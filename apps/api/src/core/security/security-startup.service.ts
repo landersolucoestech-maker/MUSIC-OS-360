@@ -37,31 +37,31 @@ export class SecurityStartupService implements OnApplicationBootstrap {
         name:    'ENCRYPTION_KEY presente',
         fatal:   true,
         check:   () => Boolean(this.getConfig('ENCRYPTION_KEY')),
-        message: 'ENCRYPTION_KEY não definida — dados PII serão cifrados com chave zero (INSEGURO)',
+        message: 'ENCRYPTION_KEY not set — PII will be encrypted with the zero key (INSECURE)',
       },
       {
         name:    'ENCRYPTION_KEY não é zero-key',
         fatal:   true,
         check:   () => this.getConfig('ENCRYPTION_KEY') !== ZERO_KEY,
-        message: 'ENCRYPTION_KEY é a chave zero padrão — substituir por chave de 64 hex chars antes do deploy',
+        message: 'ENCRYPTION_KEY is the default zero key — replace it with a 64-hex-char key before deploying',
       },
       {
         name:    'SUPABASE_URL presente',
         fatal:   true,
         check:   () => Boolean(this.getConfig('SUPABASE_URL')),
-        message: 'SUPABASE_URL não definida — autenticação JWT não funcionará',
+        message: 'SUPABASE_URL not set — JWT authentication will not work',
       },
       {
         name:    'DATABASE_URL presente',
         fatal:   false,
         check:   () => Boolean(this.getConfig('DATABASE_URL')),
-        message: 'DATABASE_URL não definida — API em modo standalone sem persistência',
+        message: 'DATABASE_URL not set — API in standalone mode without persistence',
       },
       {
         name:    'SUPABASE_SERVICE_ROLE_KEY presente em produção',
         fatal:   true,
         check:   () => !prodLike || Boolean(this.getConfig('SUPABASE_SERVICE_ROLE_KEY')),
-        message: 'SUPABASE_SERVICE_ROLE_KEY não definida — operações admin Supabase não funcionarão',
+        message: 'SUPABASE_SERVICE_ROLE_KEY not set — Supabase admin operations will not work',
       },
       {
         name:    'STRIPE_WEBHOOK_SECRET presente quando Stripe activo',
@@ -71,19 +71,19 @@ export class SecurityStartupService implements OnApplicationBootstrap {
           const stripeActive = Boolean(this.getConfig('STRIPE_SECRET_KEY'));
           return !stripeActive || Boolean(this.getConfig('STRIPE_WEBHOOK_SECRET'));
         },
-        message: 'STRIPE_WEBHOOK_SECRET não definido — webhooks Stripe serão rejeitados em produção',
+        message: 'STRIPE_WEBHOOK_SECRET not set — Stripe webhooks will be rejected in production',
       },
       {
         name:    'SENTRY_DSN presente em produção',
         fatal:   true,
         check:   () => !prodLike || Boolean(this.getConfig('SENTRY_DSN')),
-        message: 'SENTRY_DSN não definido em produção — erros não serão reportados ao Sentry',
+        message: 'SENTRY_DSN not set in production — errors will not be reported to Sentry',
       },
       {
         name:    'RESEND_API_KEY presente em produção',
         fatal:   false,
         check:   () => !prodLike || Boolean(this.getConfig('RESEND_API_KEY')),
-        message: 'RESEND_API_KEY não definida em produção — emails transacionais não serão enviados',
+        message: 'RESEND_API_KEY not set in production — transactional e-mails will not be sent',
       },
       {
         name:    'AUTH/MOCK bypass desativado em prod-like',
@@ -93,13 +93,13 @@ export class SecurityStartupService implements OnApplicationBootstrap {
           !['AUTH_DISABLED', 'MOCK_MODE', 'USE_MOCK', 'VITE_MOCK_MODE'].some(
             (key) => this.getConfig(key) === 'true',
           ),
-        message: 'AUTH_DISABLED/MOCK_MODE/USE_MOCK/VITE_MOCK_MODE nao podem estar ativos em staging/production',
+        message: 'AUTH_DISABLED/MOCK_MODE/USE_MOCK/VITE_MOCK_MODE cannot be active in staging/production',
       },
       {
         name:    'METRICS_TOKEN presente em prod-like',
         fatal:   true,
         check:   () => !prodLike || Boolean(this.getConfig('METRICS_TOKEN')),
-        message: 'METRICS_TOKEN nao definido - /metrics deve exigir token em staging/production',
+        message: 'METRICS_TOKEN not set - /metrics must require a token in staging/production',
       },
     ];
 

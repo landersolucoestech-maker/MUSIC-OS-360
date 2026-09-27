@@ -76,7 +76,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   process.on('SIGTERM', async () => {
-    logger.log('SIGTERM recebido — iniciando graceful shutdown...');
+    logger.log('SIGTERM received — starting graceful shutdown...');
     await app.close();
     process.exit(0);
   });

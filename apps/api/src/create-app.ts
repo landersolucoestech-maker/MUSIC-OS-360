@@ -35,13 +35,13 @@ export function assertApiRuntimeEnv(logger: Logger): void {
   if (prodLike) {
     for (const flag of ['USE_MOCK', 'MOCK_MODE', 'AUTH_DISABLED'] as const) {
       if (process.env[flag] === 'true') {
-        errors.push(`${flag}=true e proibido em NODE_ENV=${nodeEnv}`);
+        errors.push(`${flag}=true is forbidden in NODE_ENV=${nodeEnv}`);
       }
     }
   }
 
   if (errors.length > 0) {
-    const message = `FATAL: ambiente Supabase invalido:\n${errors.map((err) => `  - ${err}`).join('\n')}`;
+    const message = `FATAL: invalid Supabase environment:\n${errors.map((err) => `  - ${err}`).join('\n')}`;
     logger.error(message);
     throw new Error(message);
   }
@@ -200,7 +200,7 @@ export async function createApp(): Promise<INestApplication> {
         swaggerOptions: { persistAuthorization: true },
       });
     } catch (err) {
-      logger.warn(`Swagger desativado neste boot: ${String(err)}`);
+      logger.warn(`Swagger disabled in this boot: ${String(err)}`);
     }
   }
 

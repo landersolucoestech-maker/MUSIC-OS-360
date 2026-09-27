@@ -105,7 +105,7 @@ async function run(): Promise<void> {
   if (targetRef === SUPABASE_PROD_REF) {
     console.error(
       '\n[MUSIC OS 360] Refused: DATABASE_URL points to the Supabase MAIN branch. ' +
-      'O bootstrap do tenant-zero nunca pode rodar contra MAIN.\n',
+      'The tenant-zero bootstrap can never run against MAIN.\n',
     );
     process.exit(1);
   }

@@ -25,7 +25,7 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
   const adminEmail = process.env['SEED_ADMIN_EMAIL'] ?? 'admin@musicos360.dev';
   const adminName = process.env['SEED_ADMIN_NAME'] ?? 'Admin Dev (Seed)';
 
-  console.log('\n[seed:operational] Iniciando seed operacional...');
+  console.log('\n[seed:operational] Starting operational seed...');
 
   await ds.query(`
     INSERT INTO organizations (id, name, slug, plan, billing_status, industry)
@@ -120,5 +120,5 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
 
   await ds.query(`RESET app.current_tenant_id`);
 
-  console.log('\n[seed:operational] Seed operacional completo.\n');
+  console.log('\n[seed:operational] Operational seed complete.\n');
 }

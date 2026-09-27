@@ -64,7 +64,7 @@ export function evaluateRealtimeState(input: RealtimeStateInput): RealtimeStateR
 
   const publicPolicy = input.policies.find((p) => (p.qual ?? '').trim() === 'true');
   if (publicPolicy) {
-    return { state: 'UNSAFE_PUBLIC_ACCESS', reason: `Policy "${publicPolicy.policyname}" usa USING (true) — acesso público a canais privados.` };
+    return { state: 'UNSAFE_PUBLIC_ACCESS', reason: `Policy "${publicPolicy.policyname}" uses USING (true) — public access to private channels.` };
   }
 
   // No policy yet — the migration simply was not applied. This
@@ -77,9 +77,9 @@ export function evaluateRealtimeState(input: RealtimeStateInput): RealtimeStateR
   // would classify Supabase's normal initial state as a regression.
   if (input.policies.length === 0) {
     const ownerNote = input.owner === input.currentUser
-      ? 'a role de conexão já é a owner, mas a migration ainda não foi aplicada'
-      : `a role de conexão ("${input.currentUser}") não é a owner ("${input.owner}") de realtime.messages`;
-    return { state: 'PENDING_EXTERNAL_PRIVILEGE', reason: `Nenhuma policy (RLS=${input.rlsEnabled}) — ${ownerNote}.` };
+      ? 'the connection role is already the owner, but the migration has not been applied yet'
+      : `the connection role ("${input.currentUser}") is not the owner ("${input.owner}") of realtime.messages`;
+    return { state: 'PENDING_EXTERNAL_PRIVILEGE', reason: `No policy (RLS=${input.rlsEnabled}) — ${ownerNote}.` };
   }
 
   const expectedNames = Object.keys(EXPECTED_POLICIES);
@@ -89,8 +89,8 @@ export function evaluateRealtimeState(input: RealtimeStateInput): RealtimeStateR
   if (!input.rlsEnabled || !hasExactSet) {
     return {
       state: 'DRIFT',
-      reason: `Esperava RLS habilitada com exatamente as policies [${expectedNames.join(', ')}]; ` +
-        `encontrado RLS=${input.rlsEnabled}, policies=[${foundNames.join(', ') || 'nenhuma'}].`,
+      reason: `Expected RLS enabled with exactly the policies [${expectedNames.join(', ')}]; ` +
+        `found RLS=${input.rlsEnabled}, policies=[${foundNames.join(', ') || 'none'}].`,
     };
   }
 
@@ -102,10 +102,10 @@ export function evaluateRealtimeState(input: RealtimeStateInput): RealtimeStateR
     if (missing.length > 0) {
       return {
         state: 'INVALID_POLICY',
-        reason: `Policy "${policy.policyname}" existe mas o predicado não contém: ${missing.join(' | ')}. Predicado atual: ${qual}`,
+        reason: `Policy "${policy.policyname}" exists but the predicate does not contain: ${missing.join(' | ')}. Current predicate: ${qual}`,
       };
     }
   }
 
-  return { state: 'APPLIED_AND_VERIFIED', reason: 'RLS habilitada, exatamente as duas policies canônicas, predicados corretos, sem acesso público.' };
+  return { state: 'APPLIED_AND_VERIFIED', reason: 'RLS enabled, exactly the two canonical policies, correct predicates, no public access.' };
 }

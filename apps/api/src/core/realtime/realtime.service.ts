@@ -60,7 +60,7 @@ export class RealtimeService implements OnModuleDestroy {
     } else {
       this.client = null;
       this.logger.warn(
-        'RealtimeService: SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY ausentes — broadcasts desativados (no-op)',
+        'RealtimeService: SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY missing — broadcasts disabled (no-op)',
       );
     }
     // find-c703b56c (class find-b4201eb2): `tenants` is FORCE RLS (org_isolation). This lookup

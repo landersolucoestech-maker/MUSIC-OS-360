@@ -162,7 +162,7 @@ export async function createProvisioningDataSource(
             `${useAppUrl ? 'APP_DATABASE_URL (session-context ON, NOBYPASSRLS app role)' : 'DATABASE_URL'} detectado — host=${parsedUrl.hostname} port=${parsedUrl.port || 'default'} user=${parsedUrl.username}`,
           );
         } catch {
-          throw new Error('Database URL configurado, mas URL invalida');
+          throw new Error('Database URL configured, but the URL is invalid');
         }
 
         const poolMax = Number(config.get<string>('DB_POOL_MAX') ?? (isProd ? 20 : 20));
@@ -190,7 +190,7 @@ export async function createProvisioningDataSource(
 
         try {
           await ds.initialize();
-          logger.log('PostgreSQL conectado via TypeORM');
+          logger.log('PostgreSQL connected via TypeORM');
           // PHASE 3J: when session-context is active, wraps the DataSource in an
           // ALS-aware Proxy so that EVERY query of the HTTP request path (and of the jobs)
           // runs in the tenant context opened by runInTenantContext. Without the flag,

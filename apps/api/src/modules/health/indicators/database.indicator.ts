@@ -21,7 +21,7 @@ export class DatabaseHealthIndicator extends HealthIndicator {
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     if (!this.ds || !this.ds.isInitialized) {
-      const result = this.getStatus(key, false, { reason: 'DataSource não inicializado' });
+      const result = this.getStatus(key, false, { reason: 'DataSource not initialized' });
       throw new HealthCheckError('Database check failed', result);
     }
 

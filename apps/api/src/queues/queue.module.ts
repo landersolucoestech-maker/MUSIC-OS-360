@@ -60,7 +60,7 @@ function createRedisErrorLogger() {
     if (code !== lastCode || now - lastLogAt >= REDIS_ERROR_LOG_INTERVAL_MS) {
       lastCode = code;
       lastLogAt = now;
-      moduleLogger.warn(`Redis indisponivel (${code}); BullMQ aguardando reconnect`);
+      moduleLogger.warn(`Redis unavailable (${code}); BullMQ waiting to reconnect`);
     }
   };
 }
@@ -72,7 +72,7 @@ function createRedisReconnectLogger() {
     const now = Date.now();
     if (now - lastLogAt >= REDIS_ERROR_LOG_INTERVAL_MS) {
       lastLogAt = now;
-      moduleLogger.warn(`Redis reconectando em ${delay}ms`);
+      moduleLogger.warn(`Redis reconnecting in ${delay}ms`);
     }
   };
 }
@@ -121,7 +121,7 @@ async function probeRedis(url: string): Promise<boolean> {
     };
 
     const timer = setTimeout(() => {
-      moduleLogger.warn('Redis: timeout na conexão de teste — BullMQ desativado');
+      moduleLogger.warn('Redis: test connection timed out — BullMQ disabled');
       done(false);
     }, 5000);
 
@@ -134,13 +134,13 @@ async function probeRedis(url: string): Promise<boolean> {
       } catch (err: unknown) {
         clearTimeout(timer);
         const message = err instanceof Error ? err.message : String(err);
-        moduleLogger.warn(`Redis indisponivel para comandos: ${message.split('\n')[0]} - BullMQ desativado`);
+        moduleLogger.warn(`Redis unavailable for commands: ${message.split('\n')[0]} - BullMQ disabled`);
         done(false);
       }
     });
     probe.on('error', (err: Error) => {
       clearTimeout(timer);
-      moduleLogger.warn(`Redis inacessível: ${err.message?.split('\n')[0]} — BullMQ desativado`);
+      moduleLogger.warn(`Redis unreachable: ${err.message?.split('\n')[0]} — BullMQ disabled`);
       done(false);
     });
 
@@ -194,17 +194,17 @@ export class QueueModule {
 
     if (!isIoRedisUrl(url)) {
       if (isProd) {
-        moduleLogger.error('REDIS_QUEUE_URL não configurado em produção — abortando startup');
+        moduleLogger.error('REDIS_QUEUE_URL not configured in production — aborting startup');
         process.exit(1);
       }
-      moduleLogger.warn('REDIS_QUEUE_URL não configurado — BullMQ desativado (modo no-op)');
+      moduleLogger.warn('REDIS_QUEUE_URL not configured — BullMQ disabled (no-op mode)');
       return QueueModule.noOpModule();
     }
 
     const ok = await bullMqAvailable();
     if (!ok) {
       if (isProd) {
-        moduleLogger.error('Redis inacessível em produção — abortando startup');
+        moduleLogger.error('Redis unreachable in production — aborting startup');
         process.exit(1);
       }
       return QueueModule.noOpModule();

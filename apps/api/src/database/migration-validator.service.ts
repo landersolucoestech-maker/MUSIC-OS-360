@@ -64,7 +64,7 @@ export class MigrationValidatorService implements OnApplicationBootstrap {
 
       if (hasPending) {
         const msg =
-          'Existem migrations pendentes. Execute "npm run db:migrate" antes de iniciar a aplicação.';
+          'There are pending migrations. Run "npm run db:migrate" before starting the application.';
 
         if (isProduction) {
           this.logger.error(`[FATAL] ${msg}`);

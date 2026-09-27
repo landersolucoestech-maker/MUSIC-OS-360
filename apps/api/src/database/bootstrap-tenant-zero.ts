@@ -80,8 +80,8 @@ async function assertNoConflictingSystemTenant(ds: DataSource, table: 'organizat
   );
   if (rows.length > 0) {
     throw new TenantZeroInvariantError(
-      `${table}.id=${rows[0].id} já está marcado is_system_tenant=true, mas difere do ID canônico do tenant-zero (${canonicalId}). ` +
-      'Nunca promova um tenant existente por nome/slug — corrija manualmente antes de rodar o bootstrap novamente.',
+      `${table}.id=${rows[0].id} is already marked is_system_tenant=true, but differs from the canonical tenant-zero ID (${canonicalId}). ` +
+      'Never promote an existing tenant by name/slug — fix it manually before running the bootstrap again.',
     );
   }
 }
@@ -101,8 +101,8 @@ async function assertIdentityMatchesIfExists(
   const row = rows[0] as { slug: string; name: string };
   if (row.slug !== TENANT_ZERO_SLUG) {
     throw new TenantZeroInvariantError(
-      `${table}.id=${canonicalId} existe mas com slug="${row.slug}" (esperado "${TENANT_ZERO_SLUG}"). ` +
-      'Identidade divergente — resolva manualmente, o bootstrap não sobrescreve slugs.',
+      `${table}.id=${canonicalId} exists but with slug="${row.slug}" (expected "${TENANT_ZERO_SLUG}"). ` +
+      'Diverging identity — resolve it manually; the bootstrap does not overwrite slugs.',
     );
   }
   return { exists: true };
@@ -120,7 +120,7 @@ export async function bootstrapTenantZero(ds: DataSource, realOwner?: RealOwnerI
 
   if (isProduction && !realOwner) {
     throw new TenantZeroInvariantError(
-      'Em produção, um owner real (RealOwnerInput) é obrigatório — o owner sintético de DEV/STAGING nunca é criado em produção.',
+      'In production, a real owner (RealOwnerInput) is required — the synthetic DEV/STAGING owner is never created in production.',
     );
   }
 

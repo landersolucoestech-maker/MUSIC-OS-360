@@ -185,7 +185,7 @@ export class StorageService {
     const publicUrl = this.r2PublicUrl
       ? `${this.r2PublicUrl}/${key}`
       : `r2://${this.r2Bucket}/${key}`;
-    this.logger.log(`Presigned upload gerado: ${key}`);
+    this.logger.log(`Presigned upload generated: ${key}`);
     return { presignedUrl, key, fileId, publicUrl };
   }
 
@@ -233,7 +233,7 @@ export class StorageService {
     await client.send(
       new DeleteObjectCommand({ Bucket: this.r2Bucket, Key: key }),
     );
-    this.logger.log(`Ficheiro eliminado: ${key}`);
+    this.logger.log(`File deleted: ${key}`);
   }
 
   async exists(key: string): Promise<boolean> {

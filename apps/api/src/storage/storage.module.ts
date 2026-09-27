@@ -53,7 +53,7 @@ export { R2_CLIENT, R2_BUCKET, R2_PUBLIC_URL } from './storage.tokens';
           requestChecksumCalculation: 'WHEN_REQUIRED',
         });
 
-        logger.log(`Cloudflare R2 conectado (account: ${accountId})`);
+        logger.log(`Cloudflare R2 connected (account: ${accountId})`);
         return client;
       },
     },

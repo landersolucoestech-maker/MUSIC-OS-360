@@ -37,7 +37,7 @@ describe('evaluateRealtimeState', () => {
       policies: [],
     });
     expect(result.state).toBe('PENDING_EXTERNAL_PRIVILEGE');
-    expect(result.reason).toContain('não é a owner');
+    expect(result.reason).toContain('is not the owner');
   });
 
   it('PENDING_EXTERNAL_PRIVILEGE: RLS disabled, no policy, even when the role is already owner (just not applied yet)', () => {
@@ -49,7 +49,7 @@ describe('evaluateRealtimeState', () => {
       policies: [],
     });
     expect(result.state).toBe('PENDING_EXTERNAL_PRIVILEGE');
-    expect(result.reason).toContain('ainda não foi aplicada');
+    expect(result.reason).toContain('has not been applied yet');
   });
 
   it('PENDING_EXTERNAL_PRIVILEGE: RLS already enabled by Supabase default but no policy yet (real case confirmed against Supabase DEV in Part 72 — not DRIFT)', () => {

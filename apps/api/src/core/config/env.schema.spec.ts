@@ -45,12 +45,12 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
 
     it('development + MAIN_REF → fails (cross denylist)', () => {
       const errors = collectSupabaseEnvErrors({ DATABASE_URL: pooler(SUPABASE_MAIN_REF) }, 'development');
-      expect(errors.some((e) => e.includes('OUTRO ambiente') && e.includes(SUPABASE_MAIN_REF))).toBe(true);
+      expect(errors.some((e) => e.includes('ANOTHER environment') && e.includes(SUPABASE_MAIN_REF))).toBe(true);
     });
 
     it('development + old excluded DEV (sxdhnhoupjrnntrmjtyn) → fails (absolute denylist)', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url('sxdhnhoupjrnntrmjtyn') }, 'development');
-      expect(errors.some((e) => e.includes('banido'))).toBe(true);
+      expect(errors.some((e) => e.includes('banned'))).toBe(true);
     });
 
     it('development + PROD_REF → fails', () => {
@@ -83,7 +83,7 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
 
     it('production + DEV_REF → fails', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url(SUPABASE_DEV_REF) }, 'production');
-      expect(errors.some((e) => e.includes('OUTRO ambiente'))).toBe(true);
+      expect(errors.some((e) => e.includes('ANOTHER environment'))).toBe(true);
     });
 
     it('staging + STAGING_REF → passes', () => {
@@ -97,12 +97,12 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
 
     it('staging + DEV_REF → fails', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url(SUPABASE_DEV_REF) }, 'staging');
-      expect(errors.some((e) => e.includes('OUTRO ambiente'))).toBe(true);
+      expect(errors.some((e) => e.includes('ANOTHER environment'))).toBe(true);
     });
 
     it('test + any remote ref → fails (no silent fallback)', () => {
       const errors = collectSupabaseEnvErrors({ DATABASE_URL: pooler(SUPABASE_DEV_REF) }, 'test');
-      expect(errors.some((e) => e.includes('não aceita nenhum projeto Supabase remoto') || e.includes('OUTRO ambiente'))).toBe(true);
+      expect(errors.some((e) => e.includes('accepts no remote Supabase project') || e.includes('ANOTHER environment'))).toBe(true);
     });
 
     it('test + local Postgres (non-Supabase) → passes', () => {
@@ -114,7 +114,7 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
         SUPABASE_URL: url(SUPABASE_DEV_REF),
         DATABASE_URL: pooler(SUPABASE_STAGING_REF),
       }, 'development');
-      expect(errors.some((e) => e.includes('divergentes'))).toBe(true);
+      expect(errors.some((e) => e.includes('Diverging'))).toBe(true);
     });
 
     it('URL and JWT with different refs → fails', () => {
@@ -122,7 +122,7 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
         SUPABASE_URL: url(SUPABASE_DEV_REF),
         SUPABASE_ANON_KEY: jwtFor(SUPABASE_MAIN_REF, 'anon'),
       }, 'development');
-      expect(errors.some((e) => e.includes('SUPABASE_ANON_KEY') && e.includes('OUTRO ambiente'))).toBe(true);
+      expect(errors.some((e) => e.includes('SUPABASE_ANON_KEY') && e.includes('ANOTHER environment'))).toBe(true);
     });
 
     it('required variable missing in production → fails', () => {
@@ -144,22 +144,22 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
 
     it('absolute denylist (banned preview branch) prevails in any environment', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url('mkyvkciwyhfawmvluugb') }, 'development');
-      expect(errors.some((e) => e.includes('banido'))).toBe(true);
+      expect(errors.some((e) => e.includes('banned'))).toBe(true);
     });
 
     it('malformed Supabase hostname (ref not extractable) → fails', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: 'https://.supabase.co' }, 'development');
-      expect(errors.some((e) => e.includes('malformado'))).toBe(true);
+      expect(errors.some((e) => e.includes('malformed'))).toBe(true);
     });
 
     it('ref extracted from the pooler is validated (cross denylist via connection string)', () => {
       const errors = collectSupabaseEnvErrors({ DATABASE_URL: pooler(SUPABASE_PROD_REF) }, 'development');
-      expect(errors.some((e) => e.includes('DATABASE_URL') && e.includes('OUTRO ambiente'))).toBe(true);
+      expect(errors.some((e) => e.includes('DATABASE_URL') && e.includes('ANOTHER environment'))).toBe(true);
     });
 
     it('ref extracted from the direct URL (db.<ref>) is validated, including DIRECT_DATABASE_URL', () => {
       const errors = collectSupabaseEnvErrors({ DIRECT_DATABASE_URL: direct(SUPABASE_MAIN_REF) }, 'development');
-      expect(errors.some((e) => e.includes('DIRECT_DATABASE_URL') && e.includes('OUTRO ambiente'))).toBe(true);
+      expect(errors.some((e) => e.includes('DIRECT_DATABASE_URL') && e.includes('ANOTHER environment'))).toBe(true);
     });
 
     it('JWT with inverted role (service_role in ANON_KEY) → fails', () => {
@@ -167,7 +167,7 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
         SUPABASE_URL: url(SUPABASE_DEV_REF),
         SUPABASE_ANON_KEY: jwtFor(SUPABASE_DEV_REF, 'service_role'),
       }, 'development');
-      expect(errors.some((e) => e.includes('chaves invertidas'))).toBe(true);
+      expect(errors.some((e) => e.includes('keys swapped'))).toBe(true);
     });
   });
 
@@ -187,7 +187,7 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
 
     it('development + MAIN → blocked', () => {
       const errors = collectDatabaseCommandErrors({ DATABASE_URL: pooler(SUPABASE_MAIN_REF) }, 'development');
-      expect(errors.some((e) => e.includes('OUTRO ambiente'))).toBe(true);
+      expect(errors.some((e) => e.includes('ANOTHER environment'))).toBe(true);
     });
 
     it('development + PROD → blocked', () => {
@@ -196,7 +196,7 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
 
     it('development + old excluded DEV → blocked (denylist)', () => {
       const errors = collectDatabaseCommandErrors({ DATABASE_URL: direct('sxdhnhoupjrnntrmjtyn') }, 'development');
-      expect(errors.some((e) => e.includes('banido'))).toBe(true);
+      expect(errors.some((e) => e.includes('banned'))).toBe(true);
     });
 
     it('development + unknown random ref → blocked', () => {
@@ -204,16 +204,16 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
     });
 
     it('missing DATABASE_URL → blocked', () => {
-      expect(collectDatabaseCommandErrors({}, 'development').some((e) => e.includes('ausente'))).toBe(true);
+      expect(collectDatabaseCommandErrors({}, 'development').some((e) => e.includes('missing'))).toBe(true);
     });
 
     it('empty DATABASE_URL → blocked', () => {
-      expect(collectDatabaseCommandErrors({ DATABASE_URL: '   ' }, 'development').some((e) => e.includes('ausente'))).toBe(true);
+      expect(collectDatabaseCommandErrors({ DATABASE_URL: '   ' }, 'development').some((e) => e.includes('missing'))).toBe(true);
     });
 
     it('malformed DATABASE_URL (not parseable) → blocked', () => {
       const errors = collectDatabaseCommandErrors({ DATABASE_URL: 'not a url at all' }, 'development');
-      expect(errors.some((e) => e.includes('não identificável') || e.includes('malformada'))).toBe(true);
+      expect(errors.some((e) => e.includes('unidentifiable') || e.includes('malformed'))).toBe(true);
     });
 
     it('non-Supabase remote host → blocked (unidentifiable environment)', () => {
@@ -221,7 +221,7 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
         { DATABASE_URL: 'postgresql://user:pw@db.example-somewhere.com:5432/postgres' },
         'development',
       );
-      expect(errors.some((e) => e.includes('não identificável'))).toBe(true);
+      expect(errors.some((e) => e.includes('unidentifiable'))).toBe(true);
     });
 
     it('divergent URL and ref (SUPABASE_URL=DEV, DATABASE_URL=MAIN) → blocked', () => {
@@ -230,7 +230,7 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
         'development',
       );
       expect(errors.length).toBeGreaterThan(0);
-      expect(errors.some((e) => e.includes('divergentes') || e.includes('OUTRO ambiente'))).toBe(true);
+      expect(errors.some((e) => e.includes('Diverging') || e.includes('ANOTHER environment'))).toBe(true);
     });
 
     it('password with special characters in the DEV pooler → safe parse, allowed', () => {
@@ -267,8 +267,8 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Part 4
   // letting the staging deploy inherit the silent defaults (RLS/RBAC off).
   it('staging, missing RBAC, missing DB context → fails (the same production gate now covers staging)', () => {
     const errors = collectProductionAuthorityErrors({}, 'staging');
-    expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('não declarado'))).toBe(true);
-    expect(errors.some((e) => e.includes('RBAC_PERSISTED_AUTHORITY') && e.includes('não declarado'))).toBe(true);
+    expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('not declared'))).toBe(true);
+    expect(errors.some((e) => e.includes('RBAC_PERSISTED_AUTHORITY') && e.includes('not declared'))).toBe(true);
   });
 
   it('staging, RBAC=ON, DB context=true, APP_DATABASE_URL present → passes', () => {
@@ -280,8 +280,8 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Part 4
 
   it('production, missing RBAC, missing DB context → fails (both flags reported)', () => {
     const errors = collectProductionAuthorityErrors({}, 'production');
-    expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('não declarado'))).toBe(true);
-    expect(errors.some((e) => e.includes('RBAC_PERSISTED_AUTHORITY') && e.includes('não declarado'))).toBe(true);
+    expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('not declared'))).toBe(true);
+    expect(errors.some((e) => e.includes('RBAC_PERSISTED_AUTHORITY') && e.includes('not declared'))).toBe(true);
   });
 
   it('production, RBAC=SHADOW declared, DB context=true, no waiver → fails', () => {
@@ -289,7 +289,7 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Part 4
       { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'SHADOW' },
       'production',
     );
-    expect(errors.some((e) => e.includes('SHADOW') && e.includes('sem waiver'))).toBe(true);
+    expect(errors.some((e) => e.includes('SHADOW') && e.includes('without waiver'))).toBe(true);
   });
 
   it('production, RBAC=SHADOW, DB context=true, with explicit waiver → passes temporarily', () => {
@@ -322,7 +322,7 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Part 4
 
   it('production, RBAC=ON, missing DB context → fails (DB context not declared)', () => {
     const errors = collectProductionAuthorityErrors({ RBAC_PERSISTED_AUTHORITY: 'ON' }, 'production');
-    expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('não declarado'))).toBe(true);
+    expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('not declared'))).toBe(true);
   });
 
   it('production, RBAC=OFF → fails, even with correct DB context', () => {
@@ -330,7 +330,7 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Part 4
       { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'OFF' },
       'production',
     );
-    expect(errors.some((e) => e.includes('OFF') && e.includes('proibido'))).toBe(true);
+    expect(errors.some((e) => e.includes('OFF') && e.includes('forbidden'))).toBe(true);
   });
 
   it('production, DB context=true without APP_DATABASE_URL → fails (silent fallback to bypassrls)', () => {
@@ -338,7 +338,7 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Part 4
       { DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'ON' },
       'production',
     );
-    expect(errors.some((e) => e.includes('APP_DATABASE_URL ausente'))).toBe(true);
+    expect(errors.some((e) => e.includes('APP_DATABASE_URL missing'))).toBe(true);
   });
 
   it('production, waiver=true but RBAC=ON → waiver is ignored (no longer SHADOW, nothing to forgive)', () => {

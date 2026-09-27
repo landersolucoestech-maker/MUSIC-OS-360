@@ -116,7 +116,7 @@ describe('bootstrapTenantZero', () => {
       organizations: [{ id: 'some-other-org-id', slug: 'outra-org', name: 'Outra Org', is_system_tenant: true }],
     });
 
-    await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/já está marcado is_system_tenant=true/);
+    await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/is already marked is_system_tenant=true/);
   });
 
   it('rejects when the canonical ID already exists with a diverging slug (never overwrites identity)', async () => {
@@ -124,14 +124,14 @@ describe('bootstrapTenantZero', () => {
       organizations: [{ id: TENANT_ZERO_ORG_ID, slug: 'nome-errado', name: 'Nome Errado', is_system_tenant: true }],
     });
 
-    await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/slug divergente|Identidade divergente/);
+    await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/Diverging identity/);
   });
 
   it('in production, requires a RealOwnerInput — never creates a synthetic owner', async () => {
     process.env['NODE_ENV'] = 'production';
     const ds = buildFakeDataSource();
 
-    await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/owner real/);
+    await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/real owner/);
     expect(ds.state.org_members).toHaveLength(0);
   });
 

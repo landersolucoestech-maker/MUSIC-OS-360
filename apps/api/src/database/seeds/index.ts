@@ -47,7 +47,7 @@ async function run(): Promise<void> {
 
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
-    console.log('  ✓ DataSource inicializado');
+    console.log('  ✓ DataSource initialized');
   }
 
   try {

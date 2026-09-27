@@ -91,29 +91,29 @@ export function collectSupabaseEnvErrors(
       // A malformed Supabase hostname (present but with no extractable ref) is an error;
       // non-Supabase connections (e.g. local Postgres in test) pass without a ref.
       if (/supabase\.(co|com)/i.test(raw)) {
-        errors.push(`${key} tem hostname Supabase malformado — ref não extraível`);
+        errors.push(`${key} has a malformed Supabase hostname — ref cannot be extracted`);
       }
       continue;
     }
     resolved.push([key, ref]);
     if (SUPABASE_REF_DENYLIST.includes(ref)) {
-      errors.push(`${key} aponta para o ref Supabase banido "${ref}"`);
+      errors.push(`${key} points to the banned Supabase ref "${ref}"`);
       continue;
     }
     // Cross denylist: a known ref of ANOTHER environment is always forbidden.
     if (forbidden.includes(ref)) {
       errors.push(
-        `${key} usa ref "${ref}" de OUTRO ambiente — proibido em NODE_ENV=${nodeEnv} (denylist cruzada)`,
+        `${key} uses ref "${ref}" from ANOTHER environment — forbidden in NODE_ENV=${nodeEnv} (cross denylist)`,
       );
       continue;
     }
     if (expectedRef === null) {
       errors.push(
-        `${key} usa ref remoto "${ref}" mas NODE_ENV=${nodeEnv} não aceita nenhum projeto Supabase remoto`,
+        `${key} uses remote ref "${ref}" but NODE_ENV=${nodeEnv} accepts no remote Supabase project`,
       );
     } else if (ref !== expectedRef) {
       errors.push(
-        `${key} usa ref "${ref}" mas NODE_ENV=${nodeEnv} exige o projeto "${expectedRef}"`,
+        `${key} uses ref "${ref}" but NODE_ENV=${nodeEnv} requires project "${expectedRef}"`,
       );
     }
   }
@@ -122,9 +122,9 @@ export function collectSupabaseEnvErrors(
   const distinctRefs = new Set(resolved.map(([, ref]) => ref));
   if (distinctRefs.size > 1) {
     errors.push(
-      `Refs Supabase divergentes entre variáveis: ${resolved
+      `Diverging Supabase refs across variables: ${resolved
         .map(([key, ref]) => `${key}=${ref}`)
-        .join(' · ')} — todas devem apontar para o mesmo projeto`,
+        .join(' · ')} — all of them must point to the same project`,
     );
   }
 
@@ -143,15 +143,15 @@ export function collectSupabaseEnvErrors(
     }
     if (claims.ref && forbidden.includes(claims.ref)) {
       errors.push(
-        `${key} tem payload ref "${claims.ref}" de OUTRO ambiente — proibido em NODE_ENV=${nodeEnv}`,
+        `${key} has payload ref "${claims.ref}" from ANOTHER environment — forbidden in NODE_ENV=${nodeEnv}`,
       );
     } else if (claims.ref && expectedRef !== null && claims.ref !== expectedRef) {
-      errors.push(`${key} tem payload ref "${claims.ref}" != projeto esperado "${expectedRef}"`);
+      errors.push(`${key} has payload ref "${claims.ref}" != expected project "${expectedRef}"`);
     } else if (claims.ref && expectedRef === null) {
-      errors.push(`${key} tem payload ref "${claims.ref}" mas NODE_ENV=${nodeEnv} não aceita projeto remoto`);
+      errors.push(`${key} has payload ref "${claims.ref}" but NODE_ENV=${nodeEnv} accepts no remote project`);
     }
     if (claims.role && claims.role !== expectedRole) {
-      errors.push(`${key} tem role "${claims.role}" (esperado "${expectedRole}" — chaves invertidas?)`);
+      errors.push(`${key} has role "${claims.role}" (expected "${expectedRole}" — keys swapped?)`);
     }
   }
 
@@ -212,7 +212,7 @@ export function collectDatabaseCommandErrors(
   const errors = collectSupabaseEnvErrors(env, nodeEnv);
   const url = env['DATABASE_URL'];
   if (!url || url.trim() === '') {
-    errors.push('DATABASE_URL ausente/vazia — comandos de banco exigem alvo explícito');
+    errors.push('DATABASE_URL missing/empty — database commands require an explicit target');
     return errors;
   }
   if (extractSupabaseRef(url) === null) {
@@ -223,10 +223,10 @@ export function collectDatabaseCommandErrors(
       host = null;
     }
     if (!host) {
-      errors.push('DATABASE_URL malformada — ambiente não identificável (bloqueio fail-closed)');
+      errors.push('DATABASE_URL malformed — environment unidentifiable (fail-closed block)');
     } else if (!LOCAL_DB_HOSTS.includes(host.toLowerCase())) {
       errors.push(
-        `DATABASE_URL aponta para host remoto não-Supabase "${host}" — ambiente não identificável (bloqueio fail-closed)`,
+        `DATABASE_URL points to a non-Supabase remote host "${host}" — environment unidentifiable (fail-closed block)`,
       );
     }
   }
@@ -284,25 +284,25 @@ export function collectProductionAuthorityErrors(
   if (nodeEnv !== 'production' && nodeEnv !== 'staging') return [];
 
   const errors: string[] = [];
-  const envLabel = nodeEnv === 'staging' ? 'staging' : 'produção';
+  const envLabel = nodeEnv === 'staging' ? 'staging' : 'production';
 
   const dbCtxRaw = env['DATABASE_SESSION_CONTEXT_ENABLED'];
   if (dbCtxRaw === undefined || dbCtxRaw === '') {
     errors.push(
-      `DATABASE_SESSION_CONTEXT_ENABLED não declarado em ${envLabel} — o default silencioso ` +
-        '("false") desliga o isolamento de sessão por tenant no DataSource de app (DBCTX-01).',
+      `DATABASE_SESSION_CONTEXT_ENABLED not declared in ${envLabel} — the silent default ` +
+        '("false") turns off per-tenant session isolation in the app DataSource (DBCTX-01).',
     );
   } else if (dbCtxRaw !== 'true') {
     errors.push(
-      `DATABASE_SESSION_CONTEXT_ENABLED=false em ${envLabel} — isolamento de sessão por tenant desligado (DBCTX-01).`,
+      `DATABASE_SESSION_CONTEXT_ENABLED=false in ${envLabel} — per-tenant session isolation turned off (DBCTX-01).`,
     );
   } else {
     const appUrl = env['APP_DATABASE_URL'];
     if (!appUrl || appUrl.trim() === '') {
       errors.push(
-        'DATABASE_SESSION_CONTEXT_ENABLED=true mas APP_DATABASE_URL ausente — o DatabaseModule ' +
-          'cai silenciosamente de volta para DATABASE_URL (bypassrls), anulando o isolamento de ' +
-          'sessão por tenant que a flag deveria garantir (DBCTX-01).',
+        'DATABASE_SESSION_CONTEXT_ENABLED=true but APP_DATABASE_URL missing — the DatabaseModule ' +
+          'silently falls back to DATABASE_URL (bypassrls), voiding the per-tenant ' +
+          'session isolation the flag is supposed to guarantee (DBCTX-01).',
       );
     }
   }
@@ -310,22 +310,22 @@ export function collectProductionAuthorityErrors(
   const rbacRaw = env['RBAC_PERSISTED_AUTHORITY'];
   if (rbacRaw === undefined || rbacRaw === '') {
     errors.push(
-      `RBAC_PERSISTED_AUTHORITY não declarado em ${envLabel} — o default silencioso ("SHADOW") ` +
-        'significa que a autorização real ainda roda apenas no motor legado (RBAC-SHADOW-01).',
+      `RBAC_PERSISTED_AUTHORITY not declared in ${envLabel} — the silent default ("SHADOW") ` +
+        'means real authorization still runs only on the legacy engine (RBAC-SHADOW-01).',
     );
   } else if (rbacRaw === 'OFF') {
-    errors.push(`RBAC_PERSISTED_AUTHORITY=OFF é proibido em ${envLabel} (RBAC-SHADOW-01).`);
+    errors.push(`RBAC_PERSISTED_AUTHORITY=OFF is forbidden in ${envLabel} (RBAC-SHADOW-01).`);
   } else if (rbacRaw === 'SHADOW') {
     const waiver = env['ALLOW_RBAC_SHADOW_IN_PRODUCTION'] === 'true';
     if (!waiver) {
       errors.push(
-        `RBAC_PERSISTED_AUTHORITY=SHADOW em ${envLabel} sem waiver — defina ` +
-          'ALLOW_RBAC_SHADOW_IN_PRODUCTION=true apenas como exceção temporária formal enquanto o ' +
-          'harness (test/rbac-shadow-harness) ainda não aprovou a promoção a ON (RBAC-SHADOW-01).',
+        `RBAC_PERSISTED_AUTHORITY=SHADOW in ${envLabel} without waiver — set ` +
+          'ALLOW_RBAC_SHADOW_IN_PRODUCTION=true only as a formal temporary exception while the ' +
+          'harness (test/rbac-shadow-harness) has not yet approved the promotion to ON (RBAC-SHADOW-01).',
       );
     }
   } else if (rbacRaw !== 'ON') {
-    errors.push(`RBAC_PERSISTED_AUTHORITY="${rbacRaw}" não é um valor reconhecido (RBAC-SHADOW-01).`);
+    errors.push(`RBAC_PERSISTED_AUTHORITY="${rbacRaw}" is not a recognized value (RBAC-SHADOW-01).`);
   }
 
   return errors;
@@ -606,7 +606,7 @@ export const envSchema = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: [key],
-        message: `${key} aponta para o ref Supabase banido "${ref}" (branch preview sem tabelas públicas)`,
+        message: `${key} points to the banned Supabase ref "${ref}" (preview branch without public tables)`,
       });
     }
   }
@@ -631,14 +631,14 @@ export const envSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [key],
-          message: `${key} usa ref "${ref}" fora da allowlist [${SUPABASE_ALLOWED_REFS.join(', ')}] em ${cfg.NODE_ENV}`,
+          message: `${key} uses ref "${ref}" outside the allowlist [${SUPABASE_ALLOWED_REFS.join(', ')}] in ${cfg.NODE_ENV}`,
         });
       }
       if (cfg.NODE_ENV === 'production' && ref !== SUPABASE_PROD_REF) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [key],
-          message: `${key} deve usar o ref de produção "${SUPABASE_PROD_REF}" quando NODE_ENV=production (encontrado "${ref}")`,
+          message: `${key} must use the production ref "${SUPABASE_PROD_REF}" when NODE_ENV=production (found "${ref}")`,
         });
       }
     }
@@ -649,7 +649,7 @@ export const envSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [flag],
-          message: `${flag}=true é proibido em ${cfg.NODE_ENV} (permitido apenas em development)`,
+          message: `${flag}=true is forbidden in ${cfg.NODE_ENV} (allowed only in development)`,
         });
       }
     }

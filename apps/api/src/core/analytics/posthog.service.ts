@@ -43,7 +43,7 @@ export class PostHogService implements OnModuleDestroy {
       flushInterval:    10_000,
       disableGeoip:     false,
     });
-    this.logger.log(`PostHog inicializado — host: ${this.host}`);
+    this.logger.log(`PostHog initialized — host: ${this.host}`);
   }
 
   /** Real configuration state — used by analytics-tracking to never pretend coverage of an unconfigured provider. */
