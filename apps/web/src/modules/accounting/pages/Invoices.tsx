@@ -142,7 +142,7 @@ export default function Invoices() {
     setSelectedIds(filteredInvoices.map((invoice: any) => invoice.id));
   };
 
-  // Filtros
+  // Filters
   const filteredInvoices = invoicesWithType.filter((invoice: any) => {
     const partyName = getInvoicePartyName(invoice).toLowerCase();
     const rawSearch = searchTerm.toLowerCase();

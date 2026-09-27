@@ -1,12 +1,12 @@
 
 import type { TransactionEntityLink } from "@/modules/accounting/types/accounting.types";
 
-// ==================== TIPOS ====================
+// ==================== TYPES ====================
 
 export interface TransactionFormData {
   /** Managerial links (P&L) — mandatory ≥1. Multiple ones with allocation. */
   entityLinks: TransactionEntityLink[];
-  // Dados gerais
+  // General data
   tipoTransacao: string;
   tipoCliente: string;
   category: string;
@@ -35,14 +35,14 @@ export interface TransactionFormData {
   motivoViagem: string;
   advertisingName: string;
   
-  // Pagamento
+  // Payment
   formaPagamento: string;
   tipoPagamento: string;
   quantidadeParcelas: string;
   intervaloParcelas: string;
   dataPrimeiraParcela: string;
   
-  // Anexo
+  // Attachment
   anexoUrl: string;
   anexoNome: string;
 }
@@ -95,7 +95,7 @@ export const transactionTypes = [
   { value: "transferencia", label: "Transferência" },
 ];
 
-// ==================== TIPOS DE CLIENTE ====================
+// ==================== CLIENT TYPES ====================
 
 export const clientTypes = [
   { value: "empresa", label: "Empresa" },
@@ -123,7 +123,7 @@ export const transactionStatusOptions = [
   { value: "cancelled", label: "Cancelado" },
 ];
 
-// ==================== FORMAS DE PAGAMENTO ====================
+// ==================== PAYMENT METHODS ====================
 
 export const paymentMethods = [
   { value: "pix", label: "PIX" },
@@ -146,7 +146,7 @@ export const installmentIntervals = [
   { value: "semanal", label: "Semanal" },
 ];
 
-// ==================== DESPESA - EMPRESA ====================
+// ==================== EXPENSE - COMPANY ====================
 
 export const companyExpenseCategories = [
   { value: "servicos", label: "Serviços" },
@@ -157,7 +157,7 @@ export const companyExpenseCategories = [
   { value: "suporte-financeiro", label: "Suporte Financeiro" },
 ];
 
-// ==================== DESPESA - PESSOA ====================
+// ==================== EXPENSE - PERSON ====================
 
 export const individualExpenseCategories = [
   { value: "remuneracao", label: "Remuneração" },
@@ -182,7 +182,7 @@ export const individualServiceTypes = [
   { value: "consultoria", label: "Consultoria" },
 ];
 
-// Subcategorias Reembolso (Pessoa)
+// Reimbursement subcategories (Person)
 export const individualReimbursementTypes = [
   { value: "reembolso-transporte", label: "Reembolso de transporte" },
   { value: "reembolso-alimentacao", label: "Reembolso de alimentação" },
@@ -214,7 +214,7 @@ export const expenseServicesRequiringArtistAndProject = [
   "sampling-clearance",
 ];
 
-// ==================== MARKETING (Despesa) ====================
+// ==================== MARKETING (Expense) ====================
 
 export const marketingExpenseTypes = [
   { value: "marketing-trafego-pr", label: "Marketing / Tráfego / PR" },
@@ -224,7 +224,7 @@ export const marketingExpenseTypes = [
 
 // Marketing: artist mandatory, project optional
 
-// ==================== VIAGENS (Despesa) ====================
+// ==================== TRAVEL (Expense) ====================
 
 export const travelExpenseTypes = [
   { value: "passagens", label: "Passagens" },
@@ -236,7 +236,7 @@ export const travelExpenseTypes = [
 
 // Travel: artist mandatory + travel reason mandatory
 
-// ==================== PRODUTOS (Despesa) ====================
+// ==================== PRODUCTS (Expense) ====================
 
 export const expenseProductTypes = [
   { value: "equipamentos", label: "Equipamentos" },
@@ -248,7 +248,7 @@ export const expenseProductTypes = [
 // Set design/pyrotechnics: artist mandatory + event/show mandatory
 export const expenseProductsRequiringEvent = ["cenografia-pirotecnia"];
 
-// ==================== ADMINISTRATIVO (Despesa) ====================
+// ==================== ADMINISTRATIVE (Expense) ====================
 
 export const administrativeExpenseTypes = [
   { value: "aluguel", label: "Aluguel" },
@@ -265,7 +265,7 @@ export const administrativeExpenseTypes = [
   { value: "tarifas-plataformas", label: "Tarifas de plataformas" },
 ];
 
-// ==================== DESPESA - ARTISTA ====================
+// ==================== EXPENSE - ARTIST ====================
 
 export const artistExpenseCategories = [
   { value: "caches", label: "Cachês" },
@@ -388,7 +388,7 @@ export const contractualRevenueTypes = [
   { value: "apoio-cultural", label: "Apoio Cultural / Incentivo Fiscal" },
 ];
 
-// ==================== RECEITA - ARTISTA ====================
+// ==================== REVENUE - ARTIST ====================
 
 export const artistRevenueCategories = [
   { value: "cache-show", label: "Cachê de show" },
@@ -399,7 +399,7 @@ export const artistRevenueCategories = [
   { value: "outros", label: "Outros" },
 ];
 
-// ==================== INVESTIMENTO ====================
+// ==================== INVESTMENT ====================
 
 export const investmentCategories = [
   { value: "equipamentos", label: "Equipamentos" },
@@ -409,7 +409,7 @@ export const investmentCategories = [
   { value: "formacao", label: "Formação / Capacitação" },
 ];
 
-// Itens por categoria de Investimento
+// Items per Investment category
 export const investmentEquipmentItems = [
   { value: "microfone", label: "Microfone" },
   { value: "fone-ouvido", label: "Fone de ouvido" },
@@ -485,7 +485,7 @@ export const getInvestmentItemsByCategory = (categoria: string): { value: string
   }
 };
 
-// ==================== IMPOSTO ====================
+// ==================== TAX ====================
 
 export const taxCategories = [
   { value: "irrf", label: "IRRF" },
@@ -530,7 +530,7 @@ export const getCategoriesForTransactionType = (
   if (tipoTransacao === "transferencia") return transferCategories;
   if (tipoTransacao === "investimento") return investmentCategories;
 
-  // Empresa
+  // Company
   if (tipoCliente === "empresa") {
     if (tipoTransacao === "despesa") return companyExpenseCategories;
     if (tipoTransacao === "receita") return companyRevenueCategories;
@@ -556,13 +556,13 @@ export const getSubcategoriesForCategory = (
   tipoCliente: string,
   categoria: string
 ): { value: string; label: string }[] => {
-  // Artista + Despesa
+  // Artist + Expense
   if (tipoCliente === "artista" && tipoTransacao === "despesa") {
     if (categoria === "caches") return artistFeeTypes;
     return [];
   }
 
-  // Empresa
+  // Company
   if (tipoCliente === "empresa") {
     if (tipoTransacao === "despesa") {
       switch (categoria) {

@@ -148,7 +148,7 @@ export function InvoiceItemsSection({
         </Card>
       </section>
 
-      {/* ── TRIBUTOS ── */}
+      {/* ── TAXES ── */}
       <section className="space-y-4" data-testid="section-tributos">
         <h3 className="text-base font-semibold border-b pb-1">Tributos</h3>
         <div className="flex items-center justify-between">

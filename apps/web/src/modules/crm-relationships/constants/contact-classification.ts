@@ -35,8 +35,8 @@ export const CONTACT_CATEGORY_OPTIONS: ClassificationOption[] = [
 const opt = (value: string, label: string): ClassificationOption => ({ value, label });
 const OUTROS = opt("outros", "Outros");
 
-// Perfis por Tipo de Contato + Categoria.
-// Chaves de categoria = slugs de CONTACT_CATEGORY_OPTIONS.
+// Profiles per contact type + category.
+// Category keys = CONTACT_CATEGORY_OPTIONS slugs.
 export const CONTACT_PROFILES: Record<ContatoTipoPessoa, Record<string, ClassificationOption[]>> = {
   pessoa_fisica: {
     CORPORATE_CLIENT: [

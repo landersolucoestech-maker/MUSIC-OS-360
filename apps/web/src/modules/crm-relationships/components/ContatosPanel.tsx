@@ -52,7 +52,7 @@ function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
   const isIndividual = tipoPessoa === "pessoa_fisica";
 
   return {
-    // Entidade
+    // Entity
     tipo_pessoa: tipoPessoa, // sempre "pessoa_fisica" | "pessoa_juridica"
 
     // Individual (natural person)
@@ -109,7 +109,7 @@ function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
 }
 
 // ─────────────────────────────────────────────
-// Componente
+// Component
 // ─────────────────────────────────────────────
 export type ContatosPanelHandle = {
   openCreate: () => void;
@@ -125,7 +125,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
     const [editContact, setEditContact] = useState<Contact | null>(null);
     const [formOpen, setFormOpen]       = useState(false);
 
-    // ── Filtro ──────────────────────────────────
+    // ── Filter ──────────────────────────────────
     const filtered = useMemo(() => {
       const cfg  = FILTROS.find((f) => f.value === filtro)!;
       const term = search.trim().toLowerCase();
@@ -173,7 +173,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
 
     return (
       <div className="space-y-5" data-testid="contatos-panel">
-        {/* Barra de busca + filtro */}
+        {/* Search bar + filter */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center rounded-lg bg-muted/30 p-3">
           <Input
             value={search}
@@ -196,7 +196,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
           </Select>
         </div>
 
-        {/* Tabela */}
+        {/* Table */}
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Carregando contatos...</p>
         ) : filtered.length === 0 ? (

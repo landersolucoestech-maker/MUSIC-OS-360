@@ -34,7 +34,7 @@ import type { ContactAttachment } from "../types";
 
 
 // ----------------------------------------------------------------------------
-// Tipos
+// Types
 // ----------------------------------------------------------------------------
 
 export type TipoPessoa = "pessoa_fisica" | "pessoa_juridica";
@@ -47,7 +47,7 @@ export type ContatoFormState = {
   cpf: string;
   funcao: string;
   instagram: string;
-  foto: string; // data URL ou URL externa
+  foto: string; // data URL or external URL
 
   // Legal entity (company)
   razao_social: string;
@@ -198,7 +198,7 @@ const buildPayload = (s: ContatoFormState): ContatoFormPayload => ({
 });
 
 // ----------------------------------------------------------------------------
-// Subcomponentes UI internos
+// Internal UI subcomponents
 // ----------------------------------------------------------------------------
 
 function SectionHeader({ title }: { title: string }) {
@@ -219,7 +219,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 // ----------------------------------------------------------------------------
-// Componente principal
+// Main component
 // ----------------------------------------------------------------------------
 
 export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSubmit }: ContatoFormModalProps) {
@@ -269,7 +269,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     }
   };
 
-  // Foto: file → data URL
+  // Photo: file → data URL
   const handleFotoSelect = (file: File | null) => {
     if (!file) return;
     const reader = new FileReader();
@@ -512,7 +512,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </Field>
           </div>
 
-          {/* DADOS DO CONTATO ============================================= */}
+          {/* CONTACT DETAILS ============================================== */}
           <SectionHeader title={isPF ? "Dados da Pessoa Física" : "Dados da Pessoa Jurídica"} />
 
           {isPF ? (

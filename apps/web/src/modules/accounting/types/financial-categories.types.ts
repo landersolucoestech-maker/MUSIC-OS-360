@@ -69,7 +69,7 @@ export interface FinanceCategoryRule {
 
 export type FinanceCategoryRuleDraft = Omit<FinanceCategoryRule, "id" | "origin" | "createdAt" | "updatedAt">;
 
-/** Formato retornado por /finance-category-rules (backend real, ver apps/api/src/modules/finance-category-rules). */
+/** Shape returned by /finance-category-rules (real backend, see apps/api/src/modules/finance-category-rules). */
 export interface FinanceCategoryRuleApiResponse {
   id: string;
   keywords: string[];

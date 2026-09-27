@@ -117,7 +117,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
             </CardContent>
           </Card>
 
-          {/* Tomador / Fornecedor */}
+          {/* Service taker / supplier */}
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Building2 className="h-4 w-4" />{isEntrada ? "Fornecedor / Emitente" : "Tomador do Serviço"}</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -193,7 +193,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
             </Card>
           )}
 
-          {/* Tributos */}
+          {/* Taxes */}
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Calculator className="h-4 w-4" />Tributos</CardTitle></CardHeader>
             <CardContent className="space-y-3">
@@ -224,7 +224,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
             </CardContent>
           </Card>
 
-          {/* Pagamento */}
+          {/* Payment */}
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><CreditCard className="h-4 w-4" />Pagamento</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">

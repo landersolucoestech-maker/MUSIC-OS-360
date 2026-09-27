@@ -25,7 +25,7 @@ import { TIPO_INTERACAO_OPTIONS, type Interacao } from "../shared/interacoes";
 
 
 // ----------------------------------------------------------------------------
-// Tipos
+// Types
 // ----------------------------------------------------------------------------
 
 export type TipoPessoa = "pessoa_fisica" | "pessoa_juridica";
@@ -37,14 +37,14 @@ export type ContatoFormState = {
   nome_pf: string;
   cpf: string;
   funcao: string;
-  foto: string; // data URL ou URL externa
+  foto: string; // data URL or external URL
 
   // Legal entity (company)
   razao_social: string;
   nome_fantasia: string;
   cnpj: string;
 
-  // Comum
+  // Common
   categoria: string;
   email: string;
   telefone: string;
@@ -181,7 +181,7 @@ const buildPayload = (s: ContatoFormState): ContatoFormPayload => ({
 });
 
 // ----------------------------------------------------------------------------
-// Subcomponentes UI internos
+// Internal UI subcomponents
 // ----------------------------------------------------------------------------
 
 function SectionHeader({ number, title }: { number: number; title: string }) {
@@ -202,7 +202,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 // ----------------------------------------------------------------------------
-// Componente principal
+// Main component
 // ----------------------------------------------------------------------------
 
 export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSubmit }: ContatoFormModalProps) {
@@ -244,7 +244,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     }
   };
 
-  // Foto: file → data URL
+  // Photo: file → data URL
   const handleFotoSelect = (file: File | null) => {
     if (!file) return;
     const reader = new FileReader();
@@ -301,7 +301,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          {/* 1. TIPO DE CONTATO ============================================ */}
+          {/* 1. CONTACT TYPE ================================================ */}
           <SectionHeader number={1} title="Tipo de Contato" />
 
           <div className="grid grid-cols-2 gap-3">
@@ -331,7 +331,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </button>
           </div>
 
-          {/* 2. DADOS DO CONTATO ========================================== */}
+          {/* 2. CONTACT DETAILS =========================================== */}
           <SectionHeader number={2} title={isPF ? "Dados da Pessoa Física" : "Dados da Pessoa Jurídica"} />
 
           {isPF ? (
@@ -431,7 +431,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </>
           )}
 
-          {/* 3. CONTATO ===================================================== */}
+          {/* 3. CONTACT ===================================================== */}
           <SectionHeader number={3} title="Contato" />
 
           <div className="grid grid-cols-3 gap-4">

@@ -25,7 +25,7 @@ import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 
 // ─────────────────────────────────────────────
-// Tipos
+// Types
 // ─────────────────────────────────────────────
 interface ContatoViewModalProps {
   open: boolean;
@@ -80,7 +80,7 @@ function Row({
 }
 
 // ─────────────────────────────────────────────
-// Componente principal
+// Main component
 // ─────────────────────────────────────────────
 export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: ContatoViewModalProps) {
   const timeline = useClientTimeline(open && contact ? contact.id : null);
@@ -168,7 +168,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
             <Row icon={Tag}  label="Perfil"           value={perfilLabel} />
           </Section>
 
-          {/* ══ DADOS ══ */}
+          {/* ══ DATA ══ */}
           <Section title={isPF ? "Dados da Pessoa Física" : "Dados da Pessoa Jurídica"}>
             {isPF ? (
               <>
@@ -218,7 +218,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
             </Section>
           )}
 
-          {/* ══ ANEXOS ══ */}
+          {/* ══ ATTACHMENTS ══ */}
           {(contact.attachments?.length ?? 0) > 0 && (
             <section className="space-y-2">
               <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">

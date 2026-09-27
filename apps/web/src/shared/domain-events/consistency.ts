@@ -1,17 +1,16 @@
 /**
  * STEP 4 — Cross-Domain Consistency Hooks
  *
- * Registra handlers de eventos de domínio para garantir consistência
- * entre módulos sem acoplamento direto.
+ * Registers domain event handlers to keep modules consistent
+ * without direct coupling.
  *
- * Padrões implementados:
- * - ARTIST_CREATED → inicializa metas_artistas padrão
- * - CONTRACT_CREATED → atualiza status do artista para "signed"
- * - TRANSACTION_CREATED → sinaliza necessidade de atualizar cálculo financeiro
- * - LEAD_CONVERTED → cria rascunho de contrato + notifica equipe
+ * Implemented handlers:
+ * - CONTRACT_CREATED → sets the artist status to "signed" (+ contrato_id)
+ * - TRANSACTION_CREATED → flags the artist/global P&L as stale in storage
+ * - ARTIST_CREATED, LEAD_CONVERTED, MUSIC_REGISTERED → dev-only diagnostic log
  *
- * Este módulo é auto-inicializado quando importado (side-effect import).
- * Importe uma vez em App.tsx: import '@/shared/domain-events/consistency'
+ * This module self-initializes when imported (side-effect import).
+ * Import it once in App.tsx: import '@/shared/domain-events/consistency'
  */
 import { subscribe, DomainEvents } from "./index";
 import { storage } from "@/shared/lib/storage";
@@ -24,7 +23,7 @@ function initConsistencyHooks(): void {
   if (_initialized) return;
   _initialized = true;
 
-  // ── CONTRACT_CREATED → Artista vira "signed" ──────────────────────────────
+  // ── CONTRACT_CREATED → artist becomes "signed" ────────────────────────────
   subscribe(DomainEvents.CONTRACT_CREATED, async ({ artist_id, id }) => {
     if (!artist_id) return;
     try {
@@ -36,27 +35,27 @@ function initConsistencyHooks(): void {
         });
       }
     } catch {
-      // Não propagamos — consistency hook não deve derrubar o fluxo principal
+      // Not propagated — a consistency hook must not break the main flow
     }
   });
 
-  // ── ARTIST_CREATED → Inicializa configurações padrão do artista ──────────
+  // ── ARTIST_CREATED → dev-only diagnostic log ─────────────────────────────
   subscribe(DomainEvents.ARTIST_CREATED, ({ id, nome_artistico }) => {
     try {
-      // Registra entrada de auditoria de boas-vindas no console (dev)
+      // Logs the creation to the console (dev only)
       if (IS_DEV) {
-        console.info(`[consistency] Artista criado: "${nome_artistico}" (${id})`);
+        console.info(`[consistency] Artist created: "${nome_artistico}" (${id})`);
       }
     } catch {
-      /* silencioso */
+      /* intentionally ignored: must not break the emitter */
     }
   });
 
-  // ── TRANSACTION_CREATED → Sinaliza recálculo financeiro pendente ─────────
+  // ── TRANSACTION_CREATED → flags a pending financial recalculation ────────
   subscribe(DomainEvents.TRANSACTION_CREATED, ({ artist_id, type, valor }) => {
     try {
       const orgId = getCurrentOrgId();
-      // Marca que o P&L deste artista está desatualizado (flag para UI)
+      // Marks this artist's P&L as stale (flag for the UI)
       const flagKey = `_pl_stale_${orgId}`;
       const existing = storage.getRaw<Record<string, boolean>>(flagKey) ?? {};
       if (artist_id) {
@@ -71,20 +70,20 @@ function initConsistencyHooks(): void {
         );
       }
     } catch {
-      /* silencioso */
+      /* intentionally ignored: must not break the emitter */
     }
   });
 
-  // ── LEAD_CONVERTED → Cria artista rascunho se lead era artista ───────────
+  // ── LEAD_CONVERTED → dev-only diagnostic log ─────────────────────────────
   subscribe(DomainEvents.LEAD_CONVERTED, ({ id, artist_id }) => {
     if (IS_DEV) {
       console.info(
-        `[consistency] Lead ${id} convertido${artist_id ? ` → artista ${artist_id}` : ""}`,
+        `[consistency] Lead ${id} converted${artist_id ? ` → artist ${artist_id}` : ""}`,
       );
     }
   });
 
-  // ── MUSIC_REGISTERED → Valida integridade do catálogo ───────────────────
+  // ── MUSIC_REGISTERED → dev-only diagnostic log ───────────────────────────
   subscribe(DomainEvents.MUSIC_REGISTERED, ({ work_id, title }) => {
     if (IS_DEV) {
       console.info(`[consistency] Work registered: "${title}" (${work_id})`);
@@ -92,10 +91,10 @@ function initConsistencyHooks(): void {
   });
 }
 
-// Auto-inicialização ao importar
+// Self-initialization on import
 initConsistencyHooks();
 
-/** Permite re-inicializar em ambiente de testes. */
+/** Allows re-initialization in test environments. */
 export function resetConsistencyHooks(): void {
   _initialized = false;
   initConsistencyHooks();

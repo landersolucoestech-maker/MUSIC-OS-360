@@ -1,6 +1,6 @@
 {
  "totals": {
-  "comment": 158,
+  "comment": 139,
   "directory": 23,
   "eventQueueJob": 18,
   "filename": 83,
@@ -51,8 +51,6 @@
   "comment::apps/web/src/modules/support/services/knowledge-base.service.ts": 1,
   "comment::apps/web/src/modules/support/types/index.ts": 2,
   "comment::apps/web/src/shared/components/MainLayout.tsx": 1,
-  "comment::apps/web/src/shared/domain-events/consistency.ts": 8,
-  "comment::apps/web/src/shared/domain-events/index.ts": 11,
   "comment::apps/web/src/shared/hooks/useDataQuery.ts": 1,
   "comment::apps/web/src/shared/infrastructure/ErrorBoundary.tsx": 1,
   "comment::apps/web/src/shared/infrastructure/ProtectedRoute.tsx": 6,

@@ -310,7 +310,7 @@ export default function FinancialCategories() {
           </Card>
         </div>
 
-        {/* Modal Criar / Ver / Editar */}
+        {/* Create / View / Edit modal */}
         <Dialog open={modalOpen} onOpenChange={setModalOpen}>
           <DialogContent className="max-w-lg">
             <DialogHeader>

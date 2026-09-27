@@ -235,7 +235,7 @@ export function DetailsSection({
         </div>
       </section>
 
-      {/* ── TOMADOR / FORNECEDOR ── */}
+      {/* ── SERVICE TAKER / SUPPLIER ── */}
       <section className="space-y-4" data-testid="section-tomador">
         <h3 className="text-base font-semibold border-b pb-1">{rules.tomadorSectionLabel}</h3>
 

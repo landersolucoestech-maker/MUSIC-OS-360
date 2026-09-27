@@ -104,7 +104,7 @@ function KpiCards({
   );
 }
 
-// ── Demonstrativo P&L (empresa) ───────────────────────────────────────────────
+// ── P&L statement (company) ─────────────────────────────────────────────────
 
 function PLEmpresaTable({
   receitasPorCategoria, despesasPorCategoria,
@@ -295,7 +295,7 @@ export default function ProfitAndLoss() {
     >
       <div className="space-y-6">
 
-        {/* ── Toolbar: busca + date pickers (alinhados à direita) ── */}
+        {/* ── Toolbar: search + date pickers (right-aligned) ── */}
         <div className="flex flex-wrap items-center gap-3 rounded-lg bg-muted/30 p-3">
           {/* Date picker — always immediately to the left of the search */}
           <DatePickerField
@@ -352,7 +352,7 @@ export default function ProfitAndLoss() {
           <TabsContent value="todos" className="space-y-6 mt-6">
             <PLEmpresaTable {...plEmpresaProps} />
 
-            {/* Projetos (compacto) */}
+            {/* Projects (compact) */}
             <Card>
               <CardContent className="p-0 max-h-64 overflow-y-auto">
                 <ListSectionHeader
@@ -388,7 +388,7 @@ export default function ProfitAndLoss() {
               </CardContent>
             </Card>
 
-            {/* Artistas (compacto) */}
+            {/* Artists (compact) */}
             <Card>
               <CardContent className="p-0">
                 <ListSectionHeader
@@ -427,12 +427,12 @@ export default function ProfitAndLoss() {
             </Card>
           </TabsContent>
 
-          {/* ── P&L EMPRESA ──────────────────────────────────────────────── */}
+          {/* ── COMPANY P&L ──────────────────────────────────────────────── */}
           <TabsContent value="empresa" className="space-y-4 mt-6">
             <PLEmpresaTable {...plEmpresaProps} />
           </TabsContent>
 
-          {/* ── P&L PROJETOS ─────────────────────────────────────────────── */}
+          {/* ── PROJECTS P&L ─────────────────────────────────────────────── */}
           <TabsContent value="projetos" className="space-y-4 mt-6">
             <Card>
               <CardContent className="p-0">
@@ -478,7 +478,7 @@ export default function ProfitAndLoss() {
             </Card>
           </TabsContent>
 
-          {/* ── P&L ARTISTAS ─────────────────────────────────────────────── */}
+          {/* ── ARTISTS P&L ──────────────────────────────────────────────── */}
           <TabsContent value="artistas" className="space-y-4 mt-6">
             <Card>
               <CardContent className="p-0">

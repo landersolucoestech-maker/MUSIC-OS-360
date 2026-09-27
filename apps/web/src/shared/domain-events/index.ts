@@ -1,26 +1,26 @@
 /**
  * STEP 1 — Domain Events System
  *
- * Bus de eventos de domínio leve e tipado.
- * Desacopla módulos: use-cases emitem, qualquer módulo pode reagir
- * sem importar diretamente o emissor.
+ * Lightweight, typed domain event bus.
+ * Decouples modules: use cases emit, any module can react
+ * without importing the emitter directly.
  *
  * API:
- *   emit(event, payload)       — dispara um evento
- *   subscribe(event, handler)  — registra listener; retorna unsubscribe()
- *   subscribeOnce(event, h)    — listener de disparo único
- *   clearAll()                 — limpa todos os listeners (testes)
+ *   emit(event, payload)       — fires an event
+ *   subscribe(event, handler)  — registers a listener; returns unsubscribe()
+ *   subscribeOnce(event, h)    — one-shot listener
+ *   clearAll()                 — clears every listener (tests)
  */
 
-// ─── Catálogo de Eventos ─────────────────────────────────────────────────────
+// ─── Event catalog ───────────────────────────────────────────────────────────
 
 export const DomainEvents = {
-  // Artistas
+  // Artists
   ARTIST_CREATED: "ARTIST_CREATED",
   ARTIST_UPDATED: "ARTIST_UPDATED",
   ARTIST_DELETED: "ARTIST_DELETED",
 
-  // Catálogo
+  // Catalog
   MUSIC_REGISTERED:    "MUSIC_REGISTERED",
   MUSIC_UPDATED:       "MUSIC_UPDATED",
   MUSIC_DELETED:       "MUSIC_DELETED",
@@ -28,7 +28,7 @@ export const DomainEvents = {
   PHONOGRAM_UPDATED:   "PHONOGRAM_UPDATED",
   PHONOGRAM_DELETED:   "PHONOGRAM_DELETED",
 
-  // Contratos
+  // Contracts
   CONTRACT_CREATED:          "CONTRACT_CREATED",
   CONTRACT_UPDATED:          "CONTRACT_UPDATED",
   CONTRACT_DELETED:          "CONTRACT_DELETED",
@@ -39,14 +39,14 @@ export const DomainEvents = {
   CONTRACT_TEMPLATE_UPDATED: "CONTRACT_TEMPLATE_UPDATED",
   CONTRACT_TEMPLATE_DELETED: "CONTRACT_TEMPLATE_DELETED",
 
-  // Lançamentos
+  // Releases
   RELEASE_CREATED: "RELEASE_CREATED",
   RELEASE_UPDATED: "RELEASE_UPDATED",
   RELEASE_DELETED: "RELEASE_DELETED",
   RELEASE_APPROVED: "release.approved",
   RELEASE_REJECTED: "release.rejected",
 
-  // Shares (gestão de participação em obras/fonogramas)
+  // Shares (ownership management of works/sound recordings)
   SHARE_CREATED: "SHARE_CREATED",
   SHARE_UPDATED: "SHARE_UPDATED",
   SHARE_DELETED: "SHARE_DELETED",
@@ -58,24 +58,24 @@ export const DomainEvents = {
   LEAD_CAPTURED:  "LEAD_CAPTURED",
   LEAD_CONVERTED: "LEAD_CONVERTED",
 
-  // Financeiro
+  // Finance
   TRANSACTION_CREATED: "TRANSACTION_CREATED",
   TRANSACTION_UPDATED: "TRANSACTION_UPDATED",
   TRANSACTION_DELETED: "TRANSACTION_DELETED",
   FINANCE_CALCULATED:  "FINANCE_CALCULATED",
 
-  // Notas Fiscais
+  // Invoices (Notas Fiscais)
   INVOICE_CREATED: "INVOICE_CREATED",
   INVOICE_UPDATED: "INVOICE_UPDATED",
   INVOICE_DELETED: "INVOICE_DELETED",
 
-  // Sistema
+  // System
   AUDIT_ENTRY_CREATED: "AUDIT_ENTRY_CREATED",
 } as const;
 
 export type DomainEventName = (typeof DomainEvents)[keyof typeof DomainEvents];
 
-// ─── Tipos de Payload por Evento ─────────────────────────────────────────────
+// ─── Payload types per event ─────────────────────────────────────────────────
 
 export interface ArtistCreatedPayload {
   id: string;
@@ -174,8 +174,8 @@ type Handler<T> = (payload: T) => void | Promise<void>;
 const _listeners = new Map<string, Handler<unknown>[]>();
 
 /**
- * Emite um evento de domínio para todos os subscribers registrados.
- * Erros em handlers são capturados e logados sem interromper outros handlers.
+ * Emits a domain event to every registered subscriber.
+ * Handler errors are caught and logged without interrupting other handlers.
  */
 export function emit<K extends DomainEventName>(
   event: K,
@@ -195,7 +195,7 @@ export function emit<K extends DomainEventName>(
     }
   }
 
-  // Também dispara como CustomEvent no window para listeners nativos (devtools, etc.)
+  // Also dispatches as a CustomEvent on window for native listeners (devtools, etc.)
   if (typeof window !== "undefined") {
     window.dispatchEvent(
       new CustomEvent(`musicos360:${event}`, { detail: payload }),
@@ -204,8 +204,8 @@ export function emit<K extends DomainEventName>(
 }
 
 /**
- * Registra um handler para um evento de domínio.
- * Retorna uma função de cleanup (unsubscribe).
+ * Registers a handler for a domain event.
+ * Returns a cleanup function (unsubscribe).
  */
 export function subscribe<K extends DomainEventName>(
   event: K,
@@ -224,7 +224,7 @@ export function subscribe<K extends DomainEventName>(
 }
 
 /**
- * Handler de disparo único — se auto-remove após a primeira execução.
+ * One-shot handler — removes itself after the first execution.
  */
 export function subscribeOnce<K extends DomainEventName>(
   event: K,
@@ -238,14 +238,14 @@ export function subscribeOnce<K extends DomainEventName>(
 }
 
 /**
- * Remove todos os listeners (útil em testes).
+ * Removes every listener (useful in tests).
  */
 export function clearAll(): void {
   _listeners.clear();
 }
 
 /**
- * Retorna o número de listeners registrados para um evento.
+ * Returns the number of listeners registered for an event.
  */
 export function listenerCount(event: DomainEventName): number {
   return _listeners.get(event)?.length ?? 0;
