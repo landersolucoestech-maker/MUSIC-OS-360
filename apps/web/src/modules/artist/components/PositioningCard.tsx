@@ -8,6 +8,7 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/shared/ui/sheet";
 import { useCareerStage, type CareerStageDimensionKey } from "@/modules/artist/hooks/useCareerStage";
 import { useMarketBenchmark } from "@/modules/artist/hooks/useMarketBenchmark";
+import { metricLabel } from "../lib/metric-labels";
 
 const DIMENSION_LABELS: Record<CareerStageDimensionKey, string> = {
   AUDIENCE: "Audiência",
@@ -18,16 +19,6 @@ const DIMENSION_LABELS: Record<CareerStageDimensionKey, string> = {
   MOMENTUM: "Momentum (90d)",
 };
 
-// The same friendly labels already used in ArtistPlatformMetrics.tsx for each
-// platform — reused here (item 61: never show "spotify.monthly_listeners" in the UI).
-const METRIC_LABELS: Record<string, string> = {
-  "spotify.monthly_listeners": "Spotify · Ouvintes mensais",
-  "youtube.subscribers": "YouTube · Inscritos",
-  "deezer.fans": "Deezer · Fãs",
-  "soundcloud.followers": "SoundCloud · Seguidores",
-  "instagram.followers": "Instagram · Seguidores",
-  "tiktok.followers": "TikTok · Seguidores",
-};
 
 const numberFormatter = new Intl.NumberFormat("pt-BR");
 
@@ -203,7 +194,7 @@ export function PositioningCard({ artistId }: { artistId: string }) {
                         <ul className="text-xs text-muted-foreground space-y-0.5">
                           {dim.evidence.map((e) => (
                             <li key={e.metricKey}>
-                              {e.metricKey}: {formatRaw(e.rawValue)}
+                              {metricLabel(e.metricKey)}: {formatRaw(e.rawValue)}
                             </li>
                           ))}
                         </ul>
@@ -227,7 +218,7 @@ export function PositioningCard({ artistId }: { artistId: string }) {
                       {mb.result.metrics.map((m) => (
                         <div key={m.metricKey} className="border-b border-border pb-2 mb-2">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm font-medium">{METRIC_LABELS[m.metricKey] ?? m.metricKey}</span>
+                            <span className="text-sm font-medium">{metricLabel(m.metricKey)}</span>
                             <Badge variant={m.status === "AVAILABLE" ? "secondary" : "outline"}>
                               {m.status === "AVAILABLE" ? `P${Math.round(m.percentile as number)}` : m.status}
                             </Badge>
@@ -341,7 +332,7 @@ function MarketComparisonSection({
         <div className="space-y-1 mb-1">
           {availableMetrics.map((m) => (
             <div key={m.metricKey} className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground truncate">{METRIC_LABELS[m.metricKey] ?? m.metricKey}</span>
+              <span className="text-muted-foreground truncate">{metricLabel(m.metricKey)}</span>
               <span className="flex items-center gap-2 shrink-0">
                 <span className="text-muted-foreground">{formatCount(m.artistValue)}</span>
                 <span className="text-muted-foreground/50">vs</span>

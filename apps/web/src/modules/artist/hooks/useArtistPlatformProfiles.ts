@@ -61,6 +61,20 @@ export const artistPlatformProfilesKey = (artistId: string | null | undefined) =
 
 const SYNC_POLL_INTERVAL_MS = 2_000;
 
+/**
+ * Skip reason code returned by POST /artists/:id/platform-profiles/sync
+ * (artist-external-profile-sync.service.ts) → PT-BR copy. The raw code never
+ * reaches the toast.
+ */
+const SYNC_SKIP_REASON_COPY: Readonly<Record<string, string>> = {
+  missing_external_profile: "cadastre o perfil desta plataforma no artista antes de sincronizar",
+  pending_sync_exists: "já existe uma sincronização em andamento para esta plataforma",
+};
+
+export function syncSkipReasonCopy(reason: string | undefined): string {
+  return (reason && SYNC_SKIP_REASON_COPY[reason]) || "sem dados para sincronizar";
+}
+
 export function useArtistPlatformProfiles(artistId: string | null | undefined) {
   return useQuery({
     queryKey: artistPlatformProfilesKey(artistId),
@@ -109,8 +123,7 @@ export function useSyncArtistPlatformProfile(artistId: string | null | undefined
         toast.success("Sincronização enfileirada.");
         return;
       }
-      const reason = result.skipped[0]?.reason ?? "sem dados para sincronizar";
-      toast.info(`Sincronização não iniciada: ${reason}.`);
+      toast.info(`Sincronização não iniciada: ${syncSkipReasonCopy(result.skipped[0]?.reason)}.`);
     },
     onError: (err: Error) => {
       toast.error(toUserMessage(err));
