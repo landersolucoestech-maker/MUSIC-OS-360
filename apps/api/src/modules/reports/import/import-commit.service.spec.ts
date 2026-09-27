@@ -77,6 +77,7 @@ describe('ImportCommitService — transactional commit', () => {
     const duplicateResult = await duplicated.svc.commit('artists', file, 't', 'u');
     expect(duplicated.qr.rollbackTransaction).toHaveBeenCalled();
     expect(duplicateResult.errors.some((e) => /já existe/i.test(e))).toBe(true);
+    expect(duplicateResult.errors.join(' ')).not.toMatch(/nome_artistico|create-only/);
 
     const def = { ...DEF, importableColumns: ['nome_artistico', 'client_id'] };
     const validation = validResult(1);
@@ -84,6 +85,7 @@ describe('ImportCommitService — transactional commit', () => {
     const invalidRelation = makeSvc({ def, validation, queryImpl: () => [] });
     const relationResult = await invalidRelation.svc.commit('artists', file, 't', 'u');
     expect(relationResult.errors.some((e) => /relacionamento inválido/i.test(e))).toBe(true);
+    expect(relationResult.errors.join(' ')).not.toMatch(/client_id|="/);
   });
 
   it('database exception causes rollback and propagates', async () => {

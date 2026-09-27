@@ -21,6 +21,7 @@ import {
 } from '../form-contracts/report-form-contracts';
 import { REPEATING_GROUP_IMPORT_WRITERS } from '../computed-fields/registry';
 import { ImportAuditService } from './import-audit.service';
+import { getFieldLabelPtBr } from '../i18n/field-labels.pt-br';
 import { ImportEngineService } from './import-engine.service';
 import type { RowValidation } from './import.types';
 import { FinanceCategoryRulesService } from '../../finance-category-rules/finance-category-rules.service';
@@ -137,7 +138,7 @@ export class ImportCommitService {
     if (validation.errors.length > 0 || validation.invalidRows > 0) {
       const rowErrors = validation.rows
         .filter((row) => !row.valid)
-        .flatMap((row) => row.errors.map((error) => `Linha ${row.index + 2}: ${error.column} — ${error.message}`));
+        .flatMap((row) => row.errors.map((error) => `Linha ${row.index + 2}: ${getFieldLabelPtBr(error.column)} — ${error.message}`));
       return {
         entity,
         totalRows: validation.totalRows,
@@ -197,7 +198,7 @@ export class ImportCommitService {
       [value, tenantId],
     );
     if (Array.isArray(found) && found.length > 0) {
-      errors.push(`Linha ${row.index + 2}: já existe registro com ${def.identityColumn}="${String(value)}" (create-only).`);
+      errors.push(`Linha ${row.index + 2}: já existe um registro com ${getFieldLabelPtBr(def.identityColumn)} "${String(value)}". A importação só cria registros novos.`);
     }
   }
 
@@ -219,7 +220,7 @@ export class ImportCommitService {
         [value, tenantId],
       );
       if (!Array.isArray(found) || found.length === 0) {
-        errors.push(`Linha ${row.index + 2}: relacionamento inválido ${column}="${String(value)}".`);
+        errors.push(`Linha ${row.index + 2}: relacionamento inválido em ${getFieldLabelPtBr(column)}: o registro "${String(value)}" não foi encontrado.`);
       }
     }
   }

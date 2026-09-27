@@ -58,7 +58,8 @@ describe('ImportEngineService — single-sheet XLSX', () => {
     const absent = await makeEngine({ def: defWithRequiredCategory }).validateFile(
       'artists', workbook('Artistas', [['Nome artístico'], ['Ana']]), 't',
     );
-    expect(absent.errors.some((e) => e.includes('categoria'))).toBe(true);
+    expect(absent.errors).toContain('Coluna obrigatória ausente no arquivo: "Categoria".');
+    expect(absent.errors.join(' ')).not.toContain('"categoria"');
     const empty = await makeEngine({ def: defWithRequiredCategory }).validateFile(
       'artists', workbook('Artistas', [['Nome artístico', 'Categoria'], ['Ana', '']]), 't',
     );

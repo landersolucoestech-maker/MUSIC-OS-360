@@ -3,7 +3,7 @@
  */
 import { Injectable } from '@nestjs/common';
 import { getReportFormContract } from '../form-contracts/report-form-contracts';
-import { normalizeFieldKey } from '../i18n/field-labels.pt-br';
+import { getFieldLabelPtBr, normalizeFieldKey } from '../i18n/field-labels.pt-br';
 import type { ReportEntityDefinition } from '../definitions/report-entity-definition.types';
 import type { HeaderMapping } from './import-mapper.service';
 import type {
@@ -49,7 +49,7 @@ function coerce(
   if (type === 'Boolean' || type === 'boolean' || type === 'bool') {
     if (BOOL_TRUE.has(value.toLowerCase())) return { ok: true, value: true };
     if (BOOL_FALSE.has(value.toLowerCase())) return { ok: true, value: false };
-    return { ok: false, value, message: 'booleano inválido' };
+    return { ok: false, value, message: 'valor inválido (use Sim ou Não)' };
   }
   return { ok: true, value };
 }
@@ -95,7 +95,7 @@ export class ImportValidationService {
     ]));
 
     for (const column of requiredColumns.filter((entry) => !mappedColumns.has(entry))) {
-      errors.push(`Coluna obrigatória ausente no arquivo: "${column}".`);
+      errors.push(`Coluna obrigatória ausente no arquivo: "${getFieldLabelPtBr(column)}".`);
     }
 
     const allowsRepeatedIdentity = Boolean(getReportFormContract(entity)?.repeatingGroup);
