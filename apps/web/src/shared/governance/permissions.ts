@@ -41,7 +41,7 @@ export interface ModuleAccessPolicy {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PAPÉIS DO SISTEMA
+// SYSTEM ROLES
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -57,9 +57,9 @@ export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
     role:          "owner",
     name:          "Proprietário",
     description:
-      "Controlo total do tenant: billing, utilizadores, configurações, " +
-      "todos os módulos. Não pode ser removido por outros papéis. " +
-      "Um tenant tem exactamente um owner (pode ser transferido).",
+      "Full control of the tenant: billing, users, settings, " +
+      "every module. Cannot be removed by other roles. " +
+      "A tenant has exactly one owner (transferable).",
     canInviteRoles: ["admin", "manager", "editor", "viewer"],
     restrictions:  [],
   },
@@ -68,14 +68,14 @@ export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
     role:          "admin",
     name:          "Administrador",
     description:
-      "Acesso total a todos os módulos e operações. " +
-      "Pode gerir utilizadores excluindo o owner. " +
-      "Não acede a configurações de billing (reservado ao owner).",
+      "Full access to every module and operation. " +
+      "Can manage users except the owner. " +
+      "No access to billing settings (reserved for the owner).",
     canInviteRoles: ["manager", "editor", "viewer"],
     restrictions:  [
-      "Não pode alterar plano de billing",
-      "Não pode remover o owner",
-      "Não pode transferir ownership",
+      "Cannot change the billing plan",
+      "Cannot remove the owner",
+      "Cannot transfer ownership",
     ],
   },
 
@@ -83,14 +83,14 @@ export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
     role:          "manager",
     name:          "Gestor",
     description:
-      "Acesso de escrita a todos os módulos operacionais. " +
-      "Acesso de leitura a auditoria e configurações. " +
-      "Não pode gerir utilizadores nem alterar configurações do tenant.",
+      "Write access to every operational module. " +
+      "Read access to audit and settings. " +
+      "Cannot manage users nor change tenant settings.",
     canInviteRoles: ["editor", "viewer"],
     restrictions:  [
-      "Leitura em auditoria e configurações (sem escrita)",
-      "Não pode gerir utilizadores",
-      "Não pode alterar configurações do tenant",
+      "Read-only on audit and settings (no write)",
+      "Cannot manage users",
+      "Cannot change tenant settings",
     ],
   },
 
@@ -98,15 +98,15 @@ export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
     role:          "editor",
     name:          "Editor",
     description:
-      "Pode criar e editar registos em todos os módulos operacionais. " +
-      "Não pode eliminar registos nem aceder a auditoria ou configurações. " +
-      "Típico para colaboradores de produção e marketing.",
+      "Can create and edit records in every operational module. " +
+      "Cannot delete records nor access audit or settings. " +
+      "Typical for production and marketing staff.",
     canInviteRoles: [],
     restrictions:  [
-      "Sem acesso a auditoria",
-      "Sem acesso a configurações",
-      "Sem permissão de eliminação em nenhum módulo",
-      "Não pode convidar novos utilizadores",
+      "No access to audit",
+      "No access to settings",
+      "No delete permission in any module",
+      "Cannot invite new users",
     ],
   },
 
@@ -114,15 +114,15 @@ export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
     role:          "viewer",
     name:          "Visualizador",
     description:
-      "Acesso de leitura e exportação a todos os módulos operacionais. " +
-      "Não pode criar, editar ou eliminar nada. " +
-      "Típico para stakeholders externos, auditores, artistas com acesso ao ERP.",
+      "Read and export access to every operational module. " +
+      "Cannot create, edit or delete anything. " +
+      "Typical for external stakeholders, auditors, artists with ERP access.",
     canInviteRoles: [],
     restrictions:  [
-      "Apenas leitura e exportação",
-      "Sem acesso a auditoria",
-      "Sem acesso a configurações",
-      "Não pode convidar novos utilizadores",
+      "Read and export only",
+      "No access to audit",
+      "No access to settings",
+      "Cannot invite new users",
     ],
   },
 };
@@ -160,7 +160,7 @@ export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
  * Format ✓✓✓✓: read.write.delete.export
  */
 export const PERMISSION_MATRIX_DOCS = `
-Módulo         | owner | admin | manager | editor | viewer
+Module         | owner | admin | manager | editor | viewer
 ─────────────────────────────────────────────────────────────
 artists        | FULL  | FULL  |  FULL   | R/W/-/E|  R/-/-/E
 catalog        | FULL  | FULL  |  FULL   | R/W/-/E|  R/-/-/E
@@ -265,9 +265,9 @@ export const PERMISSION_USAGE_PATTERN = {
   featureFlag:    "tenant.features[featureFlagKey]",
   adminRoute:     "AdminRoute roles={['owner', 'admin']}",
   forbidden: [
-    "verificar tenant.role directamente",
-    "esconder via CSS (usar renderização condicional)",
-    "verificar permissões em serviços/mappers",
+    "check tenant.role directly",
+    "hide via CSS (use conditional rendering)",
+    "check permissions in services/mappers",
   ],
 } as const;
 
@@ -314,7 +314,7 @@ export const SENSITIVE_DATA_POLICY = {
   integrationCredentials: {
     visibleFor:  [] as TenantRole[],
     neverDisplay: true,
-    storageNote:  "localStorage apenas em modo standalone; backend Vault no futuro",
+    storageNote:  "localStorage only in standalone mode; backend Vault in the future",
   },
   authTokens: {
     clearOnLogout: true,

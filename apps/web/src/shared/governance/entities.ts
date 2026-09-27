@@ -22,12 +22,12 @@ export type RelationshipCardinality =
   | "1:1"    // one to one
   | "1:N"    // one to many
   | "N:1"    // many to one
-  | "N:N";   // muitos para muitos
+  | "N:N";   // many to many
 
 export interface EntityRelationship {
-  /** Entidade destino do relacionamento */
+  /** Target entity of the relationship */
   target: string;
-  /** Cardinalidade */
+  /** Cardinality */
   cardinality: RelationshipCardinality;
   /** Field(s) implementing the relationship */
   via: string;
@@ -50,7 +50,7 @@ export interface EntityDefinition {
   externalIds: string[];
   /** Mandatory fields on creation */
   requiredFields: string[];
-  /** Relacionamentos com outras entidades */
+  /** Relationships with other entities */
   relationships: EntityRelationship[];
   /** Short description */
   description: string;
@@ -84,35 +84,35 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "1:N",
         via:         "contrato_id",
         required:    false,
-        description: "Contrato ativo vinculado ao artista",
+        description: "Active contract linked to the artist",
       },
       {
         target:      "Obra",
         cardinality: "N:N",
         via:         "Share.artista_id",
         required:    false,
-        description: "Participação em obras via shares de composição",
+        description: "Participation in works via composition shares",
       },
       {
         target:      "Lancamento",
         cardinality: "N:N",
         via:         "Lancamento.artista_ids[]",
         required:    false,
-        description: "Artistas participantes em um lançamento",
+        description: "Artists participating in a release",
       },
       {
         target:      "ArtistaRelacionamento",
         cardinality: "1:N",
         via:         "relacionamentos[]",
         required:    false,
-        description: "Empresário, gravadora, editora, booker, jurídico, etc.",
+        description: "Manager, label, publisher, booker, legal, etc.",
       },
     ],
     description:
-      "Entidade central do sistema. Representa um artista musical: " +
-      "solo, banda, duo, trio, grupo ou colectivo. " +
-      "Agrega perfil, dados fiscais, relacionamentos, " +
-      "métricas de plataformas e histórico de contratos.",
+      "Central entity of the system. Represents a music artist: " +
+      "solo, band, duo, trio, group or collective. " +
+      "Aggregates profile, tax data, relationships, " +
+      "platform metrics and contract history.",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -132,27 +132,27 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "1:N",
         via:         "Fonograma.obra_id",
         required:    false,
-        description: "Gravações (fonogramas) da obra",
+        description: "Recordings (sound recordings) of the work",
       },
       {
         target:      "Share",
         cardinality: "1:N",
         via:         "Share.obra_id",
         required:    false,
-        description: "Participações de composição (splits de direitos autorais)",
+        description: "Composition participations (copyright splits)",
       },
       {
         target:      "Licenca",
         cardinality: "1:N",
         via:         "Licenca.obra_id",
         required:    false,
-        description: "Licenças de uso da obra",
+        description: "Usage licenses of the work",
       },
     ],
     description:
-      "Composição musical (letra + melodia). Identificada por ISWC. " +
-      "Pode ter múltiplos fonogramas (gravações). " +
-      "Gerida pelo ECAD / UBC para efeitos de arrecadação.",
+      "Musical composition (lyrics + melody). Identified by ISWC. " +
+      "May have multiple sound recordings. " +
+      "Managed by ECAD / UBC for collection purposes.",
   },
 
   Fonograma: {
@@ -168,27 +168,27 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "obra_id",
         required:    true,
-        description: "Obra da qual este fonograma é gravação",
+        description: "Work of which this sound recording is a recording",
       },
       {
         target:      "Lancamento",
         cardinality: "N:N",
         via:         "Lancamento.fonograma_ids[]",
         required:    false,
-        description: "Lançamentos que incluem este fonograma",
+        description: "Releases that include this sound recording",
       },
       {
         target:      "Share",
         cardinality: "1:N",
         via:         "Share.phonogram_id",
         required:    false,
-        description: "Participações de master (splits de direitos conexos)",
+        description: "Master participations (neighboring-rights splits)",
       },
     ],
     description:
-      "Gravação específica de uma obra. Identificado por ISRC. " +
-      "Pode aparecer em múltiplos lançamentos. " +
-      "Ponto de referência para claims ECAD e Content ID.",
+      "Specific recording of a work. Identified by ISRC. " +
+      "May appear in multiple releases. " +
+      "Reference point for ECAD and Content ID claims.",
   },
 
   Share: {
@@ -204,27 +204,27 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "obra_id",
         required:    false,
-        description: "Obra à qual este share de composição pertence",
+        description: "Work this composition share belongs to",
       },
       {
         target:      "Fonograma",
         cardinality: "N:1",
         via:         "phonogram_id",
         required:    false,
-        description: "Fonograma ao qual este share de master pertence",
+        description: "Sound recording this master share belongs to",
       },
       {
         target:      "Artista",
         cardinality: "N:1",
         via:         "artista_id",
         required:    false,
-        description: "Artista titular do share",
+        description: "Artist holding the share",
       },
     ],
     description:
-      "Participação percentual nos direitos de uma obra ou fonograma. " +
-      "Tipos: composição, master, editorial, performance, sincronia. " +
-      "Direção: entrada (recebe) ou saída (paga).",
+      "Percentage participation in the rights of a work or sound recording. " +
+      "Types: composition, master, publishing, performance, synchronization. " +
+      "Direction: inbound (receives) or outbound (pays).",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -244,20 +244,20 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:N",
         via:         "artista_ids[]",
         required:    true,
-        description: "Artistas principais do lançamento",
+        description: "Main artists of the release",
       },
       {
         target:      "Fonograma",
         cardinality: "N:N",
         via:         "fonograma_ids[]",
         required:    false,
-        description: "Fonogramas incluídos no lançamento",
+        description: "Sound recordings included in the release",
       },
     ],
     description:
-      "Produto musical comercial: single, EP, álbum, compilação, live. " +
-      "Agrega fonogramas, define distribuidora, plataformas de distribuição, " +
-      "datas de entrega e publicação.",
+      "Commercial music product: single, EP, album, compilation, live. " +
+      "Aggregates sound recordings, defines the distributor, distribution platforms, " +
+      "delivery and publication dates.",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -277,20 +277,20 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "artista_id",
         required:    false,
-        description: "Artista principal do contrato",
+        description: "Main artist of the contract",
       },
       {
         target:      "Cliente",
         cardinality: "N:1",
         via:         "cliente_id",
         required:    false,
-        description: "Cliente / contraparte do contrato",
+        description: "Client / counterparty of the contract",
       },
     ],
     description:
-      "Contrato jurídico: exclusivo, não exclusivo, licenciamento, " +
-      "distribuição, produção, representação, parceria, serviços, gestão. " +
-      "Suporte a assinatura digital via Autentique.",
+      "Legal contract: exclusive, non-exclusive, licensing, " +
+      "distribution, production, representation, partnership, services, management. " +
+      "Digital signature support via Autentique.",
   },
 
   TemplateContrato: {
@@ -306,13 +306,13 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "1:N",
         via:         "Contrato.template_id",
         required:    false,
-        description: "Contratos gerados a partir deste template",
+        description: "Contracts generated from this template",
       },
     ],
     description:
-      "Template reutilizável para geração de contratos. " +
-      "Suporta variáveis dinâmicas ({{artista}}, {{valor}}, etc.). " +
-      "Versionado e categorizado por tipo de contrato.",
+      "Reusable template for contract generation. " +
+      "Supports dynamic variables ({{artista}}, {{valor}}, etc.). " +
+      "Versioned and categorized by contract type.",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -332,28 +332,28 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "artista_id",
         required:    false,
-        description: "Artista vinculado à transação (P&L por artista)",
+        description: "Artist linked to the transaction (P&L per artist)",
       },
       {
         target:      "Projeto",
         cardinality: "N:1",
         via:         "projeto_id",
         required:    false,
-        description: "Projeto vinculado (P&L por projeto, recoupment)",
+        description: "Linked project (P&L per project, recoupment)",
       },
       {
         target:      "NotaFiscal",
         cardinality: "N:1",
         via:         "nota_fiscal_id",
         required:    false,
-        description: "Nota fiscal associada à transação",
+        description: "Invoice associated with the transaction",
       },
     ],
     description:
-      "Transação financeira: receita ou despesa. " +
-      "Base do P&L, fluxo de caixa e conciliação OFX. " +
-      "Categorias incluem 'recebimentos externos de direitos' apenas como label — " +
-      "NÃO é um domínio de produto separado.",
+      "Financial transaction: revenue or expense. " +
+      "Basis of the P&L, cash flow and OFX reconciliation. " +
+      "Categories include 'recebimentos externos de direitos' only as a label — " +
+      "It is NOT a separate product domain.",
   },
 
   NotaFiscal: {
@@ -369,19 +369,19 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "1:N",
         via:         "Transacao.nota_fiscal_id",
         required:    false,
-        description: "Transações vinculadas a esta nota fiscal",
+        description: "Transactions linked to this invoice",
       },
       {
         target:      "Cliente",
         cardinality: "N:1",
         via:         "cliente_id",
         required:    false,
-        description: "Destinatário da nota fiscal",
+        description: "Invoice recipient",
       },
     ],
     description:
-      "Nota fiscal de serviços ou produtos: NFS-e, NF-e, NFC-e, recibo. " +
-      "Fluxo: rascunho → pendente → emitida → cancelada / rejeitada.",
+      "Invoice for services or products: NFS-e, NF-e, NFC-e, receipt. " +
+      "Flow: draft → pending → issued → canceled / rejected.",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -401,27 +401,27 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "1:N",
         via:         "Contrato.cliente_id",
         required:    false,
-        description: "Contratos em que este cliente é contraparte",
+        description: "Contracts in which this client is the counterparty",
       },
       {
         target:      "Lead",
         cardinality: "1:N",
         via:         "Lead.cliente_id",
         required:    false,
-        description: "Leads originados deste cliente",
+        description: "Leads originated from this client",
       },
       {
         target:      "Contato",
         cardinality: "1:N",
         via:         "Contato.cliente_id",
         required:    false,
-        description: "Contatos associados a este cliente",
+        description: "Contacts associated with this client",
       },
     ],
     description:
-      "Cliente ou parceiro de negócio: gravadora, editora, agência, " +
-      "marca, produtor, veículo de comunicação. " +
-      "Pode ser pessoa física ou jurídica.",
+      "Client or business partner: label, publisher, agency, " +
+      "brand, producer, media outlet. " +
+      "May be an individual or a legal entity.",
   },
 
   Lead: {
@@ -437,20 +437,20 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "cliente_id",
         required:    false,
-        description: "Cliente existente de onde o lead originou",
+        description: "Existing client the lead originated from",
       },
       {
         target:      "Artista",
         cardinality: "N:1",
         via:         "artista_id",
         required:    false,
-        description: "Artista alvo desta oportunidade",
+        description: "Target artist of this opportunity",
       },
     ],
     description:
-      "Oportunidade de negócio em captacao comercial. " +
-      "Status: novo → em contacto → proposta → negociação → fechado/perdido. " +
-      "Temperatura: quente, morno, frio.",
+      "Business opportunity in sales prospecting. " +
+      "Status: new → in contact → proposal → negotiation → closed/lost. " +
+      "Temperature: hot, warm, cold.",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -470,19 +470,19 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:N",
         via:         "artista_ids[]",
         required:    false,
-        description: "Artistas participantes no evento",
+        description: "Artists participating in the event",
       },
       {
         target:      "Projeto",
         cardinality: "N:1",
         via:         "projeto_id",
         required:    false,
-        description: "Projeto ao qual o evento pertence",
+        description: "Project the event belongs to",
       },
     ],
     description:
-      "Evento ao vivo ou em estúdio: show, festival, gravação, " +
-      "videoclipe, ensaio, reunião, workshop, lançamento, live, streaming.",
+      "Live or studio event: show, festival, recording, " +
+      "music video, rehearsal, meeting, workshop, release, live, streaming.",
   },
 
   Projeto: {
@@ -498,26 +498,26 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "artista_id",
         required:    false,
-        description: "Artista principal do projecto",
+        description: "Main artist of the project",
       },
       {
         target:      "Transacao",
         cardinality: "1:N",
         via:         "Transacao.projeto_id",
         required:    false,
-        description: "Transações do projecto (P&L e recoupment)",
+        description: "Project transactions (P&L and recoupment)",
       },
       {
         target:      "Evento",
         cardinality: "1:N",
         via:         "Evento.projeto_id",
         required:    false,
-        description: "Eventos vinculados ao projecto",
+        description: "Events linked to the project",
       },
     ],
     description:
-      "Projecto musical com P&L dedicado e recoupment tracking. " +
-      "Tipos: álbum, EP, single, videoclipe, show, tour, campanha, podcast.",
+      "Music project with a dedicated P&L and recoupment tracking. " +
+      "Types: album, EP, single, music video, show, tour, campaign, podcast.",
   },
 
   Inventario: {
@@ -529,9 +529,9 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
     requiredFields: ["id", "nome", "status"],
     relationships: [],
     description:
-      "Item de inventário: equipamento de estúdio, instrumento, " +
-      "equipamento de PA/iluminação, veículo. " +
-      "Estado: disponível, em uso, manutenção, emprestado, descartado.",
+      "Inventory item: studio equipment, instrument, " +
+      "PA/lighting equipment, vehicle. " +
+      "State: available, in use, maintenance, lent, discarded.",
   },
 
   Funcionario: {
@@ -547,12 +547,12 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "1:N",
         via:         "FeriasAusencia.funcionario_id",
         required:    false,
-        description: "Períodos de férias e ausências do funcionário",
+        description: "Employee vacation and absence periods",
       },
     ],
     description:
-      "Colaborador da empresa: CLT, PJ, autónomo, estagiário, temporário. " +
-      "Gestão de cargo, departamento, salário, admissão e desligamento.",
+      "Company staff member: CLT, PJ, self-employed, intern, temporary. " +
+      "Management of position, department, salary, hiring and termination.",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -572,20 +572,20 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "obra_id",
         required:    false,
-        description: "Obra cujo uso está sendo contestado",
+        description: "Work whose use is being disputed",
       },
       {
         target:      "Fonograma",
         cardinality: "N:1",
         via:         "fonograma_id",
         required:    false,
-        description: "Fonograma cujo uso está sendo contestado",
+        description: "Sound recording whose use is being disputed",
       },
     ],
     description:
-      "Solicitação de remoção de conteúdo não autorizado. " +
-      "Plataformas: YouTube, TikTok, Instagram, Spotify, etc. " +
-      "Status: pendente → enviado → processando → concluído / rejeitado / falhou.",
+      "Request to remove unauthorized content. " +
+      "Platforms: YouTube, TikTok, Instagram, Spotify, etc. " +
+      "Status: pending → sent → processing → completed / rejected / failed.",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -605,26 +605,26 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "obra_id",
         required:    false,
-        description: "Obra licenciada",
+        description: "Licensed work",
       },
       {
         target:      "Cliente",
         cardinality: "N:1",
         via:         "cliente_id",
         required:    false,
-        description: "Licenciado (quem recebe o direito de uso)",
+        description: "Licensee (who receives the usage right)",
       },
       {
         target:      "Contrato",
         cardinality: "N:1",
         via:         "contrato_id",
         required:    false,
-        description: "Contrato de licença associado",
+        description: "Associated license contract",
       },
     ],
     description:
-      "Licença de uso de obra: sincronia, mecânica, performance, " +
-      "impressão, digital, streaming. Territórios, prazo e valor por uso.",
+      "Work usage license: synchronization, mechanical, performance, " +
+      "print, digital, streaming. Territories, term and fee per use.",
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -644,19 +644,19 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "artista_id",
         required:    false,
-        description: "Artista foco da campanha",
+        description: "Artist the campaign focuses on",
       },
       {
         target:      "Lancamento",
         cardinality: "N:1",
         via:         "lancamento_id",
         required:    false,
-        description: "Lançamento que a campanha promove",
+        description: "Release the campaign promotes",
       },
     ],
     description:
-      "Campanha de marketing: digital, impressa, outdoor, rádio, " +
-      "TV, influencer, email, SMS, push, release de imprensa.",
+      "Marketing campaign: digital, print, outdoor, radio, " +
+      "TV, influencer, email, SMS, push, press release.",
   },
 };
 

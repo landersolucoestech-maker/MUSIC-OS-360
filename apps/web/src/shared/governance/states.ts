@@ -27,7 +27,7 @@ export type UiColor =
   | "green"    // active / positive / completed
   | "blue"     // in progress / scheduled
   | "yellow"   // pending / draft / review
-  | "gray"     // inactivo / arquivado / neutro
+  | "gray"     // inactive / archived / neutral
   | "red";     // cancelled / rejected / overdue / failed (ONLY these)
 
 export interface StateDefinition {
@@ -53,7 +53,7 @@ export interface StateMachine {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// ARTISTA — Estado de cadastro
+// ARTIST — Registration state
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const ARTISTA_STATE_MACHINE: StateMachine = {
@@ -61,34 +61,34 @@ export const ARTISTA_STATE_MACHINE: StateMachine = {
   initialState: "prospect",
   states: [
     { value: "prospect",       label: "Prospecto",   color: "yellow", isFinal: false,
-      description: "Artista em avaliação — não tem contrato ativo." },
+      description: "Artist under evaluation — has no active contract." },
     { value: "signed",         label: "Contratado",  color: "blue",   isFinal: false,
-      description: "Contrato assinado, onboarding em curso." },
+      description: "Contract signed, onboarding in progress." },
     { value: "active",         label: "Ativo",      color: "green",  isFinal: false,
-      description: "Artista operacional na label/editora." },
+      description: "Operational artist at the label/publisher." },
     { value: "inactive",       label: "Inactivo",    color: "gray",   isFinal: false,
-      description: "Sem atividade recente; contrato suspenso." },
+      description: "No recent activity; contract suspended." },
     { value: "suspended",      label: "Suspenso",    color: "yellow", isFinal: false,
-      description: "Relação em análise por incumprimento." },
+      description: "Relationship under review for non-compliance." },
     { value: "former_artist",  label: "Ex-Artista",  color: "gray",   isFinal: true,
-      description: "Contrato encerrado; histórico mantido." },
+      description: "Contract terminated; history kept." },
     { value: "terminated",     label: "Desligado",   color: "red",    isFinal: true,
-      description: "Ruptura contratual antecipada ou por falta grave." },
+      description: "Early contractual rupture or due to serious misconduct." },
   ],
   transitions: [
-    { from: "prospect",  to: "signed",        trigger: "Assinar contrato",    description: "Contrato aceite e assinado digitalmente." },
-    { from: "signed",    to: "active",        trigger: "Concluir onboarding", description: "Perfil completo, dados fiscais verificados." },
-    { from: "active",    to: "inactive",      trigger: "Inactivar",           description: "Sem atividade durante período definido." },
-    { from: "inactive",  to: "active",        trigger: "Reactivar",           description: "Artista retoma atividade." },
-    { from: "active",    to: "suspended",     trigger: "Suspender",           description: "Incumprimento de cláusula contratual." },
-    { from: "suspended", to: "active",        trigger: "Levantar suspensão",  description: "Resolução da causa de suspensão." },
-    { from: "suspended", to: "terminated",    trigger: "Desligar",            description: "Incumprimento não resolvido — ruptura." },
-    { from: "active",    to: "former_artist", trigger: "Encerrar contrato",   description: "Contrato expirado naturalmente." },
+    { from: "prospect",  to: "signed",        trigger: "Sign contract",    description: "Contract accepted and digitally signed." },
+    { from: "signed",    to: "active",        trigger: "Complete onboarding", description: "Complete profile, tax data verified." },
+    { from: "active",    to: "inactive",      trigger: "Inactivar",           description: "No activity during a defined period." },
+    { from: "inactive",  to: "active",        trigger: "Reactivar",           description: "The artist resumes activity." },
+    { from: "active",    to: "suspended",     trigger: "Suspender",           description: "Breach of a contract clause." },
+    { from: "suspended", to: "active",        trigger: "Lift suspension",  description: "Resolution of the suspension cause." },
+    { from: "suspended", to: "terminated",    trigger: "Offboard",            description: "Unresolved breach — rupture." },
+    { from: "active",    to: "former_artist", trigger: "Terminate contract",   description: "Contract expired naturally." },
   ],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// CONTRATO — Ciclo de vida
+// CONTRACT — Lifecycle
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const CONTRATO_STATE_MACHINE: StateMachine = {
@@ -96,31 +96,31 @@ export const CONTRATO_STATE_MACHINE: StateMachine = {
   initialState: "rascunho",
   states: [
     { value: "rascunho",              label: "Rascunho",              color: "yellow", isFinal: false,
-      description: "Em edição; não vinculativo." },
+      description: "Being edited; not binding." },
     { value: "aguardando_assinatura", label: "Aguardando Assinatura", color: "blue",   isFinal: false,
-      description: "Enviado para assinatura digital (Autentique)." },
+      description: "Sent for digital signature (Autentique)." },
     { value: "vigente",               label: "Vigente",               color: "green",  isFinal: false,
-      description: "Ativo e dentro do prazo de validade." },
+      description: "Active and within the validity period." },
     { value: "ativo",                 label: "Ativo",                color: "green",  isFinal: false,
-      description: "Sinónimo de vigente (compatibilidade)." },
+      description: "Synonym of vigente (compatibility)." },
     { value: "vencendo",              label: "A Vencer",              color: "yellow", isFinal: false,
-      description: "Vence nos próximos 30 dias — alerta ativo." },
+      description: "Expires in the next 30 days — alert active." },
     { value: "vencido",               label: "Vencido",               color: "red",    isFinal: false,
-      description: "Prazo expirado sem renovação." },
+      description: "Term expired without renewal." },
     { value: "encerrado",             label: "Encerrado",             color: "gray",   isFinal: true,
-      description: "Encerrado por acordo mútuo ou cumprimento total." },
+      description: "Terminated by mutual agreement or full performance." },
     { value: "cancelado",             label: "Cancelado",             color: "red",    isFinal: true,
-      description: "Cancelado antes da assinatura ou por ruptura." },
+      description: "Canceled before signature or due to rupture." },
   ],
   transitions: [
-    { from: "rascunho",              to: "aguardando_assinatura", trigger: "Enviar para assinatura", description: "Enviado via Autentique." },
-    { from: "aguardando_assinatura", to: "vigente",               trigger: "Todas as partes assinaram", description: "Autentique confirma assinaturas completas." },
-    { from: "aguardando_assinatura", to: "cancelado",             trigger: "Cancelar",              description: "Cancelado antes de assinatura completa." },
-    { from: "vigente",               to: "vencendo",              trigger: "Automático (30 dias)",  description: "Rotina automática detecta a proximidade do vencimento." },
-    { from: "vencendo",              to: "vencido",               trigger: "Automático (data)",     description: "Data de vencimento atingida sem renovação." },
-    { from: "vencido",               to: "vigente",               trigger: "Renovar",               description: "Nova data de vencimento definida." },
-    { from: "vigente",               to: "encerrado",             trigger: "Encerrar",              description: "Encerramento por acordo mútuo." },
-    { from: "vencido",               to: "encerrado",             trigger: "Arquivar",              description: "Arquivamento após expiração." },
+    { from: "rascunho",              to: "aguardando_assinatura", trigger: "Send for signature", description: "Sent via Autentique." },
+    { from: "aguardando_assinatura", to: "vigente",               trigger: "Every party has signed", description: "Autentique confirms complete signatures." },
+    { from: "aguardando_assinatura", to: "cancelado",             trigger: "Cancel",              description: "Canceled before complete signature." },
+    { from: "vigente",               to: "vencendo",              trigger: "Automatic (30 days)",  description: "An automatic routine detects the upcoming expiration." },
+    { from: "vencendo",              to: "vencido",               trigger: "Automatic (date)",     description: "Expiration date reached without renewal." },
+    { from: "vencido",               to: "vigente",               trigger: "Renew",               description: "New expiration date defined." },
+    { from: "vigente",               to: "encerrado",             trigger: "Terminate",              description: "Termination by mutual agreement." },
+    { from: "vencido",               to: "encerrado",             trigger: "Archive",              description: "Archiving after expiration." },
   ],
 };
 
@@ -133,19 +133,19 @@ export const TRANSACAO_STATE_MACHINE: StateMachine = {
   initialState: "pendente",
   states: [
     { value: "agendado",  label: "Agendado",  color: "blue",   isFinal: false,
-      description: "Pagamento programado para data futura." },
+      description: "Payment scheduled for a future date." },
     { value: "pendente",  label: "Pendente",  color: "yellow", isFinal: false,
-      description: "Aguardando pagamento ou confirmação." },
+      description: "Waiting for payment or confirmation." },
     { value: "concluido", label: "Concluído", color: "green",  isFinal: true,
-      description: "Pagamento efetuado e confirmado." },
+      description: "Payment made and confirmed." },
     { value: "cancelado", label: "Cancelado", color: "red",    isFinal: true,
-      description: "Transação cancelada — nunca efetuada." },
+      description: "Transaction canceled — never carried out." },
   ],
   transitions: [
-    { from: "agendado", to: "pendente",  trigger: "Data de vencimento",   description: "Data de vencimento atingida; aguardando pagamento." },
-    { from: "pendente", to: "concluido", trigger: "Confirmar pagamento",  description: "Usuário confirma pagamento recebido/efetuado." },
-    { from: "agendado", to: "cancelado", trigger: "Cancelar",             description: "Agendamento cancelado antes da data." },
-    { from: "pendente", to: "cancelado", trigger: "Cancelar",             description: "Pagamento não efetuado — transação cancelada." },
+    { from: "agendado", to: "pendente",  trigger: "Due date",   description: "Due date reached; waiting for payment." },
+    { from: "pendente", to: "concluido", trigger: "Confirm payment",  description: "The user confirms the payment received/made." },
+    { from: "agendado", to: "cancelado", trigger: "Cancel",             description: "Schedule canceled before the date." },
+    { from: "pendente", to: "cancelado", trigger: "Cancel",             description: "Payment not made — transaction canceled." },
   ],
 };
 
@@ -158,27 +158,27 @@ export const NOTA_FISCAL_STATE_MACHINE: StateMachine = {
   initialState: "rascunho",
   states: [
     { value: "rascunho",  label: "Rascunho",  color: "yellow", isFinal: false,
-      description: "Em preenchimento; não enviada à SEFAZ." },
+      description: "Being filled in; not sent to SEFAZ." },
     { value: "pendente",  label: "Pendente",  color: "blue",   isFinal: false,
-      description: "Enviada para emissão; aguardando resposta." },
+      description: "Sent for issuance; waiting for the response." },
     { value: "emitida",   label: "Emitida",   color: "green",  isFinal: false,
-      description: "Autorizada pela SEFAZ; chave de acesso disponível." },
+      description: "Authorized by SEFAZ; access key available." },
     { value: "cancelada", label: "Cancelada", color: "red",    isFinal: true,
-      description: "Cancelada dentro do prazo legal." },
+      description: "Canceled within the legal period." },
     { value: "rejeitada", label: "Rejeitada", color: "red",    isFinal: false,
-      description: "Rejeitada pela SEFAZ; requer correcção e reenvio." },
+      description: "Rejected by SEFAZ; requires correction and resubmission." },
   ],
   transitions: [
-    { from: "rascunho", to: "pendente",  trigger: "Emitir",    description: "Enviada à SEFAZ / gateway fiscal." },
-    { from: "pendente", to: "emitida",   trigger: "Autorizada", description: "SEFAZ autoriza; chave gerada." },
-    { from: "pendente", to: "rejeitada", trigger: "Rejeitada",  description: "SEFAZ rejeita; mensagem de erro disponível." },
-    { from: "rejeitada",to: "pendente",  trigger: "Corrigir e reenviar", description: "Campos corrigidos; nova tentativa." },
-    { from: "emitida",  to: "cancelada", trigger: "Cancelar",  description: "Dentro do prazo legal de cancelamento." },
+    { from: "rascunho", to: "pendente",  trigger: "Issue",    description: "Sent to SEFAZ / the tax gateway." },
+    { from: "pendente", to: "emitida",   trigger: "Authorized", description: "SEFAZ authorizes; key generated." },
+    { from: "pendente", to: "rejeitada", trigger: "Rejected",  description: "SEFAZ rejects; error message available." },
+    { from: "rejeitada",to: "pendente",  trigger: "Correct and resubmit", description: "Fields corrected; new attempt." },
+    { from: "emitida",  to: "cancelada", trigger: "Cancel",  description: "Within the legal cancellation period." },
   ],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// OBRA — Estado de registo
+// WORK — Registration state
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const OBRA_STATE_MACHINE: StateMachine = {
@@ -186,25 +186,25 @@ export const OBRA_STATE_MACHINE: StateMachine = {
   initialState: "pendente",
   states: [
     { value: "pendente",    label: "Pendente",    color: "yellow", isFinal: false,
-      description: "Aguardando dados completos para registro." },
+      description: "Waiting for complete data for registration." },
     { value: "analise",     label: "Em Análise",  color: "blue",   isFinal: false,
-      description: "Em análise pela equipe ou entidade de direitos." },
+      description: "Under review by the team or the rights society." },
     { value: "registrado",  label: "Registrado",   color: "green",  isFinal: false,
-      description: "Registrado nas entidades de direitos (ECAD/UBC)." },
+      description: "Registered with the rights societies (ECAD/UBC)." },
     { value: "ativo",       label: "Ativo",      color: "green",  isFinal: false,
-      description: "Ativo no catálogo e disponível para licenciamento." },
+      description: "Active in the catalog and available for licensing." },
     { value: "inativo",     label: "Inactivo",    color: "gray",   isFinal: false,
-      description: "Fora de comercialização ativa; dados mantidos." },
+      description: "Out of active commercialization; data kept." },
     { value: "arquivado",   label: "Arquivado",   color: "gray",   isFinal: true,
-      description: "Histórico; sem uso comercial ativo." },
+      description: "Historical; no active commercial use." },
   ],
   transitions: [
-    { from: "pendente",   to: "analise",    trigger: "Submeter para análise",  description: "Dados suficientes para avaliação." },
-    { from: "analise",    to: "registrado", trigger: "Registar",               description: "Registro confirmado em entidade de direitos." },
-    { from: "registrado", to: "ativo",      trigger: "Activar",                description: "Disponível para licenciamento e arrecadação." },
-    { from: "ativo",      to: "inativo",    trigger: "Inactivar",              description: "Retirar de comercialização ativa." },
-    { from: "inativo",    to: "ativo",      trigger: "Reactivar",              description: "Retomar comercialização." },
-    { from: "ativo",      to: "arquivado",  trigger: "Arquivar",               description: "Encerrar ciclo de vida da obra." },
+    { from: "pendente",   to: "analise",    trigger: "Submit for review",  description: "Enough data for evaluation." },
+    { from: "analise",    to: "registrado", trigger: "Register",               description: "Registration confirmed with a rights society." },
+    { from: "registrado", to: "ativo",      trigger: "Activar",                description: "Available for licensing and collection." },
+    { from: "ativo",      to: "inativo",    trigger: "Inactivar",              description: "Withdraw from active commercialization." },
+    { from: "inativo",    to: "ativo",      trigger: "Reactivar",              description: "Resume commercialization." },
+    { from: "ativo",      to: "arquivado",  trigger: "Archive",               description: "End the work's lifecycle." },
   ],
 };
 
@@ -217,29 +217,29 @@ export const LANCAMENTO_STATE_MACHINE: StateMachine = {
   initialState: "analise",
   states: [
     { value: "analise",   label: "Em Análise",  color: "yellow", isFinal: false,
-      description: "Metadados em validação interna." },
+      description: "Metadata under internal validation." },
     { value: "aprovado",  label: "Aprovado",    color: "blue",   isFinal: false,
-      description: "Aprovado internamente; aguardando entrega à distribuidora." },
+      description: "Approved internally; waiting for delivery to the distributor." },
     { value: "entregue",  label: "Entregue",    color: "blue",   isFinal: false,
-      description: "Entregue à distribuidora; aguardando publicação." },
+      description: "Delivered to the distributor; waiting for publication." },
     { value: "publicado", label: "Publicado",   color: "green",  isFinal: false,
-      description: "Live nas plataformas de streaming." },
+      description: "Live on the streaming platforms." },
     { value: "arquivado", label: "Arquivado",   color: "gray",   isFinal: true,
-      description: "Retirado das plataformas; histórico mantido." },
+      description: "Withdrawn from the platforms; history kept." },
     { value: "cancelado", label: "Cancelado",   color: "red",    isFinal: true,
-      description: "Cancelado antes da entrega." },
+      description: "Canceled before delivery." },
   ],
   transitions: [
-    { from: "analise",   to: "aprovado",  trigger: "Aprovar",         description: "Revisão interna concluída." },
-    { from: "analise",   to: "cancelado", trigger: "Cancelar",        description: "Lançamento cancelado na fase de análise." },
-    { from: "aprovado",  to: "entregue",  trigger: "Entregar",        description: "Enviado para a distribuidora." },
-    { from: "entregue",  to: "publicado", trigger: "Confirmar live",  description: "Distribuidora confirma publicação nas plataformas." },
-    { from: "publicado", to: "arquivado", trigger: "Retirar",         description: "Solicitação de retirada das plataformas." },
+    { from: "analise",   to: "aprovado",  trigger: "Approve",         description: "Internal review completed." },
+    { from: "analise",   to: "cancelado", trigger: "Cancel",        description: "Release canceled in the review phase." },
+    { from: "aprovado",  to: "entregue",  trigger: "Deliver",        description: "Sent to the distributor." },
+    { from: "entregue",  to: "publicado", trigger: "Confirm live",  description: "The distributor confirms publication on the platforms." },
+    { from: "publicado", to: "arquivado", trigger: "Withdraw",         description: "Request to withdraw from the platforms." },
   ],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// LEAD — CRM comercial de captacao
+// LEAD — Sales prospecting CRM
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const LEAD_STATE_MACHINE: StateMachine = {
@@ -247,28 +247,28 @@ export const LEAD_STATE_MACHINE: StateMachine = {
   initialState: "novo",
   states: [
     { value: "novo",         label: "Novo",          color: "blue",   isFinal: false,
-      description: "Lead recém-criado; não contactado." },
+      description: "Newly created lead; not contacted." },
     { value: "em_contato",   label: "Em Contato",   color: "blue",   isFinal: false,
-      description: "Primeiro contato realizado." },
+      description: "First contact made." },
     { value: "proposta",     label: "Proposta",       color: "blue",   isFinal: false,
-      description: "Proposta comercial enviada." },
+      description: "Sales proposal sent." },
     { value: "negociacao",   label: "Negociação",     color: "yellow", isFinal: false,
-      description: "Em negociação de termos e valores." },
+      description: "Negotiating terms and values." },
     { value: "fechado",      label: "Fechado",        color: "green",  isFinal: true,
-      description: "Acordo fechado; origina Contrato ou Cliente." },
+      description: "Deal closed; originates a Contract or a Client." },
     { value: "perdido",      label: "Perdido",        color: "red",    isFinal: true,
-      description: "Oportunidade perdida; motivo registrado." },
+      description: "Opportunity lost; reason recorded." },
     { value: "inativo",      label: "Inactivo",       color: "gray",   isFinal: false,
-      description: "Sem interação recente; em espera." },
+      description: "No recent interaction; on hold." },
   ],
   transitions: [
-    { from: "novo",       to: "em_contato", trigger: "Contactar",         description: "Primeiro contato registrado." },
-    { from: "em_contato", to: "proposta",   trigger: "Enviar proposta",   description: "Proposta comercial preparada." },
-    { from: "proposta",   to: "negociacao", trigger: "Iniciar negociação", description: "Cliente respondeu com contra-proposta." },
-    { from: "negociacao", to: "fechado",    trigger: "Fechar negócio",    description: "Acordo aceite por ambas as partes." },
-    { from: "negociacao", to: "perdido",    trigger: "Marcar como perdido", description: "Oportunidade não concretizada." },
-    { from: "proposta",   to: "perdido",    trigger: "Proposta rejeitada", description: "Cliente rejeitou proposta." },
-    { from: "perdido",    to: "novo",       trigger: "Reactivar",         description: "Nova janela de oportunidade." },
+    { from: "novo",       to: "em_contato", trigger: "Contact",         description: "First contact recorded." },
+    { from: "em_contato", to: "proposta",   trigger: "Send proposal",   description: "Sales proposal prepared." },
+    { from: "proposta",   to: "negociacao", trigger: "Start negotiation", description: "The client replied with a counter-proposal." },
+    { from: "negociacao", to: "fechado",    trigger: "Close the deal",    description: "Deal accepted by both parties." },
+    { from: "negociacao", to: "perdido",    trigger: "Mark as lost", description: "Opportunity not realized." },
+    { from: "proposta",   to: "perdido",    trigger: "Proposal rejected", description: "The client rejected the proposal." },
+    { from: "perdido",    to: "novo",       trigger: "Reactivar",         description: "New opportunity window." },
   ],
 };
 
@@ -281,25 +281,25 @@ export const TAKEDOWN_STATE_MACHINE: StateMachine = {
   initialState: "pendente",
   states: [
     { value: "pendente",     label: "Pendente",     color: "yellow", isFinal: false,
-      description: "Takedown criado; aguardando envio à plataforma." },
+      description: "Takedown created; waiting to be sent to the platform." },
     { value: "enviado",      label: "Enviado",      color: "blue",   isFinal: false,
-      description: "Solicitação enviada à plataforma." },
+      description: "Request sent to the platform." },
     { value: "processando",  label: "Processando",  color: "blue",   isFinal: false,
-      description: "Plataforma está processando a solicitação." },
+      description: "The platform is processing the request." },
     { value: "concluido",    label: "Concluído",    color: "green",  isFinal: true,
-      description: "Conteúdo removido com sucesso." },
+      description: "Content removed successfully." },
     { value: "rejeitado",    label: "Rejeitado",    color: "red",    isFinal: true,
-      description: "Plataforma rejeitou o pedido de remoção." },
+      description: "The platform rejected the removal request." },
     { value: "falhou",       label: "Falhou",       color: "red",    isFinal: false,
-      description: "Erro técnico; reenvio possível." },
+      description: "Technical error; resubmission possible." },
   ],
   transitions: [
-    { from: "pendente",    to: "enviado",     trigger: "Enviar",       description: "Submissão à plataforma." },
-    { from: "enviado",     to: "processando", trigger: "Acusação de recebimento", description: "Plataforma confirma recebimento." },
-    { from: "processando", to: "concluido",   trigger: "Remoção confirmada", description: "URL da infracção inacessível." },
-    { from: "processando", to: "rejeitado",   trigger: "Rejeição",     description: "Plataforma nega o pedido (fair use, etc.)." },
-    { from: "enviado",     to: "falhou",      trigger: "Erro técnico", description: "Falha na comunicação com a plataforma." },
-    { from: "falhou",      to: "pendente",    trigger: "Reenviar",     description: "Nova tentativa." },
+    { from: "pendente",    to: "enviado",     trigger: "Send",       description: "Submission to the platform." },
+    { from: "enviado",     to: "processando", trigger: "Acknowledgment of receipt", description: "The platform confirms receipt." },
+    { from: "processando", to: "concluido",   trigger: "Removal confirmed", description: "Infringement URL inaccessible." },
+    { from: "processando", to: "rejeitado",   trigger: "Rejection",     description: "The platform denies the request (fair use, etc.)." },
+    { from: "enviado",     to: "falhou",      trigger: "Technical error", description: "Communication failure with the platform." },
+    { from: "falhou",      to: "pendente",    trigger: "Resend",     description: "New attempt." },
   ],
 };
 
@@ -312,23 +312,23 @@ export const EVENTO_STATE_MACHINE: StateMachine = {
   initialState: "planejado",
   states: [
     { value: "planejado",  label: "Planeado",    color: "yellow", isFinal: false,
-      description: "Em planeamento; datas e recursos em definição." },
+      description: "Being planned; dates and resources being defined." },
     { value: "confirmado", label: "Confirmado",  color: "blue",   isFinal: false,
-      description: "Contrato assinado; local e data confirmados." },
+      description: "Contract signed; venue and date confirmed." },
     { value: "concluido",  label: "Concluído",   color: "green",  isFinal: true,
-      description: "Evento realizado com sucesso." },
+      description: "Event held successfully." },
     { value: "cancelado",  label: "Cancelado",   color: "red",    isFinal: true,
-      description: "Evento cancelado antes da realização." },
+      description: "Event canceled before taking place." },
     { value: "adiado",     label: "Adiado",      color: "yellow", isFinal: false,
-      description: "Nova data a confirmar." },
+      description: "New date to be confirmed." },
   ],
   transitions: [
-    { from: "planejado",  to: "confirmado", trigger: "Confirmar",  description: "Local e data acordados contratualmente." },
-    { from: "confirmado", to: "concluido",  trigger: "Realizar",   description: "Evento decorreu." },
-    { from: "confirmado", to: "cancelado",  trigger: "Cancelar",   description: "Cancelamento após confirmação." },
-    { from: "confirmado", to: "adiado",     trigger: "Adiar",      description: "Data alterada; novo planeamento." },
-    { from: "adiado",     to: "confirmado", trigger: "Reconformar", description: "Nova data confirmada." },
-    { from: "planejado",  to: "cancelado",  trigger: "Cancelar",   description: "Cancelamento na fase de planeamento." },
+    { from: "planejado",  to: "confirmado", trigger: "Confirm",  description: "Venue and date agreed contractually." },
+    { from: "confirmado", to: "concluido",  trigger: "Hold",   description: "The event took place." },
+    { from: "confirmado", to: "cancelado",  trigger: "Cancel",   description: "Cancellation after confirmation." },
+    { from: "confirmado", to: "adiado",     trigger: "Postpone",      description: "Date changed; new planning." },
+    { from: "adiado",     to: "confirmado", trigger: "Reconformar", description: "New date confirmed." },
+    { from: "planejado",  to: "cancelado",  trigger: "Cancel",   description: "Cancellation in the planning phase." },
   ],
 };
 

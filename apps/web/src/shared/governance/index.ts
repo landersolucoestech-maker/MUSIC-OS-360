@@ -27,5 +27,5 @@ export * from "./states";
 // ── RBAC permission system ────────────────────────────────────────────────────
 export * from "./permissions";
 
-// ── Fluxos operacionais ───────────────────────────────────────────────────────
+// ── Operational flows ──────────────────────────────────────────────────────────
 export * from "./flows";

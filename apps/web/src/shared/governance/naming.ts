@@ -73,7 +73,7 @@ export const FILE_NAMING_RULES = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 2. COMPONENTES REACT
+// 2. REACT COMPONENTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -222,7 +222,7 @@ export const ENTITY_NAMING = {
   insert:        "type {NomeEntidade}Insert",
   update:        "type {NomeEntidade}Update",
   withRelations: "interface {NomeEntidade}WithRelations",
-  ref:           "interface {NomeEntidade}Ref  // em shared/types/refs.ts",
+  ref:           "interface {EntityName}Ref  // in shared/types/refs.ts",
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -261,7 +261,7 @@ export const DTO_NAMING = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 7. CONSTANTES E ENUMS
+// 7. CONSTANTS AND ENUMS
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -282,12 +282,12 @@ export const DTO_NAMING = {
  */
 export const CONSTANTS_NAMING = {
   value:       "SCREAMING_SNAKE_CASE",
-  unionType:   "type {Name} = 'valor_a' | 'valor_b'  // em shared/types/enums.ts",
-  noTsEnum:    "PROIBIDO: enum TypeScript. Usar literal union type.",
+  unionType:   "type {Name} = 'value_a' | 'value_b'  // in shared/types/enums.ts",
+  noTsEnum:    "FORBIDDEN: TypeScript enum. Use a literal union type.",
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 8. ROTAS E URLs
+// 8. ROUTES AND URLs
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -330,7 +330,7 @@ export const ROUTE_PATTERNS = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 9. CHAVES LOCALSTORAGE
+// 9. LOCALSTORAGE KEYS
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -359,7 +359,7 @@ export const LOCALSTORAGE_KEYS = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 10. EVENTOS CUSTOMIZADOS (window CustomEvents)
+// 10. CUSTOM EVENTS (window CustomEvents)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -381,7 +381,7 @@ export const CUSTOM_EVENTS = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 11. IDs DE TESTE (data-testid)
+// 11. TEST IDs (data-testid)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**

@@ -19,7 +19,7 @@
 
 import type { TenantModuleKey } from "@/app/providers/TenantContext";
 
-// ─── Tipos do registo ─────────────────────────────────────────────────────────
+// ─── Registry types ───────────────────────────────────────────────────────────
 
 export type ModuleStatus =
   | "production"    // active, in production (standalone mode)
@@ -32,9 +32,9 @@ export interface ModuleDefinition {
   key: TenantModuleKey;
   /** Display name */
   name: string;
-  /** Rota raiz no React Router */
+  /** Root route in React Router */
   route: string;
-  /** Feature flag em FeatureFlags */
+  /** Feature flag in FeatureFlags */
   featureFlag: string;
   /** Primary entities managed by the module */
   primaryEntities: string[];
@@ -65,9 +65,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
                       "licensing", "projects"],
     status:          "production",
     description:
-      "Gestão completa de artistas: perfil, dados fiscais, relacionamentos " +
-      "(empresário, gravadora, editora, booker), métricas de plataformas de " +
-      "streaming e visão 360° consolidada.",
+      "Complete artist management: profile, tax data, relationships " +
+      "(manager, label, publisher, booker), streaming platform " +
+      "metrics and a consolidated 360° view.",
   },
 
   // ── Catalog ─────────────────────────────────────────────────────────────────
@@ -81,9 +81,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["releases", "licensing", "monitoring", "accounting"],
     status:          "production",
     description:
-      "Catálogo musical completo: obras (composições, ISWC), fonogramas " +
-      "(gravações, ISRC), shares de composição e master, " +
-      "metadata editorial e controlo de territórios.",
+      "Complete music catalog: works (compositions, ISWC), sound recordings " +
+      "(recordings, ISRC), composition and master shares, " +
+      "editorial metadata and territory control.",
   },
 
   // ── Releases ────────────────────────────────────────────────────────────────
@@ -97,9 +97,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["accounting", "marketing", "monitoring"],
     status:          "production",
     description:
-      "Lançamentos musicais (single, EP, álbum, compilação, live): " +
-      "metadata, distribuidoras, plataformas, datas de entrega e " +
-      "gestão de shares/participações por lançamento.",
+      "Music releases (single, EP, album, compilation, live): " +
+      "metadata, distributors, platforms, delivery dates and " +
+      "management of shares/participations per release.",
   },
 
   // ── Contracts ───────────────────────────────────────────────────────────────
@@ -113,9 +113,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["accounting", "artists", "releases"],
     status:          "production",
     description:
-      "Gestão de contratos: templates editáveis, assinatura digital " +
-      "(Autentique), alertas de vencimento, histórico de versões e " +
-      "rastreio de status (rascunho → assinado → encerrado).",
+      "Contract management: editable templates, digital signature " +
+      "(Autentique), expiration alerts, version history and " +
+      "status tracking (draft → signed → terminated).",
   },
 
   // ── Accounting ──────────────────────────────────────────────────────────────
@@ -129,11 +129,11 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      [],
     status:          "production",
     description:
-      "Contabilidade operacional: transações (receita/despesa), P&L por " +
-      "artista e projecto, fluxo de caixa, conciliação bancária OFX, " +
-      "recoupment tracking e emissão de notas fiscais. " +
-      "ÂMBITO: receita − despesa = lucro líquido. " +
-      "NÃO inclui: recebimentos externos de direitos, splits, distribuição de pagamentos.",
+      "Operational accounting: transactions (revenue/expense), P&L per " +
+      "artist and project, cash flow, OFX bank reconciliation, " +
+      "recoupment tracking and invoice issuance. " +
+      "SCOPE: revenue − expense = net profit. " +
+      "Does NOT include: external rights receipts, splits, payment distribution.",
   },
 
   // ── CRM ─────────────────────────────────────────────────────────────────────
@@ -147,8 +147,8 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["contracts", "marketing", "leads"],
     status:          "production",
     description:
-      "CRM de clientes e contactos: empresas, pessoas físicas, " +
-      "histórico de interacções, segmentação e vinculação a artistas.",
+      "CRM of clients and contacts: companies, individuals, " +
+      "interaction history, segmentation and linking to artists.",
   },
 
   // ── Marketing ───────────────────────────────────────────────────────────────
@@ -162,9 +162,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      [],
     status:          "production",
     description:
-      "Gestão de campanhas e conteúdo: calendário editorial, briefings, " +
-      "tarefas de marketing, IA Criativa para copy e " +
-      "integração com Meta Ads (stub), Google Ads (stub), " +
+      "Campaign and content management: editorial calendar, briefings, " +
+      "marketing tasks, Creative AI for copy and " +
+      "integration with Meta Ads (stub), Google Ads (stub), " +
       "TikTok Ads (stub).",
   },
 
@@ -179,9 +179,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["accounting"],
     status:          "production",
     description:
-      "Gestão de eventos ao vivo e em estúdio: shows, festivais, " +
-      "gravações, videoclipes, ensaios. Controlo de status, " +
-      "datas, locais e vinculação a artistas e projectos.",
+      "Management of live and studio events: shows, festivals, " +
+      "recordings, music videos, rehearsals. Control of status, " +
+      "dates, venues and linking to artists and projects.",
   },
 
   // ── Inventory ───────────────────────────────────────────────────────────────
@@ -195,9 +195,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["accounting"],
     status:          "production",
     description:
-      "Inventário de equipamentos e activos: estado (disponível, em uso, " +
-      "manutenção, emprestado, descartado), localização e " +
-      "histórico de utilização.",
+      "Inventory of equipment and assets: state (available, in use, " +
+      "maintenance, lent, discarded), location and " +
+      "usage history.",
   },
 
   // ── RH ──────────────────────────────────────────────────────────────────────
@@ -211,9 +211,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["accounting"],
     status:          "production",
     description:
-      "Gestão de colaboradores: CLT, PJ, autónomos, estagiários. " +
-      "Cargos, departamentos, contratos de trabalho, " +
-      "férias e ausências.",
+      "Staff management: CLT, PJ, self-employed, interns. " +
+      "Positions, departments, employment contracts, " +
+      "vacations and absences.",
   },
 
   // ── Monitoring ──────────────────────────────────────────────────────────────
@@ -227,10 +227,10 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      [],
     status:          "production",
     description:
-      "Monitoramento de uso do catálogo e protecção de direitos: " +
-      "takedowns (plataformas digitais), conciliação ECAD " +
-      "(ECADViewModal), tracking de infracções e rastreio de uso " +
-      "não autorizado.",
+      "Catalog usage monitoring and rights protection: " +
+      "takedowns (digital platforms), ECAD reconciliation " +
+      "(ECADViewModal), infringement tracking and tracing of unauthorized " +
+      "use.",
   },
 
   // ── Licensing ───────────────────────────────────────────────────────────────
@@ -244,9 +244,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["accounting"],
     status:          "production",
     description:
-      "Licenciamento de obras: sincronia, mecânica, performance, " +
-      "impressão, digital, streaming. Controlo de territórios, " +
-      "prazos e valores por tipo de uso.",
+      "Work licensing: synchronization, mechanical, performance, " +
+      "print, digital, streaming. Territory control, " +
+      "terms and fees per usage type.",
   },
 
   // ── Projects ─────────────────────────────────────────────────────────────────
@@ -260,9 +260,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["accounting", "events"],
     status:          "production",
     description:
-      "Gestão de projectos musicais: álbuns, EPs, singles, videoclipes, " +
-      "shows, tours e campanhas. P&L por projecto, " +
-      "recoupment tracking e vinculação a transações.",
+      "Management of music projects: albums, EPs, singles, music videos, " +
+      "shows, tours and campaigns. P&L per project, " +
+      "recoupment tracking and linking to transactions.",
   },
 
   // ── Leads ───────────────────────────────────────────────────────────────────
@@ -276,9 +276,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["crm", "contracts"],
     status:          "production",
     description:
-      "Leads comerciais: captacao, follow-up, proposta e contrato." +
-      "negociação → fechado / perdido. Temperatura, prioridade, " +
-      "valor estimado e histórico de actividade.",
+      "Sales leads: prospecting, follow-up, proposal and contract." +
+      "negotiation → closed / lost. Temperature, priority, " +
+      "estimated value and activity history.",
   },
 
   // ── Audit ────────────────────────────────────────────────────────────────────
@@ -292,9 +292,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      [],
     status:          "stub",
     description:
-      "Log de auditoria de todas as acções do sistema: quem fez o quê, " +
-      "quando e em que entidade. Acesso restrito a owner/admin. " +
-      "FUTURO: integração com backend persistente.",
+      "Audit log of every system action: who did what, " +
+      "when and on which entity. Access restricted to owner/admin. " +
+      "FUTURE: integration with a persistent backend.",
   },
 
   // ── Settings ─────────────────────────────────────────────────────────────────
@@ -308,9 +308,9 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      [],
     status:          "production",
     description:
-      "Configurações do tenant: perfil da empresa, utilizadores, " +
-      "papéis e permissões RBAC, integrações (ABRAMUS funcional; " +
-      "restantes em stub) e personalizacao operacional de tenant.",
+      "Tenant settings: company profile, users, " +
+      "RBAC roles and permissions, integrations (ABRAMUS working; " +
+      "the rest stubbed) and operational tenant customization.",
   },
 
   musicchat: {
@@ -323,18 +323,18 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     consumedBy:      ["audit", "marketing", "crm"],
     status:          "production",
     description:
-      "Central multicanal de atendimento: Inbox real em /chat (lista de conversas, " +
-      "timeline de mensagens, composer, realtime, RBAC, tenant isolation testada) " +
-      "sobre o backend real de conversations/messages/notes. WhatsApp é o único canal " +
-      "com webhook + envio outbound reais (2026-08-22 — corrigido: respostas do agente " +
-      "e mensagens de triagem automatica antes só ficavam gravadas no banco, nunca " +
-      "chegavam ao WhatsApp de verdade). Instagram/Facebook/TikTok/site do tenant ainda " +
-      "não têm canal de mensagens real (só métricas para os dois primeiros) — " +
-      "registrados como pendência técnica, não simulados na UI.",
+      "Multichannel support center: real Inbox at /chat (conversation list, " +
+      "message timeline, composer, realtime, RBAC, tested tenant isolation) " +
+      "on top of the real conversations/messages/notes backend. WhatsApp is the only channel " +
+      "with a real webhook + outbound sending (2026-08-22 — fixed: agent replies " +
+      "and automatic triage messages used to be stored in the database only, never " +
+      "actually reaching WhatsApp). The tenant's Instagram/Facebook/TikTok/website still " +
+      "have no real messaging channel (metrics only for the first two) — " +
+      "recorded as technical debt, not simulated in the UI.",
   },
 };
 
-// ─── Helpers de acesso ao registo ─────────────────────────────────────────────
+// ─── Registry access helpers ──────────────────────────────────────────────────
 
 export function getModule(key: TenantModuleKey): ModuleDefinition {
   return MODULE_REGISTRY[key];
@@ -356,7 +356,7 @@ export function getModuleConsumers(key: TenantModuleKey): ModuleDefinition[] {
   return getAllModules().filter(m => m.dependsOn.includes(key));
 }
 
-// ─── Regras de camada compartilhada ──────────────────────────────────────────
+// ─── Shared layer rules ──────────────────────────────────────────────────────
 
 /**
  * RULE: what may and what may NOT go into shared/.
@@ -382,22 +382,22 @@ export function getModuleConsumers(key: TenantModuleKey): ModuleDefinition[] {
  */
 export const SHARED_LAYER_RULES = {
   allowed: [
-    "tipos cross-domain (2+ módulos)",
-    "componentes UI primitivos (shadcn/Radix)",
-    "componentes genuinamente cross-domain",
-    "infra-estrutura de app (ErrorBoundary, AdminRoute)",
+    "cross-domain types (2+ modules)",
+    "primitive UI components (shadcn/Radix)",
+    "genuinely cross-domain components",
+    "app infrastructure (ErrorBoundary, AdminRoute)",
     "providers (Auth, Tenant)",
     "config (queryClient)",
     "hooks cross-domain",
-    "utilitários puros",
-    "contratos de integração",
+    "pure utilities",
+    "integration contracts",
     "governance",
   ],
   forbidden: [
-    "lógica específica de módulo único",
-    "componentes apenas de um módulo",
-    "serviços com domínio específico",
-    "mappers de entidade (pertencem ao módulo)",
+    "logic specific to a single module",
+    "components of a single module only",
+    "domain-specific services",
+    "entity mappers (they belong to the module)",
   ],
 } as const;
 
