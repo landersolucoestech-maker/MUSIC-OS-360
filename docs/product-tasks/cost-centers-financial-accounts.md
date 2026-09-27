@@ -1,28 +1,28 @@
-# Centros de Custo e Contas Financeiras
+# Cost Centers and Financial Accounts
 
 ## What & Why
-Actualmente todas as transações existem "no ar" sem vinculação a uma conta bancária de origem/destino nem a um centro de custo que permita DRE por projecto, artista ou campanha. Sem estes dois pilares, não é possível gerar relatórios financeiros profissionais — apenas somas globais. Esta task introduz as duas entidades estruturais que tornam o sistema num ERP real.
+Currently all transactions exist "in the air", with no link to a source/destination bank account nor to a cost center that would allow an income statement (DRE) per project, artist or campaign. Without these two pillars, it is not possible to generate professional financial reports — only global sums. This task introduces the two structural entities that turn the system into a real ERP.
 
 ## Done looks like
-- **Centros de custo**: nova tabela `centros_custo` com CRUD no Settings ou numa sub-tab de `/accounting/rules`. Campos: nome, código, tipo (projecto/artista/campanha/geral), responsável, ativo. 5 registos seed incluídos.
-- **Contas financeiras**: nova tabela `contas_financeiras`. Campos: nome, banco, agência, conta, tipo (corrente/poupança/caixa/virtual), moeda (BRL), saldo_inicial, ativo. 3 registos seed (Conta Principal, Caixa, Conta Poupança).
-- **Formulário de transação** ganha dois campos novos opcionais: "Centro de Custo" e "Conta Financeira" — selects com autocomplete a partir das tabelas criadas.
-- **Tabela `transacoes`** no mock data recebe `centro_custo_id` e `conta_financeira_id` como campos opcionais (nullable); dados históricos não quebram.
-- **Página de Contabilidade** mostra novo filtro por Centro de Custo que filtra os KPIs e o gráfico de evolução.
+- **Cost centers**: new `centros_custo` table with CRUD in Settings or in a sub-tab of `/accounting/rules`. Fields: name, code, type (project/artist/campaign/general), person in charge, active. 5 seed records included.
+- **Financial accounts**: new `contas_financeiras` table. Fields: name, bank, branch, account, type (checking/savings/cash/virtual), currency (BRL), saldo_inicial (opening balance), active. 3 seed records ("Conta Principal", "Caixa", "Conta Poupança" — Main Account, Cash, Savings Account).
+- **Transaction form** gains two new optional fields: "Centro de Custo" (Cost Center) and "Conta Financeira" (Financial Account) — selects with autocomplete from the created tables.
+- **`transacoes` table** in the mock data receives `centro_custo_id` and `conta_financeira_id` as optional (nullable) fields; historical data does not break.
+- **Accounting page** shows a new Cost Center filter that filters the KPIs and the evolution chart.
 
 ## Out of scope
-- Transferências entre contas (conciliação bancária — futura task)
-- Saldo calculado automaticamente por conta (fase posterior)
-- OFX import vinculado a conta específica (futura task)
-- DRE completo por centro de custo (task separada de relatórios)
+- Transfers between accounts (bank reconciliation — future task)
+- Balance calculated automatically per account (later phase)
+- OFX import linked to a specific account (future task)
+- Full income statement per cost center (separate reports task)
 
 ## Steps
-1. **Mock data** — adicionar `centros_custo` e `contas_financeiras` a `buildSeedData()` + patch em `patchMockData()`; adicionar campos `centro_custo_id` e `conta_financeira_id` (nullable) às transações seed existentes
-2. **Service methods** — adicionar CRUD de centros de custo e contas financeiras ao `accounting.service.ts`
-3. **Hooks** — criar `useCentrosCusto.ts` e `useContasFinanceiras.ts` com React Query
-4. **CRUD na página Rules** — adicionar tabs "Centros de Custo" e "Contas Financeiras" à página `/accounting/rules` com tabelas + modais de criar/editar
-5. **Formulário de transação** — adicionar selects de Centro de Custo e Conta Financeira na secção de detalhes do form (após categoria, antes de observações); ambos opcionais
-6. **Filtro na página Contabilidade** — adicionar filtro por Centro de Custo ao header de filtros da página de P&L; filtrar KPIs e gráfico pelo centro seleccionado
+1. **Mock data** — add `centros_custo` and `contas_financeiras` to `buildSeedData()` + patch in `patchMockData()`; add the `centro_custo_id` and `conta_financeira_id` fields (nullable) to the existing seed transactions
+2. **Service methods** — add CRUD for cost centers and financial accounts to `accounting.service.ts`
+3. **Hooks** — create `useCentrosCusto.ts` and `useContasFinanceiras.ts` with React Query
+4. **CRUD on the Rules page** — add "Centros de Custo" and "Contas Financeiras" tabs to the `/accounting/rules` page with tables + create/edit modals
+5. **Transaction form** — add Cost Center and Financial Account selects in the details section of the form (after category, before notes); both optional
+6. **Filter on the Accounting page** — add a Cost Center filter to the filter header of the P&L page; filter KPIs and the chart by the selected center
 
 ## Relevant files
 - `apps/web/src/modules/accounting/pages/TransacaoRules.tsx`

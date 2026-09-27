@@ -1,29 +1,29 @@
-# Enriquecer Modelo de Transação — Campos Financeiros Completos
+# Enrich the Transaction Model — Complete Financial Fields
 
 ## What & Why
-A tabela `transacoes` actual tem apenas `valor` (um único número), sem distinção entre valor bruto, descontos, impostos e valor líquido. Também não tem moeda, vencimento separado de pagamento, nem campos para recorrência. Isso impede cálculos financeiros correctos como gross-to-net, apuração de impostos por transação, e controlo de recorrências contratuais. Esta task enriquece o modelo sem quebrar dados existentes (todos os campos novos são nullable).
+The current `transacoes` table has only `valor` (a single number), with no distinction between gross amount, discounts, taxes and net amount. It also has no currency, no due date separate from the payment date, and no fields for recurrence. This prevents correct financial calculations such as gross-to-net, tax assessment per transaction, and control of contractual recurrences. This task enriches the model without breaking existing data (all new fields are nullable).
 
 ## Done looks like
-- Mock data `transacoes` recebe os novos campos opcionais: `valor_bruto`, `desconto`, `impostos_valor`, `valor_liquido`, `moeda` (default `BRL`), `data_vencimento`, `data_pagamento`, `numero_documento`, `recorrente` (boolean), `recorrencia_tipo` (`mensal`/`trimestral`/`anual`), `recorrencia_fim`
-- Formulário de transação exibe novos campos na secção "Pagamento": Valor Bruto, Desconto (%), Impostos (valor), e calcula automaticamente o Valor Líquido = Bruto – Desconto – Impostos
-- Campo "Data de Vencimento" aparece no formulário (era apenas Data da Transação antes)
-- Toggle "Transação Recorrente" abre campos de frequência e data de fim
-- Tabela de transações na página `/accounting` mostra coluna "Valor Líquido" em vez de "Valor" quando existe distinção; indicador visual para transações recorrentes
-- Todos os dados históricos do localStorage continuam a funcionar (campos novos têm fallback para `valor` se `valor_liquido` não existir)
-- Backend entity `TransactionEntity` atualizado com os novos campos tipados
+- The `transacoes` mock data receives the new optional fields: `valor_bruto`, `desconto`, `impostos_valor`, `valor_liquido`, `moeda` (default `BRL`), `data_vencimento`, `data_pagamento`, `numero_documento`, `recorrente` (boolean), `recorrencia_tipo` (`mensal`/`trimestral`/`anual`), `recorrencia_fim`
+- The transaction form displays new fields in the "Pagamento" (Payment) section: Gross Amount, Discount (%), Taxes (amount), and automatically computes Net Amount = Gross – Discount – Taxes
+- A "Data de Vencimento" (Due Date) field appears in the form (previously there was only the Transaction Date)
+- A "Transação Recorrente" (Recurring Transaction) toggle opens frequency and end date fields
+- The transactions table on the `/accounting` page shows a "Valor Líquido" (Net Amount) column instead of "Valor" (Amount) when there is a distinction; visual indicator for recurring transactions
+- All historical data in localStorage keeps working (the new fields fall back to `valor` if `valor_liquido` does not exist)
+- Backend entity `TransactionEntity` updated with the new typed fields
 
 ## Out of scope
-- Geração automática de transações recorrentes (cron job — futura task)
-- Moedas estrangeiras com câmbio automático (apenas BRL na fase actual)
-- Integração bancária OFX com reconciliação de `data_pagamento` (futura task)
+- Automatic generation of recurring transactions (cron job — future task)
+- Foreign currencies with automatic exchange (BRL only in the current phase)
+- OFX bank integration with reconciliation of `data_pagamento` (future task)
 
 ## Steps
-1. **Mock data** — adicionar campos novos a todas as transações seed em `buildSeedData()`; patch em `patchMockData()` que preenche `valor_liquido = valor` para transações sem o campo
-2. **Tipos TypeScript** — atualizar `Transacao` em `accounting.types.ts` com os novos campos opcionais
-3. **Formulário — secção de valores** — criar sub-secção "Decomposição do Valor" na `PaymentSection` com Valor Bruto, Desconto %, Impostos, e Valor Líquido calculado reactivamente; o campo existente `valor` passa a ser alias de `valor_liquido` para compatibilidade
-4. **Formulário — recorrência** — adicionar toggle "Recorrente" que abre selects de frequência e data de fim; estes dados são guardados mas não geram transações automaticamente ainda
-5. **Tabela de transações** — mostrar `valor_liquido` (ou fallback para `valor`) na coluna de valor; adicionar ícone de recorrência; adicionar coluna "Vencimento" opcionalmente visível
-6. **Backend entity** — atualizar `TransactionEntity` com todos os novos campos `@Column({ nullable: true })`; atualizar `transacao.validator.ts` para aceitar os novos campos opcionais
+1. **Mock data** — add the new fields to all seed transactions in `buildSeedData()`; patch in `patchMockData()` that fills in `valor_liquido = valor` for transactions without the field
+2. **TypeScript types** — update `Transacao` in `accounting.types.ts` with the new optional fields
+3. **Form — amounts section** — create a "Decomposição do Valor" (Amount Breakdown) sub-section in `PaymentSection` with Gross Amount, Discount %, Taxes, and a reactively computed Net Amount; the existing `valor` field becomes an alias of `valor_liquido` for compatibility
+4. **Form — recurrence** — add a "Recorrente" (Recurring) toggle that opens frequency and end date selects; this data is saved but does not generate transactions automatically yet
+5. **Transactions table** — show `valor_liquido` (or fall back to `valor`) in the amount column; add a recurrence icon; add an optionally visible "Vencimento" (Due) column
+6. **Backend entity** — update `TransactionEntity` with all the new `@Column({ nullable: true })` fields; update `transacao.validator.ts` to accept the new optional fields
 
 ## Relevant files
 - `apps/web/src/modules/accounting/types/accounting.types.ts`

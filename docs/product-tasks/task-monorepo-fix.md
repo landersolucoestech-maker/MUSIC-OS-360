@@ -1,33 +1,33 @@
-# Monorepo Fix — Workspaces + Client Isolado
+# Monorepo Fix — Workspaces + Isolated Client
 
 ## What & Why
-O `package.json` raiz declara apenas `"workspaces": ["apps/api"]` — o `client/` e os pacotes `packages/shared-types` e `packages/shared-zod` não fazem parte do workspace npm/turbo. Isso significa que:
-- `turbo run dev` não orquestra o frontend corretamente
-- `packages/shared-types` e `packages/shared-zod` não são instalados como workspaces reais
-- O `client/` não tem `package.json` próprio (está no root), misturando dependências frontend com root scripts
-- Não há `tsconfig references` ligando client → shared-types/shared-zod
-- Vite tem acesso potencial a código Node/NestJS porque tudo está no mesmo escopo de dependências
+The root `package.json` declares only `"workspaces": ["apps/api"]` — `client/` and the `packages/shared-types` and `packages/shared-zod` packages are not part of the npm/turbo workspace. This means that:
+- `turbo run dev` does not orchestrate the frontend correctly
+- `packages/shared-types` and `packages/shared-zod` are not installed as real workspaces
+- `client/` does not have its own `package.json` (it is in the root), mixing frontend dependencies with root scripts
+- There are no `tsconfig references` linking client → shared-types/shared-zod
+- Vite potentially has access to Node/NestJS code because everything is in the same dependency scope
 
 ## Done looks like
-- `"workspaces"` inclui `["apps/api", "client", "packages/*"]`
-- `client/package.json` existe com dependências frontend isoladas (react, vite, tailwind, shadcn, etc.)
-- `packages/shared-types/package.json` e `packages/shared-zod/package.json` exportam corretamente
-- `tsconfig.json` raiz usa `references` para client, api, shared-types, shared-zod
-- `turbo.json` orquestra `dev`, `build`, `typecheck`, `lint` corretamente para todos os workspaces
-- `vite.config.ts` não tem acesso a dependências NestJS/Node específicas do backend
-- `turbo run dev` inicia frontend e backend sem erro
+- `"workspaces"` includes `["apps/api", "client", "packages/*"]`
+- `client/package.json` exists with isolated frontend dependencies (react, vite, tailwind, shadcn, etc.)
+- `packages/shared-types/package.json` and `packages/shared-zod/package.json` export correctly
+- The root `tsconfig.json` uses `references` for client, api, shared-types, shared-zod
+- `turbo.json` orchestrates `dev`, `build`, `typecheck`, `lint` correctly for all workspaces
+- `vite.config.ts` has no access to backend-specific NestJS/Node dependencies
+- `turbo run dev` starts the frontend and backend without errors
 
 ## Out of scope
-- Migrar conteúdo existente dos packages shared-types/shared-zod (apenas estrutura)
-- CI/CD GitHub Actions (apenas local funcional)
-- Alteração de lógica de negócio
+- Migrating the existing content of the shared-types/shared-zod packages (structure only)
+- CI/CD GitHub Actions (only a working local setup)
+- Changing business logic
 
 ## Steps
-1. **Atualizar workspaces** — adicionar `"client"` e `"packages/*"` ao array `"workspaces"` do `package.json` raiz; ajustar scripts `dev:web` e `build:web` para apontar ao workspace `client`
-2. **Criar `client/package.json`** — extrair dependências frontend do root `package.json` para `client/package.json` com nome `@music-os-360/client`; manter devDependencies de build no root
-3. **Configurar packages** — garantir que `packages/shared-types/package.json` e `packages/shared-zod/package.json` têm `"name"`, `"main"` e `"exports"` corretos; criar `index.ts` barrels se ausentes
-4. **Corrigir tsconfig references** — root `tsconfig.json` referenciar client, api, packages; `client/tsconfig.json` referenciar shared-types e shared-zod; alias Vite `@shared-types`, `@shared-zod` alinhados
-5. **Atualizar turbo.json** — garantir pipeline `dev` e `build` funcional para todos os workspaces; testar `turbo run typecheck` sem erros
+1. **Update workspaces** — add `"client"` and `"packages/*"` to the `"workspaces"` array of the root `package.json`; adjust the `dev:web` and `build:web` scripts to point to the `client` workspace
+2. **Create `client/package.json`** — extract the frontend dependencies from the root `package.json` into `client/package.json` with the name `@music-os-360/client`; keep the build devDependencies in the root
+3. **Configure packages** — ensure that `packages/shared-types/package.json` and `packages/shared-zod/package.json` have correct `"name"`, `"main"` and `"exports"`; create `index.ts` barrels if missing
+4. **Fix tsconfig references** — root `tsconfig.json` references client, api, packages; `client/tsconfig.json` references shared-types and shared-zod; Vite aliases `@shared-types`, `@shared-zod` aligned
+5. **Update turbo.json** — ensure a working `dev` and `build` pipeline for all workspaces; test `turbo run typecheck` without errors
 
 ## Relevant files
 - `package.json`

@@ -1,38 +1,38 @@
-# FASE 8 — Estratégia de Testabilidade
+# PHASE 8 — Testability Strategy
 
 ## What & Why
-O sistema tem zero testes automatizados. Para um ERP enterprise-grade multi-tenant com RBAC, workflows de estado e contratos financeiros, a ausência de testes representa risco operacional severo — qualquer refactoring quebra comportamentos críticos sem alertas. Esta fase implementa a estratégia de testes baseada em prioridade de risco: workflow engine, RBAC, tenant isolation e lifecycles críticos primeiro.
+The system has zero automated tests. For an enterprise-grade multi-tenant ERP with RBAC, state workflows and financial contracts, the absence of tests represents a severe operational risk — any refactoring breaks critical behaviors without warning. This phase implements a test strategy based on risk priority: workflow engine, RBAC, tenant isolation and critical lifecycles first.
 
 ## Done looks like
-- Suite de testes executável via `cd apps/api && npm test` (Jest + @nestjs/testing)
-- **Workflow Engine Tests** (`workflow.engine.spec.ts`): testa todas as transições válidas e inválidas para cada workflow (releases, contracts, leads, campaigns, tickets), guards de negócio, roles autorizadas, erro em transições ilegais
-- **RBAC Tests** (`rbac.service.spec.ts`): matrix completa de permissões por role — cada resource:action testado para cada role (8 roles × 16 resources × 6 actions = cobertura completa); hierarquia de roles; `assertCan` lança `ForbiddenException` corretamente
-- **Tenant Isolation Tests** (`tenant-isolation.spec.ts`): garante que queries de um tenant não retornam dados de outro tenant; testa TenantGuard com JWT válido/inválido/ausente; testa soft-delete com tenant scope
-- **Auth Tests** (`auth.spec.ts`): validação de JWT Clerk, extração de claims, guard behavior com token expirado/inválido
-- **Domain Event Tests** (`events.spec.ts`): cada `DOMAIN_EVENT` tem handler registado, payload correto e side-effects esperados são chamados (com mocks)
-- **Release Lifecycle Test** (`release-lifecycle.spec.ts`): teste e2e do ciclo completo: criar release → transitar por todos os estados → verificar audit trail → verificar domain events emitidos → verificar notificações
-- **Contract Lifecycle Test** (`contract-lifecycle.spec.ts`): criar → análise → assinatura → vigente → encerrado; verificar invariants em cada etapa
-- **Fixtures e Factories** — `apps/api/src/test/factories/`: `tenantFactory`, `artistFactory`, `releaseFactory`, `contractFactory`, `userFactory` com defaults sensatos e override por spread
-- **Test Database** — testes usam banco PostgreSQL em memória (ou container Docker isolado) via `TypeORM createConnection` com `dropSchema: true` e seed de fixtures
-- Cobertura mínima documentada: workflow engine 90%, RBAC 100%, tenant isolation 85%, lifecycles críticos 80%
-- CI-ready: `npm test` retorna código 0 em suite limpa, código 1 com falhas
+- Test suite runnable via `cd apps/api && npm test` (Jest + @nestjs/testing)
+- **Workflow Engine Tests** (`workflow.engine.spec.ts`): tests all valid and invalid transitions for each workflow (releases, contracts, leads, campaigns, tickets), business guards, authorized roles, error on illegal transitions
+- **RBAC Tests** (`rbac.service.spec.ts`): complete permission matrix per role — each resource:action tested for each role (8 roles × 16 resources × 6 actions = full coverage); role hierarchy; `assertCan` throws `ForbiddenException` correctly
+- **Tenant Isolation Tests** (`tenant-isolation.spec.ts`): guarantees that one tenant's queries do not return another tenant's data; tests TenantGuard with a valid/invalid/missing JWT; tests soft-delete with tenant scope
+- **Auth Tests** (`auth.spec.ts`): Clerk JWT validation, claims extraction, guard behavior with an expired/invalid token
+- **Domain Event Tests** (`events.spec.ts`): each `DOMAIN_EVENT` has a registered handler, a correct payload, and the expected side effects are called (with mocks)
+- **Release Lifecycle Test** (`release-lifecycle.spec.ts`): e2e test of the complete cycle: create a release → transition through all states → verify the audit trail → verify the emitted domain events → verify the notifications
+- **Contract Lifecycle Test** (`contract-lifecycle.spec.ts`): create → analysis → signature → in force → terminated; verify invariants at each stage
+- **Fixtures and Factories** — `apps/api/src/test/factories/`: `tenantFactory`, `artistFactory`, `releaseFactory`, `contractFactory`, `userFactory` with sensible defaults and override by spread
+- **Test Database** — tests use an in-memory PostgreSQL database (or an isolated Docker container) via `TypeORM createConnection` with `dropSchema: true` and a fixture seed
+- Minimum coverage documented: workflow engine 90%, RBAC 100%, tenant isolation 85%, critical lifecycles 80%
+- CI-ready: `npm test` returns exit code 0 on a clean suite, exit code 1 with failures
 
 ## Out of scope
-- Testes de frontend (React Testing Library)
-- Testes de carga/performance
-- Testes de UI end-to-end (Playwright/Cypress)
-- 100% de cobertura de todos os módulos
+- Frontend tests (React Testing Library)
+- Load/performance tests
+- End-to-end UI tests (Playwright/Cypress)
+- 100% coverage of all modules
 
 ## Steps
-1. **Configurar Jest + @nestjs/testing** — Instalar dependências de teste: `jest`, `@nestjs/testing`, `supertest`, `@types/jest`. Configurar `jest.config.ts` em `apps/api` com paths, transform, coverage thresholds. Criar `apps/api/src/test/` com `setup.ts` (bootstrap de módulo de teste) e pasta `factories/`.
-2. **Criar factories de fixtures** — Implementar factories tipadas: `createTenant()`, `createArtist()`, `createRelease()`, `createContract()`, `createUser()`. Cada factory aceita partial overrides. Criar `TestDatabaseModule` que usa TypeORM com `synchronize: true` e `dropSchema: true` para isolamento de testes.
-3. **Implementar RBAC tests** — `rbac.service.spec.ts` com matrix completa: para cada role × resource × action, assertar `can()` retorna o booleano esperado. Tabela de verdade como constante que serve de documentação executável.
-4. **Implementar Workflow Engine tests** — `workflow.engine.spec.ts` com testes parametrizados para cada workflow: transições válidas (estado correto + role correta), transições inválidas (estado errado → WorkflowTransitionError), guards de negócio (release sem capa → bloqueada em review).
-5. **Implementar Tenant Isolation tests** — `tenant-isolation.spec.ts`: criar dados em tenant A, queries no contexto de tenant B retornam zero resultados. Testar em todos os módulos principais (artists, releases, contracts, transactions).
-6. **Implementar lifecycle integration tests** — `release-lifecycle.spec.ts` e `contract-lifecycle.spec.ts`: criar entidade, fazer transições sequenciais via `WorkflowService`, verificar estado final, verificar eventos emitidos (com `EventsService` em modo test/mock), verificar audit logs persistidos.
+1. **Configure Jest + @nestjs/testing** — Install the test dependencies: `jest`, `@nestjs/testing`, `supertest`, `@types/jest`. Configure `jest.config.ts` in `apps/api` with paths, transform, coverage thresholds. Create `apps/api/src/test/` with `setup.ts` (test module bootstrap) and a `factories/` folder.
+2. **Create fixture factories** — Implement typed factories: `createTenant()`, `createArtist()`, `createRelease()`, `createContract()`, `createUser()`. Each factory accepts partial overrides. Create a `TestDatabaseModule` that uses TypeORM with `synchronize: true` and `dropSchema: true` for test isolation.
+3. **Implement RBAC tests** — `rbac.service.spec.ts` with the complete matrix: for each role × resource × action, assert that `can()` returns the expected boolean. A truth table as a constant that serves as executable documentation.
+4. **Implement Workflow Engine tests** — `workflow.engine.spec.ts` with parameterized tests for each workflow: valid transitions (correct state + correct role), invalid transitions (wrong state → WorkflowTransitionError), business guards (release without a cover → blocked at review).
+5. **Implement Tenant Isolation tests** — `tenant-isolation.spec.ts`: create data in tenant A; queries in the context of tenant B return zero results. Test in all the main modules (artists, releases, contracts, transactions).
+6. **Implement lifecycle integration tests** — `release-lifecycle.spec.ts` and `contract-lifecycle.spec.ts`: create an entity, make sequential transitions via `WorkflowService`, verify the final state, verify the emitted events (with `EventsService` in test/mock mode), verify the persisted audit logs.
 
 ## Relevant files
-- `apps/api/src/core/workflow/` (FASE 2)
+- `apps/api/src/core/workflow/` (PHASE 2)
 - `apps/api/src/core/rbac/rbac.service.ts`
 - `apps/api/src/core/events/events.service.ts`
 - `apps/api/src/core/guards/tenant.guard.ts`

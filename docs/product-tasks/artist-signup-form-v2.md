@@ -1,54 +1,54 @@
-# Reformular Formulário Público de Cadastro de Artista
+# Redesign the Public Artist Signup Form
 
 ## What & Why
-Reorganizar e ampliar o formulário de `/signup/artista/:orgSlug` conforme especificação:
-novos campos, multi-select para Tipo de Perfil, campo Gênero (sexo), Data de Nascimento,
-lista completa de gêneros musicais ordenada alfabeticamente, campo Deezer, seção de
-distribuidoras na Aba 2, e seção Resumo com dados do artista na Aba 3.
-Mantém identidade visual, responsividade e estrutura de 3 abas.
+Reorganize and expand the `/signup/artista/:orgSlug` form according to the specification:
+new fields, a multi-select for Profile Type, a Gender (sex) field, Date of Birth,
+a complete alphabetically sorted list of music genres, a Deezer field, a distributors
+section in Tab 2, and a Summary section with the artist's data in Tab 3.
+Keeps the visual identity, responsiveness and 3-tab structure.
 
 ## Done looks like
 
-**Aba 1 — Dados Básicos** (em ordem):
-- Nome Artístico
-- Nome Civil
-- Tipo de Perfil — grupo de checkboxes com múltipla seleção: DJ · DJ/Produtor · Compositor/Autor · Intérprete · Produtor (ao menos 1 obrigatório para avançar)
-- Gênero — select ou radio com: Masculino / Feminino
-- Gênero Musical — lista completa ordenada alfabeticamente
-- E-mail (obrigatório)
-- Telefone / WhatsApp (obrigatório)
-- CPF
-- Data de Nascimento (date picker ou input tipo date)
+**Tab 1 — "Dados Básicos" (Basic Data)** (in order):
+- "Nome Artístico" (Stage Name)
+- "Nome Civil" (Legal Name)
+- "Tipo de Perfil" (Profile Type) — multi-select checkbox group: "DJ" · "DJ/Produtor" · "Compositor/Autor" · "Intérprete" · "Produtor" (at least 1 required to proceed)
+- "Gênero" (Gender) — select or radio with: "Masculino" / "Feminino"
+- "Gênero Musical" (Music Genre) — complete alphabetically sorted list
+- "E-mail" (required)
+- "Telefone / WhatsApp" (Phone / WhatsApp) (required)
+- CPF (Brazilian individual taxpayer ID)
+- "Data de Nascimento" (Date of Birth) (date picker or date-type input)
 
-**Aba 2 — Links e Redes**:
-- Instagram, TikTok, YouTube, Spotify, Apple Music, Deezer (novo), SoundCloud
-- Link do Presskit
-- Seção "Distribuidoras": Select de distribuidora (lista com as principais do mercado BR + "Outro") + Input de e-mail de share/acesso
+**Tab 2 — "Links e Redes" (Links and Social Media)**:
+- Instagram, TikTok, YouTube, Spotify, Apple Music, Deezer (new), SoundCloud
+- "Link do Presskit" (Press Kit Link)
+- "Distribuidoras" (Distributors) section: distributor Select (list of the main players in the BR market + "Outro" (Other)) + share/access e-mail Input
 
-**Aba 3 — Bio e Contexto**:
-- Seção "Resumo" exibindo em cards ou linhas os valores preenchidos: Nome do Artista, Tipo de Perfil, Telefone/WhatsApp, E-mail
-- Campos existentes mantidos: Biografia, Foto de Perfil (URL), Mensagem para a gravadora
+**Tab 3 — "Bio e Contexto" (Bio and Context)**:
+- "Resumo" (Summary) section displaying the filled-in values as cards or rows: Artist Name, Profile Type, Phone/WhatsApp, E-mail
+- Existing fields kept: Biography, Profile Photo (URL), Message to the record label
 
-Validação e submit: todos os campos novos incluídos no payload para `createArtistUseCase`;
-campos sem campo dedicado na use case (deezer, distribuidora, distribuidora_email, data_nascimento)
-vão em `notas_internas`.
+Validation and submit: all new fields included in the payload for `createArtistUseCase`;
+fields with no dedicated field in the use case (`deezer`, `distribuidora`, `distribuidora_email`, `data_nascimento`)
+go into `notas_internas`.
 
 ## Out of scope
-- Mudanças em outros módulos além de `ArtistaSignupPublic.tsx`
-- Geração de resumo via IA/OpenAI — seção Resumo é display somente leitura com dados já preenchidos
-- Integração real com distribuidoras (captura texto para `notas_internas`)
+- Changes in modules other than `ArtistaSignupPublic.tsx`
+- Summary generation via AI/OpenAI — the Summary section is a read-only display of data already filled in
+- Real integration with distributors (captures text into `notas_internas`)
 
 ## Steps
 
-1. **Tipos e constantes** — Adicionar ao `FormData`: `tipo_perfil: string[]`, `genero: string`, `data_nascimento: string`, `deezer: string`, `distribuidora: string`, `distribuidora_email: string`. Substituir `TIPOS` por `TIPO_PERFIL_OPTIONS` com as 5 opções. Expandir `GENEROS` para lista completa de gêneros musicais BR ordenada alfabeticamente (mínimo 30 gêneros). Adicionar `DISTRIBUIDORAS` (Believe, CD Baby, DistroKid, Ingrooves, Kontor, ONErpm, Orchard, Sony Music, Stem, Symphonic, TuneCore, Warner Music, Outro). Atualizar `EMPTY`.
+1. **Types and constants** — Add to `FormData`: `tipo_perfil: string[]`, `genero: string`, `data_nascimento: string`, `deezer: string`, `distribuidora: string`, `distribuidora_email: string`. Replace `TIPOS` with `TIPO_PERFIL_OPTIONS` with the 5 options. Expand `GENEROS` into a complete, alphabetically sorted list of BR music genres (at least 30 genres). Add `DISTRIBUIDORAS` (Believe, CD Baby, DistroKid, Ingrooves, Kontor, ONErpm, Orchard, Sony Music, Stem, Symphonic, TuneCore, Warner Music, Outro). Update `EMPTY`.
 
-2. **Aba 1 — Tipo de Perfil, Gênero, Data de Nascimento** — Remover Select "Tipo" e substituir por grupo de checkboxes visuais "Tipo de Perfil" (múltipla seleção, estilo badge/toggle). Adicionar Select "Gênero" (Masculino/Feminino). Adicionar Input type="date" ou DatePicker "Data de Nascimento". Atualizar `validateStep1` para exigir ao menos 1 tipo de perfil.
+2. **Tab 1 — Profile Type, Gender, Date of Birth** — Remove the "Tipo" Select and replace it with a visual "Tipo de Perfil" checkbox group (multi-select, badge/toggle style). Add a "Gênero" Select ("Masculino"/"Feminino"). Add an Input type="date" or DatePicker "Data de Nascimento". Update `validateStep1` to require at least 1 profile type.
 
-3. **Aba 2 — Deezer e Distribuidoras** — Inserir campo Deezer com ícone `SiDeezer` de `react-icons/si`. Adicionar seção "Distribuidoras" com Select + Input de e-mail.
+3. **Tab 2 — Deezer and Distributors** — Insert a Deezer field with the `SiDeezer` icon from `react-icons/si`. Add a "Distribuidoras" section with a Select + e-mail Input.
 
-4. **Aba 3 — seção Resumo** — Exibir card de Resumo no topo do Step 3 mostrando: Nome do Artista, Tipo de Perfil (join dos selecionados), Telefone/WhatsApp, E-mail — usando os dados do formulário preenchidos nas abas anteriores.
+4. **Tab 3 — Summary section** — Display a Summary card at the top of Step 3 showing: Artist Name, Profile Type (join of the selected ones), Phone/WhatsApp, E-mail — using the form data filled in on the previous tabs.
 
-5. **handleSubmit — mapear campos novos** — Incluir campos novos no payload. `tipo` na use case recebe `tipo_perfil.join(", ")`. Campos extras vão em `notas_internas` junto com campos já existentes.
+5. **handleSubmit — map new fields** — Include the new fields in the payload. `tipo` in the use case receives `tipo_perfil.join(", ")`. Extra fields go into `notas_internas` along with the already existing fields.
 
 ## Relevant files
 - `client/src/modules/auth/pages/ArtistaSignupPublic.tsx`

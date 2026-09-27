@@ -1,51 +1,51 @@
 ---
-title: Templates de contratos: remover segunda aba + limpar papéis de signatário
+title: Contract templates: remove the second tab + clean up signer roles
 ---
-# Task #629 — Limpar página Templates: remover segunda aba + papéis de signatário
+# Task #629 — Clean up the Templates page: remove the second tab + signer roles
 
-## Contexto
-A página `/contratos/templates` tem duas abas ("Templates Simples" e "Templates com Variáveis")
-porque durante a task #624 os dois sistemas coexistiram. Desde a task #627 o wizard de assinatura
-digital foi eliminado — a aba "Templates com Variáveis" (contracts-v2) ficou sem utilidade.
+## Context
+The `/contratos/templates` page has two tabs ("Templates Simples" and "Templates com Variáveis")
+because the two systems coexisted during task #624. Since task #627 the digital signature
+wizard has been eliminated — the "Templates com Variáveis" tab (contracts-v2) no longer serves any purpose.
 
-O campo "papel" nos signatários (form de contrato + templates) tem roles que o utilizador quer remover.
+The "papel" (role) field on signers (contract form + templates) has roles that the user wants removed.
 
-## Alterações
+## Changes
 
-### 1. TemplatesContratos.tsx — eliminar tabs
-- Remover `<Tabs>`, `<TabsList>`, `<TabsTrigger>`, `<TabsContent>` da page root
-- Remover a função `TabTemplatesVariaveis` e toda a sua lógica (useDocumentTemplates, NewTemplateFormV2, TemplateCardV2)
-- A page passa a renderizar directamente o conteúdo de `TabTemplatesSimples` (sem wrapper de aba)
-- Remover imports que ficam a zero: `useDocumentTemplates`, `useCreateTemplate`, `TEMPLATE_CATEGORY_LABEL`,
+### 1. TemplatesContratos.tsx — eliminate tabs
+- Remove `<Tabs>`, `<TabsList>`, `<TabsTrigger>`, `<TabsContent>` from the page root
+- Remove the `TabTemplatesVariaveis` function and all of its logic (useDocumentTemplates, NewTemplateFormV2, TemplateCardV2)
+- The page now renders the content of `TabTemplatesSimples` directly (without a tab wrapper)
+- Remove imports that end up unused: `useDocumentTemplates`, `useCreateTemplate`, `TEMPLATE_CATEGORY_LABEL`,
   `SIGNER_ROLE_LABEL` (contracts-v2), `TemplateCategory`, `SignerRole`, `createTemplateSchema`,
   `CreateTemplateInput`, `Tabs/*`, `Layers`, `Save`, `Trash2`, `Form/*`, `Textarea`, `toast`
-- Remover `SIGNER_ROLE_OPTIONS` e `CATEGORY_OPTIONS` locais (apenas usados na aba removida)
+- Remove the local `SIGNER_ROLE_OPTIONS` and `CATEGORY_OPTIONS` (only used in the removed tab)
 
-### 2. contrato-schema.ts — remover roles
-Remover de `SIGNER_ROLES`, `SIGNER_ROLE_LABEL` e do tipo derivado:
+### 2. contrato-schema.ts — remove roles
+Remove from `SIGNER_ROLES`, `SIGNER_ROLE_LABEL` and the derived type:
 - `testemunha`
 - `procurador`
 - `advogado`
 
-Resultado: apenas `["artista", "label", "produtor"]`
+Result: only `["artista", "label", "produtor"]`
 
-### 3. contracts-v2/types/index.ts — sincronizar SignerRole
-Remover `"testemunha"`, `"procurador"`, `"advogado"` do union type `SignerRole`
-(mantém: `"artista" | "label" | "produtor"`)
+### 3. contracts-v2/types/index.ts — synchronize SignerRole
+Remove `"testemunha"`, `"procurador"`, `"advogado"` from the `SignerRole` union type
+(keeps: `"artista" | "label" | "produtor"`)
 
 ### 4. contracts-v2/types/index.ts — SIGNER_ROLE_LABEL
-Verificar se existe `SIGNER_ROLE_LABEL` exportado neste ficheiro e, se sim,
-remover as entradas dos roles removidos.
+Check whether a `SIGNER_ROLE_LABEL` is exported from this file and, if so,
+remove the entries for the removed roles.
 
-### 5. Validação
-- `cd client && npx tsc --noEmit` → 0 erros
+### 5. Validation
+- `cd client && npx tsc --noEmit` → 0 errors
 
-## Ficheiros afectados
+## Affected files
 - `client/src/modules/contracts/pages/TemplatesContratos.tsx`
 - `client/src/modules/contracts/lib/contrato-schema.ts`
 - `client/src/modules/contracts-v2/types/index.ts`
 
 ## Done when
-- `/contratos/templates` mostra apenas uma única lista de templates, sem tabs
-- Campo "papel" no formulário de contrato só oferece: Artista, Gravadora / Label, Produtor
-- tsc → 0 erros
+- `/contratos/templates` shows only a single list of templates, without tabs
+- The "papel" (role) field on the contract form only offers: "Artista", "Gravadora / Label", "Produtor"
+- tsc → 0 errors

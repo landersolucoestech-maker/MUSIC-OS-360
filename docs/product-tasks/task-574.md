@@ -1,35 +1,35 @@
 ---
-title: F1 — Contratos: Upload, Versionamento e Vínculos
+title: F1 — Contracts: Upload, Versioning and Links
 ---
-# Contratos — Upload, Versionamento e Vínculos
+# Contracts — Upload, Versioning and Links
 
 ## What & Why
-Elevar o módulo de Contratos ao nível operacional: permitir anexar o arquivo PDF do contrato (via URL), manter histórico de versões (v1, v2, v3...), vincular contratos a artistas e lançamentos de forma visível, e preparar a arquitetura para integração futura com Autentique (assinatura digital). Atualmente o módulo apenas registra metadados — sem o arquivo real e sem rastreabilidade de versões.
+Bring the Contracts module up to an operational level: allow attaching the contract's PDF file (via URL), keep a version history (v1, v2, v3...), link contracts to artists and releases visibly, and prepare the architecture for future integration with Autentique (digital signature). Currently the module only records metadata — without the actual file and without version traceability.
 
 ## Done looks like
-- Formulário de contrato ganha campo **"URL do arquivo"** (PDF) com botão "Abrir" no modal de visualização
-- Modal de visualização exibe link de download/abertura do PDF, status de assinatura atual e histórico de versões
-- **Histórico de versões**: cada contrato pode ter N versões; ao editar e salvar com mudança de documento, cria uma nova entrada de versão (v1, v2...) com data e autor; lista de versões no modal de view
-- **Vínculos explícitos**: ao criar/editar um contrato, campo para vincular a um Lançamento específico (select); na view, link direto para o lançamento vinculado
-- Na página de **Artistas → Visão 360**, aba Contratos lista todos os contratos do artista com status, valor e link para abrir o contrato
-- Na página de **Lançamentos → View**, seção "Contratos" mostra contratos vinculados ao lançamento
-- Campo de status `aguardando_assinatura` adicionado (além de ativo/expirado/cancelado) — preparação para Autentique
-- KPI novo na página: "Aguardando assinatura" com badge de contagem
-- Alerta visual em contratos com data de vencimento nos próximos 30 dias (badge `expirando`)
+- The contract form gains a **"URL do arquivo"** (File URL) field (PDF) with an "Abrir" (Open) button in the view modal
+- The view modal displays a download/open link for the PDF, the current signature status and the version history
+- **Version history**: each contract can have N versions; when editing and saving with a document change, a new version entry (v1, v2...) is created with date and author; list of versions in the view modal
+- **Explicit links**: when creating/editing a contract, a field to link it to a specific Release (select); in the view, a direct link to the linked release
+- On the **Artists → "Visão 360"** (360 View) page, the Contracts tab lists all of the artist's contracts with status, amount and a link to open the contract
+- On the **Releases → View** page, a "Contratos" (Contracts) section shows the contracts linked to the release
+- Status field value `aguardando_assinatura` (awaiting signature) added (in addition to active/expired/cancelled) — preparation for Autentique
+- New KPI on the page: "Aguardando assinatura" (Awaiting signature) with a count badge
+- Visual alert on contracts with an expiration date within the next 30 days (`expirando` badge)
 
 ## Out of scope
-- Integração real com Autentique (API calls reais)
-- Geração automática de PDF a partir de template
-- Múltiplos signatários / workflow de aprovação
-- Upload real de arquivo para storage (apenas URL por enquanto)
+- Real integration with Autentique (real API calls)
+- Automatic PDF generation from a template
+- Multiple signers / approval workflow
+- Real file upload to storage (URL only for now)
 
 ## Steps
-1. **Expandir modelo de dados** — Adicionar `arquivo_url`, `lancamento_id`, `versoes` (array com `{versao, url, criado_em, notas}`), status `aguardando_assinatura` aos tipos e mockData
-2. **Atualizar formulário de contrato** — Campos: URL do arquivo, select de lançamento vinculado, notas de versão (campo livre ao salvar uma nova versão)
-3. **Modal de visualização expandido** — Seção "Arquivo": botão abrir PDF; seção "Histórico de Versões": lista de versões com data e notas; seção "Lançamento vinculado": link para o lançamento
-4. **Alerta de vencimento** — Lógica que detecta contratos com `data_fim` nos próximos 30 dias e exibe badge `expirando` na lista e no KPI
-5. **Integração reversa com Artistas e Lançamentos** — Na aba Contratos do Visão 360 do artista, exibir lista dos contratos; na aba de um lançamento, mostrar contratos vinculados
-6. **Arquitetura Autentique** — Adicionar campo `autentique_doc_id` (nullable string) e botão "Enviar para assinatura" (disabled com tooltip "em breve — integração Autentique") no modal de view
+1. **Expand the data model** — Add `arquivo_url`, `lancamento_id`, `versoes` (array with `{versao, url, criado_em, notas}`), status `aguardando_assinatura` to the types and mockData
+2. **Update the contract form** — Fields: file URL, linked release select, version notes (free-text field when saving a new version)
+3. **Expanded view modal** — "Arquivo" (File) section: open PDF button; "Histórico de Versões" (Version History) section: list of versions with date and notes; "Lançamento vinculado" (Linked release) section: link to the release
+4. **Expiration alert** — Logic that detects contracts with `data_fim` within the next 30 days and displays the `expirando` badge in the list and in the KPI
+5. **Reverse integration with Artists and Releases** — In the Contracts tab of the artist's 360 View, display the list of contracts; in a release's tab, show the linked contracts
+6. **Autentique architecture** — Add an `autentique_doc_id` field (nullable string) and an "Enviar para assinatura" (Send for signature) button (disabled with the tooltip "em breve — integração Autentique" (coming soon — Autentique integration)) in the view modal
 
 ## Relevant files
 - `client/src/modules/contracts/pages/Contratos.tsx`

@@ -1,29 +1,29 @@
-# DRE e Fluxo de Caixa — Relatórios Financeiros Profissionais
+# Income Statement (DRE) and Cash Flow — Professional Financial Reports
 
 ## What & Why
-A página de Contabilidade actual mostra apenas KPIs globais (total receitas, despesas, saldo) e um gráfico de evolução mensal. Não há DRE estruturado por categoria, nem fluxo de caixa com projecção. Para uma gravadora/produtora, o DRE por projecto/artista e o fluxo de caixa com vencimentos futuros são os dois relatórios operacionais mais críticos. Esta task substitui a visualização simples por relatórios financeiros de nível ERP.
+The current Accounting page shows only global KPIs (total revenue, expenses, balance) and a monthly evolution chart. There is no income statement (DRE) structured by category, nor a cash flow with projection. For a record label/production company, the income statement per project/artist and the cash flow with future due dates are the two most critical operational reports. This task replaces the simple view with ERP-level financial reports.
 
 ## Done looks like
-- **DRE tab** na página Contabilidade: tabela hierárquica agrupada por tipo → categoria → subcategoria com subtotais e totais. Filtrável por período (mês/trimestre/ano), centro de custo e artista. Exportável como XLSX (este repositório é XLSX-only — `scripts/verify-xlsx-only.mjs`).
-- **Fluxo de Caixa tab**: lista cronológica de transações por data de vencimento (futuros) e data de pagamento (passados), com saldo acumulado calculado linha a linha. Distingue visualmente "pago", "a vencer", "atrasado".
-- **P&L por Projecto**: tabela que lista projectos como linhas, com receitas, despesas e resultado líquido por projecto — usando o campo `projeto_id` das transações.
-- **P&L por Artista**: mesma lógica mas agrupado por artista.
-- A página Contabilidade ganha tabs: "Visão Geral" (actual), "DRE", "Fluxo de Caixa", "Por Projecto", "Por Artista".
-- Cada tab tem selector de período e botão de exportar XLSX.
+- **DRE tab** on the Accounting page: hierarchical table grouped by type → category → subcategory with subtotals and totals. Filterable by period (month/quarter/year), cost center and artist. Exportable as XLSX (this repository is XLSX-only — `scripts/verify-xlsx-only.mjs`).
+- **"Fluxo de Caixa" (Cash Flow) tab**: chronological list of transactions by due date (future ones) and payment date (past ones), with a running balance computed row by row. Visually distinguishes "pago", "a vencer", "atrasado" (paid, upcoming, overdue).
+- **P&L per Project**: a table that lists projects as rows, with revenue, expenses and net result per project — using the transactions' `projeto_id` field.
+- **P&L per Artist**: the same logic but grouped by artist.
+- The Accounting page gains tabs: "Visão Geral" (Overview — current), "DRE", "Fluxo de Caixa", "Por Projecto" (By Project), "Por Artista" (By Artist).
+- Each tab has a period selector and an XLSX export button.
 
 ## Out of scope
-- Integração com sistema contábil externo (SPED, ECD — futura integração)
-- Gráficos de projecção com IA
-- Consolidação multi-empresa/multi-tenant
-- PDF de relatório com layout formatado (apenas XLSX por agora)
+- Integration with an external accounting system (SPED, ECD — future integration)
+- AI projection charts
+- Multi-company/multi-tenant consolidation
+- Report PDF with a formatted layout (XLSX only for now)
 
 ## Steps
-1. **Utilitários de agregação** — criar `apps/web/src/modules/accounting/utils/financial-reports.ts` com funções puras: `groupByCategory()`, `buildDRE()`, `buildCashFlow()`, `groupByProject()`, `groupByArtist()` — recebem array de transações e retornam estruturas tipadas para as tabelas
-2. **DRE tab** — componente `DREReport.tsx` com tabela hierárquica colapsável: linha de tipo (Receita/Despesa/Investimento/Imposto), sub-linhas de categoria, sub-sub-linhas de subcategoria, valores e percentagens; filtros por período e centro de custo
-3. **Fluxo de Caixa tab** — componente `CashFlowReport.tsx`: lista cronológica usando `data_vencimento` (para futuros) e `data` (para passados), saldo acumulado, código de cor por status; filtro por conta financeira
-4. **P&L por Projecto e por Artista** — componentes `PLByProject.tsx` e `PLByArtist.tsx`: tabelas simples com linhas por entidade e colunas Receitas / Despesas / Resultado / Margem %
-5. **Tabs na página Contabilidade** — substituir layout actual por TabsList com 5 tabs; mover conteúdo actual para "Visão Geral"; montar os 4 novos tabs com os componentes criados
-6. **Export XLSX** — reutilizar `exportToXlsx()` já existente em `shared/lib/xlsx.ts` (repositório é XLSX-only) para converter array de objectos para download; botão em cada tab de relatório
+1. **Aggregation utilities** — create `apps/web/src/modules/accounting/utils/financial-reports.ts` with pure functions: `groupByCategory()`, `buildDRE()`, `buildCashFlow()`, `groupByProject()`, `groupByArtist()` — they receive an array of transactions and return typed structures for the tables
+2. **DRE tab** — `DREReport.tsx` component with a collapsible hierarchical table: type row (Revenue/Expense/Investment/Tax), category sub-rows, subcategory sub-sub-rows, amounts and percentages; filters by period and cost center
+3. **Cash Flow tab** — `CashFlowReport.tsx` component: chronological list using `data_vencimento` (for future ones) and `data` (for past ones), running balance, color coding by status; filter by financial account
+4. **P&L per Project and per Artist** — `PLByProject.tsx` and `PLByArtist.tsx` components: simple tables with rows per entity and columns Revenue / Expenses / Result / Margin %
+5. **Tabs on the Accounting page** — replace the current layout with a TabsList with 5 tabs; move the current content to "Visão Geral"; mount the 4 new tabs with the created components
+6. **XLSX export** — reuse the existing `exportToXlsx()` in `shared/lib/xlsx.ts` (the repository is XLSX-only) to convert an array of objects into a download; a button on each report tab
 
 ## Relevant files
 - `apps/web/src/modules/accounting/pages/Contabilidade.tsx`

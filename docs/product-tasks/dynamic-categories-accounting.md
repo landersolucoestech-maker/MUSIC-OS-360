@@ -1,29 +1,29 @@
-# Categorias e Subcategorias Dinâmicas
+# Dynamic Categories and Subcategories
 
 ## What & Why
-O sistema financeiro tem ~200 linhas de categorias/subcategorias hardcoded em `transacao-constants.ts` e replicadas no backend validator. Qualquer nova categoria exige edição de código em 4+ ficheiros. Esta task cria o alicerce: categorias e subcategorias tornam-se dados configuráveis, não código.
+The financial system has ~200 lines of categories/subcategories hardcoded in `transacao-constants.ts` and replicated in the backend validator. Any new category requires a code edit in 4+ files. This task lays the foundation: categories and subcategories become configurable data, not code.
 
 ## Done looks like
-- Tabela `transaction_categories` e `transaction_subcategories` no mock data com todas as categorias actuais migradas
-- Página `/accounting/rules` (já existente) expande-se com duas tabs novas: "Categorias" e "Subcategorias", cada uma com CRUD completo (criar, editar, desactivar, ordenar)
-- Cada categoria tem: nome, tipo de transação aplicável, cor, ícone, ordem, ativo
-- Cada subcategoria tem: nome, categoria pai, campos que exige (artista, projeto, evento), ativo
-- O formulário de transação passa a ler categorias/subcategorias do storage em vez de arrays estáticos
-- Os arrays hardcoded em `transacao-constants.ts` são mantidos como fallback de seed apenas, com um comentário de deprecação
-- Backend validator aceita qualquer string para categoria/subcategoria (validação passa a ser "não vazio" em vez de enum fechado)
+- `transaction_categories` and `transaction_subcategories` tables in the mock data with all current categories migrated
+- The `/accounting/rules` page (already existing) expands with two new tabs: "Categorias" (Categories) and "Subcategorias" (Subcategories), each with full CRUD (create, edit, deactivate, reorder)
+- Each category has: name, applicable transaction type, color, icon, order, active
+- Each subcategory has: name, parent category, fields it requires (artist, project, event), active
+- The transaction form now reads categories/subcategories from storage instead of static arrays
+- The hardcoded arrays in `transacao-constants.ts` are kept as a seed fallback only, with a deprecation comment
+- The backend validator accepts any string for category/subcategory (validation becomes "non-empty" instead of a closed enum)
 
 ## Out of scope
-- Regras de visibilidade dinâmicas (a lógica de DISPLAY_RULES continua no código por ora — task separada)
-- Migração de dados históricos no localStorage (patch no patchMockData garante seed)
-- Contas financeiras e centros de custo (tasks separadas)
+- Dynamic visibility rules (the DISPLAY_RULES logic stays in code for now — separate task)
+- Migration of historical data in localStorage (the patch in patchMockData guarantees the seed)
+- Financial accounts and cost centers (separate tasks)
 
 ## Steps
-1. **Adicionar tabelas ao mock data** — criar `transaction_categories` e `transaction_subcategories` em `buildSeedData()` + patch em `patchMockData()` com todas as categorias actuais migradas para linhas de dados
-2. **Service methods** — adicionar `listCategories`, `createCategory`, `updateCategory`, `listSubcategories`, `createSubcategory`, `updateSubcategory` ao `accounting.service.ts`
-3. **Hook de categorias** — criar `useTransactionCategories.ts` com React Query para leitura e mutações; usar no formulário de transação em vez dos arrays estáticos
-4. **CRUD de categorias na página Rules** — adicionar tab "Categorias" à página `/accounting/rules` com tabela + modal criar/editar (nome, tipo, cor, ícone, ordem, ativo)
-5. **CRUD de subcategorias na página Rules** — adicionar tab "Subcategorias" com tabela + modal (nome, categoria pai, campos exigidos, ativo); mostrar apenas subcategorias da categoria seleccionada
-6. **Formulário de transação data-driven** — substituir os arrays estáticos nos selects de categoria e subcategoria por dados vindos do hook; manter o comportamento visual idêntico
+1. **Add tables to the mock data** — create `transaction_categories` and `transaction_subcategories` in `buildSeedData()` + patch in `patchMockData()` with all current categories migrated to data rows
+2. **Service methods** — add `listCategories`, `createCategory`, `updateCategory`, `listSubcategories`, `createSubcategory`, `updateSubcategory` to `accounting.service.ts`
+3. **Categories hook** — create `useTransactionCategories.ts` with React Query for reads and mutations; use it in the transaction form instead of the static arrays
+4. **Categories CRUD on the Rules page** — add a "Categorias" tab to the `/accounting/rules` page with a table + create/edit modal (name, type, color, icon, order, active)
+5. **Subcategories CRUD on the Rules page** — add a "Subcategorias" tab with a table + modal (name, parent category, required fields, active); show only the subcategories of the selected category
+6. **Data-driven transaction form** — replace the static arrays in the category and subcategory selects with data coming from the hook; keep the visual behavior identical
 
 ## Relevant files
 - `apps/web/src/modules/accounting/constants/transacao-constants.ts`

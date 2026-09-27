@@ -1,32 +1,32 @@
 ---
-title: F1 — Lançamentos: Pipeline e Assets
+title: F1 — Releases: Pipeline and Assets
 ---
-# Lançamentos — Pipeline Operacional e Assets
+# Releases — Operational Pipeline and Assets
 
 ## What & Why
-Transformar o módulo de Lançamentos em uma ferramenta operacional real: pipeline visual de status, checklist de assets obrigatórios por tipo de lançamento (single/EP/álbum), cronograma com data de entrega de materiais, e visão completa de cada release. A equipe precisa saber o que está faltando para publicar cada lançamento.
+Turn the Releases module into a real operational tool: a visual status pipeline, a checklist of mandatory assets per release type (single/EP/album), a schedule with material delivery dates, and a complete view of each release. The team needs to know what is missing to publish each release.
 
 ## Done looks like
-- Página de Lançamentos ganha **view toggle** entre lista (atual) e **Kanban** (colunas: Planejado → Em Produção → Aguardando Distribuição → Publicado → Cancelado)
-- No Kanban, cada card de lançamento exibe: nome, artista, tipo, data-alvo e % de conclusão do checklist de assets
-- **Checklist de assets** por lançamento: áudio master (WAV/FLAC URL), capa do álbum (3000×3000 URL), vídeo clipe (URL YouTube), letra (texto ou URL), ficha técnica (texto), press release (texto/URL), EPK (URL) — obrigatórios variam por tipo
-- Modal de **View do Lançamento** ganha aba "Assets" com checklist visual (✓/✗ por item) e aba "Cronograma" com datas-chave (gravação, mix/master, entrega à distribuidora, publicação)
-- **Formulário de Lançamento** expandido com: campos de assets (URLs), datas de cronograma, campo ISRC global (para singles), campo UPC, notas internas
-- KPIs na página: total de lançamentos, quantos têm assets incompletos (checklist < 100%), próximos 30 dias, publicados este mês
-- Filtro "Assets incompletos" na listagem
+- The Releases page gains a **view toggle** between list (current) and **Kanban** (columns: "Planejado" → "Em Produção" → "Aguardando Distribuição" → "Publicado" → "Cancelado" — Planned → In Production → Awaiting Distribution → Published → Cancelled)
+- In the Kanban, each release card displays: name, artist, type, target date and the % completion of the asset checklist
+- **Asset checklist** per release: master audio (WAV/FLAC URL), album cover (3000×3000 URL), music video (YouTube URL), lyrics (text or URL), credits sheet (text), press release (text/URL), EPK (URL) — the mandatory ones vary by type
+- The **Release View** modal gains an "Assets" tab with a visual checklist (✓/✗ per item) and a "Cronograma" (Schedule) tab with key dates (recording, mix/master, delivery to the distributor, publication)
+- **Release form** expanded with: asset fields (URLs), schedule dates, a global ISRC field (for singles), a UPC field, internal notes
+- KPIs on the page: total releases, how many have incomplete assets (checklist < 100%), next 30 days, published this month
+- "Assets incompletos" (Incomplete assets) filter in the listing
 
 ## Out of scope
-- Upload real de arquivos de áudio/vídeo (usar URLs por enquanto)
-- Integração com distribuidoras (envio automático)
-- Aprovação/workflow digital com assinaturas
+- Real upload of audio/video files (use URLs for now)
+- Integration with distributors (automatic delivery)
+- Digital approval/workflow with signatures
 
 ## Steps
-1. **Expandir modelo de dados** — Adicionar campos no mockData e tipos: `assets` (objeto com campos de URL por tipo), `cronograma` (datas: gravacao, mix_master, entrega_distribuidora), `isrc_global`, `upc`, `notas_internas`
-2. **Atualizar formulário de Lançamento** — Adicionar seções "Assets" (URLs para cada tipo de material) e "Cronograma" (date pickers para cada etapa), ISRC/UPC
-3. **Aba Assets no modal de visualização** — Checklist visual dos assets com status ✓/✗, links para abrir cada material, % de completude calculada dinamicamente
-4. **Aba Cronograma no modal** — Timeline vertical com as datas-chave e indicação de atrasos (data passada sem conclusão)
-5. **View Kanban** — Implementar toggle lista/kanban na página; columns mapeadas por status; cards com % de assets; drag entre colunas atualiza status no localStorage
-6. **KPIs e filtros** — Adicionar MetricCards para assets incompletos e próximos lançamentos; filtro "incompleto" na barra de filtros
+1. **Expand the data model** — Add fields to the mockData and types: `assets` (object with URL fields per type), `cronograma` (dates: `gravacao`, `mix_master`, `entrega_distribuidora`), `isrc_global`, `upc`, `notas_internas`
+2. **Update the Release form** — Add "Assets" sections (URLs for each type of material) and "Cronograma" (date pickers for each stage), ISRC/UPC
+3. **Assets tab in the view modal** — Visual checklist of the assets with ✓/✗ status, links to open each material, % completeness computed dynamically
+4. **Schedule tab in the modal** — Vertical timeline with the key dates and an indication of delays (past date without completion)
+5. **Kanban view** — Implement the list/kanban toggle on the page; columns mapped by status; cards with asset %; dragging between columns updates the status in localStorage
+6. **KPIs and filters** — Add MetricCards for incomplete assets and upcoming releases; an "incompleto" (incomplete) filter in the filter bar
 
 ## Relevant files
 - `client/src/modules/releases/pages/Lancamentos.tsx`

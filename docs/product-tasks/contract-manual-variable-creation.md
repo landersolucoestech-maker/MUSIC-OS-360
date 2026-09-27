@@ -1,64 +1,64 @@
 ---
-title: Adicionar criação manual de variáveis no Contract Intelligence Engine
+title: Add manual variable creation to the Contract Intelligence Engine
 ---
-# Criação manual de variáveis no analisador de contratos
+# Manual variable creation in the contract analyzer
 
 ## What & Why
 
-Após a análise semântica da IA, o utilizador só pode editar as variáveis detectadas
-automaticamente. Não tem como adicionar variáveis novas que a IA não identificou —
-por exemplo, uma cláusula específica que só ele reconhece como variável.
+After the AI semantic analysis, the user can only edit the automatically detected
+variables. There is no way to add new variables that the AI did not identify —
+for example, a specific clause that only the user recognizes as a variable.
 
-O pedido é: ter um botão "Adicionar Variável" que permita criar variáveis vazias
-manualmente e preenchê-las à mão.
+The request is: have an "Adicionar Variável" (Add Variable) button that allows creating empty
+variables manually and filling them in by hand.
 
 ## Done looks like
 
-- Botão "+ Adicionar" no cabeçalho do painel de variáveis (ao lado de "Aceitar todas")
-- Clicar abre um mini-formulário inline (ou adiciona directamente um `VariableCard` novo
-  com campos vazios em modo de edição)
-- Nova variável criada com:
-  - `id`: `crypto.randomUUID()` ou `nanoid`
-  - `originalText`: vazio (utilizador preenche)
-  - `placeholder`: vazio (utilizador preenche — sugestão automática ao escrever o texto original)
-  - `inferredEntity`: vazio
-  - `context`: vazio
-  - `accepted: true` (criada manualmente → activa por defeito)
-- O card novo é visualmente distinguível das variáveis AI (badge "manual" ou ícone diferente)
-- Ao escrever em `originalText`, o campo `placeholder` auto-sugere
-  `{{CONTRATO.NOME_EM_CAPS_UNDERSCORED}}` (mesmo padrão das variáveis AI)
+- "+ Adicionar" (+ Add) button in the variables panel header (next to "Aceitar todas" (Accept all))
+- Clicking it opens an inline mini-form (or directly adds a new `VariableCard`
+  with empty fields in edit mode)
+- New variable created with:
+  - `id`: `crypto.randomUUID()` or `nanoid`
+  - `originalText`: empty (the user fills it in)
+  - `placeholder`: empty (the user fills it in — automatic suggestion while typing the original text)
+  - `inferredEntity`: empty
+  - `context`: empty
+  - `accepted: true` (created manually → active by default)
+- The new card is visually distinguishable from AI variables ("manual" badge or a different icon)
+- When typing into `originalText`, the `placeholder` field auto-suggests
+  `{{CONTRATO.NOME_EM_CAPS_UNDERSCORED}}` (same pattern as the AI variables)
 - TypeScript EXIT:0
 
 ## Out of scope
 
-- Seleccionar texto no editor para criar variável a partir da selecção (feature separada)
-- Persistência/edição de variáveis manuais no TemplateEditModal (fora do import workspace)
+- Selecting text in the editor to create a variable from the selection (separate feature)
+- Persistence/editing of manual variables in TemplateEditModal (outside the import workspace)
 
 ## Steps
 
-1. **Adicionar handler `handleAddManualVariable` em `ContractImportWorkspace`** —
-   cria uma `SemanticVariable` com campos vazios e `accepted: true`, adiciona ao
-   estado `variables`, activa-a (`setActiveVariableId`).
+1. **Add a `handleAddManualVariable` handler in `ContractImportWorkspace`** —
+   creates a `SemanticVariable` with empty fields and `accepted: true`, adds it to the
+   `variables` state, activates it (`setActiveVariableId`).
 
-2. **Botão "+ Adicionar" no cabeçalho do painel** — ao lado de "Aceitar todas",
-   sempre visível (independentemente de haver variáveis ou não).
+2. **"+ Adicionar" button in the panel header** — next to "Aceitar todas",
+   always visible (regardless of whether there are variables or not).
 
-3. **Badge "manual" no `VariableCard`** — detectar se `originalText` começa vazio ou
-   usar um campo `source?: "ai" | "manual"` na interface. Adicionar campo `source` a
-   `SemanticVariable` em `contracts.types.ts` como opcional (`source?: "ai" | "manual"`).
-   Cards manuais mostram badge pequeno "Manual" na cor `outline`.
+3. **"manual" badge on `VariableCard`** — detect whether `originalText` starts empty or
+   use a `source?: "ai" | "manual"` field on the interface. Add a `source` field to
+   `SemanticVariable` in `contracts.types.ts` as optional (`source?: "ai" | "manual"`).
+   Manual cards show a small "Manual" badge in the `outline` color.
 
-4. **Auto-sugestão de placeholder** — no `VariableCard`, quando `originalText` muda e
-   `placeholder` está vazio, derivar o placeholder automaticamente:
-   `{{CONTRATO.` + texto em maiúsculas, sem espaços (underscored) + `}}`.
+4. **Placeholder auto-suggestion** — in `VariableCard`, when `originalText` changes and
+   `placeholder` is empty, derive the placeholder automatically:
+   `{{CONTRATO.` + text in uppercase, without spaces (underscored) + `}}`.
 
 5. **TypeCheck** — `cd apps/web && npx tsc --noEmit -p tsconfig.app.json 2>&1; echo "EXIT:$?"`
 
 ## Relevant files
 
 - `apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx`
-  - linha 195: `VariableCard` component
-  - linha 305: estado `variables`
-  - linha 695: painel de variáveis (header + lista)
+  - line 195: `VariableCard` component
+  - line 305: `variables` state
+  - line 695: variables panel (header + list)
 - `apps/web/src/modules/contracts/types/contracts.types.ts:191`
-  - `SemanticVariable` interface — adicionar `source?: "ai" | "manual"`
+  - `SemanticVariable` interface — add `source?: "ai" | "manual"`

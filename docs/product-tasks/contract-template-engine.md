@@ -1,57 +1,57 @@
-# Contract Template Engine — Refactor Completo
+# Contract Template Engine — Complete Refactor
 
 ## What & Why
-O módulo "Tipos de Contratos" actual é um formulário CRUD simples com campos planos. O objectivo é transformá-lo num sistema profissional de templates contratuais musicais: participantes tipados com geração automática de variáveis, editor de cláusulas com autocomplete de variáveis, secções de obra musical, assinatura digital (estrutura), branding, e preview dinâmico — tudo dentro de um modal multi-tab de 8 secções. Nenhuma lógica de negócio existente é removida; o sistema existente de `contract_service_types` é estendido.
+The current "Tipos de Contratos" (Contract Types) module is a simple CRUD form with flat fields. The goal is to turn it into a professional music contract template system: typed participants with automatic variable generation, a clause editor with variable autocomplete, musical work sections, digital signature (structure), branding, and dynamic preview — all inside an 8-section multi-tab modal. No existing business logic is removed; the existing `contract_service_types` system is extended.
 
 ## Done looks like
-- A aba "Tipos de Contratos" em `/contratos/templates` abre um modal multi-tab com 8 abas: Informações Gerais, Envolvidos, Financeiro, Obra Musical, Cláusulas, Assinaturas, Branding, Preview
-- **Aba 1 — Informações Gerais**: nome, categoria, tipo de contrato (select), descrição; slug e ordem ficam em secção "Avançado" colapsável
-- **Aba 2 — Envolvidos**: adicionar participantes com role (CONTRATANTE, CONTRATADO, ARTISTA, PRODUTOR, EMPRESA, LABEL, EMPRESÁRIO, COMPOSITOR, TESTEMUNHA, REPRESENTANTE LEGAL), tipo de entidade (PF / PJ); ao seleccionar PF são geradas automaticamente as variáveis `{{ROLE_NOME_COMPLETO}}`, `{{ROLE_CPF}}`, `{{ROLE_RG}}`, `{{ROLE_EMAIL}}` etc.; ao seleccionar PJ são geradas `{{ROLE_RAZAO_SOCIAL}}`, `{{ROLE_CNPJ}}`, `{{ROLE_REPRESENTANTE_LEGAL}}` etc.; as variáveis geradas são exibidas como badges na linha do participante
-- **Aba 3 — Financeiro**: checkboxes para royalties, valor fixo, adiantamento, suporte mensal, parcelamento; campos de moeda padrão, frequência de pagamento, multa, juros, vencimento; categoria financeira padrão
-- **Aba 4 — Obra Musical**: título, ISRC, UPC, género, idioma, data de lançamento, plataformas (multi-select), tipo de distribuição
-- **Aba 5 — Cláusulas**: lista de cláusulas (título + conteúdo) com ScrollArea interno; ao digitar `{{` no textarea de conteúdo abre um popover de autocomplete com busca, categorias (Participantes, Financeiro, Obra Musical, Vigência, Sistema, Personalizadas), descrição e exemplo de cada variável; variáveis são destacadas visualmente no editor; variáveis inexistentes mostram indicador de erro
-- **Aba 6 — Assinaturas**: toggle "habilitar assinatura digital"; ordem de assinatura (drag ou seleção); opção "exigir testemunhas"; campo de provider (Autentique, DocuSign — placeholder); campo "trilha de auditoria" toggle
-- **Aba 7 — Branding**: upload de cabeçalho e rodapé (existentes, mantidos); toggle watermark; campo de logo; alinhamento, margens, fonte do documento, numeração de páginas
-- **Aba 8 — Preview**: render dinâmico do contrato substituindo todas as variáveis por valores mock realistas; atualiza em tempo real ao trocar de aba; exibe formatação final com cabeçalho/rodapé/logo se definidos
-- O modal tem largura `max-w-5xl` e altura `90vh`; navegação entre abas preserva todos os dados do formulário (state interno sem reset entre abas)
-- Sistema de variáveis tem estrutura tipada: `{ id, key, label, type, source, category, required, example, participantReference }`; variáveis de participantes são geradas automaticamente ao adicionar/alterar participantes; variáveis fixas do sistema (datas, obra) sempre disponíveis
-- Todas as validações obrigatórias: slug único, cláusulas não vazias, ao menos um participante, datas consistentes
-- O payload salvo em `contract_service_types` é retrocompatível com o schema existente — os novos campos (participants, variables, music_work, signature_settings, branding_settings) são armazenados como JSON serializado em campos de texto existentes ou em campos novos no objecto armazenado no localStorage (mock mode); nenhuma migração de dados de produção é necessária
-- Visual consistente com o design system MUSIC OS 360: dark mode, card sections, badges, tipografia Plus Jakarta Sans
+- The "Tipos de Contratos" tab at `/contratos/templates` opens a multi-tab modal with 8 tabs: "Informações Gerais", "Envolvidos", "Financeiro", "Obra Musical", "Cláusulas", "Assinaturas", "Branding", "Preview" (General Information, Parties, Financial, Musical Work, Clauses, Signatures, Branding, Preview)
+- **Tab 1 — General Information**: name, category, contract type (select), description; slug and order live in a collapsible "Avançado" (Advanced) section
+- **Tab 2 — Parties**: add participants with a role (CONTRATANTE, CONTRATADO, ARTISTA, PRODUTOR, EMPRESA, LABEL, EMPRESÁRIO, COMPOSITOR, TESTEMUNHA, REPRESENTANTE LEGAL), entity type (PF / PJ — individual / legal entity); when PF is selected, the variables `{{ROLE_NOME_COMPLETO}}`, `{{ROLE_CPF}}`, `{{ROLE_RG}}`, `{{ROLE_EMAIL}}` etc. are generated automatically; when PJ is selected, `{{ROLE_RAZAO_SOCIAL}}`, `{{ROLE_CNPJ}}`, `{{ROLE_REPRESENTANTE_LEGAL}}` etc. are generated; the generated variables are displayed as badges on the participant's row
+- **Tab 3 — Financial**: checkboxes for royalties, fixed amount, advance, monthly support, installments; fields for default currency, payment frequency, penalty, interest, due date; default financial category
+- **Tab 4 — Musical Work**: title, ISRC, UPC, genre, language, release date, platforms (multi-select), distribution type
+- **Tab 5 — Clauses**: list of clauses (title + content) with an internal ScrollArea; typing `{{` in the content textarea opens an autocomplete popover with search, categories ("Participantes", "Financeiro", "Obra Musical", "Vigência", "Sistema", "Personalizadas" — Participants, Financial, Musical Work, Term, System, Custom), and a description and example for each variable; variables are visually highlighted in the editor; nonexistent variables show an error indicator
+- **Tab 6 — Signatures**: "habilitar assinatura digital" (enable digital signature) toggle; signing order (drag or selection); "exigir testemunhas" (require witnesses) option; provider field (Autentique, DocuSign — placeholder); "trilha de auditoria" (audit trail) toggle field
+- **Tab 7 — Branding**: header and footer upload (existing, kept); watermark toggle; logo field; alignment, margins, document font, page numbering
+- **Tab 8 — Preview**: dynamic render of the contract replacing all variables with realistic mock values; updates in real time when switching tabs; displays the final formatting with header/footer/logo if defined
+- The modal has width `max-w-5xl` and height `90vh`; navigating between tabs preserves all the form data (internal state with no reset between tabs)
+- The variable system has a typed structure: `{ id, key, label, type, source, category, required, example, participantReference }`; participant variables are generated automatically when participants are added/changed; fixed system variables (dates, work) are always available
+- All mandatory validations: unique slug, non-empty clauses, at least one participant, consistent dates
+- The payload saved in `contract_service_types` is backward compatible with the existing schema — the new fields (participants, variables, music_work, signature_settings, branding_settings) are stored as serialized JSON in existing text fields or in new fields on the object stored in localStorage (mock mode); no production data migration is necessary
+- Visuals consistent with the MUSIC OS 360 design system: dark mode, card sections, badges, Plus Jakarta Sans typography
 
 ## Out of scope
-- Geração real de PDF
-- Integração real com Autentique / DocuSign (estrutura preparada, não funcional)
-- Publicação no backend NestJS / TypeORM (permanece mock mode)
-- IA para geração de cláusulas (estrutura preparada com campo `aiGenerated` nos tipos, sem implementação)
-- Alterações nos módulos fora de `contracts/`
-- Alterações em `ContratoFormModal`, `ContratoViewModal`, `TemplateContratoFormModal`
+- Real PDF generation
+- Real integration with Autentique / DocuSign (structure prepared, not functional)
+- Publishing on the NestJS / TypeORM backend (stays in mock mode)
+- AI for clause generation (structure prepared with an `aiGenerated` field on the types, no implementation)
+- Changes to modules outside `contracts/`
+- Changes to `ContratoFormModal`, `ContratoViewModal`, `TemplateContratoFormModal`
 
 ## Steps
 
-1. **Novos tipos TypeScript** — Em `contracts/types/contracts.types.ts`, definir as interfaces `ContractTemplate`, `Participant`, `ContractVariable`, `ContractClause`, `FinancialSettings`, `MusicWork`, `SignatureSettings`, `BrandingSettings`, `ParticipantRole`, `EntityType`. Garantir que `ContractServiceType` existente se mantém ou é um alias/subset de `ContractTemplate` para backward compat.
+1. **New TypeScript types** — In `contracts/types/contracts.types.ts`, define the interfaces `ContractTemplate`, `Participant`, `ContractVariable`, `ContractClause`, `FinancialSettings`, `MusicWork`, `SignatureSettings`, `BrandingSettings`, `ParticipantRole`, `EntityType`. Ensure that the existing `ContractServiceType` is kept or is an alias/subset of `ContractTemplate` for backward compat.
 
-2. **Sistema de variáveis** — Criar `contracts/utils/contract-variables.ts` com: (a) lista de variáveis fixas do sistema agrupadas por categoria (Vigência, Obra Musical, Sistema); (b) função `generateParticipantVariables(role, entityType)` que retorna o array de `ContractVariable` para um participante PF ou PJ; (c) função `resolveAllVariables(participants)` que junta fixas + geradas e retorna a lista completa ordenada por categoria.
+2. **Variable system** — Create `contracts/utils/contract-variables.ts` with: (a) a list of fixed system variables grouped by category (Term, Musical Work, System); (b) a function `generateParticipantVariables(role, entityType)` that returns the `ContractVariable` array for a PF or PJ participant; (c) a function `resolveAllVariables(participants)` that merges fixed + generated variables and returns the complete list sorted by category.
 
-3. **Aba Informações Gerais** — Refatorar a secção equivalente do `ServiceTypeFormModal` para a Aba 1: nome, categoria (select com: Agenciamento, Distribuição, Produção, Licenciamento, Publicação, Outros), tipo de contrato (texto livre), descrição; slug + ordem colapsáveis.
+3. **General Information tab** — Refactor the equivalent section of `ServiceTypeFormModal` into Tab 1: name, category (select with: "Agenciamento", "Distribuição", "Produção", "Licenciamento", "Publicação", "Outros" — Booking agency, Distribution, Production, Licensing, Publishing, Other), contract type (free text), description; collapsible slug + order.
 
-4. **Aba Envolvidos** — Construir `ParticipantEditor`: botão "Adicionar Envolvido" abre um inline form com select de role + toggle PF/PJ; ao confirmar, o participante aparece em card com nome do role, tipo de entidade, e badges das variáveis geradas automaticamente; permitir remover; os cards são reordenáveis por drag (ou botões ↑↓ como fallback).
+4. **Parties tab** — Build `ParticipantEditor`: the "Adicionar Envolvido" (Add Party) button opens an inline form with a role select + PF/PJ toggle; on confirm, the participant appears in a card with the role name, entity type, and badges for the automatically generated variables; allow removal; the cards can be reordered by drag (or ↑↓ buttons as a fallback).
 
-5. **Aba Financeiro** — Manter os checkboxes existentes (requires_royalties, requires_fixed_value, requires_advance, requires_financial_support, allow_installments) e adicionar: select de moeda (BRL padrão), select de frequência de pagamento (único, mensal, trimestral, anual), campos de multa (%) e juros (% ao mês), campo de vencimento padrão (dias), categoria financeira padrão.
+5. **Financial tab** — Keep the existing checkboxes (requires_royalties, requires_fixed_value, requires_advance, requires_financial_support, allow_installments) and add: currency select (BRL default), payment frequency select (one-off, monthly, quarterly, yearly), penalty (%) and interest (% per month) fields, default due date field (days), default financial category.
 
-6. **Aba Obra Musical** — Construir form com campos: título da obra, ISRC, UPC, género (select), idioma (select), data de lançamento, plataformas (multi-checkbox: Spotify, Apple Music, YouTube Music, Deezer, Tidal, Amazon Music, outros), tipo de distribuição (exclusiva / não-exclusiva / licença).
+6. **Musical Work tab** — Build a form with the fields: work title, ISRC, UPC, genre (select), language (select), release date, platforms (multi-checkbox: Spotify, Apple Music, YouTube Music, Deezer, Tidal, Amazon Music, others), distribution type (exclusive / non-exclusive / license).
 
-7. **Autocomplete de variáveis no editor de cláusulas** — No textarea de conteúdo de cada cláusula, detectar quando o utilizador digita `{{` (via `onChange`) e abrir um `Popover` posicionado com lista de variáveis disponíveis filtrada por busca; clicar numa variável insere `{{VARIABLE_KEY}}` no cursor; variáveis já inseridas que existam na lista são destacadas visualmente (fundo com `bg-primary/10`); variáveis não encontradas na lista ficam com `bg-destructive/10`.
+7. **Variable autocomplete in the clause editor** — In each clause's content textarea, detect when the user types `{{` (via `onChange`) and open a positioned `Popover` with the list of available variables filtered by search; clicking a variable inserts `{{VARIABLE_KEY}}` at the cursor; already inserted variables that exist in the list are visually highlighted (background with `bg-primary/10`); variables not found in the list get `bg-destructive/10`.
 
-8. **Aba Assinaturas** — Construir form com toggle "habilitar assinatura", lista de participantes em ordem de assinatura (reordenável), toggle "exigir testemunhas", select de provider (Autentique, DocuSign — desabilitados com tooltip "em breve"), toggle "trilha de auditoria".
+8. **Signatures tab** — Build a form with a "habilitar assinatura" (enable signature) toggle, a list of participants in signing order (reorderable), an "exigir testemunhas" (require witnesses) toggle, a provider select (Autentique, DocuSign — disabled with an "em breve" (coming soon) tooltip), and a "trilha de auditoria" (audit trail) toggle.
 
-9. **Aba Branding** — Manter upload de cabeçalho/rodapé existente; adicionar: upload de logo, toggle de watermark (campo de texto do watermark), select de alinhamento do texto (esquerda/centro/justificado), select de fonte (Plus Jakarta Sans, Arial, Times New Roman), toggle de numeração de páginas, campos de margem (top/bottom/left/right em mm com defaults).
+9. **Branding tab** — Keep the existing header/footer upload; add: logo upload, watermark toggle (watermark text field), text alignment select (left/center/justified), font select (Plus Jakarta Sans, Arial, Times New Roman), page numbering toggle, margin fields (top/bottom/left/right in mm with defaults).
 
-10. **Aba Preview** — Construir componente `ContractPreview` que: (a) recolhe todos os dados do formulário via `useWatch` ou passagem de props; (b) substitui cada `{{VARIABLE_KEY}}` por um valor mock da propriedade `example` da variável correspondente; (c) renderiza as cláusulas como HTML formatado num div com classes de tipografia (`prose`-like); (d) mostra cabeçalho e rodapé se definidos como imagens.
+10. **Preview tab** — Build a `ContractPreview` component that: (a) collects all the form data via `useWatch` or by passing props; (b) replaces each `{{VARIABLE_KEY}}` with a mock value from the `example` property of the corresponding variable; (c) renders the clauses as formatted HTML in a div with typography classes (`prose`-like); (d) shows the header and footer if they are defined as images.
 
-11. **Orquestração do modal multi-tab** — Refactorizar `ServiceTypeFormModal` para usar `Tabs`/`TabsList`/`TabsContent` (shadcn); mover toda a lógica de submit e state para o topo do componente; garantir que mudar de aba não apaga dados; o botão "Salvar" no footer funciona em qualquer aba activa; indicadores visuais de abas com erros (ponto vermelho no tab label se `formState.errors` tocar campos dessa aba).
+11. **Multi-tab modal orchestration** — Refactor `ServiceTypeFormModal` to use `Tabs`/`TabsList`/`TabsContent` (shadcn); move all the submit logic and state to the top of the component; ensure that switching tabs does not erase data; the "Salvar" (Save) button in the footer works on any active tab; visual indicators for tabs with errors (red dot on the tab label if `formState.errors` touches fields on that tab).
 
-12. **Persistência** — Atualizar `contractsService.createContractServiceType` / `updateContractServiceType` para serializar os novos campos (participants, variables, music_work, signature_settings, branding_settings) como parte do objecto salvo; atualizar `useContractServiceTypes` hook para deserializar e expor os novos campos; garantir retrocompatibilidade com registos antigos sem os novos campos (defaults seguros).
+12. **Persistence** — Update `contractsService.createContractServiceType` / `updateContractServiceType` to serialize the new fields (participants, variables, music_work, signature_settings, branding_settings) as part of the saved object; update the `useContractServiceTypes` hook to deserialize and expose the new fields; ensure backward compatibility with old records that lack the new fields (safe defaults).
 
 ## Relevant files
 - `apps/web/src/modules/contracts/components/ServiceTypeFormModal.tsx`

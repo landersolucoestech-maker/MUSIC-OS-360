@@ -1,25 +1,25 @@
-# Layout Template Tab — Painel Variáveis + Formulário à Esquerda
+# Template Tab Layout — Variables Panel + Form on the Left
 
 ## What & Why
-Na aba "Template" do modal `ContractImportWorkspace`, as secções "Informações Básicas" e "Identidade Visual do Documento" ficam empilhadas em cima do editor, ocupando altura de forma vertical e comprimindo o painel lateral "Variáveis do Registo". O utilizador quer que essas secções fiquem no lado esquerdo (junto do editor) para que o painel de variáveis tenha mais altura disponível.
+In the "Template" tab of the `ContractImportWorkspace` modal, the "Informações Básicas" (Basic Information) and "Identidade Visual do Documento" (Document Visual Identity) sections are stacked on top of the editor, taking up height vertically and squeezing the "Variáveis do Registo" (Registry Variables) side panel. The user wants these sections to sit on the left side (together with the editor) so that the variables panel has more height available.
 
 ## Done looks like
-- A aba "Template" usa um layout de 2 colunas lado a lado:
-  - **Coluna esquerda** (`flex-1`): secção "Informações Básicas" (nome + categoria) → secção "Identidade Visual" (header/footer image uploaders) → editor de texto (ocupa o restante da altura)
-  - **Coluna direita** (largura fixa, igual à actual `w-72`): painel "Variáveis do Registo" ocupa toda a altura do modal, sem ser espremido pelas secções superiores
-- O painel de variáveis (ScrollArea) tem significativamente mais altura visível do que antes
-- As secções "Informações Básicas" e "Identidade Visual" passam a ter scroll próprio ou ficam fixas no topo da coluna esquerda com overflow controlado
-- O visual geral do modal mantém a mesma largura, border-b e estilos existentes; apenas o eixo do layout muda de vertical (top→bottom) para horizontal (left | right)
+- The "Template" tab uses a 2-column side-by-side layout:
+  - **Left column** (`flex-1`): "Informações Básicas" section (name + category) → "Identidade Visual" section (header/footer image uploaders) → text editor (takes the remaining height)
+  - **Right column** (fixed width, same as the current `w-72`): the "Variáveis do Registo" panel takes the full height of the modal, without being squeezed by the upper sections
+- The variables panel (ScrollArea) has significantly more visible height than before
+- The "Informações Básicas" and "Identidade Visual" sections get their own scroll or stay fixed at the top of the left column with controlled overflow
+- The overall look of the modal keeps the same width, border-b and existing styles; only the layout axis changes from vertical (top→bottom) to horizontal (left | right)
 
 ## Out of scope
-- Alterações às abas Variáveis, Categorias ou Preview
-- Alterações ao footer fixo (Cancelar + Salvar Template)
-- Alterações ao `ImageUploadZone` em si
+- Changes to the "Variáveis", "Categorias" or "Preview" tabs
+- Changes to the fixed footer ("Cancelar" + "Salvar Template")
+- Changes to `ImageUploadZone` itself
 
 ## Steps
-1. **Reestruturar o TabsContent "template"** — trocar o layout actual (stack vertical de secções `shrink-0` + flex row `Editor | Vars`) por um único flex row de 2 colunas que ocupa todo o espaço disponível: coluna esquerda (`flex-1`, `flex flex-col`, `overflow-y-auto`) + coluna direita (largura fixa, `flex flex-col`, `border-l`, altura completa).
-2. **Coluna esquerda** — mover para dentro dela, em ordem: "Informações Básicas" (sem `border-b`, com `border-b` interno entre secções ou `px-6 py-4` normal), "Identidade Visual do Documento", e a área do editor de texto com o botão "Analisar com IA". A coluna deve ter `overflow-y-auto` para permitir scroll se o conteúdo crescer.
-3. **Coluna direita** — o painel "Variáveis do Registo" fica na coluna direita e cresce para ocupar toda a altura disponível do modal (sem estar limitado pelas secções de formulário). Manter `ScrollArea flex-1` para a lista de variáveis e o bloco "Variável Rápida" fixo no fundo.
+1. **Restructure the "template" TabsContent** — swap the current layout (vertical stack of `shrink-0` sections + a `Editor | Vars` flex row) for a single 2-column flex row that takes all the available space: left column (`flex-1`, `flex flex-col`, `overflow-y-auto`) + right column (fixed width, `flex flex-col`, `border-l`, full height).
+2. **Left column** — move into it, in order: "Informações Básicas" (without `border-b`, with an inner `border-b` between sections or the normal `px-6 py-4`), "Identidade Visual do Documento", and the text editor area with the "Analisar com IA" (Analyze with AI) button. The column must have `overflow-y-auto` to allow scrolling if the content grows.
+3. **Right column** — the "Variáveis do Registo" panel sits in the right column and grows to take the full available height of the modal (without being limited by the form sections). Keep `ScrollArea flex-1` for the variable list and the "Variável Rápida" (Quick Variable) block fixed at the bottom.
 
 ## Relevant files
 - `apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx:707-886`

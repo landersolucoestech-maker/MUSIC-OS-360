@@ -1,39 +1,39 @@
-# FASE 3 — Domain Events + Automações
+# PHASE 3 — Domain Events + Automations
 
 ## What & Why
-O sistema tem hoje apenas 9 eventos de domínio definidos no `DOMAIN_EVENTS` constant e um `EventsService` wrapper sobre EventEmitter2, mas sem handlers concretos registados, sem payload tipado por evento e sem automações reais. Esta fase implementa o barramento de eventos completo com payloads fortemente tipados, handlers concretos e as automações operacionais que transformam o ERP num sistema reativo.
+The system today has only 9 domain events defined in the `DOMAIN_EVENTS` constant and an `EventsService` wrapper over EventEmitter2, but no concrete handlers registered, no typed payload per event and no real automations. This phase implements the complete event bus with strongly typed payloads, concrete handlers and the operational automations that turn the ERP into a reactive system.
 
 ## Done looks like
-- `apps/api/src/core/events/` expandido com: `domain-events.types.ts` (interfaces tipadas para cada evento), `event-bus.service.ts` (wrapper com emit tipado), handlers por módulo em `apps/api/src/modules/<name>/handlers/`
-- Eventos de domínio implementados com payload tipado:
-  - `ArtistCreated` → dispara: notificação ao owner, bootstrap de metas iniciais, criação de pasta de media
-  - `ReleaseApproved` → dispara: checklist operacional (capa, ISRC, UPC, distribuidora), notificação ao artista, criação de WorkflowTask
-  - `ContractSigned` → dispara: atualização do vínculo artista, notificação ao jurídico, audit trail enriquecido
-  - `LeadConverted` → dispara: criação de Client, criação de artista em onboarding, disparo de email de boas-vindas
-  - `CampaignStarted` → dispara: criação de monitoramento inicial, notificação ao marketing
-  - `CampaignEnded` → dispara: geração de relatório de performance, notificação
-  - `OrganizationCreated` (TenantCreated) → dispara: bootstrap de dados iniciais (categorias, templates, roles), seed de notificações de boas-vindas
-  - `UserInvited` → dispara: email de convite, notificação in-app
-  - `AssetUploaded` → dispara: validação de tipo/tamanho, enfileiramento de processamento (thumbnail, waveform placeholder)
-  - `TicketResolved` → dispara: notificação ao requester, atualização de SLA metrics
-  - `WorkflowTransitioned` (genérico) → dispara: audit log de transição, notificação contextual
-- Event handlers são `@OnEvent()` NestJS decorators — desacoplados dos services emissores
-- Todos os eventos persistem em `domain_event_log` (nova tabela): event_type, tenant_id, aggregate_type, aggregate_id, payload JSONB, occurred_at, processed_at, correlation_id
-- `correlation_id` propagado do request através de AsyncLocalStorage — rastreável de ponta a ponta
-- Frontend recebe notificações in-app em tempo real via WebSocket existente para eventos relevantes
+- `apps/api/src/core/events/` expanded with: `domain-events.types.ts` (typed interfaces for each event), `event-bus.service.ts` (wrapper with typed emit), per-module handlers in `apps/api/src/modules/<name>/handlers/`
+- Domain events implemented with a typed payload:
+  - `ArtistCreated` → triggers: notification to the owner, bootstrap of initial goals, creation of a media folder
+  - `ReleaseApproved` → triggers: operational checklist (cover, ISRC, UPC, distributor), notification to the artist, creation of a WorkflowTask
+  - `ContractSigned` → triggers: update of the artist link, notification to legal, enriched audit trail
+  - `LeadConverted` → triggers: creation of a Client, creation of an artist in onboarding, sending of a welcome email
+  - `CampaignStarted` → triggers: creation of initial monitoring, notification to marketing
+  - `CampaignEnded` → triggers: generation of a performance report, notification
+  - `OrganizationCreated` (TenantCreated) → triggers: bootstrap of initial data (categories, templates, roles), seeding of welcome notifications
+  - `UserInvited` → triggers: invitation email, in-app notification
+  - `AssetUploaded` → triggers: type/size validation, enqueueing of processing (thumbnail, waveform placeholder)
+  - `TicketResolved` → triggers: notification to the requester, update of SLA metrics
+  - `WorkflowTransitioned` (generic) → triggers: transition audit log, contextual notification
+- Event handlers are NestJS `@OnEvent()` decorators — decoupled from the emitting services
+- All events persist in `domain_event_log` (new table): event_type, tenant_id, aggregate_type, aggregate_id, payload JSONB, occurred_at, processed_at, correlation_id
+- `correlation_id` propagated from the request through AsyncLocalStorage — traceable end to end
+- The frontend receives real-time in-app notifications via the existing WebSocket for relevant events
 
 ## Out of scope
-- Broker externo (RabbitMQ, Kafka) — continuar com EventEmitter2 interno
-- Retry automático de handlers com falha (BullMQ já existe mas não é usado aqui)
-- Eventos de analytics de plataformas externas (YouTube, TikTok, etc.)
+- External broker (RabbitMQ, Kafka) — keep the internal EventEmitter2
+- Automatic retry of failed handlers (BullMQ already exists but is not used here)
+- Analytics events from external platforms (YouTube, TikTok, etc.)
 
 ## Steps
-1. **Tipar todos os eventos de domínio** — Criar `domain-events.types.ts` com interfaces para cada evento: `ArtistCreatedEvent`, `ReleaseApprovedEvent`, `ContractSignedEvent`, etc. Cada interface herda de `BaseDomainEvent<T>` com `type`, `tenantId`, `actorId`, `correlationId`, `occurredAt`, `payload`.
-2. **Criar domain_event_log entity + migration** — Nova entidade TypeORM para persitência de eventos emitidos: event_type, aggregate_type, aggregate_id, tenant_id, actor_id, correlation_id, payload, occurred_at, processed_at, error. Append-only (sem soft-delete, sem update).
-3. **Expandir DOMAIN_EVENTS constant** — Adicionar todos os eventos em falta: `release.approved`, `release.distributed`, `campaign.started`, `campaign.ended`, `lead.converted`, `asset.uploaded`, `ticket.resolved`, `workflow.transitioned`. Organizar por aggregate.
-4. **Implementar handlers concretos** — Por módulo, criar handlers com `@OnEvent(DOMAIN_EVENTS.X)`: `ArtistEventHandler`, `ReleaseEventHandler`, `ContractEventHandler`, `LeadEventHandler`, `CampaignEventHandler`, `UploadEventHandler`, `TicketEventHandler`. Cada handler implementa a automação correspondente e persiste no domain_event_log.
-5. **Integrar correlation_id via AsyncLocalStorage** — Criar middleware que gera `X-Correlation-ID` por request e o armazena em AsyncLocalStorage. `EventsService.emit()` lê o correlation_id automaticamente e o inclui em todos os eventos.
-6. **Notificações in-app reativas** — Handler de notificação que escuta eventos relevantes e persiste em `notifications` + emite via WebSocket para o user_id afetado.
+1. **Type all domain events** — Create `domain-events.types.ts` with interfaces for each event: `ArtistCreatedEvent`, `ReleaseApprovedEvent`, `ContractSignedEvent`, etc. Each interface extends `BaseDomainEvent<T>` with `type`, `tenantId`, `actorId`, `correlationId`, `occurredAt`, `payload`.
+2. **Create the domain_event_log entity + migration** — New TypeORM entity for persisting emitted events: event_type, aggregate_type, aggregate_id, tenant_id, actor_id, correlation_id, payload, occurred_at, processed_at, error. Append-only (no soft-delete, no update).
+3. **Expand the DOMAIN_EVENTS constant** — Add all the missing events: `release.approved`, `release.distributed`, `campaign.started`, `campaign.ended`, `lead.converted`, `asset.uploaded`, `ticket.resolved`, `workflow.transitioned`. Organize by aggregate.
+4. **Implement concrete handlers** — Per module, create handlers with `@OnEvent(DOMAIN_EVENTS.X)`: `ArtistEventHandler`, `ReleaseEventHandler`, `ContractEventHandler`, `LeadEventHandler`, `CampaignEventHandler`, `UploadEventHandler`, `TicketEventHandler`. Each handler implements the corresponding automation and persists to the domain_event_log.
+5. **Integrate correlation_id via AsyncLocalStorage** — Create middleware that generates an `X-Correlation-ID` per request and stores it in AsyncLocalStorage. `EventsService.emit()` reads the correlation_id automatically and includes it in all events.
+6. **Reactive in-app notifications** — A notification handler that listens to relevant events and persists them in `notifications` + emits via WebSocket to the affected user_id.
 
 ## Relevant files
 - `apps/api/src/core/events/events.service.ts`

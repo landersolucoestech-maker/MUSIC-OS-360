@@ -1,44 +1,44 @@
-# Wizard "Novo Contrato" — Template-Driven
+# "Novo Contrato" (New Contract) Wizard — Template-Driven
 
 ## What & Why
-O modal `ContratoFormModal` ainda usa campos fixos (`client_type`, `artist_id`, `company_id`, `contractor_contact`, `responsible_person`) que são arquitecturalmente incompatíveis com a engine semântica de templates já existente no sistema. O modal deve ser substituído por um wizard profissional de 6 etapas, totalmente controlado pelo template seleccionado. O formulário nunca mais assume "cliente + artista + empresa" — tudo é derivado do semantic manifest do template.
+The `ContratoFormModal` modal still uses fixed fields (`client_type`, `artist_id`, `company_id`, `contractor_contact`, `responsible_person`) that are architecturally incompatible with the semantic template engine that already exists in the system. The modal must be replaced by a professional 6-step wizard, fully controlled by the selected template. The form never again assumes "client + artist + company" — everything is derived from the template's semantic manifest.
 
 ## Done looks like
-- Clicar "Novo Contrato" abre um wizard de página inteira (ou dialog fullscreen) dividido em dois painéis: esquerda (wizard steps + form dinâmico) e direita (preview jurídico em tempo real).
-- Etapa 1 — Template: dropdown mostra apenas os templates activos com o seu label da CategoryRegistry; ao seleccionar, o sistema lê o `variables_manifest` e extrai placeholders, partes e signatários.
-- Etapa 2 — Partes: o sistema detecta automaticamente os roles presentes nos placeholders do template (ex: `{{REPRESENTANTE.NAME}}` gera o role "REPRESENTANTE") e renderiza um formulário por role com os campos corrects (PF: nome, CPF, RG, endereço, profissão, estado civil; PJ: razão social, CNPJ, endereço, representante legal; Artista: nome artístico, nome civil, CPF). Cada parte pode ser preenchida manualmente, vinda do CRM ou dos Artistas.
-- Etapa 3 — Variáveis: inputs gerados dinamicamente a partir do manifest (`text`, `textarea`, `number`, `percentage`, `currency`, `boolean`, `select`, `date`). Nenhum campo financeiro hardcoded.
-- Etapa 4 — Documento: o template é renderizado com as variáveis/partes preenchidas; o preview à direita atualiza em tempo real; placeholders não resolvidos ficam destacados em amarelo com ⚠.
-- Etapa 5 — Signatários: signatários detectados automaticamente via `{{SIGNATURE.ROLE}}` no template; cada signatário tem nome, email, obrigatório, ordem, provider (DocuSign / Clicksign / Autentique).
-- Etapa 6 — Revisão: resumo de tudo antes de guardar. Botão "Guardar Rascunho" cria o contrato com `status: draft`. Botão "Enviar para Assinatura" cria o contrato e simula o envio.
-- O modal de edição (`mode: "edit"`) hidrata o wizard com os dados existentes.
-- Os campos `client_type`, `artist_id`, `company_id`, `contractor_contact`, `responsible_person` são completamente removidos do modal.
-- TypeScript sem erros (`tsc --noEmit` EXIT:0).
+- Clicking "Novo Contrato" opens a full-page wizard (or fullscreen dialog) split into two panels: left (wizard steps + dynamic form) and right (real-time legal preview).
+- Step 1 — Template: the dropdown shows only the active templates with their CategoryRegistry label; on selection, the system reads the `variables_manifest` and extracts placeholders, parties and signers.
+- Step 2 — Parties: the system automatically detects the roles present in the template's placeholders (e.g. `{{REPRESENTANTE.NAME}}` generates the role "REPRESENTANTE") and renders a form per role with the correct fields (PF — individual: name, CPF, RG, address, profession, marital status; PJ — legal entity: corporate name, CNPJ, address, legal representative; Artist: stage name, legal name, CPF). Each party can be filled in manually, or come from the CRM or from Artists.
+- Step 3 — Variables: inputs generated dynamically from the manifest (`text`, `textarea`, `number`, `percentage`, `currency`, `boolean`, `select`, `date`). No hardcoded financial fields.
+- Step 4 — Document: the template is rendered with the filled-in variables/parties; the preview on the right updates in real time; unresolved placeholders are highlighted in yellow with ⚠.
+- Step 5 — Signers: signers detected automatically via `{{SIGNATURE.ROLE}}` in the template; each signer has name, email, required, order, provider (DocuSign / Clicksign / Autentique).
+- Step 6 — Review: a summary of everything before saving. The "Guardar Rascunho" (Save Draft) button creates the contract with `status: draft`. The "Enviar para Assinatura" (Send for Signature) button creates the contract and simulates sending it.
+- The edit modal (`mode: "edit"`) hydrates the wizard with the existing data.
+- The `client_type`, `artist_id`, `company_id`, `contractor_contact`, `responsible_person` fields are completely removed from the modal.
+- TypeScript with no errors (`tsc --noEmit` EXIT:0).
 
 ## Out of scope
-- Integração real com DocuSign / Clicksign / Autentique (infra de webhook, OAuth) — apenas a UI e estrutura de dados.
-- PDF export / geração de ficheiro PDF (apenas preview HTML).
-- Alteração da engine de templates (ContractImportWorkspace, parseContractText, useTemplatesContratos).
-- Alteração de backend/API.
-- Módulo de assinatura separado — apenas o fluxo dentro do wizard.
+- Real integration with DocuSign / Clicksign / Autentique (webhook infra, OAuth) — only the UI and data structure.
+- PDF export / PDF file generation (HTML preview only).
+- Changes to the template engine (ContractImportWorkspace, parseContractText, useTemplatesContratos).
+- Backend/API changes.
+- A separate signature module — only the flow inside the wizard.
 
 ## Steps
 
-1. **Novo componente `ContratoWizard`** — Criar `apps/web/src/modules/contracts/components/ContratoWizard.tsx`. Wizard de 6 etapas com sidebar de navegação (Template → Partes → Variáveis → Documento → Signatários → Revisão). Layout: painel esquerdo 55% (form) + painel direito 45% (preview). Usa `useState` para etapa actual e dados do wizard. Substituir a abertura do `ContratoFormModal` em `Contratos.tsx` por este wizard (dialog fullscreen ou drawer).
+1. **New `ContratoWizard` component** — Create `apps/web/src/modules/contracts/components/ContratoWizard.tsx`. 6-step wizard with a navigation sidebar (Template → Parties → Variables → Document → Signers → Review). Layout: left panel 55% (form) + right panel 45% (preview). Uses `useState` for the current step and the wizard data. Replace the opening of `ContratoFormModal` in `Contratos.tsx` with this wizard (fullscreen dialog or drawer).
 
-2. **Etapa 1 — Selecção de template** — Dropdown com os templates activos (hook `useTemplatesContratos`). Ao seleccionar, fazer parse do `variables_manifest` (JSON) para extrair variáveis, e parse do `conteudo` via regex `\{\{([A-Z_]+)\.([A-Z_]+)\}\}` para extrair roles de partes (ex: `REPRESENTANTE`, `REPRESENTADO`, `TESTEMUNHA_1`). Guardar no estado do wizard: `{ templateId, manifest, detectedRoles, rawContent }`.
+2. **Step 1 — Template selection** — Dropdown with the active templates (hook `useTemplatesContratos`). On selection, parse the `variables_manifest` (JSON) to extract variables, and parse the `conteudo` via the regex `\{\{([A-Z_]+)\.([A-Z_]+)\}\}` to extract party roles (e.g. `REPRESENTANTE`, `REPRESENTADO`, `TESTEMUNHA_1`). Store in the wizard state: `{ templateId, manifest, detectedRoles, rawContent }`.
 
-3. **Etapa 2 — Partes contratuais dinâmicas** — Para cada role detectado, renderizar um card com: selector de origem (Manual / CRM / Artistas) e campos corrects conforme tipo esperado (PF / PJ / Artista). Os campos de PF/PJ/Artista devem estar num sub-componente `PartyForm`. A escolha "CRM" mostra um Select com `useClientes()`; "Artistas" mostra um Select com artistas; "Manual" mostra os campos directamente.
+3. **Step 2 — Dynamic contracting parties** — For each detected role, render a card with: a source selector (Manual / CRM / Artists) and the correct fields according to the expected type (PF / PJ / Artist). The PF/PJ/Artist fields must be in a `PartyForm` sub-component. The "CRM" choice shows a Select with `useClientes()`; "Artistas" shows a Select with artists; "Manual" shows the fields directly.
 
-4. **Etapa 3 — Variáveis dinâmicas** — Ler as variáveis do manifest (array `variables` ou todos os `{{PLACEHOLDER}}` do conteúdo que não sejam roles de partes nem `SIGNATURE.*`). Para cada variável, renderizar o input correcto pelo tipo (`text` → `<Input>`, `textarea` → `<Textarea>`, `number`/`currency`/`percentage` → `<Input type="number">`, `date` → `<DatePickerField>`, `boolean` → `<Checkbox>`, `select` → `<Select>`). Guardar valores em `Record<string, string>`.
+4. **Step 3 — Dynamic variables** — Read the variables from the manifest (the `variables` array or every `{{PLACEHOLDER}}` in the content that is neither a party role nor `SIGNATURE.*`). For each variable, render the correct input for its type (`text` → `<Input>`, `textarea` → `<Textarea>`, `number`/`currency`/`percentage` → `<Input type="number">`, `date` → `<DatePickerField>`, `boolean` → `<Checkbox>`, `select` → `<Select>`). Store values in a `Record<string, string>`.
 
-5. **Etapa 4 — Preview do documento** — Renderizar o `conteudo` do template substituindo todos os placeholders pelos valores preenchidos nas etapas 2 e 3. Placeholders não resolvidos ficam em `<span class="bg-yellow-100 text-yellow-800">⚠ {{PLACEHOLDER}}</span>`. Preview em painel direito com scroll, tipografia jurídica (font IBM Plex Mono ou serif), header/footer images do template se existirem.
+5. **Step 4 — Document preview** — Render the template's `conteudo`, replacing all placeholders with the values filled in during steps 2 and 3. Unresolved placeholders are rendered as `<span class="bg-yellow-100 text-yellow-800">⚠ {{PLACEHOLDER}}</span>`. Preview in the right panel with scrolling, legal typography (IBM Plex Mono or serif font), the template's header/footer images if they exist.
 
-6. **Etapa 5 — Signatários** — Detectar automaticamente `{{SIGNATURE.ROLE}}`, `{{INITIALS.ROLE}}`, `{{SIGN_DATE.ROLE}}` do conteúdo. Para cada role de assinatura, criar uma linha de signatário com: nome (pré-preenchido da Etapa 2 se o role coincide), email, obrigatório (checkbox), ordem (number), provider (Select: DocuSign / Clicksign / Autentique). Permitir adicionar signatários adicionais manualmente.
+6. **Step 5 — Signers** — Automatically detect `{{SIGNATURE.ROLE}}`, `{{INITIALS.ROLE}}`, `{{SIGN_DATE.ROLE}}` in the content. For each signature role, create a signer row with: name (prefilled from Step 2 if the role matches), email, required (checkbox), order (number), provider (Select: DocuSign / Clicksign / Autentique). Allow adding additional signers manually.
 
-7. **Etapa 6 — Revisão e gravação** — Mostrar resumo: template seleccionado, partes preenchidas, nº de variáveis, nº de signatários, provider. Botão "Guardar Rascunho": chamar `createContrato.mutate({ titulo, template_id, status: "rascunho", signers, ... })` onde os dados das partes e variáveis ficam em `observacoes` (JSON serializado) até existir schema dedicado. Botão "Enviar para Assinatura": mesmo mas `status: "aguardando_assinatura"` + `toast.info("Envio simulado — integração com [provider] não activa")`.
+7. **Step 6 — Review and save** — Show a summary: selected template, filled-in parties, number of variables, number of signers, provider. "Guardar Rascunho" button: call `createContrato.mutate({ titulo, template_id, status: "rascunho", signers, ... })` where the party and variable data go into `observacoes` (serialized JSON) until a dedicated schema exists. "Enviar para Assinatura" button: the same but with `status: "aguardando_assinatura"` + `toast.info("Envio simulado — integração com [provider] não activa")`.
 
-8. **Limpar ContratoFormModal** — Remover completamente os campos `client_type`, `artist_id`, `company_id`, `contractor_contact`, `responsible_person` do schema Zod `contrato-schema.ts` e do componente. Atualizar `Contratos.tsx` para usar `ContratoWizard` em vez de `ContratoFormModal` para criação. O modal de edição pode continuar a existir em forma simplificada (apenas status, datas, observações) ou também usar o wizard com hidratação.
+8. **Clean up ContratoFormModal** — Completely remove the `client_type`, `artist_id`, `company_id`, `contractor_contact`, `responsible_person` fields from the Zod schema `contrato-schema.ts` and from the component. Update `Contratos.tsx` to use `ContratoWizard` instead of `ContratoFormModal` for creation. The edit modal may continue to exist in a simplified form (only status, dates, notes) or also use the wizard with hydration.
 
 ## Relevant files
 - `apps/web/src/modules/contracts/components/ContratoFormModal.tsx`

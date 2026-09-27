@@ -1,49 +1,49 @@
 # TASK 9 — Distribution Orchestration (DistroKid, TuneCore, ONErpm, TooLost, FUGA)
 
 ## What & Why
-O sistema tem módulo de lançamentos (`/lancamentos`) no frontend mas não tem backend para orquestrar a entrega real para distribuidoras. Distribuidoras como DistroKid, TuneCore, ONErpm, TooLost e FUGA têm APIs próprias para validar metadata, submeter releases e acompanhar status. Sem esta camada, releases ficam apenas como registros internos sem entrega real às plataformas digitais.
+The system has a releases module (`/lancamentos`) in the frontend but no backend to orchestrate the actual delivery to distributors. Distributors such as DistroKid, TuneCore, ONErpm, TooLost and FUGA have their own APIs for validating metadata, submitting releases and tracking status. Without this layer, releases remain only internal records with no actual delivery to the digital platforms.
 
-## Escopo ESTRITO
-O módulo serve APENAS para:
-- validar metadata do release (título, ISRC, UPC, artistas, gênero, data)
-- organizar e validar assets (áudio WAV/FLAC, artwork JPEG 3000x3000)
-- submeter release para a distribuidora selecionada
-- acompanhar status (pending → processing → distributed → failed)
+## STRICT scope
+The module serves ONLY to:
+- validate the release metadata (title, ISRC, UPC, artists, genre, date)
+- organize and validate assets (WAV/FLAC audio, JPEG 3000x3000 artwork)
+- submit the release to the selected distributor
+- track status (pending → processing → distributed → failed)
 
-NÃO implementar: royalties, payout, DSP accounting, fingerprinting, anti-fraude, content ID, ingestão DSP própria, ledger financeiro.
+DO NOT implement: royalties, payout, DSP accounting, fingerprinting, anti-fraud, content ID, own DSP ingestion, financial ledger.
 
 ## Done looks like
-- Interface `DistributionProvider` em `packages/shared-types`: `validateRelease()`, `uploadAssets()`, `publishRelease()`, `syncStatus()`
-- Adapters implementados: `DistroKidAdapter`, `TuneCoreAdapter`, `ONErpmAdapter`, `TooLostAdapter`, `FUGAAdapter` — cada um implementa `DistributionProvider`; em fase inicial os adapters são skeletons que logam a operação e retornam status `pending` (integrações reais via API key por tenant quando disponível)
-- `DistributionOrchestratorService`: recebe `releaseId + tenantId + provider`, valida metadata via `ReleasesService`, valida assets via `UploadsService`, chama o adapter correto, persiste status na tabela `distribution_submissions`
-- Tabela `distribution_submissions`: `id`, `tenant_id`, `release_id`, `provider`, `status` (pending/processing/distributed/failed), `external_id`, `submitted_at`, `last_sync_at`, `error_message`
-- Endpoint `POST /distribution/submit`: recebe `{ releaseId, provider }`, valida release, inicia processo
-- Endpoint `GET /distribution/status/:submissionId`: retorna status atual
-- Endpoint `POST /distribution/sync/:submissionId`: dispara sync de status com a distribuidora
-- Frontend: página de releases conecta ao endpoint real (substituindo mock); botão "Distribuir" abre seletor de distribuidora e chama `POST /distribution/submit`
-- `tsc --noEmit` sem erros
+- `DistributionProvider` interface in `packages/shared-types`: `validateRelease()`, `uploadAssets()`, `publishRelease()`, `syncStatus()`
+- Implemented adapters: `DistroKidAdapter`, `TuneCoreAdapter`, `ONErpmAdapter`, `TooLostAdapter`, `FUGAAdapter` — each implements `DistributionProvider`; in the initial phase the adapters are skeletons that log the operation and return status `pending` (real integrations via a per-tenant API key when available)
+- `DistributionOrchestratorService`: receives `releaseId + tenantId + provider`, validates metadata via `ReleasesService`, validates assets via `UploadsService`, calls the correct adapter, persists the status in the `distribution_submissions` table
+- `distribution_submissions` table: `id`, `tenant_id`, `release_id`, `provider`, `status` (pending/processing/distributed/failed), `external_id`, `submitted_at`, `last_sync_at`, `error_message`
+- `POST /distribution/submit` endpoint: receives `{ releaseId, provider }`, validates the release, starts the process
+- `GET /distribution/status/:submissionId` endpoint: returns the current status
+- `POST /distribution/sync/:submissionId` endpoint: triggers a status sync with the distributor
+- Frontend: the releases page connects to the real endpoint (replacing the mock); the "Distribuir" (Distribute) button opens a distributor selector and calls `POST /distribution/submit`
+- `tsc --noEmit` without errors
 
 ## Out of scope
-- Implementação real das APIs das distribuidoras (apenas estrutura/skeleton dos adapters)
-- Pagamentos às distribuidoras (faturamento manual pelo tenant)
-- Relatórios de distribuição avançados
-- Integração com ECAD/ABRAMUS
+- Real implementation of the distributors' APIs (only the structure/skeleton of the adapters)
+- Payments to the distributors (manual billing by the tenant)
+- Advanced distribution reports
+- Integration with ECAD/ABRAMUS
 
 ## Steps
-1. **Schema Drizzle** — criar tabela `distribution_submissions` com campos descritos acima; gerar e aplicar migration via drizzle-kit
-2. **Interface DistributionProvider** — criar `packages/shared-types/src/distribution.ts` com interface `DistributionProvider`, enum `DistributionProviderName`, tipo `ReleaseSubmission`, tipo `SubmissionStatus`
-3. **Adapters skeleton** — criar `apps/api/src/modules/distribution/adapters/` com um arquivo por distribuidora; cada adapter implementa `DistributionProvider`; `validateRelease()` verifica campos obrigatórios (título, ISRC, UPC, artista, gênero, data); `publishRelease()` loga e retorna `{ externalId: uuid(), status: 'pending' }`; `syncStatus()` retorna status atual do banco
-4. **DistributionOrchestratorService** — criar service que: carrega release via Drizzle, valida campos obrigatórios, seleciona adapter pelo `provider`, chama `validateRelease()` + `uploadAssets()` + `publishRelease()`, persiste em `distribution_submissions`; trata erros com mensagem descritiva por step
-5. **DistributionController + Module** — criar controller com os 3 endpoints; criar `DistributionModule` com provider, registrar no `AppModule`; proteger endpoints com `TenantGuard` + `@RequireRole('editor')`
-6. **Frontend** — atualizar `client/src/modules/releases/` para usar `POST /distribution/submit` no botão de distribuição e `GET /distribution/status/:id` para exibir status; exibir badge de status por submissão na listagem de releases
+1. **Drizzle schema** — create the `distribution_submissions` table with the fields described above; generate and apply the migration via drizzle-kit
+2. **DistributionProvider interface** — create `packages/shared-types/src/distribution.ts` with the `DistributionProvider` interface, the `DistributionProviderName` enum, the `ReleaseSubmission` type, the `SubmissionStatus` type
+3. **Skeleton adapters** — create `apps/api/src/modules/distribution/adapters/` with one file per distributor; each adapter implements `DistributionProvider`; `validateRelease()` checks the mandatory fields (title, ISRC, UPC, artist, genre, date); `publishRelease()` logs and returns `{ externalId: uuid(), status: 'pending' }`; `syncStatus()` returns the current status from the database
+4. **DistributionOrchestratorService** — create a service that: loads the release via Drizzle, validates the mandatory fields, selects the adapter by `provider`, calls `validateRelease()` + `uploadAssets()` + `publishRelease()`, persists to `distribution_submissions`; handles errors with a descriptive message per step
+5. **DistributionController + Module** — create the controller with the 3 endpoints; create `DistributionModule` with the provider, register it in `AppModule`; protect the endpoints with `TenantGuard` + `@RequireRole('editor')`
+6. **Frontend** — update `client/src/modules/releases/` to use `POST /distribution/submit` on the distribution button and `GET /distribution/status/:id` to display the status; display a status badge per submission in the releases listing
 
 ## Relevant files
-- `apps/api/src/modules/releases/` (releases module existente)
+- `apps/api/src/modules/releases/` (existing releases module)
 - `apps/api/src/database/schema.ts`
 - `apps/api/src/app.module.ts`
 - `packages/shared-types/`
 - `client/src/modules/releases/pages/`
 
 ## Depends on
-- Task #661 (auth chain — tenantId necessário)
-- Task #665 (backend modules — padrão de CRUD a seguir)
+- Task #661 (auth chain — tenantId required)
+- Task #665 (backend modules — CRUD pattern to follow)

@@ -1,74 +1,74 @@
 ---
-title: Frontend — migrar 8 hooks de integrações para usar backend (remover sessionStorage)
+title: Frontend — migrate 8 integration hooks to use the backend (remove sessionStorage)
 ---
-# Migrar Hooks Frontend de Integrações
+# Migrate the Frontend Integration Hooks
 
 ## What & Why
-Os hooks de integração do frontend atualmente armazenam credenciais e tokens em
-`sessionStorage`/`localStorage`. Isso é inseguro e incorreto — credenciais devem
-ficar no banco (criptografadas server-side). Os hooks devem apenas chamar o backend
-via `api-client`. Migrar 8 hooks: useSpotify, useSoundCloud, useAppleMusic,
-useInstagram, useTikTokAds, useGoogleAds, useAbramus e useYouTube.
+The frontend integration hooks currently store credentials and tokens in
+`sessionStorage`/`localStorage`. This is insecure and incorrect — credentials must
+live in the database (encrypted server-side). The hooks must only call the backend
+via `api-client`. Migrate 8 hooks: useSpotify, useSoundCloud, useAppleMusic,
+useInstagram, useTikTokAds, useGoogleAds, useAbramus and useYouTube.
 
 ## Done looks like
-- Nenhum dos 8 hooks usa `sessionStorage` ou `localStorage` para credenciais
-- Todos os hooks usam `api.get`, `api.post`, `api.delete` do `@/shared/lib/api-client`
-- Modo mock respeitado: quando `MOCK_MODE === true`, os hooks retornam stub sem chamar backend
-- useSpotify: `useSpotifyStatus` lê `/integrations/status`; `useSpotifyConnect` abre
-  popup com URL do backend; `useSpotifyArtistMetrics` chama `POST /integrations/spotify/sync-artist`;
-  `useSpotifyDisconnect` chama `DELETE /integrations/spotify/disconnect`
+- None of the 8 hooks uses `sessionStorage` or `localStorage` for credentials
+- All hooks use `api.get`, `api.post`, `api.delete` from `@/shared/lib/api-client`
+- Mock mode respected: when `MOCK_MODE === true`, the hooks return a stub without calling the backend
+- useSpotify: `useSpotifyStatus` reads `/integrations/status`; `useSpotifyConnect` opens a
+  popup with the backend URL; `useSpotifyArtistMetrics` calls `POST /integrations/spotify/sync-artist`;
+  `useSpotifyDisconnect` calls `DELETE /integrations/spotify/disconnect`
 - useSoundCloud: status via `GET /integrations/soundcloud/status`, configure via POST,
-  disconnect via DELETE, métricas via GET
-- useAppleMusic: status, configure, disconnect, métricas via backend
-- useInstagram: status, connect (popup OAuth), metrics, disconnect via backend
-- useTikTokAds: status, configure, campaigns, disconnect via backend
-- useGoogleAds: status, configure, connect (popup OAuth), campaigns, disconnect via backend
-- useAbramus: status e saveCredentials chamam backend; searchArtist chama
+  disconnect via DELETE, metrics via GET
+- useAppleMusic: status, configure, disconnect, metrics via the backend
+- useInstagram: status, connect (OAuth popup), metrics, disconnect via the backend
+- useTikTokAds: status, configure, campaigns, disconnect via the backend
+- useGoogleAds: status, configure, connect (OAuth popup), campaigns, disconnect via the backend
+- useAbramus: status and saveCredentials call the backend; searchArtist calls
   `GET /integrations/abramus/search/artist`
 - useYouTube: status via `GET /integrations/youtube/status`, channelMetrics via
   `GET /integrations/youtube/channel/:id`
-- `api-client.ts` tem método `delete` disponível (adicionar se faltar)
+- `api-client.ts` has a `delete` method available (add it if missing)
 
 ## Out of scope
-- Criar novos serviços backend (já coberto pela task anterior)
-- Refatorar componentes que consumem os hooks
-- Testes E2E
+- Creating new backend services (already covered by the previous task)
+- Refactoring the components that consume the hooks
+- E2E tests
 
 ## Steps
-1. **Verificar api-client.ts** — Confirmar que o objeto `api` exporta método `delete`.
-   Se não existir, adicionar: `delete: <T>(path: string) => request<T>(path, { method: 'DELETE' })`.
-2. **Migrar useSpotify.ts** — Substituir completamente: remover sessionStorage.
-   `useSpotifyStatus` lê do backend; `useSpotifyConnect` abre popup via URL do backend;
-   `useSpotifyArtistMetrics` sincroniza via POST; `useSpotifyDisconnect` chama DELETE.
-   Manter MOCK_MODE guard.
-3. **Migrar useSoundCloud.ts** — Substituir completamente: `useSoundCloudStatus`,
+1. **Check api-client.ts** — Confirm that the `api` object exports a `delete` method.
+   If it does not exist, add: `delete: <T>(path: string) => request<T>(path, { method: 'DELETE' })`.
+2. **Migrate useSpotify.ts** — Replace completely: remove sessionStorage.
+   `useSpotifyStatus` reads from the backend; `useSpotifyConnect` opens a popup via the backend URL;
+   `useSpotifyArtistMetrics` syncs via POST; `useSpotifyDisconnect` calls DELETE.
+   Keep the MOCK_MODE guard.
+3. **Migrate useSoundCloud.ts** — Replace completely: `useSoundCloudStatus`,
    `useSoundCloudSaveCredentials` (POST configure), `useSoundCloudDeleteCredentials`
    (DELETE disconnect), `useSoundCloudUserMetrics` (GET user/:permalink),
    `useSoundCloudTrackMetrics` (GET track/:id).
-4. **Migrar useAppleMusic.ts** — Substituir: `useAppleMusicStatus`,
-   `useAppleMusicSaveCredentials` (POST configure com team_id/key_id/private_key),
+4. **Migrate useAppleMusic.ts** — Replace: `useAppleMusicStatus`,
+   `useAppleMusicSaveCredentials` (POST configure with team_id/key_id/private_key),
    `useAppleMusicArtistMetrics` (GET artist/:id), `useAppleMusicDisconnect`.
-5. **Migrar useInstagram.ts** — Substituir: `useInstagramStatus`, `useInstagramConnect`
+5. **Migrate useInstagram.ts** — Replace: `useInstagramStatus`, `useInstagramConnect`
    (GET auth → popup), `useInstagramAccountMetrics` (GET metrics),
    `useInstagramDisconnect` (DELETE).
-6. **Migrar useTikTokAds.ts** — Substituir: `useTikTokAdsStatus`,
-   `useTikTokAdsSaveCredentials` (POST configure com app_id/secret/advertiser_id),
+6. **Migrate useTikTokAds.ts** — Replace: `useTikTokAdsStatus`,
+   `useTikTokAdsSaveCredentials` (POST configure with app_id/secret/advertiser_id),
    `useTikTokAdsCampaigns` (GET campaigns), `useTikTokAdsDisconnect` (DELETE).
-7. **Migrar useGoogleAds.ts** — Substituir: `useGoogleAdsStatus`,
+7. **Migrate useGoogleAds.ts** — Replace: `useGoogleAdsStatus`,
    `useGoogleAdsSaveCredentials` (POST configure), `useGoogleAdsConnect`
    (GET auth → popup), `useGoogleAdsCampaigns` (GET campaigns),
    `useGoogleAdsDisconnect` (DELETE).
-8. **Migrar useAbramus.ts** — Atualizar seletivamente: `useAbramusStatus`
+8. **Migrate useAbramus.ts** — Update selectively: `useAbramusStatus`
    (GET /integrations/abramus/status), `useAbramusSaveCredentials`
-   (POST /integrations/abramus/configure com username/password/base_url),
-   `useAbramusSearchArtist` (GET /integrations/abramus/search/artist). Manter
-   tipos e demais funções existentes que não usam sessionStorage.
-9. **Migrar useYouTube.ts** — `useYouTubeStatus` (GET /integrations/youtube/status),
-   `useYouTubeChannelMetrics` (GET /integrations/youtube/channel/:id). Remover
+   (POST /integrations/abramus/configure with username/password/base_url),
+   `useAbramusSearchArtist` (GET /integrations/abramus/search/artist). Keep
+   the types and the other existing functions that do not use sessionStorage.
+9. **Migrate useYouTube.ts** — `useYouTubeStatus` (GET /integrations/youtube/status),
+   `useYouTubeChannelMetrics` (GET /integrations/youtube/channel/:id). Remove
    sessionStorage.
-10. **Verificar ausência de sessionStorage** — Confirmar que nenhum dos 8 hooks
-    exporta chamadas para `sessionStorage.setItem`/`getItem` para credenciais.
-11. **TypeCheck frontend** — `cd client && npx tsc --noEmit` zero erros.
+10. **Check for absence of sessionStorage** — Confirm that none of the 8 hooks
+    exports calls to `sessionStorage.setItem`/`getItem` for credentials.
+11. **Frontend TypeCheck** — `cd client && npx tsc --noEmit` zero errors.
 
 ## Relevant files
 - `client/src/shared/lib/api-client.ts`

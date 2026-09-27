@@ -12,7 +12,7 @@ OpenAI is already installed (javascript_openai_ai_integrations==2.0.0) and must 
 - A right-side panel lists every detected variable with original value / context / placeholder; user can accept, edit, or remove each one
 - Clicking a variable in the panel highlights the corresponding span in the editor
 - "Gerar Template" replaces accepted variables in the document text with their `{{PLACEHOLDER}}` and saves as a `TemplateContrato` record (reusing the existing `TemplateContrato` type and `useTemplatesContratos` hook)
-- AI also shows clause-type badges on detected clauses (financial, autoral, exclusividade, confidencialidade, inadimplência, distribuição digital, licenciamento, royalties)
+- AI also shows clause-type badges on detected clauses (financial, copyright, exclusivity, confidentiality, default/non-payment, digital distribution, licensing, royalties)
 - Existing contract list on `TemplatesContratos.tsx` keeps working — the new workspace is layered on top as a modal/page
 - `ServiceTypeFormModal.tsx` is deleted; the old "Tipos de Contrato" table and its CRUD are removed from the page
 - Zero TypeScript errors after the change

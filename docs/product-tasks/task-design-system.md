@@ -1,32 +1,32 @@
-# Design System Enterprise — Spacing + Grids + Loading + Empty States + Formulários
+# Enterprise Design System — Spacing + Grids + Loading + Empty States + Forms
 
 ## What & Why
-O frontend tem 15+ módulos desenvolvidos incrementalmente sem um design system centralizado aplicado de forma consistente. Isso resulta em: spacing inconsistente (alguns usam `gap-4`, outros `gap-6`, outros `space-y-3`), ausência de empty states padronizados (alguns módulos mostram tabela vazia, outros nada), loading states heterogêneos (alguns usam Skeleton, outros spinner, alguns nada), formulários com density visual diferente entre módulos, e motion/transições ausentes em muitos componentes. O resultado é uma UX com aparência amadora apesar dos dados serem enterprise.
+The frontend has 15+ modules developed incrementally without a centralized design system applied consistently. This results in: inconsistent spacing (some use `gap-4`, others `gap-6`, others `space-y-3`), no standardized empty states (some modules show an empty table, others nothing), heterogeneous loading states (some use Skeleton, others a spinner, some nothing), forms with different visual density between modules, and motion/transitions missing from many components. The result is a UX with an amateur look even though the data is enterprise-grade.
 
 ## Done looks like
-- `shared/design-system/tokens.ts` documenta todas as decisões: spacing scale, border-radius, shadows, motion durations
-- Componente `<EmptyState>` padronizado: icon + title + description + optional CTA; aplicado em todas as tabelas e listas quando `data.length === 0`
-- Componente `<PageSkeleton>` e `<TableSkeleton rows={N}>` padronizados; substituem spinners ad-hoc em todos os módulos
-- Componente `<SectionCard>` padronizado para cards de conteúdo com header, body e footer opcionais; substituir divs genéricas nos dashboards
-- Formulários: todos os formulários críticos (Artist, Fonograma, Contrato, Transação, Lead) usam o mesmo layout 2-col com `fieldset/legend` semântico, espaçamento `gap-6`, labels acima dos campos, helper text e mensagens de erro padronizadas
-- `<StatusBadge>` unificado que substitui os múltiplos badge variants espalhados: aceita `status` e `variant` e mapeia para cor semanticamente correta (success=verde, warning=amarelo, destructive=vermelho, pending=azul)
-- Motion: transições de modal (fade + scale 200ms), accordion (height 150ms), hover em rows de tabela (bg 100ms) — todos via Tailwind `transition-*`
-- Mobile: todos os modais têm `max-h-[90vh] overflow-y-auto`; tabelas têm scroll horizontal em telas < 768px
-- Nenhuma regressão funcional: UX operacional preservada integralmente
+- `shared/design-system/tokens.ts` documents all decisions: spacing scale, border-radius, shadows, motion durations
+- A standardized `<EmptyState>` component: icon + title + description + optional CTA; applied to all tables and lists when `data.length === 0`
+- Standardized `<PageSkeleton>` and `<TableSkeleton rows={N}>` components; they replace ad-hoc spinners in all modules
+- A standardized `<SectionCard>` component for content cards with an optional header, body and footer; replace generic divs in the dashboards
+- Forms: all critical forms (Artist, Phonogram, Contract, Transaction, Lead) use the same 2-col layout with semantic `fieldset/legend`, `gap-6` spacing, labels above the fields, standardized helper text and error messages
+- A unified `<StatusBadge>` that replaces the multiple badge variants scattered around: it accepts `status` and `variant` and maps them to the semantically correct color (success=green, warning=yellow, destructive=red, pending=blue)
+- Motion: modal transitions (fade + scale 200ms), accordion (height 150ms), hover on table rows (bg 100ms) — all via Tailwind `transition-*`
+- Mobile: all modals have `max-h-[90vh] overflow-y-auto`; tables scroll horizontally on screens < 768px
+- No functional regression: operational UX fully preserved
 
 ## Out of scope
-- Reescrever módulos inteiros
-- Dark mode (já configurado)
-- Mudar identidade visual (cores, tipografia definidas)
-- Storybook / documentação visual
+- Rewriting whole modules
+- Dark mode (already configured)
+- Changing the visual identity (colors, typography already defined)
+- Storybook / visual documentation
 
 ## Steps
-1. **Auditoria de inconsistências** — gerar lista de: todos os empty states existentes (ou ausentes), todos os loading patterns, todos os badge/status components, spacing inconsistente em formulários principais — base para o trabalho dos passos seguintes
-2. **EmptyState component** — criar `shared/components/EmptyState.tsx`: props `{ icon, title, description, action?: { label, onClick } }`; aplicar em: ArtistasList, ObrasList, FonogramasList, ContratosList, LeadsList, TransaçõesList, ProjetosList, EventosList, InventárioList
-3. **Skeleton components** — criar `shared/components/skeletons/TableSkeleton.tsx` e `PageSkeleton.tsx`; substituir todos os `isLoading && <Spinner>` por `<TableSkeleton rows={5} />` ou `<PageSkeleton />`; garantir que dimensões coincidem com layout real
-4. **StatusBadge unificado** — criar `shared/components/StatusBadge.tsx` que consolida `ContratoStatusBadge`, badges de status de releases, de transações, de leads; mapeamento centralizado `status → variant → label`; substituir instâncias espalhadas pelo componente unificado
-5. **Formulários críticos** — padronizar layout dos 5 formulários principais (ArtistaFormModal, FonogramaFormModal, ContratoFormModal, TransacaoFormModal, LeadFormModal): grid 2-col consistente, labels acima, helper text via `<FormDescription>`, error via `<FormMessage>`, `gap-6` entre grupos de campos
-6. **Motion + mobile** — adicionar `transition-colors duration-100` em todas as table rows; `max-h-[90vh] overflow-y-auto` em todos os Dialog/Sheet com conteúdo longo; `overflow-x-auto` wrapping todas as tabelas; verificar que nenhum modal quebra em 375px
+1. **Inconsistency audit** — produce a list of: all existing (or missing) empty states, all loading patterns, all badge/status components, inconsistent spacing in the main forms — the basis for the work in the following steps
+2. **EmptyState component** — create `shared/components/EmptyState.tsx`: props `{ icon, title, description, action?: { label, onClick } }`; apply it to: `ArtistasList`, `ObrasList`, `FonogramasList`, `ContratosList`, `LeadsList`, `TransaçõesList`, `ProjetosList`, `EventosList`, `InventárioList`
+3. **Skeleton components** — create `shared/components/skeletons/TableSkeleton.tsx` and `PageSkeleton.tsx`; replace every `isLoading && <Spinner>` with `<TableSkeleton rows={5} />` or `<PageSkeleton />`; ensure the dimensions match the real layout
+4. **Unified StatusBadge** — create `shared/components/StatusBadge.tsx`, which consolidates `ContratoStatusBadge` and the status badges for releases, transactions and leads; centralized `status → variant → label` mapping; replace the scattered instances with the unified component
+5. **Critical forms** — standardize the layout of the 5 main forms (ArtistaFormModal, FonogramaFormModal, ContratoFormModal, TransacaoFormModal, LeadFormModal): consistent 2-col grid, labels above, helper text via `<FormDescription>`, errors via `<FormMessage>`, `gap-6` between field groups
+6. **Motion + mobile** — add `transition-colors duration-100` to all table rows; `max-h-[90vh] overflow-y-auto` on every Dialog/Sheet with long content; `overflow-x-auto` wrapping all tables; verify that no modal breaks at 375px
 
 ## Relevant files
 - `client/src/shared/components/`

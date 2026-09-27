@@ -1,25 +1,25 @@
-# Upload Cabeçalho/Rodapé nos Editores de Template
+# Header/Footer Upload in the Template Editors
 
 ## What & Why
-Adicionar upload de imagem de cabeçalho e rodapé ao editor de criação e edição de templates de contrato. Nada mais.
+Add header and footer image upload to the contract template creation and editing editor. Nothing else.
 
 ## Done looks like
-- No editor de criação (ContractImportWorkspace) existe uma secção "Cabeçalho / Rodapé" no painel lateral direito, abaixo das variáveis
-- No editor de edição (TemplateEditModal) a mesma secção aparece no mesmo local
-- O utilizador pode fazer upload de uma imagem PNG/JPG/WEBP para cabeçalho e outra para rodapé
-- Após upload, aparece uma miniatura (preview) da imagem com botão de remoção (X)
-- As imagens são convertidas para base64 e guardadas no payload de save como `header_image` e `footer_image`
-- Ao reabrir um template em edição, as imagens guardadas são carregadas e mostradas no preview
+- In the creation editor (ContractImportWorkspace) there is a "Cabeçalho / Rodapé" (Header / Footer) section in the right side panel, below the variables
+- In the editing editor (TemplateEditModal) the same section appears in the same location
+- The user can upload one PNG/JPG/WEBP image for the header and another for the footer
+- After upload, a thumbnail (preview) of the image appears with a remove button (X)
+- The images are converted to base64 and stored in the save payload as `header_image` and `footer_image`
+- When a template is reopened for editing, the saved images are loaded and shown in the preview
 
 ## Out of scope
-- Estilo A4 no editor
-- Topbar contextual com múltiplos painéis
-- Qualquer outra mudança visual ao editor
+- A4 styling in the editor
+- Contextual topbar with multiple panels
+- Any other visual change to the editor
 
 ## Steps
-1. **Adicionar secção de upload ao painel direito do ContractImportWorkspace** — Adicionar estados `headerImage` e `footerImage` (string base64 | null). Abaixo do criador de variável custom, adicionar dois campos de upload com preview e botão de remover. Incluir `header_image` e `footer_image` no payload do `handleSave`.
+1. **Add an upload section to the ContractImportWorkspace right panel** — Add `headerImage` and `footerImage` state (base64 string | null). Below the custom variable creator, add two upload fields with preview and a remove button. Include `header_image` and `footer_image` in the `handleSave` payload.
 
-2. **Replicar para TemplateEditModal** — Mesmo upload nos mesmos estados. No `useEffect` que preenche o formulário, ler `header_image` e `footer_image` do template e pré-preencher. Incluir no payload do `handleSave`.
+2. **Replicate in TemplateEditModal** — Same upload with the same state. In the `useEffect` that fills in the form, read `header_image` and `footer_image` from the template and prefill them. Include them in the `handleSave` payload.
 
 ## Relevant files
 - `apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx`

@@ -1,31 +1,31 @@
-# Observabilidade Enterprise — Correlation ID + Structured Logs + Tracing
+# Enterprise Observability — Correlation ID + Structured Logs + Tracing
 
 ## What & Why
-O interceptor de logging atual apenas registra `METHOD URL → STATUS [Xms]` em texto plano. Não há correlation ID, tenant ID nos logs, structured JSON, tracing distribuído nem métricas de fila. Em produção multi-tenant, isso torna impossível correlacionar requests com tenants, rastrear falhas em filas e diagnosticar problemas de performance por rota. O AuditService existe mas não é chamado sistematicamente.
+The current logging interceptor only records `METHOD URL → STATUS [Xms]` in plain text. There is no correlation ID, no tenant ID in the logs, no structured JSON, no distributed tracing and no queue metrics. In multi-tenant production, this makes it impossible to correlate requests with tenants, track failures in queues and diagnose per-route performance problems. The AuditService exists but is not called systematically.
 
 ## Done looks like
-- Cada request tem `x-request-id` (UUID gerado ou propagado do header)
-- `LoggingInterceptor` reformulado: emite JSON estruturado com `requestId`, `tenantId`, `userId`, `method`, `path`, `statusCode`, `durationMs`
-- Middleware `CorrelationIdMiddleware` injeta `x-request-id` no request e response antes de qualquer handler
-- `AsyncLocalStorage` propaga `requestId` e `tenantId` para qualquer `this.logger.log()` feito dentro de services (via `RequestContextService`)
-- Queue processors: log estruturado de início (`job.id`, `queue`, `tenantId`), conclusão e falha
-- Health check endpoint `GET /health` retorna `{ status: "ok", uptime, version, db: "connected" }`
-- Endpoint `GET /health/queues` retorna contagem de jobs waiting/active/failed por fila
-- `GlobalExceptionFilter` reformulado: inclui `requestId`, `tenantId`, stack trace em dev, mensagem sanitizada em prod
-- `tsc --noEmit` sem erros
+- Each request has an `x-request-id` (UUID generated or propagated from the header)
+- `LoggingInterceptor` reworked: emits structured JSON with `requestId`, `tenantId`, `userId`, `method`, `path`, `statusCode`, `durationMs`
+- A `CorrelationIdMiddleware` injects `x-request-id` into the request and response before any handler
+- `AsyncLocalStorage` propagates `requestId` and `tenantId` to any `this.logger.log()` done inside services (via `RequestContextService`)
+- Queue processors: structured log of start (`job.id`, `queue`, `tenantId`), completion and failure
+- Health check endpoint `GET /health` returns `{ status: "ok", uptime, version, db: "connected" }`
+- Endpoint `GET /health/queues` returns the count of waiting/active/failed jobs per queue
+- `GlobalExceptionFilter` reworked: includes `requestId`, `tenantId`, stack trace in dev, sanitized message in prod
+- `tsc --noEmit` without errors
 
 ## Out of scope
-- OpenTelemetry full distributed tracing (instrumentação de spans end-to-end)
-- PostHog / Sentry integration (já existe, apenas melhorar integração)
-- Frontend observabilidade
+- Full OpenTelemetry distributed tracing (end-to-end span instrumentation)
+- PostHog / Sentry integration (already exists, only improve the integration)
+- Frontend observability
 
 ## Steps
-1. **CorrelationIdMiddleware** — criar `core/middleware/correlation-id.middleware.ts`: gerar UUID v4 se `x-request-id` não vier no header; setar em `req.requestId` e no response header `x-request-id`; registrar no `AppModule` como middleware global
-2. **RequestContextService** — criar `core/context/request-context.service.ts` usando `AsyncLocalStorage<{ requestId: string; tenantId: string | null; userId: string | null }>`; exportar `getContext()` e `run(ctx, fn)`; registrar no `CoreModule`
-3. **LoggingInterceptor refactor** — reescrever para emitir JSON estruturado: `{ level, timestamp, requestId, tenantId, userId, method, path, statusCode, durationMs }`; usar `RequestContextService.getContext()`
-4. **Queue logs** — atualizar todos os 4 processors existentes (email, notifications, ai-jobs, clerk-sync) para logar `{ jobId, queue, tenantId, attempt }` no início e fim de cada job via `this.logger.log(JSON.stringify(...))`
-5. **Health endpoints** — criar `core/health/health.controller.ts` com `GET /health` (db ping via Drizzle `SELECT 1`) e `GET /health/queues` (BullMQ queue counts para EMAILS, NOTIFICATIONS, AI_JOBS, CLERK_SYNC); registrar no `CoreModule`
-6. **GlobalExceptionFilter update** — adicionar `requestId` e `tenantId` ao corpo de erro; sanitizar stack trace (`NODE_ENV !== production`); logar como JSON estruturado
+1. **CorrelationIdMiddleware** — create `core/middleware/correlation-id.middleware.ts`: generate a UUID v4 if `x-request-id` does not come in the header; set it on `req.requestId` and in the `x-request-id` response header; register it in `AppModule` as global middleware
+2. **RequestContextService** — create `core/context/request-context.service.ts` using `AsyncLocalStorage<{ requestId: string; tenantId: string | null; userId: string | null }>`; export `getContext()` and `run(ctx, fn)`; register it in `CoreModule`
+3. **LoggingInterceptor refactor** — rewrite it to emit structured JSON: `{ level, timestamp, requestId, tenantId, userId, method, path, statusCode, durationMs }`; use `RequestContextService.getContext()`
+4. **Queue logs** — update all 4 existing processors (email, notifications, ai-jobs, clerk-sync) to log `{ jobId, queue, tenantId, attempt }` at the start and end of each job via `this.logger.log(JSON.stringify(...))`
+5. **Health endpoints** — create `core/health/health.controller.ts` with `GET /health` (db ping via Drizzle `SELECT 1`) and `GET /health/queues` (BullMQ queue counts for EMAILS, NOTIFICATIONS, AI_JOBS, CLERK_SYNC); register it in `CoreModule`
+6. **GlobalExceptionFilter update** — add `requestId` and `tenantId` to the error body; sanitize the stack trace (`NODE_ENV !== production`); log as structured JSON
 
 ## Relevant files
 - `apps/api/src/core/interceptors/logging.interceptor.ts`

@@ -1,60 +1,60 @@
-# Refatorar Modal "Novo Template" — 3 Abas
+# Refactor the "Novo Template" (New Template) Modal — 3 Tabs
 
 ## What & Why
 
-O modal `ContractImportWorkspace` (aberto por "+ Novo Template" em `/contratos/templates`) tem um layout vertical longo e desorganizado. A refatoração transforma-o num editor profissional com 3 abas horizontais no topo: **Template · Variáveis · Preview**.
+The `ContractImportWorkspace` modal (opened by "+ Novo Template" at `/contratos/templates`) has a long, disorganized vertical layout. The refactor turns it into a professional editor with 3 horizontal tabs at the top: **"Template · Variáveis · Preview"** (Template · Variables · Preview).
 
 ## Done looks like
 
 ### Modal
-- Largura ~980–1100 px, altura máxima 85 vh, sem scroll externo
-- Header fixo: título "Novo Template de Contrato" + botão X
-- Tabs horizontais pills no topo: **Template · Variáveis · Preview**
-- Footer fixo: texto "Alterações salvas automaticamente" à esq. + botões Cancelar + Salvar Template (com loading state) à dir.
+- Width ~980–1100 px, max height 85 vh, no outer scroll
+- Fixed header: title "Novo Template de Contrato" (New Contract Template) + X button
+- Horizontal pill tabs at the top: **"Template · Variáveis · Preview"**
+- Fixed footer: the text "Alterações salvas automaticamente" (Changes saved automatically) on the left + "Cancelar" (Cancel) + "Salvar Template" (Save Template) buttons (with loading state) on the right
 
-### Aba — Template
-- **Seção Informações Básicas**: grid 2 colunas — Input "Nome do Template" + Select "Categoria"
-- **Seção Cabeçalho e Rodapé**: dois `ImageUploadZone` lado a lado para `header_image` / `footer_image`. Cada um tem: estado vazio elegante (ícone + texto), hover state, preview `object-contain`, overlay com botão Substituir e botão Remover
-- **Editor de Cláusulas** (abaixo dos uploads): `<textarea>` contínuo full-height estilo documento (padding generoso, fundo levemente mais claro, tipografia elegante), placeholder "Escreva o conteúdo do contrato…", sem o sistema antigo de múltiplos cards por cláusula. Highlight de `{{VARIAVEL}}` mantido
-- **Painel lateral fixo** à direita (largura ~272 px): lista de variáveis agrupadas por categoria (AGÊNCIA, ARTISTA, FINANCEIRO…); clicar numa variável insere-a no editor com toast de confirmação. Painel sempre visível dentro desta aba
+### Tab — Template
+- **Basic Information section**: 2-column grid — "Nome do Template" (Template Name) Input + "Categoria" (Category) Select
+- **Header and Footer section**: two `ImageUploadZone`s side by side for `header_image` / `footer_image`. Each one has: an elegant empty state (icon + text), a hover state, an `object-contain` preview, and an overlay with a "Substituir" (Replace) button and a "Remover" (Remove) button
+- **Clause Editor** (below the uploads): a continuous full-height document-style `<textarea>` (generous padding, slightly lighter background, elegant typography), placeholder "Escreva o conteúdo do contrato…" (Write the contract content…), without the old system of multiple cards per clause. `{{VARIAVEL}}` highlighting kept
+- **Fixed side panel** on the right (width ~272 px): list of variables grouped by category (AGÊNCIA, ARTISTA, FINANCEIRO…); clicking a variable inserts it into the editor with a confirmation toast. The panel is always visible within this tab
 
-### Aba — Variáveis
-- Renderiza o conteúdo completo do `VariableRegistry` existente (busca, listagem, criar, editar, apagar, importar XLSX, exportar XLSX) — **sem** o PageHeader da página standalone
-- Usar a lógica já existente via `useVariableRegistry`
+### Tab — Variables
+- Renders the full content of the existing `VariableRegistry` (search, listing, create, edit, delete, import XLSX, export XLSX) — **without** the PageHeader of the standalone page
+- Use the existing logic via `useVariableRegistry`
 
-### Aba — Preview
-- Simula uma folha A4 (max-w, sombra, padding interno amplo) com:
-  - Cabeçalho: imagem de `header_image` (ou área vazia elegante)
-  - Corpo: texto do contrato com variáveis `{{X.Y}}` destacadas
-  - Rodapé: imagem de `footer_image` (ou área vazia elegante)
-- Visual inspirado em documento Word/PDF
+### Tab — Preview
+- Simulates an A4 sheet (max-w, shadow, wide inner padding) with:
+  - Header: the `header_image` image (or an elegant empty area)
+  - Body: contract text with the `{{X.Y}}` variables highlighted
+  - Footer: the `footer_image` image (or an elegant empty area)
+- Visual style inspired by a Word/PDF document
 
-### Limpeza
-- Remover o Dialog separado do `VariableRegistry` e o estado `varRegistryOpen` adicionados na tarefa anterior — a funcionalidade vive agora na aba Variáveis
-- Remover o botão "Variáveis" que abria esse Dialog do cabeçalho do modal
-- Remover imports não usados; confirmar `tsc --noEmit --skipLibCheck` sem erros
+### Cleanup
+- Remove the separate `VariableRegistry` Dialog and the `varRegistryOpen` state added in the previous task — the functionality now lives in the Variables tab
+- Remove the "Variáveis" (Variables) button that opened that Dialog from the modal header
+- Remove unused imports; confirm `tsc --noEmit --skipLibCheck` with no errors
 
 ## Out of scope
-- Alterações na página standalone `/contratos/variaveis`
-- Backend / persistência real
-- Editor rich-text WYSIWYG
-- Edição de templates existentes (outro momento)
+- Changes to the standalone page `/contratos/variaveis`
+- Backend / real persistence
+- WYSIWYG rich-text editor
+- Editing existing templates (another time)
 
 ## Steps
 
-1. **Reestruturar o modal** — Substituir o layout vertical por: header fixo → `<Tabs>` (shadcn) com 3 triggers → área de conteúdo scrollável → footer fixo. Apagar blocos antigos (cards de cláusulas, campos dispersos).
+1. **Restructure the modal** — Replace the vertical layout with: fixed header → `<Tabs>` (shadcn) with 3 triggers → scrollable content area → fixed footer. Delete the old blocks (clause cards, scattered fields).
 
-2. **Aba Template — Informações Básicas** — Grid 2 colunas com Input Nome e Select Categoria usando estado controlado já existente.
+2. **Template tab — Basic Information** — 2-column grid with the Name Input and Category Select using the existing controlled state.
 
-3. **Aba Template — Uploaders** — Componente `ImageUploadZone` interno (não exposto) com os dois estados (vazio / com imagem + overlay), usando `FileReader` já presente no código original.
+3. **Template tab — Uploaders** — Internal `ImageUploadZone` component (not exported) with both states (empty / with image + overlay), using the `FileReader` already present in the original code.
 
-4. **Aba Template — Editor + painel lateral** — Flex row: editor `<textarea>` full-height à esq.; painel `RegistryVarGroup` fixo (w-72) à dir. com variáveis clicáveis que inserem no editor. Preservar lógica de detecção semântica e botão IA.
+4. **Template tab — Editor + side panel** — Flex row: full-height `<textarea>` editor on the left; fixed `RegistryVarGroup` panel (w-72) on the right with clickable variables that insert into the editor. Preserve the semantic detection logic and the AI button.
 
-5. **Aba Variáveis** — Montar o conteúdo do `VariableRegistry` com `asModal={true}` (sem PageHeader) dentro do `TabsContent` respectivo, passando `onClose` como no-op já que não há Dialog wrapper.
+5. **Variables tab** — Mount the `VariableRegistry` content with `asModal={true}` (no PageHeader) inside the corresponding `TabsContent`, passing `onClose` as a no-op since there is no Dialog wrapper.
 
-6. **Aba Preview** — Componente `A4Preview` interno: container folha A4 com sombra; renderiza header_image, conteúdo com highlight de variáveis e footer_image.
+6. **Preview tab** — Internal `A4Preview` component: A4 sheet container with shadow; renders header_image, the content with variable highlighting, and footer_image.
 
-7. **Footer fixo + cleanup** — Footer sticky, remover Dialog `varRegistryOpen`, estado e botão obsoletos, confirmar TypeScript limpo.
+7. **Fixed footer + cleanup** — Sticky footer, remove the `varRegistryOpen` Dialog, the obsolete state and button, confirm clean TypeScript.
 
 ## Relevant files
 

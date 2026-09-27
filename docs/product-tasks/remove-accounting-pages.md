@@ -1,22 +1,22 @@
-# Remover páginas do Financeiro
+# Remove Finance pages
 
 ## What & Why
-Remover as páginas Conciliação, Fluxo de Caixa e Relatórios do módulo Financeiro (accounting), eliminando rotas, links de navegação e arquivos de página correspondentes.
+Remove the "Conciliação" (Reconciliation), "Fluxo de Caixa" (Cash Flow) and "Relatórios" (Reports) pages from the Finance module (accounting), eliminating the corresponding routes, navigation links and page files.
 
 ## Done looks like
-- As rotas `/accounting/conciliacao`, `/accounting/fluxo` e `/accounting/relatorios` não existem mais
-- Os links para essas páginas foram removidos do sidebar
-- Os arquivos de página foram deletados
-- O restante do módulo (Transações, Contabilidade, Nota Fiscal) funciona normalmente
+- The routes `/accounting/conciliacao`, `/accounting/fluxo` and `/accounting/relatorios` no longer exist
+- The links to those pages have been removed from the sidebar
+- The page files have been deleted
+- The rest of the module (Transactions, Accounting, Invoice — "Nota Fiscal") works normally
 
 ## Out of scope
-- Alterações em qualquer outra seção do módulo Financeiro
-- Remoção de dados mock relacionados
+- Changes to any other section of the Finance module
+- Removal of related mock data
 
 ## Steps
-1. **Remover rotas** — Excluir as 3 `<Route>` de `accounting.routes.tsx` e os 3 lazy imports correspondentes
-2. **Remover nav links** — Remover os itens Conciliação, Fluxo de Caixa e Relatórios do `AppSidebar.tsx`
-3. **Deletar arquivos de página** — Remover `FluxoCaixa.tsx`, `Conciliacao.tsx` e `RelatoriosFinanceiros.tsx`
+1. **Remove routes** — Delete the 3 `<Route>`s from `accounting.routes.tsx` and the 3 corresponding lazy imports
+2. **Remove nav links** — Remove the "Conciliação", "Fluxo de Caixa" and "Relatórios" items from `AppSidebar.tsx`
+3. **Delete page files** — Remove `FluxoCaixa.tsx`, `Conciliacao.tsx` and `RelatoriosFinanceiros.tsx`
 
 ## Relevant files
 - `client/src/app/routes/accounting.routes.tsx`

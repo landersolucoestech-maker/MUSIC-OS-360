@@ -1,20 +1,20 @@
 ---
-title: Substituir o Contract Intelligence Engine por um editor livre de templates contratuais
+title: Replace the Contract Intelligence Engine with a free contract template editor
 ---
 
-# Editor livre de Templates Contratuais
+# Free Contract Template Editor
 
-## Mudança de direcção
+## Change of direction
 
-O sistema anterior era centrado em IA: o utilizador importava um contrato → a IA analisava → detectava variáveis. Isso está errado.
+The previous system was AI-centric: the user imported a contract → the AI analyzed it → it detected variables. That is wrong.
 
-O novo sistema é centrado no **utilizador como autor**:
-- O utilizador escreve ou cola livremente qualquer contrato
-- O utilizador insere placeholders clicando numa biblioteca lateral
-- O utilizador cria variáveis customizadas sem restrições
-- A IA é apenas uma sugestão opcional — não controla nada
+The new system is centered on the **user as author**:
+- The user freely writes or pastes any contract
+- The user inserts placeholders by clicking in a side library
+- The user creates custom variables without restrictions
+- The AI is only an optional suggestion — it does not control anything
 
-## Arquitectura obrigatória
+## Mandatory architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -68,93 +68,93 @@ O novo sistema é centrado no **utilizador como autor**:
 └──────────────────────────────────────┴───────────────────────────────────┘
 ```
 
-## O que REMOVER
+## What to REMOVE
 
-- Todo o fluxo de import wizard (fase "upload" → "analyzing" → "review")
-- Todo o processamento de ficheiros (FileReader, mammoth, PDF handling)
-- A chamada `parseContractText()` como fluxo principal
-- O `VariableCard` complexo com accept/reject
-- O estado de fase (WorkspacePhase)
-- As variáveis como lista editável separada
+- The whole import wizard flow ("upload" → "analyzing" → "review" phases)
+- All file processing (FileReader, mammoth, PDF handling)
+- The `parseContractText()` call as the main flow
+- The complex `VariableCard` with accept/reject
+- The phase state (WorkspacePhase)
+- The variables as a separate editable list
 
-## O que MANTER / REUTILIZAR
+## What to KEEP / REUSE
 
-- `applyVariablesToText()` para o preview
-- `parseContractText()` como funcionalidade OPCIONAL ("Sugestões IA")
-- `semantic-parser.service.ts` (já reescrito com namespaces abertos)
-- Layout full-screen Dialog (`w-screen h-screen`)
-- Header com campo de nome + botão guardar
+- `applyVariablesToText()` for the preview
+- `parseContractText()` as an OPTIONAL feature ("Sugestões IA" — AI Suggestions)
+- `semantic-parser.service.ts` (already rewritten with open namespaces)
+- Full-screen Dialog layout (`w-screen h-screen`)
+- Header with a name field + save button
 - Toast `import { toast } from "sonner"`
 
-## Implementação detalhada
+## Detailed implementation
 
-### Editor central
+### Central editor
 
-- `<textarea>` redimensionável com scroll, font mono, texto livre
-- Destaca {{placeholders}} visualmente: não modifica o texto base — usa um overlay ou aplica a função de highlight no preview separado
-- Botão "Sugestões IA" (discreto, collapsible): ao clicar, chama `parseContractText()` e mostra um popover com as sugestões — o utilizador aprova cada uma individualmente
-- O texto editado pelo utilizador é a fonte da verdade — nunca é alterado automaticamente
+- Resizable `<textarea>` with scrolling, mono font, free text
+- Visually highlights {{placeholders}}: does not modify the base text — uses an overlay or applies the highlight function in the separate preview
+- "Sugestões IA" button (discreet, collapsible): on click, calls `parseContractText()` and shows a popover with the suggestions — the user approves each one individually
+- The text edited by the user is the source of truth — it is never changed automatically
 
-### Biblioteca de variáveis (painel direito)
+### Variable library (right panel)
 
-Grupos pré-definidos (expansíveis/colapsáveis):
+Predefined groups (expandable/collapsible):
 
-| Grupo | Variáveis base |
+| Group | Base variables |
 |-------|---------------|
-| Envolvidos | PARTY_1.NAME, PARTY_1.CPF, PARTY_1.CNPJ, PARTY_1.RG, PARTY_1.ADDRESS, PARTY_1.EMAIL, PARTY_1.PHONE |
-| Financeiro | PAYMENT.AMOUNT, PAYMENT.CURRENCY, PAYMENT.METHOD, PAYMENT.DUE_DATE, PAYMENT.INSTALLMENTS, PAYMENT.FREQUENCY, PAYMENT.LATE_INTEREST, PAYMENT.FINE |
-| Contrato | CONTRACT.START_DATE, CONTRACT.END_DATE, CONTRACT.DURATION, CONTRACT.CITY, CONTRACT.STATE |
-| Obra | WORK.TITLE, WORK.ISRC, WORK.ISWC, WORK.UPC |
-| Evento | EVENT.NAME, EVENT.DATE, EVENT.LOCATION, EVENT.CACHE |
+| "Envolvidos" (Parties) | PARTY_1.NAME, PARTY_1.CPF, PARTY_1.CNPJ, PARTY_1.RG, PARTY_1.ADDRESS, PARTY_1.EMAIL, PARTY_1.PHONE |
+| "Financeiro" (Financial) | PAYMENT.AMOUNT, PAYMENT.CURRENCY, PAYMENT.METHOD, PAYMENT.DUE_DATE, PAYMENT.INSTALLMENTS, PAYMENT.FREQUENCY, PAYMENT.LATE_INTEREST, PAYMENT.FINE |
+| "Contrato" (Contract) | CONTRACT.START_DATE, CONTRACT.END_DATE, CONTRACT.DURATION, CONTRACT.CITY, CONTRACT.STATE |
+| "Obra" (Work) | WORK.TITLE, WORK.ISRC, WORK.ISWC, WORK.UPC |
+| "Evento" (Event) | EVENT.NAME, EVENT.DATE, EVENT.LOCATION, EVENT.CACHE |
 
-Botão `[+]` ao lado de cada variável → insere `{{GRUPO.CAMPO}}` na posição do cursor no editor.
+`[+]` button next to each variable → inserts `{{GRUPO.CAMPO}}` at the cursor position in the editor.
 
-Campo de pesquisa filtra variáveis de todos os grupos.
+The search field filters variables from all groups.
 
-Secção "Customizadas" em baixo: mostra variáveis criadas pelo utilizador.
+"Customizadas" (Custom) section at the bottom: shows the variables created by the user.
 
-### Criação de variável customizada
+### Custom variable creation
 
-1. Campo de input: utilizador escreve `VIDEO.RESOLUTION`
-2. Sistema valida que tem formato `GRUPO.CAMPO` (regex `^[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]+$`)
-3. Sistema cria `{{VIDEO.RESOLUTION}}` e adiciona à secção "Customizadas"
-4. Variável fica disponível para inserção como qualquer outra
+1. Input field: the user types `VIDEO.RESOLUTION`
+2. The system validates that it has the `GRUPO.CAMPO` format (regex `^[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]+$`)
+3. The system creates `{{VIDEO.RESOLUTION}}` and adds it to the "Customizadas" section
+4. The variable becomes available for insertion like any other
 
-### Sugestões IA (opcional)
+### AI Suggestions (optional)
 
-Botão "✨ Sugestões IA" no header ou no editor:
-1. Chama `parseContractText(currentText)` 
-2. Mostra um painel dropdown com as variáveis sugeridas pela IA
-3. Cada sugestão mostra: valor original + placeholder sugerido + botão "Aceitar" (que insere o placeholder substituindo o texto no editor)
-4. O utilizador pode ignorar tudo ou aceitar selectivamente
+"✨ Sugestões IA" button in the header or in the editor:
+1. Calls `parseContractText(currentText)` 
+2. Shows a dropdown panel with the variables suggested by the AI
+3. Each suggestion shows: original value + suggested placeholder + an "Aceitar" (Accept) button (which inserts the placeholder, replacing the text in the editor)
+4. The user can ignore everything or accept selectively
 
-### Guardar
+### Save
 
-- Filtra placeholders presentes no texto final: `text.match(/\{\{[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]+\}\}/g)`
-- Cria manifest com as variáveis detectadas no texto
-- Salva via `onSave(data: TemplateContratoInsert)`
+- Filters the placeholders present in the final text: `text.match(/\{\{[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]+\}\}/g)`
+- Creates a manifest with the variables detected in the text
+- Saves via `onSave(data: TemplateContratoInsert)`
 
-## Ficheiros a modificar
+## Files to modify
 
-| Ficheiro | Acção |
+| File | Action |
 |----------|-------|
-| `contracts/components/ContractImportWorkspace.tsx` | Reescrever completamente — free editor + variable library |
-| `contracts/pages/TemplatesContratos.tsx` | Sem mudanças necessárias |
-| `contracts/services/semantic-parser.service.ts` | Sem mudanças (já corrigido em #64) |
-| `contracts/types/contracts.types.ts` | Sem mudanças (já corrigido em #64) |
+| `contracts/components/ContractImportWorkspace.tsx` | Rewrite completely — free editor + variable library |
+| `contracts/pages/TemplatesContratos.tsx` | No changes needed |
+| `contracts/services/semantic-parser.service.ts` | No changes (already fixed in #64) |
+| `contracts/types/contracts.types.ts` | No changes (already fixed in #64) |
 
 ## Done looks like
 
-1. Abrir `/contratos/templates` → clicar "Novo Template"
-2. Workspace full-screen abre com textarea vazia e biblioteca lateral
-3. Utilizador cola um contrato → texto aparece no editor
-4. Utilizador clica `[+]` ao lado de `{{PARTY_1.NAME}}` → placeholder inserido no cursor
-5. Utilizador escreve `VIDEO.RESOLUTION` → clicar Criar → `{{VIDEO.RESOLUTION}}` disponível para inserção
-6. Clicar "Guardar Template" → template guardado, volta à lista
+1. Open `/contratos/templates` → click "Novo Template" (New Template)
+2. The full-screen workspace opens with an empty textarea and the side library
+3. The user pastes a contract → the text appears in the editor
+4. The user clicks `[+]` next to `{{PARTY_1.NAME}}` → placeholder inserted at the cursor
+5. The user types `VIDEO.RESOLUTION` → clicks "Criar" (Create) → `{{VIDEO.RESOLUTION}}` available for insertion
+6. Click "Guardar Template" (Save Template) → template saved, returns to the list
 7. TypeScript: EXIT:0
 
-## Restrições
+## Constraints
 
-- Toast: `import { toast } from "sonner"` (nunca shadcn useToast)
-- Sem parallel tool calls (regra absoluta)
-- Manter compatibilidade com `useTemplatesContratos` hook (data layer intacto)
+- Toast: `import { toast } from "sonner"` (never shadcn useToast)
+- No parallel tool calls (absolute rule)
+- Keep compatibility with the `useTemplatesContratos` hook (data layer intact)

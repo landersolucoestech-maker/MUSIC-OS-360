@@ -1,56 +1,56 @@
 ---
-title: Refactor TransacaoFormModal — Arquitectura Enterprise
+title: Refactor TransacaoFormModal — Enterprise Architecture
 ---
-# Refactor TransacaoFormModal — Arquitectura Enterprise
+# Refactor TransacaoFormModal — Enterprise Architecture
 
 ## What & Why
 
-O `TransacaoFormModal.tsx` é um monólito de 1 069 linhas com lógica financeira crítica, validações, regras de negócio e 5 `useEffect` de reset encadeados, todos enterrados no componente React. O resultado é difícil de manter, alto risco de estados inconsistentes e praticamente impossível de escalar com novas regras financeiras.
+`TransacaoFormModal.tsx` is a 1,069-line monolith with critical financial logic, validations, business rules and 5 chained reset `useEffect`s, all buried in the React component. The result is hard to maintain, carries a high risk of inconsistent states and is practically impossible to scale with new financial rules.
 
-O objectivo é reorganizar esse módulo numa arquitectura modular e previsível **sem alterar nenhuma regra de negócio nem o comportamento visual/funcional do formulário**.
+The goal is to reorganize this module into a modular, predictable architecture **without changing any business rule or the visual/functional behavior of the form**.
 
 ## Done looks like
 
-- `TransacaoFormModal.tsx` na localização actual torna-se um wrapper de re-export (<10 linhas) — os 5+ pontos de importação existentes não quebram.
-- Nova pasta `transacao-form/` com a estrutura completa descrita abaixo.
-- **Zero** `useEffect` de reset encadeados — substituídos por `updateField` + `applyResets` controlados via `RESET_MAP`.
-- Regras de exibição/obrigatoriedade residem em `financial-form-rules.ts` como mapa configurável (`DISPLAY_RULES`), não como dezenas de booleans no componente.
-- Validação completamente extraída para `financial-form-validation.ts` + `useFinancialValidation.ts`.
-- Componente principal (`transacao-form/TransacaoFormModal.tsx`) ≤ 150 linhas — apenas orquestra sections.
-- TypeScript estrito: sem `any`, tipagem forte para regras, validação e estado derivado.
-- Formulário abre, preenche, valida, submete e reseta exactamente como antes em mock mode.
+- `TransacaoFormModal.tsx` in its current location becomes a re-export wrapper (<10 lines) — the 5+ existing import points do not break.
+- New `transacao-form/` folder with the complete structure described below.
+- **Zero** chained reset `useEffect`s — replaced by `updateField` + `applyResets` controlled via `RESET_MAP`.
+- Display/required rules live in `financial-form-rules.ts` as a configurable map (`DISPLAY_RULES`), not as dozens of booleans in the component.
+- Validation fully extracted into `financial-form-validation.ts` + `useFinancialValidation.ts`.
+- Main component (`transacao-form/TransacaoFormModal.tsx`) ≤ 150 lines — it only orchestrates sections.
+- Strict TypeScript: no `any`, strong typing for rules, validation and derived state.
+- The form opens, fills in, validates, submits and resets exactly as before in mock mode.
 
 ## Out of scope
 
-- Alteração de regras de negócio financeiro existentes.
-- Integração com API real (ainda mock mode).
-- Refactor de `NotaFiscalFormModal.tsx` ou outros componentes do módulo.
-- Alteração de componentes partilhados (`shared/ui`, `shared/components`).
-- Novas funcionalidades de "Regras Financeiras" dinâmicas — apenas preparar a arquitectura.
+- Changing existing financial business rules.
+- Integration with the real API (still mock mode).
+- Refactoring `NotaFiscalFormModal.tsx` or other components of the module.
+- Changing shared components (`shared/ui`, `shared/components`).
+- New dynamic "Regras Financeiras" (Financial Rules) features — only prepare the architecture.
 
 ## Steps
 
-1. **Criar a pasta e o esqueleto de ficheiros** — criar `transacao-form/` dentro de `components/` com todos os ficheiros vazios conforme a estrutura final; transformar o `TransacaoFormModal.tsx` existente num re-export barrel imediato para que os imports actuais não quebrem enquanto o trabalho decorre.
+1. **Create the folder and the file skeleton** — create `transacao-form/` inside `components/` with all the files empty according to the final structure; turn the existing `TransacaoFormModal.tsx` into an immediate re-export barrel so that the current imports do not break while the work is in progress.
 
-2. **Extrair `financial-form-rules.ts`** — mover todos os booleans de condição (exibirArtista, exibirProjeto, projetoObrigatorio, exibirEvento, exibirFornecedor, exibirOrgaoArrecadador, exibirMotivoViagem, exibirNomePublicidade, exibirParcelamento) para um `DISPLAY_RULES` map puro, tipado em TypeScript, derivado apenas dos valores do formulário. Nenhuma lógica de React aqui.
+2. **Extract `financial-form-rules.ts`** — move all the condition booleans (exibirArtista, exibirProjeto, projetoObrigatorio, exibirEvento, exibirFornecedor, exibirOrgaoArrecadador, exibirMotivoViagem, exibirNomePublicidade, exibirParcelamento) into a pure `DISPLAY_RULES` map, typed in TypeScript, derived only from the form values. No React logic here.
 
-3. **Extrair `financial-reset-rules.ts`** — implementar o `RESET_MAP` que descreve quais campos dependentes devem ser limpos quando um campo pai muda (ex: `tipoTransacao` → reseta categoria, subcategoria, artistaVinculado…). Criar `applyResets(field, map, currentData): Partial<TransacaoFormData>`.
+3. **Extract `financial-reset-rules.ts`** — implement the `RESET_MAP` that describes which dependent fields must be cleared when a parent field changes (e.g. `tipoTransacao` → resets category, subcategory, artistaVinculado…). Create `applyResets(field, map, currentData): Partial<TransacaoFormData>`.
 
-4. **Criar `useTransacaoForm.ts`** — encapsula todo o estado do formulário (`formData`, `errors`, `isSubmitting`), expõe `updateField` (chama `applyResets` internamente), `handleSubmit`, `handleFileUpload`, `handleRemoveAnexo` e `initialize(transacao, open)`. Elimina todos os `useEffect` de reset encadeados; mantém apenas um único `useEffect` de inicialização.
+4. **Create `useTransacaoForm.ts`** — encapsulates all the form state (`formData`, `errors`, `isSubmitting`), exposes `updateField` (calls `applyResets` internally), `handleSubmit`, `handleFileUpload`, `handleRemoveAnexo` and `initialize(transacao, open)`. Eliminates all the chained reset `useEffect`s; keeps only a single initialization `useEffect`.
 
-5. **Criar `useFinancialRules.ts`** — recebe `formData` e retorna o objecto de regras derivadas (resultado de `DISPLAY_RULES`). Usa `useMemo` para derivação eficiente. Expõe também `categorias`, `subcategorias`, `itensInvestimento`, `projetosFiltrados`, `eventosFiltrados`, `valorParcela` e `labelTipoCliente`.
+5. **Create `useFinancialRules.ts`** — receives `formData` and returns the derived rules object (the result of `DISPLAY_RULES`). Uses `useMemo` for efficient derivation. Also exposes `categorias`, `subcategorias`, `itensInvestimento`, `projetosFiltrados`, `eventosFiltrados`, `valorParcela` and `labelTipoCliente`.
 
-6. **Criar `financial-form-validation.ts` + `useFinancialValidation.ts`** — extrair a função `validate` para validação pura (sem React), que recebe `formData + rules` e devolve `ValidationResult`. O hook envolve essa função e expõe `validate()` e `clearFieldError(field)`.
+6. **Create `financial-form-validation.ts` + `useFinancialValidation.ts`** — extract the `validate` function into pure validation (no React), which receives `formData + rules` and returns a `ValidationResult`. The hook wraps that function and exposes `validate()` and `clearFieldError(field)`.
 
-7. **Criar os 3 field components reutilizáveis** — `FormSelectField.tsx`, `FormInputField.tsx`, `FormDateField.tsx` como wrappers finos sobre os primitivos `shadcn` existentes, com suporte a `error`, `disabled`, `label`, `required`. Sem lógica de negócio.
+7. **Create the 3 reusable field components** — `FormSelectField.tsx`, `FormInputField.tsx`, `FormDateField.tsx` as thin wrappers over the existing `shadcn` primitives, with support for `error`, `disabled`, `label`, `required`. No business logic.
 
-8. **Criar as 5 sections** — `TransactionTypeSection.tsx`, `CategorySection.tsx`, `FinancialLinksSection.tsx`, `PaymentSection.tsx`, `DetailsSection.tsx`. Cada section recebe `formData`, `rules`, handlers e `errors` por props. Nenhuma section contém lógica derivada — apenas renderização com os field components.
+8. **Create the 5 sections** — `TransactionTypeSection.tsx`, `CategorySection.tsx`, `FinancialLinksSection.tsx`, `PaymentSection.tsx`, `DetailsSection.tsx`. Each section receives `formData`, `rules`, handlers and `errors` via props. No section contains derived logic — only rendering with the field components.
 
-9. **Montar o `transacao-form/TransacaoFormModal.tsx` final** — componente ≤ 150 linhas que compõe os hooks + sections. Mantém as props originais (`open`, `onOpenChange`, `transacao`, `mode`). Eliminar o JSX duplicado do `itemInvestimento` que existe nas linhas 593-650 do original.
+9. **Assemble the final `transacao-form/TransacaoFormModal.tsx`** — a component of ≤ 150 lines that composes the hooks + sections. Keeps the original props (`open`, `onOpenChange`, `transacao`, `mode`). Eliminate the duplicated `itemInvestimento` JSX that exists in lines 593-650 of the original.
 
-10. **Remover `any` e reforçar tipagem** — a prop `transacao?: any` passa a `transacao?: Record<string, unknown>`. Todos os tipos de regras, validação e estado derivado tipados explicitamente.
+10. **Remove `any` and strengthen typing** — the prop `transacao?: any` becomes `transacao?: Record<string, unknown>`. All types of rules, validation and derived state typed explicitly.
 
-11. **Verificar TypeScript e comportamento** — correr `npx tsc --noEmit` no workspace, confirmar zero erros. Testar manualmente os fluxos: receita musical com projecto, despesa viagem com artista, imposto com órgão arrecadador, parcelamento, modo view.
+11. **Verify TypeScript and behavior** — run `npx tsc --noEmit` in the workspace, confirm zero errors. Manually test the flows: music revenue with a project, travel expense with an artist, tax with a collecting agency, installments, view mode.
 
 ## Relevant files
 

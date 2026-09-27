@@ -1,40 +1,40 @@
 ---
-title: Módulo Support Hub Enterprise
+title: Enterprise Support Hub Module
 ---
-# Módulo Support Hub Enterprise
+# Enterprise Support Hub Module
 
 ## What & Why
-Criar um módulo completo de suporte enterprise — **Support Hub** — totalmente integrado ao ecossistema do MUSIC OS 360. O módulo centraliza tickets, chat ao vivo, base de conhecimento, status do sistema e solicitações em um único hub premium, seguindo a identidade visual existente (azul `#3B82F6`, dark mode, glassmorphism, tipografia Plus Jakarta Sans).
+Create a complete enterprise support module — **Support Hub** — fully integrated into the MUSIC OS 360 ecosystem. The module centralizes tickets, live chat, knowledge base, system status and requests in a single premium hub, following the existing visual identity (blue `#3B82F6`, dark mode, glassmorphism, Plus Jakarta Sans typography).
 
 ## Done looks like
-- Rota `/support` com dashboard principal: "Como podemos ajudar hoje?", KPIs (tickets abertos/resolvidos, SLA médio, tempo de resposta, status do sistema)
-- Rotas `/support/tickets`, `/support/tickets/:id`, `/support/chat`, `/support/knowledge`, `/support/status`, `/support/requests` funcionando com lazy loading
-- Sidebar com grupo "Support Hub" contendo: Dashboard → Tickets → Chat ao Vivo → Base de Conhecimento → Status do Sistema → Solicitações
-- Sistema de tickets enterprise: criar, editar, responder, timeline de histórico, prioridade (low/medium/high/critical), status (open/in_progress/waiting_customer/resolved/closed), SLA deadline, responsável, categoria; drawer lateral fullscreen inspirado no Linear/Intercom
-- Badges de status com cores suaves (vermelho, amarelo, azul, verde) e badges de prioridade com glow discreto
-- Chat ao vivo com typing indicator, histórico de mensagens, upload de arquivos, emojis — visual estilo Intercom/Discord mas com identidade MUSIC OS 360
-- Base de conhecimento com artigos, categorias (Financeiro, Analytics, Distribuição, Contratos, Artistas, Projetos, Usuários, Permissões, Integrações), busca rápida estilo command menu e suporte a markdown
-- Página de status com indicadores operational/degraded/maintenance/offline para API, autenticação, uploads, realtime, analytics, financeiro, processamento e banco de dados — visual estilo Vercel/Stripe Status
-- Isolamento multi-tenant: todos os tickets, mensagens, artigos e chats carregam/salvam com `tenant_id`
-- Visual enterprise: `rounded-2xl`, `backdrop-blur`, `border-white/10`, gradientes escuros, glow azul sutil, skeletons de loading, empty states, animações suaves, responsivo (desktop/tablet/mobile)
-- Todo o módulo usa mock data + localStorage no padrão `musicos360_` — sem backend obrigatório
+- `/support` route with a main dashboard: "Como podemos ajudar hoje?" (How can we help today?), KPIs (open/resolved tickets, average SLA, response time, system status)
+- Routes `/support/tickets`, `/support/tickets/:id`, `/support/chat`, `/support/knowledge`, `/support/status`, `/support/requests` working with lazy loading
+- Sidebar with a "Support Hub" group containing: "Dashboard" → "Tickets" → "Chat ao Vivo" → "Base de Conhecimento" → "Status do Sistema" → "Solicitações" (Dashboard → Tickets → Live Chat → Knowledge Base → System Status → Requests)
+- Enterprise ticket system: create, edit, reply, history timeline, priority (low/medium/high/critical), status (open/in_progress/waiting_customer/resolved/closed), SLA deadline, assignee, category; fullscreen side drawer inspired by Linear/Intercom
+- Status badges with soft colors (red, yellow, blue, green) and priority badges with a discreet glow
+- Live chat with a typing indicator, message history, file upload, emojis — Intercom/Discord-style visuals but with the MUSIC OS 360 identity
+- Knowledge base with articles, categories ("Financeiro", "Analytics", "Distribuição", "Contratos", "Artistas", "Projetos", "Usuários", "Permissões", "Integrações" — Finance, Analytics, Distribution, Contracts, Artists, Projects, Users, Permissions, Integrations), command-menu-style quick search and markdown support
+- Status page with operational/degraded/maintenance/offline indicators for API, authentication, uploads, realtime, analytics, finance, processing and database — Vercel/Stripe Status-style visuals
+- Multi-tenant isolation: all tickets, messages, articles and chats load/save with `tenant_id`
+- Enterprise visuals: `rounded-2xl`, `backdrop-blur`, `border-white/10`, dark gradients, subtle blue glow, loading skeletons, empty states, smooth animations, responsive (desktop/tablet/mobile)
+- The whole module uses mock data + localStorage with the `musicos360_` pattern — no backend required
 
 ## Out of scope
-- Backend real com banco de dados Postgres (tabelas descritas no prompt servem como referência de tipos)
-- WebSocket real (simular realtime com polling/estado local)
-- Upload de arquivos real para storage externo
-- Integração com ferramentas externas (Zendesk, Intercom, etc.)
-- IA/automação de respostas
+- Real backend with a Postgres database (the tables described in the prompt serve as a type reference)
+- Real WebSocket (simulate realtime with polling/local state)
+- Real file upload to external storage
+- Integration with external tools (Zendesk, Intercom, etc.)
+- AI/automated replies
 
 ## Steps
-1. **Estrutura do módulo** — Criar `client/src/modules/support/` com subpastas `pages/`, `components/`, `hooks/`, `types/`, `data/`; definir interfaces TypeScript centralizadas (Ticket, Message, KnowledgeArticle, SystemStatus, ChatMessage, SupportCategory) com enums de status e prioridade
-2. **Rotas e sidebar** — Registrar as 6 rotas em `support.routes.tsx`, importá-las no `App.tsx`, e adicionar o grupo "Support Hub" com seus 6 itens no `AppSidebar.tsx` usando ícones do lucide-react
-3. **Dashboard `/support`** — Página principal com hero "Como podemos ajudar hoje?", 6 cards KPI, activity feed e gráfico de tendência de tickets; integrar mock data com localStorage
-4. **Sistema de tickets `/support/tickets` e `/support/tickets/:id`** — Listagem com filtros (status, prioridade, categoria), busca e infinite scroll; drawer fullscreen de detalhe com timeline de histórico, formulário de resposta, campos de prioridade/SLA/responsável e badges premium
-5. **Chat ao vivo `/support/chat`** — Layout two-pane (lista de chats + painel de mensagens), typing indicator simulado, histórico persistido em localStorage, suporte a emojis e upload simulado
-6. **Base de conhecimento `/support/knowledge`** — Grid de categorias, listagem de artigos com busca command-menu, visualização de artigo em markdown renderizado; artigos de mock cobrindo as 9 categorias do domínio
-7. **Status do sistema `/support/status`** — Cards de serviço com indicadores coloridos, histórico de incidentes simulado e uptime visual; design inspirado em Vercel/Stripe Status
-8. **Polimento visual** — Aplicar glassmorphism (`backdrop-blur`, `bg-white/5`, `border-white/10`), glow azul sutil nos cards críticos, skeletons em todos os carregamentos, empty states ilustrados, animações de entrada (fade/slide suaves), garantir responsividade completa
+1. **Module structure** — Create `client/src/modules/support/` with the subfolders `pages/`, `components/`, `hooks/`, `types/`, `data/`; define centralized TypeScript interfaces (Ticket, Message, KnowledgeArticle, SystemStatus, ChatMessage, SupportCategory) with status and priority enums
+2. **Routes and sidebar** — Register the 6 routes in `support.routes.tsx`, import them in `App.tsx`, and add the "Support Hub" group with its 6 items to `AppSidebar.tsx` using lucide-react icons
+3. **`/support` dashboard** — Main page with a "Como podemos ajudar hoje?" hero, 6 KPI cards, an activity feed and a ticket trend chart; integrate mock data with localStorage
+4. **Ticket system `/support/tickets` and `/support/tickets/:id`** — Listing with filters (status, priority, category), search and infinite scroll; fullscreen detail drawer with a history timeline, reply form, priority/SLA/assignee fields and premium badges
+5. **Live chat `/support/chat`** — Two-pane layout (chat list + message panel), simulated typing indicator, history persisted in localStorage, support for emojis and simulated upload
+6. **Knowledge base `/support/knowledge`** — Category grid, article listing with command-menu search, article view with rendered markdown; mock articles covering the 9 domain categories
+7. **System status `/support/status`** — Service cards with colored indicators, simulated incident history and visual uptime; design inspired by Vercel/Stripe Status
+8. **Visual polish** — Apply glassmorphism (`backdrop-blur`, `bg-white/5`, `border-white/10`), a subtle blue glow on critical cards, skeletons on all loads, illustrated empty states, entrance animations (smooth fade/slide), ensure full responsiveness
 
 ## Relevant files
 - `client/src/App.tsx`

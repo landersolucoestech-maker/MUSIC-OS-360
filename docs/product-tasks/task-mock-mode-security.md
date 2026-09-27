@@ -1,26 +1,26 @@
-# MOCK_MODE — Opt-in Seguro + Bundle Guard
+# MOCK_MODE — Secure Opt-in + Bundle Guard
 
 ## What & Why
-`MOCK_MODE` é definido como `VITE_USE_MOCK !== "false"` — lógica de opt-out. Se `VITE_USE_MOCK` não for definida em produção (esquecimento ou misconfiguration), mock ativa automaticamente, expondo MOCK_DATA e desativando chamadas reais ao backend. Isso é um risco crítico de segurança e confiabilidade em produção: dados falsos apareceriam no SaaS real, todas as mutações seriam silenciosas (sem persistência) e as integrações não funcionariam.
+`MOCK_MODE` is defined as `VITE_USE_MOCK !== "false"` — opt-out logic. If `VITE_USE_MOCK` is not defined in production (oversight or misconfiguration), mock activates automatically, exposing MOCK_DATA and disabling real calls to the backend. This is a critical security and reliability risk in production: fake data would appear in the real SaaS, all mutations would be silent (no persistence) and the integrations would not work.
 
 ## Done looks like
-- `MOCK_MODE` só é `true` quando `VITE_USE_MOCK === "true"` explicitamente (opt-in)
-- Em build de produção (`NODE_ENV=production` ou `VITE_USE_MOCK` não definida), MOCK_MODE é `false` automaticamente
-- Imports de `mockData.ts` e qualquer mock provider são excluídos do bundle de produção via tree-shaking ou guards de importação
-- Console.warn visível em dev quando MOCK_MODE está ativo, bloqueio (throw) se MOCK_MODE for `true` em build prod
-- Variável `VITE_USE_MOCK=false` adicionada ao `.env.example` como padrão de produção
+- `MOCK_MODE` is only `true` when `VITE_USE_MOCK === "true"` explicitly (opt-in)
+- In a production build (`NODE_ENV=production` or `VITE_USE_MOCK` not defined), MOCK_MODE is `false` automatically
+- Imports of `mockData.ts` and any mock provider are excluded from the production bundle via tree-shaking or import guards
+- A visible console.warn in dev when MOCK_MODE is active, a hard block (throw) if MOCK_MODE is `true` in a prod build
+- The variable `VITE_USE_MOCK=false` added to `.env.example` as the production default
 
 ## Out of scope
-- Remover a lógica mock em si (ainda necessária para dev/standalone)
-- Alterar dados do mockData (conteúdo)
-- Modificar qualquer hook de integração (já corrigido na Task #655)
+- Removing the mock logic itself (still needed for dev/standalone)
+- Changing the mockData data (content)
+- Modifying any integration hook (already fixed in Task #655)
 
 ## Steps
-1. **Inverter lógica em `env.ts`** — mudar para `VITE_USE_MOCK === "true"` (opt-in); adicionar guard que em `IS_PROD && MOCK_MODE` lança erro explícito com mensagem clara
-2. **Proteger imports de mockData** — envolver cada import de `mockData.ts` e `mock-rights.provider` em bloco condicional com `MOCK_MODE`; usar `import.meta.env.VITE_USE_MOCK === "true"` como condição para Vite eliminar via tree-shaking no bundle prod
-3. **Atualizar `.env.example`** — documentar `VITE_USE_MOCK=false` como valor padrão de produção; `VITE_USE_MOCK=true` como instrução explícita para dev standalone
-4. **Validar bundle** — rodar `vite build` e verificar que `mockData` não aparece no output; grep no dist para confirmar ausência
-5. **Tsc 0 erros** — garantir que a mudança de tipo não quebra nenhum import existente
+1. **Invert the logic in `env.ts`** — change to `VITE_USE_MOCK === "true"` (opt-in); add a guard that throws an explicit error with a clear message when `IS_PROD && MOCK_MODE`
+2. **Protect the mockData imports** — wrap each import of `mockData.ts` and `mock-rights.provider` in a conditional block on `MOCK_MODE`; use `import.meta.env.VITE_USE_MOCK === "true"` as the condition so Vite eliminates it via tree-shaking in the prod bundle
+3. **Update `.env.example`** — document `VITE_USE_MOCK=false` as the production default value; `VITE_USE_MOCK=true` as an explicit instruction for standalone dev
+4. **Validate the bundle** — run `vite build` and verify that `mockData` does not appear in the output; grep the dist to confirm its absence
+5. **Tsc 0 errors** — ensure that the type change does not break any existing import
 
 ## Relevant files
 - `client/src/shared/lib/env.ts`

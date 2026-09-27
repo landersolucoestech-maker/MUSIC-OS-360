@@ -1,44 +1,44 @@
 ---
-title: Corrigir URL do endpoint AI no analisador de contratos
+title: Fix the AI endpoint URL in the contract analyzer
 ---
 ---
-title: Corrigir URL do endpoint AI no semantic-parser — /api/ai/generate → /api/v1/ai/generate
+title: Fix the AI endpoint URL in the semantic-parser — /api/ai/generate → /api/v1/ai/generate
 ---
-# Corrigir URL do endpoint AI no semantic-parser
+# Fix the AI endpoint URL in the semantic-parser
 
 ## What & Why
 
-`apps/web/src/modules/contracts/services/semantic-parser.service.ts` chama
-`fetch("/api/ai/generate", ...)` diretamente. O Vite proxy encaminha `/api` para
-`127.0.0.1:3001` sem rewrite, por isso o pedido chega ao NestJS como
-`/api/ai/generate` — mas o NestJS serve o endpoint em `/api/v1/ai/generate`.
-Resultado: 404, e a análise semântica de contratos nunca chega à OpenAI.
+`apps/web/src/modules/contracts/services/semantic-parser.service.ts` calls
+`fetch("/api/ai/generate", ...)` directly. The Vite proxy forwards `/api` to
+`127.0.0.1:3001` without a rewrite, so the request reaches NestJS as
+`/api/ai/generate` — but NestJS serves the endpoint at `/api/v1/ai/generate`.
+Result: 404, and the semantic contract analysis never reaches OpenAI.
 
-O `api-client.ts` já usa o padrão correto (`${API_BASE_URL}/api/v1${path}`).
-O serviço semântico apenas bypass esse client com um fetch manual e path errado.
+`api-client.ts` already uses the correct pattern (`${API_BASE_URL}/api/v1${path}`).
+The semantic service simply bypasses that client with a manual fetch and a wrong path.
 
 ## Done looks like
 
-- `semantic-parser.service.ts` chama `/api/v1/ai/generate` (ou usa o `apiClient`)
-- O Contract Intelligence Engine analisa um contrato e retorna resultado (HTTP 200) sem 404
-- Zero erros TypeScript (`EXIT:0`)
-- Zero novas regressões noutros serviços AI
+- `semantic-parser.service.ts` calls `/api/v1/ai/generate` (or uses the `apiClient`)
+- The Contract Intelligence Engine analyzes a contract and returns a result (HTTP 200) without a 404
+- Zero TypeScript errors (`EXIT:0`)
+- Zero new regressions in other AI services
 
 ## Out of scope
 
-- Migrar todos os providers AI para usar `apiClient` (trabalho separado)
-- Alterar o prefixo global da API
+- Migrating all AI providers to use `apiClient` (separate work)
+- Changing the global API prefix
 
 ## Steps
 
-1. **Corrigir o path em `semantic-parser.service.ts` linha 132**: mudar
-   `fetch("/api/ai/generate", ...)` para `fetch("/api/v1/ai/generate", ...)`
+1. **Fix the path in `semantic-parser.service.ts` line 132**: change
+   `fetch("/api/ai/generate", ...)` to `fetch("/api/v1/ai/generate", ...)`
 2. **TypeCheck**: `cd apps/web && npx tsc --noEmit -p tsconfig.app.json 2>&1; echo "EXIT:$?"`
-3. **Smoke test manual**: fazer uma chamada a `/api/v1/ai/generate` a partir do browser
-   e confirmar HTTP 200 na UI do Contract Intelligence Engine
+3. **Manual smoke test**: make a call to `/api/v1/ai/generate` from the browser
+   and confirm HTTP 200 in the Contract Intelligence Engine UI
 
 ## Relevant files
 
 - `apps/web/src/modules/contracts/services/semantic-parser.service.ts:132`
-- `apps/web/src/shared/lib/api-client.ts:119` (padrão correto de referência)
-- `apps/web/vite.config.ts:165` (proxy: `/api` → `127.0.0.1:3001`, sem rewrite)
+- `apps/web/src/shared/lib/api-client.ts:119` (correct reference pattern)
+- `apps/web/vite.config.ts:165` (proxy: `/api` → `127.0.0.1:3001`, no rewrite)

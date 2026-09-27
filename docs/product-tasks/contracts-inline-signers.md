@@ -1,29 +1,29 @@
-# Signatários inline no formulário de contrato
+# Inline signers in the contract form
 
 ## What & Why
-O formulário de criação/edição de contrato precisa de uma secção de signatários directamente nele, sem sair da página nem navegar para qualquer wizard. O utilizador preenche os dados do contrato e os signatários no mesmo formulário, tudo de uma vez.
+The contract create/edit form needs a signers section directly inside it, without leaving the page or navigating to any wizard. The user fills in the contract data and the signers in the same form, all at once.
 
 ## Done looks like
-- O formulário de contrato (`ContratoFormModal`) tem uma nova secção "Signatários" no final, antes de "Observações"
-- O utilizador pode adicionar signatários inline: clicar "Adicionar Signatário" expande uma linha com campos nome, email e select de role (artista, label, testemunha, etc.)
-- Cada signatário tem um botão de remover; limite de 10 signatários
-- Os signatários são guardados junto ao contrato no localStorage ao submeter o formulário
-- A aba "Assinatura Digital" no modal de visualização do contrato mostra os signatários guardados (lidos directamente de `contrato.signers`) — sem botão de redirect para wizard, sem navegação para outra página
-- O botão "Iniciar Processo de Assinatura" (que redirigia para `/contratos/assinatura/novo`) é removido completamente
-- tsc --noEmit → 0 erros
+- The contract form (`ContratoFormModal`) has a new "Signatários" (Signers) section at the end, before "Observações" (Notes)
+- The user can add signers inline: clicking "Adicionar Signatário" (Add Signer) expands a row with name, email and role select fields (artist, label, witness, etc.)
+- Each signer has a remove button; limit of 10 signers
+- The signers are saved together with the contract in localStorage when the form is submitted
+- The "Assinatura Digital" (Digital Signature) tab in the contract view modal shows the saved signers (read directly from `contrato.signers`) — no redirect button to a wizard, no navigation to another page
+- The "Iniciar Processo de Assinatura" (Start Signature Process) button (which redirected to `/contratos/assinatura/novo`) is removed completely
+- tsc --noEmit → 0 errors
 
 ## Out of scope
-- Qualquer wizard de assinatura — o `DocumentWizard` (contracts-v2) não é tocado
-- Navegação para outras páginas durante o fluxo de contratos
-- Integração real com Autentique (continua mock)
-- Templates com variáveis — não são alterados
+- Any signature wizard — the `DocumentWizard` (contracts-v2) is not touched
+- Navigation to other pages during the contracts flow
+- Real integration with Autentique (remains mock)
+- Templates with variables — they are not changed
 
 ## Steps
-1. **Estender o schema e tipo** — Adicionar campo `signers` (array de `{ name, email, role }`) ao `contratoSchema` e ao tipo `Contrato` em mock data, com default `[]`
-2. **Secção Signatários no ContratoFormModal** — Adicionar card "Signatários" no formulário. Botão "Adicionar Signatário" insere uma linha inline com campos nome, email e select de role. Cada linha tem botão ×. Os valores ficam em `useFieldArray` do react-hook-form.
-3. **Persistir no mock data** — Garantir que os signatários são guardados ao submeter (criar/editar contrato) via o mapper/hook existente.
-4. **Atualizar aba "Assinatura Digital"** — Remover o botão "Iniciar Processo de Assinatura" e o redirect para o wizard. Mostrar directamente a lista de signatários de `contrato.signers`. Se a lista estiver vazia, mostrar mensagem "Adicione signatários no formulário do contrato".
-5. **Validação tsc** — Correr `cd client && npx tsc --noEmit` e resolver todos os erros de tipo.
+1. **Extend the schema and type** — Add a `signers` field (array of `{ name, email, role }`) to `contratoSchema` and to the `Contrato` type in the mock data, with default `[]`
+2. **Signers section in ContratoFormModal** — Add a "Signatários" card to the form. The "Adicionar Signatário" button inserts an inline row with name, email and role select fields. Each row has an × button. The values live in a react-hook-form `useFieldArray`.
+3. **Persist in the mock data** — Ensure the signers are saved on submit (create/edit contract) via the existing mapper/hook.
+4. **Update the "Assinatura Digital" tab** — Remove the "Iniciar Processo de Assinatura" button and the redirect to the wizard. Show the list of signers from `contrato.signers` directly. If the list is empty, show the message "Adicione signatários no formulário do contrato" (Add signers in the contract form).
+5. **tsc validation** — Run `cd client && npx tsc --noEmit` and fix all type errors.
 
 ## Relevant files
 - `client/src/modules/contracts/components/ContratoFormModal.tsx`

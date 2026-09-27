@@ -1,30 +1,30 @@
 ---
-title: Aba Billing em Configurações
+title: Billing tab in Settings
 ---
-# Aba Billing em Configurações
+# Billing Tab in Settings
 
 ## What & Why
-A página de Configurações não tem aba de Billing. É necessário adicionar a aba "Billing" com informações do plano atual, uso de seats, histórico de faturas (mock) e CTA de upgrade de plano — consumindo os dados já disponíveis no `TenantContext` (`tenant.plan`, `tenant.billing`).
+The Settings page has no Billing tab. A "Billing" tab needs to be added with information about the current plan, seat usage, invoice history (mock) and a plan upgrade CTA — consuming the data already available in `TenantContext` (`tenant.plan`, `tenant.billing`).
 
 ## Done looks like
-- Nova aba "Billing" visível na barra de abas em `/configuracoes`, após a aba "Integrações"
-- Cartão de plano atual com: nome do plano (Starter / Professional / Enterprise), status (Ativo / Trial / Suspenso), data de próxima renovação e badge colorida de status
-- Medidor de seats: X de Y utilizados, barra de progresso visual
-- Tabela de histórico de faturas com colunas Fatura, Data, Valor, Status e botão "Baixar" (mock com 4–6 entradas realistas)
-- Cartão de método de pagamento (mock: cartão terminando em 4242, bandeira Visa)
-- Seção de comparação de planos com botão "Fazer Upgrade" (apenas visual — dispara toast informativo)
-- Layout enterprise consistente com as demais abas: cards com `CardHeader`/`CardContent`, espaçamento `space-y-6`
+- New "Billing" tab visible in the tab bar at `/configuracoes`, after the "Integrações" (Integrations) tab
+- Current plan card with: plan name (Starter / Professional / Enterprise), status ("Ativo" / "Trial" / "Suspenso" — Active / Trial / Suspended), next renewal date and a colored status badge
+- Seat meter: X of Y used, visual progress bar
+- Invoice history table with columns "Fatura", "Data", "Valor", "Status" (Invoice, Date, Amount, Status) and a "Baixar" (Download) button (mock with 4–6 realistic entries)
+- Payment method card (mock: card ending in 4242, Visa brand)
+- Plan comparison section with a "Fazer Upgrade" (Upgrade) button (visual only — fires an informational toast)
+- Enterprise layout consistent with the other tabs: cards with `CardHeader`/`CardContent`, `space-y-6` spacing
 
 ## Out of scope
-- Integração real com Stripe ou qualquer gateway de pagamento
-- Geração ou download real de PDF de faturas
-- Alteração real de plano ou método de pagamento
+- Real integration with Stripe or any payment gateway
+- Real generation or download of invoice PDFs
+- Real change of plan or payment method
 
 ## Steps
-1. **Adicionar TabsTrigger "billing"** — Inserir o trigger com ícone `CreditCard` da lucide-react na `TabsList` de `Configuracoes.tsx`, após o trigger de "integracoes"
-2. **Construir TabsContent "billing"** — Implementar o conteúdo da aba com 4 cards: (a) Plano Atual + status + renovação, (b) Uso de Seats com barra de progresso, (c) Histórico de Faturas (tabela com mock data), (d) Método de Pagamento mock
-3. **Adicionar seção de upgrade de plano** — Tabela comparativa dos 3 planos (Starter/Professional/Enterprise) com destaque no plano actual e botão "Fazer Upgrade" que dispara `toast.info`
-4. **Consumir dados do TenantContext** — Usar `useTenant()` para ler `tenant.plan`, `tenant.billing.status`, `tenant.billing.seats`, `tenant.billing.seatsUsed`, `tenant.billing.currentPeriodEnd` e reflectir valores reais no UI
+1. **Add the "billing" TabsTrigger** — Insert the trigger with the `CreditCard` icon from lucide-react into the `TabsList` of `Configuracoes.tsx`, after the "integracoes" trigger
+2. **Build the "billing" TabsContent** — Implement the tab content with 4 cards: (a) Current Plan + status + renewal, (b) Seat Usage with a progress bar, (c) Invoice History (table with mock data), (d) mock Payment Method
+3. **Add the plan upgrade section** — Comparison table of the 3 plans (Starter/Professional/Enterprise) highlighting the current plan and a "Fazer Upgrade" button that fires `toast.info`
+4. **Consume TenantContext data** — Use `useTenant()` to read `tenant.plan`, `tenant.billing.status`, `tenant.billing.seats`, `tenant.billing.seatsUsed`, `tenant.billing.currentPeriodEnd` and reflect real values in the UI
 
 ## Relevant files
 - `client/src/modules/settings/pages/Configuracoes.tsx:640-690`

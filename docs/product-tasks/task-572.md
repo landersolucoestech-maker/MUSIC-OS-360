@@ -1,33 +1,33 @@
 ---
-title: F1 — Artistas: Perfil 360 Completo
+title: F1 — Artists: Complete 360 Profile
 ---
-# Artistas — Perfil 360 Completo
+# Artists — Complete 360 Profile
 
 ## What & Why
-Expandir a gestão de artistas para cobrir todo o ciclo de vida operacional: histórico de interações, galeria de mídia, documentos vinculados, relacionamentos (manager, produtor, label parceira), e visão completa de contratos + lançamentos + financeiro por artista — tudo dentro do modal Visão 360. O objetivo é que a equipe possa operar o artista inteiramente de um lugar.
+Expand artist management to cover the whole operational lifecycle: interaction history, media gallery, linked documents, relationships (manager, producer, partner label), and a complete view of contracts + releases + finance per artist — all inside the "Visão 360" (360 View) modal. The goal is for the team to be able to operate the artist entirely from one place.
 
 ## Done looks like
-- Modal Visão 360 do artista ganha aba **Histórico** com timeline de eventos (criação, alterações de status, contratos assinados, lançamentos publicados) — alimentada por dados existentes do sistema
-- Aba **Mídia** no 360: galeria de fotos (URLs, múltiplas), campo de banner/capa, campo de vídeo-apresentação (YouTube embed)
-- Aba **Documentos**: lista de documentos vinculados (press kit URL, bio PDF URL, rider técnico URL), com botão "Abrir" para cada um
-- Aba **Relacionamentos**: campos para manager (nome + contato), produtor executivo, label parceira, agência de booking
-- Lista de artistas ganha filtro por status `onboarding` além dos existentes
-- Badge de status `onboarding` aparece no StatusBadge com cor warning/amarelo
-- Formulário de edição de artista (`ArtistaFormModal`) inclui novos campos: galeria de fotos (JSON array de URLs), vídeo YouTube, manager, produtor, agência, documentos
+- The artist's 360 View modal gains a **"Histórico"** (History) tab with an event timeline (creation, status changes, signed contracts, published releases) — fed by existing system data
+- **"Mídia"** (Media) tab in the 360: photo gallery (URLs, multiple), banner/cover field, introduction video field (YouTube embed)
+- **"Documentos"** (Documents) tab: list of linked documents (press kit URL, bio PDF URL, technical rider URL), with an "Abrir" (Open) button for each one
+- **"Relacionamentos"** (Relationships) tab: fields for manager (name + contact), executive producer, partner label, booking agency
+- The artist list gains a filter by the `onboarding` status in addition to the existing ones
+- The `onboarding` status badge appears in StatusBadge with a warning/yellow color
+- The artist edit form (`ArtistaFormModal`) includes new fields: photo gallery (JSON array of URLs), YouTube video, manager, producer, agency, documents
 
 ## Out of scope
-- Upload real de arquivos (usar URLs por enquanto)
-- Automação de histórico em tempo real (alimentar pelo mock data existente)
-- Integração com plataformas de streaming para puxar dados automaticamente
+- Real file upload (use URLs for now)
+- Real-time history automation (feed it from the existing mock data)
+- Integration with streaming platforms to pull data automatically
 
 ## Steps
-1. **Expandir modelo de dados do artista** — Adicionar campos no mockData e nos tipos TypeScript: `galeria_urls`, `video_apresentacao_url`, `manager_nome`, `manager_contato`, `produtor_executivo`, `agencia_booking`, `label_parceira`, `documentos` (array de `{nome, url}`)
-2. **Atualizar `ArtistaFormModal`** — Adicionar seção "Mídia" (galeria de URLs com add/remove dinâmico, vídeo YouTube), seção "Relacionamentos" (manager, produtor, agência, label), seção "Documentos" (lista de nome+URL)
-3. **Aba Mídia no 360** — Galeria de fotos em grid, embed de vídeo YouTube (iframe), campo de banner exibido no topo do modal
-4. **Aba Documentos no 360** — Lista dos documentos com ícone, nome e botão "Abrir" (abre URL em nova aba)
-5. **Aba Relacionamentos no 360** — Cards compactos para manager, produtor, agência, label com nome e contato
-6. **Aba Histórico no 360** — Timeline vertical com eventos derivados dos dados existentes (data de criação, contratos, lançamentos vinculados ao artista)
-7. **Filtro `onboarding` na listagem** — Adicionar opção na listagem de artistas + badge correto no StatusBadge
+1. **Expand the artist data model** — Add fields to the mockData and the TypeScript types: `galeria_urls`, `video_apresentacao_url`, `manager_nome`, `manager_contato`, `produtor_executivo`, `agencia_booking`, `label_parceira`, `documentos` (array of `{nome, url}`)
+2. **Update `ArtistaFormModal`** — Add a "Mídia" section (URL gallery with dynamic add/remove, YouTube video), a "Relacionamentos" section (manager, producer, agency, label), a "Documentos" section (list of name+URL)
+3. **Media tab in the 360** — Photo gallery in a grid, YouTube video embed (iframe), banner field displayed at the top of the modal
+4. **Documents tab in the 360** — List of documents with icon, name and an "Abrir" button (opens the URL in a new tab)
+5. **Relationships tab in the 360** — Compact cards for manager, producer, agency, label with name and contact
+6. **History tab in the 360** — Vertical timeline with events derived from existing data (creation date, contracts, releases linked to the artist)
+7. **`onboarding` filter in the listing** — Add the option to the artist listing + the correct badge in StatusBadge
 
 ## Relevant files
 - `client/src/modules/artist/pages/Artistas.tsx`

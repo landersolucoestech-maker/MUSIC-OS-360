@@ -7,17 +7,17 @@ title: Free Contract Template Editor + Variable Registry System
 
 # Free Contract Template Editor + Variable Registry
 
-## O que é isto
+## What this is
 
-Refactorização completa do módulo de templates contratuais em 3 partes:
+Complete refactor of the contract template module in 3 parts:
 
-1. **Editor livre** — textarea profissional onde o utilizador escreve/cola contratos e insere placeholders
-2. **Variable Registry** — página dedicada para gerir variáveis globais com aliases livres
-3. **IA opcional** — botão discreto de sugestões; não controla nada
+1. **Free editor** — professional textarea where the user writes/pastes contracts and inserts placeholders
+2. **Variable Registry** — dedicated page for managing global variables with free-form aliases
+3. **Optional AI** — discreet suggestions button; it does not control anything
 
 ---
 
-## Parte 1 — Reescrever `ContractImportWorkspace.tsx` como editor livre
+## Part 1 — Rewrite `ContractImportWorkspace.tsx` as a free editor
 
 ### Layout
 
@@ -49,14 +49,14 @@ Refactorização completa do módulo de templates contratuais em 3 partes:
 └────────────────────────────────────────┴────────────────────────────┘
 ```
 
-### Comportamento do editor
+### Editor behavior
 
-- `<textarea>` full-height, font-mono, sem estrutura obrigatória
-- O utilizador edita o texto directamente — **nunca alterado automaticamente**
-- O botão `[+]` junto a cada variável insere `{{GRUPO.CAMPO}}` na posição do cursor (via `selectionStart`/`selectionEnd`)
-- Preview abaixo do editor: usa `renderHighlighted(text)` — split por regex `(\{\{[^}]+\}\})` e destaca a azul (read-only)
+- Full-height `<textarea>`, font-mono, no mandatory structure
+- The user edits the text directly — **never changed automatically**
+- The `[+]` button next to each variable inserts `{{GRUPO.CAMPO}}` at the cursor position (via `selectionStart`/`selectionEnd`)
+- Preview below the editor: uses `renderHighlighted(text)` — split by the regex `(\{\{[^}]+\}\})` and highlighted in blue (read-only)
 
-### Variáveis default (painel direito, sempre presentes)
+### Default variables (right panel, always present)
 
 ```ts
 const DEFAULT_VARIABLE_GROUPS = [
@@ -102,29 +102,29 @@ const DEFAULT_VARIABLE_GROUPS = [
 ];
 ```
 
-### Pesquisa de variáveis
+### Variable search
 
-- Input de pesquisa no topo do painel direito
-- Filtra em tempo real: mostra apenas variáveis que contêm o texto pesquisado (case-insensitive)
-- Pesquisa nos grupos default + variáveis do registry pessoal
+- Search input at the top of the right panel
+- Filters in real time: shows only variables that contain the searched text (case-insensitive)
+- Searches the default groups + the variables in the personal registry
 
-### Criação de variável custom inline
+### Inline custom variable creation
 
-- Campo input: utilizador escreve `VIDEO.RESOLUTION`
-- Regex de validação: `/^[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]+$/i` (aceita lowercase, normaliza para uppercase)
-- Botão "Criar" → adiciona ao registry (salva via hook) + insere no cursor opcionalmente
-- Aparece na secção "Minhas Variáveis" no painel
+- Input field: the user types `VIDEO.RESOLUTION`
+- Validation regex: `/^[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]+$/i` (accepts lowercase, normalizes to uppercase)
+- "Criar" (Create) button → adds it to the registry (saved via the hook) + optionally inserts it at the cursor
+- It appears in the "Minhas Variáveis" (My Variables) section in the panel
 
-### Botão "✨ IA" (opcional)
+### "✨ IA" (AI) button (optional)
 
-- No header, botão discreto (variant="outline", size="sm")
-- Ao clicar: chama `parseContractText(text)` com loading spinner
-- Resultado: mostra um sheet/popover com lista de sugestões
-- Cada sugestão: `valor original` → `{{PLACEHOLDER.SUGERIDO}}` + botão "Aceitar" + botão "Ignorar"
-- "Aceitar" substitui **apenas essa ocorrência** no textarea via string replace
-- O utilizador pode fechar sem aceitar nada — não altera texto automaticamente
+- In the header, a discreet button (variant="outline", size="sm")
+- On click: calls `parseContractText(text)` with a loading spinner
+- Result: shows a sheet/popover with a list of suggestions
+- Each suggestion: `valor original` → `{{PLACEHOLDER.SUGERIDO}}` + an "Aceitar" (Accept) button + an "Ignorar" (Ignore) button
+- "Aceitar" replaces **only that occurrence** in the textarea via string replace
+- The user can close without accepting anything — it does not change the text automatically
 
-### Guardar
+### Save
 
 ```ts
 const placeholders = [...new Set(text.match(/\{\{[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]+\}\}/gi) ?? [])];
@@ -135,40 +135,40 @@ onSave({ nome, tipo_servico: "semantico", conteudo: text, ativo: true,
 
 ---
 
-## Parte 2 — Variable Registry (nova página)
+## Part 2 — Variable Registry (new page)
 
-### Nova rota: `/contratos/variaveis`
+### New route: `/contratos/variaveis`
 
-Adicionar em `contracts.routes.tsx`:
+Add to `contracts.routes.tsx`:
 ```tsx
 const VariableRegistry = lazy(() => import("@/modules/contracts/pages/VariableRegistry"));
 <Route path="/contratos/variaveis" element={<P><VariableRegistry /></P>} />
 ```
 
-### Novo ficheiro: `apps/web/src/modules/contracts/pages/VariableRegistry.tsx`
+### New file: `apps/web/src/modules/contracts/pages/VariableRegistry.tsx`
 
-Página simples com:
-- Header: "Variáveis de Template" / "Crie, organize e reutilize placeholders em qualquer contrato"
-- Botão "Nova Variável" → abre modal de criação
-- Tabela com colunas: **Nome** | **Grupo** | **Campo** | **Placeholder** | **Acções** (copiar, editar, apagar)
-- Estado vazio: "Nenhuma variável criada. Clique em 'Nova Variável' para começar."
+Simple page with:
+- Header: "Variáveis de Template" / "Crie, organize e reutilize placeholders em qualquer contrato" (Template Variables / Create, organize and reuse placeholders in any contract)
+- "Nova Variável" (New Variable) button → opens the creation modal
+- Table with columns: **"Nome"** | **"Grupo"** | **"Campo"** | **"Placeholder"** | **"Acções"** (Name | Group | Field | Placeholder | Actions: copy, edit, delete)
+- Empty state: "Nenhuma variável criada. Clique em 'Nova Variável' para começar." (No variables created. Click 'Nova Variável' to get started.)
 
-### Modal "Nova Variável"
+### "Nova Variável" modal
 
-3 campos:
-1. **Nome amigável** — ex: "Nome do Artista" (label livre)
-2. **Grupo / Contexto** — ex: "ARTISTA" (normalizado uppercase)
-3. **Campo** — ex: "NAME" (normalizado uppercase)
+3 fields:
+1. **Friendly name** — e.g. "Nome do Artista" (free-form label)
+2. **Group / Context** — e.g. "ARTISTA" (normalized to uppercase)
+3. **Field** — e.g. "NAME" (normalized to uppercase)
 
-Preview automático: `{{ARTISTA.NAME}}`
+Automatic preview: `{{ARTISTA.NAME}}`
 
-Validação:
-- Grupo: `/^[A-Z][A-Z0-9_]+$/` mínimo 2 chars
-- Campo: `/^[A-Z][A-Z0-9_]+$/` mínimo 2 chars
+Validation:
+- Group: `/^[A-Z][A-Z0-9_]+$/` minimum 2 chars
+- Field: `/^[A-Z][A-Z0-9_]+$/` minimum 2 chars
 
-### Storage do registry
+### Registry storage
 
-Novo key no localStorage: `musicos360_variable_registry`
+New localStorage key: `musicos360_variable_registry`
 
 Hook: `apps/web/src/modules/contracts/hooks/useVariableRegistry.ts`
 
@@ -183,49 +183,49 @@ interface RegistryVariable {
 }
 ```
 
-O hook usa `useState` + `useEffect` com `localStorage` directamente (não precisa de `storage.ts` — é preferências do utilizador, não dados de negócio).
+The hook uses `useState` + `useEffect` with `localStorage` directly (it does not need `storage.ts` — these are user preferences, not business data).
 
-### Sidebar de navegação
+### Navigation sidebar
 
-Adicionar "Variáveis" como link no sidebar, sob Contratos, entre Templates e o que vier a seguir.
+Add "Variáveis" (Variables) as a link in the sidebar, under "Contratos" (Contracts), between Templates and whatever comes next.
 
-Ficheiro: `apps/web/src/shared/components/MainLayout.tsx` ou onde estão os links do sidebar.
+File: `apps/web/src/shared/components/MainLayout.tsx` or wherever the sidebar links are.
 
 ---
 
-## Ficheiros a criar / modificar
+## Files to create / modify
 
-| Ficheiro | Acção |
+| File | Action |
 |----------|-------|
-| `contracts/components/ContractImportWorkspace.tsx` | Reescrever completamente (free editor) |
-| `contracts/pages/VariableRegistry.tsx` | Criar (nova página) |
-| `contracts/hooks/useVariableRegistry.ts` | Criar (hook localStorage) |
-| `contracts/routes/contracts.routes.tsx` | Adicionar rota `/contratos/variaveis` |
-| Sidebar/MainLayout | Adicionar link "Variáveis" |
+| `contracts/components/ContractImportWorkspace.tsx` | Rewrite completely (free editor) |
+| `contracts/pages/VariableRegistry.tsx` | Create (new page) |
+| `contracts/hooks/useVariableRegistry.ts` | Create (localStorage hook) |
+| `contracts/routes/contracts.routes.tsx` | Add the `/contratos/variaveis` route |
+| Sidebar/MainLayout | Add the "Variáveis" link |
 
-Não modificar: `semantic-parser.service.ts`, `contracts.types.ts`, `useTemplatesContratos.ts`, `TemplatesContratos.tsx`
+Do not modify: `semantic-parser.service.ts`, `contracts.types.ts`, `useTemplatesContratos.ts`, `TemplatesContratos.tsx`
 
 ---
 
 ## Done looks like
 
-1. `/contratos/templates` → lista de templates + botão "Novo Template"
-2. Clicar "Novo Template" → editor full-screen com textarea + painel de variáveis
-3. Colar texto → aparece no editor; placeholders já no texto ficam destacados no preview
-4. Clicar `[+]` em `{{PAYMENT.AMOUNT}}` → inserido no cursor do textarea
-5. Pesquisar "ARTISTA" → filtra variáveis do registry pessoal
-6. Criar variável custom `SHOW.RIDER` → aparece em "Minhas Variáveis"
-7. Botão "✨ IA" → mostra sugestões, utilizador decide individualmente
-8. Guardar → template na lista
-9. `/contratos/variaveis` → tabela de variáveis com criar/editar/apagar
+1. `/contratos/templates` → list of templates + "Novo Template" (New Template) button
+2. Click "Novo Template" → full-screen editor with a textarea + variables panel
+3. Paste text → it appears in the editor; placeholders already in the text are highlighted in the preview
+4. Click `[+]` on `{{PAYMENT.AMOUNT}}` → inserted at the textarea cursor
+5. Search "ARTISTA" → filters the variables in the personal registry
+6. Create the custom variable `SHOW.RIDER` → it appears in "Minhas Variáveis"
+7. "✨ IA" button → shows suggestions, the user decides on each one individually
+8. Save → template in the list
+9. `/contratos/variaveis` → variables table with create/edit/delete
 10. TypeScript: EXIT:0
 
 ---
 
-## Restrições
+## Constraints
 
-- Toast: `import { toast } from "sonner"` — NUNCA shadcn useToast
-- Sem parallel tool calls (regra absoluta do utilizador)
-- Grupos NÃO são limitados — qualquer string válida é aceite
-- A IA NUNCA altera o texto automaticamente — apenas sugere
-- O texto do editor é sempre a fonte da verdade
+- Toast: `import { toast } from "sonner"` — NEVER shadcn useToast
+- No parallel tool calls (the user's absolute rule)
+- Groups are NOT limited — any valid string is accepted
+- The AI NEVER changes the text automatically — it only suggests
+- The editor text is always the source of truth

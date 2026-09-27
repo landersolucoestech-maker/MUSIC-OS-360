@@ -1,31 +1,31 @@
-# Tipos de Contrato Dinâmicos — eliminar ARTISTA/EMPRESA_SERVICE_LABELS
+# Dynamic Contract Types — eliminate ARTISTA/EMPRESA_SERVICE_LABELS
 
 ## What & Why
-`ARTISTA_SERVICE_LABELS` e `EMPRESA_SERVICE_LABELS` estão hardcoded dentro de `ContratoFormModal.tsx` (linhas 29-51). Adicionar um novo tipo de serviço exige edição de código em vez de configuração administrativa. O formulário condiciona a exibição de campos financeiros (royalties, valor fixo, adiantamento) com base em strings estáticas como `"agenciamento"`, o que torna o sistema frágil e impossível de escalar. Esta task transforma tipos de contrato numa entidade dinâmica configurável com CRUD admin.
+`ARTISTA_SERVICE_LABELS` and `EMPRESA_SERVICE_LABELS` are hardcoded inside `ContratoFormModal.tsx` (lines 29-51). Adding a new service type requires a code edit instead of administrative configuration. The form conditions the display of financial fields (royalties, fixed amount, advance) on static strings such as `"agenciamento"`, which makes the system fragile and impossible to scale. This task turns contract types into a configurable dynamic entity with an admin CRUD.
 
 ## Done looks like
-- Nova tabela `contract_service_types` no mock data com os 14 tipos actuais migrados como linhas de dados (Empresariamento, Gestão, Agenciamento, Edição, Distribuição, Marketing, Produção Musical, Produção Audiovisual, Licenciamento, Publicidade, Parceria, Shows, Suporte Financeiro, Outros)
-- Cada tipo tem as flags financeiras configuráveis: `requires_royalties`, `requires_fixed_value`, `requires_advance`, `requires_financial_support`, `allow_installments`, `financial_model` (valor_fixo / royalties / misto / recorrente)
-- Cada tipo tem `client_types` (array: artista | pessoa_fisica | pessoa_juridica) para o filtro dinâmico
-- Hook `useContractServiceTypes.ts` criado com lista, criar, editar, arquivar (não excluir se houver contratos vinculados)
-- `ContratoFormModal.tsx` substituí `ARTISTA_SERVICE_LABELS` / `EMPRESA_SERVICE_LABELS` + `getFilteredServiceTypes()` pelo hook; os campos de valor (royalties %, valor fixo, adiantamento, suporte financeiro) são exibidos com base nas flags da entidade seleccionada — não em strings hardcoded
-- Página `TemplatesContratos.tsx` ganha duas tabs: **Templates** (conteúdo actual) e **Tipos de Contrato** (nova tabela CRUD)
-- A tab "Tipos de Contrato" tem: tabela com colunas Nome / Tipo de Cliente / Modelo Financeiro / Status / Ordem / Acções + modal criar/editar com todos os campos do spec + validação de slug único
-- Contratos existentes no localStorage continuam a funcionar — o campo `tipo` é preservado; se não existir entrada em `contract_service_types` com esse slug, o label original é mantido como fallback
+- New `contract_service_types` table in the mock data with the 14 current types migrated as data rows ("Empresariamento", "Gestão", "Agenciamento", "Edição", "Distribuição", "Marketing", "Produção Musical", "Produção Audiovisual", "Licenciamento", "Publicidade", "Parceria", "Shows", "Suporte Financeiro", "Outros")
+- Each type has the configurable financial flags: `requires_royalties`, `requires_fixed_value`, `requires_advance`, `requires_financial_support`, `allow_installments`, `financial_model` (`valor_fixo` / `royalties` / `misto` / `recorrente`)
+- Each type has `client_types` (array: `artista` | `pessoa_fisica` | `pessoa_juridica`) for the dynamic filter
+- Hook `useContractServiceTypes.ts` created with list, create, edit, archive (no deletion if there are linked contracts)
+- `ContratoFormModal.tsx` replaces `ARTISTA_SERVICE_LABELS` / `EMPRESA_SERVICE_LABELS` + `getFilteredServiceTypes()` with the hook; the amount fields (royalties %, fixed amount, advance, financial support) are displayed based on the flags of the selected entity — not on hardcoded strings
+- The `TemplatesContratos.tsx` page gains two tabs: **Templates** (current content) and **"Tipos de Contrato"** (Contract Types — new CRUD table)
+- The "Tipos de Contrato" tab has: a table with columns Name / Client Type / Financial Model / Status / Order / Actions + a create/edit modal with all the fields in the spec + unique-slug validation
+- Existing contracts in localStorage keep working — the `tipo` field is preserved; if there is no entry in `contract_service_types` with that slug, the original label is kept as a fallback
 
 ## Out of scope
-- Geração automática de cláusulas financeiras em templates com base no tipo (futura task)
-- Integração com módulo de Accounting para lançamento automático de pagamentos (depende de task #37-#40)
-- Backend API endpoint para `contract_service_types` (mock data é suficiente na fase actual)
-- Exclusão permanente — apenas arquivamento (ativo = false)
+- Automatic generation of financial clauses in templates based on the type (future task)
+- Integration with the Accounting module for automatic posting of payments (depends on tasks #37-#40)
+- Backend API endpoint for `contract_service_types` (mock data is sufficient in the current phase)
+- Permanent deletion — archiving only (active = false)
 
 ## Steps
-1. **Mock data** — adicionar `contract_service_types` a `buildSeedData()` com os 14 tipos migrados; patch em `patchMockData()` para injectar se ausente; campos: `id`, `name`, `slug`, `description`, `client_types[]`, `financial_model`, `requires_royalties`, `requires_fixed_value`, `requires_advance`, `requires_financial_support`, `allow_installments`, `default_financial_category`, `active`, `sort_order`, `created_at`, `updated_at`
-2. **Service** — adicionar `listContractServiceTypes`, `createContractServiceType`, `updateContractServiceType` ao `contracts.service.ts` (operações CRUD via `storage`)
-3. **Hook** — criar `modules/contracts/hooks/useContractServiceTypes.ts` com TanStack Query: lista activos, filtra por `client_type`, mutações de criar/editar/arquivar com toast sonner
-4. **Refactor ContratoFormModal** — substituir os dois mapas hardcoded e `getFilteredServiceTypes()` pelo hook; o select de Tipo de Serviço passa a usar os dados do hook filtrados por `client_type`; a visibilidade dos campos financeiros passa a usar as flags da entidade (`selectedType.requires_royalties` etc.) em vez de verificar strings; manter retrocompatibilidade via fallback para tipos antigos
-5. **Tab "Tipos de Contrato" em TemplatesContratos.tsx** — envolver o conteúdo actual numa tab "Templates"; criar segunda tab "Tipos de Contrato" com tabela (Nome, Tipo de Cliente como badges, Modelo Financeiro, Status, Ordem, Acções editar/arquivar) + modal criar/editar com todos os campos do spec
-6. **Validações do modal** — slug gerado automaticamente a partir do nome (slugify), editável manualmente; validar unicidade no submit; botão "Arquivar" não disponível se slug for usado em contratos existentes (verificar mock data)
+1. **Mock data** — add `contract_service_types` to `buildSeedData()` with the 14 migrated types; patch in `patchMockData()` to inject it if absent; fields: `id`, `name`, `slug`, `description`, `client_types[]`, `financial_model`, `requires_royalties`, `requires_fixed_value`, `requires_advance`, `requires_financial_support`, `allow_installments`, `default_financial_category`, `active`, `sort_order`, `created_at`, `updated_at`
+2. **Service** — add `listContractServiceTypes`, `createContractServiceType`, `updateContractServiceType` to `contracts.service.ts` (CRUD operations via `storage`)
+3. **Hook** — create `modules/contracts/hooks/useContractServiceTypes.ts` with TanStack Query: lists active ones, filters by `client_type`, create/edit/archive mutations with a sonner toast
+4. **Refactor ContratoFormModal** — replace the two hardcoded maps and `getFilteredServiceTypes()` with the hook; the Service Type select now uses the hook's data filtered by `client_type`; the visibility of the financial fields now uses the entity's flags (`selectedType.requires_royalties` etc.) instead of checking strings; keep backward compatibility via a fallback for old types
+5. **"Tipos de Contrato" tab in TemplatesContratos.tsx** — wrap the current content in a "Templates" tab; create a second "Tipos de Contrato" tab with a table (Name, Client Type as badges, Financial Model, Status, Order, edit/archive Actions) + a create/edit modal with all the fields in the spec
+6. **Modal validations** — slug generated automatically from the name (slugify), manually editable; validate uniqueness on submit; the "Arquivar" (Archive) button is not available if the slug is used in existing contracts (check the mock data)
 
 ## Relevant files
 - `apps/web/src/modules/contracts/components/ContratoFormModal.tsx:29-51`

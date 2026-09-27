@@ -1,38 +1,38 @@
-# Variable Registry — Alias + Nomenclatura Interna + Pré-seeds
+# Variable Registry — Alias + Internal Naming + Pre-seeds
 
 ## What & Why
-A especificação define que a variável de template tem dois eixos:
+The specification defines that a template variable has two axes:
 
-1. **Alias Visual/Jurídico** (campo esquerdo) — o nome que aparece no contrato e no placeholder: `ARTISTA`, `GRAVADORA`, `LICENCIANTE`. É o prefixo do placeholder: `{{ARTISTA.CPF}}`.
-2. **Nomenclatura Interna/Técnica** (campo direito) — organização lógica interna: `artist`, `label`, `licensor`. Não aparece no placeholder; serve para busca, agrupamento e documentação interna.
+1. **Visual/Legal Alias** (left field) — the name that appears in the contract and in the placeholder: `ARTISTA`, `GRAVADORA`, `LICENCIANTE`. It is the placeholder prefix: `{{ARTISTA.CPF}}`.
+2. **Internal/Technical Naming** (right field) — internal logical organization: `artist`, `label`, `licensor`. It does not appear in the placeholder; it is used for search, grouping and internal documentation.
 
-O registry actual usa "Grupo / Contexto" para o que conceptualmente é o Alias, e não tem o campo de nomenclatura interna. Além disso, o utilizador precisa de ver exemplos já criados para entender o padrão antes de criar as suas próprias variáveis.
+The current registry uses "Grupo / Contexto" (Group / Context) for what is conceptually the Alias, and it does not have the internal naming field. In addition, the user needs to see already-created examples to understand the pattern before creating their own variables.
 
 ## Done looks like
-- Formulário "Nova Variável" com dois campos renomeados:
-  - Campo esquerdo: **Alias Visual / Jurídico** (placeholder: "ARTISTA") — normalizado UPPERCASE
-  - Campo direito (novo): **Nomenclatura Interna** (placeholder: "artist") — guardado mas não aparece no placeholder gerado
-  - Campo existente: **Campo** (placeholder: "NAME") — mantido igual
-- Preview automático mostra `{{ALIAS.CAMPO}}` (como antes, mas conceptualmente correcto)
-- Tabela mostra coluna extra "Nomenclatura Interna" (se preenchida)
-- Ao abrir `/contratos/variaveis` pela primeira vez (localStorage vazio), carrega automaticamente ~10 variáveis de exemplo:
+- "Nova Variável" (New Variable) form with two renamed fields:
+  - Left field: **"Alias Visual / Jurídico"** (Visual / Legal Alias) (placeholder: "ARTISTA") — normalized to UPPERCASE
+  - Right field (new): **"Nomenclatura Interna"** (Internal Naming) (placeholder: "artist") — saved but it does not appear in the generated placeholder
+  - Existing field: **"Campo"** (Field) (placeholder: "NAME") — kept the same
+- The automatic preview shows `{{ALIAS.CAMPO}}` (as before, but conceptually correct)
+- The table shows an extra "Nomenclatura Interna" column (if filled in)
+- When `/contratos/variaveis` is opened for the first time (empty localStorage), ~10 example variables are loaded automatically:
   - ARTISTA.NAME, ARTISTA.CPF, ARTISTA.EMAIL, ARTISTA.CNPJ (internalGroup: artist)
   - GRAVADORA.NAME, GRAVADORA.CNPJ (internalGroup: label)
   - LICENCIANTE.NAME, LICENCIANTE.CPF (internalGroup: licensor)
   - CONTRATANTE.NAME, CONTRATANTE.CPF (internalGroup: contractor)
-- Criar, editar e apagar variáveis funciona tal como antes
+- Creating, editing and deleting variables works just as before
 - TypeScript: EXIT:0
 
 ## Out of scope
-- Usar `internalGroup` para filtragem automática no editor de templates (futuro)
-- Migrar variáveis DEFAULT_VARIABLE_GROUPS do editor para usar este modelo
-- Backend persistence (localStorage apenas, por design)
+- Using `internalGroup` for automatic filtering in the template editor (future)
+- Migrating the editor's DEFAULT_VARIABLE_GROUPS variables to use this model
+- Backend persistence (localStorage only, by design)
 
 ## Steps
-1. **Atualizar interface `RegistryVariable`** — adicionar campo opcional `internalGroup?: string` ao tipo em `useVariableRegistry.ts`
-2. **Adicionar pré-seeds** — quando o hook carrega e o localStorage está vazio, popular com os ~10 exemplos acima (ARTISTA, GRAVADORA, LICENCIANTE, CONTRATANTE com campos NAME, CPF, EMAIL, CNPJ conforme aplicável)
-3. **Atualizar formulário modal** — renomear "Grupo / Contexto" → "Alias Visual / Jurídico", adicionar campo "Nomenclatura Interna" (opcional, não afecta o placeholder), atualizar lógica de `addVariable`/`updateVariable` para persistir `internalGroup`
-4. **Atualizar tabela** — adicionar coluna "Nomenclatura Interna" entre "Grupo/Alias" e "Campo"; mostrar o valor ou dash se vazio
+1. **Update the `RegistryVariable` interface** — add an optional `internalGroup?: string` field to the type in `useVariableRegistry.ts`
+2. **Add pre-seeds** — when the hook loads and localStorage is empty, populate it with the ~10 examples above (ARTISTA, GRAVADORA, LICENCIANTE, CONTRATANTE with the NAME, CPF, EMAIL, CNPJ fields as applicable)
+3. **Update the modal form** — rename "Grupo / Contexto" → "Alias Visual / Jurídico", add a "Nomenclatura Interna" field (optional, does not affect the placeholder), update the `addVariable`/`updateVariable` logic to persist `internalGroup`
+4. **Update the table** — add a "Nomenclatura Interna" column between "Grupo/Alias" and "Campo"; show the value or a dash if empty
 
 ## Relevant files
 - `apps/web/src/modules/contracts/hooks/useVariableRegistry.ts`

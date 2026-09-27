@@ -1,33 +1,33 @@
 ---
-title: F1 — Onboarding Público de Artistas
+title: F1 — Public Artist Onboarding
 ---
-# Onboarding Público de Artistas
+# Public Artist Onboarding
 
 ## What & Why
-Transformar a página `ArtistaSignupPublic` (atualmente um formulário simples) em uma landing page branded e funcional para captura de novos artistas. O artista preenche dados, envia documentos (press kit, bio, foto), links estratégicos (streaming, sociais) e assets — tudo é salvo automaticamente no sistema da gravadora como um novo registro de artista com status "onboarding".
+Turn the `ArtistaSignupPublic` page (currently a simple form) into a branded, functional landing page for capturing new artists. The artist fills in their data, sends documents (press kit, bio, photo), strategic links (streaming, social) and assets — everything is saved automatically in the record label's system as a new artist record with status "onboarding".
 
 ## Done looks like
-- URL pública `/cadastro/:orgSlug` exibe landing page branded com logo, descrição da gravadora e formulário multi-step
-- Step 1 — Dados básicos: nome artístico, nome civil, tipo (solo/banda/DJ), gênero, email, telefone, CPF/CNPJ
-- Step 2 — Links e redes: Spotify, Instagram, TikTok, YouTube, SoundCloud + campo "link de press kit" livre
-- Step 3 — Mensagem e contexto: campo de texto livre (bio/proposta/contexto), upload de foto de perfil (URL ou upload direto), upload de press kit PDF (armazenado como URL na observação)
-- Ao submeter: artista é criado no sistema com `status = "onboarding"`, todos os links salvos, observações preenchidas
-- Página de sucesso com número de protocolo (ID do artista truncado) e instrução de próximos passos
-- Se orgSlug inválido/ausente: mensagem de erro clara ao invés de formulário em branco
-- Responsivo, dark/light mode, sem necessidade de login
+- The public URL `/cadastro/:orgSlug` displays a branded landing page with logo, record label description and a multi-step form
+- Step 1 — Basic data: stage name, legal name, type (solo/band/DJ), genre, email, phone, CPF/CNPJ
+- Step 2 — Links and social media: Spotify, Instagram, TikTok, YouTube, SoundCloud + a free-form "press kit link" field
+- Step 3 — Message and context: free-text field (bio/proposal/context), profile photo upload (URL or direct upload), press kit PDF upload (stored as a URL in the notes)
+- On submit: the artist is created in the system with `status = "onboarding"`, all links saved, notes filled in
+- Success page with a protocol number (truncated artist ID) and next-steps instructions
+- If the orgSlug is invalid/missing: a clear error message instead of a blank form
+- Responsive, dark/light mode, no login required
 
 ## Out of scope
-- Upload real de arquivos para storage (usar campos de URL por enquanto)
-- Integração com email (notificação ao admin fica para fase futura)
-- Múltiplos documentos além de press kit
-- Preview do press kit em-app
+- Real file upload to storage (use URL fields for now)
+- Email integration (admin notification is left for a future phase)
+- Multiple documents beyond the press kit
+- In-app press kit preview
 
 ## Steps
-1. **Redesenhar landing page** — Substituir o layout simples por uma landing com hero section (nome da gravadora, tagline, CTA), seção de benefícios e formulário multi-step em card centralizado
-2. **Implementar stepper multi-step** — 3 steps com indicador de progresso, validação por step, navegação prev/next, step atual persistido em estado local
-3. **Step de links e redes sociais** — Campos para Spotify, Apple Music, YouTube, Instagram, TikTok, SoundCloud, mais campo livre para press kit URL
-4. **Step de bio e assets** — Campo de texto livre para proposta/contexto, campo de foto URL, campo de press kit URL (PDF), preview de imagem
-5. **Persistência e página de sucesso** — Ao submeter, criar artista com todos os campos preenchidos e status "onboarding"; exibir tela de confirmação com protocolo
+1. **Redesign the landing page** — Replace the simple layout with a landing page with a hero section (record label name, tagline, CTA), a benefits section and a multi-step form in a centered card
+2. **Implement the multi-step stepper** — 3 steps with a progress indicator, per-step validation, prev/next navigation, current step persisted in local state
+3. **Links and social media step** — Fields for Spotify, Apple Music, YouTube, Instagram, TikTok, SoundCloud, plus a free-form field for the press kit URL
+4. **Bio and assets step** — Free-text field for the proposal/context, photo URL field, press kit URL field (PDF), image preview
+5. **Persistence and success page** — On submit, create the artist with all filled-in fields and status "onboarding"; display a confirmation screen with the protocol number
 
 ## Relevant files
 - `client/src/modules/auth/pages/ArtistaSignupPublic.tsx`

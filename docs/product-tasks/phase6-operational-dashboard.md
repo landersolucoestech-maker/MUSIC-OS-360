@@ -1,38 +1,38 @@
-# FASE 6 — Operational Dashboard Real
+# PHASE 6 — Real Operational Dashboard
 
 ## What & Why
-O dashboard atual exibe métricas estáticas de mock data sem valor operacional real. Para um ERP multi-tenant enterprise, o dashboard é o painel de controle crítico — precisa expor gargalos operacionais, alertas reais com SLA, e indicadores de saúde do negócio musical em tempo real. Esta fase transforma o dashboard em centro nervoso operacional.
+The current dashboard displays static mock-data metrics with no real operational value. For a multi-tenant enterprise ERP, the dashboard is the critical control panel — it needs to expose operational bottlenecks, real alerts with SLAs, and health indicators for the music business in real time. This phase turns the dashboard into the operational nerve center.
 
 ## Done looks like
-- Dashboard reorganizado em seções: **Alertas Críticos** (vermelho, ação urgente), **Pendências** (amarelo, ação necessária), **Saúde Operacional** (verde, monitoramento), **Tendências** (azul, contexto)
-- Indicadores operacionais reais calculados no backend via `GET /dashboard/operational-summary`:
-  - Releases: atrasados (data_lancamento < hoje e status != released), sem capa, sem ISRC, sem distribuidora
-  - Contratos: vencendo em 30 dias, em assinatura há mais de 7 dias, sem arquivo_url
-  - Campanhas: sem budget definido, ativas com gasto > 90% do orçamento
-  - Catálogo: obras sem ISRC, fonogramas sem isrc, shares que não somam 100%
-  - Tickets: críticos abertos há mais de SLA, sem assignee
-  - Integrações: com status `error` ou `disconnected` com last_sync > 24h
-  - Onboarding: artistas em status `onboarding` há mais de 14 dias
-  - RH: funcionários com folha pendente no mês corrente
-- Cada alerta inclui: título, descrição, count, severity (critical/warning/info), link direto para o módulo e filtro pré-aplicado
-- Widget de **Timeline Operacional**: últimas 20 ações críticas de domínio (transições de workflow, contratos assinados, releases publicados) em ordem cronológica — alimentado pelo `domain_event_log` da FASE 3
-- Widget de **Saúde das Integrações**: status em tempo real das integrações ativas (ABRAMUS, Spotify, YouTube, etc.) com última sincronização
-- **KPIs de Negócio** atualizados (real, não mock): receita do mês, despesas do mês, margem, número de artistas ativos, releases este mês, leads em pipeline
-- Backend calcula todos os indicadores em queries SQL eficientes com índices existentes; response em < 500ms
-- Dashboard suporta auto-refresh a cada 5 minutos via TanStack Query `refetchInterval`
+- Dashboard reorganized into sections: **Critical Alerts** (red, urgent action), **Pending Items** (yellow, action needed), **Operational Health** (green, monitoring), **Trends** (blue, context)
+- Real operational indicators computed in the backend via `GET /dashboard/operational-summary`:
+  - Releases: late (data_lancamento < today and status != released), no cover, no ISRC, no distributor
+  - Contracts: expiring within 30 days, in signature for more than 7 days, no arquivo_url
+  - Campaigns: no budget defined, active with spend > 90% of the budget
+  - Catalog: works without ISRC, phonograms without isrc, shares that do not add up to 100%
+  - Tickets: critical ones open longer than the SLA, no assignee
+  - Integrations: with status `error` or `disconnected` with last_sync > 24h
+  - Onboarding: artists in `onboarding` status for more than 14 days
+  - HR: employees with pending payroll in the current month
+- Each alert includes: title, description, count, severity (critical/warning/info), a direct link to the module and a pre-applied filter
+- **Operational Timeline** widget: the last 20 critical domain actions (workflow transitions, signed contracts, published releases) in chronological order — fed by the `domain_event_log` from PHASE 3
+- **Integration Health** widget: real-time status of the active integrations (ABRAMUS, Spotify, YouTube, etc.) with the last synchronization
+- Updated **Business KPIs** (real, not mock): revenue for the month, expenses for the month, margin, number of active artists, releases this month, leads in the pipeline
+- The backend computes all indicators in efficient SQL queries with existing indexes; response in < 500ms
+- The dashboard supports auto-refresh every 5 minutes via TanStack Query `refetchInterval`
 
 ## Out of scope
-- Configuração de alertas pelo usuário
-- Dashboard customizável (drag-and-drop widgets)
-- Histórico de KPIs com série temporal (gráficos de tendência são simplificados)
+- User configuration of alerts
+- Customizable dashboard (drag-and-drop widgets)
+- KPI history with time series (trend charts are simplified)
 
 ## Steps
-1. **Criar endpoint GET /dashboard/operational-summary** — Service que executa queries paralelas (Promise.all) para cada categoria de alerta. Response tipado com `OperationalAlert[]`, `KpiSummary`, `RecentActivity[]`, `IntegrationHealth[]`. Cache de 60s no `CacheService` existente.
-2. **Criar queries de alertas** — Para cada categoria (releases, contratos, catálogo, campanhas, tickets, integrações, RH), implementar query TypeORM eficiente com os filtros corretos filtrados por tenant_id. Retornar count + top 5 itens com link de navegação.
-3. **Refatorar componente Dashboard no frontend** — Substituir mock data por chamada real ao endpoint. Criar componentes: `OperationalAlerts.tsx` (lista com cores por severity), `KpiGrid.tsx` (6 KPIs principais), `OperationalTimeline.tsx` (últimas ações), `IntegrationHealthBar.tsx`.
-4. **Implementar deep-links nos alertas** — Cada alerta tem `link` e `filter` — ao clicar, navega para o módulo correto com filtro pré-aplicado (ex: Contratos com filtro `vencendo_em_30_dias=true`). Usar `useSearchParams` ou store Zustand para receber o filtro ao montar o módulo.
-5. **Auto-refresh e loading states** — TanStack Query com `refetchInterval: 5 * 60 * 1000` (5min). Skeleton loading por seção independente. Indicador visual de "última atualização" no header do dashboard.
-6. **Métricas de saúde das integrações** — Widget separado que consulta `IntegrationEntity` + `webhook_events` (falhas recentes) e exibe status visual de cada integração ativa do tenant.
+1. **Create the GET /dashboard/operational-summary endpoint** — A service that runs parallel queries (Promise.all) for each alert category. Response typed with `OperationalAlert[]`, `KpiSummary`, `RecentActivity[]`, `IntegrationHealth[]`. 60s cache in the existing `CacheService`.
+2. **Create the alert queries** — For each category (releases, contracts, catalog, campaigns, tickets, integrations, HR), implement an efficient TypeORM query with the correct filters scoped by tenant_id. Return the count + the top 5 items with a navigation link.
+3. **Refactor the Dashboard component in the frontend** — Replace the mock data with a real call to the endpoint. Create the components: `OperationalAlerts.tsx` (list with colors by severity), `KpiGrid.tsx` (6 main KPIs), `OperationalTimeline.tsx` (latest actions), `IntegrationHealthBar.tsx`.
+4. **Implement deep links in the alerts** — Each alert has a `link` and a `filter` — on click, it navigates to the correct module with the filter pre-applied (e.g. Contracts with the filter `vencendo_em_30_dias=true`). Use `useSearchParams` or a Zustand store to receive the filter when the module mounts.
+5. **Auto-refresh and loading states** — TanStack Query with `refetchInterval: 5 * 60 * 1000` (5min). Independent skeleton loading per section. A visual "last updated" indicator in the dashboard header.
+6. **Integration health metrics** — A separate widget that queries `IntegrationEntity` + `webhook_events` (recent failures) and displays a visual status for each of the tenant's active integrations.
 
 ## Relevant files
 - `apps/web/src/modules/dashboard/pages/`

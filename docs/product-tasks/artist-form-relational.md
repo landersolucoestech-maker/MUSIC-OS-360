@@ -1,86 +1,86 @@
-# Formulário de Artista Relacional
+# Relational Artist Form
 
 ## What & Why
 
-Refatorar `ArtistaFormModal.tsx` (actual: 942 linhas, ~55 useState, entidade única por perfil)
-para um formulário relacional com react-hook-form + useFieldArray que suporte múltiplos
-relacionamentos comerciais simultâneos por artista. O modelo actual é rígido (um único
-tipo de perfil por artista) e não escala para a realidade de labels e distribuidoras que
-gerem artistas com múltiplos empresários, gravadoras, editoras e equipe ao mesmo tempo.
+Refactor `ArtistaFormModal.tsx` (currently: 942 lines, ~55 useState, a single entity per profile)
+into a relational form with react-hook-form + useFieldArray that supports multiple
+simultaneous commercial relationships per artist. The current model is rigid (a single
+profile type per artist) and does not scale to the reality of labels and distributors that
+manage artists with multiple managers, record labels, publishers and team members at the same time.
 
 ## Done looks like
 
-- O botão "Novo Artista" e "Editar Artista" abre o modal refatorado
-- Seção 1 (Informações Básicas): upload imagem, nome artístico, gênero musical,
-  especialidades, documentos, presskit, biografia, MAIS slug artístico automático,
-  tags musicais (chips), fase da carreira (iniciante / em ascensão / consolidado / mainstream)
-- Seção 2 (Dados Pessoais): inalterada
-- Seção 3 (Dados Bancários): inalterada
-- Seção 4 (Redes Sociais): inalterada + validação automática de URLs por plataforma
-- Seção 5 (Relacionamentos Comerciais): substituiu "Tipo de Perfil" fixo
-  - Cada subsecção tem botão "Adicionar" e cards individuais removíveis
-  - Empresários: múltiplos (nome, telefone, email) + distribuidoras próprias
-  - Gravadoras: múltiplas (nome, telefone, email) + responsáveis + distribuidoras
-  - Editoras: múltiplas (nome, telefone, email) + distribuidoras
-  - Bookers: múltiplos (nome, telefone, email)
-  - Jurídico: múltiplos (nome, telefone, email, escritório)
-  - Financeiro: múltiplos (nome, telefone, email)
-  - Contador: múltiplos (nome, telefone, email, CRC)
-  - Assessoria: múltiplos (nome, telefone, email)
-- Seção 6 (Distribuidoras globais): REMOVIDA — distribuidoras pertencem às entidades
-- Formulário carrega dados existentes corretamente em modo edição
-- TypeScript sem erros, mock data persiste no localStorage
+- The "Novo Artista" (New Artist) and "Editar Artista" (Edit Artist) buttons open the refactored modal
+- Section 1 ("Informações Básicas" / Basic Information): image upload, stage name, music genre,
+  specialties, documents, press kit, biography, PLUS an automatic artist slug,
+  music tags (chips), career stage ("iniciante" / "em ascensão" / "consolidado" / "mainstream" — beginner / rising / established / mainstream)
+- Section 2 ("Dados Pessoais" / Personal Data): unchanged
+- Section 3 ("Dados Bancários" / Bank Details): unchanged
+- Section 4 ("Redes Sociais" / Social Media): unchanged + automatic per-platform URL validation
+- Section 5 ("Relacionamentos Comerciais" / Commercial Relationships): replaced the fixed "Tipo de Perfil" (Profile Type)
+  - Each subsection has an "Adicionar" (Add) button and individual removable cards
+  - Managers: multiple (name, phone, email) + their own distributors
+  - Record labels: multiple (name, phone, email) + contacts in charge + distributors
+  - Publishers: multiple (name, phone, email) + distributors
+  - Bookers: multiple (name, phone, email)
+  - Legal: multiple (name, phone, email, law firm)
+  - Finance: multiple (name, phone, email)
+  - Accountant: multiple (name, phone, email, CRC — accountant registration number)
+  - PR / press office: multiple (name, phone, email)
+- Section 6 (global distributors): REMOVED — distributors belong to the entities
+- The form loads existing data correctly in edit mode
+- TypeScript with no errors, mock data persists in localStorage
 
 ## Out of scope
 
-- Backend real (mock data + localStorage apenas)
-- Importação de Excel (mapper de export pode ser atualizado como bônus, mas não bloqueia)
-- Módulo CRM: nenhuma mudança nos hooks de clientes/gravadoras do CRM
-- Redesign visual além do necessário (manter shadcn/Radix actuais)
-- Página pública de onboarding (ArtistaSignupPublic.tsx — intocada)
+- Real backend (mock data + localStorage only)
+- Excel import (the export mapper may be updated as a bonus, but it does not block)
+- CRM module: no change to the CRM's client/record label hooks
+- Visual redesign beyond what is necessary (keep the current shadcn/Radix)
+- Public onboarding page (ArtistaSignupPublic.tsx — untouched)
 
 ## Steps
 
-1. **Tipos e Artista interface** — Adicionar campos novos ao tipo `Artista` em `useArtistas.ts`:
+1. **Types and the `Artista` interface** — Add new fields to the `Artista` type in `useArtistas.ts`:
    `slug_artistico`, `tags_musicais` (string[] | null), `fase_carreira` (string | null),
-   `relacionamentos` (array tipado com subtipo `ArtistaRelacionamento` cobrindo todas as
-   entidades: empresario, gravadora, editora, booker, juridico, financeiro, contador,
-   assessoria — cada uma com campos nome/telefone/email + campos opcionais escritório,
-   CRC, responsáveis[], distribuidoras[]). Manter campos legados de
-   empresario_*, gravadora_* e distribuidoras_* como opcionais deprecated para não
-   quebrar código existente.
+   `relacionamentos` (typed array with an `ArtistaRelacionamento` subtype covering all
+   entities: `empresario`, `gravadora`, `editora`, `booker`, `juridico`, `financeiro`, `contador`,
+   `assessoria` — each with name/phone/email fields + optional fields law firm,
+   CRC, contacts in charge[], distributors[]). Keep the legacy fields
+   empresario_*, gravadora_* and distribuidoras_* as optional and deprecated so as not to
+   break existing code.
 
-2. **Schema do form (react-hook-form)** — Criar o schema TypeScript `ArtistaFormValues`
-   compatível com a nova estrutura relacional, usando `useFieldArray` para cada tipo de
-   entidade. Este schema é interno ao formulário e independente do tipo `Artista` do DB —
-   o mapper faz a ponte.
+2. **Form schema (react-hook-form)** — Create the TypeScript schema `ArtistaFormValues`
+   compatible with the new relational structure, using `useFieldArray` for each entity
+   type. This schema is internal to the form and independent of the DB `Artista` type —
+   the mapper bridges the two.
 
-3. **Refatorar ArtistaFormModal.tsx** — Substituir todos os ~55 `useState` por um único
-   `useForm<ArtistaFormValues>`. Implementar `useFieldArray` para cada seção relacional
-   (empresarios, gravadoras, editoras, bookers, juridico, financeiro, contador, assessoria).
-   Cada array usa `useFieldArray` aninhado para distribuidoras dentro de cada entidade.
-   Manter o Dialog, layout de seções numeradas e estrutura visual actual.
+3. **Refactor ArtistaFormModal.tsx** — Replace all ~55 `useState` calls with a single
+   `useForm<ArtistaFormValues>`. Implement `useFieldArray` for each relational section
+   (`empresarios`, `gravadoras`, `editoras`, `bookers`, `juridico`, `financeiro`, `contador`, `assessoria`).
+   Each array uses a nested `useFieldArray` for the distributors inside each entity.
+   Keep the Dialog, the numbered-section layout and the current visual structure.
 
-4. **Seção Relacionamentos Comerciais** — Construir a UI da nova seção 5: cards por
-   entidade, botão "Adicionar X", botão remover por card, campos inline por item.
-   Distribuidoras ficam dentro dos cards de empresário/gravadora/editora como subsecção.
-   Listas de distribuidoras disponíveis: ONErpm, DistroKid, 30 Por 1, Symphonic, Somvibe,
-   SoundOn, MusicPro, Outro (+ campo livre para custom).
+4. **Commercial Relationships section** — Build the UI for the new section 5: cards per
+   entity, an "Adicionar X" (Add X) button, a remove button per card, inline fields per item.
+   Distributors live inside the manager/record label/publisher cards as a subsection.
+   Available distributor lists: ONErpm, DistroKid, 30 Por 1, Symphonic, Somvibe,
+   SoundOn, MusicPro, Outro (Other) (+ a free-text field for custom entries).
 
-5. **Novos campos na Seção 1** — Adicionar slug artístico (gerado automaticamente do nome
-   artístico, editável manualmente), tags musicais (input chip com Enter/vírgula), fase da
-   carreira (Select: iniciante / em ascensão / consolidado / mainstream).
+5. **New fields in Section 1** — Add the artist slug (generated automatically from the stage
+   name, manually editable), music tags (chip input with Enter/comma), career stage
+   (Select: "iniciante" / "em ascensão" / "consolidado" / "mainstream").
 
-6. **Validação de URLs de redes sociais** — Adicionar validação inline em tempo real para
-   Spotify, Instagram, YouTube, TikTok, SoundCloud, Deezer, Apple Music. Mostrar ícone de
-   check/erro ao lado de cada campo. Reutilizar extractors já existentes no mapper.
+6. **Social media URL validation** — Add real-time inline validation for
+   Spotify, Instagram, YouTube, TikTok, SoundCloud, Deezer, Apple Music. Show a
+   check/error icon next to each field. Reuse the extractors that already exist in the mapper.
 
-7. **Atualizar artista.mapper.ts** — Atualizar `artistaToFormFields` e `formToArtistaPayload`
-   para serializar/deserializar o array `relacionamentos` de/para o tipo `Artista`.
-   Manter backward-compat nos campos legados para artistas já cadastrados.
+7. **Update artista.mapper.ts** — Update `artistaToFormFields` and `formToArtistaPayload`
+   to serialize/deserialize the `relacionamentos` array to/from the `Artista` type.
+   Keep backward compatibility on the legacy fields for artists already registered.
 
-8. **TypeScript e testes** — Correr `cd client && npx tsc --noEmit` e confirmar zero erros.
-   Verificar que o formulário abre, preenche, salva e recarrega um artista em modo edição.
+8. **TypeScript and tests** — Run `cd client && npx tsc --noEmit` and confirm zero errors.
+   Verify that the form opens, fills in, saves and reloads an artist in edit mode.
 
 ## Relevant files
 
