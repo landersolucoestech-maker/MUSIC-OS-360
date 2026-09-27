@@ -6,7 +6,7 @@
 > premissa de waves antigas pendentes. A fonte de verdade atual validada pelo
 > `DATABASE_URL` e `157` public tables / `80` registros em
 > `public.musicos360_migrations`. A execucao de waves antigas esta bloqueada.
-> Use `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md` como documento canonico.
+> Use `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` como documento canonico.
 # Runbook — Reconciliação de Migrations (Prod +66) · MUSIC OS 360
 
 > Produção está **66 migrations atrás** (última aplicada `AddArtistIdToWorks20260523000001`; repo tem 79).

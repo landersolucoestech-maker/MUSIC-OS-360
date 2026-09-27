@@ -944,7 +944,7 @@
       },
       "rh": {
         "status": "COMPLETE",
-        "file": "docs/backend-v2/field-traceability/modules/rh.md",
+        "file": "docs/backend-v2/field-traceability/modules/hr.md",
         "domainMeaning": "Internal HR/employee records management (funcionarios, folha de pagamento, ferias/ausencias, documentos) -- Employee is structurally distinct from platform User/OrgMember, no FK exists between them",
         "subdomainsAudited": 4,
         "createMappingMismatch": 3,

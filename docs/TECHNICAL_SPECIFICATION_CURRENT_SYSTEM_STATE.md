@@ -268,7 +268,7 @@ Endpoints públicos encontrados: forms submit, OAuth exchange/callbacks, externa
 | Billing | subscriptions, state, events, plans | `20260701000001..3` | parcial | billing | `/billing/*` | settings/admin | Sim/global | Sim | Sim em state/events/settings | `billing_plans` policy global | PARCIAL |
 | Operational/audit/events | activity, audit, domain events, workflow | multiple | `entities.ts` | interceptors/handlers | audit/activity | dashboard/settings | Sim | Sim | parcial | logs sensíveis não auditados | PARCIAL |
 
-Validações pendentes: tabelas órfãs, entities sem tabela, migrations sem entity, colunas sem uso e drift ambiente local/staging/prod. Há documento `docs/AUDITORIA_DB_2026-07-05.md`, mas ele foi tratado como evidência documental, não como execução atual.
+Validações pendentes: tabelas órfãs, entities sem tabela, migrations sem entity, colunas sem uso e drift ambiente local/staging/prod. Há documento `docs/DB_AUDIT_2026-07-05.md`, mas ele foi tratado como evidência documental, não como execução atual.
 
 ## 9. Matriz de módulos
 

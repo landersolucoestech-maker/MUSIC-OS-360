@@ -41,7 +41,7 @@ NÃO
   configurado no projeto Supabase; um schema dedicado não entra nessa superfície sem exposição
   explícita e deliberada — ver seção DATA API abaixo).
 - Separar claramente a apps/api-v2 do banco legacy: o legacy (apps/api, TypeORM) já usa `public`
-  extensivamente (baseline canônico "157 public tables", docs/ETAPA_4_CANONICAL_BASELINE_157_80.md,
+  extensivamente (baseline canônico "157 public tables", docs/STAGE_4_CANONICAL_BASELINE_157_80.md,
   legacy, não reaberto) — um schema `app` dedicado elimina qualquer risco de colisão de nome de
   tabela/índice/constraint entre os dois backends durante a coexistência até o cutover.
 - Manter ownership arquitetural explícito: qualquer objeto em `app.*` é inequivocamente da apps/api-v2;

@@ -470,8 +470,8 @@ De módulos fragmentados para um **Sistema Operacional Musical Moderno, Contextu
 # RELEASE CANONICO ATUAL
 
 - `docs/runbooks/release-baseline-157-80.md` - runbook oficial de release baseado no baseline canonico `157 public tables / 80 musicos360_migrations`.
-- `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md` - fonte de verdade do baseline atual; a secao 6 registra a decisao tecnica que encerra o impasse 3B/3B.1.
-- `docs/AUDITORIA_DB_2026-07-05.md` - auditoria completa schema real x codigo (grupos A/B/C/D); confirma o baseline 157/80 e lista candidatas a remocao pendentes de Go/No-Go.
+- `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` - fonte de verdade do baseline atual; a secao 6 registra a decisao tecnica que encerra o impasse 3B/3B.1.
+- `docs/DB_AUDIT_2026-07-05.md` - auditoria completa schema real x codigo (grupos A/B/C/D); confirma o baseline 157/80 e lista candidatas a remocao pendentes de Go/No-Go.
 
 Documentos bloqueados para execucao:
 

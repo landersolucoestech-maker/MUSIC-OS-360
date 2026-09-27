@@ -615,7 +615,7 @@ NEXT_MODULE: rh
 
 ### MODULE: rh
 STATUS: COMPLETE
-Report: `docs/backend-v2/field-traceability/modules/rh.md`
+Report: `docs/backend-v2/field-traceability/modules/hr.md`
 RH_DOMAIN_MEANING: internal HR/employee records management (funcionários, folha de pagamento, férias/
 ausências, documentos) — Employee is structurally distinct from platform User/OrgMember, confirmed no
 FK exists between them. **CRITICAL — ties with (and arguably exceeds) `releases.md` for the most

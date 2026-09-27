@@ -189,15 +189,15 @@ Status: **PHASE_2_DOCS_ARCHIVED**
 
 | Documento | Motivo | Substituto canonico |
 |---|---|---|
-| `docs/archive/2026-07/ETAPA_3B_MIRROR_RESTORE_NO_GO_REPORT.md` | NO-GO historico por tentativa com `postgres:17` puro | `docs/FINAL_MIRROR_ROOT_CAUSE_REPORT.md`, `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md` |
-| `docs/archive/2026-07/ETAPA_3B1_SUPABASE_COMPATIBLE_MIRROR_REPORT.md` | NO-GO historico por tentativa com imagem Supabase inicializada e criterio antigo `61/14` | `docs/FINAL_MIRROR_ROOT_CAUSE_REPORT.md`, `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md` |
+| `docs/archive/2026-07/ETAPA_3B_MIRROR_RESTORE_NO_GO_REPORT.md` | NO-GO historico por tentativa com `postgres:17` puro | `docs/FINAL_MIRROR_ROOT_CAUSE_REPORT.md`, `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` |
+| `docs/archive/2026-07/ETAPA_3B1_SUPABASE_COMPATIBLE_MIRROR_REPORT.md` | NO-GO historico por tentativa com imagem Supabase inicializada e criterio antigo `61/14` | `docs/FINAL_MIRROR_ROOT_CAUSE_REPORT.md`, `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` |
 | `docs/archive/2026-07/AUDITORIA_TECNICA_COMPLETA.md` | Auditoria antiga substituida por auditoria enterprise mais recente | `docs/AUDITORIA_TECNICA_ENTERPRISE_SAAS.md` |
 | `docs/archive/2026-07/P0_RBAC_SHADOW_READINESS_STATUS.md` | Tentativa BLOCKED anterior marcada como superseded | `docs/P0_CANONICAL_READINESS_REPORT.md`, `docs/P1_NO_GO_REMEDIATION_REPORT.md` |
 
 ### Documentos mantidos como canonicos
 
 - `docs/STRUCTURAL_CLEANUP_AUDIT.md`
-- `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md`
+- `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
 - `docs/FINAL_MIRROR_ROOT_CAUSE_REPORT.md`
 - `docs/P0_CANONICAL_READINESS_REPORT.md`
 - `docs/P1_PRODUCTION_READINESS_REVIEW.md`
@@ -206,7 +206,7 @@ Status: **PHASE_2_DOCS_ARCHIVED**
 ### Links atualizados
 
 - `docs/STRUCTURAL_CLEANUP_AUDIT.md`
-- `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md`
+- `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
 - `docs/P0_CANONICAL_READINESS_REPORT.md`
 - `docs/P1_NO_GO_REMEDIATION_REPORT.md`
 
@@ -237,7 +237,7 @@ Status: **RELEASE_BASELINE_RUNBOOK_CREATED**
 
 ### Fonte canonica
 
-- `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md`
+- `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
 
 ### Baseline oficial registrado
 

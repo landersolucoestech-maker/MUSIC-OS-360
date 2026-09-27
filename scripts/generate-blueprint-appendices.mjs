@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const docPath = path.join(root, 'docs', 'BLUEPRINT_ENTERPRISE_DEFINITIVO_2026-07-09.md');
+const docPath = path.join(root, 'docs', 'ENTERPRISE_BLUEPRINT_FINAL_2026-07-09.md');
 
 function walk(dir, predicate = () => true) {
   if (!fs.existsSync(dir)) return [];
@@ -107,7 +107,7 @@ const appendix = [
   'EVIDENCE',
   '',
   '- Script gerador: `scripts/generate-blueprint-appendices.mjs`',
-  '- Documento alvo: `docs/BLUEPRINT_ENTERPRISE_DEFINITIVO_2026-07-09.md`',
+  '- Documento alvo: `docs/ENTERPRISE_BLUEPRINT_FINAL_2026-07-09.md`',
   '',
   listSection('26.1 API Modules', apiModules.map((m) => `apps/api/src/modules/${m}`)),
   listSection('26.2 Web Modules', webModules.map((m) => `apps/web/src/modules/${m}`)),

@@ -2258,7 +2258,7 @@ Se o módulo `rh` é um requisito de produto ativo e prioritário, dado que est�
 HIGH
 
 ### Evidence
-`docs/backend-v2/field-traceability/modules/rh.md §0,§1`
+`docs/backend-v2/field-traceability/modules/hr.md §0,§1`
 
 ---
 
@@ -3217,7 +3217,7 @@ PO-VERIFY-012
 "O módulo RH (Funcionários/Folha/Férias) é um requisito de produto ativo e prioritário, dado que hoje está
 100% quebrado para criação em todos os 4 sub-recursos?"
 CURRENT_MODEL: bugs ativos, sem correção nesta etapa
-EVIDENCE: modules/rh.md §0,§1
+EVIDENCE: modules/hr.md §0,§1
 IMPACT_IF_WRONG: Se for prioritário, precisa entrar em uma wave de correção antes do v2; se não for
   prioridade real de produto, pode ser descontinuado/simplificado em vez de reconstruído.
 ```

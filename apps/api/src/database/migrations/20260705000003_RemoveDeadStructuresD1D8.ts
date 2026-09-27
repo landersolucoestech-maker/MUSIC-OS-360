@@ -4,7 +4,7 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
  * 20260705000003_RemoveDeadStructuresD1D8
  *
  * Forward-only destructive migration covering findings D1–D8 of the full
- * database audit (2026-07-05, `docs/AUDITORIA_DB_2026-07-05.md`). Every
+ * database audit (2026-07-05, `docs/DB_AUDIT_2026-07-05.md`). Every
  * structure removed here was confirmed to have 0 live code references
  * (outside orphan migrations/entities) before this migration was written.
  *

@@ -2,7 +2,7 @@
 
 Data: 2026-07-04
 Status: runbook oficial de release baseado no baseline canonico atual
-Fonte canonica: `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md`
+Fonte canonica: `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
 
 ## 1. Objetivo
 
@@ -24,7 +24,7 @@ Os documentos abaixo sao historicos e nao podem orientar execucao de release ou 
 - ETAPA 3B.1 - Supabase-Compatible Mirror Report (relatorio de sessao, nao versionado)
 
 A decisao tecnica que encerra o impasse 3B/3B.1 esta registrada na secao 6 de
-`docs/ETAPA_4_CANONICAL_BASELINE_157_80.md`.
+`docs/STAGE_4_CANONICAL_BASELINE_157_80.md`.
 
 Bloqueio explicito:
 
@@ -76,7 +76,7 @@ Validar:
 - `public.musicos360_migrations = 80`
 - sem migrations pendentes inesperadas
 - registry de migrations consistente
-- schema compativel com `docs/ETAPA_4_CANONICAL_BASELINE_157_80.md`
+- schema compativel com `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
 
 Comando permitido, somente contra staging/mirror:
 

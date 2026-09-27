@@ -2,7 +2,7 @@
 
 Data da analise: 2026-07-09  
 Branch local: `dev`  
-Documento canônico desta retomada: `docs/BLUEPRINT_ENTERPRISE_DEFINITIVO_2026-07-09.md`  
+Documento canônico desta retomada: `docs/ENTERPRISE_BLUEPRINT_FINAL_2026-07-09.md`\
 Escopo: monorepo completo visivel no workspace: `apps/`, `packages/`, `server/`, `scripts/`, `infra/`, `docs/`, `supabase/`, `public/`, `.github/`, arquivos raiz e relatorios gerados em `reports/`.
 
 ## 0. Regra De Leitura Deste Blueprint
@@ -1101,7 +1101,7 @@ Os inventários abaixo foram gerados mecanicamente a partir do workspace local p
 EVIDÊNCIA
 
 - Script gerador: `scripts/generate-blueprint-appendices.mjs`
-- Documento alvo: `docs/BLUEPRINT_ENTERPRISE_DEFINITIVO_2026-07-09.md`
+- Documento alvo: `docs/ENTERPRISE_BLUEPRINT_FINAL_2026-07-09.md`
 
 ### 26.1 API Modules
 

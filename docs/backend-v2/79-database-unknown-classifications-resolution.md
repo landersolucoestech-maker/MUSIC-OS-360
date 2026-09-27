@@ -70,7 +70,7 @@ FINAL_CLASSIFICATION: MIGRATION_HELPER
 DOMAIN: infraestrutura de migration (TypeORM)
 DATABASE_EVIDENCE: tabela simples de bookkeeping de migrations aplicadas (padrão TypeORM), referenciada
   como a fonte do baseline "80 musicos360_migrations" já citado em docs anteriores desta série
-  (ETAPA_4_CANONICAL_BASELINE_157_80.md).
+  (STAGE_4_CANONICAL_BASELINE_157_80.md).
 CODE_EVIDENCE: apps/api/src/database/datasource.ts:64 — `migrationsTableName:
   'musicos360_migrations'` (configuração explícita do DataSource TypeORM); consumida também por
   apps/api/src/database/migration-validator.service.ts (valida migrations pendentes no boot, fatal em

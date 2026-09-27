@@ -153,7 +153,7 @@ apps  dist  docs  e2e  infra  node_modules  packages  public
 reports  scripts  server  supabase  test-results
 ```
 
-Documentação solta na raiz (não organizada em `docs/`): `ARCHITECTURE_DECISION_RECORDS.md`, `BACKLOG.md`, `CLEANUP_REPORT.md`, `DESIGN_SYSTEM_UI_UX.md`, `EXECUTIVE_SUMMARY.md`, `GOVERNANCE.md`, `INDEX_DOCUMENTATION.md`, `MAPEAMENTO_ESTRUTURAL.md`, `PHASE_1_IMPLEMENTATION_GUIDE.md`, `QUICK_START_GUIDE.md`, `README.md`, `RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md`, `ROADMAP_IMPLEMENTATION.md`.
+Documentação solta na raiz (não organizada em `docs/`): `ARCHITECTURE_DECISION_RECORDS.md`, `BACKLOG.md`, `CLEANUP_REPORT.md`, `DESIGN_SYSTEM_UI_UX.md`, `EXECUTIVE_SUMMARY.md`, `GOVERNANCE.md`, `INDEX_DOCUMENTATION.md`, `STRUCTURAL_MAP.md`, `PHASE_1_IMPLEMENTATION_GUIDE.md`, `QUICK_START_GUIDE.md`, `README.md`, `RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md`, `ROADMAP_IMPLEMENTATION.md`.
 
 ## Problemas encontrados
 
