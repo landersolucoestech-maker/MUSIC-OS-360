@@ -97,3 +97,17 @@ describe('RolesGuard dual-read ordering', () => {
     );
   });
 });
+
+describe('RolesGuard — denial end-user copy', () => {
+  it('answers with PT-BR copy and a machine code, never the role slugs or the route', async () => {
+    const { guard, context } = setup('viewer', 'manager', 'artist:delete');
+    const denial = await guard.canActivate(context).then(
+      () => { throw new Error('expected a denial'); },
+      (err: unknown) => err as ForbiddenException,
+    );
+    const body = denial.getResponse() as { error: string; message: string };
+    expect(body.error).toBe('PERMISSION_DENIED');
+    expect(body.message).toBe('Você não tem permissão para realizar esta ação.');
+    expect(body.message).not.toMatch(/viewer|manager|artists|DELETE/);
+  });
+});

@@ -227,9 +227,11 @@ export class RbacService {
 
   assertCan(role: string, resource: Resource, action: Action): void {
     if (!this.can(role, resource, action)) {
-      throw new ForbiddenException(
-        `Permissão negada: role '${role}' não pode realizar '${action}' em '${resource}'`,
-      );
+      throw new ForbiddenException({
+        statusCode: 403,
+        error: 'PERMISSION_DENIED',
+        message: 'Você não tem permissão para realizar esta ação.',
+      });
     }
   }
 

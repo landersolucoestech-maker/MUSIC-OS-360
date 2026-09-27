@@ -1,8 +1,8 @@
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
@@ -17,6 +17,7 @@ import {
 import { IS_PUBLIC_KEY } from './auth.guard';
 import { AUTH_BOOTSTRAP_KEY } from '../decorators/auth-bootstrap.decorator';
 import { redactUrl } from '../security/redact';
+import { permissionDeniedException } from './authorization-errors';
 
 export {
   getPersistedAuthorityMode,
@@ -26,6 +27,7 @@ export {
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
+  private readonly logger = new Logger(PermissionsGuard.name);
   constructor(
     private readonly reflector: Reflector,
     private readonly decisions: RbacDecisionService,
@@ -53,9 +55,8 @@ export class PermissionsGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest<Request>();
     if (!request.currentMember && mode === 'ON') {
-      throw new ForbiddenException(
-        'Contexto RBAC ausente. O membro deve ser resolvido antes da verificacao de permissoes.',
-      );
+      this.logger.error('RBAC context missing: the member must be resolved before the permission check.');
+      throw permissionDeniedException();
     }
     const active = request.rbacActiveDecision ?? {
       decision: 'ALLOW' as const,
@@ -78,9 +79,8 @@ export class PermissionsGuard implements CanActivate {
     if (mode === 'ON' && shadowDecision === 'DENY') {
       const route =
         `${request.method ?? ''} ${redactUrl(request.originalUrl ?? request.url ?? '')}`.trim();
-      throw new ForbiddenException(
-        `Permissao insuficiente para ${route}. Necessario: ${required.join(', ')}.`,
-      );
+      this.logger.warn(`Permission denied on ${route}; required: ${required.join(', ')}`);
+      throw permissionDeniedException();
     }
     return true;
   }

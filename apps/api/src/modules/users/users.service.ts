@@ -428,7 +428,7 @@ export class UsersService {
     // be granted through this self-service path, closing the gap where
     // invite() filtered on is_assignable but assignRole() did not.
     if (assignable.get(targetRole) === false) {
-      throw new BadRequestException(`O papel '${targetRole}' não pode ser atribuído por este fluxo`);
+      throw new BadRequestException('Este papel não pode ser atribuído por este fluxo.');
     }
     const actorLevel = levels.get(actorRole) ?? ROLE_HIERARCHY[actorRole] ?? 0;
     const targetLevel = levels.get(targetRole) ?? ROLE_HIERARCHY[targetRole] ?? 0;

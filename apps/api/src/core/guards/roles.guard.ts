@@ -1,8 +1,8 @@
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
@@ -15,6 +15,7 @@ import { IS_PUBLIC_KEY } from './auth.guard';
 import { ROLE_HIERARCHY } from '../rbac/role-hierarchy';
 import { AUTH_BOOTSTRAP_KEY } from '../decorators/auth-bootstrap.decorator';
 import { redactUrl } from '../security/redact';
+import { permissionDeniedException } from './authorization-errors';
 export { ROLE_HIERARCHY } from '../rbac/role-hierarchy';
 
 const WRITE_METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
@@ -26,6 +27,7 @@ function minAcceptedLevel(roles: string[] | undefined): number | null {
 
 @Injectable()
 export class RolesGuard implements CanActivate {
+  private readonly logger = new Logger(RolesGuard.name);
   constructor(
     private readonly reflector: Reflector,
     private readonly decisions: RbacDecisionService,
@@ -82,9 +84,10 @@ export class RolesGuard implements CanActivate {
           'mutable_route_without_roles',
           startedAt,
         );
-        throw new ForbiddenException(
-          `RBAC: rota ${request.method} ${redactUrl(request.url ?? '')} sem @Roles declarado - bloqueado por politica fail-closed.`,
+        this.logger.error(
+          `RBAC: route ${request.method} ${redactUrl(request.url ?? '')} declares no @Roles - blocked by the fail-closed policy.`,
         );
+        throw permissionDeniedException();
       }
       request.rbacActiveDecision = {
         decision: 'ALLOW',
@@ -114,9 +117,8 @@ export class RolesGuard implements CanActivate {
         'missing_membership_context',
         startedAt,
       );
-      throw new ForbiddenException(
-        'Contexto RBAC ausente. TenantGuard deve resolver o membro antes da autorizacao.',
-      );
+      this.logger.error('RBAC context missing: TenantGuard must resolve the member before authorization.');
+      throw permissionDeniedException();
     }
 
     const memberRole =
@@ -132,9 +134,8 @@ export class RolesGuard implements CanActivate {
         'insufficient_role_hierarchy',
         startedAt,
       );
-      throw new ForbiddenException(
-        `Permissão insuficiente. Papel atual: ${memberRole}. Necessário: ${requiredLabels}`,
-      );
+      this.logger.warn(`Insufficient role: current=${memberRole}, required=${requiredLabels}`);
+      throw permissionDeniedException();
     }
 
     request.rbacActiveDecision = {

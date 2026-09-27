@@ -23,6 +23,14 @@ import { PLAN_LIMITS } from '../../modules/billing/billing.service';
 
 export type LimitedResource = 'artists' | 'contracts' | 'users' | 'storageGb';
 
+/** PT-BR unit of each limited resource, used in the end-user limit message (never the raw key). */
+const LIMITED_RESOURCE_UNITS_PT_BR: Readonly<Record<LimitedResource, string>> = {
+  artists: 'artistas',
+  contracts: 'contratos',
+  users: 'usuários',
+  storageGb: 'GB de armazenamento',
+};
+
 const RESOURCE_QUERIES: Record<LimitedResource, (tenantId: string, orgId?: string) => [string, unknown[]]> = {
   artists:   (tid) => ['SELECT COUNT(*)::int AS cnt FROM artists WHERE tenant_id = $1 AND deleted_at IS NULL', [tid]],
   contracts: (tid) => ['SELECT COUNT(*)::int AS cnt FROM contracts WHERE tenant_id = $1 AND deleted_at IS NULL', [tid]],
@@ -88,11 +96,11 @@ export class PlanLimitService {
         `Plan ${plan} reached its limit: tenant=${tenantId} resource=${resource} ` +
         `current=${current} cap=${cap}`,
       );
-      throw new ForbiddenException(
-        `Limite do plano atingido para "${resource}". ` +
-        `O plano atual (${plan}) permite até ${cap} ${resource}. ` +
-        'Faça upgrade para continuar.',
-      );
+      throw new ForbiddenException({
+        statusCode: 403,
+        error: 'PLAN_LIMIT_REACHED',
+        message: `Limite do plano atingido: seu plano permite até ${cap} ${LIMITED_RESOURCE_UNITS_PT_BR[resource]}. Faça upgrade para continuar.`,
+      });
     }
   }
 
