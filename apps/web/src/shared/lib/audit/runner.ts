@@ -214,13 +214,13 @@ const CONFIGS: AuditConfig[] = [
     table: "funcionarios",
     entityType: "Funcionário",
     fixPath: (row) => editPath("/hr", row),
-    label: (row) => entityLabel(row, ["nome", "email", "cargo"], "Funcionário sem nome"),
+    label: (row) => entityLabel(row, ["name", "email", "job_title"], "Funcionário sem nome"),
     fields: [
-      { key: "nome", label: "Nome completo", severity: "obrigatorio" },
+      { key: "name", label: "Nome completo", severity: "obrigatorio" },
       { key: "email", label: "E-mail", severity: "obrigatorio" },
       { key: "cpf", label: "CPF", severity: "recomendado" },
-      { key: "telefone", label: "Telefone", severity: "recomendado" },
-      { key: "cargo", label: "Cargo", severity: "recomendado" },
+      { key: "phone", label: "Telefone", severity: "recomendado" },
+      { key: "job_title", label: "Cargo", severity: "recomendado" },
     ],
   },
 ];

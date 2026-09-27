@@ -287,7 +287,7 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
       ds.query(`SELECT id, deleted_at FROM payroll_entries WHERE deleted_at IS NULL LIMIT 1`),
     ).resolves.toBeDefined();
     await expect(
-      ds.query(`SELECT id, deleted_at, documento_url, created_by FROM leave_requests WHERE deleted_at IS NULL LIMIT 1`),
+      ds.query(`SELECT id, deleted_at, document_url, created_by FROM leave_requests WHERE deleted_at IS NULL LIMIT 1`),
     ).resolves.toBeDefined();
     await expect(
       ds.query(`SELECT id, created_at, updated_at, deleted_at FROM audiovisual_approvals WHERE deleted_at IS NULL LIMIT 1`),

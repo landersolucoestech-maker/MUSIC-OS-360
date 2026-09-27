@@ -161,16 +161,16 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'deleted_at',
   ],
   employees: [
-    'id', 'tenant_id', 'nome_completo', 'name', 'cpf_encrypted', 'rg',
-    'data_nascimento', 'email_encrypted', 'telefone_encrypted', 'endereco', 'cargo', 'setor',
-    'departamento', 'tipo_contrato', 'data_admissao', 'data_demissao', 'salario_base', 'salario',
-    'status', 'observacoes', 'vinculo_usuario_id', 'documents', 'metadata', 'created_at',
+    'id', 'tenant_id', 'legacy_full_name', 'name', 'cpf_encrypted', 'rg',
+    'birth_date', 'email_encrypted', 'phone_encrypted', 'address', 'job_title', 'legacy_sector',
+    'department', 'contract_type', 'hired_at', 'terminated_at', 'legacy_base_salary', 'salary',
+    'status', 'notes', 'linked_user_id', 'documents', 'metadata', 'created_at',
     'updated_at', 'created_by', 'deleted_at',
   ],
   payroll_entries: [
-    'id', 'tenant_id', 'funcionario_id', 'employee_id', 'mes_referencia', 'competencia',
-    'salario_bruto', 'descontos', 'bonus', 'salario_liquido', 'data_pagamento', 'status',
-    'observacoes', 'arquivo_url', 'pago_em', 'metadata', 'created_at', 'updated_at',
+    'id', 'tenant_id', 'legacy_employee_id', 'employee_id', 'legacy_reference_month', 'reference_month',
+    'gross_salary', 'deductions', 'bonus', 'net_salary', 'payment_date', 'status',
+    'notes', 'file_url', 'paid_at', 'metadata', 'created_at', 'updated_at',
     'deleted_at',
   ],
   org_members: [
@@ -199,9 +199,9 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'description', 'metadata', 'created_at', 'created_by', 'deleted_at',
   ],
   leave_requests: [
-    'id', 'tenant_id', 'funcionario_id', 'employee_id', 'type', 'start_date',
-    'end_date', 'dias_totais', 'status', 'aprovado_por', 'observacoes', 'motivo',
-    'documento_url', 'metadata', 'created_at', 'updated_at', 'created_by', 'deleted_at',
+    'id', 'tenant_id', 'legacy_employee_id', 'employee_id', 'type', 'start_date',
+    'end_date', 'total_days', 'status', 'approved_by', 'notes', 'reason',
+    'document_url', 'metadata', 'created_at', 'updated_at', 'created_by', 'deleted_at',
   ],
 };
 

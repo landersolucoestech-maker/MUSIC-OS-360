@@ -11,6 +11,14 @@ import type { CreatePayrollEntryDto } from './dto/create-payroll-entry.dto';
 import type { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
 import { EmployeeStatus, PayrollStatus, LeaveRequestStatus } from '@music-os-360/types';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import {
+  EMPLOYEE_DEPRECATED_FIELDS,
+  LEAVE_REQUEST_DEPRECATED_FIELDS,
+  PAYROLL_DEPRECATED_FIELDS,
+  canonicalContractType,
+  canonicalLeaveType,
+} from './hr-legacy-fields';
 
 @Injectable()
 export class HrService {
@@ -32,12 +40,12 @@ export class HrService {
   private mapEmployee(e: EmployeeEntity) {
     return {
       ...e,
-      email:              this.enc.decryptNullable(e.email_encrypted),
-      telefone:           this.enc.decryptNullable(e.telefone_encrypted),
-      cpf:                this.enc.decryptNullable(e.cpf_encrypted),
-      email_encrypted:    undefined,
-      telefone_encrypted: undefined,
-      cpf_encrypted:      undefined,
+      email:           this.enc.decryptNullable(e.email_encrypted),
+      phone:           this.enc.decryptNullable(e.phone_encrypted),
+      cpf:             this.enc.decryptNullable(e.cpf_encrypted),
+      email_encrypted: undefined,
+      phone_encrypted: undefined,
+      cpf_encrypted:   undefined,
     };
   }
 
@@ -45,16 +53,15 @@ export class HrService {
 
   async listEmployees(
     tenantId: string,
-    query: { status?: string; setor?: string; search?: string; offset?: number; limit?: number } = {},
+    query: { status?: string; department?: string; search?: string; offset?: number; limit?: number } = {},
   ) {
     const qb = this.empRepo!
       .createQueryBuilder('e')
       .where('e.tenant_id = :tenantId AND e.deleted_at IS NULL', { tenantId });
 
     if (query.status) qb.andWhere('e.status = :status', { status: query.status });
-    // The frontend uses "setor"; the physical column is `departamento` (same field, legacy name).
-    if (query.setor)  qb.andWhere('e.departamento = :setor', { setor: query.setor });
-    if (query.search) qb.andWhere('(e.name ILIKE :search OR e.cargo ILIKE :search)', { search: `%${query.search}%` });
+    if (query.department) qb.andWhere('e.department = :department', { department: query.department });
+    if (query.search) qb.andWhere('(e.name ILIKE :search OR e.job_title ILIKE :search)', { search: `%${query.search}%` });
 
     qb.orderBy('e.created_at', 'DESC')
       .skip(query.offset ?? 0)
@@ -86,47 +93,45 @@ export class HrService {
     return this.mapEmployee(await this._findRaw(tenantId, id));
   }
 
-  async createEmployee(tenantId: string, userId: string, dto: CreateEmployeeDto) {
+  async createEmployee(tenantId: string, userId: string, input: CreateEmployeeDto) {
+    const dto = applyDeprecatedFieldAliases(input as unknown as Record<string, unknown>, EMPLOYEE_DEPRECATED_FIELDS);
     const entity = this.empRepo!.create({
-      tenant_id:          tenantId,
-      name:               dto.name,
-      cargo:              dto.cargo         ?? null,
-      departamento:       dto.departamento  ?? null,
-      tipo_contrato:      dto.tipo_contrato ?? 'clt',
-      status:             dto.status ?? EmployeeStatus.ACTIVE,
-      email_encrypted:    this.enc.encryptNullable((dto as any).email),
-      telefone_encrypted: this.enc.encryptNullable((dto as any).telefone),
-      cpf_encrypted:      this.enc.encryptNullable((dto as any).cpf),
-      salario:            (dto as any).salario       ?? null,
-      data_admissao:      (dto as any).data_admissao ? new Date((dto as any).data_admissao) : null,
-      data_demissao:      (dto as any).data_demissao ? new Date((dto as any).data_demissao) : null,
-      documents:         (dto as any).documents    ?? [],
-      metadata:           (dto as any).metadata      ?? {},
-      created_by:         userId,
+      tenant_id:       tenantId,
+      name:            dto['name'] as string,
+      job_title:       (dto['job_title'] as string | undefined) ?? null,
+      department:      (dto['department'] as string | undefined) ?? null,
+      contract_type:   (canonicalContractType(dto['contract_type']) as string | undefined) ?? 'clt',
+      status:          (dto['status'] as EmployeeStatus | undefined) ?? EmployeeStatus.ACTIVE,
+      email_encrypted: this.enc.encryptNullable(dto['email'] as string | null | undefined),
+      phone_encrypted: this.enc.encryptNullable(dto['phone'] as string | null | undefined),
+      cpf_encrypted:   this.enc.encryptNullable(dto['cpf'] as string | null | undefined),
+      salary:          (dto['salary'] as string | undefined) ?? null,
+      hired_at:        dto['hired_at'] ? new Date(dto['hired_at'] as string) : null,
+      terminated_at:   dto['terminated_at'] ? new Date(dto['terminated_at'] as string) : null,
+      notes:           (dto['notes'] as string | undefined) ?? null,
+      linked_user_id:  (dto['linked_user_id'] as string | undefined) ?? null,
+      documents:       (dto['documents'] as unknown[] | undefined) ?? [],
+      metadata:        (dto['metadata'] as Record<string, unknown> | undefined) ?? {},
+      created_by:      userId,
     });
     return this.mapEmployee((await this.empRepo!.save(entity)) as EmployeeEntity);
   }
 
-  async updateEmployee(tenantId: string, userId: string, id: string, dto: UpdateEmployeeDto) {
+  async updateEmployee(tenantId: string, userId: string, id: string, input: UpdateEmployeeDto) {
     await this._findRaw(tenantId, id);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dto = applyDeprecatedFieldAliases(input as unknown as Record<string, unknown>, EMPLOYEE_DEPRECATED_FIELDS);
     const updates: Record<string, unknown> = { updated_at: new Date() };
-    if (dto.name          != null) updates.name          = dto.name;
-    if (dto.cargo         != null) updates.cargo         = dto.cargo;
-    if (dto.departamento  != null) updates.departamento  = dto.departamento;
-    if (dto.tipo_contrato != null) updates.tipo_contrato = dto.tipo_contrato;
-    if (dto.status        != null) updates.status        = dto.status;
-    if ((dto as any).salario       != null) updates.salario       = (dto as any).salario;
-    if ((dto as any).documents    != null) updates.documents    = (dto as any).documents;
-    if ((dto as any).metadata      != null) updates.metadata      = (dto as any).metadata;
-    if ((dto as any).data_admissao != null) updates.data_admissao = new Date((dto as any).data_admissao);
-    if ((dto as any).data_demissao != null) updates.data_demissao = new Date((dto as any).data_demissao);
-    if ((dto as any).email    !== undefined) updates.email_encrypted    = this.enc.encryptNullable((dto as any).email);
-    if ((dto as any).telefone !== undefined) updates.telefone_encrypted = this.enc.encryptNullable((dto as any).telefone);
-    if ((dto as any).cpf      !== undefined) updates.cpf_encrypted      = this.enc.encryptNullable((dto as any).cpf);
+    for (const field of ['name', 'job_title', 'department', 'status', 'salary', 'documents', 'metadata', 'notes', 'linked_user_id'] as const) {
+      if (dto[field] != null) updates[field] = dto[field];
+    }
+    if (dto['contract_type'] != null) updates.contract_type = canonicalContractType(dto['contract_type']);
+    if (dto['hired_at'] != null) updates.hired_at = new Date(dto['hired_at'] as string);
+    if (dto['terminated_at'] != null) updates.terminated_at = new Date(dto['terminated_at'] as string);
+    if (dto['email'] !== undefined) updates.email_encrypted = this.enc.encryptNullable(dto['email'] as string | null);
+    if (dto['phone'] !== undefined) updates.phone_encrypted = this.enc.encryptNullable(dto['phone'] as string | null);
+    if (dto['cpf']   !== undefined) updates.cpf_encrypted   = this.enc.encryptNullable(dto['cpf'] as string | null);
 
-    const expectedUpdatedAt = (dto as any).expectedUpdatedAt as string | undefined;
-    delete updates['expectedUpdatedAt'];
+    const expectedUpdatedAt = dto['expectedUpdatedAt'] as string | undefined;
     await casUpdate(
       this.empRepo!,
       { id, tenant_id: tenantId } as any,
@@ -147,14 +152,14 @@ export class HrService {
 
   async listPayroll(
     tenantId: string,
-    query: { employee_id?: string; competencia?: string; status?: string; offset?: number; limit?: number } = {},
+    query: { employee_id?: string; reference_month?: string; status?: string; offset?: number; limit?: number } = {},
   ) {
     const qb = this.payrollRepo!
       .createQueryBuilder('p')
       .where('p.tenant_id = :tenantId AND p.deleted_at IS NULL', { tenantId });
 
     if (query.employee_id) qb.andWhere('p.employee_id = :employeeId', { employeeId: query.employee_id });
-    if (query.competencia) qb.andWhere('p.competencia = :competencia', { competencia: query.competencia });
+    if (query.reference_month) qb.andWhere('p.reference_month = :referenceMonth', { referenceMonth: query.reference_month });
     if (query.status)      qb.andWhere('p.status = :status', { status: query.status });
 
     qb.orderBy('p.created_at', 'DESC')
@@ -165,21 +170,30 @@ export class HrService {
     return { data, meta: { total, offset: query.offset ?? 0, limit: query.limit ?? 50 } };
   }
 
-  async createPayroll(tenantId: string, dto: CreatePayrollEntryDto): Promise<PayrollEntryEntity> {
+  async createPayroll(tenantId: string, input: CreatePayrollEntryDto): Promise<PayrollEntryEntity> {
+    const dto = applyDeprecatedFieldAliases(input as unknown as Record<string, unknown>, PAYROLL_DEPRECATED_FIELDS);
+    const employeeId = dto['employee_id'] as string | undefined;
+    const referenceMonth = dto['reference_month'] as string | undefined;
+    if (!employeeId || !referenceMonth || dto['gross_salary'] == null || dto['net_salary'] == null) {
+      throw new BadRequestException('Funcionário, competência, salário bruto e salário líquido são obrigatórios.');
+    }
     // find-88311b49: employee_id had no cross-tenant ownership check — a
     // payroll entry could silently reference another tenant's employee.
-    await assertSameTenantFk(this.payrollRepo!.manager.connection, 'employees', dto.employee_id, tenantId, 'Funcionário');
+    await assertSameTenantFk(this.payrollRepo!.manager.connection, 'employees', employeeId, tenantId, 'Funcionário');
     const entity = this.payrollRepo!.create({
       tenant_id:       tenantId,
-      employee_id:     dto.employee_id,
-      competencia:     dto.competencia,
-      salario_bruto:   dto.salario_bruto,
-      descontos:       (dto as any).descontos    ?? '0',
-      salario_liquido: dto.salario_liquido,
-      status:          (dto as any).status       ?? PayrollStatus.PENDING,
-      arquivo_url:     (dto as any).arquivo_url  ?? null,
-      pago_em:         (dto as any).pago_em      ? new Date((dto as any).pago_em) : null,
-      metadata:        (dto as any).metadata     ?? {},
+      employee_id:     employeeId,
+      reference_month: referenceMonth,
+      gross_salary:    String(dto['gross_salary']),
+      deductions:      dto['deductions'] != null ? String(dto['deductions']) : '0',
+      bonus:           dto['bonus'] != null ? String(dto['bonus']) : null,
+      net_salary:      String(dto['net_salary']),
+      payment_date:    (dto['payment_date'] as string | undefined) ?? null,
+      status:          (dto['status'] as PayrollStatus | undefined) ?? PayrollStatus.PENDING,
+      notes:           (dto['notes'] as string | undefined) ?? null,
+      file_url:        (dto['file_url'] as string | undefined) ?? null,
+      paid_at:         dto['paid_at'] ? new Date(dto['paid_at'] as string) : null,
+      metadata:        (dto['metadata'] as Record<string, unknown> | undefined) ?? {},
     });
     return this.payrollRepo!.save(entity);
   }
@@ -206,21 +220,26 @@ export class HrService {
     return { data, meta: { total, offset: query.offset ?? 0, limit: query.limit ?? 50 } };
   }
 
-  async createLeaveRequest(tenantId: string, userId: string, dto: CreateLeaveRequestDto): Promise<LeaveRequestEntity> {
+  async createLeaveRequest(tenantId: string, userId: string, input: CreateLeaveRequestDto): Promise<LeaveRequestEntity> {
+    const dto = applyDeprecatedFieldAliases(input as unknown as Record<string, unknown>, LEAVE_REQUEST_DEPRECATED_FIELDS);
+    const employeeId = dto['employee_id'] as string | undefined;
+    if (!employeeId) throw new BadRequestException('Funcionário é obrigatório.');
     // find-88311b49: employee_id had no cross-tenant ownership check — a
     // leave request could silently reference another tenant's employee.
-    await assertSameTenantFk(this.leaveRepo!.manager.connection, 'employees', dto.employee_id, tenantId, 'Funcionário');
+    await assertSameTenantFk(this.leaveRepo!.manager.connection, 'employees', employeeId, tenantId, 'Funcionário');
     const entity = this.leaveRepo!.create({
       tenant_id:    tenantId,
-      employee_id:  dto.employee_id,
-      type:         dto.type,
-      start_date:  new Date(dto.start_date),
-      end_date:     new Date(dto.end_date),
-      status:       (dto as any).status       ?? LeaveRequestStatus.PENDING,
-      motivo:       (dto as any).motivo       ?? null,
-      aprovado_por: (dto as any).aprovado_por ?? null,
-      documento_url: (dto as any).documento_url ?? null,
-      metadata:     (dto as any).metadata     ?? {},
+      employee_id:  employeeId,
+      type:         canonicalLeaveType(dto['type']) as string,
+      start_date:   new Date(dto['start_date'] as string),
+      end_date:     new Date(dto['end_date'] as string),
+      total_days:   (dto['total_days'] as number | undefined) ?? null,
+      status:       (dto['status'] as LeaveRequestStatus | undefined) ?? LeaveRequestStatus.PENDING,
+      reason:       (dto['reason'] as string | undefined) ?? null,
+      notes:        (dto['notes'] as string | undefined) ?? null,
+      approved_by:  (dto['approved_by'] as string | undefined) ?? null,
+      document_url: (dto['document_url'] as string | undefined) ?? null,
+      metadata:     (dto['metadata'] as Record<string, unknown> | undefined) ?? {},
       created_by:   userId,
     });
     return this.leaveRepo!.save(entity);
@@ -229,11 +248,11 @@ export class HrService {
   async approveLeaveRequest(tenantId: string, id: string, userId: string): Promise<LeaveRequestEntity> {
     // find-c83fdb94: guard the single valid transition (pending -> approved)
     // so an already-approved/rejected request can't be re-approved or have
-    // its aprovado_por/updated_at silently overwritten by a repeat call.
+    // its approved_by/updated_at silently overwritten by a repeat call.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await this.leaveRepo!.update(
       { id, tenant_id: tenantId, status: LeaveRequestStatus.PENDING } as any,
-      { status: LeaveRequestStatus.APPROVED, aprovado_por: userId, updated_at: new Date() } as any,
+      { status: LeaveRequestStatus.APPROVED, approved_by: userId, updated_at: new Date() } as any,
     );
     if (!result.affected) {
       const current = await this.leaveRepo!

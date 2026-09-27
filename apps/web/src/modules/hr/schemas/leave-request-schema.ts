@@ -9,9 +9,9 @@ export const leaveRequestSchema = z.object({
     .min(1, "Data de início é obrigatória"),
   endDate: z.string()
     .min(1, "Data de fim é obrigatória"),
-  status: z.enum(["pending", "approved", "rejected", "in_progress", "completed"]).default("pending"),
+  status: z.enum(["pending", "approved", "rejected", "completed"]).default("pending"),
   approvedBy: z.string().max(150, "Nome deve ter no máximo 150 caracteres").optional().or(z.literal("")),
-  observacoes: z.string()
+  notes: z.string()
     .max(2000, "Observações deve ter no máximo 2000 caracteres")
     .optional()
     .or(z.literal("")),

@@ -27,6 +27,12 @@ export const FIELD_LABELS_PT_BR = {
   companyName: 'Empresa',
   empresa: 'Empresa',
   responsible: 'Responsável',
+  department: 'Departamento',
+  linkedUserId: 'Usuário vinculado',
+  terminatedAt: 'Data de demissão',
+  hiredAt: 'Data de admissão',
+  salary: 'Salário',
+  contractType: 'Tipo de contrato',
   responsavel: 'Responsável',
   titularConta: 'Titular da conta',
 

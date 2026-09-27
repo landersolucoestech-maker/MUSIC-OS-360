@@ -62,14 +62,14 @@ export interface UsePayrollPaginatedParams {
   page: number;
   pageSize: number;
   search?: string;
-  competencia?: string;
+  referenceMonth?: string;
   status?: string;
   enabled?: boolean;
 }
 
-export function usePayrollPaginated({ page, pageSize, search, competencia, status, enabled = true }: UsePayrollPaginatedParams) {
+export function usePayrollPaginated({ page, pageSize, search, referenceMonth, status, enabled = true }: UsePayrollPaginatedParams) {
   const filters: Record<string, unknown> = {};
-  if (competencia) filters.competencia = competencia;
+  if (referenceMonth) filters.reference_month = referenceMonth;
   if (status) filters.status = status;
 
   const result = usePaginatedDataQuery<PayrollEntry>({

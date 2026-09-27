@@ -17,13 +17,6 @@ export const DEPARTMENTS = [
   "Operações",
 ] as const;
 
-export const CONTRACT_TYPES = [
-  "CLT",
-  "PJ",
-  "Freelancer",
-  "Estágio",
-  "Temporário",
-] as const;
 
 export const EMPLOYEE_STATUS = [
   "active",

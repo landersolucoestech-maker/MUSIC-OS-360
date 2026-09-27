@@ -9,65 +9,67 @@ export type { EmployeeStatusValue, EmployeeContractType, LeaveType, LeaveRequest
 
 export interface Employee {
   id: string;
-  user_id?: string;
   name: string;
-  cargo?: string | null;
-  departamento?: string | null;
-  salario?: number | string | null;
-  tipo_contrato?: EmployeeContractType | string | null;
-  data_admissao?: string | null;
+  job_title?: string | null;
+  department?: string | null;
+  salary?: number | string | null;
+  contract_type?: EmployeeContractType | string | null;
+  hired_at?: string | null;
+  terminated_at?: string | null;
   status?: EmployeeStatusValue | string | null;
-  vinculo_usuario_id?: string | null;
+  linked_user_id?: string | null;
   email?: string | null;
-  telefone?: string | null;
+  phone?: string | null;
   cpf?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
+  documents?: unknown[];
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
 }
 
-export type EmployeeInsert = Omit<Employee, "id" | "user_id" | "created_at" | "updated_at">;
+export type EmployeeInsert = Omit<Employee, "id" | "created_at" | "updated_at">;
 export type EmployeeUpdate = Partial<EmployeeInsert>;
 
 export interface PayrollEntry {
   id: string;
-  user_id?: string;
-  funcionario_id?: string | null;
-  periodo?: string | null;
-  mes_referencia?: string | null;
-  salario_bruto?: number | null;
-  descontos?: number | null;
-  bonus?: number | null;
-  salario_liquido?: number | null;
-  data_pagamento?: string | null;
+  employee_id?: string | null;
+  reference_month?: string | null;
+  gross_salary?: number | string | null;
+  deductions?: number | string | null;
+  bonus?: number | string | null;
+  net_salary?: number | string | null;
+  payment_date?: string | null;
+  paid_at?: string | null;
   status?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
+  file_url?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
 }
 
-export type PayrollEntryInsert = Omit<PayrollEntry, "id" | "user_id" | "created_at" | "updated_at">;
+export type PayrollEntryInsert = Omit<PayrollEntry, "id" | "created_at" | "updated_at">;
 export type PayrollEntryUpdate = Partial<PayrollEntryInsert>;
 
 export interface LeaveRequest {
   id: string;
-  user_id?: string;
-  funcionario_id?: string | null;
+  employee_id?: string | null;
   type?: LeaveType | string | null;
   start_date?: string | null;
   end_date?: string | null;
-  dias_totais?: number | null;
+  total_days?: number | null;
   status?: LeaveRequestStatusValue | string | null;
-  motivo?: string | null;
-  observacoes?: string | null;
+  reason?: string | null;
+  notes?: string | null;
+  approved_by?: string | null;
+  document_url?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
 }
 
-export type LeaveRequestInsert = Omit<LeaveRequest, "id" | "user_id" | "created_at" | "updated_at">;
+export type LeaveRequestInsert = Omit<LeaveRequest, "id" | "created_at" | "updated_at">;
 export type LeaveRequestUpdate = Partial<LeaveRequestInsert>;
 
 export interface EmployeeDocument {

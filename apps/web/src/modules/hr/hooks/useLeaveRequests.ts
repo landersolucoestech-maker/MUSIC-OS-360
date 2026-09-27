@@ -4,24 +4,6 @@ import type { LeaveRequest, LeaveRequestInsert, LeaveRequestUpdate } from "../ty
 
 export type { LeaveRequest, LeaveRequestInsert, LeaveRequestUpdate };
 
-export const LEAVE_TYPES = [
-  "férias",
-  "licença médica",
-  "licença maternidade",
-  "licença paternidade",
-  "falta justificada",
-  "falta injustificada",
-  "day off",
-  "folga compensatória",
-] as const;
-
-export const LEAVE_STATUS = [
-  "pending",
-  "approved",
-  "rejected",
-  "em andamento",
-  "completed",
-] as const;
 
 export function useLeaveRequests() {
   const result = useDataQuery<LeaveRequest>({

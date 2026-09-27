@@ -72,14 +72,14 @@ export function PayrollFormModal({
       setStatus("pending");
       setNotes("");
     } else if (open && record) {
-      setEmployeeId((record.funcionario_id as string) || "");
-      setReferenceMonth((record.mes_referencia as string) || "");
-      setGrossSalary((record.salario_bruto as number) ?? "");
-      setDiscounts((record.descontos as number) ?? 0);
+      setEmployeeId((record.employee_id as string) || "");
+      setReferenceMonth((record.reference_month as string) || "");
+      setGrossSalary((record.gross_salary as number) ?? "");
+      setDiscounts((record.deductions as number) ?? 0);
       setBonus((record.bonus as number) ?? 0);
-      setPaymentDate((record.data_pagamento as string) || "");
+      setPaymentDate((record.payment_date as string) || "");
       setStatus((record.status as string) || "pending");
-      setNotes((record.observacoes as string) || "");
+      setNotes((record.notes as string) || "");
     }
   }, [open, mode, record]);
 
@@ -103,11 +103,11 @@ export function PayrollFormModal({
       employeeId,
       referenceMonth,
       grossSalary: grossSalary !== "" ? Number(grossSalary) : null,
-      descontos: discounts !== "" ? Number(discounts) : null,
+      deductions: discounts !== "" ? Number(discounts) : null,
       bonus: bonus !== "" ? Number(bonus) : null,
       paymentDate: paymentDate || "",
       status: status as "pending" | "processed" | "paid" | "cancelled",
-      observacoes: notes || "",
+      notes: notes || "",
     });
 
     if (!validation.success) {
@@ -132,15 +132,15 @@ export function PayrollFormModal({
     setIsSubmitting(true);
 
     const data = {
-      funcionario_id: employeeId,
-      mes_referencia: referenceMonth,
-      salario_bruto: typeof grossSalary === "number" ? grossSalary : 0,
-      descontos: typeof discounts === "number" ? discounts : 0,
+      employee_id: employeeId,
+      reference_month: referenceMonth,
+      gross_salary: typeof grossSalary === "number" ? grossSalary : 0,
+      deductions: typeof discounts === "number" ? discounts : 0,
       bonus: typeof bonus === "number" ? bonus : 0,
-      salario_liquido: netSalary,
-      data_pagamento: paymentDate || null,
+      net_salary: netSalary,
+      payment_date: paymentDate || null,
       status,
-      observacoes: notes.trim() || null,
+      notes: notes.trim() || null,
     };
 
     try {
@@ -191,7 +191,7 @@ export function PayrollFormModal({
             <AsyncEntityCombobox<Employee>
               table="funcionarios"
               value={employeeId || null}
-              getLabel={(f) => `${f.name ?? ""} - ${f.cargo || "Sem cargo"}`}
+              getLabel={(f) => `${f.name ?? ""} - ${f.job_title || "Sem cargo"}`}
               onChange={setEmployeeId}
               placeholder="Selecione o funcionário"
               searchPlaceholder="Buscar por nome…"
@@ -202,8 +202,8 @@ export function PayrollFormModal({
             {selectedEmployee && (
               <p className="text-xs text-muted-foreground">
                 Salário base: R${" "}
-                {selectedEmployee.salario
-                  ? Number(selectedEmployee.salario).toLocaleString(
+                {selectedEmployee.salary
+                  ? Number(selectedEmployee.salary).toLocaleString(
                       "pt-BR",
                       { minimumFractionDigits: 2 }
                     )
@@ -234,7 +234,7 @@ export function PayrollFormModal({
                 value={grossSalary}
                 onChange={(e) => handleGrossSalaryChange(e.target.value)}
                 disabled={isViewMode}
-                data-testid="input-salario-bruto"
+                data-testid="input-gross-salary"
               />
             </div>
             <div className="space-y-2">
@@ -247,7 +247,7 @@ export function PayrollFormModal({
                 value={discounts}
                 onChange={(e) => handleDiscountsChange(e.target.value)}
                 disabled={isViewMode}
-                data-testid="input-descontos"
+                data-testid="input-deductions"
               />
             </div>
             <div className="space-y-2">
@@ -274,7 +274,7 @@ export function PayrollFormModal({
               })}`}
               disabled
               className="font-semibold"
-              data-testid="input-salario-liquido"
+              data-testid="input-net-salary"
             />
             <p className="text-xs text-muted-foreground">
               Calculado automaticamente: Bruto - Descontos + Bônus
@@ -321,7 +321,7 @@ export function PayrollFormModal({
               onChange={(e) => setNotes(e.target.value)}
               disabled={isViewMode}
               rows={3}
-              data-testid="input-observacoes-pagamento"
+              data-testid="input-payment-notes"
             />
           </div>
         </div>

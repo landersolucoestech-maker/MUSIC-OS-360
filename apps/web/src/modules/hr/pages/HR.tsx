@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { LEAVE_STATUS_OPTIONS, contractTypeLabel, leaveStatusLabel, leaveTypeLabel } from "@/modules/hr/constants";
 import { MonthPickerField } from "@/shared/ui/month-picker-field";
 import { toast } from "sonner";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
@@ -73,7 +74,6 @@ import { usePayroll, PAYMENT_STATUS } from "@/modules/hr/hooks/usePayroll";
 import type { PayrollEntry } from "@/modules/hr/hooks/usePayroll";
 import {
   useLeaveRequests,
-  LEAVE_STATUS,
 } from "@/modules/hr/hooks/useLeaveRequests";
 import type { LeaveRequest } from "@/modules/hr/hooks/useLeaveRequests";
 import {
@@ -107,7 +107,6 @@ const STATUS_VARIANT_AUSENCIA: Record<string, BadgeVariant> = {
   pending: "warning",
   approved: "success",
   rejected: "danger",
-  "em andamento": "info",
   completed: "neutral",
 };
 
@@ -192,11 +191,11 @@ export default function HR() {
   const [leaveFormModal, setLeaveFormModal] = useState<{
     open: boolean;
     mode: "create" | "edit" | "view";
-    ausencia?: LeaveRequest;
+    leaveRequest?: LeaveRequest;
   }>({ open: false, mode: "create" });
   const [leaveDeleteModal, setLeaveDeleteModal] = useState<{
     open: boolean;
-    ausencia?: LeaveRequest;
+    leaveRequest?: LeaveRequest;
   }>({ open: false });
   const [selectedLeaveIds, setSelectedLeaveIds] = useState<string[]>([]);
   const [leaveBulkDeleteModal, setLeaveBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
@@ -258,7 +257,7 @@ export default function HR() {
     error: payrollPageError, refetch: refetchPayrollPage,
   } = usePayrollPaginated({
     page: payrollPage, pageSize: payrollPageSize, search: debouncedPayrollSearch || undefined,
-    competencia: payrollMonthFilter || undefined,
+    referenceMonth: payrollMonthFilter || undefined,
     status: payrollStatusFilter !== "all" ? payrollStatusFilter : undefined,
     enabled: activeTab === "folha",
   });
@@ -310,8 +309,8 @@ export default function HR() {
   };
 
   const handleDeleteLeave = () => {
-    if (leaveDeleteModal.ausencia) {
-      deleteLeaveRequest.mutate(leaveDeleteModal.ausencia.id);
+    if (leaveDeleteModal.leaveRequest) {
+      deleteLeaveRequest.mutate(leaveDeleteModal.leaveRequest.id);
       setLeaveDeleteModal({ open: false });
     }
   };
@@ -334,9 +333,9 @@ export default function HR() {
     reportBulkResult(result, "excluído", "registro de férias");
   };
 
-  const handleApproveReject = (ausencia: LeaveRequest, newStatus: string) => {
+  const handleApproveReject = (leaveRequest: LeaveRequest, newStatus: string) => {
     updateLeaveRequest.mutate({
-      id: ausencia.id,
+      id: leaveRequest.id,
       status: newStatus,
     } as any);
   };
@@ -589,9 +588,9 @@ export default function HR() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos Status</SelectItem>
-                    {LEAVE_STATUS.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                    {LEAVE_STATUS_OPTIONS.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -674,17 +673,17 @@ export default function HR() {
                           {f.email && <p className="text-xs text-muted-foreground">{f.email}</p>}
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{f.cargo || "—"}</TableCell>
-                      <TableCell className="text-muted-foreground">{f.departamento || "—"}</TableCell>
-                      <TableCell className="text-muted-foreground">{f.tipo_contrato || "—"}</TableCell>
-                      <TableCell className={`text-right ${getMonetarySemanticClass("neutral")}`}>{f.salario ? formatCurrency(Number(f.salario)) : "—"}</TableCell>
+                      <TableCell className="text-muted-foreground">{f.job_title || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground">{f.department || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground">{contractTypeLabel(f.contract_type as string | null)}</TableCell>
+                      <TableCell className={`text-right ${getMonetarySemanticClass("neutral")}`}>{f.salary ? formatCurrency(Number(f.salary)) : "—"}</TableCell>
                       <TableCell>
                         <Badge variant={STATUS_VARIANT_EMPLOYEE[f.status || "active"] || "neutral"}>
                           {(f.status || "active").charAt(0).toUpperCase() + (f.status || "active").slice(1)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-xs" data-testid={`text-usuario-vinculo-${f.id}`}>
-                        {getUserName(f.vinculo_usuario_id ?? null) || "—"}
+                        {getUserName(f.linked_user_id ?? null) || "—"}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
@@ -804,19 +803,19 @@ export default function HR() {
                           data-testid={`checkbox-folha-${fp.id}`}
                         />
                       </TableCell>
-                      <TableCell className="font-medium"><EmployeeNameCell id={fp.funcionario_id ?? null} /></TableCell>
-                      <TableCell className="text-muted-foreground">{fp.mes_referencia || "—"}</TableCell>
-                      <TableCell className={`text-right ${getMonetarySemanticClass("neutral")}`}>{formatCurrency(Number(fp.salario_bruto) || 0)}</TableCell>
+                      <TableCell className="font-medium"><EmployeeNameCell id={fp.employee_id ?? null} /></TableCell>
+                      <TableCell className="text-muted-foreground">{fp.reference_month || "—"}</TableCell>
+                      <TableCell className={`text-right ${getMonetarySemanticClass("neutral")}`}>{formatCurrency(Number(fp.gross_salary) || 0)}</TableCell>
                       <TableCell className={`text-right ${getMonetarySemanticClass("negative")}`}>
-                        {fp.descontos ? formatCurrency(-Number(fp.descontos)) : "—"}
+                        {fp.deductions ? formatCurrency(-Number(fp.deductions)) : "—"}
                       </TableCell>
                       <TableCell className={`text-right ${getMonetarySemanticClass("neutral")}`}>
                         {fp.bonus ? `+ ${formatCurrency(Number(fp.bonus))}` : "—"}
                       </TableCell>
                       <TableCell className={`text-right font-semibold ${getMonetarySemanticClass("neutral")}`}>
-                        {formatCurrency(Number(fp.salario_liquido) || 0)}
+                        {formatCurrency(Number(fp.net_salary) || 0)}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{fp.data_pagamento ? formatDate(fp.data_pagamento) : "—"}</TableCell>
+                      <TableCell className="text-muted-foreground">{fp.payment_date ? formatDate(fp.payment_date) : "—"}</TableCell>
                       <TableCell>
                         <Badge variant={STATUS_VARIANT_PAYMENT[fp.status || "pending"] || "neutral"}>
                           {(fp.status || "pending").charAt(0).toUpperCase() + (fp.status || "pending").slice(1)}
@@ -938,16 +937,16 @@ export default function HR() {
                           data-testid={`checkbox-ferias-${fa.id}`}
                         />
                       </TableCell>
-                      <TableCell className="font-medium"><EmployeeNameCell id={fa.funcionario_id ?? null} /></TableCell>
+                      <TableCell className="font-medium"><EmployeeNameCell id={fa.employee_id ?? null} /></TableCell>
                       <TableCell className="text-muted-foreground">
-                        {fa.type ? fa.type.charAt(0).toUpperCase() + fa.type.slice(1) : "—"}
+                        {leaveTypeLabel(fa.type)}
                       </TableCell>
                       <TableCell className="text-muted-foreground">{formatDate(fa.start_date)}</TableCell>
                       <TableCell className="text-muted-foreground">{formatDate(fa.end_date)}</TableCell>
-                      <TableCell className="text-center">{fa.dias_totais ?? "—"}</TableCell>
+                      <TableCell className="text-center">{fa.total_days ?? "—"}</TableCell>
                       <TableCell>
                         <Badge variant={STATUS_VARIANT_AUSENCIA[fa.status || "pending"] || "neutral"}>
-                          {(fa.status || "pending").charAt(0).toUpperCase() + (fa.status || "pending").slice(1)}
+                          {leaveStatusLabel(fa.status || "pending")}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
@@ -969,13 +968,13 @@ export default function HR() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "view", ausencia: fa })} data-testid={`button-view-ferias-${fa.id}`}>
+                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "view", leaveRequest: fa })} data-testid={`button-view-ferias-${fa.id}`}>
                                 <Eye className="mr-2 h-4 w-4" /> Visualizar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "edit", ausencia: fa })} data-testid={`button-edit-ferias-${fa.id}`}>
+                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "edit", leaveRequest: fa })} data-testid={`button-edit-ferias-${fa.id}`}>
                                 <Pencil className="mr-2 h-4 w-4" /> Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive" onClick={() => setLeaveDeleteModal({ open: true, ausencia: fa })} data-testid={`button-delete-ferias-${fa.id}`}>
+                              <DropdownMenuItem className="text-destructive" onClick={() => setLeaveDeleteModal({ open: true, leaveRequest: fa })} data-testid={`button-delete-ferias-${fa.id}`}>
                                 <Trash2 className="mr-2 h-4 w-4" /> Excluir
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -1163,13 +1162,13 @@ export default function HR() {
       <LeaveRequestFormModal
         open={leaveFormModal.open && leaveFormModal.mode !== "view"}
         onOpenChange={(open) => setLeaveFormModal({ ...leaveFormModal, open })}
-        ausencia={leaveFormModal.ausencia}
+        leaveRequest={leaveFormModal.leaveRequest}
         mode={leaveFormModal.mode}
       />
       <LeaveRequestViewModal
         open={leaveFormModal.open && leaveFormModal.mode === "view"}
         onOpenChange={(open) => setLeaveFormModal({ ...leaveFormModal, open })}
-        ausencia={leaveFormModal.ausencia}
+        leaveRequest={leaveFormModal.leaveRequest}
       />
 
       <DeleteConfirmModal

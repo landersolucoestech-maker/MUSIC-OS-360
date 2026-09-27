@@ -28,14 +28,16 @@ export class HrController {
   listEmployees(
     @CurrentTenant() tenant: { id: string },
     @Query('status') status?: string,
-    @Query('setor') sector?: string,
+    @Query('department') department?: string,
+    /** CZ-030: deprecated alias of `department` (deploy-skew window). */
+    @Query('setor') legacyDepartment?: string,
     @Query('search') search?: string,
     @Query('offset') offset?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.listEmployees(tenant.id, {
       status,
-      setor: sector,
+      department: department ?? legacyDepartment,
       search,
       offset: offset ? +offset : undefined,
       limit:  limit  ? +limit  : undefined,
@@ -103,14 +105,16 @@ export class HrController {
   listPayroll(
     @CurrentTenant() tenant: { id: string },
     @Query('employee_id') employee_id?: string,
-    @Query('competencia') competencia?: string,
+    @Query('reference_month') referenceMonth?: string,
+    /** CZ-030: deprecated alias of `reference_month` (deploy-skew window). */
+    @Query('competencia') legacyReferenceMonth?: string,
     @Query('status') status?: string,
     @Query('offset') offset?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.listPayroll(tenant.id, {
       employee_id,
-      competencia,
+      reference_month: referenceMonth ?? legacyReferenceMonth,
       status,
       offset: offset ? +offset : undefined,
       limit:  limit  ? +limit  : undefined,

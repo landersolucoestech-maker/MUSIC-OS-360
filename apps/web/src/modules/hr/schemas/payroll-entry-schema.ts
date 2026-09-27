@@ -9,7 +9,7 @@ export const payrollEntrySchema = z.object({
     .min(0, "Salário bruto não pode ser negativo")
     .optional()
     .nullable(),
-  descontos: z.number()
+  deductions: z.number()
     .min(0, "Descontos não podem ser negativos")
     .optional()
     .nullable(),
@@ -19,7 +19,7 @@ export const payrollEntrySchema = z.object({
     .nullable(),
   paymentDate: z.string().optional().or(z.literal("")),
   status: z.enum(["pending", "processed", "paid", "cancelled"]).default("pending"),
-  observacoes: z.string()
+  notes: z.string()
     .max(2000, "Observações deve ter no máximo 2000 caracteres")
     .optional()
     .or(z.literal("")),

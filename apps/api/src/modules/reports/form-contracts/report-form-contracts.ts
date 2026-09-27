@@ -138,10 +138,10 @@ const EMPLOYEES_CONTRACT: ReportFormContract = {
   tableName: 'employees',
   identityColumn: 'name',
   fields: [
-    col('name'), col('cargo'), col('departamento'), col('status'),
-    col('tipo_contrato'), col('salario'), col('data_admissao'),
-    col('data_demissao'), col('documents'),
-    enc('email', 'email_encrypted'), enc('telefone', 'telefone_encrypted'),
+    col('name'), col('job_title'), col('department'), col('status'),
+    col('contract_type'), col('salary'), col('hired_at'),
+    col('terminated_at'), col('notes'), col('linked_user_id'), col('documents'),
+    enc('email', 'email_encrypted'), enc('phone', 'phone_encrypted'),
     enc('cpf', 'cpf_encrypted'),
   ],
   excludedFormFields: {

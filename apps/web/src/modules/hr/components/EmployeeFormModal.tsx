@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { CONTRACT_TYPE_OPTIONS } from "@/modules/hr/constants";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import {
   Dialog,
@@ -24,7 +25,6 @@ import { Loader2, User, Briefcase, Link2 } from "lucide-react";
 import {
   useEmployees,
   DEPARTMENTS,
-  CONTRACT_TYPES,
   EMPLOYEE_STATUS,
 } from "@/modules/hr/hooks/useEmployees";
 import type { Employee } from "@/modules/hr/hooks/useEmployees";
@@ -80,16 +80,16 @@ export function EmployeeFormModal({
         setRg((employee.rg as string) || "");
         setBirthDate((employee.data_nascimento as string) || "");
         setEmail((employee.email as string) || "");
-        setPhone((employee.telefone as string) || "");
+        setPhone((employee.phone as string) || "");
         setAddress((employee.endereco as string) || "");
-        setPosition((employee.cargo as string) || "");
-        setDepartment((employee.departamento as string) || "");
-        setContractType((employee.tipo_contrato as string) || "");
-        setHireDate((employee.data_admissao as string) || "");
-        setBaseSalary(employee.salario != null ? Number(employee.salario) : "");
+        setPosition((employee.job_title as string) || "");
+        setDepartment((employee.department as string) || "");
+        setContractType((employee.contract_type as string) || "");
+        setHireDate((employee.hired_at as string) || "");
+        setBaseSalary(employee.salary != null ? Number(employee.salary) : "");
         setStatus((employee.status as string) || "active");
-        setNotes((employee.observacoes as string) || "");
-        setLinkUserId((employee.vinculo_usuario_id as string) || "");
+        setNotes((employee.notes as string) || "");
+        setLinkUserId((employee.linked_user_id as string) || "");
       } else {
         setFullName("");
         setCpf("");
@@ -162,12 +162,14 @@ export function EmployeeFormModal({
       name: fullName.trim(),
       cpf: cpf.trim() || null,
       email: email.trim() || null,
-      telefone: phone.trim() || null,
-      cargo: position.trim() || null,
-      departamento: department || null,
-      tipo_contrato: contractType || null,
-      data_admissao: hireDate || null,
-      salario: baseSalary !== "" ? String(baseSalary) : null,
+      phone: phone.trim() || null,
+      job_title: position.trim() || null,
+      department: department || null,
+      contract_type: contractType || null,
+      hired_at: hireDate || null,
+      salary: baseSalary !== "" ? String(baseSalary) : null,
+      notes: notes.trim() || null,
+      linked_user_id: linkUserId || null,
       status,
     };
 
@@ -331,14 +333,14 @@ export function EmployeeFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="telefone">Telefone</Label>
+                <Label htmlFor="phone">Telefone</Label>
                 <Input
-                  id="telefone"
+                  id="phone"
                   placeholder="(00) 00000-0000"
                   value={phone}
                   onChange={(e) => setPhone(maskPhone(e.target.value))}
                   disabled={isViewMode}
-                  data-testid="input-telefone"
+                  data-testid="input-phone"
                 />
               </div>
               <div className="space-y-1.5">
@@ -358,14 +360,14 @@ export function EmployeeFormModal({
           <TabsContent value="profissional" className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="cargo">Cargo</Label>
+                <Label htmlFor="job_title">Cargo</Label>
                 <Input
-                  id="cargo"
+                  id="job_title"
                   placeholder="Ex: Analista, Coordenador"
                   value={position}
                   onChange={(e) => setPosition(e.target.value)}
                   disabled={isViewMode}
-                  data-testid="input-cargo"
+                  data-testid="input-job-title"
                 />
               </div>
               <div className="space-y-1.5">
@@ -375,7 +377,7 @@ export function EmployeeFormModal({
                   onValueChange={setDepartment}
                   disabled={isViewMode}
                 >
-                  <SelectTrigger data-testid="select-setor">
+                  <SelectTrigger data-testid="select-department">
                     <SelectValue placeholder="Selecione o setor" />
                   </SelectTrigger>
                   <SelectContent>
@@ -391,26 +393,26 @@ export function EmployeeFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="tipo_contrato">Tipo de Contrato</Label>
+                <Label htmlFor="contract_type">Tipo de Contrato</Label>
                 <Select
                   value={contractType}
                   onValueChange={setContractType}
                   disabled={isViewMode}
                 >
-                  <SelectTrigger data-testid="select-type-contrato">
+                  <SelectTrigger data-testid="select-contract-type">
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CONTRACT_TYPES.map((t) => (
-                      <SelectItem key={t} value={t}>
-                        {t}
+                    {CONTRACT_TYPE_OPTIONS.map((t) => (
+                      <SelectItem key={t.value} value={t.value}>
+                        {t.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="data_admissao">Data de Admissão</Label>
+                <Label htmlFor="hired_at">Data de Admissão</Label>
                 <DatePickerField
                   value={hireDate}
                   onChange={setHireDate}
@@ -435,7 +437,7 @@ export function EmployeeFormModal({
                     setBaseSalary(e.target.value ? Number(e.target.value) : "")
                   }
                   disabled={isViewMode}
-                  data-testid="input-salario-base"
+                  data-testid="input-base-salary"
                 />
               </div>
               <div className="space-y-1.5">
@@ -460,15 +462,15 @@ export function EmployeeFormModal({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="observacoes">Observações</Label>
+              <Label htmlFor="notes">Observações</Label>
               <Textarea
-                id="observacoes"
+                id="notes"
                 placeholder="Observações sobre o funcionário"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 disabled={isViewMode}
                 rows={3}
-                data-testid="input-observacoes"
+                data-testid="input-notes"
               />
             </div>
 

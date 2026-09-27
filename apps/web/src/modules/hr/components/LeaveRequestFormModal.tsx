@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { LEAVE_STATUS_OPTIONS, LEAVE_TYPE_OPTIONS } from "@/modules/hr/constants";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import {
   Dialog,
@@ -24,8 +25,6 @@ import { toast } from "sonner";
 import { leaveRequestSchema } from "@/modules/hr/schemas/leave-request-schema";
 import {
   useLeaveRequests,
-  LEAVE_TYPES,
-  LEAVE_STATUS,
 } from "@/modules/hr/hooks/useLeaveRequests";
 import type { LeaveRequest, LeaveRequestInsert } from "@/modules/hr/hooks/useLeaveRequests";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
@@ -35,7 +34,7 @@ import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 interface LeaveRequestFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  ausencia?: LeaveRequest | null;
+  leaveRequest?: LeaveRequest | null;
   mode: "create" | "edit" | "view";
 }
 
@@ -51,7 +50,7 @@ function countLeaveDays(start: string, end: string): number {
 export function LeaveRequestFormModal({
   open,
   onOpenChange,
-  ausencia,
+  leaveRequest,
   mode,
 }: LeaveRequestFormModalProps) {
   const { addLeaveRequest, updateLeaveRequest } = useLeaveRequests();
@@ -71,23 +70,23 @@ export function LeaveRequestFormModal({
   const totalDays = useMemo(() => countLeaveDays(startDate, endDate), [startDate, endDate]);
 
   useEffect(() => {
-    if (open && mode === "edit" && ausencia) {
-      setEmployeeId((ausencia.funcionario_id as string) || "");
-      setType((ausencia.type as string) || "");
-      setStartDate((ausencia.start_date as string) || "");
-      setEndDate((ausencia.end_date as string) || "");
-      setStatus((ausencia.status as string) || "pending");
-      setApprovedBy((ausencia.aprovado_por as string) || "");
-      setNotes((ausencia.observacoes as string) || "");
+    if (open && mode === "edit" && leaveRequest) {
+      setEmployeeId((leaveRequest.employee_id as string) || "");
+      setType((leaveRequest.type as string) || "");
+      setStartDate((leaveRequest.start_date as string) || "");
+      setEndDate((leaveRequest.end_date as string) || "");
+      setStatus((leaveRequest.status as string) || "pending");
+      setApprovedBy((leaveRequest.approved_by as string) || "");
+      setNotes((leaveRequest.notes as string) || "");
       setErrors({});
-    } else if (open && mode === "view" && ausencia) {
-      setEmployeeId((ausencia.funcionario_id as string) || "");
-      setType((ausencia.type as string) || "");
-      setStartDate((ausencia.start_date as string) || "");
-      setEndDate((ausencia.end_date as string) || "");
-      setStatus((ausencia.status as string) || "pending");
-      setApprovedBy((ausencia.aprovado_por as string) || "");
-      setNotes((ausencia.observacoes as string) || "");
+    } else if (open && mode === "view" && leaveRequest) {
+      setEmployeeId((leaveRequest.employee_id as string) || "");
+      setType((leaveRequest.type as string) || "");
+      setStartDate((leaveRequest.start_date as string) || "");
+      setEndDate((leaveRequest.end_date as string) || "");
+      setStatus((leaveRequest.status as string) || "pending");
+      setApprovedBy((leaveRequest.approved_by as string) || "");
+      setNotes((leaveRequest.notes as string) || "");
       setErrors({});
     } else if (open && mode === "create") {
       setEmployeeId("");
@@ -99,7 +98,7 @@ export function LeaveRequestFormModal({
       setNotes("");
       setErrors({});
     }
-  }, [open, mode, ausencia]);
+  }, [open, mode, leaveRequest]);
 
   const clearError = (field: string) => {
     if (errors[field]) {
@@ -117,9 +116,9 @@ export function LeaveRequestFormModal({
       type,
       startDate,
       endDate,
-      status: status as "pending" | "approved" | "rejected" | "in_progress" | "completed",
+      status: status as "pending" | "approved" | "rejected" | "completed",
       approvedBy: approvedBy || "",
-      observacoes: notes || "",
+      notes: notes || "",
     });
 
     if (!result.success) {
@@ -131,7 +130,6 @@ export function LeaveRequestFormModal({
         }
       });
       // Map schema field names back to the original error keys
-      if (newErrors.employeeId) newErrors.funcionario_id = newErrors.employeeId;
       if (newErrors.startDate) newErrors.start_date = newErrors.startDate;
       if (newErrors.endDate) newErrors.end_date = newErrors.endDate;
       setErrors(newErrors);
@@ -155,23 +153,23 @@ export function LeaveRequestFormModal({
     }
 
     const data: LeaveRequestInsert = {
-      funcionario_id: employeeId,
+      employee_id: employeeId,
       type: type || null,
       start_date: startDate,
       end_date: endDate,
-      dias_totais: totalDays,
+      total_days: totalDays,
       status,
-      aprovado_por: approvedBy.trim() || null,
-      observacoes: notes.trim() || null,
+      approved_by: approvedBy.trim() || null,
+      notes: notes.trim() || null,
     };
 
     if (mode === "create") {
       addLeaveRequest.mutate(data, {
         onSuccess: () => onOpenChange(false),
       });
-    } else if (mode === "edit" && ausencia) {
+    } else if (mode === "edit" && leaveRequest) {
       updateLeaveRequest.mutate(
-        { id: ausencia.id, ...data, expectedUpdatedAt: getExpectedUpdatedAt(ausencia) },
+        { id: leaveRequest.id, ...data, expectedUpdatedAt: getExpectedUpdatedAt(leaveRequest) },
         {
           onSuccess: () => onOpenChange(false),
           onError: (err) => { handleConcurrencyConflict(err, "registro de férias/ausência"); },
@@ -193,10 +191,10 @@ export function LeaveRequestFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-lg max-h-[90vh] overflow-y-auto"
-        data-testid="ferias-ausencias-form-modal"
+        data-testid="leave-request-form-modal"
       >
         <DialogHeader>
-          <DialogTitle data-testid="ferias-ausencias-form-title">{title}</DialogTitle>
+          <DialogTitle data-testid="leave-request-form-title">{title}</DialogTitle>
           <DialogDescription>
             {mode === "create"
               ? "Registre uma nova férias ou ausência"
@@ -215,17 +213,17 @@ export function LeaveRequestFormModal({
               getLabel={(f) => f.name ?? ""}
               onChange={(id) => {
                 setEmployeeId(id);
-                clearError("funcionario_id");
+                clearError("employeeId");
               }}
               placeholder={loadingEmployees ? "Carregando…" : "Selecione o funcionário"}
               searchPlaceholder="Buscar por nome…"
               emptyText="Nenhum funcionário encontrado"
               disabled={isViewMode}
-              invalid={!!errors.funcionario_id}
+              invalid={!!errors.employeeId}
               data-testid="select-funcionario-id"
             />
-            {errors.funcionario_id && (
-              <p className="text-sm text-destructive">{errors.funcionario_id}</p>
+            {errors.employeeId && (
+              <p className="text-sm text-destructive">{errors.employeeId}</p>
             )}
           </div>
 
@@ -241,14 +239,14 @@ export function LeaveRequestFormModal({
             >
               <SelectTrigger
                 className={errors.type ? "border-destructive" : ""}
-                data-testid="select-type-ausencia"
+                data-testid="select-leave-type"
               >
                 <SelectValue placeholder="Selecione o tipo" />
               </SelectTrigger>
               <SelectContent>
-                {LEAVE_TYPES.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                {LEAVE_TYPE_OPTIONS.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    {t.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -307,13 +305,13 @@ export function LeaveRequestFormModal({
               onValueChange={setStatus}
               disabled={isViewMode}
             >
-              <SelectTrigger data-testid="select-status-ausencia">
+              <SelectTrigger data-testid="select-leave-status">
                 <SelectValue placeholder="Selecione o status" />
               </SelectTrigger>
               <SelectContent>
-                {LEAVE_STATUS.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                {LEAVE_STATUS_OPTIONS.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -338,7 +336,7 @@ export function LeaveRequestFormModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               disabled={isViewMode}
-              data-testid="input-observacoes-ausencia"
+              data-testid="input-leave-notes"
             />
           </div>
         </div>
@@ -347,7 +345,7 @@ export function LeaveRequestFormModal({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            data-testid="button-cancel-ausencia"
+            data-testid="button-cancel-leave-request"
           >
             {isViewMode ? "Fechar" : "Cancelar"}
           </Button>
@@ -355,7 +353,7 @@ export function LeaveRequestFormModal({
             <Button
               onClick={handleSubmit}
               disabled={isPending}
-              data-testid="button-save-ausencia"
+              data-testid="button-save-leave-request"
             >
               {isPending && <Loader2 className="mr-2 animate-spin" />}
               {mode === "create" ? "Criar" : "Salvar"}

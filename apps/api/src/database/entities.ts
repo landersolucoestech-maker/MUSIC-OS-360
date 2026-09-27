@@ -1974,16 +1974,18 @@ export class EmployeeEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) name: string;
-  @Column({ type: 'varchar', length: 255, nullable: true }) cargo: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) departamento: string | null;
-  @Column({ type: 'varchar', length: 100, default: 'clt' }) tipo_contrato: string;
+  @Column({ type: 'varchar', length: 255, nullable: true }) job_title: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) department: string | null;
+  @Column({ type: 'varchar', length: 100, default: 'clt' }) contract_type: string;
   @Column({ type: 'varchar', length: 50, default: EmployeeStatus.ACTIVE }) status: EmployeeStatus;
   @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
-  @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) phone_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) cpf_encrypted: string | null;
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) salario: string | null;
-  @Column({ type: 'timestamp', nullable: true }) data_admissao: Date | null;
-  @Column({ type: 'timestamp', nullable: true }) data_demissao: Date | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) salary: string | null;
+  @Column({ type: 'timestamp', nullable: true }) hired_at: Date | null;
+  @Column({ type: 'timestamp', nullable: true }) terminated_at: Date | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
+  @Column({ type: 'varchar', length: 64, nullable: true }) linked_user_id: string | null;
   @Column({ type: 'jsonb', default: [] }) documents: unknown[];
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
@@ -2003,18 +2005,21 @@ export class EmployeeEntity {
 @Entity('payroll_entries')
 @Index(['tenant_id'])
 @Index(['employee_id'])
-@Index(['employee_id', 'competencia'], { unique: true })
+@Index(['employee_id', 'reference_month'], { unique: true })
 export class PayrollEntryEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid' }) employee_id: string;
-  @Column({ type: 'varchar', length: 7 }) competencia: string;
-  @Column({ type: 'decimal', precision: 15, scale: 2 }) salario_bruto: string;
-  @Column({ type: 'decimal', precision: 15, scale: 2, default: '0' }) descontos: string;
-  @Column({ type: 'decimal', precision: 15, scale: 2 }) salario_liquido: string;
+  @Column({ type: 'varchar', length: 7 }) reference_month: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2 }) gross_salary: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: '0' }) deductions: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) bonus: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2 }) net_salary: string;
+  @Column({ type: 'date', nullable: true }) payment_date: string | null;
   @Column({ type: 'varchar', length: 50, default: PayrollStatus.PENDING }) status: PayrollStatus;
-  @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
-  @Column({ type: 'timestamp', nullable: true }) pago_em: Date | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
+  @Column({ type: 'text', nullable: true }) file_url: string | null;
+  @Column({ type: 'timestamp', nullable: true }) paid_at: Date | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
@@ -2040,9 +2045,11 @@ export class LeaveRequestEntity {
   @Column({ type: 'varchar', length: 50, default: LeaveRequestStatus.PENDING }) status: LeaveRequestStatus;
   @Column({ type: 'timestamp' }) start_date: Date;
   @Column({ type: 'timestamp' }) end_date: Date;
-  @Column({ type: 'text', nullable: true }) motivo: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) aprovado_por: string | null;
-  @Column({ type: 'text', nullable: true }) documento_url: string | null;
+  @Column({ type: 'integer', nullable: true }) total_days: number | null;
+  @Column({ type: 'text', nullable: true }) reason: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) approved_by: string | null;
+  @Column({ type: 'text', nullable: true }) document_url: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;

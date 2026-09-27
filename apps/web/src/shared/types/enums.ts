@@ -253,17 +253,19 @@ export type EmployeeStatusValue = `${EmployeeStatus}`;
 export type EmployeeContractType =
   | "clt"
   | "pj"
-  | "autonomo"
-  | "estagio"
-  | "temporario";
+  | "freelancer"
+  | "internship"
+  | "temporary";
 
 export type LeaveType =
-  | "ferias"
-  | "licenca_medica"
-  | "licenca_maternidade"
-  | "licenca_paternidade"
-  | "falta"
-  | "outro";
+  | "vacation"
+  | "sick_leave"
+  | "maternity_leave"
+  | "paternity_leave"
+  | "excused_absence"
+  | "unexcused_absence"
+  | "day_off"
+  | "compensatory_time_off";
 
 /** Derived from LeaveRequestStatus — source of truth: @music-os-360/types */
 export type LeaveRequestStatusValue = `${LeaveRequestStatus}`;

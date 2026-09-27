@@ -28,7 +28,7 @@ describe('HrService — cross-tenant FK ownership (find-88311b49)', () => {
     await expect(
       service.createPayroll('tenant-1', {
         employee_id: '323e4567-e89b-12d3-a456-426614174000',
-        competencia: '2026-01', salario_bruto: '1000', salario_liquido: '900',
+        reference_month: '2026-01', gross_salary: '1000', net_salary: '900',
       } as unknown as CreatePayrollEntryDto),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
@@ -38,7 +38,7 @@ describe('HrService — cross-tenant FK ownership (find-88311b49)', () => {
     await expect(
       service.createPayroll('tenant-1', {
         employee_id: '223e4567-e89b-12d3-a456-426614174000',
-        competencia: '2026-01', salario_bruto: '1000', salario_liquido: '900',
+        reference_month: '2026-01', gross_salary: '1000', net_salary: '900',
       } as unknown as CreatePayrollEntryDto),
     ).resolves.toBeDefined();
     expect(repo.save).toHaveBeenCalled();
