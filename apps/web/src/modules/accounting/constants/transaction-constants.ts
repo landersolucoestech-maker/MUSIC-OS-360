@@ -474,8 +474,8 @@ export const investmentTrainingItems = [
   { value: "outros", label: "Outros" },
 ];
 
-export const getInvestmentItemsByCategory = (categoria: string): { value: string; label: string }[] => {
-  switch (categoria) {
+export const getInvestmentItemsByCategory = (category: string): { value: string; label: string }[] => {
+  switch (category) {
     case "equipamentos": return investmentEquipmentItems;
     case "infraestrutura": return investmentInfrastructureItems;
     case "tecnologia": return investmentTechnologyItems;
@@ -523,49 +523,49 @@ export const collectingAgencies = [
 // ==================== HELPERS ====================
 
 export const getCategoriesForTransactionType = (
-  tipoTransacao: string,
-  tipoCliente: string
+  transactionType: string,
+  clientType: string
 ): { value: string; label: string }[] => {
-  if (tipoTransacao === "imposto") return taxCategories;
-  if (tipoTransacao === "transferencia") return transferCategories;
-  if (tipoTransacao === "investimento") return investmentCategories;
+  if (transactionType === "imposto") return taxCategories;
+  if (transactionType === "transferencia") return transferCategories;
+  if (transactionType === "investimento") return investmentCategories;
 
   // Company
-  if (tipoCliente === "empresa") {
-    if (tipoTransacao === "despesa") return companyExpenseCategories;
-    if (tipoTransacao === "receita") return companyRevenueCategories;
+  if (clientType === "empresa") {
+    if (transactionType === "despesa") return companyExpenseCategories;
+    if (transactionType === "receita") return companyRevenueCategories;
   }
 
   // The person counterparty has specific expense categories
-  if (tipoCliente === "pessoa") {
-    if (tipoTransacao === "despesa") return individualExpenseCategories;
-    if (tipoTransacao === "receita") return companyRevenueCategories;
+  if (clientType === "pessoa") {
+    if (transactionType === "despesa") return individualExpenseCategories;
+    if (transactionType === "receita") return companyRevenueCategories;
   }
 
   // The artist counterparty has specific categories
-  if (tipoCliente === "artista") {
-    if (tipoTransacao === "despesa") return artistExpenseCategories;
-    if (tipoTransacao === "receita") return artistRevenueCategories;
+  if (clientType === "artista") {
+    if (transactionType === "despesa") return artistExpenseCategories;
+    if (transactionType === "receita") return artistRevenueCategories;
   }
 
   return [];
 };
 
 export const getSubcategoriesForCategory = (
-  tipoTransacao: string,
-  tipoCliente: string,
-  categoria: string
+  transactionType: string,
+  clientType: string,
+  category: string
 ): { value: string; label: string }[] => {
   // Artist + Expense
-  if (tipoCliente === "artista" && tipoTransacao === "despesa") {
-    if (categoria === "caches") return artistFeeTypes;
+  if (clientType === "artista" && transactionType === "despesa") {
+    if (category === "caches") return artistFeeTypes;
     return [];
   }
 
   // Company
-  if (tipoCliente === "empresa") {
-    if (tipoTransacao === "despesa") {
-      switch (categoria) {
+  if (clientType === "empresa") {
+    if (transactionType === "despesa") {
+      switch (category) {
         case "servicos": return expenseServiceTypes;
         case "produtos": return expenseProductTypes;
         case "administrativo": return administrativeExpenseTypes;
@@ -575,8 +575,8 @@ export const getSubcategoriesForCategory = (
       }
     }
 
-    if (tipoTransacao === "receita") {
-      switch (categoria) {
+    if (transactionType === "receita") {
+      switch (category) {
         case "receitas-musicais": return musicRevenueTypes;
         case "servicos": return revenueServiceTypes;
         case "produtos": return revenueProductTypes;
@@ -587,9 +587,9 @@ export const getSubcategoriesForCategory = (
   }
 
   // The person counterparty has specific expense subcategories
-  if (tipoCliente === "pessoa") {
-    if (tipoTransacao === "despesa") {
-      switch (categoria) {
+  if (clientType === "pessoa") {
+    if (transactionType === "despesa") {
+      switch (category) {
         case "remuneracao": return individualCompensationTypes;
         case "servicos-pf": return individualServiceTypes;
         case "reembolso": return individualReimbursementTypes;
@@ -597,8 +597,8 @@ export const getSubcategoriesForCategory = (
       }
     }
 
-    if (tipoTransacao === "receita") {
-      switch (categoria) {
+    if (transactionType === "receita") {
+      switch (category) {
         case "receitas-musicais": return musicRevenueTypes;
         case "servicos": return revenueServiceTypes;
         case "produtos": return revenueProductTypes;

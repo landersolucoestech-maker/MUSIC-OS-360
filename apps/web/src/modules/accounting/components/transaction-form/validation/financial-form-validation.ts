@@ -45,8 +45,8 @@ export function validateTransactionForm(
     errors.description = "Informe a descrição";
   }
 
-  const valor = parseMoney(f.amount);
-  if (!Number.isFinite(valor) || valor <= 0) {
+  const amount = parseMoney(f.amount);
+  if (!Number.isFinite(amount) || amount <= 0) {
     errors.amount = "Informe um valor válido";
   }
 
@@ -83,8 +83,8 @@ export function validateTransactionForm(
   }
 
   if (rules.exibirParcelamento) {
-    const quantidadeParcelas = parsePositiveInteger(f.quantidadeParcelas);
-    if (!Number.isInteger(quantidadeParcelas) || quantidadeParcelas < 2) {
+    const installmentCount = parsePositiveInteger(f.quantidadeParcelas);
+    if (!Number.isInteger(installmentCount) || installmentCount < 2) {
       errors.quantidadeParcelas = "Mínimo 2 parcelas";
     }
 

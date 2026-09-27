@@ -109,18 +109,18 @@ export interface InvoiceFormRules {
 }
 
 export function computeInvoiceRules(operationType: InvoiceOperationType): InvoiceFormRules {
-  const isEntrada = operationType === "entrada";
+  const isInflow = operationType === "entrada";
   return {
-    isEntrada,
-    tomadorSectionLabel: isEntrada ? "Fornecedor / Emitente" : "Tomador",
-    prestadorCardLabel: isEntrada
+    isEntrada: isInflow,
+    tomadorSectionLabel: isInflow ? "Fornecedor / Emitente" : "Tomador",
+    prestadorCardLabel: isInflow
       ? "Tomador (sua empresa, configurada em Empresa)"
       : "Prestador (configurado em Empresa)",
-    clienteSelectLabel: isEntrada
+    clienteSelectLabel: isInflow
       ? "Fornecedor Cadastrado (preenche automaticamente)"
       : "Cliente Cadastrado (preenche automaticamente)",
-    valorLiquidoLabel: isEntrada ? "Valor Líquido a Pagar" : "Valor Líquido a Receber",
-    tributosSectionDesc: isEntrada
+    valorLiquidoLabel: isInflow ? "Valor Líquido a Pagar" : "Valor Líquido a Receber",
+    tributosSectionDesc: isInflow
       ? "Tributos retidos / pagos sobre o valor da nota."
       : "Tributos calculados automaticamente sobre o valor dos serviços.",
   };

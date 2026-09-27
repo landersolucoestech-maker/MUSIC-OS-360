@@ -283,7 +283,7 @@ export function useTransactionFormController({
     toast.success("Arquivo anexado localmente. Upload real será processado futuramente.");
   }, [clearFieldError, isSubmitting, isViewMode, revokeObjectUrl]);
 
-  const handleRemoveAnexo = useCallback(() => {
+  const handleRemoveAttachment = useCallback(() => {
     if (isViewMode || isSubmitting) return;
 
     revokeObjectUrl();
@@ -303,7 +303,7 @@ export function useTransactionFormController({
     handleSubmit,
     handleClose,
     handleFileUpload,
-    handleRemoveAnexo,
+    handleRemoveAnexo: handleRemoveAttachment,
   };
 }
 

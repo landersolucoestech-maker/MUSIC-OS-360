@@ -53,28 +53,28 @@ interface RuleContext {
 }
 
 function buildContext(f: TransactionFormData): RuleContext {
-  const isImposto       = f.tipoTransacao === "imposto";
+  const isTax       = f.tipoTransacao === "imposto";
   const isTransferencia = f.tipoTransacao === "transferencia";
-  const isInvestimento  = f.tipoTransacao === "investimento";
-  const isDespesa       = f.tipoTransacao === "despesa";
-  const isReceita       = f.tipoTransacao === "receita";
-  const isEmpresa       = f.tipoCliente === "empresa";
-  const isArtista       = f.tipoCliente === "artista";
-  const isPessoa        = f.tipoCliente === "pessoa";
-  const isEmpresaOuPessoa = isEmpresa || isPessoa;
+  const isInvestment  = f.tipoTransacao === "investimento";
+  const isExpense       = f.tipoTransacao === "despesa";
+  const isIncome       = f.tipoTransacao === "receita";
+  const isCompany       = f.tipoCliente === "empresa";
+  const isArtist       = f.tipoCliente === "artista";
+  const isPerson        = f.tipoCliente === "pessoa";
+  const isCompanyOrPerson = isCompany || isPerson;
   return {
-    isImposto, isTransferencia, isInvestimento, isDespesa, isReceita,
-    isEmpresa, isArtista, isPessoa, isEmpresaOuPessoa,
-    isDespesaServico:             isDespesa && isEmpresaOuPessoa && f.category === "servicos",
-    isDespesaMarketing:           isDespesa && isEmpresaOuPessoa && f.category === "marketing",
-    isDespesaViagem:              isDespesa && isEmpresaOuPessoa && f.category === "viagens",
-    isDespesaProduto:             isDespesa && isEmpresaOuPessoa && f.category === "produtos",
-    isDespesaSuporteFinanceiro:   isDespesa && isEmpresaOuPessoa && f.category === "suporte-financeiro",
-    isDespesaArtistaCaches:       isDespesa && isArtista && f.category === "caches",
-    isDespesaArtistaSuporteFinanceiro: isDespesa && isArtista && f.category === "suporte-financeiro",
-    isReceitaMusical: isReceita && isEmpresaOuPessoa && f.category === "receitas-musicais",
-    isReceitaServico: isReceita && isEmpresaOuPessoa && f.category === "servicos",
-    isReceitaProduto: isReceita && isEmpresaOuPessoa && f.category === "produtos",
+    isImposto: isTax, isTransferencia, isInvestimento: isInvestment, isDespesa: isExpense, isReceita: isIncome,
+    isEmpresa: isCompany, isArtista: isArtist, isPessoa: isPerson, isEmpresaOuPessoa: isCompanyOrPerson,
+    isDespesaServico:             isExpense && isCompanyOrPerson && f.category === "servicos",
+    isDespesaMarketing:           isExpense && isCompanyOrPerson && f.category === "marketing",
+    isDespesaViagem:              isExpense && isCompanyOrPerson && f.category === "viagens",
+    isDespesaProduto:             isExpense && isCompanyOrPerson && f.category === "produtos",
+    isDespesaSuporteFinanceiro:   isExpense && isCompanyOrPerson && f.category === "suporte-financeiro",
+    isDespesaArtistaCaches:       isExpense && isArtist && f.category === "caches",
+    isDespesaArtistaSuporteFinanceiro: isExpense && isArtist && f.category === "suporte-financeiro",
+    isReceitaMusical: isIncome && isCompanyOrPerson && f.category === "receitas-musicais",
+    isReceitaServico: isIncome && isCompanyOrPerson && f.category === "servicos",
+    isReceitaProduto: isIncome && isCompanyOrPerson && f.category === "produtos",
     hasTipoTransacao: Boolean(f.tipoTransacao),
   };
 }
@@ -90,8 +90,8 @@ export const DISPLAY_RULES: Record<BooleanRuleKey, RulePredicate> = {
     ctx.hasTipoTransacao && !ctx.isImposto && !ctx.isTransferencia && !ctx.isInvestimento,
 
   exibirCategoria: (f, ctx) => {
-    const categorias = getCategoriesForTransactionType(f.tipoTransacao, f.tipoCliente);
-    return categorias.length > 0 && Boolean(f.tipoCliente || ctx.isImposto || ctx.isTransferencia || ctx.isInvestimento);
+    const categories = getCategoriesForTransactionType(f.tipoTransacao, f.tipoCliente);
+    return categories.length > 0 && Boolean(f.tipoCliente || ctx.isImposto || ctx.isTransferencia || ctx.isInvestimento);
   },
 
   exibirSubcategoria: (f) => {
@@ -156,8 +156,8 @@ export function computeFinancialRules(f: TransactionFormData): FinancialFormRule
     ),
   ) as Record<BooleanRuleKey, boolean>;
 
-  const labelTipoCliente = ctx.isDespesa ? "Pagar quem" : ctx.isReceita ? "Receber de" : "Tipo de Cliente";
+  const labelClientType = ctx.isDespesa ? "Pagar quem" : ctx.isReceita ? "Receber de" : "Tipo de Cliente";
 
-  return { ...booleans, labelTipoCliente };
+  return { ...booleans, labelTipoCliente: labelClientType };
 }
 

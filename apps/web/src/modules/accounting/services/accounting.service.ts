@@ -28,9 +28,9 @@ export const accountingService = {
 
   async getSummary() {
     const list = await storage.list<{ id: string; type: string; valor: number }>("transactions");
-    const receitas = list.filter((t) => t.type === "receita").reduce((s, t) => s + (t.valor ?? 0), 0);
-    const despesas = list.filter((t) => t.type === "despesa").reduce((s, t) => s + (t.valor ?? 0), 0);
-    return { receitas, despesas, saldo: receitas - despesas, total: list.length };
+    const income = list.filter((t) => t.type === "receita").reduce((s, t) => s + (t.valor ?? 0), 0);
+    const expenses = list.filter((t) => t.type === "despesa").reduce((s, t) => s + (t.valor ?? 0), 0);
+    return { receitas: income, despesas: expenses, saldo: income - expenses, total: list.length };
   },
 
   async listInvoices() {

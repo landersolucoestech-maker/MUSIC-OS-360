@@ -7,12 +7,12 @@ export type OverrideKey = string;
 export type RuleOverrides = Record<OverrideKey, boolean>;
 
 function buildKey(
-  tipoTransacao: string,
-  tipoCliente:   string,
+  transactionType: string,
+  clientType:   string,
   category:     string,
   ruleKey:       string,
 ): OverrideKey {
-  return `${tipoTransacao}:${tipoCliente}:${category}:${ruleKey}`;
+  return `${transactionType}:${clientType}:${category}:${ruleKey}`;
 }
 
 function load(): RuleOverrides {
@@ -32,10 +32,10 @@ function save(overrides: RuleOverrides): void {
 
 export interface UseRuleOverridesReturn {
   overrides:     RuleOverrides;
-  toggleOverride: (tipoTransacao: string, tipoCliente: string, category: string, ruleKey: string, currentValue: boolean) => void;
+  toggleOverride: (transactionType: string, clientType: string, category: string, ruleKey: string, currentValue: boolean) => void;
   clearOverrides: () => void;
   hasOverrides:   boolean;
-  getEffective:   (tipoTransacao: string, tipoCliente: string, category: string, ruleKey: string, computed: boolean) => boolean;
+  getEffective:   (transactionType: string, clientType: string, category: string, ruleKey: string, computed: boolean) => boolean;
 }
 
 export function useRuleOverrides(): UseRuleOverridesReturn {
@@ -44,13 +44,13 @@ export function useRuleOverrides(): UseRuleOverridesReturn {
   useEffect(() => { save(overrides); }, [overrides]);
 
   const toggleOverride = useCallback((
-    tipoTransacao: string,
-    tipoCliente:   string,
+    transactionType: string,
+    clientType:   string,
     category:     string,
     ruleKey:       string,
     currentValue:  boolean,
   ) => {
-    const key = buildKey(tipoTransacao, tipoCliente, category, ruleKey);
+    const key = buildKey(transactionType, clientType, category, ruleKey);
     setOverrides(prev => {
       const next = { ...prev };
       // Toggle: if same as what the rule already produces without override, store explicit; if already overriding, remove
@@ -68,13 +68,13 @@ export function useRuleOverrides(): UseRuleOverridesReturn {
   }, []);
 
   const getEffective = useCallback((
-    tipoTransacao: string,
-    tipoCliente:   string,
+    transactionType: string,
+    clientType:   string,
     category:     string,
     ruleKey:       string,
     computed:      boolean,
   ): boolean => {
-    const key = buildKey(tipoTransacao, tipoCliente, category, ruleKey);
+    const key = buildKey(transactionType, clientType, category, ruleKey);
     return key in overrides ? overrides[key] : computed;
   }, [overrides]);
 

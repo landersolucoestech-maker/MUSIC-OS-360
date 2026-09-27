@@ -25,11 +25,11 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/shared/ui/select";
 import {
-  useFinancialRules, type FinancialRule, type FinancialRuleTipo,
+  useFinancialRules, type FinancialRule, type FinancialRuleType,
   type FinancialRuleCalculo, type FinancialRuleTrigger,
 } from "@/modules/accounting/hooks/useFinancialRules";
 
-const TIPOS: { value: FinancialRuleTipo; label: string }[] = [
+const TYPES: { value: FinancialRuleType; label: string }[] = [
   { value: "imposto", label: "Imposto" },
   { value: "comissao", label: "Comissão" },
   { value: "external_rights_fee", label: "Taxa de Direitos Externos" },
@@ -51,7 +51,7 @@ const TRIGGERS: { value: FinancialRuleTrigger; label: string }[] = [
 
 interface FormState {
   name: string;
-  type: FinancialRuleTipo;
+  type: FinancialRuleType;
   category: string;
   calculo: FinancialRuleCalculo;
   valor: string;
@@ -78,7 +78,7 @@ function toForm(rule: FinancialRule): FormState {
   };
 }
 
-function fmtValor(rule: FinancialRule): string {
+function fmtAmount(rule: FinancialRule): string {
   return rule.calculo === "percentual" ? `${rule.value}%` : `R$ ${Number(rule.value).toFixed(2)}`;
 }
 
@@ -106,8 +106,8 @@ export default function FinancialRules() {
 
   async function handleSubmit() {
     if (!form.name.trim()) { setError("Informe o nome da regra."); return; }
-    const valorNum = Number(form.valor);
-    if (!form.valor.trim() || Number.isNaN(valorNum)) { setError("Informe um valor numérico válido."); return; }
+    const amountNum = Number(form.valor);
+    if (!form.valor.trim() || Number.isNaN(amountNum)) { setError("Informe um valor numérico válido."); return; }
     if (form.triggers.length === 0) {
       setError("Selecione ao menos um evento — uma regra sem evento nunca dispara.");
       return;
@@ -118,7 +118,7 @@ export default function FinancialRules() {
       type: form.type,
       category: form.category.trim() || undefined,
       calculo: form.calculo,
-      value: valorNum,
+      value: amountNum,
       description: form.description.trim() || undefined,
       active: form.active,
       condicoes: { triggers: form.triggers },
@@ -209,9 +209,9 @@ export default function FinancialRules() {
                           {rule.category && <p className="text-xs text-muted-foreground">{rule.category}</p>}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {TIPOS.find((t) => t.value === rule.type)?.label ?? rule.type}
+                          {TYPES.find((t) => t.value === rule.type)?.label ?? rule.type}
                         </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{fmtValor(rule)}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{fmtAmount(rule)}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
                             {(rule.condicoes?.triggers ?? []).length === 0 ? (
@@ -261,10 +261,10 @@ export default function FinancialRules() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">Tipo</Label>
-                  <Select value={form.type} onValueChange={(v) => setField("type", v as FinancialRuleTipo)}>
+                  <Select value={form.type} onValueChange={(v) => setField("type", v as FinancialRuleType)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {TIPOS.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                      {TYPES.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>

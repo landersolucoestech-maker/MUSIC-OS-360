@@ -40,17 +40,17 @@ export function FinanceChart() {
 
   const chartData = useMemo(() => {
     const hoje = new Date();
-    const meses: { month: Date; label: string }[] = [];
+    const months: { month: Date; label: string }[] = [];
 
     for (let i = 5; i >= 0; i--) {
       const month = startOfMonth(subMonths(hoje, i));
-      meses.push({
+      months.push({
         month,
         label: format(month, "MMM", { locale: ptBR }),
       });
     }
 
-    return meses.map(({ month, label }) => {
+    return months.map(({ month, label }) => {
       const monthTransactions = transactions.filter(t => {
         const dataTransacao = safeParseDate(t.data);
         if (!dataTransacao) return false;
@@ -60,19 +60,19 @@ export function FinanceChart() {
         );
       });
 
-      const receitas = monthTransactions
+      const income = monthTransactions
         .filter(t => t.type === "receita")
         .reduce((acc, t) => acc + (t.valor || 0), 0);
 
-      const despesas = monthTransactions
+      const expenses = monthTransactions
         .filter(t => t.type === "despesa")
         .reduce((acc, t) => acc + (t.valor || 0), 0);
 
       return {
         name: label.charAt(0).toUpperCase() + label.slice(1),
-        receitas,
-        despesas,
-        lucro: receitas - despesas,
+        receitas: income,
+        despesas: expenses,
+        lucro: income - expenses,
       };
     });
   }, [transactions]);

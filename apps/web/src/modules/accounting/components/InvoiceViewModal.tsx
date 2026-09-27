@@ -18,13 +18,13 @@ interface InvoiceViewModalProps {
   onEdit?: () => void;
 }
 
-const tipoNotaLabels: Record<string, string> = {
+const invoiceTypeLabels: Record<string, string> = {
   nfse: "NFS-e (Serviço)",
   nfe: "NF-e (Produto)",
   nfce: "NFC-e (Consumidor)",
 };
 
-const formaPagamentoLabels: Record<string, string> = {
+const paymentMethodLabels: Record<string, string> = {
   dinheiro: "Dinheiro",
   pix: "PIX",
   transferencia: "Transferência",
@@ -69,9 +69,9 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
 export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: InvoiceViewModalProps) {
   if (!invoice) return null;
   const { type: operationType, observacoesLimpas: cleanedNotes } = parseOperationType(invoice.notes);
-  const isEntrada = operationType === "entrada";
+  const isInflow = operationType === "entrada";
   const itens: any[] = Array.isArray(invoice.itens) ? invoice.itens : [];
-  const valorServicos = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
+  const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
   const totalRetencoes =
     (invoice.iss_retido ? Number(invoice.iss_amount || 0) : 0) +
     Number(invoice.pis_amount || 0) +
@@ -79,11 +79,11 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
     Number(invoice.ir_amount || 0) +
     Number(invoice.csll_amount || 0) +
     Number(invoice.inss_amount || 0);
-  const valorLiquido =
+  const netAmount =
     numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ??
-    Math.max(valorServicos - totalRetencoes, 0);
-  const signedNotaValue = isEntrada ? -valorLiquido : valorLiquido;
-  const signedServicesValue = isEntrada ? -valorServicos : valorServicos;
+    Math.max(servicesAmount - totalRetencoes, 0);
+  const signedNotaValue = isInflow ? -netAmount : netAmount;
+  const signedServicesValue = isInflow ? -servicesAmount : servicesAmount;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -94,11 +94,11 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
             Nota Fiscal Nº {invoice.numero}/{invoice.serie || "001"}
           </DialogTitle>
           <DialogDescription className="flex gap-2 items-center mt-1">
-            <Badge variant={isEntrada ? "secondary" : "default"} className="gap-1" data-testid={`badge-type-${operationType}`}>
-              {isEntrada ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
-              {isEntrada ? "Entrada" : "Saída"}
+            <Badge variant={isInflow ? "secondary" : "default"} className="gap-1" data-testid={`badge-type-${operationType}`}>
+              {isInflow ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
+              {isInflow ? "Entrada" : "Saída"}
             </Badge>
-            <Badge variant="outline">{tipoNotaLabels[invoice.tipo_nota] || invoice.tipo_nota || "NFS-e"}</Badge>
+            <Badge variant="outline">{invoiceTypeLabels[invoice.tipo_nota] || invoice.tipo_nota || "NFS-e"}</Badge>
             {getStatusBadge(invoice.status)}
           </DialogDescription>
         </DialogHeader>
@@ -119,7 +119,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
 
           {/* Service taker / supplier */}
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Building2 className="h-4 w-4" />{isEntrada ? "Fornecedor / Emitente" : "Tomador do Serviço"}</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Building2 className="h-4 w-4" />{isInflow ? "Fornecedor / Emitente" : "Tomador do Serviço"}</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field label="Razão Social / Nome" value={getInvoicePartyName(invoice)} />
               <Field label="CNPJ / CPF" value={invoice.tomador_cnpj && formatCpfCnpj(invoice.tomador_cnpj)} />
@@ -179,8 +179,8 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
                                 <TableCell>{it.description}</TableCell>
                                 <TableCell>{it.codigo_servico}</TableCell>
                                 <TableCell className="text-right">{it.quantidade}</TableCell>
-                                <TableCell className={`text-right ${getCurrencyToneClass(isEntrada ? -itemUnitPrice : itemUnitPrice)}`}>{formatCurrency(isEntrada ? -itemUnitPrice : itemUnitPrice)}</TableCell>
-                                <TableCell className={`text-right font-medium ${getCurrencyToneClass(isEntrada ? -itemTotal : itemTotal)}`}>{formatCurrency(isEntrada ? -itemTotal : itemTotal)}</TableCell>
+                                <TableCell className={`text-right ${getCurrencyToneClass(isInflow ? -itemUnitPrice : itemUnitPrice)}`}>{formatCurrency(isInflow ? -itemUnitPrice : itemUnitPrice)}</TableCell>
+                                <TableCell className={`text-right font-medium ${getCurrencyToneClass(isInflow ? -itemTotal : itemTotal)}`}>{formatCurrency(isInflow ? -itemTotal : itemTotal)}</TableCell>
                               </TableRow>
                             );
                           })}
@@ -217,7 +217,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
                   <p className="text-sm font-semibold text-destructive">{formatCurrency(-totalRetencoes)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground">{isEntrada ? "Valor Líquido a Pagar" : "Valor Líquido a Receber"}</p>
+                  <p className="text-xs text-muted-foreground">{isInflow ? "Valor Líquido a Pagar" : "Valor Líquido a Receber"}</p>
                   <p className={`text-2xl font-bold ${getCurrencyToneClass(signedNotaValue)}`} data-testid="text-nf-valor-liquido">{formatCurrency(signedNotaValue)}</p>
                 </div>
               </div>
@@ -228,7 +228,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><CreditCard className="h-4 w-4" />Pagamento</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <Field label="Forma Pagamento" value={formaPagamentoLabels[invoice.forma_pagamento] || invoice.forma_pagamento} />
+              <Field label="Forma Pagamento" value={paymentMethodLabels[invoice.forma_pagamento] || invoice.forma_pagamento} />
               <Field label="Condição" value={invoice.condicao_pagamento} />
               <Field label="Vencimento" value={invoice.vencimento && (
                 <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" />{formatDate(invoice.vencimento)}</span>

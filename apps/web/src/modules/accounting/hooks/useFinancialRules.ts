@@ -2,13 +2,13 @@ import { useDataQuery } from "@/shared/hooks/useDataQuery";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 
 export type FinancialRuleTrigger = "transaction.created" | "transaction.paid" | "invoice.overdue" | "contract.signed";
-export type FinancialRuleTipo = "imposto" | "comissao" | "external_rights_fee" | "desconto" | "taxa" | "outros";
+export type FinancialRuleType = "imposto" | "comissao" | "external_rights_fee" | "desconto" | "taxa" | "outros";
 export type FinancialRuleCalculo = "percentual" | "fixo" | "faixa";
 
 export interface FinancialRule {
   id: string;
   name: string;
-  type: FinancialRuleTipo;
+  type: FinancialRuleType;
   category: string | null;
   calculo: FinancialRuleCalculo;
   value: number;

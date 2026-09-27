@@ -37,10 +37,10 @@ export function useFinancialRules({
     if (Object.keys(stored).length === 0) return computed;
 
     // Apply stored overrides for matching combination
-    const { tipoTransacao, tipoCliente, category } = formData;
+    const { tipoTransacao: transactionType, tipoCliente: clientType, category } = formData;
     const overridden: FinancialFormRules = { ...computed };
     for (const ruleKey of Object.keys(DISPLAY_RULES) as (keyof typeof DISPLAY_RULES)[]) {
-      const k = buildKey(tipoTransacao, tipoCliente, category, ruleKey);
+      const k = buildKey(transactionType, clientType, category, ruleKey);
       if (k in stored) {
         overridden[ruleKey] = stored[k];
       }
@@ -58,7 +58,7 @@ export function useFinancialRules({
     [formData.tipoTransacao, formData.tipoCliente, formData.category],
   );
 
-  const itensInvestimento = useMemo(
+  const investmentItems = useMemo(
     () => getInvestmentItemsByCategory(formData.category),
     [formData.category],
   );
@@ -70,7 +70,7 @@ export function useFinancialRules({
     [formData.artistaVinculado, events],
   );
 
-  const valorParcela = useMemo(() => {
+  const installmentAmount = useMemo(() => {
     if (formData.tipoPagamento === "parcelado" && formData.amount && formData.quantidadeParcelas) {
       const v = parseFloat(formData.amount);
       const p = parseInt(formData.quantidadeParcelas);
@@ -83,8 +83,8 @@ export function useFinancialRules({
     ...rules,
     categories,
     subcategorias,
-    itensInvestimento,
+    itensInvestimento: investmentItems,
     filteredEvents,
-    valorParcela,
+    valorParcela: installmentAmount,
   };
 }

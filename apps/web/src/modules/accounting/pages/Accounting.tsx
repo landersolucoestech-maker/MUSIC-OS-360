@@ -43,7 +43,7 @@ export default function Accounting() {
 
   // KPIs — exact aggregation over the whole tenant (GET /transactions/stats),
   // never computed only over the currently displayed page/date filter (Task H).
-  const { kpis: metricas } = useFinanceStats();
+  const { kpis: metrics } = useFinanceStats();
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; transaction?: Transaction }>({ open: false, mode: "create" });
@@ -119,14 +119,14 @@ export default function Accounting() {
       const memo = block.match(/<MEMO>([^<\n]+)/i)?.[1]?.trim() ||
         block.match(/<NAME>([^<\n]+)/i)?.[1]?.trim() || "Transação importada";
       if (trnamt && dtposted) {
-        const valor = parseFloat(trnamt.replace(",", "."));
+        const amount = parseFloat(trnamt.replace(",", "."));
         const year = dtposted.substring(0, 4);
         const month = dtposted.substring(4, 6);
         const day = dtposted.substring(6, 8);
         transactions.push({
-          description: memo, amount: Math.abs(valor),
+          description: memo, amount: Math.abs(amount),
           data: `${year}-${month}-${day}`,
-          type: valor >= 0 ? "receita" : "despesa",
+          type: amount >= 0 ? "receita" : "despesa",
           category: "outros", status: "paid",
           artist_id: null, client_id: null,
           origem: "manual" as any, venda_id: null,
@@ -226,36 +226,36 @@ export default function Accounting() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <MetricCard
             title="Receita Mensal"
-            value={formatCurrency(metricas.revenuePaid)}
+            value={formatCurrency(metrics.revenuePaid)}
             description="receitas pagas"
             icon={TrendingUp}
             accent="success"
           />
           <MetricCard
             title="Despesas Mensais"
-            value={formatCurrency(-metricas.expensesPaid)}
+            value={formatCurrency(-metrics.expensesPaid)}
             description="despesas pagas"
             icon={TrendingDown}
             accent="destructive"
           />
           <MetricCard
             title="Lucro Líquido"
-            value={formatCurrency(metricas.netProfit)}
-            description={`margem ${metricas.margin}%`}
+            value={formatCurrency(metrics.netProfit)}
+            description={`margem ${metrics.margin}%`}
             icon={DollarSign}
-            accent={metricas.netProfit >= 0 ? "success" : "destructive"}
+            accent={metrics.netProfit >= 0 ? "success" : "destructive"}
           />
           <MetricCard
             title="Contas a Receber"
-            value={formatCurrency(metricas.receivables)}
-            description={`${metricas.pendingRevenue} pendentes`}
+            value={formatCurrency(metrics.receivables)}
+            description={`${metrics.pendingRevenue} pendentes`}
             icon={TrendingUp}
             accent="warning"
           />
           <MetricCard
             title="Contas a Pagar"
-            value={formatCurrency(-metricas.payables)}
-            description={`${metricas.pendingExpenses} pendentes`}
+            value={formatCurrency(-metrics.payables)}
+            description={`${metrics.pendingExpenses} pendentes`}
             icon={FileText}
             accent="warning"
           />
@@ -328,7 +328,7 @@ export default function Accounting() {
           )}
           {hasActiveFilters && (
             <span className="text-xs text-muted-foreground ml-auto">
-              {total} de {metricas.total} transações
+              {total} de {metrics.total} transações
             </span>
           )}
         </div>
@@ -395,10 +395,10 @@ export default function Accounting() {
                 <TableBody>
                   {pageItems.map((transaction) => {
                     const type = transaction.type === "receita" ? "receita" : "despesa";
-                    const descricao = String(transaction.descricao ?? "Transação sem descrição");
+                    const description = String(transaction.descricao ?? "Transação sem descrição");
                     const category = String(transaction.categoria ?? "sem_categoria");
                     const data = String(transaction.data ?? "");
-                    const valor = Number(transaction.valor ?? 0);
+                    const amount = Number(transaction.valor ?? 0);
 
                     return (
                     <TableRow key={transaction.id} data-testid={`row-transaction-${transaction.id}`} className={selectedIds.includes(transaction.id) ? "bg-muted/20" : ""}>
@@ -422,15 +422,15 @@ export default function Accounting() {
                           }
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium max-w-[200px] truncate">{descricao}</TableCell>
+                      <TableCell className="font-medium max-w-[200px] truncate">{description}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{formatCategoryLabel(category)}</TableCell>
                       <TableCell><StatusBadge status={transaction.status ?? "pending"} /></TableCell>
                       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">{data ? formatDate(data) : "—"}</TableCell>
                       <TableCell className={cn(
                         "text-right text-sm",
-                        valor === 0 ? "text-muted-foreground" : type === "receita" ? "text-success" : "text-destructive"
+                        amount === 0 ? "text-muted-foreground" : type === "receita" ? "text-success" : "text-destructive"
                       )}>
-                        {valor === 0 ? "" : type === "receita" ? "+" : "−"}{formatCurrency(valor)}
+                        {amount === 0 ? "" : type === "receita" ? "+" : "−"}{formatCurrency(amount)}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>

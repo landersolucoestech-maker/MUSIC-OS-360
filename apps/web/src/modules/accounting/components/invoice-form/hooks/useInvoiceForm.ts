@@ -86,20 +86,20 @@ export function useInvoiceForm({
 
   useEffect(() => {
     if (invoice && (mode === "edit" || mode === "view")) {
-      const { type, observacoesLimpas } = parseOperationType(invoice.notes);
-      const valorServicos = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
-      const valorLiquido = numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
-      const descricaoServicos = invoice.service_description ?? "";
-      const tomadorRazaoSocial = invoice.tomador_razao_social ?? invoice.tomador_nome ?? invoice.clientes?.nome ?? "";
+      const { type, observacoesLimpas: cleanNotes } = parseOperationType(invoice.notes);
+      const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
+      const netAmount = numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
+      const servicesDescription = invoice.service_description ?? "";
+      const recipientLegalName = invoice.tomador_razao_social ?? invoice.tomador_nome ?? invoice.clientes?.nome ?? "";
       setOperationType(type);
       setFormData({
         ...INITIAL_FORM_DATA,
         ...invoice,
-        observacoes: observacoesLimpas,
-        tomador_razao_social: tomadorRazaoSocial,
-        service_description: descricaoServicos,
-        service_amount: valorServicos,
-        net_amount: valorLiquido,
+        observacoes: cleanNotes,
+        tomador_razao_social: recipientLegalName,
+        service_description: servicesDescription,
+        service_amount: servicesAmount,
+        net_amount: netAmount,
         data_emissao: invoice.data_emissao ? new Date(invoice.data_emissao) : undefined,
         vencimento: invoice.vencimento
           ? new Date(invoice.vencimento)
@@ -108,7 +108,7 @@ export function useInvoiceForm({
             : undefined,
         itens: Array.isArray(invoice.itens) && invoice.itens.length > 0
           ? invoice.itens
-          : [{ ...INITIAL_ITEM, description: descricaoServicos, unit_price: valorServicos, total_amount: valorServicos }],
+          : [{ ...INITIAL_ITEM, description: servicesDescription, unit_price: servicesAmount, total_amount: servicesAmount }],
       });
     } else if (!invoice && open) {
       setOperationType(defaultOperationType ?? "saida");
@@ -122,34 +122,34 @@ export function useInvoiceForm({
     setFormData((prev) => {
       const isDefault = !prev.codigo_municipio || prev.codigo_municipio === "3550308";
       if (!isDefault) return prev;
-      const cidade = (companySettings.cidade || "").toLowerCase();
-      return { ...prev, codigo_municipio: cidade.includes("são paulo") ? "3550308" : prev.codigo_municipio };
+      const city = (companySettings.cidade || "").toLowerCase();
+      return { ...prev, codigo_municipio: city.includes("são paulo") ? "3550308" : prev.codigo_municipio };
     });
   }, [companySettings, mode, open]);
 
   useEffect(() => {
     if (isViewMode) return;
-    const valor = Number(formData.service_amount) || 0;
-    if (valor === 0) return;
+    const amount = Number(formData.service_amount) || 0;
+    if (amount === 0) return;
     const deducoes = Number(formData.deductions_amount) || 0;
-    const baseCalculo = +(valor - deducoes).toFixed(2);
+    const baseCalculo = +(amount - deducoes).toFixed(2);
     const aliquotaIss = Number(formData.aliquota_iss) || 0;
-    const valorIss = +(baseCalculo * (aliquotaIss / 100)).toFixed(2);
-    const valorPis = +(valor * 0.0065).toFixed(2);
-    const valorCofins = +(valor * 0.03).toFixed(2);
-    const valorIr = +(valor * 0.015).toFixed(2);
-    const valorCsll = +(valor * 0.01).toFixed(2);
-    const valorInss = Number(formData.inss_amount) || 0;
-    const valorLiquido = +(valor - (formData.iss_retido ? valorIss : 0) - valorPis - valorCofins - valorIr - valorCsll - valorInss).toFixed(2);
+    const issAmount = +(baseCalculo * (aliquotaIss / 100)).toFixed(2);
+    const pisAmount = +(amount * 0.0065).toFixed(2);
+    const cofinsAmount = +(amount * 0.03).toFixed(2);
+    const irAmount = +(amount * 0.015).toFixed(2);
+    const csllAmount = +(amount * 0.01).toFixed(2);
+    const inssAmount = Number(formData.inss_amount) || 0;
+    const netAmount = +(amount - (formData.iss_retido ? issAmount : 0) - pisAmount - cofinsAmount - irAmount - csllAmount - inssAmount).toFixed(2);
     setFormData((prev) => ({
       ...prev,
       base_calculo: baseCalculo,
-      iss_amount: valorIss,
-      pis_amount: valorPis,
-      cofins_amount: valorCofins,
-      ir_amount: valorIr,
-      csll_amount: valorCsll,
-      net_amount: valorLiquido,
+      iss_amount: issAmount,
+      pis_amount: pisAmount,
+      cofins_amount: cofinsAmount,
+      ir_amount: irAmount,
+      csll_amount: csllAmount,
+      net_amount: netAmount,
     }));
   }, [formData.service_amount, formData.deductions_amount, formData.aliquota_iss, formData.iss_retido, formData.inss_amount, isViewMode]);
 
@@ -196,17 +196,17 @@ export function useInvoiceForm({
   }), []);
 
   const recalculateTaxes = useCallback(() => {
-    const valor = Number(formData.service_amount) || 0;
+    const amount = Number(formData.service_amount) || 0;
     const deducoes = Number(formData.deductions_amount) || 0;
-    const baseCalculo = valor - deducoes;
-    const valorIss = +(baseCalculo * ((Number(formData.aliquota_iss) || 0) / 100)).toFixed(2);
-    const valorPis = +(valor * 0.0065).toFixed(2);
-    const valorCofins = +(valor * 0.03).toFixed(2);
-    const valorIr = +(valor * 0.015).toFixed(2);
-    const valorCsll = +(valor * 0.01).toFixed(2);
-    const valorInss = Number(formData.inss_amount) || 0;
-    const valorLiquido = +(valor - (formData.iss_retido ? valorIss : 0) - valorPis - valorCofins - valorIr - valorCsll - valorInss).toFixed(2);
-    setFormData((prev) => ({ ...prev, base_calculo: baseCalculo, iss_amount: valorIss, pis_amount: valorPis, cofins_amount: valorCofins, ir_amount: valorIr, csll_amount: valorCsll, net_amount: valorLiquido }));
+    const baseCalculo = amount - deducoes;
+    const issAmount = +(baseCalculo * ((Number(formData.aliquota_iss) || 0) / 100)).toFixed(2);
+    const pisAmount = +(amount * 0.0065).toFixed(2);
+    const cofinsAmount = +(amount * 0.03).toFixed(2);
+    const irAmount = +(amount * 0.015).toFixed(2);
+    const csllAmount = +(amount * 0.01).toFixed(2);
+    const inssAmount = Number(formData.inss_amount) || 0;
+    const netAmount = +(amount - (formData.iss_retido ? issAmount : 0) - pisAmount - cofinsAmount - irAmount - csllAmount - inssAmount).toFixed(2);
+    setFormData((prev) => ({ ...prev, base_calculo: baseCalculo, iss_amount: issAmount, pis_amount: pisAmount, cofins_amount: cofinsAmount, ir_amount: irAmount, csll_amount: csllAmount, net_amount: netAmount }));
     toast.success("Tributos recalculados");
   }, [formData]);
 
@@ -245,14 +245,14 @@ export function useInvoiceForm({
       return;
     }
 
-    const valorServicos = Number(formData.service_amount) || 0;
+    const servicesAmount = Number(formData.service_amount) || 0;
     const data = {
       numero: formData.numero.trim(),
       serie: formData.serie?.trim() || null,
       tipo_nota: formData.tipo_nota,
       client_id: formData.client_id || null,
       venda_id: null,
-      legacy_amount: valorServicos,
+      legacy_amount: servicesAmount,
       data_emissao: formData.data_emissao ? format(formData.data_emissao, "yyyy-MM-dd") : null,
       vencimento: formData.vencimento ? format(formData.vencimento, "yyyy-MM-dd") : null,
       status: formData.status,
@@ -272,7 +272,7 @@ export function useInvoiceForm({
       tomador_city: formData.tomador_city,
       tomador_uf: formData.tomador_uf,
       tomador_cep: formData.tomador_cep,
-      service_amount: valorServicos,
+      service_amount: servicesAmount,
       deductions_amount: Number(formData.deductions_amount) || 0,
       base_calculo: Number(formData.base_calculo) || 0,
       aliquota_iss: Number(formData.aliquota_iss) || 0,

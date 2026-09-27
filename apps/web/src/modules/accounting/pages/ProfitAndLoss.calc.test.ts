@@ -33,8 +33,8 @@ describe("sum — reproduces and proves the fix for the ProfitAndLoss bug", () =
   it("reproduces the bug: a naive reduce over strings produces a value that becomes NaN", () => {
     // `any` on purpose: reproduces exactly how `transactions` arrives from the API
     // (useTransactions() does not type `valor` as number — it arrives as a string).
-    const despesas: any[] = [{ valor: "500.00" }, { valor: "100.00" }, { valor: "10.00" }];
-    const naiveSum = despesas.reduce((s, t) => s + (t.valor ?? 0), 0);
+    const expenses: any[] = [{ valor: "500.00" }, { valor: "100.00" }, { valor: "10.00" }];
+    const naiveSum = expenses.reduce((s, t) => s + (t.valor ?? 0), 0);
     // String concatenation produces "0500.00100.0010.00" — multiple decimal
     // points — which Number() cannot parse.
     expect(typeof naiveSum).toBe("string");
@@ -42,20 +42,20 @@ describe("sum — reproduces and proves the fix for the ProfitAndLoss bug", () =
   });
 
   it("correctly sums transactions with string amounts (the real API payload)", () => {
-    const despesas = [{ valor: "500.00" }, { valor: "100.00" }, { valor: "10.00" }];
-    expect(sum(despesas, "valor")).toBe(610);
+    const expenses = [{ valor: "500.00" }, { valor: "100.00" }, { valor: "10.00" }];
+    expect(sum(expenses, "valor")).toBe(610);
   });
 
   it("the total matches exactly the sum of the rows shown per category", () => {
-    const despesas = [
+    const expenses = [
       { categoria: "Equipamentos Task X", valor: "500.00" },
       { categoria: "Aluguel", valor: "100.00" },
       { categoria: "Active Rule Test", valor: "10.00" },
     ];
-    const total = sum(despesas, "valor");
-    const porCategoria = despesas.reduce((s, t) => s + toNumber(t.valor), 0);
+    const total = sum(expenses, "valor");
+    const byCategory = expenses.reduce((s, t) => s + toNumber(t.valor), 0);
     expect(total).toBe(610);
-    expect(porCategoria).toBe(total);
+    expect(byCategory).toBe(total);
   });
 
   it("an empty array sums to 0 (the case that masked the bug when only expenses had data)", () => {
@@ -63,7 +63,7 @@ describe("sum — reproduces and proves the fix for the ProfitAndLoss bug", () =
   });
 
   it("safely ignores a single corrupted value without breaking the whole total", () => {
-    const despesas = [{ valor: "500.00" }, { valor: "não é número" }, { valor: "10.00" }];
-    expect(sum(despesas, "valor")).toBe(510);
+    const expenses = [{ valor: "500.00" }, { valor: "não é número" }, { valor: "10.00" }];
+    expect(sum(expenses, "valor")).toBe(510);
   });
 });

@@ -17,13 +17,13 @@ const statusOptions = [
   { value: "cancelled", label: "Cancelada" },
 ];
 
-const tipoNotaOptions = [
+const invoiceTypeOptions = [
   { value: "nfse", label: "NFS-e (Serviço)" },
   { value: "nfe", label: "NF-e (Produto)" },
   { value: "nfce", label: "NFC-e (Consumidor)" },
 ];
 
-const codigosServicoComuns = [
+const commonServiceCodes = [
   { value: "12.07", label: "12.07 - Shows, festivais e congêneres" },
   { value: "12.13", label: "12.13 - Produção de eventos artísticos" },
   { value: "13.02", label: "13.02 - Fonografia ou gravação de sons" },
@@ -141,7 +141,7 @@ export function DetailsSection({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {tipoNotaOptions.map((o) => (
+                {invoiceTypeOptions.map((o) => (
                   <SelectItem key={o.value} value={o.value}>
                     {o.label}
                   </SelectItem>
@@ -215,7 +215,7 @@ export function DetailsSection({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {codigosServicoComuns.map((o) => (
+                {commonServiceCodes.map((o) => (
                   <SelectItem key={o.value} value={o.value}>
                     {o.label}
                   </SelectItem>

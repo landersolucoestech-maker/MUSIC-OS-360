@@ -24,7 +24,7 @@ export function DetailsSection({
   disabled,
   updateField,
   handleFileUpload,
-  handleRemoveAnexo,
+  handleRemoveAnexo: handleRemoveAttachment,
 }: DetailsSectionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isLocalPendingAttachment = formData.anexoUrl.startsWith("blob:");
@@ -74,7 +74,7 @@ export function DetailsSection({
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={handleRemoveAnexo}
+                  onClick={handleRemoveAttachment}
                   className="text-destructive hover:text-destructive"
                 >
                   <X className="h-4 w-4" />

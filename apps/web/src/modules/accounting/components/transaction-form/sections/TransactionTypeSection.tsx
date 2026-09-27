@@ -19,8 +19,8 @@ import {
   toRuleLink,
 } from "@/modules/accounting/utils/financialRules.utils";
 
-interface Artista { id: string; nome_artistico: string }
-interface Projeto { id: string; title: string }
+interface Artist { id: string; nome_artistico: string }
+interface Project { id: string; title: string }
 interface Event { id: string; title: string; start_date?: string | null }
 
 interface TransactionTypeSectionProps {
@@ -150,7 +150,7 @@ export function TransactionTypeSection({
           {selectedLink === "Artista" && (
             <div className="space-y-2">
               <Label className="text-sm">Artista Vinculado *</Label>
-              <AsyncEntityCombobox<Artista>
+              <AsyncEntityCombobox<Artist>
                 table="artistas"
                 getLabel={(a) => a.nome_artistico}
                 value={formData.artistaVinculado}
@@ -168,7 +168,7 @@ export function TransactionTypeSection({
           {selectedLink === "Projeto" && (
             <div className="space-y-2">
               <Label className="text-sm">Projeto Vinculado *</Label>
-              <AsyncEntityCombobox<Projeto>
+              <AsyncEntityCombobox<Project>
                 table="projects"
                 getLabel={(p) => p.title}
                 value={formData.projetoVinculado}
@@ -265,7 +265,7 @@ export function TransactionTypeSection({
               <Label className="text-sm">
                 Projeto / Música{rules.projetoObrigatorio ? "" : " (opcional)"}
               </Label>
-              <AsyncEntityCombobox<Projeto>
+              <AsyncEntityCombobox<Project>
                 table="projects"
                 getLabel={(p) => p.title}
                 value={formData.projetoVinculado}

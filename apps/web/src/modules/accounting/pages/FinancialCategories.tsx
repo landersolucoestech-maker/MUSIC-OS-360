@@ -118,7 +118,7 @@ export default function FinancialCategories() {
     if (!form.category.trim()) { setError(true); return; }
     const now = new Date().toISOString();
     if (mode === "create") {
-      const novo: FinancialCategoryRuleEntity = {
+      const newRule: FinancialCategoryRuleEntity = {
         id: (globalThis.crypto?.randomUUID?.() ?? `cat-${Date.now()}`),
         transaction_type: form.transaction_type,
         counterparty_type: form.counterparty_type,
@@ -130,7 +130,7 @@ export default function FinancialCategories() {
         created_at: now,
         updated_at: now,
       };
-      setRules([...rules, novo]);
+      setRules([...rules, newRule]);
     } else if (mode === "edit" && selectedId) {
       setRules(rules.map((r) => r.id === selectedId ? {
         ...r,

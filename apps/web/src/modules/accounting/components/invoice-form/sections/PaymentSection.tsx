@@ -7,7 +7,7 @@ import { FileUpload, type UploadedFile } from "@/shared/components/FileUpload";
 import { format, parseISO } from "date-fns";
 import type { InvoiceFormData } from "@/modules/accounting/components/invoice-form/rules/invoice-form-rules";
 
-const formaPagamentoOptions = [
+const paymentMethodOptions = [
   { value: "dinheiro", label: "Dinheiro" },
   { value: "pix", label: "PIX" },
   { value: "transferencia", label: "Transferência" },
@@ -49,7 +49,7 @@ export function PaymentSection({ formData, disabled, updateField }: PaymentSecti
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              {formaPagamentoOptions.map((option) => (
+              {paymentMethodOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
               ))}
             </SelectContent>
