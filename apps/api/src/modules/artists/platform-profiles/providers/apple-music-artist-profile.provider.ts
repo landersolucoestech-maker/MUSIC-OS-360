@@ -1,4 +1,4 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type {
   ArtistPlatformProvider,
   ArtistPlatformProviderInput,
@@ -9,6 +9,7 @@ import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soun
 import { checkRegisteredHandleAgainstRegistry, resolveCanonicalUuidForProvider } from '../soundcharts-canonical-candidates.util';
 import { soundchartsNotIndexedProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
 import { extractAppleMusicId } from '../apple-music-url.util';
+import { integrationNotConfigured } from '../../../../core/errors/integration-not-configured';
 
 /**
  * Apple Music has no audience/listeners in Soundcharts (see
@@ -39,9 +40,7 @@ export class AppleMusicArtistProfileProvider implements ArtistPlatformProvider {
 
   async resolve(input: ArtistPlatformProviderInput): Promise<SocialPlatformProfileSnapshot> {
     if (!(await this.isConfigured())) {
-      throw new ServiceUnavailableException(
-        'Apple Music (Soundcharts) não configurado: defina SOUNDCHARTS_CLIENT_ID e SOUNDCHARTS_CLIENT_SECRET no ambiente da API',
-      );
+      throw integrationNotConfigured('Apple Music', 'SOUNDCHARTS_NOT_CONFIGURED', ['SOUNDCHARTS_CLIENT_ID', 'SOUNDCHARTS_CLIENT_SECRET']);
     }
 
     const appleId = input.externalId ?? extractAppleMusicId(input.externalUrl ?? '');

@@ -1,4 +1,4 @@
-import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
   ArtistPlatformProvider,
@@ -12,6 +12,7 @@ import { evaluateCrossPlatformEvidence } from '../soundcharts-canonical-candidat
 import { parseYoutubeRef } from '../youtube-ref.util';
 import { CircuitBreaker } from '../../../../core/resilience/circuit-breaker';
 import { resilientFetch } from '../../../../core/resilience/resilient-fetch';
+import { integrationNotConfigured } from '../../../../core/errors/integration-not-configured';
 
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 
@@ -52,9 +53,7 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
 
   async resolve(input: ArtistPlatformProviderInput): Promise<SocialPlatformProfileSnapshot> {
     if (!(await this.isConfigured())) {
-      throw new ServiceUnavailableException(
-        'YouTube não configurado: defina YOUTUBE_API_KEY, SOUNDCHARTS_CLIENT_ID e SOUNDCHARTS_CLIENT_SECRET no ambiente da API',
-      );
+      throw integrationNotConfigured('YouTube', 'YOUTUBE_NOT_CONFIGURED', ['YOUTUBE_API_KEY', 'SOUNDCHARTS_CLIENT_ID', 'SOUNDCHARTS_CLIENT_SECRET']);
     }
 
     const apiKey = this.config.get<string>('YOUTUBE_API_KEY') ?? '';

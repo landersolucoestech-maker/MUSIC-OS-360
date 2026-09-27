@@ -20,9 +20,7 @@ export class PartnerApiAdapter implements SocietyAdapter {
 
   private guard(): never {
     throw new ServiceUnavailableException(
-      this.enabled
-        ? 'Integração PARTNER_API habilitada, porém nenhum parceiro/endpoint oficial está configurado.'
-        : 'Driver PARTNER_API desabilitado. Defina REGISTRY_PARTNER_API_ENABLED=true e configure um parceiro oficial.',
+      'O envio automático por parceiro oficial ainda não está disponível para esta sociedade.',
     );
   }
 

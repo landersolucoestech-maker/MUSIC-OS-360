@@ -1,4 +1,4 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type {
   ArtistPlatformProvider,
   ArtistPlatformProviderInput,
@@ -8,6 +8,7 @@ import { SoundchartsService } from '../../../integrations/soundcharts/soundchart
 import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soundcharts.errors';
 import { primaryIdentityProvenance, soundchartsNotIndexedProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
 import { evaluateCrossPlatformEvidence } from '../soundcharts-canonical-candidates.util';
+import { integrationNotConfigured } from '../../../../core/errors/integration-not-configured';
 
 /**
  * Single source of the Deezer fans card: Soundcharts /audience/deezer — the
@@ -26,9 +27,7 @@ export class DeezerArtistProfileProvider implements ArtistPlatformProvider {
 
   async resolve(input: ArtistPlatformProviderInput): Promise<SocialPlatformProfileSnapshot> {
     if (!(await this.isConfigured())) {
-      throw new ServiceUnavailableException(
-        'Deezer (Soundcharts) não configurado: defina SOUNDCHARTS_CLIENT_ID e SOUNDCHARTS_CLIENT_SECRET no ambiente da API',
-      );
+      throw integrationNotConfigured('Deezer', 'SOUNDCHARTS_NOT_CONFIGURED', ['SOUNDCHARTS_CLIENT_ID', 'SOUNDCHARTS_CLIENT_SECRET']);
     }
 
     const artistId = input.externalId ?? this.extractArtistId(input.externalUrl ?? '');

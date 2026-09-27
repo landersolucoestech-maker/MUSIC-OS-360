@@ -42,6 +42,7 @@ import {
   OAuthCodeStateDto,
   AutentiqueWebhookDto,
 } from './dto/integrations.dto';
+import { integrationNotConfigured } from '../../core/errors/integration-not-configured';
 
 const GENERIC_OAUTH_PLATFORMS = new Set([
   'corp_instagram', 'meta_business', 'meta_ads',
@@ -153,10 +154,10 @@ export class IntegrationsController {
     const cacheKey = `oauth_exchange:${exchange_token}`;
     const entry = this.cache.get<{ platform: string; tenantId?: string; userId?: string }>(cacheKey);
     if (!entry) {
-      throw new BadRequestException('exchange_token inválido ou expirado. Inicie a autorização novamente.');
+      throw new BadRequestException('A autorização expirou ou é inválida. Inicie a conexão novamente.');
     }
     if (entry.platform !== platform) {
-      throw new BadRequestException('exchange_token não corresponde à plataforma solicitada.');
+      throw new BadRequestException('A autorização não corresponde à plataforma solicitada. Inicie a conexão novamente.');
     }
     this.cache.delete(cacheKey);
 
@@ -201,7 +202,7 @@ export class IntegrationsController {
         const appId = this.config.get<string>('META_APP_ID') ?? '';
         const appSecret = this.config.get<string>('META_APP_SECRET') ?? '';
         if (!appId || !appSecret) {
-          throw new BadRequestException('META_APP_ID / META_APP_SECRET não configurados');
+          throw integrationNotConfigured('Meta', 'META_NOT_CONFIGURED', ['META_APP_ID', 'META_APP_SECRET']);
         }
 
         const url = `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${appId}&redirect_uri=${encodeURIComponent(redirect_uri)}&client_secret=${appSecret}&code=${code}`;
@@ -213,7 +214,7 @@ export class IntegrationsController {
         }
 
         const shortToken = asString(json['access_token']);
-        if (!shortToken) throw new BadRequestException('Meta não retornou access_token');
+        if (!shortToken) throw providerOAuthExchangeFailure('meta', 'missing_access_token', null);
 
         const longRes = await fetch(
           `https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${shortToken}`,
@@ -237,7 +238,7 @@ export class IntegrationsController {
         const clientKey = this.config.get<string>('TIKTOK_CLIENT_KEY') ?? '';
         const clientSecret = this.config.get<string>('TIKTOK_CLIENT_SECRET') ?? '';
         if (!clientKey || !clientSecret) {
-          throw new BadRequestException('TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET não configurados');
+          throw integrationNotConfigured('TikTok', 'TIKTOK_NOT_CONFIGURED', ['TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_SECRET']);
         }
 
         const res = await fetch('https://open.tiktokapis.com/v2/oauth/token/', {
@@ -257,7 +258,7 @@ export class IntegrationsController {
         }
 
         const accessToken = asString(json['access_token']);
-        if (!accessToken) throw new BadRequestException('TikTok não retornou access_token');
+        if (!accessToken) throw providerOAuthExchangeFailure('tiktok', 'missing_access_token', null);
         return persist({
           accessToken,
           refreshToken: asString(json['refresh_token']),
@@ -272,7 +273,7 @@ export class IntegrationsController {
         const clientSecret = this.config.get<string>('GOOGLE_CLIENT_SECRET') ??
           this.config.get<string>('GOOGLE_ADS_CLIENT_SECRET') ?? '';
         if (!clientId || !clientSecret) {
-          throw new BadRequestException('GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET não configurados');
+          throw integrationNotConfigured('Google', 'GOOGLE_NOT_CONFIGURED', ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']);
         }
 
         const res = await fetch('https://oauth2.googleapis.com/token', {
@@ -292,7 +293,7 @@ export class IntegrationsController {
         }
 
         const accessToken = asString(json['access_token']);
-        if (!accessToken) throw new BadRequestException('Google não retornou access_token');
+        if (!accessToken) throw providerOAuthExchangeFailure('google', 'missing_access_token', null);
         return persist({
           accessToken,
           refreshToken: asString(json['refresh_token']),
@@ -307,9 +308,7 @@ export class IntegrationsController {
         const authBaseUrl = this.config.get<string>('DOCUSIGN_AUTH_BASE_URL') ??
           'https://account-d.docusign.com';
         if (!integrationKey || !clientSecret) {
-          throw new BadRequestException(
-            'DOCUSIGN_INTEGRATION_KEY / DOCUSIGN_CLIENT_SECRET não configurados',
-          );
+          throw integrationNotConfigured('DocuSign', 'DOCUSIGN_NOT_CONFIGURED', ['DOCUSIGN_INTEGRATION_KEY', 'DOCUSIGN_CLIENT_SECRET']);
         }
 
         const basic = Buffer.from(`${integrationKey}:${clientSecret}`).toString('base64');
@@ -331,7 +330,7 @@ export class IntegrationsController {
         }
 
         const accessToken = asString(json['access_token']);
-        if (!accessToken) throw new BadRequestException('DocuSign não retornou access_token');
+        if (!accessToken) throw providerOAuthExchangeFailure('docusign', 'missing_access_token', null);
         return persist({
           accessToken,
           refreshToken: asString(json['refresh_token']),
@@ -344,9 +343,7 @@ export class IntegrationsController {
         const clientSecret = this.config.get<string>('STRIPE_SECRET_KEY') ?? '';
         const clientId = this.config.get<string>('STRIPE_CONNECT_CLIENT_ID') ?? '';
         if (!clientSecret || !clientId) {
-          throw new BadRequestException(
-            'STRIPE_SECRET_KEY / STRIPE_CONNECT_CLIENT_ID não configurados',
-          );
+          throw integrationNotConfigured('Stripe', 'STRIPE_CONNECT_NOT_CONFIGURED', ['STRIPE_SECRET_KEY', 'STRIPE_CONNECT_CLIENT_ID']);
         }
 
         const res = await fetch('https://connect.stripe.com/oauth/token', {
@@ -363,7 +360,7 @@ export class IntegrationsController {
         }
 
         const accessToken = asString(json['access_token']);
-        if (!accessToken) throw new BadRequestException('Stripe não retornou access_token');
+        if (!accessToken) throw providerOAuthExchangeFailure('stripe', 'missing_access_token', null);
         return persist({
           accessToken,
           refreshToken: asString(json['refresh_token']),

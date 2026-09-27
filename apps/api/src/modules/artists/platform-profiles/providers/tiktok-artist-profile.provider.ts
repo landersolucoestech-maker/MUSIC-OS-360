@@ -1,4 +1,4 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type {
   ArtistPlatformProvider,
   ArtistPlatformProviderInput,
@@ -9,6 +9,7 @@ import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soun
 import { checkRegisteredHandleAgainstRegistry, resolveCanonicalUuidForProvider } from '../soundcharts-canonical-candidates.util';
 import { isDevMockSocialMetricsEnabled, mockFollowersFor } from '../dev-social-metrics-mock';
 import { soundchartsNotIndexedProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
+import { integrationNotConfigured } from '../../../../core/errors/integration-not-configured';
 
 /**
  * Public ARTIST metric via Soundcharts /audience/tiktok — never the
@@ -46,9 +47,7 @@ export class TikTokArtistProfileProvider implements ArtistPlatformProvider {
 
   async resolve(input: ArtistPlatformProviderInput): Promise<SocialPlatformProfileSnapshot> {
     if (!(await this.isConfigured())) {
-      throw new ServiceUnavailableException(
-        'TikTok (Soundcharts) não configurado: defina SOUNDCHARTS_CLIENT_ID e SOUNDCHARTS_CLIENT_SECRET no ambiente da API',
-      );
+      throw integrationNotConfigured('TikTok', 'SOUNDCHARTS_NOT_CONFIGURED', ['SOUNDCHARTS_CLIENT_ID', 'SOUNDCHARTS_CLIENT_SECRET']);
     }
 
     // extractUsername normalizes both a raw handle (with/without @) and a full URL —

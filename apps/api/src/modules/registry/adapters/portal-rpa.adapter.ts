@@ -19,7 +19,7 @@ export class PortalRpaAdapter implements SocietyAdapter {
   readonly enabled = process.env['REGISTRY_PORTAL_RPA_ENABLED'] === 'true';
 
   private guard(): never {
-    throw new ServiceUnavailableException('Driver PORTAL_RPA desabilitado por padrão. Automação de portal exige autorização explícita.');
+    throw new ServiceUnavailableException('A automação de portal da sociedade está desabilitada.');
   }
 
   async submitWork(): Promise<SocietySubmissionResult> { return this.guard(); }

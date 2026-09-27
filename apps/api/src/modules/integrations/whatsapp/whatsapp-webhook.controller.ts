@@ -119,7 +119,7 @@ export class WhatsAppWebhookController {
     const appSecret = this.config.get<string>('META_APP_SECRET') ?? '';
     if (!appSecret) {
       this.logger.error('[whatsapp/webhook] META_APP_SECRET not configured — webhook rejected');
-      throw new ServiceUnavailableException('WhatsApp webhook não configurado: META_APP_SECRET ausente');
+      throw new ServiceUnavailableException('WhatsApp webhook not configured');
     }
 
     if (!signature) {

@@ -26,6 +26,7 @@ import { AuditService } from '../../core/audit/audit.service';
 import type { JwtAuth } from '../../core/guards/auth.guard';
 import { strongPasswordViolations } from '../../core/security/password-policy';
 import type { ChangeRequiredPasswordDto } from './dto/change-required-password.dto';
+import { integrationNotConfigured } from '../../core/errors/integration-not-configured';
 
 @Injectable()
 export class AuthPasswordService {
@@ -45,7 +46,7 @@ export class AuthPasswordService {
     const url = this.env('SUPABASE_URL');
     const key = this.env('SUPABASE_SERVICE_ROLE_KEY');
     if (!url || !key) {
-      throw new ServiceUnavailableException('SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY não configuradas — não é possível trocar a senha.');
+      throw integrationNotConfigured('o serviço de autenticação', 'AUTH_PROVIDER_NOT_CONFIGURED', ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']);
     }
     return createClient(url, key);
   }
