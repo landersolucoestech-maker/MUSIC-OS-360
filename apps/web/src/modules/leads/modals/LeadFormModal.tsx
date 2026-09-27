@@ -41,7 +41,7 @@ import type { LeadUpload } from "../types";
 import { toUserMessage } from "@/shared/lib/errors";
 
 // ─────────────────────────────────────────────
-// Interações
+// Interactions
 // ─────────────────────────────────────────────
 export const TIPO_INTERACAO_OPTIONS = [
   { value: "ligacao",    label: "Ligação"    },
@@ -60,7 +60,7 @@ export const TEMPERATURA_OPTIONS = [
 ] as const;
 
 // ─────────────────────────────────────────────
-// Regras condicionais por combo type + serviço
+// Conditional rules per type + service combo
 // ─────────────────────────────────────────────
 
 const EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
@@ -98,7 +98,7 @@ const matchCombo = (
 ) => list.some((c) => c.type === type && c.servico === servico);
 
 // ─────────────────────────────────────────────
-// Tipos
+// Types
 // ─────────────────────────────────────────────
 export type Interacao = {
   id: string;
@@ -308,7 +308,7 @@ function SelectField({ value, onChange, options, placeholder, testId }: {
 }
 
 // ─────────────────────────────────────────────
-// Componente principal
+// Main component
 // ─────────────────────────────────────────────
 export function LeadFormModal({
   open, onOpenChange, mode, initialValue, onSubmit,
@@ -356,7 +356,7 @@ export function LeadFormModal({
     empresario: { ...(prev.empresario ?? EMPRESARIO_DEFAULT), [field]: value },
   }));
 
-  // ── Interações ───────────────────────────────
+  // ── Interactions ───────────────────────────────
   const addInteracao = () => {
     const nova: Interacao = {
       id: newId(), type: "whatsapp",
@@ -415,13 +415,13 @@ export function LeadFormModal({
   const showEvento   = matchCombo(EVENTO_COMBOS,   type, servico);
   const showCampanha = matchCombo(CAMPANHA_COMBOS, type, servico);
 
-  // CORRIGIDO: showInfluenciador e showEmpresario são mutuamente exclusivos com showEvento
+  // FIXED: showInfluenciador and showEmpresario are mutually exclusive with showEvento
   const showInfluenciador = type === TIPO_LEAD_INFLUENCIADOR && !showEvento;
   const showEmpresario    = type === TIPO_LEAD_EMPRESARIO    && !showEvento;
 
   const showArtistaBandaEvento = matchCombo(ARTISTA_EVENTO_COMBOS, type, servico);
 
-  // Campo artista/influenciador na seção Classificação
+  // Artist/influencer field in the Classification section
   const showArtistaMarcaEmpresa    = type === "marca_empresa"    && servico === "campanhas_artistas";
   const showArtistaBandaEmpresario = type === TIPO_LEAD_EMPRESARIO;
   const showInfluenciadorTipoLead  = type === TIPO_LEAD_INFLUENCIADOR;
@@ -489,7 +489,7 @@ export function LeadFormModal({
         <div className="grid gap-4 py-4">
 
           {/* ══════════════════════════════════════
-              DADOS DO CONTATO
+              CONTACT DETAILS
           ══════════════════════════════════════ */}
           <SectionHeader title="Dados do Contato" />
 
@@ -659,7 +659,7 @@ export function LeadFormModal({
           </Field>
 
           {/* ══════════════════════════════════════
-              ORIGEM E GESTÃO COMERCIAL
+              ORIGIN AND SALES MANAGEMENT
           ══════════════════════════════════════ */}
           <SectionHeader title="Origem e Gestão Comercial" />
 
@@ -751,7 +751,7 @@ export function LeadFormModal({
           </div>
 
           {/* ══════════════════════════════════════
-              DETALHES DO EVENTO
+              EVENT DETAILS
           ══════════════════════════════════════ */}
           {showEvento && (
             <>
@@ -844,7 +844,7 @@ export function LeadFormModal({
           )}
 
           {/* ══════════════════════════════════════
-              DETALHES DA CAMPANHA
+              CAMPAIGN DETAILS
           ══════════════════════════════════════ */}
           {showCampanha && (
             <>
@@ -925,7 +925,7 @@ export function LeadFormModal({
           )}
 
           {/* ══════════════════════════════════════
-              DETALHES DO INFLUENCIADOR
+              INFLUENCER DETAILS
           ══════════════════════════════════════ */}
           {showInfluenciador && (
             <>
@@ -999,7 +999,7 @@ export function LeadFormModal({
           )}
 
           {/* ══════════════════════════════════════
-              DETALHES DO EMPRESÁRIO ARTÍSTICO
+              ARTIST MANAGER DETAILS
           ══════════════════════════════════════ */}
           {showEmpresario && (
             <>
@@ -1025,7 +1025,7 @@ export function LeadFormModal({
           )}
 
           {/* ══════════════════════════════════════
-              HISTÓRICO DE INTERAÇÕES
+              INTERACTION HISTORY
           ══════════════════════════════════════ */}
           <SectionHeader title="Anexos" />
           <div className="space-y-3 rounded-md border border-dashed border-border bg-muted/20 p-4">

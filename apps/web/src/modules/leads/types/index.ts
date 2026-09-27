@@ -61,7 +61,7 @@ export type LeadInternalCRMData = {
   probabilidadeFechamento?: number;
   proximoFollowUp?: string;
   observacoesInternas?: string;
-  /** Campanha de marketing de origem do lead (persistida pelo formulário). */
+  /** Marketing campaign the lead originated from (persisted by the form). */
   campanha_marketing?: string;
 };
 

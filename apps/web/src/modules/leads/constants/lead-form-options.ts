@@ -38,7 +38,7 @@ export const SERVICOS_OPTIONS = [
 
 export type ServicoLead = (typeof SERVICOS_OPTIONS)[number]["value"];
 
-// Valor de tipo de lead com tratamento especial (serviços em texto livre).
+// Lead type value with special handling (free-text services).
 export const TIPO_LEAD_OUTROS: TipoLead = "outros";
 
 export const SERVICOS_POR_TIPO_LEAD: Record<TipoLead, ReadonlyArray<ServicoLead>> = {
@@ -116,7 +116,7 @@ export const SERVICOS_POR_TIPO_LEAD: Record<TipoLead, ReadonlyArray<ServicoLead>
     "criacao_sites",
     "consultoria",
   ],
-  // "Outros": sem lista pré-definida — serviços informados em texto livre.
+  // "Outros": no predefined list — services entered as free text.
   outros: [],
 };
 
@@ -150,10 +150,10 @@ export const ORIGEM_LEAD_OPTIONS = [
 
 export type OrigemLead = (typeof ORIGEM_LEAD_OPTIONS)[number]["value"];
 
-// Alinhado 1:1 ao enum real LeadStatus (@music-os-360/types) e ao workflow
+// Aligned 1:1 with the real LeadStatus enum (@music-os-360/types) and the workflow
 // apps/api/src/core/workflow/definitions/leads.workflow.ts — a lista anterior
-// (novo_lead/proposta_enviada/follow_up/confirmado/arquivado) não existia no
-// backend; qualquer PATCH com esses valores era rejeitado por @IsIn(STATUSES).
+// (novo_lead/proposta_enviada/follow_up/confirmado/arquivado) did not exist on the
+// backend; any PATCH with those values was rejected by @IsIn(STATUSES).
 export const STATUS_LEAD_OPTIONS = [
   { value: "new",         label: "Novo"           },
   { value: "contacted",   label: "Contato"        },

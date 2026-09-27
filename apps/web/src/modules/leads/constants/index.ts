@@ -33,9 +33,9 @@ export const leadServiceTypeOptions: Array<{ value: LeadServiceType; label: stri
 ];
 
 /**
- * Re-exporta STATUS_LEAD_OPTIONS como leadStatusOptions para manter
- * compatibilidade com componentes legados que importam deste barrel.
- * Fonte única de verdade: constants/lead-form-options.ts
+ * Re-exports STATUS_LEAD_OPTIONS as leadStatusOptions to keep
+ * compatibility with legacy components that import from this barrel.
+ * Single source of truth: constants/lead-form-options.ts
  */
 export { STATUS_LEAD_OPTIONS as leadStatusOptions };
 

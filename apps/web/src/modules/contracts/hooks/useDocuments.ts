@@ -2,9 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { VinculadoDocument } from "@/modules/contracts/types/document-types";
 
-// Documentos vinculados não possuem endpoint real ainda: leitura reporta o
-// estado verdadeiro (vazio) e escrita falha explicitamente. É proibido simular
-// o backend em localStorage ou devolver documents fictícios.
+// Linked documents do not have a real endpoint yet: reading reports the
+// true (empty) state and writing fails explicitly. Simulating
+// the backend in localStorage or returning fictitious documents is forbidden.
 const DOCUMENTS_BACKEND_UNAVAILABLE =
   "Documentos de contrato ainda não possuem endpoint real no backend — operação indisponível.";
 
@@ -12,7 +12,7 @@ export const CONTRACTS_DOC_KEYS = {
   documents: ["contracts", "documents"] as const,
 };
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_DOCUMENTS: VinculadoDocument[] = [];
 
 export function useDocuments() {

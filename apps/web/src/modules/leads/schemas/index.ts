@@ -232,8 +232,8 @@ export const serviceLeadSchemas: Record<LeadServiceType, ServiceLeadSchema> = {
   }),
 };
 
-// register(..., { valueAsNumber: true }) produz NaN quando o campo numérico é
-// limpo no DOM — trata como "não informado" em vez de erro de validação.
+// register(..., { valueAsNumber: true }) yields NaN when the numeric field is
+// cleared in the DOM — treat it as "not provided" instead of a validation error.
 const nanAsUndefined = <T extends z.ZodTypeAny>(schema: T) =>
   z.preprocess((value) => (typeof value === "number" && Number.isNaN(value) ? undefined : value), schema);
 

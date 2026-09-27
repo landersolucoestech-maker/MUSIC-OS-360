@@ -5,7 +5,7 @@ import { api } from "@/shared/lib/api-client";
 import type { ContractWithRelations } from "./useContracts";
 
 export interface UseContractsPaginatedParams {
-  /** 0-indexado, mesma convenção de usePagination()/TablePagination. */
+  /** 0-indexed, same convention as usePagination()/TablePagination. */
   page: number;
   pageSize: number;
   search?: string;
@@ -50,9 +50,9 @@ export interface ContractStats {
 const EMPTY_STATS: ContractStats = { total: 0, byGroup: {} };
 
 /**
- * Contagem + soma de valor por status, sobre o TENANT INTEIRO — GET
- * /contracts/stats (agregado no banco). Task H: os KPIs de Contracts.tsx
- * não podem mais ser calculados só sobre a página atual.
+ * Count + value sum per status, over the WHOLE TENANT — GET
+ * /contracts/stats (aggregated in the database). Task H: the Contracts.tsx KPIs
+ * can no longer be computed over the current page only.
  */
 export function useContractsStats() {
   const query = useQuery<ContractStats>({

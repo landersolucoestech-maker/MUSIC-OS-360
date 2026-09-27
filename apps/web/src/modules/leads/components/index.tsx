@@ -81,13 +81,13 @@ export function LeadFilters({
         placeholder="Buscar por nome, e-mail, WhatsApp, Instagram ou empresa"
         className="h-8 min-w-[240px] flex-1 bg-card border-border text-sm"
       />
-      {/* serviceType: usa leadServiceTypeOptions (enum LeadServiceType — válido para filtrar lead.serviceType) */}
+      {/* serviceType: uses leadServiceTypeOptions (LeadServiceType enum — valid for filtering lead.serviceType) */}
       <FilterSelect
         value={filters.serviceType}
         onValueChange={(value) => onChange("serviceType", value)}
         options={[{ value: "all", label: "Todos os serviços" }, ...leadServiceTypeOptions]}
       />
-      {/* CORRIGIDO: usa STATUS_LEAD_OPTIONS do novo sistema, alinhado com os valores salvos pelo LeadFormModal */}
+      {/* FIXED: uses STATUS_LEAD_OPTIONS from the new system, aligned with the values saved by LeadFormModal */}
       <FilterSelect
         value={filters.statusLead}
         onValueChange={(value) => onChange("statusLead", value)}
@@ -98,7 +98,7 @@ export function LeadFilters({
         onValueChange={(value) => onChange("responsavel", value)}
         options={[{ value: "all", label: "Responsáveis" }, ...responsaveis.map((value) => ({ value, label: value }))]}
       />
-      {/* CORRIGIDO: usa ORIGEM_LEAD_OPTIONS do novo sistema */}
+      {/* FIXED: uses ORIGEM_LEAD_OPTIONS from the new system */}
       <FilterSelect
         value={filters.origemLead}
         onValueChange={(value) => onChange("origemLead", value)}
@@ -359,7 +359,7 @@ export function InternalCRMFields({ register, setValue, watch }: LeadFormControl
           </SelectContent>
         </Select>
       </Field>
-      {/* CORRIGIDO: campo separado para campanha_marketing — não mais conflitando com observacoesInternas */}
+      {/* FIXED: separate field for campanha_marketing — no longer conflicting with observacoesInternas */}
       <Field label="Campanha de Marketing">
         <Input {...register("dadosInternosCRM.campanha_marketing")} placeholder="Nome da campanha que gerou o lead" />
       </Field>

@@ -1,9 +1,9 @@
 /**
  * LeadViewModal.interacoes-equipe.guard.test.ts
  *
- * Guarda permanente (REM-04 / GAP-10): `historicoInteracoes` era sempre []
- * — o registro real de interações da equipe (`/lead-interactions`) nunca
- * era buscado. Este teste falha se a integração real for removida.
+ * Permanent guard (REM-04 / GAP-10): `historicoInteracoes` was always []
+ * — the real team interaction log (`/lead-interactions`) was never
+ * fetched. This test fails if the real integration is removed.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

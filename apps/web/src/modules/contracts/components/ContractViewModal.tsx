@@ -149,7 +149,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
             </TabsList>
 
             <ScrollArea className="flex-1">
-              {/* ── Informações ── */}
+              {/* ── Information ── */}
               <TabsContent value="informacoes" className="p-6 space-y-5 mt-0">
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {[
@@ -188,9 +188,9 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                 )}
               </TabsContent>
 
-              {/* ── Assinatura Digital ── */}
+              {/* ── Digital signature ── */}
               <TabsContent value="assinatura" className="p-6 mt-0 space-y-5" data-testid="tab-content-assinatura">
-                {/* Signatários do contrato (inline, do formulário) */}
+                {/* Contract signatories (inline, from the form) */}
                 {contratoSigners.length > 0 ? (
                   <div>
                     <p className="text-xs font-medium text-muted-foreground  tracking-wide mb-3">
@@ -265,7 +265,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                   </div>
                 )}
 
-                {/* Se existir documento vinculado, mostra status + plataforma + timeline */}
+                {/* If a linked document exists, shows status + platform + timeline */}
                 {vinculadoDoc && (
                   <>
                     <div className="border-t border-border pt-5">
@@ -354,7 +354,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                 )}
               </TabsContent>
 
-              {/* ── Arquivo ── */}
+              {/* ── File ── */}
               <TabsContent value="arquivo" className="p-6 mt-0" data-testid="tab-content-arquivo">
                 {contrato.arquivo_url ? (
                   <Card className="bg-muted/20">
@@ -385,7 +385,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                 )}
               </TabsContent>
 
-              {/* ── Versões (histórico documental) ── */}
+              {/* ── Versions (document history) ── */}
               <TabsContent value="versoes" className="p-6 mt-0" data-testid="tab-content-versoes">
                 {versoes.length > 0 ? (
                   <div className="space-y-3">
@@ -441,7 +441,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                 )}
               </TabsContent>
 
-              {/* ── Documentos Anexos (REM-02) ── */}
+              {/* ── Attached documents (REM-02) ── */}
               <TabsContent value="documents" className="p-6 mt-0" data-testid="tab-content-documents">
                 {documents.length > 0 ? (
                   <div className="space-y-3">
@@ -480,7 +480,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                 )}
               </TabsContent>
 
-              {/* ── Lançamento ── */}
+              {/* ── Release ── */}
               <TabsContent value="lancamento" className="p-6 mt-0" data-testid="tab-content-lancamento">
                 {lancamentoVinculado ? (
                   <Card className="bg-muted/20">

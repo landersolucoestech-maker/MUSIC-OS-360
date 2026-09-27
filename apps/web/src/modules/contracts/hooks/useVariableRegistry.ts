@@ -29,7 +29,7 @@ const SEED_VARIABLES: Omit<RegistryVariable, "id" | "createdAt">[] = [
   // GRAVADORA (label)
   { name: "Nome da Gravadora",      group: "GRAVADORA",  field: "NAME",        placeholder: "{{GRAVADORA.NAME}}",      internalGroup: "label" },
   { name: "CNPJ da Gravadora",      group: "GRAVADORA",  field: "CNPJ",        placeholder: "{{GRAVADORA.CNPJ}}",      internalGroup: "label" },
-  // LICENCIANTE (licensor)
+  // LICENCIANTE group (licensor)
   { name: "Nome do Licenciante",    group: "LICENCIANTE", field: "NAME",       placeholder: "{{LICENCIANTE.NAME}}",    internalGroup: "licensor" },
   { name: "CPF do Licenciante",     group: "LICENCIANTE", field: "CPF",        placeholder: "{{LICENCIANTE.CPF}}",     internalGroup: "licensor" },
   // CONTRATANTE (contractor)

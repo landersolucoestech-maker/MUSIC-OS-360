@@ -1,16 +1,16 @@
 /**
  * services/leads.service.ts
  *
- * Backend real `/leads` (tabela `leads`, LeadsController/LeadsService —
- * apps/api/src/modules/leads). Substitui a implementação anterior, um array
- * em memória com 2 leads fictícios ("Marina Torres"/"Rafael Azevedo") que
- * nunca chamava a API — toda criação/edição era perdida ao recarregar.
+ * Real backend `/leads` (`leads` table, LeadsController/LeadsService —
+ * apps/api/src/modules/leads). Replaces the previous implementation, an in-memory
+ * array with 2 fictitious leads ("Marina Torres"/"Rafael Azevedo") that
+ * never called the API — every create/edit was lost on reload.
  *
- * `historicoInteracoes` não é embutido na resposta do lead — existe um
- * endpoint real e separado (`/lead-interactions?leadId=`). REM-04 (Remaining
- * Product Completion Backlog / GAP-10) integrou esse endpoint diretamente em
- * LeadViewModal via useLeadInteractions() em vez de embuti-lo aqui — mantido
- * vazio nesta camada para não duplicar a fonte de verdade.
+ * `historicoInteracoes` is not embedded in the lead response — there is a
+ * real, separate endpoint (`/lead-interactions?leadId=`). REM-04 (Remaining
+ * Product Completion Backlog / GAP-10) wired that endpoint directly into
+ * LeadViewModal via useLeadInteractions() instead of embedding it here — kept
+ * empty in this layer so the source of truth is not duplicated.
  */
 import { api } from "@/shared/lib/api-client";
 import type { Lead, LeadClientType, LeadServiceType, LeadInternalCRMData } from "../types";
@@ -90,9 +90,9 @@ function toApiPayload(data: Omit<Lead, "id" | "createdAt" | "updatedAt" | "histo
 export const leadsService = {
   async list(): Promise<Lead[]> {
     // api.get() já desembrulha o envelope {data,timestamp}; como o controller
-    // retorna {data: [...], meta} diretamente (TransformInterceptor preserva
-    // objetos que já têm `data`, não re-envolve), o valor aqui já É o array —
-    // reler `.data` (via ListLeadsResult) duplicava o unwrap e dava undefined.
+    // returns {data: [...], meta} directly (TransformInterceptor preserves
+    // objects that already have `data`, it does not re-wrap), the value here already IS the array —
+    // re-reading `.data` (via ListLeadsResult) duplicated the unwrap and yielded undefined.
     const result = await api.get<ApiLeadResponse[]>("/leads?limit=200");
     return result.map(fromApi).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   },

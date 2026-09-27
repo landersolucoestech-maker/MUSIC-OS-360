@@ -19,7 +19,7 @@ import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
 import { ContatoFormModal, type ContatoFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
 
 // ─────────────────────────────────────────────
-// Combos condicionais
+// Conditional combos
 // ─────────────────────────────────────────────
 const EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "marca_empresa",        servico: "eventos_corporativos" },
@@ -45,7 +45,7 @@ const matchCombo = (
 ) => list.some((c) => c.type === type && c.servico === servico);
 
 // ─────────────────────────────────────────────
-// Mapeamentos
+// Mappings
 // ─────────────────────────────────────────────
 const TIPO_LEAD_TO_CLIENT: Record<string, LeadClientType> = {
   artista_banda:        "artist",
@@ -99,8 +99,8 @@ function payloadToLead(
   const clientType = TIPO_LEAD_TO_CLIENT[payload.tipo_lead]   ?? "other";
   const serviceType = SERVICO_TO_TIPO_SERVICO[payload.servico] ?? "consultoria";
 
-  // CORRIGIDO: cada bloco condicional é espalhado individualmente para não perder dados.
-  // O operador ?? encadeado anterior descartava todos os blocos exceto o primeiro não-undefined.
+  // FIXED: each conditional block is spread individually so no data is lost.
+  // The previous chained ?? operator discarded every block except the first non-undefined one.
   const condicional =
     payload.evento        ??
     payload.campanha      ??
@@ -235,7 +235,7 @@ function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
 }
 
 // ─────────────────────────────────────────────
-// Página
+// Page
 // ─────────────────────────────────────────────
 export default function LeadsPage() {
   const navigate = useNavigate();
@@ -298,9 +298,9 @@ export default function LeadsPage() {
     setModalOpen(true);
   }
 
-  // Exportação real do CRM: reaproveita a Central de Relatórios (dados
+  // Real CRM export: reuses the Reports Center (data
   // completos do tenant, RBAC, tenant isolation, formula injection mitigada —
-  // ver Parte 79). Nenhuma implementação client-side paralela.
+  // see Part 79). No parallel client-side implementation.
   const exportButton = (
     <Button
       size="sm"

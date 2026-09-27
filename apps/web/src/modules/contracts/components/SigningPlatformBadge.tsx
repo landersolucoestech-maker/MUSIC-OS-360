@@ -18,7 +18,7 @@ export function SigningPlatformBadge({ platform, className }: SigningPlatformBad
   const label = PLATFORM_LABEL[platform];
   if (!label) return null;
 
-  // Identidade de plataforma colapsa no variant neutro (sem cores de marca).
+  // Platform identity collapses into the neutral variant (no brand colors).
   return (
     <Badge
       variant="neutral"

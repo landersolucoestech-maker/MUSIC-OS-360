@@ -1,17 +1,17 @@
 /**
  * leads.service.test.ts
  *
- * Guarda permanente (Fase 2 — persistência real de Leads): leads.service.ts
- * NUNCA pode voltar a conter um mock de dados em memória. Antes desta fase,
- * o arquivo mantinha um array `let leads = [...seedLeads]` mutado em runtime
- * (create/update/remove operavam sobre esse array, nunca sobre um backend
- * real) — dados desapareciam a cada reload da página e eram idênticos para
- * todos os tenants.
+ * Permanent guard (Phase 2 — real Leads persistence): leads.service.ts
+ * must NEVER again contain an in-memory data mock. Before this phase,
+ * the file kept a `let leads = [...seedLeads]` array mutated at runtime
+ * (create/update/remove operated on that array, never on a real
+ * backend) — data disappeared on every page reload and was identical for
+ * every tenant.
  *
- * Este teste falha se o arquivo voltar a conter: seeds/arrays de negócio,
- * mutação de variável module-level, IDs gerados localmente como substituto
- * de persistência, ou qualquer resposta estática. E confirma comportamentalmente
- * que list/create/update/remove sempre delegam para `api` (HTTP real, `/leads`).
+ * This test fails if the file again contains: business seeds/arrays,
+ * module-level variable mutation, locally generated IDs as a substitute
+ * for persistence, or any static response. It also confirms behaviorally
+ * that list/create/update/remove always delegate to `api` (real HTTP, `/leads`).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import * as fs from "fs";

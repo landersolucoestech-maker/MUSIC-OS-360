@@ -104,7 +104,7 @@ export function LeadsTable({
             const servico = typeof ps.servico === "string" ? ps.servico : "";
 
             // CORRIGIDO: fallback usa leadServiceTypeOptions (enum LeadServiceType),
-            // não leadStatusOptions, que é uma lista de status sem relação com serviceType.
+            // not leadStatusOptions, which is a status list unrelated to serviceType.
             const servicoLabel = servico
               ? optionLabel(SERVICOS_OPTIONS, servico)
               : optionLabel(leadServiceTypeOptions, lead.serviceType);
@@ -124,7 +124,7 @@ export function LeadsTable({
                   {servicoLabel}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {/* CORRIGIDO: usa STATUS_LEAD_OPTIONS alinhado com os valores salvos pelo novo sistema */}
+                  {/* FIXED: uses STATUS_LEAD_OPTIONS aligned with the values saved by the new system */}
                   {optionLabel(STATUS_LEAD_OPTIONS, lead.dadosInternosCRM.statusLead)}
                 </TableCell>
                 <TableCell className="text-muted-foreground">

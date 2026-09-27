@@ -33,7 +33,7 @@ import { useLeadInteractions } from "../hooks/useLeadInteractions";
 import { LEAD_INTERACTION_TYPE_LABELS } from "../services/lead-interactions.service";
 
 // ─────────────────────────────────────────────
-// Combos — espelho exato do LeadFormModal
+// Combos — exact mirror of LeadFormModal
 // ─────────────────────────────────────────────
 const EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "marca_empresa",        servico: "eventos_corporativos" },
@@ -70,7 +70,7 @@ const matchCombo = (
 ) => list.some((c) => c.type === type && c.servico === servico);
 
 // ─────────────────────────────────────────────
-// Tipos
+// Types
 // ─────────────────────────────────────────────
 interface LeadViewModalProps {
   open: boolean;
@@ -139,14 +139,14 @@ function Row({
 }
 
 // ─────────────────────────────────────────────
-// Componente
+// Component
 // ─────────────────────────────────────────────
 export function LeadViewModal({
   open, onOpenChange, lead, onEdit,
 }: LeadViewModalProps) {
-  // REM-04 (GAP-10): registro real de interações da equipe (lead_interactions),
-  // distinto do "Histórico de Interações" abaixo (que vem do payload do
-  // formulário de captação). Hook chamado antes do early-return (Rules of Hooks).
+  // REM-04 (GAP-10): real team interaction log (lead_interactions),
+  // distinct from the "Histórico de Interações" below (which comes from the payload of the
+  // intake form). Hook called before the early return (Rules of Hooks).
   const { data: interacoesEquipe = [] } = useLeadInteractions(lead?.id);
 
   if (!lead) return null;
@@ -226,7 +226,7 @@ export function LeadViewModal({
           </Section>
 
           {/* ══════════════════════════════════════
-              ORIGEM E GESTÃO COMERCIAL
+              ORIGIN AND SALES MANAGEMENT
           ══════════════════════════════════════ */}
           <Section title="Origem e Gestão Comercial">
             <Row icon={AtSign}        label="Origem do Lead"        value={lookup(ORIGEM_LEAD_OPTIONS, crm.origemLead  as string)} />
@@ -241,7 +241,7 @@ export function LeadViewModal({
           </Section>
 
           {/* ══════════════════════════════════════
-              DETALHES DO EVENTO
+              EVENT DETAILS
           ══════════════════════════════════════ */}
           {showEvento && (
             <Section title="Detalhes do Evento">
@@ -262,7 +262,7 @@ export function LeadViewModal({
           )}
 
           {/* ══════════════════════════════════════
-              DETALHES DA CAMPANHA
+              CAMPAIGN DETAILS
           ══════════════════════════════════════ */}
           {showCampanha && (
             <Section title="Detalhes da Campanha">
@@ -280,7 +280,7 @@ export function LeadViewModal({
           )}
 
           {/* ══════════════════════════════════════
-              DETALHES DO INFLUENCIADOR
+              INFLUENCER DETAILS
           ══════════════════════════════════════ */}
           {showInfluenciador && (
             <Section title="Detalhes do Influenciador">
@@ -297,7 +297,7 @@ export function LeadViewModal({
           )}
 
           {/* ══════════════════════════════════════
-              DETALHES DO EMPRESÁRIO ARTÍSTICO
+              ARTIST MANAGER DETAILS
           ══════════════════════════════════════ */}
           {showEmpresario && (
             <Section title="Detalhes do Empresário Artístico">
@@ -309,7 +309,7 @@ export function LeadViewModal({
           )}
 
           {/* ══════════════════════════════════════
-              HISTÓRICO DE INTERAÇÕES
+              INTERACTION HISTORY
           ══════════════════════════════════════ */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold tracking-wider text-muted-foreground border-b pb-1">
@@ -341,7 +341,7 @@ export function LeadViewModal({
           </section>
 
           {/* ══════════════════════════════════════
-              REGISTRO DE INTERAÇÕES DA EQUIPE (REM-04 / GAP-10)
+              TEAM INTERACTION LOG (REM-04 / GAP-10)
           ══════════════════════════════════════ */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold tracking-wider text-muted-foreground border-b pb-1">

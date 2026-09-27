@@ -60,9 +60,9 @@ export default function Contracts() {
 
   const hasActiveFilters = searchTerm !== "" || typeFilter !== "all-type" || statusFilter !== "all-status" || platformFilter !== "all-platform";
 
-  // Task H: paginação real server-side — a página muda de request (nunca
-  // recorta uma lista já baixada), e volta pra página 0 quando um filtro
-  // muda (senão a página 5 de um filtro que só tem 2 páginas fica presa).
+  // Task H: real server-side pagination — the page changes the request (it never
+  // slices an already-downloaded list), and goes back to page 0 when a filter
+  // changes (otherwise page 5 of a filter that has only 2 pages gets stuck).
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   useEffect(() => { setPage(0); }, [debouncedSearch, typeFilter, statusFilter, platformFilter]);
@@ -83,11 +83,11 @@ export default function Contracts() {
   });
   const filteredContratos = pageItems;
 
-  // KPIs: contagem + soma de valor por status SOBRE O TENANT INTEIRO (não a
-  // página atual) — GET /contracts/stats, agregado no banco. O bucket-mapping
-  // (vigente/assinado/aguardando/análise/encerrado) é o mesmo de sempre, só
-  // que agora itera sobre {status: count} (5-10 entradas) em vez da lista
-  // completa de contratos.
+  // KPIs: count + value sum per status OVER THE WHOLE TENANT (not the
+  // current page) — GET /contracts/stats, aggregated in the database. The bucket mapping
+  // (active/signed/pending/under review/closed) is the same as always, except
+  // that it now iterates over {status: count} (5-10 entries) instead of the full
+  // contract list.
   const { stats: contratosStats } = useContractsStats();
 
   const toggleSelectAll = () => {
@@ -121,9 +121,9 @@ export default function Contracts() {
     }
   };
 
-  // ── KPIs de contratos: PARTIÇÃO por status → a soma dos buckets = total da lista ──
-  // Cada contrato cai em EXATAMENTE um bucket (status desconhecido → "Em Análise"),
-  // garantindo Total = Vigentes + Assinados + Aguardando + Em Análise + Encerrados.
+  // ── Contract KPIs: PARTITION by status → the sum of the buckets = list total ──
+  // Each contract falls into EXACTLY one bucket (unknown status → "Em Análise"),
+  // guaranteeing Total = Vigentes + Assinados + Aguardando + Em Análise + Encerrados.
   const norm = (s?: string | null) => (s ?? "").toLowerCase();
   const EM_VIGOR_STATUSES = new Set(["in_force", "active"]);
   const ASSINADO_STATUSES = new Set(["signed"]);
@@ -135,7 +135,7 @@ export default function Contracts() {
     if (ASSINADO_STATUSES.has(s)) return "assinado";
     if (AGUARDANDO_STATUSES.has(s)) return "aguardando";
     if (ENCERRADO_STATUSES.has(s)) return "encerrado";
-    return "analise"; // draft / under_review / negociação / qualquer status desconhecido
+    return "analise"; // draft / under_review / negotiation / any unknown status
   };
 
   const tally = { vigente: 0, assinado: 0, aguardando: 0, analise: 0, encerrado: 0 };
@@ -176,7 +176,7 @@ export default function Contracts() {
       }
     >
       <div className="space-y-6">
-        {/* ── KPI Stats: partição por status (Total = soma dos 5 buckets) ── */}
+        {/* ── KPI stats: partition by status (Total = sum of the 5 buckets) ── */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="Total de Contratos"
@@ -433,13 +433,13 @@ export default function Contracts() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): ContractWizard chama useContracts() de novo só para as
-          mutations de create/update, a mesma query do isLoading acima.
-          Montá-lo só depois do isLoading virar false criava um observer
-          novo nessa query; em erro (backend fora do ar), refetchOnMount
-          reabria isLoading, o gate desmontava o wizard de novo — loop
-          infinito de loading. Mantê-los sempre montados quebra o ciclo. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): ContractWizard calls useContracts() again only for the
+          create/update mutations, the same query as the isLoading above.
+          Mounting it only after isLoading turned false created a new observer
+          on that query; on error (backend down), refetchOnMount
+          reopened isLoading, the gate unmounted the wizard again — an infinite
+          loading loop. Keeping them always mounted breaks the cycle. */}
       <ContractViewModal
         open={viewModal.open}
         onOpenChange={(open) => setViewModal({ ...viewModal, open })}

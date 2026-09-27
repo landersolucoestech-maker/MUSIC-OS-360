@@ -1,11 +1,11 @@
 /**
  * contracts/components/SendForSigningDialog.tsx
  *
- * Dialog para selecionar o provedor de assinatura digital e disparar o envio
- * de um contrato para assinatura.
+ * Dialog to select the digital-signature provider and trigger sending
+ * a contract for signing.
  *
- * Provedores mostrados:  Autentique (sempre) | Clicksign | DocuSign
- * Somente provedores conectados ficam habilitados para seleção.
+ * Providers shown:  Autentique (always) | Clicksign | DocuSign
+ * Only connected providers are enabled for selection.
  */
 
 import { useState } from "react";
@@ -65,13 +65,13 @@ export function SendForSigningDialog({
         provider:   selected,
       });
 
-      // Autentique já envia o convite de assinatura por email diretamente aos
-      // signatários (ver signing.service.ts) — este toast só confirma o envio.
-      // Nota: o vínculo local do documento (useDocuments/useSaveDocument) não
-      // tem endpoint real ainda (ver contracts/hooks/useDocuments.ts) — o envio
-      // acima já é real e irreversível, então o sucesso é reportado a partir
-      // dele, sem depender de uma persistência local que sempre falharia e
-      // mascararia o envio bem-sucedido como erro.
+      // Autentique already sends the signing invitation by email directly to the
+      // signatories (see signing.service.ts) — this toast only confirms the send.
+      // Note: the local document link (useDocuments/useSaveDocument) does not
+      // have a real endpoint yet (see contracts/hooks/useDocuments.ts) — the send
+      // above is already real and irreversible, so success is reported from
+      // it, without depending on a local persistence that would always fail and
+      // would mask the successful send as an error.
       toast.success("Contrato enviado via Autentique!", {
         description: `${signers.length} signatário(s) notificado(s) por email.`,
       });

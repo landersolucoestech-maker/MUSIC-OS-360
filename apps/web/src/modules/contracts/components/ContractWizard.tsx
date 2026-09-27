@@ -387,7 +387,7 @@ function StepTemplate({
   );
 }
 
-// ── Step 2 — Partes ────────────────────────────────────────────────────────
+// ── Step 2 — Parties ────────────────────────────────────────────────────────
 
 function PartyCard({
   role, party, onChange,
@@ -615,7 +615,7 @@ function PartyCard({
   );
 }
 
-// ── Step 3 — Variáveis (manifest-driven) ──────────────────────────────────
+// ── Step 3 — Variables (manifest-driven) ──────────────────────────────────
 
 function VariableField({
   manifest, value, onChange,
@@ -728,7 +728,7 @@ function VariableField({
   );
 }
 
-// ── Step 5 — Signatários ────────────────────────────────────────────────────
+// ── Step 5 — Signatories ────────────────────────────────────────────────────
 
 function SignerRow({
   signer, onUpdate, onRemove,
@@ -833,7 +833,7 @@ function PreviewPanel({
   );
 }
 
-// ── Step 6 — Revisão ────────────────────────────────────────────────────────
+// ── Step 6 — Review ────────────────────────────────────────────────────────
 
 function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardMeta) => void }) {
   const m = state.meta;

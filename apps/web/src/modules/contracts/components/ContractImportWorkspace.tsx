@@ -624,9 +624,9 @@ export function ContractImportWorkspace({
             >
               {/* ── Left column: form sections + editor ── */}
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                {/* Informações Básicas + Identidade Visual — lado a lado */}
+                {/* Basic information + Visual identity — side by side */}
                 <div className="shrink-0 border-b flex">
-                  {/* Informações Básicas */}
+                  {/* Basic information */}
                   <div className="flex-1 px-6 py-4">
                     <p className="text-[11px] font-semibold text-muted-foreground  tracking-wider mb-3">
                       Informações Básicas
@@ -672,7 +672,7 @@ export function ContractImportWorkspace({
                   {/* Divider vertical */}
                   <div className="border-l self-stretch" />
 
-                  {/* Identidade Visual */}
+                  {/* Visual identity */}
                   <div className="flex-1 px-6 py-4">
                     <p className="text-[11px] font-semibold text-muted-foreground  tracking-wider mb-3">
                       Identidade Visual do Documento

@@ -42,9 +42,9 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 // ── ContractForm ─────────────────────────────────────────────────────────────
-/** REM-02: documents anexos não fazem parte do zod schema (não precisam de
- * validação — já foram validados no upload real ao R2) — trafegam ao lado
- * dos campos do formulário até o payload final. */
+/** REM-02: attached documents are not part of the zod schema (they need no
+ * validation — they were already validated by the real R2 upload) — they travel alongside
+ * the form fields up to the final payload. */
 type ContratoFormSubmitData = ContractFormData & { documents: UploadedFile[] };
 
 interface ContractFormProps {
@@ -53,7 +53,7 @@ interface ContractFormProps {
   initialData?: Partial<ContratoFormSubmitData>;
   isLoading?: boolean;
   artists?: Array<{ id: string; name: string }>;
-  /** id do contrato em edição — organiza a pasta do anexo no R2 (undefined em criação). */
+  /** id of the contract being edited — organizes the attachment folder in R2 (undefined on create). */
   contratoId?: string;
 }
 
@@ -77,9 +77,9 @@ const ContractForm = ({
   const { serviceTypes, allServiceTypes } = useContractServiceTypes(null);
   const { templates } = useContractTemplates();
 
-  // Normaliza slugs da CategoryRegistry (e legados) para slugs CST equivalentes.
+  // Normalizes CategoryRegistry (and legacy) slugs to the equivalent CST slugs.
   // O workspace guarda tipo_servico com slugs da CategoryRegistry (ex: "empresariamento_360").
-  // Esta função converte-os para o slug CST correspondente para que o filtro funcione.
+  // This function converts them to the matching CST slug so the filter works.
   const normalizeToCst = useCallback((slug: string | undefined | null): string | null => {
     if (!slug) return null;
     const CST_VALID = new Set([
@@ -123,7 +123,7 @@ const ContractForm = ({
   );
 
   // Mapa CST slug → label da CategoryRegistry do utilizador.
-  // Permite mostrar "Empresariamento 360" (CategoryRegistry) em vez de "Empresariamento" (CST).
+  // Allows showing "Empresariamento 360" (CategoryRegistry) instead of "Empresariamento" (CST).
   const { categories: registryCategories } = useCategoryRegistry();
   const cstToLabel = useMemo(() => {
     const map = new Map<string, string>();
@@ -132,7 +132,7 @@ const ContractForm = ({
       if (!raw) continue;
       const cstSlug = normalizeToCst(raw);
       if (!cstSlug) continue;
-      // tenta encontrar o label na CategoryRegistry pelo slug do template
+      // tries to find the label in the CategoryRegistry by the template slug
       const cat = registryCategories.find((c) => c.value === raw);
       if (cat) map.set(cstSlug, cat.label);
     }
@@ -162,14 +162,14 @@ const ContractForm = ({
 
   return (
     <form onSubmit={form.handleSubmit((data) => onSubmit({ ...data, documents }))} className="space-y-6">
-      {/* ── Informações Básicas ── */}
+      {/* ── Basic information ── */}
       <Card>
         <CardHeader>
           <CardTitle>Informações Básicas</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {/* Título */}
+            {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title">Título do Contrato *</Label>
               <Input
@@ -183,7 +183,7 @@ const ContractForm = ({
               )}
             </div>
 
-            {/* Tipo de Serviço */}
+            {/* Service type */}
             <div className="space-y-2">
               <Label>Tipo de Serviço *</Label>
               <Select
@@ -239,7 +239,7 @@ const ContractForm = ({
         </CardContent>
       </Card>
 
-      {/* ── Datas ── */}
+      {/* ── Dates ── */}
       <Card>
         <CardHeader><CardTitle>Datas</CardTitle></CardHeader>
         <CardContent className="space-y-4">
@@ -286,14 +286,14 @@ const ContractForm = ({
         </CardContent>
       </Card>
 
-      {/* ── Valores ── */}
+      {/* ── Amounts ── */}
       <Card>
         <CardHeader><CardTitle>Valores</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             {selectedType ? (
               <>
-                {/* Selecionar tipo de pagamento (valor fixo ou recebimentos externos de direitos) — para qualquer tipo de cliente */}
+                {/* Select the payment type (fixed amount or external rights receipts) — for any client type */}
                 {selectedType.allow_installments && (
                   <>
                     <div className="space-y-2">
@@ -328,7 +328,7 @@ const ContractForm = ({
                   </>
                 )}
 
-                {/* Recebimentos externos de direitos direto (type não usa seletor de pagamento) */}
+                {/* External rights receipts directly (type does not use the payment selector) */}
                 {selectedType.requires_external_rights_terms && !selectedType.allow_installments && (
                   <div className="space-y-2">
                     <Label htmlFor="external_rights_percentage">Termos externos de direitos (%)</Label>
@@ -337,7 +337,7 @@ const ContractForm = ({
                   </div>
                 )}
 
-                {/* Valor fixo direto (type não usa seletor de pagamento) */}
+                {/* Fixed amount directly (type does not use the payment selector) */}
                 {selectedType.requires_fixed_value && !selectedType.allow_installments && (
                   <div className="space-y-2">
                     <Label htmlFor="fixed_value">Valor Fixo do Serviço (R$)</Label>
@@ -346,7 +346,7 @@ const ContractForm = ({
                   </div>
                 )}
 
-                {/* Adiantamento */}
+                {/* Advance */}
                 {selectedType.requires_advance && (
                   <div className="space-y-2">
                     <Label htmlFor="advance_payment">Adiantamento (R$)</Label>
@@ -355,7 +355,7 @@ const ContractForm = ({
                   </div>
                 )}
 
-                {/* Suporte financeiro mensal */}
+                {/* Monthly financial support */}
                 {selectedType.requires_financial_support && (
                   <div className="space-y-2">
                     <Label htmlFor="financial_support">Suporte Financeiro Mensal (R$)</Label>
@@ -365,7 +365,7 @@ const ContractForm = ({
                 )}
               </>
             ) : (
-              /* Sem type selecionado: campo de valor genérico (fallback) */
+              /* No type selected: generic amount field (fallback) */
               <div className="space-y-2">
                 <Label htmlFor="fixed_value_default">Valor do Contrato (R$)</Label>
                 <Input id="fixed_value_default" type="number" step="0.01" placeholder="0,00"
@@ -376,7 +376,7 @@ const ContractForm = ({
         </CardContent>
       </Card>
 
-      {/* ── Arquivo e Vínculos ── */}
+      {/* ── File and links ── */}
       <Card>
         <CardHeader><CardTitle>Arquivo e Vínculos</CardTitle></CardHeader>
         <CardContent className="space-y-4">
@@ -420,7 +420,7 @@ const ContractForm = ({
         </CardContent>
       </Card>
 
-      {/* ── Documentos Anexos ── */}
+      {/* ── Attached documents ── */}
       <Card>
         <CardHeader><CardTitle>Documentos Anexos</CardTitle></CardHeader>
         <CardContent>
@@ -437,7 +437,7 @@ const ContractForm = ({
         </CardContent>
       </Card>
 
-      {/* ── Signatários ── */}
+      {/* ── Signatories ── */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -532,7 +532,7 @@ const ContractForm = ({
         </CardContent>
       </Card>
 
-      {/* ── Observações e Termos ── */}
+      {/* ── Notes and terms ── */}
       <Card>
         <CardHeader><CardTitle>Observações e Termos</CardTitle></CardHeader>
         <CardContent className="space-y-4">

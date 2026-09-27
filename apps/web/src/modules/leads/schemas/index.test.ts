@@ -5,7 +5,7 @@ const basePayload = {
   nomeCompleto: "Fulano de Tal",
   clientType: "artist",
   serviceType: "producaoMusical",
-  // "objetivo" é obrigatório para o tipo de serviço producaoMusical.
+  // "objetivo" is required for the producaoMusical service type.
   payloadServico: { objetivo: "Lançamento de single" },
   dadosInternosCRM: { statusLead: "novo" },
 };
@@ -26,8 +26,8 @@ describe("leadValidationSchema — dadosInternosCRM.valorEstimado/probabilidadeF
   });
 
   it("treats NaN (cleared DOM input via valueAsNumber) as not provided, not as an error", () => {
-    // register(..., { valueAsNumber: true }) produz NaN quando o campo é limpo —
-    // sem o preprocess, isso quebrava a validação com "Expected number, received nan".
+    // register(..., { valueAsNumber: true }) yields NaN when the field is cleared —
+    // without the preprocess, this broke validation with "Expected number, received nan".
     const result = leadValidationSchema.safeParse({
       ...basePayload,
       dadosInternosCRM: { statusLead: "novo", valorEstimado: NaN },

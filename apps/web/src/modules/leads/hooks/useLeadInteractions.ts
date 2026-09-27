@@ -1,6 +1,6 @@
 /**
- * REM-04 (GAP-10): substitui `Lead.historicoInteracoes` (sempre []) por
- * leitura real de `/lead-interactions?leadId=`.
+ * REM-04 (GAP-10): replaces `Lead.historicoInteracoes` (always []) with a
+ * real read of `/lead-interactions?leadId=`.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { leadInteractionsService, type LeadInteractionType } from "../services/lead-interactions.service";

@@ -1,12 +1,12 @@
 /**
  * ContractFormModal.documents-persist.guard.test.ts
  *
- * Guarda permanente (REM-02 — Remaining Product Completion Backlog):
- * "Documentos Anexos" fazia upload real ao R2 via FileUpload/useUploadToR2,
- * mas o array `documents` nunca era incluído no payload salvo — falso
- * sucesso: o upload funcionava, mas a referência nunca sobrevivia a um
- * reload (contracts.documents não existia, e o handleSubmit nem lia o
- * estado `documents`). Este teste falha se a regressão voltar.
+ * Permanent guard (REM-02 — Remaining Product Completion Backlog):
+ * "Documentos Anexos" did a real upload to R2 via FileUpload/useUploadToR2,
+ * but the `documents` array was never included in the saved payload — false
+ * success: the upload worked, but the reference never survived a
+ * reload (contracts.documents did not exist, and handleSubmit did not even read the
+ * `documents` state). This test fails if the regression comes back.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

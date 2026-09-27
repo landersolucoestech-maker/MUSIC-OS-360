@@ -2,9 +2,9 @@
  * services/lead-interactions.service.ts
  *
  * REM-04 (Remaining Product Completion Backlog / GAP-10): `Lead.historicoInteracoes`
- * era sempre `[]` — existe um endpoint real (`/lead-interactions`,
- * LeadInteractionsController/Service) que nunca foi integrado a esta tela.
- * Este serviço lê diretamente da tabela real `lead_interactions`.
+ * was always `[]` — a real endpoint exists (`/lead-interactions`,
+ * LeadInteractionsController/Service) that was never wired into this screen.
+ * This service reads directly from the real `lead_interactions` table.
  */
 import { api } from "@/shared/lib/api-client";
 
