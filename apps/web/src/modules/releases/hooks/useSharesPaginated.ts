@@ -51,13 +51,13 @@ interface DirecaoStatusRow {
 }
 
 export interface ShareKPIs {
-  aReceber: number;
-  recebidos: number;
-  aEnviar: number;
-  enviados: number;
+  toReceive: number;
+  received: number;
+  toSend: number;
+  sent: number;
 }
 
-const EMPTY_SHARE_KPIS: ShareKPIs = { aReceber: 0, recebidos: 0, aEnviar: 0, enviados: 0 };
+const EMPTY_SHARE_KPIS: ShareKPIs = { toReceive: 0, received: 0, toSend: 0, sent: 0 };
 
 /** GET /shares/stats — exact direction×status distribution, whole tenant (Task H). */
 export function useSharesStats() {
@@ -70,12 +70,12 @@ export function useSharesStats() {
   const rows = query.data ?? [];
   const kpis = rows.length === 0 ? EMPTY_SHARE_KPIS : rows.reduce((acc, row) => {
     const pendingLike = row.status === "pendente" || row.status === "parcial";
-    if (row.direction === "a_receber" && pendingLike) acc.aReceber += row.cnt;
-    else if (row.direction === "a_receber" && row.status === "recebido") acc.recebidos += row.cnt;
-    else if (row.direction === "a_enviar" && pendingLike) acc.aEnviar += row.cnt;
-    else if (row.direction === "a_enviar" && row.status === "enviado") acc.enviados += row.cnt;
+    if (row.direction === "a_receber" && pendingLike) acc.toReceive += row.cnt;
+    else if (row.direction === "a_receber" && row.status === "recebido") acc.received += row.cnt;
+    else if (row.direction === "a_enviar" && pendingLike) acc.toSend += row.cnt;
+    else if (row.direction === "a_enviar" && row.status === "enviado") acc.sent += row.cnt;
     return acc;
-  }, { aReceber: 0, recebidos: 0, aEnviar: 0, enviados: 0 });
+  }, { toReceive: 0, received: 0, toSend: 0, sent: 0 });
 
   return { kpis, isLoading: query.isLoading, error: query.error };
 }

@@ -84,7 +84,7 @@ interface ReleaseCardProps {
  * Release card with automatic contrast: detects the cover's luminance and adapts
  * text/badges/chrome for legibility over both light and dark covers.
  */
-function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, onEdit, onMetrics, onDelete }: ReleaseCardProps) {
+function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, onView, onEdit, onMetrics, onDelete }: ReleaseCardProps) {
   const artworkUrl = getReleaseArtworkUrl(release);
   const { mode } = useImageContrast(artworkUrl);
   const status = cardStatusClasses(release, mode);
@@ -93,7 +93,7 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
   const releaseTime = release.data_lancamento ? new Date(release.data_lancamento).getTime() : NaN;
   const showCountdown = !Number.isNaN(releaseTime) && releaseTime > now;
   const releaseType = release.type === "single" ? "Single" : release.type === "ep" ? "EP" : "Album";
-  const genre = (release.music_genre as string | null) ?? artista?.musicGenre ?? "Genre TBA";
+  const genre = (release.music_genre as string | null) ?? artist?.musicGenre ?? "Genre TBA";
   const text = contrastText(mode);
   const subtext = contrastSubtext(mode);
   const chrome = contrastChrome(mode);
@@ -166,7 +166,7 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
             {release.title}
           </h3>
           <p className={`mt-1 text-sm font-medium ${subtext}`} data-testid={`text-lancamento-artista-${release.id}`}>
-            {artista?.stageName || "Artista não vinculado"}
+            {artist?.stageName || "Artista não vinculado"}
           </p>
           {showCountdown && (
             <div className={`mt-3 rounded-lg border p-2.5 ${chrome}`}>
@@ -199,7 +199,7 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
 }
 
 export default function Releases() {
-  const { lancamentos, isLoading, deleteLancamento, addLancamento } = useReleases();
+  const { lancamentos: releases, isLoading, deleteLancamento: deleteRelease, addLancamento: addRelease } = useReleases();
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -215,7 +215,7 @@ export default function Releases() {
     if (selectedIds.length === 0) return;
     const ids = selectedIds;
     setSelectedIds([]);
-    const result = await runBulkAction(ids, (id) => deleteLancamento.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deleteRelease.mutateAsync(id));
     reportBulkResult(result, "excluído", "lançamento");
   };
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; release?: any }>({ open: false, mode: "create" });
@@ -225,7 +225,7 @@ export default function Releases() {
 
   useEditQueryParam(
     "edit",
-    lancamentos,
+    releases,
     useCallback((release) => setFormModal({ open: true, mode: "edit", release }), []),
     "lancamentos",
   );
@@ -237,13 +237,13 @@ export default function Releases() {
   useEffect(() => {
     const viewId = searchParams.get("view");
     if (!viewId) return;
-    const target = lancamentos.find((l) => l.id === viewId);
+    const target = releases.find((l) => l.id === viewId);
     if (target) {
       setViewModal({ open: true, release: target });
       setSearchParams((prev) => { prev.delete("view"); return prev; }, { replace: true });
       return;
     }
-    if (lancamentos.length === 0) return;
+    if (releases.length === 0) return;
     let cancelled = false;
     storage.findById<Release & { id: string }>("lancamentos", viewId).then((found) => {
       if (cancelled || !found) return;
@@ -251,7 +251,7 @@ export default function Releases() {
       setSearchParams((prev) => { prev.delete("view"); return prev; }, { replace: true });
     });
     return () => { cancelled = true; };
-  }, [searchParams, lancamentos, setSearchParams]);
+  }, [searchParams, releases, setSearchParams]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all-type");
@@ -289,25 +289,25 @@ export default function Releases() {
   // Task J: per-card artist name/genre, resolved by direct ID lookup (GET
   // /artists/:id) only for the current page's releases — it used to scan
   // unfiltered useArtistas(), truncated at the tenant's first 50.
-  const [resolvedArtistas, setResolvedArtistas] = useState<Record<string, Artist>>({});
-  const pageArtistaIds = useMemo(
+  const [resolvedArtists, setResolvedArtists] = useState<Record<string, Artist>>({});
+  const pageArtistIds = useMemo(
     () => Array.from(new Set(pageItems.map((r) => r.artist_id).filter((id): id is string => !!id))),
     [pageItems],
   );
   useEffect(() => {
-    if (pageArtistaIds.length === 0) return;
+    if (pageArtistIds.length === 0) return;
     let cancelled = false;
-    Promise.all(pageArtistaIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
+    Promise.all(pageArtistIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, Artist> = {};
-        results.forEach((a, i) => { if (a) map[pageArtistaIds[i]] = wireToArtist(a); });
-        setResolvedArtistas((prev) => ({ ...prev, ...map }));
+        results.forEach((a, i) => { if (a) map[pageArtistIds[i]] = wireToArtist(a); });
+        setResolvedArtists((prev) => ({ ...prev, ...map }));
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [pageArtistaIds]);
-  const getArtistaById = (id: string | null) => id ? resolvedArtistas[id] : undefined;
+  }, [pageArtistIds]);
+  const getArtistById = (id: string | null) => id ? resolvedArtists[id] : undefined;
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -318,7 +318,7 @@ export default function Releases() {
 
   const handleDelete = () => {
     if (deleteModal.release) {
-      deleteLancamento.mutate(deleteModal.release.id);
+      deleteRelease.mutate(deleteModal.release.id);
       setDeleteModal({ open: false });
     }
   };
@@ -473,7 +473,7 @@ export default function Releases() {
                     <ReleaseCard
                       key={release.id}
                       release={release}
-                      artista={getArtistaById(release.artist_id ?? null)}
+                      artista={getArtistById(release.artist_id ?? null)}
                       now={now}
                       selected={selectedIds.includes(release.id)}
                       onToggleSelect={() => toggleSelect(release.id)}

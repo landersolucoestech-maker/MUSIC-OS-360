@@ -86,12 +86,12 @@ const STEPS = [
 const sortOptionsByLabel = <T extends { label: string }>(items: T[]) =>
   [...items].sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
 
-const GENERO_OPTIONS = MUSICAL_GENRES;
-const GENERO_OPTS = GENERO_OPTIONS.map((o) => o.value);
-const GENERO_LABELS: Record<string, string> = Object.fromEntries(
-  GENERO_OPTIONS.map((o) => [o.value, o.label]),
+const GENRE_OPTIONS = MUSICAL_GENRES;
+const GENRE_OPTS = GENRE_OPTIONS.map((o) => o.value);
+const GENRE_LABELS: Record<string, string> = Object.fromEntries(
+  GENRE_OPTIONS.map((o) => [o.value, o.label]),
 );
-const GENERO_ALIASES: Record<string, string> = {
+const GENRE_ALIASES: Record<string, string> = {
   eletronico: "eletronica",
   electronico: "eletronica",
   electronica: "eletronica",
@@ -107,13 +107,13 @@ const normStr = (s: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
-const matchGenero = (raw: string): string => {
+const matchGenre = (raw: string): string => {
   if (!raw) return "";
   const n = normStr(raw);
-  const exact = GENERO_OPTS.find((g) => normStr(g) === n);
+  const exact = GENRE_OPTS.find((g) => normStr(g) === n);
   if (exact) return exact;
-  if (GENERO_ALIASES[n]) return GENERO_ALIASES[n];
-  const partial = GENERO_OPTS.find(
+  if (GENRE_ALIASES[n]) return GENRE_ALIASES[n];
+  const partial = GENRE_OPTS.find(
     (g) => n.startsWith(normStr(g)) || normStr(g).startsWith(n),
   );
   return partial ?? raw.toLowerCase();
@@ -133,7 +133,7 @@ const splitNames = (s: string | null | undefined): string[] => {
  * list (Task J). Used only for best-effort autofill (ISRC of a project track);
  * a few results are enough, so the small `pageSize` is intentional.
  */
-async function findFonogramaByTitle(title: string): Promise<FonogramaWithRelations | undefined> {
+async function findPhonogramByTitle(title: string): Promise<FonogramaWithRelations | undefined> {
   if (!title.trim()) return undefined;
   const alvo = normStr(title);
   const { items } = await storage.listPaged<FonogramaWithRelations & { id: string }>("fonogramas", {
@@ -470,7 +470,7 @@ export function ReleaseFormModal({
   mode,
   onCreated,
 }: ReleaseFormModalProps) {
-  const { addLancamento, updateLancamento } = useReleases();
+  const { addLancamento: addRelease, updateLancamento: updateRelease } = useReleases();
   const { upload: uploadToR2, isUploading: isUploadingCoverR2 } = useUploadToR2();
 
   // ── Core state ────────────────────────────────────────────────────────────
@@ -479,15 +479,15 @@ export function ReleaseFormModal({
   const [extraFields, setExtraFields] = useState<ExtraFields>({
     ...DEFAULT_EXTRA,
   });
-  const [faixas, setFaixas] = useState<ReleaseTrack[]>([createReleaseTrack(1)]);
-  const [capaPrincipal, setCapaPrincipal] = useState<File | null>(null);
+  const [tracks, setTracks] = useState<ReleaseTrack[]>([createReleaseTrack(1)]);
+  const [mainCover, setMainCover] = useState<File | null>(null);
   const isUploadingCover = isUploadingCoverR2;
 
   // ── Combobox state (unchanged) ────────────────────────────────────────────
-  const [projetoSearch, setProjetoSearch] = useState("");
-  const [projetoOpen, setProjetoOpen] = useState(false);
-  const [artistaSearch, setArtistaSearch] = useState("");
-  const [artistaOpen, setArtistaOpen] = useState(false);
+  const [projectSearch, setProjectSearch] = useState("");
+  const [projectOpen, setProjectOpen] = useState(false);
+  const [artistSearch, setArtistSearch] = useState("");
+  const [artistOpen, setArtistOpen] = useState(false);
 
   // ── Distribution platforms (single source: service/hook) ──────────────────
   // Only truly connected platforms are selectable.
@@ -500,18 +500,18 @@ export function ReleaseFormModal({
   // ── Derived labels ────────────────────────────────────────────────────────
   // Task J: fetches directly by ID (GET /projects/:id) — does not depend on the
   // project being among the first loaded by unfiltered useProjetos().
-  const { entity: selectedProjeto } = useEntityById<ProjectWithRelations>("projects", formData.projetoSeed || undefined);
-  const projetoLabel: string = selectedProjeto
-    ? ((selectedProjeto.title ?? (selectedProjeto.nome as string | undefined) ?? "") as string)
+  const { entity: selectedProject } = useEntityById<ProjectWithRelations>("projects", formData.projetoSeed || undefined);
+  const projectLabel: string = selectedProject
+    ? ((selectedProject.title ?? (selectedProject.nome as string | undefined) ?? "") as string)
     : "";
   // Task I: fetches directly by ID (does not depend on the artist being among
   // the first loaded by unfiltered useArtistas()).
-  const { entity: selectedArtistaWire } = useEntityById<ArtistWireRecord>("artistas", formData.artist_id || undefined);
-  const selectedArtista: Artist | undefined = selectedArtistaWire ? wireToArtist(selectedArtistaWire) : undefined;
-  const artistaLabel = selectedArtista?.stageName ?? "";
+  const { entity: selectedArtistWire } = useEntityById<ArtistWireRecord>("artistas", formData.artist_id || undefined);
+  const selectedArtist: Artist | undefined = selectedArtistWire ? wireToArtist(selectedArtistWire) : undefined;
+  const artistLabel = selectedArtist?.stageName ?? "";
 
   // ── Filtered lists ────────────────────────────────────────────────────────
-  const TIPOS_MUSICAIS = ["album", "ep", "single"];
+  const MUSIC_RELEASE_TYPES = ["album", "ep", "single"];
   // Task J: server-side search (internally debounced) — it used to filter only
   // the tenant's first 50 projects loaded by unfiltered useProjetos(). The type
   // filter (album/ep/single) stays client-side over the fetched results — the
@@ -519,22 +519,22 @@ export function ReleaseFormModal({
   // QueryProjectDto), so filtering the 3 music types here is the same concession
   // accepted in other migrations of this task (a slight narrowing, never a cap
   // of 50 over the whole tenant).
-  const { items: projetosBusca } = useEntityLookup<ProjectWithRelations>({
+  const { items: projectsSearch } = useEntityLookup<ProjectWithRelations>({
     table: "projects",
-    search: projetoSearch,
-    enabled: projetoOpen,
+    search: projectSearch,
+    enabled: projectOpen,
   });
-  const projetosFiltrados = projetosBusca.filter(
-    (p) => !p.type || TIPOS_MUSICAIS.includes(String(p.type).toLowerCase()),
+  const filteredProjects = projectsSearch.filter(
+    (p) => !p.type || MUSIC_RELEASE_TYPES.includes(String(p.type).toLowerCase()),
   );
   // Task I: server-side search (internally debounced) — it used to filter only
   // the tenant's first 50 artists loaded by unfiltered useArtistas().
-  const { items: artistasFiltradosWire } = useEntityLookup<ArtistWireRecord>({
+  const { items: filteredArtistsWire } = useEntityLookup<ArtistWireRecord>({
     table: "artistas",
-    search: artistaSearch,
-    enabled: artistaOpen,
+    search: artistSearch,
+    enabled: artistOpen,
   });
-  const artistasFiltrados = artistasFiltradosWire.map(wireToArtist);
+  const filteredArtists = filteredArtistsWire.map(wireToArtist);
 
   // ── Reset on open ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -547,9 +547,9 @@ export function ReleaseFormModal({
       : {};
 
     if (release && Array.isArray(meta["faixas"]) && (meta["faixas"] as unknown[]).length > 0) {
-      setFaixas((meta["faixas"] as ReleaseTrack[]).map(f => ({ ...f, arquivoAudio: null })));
+      setTracks((meta["faixas"] as ReleaseTrack[]).map(f => ({ ...f, arquivoAudio: null })));
     } else {
-      setFaixas([createReleaseTrack(1)]);
+      setTracks([createReleaseTrack(1)]);
     }
 
     setExtraFields({
@@ -565,11 +565,11 @@ export function ReleaseFormModal({
       ...(meta["pricing"] ? { pricing: String(meta["pricing"]) } : {}),
     });
 
-    setCapaPrincipal(null);
-    setProjetoSearch("");
-    setArtistaSearch("");
-    setProjetoOpen(false);
-    setArtistaOpen(false);
+    setMainCover(null);
+    setProjectSearch("");
+    setArtistSearch("");
+    setProjectOpen(false);
+    setArtistOpen(false);
   }, [open, release]);
 
   const isViewMode = mode === "view";
@@ -584,16 +584,16 @@ export function ReleaseFormModal({
   // and the phonogram whose title matches the project/track are also resolved
   // by direct lookup (storage.findById / title search), never by scanning
   // unfiltered useArtistas()/useFonogramas().
-  const handleSelectProjeto = async (projeto: ProjectWithRelations) => {
-    const projectId = projeto.id;
-    const seed = projectToReleaseSeed(projeto);
-    const linkedArtistaWire = projeto.artist_id
-      ? await storage.findById<ArtistWireRecord>("artistas", projeto.artist_id as string)
+  const handleSelectProject = async (project: ProjectWithRelations) => {
+    const projectId = project.id;
+    const seed = projectToReleaseSeed(project);
+    const linkedArtistWire = project.artist_id
+      ? await storage.findById<ArtistWireRecord>("artistas", project.artist_id as string)
       : undefined;
-    const linkedArtista = linkedArtistaWire ? wireToArtist(linkedArtistaWire) : undefined;
-    const rawGenero = seed.genero?.trim() || linkedArtista?.musicGenre || "";
-    const fonoDosProjeto = projeto.title
-      ? await findFonogramaByTitle(projeto.title)
+    const linkedArtist = linkedArtistWire ? wireToArtist(linkedArtistWire) : undefined;
+    const rawGenre = seed.genero?.trim() || linkedArtist?.musicGenre || "";
+    const projectPhonograms = project.title
+      ? await findPhonogramByTitle(project.title)
       : undefined;
     setFormData((prev) => ({
       ...prev,
@@ -602,32 +602,32 @@ export function ReleaseFormModal({
       artist_id: !prev.artist_id.trim()
         ? (seed.artist_id ?? "")
         : prev.artist_id,
-      genero: !prev.genero.trim() ? matchGenero(rawGenero) : prev.genero,
+      genero: !prev.genero.trim() ? matchGenre(rawGenre) : prev.genero,
       type: !prev.type.trim() ? (seed.type ?? "") : prev.type,
       isrcGlobal: !prev.isrcGlobal.trim()
-        ? (fonoDosProjeto?.isrc ?? "")
+        ? (projectPhonograms?.isrc ?? "")
         : prev.isrcGlobal,
     }));
-    if (projeto.description) {
+    if (project.description) {
       try {
-        const musicas = JSON.parse(projeto.description) as Array<{
+        const projectTracks = JSON.parse(project.description) as Array<{
           nome?: string;
           compositores?: string[];
           produtores?: string[];
           isrc?: string;
           letra?: string;
         }>;
-        if (musicas.length > 0) {
-          const artistaNome = linkedArtista?.stageName ?? "";
-          const faixasResolvidas = await Promise.all(
-            musicas.map(async (m, i) => {
-              const isrcFaixa =
-                m.isrc?.trim() || (m.nome ? (await findFonogramaByTitle(m.nome))?.isrc ?? "" : "");
+        if (projectTracks.length > 0) {
+          const artistName = linkedArtist?.stageName ?? "";
+          const resolvedTracks = await Promise.all(
+            projectTracks.map(async (m, i) => {
+              const trackIsrc =
+                m.isrc?.trim() || (m.nome ? (await findPhonogramByTitle(m.nome))?.isrc ?? "" : "");
               return {
                 ...createReleaseTrack(i + 1),
                 title: m.nome ?? "",
-                artista: artistaNome,
-                isrc: isrcFaixa,
+                artista: artistName,
+                isrc: trackIsrc,
                 compositores: m.compositores?.length ? m.compositores : [""],
                 produtores: m.produtores?.length
                   ? m.produtores.map((p) => ({ nome: p, role: "Producer" }))
@@ -636,20 +636,20 @@ export function ReleaseFormModal({
               };
             }),
           );
-          setFaixas(faixasResolvidas);
+          setTracks(resolvedTracks);
         }
       } catch {
         /* invalid JSON */
       }
     }
-    setProjetoOpen(false);
-    setProjetoSearch("");
+    setProjectOpen(false);
+    setProjectSearch("");
   };
 
-  const handleSelectArtista = (artistId: string) => {
+  const handleSelectArtist = (artistId: string) => {
     setFormData((prev) => ({ ...prev, artist_id: artistId }));
-    setArtistaOpen(false);
-    setArtistaSearch("");
+    setArtistOpen(false);
+    setArtistSearch("");
   };
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -663,7 +663,7 @@ export function ReleaseFormModal({
           (extraFields.variosArtistas || !!formData.artist_id.trim())
         );
       case 1:
-        return faixas.every((f) => !!f.title.trim() && !!f.aiAssistanceLevel);
+        return tracks.every((f) => !!f.title.trim() && !!f.aiAssistanceLevel);
       default:
         return true;
     }
@@ -681,17 +681,17 @@ export function ReleaseFormModal({
   // ─────────────────────────────────────────────────────────────────────────
   // FAIXA HELPERS
   // ─────────────────────────────────────────────────────────────────────────
-  const addFaixa = () =>
-    setFaixas((prev) => [...prev, createReleaseTrack(prev.length + 1)]);
-  const removeFaixa = (id: number) => {
-    if (faixas.length > 1) setFaixas((prev) => prev.filter((f) => f.id !== id));
+  const addTrack = () =>
+    setTracks((prev) => [...prev, createReleaseTrack(prev.length + 1)]);
+  const removeTrack = (id: number) => {
+    if (tracks.length > 1) setTracks((prev) => prev.filter((f) => f.id !== id));
   };
   const updF = <K extends keyof ReleaseTrack>(id: number, k: K, v: ReleaseTrack[K]) =>
-    setFaixas((prev) => prev.map((f) => (f.id === id ? { ...f, [k]: v } : f)));
+    setTracks((prev) => prev.map((f) => (f.id === id ? { ...f, [k]: v } : f)));
 
-  const handleFaixaAudioUpload = async (faixaId: number, file: File) => {
-    updF(faixaId, "arquivoAudio", file);
-    updF(faixaId, "_uploading", true);
+  const handleTrackAudioUpload = async (trackId: number, file: File) => {
+    updF(trackId, "arquivoAudio", file);
+    updF(trackId, "_uploading", true);
     try {
       const { publicUrl } = await uploadToR2({
         file,
@@ -699,28 +699,28 @@ export function ReleaseFormModal({
         entity:   "release",
         entityId: release?.id,
       });
-      updF(faixaId, "audioUrl", publicUrl);
+      updF(trackId, "audioUrl", publicUrl);
       toast.success("Áudio enviado e link gerado com sucesso!");
     } catch (err) {
       const msg = err instanceof R2NotConfiguredError
         ? toUserMessage(err)
         : toUserMessage(err, "Erro no upload do áudio");
       toast.error(`Upload falhou: ${msg}`);
-      updF(faixaId, "arquivoAudio", null);
+      updF(trackId, "arquivoAudio", null);
     } finally {
-      updF(faixaId, "_uploading", false);
+      updF(trackId, "_uploading", false);
     }
   };
 
   // Compositores (string[])
   const addComp = (fid: number) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid ? { ...f, compositores: [...f.compositores, ""] } : f,
       ),
     );
   const updComp = (fid: number, i: number, v: string) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
           ? {
@@ -731,7 +731,7 @@ export function ReleaseFormModal({
       ),
     );
   const removeComp = (fid: number, i: number) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
           ? { ...f, compositores: f.compositores.filter((_, idx) => idx !== i) }
@@ -745,7 +745,7 @@ export function ReleaseFormModal({
     field: "artistasAdicionais" | "produtores",
     defaultRole: string,
   ) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
           ? { ...f, [field]: [...f[field], { nome: "", role: defaultRole }] }
@@ -759,7 +759,7 @@ export function ReleaseFormModal({
     k: "nome" | "role",
     v: string,
   ) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
           ? {
@@ -776,7 +776,7 @@ export function ReleaseFormModal({
     field: "artistasAdicionais" | "produtores",
     i: number,
   ) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
           ? {
@@ -791,7 +791,7 @@ export function ReleaseFormModal({
 
   // Musicians
   const addMus = (fid: number) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
           ? { ...f, musicos: [...f.musicos, { nome: "", instrumento: "" }] }
@@ -804,7 +804,7 @@ export function ReleaseFormModal({
     k: "nome" | "instrumento",
     v: string,
   ) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
           ? {
@@ -817,7 +817,7 @@ export function ReleaseFormModal({
       ),
     );
   const removeMus = (fid: number, i: number) =>
-    setFaixas((prev) =>
+    setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
           ? { ...f, musicos: f.musicos.filter((_, idx) => idx !== i) }
@@ -849,7 +849,7 @@ export function ReleaseFormModal({
   // COVER UPLOAD  — directly to Cloudflare R2 via the backend's presigned URL
   // ─────────────────────────────────────────────────────────────────────────
   const handleCoverUpload = async (file: File) => {
-    setCapaPrincipal(file);
+    setMainCover(file);
     try {
       const { publicUrl } = await uploadToR2({
         file,
@@ -870,7 +870,7 @@ export function ReleaseFormModal({
         toast.error("Falha desconhecida ao enviar capa.");
       }
       // Clears the preview to show the upload did not complete
-      setCapaPrincipal(null);
+      setMainCover(null);
     }
   };
 
@@ -886,12 +886,12 @@ export function ReleaseFormModal({
     try {
       const payload = formToReleasePayload(formData, mode === "edit" ? "edit" : "create");
       // Persist faixas and extraFields in metadata for edit round-trips
-      const savableFaixas = faixas.map(({ arquivoAudio: _a, _uploading: _u, ...f }) => f);
+      const savableTracks = tracks.map(({ arquivoAudio: _a, _uploading: _u, ...f }) => f);
       const enrichedMeta: Record<string, unknown> = {
         ...(typeof payload["metadata"] === "object" && payload["metadata"] !== null
           ? (payload["metadata"] as Record<string, unknown>)
           : {}),
-        faixas: savableFaixas,
+        faixas: savableTracks,
         territory: extraFields.territory,
         releaseTimezone: extraFields.releaseTimezone,
         pricing: extraFields.pricing,
@@ -904,14 +904,14 @@ export function ReleaseFormModal({
       };
       payload["metadata"] = enrichedMeta;
       if (mode === "edit" && release?.id) {
-        await updateLancamento.mutateAsync({
+        await updateRelease.mutateAsync({
           id: release.id,
           ...payload,
           expectedUpdatedAt: getExpectedUpdatedAt(release),
         } as never);
         toast.success("Lançamento atualizado!");
       } else {
-        const created = (await addLancamento.mutateAsync(payload as never)) as (Release & { id?: string }) | undefined;
+        const created = (await addRelease.mutateAsync(payload as never)) as (Release & { id?: string }) | undefined;
         // Decoupled integration: offer to start the shares flow (via navigation) only
         // when there are enough participants/credits. No direct coupling.
         // find-ed7823e9: it used to force a status PATCH to distributed right after
@@ -1037,20 +1037,20 @@ export function ReleaseFormModal({
           <div className="space-y-2">
             <Label>Projeto</Label>
             <Popover
-              open={projetoOpen}
-              onOpenChange={isViewMode ? undefined : setProjetoOpen}
+              open={projectOpen}
+              onOpenChange={isViewMode ? undefined : setProjectOpen}
             >
               <PopoverTrigger asChild>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <Input
-                    value={projetoOpen ? projetoSearch : projetoLabel}
+                    value={projectOpen ? projectSearch : projectLabel}
                     onChange={(e) => {
-                      setProjetoSearch(e.target.value);
-                      setProjetoOpen(true);
+                      setProjectSearch(e.target.value);
+                      setProjectOpen(true);
                     }}
-                    onFocus={() => !isViewMode && setProjetoOpen(true)}
-                    onClick={() => !isViewMode && setProjetoOpen(true)}
+                    onFocus={() => !isViewMode && setProjectOpen(true)}
+                    onClick={() => !isViewMode && setProjectOpen(true)}
                     disabled={isViewMode}
                     placeholder="Buscar projeto..."
                     className="pl-10"
@@ -1077,22 +1077,22 @@ export function ReleaseFormModal({
               >
                 <ScrollArea className="max-h-[280px]">
                   <div className="p-2">
-                    {projetosFiltrados.length === 0 ? (
+                    {filteredProjects.length === 0 ? (
                       <p className="text-sm text-muted-foreground text-center py-4">
                         Nenhum projeto encontrado.
                       </p>
                     ) : (
-                      projetosFiltrados.map((p) => (
+                      filteredProjects.map((p) => (
                         <div
                           key={p.id}
                           role="option"
                           tabIndex={0}
                           className="flex items-center gap-3 p-2 hover:bg-muted rounded-lg cursor-pointer transition-colors"
-                          onClick={() => handleSelectProjeto(p)}
+                          onClick={() => handleSelectProject(p)}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              handleSelectProjeto(p);
+                              handleSelectProject(p);
                             }
                           }}
                           data-testid={`option-projeto-${p.id}`}
@@ -1196,20 +1196,20 @@ export function ReleaseFormModal({
             <div className="space-y-2">
               <Label>Artista Principal *</Label>
               <Popover
-                open={artistaOpen}
-                onOpenChange={isViewMode ? undefined : setArtistaOpen}
+                open={artistOpen}
+                onOpenChange={isViewMode ? undefined : setArtistOpen}
               >
                 <PopoverTrigger asChild>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                     <Input
-                      value={artistaOpen ? artistaSearch : artistaLabel}
+                      value={artistOpen ? artistSearch : artistLabel}
                       onChange={(e) => {
-                        setArtistaSearch(e.target.value);
-                        setArtistaOpen(true);
+                        setArtistSearch(e.target.value);
+                        setArtistOpen(true);
                       }}
-                      onFocus={() => !isViewMode && setArtistaOpen(true)}
-                      onClick={() => !isViewMode && setArtistaOpen(true)}
+                      onFocus={() => !isViewMode && setArtistOpen(true)}
+                      onClick={() => !isViewMode && setArtistOpen(true)}
                       disabled={isViewMode}
                       placeholder="Buscar artista..."
                       className="pl-10"
@@ -1236,22 +1236,22 @@ export function ReleaseFormModal({
                 >
                   <ScrollArea className="max-h-[280px]">
                     <div className="p-2">
-                      {artistasFiltrados.length === 0 ? (
+                      {filteredArtists.length === 0 ? (
                         <p className="text-sm text-muted-foreground text-center py-4">
                           Nenhum artista encontrado.
                         </p>
                       ) : (
-                        artistasFiltrados.map((a) => (
+                        filteredArtists.map((a) => (
                           <div
                             key={a.id}
                             role="option"
                             tabIndex={0}
                             className="flex items-center gap-3 p-2 hover:bg-muted rounded-lg cursor-pointer transition-colors"
-                            onClick={() => handleSelectArtista(a.id)}
+                            onClick={() => handleSelectArtist(a.id)}
                             onKeyDown={(e) => {
                               if (e.key === "Enter" || e.key === " ") {
                                 e.preventDefault();
-                                handleSelectArtista(a.id);
+                                handleSelectArtist(a.id);
                               }
                             }}
                             data-testid={`option-artista-${a.id}`}
@@ -1307,16 +1307,16 @@ export function ReleaseFormModal({
                   <SelectValue placeholder="Selecione o gênero" />
                 </SelectTrigger>
                 <SelectContent>
-                  {[...GENERO_OPTS]
+                  {[...GENRE_OPTS]
                     .sort((a, b) =>
-                      (GENERO_LABELS[a] ?? a).localeCompare(
-                        GENERO_LABELS[b] ?? b,
+                      (GENRE_LABELS[a] ?? a).localeCompare(
+                        GENRE_LABELS[b] ?? b,
                         "pt-BR",
                       ),
                     )
                     .map((g) => (
                       <SelectItem key={g} value={g}>
-                        {GENERO_LABELS[g] ?? g}
+                        {GENRE_LABELS[g] ?? g}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -1333,16 +1333,16 @@ export function ReleaseFormModal({
                   <SelectValue placeholder="Selecione o gênero" />
                 </SelectTrigger>
                 <SelectContent>
-                  {[...GENERO_OPTS]
+                  {[...GENRE_OPTS]
                     .sort((a, b) =>
-                      (GENERO_LABELS[a] ?? a).localeCompare(
-                        GENERO_LABELS[b] ?? b,
+                      (GENRE_LABELS[a] ?? a).localeCompare(
+                        GENRE_LABELS[b] ?? b,
                         "pt-BR",
                       ),
                     )
                     .map((g) => (
                       <SelectItem key={g} value={g}>
-                        {GENERO_LABELS[g] ?? g}
+                        {GENRE_LABELS[g] ?? g}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -1497,19 +1497,19 @@ export function ReleaseFormModal({
   // ─────────────────────────────────────────────────────────────────────────
   const renderStep1 = () => (
     <div className="space-y-6">
-      {faixas.map((faixa, index) => (
-        <Card key={faixa.id} className="bg-muted/30 border-border">
+      {tracks.map((track, index) => (
+        <Card key={track.id} className="bg-muted/30 border-border">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">
-                {index + 1}. {faixa.title || "Nova Faixa"}
+                {index + 1}. {track.title || "Nova Faixa"}
               </CardTitle>
-              {faixas.length > 1 && !isViewMode && (
+              {tracks.length > 1 && !isViewMode && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeFaixa(faixa.id)}
+                  onClick={() => removeTrack(track.id)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -1526,8 +1526,8 @@ export function ReleaseFormModal({
                 </span>
               </Label>
               <Input
-                value={faixa.title}
-                onChange={(e) => updF(faixa.id, "title", e.target.value)}
+                value={track.title}
+                onChange={(e) => updF(track.id, "title", e.target.value)}
                 placeholder="Nome da música"
                 disabled={isViewMode}
                 maxLength={200}
@@ -1538,9 +1538,9 @@ export function ReleaseFormModal({
             {/* Alternative version */}
             <label className="flex items-center gap-2 cursor-pointer">
               <Checkbox
-                checked={faixa.isVersionAlternativa}
+                checked={track.isVersionAlternativa}
                 onCheckedChange={(checked) =>
-                  updF(faixa.id, "isVersionAlternativa", checked === true)
+                  updF(track.id, "isVersionAlternativa", checked === true)
                 }
                 disabled={isViewMode}
                 data-cy="checkbox-alternative-version"
@@ -1550,7 +1550,7 @@ export function ReleaseFormModal({
               </span>
             </label>
 
-            {faixa.isVersionAlternativa && (
+            {track.isVersionAlternativa && (
               <div className="space-y-3 pl-6 border-l-2 border-primary/20">
                 <Label>Tipo de Versão</Label>
                 <InfoBox>
@@ -1560,8 +1560,8 @@ export function ReleaseFormModal({
                 </InfoBox>
                 <div className="flex items-end gap-3">
                   <Select
-                    value={faixa.tipoVersao}
-                    onValueChange={(v) => updF(faixa.id, "tipoVersao", v)}
+                    value={track.tipoVersao}
+                    onValueChange={(v) => updF(track.id, "tipoVersao", v)}
                     disabled={isViewMode}
                   >
                     <SelectTrigger
@@ -1579,13 +1579,13 @@ export function ReleaseFormModal({
                     </SelectContent>
                   </Select>
 
-                  {faixa.tipoVersao === "other" && (
+                  {track.tipoVersao === "other" && (
                     <div className="flex-1 space-y-2">
                       <Label>Descrição da Versão Customizada</Label>
                       <Input
                         placeholder="Ex.: versão estendida, remix especial etc."
-                        value={faixa.versionCustomName || ""}
-                        onChange={(e) => updF(faixa.id, "versionCustomName", e.target.value)}
+                        value={track.versionCustomName || ""}
+                        onChange={(e) => updF(track.id, "versionCustomName", e.target.value)}
                         disabled={isViewMode}
                       />
                     </div>
@@ -1597,7 +1597,7 @@ export function ReleaseFormModal({
             <Separator />
 
             {/* Album-level artists (read-only display) */}
-            {(artistaLabel ||
+            {(artistLabel ||
               extraFields.artistasAdicionaisAlbum.length > 0) && (
               <div className="space-y-2">
                 <Label>
@@ -1607,9 +1607,9 @@ export function ReleaseFormModal({
                   </span>
                 </Label>
                 <div className="bg-muted/50 border rounded-md p-3 space-y-1">
-                  {artistaLabel && (
+                  {artistLabel && (
                     <p className="text-sm">
-                      <span className="font-medium">{artistaLabel}</span>
+                      <span className="font-medium">{artistLabel}</span>
                       <span className="text-muted-foreground">
                         {" "}
                         — Main Artist
@@ -1634,14 +1634,14 @@ export function ReleaseFormModal({
                 Artistas do álbum aparecem automaticamente em todas as faixas.
               </InfoBox>
               <ArtistRows
-                entries={faixa.artistasAdicionais}
+                entries={track.artistasAdicionais}
                 roles={ARTIST_ROLES}
                 addLabel="Adicionar Artista / Colaborador"
-                onAdd={() => addAE(faixa.id, "artistasAdicionais", "Performer")}
+                onAdd={() => addAE(track.id, "artistasAdicionais", "Performer")}
                 onUpdate={(i, k, v) =>
-                  updAE(faixa.id, "artistasAdicionais", i, k, v)
+                  updAE(track.id, "artistasAdicionais", i, k, v)
                 }
-                onRemove={(i) => removeAE(faixa.id, "artistasAdicionais", i)}
+                onRemove={(i) => removeAE(track.id, "artistasAdicionais", i)}
                 withArtistSuggestions
               />
             </div>
@@ -1653,12 +1653,12 @@ export function ReleaseFormModal({
                 Adicione produtores e engenheiros que trabalharam nesta faixa.
               </InfoBox>
               <ArtistRows
-                entries={faixa.produtores}
+                entries={track.produtores}
                 roles={PRODUCER_ROLES}
                 addLabel="Adicionar Produtor / Engenheiro"
-                onAdd={() => addAE(faixa.id, "produtores", "Producer")}
-                onUpdate={(i, k, v) => updAE(faixa.id, "produtores", i, k, v)}
-                onRemove={(i) => removeAE(faixa.id, "produtores", i)}
+                onAdd={() => addAE(track.id, "produtores", "Producer")}
+                onUpdate={(i, k, v) => updAE(track.id, "produtores", i, k, v)}
+                onRemove={(i) => removeAE(track.id, "produtores", i)}
               />
             </div>
 
@@ -1669,21 +1669,21 @@ export function ReleaseFormModal({
                 Se todos os membros de uma dupla ou banda são compositores,
                 liste-os individualmente.
               </InfoBox>
-              {faixa.compositores.map((c, i) => (
+              {track.compositores.map((c, i) => (
                 <div key={i} className="flex gap-2 items-center mb-2">
                   <Input
                     value={c}
-                    onChange={(e) => updComp(faixa.id, i, e.target.value)}
+                    onChange={(e) => updComp(track.id, i, e.target.value)}
                     placeholder="Nome do compositor"
                     disabled={isViewMode}
                     className="flex-1"
                   />
-                  {faixa.compositores.length > 1 && !isViewMode && (
+                  {track.compositores.length > 1 && !isViewMode && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeComp(faixa.id, i)}
+                      onClick={() => removeComp(track.id, i)}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -1696,7 +1696,7 @@ export function ReleaseFormModal({
                   variant="outline"
                   size="sm"
                   className="w-full gap-2"
-                  onClick={() => addComp(faixa.id)}
+                  onClick={() => addComp(track.id)}
                 >
                   <Plus className="h-4 w-4" /> Adicionar Compositor
                 </Button>
@@ -1710,12 +1710,12 @@ export function ReleaseFormModal({
                 Adicione os músicos que tocaram nesta faixa e o instrumento
                 correspondente.
               </InfoBox>
-              {faixa.musicos.map((m, i) => (
+              {track.musicos.map((m, i) => (
                 <div key={i} className="flex gap-2 items-center mb-2">
                   <Input
                     value={m.nome}
                     onChange={(e) =>
-                      updMus(faixa.id, i, "nome", e.target.value)
+                      updMus(track.id, i, "nome", e.target.value)
                     }
                     placeholder="Nome do músico"
                     disabled={isViewMode}
@@ -1723,7 +1723,7 @@ export function ReleaseFormModal({
                   />
                   <Select
                     value={m.instrumento}
-                    onValueChange={(v) => updMus(faixa.id, i, "instrumento", v)}
+                    onValueChange={(v) => updMus(track.id, i, "instrumento", v)}
                     disabled={isViewMode}
                   >
                     <SelectTrigger className="w-44">
@@ -1742,7 +1742,7 @@ export function ReleaseFormModal({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeMus(faixa.id, i)}
+                      onClick={() => removeMus(track.id, i)}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -1755,7 +1755,7 @@ export function ReleaseFormModal({
                   variant="outline"
                   size="sm"
                   className="w-full gap-2"
-                  onClick={() => addMus(faixa.id)}
+                  onClick={() => addMus(track.id)}
                 >
                   <Plus className="h-4 w-4" /> Adicionar Músico
                 </Button>
@@ -1779,8 +1779,8 @@ export function ReleaseFormModal({
                 </a>
               </InfoBox>
               <Select
-                value={faixa.aiAssistanceLevel}
-                onValueChange={(v) => updF(faixa.id, "aiAssistanceLevel", v)}
+                value={track.aiAssistanceLevel}
+                onValueChange={(v) => updF(track.id, "aiAssistanceLevel", v)}
                 disabled={isViewMode}
               >
                 <SelectTrigger data-cy="dropdown-ai-assistance-level">
@@ -1804,9 +1804,9 @@ export function ReleaseFormModal({
 
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
-                  checked={faixa.instrumental}
+                  checked={track.instrumental}
                   onCheckedChange={(checked) =>
-                    updF(faixa.id, "instrumental", checked === true)
+                    updF(track.id, "instrumental", checked === true)
                   }
                   disabled={isViewMode}
                   data-cy="checkbox-instrumental-track"
@@ -1814,13 +1814,13 @@ export function ReleaseFormModal({
                 <span className="text-sm">Faixa Instrumental (sem letra)</span>
               </label>
 
-              {!faixa.instrumental && (
+              {!track.instrumental && (
                 <>
                   <div className="space-y-2">
                     <Label>Idioma da Faixa *</Label>
                     <Select
-                      value={faixa.idioma}
-                      onValueChange={(v) => updF(faixa.id, "idioma", v)}
+                      value={track.idioma}
+                      onValueChange={(v) => updF(track.id, "idioma", v)}
                       disabled={isViewMode}
                     >
                       <SelectTrigger className="w-64">
@@ -1843,8 +1843,8 @@ export function ReleaseFormModal({
                       branco.
                     </p>
                     <Textarea
-                      value={faixa.letra}
-                      onChange={(e) => updF(faixa.id, "letra", e.target.value)}
+                      value={track.letra}
+                      onChange={(e) => updF(track.id, "letra", e.target.value)}
                       placeholder="Letra da música..."
                       rows={5}
                       disabled={isViewMode}
@@ -1854,8 +1854,8 @@ export function ReleaseFormModal({
                   <div className="space-y-2">
                     <Label>Conteúdo Explícito *</Label>
                     <Select
-                      value={faixa.explicit}
-                      onValueChange={(v) => updF(faixa.id, "explicit", v)}
+                      value={track.explicit}
+                      onValueChange={(v) => updF(track.id, "explicit", v)}
                       disabled={isViewMode}
                     >
                       <SelectTrigger
@@ -1888,9 +1888,9 @@ export function ReleaseFormModal({
                 </span>
               </Label>
               <Input
-                value={faixa.isrc}
+                value={track.isrc}
                 onChange={(e) =>
-                  updF(faixa.id, "isrc", e.target.value.toUpperCase())
+                  updF(track.id, "isrc", e.target.value.toUpperCase())
                 }
                 placeholder="BR-ABC-26-00001"
                 disabled={isViewMode}
@@ -1909,8 +1909,8 @@ export function ReleaseFormModal({
                 </span>
               </Label>
               <Input
-                value={faixa.artista}
-                onChange={(e) => updF(faixa.id, "artista", e.target.value)}
+                value={track.artista}
+                onChange={(e) => updF(track.id, "artista", e.target.value)}
                 placeholder="Nome do artista"
                 disabled={isViewMode}
               />
@@ -1923,22 +1923,22 @@ export function ReleaseFormModal({
                 className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-muted-foreground/50 transition-colors"
                 onClick={() =>
                   !isViewMode &&
-                  document.getElementById(`audio-${faixa.id}`)?.click()
+                  document.getElementById(`audio-${track.id}`)?.click()
                 }
               >
                 <p className="text-sm text-muted-foreground">
                   WAV (recomendado) ou MP3 — máx. 25 MB
                 </p>
-                {faixa.arquivoAudio ? (
+                {track.arquivoAudio ? (
                   <div className="mt-2">
                     <p className="text-sm text-foreground font-medium">
-                      {faixa.arquivoAudio.name}
-                      {faixa._uploading && " — enviando..."}
-                      {!faixa._uploading && faixa.audioUrl && " — link gerado ✓"}
+                      {track.arquivoAudio.name}
+                      {track._uploading && " — enviando..."}
+                      {!track._uploading && track.audioUrl && " — link gerado ✓"}
                     </p>
-                    {!faixa._uploading && faixa.audioUrl && (
+                    {!track._uploading && track.audioUrl && (
                       <a
-                        href={faixa.audioUrl}
+                        href={track.audioUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs text-primary hover:underline"
@@ -1961,13 +1961,13 @@ export function ReleaseFormModal({
                   )
                 )}
                 <input
-                  id={`audio-${faixa.id}`}
+                  id={`audio-${track.id}`}
                   type="file"
                   accept=".mp3,.wav"
                   className="hidden"
                   onChange={(e) => {
                     const f = e.target.files?.[0];
-                    if (f) void handleFaixaAudioUpload(faixa.id, f);
+                    if (f) void handleTrackAudioUpload(track.id, f);
                   }}
                   disabled={isViewMode}
                 />
@@ -1982,7 +1982,7 @@ export function ReleaseFormModal({
           type="button"
           variant="outline"
           className="w-full gap-2"
-          onClick={addFaixa}
+          onClick={addTrack}
         >
           <Plus className="h-4 w-4" /> Adicionar Faixa
         </Button>
@@ -2006,10 +2006,10 @@ export function ReleaseFormModal({
           {/* Preview */}
           <div className="shrink-0">
             <div className="w-44 h-44 border-2 border-dashed border-border rounded-lg overflow-hidden bg-muted/50 flex items-center justify-center relative">
-              {capaPrincipal ? (
+              {mainCover ? (
                 <>
                   <img
-                    src={URL.createObjectURL(capaPrincipal)}
+                    src={URL.createObjectURL(mainCover)}
                     alt="Capa"
                     className="w-full h-full object-cover"
                   />
@@ -2070,10 +2070,10 @@ export function ReleaseFormModal({
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">Enviando capa…</p>
                 </div>
-              ) : capaPrincipal ? (
+              ) : mainCover ? (
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <p className="text-sm font-medium">{capaPrincipal.name}</p>
+                  <p className="text-sm font-medium">{mainCover.name}</p>
                   {!isViewMode && (
                     <Button
                       type="button"
@@ -2081,7 +2081,7 @@ export function ReleaseFormModal({
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setCapaPrincipal(null);
+                        setMainCover(null);
                         setFormData((prev) => ({ ...prev, assetCapaUrl: "" }));
                       }}
                     >
@@ -2404,8 +2404,8 @@ export function ReleaseFormModal({
   // STEP 4 — PREVIEW / DISTRIBUTE
   // ─────────────────────────────────────────────────────────────────────────
   const renderStep4 = () => {
-    const artistaNome =
-      artistaLabel || (extraFields.variosArtistas ? "Various Artists" : "—");
+    const artistName =
+      artistLabel || (extraFields.variosArtistas ? "Various Artists" : "—");
 
     const warnings: string[] = [];
     if (!formData.title.trim()) warnings.push("Título do lançamento ausente.");
@@ -2419,10 +2419,10 @@ export function ReleaseFormModal({
       warnings.push("Ano de copyright (lançamento) ausente.");
     if (!extraFields.copyrightDataGravacao)
       warnings.push("Ano de copyright (gravação) ausente.");
-    if (!capaPrincipal) warnings.push("Capa do álbum não enviada.");
+    if (!mainCover) warnings.push("Capa do álbum não enviada.");
     if (!formData.dataLancamento)
       warnings.push("Data de lançamento não definida.");
-    faixas.forEach((f, i) => {
+    tracks.forEach((f, i) => {
       if (!f.title.trim()) warnings.push(`Faixa ${i + 1}: título ausente.`);
       if (!f.aiAssistanceLevel)
         warnings.push(`Faixa ${i + 1}: AI-Assisted Materials não declarado.`);
@@ -2442,9 +2442,9 @@ export function ReleaseFormModal({
             {/* Header */}
             <div className="flex flex-col md:flex-row gap-6 mb-4">
               <div className="shrink-0">
-                {capaPrincipal ? (
+                {mainCover ? (
                   <img
-                    src={URL.createObjectURL(capaPrincipal)}
+                    src={URL.createObjectURL(mainCover)}
                     alt="Capa"
                     className="w-36 h-36 rounded-lg object-cover border border-border"
                   />
@@ -2466,7 +2466,7 @@ export function ReleaseFormModal({
                     {formData.title || "—"}
                     {formData.type ? ` — ${formData.type.toUpperCase()}` : ""}
                   </h3>
-                  <p className="text-muted-foreground">por {artistaNome}</p>
+                  <p className="text-muted-foreground">por {artistName}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                   <span className="text-muted-foreground">Gravadora:</span>
@@ -2475,8 +2475,8 @@ export function ReleaseFormModal({
                   <span className="text-muted-foreground">Gêneros:</span>
                   <span>
                     {[
-                      GENERO_LABELS[formData.genero] ?? formData.genero,
-                      GENERO_LABELS[extraFields.generoSecundario] ??
+                      GENRE_LABELS[formData.genero] ?? formData.genero,
+                      GENRE_LABELS[extraFields.generoSecundario] ??
                         extraFields.generoSecundario,
                     ]
                       .filter(Boolean)
@@ -2519,7 +2519,7 @@ export function ReleaseFormModal({
 
             {/* Track list */}
             <div className="space-y-1">
-              {faixas.map((f, i) => (
+              {tracks.map((f, i) => (
                 <div
                   key={f.id}
                   className="flex items-center gap-3 py-2 border-b border-border last:border-0"
@@ -2532,7 +2532,7 @@ export function ReleaseFormModal({
                       {f.title || "Sem título"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {f.artista || artistaNome}
+                      {f.artista || artistName}
                     </p>
                   </div>
                   {f.isrc && (

@@ -38,7 +38,7 @@ interface ReleaseViewModalProps {
   release?: Release;
 }
 
-const TIPO_MAP: Record<string, { label: string; color: string }> = {
+const TYPE_MAP: Record<string, { label: string; color: string }> = {
   single: { label: "Single", color: "bg-primary text-foreground" },
   ep: { label: "EP", color: "bg-info text-info-foreground" },
   album: { label: "Álbum", color: "bg-primary text-foreground" },
@@ -94,8 +94,8 @@ function LinkField({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
-function aggregateField(faixas: any[], key: string): string {
-  const values = faixas
+function aggregateField(tracks: any[], key: string): string {
+  const values = tracks
     .flatMap((f) => {
       const value = f[key];
       if (Array.isArray(value)) return value;
@@ -109,8 +109,8 @@ function aggregateField(faixas: any[], key: string): string {
 export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewModalProps) {
   // Main artist of the release — looked up DIRECTLY by ID (GET /artists/:id),
   // does not depend on being among the first 50 loaded (Task J).
-  const { entity: artistaWire } = useEntityById<ArtistWireRecord>("artistas", open ? release?.artist_id ?? undefined : undefined);
-  const artista: Artist | undefined = artistaWire ? wireToArtist(artistaWire) : undefined;
+  const { entity: artistWire } = useEntityById<ArtistWireRecord>("artistas", open ? release?.artist_id ?? undefined : undefined);
+  const artist: Artist | undefined = artistWire ? wireToArtist(artistWire) : undefined;
   const { shares } = useShares();
   const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
     table: "lancamentos",
@@ -128,50 +128,50 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   // releases) and artist names per linked share — resolved directly by ID
   // via storage.findById, never scanning useFonogramas()/
   // useArtistas() without a filter (Task J).
-  const fonogramaIds = useMemo(
+  const phonogramIds = useMemo(
     () => (Array.isArray(release?.fonograma_ids) ? (release!.fonograma_ids as string[]) : []),
     [release],
   );
-  const [resolvedFonogramas, setResolvedFonogramas] = useState<Record<string, FonogramaWithRelations>>({});
+  const [resolvedPhonograms, setResolvedPhonograms] = useState<Record<string, FonogramaWithRelations>>({});
   useEffect(() => {
-    if (!open || fonogramaIds.length === 0) return;
+    if (!open || phonogramIds.length === 0) return;
     let cancelled = false;
-    Promise.all(fonogramaIds.map((id) => storage.findById<FonogramaWithRelations & { id: string }>("fonogramas", id)))
+    Promise.all(phonogramIds.map((id) => storage.findById<FonogramaWithRelations & { id: string }>("fonogramas", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, FonogramaWithRelations> = {};
-        results.forEach((f, i) => { if (f) map[fonogramaIds[i]] = f; });
-        setResolvedFonogramas(map);
+        results.forEach((f, i) => { if (f) map[phonogramIds[i]] = f; });
+        setResolvedPhonograms(map);
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [open, fonogramaIds]);
+  }, [open, phonogramIds]);
 
-  const shareArtistaIds = useMemo(
+  const shareArtistIds = useMemo(
     () => Array.from(new Set(shares.filter((s) => (s as Record<string, unknown>)["release_id"] === release?.id && s.artist_id).map((s) => s.artist_id as string))),
     [shares, release?.id],
   );
-  const [resolvedShareArtistas, setResolvedShareArtistas] = useState<Record<string, Artist>>({});
+  const [resolvedShareArtists, setResolvedShareArtists] = useState<Record<string, Artist>>({});
   useEffect(() => {
-    if (!open || shareArtistaIds.length === 0) return;
+    if (!open || shareArtistIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareArtistaIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
+    Promise.all(shareArtistIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, Artist> = {};
-        results.forEach((a, i) => { if (a) map[shareArtistaIds[i]] = wireToArtist(a); });
-        setResolvedShareArtistas(map);
+        results.forEach((a, i) => { if (a) map[shareArtistIds[i]] = wireToArtist(a); });
+        setResolvedShareArtists(map);
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [open, shareArtistaIds]);
+  }, [open, shareArtistIds]);
 
   if (!release) return null;
 
   const metadata = ((release as Record<string, unknown>)["metadata"] as Record<string, unknown> | null | undefined) ?? {};
   const assets = (release.assets ?? metadata["assets"] ?? {}) as Record<string, unknown>;
   const cronograma = (release.cronograma ?? metadata["cronograma"] ?? {}) as Record<string, unknown>;
-  const metadataFaixas = Array.isArray(metadata["faixas"]) ? (metadata["faixas"] as any[]) : [];
+  const trackMetadata = Array.isArray(metadata["faixas"]) ? (metadata["faixas"] as any[]) : [];
 
   const allowedTransitions = resolveAllowedTransitions(
     "release",
@@ -179,37 +179,37 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
     detail?.allowed_transitions,
   );
   const type = String(release.type ?? "single").toLowerCase();
-  const tipoInfo = TIPO_MAP[type] ?? { label: type.toUpperCase(), color: "bg-muted text-muted-foreground" };
-  const capaUrl = (release.capa_url as string | null | undefined) ?? textValue(assets["capa_url"]);
+  const typeInfo = TYPE_MAP[type] ?? { label: type.toUpperCase(), color: "bg-muted text-muted-foreground" };
+  const coverUrl = (release.capa_url as string | null | undefined) ?? textValue(assets["capa_url"]);
   const dataFormatada = formatReleaseDate(release.data_lancamento);
   const idiomaRaw = release.idioma ?? metadata["idioma"];
   const idioma = IDIOMAS[String(idiomaRaw ?? "")] ?? textValue(idiomaRaw);
 
-  const faixasCatalogo = fonogramaIds
-    .map((id) => resolvedFonogramas[id])
+  const catalogTracks = phonogramIds
+    .map((id) => resolvedPhonograms[id])
     .filter(Boolean);
-  const faixas = metadataFaixas.length > 0 ? metadataFaixas : faixasCatalogo;
-  const compositores = aggregateField(faixas, "compositores");
-  const interpretes = aggregateField(faixas, "interpretes");
-  const produtores = aggregateField(faixas, "produtores");
-  const hasAssets = Object.values(assets).some(Boolean) || Boolean(capaUrl);
+  const tracks = trackMetadata.length > 0 ? trackMetadata : catalogTracks;
+  const composers = aggregateField(tracks, "compositores");
+  const performers = aggregateField(tracks, "interpretes");
+  const producers = aggregateField(tracks, "produtores");
+  const hasAssets = Object.values(assets).some(Boolean) || Boolean(coverUrl);
   const hasCronograma = Object.values(cronograma).some(Boolean);
   const hasNotes = Boolean(release.notes || release.notas_internas || metadata["observacoes"] || metadata["notas_internas"]);
 
   // Copyright (years + holder)
-  const copyrightAnoLancamento = textValue(metadata["copyrightDataLancamento"]);
-  const copyrightAnoGravacao = textValue(metadata["copyrightDataGravacao"]);
+  const copyrightReleaseYear = textValue(metadata["copyrightDataLancamento"]);
+  const copyrightRecordingYear = textValue(metadata["copyrightDataGravacao"]);
 
   // Subgenre + selected platforms
   const subgenero = textValue(metadata["generoSecundario"]) ?? textValue(metadata["genero_secundario"]);
-  const plataformasArr = Array.isArray(release.plataformas) ? (release.plataformas as string[]).filter(Boolean) : [];
-  const plataformasLabel = plataformasArr.length > 0 ? plataformasArr.join(", ") : null;
+  const platformsArr = Array.isArray(release.plataformas) ? (release.plataformas as string[]).filter(Boolean) : [];
+  const platformsLabel = platformsArr.length > 0 ? platformsArr.join(", ") : null;
 
   // Distribution: internal vs platform (platform_status is NEVER manual)
   const platformId = textValue(release.selected_platform_id) ?? textValue(release.distribuidora);
   const platformName = findDistributionPlatform(platformId)?.name ?? platformId;
   const platformStatus = resolvePlatformStatus(release);
-  const modoDistribuicao = platformStatus || platformId ? "Plataforma" : "Controle interno";
+  const distributionMode = platformStatus || platformId ? "Plataforma" : "Controle interno";
   const lastAttempt = formatReleaseDate(textValue(release.platform_last_attempt_at));
   const lastSync = formatReleaseDate(textValue(release.platform_last_sync_at));
 
@@ -236,7 +236,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
               <h2 className="text-2xl font-bold leading-tight text-foreground">{release.title}</h2>
               <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
                 <UserRound className="h-4 w-4" />
-                {artista?.stageName || "Artista não vinculado"}
+                {artist?.stageName || "Artista não vinculado"}
               </p>
             </div>
             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
@@ -264,17 +264,17 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
 
         <div className="rounded-lg border border-border p-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Field label="Tipo" value={tipoInfo.label} />
+            <Field label="Tipo" value={typeInfo.label} />
             <Field label="Gênero" value={release.music_genre ?? textValue(metadata["genero"])} />
             <Field label="Subgênero" value={subgenero} />
             <Field label="Idioma" value={idioma} />
             <Field label="Gravadora / Selo" value={release.gravadora ?? textValue(metadata["gravadora"])} />
-            <Field label="Plataformas selecionadas" value={plataformasLabel} />
+            <Field label="Plataformas selecionadas" value={platformsLabel} />
             <Field label="ISRC Global" value={release.isrc_global ?? textValue(metadata["isrc_global"])} />
             <Field label="UPC / EAN" value={release.upc ?? release.codigo_upc ?? textValue(metadata["upc"])} />
             <Field label="Titular do Copyright" value={release.copyright ?? textValue(metadata["copyright"])} />
-            <Field label="© Ano (Lançamento)" value={copyrightAnoLancamento} />
-            <Field label="℗ Ano (Gravação)" value={copyrightAnoGravacao} />
+            <Field label="© Ano (Lançamento)" value={copyrightReleaseYear} />
+            <Field label="℗ Ano (Gravação)" value={copyrightRecordingYear} />
           </div>
         </div>
 
@@ -291,7 +291,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-semibold tracking-wider text-muted-foreground">Distribuição:</span>
-              <span className="text-foreground">{modoDistribuicao}</span>
+              <span className="text-foreground">{distributionMode}</span>
             </div>
             {platformStatus && (
               <div className="flex items-center gap-2">
@@ -325,7 +325,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
           </>
         )}
 
-        {(compositores || interpretes || produtores) && (
+        {(composers || performers || producers) && (
           <>
             <Separator />
             <div className="space-y-3">
@@ -333,9 +333,9 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                 Créditos
               </h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                <Field label="Compositores" value={compositores} />
-                <Field label="Interpretes" value={interpretes} />
-                <Field label="Produtores" value={produtores} />
+                <Field label="Compositores" value={composers} />
+                <Field label="Interpretes" value={performers} />
+                <Field label="Produtores" value={producers} />
               </div>
             </div>
           </>
@@ -351,7 +351,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                     <LinkIcon className="h-3.5 w-3.5" />
                     Arquivos
                   </h3>
-                  <LinkField label="Capa" value={capaUrl} />
+                  <LinkField label="Capa" value={coverUrl} />
                   <LinkField label="Áudio master" value={textValue(assets["audio_master_url"])} />
                   <LinkField label="Vídeo clipe" value={textValue(assets["video_clipe_url"])} />
                   <LinkField label="EPK" value={textValue(assets["epk_url"])} />
@@ -390,15 +390,15 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
           </>
         )}
 
-        {faixas.length > 0 && (
+        {tracks.length > 0 && (
           <>
             <Separator />
             <div className="space-y-2">
               <h3 className="text-[11px] font-semibold  tracking-wider text-muted-foreground">
-                Faixas ({faixas.length})
+                Faixas ({tracks.length})
               </h3>
               <div className="space-y-1">
-                {faixas.map((f: any, idx) => (
+                {tracks.map((f: any, idx) => (
                   <div
                     key={f.id ?? idx}
                     className="flex items-center gap-3 rounded-lg bg-muted/30 px-3 py-2.5"
@@ -438,15 +438,15 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
               <div className="space-y-1">
                 {linkedShares.map((s) => {
                   const sr = s as Record<string, unknown>;
-                  const nome =
-                    (s.artist_id ? resolvedShareArtistas[s.artist_id]?.stageName : undefined) ??
+                  const name =
+                    (s.artist_id ? resolvedShareArtists[s.artist_id]?.stageName : undefined) ??
                     textValue(sr["holder"]) ??
                     textValue(sr["music_title"]) ??
                     "—";
                   const pct = s.percentage != null ? `${s.percentage}%` : "";
                   return (
                     <div key={s.id} className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2 text-sm">
-                      <span className="truncate">{nome}</span>
+                      <span className="truncate">{name}</span>
                       <span className="flex items-center gap-2">
                         <span className="tabular-nums text-muted-foreground">{pct}</span>
                         <StatusBadge status={String(s.status ?? "")} />

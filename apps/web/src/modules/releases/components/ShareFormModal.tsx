@@ -127,19 +127,19 @@ function shareToForm(share: Share & Record<string, unknown>): ShareFormState {
 
 export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, onSuccess }: ShareFormModalProps) {
   const { addShare, updateShare, shares } = useShares();
-  const { lancamentos } = useReleases();
+  const { lancamentos: releases } = useReleases();
   const [formData, setFormData] = useState<ShareFormState>(EMPTY);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isEditing = !!share?.id;
   const isInternal = formData.share_type === "internal_release";
 
-  const lancamentosDistribuidos = useMemo(
+  const distributedReleases = useMemo(
     () =>
-      lancamentos
+      releases
         .slice()
         .sort((a, b) => String(a.title ?? "").localeCompare(String(b.title ?? ""), "pt-BR")),
-    [lancamentos],
+    [releases],
   );
 
   useEffect(() => {
@@ -200,14 +200,14 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
     }
 
     const percentageNum = formData.percentage ? parseFloat(formData.percentage) : null;
-    const valorTotalNum = formData.valor_total ? parseFloat(formData.valor_total) : null;
+    const totalValueNum = formData.valor_total ? parseFloat(formData.valor_total) : null;
     setIsSubmitting(true);
     try {
-      const selectedRelease = lancamentosDistribuidos.find((l) => l.id === formData.release_id);
+      const selectedRelease = distributedReleases.find((l) => l.id === formData.release_id);
       const common = {
         share_type: formData.share_type,
         percentage: percentageNum,
-        total_amount: valorTotalNum,
+        total_amount: totalValueNum,
         status: formData.status,
         acordo_notas: formData.acordo_notas.trim() || null,
         acordo_url: formData.acordo_url.trim() || null,
@@ -242,14 +242,14 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
         await updateShare.mutateAsync({ id: share.id, ...payload, expectedUpdatedAt: getExpectedUpdatedAt(share) });
         toast.success("Share atualizado com sucesso!");
       } else {
-        const novaVersao = 1;
+        const newVersion = 1;
         await addShare.mutateAsync({
           ...payload,
-          versao: novaVersao,
+          versao: newVersion,
           historico:
             percentageNum != null
               ? [{
-                  versao: novaVersao,
+                  versao: newVersion,
                   data: new Date().toISOString().split("T")[0],
                   percentage: percentageNum,
                   autor: "Sistema",
@@ -307,7 +307,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
                     <SelectValue placeholder="Selecione o lançamento" />
                   </SelectTrigger>
                   <SelectContent>
-                    {lancamentosDistribuidos.map((l) => (
+                    {distributedReleases.map((l) => (
                       <SelectItem key={l.id} value={l.id}>{l.title}</SelectItem>
                     ))}
                   </SelectContent>

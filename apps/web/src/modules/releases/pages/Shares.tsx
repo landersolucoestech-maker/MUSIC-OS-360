@@ -32,7 +32,7 @@ import { resolveShareType, shareTypeLabel, shareStatusBadge } from "@/modules/re
 import { SHARE_FOR_RELEASE_PARAM } from "@/modules/releases/services/share-from-release";
 import type { Share } from "@/modules/releases/types";
 
-const TIPO_LABELS: Record<string, string> = {
+const TYPE_LABELS: Record<string, string> = {
   interprete: "Intérprete",
   compositor: "Compositor",
   produtor: "Produtor",
@@ -45,12 +45,12 @@ const TIPO_LABELS: Record<string, string> = {
 
 export default function Shares() {
   const { deleteShare, updateShare } = useShares();
-  const { lancamentos, isLoading: loadingLancamentos } = useReleases();
+  const { lancamentos: releases, isLoading: loadingReleases } = useReleases();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [direcaoFilter, setDirecaoFilter] = useState("todos");
   const [statusFilter, setStatusFilter] = useState("todos");
-  const [tipoFilter, setTipoFilter] = useState("todos");
+  const [typeFilter, setTypeFilter] = useState("todos");
   const [shareTypeFilter, setShareTypeFilter] = useState("todos");
   const [viewModal, setViewModal] = useState<{ open: boolean; share?: any }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; share?: any }>({ open: false });
@@ -70,7 +70,7 @@ export default function Shares() {
   const [pageSize, setPageSize] = useState(10);
   useEffect(() => {
     setPage(0);
-  }, [debouncedSearch, direcaoFilter, statusFilter, tipoFilter, shareTypeFilter]);
+  }, [debouncedSearch, direcaoFilter, statusFilter, typeFilter, shareTypeFilter]);
 
   const {
     shares: pageShares, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
@@ -78,16 +78,16 @@ export default function Shares() {
     page, pageSize, search: debouncedSearch || undefined,
     direction: direcaoFilter !== "todos" ? direcaoFilter : undefined,
     status: statusFilter !== "todos" ? statusFilter : undefined,
-    partyRole: tipoFilter !== "todos" ? tipoFilter : undefined,
+    partyRole: typeFilter !== "todos" ? typeFilter : undefined,
     shareType: shareTypeFilter !== "todos" ? shareTypeFilter : undefined,
   });
 
-  const isLoading = loadingLancamentos || isLoadingPage;
+  const isLoading = loadingReleases || isLoadingPage;
 
   // ── KPI counts — exact aggregation of the whole tenant (GET /shares/stats),
   // never computed only over the loaded page (Task H). ──────────────────────
   const { kpis: shareKpis } = useSharesStats();
-  const { aReceber, recebidos, aEnviar, enviados } = shareKpis;
+  const { toReceive, received, toSend, sent } = shareKpis;
 
   const filteredShares = pageShares;
   const sharesPg = { pageItems: filteredShares, total, page, pageSize, setPage, setPageSize };
@@ -98,48 +98,48 @@ export default function Shares() {
   // to the first 50 of the tenant.
   type WorkLabel = { title?: string | null; compositor?: string | null };
   type ArtistLabel = { nome_artistico?: string | null };
-  const [resolvedObras, setResolvedObras] = useState<Record<string, WorkLabel>>({});
-  const [resolvedArtistas, setResolvedArtistas] = useState<Record<string, ArtistLabel>>({});
-  const shareObraIds = useMemo(
+  const [resolvedWorks, setResolvedWorks] = useState<Record<string, WorkLabel>>({});
+  const [resolvedArtists, setResolvedArtists] = useState<Record<string, ArtistLabel>>({});
+  const shareWorkIds = useMemo(
     () => Array.from(new Set(pageShares.map((s: any) => s.work_id).filter(Boolean))) as string[],
     [pageShares],
   );
-  const shareArtistaIds = useMemo(
+  const shareArtistIds = useMemo(
     () => Array.from(new Set(pageShares.map((s: any) => s.artist_id).filter(Boolean))) as string[],
     [pageShares],
   );
   useEffect(() => {
-    if (shareObraIds.length === 0) return;
+    if (shareWorkIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareObraIds.map((id) => storage.findById<WorkLabel & { id: string }>("obras", id)))
+    Promise.all(shareWorkIds.map((id) => storage.findById<WorkLabel & { id: string }>("obras", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, WorkLabel> = {};
-        results.forEach((o, i) => { if (o) map[shareObraIds[i]] = o; });
-        setResolvedObras((prev) => ({ ...prev, ...map }));
+        results.forEach((o, i) => { if (o) map[shareWorkIds[i]] = o; });
+        setResolvedWorks((prev) => ({ ...prev, ...map }));
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [shareObraIds]);
+  }, [shareWorkIds]);
   useEffect(() => {
-    if (shareArtistaIds.length === 0) return;
+    if (shareArtistIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareArtistaIds.map((id) => storage.findById<ArtistLabel & { id: string }>("artistas", id)))
+    Promise.all(shareArtistIds.map((id) => storage.findById<ArtistLabel & { id: string }>("artistas", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, ArtistLabel> = {};
-        results.forEach((a, i) => { if (a) map[shareArtistaIds[i]] = a; });
-        setResolvedArtistas((prev) => ({ ...prev, ...map }));
+        results.forEach((a, i) => { if (a) map[shareArtistIds[i]] = a; });
+        setResolvedArtists((prev) => ({ ...prev, ...map }));
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [shareArtistaIds]);
+  }, [shareArtistIds]);
 
   const handleClearFilters = () => {
     setSearchTerm("");
     setDirecaoFilter("todos");
     setStatusFilter("todos");
-    setTipoFilter("todos");
+    setTypeFilter("todos");
     setShareTypeFilter("todos");
   };
 
@@ -173,15 +173,15 @@ export default function Shares() {
     reportBulkResult(result, "excluído", "share");
   };
 
-  const handleRegistrarLiquidacao = async (share: any, novoStatus: "recebido" | "enviado") => {
+  const handleRegistrarLiquidacao = async (share: any, newStatus: "recebido" | "enviado") => {
     try {
       await updateShare.mutateAsync({
         id: share.id,
-        status: novoStatus,
+        status: newStatus,
         settled_amount: share.total_amount,
         expectedUpdatedAt: getExpectedUpdatedAt(share),
       });
-      toast.success(novoStatus === "recebido" ? "Recebimento registrado!" : "Envio registrado!");
+      toast.success(newStatus === "recebido" ? "Recebimento registrado!" : "Envio registrado!");
     } catch (err) {
       if (handleConcurrencyConflict(err, "share")) return;
     }
@@ -205,7 +205,7 @@ export default function Shares() {
     searchTerm !== "" ||
     direcaoFilter !== "todos" ||
     statusFilter !== "todos" ||
-    tipoFilter !== "todos" ||
+    typeFilter !== "todos" ||
     shareTypeFilter !== "todos";
 
   return (
@@ -230,7 +230,7 @@ export default function Shares() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">A Receber</p>
-                  <p className="text-2xl font-bold text-foreground" data-testid="metric-a-receber">{aReceber}</p>
+                  <p className="text-2xl font-bold text-foreground" data-testid="metric-to-receive">{toReceive}</p>
                 </div>
               </div>
             </CardContent>
@@ -243,7 +243,7 @@ export default function Shares() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Recebidos</p>
-                  <p className="text-2xl font-bold text-foreground" data-testid="metric-recebidos">{recebidos}</p>
+                  <p className="text-2xl font-bold text-foreground" data-testid="metric-received">{received}</p>
                 </div>
               </div>
             </CardContent>
@@ -256,7 +256,7 @@ export default function Shares() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">A Enviar</p>
-                  <p className="text-2xl font-bold text-foreground" data-testid="metric-a-enviar">{aEnviar}</p>
+                  <p className="text-2xl font-bold text-foreground" data-testid="metric-to-send">{toSend}</p>
                 </div>
               </div>
             </CardContent>
@@ -269,7 +269,7 @@ export default function Shares() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Enviados</p>
-                  <p className="text-2xl font-bold text-foreground" data-testid="metric-enviados">{enviados}</p>
+                  <p className="text-2xl font-bold text-foreground" data-testid="metric-sent">{sent}</p>
                 </div>
               </div>
             </CardContent>
@@ -323,7 +323,7 @@ export default function Shares() {
                   <SelectItem value="cancelado">Cancelado</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={tipoFilter} onValueChange={setTipoFilter}>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-type">
                   <SelectValue placeholder="Função" />
                 </SelectTrigger>
@@ -395,12 +395,12 @@ export default function Shares() {
                 </TableHeader>
                 <TableBody>
                   {sharesPg.pageItems.map((share: any) => {
-                    const obra = share.work_id ? resolvedObras[share.work_id] : undefined;
-                    const lancamento = lancamentos.find((l: any) => l.id === share.release_id);
-                    const artista = share.artist_id ? resolvedArtistas[share.artist_id] : undefined;
-                    const nomeDetentor = artista?.nome_artistico || share.holder || "—";
+                    const work = share.work_id ? resolvedWorks[share.work_id] : undefined;
+                    const release = releases.find((l: any) => l.id === share.release_id);
+                    const artist = share.artist_id ? resolvedArtists[share.artist_id] : undefined;
+                    const holderName = artist?.nome_artistico || share.holder || "—";
                     const sType = resolveShareType(share as Share & Record<string, unknown>);
-                    const isPendente = share.status === "pendente" || share.status === "parcial";
+                    const isPending = share.status === "pendente" || share.status === "parcial";
 
                     return (
                       <TableRow key={share.id} data-testid={`row-share-${share.id}`}>
@@ -417,8 +417,8 @@ export default function Shares() {
                               <Share2 className="h-3.5 w-3.5 text-primary" />
                             </div>
                             <div>
-                              <p className="font-medium text-foreground text-sm">{obra?.title ?? lancamento?.title ?? share.music_title ?? share.work_id ?? "—"}</p>
-                              <p className="text-xs text-muted-foreground">{obra?.compositor ?? ""}</p>
+                              <p className="font-medium text-foreground text-sm">{work?.title ?? release?.title ?? share.music_title ?? share.work_id ?? "—"}</p>
+                              <p className="text-xs text-muted-foreground">{work?.compositor ?? ""}</p>
                             </div>
                           </div>
                         </TableCell>
@@ -427,10 +427,10 @@ export default function Shares() {
                             {shareTypeLabel(sType)}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-foreground text-sm">{nomeDetentor}</TableCell>
+                        <TableCell className="text-foreground text-sm">{holderName}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className="text-xs">
-                            {TIPO_LABELS[share.type] ?? share.type ?? "—"}
+                            {TYPE_LABELS[share.type] ?? share.type ?? "—"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center text-foreground text-sm">
@@ -459,7 +459,7 @@ export default function Shares() {
                                 <Pencil className="h-4 w-4 mr-2" />
                                 Editar
                               </DropdownMenuItem>
-                              {isPendente && share.direction === "a_receber" && (
+                              {isPending && share.direction === "a_receber" && (
                                 <DropdownMenuItem
                                   data-testid={`button-receber-${share.id}`}
                                   onClick={() => handleRegistrarLiquidacao(share, "recebido")}
@@ -468,7 +468,7 @@ export default function Shares() {
                                   Registrar Recebimento
                                 </DropdownMenuItem>
                               )}
-                              {isPendente && share.direction === "a_enviar" && (
+                              {isPending && share.direction === "a_enviar" && (
                                 <DropdownMenuItem
                                   data-testid={`button-enviar-${share.id}`}
                                   onClick={() => handleRegistrarLiquidacao(share, "enviado")}

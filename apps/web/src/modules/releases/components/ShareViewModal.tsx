@@ -57,7 +57,7 @@ function Field({
 }
 
 export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProps) {
-  const { lancamentos } = useReleases();
+  const { lancamentos: releases } = useReleases();
 
   const s = (share ?? {}) as Share & Record<string, unknown>;
   const str = (k: string): string => (typeof s[k] === "string" ? (s[k] as string) : "");
@@ -65,16 +65,16 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   // DIRECT resolution by ID (GET /works/:id, GET /artists/:id) — does not depend
   // on the work/artist being among the first 50 loaded by
   // useObras()/useArtistas() without a filter (Task J).
-  const { entity: obraVinculada } = useEntityById<ObraWithRelations>("obras", open ? str("work_id") || undefined : undefined);
-  const { entity: artistaResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? share?.artist_id ?? undefined : undefined);
-  const artistaResolved: Artist | undefined = artistaResolvedWire ? wireToArtist(artistaResolvedWire) : undefined;
-  const vinculoArtistaId = str("artista_project_id") || share?.artist_id || undefined;
-  const { entity: vinculoArtistaResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? vinculoArtistaId : undefined);
-  const vinculoArtistaResolved: Artist | undefined = vinculoArtistaResolvedWire ? wireToArtist(vinculoArtistaResolvedWire) : undefined;
+  const { entity: linkedWork } = useEntityById<ObraWithRelations>("obras", open ? str("work_id") || undefined : undefined);
+  const { entity: artistResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? share?.artist_id ?? undefined : undefined);
+  const artistResolved: Artist | undefined = artistResolvedWire ? wireToArtist(artistResolvedWire) : undefined;
+  const linkedArtistId = str("artista_project_id") || share?.artist_id || undefined;
+  const { entity: linkedArtistResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? linkedArtistId : undefined);
+  const linkedArtistResolved: Artist | undefined = linkedArtistResolvedWire ? wireToArtist(linkedArtistResolvedWire) : undefined;
 
   if (!share) return null;
 
-  const historico: ShareHistoryEntry[] = Array.isArray(share.historico) ? share.historico : [];
+  const history: ShareHistoryEntry[] = Array.isArray(share.historico) ? share.historico : [];
   const shareType = resolveShareType(s);
   const isInternal = shareType === "internal_release";
 
@@ -83,10 +83,10 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
    * (work_id → lançamento_id → nome_musica), with additional safe fallbacks.
    */
   const pickShareTitle = (): string | null => {
-    const obraTitle = obraVinculada?.title;
-    const lancTitle = lancamentos.find((l) => l.id === str("release_id"))?.title;
+    const workTitle = linkedWork?.title;
+    const lancTitle = releases.find((l) => l.id === str("release_id"))?.title;
     return (
-      obraTitle ||
+      workTitle ||
       lancTitle ||
       str("music_title") ||
       str("titulo_obra") ||
@@ -100,9 +100,9 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   const releaseTitle = pickShareTitle();
 
   // Participant: linked artist (artist_id) → holder (same as the table's Holder column)
-  const participanteNome = artistaResolved?.stageName ?? str("holder") ?? null;
-  const artistaNome = artistaResolved?.stageName ?? null;
-  const vinculoNome = vinculoArtistaResolved?.stageName ?? null;
+  const participantName = artistResolved?.stageName ?? str("holder") ?? null;
+  const artistName = artistResolved?.stageName ?? null;
+  const linkedName = linkedArtistResolved?.stageName ?? null;
 
   const directionLabel = str("direction") === "a_receber" ? "A Receber" : str("direction") === "a_enviar" ? "A Enviar" : null;
   const registradoEm = str("created_at") ? formatDate(str("created_at")) : null;
@@ -133,8 +133,8 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
               {isInternal ? (
                 <>
                   <Field label="Lançamento / Música" value={releaseTitle} icon={Disc3} />
-                  {artistaNome && <Field label="Artista" value={artistaNome} icon={User} />}
-                  <Field label="Participante" value={participanteNome} icon={User} />
+                  {artistName && <Field label="Artista" value={artistName} icon={User} />}
+                  <Field label="Participante" value={participantName} icon={User} />
                   <Field label="Destinatário" value={str("recipient") || null} icon={User} />
                   <Field label="Função" value={s["type"] ? funcaoLabel(String(s["type"])) : null} icon={Share2} />
                   <Field label="Direção" value={directionLabel} />
@@ -143,7 +143,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
                 <>
                   <Field label="Música externa" value={str("music_title") || null} icon={FileText} />
                   <Field label="Artista externo" value={str("artista_externo") || null} icon={User} />
-                  <Field label="Vínculo (empresa)" value={vinculoNome} icon={Building} />
+                  <Field label="Vínculo (empresa)" value={linkedName} icon={Building} />
                   <Field label="Pagador" value={str("pagador") || null} icon={User} />
                   <Field label="Contato do pagador" value={str("pagador_contato") || null} />
                   <Field label="Origem do acordo" value={str("origem_acordo") || null} />
@@ -223,13 +223,13 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
           )}
 
           {/* ── Version history ─────────────────────────────────────────── */}
-          {historico.length > 0 && (
+          {history.length > 0 && (
             <div>
               <p className="text-xs font-semibold  tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
                 <History className="h-3.5 w-3.5" /> Histórico de Versões
               </p>
               <div className="space-y-2">
-                {historico.slice().reverse().map((h, i) => (
+                {history.slice().reverse().map((h, i) => (
                   <div
                     key={i}
                     className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/20"
