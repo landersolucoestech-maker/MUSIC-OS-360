@@ -128,9 +128,9 @@ describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 in
     it('required variable missing in production → fails', () => {
       const errors = collectSupabaseEnvErrors({}, 'production');
       expect(errors).toEqual(expect.arrayContaining([
-        expect.stringContaining('DATABASE_URL e obrigatorio'),
-        expect.stringContaining('SUPABASE_URL e obrigatorio'),
-        expect.stringContaining('SUPABASE_ANON_KEY e obrigatorio'),
+        expect.stringContaining('DATABASE_URL is required'),
+        expect.stringContaining('SUPABASE_URL is required'),
+        expect.stringContaining('SUPABASE_ANON_KEY is required'),
       ]));
     });
 

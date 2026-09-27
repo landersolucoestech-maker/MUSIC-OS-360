@@ -138,7 +138,7 @@ export function collectSupabaseEnvErrors(
     if (!token) continue;
     const claims = decodeSupabaseJwtClaims(token);
     if (!claims) {
-      errors.push(`${key} nao e um JWT decodificavel`);
+      errors.push(`${key} is not a decodable JWT`);
       continue;
     }
     if (claims.ref && forbidden.includes(claims.ref)) {
@@ -157,7 +157,7 @@ export function collectSupabaseEnvErrors(
 
   if (prodLike) {
     for (const key of ['DATABASE_URL', 'SUPABASE_URL', 'SUPABASE_ANON_KEY'] as const) {
-      if (!env[key]) errors.push(`${key} e obrigatorio em NODE_ENV=${nodeEnv}`);
+      if (!env[key]) errors.push(`${key} is required in NODE_ENV=${nodeEnv}`);
     }
   }
 
