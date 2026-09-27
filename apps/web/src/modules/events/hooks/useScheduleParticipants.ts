@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { useUsers } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsers";
 
 export type ScheduleParticipantSource = "artist" | "employee" | "user" | "contact";
 

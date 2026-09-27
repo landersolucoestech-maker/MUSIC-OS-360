@@ -12,7 +12,7 @@
  *
  * Consumed by:
  *  - the content form / preview UI (Calendario.tsx)
- *  - the validation schema (forms/conteudo-schema.ts) — frontend boundary
+ *  - the validation schema (forms/content-schema.ts) — frontend boundary
  *  - the data service (services/marketing.service.ts) — persistence boundary
  *
  * Frontend and backend MUST call into this module so the rules never diverge.

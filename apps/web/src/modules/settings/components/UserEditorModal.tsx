@@ -5,7 +5,7 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { toast } from "sonner";
-import { useUsers, type UserAccount } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers, type UserAccount } from "@/modules/settings/hooks/useUsers";
 import { useRoles } from "@/modules/settings/hooks/useRoles";
 
 import { toUserMessage } from "@/shared/lib/errors";

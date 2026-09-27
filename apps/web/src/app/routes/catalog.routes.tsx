@@ -7,7 +7,7 @@ import type { SuspenseRouteComponent } from "./types";
 
 const MusicRegistration  = lazy(() => import("@/modules/catalog/pages/MusicRegistration"));
 const Takedowns        = lazy(() => import("@/modules/monitoring/pages/Takedowns"));
-const Licensing    = lazy(() => import("@/modules/licensing/pages/Licenciamento"));
+const Licensing    = lazy(() => import("@/modules/licensing/pages/Licensing"));
 const RightsMonitoring = lazy(() => import("@/modules/monitoring/rights/pages/RightsMonitoring"));
 
 export function catalogRoutes(P: SuspenseRouteComponent) {

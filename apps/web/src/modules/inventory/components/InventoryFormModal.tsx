@@ -10,9 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { inventorySchema, type InventoryFormData } from "@/modules/inventory/lib/inventario-schema";
+import { inventorySchema, type InventoryFormData } from "@/modules/inventory/lib/inventory-schema";
 import { FieldError } from "@/shared/components/FormField";
-import { useInventory } from "@/modules/inventory/hooks/useInventario";
+import { useInventory } from "@/modules/inventory/hooks/useInventory";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 
 interface InventoryFormModalProps {

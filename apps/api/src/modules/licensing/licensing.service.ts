@@ -63,7 +63,7 @@ export class LicensingService {
       .andWhere('l.deleted_at IS NULL');
 
     if (query.status) {
-      // The "Propostas" tab of Licenciamento.tsx spans negociacao+proposta —
+      // The "Propostas" tab of Licensing.tsx spans negociacao+proposta —
       // accepts comma-separated statuses and uses IN when there is more than one.
       const statuses = query.status.split(',').map((s) => s.trim()).filter(Boolean);
       if (statuses.length > 1) qb.andWhere('l.status IN (:...statuses)', { statuses });
@@ -95,7 +95,7 @@ export class LicensingService {
    * Count + sum of `valor` per status, over the whole tenant (not the
    * current page) — Task H: exact KPIs without downloading the whole table. The 3
    * tabs (catalog/proposals/active) and the "Valor Total" card (sum only
-   * of status=ativa) of Licenciamento.tsx now read this map instead of the
+   * of status=ativa) of Licensing.tsx now read this map instead of the
    * full license list.
    */
   async stats(tenantId: string): Promise<GroupStatsResult> {

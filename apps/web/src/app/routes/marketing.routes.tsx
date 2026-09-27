@@ -6,11 +6,11 @@ import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import type { SuspenseRouteComponent } from "./types";
 
-const MarketingOverview = lazy(() => import("@/modules/marketing/pages/VisaoGeral"));
-const MarketingCampaigns = lazy(() => import("@/modules/marketing/pages/Campanhas"));
-const MarketingCalendar = lazy(() => import("@/modules/marketing/pages/Calendario"));
-const MarketingTasks = lazy(() => import("@/modules/marketing/pages/Tarefas"));
-const MarketingMetrics = lazy(() => import("@/modules/marketing/pages/Metricas"));
+const MarketingOverview = lazy(() => import("@/modules/marketing/pages/Overview"));
+const MarketingCampaigns = lazy(() => import("@/modules/marketing/pages/Campaigns"));
+const MarketingCalendar = lazy(() => import("@/modules/marketing/pages/Calendar"));
+const MarketingTasks = lazy(() => import("@/modules/marketing/pages/Tasks"));
+const MarketingMetrics = lazy(() => import("@/modules/marketing/pages/Metrics"));
 const MarketingBriefing = lazy(() => import("@/modules/marketing/pages/Briefing"));
 const MarketingIACriativa = lazy(() => import("@/modules/marketing/pages/IACriativa"));
 

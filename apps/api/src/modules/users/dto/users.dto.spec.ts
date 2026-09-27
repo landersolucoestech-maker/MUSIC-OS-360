@@ -7,7 +7,7 @@ import { UpdateUserDto } from './users.dto';
  * users.dto.spec.ts
  *
  * Permanent guard (2026-07-18 audit — settings/users): the
- * useUsuarios() hook sent `full_name`/`phone`/`cargo` — `phone` never had a
+ * useUsers() hook sent `full_name`/`phone`/`cargo` — `phone` never had a
  * column nor a DTO field (always discarded/rejected); `full_name`/`cargo`
  * did not match the real DTO names (`fullName`/`role`). Fixed in the
  * hook (sends fullName/phone) and here in the DTO (phone added).
@@ -17,7 +17,7 @@ import { UpdateUserDto } from './users.dto';
  * authorization/hierarchy checks of the dedicated endpoints (PATCH /users/:id/role,
  * gate 'admin'; PATCH /users/:id/status, gate 'owner'). A 'manager'
  * could self-promote to 'owner' through the generic PATCH. The
- * useUsuarios() hook was already fixed to use the dedicated endpoints.
+ * useUsers() hook was already fixed to use the dedicated endpoints.
  */
 async function validatePayload(payload: Record<string, unknown>) {
   const instance = plainToInstance(UpdateUserDto, payload);
@@ -25,7 +25,7 @@ async function validatePayload(payload: Record<string, unknown>) {
 }
 
 describe('UpdateUserDto — contrato real (auditoria 2026-07-18 + Task L)', () => {
-  it('accepts fullName/phone — the real profile payload sent by useUsuarios()', async () => {
+  it('accepts fullName/phone — the real profile payload sent by useUsers()', async () => {
     const errors = await validatePayload({ fullName: 'Fulano da Silva', phone: '11999999999' });
     expect(errors).toEqual([]);
   });

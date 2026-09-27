@@ -9,7 +9,7 @@ import type { SuspenseRouteComponent } from "./types";
 
 const Projects  = lazy(() => import("@/modules/projects/pages/Projects"));
 const Schedule    = lazy(() => import("@/modules/events/pages/Schedule"));
-const Inventory = lazy(() => import("@/modules/inventory/pages/Inventario"));
+const Inventory = lazy(() => import("@/modules/inventory/pages/Inventory"));
 const HR        = lazy(() => import("@/modules/hr/pages/HR"));
 
 export function operationsRoutes(P: SuspenseRouteComponent) {

@@ -1,6 +1,6 @@
 /**
  * The News template's shared creative renderer. Composited INSIDE a
- * platform's media region — Calendario.tsx's PreviewFrame wraps this with
+ * platform's media region — Calendar.tsx's PreviewFrame wraps this with
  * the actual Instagram/TikTok/YouTube/etc. chrome, which stays completely
  * untouched (see PreviewFrame's `renderSurface` prop). One renderer serving
  * every platform: there is no InstagramTemplateSurface/TikTokTemplateSurface
@@ -8,13 +8,13 @@
  * driven by ASPECT_CLASS in ../config/social-formats.ts) comes from this
  * component's flex-based layout, not per-platform coordinates.
  *
- * Extracted from Calendario.tsx (a page component that pulls in
+ * Extracted from Calendar.tsx (a page component that pulls in
  * MainLayout/Supabase/auth-context at module scope, which real unit tests
  * can't satisfy) so the actual composition logic is testable in isolation.
  *
  * This renders an in-browser visual composite for editing feedback only,
  * not a rendered artifact -- there is no export/render pipeline yet (see the
- * `finalize()` guard in Calendario.tsx's ContentScheduleModal blocking
+ * `finalize()` guard in Calendar.tsx's ContentScheduleModal blocking
  * external publish for template-mode content until one exists).
  */
 import { Upload } from "lucide-react";

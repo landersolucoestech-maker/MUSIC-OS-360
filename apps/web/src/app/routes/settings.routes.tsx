@@ -6,11 +6,11 @@ import { Route } from "react-router-dom";
 import type { SuspenseRouteComponent } from "./types";
 import { AdminRoute } from "@/shared/infrastructure/AdminRoute";
 
-const Settings = lazy(() => import("@/modules/settings/pages/Configuracoes"));
-const Profile = lazy(() => import("@/modules/settings/pages/Perfil"));
-const Users = lazy(() => import("@/modules/settings/pages/Usuarios"));
+const Settings = lazy(() => import("@/modules/settings/pages/Settings"));
+const Profile = lazy(() => import("@/modules/settings/pages/Profile"));
+const Users = lazy(() => import("@/modules/settings/pages/Users"));
 const Billing = lazy(() => import("@/modules/settings/pages/Billing"));
-const Auditoria = lazy(() => import("@/modules/admin/pages/Auditoria"));
+const DataAudit = lazy(() => import("@/modules/admin/pages/DataAudit"));
 const Onboarding = lazy(() => import("@/modules/auth/pages/Onboarding"));
 
 export function settingsRoutes(P: SuspenseRouteComponent) {
@@ -25,7 +25,7 @@ export function settingsRoutes(P: SuspenseRouteComponent) {
       <Route path="/onboarding" element={<P><Onboarding /></P>} />
       <Route
         path="/auditoria"
-        element={<P><AdminRoute><Auditoria /></AdminRoute></P>}
+        element={<P><AdminRoute><DataAudit /></AdminRoute></P>}
       />
     </>
   );

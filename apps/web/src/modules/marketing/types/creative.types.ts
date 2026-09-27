@@ -1,6 +1,6 @@
 /**
  * Creative editor — types for the "Template" creative mode layered onto the
- * existing Content Schedule modal (see Calendario.tsx). Persisted under
+ * existing Content Schedule modal (see Calendar.tsx). Persisted under
  * MarketingContent.metadata.creative (jsonb, see marketing-contents.service.ts's
  * merge-on-update). Not a new ContentType/format — see social-formats.ts,
  * which remains the single source of truth for platform/aspect/media rules.
@@ -44,7 +44,7 @@ export interface CreativeWatermarkConfig {
  * configuration. "dirty" after any edit to slots/identity/caption/watermark/
  * layout; export/render (not implemented yet — see PreviewFrame's template
  * surface and the "Renderização ainda não disponível" guard in
- * Calendario.tsx) would clear it back to "clean" once it exists.
+ * Calendar.tsx) would clear it back to "clean" once it exists.
  */
 export type CreativeRenderState = "clean" | "dirty";
 

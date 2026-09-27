@@ -288,7 +288,7 @@ function DataTab() {
   );
 }
 
-export default function Auditoria() {
+export default function DataAudit() {
   const { isFetching, refetch } = useAudit();
 
   const headerActions = (

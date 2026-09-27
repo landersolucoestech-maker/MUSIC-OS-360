@@ -18,7 +18,7 @@
  * EXTERNAL_MEASUREMENT (ranking, search volume, domain authority, traffic, SERP
  * position, backlinks, Core Web Vitals, indexing status) is NEVER produced —
  * there is no real provider connected for any of these metrics (confirmed:
- * "Search Console" only exists as a UI label in Configuracoes.tsx, zero backend
+ * "Search Console" only exists as a UI label in Settings.tsx, zero backend
  * capability). Every field in that category is explicitly reported as
  * "unavailable".
  *

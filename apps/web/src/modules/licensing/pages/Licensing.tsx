@@ -15,15 +15,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { FileText, Music, Clock, DollarSign, PlusCircle, Search, Loader2, MoreHorizontal, Eye, Pencil, Trash2, Shield } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu";
-import { LicenseFormModal } from "@/modules/licensing/components/LicencaFormModal";
-import { LicenseViewModal } from "@/modules/licensing/components/LicencaViewModal";
+import { LicenseFormModal } from "@/modules/licensing/components/LicenseFormModal";
+import { LicenseViewModal } from "@/modules/licensing/components/LicenseViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
-import { useLicenses } from "@/modules/licensing/hooks/useLicencas";
-import { useLicensesPaginated, useLicensesStats } from "@/modules/licensing/hooks/useLicencasPaginated";
-import { formatRemuneration, workArtistLabel, mediaLabel } from "@/modules/licensing/lib/licenca-format";
+import { useLicenses } from "@/modules/licensing/hooks/useLicenses";
+import { useLicensesPaginated, useLicensesStats } from "@/modules/licensing/hooks/useLicensesPaginated";
+import { formatRemuneration, workArtistLabel, mediaLabel } from "@/modules/licensing/lib/license-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 import { formatCurrency } from "@/shared/lib/format-utils";
 import { FeatureGate } from '@/shared/components/FeatureGate';
@@ -39,9 +39,9 @@ const getStatusBadge = (status: string) => {
 };
 
 export default function Licensing() {
-  // Task H: useLicencas() (fetch-all) remains only for mutations (delete) and the
+  // Task H: useLicenses() (fetch-all) remains only for mutations (delete) and the
   // initial isLoading gate — the tables below now read from
-  // useLicencasPaginated() (server-side, one page at a time).
+  // useLicensesPaginated() (server-side, one page at a time).
   const { licenses, isLoading, deleteLicense } = useLicenses();
 
   const [activeTab, setActiveTab] = useState("catalogo");
@@ -573,7 +573,7 @@ export default function Licensing() {
     )}
 
       {/* Outside the isLoading gate on purpose — same bug as /artistas
-          (Task C): LicencaFormModal calls useLicencas() again only for the
+          (Task C): LicenseFormModal calls useLicenses() again only for the
           create/update mutations, the same query as the isLoading above.
           Mounting it only after isLoading turned false created a new observer
           on that query; on error (backend down), refetchOnMount

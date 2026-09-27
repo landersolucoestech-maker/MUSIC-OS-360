@@ -1,5 +1,5 @@
 /**
- * Campanhas.estimated-metrics-disclosure.guard.test.ts
+ * Campaigns.estimated-metrics-disclosure.guard.test.ts
  *
  * Guarda permanente (CODEBASE_MAP Gotcha #16): fabricated/budget-derived
  * campaign metrics must never render as unqualified real KPIs. Locks the
@@ -12,7 +12,7 @@ import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const SOURCE = fs.readFileSync(path.resolve(__dirname, "Campanhas.tsx"), "utf8");
+const SOURCE = fs.readFileSync(path.resolve(__dirname, "Campaigns.tsx"), "utf8");
 
 describe("Campanhas — fabricated metrics disclosed, never presented as real (CODEBASE_MAP #16)", () => {
   it("the top KPI strip's Cliques caption reflects whether all contributing campaigns are estimated", () => {

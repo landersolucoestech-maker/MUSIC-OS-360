@@ -51,7 +51,7 @@ const EMPTY_STATS: LicenseStats = { total: 0, byGroup: {} };
 /**
  * Count + value sum per status, over the WHOLE TENANT — GET
  * /licenses/stats (aggregated in the database). Task H: the KPIs and the 3 tabs of
- * Licenciamento.tsx can no longer be computed over the current page only.
+ * Licensing.tsx can no longer be computed over the current page only.
  */
 export function useLicensesStats() {
   const query = useQuery<LicenseStats>({

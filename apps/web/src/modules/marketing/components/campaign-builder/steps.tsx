@@ -26,7 +26,7 @@ import {
 import type { BuilderStepProps, CampaignCreative, CampaignObjective, CampaignPlacement, CampaignPlatform, CreativeType, PromotedEntityType } from "./campaign-builder.types";
 import { Badge } from "@/shared/ui/badge";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
-import { useUsers } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsers";
 import { useMarketingProjects } from "../../hooks/useMarketingProjects";
 import { useMarketingContents } from "../../hooks/useMarketingContents";
 import { CONTENT_CHANNEL_LABEL, CONTENT_STATUS_LABEL } from "../../constants/marketing.constants";

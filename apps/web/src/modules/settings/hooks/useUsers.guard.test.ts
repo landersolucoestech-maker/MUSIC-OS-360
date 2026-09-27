@@ -10,10 +10,10 @@ import { describe, expect, it } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const FILE_PATH = path.resolve(__dirname, "useUsuarios.ts");
+const FILE_PATH = path.resolve(__dirname, "useUsers.ts");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
-describe("useUsuarios — profile and RBAC contracts", () => {
+describe("useUsers — profile and RBAC contracts", () => {
   it("traduz full_name para fullName no PATCH de perfil", () => {
     expect(SOURCE).toMatch(/fullName:\s*full_name/);
     expect(SOURCE).toMatch(/api\.patch\(`\/users\/\$\{id\}`,\s*profilePayload\)/);

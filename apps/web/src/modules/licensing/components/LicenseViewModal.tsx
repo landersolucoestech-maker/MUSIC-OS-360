@@ -3,7 +3,7 @@ import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { FileText, Music, Building, DollarSign, Calendar, MapPin, Tv } from "lucide-react";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import { formatLicensingDate, formatRemuneration, workArtistLabel, mediaLabel, typeLabel } from "@/modules/licensing/lib/licenca-format";
+import { formatLicensingDate, formatRemuneration, workArtistLabel, mediaLabel, typeLabel } from "@/modules/licensing/lib/license-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 
 interface ClientOption { id: string; name: string }

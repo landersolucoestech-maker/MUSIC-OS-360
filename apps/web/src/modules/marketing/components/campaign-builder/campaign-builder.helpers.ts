@@ -307,7 +307,7 @@ export function toMarketingCampaignInput(state: CampaignBuilderState): CreateInp
       costPerResult: estimate.costPerResult,
       // CODEBASE_MAP Gotcha #16: always true here -- publish() never calls a real
       // ad-platform integration, so this is the only kind of metrics this flow can
-      // ever produce. See Campanhas.tsx for how it's disclosed to the user.
+      // ever produce. See Campaigns.tsx for how it's disclosed to the user.
       isEstimated: true,
     },
     notes: JSON.stringify({

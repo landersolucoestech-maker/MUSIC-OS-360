@@ -12,11 +12,11 @@ import { useAiSuggestions, useGenerateAi } from "../../hooks/useMarketingAI";
 import type { AiGenerationPayload } from "../../types/marketing.types";
 import type { AiTab, TargetOption } from "./iaCriativa.types";
 import { IdeiasTab } from "./IdeiasTab";
-import { ProfileTab } from "./PerfilTab";
+import { ProfileTab } from "./ProfileTab";
 import { PitchingTab } from "./PitchingTab";
 import { TendenciasTab } from "./TendenciasTab";
 import { AnalyticsTab } from "./AnalyticsTab";
-import { HistoryTab } from "./HistoricoTab";
+import { HistoryTab } from "./HistoryTab";
 import { PlanejamentoTab } from "./PlanejamentoTab";
 
 const TABS: Array<{ value: AiTab; label: string; icon: typeof Sparkles }> = [

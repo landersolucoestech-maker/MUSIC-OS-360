@@ -1,5 +1,5 @@
 /**
- * Permanent guard (Wave 13 — item 7): UsuarioFormModal.tsx had a whole
+ * Permanent guard (Wave 13 — item 7): UserFormModal.tsx had a whole
  * "Permissões" tab (per-module checkbox grid, templates, department
  * selector, artist link) that was never sent in onSubmit — the admin
  * checked/unchecked permissions, saved, and nothing persisted. The only real
@@ -15,10 +15,10 @@ import { describe, expect, it } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const FILE_PATH = path.resolve(__dirname, "UsuarioFormModal.tsx");
+const FILE_PATH = path.resolve(__dirname, "UserFormModal.tsx");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
-describe("UsuarioFormModal.tsx — no dead per-module permissions UI", () => {
+describe("UserFormModal.tsx — no dead per-module permissions UI", () => {
   it("no longer declares the per-module permission grid (MODULOS/ModulePermissions/togglePermission)", () => {
     expect(SOURCE).not.toMatch(/\bMODULOS\b/);
     expect(SOURCE).not.toMatch(/\bModulePermissions\b/);

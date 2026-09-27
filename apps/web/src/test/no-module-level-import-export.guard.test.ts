@@ -33,7 +33,7 @@ const FIXED_MODULE_FILES = [
   "modules/catalog/pages/MusicRegistration.tsx",
   "modules/hr/pages/HR.tsx",
   "modules/releases/pages/Releases.tsx",
-  "modules/inventory/pages/Inventario.tsx",
+  "modules/inventory/pages/Inventory.tsx",
   "modules/contracts/pages/Contracts.tsx",
   "modules/accounting/pages/ProfitAndLoss.tsx",
   // Task T (continuation): the "Exportar" button in Shares.tsx had no

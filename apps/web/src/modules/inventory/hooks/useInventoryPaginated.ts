@@ -52,7 +52,7 @@ const EMPTY_STATS: InventoryStats = { total: 0, byGroup: {} };
 /**
  * Count per status + asset value sum, over the WHOLE TENANT —
  * GET /inventory/stats (aggregated in the database). Task H: the
- * Inventario.tsx KPIs can no longer be computed over the current page only.
+ * Inventory.tsx KPIs can no longer be computed over the current page only.
  */
 export function useInventoryStats() {
   const query = useQuery<InventoryStats>({

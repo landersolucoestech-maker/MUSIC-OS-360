@@ -11,12 +11,12 @@ import { Textarea } from "@/shared/ui/textarea";
 import { FieldError } from "@/shared/components/FormField";
 import { toast } from "sonner";
 import { FileText, Music, DollarSign, Building } from "lucide-react";
-import { licenseSchema, type LicenseFormData } from "@/modules/licensing/lib/licenca-schema";
-import { useLicenses } from "@/modules/licensing/hooks/useLicencas";
+import { licenseSchema, type LicenseFormData } from "@/modules/licensing/lib/license-schema";
+import { useLicenses } from "@/modules/licensing/hooks/useLicenses";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
-import { workArtistLabel } from "@/modules/licensing/lib/licenca-format";
+import { workArtistLabel } from "@/modules/licensing/lib/license-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 
 interface ClientOption { id: string; name: string }

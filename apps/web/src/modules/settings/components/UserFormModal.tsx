@@ -9,9 +9,9 @@ import { toast } from "sonner";
 import { User, UserCheck, Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSchema, type UserFormData } from "@/modules/settings/lib/usuario-schema";
+import { userSchema, type UserFormData } from "@/modules/settings/lib/user-schema";
 import { FormField, FieldError } from "@/shared/components/FormField";
-import { useUsers } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsers";
 interface UserFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

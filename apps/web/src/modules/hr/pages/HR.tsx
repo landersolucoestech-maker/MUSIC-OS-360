@@ -80,7 +80,7 @@ import {
   useEmployeesPaginated, useEmployeesStats,
   usePayrollPaginated, useLeaveRequestsPaginated,
 } from "@/modules/hr/hooks/useHRPaginated";
-import { useUsers } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsers";
 import {
   useEmployeeDocuments,
   DOCUMENT_TYPES,

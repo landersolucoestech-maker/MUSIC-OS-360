@@ -108,7 +108,7 @@ export function useRoles() {
   /**
    * CODEBASE_MAP Gotcha #17: without this, the editor below gives no
    * indication that a granted/revoked permission may not actually be
-   * enforced (RBAC_PERSISTED_AUTHORITY=SHADOW). See Configuracoes.tsx's
+   * enforced (RBAC_PERSISTED_AUTHORITY=SHADOW). See Settings.tsx's
    * disclosure banner, which reads authorityModeQuery.data.
    */
   const authorityModeQuery = useQuery<RbacAuthorityMode>({

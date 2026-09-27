@@ -77,7 +77,7 @@ import { MarketingCalendarView, ALL_FILTER, type MarketingCalendarViewMode } fro
 import { useProjectAssetLibrary } from "../hooks/useMarketingAssets";
 import { useCreateContent, useMarketingContents, useUpdateContent } from "../hooks/useMarketingContents";
 import { CONTENT_STATUS_OPTIONS } from "../constants/marketing.constants";
-import { contentSchema } from "../forms/conteudo-schema";
+import { contentSchema } from "../forms/content-schema";
 import {
   ASPECT_CLASS,
   PREVIEW_PLATFORM_NAME,

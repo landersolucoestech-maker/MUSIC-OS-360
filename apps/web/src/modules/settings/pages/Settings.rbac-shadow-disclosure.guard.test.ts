@@ -1,5 +1,5 @@
 /**
- * Configuracoes.rbac-shadow-disclosure.guard.test.ts
+ * Settings.rbac-shadow-disclosure.guard.test.ts
  *
  * Permanent guard (CODEBASE_MAP Gotcha #17 --
  * "the most significant UX-integrity finding in the whole map"): the
@@ -14,7 +14,7 @@ import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const SETTINGS = fs.readFileSync(path.resolve(__dirname, "Configuracoes.tsx"), "utf8");
+const SETTINGS = fs.readFileSync(path.resolve(__dirname, "Settings.tsx"), "utf8");
 const USE_ROLES = fs.readFileSync(
   path.resolve(__dirname, "../hooks/useRoles.ts"),
   "utf8",

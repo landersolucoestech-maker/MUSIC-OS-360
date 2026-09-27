@@ -50,7 +50,7 @@ export class InventoryService {
    * item's asset value is `quantidade * unit_price` — a product of
    * two columns. Replicates the same aggregation here, with the correct SQL
    * expression. Keeps the business rule that existed in the client (see
-   * pre-migration Inventario.tsx): a 0/null quantity counts as 1 in the
+   * pre-migration Inventory.tsx): a 0/null quantity counts as 1 in the
    * value computation (COALESCE(NULLIF(quantidade,0), 1)).
    */
   async stats(tenantId: string): Promise<GroupStatsResult> {

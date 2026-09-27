@@ -6,7 +6,7 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 const STATUSES = ['ativa', 'negociacao', 'proposta', 'expirada'] as const;
 const REMUNERATION_TYPES = ['FIXED', 'PERCENTAGE', 'FIXED_PLUS_PERCENTAGE'] as const;
 
-/** Canonical contract of the LicencaFormModal form. */
+/** Canonical contract of the LicenseFormModal form. */
 export class CreateLicenseDto {
   @ApiProperty() @IsString() @MaxLength(500) title!: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;
@@ -45,7 +45,7 @@ export class UpdateLicenseDto extends PartialType(CreateLicenseDto) {
 
 export class QueryLicenseDto extends PaginationDto {
   /** Accepts a single status ("ativa") or several separated by commas
-   * ("negociacao,proposta") — the "Propostas" tab of Licenciamento.tsx
+   * ("negociacao,proposta") — the "Propostas" tab of Licensing.tsx
    * spans two statuses (Task H). */
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;

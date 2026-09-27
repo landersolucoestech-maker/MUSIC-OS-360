@@ -527,7 +527,7 @@ export const FLOW_LICENSING: OperationalFlow = {
       notes: "Lead created with type 'licenciamento'." },
     { step: 2, actor: "Licensing manager", action: "Create a License linked to the Work",
       module: "licensing", entitiesAffected: ["Licenca"], integrations: [],
-      uiElement: "LicencaFormModal" },
+      uiElement: "LicenseFormModal" },
     { step: 3, actor: "Licensing manager", action: "Generate the License Contract",
       module: "contracts", entitiesAffected: ["Contrato"], integrations: [],
       notes: "Continues in flow F03." },

@@ -14,14 +14,14 @@ import { formatCurrency, formatDate, getMonetarySemanticClass } from "@/shared/l
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { Checkbox } from "@/shared/ui/checkbox";
-import { InventoryFormModal } from "@/modules/inventory/components/InventarioFormModal";
-import { InventoryViewModal } from "@/modules/inventory/components/InventarioViewModal";
+import { InventoryFormModal } from "@/modules/inventory/components/InventoryFormModal";
+import { InventoryViewModal } from "@/modules/inventory/components/InventoryViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
-import { useInventory } from "@/modules/inventory/hooks/useInventario";
-import { useInventoryPaginated, useInventoryStats } from "@/modules/inventory/hooks/useInventarioPaginated";
+import { useInventory } from "@/modules/inventory/hooks/useInventory";
+import { useInventoryPaginated, useInventoryStats } from "@/modules/inventory/hooks/useInventoryPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { FeatureGate } from '@/shared/components/FeatureGate';
@@ -273,7 +273,7 @@ export default function Inventory() {
     )}
 
       {/* Outside the isLoading gate on purpose — same bug as /artistas
-          (Task C): InventarioFormModal calls useInventario() again only
+          (Task C): InventoryFormModal calls useInventory() again only
           for the mutations, the same query as the isLoading above. */}
       <InventoryViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} item={viewModal.item} />
       <InventoryFormModal open={formModal.open} onOpenChange={(open) => setFormModal({ ...formModal, open })} item={formModal.item} mode={formModal.mode} />

@@ -5,7 +5,7 @@ vi.mock("@/modules/hr/hooks/useEmployees", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/modules/hr/hooks/useEmployees")>()),
   useEmployees: () => ({ addEmployee: { mutateAsync: vi.fn(), isPending: false }, updateEmployee: { mutateAsync: vi.fn(), isPending: false } }),
 }));
-vi.mock("@/modules/settings/hooks/useUsuarios", () => ({ useUsers: () => ({ users: [], isLoading: false }) }));
+vi.mock("@/modules/settings/hooks/useUsers", () => ({ useUsers: () => ({ users: [], isLoading: false }) }));
 
 import { EmployeeFormModal } from "./EmployeeFormModal";
 

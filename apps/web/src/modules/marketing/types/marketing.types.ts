@@ -428,7 +428,7 @@ export interface MarketingContent {
   copy: string;
   notes: string;
   approval: ApprovalStatus;
-  /** Free-form persisted extras (e.g. `creative` — see CreativeConfig in Calendario.tsx). Backend column: jsonb, merged on update, never replaced. */
+  /** Free-form persisted extras (e.g. `creative` — see CreativeConfig in Calendar.tsx). Backend column: jsonb, merged on update, never replaced. */
   metadata?: Record<string, unknown>;
   createdAt: ISODate;
   updatedAt: ISODate;

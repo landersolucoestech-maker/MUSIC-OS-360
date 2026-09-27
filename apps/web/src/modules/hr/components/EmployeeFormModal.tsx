@@ -28,7 +28,7 @@ import {
   EMPLOYEE_STATUS,
 } from "@/modules/hr/hooks/useEmployees";
 import type { Employee } from "@/modules/hr/hooks/useEmployees";
-import { useUsers } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsers";
 import { maskCPF, maskPhone } from "@/shared/lib/masks";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";

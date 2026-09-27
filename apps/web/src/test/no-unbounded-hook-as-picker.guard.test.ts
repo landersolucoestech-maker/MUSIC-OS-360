@@ -47,7 +47,7 @@ const HOOK_DEFINITION_FILES = new Set([
   "modules/contracts/hooks/useContracts.ts",
   "modules/crm-relationships/hooks/useContacts.ts",
   "modules/crm-relationships/services/clients.service.ts",
-  "modules/licensing/hooks/useLicencas.ts",
+  "modules/licensing/hooks/useLicenses.ts",
   "modules/hr/hooks/useEmployees.ts",
   "modules/artist/hooks/useArtistsPaginated.ts",
   "shared/hooks/useEntityLookup.ts",
@@ -89,11 +89,11 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
     "useProjects() for mutations only (addProject/updateProject).",
   "modules/projects/pages/Projects.tsx":
     "useProjects() for mutations + the genre dropdown (distinct values) — risk documented in the file itself; the deep link (?projeto=) and the per-row artist name use direct lookup by ID.",
-  "modules/marketing/components/ia-criativa/PerfilTab.tsx":
+  "modules/marketing/components/ia-criativa/ProfileTab.tsx":
     "useWorks/usePhonograms(!!artist, artist?.id) — scoped server-side by the artist selected in the form itself.",
-  "modules/licensing/pages/Licenciamento.tsx":
+  "modules/licensing/pages/Licensing.tsx":
     "useLicenses() for mutations only (delete); the paginated list uses a separate hook (Task H).",
-  "modules/licensing/components/LicencaFormModal.tsx":
+  "modules/licensing/components/LicenseFormModal.tsx":
     "useLicenses() for mutations only (addLicense/updateLicense); the work picker uses AsyncEntityCombobox.",
 };
 
