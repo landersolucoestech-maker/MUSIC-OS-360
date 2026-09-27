@@ -12,5 +12,12 @@
     "scope": "runtime",
     "createdAt": "2026-09-27T17:42:53.065Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-9b7cfea4",
+    "text": "completion-gate.mjs / gate-engine.mjs's workspaceFingerprint appears to bind to something that changes on every commit (likely includes HEAD or the ops state.json content itself), so PASS evidence captured and committed together always reads as 'stale or failing' again immediately after that very commit lands (observed mission-a5c14661, Cluster Zero Z1-Z5 closure 2026-09-27: re-verified+committed at HEAD 1fab009, then the ops-state-only commit 7c6b959 that recorded that evidence made the gate report all 5 criteria stale again, even though zero source files changed between the two commits). This creates an unavoidable one-commit lag between 'genuinely fresh evidence' and 'gate agrees it's fresh' for any criterion whose evidence is committed alongside itself. Recommend: exclude .claude/ops/** from the fingerprint's tracked-tree hash (evidence/state bookkeeping isn't product code under test), or fingerprint working-tree content only (not HEAD), so recording evidence doesn't retroactively invalidate itself.",
+    "scope": "runtime",
+    "createdAt": "2026-09-27T18:22:55.838Z",
+    "appliedAt": null
   }
 ]
