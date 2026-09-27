@@ -24,9 +24,9 @@ describe("ArtistaSignupPublic — real contract with /public/artist-registration
   });
 
   it("sends the real DTO's required fields (artistName/artisticName/fullName/email/acceptedTerms)", () => {
-    expect(SOURCE).toMatch(/artistName:\s*nomeArtistico\.trim\(\)/);
-    expect(SOURCE).toMatch(/artisticName:\s*nomeArtistico\.trim\(\)/);
-    expect(SOURCE).toMatch(/fullName:\s*nome\.trim\(\)/);
+    expect(SOURCE).toMatch(/artistName:\s*stageName\.trim\(\)/);
+    expect(SOURCE).toMatch(/artisticName:\s*stageName\.trim\(\)/);
+    expect(SOURCE).toMatch(/fullName:\s*name\.trim\(\)/);
     expect(SOURCE).toMatch(/email:\s*email\.trim\(\)/);
     expect(SOURCE).toMatch(/acceptedTerms,/);
   });

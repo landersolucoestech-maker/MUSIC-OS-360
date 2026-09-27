@@ -37,19 +37,19 @@ import { useArtists } from "@/modules/artist/hooks/useArtists";
 
 // ─── Same constants as ArtistaFormModal ───────────────────────────────────────
 
-const GENEROS_MUSICAIS = MUSICAL_GENRE_LABELS;
+const MUSIC_GENRES = MUSICAL_GENRE_LABELS;
 
 const BANCOS = [
   "Banco do Brasil", "Bradesco", "Caixa Econômica", "Itaú", "Santander",
   "Nubank", "Inter", "C6 Bank", "PicPay", "Mercado Pago", "Outro",
 ];
 
-const TIPO_PERFIL_OPTIONS = [
+const PROFILE_TYPE_OPTIONS = [
   { value: "independente",   label: "Independente" },
   { value: "com_empresario", label: "Com empresário" },
 ];
 
-const CATEGORIAS_EQUIPE = [
+const TEAM_CATEGORIES = [
   { value: "booker",          label: "Booker" },
   { value: "assessoria",      label: "Assessoria de Imprensa" },
   { value: "juridico",        label: "Jurídico" },
@@ -59,7 +59,7 @@ const CATEGORIAS_EQUIPE = [
   { value: "roadie",          label: "Roadie" },
 ];
 
-const DISTRIBUIDORAS_OPTIONS = [
+const DISTRIBUTORS_OPTIONS = [
   { id: "onerpm",    label: "ONErpm" },
   { id: "distrokid", label: "DistroKid" },
   { id: "30por1",    label: "30 Por 1" },
@@ -73,21 +73,21 @@ const ESPECIALIDADES = Object.entries(SPECIALTY_LABELS).map(([value, label]) => 
 
 // ─── Types (same as ArtistaFormModal) ─────────────────────────────────────────
 
-interface DistribuidoraEntry {
+interface DistributorEntry {
   id: string;
   email: string;
   nomeCustom?: string;
 }
 
-interface ContatoEquipe {
+interface TeamContact {
   nome: string;
   categoria: string;
   telefone: string;
   email: string;
-  distribuidoras: DistribuidoraEntry[];
+  distribuidoras: DistributorEntry[];
 }
 
-const EMPTY_CONTATO: ContatoEquipe = {
+const EMPTY_CONTACT: TeamContact = {
   nome: "", categoria: "", telefone: "", email: "", distribuidoras: [],
 };
 
@@ -126,7 +126,7 @@ function UrlIcon({ state }: { state: UrlValidationState }) {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function ArtistaSignupPublic() {
+export default function ArtistSignupPublic() {
   const { orgSlug } = useParams<{ orgSlug?: string }>();
   const { addArtist } = useArtists();
 
@@ -142,30 +142,30 @@ export default function ArtistaSignupPublic() {
 
   // ── Form state — mirrors ArtistaFormModal fields ───────────────────────────
   // Step 1: Basic information
-  const [nomeArtistico, setNomeArtistico]   = useState("");
-  const [generoMusical, setGeneroMusical]   = useState("");
+  const [stageName, setStageName]   = useState("");
+  const [musicGenre, setMusicGenre]   = useState("");
   const [especialidades, setEspecialidades] = useState<string[]>([]);
   const [biografia, setBiografia]           = useState("");
   const [fotoUrl, setFotoUrl]               = useState("");
-  const [documentosPessoaisUrl, setDocumentosPessoaisUrl] = useState("");
+  const [personalDocumentsUrl, setPersonalDocumentsUrl] = useState("");
   const [presskitUrl, setPresskitUrl]       = useState("");
 
   // Step 2: Personal data
-  const [nome, setNome]               = useState("");
-  const [dataNascimento, setDataNascimento] = useState("");
+  const [name, setName]               = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [cpfCnpj, setCpfCnpj]         = useState("");
   const [rg, setRg]                   = useState("");
-  const [genero, setGenero]           = useState("");
-  const [endereco, setEndereco]       = useState("");
-  const [telefone, setTelefone]       = useState("");
+  const [genre, setGenre]           = useState("");
+  const [address, setAddress]       = useState("");
+  const [phone, setPhone]       = useState("");
   const [email, setEmail]             = useState("");
 
   // Step 3: Bank details
   const [banco, setBanco]             = useState("");
   const [agencia, setAgencia]         = useState("");
-  const [conta, setConta]             = useState("");
-  const [chavePix, setChavePix]       = useState("");
-  const [titularConta, setTitularConta] = useState("");
+  const [account, setAccount]             = useState("");
+  const [pixKey, setPixKey]       = useState("");
+  const [accountHolder, setAccountHolder] = useState("");
 
   // Step 4: Social networks
   const [spotify, setSpotify]         = useState("");
@@ -177,14 +177,14 @@ export default function ArtistaSignupPublic() {
   const [appleMusic, setAppleMusic]   = useState("");
 
   // Step 5: Distributors / aggregators
-  const [distribuidorasGerais, setDistribuidorasGerais] = useState<DistribuidoraEntry[]>([]);
+  const [generalDistributors, setGeneralDistributors] = useState<DistributorEntry[]>([]);
 
   // Step 6: Profile type + team
-  const [tipoPerfil, setTipoPerfil]       = useState("independente");
-  const [contatosEquipe, setContatosEquipe] = useState<ContatoEquipe[]>([{ ...EMPTY_CONTATO }]);
+  const [profileType, setProfileType]       = useState("independente");
+  const [teamContacts, setTeamContacts] = useState<TeamContact[]>([{ ...EMPTY_CONTACT }]);
 
   // Step 7: Notes
-  const [notasInternas, setNotasInternas] = useState("");
+  const [internalNotes, setInternalNotes] = useState("");
 
   // ── Slug validation ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -205,11 +205,11 @@ export default function ArtistaSignupPublic() {
 
   // ── Ensure at least one empty equipe card when perfil changes ─────────────
   useEffect(() => {
-    const PERFIS_COM_EQUIPE = ["independente", "com_empresario"];
-    if (PERFIS_COM_EQUIPE.includes(tipoPerfil) && contatosEquipe.length === 0) {
-      setContatosEquipe([{ ...EMPTY_CONTATO }]);
+    const PROFILES_WITH_TEAM = ["independente", "com_empresario"];
+    if (PROFILES_WITH_TEAM.includes(profileType) && teamContacts.length === 0) {
+      setTeamContacts([{ ...EMPTY_CONTACT }]);
     }
-  }, [tipoPerfil]);
+  }, [profileType]);
 
   // ── URL validation states (same as ArtistaFormModal) ──────────────────────
   const urlStates = {
@@ -230,44 +230,44 @@ export default function ArtistaSignupPublic() {
   };
 
   // ── General distributor helpers (same as ArtistaFormModal) ──────────────
-  const toggleDistGeral = (distId: string, checked: boolean) => {
+  const toggleDistGeneral = (distId: string, checked: boolean) => {
     if (checked) {
-      setDistribuidorasGerais((prev) => [
+      setGeneralDistributors((prev) => [
         ...prev,
         { id: distId, email: "", nomeCustom: distId === "outros" ? "" : undefined },
       ]);
     } else {
-      setDistribuidorasGerais((prev) => prev.filter((d) => d.id !== distId));
+      setGeneralDistributors((prev) => prev.filter((d) => d.id !== distId));
     }
   };
 
-  const updateDistEmailGeral = (distId: string, email: string) => {
-    setDistribuidorasGerais((prev) =>
+  const updateDistGeneralEmail = (distId: string, email: string) => {
+    setGeneralDistributors((prev) =>
       prev.map((d) => (d.id === distId ? { ...d, email } : d))
     );
   };
 
-  const updateDistNomeCustomGeral = (nomeCustom: string) => {
-    setDistribuidorasGerais((prev) =>
-      prev.map((d) => (d.id === "outros" ? { ...d, nomeCustom } : d))
+  const updateDistGeneralCustomName = (customName: string) => {
+    setGeneralDistributors((prev) =>
+      prev.map((d) => (d.id === "outros" ? { ...d, nomeCustom: customName } : d))
     );
   };
 
   // ── Equipe helpers (same as ArtistaFormModal) ──────────────────────────────
-  const addContato = () => setContatosEquipe((prev) => [...prev, { ...EMPTY_CONTATO }]);
+  const addContact = () => setTeamContacts((prev) => [...prev, { ...EMPTY_CONTACT }]);
 
-  const removeContato = (idx: number) =>
-    setContatosEquipe((prev) => prev.filter((_, i) => i !== idx));
+  const removeContact = (idx: number) =>
+    setTeamContacts((prev) => prev.filter((_, i) => i !== idx));
 
-  const updateContato = (idx: number, field: keyof ContatoEquipe, value: unknown) =>
-    setContatosEquipe((prev) =>
+  const updateContact = (idx: number, field: keyof TeamContact, value: unknown) =>
+    setTeamContacts((prev) =>
       prev.map((c, i) => (i === idx ? { ...c, [field]: value } : c))
     );
 
-  const toggleDistEquipe = (contatoIdx: number, distId: string, checked: boolean) => {
-    setContatosEquipe((prev) =>
+  const toggleDistTeam = (contactIdx: number, distId: string, checked: boolean) => {
+    setTeamContacts((prev) =>
       prev.map((c, i) => {
-        if (i !== contatoIdx) return c;
+        if (i !== contactIdx) return c;
         if (checked) {
           return {
             ...c,
@@ -282,21 +282,21 @@ export default function ArtistaSignupPublic() {
     );
   };
 
-  const updateDistEmailEquipe = (contatoIdx: number, distId: string, email: string) => {
-    setContatosEquipe((prev) =>
+  const updateDistTeamEmail = (contactIdx: number, distId: string, email: string) => {
+    setTeamContacts((prev) =>
       prev.map((c, i) =>
-        i === contatoIdx
+        i === contactIdx
           ? { ...c, distribuidoras: c.distribuidoras.map((d) => d.id === distId ? { ...d, email } : d) }
           : c
       )
     );
   };
 
-  const updateDistNomeCustomEquipe = (contatoIdx: number, nomeCustom: string) => {
-    setContatosEquipe((prev) =>
+  const updateDistTeamCustomName = (contactIdx: number, customName: string) => {
+    setTeamContacts((prev) =>
       prev.map((c, i) =>
-        i === contatoIdx
-          ? { ...c, distribuidoras: c.distribuidoras.map((d) => d.id === "outros" ? { ...d, nomeCustom } : d) }
+        i === contactIdx
+          ? { ...c, distribuidoras: c.distribuidoras.map((d) => d.id === "outros" ? { ...d, nomeCustom: customName } : d) }
           : c
       )
     );
@@ -310,12 +310,12 @@ export default function ArtistaSignupPublic() {
     const e: Record<string, string> = {};
 
     if (s === 1) {
-      if (!nomeArtistico.trim()) e.nomeArtistico = "Obrigatório";
-      if (!generoMusical)        e.generoMusical  = "Obrigatório";
+      if (!stageName.trim()) e.nomeArtistico = "Obrigatório";
+      if (!musicGenre)        e.generoMusical  = "Obrigatório";
     }
 
     if (s === 2) {
-      if (!nome.trim())    e.nome    = "Obrigatório";
+      if (!name.trim())    e.nome    = "Obrigatório";
       if (!email.trim())   e.email   = "Obrigatório";
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "E-mail inválido";
     }
@@ -353,8 +353,8 @@ export default function ArtistaSignupPublic() {
   // ── Submit (same payload as ArtistaFormModal) ──────────────────────────────
   const handleSubmit = async () => {
     if (!validateStep(step)) return;
-    if (!nomeArtistico.trim()) { toast.error("Nome artístico é obrigatório"); return; }
-    if (!nome.trim())          { toast.error("Nome completo é obrigatório");  return; }
+    if (!stageName.trim()) { toast.error("Nome artístico é obrigatório"); return; }
+    if (!name.trim())          { toast.error("Nome completo é obrigatório");  return; }
     if (!acceptedTerms)        { toast.error("Aceite os termos para enviar o cadastro"); return; }
     if (!orgSlug) return;
 
@@ -377,37 +377,37 @@ export default function ArtistaSignupPublic() {
       if (soundcloud) socialLinks.soundcloud = soundcloud;
 
       const additionalData: Record<string, unknown> = {
-        nomeCivil: nome.trim() || null,
-        genero: genero || null,
+        nomeCivil: name.trim() || null,
+        genero: genre || null,
         especialidades: especialidades.length > 0 ? especialidades : null,
         fotoUrl: fotoUrl || null,
-        documentosPessoaisUrl: documentosPessoaisUrl || null,
+        documentosPessoaisUrl: personalDocumentsUrl || null,
         presskitUrl: presskitUrl || null,
-        dataNascimento: dataNascimento || null,
+        dataNascimento: birthDate || null,
         cpfCnpj: cpfCnpj || null,
         rg: rg || null,
-        endereco: endereco || null,
+        endereco: address || null,
         banco: banco || null,
         agencia: agencia || null,
-        conta: conta || null,
-        chavePix: chavePix || null,
-        titularConta: titularConta || null,
-        tipoPerfil: tipoPerfil,
-        contatosEquipe: contatosEquipe.length > 0 ? contatosEquipe : null,
-        distribuidorasGerais: distribuidorasGerais.length > 0 ? distribuidorasGerais : null,
-        notasInternas: notasInternas || null,
+        conta: account || null,
+        chavePix: pixKey || null,
+        titularConta: accountHolder || null,
+        tipoPerfil: profileType,
+        contatosEquipe: teamContacts.length > 0 ? teamContacts : null,
+        distribuidorasGerais: generalDistributors.length > 0 ? generalDistributors : null,
+        notasInternas: internalNotes || null,
       };
 
       const result = await publicApi.post<{ id: string; protocol?: string }>(
         "/public/artist-registration",
         {
           workspaceSlug: orgSlug,
-          artistName: nomeArtistico.trim(),
-          artisticName: nomeArtistico.trim(),
-          fullName: nome.trim(),
+          artistName: stageName.trim(),
+          artisticName: stageName.trim(),
+          fullName: name.trim(),
           email: email.trim(),
-          phone: telefone.trim() || undefined,
-          musicalGenre: generoMusical || undefined,
+          phone: phone.trim() || undefined,
+          musicalGenre: musicGenre || undefined,
           message: biografia.trim() || undefined,
           socialLinks,
           additionalData,
@@ -648,8 +648,8 @@ export default function ArtistaSignupPublic() {
                 <Label className="text-sm">Nome Artístico <span className="text-destructive">*</span></Label>
                 <Input
                   placeholder="Nome usado profissionalmente"
-                  value={nomeArtistico}
-                  onChange={(e) => { setNomeArtistico(e.target.value); clearError("nomeArtistico"); }}
+                  value={stageName}
+                  onChange={(e) => { setStageName(e.target.value); clearError("nomeArtistico"); }}
                   data-testid="input-nome-artistico"
                   className={errors.nomeArtistico ? "border-destructive" : ""}
                 />
@@ -658,14 +658,14 @@ export default function ArtistaSignupPublic() {
               <div className="space-y-1.5 col-span-2 sm:col-span-1">
                 <Label className="text-sm">Gênero Musical <span className="text-destructive">*</span></Label>
                 <Select
-                  value={generoMusical}
-                  onValueChange={(v) => { setGeneroMusical(v); clearError("generoMusical"); }}
+                  value={musicGenre}
+                  onValueChange={(v) => { setMusicGenre(v); clearError("generoMusical"); }}
                 >
                   <SelectTrigger data-testid="select-genero-musical" className={errors.generoMusical ? "border-destructive" : ""}>
                     <SelectValue placeholder="Selecione o gênero" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
-                    {GENEROS_MUSICAIS.map((g) => (
+                    {MUSIC_GENRES.map((g) => (
                       <SelectItem key={g} value={g}>{g}</SelectItem>
                     ))}
                   </SelectContent>
@@ -694,8 +694,8 @@ export default function ArtistaSignupPublic() {
               <Label className="text-sm">Link de Documentos Pessoais (PDF)</Label>
               <Input
                 placeholder="https://drive.google.com/… ou Dropbox"
-                value={documentosPessoaisUrl}
-                onChange={(e) => setDocumentosPessoaisUrl(e.target.value)}
+                value={personalDocumentsUrl}
+                onChange={(e) => setPersonalDocumentsUrl(e.target.value)}
                 data-testid="input-documents-pessoais-url"
               />
             </div>
@@ -739,8 +739,8 @@ export default function ArtistaSignupPublic() {
                 <Label className="text-sm">Nome Completo <span className="text-destructive">*</span></Label>
                 <Input
                   placeholder="Nome conforme documento"
-                  value={nome}
-                  onChange={(e) => { setNome(e.target.value); clearError("nome"); }}
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); clearError("nome"); }}
                   data-testid="input-nome-civil"
                   className={errors.nome ? "border-destructive" : ""}
                 />
@@ -749,8 +749,8 @@ export default function ArtistaSignupPublic() {
               <div className="space-y-1.5 col-span-2 sm:col-span-1">
                 <Label className="text-sm">Data de Nascimento</Label>
                 <DatePickerField
-                  value={dataNascimento}
-                  onChange={setDataNascimento}
+                  value={birthDate}
+                  onChange={setBirthDate}
                   data-testid="input-data-nascimento"
                   className="block"
                 />
@@ -781,7 +781,7 @@ export default function ArtistaSignupPublic() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-sm">Gênero</Label>
-                <Select value={genero} onValueChange={setGenero}>
+                <Select value={genre} onValueChange={setGenre}>
                   <SelectTrigger data-testid="select-genero-pessoa">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
@@ -795,8 +795,8 @@ export default function ArtistaSignupPublic() {
                 <Label className="text-sm">Endereço Completo</Label>
                 <Input
                   placeholder="Rua, número, bairro, cidade, CEP"
-                  value={endereco}
-                  onChange={(e) => setEndereco(e.target.value)}
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                   data-testid="input-endereco"
                 />
               </div>
@@ -807,8 +807,8 @@ export default function ArtistaSignupPublic() {
                 <Label className="text-sm">Telefone / WhatsApp</Label>
                 <Input
                   placeholder="(11) 99999-9999"
-                  value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   data-testid="input-telefone"
                 />
               </div>
@@ -869,8 +869,8 @@ export default function ArtistaSignupPublic() {
                 <Label className="text-sm">Conta com Dígito</Label>
                 <Input
                   placeholder="00000-0"
-                  value={conta}
-                  onChange={(e) => setConta(e.target.value)}
+                  value={account}
+                  onChange={(e) => setAccount(e.target.value)}
                   data-testid="input-conta"
                 />
               </div>
@@ -878,8 +878,8 @@ export default function ArtistaSignupPublic() {
                 <Label className="text-sm">Chave Pix</Label>
                 <Input
                   placeholder="CPF, e-mail, telefone ou chave aleatória"
-                  value={chavePix}
-                  onChange={(e) => setChavePix(e.target.value)}
+                  value={pixKey}
+                  onChange={(e) => setPixKey(e.target.value)}
                   data-testid="input-chave-pix"
                 />
               </div>
@@ -889,8 +889,8 @@ export default function ArtistaSignupPublic() {
               <Label className="text-sm">Titular da Conta</Label>
               <Input
                 placeholder="Nome completo do titular"
-                value={titularConta}
-                onChange={(e) => setTitularConta(e.target.value)}
+                value={accountHolder}
+                onChange={(e) => setAccountHolder(e.target.value)}
                 data-testid="input-titular-conta"
               />
             </div>
@@ -1050,8 +1050,8 @@ export default function ArtistaSignupPublic() {
             </div>
 
             <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-              {DISTRIBUIDORAS_OPTIONS.map((dist) => {
-                const entry = distribuidorasGerais.find((d) => d.id === dist.id);
+              {DISTRIBUTORS_OPTIONS.map((dist) => {
+                const entry = generalDistributors.find((d) => d.id === dist.id);
                 const isChecked = !!entry;
                 return (
                   <div key={dist.id} className="space-y-1.5">
@@ -1059,7 +1059,7 @@ export default function ArtistaSignupPublic() {
                       <Checkbox
                         id={`geral-dist-${dist.id}`}
                         checked={isChecked}
-                        onCheckedChange={(checked) => toggleDistGeral(dist.id, !!checked)}
+                        onCheckedChange={(checked) => toggleDistGeneral(dist.id, !!checked)}
                         data-testid={`checkbox-geral-dist-${dist.id}`}
                       />
                       <Label htmlFor={`geral-dist-${dist.id}`} className="text-sm cursor-pointer font-medium">
@@ -1071,7 +1071,7 @@ export default function ArtistaSignupPublic() {
                       <div className="ml-6 space-y-1.5">
                         <Input
                           value={entry?.nomeCustom ?? ""}
-                          onChange={(e) => updateDistNomeCustomGeral(e.target.value)}
+                          onChange={(e) => updateDistGeneralCustomName(e.target.value)}
                           placeholder="Nome da distribuidora…"
                           className="h-8 text-sm"
                           data-testid="input-geral-dist-nome-custom"
@@ -1079,7 +1079,7 @@ export default function ArtistaSignupPublic() {
                         {(entry?.nomeCustom ?? "").trim().length > 0 && (
                           <Input
                             value={entry?.email ?? ""}
-                            onChange={(e) => updateDistEmailGeral(dist.id, e.target.value)}
+                            onChange={(e) => updateDistGeneralEmail(dist.id, e.target.value)}
                             type="email"
                             placeholder="E-mail de share…"
                             className="h-8 text-sm"
@@ -1093,7 +1093,7 @@ export default function ArtistaSignupPublic() {
                       <div className="ml-6">
                         <Input
                           value={entry?.email ?? ""}
-                          onChange={(e) => updateDistEmailGeral(dist.id, e.target.value)}
+                          onChange={(e) => updateDistGeneralEmail(dist.id, e.target.value)}
                           type="email"
                           placeholder={`Email de share — ${dist.label}`}
                           className="h-8 text-sm"
@@ -1106,7 +1106,7 @@ export default function ArtistaSignupPublic() {
               })}
             </div>
 
-            {distribuidorasGerais.some((d) => d.id === "outros" && !(d.nomeCustom ?? "").trim()) && (
+            {generalDistributors.some((d) => d.id === "outros" && !(d.nomeCustom ?? "").trim()) && (
               <p className="text-xs text-muted-foreground ml-6">
                 Preencha o nome da distribuidora para ativar o e-mail de share.
               </p>
@@ -1127,12 +1127,12 @@ export default function ArtistaSignupPublic() {
 
             <div className="space-y-1.5">
               <Label className="text-sm">Perfil Comercial <span className="text-destructive">*</span></Label>
-              <Select value={tipoPerfil} onValueChange={setTipoPerfil}>
+              <Select value={profileType} onValueChange={setProfileType}>
                 <SelectTrigger data-testid="select-type-perfil">
                   <SelectValue placeholder="Selecione o perfil" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border border-border z-50">
-                  {TIPO_PERFIL_OPTIONS.map((opt) => (
+                  {PROFILE_TYPE_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                   ))}
                 </SelectContent>
@@ -1142,7 +1142,7 @@ export default function ArtistaSignupPublic() {
             <Separator />
 
             {/* Dynamic team — same logic as ArtistaFormModal */}
-            {["independente", "com_empresario"].includes(tipoPerfil) && (
+            {["independente", "com_empresario"].includes(profileType) && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <Label className="text-sm text-muted-foreground">Equipe / Contatos</Label>
@@ -1151,7 +1151,7 @@ export default function ArtistaSignupPublic() {
                     variant="outline"
                     size="sm"
                     className="h-7 text-xs gap-1"
-                    onClick={addContato}
+                    onClick={addContact}
                     data-testid="button-add-contato"
                   >
                     <Plus className="h-3 w-3" />
@@ -1159,19 +1159,19 @@ export default function ArtistaSignupPublic() {
                   </Button>
                 </div>
 
-                {contatosEquipe.length === 0 && (
+                {teamContacts.length === 0 && (
                   <p className="text-xs text-muted-foreground text-center py-4 border border-dashed rounded-lg">
                     Nenhum contato adicionado. Clique em "Adicionar" para incluir membros da equipe.
                   </p>
                 )}
 
-                {contatosEquipe.map((contato, idx) => {
-                  const isEditora =
-                    contato.categoria === "editora_musical" ||
-                    contato.categoria === "empresario" ||
-                    contato.categoria === "gestor" ||
-                    tipoPerfil === "com_empresario";
-                  const outrosEntry = contato.distribuidoras.find((d) => d.id === "outros");
+                {teamContacts.map((contact, idx) => {
+                  const isPublisher =
+                    contact.categoria === "editora_musical" ||
+                    contact.categoria === "empresario" ||
+                    contact.categoria === "gestor" ||
+                    profileType === "com_empresario";
+                  const outrosEntry = contact.distribuidoras.find((d) => d.id === "outros");
 
                   return (
                     <div
@@ -1189,7 +1189,7 @@ export default function ArtistaSignupPublic() {
                           variant="ghost"
                           size="sm"
                           className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                          onClick={() => removeContato(idx)}
+                          onClick={() => removeContact(idx)}
                           data-testid={`button-remove-contato-${idx}`}
                         >
                           <X className="h-3.5 w-3.5" />
@@ -1197,29 +1197,29 @@ export default function ArtistaSignupPublic() {
                       </div>
 
                       {/* Name + category */}
-                      <div className={tipoPerfil === "com_empresario" ? "space-y-1.5" : "grid grid-cols-2 gap-3"}>
+                      <div className={profileType === "com_empresario" ? "space-y-1.5" : "grid grid-cols-2 gap-3"}>
                         <div className="space-y-1.5">
                           <Label className="text-xs">Nome</Label>
                           <Input
-                            value={contato.nome}
-                            onChange={(e) => updateContato(idx, "nome", e.target.value)}
+                            value={contact.nome}
+                            onChange={(e) => updateContact(idx, "nome", e.target.value)}
                             placeholder="Nome completo"
                             className="h-8 text-sm"
                             data-testid={`input-contato-nome-${idx}`}
                           />
                         </div>
-                        {tipoPerfil !== "com_empresario" && (
+                        {profileType !== "com_empresario" && (
                           <div className="space-y-1.5">
                             <Label className="text-xs">Categoria</Label>
                             <Select
-                              value={contato.categoria}
-                              onValueChange={(v) => updateContato(idx, "categoria", v)}
+                              value={contact.categoria}
+                              onValueChange={(v) => updateContact(idx, "categoria", v)}
                             >
                               <SelectTrigger className="h-8 text-sm" data-testid={`select-contato-categoria-${idx}`}>
                                 <SelectValue placeholder="Selecione…" />
                               </SelectTrigger>
                               <SelectContent className="bg-background border border-border z-50">
-                                {CATEGORIAS_EQUIPE.map((c) => (
+                                {TEAM_CATEGORIES.map((c) => (
                                   <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
                                 ))}
                               </SelectContent>
@@ -1233,8 +1233,8 @@ export default function ArtistaSignupPublic() {
                         <div className="space-y-1.5">
                           <Label className="text-xs">Telefone</Label>
                           <Input
-                            value={contato.telefone}
-                            onChange={(e) => updateContato(idx, "telefone", e.target.value)}
+                            value={contact.telefone}
+                            onChange={(e) => updateContact(idx, "telefone", e.target.value)}
                             placeholder="(00) 00000-0000"
                             className="h-8 text-sm"
                             data-testid={`input-contato-telefone-${idx}`}
@@ -1243,8 +1243,8 @@ export default function ArtistaSignupPublic() {
                         <div className="space-y-1.5">
                           <Label className="text-xs">E-mail</Label>
                           <Input
-                            value={contato.email}
-                            onChange={(e) => updateContato(idx, "email", e.target.value)}
+                            value={contact.email}
+                            onChange={(e) => updateContact(idx, "email", e.target.value)}
                             type="email"
                             placeholder="email@exemplo.com"
                             className="h-8 text-sm"
@@ -1254,12 +1254,12 @@ export default function ArtistaSignupPublic() {
                       </div>
 
                       {/* Distributors — only when Editora Musical (same logic as the modal) */}
-                      {isEditora && (
+                      {isPublisher && (
                         <div className="space-y-3 pt-2 border-t border-border/40">
                           <Label className="text-xs text-muted-foreground">Distribuidoras</Label>
                           <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                            {DISTRIBUIDORAS_OPTIONS.map((dist) => {
-                              const dEntry = contato.distribuidoras.find((d) => d.id === dist.id);
+                            {DISTRIBUTORS_OPTIONS.map((dist) => {
+                              const dEntry = contact.distribuidoras.find((d) => d.id === dist.id);
                               const dChecked = !!dEntry;
                               return (
                                 <div key={dist.id} className="space-y-1.5">
@@ -1267,7 +1267,7 @@ export default function ArtistaSignupPublic() {
                                     <Checkbox
                                       id={`dist-${idx}-${dist.id}`}
                                       checked={dChecked}
-                                      onCheckedChange={(checked) => toggleDistEquipe(idx, dist.id, !!checked)}
+                                      onCheckedChange={(checked) => toggleDistTeam(idx, dist.id, !!checked)}
                                       data-testid={`checkbox-dist-${idx}-${dist.id}`}
                                     />
                                     <Label htmlFor={`dist-${idx}-${dist.id}`} className="text-xs cursor-pointer font-medium">
@@ -1279,7 +1279,7 @@ export default function ArtistaSignupPublic() {
                                     <div className="ml-6 space-y-1.5">
                                       <Input
                                         value={dEntry?.nomeCustom ?? ""}
-                                        onChange={(e) => updateDistNomeCustomEquipe(idx, e.target.value)}
+                                        onChange={(e) => updateDistTeamCustomName(idx, e.target.value)}
                                         placeholder="Nome da distribuidora…"
                                         className="h-7 text-xs"
                                         data-testid={`input-dist-nome-custom-${idx}`}
@@ -1287,7 +1287,7 @@ export default function ArtistaSignupPublic() {
                                       {(dEntry?.nomeCustom ?? "").trim().length > 0 && (
                                         <Input
                                           value={dEntry?.email ?? ""}
-                                          onChange={(e) => updateDistEmailEquipe(idx, dist.id, e.target.value)}
+                                          onChange={(e) => updateDistTeamEmail(idx, dist.id, e.target.value)}
                                           type="email"
                                           placeholder="E-mail de share…"
                                           className="h-7 text-xs"
@@ -1301,7 +1301,7 @@ export default function ArtistaSignupPublic() {
                                     <div className="ml-6">
                                       <Input
                                         value={dEntry?.email ?? ""}
-                                        onChange={(e) => updateDistEmailEquipe(idx, dist.id, e.target.value)}
+                                        onChange={(e) => updateDistTeamEmail(idx, dist.id, e.target.value)}
                                         type="email"
                                         placeholder={`Email de share — ${dist.label}`}
                                         className="h-7 text-xs"
@@ -1344,18 +1344,18 @@ export default function ArtistaSignupPublic() {
               <p className="text-xs font-semibold  tracking-widest text-primary">Resumo do Cadastro</p>
               <div className="text-sm space-y-1.5">
                 {[
-                  { label: "Nome Artístico",  value: nomeArtistico },
-                  { label: "Nome Completo",   value: nome },
+                  { label: "Nome Artístico",  value: stageName },
+                  { label: "Nome Completo",   value: name },
                   { label: "E-mail",          value: email },
-                  { label: "Telefone",        value: telefone },
-                  { label: "Gênero Musical",  value: generoMusical },
-                  { label: "Tipo de Perfil",  value: TIPO_PERFIL_OPTIONS.find((o) => o.value === tipoPerfil)?.label },
-                  distribuidorasGerais.length > 0
+                  { label: "Telefone",        value: phone },
+                  { label: "Gênero Musical",  value: musicGenre },
+                  { label: "Tipo de Perfil",  value: PROFILE_TYPE_OPTIONS.find((o) => o.value === profileType)?.label },
+                  generalDistributors.length > 0
                     ? {
                         label: "Distribuidoras",
-                        value: distribuidorasGerais
+                        value: generalDistributors
                           .map((d) => {
-                            const opt = DISTRIBUIDORAS_OPTIONS.find((o) => o.id === d.id);
+                            const opt = DISTRIBUTORS_OPTIONS.find((o) => o.id === d.id);
                             return d.id === "outros" ? (d.nomeCustom || "Outros") : (opt?.label ?? d.id);
                           })
                           .join(", "),
@@ -1379,8 +1379,8 @@ export default function ArtistaSignupPublic() {
               <Textarea
                 placeholder="Notas internas, rider técnico, preferências, informações adicionais, disponibilidade, projetos em andamento…"
                 className="min-h-[120px]"
-                value={notasInternas}
-                onChange={(e) => setNotasInternas(e.target.value)}
+                value={internalNotes}
+                onChange={(e) => setInternalNotes(e.target.value)}
                 data-testid="textarea-observacoes"
               />
             </div>
