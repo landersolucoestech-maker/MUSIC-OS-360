@@ -1,9 +1,9 @@
-# PASSO 12-J.7 — Overlay de observability + WEB para staging.
-# Uso (com o compose base que já tem postgres/redis/api):
+# STEP 12-J.7 — observability + WEB overlay for staging.
+# Usage (on top of the base compose, which already has postgres/redis/api):
 #   docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d
 #
-# Fornece: WEB (Vite preview), Prometheus (scrape /metrics da API) e Grafana
-# (datasources Prometheus + Postgres já provisionados + dashboard RBAC shadow).
+# Provides: WEB (Vite preview), Prometheus (scrapes the API /metrics) and Grafana
+# (Prometheus + Postgres datasources already provisioned + RBAC shadow dashboard).
 services:
   web:
     build:
@@ -43,9 +43,9 @@ services:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_USERS_ALLOW_SIGN_UP: 'false'
-      # injetado nos datasources (ver provisioning); postgres local é opcional
-      # (--profile local-db) — sem ele, o datasource Postgres do Grafana fica
-      # inacessível, mas isso não bloqueia a subida do Grafana em si.
+      # injected into the datasources (see provisioning); local postgres is optional
+      # (--profile local-db) — without it the Grafana Postgres datasource is
+      # unreachable, but that does not block Grafana itself from starting.
       MUSICOS_DB_HOST: postgres
       MUSICOS_DB_NAME: ${POSTGRES_DB:-musicos360}
       MUSICOS_DB_USER: ${POSTGRES_USER:-musicos360}

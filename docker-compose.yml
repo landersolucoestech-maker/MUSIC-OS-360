@@ -1,24 +1,24 @@
 version: '3.9'
 
 # ─── MUSIC OS 360 — Local Development Stack ──────────────────────────────────
-# Serviços: PostgreSQL + Redis + API NestJS
-# Frontend (Vite) corre localmente via `npm run dev:web` — não containerizado.
+# Services: PostgreSQL + Redis + NestJS API
+# The frontend (Vite) runs locally via `npm run dev:web` — not containerized.
 #
-# Uso (--env-file explícito — Docker Compose não descobre mais um `.env`
-# implícito na raiz; o nome canônico agora é .env.development):
-#   docker compose --env-file .env.development up -d          # subir todos os serviços em background
-#   docker compose --env-file .env.development logs -f api    # acompanhar logs da API
-#   docker compose --env-file .env.development down -v        # parar e remover volumes
+# Usage (explicit --env-file — Docker Compose no longer discovers an implicit
+# `.env` at the root; the canonical name is now .env.development):
+#   docker compose --env-file .env.development up -d          # start every service in the background
+#   docker compose --env-file .env.development logs -f api    # follow the API logs
+#   docker compose --env-file .env.development down -v        # stop and remove volumes
 #
-# Variáveis de ambiente: editar .env.development diretamente (arquivo real,
-# fora do Git — não é mais um template .example a copiar).
+# Environment variables: edit .env.development directly (a real file, kept
+# out of Git — no longer a .example template to copy).
 
 services:
-  # ─── PostgreSQL (local, OPCIONAL) ─────────────────────────────────────────────
-  # Não é requisito para subir a aplicação: em development, apps/api conecta
-  # diretamente ao Postgres remoto do Supabase DEV via DATABASE_URL
-  # (.env.development). Este serviço só sobe com `--profile local-db`, para quem
-  # quiser um Postgres local isolado (ex.: testes offline sem Supabase).
+  # ─── PostgreSQL (local, OPTIONAL) ─────────────────────────────────────────────
+  # Not required to run the application: in development, apps/api connects
+  # directly to the remote Supabase DEV Postgres via DATABASE_URL
+  # (.env.development). This service only starts with `--profile local-db`, for
+  # anyone who wants an isolated local Postgres (e.g. offline tests without Supabase).
   postgres:
     profiles: ['local-db']
     image: postgres:16-alpine
@@ -74,7 +74,7 @@ services:
       REDIS_URL: redis://redis:6379
       RBAC_PERSISTED_AUTHORITY: SHADOW
       AUTH_DISABLED: ${AUTH_DISABLED:-false}
-      # Preencher com valores reais (ou usar .env):
+      # Fill in with real values (or use .env):
       SUPABASE_URL: ${SUPABASE_URL:-https://placeholder.supabase.co}
       SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
       SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}

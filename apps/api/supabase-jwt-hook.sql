@@ -2,38 +2,38 @@
 -- MUSIC OS 360 — Supabase Custom Access Token Hook
 -- =============================================================================
 --
--- PROPÓSITO:
---   Enriquecer automaticamente cada JWT emitido/renovado pelo Supabase com
---   org_id e role do utilizador, lidos em tempo real da tabela org_members.
+-- PURPOSE:
+--   Automatically enrich every JWT issued/refreshed by Supabase with the
+--   user's org_id and role, read live from the org_members table.
 --
--- RESULTADO: Todos os JWTs terão:
+-- RESULT: every JWT carries:
 --   {
 --     "app_metadata": {
---       "org_id": "<uuid-da-organização>",
+--       "org_id": "<organization-uuid>",
 --       "role":   "viewer | editor | manager | admin | owner | super_admin"
 --     }
 --   }
 --
--- COMPATIBILIDADE:
---   • JwtAuthGuard  — lê app_metadata.org_id → request.auth.orgId
+-- COMPATIBILITY:
+--   • JwtAuthGuard  — reads app_metadata.org_id → request.auth.orgId
 --   • TenantGuard   — lookup tenants WHERE org_id = :orgId
---   • RolesGuard    — currentMember.role da DB
+--   • RolesGuard    — currentMember.role from the DB
 --   • RLS           — auth.jwt()->'app_metadata'->>'org_id'
---   • Frontend      — AuthContext mapSupabaseUser lê app_metadata.org_id
+--   • Frontend      — AuthContext mapSupabaseUser reads app_metadata.org_id
 --
--- COMO ATIVAR (após executar este script no SQL Editor do Supabase):
+-- HOW TO ENABLE (after running this script in the Supabase SQL Editor):
 --   1. Dashboard → Authentication → Hooks
 --   2. "Custom Access Token" → Enable
 --   3. Schema: public   Function: custom_access_token_hook
 --   4. Save
 --
--- O hook dispara em:
+-- The hook fires on:
 --   • signInWithPassword / signInWithOAuth / signInWithMagicLink
 --   • refreshSession / auto-refresh (persistSession=true)
---   • getSession (se o token estiver expirado e for renovado)
+--   • getSession (when the token has expired and is refreshed)
 -- =============================================================================
 
--- ─── 1. Função do hook ────────────────────────────────────────────────────────
+-- ─── 1. Hook function ─────────────────────────────────────────────────────────
 
 CREATE OR REPLACE FUNCTION public.custom_access_token_hook(event jsonb)
 RETURNS jsonb
@@ -53,9 +53,9 @@ BEGIN
   v_claims    := event -> 'claims';
   v_user_id   := event ->> 'user_id';
 
-  -- ─── Busca a membria ativa mais recente do utilizador ───────────────────────
-  -- O app_metadata.org_id seleciona explicitamente o tenant corrente.
-  -- A selecao so e aceita quando existe membership e tenant ativos.
+  -- ─── Look up the user's most recent active membership ───────────────────────
+  -- app_metadata.org_id explicitly selects the current tenant.
+  -- The selection is only accepted when an active membership and tenant exist.
   SELECT u.raw_app_meta_data ->> 'org_id'
     INTO v_requested_tenant_id
     FROM auth.users u
@@ -73,8 +73,8 @@ BEGIN
    ORDER BY om.joined_at DESC NULLS LAST, om.id DESC
    LIMIT 1;
 
-  -- ─── Injeta no app_metadata (mescla, não sobrescreve) ──────────────────────
-  -- Preserva eventuais campos pré-existentes em app_metadata.
+  -- ─── Inject into app_metadata (merge, do not overwrite) ─────────────────────
+  -- Keeps any fields already present in app_metadata.
   IF v_tenant_id IS NOT NULL THEN
     v_app_meta := COALESCE(v_claims -> 'app_metadata', '{}'::jsonb)
                   || jsonb_build_object(
@@ -87,8 +87,8 @@ BEGIN
   RETURN jsonb_set(event, '{claims}', v_claims);
 
 EXCEPTION WHEN OTHERS THEN
-  -- Nunca bloquear o login se a query falhar (ex: tabela ainda não existe).
-  -- O JWT é emitido sem os claims extras — seguro mas sem isolamento de tenant.
+  -- Never block login when the query fails (e.g. the table does not exist yet).
+  -- The JWT is issued without the extra claims — safe, but without tenant isolation.
   RAISE WARNING '[musicos360:jwt_hook] Erro ao enriquecer JWT para user %: % — JWT emitido sem app_metadata',
     v_user_id, SQLERRM;
   RETURN event;
@@ -96,32 +96,32 @@ END;
 $$;
 
 
--- ─── 2. Permissões ────────────────────────────────────────────────────────────
--- supabase_auth_admin é o role interno do Supabase que invoca o hook.
+-- ─── 2. Permissions ───────────────────────────────────────────────────────────
+-- supabase_auth_admin is the internal Supabase role that invokes the hook.
 
 GRANT USAGE    ON SCHEMA public                                      TO supabase_auth_admin;
 GRANT EXECUTE  ON FUNCTION public.custom_access_token_hook(jsonb)    TO supabase_auth_admin;
 
--- Revogar explicitamente de roles não-privilegiadas por segurança.
+-- Explicitly revoke from non-privileged roles for safety.
 REVOKE EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb) FROM authenticated, anon, public;
 
 
--- ─── 3. (Opcional) Permissão para o hook ler org_members sem RLS ──────────────
--- SECURITY DEFINER já contorna o RLS porque a função corre com o owner (postgres).
--- Se o owner da função não for postgres, adicione:
+-- ─── 3. (Optional) Allow the hook to read org_members without RLS ────────────
+-- SECURITY DEFINER already bypasses RLS because the function runs as its owner (postgres).
+-- If the function owner is not postgres, add:
 --   ALTER FUNCTION public.custom_access_token_hook(jsonb) OWNER TO postgres;
 
 
--- ─── 4. Validação pós-ativação ────────────────────────────────────────────────
--- Após ativar o hook no Dashboard e fazer login, execute no SQL Editor:
+-- ─── 4. Post-activation check ─────────────────────────────────────────────────
+-- After enabling the hook in the Dashboard and logging in, run in the SQL Editor:
 --
 --   SELECT auth.jwt() -> 'app_metadata';
---   -- Deve retornar: {"org_id": "<uuid>", "role": "<role>"}
+--   -- Must return: {"org_id": "<uuid>", "role": "<role>"}
 --
--- Para verificar um token específico sem fazer login:
+-- To check a specific token without logging in:
 --   SELECT public.custom_access_token_hook(
 --     jsonb_build_object(
---       'user_id', '<uuid-do-utilizador>',
+--       'user_id', '<user-uuid>',
 --       'claims',  '{}'::jsonb
 --     )
 --   );

@@ -1,16 +1,16 @@
 name: Staging CI/CD
 
-# Gate de homologação da branch permanente `staging`.
-# Toda mudança destinada a produção deve seguir dev -> staging -> main.
-# Requer secrets do GitHub Environment `staging`, isolados de produção:
+# Acceptance gate for the permanent `staging` branch.
+# Every change bound for production must follow dev -> staging -> main.
+# Requires secrets from the GitHub Environment `staging`, isolated from production:
 #   STAGING_DATABASE_URL
 #   STAGING_APP_DATABASE_URL
 #   STAGING_API_URL
 #   STAGING_DEPLOY_WEBHOOK_URL
-# Opcionais para smoke autenticado:
+# Optional, for the authenticated smoke test:
 #   STAGING_SMOKE_TOKEN
 #   STAGING_SMOKE_TENANT
-# Nunca usar secrets de produção neste workflow.
+# Never use production secrets in this workflow.
 
 on:
   push:
@@ -144,8 +144,8 @@ jobs:
           test -n "$API_URL"
           pnpm --filter @music-os-360/api smoke-test
 
-# Regra de promoção:
-# - dev recebe desenvolvimento;
-# - staging recebe somente código aprovado em dev;
-# - main recebe somente código validado pela branch staging;
-# - migrations continuam bloqueadas sem autorização explícita.
+# Promotion rule:
+# - dev receives development work;
+# - staging receives only code approved on dev;
+# - main receives only code validated on the staging branch;
+# - migrations stay blocked without explicit authorization.

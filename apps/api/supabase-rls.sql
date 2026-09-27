@@ -1,21 +1,21 @@
 -- =============================================================================
 -- MUSIC OS 360 — Supabase Row-Level Security (RLS) Policies
 -- =============================================================================
--- Execute este script no SQL Editor do Supabase (Settings → SQL Editor).
+-- Run this script in the Supabase SQL Editor (Settings → SQL Editor).
 --
--- SEGURANÇA: cada bloco usa EXCEPTION WHEN undefined_table para ignorar
--- tabelas ainda não criadas — o script é idempotente e pode ser re-executado
--- após cada migration sem erros.
+-- SAFETY: every block uses EXCEPTION WHEN undefined_table to skip tables that
+-- do not exist yet — the script is idempotent and can be re-run after every
+-- migration without errors.
 --
--- Estrutura de isolamento JWT:
+-- JWT isolation structure:
 --   auth.uid()                              → user UUID (sub)
---   auth.jwt()->'app_metadata'->>'org_id'   → UUID da organização do tenant
---   auth.jwt()->'app_metadata'->>'role'     → role RBAC do utilizador
+--   auth.jwt()->'app_metadata'->>'org_id'   → UUID of the tenant organization
+--   auth.jwt()->'app_metadata'->>'role'     → RBAC role of the user
 -- =============================================================================
 
 
 -- =============================================================================
--- PASSO 1 — Helper functions (sempre criadas, não dependem de tabelas)
+-- STEP 1 — Helper functions (always created, independent of tables)
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION public.auth_org_id()
@@ -46,8 +46,8 @@ $$;
 
 
 -- =============================================================================
--- PASSO 2 — Helper interno: habilita RLS + cria policies por tabela
--- Cada bloco é independente — tabelas inexistentes geram NOTICE, não erro.
+-- STEP 2 — Per-table blocks: enable RLS + create policies
+-- Every block is independent — missing tables raise a NOTICE, not an error.
 -- =============================================================================
 
 
@@ -62,9 +62,9 @@ DO $$ BEGIN
     FOR ALL
     USING      (public.has_min_role('super_admin'))
     WITH CHECK (public.has_min_role('super_admin'));
-  RAISE NOTICE 'RLS aplicado: organizations';
+  RAISE NOTICE 'RLS applied: organizations';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela organizations não existe ainda';
+  RAISE NOTICE 'SKIP: table organizations does not exist yet';
 END $$;
 
 
@@ -79,9 +79,9 @@ DO $$ BEGIN
     FOR ALL
     USING      (org_id = public.auth_org_id() AND public.has_min_role('admin'))
     WITH CHECK (org_id = public.auth_org_id() AND public.has_min_role('admin'));
-  RAISE NOTICE 'RLS aplicado: tenants';
+  RAISE NOTICE 'RLS applied: tenants';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela tenants não existe ainda';
+  RAISE NOTICE 'SKIP: table tenants does not exist yet';
 END $$;
 
 
@@ -102,9 +102,9 @@ DO $$ BEGIN
     WITH CHECK (org_id = public.auth_org_id() AND public.has_min_role('admin'));
   CREATE POLICY "musicos360_member_delete" ON public.org_members
     FOR DELETE USING (org_id = public.auth_org_id() AND public.has_min_role('owner'));
-  RAISE NOTICE 'RLS aplicado: org_members';
+  RAISE NOTICE 'RLS applied: org_members';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela org_members não existe ainda';
+  RAISE NOTICE 'SKIP: table org_members does not exist yet';
 END $$;
 
 
@@ -123,9 +123,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_artists_delete" ON public.artists
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: artists';
+  RAISE NOTICE 'RLS applied: artists';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela artists não existe ainda';
+  RAISE NOTICE 'SKIP: table artists does not exist yet';
 END $$;
 
 
@@ -144,9 +144,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_works_delete" ON public.works
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: works';
+  RAISE NOTICE 'RLS applied: works';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela works não existe ainda';
+  RAISE NOTICE 'SKIP: table works does not exist yet';
 END $$;
 
 
@@ -165,9 +165,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_phonograms_delete" ON public.phonograms
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: phonograms';
+  RAISE NOTICE 'RLS applied: phonograms';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela phonograms não existe ainda';
+  RAISE NOTICE 'SKIP: table phonograms does not exist yet';
 END $$;
 
 
@@ -186,9 +186,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_contracts_delete" ON public.contracts
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: contracts';
+  RAISE NOTICE 'RLS applied: contracts';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela contracts não existe ainda';
+  RAISE NOTICE 'SKIP: table contracts does not exist yet';
 END $$;
 
 
@@ -204,9 +204,9 @@ DO $$ BEGIN
     FOR INSERT WITH CHECK (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_ctpl_delete" ON public.contract_templates
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: contract_templates';
+  RAISE NOTICE 'RLS applied: contract_templates';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela contract_templates não existe ainda';
+  RAISE NOTICE 'SKIP: table contract_templates does not exist yet';
 END $$;
 
 
@@ -225,9 +225,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_tx_delete" ON public.transactions
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: transactions';
+  RAISE NOTICE 'RLS applied: transactions';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela transactions não existe ainda';
+  RAISE NOTICE 'SKIP: table transactions does not exist yet';
 END $$;
 
 
@@ -246,9 +246,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_inv_delete" ON public.invoices
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: invoices';
+  RAISE NOTICE 'RLS applied: invoices';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela invoices não existe ainda';
+  RAISE NOTICE 'SKIP: table invoices does not exist yet';
 END $$;
 
 
@@ -267,9 +267,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_clients_delete" ON public.clients
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: clients';
+  RAISE NOTICE 'RLS applied: clients';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela clients não existe ainda';
+  RAISE NOTICE 'SKIP: table clients does not exist yet';
 END $$;
 
 
@@ -288,9 +288,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_leads_delete" ON public.leads
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: leads';
+  RAISE NOTICE 'RLS applied: leads';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela leads não existe ainda';
+  RAISE NOTICE 'SKIP: table leads does not exist yet';
 END $$;
 
 
@@ -306,9 +306,9 @@ DO $$ BEGIN
     FOR INSERT WITH CHECK (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_li_delete" ON public.lead_interactions
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: lead_interactions';
+  RAISE NOTICE 'RLS applied: lead_interactions';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela lead_interactions não existe ainda';
+  RAISE NOTICE 'SKIP: table lead_interactions does not exist yet';
 END $$;
 
 
@@ -327,9 +327,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_camp_delete" ON public.campaigns
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: campaigns';
+  RAISE NOTICE 'RLS applied: campaigns';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela campaigns não existe ainda';
+  RAISE NOTICE 'SKIP: table campaigns does not exist yet';
 END $$;
 
 
@@ -348,9 +348,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_events_delete" ON public.events
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: events';
+  RAISE NOTICE 'RLS applied: events';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela events não existe ainda';
+  RAISE NOTICE 'SKIP: table events does not exist yet';
 END $$;
 
 
@@ -369,9 +369,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_proj_delete" ON public.projects
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: projects';
+  RAISE NOTICE 'RLS applied: projects';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela projects não existe ainda';
+  RAISE NOTICE 'SKIP: table projects does not exist yet';
 END $$;
 
 
@@ -390,9 +390,9 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('editor'));
   CREATE POLICY "musicos360_rel_delete" ON public.releases
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
-  RAISE NOTICE 'RLS aplicado: releases';
+  RAISE NOTICE 'RLS applied: releases';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela releases não existe ainda';
+  RAISE NOTICE 'SKIP: table releases does not exist yet';
 END $$;
 
 
@@ -411,13 +411,13 @@ DO $$ BEGIN
     FOR UPDATE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('manager'));
   CREATE POLICY "musicos360_shares_delete" ON public.shares
     FOR DELETE USING (tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id()) AND public.has_min_role('admin'));
-  RAISE NOTICE 'RLS aplicado: shares';
+  RAISE NOTICE 'RLS applied: shares';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela shares não existe ainda';
+  RAISE NOTICE 'SKIP: table shares does not exist yet';
 END $$;
 
 
--- ── audit_log (imutável — sem UPDATE/DELETE via RLS) ──────────────────────────
+-- ── audit_log (immutable — no UPDATE/DELETE via RLS) ──────────────────────────
 DO $$ BEGIN
   ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
   DROP POLICY IF EXISTS "musicos360_audit_select" ON public.audit_log;
@@ -431,13 +431,13 @@ DO $$ BEGIN
     FOR INSERT WITH CHECK (
       tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id())
     );
-  RAISE NOTICE 'RLS aplicado: audit_log';
+  RAISE NOTICE 'RLS applied: audit_log';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela audit_log não existe ainda';
+  RAISE NOTICE 'SKIP: table audit_log does not exist yet';
 END $$;
 
 
--- ── notifications (cada utilizador vê só as suas) ─────────────────────────────
+-- ── notifications (each user sees only their own) ─────────────────────────────
 DO $$ BEGIN
   ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
   DROP POLICY IF EXISTS "musicos360_notif_select" ON public.notifications;
@@ -452,29 +452,29 @@ DO $$ BEGIN
       tenant_id IN (SELECT id FROM public.tenants WHERE org_id = public.auth_org_id())
       AND public.has_min_role('manager')
     );
-  RAISE NOTICE 'RLS aplicado: notifications';
+  RAISE NOTICE 'RLS applied: notifications';
 EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'SKIP: tabela notifications não existe ainda';
+  RAISE NOTICE 'SKIP: table notifications does not exist yet';
 END $$;
 
 
 -- =============================================================================
--- PASSO 3 — Grants de acesso
--- service_role bypassa RLS por design do Supabase — usar apenas em migrations.
--- authenticated role usa RLS como única barreira.
+-- STEP 3 — Access grants
+-- service_role bypasses RLS by Supabase design — use it only in migrations.
+-- The authenticated role relies on RLS as its only barrier.
 -- =============================================================================
 
 DO $$ BEGIN
   GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
   GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
-  RAISE NOTICE 'Grants aplicados ao role authenticated';
+  RAISE NOTICE 'Grants applied to the authenticated role';
 EXCEPTION WHEN OTHERS THEN
-  RAISE NOTICE 'SKIP: erro ao aplicar grants — %', SQLERRM;
+  RAISE NOTICE 'SKIP: failed to apply grants — %', SQLERRM;
 END $$;
 
 
 -- =============================================================================
--- FIM — Re-execute este script após cada migration de schema.
--- As functions (PASSO 1) são idempotentes via CREATE OR REPLACE.
--- Os blocos DO (PASSO 2) ignoram tabelas inexistentes com NOTICE.
+-- END — Re-run this script after every schema migration.
+-- The functions (STEP 1) are idempotent via CREATE OR REPLACE.
+-- The DO blocks (STEP 2) skip missing tables with a NOTICE.
 -- =============================================================================
