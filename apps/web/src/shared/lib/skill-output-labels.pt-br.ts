@@ -370,7 +370,7 @@ export function skillFieldLabel(key: string): string {
   return SKILL_OUTPUT_FIELD_LABELS_PT_BR[key] ?? UNKNOWN_FIELD_LABEL;
 }
 
-/** Display value of a skill output field: enums mapped, booleans as Sim/Não, numbers in pt-BR. */
+/** Display value of a skill output field: enum values mapped, booleans as yes/no labels, numbers in pt-BR format. */
 export function skillValueLabel(key: string, value: unknown): string {
   if (typeof value === "boolean") return value ? "Sim" : "Não";
   if (typeof value === "number") return value.toLocaleString("pt-BR");
