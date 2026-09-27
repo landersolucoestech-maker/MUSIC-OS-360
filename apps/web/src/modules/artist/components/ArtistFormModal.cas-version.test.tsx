@@ -98,7 +98,7 @@ function freshVersion(overrides: Partial<ArtistWireRecord> = {}): ArtistWireReco
   };
 }
 
-const nomeInput = () => screen.getByTestId("input-nome-artistico") as HTMLInputElement;
+const nameInput = () => screen.getByTestId("input-nome-artistico") as HTMLInputElement;
 const saveButton = () => screen.getByTestId("button-salvar-modal") as HTMLButtonElement;
 
 beforeEach(() => {
@@ -114,7 +114,7 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     // Before hydration: Save is unavailable.
     expect(saveButton()).toBeDisabled();
 
-    await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
+    await waitFor(() => expect(nameInput().value).toBe("Versão Atual"));
     expect(saveButton()).not.toBeDisabled();
 
     fireEvent.click(saveButton());
@@ -129,10 +129,10 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
   it("preserves what the user typed when a background refetch arrives after hydration", async () => {
     const { queryClient } = renderModal({ artist: listSnapshot });
 
-    await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
+    await waitFor(() => expect(nameInput().value).toBe("Versão Atual"));
 
-    fireEvent.change(nomeInput(), { target: { value: "Editado pelo usuário" } });
-    expect(nomeInput().value).toBe("Editado pelo usuário");
+    fireEvent.change(nameInput(), { target: { value: "Editado pelo usuário" } });
+    expect(nameInput().value).toBe("Editado pelo usuário");
 
     // Simulates a background refetch (e.g. tab refocus) bringing a new server
     // version — it must NOT erase what the user typed.
@@ -141,14 +141,14 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
       await queryClient.refetchQueries({ queryKey: ["artists", ARTIST_ID, "edit-fresh"] });
     });
 
-    expect(nomeInput().value).toBe("Editado pelo usuário");
+    expect(nameInput().value).toBe("Editado pelo usuário");
   });
 
   it("save normal funciona (ciclo 1: abrir → editar → salvar)", async () => {
     const { onSuccess } = renderModal({ artist: listSnapshot });
 
-    await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
-    fireEvent.change(nomeInput(), { target: { value: "Editado ciclo 1" } });
+    await waitFor(() => expect(nameInput().value).toBe("Versão Atual"));
+    fireEvent.change(nameInput(), { target: { value: "Editado ciclo 1" } });
 
     fireEvent.click(saveButton());
 
@@ -160,8 +160,8 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
 
   it("a normal save works (cycle 2: reopen → edit → save again, no spurious 409)", async () => {
     const { onSuccess } = renderModal({ artist: listSnapshot });
-    await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
-    fireEvent.change(nomeInput(), { target: { value: "Editado ciclo 1" } });
+    await waitFor(() => expect(nameInput().value).toBe("Versão Atual"));
+    fireEvent.change(nameInput(), { target: { value: "Editado ciclo 1" } });
     fireEvent.click(saveButton());
     await waitFor(() => expect(patchCalls).toHaveLength(1));
     const versionAfterCycle1 = server.updated_at;
@@ -195,13 +195,13 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
 
   it("real A/B conflict: another session saves between this session's GET and PATCH → 409 (ConflictError), the modal stays open", async () => {
     const { onSuccess, onOpenChange } = renderModal({ artist: listSnapshot });
-    await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
+    await waitFor(() => expect(nameInput().value).toBe("Versão Atual"));
 
     // "A" saves first, outside this session — the server advances the version.
     server = freshVersion({ nome_artistico: "Salvo por A", updated_at: "2026-08-18T20:45:00.000Z" });
 
     // "B" (this session) still holds the old expectedUpdatedAt (from hydration).
-    fireEvent.change(nomeInput(), { target: { value: "Tentativa de B" } });
+    fireEvent.change(nameInput(), { target: { value: "Tentativa de B" } });
     fireEvent.click(saveButton());
 
     // useDataQuery fires a generic error toast in the mutation's onError, besides

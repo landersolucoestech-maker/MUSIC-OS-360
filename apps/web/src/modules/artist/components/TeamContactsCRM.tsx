@@ -83,8 +83,8 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
       .filter((c) => !linkedIds.has(c.id))
       .filter((c) => {
         if (!term) return true;
-        const categoria = labelFor(contactTypeOptions, c.contactType);
-        const haystack = [c.name, c.companyName, categoria, c.email, c.phone, c.whatsapp]
+        const category = labelFor(contactTypeOptions, c.contactType);
+        const haystack = [c.name, c.companyName, category, c.email, c.phone, c.whatsapp]
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
@@ -217,7 +217,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
         <div className="space-y-2" data-testid="equipe-vinculada">
           {value.map((link) => {
             const contact = contactById.get(link.contactId);
-            const showDistribuidoras = contact ? DISTRIBUTOR_CONTACT_TYPES.has(contact.contactType) : false;
+            const showDistributors = contact ? DISTRIBUTOR_CONTACT_TYPES.has(contact.contactType) : false;
 
             return (
               <div
@@ -259,7 +259,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                 </div>
 
                 {/* Distributors — only for Empresário / Gravadora / Editora */}
-                {showDistribuidoras && (
+                {showDistributors && (
                   <div className="mt-3 space-y-3 border-t border-border/40 pt-3">
                     <Label className="text-xs text-muted-foreground">Distribuidoras</Label>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-3">

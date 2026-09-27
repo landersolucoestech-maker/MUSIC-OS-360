@@ -275,7 +275,7 @@ export function validateAppleMusicUrl(url: string): UrlValidationState {
 // names of each field.
 
 type WireDistributorEntry = { id: string; email: string; nomeCustom?: string };
-type WireResponsavel = { nome: string; telefone: string; email: string };
+type WireResponsiblePerson = { nome: string; telefone: string; email: string };
 type WireRelacionamento = {
   type: ArtistRelationship["type"];
   nome: string;
@@ -283,11 +283,11 @@ type WireRelacionamento = {
   email: string;
   escritorio?: string;
   crc?: string;
-  responsaveis?: WireResponsavel[];
+  responsaveis?: WireResponsiblePerson[];
   distribuidoras?: WireDistributorEntry[];
 };
-type WireContatoVinculado = { contactId: string; distribuidoras?: WireDistributorEntry[] };
-type WireContatoEquipe = {
+type WireLinkedContact = { contactId: string; distribuidoras?: WireDistributorEntry[] };
+type WireTeamContact = {
   nome: string;
   categoria: string;
   telefone: string;
@@ -370,8 +370,8 @@ export type ArtistWireRecord = Record<string, unknown> & {
   label_parceira?: string | null;
   documents?: { nome: string; url: string }[] | null;
   distribuidoras_gerais?: WireDistributorEntry[] | null;
-  contatos_vinculados?: WireContatoVinculado[] | null;
-  contatos_equipe?: WireContatoEquipe[] | null;
+  contatos_vinculados?: WireLinkedContact[] | null;
+  contatos_equipe?: WireTeamContact[] | null;
   created_at?: string;
   updated_at?: string;
 };
@@ -383,10 +383,10 @@ function distributorToWire(d: DistributorEntry): WireDistributorEntry {
   return { id: d.id, email: d.email, ...(d.customName !== undefined ? { nomeCustom: d.customName } : {}) };
 }
 
-function responsibleFromWire(r: WireResponsavel): ArtistResponsible {
+function responsibleFromWire(r: WireResponsiblePerson): ArtistResponsible {
   return { name: r.nome ?? "", phone: r.telefone ?? "", email: r.email ?? "" };
 }
-function responsibleToWire(r: ArtistResponsible): WireResponsavel {
+function responsibleToWire(r: ArtistResponsible): WireResponsiblePerson {
   return { nome: r.name ?? "", telefone: r.phone ?? "", email: r.email ?? "" };
 }
 
@@ -415,20 +415,20 @@ function relationshipToWire(r: ArtistRelationship): WireRelacionamento {
   };
 }
 
-function linkedContactFromWire(c: WireContatoVinculado): ArtistLinkedContact {
+function linkedContactFromWire(c: WireLinkedContact): ArtistLinkedContact {
   return {
     contactId: c.contactId,
     ...(c.distribuidoras ? { distributors: c.distribuidoras.map(distributorFromWire) } : {}),
   };
 }
-function linkedContactToWire(c: ArtistLinkedContact): WireContatoVinculado {
+function linkedContactToWire(c: ArtistLinkedContact): WireLinkedContact {
   return {
     contactId: c.contactId,
     ...(c.distributors ? { distribuidoras: c.distributors.map(distributorToWire) } : {}),
   };
 }
 
-function teamContactFromWire(c: WireContatoEquipe): ArtistTeamContact {
+function teamContactFromWire(c: WireTeamContact): ArtistTeamContact {
   return {
     name: c.nome ?? "",
     category: c.categoria ?? "",
@@ -437,7 +437,7 @@ function teamContactFromWire(c: WireContatoEquipe): ArtistTeamContact {
     distributors: Array.isArray(c.distribuidoras) ? c.distribuidoras.map(distributorFromWire) : [],
   };
 }
-function teamContactToWire(c: ArtistTeamContact): WireContatoEquipe {
+function teamContactToWire(c: ArtistTeamContact): WireTeamContact {
   return {
     nome: c.name ?? "",
     categoria: c.category ?? "",

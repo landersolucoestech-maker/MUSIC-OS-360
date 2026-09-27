@@ -137,14 +137,14 @@ export interface ArtistFormSection {
 
 // ─── Options ─────────────────────────────────────────────────────
 
-const GENEROS_MUSICAIS_OPTIONS = MUSICAL_GENRE_LABELS.map((g) => ({ value: g, label: g }));
+const MUSIC_GENRE_OPTIONS = MUSICAL_GENRE_LABELS.map((g) => ({ value: g, label: g }));
 
 const BANCOS_OPTIONS = [
   "Banco do Brasil", "Bradesco", "Caixa Econômica", "Itaú", "Santander",
   "Nubank", "Inter", "C6 Bank", "PicPay", "Mercado Pago", "Outro",
 ].map((b) => ({ value: b, label: b }));
 
-export const TIPO_PERFIL_OPTIONS = [
+export const PROFILE_TYPE_OPTIONS = [
   { value: "independente",   label: "Independente" },
   { value: "com_empresario", label: "Com empresário" },
   { value: "gravadora",      label: "Com gravadora" },
@@ -152,9 +152,9 @@ export const TIPO_PERFIL_OPTIONS = [
 ] as const;
 
 /** Profiles that show the Distributors / Aggregators section. */
-export const PERFIS_COM_DISTRIBUIDORA = ["com_empresario", "gravadora", "editora"];
+export const PROFILES_WITH_DISTRIBUTOR = ["com_empresario", "gravadora", "editora"];
 
-export const DISTRIBUIDORAS_OPTIONS = [
+export const DISTRIBUTOR_OPTIONS = [
   { id: "onerpm",    label: "ONErpm" },
   { id: "distrokid", label: "DistroKid" },
   { id: "30por1",    label: "30 Por 1" },
@@ -191,7 +191,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
       },
       {
         id: "generoMusical", label: "Gênero Musical", type: "select",
-        options: GENEROS_MUSICAIS_OPTIONS, placeholder: "Selecione o gênero", testId: "select-genero",
+        options: MUSIC_GENRE_OPTIONS, placeholder: "Selecione o gênero", testId: "select-genero",
       },
       {
         id: "especialidades", label: "Especialidade / Função", type: "multicheck", fullWidth: true,
@@ -296,7 +296,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
     fields: [
       {
         id: "tipoPerfil", label: "Perfil Comercial", type: "select", fullWidth: true,
-        options: TIPO_PERFIL_OPTIONS, placeholder: "Selecione o perfil", testId: "select-type-perfil",
+        options: PROFILE_TYPE_OPTIONS, placeholder: "Selecione o perfil", testId: "select-type-perfil",
       },
       { id: "contatosVinculados", label: "Equipe / Contatos (CRM)", type: "contatos-crm", fullWidth: true },
     ],
@@ -304,7 +304,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
   {
     id: "distribuidoras",
     title: "Distribuidoras / Agregadoras",
-    visibleWhen: (v) => PERFIS_COM_DISTRIBUIDORA.includes(v.tipoPerfil),
+    visibleWhen: (v) => PROFILES_WITH_DISTRIBUTOR.includes(v.tipoPerfil),
     fields: [
       { id: "distribuidorasGerais", label: "Distribuidoras / Agregadoras", type: "distribuidoras", fullWidth: true },
     ],
@@ -342,15 +342,15 @@ export function emptyArtistFormValues(): ArtistFormValues {
 
 // ─── Validation (Zod schema GENERATED from the definition) ───────
 
-const distribuidoraEntrySchema = z.object({
+const distributorEntrySchema = z.object({
   id: z.string(),
   email: z.string(),
   nomeCustom: z.string().optional(),
 });
 
-const contatoVinculadoSchema = z.object({
+const linkedContactSchema = z.object({
   contactId: z.string(),
-  distributors: z.array(distribuidoraEntrySchema),
+  distributors: z.array(distributorEntrySchema),
 });
 
 function stringFieldSchema(field: ArtistFormField): z.ZodTypeAny {
@@ -379,15 +379,15 @@ export function buildArtistSchema() {
         shape[field.id] = z.array(z.string()).optional();
         break;
       case "contatos-crm":
-        shape[field.id] = z.array(contatoVinculadoSchema).optional();
+        shape[field.id] = z.array(linkedContactSchema).optional();
         break;
       case "distribuidoras":
-        shape[field.id] = z.array(distribuidoraEntrySchema).optional();
+        shape[field.id] = z.array(distributorEntrySchema).optional();
         break;
       case "select":
         if (field.id === "tipoPerfil") {
           shape[field.id] = z
-            .enum(TIPO_PERFIL_OPTIONS.map((o) => o.value) as [string, ...string[]])
+            .enum(PROFILE_TYPE_OPTIONS.map((o) => o.value) as [string, ...string[]])
             .default("independente");
         } else {
           shape[field.id] = stringFieldSchema(field);
@@ -410,7 +410,7 @@ export function artistToFormValues(artist: Artist | null | undefined): ArtistFor
   const f = artistToFormFields(artist ?? null);
 
   const rawLinked = artist?.linkedContacts;
-  const contatosVinculados: ArtistLinkedContactValue[] = Array.isArray(rawLinked)
+  const linkedContacts: ArtistLinkedContactValue[] = Array.isArray(rawLinked)
     ? rawLinked
         .filter((v) => typeof v?.contactId === "string" && v.contactId)
         .map((v) => ({
@@ -420,7 +420,7 @@ export function artistToFormValues(artist: Artist | null | undefined): ArtistFor
     : [];
 
   const rawDists = artist?.generalDistributors;
-  const distribuidorasGerais: DistributorEntry[] = Array.isArray(rawDists) ? rawDists : [];
+  const generalDistributors: DistributorEntry[] = Array.isArray(rawDists) ? rawDists : [];
 
   return {
     ...emptyArtistFormValues(),
@@ -452,8 +452,8 @@ export function artistToFormValues(artist: Artist | null | undefined): ArtistFor
     deezer: f.deezer,
     appleMusic: f.appleMusic,
     tipoPerfil: (f.tipoPerfil || "independente") as ArtistFormValues["tipoPerfil"],
-    distribuidorasGerais,
-    contatosVinculados,
+    distribuidorasGerais: generalDistributors,
+    contatosVinculados: linkedContacts,
     fotoUrl: f.fotoUrl,
     documentosPessoaisUrl: f.documentosPessoaisUrl,
     presskitUrl: f.presskitUrl,

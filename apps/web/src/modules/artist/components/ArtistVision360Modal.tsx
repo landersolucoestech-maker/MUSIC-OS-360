@@ -298,7 +298,7 @@ const formatStatusPtBr = (status?: string | null): string => {
 export function ArtistVision360Modal({
   open,
   onOpenChange,
-  artista,
+  artista: artist,
 }: ArtistVision360ModalProps) {
   // The 360 hub's heavy queries only make sense while the modal is open — see
   // Task F: keeping them always active made Dashboard/Artists download ~11 whole
@@ -312,7 +312,7 @@ export function ArtistVision360Modal({
   // table and filtered on the client with `.filter(x => x.artist_id === id)`
   // (the pattern Task G removes) — switching artists even reused the same wrong
   // cache, since the queryKey did not distinguish the artist.
-  const artistId = artista?.id;
+  const artistId = artist?.id;
   const audienceHealth = useSkillRun<Record<string, unknown>>(`/artists/${artistId}/audience-health`);
   const { works: actualWorks } = useWorks(open, artistId);
   const { phonograms: actualPhonograms } = usePhonograms(open, artistId);
@@ -334,13 +334,13 @@ export function ArtistVision360Modal({
 
   // Resolves the linked contacts (references) with the CRM's current data.
   const linkedContactsResolved = useMemo(() => {
-    const raw = (artista as Record<string, unknown> | null | undefined)?.contatos_vinculados;
+    const raw = (artist as Record<string, unknown> | null | undefined)?.contatos_vinculados;
     if (!Array.isArray(raw)) return [];
     const byId = new Map(contacts.map((c) => [c.id, c]));
     return (raw as Array<{ contactId?: string }>)
       .map((v) => (typeof v?.contactId === "string" ? byId.get(v.contactId) : undefined))
       .filter((c): c is NonNullable<typeof c> => Boolean(c));
-  }, [artista, contacts]);
+  }, [artist, contacts]);
 
   const [activeTab, setActiveTab] = useState("visao-geral");
   const [showMetaForm, setShowMetaForm] = useState(false);
@@ -434,7 +434,7 @@ export function ArtistVision360Modal({
 
   // ── Evolution: derived milestones ──────────────────────────────────────
   const evolutionMilestones: { id: string; label: string; descricao: string; data: string }[] = [];
-  if (artista?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artista.created_at });
+  if (artist?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artist.created_at });
   const firstRelease = (actualReleases as any[])
     .filter((l) => l.created_at || l.data_lancamento)
     .sort((a, b) => new Date(a.created_at ?? a.data_lancamento).getTime() - new Date(b.created_at ?? b.data_lancamento).getTime())[0];
@@ -501,12 +501,12 @@ export function ArtistVision360Modal({
     data: string;
     usuario: string;
   }[] = [];
-  if (artista?.created_at) {
+  if (artist?.created_at) {
     actualHistory.push({
       id: "criacao",
       type: "criacao",
       descricao: "Artista cadastrado no sistema",
-      data: artista.created_at,
+      data: artist.created_at,
       usuario: "Admin",
     });
   }
@@ -559,18 +559,18 @@ export function ArtistVision360Modal({
     suspended: "Artista suspenso",
   };
   if (
-    artista?.status &&
-    artista.status !== "signed" &&
-    artista.updated_at
+    artist?.status &&
+    artist.status !== "signed" &&
+    artist.updated_at
   ) {
     const label =
-      ARTIST_STATUS_HISTORY_LABELS[artista.status] ??
-      `Status alterado para: ${artista.status}`;
+      ARTIST_STATUS_HISTORY_LABELS[artist.status] ??
+      `Status alterado para: ${artist.status}`;
     actualHistory.push({
-      id: `status-${artista.status}`,
+      id: `status-${artist.status}`,
       type: "status",
       descricao: label,
-      data: artista.updated_at,
+      data: artist.updated_at,
       usuario: "Admin",
     });
   }
@@ -597,7 +597,7 @@ export function ArtistVision360Modal({
     status: "em_progresso" as MarketingMeta["status"],
   });
 
-  if (!artista) return null;
+  if (!artist) return null;
 
   const resetForm = () => {
     setMetaForm({
@@ -678,7 +678,7 @@ export function ArtistVision360Modal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] p-0 gap-0 flex flex-col overflow-hidden bg-card">
         <DialogTitle className="sr-only">
-          Visão 360 do artista {artista.nome_artistico}
+          Visão 360 do artista {artist.nome_artistico}
         </DialogTitle>
         <div className="border-b border-border shrink-0 bg-card">
           <div className="p-6 pb-4">
@@ -687,25 +687,25 @@ export function ArtistVision360Modal({
                 <div
                   className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-xl font-bold text-foreground shrink-0"
                 >
-                  {artista.foto_url ? (
+                  {artist.foto_url ? (
                     <img
-                      src={artista.foto_url}
-                      alt={artista.nome_artistico}
+                      src={artist.foto_url}
+                      alt={artist.nome_artistico}
                       className="w-full h-full rounded-full object-cover"
                     />
                   ) : (
-                    artista.nome_artistico?.[0] || "A"
+                    artist.nome_artistico?.[0] || "A"
                   )}
                 </div>
                 <div>
                   <h2 className="text-xl font-bold">
-                    {artista.nome_artistico}
+                    {artist.nome_artistico}
                   </h2>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="neutral">
-                      {artista.music_genre || "Não informado"}
+                      {artist.music_genre || "Não informado"}
                     </Badge>
-                    {artista.status === "onboarding" ? (
+                    {artist.status === "onboarding" ? (
                       <Badge variant="warning">
                         Onboarding
                       </Badge>
@@ -922,7 +922,7 @@ export function ArtistVision360Modal({
               {/* Career positioning (Phase 3.2 Part IV — consolidates Career Stage +
                   Market Benchmark into a single diagnosis; both computed in the
                   backend from already-ingested Soundcharts metrics) */}
-              <PositioningCard artistId={artista.id} />
+              <PositioningCard artistId={artist.id} />
 
               {/* Metrics */}
               <div className="grid grid-cols-5 gap-4">
@@ -1158,7 +1158,7 @@ export function ArtistVision360Modal({
                         Nome Artístico
                       </p>
                       <p className="text-sm font-medium">
-                        {artista.nome_artistico || "Não informado"}
+                        {artist.nome_artistico || "Não informado"}
                       </p>
                     </div>
                     <div>
@@ -1166,15 +1166,15 @@ export function ArtistVision360Modal({
                         Gênero Musical
                       </p>
                       <p className="text-sm font-medium capitalize">
-                        {artista.music_genre || "Não informado"}
+                        {artist.music_genre || "Não informado"}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Função</p>
                       <p className="text-sm font-medium">
                         {(() => {
-                          const specialties = Array.isArray(artista.especialidades)
-                            ? artista.especialidades
+                          const specialties = Array.isArray(artist.especialidades)
+                            ? artist.especialidades
                             : [];
                           if (specialties.length === 0) return "Não informado";
                           return specialties
@@ -1184,11 +1184,11 @@ export function ArtistVision360Modal({
                       </p>
                     </div>
                   </div>
-                  {artista.notes && (
+                  {artist.notes && (
                     <div className="mt-4">
                       <p className="text-xs text-muted-foreground">Biografia</p>
                       <p className="text-sm font-medium">
-                        {artista.notes}
+                        {artist.notes}
                       </p>
                     </div>
                   )}
@@ -1208,8 +1208,8 @@ export function ArtistVision360Modal({
                         Nome Completo
                       </p>
                       <p className="text-sm font-medium">
-                        {artista.nome_civil ||
-                          artista.nome_artistico ||
+                        {artist.nome_civil ||
+                          artist.nome_artistico ||
                           "Não informado"}
                       </p>
                     </div>
@@ -1218,25 +1218,25 @@ export function ArtistVision360Modal({
                         Data de Nascimento
                       </p>
                       <p className="text-sm font-medium">
-                        {formatDateDMY(artista.data_nascimento as string | null)}
+                        {formatDateDMY(artist.data_nascimento as string | null)}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">CPF/CNPJ</p>
                       <p className="text-sm font-medium">
-                        {artista.cpf_cnpj || "Não informado"}
+                        {artist.cpf_cnpj || "Não informado"}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">RG</p>
                       <p className="text-sm font-medium">
-                        {artista.rg || "Não informado"}
+                        {artist.rg || "Não informado"}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Gênero</p>
                       <p className="text-sm font-medium">
-                        {(artista as Record<string, unknown>).genero as string || "Não informado"}
+                        {(artist as Record<string, unknown>).genero as string || "Não informado"}
                       </p>
                     </div>
                   </div>
@@ -1254,13 +1254,13 @@ export function ArtistVision360Modal({
                     <div>
                       <p className="text-xs text-muted-foreground">E-mail</p>
                       <p className="text-sm font-medium">
-                        {artista.email || "Não informado"}
+                        {artist.email || "Não informado"}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Telefone</p>
                       <p className="text-sm font-medium">
-                        {artista.telefone || "Não informado"}
+                        {artist.telefone || "Não informado"}
                       </p>
                     </div>
                   </div>
@@ -1268,7 +1268,7 @@ export function ArtistVision360Modal({
                     <div>
                       <p className="text-xs text-muted-foreground">Endereço</p>
                       <p className="text-sm font-medium">
-                        {artista.endereco || "Não informado"}
+                        {artist.endereco || "Não informado"}
                       </p>
                     </div>
                   </div>
@@ -1286,31 +1286,31 @@ export function ArtistVision360Modal({
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Banco</p>
                       <p className="text-sm font-medium break-words">
-                        {artista.banco?.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) || "Não informado"}
+                        {artist.banco?.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) || "Não informado"}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Agência</p>
                       <p className="text-sm font-medium break-words">
-                        {artista.agencia || "Não informado"}
+                        {artist.agencia || "Não informado"}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Conta</p>
                       <p className="text-sm font-medium break-words">
-                        {artista.conta || "Não informado"}
+                        {artist.conta || "Não informado"}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Titular da Conta</p>
                       <p className="text-sm font-medium break-words">
-                        {artista.titular_conta || artista.nome_civil || "Não informado"}
+                        {artist.titular_conta || artist.nome_civil || "Não informado"}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Chave PIX</p>
                       <p className="text-sm font-medium break-words">
-                        {artista.chave_pix || "Não informado"}
+                        {artist.chave_pix || "Não informado"}
                       </p>
                     </div>
                   </div>
@@ -1319,14 +1319,14 @@ export function ArtistVision360Modal({
 
               {/* Profiles and social networks */}
               <ArtistPlatformMetrics
-                artistId={artista.id}
-                spotifyUrl={artista.spotify_url ?? null}
-                youtubeUrl={artista.youtube_url ?? null}
-                instagramUrl={artista.instagram_url ?? null}
-                tiktokUrl={artista.tiktok_url ?? null}
-                deezerUrl={artista.deezer_url ?? null}
-                appleMusicUrl={artista.apple_music_url ?? null}
-                soundcloudUrl={artista.soundcloud_url ?? null}
+                artistId={artist.id}
+                spotifyUrl={artist.spotify_url ?? null}
+                youtubeUrl={artist.youtube_url ?? null}
+                instagramUrl={artist.instagram_url ?? null}
+                tiktokUrl={artist.tiktok_url ?? null}
+                deezerUrl={artist.deezer_url ?? null}
+                appleMusicUrl={artist.apple_music_url ?? null}
+                soundcloudUrl={artist.soundcloud_url ?? null}
               />
 
               {/* Profile type */}
@@ -1340,25 +1340,25 @@ export function ArtistVision360Modal({
                     <div>
                       <p className="text-xs text-muted-foreground">Tipo</p>
                       <Badge variant="outline" className="capitalize">
-                        {artista.tipo_perfil === "independente"
+                        {artist.tipo_perfil === "independente"
                           ? "Independente"
-                          : artista.tipo_perfil === "com_empresario"
+                          : artist.tipo_perfil === "com_empresario"
                             ? "Com Empresário"
-                            : artista.tipo_perfil === "gravadora"
+                            : artist.tipo_perfil === "gravadora"
                               ? "Gravadora"
-                              : artista.tipo_perfil === "editora"
+                              : artist.tipo_perfil === "editora"
                                 ? "Editora"
                                 : "Não informado"}
                       </Badge>
                     </div>
-                    {artista.tipo_perfil === "com_empresario" && (
+                    {artist.tipo_perfil === "com_empresario" && (
                       <>
                         <div>
                           <p className="text-xs text-muted-foreground">
                             Nome do Empresário
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.empresario_nome || "Não informado"}
+                            {artist.empresario_nome || "Não informado"}
                           </p>
                         </div>
                         <div>
@@ -1366,7 +1366,7 @@ export function ArtistVision360Modal({
                             Telefone do Empresário
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.empresario_telefone || "Não informado"}
+                            {artist.empresario_telefone || "Não informado"}
                           </p>
                         </div>
                         <div>
@@ -1374,19 +1374,19 @@ export function ArtistVision360Modal({
                             E-mail do Empresário
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.empresario_email || "Não informado"}
+                            {artist.empresario_email || "Não informado"}
                           </p>
                         </div>
                       </>
                     )}
-                    {artista.tipo_perfil === "gravadora" && (
+                    {artist.tipo_perfil === "gravadora" && (
                       <>
                         <div>
                           <p className="text-xs text-muted-foreground">
                             Nome da Gravadora
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.gravadora_nome || "Não informado"}
+                            {artist.gravadora_nome || "Não informado"}
                           </p>
                         </div>
                         <div>
@@ -1394,7 +1394,7 @@ export function ArtistVision360Modal({
                             Contato na Gravadora
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.gravadora_responsavel_nome ||
+                            {artist.gravadora_responsavel_nome ||
                               "Não informado"}
                           </p>
                         </div>
@@ -1403,7 +1403,7 @@ export function ArtistVision360Modal({
                             Telefone da Gravadora
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.gravadora_telefone || "Não informado"}
+                            {artist.gravadora_telefone || "Não informado"}
                           </p>
                         </div>
                         <div>
@@ -1411,19 +1411,19 @@ export function ArtistVision360Modal({
                             E-mail da Gravadora
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.gravadora_email || "Não informado"}
+                            {artist.gravadora_email || "Não informado"}
                           </p>
                         </div>
                       </>
                     )}
-                    {artista.tipo_perfil === "editora" && (
+                    {artist.tipo_perfil === "editora" && (
                       <>
                         <div>
                           <p className="text-xs text-muted-foreground">
                             Nome do Responsável
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.gravadora_responsavel_nome ||
+                            {artist.gravadora_responsavel_nome ||
                               "Não informado"}
                           </p>
                         </div>
@@ -1432,7 +1432,7 @@ export function ArtistVision360Modal({
                             Telefone do Responsável
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.gravadora_responsavel_telefone ||
+                            {artist.gravadora_responsavel_telefone ||
                               "Não informado"}
                           </p>
                         </div>
@@ -1441,7 +1441,7 @@ export function ArtistVision360Modal({
                             E-mail do Responsável
                           </p>
                           <p className="text-sm font-medium">
-                            {artista.gravadora_responsavel_email ||
+                            {artist.gravadora_responsavel_email ||
                               "Não informado"}
                           </p>
                         </div>
@@ -1461,11 +1461,11 @@ export function ArtistVision360Modal({
                     </h3>
                   </div>
                   {(() => {
-                    const distributorSelections = artista.distribuidoras_selecionadas ?? {};
+                    const distributorSelections = artist.distribuidoras_selecionadas ?? {};
                     const activeDistributorIds = Object.entries(distributorSelections)
                       .filter(([, v]) => v)
                       .map(([k]) => k);
-                    const emails = artista.distribuidoras_emails ?? {};
+                    const emails = artist.distribuidoras_emails ?? {};
                     return activeDistributorIds.length > 0 ? (
                       <>
                         <div className="flex flex-wrap gap-2">
@@ -1538,8 +1538,8 @@ export function ArtistVision360Modal({
               {/* Distributors / aggregators (new format — form section 5) */}
               {(() => {
                 const generalDistributors: Array<{ id: string; email: string; nomeCustom?: string }> =
-                  Array.isArray((artista as Record<string, unknown>).distribuidoras_gerais)
-                    ? ((artista as Record<string, unknown>).distribuidoras_gerais as Array<{ id: string; email: string; nomeCustom?: string }>)
+                  Array.isArray((artist as Record<string, unknown>).distribuidoras_gerais)
+                    ? ((artist as Record<string, unknown>).distribuidoras_gerais as Array<{ id: string; email: string; nomeCustom?: string }>)
                     : [];
                 if (generalDistributors.length === 0) return null;
                 const DISTRIBUTOR_LABEL: Record<string, string> = {
@@ -1618,8 +1618,8 @@ export function ArtistVision360Modal({
               {/* Team / contacts (legacy — old embedded data / public self-signup) */}
               {(() => {
                 type TeamContactItem = { nome: string; categoria: string; telefone: string; email: string; distribuidoras?: Array<{ id: string; email: string; nomeCustom?: string }> };
-                const team: TeamContactItem[] = Array.isArray((artista as Record<string, unknown>).contatos_equipe)
-                  ? ((artista as Record<string, unknown>).contatos_equipe as TeamContactItem[]).filter((c) => c.nome || c.email || c.telefone)
+                const team: TeamContactItem[] = Array.isArray((artist as Record<string, unknown>).contatos_equipe)
+                  ? ((artist as Record<string, unknown>).contatos_equipe as TeamContactItem[]).filter((c) => c.nome || c.email || c.telefone)
                   : [];
                 if (team.length === 0) return null;
                 const CATEGORY_LABEL: Record<string, string> = {
@@ -1696,14 +1696,14 @@ export function ArtistVision360Modal({
               })()}
 
               {/* Notes */}
-              {artista.notes && (
+              {artist.notes && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-4">
                       <BookOpen className="h-5 w-5 text-muted-foreground" />
                       <h3 className="font-semibold">Observações</h3>
                     </div>
-                    <p className="text-sm">{artista.notes}</p>
+                    <p className="text-sm">{artist.notes}</p>
                   </CardContent>
                 </Card>
               )}
@@ -1712,8 +1712,8 @@ export function ArtistVision360Modal({
               <div className="text-sm text-muted-foreground">
                 <span>Data do Cadastro: </span>
                 <span>
-                  {artista.created_at
-                    ? new Date(artista.created_at).toLocaleDateString("pt-BR")
+                  {artist.created_at
+                    ? new Date(artist.created_at).toLocaleDateString("pt-BR")
                     : new Date().toLocaleDateString("pt-BR")}
                 </span>
               </div>
@@ -1728,10 +1728,10 @@ export function ArtistVision360Modal({
                     <ImageIcon className="h-5 w-5 text-muted-foreground" />
                     <h3 className="font-semibold">Galeria de Fotos</h3>
                   </div>
-                  {Array.isArray(artista.galeria_urls) &&
-                  artista.galeria_urls.length > 0 ? (
+                  {Array.isArray(artist.galeria_urls) &&
+                  artist.galeria_urls.length > 0 ? (
                     <div className="grid grid-cols-3 gap-3">
-                      {(artista.galeria_urls as string[]).map((url, idx) => (
+                      {(artist.galeria_urls as string[]).map((url, idx) => (
                         <div
                           key={idx}
                           className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-border group"
@@ -1787,11 +1787,11 @@ export function ArtistVision360Modal({
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <h3 className="font-semibold">Documentos Vinculados</h3>
                   </div>
-                  {Array.isArray(artista.documents) &&
-                  artista.documents.length > 0 ? (
+                  {Array.isArray(artist.documents) &&
+                  artist.documents.length > 0 ? (
                     <div className="space-y-2">
                       {(
-                        artista.documents as { nome: string; url: string }[]
+                        artist.documents as { nome: string; url: string }[]
                       ).map((doc, idx) => (
                         <div
                           key={idx}
@@ -1840,21 +1840,21 @@ export function ArtistVision360Modal({
               </Card>
 
               {/* Legacy document links */}
-              {(artista.documentos_pessoais_url || artista.presskit_url) && (
+              {(artist.documentos_pessoais_url || artist.presskit_url) && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <h3 className="font-semibold mb-3">Arquivos Rápidos</h3>
                     <div className="space-y-2">
-                      {artista.documentos_pessoais_url && (
-                        <StoredFileLink url={artista.documentos_pessoais_url}
+                      {artist.documentos_pessoais_url && (
+                        <StoredFileLink url={artist.documentos_pessoais_url}
                           className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded text-sm text-primary">
                           <FileText className="h-4 w-4" />
                           Documentos Pessoais
                           <ExternalLink className="h-3 w-3 ml-auto" />
                         </StoredFileLink>
                       )}
-                      {artista.presskit_url && (
-                        <StoredFileLink url={artista.presskit_url}
+                      {artist.presskit_url && (
+                        <StoredFileLink url={artist.presskit_url}
                           className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded text-sm text-primary">
                           <Link2 className="h-4 w-4" />
                           Press Kit
@@ -1909,8 +1909,8 @@ export function ArtistVision360Modal({
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <TrendingUp className="h-5 w-5 mx-auto text-primary mb-2" />
                       <p className="text-2xl font-bold">
-                        {artista.spotify_ouvintes != null
-                          ? Number(artista.spotify_ouvintes).toLocaleString(
+                        {artist.spotify_ouvintes != null
+                          ? Number(artist.spotify_ouvintes).toLocaleString(
                               "pt-BR",
                             )
                           : "—"}
@@ -2426,7 +2426,7 @@ export function ArtistVision360Modal({
                       <div>
                         <h3 className="font-semibold">Metas & OKRs</h3>
                         <p className="text-sm text-muted-foreground">
-                          {artista.nome_artistico}
+                          {artist.nome_artistico}
                         </p>
                       </div>
                     </div>
@@ -2606,7 +2606,7 @@ export function ArtistVision360Modal({
 
             {/* Evolution */}
             <TabsContent value="evolucao" className="p-6 space-y-6 mt-0">
-              <ArtistEvolutionSection artist={artista} />
+              <ArtistEvolutionSection artist={artist} />
 
               {/* ══ AUDIENCE HEALTH (audience-health AI Skill over the already-computed Career Stage + Market Benchmark) ══ */}
               <section className="space-y-3" data-testid="artist-vision-audience-health">

@@ -10,7 +10,7 @@ import { storage } from "@/shared/lib/storage";
 import type { Artist, ArtistInsert, ArtistUpdate } from "../types/artist.types";
 import { wireToArtist, artistToWirePayload, type ArtistWireRecord } from "./artist.mapper";
 
-export const artistaService = {
+export const artistService = {
   async list(): Promise<Artist[]> {
     return (await storage.list<ArtistWireRecord>("artistas")).map(wireToArtist);
   },

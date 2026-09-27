@@ -4,7 +4,7 @@ import { useForm, Controller, type Control, type FieldErrors, type UseFormRegist
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ARTIST_FORM_SECTIONS,
-  DISTRIBUIDORAS_OPTIONS,
+  DISTRIBUTOR_OPTIONS,
   artistSchema,
   artistToFormValues,
   artistToPreservedInput,
@@ -81,7 +81,7 @@ function DistributorsField({
   return (
     <>
       <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-        {DISTRIBUIDORAS_OPTIONS.map((dist) => {
+        {DISTRIBUTOR_OPTIONS.map((dist) => {
           const entry = value.find((d) => d.id === dist.id);
           const isChecked = !!entry;
           return (
@@ -355,7 +355,7 @@ interface ArtistFormModalProps {
 export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: ArtistFormModalProps) {
   const isEditing = !!artist;
   const { addArtist, updateArtist } = useArtists();
-  const { addClient: addCliente } = useClients();
+  const { addClient } = useClients();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Task: spurious CAS 409 — the modal received `artist` as a frozen snapshot of
@@ -402,13 +402,13 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
   });
   const { register, control, watch, reset, handleSubmit: rhfSubmit } = form;
 
-  const tipoPerfilVal = watch("tipoPerfil");
+  const profileTypeValue = watch("tipoPerfil");
 
   // ── Hydrates the form from ONE version (single source) ─────────
   // The SAME canonical hydration used by the export (single definition).
   const hydrateForm = (source: Artist | null) => {
     const v = artistToFormValues(source);
-    const { fotoUrl, documentosPessoaisUrl, presskitUrl, ...formValues } = v;
+    const { fotoUrl, documentosPessoaisUrl: personalDocumentsUrl, presskitUrl, ...formValues } = v;
     reset(formValues);
 
     setPreserved(artistToPreservedInput(source));
@@ -418,8 +418,8 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
       fotoUrl: fotoUrl
         ? [{ url: fotoUrl, name: "foto", size: 0, type: "image/*", path: "" }]
         : [],
-      documentosPessoaisUrl: documentosPessoaisUrl
-        ? [{ name: "documento.pdf", size: 0, type: "application/pdf", path: documentosPessoaisUrl, url: documentosPessoaisUrl }]
+      documentosPessoaisUrl: personalDocumentsUrl
+        ? [{ name: "documento.pdf", size: 0, type: "application/pdf", path: personalDocumentsUrl, url: personalDocumentsUrl }]
         : [],
       presskitUrl: presskitUrl
         ? [{ name: "presskit.pdf", size: 0, type: "application/pdf", path: presskitUrl, url: presskitUrl }]
@@ -501,7 +501,7 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
           throw err;
         }
       } else {
-        await addCliente.mutateAsync({
+        await addClient.mutateAsync({
           tipo_pessoa: "pessoa_fisica" as const,
           nome:        values.nomeArtistico.trim(),
           cpf_cnpj:    values.cpfCnpj.trim() || null,

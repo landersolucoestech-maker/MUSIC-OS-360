@@ -26,10 +26,10 @@ export interface UseArtistsPaginatedParams {
  */
 export type ArtistWithRelationship = Artist & { vinculo?: ArtistRelationshipType };
 
-export function useArtistsPaginated({ page, pageSize, search, vinculo, genero }: UseArtistsPaginatedParams) {
+export function useArtistsPaginated({ page, pageSize, search, vinculo, genero: genre }: UseArtistsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (vinculo) filters.vinculo = vinculo;
-  if (genero) filters.genre = genero;
+  if (genre) filters.genre = genre;
 
   const result = usePaginatedDataQuery<ArtistWireRecord>({
     queryKey: [...QUERY_KEYS.ARTISTS],
