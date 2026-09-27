@@ -20,7 +20,7 @@ describe('RELEASES_WORKFLOW — distribution', () => {
   it('rejects DRAFT -> DISTRIBUTED (transition_not_defined)', async () => {
     await expect(
       engine.transition({ ...base, fromStatus: ReleaseStatus.DRAFT, toStatus: ReleaseStatus.DISTRIBUTED } as never),
-    ).rejects.toThrow(/Transição inválida/);
+    ).rejects.toThrow(/Invalid transition/);
   });
 
   it('allows SCHEDULED -> DISTRIBUTED for admin', async () => {
@@ -40,7 +40,7 @@ describe('RELEASES_WORKFLOW — lossy round-trips that the old form used to gene
   ];
   for (const [from, to] of lossy) {
     it(`${from} -> ${to} does not exist (editing metadata cannot resubmit status)`, async () => {
-      await expect(engine.transition({ ...base, fromStatus: from, toStatus: to } as never)).rejects.toThrow(/Transição inválida/);
+      await expect(engine.transition({ ...base, fromStatus: from, toStatus: to } as never)).rejects.toThrow(/Invalid transition/);
     });
   }
 });

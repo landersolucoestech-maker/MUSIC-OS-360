@@ -9,7 +9,7 @@
  *                               EntityManager/transaction (atomic with entity update)
  */
 
-import { Injectable, Inject, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException, Logger } from '@nestjs/common';
 import { DataSource, Repository, EntityManager, FindOptionsWhere, FindOptionsOrder } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { WorkflowTransitionEntity } from '../../database/entities';
@@ -41,6 +41,7 @@ export interface TransitionResult {
 
 @Injectable()
 export class WorkflowService {
+  private readonly logger = new Logger(WorkflowService.name);
   private readonly engines = new Map<string, WorkflowEngine<string>>();
   private readonly historyRepo: Repository<WorkflowTransitionEntity> | null = null;
 
@@ -136,7 +137,12 @@ export class WorkflowService {
       await engine.transition(context);
     } catch (err) {
       if (err instanceof WorkflowTransitionError) {
-        throw new BadRequestException(err.message);
+        this.logger.warn(`${err.message} (${req.entityType} ${req.entityId}, tenant ${req.tenantId}, code=${err.code})`);
+        throw new BadRequestException({
+          statusCode: 400,
+          error: `WORKFLOW_${err.code.toUpperCase()}`,
+          message: err.userMessage,
+        });
       }
       throw err;
     }

@@ -20,6 +20,7 @@ export type WorkflowGuard<TState extends string = string> = (
 
 export interface WorkflowGuardResult {
   allowed: boolean;
+  /** PT-BR end-user copy explaining the rejection (returned as the HTTP message). */
   reason?: string;
 }
 
@@ -53,14 +54,38 @@ export interface AllowedTransition<TState extends string = string> {
   label?: string;
 }
 
+/** Why the engine rejected a transition (machine code). */
+export type WorkflowTransitionErrorCode =
+  | 'transition_not_defined'
+  | 'actor_role_missing'
+  | 'role_not_authorized'
+  | 'guard_rejected';
+
+/** PT-BR end-user copy per rejection code (guard rejections use the guard's own copy). */
+export const WORKFLOW_TRANSITION_USER_MESSAGES: Readonly<Record<WorkflowTransitionErrorCode, string>> = {
+  transition_not_defined: 'Esta mudança de status não é permitida.',
+  actor_role_missing: 'Você precisa estar autenticado para realizar esta ação.',
+  role_not_authorized: 'Seu perfil não tem permissão para realizar esta mudança de status.',
+  guard_rejected: 'A mudança de status não atende às condições necessárias.',
+};
+
+/**
+ * Rejected workflow transition. `message` is an English technical diagnostic
+ * (it names states, roles and the workflow — never shown to end users);
+ * `userMessage` is the PT-BR copy the HTTP layer returns.
+ */
 export class WorkflowTransitionError extends Error {
+  readonly userMessage: string;
+
   constructor(
     message: string,
     public readonly fromStatus: string,
     public readonly toStatus: string,
-    public readonly reason?: string,
+    public readonly code: WorkflowTransitionErrorCode,
+    userMessage?: string,
   ) {
     super(message);
     this.name = 'WorkflowTransitionError';
+    this.userMessage = userMessage ?? WORKFLOW_TRANSITION_USER_MESSAGES[code];
   }
 }

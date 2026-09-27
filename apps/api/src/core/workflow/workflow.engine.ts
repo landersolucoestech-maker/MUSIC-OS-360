@@ -64,7 +64,7 @@ export class WorkflowEngine<TState extends string = string> {
 
     if (!matched) {
       throw new WorkflowTransitionError(
-        `Transição inválida: '${fromStatus}' → '${toStatus}' não é permitida no workflow '${this.definition.name}'`,
+        `Invalid transition: '${fromStatus}' → '${toStatus}' is not allowed in workflow '${this.definition.name}'`,
         fromStatus,
         toStatus,
         'transition_not_defined',
@@ -75,7 +75,7 @@ export class WorkflowEngine<TState extends string = string> {
     if (matched.roles) {
       if (!actorRole) {
         throw new WorkflowTransitionError(
-          `Acesso negado: autenticação obrigatória para a transição '${fromStatus}' → '${toStatus}'`,
+          `Access denied: authentication required for transition '${fromStatus}' → '${toStatus}'`,
           fromStatus,
           toStatus,
           'actor_role_missing',
@@ -83,7 +83,7 @@ export class WorkflowEngine<TState extends string = string> {
       }
       if (!matched.roles.includes(actorRole)) {
         throw new WorkflowTransitionError(
-          `Permissão insuficiente: role '${actorRole}' não pode executar '${fromStatus}' → '${toStatus}'`,
+          `Insufficient permission: role '${actorRole}' cannot perform '${fromStatus}' → '${toStatus}'`,
           fromStatus,
           toStatus,
           'role_not_authorized',
@@ -95,10 +95,11 @@ export class WorkflowEngine<TState extends string = string> {
       const result = await matched.guard(context);
       if (!result.allowed) {
         throw new WorkflowTransitionError(
-          `Guard bloqueou transição: ${result.reason ?? 'condição de negócio não satisfeita'}`,
+          `Guard rejected transition '${fromStatus}' → '${toStatus}' in workflow '${this.definition.name}'`,
           fromStatus,
           toStatus,
-          result.reason ?? 'guard_failed',
+          'guard_rejected',
+          result.reason,
         );
       }
     }
