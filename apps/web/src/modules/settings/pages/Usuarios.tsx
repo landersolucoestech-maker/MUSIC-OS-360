@@ -8,20 +8,20 @@ import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { Users, Search, Loader2, Eye, Pencil } from "lucide-react";
-import { UsuarioEditorModal } from "@/modules/settings/components/UsuarioEditorModal";
-import { UsuarioViewModal } from "@/modules/settings/components/UsuarioViewModal";
+import { UserEditorModal } from "@/modules/settings/components/UsuarioEditorModal";
+import { UserViewModal } from "@/modules/settings/components/UsuarioViewModal";
 import { EmptyState } from "@/shared/components/EmptyState";
-import { useUsuarios, type Usuario } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers, type UserAccount } from "@/modules/settings/hooks/useUsuarios";
 import { useRoles } from "@/modules/settings/hooks/useRoles";
 import { formatPersonName } from "@/shared/lib/format-name";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export default function Usuarios() {
-  const { usuarios, isLoading } = useUsuarios();
+export default function UsersPage() {
+  const { users, isLoading } = useUsers();
   const { roles } = useRoles();
-  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; usuario?: Usuario }>({ open: false, mode: "create" });
-  const [viewModal, setViewModal] = useState<{ open: boolean; usuario?: Usuario }>({ open: false });
+  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; usuario?: UserAccount }>({ open: false, mode: "create" });
+  const [viewModal, setViewModal] = useState<{ open: boolean; usuario?: UserAccount }>({ open: false });
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all-roles");
   const [statusFilter, setStatusFilter] = useState("all-status");
@@ -31,14 +31,14 @@ export default function Usuarios() {
     [roles],
   );
 
-  const filteredUsuarios = usuarios.filter((usuario) => {
+  const filteredUsers = users.filter((member) => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
     const matchesSearch =
       !normalizedSearch ||
-      (usuario.full_name?.toLowerCase().includes(normalizedSearch) ?? false) ||
-      usuario.email.toLowerCase().includes(normalizedSearch);
-    const matchesRole = roleFilter === "all-roles" || usuario.role === roleFilter;
-    const matchesStatus = statusFilter === "all-status" || usuario.status === statusFilter;
+      (member.full_name?.toLowerCase().includes(normalizedSearch) ?? false) ||
+      member.email.toLowerCase().includes(normalizedSearch);
+    const matchesRole = roleFilter === "all-roles" || member.role === roleFilter;
+    const matchesStatus = statusFilter === "all-status" || member.status === statusFilter;
     return matchesSearch && matchesRole && matchesStatus;
   });
 
@@ -125,7 +125,7 @@ export default function Usuarios() {
           )}
         </div>
 
-        {filteredUsuarios.length === 0 ? (
+        {filteredUsers.length === 0 ? (
           <EmptyState
             icon={Users}
             title="Nenhum usuário encontrado"
@@ -134,7 +134,7 @@ export default function Usuarios() {
         ) : (
           <Card className="bg-card border-border">
             <CardContent className="pt-0">
-              <ListSectionHeader title="Usuários" count={filteredUsuarios.length} description="Usuários cadastrados no workspace atual" />
+              <ListSectionHeader title="Usuários" count={filteredUsers.length} description="Usuários cadastrados no workspace atual" />
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -147,25 +147,25 @@ export default function Usuarios() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredUsuarios.map((usuario) => (
-                    <TableRow key={usuario.id} data-testid={`row-usuario-${usuario.id}`}>
+                  {filteredUsers.map((member) => (
+                    <TableRow key={member.id} data-testid={`row-usuario-${member.id}`}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-semibold text-xs shrink-0">
-                            {initials(usuario.full_name)}
+                            {initials(member.full_name)}
                           </div>
                           <div>
-                            <p className="font-medium text-sm">{formatPersonName(usuario.full_name, "Usuário")}</p>
-                            <p className="text-xs text-muted-foreground">{usuario.email}</p>
+                            <p className="font-medium text-sm">{formatPersonName(member.full_name, "Usuário")}</p>
+                            <p className="text-xs text-muted-foreground">{member.email}</p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell><Badge variant="outline" className="text-xs">{roleNames.get(usuario.role) ?? usuario.role}</Badge></TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{usuario.phone || "—"}</TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{formatDate(usuario.created_at)}</TableCell>
+                      <TableCell><Badge variant="outline" className="text-xs">{roleNames.get(member.role) ?? member.role}</Badge></TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{member.phone || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{formatDate(member.created_at)}</TableCell>
                       <TableCell>
-                        <Badge className={`text-xs ${usuario.status === "ativo" ? "bg-success" : "bg-gray-500"} text-foreground`}>
-                          {usuario.status === "ativo" ? "Ativo" : "Inativo"}
+                        <Badge className={`text-xs ${member.status === "ativo" ? "bg-success" : "bg-gray-500"} text-foreground`}>
+                          {member.status === "ativo" ? "Ativo" : "Inativo"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
@@ -174,16 +174,16 @@ export default function Usuarios() {
                             variant="ghost"
                             size="sm"
                             className="h-7 w-7 p-0"
-                            data-testid={`button-ver-usuario-${usuario.id}`}
+                            data-testid={`button-ver-usuario-${member.id}`}
                             onClick={() => setViewModal({
                               open: true,
                               usuario: {
-                                ...usuario,
-                                nome: usuario.full_name,
-                                iniciais: initials(usuario.full_name),
-                                telefone: usuario.phone,
-                                criadoEm: formatDate(usuario.created_at),
-                              } as Usuario,
+                                ...member,
+                                nome: member.full_name,
+                                iniciais: initials(member.full_name),
+                                telefone: member.phone,
+                                criadoEm: formatDate(member.created_at),
+                              } as UserAccount,
                             })}
                           >
                             <Eye className="h-4 w-4" />
@@ -192,8 +192,8 @@ export default function Usuarios() {
                             variant="ghost"
                             size="sm"
                             className="h-7 w-7 p-0"
-                            data-testid={`button-editar-usuario-${usuario.id}`}
-                            onClick={() => setFormModal({ open: true, mode: "edit", usuario })}
+                            data-testid={`button-editar-usuario-${member.id}`}
+                            onClick={() => setFormModal({ open: true, mode: "edit", usuario: member })}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -208,12 +208,12 @@ export default function Usuarios() {
         )}
       </div>
 
-      <UsuarioViewModal
+      <UserViewModal
         open={viewModal.open}
         onOpenChange={(open) => setViewModal((current) => ({ ...current, open }))}
         usuario={viewModal.usuario}
       />
-      <UsuarioEditorModal
+      <UserEditorModal
         open={formModal.open}
         onOpenChange={(open) => setFormModal((current) => ({ ...current, open }))}
         usuario={formModal.usuario}

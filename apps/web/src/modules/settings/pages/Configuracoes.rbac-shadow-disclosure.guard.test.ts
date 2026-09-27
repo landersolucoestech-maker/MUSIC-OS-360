@@ -14,7 +14,7 @@ import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const CONFIGURACOES = fs.readFileSync(path.resolve(__dirname, "Configuracoes.tsx"), "utf8");
+const SETTINGS = fs.readFileSync(path.resolve(__dirname, "Configuracoes.tsx"), "utf8");
 const USE_ROLES = fs.readFileSync(
   path.resolve(__dirname, "../hooks/useRoles.ts"),
   "utf8",
@@ -27,15 +27,15 @@ describe("Configuracoes — RBAC shadow-mode disclosure (CODEBASE_MAP #17)", () 
   });
 
   it("the Papéis e Permissões card renders a not-enforced banner sourced from authorityMode", () => {
-    expect(CONFIGURACOES).toMatch(/authorityMode\s*&&\s*!authorityMode\.enforced/);
-    expect(CONFIGURACOES).toMatch(/data-testid="alert-rbac-not-enforced"/);
+    expect(SETTINGS).toMatch(/authorityMode\s*&&\s*!authorityMode\.enforced/);
+    expect(SETTINGS).toMatch(/data-testid="alert-rbac-not-enforced"/);
   });
 
   it("never claims enforcement is on merely because the editor UI is functional", () => {
     // The banner must gate on the real backend flag, not on roles.length or isLoading alone.
-    const bannerBlock = CONFIGURACOES.slice(
-      CONFIGURACOES.indexOf('data-testid="alert-rbac-not-enforced"') - 200,
-      CONFIGURACOES.indexOf('data-testid="alert-rbac-not-enforced"'),
+    const bannerBlock = SETTINGS.slice(
+      SETTINGS.indexOf('data-testid="alert-rbac-not-enforced"') - 200,
+      SETTINGS.indexOf('data-testid="alert-rbac-not-enforced"'),
     );
     expect(bannerBlock).toMatch(/authorityMode/);
   });

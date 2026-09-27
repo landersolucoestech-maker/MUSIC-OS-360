@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsuarios";
 
 export type AgendaParticipantSource = "artist" | "employee" | "user" | "contact";
 
@@ -75,7 +75,7 @@ export function useAgendaParticipants(search: string = "", pendingArtistId?: str
   const { items: artistItems } = useEntityLookup<ArtistaLookup>({ table: "artistas", search, pageSize: 20 });
   const { items: employeeItems } = useEntityLookup<FuncionarioLookup>({ table: "funcionarios", search, pageSize: 20 });
   const { entity: pendingArtist } = useEntityById<ArtistaLookup>("artistas", pendingArtistId);
-  const { usuarios = [] } = useUsuarios();
+  const { users: usuarios = [] } = useUsers();
   const { contacts = [] } = useContacts();
 
   const participants = useMemo<AgendaParticipant[]>(() => {

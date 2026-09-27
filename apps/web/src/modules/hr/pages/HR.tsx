@@ -80,7 +80,7 @@ import {
   useEmployeesPaginated, useEmployeesStats,
   usePayrollPaginated, useLeaveRequestsPaginated,
 } from "@/modules/hr/hooks/useHRPaginated";
-import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsuarios";
 import {
   useEmployeeDocuments,
   DOCUMENT_TYPES,
@@ -128,7 +128,7 @@ export default function HR() {
 
   const { deletePayrollEntry } = usePayroll();
 
-  const { usuarios: users = [] } = useUsuarios();
+  const { users: users = [] } = useUsers();
   const getUserName = (userId: string | null) => {
     if (!userId) return null;
     const u = users.find((u) => u.id === userId);

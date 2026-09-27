@@ -8,14 +8,14 @@ import { Badge } from "@/shared/ui/badge";
 import { User, Mail, Phone, Building2, Calendar, Shield } from "lucide-react";
 import { formatPersonName } from "@/shared/lib/format-name";
 
-interface UsuarioViewModalProps {
+interface UserViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   usuario?: any;
 }
 
-export function UsuarioViewModal({ open, onOpenChange, usuario }: UsuarioViewModalProps) {
-  if (!usuario) return null;
+export function UserViewModal({ open, onOpenChange, usuario: member }: UserViewModalProps) {
+  if (!member) return null;
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -43,62 +43,62 @@ export function UsuarioViewModal({ open, onOpenChange, usuario }: UsuarioViewMod
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shrink-0">
               <span className="text-primary-foreground text-xl font-semibold">
-                {usuario.iniciais || usuario.nome?.charAt(0) || "U"}
+                {member.iniciais || member.nome?.charAt(0) || "U"}
               </span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-foreground">{formatPersonName(usuario.nome, usuario.nome)}</h2>
-              <p className="text-muted-foreground">{usuario.cargo}</p>
+              <h2 className="text-xl font-bold text-foreground">{formatPersonName(member.nome, member.nome)}</h2>
+              <p className="text-muted-foreground">{member.cargo}</p>
             </div>
           </div>
 
           {/* Badges */}
           <div className="flex gap-2">
             <Badge variant="neutral">
-              {usuario.cargo || "Usuário"}
+              {member.cargo || "Usuário"}
             </Badge>
-            {getStatusBadge(usuario.status)}
+            {getStatusBadge(member.status)}
           </div>
 
           {/* Information grid */}
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Status</p>
-              <p className="font-medium text-foreground">{usuario.status || "-"}</p>
+              <p className="font-medium text-foreground">{member.status || "-"}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Setor</p>
               <div className="flex items-center gap-1.5">
                 <Building2 className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{usuario.setor || "-"}</span>
+                <span className="font-medium text-foreground">{member.setor || "-"}</span>
               </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Cargo</p>
               <div className="flex items-center gap-1.5">
                 <Shield className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{usuario.cargo || "-"}</span>
+                <span className="font-medium text-foreground">{member.cargo || "-"}</span>
               </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">E-mail</p>
               <div className="flex items-center gap-1.5">
                 <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{usuario.email || "-"}</span>
+                <span className="font-medium text-foreground">{member.email || "-"}</span>
               </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Telefone</p>
               <div className="flex items-center gap-1.5">
                 <Phone className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{usuario.telefone || "-"}</span>
+                <span className="font-medium text-foreground">{member.telefone || "-"}</span>
               </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Criado em</p>
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{usuario.criadoEm || "-"}</span>
+                <span className="font-medium text-foreground">{member.criadoEm || "-"}</span>
               </div>
             </div>
           </div>

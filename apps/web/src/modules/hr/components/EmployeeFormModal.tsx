@@ -28,7 +28,7 @@ import {
   EMPLOYEE_STATUS,
 } from "@/modules/hr/hooks/useEmployees";
 import type { Employee } from "@/modules/hr/hooks/useEmployees";
-import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsuarios";
 import { maskCPF, maskPhone } from "@/shared/lib/masks";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";
@@ -48,7 +48,7 @@ export function EmployeeFormModal({
   mode,
 }: EmployeeFormModalProps) {
   const { addEmployee, updateEmployee } = useEmployees();
-  const { usuarios: users, isLoading: loadingUsers } = useUsuarios();
+  const { users, isLoading: loadingUsers } = useUsers();
   const isViewMode = mode === "view";
 
   const [activeTab, setActiveTab] = useState("pessoal");

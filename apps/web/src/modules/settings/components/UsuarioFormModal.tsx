@@ -9,10 +9,10 @@ import { toast } from "sonner";
 import { User, UserCheck, Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usuarioSchema, type UsuarioFormData } from "@/modules/settings/lib/usuario-schema";
+import { userSchema, type UserFormData } from "@/modules/settings/lib/usuario-schema";
 import { FormField, FieldError } from "@/shared/components/FormField";
-import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
-interface UsuarioFormModalProps {
+import { useUsers } from "@/modules/settings/hooks/useUsuarios";
+interface UserFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   usuario?: any;
@@ -30,8 +30,8 @@ const NIVEIS_ACESSO = [
   { value: "leitor", label: "Leitor (somente leitura)", description: "Visualização sem permissão de edição ou criação." },
 ];
 
-export function UsuarioFormModal({ open, onOpenChange, usuario, mode }: UsuarioFormModalProps) {
-  const { updateUsuario } = useUsuarios();
+export function UserFormModal({ open, onOpenChange, usuario: member, mode }: UserFormModalProps) {
+  const { updateUser } = useUsers();
 
   const isViewMode = mode === "view";
   const title = mode === "create" ? "Novo Usuário" : mode === "edit" ? "Editar Usuário" : "Detalhes do Usuário";
@@ -43,8 +43,8 @@ export function UsuarioFormModal({ open, onOpenChange, usuario, mode }: UsuarioF
     watch,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<UsuarioFormData>({
-    resolver: zodResolver(usuarioSchema),
+  } = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
     mode: "onChange",
     defaultValues: {
       nome: "",
@@ -59,13 +59,13 @@ export function UsuarioFormModal({ open, onOpenChange, usuario, mode }: UsuarioF
 
   useEffect(() => {
     if (open) {
-      if (usuario && (mode === "edit" || mode === "view")) {
+      if (member && (mode === "edit" || mode === "view")) {
         reset({
-          nome: usuario.name || "",
-          email: usuario.email || "",
-          telefone: usuario.telefone || "",
-          status: usuario.status || "ativo",
-          nivel_acesso: usuario.role || "",
+          nome: member.name || "",
+          email: member.email || "",
+          telefone: member.telefone || "",
+          status: member.status || "ativo",
+          nivel_acesso: member.role || "",
         });
       } else {
         reset({
@@ -77,15 +77,15 @@ export function UsuarioFormModal({ open, onOpenChange, usuario, mode }: UsuarioF
         });
       }
     }
-  }, [usuario, mode, open, reset]);
+  }, [member, mode, open, reset]);
 
-  const onSubmit = async (data: UsuarioFormData) => {
+  const onSubmit = async (data: UserFormData) => {
     if (isViewMode) return;
 
     try {
-      if (mode === "edit" && usuario?.id) {
-        await updateUsuario.mutateAsync({
-          id: usuario.id,
+      if (mode === "edit" && member?.id) {
+        await updateUser.mutateAsync({
+          id: member.id,
           full_name: data.nome,
           phone: data.telefone ?? undefined,
           cargo: data.nivel_acesso || undefined,

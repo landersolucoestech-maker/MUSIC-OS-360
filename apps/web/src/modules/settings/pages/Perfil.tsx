@@ -15,11 +15,11 @@ import { useUserSettings } from "@/modules/settings/hooks/useUserSettings";
 import { useAuth } from "@/app/providers/AuthContext";
 import { cn } from "@/shared/lib/utils";
 
-const SETOR_OPTIONS = [
+const DEPARTMENT_OPTIONS = [
   "Administrativo", "A&R", "Comercial", "Financeiro", "Jurídico",
   "Marketing", "Produção Musical", "Tecnologia", "Recursos Humanos", "Outro",
 ];
-const CARGO_OPTIONS = [
+const POSITION_OPTIONS = [
   "Diretor(a)", "Gerente", "Coordenador(a)", "Analista",
   "Assistente", "Produtor(a)", "Estagiário(a)", "Outro",
 ];
@@ -341,7 +341,7 @@ export default function Perfil() {
                       <SelectValue placeholder="Selecione o setor" />
                     </SelectTrigger>
                     <SelectContent>
-                      {SETOR_OPTIONS.map((s) => (
+                      {DEPARTMENT_OPTIONS.map((s) => (
                         <SelectItem key={s} value={s}>{s}</SelectItem>
                       ))}
                     </SelectContent>
@@ -361,7 +361,7 @@ export default function Perfil() {
                       <SelectValue placeholder="Selecione o cargo" />
                     </SelectTrigger>
                     <SelectContent>
-                      {CARGO_OPTIONS.map((c) => (
+                      {POSITION_OPTIONS.map((c) => (
                         <SelectItem key={c} value={c}>{c}</SelectItem>
                       ))}
                     </SelectContent>

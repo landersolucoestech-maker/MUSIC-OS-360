@@ -20,7 +20,7 @@ describe("useUsuarios — profile and RBAC contracts", () => {
   });
 
   it("sends role or the cargo alias through the dedicated RBAC endpoint", () => {
-    expect(SOURCE).toMatch(/const effectiveRole = role \?\? cargo/);
+    expect(SOURCE).toMatch(/const effectiveRole = role \?\? position/);
     expect(SOURCE).toMatch(
       /api\.patch\(`\/users\/\$\{id\}\/role`,\s*\{\s*role:\s*effectiveRole\s*\}\)/,
     );

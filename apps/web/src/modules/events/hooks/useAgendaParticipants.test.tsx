@@ -13,7 +13,7 @@ vi.mock("@/shared/lib/storage", async () => {
 // Task J: useAgendaParticipants must no longer depend on useArtistas()/
 // useFuncionarios() (capped at 50/tenant) — usuarios/contacts are outside the
 // scope of this migration, mocked empty to isolate the test.
-vi.mock("@/modules/settings/hooks/useUsuarios", () => ({ useUsuarios: () => ({ usuarios: [] }) }));
+vi.mock("@/modules/settings/hooks/useUsuarios", () => ({ useUsers: () => ({ users: [] }) }));
 vi.mock("@/modules/crm-relationships/hooks/useContacts", () => ({ useContacts: () => ({ contacts: [] }) }));
 
 const mockedListPaged = vi.mocked(storage.listPaged);

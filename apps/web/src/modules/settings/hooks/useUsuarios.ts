@@ -5,7 +5,7 @@ import { api } from "@/shared/lib/api-client";
 import { useAuth } from "@/app/providers/AuthContext";
 
 import { toUserMessage } from "@/shared/lib/errors";
-export interface Usuario {
+export interface UserAccount {
   id: string;
   email: string;
   full_name: string | null;
@@ -23,7 +23,7 @@ export interface Usuario {
 // (e.g. useAgendaParticipants, which combines this list with 3 others — the
 // "Maximum update depth exceeded" loop reproduced in SchedulerFormModal came
 // from here).
-const EMPTY_USUARIOS: Usuario[] = [];
+const EMPTY_USERS: UserAccount[] = [];
 
 interface ApiUser {
   id: string;
@@ -49,7 +49,7 @@ interface UsersPage {
   };
 }
 
-export interface UpdateUsuarioInput {
+export interface UpdateUserInput {
   id: string;
   full_name?: string;
   phone?: string;
@@ -59,7 +59,7 @@ export interface UpdateUsuarioInput {
   cargo?: string;
 }
 
-function mapUser(user: ApiUser): Usuario {
+function mapUser(user: ApiUser): UserAccount {
   return {
     id: user.id,
     email: user.email,
@@ -73,11 +73,11 @@ function mapUser(user: ApiUser): Usuario {
   };
 }
 
-export function useUsuarios() {
+export function useUsers() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: usuarios = EMPTY_USUARIOS, isLoading, error } = useQuery<Usuario[]>({
+  const { data: users = EMPTY_USERS, isLoading, error } = useQuery<UserAccount[]>({
     queryKey: [...QUERY_KEYS.USERS],
     queryFn: async () => {
       const page = await api.get<UsersPage>("/users?limit=100&offset=0");
@@ -85,8 +85,8 @@ export function useUsuarios() {
     },
   });
 
-  const updateUsuario = useMutation({
-    mutationFn: async ({ id, full_name, phone, status, role, cargo }: UpdateUsuarioInput) => {
+  const updateUser = useMutation({
+    mutationFn: async ({ id, full_name, phone, status, role, cargo: position }: UpdateUserInput) => {
       const profilePayload = {
         ...(full_name !== undefined && { fullName: full_name }),
         ...(phone !== undefined && { phone }),
@@ -103,7 +103,7 @@ export function useUsuarios() {
         await api.patch(`/users/${id}/status`, { status: status === "ativo" ? "active" : "inactive" });
       }
 
-      const effectiveRole = role ?? cargo;
+      const effectiveRole = role ?? position;
       // A role change has its own endpoint, authorization and auditing.
       // Sending `role` through the generic PATCH bypassed the RBAC hierarchy and
       // did not guarantee a role_id update.
@@ -125,10 +125,10 @@ export function useUsuarios() {
   });
 
   return {
-    usuarios,
+    users,
     isLoading,
     error,
-    updateUsuario,
+    updateUser,
     currentUserId: user?.id ?? "",
   };
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const usuarioSchema = z.object({
+export const userSchema = z.object({
   nome: z.string()
     .min(2, "Nome deve ter no mínimo 2 caracteres")
     .max(150, "Nome deve ter no máximo 150 caracteres")
@@ -27,4 +27,4 @@ export const usuarioSchema = z.object({
     .or(z.literal("")),
 });
 
-export type UsuarioFormData = z.infer<typeof usuarioSchema>;
+export type UserFormData = z.infer<typeof userSchema>;

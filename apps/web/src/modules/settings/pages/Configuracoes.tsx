@@ -23,10 +23,10 @@ import { AiSkillRunPanel } from "@/shared/components/ai/AiSkillRunPanel";
 import type { OnboardingCroOutput } from "@music-os-360/ai-skills";
 import { useUserSettings } from "@/modules/settings/hooks/useUserSettings";
 import { useCompanySettings } from "@/modules/settings/hooks/useCompanySettings";
-import { useUsuarios, Usuario } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers, UserAccount } from "@/modules/settings/hooks/useUsuarios";
 import { useRoles, Role, RoleDetail } from "@/modules/settings/hooks/useRoles";
-import { UsuarioFormModal } from "@/modules/settings/components/UsuarioFormModal";
-import { UsuarioViewModal } from "@/modules/settings/components/UsuarioViewModal";
+import { UserFormModal } from "@/modules/settings/components/UsuarioFormModal";
+import { UserViewModal } from "@/modules/settings/components/UsuarioViewModal";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -146,7 +146,7 @@ function formatRoleName(name: string): string {
   return name.replace(/_/g, " ");
 }
 
-export default function Configuracoes() {
+export default function SettingsPage() {
   const { tenant, setTenant } = useTenant();
 
   const onboardingProgressMutation = useAiSkillRun<OnboardingCroOutput>(() =>
@@ -186,10 +186,10 @@ export default function Configuracoes() {
   const [slugError, setSlugError] = useState<string>("");
   const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [companySnapshot, setCompanySnapshot] = useState<typeof companySettings | null>(null);
-  const { usuarios, isLoading: usuariosLoading } = useUsuarios();
+  const { users, isLoading: usersLoading } = useUsers();
   const currentUserRole = useMemo(
-    () => usuarios.find((u) => u.id === user?.id)?.role,
-    [usuarios, user?.id],
+    () => users.find((u) => u.id === user?.id)?.role,
+    [users, user?.id],
   );
   const isAdmin = currentUserRole === "admin" || currentUserRole === "owner";
   const [publicRegistrationEnabled, setPublicRegistrationEnabled] = useState(true);
@@ -274,39 +274,39 @@ export default function Configuracoes() {
   const { data: nfeStatus } = useNfeStatus();
 
   // State for the Users tab
-  const [usuarioFormModal, setUsuarioFormModal] = useState<{ open: boolean; mode: "create" | "edit"; usuario?: Usuario }>({ open: false, mode: "create" });
-  const [usuarioViewModal, setUsuarioViewModal] = useState<{ open: boolean; usuario?: Usuario }>({ open: false });
-  const [usuarioSearchTerm, setUsuarioSearchTerm] = useState("");
-  const [usuarioCargoFilter, setUsuarioCargoFilter] = useState("all-cargo");
-  const [usuarioStatusFilter, setUsuarioStatusFilter] = useState("all-status");
+  const [userFormModal, setUserFormModal] = useState<{ open: boolean; mode: "create" | "edit"; usuario?: UserAccount }>({ open: false, mode: "create" });
+  const [userViewModal, setUserViewModal] = useState<{ open: boolean; usuario?: UserAccount }>({ open: false });
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+  const [userPositionFilter, setUserPositionFilter] = useState("all-cargo");
+  const [userStatusFilter, setUserStatusFilter] = useState("all-status");
 
-  const filteredUsuarios = useMemo(() => {
-    return usuarios.filter((usuario) => {
+  const filteredUsers = useMemo(() => {
+    return users.filter((member) => {
       const matchesSearch = 
-        (usuario.full_name?.toLowerCase().includes(usuarioSearchTerm.toLowerCase()) || false) ||
-        (usuario.email?.toLowerCase().includes(usuarioSearchTerm.toLowerCase()) || false);
-      const matchesCargo = usuarioCargoFilter === "all-cargo" || 
-        (usuarioCargoFilter === "admin" && usuario.role === "admin") ||
-        (usuarioCargoFilter === "usuario" && usuario.role !== "admin");
-      const matchesStatus = usuarioStatusFilter === "all-status" || usuario.status === usuarioStatusFilter;
-      return matchesSearch && matchesCargo && matchesStatus;
+        (member.full_name?.toLowerCase().includes(userSearchTerm.toLowerCase()) || false) ||
+        (member.email?.toLowerCase().includes(userSearchTerm.toLowerCase()) || false);
+      const matchesPosition = userPositionFilter === "all-cargo" ||
+        (userPositionFilter === "admin" && member.role === "admin") ||
+        (userPositionFilter === "usuario" && member.role !== "admin");
+      const matchesStatus = userStatusFilter === "all-status" || member.status === userStatusFilter;
+      return matchesSearch && matchesPosition && matchesStatus;
     });
-  }, [usuarios, usuarioSearchTerm, usuarioCargoFilter, usuarioStatusFilter]);
+  }, [users, userSearchTerm, userPositionFilter, userStatusFilter]);
 
-  const hasActiveUsuarioFilters = usuarioSearchTerm !== "" || usuarioCargoFilter !== "all-cargo" || usuarioStatusFilter !== "all-status";
+  const hasActiveUserFilters = userSearchTerm !== "" || userPositionFilter !== "all-cargo" || userStatusFilter !== "all-status";
 
-  const clearUsuarioFilters = () => {
-    setUsuarioSearchTerm("");
-    setUsuarioCargoFilter("all-cargo");
-    setUsuarioStatusFilter("all-status");
+  const clearUserFilters = () => {
+    setUserSearchTerm("");
+    setUserPositionFilter("all-cargo");
+    setUserStatusFilter("all-status");
   };
 
-  const getUsuarioInitials = (name: string | null) => {
+  const getUserInitials = (name: string | null) => {
     if (!name) return "U";
     return name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
   };
 
-  const formatUsuarioDate = (dateString: string) => {
+  const formatUserDate = (dateString: string) => {
     try {
       return format(new Date(dateString), "dd/MM/yyyy", { locale: ptBR });
     } catch {
@@ -485,7 +485,7 @@ export default function Configuracoes() {
     && GOVERNED_PROVIDER_KEYS.has(id)
     && !findProviderState(externalProviders, id);
 
-  const integracoes: IntegrationCatalogItem[] = [
+  const integrations: IntegrationCatalogItem[] = [
     // ── Digital signature ───────────────────────────────────────────────────────
     {
       id: "autentique",
@@ -622,7 +622,7 @@ export default function Configuracoes() {
    * status is a placeholder that is never read: the row branches on `portalUrl`.
    */
   const catalogItems: IntegrationCatalogItem[] = [
-    ...integracoes,
+    ...integrations,
     ...DISTRIBUTORS.map((dist) => ({
       id: dist.id,
       name: dist.name,
@@ -1415,26 +1415,26 @@ export default function Configuracoes() {
 
                       {/* Rows of the single catalog — logo + governance/plan when the backend
                           resolves the provider, local text in the other cases. */}
-                      {items.map((integracao) => {
-                        if (integracao.portalUrl) {
+                      {items.map((integration) => {
+                        if (integration.portalUrl) {
                           // Distributor: always external access, never adapter/Connect.
                           return (
                             <div
-                              key={integracao.id}
+                              key={integration.id}
                               className="flex items-center justify-between p-4 bg-muted/30 rounded-lg"
-                              data-testid={`integration-row-${integracao.id}`}
+                              data-testid={`integration-row-${integration.id}`}
                             >
                               <div className="flex items-center gap-4">
-                                <IntegrationLogo id={integracao.logoId!} imageClassName="h-11 w-11" />
+                                <IntegrationLogo id={integration.logoId!} imageClassName="h-11 w-11" />
                                 <div>
-                                  <p className="font-medium">{integracao.name}</p>
-                                  <p className="text-sm text-muted-foreground leading-snug">{integracao.description}</p>
+                                  <p className="font-medium">{integration.name}</p>
+                                  <p className="text-sm text-muted-foreground leading-snug">{integration.description}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-3 shrink-0 ml-4">
                                 <Badge variant="secondary">Acesso externo</Badge>
-                                <Button variant="outline" size="sm" asChild data-testid={`button-integration-${integracao.id}`}>
-                                  <a href={integracao.portalUrl} target="_blank" rel="noopener noreferrer">
+                                <Button variant="outline" size="sm" asChild data-testid={`button-integration-${integration.id}`}>
+                                  <a href={integration.portalUrl} target="_blank" rel="noopener noreferrer">
                                     Abrir portal oficial
                                     <ExternalLink className="h-3 w-3 ml-2" />
                                   </a>
@@ -1444,15 +1444,15 @@ export default function Configuracoes() {
                           );
                         }
 
-                        const FallbackIcon = integracao.icon;
-                        const isMarketingPlatform = MARKETING_PLATFORM_IDS.has(integracao.id);
-                        const isConnecting = connectingPlatform === integracao.id;
-                        const handler = integrationConfigHandlers[integracao.id];
+                        const FallbackIcon = integration.icon;
+                        const isMarketingPlatform = MARKETING_PLATFORM_IDS.has(integration.id);
+                        const isConnecting = connectingPlatform === integration.id;
+                        const handler = integrationConfigHandlers[integration.id];
                         const isConfigurable = Boolean(handler);
                         // Backend governance (publication + technical capability + plan
                         // entitlement + connection) for this slug, if it is a governed provider
                         // resolved for this tenant — see useExternalProviders.ts.
-                        const governed: ClientIntegration | undefined = findProviderState(externalProviders, integracao.id);
+                        const governed: ClientIntegration | undefined = findProviderState(externalProviders, integration.id);
                         const presentation = governed ? INTEGRATION_PRESENTATION[governed.reasonCode] : null;
                         const lockedByPlan = governed?.reasonCode === IntegrationReasonCode.PLAN_NOT_INCLUDED;
                         // No action (Connect/Configure) when the backend does not authorize it —
@@ -1461,26 +1461,26 @@ export default function Configuracoes() {
                         const noAction = Boolean(presentation) && presentation!.action === "none";
                         return (
                           <div
-                            key={integracao.id}
+                            key={integration.id}
                             className="flex items-center justify-between p-4 bg-muted/30 rounded-lg"
-                            data-testid={`integration-row-${integracao.id}`}
+                            data-testid={`integration-row-${integration.id}`}
                           >
                             {/* Left: icon + texts */}
                             <div className="flex items-center gap-4">
-                              {integracao.logoId ? (
-                                <IntegrationLogo id={integracao.logoId} />
+                              {integration.logoId ? (
+                                <IntegrationLogo id={integration.logoId} />
                               ) : FallbackIcon ? (
-                                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border/50 ${integracao.iconBackgroundClassName ?? "bg-muted"}`}>
-                                  <FallbackIcon className={`h-6 w-6 ${integracao.iconClassName ?? ""}`} />
+                                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border/50 ${integration.iconBackgroundClassName ?? "bg-muted"}`}>
+                                  <FallbackIcon className={`h-6 w-6 ${integration.iconClassName ?? ""}`} />
                                 </div>
                               ) : (
                                 <div className="h-12 w-12 shrink-0 rounded-lg border border-border/50 bg-muted" />
                               )}
                               <div>
-                                <p className="font-medium">{integracao.name}</p>
-                                <p className="text-sm text-muted-foreground leading-snug">{integracao.description}</p>
+                                <p className="font-medium">{integration.name}</p>
+                                <p className="text-sm text-muted-foreground leading-snug">{integration.description}</p>
                                 {lockedByPlan && governed && (
-                                  <p className="mt-1 text-xs text-muted-foreground" data-testid={`integration-row-${integracao.id}-locked`}>
+                                  <p className="mt-1 text-xs text-muted-foreground" data-testid={`integration-row-${integration.id}-locked`}>
                                     {governed.eligiblePlans.length > 0 ? (
                                       <>Disponível {governed.eligiblePlans.length > 1 ? "nos planos" : "no plano"}:{" "}
                                         <span className="font-medium text-foreground">{governed.eligiblePlans.join(", ")}</span></>
@@ -1497,15 +1497,15 @@ export default function Configuracoes() {
                               {presentation ? (
                                 <Badge
                                   variant={REASON_TONE_VARIANT[presentation.tone] ?? "neutral"}
-                                  data-testid={`badge-integration-${integracao.id}-status`}
+                                  data-testid={`badge-integration-${integration.id}-status`}
                                 >
                                   {presentation.label}
                                 </Badge>
                               ) : (
                                 <IntegrationStatusBadges
-                                  status={integracao.status}
-                                  notices={integracao.notices}
-                                  testIdPrefix={`badge-integration-${integracao.id}`}
+                                  status={integration.status}
+                                  notices={integration.notices}
+                                  testIdPrefix={`badge-integration-${integration.id}`}
                                 />
                               )}
                               {lockedByPlan ? (
@@ -1514,27 +1514,27 @@ export default function Configuracoes() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => navigate("/configuracoes/billing")}
-                                    data-testid={`button-integration-${integracao.id}`}
+                                    data-testid={`button-integration-${integration.id}`}
                                   >
                                     Ver planos
                                   </Button>
                                 ) : null
                               ) : noAction ? null : isMarketingPlatform ? (
                                 isConnecting ? (
-                                  <Button variant="outline" size="sm" disabled data-testid={`button-integration-${integracao.id}`}>
+                                  <Button variant="outline" size="sm" disabled data-testid={`button-integration-${integration.id}`}>
                                     <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                                     Conectando...
                                   </Button>
-                                ) : integracao.status === ExternalProviderStatus.CONNECTED ? (
+                                ) : integration.status === ExternalProviderStatus.CONNECTED ? (
                                   <Button
                                     variant="outline"
                                     size="sm"
                                     className="text-destructive border-destructive/30 hover:bg-destructive/10"
                                     onClick={() => {
-                                      disconnectMarketing(integracao.id as MarketingPlatformId);
-                                      toast.success(`${integracao.name} desconectado.`);
+                                      disconnectMarketing(integration.id as MarketingPlatformId);
+                                      toast.success(`${integration.name} desconectado.`);
                                     }}
-                                    data-testid={`button-integration-${integracao.id}`}
+                                    data-testid={`button-integration-${integration.id}`}
                                   >
                                     <Unplug className="h-3 w-3 mr-1" />
                                     Desconectar
@@ -1543,8 +1543,8 @@ export default function Configuracoes() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => setOauthDialogPlatform(integracao.id as MarketingPlatformId)}
-                                    data-testid={`button-integration-${integracao.id}`}
+                                    onClick={() => setOauthDialogPlatform(integration.id as MarketingPlatformId)}
+                                    data-testid={`button-integration-${integration.id}`}
                                   >
                                     Conectar
                                     <ExternalLink className="h-3 w-3 ml-1" />
@@ -1556,10 +1556,10 @@ export default function Configuracoes() {
                                   size="sm"
                                   onClick={handler}
                                   disabled={!isConfigurable}
-                                  data-testid={`button-integration-${integracao.id}`}
+                                  data-testid={`button-integration-${integration.id}`}
                                 >
                                   {isConfigurable
-                                    ? integracao.status === ExternalProviderStatus.CONNECTED
+                                    ? integration.status === ExternalProviderStatus.CONNECTED
                                       ? "Gerenciar"
                                       : "Configurar"
                                     : "Em breve"}
@@ -2082,7 +2082,7 @@ export default function Configuracoes() {
             {/* Metrics */}
             <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
               {[
-                { label: "Usuários Ativos", value: usuarios.filter((u) => (u.status ?? "ativo") === "ativo").length, icon: Users },
+                { label: "Usuários Ativos", value: users.filter((u) => (u.status ?? "ativo") === "ativo").length, icon: Users },
                 { label: "Convites Pendentes", value: teamInvites.length, icon: Mail },
                 { label: "Papéis Configurados", value: roles.length, icon: Shield },
                 { label: "Permissões Totais", value: permissions.length, icon: Key },
@@ -2094,7 +2094,7 @@ export default function Configuracoes() {
                       {m.label}
                     </div>
                     <p className="text-2xl font-bold">
-                      {rolesLoading || usuariosLoading ? "—" : m.value}
+                      {rolesLoading || usersLoading ? "—" : m.value}
                     </p>
                   </CardContent>
                 </Card>
@@ -2145,11 +2145,11 @@ export default function Configuracoes() {
                 </div>
 
                 {/* Member list */}
-                {usuariosLoading || rolesLoading ? (
+                {usersLoading || rolesLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   </div>
-                ) : filteredUsuarios.length === 0 && teamInvites.length === 0 ? (
+                ) : filteredUsers.length === 0 && teamInvites.length === 0 ? (
                   <EmptyState
                     icon={Users}
                     title="Nenhum membro na equipe"
@@ -2158,24 +2158,24 @@ export default function Configuracoes() {
                 ) : (
                   <div className="space-y-2">
                     {/* Active users */}
-                    {filteredUsuarios.map((usuario) => (
+                    {filteredUsers.map((member) => (
                       <div 
-                        key={usuario.id} 
+                        key={member.id}
                         className="flex items-center gap-4 py-3 border-b border-border last:border-0"
-                        data-testid={`row-user-${usuario.id}`}
+                        data-testid={`row-user-${member.id}`}
                       >
                         <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center text-foreground font-medium text-sm">
-                          {getUsuarioInitials(usuario.full_name)}
+                          {getUserInitials(member.full_name)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-foreground truncate">{usuario.full_name || "Usuário"}</p>
-                          <p className="text-sm text-muted-foreground truncate">{usuario.email}</p>
+                          <p className="font-medium text-foreground truncate">{member.full_name || "Usuário"}</p>
+                          <p className="text-sm text-muted-foreground truncate">{member.email}</p>
                         </div>
                         <Select 
-                          value={roles.find((role) => role.slug === usuario.role)?.id ?? ""}
-                          onValueChange={(value) => void handleRoleChange(usuario.id, value)}
+                          value={roles.find((role) => role.slug === member.role)?.id ?? ""}
+                          onValueChange={(value) => void handleRoleChange(member.id, value)}
                         >
-                          <SelectTrigger className="w-[140px]" data-testid={`select-role-${usuario.id}`}>
+                          <SelectTrigger className="w-[140px]" data-testid={`select-role-${member.id}`}>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -2191,12 +2191,12 @@ export default function Configuracoes() {
                           </SelectContent>
                         </Select>
                         <Select 
-                          value={usuario.status || "ativo"}
+                          value={member.status || "ativo"}
                           onValueChange={(value) => {
                             // Update status logic
                           }}
                         >
-                          <SelectTrigger className="w-[120px]" data-testid={`select-status-${usuario.id}`}>
+                          <SelectTrigger className="w-[120px]" data-testid={`select-status-${member.id}`}>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -2209,7 +2209,7 @@ export default function Configuracoes() {
                           variant="ghost" 
                           size="icon"
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          data-testid={`button-remove-user-${usuario.id}`}
+                          data-testid={`button-remove-user-${member.id}`}
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -2354,16 +2354,16 @@ export default function Configuracoes() {
 
       </div>
 
-      <UsuarioViewModal 
-        open={usuarioViewModal.open} 
-        onOpenChange={(open) => setUsuarioViewModal({ ...usuarioViewModal, open })} 
-        usuario={usuarioViewModal.usuario} 
+      <UserViewModal
+        open={userViewModal.open}
+        onOpenChange={(open) => setUserViewModal({ ...userViewModal, open })}
+        usuario={userViewModal.usuario}
       />
-      <UsuarioFormModal 
-        open={usuarioFormModal.open} 
-        onOpenChange={(open) => setUsuarioFormModal({ ...usuarioFormModal, open })} 
-        usuario={usuarioFormModal.usuario} 
-        mode={usuarioFormModal.mode} 
+      <UserFormModal
+        open={userFormModal.open}
+        onOpenChange={(open) => setUserFormModal({ ...userFormModal, open })}
+        usuario={userFormModal.usuario}
+        mode={userFormModal.mode}
       />
 
       {/* Permissions Modal */}

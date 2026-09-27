@@ -5,19 +5,19 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { toast } from "sonner";
-import { useUsuarios, type Usuario } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers, type UserAccount } from "@/modules/settings/hooks/useUsuarios";
 import { useRoles } from "@/modules/settings/hooks/useRoles";
 
 import { toUserMessage } from "@/shared/lib/errors";
-interface UsuarioEditorModalProps {
+interface UserEditorModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  usuario?: Usuario;
+  usuario?: UserAccount;
   mode: "create" | "edit";
 }
 
-export function UsuarioEditorModal({ open, onOpenChange, usuario, mode }: UsuarioEditorModalProps) {
-  const { updateUsuario } = useUsuarios();
+export function UserEditorModal({ open, onOpenChange, usuario: member, mode }: UserEditorModalProps) {
+  const { updateUser } = useUsers();
   const { roles, inviteUser } = useRoles();
   const assignableRoles = useMemo(
     () => roles.filter((role) => role.is_assignable !== false && !role.archived_at),
@@ -32,14 +32,14 @@ export function UsuarioEditorModal({ open, onOpenChange, usuario, mode }: Usuari
 
   useEffect(() => {
     if (!open) return;
-    setName(usuario?.full_name ?? "");
-    setEmail(usuario?.email ?? "");
-    setPhone(usuario?.phone ?? "");
-    setStatus(usuario?.status ?? "ativo");
-    setRoleSlug(usuario?.role ?? "");
-  }, [open, usuario]);
+    setName(member?.full_name ?? "");
+    setEmail(member?.email ?? "");
+    setPhone(member?.phone ?? "");
+    setStatus(member?.status ?? "ativo");
+    setRoleSlug(member?.role ?? "");
+  }, [open, member]);
 
-  const isSaving = updateUsuario.isPending || inviteUser.isPending;
+  const isSaving = updateUser.isPending || inviteUser.isPending;
 
   const submit = async () => {
     const normalizedEmail = email.trim().toLowerCase();
@@ -62,13 +62,13 @@ export function UsuarioEditorModal({ open, onOpenChange, usuario, mode }: Usuari
         await inviteUser.mutateAsync({ email: normalizedEmail, roleId: role.id });
         toast.success("Convite enviado com sucesso");
       } else {
-        if (!usuario) return;
+        if (!member) return;
         if (name.trim().length < 2) {
           toast.error("Nome deve ter pelo menos 2 caracteres");
           return;
         }
-        await updateUsuario.mutateAsync({
-          id: usuario.id,
+        await updateUser.mutateAsync({
+          id: member.id,
           full_name: name.trim(),
           phone: phone.trim(),
           status,

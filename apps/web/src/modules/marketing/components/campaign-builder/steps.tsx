@@ -26,7 +26,7 @@ import {
 import type { BuilderStepProps, CampaignCreative, CampaignObjective, CampaignPlacement, CampaignPlatform, CreativeType, PromotedEntityType } from "./campaign-builder.types";
 import { Badge } from "@/shared/ui/badge";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
-import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
+import { useUsers } from "@/modules/settings/hooks/useUsuarios";
 import { useMarketingProjects } from "../../hooks/useMarketingProjects";
 import { useMarketingContents } from "../../hooks/useMarketingContents";
 import { CONTENT_CHANNEL_LABEL, CONTENT_STATUS_LABEL } from "../../constants/marketing.constants";
@@ -151,7 +151,7 @@ export function CampaignOutcomeStep({ state, setState }: BuilderStepProps) {
 
 export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
   // Existing system data — no manual typing, keeps relationships consistent.
-  const { usuarios } = useUsuarios();
+  const { users: usuarios } = useUsers();
   const { data: projects } = useMarketingProjects();
 
   const userList = usuarios ?? [];
