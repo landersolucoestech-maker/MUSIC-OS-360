@@ -568,11 +568,11 @@ export class BillingService {
     this.assertBillingRepositories();
 
     // The price's primary source is the database (plan). NEVER STRIPE_PRICE_* from env.
-    if (!params.planRef) throw new BadRequestException('Plano não informado (planId ou planSlug)');
+    if (!params.planRef) throw new BadRequestException('Selecione um plano.');
     const plan = await this.plans.resolve(params.planRef);
-    if (!plan || !plan.active) throw new BadRequestException(`Plano inválido ou inativo: ${params.planRef}`);
+    if (!plan || !plan.active) throw new BadRequestException('O plano selecionado é inválido ou está inativo.');
     if (!plan.stripe_price_id) {
-      throw new BadRequestException(`Plano '${plan.slug}' não sincronizado com Stripe`);
+      throw new BadRequestException('Este plano ainda não está sincronizado com o Stripe.');
     }
 
     const sub = await this.subRepo!

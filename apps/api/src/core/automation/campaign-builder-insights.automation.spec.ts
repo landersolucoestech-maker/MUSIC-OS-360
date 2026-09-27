@@ -106,7 +106,7 @@ describe('CampaignBuilderInsightsAutomation.runAdCreative (ON_DEMAND: POST .../a
     const handler = new CampaignBuilderInsightsAutomation(skillRun as never, ai as never, campaignBuilder as never);
 
     await expect(handler.runAdCreative('t1', 'u1', 'camp-1', 'TIKTOK_ADS', 'TIKTOK_FOR_YOU')).rejects.toThrow(
-      /não está selecionada/,
+      /não faz parte desta campanha/,
     );
     expect(ai.complete).not.toHaveBeenCalled();
     expect(skillRun.start).not.toHaveBeenCalled();

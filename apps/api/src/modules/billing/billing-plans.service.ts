@@ -59,7 +59,7 @@ export class BillingPlansService {
   }
 
   private get stripeRequired(): StripePlansClient {
-    if (!this.stripe) throw new BadRequestException('Stripe nao configurado neste ambiente');
+    if (!this.stripe) throw new BadRequestException('A integração com o Stripe não está configurada neste ambiente.');
     return this.stripe;
   }
 
@@ -125,25 +125,25 @@ export class BillingPlansService {
   // ── Writes ───────────────────────────────────────────────────────────────
   private validate(input: UpsertPlanInput, requireAll: boolean): void {
     if (requireAll) {
-      if (!input.slug) throw new BadRequestException('slug é obrigatório');
-      if (!input.name) throw new BadRequestException('name é obrigatório');
+      if (!input.slug) throw new BadRequestException('O identificador (URL) do plano é obrigatório.');
+      if (!input.name) throw new BadRequestException('O nome do plano é obrigatório.');
       if (input.amount == null) throw new BadRequestException('O valor é obrigatório.');
     }
     if (input.amount != null && (!Number.isInteger(input.amount) || input.amount <= 0)) {
       throw new BadRequestException('O valor deve ser um número inteiro de centavos maior que zero.');
     }
     if (input.currency != null && !/^[a-z]{3}$/.test(input.currency)) {
-      throw new BadRequestException('currency deve ser ISO de 3 letras minúsculas (ex: brl)');
+      throw new BadRequestException('A moeda deve ser um código ISO de 3 letras minúsculas (ex.: brl).');
     }
     if (input.interval != null && !VALID_INTERVALS.includes(input.interval)) {
-      throw new BadRequestException(`interval deve ser um de: ${VALID_INTERVALS.join(', ')}`);
+      throw new BadRequestException('O intervalo de cobrança deve ser mensal ou anual.');
     }
   }
 
   async create(input: UpsertPlanInput): Promise<BillingPlanEntity> {
     this.validate(input, true);
     const existing = await this.repo.findOne({ where: { slug: input.slug } });
-    if (existing) throw new BadRequestException(`Já existe um plano com slug '${input.slug}'`);
+    if (existing) throw new BadRequestException(`Já existe um plano com o identificador (URL) "${input.slug}".`);
 
     const plan = await this.repo.save(this.repo.create({
       slug: input.slug!,
@@ -170,7 +170,7 @@ export class BillingPlansService {
 
     if (input.slug && input.slug !== plan.slug) {
       const dup = await this.repo.findOne({ where: { slug: input.slug } });
-      if (dup) throw new BadRequestException(`Já existe um plano com slug '${input.slug}'`);
+      if (dup) throw new BadRequestException(`Já existe um plano com o identificador (URL) "${input.slug}".`);
     }
 
     // A Stripe Price is IMMUTABLE: changing amount/currency/interval requires a new Price.

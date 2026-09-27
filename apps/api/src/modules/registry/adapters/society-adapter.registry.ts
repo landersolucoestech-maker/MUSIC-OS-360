@@ -24,7 +24,7 @@ export class SocietyAdapterRegistry {
 
   resolve(driver: SocietyDriver): SocietyAdapter {
     const adapter = this.adapters[driver];
-    if (!adapter) throw new BadRequestException(`Driver de sociedade não suportado: ${driver}`);
+    if (!adapter) throw new BadRequestException('Esta sociedade não é suportada para envio.');
     return adapter;
   }
 

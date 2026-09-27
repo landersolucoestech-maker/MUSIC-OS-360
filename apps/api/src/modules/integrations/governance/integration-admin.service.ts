@@ -178,7 +178,7 @@ export class IntegrationAdminService {
     const rejected = requested.filter((s) => !allowed.has(s));
 
     const plan = await this.planRepo.findOne({ where: { slug: planSlug } });
-    if (!plan) throw new NotFoundException(`Plano não encontrado: ${planSlug}`);
+    if (!plan) throw new NotFoundException('Plano não encontrado.');
 
     // Write via the REPOSITORY: the tenant-aware DataSource filters a raw UPDATE on
     // billing_plans (0 rows, no error) — the repo is the path that persists.
@@ -197,10 +197,11 @@ export class IntegrationAdminService {
     return Array.isArray(list) ? list.filter((s): s is string => typeof s === 'string') : [];
   }
 
-  private validateAudience(audience: unknown, field: string): IntegrationAudience {
+  private validateAudience(audience: unknown, field: 'viewAudience' | 'useAudience'): IntegrationAudience {
     const a = audience as Partial<IntegrationAudience> | undefined;
     if (!a || !AUDIENCE_MODES.includes(a.mode as never)) {
-      throw new BadRequestException(`${field}.mode inválido — use: ${AUDIENCE_MODES.join(', ')}`);
+      const scope = field === 'viewAudience' ? 'visualização' : 'uso';
+      throw new BadRequestException(`O modo de público de ${scope} informado é inválido.`);
     }
     return {
       mode: a.mode as IntegrationAudience['mode'],
@@ -225,13 +226,13 @@ export class IntegrationAdminService {
 
     if (patch.publicationState !== undefined) {
       if (!PUBLICATION_STATES.includes(patch.publicationState as never)) {
-        throw new BadRequestException(`publicationState inválido — use: ${PUBLICATION_STATES.join(', ')}`);
+        throw new BadRequestException('O estado de publicação informado é inválido.');
       }
       updates.publication_state = patch.publicationState as PlatformIntegrationEntity['publication_state'];
     }
     if (patch.technicalState !== undefined) {
       if (!TECHNICAL_STATES.includes(patch.technicalState as never)) {
-        throw new BadRequestException(`technicalState inválido — use: ${TECHNICAL_STATES.join(', ')}`);
+        throw new BadRequestException('O estado técnico informado é inválido.');
       }
       updates.technical_state = patch.technicalState;
     }

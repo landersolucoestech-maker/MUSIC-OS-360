@@ -109,7 +109,7 @@ export class RightsHoldersService {
 
   private assertValidDocument(documentType: string | null | undefined, value: string | null | undefined): void {
     if (!isValidDocument(documentType, value)) {
-      throw new BadRequestException(`Documento inválido para o tipo ${documentType ?? 'informado'}.`);
+      throw new BadRequestException('Documento inválido para o tipo informado.');
     }
   }
 

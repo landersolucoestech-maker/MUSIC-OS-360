@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { DatabaseContextService } from '../../database/database-context.service';
@@ -60,22 +60,30 @@ const DEFAULTS: Record<NotificationSettingKey, { enabled: boolean; config: Setti
 const FREQUENCIES = ['immediate', 'daily', 'weekly', 'biweekly', 'monthly', 'event'];
 const REMINDER_TYPES = ['contract', 'pending_task', 'recommended_action'];
 
+const validationLogger = new Logger('NotificationSettingsValidation');
+
+/** PT-BR copy for the user; the offending field key is logged, never returned. */
+function reject(field: string, message: string): never {
+  validationLogger.debug(`[notification-settings] invalid value for ${field}`);
+  throw new BadRequestException(message);
+}
+
 function requireObject(value: unknown, field: string): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    throw new BadRequestException(`${field} deve ser um objeto`);
+    reject(field, 'As configurações de notificação enviadas estão em um formato inválido.');
   }
   return value as Record<string, unknown>;
 }
 
 function requireTime(value: unknown, field: string): void {
   if (typeof value !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) {
-    throw new BadRequestException('O horário deve usar o formato HH:mm.');
+    reject(field, 'O horário deve usar o formato HH:mm.');
   }
 }
 
 function requireWeekday(value: unknown, field: string): void {
   if (!Number.isInteger(value) || Number(value) < 0 || Number(value) > 6) {
-    throw new BadRequestException('O dia da semana informado é inválido.');
+    reject(field, 'O dia da semana informado é inválido.');
   }
 }
 
@@ -87,7 +95,7 @@ function requireDays(value: unknown, field: string): void {
     value.some((day) => !Number.isInteger(day) || day < 0 || day > 365) ||
     new Set(value).size !== value.length
   ) {
-    throw new BadRequestException(`${field} deve conter dias únicos entre 0 e 365`);
+    reject(field, 'Os dias informados devem ser únicos e estar entre 0 e 365.');
   }
 }
 
@@ -97,11 +105,11 @@ function requireStringList(
   allowed?: readonly string[],
 ): string[] {
   if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
-    throw new BadRequestException(`${field} deve ser uma lista de textos`);
+    reject(field, 'A lista de opções enviada é inválida.');
   }
   const strings = value as string[];
   if (allowed && strings.some((item) => !allowed.includes(item))) {
-    throw new BadRequestException(`${field} contém valor não suportado`);
+    reject(field, 'Uma das opções enviadas não é suportada.');
   }
   return strings;
 }

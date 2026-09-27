@@ -89,7 +89,7 @@ export class OperationalListsService {
         slug: dto.slug,
       })
       .getOne();
-    if (existing) throw new ConflictException(`Já existe um item "${dto.slug}" para o tipo "${dto.kind}"`);
+    if (existing) throw new ConflictException(`Já existe um item com o identificador "${dto.slug}" nesta lista.`);
 
     const entity = this.repo!.create({
       tenant_id: tenantId,

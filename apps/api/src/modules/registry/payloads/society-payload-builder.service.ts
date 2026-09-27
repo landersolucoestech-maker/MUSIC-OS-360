@@ -29,14 +29,14 @@ function isPublisher(role: string | null | undefined): boolean {
 function shareToParty(s: ShareEntity): PayloadParty {
   const name = s.credited_name ?? s.holder_name;
   if (!name || !name.trim()) {
-    throw new BadRequestException(`Share ${s.id} elegível para registro está sem holder_name (dado de registro incompleto).`);
+    throw new BadRequestException('Uma participação elegível para registro está sem o nome do titular.');
   }
   if (s.percentage == null) {
-    throw new BadRequestException(`Share ${s.id} elegível para registro está sem percentage (dado de registro incompleto).`);
+    throw new BadRequestException('Uma participação elegível para registro está sem o percentual.');
   }
   const pct = Number(s.percentage);
   if (!Number.isFinite(pct)) {
-    throw new BadRequestException(`Share ${s.id} tem percentage inválido: "${s.percentage}".`);
+    throw new BadRequestException('Uma participação elegível para registro tem percentual inválido.');
   }
   return {
     name: name.trim(),

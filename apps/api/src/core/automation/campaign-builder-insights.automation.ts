@@ -74,7 +74,7 @@ export class CampaignBuilderInsightsAutomation {
     const campaign = await this.campaignBuilder.find(tenantId, campaignId);
 
     if (!(campaign.platforms ?? []).includes(platform)) {
-      throw new NotFoundException(`Plataforma "${platform}" não está selecionada nesta campanha`);
+      throw new NotFoundException('A plataforma selecionada não faz parte desta campanha.');
     }
 
     const input: AdCreativeInput = {

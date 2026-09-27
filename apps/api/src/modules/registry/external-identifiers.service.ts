@@ -56,7 +56,7 @@ export class ExternalIdentifierService {
   /** Normalise a route param into a known entity type, or 400. */
   normalizeEntityType(raw: string): RegistrableEntityType {
     const mapped = ENTITY_TYPE_ALIASES[(raw ?? '').toLowerCase()];
-    if (!mapped) throw new BadRequestException(`Tipo de entidade inválido: ${raw}`);
+    if (!mapped) throw new BadRequestException('Tipo de entidade inválido.');
     return mapped;
   }
 
