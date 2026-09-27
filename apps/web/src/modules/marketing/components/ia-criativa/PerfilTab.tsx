@@ -119,7 +119,7 @@ function ProfileWaitingState({ bundle }: { bundle: ArtistProfileBundle | null })
       <div className="rounded-lg border border-dashed border-border p-8 text-center">
         <UserRound className="mx-auto h-8 w-8 text-muted-foreground/60" />
         <p className="mt-3 text-sm font-medium">Selecione um artista para carregar o dossiê automaticamente.</p>
-        <p className="mt-1 text-xs text-muted-foreground">A analise usa os dados já cadastrados no sistema, não um formulário manual.</p>
+        <p className="mt-1 text-xs text-muted-foreground">A análise usa os dados já cadastrados no sistema, não um formulário manual.</p>
       </div>
     );
   }
@@ -127,7 +127,7 @@ function ProfileWaitingState({ bundle }: { bundle: ArtistProfileBundle | null })
     <div className="rounded-lg border border-dashed border-border p-8 text-center">
       <Search className="mx-auto h-8 w-8 text-muted-foreground/60" />
       <p className="mt-3 text-sm font-medium">Dossiê carregado para {bundle.artist.label}.</p>
-      <p className="mt-1 text-xs text-muted-foreground">Execute a analise para preencher o dashboard executivo com diagnostico estratégico.</p>
+      <p className="mt-1 text-xs text-muted-foreground">Execute a análise para preencher o dashboard executivo com diagnóstico estratégico.</p>
     </div>
   );
 }

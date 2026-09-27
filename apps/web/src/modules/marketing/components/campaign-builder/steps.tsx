@@ -49,7 +49,7 @@ const COUNTRY_OPTIONS = [
   "Gana", "Georgia", "Grecia", "Guatemala", "Haiti", "Honduras", "Hungria", "India", "Indonesia", "Ira", "Iraque",
   "Irlanda", "Islandia", "Israel", "Italia", "Jamaica", "Japao", "Jordania", "Kuwait", "Laos", "Letonia", "Libano",
   "Lituania", "Luxemburgo", "Malasia", "Malta", "Marrocos", "Mexico", "Mocambique", "Nepal", "Nicaragua", "Nigeria",
-  "Noruega", "Nova Zelandia", "Paises Baixos", "Panama", "Paraguai", "Peru", "Polonia", "Portugal", "Quenia",
+  "Noruega", "Nova Zelandia", "Países Baixos", "Panama", "Paraguai", "Peru", "Polonia", "Portugal", "Quenia",
   "Reino Unido", "Republica Dominicana", "Republica Tcheca", "Romenia", "Russia", "Senegal", "Servia", "Singapura",
   "Suecia", "Suica", "Tailandia", "Taiwan", "Tanzania", "Tunisia", "Turquia", "Ucrania", "Uruguai", "Venezuela",
   "Vietna", "Zambia", "Zimbabue",
@@ -59,8 +59,8 @@ const LANGUAGE_OPTIONS = [
   { value: "am", label: "Amarico" }, { value: "ar", label: "Árabe" }, { value: "hy", label: "Armênio" },
   { value: "az", label: "Azerbaijano" }, { value: "bn", label: "Bengali" }, { value: "be", label: "Bielorrusso" },
   { value: "bg", label: "Búlgaro" }, { value: "km", label: "Cambojano" }, { value: "ca", label: "Catalão" },
-  { value: "kk", label: "Cazaque" }, { value: "zh-CN", label: "Chines simplificado" },
-  { value: "zh-TW", label: "Chines tradicional" }, { value: "ko", label: "Coreano" }, { value: "hr", label: "Croata" },
+  { value: "kk", label: "Cazaque" }, { value: "zh-CN", label: "Chinês simplificado" },
+  { value: "zh-TW", label: "Chinês tradicional" }, { value: "ko", label: "Coreano" }, { value: "hr", label: "Croata" },
   { value: "da", label: "Dinamarquês" }, { value: "sk", label: "Eslovaco" }, { value: "sl", label: "Esloveno" },
   { value: "es", label: "Espanhol" }, { value: "et", label: "Estoniano" }, { value: "fi", label: "Finlandês" },
   { value: "fr", label: "Frances" }, { value: "ka", label: "Georgiano" }, { value: "el", label: "Grego" },
@@ -435,7 +435,7 @@ export function CampaignCreativesStep({ state, setState }: BuilderStepProps) {
   });
   const update = (id: string, patch: Partial<CampaignCreative>) => setState((c) => ({ ...c, creatives: c.creatives.map((creative) => creative.id === id ? { ...creative, ...patch } : creative) }));
   const remove = (id: string) => setState((c) => ({ ...c, creatives: c.creatives.filter((creative) => creative.id !== id) }));
-  const duplicate = (creative: CampaignCreative) => setState((c) => ({ ...c, creatives: [...c.creatives, { ...creative, id: crypto.randomUUID(), contentId: undefined, name: `${creative.name} copia` }] }));
+  const duplicate = (creative: CampaignCreative) => setState((c) => ({ ...c, creatives: [...c.creatives, { ...creative, id: crypto.randomUUID(), contentId: undefined, name: `${creative.name} cópia` }] }));
   return (
     <div className="space-y-4">
       <section className="space-y-2 rounded-lg border border-border bg-muted/20 p-3">

@@ -6,13 +6,13 @@ export function analyzeTrendsContext(sources: IntelligenceSources, filters?: { g
   const channels = sources.contents.map((item) => item.channel).filter(Boolean).map(String);
   return {
     filters,
-    risingGenres: [filters?.genre || mostCommon(genres) || "genero a definir"],
+    risingGenres: [filters?.genre || mostCommon(genres) || "gênero a definir"],
     growingFormats: [filters?.platform || mostCommon(channels) || "Reels/TikTok/Shorts"],
     internalMatches: sources.releases.slice(0, 6).map((item) => item.title),
     practicalSuggestions: [
-      "Cruzar tendencia com lancamentos que ja possuem audio/letra/capa completos.",
+      "Cruzar tendência com lançamentos que já possuem áudio/letra/capa completos.",
       "Gerar cortes curtos para validar potencial antes de campanha paga.",
-      "Reaproveitar catalogo com melhor fit editorial.",
+      "Reaproveitar catálogo com melhor fit editorial.",
     ],
   };
 }

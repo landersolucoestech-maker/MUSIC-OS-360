@@ -1400,7 +1400,7 @@ export function SupportCenterView({
             <div className="space-y-5 p-4">
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Painel Operacional</h3>
-                <p className="mt-1 text-xs text-muted-foreground">Cliente, prazo, CRM e acoes da conversa.</p>
+                <p className="mt-1 text-xs text-muted-foreground">Cliente, prazo, CRM e ações da conversa.</p>
               </div>
 
               <div className="space-y-3 rounded-md border border-border bg-muted/20 p-3">

@@ -16,7 +16,7 @@ import {
   Building2, User, Music,
 } from "lucide-react";
 import { useContractTemplates } from "@/modules/contracts/hooks/useContractTemplates";
-import { useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
+import { contractCategoryLabel, useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
 import { useContracts } from "@/modules/contracts/hooks/useContracts";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
@@ -335,8 +335,7 @@ function StepTemplate({
 
   const getCategoryLabel = useCallback(
     (tipoServico: string) => {
-      const found = categories.find((c) => c.value === tipoServico);
-      return found ? found.label : tipoServico;
+      return contractCategoryLabel(categories, tipoServico);
     },
     [categories],
   );

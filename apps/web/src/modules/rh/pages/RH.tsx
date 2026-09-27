@@ -904,7 +904,7 @@ export default function RH() {
                     <Checkbox
                       checked={filteredFerias.length > 0 && filteredFerias.every((fa) => selectedFeriasIds.includes(fa.id))}
                       onCheckedChange={toggleSelectAllFerias}
-                      aria-label="Selecionar todos os registros de ferias"
+                      aria-label="Selecionar todos os registros de férias"
                       data-testid="checkbox-select-all-ferias"
                     />
                     <span className="text-xs text-muted-foreground">
@@ -934,7 +934,7 @@ export default function RH() {
                         <Checkbox
                           checked={selectedFeriasIds.includes(fa.id)}
                           onCheckedChange={() => toggleSelectFerias(fa.id)}
-                          aria-label={`Selecionar registro de ferias ${fa.id}`}
+                          aria-label={`Selecionar registro de férias ${fa.id}`}
                           data-testid={`checkbox-ferias-${fa.id}`}
                         />
                       </TableCell>
@@ -1201,7 +1201,7 @@ export default function RH() {
         onOpenChange={(open) => setFolhaBulkDeleteModal({ ...folhaBulkDeleteModal, open })}
         onConfirm={handleBulkDeleteFolha}
         title="Excluir registros de pagamento"
-        description={`Tem certeza que deseja excluir ${folhaBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta acao nao pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir ${folhaBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
       />
 
       <DeleteConfirmModal
@@ -1209,7 +1209,7 @@ export default function RH() {
         onOpenChange={(open) => setFeriasBulkDeleteModal({ ...feriasBulkDeleteModal, open })}
         onConfirm={handleBulkDeleteFerias}
         title="Excluir registros de férias e ausências"
-        description={`Tem certeza que deseja excluir ${feriasBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta acao nao pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir ${feriasBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
       />
 
       <DeleteConfirmModal

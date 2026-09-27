@@ -25,6 +25,11 @@ import {
 } from "@/modules/contracts/hooks/useContractTemplates";
 import { ContractImportWorkspace } from "@/modules/contracts/components/ContractImportWorkspace";
 import { ContractTemplateViewModal } from "@/modules/contracts/components/ContractTemplateViewModal";
+import {
+  contractCategoryLabel,
+  useCategoryRegistry,
+  type ContractCategory,
+} from "@/modules/contracts/hooks/useCategoryRegistry";
 import type { SemanticTemplateManifest } from "@/modules/contracts/types/contracts.types";
 
 function parseManifest(template: ContractTemplateRow): SemanticTemplateManifest | null {
@@ -46,11 +51,6 @@ function getClauseTypes(template: ContractTemplateRow): string[] {
   return parseManifest(template)?.clauseTypes ?? [];
 }
 
-function formatSlug(slug?: string | null): string {
-  if (!slug) return "Padrao";
-  return slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 function formatDate(dateStr?: string): string {
   if (!dateStr) return "-";
   try {
@@ -64,8 +64,8 @@ function formatDate(dateStr?: string): string {
   }
 }
 
-function templateCategory(template: ContractTemplateRow): string {
-  return template.tipo_servico === "semantico" ? "Semantico IA" : formatSlug(template.tipo_servico);
+function templateCategory(template: ContractTemplateRow, categories: ReadonlyArray<ContractCategory>): string {
+  return contractCategoryLabel(categories, template.tipo_servico);
 }
 
 function templateStatus(template: ContractTemplateRow): string {
@@ -74,6 +74,7 @@ function templateStatus(template: ContractTemplateRow): string {
 
 export default function ContractTemplates() {
   const { templates, isLoading, addTemplate, updateTemplate, deleteTemplate } = useContractTemplates();
+  const { categories } = useCategoryRegistry();
 
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -103,12 +104,12 @@ export default function ContractTemplates() {
   const sortedTemplates = useMemo(
     () => sortTableRows(filteredTemplates, sortState, (template, key) => {
       if (key === "name") return template.name;
-      if (key === "categoria") return templateCategory(template);
+      if (key === "categoria") return templateCategory(template, categories);
       if (key === "status") return templateStatus(template);
       if (key === "created_at") return template.created_at;
       return (template as Record<string, unknown>)[key];
     }),
-    [filteredTemplates, sortState],
+    [filteredTemplates, sortState, categories],
   );
 
   useEffect(() => {
@@ -344,7 +345,7 @@ export default function ContractTemplates() {
                     <SortableTableHead sortKey="categoria" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Categoria</SortableTableHead>
                     <SortableTableHead sortKey="status" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Status</SortableTableHead>
                     <SortableTableHead sortKey="created_at" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Data de Criação</SortableTableHead>
-                    <TableHead className="text-right">Acoes</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -375,7 +376,7 @@ export default function ContractTemplates() {
                           <div className="flex items-center gap-1 flex-wrap">
                             <Badge variant={isSemantic ? "secondary" : "outline"} className="text-[10px] gap-1">
                               {isSemantic && <Sparkles className="h-2.5 w-2.5" />}
-                              {templateCategory(template)}
+                              {templateCategory(template, categories)}
                             </Badge>
                             {clauseTypes.slice(0, 1).map((ct) => <Badge key={ct} variant="outline" className="text-[10px]">{ct}</Badge>)}
                             {clauseTypes.length > 1 && <span className="text-[10px] px-1 py-0.5 rounded border text-muted-foreground border-border">+{clauseTypes.length - 1}</span>}
@@ -443,7 +444,7 @@ export default function ContractTemplates() {
         onOpenChange={setIsDeleteOpen}
         onConfirm={handleDeleteConfirm}
         title="Excluir Template"
-        description={`Tem certeza que deseja excluir o template "${selectedTemplate?.name}"? Esta acao nao pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir o template "${selectedTemplate?.name}"? Esta ação não pode ser desfeita.`}
       />
 
       <DeleteConfirmModal
@@ -451,7 +452,7 @@ export default function ContractTemplates() {
         onOpenChange={setIsBulkDeleteOpen}
         onConfirm={handleBulkDeleteConfirm}
         title="Excluir Templates"
-        description={`Tem certeza que deseja excluir ${selectedCount} template(s)? Esta acao nao pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir ${selectedCount} template(s)? Esta ação não pode ser desfeita.`}
       />
     </MainLayout>
   );

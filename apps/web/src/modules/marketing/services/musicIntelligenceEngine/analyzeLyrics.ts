@@ -30,7 +30,7 @@ export function analyzeLyricsDraft(lyric: string): TrackLyricsAnalysis {
     hooks,
     viralPhrases: hooks.slice(0, 3),
     keywords,
-    targetAudience: "audiencia provavel baseada em letra, genero e historico do artista",
+    targetAudience: "audiência provável baseada em letra, gênero e histórico do artista",
     editorialTags: keywords.slice(0, 6),
     missingData: [],
   };

@@ -32,14 +32,14 @@ export function pickReleaseString(release: ReleaseWithRelations, keys: string[])
 }
 
 export function estimateReleaseFrequency(dates: string[]) {
-  if (dates.length < 2) return dates.length === 1 ? "catalogo inicial" : "sem agenda de lancamentos cadastrada";
+  if (dates.length < 2) return dates.length === 1 ? "catálogo inicial" : "sem agenda de lançamentos cadastrada";
   const first = new Date(dates[0]).getTime();
   const last = new Date(dates[dates.length - 1]).getTime();
   const months = Math.max(1, Math.round((last - first) / 1000 / 60 / 60 / 24 / 30));
   const releasesPerYear = (dates.length / months) * 12;
-  if (releasesPerYear >= 8) return "alta frequencia";
-  if (releasesPerYear >= 4) return "frequencia consistente";
-  return "frequencia baixa";
+  if (releasesPerYear >= 8) return "alta frequência";
+  if (releasesPerYear >= 4) return "frequência consistente";
+  return "frequência baixa";
 }
 
 export function inferCareerStage(spotify?: number | null, instagram?: number | null, releases = 0) {

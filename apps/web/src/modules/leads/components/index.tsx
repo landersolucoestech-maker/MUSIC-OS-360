@@ -150,7 +150,7 @@ export function LeadBaseFields({ register, setValue, watch, schema }: LeadFormCo
       <PayloadInput
         label="Cargo / Função"
         name="cargoFuncao"
-        placeholder="Ex: produtor, empresario, promoter"
+        placeholder="Ex: produtor, empresário, promoter"
         payload={payload}
         setValue={setValue}
       />
@@ -406,7 +406,7 @@ export function UploadDropzone({ uploads, onChange }: { uploads: LeadUpload[]; o
     <FormSection title="4. ANEXOS">
       <label className="flex min-h-[120px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card px-4 py-6 text-center transition hover:bg-muted md:col-span-2">
         <Upload className="mb-2 h-5 w-5 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">Adicionar PDF, imagem, video, contrato, rider, mídia kit ou release</span>
+        <span className="text-sm font-medium text-foreground">Adicionar PDF, imagem, vídeo, contrato, rider, mídia kit ou release</span>
         <span className="mt-1 text-xs text-muted-foreground">Máximo de 25MB por arquivo</span>
         <input type="file" multiple className="hidden" accept={uploadRules.extensions.join(",")} onChange={(event) => handleFiles(event.target.files)} />
       </label>

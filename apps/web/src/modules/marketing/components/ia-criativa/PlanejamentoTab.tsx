@@ -31,7 +31,7 @@ export function PlanejamentoTab({
       targetType: artist ? "artista" : "empresa",
       targetId: artist?.id,
       targetName: artist?.label || "Empresa",
-      prompt: `Gerar plano executavel de ${period} dias para ${artist?.label || "empresa"}${release ? ` / ${release.label}` : ""}. Objetivo: ${objective}. Plataforma: ${platform}. Itens sugeridos: ${plan.items.map((item) => item.title).join(", ")}.`,
+      prompt: `Gerar plano executável de ${period} dias para ${artist?.label || "empresa"}${release ? ` / ${release.label}` : ""}. Objetivo: ${objective}. Plataforma: ${platform}. Itens sugeridos: ${plan.items.map((item) => item.title).join(", ")}.`,
       campaignObjective: objective,
       releasePhase: `${period} dias`,
       references: JSON.stringify(plan),
@@ -40,11 +40,11 @@ export function PlanejamentoTab({
 
   return (
     <WorkflowSection
-      question="O que deve ser feito nos proximos 30/60/90 dias?"
+      question="O que deve ser feito nos próximos 30/60/90 dias?"
       result={
         <div className="space-y-4">
           <ResultList title={`Plano de ${period} dias`} items={plan.items.map((item) => `${item.title} · D+${item.dueInDays} · ${item.channel} · ${item.priority}`)} />
-          <p className="text-xs text-muted-foreground">Cada item planejado esta pronto para virar tarefa no modulo Tarefas quando a integração de criação operacional estiver conectada.</p>
+          <p className="text-xs text-muted-foreground">Cada item planejado está pronto para virar tarefa no módulo Tarefas quando a integração de criação operacional estiver conectada.</p>
         </div>
       }
     >

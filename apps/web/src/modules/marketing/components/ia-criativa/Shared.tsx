@@ -212,7 +212,7 @@ export function AudioUpload({
   };
 
   return (
-    <Field label={`Audio WAV${required ? " *" : ""}`}>
+    <Field label={`Áudio WAV${required ? " *" : ""}`}>
       <div className="rounded-lg border border-dashed border-border p-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">.wav ate {formatBytes(MAX_WAV_SIZE_BYTES)}. Pré-visualização local; o envio usa o armazenamento do servidor.</p>

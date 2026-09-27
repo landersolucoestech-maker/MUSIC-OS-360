@@ -413,7 +413,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
 
   const advancedItems = [
     ["Valor bruto", moneyValue(valueOf(t, ["grossAmount", "valorBruto"]))],
-    ["Valor liquido", moneyValue(valueOf(t, ["netAmount", "valorLiquido"]))],
+    ["Valor líquido", moneyValue(valueOf(t, ["netAmount", "valorLiquido"]))],
     ["Descontos", moneyValue(valueOf(t, ["discount", "desconto"]))],
     ["Taxas", moneyValue(valueOf(t, ["fees", "taxas"]))],
     ["Juros", moneyValue(valueOf(t, ["interest", "juros"]))],

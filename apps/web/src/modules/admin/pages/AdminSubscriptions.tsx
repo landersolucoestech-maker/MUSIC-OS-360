@@ -265,10 +265,10 @@ export default function AdminSubscriptions() {
   const billingAction = useMutation({
     mutationFn: async (action: BillingAdminAction) => {
       if (action.kind === "suspend") {
-        return adminBillingService.suspendTenant(action.sub.tenant_id, "Suspensao manual pelo painel admin");
+        return adminBillingService.suspendTenant(action.sub.tenant_id, "Suspensão manual pelo painel administrativo");
       }
       if (action.kind === "reactivate") {
-        return adminBillingService.reactivateTenant(action.sub.tenant_id, "Reativacao manual pelo painel admin");
+        return adminBillingService.reactivateTenant(action.sub.tenant_id, "Reativação manual pelo painel administrativo");
       }
       if (action.kind === "override_active") {
         return adminBillingService.applyOverride(action.sub.tenant_id, {

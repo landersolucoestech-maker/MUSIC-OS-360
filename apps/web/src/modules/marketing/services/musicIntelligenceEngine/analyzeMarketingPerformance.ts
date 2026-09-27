@@ -7,8 +7,8 @@ export function analyzeMarketingPerformanceContext(sources: IntelligenceSources)
     bestReleases: sources.releases.slice(0, 5).map((item) => item.title),
     diagnosis: [
       "Repetir formatos com maior clareza de canal e objetivo.",
-      "Abandonar conteudos sem CTA ou sem vinculo com campanha/lancamento.",
-      "Converter insights em tarefas operacionais para manter cadencia.",
+      "Abandonar conteúdos sem CTA ou sem vínculo com campanha/lançamento.",
+      "Converter insights em tarefas operacionais para manter cadência.",
     ],
   };
 }

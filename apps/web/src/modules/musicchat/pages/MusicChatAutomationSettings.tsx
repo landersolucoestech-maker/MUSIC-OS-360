@@ -461,7 +461,7 @@ export default function MusicChatAutomationSettings() {
                       value={returnTextCommands.join(", ")}
                       onChange={(event) => updateReturnCommands(returnQuickCommand, parseList(event.target.value))}
                       className="h-8 text-sm"
-                      placeholder="menu, voltar, inicio"
+                      placeholder="menu, voltar, início"
                     />
                   </div>
                   <div className="flex items-end">

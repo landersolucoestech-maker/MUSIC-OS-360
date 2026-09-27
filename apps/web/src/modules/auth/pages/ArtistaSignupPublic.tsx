@@ -446,9 +446,9 @@ export default function ArtistaSignupPublic() {
             <AlertCircle className="h-10 w-10 text-destructive" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">{orgSlug ? "Cadastro indisponivel" : "Link invalido"}</h1>
+            <h1 className="text-xl font-bold">{orgSlug ? "Cadastro indisponível" : "Link inválido"}</h1>
             <p className="text-muted-foreground text-sm mt-2">
-              Use o link publico de cadastro fornecido pela empresa responsável.
+              Use o link público de cadastro fornecido pela empresa responsável.
             </p>
           </div>
           {orgSlug && (

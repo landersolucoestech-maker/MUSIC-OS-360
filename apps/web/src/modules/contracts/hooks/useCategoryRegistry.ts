@@ -39,6 +39,21 @@ const SEED_CATEGORIES: Omit<ContractCategory, "id" | "createdAt">[] = [
   { label: "Outros",             value: "outros",          description: "Categorias diversas" },
 ];
 
+export const DEFAULT_CATEGORY_LABEL = "Padrão";
+export const UNKNOWN_CATEGORY_LABEL = "Categoria não cadastrada";
+
+/**
+ * PT-BR label of a contract category slug (`tipo_servico`). The slug is a
+ * technical value and is never rendered: an unregistered slug gets a neutral label.
+ */
+export function contractCategoryLabel(
+  categories: ReadonlyArray<Pick<ContractCategory, "value" | "label">>,
+  slug: string | null | undefined,
+): string {
+  if (!slug) return DEFAULT_CATEGORY_LABEL;
+  return categories.find((c) => c.value === slug)?.label ?? UNKNOWN_CATEGORY_LABEL;
+}
+
 function buildSeeds(): ContractCategory[] {
   const now = new Date().toISOString();
   return SEED_CATEGORIES.map((s, i) => ({

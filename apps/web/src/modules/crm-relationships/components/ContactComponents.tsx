@@ -283,7 +283,7 @@ function ContactAttachmentDropzone({
     <FormSection title="Anexos">
       <label className="flex min-h-[120px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6 text-center transition hover:bg-muted/50">
         <Upload className="mb-2 h-5 w-5 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">Adicionar PDF, imagem, video, contrato, rider, mídia kit ou release</span>
+        <span className="text-sm font-medium text-foreground">Adicionar PDF, imagem, vídeo, contrato, rider, mídia kit ou release</span>
         <span className="mt-1 text-xs text-muted-foreground">Arquivos inválidos são bloqueados antes de salvar.</span>
         <input type="file" multiple className="hidden" accept={relationshipUploadRules.extensions.join(",")} onChange={(event) => handleFiles(event.target.files)} />
       </label>

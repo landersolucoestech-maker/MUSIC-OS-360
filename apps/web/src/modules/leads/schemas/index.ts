@@ -67,7 +67,7 @@ const sectionLabels = {
 };
 
 function requiredMessage(field: DynamicFieldSchema) {
-  return `${field.label} e obrigatorio`;
+  return `${field.label} é obrigatório`;
 }
 
 function schema(config: {
@@ -119,7 +119,7 @@ const musicProjectFields = [
   field("objetivo", "textarea", "Objetivo do projeto", "briefing", { required: true, placeholder: "Descreva o resultado musical esperado" }),
   field("referencias", "textarea", "Referências", "briefing", { placeholder: "Links, artistas, sonoridades ou campanhas de referência" }),
   field("prazoDesejado", "date", "Prazo desejado", "comercial"),
-  field("orcamento", "money", "Orcamento estimado", "comercial", { masks: "currency" }),
+  field("orcamento", "money", "Orçamento estimado", "comercial", { masks: "currency" }),
 ] satisfies DynamicFieldSchema[];
 
 const digitalProjectFields = [
@@ -172,7 +172,7 @@ export const serviceLeadSchemas: Record<LeadServiceType, ServiceLeadSchema> = {
     baseFields: companyBaseFields,
     fields: [
       ...digitalProjectFields,
-      field("canalPrioritario", "select", "Canal prioritario", "digital", {
+      field("canalPrioritario", "select", "Canal prioritário", "digital", {
         options: [{ value: "instagram", label: "Instagram" }, { value: "tiktok", label: "TikTok" }, { value: "youtube", label: "YouTube" }, { value: "spotify", label: "Spotify" }],
       }),
     ],
@@ -216,7 +216,7 @@ export const serviceLeadSchemas: Record<LeadServiceType, ServiceLeadSchema> = {
   }),
   designGrafico: schema({
     baseFields: companyBaseFields,
-    fields: [...digitalProjectFields, field("pecas", "textarea", "Pecas necessarias", "escopo")],
+    fields: [...digitalProjectFields, field("pecas", "textarea", "Peças necessárias", "escopo")],
   }),
   desenvolvimentoSite: schema({
     baseFields: companyBaseFields,

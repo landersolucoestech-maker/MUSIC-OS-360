@@ -304,7 +304,7 @@ export const INTEGRATION_REGISTRY: Record<IntegrationId, IntegrationMeta> = {
     id: "musicroomchat",
     name: "MusicRoom Chat",
     category: "chat",
-    description: "Canal de chat de sala musical — discussões por projecto, artista e lançamento.",
+    description: "Canal de chat de sala musical — discussões por projeto, artista e lançamento.",
     credentialsKey: "musicos360_musicroomchat_credentials",
   },
 };

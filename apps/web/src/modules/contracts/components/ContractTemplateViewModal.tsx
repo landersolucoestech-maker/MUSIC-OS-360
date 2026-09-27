@@ -6,6 +6,7 @@ import { Printer, Download, Copy } from "lucide-react";
 import type { ContractTemplateRow } from "@/modules/contracts/hooks/useContractTemplates";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
 import { toast } from "sonner";
+import { contractCategoryLabel, useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
 
 interface ContractTemplateViewModalProps {
   open: boolean;
@@ -18,6 +19,7 @@ export function ContractTemplateViewModal({
   onOpenChange,
   template,
 }: ContractTemplateViewModalProps) {
+  const { categories } = useCategoryRegistry();
   if (!template) return null;
 
   const handlePrint = () => {
@@ -67,8 +69,6 @@ export function ContractTemplateViewModal({
   const fmtDate = (iso?: string | null) =>
     iso ? new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—";
 
-  const fmtSlug = (slug: string) =>
-    slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -87,7 +87,7 @@ export function ContractTemplateViewModal({
                 </Badge>
                 {template.tipo_servico && (
                   <Badge variant="outline" className="no-underline">
-                    {fmtSlug(template.tipo_servico)}
+                    {contractCategoryLabel(categories, template.tipo_servico)}
                   </Badge>
                 )}
               </div>

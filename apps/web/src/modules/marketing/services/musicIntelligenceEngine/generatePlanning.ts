@@ -9,8 +9,8 @@ export function generatePlanningDraft(input: {
 }): PlanningContext {
   const period = Number(input.period);
   const base = [
-    "Revisar ativos do lancamento",
-    "Criar calendario de conteudos",
+    "Revisar ativos do lançamento",
+    "Criar calendário de conteúdos",
     "Produzir cortes Reels/TikTok/Shorts",
     "Preparar pitch e imprensa",
     "Configurar campanha paga",

@@ -5,7 +5,7 @@ import { MainLayout } from "@/shared/components/MainLayout";
 import { useBilling } from "@/app/providers/BillingContext";
 
 function formatAmount(amount?: number): string {
-  if (typeof amount !== "number") return "Valor pendente indisponivel";
+  if (typeof amount !== "number") return "Valor pendente indisponível";
   return (amount / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
@@ -23,7 +23,7 @@ export default function BillingBlockedPage() {
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm">
-              O workspace esta com pagamento em atraso. Enquanto a pendencia existir, o acesso aos módulos operacionais permanece bloqueado ou em modo somente leitura.
+              O workspace está com pagamento em atraso. Enquanto a pendência existir, o acesso aos módulos operacionais permanece bloqueado ou em modo somente leitura.
             </div>
             <div className="grid gap-3 text-sm sm:grid-cols-2">
               <div>

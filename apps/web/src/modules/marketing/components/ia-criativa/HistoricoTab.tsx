@@ -23,7 +23,7 @@ export function HistoricoTab({
   return (
     <>
       <WorkflowSection
-        question="O que ja foi gerado anteriormente?"
+        question="O que já foi gerado anteriormente?"
         result={
           <div className="rounded-lg border border-dashed border-border p-8 text-center">
             <p className="text-sm font-medium">Selecione uma execução para consultar os detalhes.</p>
@@ -65,7 +65,7 @@ export function HistoricoTab({
         ) : (
           <div className="rounded-lg border border-dashed border-border p-8 text-center">
             <p className="text-sm font-medium">Histórico pronto para registrar novas execuções.</p>
-            <p className="mt-1 text-xs text-muted-foreground">Ao gerar uma ideia, analise ou pitch, ela aparecera aqui com status e resumo.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Ao gerar uma ideia, análise ou pitch, ela aparecerá aqui com status e resumo.</p>
           </div>
         )}
       </WorkflowSection>

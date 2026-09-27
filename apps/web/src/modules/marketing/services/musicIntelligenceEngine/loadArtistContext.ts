@@ -88,23 +88,23 @@ export function loadArtistContext(
     },
     bottleneck: inferBottleneck({ releases: releases.length, campaigns: campaigns.length, publicSignals: publicSignals.length, tasks: tasks.length }),
     actionPlan: {
-      d30: ["Atualizar perfil, press kit e narrativa central.", "Selecionar 3 conteudos de maior potencial para Reels/TikTok/Shorts.", "Preparar uma campanha curta de descoberta."],
-      d60: ["Organizar proximo ciclo de lancamento ou colaboracao.", "Testar pitch para curadores e imprensa segmentada.", "Revisar canais com baixa consistencia."],
-      d90: ["Consolidar territorio artistico e calendario trimestral.", "Criar ativo audiovisual principal.", "Transformar aprendizados em playbook de marketing."],
+      d30: ["Atualizar perfil, press kit e narrativa central.", "Selecionar 3 conteúdos de maior potencial para Reels/TikTok/Shorts.", "Preparar uma campanha curta de descoberta."],
+      d60: ["Organizar próximo ciclo de lançamento ou colaboração.", "Testar pitch para curadores e imprensa segmentada.", "Revisar canais com baixa consistência."],
+      d90: ["Consolidar território artístico e calendário trimestral.", "Criar ativo audiovisual principal.", "Transformar aprendizados em playbook de marketing."],
     },
   };
 }
 
 function inferGrowthRhythm(dates: string[], socialSignals: string[]) {
-  if (dates.length >= 6 && socialSignals.length >= 3) return "crescimento com base de catalogo e canais ativos";
-  if (dates.length >= 3) return "crescimento em validacao por consistencia de lancamentos";
-  if (socialSignals.length >= 2) return "crescimento dependente de presenca digital";
+  if (dates.length >= 6 && socialSignals.length >= 3) return "crescimento com base de catálogo e canais ativos";
+  if (dates.length >= 3) return "crescimento em validação por consistência de lançamentos";
+  if (socialSignals.length >= 2) return "crescimento dependente de presença digital";
   return "ritmo ainda pouco mensuravel";
 }
 
 function inferBottleneck(input: { releases: number; campaigns: number; publicSignals: number; tasks: number }) {
-  if (input.releases < 2) return "catalogo ainda pequeno para leitura de consistencia";
-  if (input.publicSignals < 2) return "poucos sinais de publico e canais ativos";
+  if (input.releases < 2) return "catálogo ainda pequeno para leitura de consistência";
+  if (input.publicSignals < 2) return "poucos sinais de público e canais ativos";
   if (input.campaigns < 1) return "marketing ainda sem campanhas estruturadas";
   if (input.tasks < 3) return "execução operacional pouco documentada";
   return "priorização estratégica e repetição do que performa melhor";
