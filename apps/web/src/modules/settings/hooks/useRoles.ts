@@ -232,7 +232,7 @@ export function useRoles() {
 
   const inviteUser = useMutation({
     mutationFn: ({ email, roleId }: { email: string; roleId?: string }) => {
-      if (!roleId) throw new Error("Selecione um papel");
+      if (!roleId) throw new UserFacingError("Invitation requires a role", "Selecione um papel.");
       return api.post<TeamInvite>("/users/invitations", { email, roleId });
     },
     onSuccess: invalidateRbac,

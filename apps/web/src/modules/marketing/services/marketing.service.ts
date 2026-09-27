@@ -5,6 +5,7 @@ import {
   CONTENT_TYPE_LABEL,
 } from "../constants/marketing.constants";
 import { getFormatViolation } from "../config/social-formats";
+import { UserFacingError } from "@/shared/lib/errors";
 import type {
   ActivityEvent,
   AiSuggestion,
@@ -47,7 +48,7 @@ function iso(value: unknown): string {
 
 function assertValidContent(channel: string, type: string, files: { kind?: string }[]): void {
   const violation = getFormatViolation(channel, type, files);
-  if (violation) throw new Error(`[marketing] ${violation}`);
+  if (violation) throw new UserFacingError(`Content format violation for ${channel}/${type}`, violation);
 }
 
 interface ResourceLike<T extends { id: ID; createdAt: string; updatedAt: string }> {

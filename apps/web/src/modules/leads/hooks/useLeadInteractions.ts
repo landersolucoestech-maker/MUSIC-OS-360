@@ -21,7 +21,7 @@ export function useCreateLeadInteraction(leadId: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ type, notes }: { type: LeadInteractionType; notes?: string }) => {
-      if (!leadId) throw new Error("leadId ausente");
+      if (!leadId) throw new Error("leadId is missing");
       return leadInteractionsService.create(leadId, type, notes);
     },
     onSuccess: () => {

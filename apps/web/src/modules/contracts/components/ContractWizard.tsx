@@ -22,7 +22,7 @@ import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import type { ContractTemplateRow, ContractVariable, WizardSignerRecord } from "@/modules/contracts/types/contracts.types";
 import type { ContractWithRelations, ContractInsert } from "@/modules/contracts/hooks/useContracts";
-import type { SigningPlatform } from "@/modules/contracts/types/contracts.types";
+import { SIGNING_PLATFORM_LABEL, type SigningPlatform } from "@/modules/contracts/types/contracts.types";
 import { cn } from "@/shared/lib/utils";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
 import { UserFacingError } from "@/shared/lib/errors";
@@ -1178,8 +1178,9 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
       }
 
       if (sendForSignature) {
-        toast.error(`Integração com ${provider || "plataforma"} não configurada`);
-        throw new UserFacingError(`Signing integration not configured: ${provider || "unknown"}`, `Integração com ${provider || "plataforma"} não configurada`);
+        const platformName = provider ? SIGNING_PLATFORM_LABEL[provider] : "a plataforma de assinatura";
+        toast.error(`A integração com ${platformName} não está configurada.`);
+        throw new UserFacingError(`Signing integration not configured: ${provider || "unknown"}`, `A integração com ${platformName} não está configurada.`);
       }
       onOpenChange(false);
     } finally {

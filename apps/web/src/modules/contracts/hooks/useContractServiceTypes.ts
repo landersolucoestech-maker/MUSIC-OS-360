@@ -129,7 +129,7 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
     mutationFn: async (data: ContractServiceTypeInsert) => {
       const slug = data.slug?.trim() ? data.slug.trim() : slugify(data.name);
       if (allTypes.some((t) => t.slug === slug)) {
-        throw new UserFacingError(`Duplicate contract service type slug: ${slug}`, `Já existe um tipo com o slug "${slug}"`);
+        throw new UserFacingError(`Duplicate contract service type slug: ${slug}`, `Já existe um tipo com o identificador "${slug}".`);
       }
       return contractsService.createContractServiceType({
         ...data,
@@ -151,9 +151,9 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
     mutationFn: async ({ id, ...data }: ContractServiceTypeUpdate) => {
       if (data.slug !== undefined) {
         const slug = data.slug.trim();
-        if (!slug) throw new UserFacingError("Empty contract service type slug", "O slug não pode ser vazio.");
+        if (!slug) throw new UserFacingError("Empty contract service type slug", "O identificador não pode ficar vazio.");
         if (allTypes.some((t) => t.slug === slug && t.id !== id)) {
-          throw new UserFacingError(`Duplicate contract service type slug: ${slug}`, `Já existe um tipo com o slug "${slug}"`);
+          throw new UserFacingError(`Duplicate contract service type slug: ${slug}`, `Já existe um tipo com o identificador "${slug}".`);
         }
         data.slug = slug;
       }

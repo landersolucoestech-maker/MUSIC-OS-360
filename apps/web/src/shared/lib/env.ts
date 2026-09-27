@@ -227,7 +227,7 @@ export function validateFrontendEnv(): boolean {
   // Development: warn but allow startup so devs can still iterate.
   console.warn(
     `[MUSIC OS 360] ⚠️  Missing environment variables (app will use fallbacks):\n${lines}\n` +
-    "Set these in apps/web/.env.development or ajuste o backend local.",
+    "Set these in apps/web/.env.development or adjust the local backend.",
   );
   return true;
 }

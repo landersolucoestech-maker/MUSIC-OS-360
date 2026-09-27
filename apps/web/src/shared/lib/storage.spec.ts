@@ -45,7 +45,7 @@ describe("storage.list", () => {
     apiMock.get.mockResolvedValueOnce({ meta: { total: 0 } });
 
     await expect(storage.list("items")).rejects.toThrow(
-      'Resposta inválida ao listar "items"',
+      'Invalid list response for "items"',
     );
   });
 });

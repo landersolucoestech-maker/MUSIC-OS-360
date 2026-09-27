@@ -35,7 +35,7 @@ export class UnsafeKeyError extends Error {
 
 export function assertSafeKey(key: unknown): string {
   if (!isSafeKey(key)) {
-    throw new UnsafeKeyError(`Chave de objeto inválida: ${String(key)}`);
+    throw new UnsafeKeyError(`Invalid object key: ${String(key)}`);
   }
   return key;
 }

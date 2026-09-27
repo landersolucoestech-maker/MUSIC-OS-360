@@ -15,6 +15,13 @@ export interface ContractVersion {
 
 export type SigningPlatform = "autentique" | "clicksign" | "docusign";
 
+/** Product names shown to the user for each signing platform id. */
+export const SIGNING_PLATFORM_LABEL: Readonly<Record<SigningPlatform, string>> = {
+  autentique: "Autentique",
+  clicksign: "Clicksign",
+  docusign: "DocuSign",
+};
+
 /**
  * Signer record persisted by ContractWizard.
  * Richer than the legacy ContractSigner — keeps wizard-specific fields

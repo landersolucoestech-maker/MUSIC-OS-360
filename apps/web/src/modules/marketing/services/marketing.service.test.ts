@@ -10,6 +10,7 @@ const apiMock = vi.hoisted(() => ({
 vi.mock("@/shared/lib/api-client", () => ({ api: apiMock }));
 
 import { marketingService } from "./marketing.service";
+import { toUserMessage } from "@/shared/lib/errors";
 
 describe("marketingService production API boundary", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -138,5 +139,18 @@ describe("marketingService production API boundary", () => {
       dependencies: [],
     })).rejects.toThrow("projectId");
     expect(apiMock.post).not.toHaveBeenCalled();
+  });
+
+  it("rejects an invalid content format with PT-BR user copy, before calling the API", async () => {
+    const err = await marketingService.contents
+      .update("content-1", {
+        channel: "instagram",
+        type: "reels",
+        files: [{ id: "f1", name: "capa.png", url: "https://cdn.example/capa.png", kind: "image/png" }],
+      })
+      .catch((e: unknown) => e);
+    expect(toUserMessage(err)).toBe("Este formato aceita apenas vídeo.");
+    expect((err as Error).message).toBe("Content format violation for instagram/reels");
+    expect(apiMock.patch).not.toHaveBeenCalled();
   });
 });

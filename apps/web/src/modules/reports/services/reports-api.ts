@@ -218,7 +218,7 @@ export async function fileToImportBody(file: File): Promise<ImportUploadBody> {
     throw new UserFacingError(`Invalid import MIME type; expected ${XLSX_MIME}`, "Tipo de arquivo inválido. Selecione uma planilha .xlsx.");
   }
   if (file.size <= 0 || file.size > IMPORT_MAX_BYTES) {
-    throw new UserFacingError(`Import file size outside 1..${IMPORT_MAX_BYTES} bytes`, `O arquivo deve possuir entre 1 e ${IMPORT_MAX_BYTES} bytes.`);
+    throw new UserFacingError(`Import file size outside 1..${IMPORT_MAX_BYTES} bytes`, `O arquivo deve ter no máximo ${IMPORT_MAX_BYTES / (1024 * 1024)} MB e não pode estar vazio.`);
   }
 
   const buffer = await file.arrayBuffer();
