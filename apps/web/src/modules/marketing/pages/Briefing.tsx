@@ -488,7 +488,7 @@ function BriefingViewModal({
               </p>
             </div>
             <Button size="sm" variant="outline" asChild>
-              <Link to="/marketing/ia-criativa">
+              <Link to="/marketing/creative-ai">
                 <Sparkles className="mr-1.5 h-3.5 w-3.5" /> Analisar com IA
               </Link>
             </Button>

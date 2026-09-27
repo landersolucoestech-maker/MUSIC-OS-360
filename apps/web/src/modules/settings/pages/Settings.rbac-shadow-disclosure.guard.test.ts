@@ -26,7 +26,7 @@ describe("Configuracoes — RBAC shadow-mode disclosure (CODEBASE_MAP #17)", () 
     expect(USE_ROLES).toMatch(/authorityMode:\s*authorityModeQuery\.data/);
   });
 
-  it("the Papéis e Permissões card renders a not-enforced banner sourced from authorityMode", () => {
+  it("the 'Papéis e Permissões' card renders a not-enforced banner sourced from authorityMode", () => {
     expect(SETTINGS).toMatch(/authorityMode\s*&&\s*!authorityMode\.enforced/);
     expect(SETTINGS).toMatch(/data-testid="alert-rbac-not-enforced"/);
   });

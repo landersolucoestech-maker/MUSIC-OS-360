@@ -6,7 +6,7 @@
  *
  *   `company-logo:{workspaceId}`. Mirrors the last logo into a public preview
  *   key (`company-logo:__public__`) only to demonstrate, in dev, the
- *   rendering on the public /cadastro/:slug page.
+ *   rendering on the public /apply/:slug page.
  * - Production: sends/reads via the backend, using the project's already existing storage
  *   (Cloudflare R2) under `company-logos/{workspaceId}/logo`. The endpoints below
  *   will be implemented in the backend later.

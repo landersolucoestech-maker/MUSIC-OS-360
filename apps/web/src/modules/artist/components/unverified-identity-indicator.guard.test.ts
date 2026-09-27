@@ -21,7 +21,7 @@ const FILE = join(__dirname, "ArtistPlatformMetrics.tsx");
 const source = readFileSync(FILE, "utf8");
 
 describe("The unconfirmed-identity indicator (primary_identity_status) reaches the UI", () => {
-  it("define o helper isUnverifiedIdentitySnapshot lendo primary_identity_status === INSUFFICIENT_EVIDENCE", () => {
+  it("defines the isUnverifiedIdentitySnapshot helper reading primary_identity_status === INSUFFICIENT_EVIDENCE", () => {
     expect(source).toContain("function isUnverifiedIdentitySnapshot(");
     expect(source).toContain('raw_payload?.["primary_identity_status"] === "INSUFFICIENT_EVIDENCE"');
   });

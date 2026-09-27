@@ -343,3 +343,23 @@ test("vocabulary integrity: the committed vocabulary loads fully and never conta
   assert.ok(PT_TOKENS.size > 20000, `vocabulary size ${PT_TOKENS.size}`);
   for (const w of EN_OVERRIDES) assert.equal(PT_TOKENS.has(w), false, w);
 });
+
+test("links: route-like strings in web code are checked (path segments, query keys and values, templates)", () => {
+  const src = `navigate("/lancamentos?view=" + id);
+navigate(\`/registro-musicas?editObra=\${row.id}\`);
+const back = "/configuracoes?aba=operacional&modulo=financeiro";
+const ok = \`/releases?view=\${id}\`;
+const api = "/artists/stats/genres";`;
+  assert.deepEqual(names(scanSource("apps/web/src/l.tsx", src), "frontendRoute"),
+    ["/lancamentos?view=", "/registro-musicas?editObra=${}", "/configuracoes?aba=operacional&modulo=financeiro"]);
+  assert.deepEqual(names(scanSource("apps/api/src/l.ts", `const p = "/lancamentos";`), "frontendRoute"), []);
+});
+
+test("UX: strings rendered as JSX content and non-ASCII strings are never routes or values", () => {
+  const src = `export const P = ({ plan }) => <span>{plan.period === "monthly" ? "/mês" : plan.period === "yearly" ? "/ano" : ""}</span>;
+export const Q = ({ ok }) => <p>{ok && "pendente"}</p>;
+const suffix = "/mês";`;
+  const hits = scanSource("apps/web/src/p.tsx", src);
+  assert.deepEqual(names(hits, "frontendRoute"), []);
+  assert.deepEqual(names(hits, "value"), []);
+});

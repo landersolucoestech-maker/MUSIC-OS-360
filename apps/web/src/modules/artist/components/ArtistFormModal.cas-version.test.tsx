@@ -144,7 +144,7 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     expect(nameInput().value).toBe("Editado pelo usuário");
   });
 
-  it("save normal funciona (ciclo 1: abrir → editar → salvar)", async () => {
+  it("a normal save works (cycle 1: open → edit → save)", async () => {
     const { onSuccess } = renderModal({ artist: listSnapshot });
 
     await waitFor(() => expect(nameInput().value).toBe("Versão Atual"));

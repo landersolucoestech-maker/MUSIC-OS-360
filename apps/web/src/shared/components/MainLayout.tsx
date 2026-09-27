@@ -153,13 +153,13 @@ function TopbarUserMenu() {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link to="/perfil" className="cursor-pointer text-sm">
+          <Link to="/profile" className="cursor-pointer text-sm">
             <User className="h-3.5 w-3.5 mr-2 opacity-60" />
             Meu Perfil
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/configuracoes" className="cursor-pointer text-sm">
+          <Link to="/settings" className="cursor-pointer text-sm">
             <Settings className="h-3.5 w-3.5 mr-2 opacity-60" />
             Configurações
           </Link>
@@ -281,7 +281,7 @@ export function MainLayout({
   useSyncTenantFromJWT(userEmail || undefined);
 
   useEffect(() => {
-    if (window.location.pathname.includes("/artistas")) return;
+    if (window.location.pathname.includes("/artists")) return;
 
     const tables = Array.from(document.querySelectorAll<HTMLTableElement>("table:not([data-shared-table='true'])"));
     tables.forEach((table) => {

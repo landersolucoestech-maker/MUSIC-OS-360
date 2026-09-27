@@ -274,21 +274,21 @@ function OperationalAlerts() {
     dashboard.overdue_invoices_count > 0 && {
       label: "Notas fiscais vencidas",
       value: dashboard.overdue_invoices_count,
-      href: "/accounting/nota-fiscal",
+      href: "/accounting/invoices",
       icon: AlertTriangle,
       variant: "destructive" as const,
     },
     dashboard.failed_external_syncs > 0 && {
       label: "Sincronizações com falha",
       value: dashboard.failed_external_syncs,
-      href: "/configuracoes",
+      href: "/settings",
       icon: ServerCrash,
       variant: "destructive" as const,
     },
     dashboard.contracts_expiring_soon_count > 0 && {
       label: "Contratos vencendo em 30 dias",
       value: dashboard.contracts_expiring_soon_count,
-      href: "/contratos",
+      href: "/contracts",
       icon: FileText,
       variant: "warning" as const,
     },
@@ -302,21 +302,21 @@ function OperationalAlerts() {
     dashboard.onboarding_in_progress_count > 0 && {
       label: "Onboardings em andamento",
       value: dashboard.onboarding_in_progress_count,
-      href: "/artistas",
+      href: "/artists",
       icon: Users,
       variant: "info" as const,
     },
     dashboard.pending_distribution_setups > 0 && {
       label: "Configurações de distribuição pendentes",
       value: dashboard.pending_distribution_setups,
-      href: "/lancamentos",
+      href: "/releases",
       icon: Upload,
       variant: "info" as const,
     },
     dashboard.pending_external_syncs > 0 && {
       label: "Sincronizações externas pendentes",
       value: dashboard.pending_external_syncs,
-      href: "/configuracoes",
+      href: "/settings",
       icon: Activity,
       variant: "info" as const,
     },
@@ -761,7 +761,7 @@ export default function Dashboard() {
           <SectionHeader
             title="Artistas em Destaque"
             description="Artistas com maior relevância no período"
-            action={{ label: "Ver todos", href: "/artistas" }}
+            action={{ label: "Ver todos", href: "/artists" }}
           />
           {artistsWithEvents.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -872,7 +872,7 @@ export default function Dashboard() {
                 </div>
                 <p className="text-sm font-semibold text-foreground mb-1">Nenhum artista cadastrado</p>
                 <p className="text-xs text-muted-foreground mb-4">Comece cadastrando seus artistas para ver os destaques aqui.</p>
-                <Link to="/artistas">
+                <Link to="/artists">
                   <Button size="sm" className="h-8 text-xs">
                     Criar Artista
                   </Button>
@@ -886,7 +886,7 @@ export default function Dashboard() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (see Task C): ArtistaVisao360Modal calls useContratos/useTransacoes/
           useEventos/useLancamentos/useProjetos unconditionally, all of them
           used in the Dashboard's composite isLoading (useMetrics). Mounting it only

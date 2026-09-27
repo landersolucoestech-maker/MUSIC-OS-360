@@ -15,24 +15,24 @@ import { test, expect } from '@playwright/test';
  */
 const MODULES: Array<{ name: string; path: string }> = [
   { name: 'Dashboard', path: '/dashboard' },
-  { name: 'Artistas', path: '/artistas' },
-  { name: 'Catálogo', path: '/registro-musicas' },
-  { name: 'Lançamentos', path: '/lancamentos' },
-  { name: 'Contratos', path: '/contratos' },
+  { name: 'Artistas', path: '/artists' },
+  { name: 'Catálogo', path: '/music-registration' },
+  { name: 'Lançamentos', path: '/releases' },
+  { name: 'Contratos', path: '/contracts' },
   { name: 'Audiovisual', path: '/audiovisual' },
   { name: 'Financeiro', path: '/accounting' },
   { name: 'Agenda', path: '/agenda' },
-  { name: 'Inventário', path: '/inventario' },
+  { name: 'Inventário', path: '/inventory' },
   { name: 'MusicChat', path: '/chat' },
   { name: 'CRM/Leads', path: '/leads' },
-  { name: 'RH', path: '/rh' },
+  { name: 'RH', path: '/hr' },
   { name: 'Marketing', path: '/marketing' },
-  { name: 'Relatórios', path: '/relatorios' },
+  { name: 'Relatórios', path: '/reports' },
   { name: 'Suporte', path: '/support' },
-  { name: 'Configurações', path: '/configuracoes' },
+  { name: 'Configurações', path: '/settings' },
 ];
 
-test('AUTH_DISABLED: root abre direto no dashboard, sem login, mostra LANDER RECORDS', async ({ page }) => {
+test('AUTH_DISABLED: root opens straight on the dashboard, no login, shows LANDER RECORDS', async ({ page }) => {
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(err.message));
   await page.goto('/', { waitUntil: 'networkidle' });
@@ -47,7 +47,7 @@ test('AUTH_DISABLED: root abre direto no dashboard, sem login, mostra LANDER REC
   expect(pageErrors).toEqual([]);
 });
 
-test('AUTH_DISABLED: todos os módulos abrem sem redirecionar para login/auth', async ({ page }) => {
+test('AUTH_DISABLED: every module opens without redirecting to login/auth', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
   test.skip(
     !page.url().includes('/dashboard'),

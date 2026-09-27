@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { CampaignStrategyAutomation } from './campaign-strategy.automation';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
-// ─── Mocks de fronteira (DB / SkillRunService / AIService) ────────────────────
+// ─── Boundary mocks (DB / SkillRunService / AIService) ──────────────────────────
 
 function makeSkillRun() {
   return {

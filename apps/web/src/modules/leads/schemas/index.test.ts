@@ -66,7 +66,7 @@ describe("leadValidationSchema — dadosInternosCRM.valorEstimado/probabilidadeF
   });
 });
 
-describe("serviceLeadSchemas — payloadServico por tipo (.strict())", () => {
+describe("serviceLeadSchemas — payloadServico per type (.strict())", () => {
   it("accepts only the fields defined for the selected service type", () => {
     const schema = serviceLeadSchemas.producaoMusical;
     const result = schema.validation.safeParse({ objetivo: "Lançamento de single" });

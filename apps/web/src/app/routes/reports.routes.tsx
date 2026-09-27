@@ -7,8 +7,8 @@ const Reports = lazy(() => import("@/modules/reports/pages/Reports"));
 export function reportsRoutes(P: SuspenseRouteComponent) {
   return (
     <>
-      <Route path="/relatorios" element={<P><Reports /></P>} />
-      <Route path="/analytics" element={<Navigate to="/relatorios" replace />} />
+      <Route path="/reports" element={<P><Reports /></P>} />
+      <Route path="/analytics" element={<Navigate to="/reports" replace />} />
     </>
   );
 }

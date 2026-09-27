@@ -18,7 +18,7 @@ export interface HarnessConfig {
   apiUrl: string;
   supabaseUrl: string;
   supabaseAnonKey: string;
-  tenants: string[]; // tenant_ids reais de staging
+  tenants: string[]; // real staging tenant_ids
   credentials: RoleCredential[];
   targets: {
     requests: number;

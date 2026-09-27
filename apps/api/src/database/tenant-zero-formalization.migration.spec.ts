@@ -5,7 +5,7 @@ describe('TenantZeroFormalization20260801000002', () => {
     return { query: jest.fn(async (_sql: string) => undefined) };
   }
 
-  it('adiciona is_system_tenant a organizations e tenants de forma idempotente', async () => {
+  it('adds is_system_tenant to organizations and tenants idempotently', async () => {
     const qr = queryRunner();
     await new TenantZeroFormalization20260801000002().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');

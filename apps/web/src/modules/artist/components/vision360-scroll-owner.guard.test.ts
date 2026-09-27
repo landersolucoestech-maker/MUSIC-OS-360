@@ -34,7 +34,7 @@ describe("Artist 360 modal — scroll owner estrutural", () => {
     expect(source).not.toContain('<ScrollArea className="flex-1 min-h-0">');
   });
 
-  it("a cadeia flex acima do scroll owner continua intacta", () => {
+  it("the flex chain above the scroll owner stays intact", () => {
     // Without max-h on DialogContent the modal grows beyond the viewport;
     // without min-h-0 on the Tabs the flexible child is never constrained.
     expect(source).toContain("max-h-[90vh]");

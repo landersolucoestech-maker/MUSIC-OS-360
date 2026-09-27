@@ -162,7 +162,7 @@ export default function Contracts() {
       description="Gerencie contratos e documentação legal"
       actions={
         <>
-          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={() => navigate("/contratos/templates")}>
+          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={() => navigate("/contracts/templates")}>
             <FileStack className="h-3.5 w-3.5" />
             Templates
           </Button>
@@ -433,7 +433,7 @@ export default function Contracts() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): ContractWizard calls useContracts() again only for the
           create/update mutations, the same query as the isLoading above.
           Mounting it only after isLoading turned false created a new observer

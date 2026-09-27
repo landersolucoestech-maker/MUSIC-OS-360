@@ -14,7 +14,7 @@ describe("describeAuthError", () => {
     expect(describeAuthError({ message: "x", status: 429 })).toContain("Muitas tentativas");
   });
 
-  it("rate limit por mensagem", () => {
+  it("rate limit by message", () => {
     expect(describeAuthError({ message: "Too many requests" })).toContain("Muitas tentativas");
   });
 

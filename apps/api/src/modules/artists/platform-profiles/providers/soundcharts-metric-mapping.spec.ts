@@ -127,7 +127,7 @@ describe('Single Soundcharts source per artist metric card', () => {
     expect(snapshot.followers).toBe(9_223_417);
   });
 
-  it('SoundCloud: followers vem de getSoundCloudFollowers — sem SOUNDCLOUD_CLIENT_ID', async () => {
+  it('SoundCloud: followers come from getSoundCloudFollowers — no SOUNDCLOUD_CLIENT_ID', async () => {
     const getSoundCloudFollowers = jest.fn().mockResolvedValue(metric(3_892_132));
     const soundcharts = fakeSoundcharts({ getSoundCloudFollowers });
     const provider = new SoundCloudArtistProfileProvider(soundcharts);

@@ -121,9 +121,9 @@ export interface ArtistFormField {
   /** String validations of the generated schema. */
   maxLength?: { value: number; message: string };
   requiredMessage?: string;
-  /** Validador visual para type="url". */
+  /** Visual validator for type="url". */
   urlValidator?: (url: string) => UrlValidationState;
-  /** Props para type="file". */
+  /** Props for type="file". */
   file?: { folder: string; accept: string; maxSize: number; circular?: boolean };
 }
 

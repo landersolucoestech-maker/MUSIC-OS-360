@@ -82,7 +82,7 @@ describe('OAuthCodeStateDto (Instagram/TikTok/Google Ads callbacks)', () => {
   });
 });
 
-describe('AutentiqueWebhookDto (webhook externo — sem whitelist fechado no controller)', () => {
+describe('AutentiqueWebhookDto (external webhook — no closed whitelist in the controller)', () => {
   it('accepts the real payload used in the service test (event/event_id/document_id)', async () => {
     const errors = await validatePayload(
       AutentiqueWebhookDto,

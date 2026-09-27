@@ -56,7 +56,7 @@ describe('TakedownsService — optimistic concurrency in update()', () => {
     return module.get<TakedownsService>(TakedownsService);
   }
 
-  it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
+  it('without expectedUpdatedAt: applies an unconditional update (backward compatibility)', async () => {
     service = await buildService({ affected: 1 });
     await service.update(TENANT, 'u1', TAKEDOWN_ID, { title: 'Novo título' } as any);
 

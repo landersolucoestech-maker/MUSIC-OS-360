@@ -516,7 +516,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                           className="mt-4 gap-1.5 text-xs"
                           onClick={() => {
                             onOpenChange(false);
-                            navigate(`/lancamentos?view=${linkedRelease.id}`);
+                            navigate(`/releases?view=${linkedRelease.id}`);
                           }}
                           data-testid="button-ver-lancamento"
                         >

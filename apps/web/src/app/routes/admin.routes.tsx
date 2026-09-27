@@ -36,17 +36,16 @@ export function adminRoutes(S: SuspenseRouteComponent, P: SuspenseRouteComponent
       <Route path="/admin/knowledge"      element={<P><AdminKnowledge /></P>} />
 
       {/* Settings centralizes the general, email, security, notifications, webhooks, API keys, integrations and users tabs */}
-      <Route path="/admin/configuracoes"  element={<P><AdminSettings /></P>} />
-      <Route path="/admin/musicchat/automacoes" element={<P><MusicChatAutomationSettings /></P>} />
+      <Route path="/admin/settings"       element={<P><AdminSettings /></P>} />
+      <Route path="/admin/musicchat/automations" element={<P><MusicChatAutomationSettings /></P>} />
 
 
-      {/* Redirects — standalone routes consolidated under /admin/configuracoes */}
-      <Route path="/admin/settings"       element={<Navigate to="/admin/configuracoes" replace />} />
-      <Route path="/admin/security"       element={<Navigate to="/admin/configuracoes" replace />} />
-      <Route path="/admin/integrations"   element={<Navigate to="/admin/configuracoes" replace />} />
-      <Route path="/admin/system"         element={<Navigate to="/admin/configuracoes" replace />} />
-      <Route path="/admin/notifications"  element={<Navigate to="/admin/configuracoes" replace />} />
-      <Route path="/admin/users"          element={<Navigate to="/admin/configuracoes" replace />} />
+      {/* Redirects — standalone routes consolidated under /admin/settings */}
+      <Route path="/admin/security"       element={<Navigate to="/admin/settings" replace />} />
+      <Route path="/admin/integrations"   element={<Navigate to="/admin/settings" replace />} />
+      <Route path="/admin/system"         element={<Navigate to="/admin/settings" replace />} />
+      <Route path="/admin/notifications"  element={<Navigate to="/admin/settings" replace />} />
+      <Route path="/admin/users"          element={<Navigate to="/admin/settings" replace />} />
     </>
   );
 }

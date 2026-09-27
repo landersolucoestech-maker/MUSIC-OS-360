@@ -236,7 +236,7 @@ describe('BillingService', () => {
       expect(r).toEqual({ received: true });
     });
 
-    it('inicia payment_grace em invoice.payment_failed', async () => {
+    it('starts payment_grace on invoice.payment_failed', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockReturnValueOnce({
         id: 'evt_failed',
@@ -261,7 +261,7 @@ describe('BillingService', () => {
       expect(enforcement.startPaymentGrace).toHaveBeenCalledWith('tenant-1', 'invoice.payment_failed', expect.any(Date), undefined, undefined);
     });
 
-    it('reativa tenant em invoice.payment_succeeded', async () => {
+    it('reactivates the tenant on invoice.payment_succeeded', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockReturnValueOnce({
         id: 'evt_paid',

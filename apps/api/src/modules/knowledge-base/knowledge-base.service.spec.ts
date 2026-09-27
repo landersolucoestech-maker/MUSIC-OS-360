@@ -146,7 +146,7 @@ describe('KnowledgeBaseService', () => {
   });
 
   describe('incrementViews', () => {
-    it('incrementa views atomicamente pelo id', async () => {
+    it('increments views atomically by id', async () => {
       const { svc, articleQb } = makeService();
       await svc.incrementViews('a1');
       expect(articleQb.set).toHaveBeenCalledWith({ views: expect.any(Function) });

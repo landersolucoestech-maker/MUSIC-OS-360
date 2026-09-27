@@ -120,7 +120,7 @@ describe('TransactionsService — optimistic concurrency on update/patch', () =>
     return module.get<TransactionsService>(TransactionsService);
   }
 
-  it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
+  it('without expectedUpdatedAt: applies an unconditional update (backward compatibility)', async () => {
     service = await buildService({ affected: 1 });
     await service.patch(TENANT, 'u1', TX_ID, { description: 'Nova descrição' } as any);
 

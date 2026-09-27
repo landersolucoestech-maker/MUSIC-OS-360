@@ -20,7 +20,7 @@ import { analyticsAdapter } from "@/modules/integrations/adapters/analytics.adap
 import { emit }             from "@/shared/domain-events";
 
 /* ──────────────────────────────────────── */
-/* Tipos de input                           */
+/* Input types                               */
 /* ──────────────────────────────────────── */
 
 export interface SendUserInviteInput {

@@ -16,7 +16,7 @@ describe("getExpectedUpdatedAt", () => {
     expect(getExpectedUpdatedAt({ updatedAt: "2026-08-14T10:00:00.000Z" })).toBe("2026-08-14T10:00:00.000Z");
   });
 
-  it("undefined para entidade nula/ausente", () => {
+  it("undefined for a null/missing entity", () => {
     expect(getExpectedUpdatedAt(null)).toBeUndefined();
     expect(getExpectedUpdatedAt(undefined)).toBeUndefined();
   });

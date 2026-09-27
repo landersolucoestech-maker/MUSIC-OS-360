@@ -33,7 +33,7 @@ describe("exportToXlsx — spreadsheet formula injection protection (OWASP)", ()
     expect(aoa[1][0]).toBe('\'=HYPERLINK("http://evil.test")');
   });
 
-  it("neutraliza payload iniciado por @", () => {
+  it("neutralizes a payload starting with @", () => {
     const aoa = capturedSheet([{ nome: "@SUM(1+1)", valor: 1 }]);
     expect(aoa[1][0]).toBe("'@SUM(1+1)");
   });

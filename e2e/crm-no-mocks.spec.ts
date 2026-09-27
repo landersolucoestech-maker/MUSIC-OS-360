@@ -22,10 +22,10 @@ const MOCK_NAMES = [
   'Aurora Live',
 ];
 
-test.describe('CRM (Leads/Contatos) — sem dados mockados', () => {
+test.describe('CRM (leads/contacts) — no mocked data', () => {
   test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
 
-  test('carrega Leads/Contatos via API real, sem nomes do mock antigo', async ({ page }) => {
+  test('loads leads/contacts through the real API, with none of the old mock names', async ({ page }) => {
     const apiCalls: string[] = [];
     page.on('request', (req) => {
       const url = req.url();
@@ -46,19 +46,19 @@ test.describe('CRM (Leads/Contatos) — sem dados mockados', () => {
       test.skip(true, 'Conta em troca de senha obrigatória — sem senha final estável para este E2E.');
     }
 
-    await test.step('abre o CRM (aba Contatos) e confirma chamada real ao backend', async () => {
+    await test.step('opens the CRM (contacts tab) and confirms a real backend call', async () => {
       await page.goto('/leads', { waitUntil: 'networkidle' });
       await expect(page.locator('[data-testid="tab-content-contatos"]')).toBeVisible({ timeout: 10_000 });
       expect(apiCalls.some((u) => u.includes('/api/v1/clients'))).toBe(true);
     });
 
-    await test.step('abre a aba Leads e confirma chamada real ao backend', async () => {
+    await test.step('opens the leads tab and confirms a real backend call', async () => {
       await page.locator('[data-testid="tab-leads"]').click();
       await expect(page.locator('[data-testid="tab-content-leads"]')).toBeVisible({ timeout: 10_000 });
       expect(apiCalls.some((u) => u.includes('/api/v1/leads'))).toBe(true);
     });
 
-    await test.step('nenhum nome do antigo mock em memória aparece na tela', async () => {
+    await test.step('no name from the old in-memory mock appears on screen', async () => {
       const bodyText = await page.locator('body').innerText();
       for (const name of MOCK_NAMES) {
         expect(bodyText).not.toContain(name);

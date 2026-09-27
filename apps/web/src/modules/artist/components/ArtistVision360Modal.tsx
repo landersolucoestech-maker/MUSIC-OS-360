@@ -861,7 +861,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Widgets de acompanhamento */}
+              {/* Tracking widgets */}
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 <Card className="bg-muted/30">
                   <CardContent className="p-3">
@@ -2091,7 +2091,7 @@ export function ArtistVision360Modal({
 
             {/* Finance */}
             <TabsContent value="financeiro" className="p-6 space-y-6 mt-0">
-              {/* Cards de Valores */}
+              {/* Value cards */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 <Card className="bg-success/10 border-success/20">
                   <CardContent className="p-4">

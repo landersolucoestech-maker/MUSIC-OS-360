@@ -14,7 +14,7 @@ describe("storage.listPaged", () => {
     mockedGet.mockReset();
   });
 
-  it("computa offset a partir de page/pageSize (1-indexado)", async () => {
+  it("computes offset from page/pageSize (1-indexed)", async () => {
     mockedGet.mockResolvedValue({ data: [], meta: { total: 0 } });
     await storage.listPaged("artistas", { page: 1, pageSize: 10 });
     let url = mockedGet.mock.calls[0][0] as string;

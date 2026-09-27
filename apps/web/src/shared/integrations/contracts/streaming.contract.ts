@@ -127,7 +127,7 @@ export interface AdCampaign {
   ended_at?: string | null;
 }
 
-// ─── Contrato de streaming ────────────────────────────────────────────────────
+// ─── Streaming contract ───────────────────────────────────────────────────────
 
 /**
  * IStreamingProvider — per-platform streaming metrics contract.
@@ -173,7 +173,7 @@ export interface IStreamingProvider {
   verifyConnection(): Promise<boolean>;
 }
 
-// ─── Contrato de ads ──────────────────────────────────────────────────────────
+// ─── Ads contract ─────────────────────────────────────────────────────────────
 
 /**
  * IAdsProvider — digital advertising campaigns contract.

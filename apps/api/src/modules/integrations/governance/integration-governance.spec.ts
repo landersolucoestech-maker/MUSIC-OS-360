@@ -106,7 +106,7 @@ describe('Per-plan entitlement — composition', () => {
     expect(await p.plansIncluding('inexistente')).toEqual([]);
   });
 
-  it('MULTI-TENANT: mesmo provider, planos diferentes → acessos diferentes', async () => {
+  it('MULTI-TENANT: same provider, different plans → different access', async () => {
     const plans = [
       { slug: 'starter', integrations: [], amount: 1 },
       { slug: 'enterprise', integrations: ['docusign'], amount: 3 },
@@ -118,7 +118,7 @@ describe('Per-plan entitlement — composition', () => {
     expect(b.reasonCode).toBe(IntegrationReasonCode.PLAN_NOT_INCLUDED);
   });
 
-  it('override por tenant (tenants.features.integrations) vence o plano', async () => {
+  it('per-tenant override (tenants.features.integrations) beats the plan', async () => {
     const [r] = await buildPolicy({
       plans: [{ slug: 'enterprise', integrations: [] }], oauth: CONNECTED,
     }).resolveAll({ ...CTX, tenantFeatures: { integrations: ['docusign'] } });

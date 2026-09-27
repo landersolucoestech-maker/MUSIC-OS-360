@@ -1057,7 +1057,7 @@ export class TransactionEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
 }
 
-// ─── Invoices (Brazilian notas fiscais) ───────────────────────────────────────
+// ─── Invoices (Brazilian NFS-e fiscal invoices) ───────────────────────────────────────
 @Entity('invoices')
 @Index(['tenant_id'])
 @Index(['tenant_id', 'status'])

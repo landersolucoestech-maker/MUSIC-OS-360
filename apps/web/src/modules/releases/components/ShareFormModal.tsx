@@ -284,7 +284,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
-          {/* Tipo de Share */}
+          {/* Share type */}
           <div className="space-y-2">
             <Label>Tipo de Share</Label>
             <Select value={formData.share_type} onValueChange={(v) => handleChange("share_type", v)}>

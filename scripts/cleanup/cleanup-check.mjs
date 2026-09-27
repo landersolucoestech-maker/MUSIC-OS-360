@@ -49,7 +49,7 @@ function git(args) {
   try {
     return execFileSync("git", args, { cwd: repoRoot, encoding: "utf8" });
   } catch (err) {
-    if (err.status === 1) return ""; // git grep sem matches
+    if (err.status === 1) return ""; // git grep with no matches
     throw err;
   }
 }

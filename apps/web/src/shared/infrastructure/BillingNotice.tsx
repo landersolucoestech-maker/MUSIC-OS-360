@@ -10,7 +10,7 @@ function formatAmount(amount?: number): string | null {
 export function BillingNotice() {
   const billing = useBilling();
   const location = useLocation();
-  if (location.pathname.startsWith("/billing") || location.pathname.startsWith("/configuracoes/billing")) return null;
+  if (location.pathname.startsWith("/billing") || location.pathname.startsWith("/settings/billing")) return null;
 
   if (billing.isSuspended) return null;
 
@@ -36,7 +36,7 @@ export function BillingNotice() {
             {typeof billing.daysRemaining === "number" && ` - ${billing.daysRemaining} dia(s) restantes`}
             {amount && ` - ${amount}`}
           </span>
-          <Link to="/configuracoes/billing" className="underline underline-offset-4">Regularizar</Link>
+          <Link to="/settings/billing" className="underline underline-offset-4">Regularizar</Link>
         </div>
       </div>
     );

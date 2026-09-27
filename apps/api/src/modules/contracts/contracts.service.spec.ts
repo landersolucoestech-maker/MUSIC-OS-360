@@ -269,7 +269,7 @@ describe('ContractsService.create — alias consolidation (Phase 5 / C1)', () =>
     expect(createdC1(repo)['fixed_value']).toBe('0');
   });
 
-  it('metadata/currency/signedAt/parties permanecem com comportamento inalterado (fora do escopo do C1)', async () => {
+  it('metadata/currency/signedAt/parties keep their behavior unchanged (outside C1 scope)', async () => {
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', {
       title: 'X', currency: 'USD', signedAt: '2026-01-01T00:00:00.000Z', parties: [{ nome: 'A' }],

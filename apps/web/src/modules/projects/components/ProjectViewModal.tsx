@@ -279,7 +279,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                   </div>
                   {Array.isArray(project.obras) && project.obras.length > 0 && (
                     <Link
-                      to={`/registro-musicas?projeto=${project.id}`}
+                      to={`/music-registration?project=${project.id}`}
                       className="text-xs text-destructive hover:underline inline-flex items-center gap-1"
                       onClick={() => onOpenChange(false)}
                       data-testid="link-ver-todas-obras"
@@ -310,7 +310,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                               )}
                             </div>
                             <Link
-                              to={`/registro-musicas?projeto=${project.id}&obra=${work.id}`}
+                              to={`/music-registration?project=${project.id}&work=${work.id}`}
                               className="text-xs text-destructive hover:underline inline-flex items-center gap-1 shrink-0"
                               onClick={() => onOpenChange(false)}
                               data-testid={`link-obra-${work.id}`}

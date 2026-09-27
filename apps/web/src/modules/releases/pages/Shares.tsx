@@ -519,7 +519,7 @@ export default function Shares() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): ShareFormModal calls useShares() again only for
           the mutations, the same query as the isLoading above. See Artistas.tsx
           for the full explanation of the loop. */}

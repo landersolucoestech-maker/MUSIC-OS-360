@@ -6,7 +6,7 @@ import { ReleasesService } from './releases.service';
  * in DRAFT, regardless of what the client sends. Any consumer that treats
  * "just created" as distributed is wrong by construction.
  */
-describe('ReleasesService.create — estado inicial', () => {
+describe('ReleasesService.create — initial state', () => {
   function build() {
     const repo = {
       create: jest.fn((v: Record<string, unknown>) => v),

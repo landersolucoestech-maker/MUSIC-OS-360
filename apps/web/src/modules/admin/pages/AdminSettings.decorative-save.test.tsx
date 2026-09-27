@@ -24,7 +24,7 @@ import AdminSettings from "./AdminSettings";
 function renderAdminSettings() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <MemoryRouter initialEntries={["/admin/configuracoes"]}>
+    <MemoryRouter initialEntries={["/admin/settings"]}>
       <QueryClientProvider client={qc}>
         <AdminSettings />
       </QueryClientProvider>

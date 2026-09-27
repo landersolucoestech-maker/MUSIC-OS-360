@@ -22,7 +22,7 @@ describe('GrantMusicosAppOnAllTables20260802000001', () => {
     expect(isApplicationMigration('GrantMusicosAppOnAllTables20260802000001')).toBe(true);
   });
 
-  it('concede SELECT/INSERT/UPDATE/DELETE às tabelas de leitura-escrita normal', () => {
+  it('grants SELECT/INSERT/UPDATE/DELETE on the regular read-write tables', () => {
     expect(migrationSrc).toMatch(/GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public\."\$\{table\}" TO musicos_app/);
   });
 

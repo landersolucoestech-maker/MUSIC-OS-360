@@ -31,10 +31,10 @@ import { CONTENT_CHANNEL_LABEL } from "../constants/marketing.constants";
 import { formatDate } from "../utils/marketing-format";
 
 const QUICK_LINKS = [
-  { href: "/marketing/campanhas", icon: Megaphone, label: "Nova Campanha" },
-  { href: "/marketing/calendario", icon: CalendarClock, label: "Novo Conteúdo" },
-  { href: "/marketing/tarefas", icon: ListChecks, label: "Nova Tarefa" },
-  { href: "/marketing/ia-criativa", icon: Sparkles, label: "IA Criativa" },
+  { href: "/marketing/campaigns", icon: Megaphone, label: "Nova Campanha" },
+  { href: "/marketing/calendar", icon: CalendarClock, label: "Novo Conteúdo" },
+  { href: "/marketing/tasks", icon: ListChecks, label: "Nova Tarefa" },
+  { href: "/marketing/creative-ai", icon: Sparkles, label: "IA Criativa" },
 ];
 
 export default function Overview() {
@@ -53,14 +53,14 @@ export default function Overview() {
               ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-[104px]" />)
               : (
                 <>
-                  <MarketingKpiCard title="Campanhas ativas" value={data.kpis.activeCampaigns} icon={Megaphone} accent="primary" to="/marketing/campanhas" />
-                  <MarketingKpiCard title="Projetos musicais em divulgação" value={data.kpis.activeProjects} icon={Folder} accent="primary" to="/projetos" />
-                  <MarketingKpiCard title="Conteúdos programados" value={data.kpis.scheduledContents} icon={CalendarClock} accent="warning" to="/marketing/calendario" />
-                  <MarketingKpiCard title="Tarefas pendentes" value={data.kpis.pendingTasks} icon={ListChecks} accent="warning" to="/marketing/tarefas" />
-                  <MarketingKpiCard title="Conteúdos publicados" value={data.kpis.openBriefings} icon={FileEdit} accent="primary" to="/marketing/calendario" />
+                  <MarketingKpiCard title="Campanhas ativas" value={data.kpis.activeCampaigns} icon={Megaphone} accent="primary" to="/marketing/campaigns" />
+                  <MarketingKpiCard title="Projetos musicais em divulgação" value={data.kpis.activeProjects} icon={Folder} accent="primary" to="/projects" />
+                  <MarketingKpiCard title="Conteúdos programados" value={data.kpis.scheduledContents} icon={CalendarClock} accent="warning" to="/marketing/calendar" />
+                  <MarketingKpiCard title="Tarefas pendentes" value={data.kpis.pendingTasks} icon={ListChecks} accent="warning" to="/marketing/tasks" />
+                  <MarketingKpiCard title="Conteúdos publicados" value={data.kpis.openBriefings} icon={FileEdit} accent="primary" to="/marketing/calendar" />
                   <MarketingKpiCard title="Aprovações pendentes" value={data.kpis.pendingApprovals} icon={CheckCircle2} accent="destructive" />
                   <MarketingKpiCard title="Entregas próximas" value={data.kpis.upcomingDeliveries} icon={Truck} accent="primary" />
-                  <MarketingKpiCard title="Performance do setor" value={`${data.kpis.sectorPerformance}%`} icon={Gauge} accent="success" to="/marketing/metricas" />
+                  <MarketingKpiCard title="Performance do setor" value={`${data.kpis.sectorPerformance}%`} icon={Gauge} accent="success" to="/marketing/metrics" />
                 </>
               )}
           </div>
@@ -74,7 +74,7 @@ export default function Overview() {
                 icon={CalendarClock}
                 description="Conteúdos a publicar"
                 action={
-                  <Link to="/marketing/calendario">
+                  <Link to="/marketing/calendar">
                     <Button variant="ghost" size="sm" className="h-7 text-xs">Ver calendário</Button>
                   </Link>
                 }

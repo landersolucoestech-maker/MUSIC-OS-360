@@ -369,7 +369,7 @@ const targetNameField = (targetOptions: TaskTargetOptions): FieldDef => ({
   placeholder: "Busque por projeto, artista ou empresa",
 });
 
-/** Field shared by create/edit: Tipo filtrado por Contexto + Setor. */
+/** Field shared by create/edit: type filtered by context + sector. */
 const typeField: FieldDef = {
   name: "type",
   label: "Tipo",

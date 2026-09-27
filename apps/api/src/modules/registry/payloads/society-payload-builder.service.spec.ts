@@ -41,7 +41,7 @@ function makeDs(opts: {
 
 const baseWork = { id: 'w1', tenant_id: 't1', title: 'Obra', deleted_at: null, alternative_titles: [], ai_tools: [], ai_prompts: [] };
 
-describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de shares (Fase 5 / C6)', () => {
+describe('SocietyPayloadBuilderService.buildWorkPayload — share eligibility (Phase 5 / C6)', () => {
   it('includes an eligible share (share_type null, not deleted) in the payload', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
@@ -52,7 +52,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
     expect(payload.splits[0].name).toBe('Autor A');
   });
 
-  it('exclui uma share financeira/pendente (share_type preenchido) do payload', async () => {
+  it('excludes a financial/pending share (share_type set) from the payload', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
       shares: [{ id: 's1', share_type: 'pendente', deleted_at: null, holder_name: 'Financeiro', percentage: '100', party_role: 'autor' }],
@@ -106,7 +106,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
   });
 });
 
-describe('SocietyPayloadBuilderService.buildRecordingPayload — elegibilidade de shares (Fase 5 / C6)', () => {
+describe('SocietyPayloadBuilderService.buildRecordingPayload — share eligibility (Phase 5 / C6)', () => {
   const baseRec = { id: 'r1', tenant_id: 't1', title: 'Faixa', deleted_at: null };
 
   it('contributors includes only eligible shares', async () => {

@@ -59,7 +59,7 @@ describe('SocietySubmissionService — optimistic concurrency in transition()', 
     return module.get<SocietySubmissionService>(SocietySubmissionService);
   }
 
-  it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
+  it('without expectedUpdatedAt: applies an unconditional update (backward compatibility)', async () => {
     service = await buildService({ affected: 1 });
     await service.transition(TENANT, 'u1', SUB_ID, {
       status: SocietySubmissionStatus.VALIDATING,

@@ -52,7 +52,7 @@ describe("Tenant commercial catalog — state contract", () => {
     expect(soon.action).toBe("none");
   });
 
-  it("NOT_CONNECTED (entitled) oferece conectar; CONNECTED oferece gerir", () => {
+  it("NOT_CONNECTED (entitled) offers connect; CONNECTED offers manage", () => {
     expect(INTEGRATION_PRESENTATION[IntegrationReasonCode.NOT_CONNECTED].action).toBe("connect");
     expect(INTEGRATION_PRESENTATION[IntegrationReasonCode.CONNECTED].action).toBe("manage");
   });

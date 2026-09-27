@@ -29,7 +29,7 @@ describe("useEditQueryParam", () => {
     const items: FakeRow[] = [{ id: "id-1", nome: "Um" }, { id: "id-2", nome: "Dois" }];
     const onMatch = vi.fn();
     renderHook(() => useEditQueryParam("edit", items, onMatch, "artistas"), {
-      wrapper: wrapperFor("/artistas?edit=id-2"),
+      wrapper: wrapperFor("/artists?edit=id-2"),
     });
 
     await waitFor(() => expect(onMatch).toHaveBeenCalledWith(items[1]));
@@ -43,7 +43,7 @@ describe("useEditQueryParam", () => {
     const onMatch = vi.fn();
 
     renderHook(() => useEditQueryParam("edit", items, onMatch, "artistas"), {
-      wrapper: wrapperFor("/artistas?edit=id-75"),
+      wrapper: wrapperFor("/artists?edit=id-75"),
     });
 
     await waitFor(() => expect(onMatch).toHaveBeenCalledWith({ id: "id-75", nome: "Registro 75" }));
@@ -55,7 +55,7 @@ describe("useEditQueryParam", () => {
     const onMatch = vi.fn();
 
     renderHook(() => useEditQueryParam("edit", items, onMatch), {
-      wrapper: wrapperFor("/artistas?edit=id-75"),
+      wrapper: wrapperFor("/artists?edit=id-75"),
     });
 
     await new Promise((r) => setTimeout(r, 0));
@@ -66,7 +66,7 @@ describe("useEditQueryParam", () => {
   it("without a URL parameter, fetches nothing", async () => {
     const onMatch = vi.fn();
     renderHook(() => useEditQueryParam("edit", [], onMatch, "artistas"), {
-      wrapper: wrapperFor("/artistas"),
+      wrapper: wrapperFor("/artists"),
     });
     await new Promise((r) => setTimeout(r, 0));
     expect(onMatch).not.toHaveBeenCalled();

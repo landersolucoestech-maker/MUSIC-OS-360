@@ -72,7 +72,7 @@ describe("adminIntegrationsService — admin catalog", () => {
     await expect(adminIntegrationsService.list()).rejects.toThrow("Not Found");
   });
 
-  it("update usa PATCH no recurso administrativo correto", async () => {
+  it("update uses PATCH on the correct admin resource", async () => {
     apiMock.patch.mockResolvedValue(rows[0]);
     await adminIntegrationsService.update("1", { publicationState: "hidden" });
     expect(apiMock.patch).toHaveBeenCalledWith("/admin/integrations/1", { publicationState: "hidden" });

@@ -98,7 +98,7 @@ export class CreateContractDto {
   @IsObject()
   metadata?: Record<string, unknown>;
 
-  // ── pt-BR (legacy + frontend) — passam directamente para a entity ────────
+  // ── pt-BR (legacy + frontend) — passed straight through to the entity ────────
   @ApiPropertyOptional({ example: 'Contrato de Gravação — Artista ABC', deprecated: true, description: 'Use "title".' })
   @IsOptional() @IsString() @MaxLength(500)
   titulo?: string;

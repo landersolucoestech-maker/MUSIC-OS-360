@@ -147,11 +147,11 @@ export default function MusicRegistry() {
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; item?: Work | Phonogram; type?: string }>({ open: false, item: undefined, type: undefined });
   const [contractModal, setContractModal] = useState<{ open: boolean; prefill?: { title: string; notes: string } }>({ open: false });
 
-  // Apply incoming ?projeto=:id (and optional ?obra=:id) coming from the Projetos screen
+  // Apply incoming ?project=:id (and optional ?obra=:id) coming from the Projetos screen
   const [searchParams, setSearchParams] = useSearchParams();
-  const workParam = searchParams.get("obra");
-  const editWorkParam = searchParams.get("editObra");
-  const phonogramParam = searchParams.get("fonograma");
+  const workParam = searchParams.get("work");
+  const editWorkParam = searchParams.get("editWork");
+  const phonogramParam = searchParams.get("phonogram");
   // Deep-link resolution DIRECTLY by ID (Task J) — it used to scan the works/
   // phonograms of an unfiltered useWorks()/usePhonograms(), truncated at the tenant's
   // first 50; GET /works/:id and /phonograms/:id reach
@@ -161,8 +161,8 @@ export default function MusicRegistry() {
   const { entity: deepLinkPhonogram, isLoading: loadingDeepLinkPhonogram } = useEntityById<Phonogram>("fonogramas", phonogramParam ?? undefined);
 
   useEffect(() => {
-    const projectParam = searchParams.get("projeto");
-    const newWorkParam = searchParams.get("newObra");
+    const projectParam = searchParams.get("project");
+    const newWorkParam = searchParams.get("newWork");
     if (!projectParam && !newWorkParam && !workParam && !editWorkParam && !phonogramParam) return;
 
     // If we still need to resolve an obra/fonograma but data are loading,
@@ -179,14 +179,14 @@ export default function MusicRegistry() {
       setProjectFilter(newWorkParam);
       setPendingProjectId(newWorkParam);
       setWorkTypeSelectorOpen(true);
-      next.delete("newObra");
+      next.delete("newWork");
       consumed = true;
     }
 
     if (projectParam) {
       setActiveTab("obras");
       setProjectFilter(projectParam);
-      next.delete("projeto");
+      next.delete("project");
       consumed = true;
     }
 
@@ -196,7 +196,7 @@ export default function MusicRegistry() {
         setWorkViewModal({ open: true, obra: deepLinkWork });
       }
       // Whether or not the obra was found, drop the param so we don't loop.
-      next.delete("obra");
+      next.delete("work");
       consumed = true;
     }
 
@@ -205,7 +205,7 @@ export default function MusicRegistry() {
         setActiveTab("obras");
         setWorkModal({ open: true, mode: "edit", obra: deepLinkEditWork });
       }
-      next.delete("editObra");
+      next.delete("editWork");
       consumed = true;
     }
 
@@ -214,7 +214,7 @@ export default function MusicRegistry() {
         setActiveTab("fonogramas");
         setPhonogramModal({ open: true, mode: "edit", fonograma: deepLinkPhonogram });
       }
-      next.delete("fonograma");
+      next.delete("phonogram");
       consumed = true;
     }
 
@@ -615,7 +615,7 @@ export default function MusicRegistry() {
                                 <DropdownMenuItem
                                   disabled={phonogram.status === "under_review"}
                                   title={phonogram.status === "under_review" ? "Fonograma em análise — aguarde a conclusão antes de criar um lançamento" : undefined}
-                                  onClick={() => navigate("/lancamentos")}
+                                  onClick={() => navigate("/releases")}
                                 >
                                   <Upload className="h-4 w-4 mr-2" />
                                   Fazer Lançamento
@@ -827,7 +827,7 @@ export default function MusicRegistry() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — the same bug as /artistas
+      {/* Outside the isLoading gate on purpose — the same bug as /artists
           (Task C): WorkFormModal/PhonogramFormModal call useWorks()/
           usePhonograms() again only for the mutations, the same queries as the
           isLoading above. Mounting them only after isLoading turned false created

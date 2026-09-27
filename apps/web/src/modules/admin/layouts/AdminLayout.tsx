@@ -25,7 +25,7 @@ const NAV_ITEMS = [
   { label: "Registros e auditoria",href: "/admin/audit",     icon: ScrollText },
   { label: "Suporte",         href: "/admin/support",   icon: HeadphonesIcon },
   { label: "Base de Conhecimento", href: "/admin/knowledge", icon: BookOpen },
-  { label: "Configurações",   href: "/admin/configuracoes", icon: Settings },
+  { label: "Configurações",   href: "/admin/settings", icon: Settings },
 ];
 
 const SEVERITY_ICON = {

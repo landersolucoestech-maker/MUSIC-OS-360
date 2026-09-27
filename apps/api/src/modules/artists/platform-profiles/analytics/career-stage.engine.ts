@@ -67,7 +67,7 @@ export type CareerStageStatus = 'OK' | 'INSUFFICIENT_DATA';
 
 export interface CareerStageResult {
   status: CareerStageStatus;
-  /** 0.0-10.0, null quando status=INSUFFICIENT_DATA. */
+  /** 0.0-10.0, null when status=INSUFFICIENT_DATA. */
   score: number | null;
   classification: string | null;
   /** 0-100. */

@@ -87,7 +87,7 @@ const CAMPAIGNS_DEFS: RawDef[] = [
 ];
 
 // ─── Projects ───────────────────────────────────────────────────────────────
-// Per spec: planejamento → em_andamento → revisao → concluido / cancelado
+// Per spec: `planejamento` → `em_andamento` → `revisao` → `concluido` / `cancelado`
 
 const PROJECTS_DEFS: RawDef[] = [
   { from: 'planejamento',                      to: 'em_andamento', label: 'Iniciar Projeto' },

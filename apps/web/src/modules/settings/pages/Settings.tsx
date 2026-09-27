@@ -194,7 +194,7 @@ export default function SettingsPage() {
   const isAdmin = currentUserRole === "admin" || currentUserRole === "owner";
   const [publicRegistrationEnabled, setPublicRegistrationEnabled] = useState(true);
   const publicRegistrationLink = useMemo(
-    () => (orgSlug ? `${window.location.origin}/cadastro/${orgSlug}` : ""),
+    () => (orgSlug ? `${window.location.origin}/apply/${orgSlug}` : ""),
     [orgSlug],
   );
 
@@ -822,7 +822,7 @@ export default function SettingsPage() {
                     </h2>
                     {orgSlug && (
                       <p className="mt-1 break-all font-mono text-xs text-muted-foreground">
-                        /cadastro/{orgSlug}
+                        /apply/{orgSlug}
                       </p>
                     )}
 
@@ -958,7 +958,7 @@ export default function SettingsPage() {
                   {orgSlug && !slugError && (
                     <p className="text-sm text-muted-foreground" data-testid="text-slug-preview">
                       Link de cadastro:{" "}
-                      <span className="font-mono">{window.location.origin}/cadastro/{orgSlug}</span>
+                      <span className="font-mono">{window.location.origin}/apply/{orgSlug}</span>
                     </p>
                   )}
                   <p className="text-xs text-muted-foreground">
@@ -1513,7 +1513,7 @@ export default function SettingsPage() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => navigate("/configuracoes/billing")}
+                                    onClick={() => navigate("/settings/billing")}
                                     data-testid={`button-integration-${integration.id}`}
                                   >
                                     Ver planos
@@ -1805,7 +1805,7 @@ export default function SettingsPage() {
 
               return (
                 <>
-                  {/* ── Plano Atual + Seats ─────────────────────────────────────────────── */}
+                  {/* ── Current plan + seats ─────────────────────────────────────────────── */}
                   <div className="grid gap-6 md:grid-cols-2">
                     {/* Current plan */}
                     <Card>
@@ -1851,7 +1851,7 @@ export default function SettingsPage() {
                       </CardContent>
                     </Card>
 
-                    {/* Uso de Seats */}
+                    {/* Seat usage */}
                     <Card>
                       <CardHeader className="pb-3">
                         <CardTitle className="flex items-center gap-2 text-base">

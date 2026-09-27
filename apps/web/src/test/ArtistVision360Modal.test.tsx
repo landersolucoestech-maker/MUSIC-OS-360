@@ -94,7 +94,7 @@ async function renderModal(artist: any) {
   return utils;
 }
 
-describe("<ArtistVision360Modal /> cards de plataforma na aba Perfil", () => {
+describe("<ArtistVision360Modal /> platform cards on the 'Perfil' tab", () => {
   beforeEach(() => {
     vi.mocked(api.get).mockReset();
     vi.mocked(api.post).mockReset();

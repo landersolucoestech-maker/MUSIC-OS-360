@@ -93,7 +93,7 @@ export function largestRemainder(
   }
 
   // Unit of work: amountCents × pctScaled  (cents × 10^6).
-  // total_alvo em centavos = round(amountCents × sumPct / 10^6) [half-up].
+  // target total in cents = round(amountCents × sumPct / 10^6) [half-up].
   const UNIT = 100n * PCT_SCALE; // 10^6
   const targetRaw = amountCents * sumPct;
   const targetCents = targetRaw / UNIT + (targetRaw % UNIT >= UNIT / 2n ? 1n : 0n);

@@ -1133,7 +1133,7 @@ export default function HR() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): EmployeeFormModal calls useEmployees() again only
           for the mutations, the same query as loadingFuncionarios above. */}
       <EmployeeFormModal

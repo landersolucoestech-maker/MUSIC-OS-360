@@ -49,8 +49,8 @@ export default function Takedowns() {
   // value at a time, so we resolve the intersection here: if the tab asks for
   // "pendentes" (status=pendente) and the select asks for a different status, the
   // intersection is empty — no status combination satisfies
-  // both, so we do not even call the API (equivalent to filteredRows.length===0
-  // de antes).
+  // both, so we do not even call the API (equivalent to the former
+  // filteredRows.length===0).
   const tabStatus = activeTab === "pendentes" ? "pending" : activeTab === "resolvidos" ? "completed" : undefined;
   const statusContradiction = tabStatus !== undefined && statusFilter !== "all" && statusFilter !== tabStatus;
   const effectiveStatus = statusContradiction ? undefined : (tabStatus ?? (statusFilter !== "all" ? statusFilter : undefined));
@@ -331,7 +331,7 @@ export default function Takedowns() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): TakedownFormModal calls useTakedowns() again only for
           the mutations, the same query as the isLoading above. */}
       <TakedownFormModal open={takedownModal.open} onOpenChange={(open) => setTakedownModal({ ...takedownModal, open })} takedown={takedownModal.takedown} mode={takedownModal.mode} />

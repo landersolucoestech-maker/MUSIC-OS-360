@@ -41,7 +41,7 @@ export default function MusicChat() {
           variant="outline"
           size="sm"
           className="h-8 gap-1.5 text-xs"
-          onClick={() => navigate("/admin/musicchat/automacoes")}
+          onClick={() => navigate("/admin/musicchat/automations")}
         >
           <Settings className="h-3.5 w-3.5" />
           Configurações

@@ -296,26 +296,26 @@ export const CONSTANTS_NAMING = {
  *        (legacy, kept for link compatibility until a redirect-backed migration).
  *
  * Current route structure per module:
- *   /artistas                  → artist list
- *   /artistas/:id              → artist detail
- *   /artistas/:id/editar       → artist editing
+ *   /artists                  → artist list
+ *   /artists/:id              → artist detail
+ *   /artists/:id/editar       → artist editing
  *   /catalogo/obras            → works catalog
  *   /catalogo/fonogramas       → phonograms catalog
  *   /accounting/*              → accounting module
- *   /contratos                 → contract list
+ *   /contracts                 → contract list
  *   /crm/clientes              → CRM — clients
  *   /leads                     -> commercial leads
- *   /marketing/campanhas       → marketing — campaigns
- *   /lancamentos               → music releases
- *   /gestao-shares             → shares management
- *   /monitoramento             → monitoring and takedowns
+ *   /marketing/campaigns       → marketing — campaigns
+ *   /releases               → music releases
+ *   /shares             → shares management
+ *   /rights-monitoring             → monitoring and takedowns
  *   /licencas                  → licensing
  *   /operacoes/eventos         → events
  *   /operacoes/inventario      → inventory
  *   /operacoes/rh              → human resources
- *   /projetos                  → projects
+ *   /projects                  → projects
  *   /chat                      → MusicChat
- *   /configuracoes             → settings
+ *   /settings             → settings
  *   /admin/*                   → administrative area (AdminRoute)
  *
  * Query params: snake_case.  e.g. ?page=1&per_page=20&status=ativo

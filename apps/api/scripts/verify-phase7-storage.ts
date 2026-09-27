@@ -104,7 +104,7 @@ async function uploadCycle(token: string, tenant: string, dto: {
   }
   const { presignedUrl, key, fileId, publicUrl } = pre.body?.data ?? pre.body;
 
-  // 2) PUT directo ao R2
+  // 2) PUT directly to R2
   const put = await fetch(presignedUrl, { method: 'PUT', headers: { 'Content-Type': dto.mimeType }, body: dto.body });
   if (!put.ok) {
     const errText = await put.text();
@@ -238,7 +238,7 @@ async function f75(): Promise<void> {
   const r2 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'fake.png', mimeType: 'image/png', sizeBytes: 100, category: 'documents' } });
   ok('mime image/png em categoria documents → 400', r2.status === 400, `status=${r2.status}`);
 
-  // Oversize: 11MB em images (limite 10MB)
+  // Oversize: 11MB in images (limit 10MB)
   const r3 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'big.png', mimeType: 'image/png', sizeBytes: 11 * 1024 * 1024, category: 'images' } });
   ok('oversize 11MB in images (limit 10MB) → 400', r3.status === 400, `status=${r3.status}`);
 

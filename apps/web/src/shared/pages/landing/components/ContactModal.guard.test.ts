@@ -20,7 +20,7 @@ describe("ContactModal — architectural separation from the operational tenant"
     expect(SOURCE).not.toMatch(/(?<!public)Api\.post\("\/(support-tickets|conversations|leads)/);
   });
 
-  it("chama exclusivamente /public/platform-contact", () => {
+  it("calls /public/platform-contact exclusively", () => {
     expect(SOURCE).toMatch(/"\/public\/platform-contact"/);
   });
 
@@ -28,7 +28,7 @@ describe("ContactModal — architectural separation from the operational tenant"
     expect(SOURCE).not.toMatch(/CurrentTenant|tenant_id|tenantId|support-ticket|conversation/i);
   });
 
-  it("inclui campo honeypot contra abuso", () => {
+  it("includes a honeypot field against abuse", () => {
     expect(SOURCE).toMatch(/website/);
   });
 });

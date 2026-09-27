@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx';
  * reports-export.spec.ts  (Part 78)
  *
  * Real browser E2E — reproduces and locks in the regression of the
- * "Clientes" export in the Reports Center (/relatorios): real login → triggers the
+ * "Clientes" export in the Reports Center (/reports): real login → triggers the
  * export → waits for the real download → OPENS the file and validates the content
  * (pt-BR headers, absence of technical/encrypted data). It does not declare
  * success merely because the download happened.
@@ -24,10 +24,10 @@ import * as XLSX from 'xlsx';
 const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
 
-test.describe('Central de Relatórios — exportação de Clientes', () => {
+test.describe('Reports center — client export', () => {
   test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
 
-  test('exporta Clientes em XLSX válido, sem 500, sem dados técnicos vazando', async ({ page }) => {
+  test('exports clients as a valid XLSX, no 500, no leaked technical data', async ({ page }) => {
     const pageErrors: string[] = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
 
@@ -43,12 +43,12 @@ test.describe('Central de Relatórios — exportação de Clientes', () => {
       test.skip(true, 'Conta em troca de senha obrigatória — sem senha final estável para este E2E.');
     }
 
-    await test.step('abre a Central de Relatórios', async () => {
-      await page.goto('/relatorios', { waitUntil: 'networkidle' });
+    await test.step('opens the reports center', async () => {
+      await page.goto('/reports', { waitUntil: 'networkidle' });
       await expect(page.locator('[data-testid="entity-row-clients"]')).toBeVisible({ timeout: 10_000 });
     });
 
-    await test.step('exporta Clientes e valida o arquivo real (abre e confere conteúdo)', async () => {
+    await test.step('exports clients and validates the real file (opens it and checks the content)', async () => {
       const [download] = await Promise.all([
         page.waitForEvent('download', { timeout: 15_000 }),
         page.locator('[data-testid="btn-export-clients"]').click(),

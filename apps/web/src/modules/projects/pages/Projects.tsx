@@ -70,9 +70,9 @@ export default function Projects() {
   const [genreFilter, setGenreFilter] = useState("all");
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const projectIdParam = searchParams.get("projeto");
+  const projectIdParam = searchParams.get("project");
 
-  // Auto-open the view modal when arriving with ?projeto=:id (e.g. from an
+  // Auto-open the view modal when arriving with ?project=:id (e.g. from an
   // Work link) — fetches DIRECTLY by ID (GET /projects/:id), it does not depend on the
   // project being among the first 50 loaded by useProjects() without
   // filtro (Task J).
@@ -81,7 +81,7 @@ export default function Projects() {
     if (!projectIdParam || !deepLinkProject) return;
     setViewModal({ open: true, projeto: deepLinkProject });
     const next = new URLSearchParams(searchParams);
-    next.delete("projeto");
+    next.delete("project");
     setSearchParams(next, { replace: true });
   }, [searchParams, projectIdParam, deepLinkProject, setSearchParams]);
 
@@ -160,7 +160,7 @@ export default function Projects() {
   );
 
   // KPIs: count per status OVER THE WHOLE TENANT (not the current page)
-  // — GET /projects/stats, agregado no banco.
+  // — GET /projects/stats, aggregated in the database.
   const { stats: projectsStats } = useProjectsStats();
 
   const handleDelete = () => {
@@ -449,10 +449,10 @@ export default function Projects() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): ProjectFormModal calls useProjects() again only for
           the mutations, the same query as the isLoading above. */}
-      <ProjectFormModal key={formModal.mode === "create" ? "create" : (formModal.projeto?.id ?? "edit")} open={formModal.open} onOpenChange={(open) => setFormModal(prev => ({ ...prev, open }))} projeto={formModal.projeto} mode={formModal.mode} onConcluido={(id) => navigate(`/registro-musicas?newObra=${id}`)} />
+      <ProjectFormModal key={formModal.mode === "create" ? "create" : (formModal.projeto?.id ?? "edit")} open={formModal.open} onOpenChange={(open) => setFormModal(prev => ({ ...prev, open }))} projeto={formModal.projeto} mode={formModal.mode} onConcluido={(id) => navigate(`/music-registration?newWork=${id}`)} />
       <ProjectViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} projeto={viewModal.projeto} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Projeto" description={`Tem certeza que deseja excluir o projeto "${deleteModal.projeto?.title}"?`} onConfirm={handleDelete} />
     </>

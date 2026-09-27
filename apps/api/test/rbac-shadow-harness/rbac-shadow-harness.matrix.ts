@@ -23,7 +23,7 @@ export interface MatrixAction {
 }
 
 export interface MatrixController {
-  name: string;       // chave de controller
+  name: string;       // controller key
   basePath: string;   // ex.: '/api/v1/artists'
   resource: string;   // ex.: 'artist'
   actions: MatrixAction[];

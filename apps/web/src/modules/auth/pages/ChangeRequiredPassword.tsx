@@ -67,7 +67,7 @@ export default function ChangeRequiredPassword() {
       const { error } = await changeRequiredPassword(newPassword, confirmPassword);
       if (error) {
         // Message already sanitized by the backend (never exposes internal detail) —
-        // ver auth-password.service.ts / mapError() em api-client.ts.
+        // see auth-password.service.ts / mapError() in api-client.ts.
         setErrorMessage(describeAuthError(error, "Não foi possível trocar a senha."));
         return;
       }

@@ -572,7 +572,7 @@ export default function Licensing() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): LicenseFormModal calls useLicenses() again only for the
           create/update mutations, the same query as the isLoading above.
           Mounting it only after isLoading turned false created a new observer

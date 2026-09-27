@@ -164,7 +164,7 @@ export default function Profile() {
             <CardContent className="pt-6">
               <div className="flex flex-col items-center text-center">
 
-                {/* Avatar com upload */}
+                {/* Avatar with upload */}
                 <div className="relative mb-4 group">
                   <Avatar className="h-24 w-24">
                     {avatarUrl ? (

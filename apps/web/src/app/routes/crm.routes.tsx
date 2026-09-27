@@ -8,9 +8,7 @@ export function crmRoutes(P: SuspenseRouteComponent) {
   return (
     <>
       <Route path="/leads" element={<P><LeadsPage /></P>} />
-      <Route path="/crm/configuracoes" element={<Navigate to="/configuracoes?aba=operacional&modulo=crm" replace />} />
       <Route path="/crm" element={<Navigate to="/leads" replace />} />
-      <Route path="/crm-relacionamentos" element={<Navigate to="/leads" replace />} />
       <Route path="/crm/leads/new" element={<Navigate to="/leads?modal=lead" replace />} />
       <Route path="/crm/contacts/new" element={<Navigate to="/leads" replace />} />
       <Route path="/crm/proposals/new" element={<Navigate to="/leads" replace />} />

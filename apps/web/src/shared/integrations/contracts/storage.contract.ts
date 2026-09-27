@@ -85,7 +85,7 @@ export interface IStorageProvider {
   copy(bucket: StorageBucket, sourceKey: string, destKey: string): Promise<StorageUploadResult>;
 }
 
-// ─── Helpers de chave ─────────────────────────────────────────────────────────
+// ─── Key helpers ──────────────────────────────────────────────────────────────
 
 /** Builds the storage key with per-tenant isolation */
 export function buildStorageKey(

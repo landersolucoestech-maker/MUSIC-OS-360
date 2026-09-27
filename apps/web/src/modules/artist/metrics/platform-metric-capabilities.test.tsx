@@ -13,7 +13,7 @@ import { AdaptivePlatformMetrics } from "./AdaptivePlatformMetrics";
  * from runtime — which is exactly the desired signal.
  */
 
-describe("Capability registry — contrato por plataforma", () => {
+describe("Capability registry — per-platform contract", () => {
   it("Apple Music declares NO audience metric (the source does not provide one)", () => {
     expect(metricCapabilitiesOf("apple_music")).toEqual([]);
     // Accepts both slug formats used in the project.

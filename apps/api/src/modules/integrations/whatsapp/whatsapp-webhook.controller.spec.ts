@@ -240,7 +240,7 @@ describe('WhatsAppWebhookController', () => {
     expect(musicChat.handleInboundMessage).toHaveBeenCalledWith('tenant-z', expect.anything());
   });
 
-  it('find-b4201eb2: ingest e MusicChat rodam DENTRO do contexto do tenant resolvido', async () => {
+  it('find-b4201eb2: ingest and MusicChat run INSIDE the resolved tenant context', async () => {
     const seen: Array<{ step: string; tenant: string | null }> = [];
     const ctl = makeController({
       findTenant: jest.fn().mockResolvedValue({ kind: 'resolved', tenantId: 'tenant-q' }),

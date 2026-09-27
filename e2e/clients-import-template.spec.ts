@@ -16,10 +16,10 @@ import { test, expect } from '@playwright/test';
 const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
 
-test.describe('Central de Relatórios — importação de Clientes (template real)', () => {
+test.describe('Reports center — client import (real template)', () => {
   test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
 
-  test('botão de importar Clientes abre o diálogo e o template baixado é um XLSX real do backend', async ({ page }) => {
+  test('the client import button opens the dialog and the downloaded template is a real backend XLSX', async ({ page }) => {
     await test.step('login institucional real', async () => {
       await page.goto('/auth', { waitUntil: 'networkidle' });
       await page.getByPlaceholder('Digite seu e-mail').fill(EMAIL!);
@@ -32,17 +32,17 @@ test.describe('Central de Relatórios — importação de Clientes (template rea
       test.skip(true, 'Conta em troca de senha obrigatória — sem senha final estável para este E2E.');
     }
 
-    await test.step('abre a Central de Relatórios e localiza a linha de Clientes', async () => {
-      await page.goto('/relatorios', { waitUntil: 'networkidle' });
+    await test.step('opens the reports center and finds the clients row', async () => {
+      await page.goto('/reports', { waitUntil: 'networkidle' });
       await expect(page.locator('[data-testid="entity-row-clients"]')).toBeVisible({ timeout: 10_000 });
     });
 
-    await test.step('abre o diálogo de importação de Clientes', async () => {
+    await test.step('opens the client import dialog', async () => {
       await page.locator('[data-testid="btn-import-clients"]').click();
       await expect(page.locator('[data-testid="import-dialog"]')).toBeVisible({ timeout: 10_000 });
     });
 
-    await test.step('baixa o template real (emitido pelo backend, não estático)', async () => {
+    await test.step('downloads the real template (issued by the backend, not static)', async () => {
       const [download] = await Promise.all([
         page.waitForEvent('download'),
         page.locator('[data-testid="import-download-template"]').click(),

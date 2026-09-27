@@ -75,7 +75,7 @@ export function AbramusSearchRow({
         >
           Integração ABRAMUS não configurada.{" "}
           <Link
-            to="/configuracoes"
+            to="/settings"
             className="text-primary underline-offset-2 hover:underline"
             data-testid="link-abramus-configurar"
           >
@@ -143,7 +143,7 @@ export function AbramusSearchRow({
             <span className="text-muted-foreground">
               Integração ABRAMUS não configurada.{" "}
               <Link
-                to="/configuracoes"
+                to="/settings"
                 className="text-primary underline-offset-2 hover:underline"
                 data-testid="link-abramus-configurar"
               >

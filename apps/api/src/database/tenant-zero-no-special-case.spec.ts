@@ -43,7 +43,7 @@ function listTsFiles(dir: string): string[] {
   return out;
 }
 
-describe('tenant-zero: nenhum special-case de RLS/RBAC/billing/guard', () => {
+describe('tenant-zero: no RLS/RBAC/billing/guard special case', () => {
   it('tenant-zero canonical IDs appear only in the authorized files', () => {
     const offenders: string[] = [];
 

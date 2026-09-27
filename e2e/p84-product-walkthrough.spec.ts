@@ -18,22 +18,22 @@ const PASSWORD = process.env.E2E_QA_PASSWORD;
 
 const MODULES: Array<{ name: string; path: string }> = [
   { name: 'Dashboard', path: '/dashboard' },
-  { name: 'Artistas', path: '/artistas' },
-  { name: 'Catálogo (Obras/Fonogramas)', path: '/registro-musicas' },
-  { name: 'Lançamentos', path: '/lancamentos' },
-  { name: 'Contratos', path: '/contratos' },
+  { name: 'Artistas', path: '/artists' },
+  { name: 'Catálogo (Obras/Fonogramas)', path: '/music-registration' },
+  { name: 'Lançamentos', path: '/releases' },
+  { name: 'Contratos', path: '/contracts' },
   { name: 'Audiovisual', path: '/audiovisual' },
   { name: 'Financeiro', path: '/accounting' },
-  { name: 'Contabilidade', path: '/accounting/contabilidade' },
+  { name: 'Contabilidade', path: '/accounting/profit-and-loss' },
   { name: 'Agenda', path: '/agenda' },
-  { name: 'Inventário', path: '/inventario' },
+  { name: 'Inventário', path: '/inventory' },
   { name: 'MusicChat', path: '/chat' },
   { name: 'CRM (Leads/Contatos)', path: '/leads' },
-  { name: 'RH', path: '/rh' },
+  { name: 'RH', path: '/hr' },
   { name: 'Marketing', path: '/marketing' },
-  { name: 'Relatórios', path: '/relatorios' },
+  { name: 'Relatórios', path: '/reports' },
   { name: 'Suporte', path: '/support' },
-  { name: 'Configurações', path: '/configuracoes' },
+  { name: 'Configurações', path: '/settings' },
 ];
 
 interface ModuleFinding {
@@ -45,13 +45,13 @@ interface ModuleFinding {
   bodyEmpty: boolean;
 }
 
-test.describe('Parte 84 — varredura funcional de produto', () => {
+test.describe('Part 84 — functional product sweep', () => {
   test.skip(!EMAIL || !PASSWORD, 'E2E_QA_EMAIL/E2E_QA_PASSWORD ausentes — pulando varredura real.');
 
-  test('login real + percorre todos os módulos visíveis, registrando bugs reais', async ({ page }) => {
+  test('real login + visits every visible module, recording real bugs', async ({ page }) => {
     test.setTimeout(5 * 60_000); // 17 modules with networkidle — the 30s default is too short
 
-    await test.step('login com conta sintética', async () => {
+    await test.step('login with a synthetic account', async () => {
       await page.goto('/auth', { waitUntil: 'networkidle' });
       await page.getByPlaceholder('Digite seu e-mail').fill(EMAIL!);
       await page.getByPlaceholder('Digite sua senha').fill(PASSWORD!);
@@ -119,7 +119,7 @@ test.describe('Parte 84 — varredura funcional de produto', () => {
     expect(broken, `Módulos com bug real reproduzido: ${JSON.stringify(broken.map((b) => b.name))}`).toEqual([]);
   });
 
-  test('criar artista sintético, recarregar, confirmar persistência real', async ({ page }) => {
+  test('create a synthetic artist, reload, confirm real persistence', async ({ page }) => {
     test.setTimeout(60_000);
     const nome = `QA P84 Artista ${Date.now()}`;
 
@@ -136,7 +136,7 @@ test.describe('Parte 84 — varredura funcional de produto', () => {
       }
     });
 
-    await page.goto('/artistas', { waitUntil: 'networkidle' });
+    await page.goto('/artists', { waitUntil: 'networkidle' });
     await page.getByTestId('button-novo-artista').click();
     await page.getByTestId('input-nome-artistico').fill(nome);
     await page.getByTestId('input-nome-civil').fill(nome);

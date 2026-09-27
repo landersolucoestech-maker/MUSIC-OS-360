@@ -1,5 +1,5 @@
-// Real Graphify adapter — context ENRICHMENT only (section 20: "NÃO tratar
-// Graphify como vulnerability scanner"). Graphify's real CLI (confirmed via
+// Real Graphify adapter — context ENRICHMENT only (section 20: "do NOT treat
+// Graphify as a vulnerability scanner"). Graphify's real CLI (confirmed via
 // `graphify --help` on this machine) is primarily a per-agent SKILL/hook
 // INSTALLER (`graphify claude install`, `graphify cursor install`, ...) that
 // wires itself into another coding agent's config — this adapter never

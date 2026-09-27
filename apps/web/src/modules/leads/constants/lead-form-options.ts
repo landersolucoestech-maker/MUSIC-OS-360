@@ -151,7 +151,7 @@ export const LEAD_SOURCE_OPTIONS = [
 export type LeadSource = (typeof LEAD_SOURCE_OPTIONS)[number]["value"];
 
 // Aligned 1:1 with the real LeadStatus enum (@music-os-360/types) and the workflow
-// apps/api/src/core/workflow/definitions/leads.workflow.ts — a lista anterior
+// apps/api/src/core/workflow/definitions/leads.workflow.ts — the previous list
 // (novo_lead/proposta_enviada/follow_up/confirmado/arquivado) did not exist on the
 // backend; any PATCH with those values was rejected by @IsIn(STATUSES).
 export const STATUS_LEAD_OPTIONS = [

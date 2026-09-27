@@ -272,7 +272,7 @@ export default function Inventory() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): InventoryFormModal calls useInventory() again only
           for the mutations, the same query as the isLoading above. */}
       <InventoryViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} item={viewModal.item} />

@@ -92,7 +92,7 @@ export function LogoUploader() {
 
   return (
     <div className="flex flex-col items-center text-center">
-      {/* Preview circular com overlay de upload (suporta drag & drop) */}
+      {/* Circular preview with an upload overlay (supports drag & drop) */}
       <div
         className="relative mb-4 group"
         onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}

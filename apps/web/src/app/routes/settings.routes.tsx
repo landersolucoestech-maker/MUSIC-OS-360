@@ -16,15 +16,15 @@ const Onboarding = lazy(() => import("@/modules/auth/pages/Onboarding"));
 export function settingsRoutes(P: SuspenseRouteComponent) {
   return (
     <>
-      <Route path="/configuracoes" element={<P><AdminRoute><Settings /></AdminRoute></P>} />
+      <Route path="/settings" element={<P><AdminRoute><Settings /></AdminRoute></P>} />
       <Route path="/settings/roles" element={<P><AdminRoute><Settings /></AdminRoute></P>} />
       <Route path="/settings/permissions" element={<P><AdminRoute><Settings /></AdminRoute></P>} />
-      <Route path="/perfil" element={<P><Profile /></P>} />
-      <Route path="/usuarios" element={<P><AdminRoute><Users /></AdminRoute></P>} />
-      <Route path="/configuracoes/billing" element={<P><Billing /></P>} />
+      <Route path="/profile" element={<P><Profile /></P>} />
+      <Route path="/users" element={<P><AdminRoute><Users /></AdminRoute></P>} />
+      <Route path="/settings/billing" element={<P><Billing /></P>} />
       <Route path="/onboarding" element={<P><Onboarding /></P>} />
       <Route
-        path="/auditoria"
+        path="/audit"
         element={<P><AdminRoute><DataAudit /></AdminRoute></P>}
       />
     </>

@@ -53,7 +53,7 @@ function contactToFormPayload(contact: Contact): Partial<ContactFormPayload> {
 
   return {
     // Entity
-    tipo_pessoa: personType, // sempre "pessoa_fisica" | "pessoa_juridica"
+    tipo_pessoa: personType, // always "pessoa_fisica" | "pessoa_juridica"
 
     // Individual (natural person)
     nome_pf:           isIndividual ? contact.name : "",

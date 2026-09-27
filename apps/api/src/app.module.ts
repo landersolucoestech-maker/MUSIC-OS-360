@@ -195,7 +195,7 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     EcadReportsModule,
     HrModule,
 
-    // ── Skills runtime + Modelo central de assets (Fatia 1) ───────────────────
+    // ── Skills runtime + central asset model (Slice 1) ────────────────────────
     SkillsModule,
     AssetsModule,
 

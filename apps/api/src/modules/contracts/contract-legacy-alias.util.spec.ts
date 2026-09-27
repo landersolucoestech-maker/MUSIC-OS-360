@@ -344,7 +344,7 @@ describe('resolveContractQueryAliases — only type/tipo and artist_id/artistId'
     expect(getBody(() => resolveContractQueryAliases({ type: 'gravacao', tipo: 'edicao' })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 
-  it('null/null em type → equivalente', () => {
+  it('null/null in type → equivalent', () => {
     const { normalized } = resolveContractQueryAliases({ type: null, tipo: null });
     expect(normalized.type).toBeNull();
   });

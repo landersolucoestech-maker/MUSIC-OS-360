@@ -52,7 +52,7 @@ describe('LicensingService — optimistic concurrency in update()', () => {
     return module.get<LicensingService>(LicensingService);
   }
 
-  it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
+  it('without expectedUpdatedAt: applies an unconditional update (backward compatibility)', async () => {
     service = await buildService({ affected: 1 });
     await service.update(TENANT, 'u1', LICENSE_ID, { title: 'Novo título' } as any);
 

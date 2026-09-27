@@ -1,6 +1,6 @@
 // Tracks, per real repository file, whether a mission actually looked at it —
-// the mechanism behind mission Section 59's "todo o repositório relevante foi
-// investigado" completion criterion made checkable instead of asserted. Backs
+// the mechanism behind mission Section 59's "every relevant repository file was
+// investigated" completion criterion made checkable instead of asserted. Backs
 // gate-engine.mjs's "coverage-threshold" check.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";

@@ -50,7 +50,7 @@ async function callApi(
     body: body ? JSON.stringify(body) : undefined,
   });
   let json: any = null;
-  try { json = await res.json(); } catch { /* sem corpo */ }
+  try { json = await res.json(); } catch { /* no body */ }
   return { status: res.status, json };
 }
 

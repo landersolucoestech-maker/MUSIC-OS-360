@@ -13,7 +13,7 @@ import { ptBR } from "date-fns/locale";
  * `{ locale: ptBR }` in the four calls that build the period label.
  */
 describe("date-fns format — locale pt-BR", () => {
-  const someAugustDate = new Date(2026, 7, 24); // 24 de agosto de 2026
+  const someAugustDate = new Date(2026, 7, 24); // 2026-08-24
 
   it("without a locale, the month name renders in English (reproduces the bug)", () => {
     expect(format(someAugustDate, "MMMM")).toBe("August");
@@ -40,7 +40,7 @@ describe("Schedule.tsx — guard against a locale regression", () => {
     expect(SOURCE).toMatch(/import\s*\{\s*ptBR\s*\}\s*from\s*"date-fns\/locale"/);
   });
 
-  it("toda chamada format(...) dentro de periodLabel passa { locale: ptBR }", () => {
+  it("every format(...) call inside periodLabel passes { locale: ptBR }", () => {
     const periodLabelBlock = SOURCE.match(/const periodLabel = useMemo\(\(\) => \{[\s\S]*?\}, \[currentDate, viewMode\]\);/);
     expect(periodLabelBlock).not.toBeNull();
     const block = periodLabelBlock![0];

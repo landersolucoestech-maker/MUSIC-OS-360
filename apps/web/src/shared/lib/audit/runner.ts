@@ -42,7 +42,7 @@ const CONFIGS: AuditConfig[] = [
     module: "artistas",
     table: "artistas",
     entityType: "Artista",
-    fixPath: (row) => editPath("/artistas", row),
+    fixPath: (row) => editPath("/artists", row),
     label: (row) => entityLabel(row, ["nome_artistico", "nome_civil", "email"], "Artista sem nome"),
     fields: [
       { key: "nome_artistico", label: "Nome artístico", severity: "obrigatorio" },
@@ -57,7 +57,7 @@ const CONFIGS: AuditConfig[] = [
     module: "projects",
     table: "projects",
     entityType: "Projeto",
-    fixPath: (row) => editPath("/projetos", row),
+    fixPath: (row) => editPath("/projects", row),
     label: (row) => entityLabel(row, ["title", "nome"], "Projeto sem título"),
     fields: [
       { key: "title", label: "Título", severity: "obrigatorio" },
@@ -71,7 +71,7 @@ const CONFIGS: AuditConfig[] = [
     module: "catalog",
     table: "obras",
     entityType: "Obra",
-    fixPath: (row) => `/registro-musicas?editObra=${row.id}`,
+    fixPath: (row) => `/music-registration?editWork=${row.id}`,
     label: (row) => entityLabel(row, ["title", "iswc", "cod_ecad"], "Obra sem título"),
     fields: [
       { key: "title", label: "Título", severity: "obrigatorio" },
@@ -85,7 +85,7 @@ const CONFIGS: AuditConfig[] = [
     module: "catalog",
     table: "fonogramas",
     entityType: "Fonograma",
-    fixPath: (row) => `/registro-musicas?editFonograma=${row.id}`,
+    fixPath: (row) => `/music-registration?phonogram=${row.id}`,
     label: (row) => entityLabel(row, ["title", "nome", "isrc"], "Fonograma sem título"),
     fields: [
       { key: "title", label: "Título", severity: "obrigatorio" },
@@ -99,7 +99,7 @@ const CONFIGS: AuditConfig[] = [
     module: "lancamentos",
     table: "lancamentos",
     entityType: "Lançamento",
-    fixPath: (row) => editPath("/lancamentos", row),
+    fixPath: (row) => editPath("/releases", row),
     label: (row) => entityLabel(row, ["title", "upc", "isrc_global"], "Lançamento sem título"),
     fields: [
       { key: "title", label: "Título", severity: "obrigatorio" },
@@ -115,7 +115,7 @@ const CONFIGS: AuditConfig[] = [
     module: "contracts",
     table: "contracts",
     entityType: "Contrato",
-    fixPath: (row) => editPath("/contratos", row),
+    fixPath: (row) => editPath("/contracts", row),
     label: (row) => entityLabel(row, ["title", "type"], "Contrato sem título"),
     fields: [
       { key: "title", label: "Título", severity: "obrigatorio" },
@@ -158,7 +158,7 @@ const CONFIGS: AuditConfig[] = [
     module: "inventory",
     table: "inventario",
     entityType: "Item de inventário",
-    fixPath: (row) => editPath("/inventario", row),
+    fixPath: (row) => editPath("/inventory", row),
     label: (row) => entityLabel(row, ["nome", "title", "categoria"], "Item sem nome"),
     fields: [
       { key: "nome", label: "Nome", severity: "obrigatorio" },
@@ -200,7 +200,7 @@ const CONFIGS: AuditConfig[] = [
     module: "licensing",
     table: "licencas",
     entityType: "Licença",
-    fixPath: (row) => editPath("/licenciamento", row),
+    fixPath: (row) => editPath("/licensing", row),
     label: (row) => entityLabel(row, ["title", "cliente", "projeto"], "Licença sem título"),
     fields: [
       { key: "title", label: "Título", severity: "obrigatorio" },
@@ -213,7 +213,7 @@ const CONFIGS: AuditConfig[] = [
     module: "rh",
     table: "funcionarios",
     entityType: "Funcionário",
-    fixPath: (row) => editPath("/rh", row),
+    fixPath: (row) => editPath("/hr", row),
     label: (row) => entityLabel(row, ["nome", "email", "cargo"], "Funcionário sem nome"),
     fields: [
       { key: "nome", label: "Nome completo", severity: "obrigatorio" },

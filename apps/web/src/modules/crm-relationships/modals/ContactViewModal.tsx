@@ -293,7 +293,7 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
             />
           </section>
 
-          {/* ══ TIMELINE (real, persistida em activity_logs) ══ */}
+          {/* ══ TIMELINE (real, persisted in activity_logs) ══ */}
           <section className="space-y-3" data-testid="contato-view-timeline">
             <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
               Timeline

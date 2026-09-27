@@ -69,7 +69,7 @@ describe('CopywritingAutomation (ON_DEMAND: POST /marketing/tasks/:id/ai/copywri
     const inventingJson = JSON.stringify({
       draftTitle: 'x',
       draftBody: 'x',
-      usedFacts: ['Lançamento em 15/07', 'Artista ganhou um Grammy'], // fato inventado
+      usedFacts: ['Lançamento em 15/07', 'Artista ganhou um Grammy'], // invented fact
     });
     const skillRun = makeSkillRun();
     const ai = makeAi(inventingJson);

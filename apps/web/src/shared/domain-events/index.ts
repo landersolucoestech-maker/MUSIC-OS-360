@@ -64,7 +64,7 @@ export const DomainEvents = {
   TRANSACTION_DELETED: "TRANSACTION_DELETED",
   FINANCE_CALCULATED:  "FINANCE_CALCULATED",
 
-  // Invoices (Notas Fiscais)
+  // Invoices (Brazilian NFS-e fiscal invoices)
   INVOICE_CREATED: "INVOICE_CREATED",
   INVOICE_UPDATED: "INVOICE_UPDATED",
   INVOICE_DELETED: "INVOICE_DELETED",

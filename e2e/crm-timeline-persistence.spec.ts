@@ -24,10 +24,10 @@ import { test, expect } from '@playwright/test';
 const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
 
-test.describe('CRM — Timeline do Contato/Cliente sobrevive a reload (persistência real)', () => {
+test.describe('CRM — contact/client timeline survives a reload (real persistence)', () => {
   test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
 
-  test('nota registrada na timeline permanece após reload completo da página', async ({ page }) => {
+  test('a note recorded on the timeline stays after a full page reload', async ({ page }) => {
     const noteText = `[E2E automatizado — Parte 80] verificação de persistência da timeline ${Date.now()}`;
 
     await test.step('login institucional real', async () => {
@@ -44,7 +44,7 @@ test.describe('CRM — Timeline do Contato/Cliente sobrevive a reload (persistê
 
     let contactId = '';
 
-    await test.step('abre Contatos e o primeiro contato existente', async () => {
+    await test.step('opens contacts and the first existing contact', async () => {
       await page.goto('/leads', { waitUntil: 'networkidle' });
       await page.locator('[data-testid="tab-content-contatos"]').waitFor({ timeout: 10_000 });
 
@@ -58,14 +58,14 @@ test.describe('CRM — Timeline do Contato/Cliente sobrevive a reload (persistê
       await expect(page.locator('[data-testid="contato-view-modal"]')).toBeVisible({ timeout: 10_000 });
     });
 
-    await test.step('registra uma nota na timeline real (persistida em activity_logs)', async () => {
+    await test.step('records a note on the real timeline (persisted in activity_logs)', async () => {
       await expect(page.locator('[data-testid="contato-view-timeline"]')).toBeVisible();
       await page.locator('[data-testid="contato-view-timeline-input"]').fill(noteText);
       await page.locator('[data-testid="contato-view-timeline-add"]').click();
       await expect(page.locator('[data-testid="contato-view-timeline"]')).toContainText(noteText, { timeout: 10_000 });
     });
 
-    await test.step('fecha o modal, recarrega a página do zero e reabre o mesmo contato', async () => {
+    await test.step('closes the modal, reloads the page from scratch and reopens the same contact', async () => {
       await page.locator('[data-testid="button-close-view"]').click();
       await page.reload({ waitUntil: 'networkidle' });
 
@@ -75,7 +75,7 @@ test.describe('CRM — Timeline do Contato/Cliente sobrevive a reload (persistê
       await expect(page.locator('[data-testid="contato-view-modal"]')).toBeVisible({ timeout: 10_000 });
     });
 
-    await test.step('a nota registrada antes do reload ainda está lá (prova de persistência real)', async () => {
+    await test.step('the note recorded before the reload is still there (proof of real persistence)', async () => {
       await expect(page.locator('[data-testid="contato-view-timeline"]')).toContainText(noteText, { timeout: 10_000 });
     });
   });

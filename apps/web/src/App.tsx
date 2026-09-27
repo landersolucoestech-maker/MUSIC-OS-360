@@ -33,6 +33,7 @@ import { contractsRoutes } from "@/app/routes/contracts.routes";
 import { reportsRoutes } from "@/app/routes/reports.routes";
 import { supportRoutes } from "@/app/routes/support.routes";
 import { audiovisualRoutes } from "@/app/routes/audiovisual.routes";
+import { legacyRoutes } from "@/app/routes/legacy-redirects";
 
 runClientMigrations();
 
@@ -72,7 +73,7 @@ function BillingGuard({ children }: { children: React.ReactNode }) {
   const location = window.location.pathname;
   const allowed =
     location.startsWith("/billing") ||
-    location.startsWith("/configuracoes/billing") ||
+    location.startsWith("/settings/billing") ||
     location.startsWith("/support");
   if (billing.isSuspended && !allowed) return <Navigate to="/billing/blocked" replace />;
   return <>{children}</>;
@@ -203,12 +204,11 @@ const App = () => {
                   {operationsRoutes(ProtectedRoute)}
                   {chatRoutes(ProtectedRoute)}
                   {contractsRoutes(ProtectedRoute)}
-                  <Route path="/contratos-v2" element={<Navigate to="/contratos" replace />} />
-                  <Route path="/contratos-v2/*" element={<Navigate to="/contratos" replace />} />
                   {adminRoutes(SuspenseRoute, SuperAdminRoute)}
                   {reportsRoutes(ProtectedRoute)}
                   {supportRoutes(ProtectedRoute)}
                   {audiovisualRoutes(ProtectedRoute)}
+                  {legacyRoutes()}
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>

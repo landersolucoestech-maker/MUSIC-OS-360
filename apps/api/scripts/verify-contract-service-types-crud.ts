@@ -109,7 +109,7 @@ async function main(): Promise<void> {
     await client.query('COMMIT');
     ok('Synthetic orgs and tenants created');
 
-    // TEST 1: INSERT como Tenant A
+    // TEST 1: INSERT as Tenant A
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     await client.query(
@@ -166,7 +166,7 @@ async function main(): Promise<void> {
     if ((crossRead.rowCount ?? 0) === 0) { ok('TEST 5: SELECT cross-tenant bloqueado por RLS — 0 linhas'); passed++; }
     else { fail(`TEST 5: CRITICAL FAILURE — RLS allowed cross-tenant read (${crossRead.rowCount} rows)`); failed++; }
 
-    // TEST 6: UPDATE como Tenant A
+    // TEST 6: UPDATE as Tenant A
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const upd = await client.query(
@@ -176,7 +176,7 @@ async function main(): Promise<void> {
     if (upd.rowCount === 1) { ok('TEST 6: UPDATE as Tenant A affected 1 row'); passed++; }
     else { fail('TEST 6: UPDATE did not affect the expected row'); failed++; }
 
-    // TEST 7: soft-delete (active=false) como Tenant A
+    // TEST 7: soft-delete (active=false) as Tenant A
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     await client.query(`UPDATE contract_service_types SET active = false, deleted_at = now() WHERE id = $1`, [cstA]);

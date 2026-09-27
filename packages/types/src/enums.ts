@@ -204,7 +204,7 @@ export enum TransactionStatus {
   SCHEDULED = "scheduled",
 }
 
-// ─── Invoices (Brazilian notas fiscais) ───────────────────────────────────────
+// ─── Invoices (Brazilian NFS-e fiscal invoices) ───────────────────────────────────────
 
 /**
  * InvoiceStatus — state of an invoice.

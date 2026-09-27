@@ -86,7 +86,7 @@ export class PostHogService implements OnModuleDestroy {
     }
   }
 
-  // ─── Group (tenant como org) ──────────────────────────────────────────────
+  // ─── Group (tenant as org) ───────────────────────────────────────────────
 
   groupIdentify(tenantId: string, properties: Record<string, unknown>): void {
     if (!this.client) return;

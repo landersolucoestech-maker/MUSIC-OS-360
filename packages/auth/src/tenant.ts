@@ -51,7 +51,7 @@ export function extractTenantFromPayload(
 }
 
 /**
- * Feature flags por plano de tenant.
+ * Feature flags per tenant plan.
  */
 export const PLAN_FEATURES: Record<
   TenantContext["plan"],

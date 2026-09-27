@@ -64,7 +64,7 @@ describe('SoundchartsService', () => {
 
       const tokenCalls = fetchMock.mock.calls.filter(([url]) => url === TOKEN_URL);
       expect(tokenCalls).toHaveLength(1);
-      expect(fetchMock).toHaveBeenCalledTimes(3); // 1 token + 2 chamadas de dado
+      expect(fetchMock).toHaveBeenCalledTimes(3); // 1 token + 2 data calls
     });
 
     it('renews the token when it expires', async () => {
@@ -234,7 +234,7 @@ describe('SoundchartsService', () => {
       expect(result).toEqual({ items: [], total: 0 });
     });
 
-    it('respeita offset/limit passados', async () => {
+    it('honors the given offset/limit', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(200, { items: [], page: { total: 0 } }));
       await service.getRelatedArtists('uuid-1', 20, 50);
       const dataCall = fetchMock.mock.calls.find(([url]) => url !== TOKEN_URL);

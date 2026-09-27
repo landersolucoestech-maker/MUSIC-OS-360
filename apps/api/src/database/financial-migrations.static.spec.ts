@@ -122,7 +122,7 @@ describe('financial migrations M0–M9 — static contracts', () => {
     expect(/INSERT INTO/i.test(all())).toBe(false);
   });
 
-  it('M0: UNIQUE (tenant_id, id) nos 7 alvos de FK composta', () => {
+  it('M0: UNIQUE (tenant_id, id) on the 7 composite-FK targets', () => {
     const src = read(FILES[0]);
     for (const t of ['projects', 'artists', 'phonograms', 'releases', 'clients', 'contracts', 'events']) {
       expect(src).toContain(`'${t}'`);

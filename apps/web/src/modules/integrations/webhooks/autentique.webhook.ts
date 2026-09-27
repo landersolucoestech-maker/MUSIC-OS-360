@@ -18,8 +18,8 @@ export const AUTENTIQUE_WEBHOOK_EVENTS = [
   "signer_signed",       // a signer signed the document
   "signer_rejected",     // a signer rejected the document
   "document_signed",     // all signers signed (document complete)
-  "document_expired",    // prazo de assinatura expirou
-  "document_cancelled",  // documento cancelado manualmente
+  "document_expired",    // signing deadline expired
+  "document_cancelled",  // document cancelled manually
 ] as const;
 
 export type AutentiqueWebhookEvent = typeof AUTENTIQUE_WEBHOOK_EVENTS[number];

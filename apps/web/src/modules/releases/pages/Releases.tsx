@@ -479,7 +479,7 @@ export default function Releases() {
                       onToggleSelect={() => toggleSelect(release.id)}
                       onView={() => setViewModal({ open: true, release })}
                       onEdit={() => setFormModal({ open: true, mode: "edit", release })}
-                      onMetrics={() => navigate(`/marketing/metricas?releaseId=${encodeURIComponent(release.id)}`)}
+                      onMetrics={() => navigate(`/marketing/metrics?releaseId=${encodeURIComponent(release.id)}`)}
                       onDelete={() => setDeleteModal({ open: true, release })}
                     />
                   ))}
@@ -510,7 +510,7 @@ export default function Releases() {
     </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): ReleaseFormModal calls useReleases() again only for
           the mutations, the same query as the isLoading above. */}
       <ReleaseFormModal

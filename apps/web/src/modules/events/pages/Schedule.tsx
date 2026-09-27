@@ -507,7 +507,7 @@ export default function Schedule() {
       </MainLayout>
     )}
 
-      {/* Outside the isLoading gate on purpose — same bug as /artistas
+      {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): SchedulerFormModal calls useEventos() again only for
           the mutations, the same query as the isLoading above. */}
       <SchedulerViewModal

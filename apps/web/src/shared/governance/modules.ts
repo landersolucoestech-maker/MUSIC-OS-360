@@ -23,7 +23,7 @@ import type { TenantModuleKey } from "@/app/providers/TenantContext";
 
 export type ModuleStatus =
   | "production"    // active, in production (standalone mode)
-  | "beta"          // funcional mas incompleto
+  | "beta"          // functional but incomplete
   | "stub"          // structure present, content to be developed
   | "planned";      // planned, not implemented yet
 
@@ -56,7 +56,7 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
   artists: {
     key:             "artists",
     name:            "Artistas",
-    route:           "/artistas",
+    route:           "/artists",
     featureFlag:     "moduleArtists",
     primaryEntities: ["Artista"],
     dependsOn:       ["contracts", "catalog"],
@@ -90,7 +90,7 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
   releases: {
     key:             "releases",
     name:            "Lançamentos",
-    route:           "/lancamentos",
+    route:           "/releases",
     featureFlag:     "moduleReleases",
     primaryEntities: ["Lancamento", "Share"],
     dependsOn:       ["artists", "catalog"],
@@ -106,7 +106,7 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
   contracts: {
     key:             "contracts",
     name:            "Contratos",
-    route:           "/contratos",
+    route:           "/contracts",
     featureFlag:     "moduleContracts",
     primaryEntities: ["Contrato", "TemplateContrato"],
     dependsOn:       ["artists", "crm"],
@@ -220,7 +220,7 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
   monitoring: {
     key:             "monitoring",
     name:            "Monitoramento",
-    route:           "/monitoramento",
+    route:           "/rights-monitoring",
     featureFlag:     "moduleMonitoring",
     primaryEntities: ["Takedown"],
     dependsOn:       ["catalog", "artists"],
@@ -253,7 +253,7 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
   projects: {
     key:             "projects",
     name:            "Projetos",
-    route:           "/projetos",
+    route:           "/projects",
     featureFlag:     "moduleProjects",
     primaryEntities: ["Projeto"],
     dependsOn:       ["artists", "catalog", "events"],
@@ -301,7 +301,7 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
   settings: {
     key:             "settings",
     name:            "Configurações",
-    route:           "/configuracoes",
+    route:           "/settings",
     featureFlag:     "moduleArtists",  // always accessible
     primaryEntities: ["Tenant", "User", "Role"],
     dependsOn:       [],

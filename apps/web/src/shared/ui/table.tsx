@@ -13,7 +13,7 @@ type TableSortContextValue = {
 const TableSortContext = React.createContext<TableSortContextValue | null>(null);
 
 function isArtistPage() {
-  return typeof window !== "undefined" && window.location.pathname.includes("/artistas");
+  return typeof window !== "undefined" && window.location.pathname.includes("/artists");
 }
 
 function getNodeText(node: React.ReactNode): string {

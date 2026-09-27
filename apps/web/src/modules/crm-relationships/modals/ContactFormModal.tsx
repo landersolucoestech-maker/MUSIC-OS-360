@@ -240,7 +240,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
   const isPF = state.tipo_pessoa === "pessoa_fisica";
   const isPJ = state.tipo_pessoa === "pessoa_juridica";
 
-  // Hierarchical classification (config-driven, em cascata)
+  // Hierarchical classification (config-driven, cascading)
   const profileOptions = ensureProfileOption(getProfiles(state.tipo_pessoa, state.categoria), state.perfil);
 
   const changeType = (value: ContactFormState["tipo_pessoa"]) =>

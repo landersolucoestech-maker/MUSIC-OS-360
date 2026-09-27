@@ -101,7 +101,7 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
         </DialogHeader>
 
         <div className="space-y-4 py-1 max-h-[60vh] overflow-y-auto pr-1">
-          {/* Nome + Cor */}
+          {/* Name + color */}
           <div className="grid grid-cols-[1fr_auto] gap-3 items-end">
             <div className="space-y-1.5">
               <Label className="text-[11px] text-muted-foreground  tracking-wider">Nome do Plano *</Label>

@@ -43,7 +43,7 @@ describe('PlatformContactService.submit', () => {
     expect(call.html).toContain('Gostaríamos de saber mais');
   });
 
-  it('escapa HTML no nome/empresa/mensagem antes de interpolar no e-mail', async () => {
+  it('escapes HTML in the name/company/message before interpolating into the e-mail', async () => {
     const { svc, mail } = makeService();
     await svc.submit({
       ...BASE_DTO,

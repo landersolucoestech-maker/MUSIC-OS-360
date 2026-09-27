@@ -123,7 +123,7 @@ export default function SupportDashboard() {
         {/* ── 2-col layout ── */}
         <div className="grid lg:grid-cols-[1fr_380px] gap-5">
 
-          {/* Left — Base de Conhecimento accordion */}
+          {/* Left — knowledge base accordion */}
           <div className="rounded-2xl border border-border/60 bg-card overflow-hidden">
             <div className="flex items-center gap-2 px-5 py-4 border-b border-border/60">
               <BookOpen className="h-4 w-4 text-muted-foreground" />

@@ -8,8 +8,8 @@ const ContractTemplates = lazy(() => import("@/modules/contracts/pages/ContractT
 export function contractsRoutes(P: SuspenseRouteComponent) {
   return (
     <>
-      <Route path="/contratos" element={<P><Contracts /></P>} />
-      <Route path="/contratos/templates" element={<P><ContractTemplates /></P>} />
+      <Route path="/contracts" element={<P><Contracts /></P>} />
+      <Route path="/contracts/templates" element={<P><ContractTemplates /></P>} />
     </>
   );
 }

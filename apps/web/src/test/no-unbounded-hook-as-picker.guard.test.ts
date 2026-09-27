@@ -88,7 +88,7 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/projects/components/ProjectFormModal.tsx":
     "useProjects() for mutations only (addProject/updateProject).",
   "modules/projects/pages/Projects.tsx":
-    "useProjects() for mutations + the genre dropdown (distinct values) — risk documented in the file itself; the deep link (?projeto=) and the per-row artist name use direct lookup by ID.",
+    "useProjects() for mutations + the genre dropdown (distinct values) — risk documented in the file itself; the deep link (?project=) and the per-row artist name use direct lookup by ID.",
   "modules/marketing/components/ai-creative/ProfileTab.tsx":
     "useWorks/usePhonograms(!!artist, artist?.id) — scoped server-side by the artist selected in the form itself.",
   "modules/licensing/pages/Licensing.tsx":

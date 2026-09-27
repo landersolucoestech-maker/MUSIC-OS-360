@@ -21,14 +21,14 @@ const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const CURRENT_PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
 const TEST_PASSWORD = process.env.E2E_TEST_PASSWORD;
 
-test.describe('Login institucional → troca obrigatória de senha', () => {
+test.describe('Institutional login → mandatory password change', () => {
   test.skip(!EMAIL || !CURRENT_PASSWORD || !TEST_PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD/E2E_TEST_PASSWORD ausentes — pulando E2E real.');
 
-  test('fluxo completo sem crash do React (removeChild) e sem dados sensíveis persistidos', async ({ page }) => {
+  test('full flow with no React crash (removeChild) and no sensitive data persisted', async ({ page }) => {
     const pageErrors: string[] = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
 
-    await test.step('login com credenciais válidas', async () => {
+    await test.step('login with valid credentials', async () => {
       await page.goto('/auth', { waitUntil: 'networkidle' });
       await page.getByPlaceholder('Digite seu e-mail').fill(EMAIL!);
       await page.getByPlaceholder('Digite sua senha').fill(CURRENT_PASSWORD!);
@@ -36,12 +36,12 @@ test.describe('Login institucional → troca obrigatória de senha', () => {
       await page.waitForURL('**/change-required-password', { timeout: 10_000 });
     });
 
-    await test.step('página de troca renderiza sem crash', async () => {
+    await test.step('the change page renders without crashing', async () => {
       await expect(page.locator('h1')).toHaveText(/troca de senha obrigatória/i);
       expect(pageErrors.filter((e) => /removeChild/i.test(e))).toEqual([]);
     });
 
-    await test.step('confirmação divergente é rejeitada', async () => {
+    await test.step('a mismatched confirmation is rejected', async () => {
       await page.locator('#required-new-password').fill('NovaSenhaForte9!Abc');
       await page.locator('#required-confirm-password').fill('OutraCoisaDiferente9!');
       await page.getByRole('button', { name: /trocar senha e continuar/i }).click();
@@ -49,14 +49,14 @@ test.describe('Login institucional → troca obrigatória de senha', () => {
       expect(page.url()).toContain('/change-required-password');
     });
 
-    await test.step('senha fraca é rejeitada', async () => {
+    await test.step('a weak password is rejected', async () => {
       await page.locator('#required-new-password').fill('fraca123');
       await page.locator('#required-confirm-password').fill('fraca123');
       await page.getByRole('button', { name: /trocar senha e continuar/i }).click();
       await expect(page.getByRole('alert')).toContainText(/faltam|fraca/i);
     });
 
-    await test.step('troca válida navega para o wizard, sem crash', async () => {
+    await test.step('a valid change navigates to the wizard without crashing', async () => {
       await page.locator('#required-new-password').fill(TEST_PASSWORD!);
       await page.locator('#required-confirm-password').fill(TEST_PASSWORD!);
       await page.getByRole('button', { name: /trocar senha e continuar/i }).click();
@@ -64,7 +64,7 @@ test.describe('Login institucional → troca obrigatória de senha', () => {
       expect(pageErrors.filter((e) => /removeChild/i.test(e))).toEqual([]);
     });
 
-    await test.step('encerra a sessão', async () => {
+    await test.step('ends the session', async () => {
       // Never leaves the test session open in the browser.
       await page.evaluate(() => localStorage.clear());
     });

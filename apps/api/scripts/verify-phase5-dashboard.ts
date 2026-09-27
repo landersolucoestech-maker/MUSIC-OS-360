@@ -322,7 +322,7 @@ async function f56(): Promise<void> {
   const a0 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_0_${TS}`));
   expect('artistA0 returns spotify_ouvintes=12345 (real streams)', a0?.spotify_ouvintes === 12345, `got=${a0?.spotify_ouvintes}`);
   const a1 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_1_${TS}`));
-  // Hooks frontend tratam undefined/null como "–"
+  // Frontend hooks render undefined/null as "–"
   expect('artistA1 does not fabricate streams (null/undefined)', a1?.spotify_ouvintes == null, `got=${a1?.spotify_ouvintes}`);
 }
 

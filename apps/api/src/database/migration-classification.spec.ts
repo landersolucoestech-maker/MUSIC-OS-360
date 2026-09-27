@@ -2,12 +2,12 @@ import { getMigrationCategory, isApplicationMigration, listExternalManagedMigrat
 import { ALL_MIGRATIONS } from './migrations/index';
 
 describe('migration-classification', () => {
-  it('classifica a migration Realtime como EXTERNAL_MANAGED', () => {
+  it('classifies the Realtime migration as EXTERNAL_MANAGED', () => {
     expect(getMigrationCategory('RealtimeBroadcastAuthorization20260801000001')).toBe(MigrationCategory.EXTERNAL_MANAGED);
     expect(isApplicationMigration('RealtimeBroadcastAuthorization20260801000001')).toBe(false);
   });
 
-  it('classifica a migration do tenant-zero como APPLICATION (default)', () => {
+  it('classifies the tenant-zero migration as APPLICATION (default)', () => {
     expect(getMigrationCategory('TenantZeroFormalization20260801000002')).toBe(MigrationCategory.APPLICATION);
     expect(isApplicationMigration('TenantZeroFormalization20260801000002')).toBe(true);
   });

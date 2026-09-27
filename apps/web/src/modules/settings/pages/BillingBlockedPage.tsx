@@ -37,7 +37,7 @@ export default function BillingBlockedPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild disabled={!billing.invoiceUrl}>
-                <a href={billing.invoiceUrl ?? "/configuracoes/billing"} target={billing.invoiceUrl ? "_blank" : undefined} rel="noreferrer">
+                <a href={billing.invoiceUrl ?? "/settings/billing"} target={billing.invoiceUrl ? "_blank" : undefined} rel="noreferrer">
                   <CreditCard className="mr-2 h-4 w-4" />
                   Pagar agora
                 </a>

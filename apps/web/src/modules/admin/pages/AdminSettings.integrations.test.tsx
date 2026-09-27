@@ -8,7 +8,7 @@ import liveAdminIntegrations from "../__fixtures__/admin-integrations.live.json"
 /**
  * GATE C — the Admin Portal's real RENDER path.
  *
- * This test uses the REAL COMPONENT mounted by the /admin/configuracoes route
+ * This test uses the REAL COMPONENT mounted by the /admin/settings route
  * (AdminSettings), selects the "Integrações" tab and proves the administrative
  * records reach the DOM.
  *
@@ -38,7 +38,7 @@ const CATEGORIES = [
 function renderAdminSettings() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <MemoryRouter initialEntries={["/admin/configuracoes"]}>
+    <MemoryRouter initialEntries={["/admin/settings"]}>
       <QueryClientProvider client={qc}>
         <AdminSettings />
       </QueryClientProvider>
@@ -61,7 +61,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     });
   });
 
-  it("dispara a query administrativa ao montar a aba", async () => {
+  it("fires the admin query when the tab mounts", async () => {
     renderAdminSettings();
     await openIntegrationsTab();
     await waitFor(() => expect(apiMock.get).toHaveBeenCalledWith("/admin/integrations"));

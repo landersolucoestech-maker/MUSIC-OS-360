@@ -85,16 +85,16 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { title: "Dashboard",    href: "/dashboard",  icon: LayoutDashboard },
-  { title: "Artistas",        href: "/artistas",   icon: Users,        featureFlag: "moduleArtists" },
+  { title: "Artistas",        href: "/artists",   icon: Users,        featureFlag: "moduleArtists" },
   {
     title: "Catálogo",
     icon: Music,
     featureFlag: "moduleCatalog",
     children: [
-      { title: "Projetos",           href: "/projetos",          icon: Folder, featureFlag: "moduleProjects" },
-      { title: "Obras & Fonogramas", href: "/registro-musicas",   icon: Music },
+      { title: "Projetos",           href: "/projects",          icon: Folder, featureFlag: "moduleProjects" },
+      { title: "Obras & Fonogramas", href: "/music-registration",   icon: Music },
       { title: "Monitoramento",      href: "/rights-monitoring",  icon: Radio,         featureFlag: "moduleMonitoring" },
-      { title: "Licenciamento",      href: "/licenciamento",      icon: Shield,        featureFlag: "moduleLicensing" },
+      { title: "Licenciamento",      href: "/licensing",      icon: Shield,        featureFlag: "moduleLicensing" },
       { title: "Takedowns",          href: "/takedowns",          icon: AlertTriangle, featureFlag: "moduleMonitoring" },
     ],
   },
@@ -103,11 +103,11 @@ const NAV_ITEMS: NavItem[] = [
     icon: Radio,
     featureFlag: "moduleReleases",
     children: [
-      { title: "Distribuição",    href: "/lancamentos",   icon: Upload },
-      { title: "Gestão de Shares", href: "/gestao-shares", icon: Share2 },
+      { title: "Distribuição",    href: "/releases",   icon: Upload },
+      { title: "Gestão de Shares", href: "/shares", icon: Share2 },
     ],
   },
-  { title: "Contratos", href: "/contratos", icon: FileText, featureFlag: "moduleContracts" },
+  { title: "Contratos", href: "/contracts", icon: FileText, featureFlag: "moduleContracts" },
   { title: "Audiovisual", href: "/audiovisual", icon: Video },
   {
     title: "Financeiro",
@@ -115,30 +115,30 @@ const NAV_ITEMS: NavItem[] = [
     featureFlag: "moduleAccounting",
     children: [
       { title: "Transações",   href: "/accounting",                  icon: DollarSign },
-      { title: "Contabilidade", href: "/accounting/contabilidade",   icon: BookOpen },
-      { title: "Nota Fiscal",  href: "/accounting/nota-fiscal",      icon: Receipt },
+      { title: "Contabilidade", href: "/accounting/profit-and-loss",   icon: BookOpen },
+      { title: "Nota Fiscal",  href: "/accounting/invoices",      icon: Receipt },
     ],
   },
   { title: "Agenda",           href: "/agenda",     icon: Calendar,      featureFlag: "moduleEvents" },
-  { title: "Inventário",       href: "/inventario", icon: Package,       featureFlag: "moduleInventory" },
+  { title: "Inventário",       href: "/inventory", icon: Package,       featureFlag: "moduleInventory" },
   { title: "MusicChat",        href: "/chat",       icon: MessageCircle },
   { title: "CRM", href: "/leads", icon: Contact, featureFlag: "moduleCrm" },
-  { title: "RH",               href: "/rh",         icon: Briefcase,     featureFlag: "moduleRh" },
+  { title: "RH",               href: "/hr",         icon: Briefcase,     featureFlag: "moduleRh" },
   {
     title: "Marketing",
     icon: Megaphone,
     featureFlag: "moduleMarketing",
     children: [
-      { title: "Visão Geral",          href: "/marketing/visao-geral", icon: Eye },
-      { title: "Campanhas",            href: "/marketing/campanhas",   icon: Target },
-      { title: "Calendário de Conteúdo", href: "/marketing/calendario", icon: CalendarDays },
-      { title: "Tarefas",              href: "/marketing/tarefas",     icon: ListChecks },
-      { title: "Métricas",             href: "/marketing/metricas",    icon: TrendingUp },
+      { title: "Visão Geral",          href: "/marketing/overview", icon: Eye },
+      { title: "Campanhas",            href: "/marketing/campaigns",   icon: Target },
+      { title: "Calendário de Conteúdo", href: "/marketing/calendar", icon: CalendarDays },
+      { title: "Tarefas",              href: "/marketing/tasks",     icon: ListChecks },
+      { title: "Métricas",             href: "/marketing/metrics",    icon: TrendingUp },
       { title: "Briefing",             href: "/marketing/briefing",    icon: FileEdit },
-      { title: "IA Criativa",          href: "/marketing/ia-criativa", icon: Sparkles },
+      { title: "IA Criativa",          href: "/marketing/creative-ai", icon: Sparkles },
     ],
   },
-  { title: "Relatórios",       href: "/relatorios", icon: Activity },
+  { title: "Relatórios",       href: "/reports", icon: Activity },
   { title: "Suporte", href: "/support", icon: HeadphonesIcon },
 ];
 
@@ -183,7 +183,7 @@ export function AppSidebar() {
 
     const auditItem: NavItem = {
       title: "Auditoria",
-      href: "/auditoria",
+      href: "/audit",
       icon: ClipboardCheck,
     };
     const supportIndex = visibleNavItems.findIndex(
@@ -479,13 +479,13 @@ export function AppSidebar() {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to="/perfil" className="cursor-pointer text-sm">
+              <Link to="/profile" className="cursor-pointer text-sm">
                 <User className="h-3.5 w-3.5 mr-2 opacity-60" />
                 Meu Perfil
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/configuracoes" className="cursor-pointer text-sm">
+              <Link to="/settings" className="cursor-pointer text-sm">
                 <Settings className="h-3.5 w-3.5 mr-2 opacity-60" />
                 Configurações
               </Link>

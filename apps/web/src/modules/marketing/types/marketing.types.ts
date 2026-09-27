@@ -196,7 +196,7 @@ export type TaskType =
   | "relacionamento"
   // Digital distribution
   | "planejamento_lancamento"
-  // Empresa (corporativo)
+  // Company (corporate)
   | "material_institucional"
   | "apresentacao_comercial"
   | "folder"

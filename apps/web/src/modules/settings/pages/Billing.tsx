@@ -116,8 +116,8 @@ export default function Billing() {
       const base = window.location.origin;
       return stripeClient.createCheckout(
         plan,
-        `${base}/configuracoes/billing?success=1`,
-        `${base}/configuracoes/billing?canceled=1`,
+        `${base}/settings/billing?success=1`,
+        `${base}/settings/billing?canceled=1`,
       );
     },
     onSuccess: (data) => {
@@ -128,7 +128,7 @@ export default function Billing() {
 
   // Portal
   const portalMutation = useMutation({
-    mutationFn: () => stripeClient.openPortal(`${window.location.origin}/configuracoes/billing`),
+    mutationFn: () => stripeClient.openPortal(`${window.location.origin}/settings/billing`),
     onSuccess:  (data) => { if (data?.url) window.open(data.url, "_blank"); },
     onError:    () => toast.error("Erro ao abrir portal"),
   });

@@ -1,5 +1,5 @@
 /**
- * Marketing - Calendario de Conteudo.
+ * Marketing - content calendar.
  */
 
 import { useEffect, useMemo, useState, type ComponentType, type FormEvent, type ReactNode } from "react";

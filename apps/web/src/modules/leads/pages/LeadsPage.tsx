@@ -305,7 +305,7 @@ export default function LeadsPage() {
     <Button
       size="sm"
       variant="outline"
-      onClick={() => navigate("/relatorios")}
+      onClick={() => navigate("/reports")}
       title="Exporta pela Central de Relatórios (dados completos do workspace)"
       data-testid="button-exportar-crm"
     >

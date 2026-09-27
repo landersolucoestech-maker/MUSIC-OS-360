@@ -22,7 +22,7 @@ function fakeJob(overrides: Partial<{ name: string; data: MarketBenchmarkRefresh
 }
 
 describe('MarketBenchmarkRefreshProcessor', () => {
-  it('job.name diferente do esperado: ignora sem chamar computeAndPersist', async () => {
+  it('unexpected job.name: ignored without calling computeAndPersist', async () => {
     const marketBenchmark = { computeAndPersist: jest.fn() } as unknown as MarketBenchmarkService;
     const processor = new MarketBenchmarkRefreshProcessor(marketBenchmark, makeDbContext() as never);
     await processor.process(fakeJob({ name: 'outro-job' }));

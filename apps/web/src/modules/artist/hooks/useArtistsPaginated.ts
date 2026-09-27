@@ -19,7 +19,7 @@ export interface UseArtistsPaginatedParams {
 /**
  * Server-side paginated artist list — companion of useArtists() (which still
  * serves the "give me every artist" uses: dropdowns, cross-reference in
- * useMetrics/useScheduleParticipants, modal mutations). Task H: the /artistas
+ * useMetrics/useScheduleParticipants, modal mutations). Task H: the /artists
  * table uses this for the displayed rows; contract type/genres come from
  * dedicated aggregate endpoints (useArtistsVinculoStats/useMusicGenres), never
  * from the full list.

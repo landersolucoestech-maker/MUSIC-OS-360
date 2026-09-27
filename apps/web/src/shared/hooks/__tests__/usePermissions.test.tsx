@@ -60,7 +60,7 @@ describe("usePermissions — production (no bypass)", () => {
   it("canModule(module, action) uses permission-map (write→update/create), no role", () => {
     state.permissionKeys = ["accounting:update"];
     const p = perms();
-    expect(p.canModule("accounting", "write")).toBe(true); // write resolve para update/create
+    expect(p.canModule("accounting", "write")).toBe(true); // write resolves to update/create
     expect(p.canModule("accounting", "read")).toBe(false);
   });
 

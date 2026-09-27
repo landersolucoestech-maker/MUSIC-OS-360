@@ -46,7 +46,7 @@ function checkCanonicalMapCoverage() {
   return true;
 }
 
-// ac-ae07f017: no mixed PT/EN corruption artifacts (documentsação, typeo, etc.)
+// ac-ae07f017: no mixed PT/EN corruption artifacts (`documentsação`, `typeo`, etc.)
 function checkNoMixedCorruption() {
   // The literal 's' is the corruption signature (a naive documento->documents
   // find-replace applied inside the correctly-spelled PT-BR word

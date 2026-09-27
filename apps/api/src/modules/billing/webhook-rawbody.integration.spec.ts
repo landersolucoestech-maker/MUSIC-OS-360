@@ -34,7 +34,7 @@ function makeSignedPayload() {
   return { payload, header };
 }
 
-/** Middleware exato de apps/api/src/main.ts:198-205 — populates req.rawBody via verify. */
+/** Exact middleware from apps/api/src/main.ts:198-205 — populates req.rawBody via verify. */
 function jsonWithRawBody() {
   return express.json({
     limit: '1mb',

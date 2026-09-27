@@ -324,7 +324,7 @@ export const musicChatConversationsService = {
   ): Promise<SupportMessage> {
     // X-Idempotency-Key: protects against network-level duplicate resends (timeout + retry),
     // in addition to the UI guard (isSending) in MusicChat.tsx — same pattern already used by
-    // transactions/invoices/contracts/etc. (IdempotencyInterceptor no backend). Passe a mesma
+    // transactions/invoices/contracts/etc. (IdempotencyInterceptor on the backend). Pass the same
     // key when resending the SAME content; edited content is another attempt and needs a
     // new key (see attemptRef in MusicChat.tsx/NewConversationDialog.tsx).
     const raw = await api.post<RawMessage>(

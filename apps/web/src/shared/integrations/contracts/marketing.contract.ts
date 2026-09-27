@@ -14,7 +14,7 @@
  *   · Website & other   — forms, landing pages, direct API
  */
 
-// ─── IDs de plataforma ────────────────────────────────────────────────────────
+// ─── Platform IDs ─────────────────────────────────────────────────────────────
 
 export type MarketingPlatformId =
   // ── Corporate metrics ─────────────────────────────────────────────────────

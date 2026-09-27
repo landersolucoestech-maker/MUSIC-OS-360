@@ -15,7 +15,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RemoveLegacySocietyCodeColumns20260718000016', () => {
-  it('remove cod_abramus/cod_ecad/abramus_protocol de works e phonograms', () => {
+  it('removes cod_abramus/cod_ecad/abramus_protocol from works and phonograms', () => {
     expect(migrationSrc).toMatch(/ALTER TABLE works[\s\S]*DROP COLUMN IF EXISTS cod_abramus/);
     expect(migrationSrc).toMatch(/ALTER TABLE works[\s\S]*DROP COLUMN IF EXISTS cod_ecad/);
     expect(migrationSrc).toMatch(/ALTER TABLE works[\s\S]*DROP COLUMN IF EXISTS abramus_protocol/);

@@ -30,8 +30,7 @@ export function publicRoutes(S: SuspenseRouteComponent) {
       <Route path="/signup" element={<S><Register /></S>} />
       <Route path="/reset-password" element={<S><ResetPassword /></S>} />
       <Route path="/change-required-password" element={<S><ChangeRequiredPassword /></S>} />
-      <Route path="/captar" element={<Navigate to="/leads" replace />} />
-      <Route path="/cadastro/:orgSlug" element={<S><ArtistSignupPublic /></S>} />
+      <Route path="/apply/:orgSlug" element={<S><ArtistSignupPublic /></S>} />
       <Route path="*" element={<S><NotFound /></S>} />
     </>
   );

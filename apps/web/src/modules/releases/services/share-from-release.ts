@@ -13,7 +13,7 @@ export const SHARE_FOR_RELEASE_PARAM = "shareForRelease";
 
 /** Shares Management route with the release preselected. */
 export function shareFlowFromReleaseUrl(releaseId: string): string {
-  return `/gestao-shares?${SHARE_FOR_RELEASE_PARAM}=${encodeURIComponent(releaseId)}`;
+  return `/shares?${SHARE_FOR_RELEASE_PARAM}=${encodeURIComponent(releaseId)}`;
 }
 
 /**

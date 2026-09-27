@@ -8,8 +8,8 @@ const Shares = lazy(() => import("@/modules/releases/pages/Shares"));
 export function releasesRoutes(P: SuspenseRouteComponent) {
   return (
     <>
-      <Route path="/lancamentos" element={<P><Releases /></P>} />
-      <Route path="/gestao-shares" element={<P><Shares /></P>} />
+      <Route path="/releases" element={<P><Releases /></P>} />
+      <Route path="/shares" element={<P><Shares /></P>} />
     </>
   );
 }

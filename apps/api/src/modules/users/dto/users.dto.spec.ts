@@ -24,7 +24,7 @@ async function validatePayload(payload: Record<string, unknown>) {
   return validate(instance, { whitelist: true, forbidNonWhitelisted: true });
 }
 
-describe('UpdateUserDto — contrato real (auditoria 2026-07-18 + Task L)', () => {
+describe('UpdateUserDto — real contract (audit 2026-07-18 + Task L)', () => {
   it('accepts fullName/phone — the real profile payload sent by useUsers()', async () => {
     const errors = await validatePayload({ fullName: 'Fulano da Silva', phone: '11999999999' });
     expect(errors).toEqual([]);

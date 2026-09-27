@@ -620,7 +620,7 @@ export default function Artists() {
         open={editModal.open}
         onOpenChange={(open) => {
           setEditModal((prev) => ({ ...prev, open }));
-          if (!open && editIdFromUrl) navigate("/artistas");
+          if (!open && editIdFromUrl) navigate("/artists");
         }}
         artist={editModal.artist}
       />

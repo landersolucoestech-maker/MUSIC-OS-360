@@ -117,7 +117,7 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
     expect(repo.update).not.toHaveBeenCalled();
   });
 
-  it('ignora jobs de outro nome', async () => {
+  it('ignores jobs with another name', async () => {
     const dbContext = { runInTenantContext: jest.fn() };
     const processor = new MarketingPublishingProcessor({ manager: {} } as never, dbContext as never);
 

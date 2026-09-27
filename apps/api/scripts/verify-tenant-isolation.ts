@@ -126,7 +126,7 @@ async function main(): Promise<void> {
     await client.query('COMMIT');
     ok('Orgs e tenants criados');
 
-    // ── Teste 1: INSERT como Tenant A ─────────────────────────────────────────
+    // ── Test 1: INSERT as Tenant A ────────────────────────────────────────────
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     await client.query(
@@ -138,7 +138,7 @@ async function main(): Promise<void> {
     ok('TEST 1: INSERT Artista A como Tenant A');
     passed++;
 
-    // ── Teste 2: INSERT como Tenant B ─────────────────────────────────────────
+    // ── Test 2: INSERT as Tenant B ────────────────────────────────────────────
     await client.query('BEGIN');
     await setTenant(client, tenantB);
     await client.query(

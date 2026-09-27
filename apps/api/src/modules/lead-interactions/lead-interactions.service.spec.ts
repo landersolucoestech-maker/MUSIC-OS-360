@@ -34,7 +34,7 @@ function makeService(rows: unknown[] = []) {
   return { svc, repo, qb };
 }
 
-describe('LeadInteractionsService.list — filtro por leadId (REM-04)', () => {
+describe('LeadInteractionsService.list — filter by leadId (REM-04)', () => {
   it('filters by lead_id when leadId is sent in the query', async () => {
     const { svc, qb } = makeService();
     await svc.list('tenant-1', { leadId: 'lead-1' } as unknown as QueryLeadInteractionDto);
@@ -50,7 +50,7 @@ describe('LeadInteractionsService.list — filtro por leadId (REM-04)', () => {
   });
 });
 
-describe('LeadInteractionsService.create — mapeamento DTO → colunas reais (REM-04)', () => {
+describe('LeadInteractionsService.create — DTO → real columns mapping (REM-04)', () => {
   it('writes lead_id/type/notes to the entity\'s real columns', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {

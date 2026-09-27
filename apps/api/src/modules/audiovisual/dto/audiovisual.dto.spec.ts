@@ -113,7 +113,7 @@ describe('CreateTaskDto / UpdateTaskDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita status fora do enum real do banco (invalid enum)', async () => {
+  it('rejects a status outside the real database enum (invalid enum)', async () => {
     // TASK_STATUSES mirrors the CHECK constraint of migration 20260527000004 —
     // 'todo'/'doing' are NOT valid values (see the fix in this same phase).
     const errors = await validatePayload(CreateTaskDto, { title: 'x', status: 'todo' });

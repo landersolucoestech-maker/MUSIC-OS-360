@@ -121,6 +121,17 @@ export function sourceComments(sf, text) {
   return out.sort((a, b) => a.pos - b.pos);
 }
 
+/**
+ * Portuguese words of a route-like string: path segments (`/lancamentos/:id`), query keys and
+ * query values (`?aba=operacional`). Template placeholders (`${…}`) are ignored.
+ */
+export function routeWords(link) {
+  const [pathPart, query = ""] = link.split("?");
+  const parts = [...pathPart.split("/"), ...query.split("&").flatMap((kv) => kv.split("="))]
+    .map((p) => p.replace(/\$\{\}/g, " ").replace(/^:/, "").replace(/#.*$/, ""));
+  return parts.flatMap((p) => ptWords(p));
+}
+
 /** Path surfaces of one tracked file: each Portuguese directory segment and the file name. */
 export function scanPath(relPath) {
   const hits = [];
@@ -179,7 +190,19 @@ export function scanSource(relPath, text) {
         || (ts.isIdentifier(p.expression) && p.expression.text === "require")
         || (ts.isPropertyAccessExpression(p.expression) && ["mock", "doMock", "unmock", "requireActual", "importActual"].includes(p.expression.name.text))));
   };
+  // A string rendered as JSX content ({cond ? "/mês" : "/ano"}) is user-visible text.
+  const isRenderedText = (n) => {
+    let cur = n;
+    while (cur.parent && (ts.isConditionalExpression(cur.parent) || ts.isParenthesizedExpression(cur.parent)
+      || (ts.isBinaryExpression(cur.parent) && ["||", "??", "&&"].includes(cur.parent.operatorToken.getText(sf))))) {
+      if (ts.isConditionalExpression(cur.parent) && cur.parent.condition === cur) return false;
+      cur = cur.parent;
+    }
+    return !!cur.parent && ts.isJsxExpression(cur.parent) && !!cur.parent.parent
+      && (ts.isJsxElement(cur.parent.parent) || ts.isJsxFragment(cur.parent.parent));
+  };
   const isUxValue = (n) => {
+    if (isRenderedText(n)) return true;
     const p = n.parent;
     if (ts.isJsxAttribute(p) || (ts.isJsxExpression(p) && ts.isJsxAttribute(p.parent))) {
       const attr = ts.isJsxAttribute(p) ? p : p.parent;
@@ -189,6 +212,7 @@ export function scanSource(relPath, text) {
     return false;
   };
   let controllerBase = null;
+  const isRouteSource = relPath.startsWith("apps/web/") || relPath.startsWith("e2e/");
 
   const visit = (n) => {
     if (ts.isFunctionDeclaration(n)) ident("function", n.name, n);
@@ -256,6 +280,13 @@ export function scanSource(relPath, text) {
     } else if (ts.isJsxAttribute(n) && n.name.getText(sf) === "path" && n.initializer && ts.isStringLiteral(n.initializer)) {
       claimed.add(n.initializer);
       if (relPath.startsWith("apps/web/") && ptWords(n.initializer.text).length) add("frontendRoute", "route", n.initializer.text, lineOf(n));
+    }
+    if (!fixture && isRouteSource && !claimed.has(n) && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n) || ts.isTemplateExpression(n))) {
+      const link = ts.isTemplateExpression(n) ? n.head.text + n.templateSpans.map((sp) => `\${}${sp.literal.text}`).join("") : n.text;
+      if (link.startsWith("/") && !link.startsWith("//") && /^[\x20-\x7e]*$/.test(link) && !isRenderedText(n) && routeWords(link).length) {
+        claimed.add(n);
+        add("frontendRoute", "link", link, lineOf(n));
+      }
     }
     if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) && !claimed.has(n) && VALUE_SHAPE.test(n.text)
       && !isModuleSpecifier(n) && !isUxValue(n) && ptWords(n.text).length) {
