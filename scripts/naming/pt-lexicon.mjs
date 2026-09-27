@@ -62,6 +62,12 @@ export function ptWords(name) {
 }
 
 const PT_PROSE = /\b(e|o|os|ao|aos|da|em|mesma|mesmas|mesmos|exatamente|acima|abaixo|ausente|usa|nenhum|nenhuma|efetivamente|n[aã]o|para|com|sem|quando|porque|pois|deve|devem|est[aá]|s[aã]o|tamb[eé]m|ent[aã]o|j[aá]|ainda|aqui|isso|este|esta|esse|essa|pelo|pela|pelos|pelas|uma|um|dos|das|nos|nas|mas|ou|se|que|como|onde|quem|mesmo|apenas|sempre|nunca|antes|depois|agora|cada|todo|toda|todos|todas|seu|sua|seus|suas|foi|ser|ter|tem|fazer|feito|pode|podem|precisa|caso|sobre|entre|at[eé]|voc[eê])\b/gi;
+/**
+ * Unambiguous Portuguese words (never English, never code identifiers in prose) typical of
+ * short test titles and comments that carry no function word: "rejeita senha vazia".
+ * Each one alone is definitive evidence of Portuguese prose.
+ */
+const PT_STRONG = /\b(rejeita|rejeitam|aceita|aceitam|recria|recriam|retorna|retornam|persiste|persistem|lan[cç]a|exige|exigem|reusa|filtra|filtram|identifica|reduz|oculta|mostra|mostram|exibe|renderiza|delega|preserva|aborta|reflete|respeitam|bloqueia|derruba|desabilita|habilita|extrai|vazio|vazia|negativo|negativa|conflitantes|conflito|legado|somente|ambos|erros|senha|contagem|tabela|nulos|faz|gravando|garante|impede|permite|n[aã]o)\b/gi;
 const EN_PROSE = /\b(the|and|or|not|with|without|when|because|must|should|is|are|this|that|these|those|for|from|into|only|always|never|before|after|each|every|its|was|be|have|has|do|does|can|if|then|which|who|where)\b/gi;
 
 /**
@@ -85,7 +91,8 @@ export function isPtProse(text) {
   // Portuguese function word: English text that merely lists legacy column names
   // (nome -> tipo, data_inicio) must not read as Portuguese.
   const lexicon = prose > 0 ? ptWords(t).length : 0;
-  const pt = prose + (/[ãõçáéíóúâêô]/i.test(t) ? 2 : 0) + lexicon;
+  const strong = (t.match(PT_STRONG) || []).length * 2;
+  const pt = prose + (/[ãõçáéíóúâêô]/i.test(t) ? 2 : 0) + lexicon + strong;
   const en = (t.match(EN_PROSE) || []).length;
   return pt >= 2 && pt > en;
 }

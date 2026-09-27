@@ -68,6 +68,15 @@ test("technical comments and test titles in Portuguese are flagged; English ones
   assert.deepEqual(names(hits, "testTitle"), ["deve salvar o projeto quando o formulário é válido"]);
 });
 
+test("prose detector: short Portuguese test titles without function words are flagged", () => {
+  for (const pt of ["rejeita senha vazia", "persiste failed quando provider falha", "recria RLS + policy (tenant_isolation)", "remove delega tenant + id"]) {
+    assert.equal(isPtProse(pt), true, pt);
+  }
+  for (const en of ["rejects an empty password", "remove delegates tenant + id", "renders the 'Rejeita senha vazia' message", "maps 'legado' to legacy"]) {
+    assert.equal(isPtProse(en), false, en);
+  }
+});
+
 test("comments are read from the AST: real comments flagged, strings/URLs/MIME globs are not", () => {
   const real = `/* calcula o repasse do artista quando não há contrato */
 const a = 1; // valida o valor antes de salvar no banco
