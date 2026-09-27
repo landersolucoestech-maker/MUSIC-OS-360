@@ -122,7 +122,7 @@ export class InvoiceEventsHandler {
         await this.financialRules.evaluateRules(tenantId, 'invoice.overdue', {
           entityId: invoiceId,
           entityType: 'invoice',
-          valor: parseFloat(amount),
+          amount: parseFloat(amount),
         });
       } catch (err) {
         this.logger.warn(`Failed to evaluate financial rules for invoice.overdue "${invoiceId}" — ${String(err)}`);

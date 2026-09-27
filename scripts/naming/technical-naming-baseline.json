@@ -2,7 +2,7 @@
  "totals": {
   "comment": 1,
   "eventQueueJob": 8,
-  "identifier": 1628
+  "identifier": 1621
  },
  "debt": {
   "comment::apps/web/src/modules/integrations/components/MarketingOAuthDialog.tsx": 1,
@@ -66,7 +66,6 @@
   "identifier::apps/api/src/database/entities.ts::property::artista_externo": 1,
   "identifier::apps/api/src/database/entities.ts::property::artista_project_id": 1,
   "identifier::apps/api/src/database/entities.ts::property::bairro": 1,
-  "identifier::apps/api/src/database/entities.ts::property::calculo": 1,
   "identifier::apps/api/src/database/entities.ts::property::capa_url": 1,
   "identifier::apps/api/src/database/entities.ts::property::cargo": 1,
   "identifier::apps/api/src/database/entities.ts::property::categoria": 2,
@@ -77,7 +76,6 @@
   "identifier::apps/api/src/database/entities.ts::property::compositores": 1,
   "identifier::apps/api/src/database/entities.ts::property::comprovante_url": 1,
   "identifier::apps/api/src/database/entities.ts::property::condicao_pagamento": 1,
-  "identifier::apps/api/src/database/entities.ts::property::condicoes": 1,
   "identifier::apps/api/src/database/entities.ts::property::conta_destino": 1,
   "identifier::apps/api/src/database/entities.ts::property::conta_origem": 1,
   "identifier::apps/api/src/database/entities.ts::property::contato_local": 1,
@@ -265,7 +263,6 @@
   "identifier::apps/api/src/modules/finance-category-rules/finance-category-matcher.util.ts::property::descricao": 1,
   "identifier::apps/api/src/modules/financial-rules/dto/financial-rules.dto.ts::property::calculo": 1,
   "identifier::apps/api/src/modules/financial-rules/dto/financial-rules.dto.ts::property::condicoes": 1,
-  "identifier::apps/api/src/modules/financial-rules/financial-rules.service.ts::property::valor": 1,
   "identifier::apps/api/src/modules/hr/dto/create-employee.dto.ts::property::cargo": 1,
   "identifier::apps/api/src/modules/hr/dto/create-employee.dto.ts::property::data_admissao": 1,
   "identifier::apps/api/src/modules/hr/dto/create-employee.dto.ts::property::data_demissao": 1,
@@ -504,13 +501,9 @@
   "identifier::apps/web/src/modules/accounting/constants/transaction-constants.ts::property::tipoPagamento": 1,
   "identifier::apps/web/src/modules/accounting/constants/transaction-constants.ts::property::tipoTransacao": 1,
   "identifier::apps/web/src/modules/accounting/constants/transaction-constants.ts::property::tipoVinculacao": 1,
-  "identifier::apps/web/src/modules/accounting/hooks/useFinancialRules.ts::property::calculo": 1,
-  "identifier::apps/web/src/modules/accounting/hooks/useFinancialRules.ts::property::condicoes": 1,
   "identifier::apps/web/src/modules/accounting/hooks/useInvoices.ts::property::numero": 2,
   "identifier::apps/web/src/modules/accounting/pages/Accounting.tsx::property::origem": 2,
   "identifier::apps/web/src/modules/accounting/pages/Accounting.tsx::property::venda_id": 2,
-  "identifier::apps/web/src/modules/accounting/pages/FinancialRules.tsx::property::calculo": 1,
-  "identifier::apps/web/src/modules/accounting/pages/FinancialRules.tsx::property::valor": 1,
   "identifier::apps/web/src/modules/accounting/pages/ProfitAndLoss.tsx::property::categoria": 2,
   "identifier::apps/web/src/modules/accounting/pages/ProfitAndLoss.tsx::property::despesasPorCategoria": 1,
   "identifier::apps/web/src/modules/accounting/pages/ProfitAndLoss.tsx::property::lucroLiquido": 2,

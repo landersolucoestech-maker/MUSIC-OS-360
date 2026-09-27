@@ -2594,11 +2594,11 @@ export class FinancialRuleEntity {
   @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) category: string | null;
-  @Column({ type: 'varchar', length: 50, default: 'percentual' }) calculo: string;
+  @Column({ type: 'varchar', length: 50, default: 'percentage' }) calculation_method: string;
   @Column({ type: 'decimal', precision: 10, scale: 4, default: 0 }) value: string;
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'boolean', default: true }) active: boolean;
-  @Column({ type: 'jsonb', default: {} }) condicoes: Record<string, unknown>;
+  @Column({ type: 'jsonb', default: {} }) conditions: Record<string, unknown>;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;

@@ -5,6 +5,7 @@ import { FinancialRuleEntity } from '../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import type { CreateFinancialRuleDto, UpdateFinancialRuleDto, QueryFinancialRuleDto } from './dto/financial-rules.dto';
+import { canonicalRuleType, normalizeFinancialRuleInput } from './financial-rule-legacy.mapper';
 
 export type FinancialRuleTrigger =
   | 'transaction.created'
@@ -36,7 +37,7 @@ export class FinancialRulesService {
       .where('r.tenant_id = :tenantId', { tenantId })
       .andWhere('r.deleted_at IS NULL');
 
-    if (query.type)     qb.andWhere('r.type = :type',           { type: query.type });
+    if (query.type)     qb.andWhere('r.type = :type',           { type: canonicalRuleType(query.type) });
     if (query.category) qb.andWhere('r.category = :category', { category: query.category });
     if (query.active !== undefined) qb.andWhere('r.active = :active', { active: query.active });
     if (query.search)   qb.andWhere('r.name ILIKE :search',     { search: `%${query.search}%` });
@@ -56,13 +57,13 @@ export class FinancialRulesService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateFinancialRuleDto): Promise<FinancialRuleEntity> {
-    const item = this.repository.create({ tenant_id: tenantId, ...dto, created_by: userId, updated_by: userId } as any);
+    const item = this.repository.create({ tenant_id: tenantId, ...normalizeFinancialRuleInput({ ...dto }), created_by: userId, updated_by: userId } as any);
     return this.repository.save(item as any) as any;
   }
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateFinancialRuleDto): Promise<FinancialRuleEntity> {
     await this.findById(tenantId, id);
-    const updates: Record<string, unknown> = { ...dto, updated_at: new Date(), updated_by: userId };
+    const updates: Record<string, unknown> = { ...normalizeFinancialRuleInput({ ...dto }), updated_at: new Date(), updated_by: userId };
     const expectedUpdatedAt = updates['expectedUpdatedAt'] as string | undefined;
     delete updates['expectedUpdatedAt'];
     await casUpdate(
@@ -92,7 +93,7 @@ export class FinancialRulesService {
     context: {
       entityId:   string | null;
       entityType: string | null;
-      valor?:     number;
+      amount?:    number;
       category?:  string;
       type?:      string;
     },
@@ -112,7 +113,7 @@ export class FinancialRulesService {
     }
 
     for (const rule of rules) {
-      const conds = (rule.condicoes ?? {}) as Record<string, unknown>;
+      const conds = (rule.conditions ?? {}) as Record<string, unknown>;
 
       // Trigger filter: if rule specifies triggers, check match
       if (Array.isArray(conds['triggers']) && !(conds['triggers'] as string[]).includes(trigger)) continue;
@@ -120,27 +121,27 @@ export class FinancialRulesService {
       // Category filter
       if (rule.category && context.category && rule.category !== context.category) continue;
 
-      // Tipo filter
+      // Transaction type filter
       if (conds['type'] && context.type && conds['type'] !== context.type) continue;
 
       // Compute result
-      const amount  = context.valor ?? 0;
+      const amount  = context.amount ?? 0;
       const ruleVal = parseFloat(String(rule.value));
       let computed: number;
-      if (rule.calculo === 'percentual') computed = (amount * ruleVal) / 100;
-      else if (rule.calculo === 'fixo')  computed = ruleVal;
+      if (rule.calculation_method === 'percentage') computed = (amount * ruleVal) / 100;
+      else if (rule.calculation_method === 'fixed')  computed = ruleVal;
       else {
-        // REM-03: 'faixa' (tiered/bracket) still has no persisted bracket
+        // REM-03: 'tiered' (bracket) still has no persisted bracket
         // structure (the bracket schema is an open product decision — see
         // FinancialRules.tsx "Faixa (em breve)"). Never fabricate computed=0
         // as if it were a real result — skip the rule and warn.
         this.logger.warn(
-          `evaluateRules: rule "${rule.name}" (${rule.id}) uses calculo="${rule.calculo}" which is not implemented yet — skipping, no event emitted`,
+          `evaluateRules: rule "${rule.name}" (${rule.id}) uses calculation_method="${rule.calculation_method}" which is not implemented yet — skipping, no event emitted`,
         );
         continue;
       }
 
-      const result = { trigger, computed, ruleCalculo: rule.calculo, ruleValor: ruleVal, contextValor: amount };
+      const result = { trigger, computed, calculationMethod: rule.calculation_method, ruleValue: ruleVal, contextAmount: amount };
 
       try {
         this.events.emitTyped(DOMAIN_EVENTS.FINANCIAL_RULE_TRIGGERED, {

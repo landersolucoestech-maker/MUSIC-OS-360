@@ -191,7 +191,7 @@ export class ContractEventsHandler {
                 await this.financialRules.evaluateRules(tenantId, 'contract.signed', {
                   entityId: contractId,
                   entityType: 'contract',
-                  valor: contractAmount,
+                  amount: contractAmount,
                   category: 'contratos',
                 });
               }

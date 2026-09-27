@@ -137,7 +137,7 @@ describe('P2-9 event handlers context propagation', () => {
 
     expect(financialRules.evaluateRules).toHaveBeenCalledWith(
       't1', 'invoice.overdue',
-      expect.objectContaining({ entityId: 'i1', entityType: 'invoice', valor: 250 }),
+      expect.objectContaining({ entityId: 'i1', entityType: 'invoice', amount: 250 }),
     );
   });
 

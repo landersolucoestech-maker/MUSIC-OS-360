@@ -13,8 +13,8 @@ import { EventsService } from '../../core/events/events.service';
 
 const NOW = new Date('2026-08-14T12:00:00.000Z');
 const RULE = {
-  id: 'rule-1', tenant_id: 'tenant-1', name: 'Comissão padrão', type: 'comissao',
-  calculo: 'percentual', value: '10', active: true, condicoes: {},
+  id: 'rule-1', tenant_id: 'tenant-1', name: 'Comissão padrão', type: 'commission',
+  calculation_method: 'percentage', value: '10', active: true, conditions: {},
   deleted_at: null, updated_at: NOW,
 };
 
@@ -34,7 +34,7 @@ function makeService() {
 }
 
 describe('FinancialRulesService.update — optimistic concurrency (Task K)', () => {
-  it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
+  it('without expectedUpdatedAt: applies an unconditional update (backward compatibility)', async () => {
     const { svc, repo } = makeService();
 
     await svc.update('tenant-1', 'user-1', 'rule-1', { value: 12 } as any);
@@ -74,13 +74,13 @@ describe('FinancialRulesService.update — optimistic concurrency (Task K)', () 
 });
 
 /**
- * REM-03 (Remaining Product Completion Backlog): calculo:'faixa' has no
- * persisted bracket structure ("em breve" feature in the frontend —
+ * REM-03 (Remaining Product Completion Backlog): calculation_method 'tiered' has no
+ * persisted bracket structure ("coming soon" in the frontend —
  * FinancialRules.tsx). evaluateRules() silently computed 0 and emitted
  * FINANCIAL_RULE_TRIGGERED as if it were a real result. Now it skips the
  * rule and warns — it never fabricates a result.
  */
-describe('FinancialRulesService.evaluateRules — unimplemented calculo (REM-03)', () => {
+describe('FinancialRulesService.evaluateRules — unimplemented calculation method (REM-03)', () => {
   function makeEvalService(rule: Record<string, unknown>) {
     const qb = {
       where: jest.fn().mockReturnThis(),
@@ -93,24 +93,24 @@ describe('FinancialRulesService.evaluateRules — unimplemented calculo (REM-03)
     return { svc, events };
   }
 
-  it("calculo:'faixa' does not emit FINANCIAL_RULE_TRIGGERED (never fabricates computed=0)", async () => {
+  it("calculation_method 'tiered' does not emit FINANCIAL_RULE_TRIGGERED (never fabricates computed=0)", async () => {
     const { svc, events } = makeEvalService({
-      id: 'rule-faixa', tenant_id: 'tenant-1', name: 'Comissão em faixas', type: 'comissao',
-      calculo: 'faixa', value: '10', active: true, condicoes: {},
+      id: 'rule-tiered', tenant_id: 'tenant-1', name: 'Comissão em faixas', type: 'commission',
+      calculation_method: 'tiered', value: '10', active: true, conditions: {},
     });
 
-    await svc.evaluateRules('tenant-1', 'transaction.created', { entityId: 'tx-1', entityType: 'transaction', valor: 1000 });
+    await svc.evaluateRules('tenant-1', 'transaction.created', { entityId: 'tx-1', entityType: 'transaction', amount: 1000 });
 
     expect(events.emitTyped).not.toHaveBeenCalled();
   });
 
-  it("calculo:'percentual' still emits normally (regression)", async () => {
+  it("calculation_method 'percentage' still emits normally (regression)", async () => {
     const { svc, events } = makeEvalService({
-      id: 'rule-pct', tenant_id: 'tenant-1', name: 'Comissão padrão', type: 'comissao',
-      calculo: 'percentual', value: '10', active: true, condicoes: {},
+      id: 'rule-pct', tenant_id: 'tenant-1', name: 'Comissão padrão', type: 'commission',
+      calculation_method: 'percentage', value: '10', active: true, conditions: {},
     });
 
-    await svc.evaluateRules('tenant-1', 'transaction.created', { entityId: 'tx-1', entityType: 'transaction', valor: 1000 });
+    await svc.evaluateRules('tenant-1', 'transaction.created', { entityId: 'tx-1', entityType: 'transaction', amount: 1000 });
 
     expect(events.emitTyped).toHaveBeenCalledTimes(1);
   });

@@ -2,19 +2,19 @@ import { useDataQuery } from "@/shared/hooks/useDataQuery";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 
 export type FinancialRuleTrigger = "transaction.created" | "transaction.paid" | "invoice.overdue" | "contract.signed";
-export type FinancialRuleType = "imposto" | "comissao" | "external_rights_fee" | "desconto" | "taxa" | "outros";
-export type FinancialRuleCalculation = "percentual" | "fixo" | "faixa";
+export type FinancialRuleType = "tax" | "commission" | "external_rights_fee" | "discount" | "fee" | "other";
+export type FinancialRuleCalculation = "percentage" | "fixed" | "tiered";
 
 export interface FinancialRule {
   id: string;
   name: string;
   type: FinancialRuleType;
   category: string | null;
-  calculo: FinancialRuleCalculation;
+  calculation_method: FinancialRuleCalculation;
   value: number;
   description: string | null;
   active: boolean;
-  condicoes: { triggers?: FinancialRuleTrigger[] } | null;
+  conditions: { triggers?: FinancialRuleTrigger[] } | null;
   created_at: string;
   updated_at: string;
 }

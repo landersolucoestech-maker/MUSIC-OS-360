@@ -45,7 +45,7 @@ describe('TransactionEventsHandler — P2-9', () => {
     await handler.onTransactionPaid({ tenantId: 't1', payload, correlationId: null } as any);
     expect(financialRules.evaluateRules).toHaveBeenCalledWith(
       't1', 'transaction.paid',
-      expect.objectContaining({ entityId: 'tx1', entityType: 'transaction', valor: 100 }),
+      expect.objectContaining({ entityId: 'tx1', entityType: 'transaction', amount: 100 }),
     );
   });
 
@@ -57,7 +57,7 @@ describe('TransactionEventsHandler — P2-9', () => {
       await handler.onTransactionCreated({ tenantId: 't1', payload: createdPayload } as any);
       expect(financialRules.evaluateRules).toHaveBeenCalledWith(
         't1', 'transaction.created',
-        expect.objectContaining({ entityId: 'tx2', entityType: 'transaction', valor: 250, category: 'royalties', type: 'receita' }),
+        expect.objectContaining({ entityId: 'tx2', entityType: 'transaction', amount: 250, category: 'royalties', type: 'receita' }),
       );
     });
 

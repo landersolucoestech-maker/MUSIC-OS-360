@@ -51,7 +51,7 @@ export class TransactionEventsHandler {
       await this.financialRules.evaluateRules(tenantId, 'transaction.created', {
         entityId: transactionId,
         entityType: 'transaction',
-        valor: parseFloat(amountText),
+        amount: parseFloat(amountText),
         category,
         type,
       });
@@ -84,7 +84,7 @@ export class TransactionEventsHandler {
           await this.financialRules.evaluateRules(tenantId, 'transaction.paid', {
             entityId: transactionId,
             entityType: 'transaction',
-            valor: parseFloat(amountText),
+            amount: parseFloat(amountText),
             type,
           });
         } catch (err) {

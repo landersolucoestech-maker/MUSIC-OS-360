@@ -277,6 +277,7 @@ import { RenameLeadsGeoFieldsToEnglish20260921000004 } from './20260921000004_Re
 import { DropDeadLeadsCrmDualStorageColumns20260921000005 } from './20260921000005_DropDeadLeadsCrmDualStorageColumns';
 import { RenameInvoiceTomadorGenericFieldsToEnglish20260923000001 } from './20260923000001_RenameInvoiceTomadorGenericFieldsToEnglish';
 import { DropDeadPhonogramsLegacyParticipantColumns20260923000002 } from './20260923000002_DropDeadPhonogramsLegacyParticipantColumns';
+import { CanonicalizeFinancialRulesToEnglish20260927000001 } from './20260927000001_CanonicalizeFinancialRulesToEnglish';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -565,4 +566,5 @@ export const ALL_MIGRATIONS = [
   DropDeadLeadsCrmDualStorageColumns20260921000005,
   RenameInvoiceTomadorGenericFieldsToEnglish20260923000001,
   DropDeadPhonogramsLegacyParticipantColumns20260923000002,
+  CanonicalizeFinancialRulesToEnglish20260927000001,
 ] as const;

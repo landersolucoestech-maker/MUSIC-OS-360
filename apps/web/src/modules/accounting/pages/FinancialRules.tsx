@@ -30,17 +30,17 @@ import {
 } from "@/modules/accounting/hooks/useFinancialRules";
 
 const TYPES: { value: FinancialRuleType; label: string }[] = [
-  { value: "imposto", label: "Imposto" },
-  { value: "comissao", label: "Comissão" },
+  { value: "tax", label: "Imposto" },
+  { value: "commission", label: "Comissão" },
   { value: "external_rights_fee", label: "Taxa de Direitos Externos" },
-  { value: "desconto", label: "Desconto" },
-  { value: "taxa", label: "Taxa" },
-  { value: "outros", label: "Outros" },
+  { value: "discount", label: "Desconto" },
+  { value: "fee", label: "Taxa" },
+  { value: "other", label: "Outros" },
 ];
 const CALCULATION_METHODS: { value: FinancialRuleCalculation; label: string }[] = [
-  { value: "percentual", label: "Percentual" },
-  { value: "fixo", label: "Valor Fixo" },
-  { value: "faixa", label: "Faixa (em breve)" },
+  { value: "percentage", label: "Percentual" },
+  { value: "fixed", label: "Valor Fixo" },
+  { value: "tiered", label: "Faixa (em breve)" },
 ];
 const TRIGGERS: { value: FinancialRuleTrigger; label: string }[] = [
   { value: "contract.signed", label: "Contrato assinado" },
@@ -53,16 +53,16 @@ interface FormState {
   name: string;
   type: FinancialRuleType;
   category: string;
-  calculo: FinancialRuleCalculation;
-  valor: string;
+  calculationMethod: FinancialRuleCalculation;
+  amount: string;
   description: string;
   active: boolean;
   triggers: FinancialRuleTrigger[];
 }
 
 const EMPTY_FORM: FormState = {
-  name: "", type: "outros", category: "", calculo: "percentual",
-  valor: "", description: "", active: true, triggers: [],
+  name: "", type: "other", category: "", calculationMethod: "percentage",
+  amount: "", description: "", active: true, triggers: [],
 };
 
 function toForm(rule: FinancialRule): FormState {
@@ -70,16 +70,16 @@ function toForm(rule: FinancialRule): FormState {
     name: rule.name,
     type: rule.type,
     category: rule.category ?? "",
-    calculo: rule.calculo,
-    valor: String(rule.value),
+    calculationMethod: rule.calculation_method,
+    amount: String(rule.value),
     description: rule.description ?? "",
     active: rule.active,
-    triggers: rule.condicoes?.triggers ?? [],
+    triggers: rule.conditions?.triggers ?? [],
   };
 }
 
 function fmtAmount(rule: FinancialRule): string {
-  return rule.calculo === "percentual" ? `${rule.value}%` : `R$ ${Number(rule.value).toFixed(2)}`;
+  return rule.calculation_method === "percentage" ? `${rule.value}%` : `R$ ${Number(rule.value).toFixed(2)}`;
 }
 
 export default function FinancialRules() {
@@ -106,8 +106,8 @@ export default function FinancialRules() {
 
   async function handleSubmit() {
     if (!form.name.trim()) { setError("Informe o nome da regra."); return; }
-    const amountNum = Number(form.valor);
-    if (!form.valor.trim() || Number.isNaN(amountNum)) { setError("Informe um valor numérico válido."); return; }
+    const amountNum = Number(form.amount);
+    if (!form.amount.trim() || Number.isNaN(amountNum)) { setError("Informe um valor numérico válido."); return; }
     if (form.triggers.length === 0) {
       setError("Selecione ao menos um evento — uma regra sem evento nunca dispara.");
       return;
@@ -117,11 +117,11 @@ export default function FinancialRules() {
       name: form.name.trim(),
       type: form.type,
       category: form.category.trim() || undefined,
-      calculo: form.calculo,
+      calculation_method: form.calculationMethod,
       value: amountNum,
       description: form.description.trim() || undefined,
       active: form.active,
-      condicoes: { triggers: form.triggers },
+      conditions: { triggers: form.triggers },
     };
 
     try {
@@ -209,17 +209,17 @@ export default function FinancialRules() {
                           {rule.category && <p className="text-xs text-muted-foreground">{rule.category}</p>}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {TYPES.find((t) => t.value === rule.type)?.label ?? rule.type}
+                          {TYPES.find((t) => t.value === rule.type)?.label ?? "Tipo não cadastrado"}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">{fmtAmount(rule)}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {(rule.condicoes?.triggers ?? []).length === 0 ? (
+                            {(rule.conditions?.triggers ?? []).length === 0 ? (
                               <span className="text-xs text-destructive">Nenhum — nunca dispara</span>
                             ) : (
-                              rule.condicoes!.triggers!.map((t) => (
+                              rule.conditions!.triggers!.map((t) => (
                                 <Badge key={t} variant="neutral" className="text-[10px]">
-                                  {TRIGGERS.find((tr) => tr.value === t)?.label ?? t}
+                                  {TRIGGERS.find((tr) => tr.value === t)?.label ?? "Evento não cadastrado"}
                                 </Badge>
                               ))
                             )}
@@ -276,11 +276,11 @@ export default function FinancialRules() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">Cálculo</Label>
-                  <Select value={form.calculo} onValueChange={(v) => setField("calculo", v as FinancialRuleCalculation)}>
+                  <Select value={form.calculationMethod} onValueChange={(v) => setField("calculationMethod", v as FinancialRuleCalculation)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {CALCULATION_METHODS.map((c) => (
-                        <SelectItem key={c.value} value={c.value} disabled={c.value === "faixa"}>
+                        <SelectItem key={c.value} value={c.value} disabled={c.value === "tiered"}>
                           {c.label}
                         </SelectItem>
                       ))}
@@ -288,8 +288,8 @@ export default function FinancialRules() {
                   </Select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Valor {form.calculo === "percentual" ? "(%)" : "(R$)"} *</Label>
-                  <Input type="number" step="0.01" value={form.valor} onChange={(e) => setField("valor", e.target.value)} placeholder="0.00" />
+                  <Label className="text-xs font-medium">Valor {form.calculationMethod === "percentage" ? "(%)" : "(R$)"} *</Label>
+                  <Input type="number" step="0.01" value={form.amount} onChange={(e) => setField("amount", e.target.value)} placeholder="0.00" />
                 </div>
               </div>
               <div className="space-y-1.5">
