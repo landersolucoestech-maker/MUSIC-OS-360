@@ -28,11 +28,11 @@ const SRC_ROOT = path.resolve(__dirname, "..");
 
 const UNBOUNDED_HOOKS = [
   "useArtistas",
-  "useObras",
+  "useWorks",
   "useProjects",
   "useContracts",
   "useClientes",
-  "useFonogramas",
+  "usePhonograms",
   "useLicencas",
   "useEmployees",
 ];
@@ -60,7 +60,7 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/dashboard/hooks/useMetrics.ts":
     "useArtistas()/useProjects() alimentam contagens com o agregado do backend (dashboard.artists_by_status/.artists) como fonte primária; o array capado só é usado como fallback quando o agregado ainda não carregou (mesmo padrão do HR stats).",
   "modules/artist/components/ArtistVision360Modal.tsx":
-    "useObras/useFonogramas/useProjects/useContracts(open, artistId) recebem artistId explícito e filtram server-side — não é 'me dê tudo'.",
+    "useWorks/usePhonograms/useProjects/useContracts(open, artistId) recebem artistId explícito e filtram server-side — não é 'me dê tudo'.",
   "modules/contracts/pages/Contracts.tsx":
     "useContracts() só para mutations; a lista é passada a useEditQueryParam, que tem fallback findById para IDs fora da página carregada.",
   "modules/contracts/components/ContractWizard.tsx":
@@ -68,7 +68,7 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/contracts/components/ContractFormModal.tsx":
     "useContracts() só para mutations (addContract/updateContract); o picker de clientes usa AsyncEntityCombobox.",
   "modules/catalog/pages/RegistroMusicas.tsx":
-    "useObras/useFonogramas só para mutations. useProjects() alimenta só o dropdown de projetos/gêneros (valores distintos) — risco documentado no próprio arquivo por falta de endpoint dedicado (equivalente a /works/stats/generos); busca, paginação e deep-links não dependem disso.",
+    "useWorks/usePhonograms só para mutations. useProjects() alimenta só o dropdown de projetos/gêneros (valores distintos) — risco documentado no próprio arquivo por falta de endpoint dedicado (equivalente a /works/stats/generos); busca, paginação e deep-links não dependem disso.",
   "modules/artist/components/ArtistFormModal.tsx":
     "useArtistas()/useClientes() só para mutations (addArtista/updateArtista/addCliente) — não há mais picker de contrato neste formulário (Task AA removeu a seção Classificação e Vínculos).",
   "modules/hr/pages/HR.tsx":
@@ -78,9 +78,9 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/hr/components/LeaveRequestFormModal.tsx":
     "useEmployees() só para isLoading; o picker de funcionário usa AsyncEntityCombobox.",
   "modules/catalog/components/ObraFormModal.tsx":
-    "useObras() só para mutations (addObra/updateObra); pickers de artista/projeto usam useEntityLookup/useEntityById.",
+    "useWorks() só para mutations (addWork/updateWork); pickers de artista/projeto usam useEntityLookup/useEntityById.",
   "modules/catalog/components/FonogramaFormModal.tsx":
-    "useFonogramas() só para mutations (addFonograma/updateFonograma); resolução de artista/obra usa storage.findById/listPaged direto.",
+    "usePhonograms() só para mutations (addPhonogram/updatePhonogram); resolução de artista/obra usa storage.findById/listPaged direto.",
   "modules/projects/components/ProjectFormModal.tsx":
     "useProjects() só para mutations (addProject/updateProject).",
   "modules/projects/pages/Projects.tsx":

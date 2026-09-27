@@ -79,8 +79,8 @@ const formatDateDMY = (d?: string | null): string => {
 
 // imports moved here after CircularProgress was removed
 import { formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
-import { useObras } from "@/modules/catalog/hooks/useObras";
-import { useFonogramas } from "@/modules/catalog/hooks/useFonogramas";
+import { useWorks } from "@/modules/catalog/hooks/useObras";
+import { usePhonograms } from "@/modules/catalog/hooks/useFonogramas";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useMetas } from "@/modules/marketing/hooks/useMetas";
@@ -314,8 +314,8 @@ export function ArtistVision360Modal({
   // cache, since the queryKey did not distinguish the artist.
   const artistId = artista?.id;
   const audienceHealth = useSkillRun<Record<string, unknown>>(`/artists/${artistId}/audience-health`);
-  const { obras: actualWorks } = useObras(open, artistId);
-  const { fonogramas: actualPhonograms } = useFonogramas(open, artistId);
+  const { works: actualWorks } = useWorks(open, artistId);
+  const { phonograms: actualPhonograms } = usePhonograms(open, artistId);
   const { lancamentos: actualReleases } = useReleases(open, artistId);
   const { projects: actualProjects } = useProjects(open, artistId);
   const {

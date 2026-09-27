@@ -3,19 +3,19 @@ import { useDataQuery } from "@/shared/hooks/useDataQuery";
 import { emit, DomainEvents } from "@/shared/domain-events";
 import { useTenant } from "@/app/providers/TenantContext";
 import type {
-  Fonograma,
-  FonogramaInsert,
-  FonogramaUpdate,
-  FonogramaWithRelations,
+  Phonogram,
+  PhonogramInsert,
+  PhonogramUpdate,
+  PhonogramWithRelations,
 } from "../types/catalog.types";
 
-export type { Fonograma, FonogramaInsert, FonogramaUpdate, FonogramaWithRelations };
+export type { Phonogram as Fonograma, PhonogramInsert as FonogramaInsert, PhonogramUpdate as FonogramaUpdate, PhonogramWithRelations as FonogramaWithRelations };
 
-export function useFonogramas(enabled = true, artistId?: string) {
+export function usePhonograms(enabled = true, artistId?: string) {
   const { tenant } = useTenant();
   const orgId = tenant?.id ?? "unknown";
 
-  const result = useDataQuery<FonogramaWithRelations>({
+  const result = useDataQuery<PhonogramWithRelations>({
     queryKey: artistId ? [...QUERY_KEYS.PHONOGRAMS, "by-artist", artistId] : [...QUERY_KEYS.PHONOGRAMS],
     table: "fonogramas",
     select: "*, artistas(*)",
@@ -24,14 +24,14 @@ export function useFonogramas(enabled = true, artistId?: string) {
     onMutationSuccess: {
       onCreate: (f) =>
         emit(DomainEvents.PHONOGRAM_REGISTERED, {
-          id:      (f as FonogramaWithRelations & { id: string }).id,
-          work_id: (f as FonogramaWithRelations & { work_id?: string }).work_id ?? "",
+          id:      (f as PhonogramWithRelations & { id: string }).id,
+          work_id: (f as PhonogramWithRelations & { work_id?: string }).work_id ?? "",
           org_id:  orgId,
         }),
       onUpdate: (f) =>
         emit(DomainEvents.PHONOGRAM_UPDATED, {
-          id:      (f as FonogramaWithRelations & { id: string }).id,
-          work_id: (f as FonogramaWithRelations & { work_id?: string }).work_id ?? "",
+          id:      (f as PhonogramWithRelations & { id: string }).id,
+          work_id: (f as PhonogramWithRelations & { work_id?: string }).work_id ?? "",
           org_id:  orgId,
         }),
       onDelete: (id) =>
@@ -44,12 +44,12 @@ export function useFonogramas(enabled = true, artistId?: string) {
   });
 
   return {
-    fonogramas: result.data,
+    phonograms: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addFonograma: result.create,
-    updateFonograma: result.update,
-    deleteFonograma: result.delete,
+    addPhonogram: result.create,
+    updatePhonogram: result.update,
+    deletePhonogram: result.delete,
   };
 }

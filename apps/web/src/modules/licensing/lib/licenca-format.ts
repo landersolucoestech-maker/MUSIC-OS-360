@@ -1,5 +1,5 @@
 import type { Currency, Licenca } from "@/modules/licensing/types/licensing.types";
-import type { Obra } from "@/modules/catalog/types/catalog.types";
+import type { Work } from "@/modules/catalog/types/catalog.types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = { BRL: "R$", USD: "US$", EUR: "€" };
 
@@ -53,7 +53,7 @@ function joinNames(v: string | string[] | null | undefined): string {
 }
 
 /** Derives the artist(s) of a work: linked artist → performers → composers. */
-export function obraArtistaLabel(obra: Obra | undefined | null): string {
+export function obraArtistaLabel(obra: Work | undefined | null): string {
   if (!obra) return "";
   const linked = (obra as { artistas?: { nome_artistico?: string | null } | null }).artistas?.nome_artistico;
   if (linked) return linked;

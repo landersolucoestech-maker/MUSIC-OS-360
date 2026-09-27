@@ -10,24 +10,24 @@ import { Separator } from "@/shared/ui/separator";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Switch } from "@/shared/ui/switch";
 import { Music } from "lucide-react";
-import { ObraTipoBadge } from "@/modules/catalog/components/ObraFormModal";
+import { WorkTypeBadge } from "@/modules/catalog/components/ObraFormModal";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
 import {
-  obraOutrosTitulos,
-  obraReferenciasConexas,
-  obraLetraCompleta,
-  obraCriadaPorIA,
-  obraTipoIAValue,
-  obraIaHarmonia,
-  obraIaMelodia,
-  obraIaLetra,
-  obraToParticipantes,
+  workOtherTitles,
+  workRelatedReferences,
+  workFullLyrics,
+  workCreatedByAi,
+  workTypeAiValue,
+  workAiHarmony,
+  workAiMelody,
+  workAiLyrics,
+  workToParticipants,
   exportInstrumental,
   parseDurationText,
 } from "@/modules/catalog/mappers";
 
-interface ObraViewModalProps {
+interface WorkViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   obra?: any;
@@ -97,44 +97,44 @@ function SwitchField({ label, value }: { label: string; value: boolean }) {
   );
 }
 
-export function ObraViewModal({
+export function WorkViewModal({
   open,
   onOpenChange,
-  obra: obraProp,
-}: ObraViewModalProps) {
+  obra: workProp,
+}: WorkViewModalProps) {
   // Fetches DIRECTLY by ID (GET /works/:id) — does not depend on the work being among
   // the first loaded records (Task J: it used to use an unfiltered useObras(),
   // which truncated at 50 works per tenant).
-  const { entity: fresh } = useEntityById<ObraWithRelations>("obras", open ? obraProp?.id : undefined);
-  if (!obraProp) return null;
+  const { entity: fresh } = useEntityById<ObraWithRelations>("obras", open ? workProp?.id : undefined);
+  if (!workProp) return null;
 
-  const obra: any = fresh ? { ...obraProp, ...fresh } : obraProp;
+  const work: any = fresh ? { ...workProp, ...fresh } : workProp;
 
-  const outrosTitulos    = obraOutrosTitulos(obra);
-  const referenciasConexas = obraReferenciasConexas(obra);
-  const letraCompleta    = obraLetraCompleta(obra);
-  const criadaPorIA      = obraCriadaPorIA(obra) === "sim";
-  const tipoIA           = obraTipoIAValue(obra);
-  const iaHarmonia       = obraIaHarmonia(obra);
-  const iaMelodia        = obraIaMelodia(obra);
-  const iaLetra          = obraIaLetra(obra);
-  const participantes    = obraToParticipantes(obra);
+  const outrosTitulos    = workOtherTitles(work);
+  const referenciasConexas = workRelatedReferences(work);
+  const fullLyrics    = workFullLyrics(work);
+  const criadaPorIA      = workCreatedByAi(work) === "sim";
+  const aiType           = workTypeAiValue(work);
+  const iaHarmonia       = workAiHarmony(work);
+  const iaMelodia        = workAiMelody(work);
+  const aiLyrics          = workAiLyrics(work);
+  const participantes    = workToParticipants(work);
   const instrumental     =
-    exportInstrumental(obra as Record<string, unknown>) === "Sim";
+    exportInstrumental(work as Record<string, unknown>) === "Sim";
 
-  const dur = parseDurationText(obra.duration_text);
-  const duracaoDisplay =
+  const dur = parseDurationText(work.duration_text);
+  const durationDisplay =
     dur.min || dur.seg
       ? `${dur.min || "0"}min ${dur.seg || "0"}seg`
-      : obra.duration_text || null;
+      : work.duration_text || null;
 
-  const artistaNome   = obra.artistas?.nome_artistico ?? null;
-  const projetoTitle = obra.projetos?.title ?? null;
+  const artistName   = work.artistas?.nome_artistico ?? null;
+  const projectTitle = work.projetos?.title ?? null;
 
   const iaElementos = [
     iaHarmonia.ferramenta || iaHarmonia.prompt ? "Harmonia" : null,
     iaMelodia.ferramenta  || iaMelodia.prompt  ? "Melodia"  : null,
-    iaLetra.ferramenta    || iaLetra.prompt     ? "Letra"    : null,
+    aiLyrics.ferramenta    || aiLyrics.prompt     ? "Letra"    : null,
   ].filter(Boolean) as string[];
 
   return (
@@ -154,28 +154,28 @@ export function ObraViewModal({
                 <Music className="h-5 w-5 text-primary-foreground" />
               </div>
               <div className="flex-1">
-                <h2 className="text-lg font-bold">{obra.title || "—"}</h2>
+                <h2 className="text-lg font-bold">{work.title || "—"}</h2>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <StatusBadge status={obra.status} />
-                  <ObraTipoBadge type={obra.tipo_obra} />
+                  <StatusBadge status={work.status} />
+                  <WorkTypeBadge type={work.tipo_obra} />
                 </div>
-                {obra.created_at && (
+                {work.created_at && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    📅 Cadastrado em: {new Date(obra.created_at).toLocaleDateString("pt-BR")}
+                    📅 Cadastrado em: {new Date(work.created_at).toLocaleDateString("pt-BR")}
                   </p>
                 )}
               </div>
             </div>
 
             {/* Linked project — shown only when there is a link */}
-            {(artistaNome || projetoTitle) && (
+            {(artistName || projectTitle) && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Projeto Vinculado</SectionTitle>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                    {projetoTitle && <InfoField label="Projeto" value={projetoTitle} />}
-                    {artistaNome && <InfoField label="Artista do Projeto" value={artistaNome} />}
+                    {projectTitle && <InfoField label="Projeto" value={projectTitle} />}
+                    {artistName && <InfoField label="Artista do Projeto" value={artistName} />}
                   </div>
                 </div>
               </>
@@ -187,24 +187,24 @@ export function ObraViewModal({
             <div>
               <SectionTitle>Informações Gerais</SectionTitle>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                <InfoField label="Gênero"  value={obra.music_genre} />
-                <InfoField label="Idioma"  value={obra.idioma} />
-                <InfoField label="Duração" value={duracaoDisplay} />
+                <InfoField label="Gênero"  value={work.music_genre} />
+                <InfoField label="Idioma"  value={work.idioma} />
+                <InfoField label="Duração" value={durationDisplay} />
                 <SwitchField label="Instrumental" value={instrumental} />
               </div>
             </div>
 
             {/* Registration codes — shown only when there is some code */}
-            {(obra.cod_entidade || obra.cod_ecad || obra.isrc || obra.iswc) && (
+            {(work.cod_entidade || work.cod_ecad || work.isrc || work.iswc) && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Códigos de Registro</SectionTitle>
                   <div className="grid grid-cols-2 gap-3">
-                    {obra.cod_entidade && <MonoField label="Código de Cadastro da Sociedade" value={obra.cod_entidade} />}
-                    {obra.cod_ecad && <MonoField label="Código ECAD" value={obra.cod_ecad} />}
-                    {obra.isrc && <MonoField label="ISRC" value={obra.isrc} />}
-                    {obra.iswc && <MonoField label="ISWC" value={obra.iswc} />}
+                    {work.cod_entidade && <MonoField label="Código de Cadastro da Sociedade" value={work.cod_entidade} />}
+                    {work.cod_ecad && <MonoField label="Código ECAD" value={work.cod_ecad} />}
+                    {work.isrc && <MonoField label="ISRC" value={work.isrc} />}
+                    {work.iswc && <MonoField label="ISWC" value={work.iswc} />}
                   </div>
                 </div>
               </>
@@ -267,7 +267,7 @@ export function ObraViewModal({
                   <SectionTitle>Inteligência Artificial</SectionTitle>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-3">
                     <SwitchField label="Criada por IA"    value={criadaPorIA} />
-                    <InfoField   label="Tipo de Geração IA" value={tipoIA || null} />
+                    <InfoField   label="Tipo de Geração IA" value={aiType || null} />
                   </div>
                   {iaElementos.length > 0 && (
                     <div className="space-y-2">
@@ -314,22 +314,22 @@ export function ObraViewModal({
                           )}
                         </div>
                       )}
-                      {(iaLetra.ferramenta || iaLetra.prompt) && (
+                      {(aiLyrics.ferramenta || aiLyrics.prompt) && (
                         <div className="p-3 bg-muted/30 rounded-lg">
                           <p className="text-xs font-semibold text-muted-foreground mb-1">
                             Letra (IA)
                           </p>
-                          {iaLetra.ferramenta && (
+                          {aiLyrics.ferramenta && (
                             <p className="text-sm">
                               <span className="text-muted-foreground">
                                 Ferramenta:{" "}
                               </span>
-                              {iaLetra.ferramenta}
+                              {aiLyrics.ferramenta}
                             </p>
                           )}
-                          {iaLetra.prompt && (
+                          {aiLyrics.prompt && (
                             <p className="text-sm text-muted-foreground mt-0.5">
-                              {iaLetra.prompt}
+                              {aiLyrics.prompt}
                             </p>
                           )}
                         </div>
@@ -375,13 +375,13 @@ export function ObraViewModal({
             )}
 
             {/* Lyrics */}
-            {letraCompleta && (
+            {fullLyrics && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Letra</SectionTitle>
                   <pre className="text-sm whitespace-pre-wrap font-sans text-foreground leading-relaxed">
-                    {letraCompleta}
+                    {fullLyrics}
                   </pre>
                 </div>
               </>

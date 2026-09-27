@@ -16,11 +16,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { SortableTableHead } from "@/shared/components/SortableTableHead";
 import { nextTableSortState, sortTableRows, type TableSortState } from "@/shared/lib/table-sort";
-import { ObraFormModal, ObraTipoBadge } from "@/modules/catalog/components/ObraFormModal";
-import { ObraViewModal } from "@/modules/catalog/components/ObraViewModal";
-import { ObraTipoSelectorModal, type TipoObra } from "@/modules/catalog/components/ObraTipoSelectorModal";
-import { FonogramaFormModal } from "@/modules/catalog/components/FonogramaFormModal";
-import { FonogramaViewModal } from "@/modules/catalog/components/FonogramaViewModal";
+import { WorkFormModal, WorkTypeBadge } from "@/modules/catalog/components/ObraFormModal";
+import { WorkViewModal } from "@/modules/catalog/components/ObraViewModal";
+import { WorkTypeSelectorModal, type WorkType } from "@/modules/catalog/components/ObraTipoSelectorModal";
+import { PhonogramFormModal } from "@/modules/catalog/components/FonogramaFormModal";
+import { PhonogramViewModal } from "@/modules/catalog/components/FonogramaViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { ContractFormModal } from "@/modules/contracts/components/ContractFormModal";
@@ -28,17 +28,17 @@ import { toast } from "sonner";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
-import { useObras } from "@/modules/catalog/hooks/useObras";
-import { useFonogramas } from "@/modules/catalog/hooks/useFonogramas";
+import { useWorks } from "@/modules/catalog/hooks/useObras";
+import { usePhonograms } from "@/modules/catalog/hooks/useFonogramas";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import {
-  useObrasPaginated, useObrasStats, useObrasGeneros,
-  useFonogramasPaginated, useFonogramasStats, useFonogramasGeneros,
+  useWorksPaginated, useWorksStats, useWorksGenres,
+  usePhonogramsPaginated, usePhonogramsStats, usePhonogramsGenres,
 } from "@/modules/catalog/hooks/useCatalogPaginated";
-import type { Obra, Fonograma } from "@/modules/catalog/types/catalog.types";
-import { projetoToObraSeed } from "@/modules/catalog/mappers";
+import type { Work, Phonogram } from "@/modules/catalog/types/catalog.types";
+import { projectToWorkSeed } from "@/modules/catalog/mappers";
 import { parseMusicasFromProjeto } from "@/modules/projects/lib/musica-helpers";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useSignedArtists } from "@/modules/artist/hooks/useSignedArtists";
@@ -46,173 +46,173 @@ import { useSignedArtists } from "@/modules/artist/hooks/useSignedArtists";
 
 
 
-const statusObraLabel = (s: string): string => {
+const workStatusLabel = (s: string): string => {
   if (s === "registered") return "Registrado";
   if (s === "under_review" || s === "in_review") return "Em Análise";
   if (s === "rejected") return "Rejeitado";
   return "Pendente";
 };
 
-const getFonogramaGenero = (fonograma: Pick<Fonograma, "music_genre">): string =>
-  (fonograma.music_genre ?? "").toString().trim();
+const getPhonogramGenre = (phonogram: Pick<Phonogram, "music_genre">): string =>
+  (phonogram.music_genre ?? "").toString().trim();
 
-const getFonogramaGeneroDisplay = (fonograma: Pick<Fonograma, "music_genre">): string =>
-  getFonogramaGenero(fonograma) || "Não informado";
+const getPhonogramGenreDisplay = (phonogram: Pick<Phonogram, "music_genre">): string =>
+  getPhonogramGenre(phonogram) || "Não informado";
 
-const getObraGeneroDisplay = (obra: Pick<Obra, "music_genre">): string =>
-  (obra.music_genre ?? "").toString().trim() || "Não informado";
+const getWorkGenreDisplay = (work: Pick<Work, "music_genre">): string =>
+  (work.music_genre ?? "").toString().trim() || "Não informado";
 
 const getSortText = (value: unknown): string => {
   if (Array.isArray(value)) return value.filter(Boolean).join(", ");
   return (value ?? "").toString();
 };
 
-const getFonogramaSortValue = (fonograma: Fonograma, key: string): unknown => {
-  if (key === "genero_musical") return getFonogramaGeneroDisplay(fonograma);
-  if (key === "title") return fonograma.title ?? "";
-  return getSortText((fonograma as Record<string, unknown>)[key]);
+const getPhonogramSortValue = (phonogram: Phonogram, key: string): unknown => {
+  if (key === "genero_musical") return getPhonogramGenreDisplay(phonogram);
+  if (key === "title") return phonogram.title ?? "";
+  return getSortText((phonogram as Record<string, unknown>)[key]);
 };
 
-const getObraSortValue = (obra: Obra, key: string): unknown => {
-  if (key === "genero") return getObraGeneroDisplay(obra);
-  if (key === "title") return obra.title ?? "";
-  return getSortText((obra as Record<string, unknown>)[key]);
+const getWorkSortValue = (work: Work, key: string): unknown => {
+  if (key === "genero") return getWorkGenreDisplay(work);
+  if (key === "title") return work.title ?? "";
+  return getSortText((work as Record<string, unknown>)[key]);
 };
 
-export default function RegistroMusicas() {
+export default function MusicRegistry() {
   const navigate = useNavigate();
-  const { obras, isLoading: loadingObras, deleteObra, addObra } = useObras();
-  const { fonogramas, isLoading: loadingFonogramas, deleteFonograma, addFonograma } = useFonogramas();
-  const { projects: allProjetos } = useProjects();
-  const { artists: artistasAssinados } = useSignedArtists();
+  const { works, isLoading: loadingWorks, deleteWork, addWork } = useWorks();
+  const { phonograms, isLoading: loadingPhonograms, deletePhonogram, addPhonogram } = usePhonograms();
+  const { projects: allProjects } = useProjects();
+  const { artists: signedArtists } = useSignedArtists();
   const [activeTab, setActiveTab] = useState("obras");
-  const [selectedObraIds, setSelectedObraIds] = useState<string[]>([]);
-  const toggleSelectAllObras = () => {
-    if (selectedObraIds.length === obrasPg.pageItems.length && obrasPg.pageItems.length > 0) {
-      setSelectedObraIds([]);
+  const [selectedWorkIds, setSelectedWorkIds] = useState<string[]>([]);
+  const toggleSelectAllWorks = () => {
+    if (selectedWorkIds.length === worksPg.pageItems.length && worksPg.pageItems.length > 0) {
+      setSelectedWorkIds([]);
     } else {
-      setSelectedObraIds(obrasPg.pageItems.map((o) => o.id));
+      setSelectedWorkIds(worksPg.pageItems.map((o) => o.id));
     }
   };
-  const toggleSelectObra = (id: string) => setSelectedObraIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-  const handleBulkDeleteObras = async () => {
-    if (selectedObraIds.length === 0) return;
-    const ids = selectedObraIds;
-    setSelectedObraIds([]);
-    const result = await runBulkAction(ids, (id) => deleteObra.mutateAsync(id));
+  const toggleSelectWork = (id: string) => setSelectedWorkIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const handleBulkDeleteWorks = async () => {
+    if (selectedWorkIds.length === 0) return;
+    const ids = selectedWorkIds;
+    setSelectedWorkIds([]);
+    const result = await runBulkAction(ids, (id) => deleteWork.mutateAsync(id));
     reportBulkResult(result, "excluída", "obra");
   };
 
-  const [selectedFonogramaIds, setSelectedFonogramaIds] = useState<string[]>([]);
-  const toggleSelectAllFonogramas = () => {
-    if (selectedFonogramaIds.length === fonogramasPg.pageItems.length && fonogramasPg.pageItems.length > 0) {
-      setSelectedFonogramaIds([]);
+  const [selectedPhonogramIds, setSelectedPhonogramIds] = useState<string[]>([]);
+  const toggleSelectAllPhonograms = () => {
+    if (selectedPhonogramIds.length === phonogramsPg.pageItems.length && phonogramsPg.pageItems.length > 0) {
+      setSelectedPhonogramIds([]);
     } else {
-      setSelectedFonogramaIds(fonogramasPg.pageItems.map((f) => f.id));
+      setSelectedPhonogramIds(phonogramsPg.pageItems.map((f) => f.id));
     }
   };
-  const toggleSelectFonograma = (id: string) => setSelectedFonogramaIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-  const handleBulkDeleteFonogramas = async () => {
-    if (selectedFonogramaIds.length === 0) return;
-    const ids = selectedFonogramaIds;
-    setSelectedFonogramaIds([]);
-    const result = await runBulkAction(ids, (id) => deleteFonograma.mutateAsync(id));
+  const toggleSelectPhonogram = (id: string) => setSelectedPhonogramIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const handleBulkDeletePhonograms = async () => {
+    if (selectedPhonogramIds.length === 0) return;
+    const ids = selectedPhonogramIds;
+    setSelectedPhonogramIds([]);
+    const result = await runBulkAction(ids, (id) => deletePhonogram.mutateAsync(id));
     reportBulkResult(result, "excluído", "fonograma");
   };
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all-status");
   const [genreFilter, setGenreFilter] = useState("all-genre");
-  const [fonogramaSort, setFonogramaSort] = useState<TableSortState>(null);
-  const [obraSort, setObraSort] = useState<TableSortState>(null);
-  const [tipoObraFilter, setTipoObraFilter] = useState("all-tipos");
-  const [projetoFilter, setProjetoFilter] = useState("all-projetos");
-  const [obraVinculadaFilter, setObraVinculadaFilter] = useState("all-obras");
+  const [phonogramSort, setPhonogramSort] = useState<TableSortState>(null);
+  const [workSort, setWorkSort] = useState<TableSortState>(null);
+  const [workTypeFilter, setWorkTypeFilter] = useState("all-tipos");
+  const [projectFilter, setProjectFilter] = useState("all-projetos");
+  const [linkedWorkFilter, setLinkedWorkFilter] = useState("all-obras");
   const [ecadFilter, setEcadFilter] = useState("all-ecad");
-  const [fonogramaEcadFilter, setFonogramaEcadFilter] = useState("all-ecad");
-  const [obraModal, setObraModal] = useState<{ open: boolean; mode: "create" | "edit"; obra?: Obra; tipoObra?: TipoObra }>({
+  const [phonogramEcadFilter, setPhonogramEcadFilter] = useState("all-ecad");
+  const [workModal, setWorkModal] = useState<{ open: boolean; mode: "create" | "edit"; obra?: Work; tipoObra?: WorkType }>({
     open: false,
     mode: "create",
     obra: undefined,
     tipoObra: undefined,
   });
-  const [obraTipoSelectorOpen, setObraTipoSelectorOpen] = useState(false);
+  const [workTypeSelectorOpen, setWorkTypeSelectorOpen] = useState(false);
   const [pendingProjectId, setPendingProjectId] = useState<string | null>(null);
-  const [obraViewModal, setObraViewModal] = useState<{ open: boolean; obra?: Obra }>({ open: false });
-  const [fonogramaModal, setFonogramaModal] = useState<{ open: boolean; mode: "create" | "edit"; fonograma?: Fonograma }>({
+  const [workViewModal, setWorkViewModal] = useState<{ open: boolean; obra?: Work }>({ open: false });
+  const [phonogramModal, setPhonogramModal] = useState<{ open: boolean; mode: "create" | "edit"; fonograma?: Phonogram }>({
     open: false,
     mode: "create",
     fonograma: undefined
   });
-  const [fonogramaViewModal, setFonogramaViewModal] = useState<{ open: boolean; fonograma?: Fonograma }>({ open: false });
-  const [deleteModal, setDeleteModal] = useState<{ open: boolean; item?: Obra | Fonograma; type?: string }>({ open: false, item: undefined, type: undefined });
-  const [contratoModal, setContratoModal] = useState<{ open: boolean; prefill?: { title: string; notes: string } }>({ open: false });
+  const [phonogramViewModal, setPhonogramViewModal] = useState<{ open: boolean; fonograma?: Phonogram }>({ open: false });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; item?: Work | Phonogram; type?: string }>({ open: false, item: undefined, type: undefined });
+  const [contractModal, setContractModal] = useState<{ open: boolean; prefill?: { title: string; notes: string } }>({ open: false });
 
   // Apply incoming ?projeto=:id (and optional ?obra=:id) coming from the Projetos screen
   const [searchParams, setSearchParams] = useSearchParams();
-  const obraParam = searchParams.get("obra");
-  const editObraParam = searchParams.get("editObra");
-  const fonogramaParam = searchParams.get("fonograma");
+  const workParam = searchParams.get("obra");
+  const editWorkParam = searchParams.get("editObra");
+  const phonogramParam = searchParams.get("fonograma");
   // Deep-link resolution DIRECTLY by ID (Task J) — it used to scan the works/
   // phonograms of an unfiltered useObras()/useFonogramas(), truncated at the tenant's
   // first 50; GET /works/:id and /phonograms/:id reach
   // any record of the tenant.
-  const { entity: deepLinkObra, isLoading: loadingDeepLinkObra } = useEntityById<Obra>("obras", obraParam ?? undefined);
-  const { entity: deepLinkEditObra, isLoading: loadingDeepLinkEditObra } = useEntityById<Obra>("obras", editObraParam ?? undefined);
-  const { entity: deepLinkFonograma, isLoading: loadingDeepLinkFonograma } = useEntityById<Fonograma>("fonogramas", fonogramaParam ?? undefined);
+  const { entity: deepLinkWork, isLoading: loadingDeepLinkWork } = useEntityById<Work>("obras", workParam ?? undefined);
+  const { entity: deepLinkEditWork, isLoading: loadingDeepLinkEditWork } = useEntityById<Work>("obras", editWorkParam ?? undefined);
+  const { entity: deepLinkPhonogram, isLoading: loadingDeepLinkPhonogram } = useEntityById<Phonogram>("fonogramas", phonogramParam ?? undefined);
 
   useEffect(() => {
-    const projetoParam = searchParams.get("projeto");
-    const newObraParam = searchParams.get("newObra");
-    if (!projetoParam && !newObraParam && !obraParam && !editObraParam && !fonogramaParam) return;
+    const projectParam = searchParams.get("projeto");
+    const newWorkParam = searchParams.get("newObra");
+    if (!projectParam && !newWorkParam && !workParam && !editWorkParam && !phonogramParam) return;
 
     // If we still need to resolve an obra/fonograma but data are loading,
     // wait so we don't clear the URL before having a chance to open the modal.
-    if (obraParam && loadingDeepLinkObra) return;
-    if (editObraParam && loadingDeepLinkEditObra) return;
-    if (fonogramaParam && loadingDeepLinkFonograma) return;
+    if (workParam && loadingDeepLinkWork) return;
+    if (editWorkParam && loadingDeepLinkEditWork) return;
+    if (phonogramParam && loadingDeepLinkPhonogram) return;
 
     const next = new URLSearchParams(searchParams);
     let consumed = false;
 
-    if (newObraParam) {
+    if (newWorkParam) {
       setActiveTab("obras");
-      setProjetoFilter(newObraParam);
-      setPendingProjectId(newObraParam);
-      setObraTipoSelectorOpen(true);
+      setProjectFilter(newWorkParam);
+      setPendingProjectId(newWorkParam);
+      setWorkTypeSelectorOpen(true);
       next.delete("newObra");
       consumed = true;
     }
 
-    if (projetoParam) {
+    if (projectParam) {
       setActiveTab("obras");
-      setProjetoFilter(projetoParam);
+      setProjectFilter(projectParam);
       next.delete("projeto");
       consumed = true;
     }
 
-    if (obraParam) {
-      if (deepLinkObra) {
+    if (workParam) {
+      if (deepLinkWork) {
         setActiveTab("obras");
-        setObraViewModal({ open: true, obra: deepLinkObra });
+        setWorkViewModal({ open: true, obra: deepLinkWork });
       }
       // Whether or not the obra was found, drop the param so we don't loop.
       next.delete("obra");
       consumed = true;
     }
 
-    if (editObraParam) {
-      if (deepLinkEditObra) {
+    if (editWorkParam) {
+      if (deepLinkEditWork) {
         setActiveTab("obras");
-        setObraModal({ open: true, mode: "edit", obra: deepLinkEditObra });
+        setWorkModal({ open: true, mode: "edit", obra: deepLinkEditWork });
       }
       next.delete("editObra");
       consumed = true;
     }
 
-    if (fonogramaParam) {
-      if (deepLinkFonograma) {
+    if (phonogramParam) {
+      if (deepLinkPhonogram) {
         setActiveTab("fonogramas");
-        setFonogramaModal({ open: true, mode: "edit", fonograma: deepLinkFonograma });
+        setPhonogramModal({ open: true, mode: "edit", fonograma: deepLinkPhonogram });
       }
       next.delete("fonograma");
       consumed = true;
@@ -222,9 +222,9 @@ export default function RegistroMusicas() {
       setSearchParams(next, { replace: true });
     }
   }, [
-    searchParams, obraParam, editObraParam, fonogramaParam,
-    deepLinkObra, deepLinkEditObra, deepLinkFonograma,
-    loadingDeepLinkObra, loadingDeepLinkEditObra, loadingDeepLinkFonograma,
+    searchParams, workParam, editWorkParam, phonogramParam,
+    deepLinkWork, deepLinkEditWork, deepLinkPhonogram,
+    loadingDeepLinkWork, loadingDeepLinkEditWork, loadingDeepLinkPhonogram,
     setSearchParams,
   ]);
 
@@ -234,99 +234,99 @@ export default function RegistroMusicas() {
   // pagination themselves are server-side (Task H); sorting by column across the whole
   // tenant would require mapping each SortableTableHead to a real column in the
   // backend, out of this migration's scope (documented limitation).
-  const toggleFonogramaSort = (key: string) => {
-    setFonogramaSort((current) => nextTableSortState(current, key));
+  const togglePhonogramSort = (key: string) => {
+    setPhonogramSort((current) => nextTableSortState(current, key));
   };
-  const toggleObraSort = (key: string) => {
-    setObraSort((current) => nextTableSortState(current, key));
+  const toggleWorkSort = (key: string) => {
+    setWorkSort((current) => nextTableSortState(current, key));
   };
 
   const debouncedSearch = useDebounce(searchTerm, 300);
-  const [obraPage, setObraPage] = useState(0);
-  const [obraPageSize, setObraPageSize] = useState(10);
-  const [fonogramaPage, setFonogramaPage] = useState(0);
-  const [fonogramaPageSize, setFonogramaPageSize] = useState(10);
+  const [workPage, setWorkPage] = useState(0);
+  const [workPageSize, setWorkPageSize] = useState(10);
+  const [phonogramPage, setPhonogramPage] = useState(0);
+  const [phonogramPageSize, setPhonogramPageSize] = useState(10);
   useEffect(() => {
-    setObraPage(0);
-    setFonogramaPage(0);
-  }, [debouncedSearch, statusFilter, genreFilter, tipoObraFilter, projetoFilter, obraVinculadaFilter, ecadFilter, fonogramaEcadFilter]);
+    setWorkPage(0);
+    setPhonogramPage(0);
+  }, [debouncedSearch, statusFilter, genreFilter, workTypeFilter, projectFilter, linkedWorkFilter, ecadFilter, phonogramEcadFilter]);
 
   const {
-    obras: obraPageItems, total: obraTotal, isLoading: isLoadingObraPage, error: obraPageError, refetch: refetchObraPage,
-  } = useObrasPaginated({
-    page: obraPage, pageSize: obraPageSize, search: debouncedSearch || undefined,
+    works: workPageItems, total: workTotal, isLoading: isLoadingWorkPage, error: workPageError, refetch: refetchWorkPage,
+  } = useWorksPaginated({
+    page: workPage, pageSize: workPageSize, search: debouncedSearch || undefined,
     status: statusFilter !== "all-status" ? statusFilter : undefined,
-    tipoObra: tipoObraFilter !== "all-tipos" ? tipoObraFilter : undefined,
+    tipoObra: workTypeFilter !== "all-tipos" ? workTypeFilter : undefined,
     genero: genreFilter !== "all-genre" ? genreFilter : undefined,
-    projectId: projetoFilter !== "all-projetos" ? projetoFilter : undefined,
+    projectId: projectFilter !== "all-projetos" ? projectFilter : undefined,
     ecad: ecadFilter !== "all-ecad" ? (ecadFilter as "com-ecad" | "sem-ecad") : undefined,
     enabled: activeTab === "obras",
   });
-  const obrasPg = useMemo(() => ({
-    pageItems: obraSort ? sortTableRows(obraPageItems, obraSort, getObraSortValue) : obraPageItems,
-    total: obraTotal,
-    page: obraPage,
-    pageSize: obraPageSize,
-    setPage: setObraPage,
-    setPageSize: setObraPageSize,
-  }), [obraPageItems, obraSort, obraTotal, obraPage, obraPageSize]);
+  const worksPg = useMemo(() => ({
+    pageItems: workSort ? sortTableRows(workPageItems, workSort, getWorkSortValue) : workPageItems,
+    total: workTotal,
+    page: workPage,
+    pageSize: workPageSize,
+    setPage: setWorkPage,
+    setPageSize: setWorkPageSize,
+  }), [workPageItems, workSort, workTotal, workPage, workPageSize]);
 
   const {
-    fonogramas: fonogramaPageItems, total: fonogramaTotal, isLoading: isLoadingFonogramaPage, error: fonogramaPageError, refetch: refetchFonogramaPage,
-  } = useFonogramasPaginated({
-    page: fonogramaPage, pageSize: fonogramaPageSize, search: debouncedSearch || undefined,
+    phonograms: phonogramPageItems, total: phonogramTotal, isLoading: isLoadingPhonogramPage, error: phonogramPageError, refetch: refetchPhonogramPage,
+  } = usePhonogramsPaginated({
+    page: phonogramPage, pageSize: phonogramPageSize, search: debouncedSearch || undefined,
     status: statusFilter !== "all-status" ? statusFilter : undefined,
     genero: genreFilter !== "all-genre" ? genreFilter : undefined,
-    obraVinculada: obraVinculadaFilter !== "all-obras" ? (obraVinculadaFilter as "com-obra" | "sem-obra") : undefined,
-    ecad: fonogramaEcadFilter !== "all-ecad" ? (fonogramaEcadFilter as "com-ecad" | "sem-ecad") : undefined,
+    obraVinculada: linkedWorkFilter !== "all-obras" ? (linkedWorkFilter as "com-obra" | "sem-obra") : undefined,
+    ecad: phonogramEcadFilter !== "all-ecad" ? (phonogramEcadFilter as "com-ecad" | "sem-ecad") : undefined,
     enabled: activeTab === "fonogramas",
   });
-  const fonogramasPg = useMemo(() => ({
-    pageItems: fonogramaSort ? sortTableRows(fonogramaPageItems, fonogramaSort, getFonogramaSortValue) : fonogramaPageItems,
-    total: fonogramaTotal,
-    page: fonogramaPage,
-    pageSize: fonogramaPageSize,
-    setPage: setFonogramaPage,
-    setPageSize: setFonogramaPageSize,
-  }), [fonogramaPageItems, fonogramaSort, fonogramaTotal, fonogramaPage, fonogramaPageSize]);
+  const phonogramsPg = useMemo(() => ({
+    pageItems: phonogramSort ? sortTableRows(phonogramPageItems, phonogramSort, getPhonogramSortValue) : phonogramPageItems,
+    total: phonogramTotal,
+    page: phonogramPage,
+    pageSize: phonogramPageSize,
+    setPage: setPhonogramPage,
+    setPageSize: setPhonogramPageSize,
+  }), [phonogramPageItems, phonogramSort, phonogramTotal, phonogramPage, phonogramPageSize]);
 
-  const isLoading = loadingObras || loadingFonogramas ||
-    (activeTab === "fonogramas" ? isLoadingFonogramaPage : isLoadingObraPage);
+  const isLoading = loadingWorks || loadingPhonograms ||
+    (activeTab === "fonogramas" ? isLoadingPhonogramPage : isLoadingWorkPage);
 
-  const { generos: obrasGeneros } = useObrasGeneros();
-  const { generos: fonogramasGeneros } = useFonogramasGeneros();
-  const generosUnicos = activeTab === "fonogramas" ? fonogramasGeneros : obrasGeneros;
+  const { generos: worksGenres } = useWorksGenres();
+  const { generos: phonogramsGenres } = usePhonogramsGenres();
+  const uniqueGenres = activeTab === "fonogramas" ? phonogramsGenres : worksGenres;
 
-  const projetosDisponiveis = useMemo(() => {
+  const availableProjects = useMemo(() => {
     const map = new Map<string, string>();
-    allProjetos.forEach((p) => {
+    allProjects.forEach((p) => {
       if (p?.id && p?.title) map.set(p.id, p.title);
     });
-    obras.forEach((o) => {
+    works.forEach((o) => {
       if (o.projetos?.id && o.projetos?.title && !map.has(o.projetos.id)) {
         map.set(o.projetos.id, o.projetos.title);
       }
     });
     return Array.from(map.entries()).map(([id, title]) => ({ id, title }));
-  }, [obras, allProjetos]);
+  }, [works, allProjects]);
 
   // Metrics — exact aggregation over the whole tenant (GROUP BY status), never
   // computed only over the currently loaded page/list (Task H).
-  const { stats: obrasStats } = useObrasStats();
-  const { stats: fonogramasStats } = useFonogramasStats();
-  const activeStats = activeTab === "fonogramas" ? fonogramasStats : obrasStats;
-  const pendentes = activeStats.byGroup["pending"] ?? 0;
+  const { stats: worksStats } = useWorksStats();
+  const { stats: phonogramsStats } = usePhonogramsStats();
+  const activeStats = activeTab === "fonogramas" ? phonogramsStats : worksStats;
+  const pending = activeStats.byGroup["pending"] ?? 0;
   const emAnalise = (activeStats.byGroup["under_review"] ?? 0) + (activeStats.byGroup["in_review"] ?? 0);
   const registrados = activeStats.byGroup["registered"] ?? 0;
   const total = activeStats.total;
-  const taxaAprovacao = total > 0 ? Math.round((registrados / total) * 100) : 0;
+  const approvalRate = total > 0 ? Math.round((registrados / total) * 100) : 0;
 
   const handleDelete = () => {
     if (deleteModal.item) {
       if (deleteModal.type === "fonograma") {
-        deleteFonograma.mutate(deleteModal.item.id);
+        deletePhonogram.mutate(deleteModal.item.id);
       } else {
-        deleteObra.mutate(deleteModal.item.id);
+        deleteWork.mutate(deleteModal.item.id);
       }
       setDeleteModal({ open: false, item: undefined, type: undefined });
     }
@@ -339,8 +339,8 @@ export default function RegistroMusicas() {
           size="sm"
           className="h-8 text-xs gap-1.5"
           onClick={() => activeTab === "fonogramas"
-            ? setFonogramaModal({ open: true, mode: "create" })
-            : setObraTipoSelectorOpen(true)
+            ? setPhonogramModal({ open: true, mode: "create" })
+            : setWorkTypeSelectorOpen(true)
           }
           data-testid="button-nova-obra"
         >
@@ -372,10 +372,10 @@ export default function RegistroMusicas() {
             icon={activeTab === "fonogramas" ? Disc : Music}
             accent="primary"
           />
-          <MetricCard title="Pendentes de Registro" value={pendentes} description="aguardando análise" icon={FileText} accent="warning" />
+          <MetricCard title="Pendentes de Registro" value={pending} description="aguardando análise" icon={FileText} accent="warning" />
           <MetricCard title="Em Análise" value={emAnalise} description="aguardando aprovação" icon={Clock} accent="warning" />
           <MetricCard title="Registro Aceito" value={registrados} description="aprovados" icon={CheckCircle} accent="success" />
-          <MetricCard title="Taxa de Aprovação" value={`${taxaAprovacao}%`} description={activeTab === "fonogramas" ? "fonogramas aprovados" : "obras aprovadas"} icon={CheckCircle} accent="primary" />
+          <MetricCard title="Taxa de Aprovação" value={`${approvalRate}%`} description={activeTab === "fonogramas" ? "fonogramas aprovados" : "obras aprovadas"} icon={CheckCircle} accent="primary" />
         </div>
 
 
@@ -412,15 +412,15 @@ export default function RegistroMusicas() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          {activeTab === "obras" && projetosDisponiveis.length > 0 && (
-            <Select value={projetoFilter} onValueChange={setProjetoFilter}>
+          {activeTab === "obras" && availableProjects.length > 0 && (
+            <Select value={projectFilter} onValueChange={setProjectFilter}>
               <SelectTrigger className="w-auto min-w-[150px] shrink-0 h-8 text-sm bg-card border-border" data-testid="select-filter-projeto">
                 <SelectValue placeholder="Todos Projetos" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-projetos">Todos Projetos</SelectItem>
                 <SelectItem value="no-projeto">Sem projeto vinculado</SelectItem>
-                {projetosDisponiveis.map(p => (
+                {availableProjects.map(p => (
                   <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
                 ))}
               </SelectContent>
@@ -439,7 +439,7 @@ export default function RegistroMusicas() {
             </Select>
           )}
           {activeTab === "obras" && (
-            <Select value={tipoObraFilter} onValueChange={setTipoObraFilter} data-testid="select-filter-type-obra">
+            <Select value={workTypeFilter} onValueChange={setWorkTypeFilter} data-testid="select-filter-type-obra">
               <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-type-obra">
                 <SelectValue placeholder="Todos Tipos" />
               </SelectTrigger>
@@ -451,7 +451,7 @@ export default function RegistroMusicas() {
             </Select>
           )}
           {activeTab === "fonogramas" && (
-            <Select value={obraVinculadaFilter} onValueChange={setObraVinculadaFilter} data-testid="select-filter-obra-vinculada">
+            <Select value={linkedWorkFilter} onValueChange={setLinkedWorkFilter} data-testid="select-filter-obra-vinculada">
               <SelectTrigger className="w-auto min-w-[160px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-obra-vinculada">
                 <SelectValue placeholder="Todos os Fonogramas" />
               </SelectTrigger>
@@ -463,7 +463,7 @@ export default function RegistroMusicas() {
             </Select>
           )}
           {activeTab === "fonogramas" && (
-            <Select value={fonogramaEcadFilter} onValueChange={setFonogramaEcadFilter} data-testid="select-filter-fonograma-ecad">
+            <Select value={phonogramEcadFilter} onValueChange={setPhonogramEcadFilter} data-testid="select-filter-fonograma-ecad">
               <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-fonograma-ecad">
                 <SelectValue placeholder="Todos ECAD" />
               </SelectTrigger>
@@ -491,15 +491,15 @@ export default function RegistroMusicas() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-genre">Todos Gêneros</SelectItem>
-              {generosUnicos.map(g => (
+              {uniqueGenres.map(g => (
                 <SelectItem key={g} value={g.toLowerCase()}>
                   {g.charAt(0).toUpperCase() + g.slice(1)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          {(searchTerm !== "" || statusFilter !== "all-status" || genreFilter !== "all-genre" || tipoObraFilter !== "all-tipos" || projetoFilter !== "all-projetos" || obraVinculadaFilter !== "all-obras" || ecadFilter !== "all-ecad" || fonogramaEcadFilter !== "all-ecad") && (
-            <Button variant="outline" onClick={() => { setSearchTerm(""); setStatusFilter("all-status"); setGenreFilter("all-genre"); setTipoObraFilter("all-tipos"); setProjetoFilter("all-projetos"); setObraVinculadaFilter("all-obras"); setEcadFilter("all-ecad"); setFonogramaEcadFilter("all-ecad"); }} data-testid="button-limpar-filtros">
+          {(searchTerm !== "" || statusFilter !== "all-status" || genreFilter !== "all-genre" || workTypeFilter !== "all-tipos" || projectFilter !== "all-projetos" || linkedWorkFilter !== "all-obras" || ecadFilter !== "all-ecad" || phonogramEcadFilter !== "all-ecad") && (
+            <Button variant="outline" onClick={() => { setSearchTerm(""); setStatusFilter("all-status"); setGenreFilter("all-genre"); setWorkTypeFilter("all-tipos"); setProjectFilter("all-projetos"); setLinkedWorkFilter("all-obras"); setEcadFilter("all-ecad"); setPhonogramEcadFilter("all-ecad"); }} data-testid="button-limpar-filtros">
               Limpar
             </Button>
           )}
@@ -511,64 +511,64 @@ export default function RegistroMusicas() {
             <CardContent>
               <ListSectionHeader
                 title="Fonogramas Registrados"
-                count={fonogramaTotal}
+                count={phonogramTotal}
                 description="Catálogo completo de gravações registradas"
-                action={fonogramaTotal > 0 ? (
+                action={phonogramTotal > 0 ? (
                   <div className="flex flex-wrap items-center justify-end gap-3">
                     <Checkbox
-                      checked={selectedFonogramaIds.length === fonogramasPg.pageItems.length && fonogramasPg.pageItems.length > 0}
-                      onCheckedChange={() => toggleSelectAllFonogramas()}
+                      checked={selectedPhonogramIds.length === phonogramsPg.pageItems.length && phonogramsPg.pageItems.length > 0}
+                      onCheckedChange={() => toggleSelectAllPhonograms()}
                       aria-label="Selecionar todos"
                       data-testid="checkbox-select-all-fonogramas"
                     />
                     <span className="text-xs text-muted-foreground">
-                      {selectedFonogramaIds.length > 0 ? `${selectedFonogramaIds.length} fonograma(s) selecionado(s)` : "Selecionar todos"}
+                      {selectedPhonogramIds.length > 0 ? `${selectedPhonogramIds.length} fonograma(s) selecionado(s)` : "Selecionar todos"}
                     </span>
-                    {selectedFonogramaIds.length > 0 && (
-                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeleteFonogramas} data-testid="button-bulk-delete-fonogramas">
+                    {selectedPhonogramIds.length > 0 && (
+                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeletePhonograms} data-testid="button-bulk-delete-fonogramas">
                         <Trash2 className="h-3.5 w-3.5" />
-                        Excluir ({selectedFonogramaIds.length})
+                        Excluir ({selectedPhonogramIds.length})
                       </Button>
                     )}
                   </div>
                 ) : undefined}
               />
 
-              {fonogramasPg.pageItems.length > 0 ? (
+              {phonogramsPg.pageItems.length > 0 ? (
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-8"></TableHead>
-                        <SortableTableHead sortKey="title" sortState={fonogramaSort} onSort={toggleFonogramaSort} className="min-w-[180px]">Título</SortableTableHead>
-                        <SortableTableHead sortKey="status" sortState={fonogramaSort} onSort={toggleFonogramaSort} className="min-w-[112px]">Status</SortableTableHead>
-                        <SortableTableHead sortKey="cod_entidade" sortState={fonogramaSort} onSort={toggleFonogramaSort} className="min-w-[120px]">Cód. Sociedade</SortableTableHead>
-                        <SortableTableHead sortKey="cod_ecad" sortState={fonogramaSort} onSort={toggleFonogramaSort} className="min-w-[120px]">Cód. ECAD</SortableTableHead>
-                        <SortableTableHead sortKey="isrc" sortState={fonogramaSort} onSort={toggleFonogramaSort}>ISRC</SortableTableHead>
-                        <SortableTableHead sortKey="compositores" sortState={fonogramaSort} onSort={toggleFonogramaSort} className="min-w-[130px]">Compositores</SortableTableHead>
-                        <SortableTableHead sortKey="interpretes" sortState={fonogramaSort} onSort={toggleFonogramaSort} className="min-w-[120px]">Intérpretes</SortableTableHead>
-                        <SortableTableHead sortKey="produtores" sortState={fonogramaSort} onSort={toggleFonogramaSort} className="min-w-[120px]">Produtor</SortableTableHead>
-                        <SortableTableHead sortKey="genero_musical" sortState={fonogramaSort} onSort={toggleFonogramaSort} className="min-w-[120px]">Gênero</SortableTableHead>
+                        <SortableTableHead sortKey="title" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[180px]">Título</SortableTableHead>
+                        <SortableTableHead sortKey="status" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[112px]">Status</SortableTableHead>
+                        <SortableTableHead sortKey="cod_entidade" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Cód. Sociedade</SortableTableHead>
+                        <SortableTableHead sortKey="cod_ecad" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Cód. ECAD</SortableTableHead>
+                        <SortableTableHead sortKey="isrc" sortState={phonogramSort} onSort={togglePhonogramSort}>ISRC</SortableTableHead>
+                        <SortableTableHead sortKey="compositores" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[130px]">Compositores</SortableTableHead>
+                        <SortableTableHead sortKey="interpretes" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Intérpretes</SortableTableHead>
+                        <SortableTableHead sortKey="produtores" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Produtor</SortableTableHead>
+                        <SortableTableHead sortKey="genero_musical" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Gênero</SortableTableHead>
                         <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {fonogramasPg.pageItems.map((fonograma) => (
-                        <TableRow key={fonograma.id}>
+                      {phonogramsPg.pageItems.map((phonogram) => (
+                        <TableRow key={phonogram.id}>
                           <TableCell className="py-3">
                             <Checkbox
-                              checked={selectedFonogramaIds.includes(fonograma.id)}
-                              onCheckedChange={() => toggleSelectFonograma(fonograma.id)}
-                              data-testid={`checkbox-fonograma-${fonograma.id}`}
+                              checked={selectedPhonogramIds.includes(phonogram.id)}
+                              onCheckedChange={() => toggleSelectPhonogram(phonogram.id)}
+                              data-testid={`checkbox-fonograma-${phonogram.id}`}
                             />
                           </TableCell>
                           <TableCell className="py-3">
-                            <span className="font-medium block truncate" data-testid={`text-fonograma-title-${fonograma.id}`}>{fonograma.title}</span>
-                            {!fonograma.work_id && (
+                            <span className="font-medium block truncate" data-testid={`text-fonograma-title-${phonogram.id}`}>{phonogram.title}</span>
+                            {!phonogram.work_id && (
                               <Badge
                                 variant="warning"
                                 className="mt-1 text-xs gap-1"
-                                data-testid={`badge-sem-obra-${fonograma.id}`}
+                                data-testid={`badge-sem-obra-${phonogram.id}`}
                               >
                                 <LinkIcon className="h-3 w-3" />
                                 Sem obra vinculada
@@ -577,21 +577,21 @@ export default function RegistroMusicas() {
                           </TableCell>
                           <TableCell className="py-3">
                             <Badge
-                              variant={fonograma.status === "registered" ? "success" : "warning"}
+                              variant={phonogram.status === "registered" ? "success" : "warning"}
                               className="text-xs"
                             >
-                              {fonograma.status === "registered" ? "Registrado" : fonograma.status === "under_review" ? "Em Análise" : "Pendente"}
+                              {phonogram.status === "registered" ? "Registrado" : phonogram.status === "under_review" ? "Em Análise" : "Pendente"}
                             </Badge>
                           </TableCell>
-                          <TableCell className="py-3 text-sm">{fonograma.cod_entidade || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm">{fonograma.cod_ecad || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm">{fonograma.isrc || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[140px] truncate" title={fonograma.compositores || undefined}>{fonograma.compositores || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[120px] truncate" title={fonograma.interpretes || undefined}>{fonograma.interpretes || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[120px] truncate" title={fonograma.produtores || undefined}>{fonograma.produtores || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[120px] truncate" title={getFonogramaGeneroDisplay(fonograma)}>
-                            {getFonogramaGenero(fonograma) ? (
-                              getFonogramaGenero(fonograma)
+                          <TableCell className="py-3 text-sm">{phonogram.cod_entidade || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{phonogram.cod_ecad || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{phonogram.isrc || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm max-w-[140px] truncate" title={phonogram.compositores || undefined}>{phonogram.compositores || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm max-w-[120px] truncate" title={phonogram.interpretes || undefined}>{phonogram.interpretes || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm max-w-[120px] truncate" title={phonogram.produtores || undefined}>{phonogram.produtores || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm max-w-[120px] truncate" title={getPhonogramGenreDisplay(phonogram)}>
+                            {getPhonogramGenre(phonogram) ? (
+                              getPhonogramGenre(phonogram)
                             ) : (
                               <span className="text-muted-foreground">Não informado</span>
                             )}
@@ -604,24 +604,24 @@ export default function RegistroMusicas() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setFonogramaViewModal({ open: true, fonograma })}>
+                                <DropdownMenuItem onClick={() => setPhonogramViewModal({ open: true, fonograma: phonogram })}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   Ver
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setFonogramaModal({ open: true, mode: "edit", fonograma })}>
+                                <DropdownMenuItem onClick={() => setPhonogramModal({ open: true, mode: "edit", fonograma: phonogram })}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Editar
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  disabled={fonograma.status === "under_review"}
-                                  title={fonograma.status === "under_review" ? "Fonograma em análise — aguarde a conclusão antes de criar um lançamento" : undefined}
+                                  disabled={phonogram.status === "under_review"}
+                                  title={phonogram.status === "under_review" ? "Fonograma em análise — aguarde a conclusão antes de criar um lançamento" : undefined}
                                   onClick={() => navigate("/lancamentos")}
                                 >
                                   <Upload className="h-4 w-4 mr-2" />
                                   Fazer Lançamento
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  onClick={() => setDeleteModal({ open: true, item: fonograma, type: "fonograma" })}
+                                  onClick={() => setDeleteModal({ open: true, item: phonogram, type: "fonograma" })}
                                   className="text-destructive"
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
@@ -635,23 +635,23 @@ export default function RegistroMusicas() {
                     </TableBody>
                   </Table>
                   <TablePagination
-                    total={fonogramasPg.total}
-                    page={fonogramasPg.page}
-                    pageSize={fonogramasPg.pageSize}
-                    onPageChange={fonogramasPg.setPage}
-                    onPageSizeChange={fonogramasPg.setPageSize}
+                    total={phonogramsPg.total}
+                    page={phonogramsPg.page}
+                    pageSize={phonogramsPg.pageSize}
+                    onPageChange={phonogramsPg.setPage}
+                    onPageSizeChange={phonogramsPg.setPageSize}
                     itemLabel="fonogramas"
                   />
                 </div>
-              ) : fonogramaPageError && fonogramaTotal === 0 ? (
-                <UnavailableState onRetry={() => refetchFonogramaPage()} />
+              ) : phonogramPageError && phonogramTotal === 0 ? (
+                <UnavailableState onRetry={() => refetchPhonogramPage()} />
               ) : (
                 <EmptyState
                   icon={Disc}
                   title="Nenhum fonograma cadastrado"
                   description="Comece registrando seu primeiro fonograma"
                   actionLabel="Novo Fonograma"
-                  onAction={() => setFonogramaModal({ open: true, mode: "create" })}
+                  onAction={() => setPhonogramModal({ open: true, mode: "create" })}
                 />
               )}
             </CardContent>
@@ -664,77 +664,77 @@ export default function RegistroMusicas() {
             <CardContent>
               <ListSectionHeader
                 title="Obras Registradas"
-                count={obraTotal}
+                count={workTotal}
                 description="Catálogo completo de obras musicais registradas"
-                action={obraTotal > 0 ? (
+                action={workTotal > 0 ? (
                   <div className="flex flex-wrap items-center justify-end gap-3">
                     <Checkbox
-                      checked={selectedObraIds.length === obrasPg.pageItems.length && obrasPg.pageItems.length > 0}
-                      onCheckedChange={() => toggleSelectAllObras()}
+                      checked={selectedWorkIds.length === worksPg.pageItems.length && worksPg.pageItems.length > 0}
+                      onCheckedChange={() => toggleSelectAllWorks()}
                       aria-label="Selecionar todos"
                       data-testid="checkbox-select-all-obras"
                     />
                     <span className="text-xs text-muted-foreground">
-                      {selectedObraIds.length > 0 ? `${selectedObraIds.length} obra(s) selecionada(s)` : "Selecionar todos"}
+                      {selectedWorkIds.length > 0 ? `${selectedWorkIds.length} obra(s) selecionada(s)` : "Selecionar todos"}
                     </span>
-                    {selectedObraIds.length > 0 && (
-                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeleteObras} data-testid="button-bulk-delete-obras">
+                    {selectedWorkIds.length > 0 && (
+                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeleteWorks} data-testid="button-bulk-delete-obras">
                         <Trash2 className="h-3.5 w-3.5" />
-                        Excluir ({selectedObraIds.length})
+                        Excluir ({selectedWorkIds.length})
                       </Button>
                     )}
                   </div>
                 ) : undefined}
               />
 
-              {obrasPg.pageItems.length > 0 ? (
+              {worksPg.pageItems.length > 0 ? (
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-8"></TableHead>
-                        <SortableTableHead sortKey="title" sortState={obraSort} onSort={toggleObraSort}>Título</SortableTableHead>
-                        <SortableTableHead sortKey="status" sortState={obraSort} onSort={toggleObraSort} className="min-w-[112px]">Status</SortableTableHead>
-                        <SortableTableHead sortKey="tipo_obra" sortState={obraSort} onSort={toggleObraSort} className="min-w-[112px]">Tipo</SortableTableHead>
-                        <SortableTableHead sortKey="cod_entidade" sortState={obraSort} onSort={toggleObraSort}>Cód. Sociedade</SortableTableHead>
-                        <SortableTableHead sortKey="cod_ecad" sortState={obraSort} onSort={toggleObraSort}>Cód. ECAD</SortableTableHead>
-                        <SortableTableHead sortKey="iswc" sortState={obraSort} onSort={toggleObraSort}>ISWC</SortableTableHead>
-                        <SortableTableHead sortKey="compositores" sortState={obraSort} onSort={toggleObraSort}>Compositores</SortableTableHead>
-                        <SortableTableHead sortKey="editora" sortState={obraSort} onSort={toggleObraSort}>Editora</SortableTableHead>
-                        <SortableTableHead sortKey="genero" sortState={obraSort} onSort={toggleObraSort}>Gênero</SortableTableHead>
+                        <SortableTableHead sortKey="title" sortState={workSort} onSort={toggleWorkSort}>Título</SortableTableHead>
+                        <SortableTableHead sortKey="status" sortState={workSort} onSort={toggleWorkSort} className="min-w-[112px]">Status</SortableTableHead>
+                        <SortableTableHead sortKey="tipo_obra" sortState={workSort} onSort={toggleWorkSort} className="min-w-[112px]">Tipo</SortableTableHead>
+                        <SortableTableHead sortKey="cod_entidade" sortState={workSort} onSort={toggleWorkSort}>Cód. Sociedade</SortableTableHead>
+                        <SortableTableHead sortKey="cod_ecad" sortState={workSort} onSort={toggleWorkSort}>Cód. ECAD</SortableTableHead>
+                        <SortableTableHead sortKey="iswc" sortState={workSort} onSort={toggleWorkSort}>ISWC</SortableTableHead>
+                        <SortableTableHead sortKey="compositores" sortState={workSort} onSort={toggleWorkSort}>Compositores</SortableTableHead>
+                        <SortableTableHead sortKey="editora" sortState={workSort} onSort={toggleWorkSort}>Editora</SortableTableHead>
+                        <SortableTableHead sortKey="genero" sortState={workSort} onSort={toggleWorkSort}>Gênero</SortableTableHead>
                         <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {obrasPg.pageItems.map((obra) => (
-                        <TableRow key={obra.id}>
+                      {worksPg.pageItems.map((work) => (
+                        <TableRow key={work.id}>
                           <TableCell className="py-3">
                             <Checkbox
-                              checked={selectedObraIds.includes(obra.id)}
-                              onCheckedChange={() => toggleSelectObra(obra.id)}
-                              data-testid={`checkbox-obra-${obra.id}`}
+                              checked={selectedWorkIds.includes(work.id)}
+                              onCheckedChange={() => toggleSelectWork(work.id)}
+                              data-testid={`checkbox-obra-${work.id}`}
                             />
                           </TableCell>
                           <TableCell className="py-3">
-                            <span className="font-medium block truncate" data-testid={`text-obra-title-${obra.id}`}>{obra.title}</span>
+                            <span className="font-medium block truncate" data-testid={`text-obra-title-${work.id}`}>{work.title}</span>
                           </TableCell>
                           <TableCell className="py-3">
                             <Badge
-                              variant={obra.status === "registered" ? "success" : "warning"}
+                              variant={work.status === "registered" ? "success" : "warning"}
                               className="text-xs"
                             >
-                              {obra.status === "registered" ? "Registrado" : obra.status === "under_review" ? "Em Análise" : "Pendente"}
+                              {work.status === "registered" ? "Registrado" : work.status === "under_review" ? "Em Análise" : "Pendente"}
                             </Badge>
                           </TableCell>
                           <TableCell className="py-3">
-                            <ObraTipoBadge type={obra.tipo_obra as string | null | undefined} />
+                            <WorkTypeBadge type={work.tipo_obra as string | null | undefined} />
                           </TableCell>
-                          <TableCell className="py-3 text-sm">{obra.cod_entidade || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm">{obra.cod_ecad || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm">{obra.iswc || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[140px] truncate">{obra.compositores || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[120px] truncate">{obra.editora || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm">{obra.music_genre || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{work.cod_entidade || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{work.cod_ecad || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{work.iswc || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm max-w-[140px] truncate">{work.compositores || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm max-w-[120px] truncate">{work.editora || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{work.music_genre || "-"}</TableCell>
                           <TableCell className="py-3 text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -743,27 +743,27 @@ export default function RegistroMusicas() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setObraViewModal({ open: true, obra })}>
+                                <DropdownMenuItem onClick={() => setWorkViewModal({ open: true, obra: work })}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   Ver
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setObraModal({ open: true, mode: "edit", obra })}>
+                                <DropdownMenuItem onClick={() => setWorkModal({ open: true, mode: "edit", obra: work })}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Editar
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  disabled={obra.status === "under_review"}
-                                  title={obra.status === "under_review" ? "Obra em análise — aguarde a conclusão antes de registrar um fonograma" : undefined}
+                                  disabled={work.status === "under_review"}
+                                  title={work.status === "under_review" ? "Obra em análise — aguarde a conclusão antes de registrar um fonograma" : undefined}
                                   onClick={() => {
                                     setActiveTab("fonogramas");
-                                    setFonogramaModal({ open: true, mode: "create", fonograma: { id: "", work_id: obra.id } as Fonograma });
+                                    setPhonogramModal({ open: true, mode: "create", fonograma: { id: "", work_id: work.id } as Phonogram });
                                   }}
                                 >
                                   <Disc className="h-4 w-4 mr-2" />
                                   Registrar Fonograma
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  onClick={() => setDeleteModal({ open: true, item: obra, type: "obra" })}
+                                  onClick={() => setDeleteModal({ open: true, item: work, type: "obra" })}
                                   className="text-destructive"
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
@@ -777,23 +777,23 @@ export default function RegistroMusicas() {
                     </TableBody>
                   </Table>
                   <TablePagination
-                    total={obrasPg.total}
-                    page={obrasPg.page}
-                    pageSize={obrasPg.pageSize}
-                    onPageChange={obrasPg.setPage}
-                    onPageSizeChange={obrasPg.setPageSize}
+                    total={worksPg.total}
+                    page={worksPg.page}
+                    pageSize={worksPg.pageSize}
+                    onPageChange={worksPg.setPage}
+                    onPageSizeChange={worksPg.setPageSize}
                     itemLabel="obras"
                   />
                 </div>
-              ) : obraPageError && obraTotal === 0 ? (
-                <UnavailableState onRetry={() => refetchObraPage()} />
+              ) : workPageError && workTotal === 0 ? (
+                <UnavailableState onRetry={() => refetchWorkPage()} />
               ) : (
                 <EmptyState
                   icon={Music}
                   title="Nenhuma obra cadastrada"
                   description="Comece registrando sua primeira obra musical"
                   actionLabel="Nova Obra"
-                  onAction={() => setObraTipoSelectorOpen(true)}
+                  onAction={() => setWorkTypeSelectorOpen(true)}
                 />
               )}
             </CardContent>
@@ -803,24 +803,24 @@ export default function RegistroMusicas() {
       </div>
 
       {/* Modals */}
-      <ObraTipoSelectorModal
-        open={obraTipoSelectorOpen}
-        onOpenChange={(v) => { setObraTipoSelectorOpen(v); if (!v) setPendingProjectId(null); }}
+      <WorkTypeSelectorModal
+        open={workTypeSelectorOpen}
+        onOpenChange={(v) => { setWorkTypeSelectorOpen(v); if (!v) setPendingProjectId(null); }}
         onSelect={async (type) => {
-          let obraSeed: Record<string, unknown> | undefined;
+          let workSeed: Record<string, unknown> | undefined;
           if (pendingProjectId) {
             // Fetches DIRECTLY by ID (GET /projects/:id) — does not depend on the project
             // being among the first 50 loaded by an unfiltered useProjects()
             // (Task J).
-            const projeto = await storage.findById<ProjectWithRelations>("projects", pendingProjectId);
-            if (projeto) {
-              const musicas = parseMusicasFromProjeto(projeto);
-              obraSeed = projetoToObraSeed(projeto, musicas[0] ?? null);
+            const project = await storage.findById<ProjectWithRelations>("projects", pendingProjectId);
+            if (project) {
+              const tracks = parseMusicasFromProjeto(project);
+              workSeed = projectToWorkSeed(project, tracks[0] ?? null);
             } else {
-              obraSeed = { project_id: pendingProjectId };
+              workSeed = { project_id: pendingProjectId };
             }
           }
-          setObraModal({ open: true, mode: "create", obra: obraSeed as Obra | undefined, tipoObra: type });
+          setWorkModal({ open: true, mode: "create", obra: workSeed as Work | undefined, tipoObra: type });
           setPendingProjectId(null);
         }}
       />
@@ -835,30 +835,30 @@ export default function RegistroMusicas() {
           refetchOnMount reopened isLoading, the gate unmounted the modals
           again — an infinite loading loop. Keeping them always mounted breaks
           the cycle. */}
-      <ObraFormModal
-        open={obraModal.open}
-        onOpenChange={(open) => setObraModal({ ...obraModal, open })}
-        mode={obraModal.mode}
-        obra={obraModal.obra}
-        tipoObra={obraModal.tipoObra}
-        onSaved={(info) => setContratoModal({ open: true, prefill: info })}
+      <WorkFormModal
+        open={workModal.open}
+        onOpenChange={(open) => setWorkModal({ ...workModal, open })}
+        mode={workModal.mode}
+        obra={workModal.obra}
+        tipoObra={workModal.tipoObra}
+        onSaved={(info) => setContractModal({ open: true, prefill: info })}
       />
-      <ObraViewModal
-        open={obraViewModal.open}
-        onOpenChange={(open) => setObraViewModal({ ...obraViewModal, open })}
-        obra={obraViewModal.obra}
+      <WorkViewModal
+        open={workViewModal.open}
+        onOpenChange={(open) => setWorkViewModal({ ...workViewModal, open })}
+        obra={workViewModal.obra}
       />
-      <FonogramaFormModal
-        open={fonogramaModal.open}
-        onOpenChange={(open) => setFonogramaModal({ ...fonogramaModal, open })}
-        mode={fonogramaModal.mode}
-        fonograma={fonogramaModal.fonograma as import("@/modules/catalog/components/FonogramaFormModal").FonogramaFormInput | null | undefined}
-        onSaved={(info) => setContratoModal({ open: true, prefill: info })}
+      <PhonogramFormModal
+        open={phonogramModal.open}
+        onOpenChange={(open) => setPhonogramModal({ ...phonogramModal, open })}
+        mode={phonogramModal.mode}
+        fonograma={phonogramModal.fonograma as import("@/modules/catalog/components/FonogramaFormModal").PhonogramFormInput | null | undefined}
+        onSaved={(info) => setContractModal({ open: true, prefill: info })}
       />
-      <FonogramaViewModal
-        open={fonogramaViewModal.open}
-        onOpenChange={(open) => setFonogramaViewModal({ ...fonogramaViewModal, open })}
-        fonograma={fonogramaViewModal.fonograma as unknown as import("@/modules/catalog/components/FonogramaViewModal").FonogramaViewData | null | undefined}
+      <PhonogramViewModal
+        open={phonogramViewModal.open}
+        onOpenChange={(open) => setPhonogramViewModal({ ...phonogramViewModal, open })}
+        fonograma={phonogramViewModal.fonograma as unknown as import("@/modules/catalog/components/FonogramaViewModal").PhonogramViewData | null | undefined}
       />
       <DeleteConfirmModal
         open={deleteModal.open}
@@ -868,10 +868,10 @@ export default function RegistroMusicas() {
         description={`Tem certeza que deseja excluir ${deleteModal.type === "fonograma" ? "este fonograma" : "esta obra"}? Esta ação não pode ser desfeita.`}
       />
       <ContractFormModal
-        open={contratoModal.open}
-        onOpenChange={(open) => setContratoModal({ ...contratoModal, open })}
+        open={contractModal.open}
+        onOpenChange={(open) => setContractModal({ ...contractModal, open })}
         mode="create"
-        prefill={contratoModal.prefill}
+        prefill={contractModal.prefill}
       />
     </>
   );

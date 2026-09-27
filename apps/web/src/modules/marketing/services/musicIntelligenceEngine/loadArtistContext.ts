@@ -1,5 +1,5 @@
 import type { Artist } from "@/modules/artist/hooks/useArtists";
-import type { ObraWithRelations, FonogramaWithRelations } from "@/modules/catalog/types/catalog.types";
+import type { WorkWithRelations, PhonogramWithRelations } from "@/modules/catalog/types/catalog.types";
 import type { ArtistProfileContext, IntelligenceEntity, IntelligenceSources } from "./types";
 import { estimateReleaseFrequency, inferCareerStage, mostCommon, score, stringifyValue, uniqueStrings } from "./utils";
 
@@ -13,7 +13,7 @@ import { estimateReleaseFrequency, inferCareerStage, mostCommon, score, stringif
 export function loadArtistContext(
   artist: IntelligenceEntity,
   sources: IntelligenceSources,
-  catalog: { artistRecord?: Artist; obras: ObraWithRelations[]; fonogramas: FonogramaWithRelations[] },
+  catalog: { artistRecord?: Artist; obras: WorkWithRelations[]; fonogramas: PhonogramWithRelations[] },
 ): ArtistProfileContext {
   const artistRecord = catalog.artistRecord;
   const obras = catalog.obras;

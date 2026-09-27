@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { Obra, Fonograma } from "../types/catalog.types";
+import type { Work, Phonogram } from "../types/catalog.types";
 
 export interface GroupStatsResult {
   total: number;
@@ -12,9 +12,9 @@ export interface GroupStatsResult {
 }
 
 const EMPTY_STATS: GroupStatsResult = { total: 0, byGroup: {} };
-const EMPTY_GENEROS: string[] = [];
+const EMPTY_GENRES: string[] = [];
 
-export interface UseObrasPaginatedParams {
+export interface UseWorksPaginatedParams {
   page: number;
   pageSize: number;
   search?: string;
@@ -26,17 +26,17 @@ export interface UseObrasPaginatedParams {
   enabled?: boolean;
 }
 
-export function useObrasPaginated({
-  page, pageSize, search, status, tipoObra, genero, projectId, ecad, enabled = true,
-}: UseObrasPaginatedParams) {
+export function useWorksPaginated({
+  page, pageSize, search, status, tipoObra: workType, genero: genre, projectId, ecad, enabled = true,
+}: UseWorksPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (tipoObra) filters.tipo_obra = tipoObra;
-  if (genero) filters.music_genre = genero;
+  if (workType) filters.tipo_obra = workType;
+  if (genre) filters.music_genre = genre;
   if (projectId) filters.project_id = projectId;
   if (ecad) filters.ecad = ecad;
 
-  const result = usePaginatedDataQuery<Obra>({
+  const result = usePaginatedDataQuery<Work>({
     queryKey: [...QUERY_KEYS.WORKS],
     table: "obras",
     page: page + 1,
@@ -47,7 +47,7 @@ export function useObrasPaginated({
   });
 
   return {
-    obras: result.items,
+    works: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,
@@ -57,7 +57,7 @@ export function useObrasPaginated({
   };
 }
 
-export function useObrasStats(query: { status?: string; tipoObra?: string; genero?: string; projectId?: string; ecad?: string } = {}) {
+export function useWorksStats(query: { status?: string; tipoObra?: string; genero?: string; projectId?: string; ecad?: string } = {}) {
   const q = useQuery<GroupStatsResult>({
     queryKey: [...QUERY_KEYS.WORKS, "stats", query],
     queryFn: ({ signal }) => {
@@ -75,16 +75,16 @@ export function useObrasStats(query: { status?: string; tipoObra?: string; gener
   return { stats: q.data ?? EMPTY_STATS, isLoading: q.isLoading, error: q.error };
 }
 
-export function useObrasGeneros() {
+export function useWorksGenres() {
   const q = useQuery<string[]>({
     queryKey: [...QUERY_KEYS.WORKS, "stats", "generos"],
     queryFn: ({ signal }) => api.get<string[]>("/works/stats/generos", { signal }),
     staleTime: 60_000,
   });
-  return { generos: q.data ?? EMPTY_GENEROS, isLoading: q.isLoading };
+  return { generos: q.data ?? EMPTY_GENRES, isLoading: q.isLoading };
 }
 
-export interface UseFonogramasPaginatedParams {
+export interface UsePhonogramsPaginatedParams {
   page: number;
   pageSize: number;
   search?: string;
@@ -95,16 +95,16 @@ export interface UseFonogramasPaginatedParams {
   enabled?: boolean;
 }
 
-export function useFonogramasPaginated({
-  page, pageSize, search, status, genero, obraVinculada, ecad, enabled = true,
-}: UseFonogramasPaginatedParams) {
+export function usePhonogramsPaginated({
+  page, pageSize, search, status, genero: genre, obraVinculada: linkedWork, ecad, enabled = true,
+}: UsePhonogramsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (genero) filters.music_genre = genero;
-  if (obraVinculada) filters.obra_vinculada = obraVinculada;
+  if (genre) filters.music_genre = genre;
+  if (linkedWork) filters.obra_vinculada = linkedWork;
   if (ecad) filters.ecad = ecad;
 
-  const result = usePaginatedDataQuery<Fonograma>({
+  const result = usePaginatedDataQuery<Phonogram>({
     queryKey: [...QUERY_KEYS.PHONOGRAMS],
     table: "fonogramas",
     page: page + 1,
@@ -115,7 +115,7 @@ export function useFonogramasPaginated({
   });
 
   return {
-    fonogramas: result.items,
+    phonograms: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,
@@ -125,7 +125,7 @@ export function useFonogramasPaginated({
   };
 }
 
-export function useFonogramasStats(query: { status?: string; genero?: string; obraVinculada?: string; ecad?: string } = {}) {
+export function usePhonogramsStats(query: { status?: string; genero?: string; obraVinculada?: string; ecad?: string } = {}) {
   const q = useQuery<GroupStatsResult>({
     queryKey: [...QUERY_KEYS.PHONOGRAMS, "stats", query],
     queryFn: ({ signal }) => {
@@ -142,11 +142,11 @@ export function useFonogramasStats(query: { status?: string; genero?: string; ob
   return { stats: q.data ?? EMPTY_STATS, isLoading: q.isLoading, error: q.error };
 }
 
-export function useFonogramasGeneros() {
+export function usePhonogramsGenres() {
   const q = useQuery<string[]>({
     queryKey: [...QUERY_KEYS.PHONOGRAMS, "stats", "generos"],
     queryFn: ({ signal }) => api.get<string[]>("/phonograms/stats/generos", { signal }),
     staleTime: 60_000,
   });
-  return { generos: q.data ?? EMPTY_GENEROS, isLoading: q.isLoading };
+  return { generos: q.data ?? EMPTY_GENRES, isLoading: q.isLoading };
 }

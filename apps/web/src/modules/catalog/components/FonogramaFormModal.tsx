@@ -16,7 +16,7 @@ import { ScrollArea } from "@/shared/ui/scroll-area";
 import { toast } from "sonner";
 import { Plus, Search, ChevronDown, Trash2, Upload, FileAudio, Music, X, Eye, Link, Loader2 } from "lucide-react";
 import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
-import { useFonogramas, type FonogramaInsert, type FonogramaUpdate } from "@/modules/catalog/hooks/useFonogramas";
+import { usePhonograms, type FonogramaInsert, type FonogramaUpdate } from "@/modules/catalog/hooks/useFonogramas";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
@@ -34,24 +34,24 @@ import {
   formatDurationText,
   parseIsrc,
   joinIsrc,
-  fonogramaToParticipacao,
-  fonogramaToFormFields,
+  phonogramToParticipation,
+  phonogramToFormFields,
 } from "@/modules/catalog/mappers";
-import { fonogramaSchema } from "@/modules/catalog/lib/fonograma-schema";
+import { phonogramSchema } from "@/modules/catalog/lib/fonograma-schema";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
 import { toUserMessage } from "@/shared/lib/errors";
 
-type FonogramaRow = Fonograma;
+type PhonogramRow = Fonograma;
 
 // `compositores` is typed as string[] in the schema, but in some legacy
 // records it may arrive as a string or null. Normalizes safely.
-function compositoresToString(value: unknown): string {
+function composersToString(value: unknown): string {
   if (Array.isArray(value)) return value.filter(Boolean).join(", ");
   if (typeof value === "string") return value;
   return "";
 }
 
-interface ObraVinculadaInput {
+interface LinkedWorkInput {
   id?: string | number | null;
   title?: string | null;
   titulo?: string | null;
@@ -66,14 +66,14 @@ interface ParticipacaoInput {
   musicoAcompanhante?: Participante[];
 }
 
-interface ArquivoAudioInput {
+interface AudioFileInput {
   name: string;
   size: number;
   url?: string;
   fileId?: string;
 }
 
-export type FonogramaFormInput = Partial<FonogramaRow> & {
+export type PhonogramFormInput = Partial<PhonogramRow> & {
   // camelCase aliases used by some callers / earlier in-memory shape
   codEcad?: string | null;
   codEntidade?: string | null;
@@ -90,16 +90,16 @@ export type FonogramaFormInput = Partial<FonogramaRow> & {
   pubSimultanea?: boolean | null;
   paisOrigem?: string | null;
   paisPublicacao?: string | null;
-  obraVinculada?: ObraVinculadaInput | null;
-  obra?: ObraVinculadaInput | null;
+  obraVinculada?: LinkedWorkInput | null;
+  obra?: LinkedWorkInput | null;
   participacao?: ParticipacaoInput | null;
-  arquivoAudio?: ArquivoAudioInput | null;
+  arquivoAudio?: AudioFileInput | null;
 };
 
-interface FonogramaFormModalProps {
+interface PhonogramFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  fonograma?: FonogramaFormInput | null;
+  fonograma?: PhonogramFormInput | null;
   mode: "create" | "edit" | "view";
   /** Called after a successful save — used to open a prefilled contract modal */
   onSaved?: (info: { title: string; notes: string }) => void;
@@ -119,10 +119,10 @@ const pickBool = (...values: Array<unknown>): boolean | undefined => {
   return undefined;
 };
 
-const toParticipacaoCategoria = (
+const toParticipationCategory = (
   raw: ParticipacaoInput | Json | null | undefined
-): ParticipacaoCategoria => {
-  const empty: ParticipacaoCategoria = { produtorFonografico: [], interprete: [], musicoAcompanhante: [] };
+): ParticipationCategory => {
+  const empty: ParticipationCategory = { produtorFonografico: [], interprete: [], musicoAcompanhante: [] };
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return empty;
   const r = raw as ParticipacaoInput;
   return {
@@ -132,9 +132,9 @@ const toParticipacaoCategoria = (
   };
 };
 
-const toArquivoAudio = (
-  raw: ArquivoAudioInput | Json | null | undefined
-): ArquivoAudioInput | null => {
+const toAudioFile = (
+  raw: AudioFileInput | Json | null | undefined
+): AudioFileInput | null => {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const r = raw as { name?: unknown; size?: unknown; url?: unknown; fileId?: unknown };
   if (typeof r.name === "string" && typeof r.size === "number") {
@@ -155,13 +155,13 @@ interface Participante {
   artist_id?: string;
 }
 
-interface ParticipacaoCategoria {
+interface ParticipationCategory {
   produtorFonografico: Participante[];
   interprete: Participante[];
   musicoAcompanhante: Participante[];
 }
 
-interface ObraVinculada {
+interface LinkedWork {
   id: string;
   title: string;
   genero: string;
@@ -169,12 +169,12 @@ interface ObraVinculada {
   status: string;
 }
 
-const generosMusicais = MUSICAL_GENRE_LABELS;
+const musicGenres = MUSICAL_GENRE_LABELS;
 const agregadoras = ["CD Baby", "DistroKid", "TuneCore", "Ditto Music", "ONErpm", "iMusics", "Symphonic", "Outro"];
 const classificacoes = ["STUDIO", "LIVE", "REMIX", "DEMO", "OUTRO"];
-const midias = ["TODOS", "DIGITAL", "FÍSICO", "STREAMING"];
+const mediaItems = ["TODOS", "DIGITAL", "FÍSICO", "STREAMING"];
 const statusOptions = ["Em Análise", "Pendente", "Registrado", "Rejeitado"];
-const paises = ["BRAZIL", "USA", "UK", "PORTUGAL", "ARGENTINA", "OUTRO"];
+const countries = ["BRAZIL", "USA", "UK", "PORTUGAL", "ARGENTINA", "OUTRO"];
 
 const formatFileSize = (bytes: number) => {
   if (bytes === 0) return '0 Bytes';
@@ -264,83 +264,83 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled, cla
   );
 }
 
-export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSaved }: FonogramaFormModalProps) {
-  const { addFonograma, updateFonograma } = useFonogramas();
+export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, mode, onSaved }: PhonogramFormModalProps) {
+  const { addPhonogram, updatePhonogram } = usePhonograms();
   const { orgId } = useCurrentOrgId();
-  const [viewArtista, setViewArtista] = useState<Artist | null>(null);
+  const [viewArtist, setViewArtist] = useState<Artist | null>(null);
 
   // Build the initial linked work from the form shape OR the DB shape (snake_case).
   // For records coming from the database with only work_id, the full hydration
   // happens in the useEffect below from the works list.
-  const toObraVinculada = (o: ObraVinculadaInput | null | undefined): ObraVinculada | null => {
+  const toLinkedWork = (o: LinkedWorkInput | null | undefined): LinkedWork | null => {
     if (!o) return null;
     return {
       id: String(o.id ?? ""),
       title: o.title ?? o.titulo ?? "",
       genero: o.genero ?? "",
-      compositores: compositoresToString(o.compositores),
+      compositores: composersToString(o.compositores),
       status: o.status ?? "",
     };
   };
 
-  const initialObra = (): ObraVinculada | null => {
-    if (fonograma?.obraVinculada) return toObraVinculada(fonograma.obraVinculada);
-    if (fonograma?.obra) return toObraVinculada(fonograma.obra);
+  const initialWork = (): LinkedWork | null => {
+    if (phonogram?.obraVinculada) return toLinkedWork(phonogram.obraVinculada);
+    if (phonogram?.obra) return toLinkedWork(phonogram.obra);
     return null;
   };
 
   // Linked work
-  const [obraVinculada, setObraVinculada] = useState<ObraVinculada | null>(initialObra());
-  const [buscaObra, setBuscaObra] = useState("");
+  const [linkedWork, setLinkedWork] = useState<LinkedWork | null>(initialWork());
+  const [searchWork, setSearchWork] = useState("");
   const [buscaOpen, setBuscaOpen] = useState(false);
   // Sound recording data (supports the form's camelCase OR the database's snake_case)
-  const initialDurationText = parseDurationText(fonograma?.duration_text);
-  const initialIsrc = parseIsrc(fonograma?.isrc);
+  const initialDurationText = parseDurationText(phonogram?.duration_text);
+  const initialIsrc = parseIsrc(phonogram?.isrc);
 
-  const [codEcad, setCodEcad] = useState(pickStr(fonograma?.codEcad, fonograma?.cod_ecad));
-  const [codEntidade, setCodEntidade] = useState(pickStr(fonograma?.codEntidade, fonograma?.cod_entidade));
-  const [agregadora, setAgregadora] = useState(pickStr(fonograma?.agregadora) || pickStr(fonograma?.gravadora));
-  const [isrcPais, setIsrcPais] = useState(pickStr(fonograma?.isrcPais, fonograma?.isrc_pais) || initialIsrc.pais || "BR");
-  const [isrcRegistrante, setIsrcRegistrante] = useState(pickStr(fonograma?.isrcRegistrante, fonograma?.isrc_registrante) || initialIsrc.registrante);
-  const [isrcAno, setIsrcAno] = useState(pickStr(fonograma?.isrcAno, fonograma?.isrc_ano) || initialIsrc.ano);
-  const [isrcDesignacao, setIsrcDesignacao] = useState(pickStr(fonograma?.isrcDesignacao, fonograma?.isrc_designacao) || initialIsrc.designacao);
-  const [criadaPorIA, setCriadaPorIA] = useState<boolean>(pickBool(fonograma?.criadaPorIA, fonograma?.criada_por_ia) ?? false);
-  const [emissao, setEmissao] = useState(pickStr(fonograma?.emissao));
-  const [gravacaoOriginal, setGravacaoOriginal] = useState(pickStr(fonograma?.gravacaoOriginal, fonograma?.gravacao_original, fonograma?.data_registro));
-  const [lancamento, setLancamento] = useState(pickStr(fonograma?.lancamento, fonograma?.data_lancamento));
-  const [duracaoMin, setDuracaoMin] = useState(pickStr(fonograma?.duracaoMin, fonograma?.duracao_min) || initialDurationText.min);
-  const [duracaoSeg, setDuracaoSeg] = useState(pickStr(fonograma?.duracaoSeg, fonograma?.duracao_seg) || initialDurationText.seg);
-  const [instrumental, setInstrumental] = useState<boolean>(pickBool(fonograma?.is_instrumental, fonograma?.instrumental) ?? false);
-  const [generoMusical, setGeneroMusical] = useState(pickStr(fonograma?.generoMusical, fonograma?.music_genre));
-  const [classificacao, setClassificacao] = useState(pickStr(fonograma?.classificacao));
-  const [midia, setMidia] = useState(pickStr(fonograma?.midia));
-  const [nacional, setNacional] = useState<boolean>(pickBool(fonograma?.nacional) ?? true);
-  const [pubSimultanea, setPubSimultanea] = useState<boolean>(pickBool(fonograma?.pubSimultanea, fonograma?.pub_simultanea) ?? false);
-  const [status, setStatus] = useState(dbStatusToSelect(pickStr(fonograma?.status)));
-  const [paisOrigem, setPaisOrigem] = useState(pickStr(fonograma?.paisOrigem, fonograma?.pais_origem));
-  const [paisPublicacao, setPaisPublicacao] = useState(pickStr(fonograma?.paisPublicacao, fonograma?.pais_publicacao));
-  const [title, setTitle] = useState(pickStr(fonograma?.title));
-  const [gravadora, setGravadora] = useState(pickStr(fonograma?.gravadora));
-  const [observacoes, setObservacoes] = useState(pickStr(fonograma?.notes));
+  const [codEcad, setCodEcad] = useState(pickStr(phonogram?.codEcad, phonogram?.cod_ecad));
+  const [codEntidade, setCodEntidade] = useState(pickStr(phonogram?.codEntidade, phonogram?.cod_entidade));
+  const [agregadora, setAgregadora] = useState(pickStr(phonogram?.agregadora) || pickStr(phonogram?.gravadora));
+  const [isrcCountry, setIsrcCountry] = useState(pickStr(phonogram?.isrcPais, phonogram?.isrc_pais) || initialIsrc.pais || "BR");
+  const [isrcRegistrante, setIsrcRegistrante] = useState(pickStr(phonogram?.isrcRegistrante, phonogram?.isrc_registrante) || initialIsrc.registrante);
+  const [isrcAno, setIsrcAno] = useState(pickStr(phonogram?.isrcAno, phonogram?.isrc_ano) || initialIsrc.ano);
+  const [isrcDesignacao, setIsrcDesignacao] = useState(pickStr(phonogram?.isrcDesignacao, phonogram?.isrc_designacao) || initialIsrc.designacao);
+  const [criadaPorIA, setCriadaPorIA] = useState<boolean>(pickBool(phonogram?.criadaPorIA, phonogram?.criada_por_ia) ?? false);
+  const [emissao, setEmissao] = useState(pickStr(phonogram?.emissao));
+  const [recordingDate, setRecordingDate] = useState(pickStr(phonogram?.gravacaoOriginal, phonogram?.gravacao_original, phonogram?.data_registro));
+  const [releaseDate, setReleaseDate] = useState(pickStr(phonogram?.lancamento, phonogram?.data_lancamento));
+  const [durationMin, setDurationMin] = useState(pickStr(phonogram?.duracaoMin, phonogram?.duracao_min) || initialDurationText.min);
+  const [durationSeg, setDurationSeg] = useState(pickStr(phonogram?.duracaoSeg, phonogram?.duracao_seg) || initialDurationText.seg);
+  const [instrumental, setInstrumental] = useState<boolean>(pickBool(phonogram?.is_instrumental, phonogram?.instrumental) ?? false);
+  const [musicGenre, setMusicGenre] = useState(pickStr(phonogram?.generoMusical, phonogram?.music_genre));
+  const [classificacao, setClassificacao] = useState(pickStr(phonogram?.classificacao));
+  const [media, setMedia] = useState(pickStr(phonogram?.midia));
+  const [nacional, setNacional] = useState<boolean>(pickBool(phonogram?.nacional) ?? true);
+  const [pubSimultanea, setPubSimultanea] = useState<boolean>(pickBool(phonogram?.pubSimultanea, phonogram?.pub_simultanea) ?? false);
+  const [status, setStatus] = useState(dbStatusToSelect(pickStr(phonogram?.status)));
+  const [sourceCountry, setSourceCountry] = useState(pickStr(phonogram?.paisOrigem, phonogram?.pais_origem));
+  const [publicationCountry, setPublicationCountry] = useState(pickStr(phonogram?.paisPublicacao, phonogram?.pais_publicacao));
+  const [title, setTitle] = useState(pickStr(phonogram?.title));
+  const [recordLabel, setRecordLabel] = useState(pickStr(phonogram?.gravadora));
+  const [notes, setNotes] = useState(pickStr(phonogram?.notes));
 
   // Participation
-  const [participacao, setParticipacao] = useState<ParticipacaoCategoria>(() => {
-    const fromCat = toParticipacaoCategoria(fonograma?.participacao);
-    if (fromCat.produtorFonografico.length === 0 && (fonograma as any)?.produtores) {
-      return fonogramaToParticipacao(fonograma);
+  const [participacao, setParticipacao] = useState<ParticipationCategory>(() => {
+    const fromCat = toParticipationCategory(phonogram?.participacao);
+    if (fromCat.produtorFonografico.length === 0 && (phonogram as any)?.produtores) {
+      return phonogramToParticipation(phonogram);
     }
     return fromCat;
   }
 
   );
-  const [produtorOpen, setProdutorOpen] = useState(true);
-  const [interpreteOpen, setInterpreteOpen] = useState(true);
+  const [producerOpen, setProducerOpen] = useState(true);
+  const [performerOpen, setPerformerOpen] = useState(true);
   const [musicoOpen, setMusicoOpen] = useState(true);
   const [uploadOpen, setUploadOpen] = useState(true);
 
   // Audio upload
-  const [arquivoAudio, setArquivoAudio] = useState<ArquivoAudioInput | null>(
-    toArquivoAudio(fonograma?.arquivoAudio ?? fonograma?.arquivo_audio)
+  const [audioFile, setAudioFile] = useState<AudioFileInput | null>(
+    toAudioFile(phonogram?.arquivoAudio ?? phonogram?.arquivo_audio)
   );
   const [audioUploading, setAudioUploading] = useState(false);
   const audioInputRef = useRef<HTMLInputElement>(null);
@@ -355,93 +355,93 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   // Sync state whenever the modal opens or the fonograma record changes
   useEffect(() => {
     if (!open) return;
-    const f = fonogramaToFormFields(fonograma);
-    setBuscaObra("");
+    const f = phonogramToFormFields(phonogram);
+    setSearchWork("");
     setBuscaOpen(false);
-    setObraVinculada(initialObra());
+    setLinkedWork(initialWork());
     setCodEcad(f.codEcad);
     setCodEntidade(f.codEntidade);
     setAgregadora(f.agregadora);
-    setIsrcPais(f.isrcPais);
+    setIsrcCountry(f.isrcPais);
     setIsrcRegistrante(f.isrcRegistrante);
     setIsrcAno(f.isrcAno);
     setIsrcDesignacao(f.isrcDesignacao);
     setCriadaPorIA(f.criadaPorIA);
     setEmissao(f.emissao);
-    setGravacaoOriginal(f.gravacaoOriginal);
-    setLancamento(f.lancamento);
-    setDuracaoMin(f.duracaoMin);
-    setDuracaoSeg(f.duracaoSeg);
+    setRecordingDate(f.gravacaoOriginal);
+    setReleaseDate(f.lancamento);
+    setDurationMin(f.duracaoMin);
+    setDurationSeg(f.duracaoSeg);
     setInstrumental(f.instrumental);
-    setGeneroMusical(f.generoMusical);
+    setMusicGenre(f.generoMusical);
     setClassificacao(f.classificacao);
-    setMidia(f.midia);
+    setMedia(f.midia);
     setNacional(f.nacional);
     setPubSimultanea(f.pubSimultanea);
     setStatus(f.status);
-    setPaisOrigem(f.paisOrigem);
-    setPaisPublicacao(f.paisPublicacao);
+    setSourceCountry(f.paisOrigem);
+    setPublicationCountry(f.paisPublicacao);
     setTitle(f.title);
-    setGravadora(f.gravadora);
-    setObservacoes(f.notes);
+    setRecordLabel(f.gravadora);
+    setNotes(f.notes);
     setParticipacao(() => {
-      const fromCat = toParticipacaoCategoria(fonograma?.participacao);
-      if (fromCat.produtorFonografico.length === 0 && (fonograma as any)?.produtores) {
-        return fonogramaToParticipacao(fonograma);
+      const fromCat = toParticipationCategory(phonogram?.participacao);
+      if (fromCat.produtorFonografico.length === 0 && (phonogram as any)?.produtores) {
+        return phonogramToParticipation(phonogram);
       }
       return fromCat;
     });
-    setArquivoAudio(toArquivoAudio(fonograma?.arquivoAudio ?? fonograma?.arquivo_audio));
+    setAudioFile(toAudioFile(phonogram?.arquivoAudio ?? phonogram?.arquivo_audio));
     setAceitaTermos(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, fonograma]);
+  }, [open, phonogram]);
 
   // Hydrates the linked work from fonograma.work_id — fetches DIRECTLY by
   // ID (GET /works/:id via useEntityById), it does not depend on the work being among
   // the first records loaded by useObras() (Task I: the work used to
   // stay stuck on the "Obra vinculada" placeholder forever if it was
   // outside the tenant's first 50).
-  const hydratedObraId: string | undefined =
-    (fonograma?.work_id as string | undefined) ??
-    (fonograma as { workId?: string } | null | undefined)?.workId;
-  const { entity: hydratedObra } = useEntityById<ObraWithRelations>(
+  const hydratedWorkId: string | undefined =
+    (phonogram?.work_id as string | undefined) ??
+    (phonogram as { workId?: string } | null | undefined)?.workId;
+  const { entity: hydratedWork } = useEntityById<ObraWithRelations>(
     "obras",
-    open && !fonograma?.obraVinculada ? hydratedObraId : undefined,
+    open && !phonogram?.obraVinculada ? hydratedWorkId : undefined,
   );
 
   useEffect(() => {
     if (!open) return;
     // If the caller already sent a ready object (legacy), use it
-    if (fonograma?.obraVinculada) {
-      setObraVinculada(toObraVinculada(fonograma.obraVinculada));
+    if (phonogram?.obraVinculada) {
+      setLinkedWork(toLinkedWork(phonogram.obraVinculada));
       return;
     }
-    if (!hydratedObraId) {
-      setObraVinculada(null);
+    if (!hydratedWorkId) {
+      setLinkedWork(null);
       return;
     }
-    if (hydratedObra) {
-      setObraVinculada({
-        id: hydratedObra.id,
-        title: hydratedObra.title ?? "",
-        genero: hydratedObra.music_genre ?? "",
-        compositores: compositoresToString(hydratedObra.compositores),
-        status: hydratedObra.status ?? "",
+    if (hydratedWork) {
+      setLinkedWork({
+        id: hydratedWork.id,
+        title: hydratedWork.title ?? "",
+        genero: hydratedWork.music_genre ?? "",
+        compositores: composersToString(hydratedWork.compositores),
+        status: hydratedWork.status ?? "",
       });
     } else {
       // Still loading — keeps the ID with a placeholder until the lookup by ID resolves.
-      setObraVinculada({
-        id: hydratedObraId,
+      setLinkedWork({
+        id: hydratedWorkId,
         title: "Obra vinculada",
         genero: "",
         compositores: "",
         status: "",
       });
     }
-  }, [open, fonograma, hydratedObraId, hydratedObra]);
+  }, [open, phonogram, hydratedWorkId, hydratedWork]);
 
   // Debounce of the typed term to avoid one ABRAMUS call per key.
-  const buscaObraDebounced = useDebounce(buscaObra, 300);
+  const searchWorkDebounced = useDebounce(searchWork, 300);
 
   // Server-side search (Task I) — it used to filter only the tenant's first 50 works
   // loaded via an unfiltered useObras(); now each typed (debounced) key
@@ -451,18 +451,18 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   // search, the same concession already accepted in the other migrations of this task.
   const LOCAL_RESULTS_LIMIT = 20;
   const collatorFono = new Intl.Collator("pt-BR", { sensitivity: "base" });
-  const { items: obrasBusca, total: obrasRegistradasTotal } = useEntityLookup<ObraWithRelations>({
+  const { items: worksSearch, total: registeredWorksTotal } = useEntityLookup<ObraWithRelations>({
     table: "obras",
-    search: buscaObraDebounced,
+    search: searchWorkDebounced,
     pageSize: LOCAL_RESULTS_LIMIT,
     enabled: buscaOpen,
   });
-  const obrasRegistradasFiltradas: ObraVinculada[] = obrasBusca
+  const filteredRegisteredWorks: LinkedWork[] = worksSearch
     .map((o) => ({
       id: o.id,
       title: o.title ?? "",
       genero: o.music_genre ?? "",
-      compositores: compositoresToString(o.compositores),
+      compositores: composersToString(o.compositores),
       status: o.status ?? "",
     }))
     .sort((a, b) => collatorFono.compare(a.title, b.title));
@@ -470,34 +470,34 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const isViewMode = mode === "view";
   const modalTitle = mode === "create" ? "Novo Fonograma" : mode === "edit" ? "Editar Fonograma" : "Detalhes do Fonograma";
 
-  const calcularPercentualCategoria = (categoria: Participante[]) => {
-    return categoria.reduce((total, p) => total + (parseFloat(p.percentual) || 0), 0);
+  const calculateCategoryPercentage = (category: Participante[]) => {
+    return category.reduce((total, p) => total + (parseFloat(p.percentual) || 0), 0);
   };
 
-  const calcularPercentualTotal = () => {
-    return calcularPercentualCategoria(participacao.produtorFonografico) +
-           calcularPercentualCategoria(participacao.interprete) +
-           calcularPercentualCategoria(participacao.musicoAcompanhante);
+  const calculateTotalPercentage = () => {
+    return calculateCategoryPercentage(participacao.produtorFonografico) +
+           calculateCategoryPercentage(participacao.interprete) +
+           calculateCategoryPercentage(participacao.musicoAcompanhante);
   };
 
-  const addParticipante = (categoria: keyof ParticipacaoCategoria) => {
+  const addParticipante = (category: keyof ParticipationCategory) => {
     setParticipacao({
       ...participacao,
-      [categoria]: [...participacao[categoria], { id: crypto.randomUUID(), name: "", percentual: "" }]
+      [category]: [...participacao[category], { id: crypto.randomUUID(), name: "", percentual: "" }]
     });
   };
 
-  const updateParticipante = (categoria: keyof ParticipacaoCategoria, id: string, field: keyof Participante, value: string) => {
+  const updateParticipante = (category: keyof ParticipationCategory, id: string, field: keyof Participante, value: string) => {
     setParticipacao({
       ...participacao,
-      [categoria]: participacao[categoria].map(p => p.id === id ? { ...p, [field]: value } : p)
+      [category]: participacao[category].map(p => p.id === id ? { ...p, [field]: value } : p)
     });
   };
 
-  const removeParticipante = (categoria: keyof ParticipacaoCategoria, id: string) => {
+  const removeParticipante = (category: keyof ParticipationCategory, id: string) => {
     setParticipacao({
       ...participacao,
-      [categoria]: participacao[categoria].filter(p => p.id !== id)
+      [category]: participacao[category].filter(p => p.id !== id)
     });
   };
 
@@ -515,51 +515,51 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       return;
     }
 
-    setArquivoAudio({ name: file.name, size: file.size });
+    setAudioFile({ name: file.name, size: file.size });
     setAudioUploading(true);
     try {
       const { publicUrl, fileId } = await uploadAudioToR2({
         file,
         category: "audio",
         entity:   "phonogram",
-        entityId: fonograma?.id as string | undefined,
+        entityId: phonogram?.id as string | undefined,
       });
-      setArquivoAudio({ name: file.name, size: file.size, url: publicUrl, fileId });
+      setAudioFile({ name: file.name, size: file.size, url: publicUrl, fileId });
       toast.success("Áudio enviado e link gerado com sucesso!");
     } catch (err) {
       const msg = err instanceof R2NotConfiguredError
         ? toUserMessage(err)
         : toUserMessage(err, "Erro no upload do áudio");
       toast.error(`Upload falhou: ${msg}`);
-      setArquivoAudio(null);
+      setAudioFile(null);
     } finally {
       setAudioUploading(false);
     }
   };
 
-  const duracaoMinNum = Number(duracaoMin);
-  const duracaoSegNum = Number(duracaoSeg);
-  const duracaoMinError = duracaoMin !== "" && (!Number.isInteger(duracaoMinNum) || duracaoMinNum < 0)
+  const durationMinNum = Number(durationMin);
+  const durationSegNum = Number(durationSeg);
+  const durationMinError = durationMin !== "" && (!Number.isInteger(durationMinNum) || durationMinNum < 0)
     ? "Minutos não pode ser negativo"
     : null;
-  const duracaoSegError = duracaoSeg !== "" && (!Number.isInteger(duracaoSegNum) || duracaoSegNum < 0 || duracaoSegNum > 59)
+  const durationSegError = durationSeg !== "" && (!Number.isInteger(durationSegNum) || durationSegNum < 0 || durationSegNum > 59)
     ? "Segundos deve estar entre 0 e 59"
     : null;
-  const hasDuracaoError = !!(duracaoMinError || duracaoSegError);
+  const hasDurationError = !!(durationMinError || durationSegError);
 
   // Concatenated ISRC for legacy column (e.g. "BR-XXX-25-12345")
   const isrcConcat = joinIsrc({
-    pais: isrcPais,
+    pais: isrcCountry,
     registrante: isrcRegistrante,
     ano: isrcAno,
     designacao: isrcDesignacao
   });
 
   // Duration in MM:SS, built from the separate minutes/seconds inputs
-  const durationTextConcat = formatDurationText(duracaoMin, duracaoSeg);
+  const durationTextConcat = formatDurationText(durationMin, durationSeg);
 
   const buildPayload = (): FonogramaInsert => {
-    const tituloFinal = (title && title.trim()) || obraVinculada?.title || "Sem título";
+    const tituloFinal = (title && title.trim()) || linkedWork?.title || "Sem título";
     // org_id is not a form field — the tenant comes from the API's authenticated context.
     return {
       title: tituloFinal,
@@ -567,7 +567,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       cod_entidade: codEntidade || null,
       agregadora: agregadora || null,
       isrc: isrcConcat,
-      isrc_pais: isrcPais || null,
+      isrc_pais: isrcCountry || null,
       isrc_registrante: isrcRegistrante || null,
       isrc_ano: isrcAno || null,
       isrc_designacao: isrcDesignacao || null,
@@ -576,23 +576,23 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       nacional: !!nacional,
       pub_simultanea: !!pubSimultanea,
       emissao: emissao || null,
-      gravacao_original: gravacaoOriginal || null,
-      data_lancamento: lancamento || null,
+      gravacao_original: recordingDate || null,
+      data_lancamento: releaseDate || null,
       duration_text: durationTextConcat,
-      duracao_min: duracaoMin === "" ? null : Number(duracaoMin),
-      duracao_seg: duracaoSeg === "" ? null : Number(duracaoSeg),
-      music_genre: generoMusical || null,
-      midia: midia || null,
+      duracao_min: durationMin === "" ? null : Number(durationMin),
+      duracao_seg: durationSeg === "" ? null : Number(durationSeg),
+      music_genre: musicGenre || null,
+      midia: media || null,
       classificacao: classificacao || null,
-      pais_origem: paisOrigem || null,
-      pais_publicacao: paisPublicacao || null,
+      pais_origem: sourceCountry || null,
+      pais_publicacao: publicationCountry || null,
       status: normalizeStatusForDb(status),
-      gravadora: gravadora || null,
-      notes: observacoes || null,
-      work_id: obraVinculada && typeof obraVinculada.id === "string" ? obraVinculada.id : null,
+      gravadora: recordLabel || null,
+      notes: notes || null,
+      work_id: linkedWork && typeof linkedWork.id === "string" ? linkedWork.id : null,
       participacao: participacao as unknown as Json,
-      arquivo_audio: arquivoAudio as unknown as Json,
-      audio_file_id: arquivoAudio?.fileId ?? null,
+      arquivo_audio: audioFile as unknown as Json,
+      audio_file_id: audioFile?.fileId ?? null,
     };
   };
 
@@ -600,16 +600,16 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     e.preventDefault();
     if (mode === "view") return;
 
-    if (hasDuracaoError) {
+    if (hasDurationError) {
       toast.error("Corrija os erros no campo Duração antes de continuar.");
       return;
     }
 
-    const isrcJoined = joinIsrc({ pais: isrcPais, registrante: isrcRegistrante, ano: isrcAno, designacao: isrcDesignacao });
-    const validation = fonogramaSchema.safeParse({
+    const isrcJoined = joinIsrc({ pais: isrcCountry, registrante: isrcRegistrante, ano: isrcAno, designacao: isrcDesignacao });
+    const validation = phonogramSchema.safeParse({
       title: title || "",
       isrc: isrcJoined || "",
-      genero: generoMusical || "",
+      genero: musicGenre || "",
       instrumental,
       criadaPorIA,
       pubSimultanea,
@@ -630,31 +630,31 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     const payload = buildPayload();
 
     // Capture before mutating so we can warn after a successful save.
-    const unlinkedTypedObra = buscaObra.trim() && !obraVinculada ? buscaObra.trim() : null;
+    const unlinkedTypedWork = searchWork.trim() && !linkedWork ? searchWork.trim() : null;
 
     try {
       setSubmitting(true);
       if (mode === "create") {
-        await addFonograma.mutateAsync(payload);
-      } else if (mode === "edit" && fonograma?.id) {
+        await addPhonogram.mutateAsync(payload);
+      } else if (mode === "edit" && phonogram?.id) {
         const updatePayload: { id: string } & FonogramaUpdate & { expectedUpdatedAt?: string } = {
-          id: fonograma.id,
+          id: phonogram.id,
           ...payload,
-          expectedUpdatedAt: getExpectedUpdatedAt(fonograma),
+          expectedUpdatedAt: getExpectedUpdatedAt(phonogram),
         };
-        await updateFonograma.mutateAsync(updatePayload);
+        await updatePhonogram.mutateAsync(updatePayload);
       }
       // Warn only after a successful save — avoids misleading the user on
       // failure. Wording uses "não foi vinculada" since the title may exist in
       // the catalog but was never selected from the search results.
-      if (unlinkedTypedObra) {
+      if (unlinkedTypedWork) {
         toast.warning(
-          `"${unlinkedTypedObra}" não foi vinculada como Obra Vinculada. O fonograma foi salvo sem vínculo de obra.`,
+          `"${unlinkedTypedWork}" não foi vinculada como Obra Vinculada. O fonograma foi salvo sem vínculo de obra.`,
           { duration: 6000 }
         );
       }
 
-      const tituloSalvo = (title && title.trim()) || obraVinculada?.title || "Sem título";
+      const tituloSalvo = (title && title.trim()) || linkedWork?.title || "Sem título";
       onOpenChange(false);
 
       // Opens the prefilled contract modal after closing the phonogram modal
@@ -662,8 +662,8 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
         title: `Contrato de Fonograma – ${tituloSalvo}`,
         notes: [
           `Fonograma: ${tituloSalvo}`,
-          obraVinculada?.title ? `Obra vinculada: ${obraVinculada.title}` : null,
-          obraVinculada?.compositores ? `Compositores: ${obraVinculada.compositores}` : null,
+          linkedWork?.title ? `Obra vinculada: ${linkedWork.title}` : null,
+          linkedWork?.compositores ? `Compositores: ${linkedWork.compositores}` : null,
         ].filter(Boolean).join("\n"),
       });
     } catch (err) {
@@ -676,41 +676,41 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
 
   const renderParticipacaoSection = (
     title: string,
-    categoria: keyof ParticipacaoCategoria,
-    percentualMax: number,
+    category: keyof ParticipationCategory,
+    percentageMax: number,
     isOpen: boolean,
     setIsOpen: (v: boolean) => void
   ) => {
-    const percentualAtual = calcularPercentualCategoria(participacao[categoria]);
+    const currentPercentage = calculateCategoryPercentage(participacao[category]);
     
     return (
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-muted/30 rounded-lg border border-border">
           <span className="text-sm font-medium">
-            {title} - Percentual total: {percentualAtual.toFixed(2)}% de {percentualMax.toFixed(2)}%
+            {title} - Percentual total: {currentPercentage.toFixed(2)}% de {percentageMax.toFixed(2)}%
           </span>
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
         </CollapsibleTrigger>
         <CollapsibleContent className="pt-4 space-y-4">
-          <Button type="button" variant="outline" size="sm" onClick={() => addParticipante(categoria)} disabled={isViewMode}>
+          <Button type="button" variant="outline" size="sm" onClick={() => addParticipante(category)} disabled={isViewMode}>
             <Plus className="w-4 h-4 mr-1" /> Adicionar
           </Button>
           
-          {participacao[categoria].length > 0 ? (
+          {participacao[category].length > 0 ? (
             <div className="space-y-2">
-              {participacao[categoria].map((p) => (
+              {participacao[category].map((p) => (
                 <div key={p.id} className="flex gap-3 items-center">
                   <ArtistNameInput
                     value={p.name}
-                    onChange={(val) => updateParticipante(categoria, p.id, 'name', val)}
-                    onSelect={(a) => updateParticipante(categoria, p.id, 'artist_id', a.id)}
+                    onChange={(val) => updateParticipante(category, p.id, 'name', val)}
+                    onSelect={(a) => updateParticipante(category, p.id, 'artist_id', a.id)}
                     placeholder="Nome do participante"
                     disabled={isViewMode}
                     className="flex-1"
                   />
                   <Input 
                     value={p.percentual} 
-                    onChange={(e) => updateParticipante(categoria, p.id, 'percentual', e.target.value)} 
+                    onChange={(e) => updateParticipante(category, p.id, 'percentual', e.target.value)}
                     disabled={isViewMode} 
                     placeholder="%" 
                     type="number"
@@ -733,12 +733,12 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                           ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.name } }))
                               .items.find(a => (a.nome_civil || a.nome_artistico) === p.name)
                           : undefined;
-                      if (foundWire) setViewArtista(wireToArtist(foundWire));
+                      if (foundWire) setViewArtist(wireToArtist(foundWire));
                     }}
                   >
                     <Eye className="w-4 h-4" />
                   </Button>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => removeParticipante(categoria, p.id)} disabled={isViewMode}>
+                  <Button type="button" variant="ghost" size="icon" onClick={() => removeParticipante(category, p.id)} disabled={isViewMode}>
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
@@ -764,7 +764,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
           <div className="border border-border rounded-lg p-6 space-y-4 bg-muted/10">
             <Label className="font-semibold text-sm">Título da Obra Vinculada</Label>
             
-            {obraVinculada ? (
+            {linkedWork ? (
               <div
                 className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border"
                 data-testid="obra-vinculada-card"
@@ -774,10 +774,10 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                 </div>
                 <div className="flex-1">
                   <p className="font-medium" data-testid="text-obra-vinculada-title">
-                    {obraVinculada.title}
+                    {linkedWork.title}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {obraVinculada.genero} • {obraVinculada.compositores}
+                    {linkedWork.genero} • {linkedWork.compositores}
                   </p>
                 </div>
                 {!isViewMode && (
@@ -785,7 +785,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => setObraVinculada(null)}
+                    onClick={() => setLinkedWork(null)}
                     data-testid="button-remove-obra-vinculada"
                   >
                     <X className="w-4 h-4" />
@@ -800,9 +800,9 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                     <div className="flex-1 relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
-                        value={buscaObra}
+                        value={searchWork}
                         onChange={(e) => {
-                          setBuscaObra(e.target.value);
+                          setSearchWork(e.target.value);
                           setBuscaOpen(true);
                         }}
                         onFocus={() => !isViewMode && setBuscaOpen(true)}
@@ -828,45 +828,45 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                         >
                           Obras do sistema
                         </p>
-                        {obrasRegistradasFiltradas.length > 0 ? (
-                          obrasRegistradasFiltradas.map((obra) => {
-                            const selectObra = async () => {
-                              setObraVinculada(obra);
+                        {filteredRegisteredWorks.length > 0 ? (
+                          filteredRegisteredWorks.map((work) => {
+                            const selectWork = async () => {
+                              setLinkedWork(work);
                               // Auto-fill the title if blank
-                              if (!title && obra.title) setTitle(obra.title);
+                              if (!title && work.title) setTitle(work.title);
                               // Normalize genre: match against Select options (accent+case insensitive)
-                              if (obra.genero) {
+                              if (work.genero) {
                                 const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                                const matched = generosMusicais.find(g => norm(g) === norm(obra.genero));
-                                setGeneroMusical(matched ? matched.toLowerCase() : obra.genero.toLowerCase());
+                                const matched = musicGenres.find(g => norm(g) === norm(work.genero));
+                                setMusicGenre(matched ? matched.toLowerCase() : work.genero.toLowerCase());
                               }
                               // Fill the participation from the full work data
-                              const fullObra = obrasBusca.find((o: ObraWithRelations) => o.id === obra.id);
-                              if (fullObra) {
-                                const compositoresStr = Array.isArray(fullObra.compositores)
-                                  ? (fullObra.compositores as string[]).join(", ")
-                                  : typeof fullObra.compositores === "string"
-                                  ? fullObra.compositores
-                                  : typeof fullObra.compositor === "string"
-                                  ? fullObra.compositor
+                              const fullWork = worksSearch.find((o: ObraWithRelations) => o.id === work.id);
+                              if (fullWork) {
+                                const composersStr = Array.isArray(fullWork.compositores)
+                                  ? (fullWork.compositores as string[]).join(", ")
+                                  : typeof fullWork.compositores === "string"
+                                  ? fullWork.compositores
+                                  : typeof fullWork.compositor === "string"
+                                  ? fullWork.compositor
                                   : "";
                                 // Resolve the musician/arranger from the project producers — DIRECT
                                 // lookup by ID (Task J: it used to scan the `projetos` array
                                 // of an unfiltered useProjetos(), truncated at 50 per tenant).
                                 let musicosArr: Participante[] = [];
-                                if ((fullObra.project_id as string | null | undefined)) {
-                                  const projeto = await storage.findById<ProjetoWithRelations>("projects", fullObra.project_id as string);
-                                  if (projeto?.description) {
+                                if ((fullWork.project_id as string | null | undefined)) {
+                                  const project = await storage.findById<ProjetoWithRelations>("projects", fullWork.project_id as string);
+                                  if (project?.description) {
                                     try {
                                       const normT = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                                      const musicas = JSON.parse(projeto.description as string) as Array<{ nome?: string; produtores?: string[] }>;
-                                      const musicaMatch = musicas.find(m =>
-                                        normT(m.nome || "") === normT(fullObra.title || "") ||
-                                        normT(m.nome || "") === normT(obra.title || "")
+                                      const tracks = JSON.parse(project.description as string) as Array<{ nome?: string; produtores?: string[] }>;
+                                      const trackMatch = tracks.find(m =>
+                                        normT(m.nome || "") === normT(fullWork.title || "") ||
+                                        normT(m.nome || "") === normT(work.title || "")
                                       );
-                                      if (musicaMatch?.produtores?.length) {
-                                        musicosArr = musicaMatch.produtores.map((nome: string) => ({
-                                          id: crypto.randomUUID(), name: nome, percentual: "",
+                                      if (trackMatch?.produtores?.length) {
+                                        musicosArr = trackMatch.produtores.map((name: string) => ({
+                                          id: crypto.randomUUID(), name, percentual: "",
                                         }));
                                       }
                                     } catch { /* invalid JSON — leave blank */ }
@@ -880,14 +880,14 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                 // when there is no artist_id — the same concession already accepted in
                                 // other migrations of this task).
                                 const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                                let artistaNome = fullObra.artistas?.nome_artistico as string | undefined;
-                                let artistId = fullObra.artistas?.id as string | undefined;
-                                if (!artistaNome && (fullObra.artist_id as string | null | undefined)) {
-                                  const byId = await storage.findById<ArtistWireRecord>("artistas", fullObra.artist_id as string);
-                                  if (byId) { const a = wireToArtist(byId); artistaNome = a.stageName; artistId = a.id; }
+                                let artistName = fullWork.artistas?.nome_artistico as string | undefined;
+                                let artistId = fullWork.artistas?.id as string | undefined;
+                                if (!artistName && (fullWork.artist_id as string | null | undefined)) {
+                                  const byId = await storage.findById<ArtistWireRecord>("artistas", fullWork.artist_id as string);
+                                  if (byId) { const a = wireToArtist(byId); artistName = a.stageName; artistId = a.id; }
                                 }
-                                if (!artistaNome && compositoresStr) {
-                                  const firstComp = compositoresStr.split(",")[0]?.trim();
+                                if (!artistName && composersStr) {
+                                  const firstComp = composersStr.split(",")[0]?.trim();
                                   if (firstComp) {
                                     const { items: compMatches } = await storage.listPaged<ArtistWireRecord>("artistas", {
                                       page: 1, pageSize: 5, filters: { search: firstComp },
@@ -897,48 +897,48 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                       norm(a.legalName || "") === norm(firstComp) ||
                                       norm(a.name || "") === norm(firstComp)
                                     );
-                                    if (byName) { artistaNome = byName.stageName; artistId = byName.id; }
+                                    if (byName) { artistName = byName.stageName; artistId = byName.id; }
                                   }
                                 }
-                                const interpretes: Participante[] = artistaNome
-                                  ? [{ id: crypto.randomUUID(), name: artistaNome, percentual: "", artist_id: artistId }]
+                                const performers: Participante[] = artistName
+                                  ? [{ id: crypto.randomUUID(), name: artistName, percentual: "", artist_id: artistId }]
                                   : [];
                                 setParticipacao(prev => ({
                                   ...prev,
                                   // produtorFonografico: leave blank for manual fill
-                                  interprete: prev.interprete.length === 0 ? interpretes : prev.interprete,
+                                  interprete: prev.interprete.length === 0 ? performers : prev.interprete,
                                   musicoAcompanhante: prev.musicoAcompanhante.length === 0 ? musicosArr : prev.musicoAcompanhante,
                                 }));
                               }
-                              setBuscaObra("");
+                              setSearchWork("");
                               setBuscaOpen(false);
-                              toast.success(`Obra "${obra.title}" vinculada! Campos preenchidos automaticamente.`);
+                              toast.success(`Obra "${work.title}" vinculada! Campos preenchidos automaticamente.`);
                             };
                             return (
                               <div
-                                key={obra.id}
+                                key={work.id}
                                 role="option"
                                 tabIndex={0}
                                 aria-selected={false}
                                 className="flex items-center gap-3 p-2 hover:bg-muted focus:bg-muted focus:outline-none rounded-lg cursor-pointer transition-colors"
-                                onClick={selectObra}
+                                onClick={selectWork}
                                 onKeyDown={(e) => {
                                   if (e.key === "Enter" || e.key === " ") {
                                     e.preventDefault();
-                                    selectObra();
+                                    selectWork();
                                   }
                                 }}
-                                data-testid={`option-obra-${obra.id}`}
+                                data-testid={`option-obra-${work.id}`}
                               >
                                 <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
                                   <Music className="h-4 w-4 text-primary-foreground" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm font-medium truncate">
-                                    {obra.title || "—"}
+                                    {work.title || "—"}
                                   </p>
                                   <p className="text-xs text-muted-foreground truncate">
-                                    {[obra.genero, obra.compositores]
+                                    {[work.genero, work.compositores]
                                       .filter(Boolean)
                                       .join(" • ") || "—"}
                                   </p>
@@ -954,17 +954,17 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                             Nenhuma obra registrada encontrada.
                           </p>
                         )}
-                        {obrasRegistradasTotal > LOCAL_RESULTS_LIMIT && (
+                        {registeredWorksTotal > LOCAL_RESULTS_LIMIT && (
                           <p
                             className="text-xs text-muted-foreground italic px-2 py-1"
                             data-testid="text-local-overflow"
                           >
-                            Mostrando {LOCAL_RESULTS_LIMIT} de {obrasRegistradasTotal} resultados — refine sua busca.
+                            Mostrando {LOCAL_RESULTS_LIMIT} de {registeredWorksTotal} resultados — refine sua busca.
                           </p>
                         )}
                         <AbramusSearchRow
                           kind="obras"
-                          query={buscaObraDebounced}
+                          query={searchWorkDebounced}
                           limit={LOCAL_RESULTS_LIMIT}
                           onImported={(rec) => {
                             if (!rec.localId) {
@@ -973,7 +973,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                               );
                               return;
                             }
-                            setObraVinculada({
+                            setLinkedWork({
                               id: rec.localId,
                               title: rec.title ?? "",
                               genero: rec.genero ?? "",
@@ -982,7 +982,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                 : "",
                               status: "registered",
                             });
-                            setBuscaObra("");
+                            setSearchWork("");
                             setBuscaOpen(false);
                           }}
                         />
@@ -1038,7 +1038,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
               <div className="col-span-3">
                 <span className="text-xs text-muted-foreground mb-1 block">ISRC</span>
                 <div className="flex items-center gap-1">
-                  <Input value={isrcPais} onChange={(e) => setIsrcPais(e.target.value)} disabled={isViewMode} placeholder="BR" className="h-8 px-2 text-sm flex-1 min-w-0 text-center font-sans" maxLength={2} />
+                  <Input value={isrcCountry} onChange={(e) => setIsrcCountry(e.target.value)} disabled={isViewMode} placeholder="BR" className="h-8 px-2 text-sm flex-1 min-w-0 text-center font-sans" maxLength={2} />
                   <span className="text-muted-foreground font-light shrink-0">–</span>
                   <Input value={isrcRegistrante} onChange={(e) => setIsrcRegistrante(e.target.value)} disabled={isViewMode} placeholder="XXX" className="h-8 px-2 text-sm flex-1 min-w-0 text-center font-sans" maxLength={3} />
                   <span className="text-muted-foreground font-light shrink-0">–</span>
@@ -1069,36 +1069,36 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Gravação Original</span>
-                <DatePickerField value={gravacaoOriginal} onChange={setGravacaoOriginal} disabled={isViewMode} placeholder="Data" data-testid="datepicker-gravacao-original" />
+                <DatePickerField value={recordingDate} onChange={setRecordingDate} disabled={isViewMode} placeholder="Data" data-testid="datepicker-gravacao-original" />
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Lançamento</span>
-                <DatePickerField value={lancamento} onChange={setLancamento} disabled={isViewMode} placeholder="Data" data-testid="datepicker-lancamento" />
+                <DatePickerField value={releaseDate} onChange={setReleaseDate} disabled={isViewMode} placeholder="Data" data-testid="datepicker-lancamento" />
               </div>
               <div className="col-span-4">
                 <span className="text-xs text-muted-foreground mb-1 block">Duração</span>
                 <div className="flex items-center gap-1">
                   <Input
                     data-testid="input-duracao-minutos"
-                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${duracaoMinError ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                    value={duracaoMin}
-                    onChange={(e) => setDuracaoMin(e.target.value)}
+                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationMinError ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    value={durationMin}
+                    onChange={(e) => setDurationMin(e.target.value)}
                     disabled={isViewMode}
                     placeholder="0"
                   />
                   <span className="text-xs text-muted-foreground shrink-0">min</span>
                   <Input
                     data-testid="input-duracao-segundos"
-                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${duracaoSegError ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                    value={duracaoSeg}
-                    onChange={(e) => setDuracaoSeg(e.target.value)}
+                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationSegError ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    value={durationSeg}
+                    onChange={(e) => setDurationSeg(e.target.value)}
                     disabled={isViewMode}
                     placeholder="0"
                   />
                   <span className="text-xs text-muted-foreground shrink-0">seg</span>
                 </div>
-                {(duracaoMinError || duracaoSegError) && (
-                  <p className="text-xs text-destructive">{duracaoMinError || duracaoSegError}</p>
+                {(durationMinError || durationSegError) && (
+                  <p className="text-xs text-destructive">{durationMinError || durationSegError}</p>
                 )}
               </div>
             </div>
@@ -1107,19 +1107,19 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
             <div className="grid grid-cols-12 gap-3 items-end">
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Gênero Musical</span>
-                <Select value={generoMusical} onValueChange={setGeneroMusical} disabled={isViewMode}>
+                <Select value={musicGenre} onValueChange={setMusicGenre} disabled={isViewMode}>
                   <SelectTrigger className="h-8 text-sm min-w-0"><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
-                    {generosMusicais.map(g => <SelectItem key={g} value={g.toLowerCase()}>{g}</SelectItem>)}
+                    {musicGenres.map(g => <SelectItem key={g} value={g.toLowerCase()}>{g}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Mídia</span>
-                <Select value={midia} onValueChange={setMidia} disabled={isViewMode}>
+                <Select value={media} onValueChange={setMedia} disabled={isViewMode}>
                   <SelectTrigger className="h-8 text-sm min-w-0"><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
-                    {midias.map(m => <SelectItem key={m} value={m.toLowerCase()}>{m}</SelectItem>)}
+                    {mediaItems.map(m => <SelectItem key={m} value={m.toLowerCase()}>{m}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -1137,19 +1137,19 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">País Origem</span>
-                <Select value={paisOrigem} onValueChange={setPaisOrigem} disabled={isViewMode}>
+                <Select value={sourceCountry} onValueChange={setSourceCountry} disabled={isViewMode}>
                   <SelectTrigger className="h-8 text-sm min-w-0"><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
-                    {paises.map(p => <SelectItem key={p} value={p.toLowerCase()}>{p}</SelectItem>)}
+                    {countries.map(p => <SelectItem key={p} value={p.toLowerCase()}>{p}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">País Publicação</span>
-                <Select value={paisPublicacao} onValueChange={setPaisPublicacao} disabled={isViewMode}>
+                <Select value={publicationCountry} onValueChange={setPublicationCountry} disabled={isViewMode}>
                   <SelectTrigger className="h-8 text-sm min-w-0"><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
-                    {paises.map(p => <SelectItem key={p} value={p.toLowerCase()}>{p}</SelectItem>)}
+                    {countries.map(p => <SelectItem key={p} value={p.toLowerCase()}>{p}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -1182,12 +1182,12 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
           <div className="border border-border rounded-lg p-6 space-y-4 bg-muted/10">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-base">Participação</h3>
-              <span className="text-sm text-muted-foreground">Percentual total: {calcularPercentualTotal().toFixed(2)}% de 100%</span>
+              <span className="text-sm text-muted-foreground">Percentual total: {calculateTotalPercentage().toFixed(2)}% de 100%</span>
             </div>
             
             <div className="space-y-3">
-              {renderParticipacaoSection("Produtor Fonográfico", "produtorFonografico", 41.70, produtorOpen, setProdutorOpen)}
-              {renderParticipacaoSection("Intérprete", "interprete", 41.70, interpreteOpen, setInterpreteOpen)}
+              {renderParticipacaoSection("Produtor Fonográfico", "produtorFonografico", 41.70, producerOpen, setProducerOpen)}
+              {renderParticipacaoSection("Intérprete", "interprete", 41.70, performerOpen, setPerformerOpen)}
               {renderParticipacaoSection("Músico Acompanhante", "musicoAcompanhante", 16.60, musicoOpen, setMusicoOpen)}
             </div>
           </div>
@@ -1208,7 +1208,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                   className="hidden"
                   disabled={isViewMode}
                 />
-                {arquivoAudio ? (
+                {audioFile ? (
                   <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border">
                     <div className="flex items-center gap-3">
                       {audioUploading ? (
@@ -1217,15 +1217,15 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                         <FileAudio className="w-8 h-8 text-primary" />
                       )}
                       <div>
-                        <p className="text-sm font-medium">{arquivoAudio.name}</p>
+                        <p className="text-sm font-medium">{audioFile.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {formatFileSize(arquivoAudio.size)}
+                          {formatFileSize(audioFile.size)}
                           {audioUploading && " — enviando..."}
-                          {!audioUploading && arquivoAudio.url && " — link gerado ✓"}
+                          {!audioUploading && audioFile.url && " — link gerado ✓"}
                         </p>
-                        {!audioUploading && arquivoAudio.url && (
+                        {!audioUploading && audioFile.url && (
                           <a
-                            href={arquivoAudio.url}
+                            href={audioFile.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-primary hover:underline flex items-center gap-1 mt-0.5"
@@ -1241,7 +1241,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                         <Button type="button" variant="outline" size="sm" onClick={() => audioInputRef.current?.click()} disabled={audioUploading}>
                           Trocar
                         </Button>
-                        <Button type="button" variant="ghost" size="sm" onClick={() => setArquivoAudio(null)} disabled={audioUploading}>
+                        <Button type="button" variant="ghost" size="sm" onClick={() => setAudioFile(null)} disabled={audioUploading}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -1281,7 +1281,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
               {isViewMode ? "Fechar" : "Cancelar"}
             </Button>
             {!isViewMode && (
-              <Button type="submit" size="sm" className="h-8 text-xs gap-1.5" disabled={hasDuracaoError || submitting} data-testid="button-submit-fonograma">
+              <Button type="submit" size="sm" className="h-8 text-xs gap-1.5" disabled={hasDurationError || submitting} data-testid="button-submit-fonograma">
                 {submitting
                   ? (mode === "create" ? "Cadastrando..." : "Atualizando...")
                   : (mode === "create" ? "Cadastrar Fonograma" : "Atualizar Fonograma")}
@@ -1291,9 +1291,9 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
         </form>
       </DialogContent>
       <ParticipanteViewModal
-        open={viewArtista !== null}
-        onOpenChange={(o) => { if (!o) setViewArtista(null); }}
-        artista={viewArtista}
+        open={viewArtist !== null}
+        onOpenChange={(o) => { if (!o) setViewArtist(null); }}
+        artista={viewArtist}
       />
     </Dialog>
   );

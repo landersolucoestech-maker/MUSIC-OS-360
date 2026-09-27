@@ -2,15 +2,15 @@ import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
 import { emit, DomainEvents } from "@/shared/domain-events";
 import { useTenant } from "@/app/providers/TenantContext";
-import type { Obra, ObraInsert, ObraUpdate, ObraWithRelations } from "../types/catalog.types";
+import type { Work, WorkInsert, WorkUpdate, WorkWithRelations } from "../types/catalog.types";
 
-export type { Obra, ObraInsert, ObraUpdate, ObraWithRelations };
+export type { Work as Obra, WorkInsert as ObraInsert, WorkUpdate as ObraUpdate, WorkWithRelations as ObraWithRelations };
 
-export function useObras(enabled = true, artistId?: string) {
+export function useWorks(enabled = true, artistId?: string) {
   const { tenant } = useTenant();
   const orgId = tenant?.id ?? "unknown";
 
-  const result = useDataQuery<ObraWithRelations>({
+  const result = useDataQuery<WorkWithRelations>({
     // artistId goes into the queryKey: without it, opening artist A's 360 View and
     // then artist B's would (wrongly) reuse A's cache — same key,
     // different server-side filter (see Task G).
@@ -23,13 +23,13 @@ export function useObras(enabled = true, artistId?: string) {
     onMutationSuccess: {
       onCreate: (o) =>
         emit(DomainEvents.MUSIC_REGISTERED, {
-          work_id: (o as ObraWithRelations & { id: string }).id,
+          work_id: (o as WorkWithRelations & { id: string }).id,
           title: o.title ?? "",
           org_id: orgId,
         }),
       onUpdate: (o) =>
         emit(DomainEvents.MUSIC_UPDATED, {
-          work_id: (o as ObraWithRelations & { id: string }).id,
+          work_id: (o as WorkWithRelations & { id: string }).id,
           title: o.title ?? "",
           org_id: orgId,
         }),
@@ -43,12 +43,12 @@ export function useObras(enabled = true, artistId?: string) {
   });
 
   return {
-    obras: result.data,
+    works: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addObra: result.create,
-    updateObra: result.update,
-    deleteObra: result.delete,
+    addWork: result.create,
+    updateWork: result.update,
+    deleteWork: result.delete,
   };
 }

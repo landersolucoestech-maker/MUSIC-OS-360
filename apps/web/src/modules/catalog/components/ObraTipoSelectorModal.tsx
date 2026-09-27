@@ -7,20 +7,20 @@ import {
 } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
 
-export type TipoObra = "autoral" | "referencia";
+export type WorkType = "autoral" | "referencia";
 
-interface ObraTipoSelectorModalProps {
+interface WorkTypeSelectorModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelect: (type: TipoObra) => void;
+  onSelect: (type: WorkType) => void;
 }
 
-export function ObraTipoSelectorModal({
+export function WorkTypeSelectorModal({
   open,
   onOpenChange,
   onSelect,
-}: ObraTipoSelectorModalProps) {
-  const handleSelect = (type: TipoObra) => {
+}: WorkTypeSelectorModalProps) {
+  const handleSelect = (type: WorkType) => {
     onSelect(type);
     onOpenChange(false);
   };

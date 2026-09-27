@@ -6,16 +6,16 @@ export interface ParticipanteForm {
   percentual: string;
 }
 
-export interface FonogramaParticipante {
+export interface PhonogramParticipant {
   id: string;
   name: string;
   percentual: string;
 }
 
-export interface ParticipacaoCategoria {
-  produtorFonografico: FonogramaParticipante[];
-  interprete: FonogramaParticipante[];
-  musicoAcompanhante: FonogramaParticipante[];
+export interface ParticipationCategory {
+  produtorFonografico: PhonogramParticipant[];
+  interprete: PhonogramParticipant[];
+  musicoAcompanhante: PhonogramParticipant[];
 }
 
 export interface DurationTextParts {
@@ -142,11 +142,11 @@ function normalizeStringArray(value: unknown): string[] {
   return [];
 }
 
-export function obraToParticipantes(obra: any): ParticipanteForm[] {
-  if (!obra) return [];
+export function workToParticipants(work: any): ParticipanteForm[] {
+  if (!work) return [];
   // Legacy: caller may already have prebuilt participantes
-  if (Array.isArray(obra.participantes) && obra.participantes.length > 0) {
-    return obra.participantes.map((p: any) => ({
+  if (Array.isArray(work.participantes) && work.participantes.length > 0) {
+    return work.participantes.map((p: any) => ({
       id: p.id || crypto.randomUUID(),
       name: p.name ?? "",
       classeFuncao: p.classeFuncao ?? "",
@@ -154,10 +154,10 @@ export function obraToParticipantes(obra: any): ParticipanteForm[] {
       percentual: p.percentual ?? "",
     }));
   }
-  const compositores = normalizeStringArray(obra.compositores);
-  const letristas = normalizeStringArray(obra.letristas);
+  const composers = normalizeStringArray(work.compositores);
+  const letristas = normalizeStringArray(work.letristas);
   const out: ParticipanteForm[] = [];
-  for (const name of compositores) {
+  for (const name of composers) {
     out.push({
       id: crypto.randomUUID(),
       name,
@@ -178,69 +178,69 @@ export function obraToParticipantes(obra: any): ParticipanteForm[] {
   return out;
 }
 
-export function participantesToCompositoresLetristas(
+export function participantsToComposersLyricists(
   participantes: ParticipanteForm[],
 ): { compositores: string[] | null; letristas: string[] | null } {
-  const compositores = participantes
+  const composers = participantes
     .filter((p) => p.classeFuncao?.toLowerCase() === "compositor/autor" && p.name.trim())
     .map((p) => p.name.trim());
   const letristas = participantes
     .filter((p) => p.classeFuncao?.toLowerCase() === "tradutor" && p.name.trim())
     .map((p) => p.name.trim());
   return {
-    compositores: compositores.length > 0 ? compositores : null,
+    compositores: composers.length > 0 ? composers : null,
     letristas: letristas.length > 0 ? letristas : null,
   };
 }
 
-export function obraTitle(obra: any): string {
-  if (!obra) return "";
-  return (obra.title as string) ?? (obra.titulo as string) ?? "";
+export function workTitle(work: any): string {
+  if (!work) return "";
+  return (work.title as string) ?? (work.titulo as string) ?? "";
 }
 
 // ── IAElement interface ───────────────────────────────────────────────────────
 
-export interface ObraIAElement {
+export interface WorkAiElement {
   ferramenta: string;
   prompt: string;
 }
 
 // ── Canonical field readers (handle both snake_case and camelCase) ────────────
 
-export function obraOutrosTitulos(obra: unknown): string[] {
-  if (!obra || typeof obra !== "object") return [];
-  const r = obra as Record<string, unknown>;
+export function workOtherTitles(work: unknown): string[] {
+  if (!work || typeof work !== "object") return [];
+  const r = work as Record<string, unknown>;
   return normalizeStringArray(r["outros_titulos"] ?? r["outrosTitulos"]);
 }
 
-export function obraReferenciasConexas(obra: unknown): string[] {
-  if (!obra || typeof obra !== "object") return [];
-  const r = obra as Record<string, unknown>;
+export function workRelatedReferences(work: unknown): string[] {
+  if (!work || typeof work !== "object") return [];
+  const r = work as Record<string, unknown>;
   return normalizeStringArray(r["referencias_conexas"] ?? r["referenciasConexas"]);
 }
 
-export function obraLetraCompleta(obra: unknown): string {
-  if (!obra || typeof obra !== "object") return "";
-  const r = obra as Record<string, unknown>;
+export function workFullLyrics(work: unknown): string {
+  if (!work || typeof work !== "object") return "";
+  const r = work as Record<string, unknown>;
   const v = r["letra_completa"] ?? r["letraCompleta"];
   return typeof v === "string" ? v : "";
 }
 
-export function obraCriadaPorIA(obra: unknown): "sim" | "nao" {
-  if (!obra || typeof obra !== "object") return "nao";
-  const r = obra as Record<string, unknown>;
+export function workCreatedByAi(work: unknown): "sim" | "nao" {
+  if (!work || typeof work !== "object") return "nao";
+  const r = work as Record<string, unknown>;
   if (r["criada_por_ia"] === true || r["criadaPorIA"] === "sim") return "sim";
   return "nao";
 }
 
-export function obraTipoIAValue(obra: unknown): string {
-  if (!obra || typeof obra !== "object") return "";
-  const r = obra as Record<string, unknown>;
+export function workTypeAiValue(work: unknown): string {
+  if (!work || typeof work !== "object") return "";
+  const r = work as Record<string, unknown>;
   const v = r["tipo_ia"] ?? r["tipoIA"];
   return typeof v === "string" ? v : "";
 }
 
-function readIAElement(r: Record<string, unknown>, snakeKey: string, camelKey: string): ObraIAElement {
+function readIAElement(r: Record<string, unknown>, snakeKey: string, camelKey: string): WorkAiElement {
   const raw = r[snakeKey] ?? r[camelKey];
   if (!raw || typeof raw !== "object") return { ferramenta: "", prompt: "" };
   const obj = raw as Record<string, unknown>;
@@ -250,19 +250,19 @@ function readIAElement(r: Record<string, unknown>, snakeKey: string, camelKey: s
   };
 }
 
-export function obraIaHarmonia(obra: unknown): ObraIAElement {
-  if (!obra || typeof obra !== "object") return { ferramenta: "", prompt: "" };
-  return readIAElement(obra as Record<string, unknown>, "ia_harmonia", "iaHarmonia");
+export function workAiHarmony(work: unknown): WorkAiElement {
+  if (!work || typeof work !== "object") return { ferramenta: "", prompt: "" };
+  return readIAElement(work as Record<string, unknown>, "ia_harmonia", "iaHarmonia");
 }
 
-export function obraIaMelodia(obra: unknown): ObraIAElement {
-  if (!obra || typeof obra !== "object") return { ferramenta: "", prompt: "" };
-  return readIAElement(obra as Record<string, unknown>, "ia_melodia", "iaMelodia");
+export function workAiMelody(work: unknown): WorkAiElement {
+  if (!work || typeof work !== "object") return { ferramenta: "", prompt: "" };
+  return readIAElement(work as Record<string, unknown>, "ia_melodia", "iaMelodia");
 }
 
-export function obraIaLetra(obra: unknown): ObraIAElement {
-  if (!obra || typeof obra !== "object") return { ferramenta: "", prompt: "" };
-  return readIAElement(obra as Record<string, unknown>, "ia_letra", "iaLetra");
+export function workAiLyrics(work: unknown): WorkAiElement {
+  if (!work || typeof work !== "object") return { ferramenta: "", prompt: "" };
+  return readIAElement(work as Record<string, unknown>, "ia_letra", "iaLetra");
 }
 
 // ── Export transform helpers ─────────────────────────────────────────────────
@@ -277,7 +277,7 @@ export { normalizeStr, normalizeBool } from "@/shared/lib/normalize";
 
 // ── Obra: form fields interface + readers ────────────────────────────────────
 
-export interface ObraFormFields {
+export interface WorkFormFields {
   title: string;
   situacao: string;
   generoMusical: string;
@@ -290,9 +290,9 @@ export interface ObraFormFields {
   iswc: string;
   criadaPorIA: "sim" | "nao";
   tipoIA: string;
-  iaHarmonia: ObraIAElement;
-  iaMelodia: ObraIAElement;
-  iaLetra: ObraIAElement;
+  iaHarmonia: WorkAiElement;
+  iaMelodia: WorkAiElement;
+  iaLetra: WorkAiElement;
   participantes: ParticipanteForm[];
   outrosTitulos: string[];
   referenciasConexas: string[];
@@ -301,33 +301,33 @@ export interface ObraFormFields {
 }
 
 /** DB record → form field initial values (single source of truth for useEffect) */
-export function obraToFormFields(obra: any): ObraFormFields {
-  const dur = parseDurationText(obra?.duration_text);
+export function workToFormFields(work: any): WorkFormFields {
+  const dur = parseDurationText(work?.duration_text);
   return {
-    title: obraTitle(obra),
-    situacao: dbStatusToSelect(obra?.status),
-    generoMusical: obra?.music_genre?.toLowerCase() || "",
-    idioma: obra?.idioma || "",
-    duracaoMin: obra?.duracaoMin ?? dur.min,
-    duracaoSeg: obra?.duracaoSeg ?? dur.seg,
-    instrumental: obra?.instrumental || "nao",
-    codEcad: obra?.cod_ecad ?? obra?.codEcad ?? "",
-    codEntidade: obra?.cod_entidade ?? obra?.codEntidade ?? "",
-    iswc: obra?.iswc || "",
-    criadaPorIA: obraCriadaPorIA(obra),
-    tipoIA: obraTipoIAValue(obra),
-    iaHarmonia: obraIaHarmonia(obra),
-    iaMelodia: obraIaMelodia(obra),
-    iaLetra: obraIaLetra(obra),
-    participantes: obraToParticipantes(obra),
-    outrosTitulos: obraOutrosTitulos(obra),
-    referenciasConexas: obraReferenciasConexas(obra),
-    letraCompleta: obraLetraCompleta(obra),
-    artistId: obra?.artist_id ?? "",
+    title: workTitle(work),
+    situacao: dbStatusToSelect(work?.status),
+    generoMusical: work?.music_genre?.toLowerCase() || "",
+    idioma: work?.idioma || "",
+    duracaoMin: work?.duracaoMin ?? dur.min,
+    duracaoSeg: work?.duracaoSeg ?? dur.seg,
+    instrumental: work?.instrumental || "nao",
+    codEcad: work?.cod_ecad ?? work?.codEcad ?? "",
+    codEntidade: work?.cod_entidade ?? work?.codEntidade ?? "",
+    iswc: work?.iswc || "",
+    criadaPorIA: workCreatedByAi(work),
+    tipoIA: workTypeAiValue(work),
+    iaHarmonia: workAiHarmony(work),
+    iaMelodia: workAiMelody(work),
+    iaLetra: workAiLyrics(work),
+    participantes: workToParticipants(work),
+    outrosTitulos: workOtherTitles(work),
+    referenciasConexas: workRelatedReferences(work),
+    letraCompleta: workFullLyrics(work),
+    artistId: work?.artist_id ?? "",
   };
 }
 
-export interface FormToObraInput {
+export interface FormToWorkInput {
   title: string;
   generoMusical: string;
   idioma: string;
@@ -339,9 +339,9 @@ export interface FormToObraInput {
   instrumental: string;
   criadaPorIA: "sim" | "nao";
   tipoIA: string;
-  iaHarmonia: ObraIAElement;
-  iaMelodia: ObraIAElement;
-  iaLetra: ObraIAElement;
+  iaHarmonia: WorkAiElement;
+  iaMelodia: WorkAiElement;
+  iaLetra: WorkAiElement;
   outrosTitulos: string[];
   referenciasConexas: string[];
   letraCompleta: string;
@@ -354,8 +354,8 @@ export interface FormToObraInput {
 }
 
 /** Form state → DB payload (both snake_case and camelCase keys for compatibility) */
-export function formToObraPayload(input: FormToObraInput): Record<string, unknown> {
-  const { compositores, letristas } = participantesToCompositoresLetristas(
+export function formToWorkPayload(input: FormToWorkInput): Record<string, unknown> {
+  const { compositores: composers, letristas } = participantsToComposersLyricists(
     input.participantes,
   );
   const durationText = formatDurationText(input.duracaoMin, input.duracaoSeg);
@@ -392,7 +392,7 @@ export function formToObraPayload(input: FormToObraInput): Record<string, unknow
     letra_completa: input.letraCompleta || null,
     participantes: input.participantes.length > 0 ? input.participantes : null,
     status: normalizeStatusForDb(input.situacao),
-    compositores,
+    compositores: composers,
     letristas,
     project_id: input.projectId ?? null,
     artist_id: input.artistId ?? null,
@@ -402,7 +402,7 @@ export function formToObraPayload(input: FormToObraInput): Record<string, unknow
 
 // ── Fonograma: form fields interface + readers ───────────────────────────────
 
-export interface FonogramaFormFields {
+export interface PhonogramFormFields {
   codEcad: string;
   codEntidade: string;
   agregadora: string;
@@ -431,7 +431,7 @@ export interface FonogramaFormFields {
 }
 
 /** DB record → fonograma form field initial values */
-export function fonogramaToFormFields(f: any): FonogramaFormFields {
+export function phonogramToFormFields(f: any): PhonogramFormFields {
   const dur  = parseDurationText(f?.duration_text);
   const isrc = parseIsrc(f?.isrc);
   const ps   = (v: unknown): string => {
@@ -483,14 +483,14 @@ export function fonogramaToFormFields(f: any): FonogramaFormFields {
  *
  * Single source of truth for this transformation. Do NOT duplicate it in the components.
  */
-export function projetoToObraSeed(
-  projeto: {
+export function projectToWorkSeed(
+  project: {
     id: string;
     title?: string | null;
     artist_id?: string | null;
     music_genre?: string | null;
   },
-  musica?: {
+  track?: {
     name?: string;
     genero?: string;
     idioma?: string;
@@ -501,56 +501,56 @@ export function projetoToObraSeed(
     letra?: string;
   } | null,
 ): Record<string, unknown> {
-  const participantes: ParticipanteForm[] = (musica?.compositores ?? [])
-    .filter((nome): nome is string => Boolean(nome?.trim()))
-    .map((nome) => ({
+  const participantes: ParticipanteForm[] = (track?.compositores ?? [])
+    .filter((composerName): composerName is string => Boolean(composerName?.trim()))
+    .map((composerName) => ({
       id: crypto.randomUUID(),
-      name: nome.trim(),
+      name: composerName.trim(),
       classeFuncao: "compositor/autor",
       link: "",
       percentual: "",
     }));
 
-  const letraCompleta = musica?.letra || "";
-  const genero = ((musica?.genero || projeto.music_genre || "").toLowerCase()) || null;
+  const fullLyrics = track?.letra || "";
+  const genre = ((track?.genero || project.music_genre || "").toLowerCase()) || null;
 
   return {
-    project_id: projeto.id,
-    artist_id: projeto.artist_id ?? null,
-    title: musica?.name?.trim() || projeto.title?.trim() || "",
-    music_genre: genero,
-    idioma: musica?.idioma || null,
-    duracaoMin: musica?.duracaoMin || "",
-    duracaoSeg: musica?.duracaoSeg || "",
-    instrumental: musica?.instrumental || "nao",
+    project_id: project.id,
+    artist_id: project.artist_id ?? null,
+    title: track?.name?.trim() || project.title?.trim() || "",
+    music_genre: genre,
+    idioma: track?.idioma || null,
+    duracaoMin: track?.duracaoMin || "",
+    duracaoSeg: track?.duracaoSeg || "",
+    instrumental: track?.instrumental || "nao",
     participantes: participantes.length > 0 ? participantes : null,
-    letra_completa: letraCompleta || null,
-    letraCompleta: letraCompleta || null,
+    letra_completa: fullLyrics || null,
+    letraCompleta: fullLyrics || null,
   };
 }
 
-export function fonogramaToParticipacao(fonograma: any): ParticipacaoCategoria {
-  if (!fonograma) {
+export function phonogramToParticipation(phonogram: any): ParticipationCategory {
+  if (!phonogram) {
     return { produtorFonografico: [], interprete: [], musicoAcompanhante: [] };
   }
   // Legacy: caller may already have prebuilt participacao
   if (
-    fonograma.participacao &&
-    typeof fonograma.participacao === "object" &&
-    !Array.isArray(fonograma.participacao)
+    phonogram.participacao &&
+    typeof phonogram.participacao === "object" &&
+    !Array.isArray(phonogram.participacao)
   ) {
-    const p = fonograma.participacao;
+    const p = phonogram.participacao;
     return {
       produtorFonografico: Array.isArray(p.produtorFonografico) ? p.produtorFonografico : [],
       interprete: Array.isArray(p.interprete) ? p.interprete : [],
       musicoAcompanhante: Array.isArray(p.musicoAcompanhante) ? p.musicoAcompanhante : [],
     };
   }
-  const produtores = normalizeStringArray(fonograma.produtores);
+  const producers = normalizeStringArray(phonogram.produtores);
   return {
-    produtorFonografico: produtores.map((nome) => ({
+    produtorFonografico: producers.map((producerName) => ({
       id: crypto.randomUUID(),
-      name: nome,
+      name: producerName,
       percentual: "",
     })),
     interprete: [],

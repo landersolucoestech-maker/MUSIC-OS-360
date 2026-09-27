@@ -28,15 +28,15 @@ const formatDateDMY = (d?: string | null): string => {
   return d;
 };
 
-const deriveTipoPessoa = (artista: Artist): string => {
-  const raw = artista.personType;
+const derivePersonType = (artist: Artist): string => {
+  const raw = artist.personType;
   if (raw) {
     const r = raw.toLowerCase();
     if (r.includes("juridica") || r.includes("jurídica")) return "Jurídica";
     if (r.includes("fisica") || r.includes("física")) return "Física";
     return raw;
   }
-  const perfil = (artista.profileType as string | null | undefined) ?? "";
+  const perfil = (artist.profileType as string | null | undefined) ?? "";
   if (perfil.toLowerCase().includes("empresa")) return "Jurídica";
   return "Física";
 };
@@ -44,17 +44,17 @@ const deriveTipoPessoa = (artista: Artist): string => {
 export function ParticipanteViewModal({
   open,
   onOpenChange,
-  artista,
+  artista: artist,
 }: ParticipanteViewModalProps) {
-  if (!artista) return null;
+  if (!artist) return null;
 
-  const nomeCivil = artista.legalName || artista.name || artista.stageName || "";
-  const pseudonimo = artista.stageName || "";
-  const tipoPessoa = deriveTipoPessoa(artista);
-  const genero = ((artista as unknown as Record<string, unknown>).genero as string | null | undefined) ?? "";
-  const dataNascimento = formatDateDMY(artista.birthDate);
-  const cpfCnpj = artista.taxId || "";
-  const cae = ((artista as unknown as Record<string, unknown>).cae as string | null | undefined) ?? "";
+  const legalName = artist.legalName || artist.name || artist.stageName || "";
+  const pseudonimo = artist.stageName || "";
+  const personType = derivePersonType(artist);
+  const genre = ((artist as unknown as Record<string, unknown>).genero as string | null | undefined) ?? "";
+  const birthDate = formatDateDMY(artist.birthDate);
+  const cpfCnpj = artist.taxId || "";
+  const cae = ((artist as unknown as Record<string, unknown>).cae as string | null | undefined) ?? "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -72,7 +72,7 @@ export function ParticipanteViewModal({
               Nome <span className="text-destructive">*</span>
             </Label>
             <Input
-              value={nomeCivil}
+              value={legalName}
               disabled
               className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
               data-testid="input-participante-nome"
@@ -92,7 +92,7 @@ export function ParticipanteViewModal({
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Tipo de Pessoa</Label>
-              <Select value={tipoPessoa} disabled>
+              <Select value={personType} disabled>
                 <SelectTrigger className="bg-muted/30 text-sm h-9" data-testid="select-participante-type-pessoa">
                   <SelectValue placeholder="—" />
                 </SelectTrigger>
@@ -104,7 +104,7 @@ export function ParticipanteViewModal({
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Gênero</Label>
-              <Select value={genero} disabled>
+              <Select value={genre} disabled>
                 <SelectTrigger className="bg-muted/30 text-sm h-9" data-testid="select-participante-genero">
                   <SelectValue placeholder="—" />
                 </SelectTrigger>
@@ -122,7 +122,7 @@ export function ParticipanteViewModal({
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Data de Nascimento</Label>
               <Input
-                value={dataNascimento}
+                value={birthDate}
                 disabled
                 placeholder="DD/MM/AAAA"
                 className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"

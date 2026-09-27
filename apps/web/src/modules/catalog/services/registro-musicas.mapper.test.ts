@@ -17,8 +17,8 @@
  */
 import { describe, it, expect } from "vitest";
 import {
-  formToObraPayload,
-  participantesToCompositoresLetristas,
+  formToWorkPayload,
+  participantsToComposersLyricists,
   type ParticipanteForm,
 } from "./registro-musicas.mapper";
 
@@ -52,7 +52,7 @@ function baseInput(participantes: ParticipanteForm[] = []) {
 
 describe("formToObraPayload — canonical works contract", () => {
   it("sends `cod_ecad` and `cod_entidade` (the real canonical names) — never `cod_abramus`/`codigo_abramus`/`codigo_entidade`", () => {
-    const payload = formToObraPayload(baseInput());
+    const payload = formToWorkPayload(baseInput());
     expect(payload).toHaveProperty("cod_ecad", "ECAD-456");
     expect(payload).toHaveProperty("cod_entidade", "ABR-123");
     expect(payload).not.toHaveProperty("cod_abramus");
@@ -61,7 +61,7 @@ describe("formToObraPayload — canonical works contract", () => {
   });
 
   it("never sends `metadata`, `compositor` (singular) or `editora` — they are not interactive form fields", () => {
-    const payload = formToObraPayload(baseInput());
+    const payload = formToWorkPayload(baseInput());
     expect(payload).not.toHaveProperty("metadata");
     expect(payload).not.toHaveProperty("compositor");
     expect(payload).not.toHaveProperty("editora");
@@ -74,14 +74,14 @@ describe("formToObraPayload — canonical works contract", () => {
       { id: "1", name: "Fulano", classeFuncao: "compositor/autor", link: "", percentual: "50" },
       { id: "2", name: "Beltrano", classeFuncao: "tradutor", link: "", percentual: "50" },
     ];
-    const payload = formToObraPayload(baseInput(participantes));
+    const payload = formToWorkPayload(baseInput(participantes));
     expect(payload.compositores).toEqual(["Fulano"]);
     expect(payload.letristas).toEqual(["Beltrano"]);
     expect(payload.participantes).toEqual(participantes);
   });
 
   it("participantesToCompositoresLetristas returns null when there are no participants in the matching class", () => {
-    const result = participantesToCompositoresLetristas([]);
+    const result = participantsToComposersLyricists([]);
     expect(result.compositores).toBeNull();
     expect(result.letristas).toBeNull();
   });

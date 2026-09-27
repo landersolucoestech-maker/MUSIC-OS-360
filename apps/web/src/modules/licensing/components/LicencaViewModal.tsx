@@ -4,7 +4,7 @@ import { Badge } from "@/shared/ui/badge";
 import { FileText, Music, Building, DollarSign, Calendar, MapPin, Tv } from "lucide-react";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { formatLicensingDate, formatRemuneration, obraArtistaLabel, midiaLabel, tipoLabel } from "@/modules/licensing/lib/licenca-format";
-import type { Obra } from "@/modules/catalog/types/catalog.types";
+import type { Work } from "@/modules/catalog/types/catalog.types";
 
 interface ClienteOption { id: string; name: string }
 
@@ -37,7 +37,7 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
   // Fetches DIRECTLY by ID (GET /works/:id, GET /clients/:id) — does not depend on the
   // work/client being among the first 50 loaded by useObras() /
   // an unfiltered client listing (Task J).
-  const { entity: obra } = useEntityById<Obra>("obras", open ? licenca?.work_id ?? undefined : undefined);
+  const { entity: obra } = useEntityById<Work>("obras", open ? licenca?.work_id ?? undefined : undefined);
   const { entity: cliente } = useEntityById<ClienteOption>("clientes", open ? licenca?.client_id ?? undefined : undefined);
 
   if (!licenca) return null;

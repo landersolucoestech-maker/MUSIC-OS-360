@@ -31,7 +31,7 @@ import { formatRightsDate } from "../utils/date-format";
 import { useDetections } from "@/modules/monitoring/hooks/useDetections";
 import { useEcadReports } from "@/modules/monitoring/hooks/useEcadReports";
 import { storage } from "@/shared/lib/storage";
-import type { ObraWithRelations } from "@/modules/catalog/types/catalog.types";
+import type { WorkWithRelations } from "@/modules/catalog/types/catalog.types";
 import type { CatalogObraRef } from "../types";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
@@ -85,7 +85,7 @@ export default function RightsMonitoring() {
   const obraQueries = useQueries({
     queries: workIds.map((id) => ({
       queryKey: ["byId", "obras", id],
-      queryFn: () => storage.findById<ObraWithRelations & { id: string }>("obras", id),
+      queryFn: () => storage.findById<WorkWithRelations & { id: string }>("obras", id),
       staleTime: 30_000,
     })),
   });

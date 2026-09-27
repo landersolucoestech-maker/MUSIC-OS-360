@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const obraSchema = z.object({
+export const workSchema = z.object({
   tituloObra: z.string()
     .min(1, "Título da obra é obrigatório")
     .max(200, "Título deve ter no máximo 200 caracteres")
@@ -21,4 +21,4 @@ export const obraSchema = z.object({
   aceitaTermos: z.boolean().default(false),
 }).strict();
 
-export type ObraFormData = z.infer<typeof obraSchema>;
+export type WorkFormData = z.infer<typeof workSchema>;

@@ -4,25 +4,25 @@ import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "./_helpers/render-with-providers";
 import React from "react";
 
-const { updateFonogramaMock, addFonogramaMock } = vi.hoisted(() => ({
-  updateFonogramaMock: vi.fn().mockResolvedValue({}),
-  addFonogramaMock: vi.fn().mockResolvedValue({}),
+const { updatePhonogramMock, addPhonogramMock } = vi.hoisted(() => ({
+  updatePhonogramMock: vi.fn().mockResolvedValue({}),
+  addPhonogramMock: vi.fn().mockResolvedValue({}),
 }));
 
 vi.mock("@/modules/catalog/hooks/useFonogramas", () => {
   const stableReturn = {
-    fonogramas: [] as any[],
+    phonograms: [] as any[],
     isLoading: false,
     error: null,
-    addFonograma: { mutateAsync: addFonogramaMock },
-    updateFonograma: { mutateAsync: updateFonogramaMock },
-    deleteFonograma: { mutateAsync: vi.fn() },
+    addPhonogram: { mutateAsync: addPhonogramMock },
+    updatePhonogram: { mutateAsync: updatePhonogramMock },
+    deletePhonogram: { mutateAsync: vi.fn() },
   };
-  return { useFonogramas: () => stableReturn };
+  return { usePhonograms: () => stableReturn };
 });
 
 vi.mock("@/modules/catalog/hooks/useObras", () => {
-  const stableObras = [
+  const stableWorks = [
     {
       id: "obra-1",
       title: "Canção Vinculada",
@@ -32,14 +32,14 @@ vi.mock("@/modules/catalog/hooks/useObras", () => {
     },
   ];
   const stableReturn = {
-    obras: stableObras,
+    works: stableWorks,
     isLoading: false,
     error: null,
-    addObra: { mutateAsync: vi.fn() },
-    updateObra: { mutateAsync: vi.fn() },
-    deleteObra: { mutateAsync: vi.fn() },
+    addWork: { mutateAsync: vi.fn() },
+    updateWork: { mutateAsync: vi.fn() },
+    deleteWork: { mutateAsync: vi.fn() },
   };
-  return { useObras: () => stableReturn };
+  return { useWorks: () => stableReturn };
 });
 
 // Task J: the useArtistas() hook (capped at the tenant's first 50) is
@@ -69,8 +69,8 @@ vi.mock("@/shared/hooks/useCurrentOrgId", () => ({
 }));
 
 // Task I: FonogramaFormModal hydrates the linked work via useEntityById
-// (a direct GET /works/:id), no longer scanning the useObras() list — the
-// fixture must come from storage.findById, not from the useObras() mock above.
+// (a direct GET /works/:id), no longer scanning the useWorks() list — the
+// fixture must come from storage.findById, not from the useWorks() mock above.
 vi.mock("@/shared/lib/storage", async () => {
   const actual = await vi.importActual<typeof import("@/shared/lib/storage")>("@/shared/lib/storage");
   return {
@@ -127,12 +127,12 @@ vi.mock("sonner", () => ({
   },
 }));
 
-import { FonogramaFormModal } from "@/modules/catalog/components/FonogramaFormModal";
+import { PhonogramFormModal } from "@/modules/catalog/components/FonogramaFormModal";
 
 describe("FonogramaFormModal edit mode", () => {
   beforeEach(() => {
-    updateFonogramaMock.mockClear();
-    addFonogramaMock.mockClear();
+    updatePhonogramMock.mockClear();
+    addPhonogramMock.mockClear();
   });
 
   const baseFonograma = {
@@ -149,7 +149,7 @@ describe("FonogramaFormModal edit mode", () => {
 
   it("pre-fills every field from the persisted fonograma row", async () => {
     renderWithProviders(
-      <FonogramaFormModal
+      <PhonogramFormModal
         open={true}
         onOpenChange={() => {}}
         mode="edit"
@@ -181,9 +181,9 @@ describe("FonogramaFormModal edit mode", () => {
     expect(nomeInputs).toEqual(expect.arrayContaining(["Pedro", "Marta"]));
   });
 
-  it("saves edits via updateFonograma with the right payload", async () => {
+  it("saves edits via updatePhonogram with the right payload", async () => {
     renderWithProviders(
-      <FonogramaFormModal
+      <PhonogramFormModal
         open={true}
         onOpenChange={vi.fn()}
         mode="edit"
@@ -206,10 +206,10 @@ describe("FonogramaFormModal edit mode", () => {
     fireEvent.click(screen.getByTestId("button-submit-fonograma"));
 
     await waitFor(() => {
-      expect(updateFonogramaMock).toHaveBeenCalledTimes(1);
+      expect(updatePhonogramMock).toHaveBeenCalledTimes(1);
     });
 
-    const callArg = updateFonogramaMock.mock.calls[0][0];
+    const callArg = updatePhonogramMock.mock.calls[0][0];
     expect(callArg.id).toBe("fono-1");
     expect(callArg.work_id).toBe("obra-1");
     expect(callArg.isrc).toBe("BR-ABC-25-99999");
@@ -239,7 +239,7 @@ describe("FonogramaFormModal edit mode", () => {
   // be filled.
   it("resolves the interprete's artist name via storage.findById, not from the capped artistas list", async () => {
     renderWithProviders(
-      <FonogramaFormModal
+      <PhonogramFormModal
         open={true}
         onOpenChange={() => {}}
         mode="create"

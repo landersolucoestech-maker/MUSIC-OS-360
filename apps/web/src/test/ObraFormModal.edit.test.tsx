@@ -5,22 +5,22 @@ import { renderWithProviders } from "./_helpers/render-with-providers";
 import React from "react";
 
 // Mocks must be declared before importing the component.
-const { updateObraMock, addObraMock, toastErrorMock } = vi.hoisted(() => ({
-  updateObraMock: vi.fn().mockResolvedValue({}),
-  addObraMock: vi.fn().mockResolvedValue({}),
+const { updateWorkMock, addWorkMock, toastErrorMock } = vi.hoisted(() => ({
+  updateWorkMock: vi.fn().mockResolvedValue({}),
+  addWorkMock: vi.fn().mockResolvedValue({}),
   toastErrorMock: vi.fn(),
 }));
 
 vi.mock("@/modules/catalog/hooks/useObras", () => {
   const stableReturn = {
-    obras: [] as any[],
+    works: [] as any[],
     isLoading: false,
     error: null,
-    addObra: { mutateAsync: addObraMock },
-    updateObra: { mutateAsync: updateObraMock },
-    deleteObra: { mutateAsync: vi.fn() },
+    addWork: { mutateAsync: addWorkMock },
+    updateWork: { mutateAsync: updateWorkMock },
+    deleteWork: { mutateAsync: vi.fn() },
   };
-  return { useObras: () => stableReturn };
+  return { useWorks: () => stableReturn };
 });
 
 vi.mock("@/modules/artist/hooks/useSignedArtists", () => {
@@ -99,12 +99,12 @@ vi.mock("sonner", () => ({
   },
 }));
 
-import { ObraFormModal } from "@/modules/catalog/components/ObraFormModal";
+import { WorkFormModal } from "@/modules/catalog/components/ObraFormModal";
 
 describe("ObraFormModal edit mode", () => {
   beforeEach(() => {
-    updateObraMock.mockClear();
-    addObraMock.mockClear();
+    updateWorkMock.mockClear();
+    addWorkMock.mockClear();
     toastErrorMock.mockClear();
   });
 
@@ -123,7 +123,7 @@ describe("ObraFormModal edit mode", () => {
 
   it("pre-fills every field from the persisted obra row", () => {
     renderWithProviders(
-      <ObraFormModal
+      <WorkFormModal
         open={true}
         onOpenChange={() => {}}
         mode="edit"
@@ -149,10 +149,10 @@ describe("ObraFormModal edit mode", () => {
     expect(nomeInputs).toEqual(expect.arrayContaining(["Alice", "Bob", "Carol"]));
   });
 
-  it("saves edits via updateObra with normalized payload", async () => {
+  it("saves edits via updateWork with normalized payload", async () => {
     const onOpenChange = vi.fn();
     renderWithProviders(
-      <ObraFormModal
+      <WorkFormModal
         open={true}
         onOpenChange={onOpenChange}
         mode="edit"
@@ -178,10 +178,10 @@ describe("ObraFormModal edit mode", () => {
     expect(toastErrorMock).not.toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(updateObraMock).toHaveBeenCalledTimes(1);
+      expect(updateWorkMock).toHaveBeenCalledTimes(1);
     });
 
-    const callArg = updateObraMock.mock.calls[0][0];
+    const callArg = updateWorkMock.mock.calls[0][0];
     expect(callArg.id).toBe("obra-1");
     expect(callArg.title).toBe("Canção Editada");
     // Status round-trips back to DB form
@@ -208,7 +208,7 @@ describe("ObraFormModal edit mode", () => {
   // never scanning the capped array of useArtistas() (mocked empty above).
   it("resolves the linked project's artist via storage.findById when linking a project", async () => {
     renderWithProviders(
-      <ObraFormModal
+      <WorkFormModal
         open={true}
         onOpenChange={() => {}}
         mode="create"

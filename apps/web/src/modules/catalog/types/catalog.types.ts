@@ -4,7 +4,7 @@ import type { WorkStatusValue, WorkType, PhonogramStatusValue } from "@/shared/t
 
 export type { WorkStatusValue, WorkType, PhonogramStatusValue };
 
-export interface Obra {
+export interface Work {
   id: string;
   user_id?: string;
   title: string;
@@ -32,15 +32,15 @@ export interface Obra {
   [key: string]: unknown;
 }
 
-export type ObraInsert = Omit<Obra, "id" | "user_id" | "created_at" | "updated_at">;
-export type ObraUpdate = Partial<ObraInsert>;
+export type WorkInsert = Omit<Work, "id" | "user_id" | "created_at" | "updated_at">;
+export type WorkUpdate = Partial<WorkInsert>;
 
-export interface ObraWithRelations extends Obra {
+export interface WorkWithRelations extends Work {
   artistas?: ArtistaRef | null;
   projetos?: ProjetoRef | null;
 }
 
-export interface Fonograma {
+export interface Phonogram {
   id: string;
   user_id?: string;
   title?: string | null;
@@ -91,10 +91,10 @@ export interface Fonograma {
   [key: string]: unknown;
 }
 
-export type FonogramaInsert = Omit<Fonograma, "id" | "user_id" | "created_at" | "updated_at">;
-export type FonogramaUpdate = Partial<FonogramaInsert>;
+export type PhonogramInsert = Omit<Phonogram, "id" | "user_id" | "created_at" | "updated_at">;
+export type PhonogramUpdate = Partial<PhonogramInsert>;
 
-export interface FonogramaWithRelations extends Fonograma {
+export interface PhonogramWithRelations extends Phonogram {
   artistas?: ArtistaRef | null;
 }
 

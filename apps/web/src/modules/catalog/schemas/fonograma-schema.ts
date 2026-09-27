@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const fonogramaSchema = z.object({
+export const phonogramSchema = z.object({
   title: z.string()
     .min(1, "Título do fonograma é obrigatório")
     .max(200, "Título deve ter no máximo 200 caracteres")
@@ -18,4 +18,4 @@ export const fonogramaSchema = z.object({
   aceitaTermos: z.boolean().default(false),
 });
 
-export type FonogramaFormData = z.infer<typeof fonogramaSchema>;
+export type PhonogramFormData = z.infer<typeof phonogramSchema>;

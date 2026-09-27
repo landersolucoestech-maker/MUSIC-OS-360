@@ -21,7 +21,7 @@ import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
 
 // `compositores` is typed as string[] in the schema, but in some legacy
 // records it may arrive as a string or null. Normalizes safely.
-function compositoresToString(value: unknown): string {
+function composersToString(value: unknown): string {
   if (Array.isArray(value)) return value.filter(Boolean).join(", ");
   if (typeof value === "string") return value;
   return "";
@@ -39,19 +39,19 @@ interface ParticipacaoView {
   musicoAcompanhante?: ParticipanteView[];
 }
 
-interface ObraVinculadaView {
+interface LinkedWorkView {
   title?: string;
   titulo?: string;
   genero?: string;
   compositores?: string;
 }
 
-interface ArquivoAudioView {
+interface AudioFileView {
   name: string;
   size: number;
 }
 
-export interface FonogramaViewData {
+export interface PhonogramViewData {
   // Identity
   title?: string | null;
   gravadora?: string | null;
@@ -103,19 +103,19 @@ export interface FonogramaViewData {
   origem_externa?: string | null;
   origem_externa_sincronizado_em?: string | null;
   // Composite
-  obraVinculada?: ObraVinculadaView | null;
-  obra?: ObraVinculadaView | null;
+  obraVinculada?: LinkedWorkView | null;
+  obra?: LinkedWorkView | null;
   work_id?: string | null;
   workId?: string | null;
   participacao?: ParticipacaoView | null;
-  arquivoAudio?: ArquivoAudioView | null;
-  arquivo_audio?: ArquivoAudioView | null;
+  arquivoAudio?: AudioFileView | null;
+  arquivo_audio?: AudioFileView | null;
 }
 
-interface FonogramaViewModalProps {
+interface PhonogramViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  fonograma?: FonogramaViewData | null;
+  fonograma?: PhonogramViewData | null;
 }
 
 const formatFileSize = (bytes: number) => {
@@ -199,24 +199,24 @@ function SwitchField({
   );
 }
 
-export function FonogramaViewModal({
+export function PhonogramViewModal({
   open,
   onOpenChange,
-  fonograma,
-}: FonogramaViewModalProps) {
-  const [produtorOpen, setProdutorOpen] = useState(true);
-  const [interpreteOpen, setInterpreteOpen] = useState(true);
+  fonograma: phonogram,
+}: PhonogramViewModalProps) {
+  const [producerOpen, setProducerOpen] = useState(true);
+  const [performerOpen, setPerformerOpen] = useState(true);
   const [musicoOpen, setMusicoOpen] = useState(true);
   const [uploadOpen, setUploadOpen] = useState(true);
 
   // Resolves the linked work DIRECTLY by ID (GET /works/:id) when no inline
   // object came — does not depend on the work being among the first records
   // loaded (Task J: it used to use an unfiltered useObras(), truncated at 50).
-  const inlineObra = fonograma?.obraVinculada ?? fonograma?.obra ?? null;
-  const lookupObraId = !inlineObra ? (fonograma?.work_id ?? fonograma?.workId) : undefined;
-  const { entity: foundObra } = useEntityById<ObraWithRelations>("obras", open ? lookupObraId : undefined);
+  const inlineWork = phonogram?.obraVinculada ?? phonogram?.obra ?? null;
+  const lookupWorkId = !inlineWork ? (phonogram?.work_id ?? phonogram?.workId) : undefined;
+  const { entity: foundWork } = useEntityById<ObraWithRelations>("obras", open ? lookupWorkId : undefined);
 
-  if (!fonograma) return null;
+  if (!phonogram) return null;
 
   // Pick the first non-empty string value from a list of optional fields
   const pickStr = (
@@ -229,37 +229,37 @@ export function FonogramaViewModal({
   };
 
   // Resolves the linked work: accepts an inline object (legacy) or resolves via work_id.
-  let obraVinculada: ObraVinculadaView | null = inlineObra;
-  if (!obraVinculada && lookupObraId) {
-    obraVinculada = foundObra
+  let linkedWork: LinkedWorkView | null = inlineWork;
+  if (!linkedWork && lookupWorkId) {
+    linkedWork = foundWork
       ? {
-          title: foundObra.title ?? "",
-          genero: foundObra.music_genre ?? "",
-          compositores: compositoresToString(foundObra.compositores),
+          title: foundWork.title ?? "",
+          genero: foundWork.music_genre ?? "",
+          compositores: composersToString(foundWork.compositores),
         }
       : { title: "Obra vinculada" };
   }
 
-  const obraTitle = obraVinculada?.title || obraVinculada?.titulo || "";
+  const workTitle = linkedWork?.title || linkedWork?.titulo || "";
 
-  const fonogramaTitle = pickStr(fonograma.title);
-  const gravadora = pickStr(fonograma.gravadora);
-  const observacoes = pickStr(fonograma.notes);
+  const phonogramTitle = pickStr(phonogram.title);
+  const recordLabel = pickStr(phonogram.gravadora);
+  const notes = pickStr(phonogram.notes);
 
-  const codEntidade = pickStr(fonograma.codEntidade, fonograma.cod_entidade);
-  const codEcad = pickStr(fonograma.codEcad, fonograma.cod_ecad);
-  const agregadora = pickStr(fonograma.agregadora);
+  const codEntidade = pickStr(phonogram.codEntidade, phonogram.cod_entidade);
+  const codEcad = pickStr(phonogram.codEcad, phonogram.cod_ecad);
+  const agregadora = pickStr(phonogram.agregadora);
 
   // ISRC: try parts first, otherwise split full ISRC string
-  let isrcPais = pickStr(fonograma.isrcPais);
-  let isrcRegistrante = pickStr(fonograma.isrcRegistrante);
-  let isrcAno = pickStr(fonograma.isrcAno);
-  let isrcDesignacao = pickStr(fonograma.isrcDesignacao);
-  const isrcFull = pickStr(fonograma.isrc);
-  if (!isrcPais && !isrcRegistrante && !isrcAno && !isrcDesignacao && isrcFull) {
+  let isrcCountry = pickStr(phonogram.isrcPais);
+  let isrcRegistrante = pickStr(phonogram.isrcRegistrante);
+  let isrcAno = pickStr(phonogram.isrcAno);
+  let isrcDesignacao = pickStr(phonogram.isrcDesignacao);
+  const isrcFull = pickStr(phonogram.isrc);
+  if (!isrcCountry && !isrcRegistrante && !isrcAno && !isrcDesignacao && isrcFull) {
     const clean = isrcFull.replace(/[\s-]/g, "");
     if (clean.length >= 12) {
-      isrcPais = clean.slice(0, 2);
+      isrcCountry = clean.slice(0, 2);
       isrcRegistrante = clean.slice(2, 5);
       isrcAno = clean.slice(5, 7);
       isrcDesignacao = clean.slice(7, 12);
@@ -267,84 +267,84 @@ export function FonogramaViewModal({
   }
 
   const isrcDisplay =
-    isrcPais && isrcRegistrante && isrcAno && isrcDesignacao
-      ? `${isrcPais}-${isrcRegistrante}-${isrcAno}-${isrcDesignacao}`
+    isrcCountry && isrcRegistrante && isrcAno && isrcDesignacao
+      ? `${isrcCountry}-${isrcRegistrante}-${isrcAno}-${isrcDesignacao}`
       : isrcFull ?? undefined;
 
-  const criadaPorIA = (fonograma.criadaPorIA ?? fonograma.criada_por_ia) === true;
-  const instrumental = (fonograma.is_instrumental ?? fonograma.instrumental ?? false) === true;
-  const nacional = (fonograma.nacional ?? true) === true;
+  const criadaPorIA = (phonogram.criadaPorIA ?? phonogram.criada_por_ia) === true;
+  const instrumental = (phonogram.is_instrumental ?? phonogram.instrumental ?? false) === true;
+  const nacional = (phonogram.nacional ?? true) === true;
   const pubSimultanea =
-    (fonograma.pubSimultanea ?? fonograma.pub_simultanea ?? false) === true;
+    (phonogram.pubSimultanea ?? phonogram.pub_simultanea ?? false) === true;
 
-  const emissao = formatDateBR(pickStr(fonograma.emissao));
-  const gravacaoOriginal = formatDateBR(
+  const emissao = formatDateBR(pickStr(phonogram.emissao));
+  const recordingDate = formatDateBR(
     pickStr(
-      fonograma.gravacaoOriginal,
-      fonograma.gravacao_original,
-      fonograma.data_registro,
+      phonogram.gravacaoOriginal,
+      phonogram.gravacao_original,
+      phonogram.data_registro,
     ),
   );
-  const lancamento = formatDateBR(
-    pickStr(fonograma.lancamento, fonograma.data_lancamento),
+  const releaseDate = formatDateBR(
+    pickStr(phonogram.lancamento, phonogram.data_lancamento),
   );
 
   // Duration
-  let duracaoMin = pickStr(fonograma.duracaoMin, fonograma.duracao_min);
-  let duracaoSeg = pickStr(fonograma.duracaoSeg, fonograma.duracao_seg);
-  const duracaoFull = pickStr(fonograma.duration_text);
-  if ((duracaoMin === undefined || duracaoSeg === undefined) && duracaoFull) {
-    const parts = duracaoFull.split(":");
+  let durationMin = pickStr(phonogram.duracaoMin, phonogram.duracao_min);
+  let durationSeg = pickStr(phonogram.duracaoSeg, phonogram.duracao_seg);
+  const durationFull = pickStr(phonogram.duration_text);
+  if ((durationMin === undefined || durationSeg === undefined) && durationFull) {
+    const parts = durationFull.split(":");
     if (parts.length === 2) {
-      duracaoMin = duracaoMin ?? parts[0];
-      duracaoSeg = duracaoSeg ?? parts[1];
+      durationMin = durationMin ?? parts[0];
+      durationSeg = durationSeg ?? parts[1];
     }
   }
-  const duracaoDisplay =
-    duracaoMin || duracaoSeg
-      ? `${duracaoMin || "0"}min ${duracaoSeg || "0"}seg`
+  const durationDisplay =
+    durationMin || durationSeg
+      ? `${durationMin || "0"}min ${durationSeg || "0"}seg`
       : undefined;
 
-  const generoMusical = pickStr(
-    fonograma.generoMusical,
-    fonograma.music_genre,
-    fonograma.genero,
+  const musicGenre = pickStr(
+    phonogram.generoMusical,
+    phonogram.music_genre,
+    phonogram.genero,
   );
-  const midia = pickStr(fonograma.midia);
-  const paisOrigem = pickStr(fonograma.paisOrigem, fonograma.pais_origem);
-  const paisPublicacao = pickStr(
-    fonograma.paisPublicacao,
-    fonograma.pais_publicacao,
+  const media = pickStr(phonogram.midia);
+  const sourceCountry = pickStr(phonogram.paisOrigem, phonogram.pais_origem);
+  const publicationCountry = pickStr(
+    phonogram.paisPublicacao,
+    phonogram.pais_publicacao,
   );
-  const classificacao = pickStr(fonograma.classificacao);
-  const status = pickStr(fonograma.status);
-  const createdAt = (fonograma as { created_at?: string }).created_at;
+  const classificacao = pickStr(phonogram.classificacao);
+  const status = pickStr(phonogram.status);
+  const createdAt = (phonogram as { created_at?: string }).created_at;
 
   const participacao: Required<ParticipacaoView> = {
-    produtorFonografico: fonograma.participacao?.produtorFonografico ?? [],
-    interprete: fonograma.participacao?.interprete ?? [],
-    musicoAcompanhante: fonograma.participacao?.musicoAcompanhante ?? [],
+    produtorFonografico: phonogram.participacao?.produtorFonografico ?? [],
+    interprete: phonogram.participacao?.interprete ?? [],
+    musicoAcompanhante: phonogram.participacao?.musicoAcompanhante ?? [],
   };
 
-  const calcCategoria = (cat: ParticipanteView[]): number =>
+  const calcCategory = (cat: ParticipanteView[]): number =>
     cat.reduce((t, p) => t + (parseFloat(p.percentual ?? "") || 0), 0);
 
-  const totalPercentual =
-    calcCategoria(participacao.produtorFonografico) +
-    calcCategoria(participacao.interprete) +
-    calcCategoria(participacao.musicoAcompanhante);
+  const percentageTotal =
+    calcCategory(participacao.produtorFonografico) +
+    calcCategory(participacao.interprete) +
+    calcCategory(participacao.musicoAcompanhante);
 
-  const arquivoAudio = fonograma.arquivoAudio ?? fonograma.arquivo_audio ?? null;
+  const audioFile = phonogram.arquivoAudio ?? phonogram.arquivo_audio ?? null;
 
   const renderParticipacaoSection = (
     title: string,
-    categoria: keyof Required<ParticipacaoView>,
-    percentualMax: number,
+    category: keyof Required<ParticipacaoView>,
+    percentageMax: number,
     isOpen: boolean,
     setIsOpen: (v: boolean) => void,
   ) => {
-    const lista: ParticipanteView[] = participacao[categoria] ?? [];
-    const percentualAtual = calcCategoria(lista);
+    const list: ParticipanteView[] = participacao[category] ?? [];
+    const currentPercentage = calcCategory(list);
 
     return (
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -352,7 +352,7 @@ export function FonogramaViewModal({
           <span className="text-sm font-medium text-foreground">
             {title}{" "}
             <span className="text-muted-foreground font-normal">
-              — {percentualAtual.toFixed(2)}% de {percentualMax.toFixed(2)}%
+              — {currentPercentage.toFixed(2)}% de {percentageMax.toFixed(2)}%
             </span>
           </span>
           <ChevronDown
@@ -360,9 +360,9 @@ export function FonogramaViewModal({
           />
         </CollapsibleTrigger>
         <CollapsibleContent className="pt-2">
-          {lista.length > 0 ? (
+          {list.length > 0 ? (
             <div className="px-3">
-              {lista.map((p, idx) => (
+              {list.map((p, idx) => (
                 <div
                   key={p.id ?? idx}
                   className="flex items-center justify-between py-1.5 border-b border-border/50 last:border-b-0"
@@ -403,10 +403,10 @@ export function FonogramaViewModal({
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-lg font-bold">
-                  {fonogramaTitle || obraTitle || "Fonograma sem título"}
+                  {phonogramTitle || workTitle || "Fonograma sem título"}
                 </h2>
-                {fonogramaTitle && obraTitle && fonogramaTitle !== obraTitle && (
-                  <p className="text-sm text-muted-foreground mt-0.5">Obra: {obraTitle}</p>
+                {phonogramTitle && workTitle && phonogramTitle !== workTitle && (
+                  <p className="text-sm text-muted-foreground mt-0.5">Obra: {workTitle}</p>
                 )}
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <StatusBadge status={status} />
@@ -426,7 +426,7 @@ export function FonogramaViewModal({
               <p className="text-xs font-semibold text-muted-foreground  tracking-wide mb-3">
                 Obra Vinculada
               </p>
-              {obraVinculada ? (
+              {linkedWork ? (
                 <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border">
                   <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shrink-0">
                     <Music className="h-5 w-5 text-primary-foreground" />
@@ -436,11 +436,11 @@ export function FonogramaViewModal({
                       className="font-medium text-foreground truncate"
                       data-testid="text-obra-vinculada-title"
                     >
-                      {obraTitle || "—"}
+                      {workTitle || "—"}
                     </p>
-                    {(obraVinculada.genero || obraVinculada.compositores) && (
+                    {(linkedWork.genero || linkedWork.compositores) && (
                       <p className="text-xs text-muted-foreground truncate">
-                        {[obraVinculada.genero, obraVinculada.compositores]
+                        {[linkedWork.genero, linkedWork.compositores]
                           .filter(Boolean)
                           .join(" • ")}
                       </p>
@@ -462,12 +462,12 @@ export function FonogramaViewModal({
                 Informações Gerais
               </p>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                <InfoField label="Gênero Musical" value={generoMusical} />
-                <InfoField label="Mídia" value={midia} />
-                <InfoField label="Duração" value={duracaoDisplay} />
+                <InfoField label="Gênero Musical" value={musicGenre} />
+                <InfoField label="Mídia" value={media} />
+                <InfoField label="Duração" value={durationDisplay} />
                 <InfoField label="Classificação" value={classificacao} />
                 <InfoField label="Agregadora" value={agregadora} />
-                <InfoField label="Gravadora" value={gravadora} />
+                <InfoField label="Gravadora" value={recordLabel} />
               </div>
             </div>
 
@@ -494,8 +494,8 @@ export function FonogramaViewModal({
               </p>
               <div className="grid grid-cols-3 gap-3">
                 <InfoField label="Emissão" value={emissao} />
-                <InfoField label="Gravação Original" value={gravacaoOriginal} />
-                <InfoField label="Lançamento" value={lancamento} />
+                <InfoField label="Gravação Original" value={recordingDate} />
+                <InfoField label="Lançamento" value={releaseDate} />
               </div>
             </div>
 
@@ -511,8 +511,8 @@ export function FonogramaViewModal({
                 <SwitchField label="Instrumental" value={instrumental} />
                 <SwitchField label="Nacional" value={nacional} />
                 <SwitchField label="Pub. Simultânea" value={pubSimultanea} />
-                <InfoField label="País Origem" value={paisOrigem} />
-                <InfoField label="País Publicação" value={paisPublicacao} />
+                <InfoField label="País Origem" value={sourceCountry} />
+                <InfoField label="País Publicação" value={publicationCountry} />
               </div>
             </div>
 
@@ -525,7 +525,7 @@ export function FonogramaViewModal({
                   Participação
                 </p>
                 <span className="text-xs text-muted-foreground">
-                  Total: {totalPercentual.toFixed(2)}% de 100%
+                  Total: {percentageTotal.toFixed(2)}% de 100%
                 </span>
               </div>
 
@@ -534,15 +534,15 @@ export function FonogramaViewModal({
                   "Produtor Fonográfico",
                   "produtorFonografico",
                   41.7,
-                  produtorOpen,
-                  setProdutorOpen,
+                  producerOpen,
+                  setProducerOpen,
                 )}
                 {renderParticipacaoSection(
                   "Intérprete",
                   "interprete",
                   41.7,
-                  interpreteOpen,
-                  setInterpreteOpen,
+                  performerOpen,
+                  setPerformerOpen,
                 )}
                 {renderParticipacaoSection(
                   "Músico Acompanhante",
@@ -554,7 +554,7 @@ export function FonogramaViewModal({
               </div>
             </div>
 
-            {observacoes && (
+            {notes && (
               <>
                 <Separator />
                 <div>
@@ -562,13 +562,13 @@ export function FonogramaViewModal({
                     Observações
                   </p>
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                    {observacoes}
+                    {notes}
                   </p>
                 </div>
               </>
             )}
 
-            {arquivoAudio && (
+            {audioFile && (
               <>
                 <Separator />
 
@@ -588,10 +588,10 @@ export function FonogramaViewModal({
                         <FileAudio className="w-8 h-8 text-primary shrink-0" />
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-foreground truncate">
-                            {arquivoAudio.name}
+                            {audioFile.name}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {formatFileSize(arquivoAudio.size)}
+                            {formatFileSize(audioFile.size)}
                           </p>
                         </div>
                       </div>

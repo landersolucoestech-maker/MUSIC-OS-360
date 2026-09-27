@@ -4,8 +4,8 @@ import { Button } from "@/shared/ui/button";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import { useObras } from "@/modules/catalog/hooks/useObras";
-import { useFonogramas } from "@/modules/catalog/hooks/useFonogramas";
+import { useWorks } from "@/modules/catalog/hooks/useObras";
+import { usePhonograms } from "@/modules/catalog/hooks/useFonogramas";
 import type { AiGeneratedResult } from "../../types/marketing.types";
 import type { ArtistProfileSources, GenerateAiHandler, TargetOption } from "./iaCriativa.types";
 import { buildArtistProfilePrompt, loadArtistContext, type ArtistProfileContext } from "../../services/musicIntelligenceEngine";
@@ -30,8 +30,8 @@ export function PerfilTab({
   // (capped at the tenant's first 50).
   const { entity: artistRecordWire } = useEntityById<ArtistWireRecord>("artistas", artist?.id);
   const artistRecord: Artist | undefined = artistRecordWire ? wireToArtist(artistRecordWire) : undefined;
-  const { obras } = useObras(!!artist, artist?.id);
-  const { fonogramas } = useFonogramas(!!artist, artist?.id);
+  const { works: obras } = useWorks(!!artist, artist?.id);
+  const { phonograms: fonogramas } = usePhonograms(!!artist, artist?.id);
 
   const bundle = useMemo<ArtistProfileBundle | null>(
     () => artist ? loadArtistContext(artist, sources, { artistRecord, obras, fonogramas }) : null,

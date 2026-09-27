@@ -17,7 +17,7 @@ import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { obraArtistaLabel } from "@/modules/licensing/lib/licenca-format";
-import type { Obra } from "@/modules/catalog/types/catalog.types";
+import type { Work } from "@/modules/catalog/types/catalog.types";
 
 interface ClienteOption { id: string; name: string }
 
@@ -77,7 +77,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
   // the first 50 loaded by useObras() without a filter (Task J).
   const workId = useWatch({ control, name: "workId" });
   const remunerationType = useWatch({ control, name: "remunerationType" });
-  const { entity: obraSelecionada } = useEntityById<Obra>("obras", workId || undefined);
+  const { entity: obraSelecionada } = useEntityById<Work>("obras", workId || undefined);
   const artistaDerivado = useMemo(() => obraArtistaLabel(obraSelecionada), [obraSelecionada]);
   const showMonetary = remunerationType === "FIXED" || remunerationType === "FIXED_PLUS_PERCENTAGE";
   const showPercentage = remunerationType === "PERCENTAGE" || remunerationType === "FIXED_PLUS_PERCENTAGE";
@@ -212,7 +212,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
                   name="workId"
                   control={control}
                   render={({ field }) => (
-                    <AsyncEntityCombobox<Obra>
+                    <AsyncEntityCombobox<Work>
                       table="obras"
                       getLabel={(o) => o.title ?? ""}
                       value={field.value}

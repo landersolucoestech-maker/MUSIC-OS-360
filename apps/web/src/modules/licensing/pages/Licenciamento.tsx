@@ -24,7 +24,7 @@ import { UnavailableState } from "@/shared/components/UnavailableState";
 import { useLicencas } from "@/modules/licensing/hooks/useLicencas";
 import { useLicencasPaginated, useLicencasStats } from "@/modules/licensing/hooks/useLicencasPaginated";
 import { formatRemuneration, obraArtistaLabel, midiaLabel } from "@/modules/licensing/lib/licenca-format";
-import type { Obra } from "@/modules/catalog/types/catalog.types";
+import type { Work } from "@/modules/catalog/types/catalog.types";
 import { formatCurrency } from "@/shared/lib/format-utils";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
@@ -90,7 +90,7 @@ export default function Licenciamento() {
   // (GET /works/:id, GET /clients/:id) only for the records of the
   // current page — previously it scanned useObras()/an unfiltered client
   // listing, truncated to the first 50 of the tenant.
-  const [resolvedObras, setResolvedObras] = useState<Record<string, Obra>>({});
+  const [resolvedObras, setResolvedObras] = useState<Record<string, Work>>({});
   const [resolvedClientes, setResolvedClientes] = useState<Record<string, { id: string; name: string }>>({});
   const licencaObraIds = useMemo(
     () => Array.from(new Set(pageItems.map((l: any) => l.work_id).filter(Boolean))) as string[],
@@ -103,10 +103,10 @@ export default function Licenciamento() {
   useEffect(() => {
     if (licencaObraIds.length === 0) return;
     let cancelled = false;
-    Promise.all(licencaObraIds.map((id) => storage.findById<Obra & { id: string }>("obras", id)))
+    Promise.all(licencaObraIds.map((id) => storage.findById<Work & { id: string }>("obras", id)))
       .then((results) => {
         if (cancelled) return;
-        const map: Record<string, Obra> = {};
+        const map: Record<string, Work> = {};
         results.forEach((o, i) => { if (o) map[licencaObraIds[i]] = o; });
         setResolvedObras((prev) => ({ ...prev, ...map }));
       })

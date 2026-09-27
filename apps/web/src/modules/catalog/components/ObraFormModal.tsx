@@ -46,29 +46,29 @@ import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/pro
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { ParticipanteViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
-import { useObras } from "@/modules/catalog/hooks/useObras";
+import { useWorks } from "@/modules/catalog/hooks/useObras";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useCurrentOrgId } from "@/shared/hooks/useCurrentOrgId";
 import { AbramusSearchRow } from "@/modules/catalog/components/AbramusSearchRow";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import type { TipoObra } from "@/modules/catalog/components/ObraTipoSelectorModal";
+import type { WorkType } from "@/modules/catalog/components/ObraTipoSelectorModal";
 import {
   dbStatusToSelect,
   parseDurationText,
-  obraToParticipantes,
-  obraTitle,
-  obraOutrosTitulos,
-  obraReferenciasConexas,
-  obraLetraCompleta,
-  obraCriadaPorIA,
-  obraTipoIAValue,
-  obraIaHarmonia,
-  obraIaMelodia,
-  obraIaLetra,
-  obraToFormFields,
-  formToObraPayload,
+  workToParticipants,
+  workTitle,
+  workOtherTitles,
+  workRelatedReferences,
+  workFullLyrics,
+  workCreatedByAi,
+  workTypeAiValue,
+  workAiHarmony,
+  workAiMelody,
+  workAiLyrics,
+  workToFormFields,
+  formToWorkPayload,
 } from "@/modules/catalog/mappers";
-import { obraSchema } from "@/modules/catalog/lib/obra-schema";
+import { workSchema } from "@/modules/catalog/lib/obra-schema";
 
 // ── Autocomplete: server-side search by nome_artistico/nome_civil (Task I —
 // it used to filter only the tenant's first 50 artists, loaded via
@@ -152,10 +152,10 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
   );
 }
 
-export const ObraTipoBadge = ({
+export const WorkTypeBadge = ({
   type,
 }: {
-  type?: TipoObra | string | null;
+  type?: WorkType | string | null;
 }) => {
   if (type === "autoral") {
     return (
@@ -171,13 +171,13 @@ export const ObraTipoBadge = ({
   );
 };
 
-interface ProjetoSelecionado {
+interface SelectedProject {
   id: string;
   nome: string;
   artistaNome?: string | null;
 }
 
-interface ObraFormModalProps {
+interface WorkFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   obra?: any;
@@ -187,7 +187,7 @@ interface ObraFormModalProps {
    * it forces the classification in the header. In "edit"/"view" mode it is
    * derived from the `obra.tipo_obra` record.
    */
-  tipoObra?: TipoObra;
+  tipoObra?: WorkType;
   /** Called after a successful save — used to open a prefilled contract modal */
   onSaved?: (info: { title: string; notes: string }) => void;
 }
@@ -206,7 +206,7 @@ interface IAElement {
   prompt: string;
 }
 
-const generosMusicais = MUSICAL_GENRE_LABELS;
+const musicGenres = MUSICAL_GENRE_LABELS;
 const idiomas = LANGUAGE_LABELS;
 const situacoes = ["Em Análise", "Pendente", "Registrado", "Rejeitado"];
 const classesFuncao = [
@@ -216,131 +216,131 @@ const classesFuncao = [
   "Tradutor",
 ];
 
-export function ObraFormModal({
+export function WorkFormModal({
   open,
   onOpenChange,
-  obra,
+  obra: work,
   mode,
-  tipoObra: tipoObraProp,
+  tipoObra: workTypeProp,
   onSaved,
-}: ObraFormModalProps) {
-  const { addObra, updateObra } = useObras();
+}: WorkFormModalProps) {
+  const { addWork, updateWork } = useWorks();
   const { orgId } = useCurrentOrgId();
 
   // Resolution of the work type. On creation it comes from the selector (prop). On
   // edit/view it comes from the record itself. Default = referencia.
-  const tipoObra: TipoObra = (tipoObraProp ??
-    (obra?.tipo_obra as TipoObra | undefined) ??
-    "referencia") as TipoObra;
-  const [projetoSelecionado, setProjetoSelecionado] =
-    useState<ProjetoSelecionado | null>(null);
-  const [buscaProjeto, setBuscaProjeto] = useState("");
-  const debouncedBuscaProjeto = useDebounce(buscaProjeto, 300);
-  const [buscaProjetoOpen, setBuscaProjetoOpen] = useState(false);
-  const initialDurationText = parseDurationText(obra?.duration_text);
-  const [codEcad, setCodEcad] = useState(obra?.cod_ecad ?? obra?.codEcad ?? "");
+  const workType: WorkType = (workTypeProp ??
+    (work?.tipo_obra as WorkType | undefined) ??
+    "referencia") as WorkType;
+  const [selectedProject, setSelectedProject] =
+    useState<SelectedProject | null>(null);
+  const [searchProject, setSearchProject] = useState("");
+  const debouncedSearchProject = useDebounce(searchProject, 300);
+  const [searchProjectOpen, setSearchProjectOpen] = useState(false);
+  const initialDurationText = parseDurationText(work?.duration_text);
+  const [codEcad, setCodEcad] = useState(work?.cod_ecad ?? work?.codEcad ?? "");
   const [codEntidade, setCodEntidade] = useState(
-    obra?.cod_entidade ?? obra?.codEntidade ?? "",
+    work?.cod_entidade ?? work?.codEntidade ?? "",
   );
-  const [iswc, setIswc] = useState(obra?.iswc || "");
-  const [tituloObra, setTitleObra] = useState(obraTitle(obra));
-  const [situacao, setSituacao] = useState(dbStatusToSelect(obra?.status));
-  const [generoMusical, setGeneroMusical] = useState(
-    obra?.music_genre?.toLowerCase() || "",
+  const [iswc, setIswc] = useState(work?.iswc || "");
+  const [workTitleValue, setWorkTitle] = useState(workTitle(work));
+  const [situacao, setSituacao] = useState(dbStatusToSelect(work?.status));
+  const [musicGenre, setMusicGenre] = useState(
+    work?.music_genre?.toLowerCase() || "",
   );
-  const [idioma, setIdioma] = useState(obra?.idioma || "");
-  const [duracaoMin, setDuracaoMin] = useState(
-    obra?.duracaoMin ?? initialDurationText.min,
+  const [idioma, setIdioma] = useState(work?.idioma || "");
+  const [durationMin, setDurationMin] = useState(
+    work?.duracaoMin ?? initialDurationText.min,
   );
-  const [duracaoSeg, setDuracaoSeg] = useState(
-    obra?.duracaoSeg ?? initialDurationText.seg,
+  const [durationSeg, setDurationSeg] = useState(
+    work?.duracaoSeg ?? initialDurationText.seg,
   );
-  const [instrumental, setInstrumental] = useState(obra?.instrumental || "nao");
-  const [criadaPorIA, setCriadaPorIA] = useState(() => obraCriadaPorIA(obra));
-  const [tipoIA, setTipoIA] = useState(() => obraTipoIAValue(obra));
-  const [iaHarmonia, setIaHarmonia] = useState<IAElement>(() => obraIaHarmonia(obra));
-  const [iaMelodia, setIaMelodia] = useState<IAElement>(() => obraIaMelodia(obra));
-  const [iaLetra, setIaLetra] = useState<IAElement>(() => obraIaLetra(obra));
+  const [instrumental, setInstrumental] = useState(work?.instrumental || "nao");
+  const [criadaPorIA, setCriadaPorIA] = useState(() => workCreatedByAi(work));
+  const [aiType, setAiType] = useState(() => workTypeAiValue(work));
+  const [iaHarmonia, setIaHarmonia] = useState<IAElement>(() => workAiHarmony(work));
+  const [iaMelodia, setIaMelodia] = useState<IAElement>(() => workAiMelody(work));
+  const [aiLyrics, setAiLyrics] = useState<IAElement>(() => workAiLyrics(work));
   const [participantes, setParticipantes] = useState<Participante[]>(() =>
-    obraToParticipantes(obra),
+    workToParticipants(work),
   );
-  const [outrosTitulos, setOutrosTitulos] = useState<string[]>(() => obraOutrosTitulos(obra));
-  const [referenciasConexas, setReferenciasConexas] = useState<string[]>(() => obraReferenciasConexas(obra));
-  const [letraCompleta, setLetraCompleta] = useState(() => obraLetraCompleta(obra));
+  const [outrosTitulos, setOutrosTitulos] = useState<string[]>(() => workOtherTitles(work));
+  const [referenciasConexas, setReferenciasConexas] = useState<string[]>(() => workRelatedReferences(work));
+  const [fullLyrics, setFullLyrics] = useState(() => workFullLyrics(work));
   const [aceitaTermos, setAceitaTermos] = useState(false);
-  const [viewArtista, setViewArtista] = useState<Artist | null>(null);
+  const [viewArtist, setViewArtist] = useState<Artist | null>(null);
 
   // Sync state whenever the modal opens or the obra record changes
   useEffect(() => {
     if (!open) return;
-    const f = obraToFormFields(obra);
-    setBuscaProjeto("");
-    setBuscaProjetoOpen(false);
-    setTitleObra(f.title);
+    const f = workToFormFields(work);
+    setSearchProject("");
+    setSearchProjectOpen(false);
+    setWorkTitle(f.title);
     setSituacao(f.situacao);
-    setGeneroMusical(f.generoMusical);
+    setMusicGenre(f.generoMusical);
     setIdioma(f.idioma);
-    setDuracaoMin(f.duracaoMin);
-    setDuracaoSeg(f.duracaoSeg);
+    setDurationMin(f.duracaoMin);
+    setDurationSeg(f.duracaoSeg);
     setInstrumental(f.instrumental);
     setCodEcad(f.codEcad);
     setCodEntidade(f.codEntidade);
     setIswc(f.iswc);
     setCriadaPorIA(f.criadaPorIA);
-    setTipoIA(f.tipoIA);
+    setAiType(f.tipoIA);
     setIaHarmonia(f.iaHarmonia);
     setIaMelodia(f.iaMelodia);
-    setIaLetra(f.iaLetra);
+    setAiLyrics(f.iaLetra);
     setParticipantes(f.participantes);
     setOutrosTitulos(f.outrosTitulos);
     setReferenciasConexas(f.referenciasConexas);
-    setLetraCompleta(f.letraCompleta);
+    setFullLyrics(f.letraCompleta);
     setAceitaTermos(false);
-  }, [open, obra]);
+  }, [open, work]);
 
   // Hydrates the linked project from obra.project_id — fetches DIRECTLY by
   // ID (GET /projects/:id), does not depend on the project being among the first
   // records loaded (Task J: it used to use an unfiltered useProjetos(), which
   // truncated at 50 projects per tenant).
-  const linkedProjectId: string | undefined = obra?.project_id ?? obra?.projectId;
-  const { entity: linkedProjeto } = useEntityById<ProjetoWithRelations>(
+  const linkedProjectId: string | undefined = work?.project_id ?? work?.projectId;
+  const { entity: linkedProject } = useEntityById<ProjetoWithRelations>(
     "projects",
     open ? linkedProjectId : undefined,
   );
   useEffect(() => {
     if (!open) return;
     if (!linkedProjectId) {
-      setProjetoSelecionado(null);
+      setSelectedProject(null);
       return;
     }
-    if (linkedProjeto) {
-      setProjetoSelecionado({
-        id: linkedProjeto.id,
-        nome: linkedProjeto.title ?? (linkedProjeto.nome as string) ?? "",
-        artistaNome: (linkedProjeto.artistas?.nome_artistico ?? null) as string | null,
+    if (linkedProject) {
+      setSelectedProject({
+        id: linkedProject.id,
+        nome: linkedProject.title ?? (linkedProject.nome as string) ?? "",
+        artistaNome: (linkedProject.artistas?.nome_artistico ?? null) as string | null,
       });
     } else {
       // Still loading — keeps the ID with a placeholder until the lookup by ID resolves.
-      setProjetoSelecionado({ id: linkedProjectId, nome: "Projeto vinculado" });
+      setSelectedProject({ id: linkedProjectId, nome: "Projeto vinculado" });
     }
-  }, [open, linkedProjectId, linkedProjeto]);
+  }, [open, linkedProjectId, linkedProject]);
 
   // Server-side search of completed projects (Task J) — it used to filter
   // locally only the tenant's first 50 projects loaded via an
   // unfiltered useProjetos(); now each typed (internally debounced)
   // key re-runs the search in the backend, reaching any completed
   // project of the tenant.
-  const { items: projetosConcluidosFiltrados } = useEntityLookup<ProjetoWithRelations>({
+  const { items: filteredCompletedProjects } = useEntityLookup<ProjetoWithRelations>({
     table: "projects",
-    search: buscaProjeto,
+    search: searchProject,
     filters: { status: "concluido" },
-    enabled: buscaProjetoOpen,
+    enabled: searchProjectOpen,
   });
 
   const [participacaoOpen, setParticipacaoOpen] = useState(true);
   const [outrosTitulosOpen, setOutrosTitulosOpen] = useState(false);
   const [referenciasOpen, setReferenciasOpen] = useState(false);
-  const [letraOpen, setLetraOpen] = useState(true);
+  const [lyricsOpen, setLyricsOpen] = useState(true);
 
   const isViewMode = mode === "view";
   const title =
@@ -350,7 +350,7 @@ export function ObraFormModal({
         ? "Editar Música"
         : "Detalhes da Obra";
 
-  const calcularPercentualTotal = () => {
+  const calculateTotalPercentage = () => {
     return participantes.reduce(
       (total, p) => total + (parseFloat(p.percentual) || 0),
       0,
@@ -412,43 +412,43 @@ export function ObraFormModal({
     setReferenciasConexas(referenciasConexas.filter((_, i) => i !== index));
   };
 
-  const duracaoMinNum = Number(duracaoMin);
-  const duracaoSegNum = Number(duracaoSeg);
-  const duracaoMinError =
-    duracaoMin !== "" && (!Number.isInteger(duracaoMinNum) || duracaoMinNum < 0)
+  const durationMinNum = Number(durationMin);
+  const durationSegNum = Number(durationSeg);
+  const durationMinError =
+    durationMin !== "" && (!Number.isInteger(durationMinNum) || durationMinNum < 0)
       ? "Minutos não pode ser negativo"
       : null;
-  const duracaoSegError =
-    duracaoSeg !== "" &&
-    (!Number.isInteger(duracaoSegNum) ||
-      duracaoSegNum < 0 ||
-      duracaoSegNum > 59)
+  const durationSegError =
+    durationSeg !== "" &&
+    (!Number.isInteger(durationSegNum) ||
+      durationSegNum < 0 ||
+      durationSegNum > 59)
       ? "Segundos deve estar entre 0 e 59"
       : null;
-  const hasDuracaoError = !!(duracaoMinError || duracaoSegError);
+  const hasDurationError = !!(durationMinError || durationSegError);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "view") return;
 
-    if (hasDuracaoError) {
+    if (hasDurationError) {
       toast.error("Corrija os erros no campo Duração antes de continuar.");
       return;
     }
 
-    const validation = obraSchema.safeParse({
-      tituloObra,
-      generoMusical,
+    const validation = workSchema.safeParse({
+      tituloObra: workTitleValue,
+      generoMusical: musicGenre,
       idioma,
       situacao,
       iswc,
       codEcad,
       codEntidade,
-      duracaoMin: String(duracaoMin),
-      duracaoSeg: String(duracaoSeg),
+      duracaoMin: String(durationMin),
+      duracaoSeg: String(durationSeg),
       instrumental: instrumental as "sim" | "nao",
       criadaPorIA,
-      letraCompleta,
+      letraCompleta: fullLyrics,
       aceitaTermos,
     });
 
@@ -465,37 +465,37 @@ export function ObraFormModal({
       return;
     }
 
-    const payload = formToObraPayload({
-      title: tituloObra,
-      generoMusical,
+    const payload = formToWorkPayload({
+      title: workTitleValue,
+      generoMusical: musicGenre,
       idioma,
       iswc,
       codEcad,
       codEntidade,
-      duracaoMin,
-      duracaoSeg,
+      duracaoMin: durationMin,
+      duracaoSeg: durationSeg,
       instrumental,
       criadaPorIA,
-      tipoIA,
+      tipoIA: aiType,
       iaHarmonia,
       iaMelodia,
-      iaLetra,
+      iaLetra: aiLyrics,
       outrosTitulos,
       referenciasConexas,
-      letraCompleta,
+      letraCompleta: fullLyrics,
       participantes,
       situacao,
-      projectId: projetoSelecionado?.id ?? null,
+      projectId: selectedProject?.id ?? null,
       artistId: null,
-      tipoObra,
+      tipoObra: workType,
       orgId: orgId as string,
     });
 
     try {
-      if (mode === "edit" && obra?.id) {
-        await updateObra.mutateAsync({ id: obra.id, ...payload, expectedUpdatedAt: getExpectedUpdatedAt(obra) });
+      if (mode === "edit" && work?.id) {
+        await updateWork.mutateAsync({ id: work.id, ...payload, expectedUpdatedAt: getExpectedUpdatedAt(work) });
       } else {
-        await addObra.mutateAsync(payload as any);
+        await addWork.mutateAsync(payload as any);
       }
 
       onOpenChange(false);
@@ -505,13 +505,13 @@ export function ObraFormModal({
       const linhasParticipantes = participantes
         .filter((p) => p.name || p.classeFuncao)
         .map((p) => {
-          const partes = [p.name, p.classeFuncao, p.percentual ? `${p.percentual}%` : ""].filter(Boolean);
-          return partes.join(" – ");
+          const parties = [p.name, p.classeFuncao, p.percentual ? `${p.percentual}%` : ""].filter(Boolean);
+          return parties.join(" – ");
         });
       const obsLinhas: string[] = [
-        `Obra: ${tituloObra}`,
+        `Obra: ${workTitleValue}`,
         iswc ? `ISWC: ${iswc}` : null,
-        generoMusical ? `Gênero: ${generoMusical}` : null,
+        musicGenre ? `Gênero: ${musicGenre}` : null,
         `Data: ${dataHoje}`,
         linhasParticipantes.length > 0 ? "" : null,
         linhasParticipantes.length > 0 ? "Participantes:" : null,
@@ -519,7 +519,7 @@ export function ObraFormModal({
       ].filter((l): l is string => l !== null);
 
       onSaved?.({
-        title: `Cessão de Obras – ${tituloObra}`,
+        title: `Cessão de Obras – ${workTitleValue}`,
         notes: obsLinhas.join("\n"),
       });
     } catch (err) {
@@ -534,7 +534,7 @@ export function ObraFormModal({
         <DialogHeader>
           <div className="flex items-center justify-between gap-3 pr-6">
             <DialogTitle>{title}</DialogTitle>
-            <ObraTipoBadge type={tipoObra} />
+            <WorkTypeBadge type={workType} />
           </div>
         </DialogHeader>
 
@@ -548,7 +548,7 @@ export function ObraFormModal({
               </span>
             </div>
 
-            {projetoSelecionado ? (
+            {selectedProject ? (
               <div
                 className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border"
                 data-testid="projeto-vinculado-card"
@@ -561,11 +561,11 @@ export function ObraFormModal({
                     className="font-medium truncate"
                     data-testid="text-projeto-vinculado-nome"
                   >
-                    {projetoSelecionado.nome}
+                    {selectedProject.nome}
                   </p>
-                  {projetoSelecionado.artistaNome && (
+                  {selectedProject.artistaNome && (
                     <p className="text-xs text-muted-foreground truncate">
-                      {projetoSelecionado.artistaNome}
+                      {selectedProject.artistaNome}
                     </p>
                   )}
                 </div>
@@ -574,7 +574,7 @@ export function ObraFormModal({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => setProjetoSelecionado(null)}
+                    onClick={() => setSelectedProject(null)}
                     data-testid="button-remove-projeto-vinculado"
                   >
                     <X className="w-4 h-4" />
@@ -583,20 +583,20 @@ export function ObraFormModal({
               </div>
             ) : (
               <Popover
-                open={buscaProjetoOpen}
-                onOpenChange={setBuscaProjetoOpen}
+                open={searchProjectOpen}
+                onOpenChange={setSearchProjectOpen}
               >
                 <PopoverTrigger asChild>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      value={buscaProjeto}
+                      value={searchProject}
                       onChange={(e) => {
-                        setBuscaProjeto(e.target.value);
-                        setBuscaProjetoOpen(true);
+                        setSearchProject(e.target.value);
+                        setSearchProjectOpen(true);
                       }}
-                      onFocus={() => !isViewMode && setBuscaProjetoOpen(true)}
-                      onClick={() => !isViewMode && setBuscaProjetoOpen(true)}
+                      onFocus={() => !isViewMode && setSearchProjectOpen(true)}
+                      onClick={() => !isViewMode && setSearchProjectOpen(true)}
                       disabled={isViewMode}
                       placeholder="Digite para buscar um projeto concluído..."
                       className="pl-10"
@@ -612,51 +612,51 @@ export function ObraFormModal({
                   <ScrollArea className="max-h-[320px]">
                     <div className="p-2" role="listbox">
                       <p className="text-xs text-muted-foreground px-2 py-1">
-                        {buscaProjeto
-                          ? `Resultados para "${buscaProjeto}"`
+                        {searchProject
+                          ? `Resultados para "${searchProject}"`
                           : "Projetos concluídos disponíveis"}
                       </p>
-                      {projetosConcluidosFiltrados.length > 0 ? (
-                        (projetosConcluidosFiltrados as ProjetoWithRelations[]).map((p) => {
+                      {filteredCompletedProjects.length > 0 ? (
+                        (filteredCompletedProjects as ProjetoWithRelations[]).map((p) => {
                           const pId = p.id as string;
-                          const pNomeDisplay = (p.title ??
+                          const pNameDisplay = (p.title ??
                             (p as { nome?: string }).nome ??
                             "") as string;
-                          const pArtistaNomeDisplay = (p.artistas?.nome_artistico ?? "") as string;
-                          const selectProjeto = async () => {
-                            setProjetoSelecionado({
+                          const pArtistNameDisplay = (p.artistas?.nome_artistico ?? "") as string;
+                          const selectProject = async () => {
+                            setSelectedProject({
                               id: pId,
-                              nome: pNomeDisplay,
-                              artistaNome: pArtistaNomeDisplay || null,
+                              nome: pNameDisplay,
+                              artistaNome: pArtistNameDisplay || null,
                             });
                             // Auto-fill fields from project registration
-                            if (!tituloObra && p.title) setTitleObra(p.title as string);
+                            if (!workTitleValue && p.title) setWorkTitle(p.title as string);
                             if (p.music_genre) {
                               const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                              const generoRaw = p.music_genre as string;
-                              const matched = generosMusicais.find(g => norm(g) === norm(generoRaw));
-                              setGeneroMusical(matched ? matched.toLowerCase() : generoRaw.toLowerCase());
+                              const genreRaw = p.music_genre as string;
+                              const matched = musicGenres.find(g => norm(g) === norm(genreRaw));
+                              setMusicGenre(matched ? matched.toLowerCase() : genreRaw.toLowerCase());
                             }
                             // Resolves the artist directly by ID — does not depend on the artist being
                             // among the first loaded records (Task J).
                             const artistId = p.artist_id as string | null | undefined;
-                            const artistaFoundWire = artistId
+                            const artistFoundWire = artistId
                               ? await storage.findById<ArtistWireRecord>("artistas", artistId)
                               : undefined;
-                            const artistaFound = artistaFoundWire ? wireToArtist(artistaFoundWire) : undefined;
-                            const artistaNomeResolved = artistaFound?.stageName || pArtistaNomeDisplay;
+                            const artistFound = artistFoundWire ? wireToArtist(artistFoundWire) : undefined;
+                            const artistNameResolved = artistFound?.stageName || pArtistNameDisplay;
                             // Parse descricao JSON for composers/producers from project songs
                             let autoParticipantes: Participante[] = [];
                             try {
-                              const musicas = JSON.parse(p.descricao as string || "[]");
-                              if (Array.isArray(musicas) && musicas.length > 0) {
+                              const tracks = JSON.parse(p.descricao as string || "[]");
+                              if (Array.isArray(tracks) && tracks.length > 0) {
                                 const seen = new Set<string>();
-                                const compositoresArr: string[] = musicas
+                                const composersArr: string[] = tracks
                                   .flatMap((m: any) => m.compositores || [])
-                                  .filter((nome: string) => { const k = nome.trim(); return k && !seen.has(k) && seen.add(k); });
-                                autoParticipantes = compositoresArr.map((nome: string) => ({
+                                  .filter((name: string) => { const k = name.trim(); return k && !seen.has(k) && seen.add(k); });
+                                autoParticipantes = composersArr.map((name: string) => ({
                                   id: crypto.randomUUID(),
-                                  name: nome.trim(),
+                                  name: name.trim(),
                                   classeFuncao: "compositor/autor",
                                   link: "",
                                   percentual: "",
@@ -664,10 +664,10 @@ export function ObraFormModal({
                               }
                             } catch {}
                             // Fallback: use resolved artista name as single compositor
-                            if (autoParticipantes.length === 0 && artistaNomeResolved) {
+                            if (autoParticipantes.length === 0 && artistNameResolved) {
                               autoParticipantes = [{
                                 id: crypto.randomUUID(),
-                                name: artistaNomeResolved,
+                                name: artistNameResolved,
                                 classeFuncao: "compositor/autor",
                                 link: "",
                                 percentual: "100",
@@ -677,10 +677,10 @@ export function ObraFormModal({
                             if (autoParticipantes.length > 0 && participantes.length === 0) {
                               setParticipantes(autoParticipantes);
                             }
-                            setBuscaProjeto("");
-                            setBuscaProjetoOpen(false);
+                            setSearchProject("");
+                            setSearchProjectOpen(false);
                             toast.success(
-                              `Projeto "${pNomeDisplay}" vinculado! Campos preenchidos automaticamente.`,
+                              `Projeto "${pNameDisplay}" vinculado! Campos preenchidos automaticamente.`,
                             );
                           };
                           return (
@@ -688,13 +688,13 @@ export function ObraFormModal({
                               key={pId}
                               role="option"
                               tabIndex={0}
-                              aria-selected={(projetoSelecionado as ProjetoSelecionado | null)?.id === pId}
+                              aria-selected={(selectedProject as SelectedProject | null)?.id === pId}
                               className="flex items-center gap-3 p-2 hover:bg-muted focus:bg-muted focus:outline-none rounded-lg cursor-pointer transition-colors"
-                              onClick={selectProjeto}
+                              onClick={selectProject}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") {
                                   e.preventDefault();
-                                  selectProjeto();
+                                  selectProject();
                                 }
                               }}
                               data-testid={`option-projeto-${p.id}`}
@@ -704,10 +704,10 @@ export function ObraFormModal({
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate">
-                                  {pNomeDisplay}
+                                  {pNameDisplay}
                                 </p>
                                 <p className="text-xs text-muted-foreground truncate">
-                                  {pArtistaNomeDisplay || "—"}
+                                  {pArtistNameDisplay || "—"}
                                 </p>
                               </div>
                             </div>
@@ -723,10 +723,10 @@ export function ObraFormModal({
                       )}
                       <AbramusSearchRow
                         kind="obras"
-                        query={debouncedBuscaProjeto}
+                        query={debouncedSearchProject}
                         onImported={() => {
-                          setBuscaProjeto("");
-                          setBuscaProjetoOpen(false);
+                          setSearchProject("");
+                          setSearchProjectOpen(false);
                         }}
                       />
                     </div>
@@ -789,8 +789,8 @@ export function ObraFormModal({
                 </span>
                 <Input
                   className="h-8 text-sm min-w-0"
-                  value={tituloObra}
-                  onChange={(e) => setTitleObra(e.target.value)}
+                  value={workTitleValue}
+                  onChange={(e) => setWorkTitle(e.target.value)}
                   disabled={isViewMode}
                 />
               </div>
@@ -801,15 +801,15 @@ export function ObraFormModal({
                   Gênero Musical
                 </span>
                 <Select
-                  value={generoMusical}
-                  onValueChange={setGeneroMusical}
+                  value={musicGenre}
+                  onValueChange={setMusicGenre}
                   disabled={isViewMode}
                 >
                   <SelectTrigger className="h-8 text-sm min-w-0">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {generosMusicais.map((g) => (
+                    {musicGenres.map((g) => (
                       <SelectItem key={g} value={g.toLowerCase()}>
                         {g}
                       </SelectItem>
@@ -849,9 +849,9 @@ export function ObraFormModal({
                 <div className="flex items-center gap-1">
                   <Input
                     data-testid="input-duracao-minutos"
-                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${duracaoMinError ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                    value={duracaoMin}
-                    onChange={(e) => setDuracaoMin(e.target.value)}
+                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationMinError ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    value={durationMin}
+                    onChange={(e) => setDurationMin(e.target.value)}
                     disabled={isViewMode}
                     placeholder="0"
                   />
@@ -860,9 +860,9 @@ export function ObraFormModal({
                   </span>
                   <Input
                     data-testid="input-duracao-segundos"
-                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${duracaoSegError ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                    value={duracaoSeg}
-                    onChange={(e) => setDuracaoSeg(e.target.value)}
+                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationSegError ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    value={durationSeg}
+                    onChange={(e) => setDurationSeg(e.target.value)}
                     disabled={isViewMode}
                     placeholder="0"
                   />
@@ -870,9 +870,9 @@ export function ObraFormModal({
                     seg
                   </span>
                 </div>
-                {(duracaoMinError || duracaoSegError) && (
+                {(durationMinError || durationSegError) && (
                   <p className="text-xs text-destructive">
-                    {duracaoMinError || duracaoSegError}
+                    {durationMinError || durationSegError}
                   </p>
                 )}
               </div>
@@ -939,8 +939,8 @@ export function ObraFormModal({
               <h3 className="font-semibold">Criado por IA Generativa</h3>
 
               <RadioGroup
-                value={tipoIA}
-                onValueChange={setTipoIA}
+                value={aiType}
+                onValueChange={setAiType}
                 className="flex gap-6"
                 disabled={isViewMode}
               >
@@ -964,7 +964,7 @@ export function ObraFormModal({
                 </div>
               </RadioGroup>
 
-              {tipoIA && (
+              {aiType && (
                 <div className="space-y-4 mt-4">
                   <p className="text-sm text-muted-foreground">
                     Elementos da obra musical criados por inteligência
@@ -1084,10 +1084,10 @@ export function ObraFormModal({
                           Ferramenta
                         </Label>
                         <Input
-                          value={iaLetra.ferramenta}
+                          value={aiLyrics.ferramenta}
                           onChange={(e) =>
-                            setIaLetra({
-                              ...iaLetra,
+                            setAiLyrics({
+                              ...aiLyrics,
                               ferramenta: e.target.value,
                             })
                           }
@@ -1101,9 +1101,9 @@ export function ObraFormModal({
                             Prompt
                           </Label>
                           <Input
-                            value={iaLetra.prompt}
+                            value={aiLyrics.prompt}
                             onChange={(e) =>
-                              setIaLetra({ ...iaLetra, prompt: e.target.value })
+                              setAiLyrics({ ...aiLyrics, prompt: e.target.value })
                             }
                             disabled={isViewMode}
                             placeholder="Prompt utilizado"
@@ -1115,7 +1115,7 @@ export function ObraFormModal({
                           size="icon"
                           className="mt-5"
                           onClick={() =>
-                            setIaLetra({ ferramenta: "", prompt: "" })
+                            setAiLyrics({ ferramenta: "", prompt: "" })
                           }
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1138,7 +1138,7 @@ export function ObraFormModal({
                 <div className="flex items-center gap-3">
                   <span className="font-semibold">Participação</span>
                   <span className="text-sm text-muted-foreground">
-                    Percentual total: {calcularPercentualTotal().toFixed(2)}% de
+                    Percentual total: {calculateTotalPercentage().toFixed(2)}% de
                     100%
                   </span>
                 </div>
@@ -1244,7 +1244,7 @@ export function ObraFormModal({
                                   ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.name } }))
                                       .items.find(a => (a.nome_civil || a.nome_artistico) === p.name)
                                   : undefined;
-                              if (foundWire) setViewArtista(wireToArtist(foundWire));
+                              if (foundWire) setViewArtist(wireToArtist(foundWire));
                             }}
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -1380,19 +1380,19 @@ export function ObraFormModal({
           </Collapsible>
 
           {/* Song lyrics */}
-          <Collapsible open={letraOpen} onOpenChange={setLetraOpen}>
+          <Collapsible open={lyricsOpen} onOpenChange={setLyricsOpen}>
             <div className="border border-border rounded-lg bg-muted/10">
               <CollapsibleTrigger className="flex items-center justify-between w-full p-5">
                 <span className="font-semibold">Letra da Música</span>
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform ${letraOpen ? "rotate-180" : ""}`}
+                  className={`w-4 h-4 transition-transform ${lyricsOpen ? "rotate-180" : ""}`}
                 />
               </CollapsibleTrigger>
               <CollapsibleContent className="px-5 pb-5 space-y-3">
                 <Label>Letra Completa</Label>
                 <Textarea
-                  value={letraCompleta}
-                  onChange={(e) => setLetraCompleta(e.target.value)}
+                  value={fullLyrics}
+                  onChange={(e) => setFullLyrics(e.target.value)}
                   disabled={isViewMode}
                   rows={6}
                   placeholder="Digite a letra completa da música aqui..."
@@ -1435,11 +1435,11 @@ export function ObraFormModal({
                 size="sm"
                 className="h-8 text-xs gap-1.5"
                 disabled={
-                  hasDuracaoError || addObra.isPending || updateObra.isPending
+                  hasDurationError || addWork.isPending || updateWork.isPending
                 }
                 data-testid="button-submit-obra"
               >
-                {addObra.isPending || updateObra.isPending
+                {addWork.isPending || updateWork.isPending
                   ? "Salvando..."
                   : mode === "create"
                     ? "Criar Obra"
@@ -1450,9 +1450,9 @@ export function ObraFormModal({
         </form>
       </DialogContent>
       <ParticipanteViewModal
-        open={viewArtista !== null}
-        onOpenChange={(o) => { if (!o) setViewArtista(null); }}
-        artista={viewArtista}
+        open={viewArtist !== null}
+        onOpenChange={(o) => { if (!o) setViewArtist(null); }}
+        artista={viewArtist}
       />
     </Dialog>
   );

@@ -6,10 +6,10 @@ import {
   formatDurationText,
   parseIsrc,
   joinIsrc,
-  obraToParticipantes,
-  participantesToCompositoresLetristas,
-  obraTitle,
-  fonogramaToParticipacao,
+  workToParticipants,
+  participantsToComposersLyricists,
+  workTitle,
+  phonogramToParticipation,
 } from "@/modules/catalog/mappers";
 
 describe("dbStatusToSelect", () => {
@@ -111,15 +111,15 @@ describe("joinIsrc", () => {
 
 describe("obraTitle", () => {
   it("prefers DB title, falls back to legacy titulo", () => {
-    expect(obraTitle({ title: "DB Title", titulo: "Legacy" })).toBe("DB Title");
-    expect(obraTitle({ titulo: "Legacy" })).toBe("Legacy");
-    expect(obraTitle(null)).toBe("");
+    expect(workTitle({ title: "DB Title", titulo: "Legacy" })).toBe("DB Title");
+    expect(workTitle({ titulo: "Legacy" })).toBe("Legacy");
+    expect(workTitle(null)).toBe("");
   });
 });
 
 describe("obraToParticipantes", () => {
   it("splits compositores and letristas into typed participantes", () => {
-    const result = obraToParticipantes({
+    const result = workToParticipants({
       compositores: ["Alice", "Bob"],
       letristas: ["Carol"],
     });
@@ -132,17 +132,17 @@ describe("obraToParticipantes", () => {
     const legacy = [
       { id: "1", name: "Dan", classeFuncao: "Editor", link: "", percentual: "" },
     ];
-    expect(obraToParticipantes({ participantes: legacy })).toEqual(legacy);
+    expect(workToParticipants({ participantes: legacy })).toEqual(legacy);
   });
   it("returns [] when no fields are present", () => {
-    expect(obraToParticipantes({})).toEqual([]);
-    expect(obraToParticipantes(null)).toEqual([]);
+    expect(workToParticipants({})).toEqual([]);
+    expect(workToParticipants(null)).toEqual([]);
   });
 });
 
 describe("participantesToCompositoresLetristas", () => {
   it("splits the participantes back into named arrays", () => {
-    const result = participantesToCompositoresLetristas([
+    const result = participantsToComposersLyricists([
       { id: "1", name: "Alice", classeFuncao: "compositor/autor", link: "", percentual: "" },
       { id: "2", name: "Carol", classeFuncao: "tradutor", link: "", percentual: "" },
       { id: "3", name: "  ", classeFuncao: "compositor/autor", link: "", percentual: "" },
@@ -151,7 +151,7 @@ describe("participantesToCompositoresLetristas", () => {
     expect(result.letristas).toEqual(["Carol"]);
   });
   it("returns nulls when no entries match", () => {
-    expect(participantesToCompositoresLetristas([])).toEqual({
+    expect(participantsToComposersLyricists([])).toEqual({
       compositores: null,
       letristas: null,
     });
@@ -160,7 +160,7 @@ describe("participantesToCompositoresLetristas", () => {
 
 describe("fonogramaToParticipacao", () => {
   it("hydrates produtores into produtorFonografico", () => {
-    const result = fonogramaToParticipacao({ produtores: ["P1", "P2"] });
+    const result = phonogramToParticipation({ produtores: ["P1", "P2"] });
     expect(result.produtorFonografico.map((p) => p.name)).toEqual(["P1", "P2"]);
     expect(result.interprete).toEqual([]);
     expect(result.musicoAcompanhante).toEqual([]);
@@ -171,10 +171,10 @@ describe("fonogramaToParticipacao", () => {
       interprete: [],
       musicoAcompanhante: [],
     };
-    expect(fonogramaToParticipacao({ participacao: legacy })).toEqual(legacy);
+    expect(phonogramToParticipation({ participacao: legacy })).toEqual(legacy);
   });
   it("returns empty categories when fonograma is null", () => {
-    expect(fonogramaToParticipacao(null)).toEqual({
+    expect(phonogramToParticipation(null)).toEqual({
       produtorFonografico: [],
       interprete: [],
       musicoAcompanhante: [],
