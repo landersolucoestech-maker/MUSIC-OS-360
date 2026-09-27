@@ -42,8 +42,8 @@ export class InvoiceEventsHandler {
     const tenantId = event.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { invoiceId, numero, valor, createdBy } = event.payload;
-    this.logger.log(`Invoice created: ${numero ?? invoiceId} R$${valor}`);
+    const { invoiceId, numero: invoiceNumber, valor: amount, createdBy } = event.payload;
+    this.logger.log(`Invoice created: ${invoiceNumber ?? invoiceId} R$${amount}`);
 
     if (!this.activityLogs || !createdBy) return;
     try {
@@ -52,8 +52,8 @@ export class InvoiceEventsHandler {
           entity_type: 'invoice',
           entity_id: invoiceId,
           action: 'created',
-          description: invoiceCreatedCopy(numero, valor),
-          metadata: { valor, numero, correlationId: event.correlationId ?? null },
+          description: invoiceCreatedCopy(invoiceNumber, amount),
+          metadata: { valor: amount, numero: invoiceNumber, correlationId: event.correlationId ?? null },
         });
       });
     } catch (err) {
@@ -66,8 +66,8 @@ export class InvoiceEventsHandler {
     const tenantId = event.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { invoiceId, numero, previousStatus, newStatus, changedBy } = event.payload;
-    this.logger.log(`Invoice status: ${numero ?? invoiceId} ${previousStatus} -> ${newStatus}`);
+    const { invoiceId, numero: invoiceNumber, previousStatus, newStatus, changedBy } = event.payload;
+    this.logger.log(`Invoice status: ${invoiceNumber ?? invoiceId} ${previousStatus} -> ${newStatus}`);
 
     if (!this.activityLogs || !changedBy) return;
     try {
@@ -76,7 +76,7 @@ export class InvoiceEventsHandler {
           entity_type: 'invoice',
           entity_id: invoiceId,
           action: 'status_changed',
-          description: invoiceStatusChangedCopy(numero, previousStatus, newStatus),
+          description: invoiceStatusChangedCopy(invoiceNumber, previousStatus, newStatus),
           metadata: { previousStatus, newStatus, correlationId: event.correlationId ?? null },
         });
       });
@@ -90,8 +90,8 @@ export class InvoiceEventsHandler {
     const tenantId = event.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { invoiceId, numero, valor, issuedBy, issuedAt } = event.payload;
-    this.logger.log(`Invoice issued: ${numero ?? invoiceId} R$${valor} by ${issuedBy}`);
+    const { invoiceId, numero: invoiceNumber, valor: amount, issuedBy, issuedAt } = event.payload;
+    this.logger.log(`Invoice issued: ${invoiceNumber ?? invoiceId} R$${amount} by ${issuedBy}`);
 
     if (!this.activityLogs || !issuedBy) return;
     try {
@@ -100,8 +100,8 @@ export class InvoiceEventsHandler {
           entity_type: 'invoice',
           entity_id: invoiceId,
           action: 'issued',
-          description: invoiceIssuedCopy(numero, valor),
-          metadata: { valor, numero, issuedAt, correlationId: event.correlationId ?? null },
+          description: invoiceIssuedCopy(invoiceNumber, amount),
+          metadata: { valor: amount, numero: invoiceNumber, issuedAt, correlationId: event.correlationId ?? null },
         });
       });
     } catch (err) {
@@ -114,15 +114,15 @@ export class InvoiceEventsHandler {
     const tenantId = event.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { invoiceId, numero, valor, dataVencimento } = event.payload;
-    this.logger.warn(`Invoice overdue: ${numero ?? invoiceId} R$${valor} (venceu ${dataVencimento})`);
+    const { invoiceId, numero: invoiceNumber, valor: amount, dataVencimento: dueDate } = event.payload;
+    this.logger.warn(`Invoice overdue: ${invoiceNumber ?? invoiceId} R$${amount} (due ${dueDate})`);
 
     if (this.financialRules) {
       try {
         await this.financialRules.evaluateRules(tenantId, 'invoice.overdue', {
           entityId: invoiceId,
           entityType: 'invoice',
-          valor: parseFloat(valor),
+          valor: parseFloat(amount),
         });
       } catch (err) {
         this.logger.warn(`Failed to evaluate financial rules for invoice.overdue "${invoiceId}" — ${String(err)}`);
@@ -136,8 +136,8 @@ export class InvoiceEventsHandler {
             entity_type: 'invoice',
             entity_id: invoiceId,
             action: 'overdue',
-            description: invoiceOverdueCopy(numero, valor, dataVencimento),
-            metadata: { valor, numero, dataVencimento },
+            description: invoiceOverdueCopy(invoiceNumber, amount, dueDate),
+            metadata: { valor: amount, numero: invoiceNumber, dataVencimento: dueDate },
           });
         });
       } catch (err) {
@@ -160,8 +160,8 @@ export class InvoiceEventsHandler {
         due.setDate(due.getDate() + 3);
         const task = taskRepo.create({
           tenant_id: tenantId,
-          title: overdueFollowUpTaskTitle(numero),
-          description: overdueFollowUpTaskDescription(valor, dataVencimento),
+          title: overdueFollowUpTaskTitle(invoiceNumber),
+          description: overdueFollowUpTaskDescription(amount, dueDate),
           status: 'pending',
           priority: 'high',
           type: `invoice.overdue:${invoiceId}`,

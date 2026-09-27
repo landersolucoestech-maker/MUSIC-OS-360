@@ -34,10 +34,10 @@ export async function fetchAccountingSummaryRows(
   )) as { artista: string; receitas: string; despesas: string }[];
 
   return rows.map((r) => {
-    const receitas = Number(r.receitas);
-    const despesas = Number(r.despesas);
-    const resultado = receitas - despesas;
-    const margem = receitas > 0 ? Number(((resultado / receitas) * 100).toFixed(2)) : 0;
-    return { artista: r.artista, receitas, despesas, resultado, margem };
+    const income = Number(r.receitas);
+    const expenses = Number(r.despesas);
+    const resultado = income - expenses;
+    const margem = income > 0 ? Number(((resultado / income) * 100).toFixed(2)) : 0;
+    return { artista: r.artista, receitas: income, despesas: expenses, resultado, margem };
   });
 }

@@ -344,21 +344,21 @@ export class ImportCommitService {
     tenantId: string,
   ): Promise<void> {
     const raw = rowData['categoria'];
-    let categoria = (typeof raw === 'string' && raw.trim()) || UNCATEGORIZED_PLACEHOLDER;
+    let category = (typeof raw === 'string' && raw.trim()) || UNCATEGORIZED_PLACEHOLDER;
 
-    if (categoria.toLowerCase() === UNCATEGORIZED_PLACEHOLDER && this.financeCategoryRules) {
+    if (category.toLowerCase() === UNCATEGORIZED_PLACEHOLDER && this.financeCategoryRules) {
       const ruleType = toRuleTransactionType(rowData['tipo_transacao']);
-      const descricao = rowData['descricao'];
-      if (ruleType && typeof descricao === 'string' && descricao.trim()) {
+      const description = rowData['descricao'];
+      if (ruleType && typeof description === 'string' && description.trim()) {
         try {
-          const suggestion = await this.financeCategoryRules.suggestCategoryForTransaction(tenantId, ruleType, descricao);
-          if (suggestion) categoria = suggestion.categoryName;
+          const suggestion = await this.financeCategoryRules.suggestCategoryForTransaction(tenantId, ruleType, description);
+          if (suggestion) category = suggestion.categoryName;
         } catch { /* keeps the placeholder */ }
       }
     }
 
     const index = cols.indexOf('categoria');
-    if (index >= 0) values[index] = categoria;
-    else { cols.push('categoria'); values.push(categoria); }
+    if (index >= 0) values[index] = category;
+    else { cols.push('categoria'); values.push(category); }
   }
 }

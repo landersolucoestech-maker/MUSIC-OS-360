@@ -117,12 +117,12 @@ export async function insertProjectTracksForImport(
   qr: QueryRunner,
   tenantId: string,
   projectId: string,
-  musicas: unknown,
+  trackRows: unknown,
 ): Promise<void> {
-  if (!Array.isArray(musicas)) return;
+  if (!Array.isArray(trackRows)) return;
 
   let fallbackOrder = 0;
-  for (const raw of musicas) {
+  for (const raw of trackRows) {
     if (raw === null || typeof raw !== 'object') continue;
     const item = raw as Record<string, unknown>;
     const name = String(item.nome_musica ?? '').trim();

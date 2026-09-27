@@ -145,7 +145,7 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
     requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
   };
 
-  function projectsValidation(musicas?: unknown[]): ImportValidationResult {
+  function projectsValidation(trackRows?: unknown[]): ImportValidationResult {
     return {
       entity: 'projects', supportsImport: true, mapping: {}, unknownColumns: [], ignoredColumns: [],
       totalRows: 1, validRows: 1, invalidRows: 0,
@@ -153,7 +153,7 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
         index: 0,
         data: { tipo_lancamento: 'ep', nome_ep_album: 'Meu EP' },
         valid: true, errors: [], warnings: [],
-        repeatingGroups: musicas ? { musicas } : undefined,
+        repeatingGroups: trackRows ? { musicas: trackRows } : undefined,
       }],
       errors: [], warnings: [],
     };

@@ -87,9 +87,9 @@ export class ProjectsService {
     const namesByRole = (trackId: string, role: TrackRole): string[] =>
       (byTrack.get(trackId) ?? []).filter((p) => p.role === role).map((p) => p.name);
 
-    const musicasByProject = new Map<string, ProjectTrackResponse[]>();
+    const tracksByProject = new Map<string, ProjectTrackResponse[]>();
     for (const t of tracks) {
-      const list = musicasByProject.get(t.project_id) ?? [];
+      const list = tracksByProject.get(t.project_id) ?? [];
       list.push({
         id: t.id,
         name: t.name,
@@ -106,22 +106,22 @@ export class ProjectsService {
         interpretes: namesByRole(t.id, 'interprete'),
         produtores: namesByRole(t.id, 'produtor'),
       });
-      musicasByProject.set(t.project_id, list);
+      tracksByProject.set(t.project_id, list);
     }
 
-    return projects.map((p) => Object.assign(p, { musicas: musicasByProject.get(p.id) ?? [] }));
+    return projects.map((p) => Object.assign(p, { musicas: tracksByProject.get(p.id) ?? [] }));
   }
 
   private async replaceTracks(
     tenantId: string,
     projectId: string,
-    musicas: Record<string, unknown>[] | undefined,
+    trackRows: Record<string, unknown>[] | undefined,
   ): Promise<void> {
-    if (musicas === undefined) return;
+    if (trackRows === undefined) return;
     await this.tracksRepo!.delete({ project_id: projectId, tenant_id: tenantId });
 
     let sortOrder = 0;
-    for (const m of musicas) {
+    for (const m of trackRows) {
       const trackId = (typeof m.id === 'string' && m.id) || randomUUID();
       await this.tracksRepo!.save(
         this.tracksRepo!.create({
@@ -148,10 +148,10 @@ export class ProjectsService {
       for (const [role, list] of roleFields) {
         if (!Array.isArray(list)) continue;
         const rows = list
-          .filter((nome): nome is string => typeof nome === 'string' && nome.trim().length > 0)
-          .map((nome, i) => this.participantsRepo!.create({
+          .filter((name): name is string => typeof name === 'string' && name.trim().length > 0)
+          .map((name, i) => this.participantsRepo!.create({
             id: randomUUID(), tenant_id: tenantId, project_track_id: trackId,
-            name: nome.trim(), role, sort_order: i,
+            name: name.trim(), role, sort_order: i,
           }));
         if (rows.length > 0) await this.participantsRepo!.save(rows);
       }
@@ -220,7 +220,7 @@ export class ProjectsService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateProjectDto): Promise<ProjectWithTracks> {
-    const { musicas, ...rest } = dto as CreateProjectDto & { musicas?: Record<string, unknown>[] };
+    const { musicas: trackRows, ...rest } = dto as CreateProjectDto & { musicas?: Record<string, unknown>[] };
     // find-50dd3726: artist_id had no cross-tenant ownership check — a
     // project could silently reference another tenant's artist.
     await assertSameTenantFk(this.ds!, 'artists', (rest as { artist_id?: string }).artist_id, tenantId, 'Artista');
@@ -232,7 +232,7 @@ export class ProjectsService {
       updated_by: userId,
     } as Partial<ProjectEntity>);
     const saved = await this.repo!.save(entity as ProjectEntity);
-    await this.replaceTracks(tenantId, saved.id, musicas);
+    await this.replaceTracks(tenantId, saved.id, trackRows);
     const [hydrated] = await this.hydrateTracks([saved]);
     return hydrated;
   }
@@ -248,7 +248,7 @@ export class ProjectsService {
     const dtoMap  = dto as Record<string, unknown>;
     const statusChanging = dtoMap['status'] != null && dtoMap['status'] !== current.status;
 
-    const { status: _s, musicas, expectedUpdatedAt, ...restFields } = dtoMap as Record<string, unknown> & { musicas?: Record<string, unknown>[]; expectedUpdatedAt?: string };
+    const { status: _s, musicas: trackRows, expectedUpdatedAt, ...restFields } = dtoMap as Record<string, unknown> & { musicas?: Record<string, unknown>[]; expectedUpdatedAt?: string };
     void _s;
     // find-50dd3726: only validate when the patch actually sets artist_id —
     // omitted means "unchanged", already validated at its own create time.
@@ -300,7 +300,7 @@ export class ProjectsService {
       );
     }
 
-    await this.replaceTracks(tenantId, id, musicas);
+    await this.replaceTracks(tenantId, id, trackRows);
     return this.findById(tenantId, id, actorRole);
   }
 

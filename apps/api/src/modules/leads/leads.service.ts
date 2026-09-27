@@ -493,8 +493,8 @@ export class LeadsService {
   private normalizeLeadPayload(input: Record<string, unknown>, existingMetadata: Record<string, unknown> = {}) {
     const {
       name, source, stage, notes, assignedTo, value, metadata,
-      nomeArtistico, empresa, whatsapp, instagram,
-      clientType, serviceType, payloadServico, dadosInternosCRM, uploads,
+      nomeArtistico: stageName, empresa: company, whatsapp, instagram,
+      clientType, serviceType, payloadServico: servicePayload, dadosInternosCRM: crmInternalData, uploads,
       ...rest
     } = input;
     // city/state/country pass through unchanged via ...rest -- the physical
@@ -506,14 +506,14 @@ export class LeadsService {
     if (source !== undefined) mapped['fonte'] = source;
     // `pipeline_stage` was physically removed (RebuildLeadsInCanonicalFormOrder,
     // proven orphan) — the DTO's `stage` goes to metadata, like notes/assignedTo/value.
-    if (nomeArtistico !== undefined) mapped['nome_artistico'] = nomeArtistico;
-    if (empresa !== undefined) mapped['empresa'] = empresa;
+    if (stageName !== undefined) mapped['nome_artistico'] = stageName;
+    if (company !== undefined) mapped['empresa'] = company;
     if (whatsapp !== undefined) mapped['whatsapp'] = whatsapp;
     if (instagram !== undefined) mapped['instagram'] = instagram;
     if (clientType !== undefined) mapped['client_type'] = clientType;
     if (serviceType !== undefined) mapped['service_type'] = serviceType;
-    if (payloadServico !== undefined) mapped['payload_servico'] = payloadServico;
-    if (dadosInternosCRM !== undefined) mapped['dados_internos_crm'] = dadosInternosCRM;
+    if (servicePayload !== undefined) mapped['payload_servico'] = servicePayload;
+    if (crmInternalData !== undefined) mapped['dados_internos_crm'] = crmInternalData;
     if (uploads !== undefined) mapped['uploads'] = uploads;
 
     const mergedMetadata = {

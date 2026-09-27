@@ -38,7 +38,7 @@ export class LeadEventsHandler {
     const tenantId = event.tenantId ?? event.payload.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { leadId, nome, empresa, convertedBy, convertedAt } = event.payload;
+    const { leadId, nome: name, empresa: company, convertedBy, convertedAt } = event.payload;
 
     if (this.clientRepo || this.leadRepo || this.artistRepo) {
       const created = await this.runInTenantContext(tenantId, async (manager) => {
@@ -54,7 +54,7 @@ export class LeadEventsHandler {
         const base = manager ?? this.leadRepo!.manager;
         return base.transaction(async (txManager) => {
           await txManager.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`lead-conversion:${tenantId}:${leadId}`]);
-          return this.convertLead(txManager, tenantId, event, leadId, nome, empresa, convertedBy, convertedAt);
+          return this.convertLead(txManager, tenantId, event, leadId, name, company, convertedBy, convertedAt);
         });
       });
 
@@ -87,14 +87,14 @@ export class LeadEventsHandler {
     tenantId: string,
     event: DomainEvent<LeadConvertedPayload>,
     leadId: string,
-    nome: string,
-    empresa: string | null,
+    name: string,
+    company: string | null,
     convertedBy: string,
     convertedAt: string,
   ): Promise<{ clientId: string; nome: string; categoria: string; tipoPessoa: string } | null> {
     let clientId: string | null = null;
-    let createdCategoria = '';
-    let createdTipoPessoa = '';
+    let createdCategory = '';
+    let createdPersonType = '';
     const clientRepo = manager.getRepository(ClientEntity);
     const leadRepo = manager.getRepository(LeadEntity);
     const artistRepo = manager.getRepository(ArtistEntity);
@@ -118,15 +118,15 @@ export class LeadEventsHandler {
 
     {
           try {
-            createdCategoria = 'CORPORATE_CLIENT';
-            createdTipoPessoa = empresa ? 'pessoa_juridica' : 'pessoa_fisica';
+            createdCategory = 'CORPORATE_CLIENT';
+            createdPersonType = company ? 'pessoa_juridica' : 'pessoa_fisica';
             const client = clientRepo.create({
               id: randomUUID(),
               tenant_id: tenantId,
-              nome,
-              categoria: createdCategoria,
+              nome: name,
+              categoria: createdCategory,
               perfil: 'outros',
-              tipo_pessoa: createdTipoPessoa,
+              tipo_pessoa: createdPersonType,
               responsavel_nome: convertedBy,
               notes: `Convertido de lead ${leadId} em ${convertedAt}`,
               metadata: {
@@ -140,7 +140,7 @@ export class LeadEventsHandler {
             const saved = await clientRepo.save(client);
             clientId = saved.id;
             this.logger.log(
-              `LeadEventsHandler: client "${clientId}" created from lead "${leadId}" (${nome}) tenant=${tenantId}`,
+              `LeadEventsHandler: client "${clientId}" created from lead "${leadId}" (${name}) tenant=${tenantId}`,
             );
           } catch (err) {
             this.logger.error(
@@ -171,7 +171,7 @@ export class LeadEventsHandler {
             const artist = artistRepo.create({
               id: artistId,
               tenant_id: tenantId,
-              nome_artistico: nome,
+              nome_artistico: name,
               nome_civil: null,
               status: ArtistStatus.IN_NEGOTIATION,
               status_cadastro: ArtistStatusCadastro.ACTIVE,
@@ -188,7 +188,7 @@ export class LeadEventsHandler {
             });
             await artistRepo.save(artist);
             this.logger.log(
-              `LeadEventsHandler: artist onboarding stub "${artistId}" created for lead "${leadId}" (${nome})`,
+              `LeadEventsHandler: artist onboarding stub "${artistId}" created for lead "${leadId}" (${name})`,
             );
           } catch (err) {
             this.logger.error(
@@ -197,7 +197,7 @@ export class LeadEventsHandler {
           }
         }
 
-        return clientId ? { clientId, nome, categoria: createdCategoria, tipoPessoa: createdTipoPessoa } : null;
+        return clientId ? { clientId, nome: name, categoria: createdCategory, tipoPessoa: createdPersonType } : null;
   }
 
   private failClosed(eventType: string): void {

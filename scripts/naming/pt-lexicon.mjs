@@ -9,7 +9,7 @@ export const PT_TOKENS = new Set(`
 artista artistas lancamento lancamentos projeto projetos contrato contratos obra obras fonograma fonogramas
 cliente clientes contato contatos campanha campanhas receita receitas despesa despesas pagamento pagamentos
 financeiro financeira financeiros financas usuario usuarios empresa empresas equipe equipes tarefa tarefas
-evento eventos agenda documento documentos nota notas fiscal fiscais valor valores data datas nome nomes tipo tipos
+evento eventos agenda documento documentos nota notas fiscais valor valores data datas nome nomes tipo tipos
 descricao observacao observacoes responsavel responsaveis setor setores funcionario funcionarios folha ferias
 colaborador colaboradores faixa faixas musica musicas gravacao gravacoes distribuicao distribuidora distribuidoras
 parceria parcerias parceiro parceiros relatorio relatorios configuracao configuracoes integracao integracoes

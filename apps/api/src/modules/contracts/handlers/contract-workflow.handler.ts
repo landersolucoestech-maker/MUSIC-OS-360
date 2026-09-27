@@ -50,7 +50,7 @@ export class ContractWorkflowHandler {
 
     const { contractId, title, artistId, signedBy, signedAt } = event.payload;
     const now = new Date();
-    let valorStr: string | null = null;
+    let amountStr: string | null = null;
     let shouldContinue = true;
 
     if (this.taskRepo || this.contractRepo) {
@@ -102,7 +102,7 @@ export class ContractWorkflowHandler {
             const contract = await contractRepo.findOne({
               where: { id: contractId, tenant_id: tenantId },
             });
-            valorStr = contract?.fixed_value ? String(contract.fixed_value) : null;
+            amountStr = contract?.fixed_value ? String(contract.fixed_value) : null;
           } catch {
             // non-fatal
           }
@@ -124,7 +124,7 @@ export class ContractWorkflowHandler {
             tenantId,
             title,
             artistId: artistId ?? null,
-            valor: valorStr,
+            valor: amountStr,
             readyAt: signedAt,
             integrations: ['distribution', 'financial', 'society-data-exchange'],
           },

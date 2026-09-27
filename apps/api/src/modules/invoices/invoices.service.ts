@@ -89,9 +89,9 @@ export class InvoicesService {
 
     if (query.status) qb.andWhere('i.status = :status', { status: query.status });
 
-    const tipoNota = query.tipo_nota ?? query.type;
-    if (tipoNota) {
-      qb.andWhere('(i.tipo_nota = :tipoNota OR i.type = :tipoNota)', { tipoNota });
+    const fiscalDocumentType = query.tipo_nota ?? query.type;
+    if (fiscalDocumentType) {
+      qb.andWhere('(i.tipo_nota = :tipoNota OR i.type = :tipoNota)', { tipoNota: fiscalDocumentType });
     }
     if (query.client_id) qb.andWhere('i.client_id = :clientId', { clientId: query.client_id });
     if (query.artistId) qb.andWhere('i.prestador_id = :prestadorId', { prestadorId: query.artistId });
@@ -238,8 +238,8 @@ export class InvoicesService {
   ): Promise<void> {
     const nowIso = new Date().toISOString();
     const invoiceId = String(after['id']);
-    const numero = after['numero'] == null ? null : String(after['numero']);
-    const valor = String((after['service_amount'] ?? after['legacy_amount']) ?? 0);
+    const invoiceNumber = after['numero'] == null ? null : String(after['numero']);
+    const amount = String((after['service_amount'] ?? after['legacy_amount']) ?? 0);
 
     this.events?.emitTyped(DOMAIN_EVENTS.INVOICE_STATUS_CHANGED, {
       tenantId,
@@ -249,7 +249,7 @@ export class InvoicesService {
       payload: {
         invoiceId,
         tenantId,
-        numero,
+        numero: invoiceNumber,
         previousStatus: String(before['status'] ?? ''),
         newStatus,
         changedBy: userId,
@@ -266,8 +266,8 @@ export class InvoicesService {
           invoiceId,
           tenantId,
           type: String(after['tipo_nota'] ?? after['type'] ?? ''),
-          valor,
-          numero,
+          valor: amount,
+          numero: invoiceNumber,
           issuedBy: userId,
           issuedAt: nowIso,
         },
@@ -283,8 +283,8 @@ export class InvoicesService {
         payload: {
           invoiceId,
           tenantId,
-          numero,
-          valor,
+          numero: invoiceNumber,
+          valor: amount,
           dataVencimento: String(after['data_vencimento'] ?? nowIso),
         },
       });
@@ -297,7 +297,7 @@ export class InvoicesService {
           entity_id: invoiceId,
           action: 'status_changed',
           description: `Nota fiscal ${String(before['status'] ?? '')} → ${newStatus}`,
-          metadata: { previousStatus: before['status'], newStatus, numero },
+          metadata: { previousStatus: before['status'], newStatus, numero: invoiceNumber },
         });
       } catch { /* auditing does not block the main operation */ }
     }

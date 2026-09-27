@@ -6,7 +6,7 @@ import {
 import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
-const TIPOS_NOTA = ['nfse', 'nfe', 'nfce'] as const;
+const FISCAL_DOCUMENT_TYPES = ['nfse', 'nfe', 'nfce'] as const;
 
 export class InvoiceItemDto {
   @ApiProperty() @IsString() @MaxLength(2000) description!: string;
@@ -28,7 +28,7 @@ export class InvoiceItemDto {
 export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) numero?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) serie?: string;
-  @ApiPropertyOptional({ enum: TIPOS_NOTA }) @IsOptional() @IsIn(TIPOS_NOTA) tipo_nota?: string;
+  @ApiPropertyOptional({ enum: FISCAL_DOCUMENT_TYPES }) @IsOptional() @IsIn(FISCAL_DOCUMENT_TYPES) tipo_nota?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() client_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() venda_id?: string;
 
@@ -86,7 +86,7 @@ export class UpdateInvoiceDto extends PartialType(CreateInvoiceDto) {
 
 export class QueryInvoiceDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
-  @ApiPropertyOptional({ enum: TIPOS_NOTA }) @IsOptional() @IsIn(TIPOS_NOTA) tipo_nota?: string;
+  @ApiPropertyOptional({ enum: FISCAL_DOCUMENT_TYPES }) @IsOptional() @IsIn(FISCAL_DOCUMENT_TYPES) tipo_nota?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() client_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() search?: string;
 

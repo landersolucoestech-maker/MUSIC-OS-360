@@ -84,16 +84,16 @@ export class ArtistsService {
   private toResponse(entity: ArtistEntity): ArtistResponse {
     const meta = (entity.metadata ?? {}) as Record<string, unknown>;
     const {
-      email_encrypted, telefone_encrypted, cpf_cnpj_encrypted, manager_contato_encrypted,
+      email_encrypted, telefone_encrypted: phone_encrypted, cpf_cnpj_encrypted, manager_contato_encrypted: manager_contact_encrypted,
       ...rest
     } = entity;
     return {
       ...rest,
       ...meta,
       email:           this.safeDecrypt(email_encrypted, 'email'),
-      telefone:        this.safeDecrypt(telefone_encrypted, 'telefone'),
+      telefone:        this.safeDecrypt(phone_encrypted, 'telefone'),
       cpf_cnpj:        this.safeDecrypt(cpf_cnpj_encrypted, 'cpf_cnpj'),
-      manager_contato: this.safeDecrypt(manager_contato_encrypted, 'manager_contato'),
+      manager_contato: this.safeDecrypt(manager_contact_encrypted, 'manager_contato'),
     };
   }
 
@@ -446,21 +446,21 @@ export class ArtistsService {
     const newStatus = dto.status!;
 
     if (newStatus === ArtistStatus.ACTIVE) {
-      const genero      = dto.music_genre ?? existing.music_genre;
+      const genre      = dto.music_genre ?? existing.music_genre;
       const hasEmail    = (dto as any).email    != null || existing.email_encrypted    != null;
-      const hasTelefone = (dto as any).telefone != null || existing.telefone_encrypted != null;
+      const hasPhone = (dto as any).telefone != null || existing.telefone_encrypted != null;
 
       const errors: string[] = [];
-      if (!genero)                  errors.push('music_genre obrigatório para ativar artista');
-      if (!hasEmail && !hasTelefone) errors.push('email ou telefone obrigatório para ativar artista');
+      if (!genre)                  errors.push('music_genre obrigatório para ativar artista');
+      if (!hasEmail && !hasPhone) errors.push('email ou telefone obrigatório para ativar artista');
 
       if (errors.length > 0) throw new BadRequestException(errors.join('; '));
     }
 
     // signed: contrato_id must be provided in the update or already exist
     if (newStatus === ArtistStatus.SIGNED) {
-      const contratoId = dto.contrato_id ?? existing.contrato_id;
-      if (!contratoId) {
+      const contractId = dto.contrato_id ?? existing.contrato_id;
+      if (!contractId) {
         throw new BadRequestException('Vincule um contrato para marcar o artista como contratado.');
       }
     }

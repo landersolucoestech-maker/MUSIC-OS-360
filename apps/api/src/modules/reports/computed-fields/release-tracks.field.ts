@@ -71,9 +71,9 @@ export async function writeReleaseTracksForImport(
   qr: QueryRunner,
   tenantId: string,
   releaseId: string,
-  faixas: unknown,
+  trackRows: unknown,
 ): Promise<void> {
-  const list = Array.isArray(faixas) ? faixas : [];
+  const list = Array.isArray(trackRows) ? trackRows : [];
   const stored = list.map((raw, i) => {
     const f = (raw ?? {}) as Record<string, unknown>;
     // find-532335a9: per-track ISRC inside the "Faixas do Lançamento" child

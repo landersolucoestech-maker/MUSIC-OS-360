@@ -198,14 +198,14 @@ const END_DATE_SPEC: PairSpec = {
   transform: (v) => v,
 };
 
-const ARQUIVO_URL_SPEC: PairSpec = {
+const FILE_URL_SPEC: PairSpec = {
   canonical: 'arquivo_url',
   legacy: 'fileUrl',
   isEquivalent: (a, b) => a === b,
   transform: (v) => v,
 };
 
-const VALOR_SPEC: PairSpec = {
+const FIXED_VALUE_SPEC: PairSpec = {
   canonical: 'fixed_value',
   // 'value' was the original English alias; 'valor' was this field's own
   // canonical name before naming-normalization (Cluster G) — both are kept
@@ -284,11 +284,11 @@ export function resolveContractAliases(input: Record<string, unknown>): Contract
   const endDate = resolvePair(input, END_DATE_SPEC, legacyUsed);
   if (endDate !== undefined) normalized.end_date = endDate as string | null;
 
-  const arquivoUrl = resolvePair(input, ARQUIVO_URL_SPEC, legacyUsed);
-  if (arquivoUrl !== undefined) normalized.arquivo_url = arquivoUrl as string | null;
+  const fileUrl = resolvePair(input, FILE_URL_SPEC, legacyUsed);
+  if (fileUrl !== undefined) normalized.arquivo_url = fileUrl as string | null;
 
-  const valor = resolvePair(input, VALOR_SPEC, legacyUsed);
-  if (valor !== undefined) normalized.fixed_value = valor as string | null;
+  const amount = resolvePair(input, FIXED_VALUE_SPEC, legacyUsed);
+  if (amount !== undefined) normalized.fixed_value = amount as string | null;
 
   return { normalized, legacyAliasesUsed: Array.from(legacyUsed) };
 }

@@ -144,14 +144,14 @@ export class ContractEventsHandler {
               .where('c.id = :id AND c.tenant_id = :tenantId', { id: contractId, tenantId })
               .getOne();
 
-            const contractValor = contract?.fixed_value ? parseFloat(String(contract.fixed_value)) : 0;
-            if (contractValor > 0) {
+            const contractAmount = contract?.fixed_value ? parseFloat(String(contract.fixed_value)) : 0;
+            if (contractAmount > 0) {
               const provisional = transactionRepo.create({
                 tenant_id: tenantId,
                 type: 'receita' as any,
                 categoria: 'contratos',
                 descricao: `Receita prevista - contrato "${title}"`,
-                valor: String(contractValor),
+                valor: String(contractAmount),
                 // GAP-0055: use the contract's real start date when available instead of
                 // always "today" -- the provisional transaction must reflect when the
                 // contract revenue actually becomes due, not the date the CONTRACT_SIGNED
@@ -165,7 +165,7 @@ export class ContractEventsHandler {
                 metadata: { source: 'contract.signed', contractId, title },
               } as any);
               const savedTx = await transactionRepo.save(provisional as unknown as TransactionEntity);
-              this.logger.log(`Provisional transaction "${savedTx.id}" (R$${contractValor}) created for contract "${contractId}"`);
+              this.logger.log(`Provisional transaction "${savedTx.id}" (R$${contractAmount}) created for contract "${contractId}"`);
 
               if (this.events) {
                 this.events.emitTyped(DOMAIN_EVENTS.TRANSACTION_CREATED, {
@@ -178,7 +178,7 @@ export class ContractEventsHandler {
                     tenantId,
                     type: 'receita',
                     category: 'contratos',
-                    valor: String(contractValor),
+                    valor: String(contractAmount),
                     contratoId: contractId,
                     artistId: artistId ?? null,
                     createdBy: signedBy,
@@ -191,7 +191,7 @@ export class ContractEventsHandler {
                 await this.financialRules.evaluateRules(tenantId, 'contract.signed', {
                   entityId: contractId,
                   entityType: 'contract',
-                  valor: contractValor,
+                  valor: contractAmount,
                   category: 'contratos',
                 });
               }

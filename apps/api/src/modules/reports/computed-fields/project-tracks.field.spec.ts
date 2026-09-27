@@ -77,7 +77,7 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
 
     it('inserts one project_track per track + participants per role, tenant forced', async () => {
       const { qr, calls } = makeQR();
-      const musicas = [{
+      const trackRows = [{
         nome_musica: 'Faixa importada',
         soloFeat: 'feat',
         originalRemix: 'remix',
@@ -92,7 +92,7 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
         interpretes: ['B'],
         produtores: [],
       }];
-      await insertProjectTracksForImport(qr, 'tenant-1', 'proj-novo', musicas);
+      await insertProjectTracksForImport(qr, 'tenant-1', 'proj-novo', trackRows);
 
       const trackInsert = calls.find(([sql]) => sql.includes('"project_tracks"'));
       expect(trackInsert).toBeDefined();

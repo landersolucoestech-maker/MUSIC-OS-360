@@ -97,7 +97,7 @@ describe('ArtistsService', () => {
 
     // Response contract: ciphertext NEVER leaves the API; PII fields come back
     // decrypted under the names used by the form (null when not filled in).
-    const { email_encrypted, telefone_encrypted, cpf_cnpj_encrypted, ...artistAPublic } = artistA;
+    const { email_encrypted, telefone_encrypted: phone_encrypted, cpf_cnpj_encrypted, ...artistAPublic } = artistA;
     expect(result.data).toEqual([{
       ...artistAPublic,
       email: null,
