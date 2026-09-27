@@ -109,7 +109,7 @@ export function parseAnalyticsTrackingResponse(
 
   return {
     coverageSummary: asString(json.coverageSummary) || fallback.coverageSummary,
-    // ENFORCEMENT: sempre derivado do input real, nunca do modelo.
+    // ENFORCEMENT: always derived from the real input, never from the model.
     coveragePercentage: fallback.coveragePercentage,
     gaps: mapGaps(json.gaps).length > 0 ? mapGaps(json.gaps) : fallback.gaps,
     recommendations: mapRecommendations(json.recommendations),

@@ -51,7 +51,7 @@ function mapActions(value: unknown): PostizRecommendedAction[] {
     .filter((v) => v.action.length > 0);
 }
 
-/** Sempre derivado dos sinais reais do input — nunca do JSON do modelo. */
+/** Always derived from the real input signals — never from the model JSON. */
 function computeReadyToRequestPublish(input: PostizInput): boolean {
   return input.channelReadiness === "connected" && input.hasCopy;
 }

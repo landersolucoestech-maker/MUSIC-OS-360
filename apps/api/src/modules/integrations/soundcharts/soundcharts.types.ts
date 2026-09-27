@@ -10,7 +10,7 @@ export interface SoundchartsMetric {
   value: number;
   observedAt: Date;
   source: 'soundcharts';
-  /** Caminho exato do endpoint Soundcharts que produziu `value` (provenance). */
+  /** Exact Soundcharts endpoint path that produced `value` (provenance). */
   endpoint: string;
   /** Exact response body field `value` was read from (provenance). */
   field: string;

@@ -35,7 +35,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() cpf_cnpj?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
 
-  // ── Pessoal ──────────────────────────────────────────────────────────────────
+  // ── Personal ─────────────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() data_nascimento?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() rg?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() endereco?: string;
@@ -47,7 +47,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() chave_pix?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() titular_conta?: string;
 
-  // ── Plataformas extras ───────────────────────────────────────────────────────
+  // ── Extra platforms ──────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() @Matches(DEEZER_URL_PATTERN, { message: 'Informe uma URL válida do Deezer' }) deezer_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @Matches(APPLE_MUSIC_URL_PATTERN, { message: 'Informe uma URL válida do Apple Music' }) apple_music_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @Matches(SOUNDCLOUD_URL_PATTERN, { message: 'Informe uma URL válida do SoundCloud' }) soundcloud_url?: string;
@@ -61,7 +61,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsNumber() instagram_seguidores?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() tiktok_seguidores?: number;
 
-  // ── Perfil / Relacionamentos ──────────────────────────────────────────────────
+  // ── Profile / Relationships ──────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() tipo_perfil?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() empresario_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() empresario_nome?: string;
@@ -77,7 +77,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() gravadora_responsavel_email?: string;
   @ApiPropertyOptional() @IsOptional() @IsArray() relacionamentos?: unknown[];
 
-  // ── Distribuidoras ────────────────────────────────────────────────────────────
+  // ── Distributors ─────────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsObject() distribuidoras_selecionadas?: Record<string, boolean>;
   @ApiPropertyOptional() @IsOptional() @IsObject() distribuidoras_emails?: Record<string, string>;
   @ApiPropertyOptional() @IsOptional() @IsObject() distribuidoras_empresa_selecionadas?: Record<string, boolean>;
@@ -90,7 +90,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() documentos_pessoais_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() presskit_url?: string;
 
-  // ── Equipe / Contatos ────────────────────────────────────────────────────────
+  // ── Team / Contacts ──────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() manager_nome?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() manager_contato?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() produtor_executivo?: string;
@@ -101,13 +101,13 @@ export class CreateArtistDto {
   // @deprecated Embedded contacts (legacy / public self-signup). Kept for backward compatibility.
   @ApiPropertyOptional() @IsOptional() @IsArray() contatos_equipe?: unknown[];
 
-  // ── Interno ───────────────────────────────────────────────────────────────────
+  // ── Internal ─────────────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() notas_internas?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() slug_artistico?: string;
   @ApiPropertyOptional() @IsOptional() @IsArray() tags_musicais?: string[];
   @ApiPropertyOptional() @IsOptional() @IsString() fase_carreira?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() genero?: string;
 
-  // ── Contrato ─────────────────────────────────────────────────────────────────
+  // ── Contract ─────────────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() contrato_id?: string;
 }

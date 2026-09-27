@@ -15,7 +15,7 @@ export class CatalogFormFieldColumns20260712000002 implements MigrationInterface
   name = 'CatalogFormFieldColumns20260712000002';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // ── Obras ────────────────────────────────────────────────────────────────
+    // ── Works ────────────────────────────────────────────────────────────────
     await queryRunner.query(`
       ALTER TABLE "works"
         ADD COLUMN IF NOT EXISTS "idioma" varchar(20),
@@ -44,7 +44,7 @@ export class CatalogFormFieldColumns20260712000002 implements MigrationInterface
         END
     `);
 
-    // ── Fonogramas ───────────────────────────────────────────────────────────
+    // ── Phonograms ───────────────────────────────────────────────────────────
     await queryRunner.query(`
       ALTER TABLE "phonograms"
         ADD COLUMN IF NOT EXISTS "agregadora" varchar(100),

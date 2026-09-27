@@ -98,7 +98,7 @@ describe('IntegrationsController OAuth token boundary', () => {
       expiresIn: 3600,
       scopes: 'user.info.basic,video.list',
     });
-    // gravado dentro do contexto do tenant da entrada server-side do cache
+    // written inside the tenant context of the server-side cache entry
     expect(contextLog).toEqual([{ tenantId: 'tenant-1' }]);
   });
 

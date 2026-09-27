@@ -90,7 +90,7 @@ async function main() {
     const r = await call('GET', '/audit-logs?limit=10');
     ok('/audit-logs → 200', r.status === 200);
     const arr = Array.isArray(r.body?.data) ? r.body.data : [];
-    ok('/audit-logs retorna entradas reais', arr.length >= 0); // 0 ou mais
+    ok('/audit-logs retorna entradas reais', arr.length >= 0); // 0 or more
   }
 
   console.log('\n── 6.6 — Marketing metrics (no real integrations → empty) ──');
@@ -146,7 +146,7 @@ async function main() {
   const dash = await call('GET', '/analytics/dashboard');
   ok('/analytics/dashboard → 200', dash.status === 200);
 
-  // Reload = chamar de novo
+  // Reload = call again
   const dash2 = await call('GET', '/analytics/dashboard');
   ok('/analytics/dashboard reload consistente', dash2.status === 200 && typeof dash2.body?.data?.artists === 'number');
 

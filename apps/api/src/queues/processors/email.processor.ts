@@ -13,7 +13,7 @@ import { Job }                   from 'bullmq';
 import { QUEUE_NAMES, EMAIL_JOB_NAMES } from '../queue.constants';
 import { MailService }           from '../../core/mail/mail.service';
 
-// ─── Payloads tipados por job ─────────────────────────────────────────────────
+// ─── Payloads typed per job ───────────────────────────────────────────────────
 
 export interface WelcomeEmailPayload {
   tenantId: string;
@@ -88,7 +88,7 @@ export class EmailProcessor extends WorkerHost {
     this.logger.log(`[emails] job="${job.name}" id=${job.id} attempt=${job.attemptsMade + 1}`);
 
     switch (job.name) {
-      // ── Novos jobs tipados ────────────────────────────────────────────────
+      // ── New typed jobs ────────────────────────────────────────────────
       case 'welcome':
       case EMAIL_JOB_NAMES.WELCOME: {
         const d = job.data as WelcomeEmailPayload;

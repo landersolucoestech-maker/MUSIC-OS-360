@@ -10,7 +10,7 @@ export class CreateCheckoutDto {
   @IsOptional() @IsString()
   planSlug?: string;
 
-  /** Alias legado (slug). Mantido para compatibilidade do frontend. */
+  /** Legacy alias (slug). Kept for frontend compatibility. */
   @ApiPropertyOptional({ deprecated: true })
   @IsOptional() @IsString()
   plan?: string;

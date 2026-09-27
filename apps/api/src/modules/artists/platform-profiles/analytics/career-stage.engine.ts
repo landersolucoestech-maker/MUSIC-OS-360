@@ -213,7 +213,7 @@ export function computeCareerStage(input: CareerStageEngineInput): CareerStageRe
     // the denominator is the sum of AVAILABLE weights, not 100.
     const weightedSum = available.reduce((acc, d) => acc + (d.score as number) * d.weight, 0);
     const score0to100 = weightedSum / availableWeight;
-    score = Math.round((score0to100 / 10) * 10) / 10; // 0-10, 1 casa decimal
+    score = Math.round((score0to100 / 10) * 10) / 10; // 0-10, 1 decimal place
     classification = classify(score);
     status = 'OK';
   }

@@ -86,7 +86,7 @@ function setIfPresent<T extends object>(target: T, key: keyof T, value: string):
   if (value) (target as unknown as Record<string, unknown>)[key as string] = value;
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapScript(value: unknown): AudiovisualScriptScene[] {
   return asRecordArray(value).map((s, idx) => {
@@ -169,7 +169,7 @@ const DELIVERABLE_BY_TYPE: Record<AudiovisualContentType, AudiovisualDeliverable
   "other":         { name: "Vídeo final",              format: "MP4 1080p",      platform: "A definir" },
 };
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 function buildFallback(input: AudiovisualBriefingInput): AudiovisualBriefingOutput {
   const deliverable = DELIVERABLE_BY_TYPE[input.contentType] ?? DELIVERABLE_BY_TYPE.other;

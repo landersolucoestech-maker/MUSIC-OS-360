@@ -61,9 +61,9 @@ export interface NativeSkillAutomationParams<TRow, TInput> {
   tenantId: string | null | undefined;
   /** Responsible user (for skill_run and AIService). */
   userId: string | null | undefined;
-  /** Tipo do agregado (ex.: 'project', 'release'). */
+  /** Aggregate type (e.g. 'project', 'release'). */
   entityType: string;
-  /** ID do agregado. */
+  /** Aggregate ID. */
   entityId: string | null | undefined;
   /** Key in `metadata` where the envelope is written (e.g. 'aiPlan', 'aiChecklist'). */
   metadataKey: string;

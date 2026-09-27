@@ -595,7 +595,7 @@ export const envSchema = z.object({
 }).superRefine((cfg, ctx) => {
   const isProdLike = cfg.NODE_ENV === 'production' || cfg.NODE_ENV === 'staging';
 
-  // 1) Denylist: branch preview proibido em qualquer ambiente.
+  // 1) Denylist: preview branch forbidden in any environment.
   const refSources: Array<[string, string | null]> = [
     ['SUPABASE_URL', extractSupabaseRef(cfg.SUPABASE_URL)],
     ['DATABASE_URL', extractSupabaseRef(cfg.DATABASE_URL)],

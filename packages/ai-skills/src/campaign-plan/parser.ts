@@ -60,7 +60,7 @@ function asRecordArray(value: unknown): Record<string, unknown>[] {
   return value.filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null);
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapChannels(value: unknown): CampaignPlanChannel[] {
   const raw = asRecordArray(value).map((c) => ({

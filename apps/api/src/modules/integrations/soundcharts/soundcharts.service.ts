@@ -119,7 +119,7 @@ export class SoundchartsService {
     return this.cachedToken.token;
   }
 
-  // ── HTTP interno ──────────────────────────────────────────────────────
+  // ── Internal HTTP ──────────────────────────────────────────────────────
 
   private async apiGet(path: string): Promise<{ status: number; body: unknown }> {
     const token = await this.getToken();

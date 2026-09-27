@@ -95,11 +95,11 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 function normalizeProbability(value: unknown, fallback: number): number {
   let n = typeof value === "number" ? value : Number(asString(value));
   if (!Number.isFinite(n)) return fallback;
-  if (n > 1 && n <= 100) n = n / 100; // aceita percentual (ex.: 70 → 0.7)
+  if (n > 1 && n <= 100) n = n / 100; // accepts a percentage (e.g. 70 → 0.7)
   return Math.max(0, Math.min(1, n));
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapObjections(value: unknown): CrmObjection[] {
   return asRecordArray(value).map((o) => ({
@@ -143,7 +143,7 @@ function mapStageRecommendation(value: unknown, fallback: CrmStageRecommendation
   return recommendation;
 }
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 function buildFollowUpMessage(input: CrmFollowupInput): string {
   return [

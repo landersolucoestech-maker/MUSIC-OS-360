@@ -1,5 +1,5 @@
 // ─── Feature flags ────────────────────────────────────────────────────────────
-// Controlados por tenant plan + env vars.
+// Controlled by the tenant plan + env vars.
 
 export type FeatureFlag =
   | "analytics"

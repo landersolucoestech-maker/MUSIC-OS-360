@@ -54,7 +54,7 @@ export enum FunctionalRole {
 /** Union of every role recognized by the system */
 export type AnyRole = SystemRole | FunctionalRole;
 
-// ─── Artistas ─────────────────────────────────────────────────────────────────
+// ─── Artists ──────────────────────────────────────────────────────────────────
 
 /**
  * ArtistStatus — superset of every possible artist status.
@@ -93,7 +93,7 @@ export enum ArtistRelationshipType {
   INDEPENDENT = "independent",
 }
 
-// ─── Contratos ────────────────────────────────────────────────────────────────
+// ─── Contracts ────────────────────────────────────────────────────────────────
 
 /**
  * ContractStatus — lifecycle of a contract.
@@ -204,7 +204,7 @@ export enum TransactionStatus {
   SCHEDULED = "scheduled",
 }
 
-// ─── Notas Fiscais (Invoices) ─────────────────────────────────────────────────
+// ─── Invoices (Brazilian notas fiscais) ───────────────────────────────────────
 
 /**
  * InvoiceStatus — state of an invoice.
@@ -244,7 +244,7 @@ export enum ClientStatus {
   PROSPECT = "prospect",
 }
 
-// ─── Marketing / Campanhas ────────────────────────────────────────────────────
+// ─── Marketing / Campaigns ────────────────────────────────────────────────────
 
 export enum CampaignStatus {
   DRAFT     = "draft",
@@ -264,7 +264,7 @@ export enum BriefingStatus {
   CANCELLED   = "cancelled",
 }
 
-// ─── Monitoramento ────────────────────────────────────────────────────────────
+// ─── Monitoring ───────────────────────────────────────────────────────────────
 
 /**
  * TakedownStatus — state of a takedown process.
@@ -288,7 +288,7 @@ export enum ContentDetectionStatus {
   ARCHIVED    = "archived",
 }
 
-// ─── Projetos ────────────────────────────────────────────────────────────────
+// ─── Projects ─────────────────────────────────────────────────────────────────
 
 /**
  * ProjectStatus — lifecycle of a music project.
@@ -302,7 +302,7 @@ export enum ProjectStatus {
   CANCELLED   = "cancelled",
 }
 
-// ─── Eventos ─────────────────────────────────────────────────────────────────
+// ─── Events ───────────────────────────────────────────────────────────────────
 
 /**
  * EventStatus — state of an event.

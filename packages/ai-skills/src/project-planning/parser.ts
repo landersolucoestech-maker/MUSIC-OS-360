@@ -91,7 +91,7 @@ function tryParse(text: string): Record<string, unknown> | null {
   return null;
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapPhases(value: unknown): ProjectPhase[] {
   return asRecordArray(value).map((p, idx) => ({
@@ -144,7 +144,7 @@ function mapMilestones(value: unknown): ProjectMilestone[] {
   });
 }
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 const HEURISTIC_NOTE = "Plano heurístico local: a análise detalhada do modelo não foi executada. Revise manualmente antes de usar como plano operacional definitivo.";
 

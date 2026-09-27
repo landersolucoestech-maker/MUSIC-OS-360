@@ -43,7 +43,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     expect(metadataIdx).toBeGreaterThan(0);
     expect(createdAtIdx).toBeGreaterThan(metadataIdx);
     expect(deletedAtIdx).toBeGreaterThan(createdAtIdx);
-    // Nada depois de deleted_at no bloco.
+    // Nothing after deleted_at in the block.
     const afterDeletedAt = newColumnsBlock.slice(deletedAtIdx + 'deleted_at'.length).trim();
     expect(afterDeletedAt.replace(/timestamp,?/, '').trim()).toBe('');
   });

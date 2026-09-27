@@ -212,7 +212,7 @@ export class FinancialCategories20260718000002 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // ── Remove a estrutura nova ───────────────────────────────────────────────
+    // ── Remove the new structure ───────────────────────────────────────────────
     await queryRunner.query(`DROP TRIGGER "trg_fincat_level_guard" ON "financial_categories"`);
     await queryRunner.query(`DROP FUNCTION "fn_fincat_level_guard"()`);
     await queryRunner.query(`DROP TABLE "financial_categories"`);
@@ -346,7 +346,7 @@ export class FinancialCategories20260718000002 implements MigrationInterface {
       CREATE INDEX idx_financial_category_rule_runs_rule ON financial_category_rule_runs (tenant_id, rule_id, created_at DESC)
     `);
 
-    // RLS + policies harmonizadas (20260613000015) do ponto da cadeia.
+    // RLS + harmonized policies (20260613000015) at this point of the chain.
     for (const table of [...FinancialCategories20260718000002.LEGACY_TABLES_REVERSE].reverse()) {
       await queryRunner.query(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
       await queryRunner.query(`ALTER TABLE ${table} FORCE ROW LEVEL SECURITY`);

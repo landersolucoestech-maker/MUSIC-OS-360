@@ -17,7 +17,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class HarmonizeRawTextPolicies20260613000015 implements MigrationInterface {
   name = 'HarmonizeRawTextPolicies20260613000015';
 
-  // [tabela, nome_da_policy]
+  // [table, policy_name]
   private static readonly SPECS: ReadonlyArray<[string, string]> = [
     ['financial_categories', 'tenant_isolation_financial_categories'],
     ['financial_category_audit_logs', 'tenant_isolation_financial_category_audit_logs'],

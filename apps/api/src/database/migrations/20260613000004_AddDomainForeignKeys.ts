@@ -25,7 +25,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class AddDomainForeignKeys20260613000004 implements MigrationInterface {
   name = 'AddDomainForeignKeys20260613000004';
 
-  // [tabela, coluna, tabela_ref, coluna_ref, onDelete, nome_constraint]
+  // [table, column, ref_table, ref_column, onDelete, constraint_name]
   private static readonly FKS: ReadonlyArray<[string, string, string, string, 'SET NULL' | 'CASCADE', string]> = [
     ['works',             'artista_id',  'artists',   'id', 'SET NULL', 'fk_works_artista_id'],
     ['phonograms',        'artista_id',  'artists',   'id', 'SET NULL', 'fk_phonograms_artista_id'],

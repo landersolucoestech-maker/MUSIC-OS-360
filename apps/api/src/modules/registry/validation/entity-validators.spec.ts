@@ -44,7 +44,7 @@ describe('WorkRegistryValidationService', () => {
     expect(codes(issues)).toContain('work_ai_declaration_missing');
   });
 
-  // ── Fase 5 / C6: elegibilidade de registro (share_type IS NULL) ──────────────
+  // ── Phase 5 / C6: registration eligibility (share_type IS NULL) ──────────────
 
   it('excludes financial/pendente shares from author count and percentage sum', () => {
     const issues = work.validate(

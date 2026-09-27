@@ -254,7 +254,7 @@ async function main(): Promise<void> {
     await client.end();
   }
 
-  // ── Resultado ─────────────────────────────────────────────────────────────
+  // ── Result ────────────────────────────────────────────────────────────────
   console.log('\n── Resultado ───────────────────────────────────────────────\n');
   console.log(`  Testes passados : ${passed}`);
   console.log(`  Testes falhados : ${failed}`);

@@ -56,7 +56,7 @@ function setIfPresent<T extends object>(target: T, key: keyof T, value: string):
   if (value) (target as unknown as Record<string, unknown>)[key as string] = value;
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapCalendar(value: unknown): MarketingCalendarEntry[] {
   return asRecordArray(value).map((e) => {
@@ -139,7 +139,7 @@ const FREQUENCY_SUGGESTION: Record<MarketingFrequency, string> = {
   intensive: "múltiplos posts/dia",
 };
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 const HEURISTIC_NOTE = "Calendário heurístico local: gerado a partir de datas, plataformas e frequência — refine com a estratégia da campanha.";
 

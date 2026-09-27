@@ -167,7 +167,7 @@ describe('BillingPlansService', () => {
       expect(stripe().products.create).not.toHaveBeenCalled();    // product already exists → update
       expect(stripe().products.update).toHaveBeenCalledWith('prod_1', expect.any(Object));
       expect(stripe().prices.create).toHaveBeenCalledTimes(1);    // novo price
-      expect(stripe().prices.update).toHaveBeenCalledWith('price_1', { active: false }); // desativa antigo
+      expect(stripe().prices.update).toHaveBeenCalledWith('price_1', { active: false }); // deactivates the old one
     });
 
     it('does NOT recreate the Price when only the name changes', async () => {

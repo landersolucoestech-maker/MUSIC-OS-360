@@ -157,7 +157,7 @@ describe('Permanent guard: the census of PT-suspect physical columns does not di
       // LEGAL_DOMAIN_INTENTIONAL -- should never trigger the guard even though they are PT.
       'cpf', 'cnpj', 'cpf_cnpj_encrypted', 'inscricao_estadual', 'tomador_razao_social',
       'nfse', 'aliquota_iss', 'regime_tributario',
-      // Termos EN puros -- nunca deveriam disparar.
+      // Pure EN terms -- must never trigger.
       'created_at', 'tenant_id', 'status', 'party_role', 'percentage',
     ])('"%s" NÃO é detectado como PT-suspeito (falso-positivo seria um defeito do guard)', (field) => {
       expect(isPtSuspect(field)).toBe(false);

@@ -795,7 +795,7 @@ export class WorkParticipantEntity {
   work: Relation<WorkEntity>;
 }
 
-// ─── Phonograms (fonogramas) ───────────────────────────────────────────────────
+// ─── Phonograms (legacy PT: fonogramas) ─────────────────────────────────────────
 export interface PhonogramParticipante {
   id?: string;
   name?: string;
@@ -1057,7 +1057,7 @@ export class TransactionEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
 }
 
-// ─── Invoices (Notas Fiscais) ─────────────────────────────────────────────────
+// ─── Invoices (Brazilian notas fiscais) ───────────────────────────────────────
 @Entity('invoices')
 @Index(['tenant_id'])
 @Index(['tenant_id', 'status'])

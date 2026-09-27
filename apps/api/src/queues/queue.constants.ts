@@ -56,7 +56,7 @@ export const WORKFLOW_JOB_NAMES = {
 
 export type WorkflowJobName = (typeof WORKFLOW_JOB_NAMES)[keyof typeof WORKFLOW_JOB_NAMES];
 
-/** Jobs produzidos por SpotifyService na fila streaming-sync. */
+/** Jobs produced by SpotifyService on the streaming-sync queue. */
 export const SPOTIFY_JOB_NAMES = {
   ACCOUNT_SYNC: 'spotify:sync',
 } as const;

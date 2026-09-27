@@ -70,7 +70,7 @@ export class MailService {
       .split(',').map((d) => d.trim().toLowerCase()).filter(Boolean);
   }
 
-  // ─── Envio base ───────────────────────────────────────────────────────────
+  // ─── Base sending ─────────────────────────────────────────────────────────
 
   async send(opts: SendMailOptions): Promise<MailResult> {
     if (!this.apiKey) {

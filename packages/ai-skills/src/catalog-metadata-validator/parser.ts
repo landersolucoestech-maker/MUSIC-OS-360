@@ -95,7 +95,7 @@ function normalizeScore(value: unknown, fallback: number): number {
   return Math.max(0, Math.min(100, Math.round(n)));
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapComposers(value: unknown): CatalogComposer[] {
   return asRecordArray(value).map((c) => {
@@ -204,7 +204,7 @@ function sharesSum(shares: CatalogShare[]): number {
   return shares.reduce((acc, s) => acc + (typeof s.percentage === "number" ? s.percentage : 0), 0);
 }
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 function buildFallback(
   input: CatalogMetadataValidatorInput,

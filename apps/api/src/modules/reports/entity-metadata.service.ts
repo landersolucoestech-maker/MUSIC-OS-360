@@ -148,7 +148,7 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   payment_events: EntityCategory.BILLING,
   tenant_billing_state: EntityCategory.BILLING,
 
-  // ── Infra interna de IA ───────────────────────────────────────────────────
+  // ── Internal AI infrastructure ───────────────────────────────────────────────
   ai: EntityCategory.AI_INTERNAL,
   ai_jobs: EntityCategory.AI_INTERNAL,
   ai_usage_logs: EntityCategory.AI_INTERNAL,

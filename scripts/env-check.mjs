@@ -46,7 +46,7 @@ function expectedRefFor(nodeEnv) {
   return SUPABASE_DEV_REF;
 }
 
-/** Denylist cruzada: refs conhecidos de OUTROS ambientes — prevalece sobre allowlist. */
+/** Cross denylist: known refs of OTHER environments — takes precedence over the allowlist. */
 function forbiddenRefsFor(nodeEnv) {
   const expected = expectedRefFor(nodeEnv);
   return SUPABASE_KNOWN_REFS.filter((ref) => ref !== expected);
@@ -171,7 +171,7 @@ for (const key of requiredWeb) {
   if (!web[key]) errors.push(`required frontend env missing/empty (apps/web/.env.development): ${key}`);
 }
 
-// Refs por origem
+// Refs per source
 const refSources = [
   ["SUPABASE_URL (api)", extractSupabaseRef(apiEnv.SUPABASE_URL)],
   ["DATABASE_URL (api)", extractSupabaseRef(apiEnv.DATABASE_URL)],
@@ -243,7 +243,7 @@ for (const [label, token, expectedRole] of jwtSources) {
   }
 }
 
-// VITE_API_URL bem formada
+// Well-formed VITE_API_URL
 if (web.VITE_API_URL && !/^https?:\/\//.test(web.VITE_API_URL)) {
   errors.push(`invalid VITE_API_URL: "${web.VITE_API_URL}" (expected http(s)://host[:port])`);
 }

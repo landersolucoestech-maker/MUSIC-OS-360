@@ -89,7 +89,7 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 function normalizeConfidence(value: unknown, fallback: number): number {
   let n = typeof value === "number" ? value : Number(asString(value));
   if (!Number.isFinite(n)) return fallback;
-  if (n > 1 && n <= 100) n = n / 100; // aceita percentual (ex.: 80 → 0.8)
+  if (n > 1 && n <= 100) n = n / 100; // accepts a percentage (e.g. 80 → 0.8)
   return Math.max(0, Math.min(1, n));
 }
 
@@ -137,7 +137,7 @@ function inferLinkedEntity(input: FinancialClassificationInput): LinkedEntitySug
   return { entityType: "none" };
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapLinkedEntity(value: unknown, fallback: LinkedEntitySuggestion): LinkedEntitySuggestion {
   const m = asRecord(value);
@@ -170,7 +170,7 @@ function mapRecommendedActions(value: unknown): FinancialRecommendedAction[] {
   }));
 }
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 function buildFallback(input: FinancialClassificationInput): FinancialClassificationOutput {
   const { category, costCenter } = inferFromDescription(input.description ?? "");

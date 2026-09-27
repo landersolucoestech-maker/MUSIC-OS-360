@@ -114,7 +114,7 @@ function resolveUuidPair(
     return v;
   }
 
-  // ambos presentes
+  // both present
   const ptV = input[spec.canonical];
   const enV = input[spec.legacy];
 

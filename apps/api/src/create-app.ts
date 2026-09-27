@@ -154,7 +154,7 @@ export async function createApp(): Promise<INestApplication> {
     ],
   });
 
-  // ── Prefixo global ───────────────────────────────────────────────────────────
+  // ── Global prefix ────────────────────────────────────────────────────────────
   app.setGlobalPrefix('api/v1', {
     exclude: [
       { path: 'metrics', method: RequestMethod.GET },

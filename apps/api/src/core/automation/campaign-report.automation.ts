@@ -162,7 +162,7 @@ export class CampaignReportAutomation {
     const assetsUsedCount = c.assets_used_count != null ? Number(c.assets_used_count) : 0;
     if (assetsUsedCount > 0) input.assetsUsedCount = assetsUsedCount;
 
-    // externalMetrics deliberadamente omitido — ver doc-comment do arquivo.
+    // externalMetrics deliberately omitted — see the file doc-comment.
 
     return input;
   }

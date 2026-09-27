@@ -56,7 +56,7 @@ async function run(): Promise<void> {
     await seedOperational(AppDataSource, tenant);
     console.log('  ✓ Operational: demo org/tenant/billing/artist/contact/campaign/contract/transaction');
 
-    // FASE 8 — RBAC global (permissions/roles/role_permissions) + organograma por tenant.
+    // PHASE 8 — global RBAC (permissions/roles/role_permissions) + per-tenant org chart.
     const rbac = await seedRbac(AppDataSource);
     console.log(`  ✓ RBAC: ${rbac.permissions} permissions, ${rbac.roles} roles, ${rbac.rolePermissions} role_permissions`);
     const org = await seedOrgStructure(AppDataSource);

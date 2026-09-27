@@ -92,7 +92,7 @@ export function largestRemainder(
     throw new LargestRemainderError('SUM_EXCEEDS_100', 'soma de percentuais excede 100 (I5)');
   }
 
-  // Unidade de trabalho: amountCents × pctScaled  (centavos × 10^6).
+  // Unit of work: amountCents × pctScaled  (cents × 10^6).
   // total_alvo em centavos = round(amountCents × sumPct / 10^6) [half-up].
   const UNIT = 100n * PCT_SCALE; // 10^6
   const targetRaw = amountCents * sumPct;
@@ -101,7 +101,7 @@ export function largestRemainder(
   const floors: bigint[] = [];
   const fracs: bigint[] = [];
   for (const pct of pcts) {
-    const raw = amountCents * pct; // centavos × 10^6, exato
+    const raw = amountCents * pct; // cents × 10^6, exact
     floors.push(raw / UNIT);
     fracs.push(raw % UNIT);
   }
@@ -119,7 +119,7 @@ export function largestRemainder(
       }
     }
     floors[pick] += 1n;
-    fracs[pick] = -2n; // consumido
+    fracs[pick] = -2n; // consumed
     residue -= 1n;
   }
 

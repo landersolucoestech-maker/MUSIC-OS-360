@@ -105,7 +105,7 @@ export function parseOnboardingCroResponse(
 
   return {
     progressSummary: asString(json.progressSummary) || fallback.progressSummary,
-    // ENFORCEMENT: sempre derivado do input real, nunca do modelo.
+    // ENFORCEMENT: always derived from the real input, never from the model.
     completedStepsCount: fallback.completedStepsCount,
     totalStepsCount: fallback.totalStepsCount,
     nextRecommendedStep: asString(json.nextRecommendedStep) || fallback.nextRecommendedStep,

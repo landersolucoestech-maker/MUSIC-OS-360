@@ -462,7 +462,7 @@ export class IntegrationsController {
     })));
   }
 
-  // ─── Status geral ──────────────────────────────────────────────────────────
+  // ─── General status ────────────────────────────────────────────────────────
 
   @Get('status')
   @RequireRole('viewer')
@@ -842,7 +842,7 @@ export class IntegrationsController {
     return this.instagram.disconnectProvider(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
   }
 
-  // ─── Meta corporativo (Business/Ads/Instagram — ver oauth/exchange acima) ──
+  // ─── Corporate Meta (Business/Ads/Instagram — see oauth/exchange above) ──
 
   private static readonly META_CORP_PLATFORMS = ['corp_instagram', 'meta_business', 'meta_ads'];
 

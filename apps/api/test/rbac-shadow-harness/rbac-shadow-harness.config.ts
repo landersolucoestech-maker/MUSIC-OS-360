@@ -87,7 +87,7 @@ export function loadHarnessConfig(): HarnessConfig {
   };
 }
 
-/** Hierarquia (espelha ROLE_HIERARCHY do backend) — usada para prever allow/deny. */
+/** Hierarchy (mirrors the backend ROLE_HIERARCHY) — used to predict allow/deny. */
 export const ROLE_LEVEL: Record<HarnessRole, number> = {
   owner: 90, admin: 80, manager: 70, editor: 60, accounting: 60, artist: 30, viewer: 10,
 };

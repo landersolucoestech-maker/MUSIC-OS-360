@@ -39,7 +39,7 @@ import { runOnDemandSkill, type OnDemandSkillResult } from './on-demand-skill.ru
 
 const REPORTING_ANALYSIS_SKILL_NAME = 'reporting-analysis';
 const PERFORMANCE_REPORT_SKILL_NAME = 'performance-report';
-const REPORTING_ANALYSIS_FRESHNESS_MINUTES = 24 * 60; // 1 dia
+const REPORTING_ANALYSIS_FRESHNESS_MINUTES = 24 * 60; // 1 day
 
 interface DashboardSnapshot {
   artists: number;

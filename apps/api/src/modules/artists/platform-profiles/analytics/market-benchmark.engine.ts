@@ -29,7 +29,7 @@ export interface BenchmarkMetricInput {
 }
 
 export interface CohortDefinition {
-  /** UUID Soundcharts do artista-alvo — origem da descoberta /related. */
+  /** Soundcharts UUID of the target artist — source of the /related discovery. */
   sourceArtistUuid: string | null;
   /** country_code applied as a filter, or null when unfiltered (L2/L3). */
   countryFilter: string | null;

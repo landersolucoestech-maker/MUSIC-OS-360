@@ -43,7 +43,7 @@ export class BillingRlsHardening20260701000003 implements MigrationInterface {
         WITH CHECK (app_current_tenant_id() IS NULL OR tenant_id = app_current_tenant_id())
     `);
 
-    // ── payment_events (auditoria de sistema; tenant_id nullable) ────────────
+    // ── payment_events (system audit; nullable tenant_id) ────────────
     await queryRunner.query(`ALTER TABLE "payment_events" ENABLE ROW LEVEL SECURITY`);
     await queryRunner.query(`ALTER TABLE "payment_events" FORCE ROW LEVEL SECURITY`);
     await queryRunner.query(`DROP POLICY IF EXISTS "super_admin_full_access" ON "payment_events"`);
@@ -60,7 +60,7 @@ export class BillingRlsHardening20260701000003 implements MigrationInterface {
         WITH CHECK (app_current_tenant_id() IS NULL OR tenant_id IS NULL OR tenant_id = app_current_tenant_id())
     `);
 
-    // ── billing_settings (config global; leitura p/ app, escrita p/ super_admin) ─
+    // ── billing_settings (global config; read for app, write for super_admin) ─
     await queryRunner.query(`ALTER TABLE "billing_settings" ENABLE ROW LEVEL SECURITY`);
     await queryRunner.query(`ALTER TABLE "billing_settings" FORCE ROW LEVEL SECURITY`);
     await queryRunner.query(`DROP POLICY IF EXISTS "billing_settings_read" ON "billing_settings"`);

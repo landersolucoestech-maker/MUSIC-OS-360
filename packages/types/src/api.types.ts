@@ -35,7 +35,7 @@ export interface PaginationParams {
   search?: string;
 }
 
-// ─── Auditoria ────────────────────────────────────────────────────────────────
+// ─── Audit ────────────────────────────────────────────────────────────────────
 
 export interface AuditableEntity {
   created_at: string;

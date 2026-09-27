@@ -85,7 +85,7 @@ test.describe('Parte 84 — varredura funcional de produto', () => {
       let bodyEmpty = false;
       try {
         await page.goto(mod.path, { waitUntil: 'networkidle', timeout: 20_000 });
-        await page.waitForTimeout(800); // deixa requests tardios/skeletons resolverem
+        await page.waitForTimeout(800); // lets late requests/skeletons settle
         const bodyText = (await page.locator('body').innerText()).trim();
         bodyEmpty = bodyText.length < 10;
       } catch (err) {

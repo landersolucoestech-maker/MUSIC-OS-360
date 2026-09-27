@@ -52,7 +52,7 @@ export class RemoveDeadStructuresD1D8_20260705000003 implements MigrationInterfa
       ON CONFLICT (id) DO NOTHING
     `);
 
-    // ── D1 + D2: drop do cluster CRM legado (ordem respeita FKs) ──────────────
+    // ── D1 + D2: drop the legacy CRM cluster (order respects FKs) ──────────────
     for (const table of [
       'crm_timeline_events',
       'crm_tasks',
@@ -86,10 +86,10 @@ export class RemoveDeadStructuresD1D8_20260705000003 implements MigrationInterfa
     // ── D4: organization_members (duplicata de org_members, fora de migrations) ─
     await qr.query(`DROP TABLE IF EXISTS organization_members CASCADE`);
 
-    // ── D5: financial_category_templates, 0 uso vivo ──────────────────────────
+    // ── D5: financial_category_templates, 0 live usage ──────────────────────────
     await qr.query(`DROP TABLE IF EXISTS financial_category_templates CASCADE`);
 
-    // ── D7: colunas flat legadas de financial_category_rules ──────────────────
+    // ── D7: legacy flat columns of financial_category_rules ──────────────────
     await qr.query(`
       DROP INDEX IF EXISTS idx_financial_category_rules_dynamic_lookup;
       ALTER TABLE financial_category_rules
@@ -101,7 +101,7 @@ export class RemoveDeadStructuresD1D8_20260705000003 implements MigrationInterfa
         DROP COLUMN IF EXISTS sort_order
     `);
 
-    // ── D8: financial_centers + coluna/FK financial_category_centers.center_id ─
+    // ── D8: financial_centers + column/FK financial_category_centers.center_id ─
     await qr.query(`
       ALTER TABLE financial_category_centers
         DROP COLUMN IF EXISTS center_id CASCADE

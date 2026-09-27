@@ -159,7 +159,7 @@ export class ContractsService {
     out.template_id   = dto['template_id'] ?? null;
     if (Array.isArray(dto['signers'])) out.signers = dto['signers'];
 
-    // parties/currency/signedAt → metadata: fora do escopo do C1 (C1.1), comportamento inalterado.
+    // parties/currency/signedAt → metadata: out of scope of C1 (C1.1), behavior unchanged.
     const metaIn = stripServerOwnedMetadata((dto['metadata'] as Record<string, unknown> | undefined) ?? {});
     const meta: Record<string, unknown> = { ...metaIn };
     if (Array.isArray(dto['parties']))  meta['parties']  = dto['parties'];

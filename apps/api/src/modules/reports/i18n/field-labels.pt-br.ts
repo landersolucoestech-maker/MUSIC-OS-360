@@ -14,7 +14,7 @@
 
 /** Canonical dictionary (camelCase → pt-BR). Single source of truth for the labels. */
 export const FIELD_LABELS_PT_BR = {
-  // ── Identidade / pessoa ─────────────────────────────────────────────────────
+  // ── Identity / person ───────────────────────────────────────────────────────
   name: 'Nome',
   nome: 'Nome',
   fullName: 'Nome completo',
@@ -30,7 +30,7 @@ export const FIELD_LABELS_PT_BR = {
   responsavel: 'Responsável',
   titularConta: 'Titular da conta',
 
-  // ── Contato ─────────────────────────────────────────────────────────────────
+  // ── Contact ─────────────────────────────────────────────────────────────────
   contactType: 'Tipo de contato',
   documentType: 'Tipo de documento',
   documentNumber: 'Número do documento',
@@ -136,7 +136,7 @@ export const FIELD_LABELS_PT_BR = {
   autentiqueDocId: 'Documento Autentique (ID)',
   cpf: 'CPF',
 
-  // ── Financeiro / contratos ──────────────────────────────────────────────────
+  // ── Finance / contracts ─────────────────────────────────────────────────────
   numero: 'Número',
   valor: 'Valor',
   fixedValue: 'Valor Fixo',
@@ -442,7 +442,7 @@ export const FIELD_LABELS_PT_BR = {
   paisPublicacao: 'País de publicação',
   arquivoAudio: 'Arquivo de áudio',
   audioFileId: 'ID do arquivo de áudio',
-  // ── Clientes/Contatos (regra 2026-07-12: 1 coluna por campo) ─────────────────
+  // ── Clients/Contacts (2026-07-12 rule: 1 column per field) ───────────────────
   individualName: 'Nome (pessoa física)',
   cnpj: 'CNPJ',
   foto: 'Foto',
@@ -457,11 +457,11 @@ export const FIELD_LABELS_PT_BR = {
   responsavelEmail: 'E-mail do responsável',
   responsavelTelefone: 'Telefone do responsável',
   responsavelCargo: 'Cargo do responsável',
-  // ── Eventos (regra 2026-07-12: 1 coluna por campo) ───────────────────────────
+  // ── Events (2026-07-12 rule: 1 column per field) ────────────────────────────
   contatoLocal: 'Contato do local',
   feeAmount: 'Valor do cachê',
   publicoEsperado: 'Público esperado',
-  // ── Notas Fiscais (regra 2026-07-12: 1 coluna por campo) ─────────────────────
+  // ── Invoices (2026-07-12 rule: 1 column per field) ──────────────────────────
   serie: 'Série',
   tipoNota: 'Tipo de nota',
   naturezaOperacao: 'Natureza da operação',
@@ -495,7 +495,7 @@ export const FIELD_LABELS_PT_BR = {
   urlPdf: 'PDF da nota',
   // ── Licenses (2026-07-12 rule: 1 column per field) ──────────────────────────
   remunerationType: 'Tipo de remuneração',
-  // ── Takedowns (regra 2026-07-12: 1 coluna por campo) ─────────────────────────
+  // ── Takedowns (2026-07-12 rule: 1 column per field) ─────────────────────────
   obraAfetada: 'Obra afetada',
   urlInfracao: 'Link da infração',
   evidencias: 'Evidências',
@@ -546,7 +546,7 @@ export const FIELD_LABELS_PT_BR = {
   // — a different technical field, real label confirmed in LancamentoViewModal.
   copyright: 'Titular do copyright',
 
-  // ── Parte 89 — Monitoramento (content_detections) ──────────────────────────
+  // ── Part 89 — Monitoring (content_detections) ────────────────────────────────
   tituloDetectado: 'Título detectado',
   detectadoEm: 'Detectado em',
 
@@ -606,7 +606,7 @@ export const FIELD_LABELS_PT_BR = {
   eventoRef: 'Evento (ID de referência)',
   label: 'Nome',
 
-  // ── Parte 89 — CRM: Leads ────────────────────────────────────────────────────
+  // ── Part 89 — CRM: Leads ────────────────────────────────────────────────────
   tipoLead: 'Tipo de lead',
   servico: 'Serviço',
   nomeArtistaServico: 'Nome do artista/banda',

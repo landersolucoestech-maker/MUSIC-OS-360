@@ -23,7 +23,7 @@ import { randomInt } from 'node:crypto';
 
 const LOWER = 'abcdefghijkmnopqrstuvwxyz'; // no "l" (confused with "1"/"I")
 const UPPER = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // no "O" (confused with "0")
-const DIGITS = '23456789'; // sem "0"/"1"
+const DIGITS = '23456789'; // without "0"/"1"
 const SYMBOLS = '!@#$%&*+-=?_'; // no quotes/backticks/backslashes/spaces/parentheses/brackets/braces
 const ALL = LOWER + UPPER + DIGITS + SYMBOLS;
 

@@ -98,7 +98,7 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
 
 @Module({
   imports: [
-    // ── Ambiente ─────────────────────────────────────────────────────────────
+    // ── Environment ─────────────────────────────────────────────────────────────
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnv,
@@ -247,8 +247,8 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
       provide:  APP_INTERCEPTOR,
       useClass: AuditInterceptor,
     },
-    // Guards globais aplicados a TODAS as rotas
-    // Ordem: RateLimitGuard → JwtAuthGuard → TenantGuard → RolesGuard → PermissionsGuard
+    // Global guards applied to EVERY route
+    // Order: RateLimitGuard → JwtAuthGuard → TenantGuard → RolesGuard → PermissionsGuard
     Reflector,
     {
       provide:  APP_GUARD,

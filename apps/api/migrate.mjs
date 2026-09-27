@@ -31,7 +31,7 @@ try {
 
 const sql = neon(url);
 
-// Executa cada statement separado por --> statement-breakpoint
+// Runs each statement separated by --> statement-breakpoint
 const statements = rawSql
   .split('--> statement-breakpoint')
   .map((s) => s.trim())

@@ -83,11 +83,11 @@ const ARTISTS_CONTRACT: ReportFormContract = {
     // Identity and profile (direct columns)
     col('nome_artistico'), col('nome_civil'), col('status'),
     col('music_genre'), col('notes'), col('especialidades'),
-    // Perfil estendido (metadata jsonb)
+    // Extended profile (metadata jsonb)
     meta('slug_artistico'), meta('tipo_perfil'), meta('fase_carreira'),
     meta('genero'), meta('data_nascimento'), meta('rg'), meta('endereco'),
     meta('tags_musicais'),
-    // Contato (cifrados)
+    // Contact (encrypted)
     enc('email', 'email_encrypted'), enc('telefone', 'telefone_encrypted'),
     enc('cpf_cnpj', 'cpf_cnpj_encrypted'),
     // Media and links (direct columns)
@@ -149,7 +149,7 @@ const EMPLOYEES_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Contratos ────────────────────────────────────────────────────────────────
+// ─── Contracts ────────────────────────────────────────────────────────────────
 const CONTRACTS_CONTRACT: ReportFormContract = {
   tableName: 'contracts',
   identityColumn: 'title',
@@ -184,7 +184,7 @@ const CONTRACTS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Obras ────────────────────────────────────────────────────────────────────
+// ─── Works ────────────────────────────────────────────────────────────────────
 const WORKS_CONTRACT: ReportFormContract = {
   tableName: 'works',
   identityColumn: 'title',
@@ -216,7 +216,7 @@ const WORKS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Fonogramas ───────────────────────────────────────────────────────────────
+// ─── Phonograms ───────────────────────────────────────────────────────────────
 const PHONOGRAMS_CONTRACT: ReportFormContract = {
   tableName: 'phonograms',
   identityColumn: 'title',
@@ -471,7 +471,7 @@ const SHARES_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Projetos Audiovisuais ──────────────────────────────────────────────────────
+// ─── Audiovisual Projects ─────────────────────────────────────────────────────
 const AUDIOVISUAL_PROJECTS_CONTRACT: ReportFormContract = {
   tableName: 'audiovisual_projects',
   identityColumn: 'music_title',

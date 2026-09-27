@@ -106,7 +106,7 @@ export class RealtimeService implements OnModuleDestroy {
     return tenant.org_id;
   }
 
-  /** Publica em `tenant:<org_id>`, resolvendo tenantId -> org_id primeiro. */
+  /** Publishes to `tenant:<org_id>`, resolving tenantId -> org_id first. */
   private broadcastToTenant(tenantId: string, event: string, payload: unknown): void {
     if (!this.client) return;
     void this.resolveOrgId(tenantId).then((orgId) => {

@@ -163,7 +163,7 @@ export class CreateContractDto {
   @IsOptional() @IsArray()
   documents?: unknown[];
 
-  // Campo do wizard (regra 2026-07-12: 1 coluna por campo, nome exato)
+  // Wizard field (2026-07-12 rule: 1 column per field, exact name)
   @ApiPropertyOptional()
   @IsOptional() @IsUUID()
   template_id?: string;

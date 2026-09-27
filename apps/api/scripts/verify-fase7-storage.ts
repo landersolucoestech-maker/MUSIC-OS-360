@@ -138,7 +138,7 @@ async function f72(): Promise<void> {
   if (r1.fileId) { UPLOAD_FILE_ID_A = r1.fileId; UPLOAD_KEY_A = r1.key!; UPLOAD_PUBLIC_URL_A = r1.publicUrl!; }
   if (r1.phase === 'put' && r1.detail?.includes('AccessDenied')) info('R2 credential without WRITE — environment bug, not code');
 
-  // PDF (contrato)
+  // PDF (contract)
   const PDF_MIN = Buffer.from('%PDF-1.4\n1 0 obj <<>> endobj\ntrailer <<>>\n%%EOF', 'utf-8');
   const r2 = await uploadCycle(TOKEN_A, TA, { fileName: `contract_${TS}.pdf`, mimeType: 'application/pdf', sizeBytes: PDF_MIN.length, category: 'documents', entity: 'contract', entityId: TS.toString(), body: PDF_MIN });
   const r2CodeOK = r2.ok || (r2.phase === 'put' && r2.detail?.includes('AccessDenied'));
@@ -250,7 +250,7 @@ async function f75(): Promise<void> {
   const r5 = await fetch(`${API_URL}/api/v1/uploads/presign`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN_A}` }, body: JSON.stringify({ fileName: 'x.png', mimeType: 'image/png', sizeBytes: 100, category: 'images' }) });
   ok('no X-Tenant-ID → 403', r5.status === 403, `status=${r5.status}`);
 
-  // Cross-tenant download (token B tenta acessar file de A)
+  // Cross-tenant download (token B tries to access A's file)
   if (UPLOAD_FILE_ID_A) {
     const r6 = await call('GET', `/uploads/${UPLOAD_FILE_ID_A}/download`, { token: TOKEN_B, tenant: TB });
     ok('cross-tenant download (B → file de A) → 404', r6.status === 404, `status=${r6.status}`);
@@ -262,7 +262,7 @@ async function f75(): Promise<void> {
     ok('cross-tenant confirm (B → file de A) → 404', r7.status === 404, `status=${r7.status}`);
   }
 
-  // Tamanho negativo / zero (DTO @IsPositive)
+  // Negative / zero size (DTO @IsPositive)
   const r8 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'x.png', mimeType: 'image/png', sizeBytes: 0, category: 'images' } });
   ok('sizeBytes=0 → 400/422', [400, 422].includes(r8.status), `status=${r8.status}`);
 }

@@ -20,7 +20,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class AddHrEmployeeForeignKeys20260613000005 implements MigrationInterface {
   name = 'AddHrEmployeeForeignKeys20260613000005';
 
-  // [tabela, coluna, nome_constraint]
+  // [table, column, constraint_name]
   private static readonly FKS: ReadonlyArray<[string, string, string]> = [
     ['payroll_entries', 'employee_id', 'fk_payroll_entries_employee_id'],
     ['leave_requests',  'employee_id', 'fk_leave_requests_employee_id'],

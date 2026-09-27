@@ -111,7 +111,7 @@ export class InstagramService extends IntegrationBaseService {
     let conn = await this.getOAuthConnection(tenantId, userId, PROVIDER);
     if (!conn) return { error: 'Instagram não conectado' };
 
-    const REFRESH_WINDOW_MS = 7 * 24 * 60 * 60 * 1000; // renova a partir de 7 dias antes de expirar
+    const REFRESH_WINDOW_MS = 7 * 24 * 60 * 60 * 1000; // renews starting 7 days before expiry
     const expiringSoon = !!conn.expires_at && conn.expires_at.getTime() - Date.now() < REFRESH_WINDOW_MS;
     if (expiringSoon) {
       const refreshed = await this.refreshLongLivedToken(tenantId, userId, PROVIDER);

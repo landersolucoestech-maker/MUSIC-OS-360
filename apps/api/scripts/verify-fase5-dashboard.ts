@@ -121,7 +121,7 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
     const r = await call('POST', '/contracts', { ...ctx, body: { titulo: `${tag}_CONTRACT_${i}_${TS}`, tipo: 'gravacao', data_inicio: '2026-01-01', data_fim: '2026-12-31', valor: 1000 + i } });
     const id = pickId(r.body); if (id) out.contracts.push(id); else console.log(`  !  contract POST status=${r.status} ${JSON.stringify(r.body).slice(0,150)}`);
   }
-  // Eventos: hoje
+  // Events: today
   const todayIso = new Date().toISOString();
   for (let i = 0; i < opts.eventsToday; i++) {
     const r = await call('POST', '/events', { ...ctx, body: { title: `${tag}_EVENT_TODAY_${i}_${TS}`, type: 'show', startsAt: todayIso } });
@@ -236,7 +236,7 @@ async function f52(): Promise<void> {
 }
 
 // ============================================================================
-// 5.4 — AGENDA DE HOJE
+// 5.4 — TODAY'S AGENDA
 // ============================================================================
 
 async function f54(): Promise<void> {

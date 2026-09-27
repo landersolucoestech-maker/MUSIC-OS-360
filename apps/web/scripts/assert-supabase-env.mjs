@@ -10,7 +10,7 @@
 import { loadEnv } from "vite";
 
 // REAL ENVIRONMENT MATRIX:
-//   development→DEV_REF · test→nenhum remoto · staging→STAGING_REF · production→PROD_REF.
+//   development→DEV_REF · test→no remote · staging→STAGING_REF · production→PROD_REF.
 export const SUPABASE_PROD_REF = "sxmfeocztlztvpdnxayk";
 export const SUPABASE_STAGING_REF = "jjnnjnxjkqipgqebijen";
 export const SUPABASE_DEV_REF = "rypnevnfipygyhysqpdo";
@@ -26,7 +26,7 @@ function expectedRefFor(nodeEnv) {
   return SUPABASE_DEV_REF;
 }
 
-/** Denylist cruzada: refs conhecidos de OUTROS ambientes — prevalece sobre allowlist. */
+/** Cross denylist: known refs of OTHER environments — takes precedence over the allowlist. */
 function forbiddenRefsFor(nodeEnv) {
   const expected = expectedRefFor(nodeEnv);
   return SUPABASE_KNOWN_REFS.filter((ref) => ref !== expected);

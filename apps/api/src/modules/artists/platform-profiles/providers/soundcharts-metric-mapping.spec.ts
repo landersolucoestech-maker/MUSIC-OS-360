@@ -140,7 +140,7 @@ describe('Single Soundcharts source per artist metric card', () => {
       externalUrl: 'https://soundcloud.com/billieeilish',
     });
 
-    expect(fetchSpy).not.toHaveBeenCalled(); // nenhuma chamada direta à SoundCloud API/OAuth
+    expect(fetchSpy).not.toHaveBeenCalled(); // no direct call to the SoundCloud API/OAuth
     expect(soundcharts.resolveArtistByPlatform).toHaveBeenCalledWith('soundcloud', 'billieeilish');
     expect(getSoundCloudFollowers).toHaveBeenCalledWith('sc-uuid-1');
     expect(snapshot.followers).toBe(3_892_132);

@@ -106,7 +106,7 @@ describe('SoundchartsService', () => {
         value: 100_900_923,
         observedAt: new Date('2026-08-18'),
         source: 'soundcharts',
-        // Provenance (auditoria 2026-08-31): endpoint/campo exatos de origem.
+        // Provenance (2026-08-31 audit): exact source endpoint/field.
         endpoint: '/api/v2/artist/uuid-1/streaming/spotify/listening',
         field: 'items[].value',
         // Phase 2: full series (same payload) for history backfill.
@@ -287,7 +287,7 @@ describe('SoundchartsService', () => {
       ]);
 
       expect(uuid).toBe('sc-uuid-yt');
-      expect(resolveSpy).toHaveBeenCalledTimes(1); // deezer nem chega a ser tentado
+      expect(resolveSpy).toHaveBeenCalledTimes(1); // deezer is not even attempted
       resolveSpy.mockRestore();
     });
   });

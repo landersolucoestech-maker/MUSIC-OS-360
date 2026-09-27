@@ -63,7 +63,7 @@ function mapActions(value: unknown): PerformanceReportAction[] {
     .filter((v) => v.action.length > 0);
 }
 
-/** Sempre derivado do input real — nunca do JSON do modelo. */
+/** Always derived from the real input — never from the model JSON. */
 function buildMonthlyBreakdown(input: PerformanceReportInput): PerformanceReportMonthlyBreakdown[] {
   return input.series.map((p) => ({
     month: p.month,

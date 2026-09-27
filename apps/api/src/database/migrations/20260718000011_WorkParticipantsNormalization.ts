@@ -61,7 +61,7 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
       );
     }
 
-    // ── 3. Cria a tabela filha ──────────────────────────────────────────────
+    // ── 3. Create the child table ──────────────────────────────────────────────
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS work_participants (
         id           uuid PRIMARY KEY,
@@ -80,7 +80,7 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
     `);
     await queryRunner.query(`CREATE INDEX IF NOT EXISTS idx_work_participants_tenant_work ON work_participants (tenant_id, work_id)`);
 
-    // ── 4. Backfill: um row por item de works.participantes ────────────────
+    // ── 4. Backfill: one row per works.participantes item ────────────────
     await queryRunner.query(`
       INSERT INTO work_participants (id, tenant_id, work_id, nome, classe_funcao, link, percentual, ordem)
       SELECT

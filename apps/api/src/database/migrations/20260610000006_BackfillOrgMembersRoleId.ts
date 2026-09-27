@@ -14,7 +14,7 @@ export class BackfillOrgMembersRoleId20260610000006 implements MigrationInterfac
   name = 'BackfillOrgMembersRoleId20260610000006';
 
   async up(qr: QueryRunner): Promise<void> {
-    // 1) Match direto por slug (inclui linhas-alias 'artista'/'tenant_owner').
+    // 1) Direct match by slug (includes the 'artista'/'tenant_owner' alias rows).
     await qr.query(`
       UPDATE "org_members" m
          SET "role_id" = r."id"

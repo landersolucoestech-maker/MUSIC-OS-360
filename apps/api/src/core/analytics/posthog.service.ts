@@ -62,7 +62,7 @@ export class PostHogService implements OnModuleDestroy {
     }
   }
 
-  // ─── Capture (evento) ─────────────────────────────────────────────────────
+  // ─── Capture (event) ──────────────────────────────────────────────────────
 
   capture(params: {
     userId:     string;

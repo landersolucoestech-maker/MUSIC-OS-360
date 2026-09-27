@@ -16,7 +16,7 @@ export interface ReportEntityDefinition {
   identityColumn: string;
   /** Column used for friendly display. */
   displayColumn: string;
-  /** Coluna de data principal (filtro/ordem temporal). */
+  /** Main date column (temporal filter/order). */
   dateColumn: string;
 
   exportableColumns: string[];

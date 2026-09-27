@@ -85,7 +85,7 @@ export class ReleaseReadinessService {
         requirements.push({ id: 'cover_art', label: 'Capa aprovada', status: hasCover ? 'met' : 'missing', blocking: true });
         requirements.push({ id: 'wav_master', label: 'WAV Master', status: hasMaster ? 'met' : 'missing', blocking: true });
 
-        // ── Fonograma: ISRC + registro + metadados ─────────────────────────────
+        // ── Phonogram: ISRC + registration + metadata ─────────────────────────────
         const phonogram = input.phonogramId && this.phonograms
           ? await this.phonograms.findOne({ where: { id: input.phonogramId, tenant_id: tenantId } })
           : null;
@@ -125,7 +125,7 @@ export class ReleaseReadinessService {
           detail: metaOk ? undefined : 'Exige título, artista, gênero e intérpretes',
         });
 
-        // ── Registro de obra (condicional) ─────────────────────────────────────
+        // ── Work registration (conditional) ─────────────────────────────────────
         if (phonogram?.work_id && this.works) {
           const work = await this.works.findOne({ where: { id: phonogram.work_id, tenant_id: tenantId } });
           requirements.push({

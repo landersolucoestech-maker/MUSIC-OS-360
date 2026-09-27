@@ -11,7 +11,7 @@ import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/prim
 
 export type ArtistProfileAnalysisLanguage = SkillLanguage;
 
-// ─── Blocos de entrada ────────────────────────────────────────────────────────
+// ─── Input blocks ─────────────────────────────────────────────────────────────
 
 export interface ArtistPlatformProfile {
   platform: string;

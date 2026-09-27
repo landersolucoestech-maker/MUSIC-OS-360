@@ -12,7 +12,7 @@ export type CatalogMetadataValidatorLanguage = SkillLanguage;
 
 export type CatalogMetadataType = "work" | "recording";
 
-// ─── Blocos de entrada ────────────────────────────────────────────────────────
+// ─── Input blocks ─────────────────────────────────────────────────────────────
 
 export interface CatalogComposer {
   name: string;

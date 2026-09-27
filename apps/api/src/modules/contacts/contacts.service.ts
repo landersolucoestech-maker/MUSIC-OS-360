@@ -53,7 +53,7 @@ export class ContactsService {
     return this.getById(tenantId, id);
   }
 
-  /** Cliente (ClientsService.mapClient) → forma "Contact" legada. */
+  /** Client (ClientsService.mapClient) → legacy "Contact" shape. */
   private toContactShape(c: Record<string, unknown>) {
     return {
       id: c['id'],

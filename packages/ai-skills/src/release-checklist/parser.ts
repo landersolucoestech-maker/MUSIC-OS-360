@@ -112,7 +112,7 @@ function tryParse(text: string): Record<string, unknown> | null {
   return null;
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapMissingItems(value: unknown): MissingItem[] {
   return asRecordArray(value).map((m) => ({
@@ -173,7 +173,7 @@ function computeBaselineScore(input: ReleaseChecklistInput): number {
   return Math.round((done / flags.length) * 100);
 }
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 function buildFallback(raw: string, input: ReleaseChecklistInput): ReleaseChecklistOutput {
   const score = computeBaselineScore(input);

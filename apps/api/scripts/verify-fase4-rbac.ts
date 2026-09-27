@@ -317,7 +317,7 @@ async function f47(): Promise<void> {
   const denied = await call('POST', '/artists', { auth: tokens.viewer, tenant: TENANT_A, body: { nome_artistico: `${tag}_FAIL` } });
   check('viewer cria artista (proibido)', denied.status, [403]);
 
-  // Esperar a fila de audit (interceptor)
+  // Wait for the audit queue (interceptor)
   await new Promise((r) => setTimeout(r, 1500));
 
   // Fetch audit-logs as owner

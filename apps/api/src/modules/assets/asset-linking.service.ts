@@ -82,7 +82,7 @@ export class AssetLinkingService {
     return 'unknown';
   }
 
-  /** Processa um asset.uploaded: cria asset central + vincula a projeto/tarefa. */
+  /** Processes an asset.uploaded: creates the central asset + links it to the project/task. */
   async processUpload(payload: AssetUploadedPayload): Promise<AssetLinkResult | null> {
     if (!this.assets) {
       this.logger.warn('AssetLinkingService: DATA_SOURCE unavailable — linking skipped.');
@@ -109,7 +109,7 @@ export class AssetLinkingService {
         const assetType = AssetLinkingService.classify(upload.mime_type, upload.original_name);
         await ctx.log('info', `Classificado como "${assetType}"`, { assetType });
 
-        // 1. Asset central idempotente (por origem upload/source_id).
+        // 1. Idempotent central asset (by upload origin/source_id).
         let asset = await this.assets!.findOne({
           where: { tenant_id: payload.tenantId, source: 'upload', source_id: payload.uploadId },
         });
@@ -278,7 +278,7 @@ export class AssetLinkingService {
     });
   }
 
-  /** Registra uma entrada de uso/auditoria do asset. */
+  /** Records a usage/audit entry of the asset. */
   async recordUsage(
     tenantId: string,
     assetId: string,
@@ -373,7 +373,7 @@ export class AssetLinkingService {
   }
 }
 
-/** View enriquecida de um asset vinculado a projeto/tarefa. */
+/** Enriched view of an asset linked to a project/task. */
 export interface LinkedAssetView {
   linkId: string;
   assetId: string;

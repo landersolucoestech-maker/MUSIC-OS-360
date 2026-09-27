@@ -72,7 +72,7 @@ export class AIJobsProcessor extends WorkerHost {
       );
     } catch (err) {
       this.logger.error(`[ai-jobs] complete() failed: ${(err as Error).message}`);
-      throw err; // BullMQ vai re-tentar conforme backoff configurado
+      throw err; // BullMQ will retry according to the configured backoff
     }
 
     const latencyMs = Date.now() - startMs;
@@ -80,7 +80,7 @@ export class AIJobsProcessor extends WorkerHost {
       `[ai-jobs] skill=${d.skill} provider=${result.provider} tokens_in=${result.inputTokens} tokens_out=${result.outputTokens} latency=${latencyMs}ms`,
     );
 
-    // Emitir resultado via WebSocket (ai:job:completed)
+    // Emit the result via WebSocket (ai:job:completed)
     try {
       this.wsGateway.sendToUser(d.tenantId, d.userId, 'ai:job:completed', {
         jobId:    job.id,

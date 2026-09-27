@@ -101,7 +101,7 @@ export class IntegrationPolicyService {
   private readonly categoryRepo: Repository<IntegrationCategoryEntity> | null = null;
   private readonly integRepo:    Repository<IntegrationEntity>         | null = null;
   private readonly oauthRepo:    Repository<OAuthConnectionEntity>     | null = null;
-  /** Planos — fonte dos entitlements (billing_plans.integrations). */
+  /** Plans — source of the entitlements (billing_plans.integrations). */
   private readonly planRepo: Repository<BillingPlanEntity> | null = null;
 
   constructor(

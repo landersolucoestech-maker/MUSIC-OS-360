@@ -18,7 +18,7 @@ import { EntityCategory } from './entity-metadata.types';
 export interface ReportableOptions {
   /** Explicit category (overrides the central one). */
   category?: EntityCategory;
-  /** Atalho: `reportable: false` ⇒ NOT_REPORTABLE. */
+  /** Shortcut: `reportable: false` ⇒ NOT_REPORTABLE. */
   reportable?: boolean;
   /** Operational pt-BR label. */
   label?: string;

@@ -133,7 +133,7 @@ function resolvePair(input: Record<string, unknown>, spec: PairSpec, legacyUsed:
     return spec.transform(v);
   }
 
-  // 2+ chaves presentes
+  // 2+ keys present
   const values = present.map((k) => input[k]);
   const firstLegacyPresent = present.find((k) => k !== spec.canonical)!;
 

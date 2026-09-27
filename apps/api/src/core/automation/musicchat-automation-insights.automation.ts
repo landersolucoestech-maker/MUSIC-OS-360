@@ -41,7 +41,7 @@ import { runOnDemandSkill, type OnDemandSkillResult } from './on-demand-skill.ru
 
 const AUDIT_SKILL_NAME = 'automation-audit';
 const BUILDER_SKILL_NAME = 'automation-builder';
-const AUDIT_FRESHNESS_MINUTES = 24 * 60; // 1 dia
+const AUDIT_FRESHNESS_MINUTES = 24 * 60; // 1 day
 
 interface MusicChatEventRow {
   event_type: string;

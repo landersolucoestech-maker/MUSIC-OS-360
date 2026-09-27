@@ -36,7 +36,7 @@ const NULLABLE_COLUMNS = [
   'deezer_url', 'apple_music_url', 'soundcloud_url', 'contrato_id',
 ] as const;
 
-// Colunas jsonb NOT NULL DEFAULT []: null vira lista vazia.
+// jsonb NOT NULL DEFAULT [] columns: null becomes an empty list.
 const JSONB_LIST_COLUMNS = ['galeria_urls', 'documents', 'especialidades'] as const;
 
 // SINGLE SOURCE: the sets of encrypted and metadata fields derive from the

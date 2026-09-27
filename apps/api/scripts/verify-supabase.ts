@@ -21,7 +21,7 @@
 import 'reflect-metadata';
 import * as path from 'path';
 
-// ── Carregar .env ────────────────────────────────────────────────────────────
+// ── Load .env ────────────────────────────────────────────────────────────────
 try {
   // The API package environment is authoritative. Root .env is fallback only.
   // Never override an explicitly-provided process env with either file —
@@ -60,7 +60,7 @@ const RECOMMENDED_VARS = [
   { key: 'STRIPE_WEBHOOK_SECRET',      description: 'Stripe webhook signing secret' },
 ];
 
-// ── Tabelas operacionais esperadas ────────────────────────────────────────────
+// ── Expected operational tables ───────────────────────────────────────────────
 const EXPECTED_TABLES: string[] = [
   'organizations',
   'tenants',
@@ -343,7 +343,7 @@ async function main(): Promise<void> {
     }
   }
 
-  // ── Resumo ────────────────────────────────────────────────────────────────
+  // ── Summary ────────────────────────────────────────────────────────────────
   console.log('\n╔══════════════════════════════════════════════════════════╗');
   console.log('║   VERIFICATION SUMMARY                                     ║');
   console.log('╚══════════════════════════════════════════════════════════╝\n');

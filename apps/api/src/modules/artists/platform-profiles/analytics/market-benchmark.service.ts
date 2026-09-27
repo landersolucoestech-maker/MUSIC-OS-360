@@ -117,7 +117,7 @@ export class MarketBenchmarkService {
     return { readStatus: 'REFRESHING', result: null, staleSince: null };
   }
 
-  // ── WRITE PATH (chamado SOMENTE pelo worker — MarketBenchmarkRefreshProcessor) ──
+  // ── WRITE PATH (called ONLY by the worker — MarketBenchmarkRefreshProcessor) ──
 
   async computeAndPersist(tenantId: string, artistId: string, targetUuid: string): Promise<{ result: MarketBenchmarkResult; stats: CohortFetchStats }> {
     const asOf = new Date();
@@ -167,7 +167,7 @@ export class MarketBenchmarkService {
     };
   }
 
-  /** UUID Soundcharts do artista-alvo — reaproveitado do provenance já gravado por qualquer provider Soundcharts-only bem-sucedido. */
+  /** Soundcharts UUID of the target artist — reused from the provenance already written by any successful Soundcharts-only provider. */
   private resolveTargetUuid(ownRows: OwnMetricRow[]): string | null {
     for (const row of ownRows) {
       const uuid = row.raw_payload?.['soundcharts_uuid'];

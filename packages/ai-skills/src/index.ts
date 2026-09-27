@@ -10,7 +10,7 @@
 
 export * from "./shared/primitives";
 
-// project-planning — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// project-planning — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   ProjectPlanningInput,
   ProjectPlanningOutput,
@@ -31,7 +31,7 @@ export {
   validateProjectPlanningOutput,
 } from "./project-planning";
 
-// release-checklist — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// release-checklist — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   ReleaseChecklistInput,
   ReleaseChecklistOutput,
@@ -54,7 +54,7 @@ export {
   validateReleaseChecklistOutput,
 } from "./release-checklist";
 
-// support-triage — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// support-triage — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   SupportTriageInput,
   SupportTriageOutput,
@@ -71,7 +71,7 @@ export {
   validateSupportTriageOutput,
 } from "./support-triage";
 
-// artist-profile-analysis — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// artist-profile-analysis — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   ArtistProfileAnalysisInput,
   ArtistProfileAnalysisOutput,
@@ -92,7 +92,7 @@ export {
   validateArtistProfileAnalysisOutput,
 } from "./artist-profile-analysis";
 
-// catalog-metadata-validator — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// catalog-metadata-validator — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   CatalogMetadataValidatorInput,
   CatalogMetadataValidatorOutput,
@@ -114,7 +114,7 @@ export {
   validateCatalogMetadataValidatorOutput,
 } from "./catalog-metadata-validator";
 
-// financial-classification — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// financial-classification — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   FinancialClassificationInput,
   FinancialClassificationOutput,
@@ -134,7 +134,7 @@ export {
   validateFinancialClassificationOutput,
 } from "./financial-classification";
 
-// crm-followup — re-export seletivo
+// crm-followup — selective re-export
 export type {
   CrmFollowupInput,
   CrmFollowupOutput,
@@ -153,7 +153,7 @@ export {
   validateCrmFollowupOutput,
 } from "./crm-followup";
 
-// marketing-calendar-builder — re-export seletivo
+// marketing-calendar-builder — selective re-export
 export type {
   MarketingCalendarBuilderInput,
   MarketingCalendarBuilderOutput,
@@ -175,7 +175,7 @@ export {
   validateMarketingCalendarBuilderOutput,
 } from "./marketing-calendar-builder";
 
-// audiovisual-briefing — re-export seletivo
+// audiovisual-briefing — selective re-export
 export type {
   AudiovisualBriefingInput,
   AudiovisualBriefingOutput,
@@ -198,7 +198,7 @@ export {
   validateAudiovisualBriefingOutput,
 } from "./audiovisual-briefing";
 
-// campaign-plan — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// campaign-plan — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   CampaignPlanInput,
   CampaignPlanOutput,
@@ -216,7 +216,7 @@ export {
   validateCampaignPlanOutput,
 } from "./campaign-plan";
 
-// campaign-strategy — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// campaign-strategy — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   CampaignStrategyInput,
   CampaignStrategyOutput,
@@ -233,7 +233,7 @@ export {
   validateCampaignStrategyOutput,
 } from "./campaign-strategy";
 
-// campaign-report — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// campaign-report — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   CampaignReportInput,
   CampaignReportOutput,
@@ -252,7 +252,7 @@ export {
   validateCampaignReportOutput,
 } from "./campaign-report";
 
-// social-content — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// social-content — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   SocialContentInput,
   SocialContentOutput,
@@ -268,7 +268,7 @@ export {
   validateSocialContentOutput,
 } from "./social-content";
 
-// launch-strategy — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// launch-strategy — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   LaunchStrategyInput,
   LaunchStrategyOutput,
@@ -285,7 +285,7 @@ export {
   validateLaunchStrategyOutput,
 } from "./launch-strategy";
 
-// audience-health — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// audience-health — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   AudienceHealthInput,
   AudienceHealthOutput,
@@ -303,7 +303,7 @@ export {
   validateAudienceHealthOutput,
 } from "./audience-health";
 
-// automation-audit — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// automation-audit — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   AutomationAuditInput,
   AutomationAuditOutput,
@@ -321,7 +321,7 @@ export {
   validateAutomationAuditOutput,
 } from "./automation-audit";
 
-// automation-builder — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// automation-builder — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   AutomationBuilderInput,
   AutomationBuilderOutput,
@@ -338,7 +338,7 @@ export {
   validateAutomationBuilderOutput,
 } from "./automation-builder";
 
-// reporting-analysis — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// reporting-analysis — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   ReportingAnalysisInput,
   ReportingAnalysisOutput,
@@ -356,7 +356,7 @@ export {
   validateReportingAnalysisOutput,
 } from "./reporting-analysis";
 
-// performance-report — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// performance-report — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   PerformanceReportInput,
   PerformanceReportOutput,
@@ -375,7 +375,7 @@ export {
   validatePerformanceReportOutput,
 } from "./performance-report";
 
-// contact-operations — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// contact-operations — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   ContactOperationsInput,
   ContactOperationsOutput,
@@ -391,7 +391,7 @@ export {
   validateContactOperationsOutput,
 } from "./contact-operations";
 
-// ad-creative — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// ad-creative — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   AdCreativeInput,
   AdCreativeOutput,
@@ -407,7 +407,7 @@ export {
   validateAdCreativeOutput,
 } from "./ad-creative";
 
-// paid-ads — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// paid-ads — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   PaidAdsInput,
   PaidAdsOutput,
@@ -425,7 +425,7 @@ export {
   validatePaidAdsOutput,
 } from "./paid-ads";
 
-// deals-crm — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// deals-crm — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   DealsCrmInput,
   DealsCrmOutput,
@@ -443,7 +443,7 @@ export {
   validateDealsCrmOutput,
 } from "./deals-crm";
 
-// postiz — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// postiz — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   PostizInput,
   PostizOutput,
@@ -461,7 +461,7 @@ export {
   validatePostizOutput,
 } from "./postiz";
 
-// seo-audit — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// seo-audit — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   SeoAuditInput,
   SeoAuditOutput,
@@ -479,7 +479,7 @@ export {
   validateSeoAuditOutput,
 } from "./seo-audit";
 
-// onboarding-cro — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// onboarding-cro — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   OnboardingCroInput,
   OnboardingCroOutput,
@@ -496,7 +496,7 @@ export {
   validateOnboardingCroOutput,
 } from "./onboarding-cro";
 
-// analytics-tracking — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// analytics-tracking — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   AnalyticsTrackingInput,
   AnalyticsTrackingOutput,
@@ -514,7 +514,7 @@ export {
   validateAnalyticsTrackingOutput,
 } from "./analytics-tracking";
 
-// copywriting — re-export seletivo (exclui ValidationResult para evitar TS2308)
+// copywriting — selective re-export (excludes ValidationResult to avoid TS2308)
 export type {
   CopywritingInput,
   CopywritingOutput,

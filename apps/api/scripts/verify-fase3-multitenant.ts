@@ -174,7 +174,7 @@ async function createSetFor(
 ): Promise<CreatedSet> {
   const set: CreatedSet = {};
 
-  // Cliente
+  // Client
   const cli = await call('POST', '/clients', {
     token, tenantId: tenant.tenantId,
     body: { name: `${tag}_CLIENT`, type: 'company' },
@@ -188,7 +188,7 @@ async function createSetFor(
     failed++;
   }
 
-  // Artista
+  // Artist
   const art = await call('POST', '/artists', {
     token, tenantId: tenant.tenantId,
     body: { nome_artistico: `${tag}_ARTIST` },
@@ -216,7 +216,7 @@ async function createSetFor(
     failed++;
   }
 
-  // Contrato
+  // Contract
   const ctr = await call('POST', '/contracts', {
     token, tenantId: tenant.tenantId,
     body: {
@@ -238,7 +238,7 @@ async function createSetFor(
     failed++;
   }
 
-  // Evento
+  // Event
   const ev = await call('POST', '/events', {
     token, tenantId: tenant.tenantId,
     body: {
@@ -387,14 +387,14 @@ async function fase34(): Promise<void> {
       info(`${t.path}: skip (id A/B ausente)`);
       continue;
     }
-    // Token B tenta ler id A
+    // Token B tries to read id A
     const ra = await call('GET', `${t.path}/${idA}`, { token: TOKEN_B, tenantId: TENANT_B.tenantId });
     expect(`GET ${t.path}/{A} via Tenant B → 403/404`, [403, 404].includes(ra.status), `got=${ra.status}`);
-    // Token A tenta ler id B
+    // Token A tries to read id B
     const rb = await call('GET', `${t.path}/${idB}`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
     expect(`GET ${t.path}/{B} via Tenant A → 403/404`, [403, 404].includes(rb.status), `got=${rb.status}`);
 
-    // Sanidade: token correto retorna 200
+    // Sanity: the correct token returns 200
     const okA = await call('GET', `${t.path}/${idA}`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
     expect(`GET ${t.path}/{A} via Tenant A → 200`, okA.status === 200, `got=${okA.status}`);
   }

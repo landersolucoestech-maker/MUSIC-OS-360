@@ -140,7 +140,7 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     // 2. Copies the data column by column (never SELECT *).
     await queryRunner.query(`INSERT INTO artists_new (${this.copyColumns}) SELECT ${this.copyColumns} FROM artists`);
 
-    // 3. Valida contagem antes de trocar.
+    // 3. Validate the count before swapping.
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM artists_new`);
     if (Number(newCount) !== Number(total)) {
       throw new Error(

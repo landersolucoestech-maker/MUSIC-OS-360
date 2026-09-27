@@ -15,7 +15,7 @@ export enum EntityCategory {
   INTERNAL = 'INTERNAL',
   /** Join table / N:N. */
   JUNCTION = 'JUNCTION',
-  /** Infraestrutura (logs, eventos, filas, jobs, org/tenant structure). */
+  /** Infrastructure (logs, events, queues, jobs, org/tenant structure). */
   INFRA = 'INFRA',
   /** Security / RBAC / auth / audit. */
   SECURITY = 'SECURITY',

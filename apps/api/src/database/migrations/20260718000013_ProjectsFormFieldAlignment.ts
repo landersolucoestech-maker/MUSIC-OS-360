@@ -81,7 +81,7 @@ export class ProjectsFormFieldAlignment20260718000013 implements MigrationInterf
         ADD COLUMN IF NOT EXISTS "genero" varchar(100)
     `);
 
-    // ── 3. Tabelas filhas ────────────────────────────────────────────────────
+    // ── 3. Child tables ────────────────────────────────────────────────────
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS project_tracks (
         id             uuid PRIMARY KEY,

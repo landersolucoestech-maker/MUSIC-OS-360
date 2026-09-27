@@ -47,7 +47,7 @@ export class ClientsController {
     return this.svc.addTimelineEntry(t.id, u?.userId ?? '', id, dto);
   }
 
-  // ── Contratos vinculados ─────────────────────────────────────────────────
+  // ── Linked contracts ─────────────────────────────────────────────────
   @Get(':id/contracts') @RequireRole('viewer') @RequirePermission('client:read') @ApiOperation({ summary: 'Contracts linked to the client (contracts.client_id)' })
   getContracts(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.getContracts(t.id, id);

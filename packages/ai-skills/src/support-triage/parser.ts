@@ -86,7 +86,7 @@ const SLA_BY_LEVEL: Record<SkillPriority, { responseTime: string; resolutionTime
   low:      { responseTime: "24h", resolutionTime: "5 dias úteis" },
 };
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapSla(value: unknown, fallback: SLARecommendation): SLARecommendation {
   const m = asRecord(value);
@@ -113,7 +113,7 @@ function mapActions(value: unknown): SupportRecommendedAction[] {
   });
 }
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 function buildFallback(input: SupportTriageInput): SupportTriageOutput {
   const text = `${input.subject} ${input.message}`;

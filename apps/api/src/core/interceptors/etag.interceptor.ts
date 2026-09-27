@@ -18,7 +18,7 @@ import { map }        from 'rxjs/operators';
 import { createHash } from 'crypto';
 import type { Request, Response } from 'express';
 
-const DEFAULT_MAX_AGE = 30; // segundos
+const DEFAULT_MAX_AGE = 30; // seconds
 
 @Injectable()
 export class ETagInterceptor implements NestInterceptor {

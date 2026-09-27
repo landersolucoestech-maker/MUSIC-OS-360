@@ -51,7 +51,7 @@ function asRecordArray(value: unknown): Record<string, unknown>[] {
   return value.filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null);
 }
 
-// ─── Mapeadores de blocos ─────────────────────────────────────────────────────
+// ─── Block mappers ────────────────────────────────────────────────────────────
 
 function mapStrengths(value: unknown): ArtistStrength[] {
   return asRecordArray(value).map((s) => ({
@@ -100,7 +100,7 @@ function mapPlatformRecommendations(value: unknown): ArtistPlatformRecommendatio
   }));
 }
 
-// ─── Fallback estruturado seguro ──────────────────────────────────────────────
+// ─── Safe structured fallback ─────────────────────────────────────────────────
 
 function buildFallback(input: ArtistProfileAnalysisInput): ArtistProfileAnalysisOutput {
   const genrePart = input.genre ? ` no gênero ${input.genre}` : "";

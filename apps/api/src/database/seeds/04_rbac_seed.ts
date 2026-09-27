@@ -186,7 +186,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
     );
   }
 
-  // ── 2) roles: garante os 20 globais (idempotente; preserva hierarchy_level) ──
+  // ── 2) roles: ensures the 20 global roles (idempotent; preserves hierarchy_level) ──
   for (const slug of Object.keys(ROLE_HIERARCHY)) {
     const level = ROLE_HIERARCHY[slug];
     const name = ROLE_NAMES[slug] ?? slug;
@@ -214,7 +214,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
     );
   }
 
-  // ── 3) role_permissions: paridade EXATA com ROLE_PERMISSIONS (exceto aliases) ─
+  // ── 3) role_permissions: EXACT parity with ROLE_PERMISSIONS (except aliases) ─
   for (const [slug, perms] of Object.entries(ROLE_PERMISSIONS)) {
     if (ALIASES[slug]) continue; // alias inherits from the canonical role
     for (const key of perms) {
