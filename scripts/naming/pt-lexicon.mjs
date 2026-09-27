@@ -51,6 +51,9 @@ conciliacao licenciamento licenciamentos moeda moedas prioridades titulo titulos
 enviado recebido semanas senha busca resultado resultados imagem imagens letras generos idioma comissao
 participacao participacoes margem fonografico obrigatorio opcional antigo excluido ultimo ultima primeiro primeira
 padrao personalizado personalizada
+fase fases interno interna analitica criativa ideias planejamento tendencias metas divergencia divergencias correcoes
+avancado automacoes especificacao estrutural mapeamento definitivo testabilidade observabilidade unificar signatarios
+listagens relacional dinamicas centros financeiras fluxo caixa etapa etapas tecnica sistema enriquecer modelo modulo auditoria
 `.split(/\s+/).map((t) => t.replace(/\?$/, "")).filter(Boolean)
   // ambiguous with English: drop
   .filter((t) => !["status","marketing","briefing","takedown","royalty","lead","cep","data","nota","ano","dia","modelo","ponto","banco","agencia","ordem","campo","idioma",
