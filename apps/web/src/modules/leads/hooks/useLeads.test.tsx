@@ -15,7 +15,7 @@ import { useLeads } from "./index";
 
 beforeEach(() => vi.clearAllMocks());
 
-describe("useLeads — estados reais de carregamento/sucesso/erro", () => {
+describe("useLeads — real loading/success/error states", () => {
   it("starts with isLoading=true and no error", () => {
     vi.mocked(leadsService.list).mockReturnValue(new Promise(() => {}));
     const { result } = renderHook(() => useLeads());

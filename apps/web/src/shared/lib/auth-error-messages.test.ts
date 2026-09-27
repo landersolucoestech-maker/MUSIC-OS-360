@@ -18,7 +18,7 @@ describe("describeAuthError", () => {
     expect(describeAuthError({ message: "Too many requests" })).toContain("Muitas tentativas");
   });
 
-  it("falha de rede", () => {
+  it("network failure", () => {
     expect(describeAuthError({ message: "Failed to fetch" })).toContain("Falha de conexão");
   });
 

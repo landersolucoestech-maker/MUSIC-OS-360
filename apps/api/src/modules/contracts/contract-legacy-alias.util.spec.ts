@@ -53,11 +53,11 @@ describe('resolveContractAliases — title (requiredness handled by the caller; 
 });
 
 describe('resolveContractAliases — type/tipo (strict comparison, no trim)', () => {
-  it('somente EN', () => {
+  it('EN only', () => {
     expect(resolveContractAliases({ title: 'X', type: 'gravacao' }).normalized.type).toBe('gravacao');
   });
 
-  it('somente PT (legado)', () => {
+  it('PT only (legacy)', () => {
     const { normalized, legacyAliasesUsed } = resolveContractAliases({ title: 'X', tipo: 'gravacao' });
     expect(normalized.type).toBe('gravacao');
     expect(legacyAliasesUsed).toContain('tipo');
@@ -69,7 +69,7 @@ describe('resolveContractAliases — type/tipo (strict comparison, no trim)', ()
     expect(legacyAliasesUsed).toContain('tipo');
   });
 
-  it('ambos conflitantes', () => {
+  it('both, conflicting', () => {
     expect(getBody(() => resolveContractAliases({ title: 'X', type: 'gravacao', tipo: 'edicao' })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 
@@ -77,7 +77,7 @@ describe('resolveContractAliases — type/tipo (strict comparison, no trim)', ()
     expect(getBody(() => resolveContractAliases({ title: 'X', type: 'gravacao', tipo: ' gravacao ' })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 
-  it('ambos null → equivalente, retorna null', () => {
+  it('both null → equivalent, returns null', () => {
     const { normalized, legacyAliasesUsed } = resolveContractAliases({ title: 'X', type: null, tipo: null });
     expect(normalized.type).toBeNull();
     expect(legacyAliasesUsed).toContain('tipo');
@@ -134,7 +134,7 @@ describe('resolveContractAliases — artist_id/artistId (UUID, case-insensitive 
     expect(normalized.artist_id).toBe(UUID_A);
   });
 
-  it('ambos diferentes → conflito', () => {
+  it('both different → conflict', () => {
     expect(getBody(() => resolveContractAliases({ title: 'X', artist_id: UUID_A, artistId: UUID_B })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 
@@ -146,7 +146,7 @@ describe('resolveContractAliases — artist_id/artistId (UUID, case-insensitive 
     expect(getBody(() => resolveContractAliases({ title: 'X', artistId: 'not-a-uuid' })).code).toBe('CONTRACT_UUID_INVALID');
   });
 
-  it('null/null → equivalente, retorna null', () => {
+  it('null/null → equivalent, returns null', () => {
     const { normalized } = resolveContractAliases({ title: 'X', artist_id: null, artistId: null });
     expect(normalized.artist_id).toBeNull();
   });
@@ -220,11 +220,11 @@ describe('resolveContractAliases — start_date/data_inicio/startsAt and end_dat
 });
 
 describe('resolveContractAliases — arquivo_url/fileUrl (strict, no normalization)', () => {
-  it('somente PT', () => {
+  it('PT only', () => {
     expect(resolveContractAliases({ title: 'X', arquivo_url: 'https://a.com/x.pdf' }).normalized.arquivo_url).toBe('https://a.com/x.pdf');
   });
 
-  it('somente EN, registra alias', () => {
+  it('EN only, records the alias', () => {
     const { normalized, legacyAliasesUsed } = resolveContractAliases({ title: 'X', fileUrl: 'https://a.com/x.pdf' });
     expect(normalized.arquivo_url).toBe('https://a.com/x.pdf');
     expect(legacyAliasesUsed).toContain('fileUrl');
@@ -241,12 +241,12 @@ describe('resolveContractAliases — arquivo_url/fileUrl (strict, no normalizati
     })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 
-  it('null/null → equivalente, retorna null', () => {
+  it('null/null → equivalent, returns null', () => {
     const { normalized } = resolveContractAliases({ title: 'X', arquivo_url: null, fileUrl: null });
     expect(normalized.arquivo_url).toBeNull();
   });
 
-  it('null/valor → conflito', () => {
+  it('null/value → conflict', () => {
     expect(getBody(() => resolveContractAliases({
       title: 'X', arquivo_url: null, fileUrl: 'https://a.com/x.pdf',
     })).code).toBe('CONTRACT_ALIAS_CONFLICT');
@@ -277,11 +277,11 @@ describe('resolveContractAliases — valor/value (numeric coercion)', () => {
     expect(getBody(() => resolveContractAliases({ title: 'X', valor: 0, value: '' })).code).toBe('CONTRACT_VALUE_INVALID');
   });
 
-  it('string vazia isolada → CONTRACT_VALUE_INVALID', () => {
+  it('empty string alone → CONTRACT_VALUE_INVALID', () => {
     expect(getBody(() => resolveContractAliases({ title: 'X', valor: '' })).code).toBe('CONTRACT_VALUE_INVALID');
   });
 
-  it('whitespace isolado → CONTRACT_VALUE_INVALID', () => {
+  it('whitespace only → CONTRACT_VALUE_INVALID', () => {
     expect(getBody(() => resolveContractAliases({ title: 'X', value: '   ' })).code).toBe('CONTRACT_VALUE_INVALID');
   });
 
@@ -303,7 +303,7 @@ describe('resolveContractAliases — valor/value (numeric coercion)', () => {
     expect(getBody(() => resolveContractAliases({ title: 'X', valor: null, value: 0 })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 
-  it('null/null → equivalente, retorna null', () => {
+  it('null/null → equivalent, returns null', () => {
     const { normalized } = resolveContractAliases({ title: 'X', valor: null, value: null });
     expect(normalized.fixed_value).toBeNull();
   });
@@ -312,7 +312,7 @@ describe('resolveContractAliases — valor/value (numeric coercion)', () => {
     expect(resolveContractAliases({ title: 'X' }).normalized.fixed_value).toBeUndefined();
   });
 
-  it('valores conflitantes (10 vs 20) → CONTRACT_ALIAS_CONFLICT', () => {
+  it('conflicting values (10 vs 20) → CONTRACT_ALIAS_CONFLICT', () => {
     expect(getBody(() => resolveContractAliases({ title: 'X', valor: 10, value: '20' })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 });
@@ -322,7 +322,7 @@ describe('resolveContractQueryAliases — only type/tipo and artist_id/artistId'
     expect(resolveContractQueryAliases({ type: 'gravacao' }).normalized.type).toBe('gravacao');
   });
 
-  it('tipo legado', () => {
+  it('legacy tipo', () => {
     const { normalized, legacyAliasesUsed } = resolveContractQueryAliases({ tipo: 'gravacao' });
     expect(normalized.type).toBe('gravacao');
     expect(legacyAliasesUsed).toContain('tipo');
@@ -333,14 +333,14 @@ describe('resolveContractQueryAliases — only type/tipo and artist_id/artistId'
     expect(resolveContractQueryAliases({ artist_id: uuid }).normalized.artist_id).toBe(uuid);
   });
 
-  it('artistId legado', () => {
+  it('legacy artistId', () => {
     const uuid = '11111111-1111-4111-8111-111111111111';
     const { normalized, legacyAliasesUsed } = resolveContractQueryAliases({ artistId: uuid });
     expect(normalized.artist_id).toBe(uuid);
     expect(legacyAliasesUsed).toContain('artistId');
   });
 
-  it('conflito type/tipo', () => {
+  it('type/tipo conflict', () => {
     expect(getBody(() => resolveContractQueryAliases({ type: 'gravacao', tipo: 'edicao' })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 

@@ -36,7 +36,7 @@ describe("leadValidationSchema — dadosInternosCRM.valorEstimado/probabilidadeF
     if (result.success) expect(result.data.dadosInternosCRM.valorEstimado).toBeUndefined();
   });
 
-  it("rejeita valor negativo", () => {
+  it("rejects a negative value", () => {
     const result = leadValidationSchema.safeParse({
       ...basePayload,
       dadosInternosCRM: { statusLead: "novo", valorEstimado: -10 },
@@ -44,7 +44,7 @@ describe("leadValidationSchema — dadosInternosCRM.valorEstimado/probabilidadeF
     expect(result.success).toBe(false);
   });
 
-  it("rejeita probabilidadeFechamento acima de 100", () => {
+  it("rejects probabilidadeFechamento above 100", () => {
     const result = leadValidationSchema.safeParse({
       ...basePayload,
       dadosInternosCRM: { statusLead: "novo", probabilidadeFechamento: 150 },

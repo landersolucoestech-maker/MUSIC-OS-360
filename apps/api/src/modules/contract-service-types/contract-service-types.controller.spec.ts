@@ -22,24 +22,24 @@ describe('ContractServiceTypesController', () => {
     expect(svc.list).toHaveBeenCalledWith('tenant-1');
   });
 
-  it('findById delega id + tenant', async () => {
+  it('findById delegates id + tenant', async () => {
     await controller.findById(tenant, 'cst-1');
     expect(svc.findById).toHaveBeenCalledWith('tenant-1', 'cst-1');
   });
 
-  it('create delega tenant + dto', async () => {
+  it('create delegates tenant + dto', async () => {
     const dto = { name: 'Distribuição', slug: 'distribuicao', client_types: ['artista'], financial_model: 'valor_fixo' };
     await controller.create(tenant, dto as never);
     expect(svc.create).toHaveBeenCalledWith('tenant-1', dto);
   });
 
-  it('update delega tenant + id + dto', async () => {
+  it('update delegates tenant + id + dto', async () => {
     const dto = { name: 'Novo nome' };
     await controller.update(tenant, 'cst-1', dto as never);
     expect(svc.update).toHaveBeenCalledWith('tenant-1', 'cst-1', dto);
   });
 
-  it('remove delega tenant + id (soft-delete, nunca hard delete direto)', async () => {
+  it('remove delegates tenant + id (soft delete, never a direct hard delete)', async () => {
     await controller.remove(tenant, 'cst-1');
     expect(svc.remove).toHaveBeenCalledWith('tenant-1', 'cst-1');
   });

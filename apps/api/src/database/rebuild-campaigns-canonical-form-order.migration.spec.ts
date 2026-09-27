@@ -77,7 +77,7 @@ describe('RebuildCampaignsInCanonicalFormOrder20260719000024', () => {
     expect(migrationSrc.match(/ADD CONSTRAINT fk_briefings_campanha_id FOREIGN KEY \(campanha_id\) REFERENCES campaigns\(id\) ON DELETE SET NULL/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('recria RLS + as duas policies (tenant_isolation, super_admin_full_access) e possui down() honesto', () => {
+  it('recreates RLS + both policies (tenant_isolation, super_admin_full_access) and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/CREATE POLICY tenant_isolation/g)?.length).toBeGreaterThanOrEqual(2);

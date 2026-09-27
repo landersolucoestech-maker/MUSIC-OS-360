@@ -49,7 +49,7 @@ describe('RebuildEventsInCanonicalFormOrder20260719000007', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria a FK dependente (financial_transactions), RLS + policies, valida contagem e possui down() honesto', () => {
+  it('recreates the dependent FK (financial_transactions), RLS + policies, validates the row count and has an honest down()', () => {
     expect(migrationSrc.match(/ALTER TABLE financial_transactions DROP CONSTRAINT/g)?.length).toBeGreaterThanOrEqual(1);
     expect(migrationSrc.match(/ALTER TABLE financial_transactions ADD CONSTRAINT/g)?.length).toBeGreaterThanOrEqual(1);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);

@@ -51,7 +51,7 @@ describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria as 6 FKs dependentes (transaction_allocations, budgets, performance_metric_entries, marketing_projects, audiovisual_projects, project_tracks)', () => {
+  it('recreates the 6 dependent FKs (transaction_allocations, budgets, performance_metric_entries, marketing_projects, audiovisual_projects, project_tracks)', () => {
     for (const table of [
       'transaction_allocations', 'budgets', 'performance_metric_entries',
       'marketing_projects', 'audiovisual_projects', 'project_tracks',

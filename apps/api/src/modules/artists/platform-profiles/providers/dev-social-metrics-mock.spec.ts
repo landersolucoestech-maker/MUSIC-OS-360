@@ -66,7 +66,7 @@ describe('mockFollowersFor', () => {
     expect(v).toBeLessThan(200_000);
   });
 
-  it('artistas diferentes tendem a produzir valores diferentes', () => {
+  it('different artists tend to produce different values', () => {
     expect(mockFollowersFor('artist-1', 'instagram')).not.toBe(mockFollowersFor('artist-2', 'instagram'));
   });
 });

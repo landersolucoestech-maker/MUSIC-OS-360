@@ -83,7 +83,7 @@ describe('AudiovisualBriefingAutomation (release.approved → audiovisual-briefi
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda releaseId ausente', async () => {
+  it('guards against a missing releaseId', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

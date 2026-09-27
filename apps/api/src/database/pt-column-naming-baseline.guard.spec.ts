@@ -149,7 +149,7 @@ describe('Permanent guard: the census of PT-suspect physical columns does not di
       // (the heuristic correctly marks them "suspect" -- suspect != dead;
       // the individual classification decides LIVE vs DEAD, not this guard).
       'nome_completo', 'telefone_encrypted', 'razao_social', 'data_prevista',
-    ])('"%s" É detectado como PT-suspeito', (field) => {
+    ])('"%s" IS detected as PT-suspect', (field) => {
       expect(isPtSuspect(field)).toBe(true);
     });
 

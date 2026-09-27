@@ -1,7 +1,7 @@
 import { WorkflowExecutionTenantNotNull20260613000011 } from './migrations/20260613000011_WorkflowExecutionTenantNotNull';
 
 describe('WorkflowExecutionTenantNotNull20260613000011', () => {
-  it('up recusa NULLs e aplica somente SET NOT NULL', async () => {
+  it('up refuses NULLs and applies only SET NOT NULL', async () => {
     const query = jest.fn(async (_sql: string) => undefined);
     await new WorkflowExecutionTenantNotNull20260613000011().up({ query } as never);
 
@@ -11,7 +11,7 @@ describe('WorkflowExecutionTenantNotNull20260613000011', () => {
     expect(sql).not.toMatch(/ROW LEVEL SECURITY|CREATE POLICY|CREATE INDEX|FOREIGN KEY/i);
   });
 
-  it('down remove somente NOT NULL', async () => {
+  it('down removes only NOT NULL', async () => {
     const query = jest.fn(async (_sql: string) => undefined);
     await new WorkflowExecutionTenantNotNull20260613000011().down({ query } as never);
 

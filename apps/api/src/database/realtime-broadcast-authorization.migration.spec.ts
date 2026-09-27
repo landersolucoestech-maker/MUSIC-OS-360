@@ -29,7 +29,7 @@ describe('RealtimeBroadcastAuthorization20260801000001', () => {
     expect(sql).not.toMatch(/USING\s*\(\s*true\s*\)/i);
   });
 
-  it('down() remove as policies e desabilita RLS', async () => {
+  it('down() removes the policies and disables RLS', async () => {
     const qr = queryRunner();
     await new RealtimeBroadcastAuthorization20260801000001().down(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');

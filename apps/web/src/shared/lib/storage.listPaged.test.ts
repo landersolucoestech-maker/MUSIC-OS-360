@@ -80,7 +80,7 @@ describe("storage.listPaged", () => {
     expect(options.signal).toBe(controller.signal);
   });
 
-  it("preserva page/pageSize pedidos no resultado", async () => {
+  it("keeps the requested page/pageSize in the result", async () => {
     mockedGet.mockResolvedValue({ data: [], meta: { total: 0 } });
     const result = await storage.listPaged("artistas", { page: 4, pageSize: 25 });
     expect(result.page).toBe(4);

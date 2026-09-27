@@ -198,7 +198,7 @@ describe('IntegrationUsageGuard — enforcement', () => {
     await expect(g.canActivate(ctxFor(req))).resolves.toBe(true);
   });
 
-  it('mode=connect ainda exige entitlement', async () => {
+  it('mode=connect still requires the entitlement', async () => {
     const g = new IntegrationUsageGuard(
       reflectorFor({ providerKey: 'docusign', mode: 'connect' }),
       buildPolicy({ plans: [{ slug: 'enterprise', integrations: [] }] }),

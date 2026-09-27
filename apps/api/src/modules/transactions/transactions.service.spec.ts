@@ -221,7 +221,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     expect(mockDs._repo.save).toHaveBeenCalled();
   });
 
-  it("categoria 'outros' + regra correspondente: aplica a categoria sugerida", async () => {
+  it("category 'outros' + a matching rule: applies the suggested category", async () => {
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'rule-1' });
 
     const saved = await service.create(TENANT, 'u1', {

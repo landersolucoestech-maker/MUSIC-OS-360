@@ -59,7 +59,7 @@ describe('NotificationsProcessor', () => {
     processor = module.get<NotificationsProcessor>(NotificationsProcessor);
   });
 
-  it('persiste no banco', async () => {
+  it('persists to the database', async () => {
     await processor.process({ name: NOTIFICATION_JOB_NAMES.SEND, data: {
       tenantId: 't1', userId: 'u1', title: 'Teste', type: 'info', body: 'msg',
     }} as any);

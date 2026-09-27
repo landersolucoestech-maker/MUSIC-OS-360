@@ -106,7 +106,7 @@ describe("contactsService — always delegates to the real clientsService (no lo
     expect(sentPayload["notes"]).toBe("nova observação");
   });
 
-  it("remove() delega para clientsService.remove(id)", async () => {
+  it("remove() delegates to clientsService.remove(id)", async () => {
     vi.mocked(clientsService.remove).mockResolvedValue(undefined as never);
     await contactsService.remove("c1");
     expect(clientsService.remove).toHaveBeenCalledWith("c1");

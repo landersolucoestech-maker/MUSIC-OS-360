@@ -17,7 +17,7 @@ describe("loginSchema (Part 77) — the password is never transformed", () => {
   it.each([
     "!senha", "senha@", "s#enha", "senha%1", "a&b", "a+b-c_d",
     "(parenteses)", "aa", "!primeiro-e-ultimo!",
-  ])("preserva senha com símbolo especial: %s", (password) => {
+  ])("keeps a password with a special symbol: %s", (password) => {
     const result = loginSchema.safeParse({ email: "user@example.com", password });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.password).toBe(password);
@@ -32,7 +32,7 @@ describe("loginSchema (Part 77) — the password is never transformed", () => {
     }
   });
 
-  it("rejeita senha vazia", () => {
+  it("rejects an empty password", () => {
     const result = loginSchema.safeParse({ email: "user@example.com", password: "" });
     expect(result.success).toBe(false);
   });

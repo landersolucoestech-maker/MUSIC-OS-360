@@ -99,7 +99,7 @@ describe("leadsService — always delegates to the real API (no local state)", (
     expect(result.id).toBe("server-generated-id");
   });
 
-  it("update() delega para PATCH /leads/:id", async () => {
+  it("update() delegates to PATCH /leads/:id", async () => {
     const updated = { ...apiRow, nome_completo: "Atualizado" };
     vi.mocked(api.patch).mockResolvedValue(updated as never);
 
@@ -109,7 +109,7 @@ describe("leadsService — always delegates to the real API (no local state)", (
     expect(result.nomeCompleto).toBe("Atualizado");
   });
 
-  it("remove() delega para DELETE /leads/:id", async () => {
+  it("remove() delegates to DELETE /leads/:id", async () => {
     vi.mocked(api.delete).mockResolvedValue(undefined as never);
     await leadsService.remove("1");
     expect(api.delete).toHaveBeenCalledWith("/leads/1");

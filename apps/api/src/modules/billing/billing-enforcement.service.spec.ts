@@ -79,7 +79,7 @@ describe('BillingEnforcementService — webhook idempotency lifecycle', () => {
     expect(query.mock.calls[0][1]).toEqual(['evt_1']);
   });
 
-  it('markWebhookFailed: seta status=failed — FAILED != PROCESSED, e habilita reclaim futuro', async () => {
+  it('markWebhookFailed: sets status=failed — FAILED != PROCESSED, and enables a future reclaim', async () => {
     const query = jest.fn().mockResolvedValueOnce([]);
     const service = makeService(query);
 

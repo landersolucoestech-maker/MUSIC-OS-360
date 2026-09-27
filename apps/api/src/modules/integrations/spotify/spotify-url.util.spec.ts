@@ -7,7 +7,7 @@ describe('parseSpotifyArtistId', () => {
     );
   });
 
-  it('extrai o id ignorando query string (?si=...)', () => {
+  it('extracts the id ignoring the query string (?si=...)', () => {
     expect(
       parseSpotifyArtistId('https://open.spotify.com/artist/1Xyo4u8uXC1ZmMpatF05PJ?si=abc123'),
     ).toBe('1Xyo4u8uXC1ZmMpatF05PJ');
@@ -23,15 +23,15 @@ describe('parseSpotifyArtistId', () => {
     expect(parseSpotifyArtistId('1Xyo4u8uXC1ZmMpatF05PJ')).toBe('1Xyo4u8uXC1ZmMpatF05PJ');
   });
 
-  it('rejeita URL de track', () => {
+  it('rejects a track URL', () => {
     expect(parseSpotifyArtistId('https://open.spotify.com/track/6habFhsOp2NvshLv26DqMb')).toBeNull();
   });
 
-  it('rejeita URL de album', () => {
+  it('rejects an album URL', () => {
     expect(parseSpotifyArtistId('https://open.spotify.com/album/6habFhsOp2NvshLv26DqMb')).toBeNull();
   });
 
-  it('rejeita URL de playlist', () => {
+  it('rejects a playlist URL', () => {
     expect(parseSpotifyArtistId('https://open.spotify.com/playlist/6habFhsOp2NvshLv26DqMb')).toBeNull();
   });
 
@@ -43,11 +43,11 @@ describe('parseSpotifyArtistId', () => {
     expect(parseSpotifyArtistId('https://evil.com/open.spotify.com/artist/1Xyo4u8uXC1ZmMpatF05PJ')).toBeNull();
   });
 
-  it('rejeita string vazia', () => {
+  it('rejects an empty string', () => {
     expect(parseSpotifyArtistId('')).toBeNull();
   });
 
-  it('rejeita URL malformada', () => {
+  it('rejects a malformed URL', () => {
     expect(parseSpotifyArtistId('not a url at all')).toBeNull();
   });
 });

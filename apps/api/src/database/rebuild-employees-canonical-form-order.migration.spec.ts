@@ -76,14 +76,14 @@ describe('RebuildEmployeesInCanonicalFormOrder20260719000018', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('derruba e recria FKs dependentes (payroll_entries, leave_requests)', () => {
+  it('drops and recreates the dependent FKs (payroll_entries, leave_requests)', () => {
     expect(migrationSrc).toMatch(/ALTER TABLE payroll_entries DROP CONSTRAINT fk_payroll_entries_employee_id/);
     expect(migrationSrc).toMatch(/ALTER TABLE leave_requests DROP CONSTRAINT fk_leave_requests_employee_id/);
     expect(migrationSrc.match(/ADD CONSTRAINT fk_payroll_entries_employee_id FOREIGN KEY/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc.match(/ADD CONSTRAINT fk_leave_requests_employee_id FOREIGN KEY/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('recria RLS + as duas policies (tenant_isolation, super_admin_full_access) e possui down() honesto', () => {
+  it('recreates RLS + both policies (tenant_isolation, super_admin_full_access) and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/CREATE POLICY tenant_isolation/g)?.length).toBeGreaterThanOrEqual(2);

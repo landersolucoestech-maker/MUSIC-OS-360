@@ -36,7 +36,7 @@ describe("date-fns format — locale pt-BR", () => {
 describe("Agenda.tsx — guard against a locale regression", () => {
   const SOURCE = fs.readFileSync(path.resolve(__dirname, "Agenda.tsx"), "utf8");
 
-  it('importa ptBR de "date-fns/locale"', () => {
+  it('imports ptBR from "date-fns/locale"', () => {
     expect(SOURCE).toMatch(/import\s*\{\s*ptBR\s*\}\s*from\s*"date-fns\/locale"/);
   });
 

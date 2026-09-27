@@ -80,7 +80,7 @@ describe('ProjectsService', () => {
     await buildModule();
   });
 
-  it('create() persiste title/type/status/notes/description/music_genre corretamente', async () => {
+  it('create() persists title/type/status/notes/description/music_genre correctly', async () => {
     await service.create(TENANT, 'u1', {
       title: 'Meu Álbum', type: 'album', notes: 'nota', description: null, music_genre: 'pop',
     } as any);

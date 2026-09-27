@@ -21,7 +21,7 @@ import * as path from "path";
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "ContractWizard.tsx"), "utf8");
 
-describe("ContractWizard — valor do contrato persiste na coluna canônica (CODEBASE_MAP #22)", () => {
+describe("ContractWizard — the contract amount persists in the canonical column (CODEBASE_MAP #22)", () => {
   it("WizardMeta declara o campo value", () => {
     expect(SOURCE).toMatch(/interface WizardMeta \{[\s\S]*?\bvalue: string;[\s\S]*?\}/);
   });

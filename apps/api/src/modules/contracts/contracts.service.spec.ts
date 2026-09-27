@@ -181,7 +181,7 @@ const baseContractRow = (overrides: Record<string, unknown> = {}) => ({
 });
 
 describe('ContractsService.create — alias consolidation (Phase 5 / C1)', () => {
-  it('payload PT canônico persiste somente chaves canônicas', async () => {
+  it('a canonical PT payload persists only canonical keys', async () => {
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato X', type: 'gravacao', artist_id: '11111111-1111-4111-8111-111111111111',
@@ -381,14 +381,14 @@ describe('ContractsService.list — canonical and legacy filters (Phase 5 / C1)'
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.artist_id = :artistId', { artistId: uuid });
   });
 
-  it('filtra por artistId legado', async () => {
+  it('filters by the legacy artistId', async () => {
     const uuid = '11111111-1111-4111-8111-111111111111';
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { artistId: uuid } as unknown as QueryContractDto);
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.artist_id = :artistId', { artistId: uuid });
   });
 
-  it('artist_id e artistId conflitantes rejeitam', async () => {
+  it('conflicting artist_id and artistId are rejected', async () => {
     const { svc } = makeServiceC1([baseContractRow()]);
     await expect(svc.list('tenant-1', {
       artist_id: '11111111-1111-4111-8111-111111111111', artistId: '22222222-2222-4222-8222-222222222222',

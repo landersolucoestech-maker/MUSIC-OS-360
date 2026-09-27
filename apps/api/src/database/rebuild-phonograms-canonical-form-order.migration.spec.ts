@@ -43,7 +43,7 @@ describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria as 2 FKs compostas dependentes (transaction_allocations, performance_metric_entries)', () => {
+  it('recreates the 2 dependent composite FKs (transaction_allocations, performance_metric_entries)', () => {
     for (const table of ['transaction_allocations', 'performance_metric_entries']) {
       expect(migrationSrc.match(new RegExp(`ALTER TABLE ${table} DROP CONSTRAINT`, 'g'))?.length).toBeGreaterThanOrEqual(1);
       expect(migrationSrc.match(new RegExp(`ALTER TABLE ${table} ADD CONSTRAINT`, 'g'))?.length).toBeGreaterThanOrEqual(1);

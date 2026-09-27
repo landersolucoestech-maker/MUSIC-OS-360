@@ -119,7 +119,7 @@ describe("<PlatformMiniTrend />", () => {
     );
   });
 
-  it("oculta a sparkline quando showSparkline=false (modo chip puro do 360)", () => {
+  it("hides the sparkline when showSparkline=false (360 pure chip mode)", () => {
     renderWithProviders(
       <PlatformMiniTrend
         points={[

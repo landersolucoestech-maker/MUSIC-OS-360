@@ -55,7 +55,7 @@ describe('CreateProjectDto — real canonical contract (audit 2026-07-18)', () =
     expect(errors).toEqual([]);
   });
 
-  it('rejeita type fora do enum real', async () => {
+  it('rejects a type outside the real enum', async () => {
     const errors = await validatePayload({ title: 'X', type: 'inexistente' });
     expect(errors.some((e) => e.property === 'type')).toBe(true);
   });
@@ -66,7 +66,7 @@ describe('CreateProjectDto — artist_id/orcamento (GAP-0001 / DEC-001)', () => 
     expect(await validatePayload({ ...REAL_FORM_PAYLOAD, orcamento: 15000.5 })).toEqual([]);
   });
 
-  it('aceita artist_id/orcamento nulos (campos opcionais limpos)', async () => {
+  it('accepts null artist_id/orcamento (cleared optional fields)', async () => {
     expect(await validatePayload({ ...REAL_FORM_PAYLOAD, artist_id: null, orcamento: null })).toEqual([]);
   });
 

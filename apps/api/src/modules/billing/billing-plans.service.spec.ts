@@ -62,7 +62,7 @@ describe('BillingPlansService', () => {
       expect(plan.stripe_price_id).toBe('price_new');
     });
 
-    it('rejeita amount <= 0', async () => {
+    it('rejects amount <= 0', async () => {
       await expect(service.create({ slug: 'x', name: 'X', amount: 0 })).rejects.toThrow(BadRequestException);
     });
 
@@ -74,7 +74,7 @@ describe('BillingPlansService', () => {
       await expect(service.create({ slug: 'x', name: 'X', amount: 100, interval: 'week' })).rejects.toThrow(BadRequestException);
     });
 
-    it('rejeita slug duplicado', async () => {
+    it('rejects a duplicate slug', async () => {
       repo.findOne.mockResolvedValueOnce({ id: 'dup', slug: 'pro' });
       await expect(service.create({ slug: 'pro', name: 'Pro', amount: 100 })).rejects.toThrow(BadRequestException);
     });
@@ -140,7 +140,7 @@ describe('BillingPlansService', () => {
       expect(qb.where).toHaveBeenCalledWith('p.active = true');
     });
 
-    it('normaliza features legado (objeto {labels}) para array, igual list()', async () => {
+    it('normalizes legacy features ({labels} object) to an array, like list()', async () => {
       mockPlansQuery([
         {
           id: 'plan-1', slug: 'legacy', name: 'Legacy', description: null,

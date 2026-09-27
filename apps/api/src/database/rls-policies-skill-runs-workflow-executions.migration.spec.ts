@@ -19,7 +19,7 @@ describe('RlsPoliciesSkillRunsWorkflowExecutions20260613000012', () => {
     expect(sql).not.toMatch(/skill_run_logs|workflow_execution_logs/i);
   });
 
-  it('remove policies e desabilita RLS de forma reversivel', async () => {
+  it('removes the policies and disables RLS reversibly', async () => {
     const qr = queryRunner();
     await new RlsPoliciesSkillRunsWorkflowExecutions20260613000012().down(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');

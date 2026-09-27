@@ -45,7 +45,7 @@ describe('RebuildTakedownsInCanonicalFormOrder20260719000016', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria RLS + policies e possui down() honesto', () => {
+  it('recreates RLS + policies and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);

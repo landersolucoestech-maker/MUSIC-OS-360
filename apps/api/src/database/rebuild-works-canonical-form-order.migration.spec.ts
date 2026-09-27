@@ -39,7 +39,7 @@ describe('RebuildWorksInCanonicalFormOrder20260719000002', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria as 4 FKs dependentes (release_works, phonograms, shares, work_participants)', () => {
+  it('recreates the 4 dependent FKs (release_works, phonograms, shares, work_participants)', () => {
     for (const table of ['release_works', 'phonograms', 'shares', 'work_participants']) {
       expect(migrationSrc.match(new RegExp(`ALTER TABLE ${table} DROP CONSTRAINT`, 'g'))?.length).toBeGreaterThanOrEqual(1);
       expect(migrationSrc.match(new RegExp(`ALTER TABLE ${table} ADD CONSTRAINT`, 'g'))?.length).toBeGreaterThanOrEqual(1);

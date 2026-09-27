@@ -15,7 +15,7 @@ import { useContacts } from "./useContacts";
 
 beforeEach(() => vi.clearAllMocks());
 
-describe("useContacts — estados reais de carregamento/sucesso/erro", () => {
+describe("useContacts — real loading/success/error states", () => {
   it("starts with isLoading=true and no error", () => {
     vi.mocked(contactsService.list).mockReturnValue(new Promise(() => {}));
     const { result } = renderHook(() => useContacts());

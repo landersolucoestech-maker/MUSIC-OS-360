@@ -62,7 +62,7 @@ describe('KnowledgeBaseService', () => {
   });
 
   describe('createCategory', () => {
-    it('rejeita slug duplicado', async () => {
+    it('rejects a duplicate slug', async () => {
       const { svc, categoryQb } = makeService();
       categoryQb.getOne.mockResolvedValueOnce({ id: 'existing', slug: 'faq' });
       await expect(svc.createCategory({ slug: 'faq', name: 'FAQ' })).rejects.toBeInstanceOf(BadRequestException);

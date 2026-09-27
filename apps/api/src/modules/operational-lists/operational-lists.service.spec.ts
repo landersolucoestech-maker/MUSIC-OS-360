@@ -126,7 +126,7 @@ describe('OperationalListsService', () => {
   });
 
   describe('remove', () => {
-    it('faz soft-delete gravando deleted_at', async () => {
+    it('soft-deletes by writing deleted_at', async () => {
       const existing = { id: 'uuid-2', tenant_id: 'tenant-1', kind: 'lead_type', slug: 'y', name: 'Y' };
       const { svc, repo } = makeService([existing]);
       (repo._qb['getOne'] as jest.Mock).mockImplementation(async () => existing);

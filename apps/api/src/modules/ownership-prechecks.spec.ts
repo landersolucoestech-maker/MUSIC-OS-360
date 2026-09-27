@@ -51,7 +51,7 @@ describe('ownership prechecks and tenant-scoped final operations', () => {
     });
   });
 
-  it('bloqueia confirm/download cross-tenant antes de tocar storage', async () => {
+  it('blocks cross-tenant confirm/download before touching storage', async () => {
     const repo = { createQueryBuilder: jest.fn(() => qb(null)) };
     const storage = {
       exists: jest.fn(),
@@ -89,7 +89,7 @@ describe('ownership prechecks and tenant-scoped final operations', () => {
     });
   });
 
-  it('bloqueia update cross-tenant de notification', async () => {
+  it('blocks a cross-tenant notification update', async () => {
     const repo = {
       createQueryBuilder: jest.fn(() => qb(null)),
       update: jest.fn(),
@@ -134,7 +134,7 @@ describe('ownership prechecks and tenant-scoped final operations', () => {
     );
   });
 
-  it('bloqueia update/delete cross-tenant em campaign operations', async () => {
+  it('blocks cross-tenant update/delete on campaign operations', async () => {
     const tasks = {
       findOne: jest.fn().mockResolvedValue(null),
       update: jest.fn(),

@@ -46,12 +46,12 @@ describe('CreateShotDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita campo desconhecido (unknown field)', async () => {
+  it('rejects an unknown field', async () => {
     const errors = await validatePayload(CreateShotDto, { scene_title: 'x', campoInventado: 'y' });
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita scene_title excedendo o limite de tamanho', async () => {
+  it('rejects scene_title over the length limit', async () => {
     const errors = await validatePayload(CreateShotDto, { scene_title: 'a'.repeat(256) });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -63,12 +63,12 @@ describe('UpdateShotDto', () => {
     expect(errors).toEqual([]);
   });
 
-  it('rejeita shooting_status fora do enum CAPTURE_STATUSES (invalid enum)', async () => {
+  it('rejects shooting_status outside the CAPTURE_STATUSES enum (invalid enum)', async () => {
     const errors = await validatePayload(UpdateShotDto, { shooting_status: 'nao_existe' });
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('aceita shooting_status dentro do enum CAPTURE_STATUSES', async () => {
+  it('accepts shooting_status within the CAPTURE_STATUSES enum', async () => {
     const errors = await validatePayload(UpdateShotDto, { shooting_status: 'recording' });
     expect(errors).toEqual([]);
   });
@@ -87,7 +87,7 @@ describe('ReorderShotsDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita ids ausente (missing required)', async () => {
+  it('rejects missing ids (missing required)', async () => {
     const errors = await validatePayload(ReorderShotsDto, {});
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -108,7 +108,7 @@ describe('CreateTaskDto / UpdateTaskDto', () => {
     expect(errors).toEqual([]);
   });
 
-  it('rejeita title ausente (missing required)', async () => {
+  it('rejects a missing title (missing required)', async () => {
     const errors = await validatePayload(CreateTaskDto, { description: 'sem título' });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -150,12 +150,12 @@ describe('CreateTeamMemberDto', () => {
     expect(errors).toEqual([]);
   });
 
-  it('rejeita role ausente (missing required)', async () => {
+  it('rejects a missing role (missing required)', async () => {
     const errors = await validatePayload(CreateTeamMemberDto, { external_name: 'Fulano' });
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita role fora do enum TEAM_ROLES reconciliado (invalid enum)', async () => {
+  it('rejects a role outside the reconciled TEAM_ROLES enum (invalid enum)', async () => {
     // "videomaker" was the frontend's divergent value before this phase's
     // reconciliation — it no longer exists in TEAM_ROLES.
     const errors = await validatePayload(CreateTeamMemberDto, { role: 'videomaker' });
@@ -167,7 +167,7 @@ describe('CreateTeamMemberDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita payment_amount negativo', async () => {
+  it('rejects a negative payment_amount', async () => {
     const errors = await validatePayload(CreateTeamMemberDto, { role: 'camera', payment_amount: -10 });
     expect(errors.length).toBeGreaterThan(0);
   });

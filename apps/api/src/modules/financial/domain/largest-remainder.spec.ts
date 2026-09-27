@@ -5,7 +5,7 @@ import { LargestRemainderError, largestRemainder } from './largest-remainder';
  * algorithm (no database, no network). Minimum cases required by the mandate + the
  * normative cases of Phase 12 §10.
  */
-describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
+describe('largestRemainder — normative algorithm (Phases 11/12)', () => {
   it('R$ 1.000,00 → 60/40 = 600,00 + 400,00', () => {
     expect(largestRemainder('1000.00', ['60', '40'])).toEqual(['600.00', '400.00']);
   });
@@ -44,7 +44,7 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
     expect(largestRemainder('1000.00', ['25', '25'])).toEqual(['250.00', '250.00']);
   });
 
-  it('soma acima de 100% → rejeita (I5)', () => {
+  it('sum above 100% → rejects (I5)', () => {
     expect(() => largestRemainder('1000.00', ['60', '50']))
       .toThrow(LargestRemainderError);
     expect(() => largestRemainder('1000.00', ['60', '50']))
@@ -69,7 +69,7 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
     expect(() => largestRemainder('10.001', ['100'])).toThrow(LargestRemainderError);
   });
 
-  it('lista vazia → rejeita', () => {
+  it('empty list → rejects', () => {
     expect(() => largestRemainder('100.00', [])).toThrow(/empty percentage list/);
   });
 

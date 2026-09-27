@@ -25,7 +25,7 @@ async function validatePayload(payload: Record<string, unknown>) {
 }
 
 describe('UpdateUserDto — contrato real (auditoria 2026-07-18 + Task L)', () => {
-  it('aceita fullName/phone — payload real de perfil enviado por useUsuarios()', async () => {
+  it('accepts fullName/phone — the real profile payload sent by useUsuarios()', async () => {
     const errors = await validatePayload({ fullName: 'Fulano da Silva', phone: '11999999999' });
     expect(errors).toEqual([]);
   });

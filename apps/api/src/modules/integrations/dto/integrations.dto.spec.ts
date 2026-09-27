@@ -33,7 +33,7 @@ describe('RegisterAbramusWorkDto', () => {
     expect(errors).toEqual([]);
   });
 
-  it('rejeita titulo ausente (missing required)', async () => {
+  it('rejects a missing titulo (missing required)', async () => {
     const errors = await validatePayload(RegisterAbramusWorkDto, { compositor: 'Fulano' });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -50,7 +50,7 @@ describe('RegisterAbramusWorkDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita campo desconhecido (unknown field)', async () => {
+  it('rejects an unknown field', async () => {
     const errors = await validatePayload(RegisterAbramusWorkDto, {
       titulo: 'Obra X', compositor: 'Fulano', campoInventado: true,
     });
@@ -64,7 +64,7 @@ describe('ConfigureSoundCloudDto', () => {
     expect(errors).toEqual([]);
   });
 
-  it('rejeita clientSecret ausente (missing required)', async () => {
+  it('rejects a missing clientSecret (missing required)', async () => {
     const errors = await validatePayload(ConfigureSoundCloudDto, { clientId: 'abc' });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -76,7 +76,7 @@ describe('OAuthCodeStateDto (Instagram/TikTok/Google Ads callbacks)', () => {
     expect(errors).toEqual([]);
   });
 
-  it('rejeita state ausente (missing required)', async () => {
+  it('rejects a missing state (missing required)', async () => {
     const errors = await validatePayload(OAuthCodeStateDto, { code: 'abc123' });
     expect(errors.length).toBeGreaterThan(0);
   });

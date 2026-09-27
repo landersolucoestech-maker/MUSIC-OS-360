@@ -58,7 +58,7 @@ describe('RebuildClientsInCanonicalFormOrder20260719000010', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria a FK dependente (counterparties), RLS + policies e possui down() honesto', () => {
+  it('recreates the dependent FK (counterparties), RLS + policies and has an honest down()', () => {
     expect(migrationSrc.match(/ALTER TABLE counterparties DROP CONSTRAINT/g)?.length).toBeGreaterThanOrEqual(1);
     expect(migrationSrc.match(/ALTER TABLE counterparties ADD CONSTRAINT/g)?.length).toBeGreaterThanOrEqual(1);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);

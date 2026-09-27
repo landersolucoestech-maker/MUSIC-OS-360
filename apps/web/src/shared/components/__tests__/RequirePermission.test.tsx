@@ -21,7 +21,7 @@ import { renderHook } from "@testing-library/react";
 beforeEach(() => { state.allow = false; state.loading = false; });
 
 describe("RequirePermission / PermissionGate", () => {
-  it("renderiza children quando autorizado", () => {
+  it("renders children when authorized", () => {
     state.allow = true;
     render(
       <RequirePermission module="artists" action="write">
@@ -64,7 +64,7 @@ describe("RequirePermission / PermissionGate", () => {
     expect(screen.getByText("bloqueado")).toBeInTheDocument();
   });
 
-  it("useHasPermission reflete canModule", () => {
+  it("useHasPermission mirrors canModule", () => {
     state.allow = true;
     expect(renderHook(() => useHasPermission("rh", "read")).result.current).toBe(true);
     state.allow = false;

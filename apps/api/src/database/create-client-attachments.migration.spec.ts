@@ -42,7 +42,7 @@ describe('CreateClientAttachments20260803000001', () => {
     expect(migrationSrc).toMatch(/GRANT SELECT, INSERT, UPDATE, DELETE ON client_attachments TO musicos_app/);
   });
 
-  it('down() remove a tabela', () => {
+  it('down() removes the table', () => {
     const downBlock = migrationSrc.split('async down')[1];
     expect(downBlock).toMatch(/DROP TABLE IF EXISTS client_attachments/);
   });

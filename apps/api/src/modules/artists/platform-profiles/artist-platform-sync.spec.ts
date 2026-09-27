@@ -434,7 +434,7 @@ describe('ArtistExternalProfileSyncService', () => {
     });
   });
 
-  it('rejeita plataforma fora do conjunto suportado', async () => {
+  it('rejects a platform outside the supported set', async () => {
     const service = new ArtistExternalProfileSyncService({} as never, {} as never, {} as never, null);
     await expect(service.enqueueManualSync({
       tenantId: 'tenant-1',
@@ -466,7 +466,7 @@ describe('ArtistExternalProfileSyncService', () => {
 });
 
 describe('ArtistPlatformSyncProcessor', () => {
-  it('persiste success usando artista carregado por tenant + id', async () => {
+  it('persists success using the artist loaded by tenant + id', async () => {
     const findOne = jest.fn().mockResolvedValue({
       id: 'artist-1',
       tenant_id: 'tenant-1',
@@ -524,7 +524,7 @@ describe('ArtistPlatformSyncProcessor', () => {
     expect(profiles.markFailed).not.toHaveBeenCalled();
   });
 
-  it('persiste failed quando provider falha', async () => {
+  it('persists failed when the provider fails', async () => {
     const ds = {
       getRepository: jest.fn(() => ({
         findOne: jest.fn().mockResolvedValue({ id: 'artist-1', tenant_id: 'tenant-1', spotify_url: 'https://open.spotify.com/artist/spotify-1' }),

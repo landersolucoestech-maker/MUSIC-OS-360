@@ -8,7 +8,7 @@ import { BillingController } from './billing.controller';
  * user of the tenant.
  */
 describe('BillingController.getAdminStripeMode — authorization', () => {
-  it('exige exatamente super_admin', () => {
+  it('requires exactly super_admin', () => {
     const handler = BillingController.prototype.getAdminStripeMode;
     expect(Reflect.getMetadata(ROLES_KEY, handler)).toEqual(['super_admin']);
   });

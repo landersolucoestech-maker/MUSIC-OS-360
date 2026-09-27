@@ -25,7 +25,7 @@ describe("splitDateTime", () => {
     );
   });
 
-  it("aceita um objeto Date diretamente", () => {
+  it("accepts a Date object directly", () => {
     const result = splitDateTime(new Date(2026, 7, 20, 9, 5));
     expect(result).toEqual({ date: "2026-08-20", time: "09:05" });
   });

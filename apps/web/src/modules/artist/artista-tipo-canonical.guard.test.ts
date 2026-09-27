@@ -32,7 +32,7 @@ const FILES_TO_SCAN = [
 ];
 
 describe("artists domain — the tipo field (artist line-up) was removed, not normalized", () => {
-  it.each(FILES_TO_SCAN)("%s não declara ArtistaTipo nem tipoArtista", (file) => {
+  it.each(FILES_TO_SCAN)("%s declares neither ArtistaTipo nor tipoArtista", (file) => {
     const source = fs.readFileSync(file, "utf8");
     for (const pattern of REMOVED_IDENTIFIERS) {
       expect(source).not.toMatch(pattern);

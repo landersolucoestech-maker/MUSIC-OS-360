@@ -13,11 +13,11 @@ describe("extractSupabaseRef", () => {
 });
 
 describe("deriveAuthEnvironmentLabel", () => {
-  it("identifica o ambiente DEV", () => {
+  it("identifies the DEV environment", () => {
     expect(deriveAuthEnvironmentLabel("https://rypnevnfipygyhysqpdo.supabase.co")).toBe("DEV");
   });
 
-  it("identifica o ambiente STAGING", () => {
+  it("identifies the STAGING environment", () => {
     expect(deriveAuthEnvironmentLabel("https://jjnnjnxjkqipgqebijen.supabase.co")).toBe("STAGING");
   });
 

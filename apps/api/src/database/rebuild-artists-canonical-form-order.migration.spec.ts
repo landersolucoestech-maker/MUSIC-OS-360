@@ -52,7 +52,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria as 8 FKs de tabelas dependentes (artist_platform_profiles, works, phonograms, contracts, releases, counterparties, transaction_allocations, performance_metric_entries)', () => {
+  it('recreates the 8 FKs of dependent tables (artist_platform_profiles, works, phonograms, contracts, releases, counterparties, transaction_allocations, performance_metric_entries)', () => {
     for (const table of [
       'artist_platform_profiles', 'works', 'phonograms', 'contracts', 'releases',
       'counterparties', 'transaction_allocations', 'performance_metric_entries',
@@ -64,7 +64,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     }
   });
 
-  it('recria RLS + FORCE RLS + as 2 policies originais', () => {
+  it('recreates RLS + FORCE RLS + the 2 original policies', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/super_admin_full_access/);

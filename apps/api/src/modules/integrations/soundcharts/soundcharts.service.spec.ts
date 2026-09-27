@@ -197,7 +197,7 @@ describe('SoundchartsService', () => {
     });
   });
 
-  describe('erros HTTP', () => {
+  describe('HTTP errors', () => {
     it('404: throws SoundchartsNotFoundError', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(404, { errors: [{ message: 'not found' }] }));
       await expect(service.getInstagramFollowers('uuid-1')).rejects.toBeInstanceOf(SoundchartsNotFoundError);
@@ -209,8 +209,8 @@ describe('SoundchartsService', () => {
     });
   });
 
-  describe('getRelatedArtists (Fase 3.1 — descoberta de coorte de mercado)', () => {
-    it('extrai items/total do payload real, filtra entradas sem uuid/name', async () => {
+  describe('getRelatedArtists (Phase 3.1 — market cohort discovery)', () => {
+    it('extracts items/total from the real payload, filters out entries without uuid/name', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(
         jsonResponse(200, {
           items: [
@@ -242,8 +242,8 @@ describe('SoundchartsService', () => {
     });
   });
 
-  describe('getArtistCountryCode (Fase 3.1)', () => {
-    it('extrai countryCode real quando presente', async () => {
+  describe('getArtistCountryCode (Phase 3.1)', () => {
+    it('extracts the real countryCode when present', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(200, { object: { countryCode: 'BR' }, errors: [] }));
       expect(await service.getArtistCountryCode('uuid-1')).toBe('BR');
     });

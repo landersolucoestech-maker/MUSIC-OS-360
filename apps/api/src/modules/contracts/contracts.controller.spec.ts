@@ -37,7 +37,7 @@ function makeQb(rows: Record<string, unknown>[]) {
   return qb;
 }
 
-describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
+describe('ContractsController — real HTTP contract (Phase 5 / C1)', () => {
   let app: INestApplication;
   let repo: { create: jest.Mock; save: jest.Mock; update: jest.Mock; createQueryBuilder: jest.Mock };
 
@@ -120,7 +120,7 @@ describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
       .expect(200);
   });
 
-  it('query type/tipo conflitantes → 400', async () => {
+  it('conflicting type/tipo query → 400', async () => {
     await request(app.getHttpServer())
       .get('/contracts')
       .query({ type: 'gravacao', tipo: 'edicao' })

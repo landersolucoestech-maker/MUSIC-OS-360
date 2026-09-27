@@ -50,7 +50,7 @@ describe('WorkEntity does not reintroduce removed columns', () => {
   });
 });
 
-describe('WorkParticipantEntity — tabela filha normalizada', () => {
+describe('WorkParticipantEntity — normalized child table', () => {
   const block = entityBlock('WorkParticipantEntity');
 
   it('has the real columns extracted from ParticipanteForm (name, classe_funcao, link, percentual, sort_order)', () => {

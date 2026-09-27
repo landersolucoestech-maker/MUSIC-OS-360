@@ -97,7 +97,7 @@ describe('CrmFollowupAutomation (lead.created → crm-followup)', () => {
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda tenantId/leadId ausente', async () => {
+  it('guards against a missing tenantId/leadId', async () => {
     const { ds, query } = makeDs([LEAD_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

@@ -13,7 +13,7 @@ describe("AuthRateLimiter (Part 77)", () => {
     expect(authRateLimiter.getRemainingAttempts("user@example.com")).toBe(5);
   });
 
-  it("recordFailure() reduz as tentativas restantes", () => {
+  it("recordFailure() reduces the remaining attempts", () => {
     authRateLimiter.recordFailure("user@example.com");
     expect(authRateLimiter.getRemainingAttempts("user@example.com")).toBe(4);
     authRateLimiter.recordFailure("user@example.com");

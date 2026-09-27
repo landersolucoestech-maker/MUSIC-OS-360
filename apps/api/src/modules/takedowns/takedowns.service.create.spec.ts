@@ -17,14 +17,14 @@ function makeService(queryImpl: jest.Mock) {
 }
 
 describe('TakedownsService.create — FK cross-tenant (P1)', () => {
-  it('rejeita work_id de outro tenant (ou inexistente)', async () => {
+  it('rejects a work_id from another tenant (or nonexistent)', async () => {
     const svc = makeService(jest.fn(async () => []));
     await expect(svc.create('tenant-1', 'user-1', {
       work_id: 'work-from-another-tenant', title: 'X',
     } as unknown as CreateTakedownDto)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('rejeita artist_id de outro tenant (ou inexistente)', async () => {
+  it('rejects an artist_id from another tenant (or nonexistent)', async () => {
     const svc = makeService(jest.fn(async () => []));
     await expect(svc.create('tenant-1', 'user-1', {
       artist_id: 'artist-from-another-tenant', title: 'X',

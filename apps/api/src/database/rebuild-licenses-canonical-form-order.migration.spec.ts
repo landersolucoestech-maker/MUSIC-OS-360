@@ -60,7 +60,7 @@ describe('RebuildLicensesInCanonicalFormOrder20260719000015', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria RLS + policy (tenant_isolation) e possui down() honesto', () => {
+  it('recreates RLS + policy (tenant_isolation) and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);

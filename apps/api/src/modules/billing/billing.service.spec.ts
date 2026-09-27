@@ -182,7 +182,7 @@ describe('BillingService', () => {
       })).rejects.toThrow(BadRequestException);
     });
 
-    it('reusa customer_id existente', async () => {
+    it('reuses the existing customer_id', async () => {
       const repo = mockDs._repo;
       repo._qb.getOne.mockResolvedValueOnce({ stripe_customer_id: 'cus_123', stripe_sub_id: 'sub_123' });
       await service.createCheckoutSession({
@@ -643,7 +643,7 @@ describe('BillingService', () => {
       expect(await service.getSubscription('org-x')).toBeNull();
     });
 
-    it('retorna subscription existente', async () => {
+    it('returns the existing subscription', async () => {
       const sub = { id: 's1', plan: 'starter', status: 'trial' };
       const repo = mockDs._repo;
       repo._qb.getOne.mockResolvedValueOnce(sub);

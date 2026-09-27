@@ -70,7 +70,7 @@ describe('TransactionEventsHandler — P2-9', () => {
       expect(financialRules.evaluateRules).not.toHaveBeenCalled();
     });
 
-    it('tenantId ausente → aborta (fail-closed)', async () => {
+    it('missing tenantId → aborts (fail-closed)', async () => {
       const { handler, financialRules } = build();
       await handler.onTransactionCreated({ payload: createdPayload } as any);
       expect(financialRules.evaluateRules).not.toHaveBeenCalled();

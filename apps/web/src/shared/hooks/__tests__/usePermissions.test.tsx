@@ -34,7 +34,7 @@ describe("usePermissions — production (no bypass)", () => {
     expect(p.isLoadingPermissions).toBe(false);
   });
 
-  it("permissionKeys vazio bloqueia tudo", () => {
+  it("empty permissionKeys blocks everything", () => {
     state.permissionKeys = [];
     const p = perms();
     expect(p.hasPermission("artist:read")).toBe(false);
@@ -64,7 +64,7 @@ describe("usePermissions — production (no bypass)", () => {
     expect(p.canModule("accounting", "read")).toBe(false);
   });
 
-  it("hasAllPermissions / hasAnyPermission respeitam o conjunto", () => {
+  it("hasAllPermissions / hasAnyPermission respect the set", () => {
     state.permissionKeys = ["artist:read", "artist:update"];
     const p = perms();
     expect(p.hasAllPermissions(["artist:read", "artist:update"])).toBe(true);
@@ -74,7 +74,7 @@ describe("usePermissions — production (no bypass)", () => {
   });
 });
 
-describe("usePermissions — dev/auth-disabled (permissivo)", () => {
+describe("usePermissions — dev/auth-disabled (permissive)", () => {
   it("IS_DEV + permissionKeys null → allows (does not block dev)", () => {
     setDev();
     state.permissionKeys = null;
@@ -84,7 +84,7 @@ describe("usePermissions — dev/auth-disabled (permissivo)", () => {
     expect(p.isLoadingPermissions).toBe(false);
   });
 
-  it("AUTH_DISABLED + permissionKeys null → permite", () => {
+  it("AUTH_DISABLED + null permissionKeys → allows", () => {
     setAuthDisabled();
     state.permissionKeys = null;
     const p = perms();

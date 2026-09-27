@@ -42,14 +42,14 @@ describe('RebuildReleasesInCanonicalFormOrder20260719000004', () => {
     expect(migrationSrc.match(/this\.releaseWorksPolicySql\(\)/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('recria as 3 FKs dependentes (release_works, transaction_allocations, performance_metric_entries)', () => {
+  it('recreates the 3 dependent FKs (release_works, transaction_allocations, performance_metric_entries)', () => {
     for (const table of ['release_works', 'transaction_allocations', 'performance_metric_entries']) {
       expect(migrationSrc.match(new RegExp(`ALTER TABLE ${table} DROP CONSTRAINT`, 'g'))?.length).toBeGreaterThanOrEqual(1);
       expect(migrationSrc.match(new RegExp(`ALTER TABLE ${table} ADD CONSTRAINT`, 'g'))?.length).toBeGreaterThanOrEqual(1);
     }
   });
 
-  it('recria RLS + FORCE RLS + policies e possui down() honesto', () => {
+  it('recreates RLS + FORCE RLS + policies and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);

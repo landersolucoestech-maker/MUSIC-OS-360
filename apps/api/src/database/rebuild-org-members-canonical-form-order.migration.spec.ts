@@ -77,7 +77,7 @@ describe('RebuildOrgMembersInCanonicalFormOrder20260719000020', () => {
     expect(migrationSrc.match(/FOREIGN KEY \(position_id\) REFERENCES positions\(id\) ON DELETE SET NULL/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('recria RLS + as duas policies (tenant_isolation, super_admin_full_access) e possui down() honesto', () => {
+  it('recreates RLS + both policies (tenant_isolation, super_admin_full_access) and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/CREATE POLICY tenant_isolation/g)?.length).toBeGreaterThanOrEqual(2);

@@ -57,7 +57,7 @@ describe("useOperationalSettings", () => {
     expect(leadTypeItems.some((i) => i.slug === "artista")).toBe(true);
   });
 
-  it("createItem persiste via settingsService.saveOperationalLists", () => {
+  it("createItem persists through settingsService.saveOperationalLists", () => {
     vi.mocked(settingsService.getOperationalLists).mockReturnValue(ROWS as never);
     const { result } = renderHook(() => useOperationalSettings());
 

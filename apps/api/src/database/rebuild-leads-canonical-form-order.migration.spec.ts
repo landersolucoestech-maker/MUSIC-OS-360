@@ -51,7 +51,7 @@ describe('RebuildLeadsInCanonicalFormOrder20260719000011', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria as 5 FKs dependentes (conversations, form_submissions, lead_uploads x2, lead_interactions), RLS + policies e possui down() honesto', () => {
+  it('recreates the 5 dependent FKs (conversations, form_submissions, lead_uploads x2, lead_interactions), RLS + policies and has an honest down()', () => {
     for (const conname of [
       'conversations_contact_id_fkey', 'form_submissions_lead_id_fkey', 'lead_uploads_lead_id_fkey',
       'fk_lead_uploads_lead_tenant', 'fk_lead_interactions_lead_id',

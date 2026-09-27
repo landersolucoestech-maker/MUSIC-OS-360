@@ -42,7 +42,7 @@ describe('BackfillLegacySocietyCodesToExternalIdentifiers20260718000015', () => 
     expect(migrationSrc).not.toMatch(/DROP COLUMN.*cod_ecad/i);
   });
 
-  it('aborta se a contagem de external_identifiers diminuir (fail-fast)', () => {
+  it('aborts if the external_identifiers count decreases (fail-fast)', () => {
     expect(migrationSrc).toMatch(/if \(Number\(after\) < Number\(before\)\)/);
     expect(migrationSrc).toMatch(/throw new Error/);
   });
