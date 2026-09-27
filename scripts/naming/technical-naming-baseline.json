@@ -1,17 +1,11 @@
 {
  "totals": {
-  "comment": 7,
   "directory": 23,
   "eventQueueJob": 18,
   "filename": 83,
   "identifier": 2519
  },
  "debt": {
-  "comment::apps/web/src/modules/crm-relationships/forms/ContactModal.tsx": 1,
-  "comment::apps/web/src/modules/crm-relationships/modals/ContatoFormModal.tsx": 1,
-  "comment::apps/web/src/modules/integrations/components/UbcConfigDialog.tsx": 1,
-  "comment::apps/web/src/modules/marketing/pages/Calendario.tsx": 1,
-  "comment::scripts/naming/technical-naming-census.test.mjs": 3,
   "directory::rh": 23,
   "eventQueueJob::apps/web/src/shared/domain-events/index.ts::name::contrato.sent_for_signing": 1,
   "eventQueueJob::apps/web/src/shared/domain-events/index.ts::name::contrato.signing_cancelled": 1,

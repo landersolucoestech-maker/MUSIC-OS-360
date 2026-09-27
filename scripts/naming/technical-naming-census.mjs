@@ -53,6 +53,42 @@ const TECHNICAL_NAME = /^[a-z0-9][a-z0-9_.:-]*$/; // event/queue/job/i18n-key sh
  * Scans one source file. Returns technical-name hits:
  * { surface, kind, name, line }. Pure: no filesystem access.
  */
+/**
+ * Real comments of a source file: the leading trivia of every token in the AST.
+ * A regex over the raw text also matched `//` inside URLs and `/*` inside strings such
+ * as accept="image/*" (reading until the next `*\/`), producing false positives.
+ * JSX text is not trivia and is skipped.
+ */
+export function sourceComments(sf, text) {
+  const seen = new Set();
+  const out = [];
+  const add = (ranges) => {
+    for (const r of ranges ?? []) {
+      if (seen.has(r.pos)) continue;
+      seen.add(r.pos);
+      out.push({ pos: r.pos, text: text.slice(r.pos, r.end) });
+    }
+  };
+  // Positions where JSX text begins: what follows there is text, never comment trivia.
+  const jsxTextStarts = new Set();
+  const markJsxText = (node) => {
+    if (node.kind === ts.SyntaxKind.JsxText) jsxTextStarts.add(node.getFullStart());
+    ts.forEachChild(node, markJsxText);
+  };
+  markJsxText(sf);
+  const visit = (node) => {
+    if (node.kind === ts.SyntaxKind.JsxText) return;
+    if (!jsxTextStarts.has(node.getFullStart())) add(ts.getLeadingCommentRanges(text, node.getFullStart()));
+    // same-line comments after code (`x = 1; // note`) are trailing trivia
+    if (!jsxTextStarts.has(node.getEnd())) add(ts.getTrailingCommentRanges(text, node.getEnd()));
+    // `{/* note */}` in JSX: an expression container with no expression
+    if (ts.isJsxExpression(node) && !node.expression) add(ts.getLeadingCommentRanges(text, node.getStart(sf) + 1));
+    for (const child of node.getChildren(sf)) visit(child);
+  };
+  visit(sf);
+  return out.sort((a, b) => a.pos - b.pos);
+}
+
 export function scanSource(relPath, text) {
   const hits = [];
   const add = (surface, kind, name, line) => hits.push({ surface, kind, name, line });
@@ -140,8 +176,8 @@ export function scanSource(relPath, text) {
     ts.forEachChild(n, visit);
   };
   visit(sf);
-  for (const m of text.matchAll(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g)) {
-    if (isPtProse(m[0])) add("comment", "comment", "", text.slice(0, m.index).split("\n").length);
+  for (const c of sourceComments(sf, text)) {
+    if (isPtProse(c.text)) add("comment", "comment", "", sf.getLineAndCharacterOfPosition(c.pos).line + 1);
   }
   return hits;
 }

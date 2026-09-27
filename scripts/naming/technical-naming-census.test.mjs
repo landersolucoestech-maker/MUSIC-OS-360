@@ -68,6 +68,25 @@ test("technical comments and test titles in Portuguese are flagged; English ones
   assert.deepEqual(names(hits, "testTitle"), ["deve salvar o projeto quando o formulário é válido"]);
 });
 
+test("comments are read from the AST: real comments flagged, strings/URLs/MIME globs are not", () => {
+  const real = `/* calcula o repasse do artista quando não há contrato */
+const a = 1; // valida o valor antes de salvar no banco
+export function View() {
+  return <div>{/* mostra o formulário quando não há dados */}</div>;
+}
+// fim do arquivo: remove o cache quando não há sessão`;
+  assert.equal(scanSource("apps/web/src/y.tsx", real).filter((h) => h.surface === "comment").length, 4);
+
+  const noComments = `export function F() {
+  return <input accept="image/*" placeholder="https://portal.exemplo.org.br (padrão)" />;
+}
+const note = "// calcula o valor quando não há contrato";
+const tpl = \`/* remove o item quando não há estoque */\`;
+export const X = <p>Texto: sem comentário */ aqui</p>;
+export const Y = <p><b>Atenção</b> // não é comentário quando há texto no JSX</p>;`;
+  assert.equal(scanSource("apps/web/src/z.tsx", noComments).filter((h) => h.surface === "comment").length, 0);
+});
+
 test("prose detector: quoted UX, hostnames and English 'via' are not Portuguese; short Portuguese still is", () => {
   // English prose that only quotes UX text or mentions hosts/paths (".com" is not the preposition "com")
   for (const english of [
