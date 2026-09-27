@@ -14,14 +14,14 @@ import { formatCurrency, formatDate, getMonetarySemanticClass } from "@/shared/l
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { Checkbox } from "@/shared/ui/checkbox";
-import { InventarioFormModal } from "@/modules/inventory/components/InventarioFormModal";
-import { InventarioViewModal } from "@/modules/inventory/components/InventarioViewModal";
+import { InventoryFormModal } from "@/modules/inventory/components/InventarioFormModal";
+import { InventoryViewModal } from "@/modules/inventory/components/InventarioViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
-import { useInventario } from "@/modules/inventory/hooks/useInventario";
-import { useInventarioPaginated, useInventarioStats } from "@/modules/inventory/hooks/useInventarioPaginated";
+import { useInventory } from "@/modules/inventory/hooks/useInventario";
+import { useInventoryPaginated, useInventoryStats } from "@/modules/inventory/hooks/useInventarioPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { FeatureGate } from '@/shared/components/FeatureGate';
@@ -40,8 +40,8 @@ const LOCAL_FILTER_MAP: Record<string, string> = {
   estoque: "Estoque",
 };
 
-export default function Inventario() {
-  const { isLoading, deleteInventario, addInventario } = useInventario();
+export default function Inventory() {
+  const { isLoading, deleteInventoryItem, addInventoryItem } = useInventory();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const toggleSelectAll = () => {
     if (selectedIds.length === pageItems.length && pageItems.length > 0) {
@@ -55,7 +55,7 @@ export default function Inventario() {
     if (selectedIds.length === 0) return;
     const ids = selectedIds;
     setSelectedIds([]);
-    const result = await runBulkAction(ids, (id) => deleteInventario.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deleteInventoryItem.mutateAsync(id));
     reportBulkResult(result, "excluído", "item");
   };
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; item?: any }>({ open: false, mode: "create" });
@@ -81,7 +81,7 @@ export default function Inventario() {
     isLoading: isLoadingPage,
     error: pageError,
     refetch: refetchPage,
-  } = useInventarioPaginated({
+  } = useInventoryPaginated({
     page,
     pageSize,
     search: debouncedSearch || undefined,
@@ -92,7 +92,7 @@ export default function Inventario() {
 
   // KPIs: count per status + asset value sum OVER THE WHOLE
   // TENANT (not the current page) — GET /inventory/stats, aggregated in the database.
-  const { stats: inventarioStats } = useInventarioStats();
+  const { stats: inventoryStats } = useInventoryStats();
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -103,17 +103,17 @@ export default function Inventario() {
 
   const handleDelete = () => {
     if (deleteModal.item) {
-      deleteInventario.mutate(deleteModal.item.id);
+      deleteInventoryItem.mutate(deleteModal.item.id);
       setDeleteModal({ open: false });
     }
   };
 
-  const metricas = {
-    total: inventarioStats.total,
-    emUso: inventarioStats.byGroup["em_uso"] ?? 0,
-    disponiveis: inventarioStats.byGroup["disponivel"] ?? 0,
-    emManutencao: inventarioStats.byGroup["manutencao"] ?? 0,
-    valorTotal: inventarioStats.totalSum ?? 0,
+  const metrics = {
+    total: inventoryStats.total,
+    emUso: inventoryStats.byGroup["em_uso"] ?? 0,
+    disponiveis: inventoryStats.byGroup["disponivel"] ?? 0,
+    emManutencao: inventoryStats.byGroup["manutencao"] ?? 0,
+    valorTotal: inventoryStats.totalSum ?? 0,
   };
 
   const headerActions = (
@@ -135,11 +135,11 @@ export default function Inventario() {
     <MainLayout title="Inventário" description="Controle de equipamentos e patrimônio" actions={headerActions}>
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          <MetricCard title="Total de Itens" value={metricas.total} description="equipamentos cadastrados" icon={Package} accent="primary" />
-          <MetricCard title="Em Uso" value={metricas.emUso} description="em operação" icon={Package} accent="primary" />
-          <MetricCard title="Em Manutenção" value={metricas.emManutencao} description="equipamentos" icon={Wrench} accent="warning" />
-          <MetricCard title="Disponíveis" value={metricas.disponiveis} description="prontos para uso" icon={CheckCircle} accent="success" />
-          <MetricCard title="Valor Total" value={formatCurrency(metricas.valorTotal)} description="patrimônio total" icon={DollarSign} accent="primary" />
+          <MetricCard title="Total de Itens" value={metrics.total} description="equipamentos cadastrados" icon={Package} accent="primary" />
+          <MetricCard title="Em Uso" value={metrics.emUso} description="em operação" icon={Package} accent="primary" />
+          <MetricCard title="Em Manutenção" value={metrics.emManutencao} description="equipamentos" icon={Wrench} accent="warning" />
+          <MetricCard title="Disponíveis" value={metrics.disponiveis} description="prontos para uso" icon={CheckCircle} accent="success" />
+          <MetricCard title="Valor Total" value={formatCurrency(metrics.valorTotal)} description="patrimônio total" icon={DollarSign} accent="primary" />
         </div>
 
         <div className="flex items-center gap-4 rounded-lg bg-muted/30 p-3">
@@ -275,8 +275,8 @@ export default function Inventario() {
       {/* Outside the isLoading gate on purpose — same bug as /artistas
           (Task C): InventarioFormModal calls useInventario() again only
           for the mutations, the same query as the isLoading above. */}
-      <InventarioViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} item={viewModal.item} />
-      <InventarioFormModal open={formModal.open} onOpenChange={(open) => setFormModal({ ...formModal, open })} item={formModal.item} mode={formModal.mode} />
+      <InventoryViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} item={viewModal.item} />
+      <InventoryFormModal open={formModal.open} onOpenChange={(open) => setFormModal({ ...formModal, open })} item={formModal.item} mode={formModal.mode} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Item" description={`Tem certeza que deseja excluir "${deleteModal.item?.name}"?`} onConfirm={handleDelete} />
     </>
     </FeatureGate>

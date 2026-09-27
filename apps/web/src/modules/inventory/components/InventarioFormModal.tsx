@@ -10,19 +10,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { inventarioSchema, type InventarioFormData } from "@/modules/inventory/lib/inventario-schema";
+import { inventorySchema, type InventoryFormData } from "@/modules/inventory/lib/inventario-schema";
 import { FieldError } from "@/shared/components/FormField";
-import { useInventario } from "@/modules/inventory/hooks/useInventario";
+import { useInventory } from "@/modules/inventory/hooks/useInventario";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 
-interface InventarioFormModalProps {
+interface InventoryFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   item?: any;
   mode: "create" | "edit" | "view";
 }
 
-const setoresOptions = [
+const departmentOptions = [
   "Administrativo / Corporativo",
   "Arquivo e Documentação",
   "Artístico (A&R – Artistas & Repertório)",
@@ -62,7 +62,7 @@ const statusOptions = [
   { value: "descartado", label: "Descartado" },
 ];
 
-export function InventarioFormModal({ open, onOpenChange, item, mode }: InventarioFormModalProps) {
+export function InventoryFormModal({ open, onOpenChange, item, mode }: InventoryFormModalProps) {
   const isViewMode = mode === "view";
 
   const {
@@ -72,8 +72,8 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     watch,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<InventarioFormData & { setor?: string; responsavel?: string; localCompra?: string; numeroNotaFiscal?: string; dataEntrada?: string }>({
-    resolver: zodResolver(inventarioSchema),
+  } = useForm<InventoryFormData & { setor?: string; responsavel?: string; localCompra?: string; numeroNotaFiscal?: string; dataEntrada?: string }>({
+    resolver: zodResolver(inventorySchema),
     mode: "onChange",
     defaultValues: {
       name: "",
@@ -91,16 +91,16 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     },
   });
 
-  const quantidade = watch("quantidade");
-  const valorUnitario = watch("valor_unitario");
+  const quantity = watch("quantidade");
+  const unitValue = watch("valor_unitario");
 
   // Compute the total value automatically
-  const valorTotal = useMemo(() => {
-    const qtd = quantidade || 0;
-    const valor = valorUnitario || 0;
-    const total = qtd * valor;
+  const totalValue = useMemo(() => {
+    const qtd = quantity || 0;
+    const unitAmount = unitValue || 0;
+    const total = qtd * unitAmount;
     return total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  }, [quantidade, valorUnitario]);
+  }, [quantity, unitValue]);
 
   // Update the data when the item changes (edit mode)
   useEffect(() => {
@@ -139,9 +139,9 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     }
   }, [item, open, reset]);
 
-  const { addInventario, updateInventario } = useInventario();
+  const { addInventoryItem, updateInventoryItem } = useInventory();
 
-  const onSubmit = async (data: InventarioFormData & { setor?: string; responsavel?: string; localCompra?: string; numeroNotaFiscal?: string; dataEntrada?: string }) => {
+  const onSubmit = async (data: InventoryFormData & { setor?: string; responsavel?: string; localCompra?: string; numeroNotaFiscal?: string; dataEntrada?: string }) => {
     if (isViewMode) return;
     try {
       const payload = {
@@ -159,12 +159,12 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
         notes:               data.observacoes || undefined,
       };
       if (mode === "edit" && item?.id) {
-        await updateInventario.mutateAsync({
+        await updateInventoryItem.mutateAsync({
           id: item.id as string,
           data: { ...payload, expectedUpdatedAt: getExpectedUpdatedAt(item) } as never,
         });
       } else {
-        await addInventario.mutateAsync(payload as never);
+        await addInventoryItem.mutateAsync(payload as never);
       }
       onOpenChange(false);
     } catch (err) {
@@ -217,9 +217,9 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
                       <SelectValue placeholder="Selecione o setor" />
                     </SelectTrigger>
                     <SelectContent>
-                      {setoresOptions.map((setor) => (
-                        <SelectItem key={setor} value={setor}>
-                          {setor}
+                      {departmentOptions.map((department) => (
+                        <SelectItem key={department} value={department}>
+                          {department}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -370,7 +370,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
                 <div className="space-y-2">
                   <Label>Valor Total (Calculado)</Label>
                   <Input
-                    value={valorTotal}
+                    value={totalValue}
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />

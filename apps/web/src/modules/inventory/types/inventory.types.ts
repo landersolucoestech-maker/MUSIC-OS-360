@@ -2,7 +2,7 @@ import type { InventoryStatus } from "@/shared/types/enums";
 
 export type { InventoryStatus };
 
-export interface InventarioItem {
+export interface InventoryItem {
   id: string;
   user_id?: string;
   name: string;
@@ -22,5 +22,5 @@ export interface InventarioItem {
   [key: string]: unknown;
 }
 
-export type InventarioInsert = Omit<InventarioItem, "id" | "user_id" | "created_at" | "updated_at">;
-export type InventarioUpdate = Partial<InventarioInsert>;
+export type InventoryInsert = Omit<InventoryItem, "id" | "user_id" | "created_at" | "updated_at">;
+export type InventoryUpdate = Partial<InventoryInsert>;

@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { InventarioItem } from "../types/inventory.types";
+import type { InventoryItem } from "../types/inventory.types";
 
-export interface UseInventarioPaginatedParams {
+export interface UseInventoryPaginatedParams {
   /** 0-indexed, same convention as usePagination()/TablePagination. */
   page: number;
   pageSize: number;
@@ -14,13 +14,13 @@ export interface UseInventarioPaginatedParams {
   localizacao?: string;
 }
 
-export function useInventarioPaginated({ page, pageSize, search, status, category, localizacao }: UseInventarioPaginatedParams) {
+export function useInventoryPaginated({ page, pageSize, search, status, category, localizacao: location }: UseInventoryPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
   if (category) filters.category = category;
-  if (localizacao) filters.localizacao = localizacao;
+  if (location) filters.localizacao = location;
 
-  const result = usePaginatedDataQuery<InventarioItem>({
+  const result = usePaginatedDataQuery<InventoryItem>({
     queryKey: [...QUERY_KEYS.INVENTORY],
     table: "inventario",
     page: page + 1,
@@ -40,24 +40,24 @@ export function useInventarioPaginated({ page, pageSize, search, status, categor
   };
 }
 
-export interface InventarioStats {
+export interface InventoryStats {
   total: number;
   byGroup: Record<string, number>;
   sumByGroup?: Record<string, number>;
   totalSum?: number;
 }
 
-const EMPTY_STATS: InventarioStats = { total: 0, byGroup: {} };
+const EMPTY_STATS: InventoryStats = { total: 0, byGroup: {} };
 
 /**
  * Count per status + asset value sum, over the WHOLE TENANT —
  * GET /inventory/stats (aggregated in the database). Task H: the
  * Inventario.tsx KPIs can no longer be computed over the current page only.
  */
-export function useInventarioStats() {
-  const query = useQuery<InventarioStats>({
+export function useInventoryStats() {
+  const query = useQuery<InventoryStats>({
     queryKey: [...QUERY_KEYS.INVENTORY, "stats"],
-    queryFn: ({ signal }) => api.get<InventarioStats>("/inventory/stats", { signal }),
+    queryFn: ({ signal }) => api.get<InventoryStats>("/inventory/stats", { signal }),
     staleTime: 30_000,
   });
   return {

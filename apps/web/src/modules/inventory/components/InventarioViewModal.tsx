@@ -8,13 +8,13 @@ import { Badge } from "@/shared/ui/badge";
 import { Package, MapPin, User, DollarSign } from "lucide-react";
 import { formatCurrency, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 
-interface InventarioViewModalProps {
+interface InventoryViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   item?: any;
 }
 
-export function InventarioViewModal({ open, onOpenChange, item }: InventarioViewModalProps) {
+export function InventoryViewModal({ open, onOpenChange, item }: InventoryViewModalProps) {
   if (!item) return null;
 
   const toNumber = (value: unknown): number | null => {
@@ -26,9 +26,9 @@ export function InventarioViewModal({ open, onOpenChange, item }: InventarioView
     return null;
   };
 
-  const quantidade = toNumber(item.quantidade ?? item.qtd) ?? 1;
-  const valorUnitario = toNumber(item.unit_price ?? item.valor_unitario ?? item.valorUnitario ?? item.valorUnit);
-  const valorTotal = valorUnitario == null ? null : valorUnitario * quantidade;
+  const quantity = toNumber(item.quantidade ?? item.qtd) ?? 1;
+  const unitValue = toNumber(item.unit_price ?? item.valor_unitario ?? item.valorUnitario ?? item.valorUnit);
+  const totalValue = unitValue == null ? null : unitValue * quantity;
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -76,7 +76,7 @@ export function InventarioViewModal({ open, onOpenChange, item }: InventarioView
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Quantidade</p>
-              <p className="font-medium text-foreground">{quantidade}</p>
+              <p className="font-medium text-foreground">{quantity}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Localização</p>
@@ -89,12 +89,12 @@ export function InventarioViewModal({ open, onOpenChange, item }: InventarioView
               <p className="text-sm text-muted-foreground">Valor Unitário</p>
               <div className="flex items-center gap-1.5">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
-                <span className={`font-medium ${valorUnitario == null ? "text-foreground" : getMonetarySemanticClass("neutral")}`}>{valorUnitario == null ? "-" : formatCurrency(valorUnitario)}</span>
+                <span className={`font-medium ${unitValue == null ? "text-foreground" : getMonetarySemanticClass("neutral")}`}>{unitValue == null ? "-" : formatCurrency(unitValue)}</span>
               </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Valor Total</p>
-              <p className={`font-medium ${valorTotal == null ? "text-foreground" : getMonetarySemanticClass("neutral")}`}>{valorTotal == null ? "-" : formatCurrency(valorTotal)}</p>
+              <p className={`font-medium ${totalValue == null ? "text-foreground" : getMonetarySemanticClass("neutral")}`}>{totalValue == null ? "-" : formatCurrency(totalValue)}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Setor</p>

@@ -1,11 +1,11 @@
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
-import type { InventarioItem, InventarioInsert, InventarioUpdate } from "../types/inventory.types";
+import type { InventoryItem, InventoryInsert, InventoryUpdate } from "../types/inventory.types";
 
-export type { InventarioItem, InventarioInsert, InventarioUpdate };
+export type { InventoryItem, InventoryInsert, InventoryUpdate };
 
-export function useInventario() {
-  const result = useDataQuery<InventarioItem>({
+export function useInventory() {
+  const result = useDataQuery<InventoryItem>({
     queryKey: [...QUERY_KEYS.INVENTORY],
     table: "inventario",
   }, {
@@ -15,12 +15,12 @@ export function useInventario() {
   });
 
   return {
-    inventario: result.data,
+    inventoryItems: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addInventario: result.create,
-    updateInventario: result.update,
-    deleteInventario: result.delete,
+    addInventoryItem: result.create,
+    updateInventoryItem: result.update,
+    deleteInventoryItem: result.delete,
   };
 }

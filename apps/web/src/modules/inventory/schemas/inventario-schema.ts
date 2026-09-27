@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const inventarioSchema = z.object({
+export const inventorySchema = z.object({
   name: z.string()
     .min(1, "Nome é obrigatório")
     .max(150, "Nome deve ter no máximo 150 caracteres")
@@ -33,4 +33,4 @@ export const inventarioSchema = z.object({
     .or(z.literal("")),
 });
 
-export type InventarioFormData = z.infer<typeof inventarioSchema>;
+export type InventoryFormData = z.infer<typeof inventorySchema>;
