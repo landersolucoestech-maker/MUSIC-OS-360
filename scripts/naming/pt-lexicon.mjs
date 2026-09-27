@@ -49,6 +49,8 @@ normalizar destaque destaques vencendo vencidos venceu realizados hoje ontem ama
 perfil perfis gerais participante participantes calculo calculos arrecadacao arrecadacoes certificado certificados
 conciliacao licenciamento licenciamentos moeda moedas prioridades titulo titulos numeros enderecos telefones quantidades
 enviado recebido semanas senha busca resultado resultados imagem imagens letras generos idioma comissao
+participacao participacoes margem fonografico obrigatorio opcional antigo excluido ultimo ultima primeiro primeira
+padrao personalizado personalizada
 `.split(/\s+/).map((t) => t.replace(/\?$/, "")).filter(Boolean)
   // ambiguous with English: drop
   .filter((t) => !["status","marketing","briefing","takedown","royalty","lead","cep","data","nota","ano","dia","modelo","ponto","banco","agencia","ordem","campo","idioma",
