@@ -56,7 +56,7 @@ export class AudiovisualDeliverablesController {
   }
 
   @Delete('deliverables/:id') @RequireRole('manager') @Audit('audiovisual.deliverable.deleted')
-  @ApiOperation({ summary: 'Remover entregável (soft delete)' })
+  @ApiOperation({ summary: 'Remove a deliverable (soft delete)' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.softDelete(t.id, id);
   }

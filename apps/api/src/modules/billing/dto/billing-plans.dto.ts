@@ -16,7 +16,7 @@ export class CreatePlanDto {
   @IsOptional() @IsString()
   description?: string;
 
-  @ApiProperty({ example: 29900, description: 'Valor em centavos (> 0)' })
+  @ApiProperty({ example: 29900, description: 'Amount in cents (> 0)' })
   @IsInt() @Min(1)
   amount: number;
 
@@ -56,7 +56,7 @@ export class PublicPlanDto {
   @ApiProperty() slug: string;
   @ApiProperty() name: string;
   @ApiPropertyOptional() description: string | null;
-  @ApiProperty({ description: 'Valor em centavos' }) amount: number;
+  @ApiProperty({ description: 'Amount in cents' }) amount: number;
   @ApiProperty() currency: string;
   @ApiProperty({ enum: ['month', 'year'] }) interval: string;
   @ApiProperty({ type: 'array', items: { type: 'string' } }) features: unknown[];

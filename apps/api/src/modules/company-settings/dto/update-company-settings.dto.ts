@@ -37,7 +37,7 @@ export class UpdateCompanySettingsDto {
   @IsOptional() @IsString() @MaxLength(255)
   legalName?: string;
 
-  @ApiPropertyOptional({ description: 'Nome fantasia' })
+  @ApiPropertyOptional({ description: 'Trade name (nome fantasia)' })
   @IsOptional() @IsString() @MaxLength(255)
   tradeName?: string;
 
