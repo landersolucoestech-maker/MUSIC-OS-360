@@ -18,7 +18,7 @@ import type { QueryArtistDto }  from './dto/query-artist.dto';
 import { ArtistStatus, ArtistRelationshipType } from '@music-os-360/types';
 
 /** Contract statuses treated as "active" for artist-relationship classification
- * (vinculo/vinculoStats). Contract status values are English since the
+ * (relationship/relationshipStats). Contract status values are English since the
  * ContractStatus migration (packages/types/src/enums.ts) — see
  * `apps/api/src/database/migrations/20260910000010_BackfillAndRestrictContractStatusToEnglish.ts`.
  */
@@ -120,16 +120,17 @@ export class ArtistsService {
         search: `%${query.search}%`,
       });
     }
-    // Same classification as vinculoStats() (see there for the full explanation)
+    // Same classification as relationshipStats() (see there for the full explanation)
     // — here as a WHERE filter instead of an aggregation, so the paginated table
     // and the KPIs agree on "who is exclusive/partner/independent" (Task H:
     // Artistas.tsx used to filter this on the client).
-    if (query.vinculo === ArtistRelationshipType.EXCLUSIVE) {
+    const relationship = query.relationship ?? query.vinculo;
+    if (relationship === ArtistRelationshipType.EXCLUSIVE) {
       qb.andWhere(`EXISTS (
         SELECT 1 FROM contracts c WHERE c.artist_id = a.id AND c.tenant_id = a.tenant_id
         AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL} AND c.exclusivo = true
       )`);
-    } else if (query.vinculo === ArtistRelationshipType.PARTNER) {
+    } else if (relationship === ArtistRelationshipType.PARTNER) {
       qb.andWhere(`EXISTS (
         SELECT 1 FROM contracts c WHERE c.artist_id = a.id AND c.tenant_id = a.tenant_id
         AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL}
@@ -137,7 +138,7 @@ export class ArtistsService {
         SELECT 1 FROM contracts c WHERE c.artist_id = a.id AND c.tenant_id = a.tenant_id
         AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL} AND c.exclusivo = true
       )`);
-    } else if (query.vinculo === ArtistRelationshipType.INDEPENDENT) {
+    } else if (relationship === ArtistRelationshipType.INDEPENDENT) {
       qb.andWhere(`NOT EXISTS (
         SELECT 1 FROM contracts c WHERE c.artist_id = a.id AND c.tenant_id = a.tenant_id
         AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL}
@@ -159,16 +160,16 @@ export class ArtistsService {
       .take(query.limit ?? 50);
 
     const [data, total] = await qb.getManyAndCount();
-    const vinculoById = await this.vinculoByArtistIds(tenantId, data.map((e) => e.id));
+    const relationshipById = await this.relationshipByArtistIds(tenantId, data.map((e) => e.id));
     return {
-      data: data.map((e) => ({ ...this.toResponse(e), vinculo: vinculoById[e.id] ?? ArtistRelationshipType.INDEPENDENT })),
+      data: data.map((e) => ({ ...this.toResponse(e), relationship: relationshipById[e.id] ?? ArtistRelationshipType.INDEPENDENT })),
       meta: { total, offset: query.offset ?? 0, limit: query.limit ?? 50 },
     };
   }
 
   /** Contract type per artist, restricted to the given IDs (e.g. only the current
-   * page — never the whole tenant) — same classification as vinculoStats(). */
-  private async vinculoByArtistIds(tenantId: string, artistIds: string[]): Promise<Record<string, ArtistRelationshipType.EXCLUSIVE | ArtistRelationshipType.PARTNER>> {
+   * page — never the whole tenant) — same classification as relationshipStats(). */
+  private async relationshipByArtistIds(tenantId: string, artistIds: string[]): Promise<Record<string, ArtistRelationshipType.EXCLUSIVE | ArtistRelationshipType.PARTNER>> {
     if (artistIds.length === 0) return {};
     const rows = await this.ds!.query<Array<{ artist_id: string; exclusivo: boolean }>>(
       `
@@ -189,17 +190,17 @@ export class ArtistsService {
   /**
    * Exact KPIs over the WHOLE TENANT (not the current page) — Task H.
    *
-   * `vinculo` reproduces exactly the classification the frontend used to do on
-   * the client (Artistas.tsx `classifyVinculo`): an artist is "exclusive" if it
+   * `relationship` reproduces exactly the classification the frontend used to do on
+   * the client (Artistas.tsx `classifyVinculo`, since removed): an artist is "exclusive" if it
    * has any active/signed/in-force/expiring contract with exclusivo=true;
    * "partner" if it has any such contract that is not exclusive; otherwise
    * "independent". Before: it downloaded whole artists AND contracts and
    * cross-referenced them on the client. Now: a single aggregate query.
    */
-  async vinculoStats(tenantId: string): Promise<{ exclusive: number; partner: number; independent: number; total: number }> {
-    const rows = await this.ds!.query<Array<{ vinculo: string; cnt: string }>>(
+  async relationshipStats(tenantId: string): Promise<{ exclusive: number; partner: number; independent: number; total: number }> {
+    const rows = await this.ds!.query<Array<{ relationship: string; cnt: string }>>(
       `
-      SELECT vinculo, COUNT(*)::int AS cnt FROM (
+      SELECT relationship, COUNT(*)::int AS cnt FROM (
         SELECT
           CASE
             WHEN EXISTS (
@@ -213,15 +214,15 @@ export class ArtistsService {
                 AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL}
             ) THEN '${ArtistRelationshipType.PARTNER}'
             ELSE '${ArtistRelationshipType.INDEPENDENT}'
-          END AS vinculo
+          END AS relationship
         FROM artists a
         WHERE a.tenant_id = $1 AND a.deleted_at IS NULL
       ) x
-      GROUP BY vinculo
+      GROUP BY relationship
       `,
       [tenantId],
     );
-    const byVinculo: Record<string, number> = {
+    const byRelationship: Record<string, number> = {
       [ArtistRelationshipType.EXCLUSIVE]: 0,
       [ArtistRelationshipType.PARTNER]: 0,
       [ArtistRelationshipType.INDEPENDENT]: 0,
@@ -229,13 +230,13 @@ export class ArtistsService {
     let total = 0;
     for (const r of rows) {
       const cnt = parseInt(r.cnt, 10) || 0;
-      byVinculo[r.vinculo] = cnt;
+      byRelationship[r.relationship] = cnt;
       total += cnt;
     }
     return {
-      exclusive: byVinculo[ArtistRelationshipType.EXCLUSIVE],
-      partner: byVinculo[ArtistRelationshipType.PARTNER],
-      independent: byVinculo[ArtistRelationshipType.INDEPENDENT],
+      exclusive: byRelationship[ArtistRelationshipType.EXCLUSIVE],
+      partner: byRelationship[ArtistRelationshipType.PARTNER],
+      independent: byRelationship[ArtistRelationshipType.INDEPENDENT],
       total,
     };
   }

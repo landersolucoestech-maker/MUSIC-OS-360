@@ -54,12 +54,15 @@ export class ArtistsController {
     return this.service.list(tenant.id, query);
   }
 
-  @Get('stats/vinculo')
+  // CZ-024: 'stats/relationship' is canonical; 'stats/vinculo' stays as a TEMPORARY
+  // compatibility alias on the same handler (web/api deploy independently),
+  // removed once a web build calling 'stats/relationship' is deployed.
+  @Get(['stats/relationship', 'stats/vinculo'])
   @RequireRole('viewer')
   @RequirePermission('artist:read')
   @ApiOperation({ summary: 'Artist count by relationship (exclusive/partner/independent), whole tenant' })
-  vinculoStats(@CurrentTenant() tenant: { id: string }) {
-    return this.service.vinculoStats(tenant.id);
+  relationshipStats(@CurrentTenant() tenant: { id: string }) {
+    return this.service.relationshipStats(tenant.id);
   }
 
   // CZ-020: 'stats/genres' is canonical; 'stats/generos' stays as a TEMPORARY

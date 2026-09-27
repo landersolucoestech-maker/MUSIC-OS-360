@@ -104,7 +104,7 @@ describe('ArtistsService', () => {
       telefone: null,
       cpf_cnpj: null,
       manager_contato: null,
-      vinculo: 'independent',
+      relationship: 'independent',
     }]);
     expect(result.data[0]).not.toHaveProperty('email_encrypted');
     expect(result.meta.total).toBe(1);

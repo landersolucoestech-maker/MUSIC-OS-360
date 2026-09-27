@@ -1596,6 +1596,23 @@
       "definition": "RENAME COLUMN only (no enumerated values, no dependent index/constraint/view/function/policy). Briefings and campaigns already exposed English DTO fields; projects (orcamento) and audiovisual projects (videomaker) accept the old field name as a deprecated alias through applyDeprecatedFieldAliases during the deploy-skew window. Report export headers keep the PT-BR labels (Prazo, Orçamento, Videomaker), so round-trip spreadsheets still import.",
       "producers": "BriefingsService, CampaignsService, MarketingCampaignBuilderService, ProjectsService, AudiovisualProjectsService, operational seed",
       "consumers": "campaign-plan/report/strategy automations, reports export/import, apps/web marketing.service, ProjectFormModal, AudiovisualProject modals"
+    },
+    {
+      "id": "CZ-024",
+      "status": "done",
+      "disposition": "DONE",
+      "layer": "api, web",
+      "language": "Portuguese",
+      "renameRequired": "yes",
+      "migrationRequired": "no",
+      "evidence": "artists.controller.genre-stats-route.spec.ts (both routes resolve to the same handler), artists.service.spec.ts list response, web Artists page tests",
+      "concept": "Artist relationship classification (exclusive/partner/independent) on the wire",
+      "businessConcept": "Whether an artist is exclusive, partner or independent, derived from active contracts.",
+      "currentTechnicalName": "GET /artists/stats/vinculo, list query param vinculo, list response field vinculo, web useArtistsVinculoStats/VinculoStats",
+      "canonicalEnglishName": "GET /artists/stats/relationship, query param relationship, response field relationship (values ArtistRelationshipType), web useArtistRelationshipStats/ArtistRelationshipStats",
+      "definition": "Not persisted (computed from contracts). The old route stays on the same handler and the old query param is accepted as deprecated during the deploy-skew window (TEMPORARY_MIGRATION_COMPATIBILITY); responses are canonical only.",
+      "producers": "ArtistsService.list / relationshipStats",
+      "consumers": "apps/web Artists page (useArtistsPaginated, useArtistRelationshipStats)"
     }
   ],
   "renames": [],
@@ -2449,6 +2466,38 @@
       "dependency": "CZ-023 web release",
       "status": "ACTIVE",
       "surface": "objectKey"
+    },
+    {
+      "item": "API route alias GET /artists/stats/vinculo",
+      "path": "apps/api/src/modules/artists/artists.controller.ts",
+      "currentName": "/artists/stats/vinculo",
+      "layer": "api route",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "CZ-024: `/artists/stats/vinculo` is the pre-rename name a web build released before the rename may still send (web and api deploy independently); accepted only as a deprecated input alias and moved to `/artists/stats/relationship` before persistence; responses use `/artists/stats/relationship` only.",
+      "consumer": "web builds released before CZ-024",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "remove after a web release that sends `/artists/stats/relationship` is deployed to every environment",
+      "targetState": "only `/artists/stats/relationship`",
+      "blocker": "deployment cutover (web release) — outside this environment",
+      "dependency": "CZ-024 web release",
+      "status": "ACTIVE",
+      "surface": "apiRoute"
+    },
+    {
+      "item": "deprecated alias `vinculo` of `relationship` (CZ-024)",
+      "path": "apps/api/src/modules/artists/dto/query-artist.dto.ts",
+      "currentName": "vinculo",
+      "layer": "api",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "CZ-024: `vinculo` is the pre-rename name a web build released before the rename may still send (web and api deploy independently); accepted only as a deprecated input alias and moved to `relationship` before persistence; responses use `relationship` only.",
+      "consumer": "web builds released before CZ-024",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "remove after a web release that sends `relationship` is deployed to every environment",
+      "targetState": "only `relationship`",
+      "blocker": "deployment cutover (web release) — outside this environment",
+      "dependency": "CZ-024 web release",
+      "status": "ACTIVE",
+      "surface": "identifier"
     }
   ],
   "blockers": []

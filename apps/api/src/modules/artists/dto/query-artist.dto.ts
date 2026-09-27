@@ -17,5 +17,11 @@ export class QueryArtistDto extends PaginationDto {
   @ApiPropertyOptional({ enum: ArtistRelationshipType })
   @IsOptional()
   @IsEnum(ArtistRelationshipType)
+  relationship?: ArtistRelationshipType;
+
+  /** CZ-024: deprecated alias of `relationship` (deploy-skew window). */
+  @ApiPropertyOptional({ enum: ArtistRelationshipType, deprecated: true, description: 'Deprecated alias of relationship.' })
+  @IsOptional()
+  @IsEnum(ArtistRelationshipType)
   vinculo?: ArtistRelationshipType;
 }

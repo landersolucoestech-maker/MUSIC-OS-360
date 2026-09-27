@@ -12,8 +12,8 @@ export interface UseArtistsPaginatedParams {
   pageSize: number;
   search?: string;
   /** exclusive/partner/independent — server-side filter via EXISTS on contracts (see artists.service.ts). */
-  vinculo?: ArtistRelationshipType;
-  genero?: string;
+  relationship?: ArtistRelationshipType;
+  genre?: string;
 }
 
 /**
@@ -21,14 +21,14 @@ export interface UseArtistsPaginatedParams {
  * serves the "give me every artist" uses: dropdowns, cross-reference in
  * useMetrics/useScheduleParticipants, modal mutations). Task H: the /artists
  * table uses this for the displayed rows; contract type/genres come from
- * dedicated aggregate endpoints (useArtistsVinculoStats/useMusicGenres), never
+ * dedicated aggregate endpoints (useArtistRelationshipStats/useMusicGenres), never
  * from the full list.
  */
-export type ArtistWithRelationship = Artist & { vinculo?: ArtistRelationshipType };
+export type ArtistWithRelationship = Artist & { relationship?: ArtistRelationshipType };
 
-export function useArtistsPaginated({ page, pageSize, search, vinculo, genero: genre }: UseArtistsPaginatedParams) {
+export function useArtistsPaginated({ page, pageSize, search, relationship, genre }: UseArtistsPaginatedParams) {
   const filters: Record<string, unknown> = {};
-  if (vinculo) filters.vinculo = vinculo;
+  if (relationship) filters.relationship = relationship;
   if (genre) filters.genre = genre;
 
   const result = usePaginatedDataQuery<ArtistWireRecord>({
@@ -51,24 +51,24 @@ export function useArtistsPaginated({ page, pageSize, search, vinculo, genero: g
   };
 }
 
-export interface VinculoStats {
+export interface ArtistRelationshipStats {
   exclusive: number;
   partner: number;
   independent: number;
   total: number;
 }
 
-const EMPTY_VINCULO: VinculoStats = { exclusive: 0, partner: 0, independent: 0, total: 0 };
+const EMPTY_RELATIONSHIP_STATS: ArtistRelationshipStats = { exclusive: 0, partner: 0, independent: 0, total: 0 };
 const EMPTY_GENRES: string[] = [];
 
-/** GET /artists/stats/vinculo — exact count per contract type, whole tenant. */
-export function useArtistsVinculoStats() {
-  const query = useQuery<VinculoStats>({
-    queryKey: [...QUERY_KEYS.ARTISTS, "stats", "vinculo"],
-    queryFn: ({ signal }) => api.get<VinculoStats>("/artists/stats/vinculo", { signal }),
+/** GET /artists/stats/relationship — exact count per contract type, whole tenant. */
+export function useArtistRelationshipStats() {
+  const query = useQuery<ArtistRelationshipStats>({
+    queryKey: [...QUERY_KEYS.ARTISTS, "stats", "relationship"],
+    queryFn: ({ signal }) => api.get<ArtistRelationshipStats>("/artists/stats/relationship", { signal }),
     staleTime: 30_000,
   });
-  return { stats: query.data ?? EMPTY_VINCULO, isLoading: query.isLoading, error: query.error };
+  return { stats: query.data ?? EMPTY_RELATIONSHIP_STATS, isLoading: query.isLoading, error: query.error };
 }
 
 /** GET /artists/stats/genres — the tenant's distinct genres, for the filter. */

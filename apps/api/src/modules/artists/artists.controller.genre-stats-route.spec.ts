@@ -26,7 +26,7 @@ import { EncryptionService } from '../../core/security/encryption.service';
 import { EventsService } from '../../core/events/events.service';
 import { PlanLimitService } from '../../core/billing/plan-limit.service';
 
-describe('ArtistsController — genre stats route alias (CZ-020)', () => {
+describe('ArtistsController — stats route aliases (CZ-020, CZ-024)', () => {
   let app: INestApplication;
   let fakeDs: { getRepository: jest.Mock; query: jest.Mock };
 
@@ -76,6 +76,19 @@ describe('ArtistsController — genre stats route alias (CZ-020)', () => {
     const legacyAlias = await request(app.getHttpServer()).get('/artists/stats/generos').expect(200);
 
     expect(canonical.body).toEqual(['rock', 'pop']);
+    expect(legacyAlias.body).toEqual(canonical.body);
+  });
+
+  // CZ-024: same pattern for the relationship KPIs — 'stats/relationship' is
+  // canonical, 'stats/vinculo' a TEMPORARY alias on the same handler.
+  it('GET /artists/stats/relationship (canonical) and /artists/stats/vinculo (temporary alias) both resolve to the same handler', async () => {
+    const rows = [{ relationship: 'exclusive', cnt: '2' }, { relationship: 'independent', cnt: '3' }];
+    fakeDs.query.mockResolvedValueOnce(rows).mockResolvedValueOnce(rows);
+
+    const canonical = await request(app.getHttpServer()).get('/artists/stats/relationship').expect(200);
+    const legacyAlias = await request(app.getHttpServer()).get('/artists/stats/vinculo').expect(200);
+
+    expect(canonical.body).toEqual({ exclusive: 2, partner: 0, independent: 3, total: 5 });
     expect(legacyAlias.body).toEqual(canonical.body);
   });
 });

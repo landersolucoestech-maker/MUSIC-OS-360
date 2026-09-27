@@ -29,7 +29,7 @@ import { DeezerIcon } from "@/shared/ui/deezer-icon";
 import { useArtists, type Artist } from "@/modules/artist/hooks/useArtists";
 import { ArtistPlatformMetrics } from "@/modules/artist/components/ArtistPlatformMetrics";
 import { useSignedArtists } from "@/modules/artist/hooks/useSignedArtists";
-import { useArtistsPaginated, useArtistsVinculoStats, useMusicGenres } from "@/modules/artist/hooks/useArtistsPaginated";
+import { useArtistsPaginated, useArtistRelationshipStats, useMusicGenres } from "@/modules/artist/hooks/useArtistsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { EmptyState } from "@/shared/components/EmptyState";
@@ -53,7 +53,7 @@ import { RequirePermission } from "@/shared/components/RequirePermission";
 const getXLSX = () => import("xlsx");
 
 // Task H: relationship type (exclusive/partner/independent) comes ready
-// from the backend (ArtistsService.list()/vinculoStats() — classification by
+// from the backend (ArtistsService.list()/relationshipStats() — classification by
 // active contract done server-side, against the whole tenant, not just the
 // loaded page).
 const RELATIONSHIP_BADGE: Record<ArtistRelationshipType, { label: string; status: string }> = {
@@ -100,8 +100,8 @@ export default function Artists() {
     artists: pageItemsRaw, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
   } = useArtistsPaginated({
     page, pageSize, search: debouncedSearch || undefined,
-    vinculo: statusFilter !== "todos" ? (statusFilter as ArtistRelationshipType) : undefined,
-    genero: genreFilter !== "todos" ? genreFilter : undefined,
+    relationship: statusFilter !== "todos" ? (statusFilter as ArtistRelationshipType) : undefined,
+    genre: genreFilter !== "todos" ? genreFilter : undefined,
   });
 
   // profileFilter (tipo_perfil) is not a mapped column on the TypeORM entity —
@@ -114,7 +114,7 @@ export default function Artists() {
     );
   }, [pageItemsRaw, profileFilter]);
 
-  const { stats: relationshipStats } = useArtistsVinculoStats();
+  const { stats: relationshipStats } = useArtistRelationshipStats();
   const { genres: uniqueGenres } = useMusicGenres();
 
   const handleDelete = () => {
@@ -383,7 +383,7 @@ export default function Artists() {
             )
           ) : (
             pageItems.map((artist) => {
-              const relationship = RELATIONSHIP_BADGE[artist.vinculo ?? ArtistRelationshipType.INDEPENDENT];
+              const relationship = RELATIONSHIP_BADGE[artist.relationship ?? ArtistRelationshipType.INDEPENDENT];
 
               return (
                 <div key={artist.id}>
