@@ -7,6 +7,13 @@ import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { FinanceCategoryRulesService } from '../finance-category-rules/finance-category-rules.service';
+import {
+  TRANSACTION_ALREADY_CANCELLED,
+  TRANSACTION_CANCELLED_NOT_EDITABLE,
+  transactionCancelledCopy,
+  transactionCreatedCopy,
+  transactionStatusChangedCopy,
+} from './i18n/transaction-copy.pt-br';
 import type { QueryTransactionDto } from './dto/query-transaction.dto';
 import type { TransactionDetailsDTO } from './dto/transaction-details.dto';
 import type {
@@ -283,7 +290,7 @@ export class TransactionsService {
           entity_type:  'transaction',
           entity_id:    saved.id,
           action:       'created',
-          description:  `Transacção ${saved.type} R$${valor} criada`,
+          description:  transactionCreatedCopy(saved.type, valor),
           metadata:     { type: saved.type, category: saved.categoria, valor },
         });
       } catch { /* non-critical */ }
@@ -334,7 +341,7 @@ export class TransactionsService {
     const existing = await this.findEntityById(tenantId, id);
 
     if (CANCELLED_STATUSES.has(existing.status as string)) {
-      throw new BadRequestException('Transacção já cancelada');
+      throw new BadRequestException(TRANSACTION_ALREADY_CANCELLED);
     }
 
     const cancelledAt = new Date().toISOString();
@@ -366,7 +373,7 @@ export class TransactionsService {
           entity_type:  'transaction',
           entity_id:    id,
           action:       'cancelled',
-          description:  `Transacção R$${existing.valor} cancelada`,
+          description:  transactionCancelledCopy(existing.valor),
           metadata:     { type: existing.type, valor: String(existing.valor), cancelledAt },
         });
       } catch { /* non-critical */ }
@@ -411,7 +418,7 @@ export class TransactionsService {
 
   private assertEditable(entity: TransactionEntity): void {
     if (CANCELLED_STATUSES.has(entity.status as string)) {
-      throw new ForbiddenException('Transacção cancelada não pode ser editada');
+      throw new ForbiddenException(TRANSACTION_CANCELLED_NOT_EDITABLE);
     }
   }
 
@@ -487,7 +494,7 @@ export class TransactionsService {
           entity_type:  'transaction',
           entity_id:    after.id,
           action:       'status_changed',
-          description:  `Transacção ${before.status} → ${requestedStatus}`,
+          description:  transactionStatusChangedCopy(before.status, requestedStatus),
           metadata:     { previousStatus: before.status, newStatus: requestedStatus, valor },
         });
       } catch { /* non-critical */ }

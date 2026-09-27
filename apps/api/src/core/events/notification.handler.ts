@@ -16,7 +16,8 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { DatabaseContextService } from '../../database/database-context.service';
 import { NotificationEntity } from '../../database/entities';
 import type { DomainEvent } from './events.service';
-import { statusLabelPtBr } from '@music-os-360/types';
+import { TRANSACTION_TYPE_LABELS_PT_BR, statusLabelPtBr } from '@music-os-360/types';
+import { formatBrlPtBr, formatDatePtBr } from '../i18n/copy-format.pt-br';
 
 /** ' para <PT-BR label>' when the status is a known canonical value; '' otherwise (never the raw value). */
 function toStatusSuffix(domain: string, status: unknown): string {
@@ -37,14 +38,17 @@ const WORKFLOW_ENTITY_PT_BR: Readonly<Record<string, string>> = {
   transaction: 'da transação',
 };
 
-/** Transaction type values are persisted in Portuguese (see TransactionType). */
-const TRANSACTION_TYPE_PT_BR: Readonly<Record<string, string>> = { receita: 'Receita', despesa: 'Despesa' };
+/** ": R$ 1.500,00", or "" when the payload carries no numeric amount. */
+function amountSuffix(value: unknown): string {
+  const amount = formatBrlPtBr(value);
+  return amount ? `: ${amount}` : '';
+}
 
 export function financialRuleLabel(p: Record<string, unknown>): string {
   const name = String(p['ruleName'] ?? '');
-  const computed = Number((p['result'] as Record<string, unknown> | undefined)?.['computed']);
-  if (!Number.isFinite(computed)) return `Regra financeira disparada: ${name}`;
-  const brl = computed.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const computed = (p['result'] as Record<string, unknown> | undefined)?.['computed'];
+  const brl = typeof computed === 'number' ? formatBrlPtBr(computed) : null;
+  if (!brl) return `Regra financeira disparada: ${name}`;
   return `Regra financeira disparada: ${name} — valor calculado ${brl} (nenhum lançamento foi criado)`;
 }
 
@@ -73,14 +77,18 @@ export const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string
     const domain = String(p['entityType'] ?? '');
     return `Status ${WORKFLOW_ENTITY_PT_BR[domain] ?? 'do registro'} atualizado${toStatusSuffix(domain, p['toStatus'])}`;
   },
-  [DOMAIN_EVENTS.TRANSACTION_CREATED]: (p) => `${TRANSACTION_TYPE_PT_BR[String(p['type'])] ?? 'Transação'} registrada: R$${p['valor'] ?? ''}`,
+  [DOMAIN_EVENTS.TRANSACTION_CREATED]: (p) =>
+    `${TRANSACTION_TYPE_LABELS_PT_BR[p['type'] as keyof typeof TRANSACTION_TYPE_LABELS_PT_BR] ?? 'Transação'} registrada${amountSuffix(p['valor'])}`,
   [DOMAIN_EVENTS.TRANSACTION_STATUS_CHANGED]: (p) => `Status da transação atualizado${toStatusSuffix('transaction', p['newStatus'])}`,
-  [DOMAIN_EVENTS.TRANSACTION_PAID]: (p) => `Pagamento baixado: R$${p['valor'] ?? ''}`,
-  [DOMAIN_EVENTS.TRANSACTION_CANCELLED]: (p) => `Transação cancelada: R$${p['valor'] ?? ''}`,
+  [DOMAIN_EVENTS.TRANSACTION_PAID]: (p) => `Pagamento baixado${amountSuffix(p['valor'])}`,
+  [DOMAIN_EVENTS.TRANSACTION_CANCELLED]: (p) => `Transação cancelada${amountSuffix(p['valor'])}`,
   [DOMAIN_EVENTS.INVOICE_CREATED]: (p) => (p['numero'] ? `Nota fiscal criada: ${p['numero']}` : 'Nota fiscal criada'),
   [DOMAIN_EVENTS.INVOICE_STATUS_CHANGED]: (p) => `Status da nota fiscal${p['numero'] ? ` ${p['numero']}` : ''} atualizado${toStatusSuffix('invoice', p['newStatus'])}`,
-  [DOMAIN_EVENTS.INVOICE_ISSUED]: (p) => `Nota fiscal emitida: ${p['numero'] ?? ''}`,
-  [DOMAIN_EVENTS.INVOICE_OVERDUE]: (p) => `Nota fiscal vencida: ${p['numero'] ?? ''} (${p['dataVencimento'] ?? ''})`,
+  [DOMAIN_EVENTS.INVOICE_ISSUED]: (p) => (p['numero'] ? `Nota fiscal emitida: ${p['numero']}` : 'Nota fiscal emitida'),
+  [DOMAIN_EVENTS.INVOICE_OVERDUE]: (p) => {
+    const due = formatDatePtBr(p['dataVencimento']);
+    return `Nota fiscal vencida${p['numero'] ? `: ${p['numero']}` : ''}${due ? ` (vencimento em ${due})` : ''}`;
+  },
   // find-9e7bc94e: triggering a financial rule does NOT create a ledger entry —
   // its only effect is this notification, which must at least carry the amount
   // the rule computed (it used to be discarded).

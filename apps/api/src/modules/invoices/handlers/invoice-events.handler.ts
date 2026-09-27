@@ -7,6 +7,14 @@ import { CrmTaskEntity } from '../../../database/entities';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { FinancialRulesService } from '../../financial-rules/financial-rules.service';
 import { DOMAIN_EVENTS } from '../../../core/events/events.service';
+import {
+  invoiceCreatedCopy,
+  invoiceIssuedCopy,
+  invoiceOverdueCopy,
+  invoiceStatusChangedCopy,
+  overdueFollowUpTaskDescription,
+  overdueFollowUpTaskTitle,
+} from '../i18n/invoice-copy.pt-br';
 import type { DomainEvent } from '../../../core/events/events.service';
 import type {
   InvoiceCreatedPayload,
@@ -44,7 +52,7 @@ export class InvoiceEventsHandler {
           entity_type: 'invoice',
           entity_id: invoiceId,
           action: 'created',
-          description: `Nota fiscal${numero ? ` n. ${numero}` : ''} criada`,
+          description: invoiceCreatedCopy(numero, valor),
           metadata: { valor, numero, correlationId: event.correlationId ?? null },
         });
       });
@@ -68,7 +76,7 @@ export class InvoiceEventsHandler {
           entity_type: 'invoice',
           entity_id: invoiceId,
           action: 'status_changed',
-          description: `Nota fiscal${numero ? ` n. ${numero}` : ''}: ${previousStatus} -> ${newStatus}`,
+          description: invoiceStatusChangedCopy(numero, previousStatus, newStatus),
           metadata: { previousStatus, newStatus, correlationId: event.correlationId ?? null },
         });
       });
@@ -92,7 +100,7 @@ export class InvoiceEventsHandler {
           entity_type: 'invoice',
           entity_id: invoiceId,
           action: 'issued',
-          description: `Nota fiscal${numero ? ` n. ${numero}` : ''} emitida - R$${valor}`,
+          description: invoiceIssuedCopy(numero, valor),
           metadata: { valor, numero, issuedAt, correlationId: event.correlationId ?? null },
         });
       });
@@ -128,7 +136,7 @@ export class InvoiceEventsHandler {
             entity_type: 'invoice',
             entity_id: invoiceId,
             action: 'overdue',
-            description: `Nota fiscal${numero ? ` n. ${numero}` : ''} vencida - R$${valor} (venceu ${dataVencimento})`,
+            description: invoiceOverdueCopy(numero, valor, dataVencimento),
             metadata: { valor, numero, dataVencimento },
           });
         });
@@ -152,8 +160,8 @@ export class InvoiceEventsHandler {
         due.setDate(due.getDate() + 3);
         const task = taskRepo.create({
           tenant_id: tenantId,
-          title: `Follow-up cobrança: nota fiscal${numero ? ` n. ${numero}` : ''} vencida`,
-          description: `Nota fiscal vencida em ${dataVencimento} - R$${valor}. Contatar cliente e regularizar.`,
+          title: overdueFollowUpTaskTitle(numero),
+          description: overdueFollowUpTaskDescription(valor, dataVencimento),
           status: 'pending',
           priority: 'high',
           type: `invoice.overdue:${invoiceId}`,

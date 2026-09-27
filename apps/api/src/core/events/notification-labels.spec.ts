@@ -5,7 +5,7 @@ import { EVENT_LABELS } from './notification.handler';
 /** Notification titles are end-user copy: no raw status enum, UUID or entity type. */
 describe('notification titles carry no technical identifiers', () => {
   const payload: Record<string, unknown> = {
-    nomeArtistico: 'Ana', title: 'Contrato X', numero: '123', valor: '10,00', fileName: 'capa.png',
+    nomeArtistico: 'Ana', title: 'Contrato X', numero: '123', valor: '1500.5', fileName: 'capa.png',
     newStatus: 'under_review', toStatus: 'distributed', entityType: 'release', type: 'income',
     transactionId: '7f3c9b2e-0000-4000-8000-000000000001',
     invoiceId: '7f3c9b2e-0000-4000-8000-000000000002',
@@ -18,6 +18,8 @@ describe('notification titles carry no technical identifiers', () => {
     const title = EVENT_LABELS[event](payload);
     expect(title).not.toMatch(/[0-9a-f]{8}-[0-9a-f]{4}-/);
     expect(title).not.toMatch(/under_review|distributed|\bincome\b|\brelease\b| -> /);
+    // Unformatted amounts ("R$1500.5") and ISO dates are raw technical values.
+    expect(title).not.toMatch(/R\$\d|\d\.\d(?!\d{2}\b)|\d{4}-\d{2}-\d{2}/);
   });
 });
 
@@ -35,7 +37,15 @@ describe('notification titles keep status information as PT-BR labels', () => {
     expect(EVENT_LABELS['workflow.transitioned']({ entityType: 'mystery', toStatus: 'x' })).toBe('Status do registro atualizado');
   });
 
+  it('formats the invoice due date in pt-BR', () => {
+    expect(EVENT_LABELS['invoice.overdue']({ numero: '123', dataVencimento: '2026-10-01' }))
+      .toBe('Nota fiscal vencida: 123 (vencimento em 01/10/2026)');
+    expect(EVENT_LABELS['invoice.issued']({})).toBe('Nota fiscal emitida');
+  });
+
   it('labels the transaction type in PT-BR', () => {
-    expect(EVENT_LABELS['transaction.created']({ type: 'receita', valor: '10,00' })).toBe('Receita registrada: R$10,00');
+    expect(EVENT_LABELS['transaction.created']({ type: 'receita', valor: '10' })).toBe('Receita registrada: R$ 10,00');
+    expect(EVENT_LABELS['transaction.created']({ type: 'despesa', valor: '1500.5' })).toBe('Despesa registrada: R$ 1.500,50');
+    expect(EVENT_LABELS['transaction.paid']({ valor: 'not-a-number' })).toBe('Pagamento baixado');
   });
 });

@@ -79,7 +79,7 @@ export class ReleaseEventsHandler {
               tenant_id: tenantId,
               user_id: artistId,
               title: `Seu lançamento foi aprovado: "${title}"`,
-              body: `O lançamento "${title}" foi aprovado por ${approvedBy} e segue para distribuição. Aguarde o checklist de validação.`,
+              body: `O lançamento "${title}" foi aprovado e segue para distribuição. Aguarde o checklist de validação.`,
               type: 'release.approved.artist',
               entity: 'release',
               entity_id: releaseId,

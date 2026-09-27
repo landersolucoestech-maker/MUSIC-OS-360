@@ -9,6 +9,11 @@ import { FinancialRulesService } from '../../financial-rules/financial-rules.ser
 import { DOMAIN_EVENTS } from '../../../core/events/events.service';
 import type { DomainEvent } from '../../../core/events/events.service';
 import type { TransactionCreatedPayload, TransactionPaidPayload } from '../../../core/events/domain-events.types';
+import {
+  reconciliationTaskDescription,
+  reconciliationTaskTitle,
+  transactionPaidCopy,
+} from '../i18n/transaction-copy.pt-br';
 
 @Injectable()
 export class TransactionEventsHandler {
@@ -124,7 +129,7 @@ export class TransactionEventsHandler {
             entity_type:  'transaction',
             entity_id:    transactionId,
             action:       'paid',
-            description:  `Transacção R$${valor} baixada/paga`,
+            description:  transactionPaidCopy(valor),
             metadata:     { valor, contratoId, paidAt, correlationId: event.correlationId ?? null },
           });
         } catch { /* non-critical */ }
@@ -141,8 +146,8 @@ export class TransactionEventsHandler {
             due.setDate(due.getDate() + 5);
             const task = taskRepo.create({
               tenant_id:   tenantId,
-              title:       `Conciliação financeira — transação R$${valor}`,
-              description: `Confirmar baixa e conciliação bancária da transação ${transactionId} (paga em ${paidAt})`,
+              title:       reconciliationTaskTitle(valor),
+              description: reconciliationTaskDescription(valor, paidAt),
               status:      'pending',
               priority:    'medium',
               type:        `transaction.reconciliation:${transactionId}`,

@@ -8,6 +8,7 @@ import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import type { CreateInvoiceDto, UpdateInvoiceDto, QueryInvoiceDto } from './dto/invoices.dto';
+import { invoiceCancelledCopy, invoiceCreatedCopy } from './i18n/invoice-copy.pt-br';
 
 const CANCELLED_STATUSES = new Set(['cancelled']);
 const ISSUED_STATUSES = new Set(['issued']);
@@ -162,7 +163,7 @@ export class InvoicesService {
           entity_type: 'invoice',
           entity_id: saved.id,
           action: 'created',
-          description: `Nota fiscal${saved.numero ? ` nº ${saved.numero}` : ''} criada — R$${String((mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0)}`,
+          description: invoiceCreatedCopy(saved.numero, (mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
           metadata: {
             type: mapped['tipo_nota'] ?? mapped['type'],
             valor: String((mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
@@ -220,7 +221,7 @@ export class InvoicesService {
           entity_type: 'invoice',
           entity_id: id,
           action: 'cancelled',
-          description: `Nota fiscal${current['numero'] ? ` nº ${String(current['numero'])}` : ''} cancelada`,
+          description: invoiceCancelledCopy(current['numero']),
           metadata: { numero: current['numero'], valor: String((current['service_amount'] ?? current['legacy_amount']) ?? 0) },
         });
       } catch { /* auditing does not block the main operation */ }

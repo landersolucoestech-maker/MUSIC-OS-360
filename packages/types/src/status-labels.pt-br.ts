@@ -31,6 +31,7 @@ import {
   SupportTicketStatus,
   TakedownStatus,
   TransactionStatus,
+  TransactionType,
   UploadStatus,
   WorkStatus,
 } from "./enums";
@@ -101,6 +102,16 @@ export const TRANSACTION_STATUS_LABELS_PT_BR: Readonly<Record<TransactionStatus,
   [TransactionStatus.PAID]: "Paga",
   [TransactionStatus.CANCELLED]: "Cancelada",
   [TransactionStatus.SCHEDULED]: "Agendada",
+};
+
+/**
+ * TransactionType is a classification, not a status, but it is rendered the same
+ * way. Its persisted values are still Portuguese legacy values; keying the map
+ * by the enum keeps the labels correct when the values are migrated.
+ */
+export const TRANSACTION_TYPE_LABELS_PT_BR: Readonly<Record<TransactionType, string>> = {
+  [TransactionType.RECEITA]: "Receita",
+  [TransactionType.DESPESA]: "Despesa",
 };
 
 export const INVOICE_STATUS_LABELS_PT_BR: Readonly<Record<InvoiceStatus, string>> = {
