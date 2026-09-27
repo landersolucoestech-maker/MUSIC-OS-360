@@ -62,12 +62,12 @@ export class HardenSupabaseDataApiSurface20260620000006 implements MigrationInte
         IF to_regclass('public.musicos360_migrations') IS NOT NULL THEN
           ALTER TABLE public.musicos360_migrations ENABLE ROW LEVEL SECURITY;
 
-          -- Bookkeeping do próprio TypeORM: sem esta policy, FORCE RLS abaixo
-          -- bloquearia o INSERT que a migration seguinte faz para se
-          -- registrar — mesmo o dono da tabela (musicos_migrator) é sujeito a
-          -- FORCE RLS. Restrita exclusivamente a musicos_migrator; nenhuma
-          -- outra role (authenticated/anon/musicos_app/service_role/PUBLIC)
-          -- recebe acesso de runtime por aqui.
+          -- TypeORM's own bookkeeping: without this policy, FORCE RLS below
+          -- would block the INSERT the next migration makes to
+          -- register itself — even the table owner (musicos_migrator) is subject to
+          -- FORCE RLS. Restricted exclusively to musicos_migrator; no
+          -- other role (authenticated/anon/musicos_app/service_role/PUBLIC)
+          -- gets runtime access through here.
           DROP POLICY IF EXISTS migrator_admin_all ON public.musicos360_migrations;
           IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'musicos_migrator') THEN
             CREATE POLICY migrator_admin_all

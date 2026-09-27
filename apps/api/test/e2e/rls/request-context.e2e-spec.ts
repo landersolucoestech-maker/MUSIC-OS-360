@@ -1,8 +1,8 @@
 /**
- * test/e2e/rls/request-context.e2e-spec.ts  ·  FASE 3J
+ * test/e2e/rls/request-context.e2e-spec.ts  ·  PHASE 3J
  *
  * Proves, against REAL PostgreSQL (musicos_app role, RLS+FORCE), that the
- * request-path context mechanism fixes the finding from FASE 3I:
+ * request-path context mechanism fixes the finding from PHASE 3I:
  *
  *  - a repository CAPTURED in the constructor (before any context), as
  *    services do (`this.repo = ds.getRepository(X)`), now runs inside the
@@ -124,7 +124,7 @@ async function ensureE2eTenants(owner: DataSource): Promise<void> {
   }
 }
 
-describe('FASE 3J — transparent tenant context in the request-path (real PostgreSQL)', () => {
+describe('PHASE 3J — transparent tenant context in the request-path (real PostgreSQL)', () => {
   let owner: DataSource;
   let appReal: DataSource;
   let appProxied: DataSource;

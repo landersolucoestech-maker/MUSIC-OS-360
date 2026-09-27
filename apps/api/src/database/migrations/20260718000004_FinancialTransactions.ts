@@ -164,9 +164,9 @@ export class FinancialTransactions20260718000004 implements MigrationInterface {
           RAISE EXCEPTION 'financial_transactions: registro em estado terminal (%) é imutável', OLD."status";
         END IF;
 
-        -- Campos financeiros imutáveis após liquidação (I8). Vínculos
-        -- gerenciais (counterparty/cost_center/descrição/anexos) permanecem
-        -- editáveis com auditoria.
+        -- Financial fields are immutable after settlement (I8). Management
+        -- links (counterparty/cost_center/description/attachments) remain
+        -- editable with auditing.
         IF OLD."status" IN ('settled', 'reversed') THEN
           IF NEW."type" IS DISTINCT FROM OLD."type"
              OR NEW."amount" IS DISTINCT FROM OLD."amount"

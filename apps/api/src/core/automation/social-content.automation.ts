@@ -127,7 +127,7 @@ export class SocialContentAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(p: ContentRow): SocialContentInput {
     const input: SocialContentInput = {

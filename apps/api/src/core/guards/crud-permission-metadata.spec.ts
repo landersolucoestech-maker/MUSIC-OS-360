@@ -175,7 +175,7 @@ const expectedRoutes: ExpectedRoute[] = [
   { controller: InvoicesController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'financial', permission: 'invoice:update' },
   { controller: InvoicesController, methodName: 'remove', httpMethod: RequestMethod.DELETE, path: ':id', role: 'manager', permission: 'invoice:cancel' },
 
-  // FASE 6.6 — Contracts (DELETE has cancellation semantics → contract:cancel, not delete).
+  // PHASE 6.6 — Contracts (DELETE has cancellation semantics → contract:cancel, not delete).
   { controller: ContractsController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'contract:read' },
   // Task H: count + sum of value by status across the entire tenant (exact KPIs).
   { controller: ContractsController, methodName: 'stats', httpMethod: RequestMethod.GET, path: 'stats', role: 'viewer', permission: 'contract:read' },
@@ -184,7 +184,7 @@ const expectedRoutes: ExpectedRoute[] = [
   { controller: ContractsController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'editor', permission: 'contract:update' },
   { controller: ContractsController, methodName: 'remove', httpMethod: RequestMethod.DELETE, path: ':id', role: 'manager', permission: 'contract:cancel' },
 
-  // FASE 6.6 — Contract Templates (DELETE has archiving semantics → contract_template:archive).
+  // PHASE 6.6 — Contract Templates (DELETE has archiving semantics → contract_template:archive).
   { controller: ContractTemplatesController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'contract_template:read' },
   { controller: ContractTemplatesController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'contract_template:read' },
   { controller: ContractTemplatesController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'contract_template:create' },
@@ -192,7 +192,7 @@ const expectedRoutes: ExpectedRoute[] = [
   { controller: ContractTemplatesController, methodName: 'remove', httpMethod: RequestMethod.DELETE, path: ':id', role: 'manager', permission: 'contract_template:archive' },
 ];
 
-describe('FASE 6.1 CRUD controller permission metadata', () => {
+describe('PHASE 6.1 CRUD controller permission metadata', () => {
   it.each(expectedRoutes)(
     '$controller.name.$methodName keeps @RequireRole and adds the expected @RequirePermission',
     ({ controller, methodName, httpMethod, path, role, permission }) => {
@@ -246,7 +246,7 @@ describe('FASE 6.1 CRUD controller permission metadata', () => {
     ]);
   });
 
-  it('FASE 6.6: contract/template delete routes use cancel/archive (not delete or update)', () => {
+  it('PHASE 6.6: contract/template delete routes use cancel/archive (not delete or update)', () => {
     // contracts DELETE means "Cancelar contrato (soft delete auditável)" → contract:cancel
     expect(Reflect.getMetadata(PERMISSIONS_KEY, ContractsController.prototype.remove)).toEqual([
       'contract:cancel',

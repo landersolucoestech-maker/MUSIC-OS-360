@@ -45,9 +45,9 @@ export class HardenContactsLeadUploadsRls20260620000002
           EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', '${table}_tenant_update', '${table}');
           EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', '${table}_tenant_delete', '${table}');
 
-          -- Um nome de policy é único por tabela (não por role): quando ambos
-          -- os papéis existem simultaneamente, a policy é criada UMA vez com
-          -- a lista de roles combinada, em vez de duas policies homônimas.
+          -- A policy name is unique per table (not per role): when both
+          -- roles exist at the same time, the policy is created ONCE with
+          -- the combined role list, instead of two policies with the same name.
           policy_roles := concat_ws(', ',
             CASE WHEN has_authenticated THEN 'authenticated' END,
             CASE WHEN has_musicos_app THEN 'musicos_app' END

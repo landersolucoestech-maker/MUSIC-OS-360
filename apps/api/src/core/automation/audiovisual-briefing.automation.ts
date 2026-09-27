@@ -120,7 +120,7 @@ export class AudiovisualBriefingAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(release: ReleaseRow): AudiovisualBriefingInput {
     const md = (release.metadata ?? {}) as Record<string, unknown>;

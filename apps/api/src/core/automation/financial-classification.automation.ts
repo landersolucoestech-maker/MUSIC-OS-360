@@ -131,7 +131,7 @@ export class FinancialClassificationAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(tx: TransactionRow): FinancialClassificationInput {
     const md = (tx.metadata ?? {}) as Record<string, unknown>;

@@ -127,7 +127,7 @@ describe('PermissionsGuard — enforcement ON', () => {
   });
 
   it('missing role_id → uses legacy fallback (resolver returns legacy permissions)', async () => {
-    const guard = makeGuard(['artist:read'], ['artist:read']); // resolver already encapsulates the fallback (FASE 5)
+    const guard = makeGuard(['artist:read'], ['artist:read']); // resolver already encapsulates the fallback (PHASE 5)
     await expect(guard.canActivate(makeContext({ role: 'viewer', role_id: null, tenant_id: 't-1' }))).resolves.toBe(true);
   });
 

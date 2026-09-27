@@ -129,7 +129,7 @@ export class SupportTriageAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(ticket: TicketRow): SupportTriageInput {
     const md = (ticket.metadata ?? {}) as Record<string, unknown>;

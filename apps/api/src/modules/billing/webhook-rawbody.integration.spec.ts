@@ -12,7 +12,7 @@
 import * as express from 'express';
 import * as request from 'supertest';
 
-// Mesmo padrao de require+fallback de billing.service.ts (CJS/ESM interop do pacote stripe).
+// Same require+fallback pattern as billing.service.ts (CJS/ESM interop of the stripe package).
 const StripeRaw = require('stripe');
 const StripeClass = (StripeRaw as any).default ?? StripeRaw;
 

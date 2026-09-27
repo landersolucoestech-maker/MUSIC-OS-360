@@ -136,7 +136,7 @@ export class CampaignReportAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(c: CampaignRow): CampaignReportInput {
     const input: CampaignReportInput = {

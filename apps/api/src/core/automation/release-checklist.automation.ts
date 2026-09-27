@@ -135,7 +135,7 @@ export class ReleaseChecklistAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(release: ReleaseRow): ReleaseChecklistInput {
     const md = (release.metadata ?? {}) as Record<string, unknown>;

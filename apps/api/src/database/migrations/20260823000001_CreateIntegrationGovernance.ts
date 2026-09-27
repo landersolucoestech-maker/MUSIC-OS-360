@@ -44,7 +44,7 @@ export class CreateIntegrationGovernance20260823000001 implements MigrationInter
         "category_id"       uuid         NULL REFERENCES "integration_categories"("id") ON DELETE SET NULL,
         "connection_kind"   varchar(32)  NOT NULL,
         "required_env"      jsonb        NOT NULL DEFAULT '[]'::jsonb,
-        -- draft | published | retired. Só 'published' pode ser resolvido para clientes.
+        -- draft | published | retired. Only 'published' can be resolved for clients.
         "publication_state" varchar(16)  NOT NULL DEFAULT 'draft',
         -- { mode: 'none'|'all'|'plans'|'tenants', plans: string[], tenantIds: string[] }
         "view_audience"     jsonb        NOT NULL DEFAULT '{"mode":"none","plans":[],"tenantIds":[]}'::jsonb,

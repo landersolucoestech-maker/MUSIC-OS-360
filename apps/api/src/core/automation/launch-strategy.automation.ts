@@ -123,7 +123,7 @@ export class LaunchStrategyAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(r: ReleaseRow): LaunchStrategyInput {
     const md = (r.metadata ?? {}) as Record<string, unknown>;

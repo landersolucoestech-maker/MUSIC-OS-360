@@ -83,7 +83,7 @@ export class RemoveDeadStructuresD1D8_20260705000003 implements MigrationInterfa
       await qr.query(`DROP TABLE IF EXISTS ${table} CASCADE`);
     }
 
-    // ── D4: organization_members (duplicata de org_members, fora de migrations) ─
+    // ── D4: organization_members (duplicate of org_members, outside migrations) ─
     await qr.query(`DROP TABLE IF EXISTS organization_members CASCADE`);
 
     // ── D5: financial_category_templates, 0 live usage ──────────────────────────

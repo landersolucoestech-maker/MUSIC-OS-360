@@ -1,5 +1,5 @@
 /**
- * modules/reports/export/export.types.ts  ·  FASE 2.2
+ * modules/reports/export/export.types.ts  ·  PHASE 2.2
  */
 export type ExportFormat = 'xlsx';
 

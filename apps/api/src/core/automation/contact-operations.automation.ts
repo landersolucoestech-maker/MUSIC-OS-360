@@ -122,7 +122,7 @@ export class ContactOperationsAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(c: ClientRow, sourceLeadId: string | null): ContactOperationsInput {
     const input: ContactOperationsInput = {

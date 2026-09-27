@@ -123,7 +123,7 @@ export class MarketingCalendarBuilderAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(release: ReleaseRow, approvedAt: string | undefined): MarketingCalendarBuilderInput {
     const md = (release.metadata ?? {}) as Record<string, unknown>;

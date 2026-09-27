@@ -79,11 +79,11 @@ export class RegistryRightsHoldersIdentifiers20260601000002 implements Migration
       CREATE INDEX IF NOT EXISTS idx_ext_id_tenant ON external_identifiers (tenant_id);
       CREATE INDEX IF NOT EXISTS idx_ext_id_entity ON external_identifiers (tenant_id, entity_type, entity_id);
       CREATE INDEX IF NOT EXISTS idx_ext_id_type   ON external_identifiers (tenant_id, identifier_type);
-      -- ISRC único por tenant
+      -- ISRC unique per tenant
       CREATE UNIQUE INDEX IF NOT EXISTS uq_ext_id_isrc
         ON external_identifiers (tenant_id, identifier_value)
         WHERE identifier_type = 'ISRC';
-      -- não duplicar o mesmo identificador na mesma entidade
+      -- do not duplicate the same identifier on the same entity
       CREATE UNIQUE INDEX IF NOT EXISTS uq_ext_id_entity_value
         ON external_identifiers (tenant_id, entity_type, entity_id, identifier_type, identifier_value);
     `);

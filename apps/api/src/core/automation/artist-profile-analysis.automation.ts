@@ -138,7 +138,7 @@ export class ArtistProfileAnalysisAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(artist: ArtistRow): ArtistProfileAnalysisInput {
     const md = (artist.metadata ?? {}) as Record<string, unknown>;

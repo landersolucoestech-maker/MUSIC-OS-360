@@ -18,7 +18,7 @@ export class QueryAuditLogDto extends PaginationDto {
   /** Filter by actor role (e.g. "owner", "admin") */
   @ApiPropertyOptional() @IsOptional() @IsString() actorRole?: string;
 
-  /** Filter by correlation ID (links to domain events from FASE 3) */
+  /** Filter by correlation ID (links to domain events from PHASE 3) */
   @ApiPropertyOptional() @IsOptional() @IsString() correlationId?: string;
 
   /** Start of date range (ISO 8601) */

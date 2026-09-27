@@ -134,7 +134,7 @@ export class ProjectPlanningAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(project: ProjectRow): ProjectPlanningInput {
     const md = (project.metadata ?? {}) as Record<string, unknown>;

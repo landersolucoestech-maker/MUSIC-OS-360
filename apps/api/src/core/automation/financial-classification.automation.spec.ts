@@ -32,7 +32,7 @@ function makeFailingAi() {
 }
 
 /**
- * Mock de DataSource que roteia por SQL:
+ * DataSource mock that routes by SQL:
  *  - SELECT ... FROM skill_runs   → skillRunRows
  *  - SELECT ... FROM transactions → txRows
  *  - UPDATE                       → undefined

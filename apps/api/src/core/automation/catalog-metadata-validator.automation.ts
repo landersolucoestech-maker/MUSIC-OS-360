@@ -218,7 +218,7 @@ export class CatalogMetadataValidatorAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildWorkInput(work: WorkRow): CatalogMetadataValidatorInput {
     const md = (work.metadata ?? {}) as Record<string, unknown>;

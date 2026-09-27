@@ -3575,7 +3575,7 @@ export const ALL_ENTITIES = [
   TenantEntity,
   UserEntity,
   OrgMemberEntity,
-  // ── RBAC Enterprise (FASE 4) ──
+  // ── RBAC Enterprise (PHASE 4) ──
   PermissionGroupEntity,
   PermissionEntity,
   PermissionAliasEntity,

@@ -41,7 +41,7 @@ export class RlsPoliciesSkillWorkflowLogs20260613000013 implements MigrationInte
         END $$;
       `);
 
-      // 2. ENABLE RLS (sem FORCE).
+      // 2. ENABLE RLS (without FORCE).
       await queryRunner.query(`ALTER TABLE "${table}" ENABLE ROW LEVEL SECURITY`);
 
       // 3. policy por EXISTS no parent tenantizado.

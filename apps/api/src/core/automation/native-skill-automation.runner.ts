@@ -79,7 +79,7 @@ export interface NativeSkillAutomationParams<TRow, TInput> {
   buildInput: (row: TRow) => TInput;
   /** Optional input validation (from the package). */
   validateInput?: (input: TInput) => NativeSkillValidation;
-  /** Builder do user prompt (do pacote). */
+  /** User prompt builder (from the package). */
   buildPrompt: (input: TInput) => string;
   /** Response parser (from the package). */
   parseResponse: (content: string, input: TInput) => unknown;

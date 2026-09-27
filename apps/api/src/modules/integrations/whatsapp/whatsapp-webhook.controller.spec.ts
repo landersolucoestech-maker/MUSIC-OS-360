@@ -84,7 +84,7 @@ describe('WhatsAppWebhookController', () => {
     else process.env['META_APP_SECRET'] = ORIGINAL_META_APP_SECRET;
   });
 
-  // ── GET verification (inalterado pelo hardening do POST) ─────────────────────
+  // ── GET verification (unchanged by the POST hardening) ───────────────────────
 
   it('valid webhook verification: responds 200 with the challenge as plain text', () => {
     const { controller, whatsapp } = makeController({ verify: jest.fn(() => 'challenge-123') });

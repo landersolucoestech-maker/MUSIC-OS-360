@@ -137,7 +137,7 @@ export class CrmFollowupAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(lead: LeadRow): CrmFollowupInput {
     const md = (lead.metadata ?? {}) as Record<string, unknown>;

@@ -122,7 +122,7 @@ export class CampaignPlanAutomation {
     );
   }
 
-  // ── Montagem do input da skill ──────────────────────────────────────────────
+  // ── Skill input assembly ────────────────────────────────────────────────────
 
   private buildInput(c: CampaignRow): CampaignPlanInput {
     const md = (c.metadata ?? {}) as Record<string, unknown>;

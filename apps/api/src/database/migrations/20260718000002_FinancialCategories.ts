@@ -74,7 +74,7 @@ export class FinancialCategories20260718000002 implements MigrationInterface {
         ) THEN
           RAISE EXCEPTION 'M2: financial_categories não tem a assinatura LEGADA esperada (slug/category_kind/depth_level) — abortando';
         END IF;
-        -- …e colunas da estrutura NOVA ausentes (M2 ainda não aplicada).
+        -- …and the NEW structure columns absent (M2 not applied yet).
         IF EXISTS (
           SELECT 1 FROM information_schema.columns
            WHERE table_schema = 'public' AND table_name = 'financial_categories'

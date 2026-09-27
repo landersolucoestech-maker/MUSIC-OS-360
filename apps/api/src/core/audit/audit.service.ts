@@ -36,7 +36,7 @@ export interface AuditParams {
   userAgent?:     string | null;
   /** X-Request-Id / request correlation */
   requestId?:     string | null;
-  /** From FASE-3 CorrelationContext AsyncLocalStorage */
+  /** From PHASE 3 CorrelationContext AsyncLocalStorage */
   correlationId?: string | null;
   /** Client-provided session id (X-Session-Id header) */
   sessionId?:     string | null;

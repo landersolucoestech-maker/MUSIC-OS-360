@@ -28,7 +28,7 @@ function env(key: string): string {
     .replace(/^["']|["']$/g, '');
 }
 
-describe('FASE 3N - runtime tenant context (real PostgreSQL)', () => {
+describe('PHASE 3N - runtime tenant context (real PostgreSQL)', () => {
   let owner: DataSource;
   let appReal: DataSource;
   let app: DataSource;
@@ -122,7 +122,7 @@ describe('FASE 3N - runtime tenant context (real PostgreSQL)', () => {
       expect.objectContaining({ status: 'success', total: 1 }),
       expect.objectContaining({ status: 'failed', total: 1 }),
     ]));
-    console.log('FASE3N_SKILL_EVIDENCE', evidence);
+    console.log('PHASE3N_SKILL_EVIDENCE', evidence);
   });
 
   it('records a pre-start failure in a new tenant-scoped transaction', async () => {
@@ -144,7 +144,7 @@ describe('FASE 3N - runtime tenant context (real PostgreSQL)', () => {
         const context = (await app.query(`
           SELECT private_get_tenant_id()::text AS tenant_id, current_user AS role
         `))[0];
-        console.log('FASE3N_PRESTART_CONTEXT', context);
+        console.log('PHASE3N_PRESTART_CONTEXT', context);
         throw new Error('expected pre-start failure');
       },
       getMetadata: () => ({}),
@@ -191,7 +191,7 @@ describe('FASE 3N - runtime tenant context (real PostgreSQL)', () => {
       tenant_id: TENANT_A,
       role: 'musicos_app',
     });
-    console.log('FASE3P_ASSET_LINKING_EVIDENCE', contextEvidence);
+    console.log('PHASE3P_ASSET_LINKING_EVIDENCE', contextEvidence);
   });
 
   it('runs workflow listener, start, logAction and finish in the event context', async () => {
@@ -205,7 +205,7 @@ describe('FASE 3N - runtime tenant context (real PostgreSQL)', () => {
     );
     automation.register({
       id: `${tag}_rule`,
-      name: 'FASE 3N runtime',
+      name: 'PHASE 3N runtime',
       event: `${tag}.event`,
       actions: [{ type: 'notify', template: 'phase3n' }],
     });
@@ -238,7 +238,7 @@ describe('FASE 3N - runtime tenant context (real PostgreSQL)', () => {
         SELECT private_get_tenant_id()::text AS tenant_id, current_user AS role
       `))[0],
     );
-    console.log('FASE3N_WORKFLOW_EVIDENCE', contextEvidence);
+    console.log('PHASE3N_WORKFLOW_EVIDENCE', contextEvidence);
   });
 
   it('resolves Autentique webhook via OWNER read-only and runs business logic with tenant context', async () => {
@@ -292,6 +292,6 @@ describe('FASE 3N - runtime tenant context (real PostgreSQL)', () => {
       expect.any(String),
       expect.objectContaining({ tenantId: TENANT_A }),
     );
-    console.log('FASE3N_AUTENTIQUE_EVIDENCE', contextEvidence);
+    console.log('PHASE3N_AUTENTIQUE_EVIDENCE', contextEvidence);
   });
 });

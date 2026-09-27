@@ -1,5 +1,5 @@
 /**
- * test/e2e/rls/rls-isolation.e2e-spec.ts  ·  FASE 3B
+ * test/e2e/rls/rls-isolation.e2e-spec.ts  ·  PHASE 3B
  *
  * REUSABLE harness for multi-tenant isolation via REAL RLS against PostgreSQL.
  *
@@ -158,7 +158,7 @@ const SUBLOTE_B: TableCfg[] = [
   { table: 'asset_usage_logs', extra: () => ({ asset_id: randomUUID(), action: 'view' }) },
 ];
 
-// FASE 3D — Batch 3C-A (19 tables). uuid columns without FK use a random
+// PHASE 3D — Batch 3C-A (19 tables). uuid columns without FK use a random
 // uuid; the 3 with a real FK seed the parent per tenant via `parents`.
 const SUBLOTE_3CA: TableCfg[] = [
   { table: 'audiovisual_projects',        extra: () => ({ title: 'RLS_TEST' }) },
@@ -242,7 +242,7 @@ const SUBLOTE_SKILL_WORKFLOW_EXECUTIONS: TableCfg[] = [
   },
 ];
 
-// FASE 3V-A — representatives of the 3 harmonized families (RAW ::uuid → standard).
+// PHASE 3V-A — representatives of the 3 harmonized families (RAW ::uuid → standard).
 // Same uniform policy applied to all 21; here we validate the behavior.
 const SUBLOTE_HARMONIZED_3VA: TableCfg[] = [
   { table: 'conversations',    extra: () => ({}) },                                  // FORCE-RLS
@@ -251,7 +251,7 @@ const SUBLOTE_HARMONIZED_3VA: TableCfg[] = [
   { table: 'marketing_assets', extra: () => ({ title: 'RLS_TEST', asset_type: 'COVER' }) },
 ];
 
-// FASE 3V-B — representatives of the 2 harmonized families (RAW ::text → standard).
+// PHASE 3V-B — representatives of the 2 harmonized families (RAW ::text → standard).
 // financial_* (FORCE ON) and marketing_* (FORCE OFF); identical policy to the 15.
 const SUBLOTE_HARMONIZED_3VB: TableCfg[] = [
   {
@@ -265,7 +265,7 @@ const SUBLOTE_HARMONIZED_3VB: TableCfg[] = [
   { table: 'marketing_projects', extra: () => ({ type: 'ARTIST', title: 'RLS_TEST' }) },
 ];
 
-describe('RLS isolation harness (FASE 3B) — real PostgreSQL', () => {
+describe('RLS isolation harness (PHASE 3B) — real PostgreSQL', () => {
   let owner: DataSource;
   let app: DataSource;
 
@@ -429,7 +429,7 @@ describe('RLS isolation harness (FASE 3B) — real PostgreSQL', () => {
     });
   });
 
-  // ── FASE 3F — composite key + tenant inheritance via FK (release_works) ──
+  // ── PHASE 3F — composite key + tenant inheritance via FK (release_works) ──
   // Reuses owner/app/asTenant/returnedRows; identity via (release_id, work_id),
   // since the table has no id column. Isolation inherited from releases AND works.
   describe('release_works (composite key, FK inheritance)', () => {
@@ -521,7 +521,7 @@ describe('RLS isolation harness (FASE 3B) — real PostgreSQL', () => {
     });
   });
 
-  // ── FASE 3T — logs without tenant_id, inheritance via FK to tenanted parent ──
+  // ── PHASE 3T — logs without tenant_id, inheritance via FK to tenanted parent ──
   // Identity via `id`; isolation via EXISTS on the parent (skill_runs / workflow_executions).
   const LOG_SPECS = [
     {
