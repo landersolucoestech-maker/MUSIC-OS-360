@@ -102,7 +102,7 @@ export function SendForSigningDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Signatários summary */}
+        {/* Signatories summary */}
         {signers.length === 0 ? (
           <div className="flex items-start gap-2 p-3 bg-warning/10 border border-warning/20 rounded-lg text-warning">
             <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />

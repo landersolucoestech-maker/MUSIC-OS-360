@@ -1329,7 +1329,7 @@ export default function ArtistaSignupPublic() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 7 — Observações
+            STEP 7 — Notes
             Mirrors ArtistaFormModal section 7 + summary
         ═══════════════════════════════════════════════════════════════════════ */}
         {step === 7 && (

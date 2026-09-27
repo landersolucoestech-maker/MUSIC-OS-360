@@ -50,7 +50,7 @@ export function useStripeStatus() {
   });
 }
 
-// ─── Hook de subscription (backend real) ─────────────────────────────────────
+// ─── Subscription hook (real backend) ────────────────────────────────────────
 export function useStripeSubscription(tenantId: string) {
   return useQuery<TenantSubscription | null>({
     queryKey: ["integrations", "stripe", "subscription", tenantId],

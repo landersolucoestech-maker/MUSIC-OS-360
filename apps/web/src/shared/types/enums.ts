@@ -68,7 +68,7 @@ export type ContractType =
   | "gestao"
   | "outro";
 
-// ── Transação / Accounting ────────────────────────────────────────────────────
+// ── Transaction / Accounting ──────────────────────────────────────────────────
 
 /** Derived from TransactionType — source of truth: @music-os-360/types */
 export type TransactionType = `${PkgTransactionType}`;
@@ -132,7 +132,7 @@ export type ReleaseType =
 /** Derived from ReleaseStatus — source of truth: @music-os-360/types */
 export type ReleaseStatusValue = `${ReleaseStatus}`;
 
-// ── Share / Participação ──────────────────────────────────────────────────────
+// ── Share / Participation ─────────────────────────────────────────────────────
 
 export type ShareCategory =
   | "composicao"

@@ -204,7 +204,7 @@ function NotificationsPopover() {
       await api.patch("/notifications/read-all", {});
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     } catch {
-      // erro real é reportado pelo interceptor do api-client
+      // the real error is reported by the api-client interceptor
     }
   };
 

@@ -118,7 +118,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                       return (
                         <Card key={idx} className="bg-muted/30">
                           <CardContent className="p-4 space-y-4">
-                            {/* Título e Badges */}
+                            {/* Title and badges */}
                             <div className="flex items-start justify-between gap-2">
                               <h4 className="font-medium" data-testid={`text-view-musica-nome-${idx}`}>
                                 {musicas.length > 1 ? `${idx + 1}. ` : ""}{info.name || projeto.title}

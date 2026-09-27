@@ -70,7 +70,7 @@ export function useEventsStats() {
 
   const data = query.data;
   // byGroup groups by the real events.status — canonical English value (see
-  // @music-os-360/types EventStatus / EventsService.stats()), não pt-BR.
+  // @music-os-360/types EventStatus / EventsService.stats()), not pt-BR.
   const kpis: EventsKPIs = !data ? EMPTY_KPIS : {
     total: data.total,
     confirmed: data.byGroup["confirmed"] ?? 0,

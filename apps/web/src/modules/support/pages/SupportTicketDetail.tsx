@@ -77,8 +77,8 @@ export default function SupportTicketDetail() {
       await addMessage(reply.trim(), "support");
       setReply("");
     } catch {
-      // Erro já reportado via toast em useTicketMessages; mantém o texto
-      // digitado para o usuário não perder a resposta e poder tentar de novo.
+      // Error already reported via toast in useTicketMessages; keeps the typed
+      // text so the user does not lose the reply and can try again.
     }
   }
 

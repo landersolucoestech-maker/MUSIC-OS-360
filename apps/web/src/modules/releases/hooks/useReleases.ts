@@ -21,7 +21,7 @@ export function useReleases(enabled = true, artistId?: string) {
     select: "*, artistas(*)",
     orderBy: { column: "data_lancamento", ascending: false },
     enabled,
-    // Backend de releases usa "artistId" (camelCase), não "artist_id" — ver releases.dto.ts/releases.service.ts.
+    // The releases backend uses "artistId" (camelCase), not "artist_id" — see releases.dto.ts/releases.service.ts.
     filters: artistId ? { artistId: artistId } : undefined,
     onMutationSuccess: {
       onCreate: (l) =>

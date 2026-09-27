@@ -101,8 +101,8 @@ export default function SupportRequests() {
       setShowModal(false);
       setForm({ title: "", description: "", type: "feature", priority: "medium" });
     } catch {
-      // Erro já reportado via toast em useRequests; mantém o modal aberto e o
-      // formulário preenchido para o usuário poder tentar de novo.
+      // Error already reported via toast in useRequests; keeps the modal open and the
+      // form filled in so the user can try again.
     }
   }
 

@@ -134,7 +134,7 @@ export const clientsService = {
     await api.delete(`/clients/${id}`);
   },
 
-  // ── Timeline real (persistida em activity_logs) ───────────────────────────
+  // ── Real timeline (persisted in activity_logs) ────────────────────────────
   async getTimeline(clientId: string): Promise<ClientTimelineEntry[]> {
     return api.get<ClientTimelineEntry[]>(`/clients/${clientId}/timeline`);
   },

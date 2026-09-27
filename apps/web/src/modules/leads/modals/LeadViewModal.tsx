@@ -198,7 +198,7 @@ export function LeadViewModal({
         <div className="grid gap-6 py-2">
 
           {/* ══════════════════════════════════════
-              IDENTIFICAÇÃO DO LEAD
+              LEAD IDENTIFICATION
           ══════════════════════════════════════ */}
           <Section title="Identificação do Lead">
             <Row icon={User}      label="Nome"                  value={lead.nomeCompleto}                        />

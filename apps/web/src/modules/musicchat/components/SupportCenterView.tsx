@@ -489,12 +489,12 @@ export function SupportCenterView({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingStreamRef = useRef<MediaStream | null>(null);
   const recordingChunksRef = useRef<BlobPart[]>([]);
-  // Facebook/Instagram/TikTok/Website: isMarketingConnected() reflete só a
+  // Facebook/Instagram/TikTok/Website: isMarketingConnected() only reflects the
   // marketing integration (posts/ads) via OAuth — there is no real
   // messages/DM webhook for any of these channels (only WhatsApp has one). Showing
   // "connected" here would be misleading — always unavailable for messaging
   // until a real messaging integration exists. Website: there is no widget/embed;
-  // de chat do site nem endpoint público de visitor session no backend —
+  // for website chat nor a public visitor-session endpoint on the backend —
   // the "site"/custom channel today only exists for the static form (subject
   // field), not for real-time conversation. One more channel in the list,
   // honestly unavailable — it is not the official/default channel.

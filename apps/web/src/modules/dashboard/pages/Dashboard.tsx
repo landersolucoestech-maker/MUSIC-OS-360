@@ -41,7 +41,7 @@ const MAX_ITEMS = 30;
 // ─── Upcoming appointments (Schedule) ─────────────────────────────────────────
 // Official categories of the Schedule module (SchedulerFormModal). Normalizes both the
 // events.type only stores the backend's coarse enum — see
-// modules/events/lib/event-type.ts para os rótulos pt-BR reais.
+// modules/events/lib/event-type.ts for the real pt-BR labels.
 
 // Statuses that remove the event from the upcoming appointments list (past/closed).
 const COMPROMISSO_STATUS_OCULTOS = new Set([
@@ -540,7 +540,7 @@ export default function Dashboard() {
       nome: a.stageName,
       genero: a.musicGenre || "Outro",
       lancamentos: a.lancamentos,
-      streams: a.streams, // pode ser null → UI exibe "–"
+      streams: a.streams, // may be null → the UI shows "–"
       projetos: a.projetos,
       foto_url: a.photoUrl,
     })),

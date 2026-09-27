@@ -789,7 +789,7 @@ export function ContractImportWorkspace({
               </div>
             </TabsContent>
 
-            {/* ── Tab: Variáveis ── */}
+            {/* ── Tab: variables ── */}
             <TabsContent
               value="variaveis"
               className="flex-1 overflow-hidden mt-0 data-[state=inactive]:hidden"

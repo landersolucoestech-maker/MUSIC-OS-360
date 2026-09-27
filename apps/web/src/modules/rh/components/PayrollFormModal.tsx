@@ -156,7 +156,7 @@ export function PayrollFormModal({
       onOpenChange(false);
     } catch (err) {
       if (handleConcurrencyConflict(err, "registro de pagamento")) return;
-      // demais erros: toast já é exibido pelo hook
+      // other errors: the toast is already shown by the hook
     } finally {
       setIsSubmitting(false);
     }

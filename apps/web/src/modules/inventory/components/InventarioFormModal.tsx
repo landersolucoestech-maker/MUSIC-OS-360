@@ -177,7 +177,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     if (!dateString) return "";
     // If it is already in YYYY-MM-DD format, return it as is
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
-    // Tenta converter de DD/MM/YYYY para YYYY-MM-DD
+    // Tries to convert from DD/MM/YYYY to YYYY-MM-DD
     const parts = dateString.split("/");
     if (parts.length === 3) {
       return `${parts[2]}-${parts[1]}-${parts[0]}`;

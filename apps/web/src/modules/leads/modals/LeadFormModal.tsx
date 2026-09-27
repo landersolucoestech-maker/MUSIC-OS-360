@@ -591,7 +591,7 @@ export function LeadFormModal({
           </div>
 
           {/* ══════════════════════════════════════
-              CLASSIFICAÇÃO DO LEAD
+              LEAD CLASSIFICATION
           ══════════════════════════════════════ */}
           <SectionHeader title="Classificação do Lead" />
 

@@ -28,7 +28,7 @@ export interface TikTokStatus {
   connected: boolean;
 }
 
-// ─── Hook de status (real — GET /integrations/tiktok/status) ────────────────
+// ─── Status hook (real — GET /integrations/tiktok/status) ───────────────────
 
 export function useTikTokStatus() {
   return useQuery<TikTokStatus>({

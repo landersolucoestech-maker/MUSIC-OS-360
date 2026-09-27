@@ -95,7 +95,7 @@ export default function Shares() {
   // Task J: work title/artist name per row, resolved directly by ID
   // (GET /works/:id, /artists/:id) only for the records of the current
   // page — it used to scan useObras()/useArtistas() without a filter, truncated
-  // nos primeiros 50 do tenant.
+  // to the first 50 of the tenant.
   type WorkLabel = { title?: string | null; compositor?: string | null };
   type ArtistLabel = { nome_artistico?: string | null };
   const [resolvedObras, setResolvedObras] = useState<Record<string, WorkLabel>>({});

@@ -137,7 +137,7 @@ export default function Agenda() {
     () => [{ value: "all-type", label: "Todos Tipos" }, ...(eventTypeOptions.length > 0 ? eventTypeOptions : TIPO_OPTIONS.slice(1))],
     [eventTypeOptions],
   );
-  // events.type só guarda o enum coarse do backend (show/festival/recording/
+  // events.type only stores the backend's coarse enum (show/festival/recording/
   // meeting/interview/tour/other) — the granular category chosen in the filter
   // (slug configured in Settings → Operational) must be translated
   // before becoming a query filter, otherwise it never matches a real event.
@@ -161,7 +161,7 @@ export default function Agenda() {
 
   // Bounds of the visible period (day/week/month/year) — the calendar fetches only
   // the events of that period (Task H: without it, the fetch was stuck at the
-  // limit=50 default do backend e sumia events silenciosamente em
+  // backend's default limit=50 and events silently disappeared in
   // any navigated month, in tenants with more than 50 events in total).
   const { periodStart, periodEnd } = useMemo(() => {
     if (viewMode === "dia") return { periodStart: startOfDay(currentDate), periodEnd: endOfDay(currentDate) };
@@ -193,7 +193,7 @@ export default function Agenda() {
   const handleExcelExport = async () => {
     // Task I: full sweep via iterative server-side pagination —
     // it used to export only `events` (useEventos() without a filter, stuck at the
-    // limit=50 default do backend). Preserva os filtros de type/status
+    // backend's default limit=50). Keeps the type/status filters
     // active on screen; it does not scope to the calendar period (export is "all
     // the events matching the filter", not "only what is visible now").
     const filters: Record<string, unknown> = {};
@@ -270,7 +270,7 @@ export default function Agenda() {
         const valorCache = row.valor_cache || row["Valor Cachê"];
         const publicoEsperado = row.publico_esperado || row["Público Esperado"] || row.capacidade || row["Capacidade"];
 
-        // Payload no formato do CreateEventDto real (title/type/startsAt/
+        // Payload in the real CreateEventDto shape (title/type/startsAt/
         // endsAt/venue — not title/type/start_date, which do not exist in the DTO;
         // status is omitted because CreateEventDto does not accept it, only UpdateEventDto).
         const payload: Record<string, unknown> = {

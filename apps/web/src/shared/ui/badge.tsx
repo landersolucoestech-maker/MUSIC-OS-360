@@ -19,7 +19,7 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        // ── 5 variants canônicos ──────────────────────────────────────────
+        // ── 5 canonical variants ──────────────────────────────────────────
         success: "bg-success-soft text-success",
         info: "bg-info-soft text-info",
         warning: "bg-warning-soft text-warning",

@@ -172,7 +172,7 @@ export function useKnowledgeCategories() {
       description: c.description ?? "",
       icon: c.icon ?? "BookOpen",
       color: c.color ?? "primary",
-      article_count: 0, // preenchido pelo consumidor via contagem local dos artigos
+      article_count: 0, // filled in by the consumer via a local count of the articles
     }));
 
   return {

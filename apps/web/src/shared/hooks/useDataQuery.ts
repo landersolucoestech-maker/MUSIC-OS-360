@@ -41,7 +41,7 @@ type QueryConfig<T = object> = {
   filters?: Record<string, unknown>;
   enabled?: boolean;
   additionalInvalidateKeys?: string[][];
-  /** Callbacks pós-mutação para emissão de domain events. */
+  /** Post-mutation callbacks for emitting domain events. */
   onMutationSuccess?: MutationSuccessCallbacks<T>;
   _phantom?: T;
 };

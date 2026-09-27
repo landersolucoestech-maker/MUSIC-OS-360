@@ -1,8 +1,8 @@
 /**
  * settings/hooks/useAuditTrail.ts
  *
- * Hook de leitura do Audit Trail.
- *   desembrulhando { data: AuditLogEntry[] } do envelope TransformInterceptor.
+ * Audit Trail read hook.
+ *   Unwraps { data: AuditLogEntry[] } from the TransformInterceptor envelope.
  */
 
 import { useQuery } from "@tanstack/react-query";

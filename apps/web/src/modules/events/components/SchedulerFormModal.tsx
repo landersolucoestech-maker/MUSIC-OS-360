@@ -265,10 +265,10 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   useEffect(() => {
     setFormData(hydrateFormData(open ? event : undefined));
     setErrors({});
-    // `pendingArtist` (não `participants`) de propósito: `participants` muda a
-    // cada busca digitada no picker de participantes, o que resetaria o
-    // formulário inteiro enquanto o usuário digita. `pendingArtist` só muda
-    // quando o artista legado do evento (campo `artista`) termina de resolver.
+    // `pendingArtist` (not `participants`) on purpose: `participants` changes on
+    // every search typed in the participant picker, which would reset the
+    // whole form while the user types. `pendingArtist` only changes
+    // when the event's legacy artist (`artista` field) finishes resolving.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event, mode, open, pendingArtist]);
 
@@ -386,7 +386,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
     return normalizedFormData;
   };
 
-  // Maps frontend tipoEvento (granular, tenant-configurável) → backend
+  // Maps frontend tipoEvento (granular, tenant-configurable) → backend
   // CreateEventDto.type enum (coarse: show|festival|recording|meeting|
   // interview|tour|other — the only thing events.type actually stores).
   // Primary source: metadata.backend_type of each category configured in

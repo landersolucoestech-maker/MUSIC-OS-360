@@ -68,7 +68,7 @@ export function InventarioViewModal({ open, onOpenChange, item }: InventarioView
             {getStatusBadge(item.status)}
           </div>
 
-          {/* Grid de Informações */}
+          {/* Information grid */}
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Status</p>

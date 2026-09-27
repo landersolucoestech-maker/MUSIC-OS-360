@@ -51,7 +51,7 @@ export function shareStatusBadge(status?: string | null) {
   return <Badge variant={meta?.variant ?? "neutral"}>{shareStatusLabel(status)}</Badge>;
 }
 
-// ── Função (type) ─────────────────────────────────────────────────────────────
+// ── Role (type) ───────────────────────────────────────────────────────────────
 export const FUNCAO_LABELS: Record<string, string> = {
   compositor: "Compositor / Autor",
   interprete: "Intérprete",

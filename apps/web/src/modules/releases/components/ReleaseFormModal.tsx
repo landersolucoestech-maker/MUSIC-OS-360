@@ -846,7 +846,7 @@ export function ReleaseFormModal({
 
 
   // ─────────────────────────────────────────────────────────────────────────
-  // COVER UPLOAD  — directo ao Cloudflare R2 via presigned URL do backend
+  // COVER UPLOAD  — directly to Cloudflare R2 via the backend's presigned URL
   // ─────────────────────────────────────────────────────────────────────────
   const handleCoverUpload = async (file: File) => {
     setCapaPrincipal(file);

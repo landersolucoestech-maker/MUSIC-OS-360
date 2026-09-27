@@ -109,7 +109,7 @@ export interface SocialMetrics {
   }>;
 }
 
-// ─── DTOs de campanhas de ads ─────────────────────────────────────────────────
+// ─── Ad campaign DTOs ─────────────────────────────────────────────────────────
 
 export interface AdCampaign {
   campaign_id: string;

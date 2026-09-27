@@ -14,7 +14,7 @@ export interface PublicPlan {
   slug: string;
   name: string;
   description: string | null;
-  /** Valor em centavos. */
+  /** Amount in cents. */
   amount: number;
   currency: string;
   interval: string;

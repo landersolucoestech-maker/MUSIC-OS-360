@@ -93,7 +93,7 @@ export interface TenantBilling {
   planId?:         string;
   customerId?:     string;
   subscriptionId?: string;
-  /** Enforcement: exposto pelo backend (tenant_billing_state / GET /billing/subscription). */
+  /** Enforcement: exposed by the backend (tenant_billing_state / GET /billing/subscription). */
   graceUntil?:     string;
   amountDue?:      number;
   invoiceUrl?:     string;

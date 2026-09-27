@@ -99,11 +99,11 @@
   }
 
   /*
-   * Tokens da landing institucional (#0D3E62) — escopados a `.landing-theme`,
-   * nunca em :root. O design system interno do app mantém sua paleta própria
-   * (usada em todo o dashboard); a landing é a única superfície que usa este
-   * azul oficial + sombras sutis (o resto do app roda com --shadow-*: none
-   * por decisão de design já existente, preservada aqui).
+   * Institutional landing tokens (#0D3E62) — scoped to `.landing-theme`,
+   * never on :root. The app's internal design system keeps its own palette
+   * (used across the dashboard); the landing is the only surface that uses this
+   * official blue + subtle shadows (the rest of the app runs with --shadow-*: none
+   * by an existing design decision, preserved here).
    */
   .landing-theme {
     --primary: 205 77% 22%;
@@ -113,13 +113,13 @@
     --info-foreground: 0 0% 100%;
     --ring: 205 77% 22%;
 
-    /* Navy mais escuro que #0D3E62 — fundo de header/hero/footer/CTA final,
-       criando contraste para os botões/ícones que usam --primary por cima. */
+    /* Navy darker than #0D3E62 — header/hero/footer/final CTA background,
+       creating contrast for the buttons/icons that use --primary on top. */
     --landing-dark: 205 55% 10%;
     --landing-darker: 205 58% 7%;
     --landing-dark-foreground: 0 0% 100%;
-    /* Tom claro derivado de #0D3E62 — só para texto/ícone de destaque sobre
-       fundo escuro (contraste/legibilidade), nunca como cor primária. */
+    /* Light tone derived from #0D3E62 — only for highlight text/icons on a
+       dark background (contrast/legibility), never as the primary color. */
     --landing-accent-light: 205 70% 62%;
 
     --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);

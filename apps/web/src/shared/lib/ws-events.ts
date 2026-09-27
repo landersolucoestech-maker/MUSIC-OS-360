@@ -52,7 +52,7 @@ export interface WsEventMap {
   // ── Individual notifications (PHASE 4) ─────────────────────────────────────
   'notification:new':             WsNotificationPayload;
 
-  // ── Billing (FASE 6 — Stripe) ────────────────────────────────────────────────
+  // ── Billing (PHASE 6 — Stripe) ───────────────────────────────────────────────
   'billing:plan_upgraded':        { org_id: string; plan: string };
   'billing:trial_ending':         { org_id: string; days_left: number };
   'billing:payment_failed':       { org_id: string; invoice_id: string };

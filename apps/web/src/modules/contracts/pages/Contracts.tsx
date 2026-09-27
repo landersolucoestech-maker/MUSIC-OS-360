@@ -123,7 +123,7 @@ export default function Contracts() {
 
   // ── Contract KPIs: PARTITION by status → the sum of the buckets = list total ──
   // Each contract falls into EXACTLY one bucket (unknown status → "Em Análise"),
-  // guaranteeing Total = Vigentes + Assinados + Aguardando + Em Análise + Encerrados.
+  // guaranteeing Total = active + signed + pending + under review + closed.
   const norm = (s?: string | null) => (s ?? "").toLowerCase();
   const EM_VIGOR_STATUSES = new Set(["in_force", "active"]);
   const ASSINADO_STATUSES = new Set(["signed"]);

@@ -11,7 +11,7 @@ vi.mock("@/shared/lib/api-client", () => ({ api: apiMock }));
 
 import { musicChatConversationsService } from "./conversations.service";
 
-// Regressão para o bug de double-unwrap: apps/web/src/shared/lib/api-client.ts's request()
+// Regression for the double-unwrap bug: apps/web/src/shared/lib/api-client.ts's request()
 // already returns payload.data (the TransformInterceptor preserves a controller's own
 // {data, meta} shape flat, so api.get<T>() resolves to the bare array for paginated
 // endpoints — never {data: T[], meta}). musicChatConversationsService.list()/messages()

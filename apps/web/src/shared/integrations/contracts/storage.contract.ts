@@ -72,7 +72,7 @@ export interface IStorageProvider {
   /** Generates a signed URL for a temporary download */
   presignedUrl(params: StoragePresignedUrlParams): Promise<string>;
 
-  /** Remove um objecto do storage */
+  /** Removes an object from storage */
   delete(bucket: StorageBucket, key: string): Promise<void>;
 
   /** Lists objects under a prefix */

@@ -1,6 +1,6 @@
 import type { OperationalListItem } from "@/modules/settings/hooks/useOperationalSettings";
 
-/** Enum realmente persistido em events.type (CreateEventDto.type no backend). */
+/** Enum actually persisted in events.type (CreateEventDto.type on the backend). */
 export const BACKEND_EVENT_TYPES = ["show", "festival", "recording", "meeting", "interview", "tour", "other"] as const;
 export type BackendEventType = (typeof BACKEND_EVENT_TYPES)[number];
 

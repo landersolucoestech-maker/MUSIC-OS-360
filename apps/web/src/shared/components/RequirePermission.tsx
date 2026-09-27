@@ -39,7 +39,7 @@ export function RequirePermission({
 export const PermissionGate = RequirePermission;
 
 /**
- * Hook companion — retorna true/false sem wrapper JSX.
+ * Hook companion — returns true/false without a JSX wrapper.
  *   const canWrite = useHasPermission("accounting", "write");
  */
 export function useHasPermission(

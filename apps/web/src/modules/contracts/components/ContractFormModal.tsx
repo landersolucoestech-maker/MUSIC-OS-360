@@ -78,7 +78,7 @@ const ContractForm = ({
   const { templates } = useContractTemplates();
 
   // Normalizes CategoryRegistry (and legacy) slugs to the equivalent CST slugs.
-  // O workspace guarda tipo_servico com slugs da CategoryRegistry (ex: "empresariamento_360").
+  // The workspace stores tipo_servico with CategoryRegistry slugs (e.g. "empresariamento_360").
   // This function converts them to the matching CST slug so the filter works.
   const normalizeToCst = useCallback((slug: string | undefined | null): string | null => {
     if (!slug) return null;
@@ -122,7 +122,7 @@ const ContractForm = ({
     [serviceTypes, templateSlugs],
   );
 
-  // Mapa CST slug → label da CategoryRegistry do utilizador.
+  // Map CST slug → the user's CategoryRegistry label.
   // Allows showing "Empresariamento 360" (CategoryRegistry) instead of "Empresariamento" (CST).
   const { categories: registryCategories } = useCategoryRegistry();
   const cstToLabel = useMemo(() => {
