@@ -44,6 +44,11 @@ empresario segmento prioridade probabilidade fechamento estimado territorio terr
 realizado fornecedor fornecedores preco devolucao manutencao emprestado unidade unidades condicao dias meses anos
 todos todas geral resumo exportar importar baixar subir somente apenas pagar vencido vencida mensal anual semanal
 entrada saida inicial previsao contratado contratados ouvinte seguidor faturamento receber pagos pendentes
+interacao interacoes horario horarios compromisso compromissos proximo proximos proxima proximas agora oculto ocultos
+normalizar destaque destaques vencendo vencidos venceu realizados hoje ontem amanha detentor detentores versao versoes
+perfil perfis gerais participante participantes calculo calculos arrecadacao arrecadacoes certificado certificados
+conciliacao licenciamento licenciamentos moeda moedas prioridades titulo titulos numeros enderecos telefones quantidades
+enviado recebido semanas senha busca resultado resultados imagem imagens letras generos idioma comissao
 `.split(/\s+/).map((t) => t.replace(/\?$/, "")).filter(Boolean)
   // ambiguous with English: drop
   .filter((t) => !["status","marketing","briefing","takedown","royalty","lead","cep","data","nota","ano","dia","modelo","ponto","banco","agencia","ordem","campo","idioma",
