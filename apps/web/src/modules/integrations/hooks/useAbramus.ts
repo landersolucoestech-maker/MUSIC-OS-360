@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 import type {
-  RegisterObraInput,
-  RegisterFonogramaInput,
+  RegisterWorkInput,
+  RegisterPhonogramInput,
   RegistrationResult,
   RegistrationHistoryEntry,
   GenerateISWCInput,
@@ -217,7 +217,7 @@ export function useAbramusRegistrationHistory(kind: AbramusKind, localId: string
 
 export function useAbramusRegisterObra() {
   const queryClient = useQueryClient();
-  return useMutation<RegistrationResult, Error, RegisterObraInput>({
+  return useMutation<RegistrationResult, Error, RegisterWorkInput>({
     mutationFn: async (input) => {
       // find-93fe3250: this submits a real registration to the Abramus API --
       // a network-level retry or double submission of this mutation must not
@@ -258,7 +258,7 @@ export function useAbramusRegisterObra() {
 }
 
 export function useAbramusRegisterFonograma() {
-  return useMutation<RegistrationResult, Error, RegisterFonogramaInput>({
+  return useMutation<RegistrationResult, Error, RegisterPhonogramInput>({
     mutationFn: async (_input) =>
       backendUnavailable("Registro de fonograma na ABRAMUS"),
     onError: (err) => toast.error(`Erro ao registrar fonograma: ${toUserMessage(err)}`),

@@ -1,4 +1,4 @@
-import type { ObraRef, FonogramaRef } from "@/shared/types/refs";
+import type { WorkRef, PhonogramRef } from "@/shared/types/refs";
 import type { TakedownStatus } from "@/shared/types/enums";
 
 export type { TakedownStatus };
@@ -33,6 +33,6 @@ export type TakedownInsert = Omit<Takedown, "id" | "user_id" | "created_at" | "u
 export type TakedownUpdate = Partial<TakedownInsert>;
 
 export interface TakedownWithRelations extends Takedown {
-  obras?: ObraRef | null;
-  fonogramas?: FonogramaRef | null;
+  obras?: WorkRef | null;
+  fonogramas?: PhonogramRef | null;
 }

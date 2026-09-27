@@ -1,4 +1,4 @@
-import type { ArtistaRef, ClienteRef } from "@/shared/types/refs";
+import type { ArtistRef, ClientRef } from "@/shared/types/refs";
 import type { ContractStatusValue, ContractType } from "@/shared/types/enums";
 import type { ContractSigner } from "@/modules/contracts/lib/contract-schema";
 import type { UploadedFile } from "@/shared/components/FileUpload";
@@ -67,8 +67,8 @@ export type ContractInsert = Omit<Contract, "id" | "user_id" | "created_at" | "u
 export type ContractUpdate = Partial<ContractInsert>;
 
 export interface ContractWithRelations extends Contract {
-  artistas?: ArtistaRef | null;
-  clientes?: ClienteRef | null;
+  artistas?: ArtistRef | null;
+  clientes?: ClientRef | null;
 }
 
 export interface ContractTemplateRow {

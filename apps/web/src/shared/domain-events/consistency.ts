@@ -27,8 +27,8 @@ function initConsistencyHooks(): void {
   subscribe(DomainEvents.CONTRACT_CREATED, async ({ artist_id, id }) => {
     if (!artist_id) return;
     try {
-      const artista = await storage.findById<Record<string, unknown> & { id: string }>("artistas", artist_id);
-      if (artista && artista.status !== "signed") {
+      const artist = await storage.findById<Record<string, unknown> & { id: string }>("artistas", artist_id);
+      if (artist && artist.status !== "signed") {
         await storage.update("artistas", artist_id, {
           status: "signed",
           contrato_id: id,
@@ -40,11 +40,11 @@ function initConsistencyHooks(): void {
   });
 
   // ── ARTIST_CREATED → dev-only diagnostic log ─────────────────────────────
-  subscribe(DomainEvents.ARTIST_CREATED, ({ id, nome_artistico }) => {
+  subscribe(DomainEvents.ARTIST_CREATED, ({ id, nome_artistico: stageName }) => {
     try {
       // Logs the creation to the console (dev only)
       if (IS_DEV) {
-        console.info(`[consistency] Artist created: "${nome_artistico}" (${id})`);
+        console.info(`[consistency] Artist created: "${stageName}" (${id})`);
       }
     } catch {
       /* intentionally ignored: must not break the emitter */
@@ -52,7 +52,7 @@ function initConsistencyHooks(): void {
   });
 
   // ── TRANSACTION_CREATED → flags a pending financial recalculation ────────
-  subscribe(DomainEvents.TRANSACTION_CREATED, ({ artist_id, type, valor }) => {
+  subscribe(DomainEvents.TRANSACTION_CREATED, ({ artist_id, type, valor: amount }) => {
     try {
       const orgId = getCurrentOrgId();
       // Marks this artist's P&L as stale (flag for the UI)
@@ -66,7 +66,7 @@ function initConsistencyHooks(): void {
 
       if (IS_DEV) {
         console.info(
-          `[consistency] Transaction created: ${type} R$${valor?.toFixed(2)} → P&L marked as stale`,
+          `[consistency] Transaction created: ${type} R$${amount?.toFixed(2)} → P&L marked as stale`,
         );
       }
     } catch {

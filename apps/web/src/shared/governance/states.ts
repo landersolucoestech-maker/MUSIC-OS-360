@@ -56,7 +56,7 @@ export interface StateMachine {
 // ARTIST — Registration state
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const ARTISTA_STATE_MACHINE: StateMachine = {
+export const ARTIST_STATE_MACHINE: StateMachine = {
   entity:       "Artista",
   initialState: "prospect",
   states: [
@@ -91,7 +91,7 @@ export const ARTISTA_STATE_MACHINE: StateMachine = {
 // CONTRACT — Lifecycle
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const CONTRATO_STATE_MACHINE: StateMachine = {
+export const CONTRACT_STATE_MACHINE: StateMachine = {
   entity:       "Contrato",
   initialState: "rascunho",
   states: [
@@ -153,7 +153,7 @@ export const TRANSACAO_STATE_MACHINE: StateMachine = {
 // INVOICE — Issuing cycle
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const NOTA_FISCAL_STATE_MACHINE: StateMachine = {
+export const INVOICE_STATE_MACHINE: StateMachine = {
   entity:       "NotaFiscal",
   initialState: "rascunho",
   states: [
@@ -181,7 +181,7 @@ export const NOTA_FISCAL_STATE_MACHINE: StateMachine = {
 // WORK — Registration state
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const OBRA_STATE_MACHINE: StateMachine = {
+export const WORK_STATE_MACHINE: StateMachine = {
   entity:       "Obra",
   initialState: "pendente",
   states: [
@@ -212,7 +212,7 @@ export const OBRA_STATE_MACHINE: StateMachine = {
 // RELEASE — Editorial cycle
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const LANCAMENTO_STATE_MACHINE: StateMachine = {
+export const RELEASE_STATE_MACHINE: StateMachine = {
   entity:       "Lancamento",
   initialState: "analise",
   states: [
@@ -307,7 +307,7 @@ export const TAKEDOWN_STATE_MACHINE: StateMachine = {
 // EVENT — Production cycle
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const EVENTO_STATE_MACHINE: StateMachine = {
+export const EVENT_STATE_MACHINE: StateMachine = {
   entity:       "Evento",
   initialState: "planejado",
   states: [
@@ -335,15 +335,15 @@ export const EVENTO_STATE_MACHINE: StateMachine = {
 // ─── Centralized registry of every state machine ─────────────────────────────
 
 export const ALL_STATE_MACHINES: StateMachine[] = [
-  ARTISTA_STATE_MACHINE,
-  CONTRATO_STATE_MACHINE,
+  ARTIST_STATE_MACHINE,
+  CONTRACT_STATE_MACHINE,
   TRANSACAO_STATE_MACHINE,
-  NOTA_FISCAL_STATE_MACHINE,
-  OBRA_STATE_MACHINE,
-  LANCAMENTO_STATE_MACHINE,
+  INVOICE_STATE_MACHINE,
+  WORK_STATE_MACHINE,
+  RELEASE_STATE_MACHINE,
   LEAD_STATE_MACHINE,
   TAKEDOWN_STATE_MACHINE,
-  EVENTO_STATE_MACHINE,
+  EVENT_STATE_MACHINE,
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

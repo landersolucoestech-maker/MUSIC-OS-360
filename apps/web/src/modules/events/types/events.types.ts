@@ -1,4 +1,4 @@
-import type { ArtistaRef } from "@/shared/types/refs";
+import type { ArtistRef } from "@/shared/types/refs";
 import type { EventType, EventStatusValue } from "@/shared/types/enums";
 
 export type { EventType, EventStatusValue };
@@ -31,6 +31,6 @@ export type EventInsert = Omit<Event, "id" | "user_id" | "created_at" | "updated
 export type EventUpdate = Partial<EventInsert>;
 
 export interface EventWithRelations extends Event {
-  artistas?: ArtistaRef | null;
+  artistas?: ArtistRef | null;
 }
 

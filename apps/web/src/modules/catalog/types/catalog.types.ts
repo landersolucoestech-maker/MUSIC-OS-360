@@ -1,5 +1,5 @@
 import type { Json } from "@/shared/types/database";
-import type { ArtistaRef, ProjetoRef } from "@/shared/types/refs";
+import type { ArtistRef, ProjectRef } from "@/shared/types/refs";
 import type { WorkStatusValue, WorkType, PhonogramStatusValue } from "@/shared/types/enums";
 
 export type { WorkStatusValue, WorkType, PhonogramStatusValue };
@@ -36,8 +36,8 @@ export type WorkInsert = Omit<Work, "id" | "user_id" | "created_at" | "updated_a
 export type WorkUpdate = Partial<WorkInsert>;
 
 export interface WorkWithRelations extends Work {
-  artistas?: ArtistaRef | null;
-  projetos?: ProjetoRef | null;
+  artistas?: ArtistRef | null;
+  projetos?: ProjectRef | null;
 }
 
 export interface Phonogram {
@@ -95,6 +95,6 @@ export type PhonogramInsert = Omit<Phonogram, "id" | "user_id" | "created_at" | 
 export type PhonogramUpdate = Partial<PhonogramInsert>;
 
 export interface PhonogramWithRelations extends Phonogram {
-  artistas?: ArtistaRef | null;
+  artistas?: ArtistRef | null;
 }
 

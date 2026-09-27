@@ -1,4 +1,4 @@
-import type { ClienteRef } from "@/shared/types/refs";
+import type { ClientRef } from "@/shared/types/refs";
 import type { LicenseType, LicenseStatus } from "@/shared/types/enums";
 
 export type { LicenseType, LicenseStatus };
@@ -38,5 +38,5 @@ export type LicenseInsert = Omit<License, "id" | "user_id" | "created_at" | "upd
 export type LicenseUpdate = Partial<LicenseInsert>;
 
 export interface LicenseWithRelations extends License {
-  clientes?: ClienteRef | null;
+  clientes?: ClientRef | null;
 }

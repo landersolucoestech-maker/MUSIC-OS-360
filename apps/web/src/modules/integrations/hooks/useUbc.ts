@@ -15,7 +15,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { toast } from "sonner";
 import type {
-  RegisterObraInput,
+  RegisterWorkInput,
   RegistrationResult,
   RegistrationHistoryEntry,
   GenerateISWCInput,
@@ -200,7 +200,7 @@ export function useUbcRegistrationHistory(localId: string) {
 }
 
 export function useUbcRegisterObra() {
-  return useMutation<RegistrationResult, Error, RegisterObraInput>({
+  return useMutation<RegistrationResult, Error, RegisterWorkInput>({
     mutationFn: async (_input) => ubcUnavailable(),
     onError: (err) => toast.error(`Erro ao registrar obra: ${toUserMessage(err)}`),
   });

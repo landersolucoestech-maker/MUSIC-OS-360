@@ -52,7 +52,7 @@ export interface OperationalFlow {
 // F01 — NEW ARTIST ONBOARDING
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const FLOW_ARTISTA_ONBOARDING: OperationalFlow = {
+export const FLOW_ARTIST_ONBOARDING: OperationalFlow = {
   id:          "F01",
   name:        "New artist onboarding",
   description:
@@ -158,7 +158,7 @@ export const FLOW_ARTISTA_ONBOARDING: OperationalFlow = {
 // F02 — MUSIC RELEASE
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const FLOW_LANCAMENTO_MUSICAL: OperationalFlow = {
+export const FLOW_MUSIC_RELEASE: OperationalFlow = {
   id:          "F02",
   name:        "Music release",
   description:
@@ -260,7 +260,7 @@ export const FLOW_LANCAMENTO_MUSICAL: OperationalFlow = {
 // F03 — CONTRACT LIFECYCLE
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const FLOW_CONTRATO: OperationalFlow = {
+export const FLOW_CONTRACT: OperationalFlow = {
   id:          "F03",
   name:        "Contract lifecycle",
   description:
@@ -304,7 +304,7 @@ export const FLOW_CONTRATO: OperationalFlow = {
 // F04 — FINANCIAL CYCLE
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const FLOW_FINANCEIRO: OperationalFlow = {
+export const FLOW_FINANCIAL: OperationalFlow = {
   id:          "F04",
   name:        "Financial cycle (Transaction → P&L)",
   description:
@@ -351,7 +351,7 @@ export const FLOW_FINANCEIRO: OperationalFlow = {
 // F05 — Sales flow: Lead → CLIENT → CONTRACT
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const FLOW_LEAD_CONTRATO: OperationalFlow = {
+export const FLOW_LEAD_CONTRACT: OperationalFlow = {
   id:          "F05",
   name:        "Lead → Client → Contract flow",
   description:
@@ -388,7 +388,7 @@ export const FLOW_LEAD_CONTRATO: OperationalFlow = {
 // F06 — RELEASE MARKETING CAMPAIGN
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const FLOW_CAMPANHA_MARKETING: OperationalFlow = {
+export const FLOW_MARKETING_CAMPAIGN: OperationalFlow = {
   id:          "F06",
   name:        "Release marketing campaign",
   description:
@@ -472,7 +472,7 @@ export const FLOW_TAKEDOWN: OperationalFlow = {
 // F08 — ECAD RECONCILIATION
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const FLOW_CONCILIACAO_ECAD: OperationalFlow = {
+export const FLOW_ECAD_RECONCILIATION: OperationalFlow = {
   id:          "F08",
   name:        "ECAD reconciliation",
   description:
@@ -513,7 +513,7 @@ export const FLOW_CONCILIACAO_ECAD: OperationalFlow = {
 // F09 — WORK LICENSING
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const FLOW_LICENCIAMENTO: OperationalFlow = {
+export const FLOW_LICENSING: OperationalFlow = {
   id:          "F09",
   name:        "Work licensing",
   description:
@@ -609,15 +609,15 @@ export const FLOW_TENANT_ONBOARDING: OperationalFlow = {
 // ─── Centralized flow registry ───────────────────────────────────────────────
 
 export const ALL_OPERATIONAL_FLOWS: OperationalFlow[] = [
-  FLOW_ARTISTA_ONBOARDING,
-  FLOW_LANCAMENTO_MUSICAL,
-  FLOW_CONTRATO,
-  FLOW_FINANCEIRO,
-  FLOW_LEAD_CONTRATO,
-  FLOW_CAMPANHA_MARKETING,
+  FLOW_ARTIST_ONBOARDING,
+  FLOW_MUSIC_RELEASE,
+  FLOW_CONTRACT,
+  FLOW_FINANCIAL,
+  FLOW_LEAD_CONTRACT,
+  FLOW_MARKETING_CAMPAIGN,
   FLOW_TAKEDOWN,
-  FLOW_CONCILIACAO_ECAD,
-  FLOW_LICENCIAMENTO,
+  FLOW_ECAD_RECONCILIATION,
+  FLOW_LICENSING,
   FLOW_TENANT_ONBOARDING,
 ];
 

@@ -39,7 +39,7 @@ import { TablePagination } from "@/shared/ui/table-pagination";
 import { ArtistVision360Modal } from "@/modules/artist/components/ArtistVision360Modal";
 import { ArtistFormModal } from "@/modules/artist/components/ArtistFormModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
-import { ArtistasSkeleton } from "@/shared/components/PageSkeletons";
+import { ArtistsSkeleton } from "@/shared/components/PageSkeletons";
 import { toast } from "sonner";
 import { SPECIALTY_LABELS } from "@/modules/artist/mappers";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
@@ -210,7 +210,7 @@ export default function Artists() {
 
   return (
     <>
-    {isLoading || isLoadingPage ? <ArtistasSkeleton /> : (
+    {isLoading || isLoadingPage ? <ArtistsSkeleton /> : (
     <MainLayout
       title="Artistas"
       description="Visão geral de todos os artistas"

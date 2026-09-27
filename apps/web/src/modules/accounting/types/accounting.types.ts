@@ -1,4 +1,4 @@
-import type { ArtistaRef, ClienteRef } from "@/shared/types/refs";
+import type { ArtistRef, ClientRef } from "@/shared/types/refs";
 import type {
   TransactionType,
   TransactionStatusValue,
@@ -57,8 +57,8 @@ export type TransactionInsert = Omit<Transaction, "id" | "user_id" | "created_at
 export type TransactionUpdate = Partial<TransactionInsert>;
 
 export interface TransactionWithRelations extends Transaction {
-  artistas?: ArtistaRef | null;
-  clientes?: ClienteRef | null;
+  artistas?: ArtistRef | null;
+  clientes?: ClientRef | null;
 }
 
 export interface Invoice {
@@ -87,6 +87,6 @@ export type InvoiceInsert = Omit<Invoice, "id" | "user_id" | "created_at" | "upd
 export type InvoiceUpdate = Partial<InvoiceInsert>;
 
 export interface InvoiceWithRelations extends Invoice {
-  clientes?: ClienteRef | null;
+  clientes?: ClientRef | null;
 }
 

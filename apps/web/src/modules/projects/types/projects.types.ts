@@ -1,4 +1,4 @@
-import type { ArtistaRef, ObraRef } from "@/shared/types/refs";
+import type { ArtistRef, WorkRef } from "@/shared/types/refs";
 import type { ProjectStatusValue, ProjectType } from "@/shared/types/enums";
 
 export type { ProjectStatusValue, ProjectType };
@@ -24,12 +24,12 @@ export interface Project {
 export type ProjectInsert = Omit<Project, "id" | "user_id" | "created_at" | "updated_at">;
 export type ProjectUpdate = Partial<ProjectInsert>;
 
-export interface ProjectWorkSummary extends ObraRef {
+export interface ProjectWorkSummary extends WorkRef {
   status?: string | null;
 }
 
 export interface ProjectWithRelations extends Project {
-  artistas?: ArtistaRef | null;
+  artistas?: ArtistRef | null;
   obras?: ProjectWorkSummary[] | null;
 }
 

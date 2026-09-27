@@ -80,9 +80,9 @@ function RealtimeSyncAndNotify() {
   });
 
   useWsEvent('crm.lead.captured', (d) => {
-    const nome = (d as { nome?: string }).nome;
+    const name = (d as { nome?: string }).nome;
     toast.info('Novo lead capturado', {
-      description: nome ? `Lead "${nome}" adicionado ao CRM` : undefined,
+      description: name ? `Lead "${name}" adicionado ao CRM` : undefined,
     });
   });
 

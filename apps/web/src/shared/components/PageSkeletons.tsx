@@ -203,7 +203,7 @@ export function CRMSkeleton() {
   );
 }
 
-export function ArtistasSkeleton() {
+export function ArtistsSkeleton() {
   return (
     <MainLayout>
       <div className="p-1 space-y-4 py-0">
@@ -241,7 +241,7 @@ export function ArtistasSkeleton() {
   );
 }
 
-export function FinanceiroSkeleton() {
+export function FinancialSkeleton() {
   return (
     <MainLayout>
       <div className="p-1 space-y-4 py-0">

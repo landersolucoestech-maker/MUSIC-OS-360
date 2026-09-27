@@ -10,7 +10,7 @@
  */
 
 /** Lightweight reference to an Artist (used in relations of other modules). */
-export interface ArtistaRef {
+export interface ArtistRef {
   id: string;
   nome_artistico?: string | null;
   foto_url?: string | null;
@@ -19,7 +19,7 @@ export interface ArtistaRef {
 }
 
 /** Lightweight reference to a Client / Contact. */
-export interface ClienteRef {
+export interface ClientRef {
   id: string;
   nome?: string | null;
   email?: string | null;
@@ -27,7 +27,7 @@ export interface ClienteRef {
 }
 
 /** Lightweight reference to a musical Work. */
-export interface ObraRef {
+export interface WorkRef {
   id: string;
   title: string;
   status?: string | null;
@@ -36,7 +36,7 @@ export interface ObraRef {
 }
 
 /** Lightweight reference to a sound recording. */
-export interface FonogramaRef {
+export interface PhonogramRef {
   id: string;
   title?: string | null;
   isrc?: string | null;
@@ -52,7 +52,7 @@ export interface ReleaseRef {
 }
 
 /** Lightweight reference to a Project. */
-export interface ProjetoRef {
+export interface ProjectRef {
   id: string;
   title: string;
   status?: string | null;
@@ -60,7 +60,7 @@ export interface ProjetoRef {
 }
 
 /** Lightweight reference to a Contract. */
-export interface ContratoRef {
+export interface ContractRef {
   id: string;
   title?: string | null;
   type?: string | null;
@@ -68,7 +68,7 @@ export interface ContratoRef {
 }
 
 /** Lightweight reference to an Employee. */
-export interface FuncionarioRef {
+export interface EmployeeRef {
   id: string;
   nome: string;
   cargo?: string | null;

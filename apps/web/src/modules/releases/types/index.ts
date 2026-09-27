@@ -1,4 +1,4 @@
-import type { ArtistaRef, ObraRef } from "@/shared/types/refs";
+import type { ArtistRef, WorkRef } from "@/shared/types/refs";
 import type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareCategory, ShareDirection, ShareType } from "@/shared/types/enums";
 
 export type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareCategory, ShareDirection, ShareType };
@@ -97,7 +97,7 @@ export type ReleaseInsert = Omit<Release, "id" | "user_id" | "created_at" | "upd
 export type ReleaseUpdate = Partial<ReleaseInsert>;
 
 export interface ReleaseWithRelations extends Release {
-  artistas?: ArtistaRef | null;
+  artistas?: ArtistRef | null;
 }
 
 export interface Share {
@@ -142,8 +142,8 @@ export type ShareInsert = Omit<Share, "id" | "user_id" | "created_at" | "updated
 export type ShareUpdate = Partial<ShareInsert>;
 
 export interface ShareWithRelations extends Share {
-  obras?: ObraRef | null;
-  artistas?: ArtistaRef | null;
+  obras?: WorkRef | null;
+  artistas?: ArtistRef | null;
 }
 
 export interface ShareHistoryEntry {

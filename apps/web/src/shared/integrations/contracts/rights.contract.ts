@@ -81,7 +81,7 @@ export interface RightsRegistrationStatus {
   isrc?: string | null;
 }
 
-export interface RegisterObraInput {
+export interface RegisterWorkInput {
   title: string;
   compositores: string[];
   letristas?: string[];
@@ -94,7 +94,7 @@ export interface RegisterObraInput {
   local_id: string;
 }
 
-export interface RegisterFonogramaInput {
+export interface RegisterPhonogramInput {
   title: string;
   interpretes: string[];
   compositores?: string[];
@@ -181,17 +181,17 @@ export interface GenerateISRCResult {
 
 // ─── Collection DTOs ──────────────────────────────────────────────────────────
 
-export type ArrecadacaoTipo =
+export type CollectionType =
   | "execucao_publica"   // radio, TV, live concerts
   | "streaming"          // digital platforms
   | "sincronizacao"      // films, series, advertising
   | "mecanica"           // mechanical reproduction, CDs
   | "sonorizacao";       // commercial establishments
 
-export interface ArrecadacaoEntry {
+export interface CollectionEntry {
   id: string;
   entity: RightsEntityId;
-  type: ArrecadacaoTipo;
+  type: CollectionType;
   work_id?: string | null;
   fonograma_id?: string | null;
   periodo: string;                // "YYYY-MM"
@@ -209,7 +209,7 @@ export interface ArrecadacaoSummary {
   total_bruto_cents: number;
   total_liquido_cents: number;
   total_execucoes: number;
-  por_tipo: Record<ArrecadacaoTipo, number>;
+  por_tipo: Record<CollectionType, number>;
 }
 
 // ─── Reconciliation DTOs ─────────────────────────────────────────────────────
@@ -264,16 +264,16 @@ export interface IRightsProvider {
   // ── Registration of new works/sound recordings ──────────────────────────────────────
 
   /** Registers a new work (composition) at the entity */
-  registerObra(input: RegisterObraInput): Promise<RegistrationResult>;
+  registerWork(input: RegisterWorkInput): Promise<RegistrationResult>;
 
   /** Updates data of an already registered work */
-  updateObraRegistration(externalId: string, input: Partial<RegisterObraInput>): Promise<RegistrationResult>;
+  updateWorkRegistration(externalId: string, input: Partial<RegisterWorkInput>): Promise<RegistrationResult>;
 
   /** Registers a new phonogram at the entity */
-  registerFonograma(input: RegisterFonogramaInput): Promise<RegistrationResult>;
+  registerPhonogram(input: RegisterPhonogramInput): Promise<RegistrationResult>;
 
   /** Updates data of an already registered phonogram */
-  updateFonogramaRegistration(externalId: string, input: Partial<RegisterFonogramaInput>): Promise<RegistrationResult>;
+  updatePhonogramRegistration(externalId: string, input: Partial<RegisterPhonogramInput>): Promise<RegistrationResult>;
 
   // ── Code generation ─────────────────────────────────────────────────────────
 
@@ -291,7 +291,7 @@ export interface IRightsProvider {
   // ── Collection ──────────────────────────────────────────────────────────────
 
   /** Looks up collection for a period */
-  getArrecadacao(periodo: string): Promise<ArrecadacaoEntry[]>;
+  getArrecadacao(periodo: string): Promise<CollectionEntry[]>;
 
   /** Collection summary for a period */
   getArrecadacaoSummary(periodo: string): Promise<ArrecadacaoSummary>;
