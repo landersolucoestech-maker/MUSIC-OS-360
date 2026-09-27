@@ -63,7 +63,7 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
     "useWorks/usePhonograms/useProjects/useContracts(open, artistId) receive an explicit artistId and filter server-side — not 'give me everything'.",
   "modules/artist/pages/Artists.tsx":
     "useArtists() for mutations + isLoading; the list only resolves the ?edit= deep link, with a storage.findById fallback for IDs outside the loaded batch (same pattern as Contracts.tsx).",
-  "modules/auth/pages/ArtistaSignupPublic.tsx":
+  "modules/auth/pages/ArtistSignupPublic.tsx":
     "useArtists() for mutations only (addArtist).",
   "modules/contracts/pages/Contracts.tsx":
     "useContracts() for mutations only; the list is passed to useEditQueryParam, which falls back to findById for IDs outside the loaded page.",

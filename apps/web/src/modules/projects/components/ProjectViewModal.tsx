@@ -6,7 +6,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Separator } from "@/shared/ui/separator";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Play, User, Music2, Clock, Globe, Mic, ExternalLink, FileText } from "lucide-react";
-import { parseTracksFromProject, getTrackInfo } from "@/modules/projects/lib/musica-helpers";
+import { parseTracksFromProject, getTrackInfo } from "@/modules/projects/lib/track-helpers";
 import { WorkflowTransitionPanel } from "@/shared/components/WorkflowTransitionPanel";
 import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";

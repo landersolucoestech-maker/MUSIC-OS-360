@@ -1,5 +1,5 @@
 /**
- * modules/reports/pages/Relatorios.tsx  ·  PHASE 2.5
+ * modules/reports/pages/Reports.tsx  ·  PHASE 2.5
  *
  * Reports Center — consumes ONLY the API (GET /reports/entities,
  * GET /reports/definitions). No fixed list, no mock, no registry/contract/

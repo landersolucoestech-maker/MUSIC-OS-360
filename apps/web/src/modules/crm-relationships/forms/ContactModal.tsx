@@ -1,5 +1,5 @@
 // ============================================================================
-// ContatoFormModal — create/edit a Contact (individual or legal entity).
+// ContactFormModal — create/edit a Contact (individual or legal entity).
 // ----------------------------------------------------------------------------
 // IMPORTANT: some fields below (foto, interacoes, funcao/cargo_responsavel,
 // cep/logradouro/numero/complemento/bairro, status_contato, prioridade,
@@ -20,8 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import { fetchAddressByCEP, maskCEP, maskCNPJ, maskCPF, maskPhone } from "@/shared/lib/masks";
 import { contactPriorityOptions, contactStatusOptions, contactTypeOptions } from "../constants";
-import { BR_STATES } from "../shared/estados";
-import { INTERACTION_TYPE_OPTIONS, type Interaction } from "../shared/interacoes";
+import { BR_STATES } from "../shared/brazilian-states";
+import { INTERACTION_TYPE_OPTIONS, type Interaction } from "../shared/interactions";
 
 
 // ----------------------------------------------------------------------------

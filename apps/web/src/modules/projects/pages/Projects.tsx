@@ -30,7 +30,7 @@ import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { storage } from "@/shared/lib/storage";
 import type { ProjectWithRelationsExtended } from "@/modules/projects/types/projects-extensions";
-import { getFirstTrackInfo, parseTracksFromProject } from "@/modules/projects/lib/musica-helpers";
+import { getFirstTrackInfo, parseTracksFromProject } from "@/modules/projects/lib/track-helpers";
 
 // In mock mode (and over HTTP — /projects does not join the artist) the
 // backend does not return the embedded `artistas` relation. Inject it manually

@@ -2,7 +2,7 @@ import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import type { SuspenseRouteComponent } from "./types";
 
-const Reports = lazy(() => import("@/modules/reports/pages/Relatorios"));
+const Reports = lazy(() => import("@/modules/reports/pages/Reports"));
 
 export function reportsRoutes(P: SuspenseRouteComponent) {
   return (

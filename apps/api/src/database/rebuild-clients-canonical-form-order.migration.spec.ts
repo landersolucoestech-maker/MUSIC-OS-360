@@ -3,7 +3,7 @@ import * as path from 'path';
 
 /**
  * Permanent guard (2026-07-19 audit): physical rebuild of
- * `clients` in the real form's order (ContatoFormModal — "Contact =
+ * `clients` in the real form's order (ContactFormModal — "Contact =
  * Client"). The contact classification (tipo_pessoa/categoria/perfil) is the
  * first real section.
  */

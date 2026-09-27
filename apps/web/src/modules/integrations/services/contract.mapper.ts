@@ -1,5 +1,5 @@
 /**
- * integrations/mappers/contrato.mapper.ts
+ * integrations/mappers/contract.mapper.ts
  *
  * Mapper between the Contract domain entity (mockData) and the digital
  * signature DTOs (ISigningProvider).

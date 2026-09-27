@@ -1,5 +1,5 @@
 /**
- * LeadViewModal.interacoes-equipe.guard.test.ts
+ * LeadViewModal.interactions-team.guard.test.ts
  *
  * Permanent guard (REM-04 / GAP-10): `historicoInteracoes` was always []
  * — the real team interaction log (`/lead-interactions`) was never

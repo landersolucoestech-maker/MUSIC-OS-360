@@ -159,7 +159,7 @@ export function resolveFlagsForPlan(
  *   - monitoring/rights: `modules/monitoring/rights/services/rights-source.ts`
  *   - support (partial): `modules/support/hooks/useSupport.ts` (only tickets have a real endpoint)
  *
- * Reports: `Relatorios.tsx` is already 100% driven by the real backend
+ * Reports: `Reports.tsx` is already 100% driven by the real backend
  * (`/reports/entities`, `/reports/definitions`) — no gate/mock, removed from here.
  *
  * When the corresponding backend is implemented, remove it from the list.

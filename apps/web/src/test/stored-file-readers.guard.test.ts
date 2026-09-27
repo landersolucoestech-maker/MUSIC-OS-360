@@ -52,7 +52,7 @@ describe("stored document readers go through the tenant-checked download", () =>
       "modules/accounting/components/TransactionViewModal.tsx",
       "modules/accounting/components/InvoiceViewModal.tsx",
       "modules/accounting/pages/Invoices.tsx",
-      "modules/crm-relationships/modals/ContatoViewModal.tsx",
+      "modules/crm-relationships/modals/ContactViewModal.tsx",
       "modules/releases/components/ShareViewModal.tsx",
       "modules/monitoring/components/ECADViewModal.tsx",
       "shared/components/ChatAttachment.tsx",

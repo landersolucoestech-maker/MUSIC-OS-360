@@ -1,5 +1,5 @@
 /**
- * agenda-calendar-date-field.guard.test.ts
+ * schedule-calendar-date-field.guard.test.ts
  *
  * Permanent guard (Task S): the Agenda calendar built each event
  * reading `evento.start_date`/`evento.horario_inicio`/`evento.horario_fim` —
@@ -13,7 +13,7 @@ import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const FILE_PATH = path.resolve(__dirname, "Agenda.tsx");
+const FILE_PATH = path.resolve(__dirname, "Schedule.tsx");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
 function schedulerEventsBody(): string {

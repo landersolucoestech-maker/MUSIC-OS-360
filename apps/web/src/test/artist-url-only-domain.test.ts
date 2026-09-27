@@ -1,5 +1,5 @@
 /**
- * artista-url-only-domain.test.ts
+ * artist-url-only-domain.test.ts
  *
  * Regression: no payload produced by the Artist form/mapper may contain
  * spotify_artist_id/youtube_artist_id/youtube_channel_id

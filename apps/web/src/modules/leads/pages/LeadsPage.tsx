@@ -14,9 +14,9 @@ import { LeadFormModal, type Interaction, type LeadFormPayload } from "../modals
 import { LeadViewModal } from "../modals/LeadViewModal";
 import { LeadsTable } from "../tables/LeadsTable";
 import type { Lead, LeadClientType, LeadServiceType } from "../types";
-import { ContactsPanel } from "@/modules/crm-relationships/components/ContatosPanel";
+import { ContactsPanel } from "@/modules/crm-relationships/components/ContactsPanel";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
+import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
 
 // ─────────────────────────────────────────────
 // Conditional combos

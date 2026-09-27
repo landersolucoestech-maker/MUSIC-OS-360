@@ -20,7 +20,7 @@ import { Label } from "@/shared/ui/label";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
 import { contactPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
-import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
+import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
 import { contactTypeOptions, labelFor } from "@/modules/crm-relationships/constants";
 import type { Contact } from "@/modules/crm-relationships/types";
 import type { DistributorEntry } from "@/modules/artist/types/artist.types";

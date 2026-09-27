@@ -1,5 +1,5 @@
 /**
- * ContractWizard.valor-persist.guard.test.ts
+ * ContractWizard.amount-persist.guard.test.ts
  *
  * Guarda permanente (CODEBASE_MAP Gotcha #22 — "Contract-creation wizard
  * never populates the `valor`/`fixed_value` column"): the primary

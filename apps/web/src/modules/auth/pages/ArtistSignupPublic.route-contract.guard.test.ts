@@ -1,5 +1,5 @@
 /**
- * ArtistaSignupPublic.route-contract.guard.test.ts
+ * ArtistSignupPublic.route-contract.guard.test.ts
  *
  * Permanent guard: the public artist registration form (Artist
  * Public Form — official intake channel, product decision 2026-08-22)
@@ -15,9 +15,9 @@ import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const SOURCE = fs.readFileSync(path.resolve(__dirname, "ArtistaSignupPublic.tsx"), "utf8");
+const SOURCE = fs.readFileSync(path.resolve(__dirname, "ArtistSignupPublic.tsx"), "utf8");
 
-describe("ArtistaSignupPublic — real contract with /public/artist-registration", () => {
+describe("ArtistSignupPublic — real contract with /public/artist-registration", () => {
   it("calls the real backend route (not /public/artists, which never existed)", () => {
     expect(SOURCE).toMatch(/"\/public\/artist-registration"/);
     expect(SOURCE).not.toMatch(/"\/public\/artists"/);

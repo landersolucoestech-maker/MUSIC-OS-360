@@ -16,5 +16,5 @@ export {
   type ContactFormValues,
 } from "./ContactComponents";
 
-export { ContactsPanel } from "./ContatosPanel";
-export { ContactsTable } from "./ContatosTable";
+export { ContactsPanel } from "./ContactsPanel";
+export { ContactsTable } from "./ContactsTable";

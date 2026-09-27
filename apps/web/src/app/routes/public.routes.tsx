@@ -13,7 +13,7 @@ const Auth = lazy(() => import("@/modules/auth/pages/Auth"));
 const Register = lazy(() => import("@/modules/auth/pages/Register"));
 const ResetPassword = lazy(() => import("@/modules/auth/pages/ResetPassword"));
 const ChangeRequiredPassword = lazy(() => import("@/modules/auth/pages/ChangeRequiredPassword"));
-const ArtistSignupPublic = lazy(() => import("@/modules/auth/pages/ArtistaSignupPublic"));
+const ArtistSignupPublic = lazy(() => import("@/modules/auth/pages/ArtistSignupPublic"));
 const NotFound = lazy(() => import("@/shared/pages/NotFound"));
 const OAuthPopupPage    = lazy(() => import("@/modules/integrations/pages/OAuthPopupPage"));
 const OAuthCallbackPage = lazy(() => import("@/modules/integrations/pages/OAuthCallbackPage"));

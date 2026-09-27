@@ -3,11 +3,11 @@ import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { getExpectedUpdatedAt } from "@/shared/hooks/useConcurrencyConflict";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import { ContactsTable } from "./ContatosTable";
+import { ContactsTable } from "./ContactsTable";
 import { useContacts } from "../hooks/useContacts";
 import { contactPayloadToContactData } from "../services/contacts.service";
-import { ContactFormModal, type ContactFormPayload } from "../modals/ContatoFormModal";
-import { ContactViewModal } from "../modals/ContatoViewModal";
+import { ContactFormModal, type ContactFormPayload } from "../modals/ContactFormModal";
+import { ContactViewModal } from "../modals/ContactViewModal";
 import type { Contact, ContactType } from "../types";
 
 // ─────────────────────────────────────────────
@@ -40,7 +40,7 @@ function contactToFormPayload(contact: Contact): Partial<ContactFormPayload> {
   const str = (k: string) => (typeof po[k] === "string" ? (po[k] as string) : "");
 
   // Normalizes tipo_pessoa: accepts every legacy format and always returns
-  // "pessoa_fisica" | "pessoa_juridica" — the only value ContatoFormModal understands.
+  // "pessoa_fisica" | "pessoa_juridica" — the only value ContactFormModal understands.
   const rawType = str("tipo_pessoa");
   const personType: "pessoa_fisica" | "pessoa_juridica" =
     rawType === "pessoa_juridica" ||
@@ -116,7 +116,7 @@ export type ContactsPanelHandle = {
 };
 
 export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, never>>(
-  function ContatosPanel(_, ref) {
+  function ContactsPanel(_, ref) {
     const { contacts, isLoading, createContact, updateContact, deleteContact } = useContacts();
 
     const [filter, setFilter]         = useState<TypeFilter>("todos");

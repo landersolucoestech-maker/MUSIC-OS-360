@@ -9,7 +9,7 @@
  * platform ID; that is a documented exception restricted to the backend's
  * integration layer — see apps/api's legacy-platform-fields.guard.spec.ts).
  *
- * Documented exception: artista-url-only-domain.test.ts references the legacy
+ * Documented exception: artist-url-only-domain.test.ts references the legacy
  * names as a fixture, precisely to prove the mapper/form NEVER
  * produces them — referencing them there is the regression test itself.
  */
@@ -19,7 +19,7 @@ import * as path from "path";
 
 const SRC_ROOT = path.resolve(__dirname, "..");
 const THIS_FILE = path.resolve(__filename);
-const REGRESSION_TEST_EXCEPTION = path.resolve(SRC_ROOT, "test/artista-url-only-domain.test.ts");
+const REGRESSION_TEST_EXCEPTION = path.resolve(SRC_ROOT, "test/artist-url-only-domain.test.ts");
 
 const FORBIDDEN_SNAKE = [
   /spotify_artist_id/i,

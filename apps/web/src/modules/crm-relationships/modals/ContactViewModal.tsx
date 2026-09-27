@@ -18,7 +18,7 @@ import {
 import { contactPriorityOptions, contactStatusOptions, contactTypeOptions, labelFor } from "../constants";
 import { profileLabel, type ContactPersonType } from "../constants/contact-classification";
 import { useClientTimeline } from "../hooks/useClientTimeline";
-import { INTERACTION_TYPE_OPTIONS } from "../shared/interacoes";
+import { INTERACTION_TYPE_OPTIONS } from "../shared/interactions";
 import type { Contact } from "../types";
 import { useSkillRun } from "@/shared/hooks/useSkillRun";
 import { SkillRunPanel } from "@/shared/components/SkillRunPanel";

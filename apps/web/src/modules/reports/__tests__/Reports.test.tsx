@@ -83,9 +83,9 @@ vi.mock("@/shared/components/MainLayout", () => ({
   MainLayout: ({ children }) => <div>{children}</div>,
 }));
 
-import Reports from "../pages/Relatorios";
+import Reports from "../pages/Reports";
 
-describe("Relatorios - API-driven contract", () => {
+describe("Reports - API-driven contract", () => {
   it("renders only reportable entities returned by the API", () => {
     render(<Reports />);
 

@@ -5,11 +5,11 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 /**
- * Regression: `periodLabel` in Agenda.tsx called `date-fns#format` without
+ * Regression: `periodLabel` in Schedule.tsx called `date-fns#format` without
  * `{ locale: ptBR }`, so the month name came out in English by date-fns default
  * ("24 — 30 de August, 2026" / "August de 2026") even with the rest
  * of the screen in Portuguese. This test proves the mechanism (format with/without locale
- * produces different month names) and ensures Agenda.tsx always passes
+ * produces different month names) and ensures Schedule.tsx always passes
  * `{ locale: ptBR }` in the four calls that build the period label.
  */
 describe("date-fns format — locale pt-BR", () => {
@@ -33,8 +33,8 @@ describe("date-fns format — locale pt-BR", () => {
   });
 });
 
-describe("Agenda.tsx — guard against a locale regression", () => {
-  const SOURCE = fs.readFileSync(path.resolve(__dirname, "Agenda.tsx"), "utf8");
+describe("Schedule.tsx — guard against a locale regression", () => {
+  const SOURCE = fs.readFileSync(path.resolve(__dirname, "Schedule.tsx"), "utf8");
 
   it('imports ptBR from "date-fns/locale"', () => {
     expect(SOURCE).toMatch(/import\s*\{\s*ptBR\s*\}\s*from\s*"date-fns\/locale"/);

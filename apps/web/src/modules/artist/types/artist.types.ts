@@ -44,7 +44,7 @@ export interface ArtistRelationship {
  * compatibility with old persisted data (still read/written by
  * `ArtistFormModal`/`artist.mapper.ts` as a pass-through, so existing data is
  * not discarded). NOT used by the public self-signup flow
- * (`ArtistaSignupPublic`) — that flow uses its own disconnected local shape
+ * (`ArtistSignupPublic`) — that flow uses its own disconnected local shape
  * (`ContatoEquipe`), sent as part of a Lead payload and never converted to this
  * type. New panel creates/edits use `linkedContacts`.
  */

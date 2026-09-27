@@ -37,7 +37,7 @@ import { toast } from "sonner";
 import { LeadFormModal, type LeadFormPayload } from "@/modules/leads/modals/LeadFormModal";
 import { useLeads } from "@/modules/leads/hooks";
 import type { Lead, LeadClientType, LeadServiceType } from "@/modules/leads/types";
-import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
+import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
 import { contactPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
 import { SchedulerFormModal } from "@/modules/events/components/SchedulerFormModal";

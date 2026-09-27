@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import { ContactsTable } from "@/modules/crm-relationships/components/ContatosTable";
+import { ContactsTable } from "@/modules/crm-relationships/components/ContactsTable";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
-import { ContactViewModal } from "@/modules/crm-relationships/modals/ContatoViewModal";
+import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
+import { ContactViewModal } from "@/modules/crm-relationships/modals/ContactViewModal";
 import type { Contact, ContactType } from "@/modules/crm-relationships/types";
 
 type TypeFilter =

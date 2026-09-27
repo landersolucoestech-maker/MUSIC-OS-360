@@ -1,5 +1,5 @@
 /**
- * artista-tipo-canonical.guard.test.ts
+ * artist-type-canonical.guard.test.ts
  *
  * Permanent guard (Artists Schema 15): the concept of "artist line-up type"
  * (solo/band/duo/trio/group/collective, and the old "artista_solo" form) was

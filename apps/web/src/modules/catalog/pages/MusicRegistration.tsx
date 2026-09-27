@@ -39,7 +39,7 @@ import {
 } from "@/modules/catalog/hooks/useCatalogPaginated";
 import type { Work, Phonogram } from "@/modules/catalog/types/catalog.types";
 import { projectToWorkSeed } from "@/modules/catalog/mappers";
-import { parseTracksFromProject } from "@/modules/projects/lib/musica-helpers";
+import { parseTracksFromProject } from "@/modules/projects/lib/track-helpers";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useSignedArtists } from "@/modules/artist/hooks/useSignedArtists";
 
