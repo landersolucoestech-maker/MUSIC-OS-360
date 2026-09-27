@@ -2,7 +2,7 @@
  "totals": {
   "comment": 1,
   "eventQueueJob": 8,
-  "identifier": 1621
+  "identifier": 1618
  },
  "debt": {
   "comment::apps/web/src/modules/integrations/components/MarketingOAuthDialog.tsx": 1,
@@ -16,10 +16,7 @@
   "identifier::apps/api/scripts/verify-phase5-dashboard.ts::property::receitas": 2,
   "identifier::apps/api/src/common/persistence/optimistic-update.util.spec.ts::property::nome": 1,
   "identifier::apps/api/src/core/automation/artist-profile-analysis.automation.ts::property::nome_artistico": 1,
-  "identifier::apps/api/src/core/automation/campaign-plan.automation.ts::property::nome": 1,
   "identifier::apps/api/src/core/automation/campaign-plan.automation.ts::property::orcamento": 1,
-  "identifier::apps/api/src/core/automation/campaign-report.automation.ts::property::nome": 1,
-  "identifier::apps/api/src/core/automation/campaign-strategy.automation.ts::property::nome": 1,
   "identifier::apps/api/src/core/automation/catalog-metadata-validator.automation.ts::property::compositor": 1,
   "identifier::apps/api/src/core/automation/catalog-metadata-validator.automation.ts::property::compositores": 1,
   "identifier::apps/api/src/core/automation/catalog-metadata-validator.automation.ts::property::editora": 1,

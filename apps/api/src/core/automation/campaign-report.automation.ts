@@ -44,7 +44,7 @@ import { runNativeSkillAutomation } from './native-skill-automation.runner';
 const SKILL_NAME = 'campaign-report';
 
 interface CampaignRow {
-  nome: string | null;
+  name: string | null;
   type: string | null;
   objetivo: string | null;
   status: string | null;
@@ -107,7 +107,7 @@ export class CampaignReportAutomation {
   ): Promise<CampaignRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT c.nome, c.type, c.objetivo, c.status, c.start_date, c.end_date, c.metadata,
+      `SELECT c.name, c.type, c.objetivo, c.status, c.start_date, c.end_date, c.metadata,
               a.nome_artistico AS artist_name,
               (SELECT COUNT(*) FROM campaign_tasks t WHERE t.campaign_id = c.id AND t.tenant_id = c.tenant_id) AS tasks_total,
               (SELECT COUNT(*) FROM campaign_tasks t WHERE t.campaign_id = c.id AND t.tenant_id = c.tenant_id AND t.status = 'done') AS tasks_completed,
@@ -140,7 +140,7 @@ export class CampaignReportAutomation {
 
   private buildInput(c: CampaignRow): CampaignReportInput {
     const input: CampaignReportInput = {
-      campaignName: c.nome?.trim() || 'Campanha',
+      campaignName: c.name?.trim() || 'Campanha',
       campaignType: c.type?.trim() || 'geral',
       // CampaignStatus.CANCELLED is the only outcome that is not "completed";
       // any other status at this point of the lifecycle (ENDED) is a completion.

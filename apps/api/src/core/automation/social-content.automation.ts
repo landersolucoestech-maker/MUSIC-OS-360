@@ -102,7 +102,7 @@ export class SocialContentAutomation {
     if (!this.ds) return null;
     const rows = (await manager.query(
       `SELECT p.title, p.target_type, p.target_name, p.channel, p.content_type, p.copy, p.metadata,
-              c.nome AS campaign_name
+              c.name AS campaign_name
          FROM marketing_content_posts p
          LEFT JOIN campaigns c
            ON c.id = p.campaign_id AND c.tenant_id = p.tenant_id AND c.deleted_at IS NULL

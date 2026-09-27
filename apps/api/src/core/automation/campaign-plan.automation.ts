@@ -36,7 +36,7 @@ import { runNativeSkillAutomation } from './native-skill-automation.runner';
 const SKILL_NAME = 'campaign-plan';
 
 interface CampaignRow {
-  nome: string | null;
+  name: string | null;
   type: string | null;
   objetivo: string | null;
   orcamento: string | null;
@@ -96,7 +96,7 @@ export class CampaignPlanAutomation {
   ): Promise<CampaignRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT c.nome, c.type, c.objetivo, c.orcamento, c.start_date, c.end_date, c.metadata,
+      `SELECT c.name, c.type, c.objetivo, c.orcamento, c.start_date, c.end_date, c.metadata,
               a.nome_artistico AS artist_name
          FROM campaigns c
          LEFT JOIN artists a
@@ -128,7 +128,7 @@ export class CampaignPlanAutomation {
     const md = (c.metadata ?? {}) as Record<string, unknown>;
 
     const input: CampaignPlanInput = {
-      campaignName: c.nome?.trim() || 'Campanha',
+      campaignName: c.name?.trim() || 'Campanha',
       campaignType: c.type?.trim() || 'geral',
       language: 'pt-BR',
     };
