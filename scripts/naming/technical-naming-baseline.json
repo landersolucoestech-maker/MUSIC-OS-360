@@ -2,7 +2,7 @@
  "totals": {
   "apiRoute": 1,
   "dbColumn": 208,
-  "doc": 15573,
+  "doc": 13929,
   "eventQueueJob": 13,
   "frontendRoute": 14,
   "identifier": 2371,
@@ -373,7 +373,6 @@
   "doc::docs/backend-v2/field-traceability/modules/workspace.md": 3,
   "doc::docs/backend-v2/gap-resolution/00-canonical-gap-register.md": 883,
   "doc::docs/backend-v2/review/00-master-domain-functional-verification.md": 1779,
-  "doc::docs/backend-v2/review/01-full-project-exhaustive-verification.md": 1644,
   "doc::docs/engineering/ux-language-glossary.md": 13,
   "doc::docs/runbooks/dr.md": 33,
   "doc::docs/runbooks/migration-reconciliation.md": 46,
