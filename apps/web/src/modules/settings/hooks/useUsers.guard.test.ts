@@ -14,7 +14,7 @@ const FILE_PATH = path.resolve(__dirname, "useUsers.ts");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
 describe("useUsers — profile and RBAC contracts", () => {
-  it("traduz full_name para fullName no PATCH de perfil", () => {
+  it("maps full_name to fullName in the profile PATCH", () => {
     expect(SOURCE).toMatch(/fullName:\s*full_name/);
     expect(SOURCE).toMatch(/api\.patch\(`\/users\/\$\{id\}`,\s*profilePayload\)/);
   });

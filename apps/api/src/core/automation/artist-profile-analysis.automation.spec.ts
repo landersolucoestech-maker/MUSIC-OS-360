@@ -87,7 +87,7 @@ const VALID_ANALYSIS_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'artist.created:t1:a1';
 
 describe('ArtistProfileAnalysisAutomation (artist.created → artist-profile-analysis)', () => {
-  it('Fluxo: executa, registra skill_run e grava artists.metadata.aiProfileAnalysis no sucesso', async () => {
+  it('flow: runs, records skill_run and stores artists.metadata.aiProfileAnalysis on success', async () => {
     const { ds, query } = makeDs([ARTIST_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_ANALYSIS_JSON);

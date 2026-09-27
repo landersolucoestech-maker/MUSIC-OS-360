@@ -12,7 +12,7 @@ import { useMemo, useState } from "react";
 import { useMarketingAnalytics } from "./useMarketingAnalytics";
 import { useMarketingCampaigns } from "./useMarketingCampaigns";
 import {
-  buildCentralAnaliticaModel,
+  buildAnalyticsHubModel,
   rankContent,
 } from "../analytics/analytics-hub.data";
 import {
@@ -53,7 +53,7 @@ export function useMarketingAnalyticsHub() {
   const error = analytics.error ?? campaigns.error ?? null;
 
   const model = useMemo(
-    () => buildCentralAnaliticaModel(analytics.data, campaigns.data ?? []),
+    () => buildAnalyticsHubModel(analytics.data, campaigns.data ?? []),
     [analytics.data, campaigns.data],
   );
 
@@ -109,5 +109,5 @@ export function useMarketingAnalyticsHub() {
   };
 }
 
-export type CentralAnaliticaController = ReturnType<typeof useMarketingAnalyticsHub>;
+export type AnalyticsHubController = ReturnType<typeof useMarketingAnalyticsHub>;
 

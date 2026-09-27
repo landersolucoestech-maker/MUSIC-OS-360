@@ -9,7 +9,7 @@ import type {
   BreakdownDimension,
   BreakdownRow,
   CampaignPerformanceVM,
-  CentralAnaliticaModel,
+  AnalyticsHubModel,
   ContentPerformance,
   MetricCardVM,
   PlatformBlock,
@@ -162,10 +162,10 @@ function trend(overview: AnalyticsOverview | undefined): TrendPoint[] {
   }));
 }
 
-export function buildCentralAnaliticaModel(
+export function buildAnalyticsHubModel(
   overview: AnalyticsOverview | undefined,
   campaigns: MarketingCampaign[],
-): CentralAnaliticaModel {
+): AnalyticsHubModel {
   const source = overview?.breakdownByDimension;
   const unavailable: BreakdownRow[] = [];
   const breakdown: Record<BreakdownDimension, BreakdownRow[]> = {

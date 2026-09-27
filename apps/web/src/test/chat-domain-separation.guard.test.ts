@@ -23,7 +23,7 @@ const read = (rel: string) => fs.readFileSync(path.resolve(SRC_ROOT, rel), "utf8
  *  false-positive against a check for actual forceMount usage. */
 const readCode = (rel: string) => read(rel).replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
 
-const CHAT_INTERNO_VIEW = "modules/musicchat-internal/components/InternalChatView.tsx";
+const INTERNAL_CHAT_VIEW = "modules/musicchat-internal/components/InternalChatView.tsx";
 const SUPPORT_CENTER_VIEW = "modules/musicchat/components/SupportCenterView.tsx";
 const MUSICCHAT_PAGE = "modules/musicchat/pages/MusicChat.tsx";
 const CHAT_ROUTES = "app/routes/chat.routes.tsx";
@@ -40,17 +40,17 @@ const INTERNAL_TEAM_TERMS = [
 
 describe("Permanent guard: internal chat and the support center never mix", () => {
   it("InternalChatView.tsx and SupportCenterView.tsx exist as isolated components", () => {
-    expect(fs.existsSync(path.resolve(SRC_ROOT, CHAT_INTERNO_VIEW))).toBe(true);
+    expect(fs.existsSync(path.resolve(SRC_ROOT, INTERNAL_CHAT_VIEW))).toBe(true);
     expect(fs.existsSync(path.resolve(SRC_ROOT, SUPPORT_CENTER_VIEW))).toBe(true);
   });
 
   it("InternalChatView.tsx imports nothing from modules/musicchat/ (support center)", () => {
-    const content = read(CHAT_INTERNO_VIEW);
+    const content = read(INTERNAL_CHAT_VIEW);
     expect(content).not.toMatch(/from ["']@\/modules\/musicchat\//);
   });
 
   it("InternalChatView.tsx references no external-channel/support term", () => {
-    const content = read(CHAT_INTERNO_VIEW);
+    const content = read(INTERNAL_CHAT_VIEW);
     const hits = EXTERNAL_CHANNEL_TERMS.filter((pattern) => pattern.test(content)).map(String);
     expect(hits).toEqual([]);
   });
@@ -67,7 +67,7 @@ describe("Permanent guard: internal chat and the support center never mix", () =
   });
 
   it("neither component uses Radix Tabs forceMount (root cause of the original bug)", () => {
-    expect(readCode(CHAT_INTERNO_VIEW)).not.toMatch(/forceMount/);
+    expect(readCode(INTERNAL_CHAT_VIEW)).not.toMatch(/forceMount/);
     expect(readCode(SUPPORT_CENTER_VIEW)).not.toMatch(/forceMount/);
   });
 

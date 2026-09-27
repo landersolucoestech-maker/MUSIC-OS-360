@@ -319,7 +319,7 @@ export function ArtistVision360Modal({
   const { releases: actualReleases } = useReleases(open, artistId);
   const { projects: actualProjects } = useProjects(open, artistId);
   const {
-    metas: actualMetas,
+    metas: actualGoals,
     addMeta,
     updateMeta,
     deleteMeta,
@@ -660,17 +660,17 @@ export function ArtistVision360Modal({
     await deleteMeta(String(id));
   };
 
-  const metasInProgress = actualMetas.filter(
+  const goalsInProgress = actualGoals.filter(
     (m) => m.status === "em_progresso",
   ).length;
-  const completedMetas = actualMetas.filter(
+  const completedGoals = actualGoals.filter(
     (m) => m.status === "concluida",
   ).length;
   const averageProgress =
-    actualMetas.length > 0
+    actualGoals.length > 0
       ? Math.round(
-          actualMetas.reduce((acc, m) => acc + calcProgress(m), 0) /
-            actualMetas.length,
+          actualGoals.reduce((acc, m) => acc + calcProgress(m), 0) /
+            actualGoals.length,
         )
       : 0;
 
@@ -1100,7 +1100,7 @@ export function ArtistVision360Modal({
                   <div className="grid grid-cols-3 gap-4 mt-4 text-center">
                     <div>
                       <p className="text-2xl font-bold text-warning">
-                        {metasInProgress}
+                        {goalsInProgress}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Em Progresso
@@ -1108,14 +1108,14 @@ export function ArtistVision360Modal({
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-success">
-                        {completedMetas}
+                        {completedGoals}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Concluídas
                       </p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{actualMetas.length}</p>
+                      <p className="text-2xl font-bold">{actualGoals.length}</p>
                       <p className="text-xs text-muted-foreground">Total</p>
                     </div>
                   </div>
@@ -2443,12 +2443,12 @@ export function ArtistVision360Modal({
                   {/* Summary */}
                   <div className="grid grid-cols-4 gap-4 mb-6">
                     <div className="text-center p-3 bg-muted/50 rounded-lg">
-                      <p className="text-2xl font-bold">{actualMetas.length}</p>
+                      <p className="text-2xl font-bold">{actualGoals.length}</p>
                       <p className="text-xs text-muted-foreground">Total</p>
                     </div>
                     <div className="text-center p-3 bg-warning/10 rounded-lg">
                       <p className="text-2xl font-bold text-warning">
-                        {metasInProgress}
+                        {goalsInProgress}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Em Progresso
@@ -2456,7 +2456,7 @@ export function ArtistVision360Modal({
                     </div>
                     <div className="text-center p-3 bg-success/10 rounded-lg">
                       <p className="text-2xl font-bold text-success">
-                        {completedMetas}
+                        {completedGoals}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Concluídas
@@ -2472,7 +2472,7 @@ export function ArtistVision360Modal({
                     </div>
                   </div>
 
-                  {actualMetas.length === 0 ? (
+                  {actualGoals.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
                       <Target className="h-16 w-16 text-muted-foreground mb-4" />
                       <h4 className="font-medium mb-1">
@@ -2492,7 +2492,7 @@ export function ArtistVision360Modal({
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {actualMetas.map((meta) => {
+                      {actualGoals.map((meta) => {
                         const progress = calcProgress(meta);
                         const statusInfo = metaStatusOptions.find(
                           (s) => s.value === meta.status,

@@ -98,7 +98,7 @@ export function getProgressPercent(meta: Pick<Meta, "valorAtual" | "valorAlvo"> 
   );
 }
 
-const EMPTY_METAS: Meta[] = [];
+const EMPTY_GOALS: Meta[] = [];
 
 export function useGoals(enabled = true, artistId?: string) {
   const createMeta = useCreateGoal();
@@ -113,7 +113,7 @@ export function useGoals(enabled = true, artistId?: string) {
     enabled,
   });
   return {
-    metas: query.data ?? EMPTY_METAS,
+    metas: query.data ?? EMPTY_GOALS,
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,

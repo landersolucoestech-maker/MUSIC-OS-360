@@ -171,7 +171,7 @@ export interface BreakdownRow {
 }
 
 /** Consolidated view model produced by the adapter / hook. */
-export interface CentralAnaliticaModel {
+export interface AnalyticsHubModel {
   dataSource: DataSourceStatus;
   executiveKpis: MetricCardVM[];
   trend: TrendPoint[];

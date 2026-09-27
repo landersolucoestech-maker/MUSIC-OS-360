@@ -20,8 +20,8 @@ async function validatePayload(dto: new () => object, payload: Record<string, un
 }
 
 function decoratedPropertyNames(dto: new () => object): string[] {
-  const metas = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
-  return Array.from(new Set(metas.map((m) => m.propertyName)));
+  const validationMetadata = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
+  return Array.from(new Set(validationMetadata.map((m) => m.propertyName)));
 }
 
 describe('CreateShareDto/UpdateShareDto — holderName does not accept empty/whitespace (Phase 5 / C6)', () => {

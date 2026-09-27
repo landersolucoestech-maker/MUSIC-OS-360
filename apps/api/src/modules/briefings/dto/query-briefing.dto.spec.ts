@@ -12,8 +12,8 @@ import { validate, getMetadataStorage } from 'class-validator';
 import { QueryBriefingDto } from './briefings.dto';
 
 function decoratedPropertyNames(dto: new () => object): string[] {
-  const metas = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
-  return Array.from(new Set(metas.map((m) => m.propertyName)));
+  const validationMetadata = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
+  return Array.from(new Set(validationMetadata.map((m) => m.propertyName)));
 }
 
 async function validatePayload(payload: Record<string, unknown>) {

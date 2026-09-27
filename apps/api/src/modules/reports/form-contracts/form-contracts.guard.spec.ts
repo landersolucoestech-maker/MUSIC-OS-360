@@ -71,8 +71,8 @@ const REPORT_DTO_EXCLUSIONS: Record<string, Record<string, string>> = {
 };
 
 function dtoFields(dto: new () => object): string[] {
-  const metas = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
-  return Array.from(new Set(metas.map((m) => m.propertyName)));
+  const validationMetadata = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
+  return Array.from(new Set(validationMetadata.map((m) => m.propertyName)));
 }
 
 describe('form-contracts — permanent guard form ↔ contract ↔ import/export', () => {

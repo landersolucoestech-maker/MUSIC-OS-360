@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertTriangle, XCircle, Info, CheckCircle, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Trash2 } from "lucide-react";
 import { formatRightsDate } from "../utils/date-format";
 
-export type DivergenciaSeverity = "critica" | "alta" | "media" | "baixa";
+export type DivergenceSeverity = "critica" | "alta" | "media" | "baixa";
 
 export interface DivergenceHistoryEntry {
   data: string;
@@ -17,14 +17,14 @@ export interface DivergenceHistoryEntry {
   por?: string;
 }
 
-export interface Divergencia {
+export interface Divergence {
   id: string;
   type: string;
   descricao: string;
   obra?: string;
   isrc?: string;
   origem?: string;
-  severity: DivergenciaSeverity;
+  severity: DivergenceSeverity;
   risco_score: number;
   data: string;
   status: "aberta" | "em_resolucao" | "resolvida";
@@ -36,7 +36,7 @@ export interface Divergencia {
   historico?: DivergenceHistoryEntry[];
 }
 
-const SEVERITY_CONFIG: Record<DivergenciaSeverity, { label: string; variant: BadgeVariant; icon: ReactNode; border: string }> = {
+const SEVERITY_CONFIG: Record<DivergenceSeverity, { label: string; variant: BadgeVariant; icon: ReactNode; border: string }> = {
   critica: { label: "Crítica",  variant: "danger",  icon: <XCircle className="h-4 w-4 text-destructive" />,    border: "border-l-destructive" },
   alta:    { label: "Alta",     variant: "warning", icon: <AlertTriangle className="h-4 w-4 text-orange-500" />, border: "border-l-orange-500" },
   media:   { label: "Média",    variant: "warning", icon: <AlertTriangle className="h-4 w-4 text-warning" />,    border: "border-l-warning" },
@@ -45,20 +45,20 @@ const SEVERITY_CONFIG: Record<DivergenciaSeverity, { label: string; variant: Bad
 
 
 interface Props {
-  divergencias: Divergencia[];
-  onResolve?: (div: Divergencia) => void;
+  divergencias: Divergence[];
+  onResolve?: (div: Divergence) => void;
   onBulkDelete?: (ids: string[]) => void;
 }
 
 type SortKey = "type" | "obra" | "isrc" | "origem" | "severity" | "risco_score" | "data" | "status";
 type SortDirection = "asc" | "desc";
 
-export function DivergencesPanel({ divergencias, onResolve, onBulkDelete }: Props) {
+export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkDelete }: Props) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("data");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const abertas = divergencias.filter(d => d.status !== "resolvida");
-  const sortedDivergencias = useMemo(() => {
+  const abertas = divergences.filter(d => d.status !== "resolvida");
+  const sortedDivergences = useMemo(() => {
     const normalise = (value: unknown) => value ?? "";
     return [...abertas].sort((a, b) => {
       const av = normalise(a[sortKey]);
@@ -70,7 +70,7 @@ export function DivergencesPanel({ divergencias, onResolve, onBulkDelete }: Prop
       return sortDirection === "asc" ? result : -result;
     });
   }, [abertas, sortDirection, sortKey]);
-  const divergenciasPg = usePagination(sortedDivergencias, 10);
+  const divergencesPg = usePagination(sortedDivergences, 10);
   const allSelected = abertas.length > 0 && selectedIds.length === abertas.length;
 
   const handleSort = (key: SortKey) => {
@@ -178,7 +178,7 @@ export function DivergencesPanel({ divergencias, onResolve, onBulkDelete }: Prop
           </TableRow>
         </TableHeader>
         <TableBody>
-          {divergenciasPg.pageItems.map((div) => {
+          {divergencesPg.pageItems.map((div) => {
             const cfg = SEVERITY_CONFIG[div.severity];
             return (
               <TableRow key={div.id} data-testid={`row-divergencia-${div.id}`} className={selectedIds.includes(div.id) ? "bg-muted/20" : ""}>
@@ -221,11 +221,11 @@ export function DivergencesPanel({ divergencias, onResolve, onBulkDelete }: Prop
         </TableBody>
       </Table>
       <TablePagination
-        total={divergenciasPg.total}
-        page={divergenciasPg.page}
-        pageSize={divergenciasPg.pageSize}
-        onPageChange={divergenciasPg.setPage}
-        onPageSizeChange={divergenciasPg.setPageSize}
+        total={divergencesPg.total}
+        page={divergencesPg.page}
+        pageSize={divergencesPg.pageSize}
+        onPageChange={divergencesPg.setPage}
+        onPageSizeChange={divergencesPg.setPageSize}
         itemLabel="divergências"
       />
     </>

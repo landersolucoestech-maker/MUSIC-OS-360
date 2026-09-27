@@ -23,7 +23,7 @@ import { RightsKPICards } from "../components/RightsKPICards";
 import { DetectionsTable, type DetectionRow } from "../components/DetectionsTable";
 import { DivergencesPanel } from "../components/DivergencesPanel";
 import { ResolveDivergenceModal } from "../components/ResolveDivergenceModal";
-import type { Divergencia } from "../components/DivergencesPanel";
+import type { Divergence } from "../components/DivergencesPanel";
 import { EcadImportModal } from "../components/EcadImportModal";
 import { DetectionDetailModal } from "../components/DetectionDetailModal";
 import { ECADViewModal, type EcadReportRow } from "@/modules/monitoring/components/ECADViewModal";
@@ -62,8 +62,8 @@ export default function RightsMonitoring() {
   const [ecadDetailOpen, setEcadDetailOpen] = useState(false);
   // Discrepancy resolution — local session state (there is no persisted
   // resolution field in the content_detections backend).
-  const [divOverrides, setDivOverrides] = useState<Record<string, Partial<Divergencia>>>({});
-  const [selectedDivergencia, setSelectedDivergencia] = useState<Divergencia | null>(null);
+  const [divOverrides, setDivOverrides] = useState<Record<string, Partial<Divergence>>>({});
+  const [selectedDivergence, setSelectedDivergence] = useState<Divergence | null>(null);
   const [resolverOpen, setResolverOpen] = useState(false);
 
   const { detections, isLoading: loadingDet, deleteDetection, refetch: refetchDet } = useDetections();
@@ -185,7 +185,7 @@ export default function RightsMonitoring() {
 
   // Dynamic discrepancies: detections with no linked work, or linked to a
   // work with no registered cod_ecad (no ECAD reconciliation possible).
-  const dynamicDivergencias: Divergencia[] = useMemo(() =>
+  const dynamicDivergences: Divergence[] = useMemo(() =>
     filtered
       .filter((det) => !det.obra || !det.obra.cod_ecad)
       .map((det) => ({
@@ -204,15 +204,15 @@ export default function RightsMonitoring() {
     [filtered],
   );
 
-  const allDivergencias: Divergencia[] = useMemo(() => {
-    return dynamicDivergencias.map((d) =>
+  const allDivergences: Divergence[] = useMemo(() => {
+    return dynamicDivergences.map((d) =>
       divOverrides[d.id] ? { ...d, ...divOverrides[d.id] } : d,
     );
-  }, [dynamicDivergencias, divOverrides]);
+  }, [dynamicDivergences, divOverrides]);
 
-  const openDivergencias = allDivergencias.filter((d) => d.status !== "resolvida");
+  const openDivergences = allDivergences.filter((d) => d.status !== "resolvida");
 
-  const handleResolveDivergencia = (updated: Divergencia) => {
+  const handleResolveDivergence = (updated: Divergence) => {
     setDivOverrides((prev) => ({
       ...prev,
       [updated.id]: {
@@ -227,7 +227,7 @@ export default function RightsMonitoring() {
   const TABS: { key: Tab; label: string; icon: React.ReactNode; badge?: number }[] = [
     { key: "detections",   label: "Detecções",     icon: <Shield className="h-4 w-4" /> },
     { key: "ecad",         label: "ECAD",          icon: <EcadIcon className="h-4 w-4" />, badge: enrichedReports.length },
-    { key: "divergencias", label: "Divergências",  icon: <AlertTriangle className="h-4 w-4" />, badge: openDivergencias.length },
+    { key: "divergencias", label: "Divergências",  icon: <AlertTriangle className="h-4 w-4" />, badge: openDivergences.length },
   ];
 
   function handleViewDetail(det: DetectionRow) {
@@ -274,7 +274,7 @@ export default function RightsMonitoring() {
           total={filtered.length}
           completed={completed}
           pending={pending}
-          divergences={openDivergencias.length}
+          divergences={openDivergences.length}
           matchRate={matchRate}
           receivedEcadAmount={receivedEcadAmount}
           totalEcadReports={enrichedReports.length}
@@ -425,8 +425,8 @@ export default function RightsMonitoring() {
             <Card className="border-border/60">
               <CardContent className="p-0">
                 <DivergencesPanel
-                  divergencias={allDivergencias}
-                  onResolve={(d) => { setSelectedDivergencia(d); setResolverOpen(true); }}
+                  divergencias={allDivergences}
+                  onResolve={(d) => { setSelectedDivergence(d); setResolverOpen(true); }}
                 />
               </CardContent>
             </Card>
@@ -438,10 +438,10 @@ export default function RightsMonitoring() {
         <DetectionDetailModal detection={selectedExec} open={detailOpen} onOpenChange={setDetailOpen} />
         <ECADViewModal report={selectedEcad} open={ecadDetailOpen} onOpenChange={setEcadDetailOpen} />
         <ResolveDivergenceModal
-          divergencia={selectedDivergencia}
+          divergencia={selectedDivergence}
           open={resolverOpen}
           onOpenChange={setResolverOpen}
-          onSubmit={handleResolveDivergencia}
+          onSubmit={handleResolveDivergence}
         />
         <DeleteConfirmModal
           open={Boolean(pendingBulkDelete)}

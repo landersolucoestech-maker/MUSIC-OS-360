@@ -16,8 +16,8 @@ import { UpdateArtistDto } from './update-artist.dto';
 
 /** Property names with at least one class-validator decorator (the DTO's real contract). */
 function decoratedPropertyNames(dto: new () => object): string[] {
-  const metas = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
-  return Array.from(new Set(metas.map((m) => m.propertyName)));
+  const validationMetadata = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
+  return Array.from(new Set(validationMetadata.map((m) => m.propertyName)));
 }
 
 async function validatePayload(dto: object, payload: Record<string, unknown>) {

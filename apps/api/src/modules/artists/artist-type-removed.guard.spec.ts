@@ -21,8 +21,8 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { getReportFormContract } from '../reports/form-contracts/report-form-contracts';
 
 function decoratedPropertyNames(dto: new () => object): string[] {
-  const metas = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
-  return Array.from(new Set(metas.map((m) => m.propertyName)));
+  const validationMetadata = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
+  return Array.from(new Set(validationMetadata.map((m) => m.propertyName)));
 }
 
 function readArtistEntitySource(): string {

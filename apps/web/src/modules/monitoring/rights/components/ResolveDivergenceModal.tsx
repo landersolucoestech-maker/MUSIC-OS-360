@@ -7,17 +7,17 @@ import { Button } from "@/shared/ui/button";
 import { Textarea } from "@/shared/ui/textarea";
 import { Label } from "@/shared/ui/label";
 import { Hash, Radio, Tag, Calendar, BookOpen, Gauge, History } from "lucide-react";
-import type { Divergencia, DivergenciaSeverity } from "./DivergencesPanel";
+import type { Divergence, DivergenceSeverity } from "./DivergencesPanel";
 import { formatRightsDate } from "../utils/date-format";
 
-const SEVERITY: Record<DivergenciaSeverity, { label: string; variant: BadgeVariant }> = {
+const SEVERITY: Record<DivergenceSeverity, { label: string; variant: BadgeVariant }> = {
   critica: { label: "Crítica", variant: "danger" },
   alta:    { label: "Alta",    variant: "warning" },
   media:   { label: "Média",   variant: "warning" },
   baixa:   { label: "Baixa",   variant: "neutral" },
 };
 
-const STATUS: Record<Divergencia["status"], { label: string; variant: BadgeVariant }> = {
+const STATUS: Record<Divergence["status"], { label: string; variant: BadgeVariant }> = {
   aberta:       { label: "Aberta",       variant: "warning" },
   em_resolucao: { label: "Em Resolução", variant: "info" },
   resolvida:    { label: "Resolvida",    variant: "success" },
@@ -38,34 +38,34 @@ function Row({ icon, label, value, className = "" }: { icon: React.ReactNode; la
 }
 
 interface Props {
-  divergencia: Divergencia | null;
+  divergencia: Divergence | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (updated: Divergencia) => void;
+  onSubmit: (updated: Divergence) => void;
 }
 
-export function ResolveDivergenceModal({ divergencia, open, onOpenChange, onSubmit }: Props) {
+export function ResolveDivergenceModal({ divergencia: divergence, open, onOpenChange, onSubmit }: Props) {
   const [notes, setNotes] = useState("");
 
   // Repopulate when opening/switching the discrepancy
   useEffect(() => {
-    if (open) setNotes(divergencia?.observacoes ?? "");
-  }, [open, divergencia]);
+    if (open) setNotes(divergence?.observacoes ?? "");
+  }, [open, divergence]);
 
-  if (!divergencia) return null;
+  if (!divergence) return null;
 
-  const sev = SEVERITY[divergencia.severity];
-  const st = STATUS[divergencia.status];
-  const criadaEm = divergencia.data_criacao ?? divergencia.data;
+  const sev = SEVERITY[divergence.severity];
+  const st = STATUS[divergence.status];
+  const criadaEm = divergence.data_criacao ?? divergence.data;
 
-  const aplicar = (newStatus: Divergencia["status"], acao: string) => {
+  const aplicar = (newStatus: Divergence["status"], acao: string) => {
     const data = today();
     const history = [
-      ...(divergencia.historico ?? []),
+      ...(divergence.historico ?? []),
       { data, acao, por: "Você" },
     ];
-    const updated: Divergencia = {
-      ...divergencia,
+    const updated: Divergence = {
+      ...divergence,
       status: newStatus,
       observacoes: notes.trim() || undefined,
       data_resolucao: newStatus === "resolvida" ? data : undefined,
@@ -80,7 +80,7 @@ export function ResolveDivergenceModal({ divergencia, open, onOpenChange, onSubm
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" data-testid="modal-resolver-divergencia">
         <DialogHeader>
           <DialogTitle className="text-base leading-snug">Resolver Divergência</DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground">{divergencia.type}</DialogDescription>
+          <DialogDescription className="text-xs text-muted-foreground">{divergence.type}</DialogDescription>
         </DialogHeader>
 
         <div className="mt-1 space-y-4">
@@ -88,11 +88,11 @@ export function ResolveDivergenceModal({ divergencia, open, onOpenChange, onSubm
           <div>
             <p className="text-xs font-semibold tracking-wide text-muted-foreground mb-2">Identificação</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-lg border border-border/60 bg-muted/20 p-3">
-              <Row icon={<Tag className="h-3.5 w-3.5" />} label="Tipo" value={divergencia.type} />
+              <Row icon={<Tag className="h-3.5 w-3.5" />} label="Tipo" value={divergence.type} />
               <Row icon={<Gauge className="h-3.5 w-3.5" />} label="Severidade / Risco" value={
                 <div className="flex items-center gap-2">
                   <Badge variant={sev.variant}>{sev.label}</Badge>
-                  <Badge variant="neutral">Risco {divergencia.risco_score}/100</Badge>
+                  <Badge variant="neutral">Risco {divergence.risco_score}/100</Badge>
                 </div>
               } />
               <Row icon={<Calendar className="h-3.5 w-3.5" />} label="Status" value={<Badge variant={st.variant}>{st.label}</Badge>} />
@@ -104,21 +104,21 @@ export function ResolveDivergenceModal({ divergencia, open, onOpenChange, onSubm
           <div>
             <p className="text-xs font-semibold tracking-wide text-muted-foreground mb-2">Dados relacionados</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-lg border border-border/60 bg-muted/20 p-3">
-              {divergencia.obra && <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Obra" value={divergencia.obra} />}
-              {divergencia.isrc && <Row icon={<Hash className="h-3.5 w-3.5" />} label="ISRC" value={divergencia.isrc} />}
-              {divergencia.origem && <Row icon={<Radio className="h-3.5 w-3.5" />} label="Origem da execução" value={divergencia.origem} />}
-              <Row className="sm:col-span-2" icon={<Tag className="h-3.5 w-3.5" />} label="Descrição" value={<span className="font-normal text-muted-foreground">{divergencia.descricao}</span>} />
+              {divergence.obra && <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Obra" value={divergence.obra} />}
+              {divergence.isrc && <Row icon={<Hash className="h-3.5 w-3.5" />} label="ISRC" value={divergence.isrc} />}
+              {divergence.origem && <Row icon={<Radio className="h-3.5 w-3.5" />} label="Origem da execução" value={divergence.origem} />}
+              <Row className="sm:col-span-2" icon={<Tag className="h-3.5 w-3.5" />} label="Descrição" value={<span className="font-normal text-muted-foreground">{divergence.descricao}</span>} />
             </div>
           </div>
 
           {/* History (when present) */}
-          {divergencia.historico && divergencia.historico.length > 0 && (
+          {divergence.historico && divergence.historico.length > 0 && (
             <div>
               <p className="text-xs font-semibold tracking-wide text-muted-foreground mb-2 flex items-center gap-1.5">
                 <History className="h-3.5 w-3.5" /> Histórico
               </p>
               <div className="rounded-lg border border-border/60 bg-muted/20 px-3 py-2 space-y-1.5">
-                {divergencia.historico.map((h, i) => (
+                {divergence.historico.map((h, i) => (
                   <div key={i} className="text-xs text-muted-foreground flex items-center gap-2">
                     <span className="font-sans">{formatRightsDate(h.data)}</span>
                     <span className="text-foreground">{h.acao}</span>
@@ -149,7 +149,7 @@ export function ResolveDivergenceModal({ divergencia, open, onOpenChange, onSubm
           <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-fechar-resolver">
             Fechar
           </Button>
-          {divergencia.status !== "aberta" && (
+          {divergence.status !== "aberta" && (
             <Button variant="outline" onClick={() => aplicar("aberta", "Divergência reaberta")} data-testid="button-reabrir-divergencia">
               Reabrir
             </Button>

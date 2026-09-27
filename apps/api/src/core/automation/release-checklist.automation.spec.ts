@@ -114,7 +114,7 @@ const VALID_CHECKLIST_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'release.created:t1:r1';
 
 describe('ReleaseChecklistAutomation (release.created → release-checklist)', () => {
-  it('Fluxo: executa, registra skill_run e grava releases.metadata.aiChecklist no sucesso', async () => {
+  it('flow: runs, records skill_run and stores releases.metadata.aiChecklist on success', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_CHECKLIST_JSON);

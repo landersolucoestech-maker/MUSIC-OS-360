@@ -509,7 +509,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
     }
   }, [platform, meta, onConnect, onOpenChange]);
 
-  // Escuta o postMessage do popup
+  // Listens for the popup postMessage
   useEffect(() => {
     if (!open) return;
 

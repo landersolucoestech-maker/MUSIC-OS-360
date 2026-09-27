@@ -703,7 +703,7 @@ export default function SettingsPage() {
     setIsEditingCompany(false);
   };
 
-  const handleSaveAutomacoes = () => {
+  const handleSaveAutomations = () => {
     saveUserSettings({
       auto_notificar_vencimento: userSettings.auto_notificar_vencimento,
       auto_lembrete_renovacao: userSettings.auto_lembrete_renovacao,
@@ -1241,7 +1241,7 @@ export default function SettingsPage() {
 
                 <Button 
                   className="bg-primary hover:bg-primary/90" 
-                  onClick={handleSaveAutomacoes}
+                  onClick={handleSaveAutomations}
                   disabled={saving}
                 >
                   {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}

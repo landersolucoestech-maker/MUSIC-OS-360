@@ -33,13 +33,13 @@ describe("reportsApi — reports center, real data only", () => {
     vi.stubGlobal("fetch", vi.fn());
   });
 
-  it("busca entities exclusivamente pela API real", () => {
+  it("fetches entities only from the real API", () => {
     reportsApi.entities();
 
     expect(apiClientMock.get).toHaveBeenCalledWith("/reports/entities");
   });
 
-  it("busca definitions exclusivamente pela API real", () => {
+  it("fetches definitions only from the real API", () => {
     reportsApi.definitions();
 
     expect(apiClientMock.get).toHaveBeenCalledWith("/reports/definitions");
@@ -90,7 +90,7 @@ describe("reportsApi — reports center, real data only", () => {
     expect(result).toEqual({ blob, filename: "artistas.xlsx" });
   });
 
-  it("exportBlob falha explicitamente quando a API responde erro", async () => {
+  it("exportBlob fails explicitly when the API responds with an error", async () => {
     const fetchMock = vi.mocked(fetch);
     fetchMock.mockResolvedValue({
       ok: false,
@@ -106,7 +106,7 @@ describe("reportsApi — reports center, real data only", () => {
     });
   });
 
-  it("envia importValidate para a API real", () => {
+  it("sends importValidate to the real API", () => {
     const body: ImportUploadBody = {
       filename: "artistas.xlsx",
       mimeType: XLSX_MIME,
@@ -118,7 +118,7 @@ describe("reportsApi — reports center, real data only", () => {
     expect(apiClientMock.post).toHaveBeenCalledWith("/reports/entities/artistas/import/validate", body);
   });
 
-  it("envia importCommit para a API real", () => {
+  it("sends importCommit to the real API", () => {
     const body: ImportUploadBody = {
       filename: "artistas.xlsx",
       mimeType: XLSX_MIME,

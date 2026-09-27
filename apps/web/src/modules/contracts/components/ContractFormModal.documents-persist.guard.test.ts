@@ -15,7 +15,7 @@ import * as path from "path";
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "ContractFormModal.tsx"), "utf8");
 
 describe("ContractFormModal — attached documents persist on the contract (REM-02)", () => {
-  it("inclui documents no payload enviado ao backend", () => {
+  it("includes documents in the payload sent to the backend", () => {
     expect(SOURCE).toMatch(/documents:\s*documents\s*\?\?\s*\[\]/);
   });
 
