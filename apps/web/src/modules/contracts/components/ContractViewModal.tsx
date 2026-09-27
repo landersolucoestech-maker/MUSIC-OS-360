@@ -66,7 +66,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
     ? releases.find((l) => l.id === contract.release_id)
     : undefined;
 
-  const versoes: ContractVersion[] = Array.isArray(contract.versoes)
+  const versions: ContractVersion[] = Array.isArray(contract.versoes)
     ? (contract.versoes as ContractVersion[])
     : [];
   const documents = Array.isArray(contract.documents) ? contract.documents : [];
@@ -133,7 +133,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                 { value: "informacoes", label: "Informações" },
                 { value: "assinatura",  label: `Assinatura${contractSigners.length > 0 ? ` (${contractSigners.length})` : ""}` },
                 { value: "arquivo",     label: "Arquivo" },
-                { value: "versoes",     label: `Versões${versoes.length > 0 ? ` (${versoes.length})` : ""}` },
+                { value: "versoes",     label: `Versões${versions.length > 0 ? ` (${versions.length})` : ""}` },
                 { value: "documents",  label: `Documentos${documents.length > 0 ? ` (${documents.length})` : ""}` },
                 { value: "lancamento",  label: "Lançamento" },
               ].map((tab) => (
@@ -387,9 +387,9 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
 
               {/* ── Versions (document history) ── */}
               <TabsContent value="versoes" className="p-6 mt-0" data-testid="tab-content-versoes">
-                {versoes.length > 0 ? (
+                {versions.length > 0 ? (
                   <div className="space-y-3">
-                    {versoes.map((v, index) => (
+                    {versions.map((v, index) => (
                       <div
                         key={index}
                         className="flex items-start gap-3 p-4 bg-muted/20 border border-border rounded-lg"
@@ -401,7 +401,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-0.5">
                             <span className="font-medium text-sm">{v.versao}</span>
-                            {index === versoes.length - 1 && (
+                            {index === versions.length - 1 && (
                               <Badge variant="success" className="text-[9px] h-4 px-1">
                                 Atual
                               </Badge>

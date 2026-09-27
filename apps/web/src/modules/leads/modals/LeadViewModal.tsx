@@ -166,7 +166,7 @@ export function LeadViewModal({
   const showManager         = leadType === "empresario_artistico" && !showEvent;
   const showArtistBandEvent = matchCombo(ARTIST_EVENT_COMBOS,  leadType, service);
 
-  const interacoes = Array.isArray(ps.interacoes)
+  const interactions = Array.isArray(ps.interacoes)
     ? (ps.interacoes as Interaction[])
     : [];
   const uploads = lead.uploads ?? [];
@@ -315,13 +315,13 @@ export function LeadViewModal({
             <h3 className="text-sm font-semibold tracking-wider text-muted-foreground border-b pb-1">
               Histórico de Interações
             </h3>
-            {interacoes.length === 0 ? (
+            {interactions.length === 0 ? (
               <p className="text-sm italic text-muted-foreground">
                 Nenhuma interação registrada.
               </p>
             ) : (
               <div className="space-y-3" data-testid="lead-view-interacoes">
-                {interacoes.map((it, idx) => (
+                {interactions.map((it, idx) => (
                   <div
                     key={it.id}
                     className="rounded-md border bg-muted/20 p-3 space-y-1"

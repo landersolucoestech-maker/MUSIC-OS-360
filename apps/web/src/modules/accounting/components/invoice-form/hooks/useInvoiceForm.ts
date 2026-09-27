@@ -132,9 +132,9 @@ export function useInvoiceForm({
     const amount = Number(formData.service_amount) || 0;
     if (amount === 0) return;
     const deducoes = Number(formData.deductions_amount) || 0;
-    const baseCalculo = +(amount - deducoes).toFixed(2);
+    const calculationBase = +(amount - deducoes).toFixed(2);
     const aliquotaIss = Number(formData.aliquota_iss) || 0;
-    const issAmount = +(baseCalculo * (aliquotaIss / 100)).toFixed(2);
+    const issAmount = +(calculationBase * (aliquotaIss / 100)).toFixed(2);
     const pisAmount = +(amount * 0.0065).toFixed(2);
     const cofinsAmount = +(amount * 0.03).toFixed(2);
     const irAmount = +(amount * 0.015).toFixed(2);
@@ -143,7 +143,7 @@ export function useInvoiceForm({
     const netAmount = +(amount - (formData.iss_retido ? issAmount : 0) - pisAmount - cofinsAmount - irAmount - csllAmount - inssAmount).toFixed(2);
     setFormData((prev) => ({
       ...prev,
-      base_calculo: baseCalculo,
+      base_calculo: calculationBase,
       iss_amount: issAmount,
       pis_amount: pisAmount,
       cofins_amount: cofinsAmount,
@@ -198,15 +198,15 @@ export function useInvoiceForm({
   const recalculateTaxes = useCallback(() => {
     const amount = Number(formData.service_amount) || 0;
     const deducoes = Number(formData.deductions_amount) || 0;
-    const baseCalculo = amount - deducoes;
-    const issAmount = +(baseCalculo * ((Number(formData.aliquota_iss) || 0) / 100)).toFixed(2);
+    const calculationBase = amount - deducoes;
+    const issAmount = +(calculationBase * ((Number(formData.aliquota_iss) || 0) / 100)).toFixed(2);
     const pisAmount = +(amount * 0.0065).toFixed(2);
     const cofinsAmount = +(amount * 0.03).toFixed(2);
     const irAmount = +(amount * 0.015).toFixed(2);
     const csllAmount = +(amount * 0.01).toFixed(2);
     const inssAmount = Number(formData.inss_amount) || 0;
     const netAmount = +(amount - (formData.iss_retido ? issAmount : 0) - pisAmount - cofinsAmount - irAmount - csllAmount - inssAmount).toFixed(2);
-    setFormData((prev) => ({ ...prev, base_calculo: baseCalculo, iss_amount: issAmount, pis_amount: pisAmount, cofins_amount: cofinsAmount, ir_amount: irAmount, csll_amount: csllAmount, net_amount: netAmount }));
+    setFormData((prev) => ({ ...prev, base_calculo: calculationBase, iss_amount: issAmount, pis_amount: pisAmount, cofins_amount: cofinsAmount, ir_amount: irAmount, csll_amount: csllAmount, net_amount: netAmount }));
     toast.success("Tributos recalculados");
   }, [formData]);
 

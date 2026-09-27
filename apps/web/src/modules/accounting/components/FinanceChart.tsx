@@ -39,11 +39,11 @@ export function FinanceChart() {
   const { transactions } = useTransactions();
 
   const chartData = useMemo(() => {
-    const hoje = new Date();
+    const today = new Date();
     const months: { month: Date; label: string }[] = [];
 
     for (let i = 5; i >= 0; i--) {
-      const month = startOfMonth(subMonths(hoje, i));
+      const month = startOfMonth(subMonths(today, i));
       months.push({
         month,
         label: format(month, "MMM", { locale: ptBR }),

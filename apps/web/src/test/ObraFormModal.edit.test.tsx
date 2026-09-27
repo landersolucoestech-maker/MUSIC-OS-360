@@ -132,8 +132,8 @@ describe("ObraFormModal edit mode", () => {
     );
 
     // Title hydrated from title
-    const tituloInput = screen.getByDisplayValue("Canção Original");
-    expect(tituloInput).toBeInTheDocument();
+    const titleInput = screen.getByDisplayValue("Canção Original");
+    expect(titleInput).toBeInTheDocument();
 
     // ISWC
     expect(screen.getByDisplayValue("T-123.456.789-0")).toBeInTheDocument();
@@ -161,8 +161,8 @@ describe("ObraFormModal edit mode", () => {
     );
 
     // Edit the title
-    const tituloInput = screen.getByDisplayValue("Canção Original") as HTMLInputElement;
-    fireEvent.change(tituloInput, { target: { value: "Canção Editada" } });
+    const titleInput = screen.getByDisplayValue("Canção Original") as HTMLInputElement;
+    fireEvent.change(titleInput, { target: { value: "Canção Editada" } });
 
     // Accept terms (required)
     const termosCheckbox = document.querySelector("#termos");

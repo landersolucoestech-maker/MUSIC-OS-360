@@ -98,11 +98,11 @@ export type {
   RightsSearchResult,
   CollectionType,
   CollectionEntry,
-  ArrecadacaoSummary,
-  ConciliacaoResult,
+  CollectionSummary,
+  ReconciliationResult,
   IRightsProvider,
 } from "./rights.contract";
-export { arrecadacaoStorageKey } from "./rights.contract";
+export { collectionStorageKey } from "./rights.contract";
 
 export type {
   ChannelType,

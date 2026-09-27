@@ -128,13 +128,13 @@ export type {
   GenerateISRCResult,
   CollectionType,
   CollectionEntry,
-  ArrecadacaoSummary,
-  ConciliacaoResult,
+  CollectionSummary,
+  ReconciliationResult,
   IRightsProvider,
 } from "@/shared/integrations/contracts/rights.contract";
 
 export {
-  arrecadacaoStorageKey,
+  collectionStorageKey,
   generateMockISWC,
   generateMockISRC,
 } from "@/shared/integrations/contracts/rights.contract";

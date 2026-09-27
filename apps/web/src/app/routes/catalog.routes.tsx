@@ -7,7 +7,7 @@ import type { SuspenseRouteComponent } from "./types";
 
 const MusicRegistration  = lazy(() => import("@/modules/catalog/pages/RegistroMusicas"));
 const Takedowns        = lazy(() => import("@/modules/monitoring/pages/Takedowns"));
-const Licenciamento    = lazy(() => import("@/modules/licensing/pages/Licenciamento"));
+const Licensing    = lazy(() => import("@/modules/licensing/pages/Licenciamento"));
 const RightsMonitoring = lazy(() => import("@/modules/monitoring/rights/pages/RightsMonitoring"));
 
 export function catalogRoutes(P: SuspenseRouteComponent) {
@@ -22,7 +22,7 @@ export function catalogRoutes(P: SuspenseRouteComponent) {
           covered by DetectionDetailModal on the list itself. */}
       <Route path="/rights-monitoring/execucao/:id" element={<Navigate to="/rights-monitoring" replace />} />
       <Route path="/takedowns" element={<P><Takedowns /></P>} />
-      <Route path="/licenciamento" element={<P><Licenciamento /></P>} />
+      <Route path="/licenciamento" element={<P><Licensing /></P>} />
     </>
   );
 }

@@ -260,13 +260,13 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
     const newInteraction: Interaction = { id: newId(), type: "whatsapp", data: todayISO(), horario: nowTime(), descricao: "" };
     setState((prev) => ({ ...prev, interacoes: [...prev.interacoes, newInteraction] }));
   };
-  const updateInteracao = <K extends keyof Interaction>(id: string, field: K, value: Interaction[K]) => {
+  const updateInteraction = <K extends keyof Interaction>(id: string, field: K, value: Interaction[K]) => {
     setState((prev) => ({
       ...prev,
       interacoes: prev.interacoes.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
     }));
   };
-  const removeInteracao = (id: string) => {
+  const removeInteraction = (id: string) => {
     setState((prev) => ({ ...prev, interacoes: prev.interacoes.filter((i) => i.id !== id) }));
   };
 
@@ -638,7 +638,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                 </p>
                 <button
                   type="button"
-                  onClick={() => removeInteracao(it.id)}
+                  onClick={() => removeInteraction(it.id)}
                   className="text-muted-foreground hover:text-destructive"
                   aria-label="Remover interação"
                   data-testid={`button-remove-interacao-${it.id}`}
@@ -649,7 +649,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
 
               <div className="grid grid-cols-3 gap-3">
                 <Field label="Tipo">
-                  <Select value={it.type} onValueChange={(v) => updateInteracao(it.id, "type", v)}>
+                  <Select value={it.type} onValueChange={(v) => updateInteraction(it.id, "type", v)}>
                     <SelectTrigger data-testid={`select-interacao-type-${it.id}`}>
                       <SelectValue />
                     </SelectTrigger>
@@ -663,7 +663,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                 <Field label="Data">
                   <DatePickerField
                     value={it.data}
-                    onChange={(v) => updateInteracao(it.id, "data", v)}
+                    onChange={(v) => updateInteraction(it.id, "data", v)}
                     placeholder="Selecione a data"
                     data-testid={`datepicker-interacao-${it.id}`}
                   />
@@ -672,7 +672,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                   <Input
                     type="time"
                     value={it.horario}
-                    onChange={(e) => updateInteracao(it.id, "horario", e.target.value)}
+                    onChange={(e) => updateInteraction(it.id, "horario", e.target.value)}
                     data-testid={`input-interacao-horario-${it.id}`}
                   />
                 </Field>
@@ -681,7 +681,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
               <Field label="Descrição">
                 <Textarea
                   value={it.descricao}
-                  onChange={(e) => updateInteracao(it.id, "descricao", e.target.value)}
+                  onChange={(e) => updateInteraction(it.id, "descricao", e.target.value)}
                   placeholder="Descreva a interação..."
                   className="min-h-[80px]"
                   data-testid={`textarea-interacao-${it.id}`}

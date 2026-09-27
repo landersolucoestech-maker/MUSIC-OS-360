@@ -26,7 +26,7 @@ import {
 } from "@/shared/ui/select";
 import {
   useFinancialRules, type FinancialRule, type FinancialRuleType,
-  type FinancialRuleCalculo, type FinancialRuleTrigger,
+  type FinancialRuleCalculation, type FinancialRuleTrigger,
 } from "@/modules/accounting/hooks/useFinancialRules";
 
 const TYPES: { value: FinancialRuleType; label: string }[] = [
@@ -37,7 +37,7 @@ const TYPES: { value: FinancialRuleType; label: string }[] = [
   { value: "taxa", label: "Taxa" },
   { value: "outros", label: "Outros" },
 ];
-const CALCULOS: { value: FinancialRuleCalculo; label: string }[] = [
+const CALCULATION_METHODS: { value: FinancialRuleCalculation; label: string }[] = [
   { value: "percentual", label: "Percentual" },
   { value: "fixo", label: "Valor Fixo" },
   { value: "faixa", label: "Faixa (em breve)" },
@@ -53,7 +53,7 @@ interface FormState {
   name: string;
   type: FinancialRuleType;
   category: string;
-  calculo: FinancialRuleCalculo;
+  calculo: FinancialRuleCalculation;
   valor: string;
   description: string;
   active: boolean;
@@ -276,10 +276,10 @@ export default function FinancialRules() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">Cálculo</Label>
-                  <Select value={form.calculo} onValueChange={(v) => setField("calculo", v as FinancialRuleCalculo)}>
+                  <Select value={form.calculo} onValueChange={(v) => setField("calculo", v as FinancialRuleCalculation)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {CALCULOS.map((c) => (
+                      {CALCULATION_METHODS.map((c) => (
                         <SelectItem key={c.value} value={c.value} disabled={c.value === "faixa"}>
                           {c.label}
                         </SelectItem>

@@ -12,7 +12,7 @@ import { useAiSuggestions, useGenerateAi } from "../../hooks/useMarketingAI";
 import type { AiGenerationPayload } from "../../types/marketing.types";
 import type { AiTab, TargetOption } from "./iaCriativa.types";
 import { IdeiasTab } from "./IdeiasTab";
-import { PerfilTab } from "./PerfilTab";
+import { ProfileTab } from "./PerfilTab";
 import { PitchingTab } from "./PitchingTab";
 import { TendenciasTab } from "./TendenciasTab";
 import { AnalyticsTab } from "./AnalyticsTab";
@@ -89,7 +89,7 @@ export function AiCreativeWorkspace() {
         />
       </TabsContent>
       <TabsContent value="perfil">
-        <PerfilTab
+        <ProfileTab
           sources={{
             releases,
             projects: marketingProjects,

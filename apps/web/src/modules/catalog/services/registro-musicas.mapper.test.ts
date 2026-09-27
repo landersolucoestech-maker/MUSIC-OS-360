@@ -19,10 +19,10 @@ import { describe, it, expect } from "vitest";
 import {
   formToWorkPayload,
   participantsToComposersLyricists,
-  type ParticipanteForm,
+  type ParticipantForm,
 } from "./registro-musicas.mapper";
 
-function baseInput(participantes: ParticipanteForm[] = []) {
+function baseInput(participants: ParticipantForm[] = []) {
   return {
     title: "Minha Obra",
     generoMusical: "MPB",
@@ -41,7 +41,7 @@ function baseInput(participantes: ParticipanteForm[] = []) {
     outrosTitulos: [],
     referenciasConexas: [],
     letraCompleta: "",
-    participantes,
+    participantes: participants,
     situacao: "analise",
     projectId: null,
     artistId: null,
@@ -70,14 +70,14 @@ describe("formToObraPayload — canonical works contract", () => {
   });
 
   it("derives `compositores`/`letristas` from `participantes` — never duplicates free data", () => {
-    const participantes: ParticipanteForm[] = [
+    const participants: ParticipantForm[] = [
       { id: "1", name: "Fulano", classeFuncao: "compositor/autor", link: "", percentual: "50" },
       { id: "2", name: "Beltrano", classeFuncao: "tradutor", link: "", percentual: "50" },
     ];
-    const payload = formToWorkPayload(baseInput(participantes));
+    const payload = formToWorkPayload(baseInput(participants));
     expect(payload.compositores).toEqual(["Fulano"]);
     expect(payload.letristas).toEqual(["Beltrano"]);
-    expect(payload.participantes).toEqual(participantes);
+    expect(payload.participantes).toEqual(participants);
   });
 
   it("participantesToCompositoresLetristas returns null when there are no participants in the matching class", () => {

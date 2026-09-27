@@ -3,14 +3,14 @@ import { QUERY_KEYS } from "@/shared/lib/query-config";
 
 export type FinancialRuleTrigger = "transaction.created" | "transaction.paid" | "invoice.overdue" | "contract.signed";
 export type FinancialRuleType = "imposto" | "comissao" | "external_rights_fee" | "desconto" | "taxa" | "outros";
-export type FinancialRuleCalculo = "percentual" | "fixo" | "faixa";
+export type FinancialRuleCalculation = "percentual" | "fixo" | "faixa";
 
 export interface FinancialRule {
   id: string;
   name: string;
   type: FinancialRuleType;
   category: string | null;
-  calculo: FinancialRuleCalculo;
+  calculo: FinancialRuleCalculation;
   value: number;
   description: string | null;
   active: boolean;

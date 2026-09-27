@@ -110,7 +110,7 @@ export function WorkViewModal({
 
   const work: any = fresh ? { ...workProp, ...fresh } : workProp;
 
-  const outrosTitulos    = workOtherTitles(work);
+  const otherTitles    = workOtherTitles(work);
   const referenciasConexas = workRelatedReferences(work);
   const fullLyrics    = workFullLyrics(work);
   const criadaPorIA      = workCreatedByAi(work) === "sim";
@@ -118,7 +118,7 @@ export function WorkViewModal({
   const iaHarmonia       = workAiHarmony(work);
   const iaMelodia        = workAiMelody(work);
   const aiLyrics          = workAiLyrics(work);
-  const participantes    = workToParticipants(work);
+  const participants    = workToParticipants(work);
   const instrumental     =
     exportInstrumental(work as Record<string, unknown>) === "Sim";
 
@@ -211,7 +211,7 @@ export function WorkViewModal({
             )}
 
             {/* Participants (name, role, %, link) */}
-            {participantes.length > 0 && (
+            {participants.length > 0 && (
               <>
                 <Separator />
                 <div>
@@ -219,7 +219,7 @@ export function WorkViewModal({
                     Participantes (Nome, Função, %, Link)
                   </SectionTitle>
                   <div className="space-y-1">
-                    {participantes.map((p) => (
+                    {participants.map((p) => (
                       <div
                         key={p.id}
                         className="flex items-center gap-3 py-1.5 border-b border-border/50 last:border-b-0 text-sm"
@@ -341,13 +341,13 @@ export function WorkViewModal({
             )}
 
             {/* Other titles */}
-            {outrosTitulos.length > 0 && (
+            {otherTitles.length > 0 && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Outros Títulos</SectionTitle>
                   <div className="flex flex-wrap gap-2">
-                    {outrosTitulos.map((t, i) => (
+                    {otherTitles.map((t, i) => (
                       <Badge key={i} variant="outline">
                         {t}
                       </Badge>

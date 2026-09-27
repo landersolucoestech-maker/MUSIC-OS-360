@@ -14,7 +14,7 @@ import { getLatestResult } from "./iaCriativa.utils";
 
 type ArtistProfileBundle = ArtistProfileContext;
 
-export function PerfilTab({
+export function ProfileTab({
   sources,
   onGenerate,
   isGenerating,

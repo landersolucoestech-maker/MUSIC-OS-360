@@ -59,15 +59,15 @@ function appointmentCategoryLabel(type: unknown): string {
 
 // Combines date (date-only or ISO) + "HH:mm" time into a comparable Date.
 // Without a time, assumes end of day to keep the appointment visible all day.
-function appointmentDateTime(raw: unknown, horario: unknown): Date | null {
+function appointmentDateTime(raw: unknown, time: unknown): Date | null {
   if (typeof raw !== "string" || !raw) return null;
   // `raw` is already the real event timestamp (`data` column, time included) —
   // an explicit `horario` (override) takes priority; without it, uses the time that
   // already comes in the timestamp itself instead of inventing 23:59 (event.horario_inicio
   // never existed on the backend, so that fallback always fired before).
-  if (typeof horario === "string" && /^\d{1,2}:\d{2}/.test(horario)) {
+  if (typeof time === "string" && /^\d{1,2}:\d{2}/.test(time)) {
     const datePart = raw.includes("T") ? raw.slice(0, 10) : raw;
-    const dt = new Date(`${datePart}T${horario.slice(0, 5)}:00`);
+    const dt = new Date(`${datePart}T${time.slice(0, 5)}:00`);
     return Number.isFinite(dt.getTime()) ? dt : null;
   }
   const dt = new Date(raw);

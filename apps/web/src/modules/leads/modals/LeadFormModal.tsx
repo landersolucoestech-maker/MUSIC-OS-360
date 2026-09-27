@@ -365,7 +365,7 @@ export function LeadFormModal({
     setValues((prev) => ({ ...prev, interacoes: [...prev.interacoes, newInteraction] }));
   };
 
-  const updateInteracao = <K extends keyof Interaction>(
+  const updateInteraction = <K extends keyof Interaction>(
     id: string, field: K, value: Interaction[K],
   ) => setValues((prev) => ({
     ...prev,
@@ -374,7 +374,7 @@ export function LeadFormModal({
     ),
   }));
 
-  const removeInteracao = (id: string) =>
+  const removeInteraction = (id: string) =>
     setValues((prev) => ({
       ...prev,
       interacoes: prev.interacoes.filter((i) => i.id !== id),
@@ -1121,7 +1121,7 @@ export function LeadFormModal({
                 </p>
                 <button
                   type="button"
-                  onClick={() => removeInteracao(it.id)}
+                  onClick={() => removeInteraction(it.id)}
                   className="text-muted-foreground hover:text-destructive"
                   aria-label="Remover interação"
                   data-testid={`button-remove-interacao-${it.id}`}
@@ -1134,7 +1134,7 @@ export function LeadFormModal({
                 <Field label="Tipo">
                   <SelectField
                     value={it.type}
-                    onChange={(v) => updateInteracao(it.id, "type", v)}
+                    onChange={(v) => updateInteraction(it.id, "type", v)}
                     options={INTERACTION_TYPE_OPTIONS}
                     testId={`select-interacao-type-${it.id}`}
                   />
@@ -1142,7 +1142,7 @@ export function LeadFormModal({
                 <Field label="Data">
                   <DatePickerField
                     value={it.data}
-                    onChange={(v) => updateInteracao(it.id, "data", v)}
+                    onChange={(v) => updateInteraction(it.id, "data", v)}
                     placeholder="Selecione a data"
                     data-testid={`datepicker-interacao-${it.id}`}
                   />
@@ -1151,7 +1151,7 @@ export function LeadFormModal({
                   <Input
                     type="time"
                     value={it.horario}
-                    onChange={(e) => updateInteracao(it.id, "horario", e.target.value)}
+                    onChange={(e) => updateInteraction(it.id, "horario", e.target.value)}
                     data-testid={`input-interacao-horario-${it.id}`}
                   />
                 </Field>
@@ -1160,7 +1160,7 @@ export function LeadFormModal({
               <Field label="Descrição">
                 <Textarea
                   value={it.descricao}
-                  onChange={(e) => updateInteracao(it.id, "descricao", e.target.value)}
+                  onChange={(e) => updateInteraction(it.id, "descricao", e.target.value)}
                   placeholder="Descreva a interação..."
                   className="min-h-[80px]"
                   data-testid={`textarea-interacao-${it.id}`}

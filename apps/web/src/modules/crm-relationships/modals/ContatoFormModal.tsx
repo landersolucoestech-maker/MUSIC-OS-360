@@ -25,8 +25,8 @@ import { contactPriorityOptions, contactStatusOptions } from "../constants";
 import {
   CONTACT_TYPE_OPTIONS,
   CONTACT_CATEGORY_OPTIONS,
-  getPerfis,
-  ensurePerfilOption,
+  getProfiles,
+  ensureProfileOption,
 } from "../constants/contact-classification";
 import { BR_STATES } from "../shared/estados";
 import { INTERACTION_TYPE_OPTIONS, type Interaction } from "../shared/interacoes";
@@ -241,7 +241,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
   const isPJ = state.tipo_pessoa === "pessoa_juridica";
 
   // Hierarchical classification (config-driven, em cascata)
-  const perfilOptions = ensurePerfilOption(getPerfis(state.tipo_pessoa, state.categoria), state.perfil);
+  const profileOptions = ensureProfileOption(getProfiles(state.tipo_pessoa, state.categoria), state.perfil);
 
   const changeType = (value: ContactFormState["tipo_pessoa"]) =>
     setState((prev) => ({ ...prev, tipo_pessoa: value, categoria: "", perfil: "" }));
@@ -285,13 +285,13 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
     const newInteraction: Interaction = { id: newId(), type: "whatsapp", data: todayISO(), horario: nowTime(), descricao: "" };
     setState((prev) => ({ ...prev, interacoes: [...prev.interacoes, newInteraction] }));
   };
-  const updateInteracao = <K extends keyof Interaction>(id: string, field: K, value: Interaction[K]) => {
+  const updateInteraction = <K extends keyof Interaction>(id: string, field: K, value: Interaction[K]) => {
     setState((prev) => ({
       ...prev,
       interacoes: prev.interacoes.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
     }));
   };
-  const removeInteracao = (id: string) => {
+  const removeInteraction = (id: string) => {
     setState((prev) => ({ ...prev, interacoes: prev.interacoes.filter((i) => i.id !== id) }));
   };
 
@@ -384,13 +384,13 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
               Interação {idx + 1}
             </p>
-            <button type="button" onClick={() => removeInteracao(it.id)} className="text-muted-foreground hover:text-destructive" aria-label="Remover interação" data-testid={`button-remove-interacao-${it.id}`}>
+            <button type="button" onClick={() => removeInteraction(it.id)} className="text-muted-foreground hover:text-destructive" aria-label="Remover interação" data-testid={`button-remove-interacao-${it.id}`}>
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <Field label="Tipo">
-              <Select value={it.type} onValueChange={(v) => updateInteracao(it.id, "type", v)}>
+              <Select value={it.type} onValueChange={(v) => updateInteraction(it.id, "type", v)}>
                 <SelectTrigger data-testid={`select-interacao-type-${it.id}`}><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {INTERACTION_TYPE_OPTIONS.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
@@ -398,14 +398,14 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
               </Select>
             </Field>
             <Field label="Data">
-              <DatePickerField value={it.data} onChange={(v) => updateInteracao(it.id, "data", v)} placeholder="Selecione a data" data-testid={`datepicker-interacao-${it.id}`} />
+              <DatePickerField value={it.data} onChange={(v) => updateInteraction(it.id, "data", v)} placeholder="Selecione a data" data-testid={`datepicker-interacao-${it.id}`} />
             </Field>
             <Field label="Horário">
-              <Input type="time" value={it.horario} onChange={(e) => updateInteracao(it.id, "horario", e.target.value)} data-testid={`input-interacao-horario-${it.id}`} />
+              <Input type="time" value={it.horario} onChange={(e) => updateInteraction(it.id, "horario", e.target.value)} data-testid={`input-interacao-horario-${it.id}`} />
             </Field>
           </div>
           <Field label="Descrição">
-            <Textarea value={it.descricao} onChange={(e) => updateInteracao(it.id, "descricao", e.target.value)} placeholder="Descreva a interação..." className="min-h-[80px]" data-testid={`textarea-interacao-${it.id}`} />
+            <Textarea value={it.descricao} onChange={(e) => updateInteraction(it.id, "descricao", e.target.value)} placeholder="Descreva a interação..." className="min-h-[80px]" data-testid={`textarea-interacao-${it.id}`} />
           </Field>
         </div>
       ))}
@@ -504,7 +504,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                   <SelectValue placeholder="Selecione o Perfil do Contato" />
                 </SelectTrigger>
                 <SelectContent>
-                  {perfilOptions.map((o) => (
+                  {profileOptions.map((o) => (
                     <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                   ))}
                 </SelectContent>

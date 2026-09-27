@@ -9,7 +9,7 @@ import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 
-interface ParticipanteViewModalProps {
+interface ParticipantViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   artista: Artist | null;
@@ -36,16 +36,16 @@ const derivePersonType = (artist: Artist): string => {
     if (r.includes("fisica") || r.includes("física")) return "Física";
     return raw;
   }
-  const perfil = (artist.profileType as string | null | undefined) ?? "";
-  if (perfil.toLowerCase().includes("empresa")) return "Jurídica";
+  const profile = (artist.profileType as string | null | undefined) ?? "";
+  if (profile.toLowerCase().includes("empresa")) return "Jurídica";
   return "Física";
 };
 
-export function ParticipanteViewModal({
+export function ParticipantViewModal({
   open,
   onOpenChange,
   artista: artist,
-}: ParticipanteViewModalProps) {
+}: ParticipantViewModalProps) {
   if (!artist) return null;
 
   const legalName = artist.legalName || artist.name || artist.stageName || "";

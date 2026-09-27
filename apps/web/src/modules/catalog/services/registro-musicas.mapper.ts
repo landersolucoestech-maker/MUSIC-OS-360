@@ -1,4 +1,4 @@
-export interface ParticipanteForm {
+export interface ParticipantForm {
   id: string;
   name: string;
   classeFuncao: string;
@@ -142,7 +142,7 @@ function normalizeStringArray(value: unknown): string[] {
   return [];
 }
 
-export function workToParticipants(work: any): ParticipanteForm[] {
+export function workToParticipants(work: any): ParticipantForm[] {
   if (!work) return [];
   // Legacy: caller may already have prebuilt participantes
   if (Array.isArray(work.participantes) && work.participantes.length > 0) {
@@ -156,7 +156,7 @@ export function workToParticipants(work: any): ParticipanteForm[] {
   }
   const composers = normalizeStringArray(work.compositores);
   const letristas = normalizeStringArray(work.letristas);
-  const out: ParticipanteForm[] = [];
+  const out: ParticipantForm[] = [];
   for (const name of composers) {
     out.push({
       id: crypto.randomUUID(),
@@ -179,12 +179,12 @@ export function workToParticipants(work: any): ParticipanteForm[] {
 }
 
 export function participantsToComposersLyricists(
-  participantes: ParticipanteForm[],
+  participants: ParticipantForm[],
 ): { compositores: string[] | null; letristas: string[] | null } {
-  const composers = participantes
+  const composers = participants
     .filter((p) => p.classeFuncao?.toLowerCase() === "compositor/autor" && p.name.trim())
     .map((p) => p.name.trim());
-  const letristas = participantes
+  const letristas = participants
     .filter((p) => p.classeFuncao?.toLowerCase() === "tradutor" && p.name.trim())
     .map((p) => p.name.trim());
   return {
@@ -293,7 +293,7 @@ export interface WorkFormFields {
   iaHarmonia: WorkAiElement;
   iaMelodia: WorkAiElement;
   iaLetra: WorkAiElement;
-  participantes: ParticipanteForm[];
+  participantes: ParticipantForm[];
   outrosTitulos: string[];
   referenciasConexas: string[];
   letraCompleta: string;
@@ -345,7 +345,7 @@ export interface FormToWorkInput {
   outrosTitulos: string[];
   referenciasConexas: string[];
   letraCompleta: string;
-  participantes: ParticipanteForm[];
+  participantes: ParticipantForm[];
   situacao: string;
   projectId: string | null;
   artistId: string | null;
@@ -501,7 +501,7 @@ export function projectToWorkSeed(
     letra?: string;
   } | null,
 ): Record<string, unknown> {
-  const participantes: ParticipanteForm[] = (track?.compositores ?? [])
+  const participants: ParticipantForm[] = (track?.compositores ?? [])
     .filter((composerName): composerName is string => Boolean(composerName?.trim()))
     .map((composerName) => ({
       id: crypto.randomUUID(),
@@ -523,7 +523,7 @@ export function projectToWorkSeed(
     duracaoMin: track?.duracaoMin || "",
     duracaoSeg: track?.duracaoSeg || "",
     instrumental: track?.instrumental || "nao",
-    participantes: participantes.length > 0 ? participantes : null,
+    participantes: participants.length > 0 ? participants : null,
     letra_completa: fullLyrics || null,
     letraCompleta: fullLyrics || null,
   };

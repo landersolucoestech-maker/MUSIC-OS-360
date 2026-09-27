@@ -34,7 +34,7 @@ function getInitials(name: string): string {
     .join("");
 }
 
-export default function Perfil() {
+export default function Profile() {
   const { user } = useAuth();
   const { userSettings, saveUserSettings, saving, loading } = useUserSettings();
 

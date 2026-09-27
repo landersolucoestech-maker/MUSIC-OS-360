@@ -44,7 +44,7 @@ import {
   useEcadStatus,
   useEcadSaveCredentials,
   useEcadDeleteCredentials,
-  useEcadConciliacao,
+  useEcadReconciliation,
 } from "../hooks/useEcad";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -62,7 +62,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
   const { data: status, isLoading: isLoadingStatus } = useEcadStatus();
   const saveCredentials   = useEcadSaveCredentials();
   const deleteCredentials = useEcadDeleteCredentials();
-  const conciliacao       = useEcadConciliacao();
+  const reconciliation       = useEcadReconciliation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
@@ -76,7 +76,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
   const isConnected  = status?.connected ?? false;
   const isSaving     = saveCredentials.isPending;
   const isDeleting   = deleteCredentials.isPending;
-  const isConciling  = conciliacao.isPending;
+  const isConciling  = reconciliation.isPending;
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -88,7 +88,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
   }
 
   function handleConciliar() {
-    conciliacao.mutate({ periodo: currentPeriodo });
+    reconciliation.mutate({ periodo: currentPeriodo });
   }
 
   return (
@@ -224,18 +224,18 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
               <p className="text-xs text-muted-foreground">
                 Compara os fonogramas com código ECAD registrado no catálogo com os dados de arrecadação do período atual.
               </p>
-              {conciliacao.data && (
+              {reconciliation.data && (
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="rounded bg-emerald-500/10 border border-emerald-500/20 py-2">
-                    <p className="text-base font-semibold text-emerald-600">{conciliacao.data.conciliados}</p>
+                    <p className="text-base font-semibold text-emerald-600">{reconciliation.data.conciliados}</p>
                     <p className="text-[11px] text-muted-foreground">Conciliados</p>
                   </div>
                   <div className="rounded bg-amber-500/10 border border-amber-500/20 py-2">
-                    <p className="text-base font-semibold text-amber-600">{conciliacao.data.discrepancias}</p>
+                    <p className="text-base font-semibold text-amber-600">{reconciliation.data.discrepancias}</p>
                     <p className="text-[11px] text-muted-foreground">Discrepâncias</p>
                   </div>
                   <div className="rounded bg-muted/40 border py-2">
-                    <p className="text-base font-semibold">{conciliacao.data.sem_cod_ecad}</p>
+                    <p className="text-base font-semibold">{reconciliation.data.sem_cod_ecad}</p>
                     <p className="text-[11px] text-muted-foreground">Sem cód. ECAD</p>
                   </div>
                 </div>

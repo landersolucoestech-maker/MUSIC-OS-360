@@ -27,16 +27,16 @@ function composersToString(value: unknown): string {
   return "";
 }
 
-interface ParticipanteView {
+interface ParticipantView {
   id?: string;
   nome?: string;
   percentual?: string;
 }
 
 interface ParticipacaoView {
-  produtorFonografico?: ParticipanteView[];
-  interprete?: ParticipanteView[];
-  musicoAcompanhante?: ParticipanteView[];
+  produtorFonografico?: ParticipantView[];
+  interprete?: ParticipantView[];
+  musicoAcompanhante?: ParticipantView[];
 }
 
 interface LinkedWorkView {
@@ -326,7 +326,7 @@ export function PhonogramViewModal({
     musicoAcompanhante: phonogram.participacao?.musicoAcompanhante ?? [],
   };
 
-  const calcCategory = (cat: ParticipanteView[]): number =>
+  const calcCategory = (cat: ParticipantView[]): number =>
     cat.reduce((t, p) => t + (parseFloat(p.percentual ?? "") || 0), 0);
 
   const percentageTotal =
@@ -343,7 +343,7 @@ export function PhonogramViewModal({
     isOpen: boolean,
     setIsOpen: (v: boolean) => void,
   ) => {
-    const list: ParticipanteView[] = participacao[category] ?? [];
+    const list: ParticipantView[] = participacao[category] ?? [];
     const currentPercentage = calcCategory(list);
 
     return (

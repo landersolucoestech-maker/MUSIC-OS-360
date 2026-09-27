@@ -162,9 +162,9 @@ export default function Calendar() {
   }, [contents, search, channelFilter, typeFilter, statusFilter]);
 
   const metrics = useMemo(() => {
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    const limite = new Date(hoje);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const limite = new Date(today);
     limite.setDate(limite.getDate() + 7);
 
     const scheduled = contents.filter((content) => content.status === "agendado").length;
@@ -174,7 +174,7 @@ export default function Calendar() {
       const data = new Date(content.publishDate);
       if (Number.isNaN(data.getTime())) return false;
       data.setHours(0, 0, 0, 0);
-      return data >= hoje && data <= limite;
+      return data >= today && data <= limite;
     }).length;
 
     return { total: contents.length, agendados: scheduled, publicados: published, proximos7Dias: next7Days };

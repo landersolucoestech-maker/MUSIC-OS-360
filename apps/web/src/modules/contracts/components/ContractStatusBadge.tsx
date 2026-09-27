@@ -15,9 +15,9 @@ const NEGOCIACAO_STATUSES = new Set(["em_negociacao", "negociacao", "draft", "un
 export function getContractLifecycleState(contracts: ContractLike[] | undefined | null): ContractLifecycleState {
   if (!contracts || contracts.length === 0) return "sem_contrato";
 
-  const hoje = new Date();
+  const today = new Date();
   let hasActive = false;
-  let temVencendo = false;
+  let hasExpiring = false;
   let temNegociacao = false;
 
   for (const c of contracts) {
@@ -29,7 +29,7 @@ export function getContractLifecycleState(contracts: ContractLike[] | undefined 
     }
 
     if (status === "expiring") {
-      temVencendo = true;
+      hasExpiring = true;
       hasActive = true;
       continue;
     }
@@ -40,15 +40,15 @@ export function getContractLifecycleState(contracts: ContractLike[] | undefined 
 
     if (c.end_date) {
       try {
-        const days = differenceInDays(parseISO(c.end_date), hoje);
-        if (days >= 0 && days <= 30) temVencendo = true;
+        const days = differenceInDays(parseISO(c.end_date), today);
+        if (days >= 0 && days <= 30) hasExpiring = true;
       } catch {
         /* ignore parse errors */
       }
     }
   }
 
-  if (temVencendo) return "vencendo";
+  if (hasExpiring) return "vencendo";
   if (hasActive) return "ativo";
   if (temNegociacao) return "em_negociacao";
   return "sem_contrato";
@@ -56,14 +56,14 @@ export function getContractLifecycleState(contracts: ContractLike[] | undefined 
 
 function getDaysUntilExpiry(contracts: ContractLike[] | undefined | null): number | null {
   if (!contracts) return null;
-  const hoje = new Date();
+  const today = new Date();
   let menor: number | null = null;
   for (const c of contracts) {
     const status = (c.status || "").toLowerCase();
     if (!ACTIVE_STATUSES.has(status) && status !== "expiring") continue;
     if (!c.end_date) continue;
     try {
-      const days = differenceInDays(parseISO(c.end_date), hoje);
+      const days = differenceInDays(parseISO(c.end_date), today);
       if (days >= 0 && days <= 30) {
         if (menor === null || days < menor) menor = days;
       }

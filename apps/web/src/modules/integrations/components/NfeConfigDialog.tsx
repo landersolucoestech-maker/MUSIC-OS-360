@@ -56,7 +56,7 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
   const [regime, setRegime] = useState<string>("simples_nacional");
   const [ambiente, setAmbiente] = useState<NfeAmbiente>("homologacao");
   const [certificateType, setCertificateType] = useState<NfeCertificateType>("A1");
-  const [certificadoSerial, setCertificadoSerial] = useState("");
+  const [certificateSerial, setCertificateSerial] = useState("");
   const [tokenProvedor, setTokenProvedor] = useState("");
   const [provedor, setProvedor] = useState<string>("focusnfe");
 
@@ -75,7 +75,7 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
       setRegime("simples_nacional");
       setAmbiente("homologacao");
       setCertificateType("A1");
-      setCertificadoSerial("");
+      setCertificateSerial("");
       setTokenProvedor("");
       setProvedor("focusnfe");
     }
@@ -96,7 +96,7 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
       regime_tributario: regime as "simples_nacional" | "lucro_presumido" | "lucro_real",
       ambiente,
       certificado_tipo: certificateType,
-      certificado_serial: certificadoSerial.trim() || undefined,
+      certificado_serial: certificateSerial.trim() || undefined,
       token_provedor: tokenProvedor.trim() || undefined,
       provedor: provedor as "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio",
     });
@@ -110,7 +110,7 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
     setCnpj("");
     setIe("");
     setTokenProvedor("");
-    setCertificadoSerial("");
+    setCertificateSerial("");
   };
 
   const canSave =
@@ -225,8 +225,8 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
                 <Input
                   id="nfe-cert-serial"
                   placeholder="Opcional"
-                  value={certificadoSerial}
-                  onChange={(e) => setCertificadoSerial(e.target.value)}
+                  value={certificateSerial}
+                  onChange={(e) => setCertificateSerial(e.target.value)}
                   data-testid="input-nfe-cert-serial"
                 />
               </div>

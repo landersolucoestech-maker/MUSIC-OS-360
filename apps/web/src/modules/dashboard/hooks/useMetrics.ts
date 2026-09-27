@@ -125,9 +125,9 @@ export function useMetrics(): UseMetricsReturn {
   }, [artists, events, dashboard]);
 
   const dashboardMetrics = useMemo<DashboardMetrics>(() => {
-    const hoje = new Date();
-    const monthStart = startOfMonth(hoje);
-    const monthEnd = endOfMonth(hoje);
+    const today = new Date();
+    const monthStart = startOfMonth(today);
+    const monthEnd = endOfMonth(today);
 
     // The backend returns the timestamp in the `data` column; the mock uses `start_date`.
     // Accept both to avoid a zeroed count in HTTP mode.

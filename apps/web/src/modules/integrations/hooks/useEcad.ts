@@ -37,7 +37,7 @@ export interface EcadCollectionEntry {
   valor_liquido_cents:  number;
 }
 
-export interface EcadArrecadacaoSummary {
+export interface EcadCollectionSummary {
   periodo:                string;
   total_execucoes:        number;
   valor_bruto_cents:      number;
@@ -46,7 +46,7 @@ export interface EcadArrecadacaoSummary {
   entries:                EcadCollectionEntry[];
 }
 
-export interface EcadConciliacaoResult {
+export interface EcadReconciliationResult {
   total_fonogramas:     number;
   conciliados:          number;
   nao_encontrados:      number;
@@ -96,18 +96,18 @@ export function useEcadDeleteCredentials() {
   });
 }
 
-export function useEcadArrecadacao(periodo: string, enabled = true) {
-  return useQuery<EcadArrecadacaoSummary>({
+export function useEcadCollection(periodo: string, enabled = true) {
+  return useQuery<EcadCollectionSummary>({
     queryKey: ["ecad", "arrecadacao", periodo],
-    queryFn: async (): Promise<EcadArrecadacaoSummary> => ecadUnavailable(),
+    queryFn: async (): Promise<EcadCollectionSummary> => ecadUnavailable(),
     enabled: enabled && Boolean(periodo),
     staleTime: 300_000,
     retry: false,
   });
 }
 
-export function useEcadConciliacao() {
-  return useMutation<EcadConciliacaoResult, Error, { periodo: string }>({
+export function useEcadReconciliation() {
+  return useMutation<EcadReconciliationResult, Error, { periodo: string }>({
     mutationFn: async (_input) => ecadUnavailable(),
     onError: (err) => toast.error(`Erro na conciliação ECAD: ${toUserMessage(err)}`),
   });

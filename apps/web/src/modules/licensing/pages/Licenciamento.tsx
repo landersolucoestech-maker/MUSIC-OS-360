@@ -38,7 +38,7 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-export default function Licenciamento() {
+export default function Licensing() {
   // Task H: useLicencas() (fetch-all) remains only for mutations (delete) and the
   // initial isLoading gate — the tables below now read from
   // useLicencasPaginated() (server-side, one page at a time).

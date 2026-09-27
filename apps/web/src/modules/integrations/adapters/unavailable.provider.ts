@@ -50,10 +50,10 @@ import type {
 } from "@/modules/integrations/dto";
 import type {
   CollectionEntry,
-  ArrecadacaoSummary,
+  CollectionSummary,
   ArtistSearchQuery,
   ArtistSearchResult,
-  ConciliacaoResult,
+  ReconciliationResult,
   RegisterPhonogramInput,
   RegisterWorkInput,
   RegistrationHistoryEntry,
@@ -150,9 +150,9 @@ export function createUnavailableRightsProvider(entity: RightsEntityId): IRights
     generateISWC: (_input: GenerateISWCInput): Promise<GenerateISWCResult> => Promise.reject(unavailable(`rights:${entity}`)),
     generateISRC: (_input: GenerateISRCInput): Promise<GenerateISRCResult> => Promise.reject(unavailable(`rights:${entity}`)),
     syncAll: (): Promise<{ synced: number; errors: number }> => Promise.reject(unavailable(`rights:${entity}`)),
-    getArrecadacao: (_periodo: string): Promise<CollectionEntry[]> => Promise.reject(unavailable(`rights:${entity}`)),
-    getArrecadacaoSummary: (_periodo: string): Promise<ArrecadacaoSummary> => Promise.reject(unavailable(`rights:${entity}`)),
-    conciliar: (_periodo: string): Promise<ConciliacaoResult> => Promise.reject(unavailable(`rights:${entity}`)),
+    getCollection: (_periodo: string): Promise<CollectionEntry[]> => Promise.reject(unavailable(`rights:${entity}`)),
+    getCollectionSummary: (_periodo: string): Promise<CollectionSummary> => Promise.reject(unavailable(`rights:${entity}`)),
+    conciliar: (_periodo: string): Promise<ReconciliationResult> => Promise.reject(unavailable(`rights:${entity}`)),
     verifyConnection: (): Promise<boolean> => Promise.reject(unavailable(`rights:${entity}`)),
   };
 }

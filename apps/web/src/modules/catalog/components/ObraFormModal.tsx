@@ -45,7 +45,7 @@ import {
 import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/projects/hooks/useProjects";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import { ParticipanteViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
+import { ParticipantViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
 import { useWorks } from "@/modules/catalog/hooks/useObras";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useCurrentOrgId } from "@/shared/hooks/useCurrentOrgId";
@@ -192,7 +192,7 @@ interface WorkFormModalProps {
   onSaved?: (info: { title: string; notes: string }) => void;
 }
 
-interface Participante {
+interface Participant {
   id: string;
   name: string;
   classeFuncao: string;
@@ -261,10 +261,10 @@ export function WorkFormModal({
   const [iaHarmonia, setIaHarmonia] = useState<IAElement>(() => workAiHarmony(work));
   const [iaMelodia, setIaMelodia] = useState<IAElement>(() => workAiMelody(work));
   const [aiLyrics, setAiLyrics] = useState<IAElement>(() => workAiLyrics(work));
-  const [participantes, setParticipantes] = useState<Participante[]>(() =>
+  const [participants, setParticipants] = useState<Participant[]>(() =>
     workToParticipants(work),
   );
-  const [outrosTitulos, setOutrosTitulos] = useState<string[]>(() => workOtherTitles(work));
+  const [otherTitles, setOtherTitles] = useState<string[]>(() => workOtherTitles(work));
   const [referenciasConexas, setReferenciasConexas] = useState<string[]>(() => workRelatedReferences(work));
   const [fullLyrics, setFullLyrics] = useState(() => workFullLyrics(work));
   const [aceitaTermos, setAceitaTermos] = useState(false);
@@ -291,8 +291,8 @@ export function WorkFormModal({
     setIaHarmonia(f.iaHarmonia);
     setIaMelodia(f.iaMelodia);
     setAiLyrics(f.iaLetra);
-    setParticipantes(f.participantes);
-    setOutrosTitulos(f.outrosTitulos);
+    setParticipants(f.participantes);
+    setOtherTitles(f.outrosTitulos);
     setReferenciasConexas(f.referenciasConexas);
     setFullLyrics(f.letraCompleta);
     setAceitaTermos(false);
@@ -338,7 +338,7 @@ export function WorkFormModal({
   });
 
   const [participacaoOpen, setParticipacaoOpen] = useState(true);
-  const [outrosTitulosOpen, setOutrosTitulosOpen] = useState(false);
+  const [otherTitlesOpen, setOtherTitlesOpen] = useState(false);
   const [referenciasOpen, setReferenciasOpen] = useState(false);
   const [lyricsOpen, setLyricsOpen] = useState(true);
 
@@ -351,15 +351,15 @@ export function WorkFormModal({
         : "Detalhes da Obra";
 
   const calculateTotalPercentage = () => {
-    return participantes.reduce(
+    return participants.reduce(
       (total, p) => total + (parseFloat(p.percentual) || 0),
       0,
     );
   };
 
-  const addParticipante = () => {
-    setParticipantes([
-      ...participantes,
+  const addParticipant = () => {
+    setParticipants([
+      ...participants,
       {
         id: crypto.randomUUID(),
         name: "",
@@ -370,32 +370,32 @@ export function WorkFormModal({
     ]);
   };
 
-  const updateParticipante = (
+  const updateParticipant = (
     id: string,
-    field: keyof Participante,
+    field: keyof Participant,
     value: string,
   ) => {
-    setParticipantes(
-      participantes.map((p) => (p.id === id ? { ...p, [field]: value } : p)),
+    setParticipants(
+      participants.map((p) => (p.id === id ? { ...p, [field]: value } : p)),
     );
   };
 
-  const removeParticipante = (id: string) => {
-    setParticipantes(participantes.filter((p) => p.id !== id));
+  const removeParticipant = (id: string) => {
+    setParticipants(participants.filter((p) => p.id !== id));
   };
 
-  const addOutroTitulo = () => {
-    setOutrosTitulos([...outrosTitulos, ""]);
+  const addOtherTitle = () => {
+    setOtherTitles([...otherTitles, ""]);
   };
 
-  const updateOutroTitulo = (index: number, value: string) => {
-    const newTitulos = [...outrosTitulos];
-    newTitulos[index] = value;
-    setOutrosTitulos(newTitulos);
+  const updateOtherTitle = (index: number, value: string) => {
+    const newTitles = [...otherTitles];
+    newTitles[index] = value;
+    setOtherTitles(newTitles);
   };
 
-  const removeOutroTitulo = (index: number) => {
-    setOutrosTitulos(outrosTitulos.filter((_, i) => i !== index));
+  const removeOtherTitle = (index: number) => {
+    setOtherTitles(otherTitles.filter((_, i) => i !== index));
   };
 
   const addReferenciaConexas = () => {
@@ -480,10 +480,10 @@ export function WorkFormModal({
       iaHarmonia,
       iaMelodia,
       iaLetra: aiLyrics,
-      outrosTitulos,
+      outrosTitulos: otherTitles,
       referenciasConexas,
       letraCompleta: fullLyrics,
-      participantes,
+      participantes: participants,
       situacao,
       projectId: selectedProject?.id ?? null,
       artistId: null,
@@ -501,8 +501,8 @@ export function WorkFormModal({
       onOpenChange(false);
 
       // Opens the prefilled contract modal after closing the work modal
-      const dataHoje = new Date().toISOString().split("T")[0];
-      const linhasParticipantes = participantes
+      const todayDate = new Date().toISOString().split("T")[0];
+      const participantRows = participants
         .filter((p) => p.name || p.classeFuncao)
         .map((p) => {
           const parties = [p.name, p.classeFuncao, p.percentual ? `${p.percentual}%` : ""].filter(Boolean);
@@ -512,10 +512,10 @@ export function WorkFormModal({
         `Obra: ${workTitleValue}`,
         iswc ? `ISWC: ${iswc}` : null,
         musicGenre ? `Gênero: ${musicGenre}` : null,
-        `Data: ${dataHoje}`,
-        linhasParticipantes.length > 0 ? "" : null,
-        linhasParticipantes.length > 0 ? "Participantes:" : null,
-        ...linhasParticipantes,
+        `Data: ${todayDate}`,
+        participantRows.length > 0 ? "" : null,
+        participantRows.length > 0 ? "Participantes:" : null,
+        ...participantRows,
       ].filter((l): l is string => l !== null);
 
       onSaved?.({
@@ -646,7 +646,7 @@ export function WorkFormModal({
                             const artistFound = artistFoundWire ? wireToArtist(artistFoundWire) : undefined;
                             const artistNameResolved = artistFound?.stageName || pArtistNameDisplay;
                             // Parse descricao JSON for composers/producers from project songs
-                            let autoParticipantes: Participante[] = [];
+                            let autoParticipants: Participant[] = [];
                             try {
                               const tracks = JSON.parse(p.descricao as string || "[]");
                               if (Array.isArray(tracks) && tracks.length > 0) {
@@ -654,7 +654,7 @@ export function WorkFormModal({
                                 const composersArr: string[] = tracks
                                   .flatMap((m: any) => m.compositores || [])
                                   .filter((name: string) => { const k = name.trim(); return k && !seen.has(k) && seen.add(k); });
-                                autoParticipantes = composersArr.map((name: string) => ({
+                                autoParticipants = composersArr.map((name: string) => ({
                                   id: crypto.randomUUID(),
                                   name: name.trim(),
                                   classeFuncao: "compositor/autor",
@@ -664,8 +664,8 @@ export function WorkFormModal({
                               }
                             } catch {}
                             // Fallback: use resolved artista name as single compositor
-                            if (autoParticipantes.length === 0 && artistNameResolved) {
-                              autoParticipantes = [{
+                            if (autoParticipants.length === 0 && artistNameResolved) {
+                              autoParticipants = [{
                                 id: crypto.randomUUID(),
                                 name: artistNameResolved,
                                 classeFuncao: "compositor/autor",
@@ -674,8 +674,8 @@ export function WorkFormModal({
                                 artist_id: artistId ?? undefined,
                               }];
                             }
-                            if (autoParticipantes.length > 0 && participantes.length === 0) {
-                              setParticipantes(autoParticipantes);
+                            if (autoParticipants.length > 0 && participants.length === 0) {
+                              setParticipants(autoParticipants);
                             }
                             setSearchProject("");
                             setSearchProjectOpen(false);
@@ -1152,16 +1152,16 @@ export function WorkFormModal({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={addParticipante}
+                    onClick={addParticipant}
                     disabled={isViewMode}
                   >
                     <Plus className="w-4 h-4 mr-1" /> Adicionar participante
                   </Button>
                 </div>
 
-                {participantes.length > 0 ? (
+                {participants.length > 0 ? (
                   <div className="space-y-3">
-                    {participantes.map((p) => (
+                    {participants.map((p) => (
                       <div
                         key={p.id}
                         className="grid grid-cols-12 gap-3 items-end"
@@ -1170,8 +1170,8 @@ export function WorkFormModal({
                           <Label className="text-xs">Nome *</Label>
                           <ArtistNameInput
                             value={p.name}
-                            onChange={(val) => updateParticipante(p.id, "name", val)}
-                            onSelect={(a) => updateParticipante(p.id, "artist_id", a.id)}
+                            onChange={(val) => updateParticipant(p.id, "name", val)}
+                            onSelect={(a) => updateParticipant(p.id, "artist_id", a.id)}
                             placeholder="Nome do participante"
                             disabled={isViewMode}
                           />
@@ -1181,7 +1181,7 @@ export function WorkFormModal({
                           <Select
                             value={p.classeFuncao}
                             onValueChange={(v) =>
-                              updateParticipante(p.id, "classeFuncao", v)
+                              updateParticipant(p.id, "classeFuncao", v)
                             }
                             disabled={isViewMode}
                           >
@@ -1202,7 +1202,7 @@ export function WorkFormModal({
                           <Input
                             value={p.link}
                             onChange={(e) =>
-                              updateParticipante(p.id, "link", e.target.value)
+                              updateParticipant(p.id, "link", e.target.value)
                             }
                             disabled={isViewMode}
                             placeholder="Link 1"
@@ -1214,7 +1214,7 @@ export function WorkFormModal({
                           <Input
                             value={p.percentual}
                             onChange={(e) =>
-                              updateParticipante(
+                              updateParticipant(
                                 p.id,
                                 "percentual",
                                 e.target.value,
@@ -1254,7 +1254,7 @@ export function WorkFormModal({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => removeParticipante(p.id)}
+                            onClick={() => removeParticipant(p.id)}
                             disabled={isViewMode}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1274,35 +1274,35 @@ export function WorkFormModal({
 
           {/* Other titles */}
           <Collapsible
-            open={outrosTitulosOpen}
-            onOpenChange={setOutrosTitulosOpen}
+            open={otherTitlesOpen}
+            onOpenChange={setOtherTitlesOpen}
           >
             <div className="border border-border rounded-lg bg-muted/10">
               <div className="flex items-center gap-2 p-5">
                 <CollapsibleTrigger className="flex flex-1 items-center justify-between">
                   <span className="font-semibold">Outros Títulos</span>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${outrosTitulosOpen ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 transition-transform ${otherTitlesOpen ? "rotate-180" : ""}`}
                   />
                 </CollapsibleTrigger>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={addOutroTitulo}
+                  onClick={addOtherTitle}
                   disabled={isViewMode}
                 >
                   <Plus className="w-4 h-4 mr-1" /> Adicionar
                 </Button>
               </div>
               <CollapsibleContent className="px-5 pb-5 space-y-3">
-                {outrosTitulos.length > 0 ? (
-                  outrosTitulos.map((title, index) => (
+                {otherTitles.length > 0 ? (
+                  otherTitles.map((title, index) => (
                     <div key={index} className="flex gap-2">
                       <Input
                         value={title}
                         onChange={(e) =>
-                          updateOutroTitulo(index, e.target.value)
+                          updateOtherTitle(index, e.target.value)
                         }
                         disabled={isViewMode}
                         placeholder="Título alternativo"
@@ -1311,7 +1311,7 @@ export function WorkFormModal({
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeOutroTitulo(index)}
+                        onClick={() => removeOtherTitle(index)}
                         disabled={isViewMode}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1449,7 +1449,7 @@ export function WorkFormModal({
           </DialogFooter>
         </form>
       </DialogContent>
-      <ParticipanteViewModal
+      <ParticipantViewModal
         open={viewArtist !== null}
         onOpenChange={(o) => { if (!o) setViewArtist(null); }}
         artista={viewArtist}

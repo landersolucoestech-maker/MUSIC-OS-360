@@ -21,7 +21,7 @@ import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/projects/hooks/useProjects";
-import { ParticipanteViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
+import { ParticipantViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
 import { useCurrentOrgId } from "@/shared/hooks/useCurrentOrgId";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { AbramusSearchRow } from "@/modules/catalog/components/AbramusSearchRow";
@@ -61,9 +61,9 @@ interface LinkedWorkInput {
 }
 
 interface ParticipacaoInput {
-  produtorFonografico?: Participante[];
-  interprete?: Participante[];
-  musicoAcompanhante?: Participante[];
+  produtorFonografico?: Participant[];
+  interprete?: Participant[];
+  musicoAcompanhante?: Participant[];
 }
 
 interface AudioFileInput {
@@ -148,7 +148,7 @@ const toAudioFile = (
   return null;
 };
 
-interface Participante {
+interface Participant {
   id: string;
   name: string;
   percentual: string;
@@ -156,9 +156,9 @@ interface Participante {
 }
 
 interface ParticipationCategory {
-  produtorFonografico: Participante[];
-  interprete: Participante[];
-  musicoAcompanhante: Participante[];
+  produtorFonografico: Participant[];
+  interprete: Participant[];
+  musicoAcompanhante: Participant[];
 }
 
 interface LinkedWork {
@@ -292,7 +292,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
   // Linked work
   const [linkedWork, setLinkedWork] = useState<LinkedWork | null>(initialWork());
   const [searchWork, setSearchWork] = useState("");
-  const [buscaOpen, setBuscaOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   // Sound recording data (supports the form's camelCase OR the database's snake_case)
   const initialDurationText = parseDurationText(phonogram?.duration_text);
   const initialIsrc = parseIsrc(phonogram?.isrc);
@@ -357,7 +357,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
     if (!open) return;
     const f = phonogramToFormFields(phonogram);
     setSearchWork("");
-    setBuscaOpen(false);
+    setSearchOpen(false);
     setLinkedWork(initialWork());
     setCodEcad(f.codEcad);
     setCodEntidade(f.codEntidade);
@@ -455,7 +455,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
     table: "obras",
     search: searchWorkDebounced,
     pageSize: LOCAL_RESULTS_LIMIT,
-    enabled: buscaOpen,
+    enabled: searchOpen,
   });
   const filteredRegisteredWorks: LinkedWork[] = worksSearch
     .map((o) => ({
@@ -470,7 +470,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
   const isViewMode = mode === "view";
   const modalTitle = mode === "create" ? "Novo Fonograma" : mode === "edit" ? "Editar Fonograma" : "Detalhes do Fonograma";
 
-  const calculateCategoryPercentage = (category: Participante[]) => {
+  const calculateCategoryPercentage = (category: Participant[]) => {
     return category.reduce((total, p) => total + (parseFloat(p.percentual) || 0), 0);
   };
 
@@ -480,21 +480,21 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
            calculateCategoryPercentage(participacao.musicoAcompanhante);
   };
 
-  const addParticipante = (category: keyof ParticipationCategory) => {
+  const addParticipant = (category: keyof ParticipationCategory) => {
     setParticipacao({
       ...participacao,
       [category]: [...participacao[category], { id: crypto.randomUUID(), name: "", percentual: "" }]
     });
   };
 
-  const updateParticipante = (category: keyof ParticipationCategory, id: string, field: keyof Participante, value: string) => {
+  const updateParticipant = (category: keyof ParticipationCategory, id: string, field: keyof Participant, value: string) => {
     setParticipacao({
       ...participacao,
       [category]: participacao[category].map(p => p.id === id ? { ...p, [field]: value } : p)
     });
   };
 
-  const removeParticipante = (category: keyof ParticipationCategory, id: string) => {
+  const removeParticipant = (category: keyof ParticipationCategory, id: string) => {
     setParticipacao({
       ...participacao,
       [category]: participacao[category].filter(p => p.id !== id)
@@ -559,10 +559,10 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
   const durationTextConcat = formatDurationText(durationMin, durationSeg);
 
   const buildPayload = (): FonogramaInsert => {
-    const tituloFinal = (title && title.trim()) || linkedWork?.title || "Sem título";
+    const finalTitle = (title && title.trim()) || linkedWork?.title || "Sem título";
     // org_id is not a form field — the tenant comes from the API's authenticated context.
     return {
-      title: tituloFinal,
+      title: finalTitle,
       cod_ecad: codEcad || null,
       cod_entidade: codEntidade || null,
       agregadora: agregadora || null,
@@ -654,14 +654,14 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
         );
       }
 
-      const tituloSalvo = (title && title.trim()) || linkedWork?.title || "Sem título";
+      const savedTitle = (title && title.trim()) || linkedWork?.title || "Sem título";
       onOpenChange(false);
 
       // Opens the prefilled contract modal after closing the phonogram modal
       onSaved?.({
-        title: `Contrato de Fonograma – ${tituloSalvo}`,
+        title: `Contrato de Fonograma – ${savedTitle}`,
         notes: [
-          `Fonograma: ${tituloSalvo}`,
+          `Fonograma: ${savedTitle}`,
           linkedWork?.title ? `Obra vinculada: ${linkedWork.title}` : null,
           linkedWork?.compositores ? `Compositores: ${linkedWork.compositores}` : null,
         ].filter(Boolean).join("\n"),
@@ -692,7 +692,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
         </CollapsibleTrigger>
         <CollapsibleContent className="pt-4 space-y-4">
-          <Button type="button" variant="outline" size="sm" onClick={() => addParticipante(category)} disabled={isViewMode}>
+          <Button type="button" variant="outline" size="sm" onClick={() => addParticipant(category)} disabled={isViewMode}>
             <Plus className="w-4 h-4 mr-1" /> Adicionar
           </Button>
           
@@ -702,15 +702,15 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                 <div key={p.id} className="flex gap-3 items-center">
                   <ArtistNameInput
                     value={p.name}
-                    onChange={(val) => updateParticipante(category, p.id, 'name', val)}
-                    onSelect={(a) => updateParticipante(category, p.id, 'artist_id', a.id)}
+                    onChange={(val) => updateParticipant(category, p.id, 'name', val)}
+                    onSelect={(a) => updateParticipant(category, p.id, 'artist_id', a.id)}
                     placeholder="Nome do participante"
                     disabled={isViewMode}
                     className="flex-1"
                   />
                   <Input 
                     value={p.percentual} 
-                    onChange={(e) => updateParticipante(category, p.id, 'percentual', e.target.value)}
+                    onChange={(e) => updateParticipant(category, p.id, 'percentual', e.target.value)}
                     disabled={isViewMode} 
                     placeholder="%" 
                     type="number"
@@ -738,7 +738,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                   >
                     <Eye className="w-4 h-4" />
                   </Button>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => removeParticipante(category, p.id)} disabled={isViewMode}>
+                  <Button type="button" variant="ghost" size="icon" onClick={() => removeParticipant(category, p.id)} disabled={isViewMode}>
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
@@ -795,7 +795,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
             ) : (
               <>
               <div className="flex gap-2">
-                <Popover open={buscaOpen} onOpenChange={setBuscaOpen}>
+                <Popover open={searchOpen} onOpenChange={setSearchOpen}>
                   <PopoverTrigger asChild>
                     <div className="flex-1 relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -803,10 +803,10 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                         value={searchWork}
                         onChange={(e) => {
                           setSearchWork(e.target.value);
-                          setBuscaOpen(true);
+                          setSearchOpen(true);
                         }}
-                        onFocus={() => !isViewMode && setBuscaOpen(true)}
-                        onClick={() => !isViewMode && setBuscaOpen(true)}
+                        onFocus={() => !isViewMode && setSearchOpen(true)}
+                        onClick={() => !isViewMode && setSearchOpen(true)}
                         disabled={isViewMode}
                         placeholder="Digite para buscar uma obra..."
                         className="pl-10"
@@ -853,7 +853,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                                 // Resolve the musician/arranger from the project producers — DIRECT
                                 // lookup by ID (Task J: it used to scan the `projetos` array
                                 // of an unfiltered useProjetos(), truncated at 50 per tenant).
-                                let musicosArr: Participante[] = [];
+                                let musicosArr: Participant[] = [];
                                 if ((fullWork.project_id as string | null | undefined)) {
                                   const project = await storage.findById<ProjetoWithRelations>("projects", fullWork.project_id as string);
                                   if (project?.description) {
@@ -900,7 +900,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                                     if (byName) { artistName = byName.stageName; artistId = byName.id; }
                                   }
                                 }
-                                const performers: Participante[] = artistName
+                                const performers: Participant[] = artistName
                                   ? [{ id: crypto.randomUUID(), name: artistName, percentual: "", artist_id: artistId }]
                                   : [];
                                 setParticipacao(prev => ({
@@ -911,7 +911,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                                 }));
                               }
                               setSearchWork("");
-                              setBuscaOpen(false);
+                              setSearchOpen(false);
                               toast.success(`Obra "${work.title}" vinculada! Campos preenchidos automaticamente.`);
                             };
                             return (
@@ -983,7 +983,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                               status: "registered",
                             });
                             setSearchWork("");
-                            setBuscaOpen(false);
+                            setSearchOpen(false);
                           }}
                         />
                       </div>
@@ -994,7 +994,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                   type="button"
                   variant="outline"
                   disabled={isViewMode}
-                  onClick={() => setBuscaOpen(true)}
+                  onClick={() => setSearchOpen(true)}
                   data-testid="button-buscar-obra"
                 >
                   <Search className="w-4 h-4 mr-2" /> Buscar
@@ -1290,7 +1290,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
           </DialogFooter>
         </form>
       </DialogContent>
-      <ParticipanteViewModal
+      <ParticipantViewModal
         open={viewArtist !== null}
         onOpenChange={(o) => { if (!o) setViewArtist(null); }}
         artista={viewArtist}

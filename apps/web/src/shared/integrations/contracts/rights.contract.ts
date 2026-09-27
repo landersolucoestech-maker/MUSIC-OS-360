@@ -203,7 +203,7 @@ export interface CollectionEntry {
   created_at: string;
 }
 
-export interface ArrecadacaoSummary {
+export interface CollectionSummary {
   entity: RightsEntityId;
   periodo: string;
   total_bruto_cents: number;
@@ -214,7 +214,7 @@ export interface ArrecadacaoSummary {
 
 // ─── Reconciliation DTOs ─────────────────────────────────────────────────────
 
-export interface ConciliacaoResult {
+export interface ReconciliationResult {
   matched: Array<{
     local_id: string;
     external_id: string;
@@ -291,13 +291,13 @@ export interface IRightsProvider {
   // ── Collection ──────────────────────────────────────────────────────────────
 
   /** Looks up collection for a period */
-  getArrecadacao(periodo: string): Promise<CollectionEntry[]>;
+  getCollection(periodo: string): Promise<CollectionEntry[]>;
 
   /** Collection summary for a period */
-  getArrecadacaoSummary(periodo: string): Promise<ArrecadacaoSummary>;
+  getCollectionSummary(periodo: string): Promise<CollectionSummary>;
 
   /** Reconciles received collection with the local catalog */
-  conciliar(periodo: string): Promise<ConciliacaoResult>;
+  conciliar(periodo: string): Promise<ReconciliationResult>;
 
   // ── Health ──────────────────────────────────────────────────────────────────
 
@@ -308,7 +308,7 @@ export interface IRightsProvider {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /** localStorage key for cached collection data */
-export function arrecadacaoStorageKey(entity: RightsEntityId, periodo: string): string {
+export function collectionStorageKey(entity: RightsEntityId, periodo: string): string {
   return `musicos360_${entity}_arrecadacao_${periodo}`;
 }
 
