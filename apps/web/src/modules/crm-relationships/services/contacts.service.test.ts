@@ -40,7 +40,7 @@ describe("contacts.service.ts — permanent guard against reintroducing a mock",
 
 vi.mock("./clients.service", () => ({
   clientsService: {
-    list: vi.fn(),
+    listAll: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     remove: vi.fn(),
@@ -253,15 +253,17 @@ describe("CZ-043 wire mapping — /clients canonical contract", () => {
 describe("contactsService — always delegates to the real clientsService (no local state)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("list() calls clientsService.list() and maps the API shape to Contact", async () => {
-    vi.mocked(clientsService.list).mockResolvedValue([wireRow]);
+  it("list() sweeps every page via clientsService.listAll() and maps the API shape to Contact", async () => {
+    vi.mocked(clientsService.listAll).mockResolvedValue({ items: [wireRow], total: 1, truncated: false });
 
     const result = await contactsService.list();
 
-    expect(clientsService.list).toHaveBeenCalled();
-    expect(result).toEqual([
+    expect(clientsService.listAll).toHaveBeenCalled();
+    expect(result.items).toEqual([
       expect.objectContaining({ id: "c1", name: "Selo X", category: "PARTNER", personType: "company" }),
     ]);
+    expect(result.truncated).toBe(false);
+    expect(result.total).toBe(1);
   });
 
   it("create() delegates to clientsService.create(...) without generating an id locally", async () => {
@@ -291,7 +293,7 @@ describe("contactsService — always delegates to the real clientsService (no lo
   });
 
   it("propagates clientsService errors without masking (no local success fallback)", async () => {
-    vi.mocked(clientsService.list).mockRejectedValue(new Error("network down"));
+    vi.mocked(clientsService.listAll).mockRejectedValue(new Error("network down"));
     await expect(contactsService.list()).rejects.toThrow("network down");
   });
 });

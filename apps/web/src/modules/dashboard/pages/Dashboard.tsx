@@ -25,6 +25,7 @@ import type { Artist } from "@/modules/artist/types/artist.types";
 import { useWsEvent } from "@/shared/hooks/useWsEvent";
 import { cn } from "@/shared/lib/utils";
 import { useActivityHistory, type AuditLogRow } from "../hooks/useActivityHistory";
+import { auditEntityMeta, describeAuditAction, describeAuditRow } from "../lib/audit-activity";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -77,68 +78,29 @@ function appointmentDateTime(raw: unknown, time: unknown): Date | null {
 }
 
 // ─── Audit Log → ActivityItem mapper ────────────────────────────────────────
+// Keyed by the canonical entity key resolved in lib/audit-activity (PT-BR labels live there).
 const ENTITY_ICON: Record<string, React.ReactNode> = {
-  artists:      <Users   className="h-3.5 w-3.5" />,
-  artistas:     <Users   className="h-3.5 w-3.5" />,
-  contracts:    <FileText className="h-3.5 w-3.5" />,
-  contratos:    <FileText className="h-3.5 w-3.5" />,
-  releases:     <Music   className="h-3.5 w-3.5" />,
-  lancamentos:  <Music   className="h-3.5 w-3.5" />,
-  works:        <Music   className="h-3.5 w-3.5" />,
-  obras:        <Music   className="h-3.5 w-3.5" />,
-  phonograms:   <Music   className="h-3.5 w-3.5" />,
-  fonogramas:   <Music   className="h-3.5 w-3.5" />,
-  leads:        <UserCheck className="h-3.5 w-3.5" />,
-  transactions: <DollarSign className="h-3.5 w-3.5" />,
-  transacoes:   <DollarSign className="h-3.5 w-3.5" />,
-  events:       <Calendar className="h-3.5 w-3.5" />,
-  eventos:      <Calendar className="h-3.5 w-3.5" />,
+  artist:      <Users   className="h-3.5 w-3.5" />,
+  contract:    <FileText className="h-3.5 w-3.5" />,
+  release:     <Music   className="h-3.5 w-3.5" />,
+  work:        <Music   className="h-3.5 w-3.5" />,
+  phonogram:   <Music   className="h-3.5 w-3.5" />,
+  lead:        <UserCheck className="h-3.5 w-3.5" />,
+  client:      <UserCheck className="h-3.5 w-3.5" />,
+  transaction: <DollarSign className="h-3.5 w-3.5" />,
+  invoice:     <DollarSign className="h-3.5 w-3.5" />,
+  event:       <Calendar className="h-3.5 w-3.5" />,
 };
-
-const ENTITY_BADGE: Record<string, string> = {
-  artists:      "Artista",     artistas: "Artista",
-  contracts:    "Contrato",    contratos: "Contrato",
-  releases:     "Lançamento",  lancamentos: "Lançamento",
-  works:        "Obra",        obras: "Obra",
-  phonograms:   "Fonograma",   fonogramas: "Fonograma",
-  leads:        "CRM",
-  transactions: "Accounting",  transacoes: "Accounting",
-  events:       "Agenda",      eventos: "Agenda",
-};
-
-function describeAuditAction(action: string, entity: string): string {
-  const verbMap: Record<string, string> = {
-    create:  "criado",
-    created: "criado",
-    update:  "atualizado",
-    updated: "atualizado",
-    delete:  "removido",
-    deleted: "removido",
-    sign:    "assinado",
-    signed:  "assinado",
-  };
-  const verb = verbMap[action.toLowerCase()] ?? action;
-  const label = ENTITY_BADGE[entity] ?? entity;
-  return `${label} ${verb}`;
-}
 
 function mapAuditToActivity(row: AuditLogRow): ActivityItem {
-  const after = (row.after ?? {}) as Record<string, unknown>;
-  const description =
-    (after["title"]         as string | undefined) ??
-    (after["stage_name"]     as string | undefined) ??
-    // DADO_HISTORICO: audit rows written before CZ-042 snapshot the artist
-    // with its old column name; they are immutable history, never rewritten.
-    (after["nome_artistico"] as string | undefined) ??
-    (after["nome"]           as string | undefined) ??
-    (row.entity_id ?? "—");
+  const view = describeAuditRow(row);
   const ts = row.created_at ? new Date(row.created_at) : new Date();
   return {
     id:           row.id,
-    icon:         ENTITY_ICON[row.entity] ?? <Shield className="h-3.5 w-3.5" />,
-    label:        describeAuditAction(row.action, row.entity),
-    description:  String(description),
-    badge:        ENTITY_BADGE[row.entity] ?? "Sistema",
+    icon:         (view.entityKey && ENTITY_ICON[view.entityKey]) || <Shield className="h-3.5 w-3.5" />,
+    label:        view.label,
+    description:  view.description,
+    badge:        view.badge,
     badgeVariant: row.action.includes("delete") ? "outline" : "default",
     timestamp:    Number.isFinite(ts.getTime()) ? ts : new Date(),
   };
@@ -394,20 +356,20 @@ export default function Dashboard() {
   }, []);
 
   // WS subscriptions
-  useWsEvent("artist.created", (d) =>
-    push({ icon: <Users className="h-3.5 w-3.5" />, label: "Artista cadastrado", description: d.id, badge: "Artista", badgeVariant: "default" }),
+  useWsEvent("artist.created", () =>
+    push({ icon: <Users className="h-3.5 w-3.5" />, label: "Artista cadastrado", description: "Novo cadastro no elenco", badge: "Artista", badgeVariant: "default" }),
   );
-  useWsEvent("artist.updated", (d) =>
-    push({ icon: <Users className="h-3.5 w-3.5" />, label: "Artista atualizado", description: d.id, badge: "Artista", badgeVariant: "secondary" }),
+  useWsEvent("artist.updated", () =>
+    push({ icon: <Users className="h-3.5 w-3.5" />, label: "Artista atualizado", description: "Dados alterados", badge: "Artista", badgeVariant: "secondary" }),
   );
-  useWsEvent("artist.deleted", (d) =>
-    push({ icon: <Users className="h-3.5 w-3.5" />, label: "Artista removido", description: d.id, badge: "Artista", badgeVariant: "outline" }),
+  useWsEvent("artist.deleted", () =>
+    push({ icon: <Users className="h-3.5 w-3.5" />, label: "Artista removido", description: "Cadastro removido do elenco", badge: "Artista", badgeVariant: "outline" }),
   );
   useWsEvent("catalog.music.registered", (d) =>
-    push({ icon: <Music className="h-3.5 w-3.5" />, label: "Música registrada", description: (d as { title?: string }).title ?? d.id, badge: "Catálogo", badgeVariant: "default" }),
+    push({ icon: <Music className="h-3.5 w-3.5" />, label: "Música registrada", description: (d as { title?: string }).title ?? "Título não informado", badge: "Catálogo", badgeVariant: "default" }),
   );
-  useWsEvent("catalog.phonogram.registered", (d) =>
-    push({ icon: <Music className="h-3.5 w-3.5" />, label: "Fonograma registrado", description: d.id, badge: "Catálogo", badgeVariant: "secondary" }),
+  useWsEvent("catalog.phonogram.registered", () =>
+    push({ icon: <Music className="h-3.5 w-3.5" />, label: "Fonograma registrado", description: "Novo fonograma no catálogo", badge: "Catálogo", badgeVariant: "secondary" }),
   );
   useWsEvent("contract.created", () =>
     push({ icon: <FileText className="h-3.5 w-3.5" />, label: "Contrato criado", description: "Novo contrato adicionado", badge: "Contrato", badgeVariant: "default" }),
@@ -419,7 +381,7 @@ export default function Dashboard() {
     push({ icon: <FileText className="h-3.5 w-3.5" />, label: "Contrato assinado", description: "Assinatura registrada", badge: "Contrato", badgeVariant: "default" }),
   );
   useWsEvent("crm.lead.captured", (d) =>
-    push({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead capturado", description: (d as { nome?: string }).nome ?? d.id, badge: "CRM", badgeVariant: "default" }),
+    push({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead capturado", description: (d as { nome?: string }).nome ?? "Nome não informado", badge: "CRM", badgeVariant: "default" }),
   );
   useWsEvent("crm.lead.converted", () =>
     push({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead convertido", description: "Lead virou artista/cliente", badge: "CRM", badgeVariant: "default" }),
@@ -435,7 +397,8 @@ export default function Dashboard() {
   );
   useWsEvent("audit.entry.created", (d) => {
     const ev = d as { action?: string; entity?: string };
-    push({ icon: <Shield className="h-3.5 w-3.5" />, label: `Auditoria: ${ev.action ?? ""}`, description: ev.entity ?? "", badge: "Sistema", badgeVariant: "outline" });
+    const meta = auditEntityMeta(ev.entity ?? ev.action?.split(".")[0]);
+    push({ icon: <Shield className="h-3.5 w-3.5" />, label: describeAuditAction(ev.action, ev.entity), description: "Registro de auditoria", badge: meta?.badge ?? "Sistema", badgeVariant: "outline" });
   });
 
   // Mock mode: window CustomEvents

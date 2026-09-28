@@ -122,6 +122,7 @@ function makeQb(rows: Record<string, unknown>[]) {
   const qb: Record<string, jest.Mock> = {};
   const chain = () => qb;
   qb['leftJoinAndMapOne'] = jest.fn(chain);
+  qb['select'] = jest.fn(chain);
   qb['where'] = jest.fn(chain);
   qb['andWhere'] = jest.fn(chain);
   qb['orderBy'] = jest.fn(chain);

@@ -13,13 +13,14 @@
  *   <WorkflowTransitionPanel onTransition={transition} isLoading={isPending} ... />
  */
 
+import type { StorageTable } from "@/shared/lib/api-client";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { storage, type StorageRow } from '@/shared/lib/storage';
 
 import { toUserMessage } from "@/shared/lib/errors";
 interface UseWorkflowTransitionOptions {
-  table: string;
+  table: StorageTable;
   id: string;
   queryKey: unknown[];
   onSuccess?: (toStatus: string) => void;

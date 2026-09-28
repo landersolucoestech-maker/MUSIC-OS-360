@@ -2,7 +2,7 @@ import { calendarDay } from "@/shared/lib/format-utils";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { useTransactions } from "@/modules/accounting/hooks/useTransactions";
+import { truncatedTransactionsNotice, useAllTransactions } from "@/modules/accounting/hooks/useAllTransactions";
 import { format, startOfMonth, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatCurrency } from "@/shared/lib/format-utils";
@@ -38,7 +38,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export function FinanceChart() {
-  const { transactions } = useTransactions();
+  // Full paged sweep: monthly totals over the default first page (50 rows) were partial.
+  const { transactions, truncated, total } = useAllTransactions();
 
   const chartData = useMemo(() => {
     const today = new Date();
@@ -86,6 +87,11 @@ export function FinanceChart() {
       <CardHeader>
         <CardTitle className="text-lg">Evolução Financeira</CardTitle>
         <CardDescription>Receitas, despesas e lucro dos últimos 6 meses</CardDescription>
+        {truncated && (
+          <p className="text-xs text-destructive" role="alert" data-testid="finance-chart-truncated">
+            {truncatedTransactionsNotice(transactions.length, total)}
+          </p>
+        )}
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">

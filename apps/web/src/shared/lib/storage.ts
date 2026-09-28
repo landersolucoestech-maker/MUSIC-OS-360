@@ -1,5 +1,5 @@
 import { NotFoundError, IntegrationError } from "./errors";
-import { api, TABLE_ENDPOINT, PENDING_TABLES } from "./api-client";
+import { api, TABLE_ENDPOINT, PENDING_TABLES, type StorageTable } from "./api-client";
 
 export type StorageRow = Record<string, unknown> & { id: string };
 
@@ -51,22 +51,22 @@ export interface PagedListOptions extends Omit<ListOptions, "limit" | "offset"> 
 
 interface StoragePort {
   runInTransaction<T>(callback: () => Promise<T>): Promise<T>;
-  list<T extends StorageRow>(table: string, options?: ListOptions): Promise<T[]>;
-  listPaged<T extends StorageRow>(table: string, options: PagedListOptions): Promise<PagedResult<T>>;
-  findById<T extends StorageRow>(table: string, id: string): Promise<T | undefined>;
-  getById<T extends StorageRow>(table: string, id: string): Promise<T | undefined>;
+  list<T extends StorageRow>(table: StorageTable, options?: ListOptions): Promise<T[]>;
+  listPaged<T extends StorageRow>(table: StorageTable, options: PagedListOptions): Promise<PagedResult<T>>;
+  findById<T extends StorageRow>(table: StorageTable, id: string): Promise<T | undefined>;
+  getById<T extends StorageRow>(table: StorageTable, id: string): Promise<T | undefined>;
   create<T extends StorageRow>(
-    table: string,
+    table: StorageTable,
     data: Omit<T, "id" | "user_id" | "created_at" | "updated_at">,
   ): Promise<T>;
-  update<T extends StorageRow>(table: string, id: string, data: Partial<T>): Promise<T>;
+  update<T extends StorageRow>(table: StorageTable, id: string, data: Partial<T>): Promise<T>;
   updateOptimistic<T extends StorageRow>(
-    table: string,
+    table: StorageTable,
     id: string,
     data: Partial<T>,
     expectedVersion: number,
   ): Promise<T>;
-  delete(table: string, id: string): Promise<void>;
+  delete(table: StorageTable, id: string): Promise<void>;
   getAuditLog(filters?: {
     entity?: string;
     entity_id?: string;
@@ -80,10 +80,10 @@ interface StoragePort {
 
 const pendingTablesWarned = new Set<string>();
 
-function resolveTable(table: string): { ep: string } | { pending: true; reason: string } {
-  const ep = TABLE_ENDPOINT[table];
+function resolveTable(table: StorageTable): { ep: string } | { pending: true; reason: string } {
+  const ep = (TABLE_ENDPOINT as Record<string, string>)[table];
   if (ep) return { ep };
-  const reason = PENDING_TABLES[table];
+  const reason = (PENDING_TABLES as Record<string, string>)[table];
   if (reason) {
     if (!pendingTablesWarned.has(table)) {
       pendingTablesWarned.add(table);
@@ -94,7 +94,7 @@ function resolveTable(table: string): { ep: string } | { pending: true; reason: 
   throw new IntegrationError("storage", `Unknown table "${table}". Add it to TABLE_ENDPOINT or PENDING_TABLES in api-client.ts.`);
 }
 
-function unavailableTable(table: string, reason: string): never {
+function unavailableTable(table: StorageTable, reason: string): never {
   throw new IntegrationError(
     "module-unavailable",
     `Module "${table}" unavailable in this version: ${reason}`,
@@ -102,7 +102,7 @@ function unavailableTable(table: string, reason: string): never {
   );
 }
 
-function unwrapList<T>(response: T[] | ListEnvelope<T>, table: string): T[] {
+function unwrapList<T>(response: T[] | ListEnvelope<T>, table: StorageTable): T[] {
   if (Array.isArray(response)) return response;
   if (response && Array.isArray(response.data)) return response.data;
   throw new IntegrationError(
@@ -116,7 +116,7 @@ const httpStorage: StoragePort = {
     return callback();
   },
 
-  async list<T extends StorageRow>(table: string, options?: ListOptions): Promise<T[]> {
+  async list<T extends StorageRow>(table: StorageTable, options?: ListOptions): Promise<T[]> {
     const resolved = resolveTable(table);
     if ("pending" in resolved) unavailableTable(table, resolved.reason);
     const params = new URLSearchParams();
@@ -146,7 +146,7 @@ const httpStorage: StoragePort = {
    * which is right for the "give me everything" uses (selects/lookups), but wrong
    * for a paginated table, which needs to know the tenant's real total.
    */
-  async listPaged<T extends StorageRow>(table: string, options: PagedListOptions): Promise<PagedResult<T>> {
+  async listPaged<T extends StorageRow>(table: StorageTable, options: PagedListOptions): Promise<PagedResult<T>> {
     const resolved = resolveTable(table);
     if ("pending" in resolved) unavailableTable(table, resolved.reason);
     const { page, pageSize, filters, orderBy, signal } = options;
@@ -174,7 +174,7 @@ const httpStorage: StoragePort = {
     };
   },
 
-  async findById<T extends StorageRow>(table: string, id: string): Promise<T | undefined> {
+  async findById<T extends StorageRow>(table: StorageTable, id: string): Promise<T | undefined> {
     const resolved = resolveTable(table);
     if ("pending" in resolved) unavailableTable(table, resolved.reason);
     try {
@@ -185,12 +185,12 @@ const httpStorage: StoragePort = {
     }
   },
 
-  async getById<T extends StorageRow>(table: string, id: string): Promise<T | undefined> {
+  async getById<T extends StorageRow>(table: StorageTable, id: string): Promise<T | undefined> {
     return httpStorage.findById<T>(table, id);
   },
 
   async create<T extends StorageRow>(
-    table: string,
+    table: StorageTable,
     data: Omit<T, "id" | "user_id" | "created_at" | "updated_at">,
   ): Promise<T> {
     const resolved = resolveTable(table);
@@ -198,14 +198,14 @@ const httpStorage: StoragePort = {
     return api.post<T>(resolved.ep, data);
   },
 
-  async update<T extends StorageRow>(table: string, id: string, data: Partial<T>): Promise<T> {
+  async update<T extends StorageRow>(table: StorageTable, id: string, data: Partial<T>): Promise<T> {
     const resolved = resolveTable(table);
     if ("pending" in resolved) unavailableTable(table, resolved.reason);
     return api.patch<T>(`${resolved.ep}/${id}`, data);
   },
 
   async updateOptimistic<T extends StorageRow>(
-    table: string,
+    table: StorageTable,
     id: string,
     data: Partial<T>,
     _expectedVersion: number,
@@ -213,7 +213,7 @@ const httpStorage: StoragePort = {
     return httpStorage.update<T>(table, id, data);
   },
 
-  async delete(table: string, id: string): Promise<void> {
+  async delete(table: StorageTable, id: string): Promise<void> {
     const resolved = resolveTable(table);
     if ("pending" in resolved) unavailableTable(table, resolved.reason);
     return api.delete(`${resolved.ep}/${id}`);
@@ -232,7 +232,7 @@ const httpStorage: StoragePort = {
     if (filters?.limit) params.set("limit", String(filters.limit));
     const qs = params.toString();
     const response = await api.get<AuditEntry[] | ListEnvelope<AuditEntry>>(`/audit-log${qs ? `?${qs}` : ""}`);
-    return unwrapList(response, "audit-log");
+    return unwrapList(response, "audit_logs");
   },
 
   raw(): never {

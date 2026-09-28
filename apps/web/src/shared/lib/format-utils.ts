@@ -73,6 +73,23 @@ export function formatCalendarDate(value: unknown): string {
   return `${dayOfMonth}/${month}/${year}`;
 }
 
+/**
+ * DD/MM/AAAA of a calendar-day field for display: `empty` when the value is
+ * absent, "Data inválida" when a value is present but is not a real calendar
+ * day (never the English "Invalid Date" nor a timezone-shifted day).
+ */
+export function formatCalendarDateLabel(value: unknown, empty = "-"): string {
+  if (value === null || value === undefined || (typeof value === "string" && value.trim() === "")) return empty;
+  const day = calendarDay(value);
+  if (!day) return "Data inválida";
+  const [year, month, dayOfMonth] = day.split("-").map(Number);
+  const probe = new Date(Date.UTC(year, month - 1, dayOfMonth));
+  if (probe.getUTCFullYear() !== year || probe.getUTCMonth() !== month - 1 || probe.getUTCDate() !== dayOfMonth) {
+    return "Data inválida";
+  }
+  return formatCalendarDate(day);
+}
+
 export function formatDateTime(date: string | Date | null | undefined): string {
   const d = toDate(date);
   if (!d) return "-";

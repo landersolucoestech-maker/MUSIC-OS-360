@@ -86,7 +86,7 @@ describe('Release request contract (CZ-038)', () => {
       schedule: { recording_date: '2026-08-01' },
     };
     const qb: Record<string, jest.Mock> = {};
-    for (const m of ['leftJoinAndMapOne', 'where']) qb[m] = jest.fn(() => qb);
+    for (const m of ['leftJoinAndMapOne', 'select', 'where']) qb[m] = jest.fn(() => qb);
     qb['getOne'] = jest.fn(async () => ({ ...current }));
     const repo = { createQueryBuilder: jest.fn(() => qb), update: jest.fn(async () => ({ affected: 1 })) };
     const ds = { getRepository: jest.fn(() => repo) };
@@ -108,7 +108,7 @@ describe('Release request contract (CZ-038)', () => {
       metadata: { checklist: { done: 3 }, territory: 'BR' },
     };
     const qb: Record<string, jest.Mock> = {};
-    for (const m of ['leftJoinAndMapOne', 'where']) qb[m] = jest.fn(() => qb);
+    for (const m of ['leftJoinAndMapOne', 'select', 'where']) qb[m] = jest.fn(() => qb);
     qb['getOne'] = jest.fn(async () => ({ ...current }));
     const repo = { createQueryBuilder: jest.fn(() => qb), update: jest.fn(async () => ({ affected: 1 })) };
     const ds = { getRepository: jest.fn(() => repo) };

@@ -1,3 +1,4 @@
+import type { StorageTable } from "./api-client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { apiMock } = vi.hoisted(() => ({
@@ -25,7 +26,7 @@ describe("storage.list", () => {
   it("preserves array responses", async () => {
     apiMock.get.mockResolvedValueOnce([{ id: "1", nome: "Item" }]);
 
-    await expect(storage.list("items")).resolves.toEqual([
+    await expect(storage.list("items" as StorageTable)).resolves.toEqual([
       { id: "1", nome: "Item" },
     ]);
   });
@@ -36,7 +37,7 @@ describe("storage.list", () => {
       meta: { total: 1, limit: 50, offset: 0 },
     });
 
-    await expect(storage.list("items")).resolves.toEqual([
+    await expect(storage.list("items" as StorageTable)).resolves.toEqual([
       { id: "1", nome: "Item" },
     ]);
   });
@@ -44,7 +45,7 @@ describe("storage.list", () => {
   it("fails explicitly for an invalid response contract", async () => {
     apiMock.get.mockResolvedValueOnce({ meta: { total: 0 } });
 
-    await expect(storage.list("items")).rejects.toThrow(
+    await expect(storage.list("items" as StorageTable)).rejects.toThrow(
       'Invalid list response for "items"',
     );
   });

@@ -8,6 +8,7 @@
  * ../hooks/useContacts.ts exposes the raw rows for record-level mutations.
  */
 import { api } from "@/shared/lib/api-client";
+import { fetchAllPages, type FetchAllPagesResult } from "@/shared/lib/exportAll";
 import type { ContactPriority, ContactStatus, ContactType, PersonType } from "../types";
 
 /**
@@ -160,21 +161,16 @@ export interface ClientAttachment {
 }
 
 export const clientsService = {
-  async list(params?: { search?: string; status?: string; person_type?: PersonType; category?: string; limit?: number; offset?: number }): Promise<ApiClient[]> {
-    const query = new URLSearchParams();
-    if (params?.search) query.set("search", params.search);
-    if (params?.status) query.set("status", params.status);
-    if (params?.person_type) query.set("person_type", params.person_type);
-    if (params?.category) query.set("category", params.category);
-    if (params?.limit) query.set("limit", String(params.limit));
-    if (params?.offset) query.set("offset", String(params.offset));
-    const qs = query.toString();
-    // api.get() already unwraps the TransformInterceptor's {data,timestamp} envelope;
-    // since the controller returns {data: [...], meta} directly (no new wrap,
-    // see TransformInterceptor: an object that already has `data` is preserved), the value
-    // here already IS the array — using ListApiClientsResult and re-reading `.data` duplicated the
-    // unwrap and resulted in undefined.
-    return api.get<ApiClient[]>(`/clients${qs ? `?${qs}` : ""}`);
+  /**
+   * Every client of the tenant matching the filters, via a full paged sweep.
+   * `list()` without a limit inherits the API's default page (50 rows), which
+   * silently truncated the CRM list, its metrics and every name resolution;
+   * `truncated` is true only when the sweep's safety ceiling was reached.
+   */
+  async listAll(params?: { search?: string; status?: string; person_type?: PersonType; category?: string }): Promise<FetchAllPagesResult<ApiClient>> {
+    return fetchAllPages<ApiClient>("clientes", {
+      filters: params ? { ...params } : undefined,
+    });
   },
   async create(data: CreateApiClientInput): Promise<ApiClient> {
     return api.post<ApiClient>("/clients", data);

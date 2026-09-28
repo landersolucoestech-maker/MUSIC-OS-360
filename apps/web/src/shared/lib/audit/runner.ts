@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { storage, type StorageRow } from "@/shared/lib/storage";
 import type {
   AuditIssue,
@@ -15,7 +16,7 @@ type FieldRule = {
 
 type AuditConfig = {
   module: AuditModuleId;
-  table: string;
+  table: StorageTable;
   entityType: string;
   fixPath: (row: StorageRow) => string;
   label: (row: StorageRow) => string;

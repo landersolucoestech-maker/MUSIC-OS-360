@@ -20,7 +20,8 @@ import { useTransactions, type TransactionWithRelations } from "@/modules/accoun
 import { useTransactionsPaginated, useFinanceStats } from "@/modules/accounting/hooks/useTransactionsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { formatCurrency, formatCalendarDate } from "@/shared/lib/format-utils";
-import { TRANSACTION_CATEGORY_FILTER_OPTIONS, transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
+import { transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
+import { useTransactionCategoryFilterOptions } from "@/modules/accounting/hooks/useTransactionCategoryFilterOptions";
 import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
 import { TransactionFormModal } from "@/modules/accounting/components/transaction-form/TransactionFormModal";
 import { TransactionViewModal } from "@/modules/accounting/components/TransactionViewModal";
@@ -65,6 +66,7 @@ export default function Accounting() {
   const [typeFilter, setTypeFilter] = useState("all-type");
   const [statusFilter, setStatusFilter] = useState("all-status");
   const [categoryFilter, setCategoryFilter] = useState("all-category");
+  const { options: categoryFilterOptions } = useTransactionCategoryFilterOptions();
 
   const handleOFXUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -281,7 +283,7 @@ export default function Accounting() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-category">Todas</SelectItem>
-              {TRANSACTION_CATEGORY_FILTER_OPTIONS.map((option) => (
+              {categoryFilterOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
               ))}
             </SelectContent>

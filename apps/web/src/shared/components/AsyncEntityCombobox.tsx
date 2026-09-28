@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { useState } from "react";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
@@ -8,7 +9,7 @@ import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 
 export interface AsyncEntityComboboxProps<T extends { id: string }> {
   /** Table/resource name — same key used in TABLE_ENDPOINT (api-client.ts). */
-  table: string;
+  table: StorageTable;
   /** Extracts the display text from a record (e.g. (a) => a.stage_name). */
   getLabel: (item: T) => string;
   value?: string | null;

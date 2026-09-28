@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { storage, type PagedListOptions } from "@/shared/lib/storage";
 
 export interface FetchAllPagesOptions extends Omit<PagedListOptions, "page" | "pageSize"> {
@@ -28,7 +29,7 @@ export interface FetchAllPagesResult<T> {
  * silently.
  */
 export async function fetchAllPages<T extends object>(
-  table: string,
+  table: StorageTable,
   options: FetchAllPagesOptions = {},
 ): Promise<FetchAllPagesResult<T>> {
   const { pageSize = 200, maxRecords = 5000, ...rest } = options;

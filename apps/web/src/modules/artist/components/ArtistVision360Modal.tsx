@@ -79,7 +79,7 @@ const formatDateDMY = (d?: string | null): string => {
 };
 
 // imports moved here after CircularProgress was removed
-import { formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
+import { formatCalendarDateLabel, formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { useWorks } from "@/modules/catalog/hooks/useWorks";
 import { usePhonograms } from "@/modules/catalog/hooks/usePhonograms";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
@@ -92,7 +92,7 @@ import {
   useContracts,
   type ContractWithRelations,
 } from "@/modules/contracts/hooks/useContracts";
-import { useTransactions } from "@/modules/accounting/hooks/useTransactions";
+import { truncatedTransactionsNotice, useAllTransactions } from "@/modules/accounting/hooks/useAllTransactions";
 import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
 import { ContractStatusBadge } from "@/modules/contracts/components/ContractStatusBadge";
 import { useEvents } from "@/modules/events/hooks/useEvents";
@@ -102,6 +102,8 @@ import { useMarketingCampaigns } from "@/modules/marketing/hooks/useMarketingCam
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 import { releaseStatusLabel, resolveReleaseStatus } from "@/modules/releases/lib/release-status";
 import { storedFileDisplayName } from "@/shared/lib/stored-file";
+import { distributorLabel } from "@/modules/artist/lib/distributor-label";
+import { safeExternalUrl, safeImageSrc } from "@/shared/lib/safe-url";
 
 // ── Marketing: campaign/channel labels ────────────────────────────────────
 const CAMPAIGN_STATUS_LABELS: Record<string, string> = {
@@ -347,7 +349,13 @@ export function ArtistVision360Modal({
     getProgressPercent: calcProgress,
   } = useGoals(open, artistId);
   const { contracts: actualContracts } = useContracts(open, artistId);
-  const { transactions: artistTransactions } = useTransactions(open, artistId);
+  // Full paged sweep (server-side artist_id filter): finance totals over the
+  // API's default first page (50 rows) were partial for active artists.
+  const {
+    transactions: artistTransactions,
+    truncated: artistTransactionsTruncated,
+    total: artistTransactionsTotal,
+  } = useAllTransactions({ enabled: open && Boolean(artistId), artistId });
   const { contacts } = useContacts(open);
   const { events: actualEvents } = useEvents(open, artistId);
   const { data: marketingContents = [] } = useMarketingContents(open);
@@ -686,9 +694,9 @@ export function ArtistVision360Modal({
                 <div
                   className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-xl font-bold text-foreground shrink-0"
                 >
-                  {artist.photoUrl ? (
+                  {safeImageSrc(artist.photoUrl) ? (
                     <img
-                      src={artist.photoUrl}
+                      src={safeImageSrc(artist.photoUrl)}
                       alt={artist.stageName}
                       className="w-full h-full rounded-full object-cover"
                     />
@@ -1285,7 +1293,7 @@ export function ArtistVision360Modal({
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Banco</p>
                       <p className="text-sm font-medium break-words">
-                        {artist.bankName?.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) || "Não informado"}
+                        {artist.bankName?.trim() || "Não informado"}
                       </p>
                     </div>
                     <div className="space-y-1">
@@ -1338,7 +1346,7 @@ export function ArtistVision360Modal({
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-muted-foreground">Tipo</p>
-                      <Badge variant="outline" className="capitalize">
+                      <Badge variant="outline">
                         {artist.profileType ? profileTypeLabel(artist.profileType) : "Não informado"}
                       </Badge>
                     </div>
@@ -1461,48 +1469,15 @@ export function ArtistVision360Modal({
                       <>
                         <div className="flex flex-wrap gap-2">
                           {activeDistributorIds.map((dist: string) => (
-                            <Badge
-                              key={dist}
-                              variant="secondary"
-                              className="capitalize"
-                            >
-                              {dist === "cdbaby"
-                                ? "CD Baby"
-                                : dist === "distrokid"
-                                  ? "DistroKid"
-                                  : dist === "tunecore"
-                                    ? "TuneCore"
-                                    : dist === "ditto"
-                                      ? "Ditto Music"
-                                      : dist === "onerpm"
-                                        ? "ONErpm"
-                                        : dist === "imusics"
-                                          ? "iMusics"
-                                          : dist === "symphonic"
-                                            ? "Symphonic Distribution"
-                                            : dist}
+                            <Badge key={dist} variant="secondary">
+                              {distributorLabel(dist)}
                             </Badge>
                           ))}
                         </div>
                         {Object.keys(emails).length > 0 && (
                           <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t border-border">
                             {Object.entries(emails).map(([distId, email]) => {
-                              const distributorName =
-                                distId === "cdbaby"
-                                  ? "CD Baby"
-                                  : distId === "distrokid"
-                                    ? "DistroKid"
-                                    : distId === "tunecore"
-                                      ? "TuneCore"
-                                      : distId === "ditto"
-                                        ? "Ditto Music"
-                                        : distId === "onerpm"
-                                          ? "ONErpm"
-                                          : distId === "imusics"
-                                            ? "iMusics"
-                                            : distId === "symphonic"
-                                              ? "Symphonic Distribution"
-                                              : distId;
+                              const distributorName = distributorLabel(distId);
                               return (
                                 <div key={distId}>
                                   <p className="text-xs text-muted-foreground">
@@ -1531,10 +1506,6 @@ export function ArtistVision360Modal({
                 const generalDistributors: DistributorEntry[] =
                   Array.isArray(artist.generalDistributors) ? artist.generalDistributors : [];
                 if (generalDistributors.length === 0) return null;
-                const DISTRIBUTOR_LABEL: Record<string, string> = {
-                  onerpm: "ONErpm", distrokid: "DistroKid", "30por1": "30 Por 1",
-                  symphonic: "Symphonic", musicpro: "MusicPro", somvibe: "Somvibe",
-                };
                 return (
                   <Card className="bg-muted/30">
                     <CardContent className="p-4">
@@ -1545,7 +1516,7 @@ export function ArtistVision360Modal({
                       <div className="flex flex-wrap gap-2 mb-3">
                         {generalDistributors.map((d) => (
                           <Badge key={d.id} variant="secondary">
-                            {d.id === "outros" ? (d.customName || "Outros") : (DISTRIBUTOR_LABEL[d.id] ?? d.id)}
+                            {distributorLabel(d.id, d.customName)}
                           </Badge>
                         ))}
                       </div>
@@ -1554,7 +1525,7 @@ export function ArtistVision360Modal({
                           {generalDistributors.filter((d) => d.email).map((d) => (
                             <div key={d.id}>
                               <p className="text-xs text-muted-foreground">
-                                E-mail Share — {d.id === "outros" ? (d.customName || "Outros") : (DISTRIBUTOR_LABEL[d.id] ?? d.id)}
+                                E-mail Share — {distributorLabel(d.id, d.customName)}
                               </p>
                               <p className="text-sm font-medium">{d.email}</p>
                             </div>
@@ -1615,10 +1586,6 @@ export function ArtistVision360Modal({
                   financeiro: "Financeiro", contador: "Contador", editora_musical: "Editora Musical",
                   roadie: "Roadie", gestor: "Gestor", empresario: "Empresário",
                 };
-                const DISTRIBUTOR_LABEL: Record<string, string> = {
-                  onerpm: "ONErpm", distrokid: "DistroKid", "30por1": "30 Por 1",
-                  symphonic: "Symphonic", musicpro: "MusicPro", somvibe: "Somvibe",
-                };
                 return (
                   <Card className="bg-muted/30">
                     <CardContent className="p-4">
@@ -1632,7 +1599,7 @@ export function ArtistVision360Modal({
                             <div className="flex items-center justify-between">
                               <p className="text-sm font-semibold">{c.name || "—"}</p>
                               {c.category && (
-                                <Badge variant="outline" className="text-xs capitalize">
+                                <Badge variant="outline" className="text-xs">
                                   {CATEGORY_LABEL[c.category] ?? "Outro"}
                                 </Badge>
                               )}
@@ -1657,7 +1624,7 @@ export function ArtistVision360Modal({
                                 <div className="flex flex-wrap gap-1.5">
                                   {c.distributors.map((d) => (
                                     <Badge key={d.id} variant="secondary" className="text-xs">
-                                      {d.id === "outros" ? (d.customName || "Outros") : (DISTRIBUTOR_LABEL[d.id] ?? d.id)}
+                                      {distributorLabel(d.id, d.customName)}
                                     </Badge>
                                   ))}
                                 </div>
@@ -1666,7 +1633,7 @@ export function ArtistVision360Modal({
                                     {c.distributors.filter((d) => d.email).map((d) => (
                                       <div key={d.id}>
                                         <p className="text-xs text-muted-foreground">
-                                          Share — {d.id === "outros" ? (d.customName || "Outros") : (DISTRIBUTOR_LABEL[d.id] ?? d.id)}
+                                          Share — {distributorLabel(d.id, d.customName)}
                                         </p>
                                         <p className="text-sm">{d.email}</p>
                                       </div>
@@ -1719,13 +1686,19 @@ export function ArtistVision360Modal({
                   {Array.isArray(artist.galleryUrls) &&
                   artist.galleryUrls.length > 0 ? (
                     <div className="grid grid-cols-3 gap-3">
-                      {artist.galleryUrls.map((url, idx) => (
+                      {artist.galleryUrls.map((url, idx) => {
+                        // Stored URLs are untrusted (gallery_urls has no URL validation on the API):
+                        // only absolute http(s) becomes a link / image source.
+                        const galleryHref = safeExternalUrl(url);
+                        const gallerySrc = galleryHref ? safeImageSrc(galleryHref) : "";
+                        return (
                         <div
                           key={idx}
                           className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-border group"
                         >
+                          {gallerySrc ? (
                           <img
-                            src={url}
+                            src={gallerySrc}
                             alt={`Foto ${idx + 1}`}
                             className="w-full h-full object-cover"
                             onError={(e) => {
@@ -1737,19 +1710,26 @@ export function ArtistVision360Modal({
                                 "flex";
                             }}
                           />
-                          <div className="hidden w-full h-full items-center justify-center">
+                          ) : null}
+                          <div className={`${gallerySrc ? "hidden" : "flex"} w-full h-full flex-col items-center justify-center gap-1 p-2 text-center`}>
                             <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                            {!galleryHref && (
+                              <span className="text-[10px] text-muted-foreground" data-testid="gallery-unsafe-url">Link inválido</span>
+                            )}
                           </div>
-                          <a
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="absolute inset-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                          >
-                            <ExternalLink className="h-5 w-5 text-foreground" />
-                          </a>
+                          {galleryHref && (
+                            <a
+                              href={galleryHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="absolute inset-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                            >
+                              <ExternalLink className="h-5 w-5 text-foreground" />
+                            </a>
+                          )}
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-10 text-center gap-2">
@@ -2079,6 +2059,11 @@ export function ArtistVision360Modal({
 
             {/* Finance */}
             <TabsContent value="financeiro" className="p-6 space-y-6 mt-0">
+              {artistTransactionsTruncated && (
+                <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-finance-truncated">
+                  {truncatedTransactionsNotice(artistTransactions.length, artistTransactionsTotal)}
+                </p>
+              )}
               {/* Value cards */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 <Card className="bg-success/10 border-success/20">
@@ -2174,9 +2159,7 @@ export function ArtistVision360Modal({
                               {t.description}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {t.transaction_date
-                                ? new Date(t.transaction_date).toLocaleDateString("pt-BR")
-                                : "—"}
+                              {formatCalendarDateLabel(t.transaction_date, "—")}
                               {t.category && ` · ${transactionCategoryLabel(t.category)}`}
                             </p>
                           </div>

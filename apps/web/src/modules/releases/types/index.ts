@@ -97,6 +97,13 @@ export type ReleaseInsert = Omit<Release, "id" | "user_id" | "created_at" | "upd
 export type ReleaseUpdate = Partial<ReleaseInsert>;
 
 export interface ReleaseWithRelations extends Release {
+  /** `{ id, stage_name }` of the linked artist (API embed); null when absent/deleted. */
+  artist?: ArtistRef | null;
+  /**
+   * @deprecated Deploy-skew alias of `artist` emitted by the API (same `{ id, stage_name }`).
+   * Still read by marketing (PitchingTab, loadReleaseContext, loadArtistContext); remove
+   * once those readers use `artist` and the API drops the alias.
+   */
   artistas?: ArtistRef | null;
 }
 

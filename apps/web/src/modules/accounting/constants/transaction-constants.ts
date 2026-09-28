@@ -306,7 +306,7 @@ export const companyRevenueCategories = [
 export const musicRevenueTypes = [
   { value: "participacao-show-evento", label: "Participação em Show/Evento" },
   { value: "venda-show-fechado", label: "Venda de Show Fechado" },
-  { value: "direitos-autorais", label: "Direitos Autorais" },
+  { value: "direitos-autorais", label: "Direitos autorais" },
   { value: "direitos-conexos", label: "Direitos Conexos" },
   { value: "external-rights-streaming", label: "Recebimentos externos de streaming" },
   { value: "licenciamento-obra", label: "Licenciamento de Obra" },
@@ -336,9 +336,9 @@ export const musicRevenueRequiringArtistOnly = [
 // KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS
 export const revenueServiceTypes = [
   { value: "producao-musical", label: "Produção Musical" },
-  { value: "producao-audiovisual", label: "Produção Audiovisual" },
+  { value: "producao-audiovisual", label: "Produção audiovisual" },
   { value: "marketing-divulgacao", label: "Marketing / Divulgação" },
-  { value: "design-grafico", label: "Design Gráfico" },
+  { value: "design-grafico", label: "Design gráfico" },
   { value: "criacao-site", label: "Criação de Site" },
   { value: "gestao-redes-sociais", label: "Gestão de Redes Sociais" },
   { value: "trafego-pago", label: "Tráfego Pago" },
@@ -349,7 +349,7 @@ export const revenueServiceTypes = [
   { value: "sessao-producao", label: "Sessão de Produção" },
   { value: "ensaio", label: "Ensaio" },
   { value: "locacao-estudio", label: "Locação de Estúdio" },
-  { value: "locacao-equipamentos", label: "Locação de Equipamentos" },
+  { value: "locacao-equipamentos", label: "Locação de equipamentos" },
 ];
 
 // Services (revenue) with artist + project
@@ -443,7 +443,7 @@ export const investmentInfrastructureItems = [
   { value: "tratamento-acustico", label: "Tratamento acústico" },
   { value: "ar-condicionado", label: "Ar condicionado" },
   { value: "eletrica", label: "Instalação elétrica" },
-  { value: "internet", label: "Internet / Rede" },
+  { value: "internet", label: "Internet" },
   { value: "seguranca", label: "Segurança" },
   { value: "outros", label: "Outros" },
 ];
@@ -652,39 +652,88 @@ export const isRevenueServiceRequiringArtistOnly = (subcategory: string): boolea
 };
 
 
-// ==================== DISPLAY LABELS (category / subcategory slugs) ====================
+// ==================== DISPLAY LABELS (category / subcategory values) ====================
 
 /**
- * PT-BR label of any category or subcategory slug the form writes. The slugs
- * are stored business data (taxonomy decision pending — canonical map
+ * Every option list whose `value` can be stored in transactions.category /
+ * subcategory by the slug-based taxonomy (historical rows and the visibility
+ * rules in financial-form-rules). Each slug has exactly ONE PT-BR label
+ * across all lists (guarded by transaction-constants.labels.test.ts).
+ */
+export const TRANSACTION_CATEGORY_OPTION_LISTS: ReadonlyArray<ReadonlyArray<{ value: string; label: string }>> = [
+  companyExpenseCategories, individualExpenseCategories, individualCompensationTypes, individualServiceTypes,
+  individualReimbursementTypes, expenseServiceTypes, marketingExpenseTypes, travelExpenseTypes, expenseProductTypes,
+  administrativeExpenseTypes, artistExpenseCategories, artistFeeTypes, companyRevenueCategories, musicRevenueTypes,
+  revenueServiceTypes, revenueProductTypes, contractualRevenueTypes, artistRevenueCategories, investmentCategories,
+  investmentEquipmentItems, investmentInfrastructureItems, investmentTechnologyItems, investmentMarketingItems,
+  investmentTrainingItems, taxCategories, transferCategories,
+];
+
+/** Top-level category lists (the values a list filter by `category` can match). */
+const TOP_LEVEL_CATEGORY_LISTS: ReadonlyArray<ReadonlyArray<{ value: string; label: string }>> = [
+  companyExpenseCategories, individualExpenseCategories, artistExpenseCategories, companyRevenueCategories,
+  artistRevenueCategories, investmentCategories, taxCategories, transferCategories,
+];
+
+/**
+ * Stored business data (taxonomy decision pending — canonical map
  * BLK-TRANSACTION-CATEGORY-TAXONOMY); the UI never shows the raw slug.
  */
 const CATEGORY_LABEL_BY_SLUG: ReadonlyMap<string, string> = new Map(
-  [
-    companyExpenseCategories, individualExpenseCategories, individualCompensationTypes, individualServiceTypes,
-    individualReimbursementTypes, expenseServiceTypes, marketingExpenseTypes, travelExpenseTypes, expenseProductTypes,
-    administrativeExpenseTypes, artistExpenseCategories, artistFeeTypes, companyRevenueCategories, musicRevenueTypes,
-    revenueServiceTypes, revenueProductTypes, contractualRevenueTypes, artistRevenueCategories, investmentCategories,
-    investmentEquipmentItems, investmentInfrastructureItems, investmentTechnologyItems, investmentMarketingItems,
-    investmentTrainingItems, taxCategories, transferCategories,
-  ].flatMap((options) => (options as ReadonlyArray<{ value: string; label: string }>).map((o) => [o.value, o.label] as const)),
+  TRANSACTION_CATEGORY_OPTION_LISTS.flatMap((options) => options.map((o) => [o.value, o.label] as const)),
 );
 
+/** A slug is lowercase ASCII with `-`/`_`; anything else is display text. */
+const SLUG_PATTERN = /^[a-z0-9_-]+$/;
+
 /**
- * PT-BR label of a category/subcategory slug: the form option label first,
- * then the shared finance dictionary (older import/seed slugs); never a raw slug.
+ * PT-BR label of a stored category/subcategory value:
+ * - a taxonomy slug → its single form label;
+ * - display text written by the category-rule store (transaction form) or by
+ *   the server keyword rules (financial_categories.name) → shown as stored,
+ *   it already is the PT-BR name the user chose;
+ * - a slug outside every list (older import/seed data) → the shared finance
+ *   dictionary / humanized fallback (never the raw slug).
  */
-export function transactionCategoryLabel(slug: string | null | undefined): string {
-  if (!slug) return "Sem categoria";
-  return CATEGORY_LABEL_BY_SLUG.get(slug) ?? formatCategoryLabel(slug);
+export function transactionCategoryLabel(value: string | null | undefined): string {
+  const text = typeof value === "string" ? value.trim() : "";
+  if (!text) return "Sem categoria";
+  const slugLabel = CATEGORY_LABEL_BY_SLUG.get(text);
+  if (slugLabel) return slugLabel;
+  if (!SLUG_PATTERN.test(text)) return text;
+  // Taxonomy slugs separate words with "-"; the shared dictionary/humanizer keys use "_".
+  return formatCategoryLabel(text.replace(/-/g, "_"));
 }
 
-/** Top-level category options for list filters — exactly the slugs the form writes. */
-export const TRANSACTION_CATEGORY_FILTER_OPTIONS: ReadonlyArray<{ value: string; label: string }> = Array.from(
-  new Map(
-    [companyExpenseCategories, individualExpenseCategories, artistExpenseCategories, companyRevenueCategories,
-      artistRevenueCategories, investmentCategories, taxCategories, transferCategories]
-      .flatMap((options) => (options as ReadonlyArray<{ value: string; label: string }>).map((o) => [o.value, o.label] as const)),
-  ),
-  ([value, label]) => ({ value, label }),
-).sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
+/** Suffix that tells a taxonomy slug apart from rule text with the same label. */
+export const LEGACY_CATEGORY_SUFFIX = " (classificação anterior)";
+
+/**
+ * Category filter options for the transactions list: every value the form and
+ * the rules can write —
+ * - `ruleCategories`: categories of the category-rule store (what the
+ *   transaction form writes) and names of the tenant's financial categories
+ *   (what the server keyword rules write);
+ * - every top-level taxonomy slug (historical rows, OFX placeholder "outros").
+ * The API filters by exact value, so a slug whose label equals a rule
+ * category is kept as its own option, marked with LEGACY_CATEGORY_SUFFIX.
+ */
+export function buildTransactionCategoryFilterOptions(
+  ruleCategories: ReadonlyArray<string | null | undefined> = [],
+): Array<{ value: string; label: string }> {
+  const byValue = new Map<string, string>();
+  for (const raw of ruleCategories) {
+    const value = typeof raw === "string" ? raw.trim() : "";
+    if (value && !byValue.has(value)) byValue.set(value, transactionCategoryLabel(value));
+  }
+  const ruleLabels = new Set(Array.from(byValue.values()).map((label) => label.toLocaleLowerCase("pt-BR")));
+  for (const options of TOP_LEVEL_CATEGORY_LISTS) {
+    for (const option of options) {
+      if (byValue.has(option.value)) continue;
+      const collides = ruleLabels.has(option.label.toLocaleLowerCase("pt-BR"));
+      byValue.set(option.value, collides ? `${option.label}${LEGACY_CATEGORY_SUFFIX}` : option.label);
+    }
+  }
+  return Array.from(byValue, ([value, label]) => ({ value, label }))
+    .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
+}

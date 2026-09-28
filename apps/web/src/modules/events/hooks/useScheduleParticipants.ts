@@ -88,7 +88,7 @@ export function useScheduleParticipants(search: string = "", pendingArtistId?: s
     const artistOptions = artistSource.map((artist) => ({
       source: "artist" as const,
       id: String(artist.id),
-      label: String(artist.stage_name || artist.id),
+      label: String(artist.stage_name || "Sem nome"),
       email: artist.email ? String(artist.email) : undefined,
       phone: artist.phone ? String(artist.phone) : undefined,
       category: "Artista",
@@ -97,7 +97,7 @@ export function useScheduleParticipants(search: string = "", pendingArtistId?: s
     const employeeOptions = employeeItems.map((employee) => ({
       source: "employee" as const,
       id: String(employee.id),
-      label: String(employee.name || employee.full_name || employee.email || employee.id),
+      label: String(employee.name || employee.full_name || employee.email || "Sem nome"),
       email: employee.email ? String(employee.email) : undefined,
       phone: employee.telefone ? String(employee.telefone) : undefined,
       category: employee.departamento ? String(employee.departamento) : "Funcionario",
@@ -106,7 +106,7 @@ export function useScheduleParticipants(search: string = "", pendingArtistId?: s
     const userOptions = (users as any[]).map((user) => ({
       source: "user" as const,
       id: String(user.id),
-      label: String(user.full_name || user.nome || user.email || user.id),
+      label: String(user.full_name || user.nome || user.email || "Sem nome"),
       email: user.email ? String(user.email) : undefined,
       phone: user.phone ? String(user.phone) : undefined,
       category: user.cargo ? String(user.cargo) : "Usuario",
@@ -115,7 +115,7 @@ export function useScheduleParticipants(search: string = "", pendingArtistId?: s
     const contactOptions = contacts.map((contact) => ({
       source: "contact" as const,
       id: contact.id,
-      label: contact.name || contact.legalName || contact.email || contact.id,
+      label: contact.name || contact.legalName || contact.email || "Sem nome",
       email: contact.email,
       phone: contact.phone,
       category: contact.category ? labelFor(contactTypeOptions, contact.category) : "Contato",

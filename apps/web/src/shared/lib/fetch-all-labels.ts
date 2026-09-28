@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { storage } from "@/shared/lib/storage";
 
 /**
@@ -18,7 +19,7 @@ import { storage } from "@/shared/lib/storage";
  * useEntityLookup + AsyncEntityCombobox (real server-side search).
  */
 export async function fetchAllLabels(
-  table: string,
+  table: StorageTable,
   pick: (item: Record<string, unknown>) => string | null | undefined,
 ): Promise<{ value: string; label: string }[]> {
   const seen = new Set<string>();

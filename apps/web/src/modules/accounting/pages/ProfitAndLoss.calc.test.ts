@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toNumber, sum } from "./profit-and-loss-calc";
+import { artistDisplayName, toNumber, sum } from "./profit-and-loss-calc";
 
 /**
  * Regression: GET /transactions returns `amount` as a STRING (Postgres NUMERIC
@@ -64,5 +64,23 @@ describe("sum — reproduces and proves the fix for the ProfitAndLoss bug", () =
   it("safely ignores a single corrupted value without breaking the whole total", () => {
     const expenses = [{ amount: "500.00" }, { amount: "não é número" }, { amount: "10.00" }];
     expect(sum(expenses, "amount")).toBe(510);
+  });
+});
+
+describe("artistDisplayName (per-artist P&L)", () => {
+  const names = new Map([["a1", "Banda X"], ["a2", "  "]]);
+
+  it("says it is loading while the artist sweep has not resolved", () => {
+    expect(artistDisplayName("a1", new Map(), { isLoading: true, isError: false })).toBe("Carregando…");
+  });
+
+  it("reports an unavailable artist on error instead of 'não encontrado'", () => {
+    expect(artistDisplayName("a1", new Map(), { isLoading: false, isError: true })).toBe("Artista indisponível");
+  });
+
+  it("only claims 'não encontrado' once loaded and absent", () => {
+    expect(artistDisplayName("zz", names, { isLoading: false, isError: false })).toBe("Artista não encontrado");
+    expect(artistDisplayName("a1", names, { isLoading: false, isError: false })).toBe("Banda X");
+    expect(artistDisplayName("a2", names, { isLoading: false, isError: false })).toBe("Sem nome");
   });
 });

@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { Copy, Download, FileAudio, RefreshCw, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -115,7 +116,7 @@ export function AsyncEntitySelect({
 }: {
   label: string;
   value: string;
-  table: string;
+  table: StorageTable;
   filters?: Record<string, unknown>;
   placeholder: string;
   searchPlaceholder?: string;

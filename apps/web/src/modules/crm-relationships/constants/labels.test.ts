@@ -30,6 +30,11 @@ describe("timeline actions", () => {
     expect(timelineActionLabel("note")).toBe("Nota");
   });
 
+  it("labels the attachment actions the API records (clients.service recordActivity)", () => {
+    expect(timelineActionLabel("attachment_uploaded")).toBe("Anexo enviado");
+    expect(timelineActionLabel("attachment_removed")).toBe("Anexo removido");
+  });
+
   it("never shows a raw/unknown action", () => {
     expect(timelineActionLabel("nota")).toBe(UNKNOWN_TIMELINE_ACTION_LABEL);
     expect(timelineActionLabel("toString")).toBe(UNKNOWN_TIMELINE_ACTION_LABEL);

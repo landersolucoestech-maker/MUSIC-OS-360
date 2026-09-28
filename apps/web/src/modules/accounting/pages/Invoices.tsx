@@ -42,6 +42,7 @@ import { parseOperationType, type InvoiceOperationType } from "@/modules/account
 import { formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { openStoredFile } from "@/shared/lib/stored-file";
 import { toast } from "sonner";
+import { invoiceRecipientName, useInvoicePartyName } from "@/modules/accounting/hooks/useInvoicePartyName";
 
 type TypeFilter = "all" | InvoiceOperationType;
 
@@ -54,13 +55,8 @@ function numberValue(...values: unknown[]): number | null {
   return null;
 }
 
-function getInvoicePartyName(invoice: any): string {
-  return (
-    invoice.clientes?.nome ||
-    invoice.tomador_legal_name ||
-    invoice.tomador_name ||
-    "-"
-  );
+function InvoicePartyCell({ invoice }: { invoice: any }) {
+  return <>{useInvoicePartyName(invoice) ?? "-"}</>;
 }
 
 function getInvoiceDisplayValue(invoice: any): number | null {
@@ -144,7 +140,7 @@ export default function Invoices() {
 
   // Filters
   const filteredInvoices = invoicesWithType.filter((invoice: any) => {
-    const partyName = getInvoicePartyName(invoice).toLowerCase();
+    const partyName = (invoiceRecipientName(invoice) ?? "").toLowerCase();
     const rawSearch = searchTerm.toLowerCase();
     const matchesSearch =
       (invoice.invoice_number || "").toLowerCase().includes(rawSearch) ||
@@ -404,7 +400,7 @@ export default function Invoices() {
                           {invoice.serie && <span className="text-muted-foreground text-xs ml-1">/{invoice.serie}</span>}
                         </TableCell>
                         <TableCell className="py-3">{getTypeBadge(invoice._operationType)}</TableCell>
-                        <TableCell className="py-3 text-sm">{getInvoicePartyName(invoice)}</TableCell>
+                        <TableCell className="py-3 text-sm"><InvoicePartyCell invoice={invoice} /></TableCell>
                         <TableCell className={`py-3 text-sm ${getMonetarySemanticClass("neutral")}`}>
                           {displayValue !== null ? formatCurrency(displayValue) : "-"}
                         </TableCell>

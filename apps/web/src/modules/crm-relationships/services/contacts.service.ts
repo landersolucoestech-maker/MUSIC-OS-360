@@ -249,13 +249,26 @@ export function contactToFormValues(contact: Contact): Partial<ContactFormValues
 
 // ─── Service ──────────────────────────────────────────────────────
 
+export interface ContactListResult {
+  items: Contact[];
+  /** Real backend total. */
+  total: number;
+  /** true when the sweep hit its safety ceiling before covering `total`. */
+  truncated: boolean;
+}
+
 export const contactsService = {
-  async list(): Promise<Contact[]> {
-    const clients = await clientsService.list();
-    return clients.map(wireToContact).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  /** Every contact of the tenant (full paged sweep — see clientsService.listAll). */
+  async list(): Promise<ContactListResult> {
+    const { items, total, truncated } = await clientsService.listAll();
+    return {
+      items: items.map(wireToContact).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
+      total,
+      truncated,
+    };
   },
   async listSimple(): Promise<{ id: string; name: string }[]> {
-    const contacts = await contactsService.list();
+    const { items: contacts } = await contactsService.list();
     return contacts
       .map((contact) => ({ id: contact.id, name: contact.name }))
       .sort((a, b) => a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" }));

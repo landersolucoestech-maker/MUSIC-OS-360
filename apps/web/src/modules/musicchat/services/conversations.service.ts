@@ -278,8 +278,7 @@ export const musicChatConversationsService = {
     // api.get() already unwraps the {data,timestamp} envelope of the TransformInterceptor;
     // since the controller returns {data: [...], meta} directly (no extra wrap,
     // see TransformInterceptor: an object that already has `data` is preserved), the value
-    // here already IS the array — re-reading `.data` duplicated the unwrap and resulted in undefined
-    // (same pattern documented in clientsService.list()).
+    // here already IS the array — re-reading `.data` duplicated the unwrap and resulted in undefined.
     const rows = await api.get<RawConversation[]>("/conversations?limit=200");
     return rows.map(mapConversation);
   },

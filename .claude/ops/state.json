@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-28T21:15:41.473Z",
+  "updatedAt": "2026-09-28T21:27:38.748Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -2409,9 +2409,11 @@
       "line": null,
       "summary": "SEC-F1 review bc40b76: caller metadata can set allow-listed instagram_url/tiktok_url bypassing DTO URL validation -> stored XSS via web link (Artists.tsx:457, gallery_urls in Vision360)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:37:46.371Z"
+      "createdAt": "2026-09-28T16:37:46.371Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:37.763Z"
     },
     {
       "id": "find-e294f18f",
@@ -2421,9 +2423,11 @@
       "line": null,
       "summary": "SEC-F2: metadata unfold writes unvalidated values into client columns after ValidationPipe (person_type any string, interactions bypass limits, 500 on overlong)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:37:46.451Z"
+      "createdAt": "2026-09-28T16:37:46.451Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:37.835Z"
     },
     {
       "id": "find-2cf0dde9",
@@ -2433,9 +2437,11 @@
       "line": null,
       "summary": "SEC-F3: plaintext PII keys other than the 18 stripped (CPF, documento, cpf_cnpj, email) still persisted in clients.metadata",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:37:46.527Z"
+      "createdAt": "2026-09-28T16:37:46.527Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:37.909Z"
     },
     {
       "id": "find-0d825ddf",
@@ -2445,9 +2451,11 @@
       "line": null,
       "summary": "SEC-F4: contract_id not IsUUID (500), FK check accepts soft-deleted contracts, negative test does not assert tenant param",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:37:46.608Z"
+      "createdAt": "2026-09-28T16:37:46.608Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:37.978Z"
     },
     {
       "id": "find-0f1f952e",
@@ -2539,9 +2547,11 @@
       "line": null,
       "summary": "FE-H1 review bc40b76: contracts read clientes?.nome but clients column is now name (API embeds raw client row as 'clientes') -> client name shows em-dash; ClientRef stale; API embeds raw artist/client entities (ciphertext)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:18.150Z"
+      "createdAt": "2026-09-28T16:39:18.150Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.044Z"
     },
     {
       "id": "find-bb38f41f",
@@ -2551,9 +2561,11 @@
       "line": null,
       "summary": "FE-H2: TransactionViewModal formats transaction/first-installment/due/paid dates in local TZ -> previous day",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:18.230Z"
+      "createdAt": "2026-09-28T16:39:18.230Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.099Z"
     },
     {
       "id": "find-86246a74",
@@ -2563,9 +2575,11 @@
       "line": null,
       "summary": "FE-H3: dashboard audit feed shows UUID/raw action/entity, ENTITY_BADGE 'Accounting', gender agreement 'Obra criado'",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:18.299Z"
+      "createdAt": "2026-09-28T16:39:18.299Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.163Z"
     },
     {
       "id": "find-b4e32048",
@@ -2575,9 +2589,11 @@
       "line": null,
       "summary": "FE-H4: P&L/FinanceChart/360 finance sum only first 50 transactions (duplicate of useTransactions limit finding)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:18.394Z"
+      "createdAt": "2026-09-28T16:39:18.394Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.226Z"
     },
     {
       "id": "find-59a0f9f8",
@@ -2587,9 +2603,11 @@
       "line": null,
       "summary": "FE-M1..M4: P&L artist query no loading/error; Vision360/ContactViewModal dates shift + 'Invalid Date'; CRM lists hand-rolled fetch capped at 50; bank-name capitalisation breaks accents",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:18.471Z"
+      "createdAt": "2026-09-28T16:39:18.471Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.288Z"
     },
     {
       "id": "find-17d176d1",
@@ -2599,9 +2617,11 @@
       "line": null,
       "summary": "FE-LOW: raw id/status fallbacks (distributor, PitchingTab, bestLabel, schedule participants); category label fallback Title Case + duplicate labels; TransactionViewModal duplicate audit rows, 'Tipo de cliente' label; duplicate artists/artistas cache key; English jargon labels",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:18.547Z"
+      "createdAt": "2026-09-28T16:39:18.547Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.348Z"
     },
     {
       "id": "find-3f79589a",
@@ -2611,9 +2631,11 @@
       "line": null,
       "summary": "CT-B1 review bc40b76: no clients canonicalizer -> imported person_type pessoa_fisica stored raw, later PATCH 400",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:26.529Z"
+      "createdAt": "2026-09-28T16:39:26.529Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.398Z"
     },
     {
       "id": "find-fa5e6e67",
@@ -2623,9 +2645,11 @@
       "line": null,
       "summary": "CT-D2: export writes raw English values for clients person_type/priority and artists profile_type/specialties/gender",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:26.607Z"
+      "createdAt": "2026-09-28T16:39:26.607Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.458Z"
     },
     {
       "id": "find-14f7c3b6",
@@ -2635,9 +2659,11 @@
       "line": null,
       "summary": "CT-D3: old-build client edit sends metadata copy stripped to {} which replaces stored metadata (loses lead-conversion keys / cpf copies for BLK-CRM-PII-PLAINTEXT)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:26.695Z"
+      "createdAt": "2026-09-28T16:39:26.695Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.509Z"
     },
     {
       "id": "find-43361588",
@@ -2647,9 +2673,11 @@
       "line": null,
       "summary": "CT-D4/D5/D6/D7/D9: managerContactEncrypted label 'empresário'; soundcloudFollowers '(link)'; attachment timeline actions unlabeled; AsyncEntityCombobox artist getLabel stageName on raw rows (blank); cargo_responsavel not backfilled; counterparty labels duplicated in web",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:26.770Z"
+      "createdAt": "2026-09-28T16:39:26.770Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.570Z"
     },
     {
       "id": "find-bf2f58b1",
@@ -2659,9 +2687,35 @@
       "line": null,
       "summary": "CT-OOS: project-planning automation SELECTs projects.nome/descricao (renamed) -> query fails at runtime",
       "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T16:39:26.841Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T21:27:38.631Z"
+    },
+    {
+      "id": "find-8bb0b883",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/accounting/components/transaction-form/rules/financial-form-rules.ts",
+      "line": null,
+      "summary": "Conditional form fields compare category slugs ('servicos') but the form writes rule-store text ('Serviços') -> conditional artist/project/event fields likely never trigger (web agent report)",
+      "rootCause": null,
       "disposition": null,
       "evidenceIds": [],
-      "createdAt": "2026-09-28T16:39:26.841Z"
+      "createdAt": "2026-09-28T21:27:38.696Z"
+    },
+    {
+      "id": "find-32c93d8d",
+      "category": "security",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/common/persistence/assert-same-tenant-fk.util.ts",
+      "line": null,
+      "summary": "assertSameTenantFk ignores deleted_at: contracts/licensing/takedowns/shares can link soft-deleted rows; import RELATION_TARGETS same",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T21:27:38.747Z"
     }
   ],
   "evidenceIds": [

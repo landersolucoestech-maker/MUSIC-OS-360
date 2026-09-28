@@ -1,56 +1,65 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { contactsService } from "../services";
 import { clientsService, type ApiClient, type CreateApiClientInput, type UpdateApiClientInput } from "../services/clients.service";
 import type { Contact, ContactInput } from "../types";
 
 export type { Contact };
 
+/** Both views read the same `clients` table: a write through either invalidates both. */
+const CONTACTS_QUERY_KEY = [...QUERY_KEYS.CLIENTS, "contacts", "all"];
+const CLIENTS_QUERY_KEY = [...QUERY_KEYS.CLIENTS, "raw", "all"];
+const EMPTY_CONTACTS: Contact[] = [];
+const EMPTY_CLIENTS: ApiClient[] = [];
+
+function invalidateClientQueries(queryClient: QueryClient): Promise<void> {
+  return queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.CLIENTS] });
+}
+
+/**
+ * CRM contacts (the tenant's `clients`, mapped to `Contact`). TanStack Query:
+ * one shared cache for every consumer (CRM list, Vision360, schedule
+ * participants, leads…) instead of one hand-rolled fetch per component; the
+ * list is a full paged sweep, never the API's default first page.
+ */
 export function useContacts(enabled = true) {
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [isLoading, setIsLoading] = useState(enabled);
-  const [error, setError] = useState<Error | null>(null);
-
-  async function refresh() {
-    setIsLoading(true);
-    try {
-      setContacts(await contactsService.list());
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (enabled) void refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled]);
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: CONTACTS_QUERY_KEY,
+    queryFn: () => contactsService.list(),
+    enabled,
+  });
+  const contacts = useMemo(() => query.data?.items ?? EMPTY_CONTACTS, [query.data]);
+  const invalidate = () => invalidateClientQueries(queryClient);
 
   return {
     contacts,
-    isLoading,
-    error,
+    isLoading: enabled && query.isLoading,
+    error: (query.error as Error | null) ?? null,
+    /** true when the sweep hit its safety ceiling: the list/metrics are partial. */
+    truncated: query.data?.truncated ?? false,
+    total: query.data?.total ?? 0,
     metrics: useMemo(() => ({
-      total: contacts.length,
+      total: query.data?.total ?? contacts.length,
       strategic: contacts.filter((contact) => contact.priority === "strategic").length,
       active: contacts.filter((contact) => contact.status === "active").length,
       withAttachments: contacts.filter((contact) => (contact.attachments?.length ?? 0) > 0).length,
-    }), [contacts]),
+    }), [contacts, query.data?.total]),
     createContact: async (data: ContactInput) => {
       const created = await contactsService.create(data);
-      await refresh();
+      await invalidate();
       return created;
     },
     updateContact: async (id: string, data: Partial<ContactInput>, expectedUpdatedAt?: string) => {
       await contactsService.update(id, data, expectedUpdatedAt);
-      await refresh();
+      await invalidate();
     },
     deleteContact: async (id: string) => {
       await contactsService.remove(id);
-      await refresh();
+      await invalidate();
     },
-    refetch: refresh,
+    refetch: async () => { await query.refetch(); },
   };
 }
 
@@ -71,56 +80,34 @@ export function useSimpleContacts() {
  * the same `clients` table, mapped to `Contact`.
  */
 export function useClients() {
-  const [clients, setClients] = useState<ApiClient[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: CLIENTS_QUERY_KEY,
+    queryFn: () => clientsService.listAll(),
+  });
+  const invalidate = () => invalidateClientQueries(queryClient);
 
-  async function refresh() {
-    setIsLoading(true);
-    try {
-      setClients(await clientsService.list());
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    void refresh();
-  }, []);
+  const addClient = useMutation({
+    mutationFn: (data: CreateApiClientInput) => clientsService.create(data),
+    onSuccess: invalidate,
+  });
+  const updateClient = useMutation({
+    mutationFn: ({ id, ...data }: UpdateApiClientInput & { id: string }) => clientsService.update(id, data),
+    onSuccess: invalidate,
+  });
+  const deleteClient = useMutation({
+    mutationFn: (id: string) => clientsService.remove(id),
+    onSuccess: invalidate,
+  });
 
   return {
-    clients,
-    isLoading,
-    error,
-    refetch: refresh,
-    addClient: {
-      mutate: (data: CreateApiClientInput, options?: { onSuccess?: () => void }) =>
-        void clientsService.create(data).then(async (created) => { await refresh(); return created; }).then(options?.onSuccess),
-      mutateAsync: async (data: CreateApiClientInput) => {
-        const created = await clientsService.create(data);
-        await refresh();
-        return created;
-      },
-    },
-    updateClient: {
-      mutate: ({ id, ...data }: UpdateApiClientInput & { id: string }, options?: { onSuccess?: () => void }) =>
-        void clientsService.update(id, data).then(async () => { await refresh(); }).then(options?.onSuccess),
-      mutateAsync: async ({ id, ...data }: UpdateApiClientInput & { id: string }) => {
-        const updated = await clientsService.update(id, data);
-        await refresh();
-        return updated;
-      },
-    },
-    deleteClient: {
-      mutate: (id: string, options?: { onSuccess?: () => void }) =>
-        void clientsService.remove(id).then(async () => { await refresh(); }).then(options?.onSuccess),
-      mutateAsync: async (id: string) => {
-        await clientsService.remove(id);
-        await refresh();
-      },
-    },
+    clients: query.data?.items ?? EMPTY_CLIENTS,
+    isLoading: query.isLoading,
+    error: (query.error as Error | null) ?? null,
+    truncated: query.data?.truncated ?? false,
+    refetch: async () => { await query.refetch(); },
+    addClient,
+    updateClient,
+    deleteClient,
   };
 }

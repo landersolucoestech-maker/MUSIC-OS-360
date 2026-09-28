@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { storage } from "@/shared/lib/storage";
@@ -23,7 +24,7 @@ export function useEditQueryParam<T extends HasId>(
   paramName: string,
   items: ReadonlyArray<T> | undefined,
   onMatch: (item: T) => void,
-  table?: string,
+  table?: StorageTable,
 ): void {
   const [searchParams, setSearchParams] = useSearchParams();
   const handledRef = useRef<string | null>(null);

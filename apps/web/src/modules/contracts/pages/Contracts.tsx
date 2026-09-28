@@ -34,6 +34,7 @@ import { TablePagination } from "@/shared/ui/table-pagination";
 import { usePagination } from "@/shared/hooks/usePagination";
 import { cn } from "@/shared/lib/utils";
 import { RequirePermission } from "@/shared/components/RequirePermission";
+import { contractPartyLabel } from "@/modules/contracts/lib/contract-party";
 
 export default function Contracts() {
   const navigate = useNavigate();
@@ -351,7 +352,7 @@ export default function Contracts() {
                         </TableCell>
                         <TableCell className="font-medium">{contract.title}</TableCell>
                         <TableCell className="text-muted-foreground text-sm">
-                          {contract.artistas?.stage_name || contract.clientes?.nome || "—"}
+                          {contractPartyLabel(contract)}
                         </TableCell>
                         <TableCell className="text-sm">{contract.type ? formatCategoryLabel(contract.type) : "—"}</TableCell>
                         <TableCell><SigningPlatformBadge platform={contract.signing_platform} /></TableCell>

@@ -11,8 +11,10 @@
 
 /**
  * Lightweight reference to an Artist (used in relations of other modules).
- * Keys are the canonical artist wire keys (CZ-042) — the embedded `artistas`
- * relation is a raw artist row (API join or a row fetched from /artists).
+ * Keys are the canonical artist wire keys (CZ-042). The contracts/releases API
+ * embed it as `artist` with ONLY `{ id, stage_name }` (S1 — never the raw
+ * artist row); the optional extra fields exist only on rows fetched from
+ * /artists or on other modules' embeds.
  */
 export interface ArtistRef {
   id: string;
@@ -25,12 +27,13 @@ export interface ArtistRef {
   status?: string | null;
 }
 
-/** Lightweight reference to a Client / Contact. */
+/**
+ * Lightweight reference to a Client (CZ-043 canonical English keys). The
+ * contracts API embeds it as `client` with exactly `{ id, name }`.
+ */
 export interface ClientRef {
   id: string;
-  nome?: string | null;
-  email?: string | null;
-  empresa?: string | null;
+  name?: string | null;
 }
 
 /** Lightweight reference to a musical Work. */

@@ -91,7 +91,7 @@ export function useInvoiceForm({
       const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const netAmount = numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const servicesDescription = invoice.service_description ?? "";
-      const recipientLegalName = invoice.tomador_legal_name ?? invoice.tomador_name ?? invoice.clientes?.nome ?? "";
+      const recipientLegalName = invoice.tomador_legal_name ?? invoice.tomador_name ?? "";
       setOperationType(type);
       setFormData({
         ...INITIAL_FORM_DATA,

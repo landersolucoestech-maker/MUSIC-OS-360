@@ -122,7 +122,6 @@ export interface Invoice {
 export type InvoiceInsert = Omit<Invoice, "id" | "user_id" | "created_at" | "updated_at">;
 export type InvoiceUpdate = Partial<InvoiceInsert>;
 
-export interface InvoiceWithRelations extends Invoice {
-  clientes?: ClientRef | null;
-}
+/** The invoices API embeds no relation; the client name is resolved by `client_id`. */
+export type InvoiceWithRelations = Invoice;
 

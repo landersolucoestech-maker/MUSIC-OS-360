@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
+import { safeExternalUrl, safeImageSrc } from "@/shared/lib/safe-url";
 import { useNavigate, useParams } from "react-router-dom";
 import { storage } from "@/shared/lib/storage";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
@@ -394,7 +395,7 @@ export default function Artists() {
                         {/* Avatar */}
                         <Avatar className="h-12 w-12 shrink-0">
                           {artist.photoUrl && (
-                            <AvatarImage src={artist.photoUrl} alt={artist.stageName} className="object-cover" />
+                            <AvatarImage src={safeImageSrc(artist.photoUrl) || undefined} alt={artist.stageName} className="object-cover" />
                           )}
                           <AvatarFallback className="bg-primary/10 border border-primary/20 text-primary text-sm font-semibold">
                             {getInitials(artist.stageName)}
@@ -450,11 +451,20 @@ export default function Artists() {
                                       { url: artist.appleMusicUrl, icon: <SiApplemusic className="h-4 w-4" />, label: "Apple Music" },
                                       { url: artist.soundcloudUrl, icon: <SiSoundcloud className="h-4 w-4" />, label: "SoundCloud" },
                                     ];
-                                    return links.map(({ url, icon, label }) =>
-                                      url ? (
+                                    return links.map(({ url, icon, label }) => {
+                                      // Stored social URLs are untrusted: only absolute http(s) becomes a link.
+                                      const href = safeExternalUrl(url);
+                                      if (url && !href) {
+                                        return (
+                                          <span key={label} title={`${label}: link inválido`} className="text-muted-foreground/60" data-testid={`social-unsafe-${label}`}>
+                                            {icon}
+                                          </span>
+                                        );
+                                      }
+                                      return href ? (
                                         <a
                                           key={label}
-                                          href={url}
+                                          href={href}
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           title={label}
@@ -467,8 +477,8 @@ export default function Artists() {
                                         <span key={label} title={`${label} não cadastrado`} className="text-muted-foreground/25">
                                           {icon}
                                         </span>
-                                      )
-                                    );
+                                      );
+                                    });
                                   })()}
                                 </div>
                               </div>

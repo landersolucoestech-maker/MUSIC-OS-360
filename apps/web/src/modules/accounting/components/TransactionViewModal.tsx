@@ -1,18 +1,15 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Badge } from "@/shared/ui/badge";
-import { Button } from "@/shared/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/ui/collapsible";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/dialog";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { cn } from "@/shared/lib/utils";
-import { formatCurrency, formatDate, formatDateTime, getCurrencyToneClass } from "@/shared/lib/format-utils";
+import { formatCalendarDateLabel, formatCurrency, formatDateTime, getCurrencyToneClass } from "@/shared/lib/format-utils";
 import { accountingService } from "@/modules/accounting/services/accounting.service";
 import {
   AlertCircle,
   Banknote,
   Briefcase,
   CheckCircle2,
-  ChevronDown,
   Clock,
   CreditCard,
   FileText,
@@ -177,9 +174,21 @@ function moneyValue(value: unknown): string | undefined {
   return parsed === undefined ? undefined : formatCurrency(parsed);
 }
 
-function dateValue(value: unknown): string | undefined {
+/**
+ * Transaction date, first installment, due date and paid date are calendar
+ * days (not instants): formatted from the stored day, never shifted by the
+ * browser/regional timezone. A present but invalid value reads "Data inválida".
+ */
+function calendarDateValue(value: unknown): string | undefined {
   if (!hasValue(value)) return undefined;
-  return formatDate(value as string | Date);
+  return formatCalendarDateLabel(value);
+}
+
+/** Form wording for the counterparty field (TransactionTypeSection): "Receber de" / "Pagar para". */
+function counterpartyLabel(type: string): string {
+  if (type === "revenue") return "Receber de";
+  if (Object.prototype.hasOwnProperty.call(transactionTypeMeta, type)) return "Pagar para";
+  return "Tipo de contraparte";
 }
 
 function dateTimeValue(value: unknown): string | undefined {
@@ -218,8 +227,11 @@ function TypeBadge({ type }: { type: string }) {
   );
 }
 
+/** Status outside the known values: never relabeled as "Pendente". */
+const unknownStatusMeta = { label: "Status não reconhecido", icon: AlertCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-zinc-700", dotClass: "bg-zinc-500" };
+
 function StatusBadge({ status }: { status: string }) {
-  const meta = statusMeta[status] ?? statusMeta.pendente;
+  const meta = statusMeta[status] ?? unknownStatusMeta;
   const Icon = meta.icon;
   return (
     <Badge variant="outline" className={cn("h-7 gap-1.5 rounded-full px-3 font-medium", meta.badgeClass)}>
@@ -294,19 +306,16 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
   const [details, setDetails] = useState<Detail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     if (!open || !transactionId) {
       setDetails(null);
-      setAdvancedOpen(false);
       return;
     }
 
     setIsLoading(true);
     setError(null);
-    setAdvancedOpen(false);
     accountingService.getTransaction(transactionId)
       .then((data) => {
         if (!mounted) return;
@@ -340,7 +349,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
   const subcategory = subcategorySlug ? transactionCategoryLabel(subcategorySlug) : undefined;
   const costCenter = textValue(valueOf(t, ["costCenter"]));
   const counterpartyTypeRaw = textValue(valueOf(t, ["counterpartyType"]));
-  const counterpartyType = counterpartyTypeRaw ? (TRANSACTION_COUNTERPARTY_TYPE_LABELS_PT_BR[counterpartyTypeRaw] ?? "Não informado") : undefined;
+  const counterpartyType = counterpartyTypeRaw ? (TRANSACTION_COUNTERPARTY_TYPE_LABELS_PT_BR[counterpartyTypeRaw] ?? "Tipo não reconhecido") : undefined;
   const sourceAccount = textValue(valueOf(t, ["sourceBankAccount"]));
   const destinationAccount = textValue(valueOf(t, ["destinationBankAccount"]));
   const account = sourceAccount ?? destinationAccount;
@@ -350,7 +359,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
   const advertisingName = textValue(valueOf(t, ["advertisingName"]));
   const intervalRaw = textValue(valueOf(t, ["installmentInterval"]));
   const installmentInterval = intervalRaw ? (TRANSACTION_INSTALLMENT_INTERVAL_LABELS_PT_BR[intervalRaw] ?? "Não informado") : undefined;
-  const firstInstallmentDate = dateValue(valueOf(t, ["firstInstallmentDate"]));
+  const firstInstallmentDate = calendarDateValue(valueOf(t, ["firstInstallmentDate"]));
   const observations = textValue(valueOf(t, ["note"]));
   const installments = numValue(valueOf(t, ["installments"]));
   const installmentCurrent = numValue(valueOf(t, ["installmentCurrent"]));
@@ -359,8 +368,8 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
     : undefined;
   const currency = textValue(valueOf(t, ["currency"])) ?? "BRL";
   const competence = referenceMonthValue(valueOf(t, ["competence"]));
-  const dueDate = dateValue(valueOf(t, ["dueDate"]));
-  const paidDate = dateValue(valueOf(t, ["paidAt"]));
+  const dueDate = calendarDateValue(valueOf(t, ["dueDate"]));
+  const paidDate = calendarDateValue(valueOf(t, ["paidAt"]));
 
   const relationships = useMemo(() => ([
     ["Artista", displayName(valueOf(t, ["artist"]))],
@@ -376,7 +385,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
     ?? relationships.find(([label]) => label === "Artista")?.[1]
     ?? category;
 
-  const mainDate = dateValue(transactionDate);
+  const mainDate = calendarDateValue(transactionDate);
   const paymentSummary = [method, paymentType].filter(Boolean).join(" ");
   // Details DTO: attachments[] (built from the attachment_url/attachment_name columns).
   const firstAttachment = (valueOf(t, ["attachments"]) as Detail[] | undefined)?.[0];
@@ -397,7 +406,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
     ["Taxas", moneyValue(valueOf(t, ["fees"]))],
     ["Juros", moneyValue(valueOf(t, ["interest"]))],
     ["Multa", moneyValue(valueOf(t, ["fine"]))],
-    ["Tipo de cliente", counterpartyType],
+    [counterpartyLabel(type), counterpartyType],
     ["Órgão arrecadador", taxAuthority],
     ["Item de investimento", investmentItem],
     ["Motivo da viagem", travelReason],
@@ -410,10 +419,6 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
     ["Parcelamento", installmentSummary],
     ["Intervalo das parcelas", installmentInterval],
     ["Primeira parcela", firstInstallmentDate],
-    ["Criado por", createdBy],
-    ["Atualizado por", updatedBy],
-    ["Criado em", createdAt],
-    ["Atualizado em", updatedAt],
   ] as const;
   const hasAdvancedItems = advancedItems.some(([, value]) => hasValue(value));
 
@@ -448,7 +453,6 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
                   </h2>
                   {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <DetailRow label="ID" value={textValue(valueOf(t, ["id"]))} />
                     <DetailRow label="Data" value={mainDate} />
                   </div>
                 </div>

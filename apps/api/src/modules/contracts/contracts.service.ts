@@ -2,7 +2,7 @@ import { Injectable, Inject, NotFoundException, Logger, BadRequestException } fr
 import { DataSource, Repository, FindOptionsWhere, IsNull } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DATA_SOURCE } from '../../database/database.module';
-import { ContractEntity, ArtistEntity, ClientEntity } from '../../database/entities';
+import { ContractEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { groupCount, type GroupStatsResult } from '../../common/stats/group-count.util';
@@ -20,6 +20,7 @@ import {
   type ResolvedContractWriteFields,
 } from './contract-legacy-alias.util';
 import { preserveServerOwnedMetadata, stripServerOwnedMetadata } from './contract-provider-signature';
+import { joinContractPartyRefs, toContractResponse, type ContractResponse } from './contract-party-refs';
 
 
 @Injectable()
@@ -58,20 +59,7 @@ export class ContractsService {
     const { normalized: resolvedQuery, legacyAliasesUsed } = resolveContractQueryAliases(q);
     this.logLegacyAliasUsage(legacyAliasesUsed, 'list', tenantId);
 
-    const qb = this.repo!
-      .createQueryBuilder('c')
-      .leftJoinAndMapOne(
-        'c.artistas',
-        ArtistEntity,
-        'artistas',
-        'artistas.id = c.artist_id AND artistas.tenant_id = c.tenant_id AND artistas.deleted_at IS NULL',
-      )
-      .leftJoinAndMapOne(
-        'c.clientes',
-        ClientEntity,
-        'clientes',
-        'clientes.id = c.client_id AND clientes.tenant_id = c.tenant_id AND clientes.deleted_at IS NULL',
-      )
+    const qb = joinContractPartyRefs(this.repo!.createQueryBuilder('c'))
       .where('c.tenant_id = :tenantId', { tenantId })
       .andWhere('c.deleted_at IS NULL');
 
@@ -86,9 +74,9 @@ export class ContractsService {
       .skip(typeof q['offset'] === 'number' ? q['offset'] : 0)
       .take(typeof q['limit']  === 'number' ? q['limit']  : 50);
 
-    const [data, total] = await qb.getManyAndCount();
+    const [rows, total] = await qb.getManyAndCount();
     return {
-      data,
+      data: rows.map(toContractResponse),
       meta: {
         total,
         offset: typeof q['offset'] === 'number' ? q['offset'] : 0,
@@ -116,26 +104,13 @@ export class ContractsService {
     tenantId: string,
     id: string,
     actorRole?: string,
-  ): Promise<ContractEntity & { allowed_transitions: { to: string; label?: string }[] }> {
-    const result = await this.repo!
-      .createQueryBuilder('c')
-      .leftJoinAndMapOne(
-        'c.artistas',
-        ArtistEntity,
-        'artistas',
-        'artistas.id = c.artist_id AND artistas.tenant_id = c.tenant_id AND artistas.deleted_at IS NULL',
-      )
-      .leftJoinAndMapOne(
-        'c.clientes',
-        ClientEntity,
-        'clientes',
-        'clientes.id = c.client_id AND clientes.tenant_id = c.tenant_id AND clientes.deleted_at IS NULL',
-      )
+  ): Promise<ContractResponse & { allowed_transitions: { to: string; label?: string }[] }> {
+    const result = await joinContractPartyRefs(this.repo!.createQueryBuilder('c'))
       .where('c.id = :id AND c.tenant_id = :tenantId AND c.deleted_at IS NULL', { id, tenantId })
       .getOne();
     if (!result) throw new NotFoundException('Contrato não encontrado');
     const allowed_transitions = this.workflowService.getAllowedTransitions('contract', result.status, actorRole);
-    return { ...result, allowed_transitions };
+    return { ...toContractResponse(result), allowed_transitions };
   }
 
   /**
@@ -228,7 +203,7 @@ export class ContractsService {
     id: string,
     dto: UpdateContractDto,
     actorRole?: string,
-  ): Promise<ContractEntity & { allowed_transitions: { to: string; label?: string }[] }> {
+  ): Promise<ContractResponse & { allowed_transitions: { to: string; label?: string }[] }> {
     const current = await this.findById(tenantId, id, actorRole);
     const dtoMap  = dto as Record<string, unknown>;
     const statusChanging = dtoMap['status'] != null && dtoMap['status'] !== current.status;

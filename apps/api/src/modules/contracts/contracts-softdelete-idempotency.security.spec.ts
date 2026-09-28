@@ -16,6 +16,7 @@ describe('ContractsService.softDelete — idempotent under concurrent/racing cal
     const qb: Record<string, jest.Mock> = {};
     const chain = () => qb;
     qb['leftJoinAndMapOne'] = jest.fn(chain);
+    qb['select'] = jest.fn(chain);
     qb['where'] = jest.fn(chain);
     qb['getOne'] = jest.fn(async () => contractRow);
     const repo = {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { ListSectionHeader } from "@/shared/components/ListSectionHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/ui/card";
@@ -9,16 +9,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import {
-  TrendingUp, TrendingDown, DollarSign, Loader2, RotateCcw, Search,
+  TrendingUp, TrendingDown, DollarSign, Loader2, RotateCcw, Search, AlertTriangle,
 } from "lucide-react";
-import { useTransactions, type Transaction } from "@/modules/accounting/hooks/useTransactions";
+import type { Transaction } from "@/modules/accounting/hooks/useTransactions";
+import { truncatedTransactionsNotice, useAllTransactions } from "@/modules/accounting/hooks/useAllTransactions";
 import { formatCurrency } from "@/shared/lib/format-utils";
 import { transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllPages } from "@/shared/lib/exportAll";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { FeatureGate } from '@/shared/components/FeatureGate';
-import { toNumber, sum } from "./profit-and-loss-calc";
+import { UnavailableState } from "@/shared/components/UnavailableState";
+import { Alert, AlertDescription } from "@/shared/ui/alert";
+import { artistDisplayName, toNumber, sum } from "./profit-and-loss-calc";
 
 function catLabel(cat: string) {
   return transactionCategoryLabel(cat);
@@ -180,10 +183,12 @@ function PlCompanyTable({
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function ProfitAndLoss() {
-  const { transactions, isLoading } = useTransactions();
+  // Every transaction of the tenant (paged sweep): totals over the API's default
+  // page (50 most recent) would silently understate revenue/expenses.
+  const { transactions, isLoading, error: transactionsError, truncated, total: transactionsTotal, refetch: refetchTransactions } = useAllTransactions();
   // Every artist of the tenant (paged sweep): the plain list stops at the API's
   // default page and would leave names of the remaining artists unresolved.
-  const { data: artists = [] } = useQuery({
+  const { data: artists = [], isLoading: artistsLoading, isError: artistsError } = useQuery({
     queryKey: [...QUERY_KEYS.ARTISTS, "all-names"],
     queryFn: async () => (await fetchAllPages<{ id: string; stage_name?: string | null }>("artists")).items,
   });
@@ -246,6 +251,10 @@ export default function ProfitAndLoss() {
     () => new Map(artists.map((a) => [a.id, a.stage_name ?? ""] as const)),
     [artists],
   );
+  const artistNameOf = useCallback(
+    (artistId: string) => artistDisplayName(artistId, artistNameById, { isLoading: artistsLoading, isError: artistsError }),
+    [artistNameById, artistsLoading, artistsError],
+  );
   const plByArtist = useMemo(() => {
     const byArtist = new Map<string, { id: string; name: string; totalRevenue: number; totalExpenses: number }>();
     for (const t of filteredTransactions) {
@@ -253,7 +262,7 @@ export default function ProfitAndLoss() {
       if (!artistId) continue;
       const entry = byArtist.get(artistId) ?? {
         id: artistId,
-        name: artistNameById.get(artistId) || "Artista não encontrado",
+        name: artistNameOf(artistId),
         totalRevenue: 0,
         totalExpenses: 0,
       };
@@ -264,7 +273,7 @@ export default function ProfitAndLoss() {
     return Array.from(byArtist.values())
       .map((a) => ({ ...a, profit: a.totalRevenue - a.totalExpenses, margin: a.totalRevenue > 0 ? ((a.totalRevenue - a.totalExpenses) / a.totalRevenue) * 100 : 0 }))
       .sort((a, b) => b.profit - a.profit);
-  }, [filteredTransactions, artistNameById]);
+  }, [filteredTransactions, artistNameOf]);
 
   if (isLoading) {
     return (
@@ -276,6 +285,20 @@ export default function ProfitAndLoss() {
     );
   }
 
+  if (transactionsError) {
+    return (
+      <FeatureGate feature="moduleAccounting" featureName="Contabilidade">
+        <MainLayout title="Contabilidade">
+          <UnavailableState
+            title="Não foi possível carregar as transações"
+            description="Os totais do demonstrativo não podem ser calculados sem as transações. Tente novamente."
+            onRetry={() => { void refetchTransactions(); }}
+          />
+        </MainLayout>
+      </FeatureGate>
+    );
+  }
+
   const plCompanyProps = { incomeByCategory, expensesByCategory, incomeTotal, expensesTotal, netProfit, netMargin };
 
   return (
@@ -284,6 +307,13 @@ export default function ProfitAndLoss() {
       title="Contabilidade"
     >
       <div className="space-y-6">
+
+        {truncated && (
+          <Alert variant="destructive" data-testid="alert-pl-truncated">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>{truncatedTransactionsNotice(transactions.length, transactionsTotal)}</AlertDescription>
+          </Alert>
+        )}
 
         {/* ── Toolbar: search + date pickers (right-aligned) ── */}
         <div className="flex flex-wrap items-center gap-3 rounded-lg bg-muted/30 p-3">

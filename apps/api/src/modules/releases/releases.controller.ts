@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, ParseUUIDPipe, UseInterceptors } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiHeader } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiHeader, ApiExtraModels } from '@nestjs/swagger';
 import { CurrentTenant } from '../../core/decorators/current-tenant.decorator';
 import { CurrentUser }   from '../../core/decorators/current-user.decorator';
 import { RequireRole }   from '../../core/decorators/roles.decorator';
@@ -7,13 +7,17 @@ import { Audit }         from '../../core/interceptors/audit.interceptor';
 import { IdempotencyInterceptor } from '../../core/interceptors/idempotency.interceptor';
 import type { JwtAuth }  from '../../core/guards/auth.guard';
 import { ReleasesService } from './releases.service';
-import { CreateReleaseDto, UpdateReleaseDto, QueryReleaseDto } from './dto/releases.dto';
+import { CreateReleaseDto, UpdateReleaseDto, QueryReleaseDto, ReleaseArtistEmbedDto } from './dto/releases.dto';
 
-@ApiTags('Releases') @ApiBearerAuth() @Controller('releases')
+const ARTIST_REF_DESCRIPTION =
+  'Each release embeds `artist` {id, stage_name} (null when absent). DEPRECATED: `artistas` (same projection) remains ' +
+  'only for the deploy-skew window and is removed once every deployed web build reads `artist`. See ReleaseArtistEmbedDto.';
+
+@ApiTags('Releases') @ApiBearerAuth() @ApiExtraModels(ReleaseArtistEmbedDto) @Controller('releases')
 export class ReleasesController {
   constructor(private readonly svc: ReleasesService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List releases' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List releases', description: ARTIST_REF_DESCRIPTION })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryReleaseDto) {
     return this.svc.list(t.id, q);
   }
@@ -23,7 +27,7 @@ export class ReleasesController {
     return this.svc.stats(t.id, q);
   }
 
-  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a release' })
+  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a release', description: ARTIST_REF_DESCRIPTION })
   findById(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,

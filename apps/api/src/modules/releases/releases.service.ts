@@ -2,7 +2,7 @@ import { Injectable, Inject, NotFoundException, Optional } from '@nestjs/common'
 import { DataSource, Repository, FindOptionsWhere } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DATA_SOURCE } from '../../database/database.module';
-import { ReleaseEntity, ArtistEntity } from '../../database/entities';
+import { ReleaseEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import type { CreateReleaseDto, UpdateReleaseDto, QueryReleaseDto } from './dto/releases.dto';
 import { ReleaseStatus } from '@music-os-360/types';
@@ -10,6 +10,7 @@ import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { canonicalReleaseType, canonicalizeReleaseInput } from './release-legacy-fields';
+import { joinReleaseArtistRef, toReleaseResponse, type ReleaseResponse } from './release-artist-ref';
 
 @Injectable()
 export class ReleasesService {
@@ -29,14 +30,7 @@ export class ReleasesService {
   }
 
   private baseQb(tenantId: string, q: QueryReleaseDto) {
-    const qb = this.repo!
-      .createQueryBuilder('r')
-      .leftJoinAndMapOne(
-        'r.artistas',
-        ArtistEntity,
-        'artistas',
-        'artistas.id = r.artist_id AND artistas.tenant_id = r.tenant_id AND artistas.deleted_at IS NULL',
-      )
+    const qb = joinReleaseArtistRef(this.repo!.createQueryBuilder('r'))
       .where('r.tenant_id = :tenantId', { tenantId })
       .andWhere('r.deleted_at IS NULL');
 
@@ -56,8 +50,8 @@ export class ReleasesService {
       .skip(q.offset ?? 0)
       .take(q.limit ?? 50);
 
-    const [data, total] = await qb.getManyAndCount();
-    return { data, meta: { total, offset: q.offset ?? 0, limit: q.limit ?? 50 } };
+    const [rows, total] = await qb.getManyAndCount();
+    return { data: rows.map(toReleaseResponse), meta: { total, offset: q.offset ?? 0, limit: q.limit ?? 50 } };
   }
 
   /**
@@ -86,20 +80,13 @@ export class ReleasesService {
     tenantId: string,
     id: string,
     actorRole?: string,
-  ): Promise<ReleaseEntity & { allowed_transitions: { to: string; label?: string }[] }> {
-    const result = await this.repo!
-      .createQueryBuilder('r')
-      .leftJoinAndMapOne(
-        'r.artistas',
-        ArtistEntity,
-        'artistas',
-        'artistas.id = r.artist_id AND artistas.tenant_id = r.tenant_id AND artistas.deleted_at IS NULL',
-      )
+  ): Promise<ReleaseResponse & { allowed_transitions: { to: string; label?: string }[] }> {
+    const result = await joinReleaseArtistRef(this.repo!.createQueryBuilder('r'))
       .where('r.id = :id AND r.tenant_id = :tenantId AND r.deleted_at IS NULL', { id, tenantId })
       .getOne();
     if (!result) throw new NotFoundException('Lançamento não encontrado');
     const allowed_transitions = this.workflowService.getAllowedTransitions('release', result.status, actorRole);
-    return { ...result, allowed_transitions };
+    return { ...toReleaseResponse(result), allowed_transitions };
   }
 
   async create(tenantId: string, userId: string, input: CreateReleaseDto): Promise<ReleaseEntity> {
@@ -162,7 +149,7 @@ export class ReleasesService {
     id: string,
     input: UpdateReleaseDto,
     actorRole?: string,
-  ): Promise<ReleaseEntity & { allowed_transitions: { to: string; label?: string }[] }> {
+  ): Promise<ReleaseResponse & { allowed_transitions: { to: string; label?: string }[] }> {
     const dto = canonicalizeReleaseInput(input);
     const current = await this.findById(tenantId, id, actorRole);
     const statusChanging = dto.status != null && dto.status !== current.status;

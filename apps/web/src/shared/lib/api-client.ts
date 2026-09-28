@@ -42,7 +42,7 @@ export function getTenantId(): string | null {
   return _tenantId;
 }
 
-export const TABLE_ENDPOINT: Record<string, string> = {
+export const TABLE_ENDPOINT = {
   artistas: "/artists",
   artists: "/artists",
   obras: "/works",
@@ -89,16 +89,19 @@ export const TABLE_ENDPOINT: Record<string, string> = {
   financial_categories: "/financial-categories",
   categorias_financeiras: "/financial-categories",
   contract_service_types: "/contract-service-types",
-};
+} as const satisfies Record<string, string>;
 
-export const PENDING_TABLES: Record<string, string> = {
+export const PENDING_TABLES = {
   regras: "Rules UI storage table has no backend controller",
   tarefas_marketing: "Marketing tasks have no backend controller",
   monitoramentos: "Monitoring table has no backend controller",
   roles: "RBAC is currently exposed through /users and auth context, not a /roles CRUD",
   permissions: "Permissions are computed server-side, not exposed as a /permissions CRUD",
   integrations: "Integrations are exposed via sub-routes (integrations/autentique, integrations/external-data), not a flat /integrations CRUD",
-};
+} as const satisfies Record<string, string>;
+
+/** Every table key the storage layer resolves (a typo or a removed key fails typecheck). */
+export type StorageTable = keyof typeof TABLE_ENDPOINT | keyof typeof PENDING_TABLES;
 
 async function mapError(res: Response): Promise<never> {
   let body: { message?: string | string[]; error?: string } = {};

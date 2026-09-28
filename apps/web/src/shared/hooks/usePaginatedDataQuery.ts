@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { getCacheConfig } from "@/shared/lib/query-config";
@@ -31,7 +32,7 @@ type MutationSuccessCallbacks<T> = {
 export type PaginatedQueryConfig<T = object> = {
   /** Stable queryKey prefix — page/pageSize/search/filters/sort are appended automatically. */
   queryKey: string[];
-  table: string;
+  table: StorageTable;
   page: number;
   pageSize: number;
   search?: string;

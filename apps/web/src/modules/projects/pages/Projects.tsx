@@ -267,9 +267,9 @@ export default function Projects() {
               50 artists of the tenant. */}
           <div className="flex items-center gap-1 shrink-0">
             <div className="h-8 w-[160px]">
-              <AsyncEntityCombobox<Artist>
+              <AsyncEntityCombobox<ArtistWireRecord>
                 table="artistas"
-                getLabel={(a) => a.stageName ?? ""}
+                getLabel={(a) => a.stage_name?.trim() || "Sem nome"}
                 value={artistFilter !== "all" ? artistFilter : null}
                 onChange={(id) => setArtistFilter(id)}
                 placeholder="Todos Artista"

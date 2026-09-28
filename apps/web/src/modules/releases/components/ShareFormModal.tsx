@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +16,6 @@ import { toast } from "sonner";
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
-import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { shareSchema, type ShareFormData } from "@/modules/releases/lib/share-schema";
 import { SHARE_FORM_STATUS_OPTIONS, SHARE_FUNCTION_OPTIONS, SHARE_TYPE_OPTIONS, resolveShareType } from "@/modules/releases/lib/share-format";
@@ -339,9 +339,9 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
                 {/* Task J: server-side search (AsyncEntityCombobox) — it used to fill
                     the Select with useArtistas() without a filter, truncated to the first
                     50 artists of the tenant. */}
-                <AsyncEntityCombobox<Artist>
+                <AsyncEntityCombobox<ArtistWireRecord>
                   table="artistas"
-                  getLabel={(a) => a.stageName ?? ""}
+                  getLabel={(a) => a.stage_name?.trim() || "Sem nome"}
                   value={formData.artist_id || null}
                   onChange={(id) => handleChange("artist_id", id)}
                   placeholder="Selecione o vínculo"

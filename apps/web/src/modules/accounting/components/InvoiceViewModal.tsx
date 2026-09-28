@@ -10,6 +10,7 @@ import { formatCpfCnpj } from "@/shared/lib/br-validators";
 import { parseOperationType } from "@/modules/accounting/types/invoice-type";
 import { openStoredFile } from "@/shared/lib/stored-file";
 import { toast } from "sonner";
+import { useInvoicePartyName } from "@/modules/accounting/hooks/useInvoicePartyName";
 
 interface InvoiceViewModalProps {
   open: boolean;
@@ -53,10 +54,6 @@ function numberValue(...values: unknown[]): number | null {
   return null;
 }
 
-function getInvoicePartyName(invoice: any): string | null {
-  return invoice.tomador_legal_name || invoice.tomador_name || invoice.clientes?.nome || null;
-}
-
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="space-y-1">
@@ -67,6 +64,8 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: InvoiceViewModalProps) {
+  // Hook before the early return (rules of hooks).
+  const partyName = useInvoicePartyName(invoice);
   if (!invoice) return null;
   const { type: operationType, observacoesLimpas: cleanedNotes } = parseOperationType(invoice.notes);
   const isInflow = operationType === "entrada";
@@ -121,7 +120,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Building2 className="h-4 w-4" />{isInflow ? "Fornecedor / Emitente" : "Tomador do Serviço"}</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Razão Social / Nome" value={getInvoicePartyName(invoice)} />
+              <Field label="Razão Social / Nome" value={partyName} />
               <Field label="CNPJ / CPF" value={invoice.tomador_cnpj && formatCpfCnpj(invoice.tomador_cnpj)} />
               <Field label="Inscrição Estadual" value={invoice.tomador_inscricao_estadual} />
               <Field label="Inscrição Municipal" value={invoice.tomador_inscricao_municipal} />

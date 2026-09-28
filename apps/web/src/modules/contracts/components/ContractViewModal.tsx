@@ -19,6 +19,7 @@ import { useDocuments } from "@/modules/contracts/hooks/useDocuments";
 import { DocumentStatusBadge, SignerStatusBadge } from "@/modules/contracts/components/DocumentStatusBadge";
 import { DocumentTimeline } from "@/modules/contracts/components/DocumentTimeline";
 import { SIGNER_ROLE_LABEL } from "@/modules/contracts/lib/contract-schema";
+import { contractPartyLabel } from "@/modules/contracts/lib/contract-party";
 import { SigningPlatformBadge } from "@/modules/contracts/components/SigningPlatformBadge";
 import { SendForSigningDialog } from "@/modules/contracts/components/SendForSigningDialog";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
@@ -155,7 +156,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
               <TabsContent value="informacoes" className="p-6 space-y-5 mt-0">
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {[
-                    { label: "Artista / Cliente", value: contract.artistas?.stage_name || contract.clientes?.nome || "—" },
+                    { label: "Artista / Cliente", value: contractPartyLabel(contract) },
                     { label: "Tipo", value: contract.type ? formatCategoryLabel(contract.type) : "—" },
                     { label: "Início", value: formatDateDashes(contract.start_date) },
                     { label: "Término", value: contract.end_date ? formatDateDashes(contract.end_date) : "Indeterminado" },

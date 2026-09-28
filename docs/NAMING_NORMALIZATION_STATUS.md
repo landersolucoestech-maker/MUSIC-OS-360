@@ -99,5 +99,5 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-043 | Client (CRM contact) | done | DONE | no |
 | CZ-044 | Org-chart slugs (departments, positions, job functions) | done | DONE | no |
 
-Concepts: 92. Renames: 0. Exceptions: 368. Blockers: 14.
+Concepts: 92. Renames: 0. Exceptions: 391. Blockers: 14.
 By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 76, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

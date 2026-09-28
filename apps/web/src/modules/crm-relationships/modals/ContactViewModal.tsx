@@ -24,6 +24,8 @@ import type { Contact } from "../types";
 import { useSkillRun } from "@/shared/hooks/useSkillRun";
 import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { formatCalendarDateLabel } from "@/shared/lib/format-utils";
+import { safeImageSrc } from "@/shared/lib/safe-url";
 
 // ─────────────────────────────────────────────
 // Types
@@ -38,11 +40,8 @@ interface ContactViewModalProps {
 // ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
-const fmtDate = (value?: string | null) => {
-  if (!value) return "—";
-  try { return new Date(value).toLocaleDateString("pt-BR"); }
-  catch { return value; }
-};
+/** Interaction dates are calendar days ("YYYY-MM-DD"): no timezone shift; malformed → "Data inválida". */
+const fmtDate = (value?: string | null) => formatCalendarDateLabel(value, "—");
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -118,9 +117,9 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
             className="flex items-center gap-3"
             data-testid="contato-view-title"
           >
-            {contact.photoUrl && (
+            {safeImageSrc(contact.photoUrl) && (
               <img
-                src={contact.photoUrl}
+                src={safeImageSrc(contact.photoUrl)}
                 alt="Foto"
                 className="h-10 w-10 rounded-full object-cover shrink-0"
               />

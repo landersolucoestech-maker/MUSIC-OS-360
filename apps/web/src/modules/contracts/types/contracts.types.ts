@@ -67,8 +67,10 @@ export type ContractInsert = Omit<Contract, "id" | "user_id" | "created_at" | "u
 export type ContractUpdate = Partial<ContractInsert>;
 
 export interface ContractWithRelations extends Contract {
-  artistas?: ArtistRef | null;
-  clientes?: ClientRef | null;
+  /** `{ id, stage_name }` of the linked artist; null when absent/deleted. */
+  artist?: ArtistRef | null;
+  /** `{ id, name }` of the linked client; null when absent/deleted. */
+  client?: ClientRef | null;
 }
 
 export interface ContractTemplateRow {

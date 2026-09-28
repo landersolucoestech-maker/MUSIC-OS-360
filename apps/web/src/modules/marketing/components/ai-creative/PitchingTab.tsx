@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Disc3, FileAudio, ImageIcon, Send } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Textarea } from "@/shared/ui/textarea";
+import { statusLabelPtBr } from "@music-os-360/types";
 import type { AiGeneratedResult } from "../../types/marketing.types";
 import type { GenerateAiHandler, TargetOption } from "./aiCreative.types";
 import type { IntelligenceSources, TrackDiagnosis } from "../../services/musicIntelligenceEngine";
@@ -31,7 +32,11 @@ export function PitchingTab({
       .map((item) => ({
         id: item.id,
         label: item.title,
-        helper: [item.artistas?.stage_name, item.music_genre, item.status].filter(Boolean).join(" · ") || undefined,
+        helper: [
+          item.artistas?.stage_name,
+          item.music_genre,
+          item.status ? (statusLabelPtBr("release", item.status) ?? "Status não reconhecido") : undefined,
+        ].filter(Boolean).join(" · ") || undefined,
       }))
       .filter((option) => option.id && option.label)
       .sort((a, b) => a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }))

@@ -25,3 +25,19 @@ export function toNumber(value: unknown): number {
 export function sum(arr: any[], field: string): number {
   return arr.reduce((s, t) => s + toNumber(t[field]), 0);
 }
+
+/**
+ * Display name of a transaction's artist in the per-artist P&L. The names come
+ * from a separate (tenant-wide) artist sweep, so its loading/error states are
+ * reported as such instead of claiming the artist does not exist.
+ */
+export function artistDisplayName(
+  artistId: string,
+  names: ReadonlyMap<string, string>,
+  state: { isLoading: boolean; isError: boolean },
+): string {
+  if (state.isLoading) return "Carregando…";
+  if (state.isError) return "Artista indisponível";
+  if (!names.has(artistId)) return "Artista não encontrado";
+  return names.get(artistId)?.trim() || "Sem nome";
+}

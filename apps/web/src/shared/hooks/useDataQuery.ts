@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { getCacheConfig } from "@/shared/lib/query-config";
@@ -34,7 +35,7 @@ type MutationSuccessCallbacks<T> = {
 
 type QueryConfig<T = object> = {
   queryKey: string[];
-  table: string;
+  table: StorageTable;
   /** Kept for compatibility with legacy calls (not used in mock mode). */
   select?: string;
   orderBy?: { column: string; ascending?: boolean };

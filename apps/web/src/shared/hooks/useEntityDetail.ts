@@ -16,11 +16,12 @@
  *   );
  */
 
+import type { StorageTable } from "@/shared/lib/api-client";
 import { useQuery } from '@tanstack/react-query';
 import { storage } from '@/shared/lib/storage';
 
 export function useEntityDetail<T = Record<string, unknown>>(
-  table: string,
+  table: StorageTable,
   id: string | undefined,
   enabled = true,
 ) {

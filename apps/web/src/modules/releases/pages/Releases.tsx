@@ -420,9 +420,9 @@ export default function Releases() {
               Select from unfiltered useArtistas(), truncated at the tenant's
               first 50 artists. "Todos Artistas" comes back via the Clear button. */}
           <div className="h-8 w-[180px] shrink-0">
-            <AsyncEntityCombobox<Artist>
+            <AsyncEntityCombobox<ArtistWireRecord>
               table="artistas"
-              getLabel={(a) => a.stageName ?? ""}
+              getLabel={(a) => a.stage_name?.trim() || "Sem nome"}
               value={artistFilter !== "all-artist" ? artistFilter : null}
               onChange={(id) => setArtistFilter(id)}
               placeholder="Todos Artistas"

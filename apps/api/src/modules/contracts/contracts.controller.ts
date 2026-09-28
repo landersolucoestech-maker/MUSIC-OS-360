@@ -4,7 +4,7 @@ import {
   ParseUUIDPipe,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiHeader } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiHeader, ApiExtraModels } from '@nestjs/swagger';
 import { IdempotencyInterceptor } from '../../core/interceptors/idempotency.interceptor';
 import { CurrentTenant }   from '../../core/decorators/current-tenant.decorator';
 import { CurrentUser }     from '../../core/decorators/current-user.decorator';
@@ -16,8 +16,15 @@ import { ContractsService }        from './contracts.service';
 import { CreateContractDto }       from './dto/create-contract.dto';
 import { UpdateContractDto }       from './dto/update-contract.dto';
 import { QueryContractDto }        from './dto/query-contract.dto';
+import { ContractPartyRefsDto }    from './dto/contract-party-ref.dto';
+
+const PARTY_REFS_DESCRIPTION =
+  'Each contract embeds `artist` {id, stage_name} and `client` {id, name} (null when absent). ' +
+  'DEPRECATED: `artistas` / `clientes` (same projection, `clientes.nome` mirrors `name`) remain only for ' +
+  'the deploy-skew window and are removed once every deployed web build reads `artist` / `client`. See ContractPartyRefsDto.';
 
 @ApiTags('Contracts')
+@ApiExtraModels(ContractPartyRefsDto)
 @ApiBearerAuth()
 @Controller('contracts')
 export class ContractsController {
@@ -26,7 +33,7 @@ export class ContractsController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('contract:read')
-  @ApiOperation({ summary: 'List the tenant\'s contracts' })
+  @ApiOperation({ summary: 'List the tenant\'s contracts', description: PARTY_REFS_DESCRIPTION })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryContractDto) {
     return this.service.list(tenant.id, query);
   }
@@ -42,7 +49,7 @@ export class ContractsController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('contract:read')
-  @ApiOperation({ summary: 'Get a contract by ID' })
+  @ApiOperation({ summary: 'Get a contract by ID', description: PARTY_REFS_DESCRIPTION })
   findById(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,

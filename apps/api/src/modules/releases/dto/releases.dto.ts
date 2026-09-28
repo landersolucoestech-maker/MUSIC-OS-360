@@ -66,3 +66,26 @@ export class QueryReleaseDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() artistId?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() distributor?: string;
 }
+
+/**
+ * Response-only shape of the artist embed on GET /releases and
+ * GET /releases/:id (release-artist-ref.ts). Only these fields are ever
+ * serialized — never the artist metadata or ciphertext.
+ */
+export class ReleaseArtistRefDto {
+  @ApiProperty({ format: 'uuid' }) id!: string;
+  @ApiProperty({ type: String, nullable: true }) stage_name!: string | null;
+}
+
+export class ReleaseArtistEmbedDto {
+  @ApiProperty({ type: ReleaseArtistRefDto, nullable: true, description: 'Linked artist (tenant-scoped, not deleted).' })
+  artist!: ReleaseArtistRefDto | null;
+
+  @ApiProperty({
+    type: ReleaseArtistRefDto,
+    nullable: true,
+    deprecated: true,
+    description: 'Deprecated alias of `artist` for web builds older than the English embed. Removed once every deployed web build reads `artist`.',
+  })
+  artistas!: ReleaseArtistRefDto | null;
+}

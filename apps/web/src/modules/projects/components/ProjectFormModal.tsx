@@ -746,9 +746,9 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Artista principal</Label>
-              <AsyncEntityCombobox<Artist>
+              <AsyncEntityCombobox<ArtistWireRecord>
                 table="artistas"
-                getLabel={(a) => a.stageName ?? ""}
+                getLabel={(a) => a.stage_name?.trim() || "Sem nome"}
                 value={artistId}
                 onChange={(id) => setArtistId(id || null)}
                 placeholder="Selecione o artista"

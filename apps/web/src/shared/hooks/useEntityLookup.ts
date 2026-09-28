@@ -1,3 +1,4 @@
+import type { StorageTable } from "@/shared/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { useDebounce } from "@/shared/hooks/useDebounce";
@@ -5,7 +6,7 @@ import { storage } from "@/shared/lib/storage";
 
 export interface UseEntityLookupParams {
   /** Table/resource name — same key used in TABLE_ENDPOINT (api-client.ts). */
-  table: string;
+  table: StorageTable;
   /** Term typed by the user (not debounced — the hook debounces internally). */
   search: string;
   filters?: Record<string, unknown>;
@@ -61,7 +62,7 @@ export function useEntityLookup<T extends object>({
  * selected in a combobox before any search, and (b) resolve `?edit=id`
  * without depending on the record being among the first 50 loaded.
  */
-export function useEntityById<T extends object>(table: string, id: string | null | undefined) {
+export function useEntityById<T extends object>(table: StorageTable, id: string | null | undefined) {
   const query = useQuery<T | undefined>({
     queryKey: ["byId", table, id],
     queryFn: () => storage.findById<T & { id: string }>(table, id as string) as Promise<T | undefined>,
