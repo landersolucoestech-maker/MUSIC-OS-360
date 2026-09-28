@@ -6,23 +6,23 @@ import { randomUUID } from 'crypto';
 import type { DataSource, QueryRunner } from 'typeorm';
 
 export interface ProjectTrackFieldItem {
-  nome_musica: string;
+  trackName: string;
   soloFeat: string | null;
   originalRemix: string | null;
   instrumental: string | null;
-  duracaoMinutos: string | null;
-  duracaoSegundos: string | null;
-  generoMusical: string | null;
-  idiomaMusica: string | null;
-  compositores: string[];
-  interpretes: string[];
-  produtores: string[];
-  letra: string | null;
-  arquivosAudio: string | null;
+  trackDurationMinutes: string | null;
+  trackDurationSeconds: string | null;
+  musicGenre: string | null;
+  trackLanguage: string | null;
+  composers: string[];
+  performers: string[];
+  producers: string[];
+  lyrics: string | null;
+  audioFiles: string | null;
   sort_order: number;
 }
 
-type TrackRole = 'compositor' | 'interprete' | 'produtor';
+type TrackRole = 'composer' | 'performer' | 'producer';
 
 interface TrackRow {
   id: string;
@@ -31,11 +31,11 @@ interface TrackRow {
   solo_feat: string | null;
   original_remix: string | null;
   instrumental: string | null;
-  duracao_min: string | null;
-  duracao_seg: string | null;
+  duration_minutes: string | null;
+  duration_seconds: string | null;
   music_genre: string | null;
-  idioma: string | null;
-  letra: string | null;
+  language: string | null;
+  lyrics: string | null;
   audio_url: string | null;
   sort_order: number;
 }
@@ -47,8 +47,8 @@ interface ParticipantRow {
 }
 
 function parseDuration(item: Record<string, unknown>): { minutes: string | null; seconds: string | null } {
-  const minutes = String(item.duracaoMinutos ?? '').trim();
-  const seconds = String(item.duracaoSegundos ?? '').trim();
+  const minutes = String(item.trackDurationMinutes ?? '').trim();
+  const seconds = String(item.trackDurationSeconds ?? '').trim();
   return { minutes: minutes || null, seconds: seconds || null };
 }
 
@@ -62,7 +62,7 @@ export async function fetchProjectTracksForExport(
 
   const tracks = (await ds.query(
     `SELECT "id", "project_id", "name", "solo_feat", "original_remix", "instrumental",
-            "duracao_min", "duracao_seg", "music_genre", "idioma", "letra", "audio_url", "sort_order"
+            "duration_minutes", "duration_seconds", "music_genre", "language", "lyrics", "audio_url", "sort_order"
        FROM "project_tracks"
       WHERE "tenant_id" = $1 AND "project_id" = ANY($2::uuid[])
       ORDER BY "sort_order" ASC`,
@@ -92,19 +92,19 @@ export async function fetchProjectTracksForExport(
   for (const track of tracks) {
     const list = output.get(track.project_id) ?? [];
     list.push({
-      nome_musica: track.name,
+      trackName: track.name,
       soloFeat: track.solo_feat,
       originalRemix: track.original_remix,
       instrumental: track.instrumental,
-      duracaoMinutos: track.duracao_min,
-      duracaoSegundos: track.duracao_seg,
-      generoMusical: track.music_genre,
-      idiomaMusica: track.idioma,
-      compositores: namesByRole(track.id, 'compositor'),
-      interpretes: namesByRole(track.id, 'interprete'),
-      produtores: namesByRole(track.id, 'produtor'),
-      letra: track.letra,
-      arquivosAudio: track.audio_url,
+      trackDurationMinutes: track.duration_minutes,
+      trackDurationSeconds: track.duration_seconds,
+      musicGenre: track.music_genre,
+      trackLanguage: track.language,
+      composers: namesByRole(track.id, 'composer'),
+      performers: namesByRole(track.id, 'performer'),
+      producers: namesByRole(track.id, 'producer'),
+      lyrics: track.lyrics,
+      audioFiles: track.audio_url,
       sort_order: track.sort_order,
     });
     output.set(track.project_id, list);
@@ -125,7 +125,7 @@ export async function insertProjectTracksForImport(
   for (const raw of trackRows) {
     if (raw === null || typeof raw !== 'object') continue;
     const item = raw as Record<string, unknown>;
-    const name = String(item.nome_musica ?? '').trim();
+    const name = String(item.trackName ?? '').trim();
     if (!name) continue;
 
     const trackId = randomUUID();
@@ -137,7 +137,7 @@ export async function insertProjectTracksForImport(
     await qr.query(
       `INSERT INTO "project_tracks"
          ("id", "tenant_id", "project_id", "name", "solo_feat", "original_remix",
-          "instrumental", "duracao_min", "duracao_seg", "music_genre", "idioma", "letra",
+          "instrumental", "duration_minutes", "duration_seconds", "music_genre", "language", "lyrics",
           "audio_url", "sort_order")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
       [
@@ -150,18 +150,18 @@ export async function insertProjectTracksForImport(
         (item.instrumental as string) || null,
         duration.minutes,
         duration.seconds,
-        (item.generoMusical as string) || null,
-        (item.idiomaMusica as string) || null,
-        (item.letra as string) || null,
-        (item.arquivosAudio as string) || null,
+        (item.musicGenre as string) || null,
+        (item.trackLanguage as string) || null,
+        (item.lyrics as string) || null,
+        (item.audioFiles as string) || null,
         order,
       ],
     );
 
     const roleFields: Array<[TrackRole, unknown]> = [
-      ['compositor', item.compositores],
-      ['interprete', item.interpretes],
-      ['produtor', item.produtores],
+      ['composer', item.composers],
+      ['performer', item.performers],
+      ['producer', item.producers],
     ];
     for (const [role, values] of roleFields) {
       if (!Array.isArray(values)) continue;

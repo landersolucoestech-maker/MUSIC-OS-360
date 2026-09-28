@@ -142,21 +142,21 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                                 <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
                                 <div>
                                   <span className="text-muted-foreground text-xs block">Duração</span>
-                                  <span className="font-medium" data-testid={`text-view-duracao-${idx}`}>{info.duracao || "—"}</span>
+                                  <span className="font-medium" data-testid={`text-view-duration-${idx}`}>{info.duration || "—"}</span>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Music2 className="h-4 w-4 text-muted-foreground shrink-0" />
                                 <div>
                                   <span className="text-muted-foreground text-xs block">Gênero</span>
-                                  <span className="font-medium" data-testid={`text-view-genero-${idx}`}>{info.genero ? capitalize(info.genero) : "—"}</span>
+                                  <span className="font-medium" data-testid={`text-view-genre-${idx}`}>{info.genre ? capitalize(info.genre) : "—"}</span>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
                                 <div>
                                   <span className="text-muted-foreground text-xs block">Idioma</span>
-                                  <span className="font-medium" data-testid={`text-view-idioma-${idx}`}>{info.idioma ? capitalize(info.idioma) : "—"}</span>
+                                  <span className="font-medium" data-testid={`text-view-language-${idx}`}>{info.language ? capitalize(info.language) : "—"}</span>
                                 </div>
                               </div>
                             </div>
@@ -169,8 +169,8 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                                     <Music2 className="h-3.5 w-3.5 text-warning" />
                                     <span className="text-xs font-medium">Compositores</span>
                                   </div>
-                                  <p className="text-sm text-muted-foreground" data-testid={`text-view-compositores-${idx}`}>
-                                    {info.compositores || "—"}
+                                  <p className="text-sm text-muted-foreground" data-testid={`text-view-composers-${idx}`}>
+                                    {info.composers || "—"}
                                   </p>
                                 </CardContent>
                               </Card>
@@ -180,8 +180,8 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                                     <Mic className="h-3.5 w-3.5 text-primary" />
                                     <span className="text-xs font-medium">Intérpretes</span>
                                   </div>
-                                  <p className="text-sm text-muted-foreground" data-testid={`text-view-interpretes-${idx}`}>
-                                    {info.interpretes || "—"}
+                                  <p className="text-sm text-muted-foreground" data-testid={`text-view-performers-${idx}`}>
+                                    {info.performers || "—"}
                                   </p>
                                 </CardContent>
                               </Card>
@@ -191,19 +191,19 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                                     <User className="h-3.5 w-3.5 text-info" />
                                     <span className="text-xs font-medium">Produtores</span>
                                   </div>
-                                  <p className="text-sm text-muted-foreground" data-testid={`text-view-produtores-${idx}`}>
-                                    {info.produtores || "—"}
+                                  <p className="text-sm text-muted-foreground" data-testid={`text-view-producers-${idx}`}>
+                                    {info.producers || "—"}
                                   </p>
                                 </CardContent>
                               </Card>
                             </div>
 
                             {/* Lyrics — shown only when filled in */}
-                            {info.letra && (
+                            {info.lyrics && (
                               <div>
                                 <span className="text-xs font-medium text-muted-foreground block mb-1">Letra</span>
                                 <div className="bg-background/50 rounded-md p-3 max-h-40 overflow-y-auto">
-                                  <p className="text-sm whitespace-pre-wrap" data-testid={`text-view-letra-${idx}`}>{info.letra}</p>
+                                  <p className="text-sm whitespace-pre-wrap" data-testid={`text-view-lyrics-${idx}`}>{info.lyrics}</p>
                                 </div>
                               </div>
                             )}

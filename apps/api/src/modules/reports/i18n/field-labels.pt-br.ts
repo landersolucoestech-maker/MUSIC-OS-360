@@ -589,16 +589,14 @@ export const FIELD_LABELS_PT_BR = {
   faixaIdioma: 'Idioma da faixa',
 
   // ── Part 89 — Shares ─────────────────────────────────────────────────────────
-  // `percentual` (WorkParticipantEntity) and `nomeMusica` (projects.musicas,
-  // an unrelated computed field) remain — shares migrated to
+  // `percentual` (WorkParticipantEntity) remains — shares migrated to
   // holder/recipient/direction/percentage on 2026-09-13
-  // (RenameSharePartyFieldsToEnglish), but these keys are still live for
-  // other entities/fields.
+  // (RenameSharePartyFieldsToEnglish), but the key is still live for
+  // work participants.
   shareType: 'Tipo de share',
   percentual: 'Percentual',
   percentage: 'Percentual',
   direction: 'Direção',
-  nomeMusica: 'Nome da música',
   holder: 'Detentor',
   recipient: 'Destinatário',
   artistaExterno: 'Artista externo',
@@ -659,10 +657,15 @@ export const FIELD_LABELS_PT_BR = {
   tipoLancamento: 'Tipo de Lançamento',
   nomeEpAlbum: 'Nome do EP/Álbum',
   statusProjeto: 'Status',
-  duracaoMinutos: 'Duração — Minutos',
-  duracaoSegundos: 'Duração — Segundos',
-  idiomaMusica: 'Idioma da Música',
-  arquivosAudio: 'Arquivos de Áudio (MP3/WAV)',
+  // projects.tracks repeating group (CZ-031) — same headers as before.
+  trackName: 'Nome da música',
+  trackDurationMinutes: 'Duração — Minutos',
+  trackDurationSeconds: 'Duração — Segundos',
+  trackLanguage: 'Idioma da Música',
+  composers: 'Compositores',
+  performers: 'Intérpretes',
+  producers: 'Produtores',
+  audioFiles: 'Arquivos de Áudio (MP3/WAV)',
 
   // ── Part 89 — Accounting (computed report) ──────────────────────────────────
   receitas: 'Receitas',

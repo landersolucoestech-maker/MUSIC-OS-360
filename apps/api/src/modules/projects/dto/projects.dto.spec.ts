@@ -10,7 +10,7 @@ import { CreateProjectDto } from './projects.dto';
  * DTO used English names (type/artistId/budget/currency/
  * startsAt/deadlineAt/releasedAt) that NEVER matched the real payload
  * sent by ProjetoFormModal.tsx/Projetos.tsx (title/type/status/
- * notes/description/music_genre/artist_id/musicas[]) nor the entity's
+ * notes/description/music_genre/artist_id/tracks[]) nor the entity's
  * physical columns (title/type/status/description). With
  * ValidationPipe (whitelist + forbidNonWhitelisted), every project
  * create/edit returned 400. `title` went from legacy name to canonical in the
@@ -28,10 +28,22 @@ const REAL_FORM_PAYLOAD = {
   description: null,
   music_genre: 'pop',
   artist_id: '123e4567-e89b-12d3-a456-426614174000',
+  tracks: [
+    {
+      id: 'track-1', name: 'Faixa 1', soloFeat: 'solo', originalRemix: 'original',
+      instrumental: 'nao', durationMinutes: '3', durationSeconds: '30', genre: 'pop', language: 'pt-BR',
+      composers: ['Fulano'], performers: ['Beltrano'], producers: ['Ciclano'], lyrics: 'lalala',
+    },
+  ],
+};
+
+/** The payload the pre-CZ-031 web build sends (deprecated `musicas`, Portuguese track fields). */
+const LEGACY_FORM_PAYLOAD = {
+  title: 'Meu Álbum',
+  type: 'album',
   musicas: [
     {
-      id: 'faixa-1', nome: 'Faixa 1', soloFeat: 'solo', originalRemix: 'original',
-      instrumental: 'nao', duracaoMin: '3', duracaoSeg: '30', genero: 'pop', idioma: 'pt-BR',
+      id: 'track-1', name: 'Faixa 1', duracaoMin: '3', duracaoSeg: '30', genero: 'pop', idioma: 'pt-BR',
       compositores: ['Fulano'], interpretes: ['Beltrano'], produtores: ['Ciclano'], letra: 'lalala',
     },
   ],
@@ -48,6 +60,10 @@ describe('CreateProjectDto — real canonical contract (audit 2026-07-18)', () =
       const errors = await validatePayload({ ...REAL_FORM_PAYLOAD, [key]: 'x' });
       expect(errors.some((e) => e.property === key)).toBe(true);
     }
+  });
+
+  it('still accepts the pre-CZ-031 payload (deprecated musicas) during the deploy-skew window', async () => {
+    expect(await validatePayload(LEGACY_FORM_PAYLOAD)).toEqual([]);
   });
 
   it('accepts a minimal payload (only title/type required)', async () => {

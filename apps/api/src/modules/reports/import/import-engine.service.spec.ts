@@ -147,8 +147,8 @@ describe('ImportEngineService — projects on a single sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
     identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
-    exportableColumns: ['tipo_lancamento', 'nome_ep_album', 'notes', 'status_projeto', 'nome_musica', 'soloFeat', 'originalRemix', 'instrumental', 'duracaoMinutos', 'duracaoSegundos', 'generoMusical', 'idiomaMusica', 'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'sort_order'],
-    importableColumns: ['tipo_lancamento', 'nome_ep_album', 'notes', 'status_projeto', 'nome_musica', 'soloFeat', 'originalRemix', 'instrumental', 'duracaoMinutos', 'duracaoSegundos', 'generoMusical', 'idiomaMusica', 'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'sort_order'],
+    exportableColumns: ['tipo_lancamento', 'nome_ep_album', 'notes', 'status_projeto', 'trackName', 'soloFeat', 'originalRemix', 'instrumental', 'trackDurationMinutes', 'trackDurationSeconds', 'musicGenre', 'trackLanguage', 'composers', 'performers', 'producers', 'lyrics', 'audioFiles', 'sort_order'],
+    importableColumns: ['tipo_lancamento', 'nome_ep_album', 'notes', 'status_projeto', 'trackName', 'soloFeat', 'originalRemix', 'instrumental', 'trackDurationMinutes', 'trackDurationSeconds', 'musicGenre', 'trackLanguage', 'composers', 'performers', 'producers', 'lyrics', 'audioFiles', 'sort_order'],
     filterableColumns: [], sortableColumns: [], searchableColumns: [], sensitiveColumns: [],
     requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
   };
@@ -179,13 +179,13 @@ describe('ImportEngineService — projects on a single sheet', () => {
     expect(result.rows).toHaveLength(2);
     expect(result.rows[0].data).toMatchObject({
       nome_ep_album: 'Meu EP',
-      nome_musica: 'Faixa 1',
-      compositores: 'Fulano | Ciclano',
+      trackName: 'Faixa 1',
+      composers: 'Fulano | Ciclano',
     });
     expect(result.rows[1].data).toMatchObject({
       nome_ep_album: 'Meu EP',
-      nome_musica: 'Faixa 2',
-      compositores: 'Beltrano',
+      trackName: 'Faixa 2',
+      composers: 'Beltrano',
     });
   });
 

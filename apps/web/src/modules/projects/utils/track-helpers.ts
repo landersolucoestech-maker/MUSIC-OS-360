@@ -4,14 +4,14 @@ export interface TrackData {
   soloFeat?: string;
   originalRemix?: string;
   instrumental?: string;
-  duracaoMin?: string;
-  duracaoSeg?: string;
-  genero?: string;
-  idioma?: string;
-  compositores?: string[];
-  interpretes?: string[];
-  produtores?: string[];
-  letra?: string;
+  durationMinutes?: string;
+  durationSeconds?: string;
+  genre?: string;
+  language?: string;
+  composers?: string[];
+  performers?: string[];
+  producers?: string[];
+  lyrics?: string;
   audioUrl?: string;
   /** Local-only: file metadata derived from a local File pick or a HEAD request on audioUrl.
    *  Never persisted to descricao JSON. */
@@ -20,26 +20,26 @@ export interface TrackData {
 
 export interface TrackInfo {
   name: string;
-  genero: string;
-  idioma: string;
-  compositores: string;
-  interpretes: string;
-  produtores: string;
-  duracao: string;
+  genre: string;
+  language: string;
+  composers: string;
+  performers: string;
+  producers: string;
+  duration: string;
   soloFeat: string;
   originalRemix: string;
   instrumental: string;
-  letra: string;
+  lyrics: string;
   audioUrl: string;
 }
 
 /**
- * musicas[] normalized into project_tracks (migration 20260718000013) — the API
- * already returns the hydrated array in `projeto.musicas`. `descricao` is again
+ * tracks normalized into project_tracks (migration 20260718000013) — the API
+ * already returns the hydrated array in `project.tracks`. `descricao` is again
  * pure free text and is no longer used as the source of the songs.
  */
-export function parseTracksFromProject(project: { musicas?: TrackData[] } | null | undefined): TrackData[] {
-  return Array.isArray(project?.musicas) ? project!.musicas! : [];
+export function parseTracksFromProject(project: { tracks?: TrackData[] } | null | undefined): TrackData[] {
+  return Array.isArray(project?.tracks) ? project!.tracks! : [];
 }
 
 function joinArray(arr: string[] | string | undefined | null): string {
@@ -49,32 +49,32 @@ function joinArray(arr: string[] | string | undefined | null): string {
 }
 
 export function getTrackInfo(m: TrackData): TrackInfo {
-  const min = m.duracaoMin || "";
-  const seg = m.duracaoSeg || "";
+  const min = m.durationMinutes || "";
+  const seg = m.durationSeconds || "";
   const duration = min && seg ? `${min}:${seg.padStart(2, "0")}` : min ? `${min}:00` : "";
   return {
     name: m.name || "",
-    genero: m.genero || "",
-    idioma: m.idioma || "",
-    compositores: joinArray(m.compositores),
-    interpretes: joinArray(m.interpretes),
-    produtores: joinArray(m.produtores),
-    duracao: duration,
+    genre: m.genre || "",
+    language: m.language || "",
+    composers: joinArray(m.composers),
+    performers: joinArray(m.performers),
+    producers: joinArray(m.producers),
+    duration: duration,
     soloFeat: m.soloFeat || "solo",
     originalRemix: m.originalRemix || "original",
     instrumental: m.instrumental || "nao",
-    letra: m.letra || "",
+    lyrics: m.lyrics || "",
     audioUrl: m.audioUrl || "",
   };
 }
 
-export function getFirstTrackInfo(project: { musicas?: TrackData[] } | null | undefined): TrackInfo {
+export function getFirstTrackInfo(project: { tracks?: TrackData[] } | null | undefined): TrackInfo {
   const tracks = parseTracksFromProject(project);
   if (tracks.length === 0) {
     return {
-      name: "", genero: "", idioma: "", compositores: "", interpretes: "",
-      produtores: "", duracao: "", soloFeat: "solo", originalRemix: "original",
-      instrumental: "nao", letra: "", audioUrl: "",
+      name: "", genre: "", language: "", composers: "", performers: "",
+      producers: "", duration: "", soloFeat: "solo", originalRemix: "original",
+      instrumental: "nao", lyrics: "", audioUrl: "",
     };
   }
   return getTrackInfo(tracks[0]);

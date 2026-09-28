@@ -1,5 +1,5 @@
 {
- "total": 219,
+ "total": 212,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -127,10 +127,6 @@
   "schema::column::phonograms.pais_publicacao": 1,
   "schema::column::phonograms.participacao": 1,
   "schema::column::phonograms.pub_simultanea": 1,
-  "schema::column::project_tracks.duracao_min": 1,
-  "schema::column::project_tracks.duracao_seg": 1,
-  "schema::column::project_tracks.idioma": 1,
-  "schema::column::project_tracks.letra": 1,
   "schema::column::releases.capa_url": 1,
   "schema::column::releases.cronograma": 1,
   "schema::column::releases.data_lancamento": 1,
@@ -203,9 +199,6 @@
   "schema::column::works.referencias_conexas": 1,
   "schema::column::works.tipo_ia": 1,
   "schema::column::works.tipo_obra": 1,
-  "schema::constraint-value::project_track_participants.chk_project_track_participants_role::compositor": 1,
-  "schema::constraint-value::project_track_participants.chk_project_track_participants_role::interprete": 1,
-  "schema::constraint-value::project_track_participants.chk_project_track_participants_role::produtor": 1,
   "schema::constraint::artists.chk_artists_status_cadastro": 1,
   "schema::constraint::shares.chk_shares_percentual_range": 1,
   "schema::constraint::work_participants.chk_work_participants_percentual": 1,

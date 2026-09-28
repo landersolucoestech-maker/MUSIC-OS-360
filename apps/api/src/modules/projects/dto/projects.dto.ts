@@ -6,7 +6,19 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
 
 /** Deploy-skew window: field names a pre-canonical web build still sends (see applyDeprecatedFieldAliases). */
-export const PROJECT_DEPRECATED_FIELDS: DeprecatedFieldAliases = { orcamento: 'budget' };
+export const PROJECT_DEPRECATED_FIELDS: DeprecatedFieldAliases = { orcamento: 'budget', musicas: 'tracks' };
+
+/** Same window, for each item of `tracks` (pre-canonical names of the track fields). */
+export const PROJECT_TRACK_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
+  duracaoMin: 'durationMinutes',
+  duracaoSeg: 'durationSeconds',
+  genero: 'genre',
+  idioma: 'language',
+  letra: 'lyrics',
+  compositores: 'composers',
+  interpretes: 'performers',
+  produtores: 'producers',
+};
 
 const TYPES = ['album', 'ep', 'single', 'video', 'tour', 'podcast', 'other'] as const;
 const STATUSES = Object.values(ProjectStatus) as string[];
@@ -32,8 +44,12 @@ export class CreateProjectDto {
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
   // Tracks under development — normalized into project_tracks by the service
-  // (no longer serialized into `description`).
-  @ApiPropertyOptional({ type: [Object] }) @IsOptional() @IsArray() musicas?: Record<string, unknown>[];
+  // (no longer serialized into `description`). Item fields: id, name, soloFeat,
+  // originalRemix, instrumental, durationMinutes, durationSeconds, genre,
+  // language, lyrics, audioUrl, composers, performers, producers.
+  @ApiPropertyOptional({ type: [Object] }) @IsOptional() @IsArray() tracks?: Record<string, unknown>[];
+  @ApiPropertyOptional({ type: [Object], deprecated: true, description: 'Deprecated alias of tracks.' })
+  @IsOptional() @IsArray() musicas?: Record<string, unknown>[];
 }
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {

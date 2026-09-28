@@ -2,19 +2,19 @@
  * Projects.metadata-guard.test.ts
  *
  * Permanent guard (audit 2026-07-18 — projects CRITICAL confirmed):
- * the bulk project import serialized musicas[] with JSON.stringify()
+ * the bulk project import serialized the tracks array with JSON.stringify()
  * inside `descricao` — a real anti-pattern, fixed by the normalization into
  * project_tracks (migration 20260718000013).
  *
  * Part 86: bulk import no longer exists in Projects.tsx — Import
  * and Export now exist exclusively in the Reports Center
  * (modules/reports/), whose dedicated resolver for the computed field
- * `projects.musicas` (apps/api/.../computed-fields/projects-musicas.field.ts)
+ * `projects.tracks` (apps/api/.../computed-fields/project-tracks.field.ts)
  * is today the only bulk-import path and never writes to `descricao`
- * (covered by computed-fields/projects-musicas.field.spec.ts and
+ * (covered by computed-fields/project-tracks.field.spec.ts and
  * import-commit.service.spec.ts). This test therefore guarantees the
  * structural absence of a SECOND client-side writer in Projects.tsx — if
- * it reappears, it must keep sending musicas structured, never serialized.
+ * it reappears, it must keep sending tracks structured, never serialized.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

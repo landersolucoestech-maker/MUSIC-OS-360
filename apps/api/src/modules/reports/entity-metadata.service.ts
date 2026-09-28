@@ -84,7 +84,7 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   // clients, same pattern as work_participants/project_tracks.
   client_attachments: EntityCategory.NOT_REPORTABLE,
   // project_tracks/project_track_participants: normalized relation of
-  // projects' musicas[] (migration 20260718000013) — reportable
+  // projects' tracks (migration 20260718000013) — reportable
   // separately, same pattern as work_participants.
   project_tracks: EntityCategory.NOT_REPORTABLE,
   project_track_participants: EntityCategory.NOT_REPORTABLE,
@@ -193,7 +193,7 @@ const IDENTITY_COLUMN_NAMES = new Set([
   'title', 'title', 'numero', 'codigo', 'code', 'slug', 'email', 'label',
   'assunto', 'descricao', 'description', 'referencia', 'ref',
   // Part 89 — identity columns of the new modules in the closed registry.
-  'detected_title', 'nome_musica', 'music_title',
+  'detected_title', 'music_title',
 ]);
 
 /**

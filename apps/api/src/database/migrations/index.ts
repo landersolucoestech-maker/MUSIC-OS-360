@@ -287,6 +287,7 @@ import { CanonicalizeEcadReportsToEnglish20260928000005 } from './20260928000005
 import { RenamePortugueseColumnsOnEvents20260928000006 } from './20260928000006_RenamePortugueseColumnsOnEvents';
 import { EventsStartsAtBackfillAndSync20260928000007 } from './20260928000007_EventsStartsAtBackfillAndSync';
 import { CanonicalizeHrToEnglish20260928000008 } from './20260928000008_CanonicalizeHrToEnglish';
+import { CanonicalizeProjectTracksToEnglish20260928000009 } from './20260928000009_CanonicalizeProjectTracksToEnglish';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -585,4 +586,5 @@ export const ALL_MIGRATIONS = [
   RenamePortugueseColumnsOnEvents20260928000006,
   EventsStartsAtBackfillAndSync20260928000007,
   CanonicalizeHrToEnglish20260928000008,
+  CanonicalizeProjectTracksToEnglish20260928000009,
 ] as const;

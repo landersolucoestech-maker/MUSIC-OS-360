@@ -14,14 +14,14 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
       const tracks = [
         {
           id: 'track-1', project_id: 'proj-1', name: 'Faixa 1', solo_feat: 'solo',
-          original_remix: 'original', instrumental: 'nao', duracao_min: '3', duracao_seg: '30',
-          music_genre: 'pop', idioma: 'portugues', letra: 'la la', audio_url: 'https://x/a.mp3', sort_order: 0,
+          original_remix: 'original', instrumental: 'nao', duration_minutes: '3', duration_seconds: '30',
+          music_genre: 'pop', language: 'portugues', lyrics: 'la la', audio_url: 'https://x/a.mp3', sort_order: 0,
         },
       ];
       const participants = [
-        { project_track_id: 'track-1', name: 'Fulano', role: 'compositor' },
-        { project_track_id: 'track-1', name: 'Ciclano', role: 'interprete' },
-        { project_track_id: 'track-1', name: 'Beltrano', role: 'produtor' },
+        { project_track_id: 'track-1', name: 'Fulano', role: 'composer' },
+        { project_track_id: 'track-1', name: 'Ciclano', role: 'performer' },
+        { project_track_id: 'track-1', name: 'Beltrano', role: 'producer' },
       ];
       const query = jest.fn()
         .mockResolvedValueOnce(tracks)
@@ -36,19 +36,19 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
       expect(query.mock.calls[1][1]).toEqual(['tenant-1', ['track-1']]);
 
       expect(result.get('proj-1')).toEqual([{
-        nome_musica: 'Faixa 1',
+        trackName: 'Faixa 1',
         soloFeat: 'solo',
         originalRemix: 'original',
         instrumental: 'nao',
-        duracaoMinutos: '3',
-        duracaoSegundos: '30',
-        generoMusical: 'pop',
-        idiomaMusica: 'portugues',
-        compositores: ['Fulano'],
-        interpretes: ['Ciclano'],
-        produtores: ['Beltrano'],
-        letra: 'la la',
-        arquivosAudio: 'https://x/a.mp3',
+        trackDurationMinutes: '3',
+        trackDurationSeconds: '30',
+        musicGenre: 'pop',
+        trackLanguage: 'portugues',
+        composers: ['Fulano'],
+        performers: ['Ciclano'],
+        producers: ['Beltrano'],
+        lyrics: 'la la',
+        audioFiles: 'https://x/a.mp3',
         sort_order: 0,
       }]);
     });
@@ -78,19 +78,19 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
     it('inserts one project_track per track + participants per role, tenant forced', async () => {
       const { qr, calls } = makeQR();
       const trackRows = [{
-        nome_musica: 'Faixa importada',
+        trackName: 'Faixa importada',
         soloFeat: 'feat',
         originalRemix: 'remix',
         instrumental: 'sim',
-        duracaoMinutos: '4',
-        duracaoSegundos: '12',
-        generoMusical: 'rock',
-        idiomaMusica: 'ingles',
-        letra: '',
-        arquivosAudio: '',
-        compositores: ['A', ''],
-        interpretes: ['B'],
-        produtores: [],
+        trackDurationMinutes: '4',
+        trackDurationSeconds: '12',
+        musicGenre: 'rock',
+        trackLanguage: 'ingles',
+        lyrics: '',
+        audioFiles: '',
+        composers: ['A', ''],
+        performers: ['B'],
+        producers: [],
       }];
       await insertProjectTracksForImport(qr, 'tenant-1', 'proj-novo', trackRows);
 
@@ -103,7 +103,7 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
       const participantInserts = calls.filter(([sql]) => sql.includes('"project_track_participants"'));
       expect(participantInserts).toHaveLength(2);
       expect(participantInserts.map(([, params]) => params[3])).toEqual(['A', 'B']);
-      expect(participantInserts.map(([, params]) => params[4])).toEqual(['compositor', 'interprete']);
+      expect(participantInserts.map(([, params]) => params[4])).toEqual(['composer', 'performer']);
       for (const [, params] of participantInserts) expect(params[1]).toBe('tenant-1');
     });
 
@@ -113,7 +113,7 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
         null,
         'string',
         42,
-        { nome_musica: 'Válida' },
+        { trackName: 'Válida' },
       ]);
       const trackInserts = calls.filter(([sql]) => sql.includes('"project_tracks"'));
       expect(trackInserts).toHaveLength(1);

@@ -89,68 +89,105 @@ describe('ProjectsService', () => {
     );
   });
 
-  it('create() does not send musicas to the ProjectEntity repo (no longer a column)', async () => {
+  it('create() does not send tracks (or the deprecated musicas) to the ProjectEntity repo (no longer a column)', async () => {
     await service.create(TENANT, 'u1', {
-      title: 'X', type: 'single', musicas: [{ name: 'Faixa 1' }],
+      title: 'X', type: 'single', tracks: [{ name: 'Faixa 1' }],
     } as any);
-    expect(mockDs._repo.create).toHaveBeenCalledWith(
-      expect.not.objectContaining({ musicas: expect.anything() }),
-    );
+    await service.create(TENANT, 'u1', {
+      title: 'Y', type: 'single', musicas: [{ name: 'Faixa 2' }],
+    } as any);
+    for (const [row] of mockDs._repo.create.mock.calls) {
+      expect(row).not.toHaveProperty('tracks');
+      expect(row).not.toHaveProperty('musicas');
+    }
   });
 
   it('create() persists each track as its own row in project_tracks, with participants per role', async () => {
     await service.create(TENANT, 'u1', {
       title: 'X', type: 'album',
+      tracks: [
+        {
+          id: 't1', name: 'Faixa 1', durationMinutes: '3', durationSeconds: '30', language: 'pt-BR', lyrics: 'lalala',
+          composers: ['Fulano'], performers: ['Beltrano'], producers: ['Ciclano'],
+        },
+      ],
+    } as any);
+    expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 't1', tenant_id: TENANT, name: 'Faixa 1', duration_minutes: '3', duration_seconds: '30',
+        language: 'pt-BR', lyrics: 'lalala', sort_order: 0,
+      }),
+    );
+    expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
+      expect.objectContaining({ name: 'Fulano', role: 'composer' }),
+    ]);
+    expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
+      expect.objectContaining({ name: 'Beltrano', role: 'performer' }),
+    ]);
+    expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
+      expect.objectContaining({ name: 'Ciclano', role: 'producer' }),
+    ]);
+  });
+
+  it('create() still persists the pre-CZ-031 web payload (musicas + Portuguese track fields) canonically', async () => {
+    await service.create(TENANT, 'u1', {
+      title: 'X', type: 'album',
       musicas: [
         {
-          id: 't1', name: 'Faixa 1', duracaoMin: '3', duracaoSeg: '30',
+          id: 't1', name: 'Faixa 1', duracaoMin: '3', duracaoSeg: '30', genero: 'pop', idioma: 'pt-BR', letra: 'lalala',
           compositores: ['Fulano'], interpretes: ['Beltrano'], produtores: ['Ciclano'],
         },
       ],
     } as any);
     expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 't1', tenant_id: TENANT, name: 'Faixa 1', duracao_min: '3', duracao_seg: '30', sort_order: 0 }),
+      expect.objectContaining({
+        id: 't1', duration_minutes: '3', duration_seconds: '30', music_genre: 'pop', language: 'pt-BR', lyrics: 'lalala',
+      }),
     );
-    expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-      expect.objectContaining({ name: 'Fulano', role: 'compositor' }),
-    ]);
-    expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-      expect.objectContaining({ name: 'Beltrano', role: 'interprete' }),
-    ]);
-    expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-      expect.objectContaining({ name: 'Ciclano', role: 'produtor' }),
+    const roles = mockDs._participantsRepo.save.mock.calls.map(([rows]: [Array<{ name: string; role: string }>]) => rows[0]);
+    expect(roles).toEqual([
+      expect.objectContaining({ name: 'Fulano', role: 'composer' }),
+      expect.objectContaining({ name: 'Beltrano', role: 'performer' }),
+      expect.objectContaining({ name: 'Ciclano', role: 'producer' }),
     ]);
   });
 
-  it('findById() rehydrates musicas in the shape the frontend expects', async () => {
+  it('findById() rehydrates tracks with the canonical English fields', async () => {
     const trackRows = [{
       id: 't1', project_id: PROJECT_ID, name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original',
-      instrumental: 'nao', duracao_min: '3', duracao_seg: '30', music_genre: 'pop', idioma: 'pt-BR',
-      letra: 'lalala', audio_url: null,
+      instrumental: 'nao', duration_minutes: '3', duration_seconds: '30', music_genre: 'pop', language: 'pt-BR',
+      lyrics: 'lalala', audio_url: null,
     }];
     const participantRows = [
-      { project_track_id: 't1', name: 'Fulano', role: 'compositor' },
-      { project_track_id: 't1', name: 'Beltrano', role: 'interprete' },
+      { project_track_id: 't1', name: 'Fulano', role: 'composer' },
+      { project_track_id: 't1', name: 'Beltrano', role: 'performer' },
     ];
     await buildModule(buildMockDs(mockProject, trackRows, participantRows));
 
     const found = await service.findById(TENANT, PROJECT_ID);
-    expect(found.musicas).toEqual([
+    expect(found).not.toHaveProperty('musicas');
+    expect(found.tracks).toEqual([
       {
         id: 't1', name: 'Faixa 1', soloFeat: 'solo', originalRemix: 'original', instrumental: 'nao',
-        duracaoMin: '3', duracaoSeg: '30', genero: 'pop', idioma: 'pt-BR', letra: 'lalala', audioUrl: null,
-        compositores: ['Fulano'], interpretes: ['Beltrano'], produtores: [],
+        durationMinutes: '3', durationSeconds: '30', genre: 'pop', language: 'pt-BR', lyrics: 'lalala', audioUrl: null,
+        composers: ['Fulano'], performers: ['Beltrano'], producers: [],
       },
     ]);
   });
 
-  it('update() replaces the musicas (delete + insert) when the DTO sends the array', async () => {
-    await service.update(TENANT, 'u1', PROJECT_ID, { musicas: [{ name: 'Nova Faixa' }] } as any);
+  it('update() replaces the tracks (delete + insert) when the DTO sends the array', async () => {
+    await service.update(TENANT, 'u1', PROJECT_ID, { tracks: [{ name: 'Nova Faixa' }] } as any);
     expect(mockDs._tracksRepo.delete).toHaveBeenCalledWith({ project_id: PROJECT_ID, tenant_id: TENANT });
     expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Nova Faixa' }));
   });
 
-  it('update() leaves musicas untouched when the DTO does not send the field', async () => {
+  it('update() accepts the deprecated musicas array during the deploy-skew window', async () => {
+    await service.update(TENANT, 'u1', PROJECT_ID, { musicas: [{ name: 'Faixa Legada' }] } as any);
+    expect(mockDs._tracksRepo.delete).toHaveBeenCalledWith({ project_id: PROJECT_ID, tenant_id: TENANT });
+    expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Faixa Legada' }));
+  });
+
+  it('update() leaves the tracks untouched when the DTO does not send the field', async () => {
     await service.update(TENANT, 'u1', PROJECT_ID, { notes: 'x' } as any);
     expect(mockDs._tracksRepo.delete).not.toHaveBeenCalled();
     expect(mockDs._tracksRepo.save).not.toHaveBeenCalled();

@@ -139,8 +139,8 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
     identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
-    exportableColumns: ['tipo_lancamento', 'nome_ep_album', 'nome_musica'],
-    importableColumns: ['tipo_lancamento', 'nome_ep_album', 'nome_musica'],
+    exportableColumns: ['tipo_lancamento', 'nome_ep_album', 'trackName'],
+    importableColumns: ['tipo_lancamento', 'nome_ep_album', 'trackName'],
     filterableColumns: [], sortableColumns: [], searchableColumns: [], sensitiveColumns: [],
     requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
   };
@@ -153,7 +153,7 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
         index: 0,
         data: { tipo_lancamento: 'ep', nome_ep_album: 'Meu EP' },
         valid: true, errors: [], warnings: [],
-        repeatingGroups: trackRows ? { musicas: trackRows } : undefined,
+        repeatingGroups: trackRows ? { tracks: trackRows } : undefined,
       }],
       errors: [], warnings: [],
     };
@@ -163,7 +163,7 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
     const queryImpl = (sql: string) => sql.startsWith('INSERT INTO "projects"') ? [{ id: 'proj-gerado' }] : [];
     const { svc, qr } = makeSvc({
       def: PROJECTS_DEF,
-      validation: projectsValidation([{ nome_musica: 'Faixa 1', compositores: ['Fulano'] }]),
+      validation: projectsValidation([{ trackName: 'Faixa 1', composers: ['Fulano'] }]),
       queryImpl,
     });
     const result = await svc.commit('projects', { filename: 'projects.xlsx', content: Buffer.from('xlsx') }, 'tenant-1', 'user-1');
@@ -182,7 +182,7 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
   });
 
   it('fails explicitly if the parent insert does not return an id', async () => {
-    const { svc } = makeSvc({ def: PROJECTS_DEF, validation: projectsValidation([{ nome_musica: 'Faixa' }]), queryImpl: () => [] });
+    const { svc } = makeSvc({ def: PROJECTS_DEF, validation: projectsValidation([{ trackName: 'Faixa' }]), queryImpl: () => [] });
     await expect(svc.commit('projects', { filename: 'projects.xlsx', content: Buffer.from('xlsx') }, 'tenant-1', 'user-1')).rejects.toThrow(/returned no id/);
   });
 });

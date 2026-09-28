@@ -1365,7 +1365,7 @@ export class ProjectEntity {
   @Column({ type: 'varchar', length: 50, default: ProjectStatus.PLANNING }) status: ProjectStatus;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) budget: string | null;
-  // `description` is pure free text again — musicas[] normalized into project_tracks.
+  // `description` is pure free text again — the tracks are normalized into project_tracks.
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
@@ -1377,7 +1377,7 @@ export class ProjectEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
 
   @OneToMany(() => ProjectTrackEntity, (t) => t.project)
-  musicas_rel: Relation<ProjectTrackEntity[]>;
+  project_tracks: Relation<ProjectTrackEntity[]>;
 }
 
 // ─── Project Tracks (migration 20260718000013) ────────────────────────────────
@@ -1394,25 +1394,28 @@ export class ProjectTrackEntity {
   @Column({ type: 'varchar', length: 20, nullable: true }) solo_feat: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) original_remix: string | null;
   @Column({ type: 'varchar', length: 10, nullable: true }) instrumental: string | null;
-  @Column({ type: 'varchar', length: 10, nullable: true }) duracao_min: string | null;
-  @Column({ type: 'varchar', length: 10, nullable: true }) duracao_seg: string | null;
+  @Column({ type: 'varchar', length: 10, nullable: true }) duration_minutes: string | null;
+  @Column({ type: 'varchar', length: 10, nullable: true }) duration_seconds: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) idioma: string | null;
-  @Column({ type: 'text', nullable: true }) letra: string | null;
+  @Column({ type: 'varchar', length: 50, nullable: true }) language: string | null;
+  @Column({ type: 'text', nullable: true }) lyrics: string | null;
   @Column({ type: 'text', nullable: true }) audio_url: string | null;
   @Column({ type: 'integer', default: 0 }) sort_order: number;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
 
-  @ManyToOne(() => ProjectEntity, (p) => p.musicas_rel, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ProjectEntity, (p) => p.project_tracks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_id' })
   project: Relation<ProjectEntity>;
 
   @OneToMany(() => ProjectTrackParticipantEntity, (pp) => pp.track)
-  participantes: Relation<ProjectTrackParticipantEntity[]>;
+  participants: Relation<ProjectTrackParticipantEntity[]>;
 }
 
 // ─── Project Track Participants (migration 20260718000013) ────────────────────
+export const PROJECT_TRACK_ROLES = ['composer', 'performer', 'producer'] as const;
+export type ProjectTrackRole = typeof PROJECT_TRACK_ROLES[number];
+
 // composers/performers/producers of a track — same structure (free-text
 // name, no link to a registered artist), differing only by role.
 @Entity('project_track_participants')
@@ -1422,11 +1425,11 @@ export class ProjectTrackParticipantEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid' }) project_track_id: string;
   @Column({ type: 'varchar', length: 255 }) name: string;
-  @Column({ type: 'varchar', length: 20 }) role: 'compositor' | 'interprete' | 'produtor';
+  @Column({ type: 'varchar', length: 20 }) role: ProjectTrackRole;
   @Column({ type: 'integer', default: 0 }) sort_order: number;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
 
-  @ManyToOne(() => ProjectTrackEntity, (t) => t.participantes, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ProjectTrackEntity, (t) => t.participants, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_track_id' })
   track: Relation<ProjectTrackEntity>;
 }

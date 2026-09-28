@@ -3,10 +3,10 @@ import { randomUUID } from 'crypto';
 import { DataSource, Repository, FindOptionsWhere } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DATA_SOURCE } from '../../database/database.module';
-import { ProjectEntity, ProjectTrackEntity, ProjectTrackParticipantEntity } from '../../database/entities';
+import { ProjectEntity, ProjectTrackEntity, ProjectTrackParticipantEntity, type ProjectTrackRole } from '../../database/entities';
 import { groupCount, type GroupStatsResult } from '../../common/stats/group-count.util';
 import type { CreateProjectDto, UpdateProjectDto, QueryProjectDto } from './dto/projects.dto';
-import { PROJECT_DEPRECATED_FIELDS } from './dto/projects.dto';
+import { PROJECT_DEPRECATED_FIELDS, PROJECT_TRACK_DEPRECATED_FIELDS } from './dto/projects.dto';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import { ProjectStatus } from '@music-os-360/types';
 import { WorkflowService } from '../../core/workflow/workflow.service';
@@ -14,7 +14,7 @@ import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 
-type TrackRole = 'compositor' | 'interprete' | 'produtor';
+type TrackRole = ProjectTrackRole;
 
 export interface ProjectTrackResponse {
   id: string;
@@ -22,18 +22,18 @@ export interface ProjectTrackResponse {
   soloFeat: string | null;
   originalRemix: string | null;
   instrumental: string | null;
-  duracaoMin: string | null;
-  duracaoSeg: string | null;
-  genero: string | null;
-  idioma: string | null;
-  letra: string | null;
+  durationMinutes: string | null;
+  durationSeconds: string | null;
+  genre: string | null;
+  language: string | null;
+  lyrics: string | null;
   audioUrl: string | null;
-  compositores: string[];
-  interpretes: string[];
-  produtores: string[];
+  composers: string[];
+  performers: string[];
+  producers: string[];
 }
 
-type ProjectWithTracks = ProjectEntity & { musicas: ProjectTrackResponse[] };
+type ProjectWithTracks = ProjectEntity & { tracks: ProjectTrackResponse[] };
 
 @Injectable()
 export class ProjectsService {
@@ -56,11 +56,11 @@ export class ProjectsService {
   }
 
   /**
-   * `projects.description` (formerly `descricao`, JSON of musicas[]) was
+   * `projects.description` (formerly `descricao`, JSON of the tracks array) was
    * normalized into `project_tracks` + `project_track_participants`
-   * (migration ProjectsFormFieldAlignment20260718000013). Rehydrates into the SAME
-   * format the frontend always consumed, so the API contract does not
-   * change.
+   * (migration ProjectsFormFieldAlignment20260718000013). Rehydrates them into
+   * the project's `tracks` array (canonical English fields since CZ-031; the
+   * pre-CZ-031 request names are accepted as deprecated aliases).
    */
   private async hydrateTracks(projects: ProjectEntity[]): Promise<ProjectWithTracks[]> {
     if (projects.length === 0) return [];
@@ -98,20 +98,20 @@ export class ProjectsService {
         soloFeat: t.solo_feat,
         originalRemix: t.original_remix,
         instrumental: t.instrumental,
-        duracaoMin: t.duracao_min,
-        duracaoSeg: t.duracao_seg,
-        genero: t.music_genre,
-        idioma: t.idioma,
-        letra: t.letra,
+        durationMinutes: t.duration_minutes,
+        durationSeconds: t.duration_seconds,
+        genre: t.music_genre,
+        language: t.language,
+        lyrics: t.lyrics,
         audioUrl: t.audio_url,
-        compositores: namesByRole(t.id, 'compositor'),
-        interpretes: namesByRole(t.id, 'interprete'),
-        produtores: namesByRole(t.id, 'produtor'),
+        composers: namesByRole(t.id, 'composer'),
+        performers: namesByRole(t.id, 'performer'),
+        producers: namesByRole(t.id, 'producer'),
       });
       tracksByProject.set(t.project_id, list);
     }
 
-    return projects.map((p) => Object.assign(p, { musicas: tracksByProject.get(p.id) ?? [] }));
+    return projects.map((p) => Object.assign(p, { tracks: tracksByProject.get(p.id) ?? [] }));
   }
 
   private async replaceTracks(
@@ -123,7 +123,8 @@ export class ProjectsService {
     await this.tracksRepo!.delete({ project_id: projectId, tenant_id: tenantId });
 
     let sortOrder = 0;
-    for (const m of trackRows) {
+    for (const raw of trackRows) {
+      const m = applyDeprecatedFieldAliases(raw, PROJECT_TRACK_DEPRECATED_FIELDS);
       const trackId = (typeof m.id === 'string' && m.id) || randomUUID();
       await this.tracksRepo!.save(
         this.tracksRepo!.create({
@@ -134,18 +135,18 @@ export class ProjectsService {
           solo_feat: (m.soloFeat as string) || null,
           original_remix: (m.originalRemix as string) || null,
           instrumental: (m.instrumental as string) || null,
-          duracao_min: (m.duracaoMin as string) || null,
-          duracao_seg: (m.duracaoSeg as string) || null,
-          music_genre: (m.genero as string) || null,
-          idioma: (m.idioma as string) || null,
-          letra: (m.letra as string) || null,
+          duration_minutes: (m.durationMinutes as string) || null,
+          duration_seconds: (m.durationSeconds as string) || null,
+          music_genre: (m.genre as string) || null,
+          language: (m.language as string) || null,
+          lyrics: (m.lyrics as string) || null,
           audio_url: (m.audioUrl as string) || null,
           sort_order: sortOrder++,
         }),
       );
 
       const roleFields: Array<[TrackRole, unknown]> = [
-        ['compositor', m.compositores], ['interprete', m.interpretes], ['produtor', m.produtores],
+        ['composer', m.composers], ['performer', m.performers], ['producer', m.producers],
       ];
       for (const [role, list] of roleFields) {
         if (!Array.isArray(list)) continue;
@@ -223,7 +224,7 @@ export class ProjectsService {
 
   async create(tenantId: string, userId: string, input: CreateProjectDto): Promise<ProjectWithTracks> {
     const dto = applyDeprecatedFieldAliases(input, PROJECT_DEPRECATED_FIELDS);
-    const { musicas: trackRows, ...rest } = dto as CreateProjectDto & { musicas?: Record<string, unknown>[] };
+    const { tracks: trackRows, ...rest } = dto;
     // find-50dd3726: artist_id had no cross-tenant ownership check — a
     // project could silently reference another tenant's artist.
     await assertSameTenantFk(this.ds!, 'artists', (rest as { artist_id?: string }).artist_id, tenantId, 'Artista');
@@ -251,7 +252,7 @@ export class ProjectsService {
     const dtoMap  = applyDeprecatedFieldAliases(dto as Record<string, unknown>, PROJECT_DEPRECATED_FIELDS);
     const statusChanging = dtoMap['status'] != null && dtoMap['status'] !== current.status;
 
-    const { status: _s, musicas: trackRows, expectedUpdatedAt, ...restFields } = dtoMap as Record<string, unknown> & { musicas?: Record<string, unknown>[]; expectedUpdatedAt?: string };
+    const { status: _s, tracks: trackRows, expectedUpdatedAt, ...restFields } = dtoMap as Record<string, unknown> & { tracks?: Record<string, unknown>[]; expectedUpdatedAt?: string };
     void _s;
     // find-50dd3726: only validate when the patch actually sets artist_id —
     // omitted means "unchanged", already validated at its own create time.

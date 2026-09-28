@@ -93,7 +93,7 @@ export default function Projects() {
   const getProjectGenre = (p: ProjectWithRelationsExtended): string => {
     if (p.music_genre) return (p.music_genre as string).trim().toLowerCase();
     const tracks = parseTracksFromProject(p);
-    return (tracks[0]?.genero || "").trim().toLowerCase();
+    return (tracks[0]?.genre || "").trim().toLowerCase();
   };
 
   const genres = useMemo(() => {
@@ -393,10 +393,10 @@ export default function Projects() {
                           </div>
                         </TableCell>
                         <TableCell className="capitalize text-sm">{project.type || "—"}</TableCell>
-                        <TableCell className="text-sm max-w-[140px] truncate" data-testid={`text-compositores-${project.id}`}>{info.compositores || "—"}</TableCell>
-                        <TableCell className="text-sm max-w-[140px] truncate" data-testid={`text-interpretes-${project.id}`}>{info.interpretes || "—"}</TableCell>
-                        <TableCell className="text-sm max-w-[140px] truncate" data-testid={`text-produtores-${project.id}`}>{info.produtores || "—"}</TableCell>
-                        <TableCell className="capitalize text-sm" data-testid={`text-genero-${project.id}`}>{info.genero || "—"}</TableCell>
+                        <TableCell className="text-sm max-w-[140px] truncate" data-testid={`text-composers-${project.id}`}>{info.composers || "—"}</TableCell>
+                        <TableCell className="text-sm max-w-[140px] truncate" data-testid={`text-performers-${project.id}`}>{info.performers || "—"}</TableCell>
+                        <TableCell className="text-sm max-w-[140px] truncate" data-testid={`text-producers-${project.id}`}>{info.producers || "—"}</TableCell>
+                        <TableCell className="capitalize text-sm" data-testid={`text-genre-${project.id}`}>{info.genre || "—"}</TableCell>
                         <TableCell>{getStatusBadge(project.status ?? "")}</TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>

@@ -34,14 +34,14 @@ interface TrackData {
   soloFeat: string;
   originalRemix: string;
   instrumental: string;
-  duracaoMin: string;
-  duracaoSeg: string;
-  genero: string;
-  idioma: string;
-  compositores: string[];
-  interpretes: string[];
-  produtores: string[];
-  letra: string;
+  durationMinutes: string;
+  durationSeconds: string;
+  genre: string;
+  language: string;
+  composers: string[];
+  performers: string[];
+  producers: string[];
+  lyrics: string;
   arquivoAudio: { name: string; size: number } | null;
   audioUrl?: string;
   _uploading?: boolean;
@@ -70,14 +70,14 @@ const createEmptyTrack = (): TrackData => ({
   soloFeat: "solo",
   originalRemix: "original",
   instrumental: "nao",
-  duracaoMin: "",
-  duracaoSeg: "",
-  genero: "",
-  idioma: "",
-  compositores: [""],
-  interpretes: [""],
-  produtores: [""],
-  letra: "",
+  durationMinutes: "",
+  durationSeconds: "",
+  genre: "",
+  language: "",
+  composers: [""],
+  performers: [""],
+  producers: [""],
+  lyrics: "",
   arquivoAudio: null,
 });
 
@@ -190,23 +190,23 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
   const [epName, setEpName] = useState(() => (mode !== "create" && project?.type !== "single") ? (project?.title || "") : "");
   const [tracks, setTracks] = useState<TrackData[]>(() => {
     if (mode === "create" || !project) return [createEmptyTrack()];
-    // musicas[] is normalized into project_tracks (migration 20260718000013) —
-    // the API already returns the hydrated array in projeto.musicas.
-    const saved = (project as { musicas?: TrackData[] }).musicas;
+    // tracks are normalized into project_tracks (migration 20260718000013) —
+    // the API already returns the hydrated array in project.tracks.
+    const saved = (project as { tracks?: TrackData[] }).tracks;
     if (Array.isArray(saved) && saved.length > 0) {
       return saved.map((m) => ({
         ...createEmptyTrack(), ...m,
         soloFeat: normEnum(m.soloFeat, "solo"),
         originalRemix: normEnum(m.originalRemix, "original"),
         instrumental: normEnum(m.instrumental, "nao"),
-        genero: normEnum(m.genero, ""),
-        idioma: normEnum(m.idioma, ""),
+        genre: normEnum(m.genre, ""),
+        language: normEnum(m.language, ""),
         id: m.id || crypto.randomUUID(),
       }));
     }
     const type = normType(project?.type);
     const inheritedGenre = normEnum(project?.music_genre as string | undefined, "");
-    return [{ ...createEmptyTrack(), name: type === "single" ? (project?.title || "") : "", genero: inheritedGenre }];
+    return [{ ...createEmptyTrack(), name: type === "single" ? (project?.title || "") : "", genre: inheritedGenre }];
   });
   const [notes, setNotes] = useState(() => project?.notes || "");
   // GAP-0001 / DEC-001 (MUSICAL_PROJECT_CANONICAL_HUB): the main artist and the
@@ -264,11 +264,11 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
     }
 
     // Removes local-only fields (File metadata, upload flag) before sending —
-    // musicas[] goes to its own storage (project_tracks), never again serialized into descricao.
+    // tracks go to their own storage (project_tracks), never again serialized into descricao.
     const tracksToSave = tracks.map(({ arquivoAudio: _a, _uploading: _u, ...m }) => m);
 
     // Persists the first track's genre as a direct field for efficient filtering
-    const genre = tracks[0]?.genero || null;
+    const genre = tracks[0]?.genre || null;
 
     const basePayload: ProjectUpdate = {
       title,
@@ -276,7 +276,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
       status,
       notes: notes || null,
       music_genre: genre,
-      musicas: tracksToSave,
+      tracks: tracksToSave,
       artist_id: artistId,
       budget: budgetNum,
     };
@@ -291,7 +291,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
           status,
           notes: notes || null,
           music_genre: genre,
-          musicas: tracksToSave,
+          tracks: tracksToSave,
           artist_id: artistId,
           budget: budgetNum,
         };
@@ -331,7 +331,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
     setTracks(tracks.map(m => m.id === id ? { ...m, [field]: value } : m));
   };
 
-  const addItemToTrack = (trackId: string, field: 'compositores' | 'interpretes' | 'produtores') => {
+  const addItemToTrack = (trackId: string, field: 'composers' | 'performers' | 'producers') => {
     setTracks(tracks.map(m => {
       if (m.id === trackId) {
         return { ...m, [field]: [...m[field], ""] };
@@ -340,7 +340,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
     }));
   };
 
-  const updateItemInTrack = (trackId: string, field: 'compositores' | 'interpretes' | 'produtores', index: number, value: string) => {
+  const updateItemInTrack = (trackId: string, field: 'composers' | 'performers' | 'producers', index: number, value: string) => {
     setTracks(tracks.map(m => {
       if (m.id === trackId) {
         const newArray = [...m[field]];
@@ -351,7 +351,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
     }));
   };
 
-  const removeItemFromTrack = (trackId: string, field: 'compositores' | 'interpretes' | 'produtores', index: number) => {
+  const removeItemFromTrack = (trackId: string, field: 'composers' | 'performers' | 'producers', index: number) => {
     setTracks(tracks.map(m => {
       if (m.id === trackId && m[field].length > 1) {
         const newArray = m[field].filter((_, i) => i !== index);
@@ -461,16 +461,16 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
           <Label>Duração</Label>
           <div className="flex items-center gap-1 min-w-0">
             <Input 
-              value={track.duracaoMin}
-              onChange={(e) => updateTrack(track.id, 'duracaoMin', e.target.value)}
+              value={track.durationMinutes}
+              onChange={(e) => updateTrack(track.id, 'durationMinutes', e.target.value)}
               disabled={isViewMode} 
               placeholder="Min" 
               className="min-w-0 flex-1 px-2"
             />
             <span className="text-muted-foreground shrink-0">:</span>
             <Input 
-              value={track.duracaoSeg}
-              onChange={(e) => updateTrack(track.id, 'duracaoSeg', e.target.value)}
+              value={track.durationSeconds}
+              onChange={(e) => updateTrack(track.id, 'durationSeconds', e.target.value)}
               disabled={isViewMode} 
               placeholder="Seg" 
               className="min-w-0 flex-1 px-2"
@@ -479,7 +479,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
         </div>
         <div className="space-y-2">
           <Label>Gênero Musical *</Label>
-          <Select value={track.genero} onValueChange={(v) => updateTrack(track.id, 'genero', v)} disabled={isViewMode}>
+          <Select value={track.genre} onValueChange={(v) => updateTrack(track.id, 'genre', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue placeholder="Selecione o gênero" /></SelectTrigger>
             <SelectContent>
               {musicGenres.map(g => <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>)}
@@ -488,7 +488,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
         </div>
         <div className="space-y-2">
           <Label>Idioma da Música *</Label>
-          <Select value={track.idioma} onValueChange={(v) => updateTrack(track.id, 'idioma', v)} disabled={isViewMode}>
+          <Select value={track.language} onValueChange={(v) => updateTrack(track.id, 'language', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue placeholder="Selecione o idioma" /></SelectTrigger>
             <SelectContent>
               {idiomas.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}
@@ -502,22 +502,22 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
         <div className="flex items-center justify-between">
           <Label>Compositores *</Label>
           {!isViewMode && (
-            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'compositores')}>
+            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'composers')}>
               <Plus className="w-4 h-4 mr-1" /> Adicionar Compositor
             </Button>
           )}
         </div>
         <div className="space-y-2">
-          {track.compositores.map((comp, idx) => (
+          {track.composers.map((comp, idx) => (
             <div key={idx} className="flex gap-2">
               <ArtistNameInput
                 value={comp}
-                onChange={(v) => updateItemInTrack(track.id, 'compositores', idx, v)}
+                onChange={(v) => updateItemInTrack(track.id, 'composers', idx, v)}
                 placeholder="Nome do compositor"
                 disabled={isViewMode}
               />
-              {!isViewMode && track.compositores.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'compositores', idx)}>
+              {!isViewMode && track.composers.length > 1 && (
+                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'composers', idx)}>
                   <X className="w-4 h-4" />
                 </Button>
               )}
@@ -531,22 +531,22 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
         <div className="flex items-center justify-between">
           <Label>Intérpretes *</Label>
           {!isViewMode && (
-            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'interpretes')}>
+            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'performers')}>
               <Plus className="w-4 h-4 mr-1" /> Adicionar Intérprete
             </Button>
           )}
         </div>
         <div className="space-y-2">
-          {track.interpretes.map((int, idx) => (
+          {track.performers.map((int, idx) => (
             <div key={idx} className="flex gap-2">
               <ArtistNameInput
                 value={int}
-                onChange={(v) => updateItemInTrack(track.id, 'interpretes', idx, v)}
+                onChange={(v) => updateItemInTrack(track.id, 'performers', idx, v)}
                 placeholder="Nome do intérprete"
                 disabled={isViewMode}
               />
-              {!isViewMode && track.interpretes.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'interpretes', idx)}>
+              {!isViewMode && track.performers.length > 1 && (
+                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'performers', idx)}>
                   <X className="w-4 h-4" />
                 </Button>
               )}
@@ -560,22 +560,22 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
         <div className="flex items-center justify-between">
           <Label>Produtores *</Label>
           {!isViewMode && (
-            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'produtores')}>
+            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'producers')}>
               <Plus className="w-4 h-4 mr-1" /> Adicionar Produtor
             </Button>
           )}
         </div>
         <div className="space-y-2">
-          {track.produtores.map((prod, idx) => (
+          {track.producers.map((prod, idx) => (
             <div key={idx} className="flex gap-2">
               <ArtistNameInput
                 value={prod}
-                onChange={(v) => updateItemInTrack(track.id, 'produtores', idx, v)}
+                onChange={(v) => updateItemInTrack(track.id, 'producers', idx, v)}
                 placeholder="Nome do produtor"
                 disabled={isViewMode}
               />
-              {!isViewMode && track.produtores.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'produtores', idx)}>
+              {!isViewMode && track.producers.length > 1 && (
+                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'producers', idx)}>
                   <X className="w-4 h-4" />
                 </Button>
               )}
@@ -588,8 +588,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
       <div className="space-y-2">
         <Label>Letra</Label>
         <Textarea 
-          value={track.letra}
-          onChange={(e) => updateTrack(track.id, 'letra', e.target.value)}
+          value={track.lyrics}
+          onChange={(e) => updateTrack(track.id, 'lyrics', e.target.value)}
           disabled={isViewMode} 
           rows={4} 
           placeholder="Digite a letra da música..." 

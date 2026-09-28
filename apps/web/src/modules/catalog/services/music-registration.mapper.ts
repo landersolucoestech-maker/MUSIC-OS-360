@@ -492,16 +492,16 @@ export function projectToWorkSeed(
   },
   track?: {
     name?: string;
-    genero?: string;
-    idioma?: string;
-    duracaoMin?: string;
-    duracaoSeg?: string;
+    genre?: string;
+    language?: string;
+    durationMinutes?: string;
+    durationSeconds?: string;
     instrumental?: string;
-    compositores?: string[];
-    letra?: string;
+    composers?: string[];
+    lyrics?: string;
   } | null,
 ): Record<string, unknown> {
-  const participants: ParticipantForm[] = (track?.compositores ?? [])
+  const participants: ParticipantForm[] = (track?.composers ?? [])
     .filter((composerName): composerName is string => Boolean(composerName?.trim()))
     .map((composerName) => ({
       id: crypto.randomUUID(),
@@ -511,17 +511,17 @@ export function projectToWorkSeed(
       percentual: "",
     }));
 
-  const fullLyrics = track?.letra || "";
-  const genre = ((track?.genero || project.music_genre || "").toLowerCase()) || null;
+  const fullLyrics = track?.lyrics || "";
+  const genre = ((track?.genre || project.music_genre || "").toLowerCase()) || null;
 
   return {
     project_id: project.id,
     artist_id: project.artist_id ?? null,
     title: track?.name?.trim() || project.title?.trim() || "",
     music_genre: genre,
-    idioma: track?.idioma || null,
-    duracaoMin: track?.duracaoMin || "",
-    duracaoSeg: track?.duracaoSeg || "",
+    idioma: track?.language || null,
+    duracaoMin: track?.durationMinutes || "",
+    duracaoSeg: track?.durationSeconds || "",
     instrumental: track?.instrumental || "nao",
     participantes: participants.length > 0 ? participants : null,
     letra_completa: fullLyrics || null,

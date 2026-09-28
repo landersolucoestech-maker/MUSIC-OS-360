@@ -41,14 +41,14 @@ const eventParticipants = {
 } as const;
 
 export const REPEATING_GROUP_EXPORT_RESOLVERS: Record<string, RepeatingGroupExportResolver> = {
-  'projects.musicas': fetchProjectTracksForExport as unknown as RepeatingGroupExportResolver,
+  'projects.tracks': fetchProjectTracksForExport as unknown as RepeatingGroupExportResolver,
   'releases.faixas': fetchReleaseTracksForExport as unknown as RepeatingGroupExportResolver,
   'invoices.itens': makeRowEmbeddedRepeatingGroupExportResolver(invoiceItems),
   'events.participants': makeRowEmbeddedRepeatingGroupExportResolver(eventParticipants),
 };
 
 export const REPEATING_GROUP_IMPORT_WRITERS: Record<string, RepeatingGroupImportWriter> = {
-  'projects.musicas': insertProjectTracksForImport,
+  'projects.tracks': insertProjectTracksForImport,
   'releases.faixas': writeReleaseTracksForImport,
   'invoices.itens': makeRowEmbeddedRepeatingGroupImportWriter(invoiceItems),
   'events.participants': makeRowEmbeddedRepeatingGroupImportWriter(eventParticipants),
