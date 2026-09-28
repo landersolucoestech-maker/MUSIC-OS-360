@@ -431,7 +431,7 @@ const RELEASES_CONTRACT: ReportFormContract = {
 };
 
 // ─── Shares ───────────────────────────────────────────────────────────────────
-// `historico[]` is an audit trail generated automatically by the system
+// `history[]` is an audit trail generated automatically by the system
 // on every edit (never typed by the user) — exported read-only as a
 // direct column (same pattern already used by contracts.versions), without becoming
 // its own child sheet.
@@ -441,11 +441,11 @@ const SHARES_CONTRACT: ReportFormContract = {
   fields: [
     col('share_type'), col('percentage'), col('status'), col('direction'),
     col('release_id'), col('music_title'), col('holder'), col('recipient'),
-    col('type'), col('artista_externo'), col('artista_project_id'), col('artist_id'),
-    col('pagador'), col('pagador_contato'), col('origem_acordo'), col('data_prevista'),
-    col('documents'), col('acordo_notas'), col('acordo_url'), col('notes'),
+    col('type'), col('external_artist_name'), col('artist_id'),
+    col('payer'), col('payer_contact'), col('agreement_source'), col('expected_at'),
+    col('documents'), col('agreement_notes'), col('agreement_url'), col('notes'),
     col('total_amount'), col('settled_amount'),
-    ro('versao'), ro('historico'),
+    ro('version'), ro('history'),
   ],
   excludedFormFields: {
     holderName: 'legacy English alias (ABRAMUS/ECAD registration) mapped to holder_name — not the real Shares screen',

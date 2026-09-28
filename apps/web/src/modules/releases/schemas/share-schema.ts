@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ShareStatus } from "@music-os-360/types";
 
 const percentageField = z
   .string()
@@ -31,22 +32,22 @@ export const shareSchema = z
     release_id: z.string().optional().or(z.literal("")),
     holder: z.string().max(150, "Detentor deve ter no máximo 150 caracteres").optional().or(z.literal("")),
     recipient: z.string().max(150).optional().or(z.literal("")),
-    funcao: z.enum(["compositor", "interprete", "produtor", "editora", "gravadora", "empresario", "outro"]).optional(),
+    participant_function: z.enum(["composer", "performer", "producer", "publisher", "record_label", "manager", "other"]).optional(),
     // External
     music_title: z.string().max(200, "Nome deve ter no máximo 200 caracteres").optional().or(z.literal("")),
-    artista_externo: z.string().max(150).optional().or(z.literal("")),
-    artista_project_id: z.string().optional().or(z.literal("")),
-    pagador: z.string().max(150).optional().or(z.literal("")),
-    pagador_contato: z.string().max(200).optional().or(z.literal("")),
-    origem_acordo: z.string().max(300).optional().or(z.literal("")),
-    data_prevista: z.string().optional().or(z.literal("")),
+    external_artist_name: z.string().max(150).optional().or(z.literal("")),
+    artist_id: z.string().optional().or(z.literal("")),
+    payer: z.string().max(150).optional().or(z.literal("")),
+    payer_contact: z.string().max(200).optional().or(z.literal("")),
+    agreement_source: z.string().max(300).optional().or(z.literal("")),
+    expected_at: z.string().optional().or(z.literal("")),
     documents: z.string().max(500).optional().or(z.literal("")),
     // Common
     percentage: percentageField,
-    valor_total: valueField,
-    status: z.enum(["pendente", "parcial", "enviado", "aceito", "recebido", "recusado", "erro", "cancelado"]).default("pendente"),
-    acordo_notas: z.string().max(2000, "Notas devem ter no máximo 2000 caracteres").optional().or(z.literal("")),
-    acordo_url: z.string().max(500, "URL deve ter no máximo 500 caracteres").optional().or(z.literal("")),
+    total_amount: valueField,
+    status: z.nativeEnum(ShareStatus).default(ShareStatus.PENDING),
+    agreement_notes: z.string().max(2000, "Notas devem ter no máximo 2000 caracteres").optional().or(z.literal("")),
+    agreement_url: z.string().max(500, "URL deve ter no máximo 500 caracteres").optional().or(z.literal("")),
     notes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
   })
   .superRefine((data, ctx) => {
@@ -59,7 +60,7 @@ export const shareSchema = z
       if (!data.holder) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["holder"], message: "Informe o participante" });
     } else {
       if (!data.music_title) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["music_title"], message: "Informe o nome da música" });
-      if (!data.artista_project_id) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["artista_project_id"], message: "Vincule um artista/projeto da empresa" });
+      if (!data.artist_id) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["artist_id"], message: "Vincule um artista/projeto da empresa" });
     }
   });
 

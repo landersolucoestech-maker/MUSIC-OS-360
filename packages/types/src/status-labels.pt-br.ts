@@ -96,6 +96,13 @@ export const SHARE_STATUS_LABELS_PT_BR: Readonly<Record<ShareStatus, string>> = 
   [ShareStatus.INACTIVE]: "Inativo",
   [ShareStatus.PENDING]: "Pendente",
   [ShareStatus.SETTLED]: "Liquidado",
+  [ShareStatus.PARTIAL]: "Parcial",
+  [ShareStatus.SENT]: "Enviado",
+  [ShareStatus.ACCEPTED]: "Aceito",
+  [ShareStatus.RECEIVED]: "Recebido",
+  [ShareStatus.REFUSED]: "Recusado",
+  [ShareStatus.ERROR]: "Erro",
+  [ShareStatus.CANCELLED]: "Cancelado",
 };
 
 export const TRANSACTION_STATUS_LABELS_PT_BR: Readonly<Record<TransactionStatus, string>> = {

@@ -35,12 +35,6 @@
 {"table":"releases","className":"ReleaseEntity","field":"gravadora","columnOverride":null,"type":"varchar"}
 {"table":"releases","className":"ReleaseEntity","field":"idioma","columnOverride":null,"type":"varchar"}
 {"table":"releases","className":"ReleaseEntity","field":"notas_internas","columnOverride":null,"type":"text"}
-{"table":"shares","className":"ShareEntity","field":"acordo_notas","columnOverride":null,"type":"text"}
-{"table":"shares","className":"ShareEntity","field":"artista_externo","columnOverride":null,"type":"varchar"}
-{"table":"shares","className":"ShareEntity","field":"artista_project_id","columnOverride":null,"type":"uuid"}
-{"table":"shares","className":"ShareEntity","field":"data_prevista","columnOverride":null,"type":"date"}
-{"table":"shares","className":"ShareEntity","field":"origem_acordo","columnOverride":null,"type":"varchar"}
-{"table":"shares","className":"ShareEntity","field":"pagador_contato","columnOverride":null,"type":"varchar"}
 {"table":"transactions","className":"TransactionEntity","field":"anexo_nome","columnOverride":null,"type":"varchar"}
 {"table":"transactions","className":"TransactionEntity","field":"categoria","columnOverride":null,"type":"varchar"}
 {"table":"transactions","className":"TransactionEntity","field":"conta_origem","columnOverride":null,"type":"varchar"}

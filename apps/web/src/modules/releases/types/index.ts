@@ -1,7 +1,7 @@
 import type { ArtistRef, WorkRef } from "@/shared/types/refs";
-import type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareCategory, ShareDirection, ShareType } from "@/shared/types/enums";
+import type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareFunction, ShareDirection, ShareType } from "@/shared/types/enums";
 
-export type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareCategory, ShareDirection, ShareType };
+export type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareFunction, ShareDirection, ShareType };
 
 export interface ReleaseAssets {
   audio_master_url?: string | null;
@@ -106,9 +106,10 @@ export interface Share {
   /** Internal/external discriminator. When missing, derive it via `resolveShareType`. */
   share_type?: ShareType | string | null;
   work_id?: string | null;
+  /** Company artist/project linked to the share (external receivable). */
   artist_id?: string | null;
   percentage?: number | null;
-  type?: ShareCategory | string | null;
+  type?: ShareFunction | string | null;
   direction?: ShareDirection | string | null;
   status?: ShareStatus | string | null;
   total_amount?: number | null;
@@ -119,20 +120,18 @@ export interface Share {
   release_id?: string | null;
   // ── External flow (receivable) ───────────────────────────────────────────────
   music_title?: string | null;
-  artista_externo?: string | null;
-  /** Company artist/project linked to the external receivable. */
-  artista_project_id?: string | null;
-  pagador?: string | null;
-  pagador_contato?: string | null;
-  origem_acordo?: string | null;
-  data_prevista?: string | null;
+  external_artist_name?: string | null;
+  payer?: string | null;
+  payer_contact?: string | null;
+  agreement_source?: string | null;
+  expected_at?: string | null;
   documents?: string | null;
   // ── Agreement / traceability (shared) ─────────────────────────────────────────
-  acordo_notas?: string | null;
-  acordo_url?: string | null;
+  agreement_notes?: string | null;
+  agreement_url?: string | null;
   notes?: string | null;
-  versao?: number | null;
-  historico?: ShareHistoryEntry[] | null;
+  version?: number | null;
+  history?: ShareHistoryEntry[] | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
@@ -147,19 +146,19 @@ export interface ShareWithRelations extends Share {
 }
 
 export interface ShareHistoryEntry {
-  data: string;
-  acao: string;
-  usuario?: string | null;
-  observacao?: string | null;
-  valor_anterior?: number | null;
-  valor_novo?: number | null;
-  versao?: string | null;
+  date: string;
+  action?: string | null;
+  user?: string | null;
+  note?: string | null;
+  previous_value?: number | null;
+  new_value?: number | null;
+  version?: number | string | null;
   /** Canonical field for newly-written entries. */
   percentage?: number | null;
   /** @deprecated Legacy key on already-persisted (append-only) entries written before the
    * naming-normalization rename; kept for backward-compatible reads only, never written anew. */
   percentual?: number | null;
-  descricao?: string | null;
-  autor?: string | null;
+  description?: string | null;
+  author?: string | null;
 }
 

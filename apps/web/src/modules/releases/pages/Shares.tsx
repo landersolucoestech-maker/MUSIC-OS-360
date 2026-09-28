@@ -28,7 +28,8 @@ import { useShares } from "@/modules/releases/hooks/useShares";
 import { useSharesPaginated, useSharesStats } from "@/modules/releases/hooks/useSharesPaginated";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { storage } from "@/shared/lib/storage";
-import { resolveShareType, shareTypeLabel, shareStatusBadge } from "@/modules/releases/lib/share-format";
+import { resolveShareType, shareTypeLabel, shareStatusBadge, shareStatusLabel, isPendingShareStatus, SHARE_DIRECTION_LABELS } from "@/modules/releases/lib/share-format";
+import { ShareStatus } from "@music-os-360/types";
 import { SHARE_FOR_RELEASE_PARAM } from "@/modules/releases/services/share-from-release";
 import type { Share } from "@/modules/releases/types";
 
@@ -173,7 +174,7 @@ export default function Shares() {
     reportBulkResult(result, "excluído", "share");
   };
 
-  const handleRegistrarLiquidacao = async (share: any, newStatus: "recebido" | "enviado") => {
+  const handleRegisterSettlement = async (share: any, newStatus: typeof ShareStatus.RECEIVED | typeof ShareStatus.SENT) => {
     try {
       await updateShare.mutateAsync({
         id: share.id,
@@ -181,7 +182,7 @@ export default function Shares() {
         settled_amount: share.total_amount,
         expectedUpdatedAt: getExpectedUpdatedAt(share),
       });
-      toast.success(newStatus === "recebido" ? "Recebimento registrado!" : "Envio registrado!");
+      toast.success(newStatus === ShareStatus.RECEIVED ? "Recebimento registrado!" : "Envio registrado!");
     } catch (err) {
       if (handleConcurrencyConflict(err, "share")) return;
     }
@@ -306,8 +307,8 @@ export default function Shares() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todas as direções</SelectItem>
-                  <SelectItem value="a_receber">A Receber</SelectItem>
-                  <SelectItem value="a_enviar">A Enviar</SelectItem>
+                  <SelectItem value="receivable">{SHARE_DIRECTION_LABELS.receivable}</SelectItem>
+                  <SelectItem value="payable">{SHARE_DIRECTION_LABELS.payable}</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -316,11 +317,9 @@ export default function Shares() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos os status</SelectItem>
-                  <SelectItem value="pendente">Pendente</SelectItem>
-                  <SelectItem value="parcial">Parcial</SelectItem>
-                  <SelectItem value="recebido">Recebido</SelectItem>
-                  <SelectItem value="enviado">Enviado</SelectItem>
-                  <SelectItem value="cancelado">Cancelado</SelectItem>
+                  {[ShareStatus.PENDING, ShareStatus.PARTIAL, ShareStatus.RECEIVED, ShareStatus.SENT, ShareStatus.CANCELLED].map((status) => (
+                    <SelectItem key={status} value={status}>{shareStatusLabel(status)}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -400,7 +399,7 @@ export default function Shares() {
                     const artist = share.artist_id ? resolvedArtists[share.artist_id] : undefined;
                     const holderName = artist?.nome_artistico || share.holder || "—";
                     const sType = resolveShareType(share as Share & Record<string, unknown>);
-                    const isPending = share.status === "pendente" || share.status === "parcial";
+                    const isPending = isPendingShareStatus(share.status);
 
                     return (
                       <TableRow key={share.id} data-testid={`row-share-${share.id}`}>
@@ -459,19 +458,19 @@ export default function Shares() {
                                 <Pencil className="h-4 w-4 mr-2" />
                                 Editar
                               </DropdownMenuItem>
-                              {isPending && share.direction === "a_receber" && (
+                              {isPending && share.direction === "receivable" && (
                                 <DropdownMenuItem
                                   data-testid={`button-receber-${share.id}`}
-                                  onClick={() => handleRegistrarLiquidacao(share, "recebido")}
+                                  onClick={() => handleRegisterSettlement(share, ShareStatus.RECEIVED)}
                                 >
                                   <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
                                   Registrar Recebimento
                                 </DropdownMenuItem>
                               )}
-                              {isPending && share.direction === "a_enviar" && (
+                              {isPending && share.direction === "payable" && (
                                 <DropdownMenuItem
                                   data-testid={`button-enviar-${share.id}`}
-                                  onClick={() => handleRegistrarLiquidacao(share, "enviado")}
+                                  onClick={() => handleRegisterSettlement(share, ShareStatus.SENT)}
                                 >
                                   <Send className="h-4 w-4 mr-2 text-orange-600" />
                                   Registrar Envio

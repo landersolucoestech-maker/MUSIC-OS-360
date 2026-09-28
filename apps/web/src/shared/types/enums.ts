@@ -136,30 +136,21 @@ export type ReleaseStatusValue = `${ReleaseStatus}`;
 
 // ── Share / Participation ─────────────────────────────────────────────────────
 
-export type ShareCategory =
-  | "composicao"
-  | "master"
-  | "editorial"
-  | "performance"
-  | "sincronia"
-  | "outro";
+/** Participant function stored in `shares.type` (CZ-037; PT-BR labels in share-format). */
+export type ShareFunction =
+  | "composer"
+  | "performer"
+  | "producer"
+  | "publisher"
+  | "record_label"
+  | "manager"
+  | "other";
 
-/**
- * Status of a share. Includes the package values (`@music-os-360/types`) and the
- * values actually used by the UI/mock (internal and external receipt flow).
- */
-export type ShareStatus =
-  | `${PkgShareStatus}`
-  | "parcial"
-  | "recebido"
-  | "enviado"
-  | "aceito"
-  | "recusado"
-  | "erro"
-  | "cancelado";
+/** Status of a share — source of truth: `ShareStatus` in @music-os-360/types. */
+export type ShareStatus = `${PkgShareStatus}`;
 
-/** Cash-flow direction of the share (keeps legacy aliases). */
-export type ShareDirection = "entrada" | "saida" | "a_receber" | "a_enviar" | "a_pagar";
+/** Cash-flow direction of the share. */
+export type ShareDirection = "receivable" | "payable";
 
 /** Share type discriminator: internal entry vs external receivable. */
 export type ShareType = "internal_release" | "external_receivable";

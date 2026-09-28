@@ -2,8 +2,8 @@
  * shares.service.spec.ts
  *
  * Phase 5 / C6: proves that holder_name/percentage (ownership fields —
- * ABRAMUS/ECAD submission) are never derived from holder/artista_externo/
- * pagador/recipient (financial share fields — a distinct concept),
+ * ABRAMUS/ECAD submission) are never derived from holder/external_artist_name/
+ * payer/recipient (financial share fields — a distinct concept),
  * nor filled with an artificial default ('N/D' / 0). Tested at the service
  * level — class-validator decorators do NOT run here (see shares.dto.spec.ts
  * for payload validation via ValidationPipe).
@@ -50,8 +50,8 @@ describe('SharesService.create — holder_name/percentage isolation (Phase 5 / C
   it('does not populate holder_name/percentage when only financial fields are sent', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', {
-      holder: 'João', artista_externo: 'Banda X', pagador: 'Gravadora Y', recipient: 'Z',
-      share_type: 'pendente', percentage: undefined,
+      holder: 'João', external_artist_name: 'Banda X', payer: 'Gravadora Y', recipient: 'Z',
+      share_type: 'external_receivable', percentage: undefined,
     } as unknown as CreateShareDto);
 
     const row = created(repo);
@@ -60,10 +60,10 @@ describe('SharesService.create — holder_name/percentage isolation (Phase 5 / C
     expect(row['holder']).toBe('João');
   });
 
-  it('never derives holder_name from holder/artista_externo/pagador/recipient', async () => {
+  it('never derives holder_name from holder/external_artist_name/payer/recipient', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', {
-      holder: 'D', artista_externo: 'AE', pagador: 'P', recipient: 'DEST',
+      holder: 'D', external_artist_name: 'AE', payer: 'P', recipient: 'DEST',
     } as unknown as CreateShareDto);
 
     const row = created(repo);
@@ -113,7 +113,7 @@ describe('SharesService.update — partial patch does not contaminate registry f
   it('updating only financial fields never contaminates holder_name/percentage', async () => {
     const { svc, repo } = makeService();
     await svc.update('tenant-1', 'share-1', {
-      holder: 'Novo Detentor', pagador: 'Novo Pagador',
+      holder: 'Novo Detentor', payer: 'Novo Pagador',
     } as unknown as UpdateShareDto);
 
     const row = updated(repo);
@@ -168,12 +168,12 @@ describe('SharesService — total_amount/settled_amount persistence (Task T)', (
   it('update: writes settled_amount when registering receipt/payment (same payload as the page quick-action)', async () => {
     const { svc, repo } = makeService();
     await svc.update('tenant-1', 'share-1', {
-      status: 'recebido',
+      status: 'received',
       settled_amount: 800,
     } as unknown as UpdateShareDto);
 
     const row = updated(repo);
-    expect(row['status']).toBe('recebido');
+    expect(row['status']).toBe('received');
     expect(row['settled_amount']).toBe(800);
   });
 

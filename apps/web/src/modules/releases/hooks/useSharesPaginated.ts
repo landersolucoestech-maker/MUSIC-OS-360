@@ -1,3 +1,5 @@
+import { ShareStatus } from "@music-os-360/types";
+import { isPendingShareStatus } from "@/modules/releases/lib/share-format";
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
@@ -69,11 +71,11 @@ export function useSharesStats() {
 
   const rows = query.data ?? [];
   const kpis = rows.length === 0 ? EMPTY_SHARE_KPIS : rows.reduce((acc, row) => {
-    const pendingLike = row.status === "pendente" || row.status === "parcial";
-    if (row.direction === "a_receber" && pendingLike) acc.toReceive += row.cnt;
-    else if (row.direction === "a_receber" && row.status === "recebido") acc.received += row.cnt;
-    else if (row.direction === "a_enviar" && pendingLike) acc.toSend += row.cnt;
-    else if (row.direction === "a_enviar" && row.status === "enviado") acc.sent += row.cnt;
+    const pendingLike = isPendingShareStatus(row.status);
+    if (row.direction === "receivable" && pendingLike) acc.toReceive += row.cnt;
+    else if (row.direction === "receivable" && row.status === ShareStatus.RECEIVED) acc.received += row.cnt;
+    else if (row.direction === "payable" && pendingLike) acc.toSend += row.cnt;
+    else if (row.direction === "payable" && row.status === ShareStatus.SENT) acc.sent += row.cnt;
     return acc;
   }, { toReceive: 0, received: 0, toSend: 0, sent: 0 });
 

@@ -1,5 +1,5 @@
 {
- "total": 166,
+ "total": 154,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -100,16 +100,6 @@
   "schema::column::releases.idioma": 1,
   "schema::column::releases.notas_internas": 1,
   "schema::column::releases.plataformas": 1,
-  "schema::column::shares.acordo_notas": 1,
-  "schema::column::shares.acordo_url": 1,
-  "schema::column::shares.artista_externo": 1,
-  "schema::column::shares.artista_project_id": 1,
-  "schema::column::shares.data_prevista": 1,
-  "schema::column::shares.historico": 1,
-  "schema::column::shares.origem_acordo": 1,
-  "schema::column::shares.pagador": 1,
-  "schema::column::shares.pagador_contato": 1,
-  "schema::column::shares.versao": 1,
   "schema::column::transactions.anexo_nome": 1,
   "schema::column::transactions.anexo_url": 1,
   "schema::column::transactions.categoria": 1,
@@ -157,7 +147,6 @@
   "schema::column::works.tipo_ia": 1,
   "schema::column::works.tipo_obra": 1,
   "schema::constraint::artists.chk_artists_status_cadastro": 1,
-  "schema::constraint::shares.chk_shares_percentual_range": 1,
   "schema::constraint::work_participants.chk_work_participants_percentual": 1,
   "schema::default-value::clients.tipo_pessoa::pessoa_juridica": 1,
   "schema::default-value::contract_service_types.financial_model::valor_fixo": 1,
@@ -165,7 +154,6 @@
   "schema::default-value::marketing_content_posts.status::agendado": 1,
   "schema::default-value::organizations.industry::gravadora": 1,
   "schema::default-value::releases.status::planejamento": 1,
-  "schema::default-value::shares.party_role::autor": 1,
   "schema::index::contracts.idx_contracts_data_fim": 1
  }
 }

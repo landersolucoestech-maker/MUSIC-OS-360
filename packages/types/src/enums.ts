@@ -176,6 +176,14 @@ export enum ShareStatus {
   INACTIVE = "inactive",
   PENDING  = "pending",
   SETTLED  = "settled",
+  // Financial negotiation lifecycle of external/internal share receipts (CZ-037).
+  PARTIAL   = "partial",
+  SENT      = "sent",
+  ACCEPTED  = "accepted",
+  RECEIVED  = "received",
+  REFUSED   = "refused",
+  ERROR     = "error",
+  CANCELLED = "cancelled",
 }
 
 // ─── Financeiro / Accounting ──────────────────────────────────────────────────

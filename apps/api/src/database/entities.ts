@@ -1496,7 +1496,7 @@ export class ShareEntity {
   @Column({ type: 'uuid', nullable: true }) phonogram_id: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) holder_name: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) holder_document: string | null;
-  @Column({ type: 'varchar', length: 100, default: 'autor' }) party_role: string;
+  @Column({ type: 'varchar', length: 100, default: 'author' }) party_role: string;
   @Column({ type: 'decimal', precision: 7, scale: 4, nullable: true }) percentage: string | null;
   @Column({ type: 'varchar', length: 50, default: ShareStatus.ACTIVE }) status: ShareStatus;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
@@ -1524,19 +1524,20 @@ export class ShareEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) holder: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) recipient: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) type: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) artista_externo: string | null;
-  @Column({ type: 'uuid', nullable: true }) artista_project_id: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) external_artist_name: string | null;
+  /** Former mirror of artist_id (CZ-037): read-only legacy data, no longer written. */
+  @Column({ type: 'uuid', nullable: true }) legacy_artist_project_id: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) pagador: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) pagador_contato: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) origem_acordo: string | null;
-  @Column({ type: 'date', nullable: true }) data_prevista: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) payer: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) payer_contact: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) agreement_source: string | null;
+  @Column({ type: 'date', nullable: true }) expected_at: string | null;
   @Column({ type: 'text', nullable: true }) documents: string | null;
-  @Column({ type: 'text', nullable: true }) acordo_notas: string | null;
-  @Column({ type: 'text', nullable: true }) acordo_url: string | null;
+  @Column({ type: 'text', nullable: true }) agreement_notes: string | null;
+  @Column({ type: 'text', nullable: true }) agreement_url: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'integer', nullable: true }) versao: number | null;
-  @Column({ type: 'jsonb', nullable: true }) historico: unknown[] | null;
+  @Column({ type: 'integer', nullable: true }) version: number | null;
+  @Column({ type: 'jsonb', nullable: true }) history: unknown[] | null;
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true }) total_amount: string | null;
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true }) settled_amount: string | null;
 

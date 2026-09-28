@@ -72,10 +72,10 @@ describe('CreateShareDto/UpdateShareDto — holderName does not accept empty/whi
 });
 
 describe('CreateShareDto — regression: financial share fields remain intact (Phase 5 / C6)', () => {
-  // C6 isolated holder_name/percentage (registry) from holder/artista_externo/
-  // pagador/recipient (financial) — it never removed or renamed the financial
+  // C6 isolated holder_name/percentage (registry) from holder/external_artist_name/
+  // payer/recipient (financial) — it never removed or renamed the financial
   // fields themselves. This regression fails if any of them is removed/renamed.
-  const FINANCIAL_FIELDS = ['holder', 'artista_externo', 'pagador', 'recipient', 'share_type', 'percentage', 'direction', 'type'];
+  const FINANCIAL_FIELDS = ['holder', 'external_artist_name', 'payer', 'recipient', 'share_type', 'percentage', 'direction', 'type'];
 
   it('CreateShareDto still declares all financial fields', () => {
     const props = decoratedPropertyNames(CreateShareDto);
@@ -84,7 +84,7 @@ describe('CreateShareDto — regression: financial share fields remain intact (P
 
   it('a payload with only financial fields is still accepted by the pipe (none of them became required/removed)', async () => {
     const errors = await validatePayload(CreateShareDto, {
-      holder: 'D', artista_externo: 'AE', pagador: 'P', recipient: 'DEST', share_type: 'pendente', percentage: 100,
+      holder: 'D', external_artist_name: 'AE', payer: 'P', recipient: 'DEST', share_type: 'external_receivable', percentage: 100,
     });
     expect(errors).toEqual([]);
   });

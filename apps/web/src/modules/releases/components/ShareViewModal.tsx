@@ -22,7 +22,8 @@ import {
   resolveShareType,
   shareTypeLabel,
   shareStatusBadge,
-  funcaoLabel,
+  shareFunctionLabel,
+  SHARE_DIRECTION_LABELS,
 } from "@/modules/releases/lib/share-format";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 import { openStoredFile } from "@/shared/lib/stored-file";
@@ -68,13 +69,13 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   const { entity: linkedWork } = useEntityById<ObraWithRelations>("obras", open ? str("work_id") || undefined : undefined);
   const { entity: artistResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? share?.artist_id ?? undefined : undefined);
   const artistResolved: Artist | undefined = artistResolvedWire ? wireToArtist(artistResolvedWire) : undefined;
-  const linkedArtistId = str("artista_project_id") || share?.artist_id || undefined;
+  const linkedArtistId = share?.artist_id || undefined;
   const { entity: linkedArtistResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? linkedArtistId : undefined);
   const linkedArtistResolved: Artist | undefined = linkedArtistResolvedWire ? wireToArtist(linkedArtistResolvedWire) : undefined;
 
   if (!share) return null;
 
-  const history: ShareHistoryEntry[] = Array.isArray(share.historico) ? share.historico : [];
+  const history: ShareHistoryEntry[] = Array.isArray(share.history) ? share.history : [];
   const shareType = resolveShareType(s);
   const isInternal = shareType === "internal_release";
 
@@ -104,7 +105,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   const artistName = artistResolved?.stageName ?? null;
   const linkedName = linkedArtistResolved?.stageName ?? null;
 
-  const directionLabel = str("direction") === "a_receber" ? "A Receber" : str("direction") === "a_enviar" ? "A Enviar" : null;
+  const directionLabel = SHARE_DIRECTION_LABELS[str("direction") ?? ""] ?? null;
   const registradoEm = str("created_at") ? formatDate(str("created_at")) : null;
 
   return (
@@ -114,8 +115,8 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
           <DialogTitle className="flex items-center gap-2 text-foreground">
             <Share2 className="h-5 w-5 text-primary" />
             Detalhe do Share
-            {share.versao && (
-              <Badge variant="outline" className="text-[10px] font-sans ml-1">v{share.versao}</Badge>
+            {share.version && (
+              <Badge variant="outline" className="text-[10px] font-sans ml-1">v{share.version}</Badge>
             )}
           </DialogTitle>
         </DialogHeader>
@@ -136,18 +137,18 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
                   {artistName && <Field label="Artista" value={artistName} icon={User} />}
                   <Field label="Participante" value={participantName} icon={User} />
                   <Field label="Destinatário" value={str("recipient") || null} icon={User} />
-                  <Field label="Função" value={s["type"] ? funcaoLabel(String(s["type"])) : null} icon={Share2} />
+                  <Field label="Função" value={s["type"] ? shareFunctionLabel(String(s["type"])) : null} icon={Share2} />
                   <Field label="Direção" value={directionLabel} />
                 </>
               ) : (
                 <>
                   <Field label="Música externa" value={str("music_title") || null} icon={FileText} />
-                  <Field label="Artista externo" value={str("artista_externo") || null} icon={User} />
+                  <Field label="Artista externo" value={str("external_artist_name") || null} icon={User} />
                   <Field label="Vínculo (empresa)" value={linkedName} icon={Building} />
-                  <Field label="Pagador" value={str("pagador") || null} icon={User} />
-                  <Field label="Contato do pagador" value={str("pagador_contato") || null} />
-                  <Field label="Origem do acordo" value={str("origem_acordo") || null} />
-                  <Field label="Data prevista" value={str("data_prevista") ? formatDate(str("data_prevista")) : null} icon={Calendar} />
+                  <Field label="Pagador" value={str("payer") || null} icon={User} />
+                  <Field label="Contato do pagador" value={str("payer_contact") || null} />
+                  <Field label="Origem do acordo" value={str("agreement_source") || null} />
+                  <Field label="Data prevista" value={str("expected_at") ? formatDate(str("expected_at")) : null} icon={Calendar} />
                   {str("documents") && (
                     <Field
                       label="Documentos"
@@ -181,24 +182,24 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
           </Card>
 
           {/* ── Agreement / Document ──────────────────────────────────────────── */}
-          {(share.acordo_notas || share.acordo_url) && (
+          {(share.agreement_notes || share.agreement_url) && (
             <Card className="bg-muted/30">
               <CardContent className="p-4 space-y-3">
                 <p className="text-xs font-semibold  tracking-wider text-muted-foreground">
                   Notas do Acordo
                 </p>
-                {share.acordo_notas && (
+                {share.agreement_notes && (
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                    {share.acordo_notas}
+                    {share.agreement_notes}
                   </p>
                 )}
-                {share.acordo_url && (
+                {share.agreement_url && (
                   <Button
                     variant="outline"
                     size="sm"
                     className="h-8 text-xs gap-1.5"
-                    onClick={() => { openStoredFile(share.acordo_url as string).catch(() => toast.error("Não foi possível abrir o arquivo.")); }}
-                    data-testid="btn-acordo-url"
+                    onClick={() => { openStoredFile(share.agreement_url as string).catch(() => toast.error("Não foi possível abrir o arquivo.")); }}
+                    data-testid="btn-agreement-url"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                     Ver Documento
@@ -233,29 +234,29 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
                   <div
                     key={i}
                     className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/20"
-                    data-testid={`historico-v${h.versao}`}
+                    data-testid={`history-v${h.version}`}
                   >
                     <div className="shrink-0">
-                      <Badge variant="outline" className="font-sans text-[10px]">v{h.versao}</Badge>
+                      <Badge variant="outline" className="font-sans text-[10px]">v{h.version}</Badge>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         {(h.percentage ?? h.percentual) != null && (
                           <span className="text-sm font-sans font-semibold text-primary">{h.percentage ?? h.percentual}%</span>
                         )}
-                        {h.descricao && (
-                          <span className="text-xs text-muted-foreground">{h.descricao}</span>
+                        {h.description && (
+                          <span className="text-xs text-muted-foreground">{h.description}</span>
                         )}
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-[10px] text-muted-foreground">
-                        {h.autor && (
+                        {h.author && (
                           <span className="flex items-center gap-1">
-                            <User className="h-3 w-3" />{h.autor}
+                            <User className="h-3 w-3" />{h.author}
                           </span>
                         )}
-                        {h.data && (
+                        {h.date && (
                           <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />{formatDate(h.data)}
+                            <Clock className="h-3 w-3" />{formatDate(h.date)}
                           </span>
                         )}
                       </div>

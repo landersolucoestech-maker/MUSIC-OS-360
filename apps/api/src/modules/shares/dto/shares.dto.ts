@@ -2,6 +2,11 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn, IsNumber, Min, Max, MaxLength, IsUUID, IsArray, IsInt, IsDateString, Matches } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { SHARE_DIRECTIONS, SHARE_LEGACY_VALUES, SHARE_STATUSES } from '../share-legacy-fields';
+
+const STATUS_INPUT = [...SHARE_STATUSES, ...Object.keys(SHARE_LEGACY_VALUES.status)];
+const DIRECTION_INPUT = [...SHARE_DIRECTIONS, ...Object.keys(SHARE_LEGACY_VALUES.direction)];
+const DEPRECATED = (canonical: string) => ({ deprecated: true, description: `Deprecated (CZ-037): use "${canonical}".` });
 
 const ROLES = ['author', 'composer', 'producer', 'performer', 'publisher', 'master-owner', 'other'] as const;
 
@@ -25,26 +30,39 @@ export class CreateShareDto {
   // column since 2026-09-13/RenameSharePartyFieldsToEnglish — see toColumns()).
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) share_type?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Max(100) @Type(() => Number) percentage?: number;
-  @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() acordo_notas?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() acordo_url?: string;
+  // Legacy Portuguese values (pendente, enviado, ...) are accepted and mapped
+  // to the canonical ShareStatus by the service (share-legacy-fields.ts).
+  @ApiPropertyOptional({ enum: SHARE_STATUSES }) @IsOptional() @IsIn(STATUS_INPUT) status?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() agreement_notes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() agreement_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) direction?: string;
+  @ApiPropertyOptional() @IsOptional() @IsIn(DIRECTION_INPUT) direction?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() release_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) music_title?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) holder?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) recipient?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) type?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) artista_externo?: string;
-  @ApiPropertyOptional() @IsOptional() @IsUUID() artista_project_id?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) external_artist_name?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) pagador?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) pagador_contato?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) origem_acordo?: string;
-  @ApiPropertyOptional() @IsOptional() @IsDateString() data_prevista?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) payer?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) payer_contact?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) agreement_source?: string;
+  @ApiPropertyOptional() @IsOptional() @IsDateString() expected_at?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() documents?: string;
-  @ApiPropertyOptional() @IsOptional() @Type(() => Number) @IsInt() versao?: number;
-  @ApiPropertyOptional() @IsOptional() @IsArray() historico?: unknown[];
+  @ApiPropertyOptional() @IsOptional() @Type(() => Number) @IsInt() version?: number;
+  @ApiPropertyOptional() @IsOptional() @IsArray() history?: unknown[];
+
+  // ── Deprecated Portuguese names (CZ-037, SHARE_DEPRECATED_FIELDS) ───────────
+  @ApiPropertyOptional(DEPRECATED('external_artist_name')) @IsOptional() @IsString() @MaxLength(255) artista_externo?: string;
+  @ApiPropertyOptional(DEPRECATED('artist_id')) @IsOptional() @IsUUID() artista_project_id?: string;
+  @ApiPropertyOptional(DEPRECATED('payer')) @IsOptional() @IsString() @MaxLength(255) pagador?: string;
+  @ApiPropertyOptional(DEPRECATED('payer_contact')) @IsOptional() @IsString() @MaxLength(255) pagador_contato?: string;
+  @ApiPropertyOptional(DEPRECATED('agreement_source')) @IsOptional() @IsString() @MaxLength(255) origem_acordo?: string;
+  @ApiPropertyOptional(DEPRECATED('expected_at')) @IsOptional() @IsDateString() data_prevista?: string;
+  @ApiPropertyOptional(DEPRECATED('agreement_notes')) @IsOptional() @IsString() acordo_notas?: string;
+  @ApiPropertyOptional(DEPRECATED('agreement_url')) @IsOptional() @IsString() acordo_url?: string;
+  @ApiPropertyOptional(DEPRECATED('version')) @IsOptional() @Type(() => Number) @IsInt() versao?: number;
+  @ApiPropertyOptional(DEPRECATED('history')) @IsOptional() @IsArray() historico?: unknown[];
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) total_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) settled_amount?: number;
 }
@@ -65,7 +83,7 @@ export class QueryShareDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() phonogram_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() party_role?: string;
-  @ApiPropertyOptional() @IsOptional() @IsIn(['a_receber', 'a_enviar']) direction?: string;
+  @ApiPropertyOptional() @IsOptional() @IsIn(DIRECTION_INPUT) direction?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() share_type?: string;

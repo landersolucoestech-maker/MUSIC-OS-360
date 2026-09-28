@@ -5,6 +5,8 @@ import { ShareEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { assertSplitBudgetNotExceeded } from './share-split-invariant.util';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import { SHARE_DEPRECATED_FIELDS, canonicalizeShareHistory, canonicalizeShareValues } from './share-legacy-fields';
 import type { CreateShareDto, UpdateShareDto, QueryShareDto } from './dto/shares.dto';
 
 @Injectable()
@@ -18,7 +20,7 @@ export class SharesService {
   }
 
   private baseQb(tenantId: string, query: QueryShareDto) {
-    const q = query as Record<string, unknown>;
+    const q = canonicalizeShareValues(query as Record<string, unknown>);
     const qb = this.repo!
       .createQueryBuilder('s')
       .where('s.tenant_id = :tenantId', { tenantId })
@@ -88,8 +90,12 @@ export class SharesService {
    * alias and the direct field converged on the same name — nothing to map.
    */
   private toColumns(dto: CreateShareDto | UpdateShareDto): Record<string, unknown> {
-    const d = dto as Record<string, unknown>;
+    // CZ-037: deprecated Portuguese field names and values → canonical.
+    const d = canonicalizeShareValues(
+      applyDeprecatedFieldAliases(dto as Record<string, unknown>, SHARE_DEPRECATED_FIELDS),
+    );
     const out: Record<string, unknown> = { ...d };
+    if (out['history'] !== undefined) out['history'] = canonicalizeShareHistory(out['history']);
     // EN aliases → legacy columns (never overwrite form fields)
     if (d['holderName'] !== undefined) out['holder_name']     = d['holderName'];
     if (d['holderDoc']  !== undefined) out['holder_document'] = d['holderDoc'];
@@ -169,7 +175,7 @@ export class SharesService {
     // holder_name/percentage (ownership fields — used in the ABRAMUS/ECAD
     // submission) only receive a value when the caller sends holderName/
     // percentage explicitly. They are never derived from holder/
-    // artista_externo/pagador/recipient (financial share fields — a
+    // external_artist_name/payer/recipient (financial share fields — a
     // distinct concept, see Phase 5 / C6) nor filled with an artificial default.
     const cols = this.toColumns(dto);
     await assertSameTenantFk(this.ds!, 'works',      cols['work_id']      as string | undefined, tenantId, 'Obra');
