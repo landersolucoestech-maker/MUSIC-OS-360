@@ -1,11 +1,11 @@
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
-import type { Takedown, TakedownInsert, TakedownUpdate, TakedownWithRelations } from "../types/monitoring.types";
+import type { Takedown, TakedownInsert, TakedownUpdate } from "../types/monitoring.types";
 
-export type { Takedown, TakedownInsert, TakedownUpdate, TakedownWithRelations };
+export type { Takedown, TakedownInsert, TakedownUpdate };
 
 export function useTakedowns() {
-  const result = useDataQuery<TakedownWithRelations>({
+  const result = useDataQuery<Takedown>({
     queryKey: [...QUERY_KEYS.TAKEDOWNS],
     table: "takedowns",
     select: "*, obras(*), fonogramas(*)",

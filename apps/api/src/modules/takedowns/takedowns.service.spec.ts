@@ -19,8 +19,8 @@ const mockTakedown = {
   id: TAKEDOWN_ID,
   tenant_id: TENANT,
   title: 'Takedown teste',
-  status: 'pendente',
-  plataforma: 'youtube',
+  status: 'pending',
+  platform: 'youtube',
   deleted_at: null,
   updated_at: NOW,
 } as unknown as TakedownEntity;

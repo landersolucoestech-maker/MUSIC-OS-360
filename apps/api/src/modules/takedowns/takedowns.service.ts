@@ -6,6 +6,13 @@ import { groupCount, type GroupStatsResult } from '../../common/stats/group-coun
 import type { CreateTakedownDto, UpdateTakedownDto, QueryTakedownDto } from './dto/takedowns.dto';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import {
+  TAKEDOWN_DEPRECATED_FIELDS,
+  TAKEDOWN_QUERY_DEPRECATED_FIELDS,
+  canonicalTakedownPriority,
+  canonicalTakedownType,
+} from './takedown-legacy-fields';
 
 @Injectable()
 export class TakedownsService {
@@ -22,18 +29,19 @@ export class TakedownsService {
     return this.repo;
   }
 
-  async list(tenantId: string, query: QueryTakedownDto) {
+  async list(tenantId: string, input: QueryTakedownDto) {
+    const query = applyDeprecatedFieldAliases(input, TAKEDOWN_QUERY_DEPRECATED_FIELDS);
     const qb = this.repository
       .createQueryBuilder('t')
       .where('t.tenant_id = :tenantId', { tenantId })
       .andWhere('t.deleted_at IS NULL');
 
     if (query.status) qb.andWhere('t.status = :status', { status: query.status });
-    if (query.plataforma) qb.andWhere('t.plataforma = :plataforma', { plataforma: query.plataforma });
+    if (query.platform) qb.andWhere('t.platform = :platform', { platform: query.platform });
     if (query.artist_id) qb.andWhere('t.artist_id = :artistId', { artistId: query.artist_id });
     if (query.search) {
       qb.andWhere(
-        '(t.title ILIKE :search OR t.obra_afetada ILIKE :search OR t.artista ILIKE :search OR t.motivo ILIKE :search)',
+        '(t.title ILIKE :search OR t.affected_work ILIKE :search OR t.artist_name ILIKE :search OR t.reason ILIKE :search)',
         { search: `%${query.search}%` },
       );
     }
@@ -49,7 +57,7 @@ export class TakedownsService {
   /**
    * Count per status, over the whole tenant (not the current page) —
    * Task H: exact KPIs without downloading the whole table. The bucket mapping
-   * (`pendente`/`em_andamento`/`concluído`) remains in the frontend (Takedowns.tsx),
+   * (pending/in_progress/completed) remains in the frontend (Takedowns.tsx),
    * which now iterates over this small {status: count} map instead of the full
    * takedown list.
    */
@@ -70,27 +78,38 @@ export class TakedownsService {
     return result;
   }
 
-  async create(tenantId: string, userId: string, dto: CreateTakedownDto): Promise<TakedownEntity> {
+  /** Deprecated field names and type/priority slugs -> canonical (CZ-034). */
+  private canonicalPayload<T extends object>(input: T): T {
+    const dto = applyDeprecatedFieldAliases(input, TAKEDOWN_DEPRECATED_FIELDS) as T & { type?: string; priority?: string };
+    if (dto.type !== undefined) dto.type = canonicalTakedownType(dto.type);
+    if (dto.priority !== undefined) dto.priority = canonicalTakedownPriority(dto.priority);
+    return dto;
+  }
+
+  async create(tenantId: string, userId: string, input: CreateTakedownDto): Promise<TakedownEntity> {
+    const dto = this.canonicalPayload(input);
     await assertSameTenantFk(this.ds!, 'works',   dto.work_id,    tenantId, 'Obra');
     await assertSameTenantFk(this.ds!, 'artists', dto.artist_id, tenantId, 'Artista');
 
     const entity = this.repository.create({
       tenant_id: tenantId,
       ...dto,
-      url: dto.url_infracao ?? null,
+      // `url` mirrors infringing_url (legacy duplicate column; canonical map blocker).
+      url: dto.infringing_url ?? null,
       created_by: userId,
     } as Partial<TakedownEntity>);
     return this.repository.save(entity as TakedownEntity);
   }
 
-  async update(tenantId: string, _userId: string, id: string, dto: UpdateTakedownDto): Promise<TakedownEntity> {
+  async update(tenantId: string, _userId: string, id: string, input: UpdateTakedownDto): Promise<TakedownEntity> {
     await this.findById(tenantId, id);
+    const dto = this.canonicalPayload(input);
     const { expectedUpdatedAt, ...rest } = dto as UpdateTakedownDto & { expectedUpdatedAt?: string };
     const updates: Record<string, unknown> = {
       ...rest,
       updated_at: new Date(),
     };
-    if (dto.url_infracao !== undefined) updates['url'] = dto.url_infracao ?? null;
+    if (dto.infringing_url !== undefined) updates['url'] = dto.infringing_url ?? null;
 
     await casUpdate(
       this.repository,

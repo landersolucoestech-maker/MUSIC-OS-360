@@ -1,27 +1,23 @@
 import { Badge, type BadgeVariant } from "@/shared/ui/badge";
+import { TakedownStatus, statusLabelPtBr } from "@music-os-360/types";
 import type { Takedown } from "@/modules/monitoring/types/monitoring.types";
 
-/**
- * Canonical takedown shape for rendering. Centralizes reading the two
- * shapes that coexist in the mock base: snake_case (seeds/backend) and legacy camelCase
- * (persisted by old FormModal versions). Invents no data — it only resolves
- * the same field among the possible aliases.
- */
+/** Takedown shape for rendering (canonical English API fields, CZ-034). */
 export interface NormalizedTakedown {
   id: string;
   title: string;
   type: string;
-  obra_afetada: string;
-  artista: string;
-  plataforma: string;
-  prioridade: string;
-  url_infracao: string;
-  motivo: string;
-  data: string;
-  descricao: string;
-  evidencias: string;
+  affectedWork: string;
+  artistName: string;
+  platform: string;
+  priority: string;
+  infringingUrl: string;
+  reason: string;
+  identifiedAt: string;
+  description: string;
+  evidence: string;
   status: string;
-  observacoes: string;
+  notes: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -58,64 +54,69 @@ export function normalizeTakedown(raw: Takedown & Record<string, unknown>): Norm
     id: String(raw.id),
     title: pick(raw.title),
     type: pick(raw.type),
-    obra_afetada: pick(raw.obra_afetada, raw.obraAfetada),
-    artista: pick(raw.artista),
-    plataforma: pick(raw.plataforma),
-    prioridade: pick(raw.prioridade),
-    url_infracao: pick(raw.url_infracao, raw.urlInfratora, raw.url),
-    motivo: pick(raw.motivo),
-    data: pick(raw.data_identificacao, raw.dataIdentificacao, raw.data_solicitacao, raw.data),
-    descricao: pick(raw.description, raw.descricao),
-    evidencias: pick(raw.evidencias),
+    affectedWork: pick(raw.affected_work),
+    artistName: pick(raw.artist_name),
+    platform: pick(raw.platform),
+    priority: pick(raw.priority),
+    // `url` is the legacy mirror of infringing_url (read only as a fallback).
+    infringingUrl: pick(raw.infringing_url, raw.url),
+    reason: pick(raw.reason),
+    identifiedAt: pick(raw.identified_at),
+    description: pick(raw.description),
+    evidence: pick(raw.evidence),
     status: pick(raw.status),
-    observacoes: pick(raw.notes, raw.observacoes),
+    notes: pick(raw.notes),
     created_at: str(raw.created_at) || undefined,
     updated_at: str(raw.updated_at) || undefined,
   };
 }
 
 // ── Status ────────────────────────────────────────────────────────────────────
-/** Normalizes legacy aliases to the canonical UI states. */
-function canonicalStatus(status?: string | null): string {
-  switch (status) {
-    case "resolvido": return "completed";
-    case "analise": return "in_progress";
-    default: return status ?? "";
-  }
-}
-
-const STATUS_META: Record<string, { label: string; variant: BadgeVariant }> = {
-  pending: { label: "Pendente", variant: "warning" },
-  in_progress: { label: "Em Andamento", variant: "info" },
-  completed: { label: "Concluído", variant: "success" },
-  rejected: { label: "Rejeitado", variant: "danger" },
+const STATUS_VARIANT: Record<string, BadgeVariant> = {
+  pending: "warning",
+  sent: "info",
+  processing: "info",
+  in_progress: "info",
+  completed: "success",
+  rejected: "danger",
+  failed: "danger",
 };
 
-export const isResolved = (status?: string | null) => canonicalStatus(status) === "completed";
-export const isPending = (status?: string | null) => canonicalStatus(status) === "pending";
-export const isInProgress = (status?: string | null) => canonicalStatus(status) === "in_progress";
+export const isResolved = (status?: string | null) => status === TakedownStatus.COMPLETED;
+export const isPending = (status?: string | null) => status === TakedownStatus.PENDING;
+export const isInProgress = (status?: string | null) => status === TakedownStatus.IN_PROGRESS;
 
+/** PT-BR label of a TakedownStatus; never the raw technical value. */
 export function statusLabel(status?: string | null): string {
-  const meta = STATUS_META[canonicalStatus(status)];
-  return meta?.label ?? (status ? status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "—");
+  if (!status) return "—";
+  return statusLabelPtBr("takedown", status) ?? "Status não reconhecido";
 }
 
 export function statusBadge(status?: string | null) {
-  const key = canonicalStatus(status);
-  const meta = STATUS_META[key];
-  return <Badge variant={meta?.variant ?? "neutral"}>{statusLabel(status)}</Badge>;
+  return <Badge variant={(status && STATUS_VARIANT[status]) || "neutral"}>{statusLabel(status)}</Badge>;
 }
 
 // ── Type ──────────────────────────────────────────────────────────────────────
+export const TAKEDOWN_TYPE_OPTIONS = [
+  { value: "sent", label: "Enviado por nós" },
+  { value: "received", label: "Recebido (Claim)" },
+] as const;
+
 export function typeBadge(type?: string | null) {
-  if (type === "enviado") return <Badge variant="info">Enviado</Badge>;
-  if (type === "recebido") return <Badge variant="warning">Recebido</Badge>;
+  if (type === "sent") return <Badge variant="info">Enviado</Badge>;
+  if (type === "received") return <Badge variant="warning">Recebido</Badge>;
   return <Badge variant="neutral">—</Badge>;
 }
 
 export const typeLabel = (type?: string | null): string =>
-  type === "enviado" ? "Enviado por nós" : type === "recebido" ? "Recebido (Claim)" : "—";
+  TAKEDOWN_TYPE_OPTIONS.find((o) => o.value === type)?.label ?? "—";
 
 // ── Priority ────────────────────────────────────────────────────────────────────
-const PRIORITY_LABEL: Record<string, string> = { alta: "Alta", media: "Média", baixa: "Baixa" };
-export const priorityLabel = (p?: string | null): string => (p ? PRIORITY_LABEL[p] ?? p : "—");
+export const TAKEDOWN_PRIORITY_OPTIONS = [
+  { value: "high", label: "Alta" },
+  { value: "medium", label: "Média" },
+  { value: "low", label: "Baixa" },
+] as const;
+
+export const priorityLabel = (p?: string | null): string =>
+  TAKEDOWN_PRIORITY_OPTIONS.find((o) => o.value === p)?.label ?? "—";

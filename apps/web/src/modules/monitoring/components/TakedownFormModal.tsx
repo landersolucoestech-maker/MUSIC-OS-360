@@ -41,18 +41,18 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
     resolver: zodResolver(takedownSchema),
     defaultValues: {
       title: "",
-      type: "enviado",
-      obraAfetada: "",
-      artista: "",
-      plataforma: "",
-      urlInfratora: "",
-      motivo: "",
-      descricao: "",
-      prioridade: "media",
+      type: "sent",
+      affectedWork: "",
+      artistName: "",
+      platform: "",
+      infringingUrl: "",
+      reason: "",
+      description: "",
+      priority: "medium",
       status: "pending",
-      dataIdentificacao: new Date().toISOString().split("T")[0],
-      evidencias: "",
-      observacoes: "",
+      identifiedAt: new Date().toISOString().split("T")[0],
+      evidence: "",
+      notes: "",
     },
   });
 
@@ -62,34 +62,34 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
       const n = normalizeTakedown(takedown);
       reset({
         title: n.title,
-        type: n.type || "enviado",
-        obraAfetada: n.obra_afetada,
-        artista: n.artista,
-        plataforma: n.plataforma,
-        urlInfratora: n.url_infracao,
-        motivo: n.motivo,
-        descricao: n.descricao,
-        prioridade: (n.prioridade || "media") as TakedownFormData["prioridade"],
+        type: n.type || "sent",
+        affectedWork: n.affectedWork,
+        artistName: n.artistName,
+        platform: n.platform,
+        infringingUrl: n.infringingUrl,
+        reason: n.reason,
+        description: n.description,
+        priority: (n.priority || "medium") as TakedownFormData["priority"],
         status: (n.status || "pending") as TakedownFormData["status"],
-        dataIdentificacao: n.data || new Date().toISOString().split("T")[0],
-        evidencias: n.evidencias,
-        observacoes: n.observacoes,
+        identifiedAt: n.identifiedAt || new Date().toISOString().split("T")[0],
+        evidence: n.evidence,
+        notes: n.notes,
       });
     } else {
       reset({
         title: "",
-        type: "enviado",
-        obraAfetada: "",
-        artista: "",
-        plataforma: "",
-        urlInfratora: "",
-        motivo: "",
-        descricao: "",
-        prioridade: "media",
+        type: "sent",
+        affectedWork: "",
+        artistName: "",
+        platform: "",
+        infringingUrl: "",
+        reason: "",
+        description: "",
+        priority: "medium",
         status: "pending",
-        dataIdentificacao: new Date().toISOString().split("T")[0],
-        evidencias: "",
-        observacoes: "",
+        identifiedAt: new Date().toISOString().split("T")[0],
+        evidence: "",
+        notes: "",
       });
     }
   }, [open, takedown, reset]);
@@ -98,17 +98,17 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
   const buildPayload = (data: TakedownFormData) => ({
     title: data.title,
     type: data.type || null,
-    obra_afetada: data.obraAfetada || null,
-    artista: data.artista || null,
-    plataforma: data.plataforma,
-    prioridade: data.prioridade,
-    url_infracao: data.urlInfratora || null,
-    motivo: data.motivo,
-    description: data.descricao || null,
-    evidencias: data.evidencias || null,
-    data_identificacao: data.dataIdentificacao || null,
+    affected_work: data.affectedWork || null,
+    artist_name: data.artistName || null,
+    platform: data.platform,
+    priority: data.priority,
+    infringing_url: data.infringingUrl || null,
+    reason: data.reason,
+    description: data.description || null,
+    evidence: data.evidence || null,
+    identified_at: data.identifiedAt || null,
     status: data.status,
-    notes: data.observacoes || null,
+    notes: data.notes || null,
   });
 
   const onSubmit = async (data: TakedownFormData) => {
@@ -170,8 +170,8 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="enviado">Enviado por nós</SelectItem>
-                        <SelectItem value="recebido">Recebido (Claim)</SelectItem>
+                        <SelectItem value="sent">Enviado por nós</SelectItem>
+                        <SelectItem value="received">Recebido (Claim)</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -183,22 +183,22 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
               <div className="space-y-2">
                 <Label>Obra Afetada</Label>
                 <Input
-                  {...register("obraAfetada")}
+                  {...register("affectedWork")}
                   disabled={isViewMode}
                   placeholder="Nome da obra"
-                  data-testid="input-obra-afetada"
+                  data-testid="input-affected-work"
                 />
-                <FieldError error={errors.obraAfetada?.message} />
+                <FieldError error={errors.affectedWork?.message} />
               </div>
               <div className="space-y-2">
                 <Label>Artista</Label>
                 <Input
-                  {...register("artista")}
+                  {...register("artistName")}
                   disabled={isViewMode}
                   placeholder="Nome do artista"
-                  data-testid="input-artista"
+                  data-testid="input-artist-name"
                 />
-                <FieldError error={errors.artista?.message} />
+                <FieldError error={errors.artistName?.message} />
               </div>
             </div>
 
@@ -226,17 +226,17 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
               <div className="space-y-2">
                 <Label>Prioridade</Label>
                 <Controller
-                  name="prioridade"
+                  name="priority"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value ?? "media"} onValueChange={field.onChange} disabled={isViewMode}>
-                      <SelectTrigger data-testid="select-prioridade">
+                    <Select value={field.value ?? "medium"} onValueChange={field.onChange} disabled={isViewMode}>
+                      <SelectTrigger data-testid="select-priority">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="alta">Alta</SelectItem>
-                        <SelectItem value="media">Média</SelectItem>
-                        <SelectItem value="baixa">Baixa</SelectItem>
+                        <SelectItem value="high">Alta</SelectItem>
+                        <SelectItem value="medium">Média</SelectItem>
+                        <SelectItem value="low">Baixa</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -254,11 +254,11 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
             <div className="space-y-2">
               <Label>Plataforma *</Label>
               <Controller
-                name="plataforma"
+                name="platform"
                 control={control}
                 render={({ field }) => (
                   <Select value={field.value ?? ""} onValueChange={field.onChange} disabled={isViewMode}>
-                    <SelectTrigger className={errors.plataforma ? "border-destructive" : ""} data-testid="select-plataforma">
+                    <SelectTrigger className={errors.platform ? "border-destructive" : ""} data-testid="select-platform">
                       <SelectValue placeholder="Selecione a plataforma" />
                     </SelectTrigger>
                     <SelectContent>
@@ -269,18 +269,18 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
                   </Select>
                 )}
               />
-              <FieldError error={errors.plataforma?.message} />
+              <FieldError error={errors.platform?.message} />
             </div>
 
             <div className="space-y-2">
               <Label>URL do Conteúdo Infrator</Label>
               <Input
-                {...register("urlInfratora")}
+                {...register("infringingUrl")}
                 disabled={isViewMode}
                 placeholder="https://..."
-                data-testid="input-url-infratora"
+                data-testid="input-infringing-url"
               />
-              <FieldError error={errors.urlInfratora?.message} />
+              <FieldError error={errors.infringingUrl?.message} />
             </div>
           </div>
 
@@ -294,11 +294,11 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
               <div className="space-y-2">
                 <Label>Motivo *</Label>
                 <Controller
-                  name="motivo"
+                  name="reason"
                   control={control}
                   render={({ field }) => (
                     <Select value={field.value ?? ""} onValueChange={field.onChange} disabled={isViewMode}>
-                      <SelectTrigger className={errors.motivo ? "border-destructive" : ""} data-testid="select-motivo">
+                      <SelectTrigger className={errors.reason ? "border-destructive" : ""} data-testid="select-reason">
                         <SelectValue placeholder="Selecione o motivo" />
                       </SelectTrigger>
                       <SelectContent>
@@ -309,12 +309,12 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
                     </Select>
                   )}
                 />
-                <FieldError error={errors.motivo?.message} />
+                <FieldError error={errors.reason?.message} />
               </div>
               <div className="space-y-2">
                 <Label>Data de Identificação</Label>
                 <Controller
-                  name="dataIdentificacao"
+                  name="identifiedAt"
                   control={control}
                   render={({ field }) => (
                     <DatePickerField
@@ -323,7 +323,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
                       disabled={isViewMode}
                       placeholder="Selecione a data"
                       displayFormat="dd/MM/yyyy"
-                      data-testid="datepicker-data-identificacao"
+                      data-testid="datepicker-identified-at"
                     />
                   )}
                 />
@@ -333,37 +333,37 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
             <div className="space-y-2">
               <Label>Descrição Detalhada</Label>
               <Textarea
-                {...register("descricao")}
+                {...register("description")}
                 disabled={isViewMode}
                 placeholder="Descreva detalhadamente a infração..."
                 rows={3}
-                data-testid="textarea-descricao"
+                data-testid="textarea-description"
               />
-              <FieldError error={errors.descricao?.message} />
+              <FieldError error={errors.description?.message} />
             </div>
 
             <div className="space-y-2">
               <Label>Evidências/Links de Prova</Label>
               <Textarea
-                {...register("evidencias")}
+                {...register("evidence")}
                 disabled={isViewMode}
                 placeholder="Links para evidências, capturas de tela etc."
                 rows={2}
-                data-testid="textarea-evidencias"
+                data-testid="textarea-evidence"
               />
-              <FieldError error={errors.evidencias?.message} />
+              <FieldError error={errors.evidence?.message} />
             </div>
 
             <div className="space-y-2">
               <Label>Observações</Label>
               <Textarea
-                {...register("observacoes")}
+                {...register("notes")}
                 disabled={isViewMode}
                 placeholder="Observações adicionais..."
                 rows={2}
-                data-testid="textarea-observacoes"
+                data-testid="textarea-notes"
               />
-              <FieldError error={errors.observacoes?.message} />
+              <FieldError error={errors.notes?.message} />
             </div>
           </div>
 

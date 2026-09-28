@@ -55,9 +55,9 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
     const block = entityBlock('TakedownEntity');
     const dto = source('../modules/takedowns/dto/takedowns.dto.ts');
     const fields = [
-      'title', 'type', 'obra_afetada', 'artista', 'plataforma',
-      'prioridade', 'url_infracao', 'motivo', 'description', 'evidencias',
-      'data_identificacao', 'status', 'notes',
+      'title', 'type', 'affected_work', 'artist_name', 'platform',
+      'priority', 'infringing_url', 'reason', 'description', 'evidence',
+      'identified_at', 'status', 'notes',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);

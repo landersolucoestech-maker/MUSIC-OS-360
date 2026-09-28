@@ -24,7 +24,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
   if (!takedown) return null;
 
   const n = normalizeTakedown(takedown);
-  const url = n.url_infracao;
+  const url = n.infringingUrl;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -52,7 +52,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
                 <span className="text-sm text-muted-foreground">Tipo</span>
                 <div className="mt-1">{typeBadge(n.type)}</div>
               </div>
-              <Field label="Prioridade" value={priorityLabel(n.prioridade)} />
+              <Field label="Prioridade" value={priorityLabel(n.priority)} />
             </div>
           </div>
 
@@ -62,8 +62,8 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
               <Music className="h-4 w-4" /> Obra Afetada
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Obra" value={n.obra_afetada} />
-              <Field label="Artista" value={n.artista} />
+              <Field label="Obra" value={n.affectedWork} />
+              <Field label="Artista" value={n.artistName} />
             </div>
           </div>
 
@@ -75,9 +75,9 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <span className="text-sm text-muted-foreground">Plataforma</span>
-                <div className="mt-1">{n.plataforma ? <Badge variant="neutral">{n.plataforma}</Badge> : <span className="font-medium">—</span>}</div>
+                <div className="mt-1">{n.platform ? <Badge variant="neutral">{n.platform}</Badge> : <span className="font-medium">—</span>}</div>
               </div>
-              <Field label="Data de Identificação" icon={<Calendar className="h-3 w-3" />} value={formatTakedownDate(n.data)} />
+              <Field label="Data de Identificação" icon={<Calendar className="h-3 w-3" />} value={formatTakedownDate(n.identifiedAt)} />
             </div>
             {url && (
               <div>
@@ -100,28 +100,28 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" /> Motivo e Descrição
             </h3>
-            <Field label="Motivo" value={n.motivo} />
-            {n.descricao && (
+            <Field label="Motivo" value={n.reason} />
+            {n.description && (
               <div>
                 <span className="text-sm text-muted-foreground">Descrição Detalhada</span>
-                <p className="text-sm bg-muted/30 p-3 rounded-lg mt-1">{n.descricao}</p>
+                <p className="text-sm bg-muted/30 p-3 rounded-lg mt-1">{n.description}</p>
               </div>
             )}
           </div>
 
           {/* Evidence */}
-          {n.evidencias && (
+          {n.evidence && (
             <div className="space-y-2">
               <span className="text-sm text-muted-foreground">Evidências/Links de Prova</span>
-              <p className="text-sm bg-muted/30 p-3 rounded-lg break-all">{n.evidencias}</p>
+              <p className="text-sm bg-muted/30 p-3 rounded-lg break-all">{n.evidence}</p>
             </div>
           )}
 
           {/* Notes */}
-          {n.observacoes && (
+          {n.notes && (
             <div className="space-y-2">
               <span className="text-sm text-muted-foreground">Observações</span>
-              <p className="text-sm bg-muted/30 p-3 rounded-lg">{n.observacoes}</p>
+              <p className="text-sm bg-muted/30 p-3 rounded-lg">{n.notes}</p>
             </div>
           )}
         </div>

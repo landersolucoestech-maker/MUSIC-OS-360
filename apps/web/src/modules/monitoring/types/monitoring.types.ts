@@ -1,38 +1,35 @@
-import type { WorkRef, PhonogramRef } from "@/shared/types/refs";
 import type { TakedownStatus } from "@/shared/types/enums";
 
 export type { TakedownStatus };
 
+/** Takedown as the API returns it (canonical English fields, CZ-034). */
 export interface Takedown {
   id: string;
-  user_id?: string;
   title?: string | null;
+  /** sent | received */
   type?: string | null;
   work_id?: string | null;
-  obra_afetada?: string | null;
-  artista?: string | null;
-  fonograma_id?: string | null;
-  plataforma?: string | null;
-  prioridade?: string | null;
+  artist_id?: string | null;
+  affected_work?: string | null;
+  artist_name?: string | null;
+  platform?: string | null;
+  /** high | medium | low */
+  priority?: string | null;
+  /** Legacy mirror of infringing_url. */
   url?: string | null;
-  url_infracao?: string | null;
+  infringing_url?: string | null;
   status?: TakedownStatus | string | null;
-  motivo?: string | null;
+  reason?: string | null;
+  response?: string | null;
   description?: string | null;
-  evidencias?: string | null;
-  data_identificacao?: string | null;
-  data_solicitacao?: string | null;
-  data_conclusao?: string | null;
+  evidence?: string | null;
+  identified_at?: string | null;
   notes?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
 }
 
-export type TakedownInsert = Omit<Takedown, "id" | "user_id" | "created_at" | "updated_at">;
+export type TakedownInsert = Omit<Takedown, "id" | "created_at" | "updated_at">;
 export type TakedownUpdate = Partial<TakedownInsert>;
 
-export interface TakedownWithRelations extends Takedown {
-  obras?: WorkRef | null;
-  fonogramas?: PhonogramRef | null;
-}

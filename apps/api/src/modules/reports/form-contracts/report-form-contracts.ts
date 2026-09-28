@@ -367,23 +367,19 @@ const LICENSES_CONTRACT: ReportFormContract = {
 };
 
 // ─── Takedowns ────────────────────────────────────────────────────────────────
-// CreateTakedownDto (platform/trackId/reason/requestedAt) diverges completely
-// from the real column names and from the real form (TakedownFormModal.tsx, which
-// uses title/type/obra_afetada/artista/.../observacoes) — a pre-existing
-// DTO↔form mismatch bug, out of scope for this Part. The contract uses the real
-// physical columns the form actually writes; it is not checked against the broken
-// DTO (absent from FORM_DTO_BY_TABLE in the guard test).
+// Canonical source: TakedownFormModal.tsx / CreateTakedownDto (English since
+// CZ-034). Report keys keep the pre-rename PT-BR headers.
 const TAKEDOWNS_CONTRACT: ReportFormContract = {
   tableName: 'takedowns',
   identityColumn: 'title',
   fields: [
-    col('title'), col('type'), col('obra_afetada'), col('artista'), col('status'),
-    col('prioridade'), col('plataforma'), col('url_infracao'), col('motivo'),
-    col('data_identificacao'), col('description'), col('evidencias'), col('notes'),
+    col('title'), col('type'), col('affectedWork', 'affected_work'), col('artist', 'artist_name'), col('status'),
+    col('priority'), col('platform'), col('infringingUrl', 'infringing_url'), col('reason'),
+    col('identifiedAt', 'identified_at'), col('description'), col('evidence'), col('notes'),
   ],
   excludedFormFields: {},
-  filterableColumns: ['status', 'type', 'prioridade', 'plataforma'],
-  searchableColumns: ['title', 'obra_afetada', 'artista', 'motivo'],
+  filterableColumns: ['status', 'type', 'priority', 'platform'],
+  searchableColumns: ['title', 'affected_work', 'artist_name', 'reason'],
 };
 
 // ─── Distribution (releases) ─────────────────────────────────────────────────

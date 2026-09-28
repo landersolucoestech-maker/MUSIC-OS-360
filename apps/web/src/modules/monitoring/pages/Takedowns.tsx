@@ -28,7 +28,7 @@ export default function Takedowns() {
   // Task H: the old hook (downloads everything) stays only for mutations (delete) — the
   // table and the KPIs below no longer use `takedowns`.
   const { isLoading, deleteTakedown } = useTakedowns();
-  const [activeTab, setActiveTab] = useState("todos");
+  const [activeTab, setActiveTab] = useState("all");
   const [takedownModal, setTakedownModal] = useState<{ open: boolean; mode: "create" | "edit"; takedown?: any }>({ open: false, mode: "create" });
   const [viewModal, setViewModal] = useState<{ open: boolean; takedown?: any }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; takedown?: any }>({ open: false });
@@ -47,11 +47,11 @@ export default function Takedowns() {
   // filters that were always combined with AND (see the previous version:
   // matchesTab && matchesStatus). The backend only accepts a single `status`
   // value at a time, so we resolve the intersection here: if the tab asks for
-  // "pendentes" (status=pendente) and the select asks for a different status, the
+  // "pending" and the select asks for a different status, the
   // intersection is empty — no status combination satisfies
   // both, so we do not even call the API (equivalent to the former
   // filteredRows.length===0).
-  const tabStatus = activeTab === "pendentes" ? "pending" : activeTab === "resolvidos" ? "completed" : undefined;
+  const tabStatus = activeTab === "pending" ? "pending" : activeTab === "resolved" ? "completed" : undefined;
   const statusContradiction = tabStatus !== undefined && statusFilter !== "all" && statusFilter !== tabStatus;
   const effectiveStatus = statusContradiction ? undefined : (tabStatus ?? (statusFilter !== "all" ? statusFilter : undefined));
 
@@ -73,7 +73,7 @@ export default function Takedowns() {
     pageSize,
     search: debouncedSearch || undefined,
     status: effectiveStatus,
-    plataforma: platformFilter !== "all" ? platformFilter : undefined,
+    platform: platformFilter !== "all" ? platformFilter : undefined,
   });
 
   // KPIs: count per status OVER THE WHOLE TENANT (not the current page) —
@@ -82,13 +82,13 @@ export default function Takedowns() {
   // iterates over {status: count} (few entries) instead of the full list.
   const { stats: takedownsStats } = useTakedownsStats();
   const metrics = useMemo(() => {
-    let pending = 0, resolvidos = 0, emAndamento = 0;
+    let pending = 0, resolved = 0, inProgress = 0;
     for (const [status, count] of Object.entries(takedownsStats.byGroup)) {
       if (isPending(status)) pending += count;
-      else if (isResolved(status)) resolvidos += count;
-      else if (isInProgress(status)) emAndamento += count;
+      else if (isResolved(status)) resolved += count;
+      else if (isInProgress(status)) inProgress += count;
     }
-    return { total: takedownsStats.total, pendentes: pending, resolvidos, emAndamento };
+    return { total: takedownsStats.total, pending, resolved, inProgress };
   }, [takedownsStats]);
 
   // The table renders the current page returned by the backend directly
@@ -160,15 +160,15 @@ export default function Takedowns() {
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <MetricCard title="Total" value={metrics.total} icon={AlertTriangle} accent="primary" />
-          <MetricCard title="Pendentes" value={metrics.pendentes} icon={Clock} accent="warning" />
-          <MetricCard title="Em Andamento" value={metrics.emAndamento} icon={Upload} accent="primary" />
-          <MetricCard title="Resolvidos" value={metrics.resolvidos} icon={CheckCircle} accent="success" />
+          <MetricCard title="Pendentes" value={metrics.pending} icon={Clock} accent="warning" />
+          <MetricCard title="Em Andamento" value={metrics.inProgress} icon={Upload} accent="primary" />
+          <MetricCard title="Resolvidos" value={metrics.resolved} icon={CheckCircle} accent="success" />
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant={activeTab === "todos" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("todos")} className={activeTab === "todos" ? "bg-muted text-foreground hover:bg-muted" : ""}>Todos</Button>
-          <Button variant={activeTab === "pendentes" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("pendentes")} className={activeTab === "pendentes" ? "bg-muted text-foreground hover:bg-muted" : ""}>Pendentes</Button>
-          <Button variant={activeTab === "resolvidos" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("resolvidos")} className={activeTab === "resolvidos" ? "bg-muted text-foreground hover:bg-muted" : ""}>Resolvidos</Button>
+          <Button variant={activeTab === "all" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("all")} className={activeTab === "all" ? "bg-muted text-foreground hover:bg-muted" : ""}>Todos</Button>
+          <Button variant={activeTab === "pending" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("pending")} className={activeTab === "pending" ? "bg-muted text-foreground hover:bg-muted" : ""}>Pendentes</Button>
+          <Button variant={activeTab === "resolved" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("resolved")} className={activeTab === "resolved" ? "bg-muted text-foreground hover:bg-muted" : ""}>Resolvidos</Button>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 rounded-lg bg-muted/30 p-3">
@@ -284,9 +284,9 @@ export default function Takedowns() {
                       </TableCell>
                       <TableCell className="font-medium">{n.title || "—"}</TableCell>
                       <TableCell>{typeBadge(n.type)}</TableCell>
-                      <TableCell>{n.plataforma ? <Badge variant="neutral">{n.plataforma}</Badge> : "—"}</TableCell>
-                      <TableCell>{n.motivo || "—"}</TableCell>
-                      <TableCell>{formatTakedownDate(n.data) ?? "—"}</TableCell>
+                      <TableCell>{n.platform ? <Badge variant="neutral">{n.platform}</Badge> : "—"}</TableCell>
+                      <TableCell>{n.reason || "—"}</TableCell>
+                      <TableCell>{formatTakedownDate(n.identifiedAt) ?? "—"}</TableCell>
                       <TableCell>{statusBadge(n.status)}</TableCell>
                       <TableCell>
                         <DropdownMenu>

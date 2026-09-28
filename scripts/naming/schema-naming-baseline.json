@@ -1,5 +1,5 @@
 {
- "total": 196,
+ "total": 188,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -131,14 +131,6 @@
   "schema::column::shares.pagador": 1,
   "schema::column::shares.pagador_contato": 1,
   "schema::column::shares.versao": 1,
-  "schema::column::takedowns.artista": 1,
-  "schema::column::takedowns.data_identificacao": 1,
-  "schema::column::takedowns.evidencias": 1,
-  "schema::column::takedowns.motivo": 1,
-  "schema::column::takedowns.obra_afetada": 1,
-  "schema::column::takedowns.plataforma": 1,
-  "schema::column::takedowns.prioridade": 1,
-  "schema::column::takedowns.url_infracao": 1,
   "schema::column::transactions.anexo_nome": 1,
   "schema::column::transactions.anexo_url": 1,
   "schema::column::transactions.categoria": 1,

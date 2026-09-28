@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { TakedownWithRelations } from "../types/monitoring.types";
+import type { Takedown } from "../types/monitoring.types";
 
 export interface UseTakedownsPaginatedParams {
   /** 0-indexed, same convention as usePagination()/TablePagination. */
@@ -10,15 +10,15 @@ export interface UseTakedownsPaginatedParams {
   pageSize: number;
   search?: string;
   status?: string;
-  plataforma?: string;
+  platform?: string;
 }
 
-export function useTakedownsPaginated({ page, pageSize, search, status, plataforma: platform }: UseTakedownsPaginatedParams) {
+export function useTakedownsPaginated({ page, pageSize, search, status, platform }: UseTakedownsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (platform) filters.plataforma = platform;
+  if (platform) filters.platform = platform;
 
-  const result = usePaginatedDataQuery<TakedownWithRelations>({
+  const result = usePaginatedDataQuery<Takedown>({
     queryKey: [...QUERY_KEYS.TAKEDOWNS],
     table: "takedowns",
     page: page + 1,

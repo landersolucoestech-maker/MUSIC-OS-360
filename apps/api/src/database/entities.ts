@@ -1551,22 +1551,24 @@ export class TakedownEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) title: string;
-  @Column({ type: 'varchar', length: 100 }) plataforma: string;
+  @Column({ type: 'varchar', length: 100 }) platform: string;
   @Column({ type: 'text', nullable: true }) url: string | null;
   @Column({ type: 'varchar', length: 50, default: TakedownStatus.PENDING }) status: TakedownStatus;
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
-  @Column({ type: 'text', nullable: true }) motivo: string | null;
-  @Column({ type: 'text', nullable: true }) resposta: string | null;
-  // ── Takedown form fields (1 column per field — exact name) ────────────────────
+  @Column({ type: 'text', nullable: true }) reason: string | null;
+  @Column({ type: 'text', nullable: true }) response: string | null;
+  // ── Takedown form fields (1 column per field; English since CZ-034) ─────────────
+  /** sent (issued by the tenant) | received (a claim against the tenant). */
   @Column({ type: 'varchar', length: 30, nullable: true }) type: string | null;
-  @Column({ type: 'varchar', length: 500, nullable: true }) obra_afetada: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) artista: string | null;
-  @Column({ type: 'varchar', length: 20, nullable: true }) prioridade: string | null;
-  @Column({ type: 'text', nullable: true }) url_infracao: string | null;
+  @Column({ type: 'varchar', length: 500, nullable: true }) affected_work: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) artist_name: string | null;
+  /** high | medium | low */
+  @Column({ type: 'varchar', length: 20, nullable: true }) priority: string | null;
+  @Column({ type: 'text', nullable: true }) infringing_url: string | null;
   @Column({ type: 'text', nullable: true }) description: string | null;
-  @Column({ type: 'text', nullable: true }) evidencias: string | null;
-  @Column({ type: 'date', nullable: true }) data_identificacao: string | null;
+  @Column({ type: 'text', nullable: true }) evidence: string | null;
+  @Column({ type: 'date', nullable: true }) identified_at: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;

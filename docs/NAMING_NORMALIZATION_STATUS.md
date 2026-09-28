@@ -87,6 +87,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-031 | Project tracks (songs under development in an album/EP/single project) | done | DONE | no |
 | CZ-032 | Inventory item | done | DONE | no |
 | CZ-033 | CRM lead | done | DONE | no |
+| CZ-034 | Takedown | done | DONE | no |
 
-Concepts: 81. Renames: 0. Exceptions: 177. Blockers: 3.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 65, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 82. Renames: 0. Exceptions: 190. Blockers: 4.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 66, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

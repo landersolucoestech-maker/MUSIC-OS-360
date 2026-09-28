@@ -116,7 +116,7 @@ export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
 
 /**
  * Builds a query for the rights APIs from a
- * local Takedown (matches by ISRC when available in the `motivo` field).
+ * local Takedown (matches by ISRC when available in the `reason` field).
  *
  * FUTURE MIGRATION: the isrc field will come directly from Takedown.isrc
  * once that field is added to the entity.
@@ -147,12 +147,12 @@ function formatPeriodo(iso: string): string {
 }
 
 /**
- * Tries to extract the ISRC from the Takedown's `motivo` field.
+ * Tries to extract the ISRC from the Takedown's `reason` field.
  * FUTURE MIGRATION: remove this heuristic once Takedown has a dedicated isrc field.
  */
 function extractIsrcFromTakedown(takedown: Takedown): string | undefined {
   const isrcPattern = /[A-Z]{2}[A-Z0-9]{3}\d{7}/;
-  const reason = takedown.motivo ?? "";
+  const reason = takedown.reason ?? "";
   const match = isrcPattern.exec(reason);
   return match?.[0];
 }

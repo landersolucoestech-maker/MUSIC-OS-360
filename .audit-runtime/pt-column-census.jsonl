@@ -47,10 +47,6 @@
 {"table":"shares","className":"ShareEntity","field":"data_prevista","columnOverride":null,"type":"date"}
 {"table":"shares","className":"ShareEntity","field":"origem_acordo","columnOverride":null,"type":"varchar"}
 {"table":"shares","className":"ShareEntity","field":"pagador_contato","columnOverride":null,"type":"varchar"}
-{"table":"takedowns","className":"TakedownEntity","field":"artista","columnOverride":null,"type":"varchar"}
-{"table":"takedowns","className":"TakedownEntity","field":"data_identificacao","columnOverride":null,"type":"date"}
-{"table":"takedowns","className":"TakedownEntity","field":"obra_afetada","columnOverride":null,"type":"varchar"}
-{"table":"takedowns","className":"TakedownEntity","field":"prioridade","columnOverride":null,"type":"varchar"}
 {"table":"transactions","className":"TransactionEntity","field":"anexo_nome","columnOverride":null,"type":"varchar"}
 {"table":"transactions","className":"TransactionEntity","field":"categoria","columnOverride":null,"type":"varchar"}
 {"table":"transactions","className":"TransactionEntity","field":"conta_origem","columnOverride":null,"type":"varchar"}

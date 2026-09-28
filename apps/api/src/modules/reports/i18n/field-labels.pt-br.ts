@@ -644,6 +644,13 @@ export const FIELD_LABELS_PT_BR = {
   nextFollowUpAt: 'Próximo follow-up',
   estimatedValue: 'Valor estimado',
   temperature: 'Temperatura',
+  // takedowns (CZ-034) — same headers as the pre-rename columns.
+  artist: 'Artista',
+  affectedWork: 'Obra afetada',
+  infringingUrl: 'Link da infração',
+  reason: 'Motivo',
+  identifiedAt: 'Data de identificação',
+  evidence: 'Evidências',
   campaignId: 'Campanha',
 
   // ── Parte 89 — Briefing ──────────────────────────────────────────────────────
