@@ -22,7 +22,7 @@ export interface FinancialRule {
 export function useFinancialRules() {
   const result = useDataQuery<FinancialRule>({
     queryKey: [...QUERY_KEYS.FINANCIAL_RULES],
-    table: "regras_financeiras",
+    table: "financial_rules",
     orderBy: { column: "name", ascending: true },
   }, {
     create: { success: "Regra criada com sucesso!", error: "Erro ao criar regra" },

@@ -21,7 +21,7 @@ export function useLicensesPaginated({ page, pageSize, search, status, targetMed
 
   const result = usePaginatedDataQuery<License>({
     queryKey: [...QUERY_KEYS.LICENSES],
-    table: "licencas",
+    table: "licenses",
     page: page + 1,
     pageSize,
     search,

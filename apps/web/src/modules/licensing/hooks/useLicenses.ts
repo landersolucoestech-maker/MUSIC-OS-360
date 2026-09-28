@@ -7,7 +7,7 @@ export type { License, LicenseInsert, LicenseUpdate };
 export function useLicenses() {
   const result = useDataQuery<License>({
     queryKey: [...QUERY_KEYS.LICENSES],
-    table: "licencas",
+    table: "licenses",
     select: "*, clientes(*)",
   }, {
     create: { success: "Licença criada com sucesso!", error: "Erro ao criar licença" },

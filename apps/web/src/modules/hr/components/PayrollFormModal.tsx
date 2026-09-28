@@ -171,7 +171,7 @@ export function PayrollFormModal({
 
   // Task I: resolves by direct ID (does not depend on the employee being among
   // the first ones loaded by useFuncionarios() without a filter).
-  const { entity: selectedEmployee } = useEntityById<Employee>("funcionarios", employeeId || undefined);
+  const { entity: selectedEmployee } = useEntityById<Employee>("employees", employeeId || undefined);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -189,7 +189,7 @@ export function PayrollFormModal({
           <div className="space-y-2">
             <Label>Funcionário *</Label>
             <AsyncEntityCombobox<Employee>
-              table="funcionarios"
+              table="employees"
               value={employeeId || null}
               getLabel={(f) => `${f.name ?? ""} - ${f.job_title || "Sem cargo"}`}
               onChange={setEmployeeId}

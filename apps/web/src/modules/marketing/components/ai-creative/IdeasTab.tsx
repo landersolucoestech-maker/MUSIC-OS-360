@@ -86,7 +86,7 @@ export function IdeasTab({
         <AsyncEntitySelect
           label={context === "artista" ? "Artista" : "Projeto"}
           value={target?.id ?? ""}
-          table={context === "artista" ? "artistas" : "projects"}
+          table={context === "artista" ? "artists" : "projects"}
           placeholder={context === "artista" ? "Selecione o artista" : "Selecione o projeto"}
           onChange={setTarget}
         />

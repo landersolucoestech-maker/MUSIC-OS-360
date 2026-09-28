@@ -17,7 +17,7 @@ export function usePhonograms(enabled = true, artistId?: string) {
 
   const result = useDataQuery<PhonogramWithRelations>({
     queryKey: artistId ? [...QUERY_KEYS.PHONOGRAMS, "by-artist", artistId] : [...QUERY_KEYS.PHONOGRAMS],
-    table: "fonogramas",
+    table: "phonograms",
     select: "*, artistas(*)",
     enabled,
     filters: artistId ? { artist_id: artistId } : undefined,

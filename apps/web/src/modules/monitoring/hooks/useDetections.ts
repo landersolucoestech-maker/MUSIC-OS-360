@@ -5,7 +5,7 @@ import type { ContentDetection } from "@/modules/monitoring/rights/types";
 export function useDetections() {
   const result = useDataQuery<ContentDetection>({
     queryKey: [...QUERY_KEYS.CONTENT_DETECTIONS],
-    table: "deteccoes",
+    table: "content_detections",
     orderBy: { column: "detected_at", ascending: false },
   }, {
     create: { success: "Detecção registrada com sucesso!", error: "Erro ao registrar detecção" },

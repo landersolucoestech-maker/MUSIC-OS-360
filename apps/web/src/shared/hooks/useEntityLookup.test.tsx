@@ -50,7 +50,7 @@ describe("useEntityLookup", () => {
 
   it("finds record #75 by searching part of the name (beyond the old cap of 50)", async () => {
     const { result, rerender } = renderHook(
-      ({ search }: { search: string }) => useEntityLookup<FakeRow>({ table: "artistas", search, enabled: true }),
+      ({ search }: { search: string }) => useEntityLookup<FakeRow>({ table: "artists", search, enabled: true }),
       { wrapper: createWrapper(), initialProps: { search: "" } },
     );
 
@@ -60,7 +60,7 @@ describe("useEntityLookup", () => {
 
   it("debounce: fast typing does not fire one request per keystroke", async () => {
     const { rerender } = renderHook(
-      ({ search }: { search: string }) => useEntityLookup<FakeRow>({ table: "artistas", search, enabled: true }),
+      ({ search }: { search: string }) => useEntityLookup<FakeRow>({ table: "artists", search, enabled: true }),
       { wrapper: createWrapper(), initialProps: { search: "" } },
     );
     mockedListPaged.mockClear();
@@ -78,7 +78,7 @@ describe("useEntityLookup", () => {
 
   it("an empty search + enabled does not cause a storm of repeated requests", async () => {
     const { rerender } = renderHook(
-      ({ enabled }: { enabled: boolean }) => useEntityLookup<FakeRow>({ table: "artistas", search: "", enabled }),
+      ({ enabled }: { enabled: boolean }) => useEntityLookup<FakeRow>({ table: "artists", search: "", enabled }),
       { wrapper: createWrapper(), initialProps: { enabled: false } },
     );
     mockedListPaged.mockClear();
@@ -95,7 +95,7 @@ describe("useEntityLookup", () => {
 
   it("does not fetch when enabled=false (e.g. closed popover)", async () => {
     renderHook(
-      () => useEntityLookup<FakeRow>({ table: "artistas", search: "qualquer coisa", enabled: false }),
+      () => useEntityLookup<FakeRow>({ table: "artists", search: "qualquer coisa", enabled: false }),
       { wrapper: createWrapper() },
     );
     await settle();
@@ -117,7 +117,7 @@ describe("useEntityLookup", () => {
     }) as typeof storage.listPaged);
 
     const { rerender } = renderHook(
-      ({ search }: { search: string }) => useEntityLookup<FakeRow>({ table: "artistas", search, enabled: true }),
+      ({ search }: { search: string }) => useEntityLookup<FakeRow>({ table: "artists", search, enabled: true }),
       { wrapper: createWrapper(), initialProps: { search: "Artista 1" } },
     );
     await waitFor(() => expect(signals.length).toBe(1), { timeout: 2000 });
@@ -143,14 +143,14 @@ describe("useEntityById", () => {
 
   it("resolves a record beyond the first 50 via a direct GET /:resource/:id", async () => {
     mockedFindById.mockResolvedValue({ id: "id-75", nome: "Artista 75" });
-    const { result } = renderHook(() => useEntityById<FakeRow>("artistas", "id-75"), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useEntityById<FakeRow>("artists", "id-75"), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.entity?.id).toBe("id-75"));
-    expect(mockedFindById).toHaveBeenCalledWith("artistas", "id-75");
+    expect(mockedFindById).toHaveBeenCalledWith("artists", "id-75");
   });
 
   it("does not fetch when the id is null/undefined", async () => {
-    renderHook(() => useEntityById<FakeRow>("artistas", undefined), { wrapper: createWrapper() });
+    renderHook(() => useEntityById<FakeRow>("artists", undefined), { wrapper: createWrapper() });
     expect(mockedFindById).not.toHaveBeenCalled();
   });
 });

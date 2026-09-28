@@ -109,7 +109,7 @@ export function PitchingTab({
       }
     >
       <div className="grid gap-4 md:grid-cols-2">
-        <AsyncEntitySelect label="Artista" value={artist?.id ?? ""} table="artistas" placeholder="Selecione o artista" onChange={setArtist} />
+        <AsyncEntitySelect label="Artista" value={artist?.id ?? ""} table="artists" placeholder="Selecione o artista" onChange={setArtist} />
         <EntitySelect label="Lançamento" value={release?.id ?? ""} options={releaseOptions} placeholder={artist ? "Selecione o lançamento" : "Selecione um artista primeiro"} onChange={setRelease} disabled={!artist} />
       </div>
 

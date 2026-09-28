@@ -22,7 +22,7 @@ export function useInventoryPaginated({ page, pageSize, search, status, category
 
   const result = usePaginatedDataQuery<InventoryItem>({
     queryKey: [...QUERY_KEYS.INVENTORY],
-    table: "inventario",
+    table: "inventory_items",
     page: page + 1,
     pageSize,
     search,

@@ -111,7 +111,7 @@ export function WorkViewModal({
   // Fetches DIRECTLY by ID (GET /works/:id) — does not depend on the work being among
   // the first loaded records (Task J: it used to use an unfiltered useWorks(),
   // which truncated at 50 works per tenant).
-  const { entity: fresh } = useEntityById<WorkWithRelations>("obras", open ? workProp?.id : undefined);
+  const { entity: fresh } = useEntityById<WorkWithRelations>("works", open ? workProp?.id : undefined);
   // GET /works/:id returns only artist_id/project_id (no embedded relations):
   // the linked artist and project are resolved by id.
   const linkedArtistId = open ? (fresh?.artist_id ?? workProp?.artist_id ?? undefined) : undefined;

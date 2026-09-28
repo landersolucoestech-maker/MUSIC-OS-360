@@ -340,7 +340,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
                     the Select with useArtistas() without a filter, truncated to the first
                     50 artists of the tenant. */}
                 <AsyncEntityCombobox<ArtistWireRecord>
-                  table="artistas"
+                  table="artists"
                   getLabel={(a) => a.stage_name?.trim() || "Sem nome"}
                   value={formData.artist_id || null}
                   onChange={(id) => handleChange("artist_id", id)}

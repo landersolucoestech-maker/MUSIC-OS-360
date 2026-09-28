@@ -219,7 +219,7 @@ export default function Releases() {
     "edit",
     releases,
     useCallback((release) => setFormModal({ open: true, mode: "edit", release }), []),
-    "lancamentos",
+    "releases",
   );
 
   // Support ?view=<id> to directly open the view modal (e.g., navigated from
@@ -237,7 +237,7 @@ export default function Releases() {
     }
     if (releases.length === 0) return;
     let cancelled = false;
-    storage.findById<Release & { id: string }>("lancamentos", viewId).then((found) => {
+    storage.findById<Release & { id: string }>("releases", viewId).then((found) => {
       if (cancelled || !found) return;
       setViewModal({ open: true, release: found });
       setSearchParams((prev) => { prev.delete("view"); return prev; }, { replace: true });
@@ -292,7 +292,7 @@ export default function Releases() {
   useEffect(() => {
     if (pageArtistIds.length === 0) return;
     let cancelled = false;
-    Promise.all(pageArtistIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
+    Promise.all(pageArtistIds.map((id) => storage.findById<ArtistWireRecord>("artists", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, Artist> = {};
@@ -421,7 +421,7 @@ export default function Releases() {
               first 50 artists. "Todos Artistas" comes back via the Clear button. */}
           <div className="h-8 w-[180px] shrink-0">
             <AsyncEntityCombobox<ArtistWireRecord>
-              table="artistas"
+              table="artists"
               getLabel={(a) => a.stage_name?.trim() || "Sem nome"}
               value={artistFilter !== "all-artist" ? artistFilter : null}
               onChange={(id) => setArtistFilter(id)}

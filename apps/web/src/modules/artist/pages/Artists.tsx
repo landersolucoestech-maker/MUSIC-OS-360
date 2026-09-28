@@ -195,7 +195,7 @@ export default function Artists() {
     // Task I: artist outside the first batch loaded by useArtists() with no
     // filter — fetches directly by ID instead of never resolving the deep link.
     let cancelled = false;
-    storage.findById<ArtistWireRecord>("artistas", editIdFromUrl).then((entity) => {
+    storage.findById<ArtistWireRecord>("artists", editIdFromUrl).then((entity) => {
       if (cancelled || !entity) return;
       setEditModal({ open: true, artist: wireToArtist(entity) });
     });

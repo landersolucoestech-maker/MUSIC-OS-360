@@ -51,7 +51,7 @@ export function useWorksPaginated({
 
   const result = usePaginatedDataQuery<Work>({
     queryKey: [...QUERY_KEYS.WORKS],
-    table: "obras",
+    table: "works",
     page: page + 1,
     pageSize,
     search,
@@ -124,7 +124,7 @@ export function usePhonogramsPaginated({
 
   const result = usePaginatedDataQuery<Phonogram>({
     queryKey: [...QUERY_KEYS.PHONOGRAMS],
-    table: "fonogramas",
+    table: "phonograms",
     page: page + 1,
     pageSize,
     search,

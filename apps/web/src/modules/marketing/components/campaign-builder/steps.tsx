@@ -245,7 +245,7 @@ export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
       <Field label="Entidade vinculada">
         {state.promotedEntityType === "ARTIST" ? (
           <AsyncEntityCombobox<{ id: string; stage_name?: string | null }>
-            table="artistas"
+            table="artists"
             getLabel={(a) => a.stage_name ?? ""}
             value={state.promotedEntityId}
             onChange={(id, entity) =>

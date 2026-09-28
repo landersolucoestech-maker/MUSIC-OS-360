@@ -28,7 +28,7 @@ export function invoiceRecipientName(invoice: InvoicePartyFields | null | undefi
 export function useInvoicePartyName(invoice: InvoicePartyFields | null | undefined): string | null {
   const stored = invoiceRecipientName(invoice);
   const clientId = !stored ? nonEmpty(invoice?.client_id) : null;
-  const { entity, isLoading } = useEntityById<{ name?: string | null }>("clientes", clientId);
+  const { entity, isLoading } = useEntityById<{ name?: string | null }>("clients", clientId);
   if (stored) return stored;
   if (!clientId) return null;
   if (isLoading) return CLIENT_LOADING_LABEL;

@@ -78,13 +78,13 @@ vi.mock("@/shared/lib/storage", async () => {
     storage: {
       ...actual.storage,
       findById: vi.fn(async (table: string, id: string) => {
-        if (table === "obras" && id === "obra-1") {
+        if (table === "works" && id === "obra-1") {
           return { id: "obra-1", title: "Canção Vinculada", music_genre: "pop", composer_names: ["Alice"], status: "registered" };
         }
         // Task J: an artist "outside the cap" — it would never be among the first 50
         // returned by an unfiltered useArtistas(); it is only reachable by a direct GET
         // /artists/:id (see selectObra in PhonogramFormModal.tsx).
-        if (table === "artistas" && id === "art-99") {
+        if (table === "artists" && id === "art-99") {
           return { id: "art-99", stage_name: "Artista Fora Do Cap" };
         }
         return undefined;
@@ -93,7 +93,7 @@ vi.mock("@/shared/lib/storage", async () => {
       // obra" popover (useEntityLookup inside PhonogramFormModal). A single
       // record whose artist is only resolvable via storage.findById above.
       listPaged: vi.fn(async (table: string) => {
-        if (table === "obras") {
+        if (table === "works") {
           return {
             items: [
               {

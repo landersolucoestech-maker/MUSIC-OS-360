@@ -7,7 +7,7 @@ export type { InventoryItem, InventoryInsert, InventoryUpdate };
 export function useInventory() {
   const result = useDataQuery<InventoryItem>({
     queryKey: [...QUERY_KEYS.INVENTORY],
-    table: "inventario",
+    table: "inventory_items",
   }, {
     create: { success: "Item criado com sucesso!", error: "Erro ao criar item" },
     update: { success: "Item atualizado com sucesso!", error: "Erro ao atualizar item" },

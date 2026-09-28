@@ -731,7 +731,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
                 <Label>Nome do Local</Label>
                 {shouldUseCRMLocal ? (
                   <AsyncEntityCombobox<LocalCRMLookup>
-                    table="clientes"
+                    table="clients"
                     getLabel={(local) => local.name}
                     value={formData.venue}
                     onChange={handleLocalCRMChange}

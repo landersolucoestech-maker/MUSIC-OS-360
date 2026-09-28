@@ -77,7 +77,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
   // the first 50 loaded by useWorks() without a filter (Task J).
   const workId = useWatch({ control, name: "workId" });
   const remunerationType = useWatch({ control, name: "remunerationType" });
-  const { entity: selectedWork } = useEntityById<Work>("obras", workId || undefined);
+  const { entity: selectedWork } = useEntityById<Work>("works", workId || undefined);
   const derivedArtist = useMemo(() => workArtistLabel(selectedWork), [selectedWork]);
   const showMonetary = remunerationType === "FIXED" || remunerationType === "FIXED_PLUS_PERCENTAGE";
   const showPercentage = remunerationType === "PERCENTAGE" || remunerationType === "FIXED_PLUS_PERCENTAGE";
@@ -212,7 +212,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
                   control={control}
                   render={({ field }) => (
                     <AsyncEntityCombobox<Work>
-                      table="obras"
+                      table="works"
                       getLabel={(o) => o.title ?? ""}
                       value={field.value}
                       onChange={(id) => field.onChange(id)}
@@ -253,7 +253,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
                   control={control}
                   render={({ field }) => (
                     <AsyncEntityCombobox<ClientOption>
-                      table="clientes"
+                      table="clients"
                       getLabel={(c) => c.name ?? ""}
                       value={field.value}
                       onChange={(id) => field.onChange(id)}

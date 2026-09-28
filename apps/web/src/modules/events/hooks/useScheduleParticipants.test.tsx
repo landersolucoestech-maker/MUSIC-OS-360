@@ -41,7 +41,7 @@ describe("useScheduleParticipants", () => {
     mockedListPaged.mockReset();
     mockedFindById.mockReset();
     mockedListPaged.mockImplementation((async (table: string, options: { page: number; pageSize: number; filters?: Record<string, unknown> }) => {
-      if (table !== "artistas") {
+      if (table !== "artists") {
         return { items: [], page: 1, pageSize: options.pageSize, total: 0, totalPages: 1 };
       }
       const search = (options.filters?.search as string | undefined)?.toLowerCase();
@@ -72,7 +72,7 @@ describe("useScheduleParticipants", () => {
       () => expect(result.current.getArtistParticipantById("artist-75")?.label).toBe("Artista 75"),
       { timeout: 2000 },
     );
-    expect(mockedFindById).toHaveBeenCalledWith("artistas", "artist-75");
+    expect(mockedFindById).toHaveBeenCalledWith("artists", "artist-75");
   });
 
   it("without pendingArtistId, does not call findById", async () => {

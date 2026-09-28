@@ -27,9 +27,9 @@ function initConsistencyHooks(): void {
   subscribe(DomainEvents.CONTRACT_CREATED, async ({ artist_id, id }) => {
     if (!artist_id) return;
     try {
-      const artist = await storage.findById<Record<string, unknown> & { id: string }>("artistas", artist_id);
+      const artist = await storage.findById<Record<string, unknown> & { id: string }>("artists", artist_id);
       if (artist && artist.status !== "signed") {
-        await storage.update("artistas", artist_id, {
+        await storage.update("artists", artist_id, {
           status: "signed",
           contrato_id: id,
         });

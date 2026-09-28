@@ -113,7 +113,7 @@ const STATUS_VARIANT_AUSENCIA: Record<string, BadgeVariant> = {
 /** Resolves the employee name directly by ID (GET /hr/employees/:id) — never
  * by scanning the capped list of useEmployees() (Task J). */
 function EmployeeNameCell({ id }: { id: string | null }) {
-  const { entity, isLoading } = useEntityById<Employee>("funcionarios", id);
+  const { entity, isLoading } = useEntityById<Employee>("employees", id);
   if (!id) return <>N/A</>;
   if (isLoading) return <>…</>;
   return <>{entity?.name || "N/A"}</>;
@@ -1004,7 +1004,7 @@ export default function HR() {
               <div className="flex flex-wrap items-center gap-2 flex-1">
                 <div className="w-[250px]">
                   <AsyncEntityCombobox<Employee>
-                    table="funcionarios"
+                    table="employees"
                     value={docEmployeeId || null}
                     onChange={(id) => setDocEmployeeId(id || "")}
                     getLabel={(f) => f.name ?? ""}

@@ -33,7 +33,7 @@ export function useArtistsPaginated({ page, pageSize, search, relationship, genr
 
   const result = usePaginatedDataQuery<ArtistWireRecord>({
     queryKey: [...QUERY_KEYS.ARTISTS],
-    table: "artistas",
+    table: "artists",
     page: page + 1,
     pageSize,
     search,

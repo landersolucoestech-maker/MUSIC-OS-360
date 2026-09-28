@@ -73,9 +73,9 @@ export function summarizeScheduleParticipants(participants: ScheduleParticipant[
  * list of 8 flagged in Task J) — kept as they were.
  */
 export function useScheduleParticipants(search: string = "", pendingArtistId?: string | null) {
-  const { items: artistItems } = useEntityLookup<ArtistLookup>({ table: "artistas", search, pageSize: 20 });
-  const { items: employeeItems } = useEntityLookup<EmployeeLookup>({ table: "funcionarios", search, pageSize: 20 });
-  const { entity: pendingArtist } = useEntityById<ArtistLookup>("artistas", pendingArtistId);
+  const { items: artistItems } = useEntityLookup<ArtistLookup>({ table: "artists", search, pageSize: 20 });
+  const { items: employeeItems } = useEntityLookup<EmployeeLookup>({ table: "employees", search, pageSize: 20 });
+  const { entity: pendingArtist } = useEntityById<ArtistLookup>("artists", pendingArtistId);
   const { users: users = [] } = useUsers();
   const { contacts = [] } = useContacts();
 

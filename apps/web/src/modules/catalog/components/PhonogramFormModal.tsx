@@ -118,7 +118,7 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled, cla
   }, []);
 
   const { items: suggestionsWire } = useEntityLookup<ArtistWireRecord>({
-    table: "artistas",
+    table: "artists",
     search: inputText,
     enabled: open && inputText.trim().length > 0,
   });
@@ -269,7 +269,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
   // outside the tenant's first 50).
   const hydratedWorkId: string | undefined = phonogram?.work_id ?? undefined;
   const { entity: hydratedWork } = useEntityById<ObraWithRelations>(
-    "obras",
+    "works",
     open ? hydratedWorkId : undefined,
   );
 
@@ -311,7 +311,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
   const LOCAL_RESULTS_LIMIT = 20;
   const titleCollator = new Intl.Collator("pt-BR", { sensitivity: "base" });
   const { items: worksSearch, total: registeredWorksTotal } = useEntityLookup<ObraWithRelations>({
-    table: "obras",
+    table: "works",
     search: searchWorkDebounced,
     pageSize: LOCAL_RESULTS_LIMIT,
     enabled: searchOpen,
@@ -581,9 +581,9 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                       // first loaded; falls back to a lookup by name only when the
                       // participant was never linked to a registered artist.
                       const foundWire = p.artist_id
-                        ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
+                        ? await storage.findById<ArtistWireRecord>("artists", p.artist_id)
                         : p.name
-                          ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.name } }))
+                          ? (await storage.listPaged<ArtistWireRecord>("artists", { page: 1, pageSize: 5, filters: { search: p.name } }))
                               .items.find(a => (a.full_name || a.stage_name) === p.name)
                           : undefined;
                       if (foundWire) setViewArtist(wireToArtist(foundWire));
@@ -732,13 +732,13 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                 let artistName = fullWork.artistas?.stage_name as string | undefined;
                                 let artistId = fullWork.artistas?.id as string | undefined;
                                 if (!artistName && (fullWork.artist_id as string | null | undefined)) {
-                                  const byId = await storage.findById<ArtistWireRecord>("artistas", fullWork.artist_id as string);
+                                  const byId = await storage.findById<ArtistWireRecord>("artists", fullWork.artist_id as string);
                                   if (byId) { const a = wireToArtist(byId); artistName = a.stageName; artistId = a.id; }
                                 }
                                 if (!artistName && composersStr) {
                                   const firstComp = composersStr.split(",")[0]?.trim();
                                   if (firstComp) {
-                                    const { items: compMatches } = await storage.listPaged<ArtistWireRecord>("artistas", {
+                                    const { items: compMatches } = await storage.listPaged<ArtistWireRecord>("artists", {
                                       page: 1, pageSize: 5, filters: { search: firstComp },
                                     });
                                     const byName = compMatches.map(wireToArtist).find((a: Artist) =>

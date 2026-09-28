@@ -143,7 +143,7 @@ export default function Projects() {
   useEffect(() => {
     if (pageArtistIds.length === 0) return;
     let cancelled = false;
-    Promise.all(pageArtistIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
+    Promise.all(pageArtistIds.map((id) => storage.findById<ArtistWireRecord>("artists", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, Artist> = {};
@@ -268,7 +268,7 @@ export default function Projects() {
           <div className="flex items-center gap-1 shrink-0">
             <div className="h-8 w-[160px]">
               <AsyncEntityCombobox<ArtistWireRecord>
-                table="artistas"
+                table="artists"
                 getLabel={(a) => a.stage_name?.trim() || "Sem nome"}
                 value={artistFilter !== "all" ? artistFilter : null}
                 onChange={(id) => setArtistFilter(id)}

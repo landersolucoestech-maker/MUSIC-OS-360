@@ -16,13 +16,13 @@ describe("storage.listPaged", () => {
 
   it("computes offset from page/pageSize (1-indexed)", async () => {
     mockedGet.mockResolvedValue({ data: [], meta: { total: 0 } });
-    await storage.listPaged("artistas", { page: 1, pageSize: 10 });
+    await storage.listPaged("artists", { page: 1, pageSize: 10 });
     let url = mockedGet.mock.calls[0][0] as string;
     expect(url).toContain("offset=0");
     expect(url).toContain("limit=10");
 
     mockedGet.mockClear();
-    await storage.listPaged("artistas", { page: 6, pageSize: 10 });
+    await storage.listPaged("artists", { page: 6, pageSize: 10 });
     url = mockedGet.mock.calls[0][0] as string;
     expect(url).toContain("offset=50");
     expect(url).toContain("limit=10");
@@ -30,7 +30,7 @@ describe("storage.listPaged", () => {
 
   it("includes search, orderBy and extra filters in the query string", async () => {
     mockedGet.mockResolvedValue({ data: [], meta: { total: 0 } });
-    await storage.listPaged("artistas", {
+    await storage.listPaged("artists", {
       page: 1,
       pageSize: 20,
       filters: { status: "ativo", search: "banda" },
@@ -46,7 +46,7 @@ describe("storage.listPaged", () => {
   it("unwraps the {data, meta:{total}} envelope and uses the backend's real total", async () => {
     const rows = [{ id: "a" }, { id: "b" }];
     mockedGet.mockResolvedValue({ data: rows, meta: { total: 137, offset: 0, limit: 2 } });
-    const result = await storage.listPaged("artistas", { page: 1, pageSize: 2 });
+    const result = await storage.listPaged("artists", { page: 1, pageSize: 2 });
     expect(result.items).toEqual(rows);
     expect(result.total).toBe(137);
   });
@@ -54,7 +54,7 @@ describe("storage.listPaged", () => {
   it("falls back to items.length as the total when the response is a plain array (no envelope)", async () => {
     const rows = [{ id: "a" }, { id: "b" }, { id: "c" }];
     mockedGet.mockResolvedValue(rows);
-    const result = await storage.listPaged("artistas", { page: 1, pageSize: 50 });
+    const result = await storage.listPaged("artists", { page: 1, pageSize: 50 });
     expect(result.total).toBe(3);
   });
 
@@ -67,7 +67,7 @@ describe("storage.listPaged", () => {
       [1, 50, 1],
     ])("total=%i pageSize=%i -> totalPages=%i", async (total, pageSize, expected) => {
       mockedGet.mockResolvedValue({ data: [], meta: { total } });
-      const result = await storage.listPaged("artistas", { page: 1, pageSize });
+      const result = await storage.listPaged("artists", { page: 1, pageSize });
       expect(result.totalPages).toBe(expected);
     });
   });
@@ -75,14 +75,14 @@ describe("storage.listPaged", () => {
   it("propagates the AbortSignal to api.get", async () => {
     mockedGet.mockResolvedValue({ data: [], meta: { total: 0 } });
     const controller = new AbortController();
-    await storage.listPaged("artistas", { page: 1, pageSize: 10, signal: controller.signal });
+    await storage.listPaged("artists", { page: 1, pageSize: 10, signal: controller.signal });
     const options = mockedGet.mock.calls[0][1] as { signal?: AbortSignal };
     expect(options.signal).toBe(controller.signal);
   });
 
   it("keeps the requested page/pageSize in the result", async () => {
     mockedGet.mockResolvedValue({ data: [], meta: { total: 0 } });
-    const result = await storage.listPaged("artistas", { page: 4, pageSize: 25 });
+    const result = await storage.listPaged("artists", { page: 4, pageSize: 25 });
     expect(result.page).toBe(4);
     expect(result.pageSize).toBe(25);
   });

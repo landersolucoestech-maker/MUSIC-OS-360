@@ -28,7 +28,7 @@ export function ProfileTab({
   // Task J — the selected artist's catalog is fetched directly and scoped by
   // artist_id (server-side), no longer filtering an unfiltered sources.obras/fonogramas
   // (capped at the tenant's first 50).
-  const { entity: artistRecordWire } = useEntityById<ArtistWireRecord>("artistas", artist?.id);
+  const { entity: artistRecordWire } = useEntityById<ArtistWireRecord>("artists", artist?.id);
   const artistRecord: Artist | undefined = artistRecordWire ? wireToArtist(artistRecordWire) : undefined;
   const { works } = useWorks(!!artist, artist?.id);
   const { phonograms } = usePhonograms(!!artist, artist?.id);
@@ -70,7 +70,7 @@ export function ProfileTab({
       <AsyncEntitySelect
         label="Artista"
         value={artist?.id ?? ""}
-        table="artistas"
+        table="artists"
         placeholder="Selecione o artista"
         onChange={setArtist}
       />

@@ -133,7 +133,7 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
   }, []);
 
   const { items: suggestionsWire } = useEntityLookup<ArtistWireRecord>({
-    table: "artistas",
+    table: "artists",
     search: inputText,
     enabled: open && inputText.trim().length > 0,
   });
@@ -747,7 +747,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
             <div className="space-y-2">
               <Label>Artista principal</Label>
               <AsyncEntityCombobox<ArtistWireRecord>
-                table="artistas"
+                table="artists"
                 getLabel={(a) => a.stage_name?.trim() || "Sem nome"}
                 value={artistId}
                 onChange={(id) => setArtistId(id || null)}

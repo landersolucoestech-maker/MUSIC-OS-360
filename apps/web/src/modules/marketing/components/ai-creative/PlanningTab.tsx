@@ -49,7 +49,7 @@ export function PlanningTab({
       }
     >
       <div className="grid gap-4 md:grid-cols-2">
-        <AsyncEntitySelect label="Artista opcional" value={artist?.id ?? ""} table="artistas" placeholder="Selecionar artista" onChange={setArtist} />
+        <AsyncEntitySelect label="Artista opcional" value={artist?.id ?? ""} table="artists" placeholder="Selecionar artista" onChange={setArtist} />
         <EntitySelect label="Lançamento opcional" value={release?.id ?? ""} options={releaseOptions} placeholder="Selecionar lançamento" onChange={setRelease} />
         <Field label="Objetivo">
           <Input value={objective} onChange={(event) => setObjective(event.target.value)} />

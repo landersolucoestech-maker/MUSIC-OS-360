@@ -12,17 +12,17 @@ import { wireToArtist, artistToWirePayload, type ArtistWireRecord } from "./arti
 
 export const artistService = {
   async list(): Promise<Artist[]> {
-    return (await storage.list<ArtistWireRecord>("artistas")).map(wireToArtist);
+    return (await storage.list<ArtistWireRecord>("artists")).map(wireToArtist);
   },
 
   async findById(id: string): Promise<Artist | undefined> {
-    const wire = await storage.findById<ArtistWireRecord>("artistas", id);
+    const wire = await storage.findById<ArtistWireRecord>("artists", id);
     return wire ? wireToArtist(wire) : undefined;
   },
 
   async create(data: ArtistInsert): Promise<Artist> {
     const wire = await storage.create<ArtistWireRecord>(
-      "artistas",
+      "artists",
       artistToWirePayload(data) as Omit<ArtistWireRecord, "id" | "user_id" | "created_at" | "updated_at">,
     );
     return wireToArtist(wire);
@@ -30,7 +30,7 @@ export const artistService = {
 
   async update(id: string, data: ArtistUpdate): Promise<Artist> {
     const wire = await storage.update<ArtistWireRecord>(
-      "artistas",
+      "artists",
       id,
       artistToWirePayload(data) as Partial<ArtistWireRecord>,
     );
@@ -38,6 +38,6 @@ export const artistService = {
   },
 
   async delete(id: string): Promise<void> {
-    await storage.delete("artistas", id);
+    await storage.delete("artists", id);
   },
 };

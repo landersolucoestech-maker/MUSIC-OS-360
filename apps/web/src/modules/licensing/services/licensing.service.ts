@@ -1,17 +1,17 @@
 import { storage } from "@/shared/lib/storage";
 
 export const licensingService = {
-  async list() { return storage.list("licencas"); },
-  async findById(id: string) { return storage.findById("licencas", id); },
-  async create(data: Record<string, unknown>) { return storage.create("licencas", data as never); },
-  async update(id: string, data: Record<string, unknown>) { return storage.update("licencas", id, data); },
-  async delete(id: string) { return storage.delete("licencas", id); },
+  async list() { return storage.list("licenses"); },
+  async findById(id: string) { return storage.findById("licenses", id); },
+  async create(data: Record<string, unknown>) { return storage.create("licenses", data as never); },
+  async update(id: string, data: Record<string, unknown>) { return storage.update("licenses", id, data); },
+  async delete(id: string) { return storage.delete("licenses", id); },
   async listByStatus(status: string) {
-    return storage.list("licencas", { filters: { status } });
+    return storage.list("licenses", { filters: { status } });
   },
   async listByArtist(artistId: string) {
-    return storage.list("licencas", { filters: { artist_id: artistId } });
+    return storage.list("licenses", { filters: { artist_id: artistId } });
   },
-  async listFinancialRules() { return storage.list("regras_financeiras"); },
+  async listFinancialRules() { return storage.list("financial_rules"); },
 };
 

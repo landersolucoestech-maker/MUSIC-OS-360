@@ -143,7 +143,7 @@ export function PhonogramViewModal({
   // on the work being among the first records loaded (Task J: it used to use an
   // unfiltered useWorks(), truncated at 50).
   const lookupWorkId = phonogram?.work_id ?? undefined;
-  const { entity: foundWork } = useEntityById<ObraWithRelations>("obras", open ? lookupWorkId : undefined);
+  const { entity: foundWork } = useEntityById<ObraWithRelations>("works", open ? lookupWorkId : undefined);
 
   if (!phonogram) return null;
 

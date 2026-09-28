@@ -208,7 +208,7 @@ export function LeaveRequestFormModal({
           <div className="space-y-2">
             <Label>Funcionário *</Label>
             <AsyncEntityCombobox<Employee>
-              table="funcionarios"
+              table="employees"
               value={employeeId || null}
               getLabel={(f) => f.name ?? ""}
               onChange={(id) => {

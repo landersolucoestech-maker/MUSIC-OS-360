@@ -100,7 +100,7 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
   }, []);
 
   const { items: suggestionsWire } = useEntityLookup<ArtistWireRecord>({
-    table: "artistas",
+    table: "artists",
     search: inputText,
     enabled: open && inputText.trim().length > 0,
   });
@@ -599,7 +599,7 @@ export function WorkFormModal({
                             // among the first loaded records (Task J).
                             const artistId = p.artist_id as string | null | undefined;
                             const artistFoundWire = artistId
-                              ? await storage.findById<ArtistWireRecord>("artistas", artistId)
+                              ? await storage.findById<ArtistWireRecord>("artists", artistId)
                               : undefined;
                             const artistFound = artistFoundWire ? wireToArtist(artistFoundWire) : undefined;
                             const artistNameResolved = artistFound?.stageName || pArtistNameDisplay;
@@ -1190,9 +1190,9 @@ export function WorkFormModal({
                               // first loaded) — falls back to a lookup by name only when the
                               // participant was never linked to a registered artist.
                               const foundWire = p.artist_id
-                                ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
+                                ? await storage.findById<ArtistWireRecord>("artists", p.artist_id)
                                 : p.name
-                                  ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.name } }))
+                                  ? (await storage.listPaged<ArtistWireRecord>("artists", { page: 1, pageSize: 5, filters: { search: p.name } }))
                                       .items.find(a => (a.full_name || a.stage_name) === p.name)
                                   : undefined;
                               if (foundWire) setViewArtist(wireToArtist(foundWire));

@@ -72,7 +72,7 @@ vi.mock("@/modules/monitoring/hooks/useEcadReports", () => ({
 vi.mock("@/shared/lib/storage", () => ({
   storage: {
     findById: async (table: string, id: string) => {
-      if (table !== "obras") return undefined;
+      if (table !== "works") return undefined;
       return WORKS.find((o) => o.id === id);
     },
   },

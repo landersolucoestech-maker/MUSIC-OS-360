@@ -17,7 +17,7 @@ export function useReleases(enabled = true, artistId?: string) {
 
   const result = useDataQuery<ReleaseWithRelations>({
     queryKey: artistId ? [...QUERY_KEYS.RELEASES, "by-artist", artistId] : [...QUERY_KEYS.RELEASES],
-    table: "lancamentos",
+    table: "releases",
     select: "*, artistas(*)",
     orderBy: { column: "release_date", ascending: false },
     enabled,

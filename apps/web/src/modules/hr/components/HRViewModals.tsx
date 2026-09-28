@@ -149,7 +149,7 @@ export function PayrollViewModal({
   onOpenChange: (open: boolean) => void;
   record?: PayrollEntry | null;
 }) {
-  const { entity: employee } = useEntityById<Employee>("funcionarios", record?.employee_id);
+  const { entity: employee } = useEntityById<Employee>("employees", record?.employee_id);
   if (!record) return null;
   return (
     <ViewShell
@@ -203,7 +203,7 @@ export function LeaveRequestViewModal({
   onOpenChange: (open: boolean) => void;
   leaveRequest?: LeaveRequest | null;
 }) {
-  const { entity: employee } = useEntityById<Employee>("funcionarios", leaveRequest?.employee_id);
+  const { entity: employee } = useEntityById<Employee>("employees", leaveRequest?.employee_id);
   if (!leaveRequest) return null;
   return (
     <ViewShell

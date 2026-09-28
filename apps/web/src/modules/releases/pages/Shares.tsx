@@ -103,7 +103,7 @@ export default function Shares() {
   useEffect(() => {
     if (shareWorkIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareWorkIds.map((id) => storage.findById<WorkLabel & { id: string }>("obras", id)))
+    Promise.all(shareWorkIds.map((id) => storage.findById<WorkLabel & { id: string }>("works", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, WorkLabel> = {};
@@ -116,7 +116,7 @@ export default function Shares() {
   useEffect(() => {
     if (shareArtistIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareArtistIds.map((id) => storage.findById<ArtistLabel & { id: string }>("artistas", id)))
+    Promise.all(shareArtistIds.map((id) => storage.findById<ArtistLabel & { id: string }>("artists", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, ArtistLabel> = {};

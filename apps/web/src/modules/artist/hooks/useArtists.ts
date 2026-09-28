@@ -28,7 +28,7 @@ export type {
 export function useArtists() {
   const result = useDataQuery<ArtistWireRecord>({
     queryKey: [...QUERY_KEYS.ARTISTS],
-    table: "artistas",
+    table: "artists",
   }, {
     create: { success: "Artista criado com sucesso!", error: "Erro ao criar artista" },
     update: { success: "Artista atualizado com sucesso!", error: "Erro ao atualizar artista" },

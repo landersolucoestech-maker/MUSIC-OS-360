@@ -41,7 +41,7 @@ const editPath = (path: string, row: StorageRow) => `${path}?edit=${row.id}`;
 const CONFIGS: AuditConfig[] = [
   {
     module: "artistas",
-    table: "artistas",
+    table: "artists",
     entityType: "Artista",
     fixPath: (row) => editPath("/artists", row),
     label: (row) => entityLabel(row, ["stage_name", "full_name", "email"], "Artista sem nome"),
@@ -70,7 +70,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "catalog",
-    table: "obras",
+    table: "works",
     entityType: "Obra",
     fixPath: (row) => `/music-registration?editWork=${row.id}`,
     label: (row) => entityLabel(row, ["title", "iswc", "ecad_code"], "Obra sem título"),
@@ -84,7 +84,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "catalog",
-    table: "fonogramas",
+    table: "phonograms",
     entityType: "Fonograma",
     fixPath: (row) => `/music-registration?phonogram=${row.id}`,
     label: (row) => entityLabel(row, ["title", "nome", "isrc"], "Fonograma sem título"),
@@ -98,7 +98,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "lancamentos",
-    table: "lancamentos",
+    table: "releases",
     entityType: "Lançamento",
     fixPath: (row) => editPath("/releases", row),
     label: (row) => entityLabel(row, ["title", "upc", "isrc_global"], "Lançamento sem título"),
@@ -157,7 +157,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "inventory",
-    table: "inventario",
+    table: "inventory_items",
     entityType: "Item de inventário",
     fixPath: (row) => editPath("/inventory", row),
     label: (row) => entityLabel(row, ["name", "category"], "Item sem nome"),
@@ -171,7 +171,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "crm",
-    table: "clientes",
+    table: "clients",
     entityType: "Cliente/Contato",
     fixPath: (row) => editPath("/crm", row),
     label: (row) => entityLabel(row, ["name", "legal_name", "email"], "Contato sem nome"),
@@ -200,7 +200,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "licensing",
-    table: "licencas",
+    table: "licenses",
     entityType: "Licença",
     fixPath: (row) => editPath("/licensing", row),
     label: (row) => entityLabel(row, ["title", "cliente", "projeto"], "Licença sem título"),
@@ -213,7 +213,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "rh",
-    table: "funcionarios",
+    table: "employees",
     entityType: "Funcionário",
     fixPath: (row) => editPath("/hr", row),
     label: (row) => entityLabel(row, ["name", "email", "job_title"], "Funcionário sem nome"),

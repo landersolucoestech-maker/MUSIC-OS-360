@@ -172,9 +172,9 @@ export default function MusicRegistry() {
   // phonograms of an unfiltered useWorks()/usePhonograms(), truncated at the tenant's
   // first 50; GET /works/:id and /phonograms/:id reach
   // any record of the tenant.
-  const { entity: deepLinkWork, isLoading: loadingDeepLinkWork } = useEntityById<Work>("obras", workParam ?? undefined);
-  const { entity: deepLinkEditWork, isLoading: loadingDeepLinkEditWork } = useEntityById<Work>("obras", editWorkParam ?? undefined);
-  const { entity: deepLinkPhonogram, isLoading: loadingDeepLinkPhonogram } = useEntityById<Phonogram>("fonogramas", phonogramParam ?? undefined);
+  const { entity: deepLinkWork, isLoading: loadingDeepLinkWork } = useEntityById<Work>("works", workParam ?? undefined);
+  const { entity: deepLinkEditWork, isLoading: loadingDeepLinkEditWork } = useEntityById<Work>("works", editWorkParam ?? undefined);
+  const { entity: deepLinkPhonogram, isLoading: loadingDeepLinkPhonogram } = useEntityById<Phonogram>("phonograms", phonogramParam ?? undefined);
 
   useEffect(() => {
     const projectParam = searchParams.get("project");

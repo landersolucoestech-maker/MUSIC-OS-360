@@ -5,7 +5,7 @@ import type { EcadReport } from "@/modules/monitoring/rights/types";
 export function useEcadReports() {
   const result = useDataQuery<EcadReport>({
     queryKey: [...QUERY_KEYS.ECAD_REPORTS],
-    table: "relatorios_ecad",
+    table: "ecad_reports",
     orderBy: { column: "created_at", ascending: false },
   }, {
     create: { success: "Relatório ECAD criado com sucesso!", error: "Erro ao criar relatório ECAD" },

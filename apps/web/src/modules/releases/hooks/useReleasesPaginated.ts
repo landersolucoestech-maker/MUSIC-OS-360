@@ -22,7 +22,7 @@ export function useReleasesPaginated({ page, pageSize, search, status, type, art
 
   const result = usePaginatedDataQuery<ReleaseWithRelations>({
     queryKey: [...QUERY_KEYS.RELEASES],
-    table: "lancamentos",
+    table: "releases",
     page: page + 1,
     pageSize,
     search,

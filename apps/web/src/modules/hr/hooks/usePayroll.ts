@@ -13,7 +13,7 @@ export const PAYMENT_STATUS = [
 export function usePayroll() {
   const result = useDataQuery<PayrollEntry>({
     queryKey: [...QUERY_KEYS.PAYROLL],
-    table: "folha_pagamento",
+    table: "payroll_entries",
   }, {
     create: { success: "Registro de pagamento criado com sucesso!", error: "Erro ao criar registro de pagamento" },
     update: { success: "Registro de pagamento atualizado com sucesso!", error: "Erro ao atualizar registro de pagamento" },

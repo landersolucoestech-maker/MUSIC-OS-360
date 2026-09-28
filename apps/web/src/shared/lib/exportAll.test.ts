@@ -28,7 +28,7 @@ describe("fetchAllPages", () => {
       return { items, page: options.page, pageSize: options.pageSize, total: dataset.length, totalPages: Math.ceil(dataset.length / options.pageSize) };
     }) as typeof storage.listPaged);
 
-    const result = await fetchAllPages<FakeRow>("artistas", { pageSize: 20 });
+    const result = await fetchAllPages<FakeRow>("artists", { pageSize: 20 });
 
     expect(result.total).toBe(75);
     expect(result.items).toHaveLength(75);
@@ -54,7 +54,7 @@ describe("fetchAllPages", () => {
       return { items, page: options.page, pageSize: options.pageSize, total: dataset.length, totalPages: Math.ceil(dataset.length / options.pageSize) };
     }) as typeof storage.listPaged);
 
-    const result = await fetchAllPages<FakeRow>("artistas", { pageSize: 100, maxRecords: 250 });
+    const result = await fetchAllPages<FakeRow>("artists", { pageSize: 100, maxRecords: 250 });
 
     expect(result.items.length).toBeLessThanOrEqual(250);
     expect(result.truncated).toBe(true);
@@ -63,7 +63,7 @@ describe("fetchAllPages", () => {
 
   it("an empty dataset returns items:[] without calling listPaged more than once", async () => {
     mockedListPaged.mockResolvedValue({ items: [], page: 1, pageSize: 200, total: 0, totalPages: 1 });
-    const result = await fetchAllPages<FakeRow>("artistas");
+    const result = await fetchAllPages<FakeRow>("artists");
     expect(result.items).toEqual([]);
     expect(result.truncated).toBe(false);
     expect(mockedListPaged).toHaveBeenCalledTimes(1);

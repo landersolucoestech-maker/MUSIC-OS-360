@@ -29,7 +29,7 @@ export const EMPLOYEE_STATUS = [
 export function useEmployees() {
   const result = useDataQuery<Employee>({
     queryKey: [...QUERY_KEYS.EMPLOYEES],
-    table: "funcionarios",
+    table: "employees",
   }, {
     create: { success: "Funcionário criado com sucesso!", error: "Erro ao criar funcionário" },
     update: { success: "Funcionário atualizado com sucesso!", error: "Erro ao atualizar funcionário" },

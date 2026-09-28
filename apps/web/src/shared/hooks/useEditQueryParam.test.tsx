@@ -28,7 +28,7 @@ describe("useEditQueryParam", () => {
   it("resolves by id when the record is already in the loaded list (original behavior preserved)", async () => {
     const items: FakeRow[] = [{ id: "id-1", nome: "Um" }, { id: "id-2", nome: "Dois" }];
     const onMatch = vi.fn();
-    renderHook(() => useEditQueryParam("edit", items, onMatch, "artistas"), {
+    renderHook(() => useEditQueryParam("edit", items, onMatch, "artists"), {
       wrapper: wrapperFor("/artists?edit=id-2"),
     });
 
@@ -42,12 +42,12 @@ describe("useEditQueryParam", () => {
     mockedFindById.mockResolvedValue({ id: "id-75", nome: "Registro 75" });
     const onMatch = vi.fn();
 
-    renderHook(() => useEditQueryParam("edit", items, onMatch, "artistas"), {
+    renderHook(() => useEditQueryParam("edit", items, onMatch, "artists"), {
       wrapper: wrapperFor("/artists?edit=id-75"),
     });
 
     await waitFor(() => expect(onMatch).toHaveBeenCalledWith({ id: "id-75", nome: "Registro 75" }));
-    expect(mockedFindById).toHaveBeenCalledWith("artistas", "id-75");
+    expect(mockedFindById).toHaveBeenCalledWith("artists", "id-75");
   });
 
   it("without `table`, keeps the old behavior: does not resolve records outside the loaded list", async () => {
@@ -65,7 +65,7 @@ describe("useEditQueryParam", () => {
 
   it("without a URL parameter, fetches nothing", async () => {
     const onMatch = vi.fn();
-    renderHook(() => useEditQueryParam("edit", [], onMatch, "artistas"), {
+    renderHook(() => useEditQueryParam("edit", [], onMatch, "artists"), {
       wrapper: wrapperFor("/artists"),
     });
     await new Promise((r) => setTimeout(r, 0));

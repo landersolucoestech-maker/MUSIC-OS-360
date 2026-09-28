@@ -19,7 +19,7 @@ export const DOCUMENT_TYPES = [
 export function useEmployeeDocuments(employeeId?: string) {
   const result = useDataQuery<EmployeeDocument>({
     queryKey: [...QUERY_KEYS.EMPLOYEE_DOCUMENTS, ...(employeeId ? [employeeId] : [])],
-    table: "documentos_funcionario",
+    table: "employee_documents",
     filters: employeeId ? { funcionario_id: employeeId } : undefined,
     enabled: !!employeeId,
   }, {

@@ -98,7 +98,7 @@ export default function Licensing() {
   useEffect(() => {
     if (licenseWorkIds.length === 0) return;
     let cancelled = false;
-    Promise.all(licenseWorkIds.map((id) => storage.findById<Work & { id: string }>("obras", id)))
+    Promise.all(licenseWorkIds.map((id) => storage.findById<Work & { id: string }>("works", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, Work> = {};
@@ -111,7 +111,7 @@ export default function Licensing() {
   useEffect(() => {
     if (licenseClientIds.length === 0) return;
     let cancelled = false;
-    Promise.all(licenseClientIds.map((id) => storage.findById<{ id: string; name: string }>("clientes", id)))
+    Promise.all(licenseClientIds.map((id) => storage.findById<{ id: string; name: string }>("clients", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, { id: string; name: string }> = {};

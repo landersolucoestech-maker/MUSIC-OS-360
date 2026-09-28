@@ -61,7 +61,7 @@ describe("usePaginatedDataQuery", () => {
     // Page 6 with pageSize 10 = offset 50 → items 51-60, unreachable under the
     // backend's old limit=50 default without real pagination.
     const { result } = renderHook(
-      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 6, pageSize: 10 }),
+      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 6, pageSize: 10 }),
       { wrapper: createWrapper() },
     );
 
@@ -76,7 +76,7 @@ describe("usePaginatedDataQuery", () => {
 
   it("reaches the last partial page (records 71-75)", async () => {
     const { result } = renderHook(
-      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 8, pageSize: 10 }),
+      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 8, pageSize: 10 }),
       { wrapper: createWrapper() },
     );
 
@@ -88,7 +88,7 @@ describe("usePaginatedDataQuery", () => {
 
   it("refetches when the page changes (queryKey includes page)", async () => {
     const { result, rerender } = renderHook(
-      ({ page }: { page: number }) => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page, pageSize: 10 }),
+      ({ page }: { page: number }) => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page, pageSize: 10 }),
       { wrapper: createWrapper(), initialProps: { page: 1 } },
     );
 
@@ -103,7 +103,7 @@ describe("usePaginatedDataQuery", () => {
 
   it("passes search under the configured searchParam and narrows the results", async () => {
     const { result } = renderHook(
-      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10, search: "Registro 7" }),
+      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 1, pageSize: 10, search: "Registro 7" }),
       { wrapper: createWrapper() },
     );
 
@@ -118,7 +118,7 @@ describe("usePaginatedDataQuery", () => {
 
   it("extra filters (e.g. status) reach the backend and may empty the result without breaking pagination", async () => {
     const { result } = renderHook(
-      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10, filters: { status: "ativo" } }),
+      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 1, pageSize: 10, filters: { status: "ativo" } }),
       { wrapper: createWrapper() },
     );
 
@@ -132,7 +132,7 @@ describe("usePaginatedDataQuery", () => {
   it("produces different queryKeys for different filters (no cache reuse across filters)", async () => {
     const { result, rerender } = renderHook(
       ({ filters }: { filters: Record<string, unknown> }) =>
-        usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10, filters }),
+        usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 1, pageSize: 10, filters }),
       { wrapper: createWrapper(), initialProps: { filters: {} } },
     );
 
@@ -147,7 +147,7 @@ describe("usePaginatedDataQuery", () => {
 
   it("forwards the React Query AbortSignal to storage.listPaged", async () => {
     const { result } = renderHook(
-      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10 }),
+      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 1, pageSize: 10 }),
       { wrapper: createWrapper() },
     );
 
@@ -159,7 +159,7 @@ describe("usePaginatedDataQuery", () => {
 
   it("does not fetch when enabled=false", async () => {
     renderHook(
-      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10, enabled: false }),
+      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 1, pageSize: 10, enabled: false }),
       { wrapper: createWrapper() },
     );
 

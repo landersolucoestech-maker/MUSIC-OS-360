@@ -168,7 +168,7 @@ export const clientsService = {
    * `truncated` is true only when the sweep's safety ceiling was reached.
    */
   async listAll(params?: { search?: string; status?: string; person_type?: PersonType; category?: string }): Promise<FetchAllPagesResult<ApiClient>> {
-    return fetchAllPages<ApiClient>("clientes", {
+    return fetchAllPages<ApiClient>("clients", {
       filters: params ? { ...params } : undefined,
     });
   },

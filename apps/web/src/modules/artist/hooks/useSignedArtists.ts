@@ -18,7 +18,7 @@ export function useSignedArtists() {
   const query = useQuery<ArtistWireRecord[], Error, SignedArtist[]>({
     queryKey: [...QUERY_KEYS.ARTISTS],
     queryFn: async () =>
-      storage.list<ArtistWireRecord>("artistas"),
+      storage.list<ArtistWireRecord>("artists"),
     select: (data) =>
       data.map(wireToArtist).filter((a) => a.status === "signed"),
     staleTime: cacheConfig.staleTime,

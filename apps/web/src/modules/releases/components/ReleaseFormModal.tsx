@@ -136,7 +136,7 @@ const splitNames = (s: string | null | undefined): string[] => {
 async function findPhonogramByTitle(title: string): Promise<FonogramaWithRelations | undefined> {
   if (!title.trim()) return undefined;
   const alvo = normStr(title);
-  const { items } = await storage.listPaged<FonogramaWithRelations & { id: string }>("fonogramas", {
+  const { items } = await storage.listPaged<FonogramaWithRelations & { id: string }>("phonograms", {
     page: 1,
     pageSize: 5,
     filters: { search: title },
@@ -417,7 +417,7 @@ function ArtistAutocompleteInput({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { items: suggestionsData } = useEntityLookup<ArtistWireRecord>({
-    table: "artistas",
+    table: "artists",
     search: value,
     enabled: open && value.trim().length > 0,
   });
@@ -503,7 +503,7 @@ export function ReleaseFormModal({
     : "";
   // Task I: fetches directly by ID (does not depend on the artist being among
   // the first loaded by unfiltered useArtistas()).
-  const { entity: selectedArtistWire } = useEntityById<ArtistWireRecord>("artistas", formData.artist_id || undefined);
+  const { entity: selectedArtistWire } = useEntityById<ArtistWireRecord>("artists", formData.artist_id || undefined);
   const selectedArtist: Artist | undefined = selectedArtistWire ? wireToArtist(selectedArtistWire) : undefined;
   const artistLabel = selectedArtist?.stageName ?? "";
 
@@ -527,7 +527,7 @@ export function ReleaseFormModal({
   // Task I: server-side search (internally debounced) — it used to filter only
   // the tenant's first 50 artists loaded by unfiltered useArtistas().
   const { items: filteredArtistsWire } = useEntityLookup<ArtistWireRecord>({
-    table: "artistas",
+    table: "artists",
     search: artistSearch,
     enabled: artistOpen,
   });
@@ -585,7 +585,7 @@ export function ReleaseFormModal({
     const projectId = project.id;
     const seed = projectToReleaseSeed(project);
     const linkedArtistWire = project.artist_id
-      ? await storage.findById<ArtistWireRecord>("artistas", project.artist_id as string)
+      ? await storage.findById<ArtistWireRecord>("artists", project.artist_id as string)
       : undefined;
     const linkedArtist = linkedArtistWire ? wireToArtist(linkedArtistWire) : undefined;
     const rawGenre = seed.genre?.trim() || linkedArtist?.musicGenre || "";

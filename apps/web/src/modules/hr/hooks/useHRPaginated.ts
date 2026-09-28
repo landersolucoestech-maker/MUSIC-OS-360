@@ -22,7 +22,7 @@ export function useEmployeesPaginated({ page, pageSize, search, status, departme
 
   const result = usePaginatedDataQuery<Employee>({
     queryKey: [...QUERY_KEYS.EMPLOYEES],
-    table: "funcionarios",
+    table: "employees",
     page: page + 1,
     pageSize,
     search,
@@ -74,7 +74,7 @@ export function usePayrollPaginated({ page, pageSize, search, referenceMonth, st
 
   const result = usePaginatedDataQuery<PayrollEntry>({
     queryKey: [...QUERY_KEYS.PAYROLL],
-    table: "folha_pagamento",
+    table: "payroll_entries",
     page: page + 1,
     pageSize,
     search,
@@ -107,7 +107,7 @@ export function useLeaveRequestsPaginated({ page, pageSize, search, status, enab
 
   const result = usePaginatedDataQuery<LeaveRequest>({
     queryKey: [...QUERY_KEYS.LEAVE_REQUESTS],
-    table: "ferias_ausencias",
+    table: "leave_requests",
     page: page + 1,
     pageSize,
     search,

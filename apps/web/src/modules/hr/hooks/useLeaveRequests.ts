@@ -8,7 +8,7 @@ export type { LeaveRequest, LeaveRequestInsert, LeaveRequestUpdate };
 export function useLeaveRequests() {
   const result = useDataQuery<LeaveRequest>({
     queryKey: [...QUERY_KEYS.LEAVE_REQUESTS],
-    table: "ferias_ausencias",
+    table: "leave_requests",
   }, {
     create: { success: "Registro de ausência criado com sucesso!", error: "Erro ao criar registro de ausência" },
     update: { success: "Registro de ausência atualizado com sucesso!", error: "Erro ao atualizar registro de ausência" },

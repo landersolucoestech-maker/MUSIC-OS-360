@@ -82,7 +82,7 @@ export default function RightsMonitoring() {
   const workQueries = useQueries({
     queries: workIds.map((id) => ({
       queryKey: ["byId", "obras", id],
-      queryFn: () => storage.findById<WorkWithRelations & { id: string }>("obras", id),
+      queryFn: () => storage.findById<WorkWithRelations & { id: string }>("works", id),
       staleTime: 30_000,
     })),
   });

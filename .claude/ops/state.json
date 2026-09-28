@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-28T21:27:38.748Z",
+  "updatedAt": "2026-09-28T21:37:21.729Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -2621,7 +2621,7 @@
       "evidenceIds": [],
       "createdAt": "2026-09-28T16:39:18.547Z",
       "justification": null,
-      "resolvedAt": "2026-09-28T21:27:38.348Z"
+      "resolvedAt": "2026-09-28T21:37:21.728Z"
     },
     {
       "id": "find-3f79589a",

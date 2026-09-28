@@ -16,7 +16,7 @@ export function useContractTemplates() {
 
   const result = useDataQuery<ContractTemplateRow>({
     queryKey: [...QUERY_KEYS.CONTRACT_TEMPLATES],
-    table: "templates_contratos",
+    table: "contract_templates",
     onMutationSuccess: {
       onCreate: (t) =>
         emit(DomainEvents.CONTRACT_TEMPLATE_CREATED, {

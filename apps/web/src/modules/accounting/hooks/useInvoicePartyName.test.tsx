@@ -33,11 +33,11 @@ describe("useInvoicePartyName (invoices API embeds no client — resolved by cli
     expect(mockedFindById).not.toHaveBeenCalled();
   });
 
-  it("resolves the client `name` by id through the 'clientes' storage key (/clients)", async () => {
+  it("resolves the client `name` by id through the 'clients' storage key (/clients)", async () => {
     mockedFindById.mockResolvedValue({ id: CLIENT_ID, name: "Cliente Ltda" } as never);
     const { result } = renderHook(() => useInvoicePartyName({ client_id: CLIENT_ID }), { wrapper: wrapper() });
     await waitFor(() => expect(result.current).toBe("Cliente Ltda"));
-    expect(mockedFindById).toHaveBeenCalledWith("clientes", CLIENT_ID);
+    expect(mockedFindById).toHaveBeenCalledWith("clients", CLIENT_ID);
   });
 
   it("an id that does not resolve shows 'Cliente não encontrado', never the raw id", async () => {

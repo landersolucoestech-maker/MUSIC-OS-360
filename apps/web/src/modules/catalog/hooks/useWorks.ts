@@ -15,7 +15,7 @@ export function useWorks(enabled = true, artistId?: string) {
     // then artist B's would (wrongly) reuse A's cache — same key,
     // different server-side filter (see Task G).
     queryKey: artistId ? [...QUERY_KEYS.WORKS, "by-artist", artistId] : [...QUERY_KEYS.WORKS],
-    table: "obras",
+    table: "works",
     select: "*, artistas(*), projetos(id, title)",
     enabled,
     filters: artistId ? { artist_id: artistId } : undefined,

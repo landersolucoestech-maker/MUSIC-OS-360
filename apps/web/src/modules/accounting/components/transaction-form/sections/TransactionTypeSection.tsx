@@ -151,7 +151,7 @@ export function TransactionTypeSection({
             <div className="space-y-2">
               <Label className="text-sm">Artista Vinculado *</Label>
               <AsyncEntityCombobox<Artist>
-                table="artistas"
+                table="artists"
                 getLabel={(a) => a.stage_name}
                 value={formData.artistId}
                 onChange={(id) => updateField("artistId", id)}

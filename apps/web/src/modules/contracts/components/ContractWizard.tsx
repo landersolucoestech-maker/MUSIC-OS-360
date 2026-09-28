@@ -442,7 +442,7 @@ function PartyCard({
         <div className="space-y-1">
           <Label className="text-xs">Selecionar do CRM</Label>
           <AsyncEntityCombobox<Record<string, unknown> & { id: string }>
-            table="clientes"
+            table="clients"
             value={party.sourceId || null}
             getLabel={(c) => String(c.name || "")}
             placeholder="Selecionar contato…"
@@ -474,7 +474,7 @@ function PartyCard({
         <div className="space-y-1">
           <Label className="text-xs">Selecionar Artista</Label>
           <AsyncEntityCombobox<Record<string, unknown> & { id: string }>
-            table="artistas"
+            table="artists"
             value={party.sourceId || null}
             getLabel={(a) => String(a.stage_name || a.full_name || "")}
             placeholder="Selecionar artista…"

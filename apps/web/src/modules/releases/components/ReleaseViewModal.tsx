@@ -109,11 +109,11 @@ function aggregateField(tracks: any[], key: string): string {
 export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewModalProps) {
   // Main artist of the release — looked up DIRECTLY by ID (GET /artists/:id),
   // does not depend on being among the first 50 loaded (Task J).
-  const { entity: artistWire } = useEntityById<ArtistWireRecord>("artistas", open ? release?.artist_id ?? undefined : undefined);
+  const { entity: artistWire } = useEntityById<ArtistWireRecord>("artists", open ? release?.artist_id ?? undefined : undefined);
   const artist: Artist | undefined = artistWire ? wireToArtist(artistWire) : undefined;
   const { shares } = useShares();
   const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
-    table: "lancamentos",
+    table: "releases",
     id: release?.id ?? "",
     // The releases list/paginated caches live under QUERY_KEYS.RELEASES;
     // ["lancamentos"] matched no cache, so a transition left the list stale.
@@ -121,7 +121,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   });
 
   const { data: detail } = useEntityDetail<typeof release & { allowed_transitions?: WorkflowTransition[] }>(
-    "lancamentos",
+    "releases",
     release?.id,
     open,
   );
@@ -138,7 +138,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   useEffect(() => {
     if (!open || phonogramIds.length === 0) return;
     let cancelled = false;
-    Promise.all(phonogramIds.map((id) => storage.findById<FonogramaWithRelations & { id: string }>("fonogramas", id)))
+    Promise.all(phonogramIds.map((id) => storage.findById<FonogramaWithRelations & { id: string }>("phonograms", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, FonogramaWithRelations> = {};
@@ -157,7 +157,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   useEffect(() => {
     if (!open || shareArtistIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareArtistIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
+    Promise.all(shareArtistIds.map((id) => storage.findById<ArtistWireRecord>("artists", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, Artist> = {};
