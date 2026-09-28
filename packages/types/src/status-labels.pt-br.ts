@@ -20,6 +20,7 @@ import {
   EcadReportStatus,
   EmployeeStatus,
   EventStatus,
+  InventoryStatus,
   InvoiceStatus,
   LeadStatus,
   LeaveRequestStatus,
@@ -251,6 +252,16 @@ export const ECAD_REPORT_STATUS_LABELS_PT_BR: Readonly<Record<EcadReportStatus, 
   [EcadReportStatus.ERROR]: "Erro",
 };
 
+export const INVENTORY_STATUS_LABELS_PT_BR: Readonly<Record<InventoryStatus, string>> = {
+  [InventoryStatus.AVAILABLE]: "Disponível",
+  [InventoryStatus.IN_USE]: "Em Uso",
+  [InventoryStatus.ON_LOAN]: "Emprestado",
+  [InventoryStatus.MAINTENANCE]: "Em Manutenção",
+  [InventoryStatus.DAMAGED]: "Danificado",
+  [InventoryStatus.DISCARDED]: "Descartado",
+  [InventoryStatus.RESERVED]: "Reservado",
+};
+
 export const ARTIST_GOAL_STATUS_LABELS_PT_BR: Readonly<Record<ArtistGoalStatus, string>> = {
   [ArtistGoalStatus.IN_PROGRESS]: "Em andamento",
   [ArtistGoalStatus.COMPLETED]: "Concluída",
@@ -303,6 +314,7 @@ export const STATUS_LABELS_PT_BR_BY_DOMAIN = {
   ai_job: AI_JOB_STATUS_LABELS_PT_BR,
   artist_goal: ARTIST_GOAL_STATUS_LABELS_PT_BR,
   ecad_report: ECAD_REPORT_STATUS_LABELS_PT_BR,
+  inventory: INVENTORY_STATUS_LABELS_PT_BR,
   quote: QUOTE_STATUS_LABELS_PT_BR,
   billing: BILLING_STATUS_LABELS_PT_BR,
 } as const;

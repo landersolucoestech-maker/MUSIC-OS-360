@@ -288,6 +288,7 @@ import { RenamePortugueseColumnsOnEvents20260928000006 } from './20260928000006_
 import { EventsStartsAtBackfillAndSync20260928000007 } from './20260928000007_EventsStartsAtBackfillAndSync';
 import { CanonicalizeHrToEnglish20260928000008 } from './20260928000008_CanonicalizeHrToEnglish';
 import { CanonicalizeProjectTracksToEnglish20260928000009 } from './20260928000009_CanonicalizeProjectTracksToEnglish';
+import { CanonicalizeInventoryItemsToEnglish20260928000010 } from './20260928000010_CanonicalizeInventoryItemsToEnglish';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -587,4 +588,5 @@ export const ALL_MIGRATIONS = [
   EventsStartsAtBackfillAndSync20260928000007,
   CanonicalizeHrToEnglish20260928000008,
   CanonicalizeProjectTracksToEnglish20260928000009,
+  CanonicalizeInventoryItemsToEnglish20260928000010,
 ] as const;

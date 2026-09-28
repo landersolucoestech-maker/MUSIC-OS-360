@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { InventoryStatus } from "@music-os-360/types";
 
 export const inventorySchema = z.object({
   name: z.string()
@@ -9,28 +10,33 @@ export const inventorySchema = z.object({
     .optional()
     .nullable()
     .or(z.literal("")),
-  quantidade: z.number()
+  quantity: z.number()
     .min(1, "Quantidade mínima é 1")
     .optional()
     .nullable(),
-  localizacao: z.string()
+  storageLocation: z.string()
     .max(200, "Localização deve ter no máximo 200 caracteres")
     .optional()
     .nullable()
     .or(z.literal("")),
-  status: z.enum(["disponivel", "em_uso", "emprestado", "manutencao", "danificado", "descartado"], {
+  status: z.nativeEnum(InventoryStatus, {
     errorMap: () => ({ message: "Selecione um status válido" })
   }),
-  valor_unitario: z.number()
+  unitPrice: z.number()
     .min(0, "Valor não pode ser negativo")
     .optional()
     .nullable(),
-  observacoes: z.string()
+  notes: z.string()
     .max(1000, "Observações deve ter no máximo 1000 caracteres")
     .trim()
     .optional()
     .nullable()
     .or(z.literal("")),
+  sector: z.string().optional(),
+  responsiblePerson: z.string().optional(),
+  purchaseLocation: z.string().optional(),
+  invoiceNumber: z.string().optional(),
+  entryDate: z.string().optional(),
 });
 
 export type InventoryFormData = z.infer<typeof inventorySchema>;

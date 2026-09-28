@@ -44,6 +44,7 @@ import {
   EmployeeStatus,
   PayrollStatus,
   LeaveRequestStatus,
+  InventoryStatus,
   ArtistGoalStatus,
   NotificationType,
   IdentifierType,
@@ -2543,14 +2544,14 @@ export class InventoryItemEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) category: string | null;
-  @Column({ type: 'integer', default: 0 }) quantidade: number;
+  @Column({ type: 'integer', default: 0 }) quantity: number;
   @Column({ type: 'decimal', precision: 14, scale: 2, nullable: true }) unit_price: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) localizacao: string | null;
-  @Column({ type: 'varchar', length: 50, default: 'disponivel' }) status: string;
-  @Column({ type: 'varchar', length: 255, nullable: true }) responsavel: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) setor: string | null;
-  @Column({ type: 'date', nullable: true }) data_entrada: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) local_compra: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) storage_location: string | null;
+  @Column({ type: 'varchar', length: 50, default: InventoryStatus.AVAILABLE }) status: InventoryStatus;
+  @Column({ type: 'varchar', length: 255, nullable: true }) responsible_person: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) sector: string | null;
+  @Column({ type: 'date', nullable: true }) entry_date: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) purchase_location: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) numero_nota_fiscal: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;

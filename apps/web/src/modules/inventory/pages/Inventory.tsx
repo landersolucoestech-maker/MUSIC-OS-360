@@ -24,15 +24,11 @@ import { useInventory } from "@/modules/inventory/hooks/useInventory";
 import { useInventoryPaginated, useInventoryStats } from "@/modules/inventory/hooks/useInventoryPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { StatusBadge } from "@/shared/components/StatusBadge";
+import { InventoryStatus } from "@music-os-360/types";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
-// Dropdown filters → real values stored in the database (status/localizacao).
+// Location dropdown → the storage_location values stored in the database.
 // Same translation that existed in the client-side .filter() before the migration.
-const STATUS_FILTER_MAP: Record<string, string> = {
-  "em-uso": "em_uso",
-  disponivel: "disponivel",
-  manutencao: "manutencao",
-};
 const LOCAL_FILTER_MAP: Record<string, string> = {
   estudio1: "Estúdio 1",
   estudio2: "Estúdio 2",
@@ -85,9 +81,9 @@ export default function Inventory() {
     page,
     pageSize,
     search: debouncedSearch || undefined,
-    status: statusFilter !== "all-status" ? STATUS_FILTER_MAP[statusFilter] : undefined,
+    status: statusFilter !== "all-status" ? statusFilter : undefined,
     category: categoryFilter !== "all-category" ? categoryFilter : undefined,
-    localizacao: localFilter !== "all-local" ? LOCAL_FILTER_MAP[localFilter] : undefined,
+    storageLocation: localFilter !== "all-local" ? LOCAL_FILTER_MAP[localFilter] : undefined,
   });
 
   // KPIs: count per status + asset value sum OVER THE WHOLE
@@ -110,9 +106,9 @@ export default function Inventory() {
 
   const metrics = {
     total: inventoryStats.total,
-    emUso: inventoryStats.byGroup["em_uso"] ?? 0,
-    disponiveis: inventoryStats.byGroup["disponivel"] ?? 0,
-    emManutencao: inventoryStats.byGroup["manutencao"] ?? 0,
+    emUso: inventoryStats.byGroup[InventoryStatus.IN_USE] ?? 0,
+    disponiveis: inventoryStats.byGroup[InventoryStatus.AVAILABLE] ?? 0,
+    emManutencao: inventoryStats.byGroup[InventoryStatus.MAINTENANCE] ?? 0,
     valorTotal: inventoryStats.totalSum ?? 0,
   };
 
@@ -145,7 +141,7 @@ export default function Inventory() {
         <div className="flex items-center gap-4 rounded-lg bg-muted/30 p-3">
           <div className="relative flex-1"><Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Buscar equipamentos por nome, categoria ou local..." className="pl-10 h-8 text-sm bg-card border-border" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /></div>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Categoria" /></SelectTrigger><SelectContent><SelectItem value="all-category">Todos Categoria</SelectItem><SelectItem value="áudio">Áudio</SelectItem><SelectItem value="vídeo">Vídeo</SelectItem><SelectItem value="computador">Computador</SelectItem><SelectItem value="iluminação">Iluminação</SelectItem><SelectItem value="estrutura">Estrutura</SelectItem></SelectContent></Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Status" /></SelectTrigger><SelectContent><SelectItem value="all-status">Todos Status</SelectItem><SelectItem value="em-uso">Em Uso</SelectItem><SelectItem value="disponivel">Disponível</SelectItem><SelectItem value="manutencao">Manutenção</SelectItem></SelectContent></Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Status" /></SelectTrigger><SelectContent><SelectItem value="all-status">Todos Status</SelectItem><SelectItem value={InventoryStatus.IN_USE}>Em Uso</SelectItem><SelectItem value={InventoryStatus.AVAILABLE}>Disponível</SelectItem><SelectItem value={InventoryStatus.MAINTENANCE}>Manutenção</SelectItem></SelectContent></Select>
           <Select value={localFilter} onValueChange={setLocalFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Local" /></SelectTrigger><SelectContent><SelectItem value="all-local">Todos Local</SelectItem><SelectItem value="estudio1">Estúdio 1</SelectItem><SelectItem value="estudio2">Estúdio 2</SelectItem><SelectItem value="escritorio">Escritório</SelectItem><SelectItem value="estoque">Estoque</SelectItem></SelectContent></Select>
           {hasActiveFilters && <Button variant="outline" onClick={handleClearFilters}>Limpar</Button>}
         </div>
@@ -211,17 +207,17 @@ export default function Inventory() {
                         {item.category ? <Badge variant="outline" className="text-xs">{item.category}</Badge> : "—"}
                       </TableCell>
                       <TableCell>
-                        {item.setor ? <Badge variant="secondary" className="text-xs">{item.setor}</Badge> : "—"}
+                        {item.sector ? <Badge variant="secondary" className="text-xs">{item.sector}</Badge> : "—"}
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{item.localizacao || "—"}</TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{item.responsavel || "—"}</TableCell>
-                      <TableCell><StatusBadge status={item.status} /></TableCell>
-                      <TableCell className="text-center">{item.quantidade || 1}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{item.storage_location || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{item.responsible_person || "—"}</TableCell>
+                      <TableCell><StatusBadge status={item.status} domain="inventory" /></TableCell>
+                      <TableCell className="text-center">{item.quantity || 1}</TableCell>
                       <TableCell className={`text-right font-medium ${getMonetarySemanticClass("neutral")}`}>{item.unit_price ? formatCurrency(item.unit_price) : "—"}</TableCell>
                       <TableCell className={`text-right font-medium ${getMonetarySemanticClass("neutral")}`}>
-                        {item.unit_price ? formatCurrency((Number(item.unit_price) || 0) * (Number(item.quantidade) || 1)) : "—"}
+                        {item.unit_price ? formatCurrency((Number(item.unit_price) || 0) * (Number(item.quantity) || 1)) : "—"}
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{item.dataEntrada ? formatDate(item.dataEntrada) : "—"}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{item.entry_date ? formatDate(item.entry_date) : "—"}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>

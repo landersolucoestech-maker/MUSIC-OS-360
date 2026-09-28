@@ -17,10 +17,6 @@
 {"table":"clients","className":"ClientEntity","field":"responsavel_telefone","columnOverride":null,"type":"varchar"}
 {"table":"clients","className":"ClientEntity","field":"status_contato","columnOverride":null,"type":"varchar"}
 {"table":"clients","className":"ClientEntity","field":"telefone_encrypted","columnOverride":null,"type":"text"}
-{"table":"inventory_items","className":"InventoryItemEntity","field":"data_entrada","columnOverride":null,"type":"date"}
-{"table":"inventory_items","className":"InventoryItemEntity","field":"localizacao","columnOverride":null,"type":"varchar"}
-{"table":"inventory_items","className":"InventoryItemEntity","field":"responsavel","columnOverride":null,"type":"varchar"}
-{"table":"inventory_items","className":"InventoryItemEntity","field":"setor","columnOverride":null,"type":"varchar"}
 {"table":"invoices","className":"InvoiceEntity","field":"data_emissao","columnOverride":null,"type":"timestamp"}
 {"table":"invoices","className":"InvoiceEntity","field":"data_vencimento","columnOverride":null,"type":"timestamp"}
 {"table":"invoices","className":"InvoiceEntity","field":"numero","columnOverride":null,"type":"varchar"}

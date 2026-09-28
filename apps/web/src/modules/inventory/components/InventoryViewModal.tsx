@@ -5,13 +5,16 @@ import {
   DialogTitle,
 } from "@/shared/ui/dialog";
 import { Badge } from "@/shared/ui/badge";
+import { StatusBadge } from "@/shared/components/StatusBadge";
+import { statusLabelPtBr } from "@music-os-360/types";
+import type { InventoryItem } from "@/modules/inventory/types/inventory.types";
 import { Package, MapPin, User, DollarSign } from "lucide-react";
 import { formatCurrency, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 
 interface InventoryViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  item?: any;
+  item?: InventoryItem | null;
 }
 
 export function InventoryViewModal({ open, onOpenChange, item }: InventoryViewModalProps) {
@@ -26,22 +29,11 @@ export function InventoryViewModal({ open, onOpenChange, item }: InventoryViewMo
     return null;
   };
 
-  const quantity = toNumber(item.quantidade ?? item.qtd) ?? 1;
-  const unitValue = toNumber(item.unit_price ?? item.valor_unitario ?? item.valorUnitario ?? item.valorUnit);
+  const quantity = toNumber(item.quantity) ?? 1;
+  const unitValue = toNumber(item.unit_price);
   const totalValue = unitValue == null ? null : unitValue * quantity;
-
-  const getStatusBadge = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case "em uso":
-        return <Badge variant="warning">{status}</Badge>;
-      case "disponível":
-        return <Badge variant="success">{status}</Badge>;
-      case "manutenção":
-        return <Badge variant="warning">{status}</Badge>;
-      default:
-        return <Badge variant="neutral">{status}</Badge>;
-    }
-  };
+  const status = typeof item.status === "string" ? item.status : null;
+  const statusLabel = status ? (statusLabelPtBr("inventory", status) ?? "Status não reconhecido") : "-";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -65,14 +57,14 @@ export function InventoryViewModal({ open, onOpenChange, item }: InventoryViewMo
             <Badge variant="neutral">
               {item.category || "Equipamento"}
             </Badge>
-            {getStatusBadge(item.status)}
+            {status && <StatusBadge status={status} domain="inventory" />}
           </div>
 
           {/* Information grid */}
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Status</p>
-              <p className="font-medium text-foreground">{item.status || "-"}</p>
+              <p className="font-medium text-foreground">{statusLabel}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Quantidade</p>
@@ -82,7 +74,7 @@ export function InventoryViewModal({ open, onOpenChange, item }: InventoryViewMo
               <p className="text-sm text-muted-foreground">Localização</p>
               <div className="flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{item.local || item.localizacao || "-"}</span>
+                <span className="font-medium text-foreground">{item.storage_location || "-"}</span>
               </div>
             </div>
             <div>
@@ -98,7 +90,7 @@ export function InventoryViewModal({ open, onOpenChange, item }: InventoryViewMo
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Setor</p>
-              <p className="font-medium text-foreground">{item.setor || "-"}</p>
+              <p className="font-medium text-foreground">{item.sector || "-"}</p>
             </div>
           </div>
 
@@ -110,7 +102,7 @@ export function InventoryViewModal({ open, onOpenChange, item }: InventoryViewMo
                 <User className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <p className="font-medium text-foreground">{item.responsavel || "Não atribuído"}</p>
+                <p className="font-medium text-foreground">{item.responsible_person || "Não atribuído"}</p>
                 <p className="text-sm text-muted-foreground">Responsável pelo item</p>
               </div>
             </div>

@@ -309,8 +309,6 @@ export const FIELD_LABELS_PT_BR = {
   lastContactedAt: 'Último contato em',
   local: 'Local',
   venue: 'Local',
-  localCompra: 'Local de compra',
-  localizacao: 'Localização',
   lyrics: 'Letra',
   letra: 'Letra',
   managerContatoEncrypted: 'Contato do empresário (criptografado)',
@@ -376,7 +374,6 @@ export const FIELD_LABELS_PT_BR = {
   scheduledFor: 'Agendado para',
   score: 'Pontuação',
   segmento: 'Segmento',
-  setor: 'Setor',
   settings: 'Configurações',
   sizeBytes: 'Tamanho (bytes)',
   slaBreached: 'SLA violado',
@@ -631,6 +628,12 @@ export const FIELD_LABELS_PT_BR = {
   // ── Part 89 — Tasks (marketing_tasks) / Content calendar ────────────────────
   marketingProjectId: 'Projeto de marketing vinculado',
   sector: 'Setor',
+  // inventory_items (CZ-032) — same headers as the pre-rename columns.
+  quantity: 'Quantidade',
+  storageLocation: 'Localização',
+  responsiblePerson: 'Responsável',
+  entryDate: 'Data de entrada',
+  purchaseLocation: 'Local de compra',
   campaignId: 'Campanha',
 
   // ── Parte 89 — Briefing ──────────────────────────────────────────────────────

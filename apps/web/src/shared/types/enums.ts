@@ -31,6 +31,7 @@ import type {
   EventStatus,
   EmployeeStatus,
   LeaveRequestStatus,
+  InventoryStatus,
 } from '@music-os-360/types';
 
 // ── Artist ───────────────────────────────────────────────────────────────────
@@ -272,12 +273,8 @@ export type LeaveRequestStatusValue = `${LeaveRequestStatus}`;
 
 // ── Inventory ─────────────────────────────────────────────────────────────────
 
-export type InventoryStatus =
-  | "disponivel"
-  | "em_uso"
-  | "manutencao"
-  | "descartado"
-  | "emprestado";
+/** Derived from InventoryStatus — source of truth: @music-os-360/types */
+export type InventoryStatusValue = `${InventoryStatus}`;
 
 // ── License ───────────────────────────────────────────────────────────────────
 

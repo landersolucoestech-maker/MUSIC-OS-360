@@ -342,6 +342,17 @@ export enum LeaveRequestStatus {
   COMPLETED = "completed",
 }
 
+// ─── Inventory ───────────────────────────────────────────────────────────────
+export enum InventoryStatus {
+  AVAILABLE   = "available",
+  IN_USE      = "in_use",
+  ON_LOAN     = "on_loan",
+  MAINTENANCE = "maintenance",
+  DAMAGED     = "damaged",
+  DISCARDED   = "discarded",
+  RESERVED    = "reserved",
+}
+
 // ─── Uploads / Media ─────────────────────────────────────────────────────────
 
 export enum UploadStatus {

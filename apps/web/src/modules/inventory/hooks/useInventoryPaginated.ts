@@ -11,14 +11,14 @@ export interface UseInventoryPaginatedParams {
   search?: string;
   status?: string;
   category?: string;
-  localizacao?: string;
+  storageLocation?: string;
 }
 
-export function useInventoryPaginated({ page, pageSize, search, status, category, localizacao: location }: UseInventoryPaginatedParams) {
+export function useInventoryPaginated({ page, pageSize, search, status, category, storageLocation }: UseInventoryPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
   if (category) filters.category = category;
-  if (location) filters.localizacao = location;
+  if (storageLocation) filters.storage_location = storageLocation;
 
   const result = usePaginatedDataQuery<InventoryItem>({
     queryKey: [...QUERY_KEYS.INVENTORY],

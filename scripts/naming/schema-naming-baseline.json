@@ -1,5 +1,5 @@
 {
- "total": 212,
+ "total": 205,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -68,12 +68,6 @@
   "schema::column::clients.status_contato": 1,
   "schema::column::clients.telefone_encrypted": 1,
   "schema::column::clients.tipo_pessoa": 1,
-  "schema::column::inventory_items.data_entrada": 1,
-  "schema::column::inventory_items.local_compra": 1,
-  "schema::column::inventory_items.localizacao": 1,
-  "schema::column::inventory_items.quantidade": 1,
-  "schema::column::inventory_items.responsavel": 1,
-  "schema::column::inventory_items.setor": 1,
   "schema::column::invoices.arquivo_url": 1,
   "schema::column::invoices.condicao_pagamento": 1,
   "schema::column::invoices.data_emissao": 1,
@@ -205,7 +199,6 @@
   "schema::default-value::clients.tipo_pessoa::pessoa_juridica": 1,
   "schema::default-value::contract_service_types.financial_model::valor_fixo": 1,
   "schema::default-value::contract_service_types.financial_payment_frequency::unico": 1,
-  "schema::default-value::inventory_items.status::disponivel": 1,
   "schema::default-value::licenses.status::pendente": 1,
   "schema::default-value::marketing_content_posts.status::agendado": 1,
   "schema::default-value::organizations.industry::gravadora": 1,

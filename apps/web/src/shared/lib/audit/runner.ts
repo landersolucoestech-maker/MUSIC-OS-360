@@ -159,13 +159,13 @@ const CONFIGS: AuditConfig[] = [
     table: "inventario",
     entityType: "Item de inventário",
     fixPath: (row) => editPath("/inventory", row),
-    label: (row) => entityLabel(row, ["nome", "title", "categoria"], "Item sem nome"),
+    label: (row) => entityLabel(row, ["name", "category"], "Item sem nome"),
     fields: [
-      { key: "nome", label: "Nome", severity: "obrigatorio" },
-      { key: "categoria", label: "Categoria", severity: "obrigatorio" },
+      { key: "name", label: "Nome", severity: "obrigatorio" },
+      { key: "category", label: "Categoria", severity: "obrigatorio" },
       { key: "status", label: "Status", severity: "obrigatorio" },
-      { key: "valor", label: "Valor", severity: "recomendado" },
-      { key: "localizacao", label: "Localização", severity: "recomendado" },
+      { key: "unit_price", label: "Valor", severity: "recomendado" },
+      { key: "storage_location", label: "Localização", severity: "recomendado" },
     ],
   },
   {

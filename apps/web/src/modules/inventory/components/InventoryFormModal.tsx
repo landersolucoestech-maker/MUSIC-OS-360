@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { inventorySchema, type InventoryFormData } from "@/modules/inventory/lib/inventory-schema";
+import { INVENTORY_STATUS_VALUES, isInventoryStatus } from "@/modules/inventory/constants";
+import { InventoryStatus, INVENTORY_STATUS_LABELS_PT_BR } from "@music-os-360/types";
 import { FieldError } from "@/shared/components/FormField";
 import { useInventory } from "@/modules/inventory/hooks/useInventory";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
@@ -53,14 +55,7 @@ const categoryOptions = [
   "Outros",
 ];
 
-const statusOptions = [
-  { value: "disponivel", label: "Disponível" },
-  { value: "em_uso", label: "Em Uso" },
-  { value: "emprestado", label: "Emprestado" },
-  { value: "manutencao", label: "Em Manutenção" },
-  { value: "danificado", label: "Danificado" },
-  { value: "descartado", label: "Descartado" },
-];
+const statusOptions = INVENTORY_STATUS_VALUES.map((value) => ({ value, label: INVENTORY_STATUS_LABELS_PT_BR[value] }));
 
 export function InventoryFormModal({ open, onOpenChange, item, mode }: InventoryFormModalProps) {
   const isViewMode = mode === "view";
@@ -72,27 +67,27 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
     watch,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<InventoryFormData & { setor?: string; responsavel?: string; localCompra?: string; numeroNotaFiscal?: string; dataEntrada?: string }>({
+  } = useForm<InventoryFormData>({
     resolver: zodResolver(inventorySchema),
     mode: "onChange",
     defaultValues: {
       name: "",
       category: "",
-      quantidade: 1,
-      localizacao: "",
-      status: "disponivel",
-      valor_unitario: 0,
-      observacoes: "",
-      setor: "",
-      responsavel: "",
-      localCompra: "",
-      numeroNotaFiscal: "",
-      dataEntrada: new Date().toISOString().split("T")[0],
+      quantity: 1,
+      storageLocation: "",
+      status: InventoryStatus.AVAILABLE,
+      unitPrice: 0,
+      notes: "",
+      sector: "",
+      responsiblePerson: "",
+      purchaseLocation: "",
+      invoiceNumber: "",
+      entryDate: new Date().toISOString().split("T")[0],
     },
   });
 
-  const quantity = watch("quantidade");
-  const unitValue = watch("valor_unitario");
+  const quantity = watch("quantity");
+  const unitValue = watch("unitPrice");
 
   // Compute the total value automatically
   const totalValue = useMemo(() => {
@@ -109,31 +104,31 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
         reset({
           name: item.name || "",
           category: item.category || "",
-          quantidade: item.quantidade || 1,
-          localizacao: item.localizacao || "",
-          status: item.status || "disponivel",
-          valor_unitario: item.unit_price || 0,
-          observacoes: item.notes || "",
-          setor: item.setor || "",
-          responsavel: item.responsavel || "",
-          localCompra: item.localCompra || "",
-          numeroNotaFiscal: item.numeroNotaFiscal || "",
-          dataEntrada: item.dataEntrada || new Date().toISOString().split("T")[0],
+          quantity: item.quantity || 1,
+          storageLocation: item.storage_location || "",
+          status: isInventoryStatus(item.status) ? item.status : InventoryStatus.AVAILABLE,
+          unitPrice: item.unit_price != null ? Number(item.unit_price) : 0,
+          notes: item.notes || "",
+          sector: item.sector || "",
+          responsiblePerson: item.responsible_person || "",
+          purchaseLocation: item.purchase_location || "",
+          invoiceNumber: item.numero_nota_fiscal || "",
+          entryDate: item.entry_date || new Date().toISOString().split("T")[0],
         });
       } else {
         reset({
           name: "",
           category: "",
-          quantidade: 1,
-          localizacao: "",
-          status: "disponivel",
-          valor_unitario: 0,
-          observacoes: "",
-          setor: "",
-          responsavel: "",
-          localCompra: "",
-          numeroNotaFiscal: "",
-          dataEntrada: new Date().toISOString().split("T")[0],
+          quantity: 1,
+          storageLocation: "",
+          status: InventoryStatus.AVAILABLE,
+          unitPrice: 0,
+          notes: "",
+          sector: "",
+          responsiblePerson: "",
+          purchaseLocation: "",
+          invoiceNumber: "",
+          entryDate: new Date().toISOString().split("T")[0],
         });
       }
     }
@@ -141,22 +136,22 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
 
   const { addInventoryItem, updateInventoryItem } = useInventory();
 
-  const onSubmit = async (data: InventoryFormData & { setor?: string; responsavel?: string; localCompra?: string; numeroNotaFiscal?: string; dataEntrada?: string }) => {
+  const onSubmit = async (data: InventoryFormData) => {
     if (isViewMode) return;
     try {
       const payload = {
         name:                data.name,
         category:            data.category || undefined,
-        quantidade:          data.quantidade ?? 1,
-        unit_price:          data.valor_unitario ?? undefined,
-        localizacao:         data.localizacao || undefined,
-        status:              data.status || "disponivel",
-        responsavel:         data.responsavel || undefined,
-        setor:               data.setor || undefined,
-        data_entrada:        data.dataEntrada || undefined,
-        local_compra:        data.localCompra || undefined,
-        numero_nota_fiscal:  data.numeroNotaFiscal || undefined,
-        notes:               data.observacoes || undefined,
+        quantity:            data.quantity ?? 1,
+        unit_price:          data.unitPrice ?? undefined,
+        storage_location:    data.storageLocation || undefined,
+        status:              data.status || InventoryStatus.AVAILABLE,
+        responsible_person:  data.responsiblePerson || undefined,
+        sector:              data.sector || undefined,
+        entry_date:          data.entryDate || undefined,
+        purchase_location:   data.purchaseLocation || undefined,
+        numero_nota_fiscal:  data.invoiceNumber || undefined,
+        notes:               data.notes || undefined,
       };
       if (mode === "edit" && item?.id) {
         await updateInventoryItem.mutateAsync({
@@ -209,8 +204,8 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
                 <div className="space-y-2">
                   <Label>Setor</Label>
                   <Select
-                    value={watch("setor") || ""}
-                    onValueChange={(v) => setValue("setor", v)}
+                    value={watch("sector") || ""}
+                    onValueChange={(v) => setValue("sector", v)}
                     disabled={isViewMode}
                   >
                     <SelectTrigger>
@@ -268,26 +263,26 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
                   <Input
                     type="number"
                     min="1"
-                    {...register("quantidade", { valueAsNumber: true })}
+                    {...register("quantity", { valueAsNumber: true })}
                     disabled={isViewMode}
                   />
-                  <FieldError error={errors.quantidade?.message} />
+                  <FieldError error={errors.quantity?.message} />
                 </div>
 
                 <div className="space-y-2">
                   <Label>Localização</Label>
                   <Input
-                    {...register("localizacao")}
+                    {...register("storageLocation")}
                     placeholder="Ex: Estúdio A, Sala 201, Depósito"
                     disabled={isViewMode}
                   />
-                  <FieldError error={errors.localizacao?.message} />
+                  <FieldError error={errors.storageLocation?.message} />
                 </div>
 
                 <div className="space-y-2">
                   <Label>Responsável</Label>
                   <Input
-                    {...register("responsavel")}
+                    {...register("responsiblePerson")}
                     placeholder="Nome da pessoa responsável pelo item"
                     disabled={isViewMode}
                   />
@@ -298,7 +293,7 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
                 <div className="space-y-2">
                   <Label>Status</Label>
                   <Select
-                    value={watch("status") || "disponivel"}
+                    value={watch("status") || InventoryStatus.AVAILABLE}
                     onValueChange={(v) => setValue("status", v as any)}
                     disabled={isViewMode}
                   >
@@ -329,7 +324,7 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
                 <div className="space-y-2">
                   <Label>Local de Compra</Label>
                   <Input
-                    {...register("localCompra")}
+                    {...register("purchaseLocation")}
                     placeholder="Ex: Loja de Música ABC"
                     disabled={isViewMode}
                   />
@@ -337,7 +332,7 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
                 <div className="space-y-2">
                   <Label>Número da Nota Fiscal</Label>
                   <Input
-                    {...register("numeroNotaFiscal")}
+                    {...register("invoiceNumber")}
                     placeholder="Ex: NF-123456"
                     disabled={isViewMode}
                   />
@@ -348,8 +343,8 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
                 <div className="space-y-2">
                   <Label>Data de Entrada</Label>
                   <DatePickerField
-                    value={watch("dataEntrada") ?? ""}
-                    onChange={(iso) => setValue("dataEntrada", iso)}
+                    value={watch("entryDate") ?? ""}
+                    onChange={(iso) => setValue("entryDate", iso)}
                     disabled={isViewMode}
                     placeholder="Selecione a data"
                     data-testid="datepicker-data-entrada"
@@ -361,11 +356,11 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
                     type="number"
                     step="0.01"
                     min="0"
-                    {...register("valor_unitario", { valueAsNumber: true })}
+                    {...register("unitPrice", { valueAsNumber: true })}
                     placeholder="0,00"
                     disabled={isViewMode}
                   />
-                  <FieldError error={errors.valor_unitario?.message} />
+                  <FieldError error={errors.unitPrice?.message} />
                 </div>
                 <div className="space-y-2">
                   <Label>Valor Total (Calculado)</Label>
@@ -388,13 +383,13 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
               <div className="space-y-2">
                 <Label>Observações</Label>
                 <Textarea
-                  {...register("observacoes")}
+                  {...register("notes")}
                   placeholder="Garantia, especificações técnicas, observações gerais..."
                   rows={4}
                   disabled={isViewMode}
                   className="resize-none"
                 />
-                <FieldError error={errors.observacoes?.message} />
+                <FieldError error={errors.notes?.message} />
               </div>
             </CardContent>
           </Card>

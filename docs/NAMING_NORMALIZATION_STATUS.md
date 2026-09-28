@@ -85,6 +85,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-029 | Event start (events.data -> events.starts_at, plan C3) | migrating | MIGRATION_REQUIRED | no |
 | CZ-030 | HR: employee, payroll entry, leave request | done | DONE | no |
 | CZ-031 | Project tracks (songs under development in an album/EP/single project) | done | DONE | no |
+| CZ-032 | Inventory item | done | DONE | no |
 
-Concepts: 79. Renames: 0. Exceptions: 149. Blockers: 3.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 63, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 80. Renames: 0. Exceptions: 160. Blockers: 3.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 64, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

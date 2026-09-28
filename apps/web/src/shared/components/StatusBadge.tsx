@@ -20,13 +20,13 @@ const SUCCESS = [
   "aprovado", "aprovada", "cliente_ativo", "contratado", "exclusivo",
   "disponivel", "vigente", "assinado", "em_vigor", "publicado", "pago",
   "distribuido", "recorded", "finished", "delivered", "signed", "resolved",
-  "conectado", "confirmed", "confirmado", "confirmada",
+  "conectado", "confirmed", "confirmado", "confirmada", "available",
 ];
 const INFO = [
   "em_andamento", "em_execucao", "processando", "proposal", "proposta",
   "parceiro", "a_receber", "recording", "editing", "post_production",
   "partially_signed", "open", "aberto", "in_progress",
-  "aguardando_distribuicao", "aguardando_assinatura", "producao",
+  "aguardando_distribuicao", "aguardando_assinatura", "producao", "reserved",
 ];
 const WARNING = [
   "pending", "pendente", "metadata_pending", "assets_pending",
@@ -35,13 +35,13 @@ const WARNING = [
   "scheduled", "vencendo", "lead", "em_uso", "emprestado", "manutencao",
   "programado", "pausada", "pausado", "onboarding", "planejamento",
   "aguardando", "waiting_customer", "pending_signature",
-  "ajustes_solicitados", "review", "revisao",
+  "ajustes_solicitados", "review", "revisao", "in_use", "on_loan", "maintenance",
 ];
 const DANGER = [
   "cancelled", "cancelado", "cancelada", "rejected", "rejeitado", "rejeitada",
   "reprovado", "expired", "expirado", "expirada", "vencido", "vencida",
   "rescindido", "rescindida", "inativo", "inactive", "atrasada", "atrasado", "danificado",
-  "descartado", "falhou", "failed", "bloqueada", "desconectado",
+  "descartado", "falhou", "failed", "bloqueada", "desconectado", "damaged", "discarded",
 ];
 const NEUTRAL = [
   "rascunho", "planejado", "draft", "independente", "encerrado", "fechado",

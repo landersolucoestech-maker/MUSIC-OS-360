@@ -155,8 +155,8 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'created_by', 'deleted_at',
   ],
   inventory_items: [
-    'id', 'tenant_id', 'name', 'category', 'quantidade', 'unit_price',
-    'localizacao', 'status', 'responsavel', 'setor', 'data_entrada', 'local_compra',
+    'id', 'tenant_id', 'name', 'category', 'quantity', 'unit_price',
+    'storage_location', 'status', 'responsible_person', 'sector', 'entry_date', 'purchase_location',
     'numero_nota_fiscal', 'notes', 'created_at', 'updated_at', 'created_by', 'updated_by',
     'deleted_at',
   ],
