@@ -38,29 +38,32 @@ const LEAD_TYPES: readonly CrmLeadType[] = [
   'artist', 'label', 'publisher', 'producer', 'brand', 'partner', 'supplier', 'client', 'other',
 ];
 
-/** Maps the lead's free-form status to the skill's canonical stage. */
+/**
+ * Maps the lead status (LeadStatus, English and CHECK-constrained since
+ * 20260910000016) — or, without one, the generic pipeline `stage` kept in
+ * metadata — to the skill's canonical stage.
+ */
 const STAGE_MAP: Record<string, CrmStage> = {
-  novo: 'new', new: 'new',
-  contatado: 'contacted', contactado: 'contacted', contacted: 'contacted',
-  qualificado: 'qualified', qualified: 'qualified',
-  proposta: 'proposal', proposal: 'proposal',
-  negociacao: 'negotiation', 'negociação': 'negotiation', negotiation: 'negotiation',
-  ganho: 'won', convertido: 'won', won: 'won',
-  perdido: 'lost', lost: 'lost',
-  inativo: 'inactive', inactive: 'inactive',
+  new: 'new',
+  contacted: 'contacted', in_contact: 'contacted',
+  qualified: 'qualified',
+  proposal: 'proposal',
+  negotiation: 'negotiation',
+  closed: 'won', won: 'won',
+  lost: 'lost',
+  inactive: 'inactive',
 };
 
-function mapStage(status: string | null | undefined, pipelineStage: string | null | undefined): CrmStage {
-  const s = (status ?? pipelineStage ?? '').trim().toLowerCase();
+function mapStage(status: string | null | undefined, stage: unknown): CrmStage {
+  const s = (status ?? (typeof stage === 'string' ? stage : '') ?? '').trim().toLowerCase();
   return STAGE_MAP[s] ?? 'new';
 }
 
 interface LeadRow {
-  nome: string;
-  empresa: string | null;
+  name: string;
+  company: string | null;
   status: string | null;
-  fonte: string | null;
-  pipeline_stage: string | null;
+  source: string | null;
   metadata: Record<string, unknown> | null;
 }
 
@@ -114,7 +117,7 @@ export class CrmFollowupAutomation {
   ): Promise<LeadRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT nome, empresa, status, fonte, pipeline_stage, metadata
+      `SELECT name, company, status, source, metadata
          FROM leads
         WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL
         LIMIT 1`,
@@ -148,16 +151,16 @@ export class CrmFollowupAutomation {
       : 'other';
 
     const input: CrmFollowupInput = {
-      leadName: lead.nome,
+      leadName: lead.name,
       leadType,
-      currentStage: mapStage(lead.status, lead.pipeline_stage),
-      objective: `Avançar o lead "${lead.nome}" no funil e definir o próximo passo comercial.`,
+      currentStage: mapStage(lead.status, md.stage),
+      objective: `Avançar o lead "${lead.name}" no funil e definir o próximo passo comercial.`,
       language: 'pt-BR',
     };
 
     const contextParts: string[] = [];
-    if (lead.empresa) contextParts.push(`Empresa: ${lead.empresa}.`);
-    if (lead.fonte) contextParts.push(`Origem/fonte: ${lead.fonte}.`);
+    if (lead.company) contextParts.push(`Empresa: ${lead.company}.`);
+    if (lead.source) contextParts.push(`Origem/fonte: ${lead.source}.`);
     if (typeof md.context === 'string') contextParts.push(md.context);
     if (contextParts.length > 0) input.context = contextParts.join(' ');
 

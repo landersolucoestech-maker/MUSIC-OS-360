@@ -187,13 +187,14 @@ const CONFIGS: AuditConfig[] = [
     table: "leads",
     entityType: "Lead",
     fixPath: (row) => editPath("/crm", row),
-    label: (row) => entityLabel(row, ["nome", "nome_contratante", "email"], "Lead sem nome"),
+    label: (row) => entityLabel(row, ["name", "email"], "Lead sem nome"),
+    // Keys of the /leads response (CZ-033); the lead origin lives inside
+    // crmInternalData, which this one-level check does not read.
     fields: [
-      { key: "nome", label: "Nome", severity: "obrigatorio" },
+      { key: "name", label: "Nome", severity: "obrigatorio" },
       { key: "email", label: "E-mail", severity: "obrigatorio" },
-      { key: "telefone", label: "Telefone", severity: "recomendado" },
-      { key: "origem_lead", label: "Origem", severity: "recomendado" },
-      { key: "status_lead", label: "Status", severity: "recomendado" },
+      { key: "phone", label: "Telefone", severity: "recomendado" },
+      { key: "status", label: "Status", severity: "recomendado" },
     ],
   },
   {

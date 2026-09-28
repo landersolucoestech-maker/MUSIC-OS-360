@@ -128,7 +128,7 @@ async function createFixture(qr: QueryRunner): Promise<Fixture> {
     [fixture.clientA, fixture.tenantA, fixture.clientB, fixture.tenantB],
   );
   await qr.query(
-    `INSERT INTO public.leads (id, tenant_id, nome)
+    `INSERT INTO public.leads (id, tenant_id, name)
      VALUES ($1, $2, 'Lead A'),
             ($3, $4, 'Lead B')`,
     [fixture.leadA, fixture.tenantA, fixture.leadB, fixture.tenantB],

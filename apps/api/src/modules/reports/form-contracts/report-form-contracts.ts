@@ -611,43 +611,39 @@ const INVENTORY_ITEMS_CONTRACT: ReportFormContract = {
 
 // ─── CRM — Leads ──────────────────────────────────────────────────────────────
 // Most of the form's "advanced" fields (LeadFormModal.tsx) live in
-// two NAMED jsonb columns — payload_servico and dados_internos_crm — not in the
+// two NAMED jsonb columns — service_payload and crm_internal_data — not in the
 // generic `metadata` column (hence `meta(key, physical)` with the explicit second
-// argument). The 4 nested conditional blocks (evento/campanha/
-// influenciador/empresario, each under payload_servico.<block>.*) and the
-// interaction history (payload_servico.interacoes[]) stay OUT of this
-// Part — they are objects nested inside payload_servico, not supported
-// by the current 1-level mechanism (jsonb column → key), documented as a
-// divergence in the final report.
+// argument; keys are the canonical jsonb keys of modules/leads/lead-vocabulary.ts).
+// The conditional event/campaign/influencer/manager fields and the
+// interaction history (service_payload.interactions[]) stay OUT of this
+// Part — the history is an array, not supported by the current 1-level
+// mechanism (jsonb column → key), documented as a divergence in the final report.
 const LEADS_CONTRACT: ReportFormContract = {
   tableName: 'leads',
-  identityColumn: 'nome',
+  identityColumn: 'name',
   fields: [
-    col('nome'), col('empresa'), enc('email', 'email_encrypted'), col('whatsapp'),
+    col('name'), col('company'), enc('email', 'email_encrypted'), col('whatsapp'),
     col('instagram'), col('city'), col('state'), col('client_type'), col('service_type'),
     // country: DTO-exposed (renamed from pais by naming-closure Cluster D,
     // 20260921000004_RenameLeadsGeoFieldsToEnglish) but LeadFormModal.tsx has
     // no input for it — every real row is system-normalized to 'BR'.
     // Report-only, not a form field.
     ro('country'),
-    meta('cargo', 'payload_servico'), meta('website', 'payload_servico'),
-    meta('endereco', 'payload_servico'), meta('tipo_lead', 'payload_servico'),
-    meta('servico', 'payload_servico'), meta('nome_artista_servico', 'payload_servico'),
-    meta('descricao', 'payload_servico'), meta('data_entrada', 'payload_servico'),
-    // `origemLead`/`responsavel`/`prioridade`/`temperatura`/`proximoFollowUp`/
-    // `valorEstimado`: naming-closure Cluster E resolved the former dual
-    // storage location (a physical `origem_lead`/`responsavel`/`prioridade`/
-    // `temperatura`/`estimated_value`/`probabilidade_fechamento`/
-    // `proximo_follow_up` column set, 0 non-null rows on all 7, vs. these
-    // same concepts inside `dados_internos_crm`, which real usage always
-    // wrote) by dropping the dead physical columns
-    // (20260921000005_DropDeadLeadsCrmDualStorageColumns) and redirecting
-    // the one internal writer (public-artist-application) here too. jsonb
+    meta('jobTitle', 'service_payload'), meta('website', 'service_payload'),
+    meta('address', 'service_payload'), meta('leadType', 'service_payload'),
+    meta('service', 'service_payload'), meta('serviceArtistName', 'service_payload'),
+    meta('description', 'service_payload'), meta('entryDate', 'service_payload'),
+    // Lead origin/owner/priority/temperature/next follow-up/estimated value:
+    // naming-closure Cluster E dropped their dead physical columns
+    // (20260921000005_DropDeadLeadsCrmDualStorageColumns); crm_internal_data
     // was already the only place any of these had live data.
-    meta('origemLead', 'dados_internos_crm'), meta('campanha_marketing', 'dados_internos_crm'),
-    meta('responsavel', 'dados_internos_crm'), meta('prioridade', 'dados_internos_crm'),
-    meta('proximoFollowUp', 'dados_internos_crm'), meta('valorEstimado', 'dados_internos_crm'),
-    meta('temperatura', 'dados_internos_crm'), meta('statusLead', 'dados_internos_crm'),
+    meta('leadSource', 'crm_internal_data'), meta('marketingCampaign', 'crm_internal_data'),
+    meta('responsiblePerson', 'crm_internal_data'), meta('priority', 'crm_internal_data'),
+    meta('nextFollowUpAt', 'crm_internal_data'), meta('estimatedValue', 'crm_internal_data'),
+    meta('temperature', 'crm_internal_data'),
+    // The lead status is the `status` column (workflow-managed; export only).
+    // crm_internal_data.statusLead was a stale copy nothing reads (CZ-033).
+    ro('status'),
     ro('uploads'),
     // tags is the lead's own column (text[]), with no input in the form
     // (managed outside the DTO) — export only.
@@ -661,12 +657,11 @@ const LEADS_CONTRACT: ReportFormContract = {
     assignedTo: 'legacy DTO field (generic pipeline) with no input in the real form',
     notes: 'legacy DTO field (generic pipeline) with no input in the real form',
     metadata: 'legacy jsonb object (generic pipeline) with no input in the real form',
-    nomeArtistico: 'accepted by the DTO but has no input in the real Leads form',
-    payloadServico: 'raw jsonb object — its individual fields are already contract columns',
-    dadosInternosCRM: 'raw jsonb object — its individual fields are already contract columns',
+    stageName: 'accepted by the DTO but has no input in the real Leads form',
+    servicePayload: 'raw jsonb object — its individual fields are already contract columns',
+    crmInternalData: 'raw jsonb object — its individual fields are already contract columns',
   },
   formFieldAliases: {
-    name: 'nome',
     clientType: 'client_type',
     serviceType: 'service_type',
   },

@@ -25,7 +25,7 @@ const FORBIDDEN_PATTERNS: Array<{ name: string; pattern: RegExp }> = [
   { name: "variável module-level mutável (let leads =)", pattern: /let\s+leads\s*=/ },
   { name: "geração local de id como substituto de persistência", pattern: /crypto\.randomUUID\(\)/ },
   { name: "delay simulado", pattern: /setTimeout\s*\(\s*resolve/ },
-  { name: "array de leads hardcoded", pattern: /nomeCompleto:\s*["'`]Marina/ },
+  { name: "array de leads hardcoded", pattern: /fullName:\s*["'`]Marina/ },
 ];
 
 describe("leads.service.ts — permanent guard against reintroducing a mock", () => {
@@ -56,10 +56,10 @@ import { leadsService } from "./leads.service";
 
 const apiRow = {
   id: "1",
-  nome: "X",
-  nome_completo: "X",
-  nomeArtistico: null,
-  empresa: null,
+  name: "X",
+  fullName: "X",
+  stageName: null,
+  company: null,
   email: null,
   phone: null,
   whatsapp: null,
@@ -69,9 +69,9 @@ const apiRow = {
   country: null,
   clientType: null,
   serviceType: null,
-  payloadServico: null,
-  dadosInternosCRM: null,
-  status: "novo",
+  servicePayload: null,
+  crmInternalData: null,
+  status: "new",
   uploads: null,
   created_at: "2026-01-01T00:00:00.000Z",
   updated_at: "2026-01-01T00:00:00.000Z",
@@ -86,27 +86,27 @@ describe("leadsService — always delegates to the real API (no local state)", (
     const result = await leadsService.list();
 
     expect(api.get).toHaveBeenCalledWith(expect.stringContaining("/leads"));
-    expect(result).toEqual([expect.objectContaining({ id: "1", nomeCompleto: "X" })]);
+    expect(result).toEqual([expect.objectContaining({ id: "1", fullName: "X", status: "new" })]);
   });
 
   it("create() delegates to POST /leads without generating an id locally", async () => {
     const created = { ...apiRow, id: "server-generated-id" };
     vi.mocked(api.post).mockResolvedValue(created as never);
 
-    const result = await leadsService.create({ nomeCompleto: "Novo" } as never);
+    const result = await leadsService.create({ fullName: "Novo" } as never);
 
     expect(api.post).toHaveBeenCalledWith("/leads", expect.objectContaining({ name: "Novo" }));
     expect(result.id).toBe("server-generated-id");
   });
 
   it("update() delegates to PATCH /leads/:id", async () => {
-    const updated = { ...apiRow, nome_completo: "Atualizado" };
+    const updated = { ...apiRow, fullName: "Atualizado" };
     vi.mocked(api.patch).mockResolvedValue(updated as never);
 
-    const result = await leadsService.update("1", { nomeCompleto: "Atualizado" } as never);
+    const result = await leadsService.update("1", { fullName: "Atualizado" } as never);
 
     expect(api.patch).toHaveBeenCalledWith("/leads/1", expect.objectContaining({ name: "Atualizado" }));
-    expect(result.nomeCompleto).toBe("Atualizado");
+    expect(result.fullName).toBe("Atualizado");
   });
 
   it("remove() delegates to DELETE /leads/:id", async () => {

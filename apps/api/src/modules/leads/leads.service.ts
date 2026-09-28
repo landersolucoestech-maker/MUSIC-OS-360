@@ -18,6 +18,13 @@ import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { BillingEnforcementService } from '../billing/billing-enforcement.service';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import {
+  LEAD_DEPRECATED_FIELDS,
+  canonicalCrmInternalData,
+  canonicalLeadServiceType,
+  canonicalServicePayload,
+} from './lead-vocabulary';
 
 @Injectable()
 export class LeadsService {
@@ -45,32 +52,32 @@ export class LeadsService {
     const metadata = (l.metadata ?? {}) as Record<string, unknown>;
     return {
       ...l,
-      name:               l.nome,
-      source:             l.fonte,
       notes:              metadata['notes'] ?? null,
       assignedTo:         metadata['assignedTo'] ?? null,
       value:              metadata['value'] ?? null,
       stage:              metadata['stage'] ?? null,
       email:              this.enc.decryptNullable(l.email_encrypted),
-      phone:              this.enc.decryptNullable(l.telefone_encrypted),
+      phone:              this.enc.decryptNullable(l.phone_encrypted),
       email_encrypted:    undefined as unknown as string,
-      telefone_encrypted: undefined as unknown as string,
-      // camelCase aliases for the music CRM (same physical columns of `l`).
-      nomeArtistico:      l.nome_artistico,
+      phone_encrypted:    undefined as unknown as string,
+      // camelCase fields of the music CRM contract (same physical columns of `l`).
+      fullName:           l.full_name,
+      stageName:          l.stage_name,
       clientType:         l.client_type,
       serviceType:        l.service_type,
-      payloadServico:     l.payload_servico,
-      dadosInternosCRM:   l.dados_internos_crm,
-      // `...l` above spreads the raw physical `nome`/`client_type`/
-      // `service_type` keys through first — without dropping them, the
-      // response would leak BOTH the physical snake_case key and its
-      // English camelCase alias for the same concept (see
+      servicePayload:     l.service_payload,
+      crmInternalData:    l.crm_internal_data,
+      // `...l` above spreads the raw snake_case columns through first —
+      // without dropping them, the response would carry BOTH the physical
+      // key and its camelCase field for the same concept (see
       // .claude/rules/naming-canonical.md). `undefined` drops the key from
-      // the JSON response entirely (same pattern used for the encrypted
-      // fields above).
-      nome:               undefined as unknown as string,
+      // the JSON response entirely (same pattern as the encrypted fields).
+      full_name:          undefined as unknown as string,
+      stage_name:         undefined as unknown as string,
       client_type:        undefined as unknown as string,
       service_type:       undefined as unknown as string,
+      service_payload:    undefined as unknown as Record<string, unknown>,
+      crm_internal_data:  undefined as unknown as Record<string, unknown>,
     };
   }
 
@@ -82,7 +89,7 @@ export class LeadsService {
       .andWhere('l.deleted_at IS NULL');
 
     if (q['status'])         qb.andWhere('l.status = :status',                 { status:       q['status'] });
-    if (q['search'])         qb.andWhere('(l.nome ILIKE :search OR l.empresa ILIKE :search)', { search: `%${q['search']}%` });
+    if (q['search'])         qb.andWhere('(l.name ILIKE :search OR l.company ILIKE :search)', { search: `%${q['search']}%` });
 
     qb.orderBy('l.created_at', q['ascending'] ? 'ASC' : 'DESC')
       .skip(typeof q['offset'] === 'number' ? q['offset'] : 0)
@@ -121,15 +128,15 @@ export class LeadsService {
       tenant_id:          tenantId,
       ...(lead as Record<string, unknown>),
       email_encrypted:    this.enc.encryptNullable(email as string | undefined),
-      telefone_encrypted: this.enc.encryptNullable(phone as string | undefined),
+      phone_encrypted:    this.enc.encryptNullable(phone as string | undefined),
       status:             LeadStatus.NEW,
       created_by:         userId,
       updated_by:         userId,
     } as Partial<LeadEntity>);
     const saved = await this.repo!.save(entity as LeadEntity);
-    await this.recordActivity(tenantId, userId, saved.id, 'created', `Lead "${saved.nome}" criado`, {
-      nome: saved.nome,
-      fonte: saved.fonte,
+    await this.recordActivity(tenantId, userId, saved.id, 'created', `Lead "${saved.name}" criado`, {
+      name: saved.name,
+      source: saved.source,
     });
     return this.mapLead(saved);
   }
@@ -200,7 +207,7 @@ export class LeadsService {
       .createQueryBuilder('l')
       .where('l.tenant_id = :tenantId', { tenantId: tenant.id })
       .andWhere(`l.created_at > now() - interval '5 minutes'`)
-      .andWhere('l.fonte = :fonte', { fonte: 'public_artist_application' })
+      .andWhere('l.source = :source', { source: 'public_artist_application' })
       .orderBy('l.created_at', 'DESC')
       .limit(20)
       .getMany();
@@ -221,26 +228,22 @@ export class LeadsService {
       async () => {
         const entity = this.repo!.create({
           tenant_id: tenant.id,
-          nome: dto.artisticName.trim(),
-          nome_artistico: dto.artisticName.trim(),
-          nome_completo: dto.fullName.trim(),
+          name: dto.artisticName.trim(),
+          stage_name: dto.artisticName.trim(),
+          full_name: dto.fullName.trim(),
           email_encrypted: this.enc.encryptNullable(dto.email.trim().toLowerCase()),
-          telefone_encrypted: this.enc.encryptNullable(phone || undefined),
+          phone_encrypted: this.enc.encryptNullable(phone || undefined),
           whatsapp: phone || null,
           city: dto.city?.trim() || null,
           state: dto.state?.trim() || null,
-          fonte: 'public_artist_application',
+          source: 'public_artist_application',
           status: LeadStatus.NEW,
           tags: ['artist_application', 'public_form'],
-          // origemLead: write redirected to dados_internos_crm (Cluster
-          // E, naming-closure) -- the physical origem_lead column was never read
-          // by any real path (only the CRM form populated leads
-          // visible in the product, always via dados_internos_crm.origemLead);
-          // this was the only writer of the physical column in the whole system,
-          // inconsistent with the rest of the app. Migration
-          // 20260921000005_DropDeadLeadsCrmDualStorageColumns removed the
-          // physical column (0 non-null values confirmed in DEV).
-          dados_internos_crm: { origemLead: 'public_artist_application' },
+          // Lead origin lives in crm_internal_data.leadSource (Cluster E,
+          // naming-closure: the former physical origin column was never read
+          // and was dropped by 20260921000005_DropDeadLeadsCrmDualStorageColumns;
+          // keys English since CZ-033).
+          crm_internal_data: { leadSource: 'public_artist_application' },
           metadata: {
             musicalGenre: dto.musicalGenre,
             objective: dto.objective ?? null,
@@ -267,8 +270,8 @@ export class LeadsService {
       payload: {
         tenantId: tenant.id,
         leadId: saved.id,
-        nome: saved.nome,
-        origem: 'public_artist_application',
+        name: saved.name,
+        source: 'public_artist_application',
       },
     });
 
@@ -402,7 +405,7 @@ export class LeadsService {
       ...this.normalizeLeadPayload(restFields, current.metadata ?? {}),
     };
     if (email !== undefined) nonStatusUpdates['email_encrypted']    = this.enc.encryptNullable(email as string | null);
-    if (phone !== undefined) nonStatusUpdates['telefone_encrypted']  = this.enc.encryptNullable(phone as string | null);
+    if (phone !== undefined) nonStatusUpdates['phone_encrypted']     = this.enc.encryptNullable(phone as string | null);
 
     if (statusChanging) {
       const req = {
@@ -461,8 +464,8 @@ export class LeadsService {
           payload: {
             leadId:      id,
             tenantId,
-            nome:        current.nome,
-            empresa:     current.empresa ?? null,
+            name:        current.name,
+            company:     current.company ?? null,
             convertedBy: userId,
             convertedAt: new Date().toISOString(),
           },
@@ -493,27 +496,28 @@ export class LeadsService {
   private normalizeLeadPayload(input: Record<string, unknown>, existingMetadata: Record<string, unknown> = {}) {
     const {
       name, source, stage, notes, assignedTo, value, metadata,
-      nomeArtistico: stageName, empresa: company, whatsapp, instagram,
-      clientType, serviceType, payloadServico: servicePayload, dadosInternosCRM: crmInternalData, uploads,
+      stageName, company, whatsapp, instagram,
+      clientType, serviceType, servicePayload, crmInternalData, uploads,
       ...rest
-    } = input;
+    } = applyDeprecatedFieldAliases(input, LEAD_DEPRECATED_FIELDS);
     // city/state/country pass through unchanged via ...rest -- the physical
     // columns were renamed to match the DTO field names directly
     // (naming-closure Cluster D, 20260921000004_RenameLeadsGeoFieldsToEnglish),
     // so no translation is needed for these three anymore.
     const mapped: Record<string, unknown> = { ...rest };
-    if (name !== undefined) mapped['nome'] = name;
-    if (source !== undefined) mapped['fonte'] = source;
+    if (name !== undefined) mapped['name'] = name;
+    if (source !== undefined) mapped['source'] = source;
     // `pipeline_stage` was physically removed (RebuildLeadsInCanonicalFormOrder,
     // proven orphan) — the DTO's `stage` goes to metadata, like notes/assignedTo/value.
-    if (stageName !== undefined) mapped['nome_artistico'] = stageName;
-    if (company !== undefined) mapped['empresa'] = company;
+    if (stageName !== undefined) mapped['stage_name'] = stageName;
+    if (company !== undefined) mapped['company'] = company;
     if (whatsapp !== undefined) mapped['whatsapp'] = whatsapp;
     if (instagram !== undefined) mapped['instagram'] = instagram;
     if (clientType !== undefined) mapped['client_type'] = clientType;
-    if (serviceType !== undefined) mapped['service_type'] = serviceType;
-    if (servicePayload !== undefined) mapped['payload_servico'] = servicePayload;
-    if (crmInternalData !== undefined) mapped['dados_internos_crm'] = crmInternalData;
+    // Pre-CZ-033 service types and jsonb vocabulary -> canonical (lead-vocabulary.ts).
+    if (serviceType !== undefined) mapped['service_type'] = canonicalLeadServiceType(serviceType);
+    if (servicePayload !== undefined) mapped['service_payload'] = canonicalServicePayload(servicePayload);
+    if (crmInternalData !== undefined) mapped['crm_internal_data'] = canonicalCrmInternalData(crmInternalData);
     if (uploads !== undefined) mapped['uploads'] = uploads;
 
     const mergedMetadata = {

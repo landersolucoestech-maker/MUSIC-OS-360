@@ -20,12 +20,6 @@
 {"table":"invoices","className":"InvoiceEntity","field":"data_emissao","columnOverride":null,"type":"timestamp"}
 {"table":"invoices","className":"InvoiceEntity","field":"data_vencimento","columnOverride":null,"type":"timestamp"}
 {"table":"invoices","className":"InvoiceEntity","field":"numero","columnOverride":null,"type":"varchar"}
-{"table":"leads","className":"LeadEntity","field":"empresa","columnOverride":null,"type":"varchar"}
-{"table":"leads","className":"LeadEntity","field":"fonte","columnOverride":null,"type":"varchar"}
-{"table":"leads","className":"LeadEntity","field":"nome","columnOverride":null,"type":"varchar"}
-{"table":"leads","className":"LeadEntity","field":"nome_artistico","columnOverride":null,"type":"varchar"}
-{"table":"leads","className":"LeadEntity","field":"nome_completo","columnOverride":null,"type":"varchar"}
-{"table":"leads","className":"LeadEntity","field":"telefone_encrypted","columnOverride":null,"type":"text"}
 {"table":"licenses","className":"LicenseEntity","field":"artista","columnOverride":null,"type":"varchar"}
 {"table":"licenses","className":"LicenseEntity","field":"obra_musical","columnOverride":null,"type":"varchar"}
 {"table":"licenses","className":"LicenseEntity","field":"valor","columnOverride":null,"type":"decimal"}

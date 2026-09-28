@@ -472,8 +472,8 @@ export interface MarketingContentCreatedPayload {
 export interface LeadConvertedPayload {
   leadId:      string;
   tenantId:    string;
-  nome:        string;
-  empresa:     string | null;
+  name:        string;
+  company:     string | null;
   convertedBy: string;
   convertedAt: string;
 }
@@ -653,8 +653,8 @@ export interface UserInvitedPayload {
 export interface LeadCreatedPayload {
   tenantId: string;
   leadId:   string;
-  nome:     string;
-  origem:   string;
+  name:     string;
+  source:   string;
 }
 
 export interface LeadUpdatedPayload {

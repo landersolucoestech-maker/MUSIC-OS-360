@@ -27,47 +27,18 @@ import {
   STATUS_LEAD_OPTIONS,
   EVENT_TYPE_OPTIONS,
   LEAD_TYPE_OPTIONS,
+  INTERACTION_TYPE_OPTIONS,
+  TEMPERATURE_OPTIONS,
+  LEAD_TYPE_MANAGER,
+  LEAD_TYPE_INFLUENCER,
+  EVENT_COMBOS,
+  CAMPAIGN_COMBOS,
+  ARTIST_EVENT_COMBOS,
+  matchCombo,
 } from "../constants/lead-form-options";
-import { INTERACTION_TYPE_OPTIONS, type Interaction } from "./LeadFormModal";
+import type { Interaction } from "./LeadFormModal";
 import { useLeadInteractions } from "../hooks/useLeadInteractions";
 import { LEAD_INTERACTION_TYPE_LABELS } from "../services/lead-interactions.service";
-
-// ─────────────────────────────────────────────
-// Combos — exact mirror of LeadFormModal
-// ─────────────────────────────────────────────
-const EVENT_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
-  { type: "marca_empresa",        servico: "eventos_corporativos" },
-  { type: "agencia",              servico: "producao_eventos"     },
-  { type: "agencia",              servico: "contratacao_artistas" },
-  { type: "produtora_eventos",    servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "eventos_corporativos" },
-  { type: "empresario_artistico", servico: "contratacao_artistas" },
-  { type: "empresario_artistico", servico: "eventos_corporativos" },
-  { type: "influenciador",        servico: "producao_eventos"     },
-];
-
-const CAMPAIGN_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
-  { type: "marca_empresa", servico: "campanhas_artistas" },
-  { type: "agencia",       servico: "campanhas_artistas" },
-];
-
-const ARTIST_EVENT_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
-  { type: "marca_empresa",        servico: "eventos_corporativos" },
-  { type: "agencia",              servico: "producao_eventos"     },
-  { type: "agencia",              servico: "contratacao_artistas" },
-  { type: "produtora_eventos",    servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "eventos_corporativos" },
-  { type: "empresario_artistico", servico: "contratacao_artistas" },
-  { type: "empresario_artistico", servico: "eventos_corporativos" },
-];
-
-const matchCombo = (
-  list: ReadonlyArray<{ type: string; servico: string }>,
-  type: string,
-  service: string,
-) => list.some((c) => c.type === type && c.servico === service);
 
 // ─────────────────────────────────────────────
 // Types
@@ -97,8 +68,6 @@ const fmtMoney = (value?: number | null) =>
   value == null
     ? "-"
     : Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-const TEMPERATURA_LABEL: Record<string, string> = { frio: "Frio", morno: "Morno", quente: "Quente" };
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -151,28 +120,28 @@ export function LeadViewModal({
 
   if (!lead) return null;
 
-  const ps  = (lead.payloadServico   ?? {}) as Record<string, unknown>;
-  const crm = (lead.dadosInternosCRM ?? {}) as Record<string, unknown>;
+  const ps  = (lead.servicePayload   ?? {}) as Record<string, unknown>;
+  const crm = (lead.crmInternalData ?? {}) as Record<string, unknown>;
 
   const str = (key: string): string =>
     typeof ps[key] === "string" ? (ps[key] as string) : "";
 
-  const leadType = str("tipo_lead");
-  const service  = str("servico");
+  const leadType = str("leadType");
+  const service  = str("service");
 
   const showEvent             = matchCombo(EVENT_COMBOS,          leadType, service);
   const showCampaign           = matchCombo(CAMPAIGN_COMBOS,        leadType, service);
-  const showInfluenciador      = leadType === "influenciador"        && !showEvent;
-  const showManager         = leadType === "empresario_artistico" && !showEvent;
+  const showInfluencer         = leadType === LEAD_TYPE_INFLUENCER && !showEvent;
+  const showManager         = leadType === LEAD_TYPE_MANAGER && !showEvent;
   const showArtistBandEvent = matchCombo(ARTIST_EVENT_COMBOS,  leadType, service);
 
-  const interactions = Array.isArray(ps.interacoes)
-    ? (ps.interacoes as Interaction[])
+  const interactions = Array.isArray(ps.interactions)
+    ? (ps.interactions as Interaction[])
     : [];
   const uploads = lead.uploads ?? [];
 
-  const cityDisplay = str("cidade") || lead.city || "";
-  const stateDisplay = str("estado") || lead.state || "";
+  const cityDisplay = str("city") || lead.city || "";
+  const stateDisplay = str("state") || lead.state || "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -185,10 +154,10 @@ export function LeadViewModal({
             data-testid="lead-view-title"
             className="flex items-center gap-3"
           >
-            {lead.nomeCompleto || "Lead"}
-            {(crm.statusLead as string) && (
+            {lead.fullName || "Lead"}
+            {(lead.status) && (
               <Badge variant="outline" className="text-xs">
-                {lookup(STATUS_LEAD_OPTIONS, crm.statusLead as string)}
+                {lookup(STATUS_LEAD_OPTIONS, lead.status)}
               </Badge>
             )}
           </DialogTitle>
@@ -201,27 +170,27 @@ export function LeadViewModal({
               LEAD IDENTIFICATION
           ══════════════════════════════════════ */}
           <Section title="Identificação do Lead">
-            <Row icon={User}      label="Nome"                  value={lead.nomeCompleto}                        />
-            <Row icon={Building2} label="Empresa / Contratante" value={lead.empresa}                             />
-            <Row icon={Briefcase} label="Cargo / Função"        value={str("cargo")}                             />
+            <Row icon={User}      label="Nome"                  value={lead.fullName}                        />
+            <Row icon={Building2} label="Empresa / Contratante" value={lead.company}                             />
+            <Row icon={Briefcase} label="Cargo / Função"        value={str("jobTitle")}                             />
             <Row icon={Mail}      label="E-mail"                  value={lead.email}                               />
             <Row icon={Phone}     label="Telefone / WhatsApp"   value={lead.whatsapp}                            />
             <Row icon={Instagram} label="Instagram"             value={lead.instagram}                           />
             <Row icon={Globe}     label="Site"               value={str("website")}                           />
-            <Row icon={MapPin}    label="Endereço"              value={str("endereco")}                          />
+            <Row icon={MapPin}    label="Endereço"              value={str("address")}                          />
             <Row icon={MapPin}    label="Cidade"                value={lead.city}                                />
             <Row icon={Hash}      label="Estado"                value={lead.state}                               />
             <Row icon={Tag}       label="Tipo de Lead"          value={lookup(LEAD_TYPE_OPTIONS, leadType)}      />
             <Row icon={Sparkles}  label="Serviço"               value={lookup(SERVICES_OPTIONS,  service)}       />
-            {str("nome_artista_servico") && (
+            {str("serviceArtistName") && (
               <Row
                 icon={Music}
                 label="Artista/Banda/Influenciador"
-                value={str("nome_artista_servico")}
+                value={str("serviceArtistName")}
               />
             )}
             <div className="sm:col-span-2">
-              <Row icon={FileText} label="Descrição da Demanda" value={str("descricao")} />
+              <Row icon={FileText} label="Descrição da Demanda" value={str("description")} />
             </div>
           </Section>
 
@@ -229,15 +198,15 @@ export function LeadViewModal({
               ORIGIN AND SALES MANAGEMENT
           ══════════════════════════════════════ */}
           <Section title="Origem e Gestão Comercial">
-            <Row icon={AtSign}        label="Origem do Lead"        value={lookup(LEAD_SOURCE_OPTIONS, crm.origemLead  as string)} />
-            <Row icon={Flag}          label="Status do Lead"        value={lookup(STATUS_LEAD_OPTIONS, crm.statusLead  as string)} />
-            <Row icon={Star}          label="Prioridade"            value={lookup(PRIORITY_OPTIONS,  crm.prioridade  as string)} />
-            <Row icon={UserCog}       label="Responsável pelo Lead" value={crm.responsavel                             as string}  />
-            <Row icon={Tag}           label="Campanha de Marketing" value={crm.campanha_marketing                      as string}  />
-            <Row icon={Calendar}      label="Data de Entrada"       value={fmtDate(str("data_entrada") || lead.createdAt)}        />
-            <Row icon={CalendarClock} label="Próximo Follow-up"     value={fmtDate(crm.proximoFollowUp                as string)} />
-            <Row icon={DollarSign}    label="Valor Estimado"        value={fmtMoney(crm.valorEstimado                 as number)} />
-            <Row icon={Thermometer}   label="Temperatura"           value={TEMPERATURA_LABEL[crm.temperatura as string] ?? (crm.temperatura as string)} />
+            <Row icon={AtSign}        label="Origem do Lead"        value={lookup(LEAD_SOURCE_OPTIONS, crm.leadSource as string)} />
+            <Row icon={Flag}          label="Status do Lead"        value={lookup(STATUS_LEAD_OPTIONS, lead.status)} />
+            <Row icon={Star}          label="Prioridade"            value={lookup(PRIORITY_OPTIONS,  crm.priority as string)} />
+            <Row icon={UserCog}       label="Responsável pelo Lead" value={crm.responsiblePerson as string}  />
+            <Row icon={Tag}           label="Campanha de Marketing" value={crm.marketingCampaign as string}  />
+            <Row icon={Calendar}      label="Data de Entrada"       value={fmtDate(str("entryDate") || lead.createdAt)}        />
+            <Row icon={CalendarClock} label="Próximo Follow-up"     value={fmtDate(crm.nextFollowUpAt as string)} />
+            <Row icon={DollarSign}    label="Valor Estimado"        value={fmtMoney(crm.estimatedValue as number)} />
+            <Row icon={Thermometer}   label="Temperatura"           value={lookup(TEMPERATURE_OPTIONS, crm.temperature as string)} />
           </Section>
 
           {/* ══════════════════════════════════════
@@ -245,18 +214,18 @@ export function LeadViewModal({
           ══════════════════════════════════════ */}
           {showEvent && (
             <Section title="Detalhes do Evento">
-              <Row icon={Sparkles} label="Nome do Evento"        value={str("nome_evento")}                               />
-              <Row icon={Tag}      label="Tipo de Evento"        value={lookup(EVENT_TYPE_OPTIONS, str("tipo_evento"))}  />
-              <Row icon={Calendar} label="Data do Evento"        value={fmtDate(str("data_evento"))}                     />
-              <Row icon={MapPin}   label="Local do Evento"       value={str("local_evento")}                              />
+              <Row icon={Sparkles} label="Nome do Evento"        value={str("eventName")}                               />
+              <Row icon={Tag}      label="Tipo de Evento"        value={lookup(EVENT_TYPE_OPTIONS, str("eventType"))}  />
+              <Row icon={Calendar} label="Data do Evento"        value={fmtDate(str("eventDate"))}                     />
+              <Row icon={MapPin}   label="Local do Evento"       value={str("eventVenue")}                              />
               <Row icon={MapPin}   label="Cidade"                value={cityDisplay}                                    />
               <Row icon={Hash}     label="Estado"                value={stateDisplay}                                    />
-              <Row icon={Users}    label="Capacidade de Público" value={str("capacidade_publico")}                        />
+              <Row icon={Users}    label="Capacidade de Público" value={str("audienceCapacity")}                        />
               {showArtistBandEvent && (
-                <Row icon={Music} label="Nome do Artista / Banda" value={str("nome_artista_banda")} />
+                <Row icon={Music} label="Nome do Artista / Banda" value={str("artistName")} />
               )}
               <div className="sm:col-span-2">
-                <Row icon={FileText} label="Necessidades Adicionais" value={str("necessidades_adicionais")} />
+                <Row icon={FileText} label="Necessidades Adicionais" value={str("additionalNeeds")} />
               </div>
             </Section>
           )}
@@ -266,15 +235,15 @@ export function LeadViewModal({
           ══════════════════════════════════════ */}
           {showCampaign && (
             <Section title="Detalhes da Campanha">
-              <Row icon={Sparkles} label="Nome da Campanha"        value={str("nome_campanha")}         />
-              <Row icon={Tag}      label="Tipo da Campanha"        value={str("tipo_campanha")}         />
+              <Row icon={Sparkles} label="Nome da Campanha"        value={str("campaignName")}         />
+              <Row icon={Tag}      label="Tipo da Campanha"        value={str("campaignType")}         />
               <Row icon={Calendar} label="Data de Início"          value={fmtDate(str("start_date"))}  />
               <Row icon={Calendar} label="Data de Fim"             value={fmtDate(str("end_date"))}     />
               <Row icon={MapPin}   label="Cidade"                  value={cityDisplay}                />
               <Row icon={Hash}     label="Estado"                  value={stateDisplay}                />
-              <Row icon={Music}    label="Nome do Artista / Banda" value={str("nome_artista_banda")}    />
+              <Row icon={Music}    label="Nome do Artista / Banda" value={str("artistName")}    />
               <div className="sm:col-span-2">
-                <Row icon={FileText} label="Necessidades Adicionais" value={str("necessidades_adicionais")} />
+                <Row icon={FileText} label="Necessidades Adicionais" value={str("additionalNeeds")} />
               </div>
             </Section>
           )}
@@ -282,16 +251,16 @@ export function LeadViewModal({
           {/* ══════════════════════════════════════
               INFLUENCER DETAILS
           ══════════════════════════════════════ */}
-          {showInfluenciador && (
+          {showInfluencer && (
             <Section title="Detalhes do Influenciador">
-              <Row icon={Sparkles} label="Nome da Campanha"  value={str("nome_campanha")}             />
-              <Row icon={Tag}      label="Tipo da Campanha"  value={str("tipo_campanha")}             />
-              <Row icon={MapPin}   label="Local da Campanha" value={str("local_campanha")}            />
-              <Row icon={Calendar} label="Data"              value={fmtDate(str("data"))}             />
+              <Row icon={Sparkles} label="Nome da Campanha"  value={str("campaignName")}             />
+              <Row icon={Tag}      label="Tipo da Campanha"  value={str("campaignType")}             />
+              <Row icon={MapPin}   label="Local da Campanha" value={str("campaignLocation")}            />
+              <Row icon={Calendar} label="Data"              value={fmtDate(str("date"))}             />
               <Row icon={MapPin}   label="Cidade"            value={cityDisplay}                    />
               <Row icon={Hash}     label="Estado"            value={stateDisplay}                    />
               <div className="sm:col-span-2">
-                <Row icon={FileText} label="Necessidades Adicionais" value={str("necessidades_adicionais")} />
+                <Row icon={FileText} label="Necessidades Adicionais" value={str("additionalNeeds")} />
               </div>
             </Section>
           )}
@@ -301,9 +270,9 @@ export function LeadViewModal({
           ══════════════════════════════════════ */}
           {showManager && (
             <Section title="Detalhes do Empresário Artístico">
-              <Row icon={Music} label="Nome do Artista / Banda" value={str("nome_artista_banda")} />
+              <Row icon={Music} label="Nome do Artista / Banda" value={str("artistName")} />
               <div className="sm:col-span-2">
-                <Row icon={FileText} label="Necessidades Adicionais" value={str("necessidades_adicionais")} />
+                <Row icon={FileText} label="Necessidades Adicionais" value={str("additionalNeeds")} />
               </div>
             </Section>
           )}
@@ -320,19 +289,19 @@ export function LeadViewModal({
                 Nenhuma interação registrada.
               </p>
             ) : (
-              <div className="space-y-3" data-testid="lead-view-interacoes">
+              <div className="space-y-3" data-testid="lead-view-interactions">
                 {interactions.map((it, idx) => (
                   <div
                     key={it.id}
                     className="rounded-md border bg-muted/20 p-3 space-y-1"
-                    data-testid={`lead-view-interacao-${it.id}`}
+                    data-testid={`lead-view-interaction-${it.id}`}
                   >
                     <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground">
                       <MessageSquare className="h-3.5 w-3.5" />
-                      Interação {idx + 1} · {lookup(INTERACTION_TYPE_OPTIONS, it.type)} · {fmtDate(it.data)}{it.horario ? ` ${it.horario}` : ""}
+                      Interação {idx + 1} · {lookup(INTERACTION_TYPE_OPTIONS, it.type)} · {fmtDate(it.date)}{it.time ? ` ${it.time}` : ""}
                     </p>
                     <p className="text-sm text-foreground whitespace-pre-wrap">
-                      {it.descricao || "—"}
+                      {it.description || "—"}
                     </p>
                   </div>
                 ))}
@@ -352,12 +321,12 @@ export function LeadViewModal({
                 Nenhuma interação registrada pela equipe ainda.
               </p>
             ) : (
-              <div className="space-y-3" data-testid="lead-view-interacoes-equipe">
+              <div className="space-y-3" data-testid="lead-view-team-interactions">
                 {teamInteractions.map((it) => (
                   <div
                     key={it.id}
                     className="rounded-md border bg-muted/20 p-3 space-y-1"
-                    data-testid={`lead-view-interacao-equipe-${it.id}`}
+                    data-testid={`lead-view-team-interaction-${it.id}`}
                   >
                     <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground">
                       <MessageSquare className="h-3.5 w-3.5" />

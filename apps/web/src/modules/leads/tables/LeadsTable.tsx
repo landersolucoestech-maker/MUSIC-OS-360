@@ -100,11 +100,10 @@ export function LeadsTable({
         </TableHeader>
         <TableBody>
           {pageItems.map((lead) => {
-            const ps = (lead.payloadServico ?? {}) as Record<string, unknown>;
-            const service = typeof ps.servico === "string" ? ps.servico : "";
+            const ps = (lead.servicePayload ?? {}) as Record<string, unknown>;
+            const service = typeof ps.service === "string" ? ps.service : "";
 
-            // CORRIGIDO: fallback usa leadServiceTypeOptions (enum LeadServiceType),
-            // not leadStatusOptions, which is a status list unrelated to serviceType.
+            // Fallback: the lead's serviceType (leadServiceTypeOptions), not a status list.
             const serviceLabel = service
               ? optionLabel(SERVICES_OPTIONS, service)
               : optionLabel(leadServiceTypeOptions, lead.serviceType);
@@ -124,23 +123,22 @@ export function LeadsTable({
                   {serviceLabel}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {/* FIXED: uses STATUS_LEAD_OPTIONS aligned with the values saved by the new system */}
-                  {optionLabel(STATUS_LEAD_OPTIONS, lead.dadosInternosCRM.statusLead)}
+                  {optionLabel(STATUS_LEAD_OPTIONS, lead.status)}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {optionLabel(LEAD_SOURCE_OPTIONS, lead.dadosInternosCRM.origemLead) ?? "-"}
+                  {optionLabel(LEAD_SOURCE_OPTIONS, lead.crmInternalData.leadSource) ?? "-"}
                 </TableCell>
                 <TableCell className="text-right font-medium text-foreground">
-                  {Number(lead.dadosInternosCRM.valorEstimado ?? 0).toLocaleString("pt-BR", {
+                  {Number(lead.crmInternalData.estimatedValue ?? 0).toLocaleString("pt-BR", {
                     style: "currency",
                     currency: "BRL",
                   })}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {formatDate(lead.dadosInternosCRM.proximoFollowUp)}
+                  {formatDate(lead.crmInternalData.nextFollowUpAt)}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {optionLabel(PRIORITY_OPTIONS, lead.dadosInternosCRM.prioridade) ?? "-"}
+                  {optionLabel(PRIORITY_OPTIONS, lead.crmInternalData.priority) ?? "-"}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>

@@ -181,40 +181,39 @@ describe('Schema reconciliation — PostgreSQL real', () => {
       const repo = qr.manager.getRepository(LeadEntity);
       const lead = await repo.save(repo.create({
         tenant_id: TENANT,
-        nome: 'SCHEMA_E2E',
+        name: 'SCHEMA_E2E',
         status: 'new' as never,
-        fonte: 'manual',
-        nome_completo: 'Fulano de Tal',
-        nome_artistico: 'FulanX',
+        source: 'manual',
+        full_name: 'Fulano de Tal',
+        stage_name: 'FulanX',
         whatsapp: '+5511999999999',
         instagram: '@fulanx',
         city: 'São Paulo',
         state: 'SP',
         country: 'BR',
-        client_type: 'artista',
-        service_type: 'distribuicao',
+        client_type: 'artist',
+        service_type: 'digitalDistribution',
         tags: ['vip', 'inbound'],
-        payload_servico: { plano: 'pro' },
-        // origem_lead/responsavel/prioridade/temperatura/estimated_value/
-        // probabilidade_fechamento/proximo_follow_up: dropped as dead
-        // physical columns (naming-closure Cluster E,
-        // 20260921000005_DropDeadLeadsCrmDualStorageColumns) -- these
-        // concepts live exclusively in dados_internos_crm now, the same
-        // place real usage always wrote them.
-        dados_internos_crm: {
-          score_interno: 9,
-          responsavel: 'ana',
-          prioridade: 'alta',
-          temperatura: 'quente',
-          origemLead: 'indicacao',
-          valorEstimado: 1500.0,
-          proximoFollowUp: '2026-07-01T12:00:00Z',
+        service_payload: { plan: 'pro' },
+        // The lead origin/owner/priority/temperature/estimated value/next
+        // follow-up concepts live exclusively in crm_internal_data (their dead
+        // physical columns were dropped by naming-closure Cluster E,
+        // 20260921000005_DropDeadLeadsCrmDualStorageColumns; keys English
+        // since CZ-033).
+        crm_internal_data: {
+          internalScore: 9,
+          responsiblePerson: 'ana',
+          priority: 'high',
+          temperature: 'hot',
+          leadSource: 'referral',
+          estimatedValue: 1500.0,
+          nextFollowUpAt: '2026-07-01T12:00:00Z',
         },
       }));
       const read = await repo.findOneByOrFail({ id: lead.id });
-      expect(read.service_type).toBe('distribuicao');
-      expect(read.dados_internos_crm['origemLead']).toBe('indicacao');
-      expect(read.dados_internos_crm['responsavel']).toBe('ana');
+      expect(read.service_type).toBe('digitalDistribution');
+      expect(read.crm_internal_data['leadSource']).toBe('referral');
+      expect(read.crm_internal_data['responsiblePerson']).toBe('ana');
       expect(read.tags).toEqual(['vip', 'inbound']);
     } finally {
       await qr.rollbackTransaction();

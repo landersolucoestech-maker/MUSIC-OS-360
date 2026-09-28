@@ -634,6 +634,16 @@ export const FIELD_LABELS_PT_BR = {
   responsiblePerson: 'Responsável',
   entryDate: 'Data de entrada',
   purchaseLocation: 'Local de compra',
+  // leads (CZ-033) — same headers as the pre-rename keys.
+  company: 'Empresa',
+  leadType: 'Tipo de lead',
+  service: 'Serviço',
+  serviceArtistName: 'Nome do artista/banda',
+  leadSource: 'Origem do lead',
+  marketingCampaign: 'Campanha de marketing',
+  nextFollowUpAt: 'Próximo follow-up',
+  estimatedValue: 'Valor estimado',
+  temperature: 'Temperatura',
   campaignId: 'Campanha',
 
   // ── Parte 89 — Briefing ──────────────────────────────────────────────────────

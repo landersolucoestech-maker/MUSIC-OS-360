@@ -36,7 +36,7 @@ import {
 import { toast } from "sonner";
 import { LeadFormModal, type LeadFormPayload } from "@/modules/leads/modals/LeadFormModal";
 import { useLeads } from "@/modules/leads/hooks";
-import type { Lead, LeadClientType, LeadServiceType } from "@/modules/leads/types";
+import { leadFormToLead } from "@/modules/leads/lib/lead-form-mapper";
 import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
 import { contactPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
@@ -228,55 +228,13 @@ const quickReplies = [
   "Agradecemos o contato! Vamos encaminhar para o time responsável e retornamos em breve.",
 ];
 
-const leadClientByType: Partial<Record<LeadFormPayload["tipo_lead"], LeadClientType>> = {
-  artista_banda: "artist",
-  contratante_show: "venue",
-  marca_empresa: "brand",
-  produtora_eventos: "eventProducer",
-  gravadora_selo: "label",
-  empresario_artistico: "company",
-  blog: "other",
-  influenciador: "creator",
-  outros: "other",
-};
-
-const leadServiceByService: Record<string, LeadServiceType> = {
-  agenciamento_gestao: "gestaoArtistica",
-  producao_musical: "producaoMusical",
-  edicao_musical: "registroAutoral",
-  producao_audiovisual: "videoclipe",
-  marketing_digital: "marketingMusical",
-  criacao_sites: "desenvolvimentoSite",
-  consultoria: "consultoria",
-  contratacao_artistas: "show",
-  eventos_corporativos: "producaoEvento",
-  campanhas_artistas: "marketingMusical",
-  licenciamento_musical: "licenciamento",
-  divulgacao_eventos: "marketingMusical",
-  parcerias_comerciais: "consultoria",
-  distribuicao_digital: "distribuicaoDigital",
-  gestao_catalogo: "consultoria",
-  estrategia_carreira: "gestaoArtistica",
-  administracao_editorial: "registroAutoral",
-  registro_obras: "registroAutoral",
-  arrecadacao_autoral: "registroAutoral",
-  sincronizacao: "licenciamento",
-  influenciadores: "marketingMusical",
-  producao_eventos: "producaoEvento",
-  marketing_influencia: "marketingMusical",
-  gestao_imagem: "marketingMusical",
-  atendimento_personalizado: "consultoria",
-  parcerias: "consultoria",
-  projetos_especiais: "consultoria",
-};
-
-const leadOriginByChannel: Partial<Record<SupportChannel, string>> = {
+const leadSourceByChannel: Partial<Record<SupportChannel, string>> = {
   whatsapp: "whatsapp",
   instagram: "instagram",
   facebook: "facebook",
-  tiktok: "outro",
+  tiktok: "other",
   site: "website",
-  custom: "outro",
+  custom: "other",
 };
 
 function buildConversationContext(conversation: SupportConversation) {
@@ -294,19 +252,19 @@ function buildConversationContext(conversation: SupportConversation) {
 
 function buildLeadInitialValue(conversation: SupportConversation): Partial<LeadFormPayload> {
   return {
-    nome: conversation.customer,
+    name: conversation.customer,
     email: conversation.email,
-    telefone: conversation.phone || conversation.handle,
+    phone: conversation.phone || conversation.handle,
     instagram: conversation.instagram,
-    tipo_lead: "contratante_show",
-    servico: "contratacao_artistas",
-    descricao: buildConversationContext(conversation),
-    origem_lead: leadOriginByChannel[conversation.channel] ?? "outro",
-    data_entrada: new Date().toISOString().split("T")[0],
-    status_lead: "novo_lead",
-    prioridade: conversation.deadlineState === "overdue" ? "alta" : "media",
-    responsavel: conversation.assignee === "Sem responsável" ? "" : conversation.assignee,
-    interacoes: [],
+    leadType: "show_booker",
+    service: "artist_booking",
+    description: buildConversationContext(conversation),
+    leadSource: leadSourceByChannel[conversation.channel] ?? "other",
+    entryDate: new Date().toISOString().split("T")[0],
+    leadStatus: "new",
+    priority: conversation.deadlineState === "overdue" ? "high" : "medium",
+    responsiblePerson: conversation.assignee === "Sem responsável" ? "" : conversation.assignee,
+    interactions: [],
     uploads: [],
   };
 }
@@ -348,45 +306,6 @@ function buildEventInitialValue(conversation: SupportConversation) {
     contatoLocal: conversation.phone || conversation.handle,
     descricao: buildConversationContext(conversation),
     observacoes: `Criado a partir do MusicChat. ${conversation.protocol}`,
-  };
-}
-
-function leadPayloadToLead(
-  payload: LeadFormPayload,
-): Omit<Lead, "id" | "createdAt" | "updatedAt" | "historicoInteracoes"> {
-  return {
-    nomeCompleto: payload.nome,
-    nomeArtistico: payload.nome_artista_servico,
-    empresa: payload.empresa,
-    email: payload.email,
-    whatsapp: payload.telefone,
-    instagram: payload.instagram,
-    city: payload.cidade,
-    state: payload.estado,
-    country: "BR",
-    clientType: leadClientByType[payload.tipo_lead] ?? "other",
-    serviceType: leadServiceByService[payload.servico] ?? "consultoria",
-    payloadServico: {
-      tipo_lead: payload.tipo_lead,
-      servico: payload.servico,
-      nome_artista_servico: payload.nome_artista_servico,
-      descricao: payload.descricao,
-      cargo: payload.cargo,
-      website: payload.website,
-      endereco: payload.endereco,
-      data_entrada: payload.data_entrada,
-      responsavel: payload.responsavel,
-      interacoes: payload.interacoes,
-      ...(payload.evento ?? payload.campanha ?? payload.influenciador ?? payload.empresario ?? {}),
-    },
-    dadosInternosCRM: {
-      statusLead: payload.status_lead,
-      prioridade: payload.prioridade,
-      origemLead: payload.origem_lead,
-      responsavel: payload.responsavel,
-      campanha_marketing: payload.campanha_marketing,
-    },
-    uploads: payload.uploads ?? [],
   };
 }
 
@@ -783,12 +702,12 @@ export function SupportCenterView({
 
   const handleLeadSubmit = async (payload: LeadFormPayload) => {
     if (!selectedConversation) return;
-    await createLead(leadPayloadToLead(payload));
+    await createLead(leadFormToLead(payload));
     updateConversation(
       selectedConversation.id,
       (conversation) => ({
         ...conversation,
-        crmSummary: { ...conversation.crmSummary, lead: payload.status_lead || conversation.crmSummary.lead },
+        crmSummary: { ...conversation.crmSummary, lead: payload.leadStatus || conversation.crmSummary.lead },
       }),
       "Lead criado a partir do MusicChat",
     );

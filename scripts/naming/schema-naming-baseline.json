@@ -1,5 +1,5 @@
 {
- "total": 205,
+ "total": 196,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -80,14 +80,6 @@
   "schema::column::invoices.tomador_nome": 1,
   "schema::column::invoices.tomador_razao_social": 1,
   "schema::column::invoices.venda_id": 1,
-  "schema::column::leads.dados_internos_crm": 1,
-  "schema::column::leads.empresa": 1,
-  "schema::column::leads.fonte": 1,
-  "schema::column::leads.nome": 1,
-  "schema::column::leads.nome_artistico": 1,
-  "schema::column::leads.nome_completo": 1,
-  "schema::column::leads.payload_servico": 1,
-  "schema::column::leads.telefone_encrypted": 1,
   "schema::column::licenses.artista": 1,
   "schema::column::licenses.cliente": 1,
   "schema::column::licenses.midia_destino": 1,
@@ -204,7 +196,6 @@
   "schema::default-value::organizations.industry::gravadora": 1,
   "schema::default-value::releases.status::planejamento": 1,
   "schema::default-value::shares.party_role::autor": 1,
-  "schema::index::contracts.idx_contracts_data_fim": 1,
-  "schema::index::leads.idx_leads_payload_servico": 1
+  "schema::index::contracts.idx_contracts_data_fim": 1
  }
 }

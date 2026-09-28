@@ -25,10 +25,10 @@ function makeDs(leadRows: unknown[], skillRunRows: unknown[] = []) {
   return { ds: { query }, query };
 }
 function makeEvent(overrides: Record<string, unknown> = {}) {
-  return { tenantId: 't1', payload: { tenantId: 't1', leadId: 'l1', nome: 'Estúdio X', origem: 'site', ...overrides } };
+  return { tenantId: 't1', payload: { tenantId: 't1', leadId: 'l1', name: 'Estúdio X', source: 'site', ...overrides } };
 }
 
-const LEAD_ROW = { nome: 'Estúdio X', empresa: 'Estúdio X Ltda', status: 'novo', fonte: 'site', pipeline_stage: null, metadata: {} };
+const LEAD_ROW = { name: 'Estúdio X', company: 'Estúdio X Ltda', status: 'new', source: 'site', metadata: {} };
 const VALID_JSON = JSON.stringify({
   nextStep: 'Ligar para qualificar', suggestedMessage: 'Olá!', objections: [], conversionProbability: 0.4,
   funnelStage: 'qualified', recommendedActions: [], risks: [], stageRecommendation: { stage: 'qualified', reason: 'x' },
@@ -50,7 +50,7 @@ describe('CrmFollowupAutomation (lead.created → crm-followup)', () => {
     expect(skillRun.succeed).toHaveBeenCalled();
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // input: leadName + stage mapeado (novo→new) no prompt
+    // input: leadName + mapped stage in the prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string; jsonMode: boolean }]>;
     expect(aiCalls[0][0].jsonMode).toBe(true);
     expect(aiCalls[0][0].prompt).toContain('Estúdio X');
@@ -62,6 +62,15 @@ describe('CrmFollowupAutomation (lead.created → crm-followup)', () => {
     expect(meta.aiFollowup.event).toBe('lead.created');
     expect(meta.aiFollowup.idempotencyKey).toBe(IDEMPOTENCY_KEY);
     expect(meta.aiFollowup.status).toBe('generated');
+  });
+
+  it('reads only existing lead columns (the dropped pipeline_stage column made every run fail)', async () => {
+    const { ds, query } = makeDs([LEAD_ROW]);
+    const handler = new CrmFollowupAutomation(ds as never, makeSkillRun() as never, makeAi(VALID_JSON) as never, passThroughTenantContext(ds) as never);
+    await handler.onLeadCreated(makeEvent() as never);
+    const select = query.mock.calls.find((c: unknown[]) => /FROM\s+leads/i.test(c[0] as string));
+    expect(select?.[0]).toMatch(/SELECT name, company, status, source, metadata/);
+    expect(select?.[0]).not.toMatch(/pipeline_stage/);
   });
 
   it('metadata idempotency blocks reprocessing', async () => {

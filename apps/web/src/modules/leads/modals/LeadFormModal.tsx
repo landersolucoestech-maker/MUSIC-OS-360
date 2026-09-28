@@ -31,8 +31,15 @@ import {
   LEAD_SOURCE_OPTIONS,
   PRIORITY_OPTIONS,
   EVENT_TYPE_OPTIONS,
+  INTERACTION_TYPE_OPTIONS,
+  TEMPERATURE_OPTIONS,
   LEAD_TYPE_MANAGER,
   LEAD_TYPE_INFLUENCER,
+  LEAD_TYPE_OTHER,
+  EVENT_COMBOS,
+  CAMPAIGN_COMBOS,
+  ARTIST_EVENT_COMBOS,
+  matchCombo,
   LEAD_TYPE_OPTIONS,
   getServicesForLeadType,
   type LeadType,
@@ -41,140 +48,83 @@ import type { LeadUpload } from "../types";
 import { toUserMessage } from "@/shared/lib/errors";
 
 // ─────────────────────────────────────────────
-// Interactions
-// ─────────────────────────────────────────────
-export const INTERACTION_TYPE_OPTIONS = [
-  { value: "ligacao",    label: "Ligação"    },
-  { value: "whatsapp",   label: "WhatsApp"   },
-  { value: "email",      label: "E-mail"      },
-  { value: "reuniao",    label: "Reunião"    },
-  { value: "proposta",   label: "Proposta"   },
-  { value: "follow_up",  label: "Follow-up"  },
-  { value: "observacao", label: "Observação" },
-] as const;
-
-export const TEMPERATURA_OPTIONS = [
-  { value: "frio",   label: "Frio"   },
-  { value: "morno",  label: "Morno"  },
-  { value: "quente", label: "Quente" },
-] as const;
-
-// ─────────────────────────────────────────────
-// Conditional rules per type + service combo
-// ─────────────────────────────────────────────
-
-const EVENT_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
-  { type: "marca_empresa",        servico: "eventos_corporativos" },
-  { type: "agencia",              servico: "producao_eventos"     },
-  { type: "agencia",              servico: "contratacao_artistas" },
-  { type: "produtora_eventos",    servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "eventos_corporativos" },
-  { type: "empresario_artistico", servico: "contratacao_artistas" },
-  { type: "empresario_artistico", servico: "eventos_corporativos" },
-  { type: "influenciador",        servico: "producao_eventos"     },
-];
-
-const CAMPAIGN_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
-  { type: "marca_empresa", servico: "campanhas_artistas" },
-  { type: "agencia",       servico: "campanhas_artistas" },
-];
-
-const ARTIST_EVENT_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
-  { type: "marca_empresa",        servico: "eventos_corporativos" },
-  { type: "agencia",              servico: "producao_eventos"     },
-  { type: "agencia",              servico: "contratacao_artistas" },
-  { type: "produtora_eventos",    servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "eventos_corporativos" },
-  { type: "empresario_artistico", servico: "contratacao_artistas" },
-  { type: "empresario_artistico", servico: "eventos_corporativos" },
-];
-
-const matchCombo = (
-  list: ReadonlyArray<{ type: string; servico: string }>,
-  type: string,
-  service: string,
-) => list.some((c) => c.type === type && c.servico === service);
-
-// ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
 export type Interaction = {
   id: string;
   type: string;
-  data: string;
-  horario: string;
-  descricao: string;
+  date: string;
+  time: string;
+  description: string;
 };
 
 type ConditionalEventPayload = {
-  nome_evento: string;
-  tipo_evento: string;
-  data_evento: string;
-  local_evento: string;
-  cidade: string;
-  estado: string;
-  capacidade_publico: string;
-  nome_artista_banda: string;
-  necessidades_adicionais: string;
+  eventName: string;
+  eventType: string;
+  eventDate: string;
+  eventVenue: string;
+  city: string;
+  state: string;
+  audienceCapacity: string;
+  artistName: string;
+  additionalNeeds: string;
 };
 
 type ConditionalCampaignPayload = {
-  nome_campanha: string;
-  tipo_campanha: string;
+  campaignName: string;
+  campaignType: string;
   start_date: string;
   end_date: string;
-  cidade: string;
-  estado: string;
-  nome_artista_banda: string;
-  necessidades_adicionais: string;
+  city: string;
+  state: string;
+  artistName: string;
+  additionalNeeds: string;
 };
 
-type CondicionalInfluenciadorPayload = {
-  nome_campanha: string;
-  tipo_campanha: string;
-  local_campanha: string;
-  data: string;
-  cidade: string;
-  estado: string;
-  necessidades_adicionais: string;
+type ConditionalInfluencerPayload = {
+  campaignName: string;
+  campaignType: string;
+  campaignLocation: string;
+  date: string;
+  city: string;
+  state: string;
+  additionalNeeds: string;
 };
 
 type ConditionalManagerPayload = {
-  nome_artista_banda: string;
-  necessidades_adicionais: string;
+  artistName: string;
+  additionalNeeds: string;
 };
 
 export type LeadFormPayload = {
-  nome: string;
-  empresa: string;
-  cargo: string;
+  name: string;
+  company: string;
+  jobTitle: string;
   email: string;
-  telefone: string;
+  phone: string;
   instagram: string;
   website: string;
-  endereco: string;
-  cidade: string;
-  estado: string;
-  tipo_lead: LeadType | "";
-  servico: string;
-  nome_artista_servico: string;
-  descricao: string;
-  origem_lead: string;
-  campanha_marketing: string;
-  data_entrada: string;
-  status_lead: string;
-  prioridade: string;
-  responsavel: string;
-  proximo_follow_up: string;
-  valor_estimado: string;
-  temperatura: string;
-  evento?: ConditionalEventPayload;
-  campanha?: ConditionalCampaignPayload;
-  influenciador?: CondicionalInfluenciadorPayload;
-  empresario?: ConditionalManagerPayload;
-  interacoes: Interaction[];
+  address: string;
+  city: string;
+  state: string;
+  leadType: LeadType | "";
+  service: string;
+  serviceArtistName: string;
+  description: string;
+  leadSource: string;
+  marketingCampaign: string;
+  entryDate: string;
+  leadStatus: string;
+  priority: string;
+  responsiblePerson: string;
+  nextFollowUpAt: string;
+  estimatedValue: string;
+  temperature: string;
+  event?: ConditionalEventPayload;
+  campaign?: ConditionalCampaignPayload;
+  influencer?: ConditionalInfluencerPayload;
+  manager?: ConditionalManagerPayload;
+  interactions: Interaction[];
   uploads: LeadUpload[];
 };
 
@@ -192,26 +142,26 @@ interface LeadFormModalProps {
 // Defaults
 // ─────────────────────────────────────────────
 const EVENT_DEFAULT: ConditionalEventPayload = {
-  nome_evento: "", tipo_evento: "", data_evento: "",
-  local_evento: "", cidade: "", estado: "",
-  capacidade_publico: "", nome_artista_banda: "",
-  necessidades_adicionais: "",
+  eventName: "", eventType: "", eventDate: "",
+  eventVenue: "", city: "", state: "",
+  audienceCapacity: "", artistName: "",
+  additionalNeeds: "",
 };
 
 const CAMPAIGN_DEFAULT: ConditionalCampaignPayload = {
-  nome_campanha: "", tipo_campanha: "",
+  campaignName: "", campaignType: "",
   start_date: "", end_date: "",
-  cidade: "", estado: "",
-  nome_artista_banda: "", necessidades_adicionais: "",
+  city: "", state: "",
+  artistName: "", additionalNeeds: "",
 };
 
-const INFLUENCIADOR_DEFAULT: CondicionalInfluenciadorPayload = {
-  nome_campanha: "", tipo_campanha: "", local_campanha: "",
-  data: "", cidade: "", estado: "", necessidades_adicionais: "",
+const INFLUENCER_DEFAULT: ConditionalInfluencerPayload = {
+  campaignName: "", campaignType: "", campaignLocation: "",
+  date: "", city: "", state: "", additionalNeeds: "",
 };
 
 const MANAGER_DEFAULT: ConditionalManagerPayload = {
-  nome_artista_banda: "", necessidades_adicionais: "",
+  artistName: "", additionalNeeds: "",
 };
 
 const todayISO = () => new Date().toISOString().split("T")[0];
@@ -229,34 +179,34 @@ const newId = () =>
 const buildDefaults = (
   initial?: Partial<LeadFormPayload> | null,
 ): LeadFormPayload => ({
-  nome:                 initial?.nome                 ?? "",
-  empresa:              initial?.empresa              ?? "",
-  cargo:                initial?.cargo                ?? "",
+  name:                 initial?.name                 ?? "",
+  company:              initial?.company              ?? "",
+  jobTitle:                initial?.jobTitle                ?? "",
   email:                initial?.email                ?? "",
-  telefone:             initial?.telefone             ?? "",
+  phone:             initial?.phone             ?? "",
   instagram:            initial?.instagram            ?? "",
   website:              initial?.website              ?? "",
-  endereco:             initial?.endereco             ?? "",
-  cidade:               initial?.cidade               ?? "",
-  estado:               initial?.estado               ?? "",
-  tipo_lead:            (initial?.tipo_lead as LeadType) ?? "",
-  servico:              initial?.servico              ?? "",
-  nome_artista_servico: initial?.nome_artista_servico ?? "",
-  descricao:            initial?.descricao            ?? "",
-  origem_lead:          initial?.origem_lead          ?? "",
-  campanha_marketing:   initial?.campanha_marketing   ?? "",
-  data_entrada:         initial?.data_entrada         ?? todayISO(),
-  status_lead:          initial?.status_lead          ?? "new",
-  prioridade:           initial?.prioridade           ?? "media",
-  responsavel:          initial?.responsavel          ?? "",
-  proximo_follow_up:    initial?.proximo_follow_up    ?? "",
-  valor_estimado:       initial?.valor_estimado       ?? "",
-  temperatura:          initial?.temperatura          ?? "",
-  evento:               initial?.evento               ?? { ...EVENT_DEFAULT },
-  campanha:             initial?.campanha             ?? { ...CAMPAIGN_DEFAULT },
-  influenciador:        initial?.influenciador        ?? { ...INFLUENCIADOR_DEFAULT },
-  empresario:           initial?.empresario           ?? { ...MANAGER_DEFAULT },
-  interacoes:           initial?.interacoes           ?? [],
+  address:             initial?.address             ?? "",
+  city:               initial?.city               ?? "",
+  state:               initial?.state               ?? "",
+  leadType:            (initial?.leadType as LeadType) ?? "",
+  service:              initial?.service              ?? "",
+  serviceArtistName: initial?.serviceArtistName ?? "",
+  description:            initial?.description            ?? "",
+  leadSource:          initial?.leadSource          ?? "",
+  marketingCampaign:   initial?.marketingCampaign   ?? "",
+  entryDate:         initial?.entryDate         ?? todayISO(),
+  leadStatus:          initial?.leadStatus          ?? "new",
+  priority:           initial?.priority           ?? "medium",
+  responsiblePerson:          initial?.responsiblePerson          ?? "",
+  nextFollowUpAt:    initial?.nextFollowUpAt    ?? "",
+  estimatedValue:       initial?.estimatedValue       ?? "",
+  temperature:          initial?.temperature          ?? "",
+  event:               initial?.event               ?? { ...EVENT_DEFAULT },
+  campaign:             initial?.campaign             ?? { ...CAMPAIGN_DEFAULT },
+  influencer:        initial?.influencer        ?? { ...INFLUENCER_DEFAULT },
+  manager:           initial?.manager           ?? { ...MANAGER_DEFAULT },
+  interactions:           initial?.interactions           ?? [],
   uploads:              initial?.uploads              ?? [],
 });
 
@@ -332,44 +282,44 @@ export function LeadFormModal({
     field: K, value: ConditionalEventPayload[K],
   ) => setValues((prev) => ({
     ...prev,
-    evento: { ...(prev.evento ?? EVENT_DEFAULT), [field]: value },
+    event: { ...(prev.event ?? EVENT_DEFAULT), [field]: value },
   }));
 
   const setCampaign = <K extends keyof ConditionalCampaignPayload>(
     field: K, value: ConditionalCampaignPayload[K],
   ) => setValues((prev) => ({
     ...prev,
-    campanha: { ...(prev.campanha ?? CAMPAIGN_DEFAULT), [field]: value },
+    campaign: { ...(prev.campaign ?? CAMPAIGN_DEFAULT), [field]: value },
   }));
 
-  const setInfluenciador = <K extends keyof CondicionalInfluenciadorPayload>(
-    field: K, value: CondicionalInfluenciadorPayload[K],
+  const setInfluencer = <K extends keyof ConditionalInfluencerPayload>(
+    field: K, value: ConditionalInfluencerPayload[K],
   ) => setValues((prev) => ({
     ...prev,
-    influenciador: { ...(prev.influenciador ?? INFLUENCIADOR_DEFAULT), [field]: value },
+    influencer: { ...(prev.influencer ?? INFLUENCER_DEFAULT), [field]: value },
   }));
 
   const setManager = <K extends keyof ConditionalManagerPayload>(
     field: K, value: ConditionalManagerPayload[K],
   ) => setValues((prev) => ({
     ...prev,
-    empresario: { ...(prev.empresario ?? MANAGER_DEFAULT), [field]: value },
+    manager: { ...(prev.manager ?? MANAGER_DEFAULT), [field]: value },
   }));
 
   // ── Interactions ───────────────────────────────
   const addInteraction = () => {
     const newInteraction: Interaction = {
       id: newId(), type: "whatsapp",
-      data: todayISO(), horario: nowTime(), descricao: "",
+      date: todayISO(), time: nowTime(), description: "",
     };
-    setValues((prev) => ({ ...prev, interacoes: [...prev.interacoes, newInteraction] }));
+    setValues((prev) => ({ ...prev, interactions: [...prev.interactions, newInteraction] }));
   };
 
   const updateInteraction = <K extends keyof Interaction>(
     id: string, field: K, value: Interaction[K],
   ) => setValues((prev) => ({
     ...prev,
-    interacoes: prev.interacoes.map((i) =>
+    interactions: prev.interactions.map((i) =>
       i.id === id ? { ...i, [field]: value } : i,
     ),
   }));
@@ -377,7 +327,7 @@ export function LeadFormModal({
   const removeInteraction = (id: string) =>
     setValues((prev) => ({
       ...prev,
-      interacoes: prev.interacoes.filter((i) => i.id !== id),
+      interactions: prev.interactions.filter((i) => i.id !== id),
     }));
 
   // ── Flags condicionais ───────────────────────
@@ -409,20 +359,20 @@ export function LeadFormModal({
   const removeUpload = (id: string) =>
     setValues((prev) => ({ ...prev, uploads: prev.uploads.filter((upload) => upload.id !== id) }));
 
-  const type    = values.tipo_lead as LeadType | "";
-  const service = values.servico;
+  const type    = values.leadType as LeadType | "";
+  const service = values.service;
 
   const showEvent   = matchCombo(EVENT_COMBOS,   type, service);
   const showCampaign = matchCombo(CAMPAIGN_COMBOS, type, service);
 
-  // FIXED: showInfluenciador and showEmpresario are mutually exclusive with showEvento
-  const showInfluenciador = type === LEAD_TYPE_INFLUENCER && !showEvent;
+  // showInfluencer and showManager are mutually exclusive with showEvent
+  const showInfluencer = type === LEAD_TYPE_INFLUENCER && !showEvent;
   const showManager    = type === LEAD_TYPE_MANAGER    && !showEvent;
 
   const showArtistBandEvent = matchCombo(ARTIST_EVENT_COMBOS, type, service);
 
   // Artist/influencer field in the Classification section
-  const showArtistBrandCompany    = type === "marca_empresa"    && service === "campanhas_artistas";
+  const showArtistBrandCompany    = type === "brand_or_company" && service === "artist_campaigns";
   const showArtistBandManager = type === LEAD_TYPE_MANAGER;
   const showInfluencerLeadType  = type === LEAD_TYPE_INFLUENCER;
 
@@ -455,10 +405,10 @@ export function LeadFormModal({
       setSubmitting(true);
       await onSubmit({
         ...values,
-        evento:        showEvent        ? values.evento        : undefined,
-        campanha:      showCampaign      ? values.campanha      : undefined,
-        influenciador: showInfluenciador ? values.influenciador : undefined,
-        empresario:    showManager    ? values.empresario    : undefined,
+        event:        showEvent        ? values.event        : undefined,
+        campaign:      showCampaign      ? values.campaign      : undefined,
+        influencer: showInfluencer ? values.influencer : undefined,
+        manager:    showManager    ? values.manager    : undefined,
       });
       onOpenChange(false);
     } catch (err) {
@@ -496,18 +446,18 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Nome completo">
               <Input
-                value={values.nome}
-                onChange={(e) => set("nome", e.target.value)}
+                value={values.name}
+                onChange={(e) => set("name", e.target.value)}
                 placeholder="Nome do contato"
-                data-testid="input-nome"
+                data-testid="input-name"
               />
             </Field>
             <Field label="Empresa / Contratante">
               <Input
-                value={values.empresa}
-                onChange={(e) => set("empresa", e.target.value)}
+                value={values.company}
+                onChange={(e) => set("company", e.target.value)}
                 placeholder="Nome da empresa"
-                data-testid="input-empresa"
+                data-testid="input-company"
               />
             </Field>
           </div>
@@ -515,10 +465,10 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Cargo / Função">
               <Input
-                value={values.cargo}
-                onChange={(e) => set("cargo", e.target.value)}
+                value={values.jobTitle}
+                onChange={(e) => set("jobTitle", e.target.value)}
                 placeholder="Ex: produtor, promoter..."
-                data-testid="input-cargo"
+                data-testid="input-job-title"
               />
             </Field>
             <Field label="E-mail">
@@ -535,10 +485,10 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Telefone / WhatsApp">
               <Input
-                value={values.telefone}
-                onChange={(e) => set("telefone", maskPhone(e.target.value))}
+                value={values.phone}
+                onChange={(e) => set("phone", maskPhone(e.target.value))}
                 placeholder="(00) 00000-0000"
-                data-testid="input-telefone"
+                data-testid="input-phone"
               />
             </Field>
             <Field label="Instagram">
@@ -562,10 +512,10 @@ export function LeadFormModal({
             </Field>
             <Field label="Endereço">
               <Input
-                value={values.endereco}
-                onChange={(e) => set("endereco", e.target.value)}
+                value={values.address}
+                onChange={(e) => set("address", e.target.value)}
                 placeholder="Rua, número..."
-                data-testid="input-endereco"
+                data-testid="input-address"
               />
             </Field>
           </div>
@@ -573,19 +523,19 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Cidade">
               <Input
-                value={values.cidade}
-                onChange={(e) => set("cidade", e.target.value)}
+                value={values.city}
+                onChange={(e) => set("city", e.target.value)}
                 placeholder="Ex: São Paulo"
-                data-testid="input-cidade"
+                data-testid="input-city"
               />
             </Field>
             <Field label="Estado (UF)">
               <SelectField
-                value={values.estado}
-                onChange={(v) => set("estado", v)}
+                value={values.state}
+                onChange={(v) => set("state", v)}
                 options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
                 placeholder="UF"
-                testId="select-estado"
+                testId="select-state"
               />
             </Field>
           </div>
@@ -598,15 +548,15 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Tipo de Lead">
               <SelectField
-                value={values.tipo_lead}
+                value={values.leadType}
                 onChange={(v) => {
                   const newType = v as LeadType;
                   const validServices = getServicesForLeadType(newType).map((o) => o.value);
                   setValues((prev) => ({
                     ...prev,
-                    tipo_lead:            newType,
-                    servico:              validServices.includes(prev.servico) ? prev.servico : "",
-                    nome_artista_servico: "",
+                    leadType:            newType,
+                    service:              validServices.includes(prev.service) ? prev.service : "",
+                    serviceArtistName: "",
                   }));
                 }}
                 options={LEAD_TYPE_OPTIONS}
@@ -614,25 +564,25 @@ export function LeadFormModal({
               />
             </Field>
             <Field label="Serviço">
-              {values.tipo_lead === "outros" ? (
+              {values.leadType === LEAD_TYPE_OTHER ? (
                 <Textarea
-                  value={values.servico}
-                  onChange={(e) => set("servico", e.target.value)}
+                  value={values.service}
+                  onChange={(e) => set("service", e.target.value)}
                   placeholder="Descreva os serviços (um por linha)"
                   className="min-h-[80px]"
-                  data-testid="textarea-servico-outros"
+                  data-testid="textarea-service-other"
                 />
               ) : (
                 <SelectField
-                  value={values.servico}
-                  onChange={(v) => set("servico", v)}
+                  value={values.service}
+                  onChange={(v) => set("service", v)}
                   options={availableServices}
                   placeholder={
-                    values.tipo_lead
+                    values.leadType
                       ? "Selecione o serviço"
                       : "Selecione antes o tipo de lead"
                   }
-                  testId="select-servico"
+                  testId="select-service"
                 />
               )}
             </Field>
@@ -641,20 +591,20 @@ export function LeadFormModal({
           {showArtistField && (
             <Field label={labelArtist}>
               <Input
-                value={values.nome_artista_servico}
-                onChange={(e) => set("nome_artista_servico", e.target.value)}
+                value={values.serviceArtistName}
+                onChange={(e) => set("serviceArtistName", e.target.value)}
                 placeholder={placeholderArtist}
-                data-testid="input-nome-artista-servico"
+                data-testid="input-service-artist-name"
               />
             </Field>
           )}
 
           <Field label="Descrição da Demanda">
             <Textarea
-              value={values.descricao}
-              onChange={(e) => set("descricao", e.target.value)}
+              value={values.description}
+              onChange={(e) => set("description", e.target.value)}
               placeholder="Descreva a demanda do lead"
-              data-testid="textarea-descricao"
+              data-testid="textarea-description"
             />
           </Field>
 
@@ -666,18 +616,18 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Origem do Lead">
               <SelectField
-                value={values.origem_lead}
-                onChange={(v) => set("origem_lead", v)}
+                value={values.leadSource}
+                onChange={(v) => set("leadSource", v)}
                 options={LEAD_SOURCE_OPTIONS}
-                testId="select-origem-lead"
+                testId="select-source-lead"
               />
             </Field>
             <Field label="Campanha de Marketing">
               <Input
-                value={values.campanha_marketing}
-                onChange={(e) => set("campanha_marketing", e.target.value)}
+                value={values.marketingCampaign}
+                onChange={(e) => set("marketingCampaign", e.target.value)}
                 placeholder="Nome da campanha"
-                data-testid="input-campanha-marketing"
+                data-testid="input-marketing-campaign"
               />
             </Field>
           </div>
@@ -685,18 +635,18 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Data de Entrada">
               <DatePickerField
-                value={values.data_entrada}
-                onChange={(v) => set("data_entrada", v)}
+                value={values.entryDate}
+                onChange={(v) => set("entryDate", v)}
                 placeholder="Selecione a data"
-                data-testid="datepicker-data-entrada"
+                data-testid="datepicker-entry-date"
               />
             </Field>
             <Field label="Responsável pelo Lead">
               <Input
-                value={values.responsavel}
-                onChange={(e) => set("responsavel", e.target.value)}
+                value={values.responsiblePerson}
+                onChange={(e) => set("responsiblePerson", e.target.value)}
                 placeholder="Nome do responsável"
-                data-testid="input-responsavel"
+                data-testid="input-responsible-person"
               />
             </Field>
           </div>
@@ -704,18 +654,18 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Status do Lead">
               <SelectField
-                value={values.status_lead}
-                onChange={(v) => set("status_lead", v)}
+                value={values.leadStatus}
+                onChange={(v) => set("leadStatus", v)}
                 options={leadStatusOptions}
-                testId="select-status-lead"
+                testId="select-lead-status"
               />
             </Field>
             <Field label="Prioridade">
               <SelectField
-                value={values.prioridade}
-                onChange={(v) => set("prioridade", v)}
+                value={values.priority}
+                onChange={(v) => set("priority", v)}
                 options={PRIORITY_OPTIONS}
-                testId="select-prioridade"
+                testId="select-priority"
               />
             </Field>
           </div>
@@ -723,29 +673,29 @@ export function LeadFormModal({
           <div className="grid grid-cols-2 gap-4">
             <Field label="Próximo Follow-up">
               <DatePickerField
-                value={values.proximo_follow_up}
-                onChange={(v) => set("proximo_follow_up", v)}
+                value={values.nextFollowUpAt}
+                onChange={(v) => set("nextFollowUpAt", v)}
                 placeholder="Selecione a data"
-                data-testid="datepicker-proximo-follow-up"
+                data-testid="datepicker-next-follow-up"
               />
             </Field>
             <Field label="Valor Estimado (R$)">
               <Input
                 type="number"
-                value={values.valor_estimado}
-                onChange={(e) => set("valor_estimado", e.target.value)}
+                value={values.estimatedValue}
+                onChange={(e) => set("estimatedValue", e.target.value)}
                 placeholder="0,00"
-                data-testid="input-valor-estimado"
+                data-testid="input-estimated-value"
               />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Temperatura">
               <SelectField
-                value={values.temperatura}
-                onChange={(v) => set("temperatura", v)}
-                options={TEMPERATURA_OPTIONS}
-                testId="select-temperatura"
+                value={values.temperature}
+                onChange={(v) => set("temperature", v)}
+                options={TEMPERATURE_OPTIONS}
+                testId="select-temperature"
               />
             </Field>
           </div>
@@ -760,17 +710,17 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Nome do Evento">
                   <Input
-                    value={values.evento!.nome_evento}
-                    onChange={(e) => setEvent("nome_evento", e.target.value)}
-                    data-testid="input-evento-nome"
+                    value={values.event!.eventName}
+                    onChange={(e) => setEvent("eventName", e.target.value)}
+                    data-testid="input-event-name"
                   />
                 </Field>
                 <Field label="Tipo de Evento">
                   <SelectField
-                    value={values.evento!.tipo_evento}
-                    onChange={(v) => setEvent("tipo_evento", v)}
+                    value={values.event!.eventType}
+                    onChange={(v) => setEvent("eventType", v)}
                     options={EVENT_TYPE_OPTIONS}
-                    testId="select-evento-type"
+                    testId="select-event-type"
                   />
                 </Field>
               </div>
@@ -778,17 +728,17 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Data do Evento">
                   <DatePickerField
-                    value={values.evento!.data_evento}
-                    onChange={(v) => setEvent("data_evento", v)}
+                    value={values.event!.eventDate}
+                    onChange={(v) => setEvent("eventDate", v)}
                     placeholder="Selecione a data"
-                    data-testid="datepicker-evento-data"
+                    data-testid="datepicker-event-date"
                   />
                 </Field>
                 <Field label="Local do Evento">
                   <Input
-                    value={values.evento!.local_evento}
-                    onChange={(e) => setEvent("local_evento", e.target.value)}
-                    data-testid="input-evento-local"
+                    value={values.event!.eventVenue}
+                    onChange={(e) => setEvent("eventVenue", e.target.value)}
+                    data-testid="input-event-venue"
                   />
                 </Field>
               </div>
@@ -796,18 +746,18 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Cidade">
                   <Input
-                    value={values.evento!.cidade}
-                    onChange={(e) => setEvent("cidade", e.target.value)}
-                    data-testid="input-evento-cidade"
+                    value={values.event!.city}
+                    onChange={(e) => setEvent("city", e.target.value)}
+                    data-testid="input-event-city"
                   />
                 </Field>
                 <Field label="Estado (UF)">
                   <SelectField
-                    value={values.evento!.estado}
-                    onChange={(v) => setEvent("estado", v)}
+                    value={values.event!.state}
+                    onChange={(v) => setEvent("state", v)}
                     options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
                     placeholder="UF"
-                    testId="select-evento-estado"
+                    testId="select-event-state"
                   />
                 </Field>
               </div>
@@ -815,18 +765,18 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Capacidade de Público">
                   <Input
-                    value={values.evento!.capacidade_publico}
-                    onChange={(e) => setEvent("capacidade_publico", e.target.value)}
+                    value={values.event!.audienceCapacity}
+                    onChange={(e) => setEvent("audienceCapacity", e.target.value)}
                     placeholder="Ex: 5000"
-                    data-testid="input-evento-capacidade"
+                    data-testid="input-event-capacity"
                   />
                 </Field>
                 {showArtistBandEvent && (
                   <Field label="Nome do Artista / Banda">
                     <Input
-                      value={values.evento!.nome_artista_banda}
-                      onChange={(e) => setEvent("nome_artista_banda", e.target.value)}
-                      data-testid="input-evento-artista"
+                      value={values.event!.artistName}
+                      onChange={(e) => setEvent("artistName", e.target.value)}
+                      data-testid="input-event-artist"
                     />
                   </Field>
                 )}
@@ -834,10 +784,10 @@ export function LeadFormModal({
 
               <Field label="Necessidades Adicionais">
                 <Textarea
-                  value={values.evento!.necessidades_adicionais}
-                  onChange={(e) => setEvent("necessidades_adicionais", e.target.value)}
+                  value={values.event!.additionalNeeds}
+                  onChange={(e) => setEvent("additionalNeeds", e.target.value)}
                   placeholder="Descreva as necessidades adicionais do evento..."
-                  data-testid="textarea-evento-necessidades"
+                  data-testid="textarea-event-needs"
                 />
               </Field>
             </>
@@ -853,16 +803,16 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Nome da Campanha">
                   <Input
-                    value={values.campanha!.nome_campanha}
-                    onChange={(e) => setCampaign("nome_campanha", e.target.value)}
-                    data-testid="input-campanha-nome"
+                    value={values.campaign!.campaignName}
+                    onChange={(e) => setCampaign("campaignName", e.target.value)}
+                    data-testid="input-campaign-name"
                   />
                 </Field>
                 <Field label="Tipo da Campanha">
                   <Input
-                    value={values.campanha!.tipo_campanha}
-                    onChange={(e) => setCampaign("tipo_campanha", e.target.value)}
-                    data-testid="input-campanha-type"
+                    value={values.campaign!.campaignType}
+                    onChange={(e) => setCampaign("campaignType", e.target.value)}
+                    data-testid="input-campaign-type"
                   />
                 </Field>
               </div>
@@ -870,18 +820,18 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Data de Início">
                   <DatePickerField
-                    value={values.campanha!.start_date}
+                    value={values.campaign!.start_date}
                     onChange={(v) => setCampaign("start_date", v)}
                     placeholder="Selecione a data"
-                    data-testid="datepicker-campanha-inicio"
+                    data-testid="datepicker-campaign-start"
                   />
                 </Field>
                 <Field label="Data de Fim">
                   <DatePickerField
-                    value={values.campanha!.end_date}
+                    value={values.campaign!.end_date}
                     onChange={(v) => setCampaign("end_date", v)}
                     placeholder="Selecione a data"
-                    data-testid="datepicker-campanha-fim"
+                    data-testid="datepicker-campaign-end"
                   />
                 </Field>
               </div>
@@ -889,36 +839,36 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Cidade">
                   <Input
-                    value={values.campanha!.cidade}
-                    onChange={(e) => setCampaign("cidade", e.target.value)}
-                    data-testid="input-campanha-cidade"
+                    value={values.campaign!.city}
+                    onChange={(e) => setCampaign("city", e.target.value)}
+                    data-testid="input-campaign-city"
                   />
                 </Field>
                 <Field label="Estado (UF)">
                   <SelectField
-                    value={values.campanha!.estado}
-                    onChange={(v) => setCampaign("estado", v)}
+                    value={values.campaign!.state}
+                    onChange={(v) => setCampaign("state", v)}
                     options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
                     placeholder="UF"
-                    testId="select-campanha-estado"
+                    testId="select-campaign-state"
                   />
                 </Field>
               </div>
 
               <Field label="Nome do Artista / Banda">
                 <Input
-                  value={values.campanha!.nome_artista_banda}
-                  onChange={(e) => setCampaign("nome_artista_banda", e.target.value)}
-                  data-testid="input-campanha-artista"
+                  value={values.campaign!.artistName}
+                  onChange={(e) => setCampaign("artistName", e.target.value)}
+                  data-testid="input-campaign-artist"
                 />
               </Field>
 
               <Field label="Necessidades Adicionais">
                 <Textarea
-                  value={values.campanha!.necessidades_adicionais}
-                  onChange={(e) => setCampaign("necessidades_adicionais", e.target.value)}
+                  value={values.campaign!.additionalNeeds}
+                  onChange={(e) => setCampaign("additionalNeeds", e.target.value)}
                   placeholder="Descreva as necessidades adicionais da campanha..."
-                  data-testid="textarea-campanha-necessidades"
+                  data-testid="textarea-campaign-needs"
                 />
               </Field>
             </>
@@ -927,23 +877,23 @@ export function LeadFormModal({
           {/* ══════════════════════════════════════
               INFLUENCER DETAILS
           ══════════════════════════════════════ */}
-          {showInfluenciador && (
+          {showInfluencer && (
             <>
               <SectionHeader title="Detalhes do Influenciador" />
 
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Nome da Campanha">
                   <Input
-                    value={values.influenciador!.nome_campanha}
-                    onChange={(e) => setInfluenciador("nome_campanha", e.target.value)}
-                    data-testid="input-influ-campanha"
+                    value={values.influencer!.campaignName}
+                    onChange={(e) => setInfluencer("campaignName", e.target.value)}
+                    data-testid="input-influencer-campaign"
                   />
                 </Field>
                 <Field label="Tipo da Campanha">
                   <Input
-                    value={values.influenciador!.tipo_campanha}
-                    onChange={(e) => setInfluenciador("tipo_campanha", e.target.value)}
-                    data-testid="input-influ-type"
+                    value={values.influencer!.campaignType}
+                    onChange={(e) => setInfluencer("campaignType", e.target.value)}
+                    data-testid="input-influencer-type"
                   />
                 </Field>
               </div>
@@ -951,17 +901,17 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Local da Campanha">
                   <Input
-                    value={values.influenciador!.local_campanha}
-                    onChange={(e) => setInfluenciador("local_campanha", e.target.value)}
-                    data-testid="input-influ-local"
+                    value={values.influencer!.campaignLocation}
+                    onChange={(e) => setInfluencer("campaignLocation", e.target.value)}
+                    data-testid="input-influencer-venue"
                   />
                 </Field>
                 <Field label="Data">
                   <DatePickerField
-                    value={values.influenciador!.data}
-                    onChange={(v) => setInfluenciador("data", v)}
+                    value={values.influencer!.date}
+                    onChange={(v) => setInfluencer("date", v)}
                     placeholder="Selecione a data"
-                    data-testid="datepicker-influ-data"
+                    data-testid="datepicker-influencer-date"
                   />
                 </Field>
               </div>
@@ -969,30 +919,30 @@ export function LeadFormModal({
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Cidade">
                   <Input
-                    value={values.influenciador!.cidade}
-                    onChange={(e) => setInfluenciador("cidade", e.target.value)}
-                    data-testid="input-influ-cidade"
+                    value={values.influencer!.city}
+                    onChange={(e) => setInfluencer("city", e.target.value)}
+                    data-testid="input-influencer-city"
                   />
                 </Field>
                 <Field label="Estado (UF)">
                   <SelectField
-                    value={values.influenciador!.estado}
-                    onChange={(v) => setInfluenciador("estado", v)}
+                    value={values.influencer!.state}
+                    onChange={(v) => setInfluencer("state", v)}
                     options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
                     placeholder="UF"
-                    testId="select-influ-estado"
+                    testId="select-influencer-state"
                   />
                 </Field>
               </div>
 
               <Field label="Necessidades Adicionais">
                 <Textarea
-                  value={values.influenciador!.necessidades_adicionais}
+                  value={values.influencer!.additionalNeeds}
                   onChange={(e) =>
-                    setInfluenciador("necessidades_adicionais", e.target.value)
+                    setInfluencer("additionalNeeds", e.target.value)
                   }
                   placeholder="Descreva as necessidades adicionais..."
-                  data-testid="textarea-influ-necessidades"
+                  data-testid="textarea-influencer-needs"
                 />
               </Field>
             </>
@@ -1007,18 +957,18 @@ export function LeadFormModal({
 
               <Field label="Nome do Artista / Banda">
                 <Input
-                  value={values.empresario!.nome_artista_banda}
-                  onChange={(e) => setManager("nome_artista_banda", e.target.value)}
-                  data-testid="input-empresario-artista"
+                  value={values.manager!.artistName}
+                  onChange={(e) => setManager("artistName", e.target.value)}
+                  data-testid="input-manager-artist"
                 />
               </Field>
 
               <Field label="Necessidades Adicionais">
                 <Textarea
-                  value={values.empresario!.necessidades_adicionais}
-                  onChange={(e) => setManager("necessidades_adicionais", e.target.value)}
+                  value={values.manager!.additionalNeeds}
+                  onChange={(e) => setManager("additionalNeeds", e.target.value)}
                   placeholder="Descreva as necessidades adicionais..."
-                  data-testid="textarea-empresario-necessidades"
+                  data-testid="textarea-manager-needs"
                 />
               </Field>
             </>
@@ -1092,27 +1042,27 @@ export function LeadFormModal({
               variant="outline"
               size="sm"
               onClick={addInteraction}
-              data-testid="button-add-interacao"
+              data-testid="button-add-interaction"
             >
               <Plus className="h-4 w-4 mr-1" />
               Adicionar interação
             </Button>
           </div>
 
-          {values.interacoes.length === 0 && (
+          {values.interactions.length === 0 && (
             <p
               className="text-sm text-muted-foreground italic"
-              data-testid="interacoes-empty"
+              data-testid="interactions-empty"
             >
               Nenhuma interação registrada.
             </p>
           )}
 
-          {values.interacoes.map((it, idx) => (
+          {values.interactions.map((it, idx) => (
             <div
               key={it.id}
               className="rounded-md border bg-muted/20 p-4 space-y-3"
-              data-testid={`interacao-card-${it.id}`}
+              data-testid={`interaction-card-${it.id}`}
             >
               <div className="flex items-center justify-between">
                 <p className="flex items-center gap-2 text-sm font-medium">
@@ -1124,7 +1074,7 @@ export function LeadFormModal({
                   onClick={() => removeInteraction(it.id)}
                   className="text-muted-foreground hover:text-destructive"
                   aria-label="Remover interação"
-                  data-testid={`button-remove-interacao-${it.id}`}
+                  data-testid={`button-remove-interaction-${it.id}`}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -1136,34 +1086,34 @@ export function LeadFormModal({
                     value={it.type}
                     onChange={(v) => updateInteraction(it.id, "type", v)}
                     options={INTERACTION_TYPE_OPTIONS}
-                    testId={`select-interacao-type-${it.id}`}
+                    testId={`select-interaction-type-${it.id}`}
                   />
                 </Field>
                 <Field label="Data">
                   <DatePickerField
-                    value={it.data}
-                    onChange={(v) => updateInteraction(it.id, "data", v)}
+                    value={it.date}
+                    onChange={(v) => updateInteraction(it.id, "date", v)}
                     placeholder="Selecione a data"
-                    data-testid={`datepicker-interacao-${it.id}`}
+                    data-testid={`datepicker-interaction-${it.id}`}
                   />
                 </Field>
                 <Field label="Horário">
                   <Input
                     type="time"
-                    value={it.horario}
-                    onChange={(e) => updateInteraction(it.id, "horario", e.target.value)}
-                    data-testid={`input-interacao-horario-${it.id}`}
+                    value={it.time}
+                    onChange={(e) => updateInteraction(it.id, "time", e.target.value)}
+                    data-testid={`input-interaction-time-${it.id}`}
                   />
                 </Field>
               </div>
 
               <Field label="Descrição">
                 <Textarea
-                  value={it.descricao}
-                  onChange={(e) => updateInteraction(it.id, "descricao", e.target.value)}
+                  value={it.description}
+                  onChange={(e) => updateInteraction(it.id, "description", e.target.value)}
                   placeholder="Descreva a interação..."
                   className="min-h-[80px]"
-                  data-testid={`textarea-interacao-${it.id}`}
+                  data-testid={`textarea-interaction-${it.id}`}
                 />
               </Field>
             </div>

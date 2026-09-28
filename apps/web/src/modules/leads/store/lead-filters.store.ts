@@ -4,10 +4,10 @@ import type { LeadFiltersState } from "../types";
 export const defaultLeadFilters: LeadFiltersState = {
   search: "",
   serviceType: "all",
-  statusLead: "all",
-  responsavel: "all",
-  origemLead: "all",
-  temperatura: "all",
+  status: "all",
+  responsiblePerson: "all",
+  leadSource: "all",
+  temperature: "all",
 };
 
 type LeadFiltersStore = {

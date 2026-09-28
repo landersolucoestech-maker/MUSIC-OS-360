@@ -14,8 +14,8 @@ import { EventsService } from '../../core/events/events.service';
  * RebuildLeadsInCanonicalFormOrder migration — every real POST /leads
  * failed with "column \"score\" of relation \"leads\" does not exist".
  * Never detected because the frontend used an in-memory mock. Also covers
- * the mapping of the rich music CRM fields (nomeArtistico/empresa/
- * payloadServico/dadosInternosCRM/etc, added in this Part to eliminate
+ * the mapping of the rich music CRM fields (stageName/company/
+ * servicePayload/crmInternalData/etc, added in this Part to eliminate
  * the frontend mock).
  */
 function makeBilling(status: string | null = 'active') {
@@ -72,27 +72,28 @@ describe('LeadsService.create — real physical columns (never score/pipeline_st
       name: 'Lead Teste',
       email: 'lead@example.test',
       phone: '+5511999990000',
-      nomeArtistico: 'Artistico Teste',
-      empresa: 'Empresa Teste',
+      stageName: 'Artistico Teste',
+      company: 'Empresa Teste',
       whatsapp: '+5511999990000',
       city: 'Sao Paulo',
       state: 'SP',
       clientType: 'artist',
-      serviceType: 'marketingMusical',
-      payloadServico: { tipo_lead: 'artista_banda' },
-      dadosInternosCRM: { responsavel: 'QA' },
+      serviceType: 'musicMarketing',
+      servicePayload: { leadType: 'artist_or_band' },
+      crmInternalData: { responsiblePerson: 'QA' },
       uploads: [],
     } as any);
 
     const saved = (repo.save as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
-    expect(saved['nome_artistico']).toBe('Artistico Teste');
-    expect(saved['empresa']).toBe('Empresa Teste');
+    expect(saved['name']).toBe('Lead Teste');
+    expect(saved['stage_name']).toBe('Artistico Teste');
+    expect(saved['company']).toBe('Empresa Teste');
     expect(saved['city']).toBe('Sao Paulo');
     expect(saved['state']).toBe('SP');
     expect(saved['client_type']).toBe('artist');
-    expect(saved['service_type']).toBe('marketingMusical');
-    expect(saved['payload_servico']).toEqual({ tipo_lead: 'artista_banda' });
-    expect(saved['dados_internos_crm']).toEqual({ responsavel: 'QA' });
+    expect(saved['service_type']).toBe('musicMarketing');
+    expect(saved['service_payload']).toEqual({ leadType: 'artist_or_band' });
+    expect(saved['crm_internal_data']).toEqual({ responsiblePerson: 'QA' });
     // Never reintroduces the columns removed by the canonical migration.
     expect(saved['score']).toBeUndefined();
     expect(saved['pipeline_stage']).toBeUndefined();

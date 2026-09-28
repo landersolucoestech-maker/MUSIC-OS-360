@@ -53,8 +53,8 @@ function makeEvent(): DomainEvent<LeadConvertedPayload> {
     payload: {
       tenantId: 'tenant-1',
       leadId: 'lead-1',
-      nome: 'Fulano de Tal',
-      empresa: false,
+      name: 'Fulano de Tal',
+      company: null,
       convertedBy: 'user-1',
       convertedAt: new Date().toISOString(),
     },

@@ -33,7 +33,7 @@ describe("useLeads — real loading/success/error states", () => {
   });
 
   it("success populates leads with real data from the service", async () => {
-    const rows = [{ id: "1", nomeCompleto: "Fulano", dadosInternosCRM: {} }] as never[];
+    const rows = [{ id: "1", fullName: "Fulano", status: "new", crmInternalData: {} }] as never[];
     vi.mocked(leadsService.list).mockResolvedValue(rows);
     const { result } = renderHook(() => useLeads());
     await waitFor(() => expect(result.current.leads).toHaveLength(1));
@@ -56,7 +56,7 @@ describe("useLeads — real loading/success/error states", () => {
 
     await expect(
       act(async () => {
-        await result.current.createLead({ nomeCompleto: "X" } as never);
+        await result.current.createLead({ fullName: "X" } as never);
       }),
     ).rejects.toThrow("422 validation");
     expect(result.current.leads).toEqual([]);

@@ -112,11 +112,11 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'created_by', 'updated_by', 'deleted_at',
   ],
   leads: [
-    'id', 'tenant_id', 'nome', 'nome_completo', 'empresa', 'email_encrypted',
+    'id', 'tenant_id', 'name', 'full_name', 'company', 'email_encrypted',
     'whatsapp', 'instagram', 'city', 'state', 'client_type', 'service_type',
-    'payload_servico', 'status',
-    'dados_internos_crm', 'uploads', 'country',
-    'nome_artistico', 'telefone_encrypted', 'client_id', 'fonte', 'tags', 'metadata',
+    'service_payload', 'status',
+    'crm_internal_data', 'uploads', 'country',
+    'stage_name', 'phone_encrypted', 'client_id', 'source', 'tags', 'metadata',
     'created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at',
   ],
   contracts: [

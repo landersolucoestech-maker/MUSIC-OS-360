@@ -318,7 +318,7 @@ const ENDPOINTS = [
   { path: '/contracts',   tagMatcher: (r: any) => r.titulo ?? r.title },
   { path: '/events',      tagMatcher: (r: any) => r.title ?? r.titulo },
   { path: '/transactions',tagMatcher: (r: any) => r.descricao ?? r.description },
-  { path: '/leads',       tagMatcher: (r: any) => r.name ?? r.nome },
+  { path: '/leads',       tagMatcher: (r: any) => r.name },
   { path: '/clients',     tagMatcher: (r: any) => r.name ?? r.nome },
 ];
 

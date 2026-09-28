@@ -1204,19 +1204,17 @@ export class LeadEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid', nullable: true }) client_id: string | null;
-  @Column({ type: 'varchar', length: 255 }) nome: string;
+  @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
-  @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) empresa: string | null;
+  @Column({ type: 'text', nullable: true }) phone_encrypted: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) company: string | null;
   @Column({ type: 'varchar', length: 50, default: LeadStatus.NEW }) status: LeadStatus;
-  @Column({ type: 'varchar', length: 100, nullable: true }) fonte: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) source: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
 
-  // ── Real operational columns (PHASE 2B — leads reconciliation) ────────────────
-  // Physical names preserved EXACTLY as they exist in the database (camelCase and
-  // snake_case coexist by decision of this phase; normalization is left for a future phase).
-  @Column({ type: 'varchar', length: 255, nullable: true }) nome_completo: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) nome_artistico: string | null;
+  // ── Real operational columns (PHASE 2B — leads reconciliation; English names since CZ-033) ──
+  @Column({ type: 'varchar', length: 255, nullable: true }) full_name: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) stage_name: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) whatsapp: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) instagram: string | null;
   @Column({ type: 'varchar', length: 120, nullable: true }) city: string | null;
@@ -1225,15 +1223,17 @@ export class LeadEntity {
   @Column({ type: 'varchar', length: 80, nullable: true }) client_type: string | null;
   // `tipo_servico`/`tipo_cliente` (this one, above) were translated to English
   // (`service_type`/`client_type`) by the naming-normalization mission.
-  // `origem_lead`/`responsavel`/`prioridade`/`temperatura`/`estimated_value`/
-  // `probabilidade_fechamento`/`proximo_follow_up` were a second, dead physical
+  // The former lead-origin/owner/priority/temperature/estimated-value/
+  // close-probability/next-follow-up columns were a second, dead physical
   // storage location for concepts real usage always wrote into
-  // `dados_internos_crm` (jsonb) -- dropped by naming-closure Cluster E
+  // `crm_internal_data` (jsonb) -- dropped by naming-closure Cluster E
   // (20260921000005_DropDeadLeadsCrmDualStorageColumns; 0 non-null rows on
   // all 7 columns, live data confirmed exclusively on the jsonb side).
   @Column({ type: 'varchar', length: 120, nullable: true }) service_type: string | null;
-  @Column({ type: 'jsonb', default: {} }) payload_servico: Record<string, unknown>;
-  @Column({ type: 'jsonb', default: {} }) dados_internos_crm: Record<string, unknown>;
+  // Lead form fields by service (service_payload) and CRM follow-up data
+  // (crm_internal_data); key/value vocabulary: modules/leads/lead-vocabulary.ts.
+  @Column({ type: 'jsonb', default: {} }) service_payload: Record<string, unknown>;
+  @Column({ type: 'jsonb', default: {} }) crm_internal_data: Record<string, unknown>;
   @Column({ type: 'text', array: true, default: () => "'{}'" }) tags: string[];
   // Lead form field (2026-07-12 rule: 1 column per field)
   @Column({ type: 'jsonb', nullable: true }) uploads: unknown[] | null;

@@ -14,22 +14,22 @@ export const leadClientTypeOptions: Array<{ value: LeadClientType; label: string
 ];
 
 export const leadServiceTypeOptions: Array<{ value: LeadServiceType; label: string }> = [
-  { value: "producaoMusical",     label: "Produção musical"        },
-  { value: "mixagem",             label: "Mixagem"                 },
-  { value: "masterizacao",        label: "Masterização"            },
-  { value: "distribuicaoDigital", label: "Distribuição digital"    },
-  { value: "marketingMusical",    label: "Marketing digital"       },
-  { value: "videoclipe",          label: "Videoclipe"              },
-  { value: "fotografia",          label: "Fotografia"              },
+  { value: "musicProduction",     label: "Produção musical"        },
+  { value: "mixing",             label: "Mixagem"                 },
+  { value: "mastering",        label: "Masterização"            },
+  { value: "digitalDistribution", label: "Distribuição digital"    },
+  { value: "musicMarketing",    label: "Marketing digital"       },
+  { value: "musicVideo",          label: "Videoclipe"              },
+  { value: "photography",          label: "Fotografia"              },
   { value: "show",                label: "Show"                    },
-  { value: "producaoEvento",      label: "Produção de evento"      },
-  { value: "gestaoArtistica",     label: "Gestão artística"        },
-  { value: "registroAutoral",     label: "Registro autoral"        },
-  { value: "licenciamento",       label: "Licenciamento"           },
-  { value: "designGrafico",       label: "Design gráfico"          },
-  { value: "desenvolvimentoSite", label: "Desenvolvimento de site" },
-  { value: "trafegoPago",         label: "Tráfego pago"            },
-  { value: "consultoria",         label: "Consultoria"             },
+  { value: "eventProduction",      label: "Produção de evento"      },
+  { value: "artistManagement",     label: "Gestão artística"        },
+  { value: "copyrightRegistration",     label: "Registro autoral"        },
+  { value: "licensing",       label: "Licenciamento"           },
+  { value: "graphicDesign",       label: "Design gráfico"          },
+  { value: "websiteDevelopment", label: "Desenvolvimento de site" },
+  { value: "paidTraffic",         label: "Tráfego pago"            },
+  { value: "consulting",         label: "Consultoria"             },
 ];
 
 /**

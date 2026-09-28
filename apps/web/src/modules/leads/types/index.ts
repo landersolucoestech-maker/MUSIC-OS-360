@@ -13,22 +13,22 @@ export const leadClientTypes = [
 export type LeadClientType = (typeof leadClientTypes)[number];
 
 export const leadServiceTypes = [
-  "producaoMusical",
-  "mixagem",
-  "masterizacao",
-  "distribuicaoDigital",
-  "marketingMusical",
-  "videoclipe",
-  "fotografia",
+  "musicProduction",
+  "mixing",
+  "mastering",
+  "digitalDistribution",
+  "musicMarketing",
+  "musicVideo",
+  "photography",
   "show",
-  "producaoEvento",
-  "gestaoArtistica",
-  "registroAutoral",
-  "licenciamento",
-  "designGrafico",
-  "desenvolvimentoSite",
-  "trafegoPago",
-  "consultoria",
+  "eventProduction",
+  "artistManagement",
+  "copyrightRegistration",
+  "licensing",
+  "graphicDesign",
+  "websiteDevelopment",
+  "paidTraffic",
+  "consulting",
 ] as const;
 
 export type LeadServiceType = (typeof leadServiceTypes)[number];
@@ -52,36 +52,37 @@ export type LeadInteraction = {
 };
 
 export type LeadInternalCRMData = {
-  statusLead: string;
-  responsavel?: string;
-  prioridade?: string;
-  temperatura?: string;
-  origemLead?: string;
-  valorEstimado?: number;
-  probabilidadeFechamento?: number;
-  proximoFollowUp?: string;
-  observacoesInternas?: string;
+  responsiblePerson?: string;
+  priority?: string;
+  temperature?: string;
+  leadSource?: string;
+  estimatedValue?: number;
+  closeProbability?: number;
+  nextFollowUpAt?: string;
+  internalNotes?: string;
   /** Marketing campaign the lead originated from (persisted by the form). */
-  campanha_marketing?: string;
+  marketingCampaign?: string;
 };
 
+/** Lead as the web models it (API contract: canonical English fields, CZ-033). */
 export type Lead = {
   id: string;
-  nomeCompleto: string;
-  nomeArtistico?: string;
-  empresa?: string;
+  fullName: string;
+  stageName?: string;
+  company?: string;
   email?: string;
   whatsapp?: string;
   instagram?: string;
   city?: string;
   state?: string;
   country?: string;
+  /** LeadStatus (workflow-managed `status` column). */
+  status: string;
   clientType: LeadClientType;
   serviceType: LeadServiceType;
-  payloadServico: Record<string, unknown>;
-  dadosInternosCRM: LeadInternalCRMData;
+  servicePayload: Record<string, unknown>;
+  crmInternalData: LeadInternalCRMData;
   uploads: LeadUpload[];
-  historicoInteracoes: LeadInteraction[];
   createdAt: string;
   updatedAt: string;
 };
@@ -89,8 +90,8 @@ export type Lead = {
 export type LeadFiltersState = {
   search: string;
   serviceType: "all" | LeadServiceType;
-  statusLead: "all" | string;
-  responsavel: "all" | string;
-  origemLead: "all" | string;
-  temperatura: "all" | string;
+  status: "all" | string;
+  responsiblePerson: "all" | string;
+  leadSource: "all" | string;
+  temperature: "all" | string;
 };

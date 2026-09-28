@@ -38,7 +38,7 @@ export class LeadEventsHandler {
     const tenantId = event.tenantId ?? event.payload.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { leadId, nome: name, empresa: company, convertedBy, convertedAt } = event.payload;
+    const { leadId, name, company, convertedBy, convertedAt } = event.payload;
 
     if (this.clientRepo || this.leadRepo || this.artistRepo) {
       const created = await this.runInTenantContext(tenantId, async (manager) => {

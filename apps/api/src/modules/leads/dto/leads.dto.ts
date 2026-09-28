@@ -30,8 +30,8 @@ export class CreateLeadDto {
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
   // ── Music CRM fields (real physical columns of `leads`) ─────────────────────
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) nomeArtistico?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) empresa?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) stageName?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) company?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50)  whatsapp?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) instagram?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(120) city?: string;
@@ -39,9 +39,21 @@ export class CreateLeadDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  country?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  clientType?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(120) serviceType?: string;
-  @ApiPropertyOptional() @IsOptional() @IsObject() payloadServico?: Record<string, unknown>;
-  @ApiPropertyOptional() @IsOptional() @IsObject() dadosInternosCRM?: Record<string, unknown>;
+  /** Form fields by service (keys: lead-vocabulary.ts). */
+  @ApiPropertyOptional() @IsOptional() @IsObject() servicePayload?: Record<string, unknown>;
+  /** CRM follow-up data: owner, priority, temperature, leadSource, ... (lead-vocabulary.ts). */
+  @ApiPropertyOptional() @IsOptional() @IsObject() crmInternalData?: Record<string, unknown>;
   @ApiPropertyOptional() @IsOptional() uploads?: unknown[];
+
+  // ── Deprecated aliases (CZ-033 deploy-skew window; see LEAD_DEPRECATED_FIELDS) ──
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "stageName".' })
+  @IsOptional() @IsString() @MaxLength(255) nomeArtistico?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "company".' })
+  @IsOptional() @IsString() @MaxLength(255) empresa?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "servicePayload".' })
+  @IsOptional() @IsObject() payloadServico?: Record<string, unknown>;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "crmInternalData".' })
+  @IsOptional() @IsObject() dadosInternosCRM?: Record<string, unknown>;
 }
 
 export class UpdateLeadDto extends PartialType(CreateLeadDto) {

@@ -352,7 +352,7 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
       const result = await ds.query(
         `SELECT COUNT(*)::int AS count
          FROM leads
-         WHERE nome = $1 AND tenant_id = $2`,
+         WHERE name = $1 AND tenant_id = $2`,
         [name, TENANT_A],
       );
       return result[0].count as number;
@@ -361,20 +361,20 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
     beforeAll(async () => {
       await ds.query(
         `INSERT INTO leads
-           (id, tenant_id, nome, status, city, service_type, dados_internos_crm, tags)
+           (id, tenant_id, name, status, city, service_type, crm_internal_data, tags)
          VALUES
-           (gen_random_uuid(), $1, $2, 'new', 'São Paulo', 'distribuicao', $3::jsonb, ARRAY['vip']::text[])`,
-        [TENANT_A, `${LEAD_TAG}_A`, JSON.stringify({ origemLead: 'indicacao' })],
+           (gen_random_uuid(), $1, $2, 'new', 'São Paulo', 'digitalDistribution', $3::jsonb, ARRAY['vip']::text[])`,
+        [TENANT_A, `${LEAD_TAG}_A`, JSON.stringify({ leadSource: 'referral' })],
       );
       await ds.query(
-        `INSERT INTO leads (id, tenant_id, nome, status)
+        `INSERT INTO leads (id, tenant_id, name, status)
          VALUES (gen_random_uuid(), $1, $2, 'new')`,
         [TENANT_B, `${LEAD_TAG}_B`],
       );
     });
 
     afterAll(async () => {
-      await ds.query(`DELETE FROM leads WHERE nome LIKE $1`, [`${LEAD_TAG}%`]);
+      await ds.query(`DELETE FROM leads WHERE name LIKE $1`, [`${LEAD_TAG}%`]);
     });
 
     it('export XLSX includes reconciled fields and isolates tenant', async () => {
@@ -392,9 +392,9 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
       expect(headers).not.toEqual(
         expect.arrayContaining([
           'email_encrypted',
-          'telefone_encrypted',
-          'dados_internos_crm',
-          'payload_servico',
+          'phone_encrypted',
+          'crm_internal_data',
+          'service_payload',
         ]),
       );
       const serialized = JSON.stringify(matrix);
@@ -437,7 +437,7 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
       );
       expect(result.importedRows).toBe(1);
       expect(await countLeads(name)).toBe(1);
-      const row = await ds.query(`SELECT tenant_id FROM leads WHERE nome = $1`, [name]);
+      const row = await ds.query(`SELECT tenant_id FROM leads WHERE name = $1`, [name]);
       expect(row[0].tenant_id).toBe(TENANT_A);
     });
 

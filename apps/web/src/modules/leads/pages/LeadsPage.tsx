@@ -10,229 +10,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { LeadFilters } from "../components";
 import { useLeads } from "../hooks";
 import { useLeadFiltersStore } from "../store";
-import { LeadFormModal, type Interaction, type LeadFormPayload } from "../modals/LeadFormModal";
+import { LeadFormModal } from "../modals/LeadFormModal";
 import { LeadViewModal } from "../modals/LeadViewModal";
 import { LeadsTable } from "../tables/LeadsTable";
-import type { Lead, LeadClientType, LeadServiceType } from "../types";
+import type { Lead } from "../types";
+import { leadFormToLead, leadToFormInitial } from "../lib/lead-form-mapper";
 import { ContactsPanel } from "@/modules/crm-relationships/components/ContactsPanel";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
 import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
-
-// ─────────────────────────────────────────────
-// Conditional combos
-// ─────────────────────────────────────────────
-const EVENT_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
-  { type: "marca_empresa",        servico: "eventos_corporativos" },
-  { type: "agencia",              servico: "producao_eventos"     },
-  { type: "agencia",              servico: "contratacao_artistas" },
-  { type: "produtora_eventos",    servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "contratacao_artistas" },
-  { type: "contratante_show",     servico: "eventos_corporativos" },
-  { type: "empresario_artistico", servico: "contratacao_artistas" },
-  { type: "empresario_artistico", servico: "eventos_corporativos" },
-  { type: "influenciador",        servico: "producao_eventos"     },
-];
-
-const CAMPAIGN_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
-  { type: "marca_empresa", servico: "campanhas_artistas" },
-  { type: "agencia",       servico: "campanhas_artistas" },
-];
-
-const matchCombo = (
-  list: ReadonlyArray<{ type: string; servico: string }>,
-  type: string,
-  service: string,
-) => list.some((c) => c.type === type && c.servico === service);
-
-// ─────────────────────────────────────────────
-// Mappings
-// ─────────────────────────────────────────────
-const LEAD_TYPE_TO_CLIENT: Record<string, LeadClientType> = {
-  artista_banda:        "artist",
-  contratante_show:     "eventProducer",
-  marca_empresa:        "brand",
-  produtora_eventos:    "eventProducer",
-  gravadora_selo:       "label",
-  empresario_artistico: "agency",
-  editora_musical:      "label",
-  agencia:              "agency",
-  influenciador:        "creator",
-  outros:               "other",
-};
-
-const SERVICE_TO_SERVICE_TYPE: Record<string, LeadServiceType> = {
-  agenciamento_gestao:       "gestaoArtistica",
-  producao_musical:          "producaoMusical",
-  edicao_musical:            "mixagem",
-  distribuicao_digital:      "distribuicaoDigital",
-  marketing_digital:         "marketingMusical",
-  marketing_influencia:      "marketingMusical",
-  producao_audiovisual:      "videoclipe",
-  producao_eventos:          "producaoEvento",
-  contratacao_artistas:      "producaoEvento",
-  eventos_corporativos:      "producaoEvento",
-  campanhas_artistas:        "marketingMusical",
-  licenciamento_musical:     "licenciamento",
-  gestao_imagem:             "gestaoArtistica",
-  estrategia_carreira:       "gestaoArtistica",
-  divulgacao_eventos:        "producaoEvento",
-  administracao_editorial:   "registroAutoral",
-  registro_obras:            "registroAutoral",
-  arrecadacao_autoral:       "registroAutoral",
-  sincronizacao:             "licenciamento",
-  gestao_catalogo:           "registroAutoral",
-  influenciadores:           "marketingMusical",
-  parcerias_comerciais:      "consultoria",
-  parcerias:                 "consultoria",
-  projetos_especiais:        "consultoria",
-  atendimento_personalizado: "consultoria",
-  criacao_sites:             "desenvolvimentoSite",
-  consultoria:               "consultoria",
-};
-
-// ─────────────────────────────────────────────
-// payloadToLead
-// ─────────────────────────────────────────────
-function payloadToLead(
-  payload: LeadFormPayload,
-): Omit<Lead, "id" | "createdAt" | "updatedAt" | "historicoInteracoes"> {
-  const clientType = LEAD_TYPE_TO_CLIENT[payload.tipo_lead]   ?? "other";
-  const serviceType = SERVICE_TO_SERVICE_TYPE[payload.servico] ?? "consultoria";
-
-  // FIXED: each conditional block is spread individually so no data is lost.
-  // The previous chained ?? operator discarded every block except the first non-undefined one.
-  const condicional =
-    payload.evento        ??
-    payload.campanha      ??
-    payload.influenciador ??
-    payload.empresario    ??
-    {};
-
-  return {
-    nomeCompleto:  payload.nome,
-    nomeArtistico:
-      payload.evento?.nome_artista_banda     ??
-      payload.campanha?.nome_artista_banda   ??
-      payload.empresario?.nome_artista_banda ??
-      "",
-    empresa:   payload.empresa,
-    email:     payload.email,
-    whatsapp:  payload.telefone,
-    instagram: payload.instagram,
-    city:      payload.cidade,
-    state:     payload.estado,
-    country:   "BR",
-    clientType,
-    serviceType,
-    payloadServico: {
-      tipo_lead:            payload.tipo_lead,
-      servico:              payload.servico,
-      nome_artista_servico: payload.nome_artista_servico,
-      descricao:            payload.descricao,
-      cargo:                payload.cargo,
-      website:              payload.website,
-      endereco:             payload.endereco,
-      data_entrada:         payload.data_entrada,
-      responsavel:          payload.responsavel,
-      interacoes:           payload.interacoes,
-      ...condicional,
-    },
-    dadosInternosCRM: {
-      statusLead:          payload.status_lead,
-      prioridade:          payload.prioridade,
-      origemLead:          payload.origem_lead,
-      responsavel:         payload.responsavel,
-      campanha_marketing:  payload.campanha_marketing,
-      proximoFollowUp:     payload.proximo_follow_up || undefined,
-      valorEstimado:       payload.valor_estimado ? Number(payload.valor_estimado) : undefined,
-      temperatura:         payload.temperatura || undefined,
-    },
-    uploads: payload.uploads ?? [],
-  };
-}
-
-// ─────────────────────────────────────────────
-// leadToFormInitial
-// ─────────────────────────────────────────────
-function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
-  const ps  = (lead.payloadServico   ?? {}) as Record<string, unknown>;
-  const crm = (lead.dadosInternosCRM ?? {}) as Record<string, unknown>;
-
-  const str = (k: string): string =>
-    typeof ps[k] === "string" ? (ps[k] as string) : "";
-
-  const leadType = str("tipo_lead");
-  const service  = str("servico");
-
-  const isEvent        = matchCombo(EVENT_COMBOS,   leadType, service);
-  const isCampaign      = matchCombo(CAMPAIGN_COMBOS, leadType, service);
-  const isInfluenciador = leadType === "influenciador"        && !isEvent;
-  const isManager    = leadType === "empresario_artistico" && !isEvent;
-
-  return {
-    nome:                 lead.nomeCompleto,
-    empresa:              lead.empresa   ?? "",
-    email:                lead.email     ?? "",
-    telefone:             lead.whatsapp  ?? "",
-    instagram:            lead.instagram ?? "",
-    cidade:               lead.city      ?? "",
-    estado:               lead.state     ?? "",
-    cargo:                str("cargo"),
-    website:              str("website"),
-    endereco:             str("endereco"),
-    data_entrada:         str("data_entrada"),
-    responsavel:          str("responsavel"),
-    tipo_lead:            leadType as LeadFormPayload["tipo_lead"],
-    servico: service,
-    nome_artista_servico: str("nome_artista_servico"),
-    descricao:            str("descricao"),
-    origem_lead:          (crm.origemLead         as string) ?? "",
-    status_lead:          (crm.statusLead         as string) ?? "new",
-    prioridade:           (crm.prioridade         as string) ?? "media",
-    campanha_marketing:   (crm.campanha_marketing as string) ?? "",
-    proximo_follow_up:    (crm.proximoFollowUp    as string) ?? "",
-    valor_estimado:       crm.valorEstimado != null ? String(crm.valorEstimado) : "",
-    temperatura:          (crm.temperatura        as string) ?? "",
-    interacoes: Array.isArray(ps.interacoes)
-      ? (ps.interacoes as Interaction[])
-      : [],
-    uploads: lead.uploads ?? [],
-    evento: isEvent ? {
-      nome_evento:             str("nome_evento"),
-      tipo_evento:             str("tipo_evento"),
-      data_evento:             str("data_evento"),
-      local_evento:            str("local_evento"),
-      cidade:                  str("cidade"),
-      estado:                  str("estado"),
-      capacidade_publico:      str("capacidade_publico"),
-      nome_artista_banda:      str("nome_artista_banda"),
-      necessidades_adicionais: str("necessidades_adicionais"),
-    } : undefined,
-    campanha: isCampaign ? {
-      nome_campanha:           str("nome_campanha"),
-      tipo_campanha:           str("tipo_campanha"),
-      start_date:             str("start_date"),
-      end_date:                str("end_date"),
-      cidade:                  str("cidade"),
-      estado:                  str("estado"),
-      nome_artista_banda:      str("nome_artista_banda"),
-      necessidades_adicionais: str("necessidades_adicionais"),
-    } : undefined,
-    influenciador: isInfluenciador ? {
-      nome_campanha:           str("nome_campanha"),
-      tipo_campanha:           str("tipo_campanha"),
-      local_campanha:          str("local_campanha"),
-      data:                    str("data"),
-      cidade:                  str("cidade"),
-      estado:                  str("estado"),
-      necessidades_adicionais: str("necessidades_adicionais"),
-    } : undefined,
-    empresario: isManager ? {
-      nome_artista_banda:      str("nome_artista_banda"),
-      necessidades_adicionais: str("necessidades_adicionais"),
-    } : undefined,
-  };
-}
 
 // ─────────────────────────────────────────────
 // Page
@@ -249,16 +34,9 @@ export default function LeadsPage() {
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [activeTab,        setActiveTab]        = useState<"contatos" | "leads">("contatos");
 
-  const owners = useMemo(
+  const responsiblePeople = useMemo(
     () => Array.from(
-      new Set(leads.map((l) => l.dadosInternosCRM.responsavel).filter(Boolean)),
-    ) as string[],
-    [leads],
-  );
-
-  const origens = useMemo(
-    () => Array.from(
-      new Set(leads.map((l) => l.dadosInternosCRM.origemLead).filter(Boolean)),
+      new Set(leads.map((l) => l.crmInternalData.responsiblePerson).filter(Boolean)),
     ) as string[],
     [leads],
   );
@@ -267,16 +45,16 @@ export default function LeadsPage() {
     const search = filters.search.toLowerCase();
     return leads.filter((lead) => {
       const values = [
-        lead.nomeCompleto, lead.nomeArtistico, lead.empresa,
+        lead.fullName, lead.stageName, lead.company,
         lead.email, lead.whatsapp, lead.instagram,
       ].join(" ").toLowerCase();
       return (
-        (!search || values.includes(search))                                                           &&
-        (filters.serviceType === "all" || lead.serviceType                  === filters.serviceType)   &&
-        (filters.statusLead  === "all" || lead.dadosInternosCRM.statusLead  === filters.statusLead)    &&
-        (filters.responsavel === "all" || lead.dadosInternosCRM.responsavel === filters.responsavel)   &&
-        (filters.origemLead  === "all" || lead.dadosInternosCRM.origemLead  === filters.origemLead)    &&
-        (filters.temperatura === "all" || lead.dadosInternosCRM.temperatura === filters.temperatura)
+        (!search || values.includes(search))                                                                    &&
+        (filters.serviceType       === "all" || lead.serviceType                       === filters.serviceType)       &&
+        (filters.status            === "all" || lead.status                            === filters.status)            &&
+        (filters.responsiblePerson === "all" || lead.crmInternalData.responsiblePerson === filters.responsiblePerson) &&
+        (filters.leadSource        === "all" || lead.crmInternalData.leadSource        === filters.leadSource)        &&
+        (filters.temperature       === "all" || lead.crmInternalData.temperature       === filters.temperature)
       );
     });
   }, [filters, leads]);
@@ -349,9 +127,9 @@ export default function LeadsPage() {
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-testid="leads-kpis">
           <Kpi label="Total de leads"     value={metrics.total}                                                                         />
           <Kpi label="Em negociação"      value={metrics.followUps}                                                                     />
-          <Kpi label="Propostas enviadas" value={metrics.propostas}                                                                     />
-          <Kpi label="Contratos fechados" value={metrics.contratos}                                                                     />
-          <Kpi label="Valor estimado"     value={metrics.valorEstimado.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} />
+          <Kpi label="Propostas enviadas" value={metrics.proposals}                                                                     />
+          <Kpi label="Contratos fechados" value={metrics.contracts}                                                                     />
+          <Kpi label="Valor estimado"     value={metrics.estimatedValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} />
         </section>
       )}
 
@@ -397,8 +175,7 @@ export default function LeadsPage() {
             <LeadFilters
               filters={filters}
               onChange={(field, value) => setFilters({ [field]: value })}
-              responsaveis={owners}
-              origens={origens}
+              responsiblePeople={responsiblePeople}
             />
             <LeadsTable
               leads={filteredLeads}
@@ -423,7 +200,7 @@ export default function LeadsPage() {
         initialValue={editingLead ? leadToFormInitial(editingLead) : null}
         onOpenChange={(next) => setModalOpen(next)}
         onSubmit={async (formPayload) => {
-          const leadPayload = payloadToLead(formPayload);
+          const leadPayload = leadFormToLead(formPayload);
           if (editingLead) await updateLead(editingLead.id, leadPayload, getExpectedUpdatedAt(editingLead));
           else await createLead(leadPayload);
         }}

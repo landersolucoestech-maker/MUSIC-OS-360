@@ -34,11 +34,20 @@ const POST_REBUILD_RENAMES: Record<string, string> = {
   cidade: 'city',
   estado: 'state',
   pais: 'country',
+  // 20260928000011_CanonicalizeLeadsToEnglish (CZ-033).
+  nome: 'name',
+  telefone_encrypted: 'phone_encrypted',
+  empresa: 'company',
+  fonte: 'source',
+  nome_completo: 'full_name',
+  nome_artistico: 'stage_name',
+  payload_servico: 'service_payload',
+  dados_internos_crm: 'crm_internal_data',
 };
 
 // 20260921000005_DropDeadLeadsCrmDualStorageColumns (naming-closure Cluster
 // E) dropped these 7 physical columns -- a dead dual-storage location for
-// concepts real usage always wrote into dados_internos_crm (jsonb); 0
+// concepts real usage always wrote into crm_internal_data (jsonb); 0
 // non-null rows confirmed on all 7 before dropping. Post-rename names (the
 // canonical migration text still says valor_estimado, mapped above).
 const REMOVED_AFTER_CANONICAL = new Set([
