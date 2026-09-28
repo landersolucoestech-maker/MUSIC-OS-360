@@ -37,7 +37,7 @@ const CAMPAIGN_WINDOW_DAYS = 28;
 
 interface ReleaseRow {
   title: string;
-  data_lancamento: string | Date | null;
+  release_date: string | Date | null;
   artist_name: string | null;
   metadata: Record<string, unknown> | null;
 }
@@ -97,7 +97,7 @@ export class MarketingCalendarBuilderAutomation {
   ): Promise<ReleaseRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT r.title, r.data_lancamento, r.metadata,
+      `SELECT r.title, r.release_date, r.metadata,
               a.nome_artistico AS artist_name
          FROM releases r
          LEFT JOIN artists a
@@ -128,8 +128,8 @@ export class MarketingCalendarBuilderAutomation {
   private buildInput(release: ReleaseRow, approvedAt: string | undefined): MarketingCalendarBuilderInput {
     const md = (release.metadata ?? {}) as Record<string, unknown>;
 
-    const startBase = release.data_lancamento
-      ? new Date(release.data_lancamento)
+    const startBase = release.release_date
+      ? new Date(release.release_date)
       : approvedAt
         ? new Date(approvedAt)
         : new Date();

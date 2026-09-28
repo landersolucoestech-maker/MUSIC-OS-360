@@ -25,7 +25,7 @@ export function pickReleaseString(release: ReleaseWithRelations, keys: string[])
     if (direct) return direct;
     const asset = stringifyValue(release.assets?.[key]);
     if (asset) return asset;
-    const schedule = stringifyValue(release.cronograma?.[key]);
+    const schedule = stringifyValue((release.schedule as Record<string, unknown> | null | undefined)?.[key]);
     if (schedule) return schedule;
   }
   return "";

@@ -127,8 +127,8 @@ describe('ExternalDataExchangeService.buildSocietyPayload — share eligibility 
     const svc = makeService({
       works: [work],
       shares: [
-        { holder_name: 'Autor Elegível', party_role: 'autor', percentage: '100', holder_document: null, status: 'ativo', share_type: null },
-        { holder_name: 'Financeiro', party_role: 'autor', percentage: '999', holder_document: null, status: 'ativo', share_type: 'pendente' },
+        { holder_name: 'Autor Elegível', party_role: 'author', percentage: '100', holder_document: null, status: 'active', share_type: null },
+        { holder_name: 'Financeiro', party_role: 'author', percentage: '999', holder_document: null, status: 'active', share_type: 'external_receivable' },
       ],
     });
 
@@ -146,7 +146,7 @@ describe('ExternalDataExchangeService.buildSocietyPayload — share eligibility 
   it('no share is eligible when all are financial/pending', async () => {
     const svc = makeService({
       works: [work],
-      shares: [{ holder_name: 'Financeiro', party_role: 'autor', percentage: '100', holder_document: null, status: 'ativo', share_type: 'pendente' }],
+      shares: [{ holder_name: 'Financeiro', party_role: 'author', percentage: '100', holder_document: null, status: 'active', share_type: 'external_receivable' }],
     });
 
     const payload = await (svc as unknown as {

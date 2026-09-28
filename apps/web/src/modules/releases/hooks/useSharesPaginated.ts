@@ -12,18 +12,19 @@ export interface UseSharesPaginatedParams {
   search?: string;
   direction?: string;
   status?: string;
-  /** Participant role (author/performer/producer/...) -- filters
-   * shares.party_role, not shares.type (ghost column with no real writer;
-   * see naming-closure Phase 3). */
+  /** Registry participant role (`shares.party_role`: author/composer/performer/...). */
   partyRole?: string;
+  /** Participant function chosen in the share form (`shares.type`, CZ-037). */
+  type?: string;
   shareType?: string;
 }
 
-export function useSharesPaginated({ page, pageSize, search, direction, status, partyRole, shareType }: UseSharesPaginatedParams) {
+export function useSharesPaginated({ page, pageSize, search, direction, status, partyRole, type, shareType }: UseSharesPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (direction) filters.direction = direction;
   if (status) filters.status = status;
   if (partyRole) filters.party_role = partyRole;
+  if (type) filters.type = type;
   if (shareType) filters.share_type = shareType;
 
   const result = usePaginatedDataQuery<ShareWithRelations>({

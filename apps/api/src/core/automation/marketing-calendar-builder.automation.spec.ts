@@ -28,7 +28,7 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
   return { tenantId: 't1', payload: { releaseId: 'rel1', tenantId: 't1', title: 'Aurora', artistId: 'a1', approvedBy: 'u1', approvedAt: '2026-06-10T00:00:00.000Z', ...overrides } };
 }
 
-const RELEASE_ROW = { title: 'Aurora', data_lancamento: '2026-07-01T00:00:00.000Z', artist_name: 'Banda Aurora', metadata: {} };
+const RELEASE_ROW = { title: 'Aurora', release_date: '2026-07-01T00:00:00.000Z', artist_name: 'Banda Aurora', metadata: {} };
 const VALID_JSON = JSON.stringify({
   summary: 'Plano', calendar: [], pillars: [], platformStrategies: [], phases: [], productionNeeds: [], status: 'planned',
 });

@@ -19,6 +19,8 @@ import type { FonogramaWithRelations } from "@/modules/catalog/hooks/usePhonogra
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { StatusBadge } from "@/shared/components/StatusBadge";
+import { QUERY_KEYS } from "@/shared/lib/query-config";
+import { shareStatusBadge } from "@/modules/releases/lib/share-format";
 import { WorkflowTransitionPanel } from "@/shared/components/WorkflowTransitionPanel";
 import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";
@@ -28,7 +30,7 @@ import {
   releaseStatusBadge,
   platformStatusBadge,
 } from "@/modules/releases/lib/release-status";
-import { formatReleaseDate } from "@/modules/releases/lib/release-format";
+import { formatReleaseDate, releaseLanguageLabel, releaseTypeLabel } from "@/modules/releases/lib/release-format";
 import { findDistributionPlatform } from "@/modules/releases/services/distribution-platforms";
 import type { Release, PlatformError } from "@/modules/releases/types";
 
@@ -38,23 +40,10 @@ interface ReleaseViewModalProps {
   release?: Release;
 }
 
-const TYPE_MAP: Record<string, { label: string; color: string }> = {
-  single: { label: "Single", color: "bg-primary text-foreground" },
-  ep: { label: "EP", color: "bg-info text-info-foreground" },
-  album: { label: "Álbum", color: "bg-primary text-foreground" },
-};
-
-const IDIOMAS: Record<string, string> = {
-  "pt-br": "Português (Brasil)",
-  en: "English",
-  es: "Espanol",
-  fr: "Francais",
-  de: "Deutsch",
-  it: "Italiano",
-  ja: "Japones",
-  ko: "Coreano",
-  zh: "Chines",
-  ar: "Arabe",
+const TYPE_COLOR: Record<string, string> = {
+  single: "bg-primary text-foreground",
+  ep: "bg-info text-info-foreground",
+  album: "bg-primary text-foreground",
 };
 
 function textValue(value: unknown): string | null {
@@ -115,7 +104,9 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
     table: "lancamentos",
     id: release?.id ?? "",
-    queryKey: ["lancamentos"],
+    // The releases list/paginated caches live under QUERY_KEYS.RELEASES;
+    // ["lancamentos"] matched no cache, so a transition left the list stale.
+    queryKey: [...QUERY_KEYS.RELEASES],
   });
 
   const { data: detail } = useEntityDetail<typeof release & { allowed_transitions?: WorkflowTransition[] }>(
@@ -169,8 +160,8 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   if (!release) return null;
 
   const metadata = ((release as Record<string, unknown>)["metadata"] as Record<string, unknown> | null | undefined) ?? {};
-  const assets = (release.assets ?? metadata["assets"] ?? {}) as Record<string, unknown>;
-  const cronograma = (release.cronograma ?? metadata["cronograma"] ?? {}) as Record<string, unknown>;
+  const assets = (release.assets ?? {}) as Record<string, unknown>;
+  const schedule = (release.schedule ?? {}) as Record<string, unknown>;
   const trackMetadata = Array.isArray(metadata["faixas"]) ? (metadata["faixas"] as any[]) : [];
 
   const allowedTransitions = resolveAllowedTransitions(
@@ -179,11 +170,10 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
     detail?.allowed_transitions,
   );
   const type = String(release.type ?? "single").toLowerCase();
-  const typeInfo = TYPE_MAP[type] ?? { label: type.toUpperCase(), color: "bg-muted text-muted-foreground" };
-  const coverUrl = (release.capa_url as string | null | undefined) ?? textValue(assets["capa_url"]);
-  const dataFormatada = formatReleaseDate(release.data_lancamento);
-  const idiomaRaw = release.idioma ?? metadata["idioma"];
-  const idioma = IDIOMAS[String(idiomaRaw ?? "")] ?? textValue(idiomaRaw);
+  const typeInfo = { label: releaseTypeLabel(type), color: TYPE_COLOR[type] ?? "bg-muted text-muted-foreground" };
+  const coverUrl = textValue(release.cover_url) ?? textValue(assets["cover_url"]);
+  const formattedReleaseDate = formatReleaseDate(release.release_date);
+  const languageLabel = releaseLanguageLabel(release.language);
 
   const catalogTracks = phonogramIds
     .map((id) => resolvedPhonograms[id])
@@ -193,8 +183,8 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   const performers = aggregateField(tracks, "interpretes");
   const producers = aggregateField(tracks, "produtores");
   const hasAssets = Object.values(assets).some(Boolean) || Boolean(coverUrl);
-  const hasCronograma = Object.values(cronograma).some(Boolean);
-  const hasNotes = Boolean(release.notes || release.notas_internas || metadata["observacoes"] || metadata["notas_internas"]);
+  const hasSchedule = Object.values(schedule).some(Boolean);
+  const hasNotes = Boolean(release.notes || release.internal_notes);
 
   // Copyright (years + holder)
   const copyrightReleaseYear = textValue(metadata["copyrightDataLancamento"]);
@@ -202,11 +192,11 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
 
   // Subgenre + selected platforms
   const subgenero = textValue(metadata["generoSecundario"]) ?? textValue(metadata["genero_secundario"]);
-  const platformsArr = Array.isArray(release.plataformas) ? (release.plataformas as string[]).filter(Boolean) : [];
+  const platformsArr = Array.isArray(release.platforms) ? release.platforms.filter(Boolean) : [];
   const platformsLabel = platformsArr.length > 0 ? platformsArr.join(", ") : null;
 
   // Distribution: internal vs platform (platform_status is NEVER manual)
-  const platformId = textValue(release.selected_platform_id) ?? textValue(release.distribuidora);
+  const platformId = textValue(release.selected_platform_id) ?? textValue(release.distributor);
   const platformName = findDistributionPlatform(platformId)?.name ?? platformId;
   const platformStatus = resolvePlatformStatus(release);
   const distributionMode = platformStatus || platformId ? "Plataforma" : "Controle interno";
@@ -241,10 +231,10 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
             </div>
             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
               {releaseStatusBadge(release)}
-              {dataFormatada && (
+              {formattedReleaseDate && (
                 <Badge variant="outline">
                   <Calendar className="mr-1 h-3.5 w-3.5" />
-                  {dataFormatada}
+                  {formattedReleaseDate}
                 </Badge>
               )}
             </div>
@@ -267,8 +257,8 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
             <Field label="Tipo" value={typeInfo.label} />
             <Field label="Gênero" value={release.music_genre ?? textValue(metadata["genero"])} />
             <Field label="Subgênero" value={subgenero} />
-            <Field label="Idioma" value={idioma} />
-            <Field label="Gravadora / Selo" value={release.gravadora ?? textValue(metadata["gravadora"])} />
+            <Field label="Idioma" value={languageLabel} />
+            <Field label="Gravadora / Selo" value={release.record_label} />
             <Field label="Plataformas selecionadas" value={platformsLabel} />
             <Field label="ISRC Global" value={release.isrc_global ?? textValue(metadata["isrc_global"])} />
             <Field label="UPC / EAN" value={release.upc ?? release.codigo_upc ?? textValue(metadata["upc"])} />
@@ -341,7 +331,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
           </>
         )}
 
-        {(hasAssets || hasCronograma) && (
+        {(hasAssets || hasSchedule) && (
           <>
             <Separator />
             <div className="grid gap-4 md:grid-cols-2">
@@ -353,23 +343,23 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                   </h3>
                   <LinkField label="Capa" value={coverUrl} />
                   <LinkField label="Áudio master" value={textValue(assets["audio_master_url"])} />
-                  <LinkField label="Vídeo clipe" value={textValue(assets["video_clipe_url"])} />
+                  <LinkField label="Vídeo clipe" value={textValue(assets["music_video_url"])} />
                   <LinkField label="EPK" value={textValue(assets["epk_url"])} />
-                  <Field label="Letra" value={textValue(assets["letra"])} />
-                  <Field label="Ficha técnica" value={textValue(assets["ficha_tecnica"])} />
+                  <Field label="Letra" value={textValue(assets["lyrics"])} />
+                  <Field label="Ficha técnica" value={textValue(assets["credits"])} />
                   <Field label="Press release" value={textValue(assets["press_release"])} />
                 </div>
               )}
 
-              {hasCronograma && (
+              {hasSchedule && (
                 <div className="space-y-3">
                   <h3 className="flex items-center gap-2 text-[11px] font-semibold  tracking-wider text-muted-foreground">
                     <Calendar className="h-3.5 w-3.5" />
                     Cronograma
                   </h3>
-                  <Field label="Gravação" value={formatReleaseDate(textValue(cronograma["data_gravacao"]))} />
-                  <Field label="Mix / master" value={formatReleaseDate(textValue(cronograma["data_mix_master"]))} />
-                  <Field label="Entrega distribuidora" value={formatReleaseDate(textValue(cronograma["data_entrega_distribuidora"]))} />
+                  <Field label="Gravação" value={formatReleaseDate(textValue(schedule["recording_date"]))} />
+                  <Field label="Mix / master" value={formatReleaseDate(textValue(schedule["mix_master_date"]))} />
+                  <Field label="Entrega distribuidora" value={formatReleaseDate(textValue(schedule["distributor_delivery_date"]))} />
                 </div>
               )}
             </div>
@@ -384,8 +374,8 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                 <FileText className="h-3.5 w-3.5" />
                 Observações
               </h3>
-              <Field label="Notas de distribuição" value={release.notes ?? textValue(metadata["observacoes"])} />
-              <Field label="Notas internas" value={release.notas_internas ?? textValue(metadata["notas_internas"])} />
+              <Field label="Notas de distribuição" value={release.notes} />
+              <Field label="Notas internas" value={release.internal_notes} />
             </div>
           </>
         )}
@@ -449,7 +439,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                       <span className="truncate">{name}</span>
                       <span className="flex items-center gap-2">
                         <span className="tabular-nums text-muted-foreground">{pct}</span>
-                        <StatusBadge status={String(s.status ?? "")} />
+                        {shareStatusBadge(String(s.status ?? ""))}
                       </span>
                     </div>
                   );

@@ -294,6 +294,8 @@ import { CanonicalizeTakedownsToEnglish20260928000012 } from './20260928000012_C
 import { CanonicalizeLicensesToEnglish20260928000013 } from './20260928000013_CanonicalizeLicensesToEnglish';
 import { CanonicalizeInvoicesToEnglish20260928000014 } from './20260928000014_CanonicalizeInvoicesToEnglish';
 import { CanonicalizeSharesToEnglish20260928000015 } from './20260928000015_CanonicalizeSharesToEnglish';
+import { CanonicalizeReleasesToEnglish20260928000016 } from './20260928000016_CanonicalizeReleasesToEnglish';
+import { CanonicalizeResidualShareValues20260928000017 } from './20260928000017_CanonicalizeResidualShareValues';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -599,4 +601,6 @@ export const ALL_MIGRATIONS = [
   CanonicalizeLicensesToEnglish20260928000013,
   CanonicalizeInvoicesToEnglish20260928000014,
   CanonicalizeSharesToEnglish20260928000015,
+  CanonicalizeReleasesToEnglish20260928000016,
+  CanonicalizeResidualShareValues20260928000017,
 ] as const;

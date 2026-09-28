@@ -106,9 +106,9 @@ const CONFIGS: AuditConfig[] = [
       { key: "type", label: "Tipo", severity: "obrigatorio" },
       { key: "status", label: "Status", severity: "obrigatorio" },
       { key: "artist_id", label: "Artista vinculado", severity: "obrigatorio" },
-      { key: "data_lancamento", label: "Data de lançamento", severity: "recomendado" },
-      { key: "distribuidora", label: "Distribuidora", severity: "recomendado" },
-      { key: "plataformas", label: "Plataformas", severity: "recomendado" },
+      { key: "release_date", label: "Data de lançamento", severity: "recomendado" },
+      { key: "distributor", label: "Distribuidora", severity: "recomendado" },
+      { key: "platforms", label: "Plataformas", severity: "recomendado" },
     ],
   },
   {

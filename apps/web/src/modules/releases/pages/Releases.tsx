@@ -33,7 +33,7 @@ import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { useImageContrast } from "@/shared/hooks/useImageContrast";
 import { contrastText, contrastSubtext, contrastChrome, contrastScrim } from "@/shared/lib/image-contrast";
 import { cardStatusClasses, RELEASE_STATUS_OPTIONS } from "@/modules/releases/lib/release-status";
-import { formatReleaseDate } from "@/modules/releases/lib/release-format";
+import { formatReleaseDate, releaseTypeLabel } from "@/modules/releases/lib/release-format";
 import { shareFlowFromReleaseUrl } from "@/modules/releases/services/share-from-release";
 import type { Release } from "@/modules/releases/types";
 import type { Artist } from "@/modules/artist/types/artist.types";
@@ -41,15 +41,7 @@ import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/a
 
 
 function getReleaseArtworkUrl(release: Release & Record<string, unknown>): string | null {
-  const metadata = release.metadata as Record<string, unknown> | null | undefined;
-  const metadataAssets = metadata?.["assets"] as Record<string, unknown> | null | undefined;
-  const directAssets = release.assets as Record<string, unknown> | null | undefined;
-  return (
-    (release.capa_url as string | null | undefined) ??
-    (directAssets?.["capa_url"] as string | null | undefined) ??
-    (metadataAssets?.["capa_url"] as string | null | undefined) ??
-    null
-  );
+  return release.cover_url ?? release.assets?.cover_url ?? null;
 }
 
 interface Countdown { days: string; hours: string; minutes: string; seconds: string; label: string }
@@ -88,11 +80,11 @@ function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, 
   const artworkUrl = getReleaseArtworkUrl(release);
   const { mode } = useImageContrast(artworkUrl);
   const status = cardStatusClasses(release, mode);
-  const countdown = getCountdown(release.data_lancamento, now);
+  const countdown = getCountdown(release.release_date, now);
   // The countdown only makes sense until the release date arrives.
-  const releaseTime = release.data_lancamento ? new Date(release.data_lancamento).getTime() : NaN;
+  const releaseTime = release.release_date ? new Date(release.release_date).getTime() : NaN;
   const showCountdown = !Number.isNaN(releaseTime) && releaseTime > now;
-  const releaseType = release.type === "single" ? "Single" : release.type === "ep" ? "EP" : "Album";
+  const releaseType = releaseTypeLabel(release.type);
   const genre = (release.music_genre as string | null) ?? artist?.musicGenre ?? "Genre TBA";
   const text = contrastText(mode);
   const subtext = contrastSubtext(mode);
@@ -533,9 +525,9 @@ export default function Releases() {
           {sharePrompt.release && (
             <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm">
               <p className="font-medium text-foreground">{sharePrompt.release.title}</p>
-              {formatReleaseDate(sharePrompt.release.data_lancamento) && (
+              {formatReleaseDate(sharePrompt.release.release_date) && (
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Data de lançamento: {formatReleaseDate(sharePrompt.release.data_lancamento)}
+                  Data de lançamento: {formatReleaseDate(sharePrompt.release.release_date)}
                 </p>
               )}
             </div>

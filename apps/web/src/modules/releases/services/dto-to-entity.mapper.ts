@@ -13,10 +13,10 @@ export function projectToReleaseSeed(project: {
   type?: string | null;
 }): Partial<ReleaseFormFields> {
   return {
-    projetoSeed: project.id,
+    projectSeed: project.id,
     title:      project.title?.trim() ?? "",
     artist_id:  project.artist_id ?? "",
-    genero:      project.music_genre ?? "",
+    genre:       project.music_genre ?? "",
     type:        project.type ?? "single",
   };
 }

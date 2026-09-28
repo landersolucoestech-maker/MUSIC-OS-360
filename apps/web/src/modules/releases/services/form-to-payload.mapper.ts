@@ -4,8 +4,8 @@
  *
  * Backend expects:
  *   POST /releases  → CreateReleaseDto  { title, type, artistId, upc, distributor, releasedAt,
- *                                         platforms, coverUrl, metadata, isrc_global, notas_internas,
- *                                         notes, gravadora, copyright, genero, idioma, assets, cronograma }
+ *                                         platforms, coverUrl, metadata, isrc_global, internal_notes,
+ *                                         notes, record_label, copyright, music_genre, language, assets, schedule }
  *   PATCH /releases → UpdateReleaseDto  (all optional + status: ReleaseStatus)
  *
  * NestJS ValidationPipe runs with { whitelist: true, forbidNonWhitelisted: true } —
@@ -25,47 +25,47 @@ function ns(v: string): string | null {
 export function formToReleasePayload(f: ReleaseFormFields, mode: "create" | "edit" = "create"): Record<string, unknown> {
   const assets = {
     audio_master_url:  ns(f.assetAudioMasterUrl),
-    capa_url:          ns(f.assetCapaUrl),
-    video_clipe_url:   ns(f.assetVideoClipeUrl),
-    letra:             ns(f.assetLetra),
-    ficha_tecnica:     ns(f.assetFichaTecnica),
+    cover_url:         ns(f.assetCoverUrl),
+    music_video_url:   ns(f.assetMusicVideoUrl),
+    lyrics:            ns(f.assetLyrics),
+    credits:           ns(f.assetCredits),
     press_release:     ns(f.assetPressRelease),
     epk_url:           ns(f.assetEpkUrl),
   };
-  const cronograma = {
-    data_gravacao:              ns(f.cronGravacao),
-    data_mix_master:            ns(f.cronMixMaster),
-    data_entrega_distribuidora: ns(f.cronEntregaDistribuidora),
+  const schedule = {
+    recording_date:            ns(f.scheduleRecordingDate),
+    mix_master_date:           ns(f.scheduleMixMasterDate),
+    distributor_delivery_date: ns(f.scheduleDistributorDeliveryDate),
   };
   const hasAssets = Object.values(assets).some(Boolean);
-  const hasCron = Object.values(cronograma).some(Boolean);
+  const hasSchedule = Object.values(schedule).some(Boolean);
 
   const payload: Record<string, unknown> = {
     title:       f.title.trim(),
     type:        ns(f.type) ?? "single",
   };
 
-  const artistId  = ns(f.artist_id);
-  const upc       = ns(f.upc) || ns(f.codigoUPC);
-  const distributor = ns(f.distribuidora);
-  const releasedAt  = ns(f.dataLancamento);
-  const coverUrl    = ns(f.assetCapaUrl);
+  const artistId    = ns(f.artist_id);
+  const upc         = ns(f.upc) || ns(f.upcCode);
+  const distributor = ns(f.distributor);
+  const releasedAt  = ns(f.releaseDate);
+  const coverUrl    = ns(f.assetCoverUrl);
 
-  if (artistId)   payload["artistId"]    = artistId;
-  if (upc)        payload["upc"]         = upc;
+  if (artistId)    payload["artistId"]    = artistId;
+  if (upc)         payload["upc"]         = upc;
   if (distributor) payload["distributor"] = distributor;
-  if (releasedAt) payload["releasedAt"]  = releasedAt;
-  if (coverUrl)   payload["coverUrl"]    = coverUrl;
+  if (releasedAt)  payload["releasedAt"]  = releasedAt;
+  if (coverUrl)    payload["coverUrl"]    = coverUrl;
 
   if (ns(f.isrcGlobal))        payload["isrc_global"]    = ns(f.isrcGlobal);
-  if (ns(f.notasInternas))     payload["notas_internas"] = ns(f.notasInternas);
-  if (ns(f.notasDistribuicao)) payload["notes"]          = ns(f.notasDistribuicao);
-  if (ns(f.gravadora))         payload["gravadora"]      = ns(f.gravadora);
+  if (ns(f.internalNotes))     payload["internal_notes"] = ns(f.internalNotes);
+  if (ns(f.distributionNotes)) payload["notes"]          = ns(f.distributionNotes);
+  if (ns(f.recordLabel))       payload["record_label"]   = ns(f.recordLabel);
   if (ns(f.copyright))         payload["copyright"]      = ns(f.copyright);
-  if (ns(f.genero))            payload["music_genre"]    = ns(f.genero);
-  if (ns(f.idioma))            payload["idioma"]         = ns(f.idioma);
+  if (ns(f.genre))             payload["music_genre"]    = ns(f.genre);
+  if (ns(f.language))          payload["language"]       = ns(f.language);
   if (hasAssets)               payload["assets"]         = assets;
-  if (hasCron)                 payload["cronograma"]     = cronograma;
+  if (hasSchedule)             payload["schedule"]       = schedule;
 
   // find-ed7823e9 (incompatible consumer): the form does NOT write status.
   // Status is read-only in the UI ("Controlado pelo sistema") and the only

@@ -44,3 +44,29 @@ describe('RELEASES_WORKFLOW — lossy round-trips that the old form used to gene
     });
   }
 });
+
+/**
+ * CZ-038: the cover column is `cover_url` (formerly capa_url). The guard reads
+ * the persisted entity row, so a release with a cover must pass and one
+ * without a cover must be blocked — a stale column name would block every
+ * release silently.
+ */
+describe('RELEASES_WORKFLOW — cover guard (ASSETS_PENDING -> REVIEW)', () => {
+  const engine = new WorkflowEngine<string>(RELEASES_WORKFLOW);
+  const base = {
+    entityType: 'release', entityId: 'r1', tenantId: 't1', actorId: 'u1', actorRole: 'admin',
+    fromStatus: ReleaseStatus.ASSETS_PENDING, toStatus: ReleaseStatus.REVIEW,
+  };
+
+  it('allows the transition when the persisted row has cover_url', async () => {
+    await expect(
+      engine.transition({ ...base, entity: { cover_url: 'https://cdn/x.png' } } as never),
+    ).resolves.toBeUndefined();
+  });
+
+  it('blocks the transition when there is no cover (legacy capa_url is not read)', async () => {
+    await expect(
+      engine.transition({ ...base, entity: { capa_url: 'https://cdn/x.png' } } as never),
+    ).rejects.toThrow(/Guard rejected transition/);
+  });
+});

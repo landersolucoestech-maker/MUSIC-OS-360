@@ -28,9 +28,12 @@ function isPublisherRole(role: string | null | undefined): boolean {
   return r.includes('publisher') || r.includes('editora') || r.includes('editor');
 }
 
+// Canonical share roles are English (CZ-037: party_role author/composer/
+// performer/producer/publisher); the Portuguese substrings only tolerate
+// free-text roles on rows outside the migrated vocabulary.
 function isInterpreterRole(role: string | null | undefined): boolean {
   const r = (role ?? '').toLowerCase();
-  return r.includes('interpret') || r.includes('main_artist') || r.includes('artist') || r.includes('vocal') || r.includes('cantor');
+  return r.includes('performer') || r.includes('interpret') || r.includes('main_artist') || r.includes('artist') || r.includes('vocal') || r.includes('cantor');
 }
 
 function isProducerRole(role: string | null | undefined): boolean {

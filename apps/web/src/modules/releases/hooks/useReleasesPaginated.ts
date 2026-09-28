@@ -27,7 +27,7 @@ export function useReleasesPaginated({ page, pageSize, search, status, type, art
     pageSize,
     search,
     filters,
-    orderBy: { column: "data_lancamento", ascending: false },
+    orderBy: { column: "release_date", ascending: false },
   });
 
   return {

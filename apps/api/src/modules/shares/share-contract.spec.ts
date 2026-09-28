@@ -45,6 +45,13 @@ function makeService() {
   const repo = {
     create: jest.fn((v: unknown) => v),
     save: jest.fn(async (v: unknown) => ({ id: 'share-1', ...(v as object) })),
+    update: jest.fn(async () => ({ affected: 1 })),
+    createQueryBuilder: jest.fn(() => {
+      const qb: Record<string, jest.Mock> = {};
+      qb['where'] = jest.fn(() => qb);
+      qb['getOne'] = jest.fn(async () => ({ id: 'share-1', tenant_id: 'tenant-1', work_id: null, phonogram_id: null }));
+      return qb;
+    }),
   };
   const manager = { getRepository: jest.fn(() => repo), query: jest.fn().mockResolvedValue([]) };
   const ds = {
@@ -88,5 +95,27 @@ describe('Share request contract (CZ-037)', () => {
     const { service, repo } = makeService();
     await service.create('tenant-1', { payer: 'Novo', pagador: 'Antigo', status: 'pending' } as never);
     expect(repo.create.mock.calls[0][0]).toMatchObject({ payer: 'Novo', status: 'pending' });
+  });
+
+  it('an edit from a pre-CZ-037 build never wipes canonical values with the blanks it read (deploy skew)', async () => {
+    // The old edit form reads the English response as blanks and sends them
+    // back as nulls under the Portuguese names.
+    const { service, repo } = makeService();
+    await service.update('tenant-1', 'share-1', {
+      status: 'recebido', pagador: null, artista_externo: null, acordo_notas: null, data_prevista: null, origem_acordo: null,
+      settled_amount: 800,
+    } as never);
+    const written = (repo.update.mock.calls as unknown as unknown[][])[0][1] as Record<string, unknown>;
+    expect(written).toMatchObject({ status: ShareStatus.RECEIVED, settled_amount: 800 });
+    for (const canonical of ['payer', 'external_artist_name', 'agreement_notes', 'expected_at', 'agreement_source']) {
+      expect(written).not.toHaveProperty(canonical);
+    }
+  });
+
+  it('maps residual legacy directions and party roles (entrada/saida/a_pagar, outro)', async () => {
+    const { service, repo } = makeService();
+    await service.create('tenant-1', { direction: 'entrada', party_role: 'outro', holderName: 'X' } as never);
+    expect(repo.create.mock.calls[0][0]).toMatchObject({ direction: 'receivable', party_role: 'other' });
+    for (const direction of ['saida', 'a_pagar']) expect(errorsFor(QueryShareDto, { direction })).toEqual([]);
   });
 });

@@ -33,5 +33,12 @@
     "scope": "rules",
     "createdAt": "2026-09-27T19:16:05.281Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-b6c8c194",
+    "text": "Blind-rename incident (CZ-038): a line-anchored sed ('| \"outro\";' -> '| \"other\";') on a shared multi-enum file changed 8 unrelated union types; and a word-boundary regex rename of a column name (pagador) changed PT-BR label text ('Responsável pagador'). Rule candidate: renames in shared files must be scoped to the exact declaration block/AST node, and JSX text/labels must be excluded from identifier regex renames; verify with git diff -U0 on shared files before commit.",
+    "scope": "rules",
+    "createdAt": "2026-09-28T03:10:24.791Z",
+    "appliedAt": null
   }
 ]

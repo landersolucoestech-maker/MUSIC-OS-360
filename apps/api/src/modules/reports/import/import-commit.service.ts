@@ -25,6 +25,7 @@ import { getFieldLabelPtBr } from '../i18n/field-labels.pt-br';
 import { ImportEngineService } from './import-engine.service';
 import type { RowValidation } from './import.types';
 import { FinanceCategoryRulesService } from '../../finance-category-rules/finance-category-rules.service';
+import { canonicalImportValue } from './import-value-canonicalizers';
 import { UNCATEGORIZED_PLACEHOLDER, toRuleTransactionType } from '../../transactions/transactions.service';
 
 export interface ImportCommitResult {
@@ -295,7 +296,7 @@ export class ImportCommitService {
         continue;
       }
       cols.push(physicalColumn);
-      values.push(rawValue);
+      values.push(canonicalImportValue(def.tableName, physicalColumn, rawValue));
     }
 
     for (const [physicalColumn, object] of Object.entries(metadataByColumn)) {

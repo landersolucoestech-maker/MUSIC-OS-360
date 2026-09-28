@@ -2,8 +2,8 @@
  * form-to-payload.mapper.test.ts
  *
  * Permanent guard (2026-07-18 audit — no-metadata rule, releases):
- * formToReleasePayload used to write isrc_global, notas_internas, notes,
- * gravadora, copyright, genero, idioma, assets and cronograma inside
+ * formToReleasePayload used to write isrc_global, internal notes, notes,
+ * record label, copyright, genre, language, assets and schedule inside
  * `metadata`, even though the read mapper (entity-to-form.mapper.ts) and the
  * `Release` type already expected these columns as top-level fields — the
  * ReleasesFormFieldColumns20260718000010 migration closed that gap in the
@@ -20,12 +20,12 @@ function baseFields(overrides: Partial<ReleaseFormFields> = {}): ReleaseFormFiel
     title: "Meu Lançamento",
     type: "single",
     isrcGlobal: "BR-XXX-25-00001",
-    notasInternas: "nota interna",
-    notasDistribuicao: "nota de distribuição",
-    gravadora: "Gravadora X",
+    internalNotes: "nota interna",
+    distributionNotes: "nota de distribuição",
+    recordLabel: "Gravadora X",
     copyright: "(C) 2026 Gravadora X",
-    genero: "MPB",
-    idioma: "pt-BR",
+    genre: "MPB",
+    language: "pt-br",
     ...overrides,
   };
 }
@@ -36,33 +36,34 @@ describe("formToReleasePayload — canonical releases contract", () => {
     expect(payload).not.toHaveProperty("metadata");
   });
 
-  it("sends isrc_global, notas_internas, gravadora, copyright, music_genre, idioma as top-level fields", () => {
+  it("sends isrc_global, internal_notes, record_label, copyright, music_genre, language as top-level fields (CZ-038)", () => {
     const payload = formToReleasePayload(baseFields());
     expect(payload.isrc_global).toBe("BR-XXX-25-00001");
-    expect(payload.notas_internas).toBe("nota interna");
-    expect(payload.gravadora).toBe("Gravadora X");
+    expect(payload.internal_notes).toBe("nota interna");
+    expect(payload.record_label).toBe("Gravadora X");
     expect(payload.copyright).toBe("(C) 2026 Gravadora X");
     expect(payload.music_genre).toBe("MPB");
-    expect(payload.idioma).toBe("pt-BR");
+    expect(payload.language).toBe("pt-br");
+    for (const legacy of ["notas_internas", "gravadora", "idioma", "cronograma"]) expect(payload).not.toHaveProperty(legacy);
   });
 
-  it("maps notasDistribuicao (form field name) to the canonical `notes` column", () => {
+  it("maps distributionNotes (form field name) to the canonical `notes` column", () => {
     const payload = formToReleasePayload(baseFields());
     expect(payload.notes).toBe("nota de distribuição");
   });
 
-  it("sends assets/cronograma as dedicated jsonb columns when filled", () => {
+  it("sends assets/schedule as dedicated jsonb columns with English keys when filled", () => {
     const payload = formToReleasePayload(
-      baseFields({ assetCapaUrl: "https://x/capa.png", cronGravacao: "2026-08-01" }),
+      baseFields({ assetCoverUrl: "https://x/capa.png", scheduleRecordingDate: "2026-08-01" }),
     );
-    expect(payload.assets).toMatchObject({ capa_url: "https://x/capa.png" });
-    expect(payload.cronograma).toMatchObject({ data_gravacao: "2026-08-01" });
+    expect(payload.assets).toMatchObject({ cover_url: "https://x/capa.png" });
+    expect(payload.schedule).toMatchObject({ recording_date: "2026-08-01" });
   });
 
-  it("does not send assets/cronograma when no subfield was filled", () => {
+  it("does not send assets/schedule when no subfield was filled", () => {
     const payload = formToReleasePayload(baseFields());
     expect(payload).not.toHaveProperty("assets");
-    expect(payload).not.toHaveProperty("cronograma");
+    expect(payload).not.toHaveProperty("schedule");
   });
 });
 

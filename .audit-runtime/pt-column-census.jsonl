@@ -30,11 +30,6 @@
 {"table":"phonograms","className":"PhonogramEntity","field":"pais_origem","columnOverride":null,"type":"varchar"}
 {"table":"phonograms","className":"PhonogramEntity","field":"pais_publicacao","columnOverride":null,"type":"varchar"}
 {"table":"project_tracks","className":"ProjectTrackEntity","field":"instrumental","columnOverride":null,"type":"varchar"}
-{"table":"releases","className":"ReleaseEntity","field":"capa_url","columnOverride":null,"type":"text"}
-{"table":"releases","className":"ReleaseEntity","field":"data_lancamento","columnOverride":null,"type":"timestamp"}
-{"table":"releases","className":"ReleaseEntity","field":"gravadora","columnOverride":null,"type":"varchar"}
-{"table":"releases","className":"ReleaseEntity","field":"idioma","columnOverride":null,"type":"varchar"}
-{"table":"releases","className":"ReleaseEntity","field":"notas_internas","columnOverride":null,"type":"text"}
 {"table":"transactions","className":"TransactionEntity","field":"anexo_nome","columnOverride":null,"type":"varchar"}
 {"table":"transactions","className":"TransactionEntity","field":"categoria","columnOverride":null,"type":"varchar"}
 {"table":"transactions","className":"TransactionEntity","field":"conta_origem","columnOverride":null,"type":"varchar"}

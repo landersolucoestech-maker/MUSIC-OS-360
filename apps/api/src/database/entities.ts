@@ -1449,22 +1449,22 @@ export class ReleaseEntity {
   @Column({ type: 'varchar', length: 500 }) title: string;
   @Column({ type: 'varchar', length: 100, default: 'single' }) type: string;
   @Column({ type: 'varchar', length: 50, default: ReleaseStatus.DRAFT }) status: ReleaseStatus;
-  @Column({ type: 'varchar', length: 255, nullable: true }) distribuidora: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) distributor: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) upc: string | null;
-  @Column({ type: 'timestamp', nullable: true }) data_lancamento: Date | null;
-  @Column({ type: 'jsonb', default: [] }) plataformas: unknown[];
-  @Column({ type: 'text', nullable: true }) capa_url: string | null;
+  @Column({ type: 'timestamp', nullable: true }) release_date: Date | null;
+  @Column({ type: 'jsonb', default: [] }) platforms: unknown[];
+  @Column({ type: 'text', nullable: true }) cover_url: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   // ── Release form fields (1 column per field — exact name) ─────────────────────
   @Column({ type: 'varchar', length: 50, nullable: true }) isrc_global: string | null;
-  @Column({ type: 'text', nullable: true }) notas_internas: string | null;
+  @Column({ type: 'text', nullable: true }) internal_notes: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) gravadora: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) record_label: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) copyright: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) idioma: string | null;
+  @Column({ type: 'varchar', length: 50, nullable: true }) language: string | null;
   @Column({ type: 'jsonb', nullable: true }) assets: Record<string, unknown> | null;
-  @Column({ type: 'jsonb', nullable: true }) cronograma: Record<string, unknown> | null;
+  @Column({ type: 'jsonb', nullable: true }) schedule: Record<string, unknown> | null;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
   @Column({ type: 'timestamp', nullable: true }) deleted_at: Date | null;
@@ -1525,8 +1525,8 @@ export class ShareEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) recipient: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) type: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) external_artist_name: string | null;
-  /** Former mirror of artist_id (CZ-037): read-only legacy data, no longer written. */
-  @Column({ type: 'uuid', nullable: true }) legacy_artist_project_id: string | null;
+  /** Former mirror of artist_id (CZ-037): legacy data, never written nor returned (BLK-SHARES-ARTIST-MIRROR). */
+  @Column({ type: 'uuid', nullable: true, select: false }) legacy_artist_project_id: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) payer: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) payer_contact: string | null;

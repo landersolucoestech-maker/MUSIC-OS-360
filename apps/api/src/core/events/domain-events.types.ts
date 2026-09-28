@@ -381,8 +381,8 @@ export interface ReleaseDistributedPayload {
   tenantId:       string;
   title:         string;
   artistId:       string | null;
-  distribuidora:  string | null;
-  plataformas:    unknown[];
+  distributor:    string | null;
+  platforms:      unknown[];
   distributedAt:  string;
 }
 

@@ -92,9 +92,9 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
 const RELEASE_ROW = {
   title: 'Aurora',
   type: 'single',
-  data_lancamento: null,
+  release_date: null,
   upc: null,
-  capa_url: null,
+  cover_url: null,
   artist_id: 'a1',
   artist_name: 'Banda Aurora',
   metadata: {},

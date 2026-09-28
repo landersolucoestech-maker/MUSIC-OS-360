@@ -28,31 +28,22 @@ import { useShares } from "@/modules/releases/hooks/useShares";
 import { useSharesPaginated, useSharesStats } from "@/modules/releases/hooks/useSharesPaginated";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { storage } from "@/shared/lib/storage";
-import { resolveShareType, shareTypeLabel, shareStatusBadge, shareStatusLabel, isPendingShareStatus, SHARE_DIRECTION_LABELS } from "@/modules/releases/lib/share-format";
+import { resolveShareType, shareTypeLabel, shareStatusBadge, shareStatusLabel, isPendingShareStatus, shareFunctionLabel, SHARE_DIRECTION_LABELS, SHARE_FUNCTION_OPTIONS } from "@/modules/releases/lib/share-format";
 import { ShareStatus } from "@music-os-360/types";
 import { SHARE_FOR_RELEASE_PARAM } from "@/modules/releases/services/share-from-release";
 import type { Share } from "@/modules/releases/types";
 
-const TYPE_LABELS: Record<string, string> = {
-  interprete: "Intérprete",
-  compositor: "Compositor",
-  produtor: "Produtor",
-  editora: "Editora",
-  gravadora: "Gravadora",
-  empresario: "Empresário",
-  autor: "Autor",
-  outro: "Outro",
-};
+const ALL_FILTER = "all";
 
 export default function Shares() {
   const { deleteShare, updateShare } = useShares();
   const { releases, isLoading: loadingReleases } = useReleases();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [direcaoFilter, setDirecaoFilter] = useState("todos");
-  const [statusFilter, setStatusFilter] = useState("todos");
-  const [typeFilter, setTypeFilter] = useState("todos");
-  const [shareTypeFilter, setShareTypeFilter] = useState("todos");
+  const [directionFilter, setDirectionFilter] = useState(ALL_FILTER);
+  const [statusFilter, setStatusFilter] = useState(ALL_FILTER);
+  const [typeFilter, setTypeFilter] = useState(ALL_FILTER);
+  const [shareTypeFilter, setShareTypeFilter] = useState(ALL_FILTER);
   const [viewModal, setViewModal] = useState<{ open: boolean; share?: any }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; share?: any }>({ open: false });
   const [formModal, setFormModal] = useState<{ open: boolean; share?: any; initialReleaseId?: string }>({ open: false });
@@ -71,16 +62,16 @@ export default function Shares() {
   const [pageSize, setPageSize] = useState(10);
   useEffect(() => {
     setPage(0);
-  }, [debouncedSearch, direcaoFilter, statusFilter, typeFilter, shareTypeFilter]);
+  }, [debouncedSearch, directionFilter, statusFilter, typeFilter, shareTypeFilter]);
 
   const {
     shares: pageShares, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
   } = useSharesPaginated({
     page, pageSize, search: debouncedSearch || undefined,
-    direction: direcaoFilter !== "todos" ? direcaoFilter : undefined,
-    status: statusFilter !== "todos" ? statusFilter : undefined,
-    partyRole: typeFilter !== "todos" ? typeFilter : undefined,
-    shareType: shareTypeFilter !== "todos" ? shareTypeFilter : undefined,
+    direction: directionFilter !== ALL_FILTER ? directionFilter : undefined,
+    status: statusFilter !== ALL_FILTER ? statusFilter : undefined,
+    type: typeFilter !== ALL_FILTER ? typeFilter : undefined,
+    shareType: shareTypeFilter !== ALL_FILTER ? shareTypeFilter : undefined,
   });
 
   const isLoading = loadingReleases || isLoadingPage;
@@ -138,10 +129,10 @@ export default function Shares() {
 
   const handleClearFilters = () => {
     setSearchTerm("");
-    setDirecaoFilter("todos");
-    setStatusFilter("todos");
-    setTypeFilter("todos");
-    setShareTypeFilter("todos");
+    setDirectionFilter(ALL_FILTER);
+    setStatusFilter(ALL_FILTER);
+    setTypeFilter(ALL_FILTER);
+    setShareTypeFilter(ALL_FILTER);
   };
 
   const handleDelete = () => {
@@ -204,10 +195,10 @@ export default function Shares() {
 
   const hasActiveFilters =
     searchTerm !== "" ||
-    direcaoFilter !== "todos" ||
-    statusFilter !== "todos" ||
-    typeFilter !== "todos" ||
-    shareTypeFilter !== "todos";
+    directionFilter !== ALL_FILTER ||
+    statusFilter !== ALL_FILTER ||
+    typeFilter !== ALL_FILTER ||
+    shareTypeFilter !== ALL_FILTER;
 
   return (
     <>
@@ -296,17 +287,17 @@ export default function Shares() {
                   <SelectValue placeholder="Tipo de share" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todos">Todos os tipos</SelectItem>
+                  <SelectItem value={ALL_FILTER}>Todos os tipos</SelectItem>
                   <SelectItem value="internal_release">Release Interno</SelectItem>
                   <SelectItem value="external_receivable">Externo a Receber</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={direcaoFilter} onValueChange={setDirecaoFilter}>
+              <Select value={directionFilter} onValueChange={setDirectionFilter}>
                 <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-direcao">
                   <SelectValue placeholder="Direção" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todos">Todas as direções</SelectItem>
+                  <SelectItem value={ALL_FILTER}>Todas as direções</SelectItem>
                   <SelectItem value="receivable">{SHARE_DIRECTION_LABELS.receivable}</SelectItem>
                   <SelectItem value="payable">{SHARE_DIRECTION_LABELS.payable}</SelectItem>
                 </SelectContent>
@@ -316,7 +307,7 @@ export default function Shares() {
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todos">Todos os status</SelectItem>
+                  <SelectItem value={ALL_FILTER}>Todos os status</SelectItem>
                   {[ShareStatus.PENDING, ShareStatus.PARTIAL, ShareStatus.RECEIVED, ShareStatus.SENT, ShareStatus.CANCELLED].map((status) => (
                     <SelectItem key={status} value={status}>{shareStatusLabel(status)}</SelectItem>
                   ))}
@@ -327,13 +318,10 @@ export default function Shares() {
                   <SelectValue placeholder="Função" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todos">Todas as funções</SelectItem>
-                  <SelectItem value="interprete">Intérprete</SelectItem>
-                  <SelectItem value="compositor">Compositor</SelectItem>
-                  <SelectItem value="produtor">Produtor</SelectItem>
-                  <SelectItem value="editora">Editora</SelectItem>
-                  <SelectItem value="gravadora">Gravadora</SelectItem>
-                  <SelectItem value="empresario">Empresário</SelectItem>
+                  <SelectItem value={ALL_FILTER}>Todas as funções</SelectItem>
+                  {SHARE_FUNCTION_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               {hasActiveFilters && (
@@ -429,7 +417,7 @@ export default function Shares() {
                         <TableCell className="text-foreground text-sm">{holderName}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className="text-xs">
-                            {TYPE_LABELS[share.type] ?? share.type ?? "—"}
+                            {shareFunctionLabel(share.type)}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center text-foreground text-sm">

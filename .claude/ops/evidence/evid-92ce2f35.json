@@ -1,0 +1,12 @@
+{
+  "id": "evid-92ce2f35",
+  "createdAt": "2026-09-28T03:13:23.467Z",
+  "type": "REVIEW",
+  "reviewer": "contract-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "REAL AGENT review of CZ-037 commit 38518d9: migration correct; FAIL on registry isInterpreterRole missing canonical 'performer' (H1), raw type values on Shares list (H2), PT labels corrupted to 'payer' (M1), function filter on wrong column (M2), report import bypassing value canonicalization (M3), deploy-skew null overwrite (M4), weak tests (M5), plus L1-L4",
+  "workspaceFingerprint": "a30944453b0e839a6e47fc2a0ddeca56ba3d5d02d5848014db3adc88fca45afd",
+  "fingerprintStatus": "BOUND",
+  "head": "38518d94b493eaed01bfaff83c3b065aca21fbb3"
+}

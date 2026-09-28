@@ -19,7 +19,7 @@ export function useReleases(enabled = true, artistId?: string) {
     queryKey: artistId ? [...QUERY_KEYS.RELEASES, "by-artist", artistId] : [...QUERY_KEYS.RELEASES],
     table: "lancamentos",
     select: "*, artistas(*)",
-    orderBy: { column: "data_lancamento", ascending: false },
+    orderBy: { column: "release_date", ascending: false },
     enabled,
     // The releases backend uses "artistId" (camelCase), not "artist_id" — see releases.dto.ts/releases.service.ts.
     filters: artistId ? { artistId } : undefined,

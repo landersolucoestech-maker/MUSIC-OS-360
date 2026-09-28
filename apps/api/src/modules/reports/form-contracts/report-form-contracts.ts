@@ -383,22 +383,22 @@ const TAKEDOWNS_CONTRACT: ReportFormContract = {
 };
 
 // ─── Distribution (releases) ─────────────────────────────────────────────────
-// Canonical source: LancamentoFormModal.tsx (5-step wizard). Most of the
+// Canonical source: ReleaseFormModal.tsx (5-step wizard). Most of the
 // advanced fields (Step 0/3) live in the generic `metadata` column
 // (extraFields.* → metadata.*); `faixas[]` (Step 1) lives in
 // metadata.faixas — its own repeatable group (see release-tracks.field.ts).
-// `platforms`/`assets`/`cronograma` have no identifiable UI input
+// `platforms`/`assets`/`schedule` have no identifiable UI input
 // (platforms: no multi-platform selector in the current wizard; assets: no
-// dedicated upload besides the cover; cronograma: no inputs in the modal) — excluded/
+// dedicated upload besides the cover; schedule: no inputs in the modal) — excluded/
 // read-only.
 const RELEASES_CONTRACT: ReportFormContract = {
   tableName: 'releases',
   identityColumn: 'title',
   fields: [
-    col('title'), col('type'), col('artist_id'), col('upc'), col('distribuidora'),
-    col('data_lancamento'), col('capa_url'), col('isrc_global'), col('notas_internas'),
-    col('notes'), col('gravadora'), col('copyright'), col('music_genre'), col('idioma'),
-    ro('status'), ro('cronograma'),
+    col('title'), col('type'), col('artist_id'), col('upc'), col('distributor'),
+    col('release_date'), col('cover_url'), col('isrc_global'), col('internal_notes'),
+    col('notes'), col('record_label'), col('copyright'), col('music_genre'), col('language'),
+    ro('status'), ro('schedule'),
     meta('variosArtistas'), meta('generoSecundario'),
     meta('copyrightDataLancamento'), meta('copyrightDataGravacao'),
     meta('ownUpc'), meta('territory'), meta('releaseTime'), meta('releaseTimezone'),
@@ -408,16 +408,16 @@ const RELEASES_CONTRACT: ReportFormContract = {
   excludedFormFields: {
     platforms: 'accepted by the DTO but no multi-platform selector exists in the current wizard',
     metadata: 'raw internal jsonb object — its individual fields are already contract columns',
-    assets: 'no dedicated upload inputs besides the cover (coverUrl → capa_url, already has its own column)',
+    assets: 'no dedicated upload inputs besides the cover (coverUrl → cover_url, already has its own column)',
     faixas: 'represented by its own repeating group ("Faixas do Lançamento", repeatingGroup) — never packed into a single cell',
   },
   formFieldAliases: {
     title: 'title',
     type: 'type',
     artistId: 'artist_id',
-    distributor: 'distribuidora',
-    releasedAt: 'data_lancamento',
-    coverUrl: 'capa_url',
+    distributor: 'distributor',
+    releasedAt: 'release_date',
+    coverUrl: 'cover_url',
   },
   repeatingGroup: {
       key: 'faixas',

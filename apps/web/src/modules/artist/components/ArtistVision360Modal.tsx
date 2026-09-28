@@ -408,7 +408,7 @@ export function ArtistVision360Modal({
     if (d) activityTimelineItems.push({ id: `mv-evt-${e.id}`, type: "Agenda", descricao: `${getBackendEventTypeLabel(ev.type)}: ${e.title}`, data: d, responsavel: "—" });
   });
   actualReleases.forEach((l: any) => {
-    const d = l.created_at ?? l.data_lancamento;
+    const d = l.created_at ?? l.release_date;
     if (d) activityTimelineItems.push({ id: `mv-lan-${l.id}`, type: "Produção", descricao: `Lançamento: ${l.title ?? ""}`, data: d, responsavel: "Admin" });
   });
   actualCampaigns.forEach((c) => {
@@ -444,15 +444,15 @@ export function ArtistVision360Modal({
     )
     .sort((a, b) => new Date(a.starts_at!).getTime() - new Date(b.starts_at!).getTime())[0];
   const nextRelease = (actualReleases as any[])
-    .filter((l) => l.data_lancamento && new Date(l.data_lancamento).getTime() >= nowTs)
-    .sort((a, b) => new Date(a.data_lancamento).getTime() - new Date(b.data_lancamento).getTime())[0];
+    .filter((l) => l.release_date && new Date(l.release_date).getTime() >= nowTs)
+    .sort((a, b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime())[0];
 
   // ── Evolution: derived milestones ──────────────────────────────────────
   const evolutionMilestones: { id: string; label: string; descricao: string; data: string }[] = [];
   if (artist?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artist.created_at });
   const firstRelease = (actualReleases as any[])
-    .filter((l) => l.created_at || l.data_lancamento)
-    .sort((a, b) => new Date(a.created_at ?? a.data_lancamento).getTime() - new Date(b.created_at ?? b.data_lancamento).getTime())[0];
+    .filter((l) => l.created_at || l.release_date)
+    .sort((a, b) => new Date(a.created_at ?? a.release_date).getTime() - new Date(b.created_at ?? b.release_date).getTime())[0];
   if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.data_lancamento });
   const firstShow = (actualEvents as any[])
     .filter((e) => ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) && e.starts_at)
@@ -879,7 +879,7 @@ export function ArtistVision360Modal({
                     {nextRelease ? (
                       <>
                         <p className="text-sm font-semibold truncate">{nextRelease.title}</p>
-                        <p className="text-xs text-muted-foreground">{formatDateDMY(nextRelease.data_lancamento)}</p>
+                        <p className="text-xs text-muted-foreground">{formatDateDMY(nextRelease.release_date)}</p>
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Nenhum agendado</p>
@@ -2018,9 +2018,9 @@ export function ArtistVision360Modal({
                                     {release.title}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {release.data_lancamento
+                                    {release.release_date
                                       ? new Date(
-                                          release.data_lancamento,
+                                          release.release_date,
                                         ).toLocaleDateString("pt-BR")
                                       : "Sem data"}
                                   </p>

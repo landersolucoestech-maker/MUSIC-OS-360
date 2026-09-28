@@ -127,9 +127,9 @@ export type ReleaseType =
   | "single"
   | "ep"
   | "album"
-  | "compilacao"
+  | "compilation"
   | "live"
-  | "outro";
+  | "other";
 
 /** Derived from ReleaseStatus — source of truth: @music-os-360/types */
 export type ReleaseStatusValue = `${ReleaseStatus}`;

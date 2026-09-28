@@ -5,19 +5,19 @@ export type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareFunction, Share
 
 export interface ReleaseAssets {
   audio_master_url?: string | null;
-  capa_url?: string | null;
-  video_clipe_url?: string | null;
-  letra?: string | null;
-  ficha_tecnica?: string | null;
+  cover_url?: string | null;
+  music_video_url?: string | null;
+  lyrics?: string | null;
+  credits?: string | null;
   press_release?: string | null;
   epk_url?: string | null;
   [key: string]: string | null | undefined;
 }
 
 export interface ReleaseSchedule {
-  data_gravacao?: string | null;
-  data_mix_master?: string | null;
-  data_entrega_distribuidora?: string | null;
+  recording_date?: string | null;
+  mix_master_date?: string | null;
+  distributor_delivery_date?: string | null;
   [key: string]: string | null | undefined;
 }
 
@@ -57,20 +57,21 @@ export interface Release {
   type?: ReleaseType | string | null;
   status?: ReleaseStatusValue | string | null;
   artist_id?: string | null;
-  data_lancamento?: string | null;
-  distribuidora?: string | null;
-  plataformas?: string[] | null;
+  release_date?: string | null;
+  cover_url?: string | null;
+  distributor?: string | null;
+  platforms?: string[] | null;
   fonograma_ids?: string[] | null;
   notes?: string | null;
   isrc_global?: string | null;
   upc?: string | null;
-  notas_internas?: string | null;
+  internal_notes?: string | null;
   assets?: ReleaseAssets | null;
-  cronograma?: ReleaseSchedule | null;
+  schedule?: ReleaseSchedule | null;
   // Additional fields present in the mock and the form
   music_genre?: string | null;
-  idioma?: string | null;
-  gravadora?: string | null;
+  language?: string | null;
+  record_label?: string | null;
   copyright?: string | null;
   work_id?: string | null;
   fonograma_id?: string | null;

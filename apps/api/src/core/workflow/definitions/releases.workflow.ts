@@ -41,7 +41,7 @@ export const RELEASES_WORKFLOW: WorkflowDefinition<string> = {
       roles: ['super_admin','tenant_owner','owner','admin','editor','manager','produtor','marketing_manager'],
       guard: async (ctx) => {
         const entity = ctx.entity;
-        if (!entity['capa_url'] && !entity['coverUrl']) {
+        if (!entity['cover_url'] && !entity['coverUrl']) {
           return { allowed: false, reason: 'Lançamento precisa de capa (cover art) antes de ir para revisão' };
         }
         return { allowed: true };

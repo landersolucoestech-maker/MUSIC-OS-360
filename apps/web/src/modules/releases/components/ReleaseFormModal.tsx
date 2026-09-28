@@ -54,7 +54,7 @@ import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/
 import type { Release } from "@/modules/releases/types";
 import { useDistributionPlatforms } from "@/modules/releases/hooks/useDistributionPlatforms";
 import { resolveReleaseStatus, releaseStatusLabel } from "@/modules/releases/lib/release-status";
-import { formatReleaseDate } from "@/modules/releases/lib/release-format";
+import { formatReleaseDate, RELEASE_LANGUAGE_OPTIONS } from "@/modules/releases/lib/release-format";
 import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
@@ -206,19 +206,7 @@ const INSTRUMENT_OPTS = [
   "Other",
 ];
 
-const IDIOMA_OPTS = sortOptionsByLabel([
-  { value: "de", label: "Alemão" },
-  { value: "ar", label: "Árabe" },
-  { value: "zh", label: "Chinês" },
-  { value: "ko", label: "Coreano" },
-  { value: "es", label: "Espanhol" },
-  { value: "fr", label: "Francês" },
-  { value: "en", label: "Inglês" },
-  { value: "it", label: "Italiano" },
-  { value: "ja", label: "Japonês" },
-  { value: "pt-br", label: "Português (Brasil)" },
-  { value: "pt", label: "Português" },
-]);
+const LANGUAGE_OPTS = sortOptionsByLabel([...RELEASE_LANGUAGE_OPTIONS]);
 
 const TIMEZONE_OPTS = [
   {
@@ -500,7 +488,7 @@ export function ReleaseFormModal({
   // ── Derived labels ────────────────────────────────────────────────────────
   // Task J: fetches directly by ID (GET /projects/:id) — does not depend on the
   // project being among the first loaded by unfiltered useProjetos().
-  const { entity: selectedProject } = useEntityById<ProjectWithRelations>("projects", formData.projetoSeed || undefined);
+  const { entity: selectedProject } = useEntityById<ProjectWithRelations>("projects", formData.projectSeed || undefined);
   const projectLabel: string = selectedProject
     ? ((selectedProject.title ?? (selectedProject.nome as string | undefined) ?? "") as string)
     : "";
@@ -591,18 +579,18 @@ export function ReleaseFormModal({
       ? await storage.findById<ArtistWireRecord>("artistas", project.artist_id as string)
       : undefined;
     const linkedArtist = linkedArtistWire ? wireToArtist(linkedArtistWire) : undefined;
-    const rawGenre = seed.genero?.trim() || linkedArtist?.musicGenre || "";
+    const rawGenre = seed.genre?.trim() || linkedArtist?.musicGenre || "";
     const projectPhonograms = project.title
       ? await findPhonogramByTitle(project.title)
       : undefined;
     setFormData((prev) => ({
       ...prev,
-      projetoSeed: projectId,
+      projectSeed: projectId,
       title: !prev.title.trim() ? (seed.title ?? "") : prev.title,
       artist_id: !prev.artist_id.trim()
         ? (seed.artist_id ?? "")
         : prev.artist_id,
-      genero: !prev.genero.trim() ? matchGenre(rawGenre) : prev.genero,
+      genre: !prev.genre.trim() ? matchGenre(rawGenre) : prev.genre,
       type: !prev.type.trim() ? (seed.type ?? "") : prev.type,
       isrcGlobal: !prev.isrcGlobal.trim()
         ? (projectPhonograms?.isrc ?? "")
@@ -857,7 +845,7 @@ export function ReleaseFormModal({
         entity:   "release",
         entityId: release?.id,
       });
-      setFormData((prev) => ({ ...prev, assetCapaUrl: publicUrl }));
+      setFormData((prev) => ({ ...prev, assetCoverUrl: publicUrl }));
     } catch (err) {
       console.error("[CoverUpload R2]", err);
       if (err instanceof R2NotConfiguredError) {
@@ -1056,13 +1044,13 @@ export function ReleaseFormModal({
                     className="pl-10"
                     data-testid="input-buscar-projeto"
                   />
-                  {formData.projetoSeed && !isViewMode && (
+                  {formData.projectSeed && !isViewMode && (
                     <button
                       type="button"
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setFormData((prev) => ({ ...prev, projetoSeed: "" }));
+                        setFormData((prev) => ({ ...prev, projectSeed: "" }));
                       }}
                     >
                       <X className="w-3.5 h-3.5" />
@@ -1118,7 +1106,7 @@ export function ReleaseFormModal({
                 </ScrollArea>
               </PopoverContent>
             </Popover>
-            {formData.projetoSeed && (
+            {formData.projectSeed && (
               <p className="text-xs text-muted-foreground">
                 Faixas, artista e gênero preenchidos a partir do projeto.
               </p>
@@ -1299,8 +1287,8 @@ export function ReleaseFormModal({
             <div className="space-y-2">
               <Label>Gênero Principal *</Label>
               <Select
-                value={formData.genero}
-                onValueChange={(v) => setFormData({ ...formData, genero: v })}
+                value={formData.genre}
+                onValueChange={(v) => setFormData({ ...formData, genre: v })}
                 disabled={isViewMode}
               >
                 <SelectTrigger data-testid="select-genero">
@@ -1362,15 +1350,15 @@ export function ReleaseFormModal({
               Idioma do álbum, título do álbum e títulos das faixas.
             </InfoBox>
             <Select
-              value={formData.idioma}
-              onValueChange={(v) => setFormData({ ...formData, idioma: v })}
+              value={formData.language}
+              onValueChange={(v) => setFormData({ ...formData, language: v })}
               disabled={isViewMode}
             >
               <SelectTrigger className="w-64">
                 <SelectValue placeholder="Selecione o idioma" />
               </SelectTrigger>
               <SelectContent>
-                {IDIOMA_OPTS.map((o) => (
+                {LANGUAGE_OPTS.map((o) => (
                   <SelectItem key={o.value} value={o.value}>
                     {o.label}
                   </SelectItem>
@@ -1395,9 +1383,9 @@ export function ReleaseFormModal({
               como selo.
             </InfoBox>
             <Input
-              value={formData.gravadora}
+              value={formData.recordLabel}
               onChange={(e) =>
-                setFormData({ ...formData, gravadora: e.target.value })
+                setFormData({ ...formData, recordLabel: e.target.value })
               }
               placeholder="Nome da gravadora ou selo"
               disabled={isViewMode}
@@ -1462,9 +1450,9 @@ export function ReleaseFormModal({
             </label>
             {extraFields.ownUpc && (
               <Input
-                value={formData.codigoUPC}
+                value={formData.upcCode}
                 onChange={(e) =>
-                  setFormData({ ...formData, codigoUPC: e.target.value })
+                  setFormData({ ...formData, upcCode: e.target.value })
                 }
                 placeholder="Digite o código UPC"
                 disabled={isViewMode}
@@ -1827,7 +1815,7 @@ export function ReleaseFormModal({
                         <SelectValue placeholder="Selecione o idioma" />
                       </SelectTrigger>
                       <SelectContent>
-                        {IDIOMA_OPTS.map((o) => (
+                        {LANGUAGE_OPTS.map((o) => (
                           <SelectItem key={o.value} value={o.value}>
                             {o.label}
                           </SelectItem>
@@ -2019,9 +2007,9 @@ export function ReleaseFormModal({
                     </div>
                   )}
                 </>
-              ) : formData.assetCapaUrl ? (
+              ) : formData.assetCoverUrl ? (
                 <img
-                  src={safeImageSrc(formData.assetCapaUrl)}
+                  src={safeImageSrc(formData.assetCoverUrl)}
                   alt="Capa"
                   className="w-full h-full object-cover"
                 />
@@ -2082,14 +2070,14 @@ export function ReleaseFormModal({
                       onClick={(e) => {
                         e.stopPropagation();
                         setMainCover(null);
-                        setFormData((prev) => ({ ...prev, assetCapaUrl: "" }));
+                        setFormData((prev) => ({ ...prev, assetCoverUrl: "" }));
                       }}
                     >
                       <X className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
-              ) : formData.assetCapaUrl ? (
+              ) : formData.assetCoverUrl ? (
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                   <p className="text-sm font-medium truncate max-w-[200px]">Capa salva</p>
@@ -2100,7 +2088,7 @@ export function ReleaseFormModal({
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setFormData((prev) => ({ ...prev, assetCapaUrl: "" }));
+                        setFormData((prev) => ({ ...prev, assetCoverUrl: "" }));
                       }}
                     >
                       <X className="h-4 w-4" />
@@ -2168,13 +2156,13 @@ export function ReleaseFormModal({
               </div>
             ) : (
               <Select
-                value={formData.distribuidora}
+                value={formData.distributor}
                 onValueChange={(v) =>
-                  setFormData({ ...formData, distribuidora: v })
+                  setFormData({ ...formData, distributor: v })
                 }
                 disabled={isViewMode}
               >
-                <SelectTrigger data-testid="select-distribuidora">
+                <SelectTrigger data-testid="select-distributor">
                   <div className="flex items-center gap-2">
                     <Music className="h-4 w-4 text-primary" />
                     <SelectValue placeholder="Selecione uma distribuidora conectada" />
@@ -2191,7 +2179,7 @@ export function ReleaseFormModal({
             )}
             {(() => {
               const sel = connectedDistributors.find(
-                (d) => d.id === formData.distribuidora,
+                (d) => d.id === formData.distributor,
               );
               if (!sel) return null;
               const conn = sel.username ? { username: sel.username } : null;
@@ -2272,9 +2260,9 @@ export function ReleaseFormModal({
               <div className="space-y-2">
                 <Label>Data de Lançamento</Label>
                 <DatePickerField
-                  value={formData.dataLancamento}
+                  value={formData.releaseDate}
                   onChange={(iso) =>
-                    setFormData({ ...formData, dataLancamento: iso })
+                    setFormData({ ...formData, releaseDate: iso })
                   }
                   disabled={isViewMode}
                   placeholder="DD/MM/AAAA"
@@ -2382,11 +2370,11 @@ export function ReleaseFormModal({
             <div className="space-y-2">
               <Label>Notas de Distribuição</Label>
               <Textarea
-                value={formData.notasDistribuicao ?? ""}
+                value={formData.distributionNotes ?? ""}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    notasDistribuicao: e.target.value,
+                    distributionNotes: e.target.value,
                   })
                 }
                 placeholder="Notas especiais (ex: data preferencial, territórios, exclusividades...)"
@@ -2411,16 +2399,16 @@ export function ReleaseFormModal({
     if (!formData.title.trim()) warnings.push("Título do lançamento ausente.");
     if (!extraFields.variosArtistas && !formData.artist_id)
       warnings.push("Artista principal não selecionado.");
-    if (!formData.genero) warnings.push("Gênero principal não informado.");
+    if (!formData.genre) warnings.push("Gênero principal não informado.");
     if (!extraFields.generoSecundario)
       warnings.push("Gênero secundário não informado.");
-    if (!formData.gravadora) warnings.push("Gravadora / Selo não informado.");
+    if (!formData.recordLabel) warnings.push("Gravadora / Selo não informado.");
     if (!extraFields.copyrightDataLancamento)
       warnings.push("Ano de copyright (lançamento) ausente.");
     if (!extraFields.copyrightDataGravacao)
       warnings.push("Ano de copyright (gravação) ausente.");
     if (!mainCover) warnings.push("Capa do álbum não enviada.");
-    if (!formData.dataLancamento)
+    if (!formData.releaseDate)
       warnings.push("Data de lançamento não definida.");
     tracks.forEach((f, i) => {
       if (!f.title.trim()) warnings.push(`Faixa ${i + 1}: título ausente.`);
@@ -2448,9 +2436,9 @@ export function ReleaseFormModal({
                     alt="Capa"
                     className="w-36 h-36 rounded-lg object-cover border border-border"
                   />
-                ) : formData.assetCapaUrl ? (
+                ) : formData.assetCoverUrl ? (
                   <img
-                    src={safeImageSrc(formData.assetCapaUrl)}
+                    src={safeImageSrc(formData.assetCoverUrl)}
                     alt="Capa"
                     className="w-36 h-36 rounded-lg object-cover border border-border"
                   />
@@ -2470,12 +2458,12 @@ export function ReleaseFormModal({
                 </div>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                   <span className="text-muted-foreground">Gravadora:</span>
-                  <span>{formData.gravadora || "—"}</span>
+                  <span>{formData.recordLabel || "—"}</span>
 
                   <span className="text-muted-foreground">Gêneros:</span>
                   <span>
                     {[
-                      GENRE_LABELS[formData.genero] ?? formData.genero,
+                      GENRE_LABELS[formData.genre] ?? formData.genre,
                       GENRE_LABELS[extraFields.generoSecundario] ??
                         extraFields.generoSecundario,
                     ]
@@ -2486,7 +2474,7 @@ export function ReleaseFormModal({
                   <span className="text-muted-foreground">
                     Data de Lançamento:
                   </span>
-                  <span>{formatReleaseDate(formData.dataLancamento) || "—"}</span>
+                  <span>{formatReleaseDate(formData.releaseDate) || "—"}</span>
 
                   {extraFields.releaseTime && (
                     <>
@@ -2505,10 +2493,10 @@ export function ReleaseFormModal({
                   <span className="text-muted-foreground">Território:</span>
                   <span>{extraFields.territory}</span>
 
-                  {formData.codigoUPC && (
+                  {formData.upcCode && (
                     <>
                       <span className="text-muted-foreground">UPC:</span>
-                      <span className="font-sans">{formData.codigoUPC}</span>
+                      <span className="font-sans">{formData.upcCode}</span>
                     </>
                   )}
                 </div>
@@ -2558,13 +2546,13 @@ export function ReleaseFormModal({
                   {extraFields.copyrightDataLancamento && (
                     <p>
                       © {extraFields.copyrightDataLancamento}{" "}
-                      {formData.gravadora || formData.copyright}
+                      {formData.recordLabel || formData.copyright}
                     </p>
                   )}
                   {extraFields.copyrightDataGravacao && (
                     <p>
                       ℗ {extraFields.copyrightDataGravacao}{" "}
-                      {formData.gravadora || formData.copyright}
+                      {formData.recordLabel || formData.copyright}
                     </p>
                   )}
                 </div>

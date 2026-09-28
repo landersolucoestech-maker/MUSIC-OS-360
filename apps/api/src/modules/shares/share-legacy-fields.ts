@@ -60,6 +60,9 @@ export const SHARE_LEGACY_VALUES: Readonly<Record<'status' | 'direction' | 'type
   direction: {
     a_receber: 'receivable',
     a_enviar: 'payable',
+    entrada: 'receivable',
+    saida: 'payable',
+    a_pagar: 'payable',
   },
   type: {
     compositor: 'composer',
@@ -76,6 +79,7 @@ export const SHARE_LEGACY_VALUES: Readonly<Record<'status' | 'direction' | 'type
     interprete: 'performer',
     produtor: 'producer',
     editora: 'publisher',
+    outro: 'other',
   },
 };
 

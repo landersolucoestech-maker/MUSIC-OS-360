@@ -54,8 +54,8 @@ const CANONICAL_ORDER: Record<string, string[]> = {
   ],
   releases: [
     'id', 'tenant_id', 'title', 'type', 'artist_id', 'music_genre',
-    'idioma', 'gravadora', 'copyright', 'upc', 'distribuidora', 'data_lancamento',
-    'capa_url', 'plataformas', 'isrc_global', 'assets', 'cronograma', 'notas_internas',
+    'language', 'record_label', 'copyright', 'upc', 'distributor', 'release_date',
+    'cover_url', 'platforms', 'isrc_global', 'assets', 'schedule', 'internal_notes',
     'notes', 'status', 'metadata', 'created_at', 'updated_at', 'created_by',
     'updated_by', 'deleted_at',
   ],

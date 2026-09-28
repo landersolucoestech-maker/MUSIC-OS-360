@@ -47,3 +47,34 @@ export function formatReleaseDate(value?: string | Date | null): string | null {
   const month = String(parts.month).padStart(2, "0");
   return `${day}-${month}-${parts.year}`;
 }
+
+/** PT-BR label of each canonical release type (CZ-038); never the raw technical value. */
+export const RELEASE_TYPE_LABELS: Record<string, string> = {
+  single: "Single",
+  ep: "EP",
+  album: "Álbum",
+  compilation: "Coletânea",
+  live: "Ao vivo",
+  other: "Outro",
+};
+
+export const releaseTypeLabel = (type?: string | null): string =>
+  (type && RELEASE_TYPE_LABELS[type]) || "Tipo não informado";
+
+/** Release language options (value = language code stored in `language`, label = PT-BR). */
+export const RELEASE_LANGUAGE_OPTIONS = [
+  { value: "de", label: "Alemão" },
+  { value: "ar", label: "Árabe" },
+  { value: "zh", label: "Chinês" },
+  { value: "ko", label: "Coreano" },
+  { value: "es", label: "Espanhol" },
+  { value: "fr", label: "Francês" },
+  { value: "en", label: "Inglês" },
+  { value: "it", label: "Italiano" },
+  { value: "ja", label: "Japonês" },
+  { value: "pt-br", label: "Português (Brasil)" },
+  { value: "pt", label: "Português" },
+] as const;
+
+export const releaseLanguageLabel = (code?: string | null): string | null =>
+  code ? (RELEASE_LANGUAGE_OPTIONS.find((o) => o.value === code)?.label ?? code) : null;

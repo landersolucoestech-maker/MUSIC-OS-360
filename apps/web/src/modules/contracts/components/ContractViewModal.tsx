@@ -499,13 +499,13 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3">
                           <div>
                             <p className="text-[10px] text-muted-foreground">Distribuidora</p>
-                            <p className="text-xs font-medium">{linkedRelease.distribuidora || "—"}</p>
+                            <p className="text-xs font-medium">{linkedRelease.distributor || "—"}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-muted-foreground">Data de lançamento</p>
                             <p className="text-xs font-medium">
-                              {linkedRelease.data_lancamento
-                                ? formatDateDashes(linkedRelease.data_lancamento)
+                              {linkedRelease.release_date
+                                ? formatDateDashes(linkedRelease.release_date)
                                 : "—"}
                             </p>
                           </div>

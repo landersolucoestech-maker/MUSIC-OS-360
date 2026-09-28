@@ -51,9 +51,9 @@ function mapReleaseType(type: string | null | undefined): ReleaseType {
 interface ReleaseRow {
   title: string;
   type: string | null;
-  data_lancamento: string | Date | null;
+  release_date: string | Date | null;
   upc: string | null;
-  capa_url: string | null;
+  cover_url: string | null;
   artist_id: string | null;
   artist_name: string | null;
   metadata: Record<string, unknown> | null;
@@ -109,7 +109,7 @@ export class ReleaseChecklistAutomation {
   ): Promise<ReleaseRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT r.title, r.type, r.data_lancamento, r.upc, r.capa_url, r.artist_id, r.metadata,
+      `SELECT r.title, r.type, r.release_date, r.upc, r.cover_url, r.artist_id, r.metadata,
               a.nome_artistico AS artist_name
          FROM releases r
          LEFT JOIN artists a
@@ -145,7 +145,7 @@ export class ReleaseChecklistAutomation {
       releaseTitle: release.title,
       artistName: release.artist_name?.trim() || 'Artista não identificado',
       releaseType: mapReleaseType(release.type),
-      hasCover: release.capa_url != null,
+      hasCover: release.cover_url != null,
       hasISRC: flag('hasISRC'),
       hasUPC: release.upc != null,
       hasContracts: flag('hasContracts'),
@@ -154,7 +154,7 @@ export class ReleaseChecklistAutomation {
       language: 'pt-BR',
     };
 
-    if (release.data_lancamento) input.releaseDate = new Date(release.data_lancamento).toISOString();
+    if (release.release_date) input.releaseDate = new Date(release.release_date).toISOString();
     if (typeof md.context === 'string') input.context = md.context;
 
     return input;

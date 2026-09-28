@@ -9,6 +9,7 @@ import { ReleaseStatus } from '@music-os-360/types';
 import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
+import { canonicalizeReleaseInput } from './release-legacy-fields';
 
 @Injectable()
 export class ReleasesService {
@@ -42,7 +43,7 @@ export class ReleasesService {
     if (q.status)      qb.andWhere('r.status = :status',               { status:      q.status });
     if (q.type)        qb.andWhere('r.type = :type',                   { type:        q.type });
     if (q.artistId)    qb.andWhere('r.artist_id = :artistId',        { artistId:   q.artistId });
-    if (q.distributor) qb.andWhere('r.distribuidora = :distribuidora', { distribuidora: q.distributor });
+    if (q.distributor) qb.andWhere('r.distributor = :distributor',   { distributor: q.distributor });
     if (q.search)      qb.andWhere('r.title ILIKE :search',           { search:      `%${q.search}%` });
 
     return qb;
@@ -101,28 +102,29 @@ export class ReleasesService {
     return { ...result, allowed_transitions };
   }
 
-  async create(tenantId: string, userId: string, dto: CreateReleaseDto): Promise<ReleaseEntity> {
+  async create(tenantId: string, userId: string, input: CreateReleaseDto): Promise<ReleaseEntity> {
+    const dto = canonicalizeReleaseInput(input);
     const entity = this.repo!.create({
       tenant_id:       tenantId,
       title:          dto.title,
       type:            dto.type,
       artist_id:      dto.artistId    ?? null,
       upc:             dto.upc         ?? null,
-      distribuidora:   dto.distributor ?? null,
-      data_lancamento: dto.releasedAt  ? new Date(dto.releasedAt) : null,
-      plataformas:     dto.platforms   ?? [],
-      capa_url:        dto.coverUrl    ?? null,
+      distributor:     dto.distributor ?? null,
+      release_date:    dto.releasedAt  ? new Date(dto.releasedAt) : null,
+      platforms:       dto.platforms   ?? [],
+      cover_url:       dto.coverUrl    ?? null,
       status:          ReleaseStatus.DRAFT,
       metadata:        dto.metadata    ?? {},
       isrc_global:     dto.isrc_global    ?? null,
-      notas_internas:  dto.notas_internas ?? null,
+      internal_notes:  dto.internal_notes ?? null,
       notes:           dto.notes          ?? null,
-      gravadora:       dto.gravadora      ?? null,
+      record_label:    dto.record_label   ?? null,
       copyright:       dto.copyright      ?? null,
       music_genre:     dto.music_genre    ?? null,
-      idioma:          dto.idioma         ?? null,
+      language:        dto.language       ?? null,
       assets:          dto.assets         ?? null,
-      cronograma:      dto.cronograma     ?? null,
+      schedule:        dto.schedule       ?? null,
       created_by:      userId,
       updated_by:      userId,
     });
@@ -158,9 +160,10 @@ export class ReleasesService {
     tenantId: string,
     userId: string,
     id: string,
-    dto: UpdateReleaseDto,
+    input: UpdateReleaseDto,
     actorRole?: string,
   ): Promise<ReleaseEntity & { allowed_transitions: { to: string; label?: string }[] }> {
+    const dto = canonicalizeReleaseInput(input);
     const current = await this.findById(tenantId, id, actorRole);
     const statusChanging = dto.status != null && dto.status !== current.status;
     const expectedUpdatedAt = dto.expectedUpdatedAt;
@@ -171,20 +174,20 @@ export class ReleasesService {
     if (dto.type        != null) nonStatusUpdates.type            = dto.type;
     if (dto.artistId    != null) nonStatusUpdates.artist_id      = dto.artistId;
     if (dto.upc         != null) nonStatusUpdates.upc             = dto.upc;
-    if (dto.distributor != null) nonStatusUpdates.distribuidora   = dto.distributor;
-    if (dto.releasedAt  != null) nonStatusUpdates.data_lancamento = new Date(dto.releasedAt);
-    if (dto.platforms   != null) nonStatusUpdates.plataformas     = dto.platforms;
-    if (dto.coverUrl    != null) nonStatusUpdates.capa_url        = dto.coverUrl;
+    if (dto.distributor != null) nonStatusUpdates.distributor     = dto.distributor;
+    if (dto.releasedAt  != null) nonStatusUpdates.release_date    = new Date(dto.releasedAt);
+    if (dto.platforms   != null) nonStatusUpdates.platforms       = dto.platforms;
+    if (dto.coverUrl    != null) nonStatusUpdates.cover_url       = dto.coverUrl;
     if (dto.metadata    != null) nonStatusUpdates.metadata        = dto.metadata;
     if (dto.isrc_global    != null) nonStatusUpdates.isrc_global    = dto.isrc_global;
-    if (dto.notas_internas != null) nonStatusUpdates.notas_internas = dto.notas_internas;
+    if (dto.internal_notes != null) nonStatusUpdates.internal_notes = dto.internal_notes;
     if (dto.notes          != null) nonStatusUpdates.notes          = dto.notes;
-    if (dto.gravadora      != null) nonStatusUpdates.gravadora      = dto.gravadora;
+    if (dto.record_label   != null) nonStatusUpdates.record_label   = dto.record_label;
     if (dto.copyright      != null) nonStatusUpdates.copyright      = dto.copyright;
     if (dto.music_genre    != null) nonStatusUpdates.music_genre    = dto.music_genre;
-    if (dto.idioma         != null) nonStatusUpdates.idioma         = dto.idioma;
+    if (dto.language       != null) nonStatusUpdates.language       = dto.language;
     if (dto.assets         != null) nonStatusUpdates.assets         = dto.assets;
-    if (dto.cronograma     != null) nonStatusUpdates.cronograma     = dto.cronograma;
+    if (dto.schedule       != null) nonStatusUpdates.schedule       = dto.schedule;
 
     if (statusChanging) {
       const req = {
@@ -259,8 +262,8 @@ export class ReleasesService {
             tenantId,
             title:        current.title,
             artistId:      current.artist_id,
-            distribuidora: current.distribuidora,
-            plataformas:   current.plataformas as unknown[],
+            distributor:   current.distributor,
+            platforms:     current.platforms as unknown[],
             distributedAt: nowIso,
           },
         });

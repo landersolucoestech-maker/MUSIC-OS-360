@@ -44,8 +44,8 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
     const block = entityBlock('ReleaseEntity');
     const dto = source('../modules/releases/dto/releases.dto.ts');
     const fields = [
-      'isrc_global', 'notas_internas', 'notes', 'gravadora',
-      'copyright', 'music_genre', 'idioma', 'assets', 'cronograma',
+      'isrc_global', 'internal_notes', 'notes', 'record_label',
+      'copyright', 'music_genre', 'language', 'assets', 'schedule',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);

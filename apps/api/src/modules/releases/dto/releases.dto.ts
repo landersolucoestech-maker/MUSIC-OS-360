@@ -4,12 +4,17 @@ import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import { ReleaseStatus } from '@music-os-360/types';
 
-const TYPES = ['album', 'ep', 'single', 'compilacao', 'live', 'outro'] as const;
-type ReleaseType = typeof TYPES[number];
+import { RELEASE_LEGACY_TYPES, RELEASE_TYPES } from '../release-legacy-fields';
+
+// Legacy Portuguese values (compilacao, outro) are still accepted and mapped to
+// the canonical type by the service (release-legacy-fields.ts, CZ-038).
+const TYPE_INPUT = [...RELEASE_TYPES, ...Object.keys(RELEASE_LEGACY_TYPES)];
+type ReleaseType = typeof RELEASE_TYPES[number];
+const DEPRECATED = (canonical: string) => ({ deprecated: true, description: `Deprecated (CZ-038): use "${canonical}".` });
 
 export class CreateReleaseDto {
   @ApiProperty() @IsString() @MaxLength(500) title!: string;
-  @ApiProperty({ enum: TYPES }) @IsIn(TYPES) type!: ReleaseType;
+  @ApiProperty({ enum: RELEASE_TYPES }) @IsIn(TYPE_INPUT) type!: ReleaseType;
   @ApiPropertyOptional() @IsOptional() @IsString() artistId?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) upc?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() distributor?: string;
@@ -22,17 +27,23 @@ export class CreateReleaseDto {
   @ApiPropertyOptional() @IsOptional() coverUrl?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
-  // ── Form fields (EXACT keys of LancamentoFormModal) ─────────────────────────
+  // ── Form fields (EXACT keys of ReleaseFormModal) ────────────────────────────
   // Product rule 2026-07-12: each form field has its own physical column.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) isrc_global?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() notas_internas?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() internal_notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) gravadora?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) record_label?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) copyright?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) music_genre?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) idioma?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) language?: string;
   @ApiPropertyOptional() @IsOptional() assets?: Record<string, unknown>;
-  @ApiPropertyOptional() @IsOptional() cronograma?: Record<string, unknown>;
+  @ApiPropertyOptional() @IsOptional() schedule?: Record<string, unknown>;
+
+  // ── Deprecated Portuguese names (CZ-038, RELEASE_DEPRECATED_FIELDS) ──────────
+  @ApiPropertyOptional(DEPRECATED('internal_notes')) @IsOptional() @IsString() notas_internas?: string;
+  @ApiPropertyOptional(DEPRECATED('record_label')) @IsOptional() @IsString() @MaxLength(255) gravadora?: string;
+  @ApiPropertyOptional(DEPRECATED('language')) @IsOptional() @IsString() @MaxLength(50) idioma?: string;
+  @ApiPropertyOptional(DEPRECATED('schedule')) @IsOptional() cronograma?: Record<string, unknown>;
 }
 
 export class UpdateReleaseDto extends PartialType(CreateReleaseDto) {

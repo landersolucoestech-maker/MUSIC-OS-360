@@ -348,12 +348,12 @@ async function validateReleaseCover(token: string, tenantId: string, releaseId: 
   assert(patch.res.ok, 'Failed attaching cover to release', { status: patch.res.status, body: patch.json });
   const reloaded = await http('GET', `/releases/${releaseId}`, { token, tenantId });
   assert(reloaded.res.ok, 'Failed reloading release', { status: reloaded.res.status, body: reloaded.json });
-  assert(reloaded.json?.capa_url === upload.downloadUrl, 'Release did not persist capa_url', reloaded.json);
-  const preview = await downloadBytes(reloaded.json.capa_url);
+  assert(reloaded.json?.cover_url === upload.downloadUrl, 'Release did not persist cover_url', reloaded.json);
+  const preview = await downloadBytes(reloaded.json.cover_url);
   assert(preview.ok && preview.bytes.equals(PNG_1X1), 'Cover preview failed or was corrupted', { status: preview.status });
   const newSession = await authA();
   const sessionReload = await http('GET', `/releases/${releaseId}`, { token: newSession.token, tenantId: newSession.tenantId });
-  assert(sessionReload.res.ok && sessionReload.json?.capa_url === upload.downloadUrl, 'New session did not reload the release cover', {
+  assert(sessionReload.res.ok && sessionReload.json?.cover_url === upload.downloadUrl, 'New session did not reload the release cover', {
     status: sessionReload.res.status,
     body: sessionReload.json,
   });

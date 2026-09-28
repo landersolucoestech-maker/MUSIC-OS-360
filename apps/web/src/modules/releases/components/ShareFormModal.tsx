@@ -350,12 +350,12 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="payer">Responsável payer</Label>
+                  <Label htmlFor="payer">Responsável pagador</Label>
                   <Input id="payer" placeholder="Quem paga" value={formData.payer}
                     onChange={(e) => handleChange("payer", e.target.value)} data-testid="input-payer" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="payer_contact">Contato do payer</Label>
+                  <Label htmlFor="payer_contact">Contato do pagador</Label>
                   <Input id="payer_contact" placeholder="E-mail / telefone" value={formData.payer_contact}
                     onChange={(e) => handleChange("payer_contact", e.target.value)} data-testid="input-payer-contact" />
                 </div>

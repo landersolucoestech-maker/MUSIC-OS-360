@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-27T18:34:31.087Z",
+  "updatedAt": "2026-09-28T03:13:24.344Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1692,6 +1692,138 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-27T18:34:31.086Z"
+    },
+    {
+      "id": "find-86f34888",
+      "category": "C",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
+      "line": null,
+      "summary": "CZ-037 review H1: isInterpreterRole did not match canonical party_role 'performer'; registry validation failed for migrated interpreter shares",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:23.556Z"
+    },
+    {
+      "id": "find-29ac6c3f",
+      "category": "C",
+      "severity": "HIGH",
+      "file": "apps/web/src/modules/releases/pages/Shares.tsx",
+      "line": null,
+      "summary": "CZ-037 review H2: TYPE_LABELS keyed by PT values; Função column rendered raw canonical type values",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:23.627Z"
+    },
+    {
+      "id": "find-c3133eb8",
+      "category": "C",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/releases/components/ShareFormModal.tsx",
+      "line": null,
+      "summary": "CZ-037 review M1: regex rename of pagador leaked 'payer' into PT-BR labels",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:23.698Z"
+    },
+    {
+      "id": "find-0f4652bb",
+      "category": "C",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/releases/pages/Shares.tsx",
+      "line": null,
+      "summary": "CZ-037 review M2: Função filter sent PT values as party_role while the function lives in type",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:23.780Z"
+    },
+    {
+      "id": "find-93dac98f",
+      "category": "C",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
+      "line": null,
+      "summary": "CZ-037 review M3: reports import wrote status/direction/type raw, bypassing legacy value canonicalization (all CZ-032..038 tables)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:23.854Z"
+    },
+    {
+      "id": "find-11be12c5",
+      "category": "C",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/common/compat/deprecated-field-aliases.util.ts",
+      "line": null,
+      "summary": "CZ-037 review M4: deploy skew - pre-rename build edit sends null under deprecated names, alias moved null onto canonical columns (data wipe)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:23.940Z"
+    },
+    {
+      "id": "find-c326c05e",
+      "category": "C",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/shares/share-contract.spec.ts",
+      "line": null,
+      "summary": "CZ-037 review M5: no update/round-trip/registry/web label tests; registry fixtures used impossible PT values (false green)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:24.015Z"
+    },
+    {
+      "id": "find-fe91c5cf",
+      "category": "C",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migrations/20260928000015_CanonicalizeSharesToEnglish.ts",
+      "line": null,
+      "summary": "CZ-037 review L1: down() maps pre-existing English party_role back to PT; financial statuses collapse to pending",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:24.116Z"
+    },
+    {
+      "id": "find-027555fa",
+      "category": "C",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/shares/share-legacy-fields.ts",
+      "line": null,
+      "summary": "CZ-037 review L2: direction entrada/saida/a_pagar and party_role outro unmapped",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:24.192Z"
+    },
+    {
+      "id": "find-60a51e64",
+      "category": "C",
+      "severity": "LOW",
+      "file": "apps/api/src/database/entities.ts",
+      "line": null,
+      "summary": "CZ-037 review L3: legacy_artist_project_id returned in every share response",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:24.268Z"
+    },
+    {
+      "id": "find-3ac2a723",
+      "category": "C",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
+      "line": null,
+      "summary": "CZ-037 review L4: share status badge without share domain (refused/error not shown as danger)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:24.343Z"
     }
   ],
   "evidenceIds": [
@@ -2035,7 +2167,8 @@
     "evid-0db0850e",
     "evid-803e94c3",
     "evid-10eb8790",
-    "evid-f75481e0"
+    "evid-f75481e0",
+    "evid-92ce2f35"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

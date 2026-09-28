@@ -7,34 +7,34 @@
 import type { Release } from "@/modules/releases/hooks/useReleases";
 
 export interface ReleaseFormFields {
-  projetoSeed: string;
+  projectSeed: string;
   title: string;
   artist_id: string;
   type: string;
-  codigoUPC: string;
-  genero: string;
-  idioma: string;
-  dataLancamento: string;
-  gravadora: string;
+  upcCode: string;
+  genre: string;
+  language: string;
+  releaseDate: string;
+  recordLabel: string;
   copyright: string;
-  distribuidora: string;
-  notasDistribuicao: string;
+  distributor: string;
+  distributionNotes: string;
   // ── New fields ──────────────────────────
   isrcGlobal: string;
   upc: string;
-  notasInternas: string;
+  internalNotes: string;
   // Assets
   assetAudioMasterUrl: string;
-  assetCapaUrl: string;
-  assetVideoClipeUrl: string;
-  assetLetra: string;
-  assetFichaTecnica: string;
+  assetCoverUrl: string;
+  assetMusicVideoUrl: string;
+  assetLyrics: string;
+  assetCredits: string;
   assetPressRelease: string;
   assetEpkUrl: string;
   // Schedule
-  cronGravacao: string;
-  cronMixMaster: string;
-  cronEntregaDistribuidora: string;
+  scheduleRecordingDate: string;
+  scheduleMixMasterDate: string;
+  scheduleDistributorDeliveryDate: string;
 }
 
 function ps(v: unknown): string {
@@ -43,50 +43,47 @@ function ps(v: unknown): string {
 }
 
 export function releaseToFormFields(l: Release | null | undefined): ReleaseFormFields {
-  const r = l as Record<string, unknown> | null | undefined;
-  // Support both snake_case (from backend entity) and camelCase (legacy mock data)
-  const assets = (l?.assets ?? (r?.["metadata"] as Record<string, unknown>)?.["assets"] ?? {}) as Record<string, unknown>;
-  const cron = (l?.cronograma ?? (r?.["metadata"] as Record<string, unknown>)?.["cronograma"] ?? {}) as Record<string, unknown>;
-  const meta = (r?.["metadata"] as Record<string, unknown>) ?? {};
+  const assets = (l?.assets ?? {}) as Record<string, unknown>;
+  const schedule = (l?.schedule ?? {}) as Record<string, unknown>;
 
   return {
-    projetoSeed:               "",
-    title:                    ps(l?.title ?? r?.["title"]),
-    artist_id:                ps(l?.artist_id ?? r?.["artistId"]),
-    type:                      ps(l?.type ?? r?.["type"]),
-    codigoUPC:                 ps(l?.codigo_upc ?? l?.upc ?? r?.["upc"]),
-    genero:                    ps(l?.music_genre ?? meta["genero"]),
-    idioma:                    ps(l?.idioma ?? meta["idioma"]),
-    dataLancamento:            ps(l?.data_lancamento ?? r?.["releasedAt"]),
-    gravadora:                 ps(l?.gravadora ?? meta["gravadora"]),
-    copyright:                 ps(l?.copyright ?? meta["copyright"]),
-    distribuidora:             ps(l?.distribuidora ?? r?.["distributor"]) || "onerpm",
-    notasDistribuicao:         ps(l?.notes ?? meta["observacoes"]),
-    isrcGlobal:                ps(l?.isrc_global ?? meta["isrc_global"]),
-    upc:                       ps(l?.upc ?? r?.["upc"]),
-    notasInternas:             ps(l?.notas_internas ?? meta["notas_internas"]),
-    assetAudioMasterUrl:       ps(assets["audio_master_url"]),
-    assetCapaUrl:              ps(assets["capa_url"] ?? r?.["capa_url"]),
-    assetVideoClipeUrl:        ps(assets["video_clipe_url"]),
-    assetLetra:                ps(assets["letra"]),
-    assetFichaTecnica:         ps(assets["ficha_tecnica"]),
-    assetPressRelease:         ps(assets["press_release"]),
-    assetEpkUrl:               ps(assets["epk_url"]),
-    cronGravacao:              ps(cron["data_gravacao"]),
-    cronMixMaster:             ps(cron["data_mix_master"]),
-    cronEntregaDistribuidora:  ps(cron["data_entrega_distribuidora"]),
+    projectSeed:                     "",
+    title:                           ps(l?.title),
+    artist_id:                       ps(l?.artist_id),
+    type:                            ps(l?.type),
+    upcCode:                         ps(l?.codigo_upc ?? l?.upc),
+    genre:                           ps(l?.music_genre),
+    language:                        ps(l?.language),
+    releaseDate:                     ps(l?.release_date),
+    recordLabel:                     ps(l?.record_label),
+    copyright:                       ps(l?.copyright),
+    distributor:                     ps(l?.distributor) || "onerpm",
+    distributionNotes:               ps(l?.notes),
+    isrcGlobal:                      ps(l?.isrc_global),
+    upc:                             ps(l?.upc),
+    internalNotes:                   ps(l?.internal_notes),
+    assetAudioMasterUrl:             ps(assets["audio_master_url"]),
+    assetCoverUrl:                   ps(assets["cover_url"] ?? l?.cover_url),
+    assetMusicVideoUrl:              ps(assets["music_video_url"]),
+    assetLyrics:                     ps(assets["lyrics"]),
+    assetCredits:                    ps(assets["credits"]),
+    assetPressRelease:               ps(assets["press_release"]),
+    assetEpkUrl:                     ps(assets["epk_url"]),
+    scheduleRecordingDate:           ps(schedule["recording_date"]),
+    scheduleMixMasterDate:           ps(schedule["mix_master_date"]),
+    scheduleDistributorDeliveryDate: ps(schedule["distributor_delivery_date"]),
   };
 }
 
 export function emptyReleaseFormFields(): ReleaseFormFields {
   return {
-    projetoSeed: "", title: "", artist_id: "", type: "",
-    codigoUPC: "", genero: "", idioma: "", dataLancamento: "",
-    gravadora: "", copyright: "",
-    distribuidora: "onerpm", notasDistribuicao: "",
-    isrcGlobal: "", upc: "", notasInternas: "",
-    assetAudioMasterUrl: "", assetCapaUrl: "", assetVideoClipeUrl: "",
-    assetLetra: "", assetFichaTecnica: "", assetPressRelease: "", assetEpkUrl: "",
-    cronGravacao: "", cronMixMaster: "", cronEntregaDistribuidora: "",
+    projectSeed: "", title: "", artist_id: "", type: "",
+    upcCode: "", genre: "", language: "", releaseDate: "",
+    recordLabel: "", copyright: "",
+    distributor: "onerpm", distributionNotes: "",
+    isrcGlobal: "", upc: "", internalNotes: "",
+    assetAudioMasterUrl: "", assetCoverUrl: "", assetMusicVideoUrl: "",
+    assetLyrics: "", assetCredits: "", assetPressRelease: "", assetEpkUrl: "",
+    scheduleRecordingDate: "", scheduleMixMasterDate: "", scheduleDistributorDeliveryDate: "",
   };
 }

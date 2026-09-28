@@ -439,11 +439,11 @@ export class ExternalDataExchangeService {
           title: release.title,
           type: release.type,
           status: release.status,
-          distributor: release.distribuidora,
+          distributor: release.distributor,
           upc: release.upc,
-          release_date: release.data_lancamento?.toISOString() ?? null,
-          artwork_url: release.capa_url,
-          platforms: release.plataformas,
+          release_date: release.release_date?.toISOString() ?? null,
+          artwork_url: release.cover_url,
+          platforms: release.platforms,
         } : null,
         phonograms: phonograms.map((p) => ({
           id: p.id,
@@ -452,7 +452,7 @@ export class ExternalDataExchangeService {
           duration: p.duration_text,
         })),
         files: {
-          artwork_url: release?.capa_url ?? null,
+          artwork_url: release?.cover_url ?? null,
         },
       },
     };

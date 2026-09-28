@@ -7,6 +7,10 @@
  * as `deprecated` (the global pipe forbids unknown keys) and moved here to its
  * canonical name before anything past the controller sees it:
  *   - the canonical field wins when both names are sent;
+ *   - an empty deprecated value (null / undefined / '') is dropped, never moved:
+ *     a pre-rename build reads the canonical response fields as blanks and
+ *     would send them back as nulls on edit, wiping the stored values
+ *     (CZ-037 review). Clearing a field requires the canonical name;
  *   - the deprecated key never reaches persistence.
  *
  * Each module keeps its alias table next to its DTO, registered in the
@@ -19,7 +23,8 @@ export function applyDeprecatedFieldAliases<T extends object>(input: T, aliases:
   const out: Record<string, unknown> = { ...(input as Record<string, unknown>) };
   for (const [deprecated, canonical] of Object.entries(aliases)) {
     if (!Object.prototype.hasOwnProperty.call(out, deprecated)) continue;
-    if (out[canonical] === undefined) out[canonical] = out[deprecated];
+    const value = out[deprecated];
+    if (out[canonical] === undefined && value !== null && value !== undefined && value !== '') out[canonical] = value;
     delete out[deprecated];
   }
   return out as T;

@@ -38,7 +38,7 @@ export function loadArtistContext(
     artistRecord?.spotifyListeners ? `Spotify ouvintes: ${artistRecord.spotifyListeners}` : "",
     artistRecord?.youtubeSubscribers ? `YouTube inscritos: ${artistRecord.youtubeSubscribers}` : "",
   ].filter(Boolean);
-  const releaseDates = releases.map((item) => item.data_lancamento).filter(Boolean).map(String).sort();
+  const releaseDates = releases.map((item) => item.release_date).filter(Boolean).map(String).sort();
   const completedTasks = tasks.filter((item) => item.status === "concluida").length;
   const frequency = estimateReleaseFrequency(releaseDates);
 
@@ -57,7 +57,7 @@ export function loadArtistContext(
     references: uniqueStrings([
       ...works.map((item) => stringifyValue(item.compositor || item.compositores)),
       ...phonograms.map((item) => stringifyValue(item.produtores || item.gravadora || item.agregadora)),
-      ...releases.map((item) => stringifyValue(item.distribuidora || item.gravadora)),
+      ...releases.map((item) => stringifyValue(item.distributor || item.record_label)),
     ]),
     publicSignals,
     careerStage: inferCareerStage(artistRecord?.spotifyListeners, artistRecord?.instagramFollowers, releases.length),
