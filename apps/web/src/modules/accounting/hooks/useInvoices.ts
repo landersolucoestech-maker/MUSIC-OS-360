@@ -33,17 +33,17 @@ export function useInvoices() {
       onCreate: (nf) =>
         emit(DomainEvents.INVOICE_CREATED, {
           id: (nf as InvoiceWithRelations & { id: string }).id,
-          numero: (nf as InvoiceWithRelations & { numero?: string }).numero ?? undefined,
+          invoiceNumber: (nf as InvoiceWithRelations & { invoice_number?: string }).invoice_number ?? undefined,
           client_id: (nf as InvoiceWithRelations & { client_id?: string }).client_id ?? undefined,
-          valor: invoiceValue(nf),
+          amount: invoiceValue(nf),
           org_id: orgId,
         }),
       onUpdate: (nf) =>
         emit(DomainEvents.INVOICE_UPDATED, {
           id: (nf as InvoiceWithRelations & { id: string }).id,
-          numero: (nf as InvoiceWithRelations & { numero?: string }).numero ?? undefined,
+          invoiceNumber: (nf as InvoiceWithRelations & { invoice_number?: string }).invoice_number ?? undefined,
           client_id: (nf as InvoiceWithRelations & { client_id?: string }).client_id ?? undefined,
-          valor: invoiceValue(nf),
+          amount: invoiceValue(nf),
           org_id: orgId,
         }),
       onDelete: (id) =>

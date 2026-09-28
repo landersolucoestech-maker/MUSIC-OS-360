@@ -31,7 +31,7 @@ export type RepeatingGroupImportWriter = (
 
 const invoiceItems = {
   tableName: 'invoices',
-  jsonColumn: 'itens',
+  jsonColumn: 'items',
   arrayKey: null,
 } as const;
 const eventParticipants = {
@@ -43,13 +43,13 @@ const eventParticipants = {
 export const REPEATING_GROUP_EXPORT_RESOLVERS: Record<string, RepeatingGroupExportResolver> = {
   'projects.tracks': fetchProjectTracksForExport as unknown as RepeatingGroupExportResolver,
   'releases.faixas': fetchReleaseTracksForExport as unknown as RepeatingGroupExportResolver,
-  'invoices.itens': makeRowEmbeddedRepeatingGroupExportResolver(invoiceItems),
+  'invoices.items': makeRowEmbeddedRepeatingGroupExportResolver(invoiceItems),
   'events.participants': makeRowEmbeddedRepeatingGroupExportResolver(eventParticipants),
 };
 
 export const REPEATING_GROUP_IMPORT_WRITERS: Record<string, RepeatingGroupImportWriter> = {
   'projects.tracks': insertProjectTracksForImport,
   'releases.faixas': writeReleaseTracksForImport,
-  'invoices.itens': makeRowEmbeddedRepeatingGroupImportWriter(invoiceItems),
+  'invoices.items': makeRowEmbeddedRepeatingGroupImportWriter(invoiceItems),
   'events.participants': makeRowEmbeddedRepeatingGroupImportWriter(eventParticipants),
 };

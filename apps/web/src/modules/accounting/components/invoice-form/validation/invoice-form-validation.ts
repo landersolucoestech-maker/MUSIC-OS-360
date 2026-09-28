@@ -6,12 +6,12 @@ export type InvoiceValidationErrors = Partial<Record<keyof InvoiceFormData, stri
 export function validateInvoiceForm(f: InvoiceFormData): InvoiceValidationErrors {
   const errors: InvoiceValidationErrors = {};
 
-  if (!f.numero?.trim()) {
-    errors.numero = "Número obrigatório";
+  if (!f.invoice_number?.trim()) {
+    errors.invoice_number = "Número obrigatório";
   }
 
-  if (!f.tomador_razao_social?.trim()) {
-    errors.tomador_razao_social = "Razão social obrigatória";
+  if (!f.tomador_legal_name?.trim()) {
+    errors.tomador_legal_name = "Razão social obrigatória";
   }
 
   if (!f.tomador_cnpj?.trim()) {

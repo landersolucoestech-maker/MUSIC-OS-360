@@ -528,32 +528,29 @@ const TRANSACTIONS_CONTRACT: ReportFormContract = {
 // checked against the broken DTO.
 const INVOICES_CONTRACT: ReportFormContract = {
   tableName: 'invoices',
-  identityColumn: 'numero',
+  identityColumn: 'invoice_number',
   fields: [
-    col('numero'), col('serie'), col('tipo_nota'), col('data_emissao'), col('status'),
+    col('invoice_number'), col('serie'), col('tipo_nota'), col('issued_at'), col('status'),
     col('natureza_operacao'), col('cfop'), col('codigo_servico_municipal'), col('codigo_municipio'),
-    col('client_id'), col('tomador_cnpj'), col('tomador_razao_social'),
+    col('client_id'), col('tomador_cnpj'), col('tomador_legal_name'),
     col('tomador_inscricao_estadual'), col('tomador_inscricao_municipal'), col('tomador_email'),
     col('tomador_address'), col('tomador_city'), col('tomador_uf'), col('tomador_cep'),
     col('service_description'), col('service_amount'), col('deductions_amount'), col('base_calculo'),
     col('aliquota_iss'), col('iss_amount'), col('iss_retido'), col('pis_amount'), col('cofins_amount'),
     col('ir_amount'), col('csll_amount'), col('inss_amount'), col('net_amount'),
-    col('forma_pagamento'), col('condicao_pagamento'), col('data_vencimento'), col('url_pdf'),
+    col('payment_method'), col('payment_terms'), col('invoiceDueAt', 'due_at'), col('url_pdf'),
     col('notes'),
   ],
   excludedFormFields: {},
-  // The form/DTO uses "vencimento" (kept as a documented API alias);
-  // the canonical physical column is data_vencimento -- see invoices.service.ts's
-  // normalizePayload(), which now also deletes the "vencimento" key from the
-  // persisted payload so it does not write the `vencimento` column (physical,
-  // date type) in parallel with data_vencimento (physical, timestamp type).
+  // `due_at` (NFS-e due date) is exported under its own key so its PT-BR
+  // header stays "Data de vencimento" (the generic dueAt label is "Prazo").
   formFieldAliases: {
-    vencimento: 'data_vencimento',
+    due_at: 'invoiceDueAt',
   },
   repeatingGroup: {
-      key: 'itens',
+      key: 'items',
       fields: [
-        { key: 'description' }, { key: 'codigo_servico' }, { key: 'quantidade' },
+        { key: 'description' }, { key: 'service_code' }, { key: 'quantity' },
         { key: 'unit_price' }, { key: 'total_amount' },
       ],
   },

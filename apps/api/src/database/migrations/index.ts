@@ -292,6 +292,7 @@ import { CanonicalizeInventoryItemsToEnglish20260928000010 } from './20260928000
 import { CanonicalizeLeadsToEnglish20260928000011 } from './20260928000011_CanonicalizeLeadsToEnglish';
 import { CanonicalizeTakedownsToEnglish20260928000012 } from './20260928000012_CanonicalizeTakedownsToEnglish';
 import { CanonicalizeLicensesToEnglish20260928000013 } from './20260928000013_CanonicalizeLicensesToEnglish';
+import { CanonicalizeInvoicesToEnglish20260928000014 } from './20260928000014_CanonicalizeInvoicesToEnglish';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -595,4 +596,5 @@ export const ALL_MIGRATIONS = [
   CanonicalizeLeadsToEnglish20260928000011,
   CanonicalizeTakedownsToEnglish20260928000012,
   CanonicalizeLicensesToEnglish20260928000013,
+  CanonicalizeInvoicesToEnglish20260928000014,
 ] as const;

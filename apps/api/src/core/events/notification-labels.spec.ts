@@ -38,7 +38,7 @@ describe('notification titles keep status information as PT-BR labels', () => {
   });
 
   it('formats the invoice due date in pt-BR', () => {
-    expect(EVENT_LABELS['invoice.overdue']({ numero: '123', dataVencimento: '2026-10-01' }))
+    expect(EVENT_LABELS['invoice.overdue']({ invoiceNumber: '123', dueAt: '2026-10-01' }))
       .toBe('Nota fiscal vencida: 123 (vencimento em 01/10/2026)');
     expect(EVENT_LABELS['invoice.issued']({})).toBe('Nota fiscal emitida');
   });

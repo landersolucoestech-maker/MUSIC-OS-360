@@ -90,29 +90,29 @@ export function useInvoiceForm({
       const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const netAmount = numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const servicesDescription = invoice.service_description ?? "";
-      const recipientLegalName = invoice.tomador_razao_social ?? invoice.tomador_nome ?? invoice.clientes?.nome ?? "";
+      const recipientLegalName = invoice.tomador_legal_name ?? invoice.tomador_name ?? invoice.clientes?.nome ?? "";
       setOperationType(type);
       setFormData({
         ...INITIAL_FORM_DATA,
         ...invoice,
         observacoes: cleanNotes,
-        tomador_razao_social: recipientLegalName,
+        tomador_legal_name: recipientLegalName,
         service_description: servicesDescription,
         service_amount: servicesAmount,
         net_amount: netAmount,
-        data_emissao: invoice.data_emissao ? new Date(invoice.data_emissao) : undefined,
-        vencimento: invoice.vencimento
-          ? new Date(invoice.vencimento)
-          : invoice.data_vencimento
-            ? new Date(invoice.data_vencimento)
+        issued_at: invoice.issued_at ? new Date(invoice.issued_at) : undefined,
+        due_at: invoice.due_at
+          ? new Date(invoice.due_at)
+          : invoice.due_at
+            ? new Date(invoice.due_at)
             : undefined,
-        itens: Array.isArray(invoice.itens) && invoice.itens.length > 0
-          ? invoice.itens
+        items: Array.isArray(invoice.items) && invoice.items.length > 0
+          ? invoice.items
           : [{ ...INITIAL_ITEM, description: servicesDescription, unit_price: servicesAmount, total_amount: servicesAmount }],
       });
     } else if (!invoice && open) {
       setOperationType(defaultOperationType ?? "saida");
-      setFormData({ ...INITIAL_FORM_DATA, data_emissao: new Date(), itens: [{ ...INITIAL_ITEM }] });
+      setFormData({ ...INITIAL_FORM_DATA, issued_at: new Date(), items: [{ ...INITIAL_ITEM }] });
     }
     setValidationErrors({});
   }, [invoice, mode, open, defaultOperationType]);
@@ -168,7 +168,7 @@ export function useInvoiceForm({
       ...prev,
       client_id: clientId,
       tomador_cnpj: client.document || "",
-      tomador_razao_social: client.name || "",
+      tomador_legal_name: client.name || "",
       tomador_email: client.email || "",
       tomador_address: client.address || "",
       tomador_city: client.city || "",
@@ -179,20 +179,20 @@ export function useInvoiceForm({
 
   const updateItem = useCallback((index: number, field: keyof InvoiceLineItem, value: any) => {
     setFormData((prev) => {
-      const itens = [...prev.itens];
-      itens[index] = { ...itens[index], [field]: value };
-      if (field === "quantidade" || field === "unit_price") {
-        itens[index].total_amount = +((itens[index].quantidade || 0) * (itens[index].unit_price || 0)).toFixed(2);
+      const items = [...prev.items];
+      items[index] = { ...items[index], [field]: value };
+      if (field === "quantity" || field === "unit_price") {
+        items[index].total_amount = +((items[index].quantity || 0) * (items[index].unit_price || 0)).toFixed(2);
       }
-      return { ...prev, itens, service_amount: itens.reduce((sum, item) => sum + (item.total_amount || 0), 0) };
+      return { ...prev, items, service_amount: items.reduce((sum, item) => sum + (item.total_amount || 0), 0) };
     });
   }, []);
 
-  const addItem = useCallback(() => setFormData((prev) => ({ ...prev, itens: [...prev.itens, { ...INITIAL_ITEM }] })), []);
+  const addItem = useCallback(() => setFormData((prev) => ({ ...prev, items: [...prev.items, { ...INITIAL_ITEM }] })), []);
   const removeItem = useCallback((index: number) => setFormData((prev) => {
-    if (prev.itens.length === 1) return prev;
-    const itens = prev.itens.filter((_, itemIndex) => itemIndex !== index);
-    return { ...prev, itens, service_amount: itens.reduce((sum, item) => sum + (item.total_amount || 0), 0) };
+    if (prev.items.length === 1) return prev;
+    const items = prev.items.filter((_, itemIndex) => itemIndex !== index);
+    return { ...prev, items, service_amount: items.reduce((sum, item) => sum + (item.total_amount || 0), 0) };
   }), []);
 
   const recalculateTaxes = useCallback(() => {
@@ -216,11 +216,11 @@ export function useInvoiceForm({
 
     const schemaValidation = invoiceSchema.safeParse({
       ...formData,
-      numero: formData.numero || "",
+      invoice_number: formData.invoice_number || "",
       serie: formData.serie || "",
       client_id: formData.client_id || "",
-      data_emissao: formData.data_emissao,
-      vencimento: formData.vencimento,
+      issued_at: formData.issued_at,
+      due_at: formData.due_at,
       service_amount: Number(formData.service_amount) || 0,
       deductions_amount: Number(formData.deductions_amount) || 0,
       base_calculo: Number(formData.base_calculo) || 0,
@@ -247,14 +247,14 @@ export function useInvoiceForm({
 
     const servicesAmount = Number(formData.service_amount) || 0;
     const data = {
-      numero: formData.numero.trim(),
+      invoice_number: formData.invoice_number.trim(),
       serie: formData.serie?.trim() || null,
       tipo_nota: formData.tipo_nota,
       client_id: formData.client_id || null,
-      venda_id: null,
+      sale_id: null,
       legacy_amount: servicesAmount,
-      data_emissao: formData.data_emissao ? format(formData.data_emissao, "yyyy-MM-dd") : null,
-      vencimento: formData.vencimento ? format(formData.vencimento, "yyyy-MM-dd") : null,
+      issued_at: formData.issued_at ? format(formData.issued_at, "yyyy-MM-dd") : null,
+      due_at: formData.due_at ? format(formData.due_at, "yyyy-MM-dd") : null,
       status: formData.status,
       url_pdf: formData.url_pdf || null,
       notes: serializeOperationType(operationType, formData.observacoes?.trim() || "") || null,
@@ -264,7 +264,7 @@ export function useInvoiceForm({
       cfop: formData.cfop,
       service_description: formData.service_description,
       tomador_cnpj: formData.tomador_cnpj,
-      tomador_razao_social: formData.tomador_razao_social,
+      tomador_legal_name: formData.tomador_legal_name,
       tomador_inscricao_estadual: formData.tomador_inscricao_estadual,
       tomador_inscricao_municipal: formData.tomador_inscricao_municipal || null,
       tomador_email: formData.tomador_email,
@@ -284,9 +284,9 @@ export function useInvoiceForm({
       ir_amount: Number(formData.ir_amount) || 0,
       csll_amount: Number(formData.csll_amount) || 0,
       net_amount: numberValue(formData.net_amount, formData.service_amount) ?? 0,
-      forma_pagamento: formData.forma_pagamento,
-      condicao_pagamento: formData.condicao_pagamento,
-      itens: formData.itens,
+      payment_method: formData.payment_method,
+      payment_terms: formData.payment_terms,
+      items: formData.items,
     };
 
     if (mode === "create") addInvoice.mutate(data, { onSuccess: onClose });

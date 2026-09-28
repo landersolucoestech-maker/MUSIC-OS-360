@@ -3,14 +3,14 @@ export type { InvoiceOperationType };
 
 export interface InvoiceLineItem {
   description: string;
-  quantidade: number;
+  quantity: number;
   unit_price: number;
   total_amount: number;
-  codigo_servico: string;
+  service_code: string;
 }
 
 export interface InvoiceFormData {
-  numero: string;
+  invoice_number: string;
   serie: string;
   tipo_nota: string;
   client_id: string;
@@ -19,11 +19,11 @@ export interface InvoiceFormData {
   codigo_municipio: string;
   cfop: string;
   service_description: string;
-  data_emissao: Date | undefined;
-  vencimento: Date | undefined;
+  issued_at: Date | undefined;
+  due_at: Date | undefined;
   status: string;
   tomador_cnpj: string;
-  tomador_razao_social: string;
+  tomador_legal_name: string;
   tomador_inscricao_estadual: string;
   tomador_inscricao_municipal: string;
   tomador_email: string;
@@ -43,23 +43,23 @@ export interface InvoiceFormData {
   ir_amount: number;
   csll_amount: number;
   net_amount: number;
-  forma_pagamento: string;
-  condicao_pagamento: string;
-  itens: InvoiceLineItem[];
+  payment_method: string;
+  payment_terms: string;
+  items: InvoiceLineItem[];
   url_pdf: string;
   observacoes: string;
 }
 
 export const INITIAL_ITEM: InvoiceLineItem = {
   description: "",
-  quantidade: 1,
+  quantity: 1,
   unit_price: 0,
   total_amount: 0,
-  codigo_servico: "12.07",
+  service_code: "12.07",
 };
 
 export const INITIAL_FORM_DATA: InvoiceFormData = {
-  numero: "",
+  invoice_number: "",
   serie: "001",
   tipo_nota: "nfse",
   client_id: "",
@@ -68,11 +68,11 @@ export const INITIAL_FORM_DATA: InvoiceFormData = {
   codigo_municipio: "3550308",
   cfop: "5933",
   service_description: "",
-  data_emissao: new Date(),
-  vencimento: undefined,
+  issued_at: new Date(),
+  due_at: undefined,
   status: "issued",
   tomador_cnpj: "",
-  tomador_razao_social: "",
+  tomador_legal_name: "",
   tomador_inscricao_estadual: "ISENTO",
   tomador_inscricao_municipal: "",
   tomador_email: "",
@@ -92,9 +92,9 @@ export const INITIAL_FORM_DATA: InvoiceFormData = {
   ir_amount: 0,
   csll_amount: 0,
   net_amount: 0,
-  forma_pagamento: "transferencia",
-  condicao_pagamento: "30 dias",
-  itens: [{ ...INITIAL_ITEM }],
+  payment_method: "transferencia",
+  payment_terms: "30 dias",
+  items: [{ ...INITIAL_ITEM }],
   url_pdf: "",
   observacoes: "",
 };

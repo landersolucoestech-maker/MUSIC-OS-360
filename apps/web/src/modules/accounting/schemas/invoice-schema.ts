@@ -2,13 +2,13 @@ import { z } from "zod";
 
 export const invoiceLineItemSchema = z.object({
   description: z.string().min(1, "Descrição do item é obrigatória").trim(),
-  quantidade: z.number().min(1, "Quantidade mínima é 1"),
+  quantity: z.number().min(1, "Quantidade mínima é 1"),
   unit_price: z.number().min(0, "Valor não pode ser negativo"),
   total_amount: z.number().min(0, "Valor não pode ser negativo"),
 });
 
 export const invoiceSchema = z.object({
-  numero: z.string().optional().or(z.literal("")),
+  invoice_number: z.string().optional().or(z.literal("")),
   serie: z.string().optional().or(z.literal("")),
   tipo_nota: z.enum(["nfse", "nfe", "nfce"]).default("nfse"),
   client_id: z.string().optional().or(z.literal("")),
@@ -17,11 +17,11 @@ export const invoiceSchema = z.object({
   codigo_municipio: z.string().optional().or(z.literal("")),
   cfop: z.string().optional().or(z.literal("")),
   service_description: z.string().max(2000, "Descrição deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
-  data_emissao: z.date().optional().nullable(),
-  vencimento: z.date().optional().nullable(),
+  issued_at: z.date().optional().nullable(),
+  due_at: z.date().optional().nullable(),
   status: z.string().optional().or(z.literal("")),
   tomador_cnpj: z.string().max(20, "CNPJ inválido").optional().or(z.literal("")),
-  tomador_razao_social: z.string().max(200, "Razão social deve ter no máximo 200 caracteres").optional().or(z.literal("")),
+  tomador_legal_name: z.string().max(200, "Razão social deve ter no máximo 200 caracteres").optional().or(z.literal("")),
   tomador_inscricao_estadual: z.string().max(30, "IE deve ter no máximo 30 caracteres").optional().or(z.literal("")),
   tomador_inscricao_municipal: z.string().max(30, "IM deve ter no máximo 30 caracteres").optional().or(z.literal("")),
   tomador_email: z.string().email("Email inválido").max(100, "Email deve ter no máximo 100 caracteres").optional().or(z.literal("")),
@@ -41,9 +41,9 @@ export const invoiceSchema = z.object({
   ir_amount: z.number().min(0).optional(),
   csll_amount: z.number().min(0).optional(),
   net_amount: z.number().min(0).optional(),
-  forma_pagamento: z.string().optional().or(z.literal("")),
-  condicao_pagamento: z.string().optional().or(z.literal("")),
-  itens: z.array(invoiceLineItemSchema).optional(),
+  payment_method: z.string().optional().or(z.literal("")),
+  payment_terms: z.string().optional().or(z.literal("")),
+  items: z.array(invoiceLineItemSchema).optional(),
   url_pdf: z.string().max(500, "URL deve ter no máximo 500 caracteres").optional().or(z.literal("")),
   observacoes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
 });

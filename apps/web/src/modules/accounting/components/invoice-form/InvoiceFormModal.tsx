@@ -57,9 +57,9 @@ export function InvoiceFormModal({
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
             {title}
-            {formData.numero && (
+            {formData.invoice_number && (
               <Badge variant="outline" className="ml-2">
-                Nº {formData.numero}/{formData.serie}
+                Nº {formData.invoice_number}/{formData.serie}
               </Badge>
             )}
             <Badge variant={rules.isEntrada ? "secondary" : "default"} className="ml-1 gap-1">

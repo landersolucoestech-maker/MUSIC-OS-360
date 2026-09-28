@@ -1067,7 +1067,7 @@ export class InvoiceEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true }) stripe_invoice_id: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) numero: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) invoice_number: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: InvoiceStatus.PENDING }) status: InvoiceStatus;
   @Column({ type: 'integer', nullable: true }) amount_due: number | null;
@@ -1078,18 +1078,19 @@ export class InvoiceEntity {
   @Column({ type: 'text', nullable: true }) invoice_pdf: string | null;
   @Column({ type: 'integer', default: 0 }) attempt_count: number;
   @Column({ type: 'uuid', nullable: true }) prestador_id: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) tomador_nome: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) tomador_name: string | null;
   @Column({ type: 'text', nullable: true }) tomador_doc_encrypted: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2 }) legacy_amount: string;
   @Column({ type: 'text', nullable: true }) description: string | null;
-  @Column({ type: 'timestamp', nullable: true }) data_emissao: Date | null;
-  @Column({ type: 'timestamp', nullable: true }) data_vencimento: Date | null;
-  @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
+  @Column({ type: 'timestamp', nullable: true }) issued_at: Date | null;
+  /** NFS-e due date (`due_date` above is the Stripe billing invoice's). */
+  @Column({ type: 'timestamp', nullable: true }) due_at: Date | null;
+  @Column({ type: 'text', nullable: true }) file_url: string | null;
   // ── Invoice form fields (1 column per field — exact name) ─────────────────────
   @Column({ type: 'varchar', length: 20, nullable: true }) serie: string | null;
   @Column({ type: 'varchar', length: 30, nullable: true }) tipo_nota: string | null;
   @Column({ type: 'uuid', nullable: true }) client_id: string | null;
-  @Column({ type: 'uuid', nullable: true }) venda_id: string | null;
+  @Column({ type: 'uuid', nullable: true }) sale_id: string | null;
   @Column({ type: 'text', nullable: true }) url_pdf: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) natureza_operacao: string | null;
@@ -1098,7 +1099,7 @@ export class InvoiceEntity {
   @Column({ type: 'varchar', length: 20, nullable: true }) cfop: string | null;
   @Column({ type: 'text', nullable: true }) service_description: string | null;
   @Column({ type: 'varchar', length: 30, nullable: true }) tomador_cnpj: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) tomador_razao_social: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) tomador_legal_name: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) tomador_inscricao_estadual: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) tomador_inscricao_municipal: string | null;
   @Column({ type: 'varchar', length: 150, nullable: true }) tomador_email: string | null;
@@ -1118,9 +1119,10 @@ export class InvoiceEntity {
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) ir_amount: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) csll_amount: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) net_amount: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) forma_pagamento: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) condicao_pagamento: string | null;
-  @Column({ type: 'jsonb', nullable: true }) itens: unknown[] | null;
+  @Column({ type: 'varchar', length: 50, nullable: true }) payment_method: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) payment_terms: string | null;
+  /** [{ description, service_code, quantity, unit_price, total_amount }] */
+  @Column({ type: 'jsonb', nullable: true }) items: unknown[] | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;

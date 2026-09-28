@@ -1009,7 +1009,7 @@ export class BillingService {
     if (!tenantId || !this.ds) return;
     await this.ds.query(
       `INSERT INTO invoices (
-         tenant_id, stripe_invoice_id, numero, type, status, amount_due, amount_paid, currency,
+         tenant_id, stripe_invoice_id, invoice_number, type, status, amount_due, amount_paid, currency,
          legacy_amount, due_date, hosted_invoice_url, invoice_pdf, attempt_count, metadata, created_by
        )
        -- find-475adb34: $4/$5 are integer cents: typed explicitly because $4 is also used in

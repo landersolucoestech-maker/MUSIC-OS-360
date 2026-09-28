@@ -68,7 +68,7 @@ export function InvoiceItemsSection({
             )}
           </CardHeader>
           <CardContent className="space-y-3">
-            {formData.itens.map((item, i) => (
+            {formData.items.map((item, i) => (
               <div
                 key={i}
                 className="grid grid-cols-12 gap-2 items-end p-3 border border-border rounded-lg"
@@ -85,8 +85,8 @@ export function InvoiceItemsSection({
                 <div className="col-span-4 md:col-span-2 space-y-1">
                   <Label className="text-xs">Cód. Serviço</Label>
                   <Input
-                    value={item.codigo_servico}
-                    onChange={(e) => updateItem(i, "codigo_servico", e.target.value)}
+                    value={item.service_code}
+                    onChange={(e) => updateItem(i, "service_code", e.target.value)}
                     disabled={disabled}
                   />
                 </div>
@@ -96,8 +96,8 @@ export function InvoiceItemsSection({
                     type="number"
                     min="0"
                     step="0.01"
-                    value={item.quantidade}
-                    onChange={(e) => updateItem(i, "quantidade", parseFloat(e.target.value) || 0)}
+                    value={item.quantity}
+                    onChange={(e) => updateItem(i, "quantity", parseFloat(e.target.value) || 0)}
                     disabled={disabled}
                   />
                 </div>
@@ -119,7 +119,7 @@ export function InvoiceItemsSection({
                   <p className="text-sm font-semibold pt-2">{fmt(item.total_amount)}</p>
                 </div>
                 <div className="col-span-2 md:col-span-1 flex justify-end">
-                  {!disabled && formData.itens.length > 1 && (
+                  {!disabled && formData.items.length > 1 && (
                     <Button
                       type="button"
                       variant="ghost"

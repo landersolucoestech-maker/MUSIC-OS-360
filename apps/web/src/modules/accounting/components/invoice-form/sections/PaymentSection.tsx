@@ -43,8 +43,8 @@ export function PaymentSection({ formData, disabled, updateField }: PaymentSecti
         <div className="space-y-2">
           <Label>Forma de Pagamento</Label>
           <Select
-            value={formData.forma_pagamento}
-            onValueChange={(value) => updateField("forma_pagamento", value)}
+            value={formData.payment_method}
+            onValueChange={(value) => updateField("payment_method", value)}
             disabled={disabled}
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
@@ -58,8 +58,8 @@ export function PaymentSection({ formData, disabled, updateField }: PaymentSecti
         <div className="space-y-2">
           <Label>Condição</Label>
           <Input
-            value={formData.condicao_pagamento}
-            onChange={(event) => updateField("condicao_pagamento", event.target.value)}
+            value={formData.payment_terms}
+            onChange={(event) => updateField("payment_terms", event.target.value)}
             placeholder="30 dias / À vista / 30/60/90"
             disabled={disabled}
           />
@@ -67,8 +67,8 @@ export function PaymentSection({ formData, disabled, updateField }: PaymentSecti
         <div className="space-y-2">
           <Label>Vencimento</Label>
           <DatePickerField
-            value={formData.vencimento ? format(formData.vencimento, "yyyy-MM-dd") : ""}
-            onChange={(iso) => updateField("vencimento", iso ? parseISO(iso) : undefined)}
+            value={formData.due_at ? format(formData.due_at, "yyyy-MM-dd") : ""}
+            onChange={(iso) => updateField("due_at", iso ? parseISO(iso) : undefined)}
             disabled={disabled}
             placeholder="Selecione a data"
             data-testid="datepicker-vencimento"

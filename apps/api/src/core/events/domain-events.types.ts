@@ -300,17 +300,17 @@ export interface TransactionCancelledPayload {
 export interface InvoiceCreatedPayload {
   invoiceId:    string;
   tenantId:     string;
-  type:         string;
-  valor:        string;
-  numero:       string | null;
-  prestadorId:  string | null;
+  type:          string;
+  amount:        string;
+  invoiceNumber: string | null;
+  prestadorId:   string | null;
   createdBy:    string;
 }
 
 export interface InvoiceStatusChangedPayload {
   invoiceId:      string;
   tenantId:       string;
-  numero:         string | null;
+  invoiceNumber:  string | null;
   previousStatus: string;
   newStatus:      string;
   changedBy:      string;
@@ -319,19 +319,19 @@ export interface InvoiceStatusChangedPayload {
 export interface InvoiceIssuedPayload {
   invoiceId:  string;
   tenantId:   string;
-  type:       string;
-  valor:      string;
-  numero:     string | null;
-  issuedBy:   string;
+  type:          string;
+  amount:        string;
+  invoiceNumber: string | null;
+  issuedBy:      string;
   issuedAt:   string;
 }
 
 export interface InvoiceOverduePayload {
   invoiceId:       string;
   tenantId:        string;
-  numero:          string | null;
-  valor:           string;
-  dataVencimento:  string;
+  invoiceNumber:   string | null;
+  amount:          string;
+  dueAt:           string;
 }
 
 // ─── Financial Rules ──────────────────────────────────────────────────────────

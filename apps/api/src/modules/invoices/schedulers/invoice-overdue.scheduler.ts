@@ -78,8 +78,8 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
     const rows = await enumRepo
       .createQueryBuilder('i')
       .select('DISTINCT i.tenant_id', 'tenant_id')
-      .where('i.data_vencimento IS NOT NULL')
-      .andWhere('i.data_vencimento < :now', { now })
+      .where('i.due_at IS NOT NULL')
+      .andWhere('i.due_at < :now', { now })
       .andWhere('i.status IN (:...statuses)', { statuses: ACTIVE_STATUSES })
       .andWhere('i.deleted_at IS NULL')
       .andWhere('i.tenant_id IS NOT NULL')
@@ -110,8 +110,8 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
     const overdueInvoices = await repo
       .createQueryBuilder('i')
       .where('i.tenant_id = :tenantId', { tenantId })
-      .andWhere('i.data_vencimento IS NOT NULL')
-      .andWhere('i.data_vencimento < :now', { now })
+      .andWhere('i.due_at IS NOT NULL')
+      .andWhere('i.due_at < :now', { now })
       .andWhere('i.status IN (:...statuses)', { statuses: ACTIVE_STATUSES })
       .andWhere('i.deleted_at IS NULL')
       // find-675e3eb4 (Gotcha #4/#5): `invoices` also stores the tenant's own Stripe SaaS
@@ -119,7 +119,7 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
       // BillingEnforcementService from Stripe events). They must never enter
       // this tenant-invoice overdue flow (INVOICE_OVERDUE event, financial
       // rules, "Nota fiscal vencida" notifications). Previously excluded only
-      // by accident (they carry due_date, not data_vencimento); made explicit
+      // by accident (they carry due_date, not due_at); made explicit
       // like REM-06 in invoices.service list()/findById().
       .andWhere("i.type != 'stripe_subscription'")
       .getMany();
@@ -148,13 +148,13 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
         payload: {
           invoiceId:      invoice.id,
           tenantId:       invoice.tenant_id,
-          numero:         invoice.numero ?? null,
-          valor:          String(invoice.legacy_amount),
-          dataVencimento: invoice.data_vencimento!.toISOString(),
+          invoiceNumber:  invoice.invoice_number ?? null,
+          amount:         String(invoice.legacy_amount),
+          dueAt:          invoice.due_at!.toISOString(),
         },
       });
 
-      this.logger.warn(`InvoiceOverdueScheduler: marked invoice "${invoice.id}" (${invoice.numero ?? 'no-number'}) as overdue`);
+      this.logger.warn(`InvoiceOverdueScheduler: marked invoice "${invoice.id}" (${invoice.invoice_number ?? 'no-number'}) as overdue`);
     }
   }
 }

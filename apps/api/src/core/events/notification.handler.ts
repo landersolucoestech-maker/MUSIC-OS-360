@@ -82,12 +82,12 @@ export const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string
   [DOMAIN_EVENTS.TRANSACTION_STATUS_CHANGED]: (p) => `Status da transação atualizado${toStatusSuffix('transaction', p['newStatus'])}`,
   [DOMAIN_EVENTS.TRANSACTION_PAID]: (p) => `Pagamento baixado${amountSuffix(p['valor'])}`,
   [DOMAIN_EVENTS.TRANSACTION_CANCELLED]: (p) => `Transação cancelada${amountSuffix(p['valor'])}`,
-  [DOMAIN_EVENTS.INVOICE_CREATED]: (p) => (p['numero'] ? `Nota fiscal criada: ${p['numero']}` : 'Nota fiscal criada'),
-  [DOMAIN_EVENTS.INVOICE_STATUS_CHANGED]: (p) => `Status da nota fiscal${p['numero'] ? ` ${p['numero']}` : ''} atualizado${toStatusSuffix('invoice', p['newStatus'])}`,
-  [DOMAIN_EVENTS.INVOICE_ISSUED]: (p) => (p['numero'] ? `Nota fiscal emitida: ${p['numero']}` : 'Nota fiscal emitida'),
+  [DOMAIN_EVENTS.INVOICE_CREATED]: (p) => (p['invoiceNumber'] ? `Nota fiscal criada: ${p['invoiceNumber']}` : 'Nota fiscal criada'),
+  [DOMAIN_EVENTS.INVOICE_STATUS_CHANGED]: (p) => `Status da nota fiscal${p['invoiceNumber'] ? ` ${p['invoiceNumber']}` : ''} atualizado${toStatusSuffix('invoice', p['newStatus'])}`,
+  [DOMAIN_EVENTS.INVOICE_ISSUED]: (p) => (p['invoiceNumber'] ? `Nota fiscal emitida: ${p['invoiceNumber']}` : 'Nota fiscal emitida'),
   [DOMAIN_EVENTS.INVOICE_OVERDUE]: (p) => {
-    const due = formatDatePtBr(p['dataVencimento']);
-    return `Nota fiscal vencida${p['numero'] ? `: ${p['numero']}` : ''}${due ? ` (vencimento em ${due})` : ''}`;
+    const due = formatDatePtBr(p['dueAt']);
+    return `Nota fiscal vencida${p['invoiceNumber'] ? `: ${p['invoiceNumber']}` : ''}${due ? ` (vencimento em ${due})` : ''}`;
   },
   // find-9e7bc94e: triggering a financial rule does NOT create a ledger entry —
   // its only effect is this notification, which must at least carry the amount

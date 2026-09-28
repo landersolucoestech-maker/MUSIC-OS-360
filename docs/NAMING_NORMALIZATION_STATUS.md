@@ -89,6 +89,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-033 | CRM lead | done | DONE | no |
 | CZ-034 | Takedown | done | DONE | no |
 | CZ-035 | Sync license | done | DONE | no |
+| CZ-036 | Invoice (nota fiscal) | done | DONE | no |
 
-Concepts: 83. Renames: 0. Exceptions: 204. Blockers: 4.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 67, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 84. Renames: 0. Exceptions: 221. Blockers: 4.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 68, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

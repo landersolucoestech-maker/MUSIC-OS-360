@@ -57,8 +57,8 @@ function numberValue(...values: unknown[]): number | null {
 function getInvoicePartyName(invoice: any): string {
   return (
     invoice.clientes?.nome ||
-    invoice.tomador_razao_social ||
-    invoice.tomador_nome ||
+    invoice.tomador_legal_name ||
+    invoice.tomador_name ||
     "-"
   );
 }
@@ -147,13 +147,13 @@ export default function Invoices() {
     const partyName = getInvoicePartyName(invoice).toLowerCase();
     const rawSearch = searchTerm.toLowerCase();
     const matchesSearch =
-      (invoice.numero || "").toLowerCase().includes(rawSearch) ||
+      (invoice.invoice_number || "").toLowerCase().includes(rawSearch) ||
       partyName.includes(rawSearch) ||
       (invoice.tomador_cnpj || "").toLowerCase().includes(rawSearch) ||
       (invoice.tomador_email || "").toLowerCase().includes(rawSearch);
     const matchesStatus = statusFilter === "all" || invoice.status === statusFilter;
     const matchesType = typeFilter === "all" || invoice._operationType === typeFilter;
-    const emissao = String(invoice.data_emissao ?? "").slice(0, 10);
+    const emissao = String(invoice.issued_at ?? "").slice(0, 10);
     const matchesStart = !startDate || (emissao && emissao >= startDate);
     const matchesEnd = !endDate || (emissao && emissao <= endDate);
     return matchesSearch && matchesStatus && matchesType && matchesStart && matchesEnd;
@@ -400,7 +400,7 @@ export default function Invoices() {
                           />
                         </TableCell>
                         <TableCell className="py-3">
-                          <span className="font-medium">{invoice.numero}</span>
+                          <span className="font-medium">{invoice.invoice_number}</span>
                           {invoice.serie && <span className="text-muted-foreground text-xs ml-1">/{invoice.serie}</span>}
                         </TableCell>
                         <TableCell className="py-3">{getTypeBadge(invoice._operationType)}</TableCell>
@@ -409,7 +409,7 @@ export default function Invoices() {
                           {displayValue !== null ? formatCurrency(displayValue) : "-"}
                         </TableCell>
                         <TableCell className="py-3 text-sm">
-                          {invoice.data_emissao ? format(new Date(invoice.data_emissao), "dd/MM/yyyy", { locale: ptBR }) : "-"}
+                          {invoice.issued_at ? format(new Date(invoice.issued_at), "dd/MM/yyyy", { locale: ptBR }) : "-"}
                         </TableCell>
                         <TableCell className="py-3">{getStatusBadge(invoice.status)}</TableCell>
                         <TableCell className="py-3">
@@ -521,7 +521,7 @@ export default function Invoices() {
         onOpenChange={setDeleteModalOpen}
         onConfirm={confirmDelete}
         title="Excluir Nota Fiscal"
-        description={`Tem certeza que deseja excluir a nota fiscal ${selectedInvoice?.numero}?`}
+        description={`Tem certeza que deseja excluir a nota fiscal ${selectedInvoice?.invoice_number}?`}
       />
     </MainLayout>
   );

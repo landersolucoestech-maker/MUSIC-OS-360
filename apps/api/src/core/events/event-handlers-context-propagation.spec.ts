@@ -112,7 +112,7 @@ describe('P2-9 event handlers context propagation', () => {
     await handler.onInvoiceCreated({
       type: DOMAIN_EVENTS.INVOICE_CREATED,
       tenantId: 't1',
-      payload: { invoiceId: 'i1', numero: '1', valor: 10, createdBy: 'u1' },
+      payload: { invoiceId: 'i1', invoiceNumber: '1', amount: 10, createdBy: 'u1' },
     } as any);
     expectTenantContext(dbContext);
     expect(activityLogs.create).toHaveBeenCalledWith('t1', 'u1', expect.objectContaining({ action: 'created' }));
@@ -132,7 +132,7 @@ describe('P2-9 event handlers context propagation', () => {
     await handler.onInvoiceOverdue({
       type: DOMAIN_EVENTS.INVOICE_OVERDUE,
       tenantId: 't1',
-      payload: { invoiceId: 'i1', numero: '1', valor: '250', dataVencimento: '2026-06-01' },
+      payload: { invoiceId: 'i1', invoiceNumber: '1', amount: '250', dueAt: '2026-06-01' },
     } as any);
 
     expect(financialRules.evaluateRules).toHaveBeenCalledWith(

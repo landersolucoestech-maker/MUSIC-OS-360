@@ -87,7 +87,7 @@ export function DetailsSection({
                 <p className="font-medium">
                   {[
                     companySettings.logradouro,
-                    companySettings.numero,
+                    companySettings.invoice_number,
                     companySettings.cidade,
                     companySettings.estado,
                     companySettings.cep && formatCEP(companySettings.cep),
@@ -114,8 +114,8 @@ export function DetailsSection({
               Número <span className="text-destructive">*</span>
             </Label>
             <Input
-              value={formData.numero}
-              onChange={(e) => updateField("numero", e.target.value)}
+              value={formData.invoice_number}
+              onChange={(e) => updateField("invoice_number", e.target.value)}
               placeholder="000001234"
               disabled={disabled}
               data-testid="input-numero"
@@ -155,8 +155,8 @@ export function DetailsSection({
           <div className="space-y-2">
             <Label>Data de Emissão</Label>
             <DatePickerField
-              value={formData.data_emissao ? format(formData.data_emissao, "yyyy-MM-dd") : ""}
-              onChange={(iso) => updateField("data_emissao", iso ? parseISO(iso) : undefined)}
+              value={formData.issued_at ? format(formData.issued_at, "yyyy-MM-dd") : ""}
+              onChange={(iso) => updateField("issued_at", iso ? parseISO(iso) : undefined)}
               disabled={disabled}
               placeholder="Selecione a data"
               data-testid="datepicker-data-emissao"
@@ -282,14 +282,14 @@ export function DetailsSection({
               Razão Social / Nome <span className="text-destructive">*</span>
             </Label>
             <Input
-              value={formData.tomador_razao_social}
-              onChange={(e) => updateField("tomador_razao_social", e.target.value)}
+              value={formData.tomador_legal_name}
+              onChange={(e) => updateField("tomador_legal_name", e.target.value)}
               disabled={disabled}
-              aria-invalid={!!validationErrors.tomador_razao_social}
-              className={validationErrors.tomador_razao_social ? "border-destructive" : ""}
+              aria-invalid={!!validationErrors.tomador_legal_name}
+              className={validationErrors.tomador_legal_name ? "border-destructive" : ""}
             />
-            {validationErrors.tomador_razao_social && (
-              <p className="text-xs text-destructive">{validationErrors.tomador_razao_social}</p>
+            {validationErrors.tomador_legal_name && (
+              <p className="text-xs text-destructive">{validationErrors.tomador_legal_name}</p>
             )}
           </div>
         </div>

@@ -6,7 +6,7 @@
  * the tenant's own Stripe SaaS subscription invoices (type
  * 'stripe_subscription', dunned by BillingEnforcementService). Real Postgres,
  * production wiring (app role + tenant context, owner as ADMIN_DATA_SOURCE).
- * The SaaS row is given a past data_vencimento on purpose: before the explicit
+ * The SaaS row is given a past due_at on purpose: before the explicit
  * type filter it was excluded only because Stripe rows never set that column.
  */
 import 'reflect-metadata';
@@ -39,7 +39,7 @@ describe('InvoiceOverdueScheduler excludes Stripe SaaS invoices (real Postgres)'
     await owner.query(`INSERT INTO tenants (id, org_id, name, slug) VALUES ($1, gen_random_uuid(), 'Overdue E2E', $2)`, [tenantId, `overdue-e2e-${tenantId.slice(0, 8)}`]);
     const past = new Date(Date.now() - 5 * 86400_000);
     await owner.query(
-      `INSERT INTO invoices (id, tenant_id, type, status, legacy_amount, data_vencimento, metadata)
+      `INSERT INTO invoices (id, tenant_id, type, status, legacy_amount, due_at, metadata)
        VALUES ($1, $3, 'nfse', 'pending', 100, $4, '{}'::jsonb),
               ($2, $3, 'stripe_subscription', 'pending', 99, $4, '{}'::jsonb)`,
       [taxInvoice, saasInvoice, tenantId, past],

@@ -657,6 +657,14 @@ export const FIELD_LABELS_PT_BR = {
   projectName: 'Projeto',
   usageType: 'Tipo de uso',
   targetMedia: 'Mídia de destino',
+  // invoices (CZ-036) — same headers as the pre-rename columns.
+  invoiceNumber: 'Número',
+  issuedAt: 'Data de emissão',
+  tomadorLegalName: 'Razão social do tomador',
+  paymentMethod: 'Forma de pagamento',
+  paymentTerms: 'Condição de pagamento',
+  invoiceDueAt: 'Data de vencimento',
+  serviceCode: 'Código do serviço',
   campaignId: 'Campanha',
 
   // ── Parte 89 — Briefing ──────────────────────────────────────────────────────

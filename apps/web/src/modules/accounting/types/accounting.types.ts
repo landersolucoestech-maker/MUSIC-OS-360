@@ -64,20 +64,20 @@ export interface TransactionWithRelations extends Transaction {
 export interface Invoice {
   id: string;
   user_id?: string;
-  numero?: string | null;
+  invoice_number?: string | null;
   serie?: string | null;
   tipo_nota?: InvoiceType | string | null;
   status?: InvoiceStatusValue | string | null;
-  tomador_nome?: string | null;
+  tomador_name?: string | null;
   tomador_cnpj?: string | null;
   total_amount?: number | null;
   service_amount?: number | null;
   iss_amount?: number | null;
-  data_emissao?: string | null;
-  data_vencimento?: string | null;
+  issued_at?: string | null;
+  due_at?: string | null;
   service_description?: string | null;
   client_id?: string | null;
-  venda_id?: string | null;
+  sale_id?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;

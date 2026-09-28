@@ -8,7 +8,9 @@ import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import type { CreateInvoiceDto, UpdateInvoiceDto, QueryInvoiceDto } from './dto/invoices.dto';
-import { invoiceCancelledCopy, invoiceCreatedCopy } from './i18n/invoice-copy.pt-br';
+import { invoiceCancelledCopy, invoiceCreatedCopy, invoiceStatusChangedCopy } from './i18n/invoice-copy.pt-br';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import { INVOICE_DEPRECATED_FIELDS, INVOICE_ITEM_DEPRECATED_FIELDS } from './invoice-legacy-fields';
 
 const CANCELLED_STATUSES = new Set(['cancelled']);
 const ISSUED_STATUSES = new Set(['issued']);
@@ -46,23 +48,17 @@ export class InvoicesService {
   }
 
   private normalizePayload(dto: CreateInvoiceDto | UpdateInvoiceDto): Record<string, unknown> {
-    const input = dto as unknown as Record<string, unknown>;
+    // Pre-CZ-036 names -> canonical (the item-level aliases too).
+    const input = applyDeprecatedFieldAliases(dto as unknown as Record<string, unknown>, INVOICE_DEPRECATED_FIELDS);
     const payload: Record<string, unknown> = { ...input };
+    if (Array.isArray(input['items'])) {
+      payload['items'] = (input['items'] as Record<string, unknown>[]).map((item) =>
+        applyDeprecatedFieldAliases(item, INVOICE_ITEM_DEPRECATED_FIELDS),
+      );
+    }
 
     if (input['tipo_nota'] !== undefined) payload['type'] = input['tipo_nota'];
     if (input['service_amount'] !== undefined) payload['legacy_amount'] = input['service_amount'];
-    // "vencimento" is the DTO/form-facing key (kept as-is, a documented API
-    // alias); "data_vencimento" is the sole physical column. Without the
-    // delete, `payload = {...input}` above leaves a `vencimento` key that
-    // ALSO gets persisted verbatim into the entity's own `vencimento`
-    // column (a distinct physical column, added later by
-    // 20260712000005_CrmFinanceOpsFormFieldColumns.ts) -- two columns of
-    // different types (timestamp vs date) independently writable from one
-    // form field, exactly the drift naming-canonical.md warns against.
-    if (input['vencimento'] !== undefined) {
-      payload['data_vencimento'] = input['vencimento'];
-      delete payload['vencimento'];
-    }
 
     const cnpj = input['tomador_cnpj'];
     if (cnpj !== undefined) {
@@ -97,7 +93,7 @@ export class InvoicesService {
     if (query.artistId) qb.andWhere('i.prestador_id = :prestadorId', { prestadorId: query.artistId });
     if (query.search) {
       qb.andWhere(
-        '(i.numero ILIKE :search OR i.tomador_razao_social ILIKE :search OR i.service_description ILIKE :search)',
+        '(i.invoice_number ILIKE :search OR i.tomador_legal_name ILIKE :search OR i.service_description ILIKE :search)',
         { search: `%${query.search}%` },
       );
     }
@@ -127,7 +123,7 @@ export class InvoicesService {
 
   async create(tenantId: string, userId: string, dto: CreateInvoiceDto) {
     // find-99749ea0: client_id had no cross-tenant ownership check — an
-    // invoice could silently reference another tenant's client. (venda_id's
+    // invoice could silently reference another tenant's client. (sale_id's
     // target table is not established anywhere in the codebase — no FK
     // constraint, no comment, no other reader — so it is deliberately left
     // unchecked here rather than guessing a table.)
@@ -150,8 +146,8 @@ export class InvoicesService {
         invoiceId: saved.id,
         tenantId,
         type: String((saved as unknown as Record<string, unknown>)['tipo_nota'] ?? saved.type ?? ''),
-        valor: String((saved as unknown as Record<string, unknown>)['service_amount'] ?? saved.legacy_amount ?? 0),
-        numero: saved.numero ?? null,
+        amount: String((saved as unknown as Record<string, unknown>)['service_amount'] ?? saved.legacy_amount ?? 0),
+        invoiceNumber: saved.invoice_number ?? null,
         prestadorId: saved.prestador_id ?? null,
         createdBy: userId,
       },
@@ -163,11 +159,11 @@ export class InvoicesService {
           entity_type: 'invoice',
           entity_id: saved.id,
           action: 'created',
-          description: invoiceCreatedCopy(saved.numero, (mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
+          description: invoiceCreatedCopy(saved.invoice_number, (mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
           metadata: {
             type: mapped['tipo_nota'] ?? mapped['type'],
-            valor: String((mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
-            numero: saved.numero,
+            amount: String((mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
+            invoiceNumber: saved.invoice_number,
           },
         });
       } catch { /* auditing does not block the main operation */ }
@@ -221,8 +217,8 @@ export class InvoicesService {
           entity_type: 'invoice',
           entity_id: id,
           action: 'cancelled',
-          description: invoiceCancelledCopy(current['numero']),
-          metadata: { numero: current['numero'], valor: String((current['service_amount'] ?? current['legacy_amount']) ?? 0) },
+          description: invoiceCancelledCopy(current['invoice_number']),
+          metadata: { invoiceNumber: current['invoice_number'], amount: String((current['service_amount'] ?? current['legacy_amount']) ?? 0) },
         });
       } catch { /* auditing does not block the main operation */ }
     }
@@ -238,7 +234,7 @@ export class InvoicesService {
   ): Promise<void> {
     const nowIso = new Date().toISOString();
     const invoiceId = String(after['id']);
-    const invoiceNumber = after['numero'] == null ? null : String(after['numero']);
+    const invoiceNumber = after['invoice_number'] == null ? null : String(after['invoice_number']);
     const amount = String((after['service_amount'] ?? after['legacy_amount']) ?? 0);
 
     this.events?.emitTyped(DOMAIN_EVENTS.INVOICE_STATUS_CHANGED, {
@@ -249,7 +245,7 @@ export class InvoicesService {
       payload: {
         invoiceId,
         tenantId,
-        numero: invoiceNumber,
+        invoiceNumber,
         previousStatus: String(before['status'] ?? ''),
         newStatus,
         changedBy: userId,
@@ -266,8 +262,8 @@ export class InvoicesService {
           invoiceId,
           tenantId,
           type: String(after['tipo_nota'] ?? after['type'] ?? ''),
-          valor: amount,
-          numero: invoiceNumber,
+          amount,
+          invoiceNumber,
           issuedBy: userId,
           issuedAt: nowIso,
         },
@@ -283,9 +279,9 @@ export class InvoicesService {
         payload: {
           invoiceId,
           tenantId,
-          numero: invoiceNumber,
-          valor: amount,
-          dataVencimento: String(after['data_vencimento'] ?? nowIso),
+          invoiceNumber,
+          amount,
+          dueAt: String(after['due_at'] ?? nowIso),
         },
       });
     }
@@ -296,8 +292,8 @@ export class InvoicesService {
           entity_type: 'invoice',
           entity_id: invoiceId,
           action: 'status_changed',
-          description: `Nota fiscal ${String(before['status'] ?? '')} → ${newStatus}`,
-          metadata: { previousStatus: before['status'], newStatus, numero: invoiceNumber },
+          description: invoiceStatusChangedCopy(invoiceNumber, before['status'], newStatus),
+          metadata: { previousStatus: before['status'], newStatus, invoiceNumber },
         });
       } catch { /* auditing does not block the main operation */ }
     }

@@ -156,8 +156,8 @@ export type DomainEventPayloads = {
   TRANSACTION_UPDATED:   Partial<TransactionCreatedPayload> & { id: string };
   TRANSACTION_DELETED:   { id: string; org_id: string };
   FINANCE_CALCULATED:    { artist_id: string; valor: number; org_id: string };
-  INVOICE_CREATED:       { id: string; numero?: string; client_id?: string; valor?: number; org_id: string };
-  INVOICE_UPDATED:       { id: string; numero?: string; client_id?: string; valor?: number; org_id: string };
+  INVOICE_CREATED:       { id: string; invoiceNumber?: string; client_id?: string; amount?: number; org_id: string };
+  INVOICE_UPDATED:       { id: string; invoiceNumber?: string; client_id?: string; amount?: number; org_id: string };
   INVOICE_DELETED:       { id: string; org_id: string };
   AUDIT_ENTRY_CREATED:   AuditEntryCreatedPayload;
   "user.invited":               { tenantId: string; email: string; role: string };

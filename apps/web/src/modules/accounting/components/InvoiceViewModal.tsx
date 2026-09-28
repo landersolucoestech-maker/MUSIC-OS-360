@@ -54,7 +54,7 @@ function numberValue(...values: unknown[]): number | null {
 }
 
 function getInvoicePartyName(invoice: any): string | null {
-  return invoice.tomador_razao_social || invoice.tomador_nome || invoice.clientes?.nome || null;
+  return invoice.tomador_legal_name || invoice.tomador_name || invoice.clientes?.nome || null;
 }
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -70,7 +70,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
   if (!invoice) return null;
   const { type: operationType, observacoesLimpas: cleanedNotes } = parseOperationType(invoice.notes);
   const isInflow = operationType === "entrada";
-  const itens: any[] = Array.isArray(invoice.itens) ? invoice.itens : [];
+  const items: any[] = Array.isArray(invoice.items) ? invoice.items : [];
   const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
   const totalRetencoes =
     (invoice.iss_retido ? Number(invoice.iss_amount || 0) : 0) +
@@ -91,7 +91,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Nota Fiscal Nº {invoice.numero}/{invoice.serie || "001"}
+            Nota Fiscal Nº {invoice.invoice_number}/{invoice.serie || "001"}
           </DialogTitle>
           <DialogDescription className="flex gap-2 items-center mt-1">
             <Badge variant={isInflow ? "secondary" : "default"} className="gap-1" data-testid={`badge-type-${operationType}`}>
@@ -108,8 +108,8 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Receipt className="h-4 w-4" />Identificação</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Field label="Data Emissão" value={formatDate(invoice.data_emissao)} />
-              <Field label="Vencimento" value={invoice.vencimento && formatDate(invoice.vencimento)} />
+              <Field label="Data Emissão" value={formatDate(invoice.issued_at)} />
+              <Field label="Vencimento" value={invoice.due_at && formatDate(invoice.due_at)} />
               <Field label="Natureza Operação" value={invoice.natureza_operacao} />
               <Field label="CFOP" value={invoice.cfop} />
               <Field label="Cód. Serviço Municipal" value={invoice.codigo_servico_municipal} />
@@ -138,7 +138,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           </Card>
 
           {/* Services */}
-          {(invoice.service_description || itens.length > 0) && (
+          {(invoice.service_description || items.length > 0) && (
             <Card>
               <CardHeader className="pb-2"><CardTitle className="text-sm">Serviços</CardTitle></CardHeader>
               <CardContent className="space-y-3">
@@ -148,12 +148,12 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
                     <p className="text-sm whitespace-pre-wrap">{invoice.service_description}</p>
                   </div>
                 )}
-                {itens.length > 0 && (
+                {items.length > 0 && (
                   <div className="space-y-2">
                     <div className="border border-border rounded-lg overflow-hidden">
                       <ListSectionHeader
                         title="Itens da Nota"
-                        count={itens.length}
+                        count={items.length}
                         description="Acompanhe descrições, códigos, quantidades e valores dos itens fiscais"
                         className="px-3 pt-3"
                       />
@@ -168,17 +168,14 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {itens.map((it, i) => {
-                            // Legacy itens[] entries persisted before Cluster G (naming-
-                            // normalization) still carry the Portuguese JSONB keys —
-                            // JSONB data isn't touched by the physical-column rename.
-                            const itemUnitPrice = Number(it.unit_price ?? it.valor_unitario ?? 0);
-                            const itemTotal = Number(it.total_amount ?? it.valor_total ?? 0);
+                          {items.map((it, i) => {
+                            const itemUnitPrice = Number(it.unit_price ?? 0);
+                            const itemTotal = Number(it.total_amount ?? 0);
                             return (
                               <TableRow key={i}>
                                 <TableCell>{it.description}</TableCell>
-                                <TableCell>{it.codigo_servico}</TableCell>
-                                <TableCell className="text-right">{it.quantidade}</TableCell>
+                                <TableCell>{it.service_code}</TableCell>
+                                <TableCell className="text-right">{it.quantity}</TableCell>
                                 <TableCell className={`text-right ${getCurrencyToneClass(isInflow ? -itemUnitPrice : itemUnitPrice)}`}>{formatCurrency(isInflow ? -itemUnitPrice : itemUnitPrice)}</TableCell>
                                 <TableCell className={`text-right font-medium ${getCurrencyToneClass(isInflow ? -itemTotal : itemTotal)}`}>{formatCurrency(isInflow ? -itemTotal : itemTotal)}</TableCell>
                               </TableRow>
@@ -228,10 +225,10 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><CreditCard className="h-4 w-4" />Pagamento</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <Field label="Forma Pagamento" value={paymentMethodLabels[invoice.forma_pagamento] || invoice.forma_pagamento} />
-              <Field label="Condição" value={invoice.condicao_pagamento} />
-              <Field label="Vencimento" value={invoice.vencimento && (
-                <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" />{formatDate(invoice.vencimento)}</span>
+              <Field label="Forma Pagamento" value={paymentMethodLabels[invoice.payment_method] || invoice.payment_method} />
+              <Field label="Condição" value={invoice.payment_terms} />
+              <Field label="Vencimento" value={invoice.due_at && (
+                <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" />{formatDate(invoice.due_at)}</span>
               )} />
             </CardContent>
           </Card>

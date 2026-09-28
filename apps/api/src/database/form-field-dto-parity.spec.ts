@@ -67,26 +67,22 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
     const block = entityBlock('InvoiceEntity');
     const dto = source('../modules/invoices/dto/invoices.dto.ts');
     const fields = [
-      'numero', 'serie', 'tipo_nota', 'client_id', 'natureza_operacao',
+      'invoice_number', 'serie', 'tipo_nota', 'client_id', 'natureza_operacao',
       'codigo_servico_municipal', 'codigo_municipio', 'cfop',
-      'service_description', 'data_emissao', 'status',
-      'tomador_cnpj', 'tomador_razao_social', 'tomador_inscricao_estadual',
+      'service_description', 'issued_at', 'due_at', 'status',
+      'tomador_cnpj', 'tomador_legal_name', 'tomador_inscricao_estadual',
       'tomador_inscricao_municipal', 'tomador_email', 'tomador_address',
       'tomador_city', 'tomador_uf', 'tomador_cep', 'service_amount',
       'deductions_amount', 'base_calculo', 'aliquota_iss', 'iss_amount',
       'iss_retido', 'pis_amount', 'cofins_amount', 'inss_amount', 'ir_amount',
-      'csll_amount', 'net_amount', 'forma_pagamento', 'condicao_pagamento',
-      'url_pdf', 'notes', 'itens',
+      'csll_amount', 'net_amount', 'payment_method', 'payment_terms',
+      'url_pdf', 'notes', 'items',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);
-    // "vencimento" is a DTO-only API alias for the entity's sole physical
-    // column, data_vencimento (see invoices.service.ts's normalizePayload()
-    // and report-form-contracts.ts's INVOICES_CONTRACT.formFieldAliases) --
-    // it must stay off the entity, or the dual-write bug this consolidated
-    // reappears.
-    expectFields(block, ['data_vencimento'], (field) => `\\b${field}\\b`);
-    expectFields(dto, ['vencimento']);
+    // The due date has a single physical column (`due_at`, CZ-036; formerly
+    // data_vencimento with a DTO-only `vencimento` alias that once caused a
+    // dual write) — no second `vencimento` column may reappear on the entity.
     expect(block).not.toMatch(/\bvencimento\b/);
   });
 
