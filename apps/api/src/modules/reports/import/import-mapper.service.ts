@@ -31,6 +31,8 @@ const LEGACY_IMPORT_HEADERS: Readonly<Record<string, Readonly<Record<string, str
     'nome civil': 'full_name',
     'nome do empresário': 'manager_name',
     'contato do empresário': 'manager_contact',
+    // Header written by exports before CT-D4 (a follower count mislabelled as a link).
+    'seguidores no soundcloud (link)': 'soundcloud_followers',
     ...Object.fromEntries(Object.entries(ARTIST_DEPRECATED_FIELDS).map(([legacy, canonical]) => [legacy.toLowerCase(), canonical])),
   },
   clients: {

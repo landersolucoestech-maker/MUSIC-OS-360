@@ -275,7 +275,7 @@ async function createRuntimeEntities(token: string, tenantId: string) {
     body: {
       stage_name: `Upload Artist ${runId}`,
       full_name: `Upload Artist Civil ${runId}`,
-      status: 'ativo',
+      status: 'active',
       email: `upload.artist.${runId}@example.com`,
       metadata: { phase: '7D', runId },
     },
@@ -305,7 +305,7 @@ async function createRuntimeEntities(token: string, tenantId: string) {
     body: {
       name: `Upload Client ${runId}`,
       type: 'company',
-      category: 'contratante',
+      category: 'CORPORATE_CLIENT',
       email: `upload.client.${runId}@example.com`,
       metadata: { phase: '7D', runId },
     },
@@ -318,14 +318,14 @@ async function createRuntimeEntities(token: string, tenantId: string) {
     token,
     tenantId,
     body: {
-      titulo: `Upload Contract ${runId}`,
-      tipo: 'gravacao',
-      artista_id: artistId,
-      cliente_id: clientId,
-      valor: 1000,
-      data_inicio: '2026-05-23',
-      data_fim: '2027-05-23',
-      observacoes: `Contrato upload ${runId}`,
+      title: `Upload Contract ${runId}`,
+      type: 'recording',
+      artist_id: artistId,
+      client_id: clientId,
+      value: 1000,
+      start_date: '2026-05-23',
+      end_date: '2027-05-23',
+      notes: `Contrato upload ${runId}`,
       metadata: { phase: '7D', runId },
     },
   });
@@ -363,7 +363,7 @@ async function validateReleaseCover(token: string, tenantId: string, releaseId: 
     presignPut: upload.put.status,
     preview: preview.status,
     reload: reloaded.res.status,
-    novaSessao: sessionReload.res.status,
+    newSession: sessionReload.res.status,
   };
   return upload;
 }
@@ -398,7 +398,7 @@ async function validateContractPdf(token: string, tenantId: string, contractId: 
     r2Key: upload.key,
     download: downloaded.status,
     reload: reloaded.res.status,
-    novaSessao: sessionReload.res.status,
+    newSession: sessionReload.res.status,
   };
   return upload;
 }

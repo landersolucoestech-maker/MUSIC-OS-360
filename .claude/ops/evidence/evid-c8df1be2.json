@@ -1,0 +1,12 @@
+{
+  "id": "evid-c8df1be2",
+  "createdAt": "2026-09-28T16:39:32.751Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "bc40b76: F1 stored XSS via metadata social links; F2 client metadata unfold bypasses validation; F3/F4",
+  "workspaceFingerprint": "09ca128b0c0cbf9bb095754c5b337e9531d75a91801a07dfb1a10433caee06ef",
+  "fingerprintStatus": "BOUND",
+  "head": "bc40b76314ab918aee1a97626fd67abcd1cd7f03"
+}

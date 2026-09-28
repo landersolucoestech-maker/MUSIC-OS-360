@@ -193,7 +193,7 @@ const WORKS_CONTRACT: ReportFormContract = {
     // Read-only: derived registry fields and enrichment (not part of the create form)
     ro('duration_seconds'), ro('ai_tools'), ro('ai_prompts'),
     ro('registry_status'),
-    ro('external_reference'), ro('origem_externa'), ro('origem_externa_sincronizado_em'),
+    ro('external_reference'), ro('external_source'), ro('external_source_synced_at'),
   ],
   excludedFormFields: {
     metadata: 'raw internal jsonb object',
@@ -227,7 +227,7 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
     ro('type'), ro('version_title'), ro('copyright_year'),
     ro('copyright_owner'),
     ro('registry_status'),
-    ro('external_reference'), ro('origem_externa'), ro('origem_externa_sincronizado_em'),
+    ro('external_reference'), ro('external_source'), ro('external_source_synced_at'),
     ro('audio_file_id'),
   ],
   excludedFormFields: {

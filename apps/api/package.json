@@ -32,6 +32,7 @@
     "verify:critical-rls": "tsx scripts/verify-critical-rls.ts",
     "verify:migrations": "tsx scripts/db-ops.ts check",
     "verify:canonical-order": "tsx scripts/verify-canonical-column-order.ts",
+    "verify:cz042-cz043-migrations": "tsx scripts/verify-cz042-cz043-migrations.ts",
     "verify:tenant-isolation": "tsx scripts/verify-tenant-isolation.ts",
     "verify:contract-service-types": "tsx scripts/verify-contract-service-types-crud.ts",
     "smoke-test": "tsx scripts/smoke-test.ts",

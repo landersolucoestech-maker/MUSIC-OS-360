@@ -68,9 +68,9 @@ export interface Work {
   ai_prompts?: string[] | null;
   registry_status?: string | null;
   external_reference?: string | null;
-  origem_externa?: string | null;
-  origem_externa_id?: string | null;
-  origem_externa_sincronizado_em?: string | null;
+  external_source?: string | null;
+  external_source_id?: string | null;
+  external_source_synced_at?: string | null;
   project_id?: string | null;
   artist_id?: string | null;
   created_at?: string;
@@ -162,9 +162,9 @@ export interface Phonogram {
   audio_file?: PhonogramAudioFile | Json | null;
   audio_file_id?: string | null;
   participation?: Partial<PhonogramParticipation> | null;
-  origem_externa?: string | null;
-  origem_externa_id?: string | null;
-  origem_externa_sincronizado_em?: string | null;
+  external_source?: string | null;
+  external_source_id?: string | null;
+  external_source_synced_at?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;

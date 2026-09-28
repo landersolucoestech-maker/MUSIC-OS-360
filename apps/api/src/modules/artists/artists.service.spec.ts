@@ -88,7 +88,7 @@ function makeDataSource(getOneValue: unknown = artistA) {
     // Task H: list() enriches each artist with the linkage type (exclusive/
     // partner/independent) via a raw query restricted to the page's IDs —
     // with no contract mocked, this resolves to "independent".
-    // assertSameTenantFk ownership probe: found in the caller's tenant; everything else empty.
+    // Contract ownership probe (SELECT 1 FROM "contracts"): found; everything else empty.
     query: jest.fn(async (sql: string) => (String(sql).startsWith('SELECT 1 FROM "') ? [{ exists: 1 }] : [])),
     _repo: repo,
   };
@@ -261,10 +261,73 @@ describe('ArtistsService', () => {
     (ds as any).query = jest.fn().mockResolvedValue([]);
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
     await expect(service.update(TENANT_A, USER_ID, 'artist-001', { contract_id: '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac009' } as any))
-      .rejects.toThrow('Contrato não encontrado(a) neste workspace.');
+      .rejects.toThrow('Contrato não encontrado neste workspace.');
     await expect(service.create(TENANT_A, USER_ID, { stage_name: 'X', contract_id: '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac009' } as any))
-      .rejects.toThrow('Contrato não encontrado(a) neste workspace.');
+      .rejects.toThrow('Contrato não encontrado neste workspace.');
+    // The deprecated alias goes through the same tenant check.
+    await expect(service.update(TENANT_A, USER_ID, 'artist-001', { contrato_id: '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac010' } as any))
+      .rejects.toThrow('Contrato não encontrado neste workspace.');
     expect(ds._repo.update).not.toHaveBeenCalled();
+    expect(ds._repo.save).not.toHaveBeenCalled();
+  });
+
+  it('the contract ownership query binds the caller tenant and excludes soft-deleted contracts', async () => {
+    // Only a live contract of TENANT_A exists: the mock answers like Postgres
+    // would, so dropping the tenant or deleted_at predicate makes this fail.
+    const LIVE = '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac011';
+    const DELETED = '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac012';
+    const contracts = [
+      { id: LIVE, tenant_id: TENANT_A, deleted_at: null },
+      { id: DELETED, tenant_id: TENANT_A, deleted_at: new Date() },
+    ];
+    const ds = makeDataSource();
+    (ds as any).query = jest.fn(async (sql: string, params: unknown[]) => {
+      const [id, tenantId] = params as [string, string];
+      const filtersTenant = /"tenant_id"\s*=\s*\$2/.test(sql);
+      const filtersDeleted = /"deleted_at"\s+IS\s+NULL/i.test(sql);
+      return contracts.filter((c) => c.id === id
+        && (!filtersTenant || c.tenant_id === tenantId)
+        && (!filtersDeleted || c.deleted_at === null)).map(() => ({ '?column?': 1 }));
+    });
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+
+    await expect(service.update('tenant-bbb', USER_ID, 'artist-001', { contract_id: LIVE } as any))
+      .rejects.toThrow('Contrato não encontrado neste workspace.');
+    expect((ds as any).query).toHaveBeenLastCalledWith(expect.stringContaining('"contracts"'), [LIVE, 'tenant-bbb']);
+    await expect(service.update(TENANT_A, USER_ID, 'artist-001', { contract_id: DELETED } as any))
+      .rejects.toThrow('Contrato não encontrado neste workspace.');
+    expect(ds._repo.update).not.toHaveBeenCalled();
+
+    await service.update(TENANT_A, USER_ID, 'artist-001', { contract_id: LIVE } as any);
+    expect(ds._repo.update).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ contract_id: LIVE }));
+  });
+
+  it('caller-supplied metadata can never set an allow-listed response key that fails its DTO rule (SEC-F1)', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+    const hostile = {
+      instagram_url: 'javascript:alert(1)',
+      tiktok_url: ' JaVaScRiPt:alert(document.cookie)',
+      spotify_listeners: 'data:text/html,<script>alert(1)</script>',
+      gender: 'female',
+      instagram_followers: 10,
+      origin: 'kept (never returned)',
+    };
+
+    const created = await service.create(TENANT_A, USER_ID, { stage_name: 'X', metadata: hostile } as any) as Record<string, unknown>;
+    const saved = ds._repo.save.mock.calls[0][0] as Record<string, unknown>;
+    expect(saved.metadata).toEqual({ gender: 'female', instagram_followers: 10, origin: 'kept (never returned)' });
+    expect(created).not.toHaveProperty('instagram_url');
+    expect(created).not.toHaveProperty('tiktok_url');
+    expect(JSON.stringify(created)).not.toMatch(/javascript:|data:text/i);
+
+    await service.update(TENANT_A, USER_ID, 'artist-001', { metadata: { tiktok_url: 'data:text/html,<b>x</b>' } } as any);
+    const updates = ds._repo.update.mock.calls[0][1] as Record<string, unknown>;
+    expect(updates.metadata).toEqual({});
+
+    // A valid value goes through, exactly like the top-level field.
+    await service.update(TENANT_A, USER_ID, 'artist-001', { metadata: { instagram_url: 'https://www.instagram.com/alpha' } } as any);
+    expect((ds._repo.update.mock.calls[1][1] as Record<string, unknown>).metadata).toEqual({ instagram_url: 'https://www.instagram.com/alpha' });
   });
 
   it('softDelete() sets deleted_at and updated_by without physically deleting', async () => {

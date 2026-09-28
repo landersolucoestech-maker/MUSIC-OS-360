@@ -220,13 +220,13 @@ async function createSetFor(
   const ctr = await call('POST', '/contracts', {
     token, tenantId: tenant.tenantId,
     body: {
-      titulo: `${tag}_CONTRACT`,
-      tipo: 'gravacao',
-      artista_id: set.artistId,
-      cliente_id: set.clientId,
-      data_inicio: '2026-01-01',
-      data_fim: '2026-12-31',
-      valor: 1000,
+      title: `${tag}_CONTRACT`,
+      type: 'recording',
+      artist_id: set.artistId,
+      client_id: set.clientId,
+      start_date: '2026-01-01',
+      end_date: '2026-12-31',
+      value: 1000,
     },
   });
   if (ctr.status === 201 || ctr.status === 200) {
@@ -312,9 +312,9 @@ async function phase32(): Promise<void> {
 
 const ENDPOINTS = [
   { path: '/artists',     tagMatcher: (r: any) => r.stage_name ?? r.name ?? r.title },
-  { path: '/releases',    tagMatcher: (r: any) => r.title ?? r.titulo ?? r.name },
-  { path: '/contracts',   tagMatcher: (r: any) => r.titulo ?? r.title },
-  { path: '/events',      tagMatcher: (r: any) => r.title ?? r.titulo },
+  { path: '/releases',    tagMatcher: (r: any) => r.title ?? r.name },
+  { path: '/contracts',   tagMatcher: (r: any) => r.title },
+  { path: '/events',      tagMatcher: (r: any) => r.title },
   { path: '/transactions',tagMatcher: (r: any) => r.description },
   { path: '/leads',       tagMatcher: (r: any) => r.name },
   { path: '/clients',     tagMatcher: (r: any) => r.name },
@@ -407,7 +407,7 @@ async function phase35(): Promise<void> {
   const updates = [
     { path: '/artists',      keyA: 'artistId',      keyB: 'artistId',      body: { stage_name: `HACKED_${TS}` } },
     { path: '/releases',     keyA: 'releaseId',     keyB: 'releaseId',     body: { title: `HACKED_${TS}` } },
-    { path: '/contracts',    keyA: 'contractId',    keyB: 'contractId',    body: { titulo: `HACKED_${TS}` } },
+    { path: '/contracts',    keyA: 'contractId',    keyB: 'contractId',    body: { title: `HACKED_${TS}` } },
     { path: '/events',       keyA: 'eventId',       keyB: 'eventId',       body: { title: `HACKED_${TS}` } },
     { path: '/transactions', keyA: 'transactionId', keyB: 'transactionId', body: { description: `HACKED_${TS}` } },
     { path: '/leads',        keyA: 'leadId',        keyB: 'leadId',        body: { name: `HACKED_${TS}` } },
@@ -485,14 +485,14 @@ async function phase37(): Promise<void> {
     const r = await call('GET', `/releases/${DATA_A.releaseId}`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
     expect('GET release A retorna 200', r.status === 200, `got=${r.status}`);
     const releaseA = r.body?.data ?? r.body ?? {};
-    const artistInRelease = releaseA?.artist ?? releaseA?.artista ?? releaseA?.artistId ?? releaseA?.artist_id ?? releaseA?.artista_id;
+    const artistInRelease = releaseA?.artist?.id ?? releaseA?.artistId ?? releaseA?.artist_id;
     checkArtistRef('Release A only references Artist A (same tenant)', artistInRelease, DATA_A.artistId, TAG_A);
   }
   if (DATA_B.releaseId) {
     const r = await call('GET', `/releases/${DATA_B.releaseId}`, { token: TOKEN_B, tenantId: TENANT_B.tenantId });
     expect('GET release B retorna 200', r.status === 200, `got=${r.status}`);
     const releaseB = r.body?.data ?? r.body ?? {};
-    const artistInRelease = releaseB?.artist ?? releaseB?.artista ?? releaseB?.artistId ?? releaseB?.artist_id ?? releaseB?.artista_id;
+    const artistInRelease = releaseB?.artist?.id ?? releaseB?.artistId ?? releaseB?.artist_id;
     checkArtistRef('Release B only references Artist B (same tenant)', artistInRelease, DATA_B.artistId, TAG_B);
   }
 
@@ -501,8 +501,8 @@ async function phase37(): Promise<void> {
     const r = await call('GET', `/contracts/${DATA_A.contractId}`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
     expect('GET contract A retorna 200', r.status === 200, `got=${r.status}`);
     const contractA = r.body?.data ?? r.body;
-    const aid = contractA?.artista_id ?? contractA?.artistId ?? contractA?.artista?.id;
-    const cid = contractA?.cliente_id ?? contractA?.clientId ?? contractA?.cliente?.id;
+    const aid = contractA?.artist_id ?? contractA?.artistId ?? contractA?.artist?.id;
+    const cid = contractA?.client_id ?? contractA?.clientId ?? contractA?.client?.id;
     expect('Contract A references Artist A (same tenant)', !aid || aid === DATA_A.artistId, `aid=${aid}`);
     expect('Contract A references Client A (same tenant)', !cid || cid === DATA_A.clientId, `cid=${cid}`);
   }
@@ -510,8 +510,8 @@ async function phase37(): Promise<void> {
     const r = await call('GET', `/contracts/${DATA_B.contractId}`, { token: TOKEN_B, tenantId: TENANT_B.tenantId });
     expect('GET contract B retorna 200', r.status === 200, `got=${r.status}`);
     const contractB = r.body?.data ?? r.body;
-    const aid = contractB?.artista_id ?? contractB?.artistId ?? contractB?.artista?.id;
-    const cid = contractB?.cliente_id ?? contractB?.clientId ?? contractB?.cliente?.id;
+    const aid = contractB?.artist_id ?? contractB?.artistId ?? contractB?.artist?.id;
+    const cid = contractB?.client_id ?? contractB?.clientId ?? contractB?.client?.id;
     expect('Contract B references Artist B (same tenant)', !aid || aid === DATA_B.artistId, `aid=${aid}`);
     expect('Contract B references Client B (same tenant)', !cid || cid === DATA_B.clientId, `cid=${cid}`);
   }

@@ -93,3 +93,44 @@ describe('canonicalImportValue — artists (CZ-042)', () => {
     expect(canonicalImportJsonColumn('artists', 'metadata', { genero: 'Masculino' })).toEqual({ gender: 'male' });
   });
 });
+
+describe('canonicalImportValue — clients (CZ-043, CT-B1)', () => {
+  it.each([
+    ['pessoa_fisica', 'individual'],
+    ['pessoa_juridica', 'company'],
+    [' PESSOA_FISICA ', 'individual'],
+    ['person', 'individual'],
+    ['Pessoa física', 'individual'],
+    ['pessoa JURÍDICA', 'company'],
+    ['individual', 'individual'],
+    ['company', 'company'],
+  ])('person_type %j -> %s (an imported contact stays editable: IsIn individual|company)', (cell, canonical) => {
+    expect(canonicalImportValue('clients', 'person_type', cell)).toBe(canonical);
+  });
+
+  it.each([
+    ['alta', 'high'], ['Média', 'medium'], ['media', 'medium'], ['BAIXA', 'low'], ['Estratégica', 'strategic'],
+    ['strategic', 'strategic'],
+  ])('priority %j -> %s', (cell, canonical) => {
+    expect(canonicalImportValue('clients', 'priority', cell)).toBe(canonical);
+  });
+
+  it('an unknown value is left as-is (never silently turned into a valid enum)', () => {
+    expect(canonicalImportValue('clients', 'person_type', 'alien')).toBe('alien');
+  });
+});
+
+describe('canonicalImportValue — artists labels round-trip (CT-D2)', () => {
+  it('specialties: PT-BR labels joined by " | " (export format), raw values and legacy values', () => {
+    expect(canonicalImportValue('artists', 'specialties', 'DJ | Compositor/Autor | intérprete'))
+      .toBe(JSON.stringify(['dj', 'songwriter', 'performer']));
+    expect(canonicalImportValue('artists', 'specialties', 'dj_producer|produtor')).toBe(JSON.stringify(['dj_producer', 'producer']));
+    expect(canonicalImportValue('artists', 'specialties', 'DJ')).toBe(JSON.stringify(['dj']));
+  });
+
+  it('profile_type / registration_status labels map back to the canonical value', () => {
+    expect(canonicalImportValue('artists', 'profile_type', 'Com gravadora')).toBe('record_label');
+    expect(canonicalImportValue('artists', 'registration_status', 'Suspenso')).toBe('suspended');
+    expect(canonicalImportValue('artists', 'registration_status', 'inactive')).toBe('inactive');
+  });
+});

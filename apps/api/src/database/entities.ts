@@ -747,9 +747,9 @@ export class WorkEntity {
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
   @Column({ type: 'varchar', length: 50, default: WorkStatus.PENDING }) status: WorkStatus;
   @Column({ type: 'varchar', length: 20, nullable: true }) duration_text: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) origem_externa: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) origem_externa_id: string | null;
-  @Column({ type: 'timestamp', nullable: true }) origem_externa_sincronizado_em: Date | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) external_source: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) external_source_id: string | null;
+  @Column({ type: 'timestamp', nullable: true }) external_source_synced_at: Date | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
@@ -871,9 +871,9 @@ export class PhonogramEntity {
   // formerly cod_abramus (20260718000017) / cod_entidade (CZ-040).
   @Column({ type: 'varchar', length: 100, nullable: true }) society_code: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) ecad_code: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) origem_externa: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) origem_externa_id: string | null;
-  @Column({ type: 'timestamp', nullable: true }) origem_externa_sincronizado_em: Date | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) external_source: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) external_source_id: string | null;
+  @Column({ type: 'timestamp', nullable: true }) external_source_synced_at: Date | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;

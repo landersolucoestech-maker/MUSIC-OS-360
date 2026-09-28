@@ -1,12 +1,6 @@
 {
- "total": 12,
+ "total": 6,
  "debt": {
-  "schema::column::phonograms.origem_externa": 1,
-  "schema::column::phonograms.origem_externa_id": 1,
-  "schema::column::phonograms.origem_externa_sincronizado_em": 1,
-  "schema::column::works.origem_externa": 1,
-  "schema::column::works.origem_externa_id": 1,
-  "schema::column::works.origem_externa_sincronizado_em": 1,
   "schema::default-value::contract_service_types.financial_model::valor_fixo": 1,
   "schema::default-value::contract_service_types.financial_payment_frequency::unico": 1,
   "schema::default-value::marketing_content_posts.status::agendado": 1,

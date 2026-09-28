@@ -292,3 +292,40 @@ describe('ImportCommitService — transactions: physical columns and category (T
     expect(params).toContain('outros');
   });
 });
+
+describe('ImportCommitService — artist links are http(s) only, same rule as the API (SEC-F1)', () => {
+  const HOSTILE: Array<[string, unknown]> = [
+    ['photo_url', 'javascript:alert(1)'],
+    ['press_kit_url', ' JaVaScRiPt:alert(document.cookie)'],
+    ['personal_documents_url', 'data:text/html,<script>alert(1)</script>'],
+    ['gallery_urls', '["https://cdn.example.com/ok.png","javascript:alert(1)"]'],
+    ['documents', '[{"name":"RG","url":"data:text/html,<b>x</b>"}]'],
+    ['instagram_url', 'javascript:alert(1)'],
+    ['tiktok_url', 'data:text/html,<script>alert(1)</script>'],
+  ];
+
+  it.each(HOSTILE)('rejects the whole import when %s is not an http(s) link (value never echoed)', async (column, value) => {
+    const validation = validResult(1);
+    validation.rows[0].data = { stage_name: 'A0', [column]: value };
+    const { svc, qr } = makeSvc({ validation });
+    const result = await svc.commit('artists', file, 'tenant-1', 'user-1');
+    expect(qr.rollbackTransaction).toHaveBeenCalled();
+    expect(qr.query.mock.calls.some((call: any[]) => String(call[0]).startsWith('INSERT'))).toBe(false);
+    expect(result.importedRows).toBe(0);
+    expect(result.errors.some((e) => /Linha 2: link inválido/.test(e))).toBe(true);
+    expect(result.errors.join(' ')).not.toMatch(/javascript|data:text/i);
+    expect(result.errors.join(' ')).not.toContain(column);
+  });
+
+  it('valid http(s) links are imported', async () => {
+    const validation = validResult(1);
+    validation.rows[0].data = {
+      stage_name: 'A0', photo_url: 'https://cdn.example.com/a.png', instagram_url: 'https://www.instagram.com/alpha',
+      gallery_urls: '["https://cdn.example.com/g.png"]',
+    };
+    const { svc, qr } = makeSvc({ validation });
+    const result = await svc.commit('artists', file, 'tenant-1', 'user-1');
+    expect(result.errors).toEqual([]);
+    expect(qr.commitTransaction).toHaveBeenCalled();
+  });
+});

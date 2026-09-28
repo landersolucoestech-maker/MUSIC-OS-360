@@ -135,7 +135,7 @@ async function main() {
   const artistId = art.body?.data?.id ?? art.body?.id;
   const rel = await call('POST', '/releases', { title: `${tag}_RELEASE`, type: 'single', artistId });
   ok('POST /releases', [200,201].includes(rel.status));
-  const ctr = await call('POST', '/contracts', { titulo: `${tag}_CONTRACT`, tipo: 'gravacao', artista_id: artistId, data_inicio: '2026-01-01', data_fim: '2026-12-31', valor: 500 });
+  const ctr = await call('POST', '/contracts', { title: `${tag}_CONTRACT`, type: 'recording', artist_id: artistId, start_date: '2026-01-01', end_date: '2026-12-31', value: 500 });
   ok('POST /contracts', [200,201].includes(ctr.status), `status=${ctr.status} body=${JSON.stringify(ctr.body).slice(0,150)}`);
   const ev = await call('POST', '/events', { title: `${tag}_EVENT`, type: 'show', startsAt: new Date().toISOString() });
   ok('POST /events', [200,201].includes(ev.status));

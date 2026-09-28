@@ -174,7 +174,7 @@ async function seedFor44(): Promise<void> {
   SEED_IDS['artist'] = art.body?.data?.id ?? art.body?.id;
   const rel = await call('POST', '/releases', { ...opts, body: { title: `F4_REL_${Date.now()}`, type: 'single', artistId: SEED_IDS['artist'] } });
   SEED_IDS['release'] = rel.body?.data?.id ?? rel.body?.id;
-  const ctr = await call('POST', '/contracts', { ...opts, body: { titulo: `F4_CTR_${Date.now()}`, tipo: 'gravacao', artista_id: SEED_IDS['artist'], cliente_id: SEED_IDS['client'], data_inicio: '2026-01-01', data_fim: '2026-12-31', valor: 100 } });
+  const ctr = await call('POST', '/contracts', { ...opts, body: { title: `F4_CTR_${Date.now()}`, type: 'recording', artist_id: SEED_IDS['artist'], client_id: SEED_IDS['client'], start_date: '2026-01-01', end_date: '2026-12-31', value: 100 } });
   SEED_IDS['contract'] = ctr.body?.data?.id ?? ctr.body?.id;
   const ev = await call('POST', '/events', { ...opts, body: { title: `F4_EV_${Date.now()}`, type: 'show', startsAt: new Date(Date.now()+86400000).toISOString() } });
   SEED_IDS['event'] = ev.body?.data?.id ?? ev.body?.id;
@@ -224,7 +224,7 @@ async function f44(): Promise<void> {
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
     { method: 'POST', path: () => `/releases`, body: () => ({ title: `RB_REL_${Math.random().toString(36).slice(2,6)}`, type: 'single' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
-    { method: 'POST', path: () => `/contracts`, body: () => ({ titulo: `RB_CTR_${Math.random().toString(36).slice(2,6)}`, tipo: 'gravacao', data_inicio: '2026-01-01', data_fim: '2026-12-31', valor: 50 }),
+    { method: 'POST', path: () => `/contracts`, body: () => ({ title: `RB_CTR_${Math.random().toString(36).slice(2,6)}`, type: 'recording', start_date: '2026-01-01', end_date: '2026-12-31', value: 50 }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
     { method: 'POST', path: () => `/events`, body: () => ({ title: `RB_EV_${Math.random().toString(36).slice(2,6)}`, type: 'show', startsAt: new Date().toISOString() }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
@@ -242,8 +242,8 @@ async function f44(): Promise<void> {
     { method: 'PATCH', path: () => `/releases/${SEED_IDS['release']}`, body: () => ({ title: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
     // UpdateContractDto extends PartialType(Create), which has the default status='draft';
-    // we send the current status ('rascunho') explicitly to avoid triggering the workflow.
-    { method: 'PATCH', path: () => `/contracts/${SEED_IDS['contract']}`, body: () => ({ observacoes: `RB_PATCH_${Math.random().toString(36).slice(2,6)}`, status: 'rascunho' }),
+    // we send the current status ('draft') explicitly to avoid triggering the workflow.
+    { method: 'PATCH', path: () => `/contracts/${SEED_IDS['contract']}`, body: () => ({ notes: `RB_PATCH_${Math.random().toString(36).slice(2,6)}`, status: 'draft' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
     // PATCH /transactions requires role 'financial' (level 60). Editor is also level 60 → passes the guard.
     // This is correct by the hierarchical RBAC design (compares levels, not names).

@@ -1,0 +1,15 @@
+{
+  "id": "evid-943e3fe1",
+  "createdAt": "2026-09-28T21:04:21.460Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && pnpm -s verify:cz042-cz043-migrations",
+  "command": "cd apps/api && pnpm -s verify:cz042-cz043-migrations",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "a4f8b699711ff094a5fb7e7fa1300b77ce2b915b416ca95dfa7b94c490c88ca6",
+  "fingerprintStatus": "BOUND",
+  "head": "bc40b76314ab918aee1a97626fd67abcd1cd7f03",
+  "durationMs": 2
+}

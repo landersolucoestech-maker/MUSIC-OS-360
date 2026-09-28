@@ -110,7 +110,7 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
   const out: SeedSet = { artists: [], releases: [], contracts: [], events: [], tx: [], leads: [] };
 
   for (let i = 0; i < opts.artists; i++) {
-    const r = await call('POST', '/artists', { ...ctx, body: { stage_name: `${tag}_ARTIST_${i}_${TS}`, status: 'em_negociacao', spotify_listeners: i === 0 ? 12345 : undefined } });
+    const r = await call('POST', '/artists', { ...ctx, body: { stage_name: `${tag}_ARTIST_${i}_${TS}`, status: 'in_negotiation', spotify_listeners: i === 0 ? 12345 : undefined } });
     { const id = pickId(r.body); if (id) out.artists.push(id); else console.log(`  !  artist POST failed status=${r.status} body=${JSON.stringify(r.body).slice(0,150)}`); }
   }
   for (let i = 0; i < opts.releases; i++) {
@@ -118,7 +118,7 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
     const id = pickId(r.body); if (id) out.releases.push(id); else console.log(`  !  release POST status=${r.status} ${JSON.stringify(r.body).slice(0,150)}`);
   }
   for (let i = 0; i < opts.contracts; i++) {
-    const r = await call('POST', '/contracts', { ...ctx, body: { titulo: `${tag}_CONTRACT_${i}_${TS}`, tipo: 'gravacao', data_inicio: '2026-01-01', data_fim: '2026-12-31', valor: 1000 + i } });
+    const r = await call('POST', '/contracts', { ...ctx, body: { title: `${tag}_CONTRACT_${i}_${TS}`, type: 'recording', start_date: '2026-01-01', end_date: '2026-12-31', value: 1000 + i } });
     const id = pickId(r.body); if (id) out.contracts.push(id); else console.log(`  !  contract POST status=${r.status} ${JSON.stringify(r.body).slice(0,150)}`);
   }
   // Events: today
@@ -247,17 +247,17 @@ async function f54(): Promise<void> {
   const list: any[] = Array.isArray(r.body?.data) ? r.body.data : (r.body?.data?.data ?? r.body?.items ?? []);
   const todayPrefix = new Date().toISOString().slice(0,10);
   const todayEventsTotal = list.filter((e) => {
-    const raw = e.data_inicio ?? e.startsAt ?? e.data ?? e.start_date;
+    const raw = e.startsAt ?? e.starts_at ?? e.start_date;
     return typeof raw === 'string' && raw.slice(0,10) === todayPrefix;
   });
-  const ours = todayEventsTotal.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_TODAY`));
+  const ours = todayEventsTotal.filter((e) => (e.title ?? '').includes(`DASH_A_${TS}_EVENT_TODAY`));
   expect('events dated today include the ones created in this run', ours.length === OPTS_A.eventsToday, `match=${ours.length} esperado=${OPTS_A.eventsToday}`);
 
   // Confirm that tomorrow's events do NOT enter today's slice
-  const tomorrowEvents = list.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_FUTURE`));
+  const tomorrowEvents = list.filter((e) => (e.title ?? '').includes(`DASH_A_${TS}_EVENT_FUTURE`));
   expect('next-day events created', tomorrowEvents.length === OPTS_A.eventsTomorrow);
   const tomorrowEventsInToday = tomorrowEvents.filter((e) => {
-    const raw = e.data_inicio ?? e.startsAt ?? e.data ?? e.start_date;
+    const raw = e.startsAt ?? e.starts_at ?? e.start_date;
     return typeof raw === 'string' && raw.slice(0,10) === todayPrefix;
   });
   expect('tomorrow events do NOT fall into "today"', tomorrowEventsInToday.length === 0, `bleed=${tomorrowEventsInToday.length}`);
@@ -309,7 +309,7 @@ async function f56(): Promise<void> {
   }
 
   // Creates a project via /projects (if it exists)
-  const pj = await call('POST', '/projects', { auth: TOKEN_A, tenant: TA, body: { nome: `DASH_A_PROJECT_${TS}`, artista_id: artistA0, status: 'em_andamento' } });
+  const pj = await call('POST', '/projects', { auth: TOKEN_A, tenant: TA, body: { title: `DASH_A_PROJECT_${TS}`, artist_id: artistA0, status: 'in_progress' } });
   console.log('  POST /projects =>', pj.status);
 
   // Lists artists and validates the expected fields (does not require a dedicated "featured" endpoint — the frontend derives it)

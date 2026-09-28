@@ -28,7 +28,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * Several legacy values collapse into one canonical status, so the original
  * spelling of every rewritten row is kept in metadata.legacy_status /
  * metadata.legacy_type (hardening before first application — database review
- * of 353a967); down() restores it from there.
+ * of 353a967); down() restores it from there, but only while the row still
+ * holds the canonical value that legacy spelling maps to and only for a
+ * whitelisted legacy spelling (database review of bc40b76: a status changed
+ * after up() is never reverted, and metadata written through the API cannot
+ * plant an arbitrary status/type).
  */
 const LEGACY_STATUSES: ReadonlyArray<[legacy: string, canonical: string]> = [
   ['rascunho', 'draft'], ['em_producao', 'draft'], ['incompleto', 'draft'],
@@ -53,7 +57,7 @@ export class CanonicalizeLegacyReleaseStatuses20260928000019 implements Migratio
       await queryRunner.query(
         `UPDATE "releases"
          SET "metadata" = COALESCE("metadata", '{}'::jsonb) || jsonb_build_object('legacy_status', "status"), "status" = $1
-         WHERE lower(trim("status")) = $2 AND NOT COALESCE("metadata", '{}'::jsonb) ? 'legacy_status'`,
+         WHERE lower(trim("status")) = $2`,
         [canonical, legacy],
       );
     }
@@ -61,7 +65,7 @@ export class CanonicalizeLegacyReleaseStatuses20260928000019 implements Migratio
       await queryRunner.query(
         `UPDATE "releases"
          SET "metadata" = COALESCE("metadata", '{}'::jsonb) || jsonb_build_object('legacy_type', "type"), "type" = $1
-         WHERE lower(trim("type")) = $2 AND NOT COALESCE("metadata", '{}'::jsonb) ? 'legacy_type'`,
+         WHERE lower(trim("type")) = $2`,
         [canonical, legacy],
       );
     }
@@ -72,13 +76,21 @@ export class CanonicalizeLegacyReleaseStatuses20260928000019 implements Migratio
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `UPDATE "releases" SET "status" = "metadata"->>'legacy_status', "metadata" = "metadata" - 'legacy_status'
-       WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? 'legacy_status'`,
-    );
-    await queryRunner.query(
-      `UPDATE "releases" SET "type" = "metadata"->>'legacy_type', "metadata" = "metadata" - 'legacy_type'
-       WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? 'legacy_type'`,
-    );
+    for (const [column, key, pairs] of [
+      ['status', 'legacy_status', LEGACY_STATUSES],
+      ['type', 'legacy_type', LEGACY_TYPES],
+    ] as const) {
+      await queryRunner.query(
+        `UPDATE "releases" r SET "${column}" = r."metadata"->>'${key}', "metadata" = r."metadata" - '${key}'
+         FROM (VALUES ${pairs.map((_, i) => `($${i * 2 + 1}, $${i * 2 + 2})`).join(', ')}) AS m(legacy, canonical)
+         WHERE jsonb_typeof(r."metadata") = 'object' AND r."metadata" ? '${key}'
+           AND lower(trim(r."metadata"->>'${key}')) = m.legacy AND r."${column}" = m.canonical`,
+        pairs.flatMap(([legacy, canonical]) => [legacy, canonical]),
+      );
+      // A leftover key (status changed after up(), or a value planted through the API) is dropped, never applied.
+      await queryRunner.query(
+        `UPDATE "releases" SET "metadata" = "metadata" - '${key}' WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}'`,
+      );
+    }
   }
 }

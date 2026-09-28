@@ -15,10 +15,15 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *    (banco -> bank_name, empresario_* -> agent_*, gravadora_* ->
  *    record_label_*, distribuidoras_* -> *_distributors, ...). rg and
  *    cpf_cnpj_encrypted stay (legal-domain exceptions).
- * 2. Backfill metadata -> column for every column-backed form field: the
- *    metadata value (the live copy the API kept writing) wins when present;
- *    over-long text and invalid dates are skipped. metadata keeps the old keys
- *    as historical data (never read again).
+ * 2. Backfill metadata -> column for every column-backed form field. The
+ *    metadata value is the live copy (the API kept writing it; the web sent
+ *    null/'' when a user cleared a field), so whenever the key is PRESENT it
+ *    wins — null, '' and values that do not fit (over-long text, invalid date,
+ *    non-array/object jsonb) set the column to NULL, never leaving the stale
+ *    2026-07-12 column copy live (e.g. a cleared bank account / PIX key).
+ *    Each key copied faithfully is then removed from metadata (the column is
+ *    the single copy — no stale plaintext PII duplicate); a value that could
+ *    not be copied stays in metadata as historical data.
  * 3. metadata-only fields get English keys (genero -> gender with values
  *    Masculino/Feminino -> male/female; platform metrics).
  * 4. Values: specialties, profile_type, relationships[].type; nested jsonb
@@ -26,9 +31,13 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *    categoria) in relationships, linked_contacts, team_contacts,
  *    general_distributors and documents.
  *
- * Every step is guarded (idempotent). down() reverses renames, keys and values;
- * the backfill is forward-only. idx_artists_name_trgm follows the renamed
- * column. RLS policies reference tenant_id only.
+ * Every step is guarded (idempotent). down() reverses renames, keys and values
+ * and writes every column value back to its legacy metadata key, so the
+ * pre-CZ-042 API (which reads metadata) sees the edits made after up(), and a
+ * later up() re-derives the same columns (rollback + re-apply loses nothing).
+ * A rename finding both the legacy and the canonical column raises (never a
+ * silent skip). idx_artists_name_trgm follows the renamed column. RLS policies
+ * reference tenant_id only.
  */
 const COLUMNS: ReadonlyArray<[from: string, to: string]> = [
   ['foto_url', 'photo_url'],
@@ -162,6 +171,11 @@ function renameColumn(from: string, to: string): string {
         WHERE table_schema = 'public' AND table_name = 'artists' AND column_name = '${to}'
       ) THEN
         ALTER TABLE "artists" RENAME COLUMN "${from}" TO "${to}";
+      ELSIF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = 'artists' AND column_name = '${from}'
+      ) THEN
+        RAISE EXCEPTION 'artists has both "${from}" and "${to}": resolve manually before migrating';
       END IF;
     END $$;`;
 }
@@ -212,34 +226,67 @@ const HELPERS = `
   EXCEPTION WHEN others THEN RETURN NULL;
   END $fn$;
 
+  -- jsonb value of an array/object column: arrays/objects as-is, a JSON text that
+  -- parses to an array/object is parsed, anything else is NULL.
+  CREATE OR REPLACE FUNCTION pg_temp.cz042_try_jsonb(j jsonb) RETURNS jsonb
+  LANGUAGE plpgsql IMMUTABLE AS $fn$
+  DECLARE parsed jsonb;
+  BEGIN
+    IF j IS NULL THEN RETURN NULL; END IF;
+    IF jsonb_typeof(j) IN ('array', 'object') THEN RETURN j; END IF;
+    IF jsonb_typeof(j) <> 'string' THEN RETURN NULL; END IF;
+    parsed := (j #>> '{}')::jsonb;
+    IF jsonb_typeof(parsed) IN ('array', 'object') THEN RETURN parsed; END IF;
+    RETURN NULL;
+  EXCEPTION WHEN others THEN RETURN NULL;
+  END $fn$;
+
   CREATE OR REPLACE FUNCTION pg_temp.cz042_map_array(j jsonb, mapping jsonb) RETURNS jsonb
   LANGUAGE sql IMMUTABLE AS $fn$
     SELECT CASE WHEN jsonb_typeof(j) = 'array' THEN (
-      SELECT COALESCE(jsonb_agg(CASE WHEN jsonb_typeof(e) = 'string' AND mapping ? (e #>> '{}')
-                                     THEN mapping->(e #>> '{}') ELSE e END ORDER BY o), '[]'::jsonb)
+      SELECT COALESCE(jsonb_agg(CASE WHEN jsonb_typeof(e) = 'string' AND mapping ? lower(btrim(e #>> '{}'))
+                                     THEN mapping->lower(btrim(e #>> '{}')) ELSE e END ORDER BY o), '[]'::jsonb)
       FROM jsonb_array_elements(j) WITH ORDINALITY AS t(e, o)) ELSE j END
   $fn$;
 
   CREATE OR REPLACE FUNCTION pg_temp.cz042_map_item_type(j jsonb, mapping jsonb) RETURNS jsonb
   LANGUAGE sql IMMUTABLE AS $fn$
     SELECT CASE WHEN jsonb_typeof(j) = 'array' THEN (
-      SELECT COALESCE(jsonb_agg(CASE WHEN jsonb_typeof(e) = 'object' AND mapping ? (e->>'type')
-                                     THEN e || jsonb_build_object('type', mapping->(e->>'type')) ELSE e END ORDER BY o), '[]'::jsonb)
+      SELECT COALESCE(jsonb_agg(CASE WHEN jsonb_typeof(e) = 'object' AND mapping ? lower(btrim(e->>'type'))
+                                     THEN e || jsonb_build_object('type', mapping->lower(btrim(e->>'type'))) ELSE e END ORDER BY o), '[]'::jsonb)
       FROM jsonb_array_elements(j) WITH ORDINALITY AS t(e, o)) ELSE j END
   $fn$;`;
 
+/**
+ * metadata -> column when the key is present (metadata wins, even null/''):
+ * `value` is what the column gets (NULL when it does not fit), `copied` says the
+ * column now holds exactly the metadata value — only then the key leaves metadata.
+ */
 function backfill(key: string, column: string, kind: ColumnKind): string {
-  const guard = `"metadata" ? '${key}' AND jsonb_typeof("metadata"->'${key}') <> 'null'`;
+  const raw = `"metadata"->'${key}'`;
+  const text = `NULLIF(${raw} #>> '{}', '')`;
+  let value: string;
+  let copied: string;
   if (kind === 'jsonb') {
-    return `UPDATE "artists" SET "${column}" = "metadata"->'${key}' WHERE ${guard}`;
+    value = `pg_temp.cz042_try_jsonb(${raw})`;
+    copied = `(jsonb_typeof(${raw}) = 'null' OR ${text} IS NULL OR pg_temp.cz042_try_jsonb(${raw}) IS NOT NULL)`;
+  } else if (kind === 'date') {
+    value = `pg_temp.cz042_try_date(${text})`;
+    copied = `(${text} IS NULL OR pg_temp.cz042_try_date(${text}) IS NOT NULL)`;
+  } else {
+    const fits = typeof kind === 'number' ? `length(${text}) <= ${kind}` : 'true';
+    value = `CASE WHEN ${fits} THEN ${text} END`;
+    copied = `(${text} IS NULL OR ${fits})`;
   }
-  if (kind === 'date') {
-    return `UPDATE "artists" SET "${column}" = pg_temp.cz042_try_date("metadata"->>'${key}')
-            WHERE ${guard} AND pg_temp.cz042_try_date("metadata"->>'${key}') IS NOT NULL`;
-  }
-  const lengthGuard = typeof kind === 'number' ? ` AND length("metadata"->>'${key}') <= ${kind}` : '';
-  return `UPDATE "artists" SET "${column}" = "metadata"->>'${key}'
-          WHERE ${guard} AND "metadata"->>'${key}' <> ''${lengthGuard}`;
+  return `UPDATE "artists" SET "${column}" = ${value},
+            "metadata" = CASE WHEN ${copied} THEN "metadata" - '${key}' ELSE "metadata" END
+          WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}'`;
+}
+
+/** down(): the column value goes back to its legacy metadata key (read by the pre-CZ-042 API). */
+function writeBack(key: string, column: string): string {
+  return `UPDATE "artists" SET "metadata" = COALESCE(CASE WHEN jsonb_typeof("metadata") = 'object' THEN "metadata" END, '{}'::jsonb)
+            || jsonb_build_object('${key}', to_jsonb("${column}"))`;
 }
 
 function renameMetadataKey(from: string, to: string): string {
@@ -270,14 +317,19 @@ export class CanonicalizeArtistsToEnglish20260928000022 implements MigrationInte
     await queryRunner.query(
       `UPDATE "artists" SET "metadata" = jsonb_set("metadata", '{gender}', to_jsonb(m.canonical))
        FROM (VALUES ${GENDERS.map(([l, c]) => `('${l}', '${c}')`).join(', ')}) AS m(legacy, canonical)
-       WHERE "metadata"->>'gender' = m.legacy`,
+       WHERE lower(btrim("metadata"->>'gender')) = lower(m.legacy)`,
     );
 
-    await queryRunner.query(`UPDATE "artists" SET "specialties" = pg_temp.cz042_map_array("specialties", $1::jsonb)`, [pairsJson(SPECIALTIES)]);
+    await queryRunner.query(
+      `UPDATE "artists" SET "specialties" = pg_temp.cz042_map_array("specialties", $1::jsonb)
+       WHERE jsonb_typeof("specialties") = 'array' AND EXISTS (
+         SELECT 1 FROM jsonb_array_elements_text("specialties") AS e(v) WHERE $1::jsonb ? lower(btrim(e.v)))`,
+      [pairsJson(SPECIALTIES)],
+    );
     await queryRunner.query(
       `UPDATE "artists" p SET "profile_type" = m.canonical
        FROM (VALUES ${PROFILE_TYPES.map(([l, c]) => `('${l}', '${c}')`).join(', ')}) AS m(legacy, canonical)
-       WHERE p."profile_type" = m.legacy`,
+       WHERE lower(btrim(p."profile_type")) = m.legacy`,
     );
     for (const column of NESTED_COLUMNS) {
       await queryRunner.query(
@@ -286,7 +338,7 @@ export class CanonicalizeArtistsToEnglish20260928000022 implements MigrationInte
       );
     }
     await queryRunner.query(
-      `UPDATE "artists" SET "relationships" = pg_temp.cz042_map_item_type("relationships", $1::jsonb) WHERE "relationships" IS NOT NULL`,
+      `UPDATE "artists" SET "relationships" = pg_temp.cz042_map_item_type("relationships", $1::jsonb) WHERE jsonb_typeof("relationships") = 'array'`,
       [pairsJson(RELATIONSHIP_TYPES)],
     );
   }
@@ -309,13 +361,21 @@ export class CanonicalizeArtistsToEnglish20260928000022 implements MigrationInte
        FROM (VALUES ${PROFILE_TYPES.map(([l, c]) => `('${l}', '${c}')`).join(', ')}) AS m(legacy, canonical)
        WHERE p."profile_type" = m.canonical`,
     );
-    await queryRunner.query(`UPDATE "artists" SET "specialties" = pg_temp.cz042_map_array("specialties", $1::jsonb)`, [pairsJson(SPECIALTIES, true)]);
+    await queryRunner.query(
+      `UPDATE "artists" SET "specialties" = pg_temp.cz042_map_array("specialties", $1::jsonb) WHERE jsonb_typeof("specialties") = 'array'`,
+      [pairsJson(SPECIALTIES, true)],
+    );
     await queryRunner.query(
       `UPDATE "artists" SET "metadata" = jsonb_set("metadata", '{gender}', to_jsonb(m.legacy))
        FROM (VALUES ${GENDERS.map(([l, c]) => `('${l}', '${c}')`).join(', ')}) AS m(legacy, canonical)
        WHERE "metadata"->>'gender' = m.canonical`,
     );
     for (const [from, to] of METADATA_KEYS) await queryRunner.query(renameMetadataKey(to, from));
+    // The pre-CZ-042 API reads these fields from metadata: give it the current column values.
+    for (const [key, column] of METADATA_TO_COLUMN) {
+      if ((await queryRunner.query(columnExists(column))).length === 0) continue;
+      await queryRunner.query(writeBack(key, column));
+    }
 
     await queryRunner.query(renameConstraint('chk_artists_registration_status', 'chk_artists_status_cadastro'));
     for (const [from, to] of [...COLUMNS].reverse()) await queryRunner.query(renameColumn(to, from));

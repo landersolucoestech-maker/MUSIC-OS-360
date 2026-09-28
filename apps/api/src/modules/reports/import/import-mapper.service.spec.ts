@@ -34,4 +34,13 @@ describe('ImportMapperService — headers of spreadsheets exported before CZ-039
     const { unknownColumns } = mapper.build(def('releases', ['title', 'lyrics']), ['Letra completa']);
     expect(unknownColumns).toEqual(['Letra completa']);
   });
+
+  it('maps the pre-CT-D4 artist header "Seguidores no SoundCloud (link)" to the follower count', () => {
+    const { mapping, unknownColumns } = mapper.build(
+      def('artists', ['stage_name', 'soundcloud_followers']),
+      ['Seguidores no SoundCloud (link)'],
+    );
+    expect(mapping['Seguidores no SoundCloud (link)']).toBe('soundcloud_followers');
+    expect(unknownColumns).toEqual([]);
+  });
 });

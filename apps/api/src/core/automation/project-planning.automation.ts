@@ -45,12 +45,14 @@ const MUSICAL_TYPE_KEYWORDS = [
 /** Default operational departments (when the project does not declare them in metadata). */
 const DEFAULT_DEPARTMENTS = ['A&R', 'Marketing', 'Audiovisual', 'Distribuição', 'Jurídico', 'Administrativo'];
 
+/** Columns of `projects` read by this automation (names = ProjectEntity columns). */
+export const PROJECT_PLANNING_COLUMNS = ['title', 'type', 'description', 'artist_id', 'metadata'] as const;
+
 interface ProjectRow {
-  nome: string;
+  title: string;
   type: string;
-  descricao: string | null;
+  description: string | null;
   artist_id: string | null;
-  end_date: string | Date | null;
   metadata: Record<string, unknown> | null;
 }
 
@@ -111,7 +113,7 @@ export class ProjectPlanningAutomation {
   ): Promise<ProjectRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT nome, type, descricao, artist_id, end_date, metadata
+      `SELECT ${PROJECT_PLANNING_COLUMNS.join(', ')}
          FROM projects
         WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL
         LIMIT 1`,
@@ -147,18 +149,19 @@ export class ProjectPlanningAutomation {
     const goals =
       Array.isArray(md.goals) && md.goals.length > 0
         ? md.goals.map((g) => String(g))
-        : [`Concluir e operacionalizar as entregas do projeto "${project.nome}".`];
+        : [`Concluir e operacionalizar as entregas do projeto "${project.title}".`];
 
     const input: ProjectPlanningInput = {
-      projectName: project.nome,
+      projectName: project.title,
       projectType: project.type,
       departments,
       goals,
       language: 'pt-BR',
     };
 
-    if (project.descricao) input.context = String(project.descricao);
-    if (project.end_date) input.deadline = new Date(project.end_date).toISOString();
+    if (project.description) input.context = String(project.description);
+    // `projects` has no deadline column (data_fim was dropped by
+    // RebuildProjectsInCanonicalFormOrder20260719000005): no deadline is sent.
 
     return input;
   }

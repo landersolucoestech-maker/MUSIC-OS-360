@@ -78,12 +78,16 @@ export class ClientsService {
   }
 
   async findById(tenantId: string, id: string) {
+    return this.mapClient(await this.findEntity(tenantId, id));
+  }
+
+  private async findEntity(tenantId: string, id: string): Promise<ClientEntity> {
     const result = await this.repo!
       .createQueryBuilder('c')
       .where('c.id = :id AND c.tenant_id = :tenantId AND c.deleted_at IS NULL', { id, tenantId })
       .getOne();
     if (!result) throw new NotFoundException('Cliente não encontrado');
-    return this.mapClient(result);
+    return result;
   }
 
   async create(tenantId: string, userId: string, dto: CreateClientDto) {
@@ -104,7 +108,7 @@ export class ClientsService {
   }
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateClientDto) {
-    await this.findById(tenantId, id);
+    const existing = await this.findEntity(tenantId, id);
     const { email, phone, cpf_cnpj, expectedUpdatedAt, ...rest } =
       canonicalizeClientInput(dto, { update: true }) as unknown as Record<string, unknown>;
     const updates: Record<string, unknown> = {
@@ -112,6 +116,12 @@ export class ClientsService {
       updated_at: new Date(),
       updated_by: userId,
     };
+    // CT-D3: an edit merges its metadata keys into the stored object (same rule
+    // as artists) — it never replaces keys it did not send (lead conversion
+    // keys, historical copies awaiting the BLK-CRM-PII-PLAINTEXT backfill).
+    if (updates['metadata'] !== undefined) {
+      updates['metadata'] = { ...(existing.metadata ?? {}), ...(updates['metadata'] as Record<string, unknown>) };
+    }
     if (email    !== undefined) updates['email_encrypted']    = this.enc.encryptNullable(email as string | null);
     if (phone    !== undefined) updates['phone_encrypted']    = this.enc.encryptNullable(phone as string | null);
     if (cpf_cnpj !== undefined) updates['cpf_cnpj_encrypted'] = this.enc.encryptNullable(cpf_cnpj as string | null);

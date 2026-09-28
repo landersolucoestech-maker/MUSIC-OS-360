@@ -17,7 +17,8 @@ import { canonicalCrmInternalData, canonicalLeadServiceType, canonicalServicePay
 import { LANGUAGE_LABEL_TO_CODE, LEGACY_WORK_VALUES } from '../../works/work-legacy-fields';
 import { LEGACY_PHONOGRAM_VALUES, canonicalCountryCode } from '../../phonograms/phonogram-legacy-fields';
 import { LEGACY_TRANSACTION_VALUES } from '../../transactions/transaction-legacy-fields';
-import { valueFromExportLabel } from '../i18n/value-labels.pt-br';
+import { isMultiValueLabelColumn, valueFromExportLabel } from '../i18n/value-labels.pt-br';
+import { canonicalClientPersonType, canonicalClientPriority } from '../../clients/client-legacy-fields';
 import {
   ARTIST_NESTED_JSON_COLUMNS,
   canonicalArtistMetadata,
@@ -36,9 +37,22 @@ type ColumnCanonicalizer = (value: unknown) => unknown;
 const asJsonb = (value: unknown): unknown =>
   value !== null && typeof value === 'object' ? JSON.stringify(value) : value;
 
+/**
+ * artists.specialties cell: the export writes the PT-BR labels joined by " | "
+ * ("DJ | Compositor/Autor"); a JSON list (older export) is also accepted. Each
+ * item: raw canonical value first, then PT-BR label, then legacy PT value.
+ */
+function importArtistSpecialties(value: unknown): unknown {
+  const items = typeof value === 'string'
+    ? value.split('|').map((part) => part.trim()).filter(Boolean)
+    : value;
+  if (!Array.isArray(items)) return items;
+  return canonicalArtistSpecialties(items.map((item) => valueFromExportLabel('artists', 'specialties', item) ?? item));
+}
+
 /** CZ-042 artists jsonb columns: nested-item columns get canonical keys (+ relationship types). */
 const ARTIST_JSONB_CANONICALIZERS: Record<string, ColumnCanonicalizer> = {
-  specialties: (v) => asJsonb(canonicalArtistSpecialties(v)),
+  specialties: (v) => asJsonb(importArtistSpecialties(v)),
   gallery_urls: asJsonb,
   music_tags: asJsonb,
   selected_distributors: asJsonb,
@@ -91,6 +105,8 @@ const CANONICALIZERS: Readonly<Record<string, Readonly<Record<string, ColumnCano
     publication_country: canonicalCountryCode,
   },
   artists: { profile_type: canonicalArtistProfileType, ...ARTIST_JSONB_CANONICALIZERS },
+  // CZ-043: an old CRM export carries pessoa_fisica/pessoa_juridica (and PT priorities).
+  clients: { person_type: canonicalClientPersonType, priority: canonicalClientPriority },
   transactions: {
     type: fromMap(LEGACY_TRANSACTION_VALUES.transactionType),
     counterparty_type: fromMap(LEGACY_TRANSACTION_VALUES.counterpartyType),
@@ -103,7 +119,8 @@ const CANONICALIZERS: Readonly<Record<string, Readonly<Record<string, ColumnCano
 /** Canonical value of an imported cell for `table.column` (unchanged when no mapping applies). */
 export function canonicalImportValue(table: string, physicalColumn: string, value: unknown): unknown {
   // An exported spreadsheet carries the PT-BR label of enum values (round-trip).
-  const fromLabel = valueFromExportLabel(table, physicalColumn, value);
+  // Multi-valued enum lists are split and mapped item by item by their canonicalizer.
+  const fromLabel = isMultiValueLabelColumn(table, physicalColumn) ? null : valueFromExportLabel(table, physicalColumn, value);
   if (fromLabel !== null) return fromLabel;
   const canonicalize = CANONICALIZERS[table]?.[physicalColumn];
   return canonicalize ? canonicalize(value) : value;

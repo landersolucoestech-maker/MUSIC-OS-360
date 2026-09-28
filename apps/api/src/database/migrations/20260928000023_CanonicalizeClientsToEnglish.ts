@@ -20,9 +20,12 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *    reader -> legacy_contact_status (drop blocked: BLK-CLIENTS-LEGACY-DUPLICATES).
  *    cpf_cnpj_encrypted stays (legal-domain exception).
  * 2. Backfill metadata -> empty column for the form fields the API never
- *    persisted (forward-only, over-long values skipped; metadata kept as
- *    historical data). The plaintext cpf/cnpj copies in metadata are NOT
- *    touched here (BLK-CRM-PII-PLAINTEXT: needs an encryption backfill).
+ *    persisted (over-long values skipped). A key whose value now sits in its
+ *    column leaves metadata (the column is the single copy — no stale plaintext
+ *    duplicate of responsible e-mail/phone); a value that could not be copied
+ *    stays as historical data. The legacy `cargo_responsavel` key feeds
+ *    responsible_job_title too. The plaintext cpf/cnpj copies in metadata are
+ *    NOT touched here (BLK-CRM-PII-PLAINTEXT: needs an encryption backfill).
  * 3. Values: person_type pessoa_fisica/person -> individual, pessoa_juridica
  *    -> company; interactions item keys data/horario/descricao ->
  *    date/time/description and types ligacao/reuniao/proposta/observacao ->
@@ -31,8 +34,10 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *    profile values (70 PT slugs) are unchanged — taxonomy decision
  *    (BLK-CLIENT-PROFILE-TAXONOMY).
  *
- * Every step is guarded. down() reverses renames, default, keys and values;
- * the backfill is forward-only.
+ * Every step is guarded. down() reverses renames, default, keys and values and
+ * writes each backfilled column back to its legacy metadata key (the pre-CZ-043
+ * web reads the form from metadata), so rollback + re-apply loses nothing. A
+ * rename finding both the legacy and the canonical column raises.
  */
 const COLUMNS: ReadonlyArray<[from: string, to: string]> = [
   ['tipo_pessoa', 'person_type'],
@@ -74,6 +79,7 @@ const METADATA_TO_COLUMN: ReadonlyArray<[key: string, column: string, maxLength:
   ['responsavel_email', 'responsible_email', 150],
   ['responsavel_telefone', 'responsible_phone', 30],
   ['responsavel_cargo', 'responsible_job_title', 100],
+  ['cargo_responsavel', 'responsible_job_title', 100],
   ['interacoes', 'interactions', 'jsonb'],
 ];
 
@@ -102,6 +108,11 @@ function renameColumn(from: string, to: string): string {
         WHERE table_schema = 'public' AND table_name = 'clients' AND column_name = '${to}'
       ) THEN
         ALTER TABLE "clients" RENAME COLUMN "${from}" TO "${to}";
+      ELSIF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = 'clients' AND column_name = '${from}'
+      ) THEN
+        RAISE EXCEPTION 'clients has both "${from}" and "${to}": resolve manually before migrating';
       END IF;
     END $$;`;
 }
@@ -114,10 +125,11 @@ function remapInteractions(keys: ReadonlyArray<[string, string]>, types: Readonl
     UPDATE "clients" c SET "interactions" = (
       SELECT COALESCE(jsonb_agg(
         CASE WHEN jsonb_typeof(item.elem) = 'object' THEN (
-          SELECT jsonb_object_agg(
+          SELECT COALESCE(jsonb_object_agg(
             CASE WHEN km.value IS NOT NULL AND NOT item.elem ? (km.value #>> '{}') THEN km.value #>> '{}' ELSE e.key END,
             CASE WHEN e.key = 'type' AND jsonb_typeof(e.value) = 'string' AND '${typeMap}'::jsonb ? (e.value #>> '{}')
               THEN '${typeMap}'::jsonb -> (e.value #>> '{}') ELSE e.value END)
+          , '{}'::jsonb)
           FROM jsonb_each(item.elem) AS e
           LEFT JOIN LATERAL (SELECT '${keyMap}'::jsonb -> e.key AS value) km ON true
         ) ELSE item.elem END
@@ -139,6 +151,9 @@ export class CanonicalizeClientsToEnglish20260928000023 implements MigrationInte
         await queryRunner.query(`
           UPDATE "clients" SET "${column}" = "metadata"->'${key}'
           WHERE "${column}" IS NULL AND jsonb_typeof("metadata"->'${key}') = 'array'`);
+        await queryRunner.query(`
+          UPDATE "clients" SET "metadata" = "metadata" - '${key}'
+          WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}' AND "${column}" = "metadata"->'${key}'`);
         continue;
       }
       const fits = maxLength === null ? '' : ` AND length("metadata"->>'${key}') <= ${maxLength}`;
@@ -146,6 +161,11 @@ export class CanonicalizeClientsToEnglish20260928000023 implements MigrationInte
         UPDATE "clients" SET "${column}" = "metadata"->>'${key}'
         WHERE "${column}" IS NULL AND jsonb_typeof("metadata") = 'object'
           AND jsonb_typeof("metadata"->'${key}') = 'string' AND "metadata"->>'${key}' <> ''${fits}`);
+      // Copied (or empty): the column is the single copy.
+      await queryRunner.query(`
+        UPDATE "clients" SET "metadata" = "metadata" - '${key}'
+        WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}'
+          AND (NULLIF("metadata"->>'${key}', '') IS NULL OR "${column}" = "metadata"->>'${key}')`);
     }
     // profile is NOT NULL (default fallback 'outros'): the form value wins over the fallback.
     await queryRunner.query(`
@@ -179,6 +199,17 @@ export class CanonicalizeClientsToEnglish20260928000023 implements MigrationInte
     await queryRunner.query(`ALTER TABLE "clients" ALTER COLUMN "person_type" SET DEFAULT 'pessoa_juridica'`);
     await queryRunner.query(`UPDATE "clients" SET "person_type" = 'pessoa_fisica' WHERE "person_type" = 'individual'`);
     await queryRunner.query(`UPDATE "clients" SET "person_type" = 'pessoa_juridica' WHERE "person_type" = 'company'`);
+    // The pre-CZ-043 web reads the form from metadata: give it the current column values
+    // (interactions after the key/type reversal above, i.e. in the legacy vocabulary).
+    const written = new Set<string>();
+    for (const [key, column] of METADATA_TO_COLUMN) {
+      if (written.has(column) && key === 'cargo_responsavel') continue;
+      written.add(column);
+      await queryRunner.query(`
+        UPDATE "clients" SET "metadata" = COALESCE(CASE WHEN jsonb_typeof("metadata") = 'object' THEN "metadata" END, '{}'::jsonb)
+          || jsonb_build_object('${key}', to_jsonb("${column}"))
+        WHERE "${column}" IS NOT NULL`);
+    }
     for (const [from, to] of [...COLUMNS].reverse()) await queryRunner.query(renameColumn(to, from));
   }
 }

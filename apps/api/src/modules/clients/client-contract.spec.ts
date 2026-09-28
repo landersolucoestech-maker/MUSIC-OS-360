@@ -87,7 +87,8 @@ describe('Client request/response contract (CZ-043)', () => {
 
   it('an EDIT from a pre-CZ-043 build never overwrites what it could not read (type/priority/status defaults)', () => {
     const oldBuildEdit = { name: 'Novo', type: 'company', priority: 'medium', status: 'active', zipCode: '', metadata: { tipo_pessoa: 'pessoa_juridica', interacoes: [] } };
-    expect(canonicalizeClientInput(oldBuildEdit, { update: true })).toEqual({ name: 'Novo', metadata: {} });
+    // Its stripped payloadOperacional is empty: metadata is not sent at all (CT-D3).
+    expect(canonicalizeClientInput(oldBuildEdit, { update: true })).toEqual({ name: 'Novo' });
     // A canonical (new web) edit keeps every value it sends.
     expect(canonicalizeClientInput({ priority: 'medium', status: 'active' }, { update: true })).toEqual({ priority: 'medium', status: 'active' });
   });
@@ -102,5 +103,72 @@ describe('Client request/response contract (CZ-043)', () => {
     const { svc, qb } = makeService();
     await svc.list('t1', { type: 'company' } as never);
     expect(qb['andWhere']).toHaveBeenCalledWith('c.person_type = :personType', { personType: 'company' });
+  });
+
+  it('an old-build EDIT never wipes the stored metadata; a canonical metadata edit is merged (CT-D3)', async () => {
+    const stored = { leadId: 'lead-1', convertedAt: '2026-09-01', cpf: '111.222.333-44' };
+    const { svc, repo } = makeService([{ id: 'c1', tenant_id: 't1', name: 'Bob', metadata: stored }]);
+    await svc.update('t1', 'u1', 'c1', {
+      name: 'Bob', type: 'company', metadata: { tipo_pessoa: 'pessoa_juridica', cpf: '', cnpj: '', razao_social: '', interacoes: [] },
+    } as never);
+    const firstUpdate = (repo.update.mock.calls[0] as unknown[])[1] as Record<string, unknown>;
+    expect(firstUpdate).not.toHaveProperty('metadata');
+
+    await svc.update('t1', 'u1', 'c1', { metadata: { origin: 'event', EMAIL: 'x@y.com' } } as never);
+    const secondUpdate = (repo.update.mock.calls[1] as unknown[])[1] as Record<string, unknown>;
+    expect(secondUpdate['metadata']).toEqual({ ...stored, origin: 'event' });
+  });
+
+  it('the payloadOperacional unfold runs only for pre-CZ-043 payloads (SEC-F2)', () => {
+    // A canonical payload carrying unknown metadata keys that merely look like columns
+    // is not a legacy payload: nothing is unfolded into the typed columns.
+    const out = canonicalizeClientInput({ name: 'A', person_type: 'company', metadata: { origem: 'x', profile: 'hack' } }) as Record<string, unknown>;
+    expect(out).toEqual({ name: 'A', person_type: 'company', metadata: { origem: 'x', profile: 'hack' } });
+  });
+
+  it('every unfolded legacy value is re-validated with the DTO rules; invalid values are dropped, never persisted (SEC-F2)', async () => {
+    const out = canonicalizeClientInput({
+      name: 'A',
+      metadata: {
+        tipo_pessoa: 'alien',                       // not individual|company after mapping
+        perfil: 'p'.repeat(101),                    // profile MaxLength(100)
+        cep: '0'.repeat(16),                        // zip_code MaxLength(15)
+        responsavel_email: 'e'.repeat(151),         // responsible_email MaxLength(150)
+        responsavel_telefone: '11 99999-0000',      // valid -> kept
+        interacoes: [{ type: 'hack', descricao: 'x' }],
+        razao_social: 'ACME LTDA',                  // valid -> kept
+      },
+    }) as Record<string, unknown>;
+    for (const key of ['person_type', 'profile', 'zip_code', 'responsible_email', 'interactions']) expect(out).not.toHaveProperty(key);
+    expect(out).toMatchObject({ responsible_phone: '11 99999-0000', legal_name: 'ACME LTDA', metadata: {} });
+
+    const tooLongDescription = canonicalizeClientInput({
+      name: 'A', metadata: { interacoes: [{ type: 'ligacao', descricao: 'd'.repeat(2001) }] },
+    }) as Record<string, unknown>;
+    expect(tooLongDescription).not.toHaveProperty('interactions');
+    const okInteraction = canonicalizeClientInput({
+      name: 'A', metadata: { tipo_pessoa: 'pessoa_fisica', interacoes: [{ type: 'ligacao', descricao: 'ok' }] },
+    }) as Record<string, unknown>;
+    expect(okInteraction).toMatchObject({ person_type: 'individual', interactions: [{ type: 'call', description: 'ok' }] });
+
+    // End to end: the invalid values never reach the INSERT (no 500 from a varchar overflow).
+    const { svc, repo } = makeService();
+    await svc.create('t1', 'u1', { name: 'A', metadata: { tipo_pessoa: 'alien', cep: '0'.repeat(16) } } as never);
+    const saved = repo.save.mock.calls[0][0] as Record<string, unknown>;
+    expect(saved['person_type']).toBeUndefined();
+    expect(saved['zip_code']).toBeUndefined();
+  });
+
+  it('plaintext PII keys are stripped from metadata case-insensitively (SEC-F3)', () => {
+    const pii = {
+      CPF: '1', Cnpj: '2', cpf_cnpj: '3', Documento: '4', document: '5', RG: '6', Email: 'a@b.c', 'E-Mail': 'a@b.c',
+      e_mail: 'a@b.c', Telefone: '7', PHONE: '8', celular: '9', Responsavel_Email: 'x@y.z', ' Tipo_Pessoa ': 'pf',
+      leadId: 'lead-1',
+    };
+    const created = canonicalizeClientInput({ name: 'A', metadata: pii }) as Record<string, unknown>;
+    expect(created['metadata']).toEqual({ leadId: 'lead-1' });
+    const updated = canonicalizeClientInput({ metadata: pii }, { update: true }) as Record<string, unknown>;
+    expect(updated['metadata']).toEqual({ leadId: 'lead-1' });
+    expect(JSON.stringify(created)).not.toMatch(/a@b\.c|x@y\.z/);
   });
 });

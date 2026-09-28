@@ -1,0 +1,15 @@
+{
+  "id": "evid-607356c5",
+  "createdAt": "2026-09-28T21:14:13.515Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && npx tsc --noEmit -p tsconfig.json",
+  "command": "cd apps/api && npx tsc --noEmit -p tsconfig.json",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "a7726ef20ca84fb0026118e91039d154a768c26cb28eeb92248f531ea6ce0f57",
+  "fingerprintStatus": "BOUND",
+  "head": "bc40b76314ab918aee1a97626fd67abcd1cd7f03",
+  "durationMs": 1
+}

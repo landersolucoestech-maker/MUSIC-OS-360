@@ -1,5 +1,7 @@
 import 'reflect-metadata';
-import { ProjectPlanningAutomation } from './project-planning.automation';
+import { getMetadataArgsStorage } from 'typeorm';
+import { PROJECT_PLANNING_COLUMNS, ProjectPlanningAutomation } from './project-planning.automation';
+import { ProjectEntity } from '../../database/entities';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
 // ─── Boundary mocks (DB / SkillRunService / AIService) ────────────────────────
@@ -62,11 +64,10 @@ function makeEvent(type = 'lancamento') {
 }
 
 const PROJECT_ROW = {
-  nome: 'Single Aurora',
+  title: 'Single Aurora',
   type: 'lancamento',
-  descricao: 'Lançamento do single Aurora',
+  description: 'Lançamento do single Aurora',
   artist_id: null,
-  end_date: null,
   metadata: {},
 };
 
@@ -185,4 +186,28 @@ describe('ProjectPlanningAutomation (project.completed → project-planning)', (
     expect(ai.complete).not.toHaveBeenCalled();
     expect(query).not.toHaveBeenCalled();
   });
+
+  it('the project SELECT reads only columns that exist on ProjectEntity (renamed nome/descricao/end_date never come back)', async () => {
+    const entityColumns = new Set(
+      getMetadataArgsStorage().columns.filter((c) => c.target === ProjectEntity).map((c) => c.propertyName),
+    );
+    const { ds, query } = makeDs([PROJECT_ROW]);
+    const ai = makeAi(VALID_PLAN_JSON);
+    const handler = new ProjectPlanningAutomation(ds as never, makeSkillRun() as never, ai as never, passThroughTenantContext(ds) as never);
+
+    await handler.onProjectCompleted(makeEvent() as never);
+
+    const select = query.mock.calls.map((c: unknown[]) => String(c[0])).find((sql) => /FROM\s+projects/i.test(sql) && /^\s*SELECT/i.test(sql));
+    expect(select).toBeDefined();
+    const selected = select!.match(/SELECT\s+([\s\S]+?)\s+FROM\s+projects/i)![1].split(',').map((c) => c.trim());
+    expect(selected.length).toBeGreaterThan(0);
+    for (const column of selected) expect(entityColumns).toContain(column);
+    expect([...PROJECT_PLANNING_COLUMNS]).toEqual(selected);
+
+    // The project title/description reach the skill prompt input.
+    const prompt = JSON.stringify((ai.complete as jest.Mock).mock.calls[0]);
+    expect(prompt).toContain('Single Aurora');
+    expect(prompt).toContain('Lançamento do single Aurora');
+  });
 });
+

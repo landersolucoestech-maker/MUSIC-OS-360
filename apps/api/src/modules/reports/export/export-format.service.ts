@@ -41,13 +41,15 @@ export function sanitizeExcelCellValue(value: unknown, context: CellContext): st
   if (value === null || value === undefined) return '';
   if (value instanceof Date) return value.toLocaleDateString('pt-BR');
   if (typeof value === 'boolean') return value ? 'Sim' : 'Não';
-  if (typeof value === 'object') {
+  // Enum values (and multi-valued enum lists, e.g. artists.specialties) are
+  // written as their PT-BR labels, never the raw technical value.
+  const enumLabel = exportValueLabel(context.entity, context.column, value);
+  if (typeof value === 'object' && enumLabel === null) {
     // eslint-disable-next-line no-console
     console.warn(`[reports-export] technical field skipped (raw object/array): ${context.entity}.${context.column}`);
     return '';
   }
   let text: string;
-  const enumLabel = exportValueLabel(context.entity, context.column, value);
   if (enumLabel !== null) {
     text = enumLabel;
   } else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T?/.test(value)) {

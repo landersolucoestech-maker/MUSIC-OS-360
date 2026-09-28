@@ -10,13 +10,13 @@ import {
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { PlanLimitService } from '../../core/billing/plan-limit.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
-import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { safeOrderBy } from '../../common/utils/safe-order-by';
 import type { CreateArtistDto } from './dto/create-artist.dto';
 import type { UpdateArtistDto } from './dto/update-artist.dto';
 import type { QueryArtistDto }  from './dto/query-artist.dto';
 import { ArtistStatus, ArtistRelationshipType } from '@music-os-360/types';
 import { ARTIST_METADATA_ONLY_FIELDS, canonicalizeArtistInput, canonicalizeArtistQuery } from './artist-legacy-fields';
+import { sanitizeArtistMetadataInput } from './artist-input-sanitizer';
 
 /** Contract statuses treated as "active" for artist-relationship classification
  * (relationship/relationshipStats). Contract status values are English since the
@@ -288,15 +288,13 @@ export class ArtistsService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateArtistDto, orgId?: string): Promise<ArtistResponse> {
-    const input = canonicalizeArtistInput(dto as unknown as Record<string, unknown>);
+    const input = this.canonicalInput(dto as unknown as Record<string, unknown>);
     const stageName = typeof input.stage_name === 'string' ? input.stage_name.trim() : '';
     if (!stageName) {
       throw new BadRequestException('Informe o nome artístico.');
     }
     await this.planLimit.enforce(tenantId, orgId ?? tenantId, 'artists');
-    if (input.contract_id !== undefined && input.contract_id !== null && input.contract_id !== '') {
-      await assertSameTenantFk(this.ds!, 'contracts', input.contract_id as string, tenantId, 'Contrato');
-    }
+    await this.assertContractInTenant(tenantId, input.contract_id);
 
     const data: Record<string, unknown> = {
       tenant_id:  tenantId,
@@ -338,11 +336,9 @@ export class ArtistsService {
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateArtistDto): Promise<ArtistResponse> {
     const existing = await this.findById(tenantId, id);
-    const input = canonicalizeArtistInput(dto as unknown as Record<string, unknown>, { update: true });
+    const input = this.canonicalInput(dto as unknown as Record<string, unknown>, { update: true });
     // contract_id had no ownership check — an artist could reference another tenant's contract.
-    if (input.contract_id !== undefined && input.contract_id !== null && input.contract_id !== '') {
-      await assertSameTenantFk(this.ds!, 'contracts', input.contract_id as string, tenantId, 'Contrato');
-    }
+    await this.assertContractInTenant(tenantId, input.contract_id);
 
     // ── Status transition validation ───────────────────────────────────────────
     const newStatus = input.status as ArtistStatus | undefined;
@@ -460,6 +456,32 @@ export class ArtistsService {
     });
 
     return { deleted: true };
+  }
+
+  /**
+   * Canonical request body (CZ-042 legacy names/values mapped) with the
+   * caller-supplied `metadata` stripped of every allow-listed response key
+   * that fails its DTO rule (SEC-F1: no `javascript:` link through metadata).
+   */
+  private canonicalInput(dto: Record<string, unknown>, options: { update?: boolean } = {}): Record<string, unknown> {
+    const input = canonicalizeArtistInput(dto, options);
+    if (input.metadata !== undefined) input.metadata = sanitizeArtistMetadataInput(input.metadata);
+    return input;
+  }
+
+  /**
+   * The linked contract must be a live (not soft-deleted) contract of the SAME
+   * tenant — the tenant id is bound as a parameter, never inferred.
+   */
+  private async assertContractInTenant(tenantId: string, contractId: unknown): Promise<void> {
+    if (contractId === undefined || contractId === null || contractId === '') return;
+    const rows = await this.ds!.query(
+      `SELECT 1 FROM "contracts" WHERE "id" = $1 AND "tenant_id" = $2 AND "deleted_at" IS NULL LIMIT 1`,
+      [contractId, tenantId],
+    ) as unknown[];
+    if (!Array.isArray(rows) || rows.length === 0) {
+      throw new BadRequestException('Contrato não encontrado neste workspace.');
+    }
   }
 
   // ── Lifecycle validation ─────────────────────────────────────────────────────

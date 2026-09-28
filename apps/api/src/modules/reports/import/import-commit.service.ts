@@ -28,6 +28,7 @@ import { FinanceCategoryRulesService } from '../../finance-category-rules/financ
 import { canonicalImportJsonColumn, canonicalImportValue } from './import-value-canonicalizers';
 import { UNCATEGORIZED_PLACEHOLDER, toRuleTransactionType } from '../../transactions/transactions.service';
 import { canonicalTransactionType } from '../../transactions/transaction-legacy-fields';
+import { artistUrlFieldViolations } from '../../artists/artist-input-sanitizer';
 
 export interface ImportCommitResult {
   entity: string;
@@ -163,6 +164,7 @@ export class ImportCommitService {
       for (const group of groups) await this.assertNotDuplicate(qr, def, contract, group.generalRow, tenantId, errors);
       for (const row of validation.rows) await this.assertRelationships(qr, def, row, tenantId, errors);
       for (const row of validation.rows) this.assertValidIsrc(def, contract, row, errors);
+      for (const row of validation.rows) this.assertValidArtistUrls(def, row, errors);
 
       if (errors.length > 0) {
         await qr.rollbackTransaction();
@@ -249,6 +251,25 @@ export class ImportCommitService {
       if (!isValidIsrc(value)) {
         errors.push(`Linha ${row.index + 2}: ISRC inválido "${value}". Formato esperado: CCXXXYYNNNNN (12 caracteres, hífens opcionais).`);
       }
+    }
+  }
+
+  /**
+   * SEC-F1: artist link fields (photo, gallery, documents, press kit, social
+   * URLs — including the metadata-only instagram_url/tiktok_url) are rendered
+   * as href/src by the web. The import applies the same CreateArtistDto rules
+   * as the API (http(s) only / platform pattern); an invalid link rejects the
+   * row instead of being stored. The cell value is never echoed back.
+   */
+  private assertValidArtistUrls(def: ReportEntityDefinition, row: RowValidation, errors: string[]): void {
+    if (def.tableName !== 'artists') return;
+    const values: Record<string, unknown> = {};
+    for (const [key, raw] of Object.entries(row.data)) {
+      const value = normalizeImportedValue(raw);
+      if (value !== null) values[key] = value;
+    }
+    for (const field of artistUrlFieldViolations(values)) {
+      errors.push(`Linha ${row.index + 2}: link inválido em ${getFieldLabelPtBr(field)}. Use um endereço começando com http:// ou https://.`);
     }
   }
 

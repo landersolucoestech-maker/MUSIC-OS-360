@@ -34,7 +34,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'related_references', 'legacy_lyrics', 'artist_id', 'type', 'work_origin', 'composer_name',
     'composer_names', 'publisher_name', 'translator_names', 'isrc', 'alternative_titles', 'language',
     'lyrics', 'is_instrumental', 'duration_seconds', 'registry_status', 'external_reference', 'ai_used',
-    'ai_tools', 'ai_prompts', 'origem_externa', 'origem_externa_id', 'origem_externa_sincronizado_em', 'metadata',
+    'ai_tools', 'ai_prompts', 'external_source', 'external_source_id', 'external_source_synced_at', 'metadata',
     'created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at',
   ],
   work_participants: [
@@ -50,7 +50,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'notes', 'artist_id', 'type',
     'record_label_name', 'version_title', 'recording_date', 'release_date', 'phonographic_producer_id', 'main_artist_id',
     'label_id', 'copyright_year', 'copyright_owner', 'country_of_recording', 'audio_file_id', 'duration_seconds',
-    'registry_status', 'external_reference', 'origem_externa', 'origem_externa_id', 'origem_externa_sincronizado_em', 'metadata',
+    'registry_status', 'external_reference', 'external_source', 'external_source_id', 'external_source_synced_at', 'metadata',
     'created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at',
   ],
   releases: [
@@ -67,7 +67,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
   ],
   project_tracks: [
     'id', 'tenant_id', 'project_id', 'name', 'solo_feat', 'original_remix',
-    'instrumental', 'duracao_min', 'duracao_seg', 'music_genre', 'idioma', 'letra',
+    'instrumental', 'duration_minutes', 'duration_seconds', 'music_genre', 'language', 'lyrics',
     'audio_url', 'sort_order', 'created_at', 'updated_at',
   ],
   project_track_participants: [
@@ -104,12 +104,12 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'updated_by', 'deleted_at',
   ],
   clients: [
-    'id', 'tenant_id', 'tipo_pessoa', 'categoria', 'perfil', 'nome',
-    'foto', 'individual_name', 'razao_social', 'trade_name', 'cpf_cnpj_encrypted', 'email_encrypted',
-    'telefone_encrypted', 'instagram', 'funcao', 'logradouro', 'numero', 'complemento',
-    'bairro', 'city', 'state', 'cep', 'endereco_completo', 'status_contato',
-    'prioridade_contato', 'responsavel_nome', 'responsavel_cargo', 'responsavel_email', 'responsavel_telefone', 'attachments',
-    'notes', 'interacoes', 'status', 'metadata', 'created_at', 'updated_at',
+    'id', 'tenant_id', 'person_type', 'category', 'profile', 'name',
+    'photo_url', 'individual_name', 'legal_name', 'trade_name', 'cpf_cnpj_encrypted', 'email_encrypted',
+    'phone_encrypted', 'instagram', 'job_title', 'street', 'street_number', 'address_complement',
+    'neighborhood', 'city', 'state', 'zip_code', 'address', 'legacy_contact_status',
+    'priority', 'responsible_name', 'responsible_job_title', 'responsible_email', 'responsible_phone', 'attachments',
+    'notes', 'interactions', 'status', 'metadata', 'created_at', 'updated_at',
     'created_by', 'updated_by', 'deleted_at',
   ],
   leads: [
@@ -143,16 +143,16 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'deleted_at', 'total_amount', 'settled_amount',
   ],
   licenses: [
-    'id', 'tenant_id', 'title', 'work_id', 'obra_musical', 'artista',
-    'client_id', 'cliente', 'projeto', 'type', 'tipo_uso', 'midia_destino',
-    'territorio', 'status', 'start_date', 'end_date', 'valor', 'moeda',
+    'id', 'tenant_id', 'title', 'work_id', 'work_title', 'artist_name',
+    'client_id', 'client_name', 'project_name', 'type', 'usage_type', 'target_media',
+    'territory', 'status', 'start_date', 'end_date', 'amount', 'currency',
     'notes', 'remuneration_type', 'artist_id', 'created_at', 'updated_at', 'created_by',
     'updated_by', 'deleted_at', 'percentage',
   ],
   takedowns: [
-    'id', 'tenant_id', 'title', 'type', 'obra_afetada', 'artista',
-    'status', 'prioridade', 'plataforma', 'url_infracao', 'motivo', 'data_identificacao',
-    'description', 'evidencias', 'notes', 'metadata', 'created_at', 'updated_at',
+    'id', 'tenant_id', 'title', 'type', 'affected_work', 'artist_name',
+    'status', 'priority', 'platform', 'infringing_url', 'reason', 'identified_at',
+    'description', 'evidence', 'notes', 'metadata', 'created_at', 'updated_at',
     'created_by', 'deleted_at',
   ],
   inventory_items: [

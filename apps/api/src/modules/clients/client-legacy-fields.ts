@@ -10,7 +10,10 @@
  * (BLK-CRM-PII-PLAINTEXT covers the historical copies).
  */
 import { applyDeprecatedFieldAliases, type DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import { plainToInstance } from 'class-transformer';
+import { validateSync } from 'class-validator';
 import { INTERACTION_KEYS, INTERACTION_TYPES } from '../leads/lead-vocabulary';
+import { CreateClientDto } from './dto/clients.dto';
 
 export const CLIENT_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   type: 'person_type',
@@ -53,6 +56,10 @@ export const CLIENT_TIMELINE_TYPES = ['note', 'call', 'meeting', 'email', 'whats
 const LEGACY_PERSON_TYPES: Readonly<Record<string, string>> = {
   person: 'individual', pessoa_fisica: 'individual', pessoa_juridica: 'company',
 };
+/** Pre-English priority values (same vocabulary as the lead CRM priority, plus "estratégica"). */
+const LEGACY_PRIORITIES: Readonly<Record<string, string>> = {
+  baixa: 'low', media: 'medium', 'média': 'medium', alta: 'high', estrategica: 'strategic', 'estratégica': 'strategic',
+};
 export const LEGACY_TIMELINE_TYPES: Readonly<Record<string, string>> = {
   nota: 'note', ligacao: 'call', reuniao: 'meeting', outro: 'other',
 };
@@ -63,12 +70,27 @@ const LEGACY_METADATA_FORM_KEYS = [
   'responsavel_cargo', 'interacoes',
 ] as const;
 
+/**
+ * Plaintext PII keys never kept in `clients.metadata` (SEC-F3): the canonical
+ * contract stores documents/e-mail/phone encrypted in their own columns.
+ * Matched case-insensitively ('-' and ' ' treated as '_').
+ */
+const METADATA_PII_KEYS: ReadonlySet<string> = new Set([
+  'cpf', 'cnpj', 'cpf_cnpj', 'documento', 'document', 'rg', 'email', 'e_mail', 'telefone', 'phone', 'celular',
+]);
+const STRIPPED_METADATA_KEYS: ReadonlySet<string> = new Set([...METADATA_PII_KEYS, ...LEGACY_METADATA_FORM_KEYS]);
+const normalizeMetadataKey = (key: string): string => key.trim().toLowerCase().replace(/[-\s]+/g, '_');
+
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value);
+
 const mapValue = (map: Readonly<Record<string, string>>, value: unknown): unknown =>
   typeof value === 'string' && Object.prototype.hasOwnProperty.call(map, value.trim().toLowerCase())
     ? map[value.trim().toLowerCase()]
     : value;
 
 export const canonicalClientPersonType = (value: unknown): unknown => mapValue(LEGACY_PERSON_TYPES, value);
+export const canonicalClientPriority = (value: unknown): unknown => mapValue(LEGACY_PRIORITIES, value);
 export const canonicalClientTimelineType = (value: unknown): unknown => mapValue(LEGACY_TIMELINE_TYPES, value);
 
 /** Interaction items: data/horario/descricao -> date/time/description; PT types -> English (lead vocabulary). */
@@ -86,8 +108,25 @@ export function canonicalClientInteractions(value: unknown): unknown {
 function isPreCz043Payload(raw: Record<string, unknown>): boolean {
   if (Object.keys(raw).some((key) => Object.prototype.hasOwnProperty.call(CLIENT_DEPRECATED_FIELDS, key))) return true;
   const meta = raw['metadata'];
-  return meta !== null && typeof meta === 'object' && !Array.isArray(meta)
-    && LEGACY_METADATA_FORM_KEYS.some((key) => key in (meta as Record<string, unknown>));
+  return isPlainObject(meta) && LEGACY_METADATA_FORM_KEYS.some((key) => key in meta);
+}
+
+/**
+ * SEC-F2: values unfolded from the legacy metadata copy never went through the
+ * ValidationPipe. They are re-validated with the SAME CreateClientDto rules
+ * (IsIn person_type/priority, interaction item types/lengths, column max
+ * lengths) after the legacy value mapping; an invalid value is dropped (the
+ * stored column stays untouched) instead of reaching the database.
+ */
+function dropInvalidUnfoldedValues(out: Record<string, unknown>, keys: ReadonlySet<string>): void {
+  const probe: Record<string, unknown> = {};
+  for (const key of keys) {
+    if (out[key] !== undefined) probe[key] = out[key];
+  }
+  if (Object.keys(probe).length === 0) return;
+  for (const error of validateSync(plainToInstance(CreateClientDto, probe))) {
+    if (Object.prototype.hasOwnProperty.call(probe, error.property)) delete out[error.property];
+  }
 }
 
 /**
@@ -119,25 +158,40 @@ function dropUnreadableLegacyEditValues(raw: Record<string, unknown>): void {
  */
 export function canonicalizeClientInput<T extends object>(input: T, options: { update?: boolean } = {}): T {
   const raw = { ...(input as Record<string, unknown>) };
-  if (options.update && isPreCz043Payload(raw)) dropUnreadableLegacyEditValues(raw);
+  const legacyPayload = isPreCz043Payload(raw);
+  if (options.update && legacyPayload) dropUnreadableLegacyEditValues(raw);
+  // Canonical keys whose value came out of the legacy metadata copy (re-validated below).
+  const unfolded = new Set<string>();
   const metadata = raw['metadata'];
-  if (metadata !== null && typeof metadata === 'object' && !Array.isArray(metadata)) {
-    const meta = { ...(metadata as Record<string, unknown>) };
-    const document = meta['cpf'] || meta['cnpj'];
-    for (const key of LEGACY_METADATA_FORM_KEYS) {
-      if (key !== 'cpf' && key !== 'cnpj' && raw[key] === undefined && meta[key] !== undefined && meta[key] !== '') {
-        raw[key] = meta[key];
+  if (isPlainObject(metadata)) {
+    const meta = { ...metadata };
+    // The payloadOperacional unfold only exists for pre-CZ-043 payloads (SEC-F2).
+    if (legacyPayload) {
+      for (const key of LEGACY_METADATA_FORM_KEYS) {
+        if (key !== 'cpf' && key !== 'cnpj' && raw[key] === undefined && meta[key] !== undefined && meta[key] !== '') {
+          raw[key] = meta[key];
+          unfolded.add(CLIENT_DEPRECATED_FIELDS[key] ?? key);
+        }
       }
-      delete meta[key];
+      const document = meta['cpf'] || meta['cnpj'];
+      if (raw['document'] === undefined && raw['cpf_cnpj'] === undefined && typeof document === 'string' && document) {
+        raw['cpf_cnpj'] = document;
+        unfolded.add('cpf_cnpj');
+      }
     }
-    if (raw['document'] === undefined && raw['cpf_cnpj'] === undefined && typeof document === 'string' && document) {
-      raw['cpf_cnpj'] = document;
+    // Legacy form copy and plaintext PII never stay in metadata (SEC-F3).
+    for (const key of Object.keys(meta)) {
+      if (STRIPPED_METADATA_KEYS.has(normalizeMetadataKey(key))) delete meta[key];
     }
-    raw['metadata'] = meta;
+    // CT-D3: an edit whose metadata is empty after stripping (an old build's
+    // unreadable payloadOperacional) must not replace the stored metadata.
+    if (options.update && Object.keys(meta).length === 0) delete raw['metadata'];
+    else raw['metadata'] = meta;
   }
   const out = applyDeprecatedFieldAliases(raw, CLIENT_DEPRECATED_FIELDS);
   if (out['person_type'] !== undefined) out['person_type'] = canonicalClientPersonType(out['person_type']);
   if (out['interactions'] !== undefined) out['interactions'] = canonicalClientInteractions(out['interactions']);
+  dropInvalidUnfoldedValues(out, unfolded);
   return out as T;
 }
 

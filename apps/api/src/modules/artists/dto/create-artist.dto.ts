@@ -1,10 +1,11 @@
 import {
-  IsString, IsOptional, MaxLength, IsObject, IsArray, IsEnum, IsNumber, Matches,
+  IsString, IsOptional, MaxLength, IsObject, IsArray, IsEnum, IsNumber, Matches, IsUUID, ValidateIf,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { ArtistStatus } from '@music-os-360/types';
 import { APPLE_MUSIC_URL_PATTERN } from '../platform-profiles/apple-music-url.util';
 import { ARTIST_GENDERS, ARTIST_PROFILE_TYPES, ARTIST_SPECIALTIES } from '../artist-legacy-fields';
+import { HasHttpUrlItems, IsHttpUrl } from '../artist-url.validation';
 
 // The same patterns used by the manual-sync extractors
 // (artist-external-profile-sync.service.ts extractDeezerArtistId/
@@ -38,7 +39,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional({ enum: ArtistStatus }) @IsOptional() @IsEnum(ArtistStatus) status?: ArtistStatus;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) music_genre?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() photo_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @IsHttpUrl() photo_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @Matches(/^https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?artist\/[A-Za-z0-9]{22}(?:[/?#].*)?$/i, { message: 'Informe uma URL válida do Spotify' }) spotify_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @Matches(/^https:\/\/(?:www\.)?(?:youtube\.com\/(?:@[^/?#]+|channel\/UC[A-Za-z0-9_-]{22})(?:[/?#].*)?|music\.youtube\.com\/(?:.*))$/i, { message: 'Informe uma URL válida do YouTube' }) youtube_url?: string;
   @ApiPropertyOptional({ enum: ARTIST_SPECIALTIES, isArray: true }) @IsOptional() @IsArray() specialties?: string[];
@@ -100,11 +101,11 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsArray() general_distributors?: unknown[];
 
   // ── Documents / media ────────────────────────────────────────────────────────
-  @ApiPropertyOptional() @IsOptional() @IsArray() gallery_urls?: string[];
+  @ApiPropertyOptional() @IsOptional() @IsArray() @IsHttpUrl({ each: true }) gallery_urls?: string[];
   // Items: { name, url }
-  @ApiPropertyOptional() @IsOptional() @IsArray() documents?: unknown[];
-  @ApiPropertyOptional() @IsOptional() @IsString() personal_documents_url?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() press_kit_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsArray() @HasHttpUrlItems('url') documents?: unknown[];
+  @ApiPropertyOptional() @IsOptional() @IsString() @IsHttpUrl() personal_documents_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @IsHttpUrl() press_kit_url?: string;
 
   // ── Team / Contacts ──────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) manager_name?: string;
@@ -124,16 +125,17 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(60) career_stage?: string;
 
   // ── Contract ─────────────────────────────────────────────────────────────────
-  @ApiPropertyOptional() @IsOptional() @IsString() contract_id?: string;
+  // '' = no contract (blank select); any other value must be a UUID (400, never a Postgres cast 500).
+  @ApiPropertyOptional() @IsOptional() @ValidateIf((_, v) => v !== '') @IsUUID() contract_id?: string;
 
   // ── Deprecated Portuguese names (CZ-042, ARTIST_DEPRECATED_FIELDS) ───────────
   @ApiPropertyOptional(DEPRECATED('stage_name')) @IsOptional() @IsString() @MaxLength(255) nome_artistico?: string;
   @ApiPropertyOptional(DEPRECATED('full_name')) @IsOptional() @IsString() @MaxLength(255) nome_civil?: string;
-  @ApiPropertyOptional(DEPRECATED('photo_url')) @IsOptional() @IsString() foto_url?: string;
-  @ApiPropertyOptional(DEPRECATED('gallery_urls')) @IsOptional() @IsArray() galeria_urls?: string[];
+  @ApiPropertyOptional(DEPRECATED('photo_url')) @IsOptional() @IsString() @IsHttpUrl() foto_url?: string;
+  @ApiPropertyOptional(DEPRECATED('gallery_urls')) @IsOptional() @IsArray() @IsHttpUrl({ each: true }) galeria_urls?: string[];
   @ApiPropertyOptional(DEPRECATED('specialties')) @IsOptional() @IsArray() especialidades?: string[];
-  @ApiPropertyOptional(DEPRECATED('personal_documents_url')) @IsOptional() @IsString() documentos_pessoais_url?: string;
-  @ApiPropertyOptional(DEPRECATED('press_kit_url')) @IsOptional() @IsString() presskit_url?: string;
+  @ApiPropertyOptional(DEPRECATED('personal_documents_url')) @IsOptional() @IsString() @IsHttpUrl() documentos_pessoais_url?: string;
+  @ApiPropertyOptional(DEPRECATED('press_kit_url')) @IsOptional() @IsString() @IsHttpUrl() presskit_url?: string;
   @ApiPropertyOptional(DEPRECATED('birth_date')) @IsOptional() @IsString() data_nascimento?: string;
   @ApiPropertyOptional(DEPRECATED('address')) @IsOptional() @IsString() @MaxLength(300) endereco?: string;
   @ApiPropertyOptional(DEPRECATED('phone')) @IsOptional() @IsString() telefone?: string;
@@ -172,7 +174,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional(DEPRECATED('executive_producer')) @IsOptional() @IsString() @MaxLength(255) produtor_executivo?: string;
   @ApiPropertyOptional(DEPRECATED('booking_agency')) @IsOptional() @IsString() @MaxLength(255) agencia_booking?: string;
   @ApiPropertyOptional(DEPRECATED('partner_label')) @IsOptional() @IsString() @MaxLength(255) label_parceira?: string;
-  @ApiPropertyOptional(DEPRECATED('contract_id')) @IsOptional() @IsString() contrato_id?: string;
+  @ApiPropertyOptional(DEPRECATED('contract_id')) @IsOptional() @ValidateIf((_, v) => v !== '') @IsUUID() contrato_id?: string;
   @ApiPropertyOptional(DEPRECATED('gender')) @IsOptional() @IsString() genero?: string;
   @ApiPropertyOptional(DEPRECATED('spotify_listeners')) @IsOptional() @IsNumber() spotify_ouvintes?: number;
   @ApiPropertyOptional(DEPRECATED('youtube_subscribers')) @IsOptional() @IsNumber() youtube_inscritos?: number;

@@ -79,4 +79,16 @@ describe('field-labels.pt-br — central label layer', () => {
     expect(FIELD_KEYS_BY_LABEL_PT_BR['link do spotify']).toBe('spotifyUrl');
     expect(FIELD_KEYS_BY_LABEL_PT_BR['nome do gestor de carreira']).toBe('managerName');
   });
+
+  // CT-D4: artist manager wording and metric labels (numbers, never "(link)").
+  it('artist manager contact labels share the "gestor de carreira" wording; metric labels never say "(link)"', () => {
+    expect(getFieldLabelPtBr('managerContact')).toBe('Contato do gestor de carreira');
+    expect(getFieldLabelPtBr('managerContactEncrypted')).toBe('Contato do gestor de carreira (criptografado)');
+    expect(getFieldLabelPtBr('soundcloudFollowers')).toBe('Seguidores no SoundCloud');
+    for (const key of ['spotifyListeners', 'youtubeSubscribers', 'deezerFans', 'appleMusicAlbums', 'soundcloudFollowers',
+      'instagramFollowers', 'tiktokFollowers', 'soundcloudSeguidoresUrl', 'appleMusicAlbunsUrl']) {
+      expect(getFieldLabelPtBr(key)).not.toMatch(/\(link\)/i);
+    }
+  });
 });
+

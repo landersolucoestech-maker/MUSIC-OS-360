@@ -48,12 +48,12 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | NC-040 | `leads.observacoesInternas` | proposed | NEEDS_PRODUCT_DECISION | no |
 | NC-041 | `transactions.forma_pagamento`/`tipo_pagamento` (unwritten columns — values live in `metadata.formaPagamento`/`tipoPagamento`) | proposed | NEEDS_PRODUCT_DECISION | no |
 | NC-042 | `billing.service.ts` `upsertStripeInvoice`/`upsertStripeSubscription` correctness bugs | done | BUG | no |
-| NC-043 | `works.origem_externa` | proposed | BLOCKED_PRODUCT_DECISION | no |
-| NC-044 | `works.origem_externa_id` | proposed | BLOCKED_PRODUCT_DECISION | no |
-| NC-045 | `works.origem_externa_sincronizado_em` | proposed | BLOCKED_PRODUCT_DECISION | no |
-| NC-046 | `phonograms.origem_externa` | proposed | BLOCKED_PRODUCT_DECISION | no |
-| NC-047 | `phonograms.origem_externa_id` | proposed | BLOCKED_PRODUCT_DECISION | no |
-| NC-048 | `phonograms.origem_externa_sincronizado_em` | proposed | BLOCKED_PRODUCT_DECISION | no |
+| NC-043 | `works.external_source` | approved | BLOCKED_PRODUCT_DECISION | no |
+| NC-044 | `works.external_source_id` | approved | BLOCKED_PRODUCT_DECISION | no |
+| NC-045 | `works.external_source_synced_at` | approved | BLOCKED_PRODUCT_DECISION | no |
+| NC-046 | `phonograms.external_source` | approved | BLOCKED_PRODUCT_DECISION | no |
+| NC-047 | `phonograms.external_source_id` | approved | BLOCKED_PRODUCT_DECISION | no |
+| NC-048 | `phonograms.external_source_synced_at` | approved | BLOCKED_PRODUCT_DECISION | no |
 | CZ-001 | HR / workforce administration module (web) | done | DONE | no |
 | CZ-002 | CRM contact (web) | done | DONE | no |
 | CZ-003 | Music release (web) | done | DONE | no |
@@ -97,6 +97,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-041 | Financial transaction (ledger entry) | done | DONE | no |
 | CZ-042 | Artist | done | DONE | no |
 | CZ-043 | Client (CRM contact) | done | DONE | no |
+| CZ-044 | Org-chart slugs (departments, positions, job functions) | done | DONE | no |
 
-Concepts: 91. Renames: 0. Exceptions: 302. Blockers: 14.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 75, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 92. Renames: 0. Exceptions: 368. Blockers: 14.
+By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 76, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

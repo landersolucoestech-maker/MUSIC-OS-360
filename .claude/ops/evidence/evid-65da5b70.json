@@ -1,0 +1,15 @@
+{
+  "id": "evid-65da5b70",
+  "createdAt": "2026-09-28T21:05:57.800Z",
+  "type": "COMMAND",
+  "label": "pnpm -s --filter @music-os-360/api verify:cz042-cz043-migrations",
+  "command": "pnpm -s --filter @music-os-360/api verify:cz042-cz043-migrations",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ artists: cleared bank_name (metadata null) wins over stale column\n✓ artists: cleared pix_key (metadata '') wins over stale column\n✓ artists: bank_account from metadata\n✓ artists: invalid date -> NULL\n✓ artists: invalid date kept in metadata\n✓ artists: over-long address -> NULL\n✓ artists: over-long address kept in metadata\n✓ artists: copied keys leave metadata\n✓ artists: profile_type case/space-insensitive\n✓ artists: specialties case-insensitive\n✓ artists: JSON-text relationships parsed + type mapped\n✓ artists: gender case-insensitive\n✓ clients: responsible_email backfilled\n✓ clients: cargo_responsavel backfilled\n✓ clients: empty interaction item stays {}\n✓ clients: copied keys leave metadata\n✓ releases: legacy statuses/types mapped\n✓ down: artist edits written back to legacy metadata keys\n✓ down: artist legacy columns hold the edits\n✓ down: client edit written back to legacy metadata key\n✓ down: status changed after up() is not reverted; planted legacy_status dropped\n✓ re-up: artist edits survive rollback + re-apply\n✓ re-up: client edit survives rollback + re-apply\n\n[verify-cz042-cz043] all checks passed",
+  "stderrTail": "",
+  "workspaceFingerprint": "a4f8b699711ff094a5fb7e7fa1300b77ce2b915b416ca95dfa7b94c490c88ca6",
+  "fingerprintStatus": "BOUND",
+  "head": "bc40b76314ab918aee1a97626fd67abcd1cd7f03",
+  "durationMs": 87397
+}

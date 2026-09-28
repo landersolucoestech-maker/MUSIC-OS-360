@@ -1,0 +1,12 @@
+{
+  "id": "evid-75952aaa",
+  "createdAt": "2026-09-28T16:39:32.623Z",
+  "type": "REVIEW",
+  "reviewer": "database-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "bc40b76: DB H1/H2 backfill resurrection + lossy rollback; M1-M3; lows",
+  "workspaceFingerprint": "09ca128b0c0cbf9bb095754c5b337e9531d75a91801a07dfb1a10433caee06ef",
+  "fingerprintStatus": "BOUND",
+  "head": "bc40b76314ab918aee1a97626fd67abcd1cd7f03"
+}

@@ -1,6 +1,6 @@
 import { exportValueLabel, valueFromExportLabel } from './value-labels.pt-br';
 import { sanitizeExcelCellValue } from '../export/export-format.service';
-import { canonicalImportValue } from '../import/import-value-canonicalizers';
+import { canonicalImportJsonColumn, canonicalImportValue } from '../import/import-value-canonicalizers';
 
 describe('report enum values — PT-BR in the spreadsheet, canonical in the database (round-trip)', () => {
   it('export writes the PT-BR label, never the raw technical value', () => {
@@ -24,4 +24,47 @@ describe('report enum values — PT-BR in the spreadsheet, canonical in the data
     expect(valueFromExportLabel('phonograms', 'media_type', 'Física')).toBe('physical');
     expect(valueFromExportLabel('transactions', 'type', 'Algo')).toBeNull();
   });
+
+  it('clients and artists enum columns export PT-BR labels, never raw English (CT-D2)', () => {
+    const cases: Array<[string, string, unknown, string]> = [
+      ['clients', 'person_type', 'individual', 'Pessoa física'],
+      ['clients', 'person_type', 'company', 'Pessoa jurídica'],
+      ['clients', 'priority', 'strategic', 'Estratégica'],
+      ['clients', 'status', 'prospect', 'Prospecto'],
+      ['artists', 'profile_type', 'managed', 'Com empresário'],
+      ['artists', 'gender', 'female', 'Feminino'],
+      ['artists', 'registration_status', 'active', 'Ativo'],
+      ['artists', 'specialties', ['dj', 'songwriter'], 'DJ | Compositor/Autor'],
+    ];
+    for (const [entity, column, value, label] of cases) {
+      expect(sanitizeExcelCellValue(value, { entity, column })).toBe(label);
+    }
+    // Non-enum lists are still skipped (never a raw JSON dump).
+    expect(sanitizeExcelCellValue(['https://cdn/x.png'], { entity: 'artists', column: 'gallery_urls' })).toBe('');
+  });
+
+  it('every clients/artists label round-trips through import back to the same canonical value', () => {
+    const columns: Array<[string, string, string[]]> = [
+      ['clients', 'person_type', ['individual', 'company']],
+      ['clients', 'priority', ['low', 'medium', 'high', 'strategic']],
+      ['artists', 'profile_type', ['independent', 'managed', 'record_label', 'publisher']],
+      ['artists', 'registration_status', ['active', 'inactive', 'suspended']],
+    ];
+    for (const [table, column, values] of columns) {
+      for (const value of values) {
+        const label = exportValueLabel(table, column, value)!;
+        expect(label).not.toBe(value);
+        expect(canonicalImportValue(table, column, label)).toBe(value);
+        expect(canonicalImportValue(table, column, value)).toBe(value); // raw value still accepted
+      }
+    }
+    const specialties = ['dj', 'dj_producer', 'songwriter', 'performer', 'producer'];
+    const cell = exportValueLabel('artists', 'specialties', specialties)!;
+    expect(JSON.parse(canonicalImportValue('artists', 'specialties', cell) as string)).toEqual(specialties);
+    for (const gender of ['male', 'female']) {
+      const label = exportValueLabel('artists', 'gender', gender)!;
+      expect(canonicalImportJsonColumn('artists', 'metadata', { gender: label })).toEqual({ gender });
+    }
+  });
 });
+
