@@ -23,6 +23,7 @@ import {
   InventoryStatus,
   InvoiceStatus,
   LeadStatus,
+  LicenseStatus,
   LeaveRequestStatus,
   PayrollStatus,
   PhonogramStatus,
@@ -262,6 +263,14 @@ export const INVENTORY_STATUS_LABELS_PT_BR: Readonly<Record<InventoryStatus, str
   [InventoryStatus.RESERVED]: "Reservado",
 };
 
+export const LICENSE_STATUS_LABELS_PT_BR: Readonly<Record<LicenseStatus, string>> = {
+  [LicenseStatus.PENDING]: "Pendente",
+  [LicenseStatus.NEGOTIATION]: "Em Negociação",
+  [LicenseStatus.PROPOSAL]: "Proposta Enviada",
+  [LicenseStatus.ACTIVE]: "Ativa",
+  [LicenseStatus.EXPIRED]: "Expirada",
+};
+
 export const ARTIST_GOAL_STATUS_LABELS_PT_BR: Readonly<Record<ArtistGoalStatus, string>> = {
   [ArtistGoalStatus.IN_PROGRESS]: "Em andamento",
   [ArtistGoalStatus.COMPLETED]: "Concluída",
@@ -315,6 +324,7 @@ export const STATUS_LABELS_PT_BR_BY_DOMAIN = {
   artist_goal: ARTIST_GOAL_STATUS_LABELS_PT_BR,
   ecad_report: ECAD_REPORT_STATUS_LABELS_PT_BR,
   inventory: INVENTORY_STATUS_LABELS_PT_BR,
+  license: LICENSE_STATUS_LABELS_PT_BR,
   quote: QUOTE_STATUS_LABELS_PT_BR,
   billing: BILLING_STATUS_LABELS_PT_BR,
 } as const;

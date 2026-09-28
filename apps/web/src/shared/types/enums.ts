@@ -32,6 +32,7 @@ import type {
   EmployeeStatus,
   LeaveRequestStatus,
   InventoryStatus,
+  LicenseStatus,
 } from '@music-os-360/types';
 
 // ── Artist ───────────────────────────────────────────────────────────────────
@@ -278,21 +279,8 @@ export type InventoryStatusValue = `${InventoryStatus}`;
 
 // ── License ───────────────────────────────────────────────────────────────────
 
-export type LicenseType =
-  | "sincronia"
-  | "mecanica"
-  | "performance"
-  | "impressao"
-  | "digital"
-  | "streaming"
-  | "outro";
-
-export type LicenseStatus =
-  | "ativo"
-  | "pendente"
-  | "vencido"
-  | "cancelado"
-  | "encerrado";
+/** Derived from LicenseStatus — source of truth: @music-os-360/types */
+export type LicenseStatusValue = `${LicenseStatus}`;
 
 // ── Monitoring / Takedown ─────────────────────────────────────────────────────
 

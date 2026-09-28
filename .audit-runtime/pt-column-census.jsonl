@@ -20,9 +20,6 @@
 {"table":"invoices","className":"InvoiceEntity","field":"data_emissao","columnOverride":null,"type":"timestamp"}
 {"table":"invoices","className":"InvoiceEntity","field":"data_vencimento","columnOverride":null,"type":"timestamp"}
 {"table":"invoices","className":"InvoiceEntity","field":"numero","columnOverride":null,"type":"varchar"}
-{"table":"licenses","className":"LicenseEntity","field":"artista","columnOverride":null,"type":"varchar"}
-{"table":"licenses","className":"LicenseEntity","field":"obra_musical","columnOverride":null,"type":"varchar"}
-{"table":"licenses","className":"LicenseEntity","field":"valor","columnOverride":null,"type":"decimal"}
 {"table":"phonograms","className":"PhonogramEntity","field":"data_lancamento","columnOverride":null,"type":"date"}
 {"table":"phonograms","className":"PhonogramEntity","field":"duracao_min","columnOverride":null,"type":"integer"}
 {"table":"phonograms","className":"PhonogramEntity","field":"duracao_seg","columnOverride":null,"type":"integer"}

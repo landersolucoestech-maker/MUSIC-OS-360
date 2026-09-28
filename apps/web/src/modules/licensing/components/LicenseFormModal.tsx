@@ -16,8 +16,16 @@ import { useLicenses } from "@/modules/licensing/hooks/useLicenses";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
-import { workArtistLabel } from "@/modules/licensing/lib/license-format";
+import {
+  LICENSE_STATUS_VALUES,
+  LICENSE_TYPE_OPTIONS,
+  TARGET_MEDIA_OPTIONS,
+  TERRITORY_OPTIONS,
+  licenseStatusLabel,
+  workArtistLabel,
+} from "@/modules/licensing/lib/license-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
+import { LicenseStatus } from "@music-os-360/types";
 
 interface ClientOption { id: string; name: string }
 
@@ -28,32 +36,24 @@ interface LicenseFormModalProps {
   mode: "create" | "edit" | "view";
 }
 
-const licenseTypes = ["Sync TV", "Sync Cinema", "Sync Publicidade", "Sync Games", "Sync Digital", "Master Use", "Mecânica"];
-const destinationMedia = ["TV Aberta", "TV Fechada", "Cinema", "Streaming", "Redes Sociais", "Publicidade Digital", "Games", "Outro"];
-const territories = ["Brasil", "América Latina", "Mundial", "Estados Unidos", "Europa", "Ásia"];
-const statusOptions = [
-  { value: "ativa", label: "Ativa" },
-  { value: "negociacao", label: "Em Negociação" },
-  { value: "proposta", label: "Proposta Enviada" },
-  { value: "expirada", label: "Expirada" },
-];
+const statusOptions = LICENSE_STATUS_VALUES.map((value) => ({ value, label: licenseStatusLabel(value) }));
 
 const DEFAULT_VALUES: LicenseFormData = {
   title: "",
-  tipoLicenca: "",
+  licenseType: "",
   workId: "",
   clientId: "",
-  projeto: "",
-  midiaDestino: "",
-  territorio: "",
-  status: "negociacao",
+  projectName: "",
+  targetMedia: "",
+  territory: "",
+  status: LicenseStatus.NEGOTIATION,
   startDate: "",
   endDate: "",
   remunerationType: "FIXED",
   currency: "BRL",
   amount: "",
   percentage: "",
-  observacoes: "",
+  notes: "",
 };
 
 export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }: LicenseFormModalProps) {
@@ -87,20 +87,20 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
     if (license) {
       reset({
         title: license.title || "",
-        tipoLicenca: license.type || "",
+        licenseType: license.type || "",
         workId: license.work_id || "",
         clientId: license.client_id || "",
-        projeto: license.projeto || "",
-        midiaDestino: license.midia_destino || "",
-        territorio: license.territorio || "",
-        status: license.status || "negociacao",
+        projectName: license.project_name || "",
+        targetMedia: license.target_media || "",
+        territory: license.territory || "",
+        status: license.status || LicenseStatus.NEGOTIATION,
         startDate: license.start_date || "",
         endDate: license.end_date || "",
         remunerationType: license.remuneration_type || "FIXED",
         currency: license.currency || "BRL",
-        amount: (license.amount ?? license.valor) != null ? String(license.amount ?? license.valor) : "",
+        amount: license.amount != null ? String(license.amount) : "",
         percentage: license.percentage != null ? String(license.percentage) : "",
-        observacoes: license.notes || "",
+        notes: license.notes || "",
       });
     } else {
       reset(DEFAULT_VALUES);
@@ -115,21 +115,20 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
     const pctNum = data.percentage ? Number(data.percentage) : null;
     return {
       title:            data.title,
-      type:              data.tipoLicenca || undefined,
+      type:              data.licenseType || undefined,
       work_id:           data.workId,
       client_id:        data.clientId,
-      projeto:           data.projeto || undefined,
-      midia_destino:     data.midiaDestino || undefined,
-      territorio:        data.territorio || undefined,
-      status:            data.status || "negociacao",
+      project_name:      data.projectName || undefined,
+      target_media:      data.targetMedia || undefined,
+      territory:         data.territory || undefined,
+      status:            data.status || LicenseStatus.NEGOTIATION,
       start_date:       data.startDate || undefined,
       end_date:          data.endDate || undefined,
       remuneration_type: data.remunerationType,
       currency:          isFixed || isBoth ? data.currency : null,
       amount:            isFixed || isBoth ? amountNum : null,
       percentage:        isPct || isBoth ? pctNum : null,
-      valor:             isFixed || isBoth ? amountNum : null, // back-compat (legacy field)
-      notes:             data.observacoes || undefined,
+      notes:             data.notes || undefined,
     };
   };
 
@@ -187,16 +186,16 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
               <div className="space-y-2">
                 <Label>Tipo de Licença</Label>
                 <Controller
-                  name="tipoLicenca"
+                  name="licenseType"
                   control={control}
                   render={({ field }) => (
                     <Select value={field.value ?? ""} onValueChange={field.onChange} disabled={isViewMode}>
-                      <SelectTrigger data-testid="select-type-licenca">
+                      <SelectTrigger data-testid="select-license-type">
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        {licenseTypes.map(type => (
-                          <SelectItem key={type} value={type.toLowerCase().replace(/ /g, "_")}>{type}</SelectItem>
+                        {LICENSE_TYPE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -234,7 +233,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
                   readOnly
                   disabled
                   placeholder="Definido pela obra selecionada"
-                  data-testid="input-artista"
+                  data-testid="input-artist"
                 />
               </div>
             </div>
@@ -262,7 +261,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
                       searchPlaceholder="Buscar cliente…"
                       disabled={isViewMode}
                       invalid={!!errors.clientId}
-                      data-testid="select-cliente"
+                      data-testid="select-client"
                     />
                   )}
                 />
@@ -271,12 +270,12 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
               <div className="space-y-2">
                 <Label>Projeto</Label>
                 <Input
-                  {...register("projeto")}
+                  {...register("projectName")}
                   disabled={isViewMode}
                   placeholder="Nome do projeto/campanha"
-                  data-testid="input-projeto"
+                  data-testid="input-project-name"
                 />
-                <FieldError error={errors.projeto?.message} />
+                <FieldError error={errors.projectName?.message} />
               </div>
             </div>
 
@@ -284,16 +283,16 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
               <div className="space-y-2">
                 <Label>Mídia de Destino</Label>
                 <Controller
-                  name="midiaDestino"
+                  name="targetMedia"
                   control={control}
                   render={({ field }) => (
                     <Select value={field.value ?? ""} onValueChange={field.onChange} disabled={isViewMode}>
-                      <SelectTrigger data-testid="select-midia-destino">
+                      <SelectTrigger data-testid="select-target-media">
                         <SelectValue placeholder="Selecione a mídia" />
                       </SelectTrigger>
                       <SelectContent>
-                        {destinationMedia.map(media => (
-                          <SelectItem key={media} value={media.toLowerCase().replace(/ /g, "_")}>{media}</SelectItem>
+                        {TARGET_MEDIA_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -303,16 +302,16 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
               <div className="space-y-2">
                 <Label>Território</Label>
                 <Controller
-                  name="territorio"
+                  name="territory"
                   control={control}
                   render={({ field }) => (
                     <Select value={field.value ?? ""} onValueChange={field.onChange} disabled={isViewMode}>
-                      <SelectTrigger data-testid="select-territorio">
+                      <SelectTrigger data-testid="select-territory">
                         <SelectValue placeholder="Selecione o território" />
                       </SelectTrigger>
                       <SelectContent>
-                        {territories.map(t => (
-                          <SelectItem key={t} value={t.toLowerCase().replace(/ /g, "_")}>{t}</SelectItem>
+                        {TERRITORY_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -443,13 +442,13 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
           <div className="space-y-2">
             <Label>Observações</Label>
             <Textarea
-              {...register("observacoes")}
+              {...register("notes")}
               disabled={isViewMode}
               placeholder="Observações adicionais..."
               rows={3}
-              data-testid="textarea-observacoes"
+              data-testid="textarea-notes"
             />
-            <FieldError error={errors.observacoes?.message} />
+            <FieldError error={errors.notes?.message} />
           </div>
 
           <DialogFooter>

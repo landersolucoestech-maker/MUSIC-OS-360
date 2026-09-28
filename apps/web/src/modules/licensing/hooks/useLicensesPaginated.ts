@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { LicenseWithRelations } from "../types/licensing.types";
+import type { License } from "../types/licensing.types";
 
 export interface UseLicensesPaginatedParams {
   /** 0-indexed, same convention as usePagination()/TablePagination. */
@@ -11,15 +11,15 @@ export interface UseLicensesPaginatedParams {
   search?: string;
   /** One status ("ativa") or several separated by commas ("negociacao,proposta") — the "Propostas" tab spans two statuses. */
   status?: string;
-  midia?: string;
+  targetMedia?: string;
 }
 
-export function useLicensesPaginated({ page, pageSize, search, status, midia: media }: UseLicensesPaginatedParams) {
+export function useLicensesPaginated({ page, pageSize, search, status, targetMedia }: UseLicensesPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (media) filters.midia_destino = media;
+  if (targetMedia) filters.target_media = targetMedia;
 
-  const result = usePaginatedDataQuery<LicenseWithRelations>({
+  const result = usePaginatedDataQuery<License>({
     queryKey: [...QUERY_KEYS.LICENSES],
     table: "licencas",
     page: page + 1,

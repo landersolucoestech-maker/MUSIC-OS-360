@@ -45,6 +45,7 @@ import {
   PayrollStatus,
   LeaveRequestStatus,
   InventoryStatus,
+  LicenseStatus,
   ArtistGoalStatus,
   NotificationType,
   IdentifierType,
@@ -2572,20 +2573,23 @@ export class LicenseEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 500 }) title: string;
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) obra_musical: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) artista: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) work_title: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) artist_name: string | null;
   @Column({ type: 'uuid', nullable: true }) client_id: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) cliente: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) projeto: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) client_name: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) project_name: string | null;
+  /** sync_tv | sync_cinema | sync_advertising | sync_games | sync_digital | master_use | mechanical */
   @Column({ type: 'varchar', length: 100, nullable: true }) type: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) tipo_uso: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) midia_destino: string | null;
-  @Column({ type: 'varchar', length: 150, nullable: true }) territorio: string | null;
-  @Column({ type: 'varchar', length: 50, default: 'pendente' }) status: string;
+  @Column({ type: 'varchar', length: 255, nullable: true }) usage_type: string | null;
+  /** free_tv | pay_tv | cinema | streaming | social_media | digital_advertising | games | other */
+  @Column({ type: 'varchar', length: 255, nullable: true }) target_media: string | null;
+  /** brazil | latin_america | worldwide | united_states | europe | asia */
+  @Column({ type: 'varchar', length: 150, nullable: true }) territory: string | null;
+  @Column({ type: 'varchar', length: 50, default: LicenseStatus.PENDING }) status: LicenseStatus;
   @Column({ type: 'date', nullable: true }) start_date: string | null;
   @Column({ type: 'date', nullable: true }) end_date: string | null;
-  @Column({ type: 'decimal', precision: 14, scale: 2, nullable: true }) valor: string | null;
-  @Column({ type: 'varchar', length: 10, default: 'BRL' }) moeda: string;
+  @Column({ type: 'decimal', precision: 14, scale: 2, nullable: true }) amount: string | null;
+  @Column({ type: 'varchar', length: 10, default: 'BRL' }) currency: string;
   @Column({ type: 'text', nullable: true }) notes: string | null;
   // License form fields (2026-07-12 rule: 1 column per field)
   @Column({ type: 'varchar', length: 50, nullable: true }) remuneration_type: string | null;

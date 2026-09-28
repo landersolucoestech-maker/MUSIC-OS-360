@@ -95,10 +95,11 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
     const dto = source('../modules/licensing/dto/licensing.dto.ts');
     const service = source('../modules/licensing/licensing.service.ts');
     expectFields(dto, ['remuneration_type', 'currency', 'amount', 'percentage']);
-    expectFields(entity, ['percentage'], (field) => `\\b${field}\\b`);
-    expect(service).toContain('{ valor: amount ?? legacyAmount ?? null }');
-    expect(service).toContain('{ moeda: currency ?? legacyCurrency ?? null }');
-    expect(service).toContain('...(percentage !== undefined ? { percentage } : {})');
+    // CZ-035: amount/currency are the physical columns (formerly valor/moeda,
+    // still accepted as deprecated input via LICENSE_DEPRECATED_FIELDS).
+    expectFields(entity, ['amount', 'currency', 'percentage'], (field) => `\\b${field}\\b`);
+    expect(service).toContain('applyDeprecatedFieldAliases(dto as Record<string, unknown>, LICENSE_DEPRECATED_FIELDS)');
+    expect(service).toContain("amount: raw['amount'] == null ? null : Number(raw['amount'])");
     expect(service).toContain("percentage: raw['percentage'] == null ? null : Number(raw['percentage'])");
   });
 });

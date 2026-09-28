@@ -356,14 +356,14 @@ const LICENSES_CONTRACT: ReportFormContract = {
   tableName: 'licenses',
   identityColumn: 'title',
   fields: [
-    col('title'), col('type'), col('work_id'), col('obra_musical'), col('artista'),
-    col('client_id'), col('cliente'), col('projeto'), col('tipo_uso'),
-    col('midia_destino'), col('territorio'), col('status'),
-    col('start_date'), col('end_date'), col('valor'), col('moeda'), col('notes'),
+    col('title'), col('type'), col('work_id'), col('workTitle', 'work_title'), col('artist', 'artist_name'),
+    col('client_id'), col('clientName', 'client_name'), col('projectName', 'project_name'), col('usageType', 'usage_type'),
+    col('targetMedia', 'target_media'), col('territory'), col('status'),
+    col('start_date'), col('end_date'), col('amount'), col('currency'), col('notes'),
   ],
   excludedFormFields: {},
-  filterableColumns: ['status', 'type', 'territorio'],
-  searchableColumns: ['title', 'obra_musical', 'artista', 'cliente', 'projeto'],
+  filterableColumns: ['status', 'type', 'territory'],
+  searchableColumns: ['title', 'work_title', 'artist_name', 'client_name', 'project_name'],
 };
 
 // ─── Takedowns ────────────────────────────────────────────────────────────────

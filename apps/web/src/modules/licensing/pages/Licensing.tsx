@@ -23,20 +23,15 @@ import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
 import { useLicenses } from "@/modules/licensing/hooks/useLicenses";
 import { useLicensesPaginated, useLicensesStats } from "@/modules/licensing/hooks/useLicensesPaginated";
-import { formatRemuneration, workArtistLabel, mediaLabel } from "@/modules/licensing/lib/license-format";
+import { LICENSE_STATUS_VALUES, formatRemuneration, workArtistLabel, mediaLabel, licenseStatusLabel, licenseStatusVariant } from "@/modules/licensing/lib/license-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 import { formatCurrency } from "@/shared/lib/format-utils";
 import { FeatureGate } from '@/shared/components/FeatureGate';
+import { LicenseStatus } from "@music-os-360/types";
 
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case "ativa": return <Badge variant="success">Ativa</Badge>;
-    case "negociacao": return <Badge variant="warning">Em Negociação</Badge>;
-    case "proposta": return <Badge variant="info">Proposta Enviada</Badge>;
-    case "expirada": return <Badge variant="danger">Expirada</Badge>;
-    default: return <Badge variant="neutral">{status?.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}</Badge>;
-  }
-};
+const getStatusBadge = (status?: string | null) => (
+  <Badge variant={licenseStatusVariant(status)}>{licenseStatusLabel(status)}</Badge>
+);
 
 export default function Licensing() {
   // Task H: useLicenses() (fetch-all) remains only for mutations (delete) and the
@@ -44,7 +39,7 @@ export default function Licensing() {
   // useLicensesPaginated() (server-side, one page at a time).
   const { licenses, isLoading, deleteLicense } = useLicenses();
 
-  const [activeTab, setActiveTab] = useState("catalogo");
+  const [activeTab, setActiveTab] = useState("catalog");
   const [licenseModal, setLicenseModal] = useState<{ open: boolean; mode: "create" | "edit"; licenca?: any }>({ open: false, mode: "create" });
   const [viewModal, setViewModal] = useState<{ open: boolean; licenca?: any }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; licenca?: any }>({ open: false });
@@ -59,8 +54,8 @@ export default function Licensing() {
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   // Task H: real server-side pagination — the page changes the request (it never
-  // slices an already-downloaded list). Only the "catalogo" tab has media search/filter;
-  // "propostas"/"ativas" are a fixed status applied on the backend.
+  // slices an already-downloaded list). Only the "catalog" tab has media search/filter;
+  // "proposals"/"active" are a fixed status applied on the backend.
   // Since only the active tab is rendered at a time, a single paginated call
   // is enough — it is the `status` filter that changes with `activeTab`.
   const [page, setPage] = useState(0);
@@ -68,8 +63,8 @@ export default function Licensing() {
   useEffect(() => { setPage(0); }, [debouncedSearch, statusFilter, mediaFilter, activeTab]);
 
   const tabStatus =
-    activeTab === "propostas" ? "negociacao,proposta" :
-    activeTab === "ativas" ? "ativa" :
+    activeTab === "proposals" ? `${LicenseStatus.NEGOTIATION},${LicenseStatus.PROPOSAL}` :
+    activeTab === "active" ? LicenseStatus.ACTIVE :
     (statusFilter !== "all" ? statusFilter : undefined);
 
   const {
@@ -81,9 +76,9 @@ export default function Licensing() {
   } = useLicensesPaginated({
     page,
     pageSize,
-    search: activeTab === "catalogo" ? (debouncedSearch || undefined) : undefined,
+    search: activeTab === "catalog" ? (debouncedSearch || undefined) : undefined,
     status: tabStatus,
-    midia: activeTab === "catalogo" && mediaFilter !== "all" ? mediaFilter : undefined,
+    targetMedia: activeTab === "catalog" && mediaFilter !== "all" ? mediaFilter : undefined,
   });
 
   // Task J: per-row work title/client name, resolved by direct ID
@@ -203,10 +198,10 @@ export default function Licensing() {
 
   const metrics = useMemo(() => ({
     total: stats.total,
-    ativas: stats.byGroup["ativa"] ?? 0,
-    propostas: (stats.byGroup["negociacao"] ?? 0) + (stats.byGroup["proposta"] ?? 0),
-    expiradas: stats.byGroup["expirada"] ?? 0,
-    valorTotal: stats.sumByGroup?.["ativa"] ?? 0,
+    active: stats.byGroup[LicenseStatus.ACTIVE] ?? 0,
+    proposals: (stats.byGroup[LicenseStatus.NEGOTIATION] ?? 0) + (stats.byGroup[LicenseStatus.PROPOSAL] ?? 0),
+    expired: stats.byGroup[LicenseStatus.EXPIRED] ?? 0,
+    activeTotalAmount: stats.sumByGroup?.[LicenseStatus.ACTIVE] ?? 0,
   }), [stats]);
 
   const headerActions = (
@@ -232,19 +227,19 @@ export default function Licensing() {
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           <MetricCard title="Total Licenças" value={metrics.total} icon={FileText} accent="primary" />
-          <MetricCard title="Licenças Ativas" value={metrics.ativas} icon={Music} accent="success" />
-          <MetricCard title="Em Negociação" value={metrics.propostas} icon={Clock} accent="warning" />
-          <MetricCard title="Expirado" value={metrics.expiradas} icon={Shield} accent="destructive" />
-          <MetricCard title="Valor Total" value={formatCurrency(metrics.valorTotal)} icon={DollarSign} accent="primary" />
+          <MetricCard title="Licenças Ativas" value={metrics.active} icon={Music} accent="success" />
+          <MetricCard title="Em Negociação" value={metrics.proposals} icon={Clock} accent="warning" />
+          <MetricCard title="Expirado" value={metrics.expired} icon={Shield} accent="destructive" />
+          <MetricCard title="Valor Total" value={formatCurrency(metrics.activeTotalAmount)} icon={DollarSign} accent="primary" />
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant={activeTab === "catalogo" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("catalogo")} className={activeTab === "catalogo" ? "bg-muted text-foreground hover:bg-muted" : ""}>Catálogo de Licenças</Button>
-          <Button variant={activeTab === "propostas" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("propostas")} className={activeTab === "propostas" ? "bg-muted text-foreground hover:bg-muted" : ""}>Propostas</Button>
-          <Button variant={activeTab === "ativas" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("ativas")} className={activeTab === "ativas" ? "bg-muted text-foreground hover:bg-muted" : ""}>Licenças Ativas</Button>
+          <Button variant={activeTab === "catalog" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("catalog")} className={activeTab === "catalog" ? "bg-muted text-foreground hover:bg-muted" : ""}>Catálogo de Licenças</Button>
+          <Button variant={activeTab === "proposals" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("proposals")} className={activeTab === "proposals" ? "bg-muted text-foreground hover:bg-muted" : ""}>Propostas</Button>
+          <Button variant={activeTab === "active" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("active")} className={activeTab === "active" ? "bg-muted text-foreground hover:bg-muted" : ""}>Licenças Ativas</Button>
         </div>
 
-        {activeTab === "catalogo" && (
+        {activeTab === "catalog" && (
           <>
             <div className="flex flex-wrap items-center gap-3 rounded-lg bg-muted/30 p-3">
               <div className="relative min-w-[240px] flex-1">
@@ -260,10 +255,9 @@ export default function Licensing() {
                 <SelectTrigger className="h-8 w-auto min-w-[126px] shrink-0 bg-card border-border text-sm"><SelectValue placeholder="Todos Status" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos Status</SelectItem>
-                  <SelectItem value="ativa">Ativa</SelectItem>
-                  <SelectItem value="negociacao">Em Negociação</SelectItem>
-                  <SelectItem value="proposta">Proposta Enviada</SelectItem>
-                  <SelectItem value="expirada">Expirada</SelectItem>
+                  {LICENSE_STATUS_VALUES.map((value) => (
+                    <SelectItem key={value} value={value}>{licenseStatusLabel(value)}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Select value={mediaFilter} onValueChange={setMediaFilter}>
@@ -324,7 +318,7 @@ export default function Licensing() {
                           </div>
                         </TableCell>
                         <TableCell>{clientNameOf(license) ?? "—"}</TableCell>
-                        <TableCell>{license.midia_destino ? <Badge variant="neutral">{mediaLabel(license.midia_destino)}</Badge> : "—"}</TableCell>
+                        <TableCell>{license.target_media ? <Badge variant="neutral">{mediaLabel(license.target_media)}</Badge> : "—"}</TableCell>
                         <TableCell className="font-semibold text-success">{formatRemuneration(license)}</TableCell>
                         <TableCell>{getStatusBadge(license.status ?? "")}</TableCell>
                         <TableCell>
@@ -379,14 +373,14 @@ export default function Licensing() {
           </>
         )}
 
-        {activeTab === "propostas" && (
+        {activeTab === "proposals" && (
           <Card>
             <CardContent className="p-6">
               <ListSectionHeader
                 title="Propostas em Andamento"
                 count={total}
                 description="Acompanhe propostas de licenciamento em negociação e aguardando resposta"
-                action={renderSelectAction(pageItems, "checkbox-select-all-propostas")}
+                action={renderSelectAction(pageItems, "checkbox-select-all-proposals")}
               />
               {pageItems.length > 0 ? (
                 <>
@@ -411,7 +405,7 @@ export default function Licensing() {
                               checked={selectedLicenseIds.includes(license.id)}
                               onCheckedChange={() => toggleSelectLicense(license.id)}
                               aria-label={`Selecionar licença ${license.title || license.id}`}
-                              data-testid={`checkbox-proposta-${license.id}`}
+                              data-testid={`checkbox-proposal-${license.id}`}
                             />
                           </TableCell>
                           <TableCell className="font-medium">{license.title || "—"}</TableCell>
@@ -422,7 +416,7 @@ export default function Licensing() {
                             </div>
                           </TableCell>
                           <TableCell>{clientNameOf(license) ?? "—"}</TableCell>
-                          <TableCell>{license.midia_destino ? <Badge variant="neutral">{mediaLabel(license.midia_destino)}</Badge> : "—"}</TableCell>
+                          <TableCell>{license.target_media ? <Badge variant="neutral">{mediaLabel(license.target_media)}</Badge> : "—"}</TableCell>
                           <TableCell className="font-semibold text-success">{formatRemuneration(license)}</TableCell>
                           <TableCell>{getStatusBadge(license.status ?? "")}</TableCell>
                           <TableCell>
@@ -474,14 +468,14 @@ export default function Licensing() {
           </Card>
         )}
 
-        {activeTab === "ativas" && (
+        {activeTab === "active" && (
           <Card>
             <CardContent className="p-6">
               <ListSectionHeader
                 title="Licenças Ativas"
                 count={total}
                 description="Acompanhe licenças ativas, clientes, mídias, vigência e valores"
-                action={renderSelectAction(pageItems, "checkbox-select-all-ativas")}
+                action={renderSelectAction(pageItems, "checkbox-select-all-active")}
               />
               {pageItems.length > 0 ? (
                 <>
@@ -517,7 +511,7 @@ export default function Licensing() {
                             </div>
                           </TableCell>
                           <TableCell>{clientNameOf(license) ?? "—"}</TableCell>
-                          <TableCell>{license.midia_destino ? <Badge variant="neutral">{mediaLabel(license.midia_destino)}</Badge> : "—"}</TableCell>
+                          <TableCell>{license.target_media ? <Badge variant="neutral">{mediaLabel(license.target_media)}</Badge> : "—"}</TableCell>
                           <TableCell className="font-semibold text-success">{formatRemuneration(license)}</TableCell>
                           <TableCell>{getStatusBadge(license.status ?? "")}</TableCell>
                           <TableCell>

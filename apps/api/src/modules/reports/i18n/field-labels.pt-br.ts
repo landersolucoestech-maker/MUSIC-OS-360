@@ -651,6 +651,12 @@ export const FIELD_LABELS_PT_BR = {
   reason: 'Motivo',
   identifiedAt: 'Data de identificação',
   evidence: 'Evidências',
+  // licenses (CZ-035) — same headers as the pre-rename columns.
+  workTitle: 'Obra musical',
+  clientName: 'Cliente',
+  projectName: 'Projeto',
+  usageType: 'Tipo de uso',
+  targetMedia: 'Mídia de destino',
   campaignId: 'Campanha',
 
   // ── Parte 89 — Briefing ──────────────────────────────────────────────────────

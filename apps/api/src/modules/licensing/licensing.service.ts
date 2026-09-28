@@ -6,6 +6,13 @@ import { groupCount, type GroupStatsResult } from '../../common/stats/group-coun
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import type { CreateLicenseDto, UpdateLicenseDto, QueryLicenseDto } from './dto/licensing.dto';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import {
+  LICENSE_DEPRECATED_FIELDS,
+  LICENSE_QUERY_DEPRECATED_FIELDS,
+  canonicalLicenseStatusFilter,
+  canonicalLicenseValue,
+} from './license-vocabulary';
 
 @Injectable()
 export class LicensingService {
@@ -23,59 +30,50 @@ export class LicensingService {
   }
 
   /**
-   * `amount` and `currency` correspond to the legacy physical columns valor/moeda.
-   * `percentage` corresponds to the canonical physical column `licenses.percentage`.
-   * The mapping is explicit and symmetric for creating, editing and re-reading the modal.
+   * Deprecated field names and values -> canonical (CZ-035). `amount`,
+   * `currency` and `percentage` are physical columns; the mapping is explicit
+   * and symmetric for creating, editing and re-reading the modal.
    */
   private normalizePayload(
     dto: CreateLicenseDto | UpdateLicenseDto,
   ): Record<string, unknown> {
-    const {
-      amount,
-      currency,
-      percentage,
-      valor: legacyAmount,
-      moeda: legacyCurrency,
-      ...rest
-    } = dto;
-
-    return {
-      ...rest,
-      ...(amount !== undefined || legacyAmount !== undefined ? { valor: amount ?? legacyAmount ?? null } : {}),
-      ...(currency !== undefined || legacyCurrency !== undefined ? { moeda: currency ?? legacyCurrency ?? null } : {}),
-      ...(percentage !== undefined ? { percentage } : {}),
-    };
+    const out = applyDeprecatedFieldAliases(dto as Record<string, unknown>, LICENSE_DEPRECATED_FIELDS);
+    for (const field of ['status', 'type', 'target_media', 'territory']) {
+      if (out[field] !== undefined) out[field] = canonicalLicenseValue(field, out[field]);
+    }
+    return out;
   }
 
   private mapLicense(entity: LicenseEntity): Record<string, unknown> {
     const raw = entity as unknown as Record<string, unknown>;
     return {
       ...raw,
-      amount: raw['valor'] ?? null,
-      currency: raw['moeda'] ?? 'BRL',
+      amount: raw['amount'] == null ? null : Number(raw['amount']),
+      currency: raw['currency'] ?? 'BRL',
       percentage: raw['percentage'] == null ? null : Number(raw['percentage']),
     };
   }
 
-  async list(tenantId: string, query: QueryLicenseDto) {
+  async list(tenantId: string, input: QueryLicenseDto) {
+    const query = applyDeprecatedFieldAliases(input, LICENSE_QUERY_DEPRECATED_FIELDS);
     const qb = this.repository.createQueryBuilder('l')
       .where('l.tenant_id = :tenantId', { tenantId })
       .andWhere('l.deleted_at IS NULL');
 
     if (query.status) {
-      // The "Propostas" tab of Licensing.tsx spans negociacao+proposta —
+      // The proposals tab of Licensing.tsx spans negotiation+proposal —
       // accepts comma-separated statuses and uses IN when there is more than one.
-      const statuses = query.status.split(',').map((s) => s.trim()).filter(Boolean);
+      const statuses = canonicalLicenseStatusFilter(query.status);
       if (statuses.length > 1) qb.andWhere('l.status IN (:...statuses)', { statuses });
       else if (statuses.length === 1) qb.andWhere('l.status = :status', { status: statuses[0] });
     }
     if (query.type) qb.andWhere('l.type = :type', { type: query.type });
     if (query.work_id) qb.andWhere('l.work_id = :workId', { workId: query.work_id });
     if (query.client_id) qb.andWhere('l.client_id = :clientId', { clientId: query.client_id });
-    if (query.midia_destino) qb.andWhere('l.midia_destino ILIKE :midia', { midia: `%${query.midia_destino}%` });
+    if (query.target_media) qb.andWhere('l.target_media ILIKE :media', { media: `%${query.target_media}%` });
     if (query.search) {
       qb.andWhere(
-        '(l.title ILIKE :search OR l.projeto ILIKE :search OR l.artista ILIKE :search OR l.cliente ILIKE :search)',
+        '(l.title ILIKE :search OR l.project_name ILIKE :search OR l.artist_name ILIKE :search OR l.client_name ILIKE :search)',
         { search: `%${query.search}%` },
       );
     }
@@ -92,10 +90,10 @@ export class LicensingService {
   }
 
   /**
-   * Count + sum of `valor` per status, over the whole tenant (not the
+   * Count + sum of `amount` per status, over the whole tenant (not the
    * current page) — Task H: exact KPIs without downloading the whole table. The 3
    * tabs (catalog/proposals/active) and the "Valor Total" card (sum only
-   * of status=ativa) of Licensing.tsx now read this map instead of the
+   * of status=active) of Licensing.tsx now read this map instead of the
    * full license list.
    */
   async stats(tenantId: string): Promise<GroupStatsResult> {
@@ -103,7 +101,7 @@ export class LicensingService {
       .createQueryBuilder('l')
       .where('l.tenant_id = :tenantId', { tenantId })
       .andWhere('l.deleted_at IS NULL');
-    return groupCount(qb, 'l', 'status', 'valor');
+    return groupCount(qb, 'l', 'status', 'amount');
   }
 
   async findById(tenantId: string, id: string): Promise<Record<string, unknown>> {

@@ -1,23 +1,28 @@
-import type { ClientRef } from "@/shared/types/refs";
-import type { LicenseType, LicenseStatus } from "@/shared/types/enums";
+import type { LicenseStatus } from "@music-os-360/types";
+import type { LICENSE_TYPE_OPTIONS } from "@/modules/licensing/lib/license-format";
 
-export type { LicenseType, LicenseStatus };
+export type { LicenseStatus };
+export type LicenseType = (typeof LICENSE_TYPE_OPTIONS)[number]["value"];
 
 export type RemunerationType = "FIXED" | "PERCENTAGE" | "FIXED_PLUS_PERCENTAGE";
 export type Currency = "BRL" | "USD" | "EUR";
 
+/** License as the API returns it (canonical English fields, CZ-035). */
 export interface License {
   id: string;
-  user_id?: string;
   title: string;
   // Relations (source of truth)
   work_id?: string | null;
   client_id?: string | null;
-  projeto?: string | null;
+  artist_id?: string | null;
+  work_title?: string | null;
+  artist_name?: string | null;
+  client_name?: string | null;
+  project_name?: string | null;
   type?: LicenseType | string | null;
-  tipo_uso?: string | null;
-  midia_destino?: string | null;
-  territorio?: string | null;
+  usage_type?: string | null;
+  target_media?: string | null;
+  territory?: string | null;
   status?: LicenseStatus | string | null;
   start_date?: string | null;
   end_date?: string | null;
@@ -26,17 +31,11 @@ export interface License {
   currency?: Currency | null;
   amount?: number | null;
   percentage?: number | null;
-  /** @deprecated legacy monetary amount — read/back-compat; the new model uses `amount`. */
-  valor?: number | null;
   notes?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
 }
 
-export type LicenseInsert = Omit<License, "id" | "user_id" | "created_at" | "updated_at">;
+export type LicenseInsert = Omit<License, "id" | "created_at" | "updated_at">;
 export type LicenseUpdate = Partial<LicenseInsert>;
-
-export interface LicenseWithRelations extends License {
-  clientes?: ClientRef | null;
-}

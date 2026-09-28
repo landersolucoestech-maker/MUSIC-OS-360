@@ -3,7 +3,7 @@ import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { FileText, Music, Building, DollarSign, Calendar, MapPin, Tv } from "lucide-react";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import { formatLicensingDate, formatRemuneration, workArtistLabel, mediaLabel, typeLabel } from "@/modules/licensing/lib/license-format";
+import { formatLicensingDate, formatRemuneration, workArtistLabel, mediaLabel, typeLabel, territoryLabel, licenseStatusLabel, licenseStatusVariant } from "@/modules/licensing/lib/license-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 
 interface ClientOption { id: string; name: string }
@@ -14,15 +14,9 @@ interface LicenseViewModalProps {
   licenca?: any;
 }
 
-const getStatusBadge = (status?: string) => {
-  switch (status) {
-    case "ativa": return <Badge variant="success">Ativa</Badge>;
-    case "negociacao": return <Badge variant="warning">Em Negociação</Badge>;
-    case "proposta": return <Badge variant="info">Proposta Enviada</Badge>;
-    case "expirada": return <Badge variant="danger">Expirada</Badge>;
-    default: return <Badge variant="neutral">{status?.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || "—"}</Badge>;
-  }
-};
+const getStatusBadge = (status?: string | null) => (
+  <Badge variant={licenseStatusVariant(status)}>{licenseStatusLabel(status)}</Badge>
+);
 
 function Field({ label, value, icon, valueClassName }: { label: React.ReactNode; value: React.ReactNode; icon?: React.ReactNode; valueClassName?: string }) {
   return (
@@ -85,9 +79,9 @@ export function LicenseViewModal({ open, onOpenChange, licenca: license }: Licen
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Cliente" value={clientName} />
-              <Field label="Projeto" value={license.projeto} />
-              <Field label="Mídia de Destino" icon={<Tv className="h-3 w-3" />} value={mediaLabel(license.midia_destino)} />
-              <Field label="Território" icon={<MapPin className="h-3 w-3" />} value={typeLabel(license.territorio)} />
+              <Field label="Projeto" value={license.project_name} />
+              <Field label="Mídia de Destino" icon={<Tv className="h-3 w-3" />} value={mediaLabel(license.target_media)} />
+              <Field label="Território" icon={<MapPin className="h-3 w-3" />} value={territoryLabel(license.territory)} />
             </div>
           </div>
 

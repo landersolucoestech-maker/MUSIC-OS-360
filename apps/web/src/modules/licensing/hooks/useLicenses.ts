@@ -1,11 +1,11 @@
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
-import type { License, LicenseInsert, LicenseUpdate, LicenseWithRelations } from "../types/licensing.types";
+import type { License, LicenseInsert, LicenseUpdate } from "../types/licensing.types";
 
-export type { License as Licenca, LicenseInsert as LicencaInsert, LicenseUpdate as LicencaUpdate, LicenseWithRelations as LicencaWithRelations };
+export type { License, LicenseInsert, LicenseUpdate };
 
 export function useLicenses() {
-  const result = useDataQuery<LicenseWithRelations>({
+  const result = useDataQuery<License>({
     queryKey: [...QUERY_KEYS.LICENSES],
     table: "licencas",
     select: "*, clientes(*)",

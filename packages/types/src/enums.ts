@@ -342,6 +342,15 @@ export enum LeaveRequestStatus {
   COMPLETED = "completed",
 }
 
+// ─── Licensing ───────────────────────────────────────────────────────────────
+export enum LicenseStatus {
+  PENDING     = "pending",
+  NEGOTIATION = "negotiation",
+  PROPOSAL    = "proposal",
+  ACTIVE      = "active",
+  EXPIRED     = "expired",
+}
+
 // ─── Inventory ───────────────────────────────────────────────────────────────
 export enum InventoryStatus {
   AVAILABLE   = "available",
