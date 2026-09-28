@@ -62,7 +62,7 @@ vi.mock("@/shared/lib/storage", async () => {
         // Task J: an artist "outside the cap" — only reachable by a direct GET /artists/:id
         // (it would never be among the first 50 of useArtistas()).
         if (table === "artistas" && id === "art-99") {
-          return { id: "art-99", nome_artistico: "Artista Fora Do Cap" };
+          return { id: "art-99", stage_name: "Artista Fora Do Cap" };
         }
         return undefined;
       }),

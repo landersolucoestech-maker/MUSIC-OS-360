@@ -5,8 +5,8 @@ import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { ContactsTable } from "./ContactsTable";
 import { useContacts } from "../hooks/useContacts";
-import { contactPayloadToContactData } from "../services/contacts.service";
-import { ContactFormModal, type ContactFormPayload } from "../modals/ContactFormModal";
+import { contactFormToContactInput, contactToFormValues } from "../services/contacts.service";
+import { ContactFormModal, type ContactFormValues } from "../modals/ContactFormModal";
 import { ContactViewModal } from "../modals/ContactViewModal";
 import type { Contact, ContactType } from "../types";
 
@@ -32,83 +32,6 @@ const FILTERS: ReadonlyArray<{ value: TypeFilter; label: string; types: ContactT
 ];
 
 // ─────────────────────────────────────────────
-// Converts Contact → the initial ContatoFormPayload
-// to fill the edit modal
-// ─────────────────────────────────────────────
-function contactToFormPayload(contact: Contact): Partial<ContactFormPayload> {
-  const po = (contact.payloadOperacional ?? {}) as Record<string, unknown>;
-  const str = (k: string) => (typeof po[k] === "string" ? (po[k] as string) : "");
-
-  // Normalizes tipo_pessoa: accepts every legacy format and always returns
-  // "pessoa_fisica" | "pessoa_juridica" — the only value ContactFormModal understands.
-  const rawType = str("tipo_pessoa");
-  const personType: "pessoa_fisica" | "pessoa_juridica" =
-    rawType === "pessoa_juridica" ||
-    rawType === "COMPANY" ||
-    (contact as Record<string, unknown>)["entityType"] === "COMPANY"
-      ? "pessoa_juridica"
-      : "pessoa_fisica";
-
-  const isIndividual = personType === "pessoa_fisica";
-
-  return {
-    // Entity
-    tipo_pessoa: personType, // always "pessoa_fisica" | "pessoa_juridica"
-
-    // Individual (natural person)
-    nome_pf:           isIndividual ? contact.name : "",
-    cpf:               str("cpf"),
-    funcao:            str("funcao"),
-    foto:              str("foto"),
-
-    // Legal entity (company)
-    razao_social:      !isIndividual ? contact.name : "",
-    nome_fantasia:     str("nome_fantasia"),
-    cnpj:              str("cnpj"),
-
-    // Hierarchical classification
-    categoria:         contact.contactType ?? "",
-    perfil:            str("perfil"),
-    instagram:         contact.instagram ?? "",
-    email:             contact.email ?? "",
-    telefone:          contact.whatsapp ?? contact.phone ?? "",
-
-    // Address
-    cep:               str("cep") || contact.zipCode || "",
-    logradouro:        str("logradouro"),
-    numero:            str("numero"),
-    complemento:       str("complemento"),
-    bairro:            str("bairro"),
-    cidade:            contact.city ?? "",
-    estado:            contact.state ?? "",
-
-    // Classification
-    status_contato:    contact.status ?? "active",
-    prioridade_contato: contact.priority ?? "medium",
-
-    // Responsible person
-    responsavel_nome:     str("responsavel_nome") || contact.responsible || "",
-    responsavel_email:    str("responsavel_email"),
-    responsavel_telefone: str("responsavel_telefone"),
-    // reads responsavel_cargo (current field) with a fallback to cargo_responsavel (legacy field)
-    responsavel_cargo:    str("responsavel_cargo") || str("cargo_responsavel"),
-
-    // History
-    interacoes: Array.isArray(po.interacoes) ? (po.interacoes as never[]) : [],
-    attachments: contact.attachments ?? [],
-
-    // Notes
-    observacoes: contact.notes ?? "",
-
-    // Aliases legados
-    nome:              contact.name,
-    cpf_cnpj:          contact.documentNumber ?? "",
-    endereco_completo: contact.address ?? "",
-    responsavel:       contact.responsible ?? "",
-  };
-}
-
-// ─────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────
 export type ContactsPanelHandle = {
@@ -130,9 +53,9 @@ export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, neve
       const cfg  = FILTERS.find((f) => f.value === filter)!;
       const term = search.trim().toLowerCase();
       return contacts.filter((c) => {
-        if (cfg.types.length > 0 && !cfg.types.includes(c.contactType)) return false;
+        if (cfg.types.length > 0 && (!c.category || !cfg.types.includes(c.category))) return false;
         if (!term) return true;
-        const haystack = [c.name, c.companyName, c.email, c.phone, c.whatsapp, c.city]
+        const haystack = [c.name, c.legalName, c.tradeName, c.email, c.phone, c.city]
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
@@ -154,8 +77,8 @@ export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, neve
       await deleteContact(contact.id);
     }
 
-    async function handleFormSubmit(payload: ContactFormPayload) {
-      const data = contactPayloadToContactData(payload);
+    async function handleFormSubmit(values: ContactFormValues) {
+      const data = contactFormToContactInput(values);
 
       if (editContact) {
         await updateContact(editContact.id, data, getExpectedUpdatedAt(editContact));
@@ -231,7 +154,7 @@ export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, neve
         <ContactFormModal
           open={formOpen}
           mode={editContact ? "edit" : "create"}
-          initialValue={editContact ? contactToFormPayload(editContact) : null}
+          initialValue={editContact ? contactToFormValues(editContact) : null}
           onOpenChange={(next) => {
             setFormOpen(next);
             if (!next) setEditContact(null);

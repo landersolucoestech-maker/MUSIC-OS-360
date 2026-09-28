@@ -34,12 +34,12 @@ describe("storage.listPaged", () => {
       page: 1,
       pageSize: 20,
       filters: { status: "ativo", search: "banda" },
-      orderBy: { column: "nome_artistico", ascending: true },
+      orderBy: { column: "stage_name", ascending: true },
     });
     const url = mockedGet.mock.calls[0][0] as string;
     expect(url).toContain("status=ativo");
     expect(url).toContain("search=banda");
-    expect(url).toContain("orderBy=nome_artistico");
+    expect(url).toContain("orderBy=stage_name");
     expect(url).toContain("ascending=true");
   });
 

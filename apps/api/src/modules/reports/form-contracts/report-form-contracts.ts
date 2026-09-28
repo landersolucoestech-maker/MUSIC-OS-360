@@ -76,61 +76,61 @@ const ro = (key: string, physical?: string): ReportFieldSpec => ({ key, storage:
 const meta = (key: string, physical: string = 'metadata'): ReportFieldSpec => ({ key, storage: 'metadata', physical });
 const enc = (key: string, physical: string): ReportFieldSpec => ({ key, storage: 'encrypted', physical });
 // ─── Artists (full form — 68 fields) ────────────────────────────────────────
+// CZ-042: every form field has its own physical column (col()); meta() only for
+// the metadata-only fields (gender, instagram/tiktok URLs, platform metrics).
+// Same file order and PT-BR headers as before the rename.
 const ARTISTS_CONTRACT: ReportFormContract = {
   tableName: 'artists',
-  identityColumn: 'nome_artistico',
+  identityColumn: 'stage_name',
   fields: [
-    // Identity and profile (direct columns)
-    col('nome_artistico'), col('nome_civil'), col('status'),
-    col('music_genre'), col('notes'), col('especialidades'),
-    // Extended profile (metadata jsonb)
-    meta('slug_artistico'), meta('tipo_perfil'), meta('fase_carreira'),
-    meta('genero'), meta('data_nascimento'), meta('rg'), meta('endereco'),
-    meta('tags_musicais'),
+    // Identity and profile
+    col('stage_name'), col('full_name'), col('status'),
+    col('music_genre'), col('notes'), col('specialties'),
+    // Extended profile
+    col('artist_slug'), col('profile_type'), col('career_stage'),
+    meta('gender'), col('birth_date'), col('rg'), col('address'),
+    col('music_tags'),
     // Contact (encrypted)
-    enc('email', 'email_encrypted'), enc('telefone', 'telefone_encrypted'),
+    enc('email', 'email_encrypted'), enc('phone', 'phone_encrypted'),
     enc('cpf_cnpj', 'cpf_cnpj_encrypted'),
-    // Media and links (direct columns)
-    col('foto_url'), col('spotify_url'), col('youtube_url'), col('deezer_url'),
-    col('apple_music_url'), col('soundcloud_url'), col('galeria_urls'),
+    // Media and links
+    col('photo_url'), col('spotify_url'), col('youtube_url'), col('deezer_url'),
+    col('apple_music_url'), col('soundcloud_url'), col('gallery_urls'),
     col('documents'),
-    // Media and links (metadata)
-    meta('presskit_url'), meta('documentos_pessoais_url'),
-    meta('apple_music_albuns_url'), meta('soundcloud_seguidores_url'),
+    col('press_kit_url'), col('personal_documents_url'),
+    meta('apple_music_albums'), meta('soundcloud_followers'),
     meta('instagram_url'), meta('tiktok_url'),
     // Platform metrics (metadata)
-    meta('instagram_seguidores'), meta('tiktok_seguidores'),
-    meta('spotify_ouvintes'), meta('youtube_inscritos'), meta('deezer_fas'),
-    // Team and business (direct columns)
-    col('manager_nome'), enc('manager_contato', 'manager_contato_encrypted'),
-    col('produtor_executivo'), col('agencia_booking'), col('label_parceira'),
-    col('contrato_id'),
-    // Team and business (metadata)
-    meta('empresario_id'), meta('empresario_nome'),
-    meta('empresario_email'), meta('empresario_telefone'),
-    meta('gravadora_id'), meta('gravadora_nome'), meta('gravadora_email'),
-    meta('gravadora_telefone'), meta('gravadora_responsavel_id'),
-    meta('gravadora_responsavel_nome'), meta('gravadora_responsavel_email'),
-    meta('gravadora_responsavel_telefone'),
-    // Bank details (metadata) — "agencia" here is the form's bank branch
-    // (bank details section: bank/branch/account/Pix key/holder),
-    // not the booking agency (col('agencia_booking') above, a distinct field).
-    // It was wrongly listed under "team and business" (same JSON key,
-    // wrong category) — fixed to match the form's visual order.
-    meta('banco'), meta('agencia'), meta('conta'), meta('chave_pix'), meta('titular_conta'),
-    // Distribution (metadata; arrays serialized as reversible JSON)
-    meta('distribuidoras_selecionadas'), meta('distribuidoras_gerais'),
-    meta('distribuidoras_emails'), meta('distribuidoras_empresa_selecionadas'),
-    meta('distribuidoras_empresa_emails'),
-    // Network (metadata; arrays/objects serialized as reversible JSON)
-    meta('contatos_equipe'), meta('contatos_vinculados'), meta('relacionamentos'),
+    meta('instagram_followers'), meta('tiktok_followers'),
+    meta('spotify_listeners'), meta('youtube_subscribers'), meta('deezer_fans'),
+    // Team and business — manager_* is the team "Manager"; agent_* is the
+    // "Empresário" (distinct fields).
+    col('manager_name'), enc('manager_contact', 'manager_contact_encrypted'),
+    col('executive_producer'), col('booking_agency'), col('partner_label'),
+    col('contract_id'),
+    col('agent_id'), col('agent_name'),
+    col('agent_email'), col('agent_phone'),
+    col('record_label_id'), col('record_label_name'), col('record_label_email'),
+    col('record_label_phone'), col('record_label_contact_id'),
+    col('record_label_contact_name'), col('record_label_contact_email'),
+    col('record_label_contact_phone'),
+    // Bank details — "bank_branch" is the form's bank branch, not the booking
+    // agency (col('booking_agency') above, a distinct field). Kept consecutive,
+    // in the form's visual order (guard spec).
+    col('bank_name'), col('bank_branch'), col('bank_account'), col('pix_key'), col('account_holder'),
+    // Distribution (jsonb; arrays/objects serialized as reversible JSON)
+    col('selected_distributors'), col('general_distributors'),
+    col('distributor_emails'), col('company_selected_distributors'),
+    col('company_distributor_emails'),
+    // Network (jsonb; arrays/objects serialized as reversible JSON)
+    col('team_contacts'), col('linked_contacts'), col('relationships'),
   ],
   excludedFormFields: {
     metadata: 'raw internal jsonb object — its individual fields are already contract columns',
-    notas_internas: 'internal note hidden by policy (HIDDEN_INTERNAL_HINT)',
+    internal_notes: 'internal note hidden by policy (HIDDEN_INTERNAL_HINT)',
   },
   filterableColumns: ['status', 'music_genre'],
-  searchableColumns: ['nome_artistico', 'nome_civil', 'music_genre', 'notes'],
+  searchableColumns: ['stage_name', 'full_name', 'music_genre', 'notes'],
 };
 
 // ─── Employees (HR) ─────────────────────────────────────────────────────────
@@ -255,39 +255,33 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
 // as it does for artists/employees.
 const CLIENTS_CONTRACT: ReportFormContract = {
   tableName: 'clients',
-  identityColumn: 'nome',
+  identityColumn: 'name',
+  // CZ-043: canonical columns = DTO keys (the form fields the web kept only in
+  // metadata now have their own column).
   fields: [
-    col('tipo_pessoa'), col('categoria'), col('perfil'), col('nome'),
-    col('foto'), col('individual_name'), col('razao_social'), col('trade_name'),
-    enc('email', 'email_encrypted'), enc('telefone', 'telefone_encrypted'),
+    col('person_type'), col('category'), col('profile'), col('name'),
+    col('photo_url'), col('individual_name'), col('legal_name'), col('trade_name'),
+    enc('email', 'email_encrypted'), enc('phone', 'phone_encrypted'),
     enc('cpf_cnpj', 'cpf_cnpj_encrypted'),
-    col('instagram'), col('funcao'),
-    col('logradouro'), col('numero'), col('complemento'), col('bairro'),
-    col('city'), col('state'), col('cep'), col('endereco_completo'),
-    col('status_contato'), col('prioridade_contato'),
-    col('responsavel_nome'), col('responsavel_email'),
-    col('responsavel_telefone'), col('responsavel_cargo'),
+    col('instagram'), col('job_title'),
+    col('street'), col('street_number'), col('address_complement'), col('neighborhood'),
+    col('city'), col('state'), col('zip_code'), col('address'),
+    col('priority'),
+    col('responsible_name'), col('responsible_email'),
+    col('responsible_phone'), col('responsible_job_title'),
     col('notes'), col('status'),
   ],
   excludedFormFields: {
-    metadata: 'raw internal jsonb object — no form fields of its own',
-    avatarUrl: 'accepted by CreateClientDto but discarded by the service — no mapped column (normalizeClientPayload never persists avatarUrl)',
+    metadata: 'raw internal jsonb object — historical pre-CZ-043 copies only',
+    interactions: 'CRM interaction list (jsonb array of objects) — not a spreadsheet cell',
   },
   formFieldAliases: {
-    name: 'nome',
-    type: 'tipo_pessoa',
-    category: 'categoria',
-    phone: 'telefone',
+    // Deprecated pre-CZ-043 DTO keys (client-legacy-fields.ts).
+    type: 'person_type',
     document: 'cpf_cnpj',
-    address: 'endereco_completo',
-    // Part 79: CreateClientDto gained these fields to support CRM
-    // "Contatos" (same physical `clients` table — contact = client). city/state
-    // no longer need an alias — 20260921000003_RenameClientsGeoFieldsToEnglish
-    // renamed the physical columns to match the DTO directly.
-    zipCode: 'cep',
-    responsible: 'responsavel_nome',
-    notes: 'notes',
-    priority: 'prioridade_contato',
+    avatarUrl: 'photo_url',
+    zipCode: 'zip_code',
+    responsible: 'responsible_name',
   },
 };
 

@@ -2,7 +2,7 @@ import { Injectable, Inject, Logger, Optional } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { randomUUID } from 'crypto';
 import { DataSource, EntityManager, Repository } from 'typeorm';
-import { ArtistStatus, ArtistStatusCadastro, LeadStatus } from '@music-os-360/types';
+import { ArtistStatus, ArtistRegistrationStatus, LeadStatus } from '@music-os-360/types';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
 import {
@@ -71,9 +71,9 @@ export class LeadEventsHandler {
           payload: {
             clientId: created.clientId,
             tenantId,
-            nome: created.nome,
-            category: created.categoria,
-            tipoPessoa: created.tipoPessoa,
+            name: created.name,
+            category: created.category,
+            personType: created.personType,
             sourceLeadId: leadId,
             createdBy: event.userId ?? convertedBy,
           },
@@ -91,7 +91,7 @@ export class LeadEventsHandler {
     company: string | null,
     convertedBy: string,
     convertedAt: string,
-  ): Promise<{ clientId: string; nome: string; categoria: string; tipoPessoa: string } | null> {
+  ): Promise<{ clientId: string; name: string; category: string; personType: string } | null> {
     let clientId: string | null = null;
     let createdCategory = '';
     let createdPersonType = '';
@@ -119,15 +119,15 @@ export class LeadEventsHandler {
     {
           try {
             createdCategory = 'CORPORATE_CLIENT';
-            createdPersonType = company ? 'pessoa_juridica' : 'pessoa_fisica';
+            createdPersonType = company ? 'company' : 'individual';
             const client = clientRepo.create({
               id: randomUUID(),
               tenant_id: tenantId,
-              nome: name,
-              categoria: createdCategory,
-              perfil: 'outros',
-              tipo_pessoa: createdPersonType,
-              responsavel_nome: convertedBy,
+              name,
+              category: createdCategory,
+              profile: 'outros',
+              person_type: createdPersonType,
+              responsible_name: convertedBy,
               notes: `Convertido de lead ${leadId} em ${convertedAt}`,
               metadata: {
                 leadId,
@@ -171,10 +171,10 @@ export class LeadEventsHandler {
             const artist = artistRepo.create({
               id: artistId,
               tenant_id: tenantId,
-              nome_artistico: name,
-              nome_civil: null,
+              stage_name: name,
+              full_name: null,
               status: ArtistStatus.IN_NEGOTIATION,
-              status_cadastro: ArtistStatusCadastro.ACTIVE,
+              registration_status: ArtistRegistrationStatus.ACTIVE,
               notes: `Criado automaticamente a partir da conversão do lead "${leadId}" em ${convertedAt}`,
               metadata: {
                 leadId,
@@ -197,7 +197,7 @@ export class LeadEventsHandler {
           }
         }
 
-        return clientId ? { clientId, nome: name, categoria: createdCategory, tipoPessoa: createdPersonType } : null;
+        return clientId ? { clientId, name, category: createdCategory, personType: createdPersonType } : null;
   }
 
   private failClosed(eventType: string): void {

@@ -57,27 +57,28 @@ export class ContactsService {
   private toContactShape(c: Record<string, unknown>) {
     return {
       id: c['id'],
-      name: c['name'] ?? c['nome'],
-      companyName: c['razao_social'] ?? c['trade_name'] ?? null,
-      contactType: c['categoria'] ?? 'OTHER',
-      documentType: c['tipo_pessoa'] === 'pessoa_fisica' ? 'CPF' : 'CNPJ',
-      documentNumber: c['document'] ?? null,
+      name: c['name'],
+      companyName: c['legal_name'] ?? c['trade_name'] ?? null,
+      contactType: c['category'] ?? 'OTHER',
+      documentType: c['person_type'] === 'individual' ? 'CPF' : 'CNPJ',
+      documentNumber: c['cpf_cnpj'] ?? null,
       phone: c['phone'] ?? null,
       whatsapp: c['phone'] ?? null,
       email: c['email'] ?? null,
       instagram: c['instagram'] ?? null,
-      address: c['endereco_completo'] ?? c['address'] ?? null,
+      address: c['address'] ?? null,
       city: c['city'] ?? null,
       state: c['state'] ?? null,
       country: 'Brasil',
-      zip_code: c['cep'] ?? null,
-      responsible: c['responsavel_nome'] ?? null,
-      notes: c['observacoes'] ?? null,
+      zip_code: c['zip_code'] ?? null,
+      responsible: c['responsible_name'] ?? null,
+      notes: c['notes'] ?? null,
       tags: [],
       status: c['status'] ?? 'active',
-      priority: 'medium',
+      priority: c['priority'] ?? 'medium',
       linked_artist_id: null,
-      metadata: c['metadata'] ?? {},
+      // CZ-043: the client response no longer carries metadata (historical copies).
+      metadata: {},
       created_at: c['created_at'],
       updated_at: c['updated_at'],
       deleted_at: c['deleted_at'] ?? null,
@@ -96,17 +97,18 @@ export class ContactsService {
     pick('category', 'contact_type', 'contactType', 'type');
     pick('email', 'email');
     pick('phone', 'phone', 'telefone');
-    pick('document', 'document_number', 'documentNumber');
+    pick('cpf_cnpj', 'document_number', 'documentNumber');
     pick('address', 'address', 'endereco');
     pick('city', 'city', 'cidade');
     pick('state', 'state', 'estado');
     pick('instagram', 'instagram');
-    pick('zipCode', 'zip_code', 'zipCode', 'cep');
-    pick('responsible', 'responsible', 'assignedTo');
+    pick('zip_code', 'zip_code', 'zipCode', 'cep');
+    pick('responsible_name', 'responsible', 'assignedTo');
     pick('notes', 'notes', 'observacoes');
     pick('expectedUpdatedAt', 'expectedUpdatedAt');
+    pick('legal_name', 'company_name', 'companyName');
     if (payload['company_name'] !== undefined || payload['companyName'] !== undefined) {
-      dto['type'] = 'company';
+      dto['person_type'] = 'company';
     }
     return dto;
   }

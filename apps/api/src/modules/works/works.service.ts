@@ -235,7 +235,7 @@ export class WorksService {
 
   async update(tenantId: string, userId: string, id: string, input: UpdateWorkDto): Promise<WorkWithParticipants> {
     const current = await this.findById(tenantId, id);
-    const { participants, expectedUpdatedAt, ...rest } = canonicalizeWorkInput(input) as UpdateWorkDto & { participants?: unknown[] };
+    const { participants, expectedUpdatedAt, ...rest } = canonicalizeWorkInput(input, { update: true }) as UpdateWorkDto & { participants?: unknown[] };
     // find-f81eebf2: only validate when the patch actually sets artist_id —
     // omitted means "unchanged", already validated at its own create time.
     if (rest.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');

@@ -28,15 +28,16 @@ interface UseInvoiceFormOptions {
 
 /** Raw shape returned by GET /clients (ClientsService.mapClient) —
  * enough for the service taker autofill; it does not need the `Cliente` view model. */
+/** `/clients` row used as the invoice recipient lookup (CZ-043 canonical keys). */
 export interface InvoiceClientLookup {
   id: string;
   name: string;
-  document?: string | null;
+  cpf_cnpj?: string | null;
   email?: string | null;
   address?: string | null;
   city?: string | null;
   state?: string | null;
-  cep?: string | null;
+  zip_code?: string | null;
 }
 
 function numberValue(...values: unknown[]): number | null {
@@ -167,13 +168,13 @@ export function useInvoiceForm({
     setFormData((prev) => client ? ({
       ...prev,
       client_id: clientId,
-      tomador_cnpj: client.document || "",
+      tomador_cnpj: client.cpf_cnpj || "",
       tomador_legal_name: client.name || "",
       tomador_email: client.email || "",
       tomador_address: client.address || "",
       tomador_city: client.city || "",
       tomador_uf: client.state || "SP",
-      tomador_cep: client.cep || "",
+      tomador_cep: client.zip_code || "",
     }) : ({ ...prev, client_id: clientId }));
   }, []);
 

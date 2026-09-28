@@ -6,10 +6,10 @@ import type { ImportValidationResult } from './import.types';
 
 const DEF: ReportEntityDefinition = {
   entityName: 'ArtistEntity', tableName: 'artists', category: EntityCategory.REPORTABLE,
-  identityColumn: 'nome_artistico', displayColumn: 'nome_artistico', dateColumn: 'created_at',
-  exportableColumns: ['nome_artistico'], importableColumns: ['nome_artistico'],
-  filterableColumns: [], sortableColumns: ['nome_artistico'], searchableColumns: ['nome_artistico'],
-  sensitiveColumns: ['cpf_encrypted'], requiredImportColumns: ['nome_artistico'],
+  identityColumn: 'stage_name', displayColumn: 'stage_name', dateColumn: 'created_at',
+  exportableColumns: ['stage_name'], importableColumns: ['stage_name'],
+  filterableColumns: [], sortableColumns: ['stage_name'], searchableColumns: ['stage_name'],
+  sensitiveColumns: ['cpf_encrypted'], requiredImportColumns: ['stage_name'],
   supportsExport: true, supportsImport: true,
 };
 
@@ -17,7 +17,7 @@ function validResult(rows = 2): ImportValidationResult {
   return {
     entity: 'artists', supportsImport: true, mapping: {}, unknownColumns: [], ignoredColumns: [],
     totalRows: rows, validRows: rows, invalidRows: 0,
-    rows: Array.from({ length: rows }, (_, i) => ({ index: i, data: { nome_artistico: `A${i}` }, valid: true, errors: [], warnings: [] })),
+    rows: Array.from({ length: rows }, (_, i) => ({ index: i, data: { stage_name: `A${i}` }, valid: true, errors: [], warnings: [] })),
     errors: [], warnings: [],
   };
 }
@@ -60,12 +60,26 @@ describe('ImportCommitService — transactional commit', () => {
     expect(audit.record).toHaveBeenCalledWith(expect.objectContaining({ status: 'committed', successCount: 2 }));
   });
 
+  it('arrays bound to a jsonb column are sent as JSON text (node-pg would send an invalid Postgres array literal)', async () => {
+    const withArray = validResult(1);
+    withArray.rows[0].data = { stage_name: 'A0', gallery_urls: ['https://cdn/a.png'] };
+    const { svc, qr } = makeSvc({
+      validation: withArray,
+      queryImpl: (sql) => (String(sql).includes('information_schema.columns') ? [{ column_name: 'gallery_urls' }] : []),
+    });
+    await svc.commit('artists', file, 'tenant-1', 'user-1');
+    const insert = qr.query.mock.calls.find((call: any[]) => String(call[0]).startsWith('INSERT'));
+    const cols = String(insert?.[0]).match(/\(([^)]*)\) VALUES/)![1].split(', ');
+    const value = (insert?.[1] as unknown[])[cols.indexOf('"gallery_urls"')];
+    expect(value).toBe('["https://cdn/a.png"]');
+  });
+
   it('invalid validation does not open a transaction', async () => {
     const bad = validResult(1);
     bad.invalidRows = 1;
     bad.validRows = 0;
     bad.rows[0].valid = false;
-    bad.rows[0].errors = [{ column: 'nome_artistico', message: 'campo obrigatório vazio' }];
+    bad.rows[0].errors = [{ column: 'stage_name', message: 'campo obrigatório vazio' }];
     const { svc, qr } = makeSvc({ validation: bad });
     const result = await svc.commit('artists', file, 't', 'u');
     expect(qr.startTransaction).not.toHaveBeenCalled();
@@ -77,11 +91,11 @@ describe('ImportCommitService — transactional commit', () => {
     const duplicateResult = await duplicated.svc.commit('artists', file, 't', 'u');
     expect(duplicated.qr.rollbackTransaction).toHaveBeenCalled();
     expect(duplicateResult.errors.some((e) => /já existe/i.test(e))).toBe(true);
-    expect(duplicateResult.errors.join(' ')).not.toMatch(/nome_artistico|create-only/);
+    expect(duplicateResult.errors.join(' ')).not.toMatch(/stage_name|create-only/);
 
-    const def = { ...DEF, importableColumns: ['nome_artistico', 'client_id'] };
+    const def = { ...DEF, importableColumns: ['stage_name', 'client_id'] };
     const validation = validResult(1);
-    validation.rows[0].data = { nome_artistico: 'A', client_id: 'c-x' };
+    validation.rows[0].data = { stage_name: 'A', client_id: 'c-x' };
     const invalidRelation = makeSvc({ def, validation, queryImpl: () => [] });
     const relationResult = await invalidRelation.svc.commit('artists', file, 't', 'u');
     expect(relationResult.errors.some((e) => /relacionamento inválido/i.test(e))).toBe(true);

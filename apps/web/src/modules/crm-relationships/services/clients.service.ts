@@ -2,68 +2,109 @@
  * services/clients.service.ts
  *
  * Real backend client for `/clients` (`clients` table, ClientsController/
- * ClientsService — apps/api/src/modules/clients). Source of truth for the
- * "client" dropdown used in contracts, calendar, finance, invoices and the
- * dashboard (see useClientes() in ../hooks/useContacts.ts).
- *
- * Replaces the previous implementation of useClientes(), which — despite its name —
- * read the `contacts` table (via useContacts()), never the real `clients` table.
+ * ClientsService — apps/api/src/modules/clients). Typed against the CZ-043
+ * canonical wire contract (snake_case = column names). The CRM view model
+ * (`Contact`) is mapped in ./contacts.service.ts; useClients() in
+ * ../hooks/useContacts.ts exposes the raw rows for record-level mutations.
  */
 import { api } from "@/shared/lib/api-client";
+import type { ContactPriority, ContactStatus, ContactType, PersonType } from "../types";
 
+/**
+ * One `clients.interactions` item on the wire (CZ-043 canonical keys; the API
+ * validates `type` against call/whatsapp/email/meeting/proposal/follow_up/note).
+ */
+export interface ClientWireInteraction {
+  id?: string;
+  type: string;
+  date?: string;
+  time?: string;
+  description?: string;
+}
+
+/**
+ * A `/clients` response row — the CZ-043 canonical wire contract (snake_case =
+ * column names). `email`, `phone` and `cpf_cnpj` arrive decrypted. There is NO
+ * `metadata` (historical, never returned) and no `*_encrypted` column.
+ */
 export interface ApiClient {
   id: string;
   tenant_id: string;
-  tipo_pessoa: string;
-  categoria: string;
-  perfil: string;
-  nome: string;
-  razao_social: string | null;
-  nome_fantasia: string | null;
-  nome_pf: string | null;
-  city: string | null;
-  state: string | null;
-  cep: string | null;
-  instagram: string | null;
-  endereco_completo: string | null;
-  status: string;
-  prioridade_contato: string | null;
-  notes: string | null;
-  responsavel_nome: string | null;
-  attachments: unknown[] | null;
-  metadata: Record<string, unknown> | null;
-  created_at: string;
-  updated_at: string;
-  // Friendly aliases already resolved by the backend (ClientsService.mapClient).
+  person_type: PersonType;
+  category: ContactType | null;
+  profile: string | null;
   name: string;
-  type: string;
-  category: string;
-  address: string | null;
+  photo_url: string | null;
+  individual_name: string | null;
+  legal_name: string | null;
+  trade_name: string | null;
   email: string | null;
   phone: string | null;
-  document: string | null;
+  cpf_cnpj: string | null;
+  instagram: string | null;
+  job_title: string | null;
+  street: string | null;
+  street_number: string | null;
+  address_complement: string | null;
+  neighborhood: string | null;
+  city: string | null;
+  state: string | null;
+  zip_code: string | null;
+  address: string | null;
+  priority: ContactPriority | null;
+  responsible_name: string | null;
+  responsible_job_title: string | null;
+  responsible_email: string | null;
+  responsible_phone: string | null;
+  attachments: unknown[] | null;
+  notes: string | null;
+  interactions: ClientWireInteraction[] | null;
+  status: ContactStatus;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
 }
 
+/**
+ * POST /clients body — CZ-043 canonical keys only (column names). `cpf_cnpj`
+ * is the ONLY key a CPF/CNPJ travels in (stored encrypted); no `metadata`.
+ * `null` clears an optional column.
+ */
 export interface CreateApiClientInput {
   name: string;
-  type?: "person" | "company";
-  category?: string;
-  email?: string;
-  phone?: string;
-  document?: string;
-  address?: Record<string, unknown> | string;
-  metadata?: Record<string, unknown>;
-  city?: string;
-  state?: string;
-  instagram?: string;
-  zipCode?: string;
-  responsible?: string;
-  notes?: string;
-  priority?: "low" | "medium" | "high" | "strategic";
+  person_type?: PersonType;
+  category?: ContactType | null;
+  profile?: string | null;
+  photo_url?: string | null;
+  individual_name?: string | null;
+  legal_name?: string | null;
+  trade_name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  cpf_cnpj?: string | null;
+  instagram?: string | null;
+  job_title?: string | null;
+  street?: string | null;
+  street_number?: string | null;
+  address_complement?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip_code?: string | null;
+  address?: string | null;
+  priority?: ContactPriority | null;
+  responsible_name?: string | null;
+  responsible_job_title?: string | null;
+  responsible_email?: string | null;
+  responsible_phone?: string | null;
+  notes?: string | null;
+  interactions?: ClientWireInteraction[] | null;
 }
 
+/** PATCH /clients/:id body — `status` is accepted on update only. */
 export type UpdateApiClientInput = Partial<CreateApiClientInput> & {
-  status?: "active" | "inactive" | "blocked";
+  status?: ContactStatus;
   /** Optimistic concurrency (Task L) — see apps/api optimistic-update.util.ts. */
   expectedUpdatedAt?: string;
 };
@@ -73,6 +114,14 @@ export interface ListApiClientsResult {
   meta: { total: number; offset: number; limit: number };
 }
 
+/** Manual timeline entry types accepted by POST /clients/:id/timeline (CZ-043). */
+export type ClientTimelineEntryType = "note" | "call" | "meeting" | "email" | "whatsapp" | "other";
+
+/**
+ * A client timeline event (activity_logs). `action` is a manual entry type
+ * (ClientTimelineEntryType) or an automatic lifecycle action (created/updated/
+ * removed) — shown through timelineActionLabel() (../constants/timeline).
+ */
 export interface ClientTimelineEntry {
   id: string;
   entity_type: string;
@@ -90,7 +139,8 @@ export interface ClientContractSummary {
   title: string;
   type: string;
   status: string;
-  valor: string | null;
+  /** contracts.fixed_value (numeric → string on the wire); show as BRL via formatCurrency(). */
+  fixed_value: string | null;
   start_date: string | null;
   end_date: string | null;
   created_at: string;
@@ -110,9 +160,11 @@ export interface ClientAttachment {
 }
 
 export const clientsService = {
-  async list(params?: { search?: string; status?: string; category?: string; limit?: number; offset?: number }): Promise<ApiClient[]> {
+  async list(params?: { search?: string; status?: string; person_type?: PersonType; category?: string; limit?: number; offset?: number }): Promise<ApiClient[]> {
     const query = new URLSearchParams();
+    if (params?.search) query.set("search", params.search);
     if (params?.status) query.set("status", params.status);
+    if (params?.person_type) query.set("person_type", params.person_type);
     if (params?.category) query.set("category", params.category);
     if (params?.limit) query.set("limit", String(params.limit));
     if (params?.offset) query.set("offset", String(params.offset));
@@ -138,7 +190,7 @@ export const clientsService = {
   async getTimeline(clientId: string): Promise<ClientTimelineEntry[]> {
     return api.get<ClientTimelineEntry[]>(`/clients/${clientId}/timeline`);
   },
-  async addTimelineEntry(clientId: string, data: { type: string; description: string }): Promise<ClientTimelineEntry> {
+  async addTimelineEntry(clientId: string, data: { type: ClientTimelineEntryType; description: string }): Promise<ClientTimelineEntry> {
     return api.post<ClientTimelineEntry>(`/clients/${clientId}/timeline`, data);
   },
 

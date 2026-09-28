@@ -1,4 +1,5 @@
 import { Injectable, Inject, Logger, Optional } from '@nestjs/common';
+import { statusLabelPtBr } from '@music-os-360/types';
 import { OnEvent } from '@nestjs/event-emitter';
 import { randomUUID } from 'crypto';
 import { DataSource, EntityManager, Repository } from 'typeorm';
@@ -40,7 +41,7 @@ export class ArtistEventsHandler {
     const tenantId = event.tenantId ?? event.payload.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { artistId, nomeArtistico: stageName } = event.payload;
+    const { artistId, stageName } = event.payload;
 
     if (this.goalRepo) {
       try {
@@ -82,7 +83,7 @@ export class ArtistEventsHandler {
             action: 'created',
             description: `Artista "${stageName}" criado`,
             metadata: {
-              nomeArtistico: stageName,
+              stageName,
               status: event.payload.status,
               correlationId: event.correlationId ?? null,
             },
@@ -99,7 +100,7 @@ export class ArtistEventsHandler {
     const tenantId = event.tenantId ?? event.payload.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { artistId, nomeArtistico: stageName, previousStatus, newStatus, changedBy } = event.payload;
+    const { artistId, stageName, previousStatus, newStatus, changedBy } = event.payload;
     this.logger.log(
       `Artist status changed: "${stageName}" (${artistId}) ${previousStatus} -> ${newStatus} by ${changedBy} tenant=${tenantId}`,
     );
@@ -111,9 +112,9 @@ export class ArtistEventsHandler {
             entity_type: 'artist',
             entity_id: artistId,
             action: 'status_changed',
-            description: `Status do artista "${stageName}" alterado: ${previousStatus} -> ${newStatus}`,
+            description: `Status do artista "${stageName}" alterado de ${statusLabelPtBr('artist', previousStatus) ?? 'não informado'} para ${statusLabelPtBr('artist', newStatus) ?? 'não informado'}`,
             metadata: {
-              nomeArtistico: stageName,
+              stageName,
               previousStatus,
               newStatus,
               correlationId: event.correlationId ?? null,
@@ -154,7 +155,7 @@ export class ArtistEventsHandler {
     const tenantId = event.tenantId ?? event.payload.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { artistId, nomeArtistico: stageName, deletedBy } = event.payload;
+    const { artistId, stageName, deletedBy } = event.payload;
     this.logger.log(`Artist soft-deleted: "${stageName}" (${artistId}) by ${deletedBy} tenant=${tenantId}`);
 
     if (!this.activityLogs || !deletedBy) return;
@@ -166,7 +167,7 @@ export class ArtistEventsHandler {
           action: 'deleted',
           description: `Artista "${stageName}" removido (soft-delete)`,
           metadata: {
-            nomeArtistico: stageName,
+            stageName,
             deletedBy,
             correlationId: event.correlationId ?? null,
           },

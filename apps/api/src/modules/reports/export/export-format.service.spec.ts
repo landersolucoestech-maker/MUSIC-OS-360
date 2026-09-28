@@ -14,10 +14,10 @@ describe('ExportFormatService — XLSX serialization', () => {
   }
 
   it('headers use pt-BR label, never the technical key', () => {
-    const buf = svc.toXlsx('artists', 'Artistas', ['nome_artistico'], [{ nome_artistico: 'Ana' }]);
+    const buf = svc.toXlsx('artists', 'Artistas', ['stage_name'], [{ stage_name: 'Ana' }]);
     const rows = readFirstSheetRows(buf);
     expect(rows[0]).toContain('Nome artístico');
-    expect(rows[0]).not.toContain('nome_artistico');
+    expect(rows[0]).not.toContain('stage_name');
   });
 
   it('text field exceeding the Excel cell limit is truncated (never breaks the export)', () => {
@@ -67,20 +67,20 @@ describe('ExportFormatService — XLSX serialization', () => {
 
     describe('spreadsheet formula injection (OWASP) — no cell can become a formula when opened in Excel/LibreOffice', () => {
       it('neutralizes classic formula-injection payloads', () => {
-        expect(sanitizeExcelCellValue('=HYPERLINK("http://evil.test","clique")', { entity: 'clients', column: 'nome' })).toBe(
+        expect(sanitizeExcelCellValue('=HYPERLINK("http://evil.test","clique")', { entity: 'clients', column: 'name' })).toBe(
           "'=HYPERLINK(\"http://evil.test\",\"clique\")",
         );
-        expect(sanitizeExcelCellValue('@SUM(1+1)', { entity: 'clients', column: 'nome' })).toBe("'@SUM(1+1)");
-        expect(sanitizeExcelCellValue('+cmd|\'/c calc\'!A1', { entity: 'clients', column: 'nome' })).toBe(
+        expect(sanitizeExcelCellValue('@SUM(1+1)', { entity: 'clients', column: 'name' })).toBe("'@SUM(1+1)");
+        expect(sanitizeExcelCellValue('+cmd|\'/c calc\'!A1', { entity: 'clients', column: 'name' })).toBe(
           "'+cmd|'/c calc'!A1",
         );
-        expect(sanitizeExcelCellValue('-2+3+cmd|\' /c calc\'!A1', { entity: 'clients', column: 'nome' })).toBe(
+        expect(sanitizeExcelCellValue('-2+3+cmd|\' /c calc\'!A1', { entity: 'clients', column: 'name' })).toBe(
           "'-2+3+cmd|' /c calc'!A1",
         );
       });
 
       it('neutralizes tab/CR as the first character (less common injection vectors)', () => {
-        expect(sanitizeExcelCellValue('\t=1+1', { entity: 'clients', column: 'nome' })).toBe("'\t=1+1");
+        expect(sanitizeExcelCellValue('\t=1+1', { entity: 'clients', column: 'name' })).toBe("'\t=1+1");
       });
 
       it('does NOT neutralize a legitimate phone number starting with "+" (real and common data in this application)', () => {

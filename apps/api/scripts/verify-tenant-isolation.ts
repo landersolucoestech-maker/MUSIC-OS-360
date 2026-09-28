@@ -130,7 +130,7 @@ async function main(): Promise<void> {
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     await client.query(
-      `INSERT INTO artists (id, tenant_id, nome_artistico, status)
+      `INSERT INTO artists (id, tenant_id, stage_name, status)
        VALUES ($1, $2, 'Artista Test A', 'in_negotiation')`,
       [artistA, tenantA],
     );
@@ -142,7 +142,7 @@ async function main(): Promise<void> {
     await client.query('BEGIN');
     await setTenant(client, tenantB);
     await client.query(
-      `INSERT INTO artists (id, tenant_id, nome_artistico, status)
+      `INSERT INTO artists (id, tenant_id, stage_name, status)
        VALUES ($1, $2, 'Artista Test B', 'in_negotiation')`,
       [artistB, tenantB],
     );
@@ -186,7 +186,7 @@ async function main(): Promise<void> {
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const crossUpdate = await client.query(
-      `UPDATE artists SET nome_artistico = 'HACK' WHERE id = $1`, [artistB],
+      `UPDATE artists SET stage_name = 'HACK' WHERE id = $1`, [artistB],
     );
     await client.query('ROLLBACK');
 

@@ -1,4 +1,5 @@
 
+import { formatCategoryLabel } from "@/shared/lib/category-labels";
 import type {
   TransactionCounterpartyType,
   TransactionEntityLink,
@@ -116,6 +117,8 @@ export const counterpartyTypes: { value: TransactionCounterpartyType; label: str
   { value: "company", label: "Empresa" },
   { value: "artist", label: "Artista" },
   { value: "individual", label: "Pessoa" },
+  { value: "government", label: "Governo" },
+  { value: "own_account", label: "Conta Própria" },
 ];
 
 // ==================== STATUS ====================
@@ -648,3 +651,40 @@ export const isRevenueServiceRequiringArtistOnly = (subcategory: string): boolea
   return revenueServicesRequiringArtistOnly.includes(subcategory);
 };
 
+
+// ==================== DISPLAY LABELS (category / subcategory slugs) ====================
+
+/**
+ * PT-BR label of any category or subcategory slug the form writes. The slugs
+ * are stored business data (taxonomy decision pending — canonical map
+ * BLK-TRANSACTION-CATEGORY-TAXONOMY); the UI never shows the raw slug.
+ */
+const CATEGORY_LABEL_BY_SLUG: ReadonlyMap<string, string> = new Map(
+  [
+    companyExpenseCategories, individualExpenseCategories, individualCompensationTypes, individualServiceTypes,
+    individualReimbursementTypes, expenseServiceTypes, marketingExpenseTypes, travelExpenseTypes, expenseProductTypes,
+    administrativeExpenseTypes, artistExpenseCategories, artistFeeTypes, companyRevenueCategories, musicRevenueTypes,
+    revenueServiceTypes, revenueProductTypes, contractualRevenueTypes, artistRevenueCategories, investmentCategories,
+    investmentEquipmentItems, investmentInfrastructureItems, investmentTechnologyItems, investmentMarketingItems,
+    investmentTrainingItems, taxCategories, transferCategories,
+  ].flatMap((options) => (options as ReadonlyArray<{ value: string; label: string }>).map((o) => [o.value, o.label] as const)),
+);
+
+/**
+ * PT-BR label of a category/subcategory slug: the form option label first,
+ * then the shared finance dictionary (older import/seed slugs); never a raw slug.
+ */
+export function transactionCategoryLabel(slug: string | null | undefined): string {
+  if (!slug) return "Sem categoria";
+  return CATEGORY_LABEL_BY_SLUG.get(slug) ?? formatCategoryLabel(slug);
+}
+
+/** Top-level category options for list filters — exactly the slugs the form writes. */
+export const TRANSACTION_CATEGORY_FILTER_OPTIONS: ReadonlyArray<{ value: string; label: string }> = Array.from(
+  new Map(
+    [companyExpenseCategories, individualExpenseCategories, artistExpenseCategories, companyRevenueCategories,
+      artistRevenueCategories, investmentCategories, taxCategories, transferCategories]
+      .flatMap((options) => (options as ReadonlyArray<{ value: string; label: string }>).map((o) => [o.value, o.label] as const)),
+  ),
+  ([value, label]) => ({ value, label }),
+).sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));

@@ -182,7 +182,7 @@ const SUBLOTE_3CA: TableCfg[] = [
   { table: 'society_validation_errors',   extra: () => ({ entity_type: 'WORK', entity_id: randomUUID(), severity: 'ERROR', code: 'E1', message: 'x' }) },
   { table: 'society_sync_jobs',           extra: () => ({ society: 'ECAD', driver: 'MANUAL_EXPORT' }) },
   { table: 'marketing_content_posts',     extra: () => ({ title: 'RLS_TEST', target_type: 'artist', target_name: 'X', channel: 'instagram', content_type: 'post', publish_date: '2026-06-13', publish_time: '10:00', scheduled_for: '2026-06-13T10:00:00Z', copy: 'x' }) },
-  { table: 'artist_platform_profiles',    parents: [{ fkCol: 'artist_id', table: 'artists', extra: () => ({ nome_artistico: 'RLS_PARENT' }) }],
+  { table: 'artist_platform_profiles',    parents: [{ fkCol: 'artist_id', table: 'artists', extra: () => ({ stage_name: 'RLS_PARENT' }) }],
                                           // platform unique per call → does not collide with UNIQUE(tenant_id, artist_id, platform)
                                           extra: (fk) => ({ artist_id: fk.artist_id, platform: 'spotify_' + randomUUID().slice(0, 8) }) },
 ];

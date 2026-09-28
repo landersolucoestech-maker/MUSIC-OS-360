@@ -8,6 +8,15 @@ import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { StorageService, type UploadCategory } from '../../storage/storage.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import type { CreateClientDto, UpdateClientDto, QueryClientDto } from './dto/clients.dto';
+import { canonicalClientTimelineType, canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
+
+/** Persisted client columns accepted from the (canonical) request. */
+const CLIENT_COLUMNS = [
+  'name', 'person_type', 'category', 'profile', 'photo_url', 'individual_name', 'legal_name', 'trade_name',
+  'instagram', 'job_title', 'street', 'street_number', 'address_complement', 'neighborhood', 'city', 'state',
+  'zip_code', 'address', 'priority', 'responsible_name', 'responsible_job_title', 'responsible_email',
+  'responsible_phone', 'notes', 'interactions', 'status',
+] as const;
 
 const TIMELINE_ENTITY_TYPE = 'client';
 const ATTACHMENT_CATEGORY: UploadCategory = 'documents';
@@ -29,44 +38,33 @@ export class ClientsService {
     }
   }
 
+  /**
+   * Response shape (CZ-043): canonical columns + decrypted email/phone/cpf_cnpj.
+   * Ciphertext and `metadata` (historical Portuguese copies, including
+   * plaintext cpf/cnpj — BLK-CRM-PII-PLAINTEXT) never leave the API.
+   */
   private mapClient(c: ClientEntity) {
+    const { email_encrypted, phone_encrypted, cpf_cnpj_encrypted, metadata: _metadata, ...columns } = c;
+    void _metadata;
     return {
-      ...c,
-      name:               c.nome,
-      type:               c.tipo_pessoa,
-      category:           c.categoria,
-      address:            c.endereco_completo,
-      email:              this.enc.decryptNullable(c.email_encrypted),
-      phone:              this.enc.decryptNullable(c.telefone_encrypted),
-      document:           this.enc.decryptNullable(c.cpf_cnpj_encrypted),
-      // `...c` above spreads the raw physical-column keys through first —
-      // without these, the response leaked BOTH the Portuguese physical
-      // name (nome/tipo_pessoa/categoria/endereco_completo) AND its
-      // English-mapped counterpart for the same concept (two fields that
-      // can independently drift, see .claude/rules/naming-canonical.md).
-      // `undefined` here drops the key from the JSON response entirely
-      // (same pattern already used for the encrypted fields below).
-      nome:               undefined,
-      tipo_pessoa:        undefined,
-      categoria:          undefined,
-      endereco_completo:  undefined,
-      email_encrypted:    undefined,
-      telefone_encrypted: undefined,
-      cpf_cnpj_encrypted: undefined,
+      ...columns,
+      email:    this.enc.decryptNullable(email_encrypted),
+      phone:    this.enc.decryptNullable(phone_encrypted),
+      cpf_cnpj: this.enc.decryptNullable(cpf_cnpj_encrypted),
     };
   }
 
   async list(tenantId: string, query: QueryClientDto) {
-    const q = query as Record<string, unknown>;
+    const q = canonicalizeClientQuery(query) as Record<string, unknown>;
     const qb = this.repo!
       .createQueryBuilder('c')
       .where('c.tenant_id = :tenantId', { tenantId })
       .andWhere('c.deleted_at IS NULL');
 
     if (q['status'])   qb.andWhere('c.status = :status',      { status:   q['status'] });
-    if (q['type'])     qb.andWhere('c.tipo_pessoa = :type',   { type:     q['type'] });
-    if (q['category']) qb.andWhere('c.categoria = :category', { category: q['category'] });
-    if (q['search'])   qb.andWhere('c.nome ILIKE :search',    { search: `%${q['search']}%` });
+    if (q['person_type']) qb.andWhere('c.person_type = :personType', { personType: q['person_type'] });
+    if (q['category']) qb.andWhere('c.category = :category', { category: q['category'] });
+    if (q['search'])   qb.andWhere('c.name ILIKE :search',    { search: `%${q['search']}%` });
 
     qb.orderBy('c.created_at', q['ascending'] ? 'ASC' : 'DESC')
       .skip(typeof q['offset'] === 'number' ? q['offset'] : 0)
@@ -89,39 +87,39 @@ export class ClientsService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateClientDto) {
-    const { email, phone, document, ...rest } = dto as unknown as Record<string, unknown>;
-    const client = this.normalizeClientPayload(rest, true);
+    const { email, phone, cpf_cnpj, ...rest } = canonicalizeClientInput(dto) as unknown as Record<string, unknown>;
+    const client = this.toColumns(rest, true);
     const entity = this.repo!.create({
       tenant_id:          tenantId,
       ...(client as Partial<ClientEntity>),
       email_encrypted:    this.enc.encryptNullable(email as string | undefined),
-      telefone_encrypted: this.enc.encryptNullable(phone as string | undefined),
-      cpf_cnpj_encrypted: this.enc.encryptNullable(document as string | undefined),
+      phone_encrypted:    this.enc.encryptNullable(phone as string | undefined),
+      cpf_cnpj_encrypted: this.enc.encryptNullable(cpf_cnpj as string | undefined),
       created_by:         userId,
       updated_by:         userId,
     } as Partial<ClientEntity>);
     const saved = await this.repo!.save(entity as ClientEntity);
-    await this.recordActivity(tenantId, userId, saved.id, 'created', `Cliente "${saved.nome}" criado`, {});
+    await this.recordActivity(tenantId, userId, saved.id, 'created', `Cliente "${saved.name}" criado`, {});
     return this.mapClient(saved as ClientEntity);
   }
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateClientDto) {
     await this.findById(tenantId, id);
-    const { email, phone, document, ...rest } = dto as Record<string, unknown>;
+    const { email, phone, cpf_cnpj, expectedUpdatedAt, ...rest } =
+      canonicalizeClientInput(dto, { update: true }) as unknown as Record<string, unknown>;
     const updates: Record<string, unknown> = {
-      ...this.normalizeClientPayload(rest),
+      ...this.toColumns(rest),
       updated_at: new Date(),
       updated_by: userId,
     };
     if (email    !== undefined) updates['email_encrypted']    = this.enc.encryptNullable(email as string | null);
-    if (phone    !== undefined) updates['telefone_encrypted']  = this.enc.encryptNullable(phone as string | null);
-    if (document !== undefined) updates['cpf_cnpj_encrypted'] = this.enc.encryptNullable(document as string | null);
-    delete updates['expectedUpdatedAt'];
+    if (phone    !== undefined) updates['phone_encrypted']    = this.enc.encryptNullable(phone as string | null);
+    if (cpf_cnpj !== undefined) updates['cpf_cnpj_encrypted'] = this.enc.encryptNullable(cpf_cnpj as string | null);
     await casUpdate(
       this.repo!,
       { id, tenant_id: tenantId } as any,
       updates as any,
-      (dto as Record<string, unknown>)['expectedUpdatedAt'] as string | undefined,
+      expectedUpdatedAt as string | undefined,
       'Este cliente foi alterado por outro usuário desde que você o carregou. Recarregue e tente novamente.',
     );
     await this.recordActivity(tenantId, userId, id, 'updated', 'Cliente atualizado', {
@@ -161,7 +159,7 @@ export class ClientsService {
     return this.activityLogs.create(tenantId, userId, {
       entity_type: TIMELINE_ENTITY_TYPE,
       entity_id: id,
-      action: input.type,
+      action: canonicalClientTimelineType(input.type) as string,
       description: input.description,
       metadata: {},
     });
@@ -197,7 +195,7 @@ export class ClientsService {
   async getContracts(tenantId: string, id: string) {
     await this.findById(tenantId, id);
     return this.repo!.manager.query(
-      `SELECT id, title, type, status, valor, start_date, end_date, created_at
+      `SELECT id, title, type, status, fixed_value, start_date, end_date, created_at
          FROM contracts
         WHERE tenant_id = $1 AND client_id = $2 AND deleted_at IS NULL
         ORDER BY created_at DESC`,
@@ -290,36 +288,28 @@ export class ClientsService {
     return { deleted: true };
   }
 
-  /** categoria/perfil are NOT NULL in the physical table; the public DTO does not expose
-   * `perfil` and treats `category` as optional — we keep the contract accepting
-   * both absent, with an explicit fallback instead of letting the INSERT fail
-   * with a NOT NULL violation. */
-  private static readonly DEFAULT_CATEGORIA = 'CORPORATE_CLIENT';
-  private static readonly DEFAULT_PERFIL = 'outros';
+  /** category/profile are NOT NULL in the physical table; the DTO treats both as
+   * optional — explicit fallbacks instead of letting the INSERT fail with a
+   * NOT NULL violation. */
+  private static readonly DEFAULT_CATEGORY = 'CORPORATE_CLIENT';
+  private static readonly DEFAULT_PROFILE = 'outros';
 
-  private normalizeClientPayload(input: Record<string, unknown>, isCreate = false) {
-    const {
-      name, type, category, address, avatarUrl: _avatarUrl,
-      instagram, zipCode, responsible, notes, priority,
-      ...rest
-    } = input;
-    void _avatarUrl;
-    // city/state pass through unchanged via ...rest -- the physical columns
-    // were renamed to match the DTO field names directly (naming-closure
-    // Cluster D, 20260921000003_RenameClientsGeoFieldsToEnglish), so no
-    // translation is needed for these two anymore.
-    const mapped: Record<string, unknown> = { ...rest };
-    if (name !== undefined) mapped['nome'] = name;
-    if (type !== undefined) mapped['tipo_pessoa'] = type === 'company' ? 'pessoa_juridica' : type === 'person' ? 'pessoa_fisica' : type;
-    if (category !== undefined) mapped['categoria'] = category;
-    else if (isCreate) mapped['categoria'] = ClientsService.DEFAULT_CATEGORIA;
-    if (isCreate) mapped['perfil'] = ClientsService.DEFAULT_PERFIL;
-    if (address !== undefined) mapped['endereco_completo'] = typeof address === 'string' ? address : JSON.stringify(address);
-    if (instagram !== undefined) mapped['instagram'] = instagram;
-    if (zipCode !== undefined) mapped['cep'] = zipCode;
-    if (responsible !== undefined) mapped['responsavel_nome'] = responsible;
-    if (notes !== undefined) mapped['notes'] = notes;
-    if (priority !== undefined) mapped['prioridade_contato'] = priority;
+  /** Canonical DTO -> persisted columns (only the keys sent; `undefined` = untouched). */
+  private toColumns(input: Record<string, unknown>, isCreate = false): Record<string, unknown> {
+    const mapped: Record<string, unknown> = {};
+    for (const column of CLIENT_COLUMNS) {
+      if (input[column] !== undefined) mapped[column] = input[column] === '' ? null : input[column];
+    }
+    if (input['metadata'] !== undefined) mapped['metadata'] = input['metadata'];
+    if (isCreate) {
+      mapped['category'] = mapped['category'] ?? ClientsService.DEFAULT_CATEGORY;
+      mapped['profile'] = mapped['profile'] ?? ClientsService.DEFAULT_PROFILE;
+    } else {
+      // NOT NULL columns: a null in a PATCH is ignored instead of failing the UPDATE.
+      for (const column of ['name', 'category', 'profile', 'person_type', 'status']) {
+        if (mapped[column] === null) delete mapped[column];
+      }
+    }
     return mapped;
   }
 }

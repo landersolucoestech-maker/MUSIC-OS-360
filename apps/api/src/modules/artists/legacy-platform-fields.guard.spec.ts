@@ -2,7 +2,7 @@
  * legacy-platform-fields.guard.spec.ts
  *
  * Permanent guard: the Artist domain works EXCLUSIVELY with
- * spotify_url/youtube_url/foto_url. No reference to spotify_artist_id,
+ * spotify_url/youtube_url/photo_url. No reference to spotify_artist_id,
  * youtube_artist_id, youtube_channel_id may exist as a PERSISTED or
  * EXPOSED field (database column, DTO property, export/import header,
  * API payload). If any DTO, entity, service or mapper reintroduces
@@ -124,7 +124,7 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-describe('Permanent guard: Artist domain only uses foto_url/spotify_url/youtube_url', () => {
+describe('Permanent guard: Artist domain only uses photo_url/spotify_url/youtube_url', () => {
   const allFiles = walk(SRC_ROOT).filter((f) => f !== THIS_FILE);
 
   it('no file (except migrations/down and documented exceptions) contains the snake_case forms of the removed fields', () => {

@@ -16,7 +16,7 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { DatabaseContextService } from '../../database/database-context.service';
 import { NotificationEntity } from '../../database/entities';
 import type { DomainEvent } from './events.service';
-import { TRANSACTION_TYPE_LABELS_PT_BR, statusLabelPtBr } from '@music-os-360/types';
+import { statusLabelPtBr, transactionTypeRegisteredPtBr } from '@music-os-360/types';
 import { formatBrlPtBr, formatDatePtBr } from '../i18n/copy-format.pt-br';
 
 /** ' para <PT-BR label>' when the status is a known canonical value; '' otherwise (never the raw value). */
@@ -53,10 +53,10 @@ export function financialRuleLabel(p: Record<string, unknown>): string {
 }
 
 export const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string> = {
-  [DOMAIN_EVENTS.ARTIST_CREATED]: (p) => `Artista criado: ${p['nomeArtistico'] ?? ''}`,
-  [DOMAIN_EVENTS.ARTIST_UPDATED]: (p) => `Artista atualizado: ${p['nomeArtistico'] ?? ''}`,
-  [DOMAIN_EVENTS.ARTIST_STATUS_CHANGED]: (p) => `Status do artista ${p['nomeArtistico'] ?? ''} atualizado${toStatusSuffix('artist', p['newStatus'])}`,
-  [DOMAIN_EVENTS.ARTIST_DELETED]: (p) => `Artista removido: ${p['nomeArtistico'] ?? ''}`,
+  [DOMAIN_EVENTS.ARTIST_CREATED]: (p) => `Artista criado: ${p['stageName'] ?? ''}`,
+  [DOMAIN_EVENTS.ARTIST_UPDATED]: (p) => `Artista atualizado: ${p['stageName'] ?? ''}`,
+  [DOMAIN_EVENTS.ARTIST_STATUS_CHANGED]: (p) => `Status do artista ${p['stageName'] ?? ''} atualizado${toStatusSuffix('artist', p['newStatus'])}`,
+  [DOMAIN_EVENTS.ARTIST_DELETED]: (p) => `Artista removido: ${p['stageName'] ?? ''}`,
   [DOMAIN_EVENTS.CONTRACT_CREATED]: (p) => `Contrato criado: ${p['title'] ?? ''}`,
   [DOMAIN_EVENTS.CONTRACT_STATUS_CHANGED]: (p) => `Status do contrato ${p['title'] ?? ''} atualizado${toStatusSuffix('contract', p['newStatus'])}`,
   [DOMAIN_EVENTS.CONTRACT_SENT_FOR_SIGNATURE]: (p) => `Contrato enviado para assinatura: ${p['title'] ?? ''}`,
@@ -78,7 +78,7 @@ export const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string
     return `Status ${WORKFLOW_ENTITY_PT_BR[domain] ?? 'do registro'} atualizado${toStatusSuffix(domain, p['toStatus'])}`;
   },
   [DOMAIN_EVENTS.TRANSACTION_CREATED]: (p) =>
-    `${TRANSACTION_TYPE_LABELS_PT_BR[p['type'] as keyof typeof TRANSACTION_TYPE_LABELS_PT_BR] ?? 'Transação'} registrada${amountSuffix(p['amount'])}`,
+    `${transactionTypeRegisteredPtBr(p['type'])}${amountSuffix(p['amount'])}`,
   [DOMAIN_EVENTS.TRANSACTION_STATUS_CHANGED]: (p) => `Status da transação atualizado${toStatusSuffix('transaction', p['newStatus'])}`,
   [DOMAIN_EVENTS.TRANSACTION_PAID]: (p) => `Pagamento baixado${amountSuffix(p['amount'])}`,
   [DOMAIN_EVENTS.TRANSACTION_CANCELLED]: (p) => `Transação cancelada${amountSuffix(p['amount'])}`,
@@ -93,7 +93,7 @@ export const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string
   // its only effect is this notification, which must at least carry the amount
   // the rule computed (it used to be discarded).
   [DOMAIN_EVENTS.FINANCIAL_RULE_TRIGGERED]: (p) => financialRuleLabel(p),
-  [DOMAIN_EVENTS.ARTIST_ONBOARDING_STARTED]: (p) => `Onboarding iniciado: ${p['nomeArtistico'] ?? ''}`,
+  [DOMAIN_EVENTS.ARTIST_ONBOARDING_STARTED]: (p) => `Onboarding iniciado: ${p['stageName'] ?? ''}`,
   [DOMAIN_EVENTS.DISTRIBUTION_SETUP_REQUESTED]: () => 'Setup de distribuição solicitado',
   [DOMAIN_EVENTS.EXTERNAL_DATA_SYNC_REQUESTED]: () => 'Troca de dados externa solicitada',
   [DOMAIN_EVENTS.CONTRACT_INTEGRATION_READY]: (p) => `Contrato pronto para integração: ${p['title'] ?? ''}`,

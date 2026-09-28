@@ -122,12 +122,12 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
     );
 
     await ds.query(
-      `INSERT INTO artists (id, tenant_id, nome_artistico)
+      `INSERT INTO artists (id, tenant_id, stage_name)
        VALUES (gen_random_uuid(), $1, $2)`,
       [TENANT_A, `${TAG}_A`],
     );
     await ds.query(
-      `INSERT INTO artists (id, tenant_id, nome_artistico)
+      `INSERT INTO artists (id, tenant_id, stage_name)
        VALUES (gen_random_uuid(), $1, $2)`,
       [TENANT_B, `${TAG}_B`],
     );
@@ -135,7 +135,7 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
 
   afterAll(async () => {
     if (ds?.isInitialized) {
-      await ds.query(`DELETE FROM artists WHERE nome_artistico LIKE $1`, [`${TAG}%`]);
+      await ds.query(`DELETE FROM artists WHERE stage_name LIKE $1`, [`${TAG}%`]);
       await ds.destroy();
     }
   });
@@ -151,7 +151,7 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
     const result = await ds.query(
       `SELECT COUNT(*)::int AS count
        FROM artists
-       WHERE nome_artistico = $1 AND tenant_id = $2`,
+       WHERE stage_name = $1 AND tenant_id = $2`,
       [name, TENANT_A],
     );
     return result[0].count as number;
@@ -171,7 +171,7 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
     const matrix = readWorkbook(result.body as Buffer, 'Artistas');
     const headers = matrix[0] as unknown[];
     expect(headers).toContain('Nome artístico');
-    expect(headers).not.toContain('nome_artistico');
+    expect(headers).not.toContain('stage_name');
     const serialized = JSON.stringify(matrix);
     expect(serialized).toContain(`${TAG}_A`);
     expect(serialized).not.toContain(`${TAG}_B`);
@@ -212,7 +212,7 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
     expect(result.importedRows).toBe(1);
     expect(await countArtists(name)).toBe(1);
     const row = await ds.query(
-      `SELECT tenant_id FROM artists WHERE nome_artistico = $1`,
+      `SELECT tenant_id FROM artists WHERE stage_name = $1`,
       [name],
     );
     expect(row[0].tenant_id).toBe(TENANT_A);
@@ -254,7 +254,7 @@ describe('Reports E2E — real PostgreSQL and XLSX', () => {
     );
     expect(result.importedRows).toBe(1);
     const row = await ds.query(
-      `SELECT tenant_id FROM artists WHERE nome_artistico = $1`,
+      `SELECT tenant_id FROM artists WHERE stage_name = $1`,
       [name],
     );
     expect(row[0]?.tenant_id).toBe(TENANT_A);

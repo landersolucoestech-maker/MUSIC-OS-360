@@ -52,9 +52,9 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
     payload: {
       clientId: 'c1',
       tenantId: 't1',
-      nome: 'Banda Aurora Produções',
-      categoria: 'CORPORATE_CLIENT',
-      tipoPessoa: 'pessoa_juridica',
+      name: 'Banda Aurora Produções',
+      category: 'CORPORATE_CLIENT',
+      personType: 'company',
       sourceLeadId: 'lead-1',
       createdBy: 'u1',
       ...overrides,
@@ -63,10 +63,10 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
 }
 
 const CLIENT_ROW = {
-  nome: 'Banda Aurora Produções',
-  categoria: 'CORPORATE_CLIENT',
-  tipo_pessoa: 'pessoa_juridica',
-  responsavel_nome: 'Fulano',
+  name: 'Banda Aurora Produções',
+  category: 'CORPORATE_CLIENT',
+  person_type: 'company',
+  responsible_name: 'Fulano',
   metadata: {},
 };
 
@@ -117,8 +117,8 @@ describe('ContactOperationsAutomation (client.created → contact-operations)', 
     expect(meta.aiContactOperations.parsed.recommendedActions).toHaveLength(2);
   });
 
-  it('without an assigned owner, builds the input without responsavelNome', async () => {
-    const row = { ...CLIENT_ROW, responsavel_nome: null };
+  it('without an assigned owner, builds the input without responsibleName', async () => {
+    const row = { ...CLIENT_ROW, responsible_name: null };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

@@ -30,7 +30,8 @@ import {
 } from "lucide-react";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 import { storedFileDisplayName } from "@/shared/lib/stored-file";
-import { paymentMethods, paymentTypes } from "@/modules/accounting/constants/transaction-constants";
+import { paymentMethods, paymentTypes, transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
+import { TRANSACTION_COUNTERPARTY_TYPE_LABELS_PT_BR, TRANSACTION_INSTALLMENT_INTERVAL_LABELS_PT_BR } from "@music-os-360/types";
 import type { TransactionType } from "@/modules/accounting/types/accounting.types";
 
 type Detail = Record<string, unknown>;
@@ -150,14 +151,14 @@ function textValue(value: unknown): string | undefined {
   if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
   if (typeof value !== "object") return undefined;
   const record = value as Detail;
-  return textValue(record.nome_artistico ?? record.nome ?? record.name ?? record.titulo ?? record.title ?? record.descricao ?? record.id);
+  return textValue(record.stage_name ?? record.name ?? record.title ?? record.description);
 }
 
 function displayName(value: unknown): string | undefined {
   if (!hasValue(value)) return undefined;
   if (typeof value === "object") {
     const record = value as Detail;
-    return textValue(record.nome_artistico ?? record.nome ?? record.name ?? record.titulo ?? record.title ?? record.descricao);
+    return textValue(record.stage_name ?? record.name ?? record.title ?? record.description);
   }
   const raw = textValue(value);
   if (!raw || /^[a-z]+-\d+$/i.test(raw) || /^[a-f0-9-]{8,}$/i.test(raw)) return undefined;
@@ -170,11 +171,6 @@ function numValue(value: unknown): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
-function labelize(value: unknown): string | undefined {
-  const raw = textValue(value);
-  if (!raw) return undefined;
-  return raw.replace(/[_-]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
-}
 
 function moneyValue(value: unknown): string | undefined {
   const parsed = numValue(value);
@@ -194,13 +190,13 @@ function dateTimeValue(value: unknown): string | undefined {
 function paymentMethod(value: unknown): string | undefined {
   const raw = textValue(value);
   if (!raw) return undefined;
-  return paymentMethodLabels[raw] ?? labelize(raw);
+  return paymentMethodLabels[raw] ?? "Outro meio de pagamento";
 }
 
 function paymentTypeLabel(value: unknown): string | undefined {
   const raw = textValue(value);
   if (!raw) return undefined;
-  return paymentTypeLabels[raw] ?? labelize(raw);
+  return paymentTypeLabels[raw] ?? "Outro tipo de pagamento";
 }
 
 /** Wire reference month "YYYY-MM" → PT-BR "MM/AAAA". */
@@ -294,18 +290,6 @@ function AdvancedLine({ label, value, mono }: { label: string; value: ReactNode;
   );
 }
 
-function MetadataBlock({ metadata }: { metadata: unknown }) {
-  if (!hasValue(metadata)) return null;
-  return (
-    <div className="mt-2 rounded-lg bg-muted/40 p-3">
-      <p className="mb-2 text-xs font-medium text-muted-foreground">Metadados</p>
-      <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-words text-xs leading-relaxed text-muted-foreground">
-        {JSON.stringify(metadata, null, 2)}
-      </pre>
-    </div>
-  );
-}
-
 export function TransactionViewModal({ open, onOpenChange, transactionId }: TransactionViewModalProps) {
   const [details, setDetails] = useState<Detail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -350,13 +334,23 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
   const transactionDate = valueOf(t, ["transactionDate"]);
   const method = paymentMethod(valueOf(t, ["paymentMethod"]));
   const paymentType = paymentTypeLabel(valueOf(t, ["paymentType"]));
-  const category = labelize(valueOf(t, ["category"])) ?? undefined;
-  const subcategory = labelize(valueOf(t, ["subcategory"]));
-  const costCenter = labelize(valueOf(t, ["costCenter"]));
-  const account = textValue(valueOf(t, ["bankAccount"]));
-  const bank = textValue(valueOf(t, ["bank"]));
-  const agency = textValue(valueOf(t, ["agency"]));
-  const transactionCode = textValue(valueOf(t, ["transactionCode"]));
+  const categorySlug = textValue(valueOf(t, ["category"]));
+  const category = categorySlug ? transactionCategoryLabel(categorySlug) : undefined;
+  const subcategorySlug = textValue(valueOf(t, ["subcategory"]));
+  const subcategory = subcategorySlug ? transactionCategoryLabel(subcategorySlug) : undefined;
+  const costCenter = textValue(valueOf(t, ["costCenter"]));
+  const counterpartyTypeRaw = textValue(valueOf(t, ["counterpartyType"]));
+  const counterpartyType = counterpartyTypeRaw ? (TRANSACTION_COUNTERPARTY_TYPE_LABELS_PT_BR[counterpartyTypeRaw] ?? "Não informado") : undefined;
+  const sourceAccount = textValue(valueOf(t, ["sourceBankAccount"]));
+  const destinationAccount = textValue(valueOf(t, ["destinationBankAccount"]));
+  const account = sourceAccount ?? destinationAccount;
+  const taxAuthority = textValue(valueOf(t, ["taxAuthority"]));
+  const investmentItem = textValue(valueOf(t, ["investmentItem"]));
+  const travelReason = textValue(valueOf(t, ["travelReason"]));
+  const advertisingName = textValue(valueOf(t, ["advertisingName"]));
+  const intervalRaw = textValue(valueOf(t, ["installmentInterval"]));
+  const installmentInterval = intervalRaw ? (TRANSACTION_INSTALLMENT_INTERVAL_LABELS_PT_BR[intervalRaw] ?? "Não informado") : undefined;
+  const firstInstallmentDate = dateValue(valueOf(t, ["firstInstallmentDate"]));
   const observations = textValue(valueOf(t, ["note"]));
   const installments = numValue(valueOf(t, ["installments"]));
   const installmentCurrent = numValue(valueOf(t, ["installmentCurrent"]));
@@ -367,7 +361,6 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
   const competence = referenceMonthValue(valueOf(t, ["competence"]));
   const dueDate = dateValue(valueOf(t, ["dueDate"]));
   const paidDate = dateValue(valueOf(t, ["paidAt"]));
-  const recurrence = labelize(valueOf(t, ["recurrence"]));
 
   const relationships = useMemo(() => ([
     ["Artista", displayName(valueOf(t, ["artist"]))],
@@ -391,11 +384,11 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
   const attachmentsName = textValue(firstAttachment?.name);
   const attachmentIsImage = typeof attachmentsUrl === "string" && /\.(png|jpe?g|webp|gif)$/i.test(attachmentsUrl);
   const attachmentIsPdf = typeof attachmentsUrl === "string" && /\.pdf$/i.test(attachmentsUrl);
-  const createdBy = textValue(valueOf(t, ["createdBy"]));
-  const updatedBy = textValue(valueOf(t, ["updatedBy"]));
+  // User ids are never shown; only a resolved name (object with name) is.
+  const createdBy = displayName(valueOf(t, ["createdBy"]));
+  const updatedBy = displayName(valueOf(t, ["updatedBy"]));
   const createdAt = dateTimeValue(valueOf(t, ["created_at"]));
   const updatedAt = dateTimeValue(valueOf(t, ["updated_at"]));
-  const metadata = valueOf(t, ["metadata"]);
 
   const advancedItems = [
     ["Valor bruto", moneyValue(valueOf(t, ["grossAmount"]))],
@@ -404,22 +397,25 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
     ["Taxas", moneyValue(valueOf(t, ["fees"]))],
     ["Juros", moneyValue(valueOf(t, ["interest"]))],
     ["Multa", moneyValue(valueOf(t, ["fine"]))],
-    ["Código transacional", transactionCode],
-    ["Conta bancária", account],
-    ["Banco", bank],
-    ["Agencia", agency],
-    ["Competencia", competence],
+    ["Tipo de cliente", counterpartyType],
+    ["Órgão arrecadador", taxAuthority],
+    ["Item de investimento", investmentItem],
+    ["Motivo da viagem", travelReason],
+    ["Nome da publicidade", advertisingName],
+    ["Conta de origem", sourceAccount],
+    ["Conta de destino", destinationAccount],
+    ["Competência", competence],
     ["Vencimento", dueDate],
     ["Data de pagamento", paidDate],
-    ["Recorrencia", recurrence],
     ["Parcelamento", installmentSummary],
+    ["Intervalo das parcelas", installmentInterval],
+    ["Primeira parcela", firstInstallmentDate],
     ["Criado por", createdBy],
     ["Atualizado por", updatedBy],
     ["Criado em", createdAt],
     ["Atualizado em", updatedAt],
-    ["ID", textValue(valueOf(t, ["id"]))],
   ] as const;
-  const hasAdvancedItems = advancedItems.some(([, value]) => hasValue(value)) || hasValue(valueOf(t, ["metadata"]));
+  const hasAdvancedItems = advancedItems.some(([, value]) => hasValue(value));
 
   if (!transactionId) return null;
 
@@ -474,8 +470,8 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
                   <div className="grid gap-4 rounded-3xl border border-border/70 bg-card p-5">
                     <DetailRow label="Método" value={method} />
                     <DetailRow label="Tipo" value={paymentType} />
-                    <DetailRow label="Código transacional" value={transactionCode} />
-                    <DetailRow label="Recorrência" value={recurrence} />
+                    <DetailRow label="Intervalo das parcelas" value={installmentInterval} />
+                    <DetailRow label="Primeira parcela" value={firstInstallmentDate} />
                     <DetailRow label="Competência" value={competence} />
                     <DetailRow label="Vencimento" value={dueDate} />
                     <DetailRow label="Pago em" value={paidDate} />
@@ -522,13 +518,22 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
                 </Section>
               )}
 
-              <Section title="Auditoria / Metadados" icon={History}>
+              {hasAdvancedItems && (
+                <Section title="Informações adicionais" icon={FileText}>
+                  <div className="rounded-3xl border border-border/70 bg-card p-5">
+                    {advancedItems.filter(([, value]) => hasValue(value)).map(([label, value]) => (
+                      <AdvancedLine key={label} label={label} value={value} />
+                    ))}
+                  </div>
+                </Section>
+              )}
+
+              <Section title="Auditoria" icon={History}>
                 <div className="rounded-3xl border border-border/70 bg-card p-5">
                   <AdvancedLine label="Criado por" value={createdBy} />
                   <AdvancedLine label="Atualizado por" value={updatedBy} />
                   <AdvancedLine label="Criado em" value={createdAt} mono />
                   <AdvancedLine label="Atualizado em" value={updatedAt} mono />
-                  <MetadataBlock metadata={metadata} />
                 </div>
               </Section>
             </div>
@@ -540,7 +545,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
                   {signedAmount > 0 ? "+" : ""}{formatCurrency(signedAmount)}
                 </p>
                 <div className="space-y-3">
-                  <DetailRow label="Status" value={statusMeta[status]?.label ?? labelize(status)} />
+                  <DetailRow label="Status" value={statusMeta[status]?.label ?? "Status não reconhecido"} />
                   <DetailRow label="Data" value={mainDate} />
                   <DetailRow label="Método" value={method} />
                   <DetailRow label="Tipo" value={paymentType} />

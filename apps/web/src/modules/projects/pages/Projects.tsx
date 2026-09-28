@@ -386,8 +386,8 @@ export default function Projects() {
                             })()}
                             <div className="min-w-0">
                               <p className="font-medium truncate" data-testid={`text-title-${project.id}`}>{project.title}</p>
-                              {project.artistas?.nome_artistico && (
-                                <p className="text-xs text-muted-foreground truncate">{project.artistas.nome_artistico}</p>
+                              {project.artistas?.stage_name && (
+                                <p className="text-xs text-muted-foreground truncate">{project.artistas.stage_name}</p>
                               )}
                             </div>
                           </div>

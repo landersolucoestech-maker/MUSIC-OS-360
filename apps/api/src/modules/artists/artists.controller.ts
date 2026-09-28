@@ -185,7 +185,7 @@ export class ArtistsController {
     @Query('force') force?: string,
   ) {
     const artist = await this.service.findById(tenant.id, id);
-    return this.audienceHealth.run(tenant.id, user.userId, id, artist.nome_artistico, force === 'true');
+    return this.audienceHealth.run(tenant.id, user.userId, id, artist.stage_name, force === 'true');
   }
 
   @Post(':id/platform-profiles/:platform/sync')

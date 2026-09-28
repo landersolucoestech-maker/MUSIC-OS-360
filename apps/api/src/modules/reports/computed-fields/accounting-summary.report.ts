@@ -22,14 +22,14 @@ export async function fetchAccountingSummaryRows(
 ): Promise<AccountingSummaryRow[]> {
   const rows = (await ds.query(
     `SELECT
-       a.nome_artistico AS artist,
+       a.stage_name AS artist,
        COALESCE(SUM(t.amount) FILTER (WHERE t.type = 'revenue'), 0) AS revenue,
        COALESCE(SUM(t.amount) FILTER (WHERE t.type = 'expense'), 0) AS expenses
      FROM artists a
      JOIN transactions t ON t.artist_id = a.id AND t.tenant_id = a.tenant_id
      WHERE a.tenant_id = $1 AND t.deleted_at IS NULL
-     GROUP BY a.id, a.nome_artistico
-     ORDER BY a.nome_artistico ASC`,
+     GROUP BY a.id, a.stage_name
+     ORDER BY a.stage_name ASC`,
     [tenantId],
   )) as { artist: string; revenue: string; expenses: string }[];
 

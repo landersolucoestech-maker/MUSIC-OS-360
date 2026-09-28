@@ -2,25 +2,35 @@
 // Hierarchical Contact classification (config-driven, single source).
 // Contact type → Category → Contact profile.
 //
-// - Contact type: legal nature (individual/legal entity) → persists in tipo_pessoa.
-// - Category: relationship → persists in Contact.contactType (slugs of the
+// - Contact type: legal nature (individual/company) → `clients.person_type`
+//   (Contact.personType).
+// - Category: relationship → `clients.category` (Contact.category; slugs of the
 //   ContactType enum, keeping the existing filters/"Segmento" column).
-// - Contact profile: specific identity → persists in payloadOperacional.perfil.
+// - Contact profile: specific identity → `clients.profile` (Contact.profile;
+//   PT slug VALUES unchanged — taxonomy decision pending; always shown through
+//   profileLabel()).
 //
 // The whole relationship is centralized here — no scattered ifs/switches.
 // ============================================================================
 
-export type ContactPersonType = "pessoa_fisica" | "pessoa_juridica";
+import type { PersonType } from "../types";
 
 export interface ClassificationOption {
   value: string;
   label: string;
 }
 
-export const CONTACT_TYPE_OPTIONS: ClassificationOption[] = [
-  { value: "pessoa_fisica", label: "Pessoa Física" },
-  { value: "pessoa_juridica", label: "Pessoa Jurídica" },
+export const PERSON_TYPE_OPTIONS: ReadonlyArray<{ value: PersonType; label: string }> = [
+  { value: "individual", label: "Pessoa Física" },
+  { value: "company", label: "Pessoa Jurídica" },
 ];
+
+/** PT-BR label shown for a person type outside the catalog (never the raw value). */
+export const UNKNOWN_PERSON_TYPE_LABEL = "Tipo não identificado";
+
+export function personTypeLabel(value: string): string {
+  return PERSON_TYPE_OPTIONS.find((o) => o.value === value)?.label ?? UNKNOWN_PERSON_TYPE_LABEL;
+}
 
 // value = slug of the ContactType enum (keeps compatibility with the table/filters).
 export const CONTACT_CATEGORY_OPTIONS: ClassificationOption[] = [
@@ -37,8 +47,8 @@ const OUTROS = opt("outros", "Outros");
 
 // Profiles per contact type + category.
 // Category keys = CONTACT_CATEGORY_OPTIONS slugs.
-export const CONTACT_PROFILES: Record<ContactPersonType, Record<string, ClassificationOption[]>> = {
-  pessoa_fisica: {
+export const CONTACT_PROFILES: Record<PersonType, Record<string, ClassificationOption[]>> = {
+  individual: {
     CORPORATE_CLIENT: [
       opt("artista_banda", "Artista/Banda"),
       opt("empresario_artistico", "Empresário Artístico"),
@@ -83,7 +93,7 @@ export const CONTACT_PROFILES: Record<ContactPersonType, Record<string, Classifi
     INVESTOR: [opt("investidor", "Investidor"), opt("fundo_de_investimento", "Fundo de Investimento"), OUTROS],
     COLLECTIVE_MANAGEMENT_ORGANIZATION: [OUTROS],
   },
-  pessoa_juridica: {
+  company: {
     CORPORATE_CLIENT: [
       opt("empresa", "Empresa"),
       opt("marca", "Marca"),
@@ -139,7 +149,7 @@ export const CONTACT_PROFILES: Record<ContactPersonType, Record<string, Classifi
 };
 
 /** Valid profiles for a Type + Category combination. */
-export function getProfiles(type: ContactPersonType, categorySlug: string): ClassificationOption[] {
+export function getProfiles(type: PersonType, categorySlug: string): ClassificationOption[] {
   return CONTACT_PROFILES[type]?.[categorySlug] ?? [];
 }
 
@@ -151,7 +161,7 @@ export const UNKNOWN_PROFILE_LABEL = "Perfil não cadastrado";
  * first, then in the whole catalog (a legacy profile saved under another
  * category keeps its real label); never returns the raw slug.
  */
-export function profileLabel(slug: string, type?: ContactPersonType, categorySlug?: string): string {
+export function profileLabel(slug: string, type?: PersonType, categorySlug?: string): string {
   if (!slug) return "";
   if (type && categorySlug) {
     const scoped = getProfiles(type, categorySlug).find((o) => o.value === slug);

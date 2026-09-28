@@ -12,18 +12,19 @@ import { AppDataSource } from '../src/database/datasource';
 
 // Canonical order documented per table — updated on every physical rebuild.
 const CANONICAL_ORDER: Record<string, string[]> = {
+  // CZ-042 (20260928000022): same physical order, columns renamed to English.
   artists: [
-    'id', 'tenant_id', 'foto_url', 'nome_artistico', 'music_genre', 'especialidades',
-    'documentos_pessoais_url', 'presskit_url', 'notes', 'nome_civil', 'data_nascimento', 'cpf_cnpj_encrypted',
-    'rg', 'endereco', 'telefone_encrypted', 'email_encrypted', 'banco',
-    'agencia', 'conta', 'chave_pix', 'titular_conta', 'spotify_url', 'youtube_url',
-    'soundcloud_url', 'apple_music_url', 'deezer_url', 'tipo_perfil', 'contatos_vinculados', 'distribuidoras_gerais',
-    'notas_internas', 'contrato_id', 'slug_artistico', 'tags_musicais', 'fase_carreira', 'status',
-    'status_cadastro', 'relacionamentos', 'empresario_id', 'empresario_nome', 'empresario_telefone', 'empresario_email',
-    'gravadora_id', 'gravadora_nome', 'gravadora_telefone', 'gravadora_email', 'gravadora_responsavel_id', 'gravadora_responsavel_nome',
-    'gravadora_responsavel_telefone', 'gravadora_responsavel_email', 'distribuidoras_selecionadas', 'distribuidoras_emails', 'distribuidoras_empresa_selecionadas', 'distribuidoras_empresa_emails',
-    'contatos_equipe', 'manager_nome', 'manager_contato_encrypted', 'produtor_executivo', 'agencia_booking', 'label_parceira',
-    'galeria_urls', 'documents', 'metadata', 'created_at', 'updated_at', 'created_by',
+    'id', 'tenant_id', 'photo_url', 'stage_name', 'music_genre', 'specialties',
+    'personal_documents_url', 'press_kit_url', 'notes', 'full_name', 'birth_date', 'cpf_cnpj_encrypted',
+    'rg', 'address', 'phone_encrypted', 'email_encrypted', 'bank_name',
+    'bank_branch', 'bank_account', 'pix_key', 'account_holder', 'spotify_url', 'youtube_url',
+    'soundcloud_url', 'apple_music_url', 'deezer_url', 'profile_type', 'linked_contacts', 'general_distributors',
+    'internal_notes', 'contract_id', 'artist_slug', 'music_tags', 'career_stage', 'status',
+    'registration_status', 'relationships', 'agent_id', 'agent_name', 'agent_phone', 'agent_email',
+    'record_label_id', 'record_label_name', 'record_label_phone', 'record_label_email', 'record_label_contact_id', 'record_label_contact_name',
+    'record_label_contact_phone', 'record_label_contact_email', 'selected_distributors', 'distributor_emails', 'company_selected_distributors', 'company_distributor_emails',
+    'team_contacts', 'manager_name', 'manager_contact_encrypted', 'executive_producer', 'booking_agency', 'partner_label',
+    'gallery_urls', 'documents', 'metadata', 'created_at', 'updated_at', 'created_by',
     'updated_by', 'deleted_at',
   ],
   works: [

@@ -11,7 +11,7 @@
 export interface ArtistCreatedPayload {
   artistId:      string;
   tenantId:      string;
-  nomeArtistico: string;
+  stageName:     string;
   status:        string;
   createdBy:     string;
 }
@@ -19,7 +19,7 @@ export interface ArtistCreatedPayload {
 export interface ArtistUpdatedPayload {
   artistId:      string;
   tenantId:      string;
-  nomeArtistico: string;
+  stageName:     string;
   changedFields: string[];
   updatedBy:     string;
 }
@@ -27,7 +27,7 @@ export interface ArtistUpdatedPayload {
 export interface ArtistStatusChangedPayload {
   artistId:       string;
   tenantId:       string;
-  nomeArtistico:  string;
+  stageName:      string;
   previousStatus: string;
   newStatus:      string;
   changedBy:      string;
@@ -36,7 +36,7 @@ export interface ArtistStatusChangedPayload {
 export interface ArtistDeletedPayload {
   artistId:      string;
   tenantId:      string;
-  nomeArtistico: string;
+  stageName:     string;
   deletedBy:     string;
 }
 
@@ -109,7 +109,7 @@ export interface ContractExpiredPayload {
 export interface ArtistOnboardingStartedPayload {
   artistId:      string;
   tenantId:      string;
-  nomeArtistico: string;
+  stageName:     string;
   tasks:         string[];
   startedAt:     string;
 }
@@ -483,9 +483,10 @@ export interface LeadConvertedPayload {
 export interface ClientCreatedPayload {
   clientId:   string;
   tenantId:   string;
-  nome:       string;
+  name:       string;
   category:   string;
-  tipoPessoa: string;
+  /** individual | company (CZ-043; was tipoPessoa pessoa_fisica/pessoa_juridica) */
+  personType: string;
   sourceLeadId: string | null;
   createdBy:  string;
 }

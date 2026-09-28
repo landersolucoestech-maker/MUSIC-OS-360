@@ -17,7 +17,7 @@ import {
   BillingStatus,
   SystemRole,
   ArtistStatus,
-  ArtistStatusCadastro,
+  ArtistRegistrationStatus,
   ContractStatus,
   WorkStatus,
   PhonogramStatus,
@@ -481,36 +481,74 @@ export class BillingPlanEntity {
 export class ArtistEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'varchar', length: 255 }) nome_artistico: string;
-  @Column({ type: 'varchar', length: 255, nullable: true }) nome_civil: string | null;
-  @Column({ type: 'varchar', length: 50, default: ArtistStatus.IN_NEGOTIATION }) status: ArtistStatus;
-  @Column({ type: 'varchar', length: 50, default: ArtistStatusCadastro.ACTIVE }) status_cadastro: ArtistStatusCadastro;
+  // CZ-042: every form field has its own column (product rule 2026-07-12);
+  // metadata holds only the metadata-only fields (gender, instagram/tiktok URLs,
+  // platform metrics). Old Portuguese metadata keys are historical data.
+  @Column({ type: 'text', nullable: true }) photo_url: string | null;
+  @Column({ type: 'varchar', length: 255 }) stage_name: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
-  @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
-  @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;
-  @Column({ type: 'text', nullable: true }) cpf_cnpj_encrypted: string | null;
-  @Column({ type: 'text', nullable: true }) foto_url: string | null;
-  @Column({ type: 'jsonb', default: [] }) galeria_urls: unknown[];
-  @Column({ type: 'jsonb', default: [] }) documents: unknown[];
+  @Column({ type: 'jsonb', default: [] }) specialties: unknown[];
+  @Column({ type: 'text', nullable: true }) personal_documents_url: string | null;
+  @Column({ type: 'text', nullable: true }) press_kit_url: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) manager_nome: string | null;
-  @Column({ type: 'text', nullable: true }) manager_contato_encrypted: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) produtor_executivo: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) agencia_booking: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) label_parceira: string | null;
-  @Column({ type: 'jsonb', default: [] }) especialidades: unknown[];
+  @Column({ type: 'varchar', length: 255, nullable: true }) full_name: string | null;
+  @Column({ type: 'date', nullable: true }) birth_date: string | null;
+  @Column({ type: 'text', nullable: true }) cpf_cnpj_encrypted: string | null;
+  @Column({ type: 'varchar', length: 30, nullable: true }) rg: string | null;
+  @Column({ type: 'varchar', length: 300, nullable: true }) address: string | null;
+  @Column({ type: 'text', nullable: true }) phone_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) bank_name: string | null;
+  @Column({ type: 'varchar', length: 30, nullable: true }) bank_branch: string | null;
+  @Column({ type: 'varchar', length: 40, nullable: true }) bank_account: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) pix_key: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) account_holder: string | null;
   @Column({ type: 'text', nullable: true }) spotify_url: string | null;
   @Column({ type: 'text', nullable: true }) youtube_url: string | null;
-  @Column({ type: 'text', nullable: true }) deezer_url: string | null;
-  @Column({ type: 'text', nullable: true }) apple_music_url: string | null;
   @Column({ type: 'text', nullable: true }) soundcloud_url: string | null;
-  @Column({ type: 'uuid', nullable: true }) contrato_id: string | null;
+  @Column({ type: 'text', nullable: true }) apple_music_url: string | null;
+  @Column({ type: 'text', nullable: true }) deezer_url: string | null;
+  @Column({ type: 'varchar', length: 30, nullable: true }) profile_type: string | null;
+  @Column({ type: 'jsonb', nullable: true }) linked_contacts: unknown[] | null;
+  @Column({ type: 'jsonb', nullable: true }) general_distributors: unknown[] | null;
+  @Column({ type: 'text', nullable: true }) internal_notes: string | null;
+  @Column({ type: 'uuid', nullable: true }) contract_id: string | null;
+  @Column({ type: 'varchar', length: 160, nullable: true }) artist_slug: string | null;
+  @Column({ type: 'jsonb', nullable: true }) music_tags: string[] | null;
+  @Column({ type: 'varchar', length: 60, nullable: true }) career_stage: string | null;
+  @Column({ type: 'varchar', length: 50, default: ArtistStatus.IN_NEGOTIATION }) status: ArtistStatus;
+  @Column({ type: 'varchar', length: 50, default: ArtistRegistrationStatus.ACTIVE }) registration_status: ArtistRegistrationStatus;
+  @Column({ type: 'jsonb', nullable: true }) relationships: unknown[] | null;
+  @Column({ type: 'varchar', length: 64, nullable: true }) agent_id: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) agent_name: string | null;
+  @Column({ type: 'varchar', length: 30, nullable: true }) agent_phone: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) agent_email: string | null;
+  @Column({ type: 'varchar', length: 64, nullable: true }) record_label_id: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) record_label_name: string | null;
+  @Column({ type: 'varchar', length: 30, nullable: true }) record_label_phone: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) record_label_email: string | null;
+  @Column({ type: 'varchar', length: 64, nullable: true }) record_label_contact_id: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) record_label_contact_name: string | null;
+  @Column({ type: 'varchar', length: 30, nullable: true }) record_label_contact_phone: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) record_label_contact_email: string | null;
+  @Column({ type: 'jsonb', nullable: true }) selected_distributors: Record<string, boolean> | null;
+  @Column({ type: 'jsonb', nullable: true }) distributor_emails: Record<string, string> | null;
+  @Column({ type: 'jsonb', nullable: true }) company_selected_distributors: Record<string, boolean> | null;
+  @Column({ type: 'jsonb', nullable: true }) company_distributor_emails: Record<string, string> | null;
+  @Column({ type: 'jsonb', nullable: true }) team_contacts: unknown[] | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) manager_name: string | null;
+  @Column({ type: 'text', nullable: true }) manager_contact_encrypted: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) executive_producer: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) booking_agency: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) partner_label: string | null;
+  @Column({ type: 'jsonb', default: [] }) gallery_urls: unknown[];
+  @Column({ type: 'jsonb', default: [] }) documents: unknown[];
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
-  @Column({ type: 'timestamp', nullable: true }) deleted_at: Date | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
+  @Column({ type: 'timestamp', nullable: true }) deleted_at: Date | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────
   @OneToMany(() => PhonogramEntity, (p) => p.artist)
@@ -1020,7 +1058,6 @@ export class TransactionEntity {
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'uuid', nullable: true }) contract_id: string | null;
   @Column({ type: 'uuid', nullable: true }) project_id: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) reference: string | null;
   @Column({ type: 'text', nullable: true }) attachment_url: string | null;
   // Financial categorization (financial_categories table). A logical reference
   // — the transactions table has NO physical FK today (creating the FK is Phase 2). The
@@ -1030,7 +1067,7 @@ export class TransactionEntity {
   @Column({ type: 'jsonb', default: {} }) financial_category_snapshot: Record<string, unknown>;
   // ── Form fields (CZ-041: English; the API reads/writes these columns — the
   // pre-CZ-041 metadata copies are historical data) ──────────────────────────
-  // company | artist | individual
+  // company | artist | individual | government | own_account
   @Column({ type: 'varchar', length: 50, nullable: true }) counterparty_type: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) subcategory: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
@@ -1058,6 +1095,7 @@ export class TransactionEntity {
   @Column({ type: 'varchar', length: 50, nullable: true, select: false }) legacy_transaction_type: string | null;
   @Column({ type: 'date', nullable: true, select: false }) legacy_transaction_date: string | null;
   @Column({ type: 'text', nullable: true, select: false }) legacy_attachment_url: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true, select: false }) legacy_reference: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
@@ -1144,36 +1182,40 @@ export class InvoiceEntity {
 export class ClientEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'varchar', length: 50, default: 'pessoa_juridica' }) tipo_pessoa: string;
-  @Column({ type: 'varchar', length: 100 }) categoria: string;
-  @Column({ type: 'varchar', length: 100 }) perfil: string;
-  @Column({ type: 'varchar', length: 255 }) nome: string;
-  @Column({ type: 'text', nullable: true }) foto: string | null;
+  // CZ-043: every CRM form field has its own column (English); metadata keeps
+  // the pre-CZ-043 Portuguese copies as historical data only.
+  // individual | company
+  @Column({ type: 'varchar', length: 50, default: 'company' }) person_type: string;
+  @Column({ type: 'varchar', length: 100 }) category: string;
+  @Column({ type: 'varchar', length: 100 }) profile: string;
+  @Column({ type: 'varchar', length: 255 }) name: string;
+  @Column({ type: 'text', nullable: true }) photo_url: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) individual_name: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) razao_social: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) legal_name: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) trade_name: string | null;
   @Column({ type: 'text', nullable: true }) cpf_cnpj_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
-  @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) phone_encrypted: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) instagram: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) funcao: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) logradouro: string | null;
-  @Column({ type: 'varchar', length: 20, nullable: true }) numero: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) complemento: string | null;
-  @Column({ type: 'varchar', length: 120, nullable: true }) bairro: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) job_title: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) street: string | null;
+  @Column({ type: 'varchar', length: 20, nullable: true }) street_number: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) address_complement: string | null;
+  @Column({ type: 'varchar', length: 120, nullable: true }) neighborhood: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) city: string | null;
   @Column({ type: 'varchar', length: 2, nullable: true }) state: string | null;
-  @Column({ type: 'varchar', length: 15, nullable: true }) cep: string | null;
-  @Column({ type: 'varchar', length: 500, nullable: true }) endereco_completo: string | null;
-  @Column({ type: 'varchar', length: 40, nullable: true }) status_contato: string | null;
-  @Column({ type: 'varchar', length: 40, nullable: true }) prioridade_contato: string | null;
-  @Column({ type: 'varchar', length: 150, nullable: true }) responsavel_nome: string | null;
-  @Column({ type: 'varchar', length: 150, nullable: true }) responsavel_email: string | null;
-  @Column({ type: 'varchar', length: 30, nullable: true }) responsavel_telefone: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) responsavel_cargo: string | null;
+  @Column({ type: 'varchar', length: 15, nullable: true }) zip_code: string | null;
+  @Column({ type: 'varchar', length: 500, nullable: true }) address: string | null;
+  // Pre-CZ-043 duplicate of `status` with no reader/writer (legacy data).
+  @Column({ type: 'varchar', length: 40, nullable: true, select: false }) legacy_contact_status: string | null;
+  @Column({ type: 'varchar', length: 40, nullable: true }) priority: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) responsible_name: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) responsible_job_title: string | null;
+  @Column({ type: 'varchar', length: 150, nullable: true }) responsible_email: string | null;
+  @Column({ type: 'varchar', length: 30, nullable: true }) responsible_phone: string | null;
   @Column({ type: 'jsonb', nullable: true }) attachments: unknown[] | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'jsonb', nullable: true }) interacoes: unknown[] | null;
+  @Column({ type: 'jsonb', nullable: true }) interactions: unknown[] | null;
   @Column({ type: 'varchar', length: 50, default: ClientStatus.ACTIVE }) status: ClientStatus;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;

@@ -42,7 +42,7 @@ export function createTestUser(overrides: Partial<TestUser> = {}): TestUser {
 
 export interface TestArtist {
   id: string;
-  nomeArtistico: string;
+  stageName: string;
 }
 
 /** Row id is a real UUID (many controllers run ParseUUIDPipe on it). */
@@ -50,7 +50,7 @@ export function createTestArtist(overrides: Partial<TestArtist> = {}): TestArtis
   const id = overrides.id ?? crypto.randomUUID();
   return {
     id,
-    nomeArtistico: overrides.nomeArtistico ?? `Artista de teste ${id.slice(0, 8)}`,
+    stageName: overrides.stageName ?? `Artista de teste ${id.slice(0, 8)}`,
   };
 }
 

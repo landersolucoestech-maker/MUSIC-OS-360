@@ -68,9 +68,9 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
         ? [{
             source: "artist" as const,
             id: String(artist.id ?? event.artist_id ?? "legacy-artist"),
-            label: String(artist.nome_artistico || artist.nome || "Artista"),
+            label: String(artist.stage_name || "Artista"),
             email: artist.email ? String(artist.email) : undefined,
-            phone: artist.telefone ? String(artist.telefone) : undefined,
+            phone: artist.phone ? String(artist.phone) : undefined,
             category: "Artista",
           }]
         : [];
@@ -157,7 +157,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold truncate" data-testid="text-evento-artista">
-                      {artist.nome_artistico || artist.nome || "—"}
+                      {artist.stage_name || "—"}
                     </p>
                     {artist.music_genre && (
                       <p className="text-xs text-muted-foreground">{artist.music_genre}</p>
@@ -166,7 +166,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                   {artist.email && (
                     <div className="hidden sm:flex flex-col text-right text-xs text-muted-foreground">
                       <span>{artist.email}</span>
-                      {artist.telefone && <span>{artist.telefone}</span>}
+                      {artist.phone && <span>{artist.phone}</span>}
                     </div>
                   )}
                 </CardContent>

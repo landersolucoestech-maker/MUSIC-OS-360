@@ -9,11 +9,18 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-/** Lightweight reference to an Artist (used in relations of other modules). */
+/**
+ * Lightweight reference to an Artist (used in relations of other modules).
+ * Keys are the canonical artist wire keys (CZ-042) — the embedded `artistas`
+ * relation is a raw artist row (API join or a row fetched from /artists).
+ */
 export interface ArtistRef {
   id: string;
-  nome_artistico?: string | null;
-  foto_url?: string | null;
+  stage_name?: string | null;
+  photo_url?: string | null;
+  /** Decrypted contact — present only on rows read from /artists. */
+  email?: string | null;
+  phone?: string | null;
   music_genre?: string | null;
   status?: string | null;
 }

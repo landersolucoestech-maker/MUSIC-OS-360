@@ -188,7 +188,7 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
 };
 
 const IDENTITY_COLUMN_NAMES = new Set([
-  'name', 'nome', 'nome_artistico', 'nome_civil', 'nome_fantasia', 'trade_name',
+  'name', 'nome', 'stage_name', 'full_name', 'nome_fantasia', 'trade_name',
   'individual_name', 'razao_social',
   'title', 'title', 'numero', 'codigo', 'code', 'slug', 'email', 'label',
   'assunto', 'descricao', 'description', 'referencia', 'ref',

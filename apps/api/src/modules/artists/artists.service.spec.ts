@@ -38,10 +38,15 @@ const USER_ID = 'user-111';
 const artistA = {
   id: 'artist-001',
   tenant_id: TENANT_A,
-  nome_artistico: 'Artista Alpha',
+  stage_name: 'Artista Alpha',
+  status: 'in_negotiation',
+  music_genre: null,
+  contract_id: null,
   email_encrypted: null,
-  telefone_encrypted: null,
+  phone_encrypted: null,
   cpf_cnpj_encrypted: null,
+  manager_contact_encrypted: null,
+  metadata: {},
   deleted_at: null,
   created_at: new Date(),
 };
@@ -83,7 +88,8 @@ function makeDataSource(getOneValue: unknown = artistA) {
     // Task H: list() enriches each artist with the linkage type (exclusive/
     // partner/independent) via a raw query restricted to the page's IDs —
     // with no contract mocked, this resolves to "independent".
-    query: jest.fn().mockResolvedValue([]),
+    // assertSameTenantFk ownership probe: found in the caller's tenant; everything else empty.
+    query: jest.fn(async (sql: string) => (String(sql).startsWith('SELECT 1 FROM "') ? [{ exists: 1 }] : [])),
     _repo: repo,
   };
 }
@@ -97,13 +103,13 @@ describe('ArtistsService', () => {
 
     // Response contract: ciphertext NEVER leaves the API; PII fields come back
     // decrypted under the names used by the form (null when not filled in).
-    const { email_encrypted, telefone_encrypted: phone_encrypted, cpf_cnpj_encrypted, ...artistAPublic } = artistA;
+    const { email_encrypted, phone_encrypted, cpf_cnpj_encrypted, manager_contact_encrypted, metadata, ...artistAPublic } = artistA;
     expect(result.data).toEqual([{
       ...artistAPublic,
       email: null,
-      telefone: null,
+      phone: null,
       cpf_cnpj: null,
-      manager_contato: null,
+      manager_contact: null,
       relationship: 'independent',
     }]);
     expect(result.data[0]).not.toHaveProperty('email_encrypted');
@@ -127,9 +133,29 @@ describe('ArtistsService', () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
-    await service.list(TENANT_A, { orderBy: 'nome_artistico', ascending: true } as any);
+    await service.list(TENANT_A, { orderBy: 'stage_name', ascending: true } as any);
 
-    expect(ds._repo._qb.orderBy).toHaveBeenCalledWith('a.nome_artistico', 'ASC');
+    expect(ds._repo._qb.orderBy).toHaveBeenCalledWith('a.stage_name', 'ASC');
+  });
+
+  it('CZ-042: list() maps the pre-CZ-042 orderBy values to the canonical columns', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+
+    await service.list(TENANT_A, { orderBy: 'nome_artistico', ascending: true } as any);
+    expect(ds._repo._qb.orderBy).toHaveBeenLastCalledWith('a.stage_name', 'ASC');
+    await service.list(TENANT_A, { orderBy: 'status_cadastro' } as any);
+    expect(ds._repo._qb.orderBy).toHaveBeenLastCalledWith('a.registration_status', 'DESC');
+  });
+
+  it('CZ-042: list() searches the canonical stage_name/full_name columns', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+
+    await service.list(TENANT_A, { search: 'ana' } as any);
+    expect(ds._repo._qb.andWhere).toHaveBeenCalledWith(
+      '(a.stage_name ILIKE :search OR a.full_name ILIKE :search)', { search: '%ana%' },
+    );
   });
 
   it('findById() returns the artist when it belongs to the tenant', async () => {
@@ -146,29 +172,29 @@ describe('ArtistsService', () => {
     await expect(service.findById(TENANT_A, 'inexistente')).rejects.toThrow(NotFoundException);
   });
 
-  it('create() encrypts email, telefone and cpf_cnpj before persisting', async () => {
+  it('create() encrypts email, phone and cpf_cnpj before persisting', async () => {
     const ds = makeDataSource();
     const enc = makeEncryptionMock();
     const events = makeEventsMock();
     const service = new ArtistsService(ds as any, enc, events as any, makePlanLimitMock() as any);
 
     const dto = {
-      nome_artistico: 'Artista Novo',
+      stage_name: 'Artista Novo',
       email: 'artista@music.com',
-      telefone: '+55 11 99999-0000',
+      phone: '+55 11 99999-0000',
       cpf_cnpj: '123.456.789-00',
     };
 
     const result = await service.create(TENANT_A, USER_ID, dto as any);
 
     expect(enc.encryptNullable).toHaveBeenCalledWith(dto.email);
-    expect(enc.encryptNullable).toHaveBeenCalledWith(dto.telefone);
+    expect(enc.encryptNullable).toHaveBeenCalledWith(dto.phone);
     expect(enc.encryptNullable).toHaveBeenCalledWith(dto.cpf_cnpj);
     expect(ds._repo.create).toHaveBeenCalledWith(
       expect.objectContaining({
         tenant_id: TENANT_A,
         email_encrypted: `enc:${dto.email}`,
-        telefone_encrypted: `enc:${dto.telefone}`,
+        phone_encrypted: `enc:${dto.phone}`,
         cpf_cnpj_encrypted: `enc:${dto.cpf_cnpj}`,
       }),
     );
@@ -176,7 +202,7 @@ describe('ArtistsService', () => {
     expect(events.emitTyped).toHaveBeenCalled();
     // Round-trip: the response returns the decrypted value and never the ciphertext.
     expect(result.email).toBe(dto.email);
-    expect(result.telefone).toBe(dto.telefone);
+    expect(result.phone).toBe(dto.phone);
     expect(result.cpf_cnpj).toBe(dto.cpf_cnpj);
     expect(result).not.toHaveProperty('email_encrypted');
   });
@@ -186,17 +212,59 @@ describe('ArtistsService', () => {
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
     await service.update(TENANT_A, USER_ID, 'artist-001', {
-      agencia_booking: null,
+      booking_agency: null,
       notes: 'nova bio',
     } as any);
 
     expect(ds._repo.update).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'artist-001', tenant_id: TENANT_A }),
-      expect.objectContaining({ agencia_booking: null, notes: 'nova bio' }),
+      expect.objectContaining({ booking_agency: null, notes: 'nova bio' }),
     );
     const updates = ds._repo.update.mock.calls[0][1] as Record<string, unknown>;
-    expect(updates).not.toHaveProperty('nome_artistico');
+    expect(updates).not.toHaveProperty('stage_name');
     expect(updates).not.toHaveProperty('email_encrypted');
+  });
+
+  it('create() rejects a payload without a stage name (PT-BR copy, nothing persisted)', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+
+    await expect(service.create(TENANT_A, USER_ID, { stage_name: '  ' } as any)).rejects.toThrow('Informe o nome artístico.');
+    expect(ds._repo.save).not.toHaveBeenCalled();
+  });
+
+  it('update() to active without genre/contact fails with PT-BR copy (no technical names)', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+
+    const error = await service.update(TENANT_A, USER_ID, 'artist-001', { status: 'active' } as any).catch((e: Error) => e);
+    expect((error as Error).message).toBe('Gênero musical obrigatório para ativar o artista; Informe e-mail ou telefone para ativar o artista');
+    expect((error as Error).message).not.toMatch(/music_genre|\bphone\b|\bemail\b/);
+    expect(ds._repo.update).not.toHaveBeenCalled();
+  });
+
+  it('update() to signed requires a linked contract (deprecated contrato_id accepted; empty value does not count)', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+
+    await expect(service.update(TENANT_A, USER_ID, 'artist-001', { status: 'signed', contract_id: '' } as any))
+      .rejects.toThrow('Vincule um contrato para marcar o artista como contratado.');
+    await service.update(TENANT_A, USER_ID, 'artist-001', { status: 'signed', contrato_id: '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac001' } as any);
+    expect(ds._repo.update).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ status: 'signed', contract_id: '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac001' }),
+    );
+  });
+
+  it('update()/create() reject a contract_id that belongs to another tenant (no cross-tenant reference)', async () => {
+    const ds = makeDataSource();
+    (ds as any).query = jest.fn().mockResolvedValue([]);
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+    await expect(service.update(TENANT_A, USER_ID, 'artist-001', { contract_id: '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac009' } as any))
+      .rejects.toThrow('Contrato não encontrado(a) neste workspace.');
+    await expect(service.create(TENANT_A, USER_ID, { stage_name: 'X', contract_id: '5f0c3c52-4a8e-4a39-9d51-2b7a2a4ac009' } as any))
+      .rejects.toThrow('Contrato não encontrado(a) neste workspace.');
+    expect(ds._repo.update).not.toHaveBeenCalled();
   });
 
   it('softDelete() sets deleted_at and updated_by without physically deleting', async () => {

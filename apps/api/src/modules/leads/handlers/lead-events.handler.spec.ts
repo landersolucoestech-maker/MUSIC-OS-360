@@ -62,7 +62,7 @@ function makeEvent(): DomainEvent<LeadConvertedPayload> {
 }
 
 describe('LeadEventsHandler.onLeadConverted', () => {
-  it('creates the client using categoria/perfil/responsavel_nome (real physical columns), never segmento/responsavel (removed)', async () => {
+  it('creates the client with the canonical category/profile/responsible_name columns (CZ-043), never segmento/responsavel (removed)', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     const artistRepo = makeRepo();
@@ -75,13 +75,13 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     const created = clientRepo.create.mock.calls[0][0] as Record<string, unknown>;
     expect(created['segmento']).toBeUndefined();
     expect(created['responsavel']).toBeUndefined();
-    expect(created['categoria']).toBe('CORPORATE_CLIENT');
-    expect(created['perfil']).toBe('outros');
-    expect(created['responsavel_nome']).toBe('user-1');
+    expect(created['category']).toBe('CORPORATE_CLIENT');
+    expect(created['profile']).toBe('outros');
+    expect(created['responsible_name']).toBe('user-1');
     expect(clientRepo.save).toHaveBeenCalledTimes(1);
   });
 
-  it('emits client.created (client_created) ONLY AFTER commit, never inside the transaction, with the real clientId/categoria/tipoPessoa', async () => {
+  it('emits client.created (client_created) ONLY AFTER commit, never inside the transaction, with the real clientId/category/personType', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     const artistRepo = makeRepo();
@@ -101,9 +101,9 @@ describe('LeadEventsHandler.onLeadConverted', () => {
         aggregateId: expect.any(String),
         payload: expect.objectContaining({
           tenantId: 'tenant-1',
-          nome: 'Fulano de Tal',
+          name: 'Fulano de Tal',
           category: 'CORPORATE_CLIENT',
-          tipoPessoa: 'pessoa_fisica',
+          personType: 'individual',
           sourceLeadId: 'lead-1',
         }),
       }),

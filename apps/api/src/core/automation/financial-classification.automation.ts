@@ -106,7 +106,7 @@ export class FinancialClassificationAutomation {
     if (!this.ds) return null;
     const rows = (await manager.query(
       `SELECT t.type, t.category, t.description, t.amount, t.transaction_date, t.notes, t.metadata,
-              a.nome_artistico AS artist_name
+              a.stage_name AS artist_name
          FROM transactions t
          LEFT JOIN artists a
            ON a.id = t.artist_id AND a.tenant_id = t.tenant_id AND a.deleted_at IS NULL

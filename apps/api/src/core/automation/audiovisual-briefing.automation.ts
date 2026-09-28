@@ -95,7 +95,7 @@ export class AudiovisualBriefingAutomation {
     if (!this.ds) return null;
     const rows = (await manager.query(
       `SELECT r.title, r.metadata,
-              a.nome_artistico AS artist_name
+              a.stage_name AS artist_name
          FROM releases r
          LEFT JOIN artists a
            ON a.id = r.artist_id AND a.tenant_id = r.tenant_id AND a.deleted_at IS NULL

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { clientsService, type ClientTimelineEntry } from "../services/clients.service";
+import { clientsService, type ClientTimelineEntry, type ClientTimelineEntryType } from "../services/clients.service";
 
 /**
  * A client's real timeline (persisted in activity_logs — survives a
@@ -33,7 +33,7 @@ export function useClientTimeline(clientId: string | null) {
     entries,
     isLoading,
     error,
-    addEntry: async (type: string, description: string) => {
+    addEntry: async (type: ClientTimelineEntryType, description: string) => {
       if (!clientId) return;
       await clientsService.addTimelineEntry(clientId, { type, description });
       await refresh();

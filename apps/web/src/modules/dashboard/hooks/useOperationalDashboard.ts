@@ -20,7 +20,7 @@ export interface OperationalDashboard {
   cancelled_transactions_count: number;
   invoices_by_status: Record<string, number>;
   transactions_by_status: Record<string, number>;
-  transactions_by_tipo: Record<string, number>;
+  transactions_by_type: Record<string, number>;
   pending_tasks_count: number;
   overdue_tasks_count: number;
   onboarding_in_progress_count: number;

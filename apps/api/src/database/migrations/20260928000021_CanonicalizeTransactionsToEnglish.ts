@@ -9,7 +9,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *
  * Renames: categoria -> category, descricao -> description, valor -> amount,
  *   data -> transaction_date, contrato_id -> contract_id, evento_id -> event_id,
- *   referencia -> reference, comprovante_url -> attachment_url, anexo_nome ->
+ *   comprovante_url -> attachment_url, anexo_nome ->
  *   attachment_name, tipo_cliente -> counterparty_type, subcategoria ->
  *   subcategory, fornecedor_cliente -> counterparty_name, orgao_arrecadador ->
  *   tax_authority, centro_custo -> cost_center, competencia -> reference_month,
@@ -21,9 +21,14 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *   first_installment_date. Index idx_transactions_tenant_data ->
  *   idx_transactions_tenant_transaction_date.
  * Duplicates with no writer (tipo_transacao/data_transacao of type/data;
- *   anexo_url of comprovante_url) keep their data as legacy_transaction_type /
- *   legacy_transaction_date / legacy_attachment_url (drop needs explicit
- *   authorization — blocker BLK-TRANSACTIONS-LEGACY-DUPLICATES).
+ *   anexo_url of comprovante_url; referencia, where the old API copied the
+ *   note — `notes` is backfilled from it) keep their data as
+ *   legacy_transaction_type / legacy_transaction_date / legacy_attachment_url /
+ *   legacy_reference (drop needs explicit authorization — blocker
+ *   BLK-TRANSACTIONS-LEGACY-DUPLICATES).
+ * Hardening before first application (database review of 353a967): invalid
+ *   calendar dates in metadata are skipped instead of aborting (pg_temp
+ *   try-date helper), and lock_timeout bounds the wait for the table lock.
  * One source of truth: the API wrote the form fields only into `metadata`
  *   (tipoCliente, subcategoria, formaPagamento, ...), while the reports import
  *   wrote the physical columns. Every metadata value is copied into its (empty)
@@ -55,7 +60,7 @@ const COLUMNS: ReadonlyArray<[from: string, to: string]> = [
   ['data', 'transaction_date'],
   ['contrato_id', 'contract_id'],
   ['evento_id', 'event_id'],
-  ['referencia', 'reference'],
+  ['referencia', 'legacy_reference'],
   ['comprovante_url', 'attachment_url'],
   ['anexo_nome', 'attachment_name'],
   ['tipo_cliente', 'counterparty_type'],
@@ -148,6 +153,15 @@ export class CanonicalizeTransactionsToEnglish20260928000021 implements Migratio
   name = 'CanonicalizeTransactionsToEnglish20260928000021';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
+    await queryRunner.query(`
+      CREATE OR REPLACE FUNCTION pg_temp.cz041_try_date(t text) RETURNS date
+      LANGUAGE plpgsql IMMUTABLE AS $fn$
+      BEGIN
+        IF t IS NULL OR t !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN RETURN NULL; END IF;
+        RETURN t::date;
+      EXCEPTION WHEN others THEN RETURN NULL;
+      END $fn$;`);
     for (const [from, to] of COLUMNS) await queryRunner.query(renameColumn(from, to));
     await queryRunner.query(renameIndex('idx_transactions_tenant_data', 'idx_transactions_tenant_transaction_date'));
 
@@ -163,9 +177,13 @@ export class CanonicalizeTransactionsToEnglish20260928000021 implements Migratio
       WHERE "installment_count" IS NULL AND jsonb_typeof("metadata") = 'object'
         AND "metadata"->>'quantidadeParcelas' ~ '^[0-9]{1,6}$'`);
     await queryRunner.query(`
-      UPDATE "transactions" SET "first_installment_date" = ("metadata"->>'dataPrimeiraParcela')::date
+      UPDATE "transactions" SET "first_installment_date" = pg_temp.cz041_try_date("metadata"->>'dataPrimeiraParcela')
       WHERE "first_installment_date" IS NULL AND jsonb_typeof("metadata") = 'object'
-        AND "metadata"->>'dataPrimeiraParcela' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'`);
+        AND pg_temp.cz041_try_date("metadata"->>'dataPrimeiraParcela') IS NOT NULL`);
+    // The old API copied the note into `referencia` and read metadata.observacao ?? referencia.
+    await queryRunner.query(`
+      UPDATE "transactions" SET "notes" = "legacy_reference"
+      WHERE "notes" IS NULL AND "legacy_reference" IS NOT NULL AND "legacy_reference" <> ''`);
     await queryRunner.query(`
       UPDATE "transactions" SET "event_id" = ("metadata"->>'eventoVinculado')::uuid
       WHERE "event_id" IS NULL AND jsonb_typeof("metadata") = 'object'
@@ -199,6 +217,7 @@ export class CanonicalizeTransactionsToEnglish20260928000021 implements Migratio
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
     await queryRunner.query(`ALTER TABLE "transactions" DROP CONSTRAINT IF EXISTS "chk_transactions_type"`);
     await queryRunner.query(`UPDATE "finance_category_keyword_rules" SET "transaction_type" = 'RECEITA' WHERE "transaction_type" = 'REVENUE'`);
     await queryRunner.query(`UPDATE "finance_category_keyword_rules" SET "transaction_type" = 'DESPESA' WHERE "transaction_type" = 'EXPENSE'`);

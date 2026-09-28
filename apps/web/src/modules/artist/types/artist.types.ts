@@ -1,6 +1,13 @@
-import type { ArtistStatusValue, ArtistProfileType, ArtistSpecialty } from "@/shared/types/enums";
+import type { ArtistRelationshipType } from "@music-os-360/types";
+import type {
+  ArtistStatusValue,
+  ArtistProfileType,
+  ArtistSpecialty,
+  ArtistRelationshipContactType,
+  ArtistGender,
+} from "@/shared/types/enums";
 
-export type { ArtistProfileType, ArtistSpecialty };
+export type { ArtistProfileType, ArtistSpecialty, ArtistRelationshipContactType, ArtistGender };
 export type ArtistStatus = ArtistStatusValue;
 
 export interface DistributorEntry {
@@ -29,7 +36,7 @@ export interface ArtistLinkedContact {
 }
 
 export interface ArtistRelationship {
-  type: "empresario" | "gravadora" | "editora" | "booker" | "juridico" | "financeiro" | "contador" | "assessoria";
+  type: ArtistRelationshipContactType;
   name: string;
   phone: string;
   email: string;
@@ -56,22 +63,36 @@ export interface ArtistTeamContact {
   distributors: DistributorEntry[];
 }
 
+/** Item of the `documents` column. */
+export interface ArtistDocument {
+  name: string;
+  url: string;
+}
+
+/**
+ * Internal artist model (English, camelCase). Field names mirror the canonical
+ * CZ-042 columns (`stage_name` → `stageName`, `agent_name` → `agentName`, …);
+ * the only translation point to/from the wire is `services/artist.mapper.ts`.
+ */
 export interface Artist {
   id: string;
   user_id?: string;
   stageName: string;
-  legalName?: string | null;
-  name?: string | null;
+  /** "Nome completo" (column full_name). */
+  fullName?: string | null;
   status?: ArtistStatus | string | null;
   registrationStatus?: string | null;
+  /** Contract-derived classification computed by GET /artists (exclusive/partner/independent). */
+  relationship?: ArtistRelationshipType | null;
   musicGenre?: string | null;
   email?: string | null;
   phone?: string | null;
+  /** CPF/CNPJ (wire key cpf_cnpj — legal-domain exception). */
   taxId?: string | null;
   photoUrl?: string | null;
   notes?: string | null;
   contractId?: string | null;
-  artisticSlug?: string | null;
+  artistSlug?: string | null;
   musicTags?: string[] | null;
   careerStage?: string | null;
   relationships?: ArtistRelationship[] | null;
@@ -82,63 +103,57 @@ export interface Artist {
   deezerUrl?: string | null;
   deezerFans?: number | null;
   appleMusicUrl?: string | null;
-  appleMusicAlbumsUrl?: number | null;
+  appleMusicAlbums?: number | null;
   soundcloudUrl?: string | null;
-  soundcloudFollowersUrl?: number | null;
+  soundcloudFollowers?: number | null;
   instagramUrl?: string | null;
   instagramFollowers?: number | null;
-  facebook?: string | null;
   tiktokUrl?: string | null;
   tiktokFollowers?: number | null;
-  twitter?: string | null;
-  website?: string | null;
-  personType?: string | null;
+  gender?: ArtistGender | string | null;
   birthDate?: string | null;
-  /** Identity document (RG). */
+  /** Identity document (RG — wire key rg, legal-domain exception). */
   idDocument?: string | null;
   address?: string | null;
-  bank?: string | null;
+  bankName?: string | null;
   bankBranch?: string | null;
   bankAccount?: string | null;
   pixKey?: string | null;
   accountHolder?: string | null;
   specialties?: Array<ArtistSpecialty | string> | null;
   profileType?: ArtistProfileType | string | null;
-  managerId?: string | null;
-  managerName?: string | null;
-  managerPhone?: string | null;
-  managerEmail?: string | null;
-  labelId?: string | null;
-  labelName?: string | null;
-  labelPhone?: string | null;
-  labelEmail?: string | null;
-  labelResponsibleId?: string | null;
-  labelResponsibleName?: string | null;
-  labelResponsiblePhone?: string | null;
-  labelResponsibleEmail?: string | null;
+  /** "Empresário" (agent_*). */
+  agentId?: string | null;
+  agentName?: string | null;
+  agentPhone?: string | null;
+  agentEmail?: string | null;
+  recordLabelId?: string | null;
+  recordLabelName?: string | null;
+  recordLabelPhone?: string | null;
+  recordLabelEmail?: string | null;
+  recordLabelContactId?: string | null;
+  recordLabelContactName?: string | null;
+  recordLabelContactPhone?: string | null;
+  recordLabelContactEmail?: string | null;
   selectedDistributors?: Record<string, boolean> | null;
   distributorEmails?: Record<string, string> | null;
-  selectedCompanyDistributors?: Record<string, boolean> | null;
+  companySelectedDistributors?: Record<string, boolean> | null;
   companyDistributorEmails?: Record<string, string> | null;
   personalDocumentsUrl?: string | null;
   pressKitUrl?: string | null;
   internalNotes?: string | null;
   galleryUrls?: string[] | null;
   /**
-   * @deprecated Legacy pass-through fields from a discontinued form section
-   * (distinct concept from managerName/managerPhone above — kept separate
-   * and NOT unified with them, because they coexist as independent columns
-   * on the wire DTO: `empresario_*` is the actively-used business
-   * relationship, while `manager_nome`/`manager_contato` was a separate,
-   * no-longer-collected manual field). Preserved only to round-trip
-   * pre-existing data untouched (see ArtistFormModal's pass-through comment).
+   * @deprecated "Manager" (team) pass-through fields from a discontinued form
+   * section — a distinct concept from agent* ("Empresário"). Preserved only to
+   * round-trip pre-existing data untouched.
    */
-  managerNameLegacy?: string | null;
-  managerContactLegacy?: string | null;
+  managerName?: string | null;
+  managerContact?: string | null;
   executiveProducer?: string | null;
   bookingAgency?: string | null;
   partnerLabel?: string | null;
-  documents?: { nome: string; url: string }[] | null;
+  documents?: ArtistDocument[] | null;
   generalDistributors?: DistributorEntry[] | null;
   /**
    * Team contacts linked from the CRM (single source).

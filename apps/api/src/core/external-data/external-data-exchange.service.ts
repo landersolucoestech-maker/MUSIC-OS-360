@@ -429,7 +429,7 @@ export class ExternalDataExchangeService {
         ...(input.metadata ?? {}),
         artist: {
           id: artist.id,
-          name: artist.nome_artistico,
+          name: artist.stage_name,
           genre: artist.music_genre,
           spotify_url: artist.spotify_url,
           youtube_url: artist.youtube_url,

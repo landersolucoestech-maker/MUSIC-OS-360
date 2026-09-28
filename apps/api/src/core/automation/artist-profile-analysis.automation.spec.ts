@@ -52,7 +52,7 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
     payload: {
       artistId: 'a1',
       tenantId: 't1',
-      nomeArtistico: 'Banda Aurora',
+      stageName: 'Banda Aurora',
       status: 'ativo',
       createdBy: 'u1',
       ...overrides,
@@ -61,7 +61,7 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
 }
 
 const ARTIST_ROW = {
-  nome_artistico: 'Banda Aurora',
+  stage_name: 'Banda Aurora',
   music_genre: 'MPB',
   spotify_url: 'https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK',
   youtube_url: null,

@@ -2,6 +2,7 @@
  * Validates XLSX rows against the contract and the metadata without persisting data.
  */
 import { Injectable } from '@nestjs/common';
+import { valueFromExportLabel } from '../i18n/value-labels.pt-br';
 import { getReportFormContract } from '../form-contracts/report-form-contracts';
 import { getFieldLabelPtBr, normalizeFieldKey } from '../i18n/field-labels.pt-br';
 import type { ReportEntityDefinition } from '../definitions/report-entity-definition.types';
@@ -24,11 +25,15 @@ const BOOL_FALSE = new Set(['false', '0', 'não', 'nao', 'falso', 'no']);
 function coerce(
   raw: string,
   meta: FieldTypeMeta | undefined,
+  exportedLabelValue: string | null = null,
 ): { ok: boolean; value: unknown; message?: string } {
   const value = (raw ?? '').trim();
   if (value === '') return { ok: true, value: null };
   if (meta?.isEnum && meta.enumValues && meta.enumValues.length > 0) {
-    const match = meta.enumValues.find((entry) => entry.toLowerCase() === value.toLowerCase());
+    // The raw value first; then the PT-BR label an exported spreadsheet carries (round-trip).
+    const matches = (candidate: string | null) =>
+      candidate === null ? undefined : meta.enumValues!.find((entry) => entry.toLowerCase() === candidate.toLowerCase());
+    const match = matches(value) ?? matches(exportedLabelValue);
     return match
       ? { ok: true, value: match }
       : { ok: false, value, message: 'valor fora do conjunto permitido' };
@@ -110,7 +115,7 @@ export class ImportValidationService {
           rowErrors.push({ column, message: 'coluna sensível não pode ser importada' });
           continue;
         }
-        const coerced = coerce(row[header] ?? '', typeMap[column]);
+        const coerced = coerce(row[header] ?? '', typeMap[column], valueFromExportLabel(definition.tableName, column, row[header]));
         if (!coerced.ok) {
           rowErrors.push({ column, message: coerced.message ?? 'valor inválido' });
         } else {

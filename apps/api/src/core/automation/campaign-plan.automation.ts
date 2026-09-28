@@ -97,7 +97,7 @@ export class CampaignPlanAutomation {
     if (!this.ds) return null;
     const rows = (await manager.query(
       `SELECT c.name, c.type, c.objective, c.budget, c.start_date, c.end_date, c.metadata,
-              a.nome_artistico AS artist_name
+              a.stage_name AS artist_name
          FROM campaigns c
          LEFT JOIN artists a
            ON a.id = c.artist_id AND a.tenant_id = c.tenant_id AND a.deleted_at IS NULL

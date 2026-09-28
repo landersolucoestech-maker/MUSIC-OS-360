@@ -63,20 +63,20 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
 
   const artistId = '10000000-0000-0000-0000-000000000010';
   await ds.query(`
-    INSERT INTO artists (id, tenant_id, nome_artistico, nome_civil, status, music_genre, created_by)
+    INSERT INTO artists (id, tenant_id, stage_name, full_name, status, music_genre, created_by)
     VALUES ($1, $2, 'MC Demo Artist', 'Jose da Silva', 'active', 'Funk', $3)
     ON CONFLICT (id) DO NOTHING
   `, [artistId, tenantId, effectiveAdminSub]);
 
   // "contacts" (+ satellites) was removed in favor of "clients" (the
   // "Contact = Client" decision, see ContactsService) -- seeds directly into the canonical
-  // table, with the creation event recorded in clients.interacoes (jsonb),
+  // table, with the creation event recorded in clients.interactions (jsonb),
   // which is the documented replacement for contact_timeline.
   const contactId = '10000000-0000-0000-0000-000000000021';
   await ds.query(`
     INSERT INTO clients
-      (id, tenant_id, tipo_pessoa, categoria, perfil, nome, razao_social, status_contato, prioridade_contato, status, interacoes, created_by)
-    VALUES ($1, $2, 'pessoa_juridica', 'producer', 'outros', 'Maria Produtora', 'Gravadora Demo Records', 'active', 'high', 'active',
+      (id, tenant_id, person_type, category, profile, name, legal_name, priority, status, interactions, created_by)
+    VALUES ($1, $2, 'company', 'producer', 'outros', 'Maria Produtora', 'Gravadora Demo Records', 'high', 'active',
       $3::jsonb, $4)
     ON CONFLICT (id) DO NOTHING
   `, [contactId, tenantId, JSON.stringify([{ event_type: 'contact.created', summary: 'Contato criado via seed operacional', actor_id: effectiveAdminSub, at: new Date().toISOString() }]), effectiveAdminSub]);

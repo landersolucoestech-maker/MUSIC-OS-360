@@ -79,6 +79,15 @@ describe('Work request contract (CZ-039)', () => {
     expect(canonicalizeWorkInput({ is_instrumental: true, instrumental: 'nao' })).toEqual({ is_instrumental: true });
   });
 
+  it('an EDIT from a pre-CZ-039 build never overwrites data it could not read (form defaults, empty participants)', () => {
+    // What the old build sends after reading a canonical response: its defaults for the fields it no longer finds.
+    const oldBuildEdit = { title: 'Novo título', criada_por_ia: false, instrumental: 'nao', tipo_obra: 'referencia', participantes: [] };
+    const out = canonicalizeWorkInput(oldBuildEdit, { update: true }) as Record<string, unknown>;
+    expect(out).toEqual({ title: 'Novo título' });
+    // On create the same values are the user's explicit choices and are kept.
+    expect(canonicalizeWorkInput(oldBuildEdit)).toMatchObject({ ai_used: false, is_instrumental: false, work_origin: 'reference' });
+  });
+
   it('maps the pre-CZ-039 query values', () => {
     expect(errorsFor(QueryWorkDto, { tipo_obra: 'autoral', ecad: 'com-ecad', project_id: 'no-projeto' })).toEqual([]);
     expect(canonicalizeWorkQuery({ tipo_obra: 'autoral', ecad: 'sem-ecad', project_id: 'no-projeto' }))

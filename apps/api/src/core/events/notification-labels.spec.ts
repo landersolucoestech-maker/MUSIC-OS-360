@@ -5,7 +5,7 @@ import { EVENT_LABELS } from './notification.handler';
 /** Notification titles are end-user copy: no raw status enum, UUID or entity type. */
 describe('notification titles carry no technical identifiers', () => {
   const payload: Record<string, unknown> = {
-    nomeArtistico: 'Ana', title: 'Contrato X', numero: '123', valor: '1500.5', fileName: 'capa.png',
+    stageName: 'Ana', title: 'Contrato X', numero: '123', valor: '1500.5', fileName: 'capa.png',
     newStatus: 'under_review', toStatus: 'distributed', entityType: 'release', type: 'income',
     transactionId: '7f3c9b2e-0000-4000-8000-000000000001',
     invoiceId: '7f3c9b2e-0000-4000-8000-000000000002',
@@ -47,6 +47,9 @@ describe('notification titles keep status information as PT-BR labels', () => {
     expect(EVENT_LABELS['transaction.created']({ type: 'revenue', amount: '10' })).toBe('Receita registrada: R$ 10,00');
     expect(EVENT_LABELS['transaction.created']({ type: 'expense', amount: '1500.5' })).toBe('Despesa registrada: R$ 1.500,50');
     expect(EVENT_LABELS['transaction.created']({ type: 'transfer', amount: '5' })).toBe('Transferência registrada: R$ 5,00');
+    // PT-BR gender agreement for the masculine types.
+    expect(EVENT_LABELS['transaction.created']({ type: 'investment', amount: '5' })).toBe('Investimento registrado: R$ 5,00');
+    expect(EVENT_LABELS['transaction.created']({ type: 'tax', amount: '5' })).toBe('Imposto registrado: R$ 5,00');
     expect(EVENT_LABELS['transaction.paid']({ amount: 'not-a-number' })).toBe('Pagamento baixado');
   });
 });

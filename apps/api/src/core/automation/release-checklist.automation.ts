@@ -111,7 +111,7 @@ export class ReleaseChecklistAutomation {
     if (!this.ds) return null;
     const rows = (await manager.query(
       `SELECT r.title, r.type, r.release_date, r.upc, r.cover_url, r.artist_id, r.metadata,
-              a.nome_artistico AS artist_name
+              a.stage_name AS artist_name
          FROM releases r
          LEFT JOIN artists a
            ON a.id = r.artist_id AND a.tenant_id = r.tenant_id AND a.deleted_at IS NULL

@@ -87,14 +87,14 @@ const formatFileSize = (bytes: number) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-// ── Autocomplete: server-side search by nome_artistico/nome_civil (Task I —
+// ── Autocomplete: server-side search by stage_name/full_name (Task I —
 // it used to filter only the tenant's first 50 artists loaded via
 // an unfiltered useArtistas(); now each typed (debounced) key re-runs the
 // search in the backend). Free text is still allowed.
 interface ArtistNameInputProps {
   value: string;
   onChange: (val: string) => void;
-  onSelect?: (a: { id: string; stageName: string; nome_civil?: string | null }) => void;
+  onSelect?: (a: { id: string; stageName: string; fullName?: string | null }) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -131,7 +131,7 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled, cla
   };
 
   const handleSelect = (a: Artist) => {
-    const display = a.legalName || a.stageName;
+    const display = a.fullName || a.stageName;
     setInputText(display);
     onChange(display);
     onSelect?.(a);
@@ -157,7 +157,7 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled, cla
               className="w-full text-left px-3 py-2 text-sm hover:bg-muted hover:text-foreground flex flex-col gap-0.5"
               onMouseDown={() => handleSelect(a)}
             >
-              <span className="font-medium">{a.legalName || a.stageName}</span>
+              <span className="font-medium">{a.fullName || a.stageName}</span>
               <span className="text-xs text-muted-foreground">{a.stageName}</span>
             </button>
           ))}
@@ -584,7 +584,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                         ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
                         : p.name
                           ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.name } }))
-                              .items.find(a => (a.nome_civil || a.nome_artistico) === p.name)
+                              .items.find(a => (a.full_name || a.stage_name) === p.name)
                           : undefined;
                       if (foundWire) setViewArtist(wireToArtist(foundWire));
                     }}
@@ -729,7 +729,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                 // when there is no artist_id — the same concession already accepted in
                                 // other migrations of this task).
                                 const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                                let artistName = fullWork.artistas?.nome_artistico as string | undefined;
+                                let artistName = fullWork.artistas?.stage_name as string | undefined;
                                 let artistId = fullWork.artistas?.id as string | undefined;
                                 if (!artistName && (fullWork.artist_id as string | null | undefined)) {
                                   const byId = await storage.findById<ArtistWireRecord>("artistas", fullWork.artist_id as string);
@@ -743,8 +743,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                     });
                                     const byName = compMatches.map(wireToArtist).find((a: Artist) =>
                                       norm(a.stageName || "") === norm(firstComp) ||
-                                      norm(a.legalName || "") === norm(firstComp) ||
-                                      norm(a.name || "") === norm(firstComp)
+                                      norm(a.fullName || "") === norm(firstComp)
                                     );
                                     if (byName) { artistName = byName.stageName; artistId = byName.id; }
                                   }
@@ -1142,7 +1141,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
       <ParticipantViewModal
         open={viewArtist !== null}
         onOpenChange={(o) => { if (!o) setViewArtist(null); }}
-        artista={viewArtist}
+        artist={viewArtist}
       />
     </Dialog>
   );

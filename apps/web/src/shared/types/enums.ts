@@ -40,18 +40,37 @@ import type {
 /** Derived from ArtistStatus — source of truth: @music-os-360/types */
 export type ArtistStatusValue = `${ArtistStatus}`;
 
+/**
+ * Canonical wire values of `profile_type` / `profileType` (CZ-042).
+ * PT-BR display labels live in modules/artist/services/artist.mapper.ts.
+ */
 export type ArtistProfileType =
-  | "independente"
-  | "com_empresario"
-  | "gravadora"
-  | "editora";
+  | "independent"
+  | "managed"
+  | "record_label"
+  | "publisher";
 
+/** Canonical wire values of `specialties[]` (CZ-042). */
 export type ArtistSpecialty =
   | "dj"
-  | "dj_produtor"
-  | "compositor_autor"
-  | "interprete"
-  | "produtor";
+  | "dj_producer"
+  | "songwriter"
+  | "performer"
+  | "producer";
+
+/** Canonical wire values of `relationships[].type` (CZ-042). */
+export type ArtistRelationshipContactType =
+  | "agent"
+  | "record_label"
+  | "publisher"
+  | "booker"
+  | "legal"
+  | "finance"
+  | "accountant"
+  | "press_office";
+
+/** Canonical wire values of the metadata-only `gender` field (CZ-042). */
+export type ArtistGender = "male" | "female";
 
 // ── Contract ─────────────────────────────────────────────────────────────────
 
@@ -93,7 +112,7 @@ export type TransactionPaymentMethod =
   | "check";
 
 /** Canonical wire values of `counterparty_type` / `counterpartyType` (CZ-041). */
-export type TransactionCounterpartyType = "company" | "artist" | "individual";
+export type TransactionCounterpartyType = "company" | "artist" | "individual" | "government" | "own_account";
 
 /** Canonical wire values of `payment_type` / `paymentType` (CZ-041). */
 export type TransactionPaymentType = "upfront" | "installments";

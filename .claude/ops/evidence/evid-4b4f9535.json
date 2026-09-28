@@ -1,0 +1,15 @@
+{
+  "id": "evid-4b4f9535",
+  "createdAt": "2026-09-28T11:19:00.210Z",
+  "type": "COMMAND",
+  "label": "pnpm --dir apps/web exec tsc --noEmit -p tsconfig.app.json",
+  "command": "pnpm --dir apps/web exec tsc --noEmit -p tsconfig.app.json",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "4f350c969ade95059a45683c9cd3b0f869893fc0ff15803ef66539d1b23ffef9",
+  "fingerprintStatus": "BOUND",
+  "head": "353a9676a91536c922594120916612acb3470200",
+  "durationMs": 36597
+}

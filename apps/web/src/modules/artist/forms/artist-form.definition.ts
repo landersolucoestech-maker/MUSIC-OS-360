@@ -19,13 +19,16 @@
 
 import { z } from "zod";
 import { MUSICAL_GENRE_LABELS } from "@/constants/musicalGenres";
-import type { Artist, DistributorEntry } from "@/modules/artist/types/artist.types";
+import type { Artist, ArtistProfileType, DistributorEntry } from "@/modules/artist/types/artist.types";
 import {
   artistToFormFields,
   formToArtistPayload,
   SPECIALTY_LABELS,
+  PROFILE_TYPE_LABELS,
+  GENDER_LABELS,
   normalizeSpecialty,
   normalizeProfileType,
+  normalizeGender,
   pickRow,
   validateSpotifyUrl,
   validateYoutubeUrl,
@@ -47,24 +50,24 @@ export interface ArtistLinkedContactValue {
 
 /** Fields controlled by react-hook-form (validated by the generated schema). */
 export interface ArtistFormValues {
-  nomeArtistico: string;
-  generoMusical: string;
-  especialidades: string[];
-  biografia: string;
-  notasInternas: string;
-  nome: string;
-  dataNascimento: string;
-  cpfCnpj: string;
+  stageName: string;
+  musicGenre: string;
+  specialties: string[];
+  biography: string;
+  internalNotes: string;
+  fullName: string;
+  birthDate: string;
+  taxId: string;
   rg: string;
-  genero: string;
-  endereco: string;
-  telefone: string;
+  gender: string;
+  address: string;
+  phone: string;
   email: string;
-  banco: string;
-  agencia: string;
-  conta: string;
-  chavePix: string;
-  titularConta: string;
+  bankName: string;
+  bankBranch: string;
+  bankAccount: string;
+  pixKey: string;
+  accountHolder: string;
   spotify: string;
   instagram: string;
   youtube: string;
@@ -72,16 +75,16 @@ export interface ArtistFormValues {
   soundcloud: string;
   deezer: string;
   appleMusic: string;
-  tipoPerfil: "independente" | "com_empresario" | "gravadora" | "editora";
-  distribuidorasGerais: DistributorEntry[];
-  contatosVinculados: ArtistLinkedContactValue[];
+  profileType: ArtistProfileType;
+  generalDistributors: DistributorEntry[];
+  linkedContacts: ArtistLinkedContactValue[];
 }
 
 /** File (upload) fields — shown in the form, outside react-hook-form. */
 export interface ArtistFormFileValues {
-  fotoUrl: string;
-  documentosPessoaisUrl: string;
-  presskitUrl: string;
+  photoUrl: string;
+  personalDocumentsUrl: string;
+  pressKitUrl: string;
 }
 
 /** Every field shown in the Create modal (form + uploads). */
@@ -99,8 +102,8 @@ export type ArtistFieldType =
   | "multicheck"
   | "url"
   | "file"
-  | "contatos-crm"
-  | "distribuidoras";
+  | "crm-contacts"
+  | "distributors";
 
 export interface ArtistFormField {
   /** field id — key in ArtistFormAllValues. */
@@ -139,20 +142,20 @@ export interface ArtistFormSection {
 
 const MUSIC_GENRE_OPTIONS = MUSICAL_GENRE_LABELS.map((g) => ({ value: g, label: g }));
 
-const BANCOS_OPTIONS = [
+const BANK_OPTIONS = [
   "Banco do Brasil", "Bradesco", "Caixa Econômica", "Itaú", "Santander",
   "Nubank", "Inter", "C6 Bank", "PicPay", "Mercado Pago", "Outro",
 ].map((b) => ({ value: b, label: b }));
 
-export const PROFILE_TYPE_OPTIONS = [
-  { value: "independente",   label: "Independente" },
-  { value: "com_empresario", label: "Com empresário" },
-  { value: "gravadora",      label: "Com gravadora" },
-  { value: "editora",        label: "Com editora" },
-] as const;
+/** Canonical values with PT-BR labels (label map: PROFILE_TYPE_LABELS). */
+export const PROFILE_TYPE_OPTIONS = (Object.entries(PROFILE_TYPE_LABELS) as Array<[ArtistProfileType, string]>).map(
+  ([value, label]) => ({ value, label }),
+);
+
+const GENDER_OPTIONS = Object.entries(GENDER_LABELS).map(([value, label]) => ({ value, label }));
 
 /** Profiles that show the Distributors / Aggregators section. */
-export const PROFILES_WITH_DISTRIBUTOR = ["com_empresario", "gravadora", "editora"];
+export const PROFILES_WITH_DISTRIBUTOR: readonly ArtistProfileType[] = ["managed", "record_label", "publisher"];
 
 export const DISTRIBUTOR_OPTIONS = [
   { id: "onerpm",    label: "ONErpm" },
@@ -164,7 +167,7 @@ export const DISTRIBUTOR_OPTIONS = [
   { id: "outros",    label: "Outros" },
 ] as const;
 
-const ESPECIALIDADES_OPTIONS = Object.entries(SPECIALTY_LABELS).map(
+const SPECIALTY_OPTIONS = Object.entries(SPECIALTY_LABELS).map(
   ([value, label]) => ({ value, label }),
 );
 
@@ -176,55 +179,55 @@ const URL_MAX = { value: 300, message: "URL inválida" };
 
 export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
   {
-    id: "informacoes-basicas",
+    id: "basic-info",
     title: "Informações Básicas",
     fields: [
       {
-        id: "fotoUrl", label: "Imagem do Artista", type: "file", fullWidth: true,
+        id: "photoUrl", label: "Imagem do Artista", type: "file", fullWidth: true,
         file: { folder: "artistas/fotos", accept: "image/*", maxSize: 5, circular: true },
       },
       {
-        id: "nomeArtistico", label: "Nome Artístico", type: "text", required: true,
+        id: "stageName", label: "Nome Artístico", type: "text", required: true,
         requiredMessage: "Nome artístico é obrigatório",
         maxLength: { value: 150, message: "Nome artístico deve ter no máximo 150 caracteres" },
         placeholder: "Nome usado profissionalmente", testId: "input-nome-artistico",
       },
       {
-        id: "generoMusical", label: "Gênero Musical", type: "select",
+        id: "musicGenre", label: "Gênero Musical", type: "select",
         options: MUSIC_GENRE_OPTIONS, placeholder: "Selecione o gênero", testId: "select-genero",
       },
       {
-        id: "especialidades", label: "Especialidade / Função", type: "multicheck", fullWidth: true,
-        checkOptions: ESPECIALIDADES_OPTIONS,
+        id: "specialties", label: "Especialidade / Função", type: "multicheck", fullWidth: true,
+        checkOptions: SPECIALTY_OPTIONS,
       },
       {
-        id: "documentosPessoaisUrl", label: "Documentos Pessoais (PDF)", type: "file", fullWidth: true,
+        id: "personalDocumentsUrl", label: "Documentos Pessoais (PDF)", type: "file", fullWidth: true,
         file: { folder: "artistas/documents", accept: "application/pdf", maxSize: 5 },
       },
       {
-        id: "presskitUrl", label: "Presskit / Media Kit", type: "file", fullWidth: true,
+        id: "pressKitUrl", label: "Presskit / Media Kit", type: "file", fullWidth: true,
         file: { folder: "artistas/presskit", accept: "application/pdf,.zip", maxSize: 10 },
       },
       {
-        id: "biografia", label: "Biografia", type: "textarea", fullWidth: true,
+        id: "biography", label: "Biografia", type: "textarea", fullWidth: true,
         maxLength: { value: 5000, message: "Biografia deve ter no máximo 5000 caracteres" },
         placeholder: "Trajetória, conquistas e estilo musical…", testId: "textarea-biografia",
       },
     ],
   },
   {
-    id: "dados-pessoais",
+    id: "personal-data",
     title: "Dados Pessoais",
     fields: [
       {
-        id: "nome", label: "Nome Completo", type: "text", required: true,
+        id: "fullName", label: "Nome Completo", type: "text", required: true,
         requiredMessage: "Nome completo é obrigatório",
         maxLength: { value: 150, message: "Nome completo deve ter no máximo 150 caracteres" },
         placeholder: "Nome conforme documento", testId: "input-nome-civil",
       },
-      { id: "dataNascimento", label: "Data de Nascimento", type: "date", testId: "datepicker-data-nascimento" },
+      { id: "birthDate", label: "Data de Nascimento", type: "date", testId: "datepicker-data-nascimento" },
       {
-        id: "cpfCnpj", label: "CPF", type: "text",
+        id: "taxId", label: "CPF", type: "text",
         maxLength: { value: 20, message: "CPF/CNPJ inválido" },
         placeholder: "000.000.000-00", testId: "input-cpf-cnpj",
       },
@@ -234,20 +237,17 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
         placeholder: "00.000.000-0", testId: "input-rg",
       },
       {
-        id: "genero", label: "Gênero", type: "select", testId: "select-genero-pessoa",
-        options: [
-          { value: "Masculino", label: "Masculino" },
-          { value: "Feminino", label: "Feminino" },
-        ],
+        id: "gender", label: "Gênero", type: "select", testId: "select-genero-pessoa",
+        options: GENDER_OPTIONS,
         placeholder: "Selecione o gênero",
       },
       {
-        id: "endereco", label: "Endereço Completo", type: "text",
+        id: "address", label: "Endereço Completo", type: "text",
         maxLength: { value: 300, message: "Endereço deve ter no máximo 300 caracteres" },
         placeholder: "Rua, número, bairro, cidade, CEP", testId: "input-endereco",
       },
       {
-        id: "telefone", label: "Telefone", type: "tel",
+        id: "phone", label: "Telefone", type: "tel",
         maxLength: { value: 20, message: "Telefone inválido" },
         placeholder: "(11) 99999-9999", testId: "input-telefone",
       },
@@ -259,26 +259,26 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
     ],
   },
   {
-    id: "dados-bancarios",
+    id: "bank-details",
     title: "Dados Bancários",
     fields: [
-      { id: "banco", label: "Banco", type: "select", options: BANCOS_OPTIONS, placeholder: "Selecione o banco" },
-      { id: "agencia", label: "Agência", type: "text", placeholder: "0000" },
-      { id: "conta", label: "Conta com Dígito", type: "text", placeholder: "00000-0" },
+      { id: "bankName", label: "Banco", type: "select", options: BANK_OPTIONS, placeholder: "Selecione o banco" },
+      { id: "bankBranch", label: "Agência", type: "text", placeholder: "0000" },
+      { id: "bankAccount", label: "Conta com Dígito", type: "text", placeholder: "00000-0" },
       {
-        id: "chavePix", label: "Chave Pix", type: "text",
+        id: "pixKey", label: "Chave Pix", type: "text",
         maxLength: { value: 150, message: "Chave PIX inválida" },
         placeholder: "CPF, e-mail, telefone ou chave aleatória",
       },
       {
-        id: "titularConta", label: "Titular da Conta", type: "text",
+        id: "accountHolder", label: "Titular da Conta", type: "text",
         maxLength: { value: 150, message: "Nome do titular inválido" },
         placeholder: "Nome completo do titular",
       },
     ],
   },
   {
-    id: "perfis-redes",
+    id: "social-profiles",
     title: "Perfis e Redes Sociais",
     fields: [
       { id: "spotify",    label: "Spotify",     type: "url", maxLength: URL_MAX, urlValidator: validateSpotifyUrl,    placeholder: "https://open.spotify.com/artist/…", testId: "input-spotify-url" },
@@ -291,30 +291,30 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
     ],
   },
   {
-    id: "type-perfil",
+    id: "profile-type",
     title: "Tipo de Perfil",
     fields: [
       {
-        id: "tipoPerfil", label: "Perfil Comercial", type: "select", fullWidth: true,
+        id: "profileType", label: "Perfil Comercial", type: "select", fullWidth: true,
         options: PROFILE_TYPE_OPTIONS, placeholder: "Selecione o perfil", testId: "select-type-perfil",
       },
-      { id: "contatosVinculados", label: "Equipe / Contatos (CRM)", type: "contatos-crm", fullWidth: true },
+      { id: "linkedContacts", label: "Equipe / Contatos (CRM)", type: "crm-contacts", fullWidth: true },
     ],
   },
   {
-    id: "distribuidoras",
+    id: "distributors",
     title: "Distribuidoras / Agregadoras",
-    visibleWhen: (v) => PROFILES_WITH_DISTRIBUTOR.includes(v.tipoPerfil),
+    visibleWhen: (v) => PROFILES_WITH_DISTRIBUTOR.includes(v.profileType),
     fields: [
-      { id: "distribuidorasGerais", label: "Distribuidoras / Agregadoras", type: "distribuidoras", fullWidth: true },
+      { id: "generalDistributors", label: "Distribuidoras / Agregadoras", type: "distributors", fullWidth: true },
     ],
   },
   {
-    id: "observacoes",
+    id: "notes",
     title: "Observações",
     fields: [
       {
-        id: "notasInternas", label: "Notas Internas", type: "textarea", fullWidth: true,
+        id: "internalNotes", label: "Notas Internas", type: "textarea", fullWidth: true,
         maxLength: { value: 5000, message: "Notas devem ter no máximo 5000 caracteres" },
         placeholder: "Notas internas, rider técnico, preferências, informações adicionais…",
         testId: "textarea-observacoes",
@@ -332,11 +332,11 @@ export function allArtistFormFields(): ArtistFormField[] {
 
 export function emptyArtistFormValues(): ArtistFormValues {
   return {
-    nomeArtistico: "", generoMusical: "", especialidades: [], biografia: "", notasInternas: "",
-    nome: "", dataNascimento: "", cpfCnpj: "", rg: "", genero: "", endereco: "", telefone: "", email: "",
-    banco: "", agencia: "", conta: "", chavePix: "", titularConta: "",
+    stageName: "", musicGenre: "", specialties: [], biography: "", internalNotes: "",
+    fullName: "", birthDate: "", taxId: "", rg: "", gender: "", address: "", phone: "", email: "",
+    bankName: "", bankBranch: "", bankAccount: "", pixKey: "", accountHolder: "",
     spotify: "", instagram: "", youtube: "", tiktok: "", soundcloud: "", deezer: "", appleMusic: "",
-    tipoPerfil: "independente", distribuidorasGerais: [], contatosVinculados: [],
+    profileType: "independent", generalDistributors: [], linkedContacts: [],
   };
 }
 
@@ -345,7 +345,7 @@ export function emptyArtistFormValues(): ArtistFormValues {
 const distributorEntrySchema = z.object({
   id: z.string(),
   email: z.string(),
-  nomeCustom: z.string().optional(),
+  customName: z.string().optional(),
 });
 
 const linkedContactSchema = z.object({
@@ -378,17 +378,17 @@ export function buildArtistSchema() {
       case "multicheck":
         shape[field.id] = z.array(z.string()).optional();
         break;
-      case "contatos-crm":
+      case "crm-contacts":
         shape[field.id] = z.array(linkedContactSchema).optional();
         break;
-      case "distribuidoras":
+      case "distributors":
         shape[field.id] = z.array(distributorEntrySchema).optional();
         break;
       case "select":
-        if (field.id === "tipoPerfil") {
+        if (field.id === "profileType") {
           shape[field.id] = z
             .enum(PROFILE_TYPE_OPTIONS.map((o) => o.value) as [string, ...string[]])
-            .default("independente");
+            .default("independent");
         } else {
           shape[field.id] = stringFieldSchema(field);
         }
@@ -424,26 +424,24 @@ export function artistToFormValues(artist: Artist | null | undefined): ArtistFor
 
   return {
     ...emptyArtistFormValues(),
-    nomeArtistico: f.nomeArtistico,
-    generoMusical: f.generoMusical,
-    especialidades: f.especialidades,
-    biografia: f.biografia,
-    notasInternas: f.notasInternas,
-    nome: f.nome,
-    dataNascimento: f.dataNascimento,
-    cpfCnpj: f.cpfCnpj,
+    stageName: f.stageName,
+    musicGenre: f.musicGenre,
+    specialties: f.specialties,
+    biography: f.biography,
+    internalNotes: f.internalNotes,
+    fullName: f.fullName,
+    birthDate: f.birthDate,
+    taxId: f.taxId,
     rg: f.rg,
-    genero: typeof (artist as unknown as Record<string, unknown> | null | undefined)?.genero === "string"
-      ? ((artist as unknown as Record<string, unknown>).genero as string)
-      : "",
-    endereco: f.endereco,
-    telefone: f.telefone,
+    gender: typeof artist?.gender === "string" ? artist.gender : "",
+    address: f.address,
+    phone: f.phone,
     email: f.email,
-    banco: f.banco,
-    agencia: f.agencia,
-    conta: f.conta,
-    chavePix: f.chavePix,
-    titularConta: f.titularConta,
+    bankName: f.bankName,
+    bankBranch: f.bankBranch,
+    bankAccount: f.bankAccount,
+    pixKey: f.pixKey,
+    accountHolder: f.accountHolder,
     spotify: f.spotify,
     instagram: f.instagram,
     youtube: f.youtube,
@@ -451,12 +449,12 @@ export function artistToFormValues(artist: Artist | null | undefined): ArtistFor
     soundcloud: f.soundcloud,
     deezer: f.deezer,
     appleMusic: f.appleMusic,
-    tipoPerfil: (f.tipoPerfil || "independente") as ArtistFormValues["tipoPerfil"],
-    distribuidorasGerais: generalDistributors,
-    contatosVinculados: linkedContacts,
-    fotoUrl: f.fotoUrl,
-    documentosPessoaisUrl: f.documentosPessoaisUrl,
-    presskitUrl: f.presskitUrl,
+    profileType: f.profileType,
+    generalDistributors,
+    linkedContacts,
+    photoUrl: f.photoUrl,
+    personalDocumentsUrl: f.personalDocumentsUrl,
+    pressKitUrl: f.pressKitUrl,
   };
 }
 
@@ -471,18 +469,18 @@ export type ArtistPreservedInput = Omit<FormToArtistInput, keyof ArtistFormAllVa
 
 export function emptyPreservedInput(): ArtistPreservedInput {
   return {
-    slugArtistico: "", tagsMusicais: [], faseCarreira: "",
-    statusArtista: "signed",
-    spotifyOuvintes: "", instagramSeguidores: "", youtubeInscritos: "",
-    tiktokSeguidores: "", soundcloudSeguidores: "", deezerFas: "", appleMusicAlbuns: "",
-    relacionamentos: [],
-    empresarioId: "", empresarioNome: "", empresarioTelefone: "", empresarioEmail: "",
-    gravadoraId: "", gravadoraNome: "", gravadoraTelefone: "", gravadoraEmail: "",
-    gravadoraResponsavelId: "", gravadoraResponsavelNome: "",
-    gravadoraResponsavelTelefone: "", gravadoraResponsavelEmail: "",
-    distribuidorasSelecionadas: {}, distribuidorasEmails: {},
-    distribuidorasEmpresaSelecionadas: {}, distribuidorasEmpresaEmails: {},
-    contratoId: "",
+    artistSlug: "", musicTags: [], careerStage: "",
+    artistStatus: "signed",
+    spotifyListeners: "", instagramFollowers: "", youtubeSubscribers: "",
+    tiktokFollowers: "", soundcloudFollowers: "", deezerFans: "", appleMusicAlbums: "",
+    relationships: [],
+    agentId: "", agentName: "", agentPhone: "", agentEmail: "",
+    recordLabelId: "", recordLabelName: "", recordLabelPhone: "", recordLabelEmail: "",
+    recordLabelContactId: "", recordLabelContactName: "",
+    recordLabelContactPhone: "", recordLabelContactEmail: "",
+    selectedDistributors: {}, distributorEmails: {},
+    companySelectedDistributors: {}, companyDistributorEmails: {},
+    contractId: "",
   };
 }
 
@@ -493,35 +491,35 @@ export function emptyPreservedInput(): ArtistPreservedInput {
 export function artistToPreservedInput(artist: Artist | null | undefined): ArtistPreservedInput {
   const f = artistToFormFields(artist ?? null);
   return {
-    slugArtistico: f.slugArtistico,
-    tagsMusicais: f.tagsMusicais,
-    faseCarreira: f.faseCarreira,
-    statusArtista: f.statusArtista,
-    spotifyOuvintes: f.spotifyOuvintes,
-    instagramSeguidores: f.instagramSeguidores,
-    youtubeInscritos: f.youtubeInscritos,
-    tiktokSeguidores: f.tiktokSeguidores,
-    soundcloudSeguidores: f.soundcloudSeguidores,
-    deezerFas: f.deezerFas,
-    appleMusicAlbuns: f.appleMusicAlbuns,
-    relacionamentos: f.relacionamentos,
-    empresarioId: f.empresarioId,
-    empresarioNome: f.empresarioNome,
-    empresarioTelefone: f.empresarioTelefone,
-    empresarioEmail: f.empresarioEmail,
-    gravadoraId: f.gravadoraId,
-    gravadoraNome: f.gravadoraNome,
-    gravadoraTelefone: f.gravadoraTelefone,
-    gravadoraEmail: f.gravadoraEmail,
-    gravadoraResponsavelId: f.gravadoraResponsavelId,
-    gravadoraResponsavelNome: f.gravadoraResponsavelNome,
-    gravadoraResponsavelTelefone: f.gravadoraResponsavelTelefone,
-    gravadoraResponsavelEmail: f.gravadoraResponsavelEmail,
-    distribuidorasSelecionadas: f.distribuidorasSelecionadas,
-    distribuidorasEmails: f.distribuidorasEmails,
-    distribuidorasEmpresaSelecionadas: f.distribuidorasEmpresaSelecionadas,
-    distribuidorasEmpresaEmails: f.distribuidorasEmpresaEmails,
-    contratoId: f.contratoId,
+    artistSlug: f.artistSlug,
+    musicTags: f.musicTags,
+    careerStage: f.careerStage,
+    artistStatus: f.artistStatus,
+    spotifyListeners: f.spotifyListeners,
+    instagramFollowers: f.instagramFollowers,
+    youtubeSubscribers: f.youtubeSubscribers,
+    tiktokFollowers: f.tiktokFollowers,
+    soundcloudFollowers: f.soundcloudFollowers,
+    deezerFans: f.deezerFans,
+    appleMusicAlbums: f.appleMusicAlbums,
+    relationships: f.relationships,
+    agentId: f.agentId,
+    agentName: f.agentName,
+    agentPhone: f.agentPhone,
+    agentEmail: f.agentEmail,
+    recordLabelId: f.recordLabelId,
+    recordLabelName: f.recordLabelName,
+    recordLabelPhone: f.recordLabelPhone,
+    recordLabelEmail: f.recordLabelEmail,
+    recordLabelContactId: f.recordLabelContactId,
+    recordLabelContactName: f.recordLabelContactName,
+    recordLabelContactPhone: f.recordLabelContactPhone,
+    recordLabelContactEmail: f.recordLabelContactEmail,
+    selectedDistributors: f.selectedDistributors,
+    distributorEmails: f.distributorEmails,
+    companySelectedDistributors: f.companySelectedDistributors,
+    companyDistributorEmails: f.companyDistributorEmails,
+    contractId: f.contractId,
   };
 }
 
@@ -535,23 +533,23 @@ export function formValuesToArtistPayload(
 ): Omit<Artist, "id" | "user_id" | "created_at" | "updated_at"> {
   const input: FormToArtistInput = {
     ...preserved,
-    nomeArtistico: values.nomeArtistico,
-    generoMusical: values.generoMusical,
-    especialidades: values.especialidades,
-    biografia: values.biografia,
-    notasInternas: values.notasInternas,
-    nome: values.nome,
-    dataNascimento: values.dataNascimento,
-    cpfCnpj: values.cpfCnpj,
+    stageName: values.stageName,
+    musicGenre: values.musicGenre,
+    specialties: values.specialties,
+    biography: values.biography,
+    internalNotes: values.internalNotes,
+    fullName: values.fullName,
+    birthDate: values.birthDate,
+    taxId: values.taxId,
     rg: values.rg,
-    endereco: values.endereco,
-    telefone: values.telefone,
+    address: values.address,
+    phone: values.phone,
     email: values.email,
-    banco: values.banco,
-    agencia: values.agencia,
-    conta: values.conta,
-    chavePix: values.chavePix,
-    titularConta: values.titularConta,
+    bankName: values.bankName,
+    bankBranch: values.bankBranch,
+    bankAccount: values.bankAccount,
+    pixKey: values.pixKey,
+    accountHolder: values.accountHolder,
     spotify: values.spotify,
     instagram: values.instagram,
     youtube: values.youtube,
@@ -559,19 +557,18 @@ export function formValuesToArtistPayload(
     soundcloud: values.soundcloud,
     deezer: values.deezer,
     appleMusic: values.appleMusic,
-    tipoPerfil: values.tipoPerfil,
-    fotoUrl: values.fotoUrl,
-    documentosPessoaisUrl: values.documentosPessoaisUrl,
-    presskitUrl: values.presskitUrl,
+    profileType: values.profileType,
+    photoUrl: values.photoUrl,
+    personalDocumentsUrl: values.personalDocumentsUrl,
+    pressKitUrl: values.pressKitUrl,
   };
 
-  const payload = formToArtistPayload(input);
   return {
-    ...payload,
-    genero: values.genero || null,
-    linkedContacts: values.contatosVinculados.length > 0 ? values.contatosVinculados : null,
-    generalDistributors: values.distribuidorasGerais.length > 0 ? values.distribuidorasGerais : null,
-  } as Omit<Artist, "id" | "user_id" | "created_at" | "updated_at">;
+    ...formToArtistPayload(input),
+    gender: values.gender || null,
+    linkedContacts: values.linkedContacts.length > 0 ? values.linkedContacts : null,
+    generalDistributors: values.generalDistributors.length > 0 ? values.generalDistributors : null,
+  };
 }
 
 // ─── Cell codecs (per field TYPE, not per flow) ──────────────────
@@ -596,11 +593,21 @@ export function serializeArtistFieldValue(field: ArtistFormField, values: Artist
   const v = values[field.id];
   switch (field.type) {
     case "multicheck": {
+      // Export PT-BR labels (import maps them back); an unknown stored value is
+      // dropped instead of leaking a raw identifier into the user's file.
       const arr = Array.isArray(v) ? (v as string[]) : [];
-      return arr.map((e) => SPECIALTY_LABELS[e] ?? e).join(", ");
+      return arr
+        .filter((e): e is keyof typeof SPECIALTY_LABELS => Object.prototype.hasOwnProperty.call(SPECIALTY_LABELS, e))
+        .map((e) => SPECIALTY_LABELS[e])
+        .join(", ");
     }
-    case "contatos-crm":
-    case "distribuidoras":
+    case "select": {
+      // Enum-valued selects export the PT-BR option label, never the raw value.
+      const s = v == null ? "" : String(v);
+      return field.options?.find((o) => o.value === s)?.label ?? s;
+    }
+    case "crm-contacts":
+    case "distributors":
       return serializeJsonArray(Array.isArray(v) ? (v as unknown[]) : []);
     default:
       return v == null ? "" : String(v);
@@ -616,19 +623,20 @@ function deserializeArtistFieldValue(
   switch (field.type) {
     case "multicheck":
       return s ? s.split(",").map((x) => normalizeSpecialty(x.trim())).filter(Boolean) : [];
-    case "contatos-crm":
+    case "crm-contacts":
       return parseJsonArray<ArtistLinkedContactValue>(
         s,
         (item) => typeof (item as { contactId?: unknown })?.contactId === "string",
       );
-    case "distribuidoras":
+    case "distributors":
       return parseJsonArray<DistributorEntry>(
         s,
         (item) => typeof (item as { id?: unknown })?.id === "string",
       );
     case "select":
-      if (field.id === "tipoPerfil") return normalizeProfileType(s);
-      return s;
+      if (field.id === "profileType") return normalizeProfileType(s);
+      if (field.id === "gender") return normalizeGender(s);
+      return field.options?.find((o) => o.label === s)?.value ?? s;
     default:
       return s;
   }
@@ -655,30 +663,31 @@ export function artistToExportRowFromForm(artist: Artist): Record<string, string
 
 /**
  * Headers accepted per field on import: the canonical label, the field id and
- * compatibility aliases for spreadsheets exported by older versions.
+ * compatibility aliases for spreadsheets exported by older versions (user
+ * files, not the API wire).
  */
 const IMPORT_HEADER_ALIASES: Partial<Record<keyof ArtistFormAllValues, string[]>> = {
-  fotoUrl:               ["Foto URL"],
-  nomeArtistico:         ["Nome", "nome_artistico"],
-  generoMusical:         ["Genero Musical", "genero_musical"],
-  especialidades:        ["Função", "Funcao", "Especialidades"],
-  documentosPessoaisUrl: ["documentos_pessoais_url"],
-  presskitUrl:           ["Presskit / Media Kit (PDF)", "presskit_url"],
-  biografia:             ["observacoes"],
-  nome:                  ["Nome Civil", "nome_civil"],
-  dataNascimento:        ["data_nascimento"],
-  cpfCnpj:               ["CPF/CNPJ", "cpf_cnpj"],
-  endereco:              ["Endereço completo", "Endereco"],
-  email:                 ["Email"],
-  spotify:               ["Spotify URL"],
-  instagram:             ["Instagram URL"],
-  youtube:               ["YouTube URL"],
-  tiktok:                ["TikTok URL"],
-  soundcloud:            ["SoundCloud URL", "soundcloud_url"],
-  appleMusic:            ["Apple Music URL", "apple_music_url"],
-  deezer:                ["Deezer URL", "deezer_url"],
-  tipoPerfil:            ["Tipo de Perfil", "tipo_perfil", "Perfil"],
-  notasInternas:         ["Observações", "Observacoes", "notas_internas"],
+  photoUrl:             ["Foto URL"],
+  stageName:            ["Nome", "nome_artistico"],
+  musicGenre:           ["Genero Musical", "genero_musical"],
+  specialties:          ["Função", "Funcao", "Especialidades"],
+  personalDocumentsUrl: ["documentos_pessoais_url"],
+  pressKitUrl:          ["Presskit / Media Kit (PDF)", "presskit_url"],
+  biography:            ["observacoes"],
+  fullName:             ["Nome Civil", "nome_civil"],
+  birthDate:            ["data_nascimento"],
+  taxId:                ["CPF/CNPJ", "cpf_cnpj"],
+  address:              ["Endereço completo", "Endereco"],
+  email:                ["Email"],
+  spotify:              ["Spotify URL"],
+  instagram:            ["Instagram URL"],
+  youtube:              ["YouTube URL"],
+  tiktok:               ["TikTok URL"],
+  soundcloud:           ["SoundCloud URL", "soundcloud_url"],
+  appleMusic:           ["Apple Music URL", "apple_music_url"],
+  deezer:               ["Deezer URL", "deezer_url"],
+  profileType:          ["Tipo de Perfil", "tipo_perfil", "Perfil"],
+  internalNotes:        ["Observações", "Observacoes", "notas_internas"],
 };
 
 /**
@@ -687,7 +696,7 @@ const IMPORT_HEADER_ALIASES: Partial<Record<keyof ArtistFormAllValues, string[]>
  * (invalid record).
  */
 export function parseArtistImportRow(row: Record<string, unknown>): ArtistFormAllValues | null {
-  const values: ArtistFormAllValues = { ...emptyArtistFormValues(), fotoUrl: "", documentosPessoaisUrl: "", presskitUrl: "" };
+  const values: ArtistFormAllValues = { ...emptyArtistFormValues(), photoUrl: "", personalDocumentsUrl: "", pressKitUrl: "" };
 
   for (const field of allArtistFormFields()) {
     const headers = [field.label, field.id, ...(IMPORT_HEADER_ALIASES[field.id] ?? [])];
@@ -696,6 +705,6 @@ export function parseArtistImportRow(row: Record<string, unknown>): ArtistFormAl
     (values as unknown as Record<string, unknown>)[field.id] = deserializeArtistFieldValue(field, raw);
   }
 
-  if (!values.nomeArtistico.trim()) return null;
+  if (!values.stageName.trim()) return null;
   return values;
 }

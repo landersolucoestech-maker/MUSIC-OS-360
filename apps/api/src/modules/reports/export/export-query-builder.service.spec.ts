@@ -6,14 +6,14 @@ import { EXPORT_DETECTION_LIMIT, type ExportQueryParams } from './export.types';
 
 const DEF: ReportEntityDefinition = {
   entityName: 'ArtistEntity', tableName: 'artists', category: EntityCategory.REPORTABLE,
-  identityColumn: 'nome_artistico', displayColumn: 'nome_artistico', dateColumn: 'created_at',
-  exportableColumns: ['nome_artistico', 'email', 'status'],
-  importableColumns: ['nome_artistico', 'email'],
+  identityColumn: 'stage_name', displayColumn: 'stage_name', dateColumn: 'created_at',
+  exportableColumns: ['stage_name', 'email', 'status'],
+  importableColumns: ['stage_name', 'email'],
   filterableColumns: ['status'],
-  sortableColumns: ['nome_artistico', 'created_at'],
-  searchableColumns: ['nome_artistico', 'email'],
+  sortableColumns: ['stage_name', 'created_at'],
+  searchableColumns: ['stage_name', 'email'],
   sensitiveColumns: ['cpf_encrypted'],
-  requiredImportColumns: ['nome_artistico'],
+  requiredImportColumns: ['stage_name'],
   supportsExport: true, supportsImport: true,
 };
 const base = (p: Partial<ExportQueryParams> = {}): ExportQueryParams => ({ format: 'xlsx', ...p });
@@ -23,7 +23,7 @@ describe('ExportQueryBuilderService — entity-driven safe query', () => {
 
   it('builds SELECT with explicit columns (never SELECT *) + tenant always', () => {
     const q = svc.build(DEF, base(), 'tenant-1');
-    expect(q.sql).toContain('SELECT "nome_artistico", "email_encrypted" AS "email", "status" FROM "artists"');
+    expect(q.sql).toContain('SELECT "stage_name", "email_encrypted" AS "email", "status" FROM "artists"');
     expect(q.sql).not.toContain('*');
     expect(q.sql).toContain('"tenant_id" = $1');
     expect(q.parameters[0]).toBe('tenant-1');
@@ -69,7 +69,7 @@ describe('ExportQueryBuilderService — entity-driven safe query', () => {
   it('without a declared baseWhere, no extra condition is added (existing behavior preserved)', () => {
     const q = svc.build(DEF, base(), 't');
     expect(q.sql).toBe(
-      `SELECT "nome_artistico", "email_encrypted" AS "email", "status" FROM "artists" WHERE "tenant_id" = $1 LIMIT $2`,
+      `SELECT "stage_name", "email_encrypted" AS "email", "status" FROM "artists" WHERE "tenant_id" = $1 LIMIT $2`,
     );
   });
 
@@ -85,28 +85,28 @@ describe('ExportQueryBuilderService — entity-driven safe query', () => {
   // columns are included. The ORDER always comes from def.exportableColumns (canonical config).
   describe('order of selected columns — selection filters, never orders', () => {
     it('subset sent in canonical order preserves the canonical order', () => {
-      const q = svc.build(DEF, base({ columns: ['nome_artistico', 'status'] }), 't');
-      expect(q.columns).toEqual(['nome_artistico', 'status']);
+      const q = svc.build(DEF, base({ columns: ['stage_name', 'status'] }), 't');
+      expect(q.columns).toEqual(['stage_name', 'status']);
     });
 
     it('subset sent OUT of canonical order is reordered by the canonical config', () => {
-      // Canonical: nome_artistico, email, status. Caller sends status before nome_artistico.
-      const q = svc.build(DEF, base({ columns: ['status', 'nome_artistico'] }), 't');
-      expect(q.columns).toEqual(['nome_artistico', 'status']);
-      expect(q.sql).toContain('SELECT "nome_artistico", "status" FROM "artists"');
+      // Canonical: stage_name, email, status. Caller sends status before stage_name.
+      const q = svc.build(DEF, base({ columns: ['status', 'stage_name'] }), 't');
+      expect(q.columns).toEqual(['stage_name', 'status']);
+      expect(q.sql).toContain('SELECT "stage_name", "status" FROM "artists"');
     });
 
     it('click order does not interfere: two selections of the same set in different orders produce the same output', () => {
-      const q1 = svc.build(DEF, base({ columns: ['email', 'nome_artistico'] }), 't');
-      const q2 = svc.build(DEF, base({ columns: ['nome_artistico', 'email'] }), 't');
-      expect(q1.columns).toEqual(['nome_artistico', 'email']);
-      expect(q2.columns).toEqual(['nome_artistico', 'email']);
+      const q1 = svc.build(DEF, base({ columns: ['email', 'stage_name'] }), 't');
+      const q2 = svc.build(DEF, base({ columns: ['stage_name', 'email'] }), 't');
+      expect(q1.columns).toEqual(['stage_name', 'email']);
+      expect(q2.columns).toEqual(['stage_name', 'email']);
       expect(q1.columns).toEqual(q2.columns);
     });
 
     it('without selection (full export) uses exportableColumns in the declared order', () => {
       const q = svc.build(DEF, base(), 't');
-      expect(q.columns).toEqual(['nome_artistico', 'email', 'status']);
+      expect(q.columns).toEqual(['stage_name', 'email', 'status']);
     });
   });
 });

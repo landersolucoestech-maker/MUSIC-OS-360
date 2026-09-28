@@ -49,7 +49,7 @@ export class ArtistWorkflowHandler {
     const tenantId = event.tenantId ?? event.payload.tenantId;
     if (!tenantId) return this.failClosed(event.type);
 
-    const { artistId, nomeArtistico: stageName, newStatus, changedBy } = event.payload;
+    const { artistId, stageName, newStatus, changedBy } = event.payload;
     if (newStatus !== ArtistStatus.SIGNED) return;
 
     const now = new Date();
@@ -124,7 +124,7 @@ export class ArtistWorkflowHandler {
           userId: changedBy,
           aggregateType: 'artist',
           aggregateId: artistId,
-          payload: { artistId, tenantId, nomeArtistico: stageName, tasks: taskTitles, startedAt: now.toISOString() },
+          payload: { artistId, tenantId, stageName, tasks: taskTitles, startedAt: now.toISOString() },
         });
         this.events.emitTyped(DOMAIN_EVENTS.DISTRIBUTION_SETUP_REQUESTED, {
           tenantId,
@@ -170,7 +170,7 @@ export class ArtistWorkflowHandler {
           type: 'artist:onboarding_started',
           entity: 'artist',
           entityId: artistId,
-          metadata: { artistId, nomeArtistico: stageName, correlationId: event.correlationId ?? null },
+          metadata: { artistId, stageName, correlationId: event.correlationId ?? null },
         });
       } catch (err) {
         this.logger.warn(`Failed to enqueue onboarding notification for "${artistId}" - ${String(err)}`);

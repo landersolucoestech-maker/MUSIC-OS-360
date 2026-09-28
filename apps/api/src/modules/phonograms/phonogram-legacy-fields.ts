@@ -82,12 +82,30 @@ function canonicalParticipation(value: unknown): unknown {
 }
 
 /**
+ * Deprecated keys an EDIT from a pre-CZ-040 build always sends with a value it
+ * could not have read (the response carries only canonical names): its form
+ * defaults for the flags (nacional true, criada_por_ia/pub_simultanea false)
+ * and a participation object whose categories are all empty. On update they
+ * are dropped instead of overwriting the stored data (contract review of
+ * 353a967, F1).
+ */
+const UNREADABLE_ON_EDIT = ['criada_por_ia', 'nacional', 'pub_simultanea'] as const;
+
+const isEmptyLegacyParticipation = (value: unknown): boolean =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+  && Object.values(value as Record<string, unknown>).every((items) => !Array.isArray(items) || items.length === 0);
+
+/**
  * Maps every deprecated CZ-040 name, value and nested key of a phonogram
  * payload to its canonical form. Legacy minutes/seconds become the total
  * `duration_seconds`.
  */
-export function canonicalizePhonogramInput<T extends object>(input: T): T {
-  const raw = input as Record<string, unknown>;
+export function canonicalizePhonogramInput<T extends object>(input: T, options: { update?: boolean } = {}): T {
+  const raw = { ...(input as Record<string, unknown>) };
+  if (options.update) {
+    for (const key of UNREADABLE_ON_EDIT) delete raw[key];
+    if (isEmptyLegacyParticipation(raw['participacao'])) delete raw['participacao'];
+  }
   const out = applyDeprecatedFieldAliases(raw, PHONOGRAM_DEPRECATED_FIELDS);
   const legacyMinutes = raw['duracao_min'];
   const legacySeconds = raw['duracao_seg'];

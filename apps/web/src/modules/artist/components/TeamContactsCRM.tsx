@@ -19,8 +19,8 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { contactPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
-import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
+import { contactFormToContactInput } from "@/modules/crm-relationships/services/contacts.service";
+import { ContactFormModal, type ContactFormValues } from "@/modules/crm-relationships/modals/ContactFormModal";
 import { contactTypeOptions, labelFor } from "@/modules/crm-relationships/constants";
 import type { Contact } from "@/modules/crm-relationships/types";
 import type { DistributorEntry } from "@/modules/artist/types/artist.types";
@@ -51,9 +51,9 @@ const DISTRIBUTORS_OPTIONS = [
   { id: "outros", label: "Outros" },
 ];
 
-// CRM categories (contactType) that keep the distributors section:
+// CRM categories (Contact.category) that keep the distributors section:
 // artist manager, record label and music publisher.
-const DISTRIBUTOR_CONTACT_TYPES = new Set<Contact["contactType"]>([
+const DISTRIBUTOR_CONTACT_TYPES = new Set<Contact["category"]>([
   "ARTIST_MANAGER",
   "LABEL_RECORD",
   "MUSIC_PUBLISHER",
@@ -83,8 +83,8 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
       .filter((c) => !linkedIds.has(c.id))
       .filter((c) => {
         if (!term) return true;
-        const category = labelFor(contactTypeOptions, c.contactType);
-        const haystack = [c.name, c.companyName, category, c.email, c.phone, c.whatsapp]
+        const category = labelFor(contactTypeOptions, c.category);
+        const haystack = [c.name, c.legalName, c.tradeName, category, c.email, c.phone]
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
@@ -129,8 +129,8 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
   }
 
   // ── New contact (creates it in the CRM and links it automatically) ──
-  async function handleNewContact(payload: ContactFormPayload) {
-    const created = await createContact(contactPayloadToContactData(payload));
+  async function handleNewContact(values: ContactFormValues) {
+    const created = await createContact(contactFormToContactInput(values));
     if (created?.id) addLink(created.id);
   }
 
@@ -195,8 +195,8 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{c.name}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {labelFor(contactTypeOptions, c.contactType)}
-                      {(c.phone || c.whatsapp) ? ` · ${c.phone || c.whatsapp}` : ""}
+                      {labelFor(contactTypeOptions, c.category)}
+                      {c.phone ? ` · ${c.phone}` : ""}
                       {c.email ? ` · ${c.email}` : ""}
                     </p>
                   </div>
@@ -217,7 +217,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
         <div className="space-y-2" data-testid="equipe-vinculada">
           {value.map((link) => {
             const contact = contactById.get(link.contactId);
-            const showDistributors = contact ? DISTRIBUTOR_CONTACT_TYPES.has(contact.contactType) : false;
+            const showDistributors = contact ? DISTRIBUTOR_CONTACT_TYPES.has(contact.category) : false;
 
             return (
               <div
@@ -231,13 +231,11 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                       <div className="flex items-center gap-2">
                         <span className="truncate text-sm font-semibold">{contact.name}</span>
                         <span className="rounded bg-background px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                          {labelFor(contactTypeOptions, contact.contactType)}
+                          {labelFor(contactTypeOptions, contact.category)}
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
-                        {(contact.phone || contact.whatsapp) && (
-                          <span>{contact.phone || contact.whatsapp}</span>
-                        )}
+                        {contact.phone && <span>{contact.phone}</span>}
                         {contact.email && <span>{contact.email}</span>}
                       </div>
                     </div>

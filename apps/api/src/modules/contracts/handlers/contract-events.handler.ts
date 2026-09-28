@@ -129,7 +129,7 @@ export class ContractEventsHandler {
           try {
             await artistRepo.update(
               { id: artistId, tenant_id: tenantId },
-              { status: ArtistStatus.SIGNED, contrato_id: contractId, updated_by: signedBy } as any,
+              { status: ArtistStatus.SIGNED, contract_id: contractId, updated_by: signedBy },
             );
             this.logger.log(`Artist "${artistId}" -> ${ArtistStatus.SIGNED} + contract "${contractId}"`);
           } catch (err) {

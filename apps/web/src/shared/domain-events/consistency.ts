@@ -40,7 +40,7 @@ function initConsistencyHooks(): void {
   });
 
   // ── ARTIST_CREATED → dev-only diagnostic log ─────────────────────────────
-  subscribe(DomainEvents.ARTIST_CREATED, ({ id, nome_artistico: stageName }) => {
+  subscribe(DomainEvents.ARTIST_CREATED, ({ id, stageName }) => {
     try {
       // Logs the creation to the console (dev only)
       if (IS_DEV) {

@@ -98,14 +98,18 @@ function renameColumn(from: string, to: string): string {
 
 /**
  * Renames the category keys of `participation` and the `from`/`to` item key
- * inside every category array (element order preserved).
+ * inside every category array (element order preserved). A category key is
+ * only renamed when its target is absent (never collapses two arrays), and
+ * only rows that still carry a legacy key are rewritten (hardening before
+ * first application — database review of 353a967).
  */
 function remapParticipation(categories: ReadonlyArray<[string, string]>, itemFrom: string, itemTo: string): string {
   const mapping = categories.map(([from, to]) => `('${from}', '${to}')`).join(', ');
+  const legacyKeys = categories.map(([from]) => `'${from}'`).join(', ');
   return `
     UPDATE "phonograms" p SET "participation" = (
       SELECT COALESCE(jsonb_object_agg(
-        COALESCE(m.to_key, cat.key),
+        COALESCE(CASE WHEN NOT p."participation" ? m.to_key THEN m.to_key END, cat.key),
         CASE WHEN jsonb_typeof(cat.value) = 'array' THEN (
           SELECT COALESCE(jsonb_agg(
             CASE WHEN jsonb_typeof(item.elem) = 'object' AND item.elem ? '${itemFrom}' AND NOT item.elem ? '${itemTo}'
@@ -118,13 +122,15 @@ function remapParticipation(categories: ReadonlyArray<[string, string]>, itemFro
       FROM jsonb_each(p."participation") AS cat
       LEFT JOIN (VALUES ${mapping}) AS m(from_key, to_key) ON m.from_key = cat.key
     )
-    WHERE jsonb_typeof(p."participation") = 'object'`;
+    WHERE jsonb_typeof(p."participation") = 'object'
+      AND (p."participation" ?| ARRAY[${legacyKeys}] OR p."participation"::text LIKE '%"${itemFrom}"%')`;
 }
 
 export class CanonicalizePhonogramsToEnglish20260928000020 implements MigrationInterface {
   name = 'CanonicalizePhonogramsToEnglish20260928000020';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
     for (const [from, to] of COLUMNS) await queryRunner.query(renameColumn(from, to));
 
     // One source of truth: fill the registry columns from the legacy form

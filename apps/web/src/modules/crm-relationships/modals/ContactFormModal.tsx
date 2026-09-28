@@ -1,12 +1,10 @@
 // ============================================================================
-// ContactFormModal — create/edit a Contact (individual or legal entity).
+// ContactFormModal — create/edit a Contact (individual or company).
 // ----------------------------------------------------------------------------
-// IMPORTANT: some fields below (foto, interacoes, funcao/cargo_responsavel,
-// cep/logradouro/numero/complemento/bairro, status_contato, prioridade,
-// responsavel_*) do NOT exist as dedicated columns in the current `contatos` table.
-// They are persisted via the Contact's `payloadOperacional jsonb` (structural
-// compat). Turning them into their own columns requires a schema evolution in the
-// backend.
+// Every field maps 1:1 to its own `clients` column (CZ-043); the conversion to
+// a Contact lives in ../services/contacts.service.ts (contactFormToContactInput
+// / contactToFormValues). Technical identifiers are English; every text the
+// user sees is PT-BR.
 // ============================================================================
 
 import { useEffect, useMemo, useState } from "react";
@@ -23,95 +21,75 @@ import { DatePickerField } from "@/shared/ui/date-picker-field";
 import { fetchAddressByCEP, maskCEP, maskCNPJ, maskCPF, maskPhone } from "@/shared/lib/masks";
 import { contactPriorityOptions, contactStatusOptions } from "../constants";
 import {
-  CONTACT_TYPE_OPTIONS,
+  PERSON_TYPE_OPTIONS,
   CONTACT_CATEGORY_OPTIONS,
   getProfiles,
   ensureProfileOption,
 } from "../constants/contact-classification";
 import { BR_STATES } from "../shared/brazilian-states";
 import { INTERACTION_TYPE_OPTIONS, type Interaction } from "../shared/interactions";
-import type { ContactAttachment } from "../types";
+import { deriveContactName } from "../services/contacts.service";
+import type { ContactAttachment, ContactPriority, ContactStatus, PersonType } from "../types";
 
 
 // ----------------------------------------------------------------------------
 // Types
 // ----------------------------------------------------------------------------
 
-export type PersonType = "pessoa_fisica" | "pessoa_juridica";
+export type ContactFormValues = {
+  personType: PersonType;
 
-export type ContactFormState = {
-  tipo_pessoa: PersonType;
-
-  // Individual (natural person)
-  nome_pf: string;
+  // Individual
+  individualName: string;
   cpf: string;
-  funcao: string;
+  jobTitle: string;
   instagram: string;
-  foto: string; // data URL or external URL
+  photoUrl: string; // data URL or external URL
 
-  // Legal entity (company)
-  razao_social: string;
-  nome_fantasia: string;
+  // Company
+  legalName: string;
+  tradeName: string;
   cnpj: string;
 
   // Hierarchical classification
-  categoria: string; // relacionamento → Contact.contactType
-  perfil: string;    // specific profile → payloadOperacional.perfil
+  category: string; // relationship → Contact.category
+  profile: string;  // specific profile → Contact.profile
   email: string;
-  telefone: string;
+  phone: string;
 
   // Address
-  cep: string;
-  logradouro: string;
-  numero: string;
-  complemento: string;
-  bairro: string;
-  cidade: string;
-  estado: string;
+  zipCode: string;
+  street: string;
+  streetNumber: string;
+  addressComplement: string;
+  neighborhood: string;
+  city: string;
+  state: string;
 
   // Classification
-  status_contato: string;
-  prioridade_contato: string;
+  status: ContactStatus;
+  priority: ContactPriority;
 
   // Responsible person (human reference)
-  responsavel_nome: string;
-  responsavel_email: string;
-  responsavel_telefone: string;
-  responsavel_cargo: string;
+  responsibleName: string;
+  responsibleEmail: string;
+  responsiblePhone: string;
+  responsibleJobTitle: string;
 
   // History
-  interacoes: Interaction[];
+  interactions: Interaction[];
   attachments: ContactAttachment[];
 
   // Notes
-  observacoes: string;
-};
-
-/**
- * Final payload emitted by the modal.
- * Carries ALL form fields + legacy aliases (`nome`, `cpf_cnpj`,
- * `endereco`, `responsavel`, `status`) for compatibility with old
- * consumers (`addClient.mutate`, etc.).
- */
-export type ContactFormPayload = ContactFormState & {
-  // Aliases legados
-  nome: string;
-  cpf_cnpj: string;
-  endereco: string;
-  endereco_completo: string;
-  responsavel: string;
-  status: string;
-  prioridade: string;
-  /** Responsible person's position (legacy alias of responsavel_cargo, used by the Leads contacts panel). */
-  cargo_responsavel?: string;
+  notes: string;
 };
 
 interface ContactFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   mode: "create" | "edit";
-  initialValue?: Partial<ContactFormPayload> | null;
-  onSubmit?: (payload: ContactFormPayload) => void | Promise<void>;
+  initialValue?: Partial<ContactFormValues> | null;
+  onSubmit?: (values: ContactFormValues) => void | Promise<void>;
 }
 
 // ----------------------------------------------------------------------------
@@ -125,77 +103,47 @@ const nowTime = () => {
 };
 const newId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
 
-const DEFAULTS: ContactFormState = {
-  tipo_pessoa: "pessoa_fisica",
-  nome_pf: "",
+const DEFAULTS: ContactFormValues = {
+  personType: "individual",
+  individualName: "",
   cpf: "",
-  funcao: "",
+  jobTitle: "",
   instagram: "",
-  foto: "",
-  razao_social: "",
-  nome_fantasia: "",
+  photoUrl: "",
+  legalName: "",
+  tradeName: "",
   cnpj: "",
-  categoria: "",
-  perfil: "",
+  category: "",
+  profile: "",
   email: "",
-  telefone: "",
-  cep: "",
-  logradouro: "",
-  numero: "",
-  complemento: "",
-  bairro: "",
-  cidade: "",
-  estado: "",
-  status_contato: "active",
-  prioridade_contato: "medium",
-  responsavel_nome: "",
-  responsavel_email: "",
-  responsavel_telefone: "",
-  responsavel_cargo: "",
-  interacoes: [],
+  phone: "",
+  zipCode: "",
+  street: "",
+  streetNumber: "",
+  addressComplement: "",
+  neighborhood: "",
+  city: "",
+  state: "",
+  status: "active",
+  priority: "medium",
+  responsibleName: "",
+  responsibleEmail: "",
+  responsiblePhone: "",
+  responsibleJobTitle: "",
+  interactions: [],
   attachments: [],
-  observacoes: "",
+  notes: "",
 };
 
-const buildDefaults = (initial?: Partial<ContactFormPayload> | null): ContactFormState => {
+const buildDefaults = (initial?: Partial<ContactFormValues> | null): ContactFormValues => {
   if (!initial) return { ...DEFAULTS };
   return {
     ...DEFAULTS,
     ...Object.fromEntries(
-      Object.entries(initial).filter(([key]) => key in DEFAULTS),
+      Object.entries(initial).filter(([key, value]) => key in DEFAULTS && value !== undefined),
     ),
-  } as ContactFormState;
+  } as ContactFormValues;
 };
-
-const buildAddress = (s: ContactFormState) => {
-  const linha1 = [s.logradouro, s.numero].filter(Boolean).join(", ");
-  const linha2 = [linha1, s.complemento].filter(Boolean).join(" - ");
-  return [linha2, s.bairro].filter(Boolean).join(" / ");
-};
-
-const buildFullAddress = (s: ContactFormState) => {
-  const base = buildAddress(s);
-  const cityState = [s.cidade, s.estado].filter(Boolean).join(" - ");
-  const cep = s.cep ? `CEP ${s.cep}` : "";
-  return [base, cityState, cep].filter(Boolean).join(" · ");
-};
-
-const deriveName = (s: ContactFormState) =>
-  s.tipo_pessoa === "pessoa_fisica" ? s.nome_pf : (s.nome_fantasia || s.razao_social);
-
-const deriveCpfCnpj = (s: ContactFormState) =>
-  s.tipo_pessoa === "pessoa_fisica" ? s.cpf : s.cnpj;
-
-const buildPayload = (s: ContactFormState): ContactFormPayload => ({
-  ...s,
-  nome: deriveName(s),
-  cpf_cnpj: deriveCpfCnpj(s),
-  endereco: buildAddress(s),
-  endereco_completo: buildFullAddress(s),
-  responsavel: s.responsavel_nome,
-  status: s.status_contato,
-  prioridade: s.prioridade_contato,
-});
 
 // ----------------------------------------------------------------------------
 // Internal UI subcomponents
@@ -223,9 +171,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 // ----------------------------------------------------------------------------
 
 export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSubmit }: ContactFormModalProps) {
-  const [state, setState] = useState<ContactFormState>(() => buildDefaults(initialValue));
+  const [state, setState] = useState<ContactFormValues>(() => buildDefaults(initialValue));
   const [submitting, setSubmitting] = useState(false);
-  const [cepLoading, setCepLoading] = useState(false);
+  const [zipCodeLoading, setZipCodeLoading] = useState(false);
 
   // Serializes initialValue into a stable string — ensures the form
   // repopulates even when editing different contacts with the modal already open.
@@ -234,65 +182,65 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (open) setState(buildDefaults(initialValue)); }, [open, initialKey]);
 
-  const set = <K extends keyof ContactFormState>(field: K, value: ContactFormState[K]) =>
+  const set = <K extends keyof ContactFormValues>(field: K, value: ContactFormValues[K]) =>
     setState((prev) => ({ ...prev, [field]: value }));
 
-  const isPF = state.tipo_pessoa === "pessoa_fisica";
-  const isPJ = state.tipo_pessoa === "pessoa_juridica";
+  const isIndividual = state.personType === "individual";
+  const isCompany = state.personType === "company";
 
   // Hierarchical classification (config-driven, cascading)
-  const profileOptions = ensureProfileOption(getProfiles(state.tipo_pessoa, state.categoria), state.perfil);
+  const profileOptions = ensureProfileOption(getProfiles(state.personType, state.category), state.profile);
 
-  const changeType = (value: ContactFormState["tipo_pessoa"]) =>
-    setState((prev) => ({ ...prev, tipo_pessoa: value, categoria: "", perfil: "" }));
+  const changeType = (value: PersonType) =>
+    setState((prev) => ({ ...prev, personType: value, category: "", profile: "" }));
   const changeCategory = (value: string) =>
-    setState((prev) => ({ ...prev, categoria: value, perfil: "" }));
+    setState((prev) => ({ ...prev, category: value, profile: "" }));
 
   // Automatic lookup by CEP (postal code)
-  const handleCepBlur = async () => {
-    const digits = state.cep.replace(/\D/g, "");
+  const handleZipCodeBlur = async () => {
+    const digits = state.zipCode.replace(/\D/g, "");
     if (digits.length !== 8) return;
     try {
-      setCepLoading(true);
+      setZipCodeLoading(true);
       const data = await fetchAddressByCEP(digits);
       if (!data) return;
       setState((prev) => ({
         ...prev,
-        logradouro: data.logradouro || prev.logradouro,
-        bairro: data.bairro || prev.bairro,
-        cidade: data.localidade || prev.cidade,
-        estado: data.uf || prev.estado,
-        complemento: prev.complemento || data.complemento || "",
+        street: data.logradouro || prev.street,
+        neighborhood: data.bairro || prev.neighborhood,
+        city: data.localidade || prev.city,
+        state: data.uf || prev.state,
+        addressComplement: prev.addressComplement || data.complemento || "",
       }));
     } finally {
-      setCepLoading(false);
+      setZipCodeLoading(false);
     }
   };
 
   // Photo: file → data URL
-  const handleFotoSelect = (file: File | null) => {
+  const handlePhotoSelect = (file: File | null) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result;
-      if (typeof result === "string") set("foto", result);
+      if (typeof result === "string") set("photoUrl", result);
     };
     reader.readAsDataURL(file);
   };
 
   // Interactions
   const addInteraction = () => {
-    const newInteraction: Interaction = { id: newId(), type: "whatsapp", data: todayISO(), horario: nowTime(), descricao: "" };
-    setState((prev) => ({ ...prev, interacoes: [...prev.interacoes, newInteraction] }));
+    const newInteraction: Interaction = { id: newId(), type: "whatsapp", date: todayISO(), time: nowTime(), description: "" };
+    setState((prev) => ({ ...prev, interactions: [...prev.interactions, newInteraction] }));
   };
   const updateInteraction = <K extends keyof Interaction>(id: string, field: K, value: Interaction[K]) => {
     setState((prev) => ({
       ...prev,
-      interacoes: prev.interacoes.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
+      interactions: prev.interactions.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
     }));
   };
   const removeInteraction = (id: string) => {
-    setState((prev) => ({ ...prev, interacoes: prev.interacoes.filter((i) => i.id !== id) }));
+    setState((prev) => ({ ...prev, interactions: prev.interactions.filter((i) => i.id !== id) }));
   };
 
   const addAttachments = (files: FileList | null) => {
@@ -318,7 +266,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
 
   // Validation — derived name + complete classification (category + profile)
   const isValid = useMemo(
-    () => Boolean(deriveName(state).trim()) && Boolean(state.categoria) && Boolean(state.perfil),
+    () => Boolean(deriveContactName(state).trim()) && Boolean(state.category) && Boolean(state.profile),
     [state],
   );
 
@@ -330,7 +278,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
     }
     try {
       setSubmitting(true);
-      await onSubmit(buildPayload(state));
+      await onSubmit(state);
       onOpenChange(false);
     } catch (err) {
       if (handleConcurrencyConflict(err, "contato")) return;
@@ -341,20 +289,23 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
   };
 
   // ── Reusable sections (same content for individual/legal entity) ────────────
-  const renderClassificacao = () => (
+  const renderClassification = () => (
     <>
       <SectionHeader title="Classificação" />
       <div className="grid grid-cols-2 gap-4">
+        {/* POST /clients does not accept `status` — a new contact starts "Ativo"; it is editable afterwards. */}
+        {mode === "edit" && (
         <Field label="Status do Contato">
-          <Select value={state.status_contato} onValueChange={(v) => set("status_contato", v)}>
+          <Select value={state.status} onValueChange={(v) => set("status", v as ContactStatus)}>
             <SelectTrigger data-testid="select-status"><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
               {contactStatusOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </Field>
+        )}
         <Field label="Prioridade">
-          <Select value={state.prioridade_contato} onValueChange={(v) => set("prioridade_contato", v)}>
+          <Select value={state.priority} onValueChange={(v) => set("priority", v as ContactPriority)}>
             <SelectTrigger data-testid="select-prioridade"><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
               {contactPriorityOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
@@ -374,10 +325,10 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
           Adicionar interação
         </Button>
       </div>
-      {state.interacoes.length === 0 && (
+      {state.interactions.length === 0 && (
         <p className="text-sm italic text-muted-foreground" data-testid="interacoes-empty">Nenhuma interação registrada.</p>
       )}
-      {state.interacoes.map((it, idx) => (
+      {state.interactions.map((it, idx) => (
         <div key={it.id} className="rounded-md border bg-muted/20 p-4 space-y-3" data-testid={`interacao-card-${it.id}`}>
           <div className="flex items-center justify-between">
             <p className="flex items-center gap-2 text-sm font-medium">
@@ -398,14 +349,14 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
               </Select>
             </Field>
             <Field label="Data">
-              <DatePickerField value={it.data} onChange={(v) => updateInteraction(it.id, "data", v)} placeholder="Selecione a data" data-testid={`datepicker-interacao-${it.id}`} />
+              <DatePickerField value={it.date} onChange={(v) => updateInteraction(it.id, "date", v)} placeholder="Selecione a data" data-testid={`datepicker-interacao-${it.id}`} />
             </Field>
             <Field label="Horário">
-              <Input type="time" value={it.horario} onChange={(e) => updateInteraction(it.id, "horario", e.target.value)} data-testid={`input-interacao-horario-${it.id}`} />
+              <Input type="time" value={it.time} onChange={(e) => updateInteraction(it.id, "time", e.target.value)} data-testid={`input-interacao-horario-${it.id}`} />
             </Field>
           </div>
           <Field label="Descrição">
-            <Textarea value={it.descricao} onChange={(e) => updateInteraction(it.id, "descricao", e.target.value)} placeholder="Descreva a interação..." className="min-h-[80px]" data-testid={`textarea-interacao-${it.id}`} />
+            <Textarea value={it.description} onChange={(e) => updateInteraction(it.id, "description", e.target.value)} placeholder="Descreva a interação..." className="min-h-[80px]" data-testid={`textarea-interacao-${it.id}`} />
           </Field>
         </div>
       ))}
@@ -452,7 +403,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
     <>
       <SectionHeader title="Observações" />
       <Field label="Notas">
-        <Textarea value={state.observacoes} onChange={(e) => set("observacoes", e.target.value)} placeholder="Anotações sobre o contato, contexto operacional, histórico relevante..." className="min-h-[100px]" data-testid="textarea-observacoes" />
+        <Textarea value={state.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Anotações sobre o contato, contexto operacional, histórico relevante..." className="min-h-[100px]" data-testid="textarea-observacoes" />
       </Field>
     </>
   );
@@ -475,19 +426,19 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field label="Tipo de Contato *">
-              <Select value={state.tipo_pessoa} onValueChange={(v) => changeType(v as ContactFormState["tipo_pessoa"])}>
+              <Select value={state.personType} onValueChange={(v) => changeType(v as PersonType)}>
                 <SelectTrigger data-testid="select-type-contato">
                   <SelectValue placeholder="Selecione o Tipo de Contato" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CONTACT_TYPE_OPTIONS.map((o) => (
+                  {PERSON_TYPE_OPTIONS.map((o) => (
                     <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </Field>
             <Field label="Categoria *">
-              <Select value={state.categoria} onValueChange={changeCategory} disabled={!state.tipo_pessoa}>
+              <Select value={state.category} onValueChange={changeCategory} disabled={!state.personType}>
                 <SelectTrigger data-testid="select-categoria">
                   <SelectValue placeholder="Selecione a Categoria" />
                 </SelectTrigger>
@@ -499,7 +450,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
               </Select>
             </Field>
             <Field label="Perfil do Contato *">
-              <Select value={state.perfil} onValueChange={(v) => set("perfil", v)} disabled={!state.categoria}>
+              <Select value={state.profile} onValueChange={(v) => set("profile", v)} disabled={!state.category}>
                 <SelectTrigger data-testid="select-perfil">
                   <SelectValue placeholder="Selecione o Perfil do Contato" />
                 </SelectTrigger>
@@ -513,18 +464,18 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
           </div>
 
           {/* CONTACT DETAILS ============================================== */}
-          <SectionHeader title={isPF ? "Dados da Pessoa Física" : "Dados da Pessoa Jurídica"} />
+          <SectionHeader title={isIndividual ? "Dados da Pessoa Física" : "Dados da Pessoa Jurídica"} />
 
-          {isPF ? (
+          {isIndividual ? (
             <>
               <Field label="Foto">
                 <div className="flex items-center gap-3">
-                  {state.foto ? (
+                  {state.photoUrl ? (
                     <div className="relative">
-                      <img src={state.foto} alt="Foto" className="h-16 w-16 rounded-full object-cover" />
+                      <img src={state.photoUrl} alt="Foto" className="h-16 w-16 rounded-full object-cover" />
                       <button
                         type="button"
-                        onClick={() => set("foto", "")}
+                        onClick={() => set("photoUrl", "")}
                         className="absolute -top-1 -right-1 rounded-full bg-destructive p-0.5 text-destructive-foreground"
                         aria-label="Remover foto"
                         data-testid="button-remove-foto"
@@ -538,12 +489,12 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     </div>
                   )}
                   <label className="cursor-pointer text-sm text-primary hover:underline">
-                    {state.foto ? "Trocar foto" : "Selecionar foto"}
+                    {state.photoUrl ? "Trocar foto" : "Selecionar foto"}
                     <input
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => handleFotoSelect(e.target.files?.[0] ?? null)}
+                      onChange={(e) => handlePhotoSelect(e.target.files?.[0] ?? null)}
                       data-testid="input-pf-foto"
                     />
                   </label>
@@ -553,8 +504,8 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Nome completo *">
                   <Input
-                    value={state.nome_pf}
-                    onChange={(e) => set("nome_pf", e.target.value)}
+                    value={state.individualName}
+                    onChange={(e) => set("individualName", e.target.value)}
                     placeholder="Nome da pessoa"
                     data-testid="input-pf-nome"
                   />
@@ -581,8 +532,8 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                 </Field>
                 <Field label="Telefone">
                   <Input
-                    value={state.telefone}
-                    onChange={(e) => set("telefone", maskPhone(e.target.value))}
+                    value={state.phone}
+                    onChange={(e) => set("phone", maskPhone(e.target.value))}
                     placeholder="(00) 00000-0000"
                     data-testid="input-telefone"
                   />
@@ -599,8 +550,8 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                 </Field>
                 <Field label="Função">
                   <Input
-                    value={state.funcao}
-                    onChange={(e) => set("funcao", e.target.value)}
+                    value={state.jobTitle}
+                    onChange={(e) => set("jobTitle", e.target.value)}
                     placeholder="Ex: produtor, técnico, fotógrafo"
                     data-testid="input-pf-funcao"
                   />
@@ -612,16 +563,16 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Razão Social *">
                   <Input
-                    value={state.razao_social}
-                    onChange={(e) => set("razao_social", e.target.value)}
+                    value={state.legalName}
+                    onChange={(e) => set("legalName", e.target.value)}
                     placeholder="Razão social da empresa"
                     data-testid="input-pj-razao-social"
                   />
                 </Field>
                 <Field label="Nome Fantasia">
                   <Input
-                    value={state.nome_fantasia}
-                    onChange={(e) => set("nome_fantasia", e.target.value)}
+                    value={state.tradeName}
+                    onChange={(e) => set("tradeName", e.target.value)}
                     placeholder="Nome fantasia"
                     data-testid="input-pj-nome-fantasia"
                   />
@@ -658,8 +609,8 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                 </Field>
                 <Field label="Telefone">
                   <Input
-                    value={state.telefone}
-                    onChange={(e) => set("telefone", maskPhone(e.target.value))}
+                    value={state.phone}
+                    onChange={(e) => set("phone", maskPhone(e.target.value))}
                     placeholder="(00) 00000-0000"
                     data-testid="input-telefone"
                   />
@@ -673,26 +624,26 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
 
           <div className="grid grid-cols-2 gap-4">
             <Field label="Logradouro">
-              <Input value={state.logradouro} onChange={(e) => set("logradouro", e.target.value)} placeholder="Rua, avenida..." data-testid="input-logradouro" />
+              <Input value={state.street} onChange={(e) => set("street", e.target.value)} placeholder="Rua, avenida..." data-testid="input-logradouro" />
             </Field>
             <Field label="Número">
-              <Input value={state.numero} onChange={(e) => set("numero", e.target.value)} placeholder="Ex: 123" data-testid="input-numero" />
+              <Input value={state.streetNumber} onChange={(e) => set("streetNumber", e.target.value)} placeholder="Ex: 123" data-testid="input-numero" />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Complemento">
-              <Input value={state.complemento} onChange={(e) => set("complemento", e.target.value)} placeholder="Apto, sala, bloco..." data-testid="input-complemento" />
+              <Input value={state.addressComplement} onChange={(e) => set("addressComplement", e.target.value)} placeholder="Apto, sala, bloco..." data-testid="input-complemento" />
             </Field>
             <Field label="Bairro">
-              <Input value={state.bairro} onChange={(e) => set("bairro", e.target.value)} placeholder="Bairro" data-testid="input-bairro" />
+              <Input value={state.neighborhood} onChange={(e) => set("neighborhood", e.target.value)} placeholder="Bairro" data-testid="input-bairro" />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Cidade">
-              <Input value={state.cidade} onChange={(e) => set("cidade", e.target.value)} placeholder="Cidade" data-testid="input-cidade" />
+              <Input value={state.city} onChange={(e) => set("city", e.target.value)} placeholder="Cidade" data-testid="input-cidade" />
             </Field>
             <Field label="Estado">
-              <Select value={state.estado} onValueChange={(v) => set("estado", v)}>
+              <Select value={state.state} onValueChange={(v) => set("state", v)}>
                 <SelectTrigger data-testid="select-estado"><SelectValue placeholder="UF" /></SelectTrigger>
                 <SelectContent>{BR_STATES.map((uf) => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}</SelectContent>
               </Select>
@@ -700,31 +651,31 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="CEP">
-              <Input value={state.cep} onChange={(e) => set("cep", maskCEP(e.target.value))} onBlur={handleCepBlur} placeholder="00000-000" data-testid="input-cep" />
-              {cepLoading && <p className="text-xs text-muted-foreground">Buscando endereço...</p>}
+              <Input value={state.zipCode} onChange={(e) => set("zipCode", maskCEP(e.target.value))} onBlur={handleZipCodeBlur} placeholder="00000-000" data-testid="input-cep" />
+              {zipCodeLoading && <p className="text-xs text-muted-foreground">Buscando endereço...</p>}
             </Field>
           </div>
 
-          {renderClassificacao()}
+          {renderClassification()}
 
           {/* RESPONSIBLE PERSON — shown only for legal entities ============ */}
-          {isPJ && (
+          {isCompany && (
             <>
               <SectionHeader title="Responsável" />
 
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Nome do Responsável">
                   <Input
-                    value={state.responsavel_nome}
-                    onChange={(e) => set("responsavel_nome", e.target.value)}
+                    value={state.responsibleName}
+                    onChange={(e) => set("responsibleName", e.target.value)}
                     placeholder="Nome de quem cuida do relacionamento"
                     data-testid="input-resp-nome"
                   />
                 </Field>
                 <Field label="Cargo do Responsável">
                   <Input
-                    value={state.responsavel_cargo}
-                    onChange={(e) => set("responsavel_cargo", e.target.value)}
+                    value={state.responsibleJobTitle}
+                    onChange={(e) => set("responsibleJobTitle", e.target.value)}
                     placeholder="Cargo na sua equipe"
                     data-testid="input-resp-cargo"
                   />
@@ -735,16 +686,16 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                 <Field label="E-mail do responsável">
                   <Input
                     type="email"
-                    value={state.responsavel_email}
-                    onChange={(e) => set("responsavel_email", e.target.value)}
+                    value={state.responsibleEmail}
+                    onChange={(e) => set("responsibleEmail", e.target.value)}
                     placeholder="email@empresa.com"
                     data-testid="input-resp-email"
                   />
                 </Field>
                 <Field label="Telefone do Responsável">
                   <Input
-                    value={state.responsavel_telefone}
-                    onChange={(e) => set("responsavel_telefone", maskPhone(e.target.value))}
+                    value={state.responsiblePhone}
+                    onChange={(e) => set("responsiblePhone", maskPhone(e.target.value))}
                     placeholder="(00) 00000-0000"
                     data-testid="input-resp-telefone"
                   />

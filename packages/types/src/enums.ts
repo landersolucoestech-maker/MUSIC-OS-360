@@ -74,7 +74,8 @@ export enum ArtistStatus {
   ONBOARDING     = "onboarding",
 }
 
-export enum ArtistStatusCadastro {
+/** artists.registration_status (CZ-042; was status_cadastro). */
+export enum ArtistRegistrationStatus {
   ACTIVE    = "active",
   INACTIVE  = "inactive",
   SUSPENDED = "suspended",

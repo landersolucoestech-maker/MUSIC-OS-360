@@ -15,11 +15,11 @@ import { ACCOUNTING_SUMMARY_TABLE_NAME } from '../report-module-registry';
 
 const ARTISTS_DEF: ReportEntityDefinition = {
   entityName: 'ArtistEntity', tableName: 'artists', category: EntityCategory.REPORTABLE,
-  identityColumn: 'nome_artistico', displayColumn: 'nome_artistico', dateColumn: 'created_at',
-  exportableColumns: ['nome_artistico', 'email', 'status'], importableColumns: ['nome_artistico'],
-  filterableColumns: ['status'], sortableColumns: ['nome_artistico', 'created_at'],
-  searchableColumns: ['nome_artistico'], sensitiveColumns: ['cpf_encrypted'],
-  requiredImportColumns: ['nome_artistico'], supportsExport: true, supportsImport: true,
+  identityColumn: 'stage_name', displayColumn: 'stage_name', dateColumn: 'created_at',
+  exportableColumns: ['stage_name', 'email', 'status'], importableColumns: ['stage_name'],
+  filterableColumns: ['status'], sortableColumns: ['stage_name', 'created_at'],
+  searchableColumns: ['stage_name'], sensitiveColumns: ['cpf_encrypted'],
+  requiredImportColumns: ['stage_name'], supportsExport: true, supportsImport: true,
 };
 
 const params = (extra: Record<string, unknown> = {}) => ({ format: 'xlsx' as const, ...extra });
@@ -35,7 +35,7 @@ function makeEngine(options: {
   };
   const metadata = { scan: () => ({ entities: report ? [report] : [] }) } as any;
   const definitions = { getDefinition: () => options.definition === undefined ? ARTISTS_DEF : options.definition } as any;
-  const ds = { query: options.query ?? jest.fn().mockResolvedValue([{ nome_artistico: 'A', email: 'a@x.com', status: 'ativo' }]) } as any;
+  const ds = { query: options.query ?? jest.fn().mockResolvedValue([{ stage_name: 'A', email: 'a@x.com', status: 'ativo' }]) } as any;
   const audit = { record: jest.fn() } as any;
   const tableGuard = { assertTableUsable: jest.fn().mockResolvedValue(undefined) } as any;
   const encryption = { decryptNullable: jest.fn((value: string | null) => value) } as any;
@@ -67,12 +67,12 @@ describe('ExportEngineService', () => {
     const workbook = XLSX.read(result.body as Buffer, { type: 'buffer' });
     const rows = XLSX.utils.sheet_to_json<unknown[]>(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
     expect(rows[0]).toContain('Nome artístico');
-    expect(rows[0]).not.toContain('nome_artistico');
+    expect(rows[0]).not.toContain('stage_name');
   });
 
   it('fails explicitly and audits when the result set exceeds the limit; never generates a partial file', async () => {
     const rows = Array.from({ length: EXPORT_DETECTION_LIMIT }, (_, index) => ({
-      nome_artistico: `Artista ${index}`,
+      stage_name: `Artista ${index}`,
       email: `artista${index}@example.com`,
       status: 'ativo',
     }));
@@ -98,10 +98,10 @@ describe('ExportEngineService', () => {
   // Regression: final XLSX order = canonical order (definition.exportableColumns)
   // filtered by the selection — never the order the caller sent in `columns`.
   it('selection out of canonical order is reordered by the canonical config (headers and values follow the same sequence)', async () => {
-    const query = jest.fn().mockResolvedValue([{ nome_artistico: 'A', status: 'ativo' }]);
+    const query = jest.fn().mockResolvedValue([{ stage_name: 'A', status: 'ativo' }]);
     const { engine } = makeEngine({ query });
-    // Canonical: nome_artistico, email, status. Caller selects status before nome_artistico.
-    const result = await engine.export('artists', params({ columns: ['status', 'nome_artistico'] }), 'tenant-1', 'user-1');
+    // Canonical: stage_name, email, status. Caller selects status before stage_name.
+    const result = await engine.export('artists', params({ columns: ['status', 'stage_name'] }), 'tenant-1', 'user-1');
     const workbook = XLSX.read(result.body as Buffer, { type: 'buffer' });
     const rows = XLSX.utils.sheet_to_json<unknown[]>(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
     expect(rows[0]).toEqual(['Nome artístico', 'Situação']);

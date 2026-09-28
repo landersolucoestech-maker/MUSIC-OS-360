@@ -84,6 +84,17 @@ describe('Phonogram request contract (CZ-040)', () => {
     expect(canonicalizePhonogramInput({ duration_seconds: 99, duracao_min: 3, duracao_seg: 30 })).toEqual({ duration_seconds: 99 });
   });
 
+  it('an EDIT from a pre-CZ-040 build never overwrites data it could not read (flag defaults, empty participation)', () => {
+    const oldBuildEdit = {
+      title: 'Novo título', criada_por_ia: false, nacional: true, pub_simultanea: false,
+      participacao: { produtorFonografico: [], interprete: [], musicoAcompanhante: [] },
+    };
+    expect(canonicalizePhonogramInput(oldBuildEdit, { update: true })).toEqual({ title: 'Novo título' });
+    // A participation the user really filled in is still accepted on edit.
+    const filled = canonicalizePhonogramInput({ participacao: { interprete: [{ nome: 'A', percentual: '100' }] } }, { update: true }) as Record<string, unknown>;
+    expect(filled['participation']).toEqual({ performers: [{ name: 'A', percentage: '100' }] });
+  });
+
   it('maps the pre-CZ-040 query values', () => {
     expect(errorsFor(QueryPhonogramDto, { obra_vinculada: 'sem-obra', ecad: 'com-ecad' })).toEqual([]);
     expect(canonicalizePhonogramQuery({ obra_vinculada: 'sem-obra', ecad: 'com-ecad' })).toEqual({ has_work: 'false', ecad: 'with_code' });

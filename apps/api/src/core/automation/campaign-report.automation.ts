@@ -108,7 +108,7 @@ export class CampaignReportAutomation {
     if (!this.ds) return null;
     const rows = (await manager.query(
       `SELECT c.name, c.type, c.objective, c.status, c.start_date, c.end_date, c.metadata,
-              a.nome_artistico AS artist_name,
+              a.stage_name AS artist_name,
               (SELECT COUNT(*) FROM campaign_tasks t WHERE t.campaign_id = c.id AND t.tenant_id = c.tenant_id) AS tasks_total,
               (SELECT COUNT(*) FROM campaign_tasks t WHERE t.campaign_id = c.id AND t.tenant_id = c.tenant_id AND t.status = 'done') AS tasks_completed,
               (SELECT COUNT(*) FROM campaign_assets ca WHERE ca.campaign_id = c.id AND ca.tenant_id = c.tenant_id AND ca.deleted_at IS NULL) AS assets_used_count

@@ -1,3 +1,7 @@
+import type { Interaction } from "../shared/interactions";
+
+export type { Interaction };
+
 // Source of truth for contact roles. Kept in sync with the option lists in
 // ../constants/index.ts (individual + company role catalogues). Widened from the
 // original 18-value stub to the full role catalogue actually referenced by the
@@ -115,16 +119,11 @@ export const contactTypes = [
 
 export type ContactType = (typeof contactTypes)[number];
 
-/** Individual (INDIVIDUAL) vs legal entity (COMPANY). */
-export type ContactEntityType = "INDIVIDUAL" | "COMPANY";
+/** Legal nature of the contact — canonical `clients.person_type` values (CZ-043). */
+export type PersonType = "individual" | "company";
 
-export type ContactStatus =
-  | "active"
-  | "inactive"
-  | "negotiating"
-  | "blocked"
-  | "favorite"
-  | "blacklisted";
+/** Canonical `clients.status` values (DB CHECK) — PT-BR labels in ../constants. */
+export type ContactStatus = "active" | "inactive" | "prospect";
 
 export type ContactPriority = "low" | "medium" | "high" | "strategic";
 
@@ -138,77 +137,52 @@ export type ContactAttachment = {
   createdAt: string;
 };
 
-export type ContactTimelineItem = {
-  id: string;
-  type: "meeting" | "email" | "whatsapp" | "followUp" | "contract" | "note" | "proposal" | "incident" | "event";
-  summary: string;
-  occurredAt: string;
-  payload?: Record<string, unknown>;
-};
-
+/**
+ * CRM contact (= a `clients` row). Internal camelCase model mirroring the
+ * canonical `/clients` columns one-to-one (CZ-043) — every field has its own
+ * column; there is no metadata/"payloadOperacional" side channel. The wire
+ * mapping lives in ../services/contacts.service.ts.
+ */
 export type Contact = {
   id: string;
+  personType: PersonType;
+  /** Relationship category slug (`clients.category`, ContactType slugs). */
+  category?: ContactType;
+  /** Profile slug (`clients.profile`; PT slug taxonomy unchanged — labels via profileLabel()). */
+  profile?: string;
+  /** Display name: individual name (individual) or trade/legal name (company). */
   name: string;
-  companyName?: string;
-  contactType: ContactType;
-  documentType?: string;
-  documentNumber?: string;
-  phone?: string;
-  whatsapp?: string;
+  photoUrl?: string;
+  individualName?: string;
+  legalName?: string;
+  tradeName?: string;
   email?: string;
+  phone?: string;
+  /** CPF (individual) or CNPJ (company) — the only place a document travels. */
+  cpfCnpj?: string;
   instagram?: string;
-  website?: string;
-  address?: string;
+  jobTitle?: string;
+  street?: string;
+  streetNumber?: string;
+  addressComplement?: string;
+  neighborhood?: string;
   city?: string;
   state?: string;
-  country?: string;
   zipCode?: string;
-  responsible?: string;
+  /** Full formatted address (`clients.address`). */
+  address?: string;
+  priority?: ContactPriority;
+  responsibleName?: string;
+  responsibleJobTitle?: string;
+  responsibleEmail?: string;
+  responsiblePhone?: string;
   notes?: string;
-  tags: string[];
+  interactions: Interaction[];
   status: ContactStatus;
-  priority: ContactPriority;
-  linkedArtistId?: string;
-  payloadOperacional: Record<string, unknown>;
   attachments?: ContactAttachment[];
-  timeline?: ContactTimelineItem[];
   createdAt: string;
   updatedAt: string;
 };
 
-export type ContactFiltersState = {
-  search: string;
-  contactType: "all" | ContactType;
-  status: "all" | ContactStatus;
-  priority: "all" | ContactPriority;
-  city: "all" | string;
-  tag: "all" | string;
-};
-
-export type Client = {
-  id: string;
-  nome: string;
-  razao_social?: string | null;
-  email?: string | null;
-  telefone?: string | null;
-  empresa?: string | null;
-  cidade?: string | null;
-  estado?: string | null;
-  endereco?: string | null;
-  endereco_completo?: string | null;
-  cep?: string | null;
-  status?: string | null;
-  cpf?: string | null;
-  cnpj?: string | null;
-  cpf_cnpj?: string | null;
-  tipo_pessoa?: "fisica" | "juridica" | "pessoa_fisica" | "pessoa_juridica" | string | null;
-  responsavel?: string | null;
-  observacoes?: string | null;
-  type?: string | null;
-  segmento?: string | null;
-};
-
-export type ClientInsert = Omit<Client, "id">;
-export type ClientUpdate = Partial<ClientInsert>;
-export type ClientSegment = string;
-
+/** Create/update input of a contact (server-owned fields excluded). */
+export type ContactInput = Omit<Contact, "id" | "createdAt" | "updatedAt">;

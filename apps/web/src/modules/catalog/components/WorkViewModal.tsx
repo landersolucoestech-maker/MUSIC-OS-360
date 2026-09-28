@@ -18,6 +18,7 @@ import {
   workLanguageLabel,
   workParticipantRoleLabel,
 } from "@/modules/catalog/constants/work-options";
+import { statusLabelPtBr } from "@music-os-360/types";
 import {
   workAlternativeTitles,
   workRelatedReferences,
@@ -48,7 +49,7 @@ function StatusBadge({ status }: { status?: string }) {
     return <Badge variant="warning">Pendente</Badge>;
   if (s === "rejected")
     return <Badge variant="danger">Rejeitado</Badge>;
-  return <Badge variant="secondary">{status ?? "—"}</Badge>;
+  return <Badge variant="secondary">{statusLabelPtBr("work", s) ?? "Status não reconhecido"}</Badge>;
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -111,6 +112,12 @@ export function WorkViewModal({
   // the first loaded records (Task J: it used to use an unfiltered useWorks(),
   // which truncated at 50 works per tenant).
   const { entity: fresh } = useEntityById<WorkWithRelations>("obras", open ? workProp?.id : undefined);
+  // GET /works/:id returns only artist_id/project_id (no embedded relations):
+  // the linked artist and project are resolved by id.
+  const linkedArtistId = open ? (fresh?.artist_id ?? workProp?.artist_id ?? undefined) : undefined;
+  const linkedProjectId = open ? (fresh?.project_id ?? workProp?.project_id ?? undefined) : undefined;
+  const { entity: linkedArtist } = useEntityById<{ stage_name?: string | null }>("artists", linkedArtistId);
+  const { entity: linkedProject } = useEntityById<{ title?: string | null }>("projects", linkedProjectId);
   if (!workProp) return null;
 
   const work: Partial<WorkWithRelations> = fresh ? { ...workProp, ...fresh } : workProp;
@@ -132,8 +139,8 @@ export function WorkViewModal({
       ? `${dur.minutes || "0"}min ${dur.seconds || "0"}seg`
       : work.duration_text || null;
 
-  const artistName   = work.artistas?.nome_artistico ?? null;
-  const projectTitle = work.projetos?.title ?? null;
+  const artistName   = linkedArtist?.stage_name || null;
+  const projectTitle = linkedProject?.title || null;
 
   const aiElementLabels = [
     aiHarmony.tool || aiHarmony.prompt ? "Harmonia" : null,

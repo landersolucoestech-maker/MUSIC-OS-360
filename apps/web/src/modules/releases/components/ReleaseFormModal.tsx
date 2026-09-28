@@ -1105,7 +1105,7 @@ export function ReleaseFormModal({
                                 embed the artist in /projects (no join), and resolving it per
                                 row would need N lookups per results page. The selected value
                                 (projectId) stays correct regardless of this subtitle. Upgrade
-                                path: a dedicated endpoint returning id+title+nome_artistico
+                                path: a dedicated endpoint returning id+title+stage_name
                                 already aggregated, if the UX requires it. */}
                           </div>
                         </div>

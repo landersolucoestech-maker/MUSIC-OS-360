@@ -118,7 +118,7 @@ async function main(): Promise<void> {
     check(
       'header is pt-BR and does not expose the physical key',
       exportedRows[0]?.includes('Nome artístico') === true &&
-        exportedRows[0]?.includes('nome_artistico') === false,
+        exportedRows[0]?.includes('stage_name') === false,
     );
 
     const unsupported = await api(
@@ -144,7 +144,7 @@ async function main(): Promise<void> {
       `status=${validation.status}`,
     );
     const previewCount = await dataSource.query(
-      'SELECT COUNT(*)::int AS count FROM artists WHERE nome_artistico=$1',
+      'SELECT COUNT(*)::int AS count FROM artists WHERE stage_name=$1',
       [validateName],
     );
     check('preview does not persist', previewCount[0].count === 0);
@@ -162,7 +162,7 @@ async function main(): Promise<void> {
       `status=${firstCommit.status}`,
     );
     const stored = await dataSource.query(
-      'SELECT tenant_id FROM artists WHERE nome_artistico=$1',
+      'SELECT tenant_id FROM artists WHERE stage_name=$1',
       [commitName],
     );
     check('commit persiste no tenant correto', stored[0]?.tenant_id === tenantId);
@@ -187,13 +187,13 @@ async function main(): Promise<void> {
       workbookBody([rollbackName, commitName]),
     );
     const rollbackCount = await dataSource.query(
-      'SELECT COUNT(*)::int AS count FROM artists WHERE nome_artistico=$1',
+      'SELECT COUNT(*)::int AS count FROM artists WHERE stage_name=$1',
       [rollbackName],
     );
     check('batch error performs a full rollback', rollbackCount[0].count === 0);
   } finally {
     try {
-      await dataSource.query('DELETE FROM artists WHERE nome_artistico LIKE $1', [`${TAG}%`]);
+      await dataSource.query('DELETE FROM artists WHERE stage_name LIKE $1', [`${TAG}%`]);
     } finally {
       await dataSource.destroy();
     }

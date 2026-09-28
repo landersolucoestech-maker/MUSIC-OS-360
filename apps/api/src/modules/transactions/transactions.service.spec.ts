@@ -59,7 +59,6 @@ describe('toTransactionDetails — English output contract (naming-canonical, CZ
       type: 'expense',
       status: 'pending',
       description: 'Aluguel de estúdio',
-      reference: null,
       amount: '250.50',
       transaction_date: new Date('2026-08-01T00:00:00.000Z'),
       category: 'servicos',

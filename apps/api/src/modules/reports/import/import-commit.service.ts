@@ -252,6 +252,20 @@ export class ImportCommitService {
     }
   }
 
+  private readonly jsonbColumnsByTable = new Map<string, Set<string>>();
+
+  private async jsonbColumnsOf(qr: QueryRunner, table: string): Promise<Set<string>> {
+    const cached = this.jsonbColumnsByTable.get(table);
+    if (cached) return cached;
+    const rows = await qr.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = $1 AND data_type = 'jsonb'`,
+      [table],
+    ) as Array<{ column_name: string }>;
+    const columns = new Set((Array.isArray(rows) ? rows : []).map((row) => row.column_name));
+    this.jsonbColumnsByTable.set(table, columns);
+    return columns;
+  }
+
   private async insertGroup(
     qr: QueryRunner,
     def: ReportEntityDefinition,
@@ -316,6 +330,16 @@ export class ImportCommitService {
     const repeatingGroup = contract?.repeatingGroup;
     const items = repeatingGroup ? deriveRepeatingItems(group, repeatingGroup) : [];
     const hasRepeatingItems = items.length > 0;
+    // node-postgres serializes a JS array as a Postgres array literal, which is
+    // invalid jsonb input: arrays/objects bound to a jsonb column go as JSON text
+    // (text[] columns keep the native array binding).
+    const jsonbColumns = await this.jsonbColumnsOf(qr, def.tableName);
+    cols.forEach((column, index) => {
+      const value = values[index];
+      if (jsonbColumns.has(column) && value !== null && typeof value === 'object' && !(value instanceof Date)) {
+        values[index] = JSON.stringify(value);
+      }
+    });
     const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
     const sql = `INSERT INTO ${quote(def.tableName)} (${cols.map(quote).join(', ')}) VALUES (${placeholders})` +
       (hasRepeatingItems ? ` RETURNING ${quote('id')}` : '');

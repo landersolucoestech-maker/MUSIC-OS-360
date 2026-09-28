@@ -67,7 +67,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
   Artista: {
     name:         "Artista",
     ownerModule:  "artist",
-    typesFile:    "modules/artist/types/artista.types.ts",
+    typesFile:    "modules/artist/types/artist.types.ts",
     primaryKey:   "id",
     externalIds:  [
       "cpf_cnpj",
@@ -77,12 +77,12 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
       "apple_music_url",
       "soundcloud_url",
     ],
-    requiredFields: ["id", "nome_artistico"],
+    requiredFields: ["id", "stage_name"],
     relationships: [
       {
         target:      "Contrato",
         cardinality: "1:N",
-        via:         "contrato_id",
+        via:         "contract_id",
         required:    false,
         description: "Active contract linked to the artist",
       },
@@ -103,7 +103,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
       {
         target:      "ArtistaRelacionamento",
         cardinality: "1:N",
-        via:         "relacionamentos[]",
+        via:         "relationships[]",
         required:    false,
         description: "Manager, label, publisher, booker, legal, etc.",
       },

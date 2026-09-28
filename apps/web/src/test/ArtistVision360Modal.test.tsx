@@ -66,9 +66,10 @@ vi.mock("@/shared/lib/api-client", () => ({
 }));
 
 import { ArtistVision360Modal } from "@/modules/artist/components/ArtistVision360Modal";
+import type { Artist } from "@/modules/artist/types/artist.types";
 import { api } from "@/shared/lib/api-client";
 
-async function renderModal(artist: any) {
+async function renderModal(artist: Artist) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
@@ -77,7 +78,7 @@ async function renderModal(artist: any) {
       <ArtistVision360Modal
         open
         onOpenChange={() => {}}
-        artista={artist}
+        artist={artist}
       />
     </QueryClientProvider>,
   );
@@ -105,9 +106,9 @@ describe("<ArtistVision360Modal /> platform cards on the 'Perfil' tab", () => {
 
     await renderModal({
       id: "art-1",
-      nome_artistico: "Teste",
-      spotify_url: null,
-      youtube_url: null,
+      stageName: "Teste",
+      spotifyUrl: null,
+      youtubeUrl: null,
     });
 
     expect(screen.getByTestId("metric-spotify-art-1")).toHaveTextContent("—");
@@ -121,9 +122,9 @@ describe("<ArtistVision360Modal /> platform cards on the 'Perfil' tab", () => {
 
     await renderModal({
       id: "art-1",
-      nome_artistico: "Teste",
-      spotify_url: "https://open.spotify.com/artist/spot-1",
-      youtube_url: "https://www.youtube.com/channel/UC00000000000000000001",
+      stageName: "Teste",
+      spotifyUrl: "https://open.spotify.com/artist/spot-1",
+      youtubeUrl: "https://www.youtube.com/channel/UC00000000000000000001",
     });
 
     expect(screen.getByTestId("metric-spotify-art-1")).toHaveTextContent("Não sincronizado");
@@ -159,9 +160,9 @@ describe("<ArtistVision360Modal /> platform cards on the 'Perfil' tab", () => {
 
     await renderModal({
       id: "art-1",
-      nome_artistico: "Teste",
-      spotify_url: "https://open.spotify.com/artist/spot-1",
-      youtube_url: null,
+      stageName: "Teste",
+      spotifyUrl: "https://open.spotify.com/artist/spot-1",
+      youtubeUrl: null,
     });
 
     expect(screen.getByTestId("metric-spotify-art-1")).toHaveTextContent("1.042");

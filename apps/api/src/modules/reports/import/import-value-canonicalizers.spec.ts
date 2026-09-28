@@ -42,6 +42,9 @@ describe('canonicalImportValue', () => {
     expect(canonicalImportValue('transactions', 'payment_method', 'pix')).toBe('pix');
     expect(canonicalImportValue('transactions', 'payment_type', 'parcelado')).toBe('installments');
     expect(canonicalImportValue('transactions', 'installment_interval', 'mensal')).toBe('monthly');
+    // Spreadsheet cells are free text: trimmed and case-insensitive (a NOT VALID check rejects anything else).
+    expect(canonicalImportValue('transactions', 'type', ' Receita ')).toBe('revenue');
+    expect(canonicalImportValue('transactions', 'type', 'DESPESA')).toBe('expense');
   });
 
   it('leaves canonical values, other columns, other tables and non-strings untouched', () => {
@@ -58,5 +61,35 @@ describe('canonicalImportValue', () => {
     expect(canonicalImportJsonColumn('leads', 'crm_internal_data', { priority: 'alta', temperature: 'quente' }))
       .toEqual({ priority: 'high', temperature: 'hot' });
     expect(canonicalImportJsonColumn('works', 'metadata', { a: 1 })).toEqual({ a: 1 });
+  });
+});
+
+describe('canonicalImportValue — artists (CZ-042)', () => {
+  it('maps pre-CZ-042 profile_type values (case-insensitive)', () => {
+    expect(canonicalImportValue('artists', 'profile_type', 'com_empresario')).toBe('managed');
+    expect(canonicalImportValue('artists', 'profile_type', 'Independente')).toBe('independent');
+    expect(canonicalImportValue('artists', 'profile_type', 'publisher')).toBe('publisher');
+  });
+
+  it('maps legacy specialties and sends jsonb columns as JSON text (never a Postgres array literal)', () => {
+    expect(canonicalImportValue('artists', 'specialties', ['dj', 'dj_produtor', 'interprete']))
+      .toBe(JSON.stringify(['dj', 'dj_producer', 'performer']));
+    expect(canonicalImportValue('artists', 'music_tags', ['mpb'])).toBe('["mpb"]');
+    expect(canonicalImportValue('artists', 'gallery_urls', null)).toBeNull();
+  });
+
+  it('renames nested keys and relationship types of pre-CZ-042 jsonb cells', () => {
+    const out = JSON.parse(canonicalImportValue('artists', 'relationships', [
+      { type: 'empresario', nome: 'Ana', telefone: '1', responsaveis: [{ nome: 'B' }], distribuidoras: [{ nomeCustom: 'X' }] },
+    ]) as string);
+    expect(out).toEqual([{ type: 'agent', name: 'Ana', phone: '1', responsibles: [{ name: 'B' }], distributors: [{ customName: 'X' }] }]);
+    expect(JSON.parse(canonicalImportValue('artists', 'documents', [{ nome: 'RG', url: 'u' }]) as string))
+      .toEqual([{ name: 'RG', url: 'u' }]);
+  });
+
+  it('canonicalizes the metadata-only keys/values (gender)', () => {
+    expect(canonicalImportJsonColumn('artists', 'metadata', { gender: 'Feminino', spotify_listeners: 3 }))
+      .toEqual({ gender: 'female', spotify_listeners: 3 });
+    expect(canonicalImportJsonColumn('artists', 'metadata', { genero: 'Masculino' })).toEqual({ gender: 'male' });
   });
 });

@@ -76,9 +76,9 @@ const artistA = createTestArtist();
 const artistB = createTestArtist();
 const ARTIST_A_ID = artistA.id;
 const ARTIST_B_ID = artistB.id;
-const ARTISTS_BY_TENANT: Record<string, Record<string, { id: string; nome_artistico: string }>> = {
-  [tenantA.tenantId]: { [ARTIST_A_ID]: { id: ARTIST_A_ID, nome_artistico: artistA.nomeArtistico } },
-  [tenantB.tenantId]: { [ARTIST_B_ID]: { id: ARTIST_B_ID, nome_artistico: artistB.nomeArtistico } },
+const ARTISTS_BY_TENANT: Record<string, Record<string, { id: string; stage_name: string }>> = {
+  [tenantA.tenantId]: { [ARTIST_A_ID]: { id: ARTIST_A_ID, stage_name: artistA.stageName } },
+  [tenantB.tenantId]: { [ARTIST_B_ID]: { id: ARTIST_B_ID, stage_name: artistB.stageName } },
 };
 
 describe('Cross-tenant IDOR — GET /artists/:id via real HTTP', () => {

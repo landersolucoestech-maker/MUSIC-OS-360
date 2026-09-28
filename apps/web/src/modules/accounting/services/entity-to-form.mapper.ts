@@ -3,6 +3,7 @@
  * Transaction row → form field values. Source of truth for Transaction hydration.
  */
 
+import { calendarDay } from "@/shared/lib/format-utils";
 import { initialFormData } from "@/modules/accounting/constants/transaction-constants";
 import type { TransactionFormData } from "@/modules/accounting/constants/transaction-constants";
 
@@ -66,7 +67,7 @@ export function transactionToFormFields(t: TransactionFormEntity | null | undefi
     subcategory:            str(t.subcategory),
     description:            str(t.description),
     amount:                 str(t.amount),
-    transactionDate:        str(t.transaction_date),
+    transactionDate:        calendarDay(t.transaction_date),
     status:                 str(t.status)                 || initialFormData.status,
     notes:                  str(t.notes),
     artistId:               str(t.artist_id),
@@ -86,7 +87,7 @@ export function transactionToFormFields(t: TransactionFormEntity | null | undefi
     paymentType:            str(t.payment_type)           || initialFormData.paymentType,
     installmentCount:       str(t.installment_count),
     installmentInterval:    str(t.installment_interval)   || initialFormData.installmentInterval,
-    firstInstallmentDate:   str(t.first_installment_date),
+    firstInstallmentDate:   calendarDay(t.first_installment_date),
     attachmentUrl:          str(t.attachment_url),
     attachmentName:         str(t.attachment_name),
   };

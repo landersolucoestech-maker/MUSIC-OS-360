@@ -37,6 +37,28 @@ const RENAMED_AFTER_CANONICAL: Record<string, string> = {
   // 20260921000003_RenameClientsGeoFieldsToEnglish (naming-closure Cluster D).
   cidade: 'city',
   estado: 'state',
+  // 20260928000023_CanonicalizeClientsToEnglish (CZ-043).
+  tipo_pessoa: 'person_type',
+  categoria: 'category',
+  perfil: 'profile',
+  nome: 'name',
+  foto: 'photo_url',
+  razao_social: 'legal_name',
+  telefone_encrypted: 'phone_encrypted',
+  funcao: 'job_title',
+  logradouro: 'street',
+  numero: 'street_number',
+  complemento: 'address_complement',
+  bairro: 'neighborhood',
+  cep: 'zip_code',
+  endereco_completo: 'address',
+  status_contato: 'legacy_contact_status',
+  prioridade_contato: 'priority',
+  responsavel_nome: 'responsible_name',
+  responsavel_cargo: 'responsible_job_title',
+  responsavel_email: 'responsible_email',
+  responsavel_telefone: 'responsible_phone',
+  interacoes: 'interactions',
 };
 
 function extractMigrationColumns(): string[] {

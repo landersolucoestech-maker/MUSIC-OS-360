@@ -19,8 +19,8 @@ import {
 import { useTransactions, type TransactionWithRelations } from "@/modules/accounting/hooks/useTransactions";
 import { useTransactionsPaginated, useFinanceStats } from "@/modules/accounting/hooks/useTransactionsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { formatCurrency, formatDate } from "@/shared/lib/format-utils";
-import { formatCategoryLabel } from "@/shared/lib/category-labels";
+import { formatCurrency, formatCalendarDate } from "@/shared/lib/format-utils";
+import { TRANSACTION_CATEGORY_FILTER_OPTIONS, transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
 import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
 import { TransactionFormModal } from "@/modules/accounting/components/transaction-form/TransactionFormModal";
 import { TransactionViewModal } from "@/modules/accounting/components/TransactionViewModal";
@@ -281,12 +281,9 @@ export default function Accounting() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-category">Todas</SelectItem>
-              <SelectItem value="recebimentos externos de direitos">Recebimentos externos de direitos</SelectItem>
-              <SelectItem value="producao">Produção</SelectItem>
-              <SelectItem value="shows">Shows</SelectItem>
-              <SelectItem value="licenciamento">Licenciamento</SelectItem>
-              <SelectItem value="operacional">Operacional</SelectItem>
-              <SelectItem value="marketing">Marketing</SelectItem>
+              {TRANSACTION_CATEGORY_FILTER_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           {hasActiveFilters && (
@@ -391,9 +388,9 @@ export default function Accounting() {
                         </div>
                       </TableCell>
                       <TableCell className="font-medium max-w-[200px] truncate">{description}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{formatCategoryLabel(category)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{transactionCategoryLabel(category)}</TableCell>
                       <TableCell><StatusBadge status={transaction.status ?? "pending"} /></TableCell>
-                      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">{transactionDate ? formatDate(transactionDate) : "—"}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">{transactionDate ? formatCalendarDate(transactionDate) : "—"}</TableCell>
                       <TableCell className={cn(
                         "text-right text-sm",
                         amount === 0 ? "text-muted-foreground" : isRevenue ? "text-success" : "text-destructive"

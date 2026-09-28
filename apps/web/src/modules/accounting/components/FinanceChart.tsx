@@ -1,3 +1,4 @@
+import { calendarDay } from "@/shared/lib/format-utils";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
@@ -53,7 +54,9 @@ export function FinanceChart() {
 
     return months.map(({ month, label }) => {
       const monthTransactions = transactions.filter(t => {
-        const transactionDate = safeParseDate(t.transaction_date);
+        // Calendar day, not an instant: a UTC-midnight timestamp parsed in local
+        // time would fall into the previous month on the 1st.
+        const transactionDate = safeParseDate(calendarDay(t.transaction_date) ? `${calendarDay(t.transaction_date)}T12:00:00` : null);
         if (!transactionDate) return false;
         return (
           transactionDate.getMonth() === month.getMonth() &&

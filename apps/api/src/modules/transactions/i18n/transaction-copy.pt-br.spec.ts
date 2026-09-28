@@ -14,6 +14,7 @@ describe('transaction-copy.pt-br', () => {
     expect(transactionCreatedCopy('revenue', '1500.5')).toBe('Receita de R$ 1.500,50 registrada');
     expect(transactionCreatedCopy('expense', 20)).toBe('Despesa de R$ 20,00 registrada');
     expect(transactionCreatedCopy('unknown-type', 'x')).toBe('Transação registrada');
+    expect(transactionCreatedCopy('tax', 20)).toBe('Imposto de R$ 20,00 registrado');
   });
 
   it('maps status values to PT-BR labels', () => {

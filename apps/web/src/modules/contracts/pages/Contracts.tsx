@@ -351,7 +351,7 @@ export default function Contracts() {
                         </TableCell>
                         <TableCell className="font-medium">{contract.title}</TableCell>
                         <TableCell className="text-muted-foreground text-sm">
-                          {contract.artistas?.nome_artistico || contract.clientes?.nome || "—"}
+                          {contract.artistas?.stage_name || contract.clientes?.nome || "—"}
                         </TableCell>
                         <TableCell className="text-sm">{contract.type ? formatCategoryLabel(contract.type) : "—"}</TableCell>
                         <TableCell><SigningPlatformBadge platform={contract.signing_platform} /></TableCell>

@@ -61,7 +61,7 @@ export class PhonogramsService {
     if (q['has_work'] === 'false') qb.andWhere('p.work_id IS NULL');
     else if (q['has_work'] === 'true') qb.andWhere('p.work_id IS NOT NULL');
     if (q['music_genre'] || q['genre']) {
-      qb.andWhere('p.music_genre = :genre', { genre: q['music_genre'] ?? q['genre'] });
+      qb.andWhere('LOWER(p.music_genre) = LOWER(:genre)', { genre: q['music_genre'] ?? q['genre'] });
     }
     if (q['ecad'] === 'with_code')         qb.andWhere("p.ecad_code IS NOT NULL AND p.ecad_code <> ''");
     else if (q['ecad'] === 'without_code') qb.andWhere("(p.ecad_code IS NULL OR p.ecad_code = '')");
@@ -215,7 +215,7 @@ export class PhonogramsService {
 
   async update(tenantId: string, userId: string, id: string, dto: UpdatePhonogramDto): Promise<PhonogramEntity> {
     const current = await this.findById(tenantId, id);
-    const input = canonicalizePhonogramInput(dto as unknown as Record<string, unknown>);
+    const input = canonicalizePhonogramInput(dto as unknown as Record<string, unknown>, { update: true });
     const { normalized: resolved, legacyAliasesUsed } = resolvePhonogramAliases(input);
     // update: an absent title is valid (partial PATCH); if sent,
     // resolvePhonogramAliases() itself already guaranteed valid content/conflict.

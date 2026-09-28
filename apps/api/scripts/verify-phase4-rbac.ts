@@ -95,7 +95,7 @@ async function f42(): Promise<void> {
   const noAuthEndpoints = [
     ['GET', '/auth/context'],
     ['GET', '/artists'],
-    ['POST','/artists', { nome_artistico: 'X' }],
+    ['POST','/artists', { stage_name: 'X' }],
     ['GET', '/analytics/dashboard'],
     ['GET', '/audit-logs'],
   ] as const;
@@ -133,7 +133,7 @@ async function f43(): Promise<void> {
 
   // ghost user (no org_member) with X-Tenant-ID A
   const ghostEndpoints = [
-    ['GET','/auth/context'], ['GET','/artists'], ['POST','/artists', { nome_artistico: 'X' }],
+    ['GET','/auth/context'], ['GET','/artists'], ['POST','/artists', { stage_name: 'X' }],
     ['GET','/analytics/dashboard'],
   ] as const;
   for (const [m, p, b] of ghostEndpoints) {
@@ -170,7 +170,7 @@ async function seedFor44(): Promise<void> {
   const opts = { auth: tokens.owner, tenant: TENANT_A };
   const cli = await call('POST', '/clients', { ...opts, body: { name: `F4_CLIENT_${Date.now()}`, type: 'company' } });
   SEED_IDS['client'] = cli.body?.data?.id ?? cli.body?.id;
-  const art = await call('POST', '/artists', { ...opts, body: { nome_artistico: `F4_ARTIST_${Date.now()}` } });
+  const art = await call('POST', '/artists', { ...opts, body: { stage_name: `F4_ARTIST_${Date.now()}` } });
   SEED_IDS['artist'] = art.body?.data?.id ?? art.body?.id;
   const rel = await call('POST', '/releases', { ...opts, body: { title: `F4_REL_${Date.now()}`, type: 'single', artistId: SEED_IDS['artist'] } });
   SEED_IDS['release'] = rel.body?.data?.id ?? rel.body?.id;
@@ -220,7 +220,7 @@ async function f44(): Promise<void> {
     { method: 'GET', path: () => `/activity-logs`, perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: ALLOW, super: ALLOW } as any },
 
     // POST — editor+
-    { method: 'POST', path: () => `/artists`,  body: () => ({ nome_artistico: `RB_${USERS.viewer.uid.slice(0,4)}_${Math.random().toString(36).slice(2,6)}` }),
+    { method: 'POST', path: () => `/artists`,  body: () => ({ stage_name: `RB_${USERS.viewer.uid.slice(0,4)}_${Math.random().toString(36).slice(2,6)}` }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
     { method: 'POST', path: () => `/releases`, body: () => ({ title: `RB_REL_${Math.random().toString(36).slice(2,6)}`, type: 'single' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
@@ -237,7 +237,7 @@ async function f44(): Promise<void> {
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
 
     // PATCH — editor+ (transactions = financial+; both at level 60)
-    { method: 'PATCH', path: () => `/artists/${SEED_IDS['artist']}`, body: () => ({ nome_artistico: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
+    { method: 'PATCH', path: () => `/artists/${SEED_IDS['artist']}`, body: () => ({ stage_name: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
     { method: 'PATCH', path: () => `/releases/${SEED_IDS['release']}`, body: () => ({ title: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
@@ -311,10 +311,10 @@ async function f47(): Promise<void> {
 
   // Create an action as editor (allowed) and as viewer (forbidden); then confirm only the allowed one appears in audit.
   const tag = `F47_${Date.now()}`;
-  const allowed = await call('POST', '/artists', { auth: tokens.editor, tenant: TENANT_A, body: { nome_artistico: `${tag}_OK` } });
+  const allowed = await call('POST', '/artists', { auth: tokens.editor, tenant: TENANT_A, body: { stage_name: `${tag}_OK` } });
   check('editor creates artist (allowed)', allowed.status, [200, 201]);
 
-  const denied = await call('POST', '/artists', { auth: tokens.viewer, tenant: TENANT_A, body: { nome_artistico: `${tag}_FAIL` } });
+  const denied = await call('POST', '/artists', { auth: tokens.viewer, tenant: TENANT_A, body: { stage_name: `${tag}_FAIL` } });
   check('viewer creates artist (forbidden)', denied.status, [403]);
 
   // Wait for the audit queue (interceptor)
@@ -336,7 +336,7 @@ async function f47(): Promise<void> {
   // the denied action must not have created a row in the database (artist tagged _FAIL)
   // indirect confirmation via the /artists list
   const artists = await call('GET', '/artists?limit=200', { auth: tokens.owner, tenant: TENANT_A });
-  const denyLeaked = (artists.body?.data ?? []).some((a: any) => (a.nome_artistico ?? '').includes(`${tag}_FAIL`));
+  const denyLeaked = (artists.body?.data ?? []).some((a: any) => (a.stage_name ?? '').includes(`${tag}_FAIL`));
   check('denied action did NOT create a row in artists', denyLeaked ? 0 : 200, [200]);
 }
 

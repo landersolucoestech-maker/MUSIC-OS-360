@@ -53,6 +53,7 @@ import { projectToWorkSeed } from "@/modules/catalog/mappers";
 import { parseTracksFromProject } from "@/modules/projects/lib/track-helpers";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useSignedArtists } from "@/modules/artist/hooks/useSignedArtists";
+import { statusLabelPtBr } from "@music-os-360/types";
 
 
 
@@ -421,7 +422,7 @@ export default function MusicRegistry() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder={activeTab === "fonogramas" ? "Buscar por título, compositor, intérprete, ISRC..." : "Buscar por título, compositor, ISWC, gênero..."}
+              placeholder={activeTab === "fonogramas" ? "Buscar fonograma por título..." : "Buscar obra por título..."}
               className="pl-10 h-8 text-sm bg-card border-border"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -596,7 +597,7 @@ export default function MusicRegistry() {
                               variant={phonogram.status === "registered" ? "success" : "warning"}
                               className="text-xs"
                             >
-                              {phonogram.status === "registered" ? "Registrado" : phonogram.status === "under_review" ? "Em Análise" : "Pendente"}
+                              {statusLabelPtBr("phonogram", phonogram.status) ?? "Status não reconhecido"}
                             </Badge>
                           </TableCell>
                           <TableCell className="py-3 text-sm">{phonogram.society_code || "-"}</TableCell>
@@ -739,7 +740,7 @@ export default function MusicRegistry() {
                               variant={work.status === "registered" ? "success" : "warning"}
                               className="text-xs"
                             >
-                              {work.status === "registered" ? "Registrado" : work.status === "under_review" ? "Em Análise" : "Pendente"}
+                              {statusLabelPtBr("work", work.status) ?? "Status não reconhecido"}
                             </Badge>
                           </TableCell>
                           <TableCell className="py-3">

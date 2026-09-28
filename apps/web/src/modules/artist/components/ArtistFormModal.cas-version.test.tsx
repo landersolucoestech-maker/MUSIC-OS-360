@@ -8,7 +8,7 @@ import type { ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 
 // ─── Regression: form fields and expectedUpdatedAt (CAS) must come from the
 // SAME fresh version (GET /artists/:id), never from the list snapshot.
-// Before the fix, the fields were tied to the `artista` prop (list) and only
+// Before the fix, the fields were tied to the `artist` prop (list) and only
 // expectedUpdatedAt used the fresh version — letting a PATCH with a valid CAS
 // silently overwrite a concurrent edit that was already saved.
 
@@ -80,19 +80,19 @@ function renderModal(props: Partial<React.ComponentProps<typeof ArtistFormModal>
   return { queryClient, onOpenChange, onSuccess };
 }
 
-/** Stale snapshot, like the one the list would provide via the `artista` prop. */
+/** Stale snapshot, like the one the list would provide via the `artist` prop. */
 const listSnapshot: Artist = {
   id: ARTIST_ID,
   stageName: "Versão Antiga",
-  legalName: "Nome Antigo",
+  fullName: "Nome Antigo",
   updated_at: "2026-08-01T00:00:00.000Z",
 };
 
 function freshVersion(overrides: Partial<ArtistWireRecord> = {}): ArtistWireRecord & { id: string } {
   return {
     id: ARTIST_ID,
-    nome_artistico: "Versão Atual",
-    nome_civil: "Nome Atual",
+    stage_name: "Versão Atual",
+    full_name: "Nome Atual",
     updated_at: "2026-08-18T20:00:00.000Z",
     ...overrides,
   };
@@ -123,7 +123,12 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     // expectedUpdatedAt sent = Y (fresh GET version), never X (list snapshot).
     expect(patchCalls[0].body.expectedUpdatedAt).toBe("2026-08-18T20:00:00.000Z");
     expect(patchCalls[0].body.expectedUpdatedAt).not.toBe(listSnapshot.updated_at);
-    expect(patchCalls[0].body.nome_artistico).toBe("Versão Atual");
+    expect(patchCalls[0].body.stage_name).toBe("Versão Atual");
+    // CZ-042: the PATCH carries only canonical wire keys.
+    expect(patchCalls[0].body.full_name).toBe("Nome Atual");
+    for (const legacy of ["nome_artistico", "nome_civil", "tipo_perfil", "stageName", "fullName"]) {
+      expect(patchCalls[0].body).not.toHaveProperty(legacy);
+    }
   });
 
   it("preserves what the user typed when a background refetch arrives after hydration", async () => {
@@ -136,7 +141,7 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
 
     // Simulates a background refetch (e.g. tab refocus) bringing a new server
     // version — it must NOT erase what the user typed.
-    server = freshVersion({ nome_artistico: "Renomeado por outra sessão", updated_at: "2026-08-18T20:30:00.000Z" });
+    server = freshVersion({ stage_name: "Renomeado por outra sessão", updated_at: "2026-08-18T20:30:00.000Z" });
     await act(async () => {
       await queryClient.refetchQueries({ queryKey: ["artists", ARTIST_ID, "edit-fresh"] });
     });
@@ -154,7 +159,7 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
     expect(patchCalls).toHaveLength(1);
-    expect(patchCalls[0].body.nome_artistico).toBe("Editado ciclo 1");
+    expect(patchCalls[0].body.stage_name).toBe("Editado ciclo 1");
     expect(toast.error).not.toHaveBeenCalled();
   });
 
@@ -198,7 +203,7 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     await waitFor(() => expect(nameInput().value).toBe("Versão Atual"));
 
     // "A" saves first, outside this session — the server advances the version.
-    server = freshVersion({ nome_artistico: "Salvo por A", updated_at: "2026-08-18T20:45:00.000Z" });
+    server = freshVersion({ stage_name: "Salvo por A", updated_at: "2026-08-18T20:45:00.000Z" });
 
     // "B" (this session) still holds the old expectedUpdatedAt (from hydration).
     fireEvent.change(nameInput(), { target: { value: "Tentativa de B" } });
@@ -215,6 +220,6 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     expect(onSuccess).not.toHaveBeenCalled();
     expect(onOpenChange).not.toHaveBeenCalledWith(false);
     // The server keeps A's version — B did not silently overwrite it.
-    expect(server.nome_artistico).toBe("Salvo por A");
+    expect(server.stage_name).toBe("Salvo por A");
   });
 });

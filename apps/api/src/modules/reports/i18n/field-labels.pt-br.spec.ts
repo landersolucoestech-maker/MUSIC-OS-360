@@ -48,7 +48,7 @@ describe('field-labels.pt-br — central label layer', () => {
   // ── Test 4: round-trip label ↔ key ──────────────────────────────────────────
   it('round-trip: technical key → pt-BR label → canonical key', () => {
     const cases: Array<[string, string, string]> = [
-      ['manager_name', 'Nome do empresário', 'managerName'],
+      ['manager_name', 'Nome do gestor de carreira', 'managerName'],
       ['company_name', 'Empresa', 'companyName'],
       ['signing_platform', 'Plataforma de assinatura', 'signingPlatform'],
       ['spotify_url', 'Link do Spotify', 'spotifyUrl'],
@@ -77,6 +77,6 @@ describe('field-labels.pt-br — central label layer', () => {
 
   it('reverse map has no ambiguity in critical labels', () => {
     expect(FIELD_KEYS_BY_LABEL_PT_BR['link do spotify']).toBe('spotifyUrl');
-    expect(FIELD_KEYS_BY_LABEL_PT_BR['nome do empresário']).toBe('managerName');
+    expect(FIELD_KEYS_BY_LABEL_PT_BR['nome do gestor de carreira']).toBe('managerName');
   });
 });

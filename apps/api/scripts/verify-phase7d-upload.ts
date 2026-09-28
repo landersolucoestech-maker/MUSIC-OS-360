@@ -273,8 +273,8 @@ async function createRuntimeEntities(token: string, tenantId: string) {
     token,
     tenantId,
     body: {
-      nome_artistico: `Upload Artist ${runId}`,
-      nome_civil: `Upload Artist Civil ${runId}`,
+      stage_name: `Upload Artist ${runId}`,
+      full_name: `Upload Artist Civil ${runId}`,
       status: 'ativo',
       email: `upload.artist.${runId}@example.com`,
       metadata: { phase: '7D', runId },

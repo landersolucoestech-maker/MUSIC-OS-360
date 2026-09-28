@@ -25,8 +25,10 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * (the workflow has no rejected / taken-down state) and are left untouched;
  * adding chk_releases_status waits on that product decision
  * (canonical map blocker BLK-RELEASES-STATUS-CHECK).
- * down() is a no-op: the original Portuguese spelling of each row is not
- * recorded, and every mapped value is a valid status for the old code.
+ * Several legacy values collapse into one canonical status, so the original
+ * spelling of every rewritten row is kept in metadata.legacy_status /
+ * metadata.legacy_type (hardening before first application — database review
+ * of 353a967); down() restores it from there.
  */
 const LEGACY_STATUSES: ReadonlyArray<[legacy: string, canonical: string]> = [
   ['rascunho', 'draft'], ['em_producao', 'draft'], ['incompleto', 'draft'],
@@ -48,10 +50,20 @@ export class CanonicalizeLegacyReleaseStatuses20260928000019 implements Migratio
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     for (const [legacy, canonical] of LEGACY_STATUSES) {
-      await queryRunner.query(`UPDATE "releases" SET "status" = $1 WHERE lower("status") = $2`, [canonical, legacy]);
+      await queryRunner.query(
+        `UPDATE "releases"
+         SET "metadata" = COALESCE("metadata", '{}'::jsonb) || jsonb_build_object('legacy_status', "status"), "status" = $1
+         WHERE lower(trim("status")) = $2 AND NOT COALESCE("metadata", '{}'::jsonb) ? 'legacy_status'`,
+        [canonical, legacy],
+      );
     }
     for (const [legacy, canonical] of LEGACY_TYPES) {
-      await queryRunner.query(`UPDATE "releases" SET "type" = $1 WHERE lower(trim("type")) = $2`, [canonical, legacy]);
+      await queryRunner.query(
+        `UPDATE "releases"
+         SET "metadata" = COALESCE("metadata", '{}'::jsonb) || jsonb_build_object('legacy_type', "type"), "type" = $1
+         WHERE lower(trim("type")) = $2 AND NOT COALESCE("metadata", '{}'::jsonb) ? 'legacy_type'`,
+        [canonical, legacy],
+      );
     }
     await queryRunner.query(`
       UPDATE "releases" SET "upc" = NULLIF("metadata"->>'upc', '')
@@ -59,7 +71,14 @@ export class CanonicalizeLegacyReleaseStatuses20260928000019 implements Migratio
         AND "metadata" ? 'upc' AND length("metadata"->>'upc') <= 20`);
   }
 
-  public async down(): Promise<void> {
-    // Intentionally empty — see the header.
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `UPDATE "releases" SET "status" = "metadata"->>'legacy_status', "metadata" = "metadata" - 'legacy_status'
+       WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? 'legacy_status'`,
+    );
+    await queryRunner.query(
+      `UPDATE "releases" SET "type" = "metadata"->>'legacy_type', "metadata" = "metadata" - 'legacy_type'
+       WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? 'legacy_type'`,
+    );
   }
 }

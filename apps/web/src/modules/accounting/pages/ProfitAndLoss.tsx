@@ -13,32 +13,15 @@ import {
 } from "lucide-react";
 import { useTransactions, type Transaction } from "@/modules/accounting/hooks/useTransactions";
 import { formatCurrency } from "@/shared/lib/format-utils";
-import { formatCategoryLabel } from "@/shared/lib/category-labels";
+import { transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAllPages } from "@/shared/lib/exportAll";
+import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 import { toNumber, sum } from "./profit-and-loss-calc";
 
-const CATEGORY_LABELS: Record<string, string> = {
-  "recebimentos externos de direitos": "Recebimentos externos de direitos",
-  "cachê": "Cachê de Shows",
-  licenciamento: "Licenciamento",
-  distribuicao: "Distribuição",
-  patrocinio: "Patrocínio",
-  adiantamento_artista: "Adiantamento a Artista",
-  producao_musical: "Produção Musical",
-  marketing_digital: "Marketing Digital",
-  marketing_offline: "Marketing Offline",
-  juridico: "Honorários Jurídicos",
-  administrativo: "Administrativo",
-  folha_pagamento: "Folha de Pagamento",
-  producao_audiovisual: "Produção Audiovisual",
-  infraestrutura: "Infraestrutura",
-  software: "Software",
-  seguros: "Seguros",
-  distribuicao_digital: "Distribuição Digital",
-};
-
 function catLabel(cat: string) {
-  return CATEGORY_LABELS[cat] ?? formatCategoryLabel(cat);
+  return transactionCategoryLabel(cat);
 }
 
 function totalsByCategory(rows: Transaction[]): { category: string; amount: number }[] {
@@ -198,6 +181,12 @@ function PlCompanyTable({
 
 export default function ProfitAndLoss() {
   const { transactions, isLoading } = useTransactions();
+  // Every artist of the tenant (paged sweep): the plain list stops at the API's
+  // default page and would leave names of the remaining artists unresolved.
+  const { data: artists = [] } = useQuery({
+    queryKey: [...QUERY_KEYS.ARTISTS, "all-names"],
+    queryFn: async () => (await fetchAllPages<{ id: string; stage_name?: string | null }>("artists")).items,
+  });
   const [activeTab, setActiveTab] = useState("todos");
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -251,10 +240,12 @@ export default function ProfitAndLoss() {
   [filteredTransactions]);
 
   // ── P&L per artist ──────────────────────────────────────────────────────────
-  // Groups directly by the transactions (they already come with `artistas` embedded via a
-  // server-side join, see useTransacoes select: "*, artistas(*)") instead of
-  // walking useArtistas() — avoids depending on a second list (capped at
-  // 50 records per tenant) just to resolve the display name.
+  // Groups by the transaction's artist_id; the API does not embed the artist in a
+  // transaction, so the display name is resolved from the tenant's artist list.
+  const artistNameById = useMemo(
+    () => new Map(artists.map((a) => [a.id, a.stage_name ?? ""] as const)),
+    [artists],
+  );
   const plByArtist = useMemo(() => {
     const byArtist = new Map<string, { id: string; name: string; totalRevenue: number; totalExpenses: number }>();
     for (const t of filteredTransactions) {
@@ -262,7 +253,7 @@ export default function ProfitAndLoss() {
       if (!artistId) continue;
       const entry = byArtist.get(artistId) ?? {
         id: artistId,
-        name: t.artistas?.nome_artistico ?? "—",
+        name: artistNameById.get(artistId) || "Artista não encontrado",
         totalRevenue: 0,
         totalExpenses: 0,
       };
@@ -273,7 +264,7 @@ export default function ProfitAndLoss() {
     return Array.from(byArtist.values())
       .map((a) => ({ ...a, profit: a.totalRevenue - a.totalExpenses, margin: a.totalRevenue > 0 ? ((a.totalRevenue - a.totalExpenses) / a.totalRevenue) * 100 : 0 }))
       .sort((a, b) => b.profit - a.profit);
-  }, [filteredTransactions]);
+  }, [filteredTransactions, artistNameById]);
 
   if (isLoading) {
     return (

@@ -14,13 +14,13 @@ import {
 } from "@/modules/artist/forms/artist-form.definition";
 import type { Artist } from "@/modules/artist/types/artist.types";
 
-const ARTIST: Artist & { genero?: string } = {
+const ARTIST: Artist = {
   id: "a1",
   stageName: "MC Teste",
-  legalName: "Fulano de Tal",
+  fullName: "Fulano de Tal",
   musicGenre: "Funk",
-  genero: "Masculino",
-  specialties: ["dj", "produtor"],
+  gender: "male",
+  specialties: ["dj", "producer"],
   notes: "Bio do artista",
   internalNotes: "Nota interna",
   photoUrl: "https://cdn/x/foto.png",
@@ -32,7 +32,7 @@ const ARTIST: Artist & { genero?: string } = {
   address: "Rua A, 1",
   phone: "(11) 90000-0000",
   email: "mc@teste.com",
-  bank: "Nubank",
+  bankName: "Nubank",
   bankBranch: "0001",
   bankAccount: "12345-6",
   pixKey: "mc@teste.com",
@@ -44,7 +44,7 @@ const ARTIST: Artist & { genero?: string } = {
   soundcloudUrl: "https://soundcloud.com/mc",
   instagramUrl: "https://instagram.com/mc",
   tiktokUrl: "https://tiktok.com/@mc",
-  profileType: "com_empresario",
+  profileType: "managed",
   generalDistributors: [{ id: "onerpm", email: "share@onerpm.com" }],
   linkedContacts: [{ contactId: "c-1", distributors: [{ id: "distrokid", email: "d@k.com" }] }],
 };
@@ -75,10 +75,10 @@ describe("single source of truth for the artist form definition", () => {
     const payload = formValuesToArtistPayload(values!);
 
     expect(payload.stageName).toBe("MC Teste");
-    expect(payload.legalName).toBe("Fulano de Tal");
+    expect(payload.fullName).toBe("Fulano de Tal");
     expect(payload.musicGenre).toBe("Funk");
-    expect((payload as unknown as Record<string, unknown>).genero).toBe("Masculino");
-    expect(payload.specialties).toEqual(["dj", "produtor"]);
+    expect(payload.gender).toBe("male");
+    expect(payload.specialties).toEqual(["dj", "producer"]);
     expect(payload.notes).toBe("Bio do artista");
     expect(payload.internalNotes).toBe("Nota interna");
     expect(payload.photoUrl).toBe("https://cdn/x/foto.png");
@@ -91,12 +91,12 @@ describe("single source of truth for the artist form definition", () => {
     expect(payload.deezerUrl).toBe("https://deezer.com/artist/1");
     expect(payload.instagramUrl).toBe("https://instagram.com/mc");
     expect(payload.tiktokUrl).toBe("https://tiktok.com/@mc");
-    expect(payload.profileType).toBe("com_empresario");
+    expect(payload.profileType).toBe("managed");
     expect(payload.generalDistributors).toEqual([{ id: "onerpm", email: "share@onerpm.com" }]);
     expect(payload.linkedContacts).toEqual([
       { contactId: "c-1", distributors: [{ id: "distrokid", email: "d@k.com" }] },
     ]);
-    expect(payload.bank).toBe("Nubank");
+    expect(payload.bankName).toBe("Nubank");
     expect(payload.pixKey).toBe("mc@teste.com");
   });
 
@@ -113,9 +113,52 @@ describe("single source of truth for the artist form definition", () => {
       "Tipo de Perfil": "Com_Empresario",
     });
     expect(values).not.toBeNull();
-    expect(values!.fotoUrl).toBe("https://cdn/old.png");
+    expect(values!.photoUrl).toBe("https://cdn/old.png");
     expect(values!.spotify).toContain("open.spotify.com/artist/");
-    expect(values!.notasInternas).toBe("nota antiga");
-    expect(values!.tipoPerfil).toBe("com_empresario");
+    expect(values!.internalNotes).toBe("nota antiga");
+    // Pre-CZ-042 spreadsheet value → canonical enum value.
+    expect(values!.profileType).toBe("managed");
+  });
+
+  it("exports PT-BR labels (never raw enum values) for enum-valued fields", () => {
+    const row = artistToExportRowFromForm(ARTIST);
+    expect(row["Perfil Comercial"]).toBe("Com empresário");
+    expect(row["Gênero"]).toBe("Masculino");
+    expect(row["Especialidade / Função"]).toBe("DJ, Produtor");
+    for (const raw of ["managed", "male", "producer"]) {
+      expect(Object.values(row)).not.toContain(raw);
+    }
+  });
+
+  it("imports PT-BR labels and pre-CZ-042 values into canonical option values", () => {
+    const values = parseArtistImportRow({
+      "Nome Artístico": "X",
+      "Perfil Comercial": "Com gravadora",
+      "Gênero": "Feminino",
+      "Especialidade / Função": "Intérprete, compositor_autor, dj_produtor",
+    });
+    expect(values!.profileType).toBe("record_label");
+    expect(values!.gender).toBe("female");
+    expect(values!.specialties).toEqual(["performer", "songwriter", "dj_producer"]);
+  });
+
+  it("profile-type and gender options use canonical values with PT-BR labels", () => {
+    const fields = allArtistFormFields();
+    const profile = fields.find((f) => f.id === "profileType")!;
+    expect(profile.options).toEqual([
+      { value: "independent", label: "Independente" },
+      { value: "managed", label: "Com empresário" },
+      { value: "record_label", label: "Com gravadora" },
+      { value: "publisher", label: "Com editora" },
+    ]);
+    const gender = fields.find((f) => f.id === "gender")!;
+    expect(gender.options).toEqual([
+      { value: "male", label: "Masculino" },
+      { value: "female", label: "Feminino" },
+    ]);
+    const specialties = fields.find((f) => f.id === "specialties")!;
+    expect(specialties.checkOptions?.map((o) => o.value)).toEqual([
+      "dj", "dj_producer", "songwriter", "performer", "producer",
+    ]);
   });
 });

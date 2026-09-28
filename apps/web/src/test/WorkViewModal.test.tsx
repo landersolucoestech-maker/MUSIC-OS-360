@@ -5,14 +5,19 @@ import { screen, within } from "@testing-library/react";
 import React from "react";
 import { renderWithProviders } from "./_helpers/render-with-providers";
 
-// GET /works/:id refresh — returns nothing so the component renders the given record.
+// GET /works/:id refresh returns null (the component renders the given record);
+// the linked artist/project are resolved by id (GET /artists/:id, /projects/:id).
 vi.mock("@/shared/lib/storage", async () => {
   const actual = await vi.importActual<typeof import("@/shared/lib/storage")>("@/shared/lib/storage");
   return {
     ...actual,
     storage: {
       ...actual.storage,
-      findById: vi.fn(async () => undefined),
+      findById: vi.fn(async (table: string, id: string) => {
+        if (table === "artists" && id === "artist-1") return { id, stage_name: "Ana Voz" };
+        if (table === "projects" && id === "project-1") return { id, title: "EP Verão" };
+        return null;
+      }),
     },
   };
 });
@@ -84,5 +89,19 @@ describe("WorkViewModal (canonical work → PT-BR labels)", () => {
     const languageField = screen.getByText("Idioma").parentElement as HTMLElement;
     expect(within(languageField).getByText("—")).toBeInTheDocument();
     expect(screen.queryByText("xx-unknown")).not.toBeInTheDocument();
+  });
+
+  it("shows the linked project and its artist resolved by id (the work carries only the ids)", async () => {
+    renderWithProviders(
+      <WorkViewModal open={true} onOpenChange={() => {}} work={{ ...work, artist_id: "artist-1", project_id: "project-1" }} />,
+    );
+    expect(await screen.findByText("EP Verão")).toBeInTheDocument();
+    expect(await screen.findByText("Ana Voz")).toBeInTheDocument();
+    expect(screen.getByText("Projeto Vinculado")).toBeInTheDocument();
+  });
+
+  it("hides the linked project section when the work has no links", () => {
+    renderWithProviders(<WorkViewModal open={true} onOpenChange={() => {}} work={work} />);
+    expect(screen.queryByText("Projeto Vinculado")).not.toBeInTheDocument();
   });
 });

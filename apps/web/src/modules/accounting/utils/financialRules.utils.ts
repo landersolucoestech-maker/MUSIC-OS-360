@@ -23,10 +23,8 @@ const transactionTypeValueByLabel: Record<FinancialTransactionType, TransactionT
 };
 
 /**
- * "Governo"/"Conta Própria" (tax / transfer rules) have no member in the
- * CZ-041 counterpartyType contract (company | artist | individual); their
- * English values below are form-level only — see the CZ-041 report for the
- * open contract question.
+ * Rule label -> canonical counterpartyType value (CZ-041 contract:
+ * company | artist | individual | government | own_account).
  */
 const counterpartyValueByLabel: Record<FinancialCounterpartyType, string> = {
   Empresa: "company",

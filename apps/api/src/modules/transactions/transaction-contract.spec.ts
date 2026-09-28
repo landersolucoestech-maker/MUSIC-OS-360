@@ -77,6 +77,19 @@ describe('transactions — CZ-041 canonical contract', () => {
     }
   });
 
+  it('values that do not fit the columns are rejected by validation (422), never reaching Postgres (500)', () => {
+    const cases: Array<[string, unknown]> = [
+      ['counterpartyName', 'x'.repeat(256)], ['costCenter', 'x'.repeat(101)], ['firstInstallmentDate', '2025-02-30'],
+      ['referenceMonth', '09/2026'], ['eventId', 'not-a-uuid'], ['installmentCount', 'três'],
+    ];
+    for (const [field, value] of cases) {
+      const result = createTransactionSchema.safeParse({ ...CANONICAL, [field]: value });
+      expect(result.success).toBe(false);
+      if (!result.success) expect(result.error.issues.some((i) => i.path[0] === field)).toBe(true);
+    }
+    expect(createTransactionSchema.safeParse({ ...CANONICAL, referenceMonth: '2026-09', firstInstallmentDate: '2026-02-28' }).success).toBe(true);
+  });
+
   it('PATCH accepts a partial canonical body and maps legacy keys', () => {
     expect(patchTransactionSchema.parse({ descricao: 'x' } as unknown)).toEqual(expect.not.objectContaining({ descricao: 'x' }));
     expect(patchTransactionSchema.parse({ description: 'x' })).toMatchObject({ description: 'x' });

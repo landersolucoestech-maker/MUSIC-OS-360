@@ -68,7 +68,7 @@ import {
 } from "@/modules/catalog/mappers";
 import { workSchema } from "@/modules/catalog/lib/work-schema";
 
-// ── Autocomplete: server-side search by nome_artistico/nome_civil (Task I —
+// ── Autocomplete: server-side search by stage_name/full_name (Task I —
 // it used to filter only the tenant's first 50 artists, loaded via
 // an unfiltered useArtistas(); now each typed (debounced) key re-runs the
 // search in the backend, reaching any artist of the tenant). Free text
@@ -76,7 +76,7 @@ import { workSchema } from "@/modules/catalog/lib/work-schema";
 interface ArtistNameInputProps {
   value: string;
   onChange: (val: string) => void;
-  onSelect?: (a: { id: string; stageName: string; nome_civil?: string | null }) => void;
+  onSelect?: (a: { id: string; stageName: string; fullName?: string | null }) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -113,7 +113,7 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
   };
 
   const handleSelect = (a: Artist) => {
-    const display = a.legalName || a.stageName;
+    const display = a.fullName || a.stageName;
     setInputText(display);
     onChange(display);
     onSelect?.(a);
@@ -140,7 +140,7 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
               className="w-full text-left px-3 py-2 text-sm hover:bg-muted hover:text-foreground flex flex-col gap-0.5"
               onMouseDown={() => handleSelect(a)}
             >
-              <span className="font-medium">{a.legalName || a.stageName}</span>
+              <span className="font-medium">{a.fullName || a.stageName}</span>
               <span className="text-xs text-muted-foreground">{a.stageName}</span>
             </button>
           ))}
@@ -272,7 +272,7 @@ export function WorkFormModal({
       setSelectedProject({
         id: linkedProject.id,
         nome: linkedProject.title ?? (linkedProject.nome as string) ?? "",
-        artistaNome: (linkedProject.artistas?.nome_artistico ?? null) as string | null,
+        artistaNome: (linkedProject.artistas?.stage_name ?? null) as string | null,
       });
     } else {
       // Still loading — keeps the ID with a placeholder until the lookup by ID resolves.
@@ -580,7 +580,7 @@ export function WorkFormModal({
                           const pNameDisplay = (p.title ??
                             (p as { nome?: string }).nome ??
                             "") as string;
-                          const pArtistNameDisplay = (p.artistas?.nome_artistico ?? "") as string;
+                          const pArtistNameDisplay = (p.artistas?.stage_name ?? "") as string;
                           const selectProject = async () => {
                             setSelectedProject({
                               id: pId,
@@ -1193,7 +1193,7 @@ export function WorkFormModal({
                                 ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
                                 : p.name
                                   ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.name } }))
-                                      .items.find(a => (a.nome_civil || a.nome_artistico) === p.name)
+                                      .items.find(a => (a.full_name || a.stage_name) === p.name)
                                   : undefined;
                               if (foundWire) setViewArtist(wireToArtist(foundWire));
                             }}
@@ -1401,7 +1401,7 @@ export function WorkFormModal({
       <ParticipantViewModal
         open={viewArtist !== null}
         onOpenChange={(o) => { if (!o) setViewArtist(null); }}
-        artista={viewArtist}
+        artist={viewArtist}
       />
     </Dialog>
   );

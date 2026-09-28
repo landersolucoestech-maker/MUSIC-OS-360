@@ -4,7 +4,7 @@
  * Regression: no payload produced by the Artist form/mapper may contain
  * spotify_artist_id/youtube_artist_id/youtube_channel_id
  * — the domain works exclusively with
- * foto_url/spotify_url/youtube_url. Also covers that the validators require
+ * photo_url/spotify_url/youtube_url. Also covers that the validators require
  * a real URL (a bare raw ID is no longer accepted).
  */
 import { describe, it, expect } from "vitest";
@@ -24,16 +24,16 @@ const LEGACY_KEYS = [
   "youtube_channel_id",
 ];
 
-describe("Artist domain — URL-only (foto_url/spotify_url/youtube_url)", () => {
+describe("Artist domain — URL-only (photo_url/spotify_url/youtube_url)", () => {
   it("formValuesToArtistPayload never produces any legacy field, for any input", () => {
     const values = {
       ...emptyArtistFormValues(),
-      nomeArtistico: "Artista Teste",
+      stageName: "Artista Teste",
       spotify: "https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK",
       youtube: "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw",
-      fotoUrl: "https://cdn.example.com/foto.png",
-      documentosPessoaisUrl: "",
-      presskitUrl: "",
+      photoUrl: "https://cdn.example.com/foto.png",
+      personalDocumentsUrl: "",
+      pressKitUrl: "",
     };
     const payload = formValuesToArtistPayload(values, emptyPreservedInput());
     const keys = Object.keys(payload);
@@ -50,8 +50,8 @@ describe("Artist domain — URL-only (foto_url/spotify_url/youtube_url)", () => 
       id: "a1",
       stageName: "Artista Teste",
       photoUrl: "https://cdn.example.com/foto.png",
-      spotify_url: "https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK",
-      youtube_url: "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw",
+      spotifyUrl: "https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK",
+      youtubeUrl: "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw",
     } as Artist;
 
     const row = artistToExportRowFromForm(artist);
@@ -65,7 +65,7 @@ describe("Artist domain — URL-only (foto_url/spotify_url/youtube_url)", () => 
     }
     // The only platform/media fields exported are exactly these 3.
     const fieldIds = allArtistFormFields().map((f) => f.id);
-    expect(fieldIds).toEqual(expect.arrayContaining(["fotoUrl", "spotify", "youtube"]));
+    expect(fieldIds).toEqual(expect.arrayContaining(["photoUrl", "spotify", "youtube"]));
   });
 
   it("validateSpotifyUrl rejects a raw ID (only a URL is accepted)", () => {

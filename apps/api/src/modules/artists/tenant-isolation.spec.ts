@@ -39,7 +39,7 @@ const fixtureArtist = createTestArtist();
 const artistOfA = {
   id: fixtureArtist.id,
   tenant_id: TENANT_A,
-  nome_artistico: 'Artista do Tenant A',
+  stage_name: 'Artista do Tenant A',
   deleted_at: null,
   created_at: new Date(),
   updated_at: new Date(),
@@ -121,7 +121,7 @@ describe('Tenant Isolation - ArtistsService', () => {
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock(), makePlanLimitMock());
 
     await expect(
-      service.update(TENANT_B, USER_ID, artistOfA.id, { nome_artistico: 'Hack' }),
+      service.update(TENANT_B, USER_ID, artistOfA.id, { stage_name: 'Hack' }),
     ).rejects.toThrow(NotFoundException);
   });
 });

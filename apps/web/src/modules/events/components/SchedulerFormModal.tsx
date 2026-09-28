@@ -42,11 +42,12 @@ interface SchedulerFormModalProps {
 
 /** Raw shape of GET /clients (ClientsService.mapClient) — used for the
  * CRM venue (company contacts), without depending on the `Cliente` view-model. */
+/** `/clients` row (CZ-043 canonical keys) used as a venue lookup. */
 interface LocalCRMLookup {
   id: string;
-  nome: string;
+  name: string;
   phone?: string | null;
-  endereco_completo?: string | null;
+  address?: string | null;
   city?: string | null;
   state?: string | null;
 }
@@ -307,7 +308,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
         ...formData,
         venue: localId,
         venueContact: local.phone || "",
-        address: [local.endereco_completo, local.city, local.state].filter(Boolean).join(", ")
+        address: [local.address, local.city, local.state].filter(Boolean).join(", ")
       });
     } else {
       setFormData({ ...formData, venue: localId });
@@ -731,10 +732,10 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
                 {shouldUseCRMLocal ? (
                   <AsyncEntityCombobox<LocalCRMLookup>
                     table="clientes"
-                    getLabel={(local) => local.nome}
+                    getLabel={(local) => local.name}
                     value={formData.venue}
                     onChange={handleLocalCRMChange}
-                    filters={{ type: "pessoa_juridica" }}
+                    filters={{ person_type: "company" }}
                     placeholder="Selecione o local (CRM)"
                     searchPlaceholder="Buscar local…"
                     disabled={isViewMode}

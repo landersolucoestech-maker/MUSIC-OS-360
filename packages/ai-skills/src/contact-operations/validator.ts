@@ -14,7 +14,7 @@ export function validateContactOperationsInput(
 
   if (!input.clientName?.trim()) errors.push("clientName is required");
   if (!input.clientCategory?.trim()) errors.push("clientCategory is required");
-  if (!input.clientTipoPessoa?.trim()) errors.push("clientTipoPessoa is required");
+  if (!input.clientPersonType?.trim()) errors.push("clientPersonType is required");
 
   return { valid: errors.length === 0, errors };
 }

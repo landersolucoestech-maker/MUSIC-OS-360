@@ -2,7 +2,7 @@
  * create-artist.dto.spec.ts
  *
  * Regression: the Artist create/edit contract works exclusively with URLs
- * (spotify_url/youtube_url/foto_url). Reproduces exactly the global
+ * (spotify_url/youtube_url/photo_url). Reproduces exactly the global
  * ValidationPipe (whitelist + forbidNonWhitelisted) from main.ts to prove,
  * without needing to boot the whole app, that:
  *   - a payload with the removed legacy fields is REJECTED (400);
@@ -38,7 +38,7 @@ describe('CreateArtistDto/UpdateArtistDto — URL-only domain', () => {
     'rejects payload for creation containing "%s" (non-whitelisted property)',
     async (field, value) => {
       const errors = await validatePayload(CreateArtistDto, {
-        nome_artistico: 'Teste',
+        stage_name: 'Teste',
         [field]: value,
       });
       expect(errors.length).toBeGreaterThan(0);
@@ -55,10 +55,10 @@ describe('CreateArtistDto/UpdateArtistDto — URL-only domain', () => {
     },
   );
 
-  it('accepts payload containing only foto_url/spotify_url/youtube_url', async () => {
+  it('accepts payload containing only photo_url/spotify_url/youtube_url', async () => {
     const errors = await validatePayload(CreateArtistDto, {
-      nome_artistico: 'Teste',
-      foto_url: 'https://cdn.example.com/foto.png',
+      stage_name: 'Teste',
+      photo_url: 'https://cdn.example.com/foto.png',
       spotify_url: 'https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK',
       youtube_url: 'https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw',
     });
@@ -72,6 +72,6 @@ describe('CreateArtistDto/UpdateArtistDto — URL-only domain', () => {
       expect(createProps).not.toContain(legacyField);
       expect(updateProps).not.toContain(legacyField);
     }
-    expect(createProps).toEqual(expect.arrayContaining(['foto_url', 'spotify_url', 'youtube_url']));
+    expect(createProps).toEqual(expect.arrayContaining(['photo_url', 'spotify_url', 'youtube_url']));
   });
 });

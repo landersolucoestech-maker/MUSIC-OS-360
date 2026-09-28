@@ -233,7 +233,7 @@ describe('form-contracts — permanent guard form ↔ contract ↔ import/export
 
   it('artists\' "Dados Bancários" group exports consecutively, in the form\'s visual field order (regression: "agência" must not become detached again in "Equipe e negócios")', () => {
     const keys = REPORT_FORM_CONTRACTS.artists.fields.map((f) => f.key);
-    const bankGroup = ['banco', 'agencia', 'conta', 'chave_pix', 'titular_conta'];
+    const bankGroup = ['bank_name', 'bank_branch', 'bank_account', 'pix_key', 'account_holder'];
     const indices = bankGroup.map((key) => keys.indexOf(key));
     expect(indices).toEqual(indices.slice().sort((a, b) => a - b));
     for (const [i, key] of bankGroup.entries()) {

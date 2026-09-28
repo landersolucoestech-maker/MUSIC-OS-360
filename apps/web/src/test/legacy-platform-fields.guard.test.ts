@@ -2,7 +2,7 @@
  * legacy-platform-fields.guard.test.ts
  *
  * Permanent protection: the Artist domain works EXCLUSIVELY with
- * foto_url/spotify_url/youtube_url. No reference to spotify_artist_id,
+ * photo_url/spotify_url/youtube_url. No reference to spotify_artist_id,
  * youtube_artist_id, youtube_channel_id, banner_url or video_apresentacao(_url)
  * may exist in live frontend source code — neither as a field nor as an
  * ID extraction/reconstruction utility (the frontend never extracts a
@@ -58,7 +58,7 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-describe("Permanent guard: the artist domain (frontend) only uses foto_url/spotify_url/youtube_url", () => {
+describe("Permanent guard: the artist domain (frontend) only uses photo_url/spotify_url/youtube_url", () => {
   const allFiles = walk(SRC_ROOT).filter((f) => f !== THIS_FILE);
 
   it("no file contains the snake_case forms of the removed fields", () => {

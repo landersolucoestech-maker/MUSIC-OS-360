@@ -120,9 +120,9 @@ async function createFixture(qr: QueryRunner): Promise<Fixture> {
     ],
   );
 
-  // categoria/perfil/nome are NOT NULL without a default in ClientEntity.
+  // category/profile/name are NOT NULL without a default in ClientEntity.
   await qr.query(
-    `INSERT INTO public.clients (id, tenant_id, categoria, perfil, nome)
+    `INSERT INTO public.clients (id, tenant_id, category, profile, name)
      VALUES ($1, $2, 'producer', 'outros', 'Client A'),
             ($3, $4, 'producer', 'outros', 'Client B')`,
     [fixture.clientA, fixture.tenantA, fixture.clientB, fixture.tenantB],
@@ -159,7 +159,7 @@ function sameTenantInsert(
     case 'clients':
       return {
         sql: `INSERT INTO public.clients
-                (id, tenant_id, categoria, perfil, nome)
+                (id, tenant_id, category, profile, name)
               VALUES ($1, $2, 'producer', 'outros', 'Allowed Client') RETURNING id`,
         params: [id, fixture.tenantA],
       };

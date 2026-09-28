@@ -102,7 +102,7 @@ function normEnum(v: string | undefined, fallback: string): string {
   return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || fallback;
 }
 
-// ── Autocomplete: server-side search by nome_artistico/nome_civil (Task I —
+// ── Autocomplete: server-side search by stage_name/full_name (Task I —
 // it used to filter only the tenant's first 50 artists loaded by unfiltered
 // useArtistas(); now every (debounced) keystroke searches the backend again).
 // Free text is still allowed.
@@ -146,7 +146,7 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
   };
 
   const handleSelect = (a: Artist) => {
-    const display = a.legalName || a.stageName;
+    const display = a.fullName || a.stageName;
     setInputText(display);
     onChange(display);
     setOpen(false);
@@ -171,7 +171,7 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
               className="w-full text-left px-3 py-2 text-sm hover:bg-muted hover:text-foreground flex flex-col gap-0.5"
               onMouseDown={() => handleSelect(a)}
             >
-              <span className="font-medium">{a.legalName || a.stageName}</span>
+              <span className="font-medium">{a.fullName || a.stageName}</span>
               <span className="text-xs text-muted-foreground">{a.stageName}</span>
             </button>
           ))}

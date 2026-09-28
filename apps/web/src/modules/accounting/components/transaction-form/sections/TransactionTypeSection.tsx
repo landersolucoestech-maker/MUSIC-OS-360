@@ -19,7 +19,7 @@ import {
   toRuleLink,
 } from "@/modules/accounting/utils/financialRules.utils";
 
-interface Artist { id: string; nome_artistico: string }
+interface Artist { id: string; stage_name: string }
 interface Project { id: string; title: string }
 interface Event { id: string; title: string; start_date?: string | null }
 
@@ -152,7 +152,7 @@ export function TransactionTypeSection({
               <Label className="text-sm">Artista Vinculado *</Label>
               <AsyncEntityCombobox<Artist>
                 table="artistas"
-                getLabel={(a) => a.nome_artistico}
+                getLabel={(a) => a.stage_name}
                 value={formData.artistId}
                 onChange={(id) => updateField("artistId", id)}
                 placeholder="Selecione o artista"

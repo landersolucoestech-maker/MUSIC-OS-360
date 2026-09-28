@@ -85,7 +85,7 @@ vi.mock("@/shared/lib/storage", async () => {
         // returned by an unfiltered useArtistas(); it is only reachable by a direct GET
         // /artists/:id (see selectObra in PhonogramFormModal.tsx).
         if (table === "artistas" && id === "art-99") {
-          return { id: "art-99", nome_artistico: "Artista Fora Do Cap" };
+          return { id: "art-99", stage_name: "Artista Fora Do Cap" };
         }
         return undefined;
       }),

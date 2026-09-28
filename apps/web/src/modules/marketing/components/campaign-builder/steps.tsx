@@ -244,12 +244,12 @@ export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
       </Field>
       <Field label="Entidade vinculada">
         {state.promotedEntityType === "ARTIST" ? (
-          <AsyncEntityCombobox<{ id: string; nome_artistico?: string | null }>
+          <AsyncEntityCombobox<{ id: string; stage_name?: string | null }>
             table="artistas"
-            getLabel={(a) => a.nome_artistico ?? ""}
+            getLabel={(a) => a.stage_name ?? ""}
             value={state.promotedEntityId}
             onChange={(id, entity) =>
-              setState((c) => ({ ...c, promotedEntityId: id, promotedEntityName: entity?.nome_artistico ?? "" }))
+              setState((c) => ({ ...c, promotedEntityId: id, promotedEntityName: entity?.stage_name ?? "" }))
             }
             placeholder="Selecione um artista cadastrado"
             searchPlaceholder="Buscar artista…"

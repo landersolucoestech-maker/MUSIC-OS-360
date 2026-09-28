@@ -86,7 +86,8 @@ export function ContactsTable({ contacts, onView, onEdit, onDelete, onBulkDelete
         </TableHeader>
         <TableBody>
           {pageItems.map((contact) => {
-            const phone = contact.whatsapp ?? contact.phone ?? "";
+            const phone = contact.phone ?? "";
+            const legalName = contact.personType === "company" && contact.legalName && contact.legalName !== contact.name ? contact.legalName : "";
             const city = [contact.city, contact.state].filter(Boolean).join(" / ");
             return (
               <TableRow key={contact.id} className={selectedIds.includes(contact.id) ? "bg-primary/5" : ""} data-testid={`contato-row-${contact.id}`}>
@@ -95,9 +96,9 @@ export function ContactsTable({ contacts, onView, onEdit, onDelete, onBulkDelete
                 </TableCell>
                 <TableCell>
                   <p className="font-medium text-foreground">{contact.name}</p>
-                  {contact.companyName && <p className="text-xs text-muted-foreground">{contact.companyName}</p>}
+                  {legalName && <p className="text-xs text-muted-foreground">{legalName}</p>}
                 </TableCell>
-                <TableCell className="text-muted-foreground">{labelFor(contactTypeOptions, contact.contactType)}</TableCell>
+                <TableCell className="text-muted-foreground">{labelFor(contactTypeOptions, contact.category)}</TableCell>
                 <TableCell>
                   <p className="flex items-center gap-2 text-sm text-foreground">
                     <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
@@ -114,7 +115,7 @@ export function ContactsTable({ contacts, onView, onEdit, onDelete, onBulkDelete
                     {city || "-"}
                   </span>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{contact.responsible ?? "-"}</TableCell>
+                <TableCell className="text-muted-foreground">{contact.responsibleName ?? "-"}</TableCell>
                 <TableCell className="text-muted-foreground">{labelFor(contactStatusOptions, contact.status)}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>

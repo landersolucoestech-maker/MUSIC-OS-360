@@ -13,17 +13,19 @@
  * above. This cannot happen without an explicit decision (a new ADD COLUMN
  * migration + justification), never by accident.
  *
- * Do NOT confuse this with the metadata/DTO field names — `spotify_ouvintes`,
- * `youtube_inscritos`, `deezer_fas`, `instagram_seguidores` and
- * `tiktok_seguidores` remain legitimate `metadata` keys and
- * CreateArtistDto/UpdateArtistDto properties (manual form counters) — only
- * the PHYSICAL COLUMN (`@Column` on ArtistEntity) is forbidden.
+ * Do NOT confuse this with the metadata/DTO field names — the manual form
+ * counters are `metadata` keys and CreateArtistDto/UpdateArtistDto
+ * properties, English since CZ-042 (spotify_listeners, youtube_subscribers,
+ * deezer_fans, instagram_followers, tiktok_followers, apple_music_albums,
+ * soundcloud_followers; the Portuguese names are deprecated input aliases).
+ * Only the PHYSICAL COLUMN (`@Column` on ArtistEntity) is forbidden — for the
+ * removed names and for their canonical metadata-only names alike.
  *
- * `status_cadastro` was DELIBERATELY EXCLUDED from this list — unlike the 9
- * above, it IS mapped by ArtistEntity and is written by `LeadEventsHandler`
- * (leads module) on lead→artist conversion. This guard also proves it
- * remains mapped, so nobody removes it in the future without repeating this
- * check.
+ * `registration_status` (was `status_cadastro`, renamed by CZ-042) was
+ * DELIBERATELY EXCLUDED from this list — unlike the 9 above, it IS mapped by
+ * ArtistEntity and is written by `LeadEventsHandler` (leads module) on
+ * lead→artist conversion. This guard also proves it remains mapped, so nobody
+ * removes it in the future without repeating this check.
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -38,6 +40,18 @@ const REMOVED_COLUMNS = [
   'soundcloud_seguidores',
   'instagram',
   'tiktok',
+];
+
+// CZ-042 metadata-only fields: they live in artists.metadata, never in a column.
+const METADATA_ONLY_KEYS = [
+  'spotify_listeners',
+  'youtube_subscribers',
+  'deezer_fans',
+  'instagram_followers',
+  'tiktok_followers',
+  'apple_music_albums',
+  'soundcloud_followers',
+  'gender',
 ];
 
 function readArtistEntitySource(): string {
@@ -66,11 +80,19 @@ describe('Permanent guard: physical columns removed from artists never come back
     },
   );
 
-  it('status_cadastro REMAINS mapped — kept on purpose (real write from LeadEventsHandler), do not remove without re-auditing', () => {
-    expect(propertyIsDeclared(artistEntitySource, 'status_cadastro')).toBe(true);
+  it.each(METADATA_ONLY_KEYS)(
+    'ArtistEntity does not declare @Column for the metadata-only field "%s" (CZ-042)',
+    (column) => {
+      expect(propertyIsDeclared(artistEntitySource, column)).toBe(false);
+    },
+  );
+
+  it('registration_status REMAINS mapped — kept on purpose (real write from LeadEventsHandler), do not remove without re-auditing', () => {
+    expect(propertyIsDeclared(artistEntitySource, 'registration_status')).toBe(true);
+    expect(propertyIsDeclared(artistEntitySource, 'status_cadastro')).toBe(false);
     const handlerPath = path.resolve(__dirname, '../leads/handlers/lead-events.handler.ts');
     const handlerSource = fs.readFileSync(handlerPath, 'utf8');
-    expect(handlerSource).toMatch(/status_cadastro\s*:\s*ArtistStatusCadastro\.ACTIVE/);
+    expect(handlerSource).toMatch(/registration_status\s*:\s*ArtistRegistrationStatus\.ACTIVE/);
   });
 
   it('the removal migration exists and is registered in migrations/index.ts', () => {
@@ -85,7 +107,7 @@ describe('Permanent guard: physical columns removed from artists never come back
     expect(indexSource).toMatch(/RemoveArtistLegacyMetricColumns20260821000001/);
   });
 
-  it('verify-canonical-column-order.ts no longer lists the removed columns for artists (but keeps status_cadastro)', () => {
+  it('verify-canonical-column-order.ts no longer lists the removed columns for artists (but keeps registration_status)', () => {
     const scriptPath = path.resolve(__dirname, '../../../scripts/verify-canonical-column-order.ts');
     const source = fs.readFileSync(scriptPath, 'utf8');
     const artistsBlockMatch = source.match(/artists:\s*\[([\s\S]*?)\],\n\s*works:/);
@@ -94,6 +116,7 @@ describe('Permanent guard: physical columns removed from artists never come back
     for (const column of REMOVED_COLUMNS) {
       expect(artistsBlock).not.toMatch(new RegExp(`'${column}'`));
     }
-    expect(artistsBlock).toMatch(/'status_cadastro'/);
+    expect(artistsBlock).toMatch(/'registration_status'/);
+    expect(artistsBlock).not.toMatch(/'status_cadastro'/);
   });
 });

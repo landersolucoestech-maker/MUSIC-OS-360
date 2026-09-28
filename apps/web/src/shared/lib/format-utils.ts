@@ -53,6 +53,26 @@ export function formatDate(date: string | Date | null | undefined): string {
   }).format(d);
 }
 
+/**
+ * Calendar day ("YYYY-MM-DD") of a value that represents a date, not an instant
+ * — e.g. a `timestamp` column holding midnight serialized as UTC ISO
+ * ("2026-09-01T00:00:00.000Z"). Taking the prefix avoids the timezone shift
+ * that would show the previous day in America/Sao_Paulo. "" when absent/invalid.
+ */
+export function calendarDay(value: unknown): string {
+  const text = value instanceof Date ? (isNaN(value.getTime()) ? "" : value.toISOString()) : String(value ?? "");
+  const day = text.trim().slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : "";
+}
+
+/** DD/MM/AAAA of a calendar day (see calendarDay) without timezone conversion; "-" when absent. */
+export function formatCalendarDate(value: unknown): string {
+  const day = calendarDay(value);
+  if (!day) return "-";
+  const [year, month, dayOfMonth] = day.split("-");
+  return `${dayOfMonth}/${month}/${year}`;
+}
+
 export function formatDateTime(date: string | Date | null | undefined): string {
   const d = toDate(date);
   if (!d) return "-";

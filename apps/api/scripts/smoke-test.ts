@@ -173,7 +173,7 @@ async function main(): Promise<void> {
   let createdArtistId: string | null = null;
   await test('POST /artists -> 201', async () => {
     const r = await request('POST', '/artists', {
-      nome_artistico: `Smoke Artist ${Date.now()}`,
+      stage_name: `Smoke Artist ${Date.now()}`,
     });
     expect(r.status, 'status').toBeOneOf([200, 201]);
     const d = r.data as { id?: string; data?: { id?: string } };

@@ -114,8 +114,8 @@ const PAYLOAD_VALUES: Readonly<Record<string, Readonly<Record<string, string>>>>
   },
 };
 
-const INTERACTION_KEYS: Readonly<Record<string, string>> = { data: 'date', horario: 'time', descricao: 'description' };
-const INTERACTION_TYPES: Readonly<Record<string, string>> = {
+export const INTERACTION_KEYS: Readonly<Record<string, string>> = { data: 'date', horario: 'time', descricao: 'description' };
+export const INTERACTION_TYPES: Readonly<Record<string, string>> = {
   ligacao: 'call', reuniao: 'meeting', proposta: 'proposal', observacao: 'note',
 };
 

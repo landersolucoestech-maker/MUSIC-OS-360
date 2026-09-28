@@ -89,7 +89,7 @@ export default function Shares() {
   // page — it used to scan useWorks()/useArtistas() without a filter, truncated
   // to the first 50 of the tenant.
   type WorkLabel = { title?: string | null; composer_name?: string | null };
-  type ArtistLabel = { nome_artistico?: string | null };
+  type ArtistLabel = { stage_name?: string | null };
   const [resolvedWorks, setResolvedWorks] = useState<Record<string, WorkLabel>>({});
   const [resolvedArtists, setResolvedArtists] = useState<Record<string, ArtistLabel>>({});
   const shareWorkIds = useMemo(
@@ -386,7 +386,7 @@ export default function Shares() {
                     const work = share.work_id ? resolvedWorks[share.work_id] : undefined;
                     const release = releases.find((l: any) => l.id === share.release_id);
                     const artist = share.artist_id ? resolvedArtists[share.artist_id] : undefined;
-                    const holderName = artist?.nome_artistico || share.holder || "—";
+                    const holderName = artist?.stage_name || share.holder || "—";
                     const sType = resolveShareType(share as Share & Record<string, unknown>);
                     const isPending = isPendingShareStatus(share.status);
 

@@ -42,10 +42,10 @@ import { runNativeSkillAutomation } from './native-skill-automation.runner';
 const SKILL_NAME = 'contact-operations';
 
 interface ClientRow {
-  nome: string | null;
-  categoria: string | null;
-  tipo_pessoa: string | null;
-  responsavel_nome: string | null;
+  name: string | null;
+  category: string | null;
+  person_type: string | null;
+  responsible_name: string | null;
   metadata: Record<string, unknown> | null;
 }
 
@@ -99,7 +99,7 @@ export class ContactOperationsAutomation {
   ): Promise<ClientRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT nome, categoria, tipo_pessoa, responsavel_nome, metadata
+      `SELECT name, category, person_type, responsible_name, metadata
          FROM clients
         WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL
         LIMIT 1`,
@@ -126,13 +126,13 @@ export class ContactOperationsAutomation {
 
   private buildInput(c: ClientRow, sourceLeadId: string | null): ContactOperationsInput {
     const input: ContactOperationsInput = {
-      clientName: c.nome?.trim() || 'Cliente',
-      clientCategory: c.categoria?.trim() || 'geral',
-      clientTipoPessoa: c.tipo_pessoa?.trim() || 'pessoa_juridica',
+      clientName: c.name?.trim() || 'Cliente',
+      clientCategory: c.category?.trim() || 'geral',
+      clientPersonType: c.person_type?.trim() || 'company',
       language: 'pt-BR',
     };
 
-    if (c.responsavel_nome?.trim()) input.responsavelNome = c.responsavel_nome.trim();
+    if (c.responsible_name?.trim()) input.responsibleName = c.responsible_name.trim();
     if (sourceLeadId) input.sourceLeadId = sourceLeadId;
 
     return input;

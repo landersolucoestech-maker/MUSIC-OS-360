@@ -9,7 +9,7 @@ import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 export interface AsyncEntityComboboxProps<T extends { id: string }> {
   /** Table/resource name — same key used in TABLE_ENDPOINT (api-client.ts). */
   table: string;
-  /** Extracts the display text from a record (e.g. (a) => a.nome_artistico). */
+  /** Extracts the display text from a record (e.g. (a) => a.stage_name). */
   getLabel: (item: T) => string;
   value?: string | null;
   onChange: (id: string, item: T | undefined) => void;

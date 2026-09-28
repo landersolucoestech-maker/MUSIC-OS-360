@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { MainLayout } from "@/shared/components/MainLayout";
+import { transactionTypeRegisteredPtBr } from "@music-os-360/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
@@ -20,6 +21,7 @@ import { formatCurrency } from "@/shared/lib/format-utils";
 import { DashboardSkeleton } from "@/shared/components/PageSkeletons";
 import { UnavailableState } from "@/shared/components/UnavailableState";
 import { ArtistVision360Modal } from "@/modules/artist/components/ArtistVision360Modal";
+import type { Artist } from "@/modules/artist/types/artist.types";
 import { useWsEvent } from "@/shared/hooks/useWsEvent";
 import { cn } from "@/shared/lib/utils";
 import { useActivityHistory, type AuditLogRow } from "../hooks/useActivityHistory";
@@ -124,6 +126,9 @@ function mapAuditToActivity(row: AuditLogRow): ActivityItem {
   const after = (row.after ?? {}) as Record<string, unknown>;
   const description =
     (after["title"]         as string | undefined) ??
+    (after["stage_name"]     as string | undefined) ??
+    // DADO_HISTORICO: audit rows written before CZ-042 snapshot the artist
+    // with its old column name; they are immutable history, never rewritten.
     (after["nome_artistico"] as string | undefined) ??
     (after["nome"]           as string | undefined) ??
     (row.entity_id ?? "—");
@@ -356,7 +361,7 @@ function getInitials(name: string): string {
 }
 
 export default function Dashboard() {
-  const [visao360Modal, setVisao360Modal] = useState<{ open: boolean; artista?: any }>({ open: false });
+  const [visao360Modal, setVisao360Modal] = useState<{ open: boolean; artist?: Artist }>({ open: false });
   const { dashboardMetrics, artistasMetrics: artistsMetrics, isLoading, eventos: events, error: metricsError, refetch: refetchMetrics } = useMetrics();
 
   // ── Activity state ──────────────────────────────────────────────────────────
@@ -420,13 +425,13 @@ export default function Dashboard() {
     push({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead convertido", description: "Lead virou artista/cliente", badge: "CRM", badgeVariant: "default" }),
   );
   useWsEvent("finance.transaction.created", (d) =>
-    push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação registrada", description: `${(d as { type?: string }).type ?? "transação"}`, badge: "Accounting", badgeVariant: "default" }),
+    push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação registrada", description: transactionTypeRegisteredPtBr((d as { type?: string }).type), badge: "Contabilidade", badgeVariant: "default" }),
   );
   useWsEvent("finance.transaction.updated", () =>
-    push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação atualizada", description: "Alterações salvas", badge: "Accounting", badgeVariant: "secondary" }),
+    push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação atualizada", description: "Alterações salvas", badge: "Contabilidade", badgeVariant: "secondary" }),
   );
   useWsEvent("finance.calculated", () =>
-    push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Apuração concluída", description: "Contabilidade recalculada", badge: "Accounting", badgeVariant: "default" }),
+    push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Apuração concluída", description: "Contabilidade recalculada", badge: "Contabilidade", badgeVariant: "default" }),
   );
   useWsEvent("audit.entry.created", (d) => {
     const ev = d as { action?: string; entity?: string };
@@ -442,8 +447,8 @@ export default function Dashboard() {
       {
         event: "musicos360:ARTIST_CREATED",
         fn: (e) => {
-          const d = (e as CustomEvent).detail as { nome_artistico?: string };
-          pushRef.current({ icon: <Users className="h-3.5 w-3.5" />, label: "Artista cadastrado", description: d.nome_artistico ?? "–", badge: "Artista", badgeVariant: "default" });
+          const d = (e as CustomEvent).detail as { stageName?: string };
+          pushRef.current({ icon: <Users className="h-3.5 w-3.5" />, label: "Artista cadastrado", description: d.stageName ?? "–", badge: "Artista", badgeVariant: "default" });
         },
       },
       {
@@ -487,17 +492,17 @@ export default function Dashboard() {
       {
         event: "musicos360:TRANSACTION_CREATED",
         fn: (e) => {
-          const d = (e as CustomEvent).detail as { type?: string; descricao?: string };
-          pushRef.current({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação registrada", description: d.descricao ?? d.type ?? "transação", badge: "Accounting", badgeVariant: "default" });
+          const d = (e as CustomEvent).detail as { type?: string };
+          pushRef.current({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação registrada", description: transactionTypeRegisteredPtBr(d.type), badge: "Contabilidade", badgeVariant: "default" });
         },
       },
       {
         event: "musicos360:TRANSACTION_UPDATED",
-        fn: () => pushRef.current({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação atualizada", description: "Alterações salvas", badge: "Accounting", badgeVariant: "secondary" }),
+        fn: () => pushRef.current({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação atualizada", description: "Alterações salvas", badge: "Contabilidade", badgeVariant: "secondary" }),
       },
       {
         event: "musicos360:FINANCE_CALCULATED",
-        fn: () => pushRef.current({ icon: <Radio className="h-3.5 w-3.5" />, label: "Apuração concluída", description: "Contabilidade recalculada", badge: "Accounting", badgeVariant: "default" }),
+        fn: () => pushRef.current({ icon: <Radio className="h-3.5 w-3.5" />, label: "Apuração concluída", description: "Contabilidade recalculada", badge: "Contabilidade", badgeVariant: "default" }),
       },
     ];
 
@@ -537,12 +542,12 @@ export default function Dashboard() {
   const artistsWithEvents = useMemo(
     () => featuredArtists.map((a) => ({
       id: a.id,
-      nome: a.stageName,
-      genero: a.musicGenre || "Outro",
-      lancamentos: a.lancamentos,
+      name: a.stageName,
+      genre: a.musicGenre || "Outro",
+      releases: a.lancamentos,
       streams: a.streams, // may be null → the UI shows "–"
-      projetos: a.projetos,
-      foto_url: a.photoUrl,
+      projects: a.projetos,
+      photoUrl: a.photoUrl,
     })),
     [featuredArtists],
   );
@@ -772,11 +777,11 @@ export default function Dashboard() {
                   data-testid={`card-artista-destaque-${artist.id}`}
                 >
                   {/* The artist image covers the whole card; default placeholder when there is no photo */}
-                  {artist.foto_url ? (
+                  {artist.photoUrl ? (
                     <>
                       <img
-                        src={artist.foto_url}
-                        alt={artist.nome}
+                        src={artist.photoUrl}
+                        alt={artist.name}
                         className="absolute inset-0 h-full w-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10" />
@@ -784,21 +789,21 @@ export default function Dashboard() {
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-muted">
                       <span className="text-3xl font-semibold text-muted-foreground/70">
-                        {getInitials(artist.nome)}
+                        {getInitials(artist.name)}
                       </span>
                     </div>
                   )}
 
                   <div className={cn(
                     "relative z-10 flex min-h-[300px] flex-col p-4",
-                    artist.foto_url && "text-white",
+                    artist.photoUrl && "text-white",
                   )}>
                     <div className="flex justify-end">
                       <span className={cn(
                         "text-[11px] font-bold tabular-nums tracking-tight px-1.5 py-0.5 rounded-sm border",
                         index === 0
                           ? "bg-warning/10 text-warning border-warning/20"
-                          : artist.foto_url
+                          : artist.photoUrl
                             ? "bg-white/15 text-white border-white/30"
                             : "bg-muted text-muted-foreground border-border"
                       )}>
@@ -808,20 +813,20 @@ export default function Dashboard() {
 
                     <div className="mt-auto space-y-3">
                       <div>
-                        <h3 className="font-semibold text-sm leading-tight truncate">{artist.nome}</h3>
-                        <p className={cn("text-xs mt-0.5", artist.foto_url ? "text-white/80" : "text-muted-foreground")}>{artist.genero}</p>
+                        <h3 className="font-semibold text-sm leading-tight truncate">{artist.name}</h3>
+                        <p className={cn("text-xs mt-0.5", artist.photoUrl ? "text-white/80" : "text-muted-foreground")}>{artist.genre}</p>
                       </div>
 
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <span className={cn("flex items-center gap-1.5 text-xs", artist.foto_url ? "text-white/80" : "text-muted-foreground")}>
+                          <span className={cn("flex items-center gap-1.5 text-xs", artist.photoUrl ? "text-white/80" : "text-muted-foreground")}>
                             <Layers className="h-3 w-3" />
                             Projetos
                           </span>
-                          <span className="text-xs font-sans font-semibold">{artist.projetos}</span>
+                          <span className="text-xs font-sans font-semibold">{artist.projects}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className={cn("flex items-center gap-1.5 text-xs", artist.foto_url ? "text-white/80" : "text-muted-foreground")}>
+                          <span className={cn("flex items-center gap-1.5 text-xs", artist.photoUrl ? "text-white/80" : "text-muted-foreground")}>
                             <Radio className="h-3 w-3" />
                             Streams
                           </span>
@@ -832,11 +837,11 @@ export default function Dashboard() {
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className={cn("flex items-center gap-1.5 text-xs", artist.foto_url ? "text-white/80" : "text-muted-foreground")}>
+                          <span className={cn("flex items-center gap-1.5 text-xs", artist.photoUrl ? "text-white/80" : "text-muted-foreground")}>
                             <Disc className="h-3 w-3" />
                             Lançamentos
                           </span>
-                          <span className="text-xs font-sans font-semibold">{artist.lancamentos}</span>
+                          <span className="text-xs font-sans font-semibold">{artist.releases}</span>
                         </div>
                       </div>
 
@@ -845,14 +850,14 @@ export default function Dashboard() {
                         size="sm"
                         className={cn(
                           "w-full mt-1 h-7 text-xs border",
-                          artist.foto_url
+                          artist.photoUrl
                             ? "text-white border-white/40 hover:bg-white/10 hover:text-white"
                             : "text-muted-foreground hover:text-foreground border-border/60 hover:border-border"
                         )}
                         onClick={() =>
                           setVisao360Modal({
                             open: true,
-                            artista: featuredArtists.find((a) => a.id === artist.id),
+                            artist: featuredArtists.find((a) => a.id === artist.id)?.artist,
                           })
                         }
                         data-testid={`button-ver-perfil-${artist.id}`}
@@ -897,7 +902,7 @@ export default function Dashboard() {
       <ArtistVision360Modal
         open={visao360Modal.open}
         onOpenChange={(open) => setVisao360Modal({ ...visao360Modal, open })}
-        artista={visao360Modal.artista}
+        artist={visao360Modal.artist ?? null}
       />
     </>
   );

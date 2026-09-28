@@ -39,7 +39,7 @@ import { runNativeSkillAutomation } from './native-skill-automation.runner';
 const SKILL_NAME = 'artist-profile-analysis';
 
 interface ArtistRow {
-  nome_artistico: string;
+  stage_name: string;
   music_genre: string | null;
   spotify_url: string | null;
   youtube_url: string | null;
@@ -114,7 +114,7 @@ export class ArtistProfileAnalysisAutomation {
   ): Promise<ArtistRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT nome_artistico, music_genre, spotify_url, youtube_url,
+      `SELECT stage_name, music_genre, spotify_url, youtube_url,
               deezer_url, apple_music_url, soundcloud_url, notes, metadata
          FROM artists
         WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL
@@ -146,7 +146,7 @@ export class ArtistProfileAnalysisAutomation {
       Array.isArray(v) && v.length > 0 ? v.map((x) => String(x)) : undefined;
 
     const input: ArtistProfileAnalysisInput = {
-      artistName: artist.nome_artistico,
+      artistName: artist.stage_name,
       language: 'pt-BR',
     };
 

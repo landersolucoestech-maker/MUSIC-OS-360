@@ -148,7 +148,7 @@ function DistributorsField({
 
 // ─── Field renderer (definition-driven) ──────────────────────────
 
-type FileFieldId = "fotoUrl" | "documentosPessoaisUrl" | "presskitUrl";
+type FileFieldId = "photoUrl" | "personalDocumentsUrl" | "pressKitUrl";
 
 interface FieldRendererCtx {
   register: UseFormRegister<ArtistFormValues>;
@@ -294,7 +294,7 @@ function renderArtistField(field: ArtistFormField, ctx: FieldRendererCtx) {
         </div>
       );
 
-    case "contatos-crm":
+    case "crm-contacts":
       return (
         <div key={field.id} className={span}>
           <Controller
@@ -302,7 +302,7 @@ function renderArtistField(field: ArtistFormField, ctx: FieldRendererCtx) {
             name={rhfId}
             render={({ field: rhf }) => (
               <TeamContactsCRM
-                value={Array.isArray(rhf.value) ? (rhf.value as ArtistFormValues["contatosVinculados"]) : []}
+                value={Array.isArray(rhf.value) ? (rhf.value as ArtistFormValues["linkedContacts"]) : []}
                 onChange={rhf.onChange}
               />
             )}
@@ -310,7 +310,7 @@ function renderArtistField(field: ArtistFormField, ctx: FieldRendererCtx) {
         </div>
       );
 
-    case "distribuidoras":
+    case "distributors":
       return (
         <div key={field.id} className={`space-y-4 ${span}`}>
           <Controller
@@ -364,8 +364,8 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
   // guarantees the CAS `expectedUpdatedAt` reflects the real record at edit time,
   // not what the list had cached. `staleTime: 0` forces a refetch on every modal
   // opening (never reuses an earlier fetch in the same session).
-  // `api.get` talks to the real backend (PT contract, GET /artists/:id) —
-  // converted to the internal `Artist` model (EN) via `wireToArtist`.
+  // `api.get` talks to the real backend (canonical contract, GET /artists/:id)
+  // — converted to the internal `Artist` model via `wireToArtist`.
   const freshArtistQuery = useQuery({
     queryKey: ["artists", artist?.id, "edit-fresh"],
     queryFn: async () => wireToArtist(await api.get<ArtistWireRecord>(`/artists/${artist!.id}`)),
@@ -385,7 +385,7 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
   // ── Non-form state ──────────────────────────────────────────────
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [files, setFiles] = useState<Record<FileFieldId, UploadedFile[]>>({
-    fotoUrl: [], documentosPessoaisUrl: [], presskitUrl: [],
+    photoUrl: [], personalDocumentsUrl: [], pressKitUrl: [],
   });
   const setFile = (id: FileFieldId, value: UploadedFile[]) =>
     setFiles((prev) => ({ ...prev, [id]: value }));
@@ -402,27 +402,26 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
   });
   const { register, control, watch, reset, handleSubmit: rhfSubmit } = form;
 
-  const profileTypeValue = watch("tipoPerfil");
 
   // ── Hydrates the form from ONE version (single source) ─────────
   // The SAME canonical hydration used by the export (single definition).
   const hydrateForm = (source: Artist | null) => {
     const v = artistToFormValues(source);
-    const { fotoUrl, documentosPessoaisUrl: personalDocumentsUrl, presskitUrl, ...formValues } = v;
+    const { photoUrl, personalDocumentsUrl, pressKitUrl, ...formValues } = v;
     reset(formValues);
 
     setPreserved(artistToPreservedInput(source));
     setTeamContacts(Array.isArray(source?.teamContacts) ? source.teamContacts : []);
 
     setFiles({
-      fotoUrl: fotoUrl
-        ? [{ url: fotoUrl, name: "foto", size: 0, type: "image/*", path: "" }]
+      photoUrl: photoUrl
+        ? [{ url: photoUrl, name: "foto", size: 0, type: "image/*", path: "" }]
         : [],
-      documentosPessoaisUrl: personalDocumentsUrl
+      personalDocumentsUrl: personalDocumentsUrl
         ? [{ name: "documento.pdf", size: 0, type: "application/pdf", path: personalDocumentsUrl, url: personalDocumentsUrl }]
         : [],
-      presskitUrl: presskitUrl
-        ? [{ name: "presskit.pdf", size: 0, type: "application/pdf", path: presskitUrl, url: presskitUrl }]
+      pressKitUrl: pressKitUrl
+        ? [{ name: "presskit.pdf", size: 0, type: "application/pdf", path: pressKitUrl, url: pressKitUrl }]
         : [],
     });
 
@@ -470,9 +469,9 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
     try {
       const allValues: ArtistFormAllValues = {
         ...values,
-        fotoUrl:               files.fotoUrl[0]?.url ?? "",
-        documentosPessoaisUrl: files.documentosPessoaisUrl[0]?.url ?? "",
-        presskitUrl:           files.presskitUrl[0]?.url ?? "",
+        photoUrl:             files.photoUrl[0]?.url ?? "",
+        personalDocumentsUrl: files.personalDocumentsUrl[0]?.url ?? "",
+        pressKitUrl:          files.pressKitUrl[0]?.url ?? "",
       };
 
       // The SAME canonical conversion used by the import (single definition).
@@ -480,7 +479,7 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
 
       // Pass-through of 360-profile fields that do not belong to this form
       // (Task AA: the three discontinued artist create/edit sections collected
-      // galleryUrls, manager*Legacy, executiveProducer, bookingAgency and
+      // galleryUrls, managerName/managerContact, executiveProducer, bookingAgency and
       // partnerLabel — none of them is collected here anymore. Omitting them from
       // the payload preserves the value already in the backend (update() only
       // touches columns present in the DTO — see artists.service.ts) instead of
@@ -493,7 +492,7 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
         try {
           await updateArtist.mutateAsync({
             id: artist!.id, ...payload, ...passThrough,
-            contractId: preserved.contratoId || null,
+            contractId: preserved.contractId || null,
             expectedUpdatedAt: getExpectedUpdatedAt(hydratedArtist),
           });
         } catch (err) {
@@ -501,22 +500,20 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
           throw err;
         }
       } else {
+        // CZ-043 canonical `/clients` body (a new client row starts active).
         await addClient.mutateAsync({
-          tipo_pessoa: "pessoa_fisica" as const,
-          nome:        values.nomeArtistico.trim(),
-          cpf_cnpj:    values.cpfCnpj.trim() || null,
-          responsavel: values.nome.trim() || null,
-          email:       values.email.trim() || null,
-          telefone:    values.telefone.trim() || null,
-          endereco:    values.endereco.trim() || null,
-          cidade:      null as string | null,
-          estado:      null as string | null,
-          observacoes: values.biografia.trim() || null,
-          status:      "active",
+          person_type:     "individual",
+          name:            values.stageName.trim(),
+          individual_name: values.fullName.trim() || null,
+          cpf_cnpj:        values.taxId.trim() || null,
+          email:           values.email.trim() || null,
+          phone:           values.phone.trim() || null,
+          address:         values.address.trim() || null,
+          notes:           values.biography.trim() || null,
         });
         await addArtist.mutateAsync({
           ...payload, ...passThrough,
-          contractId: preserved.contratoId || null,
+          contractId: preserved.contractId || null,
         });
       }
       handleClose(false);
@@ -563,7 +560,7 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
                     {section.fields.map((field) => renderArtistField(field, rendererCtx))}
                   </div>
 
-                  {section.id === "perfis-redes" && (
+                  {section.id === "social-profiles" && (
                     <p className="text-xs text-muted-foreground">
                       Cole as URLs públicas. O sistema extrai automaticamente os identificadores
                       do Spotify e YouTube para buscar métricas reais.

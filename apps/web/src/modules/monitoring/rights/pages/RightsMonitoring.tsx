@@ -114,7 +114,7 @@ export default function RightsMonitoring() {
         genero: o.music_genre ?? null,
         status: (o.status as string) ?? null,
         duration_text: o.duration_text ?? null,
-        artista_nome: o.artistas?.nome_artistico ?? null,
+        artista_nome: o.artistas?.stage_name ?? null,
       });
     });
     return map;

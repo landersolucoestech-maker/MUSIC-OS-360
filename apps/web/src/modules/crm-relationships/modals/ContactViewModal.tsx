@@ -16,9 +16,10 @@ import {
   MessageSquare, Pencil, Phone, Star, Tag, User,
 } from "lucide-react";
 import { contactPriorityOptions, contactStatusOptions, contactTypeOptions, labelFor } from "../constants";
-import { profileLabel, type ContactPersonType } from "../constants/contact-classification";
+import { personTypeLabel, profileLabel } from "../constants/contact-classification";
+import { timelineActionLabel } from "../constants/timeline";
 import { useClientTimeline } from "../hooks/useClientTimeline";
-import { INTERACTION_TYPE_OPTIONS } from "../shared/interactions";
+import { interactionTypeLabel } from "../shared/interactions";
 import type { Contact } from "../types";
 import { useSkillRun } from "@/shared/hooks/useSkillRun";
 import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
@@ -95,39 +96,16 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
     if (!description) return;
     setIsSavingNote(true);
     try {
-      await timeline.addEntry("nota", description);
+      await timeline.addEntry("note", description);
       setNewNote("");
     } finally {
       setIsSavingNote(false);
     }
   };
 
-  const po = (contact.payloadOperacional ?? {}) as Record<string, unknown>;
-  const str = (k: string): string => (typeof po[k] === "string" ? (po[k] as string) : "");
-
-  const interactions: Array<{ id: string; type: string; data: string; horario: string; descricao: string }> =
-    Array.isArray(po.interacoes) ? (po.interacoes as never) : [];
-
-  const personType  = str("tipo_pessoa") || "pessoa_fisica";
-  const isPF        = personType === "pessoa_fisica";
-  const personTypeLabel = isPF ? "Pessoa Física" : "Pessoa Jurídica";
-  const categoryLabel  = labelFor(contactTypeOptions, contact.contactType);
-  const profileSlug      = str("perfil");
-  const profileText      = profileLabel(profileSlug, personType as ContactPersonType, contact.contactType);
-  const razaoSocial = str("razao_social");
-  const tradeName = str("nome_fantasia");
-  const funcao       = str("funcao");
-  const foto         = str("foto");
-
-  const ownerName     = str("responsavel_nome")     || contact.responsible;
-  const respEmail    = str("responsavel_email");
-  const ownerPhone = str("responsavel_telefone");
-  const ownerPosition    = str("responsavel_cargo");
-
-  const logradouro   = str("logradouro");
-  const number       = str("numero");
-  const complement  = str("complemento");
-  const neighborhood       = str("bairro");
+  const isIndividual  = contact.personType === "individual";
+  const categoryLabel = labelFor(contactTypeOptions, contact.category);
+  const profileText   = profileLabel(contact.profile ?? "", contact.personType, contact.category);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -140,9 +118,9 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
             className="flex items-center gap-3"
             data-testid="contato-view-title"
           >
-            {foto && (
+            {contact.photoUrl && (
               <img
-                src={foto}
+                src={contact.photoUrl}
                 alt="Foto"
                 className="h-10 w-10 rounded-full object-cover shrink-0"
               />
@@ -153,7 +131,9 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
             </Badge>
           </DialogTitle>
           <DialogDescription>
-            {contact.companyName ?? labelFor(contactTypeOptions, contact.contactType)}
+            {!isIndividual && contact.legalName && contact.legalName !== contact.name
+              ? contact.legalName
+              : categoryLabel}
           </DialogDescription>
         </DialogHeader>
 
@@ -161,43 +141,43 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
 
           {/* ══ CONTACT CLASSIFICATION ══ */}
           <Section title="Classificação do Contato">
-            <Row icon={User} label="Tipo de Contato" value={personTypeLabel} />
+            <Row icon={User} label="Tipo de Contato" value={personTypeLabel(contact.personType)} />
             <Row icon={Tag}  label="Categoria"        value={categoryLabel} />
             <Row icon={Tag}  label="Perfil"           value={profileText} />
           </Section>
 
           {/* ══ DATA ══ */}
-          <Section title={isPF ? "Dados da Pessoa Física" : "Dados da Pessoa Jurídica"}>
-            {isPF ? (
+          <Section title={isIndividual ? "Dados da Pessoa Física" : "Dados da Pessoa Jurídica"}>
+            {isIndividual ? (
               <>
                 <Row icon={User}      label="Nome Completo" value={contact.name} />
-                <Row icon={Hash}      label="CPF"           value={str("cpf")} />
+                <Row icon={Hash}      label="CPF"           value={contact.cpfCnpj} />
                 <Row icon={Mail}      label="E-mail"         value={contact.email} />
-                <Row icon={Phone}     label="Telefone"      value={contact.phone || contact.whatsapp} />
+                <Row icon={Phone}     label="Telefone"      value={contact.phone} />
                 <Row icon={Instagram} label="Instagram"     value={contact.instagram} />
-                <Row icon={Briefcase} label="Função"        value={funcao} />
+                <Row icon={Briefcase} label="Função"        value={contact.jobTitle} />
               </>
             ) : (
               <>
-                <Row icon={Building2} label="Razão Social"  value={razaoSocial} />
-                <Row icon={Building2} label="Nome Fantasia" value={tradeName} />
-                <Row icon={Hash}      label="CNPJ"          value={str("cnpj")} />
+                <Row icon={Building2} label="Razão Social"  value={contact.legalName} />
+                <Row icon={Building2} label="Nome Fantasia" value={contact.tradeName} />
+                <Row icon={Hash}      label="CNPJ"          value={contact.cpfCnpj} />
                 <Row icon={Mail}      label="E-mail"         value={contact.email} />
                 <Row icon={Instagram} label="Instagram"     value={contact.instagram} />
-                <Row icon={Phone}     label="Telefone"      value={contact.phone || contact.whatsapp} />
+                <Row icon={Phone}     label="Telefone"      value={contact.phone} />
               </>
             )}
           </Section>
 
           {/* ══ ADDRESS ══ */}
           <Section title="Endereço">
-            <Row icon={MapPin} label="Logradouro"  value={logradouro} />
-            <Row icon={Hash}   label="Número"       value={number} />
-            <Row icon={MapPin} label="Complemento"  value={complement} />
-            <Row icon={MapPin} label="Bairro"       value={neighborhood} />
+            <Row icon={MapPin} label="Logradouro"  value={contact.street} />
+            <Row icon={Hash}   label="Número"       value={contact.streetNumber} />
+            <Row icon={MapPin} label="Complemento"  value={contact.addressComplement} />
+            <Row icon={MapPin} label="Bairro"       value={contact.neighborhood} />
             <Row icon={MapPin} label="Cidade"       value={contact.city} />
             <Row icon={Hash}   label="Estado"       value={contact.state} />
-            <Row icon={Hash}   label="CEP"          value={str("cep") || contact.zipCode} />
+            <Row icon={Hash}   label="CEP"          value={contact.zipCode} />
           </Section>
 
           {/* ══ CLASSIFICATION ══ */}
@@ -207,12 +187,12 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
           </Section>
 
           {/* ══ RESPONSIBLE PERSON (legal entities only) ══ */}
-          {!isPF && (
+          {!isIndividual && (
             <Section title="Responsável">
-              <Row icon={User}      label="Nome do Responsável"     value={ownerName} />
-              <Row icon={Briefcase} label="Cargo do Responsável"    value={ownerPosition} />
-              <Row icon={Mail}      label="E-mail do responsável"    value={respEmail} />
-              <Row icon={Phone}     label="Telefone do Responsável" value={ownerPhone} />
+              <Row icon={User}      label="Nome do Responsável"     value={contact.responsibleName} />
+              <Row icon={Briefcase} label="Cargo do Responsável"    value={contact.responsibleJobTitle} />
+              <Row icon={Mail}      label="E-mail do responsável"    value={contact.responsibleEmail} />
+              <Row icon={Phone}     label="Telefone do Responsável" value={contact.responsiblePhone} />
             </Section>
           )}
 
@@ -254,13 +234,13 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
             <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
               Histórico de Interações
             </h3>
-            {interactions.length === 0 ? (
+            {contact.interactions.length === 0 ? (
               <p className="text-sm italic text-muted-foreground">
                 Nenhuma interação registrada.
               </p>
             ) : (
               <div className="space-y-3">
-                {interactions.map((it, idx) => (
+                {contact.interactions.map((it, idx) => (
                   <div
                     key={it.id}
                     className="space-y-1 rounded-md border bg-muted/20 p-3"
@@ -268,10 +248,10 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
                   >
                     <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground">
                       <MessageSquare className="h-3.5 w-3.5" />
-                      Interação {idx + 1} · {labelFor([...INTERACTION_TYPE_OPTIONS], it.type)} · {fmtDate(it.data)}{it.horario ? ` ${it.horario}` : ""}
+                      Interação {idx + 1} · {interactionTypeLabel(it.type)} · {fmtDate(it.date)}{it.time ? ` ${it.time}` : ""}
                     </p>
                     <p className="whitespace-pre-wrap text-sm text-foreground">
-                      {it.descricao || "—"}
+                      {it.description || "—"}
                     </p>
                   </div>
                 ))}
@@ -345,7 +325,7 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
                   >
                     <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground">
                       <Clock className="h-3.5 w-3.5" />
-                      {entry.action} · {entry.user_name ?? "Sistema"} · {new Date(entry.created_at).toLocaleString("pt-BR")}
+                      {timelineActionLabel(entry.action)} · {entry.user_name ?? "Sistema"} · {new Date(entry.created_at).toLocaleString("pt-BR")}
                     </p>
                     <p className="whitespace-pre-wrap text-sm text-foreground">
                       {entry.description || "—"}

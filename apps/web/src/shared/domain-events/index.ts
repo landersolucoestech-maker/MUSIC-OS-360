@@ -81,7 +81,7 @@ export type DomainEventName = (typeof DomainEvents)[keyof typeof DomainEvents];
 
 export interface ArtistCreatedPayload {
   id: string;
-  nome_artistico: string;
+  stageName: string;
   org_id: string;
 }
 

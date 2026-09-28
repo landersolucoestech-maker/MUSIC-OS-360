@@ -349,7 +349,7 @@ function ContentScheduleModal({
   // useArtistas() (capped at 50 per tenant) so an artist is never lost.
   const { data: artistOptions = [] } = useQuery({
     queryKey: ["marketing-calendar-artist-names"],
-    queryFn: () => fetchAllLabels("artistas", (a) => (a.nome_artistico ?? a.nome) as string | undefined),
+    queryFn: () => fetchAllLabels("artistas", (a) => a.stage_name as string | undefined),
   });
   const { getConnectionsByCategory } = useMarketingOAuth();
 

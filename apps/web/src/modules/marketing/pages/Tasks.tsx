@@ -109,7 +109,7 @@ export default function Tasks() {
   // pagination, no cap) instead of useArtistas()/useClientes() (capped at 50 per tenant).
   const { data: artistNameOptions = [] } = useQuery({
     queryKey: ["marketing-task-target-names", "artistas"],
-    queryFn: () => fetchAllLabels("artistas", (a) => a.nome_artistico as string | undefined),
+    queryFn: () => fetchAllLabels("artistas", (a) => a.stage_name as string | undefined),
   });
   const { data: companyNameOptions = [] } = useQuery({
     queryKey: ["marketing-task-target-names", "clientes"],

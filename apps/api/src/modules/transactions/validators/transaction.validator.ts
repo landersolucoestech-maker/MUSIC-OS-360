@@ -48,32 +48,44 @@ const incomeServicesWithArtist = new Set([
 // Every optional field accepts null: the web form sends null for a blank
 // field (it used to fail with 422 — CZ-041).
 const optionalText = z.string().nullish();
+// Bounded by the physical column (CZ-041 moved these from unbounded metadata
+// into columns — an over-long value must be a 422, never a Postgres 500).
+const boundedText = (max: number) => z.string().max(max, `Informe no máximo ${max} caracteres`).nullish();
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const optionalUuid = z.string().regex(UUID_PATTERN, 'Selecione um registro válido').nullish().or(z.literal(''));
+const isCalendarDate = (value: string): boolean => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value);
+};
+const optionalDate = z.string().refine(isCalendarDate, 'Informe uma data válida').nullish().or(z.literal(''));
 const commonFields = {
   counterpartyType:       z.enum(COUNTERPARTY_TYPES).nullish(),
-  category:               optionalText,
-  subcategory:            optionalText,
+  category:               boundedText(100),
+  subcategory:            boundedText(100),
   status:                 z.enum(STATUS).nullish(),
   paymentMethod:          z.enum(PAYMENT_METHODS).nullish(),
   paymentType:            z.enum(PAYMENT_TYPES).nullish(),
-  installmentCount:       z.union([z.string(), z.number()]).transform((v) => String(v)).nullish(),
+  installmentCount:       z.union([z.string().regex(/^\d{1,6}$/, 'Informe um número de parcelas válido'), z.number().int().min(0).max(999999)])
+    .transform((v) => String(v)).nullish().or(z.literal('')),
   installmentInterval:    z.enum(INSTALLMENT_INTERVALS).nullish(),
-  firstInstallmentDate:   optionalText,
-  artistId:               optionalText,
-  projectId:              optionalText,
-  contractId:             optionalText,
-  eventId:                optionalText,
-  counterpartyName:       optionalText,
-  taxAuthority:           optionalText,
-  costCenter:             optionalText,
-  referenceMonth:         optionalText,
-  sourceBankAccount:      optionalText,
-  destinationBankAccount: optionalText,
-  investmentItem:         optionalText,
-  travelReason:           optionalText,
-  advertisingName:        optionalText,
+  firstInstallmentDate:   optionalDate,
+  artistId:               optionalUuid,
+  projectId:              optionalUuid,
+  contractId:             optionalUuid,
+  eventId:                optionalUuid,
+  counterpartyName:       boundedText(255),
+  taxAuthority:           boundedText(255),
+  costCenter:             boundedText(100),
+  referenceMonth:         z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Informe a competência no formato MM/AAAA').nullish().or(z.literal('')),
+  sourceBankAccount:      boundedText(100),
+  destinationBankAccount: boundedText(100),
+  investmentItem:         boundedText(255),
+  travelReason:           boundedText(255),
+  advertisingName:        boundedText(255),
   notes:                  optionalText,
   attachmentUrl:          optionalText,
-  attachmentName:         optionalText,
+  attachmentName:         boundedText(255),
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────────

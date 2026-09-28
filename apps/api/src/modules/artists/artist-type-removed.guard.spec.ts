@@ -10,7 +10,7 @@
  *
  * Does NOT do a naive grep for "tipo" — the word is legitimate in dozens
  * of other domains (contracts.tipo, works.tipo, transactions.tipo,
- * ArtistGoalEntity.tipo, ArtistaRelacionamento.tipo, artists.tipo_perfil).
+ * ArtistGoalEntity.tipo, ArtistaRelacionamento.tipo, artists.profile_type).
  * Each check here is pointed: the exact property in the exact place.
  */
 import * as fs from 'fs';

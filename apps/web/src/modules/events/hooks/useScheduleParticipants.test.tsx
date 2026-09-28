@@ -19,12 +19,12 @@ vi.mock("@/modules/crm-relationships/hooks/useContacts", () => ({ useContacts: (
 const mockedListPaged = vi.mocked(storage.listPaged);
 const mockedFindById = vi.mocked(storage.findById);
 
-interface FakeArtist { id: string; nome_artistico: string }
+interface FakeArtist { id: string; stage_name: string }
 
 // 75 artists — more than the old 50/tenant cap.
 const ARTISTS: FakeArtist[] = Array.from({ length: 75 }, (_, i) => ({
   id: `artist-${i + 1}`,
-  nome_artistico: `Artista ${i + 1}`,
+  stage_name: `Artista ${i + 1}`,
 }));
 
 function createWrapper() {
@@ -45,7 +45,7 @@ describe("useScheduleParticipants", () => {
         return { items: [], page: 1, pageSize: options.pageSize, total: 0, totalPages: 1 };
       }
       const search = (options.filters?.search as string | undefined)?.toLowerCase();
-      const rows = search ? ARTISTS.filter((a) => a.nome_artistico.toLowerCase().includes(search)) : ARTISTS.slice(0, options.pageSize);
+      const rows = search ? ARTISTS.filter((a) => a.stage_name.toLowerCase().includes(search)) : ARTISTS.slice(0, options.pageSize);
       return { items: rows.slice(0, options.pageSize), page: 1, pageSize: options.pageSize, total: rows.length, totalPages: 1 };
     }) as typeof storage.listPaged);
   });
@@ -64,7 +64,7 @@ describe("useScheduleParticipants", () => {
   });
 
   it("pendingArtistId: resolves the legacy artist linked to the event even outside the default page, without typing a search", async () => {
-    mockedFindById.mockResolvedValue({ id: "artist-75", nome_artistico: "Artista 75" });
+    mockedFindById.mockResolvedValue({ id: "artist-75", stage_name: "Artista 75" });
 
     const { result } = renderHook(() => useScheduleParticipants("", "artist-75"), { wrapper: createWrapper() });
 

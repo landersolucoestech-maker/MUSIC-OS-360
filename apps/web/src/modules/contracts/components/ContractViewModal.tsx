@@ -155,7 +155,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
               <TabsContent value="informacoes" className="p-6 space-y-5 mt-0">
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {[
-                    { label: "Artista / Cliente", value: contract.artistas?.nome_artistico || contract.clientes?.nome || "—" },
+                    { label: "Artista / Cliente", value: contract.artistas?.stage_name || contract.clientes?.nome || "—" },
                     { label: "Tipo", value: contract.type ? formatCategoryLabel(contract.type) : "—" },
                     { label: "Início", value: formatDateDashes(contract.start_date) },
                     { label: "Término", value: contract.end_date ? formatDateDashes(contract.end_date) : "Indeterminado" },

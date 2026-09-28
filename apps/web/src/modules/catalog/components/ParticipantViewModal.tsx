@@ -8,11 +8,12 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
+import { GENDER_LABELS } from "@/modules/artist/mappers";
 
 interface ParticipantViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  artista: Artist | null;
+  artist: Artist | null;
 }
 
 const formatDateDMY = (d?: string | null): string => {
@@ -28,33 +29,31 @@ const formatDateDMY = (d?: string | null): string => {
   return d;
 };
 
+/**
+ * The artist contract has no person-type field: it is derived from the
+ * CPF/CNPJ (14 digits = CNPJ → pessoa jurídica). The profile type (managed,
+ * record_label…) describes commercial representation, not the person type.
+ */
 const derivePersonType = (artist: Artist): string => {
-  const raw = artist.personType;
-  if (raw) {
-    const r = raw.toLowerCase();
-    if (r.includes("juridica") || r.includes("jurídica")) return "Jurídica";
-    if (r.includes("fisica") || r.includes("física")) return "Física";
-    return raw;
-  }
-  const profile = (artist.profileType as string | null | undefined) ?? "";
-  if (profile.toLowerCase().includes("empresa")) return "Jurídica";
-  return "Física";
+  const digits = (artist.taxId ?? "").replace(/\D/g, "");
+  return digits.length === 14 ? "Jurídica" : "Física";
 };
 
 export function ParticipantViewModal({
   open,
   onOpenChange,
-  artista: artist,
+  artist,
 }: ParticipantViewModalProps) {
   if (!artist) return null;
 
-  const legalName = artist.legalName || artist.name || artist.stageName || "";
+  const fullName = artist.fullName || artist.stageName || "";
   const pseudonimo = artist.stageName || "";
   const personType = derivePersonType(artist);
-  const genre = ((artist as unknown as Record<string, unknown>).genero as string | null | undefined) ?? "";
+  const gender = artist.gender ?? "";
   const birthDate = formatDateDMY(artist.birthDate);
-  const cpfCnpj = artist.taxId || "";
-  const cae = ((artist as unknown as Record<string, unknown>).cae as string | null | undefined) ?? "";
+  const taxId = artist.taxId || "";
+  // The artist contract (CZ-042) has no CAE field — shown empty.
+  const cae = "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -72,7 +71,7 @@ export function ParticipantViewModal({
               Nome <span className="text-destructive">*</span>
             </Label>
             <Input
-              value={legalName}
+              value={fullName}
               disabled
               className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
               data-testid="input-participante-nome"
@@ -104,14 +103,14 @@ export function ParticipantViewModal({
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Gênero</Label>
-              <Select value={genre} disabled>
+              <Select value={gender} disabled>
                 <SelectTrigger className="bg-muted/30 text-sm h-9" data-testid="select-participante-genero">
                   <SelectValue placeholder="—" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Masculino">Masculino</SelectItem>
-                  <SelectItem value="Feminino">Feminino</SelectItem>
-                  <SelectItem value="Outro">Outro</SelectItem>
+                  {Object.entries(GENDER_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>{label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -132,7 +131,7 @@ export function ParticipantViewModal({
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">CPF / CNPJ</Label>
               <Input
-                value={cpfCnpj}
+                value={taxId}
                 disabled
                 className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
                 data-testid="input-participante-cpf-cnpj"

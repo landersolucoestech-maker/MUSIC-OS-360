@@ -17,7 +17,8 @@ import type { Lead } from "../types";
 import { leadFormToLead, leadToFormInitial } from "../lib/lead-form-mapper";
 import { ContactsPanel } from "@/modules/crm-relationships/components/ContactsPanel";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
+import { ContactFormModal, type ContactFormValues } from "@/modules/crm-relationships/modals/ContactFormModal";
+import { contactFormToContactInput } from "@/modules/crm-relationships/services/contacts.service";
 
 // ─────────────────────────────────────────────
 // Page
@@ -61,7 +62,7 @@ export default function LeadsPage() {
 
   const contactsKpis = useMemo(() => {
     const countBy = (types: string[]) =>
-      contacts.filter((c) => types.includes(c.contactType)).length;
+      contacts.filter((c) => c.category !== undefined && types.includes(c.category)).length;
     return {
       total:        contacts.length,
       clientes:     countBy(["CORPORATE_CLIENT"]),
@@ -220,49 +221,8 @@ export default function LeadsPage() {
         open={contactModalOpen}
         mode="create"
         onOpenChange={setContactModalOpen}
-        onSubmit={async (payload: ContactFormPayload) => {
-          await createContact({
-            name:           payload.nome,
-            companyName:    payload.tipo_pessoa === "pessoa_juridica" ? payload.razao_social : undefined,
-            contactType:    (payload.categoria        || "OTHER")  as Parameters<typeof createContact>[0]["contactType"],
-            documentType:   payload.tipo_pessoa === "pessoa_fisica" ? "CPF" : "CNPJ",
-            documentNumber: payload.cpf_cnpj,
-            phone:          payload.telefone,
-            whatsapp:       payload.telefone,
-            email:          payload.email,
-            instagram:      payload.instagram || undefined,
-            address:        payload.endereco_completo,
-            city:           payload.cidade,
-            state:          payload.estado,
-            country:        "Brasil",
-            zipCode:        payload.cep,
-            responsible:    payload.responsavel,
-            notes:          payload.observacoes,
-            tags:           [],
-            status:         (payload.status_contato     || "active") as Parameters<typeof createContact>[0]["status"],
-            priority:       (payload.prioridade_contato || "medium") as Parameters<typeof createContact>[0]["priority"],
-            attachments:    payload.attachments ?? [],
-            payloadOperacional: {
-              tipo_pessoa:          payload.tipo_pessoa,
-              perfil:               payload.perfil,
-              cpf:                  payload.cpf,
-              cnpj:                 payload.cnpj,
-              razao_social:         payload.razao_social,
-              nome_fantasia:        payload.nome_fantasia,
-              funcao:               payload.funcao,
-              cargo_responsavel:    payload.cargo_responsavel,
-              foto:                 payload.foto,
-              logradouro:           payload.logradouro,
-              numero:               payload.numero,
-              complemento:          payload.complemento,
-              bairro:               payload.bairro,
-              responsavel_nome:     payload.responsavel_nome,
-              responsavel_email:    payload.responsavel_email,
-              responsavel_telefone: payload.responsavel_telefone,
-              responsavel_cargo:    payload.responsavel_cargo,
-              interacoes:           payload.interacoes,
-            },
-          });
+        onSubmit={async (values: ContactFormValues) => {
+          await createContact(contactFormToContactInput(values));
         }}
       />
     </MainLayout>

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
+import { contactTypeOptions, labelFor } from "@/modules/crm-relationships/constants";
 import { useUsers } from "@/modules/settings/hooks/useUsers";
 
 export type ScheduleParticipantSource = "artist" | "employee" | "user" | "contact";
@@ -14,12 +15,12 @@ export type ScheduleParticipant = {
   category?: string;
 };
 
+/** Artist row as returned by /artists (canonical CZ-042 keys). */
 interface ArtistLookup {
   id: string;
-  nome_artistico?: string | null;
-  nome?: string | null;
+  stage_name?: string | null;
   email?: string | null;
-  telefone?: string | null;
+  phone?: string | null;
 }
 
 interface EmployeeLookup {
@@ -87,9 +88,9 @@ export function useScheduleParticipants(search: string = "", pendingArtistId?: s
     const artistOptions = artistSource.map((artist) => ({
       source: "artist" as const,
       id: String(artist.id),
-      label: String(artist.nome_artistico || artist.nome || artist.id),
+      label: String(artist.stage_name || artist.id),
       email: artist.email ? String(artist.email) : undefined,
-      phone: artist.telefone ? String(artist.telefone) : undefined,
+      phone: artist.phone ? String(artist.phone) : undefined,
       category: "Artista",
     }));
 
@@ -111,13 +112,13 @@ export function useScheduleParticipants(search: string = "", pendingArtistId?: s
       category: user.cargo ? String(user.cargo) : "Usuario",
     }));
 
-    const contactOptions = (contacts as any[]).map((contact) => ({
+    const contactOptions = contacts.map((contact) => ({
       source: "contact" as const,
-      id: String(contact.id),
-      label: String(contact.name || contact.nome || contact.companyName || contact.email || contact.id),
-      email: contact.email ? String(contact.email) : undefined,
-      phone: contact.phone || contact.whatsapp ? String(contact.phone || contact.whatsapp) : undefined,
-      category: contact.contactType || contact.category ? String(contact.contactType || contact.category) : "Contato",
+      id: contact.id,
+      label: contact.name || contact.legalName || contact.email || contact.id,
+      email: contact.email,
+      phone: contact.phone,
+      category: contact.category ? labelFor(contactTypeOptions, contact.category) : "Contato",
     }));
 
     const byKey = new Map<string, ScheduleParticipant>();

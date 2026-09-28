@@ -12,7 +12,7 @@
  * without it being a deliberate, reviewed product decision.
  *
  * It does NOT use a naive grep for "tipo" — the word is legitimate in other
- * fields (tipo_perfil, ArtistaRelacionamento.tipo, artist-form.definition.ts has
+ * fields (profile_type, ArtistRelationship.type, artist-form.definition.ts has
  * dozens of unrelated "tipo"). It checks the exact identifiers of the removed
  * concept.
  */
@@ -44,18 +44,18 @@ describe("artists domain — the tipo field (artist line-up) was removed, not no
   });
 
   it("artistToFormFields() returns no tipoArtista for any artist", () => {
-    const fields = artistToFormFields({ nome_artistico: "X" } as never);
+    const fields = artistToFormFields({ id: "a", stageName: "X" });
     expect(fields).not.toHaveProperty("tipoArtista");
   });
 
   it("artistToPreservedInput() returns no tipoArtista", () => {
-    const preserved = artistToPreservedInput({ nome_artistico: "X" } as never);
+    const preserved = artistToPreservedInput({ id: "a", stageName: "X" });
     expect(preserved).not.toHaveProperty("tipoArtista");
   });
 
   it("formToArtistPayload() never sends the tipo key to the backend", () => {
-    const fields = artistToFormFields({ nome_artistico: "X" } as never);
-    const payload = formToArtistPayload({ ...fields, contratoId: "" });
+    const fields = artistToFormFields({ id: "a", stageName: "X" });
+    const payload = formToArtistPayload({ ...fields, contractId: "" });
     expect(payload).not.toHaveProperty("tipo");
   });
 });

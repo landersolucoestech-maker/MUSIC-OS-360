@@ -165,8 +165,8 @@ async function createCoreData(token: string, tenantId: string, tag: string) {
     token,
     tenantId,
     body: {
-      nome_artistico: `F8 Artist ${tag}`,
-      nome_civil: `F8 Civil ${tag}`,
+      stage_name: `F8 Artist ${tag}`,
+      full_name: `F8 Civil ${tag}`,
       status: 'ativo',
       genero_musical: 'Pop',
       email: `f8.artist.${tag}@example.com`,
@@ -351,7 +351,7 @@ async function validateRace(pg: PgClient, token: string, tenantId: string, core:
   const disposable = await createCoreData(token, tenantId, `race-del-${Date.now()}`);
   const [del, patchAfter] = await Promise.all([
     http('DELETE', `/artists/${disposable.artistId}`, { token, tenantId, expected: [200, 204, 404] }),
-    http('PATCH', `/artists/${disposable.artistId}`, { token, tenantId, body: { nome_artistico: `race patched ${runId}` }, expected: [200, 404] }),
+    http('PATCH', `/artists/${disposable.artistId}`, { token, tenantId, body: { stage_name: `race patched ${runId}` }, expected: [200, 404] }),
   ]);
 
   const [up1, up2] = await Promise.all([
@@ -451,7 +451,7 @@ async function validateSecurity(pg: PgClient, token: string, tenantId: string, c
   const xss = await http('POST', '/artists', {
     token,
     tenantId,
-    body: { nome_artistico: `<script>alert('${runId}')</script>`, status: 'ativo', metadata: { runId, xss: true } },
+    body: { stage_name: `<script>alert('${runId}')</script>`, status: 'ativo', metadata: { runId, xss: true } },
   });
 
   let downloadAfterDeleteStatus: number | null = null;

@@ -60,6 +60,16 @@ export interface TransactionDetailsDTO {
   event?: Record<string, unknown> | null;
   linkedEventId?: string | null;
   supplierOrClient?: string | null;
+  // Form fields persisted as columns since CZ-041 (canonical request names).
+  counterpartyType?: string | null;
+  taxAuthority?: string | null;
+  sourceBankAccount?: string | null;
+  destinationBankAccount?: string | null;
+  investmentItem?: string | null;
+  travelReason?: string | null;
+  advertisingName?: string | null;
+  installmentInterval?: string | null;
+  firstInstallmentDate?: string | null;
   supplier?: Record<string, unknown> | string | null;
   metadata: Record<string, unknown>;
   createdBy?: Record<string, unknown> | string | null;

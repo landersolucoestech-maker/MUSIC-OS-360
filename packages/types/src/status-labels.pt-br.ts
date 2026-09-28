@@ -116,8 +116,7 @@ export const TRANSACTION_STATUS_LABELS_PT_BR: Readonly<Record<TransactionStatus,
 
 /**
  * TransactionType is a classification, not a status, but it is rendered the same
- * way. Its persisted values are still Portuguese legacy values; keying the map
- * by the enum keeps the labels correct when the values are migrated.
+ * way. Persisted values are the canonical English enum values (CZ-041).
  */
 export const TRANSACTION_TYPE_LABELS_PT_BR: Readonly<Record<TransactionType, string>> = {
   [TransactionType.REVENUE]: "Receita",
@@ -126,6 +125,20 @@ export const TRANSACTION_TYPE_LABELS_PT_BR: Readonly<Record<TransactionType, str
   [TransactionType.TAX]: "Imposto",
   [TransactionType.TRANSFER]: "Transferência",
 };
+
+/** "<type> registrado(a)" with PT-BR gender agreement, per transaction type. */
+const TRANSACTION_TYPE_REGISTERED_PT_BR: Readonly<Record<TransactionType, string>> = {
+  [TransactionType.REVENUE]: "Receita registrada",
+  [TransactionType.EXPENSE]: "Despesa registrada",
+  [TransactionType.INVESTMENT]: "Investimento registrado",
+  [TransactionType.TAX]: "Imposto registrado",
+  [TransactionType.TRANSFER]: "Transferência registrada",
+};
+
+/** "Receita registrada", "Imposto registrado"; unknown type → "Transação registrada". */
+export function transactionTypeRegisteredPtBr(type: unknown): string {
+  return TRANSACTION_TYPE_REGISTERED_PT_BR[type as TransactionType] ?? "Transação registrada";
+}
 
 export const INVOICE_STATUS_LABELS_PT_BR: Readonly<Record<InvoiceStatus, string>> = {
   [InvoiceStatus.DRAFT]: "Rascunho",

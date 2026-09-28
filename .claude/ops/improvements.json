@@ -47,5 +47,12 @@
     "scope": "runtime",
     "createdAt": "2026-09-28T06:29:40.334Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-57d50f4f",
+    "text": "Inserting an import line by 'after first import' anchor twice landed inside a multi-line import block (WorkViewModal, transaction-constants). Insert imports before the first 'import' statement or after the last complete one; typecheck immediately.",
+    "scope": "rules",
+    "createdAt": "2026-09-28T16:10:31.042Z",
+    "appliedAt": null
   }
 ]

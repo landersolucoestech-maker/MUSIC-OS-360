@@ -451,8 +451,9 @@ function PartyCard({
             data-testid="combobox-crm-contato"
             onChange={(id, c) => {
               if (!c) return;
-              const isPF = c.type === "pessoa_fisica";
-              const doc = String(c.document || "");
+              // `/clients` row — CZ-043 canonical keys.
+              const isPF = c.person_type === "individual";
+              const doc = String(c.cpf_cnpj || "");
               set({
                 sourceId: id,
                 nome: String(c.name || ""),
@@ -461,8 +462,8 @@ function PartyCard({
                 email: String(c.email || ""),
                 telefone: String(c.phone || ""),
                 endereco: String(c.address || ""),
-                razao_social: String(c.razao_social || c.name || ""),
-                representante_legal: String(c.responsavel_nome || ""),
+                razao_social: String(c.legal_name || c.name || ""),
+                representante_legal: String(c.responsible_name || ""),
               });
             }}
           />
@@ -475,7 +476,7 @@ function PartyCard({
           <AsyncEntityCombobox<Record<string, unknown> & { id: string }>
             table="artistas"
             value={party.sourceId || null}
-            getLabel={(a) => String(a.nome_artistico || a.nome_civil || "")}
+            getLabel={(a) => String(a.stage_name || a.full_name || "")}
             placeholder="Selecionar artista…"
             searchPlaceholder="Buscar por nome…"
             emptyText="Nenhum artista encontrado"
@@ -484,9 +485,10 @@ function PartyCard({
               if (!a) return;
               set({
                 sourceId: id,
-                nome_artistico: String(a.nome_artistico || ""),
-                nome_civil: String(a.nome_civil || ""),
-                cpf: String(a.cpf || ""),
+                // Artist row keys: canonical CZ-042 contract (stage_name/full_name/cpf_cnpj).
+                nome_artistico: String(a.stage_name || ""),
+                nome_civil: String(a.full_name || ""),
+                cpf: String(a.cpf_cnpj || ""),
                 email: String(a.email || ""),
               });
             }}

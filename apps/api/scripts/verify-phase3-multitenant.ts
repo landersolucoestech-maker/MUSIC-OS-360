@@ -191,7 +191,7 @@ async function createSetFor(
   // Artist
   const art = await call('POST', '/artists', {
     token, tenantId: tenant.tenantId,
-    body: { nome_artistico: `${tag}_ARTIST` },
+    body: { stage_name: `${tag}_ARTIST` },
   });
   if (art.status === 201 || art.status === 200) {
     set.artistId = pickId(art.body) ?? undefined;
@@ -311,13 +311,13 @@ async function phase32(): Promise<void> {
 // ============================================================================
 
 const ENDPOINTS = [
-  { path: '/artists',     tagMatcher: (r: any) => r.nome_artistico ?? r.name ?? r.title },
+  { path: '/artists',     tagMatcher: (r: any) => r.stage_name ?? r.name ?? r.title },
   { path: '/releases',    tagMatcher: (r: any) => r.title ?? r.titulo ?? r.name },
   { path: '/contracts',   tagMatcher: (r: any) => r.titulo ?? r.title },
   { path: '/events',      tagMatcher: (r: any) => r.title ?? r.titulo },
   { path: '/transactions',tagMatcher: (r: any) => r.description },
   { path: '/leads',       tagMatcher: (r: any) => r.name },
-  { path: '/clients',     tagMatcher: (r: any) => r.name ?? r.nome },
+  { path: '/clients',     tagMatcher: (r: any) => r.name },
 ];
 
 async function phase33(): Promise<void> {
@@ -405,7 +405,7 @@ async function phase34(): Promise<void> {
 async function phase35(): Promise<void> {
   section('PHASE 3.5 — UPDATE CROSS-TENANT');
   const updates = [
-    { path: '/artists',      keyA: 'artistId',      keyB: 'artistId',      body: { nome_artistico: `HACKED_${TS}` } },
+    { path: '/artists',      keyA: 'artistId',      keyB: 'artistId',      body: { stage_name: `HACKED_${TS}` } },
     { path: '/releases',     keyA: 'releaseId',     keyB: 'releaseId',     body: { title: `HACKED_${TS}` } },
     { path: '/contracts',    keyA: 'contractId',    keyB: 'contractId',    body: { titulo: `HACKED_${TS}` } },
     { path: '/events',       keyA: 'eventId',       keyB: 'eventId',       body: { title: `HACKED_${TS}` } },
@@ -473,7 +473,7 @@ async function phase37(): Promise<void> {
       detail = `artistId=${artistRef}`;
     } else if (typeof artistRef === 'object') {
       const id = (artistRef as any).id;
-      const name = (artistRef as any).nome_artistico ?? (artistRef as any).name;
+      const name = (artistRef as any).stage_name ?? (artistRef as any).name;
       isSame = (expectedArtistId && id === expectedArtistId) || (typeof name === 'string' && name.includes(tag));
       detail = `id=${id} name=${name}`;
     }

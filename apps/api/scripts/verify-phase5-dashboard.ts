@@ -110,7 +110,7 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
   const out: SeedSet = { artists: [], releases: [], contracts: [], events: [], tx: [], leads: [] };
 
   for (let i = 0; i < opts.artists; i++) {
-    const r = await call('POST', '/artists', { ...ctx, body: { nome_artistico: `${tag}_ARTIST_${i}_${TS}`, status: 'em_negociacao', spotify_ouvintes: i === 0 ? 12345 : undefined } });
+    const r = await call('POST', '/artists', { ...ctx, body: { stage_name: `${tag}_ARTIST_${i}_${TS}`, status: 'em_negociacao', spotify_listeners: i === 0 ? 12345 : undefined } });
     { const id = pickId(r.body); if (id) out.artists.push(id); else console.log(`  !  artist POST failed status=${r.status} body=${JSON.stringify(r.body).slice(0,150)}`); }
   }
   for (let i = 0; i < opts.releases; i++) {
@@ -315,15 +315,15 @@ async function f56(): Promise<void> {
   // Lists artists and validates the expected fields (does not require a dedicated "featured" endpoint — the frontend derives it)
   const r = await call('GET', '/artists?limit=200', { auth: TOKEN_A, tenant: TA });
   const list = Array.isArray(r.body?.data) ? r.body.data : (r.body?.data?.data ?? r.body?.items ?? []);
-  const myArtists = list.filter((a: any) => (a.nome_artistico ?? '').includes(`DASH_A_${TS}_ARTIST`));
+  const myArtists = list.filter((a: any) => (a.stage_name ?? '').includes(`DASH_A_${TS}_ARTIST`));
   expect('DASH_A_* artists listed', myArtists.length === OPTS_A.artists, `got=${myArtists.length}`);
 
-  // The artist with spotify_ouvintes=12345 (index 0) must keep it; others may have null or undefined
-  const a0 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_0_${TS}`));
-  expect('artistA0 returns spotify_ouvintes=12345 (real streams)', a0?.spotify_ouvintes === 12345, `got=${a0?.spotify_ouvintes}`);
-  const a1 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_1_${TS}`));
+  // The artist with spotify_listeners=12345 (index 0) must keep it; others may have null or undefined
+  const a0 = myArtists.find((a: any) => (a.stage_name ?? '').endsWith(`_0_${TS}`));
+  expect('artistA0 returns spotify_listeners=12345 (real streams)', a0?.spotify_listeners === 12345, `got=${a0?.spotify_listeners}`);
+  const a1 = myArtists.find((a: any) => (a.stage_name ?? '').endsWith(`_1_${TS}`));
   // Frontend hooks render undefined/null as "–"
-  expect('artistA1 does not fabricate streams (null/undefined)', a1?.spotify_ouvintes == null, `got=${a1?.spotify_ouvintes}`);
+  expect('artistA1 does not fabricate streams (null/undefined)', a1?.spotify_listeners == null, `got=${a1?.spotify_listeners}`);
 }
 
 // ============================================================================

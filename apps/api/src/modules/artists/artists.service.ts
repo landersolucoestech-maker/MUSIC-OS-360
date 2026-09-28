@@ -6,16 +6,17 @@ import { EncryptionService } from '../../core/security/encryption.service';
 import {
   REPORT_FORM_CONTRACTS,
   contractEncryptedFields,
-  contractMetadataFields,
 } from '../reports/form-contracts/report-form-contracts';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { PlanLimitService } from '../../core/billing/plan-limit.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { safeOrderBy } from '../../common/utils/safe-order-by';
 import type { CreateArtistDto } from './dto/create-artist.dto';
 import type { UpdateArtistDto } from './dto/update-artist.dto';
 import type { QueryArtistDto }  from './dto/query-artist.dto';
 import { ArtistStatus, ArtistRelationshipType } from '@music-os-360/types';
+import { ARTIST_METADATA_ONLY_FIELDS, canonicalizeArtistInput, canonicalizeArtistQuery } from './artist-legacy-fields';
 
 /** Contract statuses treated as "active" for artist-relationship classification
  * (relationship/relationshipStats). Contract status values are English since the
@@ -24,38 +25,54 @@ import { ArtistStatus, ArtistRelationshipType } from '@music-os-360/types';
  */
 const ACTIVE_CONTRACT_STATUSES_SQL = `('active','signed','in_force','expiring')`;
 
-// ── Single source of the DTO ↔ entity column mapping ─────────────────────────
+// ── Single source of the DTO ↔ entity column mapping (CZ-042) ────────────────
+// Every form field has its own physical column (product rule 2026-07-12); the
+// request key is the column name. `metadata` keeps only the metadata-only
+// fields (ARTIST_METADATA_ONLY_FIELDS).
 // NOT NULL columns: null in a PATCH is ignored (never overwritten with null).
-const REQUIRED_COLUMNS = ['nome_artistico', 'status'] as const;
+const REQUIRED_COLUMNS = ['stage_name', 'status'] as const;
 
 // Nullable columns: `undefined` = leave untouched; `null`/value = persist exactly.
 const NULLABLE_COLUMNS = [
-  'nome_civil', 'music_genre', 'notes', 'foto_url',
-  'manager_nome', 'produtor_executivo',
-  'agencia_booking', 'label_parceira', 'spotify_url', 'youtube_url',
-  'deezer_url', 'apple_music_url', 'soundcloud_url', 'contrato_id',
+  'full_name', 'music_genre', 'notes', 'photo_url', 'personal_documents_url', 'press_kit_url',
+  'birth_date', 'rg', 'address', 'bank_name', 'bank_branch', 'bank_account', 'pix_key', 'account_holder',
+  'spotify_url', 'youtube_url', 'soundcloud_url', 'apple_music_url', 'deezer_url',
+  'profile_type', 'internal_notes', 'contract_id', 'artist_slug', 'career_stage',
+  'agent_id', 'agent_name', 'agent_phone', 'agent_email',
+  'record_label_id', 'record_label_name', 'record_label_phone', 'record_label_email',
+  'record_label_contact_id', 'record_label_contact_name', 'record_label_contact_phone', 'record_label_contact_email',
+  'manager_name', 'executive_producer', 'booking_agency', 'partner_label',
+  // nullable jsonb
+  'linked_contacts', 'general_distributors', 'music_tags', 'relationships',
+  'selected_distributors', 'distributor_emails', 'company_selected_distributors', 'company_distributor_emails',
+  'team_contacts',
 ] as const;
 
+// Typed (date/uuid) columns: an empty string means "no value" (the form sends
+// '' for a blank input) — persisted as null instead of failing the cast.
+const EMPTY_AS_NULL_COLUMNS = new Set<string>(['birth_date', 'contract_id']);
+
 // jsonb NOT NULL DEFAULT [] columns: null becomes an empty list.
-const JSONB_LIST_COLUMNS = ['galeria_urls', 'documents', 'especialidades'] as const;
+const JSONB_LIST_COLUMNS = ['gallery_urls', 'documents', 'specialties'] as const;
 
 // SINGLE SOURCE: the sets of encrypted and metadata fields derive from the
 // central Reports contract (form-contracts) — the same one used by
-// export/import. There used to be a local list here with legacy keys
-// (instagram/tiktok without _url) that made create SILENTLY DROP real form
-// fields (instagram_url, tiktok_url, etc.).
+// export/import.
 const ENCRYPTED_FIELDS = new Set(Object.keys(contractEncryptedFields(REPORT_FORM_CONTRACTS.artists)));
 
-const METADATA_FIELDS = new Set([
-  ...Object.keys(contractMetadataFields(REPORT_FORM_CONTRACTS.artists)),
-  // A persistable form field that is NEVER exported (internal by policy).
-  'notas_internas',
-]);
+const METADATA_FIELDS: ReadonlySet<string> = new Set(ARTIST_METADATA_ONLY_FIELDS);
 
-/** Response shape: entity without ciphertext + flattened metadata + decrypted PII. */
+const columnValue = (column: string, value: unknown): unknown =>
+  EMPTY_AS_NULL_COLUMNS.has(column) && value === '' ? null : value;
+
+/** Metadata-only fields of the response (explicit allow-list — never the whole jsonb). */
+export type ArtistMetadataResponse = Partial<Record<(typeof ARTIST_METADATA_ONLY_FIELDS)[number], unknown>>;
+
+/** Response shape: entity columns without ciphertext/raw metadata + decrypted PII + allow-listed metadata. */
 export type ArtistResponse =
-  Omit<ArtistEntity, 'email_encrypted' | 'telefone_encrypted' | 'cpf_cnpj_encrypted' | 'manager_contato_encrypted'>
-  & Record<string, unknown>;
+  Omit<ArtistEntity, 'email_encrypted' | 'phone_encrypted' | 'cpf_cnpj_encrypted' | 'manager_contact_encrypted' | 'metadata'>
+  & ArtistMetadataResponse
+  & { email: string | null; phone: string | null; cpf_cnpj: string | null; manager_contact: string | null };
 
 @Injectable()
 export class ArtistsService {
@@ -76,24 +93,29 @@ export class ArtistsService {
   }
 
   /**
-   * Frontend response: spreads the metadata fields to the top level and
-   * DECRYPTS the PII fields back to the names the form uses
-   * (email/telefone/cpf_cnpj/manager_contato). Ciphertext never leaves the API.
-   * Without this, everything saved encrypted "disappears" on reload.
+   * Frontend response (CZ-042): the entity columns (canonical names, no
+   * ciphertext), the PII DECRYPTED under its wire names (email, phone,
+   * cpf_cnpj, manager_contact) and ONLY the allow-listed metadata-only keys.
+   * The raw `metadata` jsonb is never returned: it still holds the historical
+   * pre-CZ-042 Portuguese keys.
    */
   private toResponse(entity: ArtistEntity): ArtistResponse {
-    const meta = (entity.metadata ?? {}) as Record<string, unknown>;
     const {
-      email_encrypted, telefone_encrypted: phone_encrypted, cpf_cnpj_encrypted, manager_contato_encrypted: manager_contact_encrypted,
-      ...rest
+      email_encrypted, phone_encrypted, cpf_cnpj_encrypted, manager_contact_encrypted, metadata,
+      ...columns
     } = entity;
+    const meta = (metadata ?? {}) as Record<string, unknown>;
+    const metadataFields: Record<string, unknown> = {};
+    for (const key of ARTIST_METADATA_ONLY_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(meta, key)) metadataFields[key] = meta[key];
+    }
     return {
-      ...rest,
-      ...meta,
+      ...columns,
+      ...metadataFields,
       email:           this.safeDecrypt(email_encrypted, 'email'),
-      telefone:        this.safeDecrypt(phone_encrypted, 'telefone'),
+      phone:           this.safeDecrypt(phone_encrypted, 'phone'),
       cpf_cnpj:        this.safeDecrypt(cpf_cnpj_encrypted, 'cpf_cnpj'),
-      manager_contato: this.safeDecrypt(manager_contact_encrypted, 'manager_contato'),
+      manager_contact: this.safeDecrypt(manager_contact_encrypted, 'manager_contact'),
     };
   }
 
@@ -107,7 +129,8 @@ export class ArtistsService {
     }
   }
 
-  async list(tenantId: string, query: QueryArtistDto) {
+  async list(tenantId: string, rawQuery: QueryArtistDto) {
+    const query = canonicalizeArtistQuery(rawQuery);
     const qb = this.repo!
       .createQueryBuilder('a')
       .where('a.tenant_id = :tenantId', { tenantId })
@@ -116,7 +139,7 @@ export class ArtistsService {
     if (query.status) qb.andWhere('a.status = :status', { status: query.status });
     if (query.genre)  qb.andWhere('a.music_genre = :genre', { genre: query.genre });
     if (query.search) {
-      qb.andWhere('(a.nome_artistico ILIKE :search OR a.nome_civil ILIKE :search)', {
+      qb.andWhere('(a.stage_name ILIKE :search OR a.full_name ILIKE :search)', {
         search: `%${query.search}%`,
       });
     }
@@ -152,7 +175,7 @@ export class ArtistsService {
     // used by marketing-projects/contents/assets services.
     const orderField = safeOrderBy(
       query.orderBy,
-      ['nome_artistico', 'status', 'status_cadastro', 'created_at', 'updated_at'],
+      ['stage_name', 'status', 'registration_status', 'created_at', 'updated_at'],
       'created_at',
     );
     qb.orderBy(`a.${orderField}`, query.ascending ? 'ASC' : 'DESC')
@@ -265,44 +288,36 @@ export class ArtistsService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateArtistDto, orgId?: string): Promise<ArtistResponse> {
+    const input = canonicalizeArtistInput(dto as unknown as Record<string, unknown>);
+    const stageName = typeof input.stage_name === 'string' ? input.stage_name.trim() : '';
+    if (!stageName) {
+      throw new BadRequestException('Informe o nome artístico.');
+    }
     await this.planLimit.enforce(tenantId, orgId ?? tenantId, 'artists');
-
-    // Collect metadata extras from dto
-    const metadataExtras: Record<string, unknown> = {};
-    for (const field of METADATA_FIELDS) {
-      if ((dto as any)[field] !== undefined) metadataExtras[field] = (dto as any)[field];
+    if (input.contract_id !== undefined && input.contract_id !== null && input.contract_id !== '') {
+      await assertSameTenantFk(this.ds!, 'contracts', input.contract_id as string, tenantId, 'Contrato');
     }
 
-    const entity = this.repo!.create({
-      tenant_id:           tenantId,
-      nome_artistico:      dto.nome_artistico,
-      nome_civil:          dto.nome_civil          ?? null,
-      status:              dto.status ?? ArtistStatus.IN_NEGOTIATION,
-      music_genre:         dto.music_genre         ?? null,
-      notes:               dto.notes               ?? null,
-      foto_url:            dto.foto_url            ?? null,
-      galeria_urls:        (dto.galeria_urls        ?? []) as any,
-      documents:          (dto.documents          ?? []) as any,
-      manager_nome:        dto.manager_nome        ?? null,
-      manager_contato_encrypted: this.encryption.encryptNullable(dto.manager_contato),
-      produtor_executivo:  dto.produtor_executivo  ?? null,
-      agencia_booking:     dto.agencia_booking     ?? null,
-      label_parceira:      dto.label_parceira      ?? null,
-      spotify_url:         dto.spotify_url         ?? null,
-      youtube_url:         dto.youtube_url         ?? null,
-      deezer_url:          dto.deezer_url          ?? null,
-      apple_music_url:     dto.apple_music_url     ?? null,
-      soundcloud_url:      dto.soundcloud_url      ?? null,
-      contrato_id:         dto.contrato_id         ?? null,
-      especialidades:      (dto.especialidades     ?? []) as any,
-      metadata:            { ...(dto.metadata ?? {}), ...metadataExtras },
-      email_encrypted:     this.encryption.encryptNullable(dto.email),
-      telefone_encrypted:  this.encryption.encryptNullable(dto.telefone),
-      cpf_cnpj_encrypted:  this.encryption.encryptNullable(dto.cpf_cnpj),
-      created_by:          userId,
-      updated_by:          userId,
-    });
-    const saved = await (this.repo!.save(entity as any) as any);
+    const data: Record<string, unknown> = {
+      tenant_id:  tenantId,
+      stage_name: input.stage_name,
+      status:     input.status ?? ArtistStatus.IN_NEGOTIATION,
+      created_by: userId,
+      updated_by: userId,
+    };
+    for (const col of NULLABLE_COLUMNS) data[col] = columnValue(col, input[col]) ?? null;
+    for (const col of JSONB_LIST_COLUMNS) data[col] = input[col] ?? [];
+    for (const field of ENCRYPTED_FIELDS) {
+      data[`${field}_encrypted`] = this.encryption.encryptNullable(input[field] as string | null | undefined);
+    }
+    const metadataExtras: Record<string, unknown> = {};
+    for (const field of METADATA_FIELDS) {
+      if (input[field] !== undefined) metadataExtras[field] = input[field];
+    }
+    data.metadata = { ...((input.metadata as Record<string, unknown> | undefined) ?? {}), ...metadataExtras };
+
+    const entity = this.repo!.create(data as Partial<ArtistEntity>);
+    const saved = await this.repo!.save(entity);
 
     this.events.emitTyped(DOMAIN_EVENTS.ARTIST_CREATED, {
       tenantId,
@@ -310,11 +325,11 @@ export class ArtistsService {
       aggregateType: 'artist',
       aggregateId:   saved.id,
       payload: {
-        artistId:      saved.id,
+        artistId:  saved.id,
         tenantId,
-        nomeArtistico: saved.nome_artistico,
-        status:        saved.status,
-        createdBy:     userId,
+        stageName: saved.stage_name,
+        status:    saved.status,
+        createdBy: userId,
       },
     });
 
@@ -323,11 +338,17 @@ export class ArtistsService {
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateArtistDto): Promise<ArtistResponse> {
     const existing = await this.findById(tenantId, id);
+    const input = canonicalizeArtistInput(dto as unknown as Record<string, unknown>, { update: true });
+    // contract_id had no ownership check — an artist could reference another tenant's contract.
+    if (input.contract_id !== undefined && input.contract_id !== null && input.contract_id !== '') {
+      await assertSameTenantFk(this.ds!, 'contracts', input.contract_id as string, tenantId, 'Contrato');
+    }
 
     // ── Status transition validation ───────────────────────────────────────────
-    const statusChanging = dto.status != null && dto.status !== existing.status;
+    const newStatus = input.status as ArtistStatus | undefined;
+    const statusChanging = newStatus != null && newStatus !== existing.status;
     if (statusChanging) {
-      this.validateStatusTransition(existing, dto);
+      this.validateStatusTransition(existing, input, newStatus);
     }
 
     const updates: Record<string, unknown> = { updated_at: new Date(), updated_by: userId };
@@ -336,37 +357,37 @@ export class ArtistsService {
     // Direct columns, driven by the canonical lists (single source):
     // NOT NULL ignore null; nullable persist exactly what came (null clears);
     // NOT NULL jsonb lists normalize null → [].
-    const dtoRec = dto as Record<string, unknown>;
     for (const col of REQUIRED_COLUMNS) {
-      if (dtoRec[col] != null) { updates[col] = dtoRec[col]; changedFields.push(col); }
+      if (input[col] != null) { updates[col] = input[col]; changedFields.push(col); }
     }
     for (const col of NULLABLE_COLUMNS) {
-      if (dtoRec[col] !== undefined) { updates[col] = dtoRec[col] ?? null; changedFields.push(col); }
+      if (input[col] !== undefined) { updates[col] = columnValue(col, input[col]) ?? null; changedFields.push(col); }
     }
     for (const col of JSONB_LIST_COLUMNS) {
-      if (dtoRec[col] !== undefined) { updates[col] = dtoRec[col] ?? []; changedFields.push(col); }
+      if (input[col] !== undefined) { updates[col] = input[col] ?? []; changedFields.push(col); }
     }
 
-    // Encrypted fields (field name + _encrypted suffix, uniform for all 4)
+    // Encrypted fields (wire name + _encrypted suffix, uniform for all 4)
     for (const field of ENCRYPTED_FIELDS) {
-      if (dtoRec[field] !== undefined) {
-        updates[`${field}_encrypted`] = this.encryption.encryptNullable(dtoRec[field] as string | null);
+      if (input[field] !== undefined) {
+        updates[`${field}_encrypted`] = this.encryption.encryptNullable(input[field] as string | null);
         changedFields.push(field);
       }
     }
 
-    // Collect metadata-only fields
+    // Metadata-only fields
     const metadataExtras: Record<string, unknown> = {};
     for (const field of METADATA_FIELDS) {
-      if ((dto as any)[field] !== undefined) {
-        metadataExtras[field] = (dto as any)[field];
+      if (input[field] !== undefined) {
+        metadataExtras[field] = input[field];
         changedFields.push(field);
       }
     }
-    if (Object.keys(metadataExtras).length > 0 || dto.metadata != null) {
+    const metadataInput = input.metadata as Record<string, unknown> | null | undefined;
+    if (Object.keys(metadataExtras).length > 0 || metadataInput != null) {
       updates.metadata = {
         ...(existing.metadata ?? {}),
-        ...(dto.metadata ?? {}),
+        ...(metadataInput ?? {}),
         ...metadataExtras,
       };
     }
@@ -375,7 +396,7 @@ export class ArtistsService {
       this.repo!,
       { id, tenant_id: tenantId } as any,
       updates as any,
-      dto.expectedUpdatedAt,
+      input.expectedUpdatedAt as string | undefined,
       'Este artista foi alterado por outro usuário desde que você o carregou. Recarregue e tente novamente.',
     );
     const result = await this.findById(tenantId, id);
@@ -388,11 +409,11 @@ export class ArtistsService {
         aggregateType: 'artist',
         aggregateId:   id,
         payload: {
-          artistId:      id,
+          artistId:  id,
           tenantId,
-          nomeArtistico: result.nome_artistico,
+          stageName: result.stage_name,
           changedFields,
-          updatedBy:     userId,
+          updatedBy: userId,
         },
       });
     }
@@ -407,9 +428,9 @@ export class ArtistsService {
         payload: {
           artistId:       id,
           tenantId,
-          nomeArtistico:  result.nome_artistico,
+          stageName:      result.stage_name,
           previousStatus: existing.status,
-          newStatus:      dto.status!,
+          newStatus,
           changedBy:      userId,
         },
       });
@@ -431,10 +452,10 @@ export class ArtistsService {
       aggregateType: 'artist',
       aggregateId:   id,
       payload: {
-        artistId:      id,
+        artistId:  id,
         tenantId,
-        nomeArtistico: existing.nome_artistico,
-        deletedBy:     userId,
+        stageName: existing.stage_name,
+        deletedBy: userId,
       },
     });
 
@@ -443,24 +464,22 @@ export class ArtistsService {
 
   // ── Lifecycle validation ─────────────────────────────────────────────────────
 
-  private validateStatusTransition(existing: ArtistEntity, dto: UpdateArtistDto): void {
-    const newStatus = dto.status!;
-
+  private validateStatusTransition(existing: ArtistEntity, input: Record<string, unknown>, newStatus: ArtistStatus): void {
     if (newStatus === ArtistStatus.ACTIVE) {
-      const genre      = dto.music_genre ?? existing.music_genre;
-      const hasEmail    = (dto as any).email    != null || existing.email_encrypted    != null;
-      const hasPhone = (dto as any).telefone != null || existing.telefone_encrypted != null;
+      const genre    = input.music_genre ?? existing.music_genre;
+      const hasEmail = input.email != null || existing.email_encrypted != null;
+      const hasPhone = input.phone != null || existing.phone_encrypted != null;
 
       const errors: string[] = [];
-      if (!genre)                  errors.push('music_genre obrigatório para ativar artista');
-      if (!hasEmail && !hasPhone) errors.push('email ou telefone obrigatório para ativar artista');
+      if (!genre)                 errors.push('Gênero musical obrigatório para ativar o artista');
+      if (!hasEmail && !hasPhone) errors.push('Informe e-mail ou telefone para ativar o artista');
 
       if (errors.length > 0) throw new BadRequestException(errors.join('; '));
     }
 
-    // signed: contrato_id must be provided in the update or already exist
+    // signed: a contract must be linked in the update or already exist
     if (newStatus === ArtistStatus.SIGNED) {
-      const contractId = dto.contrato_id ?? existing.contrato_id;
+      const contractId = columnValue('contract_id', input.contract_id) ?? existing.contract_id;
       if (!contractId) {
         throw new BadRequestException('Vincule um contrato para marcar o artista como contratado.');
       }

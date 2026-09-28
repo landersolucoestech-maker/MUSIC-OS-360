@@ -130,7 +130,7 @@ async function main() {
   const tag = `PROD_SMOKE_${TS}`;
   const cli = await call('POST', '/clients', { name: `${tag}_CLIENT`, type: 'company' });
   ok('POST /clients', [200,201].includes(cli.status));
-  const art = await call('POST', '/artists', { nome_artistico: `${tag}_ARTIST` });
+  const art = await call('POST', '/artists', { stage_name: `${tag}_ARTIST` });
   ok('POST /artists', [200,201].includes(art.status));
   const artistId = art.body?.data?.id ?? art.body?.id;
   const rel = await call('POST', '/releases', { title: `${tag}_RELEASE`, type: 'single', artistId });
@@ -154,7 +154,7 @@ async function main() {
   if (artistId) {
     const reread = await call('GET', `/artists/${artistId}`);
     ok('Artist persisted (GET by id) → 200', reread.status === 200);
-    ok('Artist keeps its name', reread.body?.data?.nome_artistico === `${tag}_ARTIST`);
+    ok('Artist keeps its name', reread.body?.data?.stage_name === `${tag}_ARTIST`);
   }
 
   console.log('\n── RESULT ──');

@@ -50,8 +50,8 @@ describe('AI Skill fallback copy carries no technical values', () => {
   });
 
   it('contact-operations: no field key in the gap reason', () => {
-    const out = parseContactOperationsResponse(NOT_JSON, { clientName: 'Loja X', clientCategory: 'varejo', clientTipoPessoa: 'pj' });
+    const out = parseContactOperationsResponse(NOT_JSON, { clientName: 'Loja X', clientCategory: 'varejo', clientPersonType: 'pj' });
     expect(allText(out.dataGaps)).toContain('Nome do responsável não informado');
-    expect(allText(out)).not.toContain('responsavelNome');
+    expect(allText(out)).not.toContain('responsibleName');
   });
 });

@@ -76,7 +76,7 @@ describe('ClientsService — encryption', () => {
       const saved = (repo.save as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
       expect(saved['email']).toBeUndefined();
       expect(saved['email_encrypted']).toBeDefined();
-      expect(saved['telefone_encrypted']).toBeDefined();
+      expect(saved['phone_encrypted']).toBeDefined();
       expect(saved['cpf_cnpj_encrypted']).toBeDefined();
     });
 
@@ -91,33 +91,33 @@ describe('ClientsService — encryption', () => {
     });
   });
 
-  describe('priority (GAP-11: prioridade_contato is a real column, must round-trip)', () => {
-    it('maps CreateClientDto.priority onto the prioridade_contato column on create', async () => {
+  describe('priority (GAP-11: priority is a real column, must round-trip)', () => {
+    it('maps CreateClientDto.priority onto the priority column on create', async () => {
       const { svc, repo } = makeService();
 
       await svc.create('tenant-1', 'user-1', { name: 'Alice', priority: 'strategic' } as any);
 
       const saved = (repo.save as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
-      expect(saved['prioridade_contato']).toBe('strategic');
+      expect(saved['priority']).toBe('strategic');
     });
 
-    it('does not touch prioridade_contato when priority is omitted', async () => {
+    it('does not touch priority when it is omitted', async () => {
       const { svc, repo } = makeService();
 
       await svc.create('tenant-1', 'user-1', { name: 'Bob' } as any);
 
       const saved = (repo.save as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
-      expect(saved['prioridade_contato']).toBeUndefined();
+      expect(saved['priority']).toBeUndefined();
     });
 
-    it('returns the persisted prioridade_contato as-is on read (mapClient passthrough)', async () => {
+    it('returns the persisted priority as-is on read (mapClient passthrough)', async () => {
       const { svc } = makeService([
-        { id: 'uuid-1', tenant_id: 'tenant-1', name: 'Bob', prioridade_contato: 'high' },
+        { id: 'uuid-1', tenant_id: 'tenant-1', name: 'Bob', priority: 'high' },
       ]);
 
       const result = await svc.findById('tenant-1', 'uuid-1') as Record<string, unknown>;
 
-      expect(result['prioridade_contato']).toBe('high');
+      expect(result['priority']).toBe('high');
     });
   });
 
@@ -130,7 +130,7 @@ describe('ClientsService — encryption', () => {
           tenant_id:          'tenant-1',
           name:               'Bob',
           email_encrypted:    encryptedEmail,
-          telefone_encrypted: null,
+          phone_encrypted: null,
           cpf_cnpj_encrypted: null,
         },
       ]);
@@ -139,7 +139,7 @@ describe('ClientsService — encryption', () => {
 
       expect(result['email']).toBe('bob@example.com');
       expect(result['email_encrypted']).toBeUndefined();
-      expect(result['telefone_encrypted']).toBeUndefined();
+      expect(result['phone_encrypted']).toBeUndefined();
       expect(result['cpf_cnpj_encrypted']).toBeUndefined();
     });
 
@@ -150,7 +150,7 @@ describe('ClientsService — encryption', () => {
           tenant_id:          'tenant-1',
           name:               'Charlie',
           email_encrypted:    null,
-          telefone_encrypted: null,
+          phone_encrypted: null,
           cpf_cnpj_encrypted: null,
         },
       ]);
@@ -159,7 +159,8 @@ describe('ClientsService — encryption', () => {
 
       expect(result['email']).toBeNull();
       expect(result['phone']).toBeNull();
-      expect(result['document']).toBeNull();
+      expect(result['cpf_cnpj']).toBeNull();
+      expect(result).not.toHaveProperty('metadata');
     });
   });
 
@@ -167,7 +168,7 @@ describe('ClientsService — encryption', () => {
     it('re-encrypts PII fields when provided in update payload', async () => {
       const existing = {
         id: 'uuid-3', tenant_id: 'tenant-1', name: 'Diana',
-        email_encrypted: null, telefone_encrypted: null, cpf_cnpj_encrypted: null,
+        email_encrypted: null, phone_encrypted: null, cpf_cnpj_encrypted: null,
       };
       const { svc, repo, encryption } = makeService([existing]);
 
@@ -188,7 +189,7 @@ describe('ClientsService — encryption', () => {
     it('does not touch encrypted field when PII key absent from dto', async () => {
       const existing = {
         id: 'uuid-4', tenant_id: 'tenant-1', name: 'Eve',
-        email_encrypted: 'enc:v1:existing', telefone_encrypted: null, cpf_cnpj_encrypted: null,
+        email_encrypted: 'enc:v1:existing', phone_encrypted: null, cpf_cnpj_encrypted: null,
       };
       const { svc, repo, encryption } = makeService([existing]);
       (repo._qb['getOne'] as jest.Mock).mockImplementation(async () => existing);
@@ -214,7 +215,7 @@ describe('ClientsService — encryption', () => {
     it('soft-deletes client by setting deleted_at', async () => {
       const existing = {
         id: 'uuid-5', tenant_id: 'tenant-1', name: 'Frank',
-        email_encrypted: null, telefone_encrypted: null, cpf_cnpj_encrypted: null,
+        email_encrypted: null, phone_encrypted: null, cpf_cnpj_encrypted: null,
       };
       const { svc, repo } = makeService([existing]);
       (repo._qb['getOne'] as jest.Mock).mockImplementation(async () => existing);
@@ -231,7 +232,7 @@ describe('ClientsService — encryption', () => {
     const NOW = new Date('2026-08-14T12:00:00.000Z');
     const existing = {
       id: 'uuid-6', tenant_id: 'tenant-1', name: 'Gustavo',
-      email_encrypted: null, telefone_encrypted: null, cpf_cnpj_encrypted: null,
+      email_encrypted: null, phone_encrypted: null, cpf_cnpj_encrypted: null,
       updated_at: NOW,
     };
 
@@ -278,7 +279,7 @@ describe('ClientsService — encryption', () => {
   });
 
   describe('create — CRM fields (Part 79: Contact = Client, same physical table)', () => {
-    it('maps city/state/instagram/zipCode/responsible/notes to the real physical columns', async () => {
+    it('maps city/state/instagram and the deprecated zipCode/responsible keys to the canonical columns', async () => {
       const { svc, repo } = makeService();
 
       await svc.create('tenant-1', 'user-1', {
@@ -296,8 +297,8 @@ describe('ClientsService — encryption', () => {
       expect(saved['city']).toBe('Sao Paulo');
       expect(saved['state']).toBe('SP');
       expect(saved['instagram']).toBe('@auroralive');
-      expect(saved['cep']).toBe('01000-000');
-      expect(saved['responsavel_nome']).toBe('Operacoes');
+      expect(saved['zip_code']).toBe('01000-000');
+      expect(saved['responsible_name']).toBe('Operacoes');
       expect(saved['notes']).toBe('Venue estratégico');
       // Never reintroduces the columns removed by the canonical migration.
       expect(saved['segmento']).toBeUndefined();

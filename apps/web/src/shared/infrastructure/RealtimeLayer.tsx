@@ -65,7 +65,8 @@ function RealtimeSyncAndNotify() {
 
   // ── Toasts for domain events ─────────────────────────────────────────────
   useWsEvent('artist.created', (d) => {
-    const label = (d as { nome_artistico?: string }).nome_artistico;
+    // ARTIST_* event payloads carry `stageName` (CZ-042).
+    const label = (d as { stageName?: string }).stageName;
     toast.success('Artista cadastrado', {
       description: label ? `"${label}" foi adicionado ao roster` : undefined,
     });

@@ -44,6 +44,7 @@ export function getTenantId(): string | null {
 
 export const TABLE_ENDPOINT: Record<string, string> = {
   artistas: "/artists",
+  artists: "/artists",
   obras: "/works",
   fonogramas: "/phonograms",
   shares: "/shares",

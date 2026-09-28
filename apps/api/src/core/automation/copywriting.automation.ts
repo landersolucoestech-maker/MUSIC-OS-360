@@ -105,7 +105,7 @@ export class CopywritingAutomation {
     const rows = (await this.ds.query(
       `SELECT t.title, t.description, t.kind,
               p.title AS project_title,
-              a.nome_artistico AS artist_name
+              a.stage_name AS artist_name
          FROM marketing_tasks t
          LEFT JOIN marketing_projects p
            ON p.id = t.marketing_project_id AND p.tenant_id = t.tenant_id AND p.deleted_at IS NULL

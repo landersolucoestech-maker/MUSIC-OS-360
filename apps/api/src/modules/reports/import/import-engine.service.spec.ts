@@ -10,18 +10,18 @@ import type { ReportEntityDefinition } from '../definitions/report-entity-defini
 
 const DEF: ReportEntityDefinition = {
   entityName: 'ArtistEntity', tableName: 'artists', category: EntityCategory.REPORTABLE,
-  identityColumn: 'nome_artistico', displayColumn: 'nome_artistico', dateColumn: 'created_at',
-  exportableColumns: ['nome_artistico', 'email', 'status', 'categoria'],
-  importableColumns: ['nome_artistico', 'email', 'status', 'categoria'],
-  filterableColumns: ['status'], sortableColumns: ['nome_artistico'], searchableColumns: ['nome_artistico'],
-  sensitiveColumns: ['cpf_encrypted'], requiredImportColumns: ['nome_artistico'],
+  identityColumn: 'stage_name', displayColumn: 'stage_name', dateColumn: 'created_at',
+  exportableColumns: ['stage_name', 'email', 'status', 'categoria'],
+  importableColumns: ['stage_name', 'email', 'status', 'categoria'],
+  filterableColumns: ['status'], sortableColumns: ['stage_name'], searchableColumns: ['stage_name'],
+  sensitiveColumns: ['cpf_encrypted'], requiredImportColumns: ['stage_name'],
   supportsExport: true, supportsImport: true,
 };
 
 const REPORT = {
   tableName: 'artists', label: 'Artistas', reportable: true, hasSoftDelete: true,
   columns: [
-    { name: 'nome_artistico', type: 'String', isEnum: false, nullable: false, hasDefault: false },
+    { name: 'stage_name', type: 'String', isEnum: false, nullable: false, hasDefault: false },
     { name: 'email', type: 'String', isEnum: false, nullable: true, hasDefault: false },
     { name: 'status', type: 'String', isEnum: true, enumValues: ['ativo', 'inativo'], nullable: true, hasDefault: false },
     { name: 'cpf_encrypted', type: 'String', isEnum: false, nullable: true, hasDefault: false },
@@ -50,11 +50,11 @@ describe('ImportEngineService — single-sheet XLSX', () => {
       'artists', workbook('Artistas', [['Nome artístico', 'E-mail', 'Situação', 'Categoria'], ['João', 'joao@x.com', 'ativo', 'solo']]), 'tenant-1',
     );
     expect(result.validRows).toBe(1);
-    expect(result.rows[0].data).toMatchObject({ nome_artistico: 'João', email: 'joao@x.com', status: 'ativo', categoria: 'solo' });
+    expect(result.rows[0].data).toMatchObject({ stage_name: 'João', email: 'joao@x.com', status: 'ativo', categoria: 'solo' });
   });
 
   it('rejects missing or empty required column', async () => {
-    const defWithRequiredCategory = { ...DEF, requiredImportColumns: ['nome_artistico', 'categoria'] };
+    const defWithRequiredCategory = { ...DEF, requiredImportColumns: ['stage_name', 'categoria'] };
     const absent = await makeEngine({ def: defWithRequiredCategory }).validateFile(
       'artists', workbook('Artistas', [['Nome artístico'], ['Ana']]), 't',
     );
@@ -112,7 +112,7 @@ describe('ImportEngineService — single-sheet XLSX', () => {
       't',
     );
     expect(result.rows[0].data).toEqual({
-      categoria: 'solo', status: 'ativo', email: 'joao@x.com', nome_artistico: 'João',
+      categoria: 'solo', status: 'ativo', email: 'joao@x.com', stage_name: 'João',
     });
   });
 
@@ -129,7 +129,7 @@ describe('ImportEngineService — single-sheet XLSX', () => {
     );
     expect(result.unknownColumns).toEqual([]);
     expect(result.rows[0].data).toEqual(expect.objectContaining({
-      nome_artistico: expect.any(String),
+      stage_name: expect.any(String),
       email: expect.any(String),
       categoria: expect.any(String),
     }));

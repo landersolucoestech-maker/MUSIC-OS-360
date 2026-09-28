@@ -102,12 +102,25 @@ export function canonicalWorkParticipantRole(role: unknown): string {
 }
 
 /**
+ * Deprecated keys an EDIT from a pre-CZ-039 build always sends with a value it
+ * could not have read (the response carries only canonical names): its form
+ * defaults (criada_por_ia/instrumental false, tipo_obra 'referencia') and an
+ * empty participant list. On update they are dropped instead of overwriting
+ * the stored canonical data (contract review of 353a967, F1).
+ */
+const UNREADABLE_ON_EDIT = ['criada_por_ia', 'instrumental', 'tipo_obra'] as const;
+
+/**
  * Maps every deprecated CZ-039 name, value and nested key of a work payload to
  * its canonical form. The Portuguese duplicates of registry fields are
  * converted to the registry representation (language code, booleans).
  */
-export function canonicalizeWorkInput<T extends object>(input: T): T {
-  const raw = input as Record<string, unknown>;
+export function canonicalizeWorkInput<T extends object>(input: T, options: { update?: boolean } = {}): T {
+  const raw = { ...(input as Record<string, unknown>) };
+  if (options.update) {
+    for (const key of UNREADABLE_ON_EDIT) delete raw[key];
+    if (Array.isArray(raw['participantes']) && raw['participantes'].length === 0) delete raw['participantes'];
+  }
   const legacyInstrumental = raw['instrumental'];
   const legacyLanguage = raw['idioma'];
   const out = applyDeprecatedFieldAliases(raw, WORK_DEPRECATED_FIELDS);

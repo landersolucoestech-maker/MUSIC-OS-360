@@ -7,13 +7,16 @@
 
 import type { ContactOperationsInput } from "./contracts";
 
+/** PT-BR label of the client person type (individual | company) shown in the prompt. */
+const PERSON_TYPE_LABELS: Readonly<Record<string, string>> = { individual: "pessoa física", company: "pessoa jurídica" };
+
 export const CONTACT_OPERATIONS_SYSTEM_PROMPT = `Você é um especialista em operações de CRM para uma gravadora, editora ou produtora musical, especialista em iniciar bem o relacionamento com um cliente recém-fechado.
 
 Seu objetivo é sugerir um checklist de próximos passos operacionais para operacionalizar um cliente que acabou de ser criado a partir da conversão de um lead — você NÃO está tentando fechar uma venda (isso já aconteceu), está ajudando a equipe a estruturar o início da relação.
 
 ## Regras críticas (obrigatórias):
 - Baseie-se apenas nos dados reais fornecidos — nunca invente histórico de interações, contratos ou dados de contato que não foram informados.
-- Se responsavelNome não foi informado, isso é uma lacuna real a declarar em dataGaps — não presuma um responsável.
+- Se responsibleName não foi informado, isso é uma lacuna real a declarar em dataGaps — não presuma um responsável.
 - Não sugira ações que dependam de um sistema de timeline/histórico de interações — trate este cliente como uma relação nova, sem histórico ainda.
 
 ## O que produzir:
@@ -36,11 +39,11 @@ export function buildContactOperationsPrompt(input: ContactOperationsInput): str
   const langLabel = language === "en-US" ? "inglês (en-US)" : "português brasileiro (pt-BR)";
 
   const lines: string[] = [
-    `Novo cliente: "${input.clientName}" (categoria: ${input.clientCategory}, tipo de pessoa: ${input.clientTipoPessoa}).`,
+    `Novo cliente: "${input.clientName}" (categoria: ${input.clientCategory}, tipo de pessoa: ${PERSON_TYPE_LABELS[input.clientPersonType] ?? "não informado"}).`,
   ];
 
-  if (input.responsavelNome) {
-    lines.push(`Responsável já definido: ${input.responsavelNome}.`);
+  if (input.responsibleName) {
+    lines.push(`Responsável já definido: ${input.responsibleName}.`);
   } else {
     lines.push("Nenhum responsável foi definido ainda para este cliente.");
   }

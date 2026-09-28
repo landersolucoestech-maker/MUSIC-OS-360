@@ -8,6 +8,7 @@
 import { Injectable } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { getFieldLabelPtBr } from '../i18n/field-labels.pt-br';
+import { exportValueLabel } from '../i18n/value-labels.pt-br';
 
 export interface ExportColumnHeader {
   key: string;
@@ -46,7 +47,10 @@ export function sanitizeExcelCellValue(value: unknown, context: CellContext): st
     return '';
   }
   let text: string;
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T?/.test(value)) {
+  const enumLabel = exportValueLabel(context.entity, context.column, value);
+  if (enumLabel !== null) {
+    text = enumLabel;
+  } else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T?/.test(value)) {
     const d = new Date(value);
     text = Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('pt-BR');
   } else {

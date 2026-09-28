@@ -64,7 +64,7 @@ describe('P2-9 event handlers context propagation', () => {
       type: DOMAIN_EVENTS.ARTIST_CREATED,
       tenantId: 't1',
       userId: 'u1',
-      payload: { nomeArtistico: 'A' },
+      payload: { stageName: 'A' },
     } as any);
     expectTenantContext(dbContext);
     expect(manager.getRepository).toHaveBeenCalledWith(NotificationEntity);
@@ -73,7 +73,7 @@ describe('P2-9 event handlers context propagation', () => {
     await handler.onDomainNotificationEvent({
       type: DOMAIN_EVENTS.ARTIST_CREATED,
       userId: 'u1',
-      payload: { nomeArtistico: 'A' },
+      payload: { stageName: 'A' },
     } as any);
     expect(dbContext.runInTenantContext).toHaveBeenCalledTimes(1);
   });
@@ -204,7 +204,7 @@ describe('P2-9 event handlers context propagation', () => {
     await handler.onArtistStatusChanged({
       type: DOMAIN_EVENTS.ARTIST_STATUS_CHANGED,
       tenantId: 't1',
-      payload: { artistId: 'a1', tenantId: 't1', nomeArtistico: 'A', newStatus: 'signed', changedBy: 'u1' },
+      payload: { artistId: 'a1', tenantId: 't1', stageName: 'A', newStatus: 'signed', changedBy: 'u1' },
     } as any);
     expectTenantContext(dbContext);
     expect(taskRepo.save).toHaveBeenCalled();
@@ -260,7 +260,7 @@ describe('P2-9 event handlers context propagation', () => {
     expectTenantContext(dbContext);
     expect(artistRepo.update).toHaveBeenCalledWith(
       { id: 'a1', tenant_id: 't1' },
-      expect.objectContaining({ contrato_id: 'c1' }),
+      expect.objectContaining({ contract_id: 'c1' }),
     );
     expect(txRepo.save).toHaveBeenCalled();
   });
@@ -290,7 +290,7 @@ describe('P2-9 event handlers context propagation', () => {
     await handler.onArtistCreated({
       type: DOMAIN_EVENTS.ARTIST_CREATED,
       tenantId: 't1',
-      payload: { artistId: 'a1', tenantId: 't1', nomeArtistico: 'A' },
+      payload: { artistId: 'a1', tenantId: 't1', stageName: 'A' },
     } as any);
     expectTenantContext(dbContext);
     expect(manager.getRepository).toHaveBeenCalledWith(ArtistGoalEntity);

@@ -3,7 +3,7 @@
  * Enum values are rendered through the canonical labels, amounts as BRL and
  * dates as dd/mm/aaaa — never raw values or ids.
  */
-import { TRANSACTION_TYPE_LABELS_PT_BR, statusLabelPtBr } from '@music-os-360/types';
+import { TRANSACTION_TYPE_LABELS_PT_BR, statusLabelPtBr, transactionTypeRegisteredPtBr } from '@music-os-360/types';
 import { formatBrlPtBr, formatDatePtBr } from '../../../core/i18n/copy-format.pt-br';
 
 function amountSuffix(amount: unknown): string {
@@ -15,8 +15,10 @@ export const TRANSACTION_ALREADY_CANCELLED = 'Esta transação já foi cancelada
 export const TRANSACTION_CANCELLED_NOT_EDITABLE = 'Uma transação cancelada não pode ser editada.';
 
 export function transactionCreatedCopy(type: unknown, amount: unknown): string {
-  const label = TRANSACTION_TYPE_LABELS_PT_BR[type as keyof typeof TRANSACTION_TYPE_LABELS_PT_BR] ?? 'Transação';
-  return `${label}${amountSuffix(amount)} registrada`;
+  const label = TRANSACTION_TYPE_LABELS_PT_BR[type as keyof typeof TRANSACTION_TYPE_LABELS_PT_BR];
+  if (!label) return 'Transação registrada';
+  const [, participle] = transactionTypeRegisteredPtBr(type).split(' ');
+  return `${label}${amountSuffix(amount)} ${participle}`;
 }
 
 export function transactionCancelledCopy(amount: unknown): string {

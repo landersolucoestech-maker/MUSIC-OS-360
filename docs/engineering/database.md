@@ -45,3 +45,34 @@ description: Migrations, RLS, and schema conventions
   convention has one, and without running `db:check` to confirm no pending state.
 - `database-reviewer` is read-only by default; it reviews schema, indexes, constraints, RLS
   coverage, and migration safety before a migration is considered mergeable.
+
+## Technical-language rename migrations (CZ-037 … CZ-043, `20260928000015`+)
+
+These migrations rename columns **in place** (guarded, reversible) and remap persisted values to
+English. They are not expand/contract: the running API must match the schema.
+
+**Deploy order (mandatory):**
+1. Stop (or drain) the API/worker pods — an old API against a renamed column fails every query of
+   that table.
+2. Run the pre-flight queries below against the target database and resolve anything they return.
+3. `db:migrate`, then `db:check` (zero pending).
+4. Start the new API/worker build.
+5. Deploy the new web build. Until every browser reloads, an old web build keeps sending the
+   pre-rename payload: the API accepts it as deprecated input (`*-legacy-fields.ts`), drops the
+   values an old build could not have read on edit (form defaults, empty lists), and never lets an
+   empty deprecated value overwrite a canonical one.
+
+The reverse order (new web first) fails every save with 400/422 against the old API.
+
+**Pre-flight queries (read-only):**
+- Transactions whose `type` has no canonical equivalent — they would violate `chk_transactions_type`
+  (added `NOT VALID`) on their next UPDATE:
+  `SELECT type, count(*) FROM transactions WHERE lower(type) NOT IN ('receita','despesa','investimento','imposto','transferencia','revenue','expense','investment','tax','transfer') GROUP BY 1;`
+  Fix or map those rows, then `ALTER TABLE transactions VALIDATE CONSTRAINT chk_transactions_type;`.
+- Table sizes (the renames and remaps take an ACCESS EXCLUSIVE lock for the whole migration;
+  each migration sets `lock_timeout = '15s'`): `SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE relname IN ('works','phonograms','transactions','artists','clients','releases');`
+  Schedule a maintenance window when any of them is large.
+
+**Recovery:** every migration's `down()` reverses renames, keys and values (release statuses/types
+are restored from `metadata.legacy_status` / `legacy_type`). Metadata→column backfills are
+forward-only; the metadata copy is never deleted, so a rollback loses nothing.

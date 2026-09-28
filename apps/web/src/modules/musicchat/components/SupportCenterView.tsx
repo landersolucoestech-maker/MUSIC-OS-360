@@ -37,9 +37,9 @@ import { toast } from "sonner";
 import { LeadFormModal, type LeadFormPayload } from "@/modules/leads/modals/LeadFormModal";
 import { useLeads } from "@/modules/leads/hooks";
 import { leadFormToLead } from "@/modules/leads/lib/lead-form-mapper";
-import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContactFormModal";
+import { ContactFormModal, type ContactFormValues } from "@/modules/crm-relationships/modals/ContactFormModal";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { contactPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
+import { contactFormToContactInput } from "@/modules/crm-relationships/services/contacts.service";
 import { SchedulerFormModal } from "@/modules/events/components/SchedulerFormModal";
 import { useMusicChatAutomationSettings } from "@/modules/musicchat/hooks/useMusicChatAutomationSettings";
 import { useMusicChatTriageRules } from "@/modules/musicchat/hooks/useMusicChatTriageRules";
@@ -269,28 +269,19 @@ function buildLeadInitialValue(conversation: SupportConversation): Partial<LeadF
   };
 }
 
-function buildContactInitialValue(conversation: SupportConversation): Partial<ContactFormPayload> {
-  const priority = conversation.deadlineState === "overdue" ? "high" : "medium";
+function buildContactInitialValue(conversation: SupportConversation): Partial<ContactFormValues> {
   const responsible = conversation.assignee === "Sem responsável" ? "" : conversation.assignee;
   return {
-    tipo_pessoa: "pessoa_fisica",
-    nome_pf: conversation.customer,
+    personType: "individual",
+    individualName: conversation.customer,
     email: conversation.email,
-    telefone: conversation.phone || conversation.handle,
-    categoria: "",
-    status_contato: "active",
-    prioridade_contato: priority,
-    responsavel_nome: responsible,
-    interacoes: [],
+    phone: conversation.phone || conversation.handle,
+    category: "",
+    priority: conversation.deadlineState === "overdue" ? "high" : "medium",
+    responsibleName: responsible,
+    interactions: [],
     attachments: [],
-    observacoes: buildConversationContext(conversation),
-    nome: conversation.customer,
-    cpf_cnpj: "",
-    endereco: "",
-    endereco_completo: "",
-    responsavel: responsible,
-    status: "active",
-    prioridade: priority,
+    notes: buildConversationContext(conversation),
   };
 }
 
@@ -714,9 +705,9 @@ export function SupportCenterView({
     toast.success("Lead criado a partir da conversa.");
   };
 
-  const handleContactSubmit = async (payload: ContactFormPayload) => {
+  const handleContactSubmit = async (values: ContactFormValues) => {
     if (!selectedConversation) return;
-    await createContact(contactPayloadToContactData(payload));
+    await createContact(contactFormToContactInput(values));
     updateConversation(
       selectedConversation.id,
       (conversation) => ({

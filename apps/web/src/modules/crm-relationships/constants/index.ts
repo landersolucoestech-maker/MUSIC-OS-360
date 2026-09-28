@@ -1,11 +1,6 @@
-import type { ContactPriority, ContactStatus, ContactType, ContactEntityType } from "../types";
+import type { ContactPriority, ContactStatus, ContactType } from "../types";
 
 type ContactOption = { value: ContactType; label: string };
-
-export const contactEntityTypeOptions: Array<{ value: ContactEntityType; label: string }> = [
-  { value: "INDIVIDUAL", label: "Pessoa Física" },
-  { value: "COMPANY", label: "Pessoa Jurídica" },
-];
 
 export const individualContactTypeOptions: ContactOption[] = [
   { value: "A_AND_R", label: "A&R" },
@@ -131,10 +126,7 @@ export const contactTypeOptions: ContactOption[] = [
 export const contactStatusOptions: Array<{ value: ContactStatus; label: string }> = [
   { value: "active", label: "Ativo" },
   { value: "inactive", label: "Inativo" },
-  { value: "negotiating", label: "Negociando" },
-  { value: "blocked", label: "Bloqueado" },
-  { value: "favorite", label: "Favorito" },
-  { value: "blacklisted", label: "Lista de bloqueio" },
+  { value: "prospect", label: "Em prospecção" },
 ];
 
 export const contactPriorityOptions: Array<{ value: ContactPriority; label: string }> = [
@@ -150,26 +142,14 @@ export const relationshipUploadRules = {
   extensions: [".pdf", ".png", ".jpg", ".jpeg", ".webp", ".mp4", ".mov"],
 };
 
-/**
- * Returns the category list filtered by the entity type.
- * Accepts both "INDIVIDUAL"/"COMPANY" (the API standard) and
- * "pessoa_fisica"/"pessoa_juridica" (legacy) for backward compatibility.
- */
-export function getContactTypeOptionsByEntityType(
-  entityType?: ContactEntityType | string
-): ContactOption[] {
-  if (entityType === "INDIVIDUAL" || entityType === "pessoa_fisica") {
-    return individualContactTypeOptions;
-  }
-  if (entityType === "COMPANY" || entityType === "pessoa_juridica") {
-    return companyContactTypeOptions;
-  }
-  return [];
-}
+/** PT-BR fallback for a stored value outside the option catalog (never the raw value). */
+export const UNKNOWN_OPTION_LABEL = "Não identificado";
 
+/** PT-BR label of `value`; "—" when empty, UNKNOWN_OPTION_LABEL when outside the catalog. */
 export function labelFor<T extends string>(
   options: Array<{ value: T; label: string }>,
   value?: T | string
 ) {
-  return options.find((option) => option.value === value)?.label ?? String(value ?? "-");
+  if (value == null || value === "") return "—";
+  return options.find((option) => option.value === value)?.label ?? UNKNOWN_OPTION_LABEL;
 }

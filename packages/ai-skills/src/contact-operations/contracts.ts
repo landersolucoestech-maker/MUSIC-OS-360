@@ -26,8 +26,8 @@ export type ContactOperationsLanguage = SkillLanguage;
 export interface ContactOperationsInput {
   clientName: string;
   clientCategory: string;
-  clientTipoPessoa: string;
-  responsavelNome?: string;
+  clientPersonType: string;
+  responsibleName?: string;
   sourceLeadId?: string;
   context?: string;
   language?: ContactOperationsLanguage;

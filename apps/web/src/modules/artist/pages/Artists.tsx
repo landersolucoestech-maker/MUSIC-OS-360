@@ -41,7 +41,7 @@ import { ArtistFormModal } from "@/modules/artist/components/ArtistFormModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { ArtistsSkeleton } from "@/shared/components/PageSkeletons";
 import { toast } from "sonner";
-import { SPECIALTY_LABELS } from "@/modules/artist/mappers";
+import { PROFILE_TYPE_LABELS, profileTypeLabel, specialtyLabel } from "@/modules/artist/mappers";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { ArtistRelationshipType } from "@music-os-360/types";
 import {
@@ -60,13 +60,6 @@ const RELATIONSHIP_BADGE: Record<ArtistRelationshipType, { label: string; status
   [ArtistRelationshipType.EXCLUSIVE]:   { label: "Exclusivo",    status: "exclusivo" },
   [ArtistRelationshipType.PARTNER]:     { label: "Parceiro",     status: "parceiro" },
   [ArtistRelationshipType.INDEPENDENT]: { label: "Independente", status: "sem_contrato" },
-};
-
-const PROFILE_LABELS: Record<string, string> = {
-  independente: "Independente",
-  gravadora: "Gravadora",
-  editora: "Editora",
-  com_empresario: "Com Empresário",
 };
 
 export default function Artists() {
@@ -104,13 +97,13 @@ export default function Artists() {
     genre: genreFilter !== "todos" ? genreFilter : undefined,
   });
 
-  // profileFilter (tipo_perfil) is not a mapped column on the TypeORM entity —
+  // profileFilter (profile_type) is not a server-side filter on the TypeORM entity —
   // client-side refinement applied only over the already-loaded page
   // (documented limitation; doesn't affect total/pagination, which stay exact).
   const pageItems = useMemo(() => {
     if (profileFilter === "todos") return pageItemsRaw;
     return pageItemsRaw.filter(
-      (a) => ((a.profileType as string | null | undefined) || "independente") === profileFilter,
+      (a) => ((a.profileType as string | null | undefined) || "independent") === profileFilter,
     );
   }, [pageItemsRaw, profileFilter]);
 
@@ -300,7 +293,7 @@ export default function Artists() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os Perfis</SelectItem>
-                {Object.entries(PROFILE_LABELS).sort(([, a], [, b]) => a.localeCompare(b, "pt-BR")).map(([value, label]) => (
+                {Object.entries(PROFILE_TYPE_LABELS).sort(([, a], [, b]) => a.localeCompare(b, "pt-BR")).map(([value, label]) => (
                   <SelectItem key={value} value={value}>{label}</SelectItem>
                 ))}
               </SelectContent>
@@ -421,7 +414,7 @@ export default function Artists() {
                               </div>
                               {Array.isArray(artist.specialties) && artist.specialties.length > 0 && (
                                 <p className="text-[11px] text-muted-foreground leading-tight">
-                                  {artist.specialties.map((e: string) => SPECIALTY_LABELS[e] ?? e).join(" · ")}
+                                  {artist.specialties.map((e: string) => specialtyLabel(e)).join(" · ")}
                                 </p>
                               )}
                               {artist.musicGenre && (
@@ -487,40 +480,39 @@ export default function Artists() {
                               <div className="space-y-0.5 text-xs">
                                 {(() => {
                                   const tp = artist.profileType as string | null | undefined;
-                                  if (tp === "com_empresario") {
+                                  if (tp === "managed") {
                                     return (
                                       <>
-                                        <p className="font-medium text-foreground"><span className="text-muted-foreground font-normal">Artista:</span> Com Empresário</p>
-                                        {artist.managerName && (
-                                          <p className="text-muted-foreground">{artist.managerName}</p>
+                                        <p className="font-medium text-foreground"><span className="text-muted-foreground font-normal">Artista:</span> {profileTypeLabel(tp)}</p>
+                                        {artist.agentName && (
+                                          <p className="text-muted-foreground">{artist.agentName}</p>
                                         )}
-                                        {artist.managerPhone && (
-                                          <p className="text-muted-foreground">{artist.managerPhone}</p>
+                                        {artist.agentPhone && (
+                                          <p className="text-muted-foreground">{artist.agentPhone}</p>
                                         )}
-                                        {artist.managerEmail && (
-                                          <p className="text-muted-foreground">{artist.managerEmail}</p>
+                                        {artist.agentEmail && (
+                                          <p className="text-muted-foreground">{artist.agentEmail}</p>
                                         )}
                                       </>
                                     );
                                   }
-                                  if (tp === "gravadora" || tp === "editora") {
-                                    const label = tp === "gravadora" ? "Gravadora" : "Editora";
+                                  if (tp === "record_label" || tp === "publisher") {
                                     return (
                                       <>
-                                        <p className="font-medium text-foreground"><span className="text-muted-foreground font-normal">Artista:</span> {label}</p>
-                                        {artist.labelName && (
-                                          <p className="text-muted-foreground">{artist.labelName}</p>
+                                        <p className="font-medium text-foreground"><span className="text-muted-foreground font-normal">Artista:</span> {profileTypeLabel(tp)}</p>
+                                        {artist.recordLabelName && (
+                                          <p className="text-muted-foreground">{artist.recordLabelName}</p>
                                         )}
-                                        {artist.labelResponsibleName && (
-                                          <p className="text-muted-foreground">{artist.labelResponsibleName}</p>
+                                        {artist.recordLabelContactName && (
+                                          <p className="text-muted-foreground">{artist.recordLabelContactName}</p>
                                         )}
-                                        {artist.labelPhone && (
-                                          <p className="text-muted-foreground">{artist.labelPhone}</p>
+                                        {artist.recordLabelPhone && (
+                                          <p className="text-muted-foreground">{artist.recordLabelPhone}</p>
                                         )}
                                       </>
                                     );
                                   }
-                                  return <p className="font-medium text-foreground"><span className="text-muted-foreground font-normal">Artista:</span> Independente</p>;
+                                  return <p className="font-medium text-foreground"><span className="text-muted-foreground font-normal">Artista:</span> {profileTypeLabel("independent")}</p>;
                                 })()}
                               </div>
 
@@ -529,7 +521,7 @@ export default function Artists() {
                                 <Button
                                   size="sm"
                                   className="h-7 text-xs gap-1.5"
-                                  onClick={() => setVision360Modal({ open: true, artist: artist as any })}
+                                  onClick={() => setVision360Modal({ open: true, artist })}
                                   data-testid={`button-vision360-${artist.id}`}
                                 >
                                   <Sparkles className="h-3.5 w-3.5" />
@@ -634,7 +626,7 @@ export default function Artists() {
       <ArtistVision360Modal
         open={vision360Modal.open}
         onOpenChange={(open) => setVision360Modal({ ...vision360Modal, open })}
-        artista={vision360Modal.artist as any}
+        artist={vision360Modal.artist ?? null}
       />
     </>
   );

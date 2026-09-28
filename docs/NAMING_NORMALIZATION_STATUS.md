@@ -95,6 +95,8 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-039 | Musical work | done | DONE | no |
 | CZ-040 | Phonogram | done | DONE | no |
 | CZ-041 | Financial transaction (ledger entry) | done | DONE | no |
+| CZ-042 | Artist | done | DONE | no |
+| CZ-043 | Client (CRM contact) | done | DONE | no |
 
-Concepts: 89. Renames: 0. Exceptions: 281. Blockers: 12.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 73, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 91. Renames: 0. Exceptions: 302. Blockers: 14.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 75, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

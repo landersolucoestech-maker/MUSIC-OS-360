@@ -242,7 +242,7 @@ export class AnalyticsService {
       cancelled_transactions_count:  parseInt(cancelledTxCount[0]?.cnt ?? '0'),
       invoices_by_status:            invoiceStatusMap,
       transactions_by_status:        txStatusMap,
-      transactions_by_tipo:          txTypeMap,
+      transactions_by_type:          txTypeMap,
       // Operational
       pending_tasks_count:           parseInt(pendingTasksCount[0]?.cnt ?? '0'),
       overdue_tasks_count:           parseInt(overdueTasksCount[0]?.cnt ?? '0'),

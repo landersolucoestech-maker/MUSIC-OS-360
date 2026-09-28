@@ -14,7 +14,7 @@
  * appointments"), releases/projects (to count per artist in the highlights).
  */
 import { useMemo } from "react";
-import { useArtists } from "@/modules/artist/hooks/useArtists";
+import { useArtists, type Artist } from "@/modules/artist/hooks/useArtists";
 import { useEvents, type EventWithRelations } from "@/modules/events/hooks/useEvents";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
@@ -30,6 +30,8 @@ interface FeaturedArtist {
   streams: number | null;
   projetos: number;
   photoUrl: string | null;
+  /** The full artist record — opened by the 360 view. */
+  artist: Artist;
 }
 
 interface ArtistsMetrics {
@@ -178,7 +180,8 @@ export function useMetrics(): UseMetricsReturn {
         lancamentos: releases,
         streams,
         projetos: projectsCount,
-        photoUrl: (a["foto_url"] as string | null) ?? null,
+        photoUrl: artist.photoUrl ?? null,
+        artist,
       };
     });
 

@@ -300,6 +300,8 @@ import { CanonicalizeWorksToEnglish20260928000018 } from './20260928000018_Canon
 import { CanonicalizeLegacyReleaseStatuses20260928000019 } from './20260928000019_CanonicalizeLegacyReleaseStatuses';
 import { CanonicalizePhonogramsToEnglish20260928000020 } from './20260928000020_CanonicalizePhonogramsToEnglish';
 import { CanonicalizeTransactionsToEnglish20260928000021 } from './20260928000021_CanonicalizeTransactionsToEnglish';
+import { CanonicalizeArtistsToEnglish20260928000022 } from './20260928000022_CanonicalizeArtistsToEnglish';
+import { CanonicalizeClientsToEnglish20260928000023 } from './20260928000023_CanonicalizeClientsToEnglish';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -611,4 +613,6 @@ export const ALL_MIGRATIONS = [
   CanonicalizeLegacyReleaseStatuses20260928000019,
   CanonicalizePhonogramsToEnglish20260928000020,
   CanonicalizeTransactionsToEnglish20260928000021,
+  CanonicalizeArtistsToEnglish20260928000022,
+  CanonicalizeClientsToEnglish20260928000023,
 ] as const;
