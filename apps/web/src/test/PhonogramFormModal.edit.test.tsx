@@ -27,8 +27,8 @@ vi.mock("@/modules/catalog/hooks/useWorks", () => {
       id: "obra-1",
       title: "Canção Vinculada",
       music_genre: "pop",
-      compositores: ["Alice"],
-      status: "registrado",
+      composer_names: ["Alice"],
+      status: "registered",
     },
   ];
   const stableReturn = {
@@ -79,7 +79,7 @@ vi.mock("@/shared/lib/storage", async () => {
       ...actual.storage,
       findById: vi.fn(async (table: string, id: string) => {
         if (table === "obras" && id === "obra-1") {
-          return { id: "obra-1", title: "Canção Vinculada", music_genre: "pop", compositores: ["Alice"], status: "registrado" };
+          return { id: "obra-1", title: "Canção Vinculada", music_genre: "pop", composer_names: ["Alice"], status: "registered" };
         }
         // Task J: an artist "outside the cap" — it would never be among the first 50
         // returned by an unfiltered useArtistas(); it is only reachable by a direct GET
@@ -100,7 +100,7 @@ vi.mock("@/shared/lib/storage", async () => {
                 id: "obra-99",
                 title: "Obra Rara",
                 music_genre: "pop",
-                compositores: [],
+                composer_names: [],
                 artist_id: "art-99",
               },
             ],
@@ -140,11 +140,28 @@ describe("PhonogramFormModal edit mode", () => {
     title: "Canção Vinculada",
     work_id: "obra-1",
     isrc: "BR-ABC-25-12345",
-    duration_text: "04:20",
-    gravadora: "Gravadora X",
-    produtores: ["Pedro", "Marta"],
-    status: "analise",
-    org_id: "org-1",
+    duration_seconds: 260,
+    record_label_name: "Gravadora X",
+    aggregator: "distrokid",
+    media_type: "physical",
+    recording_classification: "live",
+    country_of_recording: "BR",
+    publication_country: "ZZ",
+    recording_date: "2025-12-01T00:00:00.000Z",
+    participation: {
+      phonographic_producers: [
+        { id: "pp-1", name: "Pedro", percentage: "20" },
+        { id: "pp-2", name: "Marta", percentage: "21.7" },
+      ],
+      performers: [],
+      session_musicians: [],
+    },
+    status: "under_review",
+    // Pre-CZ-040 Portuguese fields must be ignored (no fallback reads).
+    gravadora: "Legado",
+    cod_ecad: "LEGACY-ECAD",
+    duracao_min: 9,
+    duracao_seg: 9,
   };
 
   it("pre-fills every field from the persisted fonograma row", async () => {
@@ -153,16 +170,18 @@ describe("PhonogramFormModal edit mode", () => {
         open={true}
         onOpenChange={() => {}}
         mode="edit"
-        fonograma={basePhonogram}
+        phonogram={basePhonogram}
       />
     );
 
     // Linked obra is hydrated
+    let linkedWorkTitle: HTMLElement | undefined;
     await waitFor(() => {
-      expect(screen.getByTestId("text-obra-vinculada-title")).toHaveTextContent(
-        "Canção Vinculada",
-      );
+      linkedWorkTitle = screen.getByTestId("text-obra-vinculada-title");
+      expect(linkedWorkTitle).toHaveTextContent("Canção Vinculada");
     });
+    // Composers of the linked work come from its canonical `composer_names` (CZ-039)
+    expect(linkedWorkTitle?.parentElement).toHaveTextContent("Alice");
 
     // ISRC parts
     expect(screen.getByDisplayValue("BR")).toBeInTheDocument();
@@ -174,7 +193,10 @@ describe("PhonogramFormModal edit mode", () => {
     expect(screen.getByTestId("input-duracao-minutos")).toHaveValue("4");
     expect(screen.getByTestId("input-duracao-segundos")).toHaveValue("20");
 
-    // Produtores carried over
+    // The legacy cod_ecad is not read
+    expect(screen.getByTestId("input-cod-ecad")).toHaveValue("");
+
+    // Phonographic producers read from the canonical participation
     const nameInputs = screen
       .getAllByPlaceholderText("Nome do participante")
       .map((el) => (el as HTMLInputElement).value);
@@ -187,7 +209,7 @@ describe("PhonogramFormModal edit mode", () => {
         open={true}
         onOpenChange={vi.fn()}
         mode="edit"
-        fonograma={basePhonogram}
+        phonogram={basePhonogram}
       />
     );
 
@@ -213,15 +235,30 @@ describe("PhonogramFormModal edit mode", () => {
     expect(callArg.id).toBe("fono-1");
     expect(callArg.work_id).toBe("obra-1");
     expect(callArg.isrc).toBe("BR-ABC-25-99999");
+    expect(callArg.duration_seconds).toBe(260);
     expect(callArg.duration_text).toBe("04:20");
-    // The merged form persists Gravadora X via the agregadora field (mapped from gravadora)
-    expect(callArg.agregadora).toBe("Gravadora X");
-    // Produtores from the legacy column survive the round-trip via the participacao JSON
-    const producerNames = (callArg.participacao?.produtorFonografico ?? []).map(
-      (p: { name: string }) => p.name,
-    );
-    expect(producerNames).toEqual(expect.arrayContaining(["Pedro", "Marta"]));
+    expect(callArg.record_label_name).toBe("Gravadora X");
+    expect(callArg.aggregator).toBe("distrokid");
+    expect(callArg.media_type).toBe("physical");
+    expect(callArg.recording_classification).toBe("live");
+    expect(callArg.country_of_recording).toBe("BR");
+    expect(callArg.publication_country).toBe("ZZ");
+    expect(callArg.recording_date).toBe("2025-12-01");
+    // Participation round-trips with the canonical category and item keys
+    expect(callArg.participation.phonographic_producers).toEqual([
+      { id: "pp-1", name: "Pedro", percentage: "20" },
+      { id: "pp-2", name: "Marta", percentage: "21.7" },
+    ]);
     expect(callArg.status).toBe("under_review");
+    // CZ-040: no pre-CZ-040 Portuguese key is ever sent
+    for (const legacy of [
+      "gravadora", "cod_ecad", "cod_entidade", "agregadora", "isrc_pais", "isrc_registrante", "isrc_ano",
+      "isrc_designacao", "criada_por_ia", "nacional", "pub_simultanea", "emissao", "midia", "classificacao",
+      "pais_publicacao", "pais_origem", "participacao", "arquivo_audio", "gravacao_original",
+      "data_lancamento", "duracao_min", "duracao_seg",
+    ]) {
+      expect(callArg).not.toHaveProperty(legacy);
+    }
     // Tenant isolation: org_id/orgId must NEVER be part of the payload the
     // frontend sends — the API derives the tenant from the authenticated
     // request context (see music-registration.mapper.ts). A client-supplied

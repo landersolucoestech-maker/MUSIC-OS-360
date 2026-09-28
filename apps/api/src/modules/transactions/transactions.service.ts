@@ -15,6 +15,7 @@ import {
   transactionStatusChangedCopy,
 } from './i18n/transaction-copy.pt-br';
 import type { QueryTransactionDto } from './dto/query-transaction.dto';
+import { canonicalTransactionType } from './transaction-legacy-fields';
 import type { TransactionDetailsDTO } from './dto/transaction-details.dto';
 import type {
   CreateTransactionDto,
@@ -36,10 +37,10 @@ const CANCELLED_STATUSES = new Set(['cancelled']);
  */
 export const UNCATEGORIZED_PLACEHOLDER = 'outros';
 
-/** finance_category_keyword_rules only covers RECEITA/DESPESA — other types (investimento, imposto, transferencia) are never eligible. */
-export function toRuleTransactionType(transactionType: unknown): 'RECEITA' | 'DESPESA' | null {
-  if (transactionType === 'receita') return 'RECEITA';
-  if (transactionType === 'despesa') return 'DESPESA';
+/** finance_category_keyword_rules only covers REVENUE/EXPENSE — other types (investment, tax, transfer) are never eligible. */
+export function toRuleTransactionType(transactionType: unknown): 'REVENUE' | 'EXPENSE' | null {
+  if (transactionType === 'revenue') return 'REVENUE';
+  if (transactionType === 'expense') return 'EXPENSE';
   return null;
 }
 
@@ -58,58 +59,75 @@ function toIso(value: Date | string | null | undefined): string | null {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
+/** Canonical request key -> column (CZ-041). Blank values persist as NULL. */
+const FIELD_TO_COLUMN: ReadonlyArray<[field: string, column: string]> = [
+  ['counterpartyType', 'counterparty_type'],
+  ['subcategory', 'subcategory'],
+  ['notes', 'notes'],
+  ['counterpartyName', 'counterparty_name'],
+  ['taxAuthority', 'tax_authority'],
+  ['costCenter', 'cost_center'],
+  ['referenceMonth', 'reference_month'],
+  ['sourceBankAccount', 'source_bank_account'],
+  ['destinationBankAccount', 'destination_bank_account'],
+  ['investmentItem', 'investment_item'],
+  ['travelReason', 'travel_reason'],
+  ['advertisingName', 'advertising_name'],
+  ['paymentMethod', 'payment_method'],
+  ['paymentType', 'payment_type'],
+  ['installmentInterval', 'installment_interval'],
+  ['firstInstallmentDate', 'first_installment_date'],
+  ['attachmentUrl', 'attachment_url'],
+  ['attachmentName', 'attachment_name'],
+  ['artistId', 'artist_id'],
+  ['projectId', 'project_id'],
+  ['contractId', 'contract_id'],
+  ['eventId', 'event_id'],
+];
+
 function buildPersistencePayload(
   tenantId: string,
   userId: string,
   dto: Partial<CreateTransactionDto | UpdateTransactionDto | PatchTransactionDto>,
   existing?: TransactionEntity,
 ): AnyRecord {
-  const currentMetadata = (existing?.metadata ?? {}) as AnyRecord;
-  const metadataKeys = [
-    'tipoCliente', 'subcategoria', 'formaPagamento', 'tipoPagamento',
-    'quantidadeParcelas', 'intervaloParcelas', 'dataPrimeiraParcela',
-    'artistaVinculado', 'projetoVinculado', 'contratoVinculado',
-    'eventoVinculado', 'fornecedorCliente', 'orgaoArrecadador',
-    'itemInvestimento', 'motivoViagem', 'advertisingName', 'observacao',
-    'anexoUrl', 'anexoNome',
-  ];
-  const metadata = { ...currentMetadata };
-  for (const key of metadataKeys) {
-    if ((dto as AnyRecord)[key] !== undefined) metadata[key] = (dto as AnyRecord)[key];
-  }
-
-  const payload: AnyRecord = { metadata, updated_by: userId };
+  const input = dto as AnyRecord;
+  const payload: AnyRecord = { updated_by: userId };
   if (!existing) {
     payload.tenant_id = tenantId;
     payload.created_by = userId;
-    // categoria is NOT NULL in the DB; the validator does not require it for `transferencia`,
+    // category is NOT NULL in the DB; the validator does not require it for `transfer`,
     // so we apply a defensive default on creation to avoid 23502 → 500.
-    payload.categoria = (dto.category && String(dto.category).trim()) || 'outros';
-  } else if (dto.category !== undefined) {
-    payload.categoria = dto.category || 'outros';
+    payload.category = (input.category && String(input.category).trim()) || UNCATEGORIZED_PLACEHOLDER;
+  } else if (input.category !== undefined) {
+    payload.category = input.category || UNCATEGORIZED_PLACEHOLDER;
   }
-  if (dto.tipoTransacao !== undefined) payload.type = dto.tipoTransacao;
-  if (dto.description !== undefined) payload.descricao = dto.description;
-  if (dto.amount !== undefined) payload.valor = String(dto.amount);
-  if (dto.dataTransacao !== undefined) payload.data = dto.dataTransacao;
-  if (dto.status !== undefined) payload.status = dto.status;
-  if ((dto as AnyRecord).artistaVinculado !== undefined) payload.artist_id = (dto as AnyRecord).artistaVinculado || null;
-  if ((dto as AnyRecord).contratoVinculado !== undefined) payload.contrato_id = (dto as AnyRecord).contratoVinculado || null;
-  if ((dto as AnyRecord).projetoVinculado !== undefined) payload.project_id = (dto as AnyRecord).projetoVinculado || null;
-  if ((dto as AnyRecord).anexoUrl !== undefined) payload.comprovante_url = (dto as AnyRecord).anexoUrl || null;
-  if ((dto as AnyRecord).observacao !== undefined) payload.referencia = (dto as AnyRecord).observacao || null;
+  if (input.transactionType !== undefined && input.transactionType !== null) payload.type = input.transactionType;
+  if (input.description !== undefined) payload.description = input.description;
+  if (input.amount !== undefined && input.amount !== null) payload.amount = String(input.amount);
+  if (input.transactionDate !== undefined && input.transactionDate !== null) payload.transaction_date = input.transactionDate;
+  if (input.status !== undefined && input.status !== null) payload.status = input.status;
+  for (const [field, column] of FIELD_TO_COLUMN) {
+    if (input[field] === undefined) continue;
+    const value = input[field];
+    payload[column] = value === '' ? null : value;
+  }
+  if (input.installmentCount !== undefined) {
+    const count = input.installmentCount === null ? NaN : parseInt(String(input.installmentCount), 10);
+    payload.installment_count = Number.isFinite(count) ? count : null;
+  }
   return payload;
 }
 
 export function toTransactionDetails(entity: TransactionEntity): TransactionDetailsDTO {
   const metadata = (entity.metadata ?? {}) as AnyRecord;
-  const amount = toNumber(entity.valor);
+  const amount = toNumber(entity.amount);
   const attachments = Array.isArray(metadata.attachments)
     ? metadata.attachments as Array<Record<string, unknown>>
-    : entity.comprovante_url
+    : entity.attachment_url
       ? [{
-          name: metadata.anexoNome ?? 'Comprovante',
-          url: entity.comprovante_url,
+          name: entity.attachment_name ?? 'Comprovante',
+          url: entity.attachment_url,
           type: metadata.attachmentType ?? null,
           size: metadata.attachmentSize ?? null,
         }]
@@ -119,30 +137,30 @@ export function toTransactionDetails(entity: TransactionEntity): TransactionDeta
     id: entity.id,
     type: entity.type,
     status: entity.status,
-    description: entity.descricao,
-    note: (metadata.observacao as string | undefined) ?? entity.referencia,
+    description: entity.description,
+    note: entity.notes,
     amount,
-    grossAmount: toNumber(metadata.grossAmount ?? metadata.valorBruto ?? amount),
-    netAmount: metadata.netAmount === undefined && metadata.valorLiquido === undefined ? amount : toNumber(metadata.netAmount ?? metadata.valorLiquido),
-    fees: metadata.fees === undefined && metadata.taxas === undefined ? null : toNumber(metadata.fees ?? metadata.taxas),
-    discount: metadata.discount === undefined && metadata.desconto === undefined ? null : toNumber(metadata.discount ?? metadata.desconto),
-    taxes: metadata.taxes === undefined && metadata.impostos === undefined ? null : toNumber(metadata.taxes ?? metadata.impostos),
-    interest: metadata.interest === undefined && metadata.juros === undefined ? null : toNumber(metadata.interest ?? metadata.juros),
-    fine: metadata.fine === undefined && metadata.multa === undefined ? null : toNumber(metadata.fine ?? metadata.multa),
+    grossAmount: toNumber(metadata.grossAmount ?? amount),
+    netAmount: metadata.netAmount === undefined ? amount : toNumber(metadata.netAmount),
+    fees: metadata.fees === undefined ? null : toNumber(metadata.fees),
+    discount: metadata.discount === undefined ? null : toNumber(metadata.discount),
+    taxes: metadata.taxes === undefined ? null : toNumber(metadata.taxes),
+    interest: metadata.interest === undefined ? null : toNumber(metadata.interest),
+    fine: metadata.fine === undefined ? null : toNumber(metadata.fine),
     currency: (metadata.currency as string | undefined) ?? 'BRL',
-    transactionDate: toIso(entity.data),
-    competence: metadata.competence as string | null | undefined,
+    transactionDate: toIso(entity.transaction_date),
+    competence: entity.reference_month,
     dueDate: metadata.dueDate as string | null | undefined,
     paidAt: metadata.paidAt as string | null | undefined,
     recurrence: metadata.recurrence as string | null | undefined,
-    paymentMethod: metadata.formaPagamento as string | null | undefined,
-    paymentType: metadata.tipoPagamento as string | null | undefined,
-    installments: metadata.quantidadeParcelas as number | string | null | undefined,
+    paymentMethod: entity.payment_method,
+    paymentType: entity.payment_type,
+    installments: entity.installment_count,
     installmentCurrent: metadata.installmentCurrent == null ? null : toNumber(metadata.installmentCurrent),
     bankAccount: metadata.bankAccount as Record<string, unknown> | string | null | undefined,
-    category: entity.categoria,
-    subcategory: metadata.subcategoria as string | null | undefined,
-    costCenter: metadata.costCenter as Record<string, unknown> | string | null | undefined,
+    category: entity.category,
+    subcategory: entity.subcategory,
+    costCenter: entity.cost_center,
     tags: Array.isArray(metadata.tags) ? metadata.tags as string[] : [],
     labels: Array.isArray(metadata.labels) ? metadata.labels as string[] : [],
     attachments,
@@ -152,11 +170,11 @@ export function toTransactionDetails(entity: TransactionEntity): TransactionDeta
     projectId: entity.project_id,
     campaign: metadata.campaign as Record<string, unknown> | null | undefined,
     contract: metadata.contract as Record<string, unknown> | null | undefined,
-    contractId: entity.contrato_id,
+    contractId: entity.contract_id,
     release: metadata.release as Record<string, unknown> | null | undefined,
     event: metadata.event as Record<string, unknown> | null | undefined,
-    linkedEventId: metadata.eventoVinculado as string | null | undefined,
-    supplierOrClient: metadata.fornecedorCliente as string | null | undefined,
+    linkedEventId: entity.event_id,
+    supplierOrClient: entity.counterparty_name,
     supplier: metadata.supplier as Record<string, unknown> | string | null | undefined,
     metadata,
     createdBy: entity.created_by,
@@ -187,12 +205,12 @@ export class TransactionsService {
       .andWhere('t.deleted_at IS NULL');
 
     if (q.status)     qb.andWhere('t.status = :status', { status: q.status });
-    if (q.type)       qb.andWhere('t.type = :type', { type: q.type });
-    if (q.category)   qb.andWhere('t.categoria = :categoria', { categoria: q.category });
+    if (q.type)       qb.andWhere('t.type = :type', { type: canonicalTransactionType(q.type) });
+    if (q.category)   qb.andWhere('t.category = :category', { category: q.category });
     if (q.artist_id) qb.andWhere('t.artist_id = :artistId', { artistId: q.artist_id });
-    if (q.dateFrom)   qb.andWhere('t.data >= :dateFrom', { dateFrom: q.dateFrom });
-    if (q.dateTo)     qb.andWhere('t.data <= :dateTo', { dateTo: q.dateTo });
-    if (q.search)     qb.andWhere('t.descricao ILIKE :search', { search: `%${q.search}%` });
+    if (q.dateFrom)   qb.andWhere('t.transaction_date >= :dateFrom', { dateFrom: q.dateFrom });
+    if (q.dateTo)     qb.andWhere('t.transaction_date <= :dateTo', { dateTo: q.dateTo });
+    if (q.search)     qb.andWhere('t.description ILIKE :search', { search: `%${q.search}%` });
 
     return qb;
   }
@@ -201,7 +219,7 @@ export class TransactionsService {
     const q = query as AnyRecord;
     const qb = this.baseQb(tenantId, query);
 
-    qb.orderBy('t.data', q.ascending ? 'ASC' : 'DESC')
+    qb.orderBy('t.transaction_date', q.ascending ? 'ASC' : 'DESC')
       .skip((q.offset as number) ?? 0)
       .take((q.limit as number) ?? 50);
 
@@ -222,7 +240,7 @@ export class TransactionsService {
       .select('t.type', 'type')
       .addSelect('t.status', 'status')
       .addSelect('COUNT(*)::int', 'cnt')
-      .addSelect('COALESCE(SUM(t.valor::numeric), 0)', 'sum')
+      .addSelect('COALESCE(SUM(t.amount::numeric), 0)', 'sum')
       .groupBy('t.type')
       .addGroupBy('t.status');
     const rows = await qb.getRawMany<{ type: string; status: string; cnt: string; sum: string }>();
@@ -243,7 +261,7 @@ export class TransactionsService {
   }
 
   /**
-   * find-4cd2f044: artist_id/contrato_id/project_id had no cross-tenant
+   * find-4cd2f044: artist_id/contract_id/project_id had no cross-tenant
    * ownership check — a transaction could silently reference another
    * tenant's artist/contract/project. Only validates fields actually
    * present in `payload` (omitted on update = "unchanged", already
@@ -252,14 +270,15 @@ export class TransactionsService {
   private async assertLinkedFks(tenantId: string, payload: AnyRecord): Promise<void> {
     const ds = this.repo!.manager.connection;
     if (payload.artist_id !== undefined) await assertSameTenantFk(ds, 'artists', payload.artist_id as string | undefined, tenantId, 'Artista');
-    if (payload.contrato_id !== undefined) await assertSameTenantFk(ds, 'contracts', payload.contrato_id as string | undefined, tenantId, 'Contrato');
+    if (payload.contract_id !== undefined) await assertSameTenantFk(ds, 'contracts', payload.contract_id as string | undefined, tenantId, 'Contrato');
     if (payload.project_id !== undefined) await assertSameTenantFk(ds, 'projects', payload.project_id as string | undefined, tenantId, 'Projeto');
+    if (payload.event_id !== undefined) await assertSameTenantFk(ds, 'events', payload.event_id as string | undefined, tenantId, 'Evento');
   }
 
   async create(tenantId: string, userId: string, dto: CreateTransactionDto): Promise<TransactionEntity> {
     const payload = buildPersistencePayload(tenantId, userId, dto);
     await this.assertLinkedFks(tenantId, payload);
-    payload.categoria = await this.resolveCategory(tenantId, dto, payload.categoria as string);
+    payload.category = await this.resolveCategory(tenantId, dto, payload.category as string);
     const entity = this.repo!.create(payload as Parameters<Repository<TransactionEntity>['create']>[0]);
     const saved = await this.repo!.save(entity as TransactionEntity);
 
@@ -274,10 +293,10 @@ export class TransactionsService {
         payload: {
           transactionId: saved.id,
           tenantId,
-          type:          saved.type ?? (dto as AnyRecord).tipoTransacao as string ?? '',
-          category:      saved.categoria ?? (dto as AnyRecord).category as string ?? '',
-          valor: amountText,
-          contratoId:    saved.contrato_id ?? null,
+          type:          saved.type ?? (dto as AnyRecord).transactionType as string ?? '',
+          category:      saved.category ?? (dto as AnyRecord).category as string ?? '',
+          amount:        amountText,
+          contractId:    saved.contract_id ?? null,
           artistId:     saved.artist_id ?? null,
           createdBy:     userId,
         },
@@ -291,7 +310,7 @@ export class TransactionsService {
           entity_id:    saved.id,
           action:       'created',
           description:  transactionCreatedCopy(saved.type, amountText),
-          metadata:     { type: saved.type, category: saved.categoria, valor: amountText },
+          metadata:     { type: saved.type, category: saved.category, amount: amountText },
         });
       } catch { /* non-critical */ }
     }
@@ -360,7 +379,7 @@ export class TransactionsService {
           transactionId: id,
           tenantId,
           type:          existing.type as string,
-          valor:         String(existing.valor),
+          amount:        String(existing.amount),
           cancelledBy:   userId,
           cancelledAt,
         },
@@ -373,8 +392,8 @@ export class TransactionsService {
           entity_type:  'transaction',
           entity_id:    id,
           action:       'cancelled',
-          description:  transactionCancelledCopy(existing.valor),
-          metadata:     { type: existing.type, valor: String(existing.valor), cancelledAt },
+          description:  transactionCancelledCopy(existing.amount),
+          metadata:     { type: existing.type, amount: String(existing.amount), cancelledAt },
         });
       } catch { /* non-critical */ }
     }
@@ -388,7 +407,7 @@ export class TransactionsService {
    * Task W — keyword auto-categorization on transaction creation
    * (covers manual creation and the OFX import, which reuses this same
    * endpoint). Acts only when the resolved category is the placeholder
-   * "outros" — any real category, chosen manually or by
+   * "outros" (an unchanged category slug) — any real category, chosen manually or by
    * any other flow, is never overwritten. Never crosses tenants (the rules
    * lookup is already scoped by tenantId). If there is no matching
    * rule, or the matcher is unavailable, keeps "outros".
@@ -402,7 +421,7 @@ export class TransactionsService {
       return currentCategory;
     }
 
-    const ruleType = toRuleTransactionType((dto as AnyRecord).tipoTransacao);
+    const ruleType = toRuleTransactionType((dto as AnyRecord).transactionType);
     const description = (dto as AnyRecord).description as string | undefined;
     if (!ruleType || !description || !this.financeCategoryRules) {
       return currentCategory;
@@ -432,7 +451,7 @@ export class TransactionsService {
     if (!requestedStatus || requestedStatus === before.status) return;
 
     const nowIso = new Date().toISOString();
-    const amountText  = String(after.valor);
+    const amountText  = String(after.amount);
 
     if (this.events) {
       this.events.emitTyped(DOMAIN_EVENTS.TRANSACTION_STATUS_CHANGED, {
@@ -444,7 +463,7 @@ export class TransactionsService {
           transactionId:  after.id,
           tenantId,
           type:           after.type as string,
-          valor: amountText,
+          amount:         amountText,
           previousStatus: before.status as string,
           newStatus:      requestedStatus,
           changedBy:      userId,
@@ -461,8 +480,8 @@ export class TransactionsService {
             transactionId: after.id,
             tenantId,
             type:          after.type as string,
-            valor: amountText,
-            contratoId:    after.contrato_id ?? null,
+            amount:        amountText,
+            contractId:    after.contract_id ?? null,
             artistId:     after.artist_id  ?? null,
             paidBy:        userId,
             paidAt:        nowIso,
@@ -480,7 +499,7 @@ export class TransactionsService {
             transactionId: after.id,
             tenantId,
             type:          after.type as string,
-            valor: amountText,
+            amount:        amountText,
             cancelledBy:   userId,
             cancelledAt:   nowIso,
           },
@@ -495,7 +514,7 @@ export class TransactionsService {
           entity_id:    after.id,
           action:       'status_changed',
           description:  transactionStatusChangedCopy(before.status, requestedStatus),
-          metadata:     { previousStatus: before.status, newStatus: requestedStatus, valor: amountText },
+          metadata:     { previousStatus: before.status, newStatus: requestedStatus, amount: amountText },
         });
       } catch { /* non-critical */ }
     }

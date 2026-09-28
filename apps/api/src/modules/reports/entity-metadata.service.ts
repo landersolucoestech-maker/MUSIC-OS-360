@@ -203,11 +203,11 @@ const IDENTITY_COLUMN_NAMES = new Set([
  * the guard test, and tell the export engine the final XLSX shape.
  */
 const ACCOUNTING_SUMMARY_COLUMNS: ColumnMeta[] = [
-  { name: 'artista', label: 'Artista', type: 'varchar', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
-  { name: 'receitas', label: 'Receitas', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
-  { name: 'despesas', label: 'Despesas', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
-  { name: 'resultado', label: 'Resultado', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
-  { name: 'margem', label: 'Margem (%)', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
+  { name: 'artist', label: 'Artista', type: 'varchar', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
+  { name: 'revenue', label: 'Receitas', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
+  { name: 'expenses', label: 'Despesas', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
+  { name: 'result', label: 'Resultado', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
+  { name: 'margin', label: 'Margem (%)', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
   // Not exported (outside ACCOUNTING_SUMMARY_CONTRACT.fields) — exists only
   // so dateColumn has a valid physical column for the sort fallback.
   { name: 'created_at', label: null, type: 'timestamp', nullable: false, hasDefault: true, primary: false, generated: false, isEnum: false, isCreatedAt: true, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },

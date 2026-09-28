@@ -78,10 +78,10 @@ export const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string
     return `Status ${WORKFLOW_ENTITY_PT_BR[domain] ?? 'do registro'} atualizado${toStatusSuffix(domain, p['toStatus'])}`;
   },
   [DOMAIN_EVENTS.TRANSACTION_CREATED]: (p) =>
-    `${TRANSACTION_TYPE_LABELS_PT_BR[p['type'] as keyof typeof TRANSACTION_TYPE_LABELS_PT_BR] ?? 'Transação'} registrada${amountSuffix(p['valor'])}`,
+    `${TRANSACTION_TYPE_LABELS_PT_BR[p['type'] as keyof typeof TRANSACTION_TYPE_LABELS_PT_BR] ?? 'Transação'} registrada${amountSuffix(p['amount'])}`,
   [DOMAIN_EVENTS.TRANSACTION_STATUS_CHANGED]: (p) => `Status da transação atualizado${toStatusSuffix('transaction', p['newStatus'])}`,
-  [DOMAIN_EVENTS.TRANSACTION_PAID]: (p) => `Pagamento baixado${amountSuffix(p['valor'])}`,
-  [DOMAIN_EVENTS.TRANSACTION_CANCELLED]: (p) => `Transação cancelada${amountSuffix(p['valor'])}`,
+  [DOMAIN_EVENTS.TRANSACTION_PAID]: (p) => `Pagamento baixado${amountSuffix(p['amount'])}`,
+  [DOMAIN_EVENTS.TRANSACTION_CANCELLED]: (p) => `Transação cancelada${amountSuffix(p['amount'])}`,
   [DOMAIN_EVENTS.INVOICE_CREATED]: (p) => (p['invoiceNumber'] ? `Nota fiscal criada: ${p['invoiceNumber']}` : 'Nota fiscal criada'),
   [DOMAIN_EVENTS.INVOICE_STATUS_CHANGED]: (p) => `Status da nota fiscal${p['invoiceNumber'] ? ` ${p['invoiceNumber']}` : ''} atualizado${toStatusSuffix('invoice', p['newStatus'])}`,
   [DOMAIN_EVENTS.INVOICE_ISSUED]: (p) => (p['invoiceNumber'] ? `Nota fiscal emitida: ${p['invoiceNumber']}` : 'Nota fiscal emitida'),

@@ -145,18 +145,18 @@ export class AnalyticsService {
       ),
       this.countTable('campaigns', tenantId),
       // Revenue and expenses this calendar month
-      this.ds.query<[{ receitas: string; despesas: string }]>(`
+      this.ds.query<[{ revenue: string; expenses: string }]>(`
         SELECT
-          COALESCE(SUM(CASE WHEN type = 'receita' AND status != 'cancelled' THEN valor::numeric ELSE 0 END), 0)::numeric AS receitas,
-          COALESCE(SUM(CASE WHEN type = 'despesa' AND status != 'cancelled' THEN valor::numeric ELSE 0 END), 0)::numeric AS despesas
+          COALESCE(SUM(CASE WHEN type = 'revenue' AND status != 'cancelled' THEN amount::numeric ELSE 0 END), 0)::numeric AS revenue,
+          COALESCE(SUM(CASE WHEN type = 'expense' AND status != 'cancelled' THEN amount::numeric ELSE 0 END), 0)::numeric AS expenses
         FROM transactions
-        WHERE tenant_id = $1 AND deleted_at IS NULL AND data >= $2
+        WHERE tenant_id = $1 AND deleted_at IS NULL AND transaction_date >= $2
       `, [tenantId, monthStart]),
       // Pending receivables (pending/scheduled revenue, not cancelled)
       this.ds.query<[{ total: string }]>(`
-        SELECT COALESCE(SUM(valor::numeric), 0)::numeric AS total
+        SELECT COALESCE(SUM(amount::numeric), 0)::numeric AS total
         FROM transactions
-        WHERE tenant_id = $1 AND type = 'receita' AND status IN ('pending','scheduled') AND deleted_at IS NULL
+        WHERE tenant_id = $1 AND type = 'revenue' AND status IN ('pending','scheduled') AND deleted_at IS NULL
       `, [tenantId]),
       // Overdue invoices count
       this.ds.query<[{ cnt: string }]>(`
@@ -219,8 +219,8 @@ export class AnalyticsService {
     const txStatusMap       = Object.fromEntries(txByStatus.map((r)        => [r.status, parseInt(r.cnt)]));
     const txTypeMap         = Object.fromEntries(txByType.map((r)          => [r.type,   parseInt(r.cnt)]));
 
-    const income = parseFloat(financialCurrentMonth[0]?.receitas ?? '0');
-    const expenses = parseFloat(financialCurrentMonth[0]?.despesas ?? '0');
+    const income = parseFloat(financialCurrentMonth[0]?.revenue ?? '0');
+    const expenses = parseFloat(financialCurrentMonth[0]?.expenses ?? '0');
 
     return {
       artists:                       artistCount,
@@ -265,17 +265,17 @@ export class AnalyticsService {
     if (!this.ds) return null;
     const rows = await this.ds.query<Array<{
       month: string;
-      receitas: string;
-      despesas: string;
+      revenue: string;
+      expenses: string;
     }>>(`
       SELECT
-        DATE_TRUNC('month', data)::date AS month,
-        SUM(CASE WHEN type = 'receita' THEN valor::numeric ELSE 0 END) AS receitas,
-        SUM(CASE WHEN type = 'despesa' THEN valor::numeric ELSE 0 END) AS despesas
+        DATE_TRUNC('month', transaction_date)::date AS month,
+        SUM(CASE WHEN type = 'revenue' THEN amount::numeric ELSE 0 END) AS revenue,
+        SUM(CASE WHEN type = 'expense' THEN amount::numeric ELSE 0 END) AS expenses
       FROM transactions
       WHERE tenant_id = $1
         AND deleted_at IS NULL
-        AND data >= NOW() - INTERVAL '${months} months'
+        AND transaction_date >= NOW() - INTERVAL '${months} months'
       GROUP BY 1
       ORDER BY 1 ASC
     `, [tenantId]);

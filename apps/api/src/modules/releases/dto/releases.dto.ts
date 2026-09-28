@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsOptional, IsEnum, IsIn, IsDate, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsIn, IsDate, Matches, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import { ReleaseStatus } from '@music-os-360/types';
@@ -56,8 +56,12 @@ export class UpdateReleaseDto extends PartialType(CreateReleaseDto) {
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
+const RELEASE_STATUS_LIST = new RegExp(`^(${Object.values(ReleaseStatus).join('|')})(,(${Object.values(ReleaseStatus).join('|')}))*$`);
+
 export class QueryReleaseDto extends PaginationDto {
-  @ApiPropertyOptional({ enum: ReleaseStatus }) @IsOptional() @IsEnum(ReleaseStatus) status?: ReleaseStatus;
+  /** One ReleaseStatus or a comma-separated list (a display group of the web covers several statuses). */
+  @ApiPropertyOptional({ description: `ReleaseStatus or comma-separated list: ${Object.values(ReleaseStatus).join(', ')}` })
+  @IsOptional() @IsString() @Matches(RELEASE_STATUS_LIST) status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() artistId?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() distributor?: string;

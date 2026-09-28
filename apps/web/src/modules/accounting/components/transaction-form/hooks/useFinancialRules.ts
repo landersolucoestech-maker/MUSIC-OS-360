@@ -37,10 +37,10 @@ export function useFinancialRules({
     if (Object.keys(stored).length === 0) return computed;
 
     // Apply stored overrides for matching combination
-    const { tipoTransacao: transactionType, tipoCliente: clientType, category } = formData;
+    const { transactionType, counterpartyType, category } = formData;
     const overridden: FinancialFormRules = { ...computed };
     for (const ruleKey of Object.keys(DISPLAY_RULES) as (keyof typeof DISPLAY_RULES)[]) {
-      const k = buildKey(transactionType, clientType, category, ruleKey);
+      const k = buildKey(transactionType, counterpartyType, category, ruleKey);
       if (k in stored) {
         overridden[ruleKey] = stored[k];
       }
@@ -49,13 +49,13 @@ export function useFinancialRules({
   }, [formData]);
 
   const categories = useMemo(
-    () => getCategoriesForTransactionType(formData.tipoTransacao, formData.tipoCliente),
-    [formData.tipoTransacao, formData.tipoCliente],
+    () => getCategoriesForTransactionType(formData.transactionType, formData.counterpartyType),
+    [formData.transactionType, formData.counterpartyType],
   );
 
   const subcategorias = useMemo(
-    () => getSubcategoriesForCategory(formData.tipoTransacao, formData.tipoCliente, formData.category),
-    [formData.tipoTransacao, formData.tipoCliente, formData.category],
+    () => getSubcategoriesForCategory(formData.transactionType, formData.counterpartyType, formData.category),
+    [formData.transactionType, formData.counterpartyType, formData.category],
   );
 
   const investmentItems = useMemo(
@@ -64,20 +64,20 @@ export function useFinancialRules({
   );
 
   const filteredEvents = useMemo(
-    () => formData.artistaVinculado
-      ? events.filter(e => e.artist_id != null && e.artist_id === formData.artistaVinculado)
+    () => formData.artistId
+      ? events.filter(e => e.artist_id != null && e.artist_id === formData.artistId)
       : [],
-    [formData.artistaVinculado, events],
+    [formData.artistId, events],
   );
 
   const installmentAmount = useMemo(() => {
-    if (formData.tipoPagamento === "parcelado" && formData.amount && formData.quantidadeParcelas) {
+    if (formData.paymentType === "installments" && formData.amount && formData.installmentCount) {
       const v = parseFloat(formData.amount);
-      const p = parseInt(formData.quantidadeParcelas);
+      const p = parseInt(formData.installmentCount);
       if (v > 0 && p >= 2) return (v / p).toFixed(2);
     }
     return null;
-  }, [formData.tipoPagamento, formData.amount, formData.quantidadeParcelas]);
+  }, [formData.paymentType, formData.amount, formData.installmentCount]);
 
   return {
     ...rules,

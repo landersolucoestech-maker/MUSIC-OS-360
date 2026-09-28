@@ -11,11 +11,11 @@ import { CreateWorkDto } from './dto/create-work.dto';
  * Round 8 (fix): `cod_abramus` was genuinely wrong — not because it should
  * become a generic list, but because the name ties the field to ONE
  * specific collecting society when the value can be a code at ABRAMUS, UBC,
- * SOCINPRO, or other collective-management entities. The correct canonical
- * name is `cod_entidade` (it remains ONE simple column — just renamed).
- * `cod_ecad` STILL exists as its own column: ECAD is a central, mandatory
- * public-performance entity in Brazil, not one among several alternative
- * societies — it is not fungible with `cod_entidade`.
+ * SOCINPRO, or other collective-management entities. The column is ONE
+ * generic code: `society_code` since CZ-039 (formerly cod_entidade).
+ * `ecad_code` (formerly cod_ecad) STILL exists as its own column: ECAD is a
+ * central, mandatory public-performance entity in Brazil, not one among
+ * several alternative societies — it is not fungible with `society_code`.
  *
  * The global ValidationPipe runs with { whitelist: true, forbidNonWhitelisted: true }:
  * any key outside the DTO fails the whole request with 400. This test uses
@@ -29,17 +29,17 @@ async function validateDto(payload: Record<string, unknown>) {
 const MINIMAL_VALID = { title: 'Obra de Teste' };
 
 describe('CreateWorkDto — canonical field contract', () => {
-  it('accepts `cod_ecad` (real canonical name, ECAD is a central and mandatory entity — not removed)', async () => {
-    const errors = await validateDto({ ...MINIMAL_VALID, cod_ecad: 'ECAD-123' });
+  it('accepts `ecad_code` (ECAD is a central and mandatory entity — not removed)', async () => {
+    const errors = await validateDto({ ...MINIMAL_VALID, ecad_code: 'ECAD-123' });
     expect(errors).toHaveLength(0);
   });
 
-  it('accepts `cod_entidade` — replaces `cod_abramus`, value can be a code at ABRAMUS/UBC/SOCINPRO/others', async () => {
-    const errors = await validateDto({ ...MINIMAL_VALID, cod_entidade: 'ABR-123' });
+  it('accepts `society_code` — value can be a code at ABRAMUS/UBC/SOCINPRO/others', async () => {
+    const errors = await validateDto({ ...MINIMAL_VALID, society_code: 'ABR-123' });
     expect(errors).toHaveLength(0);
   });
 
-  it('rejects `cod_abramus`/`codAbramus` — renamed to `cod_entidade` (20260718000017), the name tied it to a single society', async () => {
+  it('rejects `cod_abramus`/`codAbramus` — the name tied the code to a single society (now `society_code`)', async () => {
     for (const key of ['cod_abramus', 'codAbramus']) {
       const errors = await validateDto({ ...MINIMAL_VALID, [key]: 'ABR-123' });
       expect(errors.length).toBeGreaterThan(0);
@@ -53,19 +53,19 @@ describe('CreateWorkDto — canonical field contract', () => {
     }
   });
 
-  it('rejects `codigo_entidade` / `entity_code` — they do not exist in the real contract (the exact name is `cod_entidade`)', async () => {
+  it('rejects `codigo_entidade` / `entity_code` — they do not exist in the real contract (the exact name is `society_code`)', async () => {
     for (const key of ['codigo_entidade', 'entity_code']) {
       const errors = await validateDto({ ...MINIMAL_VALID, [key]: 'X' });
       expect(errors.length).toBeGreaterThan(0);
     }
   });
 
-  it('accepts legacy compositor/compositores/editora/co_compositores-like fields without breaking (bulk/import compat)', async () => {
+  it('accepts composer_name/composer_names/publisher_name (bulk/import compat)', async () => {
     const errors = await validateDto({
       ...MINIMAL_VALID,
-      compositor: 'João Silva',
-      compositores: [{ name: 'João Silva' }],
-      editora: 'Editora XYZ',
+      composer_name: 'João Silva',
+      composer_names: ['João Silva'],
+      publisher_name: 'Editora XYZ',
     });
     expect(errors).toHaveLength(0);
   });
@@ -80,10 +80,8 @@ describe('CreateWorkDto — canonical field contract', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejects raw `participantes[]` as a column — normalized into work_participants (migration 20260718000011)', async () => {
-    // `participantes` is still accepted in the DTO (the service translates it into child
-    // rows), but it can no longer exist as a direct column in `works`.
-    const errors = await validateDto({ ...MINIMAL_VALID, participantes: [{ name: 'X', classeFuncao: 'compositor/autor' }] });
+  it('accepts `participants[]` — the service writes them into work_participants (never a works column)', async () => {
+    const errors = await validateDto({ ...MINIMAL_VALID, participants: [{ name: 'X', role: 'composer_author' }] });
     expect(errors).toHaveLength(0);
   });
 });

@@ -10,12 +10,11 @@ export const phonogramSchema = z.object({
     .optional()
     .or(z.literal("")),
   durationText: z.string().optional().or(z.literal("")),
-  genero: z.string().optional().or(z.literal("")),
-  idioma: z.string().optional().or(z.literal("")),
-  instrumental: z.boolean().default(false),
-  criadaPorIA: z.boolean().default(false),
-  pubSimultanea: z.boolean().default(false),
-  aceitaTermos: z.boolean().default(false),
+  musicGenre: z.string().optional().or(z.literal("")),
+  isInstrumental: z.boolean().default(false),
+  aiUsed: z.boolean().default(false),
+  isSimultaneousPublication: z.boolean().default(false),
+  termsAccepted: z.boolean().default(false),
 });
 
 export type PhonogramFormData = z.infer<typeof phonogramSchema>;

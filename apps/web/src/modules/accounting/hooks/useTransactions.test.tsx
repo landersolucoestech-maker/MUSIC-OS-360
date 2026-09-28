@@ -44,6 +44,14 @@ describe("useTransactions", () => {
     expect(options?.filters).not.toHaveProperty("artistId");
   });
 
+  it("orders by the canonical transaction_date column (the legacy \"data\" column is gone)", async () => {
+    renderHook(() => useTransactions(true), { wrapper: createWrapper() });
+
+    await waitFor(() => expect(mockedList).toHaveBeenCalled());
+    const [, options] = mockedList.mock.calls[0]!;
+    expect(options?.orderBy).toEqual({ column: "transaction_date", ascending: false });
+  });
+
   it("without artistId, applies no artist filter", async () => {
     renderHook(() => useTransactions(true), { wrapper: createWrapper() });
 

@@ -26,6 +26,8 @@ import { storedFileDisplayName } from "@/shared/lib/stored-file";
 import { WorkflowTransitionPanel } from "@/shared/components/WorkflowTransitionPanel";
 import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";
+import { releaseTypeLabel } from "@/modules/releases/lib/release-format";
+import { findDistributionPlatform } from "@/modules/releases/services/distribution-platforms";
 import { resolveAllowedTransitions, WorkflowTransition } from "@/shared/lib/workflow-transitions";
 
 interface ContractWithWorkflow extends ContractWithRelations {
@@ -491,15 +493,19 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-sm truncate">{linkedRelease.title}</p>
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
-                          <Badge variant="outline" className="text-[10px] capitalize">
-                            {linkedRelease.type || "—"}
+                          <Badge variant="outline" className="text-[10px]">
+                            {releaseTypeLabel(linkedRelease.type)}
                           </Badge>
                           <StatusBadge status={linkedRelease.status ?? ""} />
                         </div>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3">
                           <div>
                             <p className="text-[10px] text-muted-foreground">Distribuidora</p>
-                            <p className="text-xs font-medium">{linkedRelease.distributor || "—"}</p>
+                            <p className="text-xs font-medium">
+                              {linkedRelease.distributor
+                                ? (findDistributionPlatform(linkedRelease.distributor)?.name ?? linkedRelease.distributor)
+                                : "—"}
+                            </p>
                           </div>
                           <div>
                             <p className="text-[10px] text-muted-foreground">Data de lançamento</p>

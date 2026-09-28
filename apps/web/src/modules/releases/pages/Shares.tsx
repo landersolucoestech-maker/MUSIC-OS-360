@@ -28,7 +28,7 @@ import { useShares } from "@/modules/releases/hooks/useShares";
 import { useSharesPaginated, useSharesStats } from "@/modules/releases/hooks/useSharesPaginated";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { storage } from "@/shared/lib/storage";
-import { resolveShareType, shareTypeLabel, shareStatusBadge, shareStatusLabel, isPendingShareStatus, shareFunctionLabel, SHARE_DIRECTION_LABELS, SHARE_FUNCTION_OPTIONS } from "@/modules/releases/lib/share-format";
+import { resolveShareType, shareTypeLabel, shareStatusBadge, isPendingShareStatus, shareFunctionLabel, SHARE_DIRECTION_LABELS, SHARE_FORM_STATUS_OPTIONS, SHARE_FUNCTION_OPTIONS, SHARE_TYPE_OPTIONS } from "@/modules/releases/lib/share-format";
 import { ShareStatus } from "@music-os-360/types";
 import { SHARE_FOR_RELEASE_PARAM } from "@/modules/releases/services/share-from-release";
 import type { Share } from "@/modules/releases/types";
@@ -88,7 +88,7 @@ export default function Shares() {
   // (GET /works/:id, /artists/:id) only for the records of the current
   // page — it used to scan useWorks()/useArtistas() without a filter, truncated
   // to the first 50 of the tenant.
-  type WorkLabel = { title?: string | null; compositor?: string | null };
+  type WorkLabel = { title?: string | null; composer_name?: string | null };
   type ArtistLabel = { nome_artistico?: string | null };
   const [resolvedWorks, setResolvedWorks] = useState<Record<string, WorkLabel>>({});
   const [resolvedArtists, setResolvedArtists] = useState<Record<string, ArtistLabel>>({});
@@ -288,12 +288,13 @@ export default function Shares() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={ALL_FILTER}>Todos os tipos</SelectItem>
-                  <SelectItem value="internal_release">Release Interno</SelectItem>
-                  <SelectItem value="external_receivable">Externo a Receber</SelectItem>
+                  {SHARE_TYPE_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Select value={directionFilter} onValueChange={setDirectionFilter}>
-                <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-direcao">
+                <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-direction">
                   <SelectValue placeholder="Direção" />
                 </SelectTrigger>
                 <SelectContent>
@@ -308,8 +309,8 @@ export default function Shares() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={ALL_FILTER}>Todos os status</SelectItem>
-                  {[ShareStatus.PENDING, ShareStatus.PARTIAL, ShareStatus.RECEIVED, ShareStatus.SENT, ShareStatus.CANCELLED].map((status) => (
-                    <SelectItem key={status} value={status}>{shareStatusLabel(status)}</SelectItem>
+                  {SHARE_FORM_STATUS_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -404,8 +405,8 @@ export default function Shares() {
                               <Share2 className="h-3.5 w-3.5 text-primary" />
                             </div>
                             <div>
-                              <p className="font-medium text-foreground text-sm">{work?.title ?? release?.title ?? share.music_title ?? share.work_id ?? "—"}</p>
-                              <p className="text-xs text-muted-foreground">{work?.compositor ?? ""}</p>
+                              <p className="font-medium text-foreground text-sm">{work?.title ?? release?.title ?? share.music_title ?? (share.work_id ? "Obra não encontrada" : "—")}</p>
+                              <p className="text-xs text-muted-foreground">{work?.composer_name ?? ""}</p>
                             </div>
                           </div>
                         </TableCell>

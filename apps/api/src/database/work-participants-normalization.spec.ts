@@ -39,13 +39,13 @@ describe('WorkEntity does not reintroduce removed columns', () => {
     expect(workBlock).not.toMatch(/@Column\([^)]*\)\s*co_compositores:/);
   });
 
-  it('keeps `compositor`, `compositores`, `editora` — real writer via bulk-import (Reports)', () => {
-    expect(workBlock).toMatch(/@Column\([^)]*\)\s*compositor:/);
-    expect(workBlock).toMatch(/@Column\([^)]*\)\s*compositores:/);
-    expect(workBlock).toMatch(/@Column\([^)]*\)\s*editora:/);
+  it('keeps `composer_name`, `composer_names`, `publisher_name` (formerly compositor/compositores/editora, CZ-039) — real writer via bulk-import (Reports)', () => {
+    expect(workBlock).toMatch(/@Column\([^)]*\)\s*composer_name:/);
+    expect(workBlock).toMatch(/@Column\([^)]*\)\s*composer_names:/);
+    expect(workBlock).toMatch(/@Column\([^)]*\)\s*publisher_name:/);
   });
 
-  it('has a relation to work_participants (participantes_rel)', () => {
+  it('has a relation to work_participants (participants)', () => {
     expect(workBlock).toMatch(/@OneToMany\(\(\) => WorkParticipantEntity/);
   });
 });
@@ -53,8 +53,8 @@ describe('WorkEntity does not reintroduce removed columns', () => {
 describe('WorkParticipantEntity — normalized child table', () => {
   const block = entityBlock('WorkParticipantEntity');
 
-  it('has the real columns extracted from ParticipanteForm (name, classe_funcao, link, percentual, sort_order)', () => {
-    for (const field of ['tenant_id', 'work_id', 'name', 'classe_funcao', 'link', 'percentual', 'sort_order']) {
+  it('has the real participant columns (name, role, link, percentage, sort_order — CZ-039)', () => {
+    for (const field of ['tenant_id', 'work_id', 'name', 'role', 'link', 'percentage', 'sort_order']) {
       expect(block).toMatch(new RegExp(`\\b${field}\\b`));
     }
   });

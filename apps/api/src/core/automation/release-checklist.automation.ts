@@ -39,13 +39,14 @@ const SKILL_NAME = 'release-checklist';
 /** Release types accepted by the skill (aligns releases.type's free varchar). */
 const KNOWN_RELEASE_TYPES: readonly ReleaseType[] = ['single', 'ep', 'album', 'mixtape', 'video', 'other'];
 
-/** Maps the release's free-form `type` to the skill enum; falls back to "other" when unknown. */
+/**
+ * Maps the canonical release `type` (album/ep/single/compilation/live/video/
+ * other; legacy Portuguese values migrated by 20260928000016/-19) to the skill
+ * enum; types the skill does not know fall back to "other".
+ */
 function mapReleaseType(type: string | null | undefined): ReleaseType {
   const t = (type ?? '').trim().toLowerCase();
-  if ((KNOWN_RELEASE_TYPES as readonly string[]).includes(t)) return t as ReleaseType;
-  if (t === 'álbum' || t === 'lp') return 'album';
-  if (t === 'clipe' || t === 'vídeo' || t === 'videoclipe') return 'video';
-  return 'other';
+  return (KNOWN_RELEASE_TYPES as readonly string[]).includes(t) ? (t as ReleaseType) : 'other';
 }
 
 interface ReleaseRow {

@@ -6,13 +6,12 @@ import {
   DialogDescription,
 } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
-
-export type WorkType = "autoral" | "referencia";
+import { WORK_ORIGIN_BADGE_LABELS, type WorkOrigin } from "@/modules/catalog/constants/work-options";
 
 interface WorkTypeSelectorModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelect: (type: WorkType) => void;
+  onSelect: (origin: WorkOrigin) => void;
 }
 
 export function WorkTypeSelectorModal({
@@ -20,14 +19,14 @@ export function WorkTypeSelectorModal({
   onOpenChange,
   onSelect,
 }: WorkTypeSelectorModalProps) {
-  const handleSelect = (type: WorkType) => {
-    onSelect(type);
+  const handleSelect = (origin: WorkOrigin) => {
+    onSelect(origin);
     onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg" data-testid="modal-obra-tipo-selector">
+      <DialogContent className="max-w-lg" data-testid="modal-work-origin-selector">
         <DialogHeader>
           <DialogTitle>Qual tipo de obra você está cadastrando?</DialogTitle>
           <DialogDescription className="sr-only">
@@ -56,18 +55,18 @@ export function WorkTypeSelectorModal({
           <Button
             type="button"
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => handleSelect("autoral")}
-            data-testid="button-tipo-obra-autoral"
+            onClick={() => handleSelect("original")}
+            data-testid="button-work-origin-original"
           >
-            Obra Autoral
+            {WORK_ORIGIN_BADGE_LABELS.original}
           </Button>
           <Button
             type="button"
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => handleSelect("referencia")}
-            data-testid="button-tipo-obra-referencia"
+            onClick={() => handleSelect("reference")}
+            data-testid="button-work-origin-reference"
           >
-            Obra por Referência
+            {WORK_ORIGIN_BADGE_LABELS.reference}
           </Button>
         </div>
       </DialogContent>

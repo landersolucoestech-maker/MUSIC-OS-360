@@ -259,18 +259,16 @@ async function createSetFor(
   }
 
   // Transaction — the schema uses pt-BR names (Zod validator)
-  // NB: categoria is mandatory in the DB (NOT NULL) but the validator accepts a
-  // transferencia without categoria → the service does not include it in the payload → 500.
-  // We send an explicit categoria to unblock it.
+  // NB: category is mandatory in the DB (NOT NULL); an explicit category is sent.
   const tx = await call('POST', '/transactions', {
     token, tenantId: tenant.tenantId,
     body: {
-      tipoTransacao:  'transferencia',
-      descricao:      `${tag}_TRANSACTION`,
-      valor:          '1500.00',
-      dataTransacao:  new Date().toISOString().slice(0, 10),
-      formaPagamento: 'pix',
-      categoria:      'outros',
+      transactionType: 'transfer',
+      description:     `${tag}_TRANSACTION`,
+      amount:          '1500.00',
+      transactionDate:  new Date().toISOString().slice(0, 10),
+      paymentMethod: 'pix',
+      category:        'outros',
     },
   });
   if (tx.status === 201 || tx.status === 200) {
@@ -317,7 +315,7 @@ const ENDPOINTS = [
   { path: '/releases',    tagMatcher: (r: any) => r.title ?? r.titulo ?? r.name },
   { path: '/contracts',   tagMatcher: (r: any) => r.titulo ?? r.title },
   { path: '/events',      tagMatcher: (r: any) => r.title ?? r.titulo },
-  { path: '/transactions',tagMatcher: (r: any) => r.descricao ?? r.description },
+  { path: '/transactions',tagMatcher: (r: any) => r.description },
   { path: '/leads',       tagMatcher: (r: any) => r.name },
   { path: '/clients',     tagMatcher: (r: any) => r.name ?? r.nome },
 ];
@@ -411,7 +409,7 @@ async function phase35(): Promise<void> {
     { path: '/releases',     keyA: 'releaseId',     keyB: 'releaseId',     body: { title: `HACKED_${TS}` } },
     { path: '/contracts',    keyA: 'contractId',    keyB: 'contractId',    body: { titulo: `HACKED_${TS}` } },
     { path: '/events',       keyA: 'eventId',       keyB: 'eventId',       body: { title: `HACKED_${TS}` } },
-    { path: '/transactions', keyA: 'transactionId', keyB: 'transactionId', body: { descricao: `HACKED_${TS}` } },
+    { path: '/transactions', keyA: 'transactionId', keyB: 'transactionId', body: { description: `HACKED_${TS}` } },
     { path: '/leads',        keyA: 'leadId',        keyB: 'leadId',        body: { name: `HACKED_${TS}` } },
     { path: '/clients',      keyA: 'clientId',      keyB: 'clientId',      body: { name: `HACKED_${TS}` } },
   ] as const;

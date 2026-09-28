@@ -3,7 +3,7 @@
 // data — Decision Gate item 11).
 //
 // Covers:
-//  1. When obra is present: renders compositor, cod_ecad (green), no orphan warning
+//  1. When obra is present: renders composer names, ecad_code (green), no orphan warning
 //  2. When obra is absent: renders red "Obra não encontrada no catálogo" warning
 //  3. DetectionStatus badge labels and Match ECAD indicator text
 
@@ -29,13 +29,13 @@ const BASE_DETECTION: DetectionRow = {
   obra: {
     id: "obra-001",
     title: "Noite de Luz",
-    compositor: "Vitória Carvalho",
-    compositores: "Vitória Carvalho, Lucas Mendes",
-    editora: "MusicOS Publishing",
+    composer_name: "Vitória Carvalho",
+    composer_names: ["Vitória Carvalho", "Lucas Mendes"],
+    publisher_name: "MusicOS Publishing",
     isrc: "BRMSC2500001",
     iswc: "T-123.456.789-0",
-    cod_ecad: "ECAD-0001-VL",
-    cod_entidade: "ABR-001-2025",
+    ecad_code: "ECAD-0001-VL",
+    society_code: "ABR-001-2025",
     genero: "Pop",
     duration_text: "3:42",
     status: "registrado",
@@ -65,6 +65,11 @@ function renderModal(detection: DetectionRow | null, open = true) {
   );
 }
 
+/** BASE_DETECTION with its catalog work (CatalogWorkRef) patched. */
+function withCatalogWork(patch: Record<string, unknown>): DetectionRow {
+  return { ...BASE_DETECTION, obra: { ...BASE_DETECTION.obra!, ...patch } };
+}
+
 describe("<DetectionDetailModal /> — with catalog data", () => {
   it("renders dialog title and platform from detection props", () => {
     renderModal(BASE_DETECTION);
@@ -72,14 +77,24 @@ describe("<DetectionDetailModal /> — with catalog data", () => {
     expect(screen.getAllByText("YouTube").length).toBeGreaterThan(0);
   });
 
-  it("shows '✓ Obra vinculada com cód. ECAD' when obra has cod_ecad", () => {
+  it("shows '✓ Obra vinculada com cód. ECAD' when obra has ecad_code", () => {
     renderModal(BASE_DETECTION);
     expect(screen.getByText(/Obra vinculada com cód\. ECAD/i)).toBeInTheDocument();
   });
 
-  it("shows compositor(es) from obra", () => {
+  it("shows compositor(es) from obra (composer_names)", () => {
     renderModal(BASE_DETECTION);
     expect(screen.getByText("Vitória Carvalho, Lucas Mendes")).toBeInTheDocument();
+  });
+
+  it("falls back to composer_name when the work has no composer_names", () => {
+    renderModal(withCatalogWork({ composer_names: null }));
+    expect(screen.getByText("Vitória Carvalho")).toBeInTheDocument();
+  });
+
+  it("shows the society code from obra", () => {
+    renderModal(BASE_DETECTION);
+    expect(screen.getByText("ABR-001-2025")).toBeInTheDocument();
   });
 
   it("shows ECAD identifier from obra", () => {
@@ -155,18 +170,13 @@ describe("<DetectionDetailModal /> — edge cases", () => {
   });
 
   it("does not render ISWC row when iswc is null", () => {
-    renderModal({
-      ...BASE_DETECTION,
-      obra: { ...BASE_DETECTION.obra!, iswc: null },
-    });
+    renderModal(withCatalogWork({ iswc: null }));
     expect(screen.queryByText("ISWC")).not.toBeInTheDocument();
   });
 
-  it("shows 'Não cadastrado' warning when cod_ecad is null in catalog", () => {
-    renderModal({
-      ...BASE_DETECTION,
-      obra: { ...BASE_DETECTION.obra!, cod_ecad: null },
-    });
-    expect(screen.getByText(/Não cadastrado/i)).toBeInTheDocument();
+  it("shows 'Não cadastrado' warning when ecad_code is null in catalog — in PT-BR, never the raw field name", () => {
+    renderModal(withCatalogWork({ ecad_code: null }));
+    expect(screen.getByText("Não cadastrado — sem código ECAD")).toBeInTheDocument();
+    expect(screen.queryByText(/ecad_code|cod_ecad/)).not.toBeInTheDocument();
   });
 });

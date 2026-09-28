@@ -9,7 +9,7 @@ import { ReleaseStatus } from '@music-os-360/types';
 import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
-import { canonicalizeReleaseInput } from './release-legacy-fields';
+import { canonicalReleaseType, canonicalizeReleaseInput } from './release-legacy-fields';
 
 @Injectable()
 export class ReleasesService {
@@ -40,8 +40,8 @@ export class ReleasesService {
       .where('r.tenant_id = :tenantId', { tenantId })
       .andWhere('r.deleted_at IS NULL');
 
-    if (q.status)      qb.andWhere('r.status = :status',               { status:      q.status });
-    if (q.type)        qb.andWhere('r.type = :type',                   { type:        q.type });
+    if (q.status)      qb.andWhere('r.status IN (:...statuses)',      { statuses:    q.status.split(',') });
+    if (q.type)        qb.andWhere('r.type = :type',                   { type:        canonicalReleaseType(q.type) });
     if (q.artistId)    qb.andWhere('r.artist_id = :artistId',        { artistId:   q.artistId });
     if (q.distributor) qb.andWhere('r.distributor = :distributor',   { distributor: q.distributor });
     if (q.search)      qb.andWhere('r.title ILIKE :search',           { search:      `%${q.search}%` });
@@ -178,7 +178,10 @@ export class ReleasesService {
     if (dto.releasedAt  != null) nonStatusUpdates.release_date    = new Date(dto.releasedAt);
     if (dto.platforms   != null) nonStatusUpdates.platforms       = dto.platforms;
     if (dto.coverUrl    != null) nonStatusUpdates.cover_url       = dto.coverUrl;
-    if (dto.metadata    != null) nonStatusUpdates.metadata        = dto.metadata;
+    // metadata is merged over the stored object: automations (checklist, launch
+    // strategy, ...) write their own keys there and the form only sends its own —
+    // a wholesale replace erased the automation outputs on every save.
+    if (dto.metadata    != null) nonStatusUpdates.metadata        = { ...(current.metadata ?? {}), ...dto.metadata };
     if (dto.isrc_global    != null) nonStatusUpdates.isrc_global    = dto.isrc_global;
     if (dto.internal_notes != null) nonStatusUpdates.internal_notes = dto.internal_notes;
     if (dto.notes          != null) nonStatusUpdates.notes          = dto.notes;
@@ -186,8 +189,12 @@ export class ReleasesService {
     if (dto.copyright      != null) nonStatusUpdates.copyright      = dto.copyright;
     if (dto.music_genre    != null) nonStatusUpdates.music_genre    = dto.music_genre;
     if (dto.language       != null) nonStatusUpdates.language       = dto.language;
-    if (dto.assets         != null) nonStatusUpdates.assets         = dto.assets;
-    if (dto.schedule       != null) nonStatusUpdates.schedule       = dto.schedule;
+    // assets/schedule are merged over the stored object: the current form sends
+    // every key (null to clear), while an edit from a pre-CZ-038 build omits the
+    // keys it read as blank (their empty legacy values are dropped) — a
+    // wholesale replace would silently erase them.
+    if (dto.assets         != null) nonStatusUpdates.assets         = { ...(current.assets ?? {}), ...dto.assets };
+    if (dto.schedule       != null) nonStatusUpdates.schedule       = { ...(current.schedule ?? {}), ...dto.schedule };
 
     if (statusChanging) {
       const req = {

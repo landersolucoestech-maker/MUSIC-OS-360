@@ -113,7 +113,7 @@ describe('SocietyPayloadBuilderService.buildRecordingPayload — share eligibili
     const svc = new SocietyPayloadBuilderService(makeDs({
       phonograms: [baseRec],
       shares: [
-        { id: 's1', share_type: null, deleted_at: null, holder_name: 'Intérprete', percentage: '100', party_role: 'interprete' },
+        { id: 's1', share_type: null, deleted_at: null, holder_name: 'Intérprete', percentage: '100', party_role: 'performer' },
         { id: 's2', share_type: 'external_receivable', deleted_at: null, holder_name: 'Financeiro', percentage: '100', party_role: 'author' },
       ],
     }));

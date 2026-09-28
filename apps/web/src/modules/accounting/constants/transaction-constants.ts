@@ -1,112 +1,121 @@
 
-import type { TransactionEntityLink } from "@/modules/accounting/types/accounting.types";
+import type {
+  TransactionCounterpartyType,
+  TransactionEntityLink,
+  TransactionInstallmentInterval,
+  TransactionPaymentMethod,
+  TransactionPaymentType,
+  TransactionType,
+} from "@/modules/accounting/types/accounting.types";
 
 // ==================== TYPES ====================
 
+/**
+ * Transaction form state. Identifiers are the canonical English names of the
+ * CZ-041 wire contract (camelCase request keys); values of the option-backed
+ * fields (transactionType, counterpartyType, paymentMethod, paymentType,
+ * installmentInterval) are the canonical English wire values. Category and
+ * subcategory keep their current slug values (taxonomy decision pending).
+ */
 export interface TransactionFormData {
   /** Managerial links (P&L) — mandatory ≥1. Multiple ones with allocation. */
   entityLinks: TransactionEntityLink[];
   // General data
-  tipoTransacao: string;
-  tipoCliente: string;
+  transactionType: string;
+  counterpartyType: string;
   category: string;
-  subcategoria: string;
+  subcategory: string;
   description: string;
   amount: string;
-  dataTransacao: string;
+  transactionDate: string;
   status: string;
-  observacao: string;
-  
+  notes: string;
+
   // Links
-  artistaVinculado: string;
-  projetoVinculado: string;
-  contratoVinculado: string;
-  eventoVinculado: string;
-  fornecedorCliente: string;
-  orgaoArrecadador: string;
-  tipoVinculacao?: string;
-  centroCusto?: string;
-  competencia?: string;
-  contaOrigem?: string;
-  contaDestino?: string;
-  
+  artistId: string;
+  projectId: string;
+  contractId: string;
+  eventId: string;
+  counterpartyName: string;
+  taxAuthority: string;
+  /** Form-only: which link the selected category rule asks for (see financialRules.utils linkValueByLabel). */
+  linkType?: string;
+  costCenter?: string;
+  referenceMonth?: string;
+  sourceBankAccount?: string;
+  destinationBankAccount?: string;
+
   // Specific fields
-  itemInvestimento: string;
-  motivoViagem: string;
+  investmentItem: string;
+  travelReason: string;
   advertisingName: string;
-  
+
   // Payment
-  formaPagamento: string;
-  tipoPagamento: string;
-  quantidadeParcelas: string;
-  intervaloParcelas: string;
-  dataPrimeiraParcela: string;
-  
+  paymentMethod: string;
+  paymentType: string;
+  installmentCount: string;
+  installmentInterval: string;
+  firstInstallmentDate: string;
+
   // Attachment
-  anexoUrl: string;
-  anexoNome: string;
+  attachmentUrl: string;
+  attachmentName: string;
 }
 
 export const initialFormData: TransactionFormData = {
   entityLinks: [],
-  tipoTransacao: "",
-  tipoCliente: "",
+  transactionType: "",
+  counterpartyType: "",
   category: "",
-  subcategoria: "",
+  subcategory: "",
   description: "",
   amount: "",
-  dataTransacao: "",
+  transactionDate: "",
   status: "pending",
-  observacao: "",
-  
-  artistaVinculado: "",
-  projetoVinculado: "",
-  contratoVinculado: "",
-  eventoVinculado: "",
-  fornecedorCliente: "",
-  orgaoArrecadador: "",
-  tipoVinculacao: "",
-  centroCusto: "",
-  competencia: "",
-  contaOrigem: "",
-  contaDestino: "",
-  
-  itemInvestimento: "",
-  motivoViagem: "",
+  notes: "",
+
+  artistId: "",
+  projectId: "",
+  contractId: "",
+  eventId: "",
+  counterpartyName: "",
+  taxAuthority: "",
+  linkType: "",
+  costCenter: "",
+  referenceMonth: "",
+  sourceBankAccount: "",
+  destinationBankAccount: "",
+
+  investmentItem: "",
+  travelReason: "",
   advertisingName: "",
-  
-  formaPagamento: "",
-  tipoPagamento: "avista",
-  quantidadeParcelas: "",
-  intervaloParcelas: "mensal",
-  dataPrimeiraParcela: "",
-  
-  anexoUrl: "",
-  anexoNome: "",
+
+  paymentMethod: "",
+  paymentType: "upfront",
+  installmentCount: "",
+  installmentInterval: "monthly",
+  firstInstallmentDate: "",
+
+  attachmentUrl: "",
+  attachmentName: "",
 };
 
 // ==================== TRANSACTION TYPES ====================
 
-export const transactionTypes = [
-  { value: "receita", label: "Receita" },
-  { value: "despesa", label: "Despesa" },
-  { value: "investimento", label: "Investimento" },
-  { value: "imposto", label: "Imposto" },
-  { value: "transferencia", label: "Transferência" },
+export const transactionTypes: { value: TransactionType; label: string }[] = [
+  { value: "revenue", label: "Receita" },
+  { value: "expense", label: "Despesa" },
+  { value: "investment", label: "Investimento" },
+  { value: "tax", label: "Imposto" },
+  { value: "transfer", label: "Transferência" },
 ];
 
-// ==================== CLIENT TYPES ====================
+// ==================== COUNTERPARTY TYPES ====================
 
-export const clientTypes = [
-  { value: "empresa", label: "Empresa" },
-  { value: "artista", label: "Artista" },
-  { value: "pessoa", label: "Pessoa" },
-];
-
-export const clientTypesForRevenue = [
-  { value: "empresa", label: "Empresa" },
-  { value: "artista", label: "Artista" },
-  { value: "pessoa", label: "Pessoa" },
+export const counterpartyTypes: { value: TransactionCounterpartyType; label: string }[] = [
+  { value: "company", label: "Empresa" },
+  { value: "artist", label: "Artista" },
+  { value: "individual", label: "Pessoa" },
 ];
 
 // ==================== STATUS ====================
@@ -125,25 +134,25 @@ export const transactionStatusOptions = [
 
 // ==================== PAYMENT METHODS ====================
 
-export const paymentMethods = [
+export const paymentMethods: { value: TransactionPaymentMethod; label: string }[] = [
   { value: "pix", label: "PIX" },
   { value: "ted", label: "TED" },
   { value: "boleto", label: "Boleto" },
-  { value: "cartao-credito", label: "Cartão de Crédito" },
-  { value: "cartao-debito", label: "Cartão de Débito" },
-  { value: "dinheiro", label: "Dinheiro" },
-  { value: "cheque", label: "Cheque" },
+  { value: "credit_card", label: "Cartão de Crédito" },
+  { value: "debit_card", label: "Cartão de Débito" },
+  { value: "cash", label: "Dinheiro" },
+  { value: "check", label: "Cheque" },
 ];
 
-export const paymentTypes = [
-  { value: "avista", label: "À vista" },
-  { value: "parcelado", label: "Parcelado" },
+export const paymentTypes: { value: TransactionPaymentType; label: string }[] = [
+  { value: "upfront", label: "À vista" },
+  { value: "installments", label: "Parcelado" },
 ];
 
-export const installmentIntervals = [
-  { value: "mensal", label: "Mensal" },
-  { value: "quinzenal", label: "Quinzenal" },
-  { value: "semanal", label: "Semanal" },
+export const installmentIntervals: { value: TransactionInstallmentInterval; label: string }[] = [
+  { value: "monthly", label: "Mensal" },
+  { value: "biweekly", label: "Quinzenal" },
+  { value: "weekly", label: "Semanal" },
 ];
 
 // ==================== EXPENSE - COMPANY ====================
@@ -524,28 +533,28 @@ export const collectingAgencies = [
 
 export const getCategoriesForTransactionType = (
   transactionType: string,
-  clientType: string
+  counterpartyType: string
 ): { value: string; label: string }[] => {
-  if (transactionType === "imposto") return taxCategories;
-  if (transactionType === "transferencia") return transferCategories;
-  if (transactionType === "investimento") return investmentCategories;
+  if (transactionType === "tax") return taxCategories;
+  if (transactionType === "transfer") return transferCategories;
+  if (transactionType === "investment") return investmentCategories;
 
   // Company
-  if (clientType === "empresa") {
-    if (transactionType === "despesa") return companyExpenseCategories;
-    if (transactionType === "receita") return companyRevenueCategories;
+  if (counterpartyType === "company") {
+    if (transactionType === "expense") return companyExpenseCategories;
+    if (transactionType === "revenue") return companyRevenueCategories;
   }
 
-  // The person counterparty has specific expense categories
-  if (clientType === "pessoa") {
-    if (transactionType === "despesa") return individualExpenseCategories;
-    if (transactionType === "receita") return companyRevenueCategories;
+  // The individual counterparty has specific expense categories
+  if (counterpartyType === "individual") {
+    if (transactionType === "expense") return individualExpenseCategories;
+    if (transactionType === "revenue") return companyRevenueCategories;
   }
 
   // The artist counterparty has specific categories
-  if (clientType === "artista") {
-    if (transactionType === "despesa") return artistExpenseCategories;
-    if (transactionType === "receita") return artistRevenueCategories;
+  if (counterpartyType === "artist") {
+    if (transactionType === "expense") return artistExpenseCategories;
+    if (transactionType === "revenue") return artistRevenueCategories;
   }
 
   return [];
@@ -553,18 +562,18 @@ export const getCategoriesForTransactionType = (
 
 export const getSubcategoriesForCategory = (
   transactionType: string,
-  clientType: string,
+  counterpartyType: string,
   category: string
 ): { value: string; label: string }[] => {
   // Artist + Expense
-  if (clientType === "artista" && transactionType === "despesa") {
+  if (counterpartyType === "artist" && transactionType === "expense") {
     if (category === "caches") return artistFeeTypes;
     return [];
   }
 
   // Company
-  if (clientType === "empresa") {
-    if (transactionType === "despesa") {
+  if (counterpartyType === "company") {
+    if (transactionType === "expense") {
       switch (category) {
         case "servicos": return expenseServiceTypes;
         case "produtos": return expenseProductTypes;
@@ -575,7 +584,7 @@ export const getSubcategoriesForCategory = (
       }
     }
 
-    if (transactionType === "receita") {
+    if (transactionType === "revenue") {
       switch (category) {
         case "receitas-musicais": return musicRevenueTypes;
         case "servicos": return revenueServiceTypes;
@@ -586,9 +595,9 @@ export const getSubcategoriesForCategory = (
     }
   }
 
-  // The person counterparty has specific expense subcategories
-  if (clientType === "pessoa") {
-    if (transactionType === "despesa") {
+  // The individual counterparty has specific expense subcategories
+  if (counterpartyType === "individual") {
+    if (transactionType === "expense") {
       switch (category) {
         case "remuneracao": return individualCompensationTypes;
         case "servicos-pf": return individualServiceTypes;
@@ -597,7 +606,7 @@ export const getSubcategoriesForCategory = (
       }
     }
 
-    if (transactionType === "receita") {
+    if (transactionType === "revenue") {
       switch (category) {
         case "receitas-musicais": return musicRevenueTypes;
         case "servicos": return revenueServiceTypes;
@@ -615,27 +624,27 @@ export const getSubcategoriesForCategory = (
 // ==================== BUSINESS RULES - CHECKERS ====================
 
 // Checks whether an expense service requires artist + project
-export const isServiceRequiringArtistAndProject = (subcategoria: string): boolean => {
-  return expenseServicesRequiringArtistAndProject.includes(subcategoria);
+export const isServiceRequiringArtistAndProject = (subcategory: string): boolean => {
+  return expenseServicesRequiringArtistAndProject.includes(subcategory);
 };
 
 // Checks whether an expense product requires an event
-export const isProductRequiringEvent = (subcategoria: string): boolean => {
-  return expenseProductsRequiringEvent.includes(subcategoria);
+export const isProductRequiringEvent = (subcategory: string): boolean => {
+  return expenseProductsRequiringEvent.includes(subcategory);
 };
 
 // Checks whether a music revenue requires artist + project
-export const isMusicRevenueRequiringArtistAndProject = (subcategoria: string): boolean => {
-  return musicRevenueRequiringArtistAndProject.includes(subcategoria);
+export const isMusicRevenueRequiringArtistAndProject = (subcategory: string): boolean => {
+  return musicRevenueRequiringArtistAndProject.includes(subcategory);
 };
 
 // Checks whether a revenue service requires artist + project
-export const isRevenueServiceRequiringArtistAndProject = (subcategoria: string): boolean => {
-  return revenueServicesRequiringArtistAndProject.includes(subcategoria);
+export const isRevenueServiceRequiringArtistAndProject = (subcategory: string): boolean => {
+  return revenueServicesRequiringArtistAndProject.includes(subcategory);
 };
 
 // Checks whether a revenue service requires only the artist
-export const isRevenueServiceRequiringArtistOnly = (subcategoria: string): boolean => {
-  return revenueServicesRequiringArtistOnly.includes(subcategoria);
+export const isRevenueServiceRequiringArtistOnly = (subcategory: string): boolean => {
+  return revenueServicesRequiringArtistOnly.includes(subcategory);
 };
 

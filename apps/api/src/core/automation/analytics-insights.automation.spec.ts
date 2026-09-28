@@ -49,9 +49,9 @@ const DASHBOARD = {
 const REVENUE_OVERVIEW = {
   months: 3,
   series: [
-    { month: '2026-04-01', receitas: '10000', despesas: '6000' },
-    { month: '2026-05-01', receitas: '12000', despesas: '7000' },
-    { month: '2026-06-01', receitas: '15000', despesas: '9000' },
+    { month: '2026-04-01', revenue: '10000', expenses: '6000' },
+    { month: '2026-05-01', revenue: '12000', expenses: '7000' },
+    { month: '2026-06-01', revenue: '15000', expenses: '9000' },
   ],
 };
 

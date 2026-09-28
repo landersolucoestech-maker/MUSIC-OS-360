@@ -98,8 +98,8 @@ export class SocietyPayloadBuilderService {
 
     const legacy: PayloadIdentifier[] = [];
     if (work.iswc) legacy.push({ provider: IdentifierProvider.CISAC, type: IdentifierType.ISWC, value: work.iswc, is_primary: true });
-    if (work.cod_entidade) legacy.push({ provider: IdentifierProvider.ABRAMUS, type: IdentifierType.ABRAMUS_PROTOCOL, value: work.cod_entidade, is_primary: false });
-    if (work.cod_ecad) legacy.push({ provider: IdentifierProvider.ECAD, type: IdentifierType.ECAD_WORK_CODE, value: work.cod_ecad, is_primary: false });
+    if (work.society_code) legacy.push({ provider: IdentifierProvider.ABRAMUS, type: IdentifierType.ABRAMUS_PROTOCOL, value: work.society_code, is_primary: false });
+    if (work.ecad_code) legacy.push({ provider: IdentifierProvider.ECAD, type: IdentifierType.ECAD_WORK_CODE, value: work.ecad_code, is_primary: false });
 
     const parties = shares.map(shareToParty);
     return {
@@ -138,7 +138,7 @@ export class SocietyPayloadBuilderService {
 
     const legacy: PayloadIdentifier[] = [];
     if (rec.isrc) legacy.push({ provider: IdentifierProvider.ISRC, type: IdentifierType.ISRC, value: rec.isrc, is_primary: true });
-    if (rec.cod_entidade) legacy.push({ provider: IdentifierProvider.ABRAMUS, type: IdentifierType.ABRAMUS_PROTOCOL, value: rec.cod_entidade, is_primary: false });
+    if (rec.society_code) legacy.push({ provider: IdentifierProvider.ABRAMUS, type: IdentifierType.ABRAMUS_PROTOCOL, value: rec.society_code, is_primary: false });
 
     return {
       kind: 'RECORDING',
@@ -152,7 +152,8 @@ export class SocietyPayloadBuilderService {
         release_date: rec.release_date ? rec.release_date.toISOString() : null,
         copyright_year: rec.copyright_year ?? null,
         copyright_owner: rec.copyright_owner ?? null,
-        country_of_recording: rec.country_of_recording ?? null,
+        // ZZ = "Outro" in the form (unknown region): never sent as a country to a society.
+        country_of_recording: rec.country_of_recording && rec.country_of_recording !== 'ZZ' ? rec.country_of_recording : null,
       },
       linked_work: { id: rec.work_id ?? null },
       main_artist: { id: rec.main_artist_id ?? rec.artist_id ?? null },

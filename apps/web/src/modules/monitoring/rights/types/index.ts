@@ -2,7 +2,7 @@
  * Domain types — Rights Monitoring.
  * They mirror the real fields of content_detections and ecad_reports
  * (apps/api/src/database/entities.ts) — no field here exists only in
- * mock data. Catalog enrichment (composer/publisher/iswc/cod_ecad) is
+ * mock data. Catalog enrichment (composer/publisher/iswc/ecad_code) is
  * resolved at runtime via work_id against the real catalog (useWorks()).
  */
 
@@ -13,13 +13,13 @@ import type { EcadReportStatus } from "@music-os-360/types";
 export interface CatalogWorkRef {
   id: string;
   title: string;
-  compositor: string | null;
-  compositores: string | string[] | null;
-  editora: string | null;
+  composer_name: string | null;
+  composer_names: string[] | null;
+  publisher_name: string | null;
   isrc: string | null;
   iswc: string | null;
-  cod_ecad: string | null;
-  cod_entidade: string | null;
+  ecad_code: string | null;
+  society_code: string | null;
   genero: string | null;
   status: string | null;
   duration_text: string | null;

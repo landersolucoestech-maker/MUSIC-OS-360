@@ -50,9 +50,15 @@ export interface UseTransactionFormControllerReturn {
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   handleClose: () => void;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleRemoveAnexo: () => void;
+  handleRemoveAttachment: () => void;
 }
 
+// useDataQuery (shared/hooks) types its mutation input as the RESPONSE row
+// (snake_case columns), while the API request body is the camelCase CZ-041
+// contract (TransactionFormPayload). The two shapes are intentionally
+// different, so the request body is bridged to the hook's input type here —
+// the only place the form hands a body to the mutation. Tracked as a finding:
+// useDataQuery needs a separate request-body type parameter.
 type AddTransactionInput = Parameters<ReturnType<typeof useTransactions>["addTransaction"]["mutateAsync"]>[0];
 type UpdateTransactionInput = Parameters<ReturnType<typeof useTransactions>["updateTransaction"]["mutateAsync"]>[0];
 
@@ -65,23 +71,23 @@ function hasFormChanges(values: Partial<TransactionFormData>): boolean {
 }
 
 function hasSelectedLinkValue(formData: TransactionFormData): boolean {
-  switch (formData.tipoVinculacao) {
-    case "artista":
-      return Boolean(formData.artistaVinculado);
-    case "projeto":
-      return Boolean(formData.projetoVinculado);
-    case "contrato":
-      return Boolean(formData.contratoVinculado);
-    case "evento":
-      return Boolean(formData.eventoVinculado);
-    case "centro-custo":
-      return Boolean(formData.centroCusto);
-    case "competencia":
-      return Boolean(formData.competencia);
-    case "conta-origem":
-      return Boolean(formData.contaOrigem);
-    case "conta-destino":
-      return Boolean(formData.contaDestino);
+  switch (formData.linkType) {
+    case "artist":
+      return Boolean(formData.artistId);
+    case "project":
+      return Boolean(formData.projectId);
+    case "contract":
+      return Boolean(formData.contractId);
+    case "event":
+      return Boolean(formData.eventId);
+    case "cost_center":
+      return Boolean(formData.costCenter);
+    case "reference_month":
+      return Boolean(formData.referenceMonth);
+    case "source_bank_account":
+      return Boolean(formData.sourceBankAccount);
+    case "destination_bank_account":
+      return Boolean(formData.destinationBankAccount);
     default:
       return true;
   }
@@ -128,8 +134,8 @@ export function useTransactionFormController({
 
   const clearTemporaryAttachment = useCallback(() => {
     setFormData(prev => {
-      if (!isLocalObjectUrl(prev.anexoUrl)) return prev;
-      return { ...prev, anexoUrl: "", anexoNome: "" };
+      if (!isLocalObjectUrl(prev.attachmentUrl)) return prev;
+      return { ...prev, attachmentUrl: "", attachmentName: "" };
     });
     revokeObjectUrl();
   }, [revokeObjectUrl]);
@@ -195,10 +201,10 @@ export function useTransactionFormController({
 
     const finalRule = getFinalRule(
       categoryRules,
-      formData.tipoTransacao,
-      formData.tipoCliente,
+      formData.transactionType,
+      formData.counterpartyType,
       formData.category,
-      formData.subcategoria,
+      formData.subcategory,
     );
     if (!finalRule) {
       toast.error("Selecione uma combinação financeira válida");
@@ -206,7 +212,7 @@ export function useTransactionFormController({
     }
 
     const links = getLinksFromRule(finalRule);
-    if (links.length > 0 && !toRuleLink(formData.tipoVinculacao ?? "")) {
+    if (links.length > 0 && !toRuleLink(formData.linkType ?? "")) {
       toast.error("Selecione uma vinculação válida para esta categoria");
       return;
     }
@@ -221,24 +227,21 @@ export function useTransactionFormController({
       return;
     }
 
-    const entityLinks = formData.entityLinks ?? [];
-
     setIsSubmitting(true);
     try {
       const payload: TransactionFormPayload = formToTransactionPayload(formData);
       const transactionId = transaction?.id;
 
       if (mode === "edit" && transactionId) {
-        const expectedUpdatedAt = (transaction?.updated_at ?? transaction?.updatedAt) as string | undefined;
+        const expectedUpdatedAt = typeof transaction?.updated_at === "string" ? transaction.updated_at : undefined;
         const updatePayload = {
           id: transactionId,
           ...payload,
-          entityLinks,
           ...(expectedUpdatedAt ? { expectedUpdatedAt } : {}),
-        } as UpdateTransactionInput;
-        await updateTransaction.mutateAsync(updatePayload);
+        };
+        await updateTransaction.mutateAsync(updatePayload as unknown as UpdateTransactionInput);
       } else {
-        await addTransaction.mutateAsync({ ...payload, entityLinks } as AddTransactionInput);
+        await addTransaction.mutateAsync(payload as unknown as AddTransactionInput);
       }
 
       handleClose();
@@ -259,6 +262,7 @@ export function useTransactionFormController({
     isViewMode,
     mode,
     transaction?.id,
+    transaction?.updated_at,
     updateTransaction,
     validate,
     visibleRules,
@@ -276,10 +280,10 @@ export function useTransactionFormController({
 
     setFormData(prev => ({
       ...prev,
-      anexoUrl: objectUrl,
-      anexoNome: file.name,
+      attachmentUrl: objectUrl,
+      attachmentName: file.name,
     }));
-    clearFieldError("anexoUrl");
+    clearFieldError("attachmentUrl");
     toast.success("Arquivo anexado localmente. Upload real será processado futuramente.");
   }, [clearFieldError, isSubmitting, isViewMode, revokeObjectUrl]);
 
@@ -287,8 +291,8 @@ export function useTransactionFormController({
     if (isViewMode || isSubmitting) return;
 
     revokeObjectUrl();
-    setFormData(prev => ({ ...prev, anexoUrl: "", anexoNome: "" }));
-    clearFieldError("anexoUrl");
+    setFormData(prev => ({ ...prev, attachmentUrl: "", attachmentName: "" }));
+    clearFieldError("attachmentUrl");
   }, [clearFieldError, isSubmitting, isViewMode, revokeObjectUrl]);
 
   return {
@@ -303,7 +307,7 @@ export function useTransactionFormController({
     handleSubmit,
     handleClose,
     handleFileUpload,
-    handleRemoveAnexo: handleRemoveAttachment,
+    handleRemoveAttachment,
   };
 }
 

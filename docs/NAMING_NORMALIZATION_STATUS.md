@@ -92,6 +92,9 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-036 | Invoice (nota fiscal) | done | DONE | no |
 | CZ-037 | Share (royalty split / financial share receivable or payable) | done | DONE | no |
 | CZ-038 | Release | done | DONE | no |
+| CZ-039 | Musical work | done | DONE | no |
+| CZ-040 | Phonogram | done | DONE | no |
+| CZ-041 | Financial transaction (ledger entry) | done | DONE | no |
 
-Concepts: 86. Renames: 0. Exceptions: 250. Blockers: 6.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 70, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 89. Renames: 0. Exceptions: 281. Blockers: 12.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 73, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

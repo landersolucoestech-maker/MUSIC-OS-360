@@ -104,13 +104,13 @@ export default function RightsMonitoring() {
       map.set(workIds[i], {
         id: o.id,
         title: o.title,
-        compositor: o.compositor ?? null,
-        compositores: (o.compositores as string | string[] | null) ?? null,
-        editora: o.editora ?? null,
+        composer_name: o.composer_name ?? null,
+        composer_names: o.composer_names ?? null,
+        publisher_name: o.publisher_name ?? null,
         isrc: o.isrc ?? null,
         iswc: o.iswc ?? null,
-        cod_ecad: o.cod_ecad ?? null,
-        cod_entidade: o.cod_entidade ?? null,
+        ecad_code: o.ecad_code ?? null,
+        society_code: o.society_code ?? null,
         genero: o.music_genre ?? null,
         status: (o.status as string) ?? null,
         duration_text: o.duration_text ?? null,
@@ -174,17 +174,17 @@ export default function RightsMonitoring() {
 
   const completed = filtered.filter((d) => d.status === "completed").length;
   const pending  = filtered.filter((d) => d.status === "pending").length;
-  const matched    = filtered.filter((d) => d.obra?.cod_ecad).length;
+  const matched    = filtered.filter((d) => d.obra?.ecad_code).length;
   const matchRate  = filtered.length > 0 ? Math.round((matched / filtered.length) * 100) : 0;
   const receivedEcadAmount = enrichedReports
     .filter((r) => r.status === EcadReportStatus.COMPLETED)
     .reduce((s, r) => s + Number(r.net_amount ?? r.gross_amount ?? 0), 0);
 
   // Dynamic discrepancies: detections with no linked work, or linked to a
-  // work with no registered cod_ecad (no ECAD reconciliation possible).
+  // work with no registered ecad_code (no ECAD reconciliation possible).
   const dynamicDivergences: Divergence[] = useMemo(() =>
     filtered
-      .filter((det) => !det.obra || !det.obra.cod_ecad)
+      .filter((det) => !det.obra || !det.obra.ecad_code)
       .map((det) => ({
         id: `div-${det.id}`,
         type: det.obra ? "Obra sem código ECAD" : "Detecção sem obra vinculada",

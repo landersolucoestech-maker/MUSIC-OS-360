@@ -1,53 +1,22 @@
 /**
- * One concept, one canonical name (see docs/NAMING_NORMALIZATION_CANONICAL_MAP.md
- * and .claude/rules/naming-canonical.md). The INTERNAL TECHNICAL CONTRACT is always in
- * ENGLISH — this holds both for fields originating from a physical column and
- * for fields originating from `entity.metadata` (jsonb). The legacy
- * Portuguese-named database (`TransactionEntity`, `apps/api/src/database/entities.ts`) is an
- * EXTERNAL boundary: the PT (real column/key) <-> EN (field of this
- * DTO) mapping happens exclusively in `toTransactionDetails()` (read) and in
- * `buildPersistencePayload()` (write), both in `transactions.service.ts`.
- * No Portuguese column/key name may leak outside those two
- * translation points.
+ * One concept, one canonical name (see docs/naming/canonical-naming-map.json
+ * and .claude/rules/naming-canonical.md). The contract of this DTO is English.
+ * Since CZ-041 every field below comes from a canonical physical column of
+ * `transactions` (`description`, `amount`, `transaction_date`, `category`,
+ * `subcategory`, `notes`, `payment_method`, `payment_type`, `installment_count`,
+ * `counterparty_name`, `event_id`, `contract_id`, `reference_month`,
+ * `cost_center`, ...) — the mapping lives only in `toTransactionDetails()`
+ * (read) and in the service's FIELD_TO_COLUMN (write), both in
+ * `transactions.service.ts`. `metadata` is historical data plus the optional
+ * enrichment keys (grossAmount, fees, attachments, ...).
  *
- * Physical origin of each field (for whoever touches the mapper):
- *  - type, description, amount, transactionDate, category, artistId,
- *    contractId, projectId, created_at, updated_at: physical columns of
- *    `transactions` (`type`, `descricao`, `valor`, `data`, `categoria`,
- *    `artist_id`, `contrato_id`, `project_id`, `created_at`, `updated_at`).
- *  - note, paymentMethod, paymentType, installments, subcategory,
- *    supplierOrClient: keys of `entity.metadata`
- *    (`observacao`, `formaPagamento`, `tipoPagamento`, `quantidadeParcelas`,
- *    `subcategoria`, `fornecedorCliente`).
- *  - linkedEventId: the entity HAS a physical `evento_id` column, but it is never
- *    written nor read by this service — the real value always comes from
- *    `entity.metadata.eventoVinculado`. Keeping the name `evento_id`/`eventoId`
- *    in the DTO would be misleading (it implies an FK column), which is why the canonical name here
- *    is `linkedEventId`. The dead `evento_id` column is a matter for
- *    `entities.ts`, out of this change's scope.
- *  - `id`/`created_at`/`updated_at`: already physical columns with no PT equivalent
- *    different from the name itself, kept as they are (`created_at`/`updated_at`
- *    stay snake_case because they are audit timestamps already consumed that way
- *    by other parts of the system — not a Portuguese name, it is the audit
- *    column convention).
- *
- * Recorded naming decisions (to avoid future rework):
- *  - `data` (PT, physical column, entry date) -> `transactionDate`, and
- *    not `date`, because the DTO already has `dueDate`, `paidAt` and `competence` — a
- *    generic `date` field would be ambiguous among those four distinct dates.
- *  - `observacao` (PT, metadata) -> `note` (singular). There is no `notes` in the
- *    DTO, so there is no collision.
- *  - `quantidadeParcelas` (PT, metadata, TOTAL number of installments) ->
- *    `installments`. Kept distinct from `installmentCurrent` (which is already EN and
- *    represents the CURRENT installment, a different concept) — no collision.
- *  - `fornecedorCliente` (PT, metadata, free string filled in by the
- *    form) -> `supplierOrClient`. The pre-existing `supplier` field is
- *    ANOTHER metadata key (`metadata.supplier`) that no writer of this service
- *    ever populates — there is no write path for it in
- *    `buildPersistencePayload`. They are concepts that already lived decoupled in
- *    metadata; `supplier` is recorded here as dead/never-written data,
- *    not as a synonym of `supplierOrClient`. Renaming or removing `supplier`
- *    is out of this change's scope (no task asked for it).
+ * Recorded naming decisions (kept for response compatibility):
+ *  - `transactionDate` (column transaction_date), not `date`: the DTO also has
+ *    `dueDate`, `paidAt` and `competence`.
+ *  - `note` (column notes), `installments` (column installment_count; distinct
+ *    from `installmentCurrent`), `supplierOrClient` (column counterparty_name;
+ *    `supplier` is a different, never-written metadata key), `linkedEventId`
+ *    (column event_id), `competence` (column reference_month).
  */
 export interface TransactionDetailsDTO {
   id: string;

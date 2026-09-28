@@ -78,16 +78,28 @@ export type TransactionType = `${PkgTransactionType}`;
 /** Derived from TransactionStatus — source of truth: @music-os-360/types */
 export type TransactionStatusValue = `${TransactionStatus}`;
 
+/**
+ * Canonical wire values of `payment_method` / `paymentMethod` (CZ-041).
+ * `pix`/`ted`/`boleto` are proper names of Brazilian payment rails, kept as-is.
+ * PT-BR display labels live in accounting/constants/transaction-constants.ts.
+ */
 export type TransactionPaymentMethod =
-  | "dinheiro"
   | "pix"
   | "ted"
   | "boleto"
-  | "cartao_credito"
-  | "cartao_debito"
-  | "cheque"
-  | "permuta"
-  | "outro";
+  | "credit_card"
+  | "debit_card"
+  | "cash"
+  | "check";
+
+/** Canonical wire values of `counterparty_type` / `counterpartyType` (CZ-041). */
+export type TransactionCounterpartyType = "company" | "artist" | "individual";
+
+/** Canonical wire values of `payment_type` / `paymentType` (CZ-041). */
+export type TransactionPaymentType = "upfront" | "installments";
+
+/** Canonical wire values of `installment_interval` / `installmentInterval` (CZ-041). */
+export type TransactionInstallmentInterval = "monthly" | "biweekly" | "weekly";
 
 // ── Invoice (Nota Fiscal) ────────────────────────────────────────────────────
 
@@ -107,14 +119,10 @@ export type InvoiceType =
 /** Derived from WorkStatus — source of truth: @music-os-360/types */
 export type WorkStatusValue = `${WorkStatus}`;
 
+/** Musical classification stored in `works.type` (CZ-039; API default `composition`). */
 export type WorkType =
-  | "musica"
-  | "letra"
-  | "trilha"
-  | "jingle"
-  | "instrumental"
-  | "sampledTrack"
-  | "outro";
+  | "composition"
+  | "other";
 
 // ── Sound recording ──────────────────────────────────────────────────────────
 

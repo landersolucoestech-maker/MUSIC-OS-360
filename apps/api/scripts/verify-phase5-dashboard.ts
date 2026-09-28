@@ -133,20 +133,20 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
     const r = await call('POST', '/events', { ...ctx, body: { title: `${tag}_EVENT_FUTURE_${i}_${TS}`, type: 'show', startsAt: tomorrowIso } });
     const id = pickId(r.body); if (id) out.events.push(id); else console.log(`  !  event(tom) POST status=${r.status} ${JSON.stringify(r.body).slice(0,150)}`);
   }
-  // Revenue transactions require tipoCliente. categoria='outros' avoids requiring an artist/subcategory.
+  // Revenue transactions require counterpartyType. category='outros' avoids requiring an artist/subcategory.
   const today = new Date().toISOString().slice(0,10);
   for (let i = 0; i < opts.txRevenueThisMonth; i++) {
-    const r = await call('POST', '/transactions', { ...ctx, body: { tipoTransacao: 'receita', tipoCliente: 'empresa', categoria: 'outros', descricao: `${tag}_TX_REV_${i}_${TS}`, valor: '1000.00', dataTransacao: today, formaPagamento: 'pix', status: 'pago' } });
+    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'revenue', counterpartyType: 'company', category: 'outros', description: `${tag}_TX_REV_${i}_${TS}`, amount: '1000.00', transactionDate: today, paymentMethod: 'pix', status: 'paid' } });
     const id = pickId(r.body); if (id) out.tx.push(id); else console.log(`  !  tx-rev POST status=${r.status} ${JSON.stringify(r.body).slice(0,200)}`);
   }
   for (let i = 0; i < opts.txExpenseThisMonth; i++) {
-    const r = await call('POST', '/transactions', { ...ctx, body: { tipoTransacao: 'despesa', tipoCliente: 'empresa', categoria: 'outros', descricao: `${tag}_TX_EXP_${i}_${TS}`, valor: '300.00', dataTransacao: today, formaPagamento: 'pix', status: 'pago' } });
+    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'expense', counterpartyType: 'company', category: 'outros', description: `${tag}_TX_EXP_${i}_${TS}`, amount: '300.00', transactionDate: today, paymentMethod: 'pix', status: 'paid' } });
     const id = pickId(r.body); if (id) out.tx.push(id); else console.log(`  !  tx-exp POST status=${r.status} ${JSON.stringify(r.body).slice(0,200)}`);
   }
   // A transaction from another month (60 days ago)
   const other = new Date(Date.now() - 60 * 86400000).toISOString().slice(0,10);
   for (let i = 0; i < opts.txRevenueOtherMonth; i++) {
-    const r = await call('POST', '/transactions', { ...ctx, body: { tipoTransacao: 'receita', tipoCliente: 'empresa', categoria: 'outros', descricao: `${tag}_TX_OLD_${i}_${TS}`, valor: '9999.00', dataTransacao: other, formaPagamento: 'pix', status: 'pago' } });
+    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'revenue', counterpartyType: 'company', category: 'outros', description: `${tag}_TX_OLD_${i}_${TS}`, amount: '9999.00', transactionDate: other, paymentMethod: 'pix', status: 'paid' } });
     const id = pickId(r.body); if (id) out.tx.push(id); else console.log(`  !  tx-old POST status=${r.status} ${JSON.stringify(r.body).slice(0,200)}`);
   }
   // Leads
@@ -334,27 +334,27 @@ async function f57(): Promise<void> {
   section('5.7 — CURRENT MONTH FINANCE');
   // For Tenant A, recompute what we expect
   const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0,0,0,0);
-  const dbA = await DB.query<{ receitas: string; despesas: string }>(`
+  const dbA = await DB.query<{ revenue: string; expenses: string }>(`
     SELECT
-      COALESCE(SUM(CASE WHEN tipo='receita' AND status NOT IN ('cancelado','cancelled') THEN valor::numeric ELSE 0 END),0)::numeric AS receitas,
-      COALESCE(SUM(CASE WHEN tipo='despesa' AND status NOT IN ('cancelado','cancelled') THEN valor::numeric ELSE 0 END),0)::numeric AS despesas
-    FROM transactions WHERE tenant_id=$1 AND deleted_at IS NULL AND data >= $2
+      COALESCE(SUM(CASE WHEN type='revenue' AND status <> 'cancelled' THEN amount::numeric ELSE 0 END),0)::numeric AS revenue,
+      COALESCE(SUM(CASE WHEN type='expense' AND status <> 'cancelled' THEN amount::numeric ELSE 0 END),0)::numeric AS expenses
+    FROM transactions WHERE tenant_id=$1 AND deleted_at IS NULL AND transaction_date >= $2
   `, [TA, monthStart]);
-  const expectedRevA = parseFloat(dbA.rows[0]?.receitas ?? '0');
-  const expectedExpA = parseFloat(dbA.rows[0]?.despesas ?? '0');
+  const expectedRevA = parseFloat(dbA.rows[0]?.revenue ?? '0');
+  const expectedExpA = parseFloat(dbA.rows[0]?.expenses ?? '0');
   expect('revenue_current_month A matches the database', Math.abs(DASH_A.revenue_current_month - expectedRevA) < 0.01, `dashboard=${DASH_A.revenue_current_month} db=${expectedRevA}`);
   expect('expenses_current_month A matches the database', Math.abs(DASH_A.expenses_current_month - expectedExpA) < 0.01, `dashboard=${DASH_A.expenses_current_month} db=${expectedExpA}`);
   expect('net_result_current_month A correct', Math.abs(DASH_A.net_result_current_month - (expectedRevA - expectedExpA)) < 0.01);
 
   // Same check for B
-  const dbB = await DB.query<{ receitas: string; despesas: string }>(`
+  const dbB = await DB.query<{ revenue: string; expenses: string }>(`
     SELECT
-      COALESCE(SUM(CASE WHEN tipo='receita' AND status NOT IN ('cancelado','cancelled') THEN valor::numeric ELSE 0 END),0)::numeric AS receitas,
-      COALESCE(SUM(CASE WHEN tipo='despesa' AND status NOT IN ('cancelado','cancelled') THEN valor::numeric ELSE 0 END),0)::numeric AS despesas
-    FROM transactions WHERE tenant_id=$1 AND deleted_at IS NULL AND data >= $2
+      COALESCE(SUM(CASE WHEN type='revenue' AND status <> 'cancelled' THEN amount::numeric ELSE 0 END),0)::numeric AS revenue,
+      COALESCE(SUM(CASE WHEN type='expense' AND status <> 'cancelled' THEN amount::numeric ELSE 0 END),0)::numeric AS expenses
+    FROM transactions WHERE tenant_id=$1 AND deleted_at IS NULL AND transaction_date >= $2
   `, [TB, monthStart]);
-  const expectedRevB = parseFloat(dbB.rows[0]?.receitas ?? '0');
-  const expectedExpB = parseFloat(dbB.rows[0]?.despesas ?? '0');
+  const expectedRevB = parseFloat(dbB.rows[0]?.revenue ?? '0');
+  const expectedExpB = parseFloat(dbB.rows[0]?.expenses ?? '0');
   expect('revenue_current_month B matches the database', Math.abs(DASH_B.revenue_current_month - expectedRevB) < 0.01, `dashboard=${DASH_B.revenue_current_month} db=${expectedRevB}`);
   expect('expenses_current_month B matches the database', Math.abs(DASH_B.expenses_current_month - expectedExpB) < 0.01);
 

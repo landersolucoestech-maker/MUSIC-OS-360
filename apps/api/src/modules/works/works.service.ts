@@ -9,6 +9,7 @@ import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { normalizeIsrc, isValidIsrc } from '../registry/validators/registry-validators';
 import { deriveWorkRegistryFields, type WorkRegistrySourceFields } from './work-registry-fields.util';
+import { canonicalWorkParticipantRole, canonicalizeWorkInput, canonicalizeWorkQuery } from './work-legacy-fields';
 import type { CreateWorkDto }  from './dto/create-work.dto';
 import type { UpdateWorkDto }  from './dto/update-work.dto';
 import type { QueryWorkDto }   from './dto/query-work.dto';
@@ -16,12 +17,12 @@ import type { QueryWorkDto }   from './dto/query-work.dto';
 export interface ParticipantResponse {
   id: string;
   name: string;
-  classeFuncao: string;
+  role: string;
   link: string | null;
-  percentual: string | null;
+  percentage: string | null;
 }
 
-type WorkWithParticipants = WorkEntity & { participantes: ParticipantResponse[] };
+type WorkWithParticipants = WorkEntity & { participants: ParticipantResponse[] };
 
 @Injectable()
 export class WorksService {
@@ -43,8 +44,7 @@ export class WorksService {
   /**
    * `works.participantes` was normalized into `work_participants`
    * (migration WorkParticipantsNormalization20260718000011). Rehydrates the
-   * array into the SAME format the frontend always consumed, so the
-   * API contract does not change.
+   * participants array on every work response (`participants`, CZ-039).
    */
   private async hydrateParticipants(works: WorkEntity[]): Promise<WorkWithParticipants[]> {
     if (works.length === 0) return [];
@@ -61,14 +61,14 @@ export class WorksService {
       list.push({
         id: row.id,
         name: row.name,
-        classeFuncao: row.classe_funcao,
+        role: row.role,
         link: row.link,
-        percentual: row.percentual,
+        percentage: row.percentage,
       });
       byWork.set(row.work_id, list);
     }
 
-    return works.map((w) => Object.assign(w, { participantes: byWork.get(w.id) ?? [] }));
+    return works.map((w) => Object.assign(w, { participants: byWork.get(w.id) ?? [] }));
   }
 
   /** Receives the repo explicitly (instead of always using this.participantsRepo)
@@ -78,9 +78,11 @@ export class WorksService {
     repo: Repository<WorkParticipantEntity>,
     tenantId: string,
     workId: string,
-    participants: unknown[] | undefined,
+    participants: unknown[] | null | undefined,
   ): Promise<void> {
-    if (participants === undefined) return;
+    // Absent or null leaves the stored participants untouched (null used to
+    // reach `.map` and 500); an explicit [] clears them.
+    if (participants == null) return;
     await repo.delete({ work_id: workId, tenant_id: tenantId });
     const rows = (participants as Array<Record<string, unknown>>).map((p, index) =>
       repo.create({
@@ -88,9 +90,9 @@ export class WorksService {
         tenant_id: tenantId,
         work_id: workId,
         name: String(p.name ?? ''),
-        classe_funcao: String(p.classeFuncao ?? 'não_informado'),
+        role: canonicalWorkParticipantRole(p.role),
         link: (p.link as string) || null,
-        percentual: p.percentual != null && p.percentual !== '' ? String(p.percentual) : null,
+        percentage: p.percentage != null && p.percentage !== '' ? String(p.percentage) : null,
         sort_order: index,
       }),
     );
@@ -99,21 +101,21 @@ export class WorksService {
 
   /** Base QueryBuilder (tenant + not-deleted + filters) shared by list() and stats(). */
   private baseQb(tenantId: string, query: QueryWorkDto) {
-    const q = query as Record<string, unknown>;
+    const q = canonicalizeWorkQuery(query as Record<string, unknown>);
     const qb = this.repo!
       .createQueryBuilder('w')
       .where('w.tenant_id = :tenantId', { tenantId })
       .andWhere('w.deleted_at IS NULL');
 
     if (q['status'])     qb.andWhere('w.status = :status', { status: q['status'] });
-    if (q['tipo_obra'])  qb.andWhere('w.tipo_obra = :tipoObra', { tipoObra: q['tipo_obra'] });
+    if (q['work_origin']) qb.andWhere('w.work_origin = :workOrigin', { workOrigin: q['work_origin'] });
     if (q['music_genre']) qb.andWhere('LOWER(w.music_genre) = LOWER(:musicGenre)', { musicGenre: q['music_genre'] });
     if (q['project_id']) {
-      if (q['project_id'] === 'no-projeto') qb.andWhere('w.project_id IS NULL');
+      if (q['project_id'] === 'none') qb.andWhere('w.project_id IS NULL');
       else qb.andWhere('w.project_id = :projectId', { projectId: q['project_id'] });
     }
-    if (q['ecad'] === 'com-ecad')      qb.andWhere("w.cod_ecad IS NOT NULL AND w.cod_ecad <> ''");
-    else if (q['ecad'] === 'sem-ecad') qb.andWhere("(w.cod_ecad IS NULL OR w.cod_ecad = '')");
+    if (q['ecad'] === 'with_code')         qb.andWhere("w.ecad_code IS NOT NULL AND w.ecad_code <> ''");
+    else if (q['ecad'] === 'without_code') qb.andWhere("(w.ecad_code IS NULL OR w.ecad_code = '')");
     if (q['search']) qb.andWhere('w.title ILIKE :search', { search: `%${q['search']}%` });
     const artistId = q['artist_id'] ?? q['artistId'];
     if (artistId) qb.andWhere('w.artist_id = :artistId', { artistId });
@@ -180,31 +182,23 @@ export class WorksService {
     rest.isrc = canonicalIsrc;
   }
 
-  async create(tenantId: string, userId: string, dto: CreateWorkDto): Promise<WorkWithParticipants> {
+  async create(tenantId: string, userId: string, input: CreateWorkDto): Promise<WorkWithParticipants> {
+    const dto = canonicalizeWorkInput(input);
     // works.type is NOT NULL. find-tipo-obra-type-collision: the real form
-    // (formToObraPayload) NEVER sends `type` -- only `tipo_obra` ('autoral'|
-    // 'referencia', the record's origin in the catalog, see
-    // WorkTypeSelectorModal.tsx). The `?? dto.tipo_obra` fallback that existed
-    // here therefore ALWAYS fired in real use, writing 'autoral'/
-    // 'referencia' into the column that ABRAMUS/ECAD registration reads as the
-    // work's musical classification (e.g. 'composicao') -- two distinct
-    // concepts silently conflated in 100% of the works created
-    // through the real UI. `tipo_obra` remains its own column, untouched;
-    // `type` now only uses the real default when the caller does not send it.
-    const type = dto.type ?? 'composicao';
-    const { participantes: participants, ...rest } = dto as CreateWorkDto & { participantes?: unknown[] };
+    // never sends `type` -- only `work_origin` ('original'|'reference', the
+    // record's origin in the catalog, see WorkTypeSelectorModal.tsx), a
+    // distinct concept from the musical classification that ABRAMUS/ECAD
+    // registration reads from `type`. `type` only takes its default when the
+    // caller does not send it.
+    const type = dto.type ?? 'composition';
+    const { participants, ...rest } = dto as CreateWorkDto & { participants?: unknown[] };
     // find-f81eebf2: artist_id had no FK (DB or app-layer) — a work could
     // silently reference another tenant's artist.
     await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
     this.normalizeIsrcField(rest);
-    // find-registry-null-fields: the PT form fields (idioma/instrumental/
-    // criada_por_ia/duration_text/outros_titulos/ia_*) are the only ones the
-    // real form writes -- the English Registry Fields
-    // (language/is_instrumental/duration_seconds/ai_used/ai_tools/ai_prompts/
-    // alternative_titles) that society-payload-builder.service.ts's
-    // buildWorkPayload() actually reads were never derived, so every
-    // ABRAMUS/ECAD work submission shipped them null. Derived here on every
-    // create so both sides finally agree.
+    // duration_seconds and ai_tools/ai_prompts are derived from the fields the
+    // form captures (duration_text, ai_harmony/ai_melody/ai_lyrics) so the
+    // ABRAMUS/ECAD payload (society-payload-builder buildWorkPayload) gets them.
     const registryFields = deriveWorkRegistryFields(rest as WorkRegistrySourceFields);
 
     // Work + participants in the same transaction: if writing the participants
@@ -239,32 +233,25 @@ export class WorksService {
     return this.findById(tenantId, saved.id);
   }
 
-  async update(tenantId: string, userId: string, id: string, dto: UpdateWorkDto): Promise<WorkWithParticipants> {
+  async update(tenantId: string, userId: string, id: string, input: UpdateWorkDto): Promise<WorkWithParticipants> {
     const current = await this.findById(tenantId, id);
-    const { participantes: participants, expectedUpdatedAt, ...rest } = dto as UpdateWorkDto & { participantes?: unknown[] };
+    const { participants, expectedUpdatedAt, ...rest } = canonicalizeWorkInput(input) as UpdateWorkDto & { participants?: unknown[] };
     // find-f81eebf2: only validate when the patch actually sets artist_id —
     // omitted means "unchanged", already validated at its own create time.
     if (rest.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
     this.normalizeIsrcField(rest);
-    // find-registry-null-fields: merge the patch's PT fields over the
-    // CURRENT row's PT fields before deriving the English Registry Fields —
-    // a partial update that only touches e.g. `idioma` must still derive
-    // correct ai_tools/ai_prompts/etc. from the unchanged sibling fields,
-    // not from `undefined`. See create()'s identical derivation above.
+    // Merge the patch over the CURRENT row before deriving: a partial update
+    // that only touches e.g. `ai_melody` must still derive ai_tools/ai_prompts
+    // from the unchanged sibling fields, not from `undefined`.
     const mergedForRegistry: WorkRegistrySourceFields = {
-      idioma: rest.idioma !== undefined ? rest.idioma : current.idioma,
-      instrumental: rest.instrumental !== undefined ? rest.instrumental : current.instrumental,
-      criada_por_ia: rest.criada_por_ia !== undefined ? rest.criada_por_ia : current.criada_por_ia,
       duration_text: rest.duration_text !== undefined ? rest.duration_text : current.duration_text,
-      outros_titulos: rest.outros_titulos !== undefined ? rest.outros_titulos : current.outros_titulos,
-      letra_completa: rest.letra_completa !== undefined ? rest.letra_completa : current.letra_completa,
-      ia_harmonia: rest.ia_harmonia !== undefined ? rest.ia_harmonia : (current.ia_harmonia as WorkRegistrySourceFields['ia_harmonia']),
-      ia_melodia: rest.ia_melodia !== undefined ? rest.ia_melodia : (current.ia_melodia as WorkRegistrySourceFields['ia_melodia']),
-      ia_letra: rest.ia_letra !== undefined ? rest.ia_letra : (current.ia_letra as WorkRegistrySourceFields['ia_letra']),
+      ai_harmony: rest.ai_harmony !== undefined ? rest.ai_harmony : (current.ai_harmony as WorkRegistrySourceFields['ai_harmony']),
+      ai_melody: rest.ai_melody !== undefined ? rest.ai_melody : (current.ai_melody as WorkRegistrySourceFields['ai_melody']),
+      ai_lyrics: rest.ai_lyrics !== undefined ? rest.ai_lyrics : (current.ai_lyrics as WorkRegistrySourceFields['ai_lyrics']),
     };
     const registryFields = deriveWorkRegistryFields(mergedForRegistry);
 
-    // Task L: casUpdate() and replaceParticipantes() ran as two independent
+    // Task L: casUpdate() and replaceParticipants() ran as two independent
     // operations — if writing the participants failed after the
     // casUpdate had already applied, the work kept its main fields
     // updated but the old (or partially deleted) participants,

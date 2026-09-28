@@ -82,8 +82,8 @@ export function ECADViewModal({ open, onOpenChange, report }: ECADViewModalProps
               {report.obra ? (
                 <div className="p-4 text-sm space-y-1">
                   <p className="font-medium text-foreground">{report.obra.title}</p>
-                  <p className="text-muted-foreground">{report.obra.compositor || "—"} · {report.obra.editora || "—"}</p>
-                  <p className="text-xs text-muted-foreground">Cód. ECAD: {report.obra.cod_ecad || "—"}</p>
+                  <p className="text-muted-foreground">{report.obra.composer_name || "—"} · {report.obra.publisher_name || "—"}</p>
+                  <p className="text-xs text-muted-foreground">Cód. ECAD: {report.obra.ecad_code || "—"}</p>
                 </div>
               ) : (
                 <p className="p-4 text-sm text-muted-foreground">

@@ -9,11 +9,11 @@
 import type { DataSource } from 'typeorm';
 
 interface AccountingSummaryRow {
-  artista: string;
-  receitas: number;
-  despesas: number;
-  resultado: number;
-  margem: number;
+  artist: string;
+  revenue: number;
+  expenses: number;
+  result: number;
+  margin: number;
 }
 
 export async function fetchAccountingSummaryRows(
@@ -22,22 +22,22 @@ export async function fetchAccountingSummaryRows(
 ): Promise<AccountingSummaryRow[]> {
   const rows = (await ds.query(
     `SELECT
-       a.nome_artistico AS artista,
-       COALESCE(SUM(t.valor) FILTER (WHERE t.type = 'receita'), 0) AS receitas,
-       COALESCE(SUM(t.valor) FILTER (WHERE t.type = 'despesa'), 0) AS despesas
+       a.nome_artistico AS artist,
+       COALESCE(SUM(t.amount) FILTER (WHERE t.type = 'revenue'), 0) AS revenue,
+       COALESCE(SUM(t.amount) FILTER (WHERE t.type = 'expense'), 0) AS expenses
      FROM artists a
      JOIN transactions t ON t.artist_id = a.id AND t.tenant_id = a.tenant_id
      WHERE a.tenant_id = $1 AND t.deleted_at IS NULL
      GROUP BY a.id, a.nome_artistico
      ORDER BY a.nome_artistico ASC`,
     [tenantId],
-  )) as { artista: string; receitas: string; despesas: string }[];
+  )) as { artist: string; revenue: string; expenses: string }[];
 
   return rows.map((r) => {
-    const income = Number(r.receitas);
-    const expenses = Number(r.despesas);
+    const income = Number(r.revenue);
+    const expenses = Number(r.expenses);
     const result = income - expenses;
     const marginPct = income > 0 ? Number(((result / income) * 100).toFixed(2)) : 0;
-    return { artista: r.artista, receitas: income, despesas: expenses, resultado: result, margem: marginPct };
+    return { artist: r.artist, revenue: income, expenses, result, margin: marginPct };
   });
 }

@@ -52,9 +52,9 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
     payload: {
       transactionId: 'x1',
       tenantId: 't1',
-      type: 'despesa',
-      categoria: 'Marketing',
-      valor: '1500.00',
+      type: 'expense',
+      category: 'Marketing',
+      amount: '1500.00',
       contratoId: null,
       artistId: 'a1',
       createdBy: 'u1',
@@ -64,11 +64,11 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
 }
 
 const TX_ROW = {
-  type: 'despesa',
-  categoria: 'Marketing',
-  descricao: 'Tráfego pago Meta Ads campanha lançamento',
-  valor: '1500.00',
-  data: '2026-06-10T00:00:00.000Z',
+  type: 'expense',
+  category: 'Marketing',
+  description: 'Tráfego pago Meta Ads campanha lançamento',
+  amount: '1500.00',
+  transaction_date: '2026-06-10T00:00:00.000Z',
   referencia: null,
   artist_name: 'Banda Aurora',
   metadata: {},
@@ -126,14 +126,14 @@ describe('FinancialClassificationAutomation (transaction.created → financial-c
     expect(meta.aiClassification.parsed.costCenter).toBe('marketing');
   });
 
-  it('maps direction=income to receita', async () => {
-    const row = { ...TX_ROW, type: 'receita', descricao: 'Royalties Spotify' };
+  it('maps revenue to direction=income', async () => {
+    const row = { ...TX_ROW, type: 'revenue', description: 'Royalties Spotify' };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const handler = new FinancialClassificationAutomation(ds as never, skillRun as never, ai as never, passThroughTenantContext(ds) as never);
 
-    await handler.onTransactionCreated(makeEvent({ type: 'receita' }) as never);
+    await handler.onTransactionCreated(makeEvent({ type: 'revenue' }) as never);
 
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string }]>;
     expect(aiCalls[0][0].prompt).toContain('receita (income)');

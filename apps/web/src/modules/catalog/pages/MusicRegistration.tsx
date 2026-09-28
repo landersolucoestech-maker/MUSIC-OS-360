@@ -16,9 +16,20 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { SortableTableHead } from "@/shared/components/SortableTableHead";
 import { nextTableSortState, sortTableRows, type TableSortState } from "@/shared/lib/table-sort";
-import { WorkFormModal, WorkTypeBadge } from "@/modules/catalog/components/WorkFormModal";
+import { WorkFormModal } from "@/modules/catalog/components/WorkFormModal";
+import { WorkOriginBadge } from "@/modules/catalog/components/WorkOriginBadge";
 import { WorkViewModal } from "@/modules/catalog/components/WorkViewModal";
-import { WorkTypeSelectorModal, type WorkType } from "@/modules/catalog/components/WorkTypeSelectorModal";
+import { WorkTypeSelectorModal } from "@/modules/catalog/components/WorkTypeSelectorModal";
+import {
+  WORK_ORIGINS,
+  WORK_ORIGIN_BADGE_LABELS,
+  WORK_ORIGIN_LABELS,
+  WORK_PROJECT_FILTER_NONE,
+  isWorkOrigin,
+  type WorkEcadFilter,
+  type WorkOrigin,
+} from "@/modules/catalog/constants/work-options";
+import type { PhonogramEcadFilter, PhonogramHasWorkFilter } from "@/modules/catalog/constants/phonogram-options";
 import { PhonogramFormModal } from "@/modules/catalog/components/PhonogramFormModal";
 import { PhonogramViewModal } from "@/modules/catalog/components/PhonogramViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
@@ -74,10 +85,14 @@ const getPhonogramSortValue = (phonogram: Phonogram, key: string): unknown => {
 };
 
 const getWorkSortValue = (work: Work, key: string): unknown => {
-  if (key === "genero") return getWorkGenreDisplay(work);
+  if (key === "music_genre") return getWorkGenreDisplay(work);
   if (key === "title") return work.title ?? "";
+  if (key === "work_origin") return WORK_ORIGIN_BADGE_LABELS[isWorkOrigin(work.work_origin) ? work.work_origin : "reference"];
   return getSortText((work as Record<string, unknown>)[key]);
 };
+
+const formatNameList = (names: string[] | null | undefined): string =>
+  Array.isArray(names) ? names.filter(Boolean).join(", ") : "";
 
 export default function MusicRegistry() {
   const navigate = useNavigate();
@@ -124,26 +139,26 @@ export default function MusicRegistry() {
   const [genreFilter, setGenreFilter] = useState("all-genre");
   const [phonogramSort, setPhonogramSort] = useState<TableSortState>(null);
   const [workSort, setWorkSort] = useState<TableSortState>(null);
-  const [workTypeFilter, setWorkTypeFilter] = useState("all-tipos");
-  const [projectFilter, setProjectFilter] = useState("all-projetos");
+  const [workOriginFilter, setWorkOriginFilter] = useState("all-origins");
+  const [projectFilter, setProjectFilter] = useState("all-projects");
   const [linkedWorkFilter, setLinkedWorkFilter] = useState("all-obras");
   const [ecadFilter, setEcadFilter] = useState("all-ecad");
   const [phonogramEcadFilter, setPhonogramEcadFilter] = useState("all-ecad");
-  const [workModal, setWorkModal] = useState<{ open: boolean; mode: "create" | "edit"; obra?: Work; tipoObra?: WorkType }>({
+  const [workModal, setWorkModal] = useState<{ open: boolean; mode: "create" | "edit"; work?: Partial<Work>; workOrigin?: WorkOrigin }>({
     open: false,
     mode: "create",
-    obra: undefined,
-    tipoObra: undefined,
+    work: undefined,
+    workOrigin: undefined,
   });
   const [workTypeSelectorOpen, setWorkTypeSelectorOpen] = useState(false);
   const [pendingProjectId, setPendingProjectId] = useState<string | null>(null);
-  const [workViewModal, setWorkViewModal] = useState<{ open: boolean; obra?: Work }>({ open: false });
-  const [phonogramModal, setPhonogramModal] = useState<{ open: boolean; mode: "create" | "edit"; fonograma?: Phonogram }>({
+  const [workViewModal, setWorkViewModal] = useState<{ open: boolean; work?: Work }>({ open: false });
+  const [phonogramModal, setPhonogramModal] = useState<{ open: boolean; mode: "create" | "edit"; phonogram?: Partial<Phonogram> }>({
     open: false,
     mode: "create",
-    fonograma: undefined
+    phonogram: undefined
   });
-  const [phonogramViewModal, setPhonogramViewModal] = useState<{ open: boolean; fonograma?: Phonogram }>({ open: false });
+  const [phonogramViewModal, setPhonogramViewModal] = useState<{ open: boolean; phonogram?: Phonogram }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; item?: Work | Phonogram; type?: string }>({ open: false, item: undefined, type: undefined });
   const [contractModal, setContractModal] = useState<{ open: boolean; prefill?: { title: string; notes: string } }>({ open: false });
 
@@ -193,7 +208,7 @@ export default function MusicRegistry() {
     if (workParam) {
       if (deepLinkWork) {
         setActiveTab("obras");
-        setWorkViewModal({ open: true, obra: deepLinkWork });
+        setWorkViewModal({ open: true, work: deepLinkWork });
       }
       // Whether or not the obra was found, drop the param so we don't loop.
       next.delete("work");
@@ -203,7 +218,7 @@ export default function MusicRegistry() {
     if (editWorkParam) {
       if (deepLinkEditWork) {
         setActiveTab("obras");
-        setWorkModal({ open: true, mode: "edit", obra: deepLinkEditWork });
+        setWorkModal({ open: true, mode: "edit", work: deepLinkEditWork });
       }
       next.delete("editWork");
       consumed = true;
@@ -212,7 +227,7 @@ export default function MusicRegistry() {
     if (phonogramParam) {
       if (deepLinkPhonogram) {
         setActiveTab("fonogramas");
-        setPhonogramModal({ open: true, mode: "edit", fonograma: deepLinkPhonogram });
+        setPhonogramModal({ open: true, mode: "edit", phonogram: deepLinkPhonogram });
       }
       next.delete("phonogram");
       consumed = true;
@@ -249,17 +264,17 @@ export default function MusicRegistry() {
   useEffect(() => {
     setWorkPage(0);
     setPhonogramPage(0);
-  }, [debouncedSearch, statusFilter, genreFilter, workTypeFilter, projectFilter, linkedWorkFilter, ecadFilter, phonogramEcadFilter]);
+  }, [debouncedSearch, statusFilter, genreFilter, workOriginFilter, projectFilter, linkedWorkFilter, ecadFilter, phonogramEcadFilter]);
 
   const {
     works: workPageItems, total: workTotal, isLoading: isLoadingWorkPage, error: workPageError, refetch: refetchWorkPage,
   } = useWorksPaginated({
     page: workPage, pageSize: workPageSize, search: debouncedSearch || undefined,
     status: statusFilter !== "all-status" ? statusFilter : undefined,
-    tipoObra: workTypeFilter !== "all-tipos" ? workTypeFilter : undefined,
-    genero: genreFilter !== "all-genre" ? genreFilter : undefined,
-    projectId: projectFilter !== "all-projetos" ? projectFilter : undefined,
-    ecad: ecadFilter !== "all-ecad" ? (ecadFilter as "com-ecad" | "sem-ecad") : undefined,
+    workOrigin: isWorkOrigin(workOriginFilter) ? workOriginFilter : undefined,
+    musicGenre: genreFilter !== "all-genre" ? genreFilter : undefined,
+    projectId: projectFilter !== "all-projects" ? projectFilter : undefined,
+    ecad: ecadFilter !== "all-ecad" ? (ecadFilter as WorkEcadFilter) : undefined,
     enabled: activeTab === "obras",
   });
   const worksPg = useMemo(() => ({
@@ -276,9 +291,9 @@ export default function MusicRegistry() {
   } = usePhonogramsPaginated({
     page: phonogramPage, pageSize: phonogramPageSize, search: debouncedSearch || undefined,
     status: statusFilter !== "all-status" ? statusFilter : undefined,
-    genero: genreFilter !== "all-genre" ? genreFilter : undefined,
-    obraVinculada: linkedWorkFilter !== "all-obras" ? (linkedWorkFilter as "com-obra" | "sem-obra") : undefined,
-    ecad: phonogramEcadFilter !== "all-ecad" ? (phonogramEcadFilter as "com-ecad" | "sem-ecad") : undefined,
+    musicGenre: genreFilter !== "all-genre" ? genreFilter : undefined,
+    hasWork: linkedWorkFilter !== "all-obras" ? (linkedWorkFilter as PhonogramHasWorkFilter) : undefined,
+    ecad: phonogramEcadFilter !== "all-ecad" ? (phonogramEcadFilter as PhonogramEcadFilter) : undefined,
     enabled: activeTab === "fonogramas",
   });
   const phonogramsPg = useMemo(() => ({
@@ -293,8 +308,8 @@ export default function MusicRegistry() {
   const isLoading = loadingWorks || loadingPhonograms ||
     (activeTab === "fonogramas" ? isLoadingPhonogramPage : isLoadingWorkPage);
 
-  const { generos: worksGenres } = useWorksGenres();
-  const { generos: phonogramsGenres } = usePhonogramsGenres();
+  const { genres: worksGenres } = useWorksGenres();
+  const { genres: phonogramsGenres } = usePhonogramsGenres();
   const uniqueGenres = activeTab === "fonogramas" ? phonogramsGenres : worksGenres;
 
   const availableProjects = useMemo(() => {
@@ -414,12 +429,12 @@ export default function MusicRegistry() {
           </div>
           {activeTab === "obras" && availableProjects.length > 0 && (
             <Select value={projectFilter} onValueChange={setProjectFilter}>
-              <SelectTrigger className="w-auto min-w-[150px] shrink-0 h-8 text-sm bg-card border-border" data-testid="select-filter-projeto">
+              <SelectTrigger className="w-auto min-w-[150px] shrink-0 h-8 text-sm bg-card border-border" data-testid="select-filter-project">
                 <SelectValue placeholder="Todos Projetos" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-projetos">Todos Projetos</SelectItem>
-                <SelectItem value="no-projeto">Sem projeto vinculado</SelectItem>
+                <SelectItem value="all-projects">Todos Projetos</SelectItem>
+                <SelectItem value={WORK_PROJECT_FILTER_NONE}>Sem projeto vinculado</SelectItem>
                 {availableProjects.map(p => (
                   <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
                 ))}
@@ -433,20 +448,21 @@ export default function MusicRegistry() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-ecad">Todos ECAD</SelectItem>
-                <SelectItem value="com-ecad">Com ECAD</SelectItem>
-                <SelectItem value="sem-ecad">Sem ECAD</SelectItem>
+                <SelectItem value="with_code">Com ECAD</SelectItem>
+                <SelectItem value="without_code">Sem ECAD</SelectItem>
               </SelectContent>
             </Select>
           )}
           {activeTab === "obras" && (
-            <Select value={workTypeFilter} onValueChange={setWorkTypeFilter} data-testid="select-filter-type-obra">
-              <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-type-obra">
+            <Select value={workOriginFilter} onValueChange={setWorkOriginFilter} data-testid="select-filter-work-origin">
+              <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-work-origin">
                 <SelectValue placeholder="Todos Tipos" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-tipos">Todos Tipos</SelectItem>
-                <SelectItem value="autoral">Autoral</SelectItem>
-                <SelectItem value="referencia">Referência</SelectItem>
+                <SelectItem value="all-origins">Todos Tipos</SelectItem>
+                {WORK_ORIGINS.map((origin) => (
+                  <SelectItem key={origin} value={origin}>{WORK_ORIGIN_LABELS[origin]}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           )}
@@ -457,8 +473,8 @@ export default function MusicRegistry() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-obras">Todos os Fonogramas</SelectItem>
-                <SelectItem value="sem-obra">Sem obra vinculada</SelectItem>
-                <SelectItem value="com-obra">Com obra vinculada</SelectItem>
+                <SelectItem value="false">Sem obra vinculada</SelectItem>
+                <SelectItem value="true">Com obra vinculada</SelectItem>
               </SelectContent>
             </Select>
           )}
@@ -469,8 +485,8 @@ export default function MusicRegistry() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-ecad">Todos ECAD</SelectItem>
-                <SelectItem value="com-ecad">Com ECAD</SelectItem>
-                <SelectItem value="sem-ecad">Sem ECAD</SelectItem>
+                <SelectItem value="with_code">Com ECAD</SelectItem>
+                <SelectItem value="without_code">Sem ECAD</SelectItem>
               </SelectContent>
             </Select>
           )}
@@ -498,8 +514,8 @@ export default function MusicRegistry() {
               ))}
             </SelectContent>
           </Select>
-          {(searchTerm !== "" || statusFilter !== "all-status" || genreFilter !== "all-genre" || workTypeFilter !== "all-tipos" || projectFilter !== "all-projetos" || linkedWorkFilter !== "all-obras" || ecadFilter !== "all-ecad" || phonogramEcadFilter !== "all-ecad") && (
-            <Button variant="outline" onClick={() => { setSearchTerm(""); setStatusFilter("all-status"); setGenreFilter("all-genre"); setWorkTypeFilter("all-tipos"); setProjectFilter("all-projetos"); setLinkedWorkFilter("all-obras"); setEcadFilter("all-ecad"); setPhonogramEcadFilter("all-ecad"); }} data-testid="button-limpar-filtros">
+          {(searchTerm !== "" || statusFilter !== "all-status" || genreFilter !== "all-genre" || workOriginFilter !== "all-origins" || projectFilter !== "all-projects" || linkedWorkFilter !== "all-obras" || ecadFilter !== "all-ecad" || phonogramEcadFilter !== "all-ecad") && (
+            <Button variant="outline" onClick={() => { setSearchTerm(""); setStatusFilter("all-status"); setGenreFilter("all-genre"); setWorkOriginFilter("all-origins"); setProjectFilter("all-projects"); setLinkedWorkFilter("all-obras"); setEcadFilter("all-ecad"); setPhonogramEcadFilter("all-ecad"); }} data-testid="button-limpar-filtros">
               Limpar
             </Button>
           )}
@@ -542,8 +558,8 @@ export default function MusicRegistry() {
                         <TableHead className="w-8"></TableHead>
                         <SortableTableHead sortKey="title" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[180px]">Título</SortableTableHead>
                         <SortableTableHead sortKey="status" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[112px]">Status</SortableTableHead>
-                        <SortableTableHead sortKey="cod_entidade" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Cód. Sociedade</SortableTableHead>
-                        <SortableTableHead sortKey="cod_ecad" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Cód. ECAD</SortableTableHead>
+                        <SortableTableHead sortKey="society_code" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Cód. Sociedade</SortableTableHead>
+                        <SortableTableHead sortKey="ecad_code" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Cód. ECAD</SortableTableHead>
                         <SortableTableHead sortKey="isrc" sortState={phonogramSort} onSort={togglePhonogramSort}>ISRC</SortableTableHead>
                         <SortableTableHead sortKey="compositores" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[130px]">Compositores</SortableTableHead>
                         <SortableTableHead sortKey="interpretes" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Intérpretes</SortableTableHead>
@@ -583,8 +599,8 @@ export default function MusicRegistry() {
                               {phonogram.status === "registered" ? "Registrado" : phonogram.status === "under_review" ? "Em Análise" : "Pendente"}
                             </Badge>
                           </TableCell>
-                          <TableCell className="py-3 text-sm">{phonogram.cod_entidade || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm">{phonogram.cod_ecad || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{phonogram.society_code || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{phonogram.ecad_code || "-"}</TableCell>
                           <TableCell className="py-3 text-sm">{phonogram.isrc || "-"}</TableCell>
                           <TableCell className="py-3 text-sm max-w-[140px] truncate" title={phonogram.compositores || undefined}>{phonogram.compositores || "-"}</TableCell>
                           <TableCell className="py-3 text-sm max-w-[120px] truncate" title={phonogram.interpretes || undefined}>{phonogram.interpretes || "-"}</TableCell>
@@ -604,11 +620,11 @@ export default function MusicRegistry() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setPhonogramViewModal({ open: true, fonograma: phonogram })}>
+                                <DropdownMenuItem onClick={() => setPhonogramViewModal({ open: true, phonogram })}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   Ver
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setPhonogramModal({ open: true, mode: "edit", fonograma: phonogram })}>
+                                <DropdownMenuItem onClick={() => setPhonogramModal({ open: true, mode: "edit", phonogram })}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Editar
                                 </DropdownMenuItem>
@@ -672,13 +688,13 @@ export default function MusicRegistry() {
                       checked={selectedWorkIds.length === worksPg.pageItems.length && worksPg.pageItems.length > 0}
                       onCheckedChange={() => toggleSelectAllWorks()}
                       aria-label="Selecionar todos"
-                      data-testid="checkbox-select-all-obras"
+                      data-testid="checkbox-select-all-works"
                     />
                     <span className="text-xs text-muted-foreground">
                       {selectedWorkIds.length > 0 ? `${selectedWorkIds.length} obra(s) selecionada(s)` : "Selecionar todos"}
                     </span>
                     {selectedWorkIds.length > 0 && (
-                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeleteWorks} data-testid="button-bulk-delete-obras">
+                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeleteWorks} data-testid="button-bulk-delete-works">
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir ({selectedWorkIds.length})
                       </Button>
@@ -695,13 +711,13 @@ export default function MusicRegistry() {
                         <TableHead className="w-8"></TableHead>
                         <SortableTableHead sortKey="title" sortState={workSort} onSort={toggleWorkSort}>Título</SortableTableHead>
                         <SortableTableHead sortKey="status" sortState={workSort} onSort={toggleWorkSort} className="min-w-[112px]">Status</SortableTableHead>
-                        <SortableTableHead sortKey="tipo_obra" sortState={workSort} onSort={toggleWorkSort} className="min-w-[112px]">Tipo</SortableTableHead>
-                        <SortableTableHead sortKey="cod_entidade" sortState={workSort} onSort={toggleWorkSort}>Cód. Sociedade</SortableTableHead>
-                        <SortableTableHead sortKey="cod_ecad" sortState={workSort} onSort={toggleWorkSort}>Cód. ECAD</SortableTableHead>
+                        <SortableTableHead sortKey="work_origin" sortState={workSort} onSort={toggleWorkSort} className="min-w-[112px]">Tipo</SortableTableHead>
+                        <SortableTableHead sortKey="society_code" sortState={workSort} onSort={toggleWorkSort}>Cód. Sociedade</SortableTableHead>
+                        <SortableTableHead sortKey="ecad_code" sortState={workSort} onSort={toggleWorkSort}>Cód. ECAD</SortableTableHead>
                         <SortableTableHead sortKey="iswc" sortState={workSort} onSort={toggleWorkSort}>ISWC</SortableTableHead>
-                        <SortableTableHead sortKey="compositores" sortState={workSort} onSort={toggleWorkSort}>Compositores</SortableTableHead>
-                        <SortableTableHead sortKey="editora" sortState={workSort} onSort={toggleWorkSort}>Editora</SortableTableHead>
-                        <SortableTableHead sortKey="genero" sortState={workSort} onSort={toggleWorkSort}>Gênero</SortableTableHead>
+                        <SortableTableHead sortKey="composer_names" sortState={workSort} onSort={toggleWorkSort}>Compositores</SortableTableHead>
+                        <SortableTableHead sortKey="publisher_name" sortState={workSort} onSort={toggleWorkSort}>Editora</SortableTableHead>
+                        <SortableTableHead sortKey="music_genre" sortState={workSort} onSort={toggleWorkSort}>Gênero</SortableTableHead>
                         <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -712,11 +728,11 @@ export default function MusicRegistry() {
                             <Checkbox
                               checked={selectedWorkIds.includes(work.id)}
                               onCheckedChange={() => toggleSelectWork(work.id)}
-                              data-testid={`checkbox-obra-${work.id}`}
+                              data-testid={`checkbox-work-${work.id}`}
                             />
                           </TableCell>
                           <TableCell className="py-3">
-                            <span className="font-medium block truncate" data-testid={`text-obra-title-${work.id}`}>{work.title}</span>
+                            <span className="font-medium block truncate" data-testid={`text-work-title-${work.id}`}>{work.title}</span>
                           </TableCell>
                           <TableCell className="py-3">
                             <Badge
@@ -727,13 +743,13 @@ export default function MusicRegistry() {
                             </Badge>
                           </TableCell>
                           <TableCell className="py-3">
-                            <WorkTypeBadge type={work.tipo_obra as string | null | undefined} />
+                            <WorkOriginBadge origin={work.work_origin} />
                           </TableCell>
-                          <TableCell className="py-3 text-sm">{work.cod_entidade || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm">{work.cod_ecad || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{work.society_code || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{work.ecad_code || "-"}</TableCell>
                           <TableCell className="py-3 text-sm">{work.iswc || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[140px] truncate">{work.compositores || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[120px] truncate">{work.editora || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm max-w-[140px] truncate">{formatNameList(work.composer_names) || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm max-w-[120px] truncate">{work.publisher_name || "-"}</TableCell>
                           <TableCell className="py-3 text-sm">{work.music_genre || "-"}</TableCell>
                           <TableCell className="py-3 text-right">
                             <DropdownMenu>
@@ -743,11 +759,11 @@ export default function MusicRegistry() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setWorkViewModal({ open: true, obra: work })}>
+                                <DropdownMenuItem onClick={() => setWorkViewModal({ open: true, work })}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   Ver
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setWorkModal({ open: true, mode: "edit", obra: work })}>
+                                <DropdownMenuItem onClick={() => setWorkModal({ open: true, mode: "edit", work })}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Editar
                                 </DropdownMenuItem>
@@ -756,7 +772,7 @@ export default function MusicRegistry() {
                                   title={work.status === "under_review" ? "Obra em análise — aguarde a conclusão antes de registrar um fonograma" : undefined}
                                   onClick={() => {
                                     setActiveTab("fonogramas");
-                                    setPhonogramModal({ open: true, mode: "create", fonograma: { id: "", work_id: work.id } as Phonogram });
+                                    setPhonogramModal({ open: true, mode: "create", phonogram: { work_id: work.id } });
                                   }}
                                 >
                                   <Disc className="h-4 w-4 mr-2" />
@@ -806,8 +822,8 @@ export default function MusicRegistry() {
       <WorkTypeSelectorModal
         open={workTypeSelectorOpen}
         onOpenChange={(v) => { setWorkTypeSelectorOpen(v); if (!v) setPendingProjectId(null); }}
-        onSelect={async (type) => {
-          let workSeed: Record<string, unknown> | undefined;
+        onSelect={async (origin) => {
+          let workSeed: Partial<Work> | undefined;
           if (pendingProjectId) {
             // Fetches DIRECTLY by ID (GET /projects/:id) — does not depend on the project
             // being among the first 50 loaded by an unfiltered useProjects()
@@ -820,7 +836,7 @@ export default function MusicRegistry() {
               workSeed = { project_id: pendingProjectId };
             }
           }
-          setWorkModal({ open: true, mode: "create", obra: workSeed as Work | undefined, tipoObra: type });
+          setWorkModal({ open: true, mode: "create", work: workSeed, workOrigin: origin });
           setPendingProjectId(null);
         }}
       />
@@ -839,26 +855,26 @@ export default function MusicRegistry() {
         open={workModal.open}
         onOpenChange={(open) => setWorkModal({ ...workModal, open })}
         mode={workModal.mode}
-        obra={workModal.obra}
-        tipoObra={workModal.tipoObra}
+        work={workModal.work}
+        workOrigin={workModal.workOrigin}
         onSaved={(info) => setContractModal({ open: true, prefill: info })}
       />
       <WorkViewModal
         open={workViewModal.open}
         onOpenChange={(open) => setWorkViewModal({ ...workViewModal, open })}
-        obra={workViewModal.obra}
+        work={workViewModal.work}
       />
       <PhonogramFormModal
         open={phonogramModal.open}
         onOpenChange={(open) => setPhonogramModal({ ...phonogramModal, open })}
         mode={phonogramModal.mode}
-        fonograma={phonogramModal.fonograma as import("@/modules/catalog/components/PhonogramFormModal").PhonogramFormInput | null | undefined}
+        phonogram={phonogramModal.phonogram}
         onSaved={(info) => setContractModal({ open: true, prefill: info })}
       />
       <PhonogramViewModal
         open={phonogramViewModal.open}
         onOpenChange={(open) => setPhonogramViewModal({ ...phonogramViewModal, open })}
-        fonograma={phonogramViewModal.fonograma as unknown as import("@/modules/catalog/components/PhonogramViewModal").PhonogramViewData | null | undefined}
+        phonogram={phonogramViewModal.phonogram}
       />
       <DeleteConfirmModal
         open={deleteModal.open}

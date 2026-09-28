@@ -180,18 +180,18 @@ const WORKS_CONTRACT: ReportFormContract = {
   identityColumn: 'title',
   fields: [
     col('title'), col('type'), col('status'), col('music_genre'),
-    col('compositor'), col('compositores'), col('editora'),
+    col('composer_name'), col('composer_names'), col('publisher_name'),
     col('isrc'), col('iswc'),
-    // Work form fields (2026-07-12 rule: 1 column per field, exact name)
-    col('idioma'), col('cod_entidade'), col('cod_ecad'), col('duration_text'),
-    col('instrumental'), col('criada_por_ia'), col('tipo_ia'),
-    col('ia_harmonia'), col('ia_melodia'), col('ia_letra'),
-    col('outros_titulos'), col('referencias_conexas'), col('letra_completa'),
-    col('letristas'), col('project_id'),
-    col('artist_id'), col('tipo_obra'),
-    // Read-only: registration/societies and enrichment (not part of the create form)
-    ro('duration_seconds'), ro('alternative_titles'), ro('ai_tools'), ro('ai_prompts'),
-    ro('language'), ro('lyrics'), ro('is_instrumental'), ro('ai_used'),
+    // Work form fields (CZ-039: English; the registry columns language/
+    // is_instrumental/ai_used/alternative_titles/lyrics are the single source)
+    col('language'), col('society_code'), col('ecad_code'), col('duration_text'),
+    col('is_instrumental'), col('ai_used'), col('ai_usage_level'),
+    col('ai_harmony'), col('ai_melody'), col('ai_lyrics'),
+    col('alternative_titles'), col('related_references'), col('lyrics'),
+    col('translator_names'), col('project_id'),
+    col('artist_id'), col('work_origin'),
+    // Read-only: derived registry fields and enrichment (not part of the create form)
+    ro('duration_seconds'), ro('ai_tools'), ro('ai_prompts'),
     ro('registry_status'),
     ro('external_reference'), ro('origem_externa'), ro('origem_externa_sincronizado_em'),
   ],
@@ -199,7 +199,7 @@ const WORKS_CONTRACT: ReportFormContract = {
     metadata: 'raw internal jsonb object',
     authors: 'relationship (authors/percentages) managed on the dedicated shares screen',
     shares: 'relationship in its own table (shares), reportable separately',
-    participantes: 'relationship normalized into work_participants (migration 20260718000011), reportable separately',
+    participants: 'relationship normalized into work_participants (migration 20260718000011), reportable separately',
     co_compositores: 'column removed (20260718000011) — no active writer, no real data lost',
     detentores: 'column removed (20260718000011) — no active writer, no real data lost',
     abramus_protocol: 'orphan column removed (20260718000016) — never written by any real flow',
@@ -213,29 +213,30 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
   fields: [
     col('title'), col('status'), col('music_genre'), col('isrc'),
     col('duration_text'), col('artist_id'), col('work_id'),
-    // Phonogram form fields (2026-07-12 rule: 1 column per field, exact name)
-    col('cod_entidade'), col('cod_ecad'), col('agregadora'),
-    col('isrc_pais'), col('isrc_registrante'), col('isrc_ano'), col('isrc_designacao'),
-    col('criada_por_ia'), col('is_instrumental'), col('nacional'), col('pub_simultanea'),
-    col('emissao'), col('gravacao_original'), col('data_lancamento'),
-    col('duracao_min'), col('duracao_seg'), col('midia'), col('classificacao'),
-    col('pais_origem'), col('pais_publicacao'), col('gravadora'),
-    col('notes'), col('participacao'), col('arquivo_audio'),
+    // Phonogram form fields (CZ-040: English; the registry columns
+    // recording_date/release_date/duration_seconds/country_of_recording are
+    // the single source of truth)
+    col('society_code'), col('ecad_code'), col('aggregator'),
+    col('isrc_country_code'), col('isrc_registrant_code'), col('isrc_year'), col('isrc_designation_code'),
+    col('ai_used'), col('is_instrumental'), col('is_national'), col('is_simultaneous_publication'),
+    col('issue_date'), col('recording_date'), col('release_date'),
+    col('duration_seconds'), col('media_type'), col('recording_classification'),
+    col('country_of_recording'), col('publication_country'), col('record_label_name'),
+    col('notes'), col('participation'), col('audio_file'),
     // Read-only: registration/societies and recording metadata
-    ro('type'), ro('version_title'), ro('duration_seconds'),
-    ro('recording_date'), ro('release_date'), ro('copyright_year'),
-    ro('copyright_owner'), ro('country_of_recording'),
+    ro('type'), ro('version_title'), ro('copyright_year'),
+    ro('copyright_owner'),
     ro('registry_status'),
     ro('external_reference'), ro('origem_externa'), ro('origem_externa_sincronizado_em'),
     ro('audio_file_id'),
   ],
   excludedFormFields: {
     metadata: 'raw internal jsonb object',
-    fileUrl: 'hypothetical field that does not exist in the DTO — the real upload flow fills audio_file_id (see the read-only entry above) and arquivo_audio',
+    fileUrl: 'hypothetical field that does not exist in the DTO — the real upload flow fills audio_file_id (see the read-only entry above) and audio_file',
     abramus_protocol: 'orphan column removed (20260718000016) — never written by any real flow',
-    compositores: 'column removed (20260923000002) — no active writer, superseded by participacao (jsonb)',
-    interpretes: 'column removed (20260923000002) — no active writer, superseded by participacao (jsonb)',
-    produtores: 'column removed (20260923000002) — no active writer, superseded by participacao (jsonb)',
+    compositores: 'column removed (20260923000002) — no active writer, superseded by participation (jsonb)',
+    interpretes: 'column removed (20260923000002) — no active writer, superseded by participation (jsonb)',
+    produtores: 'column removed (20260923000002) — no active writer, superseded by participation (jsonb)',
   },
   formFieldAliases: {
     titulo: 'title',
@@ -494,30 +495,29 @@ const AUDIOVISUAL_PROJECTS_CONTRACT: ReportFormContract = {
 };
 
 // ─── Financial transactions ─────────────────────────────────────────────────
-// Form columns (2026-07-12 rule) — `tipo_transacao`/`data_transacao`
-// are the file's logical key, but the table does NOT duplicate them from `type`/`data`
-// (those are NOT NULL, without a default, and are the only ones read by
-// TransactionsService — tipo_transacao/data_transacao were always NULL).
-// `physical` points the logical key to the real column, like the manual
-// import/export — without it, every importer INSERT violated NOT NULL. Real
-// validation is Zod (transacao.validator.ts), not a class-validator DTO — not
-// checked against FORM_DTO_BY_TABLE.
+// CZ-041: every form field is a canonical physical column (the API reads and
+// writes the columns; metadata is historical only). The pre-CZ-041 duplicates
+// tipo_transacao/data_transacao/anexo_url are legacy_* columns with no writer.
+// `transaction_type` is the file's logical key for the `type` column (keeps the
+// "Tipo de transação" header of exported spreadsheets).
+// Real validation is Zod (transaction.validator.ts), not a class-validator
+// DTO — not checked against FORM_DTO_BY_TABLE.
 const TRANSACTIONS_CONTRACT: ReportFormContract = {
   tableName: 'transactions',
-  identityColumn: 'descricao',
+  identityColumn: 'description',
   fields: [
-    col('tipo_transacao', 'type'), col('tipo_cliente'), col('categoria'), col('subcategoria'),
-    col('descricao'), col('valor'), col('data_transacao', 'data'), col('status'),
-    col('artist_id'), col('project_id'), col('contrato_id'), col('evento_id'),
-    col('fornecedor_cliente'), col('orgao_arrecadador'), col('centro_custo'), col('competencia'),
-    col('conta_origem'), col('conta_destino'), col('item_investimento'), col('motivo_viagem'),
-    col('advertising_name'), col('forma_pagamento'), col('tipo_pagamento'),
-    col('quantidade_parcelas'), col('intervalo_parcelas'), col('data_primeira_parcela'),
-    col('anexo_url'), col('anexo_nome'), col('notes'),
+    col('transaction_type', 'type'), col('counterparty_type'), col('category'), col('subcategory'),
+    col('description'), col('amount'), col('transaction_date'), col('status'),
+    col('artist_id'), col('project_id'), col('contract_id'), col('event_id'),
+    col('counterparty_name'), col('tax_authority'), col('cost_center'), col('reference_month'),
+    col('source_bank_account'), col('destination_bank_account'), col('investment_item'), col('travel_reason'),
+    col('advertising_name'), col('payment_method'), col('payment_type'),
+    col('installment_count'), col('installment_interval'), col('first_installment_date'),
+    col('attachment_url'), col('attachment_name'), col('notes'),
   ],
   excludedFormFields: {},
-  filterableColumns: ['status', 'tipo_transacao', 'categoria'],
-  searchableColumns: ['descricao', 'categoria', 'fornecedor_cliente'],
+  filterableColumns: ['status', 'transaction_type', 'category'],
+  searchableColumns: ['description', 'category', 'counterparty_name'],
 };
 
 // ─── Invoice (invoices) ──────────────────────────────────────────────────────
@@ -747,9 +747,9 @@ const BRIEFINGS_CONTRACT: ReportFormContract = {
 // field): it is not an editable form, it is a calculated report.
 const ACCOUNTING_SUMMARY_CONTRACT: ReportFormContract = {
   tableName: ACCOUNTING_SUMMARY_TABLE_NAME,
-  identityColumn: 'artista',
+  identityColumn: 'artist',
   fields: [
-    ro('artista'), ro('receitas'), ro('despesas'), ro('resultado'), ro('margem'),
+    ro('artist'), ro('revenue'), ro('expenses'), ro('result'), ro('margin'),
   ],
   excludedFormFields: {},
 };

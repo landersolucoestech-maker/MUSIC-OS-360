@@ -75,7 +75,7 @@ export function TransactionFormModal({
             disabled={disabled}
             updateField={form.updateField}
             handleFileUpload={form.handleFileUpload}
-            handleRemoveAnexo={form.handleRemoveAnexo}
+            handleRemoveAttachment={form.handleRemoveAttachment}
           />
 
           <DialogFooter className="gap-2 pt-2">

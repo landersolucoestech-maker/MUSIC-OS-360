@@ -10,27 +10,32 @@ import { Separator } from "@/shared/ui/separator";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Switch } from "@/shared/ui/switch";
 import { Music } from "lucide-react";
-import { WorkTypeBadge } from "@/modules/catalog/components/WorkFormModal";
+import { WorkOriginBadge } from "@/modules/catalog/components/WorkOriginBadge";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import type { ObraWithRelations } from "@/modules/catalog/hooks/useWorks";
+import type { Work, WorkWithRelations } from "@/modules/catalog/types/catalog.types";
 import {
-  workOtherTitles,
+  WORK_AI_USAGE_LEVEL_LABELS,
+  workLanguageLabel,
+  workParticipantRoleLabel,
+} from "@/modules/catalog/constants/work-options";
+import {
+  workAlternativeTitles,
   workRelatedReferences,
-  workFullLyrics,
-  workCreatedByAi,
-  workTypeAiValue,
+  workLyrics,
+  workAiUsed,
+  workAiUsageLevel,
   workAiHarmony,
   workAiMelody,
   workAiLyrics,
   workToParticipants,
-  exportInstrumental,
+  workIsInstrumental,
   parseDurationText,
 } from "@/modules/catalog/mappers";
 
 interface WorkViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  obra?: any;
+  work?: Partial<Work> | null;
 }
 
 function StatusBadge({ status }: { status?: string }) {
@@ -100,41 +105,40 @@ function SwitchField({ label, value }: { label: string; value: boolean }) {
 export function WorkViewModal({
   open,
   onOpenChange,
-  obra: workProp,
+  work: workProp,
 }: WorkViewModalProps) {
   // Fetches DIRECTLY by ID (GET /works/:id) — does not depend on the work being among
   // the first loaded records (Task J: it used to use an unfiltered useWorks(),
   // which truncated at 50 works per tenant).
-  const { entity: fresh } = useEntityById<ObraWithRelations>("obras", open ? workProp?.id : undefined);
+  const { entity: fresh } = useEntityById<WorkWithRelations>("obras", open ? workProp?.id : undefined);
   if (!workProp) return null;
 
-  const work: any = fresh ? { ...workProp, ...fresh } : workProp;
+  const work: Partial<WorkWithRelations> = fresh ? { ...workProp, ...fresh } : workProp;
 
-  const otherTitles    = workOtherTitles(work);
-  const referenciasConexas = workRelatedReferences(work);
-  const fullLyrics    = workFullLyrics(work);
-  const criadaPorIA      = workCreatedByAi(work) === "sim";
-  const aiType           = workTypeAiValue(work);
-  const iaHarmonia       = workAiHarmony(work);
-  const iaMelodia        = workAiMelody(work);
+  const alternativeTitles = workAlternativeTitles(work);
+  const relatedReferences = workRelatedReferences(work);
+  const lyrics            = workLyrics(work);
+  const aiUsed            = workAiUsed(work);
+  const aiUsageLevel      = workAiUsageLevel(work);
+  const aiHarmony         = workAiHarmony(work);
+  const aiMelody          = workAiMelody(work);
   const aiLyrics          = workAiLyrics(work);
-  const participants    = workToParticipants(work);
-  const instrumental     =
-    exportInstrumental(work as Record<string, unknown>) === "Sim";
+  const participants      = workToParticipants(work);
+  const isInstrumental    = workIsInstrumental(work);
 
   const dur = parseDurationText(work.duration_text);
   const durationDisplay =
-    dur.min || dur.seg
-      ? `${dur.min || "0"}min ${dur.seg || "0"}seg`
+    dur.minutes || dur.seconds
+      ? `${dur.minutes || "0"}min ${dur.seconds || "0"}seg`
       : work.duration_text || null;
 
   const artistName   = work.artistas?.nome_artistico ?? null;
   const projectTitle = work.projetos?.title ?? null;
 
-  const iaElementos = [
-    iaHarmonia.ferramenta || iaHarmonia.prompt ? "Harmonia" : null,
-    iaMelodia.ferramenta  || iaMelodia.prompt  ? "Melodia"  : null,
-    aiLyrics.ferramenta    || aiLyrics.prompt     ? "Letra"    : null,
+  const aiElementLabels = [
+    aiHarmony.tool || aiHarmony.prompt ? "Harmonia" : null,
+    aiMelody.tool  || aiMelody.prompt  ? "Melodia"  : null,
+    aiLyrics.tool  || aiLyrics.prompt  ? "Letra"    : null,
   ].filter(Boolean) as string[];
 
   return (
@@ -156,8 +160,8 @@ export function WorkViewModal({
               <div className="flex-1">
                 <h2 className="text-lg font-bold">{work.title || "—"}</h2>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <StatusBadge status={work.status} />
-                  <WorkTypeBadge type={work.tipo_obra} />
+                  <StatusBadge status={work.status ?? undefined} />
+                  <WorkOriginBadge origin={work.work_origin} />
                 </div>
                 {work.created_at && (
                   <p className="text-xs text-muted-foreground mt-1">
@@ -188,21 +192,21 @@ export function WorkViewModal({
               <SectionTitle>Informações Gerais</SectionTitle>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                 <InfoField label="Gênero"  value={work.music_genre} />
-                <InfoField label="Idioma"  value={work.idioma} />
+                <InfoField label="Idioma"  value={workLanguageLabel(work.language)} />
                 <InfoField label="Duração" value={durationDisplay} />
-                <SwitchField label="Instrumental" value={instrumental} />
+                <SwitchField label="Instrumental" value={isInstrumental} />
               </div>
             </div>
 
             {/* Registration codes — shown only when there is some code */}
-            {(work.cod_entidade || work.cod_ecad || work.isrc || work.iswc) && (
+            {(work.society_code || work.ecad_code || work.isrc || work.iswc) && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Códigos de Registro</SectionTitle>
                   <div className="grid grid-cols-2 gap-3">
-                    {work.cod_entidade && <MonoField label="Código de Cadastro da Sociedade" value={work.cod_entidade} />}
-                    {work.cod_ecad && <MonoField label="Código ECAD" value={work.cod_ecad} />}
+                    {work.society_code && <MonoField label="Código de Cadastro da Sociedade" value={work.society_code} />}
+                    {work.ecad_code && <MonoField label="Código ECAD" value={work.ecad_code} />}
                     {work.isrc && <MonoField label="ISRC" value={work.isrc} />}
                     {work.iswc && <MonoField label="ISWC" value={work.iswc} />}
                   </div>
@@ -239,17 +243,16 @@ export function WorkViewModal({
                             </a>
                           )}
                         </div>
-                        {p.classeFuncao && (
-                          <Badge
-                            variant="outline"
-                            className="text-xs font-normal shrink-0"
-                          >
-                            {p.classeFuncao}
-                          </Badge>
-                        )}
-                        {p.percentual && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs font-normal shrink-0"
+                          data-testid={`badge-participant-role-${p.id}`}
+                        >
+                          {workParticipantRoleLabel(p.role)}
+                        </Badge>
+                        {p.percentage && (
                           <span className="text-muted-foreground w-12 text-right shrink-0">
-                            {p.percentual}%
+                            {p.percentage}%
                           </span>
                         )}
                       </div>
@@ -260,71 +263,71 @@ export function WorkViewModal({
             )}
 
             {/* Artificial intelligence */}
-            {criadaPorIA && (
+            {aiUsed && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Inteligência Artificial</SectionTitle>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-3">
-                    <SwitchField label="Criada por IA"    value={criadaPorIA} />
-                    <InfoField   label="Tipo de Geração IA" value={aiType || null} />
+                    <SwitchField label="Criada por IA"    value={aiUsed} />
+                    <InfoField   label="Tipo de Geração IA" value={aiUsageLevel ? WORK_AI_USAGE_LEVEL_LABELS[aiUsageLevel] : null} />
                   </div>
-                  {iaElementos.length > 0 && (
+                  {aiElementLabels.length > 0 && (
                     <div className="space-y-2">
                       <p className="text-xs text-muted-foreground mb-1">
-                        Elementos IA: {iaElementos.join(", ")}
+                        Elementos IA: {aiElementLabels.join(", ")}
                       </p>
-                      {(iaHarmonia.ferramenta || iaHarmonia.prompt) && (
+                      {(aiHarmony.tool || aiHarmony.prompt) && (
                         <div className="p-3 bg-muted/30 rounded-lg">
                           <p className="text-xs font-semibold text-muted-foreground mb-1">
                             Harmonia
                           </p>
-                          {iaHarmonia.ferramenta && (
+                          {aiHarmony.tool && (
                             <p className="text-sm">
                               <span className="text-muted-foreground">
                                 Ferramenta:{" "}
                               </span>
-                              {iaHarmonia.ferramenta}
+                              {aiHarmony.tool}
                             </p>
                           )}
-                          {iaHarmonia.prompt && (
+                          {aiHarmony.prompt && (
                             <p className="text-sm text-muted-foreground mt-0.5">
-                              {iaHarmonia.prompt}
+                              {aiHarmony.prompt}
                             </p>
                           )}
                         </div>
                       )}
-                      {(iaMelodia.ferramenta || iaMelodia.prompt) && (
+                      {(aiMelody.tool || aiMelody.prompt) && (
                         <div className="p-3 bg-muted/30 rounded-lg">
                           <p className="text-xs font-semibold text-muted-foreground mb-1">
                             Melodia
                           </p>
-                          {iaMelodia.ferramenta && (
+                          {aiMelody.tool && (
                             <p className="text-sm">
                               <span className="text-muted-foreground">
                                 Ferramenta:{" "}
                               </span>
-                              {iaMelodia.ferramenta}
+                              {aiMelody.tool}
                             </p>
                           )}
-                          {iaMelodia.prompt && (
+                          {aiMelody.prompt && (
                             <p className="text-sm text-muted-foreground mt-0.5">
-                              {iaMelodia.prompt}
+                              {aiMelody.prompt}
                             </p>
                           )}
                         </div>
                       )}
-                      {(aiLyrics.ferramenta || aiLyrics.prompt) && (
+                      {(aiLyrics.tool || aiLyrics.prompt) && (
                         <div className="p-3 bg-muted/30 rounded-lg">
                           <p className="text-xs font-semibold text-muted-foreground mb-1">
                             Letra (IA)
                           </p>
-                          {aiLyrics.ferramenta && (
+                          {aiLyrics.tool && (
                             <p className="text-sm">
                               <span className="text-muted-foreground">
                                 Ferramenta:{" "}
                               </span>
-                              {aiLyrics.ferramenta}
+                              {aiLyrics.tool}
                             </p>
                           )}
                           {aiLyrics.prompt && (
@@ -341,13 +344,13 @@ export function WorkViewModal({
             )}
 
             {/* Other titles */}
-            {otherTitles.length > 0 && (
+            {alternativeTitles.length > 0 && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Outros Títulos</SectionTitle>
                   <div className="flex flex-wrap gap-2">
-                    {otherTitles.map((t, i) => (
+                    {alternativeTitles.map((t, i) => (
                       <Badge key={i} variant="outline">
                         {t}
                       </Badge>
@@ -358,13 +361,13 @@ export function WorkViewModal({
             )}
 
             {/* Connected references */}
-            {referenciasConexas.length > 0 && (
+            {relatedReferences.length > 0 && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Referências Conectadas</SectionTitle>
                   <div className="flex flex-wrap gap-2">
-                    {referenciasConexas.map((r, i) => (
+                    {relatedReferences.map((r, i) => (
                       <Badge key={i} variant="secondary">
                         {r}
                       </Badge>
@@ -375,13 +378,13 @@ export function WorkViewModal({
             )}
 
             {/* Lyrics */}
-            {fullLyrics && (
+            {lyrics && (
               <>
                 <Separator />
                 <div>
                   <SectionTitle>Letra</SectionTitle>
                   <pre className="text-sm whitespace-pre-wrap font-sans text-foreground leading-relaxed">
-                    {fullLyrics}
+                    {lyrics}
                   </pre>
                 </div>
               </>

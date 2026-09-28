@@ -58,8 +58,8 @@ const EMPTY_DISTRIBUTION_KPIS: DistributionKPIs = { total: 0, distributed: 0, pe
 
 /**
  * GET /releases/stats — exact distribution (whole tenant) in the 4 operational
- * buckets the Releases page shows. The backend aggregates only by
- * `status` + "required fields filled"; classification into the 4 buckets
+ * buckets the Releases page shows. The backend aggregates by `status`;
+ * classification into the 4 buckets
  * uses the SAME function (resolveStatusFromRawStatus) that already classifies each
  * card individually — no business rule duplicated in SQL.
  */
@@ -74,11 +74,11 @@ export function useReleasesDistributionStats() {
   const kpis: DistributionKPIs = rows.length === 0
     ? EMPTY_DISTRIBUTION_KPIS
     : rows.reduce((acc, row) => {
-        const bucket: ReleaseStatus = resolveStatusFromRawStatus(row.status, row.has_required);
+        const bucket: ReleaseStatus = resolveStatusFromRawStatus(row.status);
         acc.total += row.cnt;
-        if (bucket === "distribuido") acc.distributed += row.cnt;
-        else if (bucket === "pendente") acc.pending += row.cnt;
-        else if (bucket === "em_espera" || bucket === "incompleto" || bucket === "rejeitado" || bucket === "takedown") acc.waitingAction += row.cnt;
+        if (bucket === "distributed") acc.distributed += row.cnt;
+        else if (bucket === "pending") acc.pending += row.cnt;
+        else if (bucket === "on_hold" || bucket === "incomplete" || bucket === "rejected" || bucket === "takedown") acc.waitingAction += row.cnt;
         return acc;
       }, { total: 0, distributed: 0, pending: 0, waitingAction: 0 });
 

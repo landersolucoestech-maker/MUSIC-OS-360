@@ -14,7 +14,7 @@ export class QueryTransactionDto extends PaginationDto {
   artistId?: string;
 
   // Names actually read by TransactionsService.list().
-  @ApiPropertyOptional({ example: 'receita' })
+  @ApiPropertyOptional({ example: 'revenue', description: 'revenue | expense | investment | tax | transfer (legacy receita/despesa/... still mapped)' })
   @IsOptional()
   @IsString()
   type?: string;

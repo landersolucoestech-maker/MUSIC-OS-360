@@ -5,6 +5,7 @@ import { useTransactions } from "@/modules/accounting/hooks/useTransactions";
 import { format, startOfMonth, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatCurrency } from "@/shared/lib/format-utils";
+import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
 
 function safeParseDate(val: unknown): Date | null {
   if (!val) return null;
@@ -52,21 +53,21 @@ export function FinanceChart() {
 
     return months.map(({ month, label }) => {
       const monthTransactions = transactions.filter(t => {
-        const dataTransacao = safeParseDate(t.data);
-        if (!dataTransacao) return false;
+        const transactionDate = safeParseDate(t.transaction_date);
+        if (!transactionDate) return false;
         return (
-          dataTransacao.getMonth() === month.getMonth() &&
-          dataTransacao.getFullYear() === month.getFullYear()
+          transactionDate.getMonth() === month.getMonth() &&
+          transactionDate.getFullYear() === month.getFullYear()
         );
       });
 
       const income = monthTransactions
-        .filter(t => t.type === "receita")
-        .reduce((acc, t) => acc + (t.valor || 0), 0);
+        .filter(t => t.type === "revenue")
+        .reduce((acc, t) => acc + toNumber(t.amount), 0);
 
       const expenses = monthTransactions
-        .filter(t => t.type === "despesa")
-        .reduce((acc, t) => acc + (t.valor || 0), 0);
+        .filter(t => t.type === "expense")
+        .reduce((acc, t) => acc + toNumber(t.amount), 0);
 
       return {
         name: label.charAt(0).toUpperCase() + label.slice(1),

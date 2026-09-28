@@ -54,7 +54,7 @@ import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/
 import type { Release } from "@/modules/releases/types";
 import { useDistributionPlatforms } from "@/modules/releases/hooks/useDistributionPlatforms";
 import { resolveReleaseStatus, releaseStatusLabel } from "@/modules/releases/lib/release-status";
-import { formatReleaseDate, RELEASE_LANGUAGE_OPTIONS } from "@/modules/releases/lib/release-format";
+import { formatReleaseDate, RELEASE_LANGUAGE_OPTIONS, RELEASE_TYPE_LABELS, releaseTypeLabel } from "@/modules/releases/lib/release-format";
 import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
@@ -189,21 +189,30 @@ const PRODUCER_ROLES = [
   "Engenheiro de Masterização",
   "Engenheiro de Gravação",
 ];
+// value = persisted technical value (English), label = PT-BR shown to the user
 const INSTRUMENT_OPTS = [
-  "Guitar",
-  "Bass",
-  "Drums",
-  "Piano",
-  "Keyboard",
-  "Violin",
-  "Trumpet",
-  "Saxophone",
-  "DJ",
-  "Vocals",
-  "Backing Vocals",
-  "Percussion",
-  "Strings",
-  "Other",
+  { value: "Guitar", label: "Guitarra / Violão" },
+  { value: "Bass", label: "Baixo" },
+  { value: "Drums", label: "Bateria" },
+  { value: "Piano", label: "Piano" },
+  { value: "Keyboard", label: "Teclado" },
+  { value: "Violin", label: "Violino" },
+  { value: "Trumpet", label: "Trompete" },
+  { value: "Saxophone", label: "Saxofone" },
+  { value: "DJ", label: "DJ" },
+  { value: "Vocals", label: "Vocais" },
+  { value: "Backing Vocals", label: "Backing vocals (vocais de apoio)" },
+  { value: "Percussion", label: "Percussão" },
+  { value: "Strings", label: "Cordas" },
+  { value: "Other", label: "Outro" },
+];
+
+const TERRITORY_OPTS = [
+  { value: "world", label: "Mundo (global)" },
+  { value: "br", label: "Brasil" },
+  { value: "us", label: "Estados Unidos" },
+  { value: "latam", label: "América Latina" },
+  { value: "eu", label: "Europa" },
 ];
 
 const LANGUAGE_OPTS = sortOptionsByLabel([...RELEASE_LANGUAGE_OPTIONS]);
@@ -1152,9 +1161,9 @@ export function ReleaseFormModal({
                 <SelectValue placeholder="Selecione o tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="single">Single</SelectItem>
-                <SelectItem value="ep">EP</SelectItem>
-                <SelectItem value="album">Álbum</SelectItem>
+                {Object.entries(RELEASE_TYPE_LABELS).map(([value, label]) => (
+                  <SelectItem key={value} value={value}>{label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -1163,7 +1172,7 @@ export function ReleaseFormModal({
 
           {/* Various Artists */}
           <div className="space-y-2">
-            <Label>Various Artists</Label>
+            <Label>Vários artistas (Various Artists)</Label>
             <InfoBox>
               Marque esta opção se o álbum é uma coletânea com 5 ou mais
               artistas principais diferentes.
@@ -1175,7 +1184,7 @@ export function ReleaseFormModal({
                 disabled={isViewMode}
                 data-cy="checkbox-various-artists"
               />
-              <span className="text-sm">Various Artists</span>
+              <span className="text-sm">Vários artistas (Various Artists)</span>
             </label>
           </div>
 
@@ -1719,8 +1728,8 @@ export function ReleaseFormModal({
                     </SelectTrigger>
                     <SelectContent>
                       {INSTRUMENT_OPTS.map((o) => (
-                        <SelectItem key={o} value={o}>
-                          {o}
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -2230,11 +2239,9 @@ export function ReleaseFormModal({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="world">Mundo (global)</SelectItem>
-                  <SelectItem value="br">Brasil</SelectItem>
-                  <SelectItem value="us">Estados Unidos</SelectItem>
-                  <SelectItem value="latam">América Latina</SelectItem>
-                  <SelectItem value="eu">Europa</SelectItem>
+                  {TERRITORY_OPTS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -2413,7 +2420,7 @@ export function ReleaseFormModal({
     tracks.forEach((f, i) => {
       if (!f.title.trim()) warnings.push(`Faixa ${i + 1}: título ausente.`);
       if (!f.aiAssistanceLevel)
-        warnings.push(`Faixa ${i + 1}: AI-Assisted Materials não declarado.`);
+        warnings.push(`Faixa ${i + 1}: uso de IA (Materiais com Uso de IA) não declarado.`);
     });
 
     return (
@@ -2452,7 +2459,7 @@ export function ReleaseFormModal({
                 <div>
                   <h3 className="text-xl font-bold">
                     {formData.title || "—"}
-                    {formData.type ? ` — ${formData.type.toUpperCase()}` : ""}
+                    {formData.type ? ` — ${releaseTypeLabel(formData.type)}` : ""}
                   </h3>
                   <p className="text-muted-foreground">por {artistName}</p>
                 </div>
@@ -2491,7 +2498,7 @@ export function ReleaseFormModal({
                   </span>
 
                   <span className="text-muted-foreground">Território:</span>
-                  <span>{extraFields.territory}</span>
+                  <span>{TERRITORY_OPTS.find((t) => t.value === extraFields.territory)?.label ?? "Não informado"}</span>
 
                   {formData.upcCode && (
                     <>

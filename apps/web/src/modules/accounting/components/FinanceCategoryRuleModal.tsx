@@ -33,7 +33,7 @@ interface FinanceCategoryRuleModalProps {
 
 const EMPTY_DRAFT: FinanceCategoryRuleDraft = {
   keywords: [],
-  transactionType: "DESPESA",
+  transactionType: "EXPENSE",
   categoryId: "",
   categoryName: "",
   priority: 100,
@@ -123,8 +123,8 @@ export function FinanceCategoryRuleModal({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="RECEITA">Receita</SelectItem>
-                  <SelectItem value="DESPESA">Despesa</SelectItem>
+                  <SelectItem value="REVENUE">Receita</SelectItem>
+                  <SelectItem value="EXPENSE">Despesa</SelectItem>
                 </SelectContent>
               </Select>
             </div>

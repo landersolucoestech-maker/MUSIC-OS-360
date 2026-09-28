@@ -80,35 +80,34 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
       title: 'Noite Estrelada',
       work_id: '123e4567-e89b-12d3-a456-426614174000',
       artist_id: '223e4567-e89b-12d3-a456-426614174000',
-      cod_ecad: null,
-      cod_entidade: null,
-      agregadora: null,
-      isrc_pais: 'BR',
-      isrc_registrante: 'ABC',
-      isrc_ano: '25',
-      isrc_designacao: '12345',
-      criada_por_ia: false,
+      ecad_code: null,
+      society_code: null,
+      aggregator: null,
+      isrc_country_code: 'BR',
+      isrc_registrant_code: 'ABC',
+      isrc_year: '25',
+      isrc_designation_code: '12345',
+      ai_used: false,
       is_instrumental: false,
-      nacional: true,
-      pub_simultanea: false,
-      emissao: null,
-      gravacao_original: null,
-      data_lancamento: null,
+      is_national: true,
+      is_simultaneous_publication: false,
+      issue_date: null,
+      recording_date: null,
+      release_date: null,
       duration_text: '03:30',
-      duracao_min: 3,
-      duracao_seg: 30,
-      midia: null,
-      classificacao: null,
-      pais_origem: null,
-      pais_publicacao: null,
-      gravadora: null,
+      duration_seconds: 210,
+      media_type: null,
+      recording_classification: null,
+      country_of_recording: null,
+      publication_country: null,
+      record_label_name: null,
       notes: null,
       status: 'pending',
-      participacao: null,
-      arquivo_audio: null,
+      participation: null,
+      audio_file: null,
     };
 
-    it('accepts the real PT-BR payload from the frontend (all 21 physical fields from the migration)', async () => {
+    it('accepts the real frontend payload (canonical CZ-040 contract)', async () => {
       const errors = await validateDto(realFormPayload);
       expect(errors).toEqual([]);
     });
@@ -122,39 +121,36 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
       expect(errors).toEqual([]);
     });
 
-    // participacao: real bug found during naming-closure Phase 2 --
-    // the previous shape (`@IsArray() participacao?: unknown[]`) rejected the
-    // real object that PhonogramFormModal.tsx always sent
-    // (ParticipacaoCategoria: { produtorFonografico, interprete,
-    // musicoAcompanhante }), with "participacao must be an array" on EVERY
-    // real submit with participants filled in -- verified
-    // empirically before the fix. ParticipacaoDto fixes the shape.
-    it('accepts the real participacao shape (object with array categories, not an array)', async () => {
+    // participation: real bug found during naming-closure Phase 2 -- a
+    // previous `@IsArray()` shape rejected the real object PhonogramFormModal
+    // always sent (three participant categories) on EVERY real submit with
+    // participants filled in -- verified empirically before the fix.
+    it('accepts the real participation shape (object with array categories, not an array)', async () => {
       const errors = await validateDto({
         title: 'Noite Estrelada',
-        participacao: {
-          produtorFonografico: [{ id: '1', name: 'Produtor A', percentual: '50' }],
-          interprete: [{ id: '2', name: 'Intérprete B', percentual: '50' }],
-          musicoAcompanhante: [],
+        participation: {
+          phonographic_producers: [{ id: '1', name: 'Produtor A', percentage: '50' }],
+          performers: [{ id: '2', name: 'Intérprete B', percentage: '50' }],
+          session_musicians: [],
         },
       });
       expect(errors).toEqual([]);
     });
 
-    it('rejects participacao in the old incorrect shape (array, not object)', async () => {
+    it('rejects participation in the old incorrect shape (array, not object)', async () => {
       const errors = await validateDto({
         title: 'Noite Estrelada',
-        participacao: [{ role: 'interprete', name: 'X' }],
+        participation: [{ role: 'performer', name: 'X' }],
       });
-      expect(errors.some((e) => e.property === 'participacao')).toBe(true);
+      expect(errors.some((e) => e.property === 'participation')).toBe(true);
     });
 
-    it('rejects malformed participant inside a category (non-string percentual)', async () => {
+    it('rejects malformed participant inside a category (non-string percentage)', async () => {
       const errors = await validateDto({
         title: 'Noite Estrelada',
-        participacao: { interprete: [{ id: '1', name: 'X', percentual: 50 }] },
+        participation: { performers: [{ id: '1', name: 'X', percentage: 50 }] },
       });
-      expect(errors.some((e) => e.property === 'participacao')).toBe(true);
+      expect(errors.some((e) => e.property === 'participation')).toBe(true);
     });
 
     it('rejects unknown field (whitelist)', async () => {

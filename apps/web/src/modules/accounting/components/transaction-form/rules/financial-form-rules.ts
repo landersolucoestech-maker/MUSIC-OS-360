@@ -53,14 +53,14 @@ interface RuleContext {
 }
 
 function buildContext(f: TransactionFormData): RuleContext {
-  const isTax       = f.tipoTransacao === "imposto";
-  const isTransferencia = f.tipoTransacao === "transferencia";
-  const isInvestment  = f.tipoTransacao === "investimento";
-  const isExpense       = f.tipoTransacao === "despesa";
-  const isIncome       = f.tipoTransacao === "receita";
-  const isCompany       = f.tipoCliente === "empresa";
-  const isArtist       = f.tipoCliente === "artista";
-  const isPerson        = f.tipoCliente === "pessoa";
+  const isTax       = f.transactionType === "tax";
+  const isTransferencia = f.transactionType === "transfer";
+  const isInvestment  = f.transactionType === "investment";
+  const isExpense       = f.transactionType === "expense";
+  const isIncome       = f.transactionType === "revenue";
+  const isCompany       = f.counterpartyType === "company";
+  const isArtist       = f.counterpartyType === "artist";
+  const isPerson        = f.counterpartyType === "individual";
   const isCompanyOrPerson = isCompany || isPerson;
   return {
     isImposto: isTax, isTransferencia, isInvestimento: isInvestment, isDespesa: isExpense, isReceita: isIncome,
@@ -75,7 +75,7 @@ function buildContext(f: TransactionFormData): RuleContext {
     isReceitaMusical: isIncome && isCompanyOrPerson && f.category === "receitas-musicais",
     isReceitaServico: isIncome && isCompanyOrPerson && f.category === "servicos",
     isReceitaProduto: isIncome && isCompanyOrPerson && f.category === "produtos",
-    hasTipoTransacao: Boolean(f.tipoTransacao),
+    hasTipoTransacao: Boolean(f.transactionType),
   };
 }
 
@@ -90,12 +90,12 @@ export const DISPLAY_RULES: Record<BooleanRuleKey, RulePredicate> = {
     ctx.hasTipoTransacao && !ctx.isImposto && !ctx.isTransferencia && !ctx.isInvestimento,
 
   exibirCategoria: (f, ctx) => {
-    const categories = getCategoriesForTransactionType(f.tipoTransacao, f.tipoCliente);
-    return categories.length > 0 && Boolean(f.tipoCliente || ctx.isImposto || ctx.isTransferencia || ctx.isInvestimento);
+    const categories = getCategoriesForTransactionType(f.transactionType, f.counterpartyType);
+    return categories.length > 0 && Boolean(f.counterpartyType || ctx.isImposto || ctx.isTransferencia || ctx.isInvestimento);
   },
 
   exibirSubcategoria: (f) => {
-    const subs = getSubcategoriesForCategory(f.tipoTransacao, f.tipoCliente, f.category);
+    const subs = getSubcategoriesForCategory(f.transactionType, f.counterpartyType, f.category);
     return subs.length > 0;
   },
 
@@ -105,45 +105,45 @@ export const DISPLAY_RULES: Record<BooleanRuleKey, RulePredicate> = {
   },
 
   exibirArtista: (f, ctx) =>
-    (ctx.isDespesaServico  && expenseServicesRequiringArtistAndProject.includes(f.subcategoria)) ||
-    (ctx.isDespesaMarketing && Boolean(f.subcategoria)) ||
-    (ctx.isDespesaViagem   && Boolean(f.subcategoria)) ||
-    (ctx.isDespesaProduto  && Boolean(f.subcategoria)) ||
+    (ctx.isDespesaServico  && expenseServicesRequiringArtistAndProject.includes(f.subcategory)) ||
+    (ctx.isDespesaMarketing && Boolean(f.subcategory)) ||
+    (ctx.isDespesaViagem   && Boolean(f.subcategory)) ||
+    (ctx.isDespesaProduto  && Boolean(f.subcategory)) ||
     ctx.isDespesaSuporteFinanceiro ||
-    (ctx.isDespesaArtistaCaches && Boolean(f.subcategoria)) ||
+    (ctx.isDespesaArtistaCaches && Boolean(f.subcategory)) ||
     ctx.isDespesaArtistaSuporteFinanceiro ||
-    (ctx.isReceitaMusical && Boolean(f.subcategoria)) ||
+    (ctx.isReceitaMusical && Boolean(f.subcategory)) ||
     (ctx.isReceitaServico && (
-      revenueServicesRequiringArtistAndProject.includes(f.subcategoria) ||
-      revenueServicesRequiringArtistOnly.includes(f.subcategoria)
+      revenueServicesRequiringArtistAndProject.includes(f.subcategory) ||
+      revenueServicesRequiringArtistOnly.includes(f.subcategory)
     )) ||
-    (ctx.isReceitaProduto && Boolean(f.subcategoria)),
+    (ctx.isReceitaProduto && Boolean(f.subcategory)),
 
   exibirProjeto: (f, ctx) =>
-    (ctx.isDespesaServico   && expenseServicesRequiringArtistAndProject.includes(f.subcategoria)) ||
-    (ctx.isDespesaMarketing && Boolean(f.subcategoria) && Boolean(f.artistaVinculado)) ||
-    (ctx.isReceitaMusical   && musicRevenueRequiringArtistAndProject.includes(f.subcategoria)) ||
-    (ctx.isReceitaServico   && revenueServicesRequiringArtistAndProject.includes(f.subcategoria)),
+    (ctx.isDespesaServico   && expenseServicesRequiringArtistAndProject.includes(f.subcategory)) ||
+    (ctx.isDespesaMarketing && Boolean(f.subcategory) && Boolean(f.artistId)) ||
+    (ctx.isReceitaMusical   && musicRevenueRequiringArtistAndProject.includes(f.subcategory)) ||
+    (ctx.isReceitaServico   && revenueServicesRequiringArtistAndProject.includes(f.subcategory)),
 
   projetoObrigatorio: (f, ctx) =>
-    (ctx.isDespesaServico  && expenseServicesRequiringArtistAndProject.includes(f.subcategoria)) ||
-    (ctx.isReceitaMusical  && musicRevenueRequiringArtistAndProject.includes(f.subcategoria)) ||
-    (ctx.isReceitaServico  && revenueServicesRequiringArtistAndProject.includes(f.subcategoria)),
+    (ctx.isDespesaServico  && expenseServicesRequiringArtistAndProject.includes(f.subcategory)) ||
+    (ctx.isReceitaMusical  && musicRevenueRequiringArtistAndProject.includes(f.subcategory)) ||
+    (ctx.isReceitaServico  && revenueServicesRequiringArtistAndProject.includes(f.subcategory)),
 
   exibirEvento: (f, ctx) =>
-    (ctx.isDespesaProduto      && expenseProductsRequiringEvent.includes(f.subcategoria)) ||
-    (ctx.isDespesaArtistaCaches && f.subcategoria === "show-evento") ||
-    (ctx.isReceitaMusical       && ["participacao-show-evento", "venda-show-fechado"].includes(f.subcategoria)),
+    (ctx.isDespesaProduto      && expenseProductsRequiringEvent.includes(f.subcategory)) ||
+    (ctx.isDespesaArtistaCaches && f.subcategory === "show-evento") ||
+    (ctx.isReceitaMusical       && ["participacao-show-evento", "venda-show-fechado"].includes(f.subcategory)),
 
   exibirFornecedor: (_f, ctx) => (ctx.isDespesa || ctx.isReceita) && ctx.isEmpresaOuPessoa,
 
   exibirOrgaoArrecadador: (_f, ctx) => ctx.isImposto,
 
-  exibirMotivoViagem: (f, ctx) => ctx.isDespesaViagem && Boolean(f.subcategoria),
+  exibirMotivoViagem: (f, ctx) => ctx.isDespesaViagem && Boolean(f.subcategory),
 
-  exibirAdvertisingName: (f, ctx) => ctx.isDespesaArtistaCaches && f.subcategoria === "publicidade",
+  exibirAdvertisingName: (f, ctx) => ctx.isDespesaArtistaCaches && f.subcategory === "publicidade",
 
-  exibirParcelamento: (f) => f.tipoPagamento === "parcelado",
+  exibirParcelamento: (f) => f.paymentType === "installments",
 };
 
 // ── computeFinancialRules — applies DISPLAY_RULES map + derives label ─────────

@@ -72,7 +72,7 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
                 icon={<Link2 className="h-3.5 w-3.5" />}
                 label="Correspondência ECAD"
                 value={
-                  catalog?.cod_ecad
+                  catalog?.ecad_code
                     ? <span className="text-success font-semibold text-xs">✓ Obra vinculada com cód. ECAD</span>
                     : <span className="text-destructive font-semibold text-xs">✗ Sem correspondência no catálogo/ECAD</span>
                 }
@@ -85,8 +85,8 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
             <p className="text-xs font-semibold  tracking-wide text-muted-foreground mb-2">Dados da Obra — Catálogo</p>
             {catalog ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-border/60 bg-muted/20 p-3">
-                <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Compositor(es)" value={Array.isArray(catalog.compositores) ? catalog.compositores.join(", ") : (catalog.compositores || catalog.compositor || "—")} />
-                <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Publisher / Editora" value={catalog.editora || "—"} />
+                <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Compositor(es)" value={catalog.composer_names?.length ? catalog.composer_names.join(", ") : (catalog.composer_name || "—")} />
+                <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Publisher / Editora" value={catalog.publisher_name || "—"} />
                 <Row icon={<Tag className="h-3.5 w-3.5" />} label="Gênero" value={catalog.genero || "—"} />
                 <Row icon={<Clock3 className="h-3.5 w-3.5" />} label="Duração" value={catalog.duration_text || "—"} />
                 {catalog.iswc && (
@@ -96,13 +96,13 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
                   icon={<CheckCircle className="h-3.5 w-3.5" />}
                   label="Cód. ECAD"
                   value={
-                    catalog.cod_ecad
-                      ? <span className="font-sans text-success">{catalog.cod_ecad}</span>
-                      : <span className="text-warning text-xs">Não cadastrado — sem cod_ecad</span>
+                    catalog.ecad_code
+                      ? <span className="font-sans text-success">{catalog.ecad_code}</span>
+                      : <span className="text-warning text-xs">Não cadastrado — sem código ECAD</span>
                   }
                 />
-                {catalog.cod_entidade && (
-                  <Row icon={<Hash className="h-3.5 w-3.5" />} label="Cód. Sociedade" value={catalog.cod_entidade} mono />
+                {catalog.society_code && (
+                  <Row icon={<Hash className="h-3.5 w-3.5" />} label="Cód. Sociedade" value={catalog.society_code} mono />
                 )}
                 <Row
                   icon={<Tag className="h-3.5 w-3.5" />}

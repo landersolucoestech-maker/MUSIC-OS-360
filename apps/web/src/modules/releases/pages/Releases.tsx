@@ -32,8 +32,8 @@ import { useReleasesPaginated, useReleasesDistributionStats } from "@/modules/re
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { useImageContrast } from "@/shared/hooks/useImageContrast";
 import { contrastText, contrastSubtext, contrastChrome, contrastScrim } from "@/shared/lib/image-contrast";
-import { cardStatusClasses, RELEASE_STATUS_OPTIONS } from "@/modules/releases/lib/release-status";
-import { formatReleaseDate, releaseTypeLabel } from "@/modules/releases/lib/release-format";
+import { cardStatusClasses, RELEASE_DISPLAY_TO_BACKEND_STATUSES, RELEASE_STATUS_OPTIONS } from "@/modules/releases/lib/release-status";
+import { formatReleaseDate, musicGenreLabel, RELEASE_TYPE_LABELS, releaseTypeLabel } from "@/modules/releases/lib/release-format";
 import { shareFlowFromReleaseUrl } from "@/modules/releases/services/share-from-release";
 import type { Release } from "@/modules/releases/types";
 import type { Artist } from "@/modules/artist/types/artist.types";
@@ -85,7 +85,7 @@ function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, 
   const releaseTime = release.release_date ? new Date(release.release_date).getTime() : NaN;
   const showCountdown = !Number.isNaN(releaseTime) && releaseTime > now;
   const releaseType = releaseTypeLabel(release.type);
-  const genre = (release.music_genre as string | null) ?? artist?.musicGenre ?? "Genre TBA";
+  const genre = musicGenreLabel((release.music_genre as string | null) ?? artist?.musicGenre) ?? "Gênero não informado";
   const text = contrastText(mode);
   const subtext = contrastSubtext(mode);
   const chrome = contrastChrome(mode);
@@ -273,7 +273,10 @@ export default function Releases() {
     lancamentos: pageItems, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
   } = useReleasesPaginated({
     page, pageSize, search: debouncedSearch || undefined,
-    status: statusFilter !== "all-status" ? statusFilter : undefined,
+    // A display group covers several backend statuses (e.g. "Pendente" = review + scheduled).
+    status: statusFilter !== "all-status"
+      ? RELEASE_DISPLAY_TO_BACKEND_STATUSES[statusFilter as keyof typeof RELEASE_DISPLAY_TO_BACKEND_STATUSES]?.join(",")
+      : undefined,
     type: typeFilter !== "all-type" ? typeFilter : undefined,
     artistId: artistFilter !== "all-artist" ? artistFilter : undefined,
   });
@@ -351,7 +354,7 @@ export default function Releases() {
         <TooltipProvider delayDuration={200}>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {([
-              { key: "total", label: "Total de Releases", value: distributionKPIs.total, subtitle: "lançamentos cadastrados", icon: Library, color: "text-info", tooltip: "Quantidade total de lançamentos cadastrados no sistema." },
+              { key: "total", label: "Total de Lançamentos", value: distributionKPIs.total, subtitle: "lançamentos cadastrados", icon: Library, color: "text-info", tooltip: "Quantidade total de lançamentos cadastrados no sistema." },
               { key: "distributed", label: "Distribuídos", value: distributionKPIs.distributed, subtitle: "ativos nas plataformas", icon: CheckCircle2, color: "text-green-500", tooltip: "Lançamentos já distribuídos para as plataformas." },
               { key: "pending", label: "Pendentes", value: distributionKPIs.pending, subtitle: "aguardando processamento", icon: Clock, color: "text-yellow-500", tooltip: "Lançamentos aguardando processamento ou validação." },
               { key: "waitingAction", label: "Aguardando Ação", value: distributionKPIs.waitingAction, subtitle: "necessitam intervenção", icon: AlertTriangle, color: "text-red-500", tooltip: "Lançamentos que exigem correção, atualização ou intervenção operacional." },
@@ -393,21 +396,21 @@ export default function Releases() {
           </div>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="h-8 w-[126px] shrink-0 bg-card border-border text-sm">
-              <SelectValue placeholder="Todos Tipo" />
+              <SelectValue placeholder="Todos os tipos" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all-type">Todos Tipo</SelectItem>
-              <SelectItem value="single">Single</SelectItem>
-              <SelectItem value="álbum">Álbum</SelectItem>
-              <SelectItem value="ep">EP</SelectItem>
+              <SelectItem value="all-type">Todos os tipos</SelectItem>
+              {Object.entries(RELEASE_TYPE_LABELS).map(([value, label]) => (
+                <SelectItem key={value} value={value}>{label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="h-8 w-[142px] shrink-0 bg-card border-border text-sm">
-              <SelectValue placeholder="Todos Status" />
+              <SelectValue placeholder="Todos os status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all-status">Todos Status</SelectItem>
+              <SelectItem value="all-status">Todos os status</SelectItem>
               {RELEASE_STATUS_OPTIONS.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
               ))}

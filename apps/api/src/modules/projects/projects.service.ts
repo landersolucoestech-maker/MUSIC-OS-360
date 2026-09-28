@@ -304,8 +304,25 @@ export class ProjectsService {
       );
     }
 
-    await this.replaceTracks(tenantId, id, trackRows);
+    await this.replaceTracks(tenantId, id, this.tracksFromLegacyEdit(dto as Record<string, unknown>, trackRows));
     return this.findById(tenantId, id, actorRole);
+  }
+
+  /**
+   * An edit from a pre-CZ-031 build sends the deprecated `musicas`, built from a
+   * response it can no longer read (tracks moved to `tracks`) — typically a
+   * single empty placeholder row. Replacing with it would delete every stored
+   * track, so only rows that carry a name are trusted, and a legacy list with
+   * none leaves the stored tracks untouched. Canonical `tracks` is unaffected.
+   */
+  private tracksFromLegacyEdit(
+    dto: Record<string, unknown>,
+    trackRows: Record<string, unknown>[] | undefined,
+  ): Record<string, unknown>[] | undefined {
+    // trackRows present while the canonical key is absent => it came from the alias.
+    if (dto['tracks'] !== undefined || !Array.isArray(trackRows)) return trackRows;
+    const named = trackRows.filter((row) => typeof row['name'] === 'string' && row['name'].trim().length > 0);
+    return named.length > 0 ? named : undefined;
   }
 
   private emitStatusEvents(

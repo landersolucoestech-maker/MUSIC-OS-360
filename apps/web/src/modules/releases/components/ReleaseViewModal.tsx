@@ -28,9 +28,11 @@ import { resolveAllowedTransitions, WorkflowTransition } from "@/shared/lib/work
 import {
   resolvePlatformStatus,
   releaseStatusBadge,
+  releaseStatusLabel,
+  resolveReleaseStatus,
   platformStatusBadge,
 } from "@/modules/releases/lib/release-status";
-import { formatReleaseDate, releaseLanguageLabel, releaseTypeLabel } from "@/modules/releases/lib/release-format";
+import { formatReleaseDate, musicGenreLabel, releaseLanguageLabel, releaseTypeLabel } from "@/modules/releases/lib/release-format";
 import { findDistributionPlatform } from "@/modules/releases/services/distribution-platforms";
 import type { Release, PlatformError } from "@/modules/releases/types";
 
@@ -83,6 +85,15 @@ function LinkField({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
+/** Credit entries may be plain names or objects ({ nome/name, role }). */
+function creditName(value: unknown): string {
+  if (value && typeof value === "object") {
+    const entry = value as Record<string, unknown>;
+    return String(entry["name"] ?? entry["nome"] ?? "").trim();
+  }
+  return String(value ?? "").trim();
+}
+
 function aggregateField(tracks: any[], key: string): string {
   const values = tracks
     .flatMap((f) => {
@@ -90,7 +101,7 @@ function aggregateField(tracks: any[], key: string): string {
       if (Array.isArray(value)) return value;
       return String(value ?? "").split(",");
     })
-    .map((value: unknown) => String(value).trim())
+    .map(creditName)
     .filter(Boolean);
   return [...new Set(values)].join(", ");
 }
@@ -169,7 +180,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
     detail?.status ?? release.status,
     detail?.allowed_transitions,
   );
-  const type = String(release.type ?? "single").toLowerCase();
+  const type = String(release.type ?? "").toLowerCase();
   const typeInfo = { label: releaseTypeLabel(type), color: TYPE_COLOR[type] ?? "bg-muted text-muted-foreground" };
   const coverUrl = textValue(release.cover_url) ?? textValue(assets["cover_url"]);
   const formattedReleaseDate = formatReleaseDate(release.release_date);
@@ -244,6 +255,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
             <div className="mt-4">
               <WorkflowTransitionPanel
                 currentStatus={release.status ?? ""}
+                statusLabel={releaseStatusLabel(resolveReleaseStatus(release))}
                 allowedTransitions={allowedTransitions}
                 onTransition={workflowTransition}
                 isLoading={isTransitionPending}
@@ -255,14 +267,14 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
         <div className="rounded-lg border border-border p-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Tipo" value={typeInfo.label} />
-            <Field label="Gênero" value={release.music_genre ?? textValue(metadata["genero"])} />
+            <Field label="Gênero" value={musicGenreLabel(release.music_genre)} />
             <Field label="Subgênero" value={subgenero} />
             <Field label="Idioma" value={languageLabel} />
             <Field label="Gravadora / Selo" value={release.record_label} />
             <Field label="Plataformas selecionadas" value={platformsLabel} />
-            <Field label="ISRC Global" value={release.isrc_global ?? textValue(metadata["isrc_global"])} />
-            <Field label="UPC / EAN" value={release.upc ?? release.codigo_upc ?? textValue(metadata["upc"])} />
-            <Field label="Titular do Copyright" value={release.copyright ?? textValue(metadata["copyright"])} />
+            <Field label="ISRC Global" value={release.isrc_global} />
+            <Field label="UPC / EAN" value={release.upc} />
+            <Field label="Titular do Copyright" value={release.copyright} />
             <Field label="© Ano (Lançamento)" value={copyrightReleaseYear} />
             <Field label="℗ Ano (Gravação)" value={copyrightRecordingYear} />
           </div>
@@ -324,7 +336,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
               </h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                 <Field label="Compositores" value={composers} />
-                <Field label="Interpretes" value={performers} />
+                <Field label="Intérpretes" value={performers} />
                 <Field label="Produtores" value={producers} />
               </div>
             </div>

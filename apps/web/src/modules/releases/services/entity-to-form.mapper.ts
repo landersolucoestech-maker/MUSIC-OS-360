@@ -51,7 +51,7 @@ export function releaseToFormFields(l: Release | null | undefined): ReleaseFormF
     title:                           ps(l?.title),
     artist_id:                       ps(l?.artist_id),
     type:                            ps(l?.type),
-    upcCode:                         ps(l?.codigo_upc ?? l?.upc),
+    upcCode:                         ps(l?.upc),
     genre:                           ps(l?.music_genre),
     language:                        ps(l?.language),
     releaseDate:                     ps(l?.release_date),

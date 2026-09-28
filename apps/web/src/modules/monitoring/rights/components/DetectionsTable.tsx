@@ -57,7 +57,7 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
           {detections.map((det) => {
             const status = STATUS_CONFIG[det.status];
             const dt = formatRightsDateTime(det.detected_at);
-            const matched = Boolean(det.obra?.cod_ecad);
+            const matched = Boolean(det.obra?.ecad_code);
             return (
               <TableRow key={det.id} data-testid={`row-exec-${det.id}`}>
                 {onToggleSelect && (

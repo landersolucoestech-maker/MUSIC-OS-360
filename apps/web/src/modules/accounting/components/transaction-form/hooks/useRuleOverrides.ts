@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 
 const STORAGE_KEY = "musicos360_rule_overrides";
 
-// Override key: "<tipoTransacao>:<tipoCliente>:<category>:<ruleKey>"
+// Override key: "<transactionType>:<counterpartyType>:<category>:<ruleKey>"
 export type OverrideKey = string;
 export type RuleOverrides = Record<OverrideKey, boolean>;
 

@@ -9,13 +9,13 @@
 export interface CatalogWork {
   id: string;
   title: string;
-  compositor: string;
-  compositores: string;
-  editora: string;
+  composer_name: string;
+  composer_names: string[];
+  publisher_name: string;
   isrc: string;
   iswc: string | null;
-  cod_ecad: string | null;
-  cod_entidade: string | null;
+  ecad_code: string | null;
+  society_code: string | null;
   genero: string;
   status: string;
   duration_text: string;
@@ -31,7 +31,7 @@ export function buildIsrcIndex(works: CatalogWork[]): Map<string, CatalogWork> {
 
 /**
  * Computes match rate (0–100) based on how many unique ISRCs have
- * a catalog obra with a non-empty cod_ecad.
+ * a catalog work with a non-empty ecad_code.
  */
 export function computeEcadMatchRate(
   isrcs: string[],
@@ -40,7 +40,7 @@ export function computeEcadMatchRate(
   if (isrcs.length === 0) return 0;
   const matched = isrcs.filter((isrc) => {
     const work = isrcIndex.get(isrc);
-    return work && work.cod_ecad;
+    return work && work.ecad_code;
   }).length;
   return Math.round((matched / isrcs.length) * 100);
 }

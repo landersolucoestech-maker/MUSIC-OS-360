@@ -1,61 +1,26 @@
 import { describe, it, expect } from "vitest";
 import {
-  dbStatusToSelect,
-  normalizeStatusForDb,
   parseDurationText,
   formatDurationText,
   parseIsrc,
   joinIsrc,
   workToParticipants,
-  participantsToComposersLyricists,
+  participantsToComposerAndTranslatorNames,
   workTitle,
+  workToFormFields,
   phonogramToParticipation,
 } from "@/modules/catalog/mappers";
 
-describe("dbStatusToSelect", () => {
-  it("maps DB 'under_review' to Select 'em_análise'", () => {
-    expect(dbStatusToSelect("under_review")).toBe("em_análise");
-  });
-  it("maps 'pending', 'registered', 'rejected' to their Select labels", () => {
-    expect(dbStatusToSelect("pending")).toBe("pendente");
-    expect(dbStatusToSelect("registered")).toBe("registrado");
-    expect(dbStatusToSelect("rejected")).toBe("rejeitado");
-  });
-  it("returns empty string for null/undefined", () => {
-    expect(dbStatusToSelect(null)).toBe("");
-    expect(dbStatusToSelect(undefined)).toBe("");
-    expect(dbStatusToSelect("")).toBe("");
-  });
-});
-
-describe("normalizeStatusForDb", () => {
-  it("maps Select 'em_análise' (and variants) to DB 'under_review'", () => {
-    expect(normalizeStatusForDb("em_análise")).toBe("under_review");
-    expect(normalizeStatusForDb("em_analise")).toBe("under_review");
-    expect(normalizeStatusForDb("Em Análise")).toBe("under_review");
-    expect(normalizeStatusForDb("em analise")).toBe("under_review");
-  });
-  it("maps other Select labels to their DB values", () => {
-    expect(normalizeStatusForDb("pendente")).toBe("pending");
-    expect(normalizeStatusForDb("registrado")).toBe("registered");
-    expect(normalizeStatusForDb("rejeitado")).toBe("rejected");
-  });
-  it("defaults to 'pending' on empty input", () => {
-    expect(normalizeStatusForDb("")).toBe("pending");
-    expect(normalizeStatusForDb(null)).toBe("pending");
-  });
-});
-
 describe("parseDurationText", () => {
   it("parses MM:SS", () => {
-    expect(parseDurationText("03:45")).toEqual({ min: "3", seg: "45" });
+    expect(parseDurationText("03:45")).toEqual({ minutes: "3", seconds: "45" });
   });
   it("parses HH:MM:SS by collapsing hours into minutes", () => {
-    expect(parseDurationText("01:02:30")).toEqual({ min: "62", seg: "30" });
+    expect(parseDurationText("01:02:30")).toEqual({ minutes: "62", seconds: "30" });
   });
   it("returns empty parts for missing duration", () => {
-    expect(parseDurationText(null)).toEqual({ min: "", seg: "" });
-    expect(parseDurationText("")).toEqual({ min: "", seg: "" });
+    expect(parseDurationText(null)).toEqual({ minutes: "", seconds: "" });
+    expect(parseDurationText("")).toEqual({ minutes: "", seconds: "" });
   });
 });
 
@@ -72,26 +37,26 @@ describe("formatDurationText", () => {
 describe("parseIsrc", () => {
   it("parses BR-XXX-YY-NNNNN", () => {
     expect(parseIsrc("BR-ABC-25-12345")).toEqual({
-      pais: "BR",
-      registrante: "ABC",
-      ano: "25",
-      designacao: "12345",
+      countryCode: "BR",
+      registrantCode: "ABC",
+      year: "25",
+      designationCode: "12345",
     });
   });
   it("parses compact format BRXXXYYNNNNN", () => {
     expect(parseIsrc("BRABC2512345")).toEqual({
-      pais: "BR",
-      registrante: "ABC",
-      ano: "25",
-      designacao: "12345",
+      countryCode: "BR",
+      registrantCode: "ABC",
+      year: "25",
+      designationCode: "12345",
     });
   });
   it("defaults to BR for empty input", () => {
     expect(parseIsrc(null)).toEqual({
-      pais: "BR",
-      registrante: "",
-      ano: "",
-      designacao: "",
+      countryCode: "BR",
+      registrantCode: "",
+      year: "",
+      designationCode: "",
     });
   });
 });
@@ -99,17 +64,17 @@ describe("parseIsrc", () => {
 describe("joinIsrc", () => {
   it("joins all four parts", () => {
     expect(
-      joinIsrc({ pais: "BR", registrante: "ABC", ano: "25", designacao: "12345" }),
+      joinIsrc({ countryCode: "BR", registrantCode: "ABC", year: "25", designationCode: "12345" }),
     ).toBe("BR-ABC-25-12345");
   });
   it("returns null when any part missing", () => {
     expect(
-      joinIsrc({ pais: "BR", registrante: "", ano: "25", designacao: "12345" }),
+      joinIsrc({ countryCode: "BR", registrantCode: "", year: "25", designationCode: "12345" }),
     ).toBeNull();
   });
 });
 
-describe("obraTitle", () => {
+describe("workTitle", () => {
   it("prefers DB title, falls back to legacy titulo", () => {
     expect(workTitle({ title: "DB Title", titulo: "Legacy" })).toBe("DB Title");
     expect(workTitle({ titulo: "Legacy" })).toBe("Legacy");
@@ -117,22 +82,29 @@ describe("obraTitle", () => {
   });
 });
 
-describe("obraToParticipantes", () => {
-  it("splits compositores and letristas into typed participantes", () => {
+describe("workToParticipants", () => {
+  it("expands composer_names and translator_names into participants with canonical roles", () => {
     const result = workToParticipants({
-      compositores: ["Alice", "Bob"],
-      letristas: ["Carol"],
+      composer_names: ["Alice", "Bob"],
+      translator_names: ["Carol"],
     });
     expect(result).toHaveLength(3);
-    expect(result.filter((p) => p.classeFuncao === "compositor/autor")).toHaveLength(2);
-    expect(result.filter((p) => p.classeFuncao === "tradutor")).toHaveLength(1);
-    expect(result.find((p) => p.classeFuncao === "tradutor")?.name).toBe("Carol");
+    expect(result.filter((p) => p.role === "composer_author")).toHaveLength(2);
+    expect(result.filter((p) => p.role === "translator")).toHaveLength(1);
+    expect(result.find((p) => p.role === "translator")?.name).toBe("Carol");
   });
-  it("preserves legacy participantes array if provided", () => {
-    const legacy = [
-      { id: "1", name: "Dan", classeFuncao: "Editor", link: "", percentual: "" },
-    ];
-    expect(workToParticipants({ participantes: legacy })).toEqual(legacy);
+  it("reads the canonical participants array (role/percentage; null link/percentage become empty inputs)", () => {
+    const result = workToParticipants({
+      participants: [
+        { id: "1", name: "Dan", role: "publisher", link: null, percentage: "25.000" },
+        { id: "2", name: "Eve", role: "unspecified", link: "https://e.test", percentage: null },
+      ],
+      composer_names: ["Ignored When Participants Exist"],
+    });
+    expect(result).toEqual([
+      { id: "1", name: "Dan", role: "publisher", link: "", percentage: "25.000" },
+      { id: "2", name: "Eve", role: "unspecified", link: "https://e.test", percentage: "" },
+    ]);
   });
   it("returns [] when no fields are present", () => {
     expect(workToParticipants({})).toEqual([]);
@@ -140,55 +112,116 @@ describe("obraToParticipantes", () => {
   });
 });
 
-describe("participantesToCompositoresLetristas", () => {
-  it("splits the participantes back into named arrays", () => {
-    const result = participantsToComposersLyricists([
-      { id: "1", name: "Alice", classeFuncao: "compositor/autor", link: "", percentual: "" },
-      { id: "2", name: "Carol", classeFuncao: "tradutor", link: "", percentual: "" },
-      { id: "3", name: "  ", classeFuncao: "compositor/autor", link: "", percentual: "" },
+describe("participantsToComposerAndTranslatorNames", () => {
+  it("splits the participants back into composer/translator name lists", () => {
+    const result = participantsToComposerAndTranslatorNames([
+      { id: "1", name: "Alice", role: "composer_author", link: "", percentage: "" },
+      { id: "2", name: "Carol", role: "translator", link: "", percentage: "" },
+      { id: "3", name: "  ", role: "composer_author", link: "", percentage: "" },
+      { id: "4", name: "Dan", role: "publisher", link: "", percentage: "" },
     ]);
-    expect(result.compositores).toEqual(["Alice"]);
-    expect(result.letristas).toEqual(["Carol"]);
+    expect(result.composerNames).toEqual(["Alice"]);
+    expect(result.translatorNames).toEqual(["Carol"]);
   });
   it("returns nulls when no entries match", () => {
-    expect(participantsToComposersLyricists([])).toEqual({
-      compositores: null,
-      letristas: null,
+    expect(participantsToComposerAndTranslatorNames([])).toEqual({
+      composerNames: null,
+      translatorNames: null,
     });
   });
 });
 
-describe("fonogramaToParticipacao", () => {
-  it("hydrates produtores into produtorFonografico", () => {
-    const result = phonogramToParticipation({ produtores: ["P1", "P2"] });
-    expect(result.produtorFonografico.map((p) => p.name)).toEqual(["P1", "P2"]);
-    expect(result.interprete).toEqual([]);
-    expect(result.musicoAcompanhante).toEqual([]);
+describe("workToFormFields (canonical work record → form state)", () => {
+  it("reads only the canonical CZ-039 fields", () => {
+    const fields = workToFormFields({
+      title: "Canção",
+      status: "registered",
+      music_genre: "Pop",
+      language: "pt",
+      duration_text: "03:45",
+      is_instrumental: true,
+      ecad_code: "E-1",
+      society_code: "S-1",
+      iswc: "T-1",
+      ai_used: true,
+      ai_usage_level: "full",
+      ai_harmony: { tool: "Suno", prompt: "p" },
+      ai_melody: null,
+      ai_lyrics: { tool: "", prompt: "rhyme" },
+      alternative_titles: ["Alt"],
+      related_references: ["Ref"],
+      lyrics: "Letra",
+      artist_id: "art-1",
+    });
+    expect(fields).toMatchObject({
+      title: "Canção",
+      status: "registered",
+      musicGenre: "pop",
+      language: "pt",
+      durationMinutes: "3",
+      durationSeconds: "45",
+      isInstrumental: true,
+      ecadCode: "E-1",
+      societyCode: "S-1",
+      iswc: "T-1",
+      aiUsed: true,
+      aiUsageLevel: "full",
+      aiHarmony: { tool: "Suno", prompt: "p" },
+      aiMelody: { tool: "", prompt: "" },
+      aiLyrics: { tool: "", prompt: "rhyme" },
+      alternativeTitles: ["Alt"],
+      relatedReferences: ["Ref"],
+      lyrics: "Letra",
+      artistId: "art-1",
+    });
   });
-  it("respects legacy participacao object if present", () => {
+  it("yields empty/false defaults for a blank record (booleans, never 'sim'/'nao')", () => {
+    const fields = workToFormFields(null);
+    expect(fields.isInstrumental).toBe(false);
+    expect(fields.aiUsed).toBe(false);
+    expect(fields.aiUsageLevel).toBe("");
+    expect(fields.language).toBe("");
+    expect(fields.status).toBe("");
+    expect(fields.participants).toEqual([]);
+  });
+  it("ignores a value outside the ai_usage_level contract", () => {
+    expect(workToFormFields({ ai_usage_level: "unknown_level" as never }).aiUsageLevel).toBe("");
+  });
+});
+
+describe("phonogramToParticipation (canonical CZ-040 participation)", () => {
+  it("reads the canonical categories and item keys", () => {
+    const result = phonogramToParticipation({
+      participation: {
+        phonographic_producers: [{ id: "1", name: "X", percentage: "10", artist_id: "art-1" }],
+        performers: [{ id: "2", name: "Y", percentage: "41.7" }],
+        session_musicians: [],
+      },
+    });
+    expect(result).toEqual({
+      phonographic_producers: [{ id: "1", name: "X", percentage: "10", artist_id: "art-1" }],
+      performers: [{ id: "2", name: "Y", percentage: "41.7" }],
+      session_musicians: [],
+    });
+  });
+  it("ignores the pre-CZ-040 participacao object, its category keys and `percentual`", () => {
     const legacy = {
-      produtorFonografico: [{ id: "1", name: "X", percentual: "10" }],
-      interprete: [],
-      musicoAcompanhante: [],
+      participacao: { produtorFonografico: [{ id: "1", name: "X", percentual: "10" }] },
+      produtores: ["P1"],
+      participation: { interprete: [{ id: "9", name: "Z" }], performers: [{ id: "2", name: "Y", percentual: "5" }] },
     };
-    expect(phonogramToParticipation({ participacao: legacy })).toEqual(legacy);
-  });
-  it("returns empty categories when fonograma is null", () => {
-    expect(phonogramToParticipation(null)).toEqual({
-      produtorFonografico: [],
-      interprete: [],
-      musicoAcompanhante: [],
+    expect(phonogramToParticipation(legacy as never)).toEqual({
+      phonographic_producers: [],
+      performers: [{ id: "2", name: "Y", percentage: "" }],
+      session_musicians: [],
     });
   });
-});
-
-describe("status round-trip", () => {
-  it("DB → Select → DB stays consistent", () => {
-    const cases = ["under_review", "pending", "registered", "rejected"];
-    for (const dbVal of cases) {
-      const selectVal = dbStatusToSelect(dbVal);
-      expect(normalizeStatusForDb(selectVal)).toBe(dbVal);
-    }
+  it("returns empty categories when the phonogram is null", () => {
+    expect(phonogramToParticipation(null)).toEqual({
+      phonographic_producers: [],
+      performers: [],
+      session_musicians: [],
+    });
   });
 });
 
@@ -196,8 +229,8 @@ describe("duration_text round-trip", () => {
   it("DB string → parts → DB string", () => {
     const cases = ["00:05", "03:45", "10:00", "59:59"];
     for (const dur of cases) {
-      const { min, seg } = parseDurationText(dur);
-      expect(formatDurationText(min, seg)).toBe(dur);
+      const { minutes, seconds } = parseDurationText(dur);
+      expect(formatDurationText(minutes, seconds)).toBe(dur);
     }
   });
 });

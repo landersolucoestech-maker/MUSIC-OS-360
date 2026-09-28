@@ -1,68 +1,71 @@
 /**
  * accounting/services/form-to-payload.mapper.ts
- * Form field values → DB/API payload. Source of truth for Transaction persistence.
+ * Form field values → API request body. Source of truth for Transaction persistence.
  */
 
 import type { TransactionFormData } from "@/modules/accounting/constants/transaction-constants";
 
 /**
- * One field per concept (see .claude/rules/naming-canonical.md). The backend
- * (`POST/PUT/PATCH /transactions`, validated by createTransactionSchema in
- * apps/api/.../validators/transacao.validator.ts) only reads camelCase
- * PT-BR keys — the same as the form's own (`TransactionFormData`). Keeping a
- * snake_case/camelCase pair here was pure duplication for the fields that
- * also existed in camelCase (tipoTransacao, tipoCliente, dataTransacao,
- * observacao, artistaVinculado, projetoVinculado) — the snake_case was never
- * read by the schema and was only dead payload.
+ * Request body of POST/PUT/PATCH /transactions — exactly the canonical
+ * camelCase English keys of the CZ-041 wire contract, one key per concept
+ * (see .claude/rules/naming-canonical.md). The web sends ONLY these keys; the
+ * deprecated Portuguese keys the API still tolerates during the deploy window
+ * are never emitted here.
  *
- * For the fields that only existed in snake_case (contrato_id, evento_id,
- * fornecedor_cliente, orgao_arrecadador, item_investimento, motivo_viagem,
- * nome_publicidade, forma_pagamento, tipo_pagamento, quantidade_parcelas,
- * intervalo_parcelas, data_primeira_parcela, anexo_url, anexo_nome), the name
- * sent matched no schema key — the backend silently discarded
- * those values (zod strips unknown keys). That
- * included `forma_pagamento`, a mandatory field in createTransactionSchema.
- * Renaming to the real camelCase key fixes that silent discard;
- * it is not just a cosmetic rename.
+ * A blank optional form field is sent as `null` (the API accepts `null` for
+ * every optional field). costCenter/referenceMonth/sourceBankAccount/
+ * destinationBankAccount used to be sent as snake_case keys the API silently
+ * discarded; they are now real contract keys.
  *
- * centro_custo/competencia/conta_origem/conta_destino have no camelCase
- * counterpart because the current schema does not declare those fields (neither as
- * snake_case nor as camelCase) — it is not duplication, it is a form field
- * without backend persistence today; out of scope for this
- * consolidation (record it as separate debt, do not invent a new field
- * in the schema here).
+ * Values of transactionType/counterpartyType/paymentMethod/paymentType/
+ * installmentInterval are the canonical English values carried by the form
+ * state itself (see transaction-constants.ts option lists) — no translation
+ * happens here. Category/subcategory slugs are forwarded unchanged.
  */
 export interface TransactionFormPayload {
-  [key: string]: string | number | null;
-  tipoTransacao: string | null;
-  tipoCliente: string | null;
+  transactionType: string | null;
+  counterpartyType: string | null;
   category: string | null;
-  subcategoria: string | null;
+  subcategory: string | null;
   description: string | null;
   amount: number | null;
-  dataTransacao: string | null;
+  transactionDate: string | null;
   status: string;
-  observacao: string | null;
-  artistaVinculado: string | null;
-  projetoVinculado: string | null;
-  contratoVinculado: string | null;
-  eventoVinculado: string | null;
-  fornecedorCliente: string | null;
-  orgaoArrecadador: string | null;
-  centro_custo: string | null;
-  competencia: string | null;
-  conta_origem: string | null;
-  conta_destino: string | null;
-  itemInvestimento: string | null;
-  motivoViagem: string | null;
+  notes: string | null;
+  artistId: string | null;
+  projectId: string | null;
+  contractId: string | null;
+  eventId: string | null;
+  counterpartyName: string | null;
+  taxAuthority: string | null;
+  costCenter: string | null;
+  referenceMonth: string | null;
+  sourceBankAccount: string | null;
+  destinationBankAccount: string | null;
+  investmentItem: string | null;
+  travelReason: string | null;
   advertisingName: string | null;
-  formaPagamento: string | null;
-  tipoPagamento: string | null;
-  quantidadeParcelas: string | null;
-  intervaloParcelas: string | null;
-  dataPrimeiraParcela: string | null;
-  anexoUrl: string | null;
-  anexoNome: string | null;
+  paymentMethod: string | null;
+  paymentType: string | null;
+  installmentCount: string | null;
+  installmentInterval: string | null;
+  firstInstallmentDate: string | null;
+  attachmentUrl: string | null;
+  attachmentName: string | null;
+}
+
+/**
+ * The form collects the reference month as "MM/AAAA" (PT-BR convention, see
+ * the "Competência" field); the wire contract is "YYYY-MM". Anything that is
+ * neither shape is forwarded trimmed so the API validation rejects it visibly
+ * (the form validation already blocks it before submit).
+ */
+export function toReferenceMonth(value: string | undefined): string | null {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  const brazilian = /^(\d{2})\/(\d{4})$/.exec(trimmed);
+  if (brazilian) return `${brazilian[2]}-${brazilian[1]}`;
+  return trimmed;
 }
 
 function parseMoney(value: string): number | null {
@@ -78,38 +81,39 @@ function parseMoney(value: string): number | null {
 }
 
 export function formToTransactionPayload(f: TransactionFormData): TransactionFormPayload {
-  const str = (v: string): string | null => v.trim() || null;
-  const attachmentUrl = str(f.anexoUrl);
+  const str = (v: string | undefined): string | null => v?.trim() || null;
+  const attachmentUrl = str(f.attachmentUrl);
 
   return {
-    tipoTransacao:           str(f.tipoTransacao),
-    tipoCliente:             str(f.tipoCliente),
-    category:                str(f.category),
-    subcategoria:            str(f.subcategoria),
-    description:             str(f.description),
-    amount:                  parseMoney(f.amount),
-    dataTransacao:           str(f.dataTransacao),
-    status:                  str(f.status) ?? "pending",
-    observacao:              str(f.observacao),
-    artistaVinculado:        str(f.artistaVinculado),
-    projetoVinculado:        str(f.projetoVinculado),
-    contratoVinculado:       str(f.contratoVinculado),
-    eventoVinculado:         str(f.eventoVinculado),
-    fornecedorCliente:       str(f.fornecedorCliente),
-    orgaoArrecadador:        str(f.orgaoArrecadador),
-    centro_custo:            str(f.centroCusto ?? ""),
-    competencia:             str(f.competencia ?? ""),
-    conta_origem:            str(f.contaOrigem ?? ""),
-    conta_destino:           str(f.contaDestino ?? ""),
-    itemInvestimento:        str(f.itemInvestimento),
-    motivoViagem:            str(f.motivoViagem),
-    advertisingName:         str(f.advertisingName),
-    formaPagamento:          str(f.formaPagamento),
-    tipoPagamento:           str(f.tipoPagamento),
-    quantidadeParcelas:      str(f.quantidadeParcelas),
-    intervaloParcelas:       str(f.intervaloParcelas),
-    dataPrimeiraParcela:     str(f.dataPrimeiraParcela),
-    anexoUrl:                attachmentUrl?.startsWith("blob:") ? null : attachmentUrl,
-    anexoNome:               str(f.anexoNome),
+    transactionType:        str(f.transactionType),
+    counterpartyType:       str(f.counterpartyType),
+    category:               str(f.category),
+    subcategory:            str(f.subcategory),
+    description:            str(f.description),
+    amount:                 parseMoney(f.amount),
+    transactionDate:        str(f.transactionDate),
+    status:                 str(f.status) ?? "pending",
+    notes:                  str(f.notes),
+    artistId:               str(f.artistId),
+    projectId:              str(f.projectId),
+    contractId:             str(f.contractId),
+    eventId:                str(f.eventId),
+    counterpartyName:       str(f.counterpartyName),
+    taxAuthority:           str(f.taxAuthority),
+    costCenter:             str(f.costCenter),
+    referenceMonth:         toReferenceMonth(f.referenceMonth),
+    sourceBankAccount:      str(f.sourceBankAccount),
+    destinationBankAccount: str(f.destinationBankAccount),
+    investmentItem:         str(f.investmentItem),
+    travelReason:           str(f.travelReason),
+    advertisingName:        str(f.advertisingName),
+    paymentMethod:          str(f.paymentMethod),
+    paymentType:            str(f.paymentType),
+    installmentCount:       str(f.installmentCount),
+    installmentInterval:    str(f.installmentInterval),
+    firstInstallmentDate:   str(f.firstInstallmentDate),
+    // A blob: URL is a local, not-yet-uploaded preview — never persisted.
+    attachmentUrl:          attachmentUrl?.startsWith("blob:") ? null : attachmentUrl,
+    attachmentName:         str(f.attachmentName),
   };
 }

@@ -112,21 +112,21 @@ describe('ExportEngineService', () => {
 describe('ExportEngineService — computed report (Contabilidade): canonical order also applies', () => {
   const ACCOUNTING_DEF: ReportEntityDefinition = {
     entityName: 'AccountingSummary', tableName: ACCOUNTING_SUMMARY_TABLE_NAME, category: EntityCategory.REPORTABLE,
-    identityColumn: 'artista', displayColumn: 'artista', dateColumn: 'created_at',
-    exportableColumns: ['artista', 'receitas', 'despesas', 'resultado', 'margem'],
+    identityColumn: 'artist', displayColumn: 'artist', dateColumn: 'created_at',
+    exportableColumns: ['artist', 'revenue', 'expenses', 'result', 'margin'],
     importableColumns: [], filterableColumns: [], sortableColumns: [], searchableColumns: [],
-    sensitiveColumns: [], requiredImportColumns: ['artista'], supportsExport: true, supportsImport: false,
+    sensitiveColumns: [], requiredImportColumns: ['artist'], supportsExport: true, supportsImport: false,
   };
 
   it('selection out of order in the computed report is also reordered by the canonical config', async () => {
-    const query = jest.fn().mockResolvedValue([{ artista: 'Artista X', receitas: '1000', despesas: '400' }]);
+    const query = jest.fn().mockResolvedValue([{ artist: 'Artista X', revenue: '1000', expenses: '400' }]);
     const { engine } = makeEngine({
       tableName: ACCOUNTING_SUMMARY_TABLE_NAME, label: 'Contabilidade', definition: ACCOUNTING_DEF, query,
     });
-    // Canonical: artista, receitas, despesas, resultado, margem. Caller selects out of order.
+    // Canonical: artist, revenue, expenses, result, margin. Caller selects out of order.
     const result = await engine.export(
       ACCOUNTING_SUMMARY_TABLE_NAME,
-      params({ columns: ['margem', 'artista', 'receitas'] }),
+      params({ columns: ['margin', 'artist', 'revenue'] }),
       'tenant-1', 'user-1',
     );
     const workbook = XLSX.read(result.body as Buffer, { type: 'buffer' });

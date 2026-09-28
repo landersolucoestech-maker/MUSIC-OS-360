@@ -25,12 +25,13 @@ import {
   Timer,
   TrendingDown,
   TrendingUp,
-  WalletCards,
   XCircle,
   type LucideIcon,
 } from "lucide-react";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 import { storedFileDisplayName } from "@/shared/lib/stored-file";
+import { paymentMethods, paymentTypes } from "@/modules/accounting/constants/transaction-constants";
+import type { TransactionType } from "@/modules/accounting/types/accounting.types";
 
 type Detail = Record<string, unknown>;
 
@@ -48,78 +49,59 @@ type TypeMeta = {
   sign: string;
 };
 
-const transactionTypeMeta: Record<string, TypeMeta> = {
-  receita: {
+/** Keyed by the canonical `type` values (CZ-041); labels are PT-BR display text. */
+const transactionTypeMeta: Record<TransactionType, TypeMeta> = {
+  revenue: {
     label: "Receita",
     icon: TrendingUp,
     badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700",
     amountClass: "text-emerald-600",
     sign: "+",
   },
-  despesa: {
+  expense: {
     label: "Despesa",
     icon: TrendingDown,
     badgeClass: "border-rose-200 bg-rose-50 text-rose-700",
     amountClass: "text-rose-600",
     sign: "-",
   },
-  imposto: {
+  tax: {
     label: "Imposto",
     icon: ReceiptText,
     badgeClass: "border-amber-200 bg-amber-50 text-amber-700",
     amountClass: "text-amber-600",
     sign: "-",
   },
-  "recebimentos externos de direitos": {
-    label: "Recebimentos externos de direitos",
-    icon: ReceiptText,
-    badgeClass: "border-primary/30 bg-primary-soft text-primary",
-    amountClass: "text-primary",
-    sign: "+",
-  },
-  comissao: {
-    label: "Comissão",
-    icon: WalletCards,
-    badgeClass: "border-cyan-200 bg-cyan-50 text-cyan-700",
-    amountClass: "text-cyan-600",
-    sign: "-",
-  },
-  reembolso: {
-    label: "Reembolso",
-    icon: RotateCcw,
-    badgeClass: "border-blue-200 bg-blue-50 text-blue-700",
-    amountClass: "text-blue-600",
-    sign: "+",
-  },
-  adiantamento: {
-    label: "Adiantamento",
-    icon: Timer,
-    badgeClass: "border-indigo-200 bg-indigo-50 text-indigo-700",
-    amountClass: "text-indigo-600",
-    sign: "-",
-  },
-  investimento: {
+  investment: {
     label: "Investimento",
     icon: Briefcase,
     badgeClass: "border-sky-200 bg-sky-50 text-sky-700",
     amountClass: "text-sky-600",
     sign: "-",
   },
-  transferencia: {
+  transfer: {
     label: "Transferência",
     icon: RefreshCcw,
     badgeClass: "border-slate-200 bg-slate-50 text-slate-700",
     amountClass: "text-slate-800",
     sign: "",
   },
-  outros: {
-    label: "Outros",
-    icon: Banknote,
-    badgeClass: "border-zinc-200 bg-zinc-50 text-zinc-700",
-    amountClass: "text-zinc-800",
-    sign: "",
-  },
 };
+
+/** Shown while no details are loaded / for a type outside the contract (never silently relabeled). */
+const unknownTypeMeta: TypeMeta = {
+  label: "Não classificada",
+  icon: Banknote,
+  badgeClass: "border-zinc-200 bg-zinc-50 text-zinc-700",
+  amountClass: "text-zinc-800",
+  sign: "",
+};
+
+function typeMetaOf(type: string): TypeMeta {
+  return Object.prototype.hasOwnProperty.call(transactionTypeMeta, type)
+    ? transactionTypeMeta[type as TransactionType]
+    : unknownTypeMeta;
+}
 
 // PT-BR keys (pendente/aprovado/pago/atrasado/parcial/cancelado/cancelada/
 // estornado/processando) are kept as display-only fallbacks for any
@@ -144,20 +126,9 @@ const statusMeta: Record<string, { label: string; icon: LucideIcon; badgeClass: 
   processando: { label: "Processando", icon: Loader2, badgeClass: "border-cyan-200 bg-cyan-50 text-cyan-700", dotClass: "bg-cyan-500" },
 };
 
-const paymentMethodLabels: Record<string, string> = {
-  pix: "PIX",
-  ted: "TED",
-  doc: "DOC",
-  boleto: "Boleto",
-  "cartao-credito": "Cartão de crédito",
-  cartao_credito: "Cartão de crédito",
-  "cartao-debito": "Cartão de débito",
-  cartao_debito: "Cartão de débito",
-  dinheiro: "Dinheiro",
-  transferencia: "Transferência bancária",
-  transferencia_bancaria: "Transferência bancária",
-  cheque: "Cheque",
-};
+/** PT-BR labels of the canonical payment_method / payment_type values — single source: transaction-constants. */
+const paymentMethodLabels: Record<string, string> = Object.fromEntries(paymentMethods.map((o) => [o.value, o.label]));
+const paymentTypeLabels: Record<string, string> = Object.fromEntries(paymentTypes.map((o) => [o.value, o.label]));
 
 function valueOf(t: Detail | null | undefined, keys: string[]): unknown {
   for (const key of keys) {
@@ -226,8 +197,22 @@ function paymentMethod(value: unknown): string | undefined {
   return paymentMethodLabels[raw] ?? labelize(raw);
 }
 
+function paymentTypeLabel(value: unknown): string | undefined {
+  const raw = textValue(value);
+  if (!raw) return undefined;
+  return paymentTypeLabels[raw] ?? labelize(raw);
+}
+
+/** Wire reference month "YYYY-MM" → PT-BR "MM/AAAA". */
+function referenceMonthValue(value: unknown): string | undefined {
+  const raw = textValue(value);
+  if (!raw) return undefined;
+  const iso = /^(\d{4})-(\d{2})$/.exec(raw);
+  return iso ? `${iso[2]}/${iso[1]}` : raw;
+}
+
 function TypeBadge({ type }: { type: string }) {
-  const meta = transactionTypeMeta[type] ?? transactionTypeMeta.outros;
+  const meta = typeMetaOf(type);
   const Icon = meta.icon;
   return (
     <Badge variant="outline" className={cn("h-7 gap-1.5 rounded-full px-3 font-medium", meta.badgeClass)}>
@@ -356,42 +341,41 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
   }, [open, transactionId]);
 
   const t = details;
-  const type = String(valueOf(t, ["type"]) ?? "outros").toLowerCase();
+  const type = String(valueOf(t, ["type"]) ?? "");
   const status = String(valueOf(t, ["status"]) ?? "pending").toLowerCase();
-  const typeMeta = transactionTypeMeta[type] ?? transactionTypeMeta.outros;
-  const amount = numValue(valueOf(t, ["amount", "grossAmount", "gross_amount"])) ?? 0;
+  const typeMeta = typeMetaOf(type);
+  const amount = numValue(valueOf(t, ["amount", "grossAmount"])) ?? 0;
   const signedAmount = typeMeta.sign === "-" ? -Math.abs(amount) : typeMeta.sign === "+" ? Math.abs(amount) : amount;
   const description = textValue(valueOf(t, ["description"])) ?? "Transação financeira";
   const transactionDate = valueOf(t, ["transactionDate"]);
   const method = paymentMethod(valueOf(t, ["paymentMethod"]));
-  const paymentType = labelize(valueOf(t, ["paymentType"]));
+  const paymentType = paymentTypeLabel(valueOf(t, ["paymentType"]));
   const category = labelize(valueOf(t, ["category"])) ?? undefined;
   const subcategory = labelize(valueOf(t, ["subcategory"]));
-  const costCenter = labelize(valueOf(t, ["costCenter", "centroCusto", "centro_custo"]));
-  const account = textValue(valueOf(t, ["bankAccount", "contaBancaria", "conta_bancaria", "bank", "banco"]));
-  const bank = textValue(valueOf(t, ["bank", "banco"]));
-  const agency = textValue(valueOf(t, ["agency", "agencia"]));
-  const transactionCode = textValue(valueOf(t, ["transactionCode", "codigoTransacional", "codigo_transacional", "referencia"]));
+  const costCenter = labelize(valueOf(t, ["costCenter"]));
+  const account = textValue(valueOf(t, ["bankAccount"]));
+  const bank = textValue(valueOf(t, ["bank"]));
+  const agency = textValue(valueOf(t, ["agency"]));
+  const transactionCode = textValue(valueOf(t, ["transactionCode"]));
   const observations = textValue(valueOf(t, ["note"]));
   const installments = numValue(valueOf(t, ["installments"]));
-  const installmentCurrent = numValue(valueOf(t, ["installmentCurrent", "parcelaAtual", "parcela_atual"]));
+  const installmentCurrent = numValue(valueOf(t, ["installmentCurrent"]));
   const installmentSummary = installments && installments > 1
     ? `${installments}x${installmentCurrent ? `, parcela ${installmentCurrent}/${installments}` : ""}`
     : undefined;
-  const currency = textValue(valueOf(t, ["currency", "moeda"])) ?? "BRL";
-  const competence = dateValue(valueOf(t, ["competence", "competencia"]));
-  const dueDate = dateValue(valueOf(t, ["dueDate", "dataVencimento", "vencimento"]));
-  const paidDate = dateValue(valueOf(t, ["paidAt", "dataPagamento", "data_pagamento", "pagoEm"]));
-  const recurrence = labelize(valueOf(t, ["recurrence", "recorrencia", "recorrente"]));
+  const currency = textValue(valueOf(t, ["currency"])) ?? "BRL";
+  const competence = referenceMonthValue(valueOf(t, ["competence"]));
+  const dueDate = dateValue(valueOf(t, ["dueDate"]));
+  const paidDate = dateValue(valueOf(t, ["paidAt"]));
+  const recurrence = labelize(valueOf(t, ["recurrence"]));
 
   const relationships = useMemo(() => ([
-    ["Artista", displayName(valueOf(t, ["artist", "artistas", "artista", "artistaNome", "artistName"]))],
-    ["Projeto", displayName(valueOf(t, ["project", "projetos", "projeto", "projetoNome", "projectName"]))],
-    ["Campanha", displayName(valueOf(t, ["campaign", "campanha", "campanhaNome", "campaignName"]))],
-    ["Contrato", displayName(valueOf(t, ["contract", "contratos", "contrato", "contratoNome", "contractName"]))],
-    ["Evento", displayName(valueOf(t, ["event", "eventos", "evento", "eventoNome", "eventName"]))],
-    ["Cliente", displayName(valueOf(t, ["client", "clientes", "cliente", "clienteNome", "clientName"]))],
-    ["Fornecedor", displayName(valueOf(t, ["supplier", "fornecedor", "fornecedores", "supplierOrClient"]))],
+    ["Artista", displayName(valueOf(t, ["artist"]))],
+    ["Projeto", displayName(valueOf(t, ["project"]))],
+    ["Campanha", displayName(valueOf(t, ["campaign"]))],
+    ["Contrato", displayName(valueOf(t, ["contract"]))],
+    ["Evento", displayName(valueOf(t, ["event"]))],
+    ["Fornecedor / Cliente", displayName(valueOf(t, ["supplierOrClient", "supplier"]))],
   ] as const).filter(([, value]) => hasValue(value)), [t]);
 
   const subtitle = relationships.find(([label]) => label === "Projeto")?.[1]
@@ -401,23 +385,25 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
 
   const mainDate = dateValue(transactionDate);
   const paymentSummary = [method, paymentType].filter(Boolean).join(" ");
-  const attachmentsUrl = textValue(valueOf(t, ["attachmentUrl", "anexoUrl", "comprovante_url", "anexo_url", "comprovanteUrl", "anexoUrl"]));
-  const attachmentsName = textValue(valueOf(t, ["attachmentName", "anexoNome", "comprovante_nome", "anexo_nome", "comprovanteNome", "anexoNome"])) ?? undefined;
+  // Details DTO: attachments[] (built from the attachment_url/attachment_name columns).
+  const firstAttachment = (valueOf(t, ["attachments"]) as Detail[] | undefined)?.[0];
+  const attachmentsUrl = textValue(firstAttachment?.url);
+  const attachmentsName = textValue(firstAttachment?.name);
   const attachmentIsImage = typeof attachmentsUrl === "string" && /\.(png|jpe?g|webp|gif)$/i.test(attachmentsUrl);
   const attachmentIsPdf = typeof attachmentsUrl === "string" && /\.pdf$/i.test(attachmentsUrl);
-  const createdBy = textValue(valueOf(t, ["createdBy", "created_by", "usuarioCriacao", "usuario_criacao"]));
-  const updatedBy = textValue(valueOf(t, ["updatedBy", "updated_by", "usuarioAtualizacao", "usuario_atualizacao"]));
+  const createdBy = textValue(valueOf(t, ["createdBy"]));
+  const updatedBy = textValue(valueOf(t, ["updatedBy"]));
   const createdAt = dateTimeValue(valueOf(t, ["created_at"]));
   const updatedAt = dateTimeValue(valueOf(t, ["updated_at"]));
-  const metadata = valueOf(t, ["metadata", "metadados"]);
+  const metadata = valueOf(t, ["metadata"]);
 
   const advancedItems = [
-    ["Valor bruto", moneyValue(valueOf(t, ["grossAmount", "valorBruto"]))],
-    ["Valor líquido", moneyValue(valueOf(t, ["netAmount", "valorLiquido"]))],
-    ["Descontos", moneyValue(valueOf(t, ["discount", "desconto"]))],
-    ["Taxas", moneyValue(valueOf(t, ["fees", "taxas"]))],
-    ["Juros", moneyValue(valueOf(t, ["interest", "juros"]))],
-    ["Multa", moneyValue(valueOf(t, ["fine", "multa"]))],
+    ["Valor bruto", moneyValue(valueOf(t, ["grossAmount"]))],
+    ["Valor líquido", moneyValue(valueOf(t, ["netAmount"]))],
+    ["Descontos", moneyValue(valueOf(t, ["discount"]))],
+    ["Taxas", moneyValue(valueOf(t, ["fees"]))],
+    ["Juros", moneyValue(valueOf(t, ["interest"]))],
+    ["Multa", moneyValue(valueOf(t, ["fine"]))],
     ["Código transacional", transactionCode],
     ["Conta bancária", account],
     ["Banco", bank],
@@ -427,8 +413,8 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
     ["Data de pagamento", paidDate],
     ["Recorrencia", recurrence],
     ["Parcelamento", installmentSummary],
-    ["Criado por", textValue(valueOf(t, ["createdBy", "created_by"]))],
-    ["Atualizado por", textValue(valueOf(t, ["updatedBy", "updated_by"]))],
+    ["Criado por", createdBy],
+    ["Atualizado por", updatedBy],
     ["Criado em", createdAt],
     ["Atualizado em", updatedAt],
     ["ID", textValue(valueOf(t, ["id"]))],

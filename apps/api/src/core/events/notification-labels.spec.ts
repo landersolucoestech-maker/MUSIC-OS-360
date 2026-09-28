@@ -44,8 +44,9 @@ describe('notification titles keep status information as PT-BR labels', () => {
   });
 
   it('labels the transaction type in PT-BR', () => {
-    expect(EVENT_LABELS['transaction.created']({ type: 'receita', valor: '10' })).toBe('Receita registrada: R$ 10,00');
-    expect(EVENT_LABELS['transaction.created']({ type: 'despesa', valor: '1500.5' })).toBe('Despesa registrada: R$ 1.500,50');
-    expect(EVENT_LABELS['transaction.paid']({ valor: 'not-a-number' })).toBe('Pagamento baixado');
+    expect(EVENT_LABELS['transaction.created']({ type: 'revenue', amount: '10' })).toBe('Receita registrada: R$ 10,00');
+    expect(EVENT_LABELS['transaction.created']({ type: 'expense', amount: '1500.5' })).toBe('Despesa registrada: R$ 1.500,50');
+    expect(EVENT_LABELS['transaction.created']({ type: 'transfer', amount: '5' })).toBe('Transferência registrada: R$ 5,00');
+    expect(EVENT_LABELS['transaction.paid']({ amount: 'not-a-number' })).toBe('Pagamento baixado');
   });
 });

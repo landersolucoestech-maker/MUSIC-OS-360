@@ -1,19 +1,19 @@
 import type { FinanceCategoryRule, FinanceRuleTransactionType } from "../types/financial-categories.types";
 
 export const FINANCE_RULE_TRANSACTION_LABEL: Record<FinanceRuleTransactionType, string> = {
-  RECEITA: "Receita",
-  DESPESA: "Despesa",
+  REVENUE: "Receita",
+  EXPENSE: "Despesa",
 };
 
 export const FINANCE_CATEGORY_OPTIONS: Record<FinanceRuleTransactionType, Array<{ id: string; name: string }>> = {
-  RECEITA: [
+  REVENUE: [
     { id: "system-revenue-streaming", name: "Receitas Musicais / Streaming" },
     { id: "system-revenue-licensing", name: "Receitas Musicais / Licenciamento" },
     { id: "system-revenue-events", name: "Cachês / Show e Evento" },
     { id: "system-revenue-services", name: "Serviços / Produção Musical" },
     { id: "system-revenue-products", name: "Produtos / Venda Digital" },
   ],
-  DESPESA: [
+  EXPENSE: [
     { id: "system-expense-marketing", name: "Marketing / Anúncios" },
     { id: "system-expense-production", name: "Operacional / Produção Musical" },
     { id: "system-expense-audiovisual", name: "Operacional / Produção Audiovisual" },
@@ -28,10 +28,10 @@ export const SYSTEM_FINANCE_CATEGORY_RULES: FinanceCategoryRule[] = [
   {
     id: "system-rule-streaming",
     keywords: ["spotify", "deezer", "apple music", "youtube music"],
-    transactionType: "RECEITA",
+    transactionType: "REVENUE",
     categoryId: "system-revenue-streaming",
     categoryName: "Receitas Musicais / Streaming",
-    origin: "SISTEMA",
+    origin: "SYSTEM",
     priority: 10,
     active: true,
     createdAt,
@@ -40,10 +40,10 @@ export const SYSTEM_FINANCE_CATEGORY_RULES: FinanceCategoryRule[] = [
   {
     id: "system-rule-licensing",
     keywords: ["licenciamento", "sincronização", "sync", "master use"],
-    transactionType: "RECEITA",
+    transactionType: "REVENUE",
     categoryId: "system-revenue-licensing",
     categoryName: "Receitas Musicais / Licenciamento",
-    origin: "SISTEMA",
+    origin: "SYSTEM",
     priority: 20,
     active: true,
     createdAt,
@@ -52,10 +52,10 @@ export const SYSTEM_FINANCE_CATEGORY_RULES: FinanceCategoryRule[] = [
   {
     id: "system-rule-ads",
     keywords: ["meta ads", "google ads", "tiktok ads", "spotify ads", "impulsionamento"],
-    transactionType: "DESPESA",
+    transactionType: "EXPENSE",
     categoryId: "system-expense-marketing",
     categoryName: "Marketing / Anúncios",
-    origin: "SISTEMA",
+    origin: "SYSTEM",
     priority: 10,
     active: true,
     createdAt,
@@ -64,10 +64,10 @@ export const SYSTEM_FINANCE_CATEGORY_RULES: FinanceCategoryRule[] = [
   {
     id: "system-rule-production",
     keywords: ["mixagem", "masterização", "estúdio", "produtor musical"],
-    transactionType: "DESPESA",
+    transactionType: "EXPENSE",
     categoryId: "system-expense-production",
     categoryName: "Operacional / Produção Musical",
-    origin: "SISTEMA",
+    origin: "SYSTEM",
     priority: 30,
     active: true,
     createdAt,

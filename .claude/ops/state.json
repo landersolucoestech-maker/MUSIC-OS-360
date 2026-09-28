@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-28T03:13:24.344Z",
+  "updatedAt": "2026-09-28T06:29:33.117Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1701,9 +1701,11 @@
       "line": null,
       "summary": "CZ-037 review H1: isInterpreterRole did not match canonical party_role 'performer'; registry validation failed for migrated interpreter shares",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:23.556Z"
+      "createdAt": "2026-09-28T03:13:23.556Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.292Z"
     },
     {
       "id": "find-29ac6c3f",
@@ -1713,9 +1715,11 @@
       "line": null,
       "summary": "CZ-037 review H2: TYPE_LABELS keyed by PT values; Função column rendered raw canonical type values",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:23.627Z"
+      "createdAt": "2026-09-28T03:13:23.627Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.373Z"
     },
     {
       "id": "find-c3133eb8",
@@ -1725,9 +1729,11 @@
       "line": null,
       "summary": "CZ-037 review M1: regex rename of pagador leaked 'payer' into PT-BR labels",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:23.698Z"
+      "createdAt": "2026-09-28T03:13:23.698Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.774Z"
     },
     {
       "id": "find-0f4652bb",
@@ -1737,9 +1743,11 @@
       "line": null,
       "summary": "CZ-037 review M2: Função filter sent PT values as party_role while the function lives in type",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:23.780Z"
+      "createdAt": "2026-09-28T03:13:23.780Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.871Z"
     },
     {
       "id": "find-93dac98f",
@@ -1749,9 +1757,11 @@
       "line": null,
       "summary": "CZ-037 review M3: reports import wrote status/direction/type raw, bypassing legacy value canonicalization (all CZ-032..038 tables)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:23.854Z"
+      "createdAt": "2026-09-28T03:13:23.854Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.948Z"
     },
     {
       "id": "find-11be12c5",
@@ -1761,9 +1771,11 @@
       "line": null,
       "summary": "CZ-037 review M4: deploy skew - pre-rename build edit sends null under deprecated names, alias moved null onto canonical columns (data wipe)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:23.940Z"
+      "createdAt": "2026-09-28T03:13:23.940Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:33.027Z"
     },
     {
       "id": "find-c326c05e",
@@ -1773,9 +1785,11 @@
       "line": null,
       "summary": "CZ-037 review M5: no update/round-trip/registry/web label tests; registry fixtures used impossible PT values (false green)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:24.015Z"
+      "createdAt": "2026-09-28T03:13:24.015Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:33.116Z"
     },
     {
       "id": "find-fe91c5cf",
@@ -1785,9 +1799,11 @@
       "line": null,
       "summary": "CZ-037 review L1: down() maps pre-existing English party_role back to PT; financial statuses collapse to pending",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:24.116Z"
+      "createdAt": "2026-09-28T03:13:24.116Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.446Z"
     },
     {
       "id": "find-027555fa",
@@ -1797,9 +1813,11 @@
       "line": null,
       "summary": "CZ-037 review L2: direction entrada/saida/a_pagar and party_role outro unmapped",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:24.192Z"
+      "createdAt": "2026-09-28T03:13:24.192Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.516Z"
     },
     {
       "id": "find-60a51e64",
@@ -1809,9 +1827,11 @@
       "line": null,
       "summary": "CZ-037 review L3: legacy_artist_project_id returned in every share response",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:24.268Z"
+      "createdAt": "2026-09-28T03:13:24.268Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.616Z"
     },
     {
       "id": "find-3ac2a723",
@@ -1821,9 +1841,183 @@
       "line": null,
       "summary": "CZ-037 review L4: share status badge without share domain (refused/error not shown as danger)",
       "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T03:13:24.343Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.691Z"
+    },
+    {
+      "id": "find-0667f065",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/catalog/pages/MusicRegistration.tsx",
+      "line": null,
+      "summary": "Phonogram list shows compositores/interpretes/produtores columns dropped in 20260923000002 (always '-'); product decision: derive from participation/linked work or remove",
+      "rootCause": null,
       "disposition": null,
       "evidenceIds": [],
-      "createdAt": "2026-09-28T03:13:24.343Z"
+      "createdAt": "2026-09-28T06:26:43.579Z"
+    },
+    {
+      "id": "find-bf24fd8e",
+      "category": "data-integrity",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/phonograms/phonograms.service.ts",
+      "line": null,
+      "summary": "PATCH cannot clear phonogram fields: buildEntityPayload drops null values (debt C2.4)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:43.659Z"
+    },
+    {
+      "id": "find-9f8f135a",
+      "category": "correctness",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/phonograms/phonograms.service.ts",
+      "line": null,
+      "summary": "recording_date/release_date are timestamp columns while the form sends YYYY-MM-DD; non-UTC server TZ could shift a day",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:43.737Z"
+    },
+    {
+      "id": "find-99260d8e",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/catalog/components/WorkFormModal.tsx",
+      "line": null,
+      "summary": "WorkFormModal always sends artist_id: null, so editing a work unlinks its artist (pre-existing)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:43.811Z"
+    },
+    {
+      "id": "find-e27b903f",
+      "category": "correctness",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/catalog/schemas/work-schema.ts",
+      "line": null,
+      "summary": "Terms-accepted checkbox never enforced (schema default false, no refine) in works/phonograms forms (pre-existing)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:43.881Z"
+    },
+    {
+      "id": "find-be7c2390",
+      "category": "ui-copy",
+      "severity": "LOW",
+      "file": "apps/web/src/shared",
+      "line": null,
+      "summary": "Shared toast reads 'Este obra foi alterado' (gender agreement) — pre-existing",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:43.948Z"
+    },
+    {
+      "id": "find-d29e25c7",
+      "category": "correctness",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+      "line": null,
+      "summary": "Dashboard reads d.descricao from TRANSACTION_CREATED payload which never carries it (pre-existing)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:44.021Z"
+    },
+    {
+      "id": "find-b7a43326",
+      "category": "data-integrity",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/accounting/components/transaction-form/hooks/useRuleOverrides.ts",
+      "line": null,
+      "summary": "localStorage musicos360_rule_overrides holds pre-CZ-041 values (receita:empresa:...), silently stop matching; no UI writes them — clear/migrate",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:44.089Z"
+    },
+    {
+      "id": "find-00f22042",
+      "category": "naming",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/accounting",
+      "line": null,
+      "summary": "Internal PT identifiers remain in accounting form rules (exibir*, projetoObrigatorio, labelTipoCliente, RuleContext, subcategorias/itensInvestimento/valorParcela) — Z6-E",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:44.161Z"
+    },
+    {
+      "id": "find-c819e53f",
+      "category": "naming",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/accounting/components/invoice-form",
+      "line": null,
+      "summary": "Invoice payment methods still use dinheiro/transferencia values (invoices, not CZ-041) — Z6-E",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:44.241Z"
+    },
+    {
+      "id": "find-667ec50e",
+      "category": "ui-ux",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/releases/pages/Releases.tsx",
+      "line": null,
+      "summary": "UI review eae3930 M13: bulk delete of releases has no confirmation dialog",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:44.319Z"
+    },
+    {
+      "id": "find-0b4dbc2c",
+      "category": "ui-ux",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/releases/pages/Releases.tsx",
+      "line": null,
+      "summary": "UI review eae3930 L4: KPI semantics (Total de Lançamentos counts current page/filters ambiguously)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:44.390Z"
+    },
+    {
+      "id": "find-909121f4",
+      "category": "data-integrity",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/projects",
+      "line": null,
+      "summary": "Adjacent (re-review eae3930): CZ-031 project tracks can be wiped by a deploy-skew payload (legacy empty key) — verify M4 alias fix covers project tracks",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:44.462Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.142Z"
+    },
+    {
+      "id": "find-53cb89ce",
+      "category": "data-integrity",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/releases/releases.service.ts",
+      "line": null,
+      "summary": "Adjacent (re-review eae3930): release metadata wiped on every save when the form omits metadata keys — verify merge semantics",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T06:26:44.534Z",
+      "justification": null,
+      "resolvedAt": "2026-09-28T06:29:32.215Z"
     }
   ],
   "evidenceIds": [

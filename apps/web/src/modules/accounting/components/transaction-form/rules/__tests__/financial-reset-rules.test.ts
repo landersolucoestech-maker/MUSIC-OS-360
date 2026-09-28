@@ -1,150 +1,150 @@
 import { describe, it, expect } from "vitest";
 import { applyResets } from "../financial-reset-rules";
 
-// ── tipoTransacao resets ───────────────────────────────────────────────────
-describe("applyResets — tipoTransacao", () => {
+// ── transactionType resets ───────────────────────────────────────────────────
+describe("applyResets — transactionType", () => {
   it("always resets category and downstream fields", () => {
-    const result = applyResets("tipoTransacao", "despesa");
+    const result = applyResets("transactionType", "expense");
     expect(result.category).toBe("");
-    expect(result.subcategoria).toBe("");
-    expect(result.itemInvestimento).toBe("");
-    expect(result.artistaVinculado).toBe("");
-    expect(result.projetoVinculado).toBe("");
-    expect(result.contratoVinculado).toBe("");
-    expect(result.eventoVinculado).toBe("");
-    expect(result.motivoViagem).toBe("");
+    expect(result.subcategory).toBe("");
+    expect(result.investmentItem).toBe("");
+    expect(result.artistId).toBe("");
+    expect(result.projectId).toBe("");
+    expect(result.contractId).toBe("");
+    expect(result.eventId).toBe("");
+    expect(result.travelReason).toBe("");
     expect(result.advertisingName).toBe("");
-    expect(result.orgaoArrecadador).toBe("");
+    expect(result.taxAuthority).toBe("");
   });
 
-  it("resets tipoCliente when new value is 'imposto'", () => {
-    const result = applyResets("tipoTransacao", "imposto");
-    expect(result.tipoCliente).toBe("");
+  it("resets counterpartyType when new value is 'tax'", () => {
+    const result = applyResets("transactionType", "tax");
+    expect(result.counterpartyType).toBe("");
   });
 
-  it("resets tipoCliente when new value is 'transferencia'", () => {
-    const result = applyResets("tipoTransacao", "transferencia");
-    expect(result.tipoCliente).toBe("");
+  it("resets counterpartyType when new value is 'transfer'", () => {
+    const result = applyResets("transactionType", "transfer");
+    expect(result.counterpartyType).toBe("");
   });
 
-  it("resets tipoCliente when new value is 'investimento'", () => {
-    const result = applyResets("tipoTransacao", "investimento");
-    expect(result.tipoCliente).toBe("");
+  it("resets counterpartyType when new value is 'investment'", () => {
+    const result = applyResets("transactionType", "investment");
+    expect(result.counterpartyType).toBe("");
   });
 
-  it("does NOT reset tipoCliente when new value is 'despesa'", () => {
-    const result = applyResets("tipoTransacao", "despesa");
-    expect(result.tipoCliente).toBeUndefined();
+  it("does NOT reset counterpartyType when new value is 'expense'", () => {
+    const result = applyResets("transactionType", "expense");
+    expect(result.counterpartyType).toBeUndefined();
   });
 
-  it("does NOT reset tipoCliente when new value is 'receita'", () => {
-    const result = applyResets("tipoTransacao", "receita");
-    expect(result.tipoCliente).toBeUndefined();
+  it("does NOT reset counterpartyType when new value is 'revenue'", () => {
+    const result = applyResets("transactionType", "revenue");
+    expect(result.counterpartyType).toBeUndefined();
   });
 });
 
-// ── tipoCliente resets ─────────────────────────────────────────────────────
-describe("applyResets — tipoCliente", () => {
-  it("resets all dependent fields when tipoCliente changes", () => {
-    const result = applyResets("tipoCliente", "empresa");
+// ── counterpartyType resets ─────────────────────────────────────────────────────
+describe("applyResets — counterpartyType", () => {
+  it("resets all dependent fields when counterpartyType changes", () => {
+    const result = applyResets("counterpartyType", "company");
     expect(result.category).toBe("");
-    expect(result.subcategoria).toBe("");
-    expect(result.artistaVinculado).toBe("");
-    expect(result.projetoVinculado).toBe("");
-    expect(result.contratoVinculado).toBe("");
-    expect(result.eventoVinculado).toBe("");
-    expect(result.motivoViagem).toBe("");
+    expect(result.subcategory).toBe("");
+    expect(result.artistId).toBe("");
+    expect(result.projectId).toBe("");
+    expect(result.contractId).toBe("");
+    expect(result.eventId).toBe("");
+    expect(result.travelReason).toBe("");
     expect(result.advertisingName).toBe("");
   });
 
-  it("does not reset itemInvestimento or orgaoArrecadador (not in tipoCliente map)", () => {
-    const result = applyResets("tipoCliente", "artista");
-    expect(result.itemInvestimento).toBeUndefined();
-    expect(result.orgaoArrecadador).toBeUndefined();
+  it("does not reset investmentItem or taxAuthority (not in counterpartyType map)", () => {
+    const result = applyResets("counterpartyType", "artist");
+    expect(result.investmentItem).toBeUndefined();
+    expect(result.taxAuthority).toBeUndefined();
   });
 
-  it("does not reset tipoTransacao", () => {
-    const result = applyResets("tipoCliente", "pessoa");
-    expect(result.tipoTransacao).toBeUndefined();
+  it("does not reset transactionType", () => {
+    const result = applyResets("counterpartyType", "individual");
+    expect(result.transactionType).toBeUndefined();
   });
 });
 
 // ── category resets ────────────────────────────────────────────────────────
 describe("applyResets — category", () => {
-  it("resets subcategoria and all downstream fields", () => {
+  it("resets subcategory and all downstream fields", () => {
     const result = applyResets("category", "servicos");
-    expect(result.subcategoria).toBe("");
-    expect(result.itemInvestimento).toBe("");
-    expect(result.artistaVinculado).toBe("");
-    expect(result.projetoVinculado).toBe("");
-    expect(result.contratoVinculado).toBe("");
-    expect(result.eventoVinculado).toBe("");
-    expect(result.motivoViagem).toBe("");
+    expect(result.subcategory).toBe("");
+    expect(result.investmentItem).toBe("");
+    expect(result.artistId).toBe("");
+    expect(result.projectId).toBe("");
+    expect(result.contractId).toBe("");
+    expect(result.eventId).toBe("");
+    expect(result.travelReason).toBe("");
     expect(result.advertisingName).toBe("");
   });
 
-  it("does not reset tipoTransacao or tipoCliente", () => {
+  it("does not reset transactionType or counterpartyType", () => {
     const result = applyResets("category", "marketing");
-    expect(result.tipoTransacao).toBeUndefined();
-    expect(result.tipoCliente).toBeUndefined();
+    expect(result.transactionType).toBeUndefined();
+    expect(result.counterpartyType).toBeUndefined();
   });
 });
 
-// ── artistaVinculado resets ────────────────────────────────────────────────
-describe("applyResets — artistaVinculado", () => {
-  it("resets projetoVinculado, eventoVinculado, contratoVinculado", () => {
-    const result = applyResets("artistaVinculado", "artista-1");
-    expect(result.projetoVinculado).toBe("");
-    expect(result.eventoVinculado).toBe("");
-    expect(result.contratoVinculado).toBe("");
+// ── artistId resets ────────────────────────────────────────────────
+describe("applyResets — artistId", () => {
+  it("resets projectId, eventId, contractId", () => {
+    const result = applyResets("artistId", "artista-1");
+    expect(result.projectId).toBe("");
+    expect(result.eventId).toBe("");
+    expect(result.contractId).toBe("");
   });
 
   it("does not reset unrelated fields", () => {
-    const result = applyResets("artistaVinculado", "artista-1");
-    expect(result.tipoTransacao).toBeUndefined();
+    const result = applyResets("artistId", "artista-1");
+    expect(result.transactionType).toBeUndefined();
     expect(result.category).toBeUndefined();
-    expect(result.subcategoria).toBeUndefined();
+    expect(result.subcategory).toBeUndefined();
   });
 });
 
-// ── tipoPagamento resets ───────────────────────────────────────────────────
-describe("applyResets — tipoPagamento", () => {
-  it("resets parcelas fields when switching to 'avista'", () => {
-    const result = applyResets("tipoPagamento", "avista");
-    expect(result.quantidadeParcelas).toBe("");
-    expect(result.intervaloParcelas).toBe("mensal");
-    expect(result.dataPrimeiraParcela).toBe("");
+// ── paymentType resets ───────────────────────────────────────────────────
+describe("applyResets — paymentType", () => {
+  it("resets parcelas fields when switching to 'upfront'", () => {
+    const result = applyResets("paymentType", "upfront");
+    expect(result.installmentCount).toBe("");
+    expect(result.installmentInterval).toBe("monthly");
+    expect(result.firstInstallmentDate).toBe("");
   });
 
-  it("does NOT reset parcelas fields when switching to 'parcelado'", () => {
-    const result = applyResets("tipoPagamento", "parcelado");
-    expect(result.quantidadeParcelas).toBeUndefined();
-    expect(result.intervaloParcelas).toBeUndefined();
-    expect(result.dataPrimeiraParcela).toBeUndefined();
+  it("does NOT reset parcelas fields when switching to 'installments'", () => {
+    const result = applyResets("paymentType", "installments");
+    expect(result.installmentCount).toBeUndefined();
+    expect(result.installmentInterval).toBeUndefined();
+    expect(result.firstInstallmentDate).toBeUndefined();
   });
 
-  it("keeps intervaloParcelas default value ('mensal') when resetting to avista", () => {
-    const result = applyResets("tipoPagamento", "avista");
-    expect(result.intervaloParcelas).toBe("mensal");
+  it("keeps installmentInterval default value ('monthly') when resetting to upfront", () => {
+    const result = applyResets("paymentType", "upfront");
+    expect(result.installmentInterval).toBe("monthly");
   });
 });
 
 // ── fields with no reset entries ───────────────────────────────────────────
 describe("applyResets — fields not in RESET_MAP", () => {
-  it("resets dependent linkage fields for subcategoria", () => {
-    const result = applyResets("subcategoria", "design-grafico");
+  it("resets dependent linkage fields for subcategory", () => {
+    const result = applyResets("subcategory", "design-grafico");
     expect(result).toMatchObject({
-      artistaVinculado: "",
-      projetoVinculado: "",
-      contratoVinculado: "",
-      eventoVinculado: "",
-      fornecedorCliente: "",
-      orgaoArrecadador: "",
-      tipoVinculacao: "",
-      centroCusto: "",
-      competencia: "",
-      contaOrigem: "",
-      contaDestino: "",
+      artistId: "",
+      projectId: "",
+      contractId: "",
+      eventId: "",
+      counterpartyName: "",
+      taxAuthority: "",
+      linkType: "",
+      costCenter: "",
+      referenceMonth: "",
+      sourceBankAccount: "",
+      destinationBankAccount: "",
     });
   });
 

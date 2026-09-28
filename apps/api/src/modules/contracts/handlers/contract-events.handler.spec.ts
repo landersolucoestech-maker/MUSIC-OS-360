@@ -67,7 +67,7 @@ describe('ContractEventsHandler — onContractSigned', () => {
     expect(events.emitTyped).toHaveBeenCalledWith(
       'transaction.created',
       expect.objectContaining({
-        payload: expect.objectContaining({ contratoId: 'c1', source: 'contract.signed' }),
+        payload: expect.objectContaining({ contractId: 'c1', source: 'contract.signed' }),
       }),
     );
   });
@@ -90,7 +90,7 @@ describe('ContractEventsHandler — onContractSigned', () => {
     await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
 
     expect(transactionRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ data: new Date('2026-03-01T00:00:00.000Z') }),
+      expect.objectContaining({ transaction_date: new Date('2026-03-01T00:00:00.000Z') }),
     );
   });
 
@@ -98,8 +98,8 @@ describe('ContractEventsHandler — onContractSigned', () => {
     const { handler, transactionRepo } = buildWithContract({ id: 'c1', fixed_value: '5000', start_date: null });
     await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
 
-    const created = transactionRepo.create.mock.calls[0][0] as { data: Date };
-    expect(created.data).toBeInstanceOf(Date);
-    expect(created.data.getTime()).not.toBeNull();
+    const created = transactionRepo.create.mock.calls[0][0] as { transaction_date: Date };
+    expect(created.transaction_date).toBeInstanceOf(Date);
+    expect(created.transaction_date.getTime()).not.toBeNull();
   });
 });

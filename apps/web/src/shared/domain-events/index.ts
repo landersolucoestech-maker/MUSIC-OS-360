@@ -12,6 +12,8 @@
  *   clearAll()                 — clears every listener (tests)
  */
 
+import type { TransactionType } from "@/shared/types/enums";
+
 // ─── Event catalog ───────────────────────────────────────────────────────────
 
 export const DomainEvents = {
@@ -112,8 +114,8 @@ export interface LeadCapturedPayload {
 
 export interface TransactionCreatedPayload {
   id: string;
-  type: "receita" | "despesa";
-  valor: number;
+  type: TransactionType;
+  amount: number;
   artist_id?: string;
   project_id?: string;
   org_id: string;

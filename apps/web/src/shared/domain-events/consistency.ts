@@ -52,7 +52,7 @@ function initConsistencyHooks(): void {
   });
 
   // ── TRANSACTION_CREATED → flags a pending financial recalculation ────────
-  subscribe(DomainEvents.TRANSACTION_CREATED, ({ artist_id, type, valor: amount }) => {
+  subscribe(DomainEvents.TRANSACTION_CREATED, ({ artist_id, type, amount }) => {
     try {
       const orgId = getCurrentOrgId();
       // Marks this artist's P&L as stale (flag for the UI)

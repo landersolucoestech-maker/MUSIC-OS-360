@@ -75,7 +75,6 @@ export interface Release {
   copyright?: string | null;
   work_id?: string | null;
   fonograma_id?: string | null;
-  codigo_upc?: string | null;
   // ── Internal status × platform status separation ─────────────────────────────
   /** Internal operational status (control). See `release-status`. */
   internal_status?: string | null;

@@ -28,7 +28,7 @@ describe('FinancialCategoriesService.remove()', () => {
   }
 
   function zeroUsage() {
-    return { children: 0, canonical_transactions: 0, legacy_transactions: 0, category_rules: 0 };
+    return { children: 0, financial_transactions: 0, ledger_transactions: 0, category_rules: 0 };
   }
 
   it('category with no reference: deletes normally and emits an event', async () => {
@@ -66,7 +66,7 @@ describe('FinancialCategoriesService.remove()', () => {
   it('category with linked transactions (canonical or legacy): 409, no DELETE', async () => {
     const { svc, query } = makeService((sql) => {
       if (sql.includes('SELECT *') && sql.includes('FROM financial_categories')) return [CATEGORY_ROW];
-      if (sql.includes('AS children')) return [{ ...zeroUsage(), legacy_transactions: 1 }];
+      if (sql.includes('AS children')) return [{ ...zeroUsage(), ledger_transactions: 1 }];
       throw new Error(`unexpected query: ${sql}`);
     });
 

@@ -28,13 +28,25 @@ export const RELEASE_ASSET_DEPRECATED_KEYS: DeprecatedFieldAliases = {
   ficha_tecnica: 'credits',
 };
 
-export const RELEASE_TYPES = ['album', 'ep', 'single', 'compilation', 'live', 'other'] as const;
+export const RELEASE_TYPES = ['album', 'ep', 'single', 'compilation', 'live', 'video', 'other'] as const;
 export type ReleaseTypeValue = typeof RELEASE_TYPES[number];
 
 export const RELEASE_LEGACY_TYPES: Readonly<Record<string, ReleaseTypeValue>> = {
   compilacao: 'compilation',
+  'compilação': 'compilation',
   outro: 'other',
+  'álbum': 'album',
+  lp: 'album',
+  clipe: 'video',
+  'vídeo': 'video',
+  videoclipe: 'video',
 };
+
+/** Canonical release type of a (possibly legacy) value; unknown values are kept. */
+export const canonicalReleaseType = (value: unknown): unknown =>
+  typeof value === 'string' && RELEASE_LEGACY_TYPES[value.trim().toLowerCase()]
+    ? RELEASE_LEGACY_TYPES[value.trim().toLowerCase()]
+    : value;
 
 function canonicalObjectKeys(value: unknown, aliases: DeprecatedFieldAliases): unknown {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
@@ -44,7 +56,7 @@ function canonicalObjectKeys(value: unknown, aliases: DeprecatedFieldAliases): u
 /** Maps every deprecated CZ-038 name, value and jsonb key of a release payload to its canonical form. */
 export function canonicalizeReleaseInput<T extends object>(input: T): T {
   const out = applyDeprecatedFieldAliases(input as Record<string, unknown>, RELEASE_DEPRECATED_FIELDS);
-  if (typeof out['type'] === 'string' && RELEASE_LEGACY_TYPES[out['type']]) out['type'] = RELEASE_LEGACY_TYPES[out['type']];
+  if (out['type'] !== undefined) out['type'] = canonicalReleaseType(out['type']);
   if (out['schedule'] !== undefined) out['schedule'] = canonicalObjectKeys(out['schedule'], RELEASE_SCHEDULE_DEPRECATED_KEYS);
   if (out['assets'] !== undefined) out['assets'] = canonicalObjectKeys(out['assets'], RELEASE_ASSET_DEPRECATED_KEYS);
   return out as T;

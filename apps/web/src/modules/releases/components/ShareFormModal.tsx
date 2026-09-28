@@ -18,7 +18,7 @@ import { useReleases } from "@/modules/releases/hooks/useReleases";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { shareSchema, type ShareFormData } from "@/modules/releases/lib/share-schema";
-import { SHARE_FORM_STATUS_OPTIONS, SHARE_FUNCTION_OPTIONS, resolveShareType } from "@/modules/releases/lib/share-format";
+import { SHARE_FORM_STATUS_OPTIONS, SHARE_FUNCTION_OPTIONS, SHARE_TYPE_OPTIONS, resolveShareType } from "@/modules/releases/lib/share-format";
 import { ShareStatus } from "@music-os-360/types";
 import type { Share, ShareType } from "@/modules/releases/types";
 
@@ -272,8 +272,9 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="internal_release">Release Interno</SelectItem>
-                <SelectItem value="external_receivable">Share Externo a Receber</SelectItem>
+                {SHARE_TYPE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

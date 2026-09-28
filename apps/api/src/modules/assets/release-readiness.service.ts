@@ -106,14 +106,13 @@ export class ReleaseReadinessService {
         // `interpretes` (legacy free-text column, dropped -- zero writers
         // ever, naming-closure Phase 2,
         // 20260921000005.../20260923000002_DropDeadWorksPhonogramsLegacyParticipantColumns)
-        // was superseded by phonograms.participacao.interprete[]. Real shape
-        // confirmed against PhonogramFormModal.tsx and fixed at the DTO
-        // (create-phonogram.dto.ts's ParticipacaoDto -- the previous
-        // `@IsArray() participacao?: unknown[]` rejected the real object
-        // shape the form sends with "participacao must be an array" on every
-        // real submit with participants, verified empirically; this is the
-        // actual root cause `interpretes` always looked empty).
-        const hasInterpreter = !!phonogram?.participacao?.interprete?.some(
+        // was superseded by phonograms.participation.performers[] (formerly
+        // participacao.interprete, CZ-040). Real shape confirmed against
+        // PhonogramFormModal.tsx and fixed at the DTO (create-phonogram.dto.ts's
+        // ParticipationDto -- a previous `@IsArray()` rejected the real object
+        // shape on every real submit with participants, the actual root cause
+        // `interpretes` always looked empty).
+        const hasInterpreter = !!phonogram?.participation?.performers?.some(
           (p) => typeof p?.name === 'string' && p.name.trim().length > 0,
         );
         const metaOk = !!(phonogram?.title && phonogram?.music_genre && phonogram?.artist_id && hasInterpreter);

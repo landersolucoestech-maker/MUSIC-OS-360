@@ -41,18 +41,18 @@ const SKILL_NAME = 'financial-classification';
 
 interface TransactionRow {
   type: string | null;
-  categoria: string | null;
-  descricao: string | null;
-  valor: string | null;
-  data: string | Date | null;
-  referencia: string | null;
+  category: string | null;
+  description: string | null;
+  amount: string | null;
+  transaction_date: string | Date | null;
+  notes: string | null;
   artist_name: string | null;
   metadata: Record<string, unknown> | null;
 }
 
-/** Maps the transaction `type` (receita/despesa) to the skill's direction. */
+/** Maps the transaction `type` (revenue/expense) to the skill's direction. */
 function mapDirection(type: string | null | undefined): FinancialDirection {
-  return (type ?? '').trim().toLowerCase() === 'receita' ? 'income' : 'expense';
+  return (type ?? '').trim().toLowerCase() === 'revenue' ? 'income' : 'expense';
 }
 
 @Injectable()
@@ -105,7 +105,7 @@ export class FinancialClassificationAutomation {
   ): Promise<TransactionRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT t.type, t.categoria, t.descricao, t.valor, t.data, t.referencia, t.metadata,
+      `SELECT t.type, t.category, t.description, t.amount, t.transaction_date, t.notes, t.metadata,
               a.nome_artistico AS artist_name
          FROM transactions t
          LEFT JOIN artists a
@@ -137,16 +137,16 @@ export class FinancialClassificationAutomation {
     const md = (tx.metadata ?? {}) as Record<string, unknown>;
 
     const input: FinancialClassificationInput = {
-      description: tx.descricao?.trim() || tx.categoria?.trim() || 'Transação financeira',
-      amount: Number(tx.valor ?? 0),
+      description: tx.description?.trim() || tx.category?.trim() || 'Transação financeira',
+      amount: Number(tx.amount ?? 0),
       direction: mapDirection(tx.type),
       language: 'pt-BR',
     };
 
-    if (tx.data) input.date = new Date(tx.data).toISOString();
+    if (tx.transaction_date) input.date = new Date(tx.transaction_date).toISOString();
     if (tx.artist_name?.trim()) input.relatedArtist = tx.artist_name.trim();
 
-    const context = typeof md.context === 'string' ? md.context : tx.referencia;
+    const context = typeof md.context === 'string' ? md.context : tx.notes;
     if (context) input.context = context;
 
     return input;

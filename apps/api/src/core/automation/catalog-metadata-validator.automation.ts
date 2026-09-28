@@ -42,17 +42,17 @@ const METADATA_KEY = 'aiCatalogValidation';
 
 interface WorkRow {
   title: string;
-  compositor: string | null;
-  compositores: string[] | null;
-  editora: string | null;
+  composer_name: string | null;
+  composer_names: string[] | null;
+  publisher_name: string | null;
   isrc: string | null;
   metadata: Record<string, unknown> | null;
 }
 
-/** `compositor` (singular) is a free-text field, still populated by the
+/** `composer_name` (singular) is a free-text field, still populated by the
  * Reports bulk-import writer path (col()/importable in WORKS_CONTRACT) --
- * split on common separators and merged with `compositores` (plural,
- * structured, the real form's own field), deduplicated by name. */
+ * split on common separators and merged with `composer_names` (plural,
+ * structured, derived from the form's participants), deduplicated by name. */
 function splitFreeTextNames(text: string | null | undefined): string[] {
   if (!text) return [];
   return text.split(/[;,/\n]+/).map((s) => s.trim()).filter((s) => s.length > 0);
@@ -62,20 +62,20 @@ interface ParticipationEntry {
   name?: string;
 }
 interface ParticipationRow {
-  produtorFonografico?: ParticipationEntry[];
-  interprete?: ParticipationEntry[];
+  phonographic_producers?: ParticipationEntry[];
+  performers?: ParticipationEntry[];
 }
 
 interface RecordingRow {
   title: string;
-  participacao: ParticipationRow | null;
+  participation: ParticipationRow | null;
   isrc: string | null;
-  gravadora: string | null;
+  record_label_name: string | null;
   metadata: Record<string, unknown> | null;
 }
 
-/** Non-empty names of a `participacao` category (structured jsonb --
- * see ParticipacaoDto in modules/phonograms/dto/create-phonogram.dto.ts). */
+/** Non-empty names of a `participation` category (structured jsonb --
+ * see ParticipationDto in modules/phonograms/dto/create-phonogram.dto.ts). */
 function participantNames(list: ParticipationEntry[] | undefined): string[] {
   if (!Array.isArray(list)) return [];
   return list.map((p) => p?.name?.trim()).filter((n): n is string => !!n);
@@ -163,7 +163,7 @@ export class CatalogMetadataValidatorAutomation {
   ): Promise<WorkRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT title, compositor, compositores, editora, isrc, metadata
+      `SELECT title, composer_name, composer_names, publisher_name, isrc, metadata
          FROM works
         WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL
         LIMIT 1`,
@@ -195,7 +195,7 @@ export class CatalogMetadataValidatorAutomation {
   ): Promise<RecordingRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT title, participacao, isrc, gravadora, metadata
+      `SELECT title, participation, isrc, record_label_name, metadata
          FROM phonograms
         WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL
         LIMIT 1`,
@@ -223,8 +223,8 @@ export class CatalogMetadataValidatorAutomation {
   private buildWorkInput(work: WorkRow): CatalogMetadataValidatorInput {
     const md = (work.metadata ?? {}) as Record<string, unknown>;
     const composerNames = new Set<string>([
-      ...(work.compositores ?? []),
-      ...splitFreeTextNames(work.compositor),
+      ...(work.composer_names ?? []),
+      ...splitFreeTextNames(work.composer_name),
     ]);
     const input: CatalogMetadataValidatorInput = {
       title: work.title,
@@ -232,7 +232,7 @@ export class CatalogMetadataValidatorAutomation {
       composers: [...composerNames].map((name) => ({ name })),
       language: 'pt-BR',
     };
-    if (work.editora) input.publisher = work.editora;
+    if (work.publisher_name) input.publisher = work.publisher_name;
     // An ISRC on a work is an inconsistency — passed to the model to point out, if present.
     if (work.isrc) input.isrc = work.isrc;
     if (typeof md.context === 'string') input.context = md.context;
@@ -245,14 +245,14 @@ export class CatalogMetadataValidatorAutomation {
     // (legacy free-text columns, dropped by naming-closure Phase 2,
     // 20260923000002_DropDeadWorksPhonogramsLegacyParticipantColumns -- zero
     // writers ever, so this input was already always empty in production).
-    // Real participant data lives in phonograms.participacao (jsonb object
-    // with produtorFonografico/interprete/musicoAcompanhante array
+    // Real participant data lives in phonograms.participation (jsonb object
+    // with phonographic_producers/performers/session_musicians array
     // categories -- shape confirmed against PhonogramFormModal.tsx and
-    // fixed at the DTO, create-phonogram.dto.ts's ParticipacaoDto).
+    // fixed at the DTO, create-phonogram.dto.ts's ParticipationDto).
     // validateCatalogMetadataValidatorInput() requires a non-empty
     // `performers` for type=recording -- this is not optional enrichment.
-    const performers = participantNames(rec.participacao?.interprete);
-    const producers = participantNames(rec.participacao?.produtorFonografico);
+    const performers = participantNames(rec.participation?.performers);
+    const producers = participantNames(rec.participation?.phonographic_producers);
     const input: CatalogMetadataValidatorInput = {
       title: rec.title,
       type: 'recording',
@@ -261,7 +261,7 @@ export class CatalogMetadataValidatorAutomation {
     };
     if (producers.length > 0) input.producers = producers;
     if (rec.isrc) input.isrc = rec.isrc;
-    if (rec.gravadora) input.label = rec.gravadora;
+    if (rec.record_label_name) input.label = rec.record_label_name;
     if (typeof md.context === 'string') input.context = md.context;
     return input;
   }

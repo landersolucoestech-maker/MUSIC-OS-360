@@ -50,26 +50,26 @@ function makeDs(opts: { works?: unknown[]; recordings?: unknown[]; skillRuns?: u
 
 const WORK_ROW = {
   title: 'Aurora',
-  // `compositor` (singular, free-text) genuinely has a writer -- the Reports
+  // `composer_name` (singular, free-text) genuinely has a writer -- the Reports
   // bulk-import engine writes raw SQL against col()/importable fields,
   // bypassing CreateWorkDto (see work-participants-normalization.spec.ts).
-  // Merged with `compositores` (plural, the real form's own field),
+  // Merged with `composer_names` (plural, derived from the form's participants),
   // deduplicated by name -- 'Ana Lima' appears in both on purpose.
-  compositor: 'Ana Lima; Carla Dias',
-  compositores: ['Ana Lima', 'Bruno Sá'],
-  editora: 'Editora X',
+  composer_name: 'Ana Lima; Carla Dias',
+  composer_names: ['Ana Lima', 'Bruno Sá'],
+  publisher_name: 'Editora X',
   isrc: null,
   metadata: {},
 };
 
 const RECORDING_ROW = {
   title: 'Aurora (Ao Vivo)',
-  participacao: {
-    interprete: [{ name: 'Banda Aurora' }, { name: 'Convidado Y' }],
-    produtorFonografico: [{ name: 'Produtor Z' }],
+  participation: {
+    performers: [{ name: 'Banda Aurora' }, { name: 'Convidado Y' }],
+    phonographic_producers: [{ name: 'Produtor Z' }],
   },
   isrc: 'BR-ABC-24-00001',
-  gravadora: 'Selo Y',
+  record_label_name: 'Selo Y',
   metadata: {},
 };
 
@@ -114,8 +114,8 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(skillRun.succeed).toHaveBeenCalled();
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // input: type=work + compositores (plural, real form field) merged with
-    // compositor (singular, bulk-import), deduplicated by name in the prompt
+    // input: type=work + composer_names (plural, from participants) merged with
+    // composer_name (singular, bulk-import), deduplicated by name in the prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string; jsonMode: boolean }]>;
     expect(aiCalls[0][0].prompt).toContain('obra musical (work)');
     expect(aiCalls[0][0].prompt).toContain('Ana Lima');
@@ -178,7 +178,7 @@ describe('CatalogMetadataValidatorAutomation', () => {
     );
     expect(skillRun.succeed).toHaveBeenCalled();
 
-    // input: type=recording + performers/producer (from participacao, structured
+    // input: type=recording + performers/producer (from participation, structured
     // jsonb -- replaced the legacy interpretes/produtores free-text columns,
     // dropped for having no real writer) + label in the prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string }]>;
@@ -193,8 +193,8 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(meta.aiCatalogValidation.idempotencyKey).toBe('catalog.recording.created:t1:r1');
   });
 
-  it('recording: no performer in participacao records fail (skill requires non-empty performers for type=recording)', async () => {
-    const noInterpreter = { ...RECORDING_ROW, participacao: { interprete: [], produtorFonografico: [] } };
+  it('recording: no performer in participation records fail (skill requires non-empty performers for type=recording)', async () => {
+    const noInterpreter = { ...RECORDING_ROW, participation: { performers: [], phonographic_producers: [] } };
     const { ds } = makeDs({ recordings: [noInterpreter] });
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

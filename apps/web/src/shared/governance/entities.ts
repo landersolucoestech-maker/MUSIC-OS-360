@@ -124,7 +124,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
     ownerModule:  "catalog",
     typesFile:    "modules/catalog/types/obra.types.ts",
     primaryKey:   "id",
-    externalIds:  ["iswc", "cod_ecad", "cod_entidade"],
+    externalIds:  ["iswc", "ecad_code", "society_code"],
     requiredFields: ["id", "titulo"],
     relationships: [
       {

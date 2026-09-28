@@ -2,6 +2,7 @@ import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
 import { emit, DomainEvents } from "@/shared/domain-events";
 import { useTenant } from "@/app/providers/TenantContext";
+import { toNumber } from "../pages/profit-and-loss-calc";
 import type {
   Transaction,
   TransactionInsert,
@@ -18,7 +19,7 @@ export function useTransactions(enabled = true, artistId?: string) {
   const result = useDataQuery<TransactionWithRelations>({
     queryKey: artistId ? [...QUERY_KEYS.TRANSACTIONS, "by-artist", artistId] : [...QUERY_KEYS.TRANSACTIONS],
     table: "transactions",
-    orderBy: { column: "data", ascending: false },
+    orderBy: { column: "transaction_date", ascending: false },
     enabled,
     // QueryTransactionDto: "artistId" is a legacy alias NEVER read by the service (it only exists
     // so old callers do not get a 400) — the real field is "artist_id". Sending
@@ -29,19 +30,19 @@ export function useTransactions(enabled = true, artistId?: string) {
       onCreate: (t) =>
         emit(DomainEvents.TRANSACTION_CREATED, {
           id: (t as TransactionWithRelations & { id: string }).id,
-          type: t.type as "receita" | "despesa",
-          valor: t.valor ?? 0,
+          type: t.type,
+          amount: toNumber(t.amount),
           artist_id: t.artist_id ?? undefined,
-          project_id: typeof t.project_id === "string" ? t.project_id : undefined,
+          project_id: t.project_id ?? undefined,
           org_id: orgId,
         }),
       onUpdate: (t) =>
         emit(DomainEvents.TRANSACTION_UPDATED, {
           id: (t as TransactionWithRelations & { id: string }).id,
-          type: t.type as "receita" | "despesa",
-          valor: t.valor ?? 0,
+          type: t.type,
+          amount: toNumber(t.amount),
           artist_id: t.artist_id ?? undefined,
-          project_id: typeof t.project_id === "string" ? t.project_id : undefined,
+          project_id: t.project_id ?? undefined,
           org_id: orgId,
         }),
       onDelete: (id) =>

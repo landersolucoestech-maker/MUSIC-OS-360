@@ -58,7 +58,7 @@ export function workArtistLabel(work: Work | undefined | null): string {
   if (linked) return linked;
   const performers = joinNames((work as { interpretes?: string | string[] | null }).interpretes);
   if (performers) return performers;
-  return joinNames(work.compositores ?? work.compositor);
+  return joinNames(work.composer_names ?? work.composer_name);
 }
 
 /** License type codes (persisted) and their PT-BR labels. */

@@ -70,7 +70,7 @@ vi.mock("@/shared/lib/storage", async () => {
         if (table === "projects") {
           return {
             items: [
-              { id: "projeto-99", title: "Projeto Raro", status: "concluido", artist_id: "art-99" },
+              { id: "project-99", title: "Projeto Raro", status: "concluido", artist_id: "art-99" },
             ],
             page: 1,
             pageSize: 20,
@@ -108,26 +108,34 @@ describe("WorkFormModal edit mode", () => {
     toastErrorMock.mockClear();
   });
 
+  // Persisted work in the canonical CZ-039 response shape.
   const baseWork = {
-    id: "obra-1",
+    id: "work-1",
     title: "Canção Original",
     music_genre: "pop",
     iswc: "T-123.456.789-0",
     duration_text: "03:45",
-    status: "analise",
-    compositores: ["Alice", "Bob"],
-    letristas: ["Carol"],
+    status: "under_review",
+    language: "pt",
+    is_instrumental: false,
+    ai_used: false,
+    ai_usage_level: null,
+    composer_names: ["Alice", "Bob"],
+    translator_names: ["Carol"],
+    ecad_code: "ECAD-1",
+    society_code: "SOC-1",
+    work_origin: "original",
     project_id: null,
     org_id: "org-1",
   };
 
-  it("pre-fills every field from the persisted obra row", () => {
+  it("pre-fills every field from the persisted work row", () => {
     renderWithProviders(
       <WorkFormModal
         open={true}
         onOpenChange={() => {}}
         mode="edit"
-        obra={baseWork}
+        work={baseWork}
       />
     );
 
@@ -138,25 +146,64 @@ describe("WorkFormModal edit mode", () => {
     // ISWC
     expect(screen.getByDisplayValue("T-123.456.789-0")).toBeInTheDocument();
 
-    // Duration: 3 min and 45 sec
-    expect(screen.getByTestId("input-duracao-minutos")).toHaveValue("3");
-    expect(screen.getByTestId("input-duracao-segundos")).toHaveValue("45");
+    // ECAD / society codes
+    expect(screen.getByDisplayValue("ECAD-1")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("SOC-1")).toBeInTheDocument();
 
-    // Participantes from compositores + letristas
+    // Duration: 3 min and 45 sec
+    expect(screen.getByTestId("input-duration-minutes")).toHaveValue("3");
+    expect(screen.getByTestId("input-duration-seconds")).toHaveValue("45");
+
+    // Participants expanded from composer_names + translator_names
     const nameInputs = screen
       .getAllByPlaceholderText("Nome do participante")
       .map((el) => (el as HTMLInputElement).value);
     expect(nameInputs).toEqual(expect.arrayContaining(["Alice", "Bob", "Carol"]));
+
+    // Origin badge in PT-BR
+    expect(screen.getByTestId("badge-work-origin-original")).toHaveTextContent("Obra Autoral");
   });
 
-  it("saves edits via updateWork with normalized payload", async () => {
+  it("shows PT-BR labels for the ISO language code, status and participant roles — never the raw values", () => {
+    renderWithProviders(
+      <WorkFormModal
+        open={true}
+        onOpenChange={() => {}}
+        mode="edit"
+        work={{
+          ...baseWork,
+          composer_names: null,
+          translator_names: null,
+          participants: [
+            { id: "p-1", name: "Alice", role: "composer_author", link: null, percentage: "60.000" },
+            { id: "p-2", name: "Carol", role: "translator", link: null, percentage: "40.000" },
+          ],
+        }}
+      />
+    );
+
+    const languageTrigger = screen.getByTestId("trigger-work-language");
+    expect(languageTrigger).toHaveTextContent("Português");
+    expect(languageTrigger).not.toHaveTextContent(/^pt$/);
+
+    expect(screen.getByTestId("trigger-work-status")).toHaveTextContent("Em Análise");
+
+    const composerRole = screen.getByTestId("trigger-participant-role-p-1");
+    expect(composerRole).toHaveTextContent("Compositor/Autor");
+    expect(composerRole).not.toHaveTextContent("composer_author");
+    const translatorRole = screen.getByTestId("trigger-participant-role-p-2");
+    expect(translatorRole).toHaveTextContent("Tradutor");
+    expect(translatorRole).not.toHaveTextContent("translator");
+  });
+
+  it("saves edits via updateWork with the canonical (CZ-039) payload", async () => {
     const onOpenChange = vi.fn();
     renderWithProviders(
       <WorkFormModal
         open={true}
         onOpenChange={onOpenChange}
         mode="edit"
-        obra={baseWork}
+        work={baseWork}
       />
     );
 
@@ -170,7 +217,7 @@ describe("WorkFormModal edit mode", () => {
     fireEvent.click(termosCheckbox!);
 
     // Submit form
-    const saveButton = screen.getByTestId("button-submit-obra");
+    const saveButton = screen.getByTestId("button-submit-work");
     await act(async () => {
       fireEvent.submit(saveButton.closest("form")!);
     });
@@ -182,16 +229,36 @@ describe("WorkFormModal edit mode", () => {
     });
 
     const callArg = updateWorkMock.mock.calls[0][0];
-    expect(callArg.id).toBe("obra-1");
+    expect(callArg.id).toBe("work-1");
     expect(callArg.title).toBe("Canção Editada");
-    // Status round-trips back to DB form
+    // Canonical status round-trips unchanged
     expect(callArg.status).toBe("under_review");
     // Duration text stays MM:SS
     expect(callArg.duration_text).toBe("03:45");
-    // Compositores/letristas preserved
-    expect(callArg.compositores).toEqual(["Alice", "Bob"]);
-    expect(callArg.letristas).toEqual(["Carol"]);
+    // Canonical values: ISO language code, booleans, work origin
+    expect(callArg.language).toBe("pt");
+    expect(callArg.is_instrumental).toBe(false);
+    expect(callArg.ai_used).toBe(false);
+    expect(callArg.work_origin).toBe("original");
+    expect(callArg.ecad_code).toBe("ECAD-1");
+    expect(callArg.society_code).toBe("SOC-1");
+    // composer_names/translator_names preserved (derived from the participants)
+    expect(callArg.composer_names).toEqual(["Alice", "Bob"]);
+    expect(callArg.translator_names).toEqual(["Carol"]);
+    expect(callArg.participants.map((p) => [p.name, p.role])).toEqual([
+      ["Alice", "composer_author"],
+      ["Bob", "composer_author"],
+      ["Carol", "translator"],
+    ]);
     expect(callArg.iswc).toBe("T-123.456.789-0");
+    // Exactly the canonical request fields (+ id / optimistic-lock token) — no other
+    // key (e.g. a pre-CZ-039 Portuguese field name) can be present.
+    expect(Object.keys(callArg).sort()).toEqual([
+      "ai_harmony", "ai_lyrics", "ai_melody", "ai_usage_level", "ai_used", "alternative_titles",
+      "artist_id", "composer_names", "duration_text", "ecad_code", "expectedUpdatedAt", "id",
+      "is_instrumental", "iswc", "language", "lyrics", "music_genre", "participants", "project_id",
+      "related_references", "society_code", "status", "title", "translator_names", "work_origin",
+    ]);
     // Tenant isolation: org_id/orgId must NEVER be part of the payload the
     // frontend sends — the API derives the tenant from the authenticated
     // request context (see music-registration.mapper.ts::formToObraPayload).
@@ -215,9 +282,9 @@ describe("WorkFormModal edit mode", () => {
       />
     );
 
-    fireEvent.change(screen.getByTestId("input-buscar-projeto"), { target: { value: "Projeto" } });
+    fireEvent.change(screen.getByTestId("input-search-project"), { target: { value: "Projeto" } });
 
-    const option = await screen.findByTestId("option-projeto-projeto-99", {}, { timeout: 3000 });
+    const option = await screen.findByTestId("option-project-project-99", {}, { timeout: 3000 });
     fireEvent.click(option);
 
     await waitFor(() => {

@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {
   TrendingUp, TrendingDown, DollarSign, Loader2, RotateCcw, Search,
 } from "lucide-react";
-import { useTransactions } from "@/modules/accounting/hooks/useTransactions";
+import { useTransactions, type Transaction } from "@/modules/accounting/hooks/useTransactions";
 import { formatCurrency } from "@/shared/lib/format-utils";
 import { formatCategoryLabel } from "@/shared/lib/category-labels";
 import { FeatureGate } from '@/shared/components/FeatureGate';
@@ -41,12 +41,18 @@ function catLabel(cat: string) {
   return CATEGORY_LABELS[cat] ?? formatCategoryLabel(cat);
 }
 
+function totalsByCategory(rows: Transaction[]): { category: string; amount: number }[] {
+  const map: Record<string, number> = {};
+  rows.forEach((t) => { const c = t.category ?? "outras"; map[c] = (map[c] ?? 0) + toNumber(t.amount); });
+  return Object.entries(map).map(([category, amount]) => ({ category, amount })).sort((a, b) => b.amount - a.amount);
+}
+
 // ── KPI cards ─────────────────────────────────────────────────────────────────
 
 function KpiCards({
-  totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida: netMargin,
+  incomeTotal, expensesTotal, netProfit, netMargin,
 }: {
-  totalReceitas: number; totalDespesas: number; lucroLiquido: number; margemLiquida: number;
+  incomeTotal: number; expensesTotal: number; netProfit: number; netMargin: number;
 }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -106,13 +112,15 @@ function KpiCards({
 
 // ── P&L statement (company) ─────────────────────────────────────────────────
 
+interface CategoryTotal { category: string; amount: number }
+
 function PlCompanyTable({
-  receitasPorCategoria: incomeByCategory, despesasPorCategoria: expensesByCategory,
-  totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida: netMargin,
+  incomeByCategory, expensesByCategory,
+  incomeTotal, expensesTotal, netProfit, netMargin,
 }: {
-  receitasPorCategoria: { categoria: string; valor: number }[];
-  despesasPorCategoria: { categoria: string; valor: number }[];
-  totalReceitas: number; totalDespesas: number; lucroLiquido: number; margemLiquida: number;
+  incomeByCategory: CategoryTotal[];
+  expensesByCategory: CategoryTotal[];
+  incomeTotal: number; expensesTotal: number; netProfit: number; netMargin: number;
 }) {
   return (
     <Card>
@@ -136,11 +144,11 @@ function PlCompanyTable({
               <TableCell colSpan={3} className="font-semibold text-green-700 text-xs  tracking-wider">Receitas</TableCell>
             </TableRow>
             {incomeByCategory.map((r) => (
-              <TableRow key={r.categoria}>
-                <TableCell className="pl-8 text-foreground">{catLabel(r.categoria)}</TableCell>
-                <TableCell className="text-right text-green-600">{formatCurrency(r.valor)}</TableCell>
+              <TableRow key={r.category}>
+                <TableCell className="pl-8 text-foreground">{catLabel(r.category)}</TableCell>
+                <TableCell className="text-right text-green-600">{formatCurrency(r.amount)}</TableCell>
                 <TableCell className="text-right text-muted-foreground">
-                  {incomeTotal > 0 ? ((r.valor / incomeTotal) * 100).toFixed(1) : "0.0"}%
+                  {incomeTotal > 0 ? ((r.amount / incomeTotal) * 100).toFixed(1) : "0.0"}%
                 </TableCell>
               </TableRow>
             ))}
@@ -154,11 +162,11 @@ function PlCompanyTable({
               <TableCell colSpan={3} className="font-semibold text-destructive text-xs  tracking-wider">Despesas</TableCell>
             </TableRow>
             {expensesByCategory.map((d) => (
-              <TableRow key={d.categoria}>
-                <TableCell className="pl-8 text-foreground">{catLabel(d.categoria)}</TableCell>
-                <TableCell className="text-right text-destructive">{formatCurrency(-d.valor)}</TableCell>
+              <TableRow key={d.category}>
+                <TableCell className="pl-8 text-foreground">{catLabel(d.category)}</TableCell>
+                <TableCell className="text-right text-destructive">{formatCurrency(-d.amount)}</TableCell>
                 <TableCell className="text-right text-muted-foreground">
-                  {incomeTotal > 0 ? ((d.valor / incomeTotal) * 100).toFixed(1) : "0.0"}%
+                  {incomeTotal > 0 ? ((d.amount / incomeTotal) * 100).toFixed(1) : "0.0"}%
                 </TableCell>
               </TableRow>
             ))}
@@ -194,62 +202,53 @@ export default function ProfitAndLoss() {
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [financialFilter, setFinancialFilter] = useState<"todos" | "receitas" | "despesas" | "lucro">("todos");
+  const [financialFilter, setFinancialFilter] = useState<"all" | "revenue" | "expense" | "profit">("all");
 
   // Filters by search (description/category), date range and financial type — the base of every view.
-  const filteredTransacoes = useMemo(() => {
+  const filteredTransactions = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    return transactions.filter((t: any) => {
-      const data = String(t.data ?? "").slice(0, 10);
-      if (startDate && data && data < startDate) return false;
-      if (endDate && data && data > endDate) return false;
-      if (financialFilter === "receitas" && t.type !== "receita") return false;
-      if (financialFilter === "despesas" && t.type !== "despesa") return false;
-      // "lucro" and "todos" keep revenues and expenses (the net result is consolidated in the KPIs).
+    return transactions.filter((t) => {
+      const transactionDate = String(t.transaction_date ?? "").slice(0, 10);
+      if (startDate && transactionDate && transactionDate < startDate) return false;
+      if (endDate && transactionDate && transactionDate > endDate) return false;
+      if (financialFilter === "revenue" && t.type !== "revenue") return false;
+      if (financialFilter === "expense" && t.type !== "expense") return false;
+      // "profit" and "all" keep revenues and expenses (the net result is consolidated in the KPIs).
       if (!term) return true;
       return (
-        String(t.descricao ?? "").toLowerCase().includes(term) ||
-        catLabel(String(t.categoria ?? "")).toLowerCase().includes(term)
+        String(t.description ?? "").toLowerCase().includes(term) ||
+        catLabel(String(t.category ?? "")).toLowerCase().includes(term)
       );
     });
   }, [transactions, searchTerm, startDate, endDate, financialFilter]);
 
-  const income = useMemo(() => filteredTransacoes.filter((t: any) => t.type === "receita"), [filteredTransacoes]);
-  const expenses = useMemo(() => filteredTransacoes.filter((t: any) => t.type === "despesa"), [filteredTransacoes]);
+  const income = useMemo(() => filteredTransactions.filter((t) => t.type === "revenue"), [filteredTransactions]);
+  const expenses = useMemo(() => filteredTransactions.filter((t) => t.type === "expense"), [filteredTransactions]);
 
-  const incomeTotal = sum(income, "valor");
-  const expensesTotal = sum(expenses, "valor");
+  const incomeTotal = sum(income, "amount");
+  const expensesTotal = sum(expenses, "amount");
   const netProfit = incomeTotal - expensesTotal;
   const netMargin = incomeTotal > 0 ? (netProfit / incomeTotal) * 100 : 0;
 
-  const incomeByCategory = useMemo(() => {
-    const map: Record<string, number> = {};
-    income.forEach((t: any) => { const c = t.categoria ?? "outras"; map[c] = (map[c] ?? 0) + toNumber(t.valor); });
-    return Object.entries(map).map(([category, amount]) => ({ categoria: category, valor: amount })).sort((a, b) => b.valor - a.valor);
-  }, [income]);
-
-  const expensesByCategory = useMemo(() => {
-    const map: Record<string, number> = {};
-    expenses.forEach((t: any) => { const c = t.categoria ?? "outras"; map[c] = (map[c] ?? 0) + toNumber(t.valor); });
-    return Object.entries(map).map(([category, amount]) => ({ categoria: category, valor: amount })).sort((a, b) => b.valor - a.valor);
-  }, [expenses]);
+  const incomeByCategory = useMemo(() => totalsByCategory(income), [income]);
+  const expensesByCategory = useMemo(() => totalsByCategory(expenses), [expenses]);
 
   // ── P&L per project (each transaction = 1 project) ─────────────────────────
   const plByProject = useMemo(() =>
-    filteredTransacoes
-      .map((t: any) => {
-        const amount = toNumber(t.valor);
+    filteredTransactions
+      .map((t) => {
+        const amount = toNumber(t.amount);
         return {
           id: t.id,
-          nome: t.descricao ?? "—",
-          categoria: t.categoria ?? "—",
-          receita: t.type === "receita" ? amount : 0,
-          despesa: t.type === "despesa" ? amount : 0,
-          resultado: t.type === "receita" ? amount : -amount,
+          name: t.description ?? "—",
+          category: t.category ?? "—",
+          revenue: t.type === "revenue" ? amount : 0,
+          expense: t.type === "expense" ? amount : 0,
+          result: t.type === "revenue" ? amount : -amount,
         };
       })
-      .sort((a, b) => b.resultado - a.resultado),
-  [filteredTransacoes]);
+      .sort((a, b) => b.result - a.result),
+  [filteredTransactions]);
 
   // ── P&L per artist ──────────────────────────────────────────────────────────
   // Groups directly by the transactions (they already come with `artistas` embedded via a
@@ -257,24 +256,24 @@ export default function ProfitAndLoss() {
   // walking useArtistas() — avoids depending on a second list (capped at
   // 50 records per tenant) just to resolve the display name.
   const plByArtist = useMemo(() => {
-    const byArtist = new Map<string, { id: string; nome: string; totalRec: number; totalDes: number }>();
-    for (const t of filteredTransacoes as any[]) {
+    const byArtist = new Map<string, { id: string; name: string; totalRevenue: number; totalExpenses: number }>();
+    for (const t of filteredTransactions) {
       const artistId = t.artist_id;
       if (!artistId) continue;
       const entry = byArtist.get(artistId) ?? {
         id: artistId,
-        nome: t.artistas?.nome_artistico ?? t.artistas?.nome ?? "—",
-        totalRec: 0,
-        totalDes: 0,
+        name: t.artistas?.nome_artistico ?? "—",
+        totalRevenue: 0,
+        totalExpenses: 0,
       };
-      if (t.type === "receita") entry.totalRec += toNumber(t.valor);
-      else if (t.type === "despesa") entry.totalDes += toNumber(t.valor);
+      if (t.type === "revenue") entry.totalRevenue += toNumber(t.amount);
+      else if (t.type === "expense") entry.totalExpenses += toNumber(t.amount);
       byArtist.set(artistId, entry);
     }
     return Array.from(byArtist.values())
-      .map((a) => ({ ...a, lucro: a.totalRec - a.totalDes, margem: a.totalRec > 0 ? ((a.totalRec - a.totalDes) / a.totalRec) * 100 : 0 }))
-      .sort((a, b) => b.lucro - a.lucro);
-  }, [filteredTransacoes]);
+      .map((a) => ({ ...a, profit: a.totalRevenue - a.totalExpenses, margin: a.totalRevenue > 0 ? ((a.totalRevenue - a.totalExpenses) / a.totalRevenue) * 100 : 0 }))
+      .sort((a, b) => b.profit - a.profit);
+  }, [filteredTransactions]);
 
   if (isLoading) {
     return (
@@ -286,7 +285,7 @@ export default function ProfitAndLoss() {
     );
   }
 
-  const plCompanyProps = { receitasPorCategoria: incomeByCategory, despesasPorCategoria: expensesByCategory, totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida: netMargin };
+  const plCompanyProps = { incomeByCategory, expensesByCategory, incomeTotal, expensesTotal, netProfit, netMargin };
 
   return (
     <FeatureGate feature="moduleAccounting" featureName="Contabilidade">
@@ -328,17 +327,17 @@ export default function ProfitAndLoss() {
                 <SelectValue placeholder="Financeiro" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todos">Todos</SelectItem>
-                <SelectItem value="receitas">Receitas</SelectItem>
-                <SelectItem value="despesas">Despesas</SelectItem>
-                <SelectItem value="lucro">Lucro</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="revenue">Receitas</SelectItem>
+                <SelectItem value="expense">Despesas</SelectItem>
+                <SelectItem value="profit">Lucro</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
         {/* KPIs — always visible above the tabs */}
-        <KpiCards totalReceitas={incomeTotal} totalDespesas={expensesTotal} lucroLiquido={netProfit} margemLiquida={netMargin} />
+        <KpiCards incomeTotal={incomeTotal} expensesTotal={expensesTotal} netProfit={netProfit} netMargin={netMargin} />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} data-testid="tabs-contabilidade">
           <TabsList className="grid w-full grid-cols-4">
@@ -374,12 +373,12 @@ export default function ProfitAndLoss() {
                   <TableBody>
                     {plByProject.map((p) => (
                       <TableRow key={p.id}>
-                        <TableCell className="font-medium max-w-xs truncate">{p.nome}</TableCell>
-                        <TableCell className="text-muted-foreground">{catLabel(p.categoria)}</TableCell>
-                        <TableCell className="text-right text-green-600">{p.receita > 0 ? formatCurrency(p.receita) : "—"}</TableCell>
-                        <TableCell className="text-right text-destructive">{p.despesa > 0 ? formatCurrency(-p.despesa) : "—"}</TableCell>
-                        <TableCell className={`text-right font-bold ${p.resultado > 0 ? "text-green-600" : p.resultado < 0 ? "text-destructive" : "text-muted-foreground"}`}>
-                          {p.resultado >= 0 ? "+" : ""}{formatCurrency(p.resultado)}
+                        <TableCell className="font-medium max-w-xs truncate">{p.name}</TableCell>
+                        <TableCell className="text-muted-foreground">{catLabel(p.category)}</TableCell>
+                        <TableCell className="text-right text-green-600">{p.revenue > 0 ? formatCurrency(p.revenue) : "—"}</TableCell>
+                        <TableCell className="text-right text-destructive">{p.expense > 0 ? formatCurrency(-p.expense) : "—"}</TableCell>
+                        <TableCell className={`text-right font-bold ${p.result > 0 ? "text-green-600" : p.result < 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                          {p.result >= 0 ? "+" : ""}{formatCurrency(p.result)}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -410,14 +409,14 @@ export default function ProfitAndLoss() {
                   <TableBody>
                     {plByArtist.map((a) => (
                       <TableRow key={a.id}>
-                        <TableCell className="font-medium">{a.nome}</TableCell>
-                        <TableCell className="text-right text-green-600">{a.totalRec > 0 ? formatCurrency(a.totalRec) : "—"}</TableCell>
-                        <TableCell className="text-right text-destructive">{a.totalDes > 0 ? formatCurrency(-a.totalDes) : "—"}</TableCell>
-                        <TableCell className={`text-right font-bold ${a.lucro > 0 ? "text-green-600" : a.lucro < 0 ? "text-destructive" : "text-muted-foreground"}`}>
-                          {a.lucro >= 0 ? "+" : ""}{formatCurrency(a.lucro)}
+                        <TableCell className="font-medium">{a.name}</TableCell>
+                        <TableCell className="text-right text-green-600">{a.totalRevenue > 0 ? formatCurrency(a.totalRevenue) : "—"}</TableCell>
+                        <TableCell className="text-right text-destructive">{a.totalExpenses > 0 ? formatCurrency(-a.totalExpenses) : "—"}</TableCell>
+                        <TableCell className={`text-right font-bold ${a.profit > 0 ? "text-green-600" : a.profit < 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                          {a.profit >= 0 ? "+" : ""}{formatCurrency(a.profit)}
                         </TableCell>
-                        <TableCell className={`text-right ${a.margem >= 0 ? "text-primary" : "text-destructive"}`}>
-                          {a.margem.toFixed(1)}%
+                        <TableCell className={`text-right ${a.margin >= 0 ? "text-primary" : "text-destructive"}`}>
+                          {a.margin.toFixed(1)}%
                         </TableCell>
                       </TableRow>
                     ))}
@@ -455,12 +454,12 @@ export default function ProfitAndLoss() {
                   <TableBody>
                     {plByProject.map((p) => (
                       <TableRow key={p.id} data-testid={`row-projeto-${p.id}`}>
-                        <TableCell className="font-medium max-w-xs truncate">{p.nome}</TableCell>
-                        <TableCell className="text-muted-foreground">{catLabel(p.categoria)}</TableCell>
-                        <TableCell className="text-right text-green-600">{p.receita > 0 ? formatCurrency(p.receita) : "—"}</TableCell>
-                        <TableCell className="text-right text-destructive">{p.despesa > 0 ? formatCurrency(-p.despesa) : "—"}</TableCell>
-                        <TableCell className={`text-right font-bold ${p.resultado > 0 ? "text-green-600" : p.resultado < 0 ? "text-destructive" : "text-muted-foreground"}`}>
-                          {p.resultado >= 0 ? "+" : ""}{formatCurrency(p.resultado)}
+                        <TableCell className="font-medium max-w-xs truncate">{p.name}</TableCell>
+                        <TableCell className="text-muted-foreground">{catLabel(p.category)}</TableCell>
+                        <TableCell className="text-right text-green-600">{p.revenue > 0 ? formatCurrency(p.revenue) : "—"}</TableCell>
+                        <TableCell className="text-right text-destructive">{p.expense > 0 ? formatCurrency(-p.expense) : "—"}</TableCell>
+                        <TableCell className={`text-right font-bold ${p.result > 0 ? "text-green-600" : p.result < 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                          {p.result >= 0 ? "+" : ""}{formatCurrency(p.result)}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -509,23 +508,23 @@ export default function ProfitAndLoss() {
                       <>
                         {plByArtist.map((a) => (
                           <TableRow key={a.id} data-testid={`row-artista-${a.id}`}>
-                            <TableCell className="font-medium">{a.nome}</TableCell>
-                            <TableCell className="text-right text-green-600">{a.totalRec > 0 ? formatCurrency(a.totalRec) : "—"}</TableCell>
-                            <TableCell className="text-right text-destructive">{a.totalDes > 0 ? formatCurrency(-a.totalDes) : "—"}</TableCell>
-                            <TableCell className={`text-right font-bold ${a.lucro > 0 ? "text-green-600" : a.lucro < 0 ? "text-destructive" : "text-muted-foreground"}`}>
-                              {a.lucro >= 0 ? "+" : ""}{formatCurrency(a.lucro)}
+                            <TableCell className="font-medium">{a.name}</TableCell>
+                            <TableCell className="text-right text-green-600">{a.totalRevenue > 0 ? formatCurrency(a.totalRevenue) : "—"}</TableCell>
+                            <TableCell className="text-right text-destructive">{a.totalExpenses > 0 ? formatCurrency(-a.totalExpenses) : "—"}</TableCell>
+                            <TableCell className={`text-right font-bold ${a.profit > 0 ? "text-green-600" : a.profit < 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                              {a.profit >= 0 ? "+" : ""}{formatCurrency(a.profit)}
                             </TableCell>
-                            <TableCell className={`text-right text-sm ${a.margem >= 0 ? "text-primary" : "text-destructive"}`}>
-                              {a.margem.toFixed(1)}%
+                            <TableCell className={`text-right text-sm ${a.margin >= 0 ? "text-primary" : "text-destructive"}`}>
+                              {a.margin.toFixed(1)}%
                             </TableCell>
                           </TableRow>
                         ))}
                         <TableRow className="border-t-2 bg-muted/40">
                           <TableCell className="font-bold">Total (artistas)</TableCell>
-                          <TableCell className="text-right font-bold text-green-600">{formatCurrency(sum(plByArtist, "totalRec"))}</TableCell>
-                          <TableCell className="text-right font-bold text-destructive">{formatCurrency(-sum(plByArtist, "totalDes"))}</TableCell>
-                          <TableCell className={`text-right font-bold ${sum(plByArtist, "lucro") > 0 ? "text-green-600" : sum(plByArtist, "lucro") < 0 ? "text-destructive" : "text-muted-foreground"}`}>
-                            {sum(plByArtist, "lucro") >= 0 ? "+" : ""}{formatCurrency(sum(plByArtist, "lucro"))}
+                          <TableCell className="text-right font-bold text-green-600">{formatCurrency(sum(plByArtist, "totalRevenue"))}</TableCell>
+                          <TableCell className="text-right font-bold text-destructive">{formatCurrency(-sum(plByArtist, "totalExpenses"))}</TableCell>
+                          <TableCell className={`text-right font-bold ${sum(plByArtist, "profit") > 0 ? "text-green-600" : sum(plByArtist, "profit") < 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                            {sum(plByArtist, "profit") >= 0 ? "+" : ""}{formatCurrency(sum(plByArtist, "profit"))}
                           </TableCell>
                           <TableCell className="text-right text-muted-foreground">—</TableCell>
                         </TableRow>

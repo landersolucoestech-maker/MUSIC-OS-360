@@ -178,7 +178,7 @@ async function seedFor44(): Promise<void> {
   SEED_IDS['contract'] = ctr.body?.data?.id ?? ctr.body?.id;
   const ev = await call('POST', '/events', { ...opts, body: { title: `F4_EV_${Date.now()}`, type: 'show', startsAt: new Date(Date.now()+86400000).toISOString() } });
   SEED_IDS['event'] = ev.body?.data?.id ?? ev.body?.id;
-  const tx = await call('POST', '/transactions', { ...opts, body: { tipoTransacao: 'transferencia', descricao: `F4_TX_${Date.now()}`, valor: '100', dataTransacao: '2026-05-23', formaPagamento: 'pix' } });
+  const tx = await call('POST', '/transactions', { ...opts, body: { transactionType: 'transfer', description: `F4_TX_${Date.now()}`, amount: '100', transactionDate: '2026-05-23', paymentMethod: 'pix' } });
   SEED_IDS['transaction'] = tx.body?.data?.id ?? tx.body?.id;
   const ld = await call('POST', '/leads', { ...opts, body: { name: `F4_LEAD_${Date.now()}`, stage: 'prospect' } });
   SEED_IDS['lead'] = ld.body?.data?.id ?? ld.body?.id;
@@ -233,7 +233,7 @@ async function f44(): Promise<void> {
     { method: 'POST', path: () => `/clients`, body: () => ({ name: `RB_CLI_${Math.random().toString(36).slice(2,6)}`, type: 'company' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
     // POST /transactions — financial+ (editor level 60 passes too)
-    { method: 'POST', path: () => `/transactions`, body: () => ({ tipoTransacao: 'transferencia', descricao: `RB_TX_${Math.random().toString(36).slice(2,6)}`, valor: '50', dataTransacao: '2026-05-23', formaPagamento: 'pix' }),
+    { method: 'POST', path: () => `/transactions`, body: () => ({ transactionType: 'transfer', description: `RB_TX_${Math.random().toString(36).slice(2,6)}`, amount: '50', transactionDate: '2026-05-23', paymentMethod: 'pix' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
 
     // PATCH — editor+ (transactions = financial+; both at level 60)
@@ -247,7 +247,7 @@ async function f44(): Promise<void> {
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
     // PATCH /transactions requires role 'financial' (level 60). Editor is also level 60 → passes the guard.
     // This is correct by the hierarchical RBAC design (compares levels, not names).
-    { method: 'PATCH', path: () => `/transactions/${SEED_IDS['transaction']}`, body: () => ({ descricao: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
+    { method: 'PATCH', path: () => `/transactions/${SEED_IDS['transaction']}`, body: () => ({ description: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, financial: ALLOW, editor: ALLOW, viewer: DENY } as any },
 
     // DELETE — manager+ (transactions DELETE = manager+; financial and editor CANNOT)

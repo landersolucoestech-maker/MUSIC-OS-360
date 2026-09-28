@@ -491,15 +491,15 @@ export class ExternalDataExchangeService {
           title: w.title,
           isrc: w.isrc,
           iswc: w.iswc,
-          composers: w.compositores ?? w.compositor,
-          publisher: w.editora,
+          composers: w.composer_names ?? w.composer_name,
+          publisher: w.publisher_name,
           genre: w.music_genre,
         })),
         phonograms: phonograms.map((p) => ({
           id: p.id,
           title: p.title,
           isrc: p.isrc,
-          label: p.gravadora,
+          label: p.record_label_name,
         })),
         contributors: shares.map((s) => ({
           name: s.holder_name,

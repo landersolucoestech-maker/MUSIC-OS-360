@@ -42,7 +42,7 @@ export class TransactionEventsHandler {
     }
     if (!this.financialRules) return;
 
-    const { transactionId, type, category, valor: amountText, source } = event.payload;
+    const { transactionId, type, category, amount: amountText, source } = event.payload;
     // The provisional transaction created by contract.signed already evaluates rules under
     // that trigger — avoids a duplicate trigger for the same business action.
     if (source === 'contract.signed') return;
@@ -77,7 +77,7 @@ export class TransactionEventsHandler {
     await runInContext(async (manager) => {
       const contractRepo = manager ? manager.getRepository(ContractEntity) : this.contractRepo;
       const taskRepo     = manager ? manager.getRepository(CrmTaskEntity)  : this.taskRepo;
-      const { transactionId, type, contratoId: contractId, valor: amountText, paidBy, paidAt } = event.payload;
+      const { transactionId, type, contractId, amount: amountText, paidBy, paidAt } = event.payload;
 
       if (this.financialRules) {
         try {
@@ -130,7 +130,7 @@ export class TransactionEventsHandler {
             entity_id:    transactionId,
             action:       'paid',
             description:  transactionPaidCopy(amountText),
-            metadata:     { valor: amountText, contratoId: contractId, paidAt, correlationId: event.correlationId ?? null },
+            metadata:     { amount: amountText, contractId, paidAt, correlationId: event.correlationId ?? null },
           });
         } catch { /* non-critical */ }
       }

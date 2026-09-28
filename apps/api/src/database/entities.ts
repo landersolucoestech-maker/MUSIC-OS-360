@@ -692,26 +692,19 @@ export class WorkEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 500 }) title: string;
-  // `compositores`/`letristas` are derived from `participantes` (now work_participants)
-  // and persisted for fast reads in lists/reports without a join — technical
-  // justification (2026-07-18 audit). `co_compositores`/`detentores` removed: no
-  // active writer (migration WorkParticipantsNormalization20260718000011).
-  // `compositor` (singular) REMAINS despite looking equally dead from the real
-  // form/DTO: it is a `col()` (importable) in WORKS_CONTRACT, and the Reports
-  // bulk-import engine writes INSERT SQL directly against
-  // importableColumns, bypassing CreateWorkDto entirely -- a real
-  // writer (naming-closure Phase 2 almost removed this column by mistake; see
-  // work-participants-normalization.spec.ts, which already documented that writer).
-  @Column({ type: 'varchar', length: 255, nullable: true }) compositor: string | null;
-  @Column({ type: 'jsonb', nullable: true }) compositores: unknown[] | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) editora: string | null;
+  // `composer_names`/`translator_names` are derived from the participants
+  // (work_participants) and persisted for fast reads in lists/reports without a
+  // join. `composer_name` (singular) is written by the Reports bulk import
+  // (a `col()` in WORKS_CONTRACT) — see work-participants-normalization.spec.ts.
+  @Column({ type: 'varchar', length: 255, nullable: true }) composer_name: string | null;
+  @Column({ type: 'jsonb', nullable: true }) composer_names: unknown[] | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) publisher_name: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) isrc: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) iswc: string | null;
-  // Renamed from `cod_abramus` (20260718000017) — the value may be a code
-  // at ABRAMUS, UBC, SOCINPRO or another collective management society; the physical
-  // column was already recreated with this name by the migration, the entity was out of date.
-  @Column({ type: 'varchar', length: 100, nullable: true }) cod_entidade: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) cod_ecad: string | null;
+  // Code at the collective management society (ABRAMUS, UBC, SOCINPRO, ...) —
+  // formerly cod_abramus (20260718000017) / cod_entidade (CZ-039).
+  @Column({ type: 'varchar', length: 100, nullable: true }) society_code: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) ecad_code: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
   @Column({ type: 'varchar', length: 50, default: WorkStatus.PENDING }) status: WorkStatus;
@@ -739,22 +732,23 @@ export class WorkEntity {
   @Column({ type: 'jsonb', nullable: true }) ai_tools: unknown[] | null;
   @Column({ type: 'jsonb', nullable: true }) ai_prompts: unknown[] | null;
 
-  // ── Form fields (1 column per field — EXACT name of the form key) ──────────────
-  @Column({ type: 'varchar', length: 20, nullable: true }) idioma: string | null;
-  @Column({ type: 'varchar', length: 10, nullable: true }) instrumental: string | null;
-  @Column({ type: 'boolean', nullable: true }) criada_por_ia: boolean | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) tipo_ia: string | null;
-  @Column({ type: 'jsonb', nullable: true }) ia_harmonia: Record<string, unknown> | null;
-  @Column({ type: 'jsonb', nullable: true }) ia_melodia: Record<string, unknown> | null;
-  @Column({ type: 'jsonb', nullable: true }) ia_letra: Record<string, unknown> | null;
-  @Column({ type: 'jsonb', nullable: true }) outros_titulos: unknown[] | null;
-  @Column({ type: 'jsonb', nullable: true }) referencias_conexas: unknown[] | null;
-  @Column({ type: 'text', nullable: true }) letra_completa: string | null;
-  // `participantes` normalized into work_participants (migration
-  // WorkParticipantsNormalization20260718000011) — no longer a jsonb column.
-  @Column({ type: 'jsonb', nullable: true }) letristas: unknown[] | null;
+  // ── Form fields (CZ-039: English; language/is_instrumental/ai_used/
+  // alternative_titles/lyrics above are the single source of truth) ─────────
+  @Column({ type: 'varchar', length: 50, nullable: true }) ai_usage_level: string | null;
+  @Column({ type: 'jsonb', nullable: true }) ai_harmony: Record<string, unknown> | null;
+  @Column({ type: 'jsonb', nullable: true }) ai_melody: Record<string, unknown> | null;
+  @Column({ type: 'jsonb', nullable: true }) ai_lyrics: Record<string, unknown> | null;
+  @Column({ type: 'jsonb', nullable: true }) related_references: unknown[] | null;
+  @Column({ type: 'jsonb', nullable: true }) translator_names: unknown[] | null;
+  // Former Portuguese duplicates of the registry columns (CZ-039): legacy data,
+  // never written nor returned (BLK-WORKS-LEGACY-DUPLICATES).
+  @Column({ type: 'varchar', length: 20, nullable: true, select: false }) legacy_language_label: string | null;
+  @Column({ type: 'varchar', length: 10, nullable: true, select: false }) legacy_instrumental_flag: string | null;
+  @Column({ type: 'boolean', nullable: true, select: false }) legacy_ai_used: boolean | null;
+  @Column({ type: 'jsonb', nullable: true, select: false }) legacy_alternative_titles: unknown[] | null;
+  @Column({ type: 'text', nullable: true, select: false }) legacy_lyrics: string | null;
   @Column({ type: 'uuid', nullable: true }) project_id: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) tipo_obra: string | null;
+  @Column({ type: 'varchar', length: 50, nullable: true }) work_origin: string | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────
   @ManyToOne(() => ArtistEntity, (a) => a.works, { nullable: true, onDelete: 'SET NULL' })
@@ -771,13 +765,15 @@ export class WorkEntity {
   releases: Relation<ReleaseEntity[]>;
 
   @OneToMany(() => WorkParticipantEntity, (p) => p.work)
-  participantes_rel: Relation<WorkParticipantEntity[]>;
+  participants: Relation<WorkParticipantEntity[]>;
 }
 
 // ─── Work Participants (migration 20260718000011) ─────────────────────────────
 // Normalized child table for `works` authorship — replaces the old jsonb
 // column `works.participantes`. A participant never needs to be a registered
-// entity (the real form does not link to `artists`); `nome` is free text.
+// entity (the real form does not link to `artists`); `name` is free text.
+// `role` values: publisher | administrator | composer_author | translator |
+// unspecified (CZ-039; PT-BR labels live in the web UI).
 @Entity('work_participants')
 @Index(['tenant_id', 'work_id'])
 export class WorkParticipantEntity {
@@ -785,14 +781,14 @@ export class WorkParticipantEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid' }) work_id: string;
   @Column({ type: 'varchar', length: 255 }) name: string;
-  @Column({ type: 'varchar', length: 100 }) classe_funcao: string;
+  @Column({ type: 'varchar', length: 100 }) role: string;
   @Column({ type: 'text', nullable: true }) link: string | null;
-  @Column({ type: 'decimal', precision: 6, scale: 3, nullable: true }) percentual: string | null;
+  @Column({ type: 'decimal', precision: 6, scale: 3, nullable: true }) percentage: string | null;
   @Column({ type: 'integer', default: 0 }) sort_order: number;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
 
-  @ManyToOne(() => WorkEntity, (w) => w.participantes_rel, { onDelete: 'CASCADE' })
+  @ManyToOne(() => WorkEntity, (w) => w.participants, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'work_id' })
   work: Relation<WorkEntity>;
 }
@@ -801,14 +797,15 @@ export class WorkParticipantEntity {
 export interface PhonogramParticipant {
   id?: string;
   name?: string;
-  percentual?: string;
+  percentage?: string;
   artist_id?: string;
 }
 
+/** `phonograms.participation` (CZ-040; formerly participacao with PT keys). */
 export interface PhonogramParticipation {
-  produtorFonografico?: PhonogramParticipant[];
-  interprete?: PhonogramParticipant[];
-  musicoAcompanhante?: PhonogramParticipant[];
+  phonographic_producers?: PhonogramParticipant[];
+  performers?: PhonogramParticipant[];
+  session_musicians?: PhonogramParticipant[];
 }
 
 @Entity('phonograms')
@@ -829,14 +826,13 @@ export class PhonogramEntity {
   // compositores/interpretes/produtores (legacy free-text columns) removed
   // (naming-closure Phase 2, 20260923000002_DropDeadPhonogramsLegacyParticipantColumns)
   // -- zero writers in the whole repository (not even accepted by
-  // CreatePhonogramDto), superseded by `participacao` (structured jsonb,
+  // CreatePhonogramDto), superseded by `participation` (structured jsonb,
   // below, which is what the real Phonogram form actually writes).
-  @Column({ type: 'varchar', length: 255, nullable: true }) gravadora: string | null;
-  // Renamed from `cod_abramus` (20260718000017) — the value may be a code
-  // at ABRAMUS, UBC, SOCINPRO or another collective management society; the physical
-  // column was already recreated with this name by the migration, the entity was out of date.
-  @Column({ type: 'varchar', length: 100, nullable: true }) cod_entidade: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) cod_ecad: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) record_label_name: string | null;
+  // Code at the collective management society (ABRAMUS, UBC, SOCINPRO, ...) —
+  // formerly cod_abramus (20260718000017) / cod_entidade (CZ-040).
+  @Column({ type: 'varchar', length: 100, nullable: true }) society_code: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) ecad_code: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) origem_externa: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) origem_externa_id: string | null;
   @Column({ type: 'timestamp', nullable: true }) origem_externa_sincronizado_em: Date | null;
@@ -864,32 +860,36 @@ export class PhonogramEntity {
   // migration 20260605000001_AddGenreToPhonograms
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
 
-  // ── Form fields (1 column per field — EXACT name of the form key) ──────────────
-  @Column({ type: 'varchar', length: 100, nullable: true }) agregadora: string | null;
-  @Column({ type: 'varchar', length: 5, nullable: true }) isrc_pais: string | null;
-  @Column({ type: 'varchar', length: 10, nullable: true }) isrc_registrante: string | null;
-  @Column({ type: 'varchar', length: 4, nullable: true }) isrc_ano: string | null;
-  @Column({ type: 'varchar', length: 10, nullable: true }) isrc_designacao: string | null;
-  @Column({ type: 'boolean', nullable: true }) criada_por_ia: boolean | null;
+  // ── Form fields (CZ-040: English; recording_date/release_date/
+  // duration_seconds/country_of_recording above are the single source) ─────
+  @Column({ type: 'varchar', length: 100, nullable: true }) aggregator: string | null;
+  @Column({ type: 'varchar', length: 5, nullable: true }) isrc_country_code: string | null;
+  @Column({ type: 'varchar', length: 10, nullable: true }) isrc_registrant_code: string | null;
+  @Column({ type: 'varchar', length: 4, nullable: true }) isrc_year: string | null;
+  @Column({ type: 'varchar', length: 10, nullable: true }) isrc_designation_code: string | null;
+  @Column({ type: 'boolean', nullable: true }) ai_used: boolean | null;
   @Column({ type: 'boolean', nullable: true }) is_instrumental: boolean | null;
-  @Column({ type: 'boolean', nullable: true }) nacional: boolean | null;
-  @Column({ type: 'boolean', nullable: true }) pub_simultanea: boolean | null;
-  @Column({ type: 'date', nullable: true }) emissao: string | null;
-  @Column({ type: 'date', nullable: true }) gravacao_original: string | null;
-  @Column({ type: 'date', nullable: true }) data_lancamento: string | null;
-  @Column({ type: 'integer', nullable: true }) duracao_min: number | null;
-  @Column({ type: 'integer', nullable: true }) duracao_seg: number | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) midia: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) classificacao: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) pais_origem: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) pais_publicacao: string | null;
+  @Column({ type: 'boolean', nullable: true }) is_national: boolean | null;
+  @Column({ type: 'boolean', nullable: true }) is_simultaneous_publication: boolean | null;
+  @Column({ type: 'date', nullable: true }) issue_date: string | null;
+  // all | digital | physical | streaming
+  @Column({ type: 'varchar', length: 50, nullable: true }) media_type: string | null;
+  // studio | live | remix | demo | other
+  @Column({ type: 'varchar', length: 50, nullable: true }) recording_classification: string | null;
+  // ISO 3166-1 alpha-2 (ZZ = other/unknown)
+  @Column({ type: 'varchar', length: 100, nullable: true }) publication_country: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  // Real shape: an object with 3 participant array categories
-  // (produtorFonografico/interprete/musicoAcompanhante), not an array --
-  // see ParticipacaoDto in modules/phonograms/dto/create-phonogram.dto.ts
-  // (source of truth for the shape, confirmed against PhonogramFormModal.tsx).
-  @Column({ type: 'jsonb', nullable: true }) participacao: PhonogramParticipation | null;
-  @Column({ type: 'jsonb', nullable: true }) arquivo_audio: Record<string, unknown> | null;
+  // Object with three participant arrays (phonographic_producers/performers/
+  // session_musicians) — see ParticipationDto in dto/create-phonogram.dto.ts.
+  @Column({ type: 'jsonb', nullable: true }) participation: PhonogramParticipation | null;
+  @Column({ type: 'jsonb', nullable: true }) audio_file: Record<string, unknown> | null;
+  // Former Portuguese duplicates of the registry columns (CZ-040): legacy data,
+  // never written nor returned (BLK-PHONOGRAMS-LEGACY-DUPLICATES).
+  @Column({ type: 'date', nullable: true, select: false }) legacy_recording_date: string | null;
+  @Column({ type: 'date', nullable: true, select: false }) legacy_release_date: string | null;
+  @Column({ type: 'integer', nullable: true, select: false }) legacy_duration_minutes: number | null;
+  @Column({ type: 'integer', nullable: true, select: false }) legacy_duration_seconds_part: number | null;
+  @Column({ type: 'varchar', length: 100, nullable: true, select: false }) legacy_origin_country: string | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────
   // Artist→Works navigation: Artist → phonograms → PhonogramEntity → work → WorkEntity
@@ -1006,51 +1006,58 @@ export class ContractServiceTypeEntity {
 // ─── Transactions ─────────────────────────────────────────────────────────────
 @Entity('transactions')
 @Index(['tenant_id'])
-@Index(['tenant_id', 'data'])
+@Index(['tenant_id', 'transaction_date'])
 @Index(['artist_id'])
 export class TransactionEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 50 }) type: TransactionType;
-  @Column({ type: 'varchar', length: 100 }) categoria: string;
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
-  @Column({ type: 'decimal', precision: 15, scale: 2 }) valor: string;
-  @Column({ type: 'timestamp' }) data: Date;
+  @Column({ type: 'varchar', length: 100 }) category: string;
+  @Column({ type: 'text', nullable: true }) description: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2 }) amount: string;
+  @Column({ type: 'timestamp' }) transaction_date: Date;
   @Column({ type: 'varchar', length: 50, default: TransactionStatus.PENDING }) status: TransactionStatus;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
-  @Column({ type: 'uuid', nullable: true }) contrato_id: string | null;
+  @Column({ type: 'uuid', nullable: true }) contract_id: string | null;
   @Column({ type: 'uuid', nullable: true }) project_id: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) referencia: string | null;
-  @Column({ type: 'text', nullable: true }) comprovante_url: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) reference: string | null;
+  @Column({ type: 'text', nullable: true }) attachment_url: string | null;
   // Financial categorization (financial_categories table). A logical reference
   // — the transactions table has NO physical FK today (creating the FK is Phase 2). The
   // snapshot keeps the category materialized at the time of the entry (jsonb
   // NOT NULL DEFAULT '{}' in the database).
   @Column({ type: 'uuid', nullable: true }) financial_category_id: string | null;
   @Column({ type: 'jsonb', default: {} }) financial_category_snapshot: Record<string, unknown>;
-  // ── Form fields (1 column per field — EXACT name of the form key) ──────────────
-  @Column({ type: 'varchar', length: 50, nullable: true }) tipo_transacao: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) tipo_cliente: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) subcategoria: string | null;
-  @Column({ type: 'date', nullable: true }) data_transacao: string | null;
+  // ── Form fields (CZ-041: English; the API reads/writes these columns — the
+  // pre-CZ-041 metadata copies are historical data) ──────────────────────────
+  // company | artist | individual
+  @Column({ type: 'varchar', length: 50, nullable: true }) counterparty_type: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) subcategory: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) fornecedor_cliente: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) orgao_arrecadador: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) centro_custo: string | null;
-  @Column({ type: 'varchar', length: 20, nullable: true }) competencia: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) conta_origem: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) conta_destino: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) item_investimento: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) motivo_viagem: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) counterparty_name: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) tax_authority: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) cost_center: string | null;
+  @Column({ type: 'varchar', length: 20, nullable: true }) reference_month: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) source_bank_account: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) destination_bank_account: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) investment_item: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) travel_reason: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) advertising_name: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) forma_pagamento: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) tipo_pagamento: string | null;
-  @Column({ type: 'integer', nullable: true }) quantidade_parcelas: number | null;
-  @Column({ type: 'varchar', length: 30, nullable: true }) intervalo_parcelas: string | null;
-  @Column({ type: 'date', nullable: true }) data_primeira_parcela: string | null;
-  @Column({ type: 'text', nullable: true }) anexo_url: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) anexo_nome: string | null;
-  @Column({ type: 'uuid', nullable: true }) evento_id: string | null;
+  // pix | ted | boleto | credit_card | debit_card | cash | check
+  @Column({ type: 'varchar', length: 50, nullable: true }) payment_method: string | null;
+  // upfront | installments
+  @Column({ type: 'varchar', length: 50, nullable: true }) payment_type: string | null;
+  @Column({ type: 'integer', nullable: true }) installment_count: number | null;
+  // monthly | biweekly | weekly
+  @Column({ type: 'varchar', length: 30, nullable: true }) installment_interval: string | null;
+  @Column({ type: 'date', nullable: true }) first_installment_date: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) attachment_name: string | null;
+  @Column({ type: 'uuid', nullable: true }) event_id: string | null;
+  // Former duplicates with no writer (CZ-041): legacy data, never written nor
+  // returned (BLK-TRANSACTIONS-LEGACY-DUPLICATES).
+  @Column({ type: 'varchar', length: 50, nullable: true, select: false }) legacy_transaction_type: string | null;
+  @Column({ type: 'date', nullable: true, select: false }) legacy_transaction_date: string | null;
+  @Column({ type: 'text', nullable: true, select: false }) legacy_attachment_url: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;

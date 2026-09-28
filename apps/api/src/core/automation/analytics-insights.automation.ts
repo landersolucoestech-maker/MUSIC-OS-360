@@ -125,8 +125,8 @@ export class AnalyticsInsightsAutomation {
       months: overview.months,
       series: overview.series.map((p) => ({
         month: String(p.month),
-        revenue: Number(p.receitas),
-        expenses: Number(p.despesas),
+        revenue: Number(p.revenue),
+        expenses: Number(p.expenses),
       })),
       language: 'pt-BR',
     };

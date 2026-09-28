@@ -1,5 +1,6 @@
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import type { WorkWithRelations, PhonogramWithRelations } from "@/modules/catalog/types/catalog.types";
+import { phonogramAggregatorLabel, phonogramRecordingClassificationLabel } from "@/modules/catalog/constants/phonogram-options";
 import type { ArtistProfileContext, IntelligenceEntity, IntelligenceSources } from "./types";
 import { estimateReleaseFrequency, inferCareerStage, mostCommon, score, stringifyValue, uniqueStrings } from "./utils";
 
@@ -27,7 +28,7 @@ export function loadArtistContext(
   const genreCandidates = [
     artistRecord?.musicGenre,
     ...works.map((item) => item.music_genre),
-    ...phonograms.map((item) => item.musicGenre),
+    ...phonograms.map((item) => item.music_genre),
     ...releases.map((item) => item.music_genre),
   ].filter(Boolean).map(String);
   const publicSignals = [
@@ -47,7 +48,7 @@ export function loadArtistContext(
     artistRecord,
     predominantGenre: mostCommon(genreCandidates),
     subgenres: uniqueStrings([
-      ...phonograms.map((item) => stringifyValue(item.classificacao)),
+      ...phonograms.map((item) => phonogramRecordingClassificationLabel(item.recording_classification) ?? ""),
       ...releases.map((item) => stringifyValue(item["subgenero"])),
     ]),
     moods: uniqueStrings([
@@ -55,8 +56,8 @@ export function loadArtistContext(
       ...phonograms.map((item) => stringifyValue(item["mood"])),
     ]),
     references: uniqueStrings([
-      ...works.map((item) => stringifyValue(item.compositor || item.compositores)),
-      ...phonograms.map((item) => stringifyValue(item.produtores || item.gravadora || item.agregadora)),
+      ...works.map((item) => stringifyValue(item.composer_name || item.composer_names)),
+      ...phonograms.map((item) => item.record_label_name || phonogramAggregatorLabel(item.aggregator) || ""),
       ...releases.map((item) => stringifyValue(item.distributor || item.record_label)),
     ]),
     publicSignals,

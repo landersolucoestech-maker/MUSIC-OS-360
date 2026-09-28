@@ -40,5 +40,12 @@
     "scope": "rules",
     "createdAt": "2026-09-28T03:10:24.791Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-630fc33c",
+    "text": "Programmatic edits that slice a file between two text anchors must assert the anchors are unique and that the removed span is the intended size (diff line count) — a first-occurrence anchor silently deleted ~90 unrelated label lines in field-labels.pt-br.ts (caught by the reports label guard).",
+    "scope": "runtime",
+    "createdAt": "2026-09-28T06:29:40.334Z",
+    "appliedAt": null
   }
 ]

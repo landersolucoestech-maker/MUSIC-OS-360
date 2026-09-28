@@ -91,12 +91,14 @@ import {
   type ContractWithRelations,
 } from "@/modules/contracts/hooks/useContracts";
 import { useTransactions } from "@/modules/accounting/hooks/useTransactions";
+import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
 import { ContractStatusBadge } from "@/modules/contracts/components/ContractStatusBadge";
 import { useEvents } from "@/modules/events/hooks/useEvents";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 import { useMarketingContents } from "@/modules/marketing/hooks/useMarketingContents";
 import { useMarketingCampaigns } from "@/modules/marketing/hooks/useMarketingCampaigns";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { releaseStatusLabel, resolveReleaseStatus } from "@/modules/releases/lib/release-status";
 import { storedFileDisplayName } from "@/shared/lib/stored-file";
 
 // ── Marketing: campaign/channel labels ────────────────────────────────────
@@ -399,8 +401,8 @@ export function ArtistVision360Modal({
     if (d) activityTimelineItems.push({ id: `mv-ctr-${c.id}`, type: "Jurídico", descricao: `Contrato: ${c.title}`, data: d, responsavel: "Admin" });
   });
   artistTransactions.forEach((t) => {
-    const d = (t as { created_at?: string; data?: string }).created_at ?? (t as { data?: string }).data;
-    if (d) activityTimelineItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", descricao: t.descricao ?? (t.type === "receita" ? "Pagamento recebido" : "Despesa registrada"), data: d, responsavel: "Financeiro" });
+    const d = t.created_at ?? t.transaction_date;
+    if (d) activityTimelineItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", descricao: t.description ?? (t.type === "revenue" ? "Pagamento recebido" : "Despesa registrada"), data: d, responsavel: "Financeiro" });
   });
   actualEvents.forEach((e) => {
     const ev = e as { starts_at?: string; type?: string; created_at?: string };
@@ -453,7 +455,7 @@ export function ArtistVision360Modal({
   const firstRelease = (actualReleases as any[])
     .filter((l) => l.created_at || l.release_date)
     .sort((a, b) => new Date(a.created_at ?? a.release_date).getTime() - new Date(b.created_at ?? b.release_date).getTime())[0];
-  if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.data_lancamento });
+  if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.release_date });
   const firstShow = (actualEvents as any[])
     .filter((e) => ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) && e.starts_at)
     .sort((a, b) => new Date(a.starts_at!).getTime() - new Date(b.starts_at!).getTime())[0];
@@ -466,29 +468,29 @@ export function ArtistVision360Modal({
 
   // ── Real finance ──────────────────────────────────────────────────
   const totalRevenue = artistTransactions
-    .filter((t) => t.type === "receita" && t.status === "paid")
-    .reduce((sum, t) => sum + (t.valor ?? 0), 0);
+    .filter((t) => t.type === "revenue" && t.status === "paid")
+    .reduce((sum, t) => sum + toNumber(t.amount), 0);
   const totalExpenses = artistTransactions
-    .filter((t) => t.type === "despesa" && t.status === "paid")
-    .reduce((sum, t) => sum + (t.valor ?? 0), 0);
+    .filter((t) => t.type === "expense" && t.status === "paid")
+    .reduce((sum, t) => sum + toNumber(t.amount), 0);
   const totalBalance = totalRevenue - totalExpenses;
   const overallRoi = totalExpenses > 0 ? totalBalance / totalExpenses : null;
   const overallMargin = totalRevenue > 0 ? totalBalance / totalRevenue : null;
   const paidRevenue = artistTransactions.filter(
-    (t) => t.type === "receita" && t.status === "paid",
+    (t) => t.type === "revenue" && t.status === "paid",
   );
   const revenueByNature = NATURE_BUCKETS.map((b) => ({
     label: b.label,
     total: paidRevenue
-      .filter((t) => b.keywords.some((k) => String((t as { categoria?: string }).categoria ?? "").toLowerCase().includes(k)))
-      .reduce((s, t) => s + (t.valor ?? 0), 0),
+      .filter((t) => b.keywords.some((k) => String(t.category ?? "").toLowerCase().includes(k)))
+      .reduce((s, t) => s + toNumber(t.amount), 0),
   }));
   const revenueByNatureOther = paidRevenue
-    .filter((t) => !NATURE_BUCKETS.some((b) => b.keywords.some((k) => String((t as { categoria?: string }).categoria ?? "").toLowerCase().includes(k))))
-    .reduce((s, t) => s + (t.valor ?? 0), 0);
+    .filter((t) => !NATURE_BUCKETS.some((b) => b.keywords.some((k) => String(t.category ?? "").toLowerCase().includes(k))))
+    .reduce((s, t) => s + toNumber(t.amount), 0);
   const totalPending = artistTransactions
-    .filter((t) => t.status === "pending" || t.status === "a_receber")
-    .reduce((sum, t) => sum + (t.valor ?? 0), 0);
+    .filter((t) => t.status === "pending")
+    .reduce((sum, t) => sum + toNumber(t.amount), 0);
 
   // ── Contract metrics ───────────────────────────────────────────────────
   const today = new Date();
@@ -560,7 +562,7 @@ export function ArtistVision360Modal({
       actualHistory.push({
         id: `txn-${t.id}`,
         type: "financeiro",
-        descricao: t.descricao,
+        descricao: t.description ?? "",
         data: t.created_at,
         usuario: "Financeiro",
       });
@@ -1980,9 +1982,9 @@ export function ArtistVision360Modal({
                                   <p className="text-sm font-medium truncate">
                                     {phonogram.title}
                                   </p>
-                                  {phonogram.gravadora && (
+                                  {phonogram.record_label_name && (
                                     <p className="text-xs text-muted-foreground truncate">
-                                      {phonogram.gravadora}
+                                      {phonogram.record_label_name}
                                     </p>
                                   )}
                                 </div>
@@ -2029,7 +2031,7 @@ export function ArtistVision360Modal({
                                   variant="outline"
                                   className="text-xs shrink-0"
                                 >
-                                  {formatStatusPtBr(release.status)}
+                                  {releaseStatusLabel(resolveReleaseStatus(release))}
                                 </Badge>
                               </div>
                             ))}
@@ -2176,22 +2178,22 @@ export function ArtistVision360Modal({
                         >
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">
-                              {t.descricao}
+                              {t.description}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {t.data
-                                ? new Date(t.data).toLocaleDateString("pt-BR")
+                              {t.transaction_date
+                                ? new Date(t.transaction_date).toLocaleDateString("pt-BR")
                                 : "—"}
-                              {t.categoria &&
-                                ` · ${t.categoria.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}`}
+                              {t.category &&
+                                ` · ${t.category.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}`}
                             </p>
                           </div>
                           <div className="ml-4 text-right">
                             <p
-                              className={`text-sm font-bold ${t.type === "receita" ? "text-success" : "text-destructive"}`}
+                              className={`text-sm font-bold ${t.type === "revenue" ? "text-success" : "text-destructive"}`}
                             >
-                              {t.type === "receita" ? "+" : ""}
-                              {formatCurrency(t.type === "receita" ? t.valor : -t.valor)}
+                              {t.type === "revenue" ? "+" : ""}
+                              {formatCurrency(t.type === "revenue" ? toNumber(t.amount) : -toNumber(t.amount))}
                             </p>
                             <p className="text-[10px] text-muted-foreground">
                               {t.status?.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) ?? "—"}

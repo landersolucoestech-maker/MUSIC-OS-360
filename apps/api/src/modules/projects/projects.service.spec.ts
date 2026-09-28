@@ -187,6 +187,17 @@ describe('ProjectsService', () => {
     expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Faixa Legada' }));
   });
 
+  it('update() with a pre-CZ-031 placeholder musicas list (no named row) never deletes the stored tracks (deploy skew)', async () => {
+    await service.update(TENANT, 'u1', PROJECT_ID, { musicas: [{ name: '', compositores: [''] }] } as any);
+    expect(mockDs._tracksRepo.delete).not.toHaveBeenCalled();
+    expect(mockDs._tracksRepo.save).not.toHaveBeenCalled();
+  });
+
+  it('update() with canonical tracks: [] still clears the tracks (explicit intent)', async () => {
+    await service.update(TENANT, 'u1', PROJECT_ID, { tracks: [] } as any);
+    expect(mockDs._tracksRepo.delete).toHaveBeenCalledWith({ project_id: PROJECT_ID, tenant_id: TENANT });
+  });
+
   it('update() leaves the tracks untouched when the DTO does not send the field', async () => {
     await service.update(TENANT, 'u1', PROJECT_ID, { notes: 'x' } as any);
     expect(mockDs._tracksRepo.delete).not.toHaveBeenCalled();

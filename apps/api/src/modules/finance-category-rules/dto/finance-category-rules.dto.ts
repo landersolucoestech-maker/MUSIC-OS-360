@@ -1,13 +1,18 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsInt, IsIn, IsBoolean, IsUUID, IsArray, ArrayMinSize } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
-const TRANSACTION_TYPES = ['RECEITA', 'DESPESA'] as const;
+// Same vocabulary as financial_categories.transaction_types (CZ-041). A
+// pre-CZ-041 web build sends RECEITA/DESPESA — mapped before validation.
+export const RULE_TRANSACTION_TYPES = ['REVENUE', 'EXPENSE'] as const;
+const LEGACY_RULE_TRANSACTION_TYPES: Readonly<Record<string, string>> = { RECEITA: 'REVENUE', DESPESA: 'EXPENSE' };
+const canonicalRuleTransactionType = ({ value }: { value: unknown }) =>
+  typeof value === 'string' ? (LEGACY_RULE_TRANSACTION_TYPES[value.toUpperCase()] ?? value) : value;
 
 export class CreateFinanceCategoryRuleDto {
   @ApiProperty({ type: [String] }) @IsArray() @ArrayMinSize(1) @IsString({ each: true }) keywords!: string[];
-  @ApiProperty({ enum: TRANSACTION_TYPES }) @IsIn(TRANSACTION_TYPES) transaction_type!: string;
+  @ApiProperty({ enum: RULE_TRANSACTION_TYPES }) @Transform(canonicalRuleTransactionType) @IsIn(RULE_TRANSACTION_TYPES) transaction_type!: string;
   @ApiProperty() @IsUUID() category_id!: string;
   @ApiPropertyOptional() @IsOptional() @IsInt() @Type(() => Number) priority?: number;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;
@@ -19,7 +24,7 @@ export class UpdateFinanceCategoryRuleDto extends PartialType(CreateFinanceCateg
 }
 
 export class QueryFinanceCategoryRuleDto extends PaginationDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() transaction_type?: string;
+  @ApiPropertyOptional({ enum: RULE_TRANSACTION_TYPES }) @IsOptional() @Transform(canonicalRuleTransactionType) @IsString() transaction_type?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() category_id?: string;
   @ApiPropertyOptional() @IsOptional() active?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsString() search?: string;

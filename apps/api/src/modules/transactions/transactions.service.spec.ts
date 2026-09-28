@@ -24,10 +24,10 @@ const NOW    = new Date('2026-08-14T12:00:00.000Z');
 const mockTx = {
   id: TX_ID,
   tenant_id: TENANT,
-  type: 'receita',
-  categoria: 'outros',
-  status: 'pendente',
-  valor: '100',
+  type: 'revenue',
+  category: 'outros',
+  status: 'pending',
+  amount: '100',
   metadata: {},
   deleted_at: null,
   updated_at: NOW,
@@ -52,48 +52,53 @@ function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
   return { getRepository: jest.fn(() => repo), _repo: repo, _qb: qb };
 }
 
-describe('toTransactionDetails — English output contract (naming-canonical)', () => {
-  it('maps PT columns and PT metadata keys to the DTO\'s English field names', () => {
+describe('toTransactionDetails — English output contract (naming-canonical, CZ-041)', () => {
+  it('maps the canonical columns to the DTO\'s English field names', () => {
     const entity = {
       id: 'tx-1',
-      type: 'despesa',
-      status: 'pendente',
-      descricao: 'Aluguel de estúdio',
-      referencia: null,
-      valor: '250.50',
-      data: new Date('2026-08-01T00:00:00.000Z'),
-      categoria: 'servicos',
+      type: 'expense',
+      status: 'pending',
+      description: 'Aluguel de estúdio',
+      reference: null,
+      amount: '250.50',
+      transaction_date: new Date('2026-08-01T00:00:00.000Z'),
+      category: 'servicos',
+      subcategory: 'estudio',
+      notes: 'pago via pix',
+      payment_method: 'pix',
+      payment_type: 'upfront',
+      installment_count: '1',
+      counterparty_name: 'Estúdio XYZ',
+      event_id: 'event-1',
       artist_id: 'artist-1',
-      contrato_id: 'contract-1',
+      contract_id: 'contract-1',
       project_id: 'project-1',
-      comprovante_url: null,
+      reference_month: '2026-08',
+      attachment_url: null,
       created_by: 'user-1',
       updated_by: 'user-1',
       created_at: new Date('2026-08-01T00:00:00.000Z'),
       updated_at: new Date('2026-08-02T00:00:00.000Z'),
       metadata: {
-        observacao: 'pago via pix',
-        formaPagamento: 'pix',
-        tipoPagamento: 'avista',
-        quantidadeParcelas: '1',
-        subcategoria: 'estudio',
-        fornecedorCliente: 'Estúdio XYZ',
-        eventoVinculado: 'evento-1',
+        // Pre-CZ-041 metadata copies are historical only — never read.
+        observacao: 'IGNORED', formaPagamento: 'IGNORED', eventoVinculado: 'IGNORED',
       },
     } as unknown as import('../../database/entities').TransactionEntity;
 
     const dto = toTransactionDetails(entity);
 
+    expect(dto.type).toBe('expense');
     expect(dto.description).toBe('Aluguel de estúdio');
     expect(dto.amount).toBe(250.5);
     expect(dto.category).toBe('servicos');
     expect(dto.subcategory).toBe('estudio');
     expect(dto.note).toBe('pago via pix');
     expect(dto.paymentMethod).toBe('pix');
-    expect(dto.paymentType).toBe('avista');
+    expect(dto.paymentType).toBe('upfront');
     expect(dto.installments).toBe('1');
     expect(dto.supplierOrClient).toBe('Estúdio XYZ');
-    expect(dto.linkedEventId).toBe('evento-1');
+    expect(dto.linkedEventId).toBe('event-1');
+    expect(dto.competence).toBe('2026-08');
     expect(dto.artistId).toBe('artist-1');
     expect(dto.contractId).toBe('contract-1');
     expect(dto.projectId).toBe('project-1');
@@ -126,7 +131,7 @@ describe('TransactionsService — optimistic concurrency on update/patch', () =>
 
     expect(mockDs._repo.update).toHaveBeenCalledWith(
       { id: TX_ID, tenant_id: TENANT },
-      expect.objectContaining({ descricao: 'Nova descrição' }),
+      expect.objectContaining({ description: 'Nova descrição' }),
     );
   });
 
@@ -144,7 +149,7 @@ describe('TransactionsService — optimistic concurrency on update/patch', () =>
     const op = criteria.updated_at as any;
     expect(op._type).toBe('raw');
     expect(op._objectLiteralParameters).toEqual({ expected: NOW });
-    expect(payload).toEqual(expect.objectContaining({ descricao: 'Editado' }));
+    expect(payload).toEqual(expect.objectContaining({ description: 'Editado' }));
   });
 
   it('with a stale expectedUpdatedAt (0 rows affected): throws ConflictException (409), does not overwrite', async () => {
@@ -161,7 +166,7 @@ describe('TransactionsService — optimistic concurrency on update/patch', () =>
     service = await buildService({ affected: 0 });
     await expect(
       service.update(TENANT, 'u1', TX_ID, {
-        tipoTransacao: 'receita',
+        transactionType: 'revenue',
         expectedUpdatedAt: new Date('2026-08-14T11:00:00.000Z').toISOString(),
       } as any),
     ).rejects.toThrow(ConflictException);
@@ -213,10 +218,10 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const { service, mockDs, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'marketing', amount: '50',
+      transactionType: 'expense', description: 'Pagamento Spotify', category: 'marketing', amount: '50',
     } as any);
 
-    expect(saved.categoria).toBe('marketing');
+    expect(saved.category).toBe('marketing');
     expect(suggestFn).not.toHaveBeenCalled();
     expect(mockDs._repo.save).toHaveBeenCalled();
   });
@@ -225,31 +230,31 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'rule-1' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify mensal', category: 'outros', amount: '50',
+      transactionType: 'expense', description: 'Pagamento Spotify mensal', category: 'outros', amount: '50',
     } as any);
 
-    expect(saved.categoria).toBe('streaming');
+    expect(saved.category).toBe('streaming');
   });
 
   it("absent category (default 'outros') + matching rule: applies the suggested category", async () => {
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-2', categoryName: 'servicos', ruleId: 'rule-2' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'receita', description: 'Recebimento de show', amount: '500',
+      transactionType: 'revenue', description: 'Recebimento de show', amount: '500',
     } as any);
 
-    expect(saved.categoria).toBe('servicos');
+    expect(saved.category).toBe('servicos');
   });
 
   it("category 'outros' with no matching rule: keeps 'outros'", async () => {
     const { service, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Compra qualquer', category: 'outros', amount: '20',
+      transactionType: 'expense', description: 'Compra qualquer', category: 'outros', amount: '20',
     } as any);
 
-    expect(saved.categoria).toBe('outros');
-    expect(suggestFn).toHaveBeenCalledWith(TENANT, 'DESPESA', 'Compra qualquer');
+    expect(saved.category).toBe('outros');
+    expect(suggestFn).toHaveBeenCalledWith(TENANT, 'EXPENSE', 'Compra qualquer');
   });
 
   it('never crosses tenants: passes exactly the caller\'s tenantId to the matcher', async () => {
@@ -257,31 +262,31 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const otherTenant = 'tenant-other';
 
     await service.create(otherTenant, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', amount: '10',
+      transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '10',
     } as any);
 
-    expect(suggestFn).toHaveBeenCalledWith(otherTenant, 'DESPESA', 'Pagamento Spotify');
+    expect(suggestFn).toHaveBeenCalledWith(otherTenant, 'EXPENSE', 'Pagamento Spotify');
   });
 
-  it('type transferencia: never triggers the matcher (finance-category-rules only covers RECEITA/DESPESA)', async () => {
+  it('type transfer: never triggers the matcher (finance-category-rules only covers REVENUE/EXPENSE)', async () => {
     const { service, suggestFn } = await buildServiceWithMatcher({ categoryId: 'c', categoryName: 's', ruleId: 'r' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'transferencia', description: 'Transferência entre contas', category: 'outros', amount: '10',
+      transactionType: 'transfer', description: 'Transferência entre contas', category: 'outros', amount: '10',
     } as any);
 
     expect(suggestFn).not.toHaveBeenCalled();
-    expect(saved.categoria).toBe('outros');
+    expect(saved.category).toBe('outros');
   });
 
   it('matcher unavailable/error: does not block creation, falls back to outros', async () => {
     const { service } = await buildServiceWithMatcher(new Error('finance-category-rules DB down'));
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', amount: '10',
+      transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '10',
     } as any);
 
-    expect(saved.categoria).toBe('outros');
+    expect(saved.category).toBe('outros');
   });
 
   it('batch import (multiple OFX transactions in sequence): each is categorized independently and deterministically', async () => {
@@ -295,9 +300,9 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, financeCategoryRules);
 
     const ofxRows = [
-      { tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', amount: '20' },
-      { tipoTransacao: 'despesa', description: 'Corrida Uber', category: 'outros', amount: '35' },
-      { tipoTransacao: 'despesa', description: 'Padaria do bairro', category: 'outros', amount: '15' },
+      { transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '20' },
+      { transactionType: 'expense', description: 'Corrida Uber', category: 'outros', amount: '35' },
+      { transactionType: 'expense', description: 'Padaria do bairro', category: 'outros', amount: '15' },
     ];
 
     const results = [];
@@ -305,7 +310,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
       results.push(await service.create(TENANT, 'u1', row as any));
     }
 
-    expect(results.map((r) => r.categoria)).toEqual(['streaming', 'transporte', 'outros']);
+    expect(results.map((r) => r.category)).toEqual(['streaming', 'transporte', 'outros']);
     expect(suggestFn).toHaveBeenCalledTimes(3);
   });
 
@@ -314,15 +319,15 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, undefined as any);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', amount: '10',
+      transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '10',
     } as any);
 
-    expect(saved.categoria).toBe('outros');
+    expect(saved.category).toBe('outros');
   });
 });
 
 /**
- * find-4cd2f044: artist_id/contrato_id/project_id had no cross-tenant
+ * find-4cd2f044: artist_id/contract_id/project_id had no cross-tenant
  * ownership check — a transaction could silently reference another
  * tenant's artist/contract/project.
  */
@@ -338,22 +343,22 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     return { service, repo };
   }
 
-  it('rejects an artistaVinculado (artist_id) belonging to another tenant', async () => {
+  it('rejects an artistId belonging to another tenant', async () => {
     const { service } = makeService(jest.fn(async () => []));
     await expect(
       service.create(TENANT, 'user-1', {
-        tipoTransacao: 'despesa', description: 'X', category: 'marketing', amount: '50',
-        artistaVinculado: '323e4567-e89b-12d3-a456-426614174000',
+        transactionType: 'expense', description: 'X', category: 'marketing', amount: '50',
+        artistId: '323e4567-e89b-12d3-a456-426614174000',
       } as any),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('allows an artistaVinculado that belongs to the same tenant', async () => {
+  it('allows an artistId that belongs to the same tenant', async () => {
     const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
     await expect(
       service.create(TENANT, 'user-1', {
-        tipoTransacao: 'despesa', description: 'X', category: 'marketing', amount: '50',
-        artistaVinculado: '223e4567-e89b-12d3-a456-426614174000',
+        transactionType: 'expense', description: 'X', category: 'marketing', amount: '50',
+        artistId: '223e4567-e89b-12d3-a456-426614174000',
       } as any),
     ).resolves.toBeDefined();
     expect(repo.save).toHaveBeenCalled();
@@ -375,11 +380,11 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     return { service, repo };
   }
 
-  it('update: rejects changing contratoVinculado (contrato_id) to another tenant\'s contract', async () => {
+  it('update: rejects changing contractId to another tenant\'s contract', async () => {
     const { service } = makeUpdateService(jest.fn(async () => []));
     await expect(
       service.update(TENANT, 'user-1', TX_ID, {
-        contratoVinculado: '323e4567-e89b-12d3-a456-426614174000',
+        contractId: '323e4567-e89b-12d3-a456-426614174000',
       } as any),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
@@ -393,11 +398,11 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     expect(query).not.toHaveBeenCalled();
   });
 
-  it('patch: rejects changing projetoVinculado (project_id) to another tenant\'s project', async () => {
+  it('patch: rejects changing projectId to another tenant\'s project', async () => {
     const { service } = makeUpdateService(jest.fn(async () => []));
     await expect(
       service.patch(TENANT, 'user-1', TX_ID, {
-        projetoVinculado: '323e4567-e89b-12d3-a456-426614174000',
+        projectId: '323e4567-e89b-12d3-a456-426614174000',
       } as any),
     ).rejects.toBeInstanceOf(BadRequestException);
   });

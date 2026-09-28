@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import { MUSICAL_GENRE_LABELS } from "@/constants/musicalGenres";
-import { LANGUAGE_LABELS } from "@/constants/languages";
 import {
   Dialog,
   DialogContent,
@@ -31,7 +30,6 @@ import {
 } from "@/shared/ui/collapsible";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { ScrollArea } from "@/shared/ui/scroll-area";
-import { Badge } from "@/shared/ui/badge";
 import { toast } from "sonner";
 import {
   Plus,
@@ -51,22 +49,22 @@ import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/
 import { useCurrentOrgId } from "@/shared/hooks/useCurrentOrgId";
 import { AbramusSearchRow } from "@/modules/catalog/components/AbramusSearchRow";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import type { WorkType } from "@/modules/catalog/components/WorkTypeSelectorModal";
+import { WorkOriginBadge } from "@/modules/catalog/components/WorkOriginBadge";
 import {
-  dbStatusToSelect,
-  parseDurationText,
-  workToParticipants,
-  workTitle,
-  workOtherTitles,
-  workRelatedReferences,
-  workFullLyrics,
-  workCreatedByAi,
-  workTypeAiValue,
-  workAiHarmony,
-  workAiMelody,
-  workAiLyrics,
+  WORK_LANGUAGE_OPTIONS,
+  WORK_PARTICIPANT_ROLE_OPTIONS,
+  WORK_STATUS_OPTIONS,
+  isWorkAiUsageLevel,
+  isWorkOrigin,
+  workParticipantRoleLabel,
+  type WorkAiUsageLevel,
+  type WorkOrigin,
+} from "@/modules/catalog/constants/work-options";
+import type { Work, WorkAiElement } from "@/modules/catalog/types/catalog.types";
+import {
   workToFormFields,
   formToWorkPayload,
+  type ParticipantForm,
 } from "@/modules/catalog/mappers";
 import { workSchema } from "@/modules/catalog/lib/work-schema";
 
@@ -152,25 +150,6 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
   );
 }
 
-export const WorkTypeBadge = ({
-  type,
-}: {
-  type?: WorkType | string | null;
-}) => {
-  if (type === "autoral") {
-    return (
-      <Badge variant="info" data-testid="badge-type-obra-autoral">
-        Obra Autoral
-      </Badge>
-    );
-  }
-  return (
-    <Badge variant="warning" data-testid="badge-type-obra-referencia">
-      Obra por Referência
-    </Badge>
-  );
-};
-
 interface SelectedProject {
   id: string;
   nome: string;
@@ -180,129 +159,105 @@ interface SelectedProject {
 interface WorkFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  obra?: any;
+  /** Persisted work (edit/view) or a work-shaped seed (e.g. projectToWorkSeed). */
+  work?: Partial<Work> | null;
   mode: "create" | "edit" | "view";
   /**
-   * Work type chosen in the selector (Task #288). When given,
+   * Work origin chosen in the selector (Task #288). When given,
    * it forces the classification in the header. In "edit"/"view" mode it is
-   * derived from the `obra.tipo_obra` record.
+   * derived from the record's `work_origin`.
    */
-  tipoObra?: WorkType;
+  workOrigin?: WorkOrigin;
   /** Called after a successful save — used to open a prefilled contract modal */
   onSaved?: (info: { title: string; notes: string }) => void;
 }
 
-interface Participant {
-  id: string;
-  name: string;
-  classeFuncao: string;
-  link: string;
-  percentual: string;
+/** Form row of a participant; `artist_id` only links the row to a registered artist in the form. */
+interface Participant extends ParticipantForm {
   artist_id?: string;
 }
 
-interface IAElement {
-  ferramenta: string;
-  prompt: string;
-}
+const EMPTY_AI_ELEMENT: WorkAiElement = { tool: "", prompt: "" };
 
 const musicGenres = MUSICAL_GENRE_LABELS;
-const idiomas = LANGUAGE_LABELS;
-const situacoes = ["Em Análise", "Pendente", "Registrado", "Rejeitado"];
-const classesFuncao = [
-  "Editor",
-  "Administrador",
-  "Compositor/Autor",
-  "Tradutor",
-];
 
 export function WorkFormModal({
   open,
   onOpenChange,
-  obra: work,
+  work,
   mode,
-  tipoObra: workTypeProp,
+  workOrigin: workOriginProp,
   onSaved,
 }: WorkFormModalProps) {
   const { addWork, updateWork } = useWorks();
   const { orgId } = useCurrentOrgId();
 
-  // Resolution of the work type. On creation it comes from the selector (prop). On
-  // edit/view it comes from the record itself. Default = referencia.
-  const workType: WorkType = (workTypeProp ??
-    (work?.tipo_obra as WorkType | undefined) ??
-    "referencia") as WorkType;
+  // Resolution of the work origin. On creation it comes from the selector (prop). On
+  // edit/view it comes from the record itself. Default = reference.
+  const persistedOrigin = work?.work_origin;
+  const workOrigin: WorkOrigin =
+    workOriginProp ?? (isWorkOrigin(persistedOrigin) ? persistedOrigin : "reference");
   const [selectedProject, setSelectedProject] =
     useState<SelectedProject | null>(null);
   const [searchProject, setSearchProject] = useState("");
   const debouncedSearchProject = useDebounce(searchProject, 300);
   const [searchProjectOpen, setSearchProjectOpen] = useState(false);
-  const initialDurationText = parseDurationText(work?.duration_text);
-  const [codEcad, setCodEcad] = useState(work?.cod_ecad ?? work?.codEcad ?? "");
-  const [codEntidade, setCodEntidade] = useState(
-    work?.cod_entidade ?? work?.codEntidade ?? "",
-  );
-  const [iswc, setIswc] = useState(work?.iswc || "");
-  const [workTitleValue, setWorkTitle] = useState(workTitle(work));
-  const [situacao, setSituacao] = useState(dbStatusToSelect(work?.status));
-  const [musicGenre, setMusicGenre] = useState(
-    work?.music_genre?.toLowerCase() || "",
-  );
-  const [idioma, setIdioma] = useState(work?.idioma || "");
-  const [durationMin, setDurationMin] = useState(
-    work?.duracaoMin ?? initialDurationText.min,
-  );
-  const [durationSeg, setDurationSeg] = useState(
-    work?.duracaoSeg ?? initialDurationText.seg,
-  );
-  const [instrumental, setInstrumental] = useState(work?.instrumental || "nao");
-  const [criadaPorIA, setCriadaPorIA] = useState(() => workCreatedByAi(work));
-  const [aiType, setAiType] = useState(() => workTypeAiValue(work));
-  const [iaHarmonia, setIaHarmonia] = useState<IAElement>(() => workAiHarmony(work));
-  const [iaMelodia, setIaMelodia] = useState<IAElement>(() => workAiMelody(work));
-  const [aiLyrics, setAiLyrics] = useState<IAElement>(() => workAiLyrics(work));
-  const [participants, setParticipants] = useState<Participant[]>(() =>
-    workToParticipants(work),
-  );
-  const [otherTitles, setOtherTitles] = useState<string[]>(() => workOtherTitles(work));
-  const [referenciasConexas, setReferenciasConexas] = useState<string[]>(() => workRelatedReferences(work));
-  const [fullLyrics, setFullLyrics] = useState(() => workFullLyrics(work));
-  const [aceitaTermos, setAceitaTermos] = useState(false);
+  const [initialFields] = useState(() => workToFormFields(work));
+  const [ecadCode, setEcadCode] = useState(initialFields.ecadCode);
+  const [societyCode, setSocietyCode] = useState(initialFields.societyCode);
+  const [iswc, setIswc] = useState(initialFields.iswc);
+  const [workTitleValue, setWorkTitle] = useState(initialFields.title);
+  const [status, setStatus] = useState(initialFields.status);
+  const [musicGenre, setMusicGenre] = useState(initialFields.musicGenre);
+  const [language, setLanguage] = useState(initialFields.language);
+  const [durationMinutes, setDurationMinutes] = useState(initialFields.durationMinutes);
+  const [durationSeconds, setDurationSeconds] = useState(initialFields.durationSeconds);
+  const [isInstrumental, setIsInstrumental] = useState(initialFields.isInstrumental);
+  const [aiUsed, setAiUsed] = useState(initialFields.aiUsed);
+  const [aiUsageLevel, setAiUsageLevel] = useState<WorkAiUsageLevel | "">(initialFields.aiUsageLevel);
+  const [aiHarmony, setAiHarmony] = useState<WorkAiElement>(initialFields.aiHarmony);
+  const [aiMelody, setAiMelody] = useState<WorkAiElement>(initialFields.aiMelody);
+  const [aiLyrics, setAiLyrics] = useState<WorkAiElement>(initialFields.aiLyrics);
+  const [participants, setParticipants] = useState<Participant[]>(initialFields.participants);
+  const [alternativeTitles, setAlternativeTitles] = useState<string[]>(initialFields.alternativeTitles);
+  const [relatedReferences, setRelatedReferences] = useState<string[]>(initialFields.relatedReferences);
+  const [lyrics, setLyrics] = useState(initialFields.lyrics);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [viewArtist, setViewArtist] = useState<Artist | null>(null);
 
-  // Sync state whenever the modal opens or the obra record changes
+  // Sync state whenever the modal opens or the work record changes
   useEffect(() => {
     if (!open) return;
     const f = workToFormFields(work);
     setSearchProject("");
     setSearchProjectOpen(false);
     setWorkTitle(f.title);
-    setSituacao(f.situacao);
-    setMusicGenre(f.generoMusical);
-    setIdioma(f.idioma);
-    setDurationMin(f.duracaoMin);
-    setDurationSeg(f.duracaoSeg);
-    setInstrumental(f.instrumental);
-    setCodEcad(f.codEcad);
-    setCodEntidade(f.codEntidade);
+    setStatus(f.status);
+    setMusicGenre(f.musicGenre);
+    setLanguage(f.language);
+    setDurationMinutes(f.durationMinutes);
+    setDurationSeconds(f.durationSeconds);
+    setIsInstrumental(f.isInstrumental);
+    setEcadCode(f.ecadCode);
+    setSocietyCode(f.societyCode);
     setIswc(f.iswc);
-    setCriadaPorIA(f.criadaPorIA);
-    setAiType(f.tipoIA);
-    setIaHarmonia(f.iaHarmonia);
-    setIaMelodia(f.iaMelodia);
-    setAiLyrics(f.iaLetra);
-    setParticipants(f.participantes);
-    setOtherTitles(f.outrosTitulos);
-    setReferenciasConexas(f.referenciasConexas);
-    setFullLyrics(f.letraCompleta);
-    setAceitaTermos(false);
+    setAiUsed(f.aiUsed);
+    setAiUsageLevel(f.aiUsageLevel);
+    setAiHarmony(f.aiHarmony);
+    setAiMelody(f.aiMelody);
+    setAiLyrics(f.aiLyrics);
+    setParticipants(f.participants);
+    setAlternativeTitles(f.alternativeTitles);
+    setRelatedReferences(f.relatedReferences);
+    setLyrics(f.lyrics);
+    setTermsAccepted(false);
   }, [open, work]);
 
-  // Hydrates the linked project from obra.project_id — fetches DIRECTLY by
+  // Hydrates the linked project from work.project_id — fetches DIRECTLY by
   // ID (GET /projects/:id), does not depend on the project being among the first
   // records loaded (Task J: it used to use an unfiltered useProjetos(), which
   // truncated at 50 projects per tenant).
-  const linkedProjectId: string | undefined = work?.project_id ?? work?.projectId;
+  const linkedProjectId: string | undefined = work?.project_id ?? undefined;
   const { entity: linkedProject } = useEntityById<ProjetoWithRelations>(
     "projects",
     open ? linkedProjectId : undefined,
@@ -338,8 +293,8 @@ export function WorkFormModal({
   });
 
   const [participationOpen, setParticipationOpen] = useState(true);
-  const [otherTitlesOpen, setOtherTitlesOpen] = useState(false);
-  const [referenciasOpen, setReferenciasOpen] = useState(false);
+  const [alternativeTitlesOpen, setAlternativeTitlesOpen] = useState(false);
+  const [relatedReferencesOpen, setRelatedReferencesOpen] = useState(false);
   const [lyricsOpen, setLyricsOpen] = useState(true);
 
   const isViewMode = mode === "view";
@@ -352,7 +307,7 @@ export function WorkFormModal({
 
   const calculateTotalPercentage = () => {
     return participants.reduce(
-      (total, p) => total + (parseFloat(p.percentual) || 0),
+      (total, p) => total + (parseFloat(p.percentage) || 0),
       0,
     );
   };
@@ -363,9 +318,9 @@ export function WorkFormModal({
       {
         id: crypto.randomUUID(),
         name: "",
-        classeFuncao: "",
+        role: "unspecified",
         link: "",
-        percentual: "",
+        percentage: "",
       },
     ]);
   };
@@ -384,48 +339,48 @@ export function WorkFormModal({
     setParticipants(participants.filter((p) => p.id !== id));
   };
 
-  const addOtherTitle = () => {
-    setOtherTitles([...otherTitles, ""]);
+  const addAlternativeTitle = () => {
+    setAlternativeTitles([...alternativeTitles, ""]);
   };
 
-  const updateOtherTitle = (index: number, value: string) => {
-    const newTitles = [...otherTitles];
+  const updateAlternativeTitle = (index: number, value: string) => {
+    const newTitles = [...alternativeTitles];
     newTitles[index] = value;
-    setOtherTitles(newTitles);
+    setAlternativeTitles(newTitles);
   };
 
-  const removeOtherTitle = (index: number) => {
-    setOtherTitles(otherTitles.filter((_, i) => i !== index));
+  const removeAlternativeTitle = (index: number) => {
+    setAlternativeTitles(alternativeTitles.filter((_, i) => i !== index));
   };
 
-  const addReferenciaConexas = () => {
-    setReferenciasConexas([...referenciasConexas, ""]);
+  const addRelatedReference = () => {
+    setRelatedReferences([...relatedReferences, ""]);
   };
 
-  const updateReferenciaConexas = (index: number, value: string) => {
-    const newRefs = [...referenciasConexas];
+  const updateRelatedReference = (index: number, value: string) => {
+    const newRefs = [...relatedReferences];
     newRefs[index] = value;
-    setReferenciasConexas(newRefs);
+    setRelatedReferences(newRefs);
   };
 
-  const removeReferenciaConexas = (index: number) => {
-    setReferenciasConexas(referenciasConexas.filter((_, i) => i !== index));
+  const removeRelatedReference = (index: number) => {
+    setRelatedReferences(relatedReferences.filter((_, i) => i !== index));
   };
 
-  const durationMinNum = Number(durationMin);
-  const durationSegNum = Number(durationSeg);
-  const durationMinError =
-    durationMin !== "" && (!Number.isInteger(durationMinNum) || durationMinNum < 0)
+  const durationMinutesNum = Number(durationMinutes);
+  const durationSecondsNum = Number(durationSeconds);
+  const durationMinutesError =
+    durationMinutes !== "" && (!Number.isInteger(durationMinutesNum) || durationMinutesNum < 0)
       ? "Minutos não pode ser negativo"
       : null;
-  const durationSegError =
-    durationSeg !== "" &&
-    (!Number.isInteger(durationSegNum) ||
-      durationSegNum < 0 ||
-      durationSegNum > 59)
+  const durationSecondsError =
+    durationSeconds !== "" &&
+    (!Number.isInteger(durationSecondsNum) ||
+      durationSecondsNum < 0 ||
+      durationSecondsNum > 59)
       ? "Segundos deve estar entre 0 e 59"
       : null;
-  const hasDurationError = !!(durationMinError || durationSegError);
+  const hasDurationError = !!(durationMinutesError || durationSecondsError);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -437,19 +392,19 @@ export function WorkFormModal({
     }
 
     const validation = workSchema.safeParse({
-      tituloObra: workTitleValue,
-      generoMusical: musicGenre,
-      idioma,
-      situacao,
+      title: workTitleValue,
+      musicGenre,
+      language,
+      status,
       iswc,
-      codEcad,
-      codEntidade,
-      duracaoMin: String(durationMin),
-      duracaoSeg: String(durationSeg),
-      instrumental: instrumental as "sim" | "nao",
-      criadaPorIA,
-      letraCompleta: fullLyrics,
-      aceitaTermos,
+      ecadCode,
+      societyCode,
+      durationMinutes: String(durationMinutes),
+      durationSeconds: String(durationSeconds),
+      isInstrumental,
+      aiUsed,
+      lyrics,
+      termsAccepted,
     });
 
     if (!validation.success) {
@@ -467,35 +422,34 @@ export function WorkFormModal({
 
     const payload = formToWorkPayload({
       title: workTitleValue,
-      generoMusical: musicGenre,
-      idioma,
+      musicGenre,
+      language,
       iswc,
-      codEcad,
-      codEntidade,
-      duracaoMin: durationMin,
-      duracaoSeg: durationSeg,
-      instrumental,
-      criadaPorIA,
-      tipoIA: aiType,
-      iaHarmonia,
-      iaMelodia,
-      iaLetra: aiLyrics,
-      outrosTitulos: otherTitles,
-      referenciasConexas,
-      letraCompleta: fullLyrics,
-      participantes: participants,
-      situacao,
+      ecadCode,
+      societyCode,
+      durationMinutes,
+      durationSeconds,
+      isInstrumental,
+      aiUsed,
+      aiUsageLevel,
+      aiHarmony,
+      aiMelody,
+      aiLyrics,
+      alternativeTitles,
+      relatedReferences,
+      lyrics,
+      participants,
+      status,
       projectId: selectedProject?.id ?? null,
       artistId: null,
-      tipoObra: workType,
-      orgId: orgId as string,
+      workOrigin,
     });
 
     try {
       if (mode === "edit" && work?.id) {
         await updateWork.mutateAsync({ id: work.id, ...payload, expectedUpdatedAt: getExpectedUpdatedAt(work) });
       } else {
-        await addWork.mutateAsync(payload as any);
+        await addWork.mutateAsync(payload);
       }
 
       onOpenChange(false);
@@ -503,12 +457,16 @@ export function WorkFormModal({
       // Opens the prefilled contract modal after closing the work modal
       const todayDate = new Date().toISOString().split("T")[0];
       const participantRows = participants
-        .filter((p) => p.name || p.classeFuncao)
+        .filter((p) => p.name || p.role !== "unspecified")
         .map((p) => {
-          const parties = [p.name, p.classeFuncao, p.percentual ? `${p.percentual}%` : ""].filter(Boolean);
+          const parties = [
+            p.name,
+            p.role !== "unspecified" ? workParticipantRoleLabel(p.role) : "",
+            p.percentage ? `${p.percentage}%` : "",
+          ].filter(Boolean);
           return parties.join(" – ");
         });
-      const obsLinhas: string[] = [
+      const noteLines: string[] = [
         `Obra: ${workTitleValue}`,
         iswc ? `ISWC: ${iswc}` : null,
         musicGenre ? `Gênero: ${musicGenre}` : null,
@@ -520,7 +478,7 @@ export function WorkFormModal({
 
       onSaved?.({
         title: `Cessão de Obras – ${workTitleValue}`,
-        notes: obsLinhas.join("\n"),
+        notes: noteLines.join("\n"),
       });
     } catch (err) {
       if (handleConcurrencyConflict(err, "obra")) return;
@@ -534,7 +492,7 @@ export function WorkFormModal({
         <DialogHeader>
           <div className="flex items-center justify-between gap-3 pr-6">
             <DialogTitle>{title}</DialogTitle>
-            <WorkTypeBadge type={workType} />
+            <WorkOriginBadge origin={workOrigin} />
           </div>
         </DialogHeader>
 
@@ -551,7 +509,7 @@ export function WorkFormModal({
             {selectedProject ? (
               <div
                 className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border"
-                data-testid="projeto-vinculado-card"
+                data-testid="linked-project-card"
               >
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                   <Briefcase className="h-5 w-5 text-primary-foreground" />
@@ -559,7 +517,7 @@ export function WorkFormModal({
                 <div className="flex-1 min-w-0">
                   <p
                     className="font-medium truncate"
-                    data-testid="text-projeto-vinculado-nome"
+                    data-testid="text-linked-project-name"
                   >
                     {selectedProject.nome}
                   </p>
@@ -575,7 +533,7 @@ export function WorkFormModal({
                     variant="ghost"
                     size="icon"
                     onClick={() => setSelectedProject(null)}
-                    data-testid="button-remove-projeto-vinculado"
+                    data-testid="button-remove-linked-project"
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -600,7 +558,7 @@ export function WorkFormModal({
                       disabled={isViewMode}
                       placeholder="Digite para buscar um projeto concluído..."
                       className="pl-10"
-                      data-testid="input-buscar-projeto"
+                      data-testid="input-search-project"
                     />
                   </div>
                 </PopoverTrigger>
@@ -657,9 +615,9 @@ export function WorkFormModal({
                                 autoParticipants = composersArr.map((name: string) => ({
                                   id: crypto.randomUUID(),
                                   name: name.trim(),
-                                  classeFuncao: "compositor/autor",
+                                  role: "composer_author",
                                   link: "",
-                                  percentual: "",
+                                  percentage: "",
                                 }));
                               }
                             } catch {}
@@ -668,9 +626,9 @@ export function WorkFormModal({
                               autoParticipants = [{
                                 id: crypto.randomUUID(),
                                 name: artistNameResolved,
-                                classeFuncao: "compositor/autor",
+                                role: "composer_author",
                                 link: "",
-                                percentual: "100",
+                                percentage: "100",
                                 artist_id: artistId ?? undefined,
                               }];
                             }
@@ -697,7 +655,7 @@ export function WorkFormModal({
                                   selectProject();
                                 }
                               }}
-                              data-testid={`option-projeto-${p.id}`}
+                              data-testid={`option-project-${p.id}`}
                             >
                               <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
                                 <Briefcase className="h-4 w-4 text-primary-foreground" />
@@ -716,7 +674,7 @@ export function WorkFormModal({
                       ) : (
                         <p
                           className="text-sm text-muted-foreground text-center py-4"
-                          data-testid="text-empty-projetos"
+                          data-testid="text-empty-projects"
                         >
                           Nenhum projeto concluído encontrado.
                         </p>
@@ -749,8 +707,8 @@ export function WorkFormModal({
                 </span>
                 <Input
                   className="h-8 text-sm min-w-0"
-                  value={codEntidade}
-                  onChange={(e) => setCodEntidade(e.target.value)}
+                  value={societyCode}
+                  onChange={(e) => setSocietyCode(e.target.value)}
                   disabled={isViewMode}
                 />
               </div>
@@ -762,8 +720,8 @@ export function WorkFormModal({
                 </span>
                 <Input
                   className="h-8 text-sm min-w-0"
-                  value={codEcad}
-                  onChange={(e) => setCodEcad(e.target.value)}
+                  value={ecadCode}
+                  onChange={(e) => setEcadCode(e.target.value)}
                   disabled={isViewMode}
                 />
               </div>
@@ -818,23 +776,23 @@ export function WorkFormModal({
                 </Select>
               </div>
 
-              {/* Idioma — col-span-2 | Row 2 */}
+              {/* Language — col-span-2 | Row 2 */}
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">
                   Idioma
                 </span>
                 <Select
-                  value={idioma}
-                  onValueChange={setIdioma}
+                  value={language}
+                  onValueChange={setLanguage}
                   disabled={isViewMode}
                 >
-                  <SelectTrigger className="h-8 text-sm min-w-0">
+                  <SelectTrigger className="h-8 text-sm min-w-0" data-testid="trigger-work-language">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {idiomas.map((i) => (
-                      <SelectItem key={i} value={i.toLowerCase()}>
-                        {i}
+                    {WORK_LANGUAGE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -848,10 +806,10 @@ export function WorkFormModal({
                 </span>
                 <div className="flex items-center gap-1">
                   <Input
-                    data-testid="input-duracao-minutos"
-                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationMinError ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                    value={durationMin}
-                    onChange={(e) => setDurationMin(e.target.value)}
+                    data-testid="input-duration-minutes"
+                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationMinutesError ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    value={durationMinutes}
+                    onChange={(e) => setDurationMinutes(e.target.value)}
                     disabled={isViewMode}
                     placeholder="0"
                   />
@@ -859,10 +817,10 @@ export function WorkFormModal({
                     min
                   </span>
                   <Input
-                    data-testid="input-duracao-segundos"
-                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationSegError ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                    value={durationSeg}
-                    onChange={(e) => setDurationSeg(e.target.value)}
+                    data-testid="input-duration-seconds"
+                    className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationSecondsError ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    value={durationSeconds}
+                    onChange={(e) => setDurationSeconds(e.target.value)}
                     disabled={isViewMode}
                     placeholder="0"
                   />
@@ -870,9 +828,9 @@ export function WorkFormModal({
                     seg
                   </span>
                 </div>
-                {(durationMinError || durationSegError) && (
+                {(durationMinutesError || durationSecondsError) && (
                   <p className="text-xs text-destructive">
-                    {durationMinError || durationSegError}
+                    {durationMinutesError || durationSecondsError}
                   </p>
                 )}
               </div>
@@ -884,8 +842,9 @@ export function WorkFormModal({
                 </span>
                 <div className="flex items-center h-8">
                   <Switch
-                    checked={instrumental === "sim"}
-                    onCheckedChange={(v) => setInstrumental(v ? "sim" : "nao")}
+                    checked={isInstrumental}
+                    onCheckedChange={setIsInstrumental}
+                    data-testid="switch-work-instrumental"
                     disabled={isViewMode}
                   />
                 </div>
@@ -898,8 +857,9 @@ export function WorkFormModal({
                 </span>
                 <div className="flex items-center h-8">
                   <Switch
-                    checked={criadaPorIA === "sim"}
-                    onCheckedChange={(v) => setCriadaPorIA(v ? "sim" : "nao")}
+                    checked={aiUsed}
+                    onCheckedChange={setAiUsed}
+                    data-testid="switch-work-ai-used"
                     disabled={isViewMode}
                   />
                 </div>
@@ -911,20 +871,17 @@ export function WorkFormModal({
                   Situação
                 </span>
                 <Select
-                  value={situacao}
-                  onValueChange={setSituacao}
+                  value={status}
+                  onValueChange={setStatus}
                   disabled={isViewMode}
                 >
-                  <SelectTrigger className="h-8 text-sm min-w-0">
+                  <SelectTrigger className="h-8 text-sm min-w-0" data-testid="trigger-work-status">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {situacoes.map((s) => (
-                      <SelectItem
-                        key={s}
-                        value={s.toLowerCase().replace(/ /g, "_")}
-                      >
-                        {s}
+                    {WORK_STATUS_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -934,37 +891,37 @@ export function WorkFormModal({
           </div>
 
           {/* Created by generative AI - conditional */}
-          {criadaPorIA === "sim" && (
+          {aiUsed && (
             <div className="border border-border rounded-lg p-6 space-y-5 bg-muted/10">
               <h3 className="font-semibold">Criado por IA Generativa</h3>
 
               <RadioGroup
-                value={aiType}
-                onValueChange={setAiType}
+                value={aiUsageLevel}
+                onValueChange={(value) => setAiUsageLevel(isWorkAiUsageLevel(value) ? value : "")}
                 className="flex gap-6"
                 disabled={isViewMode}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem
-                    value="totalmente"
-                    id="ia_total"
+                    value="full"
+                    id="ai_usage_full"
                     className="border-primary text-primary"
                   />
-                  <label htmlFor="ia_total" className="text-sm">
+                  <label htmlFor="ai_usage_full" className="text-sm">
                     A obra foi totalmente gerada pela inteligência artificial
                     generativa.
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="parcialmente" id="ia_parcial" />
-                  <label htmlFor="ia_parcial" className="text-sm">
+                  <RadioGroupItem value="partial" id="ai_usage_partial" />
+                  <label htmlFor="ai_usage_partial" className="text-sm">
                     A obra foi parcialmente gerada pela inteligência artificial
                     generativa.
                   </label>
                 </div>
               </RadioGroup>
 
-              {aiType && (
+              {aiUsageLevel && (
                 <div className="space-y-4 mt-4">
                   <p className="text-sm text-muted-foreground">
                     Elementos da obra musical criados por inteligência
@@ -980,11 +937,11 @@ export function WorkFormModal({
                           Ferramenta
                         </Label>
                         <Input
-                          value={iaHarmonia.ferramenta}
+                          value={aiHarmony.tool}
                           onChange={(e) =>
-                            setIaHarmonia({
-                              ...iaHarmonia,
-                              ferramenta: e.target.value,
+                            setAiHarmony({
+                              ...aiHarmony,
+                              tool: e.target.value,
                             })
                           }
                           disabled={isViewMode}
@@ -997,10 +954,10 @@ export function WorkFormModal({
                             Prompt
                           </Label>
                           <Input
-                            value={iaHarmonia.prompt}
+                            value={aiHarmony.prompt}
                             onChange={(e) =>
-                              setIaHarmonia({
-                                ...iaHarmonia,
+                              setAiHarmony({
+                                ...aiHarmony,
                                 prompt: e.target.value,
                               })
                             }
@@ -1013,9 +970,7 @@ export function WorkFormModal({
                           variant="ghost"
                           size="icon"
                           className="mt-5"
-                          onClick={() =>
-                            setIaHarmonia({ ferramenta: "", prompt: "" })
-                          }
+                          onClick={() => setAiHarmony(EMPTY_AI_ELEMENT)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -1032,11 +987,11 @@ export function WorkFormModal({
                           Ferramenta
                         </Label>
                         <Input
-                          value={iaMelodia.ferramenta}
+                          value={aiMelody.tool}
                           onChange={(e) =>
-                            setIaMelodia({
-                              ...iaMelodia,
-                              ferramenta: e.target.value,
+                            setAiMelody({
+                              ...aiMelody,
+                              tool: e.target.value,
                             })
                           }
                           disabled={isViewMode}
@@ -1049,10 +1004,10 @@ export function WorkFormModal({
                             Prompt
                           </Label>
                           <Input
-                            value={iaMelodia.prompt}
+                            value={aiMelody.prompt}
                             onChange={(e) =>
-                              setIaMelodia({
-                                ...iaMelodia,
+                              setAiMelody({
+                                ...aiMelody,
                                 prompt: e.target.value,
                               })
                             }
@@ -1065,9 +1020,7 @@ export function WorkFormModal({
                           variant="ghost"
                           size="icon"
                           className="mt-5"
-                          onClick={() =>
-                            setIaMelodia({ ferramenta: "", prompt: "" })
-                          }
+                          onClick={() => setAiMelody(EMPTY_AI_ELEMENT)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -1084,11 +1037,11 @@ export function WorkFormModal({
                           Ferramenta
                         </Label>
                         <Input
-                          value={aiLyrics.ferramenta}
+                          value={aiLyrics.tool}
                           onChange={(e) =>
                             setAiLyrics({
                               ...aiLyrics,
-                              ferramenta: e.target.value,
+                              tool: e.target.value,
                             })
                           }
                           disabled={isViewMode}
@@ -1114,9 +1067,7 @@ export function WorkFormModal({
                           variant="ghost"
                           size="icon"
                           className="mt-5"
-                          onClick={() =>
-                            setAiLyrics({ ferramenta: "", prompt: "" })
-                          }
+                          onClick={() => setAiLyrics(EMPTY_AI_ELEMENT)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -1179,19 +1130,19 @@ export function WorkFormModal({
                         <div className="col-span-3 space-y-1">
                           <Label className="text-xs">Classe/Função *</Label>
                           <Select
-                            value={p.classeFuncao}
+                            value={p.role === "unspecified" ? "" : p.role}
                             onValueChange={(v) =>
-                              updateParticipant(p.id, "classeFuncao", v)
+                              updateParticipant(p.id, "role", v)
                             }
                             disabled={isViewMode}
                           >
-                            <SelectTrigger className="min-w-0">
+                            <SelectTrigger className="min-w-0" data-testid={`trigger-participant-role-${p.id}`}>
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                             <SelectContent>
-                              {classesFuncao.map((c) => (
-                                <SelectItem key={c} value={c.toLowerCase()}>
-                                  {c}
+                              {WORK_PARTICIPANT_ROLE_OPTIONS.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -1212,11 +1163,11 @@ export function WorkFormModal({
                         <div className="col-span-2 space-y-1">
                           <Label className="text-xs">% Part. *</Label>
                           <Input
-                            value={p.percentual}
+                            value={p.percentage}
                             onChange={(e) =>
                               updateParticipant(
                                 p.id,
-                                "percentual",
+                                "percentage",
                                 e.target.value,
                               )
                             }
@@ -1274,35 +1225,35 @@ export function WorkFormModal({
 
           {/* Other titles */}
           <Collapsible
-            open={otherTitlesOpen}
-            onOpenChange={setOtherTitlesOpen}
+            open={alternativeTitlesOpen}
+            onOpenChange={setAlternativeTitlesOpen}
           >
             <div className="border border-border rounded-lg bg-muted/10">
               <div className="flex items-center gap-2 p-5">
                 <CollapsibleTrigger className="flex flex-1 items-center justify-between">
                   <span className="font-semibold">Outros Títulos</span>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${otherTitlesOpen ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 transition-transform ${alternativeTitlesOpen ? "rotate-180" : ""}`}
                   />
                 </CollapsibleTrigger>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={addOtherTitle}
+                  onClick={addAlternativeTitle}
                   disabled={isViewMode}
                 >
                   <Plus className="w-4 h-4 mr-1" /> Adicionar
                 </Button>
               </div>
               <CollapsibleContent className="px-5 pb-5 space-y-3">
-                {otherTitles.length > 0 ? (
-                  otherTitles.map((title, index) => (
+                {alternativeTitles.length > 0 ? (
+                  alternativeTitles.map((title, index) => (
                     <div key={index} className="flex gap-2">
                       <Input
                         value={title}
                         onChange={(e) =>
-                          updateOtherTitle(index, e.target.value)
+                          updateAlternativeTitle(index, e.target.value)
                         }
                         disabled={isViewMode}
                         placeholder="Título alternativo"
@@ -1311,7 +1262,7 @@ export function WorkFormModal({
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeOtherTitle(index)}
+                        onClick={() => removeAlternativeTitle(index)}
                         disabled={isViewMode}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1328,33 +1279,33 @@ export function WorkFormModal({
           </Collapsible>
 
           {/* Related reference */}
-          <Collapsible open={referenciasOpen} onOpenChange={setReferenciasOpen}>
+          <Collapsible open={relatedReferencesOpen} onOpenChange={setRelatedReferencesOpen}>
             <div className="border border-border rounded-lg bg-muted/10">
               <div className="flex items-center gap-2 p-5">
                 <CollapsibleTrigger className="flex flex-1 items-center justify-between">
                   <span className="font-semibold">Referência Conexa</span>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${referenciasOpen ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 transition-transform ${relatedReferencesOpen ? "rotate-180" : ""}`}
                   />
                 </CollapsibleTrigger>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={addReferenciaConexas}
+                  onClick={addRelatedReference}
                   disabled={isViewMode}
                 >
                   <Plus className="w-4 h-4 mr-1" /> Adicionar
                 </Button>
               </div>
               <CollapsibleContent className="px-5 pb-5 space-y-3">
-                {referenciasConexas.length > 0 ? (
-                  referenciasConexas.map((ref, index) => (
+                {relatedReferences.length > 0 ? (
+                  relatedReferences.map((ref, index) => (
                     <div key={index} className="flex gap-2">
                       <Input
                         value={ref}
                         onChange={(e) =>
-                          updateReferenciaConexas(index, e.target.value)
+                          updateRelatedReference(index, e.target.value)
                         }
                         disabled={isViewMode}
                         placeholder="URL ou referência"
@@ -1363,7 +1314,7 @@ export function WorkFormModal({
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeReferenciaConexas(index)}
+                        onClick={() => removeRelatedReference(index)}
                         disabled={isViewMode}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1391,8 +1342,8 @@ export function WorkFormModal({
               <CollapsibleContent className="px-5 pb-5 space-y-3">
                 <Label>Letra Completa</Label>
                 <Textarea
-                  value={fullLyrics}
-                  onChange={(e) => setFullLyrics(e.target.value)}
+                  value={lyrics}
+                  onChange={(e) => setLyrics(e.target.value)}
                   disabled={isViewMode}
                   rows={6}
                   placeholder="Digite a letra completa da música aqui..."
@@ -1406,10 +1357,8 @@ export function WorkFormModal({
             <div className="flex items-center gap-2 p-4 bg-muted/10 rounded-lg border border-border">
               <Checkbox
                 id="termos"
-                checked={aceitaTermos}
-                onCheckedChange={(checked) =>
-                  setAceitaTermos(checked as boolean)
-                }
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked === true)}
                 className="border-primary data-[state=checked]:bg-primary"
               />
               <label htmlFor="termos" className="text-sm">
@@ -1437,7 +1386,7 @@ export function WorkFormModal({
                 disabled={
                   hasDurationError || addWork.isPending || updateWork.isPending
                 }
-                data-testid="button-submit-obra"
+                data-testid="button-submit-work"
               >
                 {addWork.isPending || updateWork.isPending
                   ? "Salvando..."

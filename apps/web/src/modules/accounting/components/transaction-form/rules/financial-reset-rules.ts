@@ -12,92 +12,92 @@ interface ConditionalReset {
 type ResetEntry = SimpleReset | ConditionalReset;
 
 export const RESET_MAP: Partial<Record<keyof TransactionFormData, ResetEntry[]>> = {
-  tipoTransacao: [
+  transactionType: [
     {
-      field: "tipoCliente",
-      when: (v) => ["imposto", "transferencia", "investimento"].includes(v),
+      field: "counterpartyType",
+      when: (v) => ["tax", "transfer", "investment"].includes(v),
     },
     "category",
-    "subcategoria",
-    "itemInvestimento",
-    "artistaVinculado",
-    "projetoVinculado",
-    "contratoVinculado",
-    "eventoVinculado",
-    "tipoVinculacao",
-    "motivoViagem",
+    "subcategory",
+    "investmentItem",
+    "artistId",
+    "projectId",
+    "contractId",
+    "eventId",
+    "linkType",
+    "travelReason",
     "advertisingName",
-    "orgaoArrecadador",
-    "centroCusto",
-    "competencia",
-    "contaOrigem",
-    "contaDestino",
+    "taxAuthority",
+    "costCenter",
+    "referenceMonth",
+    "sourceBankAccount",
+    "destinationBankAccount",
   ],
-  tipoCliente: [
+  counterpartyType: [
     "category",
-    "subcategoria",
-    "artistaVinculado",
-    "projetoVinculado",
-    "contratoVinculado",
-    "eventoVinculado",
-    "tipoVinculacao",
-    "motivoViagem",
+    "subcategory",
+    "artistId",
+    "projectId",
+    "contractId",
+    "eventId",
+    "linkType",
+    "travelReason",
     "advertisingName",
-    "centroCusto",
-    "competencia",
-    "contaOrigem",
-    "contaDestino",
+    "costCenter",
+    "referenceMonth",
+    "sourceBankAccount",
+    "destinationBankAccount",
   ],
   category: [
-    "subcategoria",
-    "itemInvestimento",
-    "artistaVinculado",
-    "projetoVinculado",
-    "contratoVinculado",
-    "eventoVinculado",
-    "tipoVinculacao",
-    "motivoViagem",
+    "subcategory",
+    "investmentItem",
+    "artistId",
+    "projectId",
+    "contractId",
+    "eventId",
+    "linkType",
+    "travelReason",
     "advertisingName",
-    "orgaoArrecadador",
-    "centroCusto",
-    "competencia",
-    "contaOrigem",
-    "contaDestino",
+    "taxAuthority",
+    "costCenter",
+    "referenceMonth",
+    "sourceBankAccount",
+    "destinationBankAccount",
   ],
-  subcategoria: [
-    "artistaVinculado",
-    "projetoVinculado",
-    "contratoVinculado",
-    "eventoVinculado",
-    "fornecedorCliente",
-    "orgaoArrecadador",
-    "tipoVinculacao",
-    "centroCusto",
-    "competencia",
-    "contaOrigem",
-    "contaDestino",
+  subcategory: [
+    "artistId",
+    "projectId",
+    "contractId",
+    "eventId",
+    "counterpartyName",
+    "taxAuthority",
+    "linkType",
+    "costCenter",
+    "referenceMonth",
+    "sourceBankAccount",
+    "destinationBankAccount",
   ],
-  tipoVinculacao: [
-    "artistaVinculado",
-    "projetoVinculado",
-    "contratoVinculado",
-    "eventoVinculado",
-    "fornecedorCliente",
-    "orgaoArrecadador",
-    "centroCusto",
-    "competencia",
-    "contaOrigem",
-    "contaDestino",
+  linkType: [
+    "artistId",
+    "projectId",
+    "contractId",
+    "eventId",
+    "counterpartyName",
+    "taxAuthority",
+    "costCenter",
+    "referenceMonth",
+    "sourceBankAccount",
+    "destinationBankAccount",
   ],
-  artistaVinculado: [
-    "projetoVinculado",
-    "eventoVinculado",
-    "contratoVinculado",
+  artistId: [
+    "projectId",
+    "eventId",
+    "contractId",
   ],
-  tipoPagamento: [
-    { field: "quantidadeParcelas",  when: (v) => v === "avista" },
-    { field: "intervaloParcelas",   value: "mensal", when: (v) => v === "avista" },
-    { field: "dataPrimeiraParcela", when: (v) => v === "avista" },
+  paymentType: [
+    { field: "installmentCount",     when: (v) => v === "upfront" },
+    { field: "installmentInterval",  value: "monthly", when: (v) => v === "upfront" },
+    { field: "firstInstallmentDate", when: (v) => v === "upfront" },
   ],
 };
 
@@ -124,19 +124,19 @@ export function applyResets(
 }
 
 const HIDDEN_FIELD_RULES: Partial<Record<keyof FinancialFormRules, (keyof TransactionFormData)[]>> = {
-  exibirItemInvestimento: ["itemInvestimento"],
-  exibirArtista: ["artistaVinculado"],
-  exibirProjeto: ["projetoVinculado"],
-  exibirEvento: ["eventoVinculado"],
-  exibirFornecedor: ["fornecedorCliente"],
-  exibirOrgaoArrecadador: ["orgaoArrecadador"],
-  exibirMotivoViagem: ["motivoViagem"],
+  exibirItemInvestimento: ["investmentItem"],
+  exibirArtista: ["artistId"],
+  exibirProjeto: ["projectId"],
+  exibirEvento: ["eventId"],
+  exibirFornecedor: ["counterpartyName"],
+  exibirOrgaoArrecadador: ["taxAuthority"],
+  exibirMotivoViagem: ["travelReason"],
   exibirAdvertisingName: ["advertisingName"],
-  exibirParcelamento: ["quantidadeParcelas", "intervaloParcelas", "dataPrimeiraParcela"],
+  exibirParcelamento: ["installmentCount", "installmentInterval", "firstInstallmentDate"],
 };
 
 function getResetValue(field: keyof TransactionFormData): string {
-  return field === "intervaloParcelas" ? "mensal" : "";
+  return field === "installmentInterval" ? "monthly" : "";
 }
 
 export function getHiddenFieldResets(
@@ -156,9 +156,8 @@ export function getHiddenFieldResets(
     if (rules[ruleKey] !== false) continue;
 
     for (const field of relatedFields) {
-      if (field === "artistaVinculado" && formData.tipoVinculacao === "artista") continue;
-      if (field === "projetoVinculado" && formData.tipoVinculacao === "projeto") continue;
-      if (field === "fornecedorCliente" && formData.tipoVinculacao === "empresa") continue;
+      if (field === "artistId" && formData.linkType === "artist") continue;
+      if (field === "projectId" && formData.linkType === "project") continue;
 
       const resetValue = getResetValue(field);
       if (formData[field] !== resetValue) {

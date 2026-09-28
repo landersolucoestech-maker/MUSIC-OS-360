@@ -15,7 +15,7 @@ interface DetailsSectionProps {
   disabled:          boolean;
   updateField:       (field: keyof TransactionFormData, value: string) => void;
   handleFileUpload:  (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleRemoveAnexo: () => void;
+  handleRemoveAttachment: () => void;
 }
 
 export function DetailsSection({
@@ -24,10 +24,10 @@ export function DetailsSection({
   disabled,
   updateField,
   handleFileUpload,
-  handleRemoveAnexo: handleRemoveAttachment,
+  handleRemoveAttachment,
 }: DetailsSectionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const isLocalPendingAttachment = formData.anexoUrl.startsWith("blob:");
+  const isLocalPendingAttachment = formData.attachmentUrl.startsWith("blob:");
 
   return (
     <Card className="bg-muted/30 border-border">
@@ -48,8 +48,8 @@ export function DetailsSection({
         <div className="space-y-2">
           <Label className="text-sm">Observações</Label>
           <Textarea
-            value={formData.observacao}
-            onChange={(e) => updateField("observacao", e.target.value)}
+            value={formData.notes}
+            onChange={(e) => updateField("notes", e.target.value)}
             disabled={disabled}
             placeholder="Informações adicionais sobre a transação..."
             rows={3}
@@ -58,11 +58,11 @@ export function DetailsSection({
 
         <div className="space-y-2">
           <Label className="text-sm">Anexo (Comprovante)</Label>
-          {formData.anexoUrl ? (
+          {formData.attachmentUrl ? (
             <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
               <FileText className="h-5 w-5 text-muted-foreground" />
               <div className="flex-1 min-w-0">
-                <span className="block text-sm truncate">{formData.anexoNome}</span>
+                <span className="block text-sm truncate">{formData.attachmentName}</span>
                 {isLocalPendingAttachment && (
                   <span className="block text-xs text-muted-foreground">
                     Arquivo local pendente de upload
@@ -96,7 +96,7 @@ export function DetailsSection({
               </div>
             </div>
           )}
-          <FieldError error={errors.anexoUrl} />
+          <FieldError error={errors.attachmentUrl} />
           <p className="text-xs text-muted-foreground">
             Formatos aceitos: PDF, JPG, PNG, DOC, DOCX
           </p>

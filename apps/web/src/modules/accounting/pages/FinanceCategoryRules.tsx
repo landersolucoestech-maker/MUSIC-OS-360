@@ -65,13 +65,13 @@ const QUERY_KEY_RULES = ["finance-category-rules"] as const;
 const QUERY_KEY_CATEGORIES = ["finance-category-rule-categories"] as const;
 
 const TYPE_BADGE: Record<FinanceRuleTransactionType, BadgeVariant> = {
-  RECEITA: "success",
-  DESPESA: "danger",
+  REVENUE: "success",
+  EXPENSE: "danger",
 };
 
-const ORIGIN_BADGE: Record<"SISTEMA" | "PERSONALIZADA", BadgeVariant> = {
-  SISTEMA: "info",
-  PERSONALIZADA: "neutral",
+const ORIGIN_BADGE: Record<"SYSTEM" | "CUSTOM", BadgeVariant> = {
+  SYSTEM: "info",
+  CUSTOM: "neutral",
 };
 
 function isRuleStatusFilter(value: string): value is "all" | "active" | "inactive" {
@@ -79,15 +79,15 @@ function isRuleStatusFilter(value: string): value is "all" | "active" | "inactiv
 }
 
 function transactionTypeFromCategory(category: FinancialCategory): FinanceRuleTransactionType | null {
-  if (category.transaction_types.includes("REVENUE")) return "RECEITA";
-  if (category.transaction_types.includes("EXPENSE")) return "DESPESA";
+  if (category.transaction_types.includes("REVENUE")) return "REVENUE";
+  if (category.transaction_types.includes("EXPENSE")) return "EXPENSE";
   return null;
 }
 
 function buildCategoriesByType(categories: FinancialCategory[]) {
   const next: Record<FinanceRuleTransactionType, Array<{ id: string; name: string }>> = {
-    RECEITA: [...FINANCE_CATEGORY_OPTIONS.RECEITA],
-    DESPESA: [...FINANCE_CATEGORY_OPTIONS.DESPESA],
+    REVENUE: [...FINANCE_CATEGORY_OPTIONS.REVENUE],
+    EXPENSE: [...FINANCE_CATEGORY_OPTIONS.EXPENSE],
   };
 
   categories
@@ -100,8 +100,8 @@ function buildCategoriesByType(categories: FinancialCategory[]) {
     });
 
   return {
-    RECEITA: next.RECEITA.sort((a, b) => a.name.localeCompare(b.name)),
-    DESPESA: next.DESPESA.sort((a, b) => a.name.localeCompare(b.name)),
+    REVENUE: next.REVENUE.sort((a, b) => a.name.localeCompare(b.name)),
+    EXPENSE: next.EXPENSE.sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
 
@@ -152,7 +152,7 @@ export default function FinanceCategoryRules() {
   }, [allRules, filterOrigin, filterStatus, filterType, search]);
 
   const { page, pageSize, total, pageItems, setPage, setPageSize } = usePagination(filteredRules, 10);
-  const visibleSelectableRuleIds = pageItems.filter((rule) => rule.origin !== "SISTEMA").map((rule) => rule.id);
+  const visibleSelectableRuleIds = pageItems.filter((rule) => rule.origin !== "SYSTEM").map((rule) => rule.id);
   const selectedVisibleRuleIds = visibleSelectableRuleIds.filter((id) => selectedRuleIds.includes(id));
   const allVisibleSelectableSelected = visibleSelectableRuleIds.length > 0 && visibleSelectableRuleIds.every((id) => selectedRuleIds.includes(id));
 
@@ -278,8 +278,8 @@ export default function FinanceCategoryRules() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os tipos</SelectItem>
-                <SelectItem value="RECEITA">Receita</SelectItem>
-                <SelectItem value="DESPESA">Despesa</SelectItem>
+                <SelectItem value="REVENUE">Receita</SelectItem>
+                <SelectItem value="EXPENSE">Despesa</SelectItem>
               </SelectContent>
             </Select>
             <Select
@@ -293,8 +293,8 @@ export default function FinanceCategoryRules() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas as origens</SelectItem>
-                <SelectItem value="SISTEMA">Sistema</SelectItem>
-                <SelectItem value="PERSONALIZADA">Personalizada</SelectItem>
+                <SelectItem value="SYSTEM">Sistema</SelectItem>
+                <SelectItem value="CUSTOM">Personalizada</SelectItem>
               </SelectContent>
             </Select>
             <Select
@@ -382,7 +382,7 @@ export default function FinanceCategoryRules() {
                         <TableCell>
                           <Checkbox
                             checked={selectedRuleIds.includes(rule.id)}
-                            disabled={rule.origin === "SISTEMA"}
+                            disabled={rule.origin === "SYSTEM"}
                             onCheckedChange={() => toggleRuleSelection(rule.id)}
                             aria-label={`Selecionar regra ${rule.categoryName}`}
                             data-testid={`checkbox-rule-${rule.id}`}
@@ -411,7 +411,7 @@ export default function FinanceCategoryRules() {
                         <TableCell>
                           <div className="flex flex-wrap items-center gap-2">
                             <Badge variant={ORIGIN_BADGE[rule.origin]}>
-                              {rule.origin === "SISTEMA" ? "Sistema" : "Personalizada"}
+                              {rule.origin === "SYSTEM" ? "Sistema" : "Personalizada"}
                             </Badge>
                             {!rule.active && <Badge variant="outline">Inativa</Badge>}
                           </div>
@@ -428,11 +428,11 @@ export default function FinanceCategoryRules() {
                                 <Eye className="mr-2 h-4 w-4" />
                                 Ver
                               </DropdownMenuItem>
-                              <DropdownMenuItem disabled={rule.origin === "SISTEMA"} onClick={() => openEdit(rule)}>
+                              <DropdownMenuItem disabled={rule.origin === "SYSTEM"} onClick={() => openEdit(rule)}>
                                 <Pencil className="mr-2 h-4 w-4" />
                                 Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem disabled={rule.origin === "SISTEMA"} onClick={() => setDeletingRule(rule)}>
+                              <DropdownMenuItem disabled={rule.origin === "SYSTEM"} onClick={() => setDeletingRule(rule)}>
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Excluir
                               </DropdownMenuItem>
@@ -535,7 +535,7 @@ export default function FinanceCategoryRules() {
                   <div>
                     <p className="text-xs  tracking-wide text-muted-foreground">Origem</p>
                     <Badge variant={ORIGIN_BADGE[viewingRule.origin]}>
-                      {viewingRule.origin === "SISTEMA" ? "Sistema" : "Personalizada"}
+                      {viewingRule.origin === "SYSTEM" ? "Sistema" : "Personalizada"}
                     </Badge>
                   </div>
                 </div>

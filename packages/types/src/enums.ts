@@ -189,8 +189,11 @@ export enum ShareStatus {
 // ─── Financeiro / Accounting ──────────────────────────────────────────────────
 
 export enum TransactionType {
-  RECEITA = "receita",
-  DESPESA = "despesa",
+  REVENUE    = "revenue",
+  EXPENSE    = "expense",
+  INVESTMENT = "investment",
+  TAX        = "tax",
+  TRANSFER   = "transfer",
 }
 
 /**

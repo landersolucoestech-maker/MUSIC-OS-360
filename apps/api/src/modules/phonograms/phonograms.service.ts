@@ -5,7 +5,6 @@ import { PhonogramEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { normalizeIsrc, isValidIsrc } from '../registry/validators/registry-validators';
-import { derivePhonogramRegistryFields, type PhonogramRegistrySourceFields } from './phonogram-registry-fields.util';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 import type { CreatePhonogramDto } from './dto/create-phonogram.dto';
@@ -16,6 +15,7 @@ import {
   resolvePhonogramQueryAliases,
   type ResolvedPhonogramWriteFields,
 } from './phonogram-legacy-alias.util';
+import { canonicalizePhonogramInput, canonicalizePhonogramQuery } from './phonogram-legacy-fields';
 
 @Injectable()
 export class PhonogramsService {
@@ -46,7 +46,7 @@ export class PhonogramsService {
 
   /** Base QueryBuilder (tenant + not-deleted + filters) shared by list() and stats(). */
   private baseQb(tenantId: string, query: QueryPhonogramDto): { qb: SelectQueryBuilder<PhonogramEntity>; legacyAliasesUsed: string[] } {
-    const q = query as Record<string, unknown>;
+    const q = canonicalizePhonogramQuery(query as Record<string, unknown>);
     const { normalized: resolvedQuery, legacyAliasesUsed } = resolvePhonogramQueryAliases(q);
 
     const qb = this.repo!
@@ -58,13 +58,13 @@ export class PhonogramsService {
     if (q['type'])      qb.andWhere('p.type = :type',           { type:      q['type'] });
     if (resolvedQuery.artist_id) qb.andWhere('p.artist_id = :artistId', { artistId: resolvedQuery.artist_id });
     if (resolvedQuery.work_id)    qb.andWhere('p.work_id = :workId',      { workId:    resolvedQuery.work_id });
-    if (q['obra_vinculada'] === 'sem-obra') qb.andWhere('p.work_id IS NULL');
-    else if (q['obra_vinculada'] === 'com-obra') qb.andWhere('p.work_id IS NOT NULL');
+    if (q['has_work'] === 'false') qb.andWhere('p.work_id IS NULL');
+    else if (q['has_work'] === 'true') qb.andWhere('p.work_id IS NOT NULL');
     if (q['music_genre'] || q['genre']) {
       qb.andWhere('p.music_genre = :genre', { genre: q['music_genre'] ?? q['genre'] });
     }
-    if (q['ecad'] === 'com-ecad')      qb.andWhere("p.cod_ecad IS NOT NULL AND p.cod_ecad <> ''");
-    else if (q['ecad'] === 'sem-ecad') qb.andWhere("(p.cod_ecad IS NULL OR p.cod_ecad = '')");
+    if (q['ecad'] === 'with_code')         qb.andWhere("p.ecad_code IS NOT NULL AND p.ecad_code <> ''");
+    else if (q['ecad'] === 'without_code') qb.andWhere("(p.ecad_code IS NULL OR p.ecad_code = '')");
     if (q['search'])    qb.andWhere('p.title ILIKE :search',   { search: `%${q['search']}%` });
 
     return { qb, legacyAliasesUsed };
@@ -128,48 +128,20 @@ export class PhonogramsService {
   private buildEntityPayload(
     input: Record<string, unknown>,
     resolved: ResolvedPhonogramWriteFields,
-    current?: PhonogramEntity,
   ): Record<string, unknown> {
     const out: Record<string, unknown> = { ...input, ...resolved };
 
     // duration (raw seconds, mapped to duration_seconds) is a distinct
     // concept from duration_text (formatted "MM:SS" string, plain
-    // passthrough) — naming-normalization 20260918000003 resolved the
-    // former collision between the two by disambiguating duracao ->
-    // duration_text instead of duration.
-    // find-registry-null-fields: explicit input['duration_seconds']/
-    // ['duration'] still wins when a caller actually sends it (e.g. a
-    // future registry-aware form or API client); otherwise it's derived
-    // below from duracao_min/duracao_seg, the PT fields the real
-    // PhonogramFormModal actually writes.
+    // passthrough). recording_date / release_date / duration_seconds /
+    // country_of_recording are written directly (CZ-040: the registry columns
+    // read by society-payload-builder buildRecordingPayload are the single
+    // source of truth; the legacy PT inputs are mapped onto them by
+    // canonicalizePhonogramInput).
     out['duration_seconds'] = input['duration_seconds'] ?? input['duration'];
     // type: default only when explicitly absent on CREATE (see create());
     // in a PATCH without type, do not overwrite the persisted value.
     if (input['type'] !== undefined) out['type'] = input['type'];
-
-    // find-registry-null-fields: gravacao_original/data_lancamento/
-    // duracao_min+duracao_seg/pais_origem are the only fields the real form
-    // writes -- the English Registry Fields (recording_date/release_date/
-    // duration_seconds/country_of_recording) that society-payload-builder.
-    // service.ts's buildRecordingPayload() actually reads were never
-    // derived, so every ABRAMUS/ECAD recording submission shipped them
-    // null. Merge the patch's PT fields over the current row's (so a
-    // partial PATCH still derives correctly) before deriving.
-    const mergedForRegistry: PhonogramRegistrySourceFields = {
-      gravacao_original: 'gravacao_original' in out ? (out['gravacao_original'] as string | null) : current?.gravacao_original,
-      data_lancamento: 'data_lancamento' in out ? (out['data_lancamento'] as string | null) : current?.data_lancamento,
-      duracao_min: 'duracao_min' in out ? (out['duracao_min'] as number | null) : current?.duracao_min,
-      duracao_seg: 'duracao_seg' in out ? (out['duracao_seg'] as number | null) : current?.duracao_seg,
-      pais_origem: 'pais_origem' in out ? (out['pais_origem'] as string | null) : current?.pais_origem,
-    };
-    const registryFields = derivePhonogramRegistryFields(mergedForRegistry);
-    // Only overwrite duration_seconds from this derivation when nothing
-    // more explicit (input['duration_seconds']/['duration'], handled above)
-    // already set it.
-    if (out['duration_seconds'] === undefined) out['duration_seconds'] = registryFields.duration_seconds;
-    if (out['recording_date'] === undefined) out['recording_date'] = registryFields.recording_date;
-    if (out['release_date'] === undefined) out['release_date'] = registryFields.release_date;
-    if (out['country_of_recording'] === undefined) out['country_of_recording'] = registryFields.country_of_recording;
 
     delete out['titulo'];
     delete out['workId'];
@@ -202,7 +174,7 @@ export class PhonogramsService {
   }
 
   async create(tenantId: string, userId: string, dto: CreatePhonogramDto): Promise<PhonogramEntity> {
-    const input = dto as unknown as Record<string, unknown>;
+    const input = canonicalizePhonogramInput(dto as unknown as Record<string, unknown>);
     const { normalized: resolved, legacyAliasesUsed } = resolvePhonogramAliases(input);
 
     if (resolved.title === undefined) {
@@ -243,7 +215,7 @@ export class PhonogramsService {
 
   async update(tenantId: string, userId: string, id: string, dto: UpdatePhonogramDto): Promise<PhonogramEntity> {
     const current = await this.findById(tenantId, id);
-    const input = dto as unknown as Record<string, unknown>;
+    const input = canonicalizePhonogramInput(dto as unknown as Record<string, unknown>);
     const { normalized: resolved, legacyAliasesUsed } = resolvePhonogramAliases(input);
     // update: an absent title is valid (partial PATCH); if sent,
     // resolvePhonogramAliases() itself already guaranteed valid content/conflict.
@@ -253,7 +225,7 @@ export class PhonogramsService {
     if (resolved.work_id !== undefined)   await assertSameTenantFk(this.ds!, 'works',   resolved.work_id,   tenantId, 'Obra');
     if (resolved.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', resolved.artist_id, tenantId, 'Artista');
 
-    const normalized = this.buildEntityPayload(input, resolved, current);
+    const normalized = this.buildEntityPayload(input, resolved);
     delete normalized['expectedUpdatedAt'];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await casUpdate(

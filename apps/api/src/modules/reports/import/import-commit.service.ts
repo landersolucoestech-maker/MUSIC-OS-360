@@ -25,8 +25,9 @@ import { getFieldLabelPtBr } from '../i18n/field-labels.pt-br';
 import { ImportEngineService } from './import-engine.service';
 import type { RowValidation } from './import.types';
 import { FinanceCategoryRulesService } from '../../finance-category-rules/finance-category-rules.service';
-import { canonicalImportValue } from './import-value-canonicalizers';
+import { canonicalImportJsonColumn, canonicalImportValue } from './import-value-canonicalizers';
 import { UNCATEGORIZED_PLACEHOLDER, toRuleTransactionType } from '../../transactions/transactions.service';
+import { canonicalTransactionType } from '../../transactions/transaction-legacy-fields';
 
 export interface ImportCommitResult {
   entity: string;
@@ -47,7 +48,7 @@ const RELATION_TARGETS: Record<string, string> = {
   artist_id: 'artists',
   project_id: 'projects',
   release_id: 'releases',
-  contrato_id: 'contracts',
+  contract_id: 'contracts',
   client_id: 'clients',
   campaign_id: 'campaigns',
 };
@@ -302,7 +303,7 @@ export class ImportCommitService {
     for (const [physicalColumn, object] of Object.entries(metadataByColumn)) {
       if (Object.keys(object).length === 0) continue;
       cols.push(physicalColumn);
-      values.push(object);
+      values.push(canonicalImportJsonColumn(def.tableName, physicalColumn, object));
     }
 
     if (def.tableName === 'transactions') {
@@ -331,7 +332,7 @@ export class ImportCommitService {
   }
 
   /**
-   * `transactions.categoria` is NOT NULL without a default. Manual creation
+   * `transactions.category` is NOT NULL without a default. Manual creation
    * (TransactionsService) already falls back to "outros" + rule-based
    * auto-categorization (Task W); the XLSX importer had neither — an
    * empty cell broke the INSERT. Reuses the same
@@ -344,12 +345,12 @@ export class ImportCommitService {
     values: unknown[],
     tenantId: string,
   ): Promise<void> {
-    const raw = rowData['categoria'];
+    const raw = rowData['category'];
     let category = (typeof raw === 'string' && raw.trim()) || UNCATEGORIZED_PLACEHOLDER;
 
     if (category.toLowerCase() === UNCATEGORIZED_PLACEHOLDER && this.financeCategoryRules) {
-      const ruleType = toRuleTransactionType(rowData['tipo_transacao']);
-      const description = rowData['descricao'];
+      const ruleType = toRuleTransactionType(canonicalTransactionType(rowData['transaction_type']));
+      const description = rowData['description'];
       if (ruleType && typeof description === 'string' && description.trim()) {
         try {
           const suggestion = await this.financeCategoryRules.suggestCategoryForTransaction(tenantId, ruleType, description);
@@ -358,8 +359,8 @@ export class ImportCommitService {
       }
     }
 
-    const index = cols.indexOf('categoria');
+    const index = cols.indexOf('category');
     if (index >= 0) values[index] = category;
-    else { cols.push('categoria'); values.push(category); }
+    else { cols.push('category'); values.push(category); }
   }
 }

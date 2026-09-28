@@ -49,30 +49,30 @@ export function PaymentSection({
 
           <FormSelectField
             label="Tipo de Pagamento"
-            value={formData.tipoPagamento}
-            onChange={(v) => updateField("tipoPagamento", v)}
+            value={formData.paymentType}
+            onChange={(v) => updateField("paymentType", v)}
             options={paymentTypes}
             disabled={disabled}
           />
 
           <FormSelectField
             label="Método de Pagamento"
-            value={formData.formaPagamento}
-            onChange={(v) => updateField("formaPagamento", v)}
+            value={formData.paymentMethod}
+            onChange={(v) => updateField("paymentMethod", v)}
             options={paymentMethods}
             placeholder="Ex: PIX, Boleto, Cartão..."
-            error={errors.formaPagamento}
+            error={errors.paymentMethod}
             disabled={disabled}
             required
           />
 
           <FormDateField
             label="Data da Transação"
-            value={formData.dataTransacao}
-            onChange={(iso) => updateField("dataTransacao", iso)}
+            value={formData.transactionDate}
+            onChange={(iso) => updateField("transactionDate", iso)}
             disabled={disabled}
             placeholder="Selecione a data"
-            error={errors.dataTransacao}
+            error={errors.transactionDate}
             required
             data-testid="datepicker-data-transacao"
           />
@@ -92,29 +92,29 @@ export function PaymentSection({
               label="Quantidade de Parcelas"
               type="number"
               min="2"
-              value={formData.quantidadeParcelas}
-              onChange={(e) => updateField("quantidadeParcelas", e.target.value)}
+              value={formData.installmentCount}
+              onChange={(e) => updateField("installmentCount", e.target.value)}
               disabled={disabled}
               placeholder="Mínimo 2"
-              error={errors.quantidadeParcelas}
+              error={errors.installmentCount}
               required
             />
 
             <FormSelectField
               label="Intervalo"
-              value={formData.intervaloParcelas}
-              onChange={(v) => updateField("intervaloParcelas", v)}
+              value={formData.installmentInterval}
+              onChange={(v) => updateField("installmentInterval", v)}
               options={installmentIntervals}
               disabled={disabled}
             />
 
             <FormDateField
               label="Data da 1ª Parcela"
-              value={formData.dataPrimeiraParcela}
-              onChange={(iso) => updateField("dataPrimeiraParcela", iso)}
+              value={formData.firstInstallmentDate}
+              onChange={(iso) => updateField("firstInstallmentDate", iso)}
               disabled={disabled}
               placeholder="Selecione a data"
-              error={errors.dataPrimeiraParcela}
+              error={errors.firstInstallmentDate}
               required
               data-testid="datepicker-data-primeira-parcela"
             />

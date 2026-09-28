@@ -4,34 +4,48 @@ import type {
   FinancialCounterpartyType,
   FinancialTransactionType,
 } from "@/modules/accounting/types/financial-category-rules.types";
+import type { TransactionType } from "@/modules/accounting/types/accounting.types";
 
 export type SelectOption = { value: string; label: string };
 
-const transactionTypeValueByLabel: Record<FinancialTransactionType, string> = {
-  Receita: "receita",
-  Despesa: "despesa",
-  Investimento: "investimento",
-  Imposto: "imposto",
-  Transferência: "transferencia",
+/**
+ * The category-rule store (FinancialCategoryRuleEntity) keys its rules by the
+ * PT-BR display label; the transaction form and the wire contract use the
+ * canonical English value. These maps are the single translation point
+ * label <-> form value (CZ-041).
+ */
+const transactionTypeValueByLabel: Record<FinancialTransactionType, TransactionType> = {
+  Receita: "revenue",
+  Despesa: "expense",
+  Investimento: "investment",
+  Imposto: "tax",
+  Transferência: "transfer",
 };
 
+/**
+ * "Governo"/"Conta Própria" (tax / transfer rules) have no member in the
+ * CZ-041 counterpartyType contract (company | artist | individual); their
+ * English values below are form-level only — see the CZ-041 report for the
+ * open contract question.
+ */
 const counterpartyValueByLabel: Record<FinancialCounterpartyType, string> = {
-  Empresa: "empresa",
-  Pessoa: "pessoa",
-  Artista: "artista",
-  Governo: "governo",
-  "Conta Própria": "conta-propria",
+  Empresa: "company",
+  Pessoa: "individual",
+  Artista: "artist",
+  Governo: "government",
+  "Conta Própria": "own_account",
 };
 
+/** Values of the form-only `linkType` field (which link input the rule asks for). */
 const linkValueByLabel: Record<FinancialCategoryLink, string> = {
-  Artista: "artista",
-  Projeto: "projeto",
-  Contrato: "contrato",
-  Evento: "evento",
-  "Centro de custo": "centro-custo",
-  Competência: "competencia",
-  "Conta Origem": "conta-origem",
-  "Conta Destino": "conta-destino",
+  Artista: "artist",
+  Projeto: "project",
+  Contrato: "contract",
+  Evento: "event",
+  "Centro de custo": "cost_center",
+  Competência: "reference_month",
+  "Conta Origem": "source_bank_account",
+  "Conta Destino": "destination_bank_account",
 };
 
 const transactionTypeLabelByValue = invertMap(transactionTypeValueByLabel);
@@ -271,9 +285,9 @@ export function createFinancialTransactionFromPaidInvoice(input: {
   payment_method: string;
 }) {
   return {
-    type: "receita",
-    status: "paid",
-    valor: roundMoney(input.amount_paid),
+    type: "revenue" as const,
+    status: "paid" as const,
+    amount: roundMoney(input.amount_paid),
     metadata: input,
   };
 }

@@ -11,8 +11,8 @@ const UUID = '3f2b8c1e-9a4d-4e7b-8c2a-1d5e6f7a8b9c';
 
 describe('transaction-copy.pt-br', () => {
   it('renders the type label and a BRL amount, never the raw enum or number', () => {
-    expect(transactionCreatedCopy('receita', '1500.5')).toBe('Receita de R$ 1.500,50 registrada');
-    expect(transactionCreatedCopy('despesa', 20)).toBe('Despesa de R$ 20,00 registrada');
+    expect(transactionCreatedCopy('revenue', '1500.5')).toBe('Receita de R$ 1.500,50 registrada');
+    expect(transactionCreatedCopy('expense', 20)).toBe('Despesa de R$ 20,00 registrada');
     expect(transactionCreatedCopy('unknown-type', 'x')).toBe('Transação registrada');
   });
 

@@ -3,7 +3,7 @@
 // + ecad_reports + obras — Decision Gate item 11, product-completion audit).
 //
 // Covers:
-//  1. Clicking a row detail button opens DetectionDetailModal with compositor + cod_ecad
+//  1. Clicking a row detail button opens DetectionDetailModal with composer names + ecad_code
 //     from the catalog (enriched via work_id lookup against useWorks())
 //  2. Clicking a detection with no matching/linked work shows the orphan warning
 //  3. The "Divergências" tab badge count reflects detections without a reconciled work
@@ -38,10 +38,10 @@ const DETECTIONS = [
 const WORKS = [
   {
     id: "obra-001", title: "Noite de Luz",
-    compositor: "Vitória Carvalho", compositores: "Vitória Carvalho, Lucas Mendes",
-    editora: "MusicOS Publishing", isrc: "BRMSC2500001", iswc: "T-123.456.789-0",
-    cod_entidade: "ABR-001-2025", cod_ecad: "ECAD-0001-VL",
-    music_genre: "Pop", status: "registrado", duration_text: "3:42",
+    composer_name: "Vitória Carvalho", composer_names: ["Vitória Carvalho", "Lucas Mendes"],
+    publisher_name: "MusicOS Publishing", isrc: "BRMSC2500001", iswc: "T-123.456.789-0",
+    society_code: "ABR-001-2025", ecad_code: "ECAD-0001-VL",
+    music_genre: "Pop", status: "registered", duration_text: "3:42",
     artistas: { id: "art-1", nome_artistico: "Vitória Lunar" },
   },
 ];
@@ -89,7 +89,7 @@ function renderPage() {
 }
 
 describe("RightsMonitoring page — detail modal with catalog data", () => {
-  it("clicking a matched row detail button opens modal with compositor and cod_ecad", async () => {
+  it("clicking a matched row detail button opens modal with composer names and ecad_code", async () => {
     renderPage();
 
     await waitFor(() => {
@@ -142,7 +142,7 @@ describe("RightsMonitoring page — 'Divergências' tab badge", () => {
     const divTab = screen.getByTestId("tab-divergencias");
 
     // Only det-011 (work_id null) is unreconciled — det-001 has a matched obra
-    // with cod_ecad, but that match resolves asynchronously (GET /works/:id),
+    // with ecad_code, but that match resolves asynchronously (GET /works/:id),
     // so wait for it to settle before reading the badge.
     await waitFor(() => {
       const badgeSpan = within(divTab).getByText(/^\d+$/);

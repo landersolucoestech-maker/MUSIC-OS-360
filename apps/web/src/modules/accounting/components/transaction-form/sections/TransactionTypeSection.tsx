@@ -44,38 +44,38 @@ export function TransactionTypeSection({
 }: TransactionTypeSectionProps) {
   const transactionTypeOptions = useMemo(() => getTransactionTypes(categoryRules), [categoryRules]);
   const counterpartyOptions = useMemo(
-    () => getCounterpartiesByType(categoryRules, formData.tipoTransacao),
-    [categoryRules, formData.tipoTransacao],
+    () => getCounterpartiesByType(categoryRules, formData.transactionType),
+    [categoryRules, formData.transactionType],
   );
   const categoryOptions = useMemo(
-    () => getCategoriesByCounterparty(categoryRules, formData.tipoTransacao, formData.tipoCliente),
-    [categoryRules, formData.tipoCliente, formData.tipoTransacao],
+    () => getCategoriesByCounterparty(categoryRules, formData.transactionType, formData.counterpartyType),
+    [categoryRules, formData.counterpartyType, formData.transactionType],
   );
   const subcategoryOptions = useMemo(
-    () => getSubcategoriesByCategory(categoryRules, formData.tipoTransacao, formData.tipoCliente, formData.category),
-    [categoryRules, formData.category, formData.tipoCliente, formData.tipoTransacao],
+    () => getSubcategoriesByCategory(categoryRules, formData.transactionType, formData.counterpartyType, formData.category),
+    [categoryRules, formData.category, formData.counterpartyType, formData.transactionType],
   );
   const finalRule = useMemo(
     () => getFinalRule(
       categoryRules,
-      formData.tipoTransacao,
-      formData.tipoCliente,
+      formData.transactionType,
+      formData.counterpartyType,
       formData.category,
-      formData.subcategoria,
+      formData.subcategory,
     ),
-    [categoryRules, formData.category, formData.subcategoria, formData.tipoCliente, formData.tipoTransacao],
+    [categoryRules, formData.category, formData.subcategory, formData.counterpartyType, formData.transactionType],
   );
   const linkOptions = useMemo(() => getLinkOptions(finalRule), [finalRule]);
-  const selectedLink = toRuleLink(formData.tipoVinculacao ?? "");
+  const selectedLink = toRuleLink(formData.linkType ?? "");
 
-  const showCounterparty = Boolean(formData.tipoTransacao) && counterpartyOptions.length > 0;
-  const showCategory = Boolean(formData.tipoCliente) && categoryOptions.length > 0;
+  const showCounterparty = Boolean(formData.transactionType) && counterpartyOptions.length > 0;
+  const showCategory = Boolean(formData.counterpartyType) && categoryOptions.length > 0;
   const showSubcategory = Boolean(formData.category) && subcategoryOptions.length > 0;
   const hasFinalRule = Boolean(finalRule);
   const showLinks = hasFinalRule && linkOptions.length > 0;
 
   const handleLinkChange = (value: string) => {
-    updateField("tipoVinculacao", value);
+    updateField("linkType", value);
   };
 
   return (
@@ -87,23 +87,23 @@ export function TransactionTypeSection({
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormSelectField
             label="Tipo de Transação"
-            value={formData.tipoTransacao}
-            onChange={(value) => updateField("tipoTransacao", value)}
+            value={formData.transactionType}
+            onChange={(value) => updateField("transactionType", value)}
             options={transactionTypeOptions}
             placeholder="Ex: Receita, Despesa, Imposto..."
-            error={errors.tipoTransacao}
+            error={errors.transactionType}
             disabled={disabled}
             required
           />
 
           {showCounterparty && (
             <FormSelectField
-              label={formData.tipoTransacao === "receita" ? "Receber de" : "Pagar para"}
-              value={formData.tipoCliente}
-              onChange={(value) => updateField("tipoCliente", value)}
+              label={formData.transactionType === "revenue" ? "Receber de" : "Pagar para"}
+              value={formData.counterpartyType}
+              onChange={(value) => updateField("counterpartyType", value)}
               options={counterpartyOptions}
               placeholder="Selecione"
-              error={errors.tipoCliente}
+              error={errors.counterpartyType}
               disabled={disabled}
               required
             />
@@ -125,11 +125,11 @@ export function TransactionTypeSection({
           {showSubcategory && (
             <FormSelectField
               label="Subcategoria"
-              value={formData.subcategoria}
-              onChange={(value) => updateField("subcategoria", value)}
+              value={formData.subcategory}
+              onChange={(value) => updateField("subcategory", value)}
               options={subcategoryOptions}
               placeholder="Selecione a subcategoria"
-              error={errors.subcategoria}
+              error={errors.subcategory}
               disabled={disabled}
               required
             />
@@ -138,7 +138,7 @@ export function TransactionTypeSection({
           {showLinks && (
             <FormSelectField
               label="Vinculações"
-              value={formData.tipoVinculacao ?? ""}
+              value={formData.linkType ?? ""}
               onChange={handleLinkChange}
               options={linkOptions}
               placeholder="Selecione o vínculo"
@@ -153,15 +153,15 @@ export function TransactionTypeSection({
               <AsyncEntityCombobox<Artist>
                 table="artistas"
                 getLabel={(a) => a.nome_artistico}
-                value={formData.artistaVinculado}
-                onChange={(id) => updateField("artistaVinculado", id)}
+                value={formData.artistId}
+                onChange={(id) => updateField("artistId", id)}
                 placeholder="Selecione o artista"
                 searchPlaceholder="Buscar artista…"
                 disabled={disabled}
-                invalid={Boolean(errors.artistaVinculado)}
+                invalid={Boolean(errors.artistId)}
                 data-testid="combobox-artista-vinculado"
               />
-              <FieldError error={errors.artistaVinculado} />
+              <FieldError error={errors.artistId} />
             </div>
           )}
 
@@ -171,23 +171,23 @@ export function TransactionTypeSection({
               <AsyncEntityCombobox<Project>
                 table="projects"
                 getLabel={(p) => p.title}
-                value={formData.projetoVinculado}
-                onChange={(id) => updateField("projetoVinculado", id)}
+                value={formData.projectId}
+                onChange={(id) => updateField("projectId", id)}
                 placeholder="Selecione o projeto"
                 searchPlaceholder="Buscar projeto…"
                 disabled={disabled}
-                invalid={Boolean(errors.projetoVinculado)}
+                invalid={Boolean(errors.projectId)}
                 data-testid="combobox-projeto-vinculado"
               />
-              <FieldError error={errors.projetoVinculado} />
+              <FieldError error={errors.projectId} />
             </div>
           )}
 
           {selectedLink === "Contrato" && (
             <FormInputField
               label="Contrato Vinculado"
-              value={formData.contratoVinculado}
-              onChange={(event) => updateField("contratoVinculado", event.target.value)}
+              value={formData.contractId}
+              onChange={(event) => updateField("contractId", event.target.value)}
               disabled={disabled}
               placeholder="Informe o contrato"
             />
@@ -196,14 +196,14 @@ export function TransactionTypeSection({
           {selectedLink === "Evento" && (
             <FormSelectField
               label="Show / Evento"
-              value={formData.eventoVinculado}
-              onChange={(value) => updateField("eventoVinculado", value)}
-              options={(formData.artistaVinculado ? filteredEvents : filteredEvents).map((event) => ({
+              value={formData.eventId}
+              onChange={(value) => updateField("eventId", value)}
+              options={(formData.artistId ? filteredEvents : filteredEvents).map((event) => ({
                 value: event.id,
                 label: event.start_date ? `${event.title} (${event.start_date})` : event.title,
               }))}
               placeholder={filteredEvents.length === 0 ? "Nenhum evento encontrado" : "Selecione o evento"}
-              error={errors.eventoVinculado}
+              error={errors.eventId}
               disabled={disabled || filteredEvents.length === 0}
               required
             />
@@ -212,8 +212,8 @@ export function TransactionTypeSection({
           {selectedLink === "Centro de custo" && (
             <FormInputField
               label="Centro de custo"
-              value={formData.centroCusto ?? ""}
-              onChange={(event) => updateField("centroCusto", event.target.value)}
+              value={formData.costCenter ?? ""}
+              onChange={(event) => updateField("costCenter", event.target.value)}
               disabled={disabled}
               placeholder="Informe o centro de custo"
             />
@@ -222,18 +222,19 @@ export function TransactionTypeSection({
           {selectedLink === "Competência" && (
             <FormInputField
               label="Competência"
-              value={formData.competencia ?? ""}
-              onChange={(event) => updateField("competencia", event.target.value)}
+              value={formData.referenceMonth ?? ""}
+              onChange={(event) => updateField("referenceMonth", event.target.value)}
               disabled={disabled}
               placeholder="Ex: 05/2026"
+              error={errors.referenceMonth}
             />
           )}
 
           {selectedLink === "Conta Origem" && (
             <FormInputField
               label="Conta Origem"
-              value={formData.contaOrigem ?? ""}
-              onChange={(event) => updateField("contaOrigem", event.target.value)}
+              value={formData.sourceBankAccount ?? ""}
+              onChange={(event) => updateField("sourceBankAccount", event.target.value)}
               disabled={disabled}
               placeholder="Informe a conta de origem"
             />
@@ -242,8 +243,8 @@ export function TransactionTypeSection({
           {selectedLink === "Conta Destino" && (
             <FormInputField
               label="Conta Destino"
-              value={formData.contaDestino ?? ""}
-              onChange={(event) => updateField("contaDestino", event.target.value)}
+              value={formData.destinationBankAccount ?? ""}
+              onChange={(event) => updateField("destinationBankAccount", event.target.value)}
               disabled={disabled}
               placeholder="Informe a conta de destino"
             />
@@ -252,15 +253,15 @@ export function TransactionTypeSection({
           {selectedLink === null && rules.exibirOrgaoArrecadador && formData.category && (
             <FormInputField
               label="Órgão Arrecadador"
-              value={formData.orgaoArrecadador}
-              onChange={(event) => updateField("orgaoArrecadador", event.target.value)}
+              value={formData.taxAuthority}
+              onChange={(event) => updateField("taxAuthority", event.target.value)}
               disabled={disabled}
               placeholder="Informe o órgão arrecadador"
-              error={errors.orgaoArrecadador}
+              error={errors.taxAuthority}
             />
           )}
 
-          {selectedLink === "Projeto" && rules.exibirProjeto && formData.artistaVinculado && (
+          {selectedLink === "Projeto" && rules.exibirProjeto && formData.artistId && (
             <div className="space-y-2">
               <Label className="text-sm">
                 Projeto / Música{rules.projetoObrigatorio ? "" : " (opcional)"}
@@ -268,16 +269,16 @@ export function TransactionTypeSection({
               <AsyncEntityCombobox<Project>
                 table="projects"
                 getLabel={(p) => p.title}
-                value={formData.projetoVinculado}
-                onChange={(id) => updateField("projetoVinculado", id)}
-                filters={{ artistId: formData.artistaVinculado }}
+                value={formData.projectId}
+                onChange={(id) => updateField("projectId", id)}
+                filters={{ artistId: formData.artistId }}
                 placeholder="Selecione o projeto"
                 searchPlaceholder="Buscar projeto…"
                 disabled={disabled}
-                invalid={Boolean(errors.projetoVinculado)}
+                invalid={Boolean(errors.projectId)}
                 data-testid="combobox-projeto-musica"
               />
-              <FieldError error={errors.projetoVinculado} />
+              <FieldError error={errors.projectId} />
             </div>
           )}
         </div>

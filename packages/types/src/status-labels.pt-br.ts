@@ -120,8 +120,11 @@ export const TRANSACTION_STATUS_LABELS_PT_BR: Readonly<Record<TransactionStatus,
  * by the enum keeps the labels correct when the values are migrated.
  */
 export const TRANSACTION_TYPE_LABELS_PT_BR: Readonly<Record<TransactionType, string>> = {
-  [TransactionType.RECEITA]: "Receita",
-  [TransactionType.DESPESA]: "Despesa",
+  [TransactionType.REVENUE]: "Receita",
+  [TransactionType.EXPENSE]: "Despesa",
+  [TransactionType.INVESTMENT]: "Investimento",
+  [TransactionType.TAX]: "Imposto",
+  [TransactionType.TRANSFER]: "Transferência",
 };
 
 export const INVOICE_STATUS_LABELS_PT_BR: Readonly<Record<InvoiceStatus, string>> = {

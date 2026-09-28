@@ -5,7 +5,7 @@ import { FinanceCategoryRulesService } from './finance-category-rules.service';
 const NOW = new Date('2026-08-16T12:00:00.000Z');
 const RULE = {
   id: 'rule-1', tenant_id: 'tenant-1', keywords: ['spotify', 'streaming'],
-  transaction_type: 'RECEITA', category_id: 'cat-1', priority: 100, active: true,
+  transaction_type: 'REVENUE', category_id: 'cat-1', priority: 100, active: true,
   deleted_at: null, updated_at: NOW,
 };
 
@@ -63,7 +63,7 @@ describe('FinanceCategoryRulesService', () => {
     const { svc, repo } = makeService();
 
     await svc.create('tenant-1', 'user-1', {
-      keywords: ['ads'], transaction_type: 'RECEITA', category_id: 'cat-2',
+      keywords: ['ads'], transaction_type: 'REVENUE', category_id: 'cat-2',
     } as any);
 
     expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({
@@ -77,7 +77,7 @@ describe('FinanceCategoryRulesService', () => {
     (repo.manager.connection.query as jest.Mock).mockResolvedValueOnce([]);
 
     await expect(svc.create('tenant-1', 'user-1', {
-      keywords: ['ads'], transaction_type: 'RECEITA', category_id: 'cat-from-tenant-2',
+      keywords: ['ads'], transaction_type: 'REVENUE', category_id: 'cat-from-tenant-2',
     } as any)).rejects.toBeInstanceOf(BadRequestException);
   });
 
@@ -173,13 +173,13 @@ function makeSuggestService(entities: unknown[], raw: unknown[]) {
 describe('FinanceCategoryRulesService.suggestCategoryForTransaction (Task W)', () => {
   const activeRule = {
     id: 'rule-1', category_id: 'cat-1', keywords: ['spotify'],
-    transaction_type: 'DESPESA', priority: 100, active: true,
+    transaction_type: 'EXPENSE', priority: 100, active: true,
   };
 
   it('returns the category (slug) of the matching rule', async () => {
     const { svc, repo } = makeSuggestService([activeRule], [{ category_name: 'streaming' }]);
 
-    const result = await svc.suggestCategoryForTransaction('tenant-1', 'DESPESA', 'Pagamento Spotify mensal');
+    const result = await svc.suggestCategoryForTransaction('tenant-1', 'EXPENSE', 'Pagamento Spotify mensal');
 
     expect(result).toEqual({ categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'rule-1' });
     expect(repo.createQueryBuilder).toHaveBeenCalled();
@@ -187,20 +187,20 @@ describe('FinanceCategoryRulesService.suggestCategoryForTransaction (Task W)', (
 
   it('returns null when no rule matches the description', async () => {
     const { svc } = makeSuggestService([activeRule], [{ category_name: 'streaming' }]);
-    const result = await svc.suggestCategoryForTransaction('tenant-1', 'DESPESA', 'Aluguel do escritório');
+    const result = await svc.suggestCategoryForTransaction('tenant-1', 'EXPENSE', 'Aluguel do escritório');
     expect(result).toBeNull();
   });
 
   it('returns null for an empty description (does not run the query)', async () => {
     const { svc, repo } = makeSuggestService([activeRule], [{ category_name: 'streaming' }]);
-    const result = await svc.suggestCategoryForTransaction('tenant-1', 'DESPESA', '');
+    const result = await svc.suggestCategoryForTransaction('tenant-1', 'EXPENSE', '');
     expect(result).toBeNull();
     expect(repo.createQueryBuilder).not.toHaveBeenCalled();
   });
 
   it('returns null when the linked category has no slug (category removed)', async () => {
     const { svc } = makeSuggestService([activeRule], [{ category_name: null }]);
-    const result = await svc.suggestCategoryForTransaction('tenant-1', 'DESPESA', 'Pagamento Spotify');
+    const result = await svc.suggestCategoryForTransaction('tenant-1', 'EXPENSE', 'Pagamento Spotify');
     expect(result).toBeNull();
   });
 });
@@ -221,11 +221,11 @@ describe('FinanceCategoryRulesService.suggestCategoryForTransaction — where cl
     const ds = { getRepository: jest.fn(() => repo) } as any;
     const svc = new FinanceCategoryRulesService(ds);
 
-    await svc.suggestCategoryForTransaction('tenant-9', 'RECEITA', 'Recebimento de show');
+    await svc.suggestCategoryForTransaction('tenant-9', 'REVENUE', 'Recebimento de show');
 
     expect(qb.where).toHaveBeenCalledWith('r.tenant_id = :tenantId', { tenantId: 'tenant-9' });
     expect(qb.andWhere).toHaveBeenCalledWith('r.deleted_at IS NULL');
     expect(qb.andWhere).toHaveBeenCalledWith('r.active = true');
-    expect(qb.andWhere).toHaveBeenCalledWith('r.transaction_type = :transactionType', { transactionType: 'RECEITA' });
+    expect(qb.andWhere).toHaveBeenCalledWith('r.transaction_type = :transactionType', { transactionType: 'REVENUE' });
   });
 });

@@ -255,8 +255,8 @@ export interface TransactionCreatedPayload {
   tenantId:      string;
   type:          string;
   category:      string;
-  valor:         string;
-  contratoId:    string | null;
+  amount:         string;
+  contractId:    string | null;
   artistId:     string | null;
   createdBy:     string;
   /** When set, identifies the originating flow (e.g. 'contract.signed') —
@@ -269,7 +269,7 @@ export interface TransactionStatusChangedPayload {
   transactionId:  string;
   tenantId:       string;
   type:           string;
-  valor:          string;
+  amount:          string;
   previousStatus: string;
   newStatus:      string;
   changedBy:      string;
@@ -279,8 +279,8 @@ export interface TransactionPaidPayload {
   transactionId: string;
   tenantId:      string;
   type:          string;
-  valor:         string;
-  contratoId:    string | null;
+  amount:         string;
+  contractId:    string | null;
   artistId:     string | null;
   paidBy:        string;
   paidAt:        string;
@@ -290,7 +290,7 @@ export interface TransactionCancelledPayload {
   transactionId: string;
   tenantId:      string;
   type:          string;
-  valor:         string;
+  amount:         string;
   cancelledBy:   string;
   cancelledAt:   string;
 }

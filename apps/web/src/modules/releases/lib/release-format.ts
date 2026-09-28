@@ -1,3 +1,4 @@
+import { MUSICAL_GENRE_LABEL_BY_VALUE } from "@/constants/musicalGenres";
 function parseDateParts(value: string | Date): { day: number; month: number; year: number } | null {
   if (value instanceof Date) {
     if (Number.isNaN(value.getTime())) return null;
@@ -55,6 +56,7 @@ export const RELEASE_TYPE_LABELS: Record<string, string> = {
   album: "Álbum",
   compilation: "Coletânea",
   live: "Ao vivo",
+  video: "Videoclipe",
   other: "Outro",
 };
 
@@ -76,5 +78,13 @@ export const RELEASE_LANGUAGE_OPTIONS = [
   { value: "pt", label: "Português" },
 ] as const;
 
-export const releaseLanguageLabel = (code?: string | null): string | null =>
-  code ? (RELEASE_LANGUAGE_OPTIONS.find((o) => o.value === code)?.label ?? code) : null;
+/** PT-BR label of a stored language code; an unknown code is never shown raw. */
+export const releaseLanguageLabel = (code?: string | null): string | null => {
+  if (!code) return null;
+  const normalized = code.trim().toLowerCase();
+  return RELEASE_LANGUAGE_OPTIONS.find((o) => o.value === normalized)?.label ?? "Idioma não reconhecido";
+};
+
+/** PT-BR label of a stored genre slug (e.g. "sertanejo-universitario" → "Sertanejo Universitário"). */
+export const musicGenreLabel = (genre?: string | null): string | null =>
+  genre ? (MUSICAL_GENRE_LABEL_BY_VALUE[genre] ?? genre) : null;

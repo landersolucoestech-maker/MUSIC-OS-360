@@ -27,8 +27,14 @@ export function resolveShareType(share: Share & Record<string, unknown>): ShareT
 export const isInternalShare = (s: Share & Record<string, unknown>) => resolveShareType(s) === "internal_release";
 export const isExternalShare = (s: Share & Record<string, unknown>) => resolveShareType(s) === "external_receivable";
 
+/** Share type discriminator options (value = technical, label = PT-BR). */
+export const SHARE_TYPE_OPTIONS: ReadonlyArray<{ value: ShareType; label: string }> = [
+  { value: "internal_release", label: "Lançamento interno" },
+  { value: "external_receivable", label: "Share externo a receber" },
+];
+
 export const shareTypeLabel = (t: ShareType): string =>
-  t === "internal_release" ? "Release Interno" : "Share Externo a Receber";
+  SHARE_TYPE_OPTIONS.find((o) => o.value === t)?.label ?? "Tipo não informado";
 
 // ── Status ──────────────────────────────────────────────────────────────────────
 const STATUS_VARIANT: Record<string, BadgeVariant> = {
@@ -49,15 +55,23 @@ const STATUS_VARIANT: Record<string, BadgeVariant> = {
 export const isPendingShareStatus = (status?: string | null): boolean =>
   status === ShareStatus.PENDING || status === ShareStatus.PARTIAL;
 
-/** Financial statuses offered by the share form (value = ShareStatus, label = PT-BR). */
+/**
+ * Every ShareStatus (value) with its PT-BR label — financial lifecycle first,
+ * then the registry lifecycle — so the form and the filter can show any
+ * status a share can hold (an unlisted value renders an empty select).
+ */
 export const SHARE_FORM_STATUS_OPTIONS = [
   ShareStatus.PENDING,
+  ShareStatus.PARTIAL,
   ShareStatus.SENT,
   ShareStatus.ACCEPTED,
   ShareStatus.RECEIVED,
   ShareStatus.REFUSED,
   ShareStatus.ERROR,
   ShareStatus.CANCELLED,
+  ShareStatus.ACTIVE,
+  ShareStatus.INACTIVE,
+  ShareStatus.SETTLED,
 ].map((value) => ({ value, label: shareStatusLabel(value) }));
 
 /** PT-BR label of a ShareStatus; never the raw technical value. */

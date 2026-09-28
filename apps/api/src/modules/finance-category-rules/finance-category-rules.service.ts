@@ -107,7 +107,7 @@ export class FinanceCategoryRulesService {
    */
   async suggestCategoryForTransaction(
     tenantId: string,
-    transactionType: 'RECEITA' | 'DESPESA',
+    transactionType: 'REVENUE' | 'EXPENSE',
     description: string,
   ): Promise<FinanceCategorySuggestion | null> {
     if (!this.repo || !description?.trim()) return null;

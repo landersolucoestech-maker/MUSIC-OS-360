@@ -1,70 +1,57 @@
 /**
  * accounting/services/entity-to-form.mapper.ts
- * Entity → form field values. Source of truth for Transaction hydration.
+ * Transaction row → form field values. Source of truth for Transaction hydration.
  */
 
 import { initialFormData } from "@/modules/accounting/constants/transaction-constants";
 import type { TransactionFormData } from "@/modules/accounting/constants/transaction-constants";
 
+/**
+ * The `transactions` row the edit form is hydrated from (GET /transactions
+ * list row / mutation response): canonical snake_case columns of the CZ-041
+ * wire contract, canonical English values. Only those columns are read — the
+ * legacy Portuguese columns (descricao, valor, data, categoria, contrato_id,
+ * evento_id, ...) no longer exist in the response.
+ */
 export interface TransactionFormEntity {
   id?: string;
   updated_at?: unknown;
-  updatedAt?: unknown;
   type?: unknown;
-  tipoTransacao?: unknown;
-  tipo_transacao?: unknown;
-  tipoCliente?: unknown;
-  tipo_cliente?: unknown;
-  categoria?: unknown;
-  subcategoria?: unknown;
-  descricao?: unknown;
-  valor?: unknown;
-  data?: unknown;
-  dataTransacao?: unknown;
-  data_transacao?: unknown;
+  counterparty_type?: unknown;
+  category?: unknown;
+  subcategory?: unknown;
+  description?: unknown;
+  amount?: unknown;
+  transaction_date?: unknown;
   status?: unknown;
-  observacao?: unknown;
   notes?: unknown;
-  artistaVinculado?: unknown;
   artist_id?: unknown;
-  projetoVinculado?: unknown;
   project_id?: unknown;
-  contratoVinculado?: unknown;
-  contrato_id?: unknown;
-  eventoVinculado?: unknown;
-  evento_id?: unknown;
-  fornecedorCliente?: unknown;
-  fornecedor_cliente?: unknown;
-  orgaoArrecadador?: unknown;
-  orgao_arrecadador?: unknown;
-  centroCusto?: unknown;
-  centro_custo?: unknown;
-  competencia?: unknown;
-  contaOrigem?: unknown;
-  conta_origem?: unknown;
-  contaDestino?: unknown;
-  conta_destino?: unknown;
-  itemInvestimento?: unknown;
-  item_investimento?: unknown;
-  motivoViagem?: unknown;
-  motivo_viagem?: unknown;
-  advertisingName?: unknown;
+  contract_id?: unknown;
+  event_id?: unknown;
+  counterparty_name?: unknown;
+  tax_authority?: unknown;
+  cost_center?: unknown;
+  reference_month?: unknown;
+  source_bank_account?: unknown;
+  destination_bank_account?: unknown;
+  investment_item?: unknown;
+  travel_reason?: unknown;
   advertising_name?: unknown;
-  formaPagamento?: unknown;
-  forma_pagamento?: unknown;
-  tipoPagamento?: unknown;
-  tipo_pagamento?: unknown;
-  quantidadeParcelas?: unknown;
-  quantidade_parcelas?: unknown;
-  intervaloParcelas?: unknown;
-  intervalo_parcelas?: unknown;
-  dataPrimeiraParcela?: unknown;
-  data_primeira_parcela?: unknown;
-  anexoUrl?: unknown;
-  anexo_url?: unknown;
-  anexoNome?: unknown;
-  anexo_nome?: unknown;
+  payment_method?: unknown;
+  payment_type?: unknown;
+  installment_count?: unknown;
+  installment_interval?: unknown;
+  first_installment_date?: unknown;
+  attachment_url?: unknown;
+  attachment_name?: unknown;
   entityLinks?: unknown;
+}
+
+/** Wire "YYYY-MM" → the form's PT-BR "MM/AAAA" input convention (inverse of toReferenceMonth). */
+function toReferenceMonthInput(value: string): string {
+  const iso = /^(\d{4})-(\d{2})$/.exec(value);
+  return iso ? `${iso[2]}/${iso[1]}` : value;
 }
 
 export function transactionToFormFields(t: TransactionFormEntity | null | undefined): TransactionFormData {
@@ -73,34 +60,34 @@ export function transactionToFormFields(t: TransactionFormEntity | null | undefi
   return {
     ...initialFormData,
     entityLinks: Array.isArray(t.entityLinks) ? (t.entityLinks as TransactionFormData["entityLinks"]) : [],
-    tipoTransacao:       str(t.tipoTransacao      ?? t.tipo_transacao ?? t.type),
-    tipoCliente:         str(t.tipoCliente        ?? t.tipo_cliente),
-    category:            str(t.categoria),
-    subcategoria:        str(t.subcategoria),
-    description:         str(t.descricao),
-    amount:              str(t.valor),
-    dataTransacao:       str(t.dataTransacao      ?? t.data_transacao ?? t.data),
-    status:              str(t.status)            || "pending",
-    observacao:          str(t.observacao         ?? t.notes),
-    artistaVinculado:    str(t.artistaVinculado   ?? t.artist_id),
-    projetoVinculado:    str(t.projetoVinculado   ?? t.project_id),
-    contratoVinculado:   str(t.contratoVinculado  ?? t.contrato_id),
-    eventoVinculado:     str(t.eventoVinculado    ?? t.evento_id),
-    fornecedorCliente:   str(t.fornecedorCliente  ?? t.fornecedor_cliente),
-    orgaoArrecadador:    str(t.orgaoArrecadador   ?? t.orgao_arrecadador),
-    centroCusto:         str(t.centroCusto        ?? t.centro_custo),
-    competencia:         str(t.competencia),
-    contaOrigem:         str(t.contaOrigem        ?? t.conta_origem),
-    contaDestino:        str(t.contaDestino       ?? t.conta_destino),
-    itemInvestimento:    str(t.itemInvestimento   ?? t.item_investimento),
-    motivoViagem:        str(t.motivoViagem       ?? t.motivo_viagem),
-    advertisingName:     str(t.advertisingName    ?? t.advertising_name),
-    formaPagamento:      str(t.formaPagamento     ?? t.forma_pagamento),
-    tipoPagamento:       str(t.tipoPagamento      ?? t.tipo_pagamento)     || "avista",
-    quantidadeParcelas:  str(t.quantidadeParcelas ?? t.quantidade_parcelas),
-    intervaloParcelas:   str(t.intervaloParcelas  ?? t.intervalo_parcelas) || "mensal",
-    dataPrimeiraParcela: str(t.dataPrimeiraParcela?? t.data_primeira_parcela),
-    anexoUrl:            str(t.anexoUrl           ?? t.anexo_url),
-    anexoNome:           str(t.anexoNome          ?? t.anexo_nome),
+    transactionType:        str(t.type),
+    counterpartyType:       str(t.counterparty_type),
+    category:               str(t.category),
+    subcategory:            str(t.subcategory),
+    description:            str(t.description),
+    amount:                 str(t.amount),
+    transactionDate:        str(t.transaction_date),
+    status:                 str(t.status)                 || initialFormData.status,
+    notes:                  str(t.notes),
+    artistId:               str(t.artist_id),
+    projectId:              str(t.project_id),
+    contractId:             str(t.contract_id),
+    eventId:                str(t.event_id),
+    counterpartyName:       str(t.counterparty_name),
+    taxAuthority:           str(t.tax_authority),
+    costCenter:             str(t.cost_center),
+    referenceMonth:         toReferenceMonthInput(str(t.reference_month)),
+    sourceBankAccount:      str(t.source_bank_account),
+    destinationBankAccount: str(t.destination_bank_account),
+    investmentItem:         str(t.investment_item),
+    travelReason:           str(t.travel_reason),
+    advertisingName:        str(t.advertising_name),
+    paymentMethod:          str(t.payment_method),
+    paymentType:            str(t.payment_type)           || initialFormData.paymentType,
+    installmentCount:       str(t.installment_count),
+    installmentInterval:    str(t.installment_interval)   || initialFormData.installmentInterval,
+    firstInstallmentDate:   str(t.first_installment_date),
+    attachmentUrl:          str(t.attachment_url),
+    attachmentName:         str(t.attachment_name),
   };
 }

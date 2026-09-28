@@ -1,8 +1,10 @@
 import { storage } from "@/shared/lib/storage";
+import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
+import type { Transaction } from "@/modules/accounting/types/accounting.types";
 
 export const accountingService = {
   async listTransactions() {
-    return storage.list("transactions", { orderBy: { column: "data", ascending: false } });
+    return storage.list("transactions", { orderBy: { column: "transaction_date", ascending: false } });
   },
 
   async getTransaction(id: string) {
@@ -22,15 +24,15 @@ export const accountingService = {
   },
 
   async listByPeriod(start: string, end: string) {
-    const all = await storage.list<{ id: string; data: string }>("transactions");
-    return all.filter((t) => t.data >= start && t.data <= end);
+    const all = await storage.list<Pick<Transaction, "id" | "transaction_date">>("transactions");
+    return all.filter((t) => t.transaction_date >= start && t.transaction_date <= end);
   },
 
   async getSummary() {
-    const list = await storage.list<{ id: string; type: string; valor: number }>("transactions");
-    const income = list.filter((t) => t.type === "receita").reduce((s, t) => s + (t.valor ?? 0), 0);
-    const expenses = list.filter((t) => t.type === "despesa").reduce((s, t) => s + (t.valor ?? 0), 0);
-    return { receitas: income, despesas: expenses, saldo: income - expenses, total: list.length };
+    const list = await storage.list<Pick<Transaction, "id" | "type" | "amount">>("transactions");
+    const income = list.filter((t) => t.type === "revenue").reduce((s, t) => s + toNumber(t.amount), 0);
+    const expenses = list.filter((t) => t.type === "expense").reduce((s, t) => s + toNumber(t.amount), 0);
+    return { revenue: income, expenses, balance: income - expenses, total: list.length };
   },
 
   async listInvoices() {

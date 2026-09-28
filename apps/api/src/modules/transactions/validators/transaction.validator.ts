@@ -1,20 +1,19 @@
 import { z } from 'zod';
+import {
+  COUNTERPARTY_TYPES,
+  INSTALLMENT_INTERVALS,
+  PAYMENT_METHODS,
+  PAYMENT_TYPES,
+  TRANSACTION_TYPES,
+  canonicalizeTransactionInput,
+} from '../transaction-legacy-fields';
 
-// ── Enum values matching the frontend constants in transacao-constants.ts ─────
-
-const TRANSACTION_TYPES = ['receita', 'despesa', 'investimento', 'imposto', 'transferencia'] as const;
+// ── Canonical enum values (CZ-041; PT-BR labels live in the web UI) ───────────
 // 'aprovado'/'atrasado' were UI-only decorative labels with zero backend
-// consumer (no service/query ever branched on them) — dead options, removed.
-// 'pago' DOES have real consumers (transactions.service.ts PAID_STATUSES,
-// analytics.service.ts KPI queries, both already treating it as equivalent
-// to confirmado/concluido) so it is translated, not dropped: 'pago' ->
-// 'paid' (see TransactionStatus in packages/types/src/enums.ts).
-const STATUS          = ['pending', 'paid', 'confirmed', 'completed', 'scheduled', 'cancelled'] as const;
-const PAYMENT_METHODS = [
-  'pix', 'ted', 'boleto', 'cartao-credito', 'cartao-debito', 'dinheiro', 'cheque',
-] as const;
-const PAYMENT_PLANS     = ['avista', 'parcelado'] as const;
-const INSTALLMENT_INTERVALS = ['mensal', 'quinzenal', 'semanal'] as const;
+// consumer — dead options, removed. 'paid' has real consumers
+// (transactions.service.ts PAID_STATUSES, analytics.service.ts KPI queries,
+// both treating it as equivalent to confirmed/completed).
+const STATUS = ['pending', 'paid', 'confirmed', 'completed', 'scheduled', 'cancelled'] as const;
 
 // ── Subcategory sets used in conditional validation ────────────────────────────
 
@@ -41,33 +40,40 @@ const incomeServicesWithArtist = new Set([
 ]);
 
 // ── Shared field declarations ──────────────────────────────────────────────────
-// tipoTransacao is defined separately in each schema so create makes it required
+// transactionType is defined separately in each schema so create makes it required
 // and update keeps it required (context always known when editing a transaction).
 
 // No defaults here — defaults only belong in createTransactionSchema so partial
 // PATCH requests don't silently overwrite existing DB values.
+// Every optional field accepts null: the web form sends null for a blank
+// field (it used to fail with 422 — CZ-041).
+const optionalText = z.string().nullish();
 const commonFields = {
-  tipoCliente:         z.string().optional(),
-  category:            z.string().optional(),
-  subcategoria:        z.string().optional(),
-  status:              z.enum(STATUS).optional(),
-  formaPagamento:      z.enum(PAYMENT_METHODS).optional(),
-  tipoPagamento:       z.enum(PAYMENT_PLANS).optional(),
-  quantidadeParcelas:  z.string().optional(),
-  intervaloParcelas:   z.enum(INSTALLMENT_INTERVALS).optional(),
-  dataPrimeiraParcela: z.string().optional(),
-  artistaVinculado:    z.string().optional(),
-  projetoVinculado:    z.string().optional(),
-  contratoVinculado:   z.string().optional(),
-  eventoVinculado:     z.string().optional(),
-  fornecedorCliente:   z.string().optional(),
-  orgaoArrecadador:    z.string().optional(),
-  itemInvestimento:    z.string().optional(),
-  motivoViagem:        z.string().optional(),
-  advertisingName:     z.string().optional(),
-  observacao:          z.string().optional(),
-  anexoUrl:            z.string().optional(),
-  anexoNome:           z.string().optional(),
+  counterpartyType:       z.enum(COUNTERPARTY_TYPES).nullish(),
+  category:               optionalText,
+  subcategory:            optionalText,
+  status:                 z.enum(STATUS).nullish(),
+  paymentMethod:          z.enum(PAYMENT_METHODS).nullish(),
+  paymentType:            z.enum(PAYMENT_TYPES).nullish(),
+  installmentCount:       z.union([z.string(), z.number()]).transform((v) => String(v)).nullish(),
+  installmentInterval:    z.enum(INSTALLMENT_INTERVALS).nullish(),
+  firstInstallmentDate:   optionalText,
+  artistId:               optionalText,
+  projectId:              optionalText,
+  contractId:             optionalText,
+  eventId:                optionalText,
+  counterpartyName:       optionalText,
+  taxAuthority:           optionalText,
+  costCenter:             optionalText,
+  referenceMonth:         optionalText,
+  sourceBankAccount:      optionalText,
+  destinationBankAccount: optionalText,
+  investmentItem:         optionalText,
+  travelReason:           optionalText,
+  advertisingName:        optionalText,
+  notes:                  optionalText,
+  attachmentUrl:          optionalText,
+  attachmentName:         optionalText,
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -79,85 +85,87 @@ const commonFields = {
 const amountField = z
   .union([z.string(), z.number()])
   .transform((v) => String(v))
-  .optional();
+  .nullish();
+
+type Nullish<T> = T | null | undefined;
 
 interface PayloadForValidation {
-  tipoTransacao: (typeof TRANSACTION_TYPES)[number];
-  tipoCliente?: string;
-  category?: string;
-  subcategoria?: string;
-  description?: string;
-  amount?: string;
-  dataTransacao?: string;
-  formaPagamento?: string;
-  tipoPagamento?: string;
-  quantidadeParcelas?: string;
-  dataPrimeiraParcela?: string;
-  artistaVinculado?: string;
-  projetoVinculado?: string;
-  eventoVinculado?: string;
-  motivoViagem?: string;
-  advertisingName?: string;
-  orgaoArrecadador?: string;
+  transactionType: (typeof TRANSACTION_TYPES)[number];
+  counterpartyType?: Nullish<string>;
+  category?: Nullish<string>;
+  subcategory?: Nullish<string>;
+  description?: Nullish<string>;
+  amount?: Nullish<string>;
+  transactionDate?: Nullish<string>;
+  paymentMethod?: Nullish<string>;
+  paymentType?: Nullish<string>;
+  installmentCount?: Nullish<string>;
+  firstInstallmentDate?: Nullish<string>;
+  artistId?: Nullish<string>;
+  projectId?: Nullish<string>;
+  eventId?: Nullish<string>;
+  travelReason?: Nullish<string>;
+  advertisingName?: Nullish<string>;
+  taxAuthority?: Nullish<string>;
 }
 
-// Partial variant used by patchTransactionSchema where tipoTransacao may be absent
-interface PartialPayloadForValidation extends Omit<PayloadForValidation, 'tipoTransacao'> {
-  tipoTransacao?: (typeof TRANSACTION_TYPES)[number];
+// Partial variant used by patchTransactionSchema where transactionType may be absent
+interface PartialPayloadForValidation extends Omit<PayloadForValidation, 'transactionType'> {
+  transactionType?: Nullish<(typeof TRANSACTION_TYPES)[number]>;
 }
 
 /**
- * Validates installment fields whenever tipoPagamento is 'parcelado'.
- * Accepts both full and partial payloads — tipoTransacao not needed here.
- * Independent of tipoTransacao — applies on both create and update.
+ * Validates installment fields whenever paymentType is 'installments'.
+ * Accepts both full and partial payloads — transactionType not needed here.
  */
-function validateParcelamento(data: PartialPayloadForValidation, ctx: z.RefinementCtx): void {
-  if (data.tipoPagamento !== 'parcelado') return;
+function validateInstallments(data: PartialPayloadForValidation, ctx: z.RefinementCtx): void {
+  if (data.paymentType !== 'installments') return;
 
-  const qtd = data.quantidadeParcelas ? parseInt(data.quantidadeParcelas, 10) : NaN;
-  if (isNaN(qtd) || qtd < 2) {
+  const count = data.installmentCount ? parseInt(data.installmentCount, 10) : NaN;
+  if (isNaN(count) || count < 2) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Mínimo 2 parcelas',
-      path: ['quantidadeParcelas'],
+      path: ['installmentCount'],
     });
   }
-  if (!data.dataPrimeiraParcela) {
+  if (!data.firstInstallmentDate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Informe a data da primeira parcela',
-      path: ['dataPrimeiraParcela'],
+      path: ['firstInstallmentDate'],
     });
   }
 }
 
 /**
  * Validates all transaction-type-specific conditional fields.
- * Requires tipoTransacao to be present — enforced by both schemas.
+ * Requires transactionType to be present — enforced by both schemas.
+ * Category/subcategory slugs are the (unchanged) taxonomy values.
  */
 function validateConditionalByType(data: PayloadForValidation, ctx: z.RefinementCtx): void {
-  const type             = data.tipoTransacao;
-  const clientType      = data.tipoCliente;
-  const category        = data.category;
-  const subcategoria     = data.subcategoria ?? '';
-  const linkedArtist = data.artistaVinculado;
+  const type              = data.transactionType;
+  const counterpartyType  = data.counterpartyType;
+  const category          = data.category;
+  const subcategory       = data.subcategory ?? '';
+  const linkedArtist      = data.artistId;
 
-  const isTax        = type === 'imposto';
-  const isTransferencia  = type === 'transferencia';
-  const isInvestment   = type === 'investimento';
-  const isExpense        = type === 'despesa';
-  const isIncome        = type === 'receita';
-  const isCompany        = clientType === 'empresa';
-  const isArtist        = clientType === 'artista';
-  const isPerson         = clientType === 'pessoa';
+  const isTax             = type === 'tax';
+  const isTransfer        = type === 'transfer';
+  const isInvestment      = type === 'investment';
+  const isExpense         = type === 'expense';
+  const isIncome          = type === 'revenue';
+  const isCompany         = counterpartyType === 'company';
+  const isArtist          = counterpartyType === 'artist';
+  const isPerson          = counterpartyType === 'individual';
   const isCompanyOrPerson = isCompany || isPerson;
 
-  const needsClientType = !isTax && !isTransferencia && !isInvestment;
-  if (needsClientType && !clientType) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o tipo de cliente', path: ['tipoCliente'] });
+  const needsCounterpartyType = !isTax && !isTransfer && !isInvestment;
+  if (needsCounterpartyType && !counterpartyType) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o tipo de cliente', path: ['counterpartyType'] });
   }
 
-  if (!isTransferencia && !category) {
+  if (!isTransfer && !category) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a categoria', path: ['category'] });
   }
 
@@ -172,83 +180,84 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
   const isServiceIncome                  = isIncome && isCompanyOrPerson && category === 'servicos';
   const isProductIncome                  = isIncome && isCompanyOrPerson && category === 'produtos';
 
-  const needsSubcategoria =
+  const needsSubcategory =
     isServiceExpense || isMarketingExpense || isTravelExpense ||
     isProductExpense || isArtistFeeExpense ||
     isMusicIncome || isServiceIncome || isProductIncome;
 
-  if (needsSubcategoria && !subcategoria) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a subcategoria', path: ['subcategoria'] });
+  if (needsSubcategory && !subcategory) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a subcategoria', path: ['subcategory'] });
   }
 
   const needsArtist =
-    (isServiceExpense  && expenseServicesWithArtistAndProject.has(subcategoria)) ||
-    (isMarketingExpense && Boolean(subcategoria)) ||
-    (isTravelExpense   && Boolean(subcategoria)) ||
-    (isProductExpense  && Boolean(subcategoria)) ||
+    (isServiceExpense  && expenseServicesWithArtistAndProject.has(subcategory)) ||
+    (isMarketingExpense && Boolean(subcategory)) ||
+    (isTravelExpense   && Boolean(subcategory)) ||
+    (isProductExpense  && Boolean(subcategory)) ||
     isFinancialSupportExpense ||
-    (isArtistFeeExpense && Boolean(subcategoria)) ||
+    (isArtistFeeExpense && Boolean(subcategory)) ||
     isArtistFinancialSupportExpense ||
-    (isMusicIncome && Boolean(subcategoria)) ||
+    (isMusicIncome && Boolean(subcategory)) ||
     (isServiceIncome && (
-      incomeServicesWithArtistAndProject.has(subcategoria) ||
-      incomeServicesWithArtist.has(subcategoria)
+      incomeServicesWithArtistAndProject.has(subcategory) ||
+      incomeServicesWithArtist.has(subcategory)
     )) ||
-    (isProductIncome && Boolean(subcategoria));
+    (isProductIncome && Boolean(subcategory));
 
   if (needsArtist && !linkedArtist) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o artista', path: ['artistaVinculado'] });
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o artista', path: ['artistId'] });
   }
 
   const projectRequired =
-    (isServiceExpense  && expenseServicesWithArtistAndProject.has(subcategoria)) ||
-    (isMusicIncome  && musicIncomeWithArtistAndProject.has(subcategoria)) ||
-    (isServiceIncome  && incomeServicesWithArtistAndProject.has(subcategoria));
+    (isServiceExpense  && expenseServicesWithArtistAndProject.has(subcategory)) ||
+    (isMusicIncome  && musicIncomeWithArtistAndProject.has(subcategory)) ||
+    (isServiceIncome  && incomeServicesWithArtistAndProject.has(subcategory));
 
   const showProject =
     projectRequired ||
-    (isMarketingExpense && Boolean(subcategoria) && Boolean(linkedArtist));
+    (isMarketingExpense && Boolean(subcategory) && Boolean(linkedArtist));
 
-  if (showProject && projectRequired && linkedArtist && !data.projetoVinculado) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o projeto', path: ['projetoVinculado'] });
+  if (showProject && projectRequired && linkedArtist && !data.projectId) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o projeto', path: ['projectId'] });
   }
 
   const needsEvent =
-    (isProductExpense     && expenseProductsWithEvent.has(subcategoria)) ||
-    (isArtistFeeExpense && subcategoria === 'show-evento') ||
-    (isMusicIncome     && ['participacao-show-evento', 'venda-show-fechado'].includes(subcategoria));
+    (isProductExpense     && expenseProductsWithEvent.has(subcategory)) ||
+    (isArtistFeeExpense && subcategory === 'show-evento') ||
+    (isMusicIncome     && ['participacao-show-evento', 'venda-show-fechado'].includes(subcategory));
 
-  if (needsEvent && linkedArtist && !data.eventoVinculado) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o show/evento', path: ['eventoVinculado'] });
+  if (needsEvent && linkedArtist && !data.eventId) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o show/evento', path: ['eventId'] });
   }
 
-  if (isTravelExpense && Boolean(subcategoria) && !data.motivoViagem?.trim()) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o motivo da viagem', path: ['motivoViagem'] });
+  if (isTravelExpense && Boolean(subcategory) && !data.travelReason?.trim()) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o motivo da viagem', path: ['travelReason'] });
   }
 
-  if (isArtistFeeExpense && subcategoria === 'publicidade' && !data.advertisingName?.trim()) {
+  if (isArtistFeeExpense && subcategory === 'publicidade' && !data.advertisingName?.trim()) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o nome da publicidade', path: ['advertisingName'] });
   }
 
-  if (isTax && !data.orgaoArrecadador) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o órgão arrecadador', path: ['orgaoArrecadador'] });
+  if (isTax && !data.taxAuthority) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o órgão arrecadador', path: ['taxAuthority'] });
   }
 }
 
 // ── Create schema ─────────────────────────────────────────────────────────────
-// All core fields required; conditional rules always run because tipoTransacao
-// is always present.
+// All core fields required; conditional rules always run because transactionType
+// is always present. Deprecated pre-CZ-041 keys/values are mapped first
+// (z.preprocess + canonicalizeTransactionInput).
 
-export const createTransactionSchema = z.object({
-  tipoTransacao: z.enum(TRANSACTION_TYPES),
+const createTransactionBaseSchema = z.object({
+  transactionType: z.enum(TRANSACTION_TYPES),
   description:     z.string().trim().min(1),
-  amount:        amountField,
-  dataTransacao: z.string().min(1),
+  amount:          amountField,
+  transactionDate: z.string().min(1),
   ...commonFields,
   // Defaults applied only on create — absent fields on PATCH/PUT must stay absent
   // so the update path does not reset existing values.
-  status:        z.enum(STATUS).optional().default('pending'),
-  tipoPagamento: z.enum(PAYMENT_PLANS).optional().default('avista'),
+  status:          z.enum(STATUS).nullish().transform((v) => v ?? 'pending'),
+  paymentType:     z.enum(PAYMENT_TYPES).nullish().transform((v) => v ?? 'upfront'),
 }).superRefine((data, ctx) => {
   if (!data.description?.trim()) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe a descrição', path: ['description'] });
@@ -256,80 +265,76 @@ export const createTransactionSchema = z.object({
   if (!data.amount || isNaN(parseFloat(data.amount)) || parseFloat(data.amount) <= 0) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['amount'] });
   }
-  if (!data.dataTransacao) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe a data da transação', path: ['dataTransacao'] });
+  if (!data.transactionDate) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe a data da transação', path: ['transactionDate'] });
   }
-  if (!data.formaPagamento) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a forma de pagamento', path: ['formaPagamento'] });
+  if (!data.paymentMethod) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a forma de pagamento', path: ['paymentMethod'] });
   }
-  validateParcelamento(data, ctx);
+  validateInstallments(data, ctx);
   validateConditionalByType(data, ctx);
 });
 
+export const createTransactionSchema = z.preprocess(canonicalizeTransactionInput, createTransactionBaseSchema);
+
 // ── PUT schema (full replace) ─────────────────────────────────────────────────
-// tipoTransacao REQUIRED — client always knows the transaction type on PUT;
+// transactionType REQUIRED — client always knows the transaction type on PUT;
 // requiring it here ensures all conditional rules are always evaluated.
 //
 // NOTE: The controller currently applies createTransactionSchema for PUT requests
 // (both POST and PUT share the same mandatory-field requirements for a full
-// replace).  updateTransactionSchema is exported here for explicit documentation
+// replace). updateTransactionSchema is exported here for explicit documentation
 // of the intended PUT contract and to give future callers (e.g. admin CLI,
-// integration tests, OpenAPI codegen) a clearly named schema — remove this
-// comment and wire the schema when a divergence from createTransactionSchema is
-// needed.
+// integration tests, OpenAPI codegen) a clearly named schema.
 
-export const updateTransactionSchema = z.object({
-  tipoTransacao: z.enum(TRANSACTION_TYPES),
-  description:     z.string().trim().optional(),
-  amount:        amountField,
-  dataTransacao: z.string().optional(),
+export const updateTransactionSchema = z.preprocess(canonicalizeTransactionInput, z.object({
+  transactionType: z.enum(TRANSACTION_TYPES),
+  description:     z.string().trim().nullish(),
+  amount:          amountField,
+  transactionDate: z.string().nullish(),
   ...commonFields,
   // Optimistic concurrency (Task J — continuity phase): when sent, the
   // update is only applied if updated_at in the database is still exactly this value —
   // detects a "lost update" when two users edit the same transaction in
   // parallel. Optional so existing callers do not break.
-  expectedUpdatedAt: z.string().optional(),
+  expectedUpdatedAt: z.string().nullish(),
 }).superRefine((data, ctx) => {
-  if (data.amount !== undefined) {
+  if (data.amount != null) {
     if (isNaN(parseFloat(data.amount)) || parseFloat(data.amount) <= 0) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['amount'] });
     }
   }
-  validateParcelamento(data, ctx);
+  validateInstallments(data, ctx);
   validateConditionalByType(data, ctx);
-});
+}));
 
 // ── PATCH schema (partial update) ─────────────────────────────────────────────
-// tipoTransacao is optional — a PATCH may legitimately update only a subset of
-// fields (e.g., status or description) without resending the full context.
+// transactionType is optional — a PATCH may legitimately update only a subset
+// of fields (e.g., status or description) without resending the full context.
 // Business-rule enforcement:
-//   • Instalment rules (tipoPagamento/parcelamento) always run when present.
-//   • Type-specific conditional rules (artista, projeto, etc.) run only when
-//     tipoTransacao IS included in the payload so there is enough context to
-//     evaluate them — partial payloads without tipoTransacao are validated only
-//     on the fields provided.
+//   • Installment rules (paymentType) always run when present.
+//   • Type-specific conditional rules (artist, project, etc.) run only when
+//     transactionType IS included in the payload.
 
-export const patchTransactionSchema = z.object({
-  tipoTransacao: z.enum(TRANSACTION_TYPES).optional(),
-  description:     z.string().trim().optional(),
-  amount:        amountField,
-  dataTransacao: z.string().optional(),
+export const patchTransactionSchema = z.preprocess(canonicalizeTransactionInput, z.object({
+  transactionType: z.enum(TRANSACTION_TYPES).nullish(),
+  description:     z.string().trim().nullish(),
+  amount:          amountField,
+  transactionDate: z.string().nullish(),
   ...commonFields,
   // Optimistic concurrency — see the comment in updateTransactionSchema.
-  expectedUpdatedAt: z.string().optional(),
+  expectedUpdatedAt: z.string().nullish(),
 }).superRefine((data, ctx) => {
-  if (data.amount !== undefined) {
+  if (data.amount != null) {
     if (isNaN(parseFloat(data.amount)) || parseFloat(data.amount) <= 0) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['amount'] });
     }
   }
-  // Instalment validation runs whenever tipoPagamento is provided
-  validateParcelamento(data, ctx);
-  // Conditional business rules run only when tipoTransacao is present
-  if (data.tipoTransacao) {
+  validateInstallments(data, ctx);
+  if (data.transactionType) {
     validateConditionalByType(data as PayloadForValidation, ctx);
   }
-});
+}));
 
 export type CreateTransactionDto = z.infer<typeof createTransactionSchema>;
 export type UpdateTransactionDto = z.infer<typeof updateTransactionSchema>;

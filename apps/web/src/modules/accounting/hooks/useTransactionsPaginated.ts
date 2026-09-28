@@ -3,6 +3,7 @@ import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
 import type { Transaction } from "./useTransactions";
+import type { TransactionType } from "../types/accounting.types";
 
 export interface UseTransactionsPaginatedParams {
   page: number;
@@ -46,7 +47,7 @@ export function useTransactionsPaginated({
 }
 
 interface TypeStatusRow {
-  type: string;
+  type: TransactionType;
   status: string;
   cnt: number;
   sum: number;
@@ -86,10 +87,10 @@ export function useFinanceStats() {
   let pendingRevenue = 0, pendingExpenses = 0;
   for (const row of rows) {
     total += row.cnt;
-    if (row.type === "receita" && row.status === "paid") { revenuePaid += row.sum; }
-    else if (row.type === "despesa" && row.status === "paid") { expensesPaid += row.sum; }
-    else if (row.type === "receita" && row.status === "pending") { receivables += row.sum; pendingRevenue += row.cnt; }
-    else if (row.type === "despesa" && row.status === "pending") { payables += row.sum; pendingExpenses += row.cnt; }
+    if (row.type === "revenue" && row.status === "paid") { revenuePaid += row.sum; }
+    else if (row.type === "expense" && row.status === "paid") { expensesPaid += row.sum; }
+    else if (row.type === "revenue" && row.status === "pending") { receivables += row.sum; pendingRevenue += row.cnt; }
+    else if (row.type === "expense" && row.status === "pending") { payables += row.sum; pendingExpenses += row.cnt; }
   }
   const netProfit = revenuePaid - expensesPaid;
   const margin = revenuePaid > 0 ? Math.round((netProfit / revenuePaid) * 100) : 0;

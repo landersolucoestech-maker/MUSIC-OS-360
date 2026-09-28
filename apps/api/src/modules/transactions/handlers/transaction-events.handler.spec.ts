@@ -24,7 +24,7 @@ describe('TransactionEventsHandler — P2-9', () => {
     return { handler, contractRepo, taskRepo, activityLogs, financialRules, dbContext };
   }
 
-  const payload = { transactionId: 'tx1', contratoId: 'c1', valor: 100, paidBy: 'u1', paidAt: '2026-06-12' };
+  const payload = { transactionId: 'tx1', contractId: 'c1', amount: 100, paidBy: 'u1', paidAt: '2026-06-12' };
 
   it('valid tenantId → runs inside runInTenantContext', async () => {
     const { handler, dbContext, activityLogs } = build();
@@ -50,14 +50,14 @@ describe('TransactionEventsHandler — P2-9', () => {
   });
 
   describe('onTransactionCreated', () => {
-    const createdPayload = { transactionId: 'tx2', type: 'receita', category: 'royalties', valor: '250' };
+    const createdPayload = { transactionId: 'tx2', type: 'revenue', category: 'royalties', amount: '250' };
 
     it('evaluates financial rules with the transaction.created trigger', async () => {
       const { handler, financialRules } = build();
       await handler.onTransactionCreated({ tenantId: 't1', payload: createdPayload } as any);
       expect(financialRules.evaluateRules).toHaveBeenCalledWith(
         't1', 'transaction.created',
-        expect.objectContaining({ entityId: 'tx2', entityType: 'transaction', amount: 250, category: 'royalties', type: 'receita' }),
+        expect.objectContaining({ entityId: 'tx2', entityType: 'transaction', amount: 250, category: 'royalties', type: 'revenue' }),
       );
     });
 

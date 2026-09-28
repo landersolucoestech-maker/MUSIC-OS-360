@@ -13,19 +13,24 @@ export class QueryWorkDto extends PaginationDto {
   @IsString()
   music_genre?: string;
 
-  @ApiPropertyOptional({ example: 'autoral' })
+  @ApiPropertyOptional({ enum: ['original', 'reference'] })
+  @IsOptional()
+  @IsString()
+  work_origin?: string;
+
+  @ApiPropertyOptional({ deprecated: true, description: 'Deprecated (CZ-039): use "work_origin".' })
   @IsOptional()
   @IsString()
   tipo_obra?: string;
 
-  @ApiPropertyOptional({ description: 'Project ID, or "sem-projeto" for works without a linked project.' })
+  @ApiPropertyOptional({ description: 'Project ID, or "none" for works without a linked project (legacy: "no-projeto").' })
   @IsOptional()
   @IsString()
   project_id?: string;
 
-  @ApiPropertyOptional({ enum: ['com-ecad', 'sem-ecad'] })
+  @ApiPropertyOptional({ enum: ['with_code', 'without_code'], description: 'Legacy values com-ecad/sem-ecad are still accepted.' })
   @IsOptional()
-  @IsIn(['com-ecad', 'sem-ecad'])
+  @IsIn(['with_code', 'without_code', 'com-ecad', 'sem-ecad'])
   ecad?: string;
 
   @ApiPropertyOptional()

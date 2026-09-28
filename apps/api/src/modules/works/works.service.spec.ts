@@ -128,30 +128,30 @@ describe('WorksService', () => {
     expect(mockDs._repo._qb.where).toHaveBeenCalled();
   });
 
-  describe('CreateWorkDto — real form payload (State B, pre-C2)', () => {
+  describe('CreateWorkDto — real form payload (CZ-039 canonical contract)', () => {
     const realFormPayload = {
       title: 'Minha Obra',
       music_genre: 'pop',
-      idioma: 'pt',
-      cod_ecad: 'ECAD-0001',
-      cod_entidade: 'ABR-123',
+      language: 'pt',
+      ecad_code: 'ECAD-0001',
+      society_code: 'ABR-123',
       duration_text: '03:30',
-      instrumental: 'nao',
-      criada_por_ia: false,
-      tipo_ia: null,
-      ia_harmonia: null,
-      ia_melodia: null,
-      ia_letra: null,
-      outros_titulos: null,
-      referencias_conexas: null,
-      letra_completa: null,
-      participantes: null,
+      is_instrumental: false,
+      ai_used: false,
+      ai_usage_level: null,
+      ai_harmony: null,
+      ai_melody: null,
+      ai_lyrics: null,
+      alternative_titles: null,
+      related_references: null,
+      lyrics: null,
+      participants: null,
       status: 'pending',
-      compositores: ['Fulano'],
-      letristas: null,
+      composer_names: ['Fulano'],
+      translator_names: null,
       project_id: '123e4567-e89b-12d3-a456-426614174000',
       artist_id: null,
-      tipo_obra: 'musica',
+      work_origin: 'original',
     };
 
     it('accepts the real frontend payload (formToObraPayload), including project_id', async () => {
@@ -170,36 +170,36 @@ describe('WorksService', () => {
     });
   });
 
-  describe('create() — type and tipo_obra are independent fields (works.type is NOT NULL)', () => {
-    // tipo_obra (catalog origin: 'autoral'|'referencia') never feeds
-    // type (ABRAMUS/ECAD classification: 'composicao'|'original'|...) — these were
+  describe('create() — type and work_origin are independent fields (works.type is NOT NULL)', () => {
+    // work_origin (catalog origin: 'original'|'reference') never feeds
+    // type (ABRAMUS/ECAD classification: 'composition'|'other'|...) — these were
     // distinct concepts collided by an incorrect fallback, removed in
     // 20260921000001_FixWorksTypeTipoObraCollision.
-    it('uses composicao when type is absent, even with tipo_obra present', async () => {
-      await service.create(TENANT, 'u1', { title: 'Nova', tipo_obra: 'musica' } as any);
+    it('uses composition when type is absent, even with work_origin present', async () => {
+      await service.create(TENANT, 'u1', { title: 'Nova', work_origin: 'reference' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'composicao', tipo_obra: 'musica' }),
+        expect.objectContaining({ type: 'composition', work_origin: 'reference' }),
       );
     });
 
-    it('uses composicao when type and tipo_obra are both absent', async () => {
+    it('uses composition when type and work_origin are both absent', async () => {
       await service.create(TENANT, 'u1', { title: 'Nova' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'composicao' }),
+        expect.objectContaining({ type: 'composition' }),
       );
     });
 
-    it('explicit type is always respected, regardless of tipo_obra', async () => {
-      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', tipo_obra: 'musica' } as any);
+    it('explicit type is always respected, regardless of work_origin', async () => {
+      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', work_origin: 'reference' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'original', tipo_obra: 'musica' }),
+        expect.objectContaining({ type: 'original', work_origin: 'reference' }),
       );
     });
 
-    it('persists compositores as an array', async () => {
-      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', compositores: ['A', 'B'] } as any);
+    it('persists composer_names as an array', async () => {
+      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', composer_names: ['A', 'B'] } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ compositores: ['A', 'B'] }),
+        expect.objectContaining({ composer_names: ['A', 'B'] }),
       );
     });
   });
@@ -212,34 +212,34 @@ describe('WorksService', () => {
     });
   });
 
-  describe('participantes — normalized into work_participants (migration 20260718000011)', () => {
-    it('create() does not send participantes to the WorkEntity repo (no longer a column)', async () => {
+  describe('participants — normalized into work_participants (migration 20260718000011)', () => {
+    it('create() does not send participants to the WorkEntity repo (not a column)', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
-        participantes: [{ id: 'p1', name: 'Fulano', classeFuncao: 'compositor/autor', link: '', percentual: '50' }],
+        participants: [{ id: 'p1', name: 'Fulano', role: 'composer_author', link: '', percentage: '50' }],
       } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
-        expect.not.objectContaining({ participantes: expect.anything() }),
+        expect.not.objectContaining({ participants: expect.anything() }),
       );
     });
 
     it('create() persists each participant as its own row in work_participants', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
-        participantes: [
-          { id: 'p1', name: 'Fulano', classeFuncao: 'compositor/autor', link: 'https://x', percentual: '60' },
-          { id: 'p2', name: 'Beltrano', classeFuncao: 'tradutor', link: '', percentual: '40' },
+        participants: [
+          { id: 'p1', name: 'Fulano', role: 'composer_author', link: 'https://x', percentage: '60' },
+          { id: 'p2', name: 'Beltrano', role: 'translator', link: '', percentage: '40' },
         ],
       } as any);
       expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-        expect.objectContaining({ id: 'p1', tenant_id: TENANT, name: 'Fulano', classe_funcao: 'compositor/autor', percentual: '60', sort_order: 0 }),
-        expect.objectContaining({ id: 'p2', tenant_id: TENANT, name: 'Beltrano', classe_funcao: 'tradutor', percentual: '40', sort_order: 1 }),
+        expect.objectContaining({ id: 'p1', tenant_id: TENANT, name: 'Fulano', role: 'composer_author', percentage: '60', sort_order: 0 }),
+        expect.objectContaining({ id: 'p2', tenant_id: TENANT, name: 'Beltrano', role: 'translator', percentage: '40', sort_order: 1 }),
       ]);
     });
 
-    it('findById() rehydrates participantes in the format expected by the frontend (id/name/classeFuncao/link/percentual)', async () => {
+    it('findById() rehydrates participants as {id, name, role, link, percentage}', async () => {
       const rows = [
-        { id: 'p1', work_id: WORK_ID, name: 'Fulano', classe_funcao: 'compositor/autor', link: null, percentual: '60' },
+        { id: 'p1', work_id: WORK_ID, name: 'Fulano', role: 'composer_author', link: null, percentage: '60' },
       ];
       mockDs = buildMockDs(mockWork, rows);
       const module = await Test.createTestingModule({
@@ -252,33 +252,33 @@ describe('WorksService', () => {
       service = module.get<WorksService>(WorksService);
 
       const found = await service.findById(TENANT, WORK_ID);
-      expect(found.participantes).toEqual([
-        { id: 'p1', name: 'Fulano', classeFuncao: 'compositor/autor', link: null, percentual: '60' },
+      expect(found.participants).toEqual([
+        { id: 'p1', name: 'Fulano', role: 'composer_author', link: null, percentage: '60' },
       ]);
     });
 
     it('update() replaces the participants (delete + insert) when the DTO sends the array', async () => {
       await service.update(TENANT, 'u1', WORK_ID, {
-        participantes: [{ id: 'p1', name: 'Novo Nome', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+        participants: [{ id: 'p1', name: 'Novo Nome', role: 'composer_author', link: '', percentage: '100' }],
       } as any);
       expect(mockDs._participantsRepo.delete).toHaveBeenCalledWith({ work_id: WORK_ID, tenant_id: TENANT });
       expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-        expect.objectContaining({ name: 'Novo Nome', percentual: '100' }),
+        expect.objectContaining({ name: 'Novo Nome', percentage: '100' }),
       ]);
     });
 
-    it('update() does not touch participantes when the DTO does not send the field', async () => {
+    it('update() does not touch participants when the DTO does not send the field', async () => {
       await service.update(TENANT, 'u1', WORK_ID, { observacoes: 'x' } as any);
       expect(mockDs._participantsRepo.delete).not.toHaveBeenCalled();
       expect(mockDs._participantsRepo.save).not.toHaveBeenCalled();
     });
   });
 
-  describe('Task L — work + participants atomicity (casUpdate + replaceParticipantes in the same transaction)', () => {
+  describe('Task L — work + participants atomicity (casUpdate + replaceParticipants in the same transaction)', () => {
     it('update() runs inside ds.transaction() (work and participants are not independent operations)', async () => {
       await service.update(TENANT, 'u1', WORK_ID, {
         observacoes: 'x',
-        participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+        participants: [{ id: 'p1', name: 'X', role: 'composer_author', link: '', percentage: '100' }],
       } as any);
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
     });
@@ -286,7 +286,7 @@ describe('WorksService', () => {
     it('create() also runs work + participants in the same transaction', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
-        participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+        participants: [{ id: 'p1', name: 'X', role: 'composer_author', link: '', percentage: '100' }],
       } as any);
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
     });
@@ -296,13 +296,20 @@ describe('WorksService', () => {
       await expect(
         service.update(TENANT, 'u1', WORK_ID, {
           observacoes: 'x',
-          participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+          participants: [{ id: 'p1', name: 'X', role: 'composer_author', link: '', percentage: '100' }],
         } as any),
       ).rejects.toThrow('constraint violation');
       // The same transaction() call that attempted the work update is the one
       // that failed on the participants — there is no second "partial" commit of the work
       // outside that transaction.
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
+    });
+
+    it('participants: null leaves the stored participants untouched (no TypeError/500); [] clears them', async () => {
+      await service.update(TENANT, 'u1', WORK_ID, { title: 'x', participants: null } as any);
+      expect(mockDs._participantsRepo.delete).not.toHaveBeenCalled();
+      await service.update(TENANT, 'u1', WORK_ID, { title: 'x', participants: [] } as any);
+      expect(mockDs._participantsRepo.delete).toHaveBeenCalledTimes(1);
     });
 
     it("scenario A/B: B tries to save work+participants against a version already overwritten by A -> 409, B's participants are never persisted", async () => {
@@ -312,11 +319,11 @@ describe('WorksService', () => {
       await expect(
         service.update(TENANT, 'u1', WORK_ID, {
           observacoes: 'edição de B',
-          participantes: [{ id: 'pB', name: 'Participante de B', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+          participants: [{ id: 'pB', name: 'Participante de B', role: 'composer_author', link: '', percentage: '100' }],
           expectedUpdatedAt: new Date('2026-08-14T10:00:00.000Z').toISOString(),
         } as any),
       ).rejects.toThrow(ConflictException);
-      // casUpdate throws BEFORE replaceParticipantes is called (same
+      // casUpdate throws BEFORE replaceParticipants is called (same
       // transaction, sequential order) — B's data never touches the database.
       expect(mockDs._participantsRepo.delete).not.toHaveBeenCalled();
       expect(mockDs._participantsRepo.save).not.toHaveBeenCalled();

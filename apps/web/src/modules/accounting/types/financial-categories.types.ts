@@ -1,7 +1,7 @@
 export type FinancialTransactionType = "REVENUE" | "EXPENSE" | "INVESTMENT" | "TAX" | "TRANSFER";
 export type FinancialCategoryKind = "operational" | "managerial" | "accounting" | "tax" | "internal" | "automation" | "reporting";
-export type FinanceRuleTransactionType = "RECEITA" | "DESPESA";
-export type FinanceCategoryRuleOrigin = "SISTEMA" | "PERSONALIZADA";
+export type FinanceRuleTransactionType = "REVENUE" | "EXPENSE";
+export type FinanceCategoryRuleOrigin = "SYSTEM" | "CUSTOM";
 
 export interface FinancialCategory {
   id: string;

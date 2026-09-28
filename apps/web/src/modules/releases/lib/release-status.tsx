@@ -2,32 +2,34 @@ import { Badge, type BadgeVariant } from "@/shared/ui/badge";
 import type { ContrastMode } from "@/shared/lib/image-contrast";
 import type { Release } from "@/modules/releases/types";
 import { cn } from "@/shared/lib/utils";
+import { ReleaseStatus as PkgReleaseStatus } from "@music-os-360/types";
 
 /**
  * release-status — the SINGLE closed taxonomy of release status (display),
- * used in the card, filters and ViewModal. Normalizes legacy/internal/platform
- * statuses to one of the 7 canonical values; the legacy `status` is never shown raw.
+ * used in the card, filters and ViewModal. Normalizes backend/platform
+ * statuses to one of the 7 display values (English keys, PT-BR labels); the
+ * raw `status` is never shown.
  */
 
 export type ReleaseStatus =
-  | "pendente"
-  | "em_espera"
-  | "rejeitado"
-  | "distribuido"
-  | "aprovado"
+  | "pending"
+  | "on_hold"
+  | "rejected"
+  | "distributed"
+  | "approved"
   | "takedown"
-  | "incompleto";
+  | "incomplete";
 
 type Hue = "emerald" | "amber" | "orange" | "sky" | "rose" | "slate";
 
 const RELEASE_STATUS_META: Record<ReleaseStatus, { label: string; variant: BadgeVariant; hue: Hue }> = {
-  pendente: { label: "Pendente", variant: "warning", hue: "amber" },
-  em_espera: { label: "Em Espera", variant: "warning", hue: "orange" },
-  aprovado: { label: "Aprovado", variant: "info", hue: "sky" },
-  distribuido: { label: "Distribuído", variant: "success", hue: "emerald" },
-  rejeitado: { label: "Rejeitado", variant: "danger", hue: "rose" },
+  pending: { label: "Pendente", variant: "warning", hue: "amber" },
+  on_hold: { label: "Em Espera", variant: "warning", hue: "orange" },
+  approved: { label: "Aprovado", variant: "info", hue: "sky" },
+  distributed: { label: "Distribuído", variant: "success", hue: "emerald" },
+  rejected: { label: "Rejeitado", variant: "danger", hue: "rose" },
   takedown: { label: "Takedown", variant: "danger", hue: "rose" },
-  incompleto: { label: "Incompleto", variant: "neutral", hue: "slate" },
+  incomplete: { label: "Incompleto", variant: "neutral", hue: "slate" },
 };
 
 /**
@@ -37,113 +39,91 @@ const RELEASE_STATUS_META: Record<ReleaseStatus, { label: string; variant: Badge
  * as the "warning" already used in RELEASE_STATUS_META) — all white text (except Incomplete).
  */
 const RELEASE_STATUS_SOLID: Record<ReleaseStatus, string> = {
-  distribuido: "bg-success text-success-foreground border-transparent",
-  aprovado: "bg-success text-success-foreground border-transparent",
-  pendente: "bg-warning text-warning-foreground border-transparent",
-  incompleto: "bg-border-strong text-foreground border-transparent",
-  rejeitado: "bg-destructive text-destructive-foreground border-transparent",
+  distributed: "bg-success text-success-foreground border-transparent",
+  approved: "bg-success text-success-foreground border-transparent",
+  pending: "bg-warning text-warning-foreground border-transparent",
+  incomplete: "bg-border-strong text-foreground border-transparent",
+  rejected: "bg-destructive text-destructive-foreground border-transparent",
   takedown: "bg-info text-info-foreground border-transparent",
-  em_espera: "bg-warning text-warning-foreground border-transparent",
+  on_hold: "bg-warning text-warning-foreground border-transparent",
 };
-
-/** Options for filter selects (display order). */
-export const RELEASE_STATUS_OPTIONS: { value: ReleaseStatus; label: string }[] = (
-  ["pendente", "em_espera", "aprovado", "distribuido", "rejeitado", "takedown", "incompleto"] as ReleaseStatus[]
-).map((v) => ({ value: v, label: RELEASE_STATUS_META[v].label }));
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
 
-// platform_status (real) → 7-set
+// platform_status (distribution platform) → display set
 const PLATFORM_TO_DISPLAY: Record<string, ReleaseStatus> = {
-  aprovado: "aprovado",
-  distribuido: "distribuido",
-  rejeitado: "rejeitado",
+  approved: "approved",
+  distributed: "distributed",
+  rejected: "rejected",
   takedown: "takedown",
-  on_hold: "em_espera",
-  erro: "em_espera",
-  cancelado: "em_espera",
-  incompleto: "incompleto",
-  pendente: "pendente",
+  on_hold: "on_hold",
+  error: "on_hold",
+  cancelled: "on_hold",
+  incomplete: "incomplete",
+  pending: "pending",
 };
 
-// internal/legacy (conflated) status → 7-set (temporary mapping requested by the user)
-const LEGACY_TO_DISPLAY: Record<string, ReleaseStatus> = {
-  // incomplete
-  rascunho: "incompleto",
-  draft: "incompleto",
-  metadata_pending: "incompleto",
-  assets_pending: "incompleto",
-  em_producao: "incompleto",
-  incompleto: "incompleto",
-  // pending
-  enviado: "pendente",
-  aguardando_distribuicao: "pendente",
-  analise: "pendente",
-  em_analise: "pendente",
-  review: "pendente",
-  scheduled: "pendente",
-  programado: "pendente",
-  pronto_para_envio: "pendente",
-  pendente: "pendente",
-  // approved
-  aprovado: "aprovado",
-  approved: "aprovado",
-  // distributed
-  publicado: "distribuido",
-  ativo: "distribuido",
-  released: "distribuido",
-  distributed: "distribuido",
-  distribuida: "distribuido",
-  distribuido: "distribuido",
-  // rejected
-  rejeitado: "rejeitado",
-  rejected: "rejeitado",
-  // takedown
+/** Backend `ReleaseStatus` (packages/types) → display set. */
+const BACKEND_TO_DISPLAY: Record<string, ReleaseStatus> = {
+  [PkgReleaseStatus.DRAFT]: "incomplete",
+  [PkgReleaseStatus.METADATA_PENDING]: "incomplete",
+  [PkgReleaseStatus.ASSETS_PENDING]: "incomplete",
+  [PkgReleaseStatus.REVIEW]: "pending",
+  [PkgReleaseStatus.SCHEDULED]: "pending",
+  [PkgReleaseStatus.APPROVED]: "approved",
+  [PkgReleaseStatus.DISTRIBUTED]: "distributed",
+  [PkgReleaseStatus.RELEASED]: "distributed",
+  [PkgReleaseStatus.CANCELLED]: "on_hold",
+  [PkgReleaseStatus.ARCHIVED]: "on_hold",
+};
+
+/**
+ * Legacy Portuguese statuses with no ReleaseStatus equivalent (migration
+ * 20260928000019 maps every other one; BLK-RELEASES-STATUS-CHECK).
+ */
+const UNMAPPED_LEGACY_TO_DISPLAY: Record<string, ReleaseStatus> = {
+  rejeitado: "rejected",
   takedown: "takedown",
   take_down: "takedown",
   remocao: "takedown",
-  // on hold
-  cancelado: "em_espera",
-  cancelled: "em_espera",
-  arquivado: "em_espera",
-  archived: "em_espera",
-  on_hold: "em_espera",
 };
 
-/** Are the minimum required fields present for the release to stop being "incomplete"? */
-export function hasRequiredForSubmission(release: Release & Record<string, unknown>): boolean {
-  return Boolean(str(release.title) && str(release.artist_id) && str(release.music_genre) && str(release.type));
-}
+/**
+ * Backend statuses of each display group — what the status filter sends
+ * (GET /releases?status=a,b). Groups without backend statuses (rejected,
+ * takedown only come from the distribution platform) are not filterable.
+ */
+export const RELEASE_DISPLAY_TO_BACKEND_STATUSES: Partial<Record<ReleaseStatus, string[]>> = Object.entries(BACKEND_TO_DISPLAY)
+  .reduce<Partial<Record<ReleaseStatus, string[]>>>((acc, [backend, display]) => {
+    (acc[display] ??= []).push(backend);
+    return acc;
+  }, {});
+
+/** Options for filter selects (display order); value = display group. */
+export const RELEASE_STATUS_OPTIONS: { value: ReleaseStatus; label: string }[] = (
+  ["pending", "on_hold", "approved", "distributed", "incomplete"] as ReleaseStatus[]
+).map((v) => ({ value: v, label: RELEASE_STATUS_META[v].label }));
+
+const displayOf = (status: string): ReleaseStatus =>
+  BACKEND_TO_DISPLAY[status] ?? UNMAPPED_LEGACY_TO_DISPLAY[status] ?? "incomplete";
 
 /**
- * Display status (7-set), single source. Prefers `platform_status` (real),
- * then legacy `internal_status`/`status`. `planejado` becomes pending/incomplete
- * depending on the presence of required data.
+ * Display status of a backend status — used by GET /releases/stats (GROUP BY
+ * status) with the SAME classification as resolveReleaseStatus().
+ * `platform_status`/`internal_status` are not columns of `releases`, so in
+ * practice both functions classify the backend `status`.
  */
-/**
- * Same classification as resolveReleaseStatus(), but from values already
- * aggregated in the backend (GET /releases/stats: GROUP BY status + "required
- * fields filled?"), without needing the full row. `platform_status`/
- * `internal_status` never exist in `releases` (columns never created in the
- * schema — resolveReleaseStatus() always falls back to the legacy `status` in practice),
- * so the only other input the classification depends on is `hasRequired`.
- */
-export function resolveStatusFromRawStatus(status: string, hasRequired: boolean): ReleaseStatus {
-  const key = (status || "").toLowerCase();
-  if (key === "planejado") return hasRequired ? "pendente" : "incompleto";
-  return LEGACY_TO_DISPLAY[key] ?? "incompleto";
+export function resolveStatusFromRawStatus(status: string): ReleaseStatus {
+  return displayOf((status || "").toLowerCase());
 }
 
+/** Display status (7-set), single source: `platform_status` first, then `internal_status`/`status`. */
 export function resolveReleaseStatus(release: Release & Record<string, unknown>): ReleaseStatus {
   const platform = str(release.platform_status).toLowerCase();
   if (platform && PLATFORM_TO_DISPLAY[platform]) return PLATFORM_TO_DISPLAY[platform];
 
   const internal = str(release.internal_status).toLowerCase();
-  const legacy = str(release.status).toLowerCase();
-  const key = internal || legacy;
-
-  if (key === "planejado") return hasRequiredForSubmission(release) ? "pendente" : "incompleto";
-  return LEGACY_TO_DISPLAY[key] ?? "incompleto";
+  return displayOf(internal || str(release.status).toLowerCase());
 }
 
 export const releaseStatusLabel = (s: ReleaseStatus): string => RELEASE_STATUS_META[s].label;

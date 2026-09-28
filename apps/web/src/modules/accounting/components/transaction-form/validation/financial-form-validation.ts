@@ -14,6 +14,9 @@ function parseMoney(value: string): number {
   return Number(normalized);
 }
 
+/** "MM/AAAA" (what the "Competência" input asks for) or the wire form "YYYY-MM". */
+const REFERENCE_MONTH_PATTERN = /^(?:(?:0[1-9]|1[0-2])\/\d{4}|\d{4}-(?:0[1-9]|1[0-2]))$/;
+
 function parsePositiveInteger(value: string): number {
   if (!/^\d+$/.test(value.trim())) return Number.NaN;
   return Number(value);
@@ -25,20 +28,20 @@ export function validateTransactionForm(
 ): ValidationErrors {
   const errors: ValidationErrors = {};
 
-  if (!f.tipoTransacao) {
-    errors.tipoTransacao = "Selecione o tipo de transação";
+  if (!f.transactionType) {
+    errors.transactionType = "Selecione o tipo de transação";
   }
 
-  if (rules.exibirTipoCliente && !f.tipoCliente) {
-    errors.tipoCliente = "Selecione o tipo de cliente";
+  if (rules.exibirTipoCliente && !f.counterpartyType) {
+    errors.counterpartyType = "Selecione o tipo de cliente";
   }
 
   if (rules.exibirCategoria && !f.category) {
     errors.category = "Selecione a categoria";
   }
 
-  if (rules.exibirSubcategoria && !f.subcategoria) {
-    errors.subcategoria = "Selecione a subcategoria";
+  if (rules.exibirSubcategoria && !f.subcategory) {
+    errors.subcategory = "Selecione a subcategoria";
   }
 
   if (!f.description?.trim()) {
@@ -50,46 +53,51 @@ export function validateTransactionForm(
     errors.amount = "Informe um valor válido";
   }
 
-  if (!f.dataTransacao) {
-    errors.dataTransacao = "Informe a data da transação";
+  if (!f.transactionDate) {
+    errors.transactionDate = "Informe a data da transação";
   }
 
-  if (!f.formaPagamento) {
-    errors.formaPagamento = "Selecione a forma de pagamento";
+  if (!f.paymentMethod) {
+    errors.paymentMethod = "Selecione a forma de pagamento";
   }
 
-  if (rules.exibirArtista && !f.artistaVinculado) {
-    errors.artistaVinculado = "Selecione o artista";
+  if (rules.exibirArtista && !f.artistId) {
+    errors.artistId = "Selecione o artista";
   }
 
-  if (rules.exibirProjeto && rules.projetoObrigatorio && f.artistaVinculado && !f.projetoVinculado) {
-    errors.projetoVinculado = "Selecione o projeto";
+  if (rules.exibirProjeto && rules.projetoObrigatorio && f.artistId && !f.projectId) {
+    errors.projectId = "Selecione o projeto";
   }
 
-  if (rules.exibirEvento && f.artistaVinculado && !f.eventoVinculado) {
-    errors.eventoVinculado = "Selecione o show/evento";
+  if (rules.exibirEvento && f.artistId && !f.eventId) {
+    errors.eventId = "Selecione o show/evento";
   }
 
-  if (rules.exibirMotivoViagem && !f.motivoViagem?.trim()) {
-    errors.motivoViagem = "Informe o motivo da viagem";
+  if (rules.exibirMotivoViagem && !f.travelReason?.trim()) {
+    errors.travelReason = "Informe o motivo da viagem";
   }
 
   if (rules.exibirAdvertisingName && !f.advertisingName?.trim()) {
     errors.advertisingName = "Informe o nome da publicidade";
   }
 
-  if (rules.exibirOrgaoArrecadador && !f.orgaoArrecadador) {
-    errors.orgaoArrecadador = "Selecione o órgão arrecadador";
+  if (rules.exibirOrgaoArrecadador && !f.taxAuthority) {
+    errors.taxAuthority = "Selecione o órgão arrecadador";
+  }
+
+  const referenceMonth = f.referenceMonth?.trim();
+  if (referenceMonth && !REFERENCE_MONTH_PATTERN.test(referenceMonth)) {
+    errors.referenceMonth = "Informe a competência no formato MM/AAAA";
   }
 
   if (rules.exibirParcelamento) {
-    const installmentCount = parsePositiveInteger(f.quantidadeParcelas);
+    const installmentCount = parsePositiveInteger(f.installmentCount);
     if (!Number.isInteger(installmentCount) || installmentCount < 2) {
-      errors.quantidadeParcelas = "Mínimo 2 parcelas";
+      errors.installmentCount = "Mínimo 2 parcelas";
     }
 
-    if (!f.dataPrimeiraParcela) {
-      errors.dataPrimeiraParcela = "Informe a data da primeira parcela";
+    if (!f.firstInstallmentDate) {
+      errors.firstInstallmentDate = "Informe a data da primeira parcela";
     }
   }
 

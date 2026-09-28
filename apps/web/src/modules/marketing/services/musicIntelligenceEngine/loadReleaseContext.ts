@@ -2,6 +2,7 @@ import type { IntelligenceEntity, IntelligenceSources, ReleaseContext } from "./
 import { analyzeAudioDraft } from "./analyzeAudio";
 import { analyzeLyricsDraft } from "./analyzeLyrics";
 import { mergeAudioLyricsInsights } from "./mergeAudioLyricsInsights";
+import { musicGenreLabel } from "@/modules/releases/lib/release-format";
 import { pickReleaseString } from "./utils";
 
 export function loadReleaseContext(
@@ -19,12 +20,12 @@ export function loadReleaseContext(
     audioUrl: pickReleaseString(releaseRecord, ["audio_master_url", "audio_url", "wav_url", "master_url", "fonograma_url"]),
     lyric: pickReleaseString(releaseRecord, ["lyrics", "lyric"]),
     coverUrl: pickReleaseString(releaseRecord, ["cover_url", "artwork_url"]),
-    genre: pickReleaseString(releaseRecord, ["music_genre", "genero", "genre"]),
+    genre: musicGenreLabel(pickReleaseString(releaseRecord, ["music_genre", "genre"])) ?? "",
     subgenre: pickReleaseString(releaseRecord, ["subgenero", "subgenre"]),
     mood: pickReleaseString(releaseRecord, ["mood", "clima", "atmosfera"]),
     bpm: pickReleaseString(releaseRecord, ["bpm"]),
     isrc: pickReleaseString(releaseRecord, ["isrc_global", "isrc"]),
-    upc: pickReleaseString(releaseRecord, ["upc", "codigo_upc", "ean"]),
+    upc: pickReleaseString(releaseRecord, ["upc", "ean"]),
     releaseDate: pickReleaseString(releaseRecord, ["release_date"]),
     credits: pickReleaseString(releaseRecord, ["credits", "compositores", "produtores"]),
     references: pickReleaseString(releaseRecord, ["referencias", "references", "press_release"]),

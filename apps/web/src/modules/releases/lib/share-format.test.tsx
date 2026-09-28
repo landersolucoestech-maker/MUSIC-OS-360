@@ -57,7 +57,7 @@ describe("share-format — PT-BR labels for canonical share values", () => {
 
 describe("release-format — PT-BR labels for canonical release values", () => {
   it("labels every canonical release type", () => {
-    expect(Object.keys(RELEASE_TYPE_LABELS)).toEqual(["single", "ep", "album", "compilation", "live", "other"]);
+    expect(Object.keys(RELEASE_TYPE_LABELS)).toEqual(["single", "ep", "album", "compilation", "live", "video", "other"]);
     expect(releaseTypeLabel("compilation")).toBe("Coletânea");
     expect(releaseTypeLabel("mixtape")).toBe("Tipo não informado");
   });
@@ -67,11 +67,17 @@ describe("release-format — PT-BR labels for canonical release values", () => {
     expect(releaseLanguageLabel("ja")).toBe("Japonês");
     expect(releaseLanguageLabel("pt")).toBe("Português");
     expect(releaseLanguageLabel(null)).toBeNull();
+    expect(releaseLanguageLabel("pt-BR")).toBe("Português (Brasil)");
+    expect(releaseLanguageLabel("xx")).toBe("Idioma não reconhecido");
   });
 });
 
 describe("Shares page — no Portuguese persisted values left in the page", () => {
   const page = readFileSync(resolve(__dirname, "../pages/Shares.tsx"), "utf8");
+  it("offers every ShareStatus in the status filter/form (no empty select for a stored status)", () => {
+    expect(SHARE_FORM_STATUS_OPTIONS.map((o) => o.value).sort()).toEqual(Object.values(ShareStatus).sort());
+  });
+
   it("uses the canonical function vocabulary and never raw type values", () => {
     for (const legacy of ['"interprete"', '"compositor"', '"gravadora"', '"empresario"', '"a_receber"', '"a_enviar"', '"pendente"']) {
       expect(page).not.toContain(legacy);

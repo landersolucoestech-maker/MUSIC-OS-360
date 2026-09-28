@@ -16,11 +16,12 @@ import {
   Plus, Search, Upload, Tags, Zap,
   Eye, Pencil, Trash2, X, MoreHorizontal,
 } from "lucide-react";
-import { useTransactions } from "@/modules/accounting/hooks/useTransactions";
+import { useTransactions, type TransactionWithRelations } from "@/modules/accounting/hooks/useTransactions";
 import { useTransactionsPaginated, useFinanceStats } from "@/modules/accounting/hooks/useTransactionsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { formatCurrency, formatDate } from "@/shared/lib/format-utils";
 import { formatCategoryLabel } from "@/shared/lib/category-labels";
+import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
 import { TransactionFormModal } from "@/modules/accounting/components/transaction-form/TransactionFormModal";
 import { TransactionViewModal } from "@/modules/accounting/components/TransactionViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
@@ -34,8 +35,9 @@ import { RequirePermission } from "@/shared/components/RequirePermission";
 import { toast } from "sonner";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
+import { ofxLineToTransactionPayload, parseOfxStatement } from "@/modules/accounting/services/ofx-import";
 
-type Transaction = Record<string, any>;
+type Transaction = TransactionWithRelations;
 
 export default function Accounting() {
   const { transactions, deleteTransaction, addTransaction } = useTransactions();
@@ -75,16 +77,18 @@ export default function Accounting() {
     reader.onload = async (e) => {
       const content = e.target?.result as string;
       try {
-        const transactions = parseOFXContent(content);
-        if (transactions.length === 0) {
+        const payloads = parseOfxStatement(content).map(ofxLineToTransactionPayload);
+        if (payloads.length === 0) {
           toast.error("Nenhuma transação encontrada no arquivo OFX");
           return;
         }
         let successCount = 0;
         let errorCount = 0;
-        for (const tx of transactions) {
+        for (const payload of payloads) {
           try {
-            await addTransaction.mutateAsync(tx);
+            // Request body (CZ-041 camelCase) bridged to useDataQuery's row-typed
+            // input — see the note in useTransactionFormController.ts.
+            await addTransaction.mutateAsync(payload as unknown as Parameters<typeof addTransaction.mutateAsync>[0]);
             successCount++;
           } catch {
             errorCount++;
@@ -98,42 +102,6 @@ export default function Accounting() {
     };
     reader.readAsText(file);
     if (ofxInputRef.current) ofxInputRef.current.value = "";
-  };
-
-  const parseOFXContent = (content: string): Array<{
-    description: string; amount: number; data: string; type: string;
-    category: string; status: string; artist_id: string | null;
-    client_id: string | null; origem: any; venda_id: string | null;
-  }> => {
-    const transactions: Array<{
-      description: string; amount: number; data: string; type: string;
-      category: string; status: string; artist_id: string | null;
-      client_id: string | null; origem: any; venda_id: string | null;
-    }> = [];
-    const stmttrnRegex = /<STMTTRN>([\s\S]*?)<\/STMTTRN>/gi;
-    let match;
-    while ((match = stmttrnRegex.exec(content)) !== null) {
-      const block = match[1];
-      const trnamt = block.match(/<TRNAMT>([^<\n]+)/i)?.[1]?.trim();
-      const dtposted = block.match(/<DTPOSTED>([^<\n]+)/i)?.[1]?.trim();
-      const memo = block.match(/<MEMO>([^<\n]+)/i)?.[1]?.trim() ||
-        block.match(/<NAME>([^<\n]+)/i)?.[1]?.trim() || "Transação importada";
-      if (trnamt && dtposted) {
-        const amount = parseFloat(trnamt.replace(",", "."));
-        const year = dtposted.substring(0, 4);
-        const month = dtposted.substring(4, 6);
-        const day = dtposted.substring(6, 8);
-        transactions.push({
-          description: memo, amount: Math.abs(amount),
-          data: `${year}-${month}-${day}`,
-          type: amount >= 0 ? "receita" : "despesa",
-          category: "outros", status: "paid",
-          artist_id: null, client_id: null,
-          origem: "manual" as any, venda_id: null,
-        });
-      }
-    }
-    return transactions;
   };
 
   const hasActiveFilters =
@@ -167,7 +135,7 @@ export default function Accounting() {
     if (selectedIds.length === pageItems.length && pageItems.length > 0) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(pageItems.map((t: any) => t.id));
+      setSelectedIds(pageItems.map((t) => t.id));
     }
   };
   const toggleSelect = (id: string) =>
@@ -293,8 +261,8 @@ export default function Accounting() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-type">Todos</SelectItem>
-              <SelectItem value="receita">Receita</SelectItem>
-              <SelectItem value="despesa">Despesa</SelectItem>
+              <SelectItem value="revenue">Receita</SelectItem>
+              <SelectItem value="expense">Despesa</SelectItem>
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -394,11 +362,11 @@ export default function Accounting() {
                 </TableHeader>
                 <TableBody>
                   {pageItems.map((transaction) => {
-                    const type = transaction.type === "receita" ? "receita" : "despesa";
-                    const description = String(transaction.descricao ?? "Transação sem descrição");
-                    const category = String(transaction.categoria ?? "sem_categoria");
-                    const data = String(transaction.data ?? "");
-                    const amount = Number(transaction.valor ?? 0);
+                    const isRevenue = transaction.type === "revenue";
+                    const description = transaction.description ?? "Transação sem descrição";
+                    const category = transaction.category ?? "sem_categoria";
+                    const transactionDate = transaction.transaction_date ?? "";
+                    const amount = toNumber(transaction.amount);
 
                     return (
                     <TableRow key={transaction.id} data-testid={`row-transaction-${transaction.id}`} className={selectedIds.includes(transaction.id) ? "bg-muted/20" : ""}>
@@ -412,11 +380,11 @@ export default function Accounting() {
                       <TableCell>
                         <div className={cn(
                           "w-7 h-7 rounded-lg flex items-center justify-center",
-                          type === "receita"
+                          isRevenue
                             ? "bg-success/10 border border-success/20"
                             : "bg-destructive/10 border border-destructive/20"
                         )}>
-                          {type === "receita"
+                          {isRevenue
                             ? <TrendingUp className="h-3.5 w-3.5 text-success" />
                             : <TrendingDown className="h-3.5 w-3.5 text-destructive" />
                           }
@@ -425,12 +393,12 @@ export default function Accounting() {
                       <TableCell className="font-medium max-w-[200px] truncate">{description}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{formatCategoryLabel(category)}</TableCell>
                       <TableCell><StatusBadge status={transaction.status ?? "pending"} /></TableCell>
-                      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">{data ? formatDate(data) : "—"}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">{transactionDate ? formatDate(transactionDate) : "—"}</TableCell>
                       <TableCell className={cn(
                         "text-right text-sm",
-                        amount === 0 ? "text-muted-foreground" : type === "receita" ? "text-success" : "text-destructive"
+                        amount === 0 ? "text-muted-foreground" : isRevenue ? "text-success" : "text-destructive"
                       )}>
-                        {amount === 0 ? "" : type === "receita" ? "+" : "−"}{formatCurrency(amount)}
+                        {amount === 0 ? "" : isRevenue ? "+" : "−"}{formatCurrency(amount)}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
@@ -490,7 +458,7 @@ export default function Accounting() {
       <TransactionFormModal
         open={formModal.open}
         onOpenChange={(open) => setFormModal({ ...formModal, open })}
-        transaction={formModal.transaction as any}
+        transaction={formModal.transaction}
         mode={formModal.mode}
       />
       <DeleteConfirmModal

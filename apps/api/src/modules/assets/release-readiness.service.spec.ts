@@ -28,7 +28,7 @@ const fullPhonogram = {
   music_genre: 'Pop',
   artist_id: 'art-1',
   work_id: null,
-  participacao: { interprete: [{ id: 'p1', name: 'Banda Aurora', percentual: '100' }] },
+  participation: { performers: [{ id: 'p1', name: 'Banda Aurora', percentage: '100' }] },
 };
 
 const goodAssets = [
@@ -75,36 +75,36 @@ describe('ReleaseReadinessService.evaluate', () => {
     expect(out.missing).toEqual(expect.arrayContaining(['phonogram', 'isrc', 'metadata']));
   });
 
-  // ── Performer requirement (participacao.interprete[]) ─────────────────────
+  // ── Performer requirement (participation.performers[]) ─────────────────────
   // Real shape confirmed against PhonogramFormModal.tsx (ParticipacaoCategoria)
   // and against the DTO fix in create-phonogram.dto.ts (ParticipacaoDto) --
   // an object with array categories, not an array like the old
-  // `@IsArray() participacao?: unknown[]` expected.
-  describe('mandatory metadata requires at least one real performer (participacao.interprete)', () => {
-    it('participacao absent (undefined) → missing', async () => {
-      const ph = { ...fullPhonogram, participacao: undefined };
+  // `@IsArray()` on the participation field expected.
+  describe('mandatory metadata requires at least one real performer (participation.performers)', () => {
+    it('participation absent (undefined) → missing', async () => {
+      const ph = { ...fullPhonogram, participation: undefined };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
       expect(out.ready).toBe(false);
     });
 
-    it('participacao null → missing', async () => {
-      const ph = { ...fullPhonogram, participacao: null };
+    it('participation null → missing', async () => {
+      const ph = { ...fullPhonogram, participation: null };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
     });
 
-    it('participacao with all categories empty → missing', async () => {
-      const ph = { ...fullPhonogram, participacao: { produtorFonografico: [], interprete: [], musicoAcompanhante: [] } };
+    it('participation with all categories empty → missing', async () => {
+      const ph = { ...fullPhonogram, participation: { phonographic_producers: [], performers: [], session_musicians: [] } };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
     });
 
     it('participants present but without any performer (only a producer) → missing', async () => {
-      const ph = { ...fullPhonogram, participacao: { produtorFonografico: [{ id: 'p1', name: 'Produtor Y', percentual: '100' }], interprete: [] } };
+      const ph = { ...fullPhonogram, participation: { phonographic_producers: [{ id: 'p1', name: 'Produtor Y', percentage: '100' }], performers: [] } };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
@@ -112,14 +112,14 @@ describe('ReleaseReadinessService.evaluate', () => {
     });
 
     it('a performer with a blank name does not count as a real performer → missing', async () => {
-      const ph = { ...fullPhonogram, participacao: { interprete: [{ id: 'p1', name: '   ', percentual: '100' }] } };
+      const ph = { ...fullPhonogram, participation: { performers: [{ id: 'p1', name: '   ', percentage: '100' }] } };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
     });
 
     it('one valid performer → met', async () => {
-      const ph = { ...fullPhonogram, participacao: { interprete: [{ id: 'p1', name: 'Banda Aurora', percentual: '100' }] } };
+      const ph = { ...fullPhonogram, participation: { performers: [{ id: 'p1', name: 'Banda Aurora', percentage: '100' }] } };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('met');
@@ -129,10 +129,10 @@ describe('ReleaseReadinessService.evaluate', () => {
     it('multiple performers → met', async () => {
       const ph = {
         ...fullPhonogram,
-        participacao: {
-          interprete: [
-            { id: 'p1', name: 'Banda Aurora', percentual: '60' },
-            { id: 'p2', name: 'Convidado Y', percentual: '40' },
+        participation: {
+          performers: [
+            { id: 'p1', name: 'Banda Aurora', percentage: '60' },
+            { id: 'p2', name: 'Convidado Y', percentage: '40' },
           ],
         },
       };

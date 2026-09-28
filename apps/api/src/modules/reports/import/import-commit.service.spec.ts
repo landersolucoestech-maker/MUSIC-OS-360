@@ -190,11 +190,11 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
 describe('ImportCommitService — transactions: physical columns and category (Task X)', () => {
   const TRANSACTIONS_DEF: ReportEntityDefinition = {
     entityName: 'TransactionEntity', tableName: 'transactions', category: EntityCategory.REPORTABLE,
-    identityColumn: 'descricao', displayColumn: 'descricao', dateColumn: 'created_at',
-    exportableColumns: ['tipo_transacao', 'categoria', 'descricao', 'valor', 'data_transacao', 'status'],
-    importableColumns: ['tipo_transacao', 'categoria', 'descricao', 'valor', 'data_transacao', 'status'],
-    filterableColumns: ['status', 'tipo_transacao', 'categoria'], sortableColumns: [], searchableColumns: [],
-    sensitiveColumns: [], requiredImportColumns: ['descricao'], supportsExport: true, supportsImport: true,
+    identityColumn: 'description', displayColumn: 'description', dateColumn: 'created_at',
+    exportableColumns: ['transaction_type', 'category', 'description', 'amount', 'transaction_date', 'status'],
+    importableColumns: ['transaction_type', 'category', 'description', 'amount', 'transaction_date', 'status'],
+    filterableColumns: ['status', 'transaction_type', 'category'], sortableColumns: [], searchableColumns: [],
+    sensitiveColumns: [], requiredImportColumns: ['description'], supportsExport: true, supportsImport: true,
   };
 
   function txValidation(row: Record<string, unknown>): ImportValidationResult {
@@ -231,19 +231,19 @@ describe('ImportCommitService — transactions: physical columns and category (T
     return { sql: String(call?.[0]), params: call?.[1] as unknown[] };
   }
 
-  it('writes tipo_transacao/data_transacao to the real physical columns (type/data), not the form columns', async () => {
-    const { svc, qr } = makeTxSvc({ row: { tipo_transacao: 'despesa', categoria: 'aluguel', descricao: 'Aluguel sala', data_transacao: '2026-01-05' } });
+  it('writes the logical transaction_type to the physical type column and canonicalizes a legacy value (despesa → expense)', async () => {
+    const { svc, qr } = makeTxSvc({ row: { transaction_type: 'despesa', category: 'aluguel', description: 'Aluguel sala', transaction_date: '2026-01-05' } });
     await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     const { sql, params } = insertCall(qr);
     expect(sql).toContain('"type"');
-    expect(sql).not.toContain('"tipo_transacao"');
-    expect(sql).toContain('"data"');
-    expect(sql).not.toContain('"data_transacao"');
-    expect(params).toContain('despesa');
+    expect(sql).not.toContain('"transaction_type"');
+    expect(sql).toContain('"transaction_date"');
+    expect(params).toContain('expense');
+    expect(params).not.toContain('despesa');
   });
 
   it('explicit category (not "outros") is preserved and the matcher is not consulted', async () => {
-    const { svc, qr, financeCategoryRules } = makeTxSvc({ row: { tipo_transacao: 'despesa', categoria: 'aluguel', descricao: 'Aluguel sala' } });
+    const { svc, qr, financeCategoryRules } = makeTxSvc({ row: { transaction_type: 'expense', category: 'aluguel', description: 'Aluguel sala' } });
     await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(financeCategoryRules.suggestCategoryForTransaction).not.toHaveBeenCalled();
     const { params } = insertCall(qr);
@@ -252,26 +252,26 @@ describe('ImportCommitService — transactions: physical columns and category (T
 
   it('empty category in the spreadsheet triggers the matcher and applies the suggestion (same service as manual creation)', async () => {
     const { svc, qr, financeCategoryRules } = makeTxSvc({
-      row: { tipo_transacao: 'despesa', categoria: '', descricao: 'Compra de cabos' },
+      row: { transaction_type: 'despesa', category: '', description: 'Compra de cabos' },
       suggestion: { categoryId: 'cat-1', categoryName: 'equipamentos', ruleId: 'rule-1' },
     });
     await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
-    expect(financeCategoryRules.suggestCategoryForTransaction).toHaveBeenCalledWith('tenant-1', 'DESPESA', 'Compra de cabos');
+    expect(financeCategoryRules.suggestCategoryForTransaction).toHaveBeenCalledWith('tenant-1', 'EXPENSE', 'Compra de cabos');
     const { params } = insertCall(qr);
     expect(params).toContain('equipamentos');
   });
 
   it('empty category with no match falls back to "outros" and the INSERT still satisfies the NOT NULL column', async () => {
-    const { svc, qr } = makeTxSvc({ row: { tipo_transacao: 'despesa', categoria: '', descricao: 'Item desconhecido' }, suggestion: null });
+    const { svc, qr } = makeTxSvc({ row: { transaction_type: 'expense', category: '', description: 'Item desconhecido' }, suggestion: null });
     const result = await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(result.importedRows).toBe(1);
     const { sql, params } = insertCall(qr);
-    expect(sql).toContain('"categoria"');
+    expect(sql).toContain('"category"');
     expect(params).toContain('outros');
   });
 
   it('unavailable matcher (exception) does not break the import — falls back to "outros"', async () => {
-    const { svc, qr } = makeTxSvc({ row: { tipo_transacao: 'despesa', categoria: '', descricao: 'Item X' }, suggestThrows: true });
+    const { svc, qr } = makeTxSvc({ row: { transaction_type: 'expense', category: '', description: 'Item X' }, suggestThrows: true });
     const result = await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(result.importedRows).toBe(1);
     const { params } = insertCall(qr);

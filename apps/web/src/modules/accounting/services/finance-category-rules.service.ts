@@ -14,7 +14,7 @@ function mapApiRule(rule: FinanceCategoryRuleApiResponse, categories: FinancialC
     transactionType: rule.transaction_type,
     categoryId: rule.category_id,
     categoryName: category?.name ?? "Categoria não identificada",
-    origin: "PERSONALIZADA",
+    origin: "CUSTOM",
     priority: rule.priority,
     active: rule.active,
     createdAt: rule.created_at,

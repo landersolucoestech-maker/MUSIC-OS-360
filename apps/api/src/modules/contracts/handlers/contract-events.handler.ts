@@ -4,7 +4,7 @@ import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
 import { ArtistEntity, ContractEntity, TransactionEntity } from '../../../database/entities';
-import { ArtistStatus } from '@music-os-360/types';
+import { ArtistStatus, TransactionStatus, TransactionType } from '@music-os-360/types';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { FinancialRulesService } from '../../financial-rules/financial-rules.service';
@@ -131,7 +131,7 @@ export class ContractEventsHandler {
               { id: artistId, tenant_id: tenantId },
               { status: ArtistStatus.SIGNED, contrato_id: contractId, updated_by: signedBy } as any,
             );
-            this.logger.log(`Artist "${artistId}" -> ${ArtistStatus.SIGNED} + contrato_id="${contractId}"`);
+            this.logger.log(`Artist "${artistId}" -> ${ArtistStatus.SIGNED} + contract "${contractId}"`);
           } catch (err) {
             this.logger.error(`Failed to update artist status for "${artistId}" - ${String(err)}`);
           }
@@ -148,22 +148,22 @@ export class ContractEventsHandler {
             if (contractAmount > 0) {
               const provisional = transactionRepo.create({
                 tenant_id: tenantId,
-                type: 'receita' as any,
-                categoria: 'contratos',
-                descricao: `Receita prevista - contrato "${title}"`,
-                valor: String(contractAmount),
+                type: TransactionType.REVENUE,
+                category: 'contratos',
+                description: `Receita prevista - contrato "${title}"`,
+                amount: String(contractAmount),
                 // GAP-0055: use the contract's real start date when available instead of
                 // always "today" -- the provisional transaction must reflect when the
                 // contract revenue actually becomes due, not the date the CONTRACT_SIGNED
                 // event was processed.
-                data: contract?.start_date ?? new Date(),
-                status: 'scheduled' as any,
+                transaction_date: contract?.start_date ? new Date(contract.start_date) : new Date(),
+                status: TransactionStatus.SCHEDULED,
                 artist_id: artistId ?? null,
-                contrato_id: contractId,
+                contract_id: contractId,
                 created_by: signedBy,
                 updated_by: signedBy,
                 metadata: { source: 'contract.signed', contractId, title },
-              } as any);
+              });
               const savedTx = await transactionRepo.save(provisional as unknown as TransactionEntity);
               this.logger.log(`Provisional transaction "${savedTx.id}" (R$${contractAmount}) created for contract "${contractId}"`);
 
@@ -176,10 +176,10 @@ export class ContractEventsHandler {
                   payload: {
                     transactionId: savedTx.id,
                     tenantId,
-                    type: 'receita',
+                    type: TransactionType.REVENUE,
                     category: 'contratos',
-                    valor: String(contractAmount),
-                    contratoId: contractId,
+                    amount: String(contractAmount),
+                    contractId,
                     artistId: artistId ?? null,
                     createdBy: signedBy,
                     source: 'contract.signed',

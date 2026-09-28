@@ -10,8 +10,8 @@ export interface FinanceRuleValidationResult {
   errors: string[];
 }
 
-const TRANSACTION_TYPES: FinanceRuleTransactionType[] = ["RECEITA", "DESPESA"];
-const RULE_ORIGINS: FinanceCategoryRuleOrigin[] = ["SISTEMA", "PERSONALIZADA"];
+const TRANSACTION_TYPES: FinanceRuleTransactionType[] = ["REVENUE", "EXPENSE"];
+const RULE_ORIGINS: FinanceCategoryRuleOrigin[] = ["SYSTEM", "CUSTOM"];
 
 export function isFinanceRuleTransactionType(value: string): value is FinanceRuleTransactionType {
   return TRANSACTION_TYPES.includes(value as FinanceRuleTransactionType);
@@ -45,7 +45,7 @@ export function validateRule(
 
   if (keywords.length === 0) errors.push("Informe pelo menos uma palavra-chave.");
   if (!draft.categoryId || !draft.categoryName) errors.push("Selecione uma categoria financeira.");
-  if (!["RECEITA", "DESPESA"].includes(draft.transactionType)) errors.push("Selecione um tipo de transação válido.");
+  if (!["REVENUE", "EXPENSE"].includes(draft.transactionType)) errors.push("Selecione um tipo de transação válido.");
 
   const conflicts = existingRules
     .filter((rule) => rule.id !== editingId && rule.transactionType === draft.transactionType)

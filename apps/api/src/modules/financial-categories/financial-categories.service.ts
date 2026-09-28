@@ -326,12 +326,12 @@ export class FinancialCategoriesService {
   async remove(tenantId: string, userId: string, id: string) {
     const current = await this.findCategory(this.db, tenantId, id);
     const usage = await this.db.query<Array<{
-      children: number; canonical_transactions: number; legacy_transactions: number; category_rules: number;
+      children: number; financial_transactions: number; ledger_transactions: number; category_rules: number;
     }>>(
       `SELECT
          (SELECT COUNT(*)::int FROM financial_categories WHERE tenant_id = $1 AND parent_id = $2) AS children,
-         (SELECT COUNT(*)::int FROM financial_transactions WHERE tenant_id = $1 AND category_id = $2) AS canonical_transactions,
-         (SELECT COUNT(*)::int FROM transactions WHERE tenant_id = $1 AND financial_category_id = $2 AND deleted_at IS NULL) AS legacy_transactions,
+         (SELECT COUNT(*)::int FROM financial_transactions WHERE tenant_id = $1 AND category_id = $2) AS financial_transactions,
+         (SELECT COUNT(*)::int FROM transactions WHERE tenant_id = $1 AND financial_category_id = $2 AND deleted_at IS NULL) AS ledger_transactions,
          (SELECT COUNT(*)::int FROM finance_category_keyword_rules WHERE tenant_id = $1 AND category_id = $2 AND deleted_at IS NULL) AS category_rules`,
       [tenantId, id],
     );
@@ -339,7 +339,7 @@ export class FinancialCategoriesService {
     if ((counts?.children ?? 0) > 0) {
       throw new ConflictException('Categoria com subcategorias não pode ser excluída');
     }
-    if ((counts?.canonical_transactions ?? 0) + (counts?.legacy_transactions ?? 0) > 0) {
+    if ((counts?.financial_transactions ?? 0) + (counts?.ledger_transactions ?? 0) > 0) {
       throw new ConflictException('Categoria vinculada a transações não pode ser excluída');
     }
     if ((counts?.category_rules ?? 0) > 0) {

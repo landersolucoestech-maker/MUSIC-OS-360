@@ -99,10 +99,10 @@ describe('Schema reconciliation — PostgreSQL real', () => {
       const snapshot = { name: 'Royalties', code: 'ROY', path: 'receita.royalties' };
       const row = await repo.save(repo.create({
         tenant_id: TENANT,
-        type: 'receita' as never,
-        categoria: 'royalties',
-        valor: '1000.00',
-        data: new Date(),
+        type: 'revenue' as never,
+        category: 'royalties',
+        amount: '1000.00',
+        transaction_date: new Date(),
         financial_category_snapshot: snapshot,
       }));
       expect((await repo.findOneByOrFail({ id: row.id })).financial_category_snapshot).toMatchObject(snapshot);
