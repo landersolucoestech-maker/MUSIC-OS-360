@@ -5,7 +5,7 @@
   "status": "blocked",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T19:54:24.176Z",
+  "updatedAt": "2026-09-29T19:55:08.074Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1096,7 +1096,8 @@
             "evid-b6a6741b",
             "evid-e92c6bcb",
             "evid-5e364cf0",
-            "evid-f40a2be9"
+            "evid-f40a2be9",
+            "evid-e8670c1a"
           ],
           "status": "closed"
         },
@@ -1161,9 +1162,10 @@
             "evid-96983966",
             "evid-06d8a694",
             "evid-5fd99216",
-            "evid-7b5c2d19"
+            "evid-7b5c2d19",
+            "evid-eb562e16"
           ],
-          "status": "open"
+          "status": "closed"
         }
       ],
       "createdAt": "2026-09-29T15:12:44.287Z"
@@ -4910,7 +4912,9 @@
     "evid-5b571d4b",
     "evid-24b0e912",
     "evid-ed5d05f8",
-    "evid-581729ed"
+    "evid-581729ed",
+    "evid-e8670c1a",
+    "evid-eb562e16"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

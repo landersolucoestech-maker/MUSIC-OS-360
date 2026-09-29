@@ -1,0 +1,15 @@
+{
+  "id": "evid-eb562e16",
+  "createdAt": "2026-09-29T19:55:08.065Z",
+  "type": "COMMAND",
+  "label": "node scripts/git-guard/cli.mjs verify-remote",
+  "command": "node scripts/git-guard/cli.mjs verify-remote",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "[git-guard] OK: origin has only refs/heads/dev.",
+  "stderrTail": "",
+  "workspaceFingerprint": "3ab02c2911d2bac1efd61284f3b097b1782cbb27721cba8ea3121812233ee085",
+  "fingerprintStatus": "BOUND",
+  "head": "6be15de680d738ddfee517311354e271fbfd7302",
+  "durationMs": 808
+}
