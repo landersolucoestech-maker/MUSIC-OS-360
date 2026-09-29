@@ -1,0 +1,15 @@
+{
+  "id": "evid-ad56e3d0",
+  "createdAt": "2026-09-29T10:55:17.277Z",
+  "type": "COMMAND",
+  "label": "corepack pnpm --filter @music-os-360/api verify:cz045-musicchat-migration",
+  "command": "corepack pnpm --filter @music-os-360/api verify:cz045-musicchat-migration",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "> @music-os-360/api@0.0.1 verify:cz045-musicchat-migration /home/user/MUSIC-OS-360/apps/api\n> tsx scripts/verify-cz045-musicchat-migration.ts\n\n✓ up: 026 applied\n✓ up: conversation service_status/priority/selected_menu_option remapped, other keys untouched\n✓ up: unknown status, non-string priority and custom option id kept\n✓ up: menu options remapped in order, labels/custom ids/non-objects kept\n✓ up: template ids remapped, titles/bodies kept\n✓ up: empty arrays stay empty\n✓ up: a legacy id whose English target the tenant already uses is kept (ids stay unique; priorities mapped)\n✓ up: collision-tenant conversations keep pointing at their own option (per-tenant id map)\n✓ down: legacy conversation restored exactly\n✓ down: other conversation unchanged\n✓ down: new-build values mapped to what the old build reads\n✓ down: settings restored exactly\n✓ down: empty arrays stay empty\n✓ down: collision tenant restored exactly (its own 'other' is not renamed)\n✓ down: collision-tenant conversations restored exactly\n✓ re-up: same result as the first up()\n\n[verify-cz045] all checks passed",
+  "stderrTail": "",
+  "workspaceFingerprint": "beed86ce73e6019f1ad1fe64930a5c98a11a73924904e4da515638dc1bda0d21",
+  "fingerprintStatus": "BOUND",
+  "head": "1dfd59547e2ba2a2916d90944e2be8ee702f8c97",
+  "durationMs": 32825
+}

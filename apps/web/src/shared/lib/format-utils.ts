@@ -93,13 +93,20 @@ function systemTimezoneOffsetMs(at: Date): number {
   return wallClockAsUtc - Math.floor(at.getTime() / 1000) * 1000;
 }
 
-/** The instant a calendar day (YYYY-MM-DD) starts, 00:00 in the system timezone. */
+/**
+ * The first instant of a calendar day (YYYY-MM-DD) in the system timezone:
+ * 00:00, or the first existing time when a DST change skips midnight (e.g.
+ * 01:00 on the historical America/Sao_Paulo spring-forward days).
+ */
 export function startOfCalendarDayInSystemTimezone(day: string): Date {
   const [year, month, dayOfMonth] = day.split("-").map(Number);
   const midnightUtc = Date.UTC(year, month - 1, dayOfMonth);
   const firstGuess = midnightUtc - systemTimezoneOffsetMs(new Date(midnightUtc));
   // Second pass: the offset at the real instant (differs across a DST change).
-  return new Date(midnightUtc - systemTimezoneOffsetMs(new Date(firstGuess)));
+  let start = midnightUtc - systemTimezoneOffsetMs(new Date(firstGuess));
+  // Midnight skipped by DST: the guess lands on the previous day — move to the first instant of `day`.
+  for (let hops = 0; hops < 3 && todayCalendarDay(new Date(start)) < day; hops += 1) start += 3_600_000;
+  return new Date(start);
 }
 
 /** First and last instant of today and of the current month, in the system timezone. */

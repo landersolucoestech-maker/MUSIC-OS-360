@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { calendarDay, formatCalendarDate } from "./format-utils";
 import { transactionToFormFields } from "@/modules/accounting/services/entity-to-form.mapper";
 
@@ -23,6 +23,22 @@ describe("calendar-day dates (timestamp midnight serialized as UTC)", () => {
 });
 
 describe("systemTimezoneDayAndMonthBounds (system timezone, whatever the browser timezone)", () => {
+  // Browser in UTC, system timezone America/Sao_Paulo: a regression to browser-local bounds fails here.
+  const originalTz = process.env.TZ;
+  beforeAll(() => {
+    process.env.TZ = "UTC";
+  });
+  afterAll(() => {
+    process.env.TZ = originalTz;
+  });
+
+  it("a day whose midnight was skipped by DST starts at its first existing instant", async () => {
+    const { startOfCalendarDayInSystemTimezone } = await import("./format-utils");
+    // 2018-11-04: America/Sao_Paulo jumped from 00:00 (-03) to 01:00 (-02).
+    expect(startOfCalendarDayInSystemTimezone("2018-11-04").toISOString()).toBe("2018-11-04T03:00:00.000Z");
+    expect(startOfCalendarDayInSystemTimezone("2018-11-05").toISOString()).toBe("2018-11-05T02:00:00.000Z");
+  });
+
   it("today and this month start/end at 00:00 / 23:59:59.999 in America/Sao_Paulo", async () => {
     const { systemTimezoneDayAndMonthBounds } = await import("./format-utils");
     // 2030-10-11T01:00Z is still 2030-10-10 22:00 in America/Sao_Paulo.

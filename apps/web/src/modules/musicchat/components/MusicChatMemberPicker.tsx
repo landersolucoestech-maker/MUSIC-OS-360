@@ -30,7 +30,8 @@ interface MusicChatMemberPickerProps {
 export function MusicChatMemberPicker({ value, onChange, label, noneLabel = "Nenhum", className }: MusicChatMemberPickerProps) {
   const [search, setSearch] = useState("");
   const { members, isLoading, error } = useMusicChatTeamMembers(search.trim());
-  const { names, isLoading: resolving, error: namesError } = useMusicChatMemberNames([value]);
+  const { names, isLoading: namesLoading, isFetching: namesFetching, error: namesError } = useMusicChatMemberNames([value]);
+  const resolving = namesLoading || namesFetching;
   const currentListed = !!value && members.some((member) => member.auth_user_id === value);
   const currentLabel = value
     ? names.get(value) ?? (resolving ? "Carregando…" : namesError ? NAME_UNAVAILABLE_LABEL : MISSING_MEMBER_LABEL)

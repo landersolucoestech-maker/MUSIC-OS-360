@@ -50,9 +50,12 @@ interface TemplateLike { id: string }
  * 20260928000026), so a tenant holding both `outros` and its own `other` never
  * ends up with two options sharing one id.
  */
-export function legacyMenuIdMap(usedIds: Iterable<string>): Readonly<Record<string, string>> {
+export function legacyMenuIdMap(usedIds: Iterable<string>, keptLegacyIds: Iterable<string> = []): Readonly<Record<string, string>> {
   const used = new Set(usedIds);
-  return Object.fromEntries(Object.entries(LEGACY_MENU_OPTION_IDS).filter(([, target]) => !used.has(target)));
+  // A legacy id still present in a stored array the payload does not replace was
+  // kept on purpose (collision tenant, migration 26): it is never renamed either.
+  const kept = new Set(keptLegacyIds);
+  return Object.fromEntries(Object.entries(LEGACY_MENU_OPTION_IDS).filter(([legacy, target]) => !used.has(target) && !kept.has(legacy)));
 }
 
 /** Maps a pre-CZ-045 settings payload (menu option ids, template ids, priorities). */

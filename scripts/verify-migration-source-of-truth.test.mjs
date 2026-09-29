@@ -162,3 +162,13 @@ test('registry parity: a class name with an underscore separator (real-world exc
   const result = checkRegistryParity(['RemoveDeadStructuresD1D8_20260705000003'], indexSource, []);
   assert.equal(result.ok, true);
 });
+
+test('the intentionally-unregistered list is read from the single TS source (comments ignored)', async () => {
+  const { loadIntentionallyUnregisteredMigrations, INTENTIONALLY_UNREGISTERED_MIGRATIONS } = await import('./verify-migration-source-of-truth.mjs');
+  assert.deepEqual(
+    loadIntentionallyUnregisteredMigrations("export const INTENTIONALLY_UNREGISTERED_MIGRATIONS: readonly string[] = [\n  // 'NotThis20260101000001' in a comment\n  'A20260101000001',\n  'B20260101000002',\n];"),
+    ['A20260101000001', 'B20260101000002'],
+  );
+  assert.throws(() => loadIntentionallyUnregisteredMigrations('export const X = [];'), /not found/);
+  assert.ok(INTENTIONALLY_UNREGISTERED_MIGRATIONS.includes('DropOrphanContactsSatelliteTables20260713000002'));
+});

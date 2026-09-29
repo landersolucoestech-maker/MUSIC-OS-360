@@ -10,10 +10,14 @@
  * workflow drifts from it:
  *   - every run reads the schema/build state first (db-ops check:state) and a
  *     build older than the database is refused;
- *   - a schema change (migrate or rollback) requires the stop hook, stops the
- *     running build and proves it is down BEFORE touching the schema;
+ *   - a schema change (migrate or rollback) requires the stop hook, runs the
+ *     read-only pre-flight and proves the probe reaches the running build
+ *     BEFORE stopping it, then proves it is down BEFORE touching the schema;
+ *     probes use the normalized base URL (no trailing slash);
+ *   - a rollback needs its typed confirmation;
  *   - db:migrate / db:rollback run nowhere else in the workflow;
- *   - the deploy never runs after a rollback and proves the new build is up;
+ *   - the deploy never runs after a rollback, deploys THIS commit and proves
+ *     THIS build (--expect-build $GITHUB_SHA) is up;
  *   - a running deploy is never cancelled.
  *
  * Text-based (js-yaml is not a dependency — see verify-db-verify-gate-wiring.mjs).
@@ -54,6 +58,8 @@ export function checkStagingDeployOrder(source) {
 
   const state = lineOf(schema, /db-ops\.ts check:state/);
   const plan = lineOf(schema, /id:\s*plan\b/);
+  const preflight = lineOf(schema, /db-ops\.ts preflight/);
+  const reachable = lineOf(schema, /wait-for-http-state\.mjs .*--until up/);
   const stop = lineOf(schema, /curl .*"\$STAGING_STOP_WEBHOOK_URL"/);
   const down = lineOf(schema, /wait-for-http-state\.mjs .*--until down/);
   const migrate = lineOf(schema, /run:\s*pnpm --filter @music-os-360\/api db:migrate\s*$/);
@@ -65,9 +71,16 @@ export function checkStagingDeployOrder(source) {
   if (down === -1) reasons.push('no step proves the running build is down (wait-for-http-state --until down)');
   if (migrate === -1) reasons.push('db:migrate step not found in migrations-staging');
   if (rollback === -1) reasons.push('db-ops rollback:to step not found in migrations-staging');
-  if ([state, plan, stop, down, migrate, rollback].every((i) => i !== -1)) {
-    if (!(state < plan && plan < stop && stop < down && down < migrate && down < rollback)) {
-      reasons.push('order must be: check:state -> plan -> stop hook -> prove down -> db:migrate / rollback:to');
+  if (preflight === -1) reasons.push('no read-only pre-flight (db-ops preflight) before the stop');
+  if (reachable === -1) reasons.push('no step proves the probe reaches the running build before the stop (wait-for-http-state --until up)');
+  if ([state, plan, preflight, reachable, stop, down, migrate, rollback].every((i) => i !== -1)) {
+    if (!(state < plan && plan < preflight && preflight < stop && reachable < stop && stop < down && down < migrate && down < rollback)) {
+      reasons.push('order must be: check:state -> plan -> pre-flight + reachability -> stop hook -> prove down -> db:migrate / rollback:to');
+    }
+    for (const [name, index] of [['reachability', reachable], ['prove down', down]]) {
+      if (!/--url "\$API_BASE\//.test(stepAt(schema, index))) {
+        reasons.push(`the ${name} probe must use the normalized base URL ($API_BASE from the plan, trailing slash stripped)`);
+      }
     }
     if (!/if:\s*steps\.plan\.outputs\.change == 'migrate'/.test(stepAt(schema, migrate))) {
       reasons.push("db:migrate must run only when steps.plan.outputs.change == 'migrate'");
@@ -87,6 +100,12 @@ export function checkStagingDeployOrder(source) {
     if (!/test -n "\$STAGING_STOP_WEBHOOK_URL" \|\|[^\n]*exit 1/.test(planStep)) {
       reasons.push('the plan must fail closed when STAGING_STOP_WEBHOOK_URL is missing');
     }
+    if (!/\[ "\$CONFIRM_ROLLBACK_TO" = "\$ROLLBACK_TO_MIGRATION" \] \|\|[^\n]*exit 1/.test(planStep)) {
+      reasons.push('a rollback must require the typed confirmation (confirm_rollback == rollback_to_migration)');
+    }
+    if (!/api_base=\$\{STAGING_API_URL%\/\}/.test(planStep)) {
+      reasons.push('the plan must publish the normalized base URL (api_base=${STAGING_API_URL%/})');
+    }
   }
 
   const outsideSchema = source.replace(schema, '');
@@ -102,9 +121,10 @@ export function checkStagingDeployOrder(source) {
     if (!/if:.*needs\.migrations-staging\.outputs\.rollback != 'true'/.test(deploy)) {
       reasons.push('deploy-staging must not run after a rollback (the newer build would serve an older schema)');
     }
-    const hook = lineOf(deploy, /curl .*"\$STAGING_DEPLOY_WEBHOOK_URL"/);
-    const up = lineOf(deploy, /wait-for-http-state\.mjs .*--until up/);
-    if (hook === -1 || up === -1 || up < hook) reasons.push('deploy-staging must prove the deployed build is up after the deploy hook');
+    const hook = lineOf(deploy, /--data .*\$GITHUB_SHA[^\n]*"\$STAGING_DEPLOY_WEBHOOK_URL"/);
+    const up = lineOf(deploy, /wait-for-http-state\.mjs .*--until up .*--expect-build "\$GITHUB_SHA"/);
+    if (hook === -1) reasons.push('deploy-staging must send this commit ($GITHUB_SHA) to the deploy hook');
+    if (up === -1 || (hook !== -1 && up < hook)) reasons.push('deploy-staging must prove the deployed build is up (--expect-build "$GITHUB_SHA") after the deploy hook');
   }
   return { ok: reasons.length === 0, reasons };
 }

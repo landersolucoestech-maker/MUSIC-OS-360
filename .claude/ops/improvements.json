@@ -61,5 +61,12 @@
     "scope": "rules",
     "createdAt": "2026-09-29T10:06:45.140Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-15292aab",
+    "text": "security-verification-engine reports npm-audit as run with 0 findings on this pnpm repo, but npm audit fails with ENOLOCK (no package-lock.json): a false green. The engine should use pnpm audit (or fail visible) when pnpm-lock.yaml is the lockfile.",
+    "scope": "runtime",
+    "createdAt": "2026-09-29T10:30:10.629Z",
+    "appliedAt": null
   }
 ]

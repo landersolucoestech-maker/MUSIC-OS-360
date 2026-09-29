@@ -2,7 +2,11 @@
  * health/health.controller.ts
  *
  * Public surface:
- *   GET /api/v1/health/live     -> liveness only
+ *   GET /api/v1/health/live     -> liveness only, plus the deployed build
+ *                                  (BUILD_SHA, set by the deploy platform to
+ *                                  the commit it deployed; null when unset).
+ *                                  The staging deploy gate compares it with
+ *                                  the commit of the run (docs/engineering/database.md).
  *
  * Protected surface:
  *   GET /api/v1/health          -> full health details
@@ -50,6 +54,7 @@ export class HealthController {
   liveness() {
     return {
       status: 'up',
+      build: process.env['BUILD_SHA'] || null,
       ts: new Date().toISOString(),
     };
   }

@@ -1,0 +1,12 @@
+{
+  "id": "evid-6d9acab0",
+  "createdAt": "2026-09-29T10:35:37.194Z",
+  "type": "REVIEW",
+  "reviewer": "database-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "ef14a87+1dfd595 DB/deploy re-review: migration fixes correct; MEDIUM M1 down-probe counts 404/3xx/4xx as down (double slash reproduces); M2 up-check does not prove the deployed build identity; M3 partial batch/rollback leaves staging down, rollback refused when PENDING>0, preflight not implemented; LOW L1 RLS guard only in 19+, L2 db:check fails on DEV intentionally-unregistered row, L3 concurrency group spans refs, L4 rollback:to by tracking id, L5 curl without timeout/retry; INFO I1-I6",
+  "workspaceFingerprint": "54ed2fb0a7654d7f53692bf78ff6ced848c8869f74e73dc7e20decae46c7009a",
+  "fingerprintStatus": "BOUND",
+  "head": "1dfd59547e2ba2a2916d90944e2be8ee702f8c97"
+}

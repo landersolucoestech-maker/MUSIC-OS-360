@@ -56,6 +56,7 @@ export function TransactionFormModal({
             disabled={disabled}
             updateField={form.updateField}
             filteredEvents={rules.filteredEvents}
+            eventsStatus={form.eventsStatus}
           />
 
           <PaymentSection

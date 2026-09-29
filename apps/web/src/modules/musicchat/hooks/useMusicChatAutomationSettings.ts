@@ -38,7 +38,8 @@ export function useMusicChatAutomationSettings() {
 
   return {
     settings: settingsQuery.data,
-    isLoading: settingsQuery.isLoading,
+    // Waiting for the tenant is loading too (a disabled query reports isLoading=false).
+    isLoading: settingsQuery.isLoading || !tenant?.id,
     isError: settingsQuery.isError,
     error: settingsQuery.error,
     refetch: settingsQuery.refetch,

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from "vitest";
 
 const listPaged = vi.fn();
 vi.mock("@/shared/lib/storage", () => ({ storage: { listPaged: (...args: unknown[]) => listPaged(...args) } }));
@@ -15,6 +15,15 @@ const page = (items: unknown[], total: number, pageSize: number) => ({ items, to
  * starts_at-scoped server query.
  */
 describe("fetchDashboardEvents", () => {
+  // Browser in UTC while the system timezone is America/Sao_Paulo (month bounds must follow the system one).
+  const originalTz = process.env.TZ;
+  beforeAll(() => {
+    process.env.TZ = "UTC";
+  });
+  afterAll(() => {
+    process.env.TZ = originalTz;
+  });
+
   const now = new Date(2030, 9, 10, 15, 0, 0);
 
   beforeEach(() => {

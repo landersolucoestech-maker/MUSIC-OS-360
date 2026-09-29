@@ -22,7 +22,7 @@ import {
   duplicateId,
   legacyMenuIdMap,
 } from './musicchat-vocabulary';
-import { assertActiveTenantMembers } from './tenant-members';
+import { activeTenantMemberIds, assertActiveTenantMembers } from './tenant-members';
 import type {
   MusicChatEscalationRuleDto,
   MusicChatInboundMessageDto,
@@ -157,13 +157,14 @@ export class MusicChatAutomationService {
     // an option `producao` sent alone maps to the stored `music_production`
     // template instead of pointing at a template that no longer exists).
     const storedOptions = (current.menu_options ?? []) as MusicChatMenuOptionDto[];
-    const idMap = legacyMenuIdMap([
-      ...(dto.menu_options ?? []).map((option) => option.id),
-      ...(dto.templates ?? []).map((template) => template.id),
-    ]);
+    const storedTemplates = (current.templates ?? []) as MusicChatTemplateDto[];
+    const idMap = legacyMenuIdMap(
+      [...(dto.menu_options ?? []).map((option) => option.id), ...(dto.templates ?? []).map((template) => template.id)],
+      [...(dto.menu_options ? [] : storedOptions.map((option) => option.id)), ...(dto.templates ? [] : storedTemplates.map((template) => template.id))],
+    );
     const menuOptionsInput = dto.menu_options?.map((option) => canonicalMenuOption(option, idMap));
     const templatesInput = dto.templates?.map((template) => canonicalTemplate(template, idMap));
-    const duplicate = duplicateId(menuOptionsInput ?? []) ?? duplicateId(templatesInput ?? []);
+    const duplicate = duplicateId(menuOptionsInput ?? []) ?? duplicateId(templatesInput ?? []) ?? duplicateId(dto.escalation_rules ?? []);
     if (duplicate) {
       throw new BadRequestException(`Há mais de uma opção ou resposta com o identificador "${duplicate}".`);
     }
@@ -259,6 +260,14 @@ export class MusicChatAutomationService {
     if (conversationId) qb.andWhere('c.id = :conversationId', { conversationId });
     const conversations = await qb.getMany();
     const created: MusicChatAutomationNotificationEntity[] = [];
+    // Recipients are re-checked at dispatch: a member offboarded after the settings
+    // were saved gets nothing (no realtime event, no WhatsApp) — the rule is skipped.
+    const recipientOf = (rule: MusicChatEscalationRuleDto) =>
+      rule.recipientUserId || (rule.recipientRole === 'manager' ? settings.manager_user_id : settings.supervisor_user_id);
+    const activeRecipients = conversations.length > 0
+      ? await activeTenantMemberIds(this.orgMemberRepo!, tenantId, rules.map(recipientOf))
+      : new Set<string>();
+    const skipped = new Set<string>();
 
     for (const conversation of conversations) {
       const minutes = (Date.now() - conversation.created_at.getTime()) / 60000;
@@ -270,9 +279,12 @@ export class MusicChatAutomationService {
       for (const rule of rules) {
         if (minutes < rule.afterMinutes) continue;
         // `||`: a blank stored recipient (saved before blank ids became null) falls back too.
-        const recipient = rule.recipientUserId
-          || (rule.recipientRole === 'manager' ? settings.manager_user_id : settings.supervisor_user_id);
+        const recipient = recipientOf(rule);
         if (!recipient) continue;
+        if (!activeRecipients.has(recipient)) {
+          skipped.add(rule.id);
+          continue;
+        }
         const notification = await this.sendNotification(tenantId, {
           conversationId: conversation.id,
           level: rule.level,
@@ -286,6 +298,11 @@ export class MusicChatAutomationService {
       }
     }
 
+    if (skipped.size > 0) {
+      await this.recordEvent(tenantId, null, 'automation.escalation_recipient_inactive',
+        'Escalonamento ignorado: o destinatário não é mais um membro ativo da organização',
+        { ruleIds: [...skipped] }, null);
+    }
     return { processed: conversations.length, notifications: created };
   }
 
@@ -384,7 +401,7 @@ export class MusicChatAutomationService {
 
     const member = await this.orgMemberRepo!
       .createQueryBuilder('m')
-      .where('m.tenant_id = :tenantId AND m.auth_user_id = :userId AND m.deleted_at IS NULL', {
+      .where('m.tenant_id = :tenantId AND m.auth_user_id = :userId AND m.is_active = true AND m.deleted_at IS NULL', {
         tenantId, userId: notification.recipient_user_id,
       })
       .getOne();
@@ -586,7 +603,8 @@ export class MusicChatAutomationService {
     const conversation = await this.findConversation(tenantId, conversationId);
     const tags = Array.from(new Set([...(Array.isArray((conversation.metadata as any)?.tags) ? (conversation.metadata as any).tags : []), ...(option.tags ?? [])]));
     await this.convRepo!.update({ tenant_id: tenantId, id: conversationId } as any, {
-      assigned_to: option.defaultAssignee ?? conversation.assigned_to,
+      // `||`: a blank stored default assignee (saved before blank ids became null) assigns nobody.
+      assigned_to: option.defaultAssignee || conversation.assigned_to,
       metadata: {
         ...(conversation.metadata ?? {}),
         automation_state: 'routed',

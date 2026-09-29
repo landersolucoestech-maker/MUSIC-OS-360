@@ -49,19 +49,20 @@ const TYPEORM_FILENAME_RE = /^(\d{14})_([A-Za-z0-9_]+)\.ts$/;
 // header) explaining why it stays unregistered and what would need to happen
 // to register it. This guard still fails on anything unregistered that
 // ISN'T listed here — that's the "forgotten, not deliberate" case.
-export const INTENTIONALLY_UNREGISTERED_MIGRATIONS = [
-  // Destructive DROP TABLE (contacts + 3 satellites). Needs explicit
-  // sign-off to register/execute, not just the migration's own header
-  // claiming a pre-verified 0-rows check. See index.ts:106 and
-  // req-a6155d65 (mission-e39d21fa) for the recorded decision.
-  'DropOrphanContactsSatelliteTables20260713000002',
-  // Staged rollout proposal (filename-prefixed PROPOSAL_, self-documented
-  // "NOT REGISTERED IN index.ts, NOT EXECUTED" in its own header) — this is
-  // step 2 (BACKFILL) of a 4-step expand/contract rollout whose step 1
-  // (EXPAND, application code accepting both PT-BR and EN values) has not
-  // shipped yet. Registering it now would run it before the app is ready.
-  'PROPOSAL_BackfillArtistGoalStatusToEnglish20260910900001',
-];
+/**
+ * Single list, owned by apps/api/src/database/migration-registry-exceptions.ts
+ * (db:check reads it too): parsed here as the quoted class names of its array.
+ */
+export function loadIntentionallyUnregisteredMigrations(
+  source = readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'apps/api/src/database/migration-registry-exceptions.ts'), 'utf8'),
+) {
+  const body = source.match(/INTENTIONALLY_UNREGISTERED_MIGRATIONS[^=]*=\s*\[([\s\S]*?)\];/)?.[1];
+  if (body === undefined) throw new Error('migration-registry-exceptions.ts: INTENTIONALLY_UNREGISTERED_MIGRATIONS array not found');
+  const withoutComments = body.replace(/\/\/.*$/gm, '');
+  return [...withoutComments.matchAll(/'([A-Za-z0-9_]+)'/g)].map((m) => m[1]);
+}
+
+export const INTENTIONALLY_UNREGISTERED_MIGRATIONS = loadIntentionallyUnregisteredMigrations();
 
 export function checkSupabaseMigrationsAllowlist(actualFiles, allowlist = SUPABASE_MIGRATIONS_ALLOWLIST) {
   const allowed = new Set(allowlist);

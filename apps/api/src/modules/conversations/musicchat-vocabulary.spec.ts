@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { BadRequestException, NotFoundException, ValidationPipe } from '@nestjs/common';
+import { IsNull } from 'typeorm';
 import {
   CloseConversationDto,
   ConversationServiceStatus,
@@ -134,7 +135,7 @@ function makeService(conversationMetadata: Record<string, unknown> = {}) {
   };
   const ws = { sendToTenant: jest.fn() };
   const svc = new MusicChatAutomationService(ds as never, { enqueue: jest.fn() } as never, {} as never, ws as never);
-  return { svc, settings, settingsRepo, convRepo, convQb, memberQb, conv };
+  return { svc, settings, settingsRepo, convRepo, convQb, memberQb, conv, eventRepo };
 }
 
 function routedMetadata(convRepo: { update: jest.Mock }) {
@@ -295,7 +296,7 @@ describe('MusicChat manual notifications and escalation recipients', () => {
     await expect(svc.sendManualNotification('t1', { ...notification, recipientUserId: 'user-of-other-tenant' })).rejects.toThrow(BadRequestException);
     convRepo.findOne.mockResolvedValueOnce(null);
     await expect(svc.sendManualNotification('t1', notification)).rejects.toThrow(NotFoundException);
-    expect(convRepo.findOne).toHaveBeenLastCalledWith({ where: expect.objectContaining({ id: 'conv-1', tenant_id: 't1' }) });
+    expect(convRepo.findOne).toHaveBeenLastCalledWith({ where: expect.objectContaining({ id: 'conv-1', tenant_id: 't1', deleted_at: IsNull() }) });
     expect(send).not.toHaveBeenCalled();
     await svc.sendManualNotification('t1', notification);
     expect(send).toHaveBeenCalledWith('t1', notification);
@@ -312,5 +313,47 @@ describe('MusicChat manual notifications and escalation recipients', () => {
     const send = jest.spyOn(svc, 'sendNotification').mockResolvedValue({ created: true, data: {} as never });
     await svc.runEscalation('t1');
     expect(send).toHaveBeenCalledWith('t1', expect.objectContaining({ recipientUserId: 'supervisor-1' }));
+  });
+
+  it('an escalation recipient who is no longer an active member gets nothing; the skip is recorded', async () => {
+    const { svc, settings, convQb, conv, eventRepo } = makeService({ service_status: 'waiting_agent' });
+    Object.assign(settings, {
+      escalation_rules: [{ id: 'r1', afterMinutes: 5, level: 'supervisor', recipientRole: 'supervisor', recipientUserId: 'offboarded-member', channels: ['whatsapp'], active: true }],
+    });
+    Object.assign(conv, { created_at: new Date(Date.now() - 60 * 60_000), status: 'open' });
+    convQb.getMany.mockResolvedValue([conv]);
+    const send = jest.spyOn(svc, 'sendNotification').mockResolvedValue({ created: true, data: {} as never });
+    await svc.runEscalation('t1');
+    expect(send).not.toHaveBeenCalled();
+    expect(eventRepo.create).toHaveBeenCalledWith(expect.objectContaining({
+      event_type: 'automation.escalation_recipient_inactive',
+      payload: { ruleIds: ['r1'] },
+    }));
+  });
+
+  it('rejects escalation rules sharing one id (400) — a stale exempt recipient cannot be multiplied', async () => {
+    const { svc, settings, settingsRepo } = makeService();
+    Object.assign(settings, { escalation_rules: [{ id: 'r1', afterMinutes: 5, level: 'supervisor', recipientRole: 'supervisor', recipientUserId: 'ex-member' }] });
+    const rule = (level: string) => ({ id: 'r1', afterMinutes: 5, level, recipientRole: 'supervisor', recipientUserId: 'ex-member', channels: ['whatsapp'] });
+    await expect(svc.updateSettings('t1', 'u1', { escalation_rules: [rule('supervisor'), rule('manager'), rule('lvl3')] }))
+      .rejects.toThrow(BadRequestException);
+    expect(settingsRepo.update).not.toHaveBeenCalled();
+  });
+
+  it('a blank stored default assignee never becomes an empty assigned_to when a conversation is routed', async () => {
+    const { svc, settings, convRepo } = makeService();
+    Object.assign(settings.menu_options[0], { defaultAssignee: '' });
+    await svc.handleInboundMessage('t1', { externalContactId: 'ext-1', customerName: 'Fulano', channel: 'internal', body: '1' });
+    const routed = convRepo.update.mock.calls.find(([, patch]) => (patch as { metadata?: Record<string, unknown> }).metadata?.['automation_state'] === 'routed');
+    expect((routed?.[1] as { assigned_to: unknown }).assigned_to).toBeNull();
+  });
+
+  it('an options-only save from a tenant that kept both outros and other templates keeps pointing outros at outros', async () => {
+    const { svc, settings, settingsRepo } = makeService();
+    settings.templates = [{ id: 'outros', title: 'Outros', body: 'a' }, { id: 'other', title: 'Outro (próprio)', body: 'b' }];
+    const legacyOption = { id: 'outros', order: 1, label: 'Outros', responseTemplateId: 'outros', queue: 'A', sector: 'T', active: true };
+    await svc.updateSettings('t1', 'u1', { menu_options: [legacyOption] });
+    const [, updates] = settingsRepo.update.mock.calls[0] as [unknown, { menu_options: Array<{ id: string; responseTemplateId: string }> }];
+    expect(updates.menu_options.map((o) => [o.id, o.responseTemplateId])).toEqual([['outros', 'outros']]);
   });
 });

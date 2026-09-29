@@ -1,4 +1,5 @@
 import { formatDate } from "@/shared/lib/format-utils";
+import { Button } from "@/shared/ui/button";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Label } from "@/shared/ui/label";
@@ -32,6 +33,7 @@ interface TransactionTypeSectionProps {
   disabled: boolean;
   updateField: (field: keyof TransactionFormData, value: string) => void;
   filteredEvents: Event[];
+  eventsStatus?: { isLoading: boolean; error: Error | null; truncated: boolean; refetch: () => void };
 }
 
 export function TransactionTypeSection({
@@ -42,7 +44,15 @@ export function TransactionTypeSection({
   disabled,
   updateField,
   filteredEvents,
+  eventsStatus,
 }: TransactionTypeSectionProps) {
+  // The picker never claims "no events" while the artist's events load or after the sweep failed.
+  const eventsPending = !!eventsStatus && (eventsStatus.isLoading || !!eventsStatus.error);
+  const eventsPlaceholder = eventsStatus?.isLoading
+    ? "Carregando eventos…"
+    : eventsStatus?.error
+      ? "Eventos indisponíveis"
+      : filteredEvents.length === 0 ? "Nenhum evento encontrado" : "Selecione o evento";
   const transactionTypeOptions = useMemo(() => getTransactionTypes(categoryRules), [categoryRules]);
   const counterpartyOptions = useMemo(
     () => getCounterpartiesByType(categoryRules, formData.transactionType),
@@ -203,11 +213,22 @@ export function TransactionTypeSection({
                 value: event.id,
                 label: event.starts_at ? `${event.title} (${formatDate(event.starts_at)})` : event.title,
               }))}
-              placeholder={filteredEvents.length === 0 ? "Nenhum evento encontrado" : "Selecione o evento"}
+              placeholder={eventsPlaceholder}
               error={errors.eventId}
-              disabled={disabled || filteredEvents.length === 0}
+              disabled={disabled || eventsPending || filteredEvents.length === 0}
               required
             />
+          )}
+          {selectedLink === "Evento" && eventsStatus?.error && (
+            <div className="flex items-center gap-2 text-xs text-destructive" role="alert" data-testid="transaction-events-error">
+              <span>Não foi possível carregar os eventos do artista.</span>
+              <Button type="button" variant="outline" size="sm" className="h-7 text-xs" onClick={eventsStatus.refetch}>
+                Tentar novamente
+              </Button>
+            </div>
+          )}
+          {selectedLink === "Evento" && !eventsPending && eventsStatus?.truncated && (
+            <p className="text-xs text-muted-foreground" role="status">A lista mostra apenas parte dos eventos deste artista.</p>
           )}
 
           {selectedLink === "Centro de custo" && (

@@ -127,8 +127,11 @@ docker exec musicos360_db psql -U musicos360 -d musicos360 -c \
 **Order (no build may serve a schema it cannot read — see
 `docs/engineering/database.md`, "Reverse transition")**:
 
-1. Stop every API instance (HTTP + in-process workers) — §5 maintenance mode
-   or scale to zero — and confirm `/api/v1/health/live` no longer answers 200.
+1. Confirm `/api/v1/health/live` answers 200 (`status: up`) on the base URL you
+   will probe, stop every API instance (HTTP + in-process workers) — §5
+   maintenance mode or scale to zero — and confirm the same URL now refuses the
+   connection, times out or answers 502/503/504 (a 404/3xx is not proof).
+   Run `pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts preflight rollback` first.
 2. Roll the database back, from the NEWER build (it holds the `down()` code),
    to the last migration of the build you are going back to:
 
@@ -142,13 +145,19 @@ DATABASE_URL='postgresql://musicos360:musicos360_dev@localhost:5432/musicos360' 
   pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts rollback:to <LastMigrationOfOlderBuild>
 ```
 
+   `rollback:to` validates the whole revert list first (refuses out-of-order
+   rows, rows without a `down()` in this build and EXTERNAL_MANAGED migrations).
    Staging: `staging.yml` → `workflow_dispatch` on `staging` with
-   `rollback_to_migration` (stops the build itself and never deploys).
+   `rollback_to_migration` and the same name in `confirm_rollback` (stops the
+   build itself and never deploys; set `staging_already_down` when it is
+   already stopped). The `staging` GitHub Environment should require reviewers
+   and allow only the `staging` branch. Partial states: see
+   `docs/engineering/database.md`, "Recovering from a partial state".
 3. Deploy the older API image (§2); `db:check` with that image must pass.
 4. Start it, validate, then leave maintenance mode.
 
 **Validation**:
-- `pnpm --filter @music-os-360/api db:check` → "Sem migrations pendentes"
+- `pnpm --filter @music-os-360/api db:check` → "✓ No pending migrations — schema in sync." (exit 0)
 - API boots without errors
 - Smoke test: any CRUD endpoint returns 200
 

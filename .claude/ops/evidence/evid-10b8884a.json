@@ -1,0 +1,12 @@
+{
+  "id": "evid-10b8884a",
+  "createdAt": "2026-09-29T10:30:00.935Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "1dfd595 security re-review: LOW-1..4 and INFO-5 fixed; new LOW-A duplicate escalation rule ids multiply a stale exempt recipient; LOW-B escalation dispatch does not re-check recipient membership (pre-existing); LOW-C inbound routing keeps blank defaultAssignee; LOW-D staging rollback_to_migration has no depth limit/second approval; INFO coverage gaps, job-level secret env, weak down proof, npm-audit false green on pnpm repo",
+  "workspaceFingerprint": "614db11e114498fec5c80d24fdfaef2813c9ff5d7a82db7905bec344f23f6640",
+  "fingerprintStatus": "BOUND",
+  "head": "1dfd59547e2ba2a2916d90944e2be8ee702f8c97"
+}

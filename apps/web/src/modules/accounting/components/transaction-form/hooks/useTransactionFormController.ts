@@ -44,6 +44,8 @@ export interface UseTransactionFormControllerReturn {
   handleClose: () => void;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemoveAttachment: () => void;
+  /** State of the selected artist's events sweep (the event picker's source). */
+  eventsStatus: { isLoading: boolean; error: Error | null; truncated: boolean; refetch: () => void };
 }
 
 // useDataQuery (shared/hooks) types its mutation input as the RESPONSE row
@@ -95,7 +97,13 @@ export function useTransactionFormController({
   const [formData, setFormData] = useState<TransactionFormData>(initialFormData);
   // The event picker lists the selected artist's events: sweep all of them (the
   // unfiltered events list is capped at the 50 oldest of the tenant).
-  const { events } = useArtistEvents(formData.artistId || undefined, open);
+  const {
+    events,
+    isLoading: eventsLoading,
+    error: eventsError,
+    truncated: eventsTruncated,
+    refetch: refetchEvents,
+  } = useArtistEvents(formData.artistId || undefined, open);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
   const { addTransaction, updateTransaction } = useTransactions();
@@ -291,6 +299,12 @@ export function useTransactionFormController({
   }, [clearFieldError, isSubmitting, isViewMode, revokeObjectUrl]);
 
   return {
+    eventsStatus: {
+      isLoading: eventsLoading,
+      error: eventsError,
+      truncated: eventsTruncated,
+      refetch: () => void refetchEvents(),
+    },
     formData,
     visibleRules,
     errors,

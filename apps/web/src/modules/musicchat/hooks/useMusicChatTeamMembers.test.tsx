@@ -85,4 +85,18 @@ describe("useMusicChatMemberNames", () => {
     expect(apiGet).toHaveBeenCalledTimes(2);
     expect(result.current.nameOf("u149", "Agente")).toBe("Nome u149");
   });
+
+  it("reports fetching while a new id resolves, so a picker can say 'loading' instead of 'not a member'", async () => {
+    let release: (value: unknown) => void = () => undefined;
+    apiGet.mockResolvedValueOnce([{ auth_user_id: "u1", full_name: "Ana", email: "ana@x.com" }]);
+    const { result, rerender } = renderHook(({ ids }) => useMusicChatMemberNames(ids), { wrapper: wrapper(), initialProps: { ids: ["u1"] } });
+    await waitFor(() => expect(result.current.names.get("u1")).toBe("Ana"));
+    apiGet.mockImplementationOnce(() => new Promise((resolve) => { release = resolve; }));
+    rerender({ ids: ["u9"] });
+    await waitFor(() => expect(result.current.isFetching).toBe(true));
+    expect(result.current.names.has("u9")).toBe(false);
+    await act(async () => release([{ auth_user_id: "u9", full_name: "Bia", email: "bia@x.com" }]));
+    await waitFor(() => expect(result.current.names.get("u9")).toBe("Bia"));
+    expect(result.current.isFetching).toBe(false);
+  });
 });

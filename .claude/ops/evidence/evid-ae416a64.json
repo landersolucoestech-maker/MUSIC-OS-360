@@ -1,0 +1,15 @@
+{
+  "id": "evid-ae416a64",
+  "createdAt": "2026-09-29T10:55:19.383Z",
+  "type": "COMMAND",
+  "label": "corepack pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts preflight migrate",
+  "command": "corepack pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts preflight migrate",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "query: SELECT version()\nquery: SELECT * FROM current_schema()\nquery: CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"\nquery: SELECT (rolsuper OR rolbypassrls) AS bypass FROM pg_roles WHERE rolname = current_user\nquery: SELECT * FROM \"information_schema\".\"tables\" WHERE \"table_schema\" = 'public' AND \"table_name\" = 'musicos360_migrations'\nquery: SELECT * FROM \"musicos360_migrations\" \"musicos360_migrations\" ORDER BY \"id\" DESC\nquery: SELECT \"type\", count(*)::text AS count FROM \"transactions\"\n      WHERE lower(\"type\") NOT IN ('receita','despesa','investimento','imposto','transferencia','revenue','expense','investment','tax','transfer')\n      GROUP BY 1\n[db:preflight] OK — no blocking condition.",
+  "stderrTail": "",
+  "workspaceFingerprint": "beed86ce73e6019f1ad1fe64930a5c98a11a73924904e4da515638dc1bda0d21",
+  "fingerprintStatus": "BOUND",
+  "head": "1dfd59547e2ba2a2916d90944e2be8ee702f8c97",
+  "durationMs": 1963
+}

@@ -9,13 +9,14 @@ import type { OrgMemberEntity } from '../../database/entities';
  * route conversations and notifications to nobody (or to someone outside the
  * tenant).
  */
-export async function assertActiveTenantMembers(
+/** The ids among `userIds` that are active, non-deleted members of the tenant. */
+export async function activeTenantMemberIds(
   repo: Pick<Repository<OrgMemberEntity>, 'createQueryBuilder'>,
   tenantId: string,
   userIds: ReadonlyArray<string | null | undefined>,
-): Promise<void> {
+): Promise<Set<string>> {
   const wanted = [...new Set(userIds.filter((id): id is string => typeof id === 'string' && id.length > 0))];
-  if (wanted.length === 0) return;
+  if (wanted.length === 0) return new Set();
   const rows: Array<{ auth_user_id: string }> = await repo
     .createQueryBuilder('m')
     .select('m.auth_user_id', 'auth_user_id')
@@ -24,7 +25,17 @@ export async function assertActiveTenantMembers(
     .andWhere('m.is_active = true')
     .andWhere('m.deleted_at IS NULL')
     .getRawMany();
-  const found = new Set(rows.map((row) => row.auth_user_id));
+  return new Set(rows.map((row) => row.auth_user_id));
+}
+
+export async function assertActiveTenantMembers(
+  repo: Pick<Repository<OrgMemberEntity>, 'createQueryBuilder'>,
+  tenantId: string,
+  userIds: ReadonlyArray<string | null | undefined>,
+): Promise<void> {
+  const wanted = userIds.filter((id): id is string => typeof id === 'string' && id.length > 0);
+  if (wanted.length === 0) return;
+  const found = await activeTenantMemberIds(repo, tenantId, wanted);
   if (wanted.some((id) => !found.has(id))) {
     throw new BadRequestException('Responsável não encontrado entre os membros ativos desta organização.');
   }

@@ -52,8 +52,8 @@ export function useMusicChatTeamMembers(search = "", enabled = true) {
   return {
     members: query.data ?? [],
     isLoading: query.isLoading,
-    /** A newer search is loading while the previous result is shown. */
-    isSearching: query.isFetching || term !== search.trim(),
+    /** A newer search is loading while the previous result is shown (not a background refetch). */
+    isSearching: query.isPlaceholderData || term !== search.trim(),
     error: query.error,
     refetch: query.refetch,
   };
@@ -84,6 +84,8 @@ export function useMusicChatMemberNames(ids: ReadonlyArray<string | null | undef
   return {
     names,
     isLoading: query.isLoading && unique.length > 0,
+    /** A lookup is in flight (also while previous names are kept as placeholder). */
+    isFetching: query.isFetching,
     /** The lookup failed and nothing was loaded before: names are unknown, not missing. */
     error: query.data === undefined ? query.error : null,
     /** Display name for an id; `fallback` when it is empty or not a member. */

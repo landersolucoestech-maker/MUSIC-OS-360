@@ -6,10 +6,13 @@ name: Staging CI/CD
 #   STAGING_DATABASE_URL
 #   STAGING_APP_DATABASE_URL
 #   STAGING_API_URL
-#   STAGING_DEPLOY_WEBHOOK_URL   deploys the checked-out build and (re)starts it
+#   STAGING_API_URL              base URL of the API (a trailing "/" is stripped)
+#   STAGING_DEPLOY_WEBHOOK_URL   POST {"ref":"<commit sha>"}: deploys THAT commit and
+#                                starts it with BUILD_SHA=<commit sha> in its env
+#                                (GET /api/v1/health/live reports it as `build`)
 #   STAGING_STOP_WEBHOOK_URL     stops EVERY instance of the running API build
-#                                (API + in-process workers) — required before any
-#                                schema change (migration or rollback)
+#                                (API + in-process workers) and keeps them stopped —
+#                                required before any schema change (migration or rollback)
 # Optional, for the authenticated smoke test:
 #   STAGING_SMOKE_TOKEN
 #   STAGING_SMOKE_TENANT
@@ -18,9 +21,12 @@ name: Staging CI/CD
 # Deploy order (DB-M2, docs/engineering/database.md "Deploy order"): the
 # technical-language migrations rename columns in place, so no build may serve
 # against a schema it cannot read. A schema change therefore runs as
-#   stop the running build -> prove it is down -> migrate/roll back -> deploy
-#   the matching build -> prove it is up -> smoke,
+#   pre-flight (read-only) -> prove the running build answers -> stop it ->
+#   prove it is down -> migrate/roll back -> deploy THIS commit -> prove THIS
+#   build is up -> smoke,
 # and a build older than the database is never deployed (db:check:state).
+# The `staging` GitHub Environment should require reviewers and allow only the
+# `staging` branch (repository settings — see docs/RUNBOOK_ROLLBACK.md).
 
 on:
   push:
@@ -35,14 +41,25 @@ on:
         description: "Roll the staging database back until this migration is the last applied one (stops the running build; no deploy). Empty = normal run."
         type: string
         default: ""
+      confirm_rollback:
+        description: "Type the same migration name again to confirm the rollback (destructive: runs every newer down())."
+        type: string
+        default: ""
+      staging_already_down:
+        description: "The staging API is already stopped (e.g. after a failed run): skip the check that the running build answers before the stop."
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
-# A deploy is never cancelled half-way (a cancelled run could leave the build
-# stopped mid-migration); later runs queue behind it.
+# A staging run is never cancelled half-way (it could leave the build stopped
+# mid-migration); later runs of the `staging` branch queue behind it (GitHub
+# keeps only the newest pending one). Runs from other refs never change the
+# schema (see the plan step) and get their own group, so they cannot replace a
+# pending staging deploy.
 concurrency:
-  group: staging-deploy
+  group: ${{ github.ref == 'refs/heads/staging' && 'staging-deploy' || format('staging-readonly-{0}', github.run_id) }}
   cancel-in-progress: false
 
 jobs:
@@ -74,12 +91,12 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
       APP_DATABASE_URL: ${{ secrets.STAGING_APP_DATABASE_URL }}
-      STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
-      STAGING_STOP_WEBHOOK_URL: ${{ secrets.STAGING_STOP_WEBHOOK_URL }}
       DATABASE_SESSION_CONTEXT_ENABLED: "true"
       NODE_ENV: staging
       ROLLBACK_TO_MIGRATION: ${{ inputs.rollback_to_migration }}
+      CONFIRM_ROLLBACK_TO: ${{ inputs.confirm_rollback }}
       APPLY_MIGRATIONS: ${{ inputs.apply_migrations }}
+      STAGING_ALREADY_DOWN: ${{ inputs.staging_already_down }}
     steps:
       - uses: actions/checkout@v4
 
@@ -98,7 +115,7 @@ jobs:
       - name: Validate Supabase project ref is STAGING (never DEV/MAIN) before any query
         run: pnpm --filter @music-os-360/api exec tsx scripts/verify-supabase-staging-ref.ts
 
-      - name: Schema state vs this build (read-only — always runs)
+      - name: Schema state vs this build (changes no schema — always runs)
         id: state
         run: pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts check:state
 
@@ -107,6 +124,8 @@ jobs:
         env:
           PENDING: ${{ steps.state.outputs.pending }}
           UNKNOWN_APPLIED: ${{ steps.state.outputs.unknown_applied }}
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+          STAGING_STOP_WEBHOOK_URL: ${{ secrets.STAGING_STOP_WEBHOOK_URL }}
         run: |
           set -euo pipefail
           test -n "$PENDING" && test -n "$UNKNOWN_APPLIED" || { echo "::error::schema state unreadable"; exit 1; }
@@ -117,7 +136,10 @@ jobs:
           change=none
           if [ -n "$ROLLBACK_TO_MIGRATION" ]; then
             [ "$APPLY_MIGRATIONS" != "true" ] || { echo "::error::apply_migrations and rollback_to_migration are mutually exclusive"; exit 1; }
-            [ "$PENDING" = "0" ] || { echo "::error::rollback_to_migration requires the database to be at this build's schema first"; exit 1; }
+            [ "$CONFIRM_ROLLBACK_TO" = "$ROLLBACK_TO_MIGRATION" ] || { echo "::error::confirm_rollback must repeat the rollback_to_migration name exactly"; exit 1; }
+            # A partially applied batch (PENDING > 0) can be rolled back too: UNKNOWN_APPLIED=0
+            # already proves this build has the down() of every applied migration, and
+            # rollback:to validates the whole revert list before reverting anything.
             change=rollback
           elif [ "$PENDING" != "0" ]; then
             [ "$APPLY_MIGRATIONS" = "true" ] || { echo "::error::$PENDING pending migration(s) on staging, but apply_migrations was not checked. Re-run this workflow on branch staging with 'Apply pending TypeORM migrations to staging' checked to authorize."; exit 1; }
@@ -129,16 +151,33 @@ jobs:
             test -n "$STAGING_API_URL" || { echo "::error::STAGING_API_URL is not configured: cannot prove the running build stopped"; exit 1; }
           fi
           echo "change=$change" >> "$GITHUB_OUTPUT"
+          echo "api_base=${STAGING_API_URL%/}" >> "$GITHUB_OUTPUT"
           echo "rollback=$([ "$change" = rollback ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
           echo "Schema change planned: $change"
 
+      - name: Pre-flight (read-only) — nothing predictable may fail after the stop
+        if: steps.plan.outputs.change != 'none'
+        env:
+          CHANGE: ${{ steps.plan.outputs.change }}
+        run: pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts preflight "$CHANGE"
+
+      - name: Prove the probe reaches the running build (so "down" below means stopped, not a wrong URL)
+        if: steps.plan.outputs.change != 'none' && inputs.staging_already_down != true
+        env:
+          API_BASE: ${{ steps.plan.outputs.api_base }}
+        run: node scripts/wait-for-http-state.mjs --url "$API_BASE/api/v1/health/live" --until up --consecutive 1 --interval 5 --timeout 60
+
       - name: Stop the running staging build (before any schema change)
         if: steps.plan.outputs.change != 'none'
-        run: curl --fail --silent --show-error --request POST "$STAGING_STOP_WEBHOOK_URL"
+        env:
+          STAGING_STOP_WEBHOOK_URL: ${{ secrets.STAGING_STOP_WEBHOOK_URL }}
+        run: curl --fail --silent --show-error --max-time 60 --retry 2 --retry-connrefused --request POST "$STAGING_STOP_WEBHOOK_URL"
 
       - name: Prove no build is serving (health endpoint down for 3 consecutive probes)
         if: steps.plan.outputs.change != 'none'
-        run: node scripts/wait-for-http-state.mjs --url "$STAGING_API_URL/api/v1/health/live" --until down --consecutive 3 --interval 5 --timeout 300
+        env:
+          API_BASE: ${{ steps.plan.outputs.api_base }}
+        run: node scripts/wait-for-http-state.mjs --url "$API_BASE/api/v1/health/live" --until down --consecutive 3 --interval 5 --timeout 300
 
       - name: db:migrate staging (build stopped, explicit authorization)
         if: steps.plan.outputs.change == 'migrate'
@@ -175,14 +214,21 @@ jobs:
           STAGING_DEPLOY_WEBHOOK_URL: ${{ secrets.STAGING_DEPLOY_WEBHOOK_URL }}
           STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
         run: test -n "$STAGING_DEPLOY_WEBHOOK_URL" && test -n "$STAGING_API_URL"
-      - name: trigger real staging deploy (starts the build matching the schema)
+      - name: trigger real staging deploy of THIS commit (the build matching the schema)
         env:
           STAGING_DEPLOY_WEBHOOK_URL: ${{ secrets.STAGING_DEPLOY_WEBHOOK_URL }}
-        run: curl --fail --silent --show-error --request POST "$STAGING_DEPLOY_WEBHOOK_URL"
-      - name: Prove the deployed build is serving (health up for 3 consecutive probes)
+        run: |
+          curl --fail --silent --show-error --max-time 60 --retry 2 --retry-connrefused \
+            --request POST --header 'Content-Type: application/json' \
+            --data "{\"ref\":\"$GITHUB_SHA\"}" "$STAGING_DEPLOY_WEBHOOK_URL"
+      - name: Prove THIS build is serving (liveness reports this commit for 3 consecutive probes)
         env:
           STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
-        run: node scripts/wait-for-http-state.mjs --url "$STAGING_API_URL/api/v1/health/ready" --until up --consecutive 3 --interval 10 --timeout 900
+        run: node scripts/wait-for-http-state.mjs --url "${STAGING_API_URL%/}/api/v1/health/live" --until up --expect-build "$GITHUB_SHA" --consecutive 3 --interval 10 --timeout 900
+      - name: Prove it is ready (database reachable)
+        env:
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+        run: node scripts/wait-for-http-state.mjs --url "${STAGING_API_URL%/}/api/v1/health/ready" --until up --consecutive 2 --interval 10 --timeout 300
 
   smoke-staging:
     name: smoke staging

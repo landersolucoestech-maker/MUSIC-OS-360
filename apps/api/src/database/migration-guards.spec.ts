@@ -17,3 +17,23 @@ describe('assertMigrationRoleBypassesRls', () => {
     await expect(assertMigrationRoleBypassesRls(runner([]), 'M')).rejects.toThrow(/BYPASSRLS/);
   });
 });
+
+describe('data migrations call the RLS-bypass guard before any other SQL', () => {
+  const migrations = [
+    ['./migrations/20260928000019_CanonicalizeLegacyReleaseStatuses', 'CanonicalizeLegacyReleaseStatuses20260928000019'],
+    ['./migrations/20260928000022_CanonicalizeArtistsToEnglish', 'CanonicalizeArtistsToEnglish20260928000022'],
+    ['./migrations/20260928000023_CanonicalizeClientsToEnglish', 'CanonicalizeClientsToEnglish20260928000023'],
+    ['./migrations/20260928000025_RenameOrgStructureSlugsToEnglish', 'RenameOrgStructureSlugsToEnglish20260928000025'],
+    ['./migrations/20260928000026_CanonicalizeMusicChatValuesToEnglish', 'CanonicalizeMusicChatValuesToEnglish20260928000026'],
+  ] as const;
+
+  it.each(migrations)('%s up() and down() stop at the guard without a bypassing role', async (path, className) => {
+    const Migration = (await import(path))[className] as new () => { up(q: unknown): Promise<void>; down(q: unknown): Promise<void> };
+    for (const direction of ['up', 'down'] as const) {
+      const query = jest.fn().mockResolvedValue([{ bypass: false }]);
+      await expect(new Migration()[direction]({ query })).rejects.toThrow(/BYPASSRLS/);
+      expect(query).toHaveBeenCalledTimes(1);
+      expect(String(query.mock.calls[0][0])).toContain('rolbypassrls');
+    }
+  });
+});

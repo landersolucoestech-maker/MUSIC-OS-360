@@ -1,0 +1,15 @@
+{
+  "id": "evid-fc7eb2e1",
+  "createdAt": "2026-09-29T10:55:21.570Z",
+  "type": "COMMAND",
+  "label": "corepack pnpm --filter @music-os-360/api db:check",
+  "command": "corepack pnpm --filter @music-os-360/api db:check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "> @music-os-360/api@0.0.1 db:check /home/user/MUSIC-OS-360/apps/api\n> tsx scripts/db-ops.ts check\n\n\n[db:check] Checking migration state…\n\nquery: SELECT version()\nquery: SELECT * FROM current_schema()\nquery: CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"\nquery: SELECT * FROM \"information_schema\".\"tables\" WHERE \"table_schema\" = 'public' AND \"table_name\" = 'musicos360_migrations'\nquery: SELECT * FROM \"musicos360_migrations\" \"musicos360_migrations\" ORDER BY \"id\" DESC\nquery: SELECT * FROM \"information_schema\".\"tables\" WHERE \"table_schema\" = 'public' AND \"table_name\" = 'musicos360_migrations'\nquery: SELECT * FROM \"musicos360_migrations\" \"musicos360_migrations\" ORDER BY \"id\" DESC\nquery: SELECT * FROM \"information_schema\".\"tables\" WHERE \"table_schema\" = 'public' AND \"table_name\" = 'musicos360_migrations'\nquery: SELECT * FROM \"musicos360_migrations\" \"musicos360_migrations\" ORDER BY \"id\" DESC\n✓ No pending migrations — schema in sync.",
+  "stderrTail": "",
+  "workspaceFingerprint": "beed86ce73e6019f1ad1fe64930a5c98a11a73924904e4da515638dc1bda0d21",
+  "fingerprintStatus": "BOUND",
+  "head": "1dfd59547e2ba2a2916d90944e2be8ee702f8c97",
+  "durationMs": 2053
+}

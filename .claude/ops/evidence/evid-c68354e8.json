@@ -1,0 +1,15 @@
+{
+  "id": "evid-c68354e8",
+  "createdAt": "2026-09-29T10:52:25.465Z",
+  "type": "COMMAND",
+  "label": "node scripts/verify-staging-deploy-order.mjs",
+  "command": "node scripts/verify-staging-deploy-order.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ verify-staging-deploy-order — no build serves while the staging schema changes.",
+  "stderrTail": "",
+  "workspaceFingerprint": "beed86ce73e6019f1ad1fe64930a5c98a11a73924904e4da515638dc1bda0d21",
+  "fingerprintStatus": "BOUND",
+  "head": "1dfd59547e2ba2a2916d90944e2be8ee702f8c97",
+  "durationMs": 48
+}

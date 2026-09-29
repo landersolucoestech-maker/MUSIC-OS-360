@@ -21,7 +21,7 @@ Promote to `staging` only when the environment is isolated:
 - [ ] Isolated staging Supabase (`jjnnjnxjkqipgqebijen`)
 - [ ] Isolated staging Redis
 - [ ] Staging R2 storage with a separate bucket/prefix
-- [ ] GitHub Environment `staging` configured, including `STAGING_STOP_WEBHOOK_URL` (stops every API instance) and `STAGING_DEPLOY_WEBHOOK_URL` (deploys and starts the build)
+- [ ] GitHub Environment `staging` configured, including `STAGING_STOP_WEBHOOK_URL` (stops every API instance) and `STAGING_DEPLOY_WEBHOOK_URL` (receives `{"ref":"<commit>"}`, deploys that commit and starts it with `BUILD_SHA=<commit>`); the Environment requires reviewers and allows only the `staging` branch
 - [ ] Staging secrets hold no production values
 - [ ] Staging API answers the health check
 - [ ] Staging web points only at the staging API

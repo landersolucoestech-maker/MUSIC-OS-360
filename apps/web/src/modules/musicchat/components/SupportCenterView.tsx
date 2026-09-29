@@ -1089,7 +1089,11 @@ export function SupportCenterView({
                       <Button
                         size="sm"
                         className="h-8 w-full text-xs"
-                        disabled={!transferTarget || !transferCandidates.some((member) => member.auth_user_id === transferTarget)}
+                        disabled={
+                          !transferTarget
+                          || !!transferCandidatesError
+                          || !transferCandidates.some((member) => member.auth_user_id === transferTarget)
+                        }
                         onClick={handleTransfer}
                       >
                         Confirmar transferência

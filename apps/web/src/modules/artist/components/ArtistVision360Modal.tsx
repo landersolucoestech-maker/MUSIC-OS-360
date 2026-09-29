@@ -906,7 +906,7 @@ export function ArtistVision360Modal({
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <Calendar className="h-5 w-5 mx-auto text-primary mb-2" />
                       <p className="text-lg font-bold" data-testid="vision360-overview-confirmed-shows">
-                        {eventsReady ? confirmedShows : eventsPendingLabel}
+                        {eventsReady ? `${confirmedShows}${artistEventsTruncated ? "+" : ""}` : eventsPendingLabel}
                       </p>
                       <p className="text-xs text-muted-foreground">Shows Confirmados</p>
                     </div>
@@ -930,6 +930,9 @@ export function ArtistVision360Modal({
                     </div>
                     {!eventsReady ? (
                       <p className="text-sm text-muted-foreground" data-testid="vision360-overview-next-show">{eventsPendingLabel}</p>
+                    ) : !nextShow && artistEventsTruncated ? (
+                      // The sweep stopped at its ceiling (oldest first): a future show may be beyond it.
+                      <p className="text-sm text-muted-foreground" data-testid="vision360-overview-next-show">Agenda incompleta</p>
                     ) : nextShow ? (
                       <>
                         <p className="text-sm font-semibold truncate">{nextShow.title}</p>
@@ -2818,17 +2821,21 @@ export function ArtistVision360Modal({
               {transactionTimelineNotice}
               {artistEventsNotice}
               {activityTimelineItems.length === 0 ? (
-                <Card className="bg-muted/30">
-                  <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
-                    <Clock className="h-10 w-10 text-muted-foreground/30" />
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Nenhuma movimentação registrada
-                    </p>
-                    <p className="text-xs text-muted-foreground/70">
-                      Ações comerciais, de marketing, financeiras, de produção, jurídicas e de agenda aparecerão aqui.
-                    </p>
-                  </CardContent>
-                </Card>
+                // "No activity" only once transactions and events are loaded: the notices
+                // above explain a list that is still loading or incomplete.
+                transactionsReady && eventsReady ? (
+                  <Card className="bg-muted/30" data-testid="vision360-activity-empty">
+                    <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
+                      <Clock className="h-10 w-10 text-muted-foreground/30" />
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Nenhuma movimentação registrada
+                      </p>
+                      <p className="text-xs text-muted-foreground/70">
+                        Ações comerciais, de marketing, financeiras, de produção, jurídicas e de agenda aparecerão aqui.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : null
               ) : (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">

@@ -1,0 +1,12 @@
+{
+  "id": "evid-77f5de2f",
+  "createdAt": "2026-09-29T10:31:09.169Z",
+  "type": "REVIEW",
+  "reviewer": "frontend-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "1dfd595 frontend re-review: M1, L1-L4, I-a..I-f closed; new LOW-1 transaction event picker says 'no events' while loading/failed; LOW-2 settings page flashes error before tenant known (disabled query isLoading false); LOW-3 Movimentacao empty state next to loading/error notice; LOW-4 member picker briefly 'not in team' on id change; INFO DST-midnight helper comment, tests not TZ-pinned, fake timers restore, transfer select/refetch, truncated events counts, missing tests",
+  "workspaceFingerprint": "64518826e2657f3c379f15b408e30b02b229efe900f1f81a8d1956e6d8d3a73e",
+  "fingerprintStatus": "BOUND",
+  "head": "1dfd59547e2ba2a2916d90944e2be8ee702f8c97"
+}

@@ -22,7 +22,25 @@ import {
   migrateApplication as migrateApplicationCore,
   checkApplication as checkApplicationCore,
   checkAppliedMigrationsKnown,
+  planRollbackTo,
+  preflightSchemaChange,
+  type AppliedMigrationRow,
 } from '../src/database/migrate-application';
+
+/**
+ * Every schema-changing command first checks that the connection role bypasses
+ * RLS: data migrations on FORCE RLS tables would otherwise update zero rows and
+ * still be recorded as applied — including the ones that run before the
+ * per-migration guard (migration-guards.ts) of the CZ migrations.
+ */
+async function requireRlsBypassingRole(command: string): Promise<void> {
+  const rows: Array<{ bypass: boolean }> = await AppDataSource.query(
+    `SELECT (rolsuper OR rolbypassrls) AS bypass FROM pg_roles WHERE rolname = current_user`,
+  );
+  if (rows[0]?.bypass !== true) {
+    throw new Error(`[${command}] the connection role must be superuser or BYPASSRLS (docs/engineering/database.md, pre-flight queries).`);
+  }
+}
 
 const COMMAND = process.argv[2];
 const ARG     = process.argv[3];
@@ -38,6 +56,7 @@ async function migrate(): Promise<void> {
     return;
   }
 
+  await requireRlsBypassingRole('db:migrate');
   console.log('[db:migrate] Aplicando migrations…');
   await AppDataSource.runMigrations({ transaction: 'each' });
   console.log('[db:migrate] Migrations applied successfully.\n');
@@ -61,6 +80,7 @@ async function migrate(): Promise<void> {
 async function migrateApplication(): Promise<void> {
   console.log('\n[db:migrate:application] Inicializando DataSource…');
   await AppDataSource.initialize();
+  await requireRlsBypassingRole('db:migrate:application');
 
   const { applied, skippedNonApplication } = await migrateApplicationCore(AppDataSource);
 
@@ -122,6 +142,7 @@ async function rollback(): Promise<void> {
 
   console.log('\n[db:rollback] Reverting the last migration…');
   await AppDataSource.initialize();
+  await requireRlsBypassingRole('db:rollback');
   await AppDataSource.undoLastMigration({ transaction: 'each' });
   console.log('[db:rollback] Migration revertida.\n');
 }
@@ -137,8 +158,11 @@ async function check(): Promise<void> {
   console.log('\n[db:check] Checking migration state…\n');
   await AppDataSource.initialize();
 
-  const unknownApplied = await checkAppliedMigrationsKnown(AppDataSource);
+  const { unknown: unknownApplied, intentionallyUnregistered } = await checkAppliedMigrationsKnown(AppDataSource);
   const hasPending = await AppDataSource.showMigrations();
+  if (intentionallyUnregistered.length > 0) {
+    console.log(`ℹ Applied, intentionally unregistered (migration-registry-exceptions.ts): ${intentionallyUnregistered.join(', ')}\n`);
+  }
   if (unknownApplied.length > 0) {
     console.log(
       `⚠ ${unknownApplied.length} applied migration(s) are not part of this build — the database is ahead of it:\n` +
@@ -154,14 +178,15 @@ async function check(): Promise<void> {
 }
 
 /**
- * check:state — read-only schema/build state for deploy gates: the number of
+ * check:state — schema/build state for deploy gates (changes no schema; like
+ * every TypeORM command it creates the empty tracking table when missing): the number of
  * pending migrations and of applied migrations this build does not ship. Also
  * appended as `pending=<n>` / `unknown_applied=<n>` to $GITHUB_OUTPUT when set.
  * Always exits 0 on a readable state (the caller decides).
  */
 async function checkState(): Promise<void> {
   await AppDataSource.initialize();
-  const unknownApplied = await checkAppliedMigrationsKnown(AppDataSource);
+  const { unknown: unknownApplied } = await checkAppliedMigrationsKnown(AppDataSource);
   const queryRunner = AppDataSource.createQueryRunner();
   let pending: string[];
   try {
@@ -190,20 +215,37 @@ async function rollbackTo(): Promise<void> {
   }
   requireRollbackConfirmation('db:rollback:to');
   await AppDataSource.initialize();
-  if (!AppDataSource.migrations.some((m) => (m.name ?? m.constructor.name) === target)) {
-    throw new Error(`"${target}" is not a migration of this build.`);
-  }
-  const lastApplied = async (): Promise<string | undefined> => {
-    const rows = await AppDataSource.query(`SELECT name FROM musicos360_migrations ORDER BY id DESC LIMIT 1`);
-    return rows[0]?.name;
-  };
-  const applied = await AppDataSource.query(`SELECT 1 FROM musicos360_migrations WHERE name = $1`, [target]);
-  if (applied.length === 0) throw new Error(`"${target}" is not applied: nothing to roll back to.`);
-  while ((await lastApplied()) !== target) {
-    console.log(`[db:rollback:to] Reverting ${await lastApplied()}…`);
+  await requireRlsBypassingRole('db:rollback:to');
+  const rows: AppliedMigrationRow[] = (await AppDataSource.query(
+    `SELECT id, name, "timestamp" FROM musicos360_migrations ORDER BY id`,
+  )).map((row: { id: number; name: string; timestamp: string | number }) => ({ id: Number(row.id), name: row.name, timestamp: Number(row.timestamp) }));
+  // The whole revert list is computed and validated before anything is reverted.
+  const plan = planRollbackTo(rows, target, AppDataSource.migrations.map((m) => m.name ?? m.constructor.name));
+  console.log(`[db:rollback:to] Reverting ${plan.length} migration(s): ${plan.join(', ') || '(none)'}`);
+  for (const expected of plan) {
+    const last = (await AppDataSource.query(`SELECT name FROM musicos360_migrations ORDER BY id DESC LIMIT 1`))[0]?.name;
+    if (last !== expected) throw new Error(`expected to revert ${expected} but the last applied migration is ${last}: stopped.`);
+    console.log(`[db:rollback:to] Reverting ${expected}…`);
     await AppDataSource.undoLastMigration({ transaction: 'each' });
   }
   console.log(`[db:rollback:to] ${target} is now the last applied migration.\n`);
+}
+
+/**
+ * preflight [migrate|rollback] — read-only checks run before the running build
+ * is stopped for a schema change: exit 1 on a blocking condition (the build
+ * must not be stopped for a change that would fail or do nothing), warnings
+ * printed as such.
+ */
+async function preflight(): Promise<void> {
+  const change = ARG ?? 'migrate';
+  if (change !== 'migrate' && change !== 'rollback') throw new Error('usage: db-ops.ts preflight [migrate|rollback]');
+  await AppDataSource.initialize();
+  const { blocking, warnings } = await preflightSchemaChange(AppDataSource, change);
+  for (const warning of warnings) console.log(`::warning::[db:preflight] ${warning}`);
+  for (const problem of blocking) console.error(`::error::[db:preflight] ${problem}`);
+  if (blocking.length > 0) process.exit(1);
+  console.log('[db:preflight] OK — no blocking condition.');
 }
 
 async function reset(): Promise<void> {
@@ -274,13 +316,14 @@ async function main(): Promise<void> {
       case 'check':              await check();                break;
       case 'check:state':        await checkState();           break;
       case 'rollback:to':        await rollbackTo();           break;
+      case 'preflight':          await preflight();            break;
       case 'check:application':  await checkApplication();     break;
       case 'reset':              await reset();                break;
       case 'generate':           await generate();             break;
       case 'seed:operational':   await seedOperational();      break;
       default:
         console.error(`\n[db-ops] Unknown command: '${COMMAND ?? ''}'`);
-        console.error('Valid commands: migrate | migrate:application | rollback | rollback:to | check | check:state | check:application | reset | generate | seed:operational\n');
+        console.error('Valid commands: migrate | migrate:application | rollback | rollback:to | preflight | check | check:state | check:application | reset | generate | seed:operational\n');
         process.exit(1);
     }
   } catch (err) {

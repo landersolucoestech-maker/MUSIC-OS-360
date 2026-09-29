@@ -8,7 +8,7 @@
 //     real instant (a show at 21:30 in America/Sao_Paulo) stays on its own day.
 // The timezone is pinned to America/Sao_Paulo (like the sibling date tests): in UTC
 // the shifting bugs these cases guard against would not reproduce.
-import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
 import { act } from "react";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -89,6 +89,10 @@ describe("<ArtistVision360Modal /> finance tab states", () => {
     goalsState.goals = [];
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("shows a loading state (no zero totals, no empty state) while the sweep is loading", async () => {
     transactionsState.isLoading = true;
     await openTab(/financeiro/i);
@@ -165,7 +169,6 @@ describe("<ArtistVision360Modal /> finance tab states", () => {
       fireEvent.click(tab);
     });
     expect(await screen.findByText("21:30")).toBeInTheDocument();
-    vi.useRealTimers();
   });
 
   it("default tab: no zero shows / 'Nenhum agendado' while the artist events load", async () => {
@@ -214,5 +217,19 @@ describe("<ArtistVision360Modal /> finance tab states", () => {
     expect(screen.queryByText("Nenhum compromisso na agenda")).not.toBeInTheDocument();
     fireEvent.click(within(alert).getByRole("button", { name: "Tentar novamente" }));
     expect(eventsState.refetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("activity tab: no 'no activity' claim while events load or after they failed", async () => {
+    eventsState.isLoading = true;
+    await openTab(/movimenta/i);
+    expect(await screen.findByTestId("vision360-events-loading")).toBeInTheDocument();
+    expect(screen.queryByTestId("vision360-activity-empty")).not.toBeInTheDocument();
+  });
+
+  it("default tab: a truncated events sweep flags the count and never claims no next show", async () => {
+    eventsState.truncated = true;
+    renderModal();
+    expect(await screen.findByTestId("vision360-overview-confirmed-shows")).toHaveTextContent("0+");
+    expect(screen.getByTestId("vision360-overview-next-show")).toHaveTextContent("Agenda incompleta");
   });
 });

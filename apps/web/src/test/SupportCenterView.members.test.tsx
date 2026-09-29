@@ -26,8 +26,15 @@ const MEMBERS = [
 vi.mock("@/modules/musicchat/hooks/useMusicChatTeamMembers", () => ({
   UNASSIGNED_LABEL: "Sem responsável",
   UNKNOWN_MEMBER_LABEL: "Agente",
-  memberDisplayName: (m: { full_name: string | null; email: string }) => m.full_name?.trim() || m.email,
-  useMusicChatTeamMembers: () => ({ members: MEMBERS, isLoading: false, error: null, refetch: vi.fn() }),
+  memberDisplayName: (m: { full_name: string | null; email: string | null }) => m.full_name?.trim() || m.email || "Agente",
+  // Server-side search, as the API does it (name or e-mail).
+  useMusicChatTeamMembers: (search = "") => ({
+    members: MEMBERS.filter((m) => `${m.full_name ?? ""} ${m.email}`.toLowerCase().includes(search.trim().toLowerCase())),
+    isLoading: false,
+    isSearching: false,
+    error: null,
+    refetch: vi.fn(),
+  }),
   useMusicChatMemberNames: () => {
     const names = new Map([["auth-ana", "Ana Real"], ["auth-bruno", "bruno@example.com"]]);
     return { names, isLoading: false, nameOf: (id: string | null | undefined, fallback: string) => (id ? names.get(id) ?? fallback : fallback) };

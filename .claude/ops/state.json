@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T10:19:09.869Z",
+  "updatedAt": "2026-09-29T10:55:51.041Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1019,6 +1019,65 @@
         }
       ],
       "createdAt": "2026-09-29T10:09:50.162Z"
+    },
+    {
+      "id": "req-bfb88273",
+      "text": "Close the 1dfd595 / ef14a87 re-reviews: deploy-order M1-M3 and L1-L5, DB INFO I1-I6, security LOW-A..D and INFOs, frontend LOW-1..4 and INFOs",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-1ad030ab",
+          "text": "Web typecheck, lint and full vitest pass in America/Sao_Paulo and UTC",
+          "evidenceIds": [
+            "evid-fb38b6df",
+            "evid-df649f3a",
+            "evid-506d5306",
+            "evid-15b4558e"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-765bc323",
+          "text": "API typecheck, lint and full jest pass (planRollbackTo, preflight, exemption list, dispatch re-check, duplicate rule ids, controller pin, migration guard wiring, liveness build)",
+          "evidenceIds": [
+            "evid-a0cf4fdf",
+            "evid-6d55adc1",
+            "evid-6c36ad82"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-eebbd084",
+          "text": "Root script tests and workflow guards pass (probe classification incl. real-server double slash, deploy-order invariants, single exemption list)",
+          "evidenceIds": [
+            "evid-b0a83536",
+            "evid-c68354e8",
+            "evid-70a6b086",
+            "evid-d775a017"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-5374ee1f",
+          "text": "Both migration verifiers pass on a fresh seeded _mig database; db-ops preflight/rollback:to/db:check exercised",
+          "evidenceIds": [
+            "evid-2d07983f",
+            "evid-ad56e3d0",
+            "evid-ae416a64",
+            "evid-fc7eb2e1"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-f402054a",
+          "text": "naming:check passes",
+          "evidenceIds": [
+            "evid-60141462"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-29T10:47:15.076Z"
     }
   ],
   "findings": [
@@ -3613,6 +3672,222 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-29T05:54:36.982Z"
+    },
+    {
+      "id": "find-8b29c82e",
+      "category": "security",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+      "line": null,
+      "summary": "1dfd595 SEC LOW-A: duplicate escalation rule ids let a stale exempt recipient be copied into many rules",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:30:01.013Z"
+    },
+    {
+      "id": "find-86449c92",
+      "category": "security",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+      "line": null,
+      "summary": "1dfd595 SEC LOW-B: escalation dispatch does not re-check recipient active membership (realtime + WhatsApp to offboarded members)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:30:01.087Z"
+    },
+    {
+      "id": "find-70405995",
+      "category": "data-integrity",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+      "line": null,
+      "summary": "1dfd595 SEC LOW-C: inbound routing copies a stored blank defaultAssignee into assigned_to",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:30:01.165Z"
+    },
+    {
+      "id": "find-7406f838",
+      "category": "security",
+      "severity": "LOW",
+      "file": ".github/workflows/staging.yml",
+      "line": null,
+      "summary": "1dfd595 SEC LOW-D: staging rollback_to_migration has no depth limit or typed confirmation",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:30:01.233Z"
+    },
+    {
+      "id": "find-f00d659e",
+      "category": "test",
+      "severity": "INFO",
+      "file": "apps/api/src/modules/conversations/musicchat-automation.controller.ts",
+      "line": null,
+      "summary": "1dfd595 SEC INFO: controller->sendManualNotification not pinned by a test; deleted_at not asserted; migration guard wiring untested; job-level secret env; npm-audit false green on pnpm repo",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:30:01.307Z"
+    },
+    {
+      "id": "find-1f9b339c",
+      "category": "ux",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/accounting/components/transaction-form/sections/TransactionTypeSection.tsx",
+      "line": null,
+      "summary": "1dfd595 FE LOW-1: transaction event picker shows 'Nenhum evento encontrado' while the artist events load or after failure",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:31:09.240Z"
+    },
+    {
+      "id": "find-0e21c584",
+      "category": "ux",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/musicchat/hooks/useMusicChatAutomationSettings.ts",
+      "line": null,
+      "summary": "1dfd595 FE LOW-2: settings page shows the load error before the tenant is known",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:31:09.318Z"
+    },
+    {
+      "id": "find-ef2f9ee7",
+      "category": "ux",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "line": null,
+      "summary": "1dfd595 FE LOW-3: Movimentacao empty state rendered next to the loading/error notices",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:31:09.390Z"
+    },
+    {
+      "id": "find-12792e4b",
+      "category": "ux",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/musicchat/components/MusicChatMemberPicker.tsx",
+      "line": null,
+      "summary": "1dfd595 FE LOW-4: member picker briefly says 'not in team' while a new id resolves",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:31:09.463Z"
+    },
+    {
+      "id": "find-d4ff03ed",
+      "category": "test",
+      "severity": "INFO",
+      "file": "apps/web/src/shared/lib/format-utils.ts",
+      "line": null,
+      "summary": "1dfd595 FE INFO: midnight-DST helper result, tests not TZ-pinned, fake timers restore, transfer select on refetch/failed refetch, truncated event counts, missing picker/useArtistEvents tests",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:31:09.537Z"
+    },
+    {
+      "id": "find-bb97dcc1",
+      "category": "infra",
+      "severity": "MEDIUM",
+      "file": "scripts/wait-for-http-state.mjs",
+      "line": null,
+      "summary": "ef14a87 DB M1: down probe treats 404/3xx/4xx as down and never proves it reaches the running build",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:35:37.275Z"
+    },
+    {
+      "id": "find-eb6eba04",
+      "category": "infra",
+      "severity": "MEDIUM",
+      "file": ".github/workflows/staging.yml",
+      "line": null,
+      "summary": "ef14a87 DB M2: deploy up-check proves some build is up, not the build of this run",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:35:37.335Z"
+    },
+    {
+      "id": "find-6fcff5a0",
+      "category": "infra",
+      "severity": "MEDIUM",
+      "file": ".github/workflows/staging.yml",
+      "line": null,
+      "summary": "ef14a87 DB M3: partial migrate/rollback leaves staging down; rollback refused when PENDING>0; pre-flight not run before the stop",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:35:37.411Z"
+    },
+    {
+      "id": "find-d6a719f2",
+      "category": "infra",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migration-guards.ts",
+      "line": null,
+      "summary": "1dfd595 DB L1: RLS guard only in 19/22/23/25/26; earlier data migrations run first",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:35:37.503Z"
+    },
+    {
+      "id": "find-292cc345",
+      "category": "infra",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migrate-application.ts",
+      "line": null,
+      "summary": "ef14a87 DB L2: db:check fails on DEV for the intentionally unregistered migration row",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:35:37.573Z"
+    },
+    {
+      "id": "find-91ed339d",
+      "category": "infra",
+      "severity": "LOW",
+      "file": ".github/workflows/staging.yml",
+      "line": null,
+      "summary": "ef14a87 DB L3/L5: concurrency group spans refs; stop/deploy curl without timeout/retry",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:35:37.640Z"
+    },
+    {
+      "id": "find-fc8829c5",
+      "category": "infra",
+      "severity": "LOW",
+      "file": "apps/api/scripts/db-ops.ts",
+      "line": null,
+      "summary": "ef14a87 DB L4: rollback:to reverts by tracking id, may revert an older or EXTERNAL_MANAGED migration",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:35:37.710Z"
+    },
+    {
+      "id": "find-b09e93da",
+      "category": "docs",
+      "severity": "INFO",
+      "file": "docs/engineering/database.md",
+      "line": null,
+      "summary": "ef14a87/1dfd595 DB INFO I1-I6: collision query coverage, lock_timeout wording, check:state read-only label, runbook text, options-only payload collision templates, rollback skips verify:rls",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T10:35:37.778Z"
     }
   ],
   "evidenceIds": [
@@ -4010,7 +4285,26 @@
     "evid-2b67aafd",
     "evid-630c2a66",
     "evid-50b703a4",
-    "evid-018894fa"
+    "evid-018894fa",
+    "evid-10b8884a",
+    "evid-77f5de2f",
+    "evid-6d9acab0",
+    "evid-fb38b6df",
+    "evid-df649f3a",
+    "evid-506d5306",
+    "evid-15b4558e",
+    "evid-a0cf4fdf",
+    "evid-6d55adc1",
+    "evid-6c36ad82",
+    "evid-b0a83536",
+    "evid-c68354e8",
+    "evid-70a6b086",
+    "evid-d775a017",
+    "evid-2d07983f",
+    "evid-ad56e3d0",
+    "evid-ae416a64",
+    "evid-fc7eb2e1",
+    "evid-60141462"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
