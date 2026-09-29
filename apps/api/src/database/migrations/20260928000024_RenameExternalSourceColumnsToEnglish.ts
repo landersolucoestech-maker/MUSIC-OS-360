@@ -12,7 +12,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * the only readers are the report contracts (read-only export fields), renamed
  * in the same change. Whether the columns are kept or dropped remains a product
  * decision (BLOCKED_PRODUCT_DECISION) — this rename is independent of it and
- * non-destructive. Guarded and reversible.
+ * non-destructive. Guarded and reversible; a table holding both the legacy and
+ * the canonical column raises (never a silent skip).
  */
 const TABLES = ['works', 'phonograms'] as const;
 const COLUMNS: ReadonlyArray<[from: string, to: string]> = [
@@ -33,6 +34,11 @@ function renameColumn(table: string, from: string, to: string): string {
         WHERE table_schema = 'public' AND table_name = '${table}' AND column_name = '${to}'
       ) THEN
         ALTER TABLE "${table}" RENAME COLUMN "${from}" TO "${to}";
+      ELSIF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = '${table}' AND column_name = '${from}'
+      ) THEN
+        RAISE EXCEPTION '${table} has both "${from}" and "${to}": resolve manually before migrating';
       END IF;
     END $$;`;
 }

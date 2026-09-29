@@ -1,0 +1,12 @@
+{
+  "id": "evid-b54240f6",
+  "createdAt": "2026-09-29T02:27:54.786Z",
+  "type": "REVIEW",
+  "reviewer": "frontend-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "ceea2e4: prior HIGH/MEDIUM largely fixed; residual Vision360 calendar dates, unstable sweep ordering, employee lookup drift, missing loading/error state, dashboard event status drift",
+  "workspaceFingerprint": "35ee59c18bbfc0ea21e7e619eea0d93ede63a7b45bfbccd9815ca4047a65a7ef",
+  "fingerprintStatus": "BOUND",
+  "head": "ceea2e4bdf4c9699c40675158b3f88b3dc9cfeca"
+}

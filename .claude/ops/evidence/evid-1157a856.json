@@ -1,0 +1,12 @@
+{
+  "id": "evid-1157a856",
+  "createdAt": "2026-09-28T21:43:51.836Z",
+  "type": "REVIEW",
+  "reviewer": "database-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "ceea2e4: NEW-HIGH-1 artists down() writeBack wipes uncopied values; NEW-MEDIUM-1 clients rollback-window edits; stale database.md; lows",
+  "workspaceFingerprint": "0d73cbffc211ac46c827bf3ce9cba6ccbb2140ef1e36d9076be5f294d321c574",
+  "fingerprintStatus": "BOUND",
+  "head": "ceea2e4bdf4c9699c40675158b3f88b3dc9cfeca"
+}

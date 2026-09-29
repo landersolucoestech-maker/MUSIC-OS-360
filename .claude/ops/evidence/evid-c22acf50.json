@@ -1,0 +1,15 @@
+{
+  "id": "evid-c22acf50",
+  "createdAt": "2026-09-29T02:39:54.054Z",
+  "type": "COMMAND",
+  "label": "pnpm -s --filter @music-os-360/api verify:cz042-cz043-migrations",
+  "command": "pnpm -s --filter @music-os-360/api verify:cz042-cz043-migrations",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ artists: cleared bank_name (metadata null) wins over stale column\n✓ artists: cleared pix_key (metadata '') wins over stale column\n✓ artists: bank_account from metadata\n✓ artists: invalid date -> NULL\n✓ artists: invalid date kept in metadata\n✓ artists: jsonb key present as null -> NULL column, key removed\n✓ artists: dd/mm/yyyy birth date parsed\n✓ artists: over-long address -> NULL\n✓ artists: over-long address kept in metadata\n✓ artists: copied keys leave metadata\n✓ artists: profile_type case/space-insensitive\n✓ artists: specialties case-insensitive\n✓ artists: JSON-text relationships parsed + type mapped\n✓ artists: gender case-insensitive\n✓ clients: responsible_email backfilled\n✓ clients: cargo_responsavel backfilled\n✓ clients: empty interaction item stays {}\n✓ clients: copied keys leave metadata\n✓ releases: legacy statuses/types mapped\n✓ down: artist edits written back to legacy metadata keys\n✓ down: artist legacy columns hold the edits\n✓ down: client edit written back to legacy metadata key\n✓ down: values up() could not copy survive in metadata\n✓ down: status changed after up() is not reverted; planted legacy_status dropped\n✓ re-up: artist edits survive rollback + re-apply\n✓ re-up: uncopied values still kept in metadata\n✓ re-up: client edit and clear made while rolled back win\n\n[verify-cz042-cz043] all checks passed",
+  "stderrTail": "",
+  "workspaceFingerprint": "4a521bf4e4106c1a7dba2721604c278f57641971d51719da5786af8e1227c89d",
+  "fingerprintStatus": "BOUND",
+  "head": "6dffc9a18bcb283a105a7ea0f4cf0c02621c7d2c",
+  "durationMs": 126228
+}

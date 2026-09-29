@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-28T21:37:21.729Z",
+  "updatedAt": "2026-09-29T02:40:27.014Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -886,7 +886,9 @@
           "text": "Z6 DB/API/events/queues/env/i18n/enum values classified; compatible migrations where safe; blockers documented",
           "evidenceIds": [
             "evid-943e3fe1",
-            "evid-65da5b70"
+            "evid-65da5b70",
+            "evid-c22acf50",
+            "evid-b76ff2c1"
           ],
           "status": "closed"
         },
@@ -2716,6 +2718,162 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-28T21:27:38.747Z"
+    },
+    {
+      "id": "find-5b417ba0",
+      "category": "data",
+      "severity": "HIGH",
+      "file": "apps/api/src/database/migrations/20260928000022_CanonicalizeArtistsToEnglish.ts",
+      "line": null,
+      "summary": "DB re-review ceea2e4 NEW-HIGH-1: down() writeBack writes JSON null over values up() kept in metadata (invalid date/over-long/non-JSON) -> lost on re-apply",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T21:43:51.496Z"
+    },
+    {
+      "id": "find-613d036d",
+      "category": "data",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/database/migrations/20260928000023_CanonicalizeClientsToEnglish.ts",
+      "line": null,
+      "summary": "NEW-MEDIUM-1: clients re-apply backfills only NULL columns -> edits/clears made while rolled back (old web writes metadata only) hidden or resurrected",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T21:43:51.574Z"
+    },
+    {
+      "id": "find-c00e0328",
+      "category": "docs",
+      "severity": "MEDIUM",
+      "file": "docs/engineering/database.md",
+      "line": null,
+      "summary": "NEW-MEDIUM-2: database.md still claims forward-only backfill, metadata never deleted, rollback loses nothing",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T21:43:51.657Z"
+    },
+    {
+      "id": "find-df63e689",
+      "category": "data",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migrations/20260928000024_RenameExternalSourceColumnsToEnglish.ts",
+      "line": null,
+      "summary": "NEW-LOW-1/2/3: 24 rename silent when both columns exist; 25 down() renames tenant-own slugs; 22 try_date rejects dd/mm/yyyy",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-28T21:43:51.728Z"
+    },
+    {
+      "id": "find-77526160",
+      "category": "security",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/releases/dto/releases.dto.ts",
+      "line": null,
+      "summary": "SEC re-review N1 (pre-existing): release coverUrl/assets URLs unvalidated -> stored XSS via ReleaseViewModal href; same raw-href pattern in WorkViewModal, Tasks, MarketingAssetCard, campaign steps, DetectionDetailModal, Project modals, ReleaseFormModal, PhonogramFormModal",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:27:54.948Z"
+    },
+    {
+      "id": "find-7786c132",
+      "category": "security",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/clients/client-legacy-fields.ts",
+      "line": null,
+      "summary": "SEC re-review N2: client metadata PII strip is top-level deny-list; nested/unlisted keys (contato.cpf, whatsapp) stored plaintext (never returned)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:27:55.071Z"
+    },
+    {
+      "id": "find-393b9167",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "line": null,
+      "summary": "FE re-review M1: Vision360 release/contract/goal dates via toLocaleDateString on midnight timestamps -> previous day",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:27:55.146Z"
+    },
+    {
+      "id": "find-41acdc6e",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/transactions/transactions.service.ts",
+      "line": null,
+      "summary": "FE re-review M2: offset pagination ordered only by transaction_date (clients: created_at) without id tie-break -> sweep can duplicate/skip rows",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:27:55.233Z"
+    },
+    {
+      "id": "find-21612a69",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/events/hooks/useScheduleParticipants.ts",
+      "line": null,
+      "summary": "FE re-review M3: employee lookup reads departamento/telefone (API department/phone); fallback 'Funcionario'/'Usuario' without accents",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:27:55.310Z"
+    },
+    {
+      "id": "find-095a351f",
+      "category": "ux",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "line": null,
+      "summary": "FE re-review M4: finance tab ignores useAllTransactions isLoading/error -> zero totals/empty state while loading or on failure",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:27:55.410Z"
+    },
+    {
+      "id": "find-6467fb93",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+      "line": null,
+      "summary": "FE re-review M5: hidden appointment statuses are PT; EventStatus English -> cancelled/completed events shown as upcoming",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:27:55.509Z"
+    },
+    {
+      "id": "find-6f183676",
+      "category": "ux",
+      "severity": "LOW",
+      "file": "apps/web/src/modules",
+      "line": null,
+      "summary": "FE re-review LOW: deprecated release artistas readers (PitchingTab, loadRelease/ArtistContext) + dead artistas reads; client category/profile export raw; stale PT query keys (useAbramus obras, RightsMonitoring, Tasks); useEntityById undefined retries; bestLabel id fallback; formatCategoryLabel accents; copy (Rádio/TV, Conversões)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:27:55.594Z"
+    },
+    {
+      "id": "find-5ff08d0a",
+      "category": "hardening",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/conversations/musicchat-vocabulary.ts",
+      "line": null,
+      "summary": "CZ-045 (6dffc9a) hardening not in the pushed version (from a superseded duplicate implementation, backup in scratchpad): menu option priority accepts any string (restrict to low|medium|high|critical after legacy mapping); legacy maps exact-match only (trim/lowercase + accented 'média'/'crítica' not mapped)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:31:43.384Z"
     }
   ],
   "evidenceIds": [
@@ -3074,7 +3232,12 @@
     "evid-65da5b70",
     "evid-607356c5",
     "evid-1d23a15a",
-    "evid-e10d142e"
+    "evid-e10d142e",
+    "evid-1157a856",
+    "evid-4641a465",
+    "evid-b54240f6",
+    "evid-c22acf50",
+    "evid-b76ff2c1"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

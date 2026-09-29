@@ -221,6 +221,7 @@ const HELPERS = `
   CREATE OR REPLACE FUNCTION pg_temp.cz042_try_date(t text) RETURNS date
   LANGUAGE plpgsql IMMUTABLE AS $fn$
   BEGIN
+    IF t ~ '^\\d{2}/\\d{2}/\\d{4}$' THEN RETURN to_date(t, 'DD/MM/YYYY'); END IF;
     IF t IS NULL OR t !~ '^\\d{4}-\\d{2}-\\d{2}' THEN RETURN NULL; END IF;
     RETURN substr(t, 1, 10)::date;
   EXCEPTION WHEN others THEN RETURN NULL;
@@ -283,10 +284,17 @@ function backfill(key: string, column: string, kind: ColumnKind): string {
           WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}'`;
 }
 
-/** down(): the column value goes back to its legacy metadata key (read by the pre-CZ-042 API). */
+/**
+ * down(): the column value goes back to its legacy metadata key (read by the
+ * pre-CZ-042 API). Only non-NULL columns are written: a NULL column either had
+ * no value (the key was already removed by up()) or holds a value up() could
+ * not copy, which up() left in metadata and must survive (database re-review
+ * of ceea2e4).
+ */
 function writeBack(key: string, column: string): string {
   return `UPDATE "artists" SET "metadata" = COALESCE(CASE WHEN jsonb_typeof("metadata") = 'object' THEN "metadata" END, '{}'::jsonb)
-            || jsonb_build_object('${key}', to_jsonb("${column}"))`;
+            || jsonb_build_object('${key}', to_jsonb("${column}"))
+          WHERE "${column}" IS NOT NULL`;
 }
 
 function renameMetadataKey(from: string, to: string): string {

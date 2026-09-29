@@ -1,0 +1,12 @@
+{
+  "id": "evid-4641a465",
+  "createdAt": "2026-09-29T02:27:54.602Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "ceea2e4: F1/F2/F4 + contract/release embeds fixed, no bypass; N1 HIGH pre-existing release-link XSS; N2 LOW nested PII in client metadata",
+  "workspaceFingerprint": "35ee59c18bbfc0ea21e7e619eea0d93ede63a7b45bfbccd9815ca4047a65a7ef",
+  "fingerprintStatus": "BOUND",
+  "head": "ceea2e4bdf4c9699c40675158b3f88b3dc9cfeca"
+}

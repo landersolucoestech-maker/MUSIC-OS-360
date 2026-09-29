@@ -73,6 +73,22 @@ The reverse order (new web first) fails every save with 400/422 against the old 
   each migration sets `lock_timeout = '15s'`): `SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE relname IN ('works','phonograms','transactions','artists','clients','releases');`
   Schedule a maintenance window when any of them is large.
 
-**Recovery:** every migration's `down()` reverses renames, keys and values (release statuses/types
-are restored from `metadata.legacy_status` / `legacy_type`). Metadata→column backfills are
-forward-only; the metadata copy is never deleted, so a rollback loses nothing.
+**Recovery:** every migration's `down()` reverses renames, keys and values.
+- Release statuses/types (`20260928000019`) are restored from `metadata.legacy_status` /
+  `legacy_type`, only while the row still holds the mapped canonical value; a status changed after
+  `up()` is never reverted and a planted key is dropped, never applied.
+- Artists/clients (`20260928000022`/`23`): `up()` copies each form field from metadata into its
+  column (a key present in metadata wins, `null`/`''` clears the column) and then removes the
+  copied key from metadata, so the column is the single copy (no stale plaintext PII). A value that
+  does not fit (invalid date, over-long text, non-array jsonb) is set to NULL in the column and
+  kept in metadata as historical data. `down()` writes every non-NULL column back to its legacy
+  metadata key, so the pre-rename API sees the edits made after `up()`, and a re-apply re-derives
+  the same columns — including edits and clears the old web made while rolled back.
+- `20260928000025` (org-chart slugs): `down()` reverts only rows that still carry the seeded
+  default name. Run seeds after migrations (the seed writes the English slugs).
+- Proof on a disposable copy (refuses any database not named `*_mig`):
+  `DB_SSL=false DATABASE_URL=…/musicos360_mig pnpm --filter @music-os-360/api verify:cz042-cz043-migrations`.
+
+**Known gap (not enforced by CI):** `.github/workflows/staging.yml` runs `db:migrate` while the
+previous build is still serving; step 1 above (stop/drain) must be done by the operator until the
+workflow gains a drain step (blocker BLK-DEPLOY-DRAIN-STEP).

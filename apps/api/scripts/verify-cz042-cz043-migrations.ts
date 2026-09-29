@@ -6,11 +6,13 @@
  * 20260928000023 (clients, CZ-043) — database review of bc40b76:
  *   - a metadata key PRESENT with null/'' wins over the stale column copy
  *     (a cleared bank account / PIX key never comes back);
- *   - invalid dates / over-long text become NULL and stay in metadata;
+ *   - invalid dates / over-long text become NULL and stay in metadata (also
+ *     through down() + re-apply); dd/mm/yyyy dates are parsed;
  *   - value maps are case/space-insensitive; a JSON-text jsonb value is parsed;
  *   - copied keys leave metadata (no stale plaintext duplicate);
  *   - down() writes the columns back to the legacy metadata keys, so edits made
- *     after up() survive rollback + re-apply;
+ *     after up() survive rollback + re-apply, and so do client edits/clears
+ *     made by the pre-CZ-043 web while rolled back;
  *   - release down() never reverts a status changed after up() nor applies a
  *     legacy_status planted through the API.
  *
@@ -40,6 +42,7 @@ if (!dbName.endsWith('_mig')) {
 const API_DIR = path.resolve(__dirname, '..');
 const TARGET = 'CanonicalizeWorksToEnglish20260928000018';
 const ARTIST = '40000000-0000-0000-0000-0000000000f1';
+const ARTIST_DMY = '40000000-0000-0000-0000-0000000000f5';
 const CLIENT = '40000000-0000-0000-0000-0000000000f2';
 const RELEASE_CHANGED = '40000000-0000-0000-0000-0000000000f3';
 const RELEASE_PLANTED = '40000000-0000-0000-0000-0000000000f4';
@@ -71,7 +74,7 @@ async function one<T = Record<string, unknown>>(db: Client, sql: string, params:
 }
 
 async function cleanup(db: Client): Promise<void> {
-  await db.query(`DELETE FROM artists WHERE id = $1`, [ARTIST]);
+  await db.query(`DELETE FROM artists WHERE id = ANY($1::uuid[])`, [[ARTIST, ARTIST_DMY]]);
   await db.query(`DELETE FROM clients WHERE id = $1`, [CLIENT]);
   await db.query(`DELETE FROM releases WHERE id = ANY($1::uuid[])`, [[RELEASE_CHANGED, RELEASE_PLANTED]]);
 }
@@ -92,9 +95,13 @@ async function main(): Promise<void> {
       `INSERT INTO artists (id, tenant_id, nome_artistico, banco, chave_pix, conta, especialidades, tipo_perfil, metadata)
        VALUES ($1, $2, 'Probe', 'Banco Antigo', 'pix-antigo', '999', '["Produtor","dj_produtor"]', ' Independente ', $3)`,
       [ARTIST, tenant, JSON.stringify({
-        banco: null, chave_pix: '', conta: '123', data_nascimento: '31/12/1990', genero: 'masculino',
+        banco: null, chave_pix: '', conta: '123', data_nascimento: '31/02/1990', genero: 'masculino', tags_musicais: null,
         relacionamentos: JSON.stringify([{ type: 'Empresario', nome: 'Z' }]), endereco: 'x'.repeat(310),
       })],
+    );
+    await db.query(
+      `INSERT INTO artists (id, tenant_id, nome_artistico, metadata) VALUES ($1, $2, 'Probe DMY', $3)`,
+      [ARTIST_DMY, tenant, JSON.stringify({ data_nascimento: '15/03/1985' })],
     );
     await db.query(
       `INSERT INTO clients (id, tenant_id, nome, categoria, perfil, metadata) VALUES ($1, $2, 'Probe Cliente', 'PARTNER', 'outros', $3)`,
@@ -110,13 +117,16 @@ async function main(): Promise<void> {
 
     // ── up ────────────────────────────────────────────────────────────────────
     dbOps('migrate');
-    const a = await one(db, `SELECT bank_name, pix_key, bank_account, birth_date, profile_type, specialties, relationships, address, metadata FROM artists WHERE id = $1`, [ARTIST]);
+    const a = await one(db, `SELECT bank_name, pix_key, bank_account, birth_date, profile_type, specialties, relationships, address, music_tags, metadata FROM artists WHERE id = $1`, [ARTIST]);
     const am = a['metadata'] as Record<string, unknown>;
     check('artists: cleared bank_name (metadata null) wins over stale column', a['bank_name'], null);
     check("artists: cleared pix_key (metadata '') wins over stale column", a['pix_key'], null);
     check('artists: bank_account from metadata', a['bank_account'], '123');
     check('artists: invalid date -> NULL', a['birth_date'], null);
-    check('artists: invalid date kept in metadata', am['data_nascimento'], '31/12/1990');
+    check('artists: invalid date kept in metadata', am['data_nascimento'], '31/02/1990');
+    check('artists: jsonb key present as null -> NULL column, key removed', [a['music_tags'], 'tags_musicais' in am], [null, false]);
+    const dmy = await one(db, `SELECT birth_date::text AS birth_date, metadata FROM artists WHERE id = $1`, [ARTIST_DMY]);
+    check('artists: dd/mm/yyyy birth date parsed', [dmy['birth_date'], 'data_nascimento' in (dmy['metadata'] as object)], ['1985-03-15', false]);
     check('artists: over-long address -> NULL', a['address'], null);
     check('artists: over-long address kept in metadata', typeof am['endereco'], 'string');
     check('artists: copied keys leave metadata', ['banco', 'chave_pix', 'conta', 'relacionamentos'].filter((k) => k in am), []);
@@ -144,15 +154,20 @@ async function main(): Promise<void> {
     check('down: artist legacy columns hold the edits', [ad['banco'], ad['chave_pix']], ['Banco Novo', 'pix-novo']);
     const cd = await one(db, `SELECT metadata FROM clients WHERE id = $1`, [CLIENT]);
     check('down: client edit written back to legacy metadata key', (cd['metadata'] as Record<string, unknown>)['responsavel_email'], 'b@x.com');
+    check('down: values up() could not copy survive in metadata', [typeof adm['endereco'], adm['data_nascimento']], ['string', '31/02/1990']);
+    // The pre-CZ-043 web writes contact fields to metadata only: an edit and a clear while rolled back.
+    await db.query(`UPDATE clients SET metadata = metadata || '{"responsavel_email":"c@x.com","responsavel_cargo":""}' WHERE id = $1`, [CLIENT]);
     const rd = await db.query(`SELECT status, metadata ? 'legacy_status' AS has_key FROM releases WHERE id = ANY($1::uuid[]) ORDER BY id`, [[RELEASE_CHANGED, RELEASE_PLANTED]]);
     check('down: status changed after up() is not reverted; planted legacy_status dropped', rd.rows.map((x) => [x.status, x.has_key]), [['released', false], ['draft', false]]);
 
     // ── re-apply ────────────────────────────────────────────────────────────────
     dbOps('migrate');
-    const au = await one(db, `SELECT bank_name, pix_key, relationships FROM artists WHERE id = $1`, [ARTIST]);
+    const au = await one(db, `SELECT bank_name, pix_key, relationships, address, birth_date, metadata FROM artists WHERE id = $1`, [ARTIST]);
+    const aum = au['metadata'] as Record<string, unknown>;
     check('re-up: artist edits survive rollback + re-apply', [au['bank_name'], au['pix_key'], au['relationships']], ['Banco Novo', 'pix-novo', [{ name: 'W', type: 'agent' }]]);
-    const cu = await one(db, `SELECT responsible_email, metadata FROM clients WHERE id = $1`, [CLIENT]);
-    check('re-up: client edit survives rollback + re-apply', [cu['responsible_email'], cu['metadata']], ['b@x.com', {}]);
+    check('re-up: uncopied values still kept in metadata', [au['address'], au['birth_date'], typeof aum['endereco'], aum['data_nascimento']], [null, null, 'string', '31/02/1990']);
+    const cu = await one(db, `SELECT responsible_email, responsible_job_title, metadata FROM clients WHERE id = $1`, [CLIENT]);
+    check('re-up: client edit and clear made while rolled back win', [cu['responsible_email'], cu['responsible_job_title'], cu['metadata']], ['c@x.com', null, {}]);
   } finally {
     await cleanup(db).catch(() => undefined);
     await db.end();
