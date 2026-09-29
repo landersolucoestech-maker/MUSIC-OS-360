@@ -234,9 +234,10 @@ describe("musicChatConversationsService member ids, queue names and transfer", (
 
   it("transfer() calls PATCH /conversations/:id/transfer with assignee_id and the concurrency token", async () => {
     apiMock.patch.mockResolvedValue(raw);
-    await musicChatConversationsService.transfer("conv-2", { assigneeId: "auth-user-7", expectedUpdatedAt: raw.updated_at });
+    await musicChatConversationsService.transfer("conv-2", { assigneeId: "auth-user-7", serviceStatus: "in_progress", expectedUpdatedAt: raw.updated_at });
     expect(apiMock.patch).toHaveBeenCalledWith("/conversations/conv-2/transfer", {
       assignee_id: "auth-user-7",
+      service_status: "in_progress",
       reason: undefined,
       expectedUpdatedAt: raw.updated_at,
     });

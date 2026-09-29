@@ -75,6 +75,49 @@ export function todayCalendarDay(now: Date = new Date()): string {
   }).format(now);
 }
 
+/** Offset (ms) of the system timezone from UTC at instant `at` (e.g. -3h for America/Sao_Paulo). */
+function systemTimezoneOffsetMs(at: Date): number {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: SYSTEM_REGIONAL_SETTINGS.timezone,
+      hourCycle: "h23",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }).formatToParts(at).map((part) => [part.type, part.value]),
+  );
+  const wallClockAsUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second);
+  return wallClockAsUtc - Math.floor(at.getTime() / 1000) * 1000;
+}
+
+/** The instant a calendar day (YYYY-MM-DD) starts, 00:00 in the system timezone. */
+export function startOfCalendarDayInSystemTimezone(day: string): Date {
+  const [year, month, dayOfMonth] = day.split("-").map(Number);
+  const midnightUtc = Date.UTC(year, month - 1, dayOfMonth);
+  const firstGuess = midnightUtc - systemTimezoneOffsetMs(new Date(midnightUtc));
+  // Second pass: the offset at the real instant (differs across a DST change).
+  return new Date(midnightUtc - systemTimezoneOffsetMs(new Date(firstGuess)));
+}
+
+/** First and last instant of today and of the current month, in the system timezone. */
+export function systemTimezoneDayAndMonthBounds(now: Date = new Date()): {
+  dayStart: Date; dayEnd: Date; monthStart: Date; monthEnd: Date;
+} {
+  const today = todayCalendarDay(now);
+  const [year, month, dayOfMonth] = today.split("-").map(Number);
+  const iso = (y: number, m: number, d: number) => new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10);
+  const before = (day: string) => new Date(startOfCalendarDayInSystemTimezone(day).getTime() - 1);
+  return {
+    dayStart: startOfCalendarDayInSystemTimezone(today),
+    dayEnd: before(iso(year, month, dayOfMonth + 1)),
+    monthStart: startOfCalendarDayInSystemTimezone(iso(year, month, 1)),
+    monthEnd: before(iso(year, month + 1, 1)),
+  };
+}
+
 /** Whole days from calendar day `from` to calendar day `to` (negative when `to` is earlier); NaN when either is not a calendar day. */
 export function calendarDaysBetween(from: unknown, to: unknown): number {
   const start = calendarDay(from);

@@ -1,0 +1,12 @@
+{
+  "id": "evid-e1bd6dec",
+  "createdAt": "2026-09-29T05:53:48.373Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "48de4bb security re-review: no CRITICAL/HIGH/MEDIUM; LOW include_self=false parsed true, LOW ids lookup exposes inactive members' e-mail, LOW stored-id exemption pooled across fields, LOW empty-string assignee persisted; INFO manual notification recipient unchecked; INFO mock-level coverage",
+  "workspaceFingerprint": "1955bf1ad745b294be264d214f490c2d389c0e1a954ed8843dee79ffc389ecf0",
+  "fingerprintStatus": "BOUND",
+  "head": "ef14a873f9d828743834c6877b2e9ff917a92fb9"
+}

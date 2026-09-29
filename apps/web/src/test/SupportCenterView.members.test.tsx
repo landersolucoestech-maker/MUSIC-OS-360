@@ -93,8 +93,31 @@ describe("<SupportCenterView /> team members", () => {
     });
     await waitFor(() => expect(service.transfer).toHaveBeenCalledWith("conv-1", {
       assigneeId: "auth-ana",
+      serviceStatus: "in_progress",
       expectedUpdatedAt: "2026-09-20T12:00:00.000Z",
     }));
     expect(service.update).not.toHaveBeenCalled();
+  });
+
+  it("a new search clears the selected member, so a member the user no longer sees is never submitted", async () => {
+    renderWithProviders(<SupportCenterView />);
+    await screen.findByText("Olá!");
+    await act(async () => {
+      fireEvent.click(screen.getAllByRole("button", { name: /Transferir/ })[0]);
+    });
+    const combobox = await screen.findByRole("combobox", { name: "Responsável" });
+    await act(async () => {
+      fireEvent.pointerDown(combobox, { button: 0, ctrlKey: false, pointerType: "mouse" });
+      fireEvent.click(combobox);
+    });
+    await act(async () => {
+      fireEvent.click(within(await screen.findByRole("listbox")).getByText("Ana Real"));
+    });
+    expect(screen.getByRole("button", { name: /Confirmar transferência/ })).toBeEnabled();
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText("Buscar por nome ou e-mail"), { target: { value: "bru" } });
+    });
+    expect(screen.getByRole("button", { name: /Confirmar transferência/ })).toBeDisabled();
+    expect(service.transfer).not.toHaveBeenCalled();
   });
 });

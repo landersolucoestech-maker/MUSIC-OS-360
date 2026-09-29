@@ -8,10 +8,12 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { blankToNull } from './conversations.dto';
 
 export class MusicChatMenuOptionDto {
   @ApiProperty() @IsString() @IsNotEmpty() id: string;
@@ -20,7 +22,7 @@ export class MusicChatMenuOptionDto {
   @ApiProperty() @IsString() @IsNotEmpty() responseTemplateId: string;
   @ApiProperty() @IsString() @IsNotEmpty() queue: string;
   @ApiProperty() @IsString() @IsNotEmpty() sector: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) defaultAssignee?: string | null;
+  @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) defaultAssignee?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsArray() tags?: string[];
   @ApiPropertyOptional() @IsOptional() @IsString() priority?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;
@@ -39,7 +41,7 @@ export class MusicChatEscalationRuleDto {
   @ApiProperty() @IsNumber() afterMinutes: number;
   @ApiProperty() @IsString() @IsNotEmpty() level: string;
   @ApiProperty() @IsString() @IsNotEmpty() recipientRole: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) recipientUserId?: string | null;
+  @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) recipientUserId?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsArray() channels?: string[];
   @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;
 }
@@ -59,8 +61,8 @@ export class UpdateMusicChatAutomationSettingsDto {
   @ApiPropertyOptional() @IsOptional() @IsObject() return_to_menu_rule?: Record<string, unknown>;
   @ApiPropertyOptional({ type: [MusicChatEscalationRuleDto] }) @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => MusicChatEscalationRuleDto) escalation_rules?: MusicChatEscalationRuleDto[];
   @ApiPropertyOptional() @IsOptional() @IsObject() notification_channels?: Record<string, unknown>;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) supervisor_user_id?: string | null;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) manager_user_id?: string | null;
+  @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) supervisor_user_id?: string | null;
+  @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) manager_user_id?: string | null;
   /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
@@ -81,9 +83,9 @@ export class RunMusicChatEscalationDto {
 }
 
 export class SendMusicChatNotificationDto {
-  @ApiProperty() @IsString() @IsNotEmpty() conversationId: string;
+  @ApiProperty() @IsUUID() conversationId: string;
   @ApiProperty() @IsString() @IsNotEmpty() level: string;
-  @ApiProperty() @IsString() @IsNotEmpty() recipientUserId: string;
+  @ApiProperty() @IsString() @IsNotEmpty() @MaxLength(255) recipientUserId: string;
   @ApiProperty() @IsIn(['in_app', 'whatsapp', 'sms']) channel: 'in_app' | 'whatsapp' | 'sms';
   @ApiProperty() @IsString() @MaxLength(255) title: string;
   @ApiPropertyOptional() @IsOptional() @IsString() body?: string;

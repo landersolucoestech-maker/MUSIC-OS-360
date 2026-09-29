@@ -21,6 +21,7 @@ export function useMusicChatAutomationSettings() {
   const settingsQuery = useQuery({
     queryKey: settingsKey,
     queryFn: () => musicChatAutomationService.getSettings(),
+    enabled: !!tenant?.id,
   });
 
   const updateSettings = useMutation({

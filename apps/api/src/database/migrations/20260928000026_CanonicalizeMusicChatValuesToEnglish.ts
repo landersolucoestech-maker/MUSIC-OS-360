@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { assertMigrationRoleBypassesRls } from '../migration-guards';
 
 /**
  * 20260928000026_CanonicalizeMusicChatValuesToEnglish (CZ-045)
@@ -76,7 +77,7 @@ async function apply(queryRunner: QueryRunner, reverse: boolean): Promise<void> 
   // with no settings row uses the default map.
   await queryRunner.query(`DROP TABLE IF EXISTS pg_temp.musicchat_id_maps`);
   await queryRunner.query(
-    `CREATE TEMP TABLE musicchat_id_maps (settings_id uuid, tenant_id uuid, remappable boolean, id_map jsonb) ON COMMIT DROP`,
+    `CREATE TEMP TABLE musicchat_id_maps (settings_id uuid, tenant_id uuid PRIMARY KEY, remappable boolean, id_map jsonb) ON COMMIT DROP`,
   );
   await queryRunner.query(
     `INSERT INTO musicchat_id_maps (settings_id, tenant_id, remappable, id_map)
@@ -100,12 +101,14 @@ async function apply(queryRunner: QueryRunner, reverse: boolean): Promise<void> 
        FROM row_ids r`,
     [optionIds],
   );
+  await queryRunner.query(`ANALYZE musicchat_id_maps`);
 
   await queryRunner.query(
     `WITH maps AS (
-       SELECT c."id",
-              COALESCE((SELECT m.id_map FROM musicchat_id_maps m WHERE m.tenant_id = c."tenant_id"), $3::jsonb) AS id_map
+       -- One hash join (not a subquery per conversation); tenant_id is unique in the map.
+       SELECT c."id", COALESCE(m.id_map, $3::jsonb) AS id_map
          FROM "conversations" c
+         LEFT JOIN musicchat_id_maps m ON m.tenant_id = c."tenant_id"
         WHERE jsonb_typeof(c."metadata") = 'object'
      )
      UPDATE "conversations" c
@@ -156,10 +159,12 @@ export class CanonicalizeMusicChatValuesToEnglish20260928000026 implements Migra
   name = 'CanonicalizeMusicChatValuesToEnglish20260928000026';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await apply(queryRunner, false);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await apply(queryRunner, true);
   }
 }

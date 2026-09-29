@@ -21,3 +21,22 @@ describe("calendar-day dates (timestamp midnight serialized as UTC)", () => {
     expect(form.firstInstallmentDate).toBe("2026-10-05");
   });
 });
+
+describe("systemTimezoneDayAndMonthBounds (system timezone, whatever the browser timezone)", () => {
+  it("today and this month start/end at 00:00 / 23:59:59.999 in America/Sao_Paulo", async () => {
+    const { systemTimezoneDayAndMonthBounds } = await import("./format-utils");
+    // 2030-10-11T01:00Z is still 2030-10-10 22:00 in America/Sao_Paulo.
+    const bounds = systemTimezoneDayAndMonthBounds(new Date("2030-10-11T01:00:00.000Z"));
+    expect(bounds.dayStart.toISOString()).toBe("2030-10-10T03:00:00.000Z");
+    expect(bounds.dayEnd.toISOString()).toBe("2030-10-11T02:59:59.999Z");
+    expect(bounds.monthStart.toISOString()).toBe("2030-10-01T03:00:00.000Z");
+    expect(bounds.monthEnd.toISOString()).toBe("2030-11-01T02:59:59.999Z");
+  });
+
+  it("December rolls over to the next year", async () => {
+    const { systemTimezoneDayAndMonthBounds } = await import("./format-utils");
+    const bounds = systemTimezoneDayAndMonthBounds(new Date("2030-12-31T12:00:00.000Z"));
+    expect(bounds.dayEnd.toISOString()).toBe("2031-01-01T02:59:59.999Z");
+    expect(bounds.monthEnd.toISOString()).toBe("2031-01-01T02:59:59.999Z");
+  });
+});

@@ -400,6 +400,7 @@ export class ConversationsService {
       ...(conv.metadata ?? {}),
       ...(dto.queue_id ? { queue_id: dto.queue_id } : {}),
       ...(dto.sector_id ? { sector_id: dto.sector_id } : {}),
+      ...(dto.service_status ? { service_status: dto.service_status } : {}),
       transfers: [
         ...transfers,
         {

@@ -387,6 +387,10 @@ export function ArtistVision360Modal({
     truncated: artistEventsTruncated,
     refetch: refetchArtistEvents,
   } = useArtistEvents(artistId, open);
+  // Event-derived values (confirmed shows, next/first show, agenda items) are
+  // never shown as zero/empty while the sweep is loading or after it failed.
+  const eventsReady = !artistEventsLoading && !artistEventsError;
+  const eventsPendingLabel = artistEventsLoading ? "Carregando…" : "Indisponível";
   const artistEventsNotice = artistEventsLoading ? (
     <p className="text-sm text-muted-foreground" role="status" data-testid="vision360-events-loading">Carregando agenda…</p>
   ) : artistEventsError ? (
@@ -901,7 +905,9 @@ export function ArtistVision360Modal({
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <Calendar className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className="text-lg font-bold">{confirmedShows}</p>
+                      <p className="text-lg font-bold" data-testid="vision360-overview-confirmed-shows">
+                        {eventsReady ? confirmedShows : eventsPendingLabel}
+                      </p>
                       <p className="text-xs text-muted-foreground">Shows Confirmados</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
@@ -913,6 +919,8 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
+              {artistEventsNotice}
+
               {/* Tracking widgets */}
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 <Card className="bg-muted/30">
@@ -920,7 +928,9 @@ export function ArtistVision360Modal({
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                       <Calendar className="h-3.5 w-3.5" /> Próximo Show
                     </div>
-                    {nextShow ? (
+                    {!eventsReady ? (
+                      <p className="text-sm text-muted-foreground" data-testid="vision360-overview-next-show">{eventsPendingLabel}</p>
+                    ) : nextShow ? (
                       <>
                         <p className="text-sm font-semibold truncate">{nextShow.title}</p>
                         <p className="text-xs text-muted-foreground">{formatDayLabel(nextShow.starts_at, "instant")}</p>
@@ -2635,6 +2645,7 @@ export function ArtistVision360Modal({
               </section>
 
               {/* Milestones / timeline */}
+              {artistEventsNotice}
               {evolutionMilestones.length > 0 && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
@@ -2805,6 +2816,7 @@ export function ArtistVision360Modal({
             {/* Activity */}
             <TabsContent value="movimentacao" className="p-6 space-y-6 mt-0">
               {transactionTimelineNotice}
+              {artistEventsNotice}
               {activityTimelineItems.length === 0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">

@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { assertMigrationRoleBypassesRls } from '../migration-guards';
 
 /**
  * 20260928000019_CanonicalizeLegacyReleaseStatuses
@@ -53,6 +54,7 @@ export class CanonicalizeLegacyReleaseStatuses20260928000019 implements Migratio
   name = 'CanonicalizeLegacyReleaseStatuses20260928000019';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await assertMigrationRoleBypassesRls(queryRunner, this.name);
     for (const [legacy, canonical] of LEGACY_STATUSES) {
       await queryRunner.query(
         `UPDATE "releases"
@@ -76,6 +78,7 @@ export class CanonicalizeLegacyReleaseStatuses20260928000019 implements Migratio
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await assertMigrationRoleBypassesRls(queryRunner, this.name);
     for (const [column, key, pairs] of [
       ['status', 'legacy_status', LEGACY_STATUSES],
       ['type', 'legacy_type', LEGACY_TYPES],

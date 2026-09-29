@@ -3,8 +3,8 @@
   "doc": 11035,
   "eventQueueJob": 12,
   "frontendRoute": 13,
-  "identifier": 659,
-  "objectKey": 1504,
+  "identifier": 658,
+  "objectKey": 1503,
   "value": 4056
  },
  "debt": {
@@ -430,7 +430,6 @@
   "identifier::apps/web/src/modules/dashboard/hooks/useMetrics.ts::property::comContrato": 1,
   "identifier::apps/web/src/modules/dashboard/hooks/useMetrics.ts::property::contratosAtivos": 1,
   "identifier::apps/web/src/modules/dashboard/hooks/useMetrics.ts::property::contratosVencendo": 1,
-  "identifier::apps/web/src/modules/dashboard/hooks/useMetrics.ts::property::eventosHoje": 1,
   "identifier::apps/web/src/modules/dashboard/hooks/useMetrics.ts::property::eventosMes": 1,
   "identifier::apps/web/src/modules/dashboard/hooks/useMetrics.ts::property::lancamentos": 1,
   "identifier::apps/web/src/modules/dashboard/hooks/useMetrics.ts::property::projetos": 1,
@@ -1353,7 +1352,6 @@
   "objectKey::apps/web/src/modules/dashboard/hooks/useMetrics.ts::object-key::comContrato": 1,
   "objectKey::apps/web/src/modules/dashboard/hooks/useMetrics.ts::object-key::contratosAtivos": 1,
   "objectKey::apps/web/src/modules/dashboard/hooks/useMetrics.ts::object-key::contratosVencendo": 1,
-  "objectKey::apps/web/src/modules/dashboard/hooks/useMetrics.ts::object-key::eventosHoje": 1,
   "objectKey::apps/web/src/modules/dashboard/hooks/useMetrics.ts::object-key::eventosMes": 1,
   "objectKey::apps/web/src/modules/dashboard/hooks/useMetrics.ts::object-key::lancamentos": 1,
   "objectKey::apps/web/src/modules/dashboard/hooks/useMetrics.ts::object-key::projetos": 1,

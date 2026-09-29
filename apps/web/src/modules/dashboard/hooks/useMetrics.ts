@@ -47,7 +47,6 @@ interface DashboardMetrics {
   contratosAtivos: number;
   contratosVencendo: number;
   receitaMensal: number;
-  eventosHoje: number;
   eventosMes: number;
   artistasDestaque: FeaturedArtist[];
 }
@@ -59,6 +58,8 @@ export interface UseMetricsReturn {
   upcomingEvents: EventWithRelations[];
   /** The events queries failed with nothing cached: event counts/appointments are unknown, not zero. */
   eventsUnavailable: boolean;
+  /** The upcoming list may miss appointments (see DashboardEvents.upcomingIncomplete). */
+  upcomingIncomplete: boolean;
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -151,7 +152,6 @@ export function useMetrics(): UseMetricsReturn {
       contratosAtivos: dashboard?.active_contracts_count ?? 0,
       contratosVencendo: dashboard?.contracts_expiring_soon_count ?? 0,
       receitaMensal: dashboard?.revenue_current_month ?? 0,
-      eventosHoje: dashboardEvents?.todayCount ?? 0,
       eventosMes: dashboardEvents?.monthCount ?? 0,
       artistasDestaque: featuredArtists,
     };
@@ -162,6 +162,7 @@ export function useMetrics(): UseMetricsReturn {
     dashboardMetrics,
     upcomingEvents: dashboardEvents?.upcoming ?? [],
     eventsUnavailable: !!errEvents && !dashboardEvents,
+    upcomingIncomplete: dashboardEvents?.upcomingIncomplete ?? false,
     isLoading,
     error,
     refetch,

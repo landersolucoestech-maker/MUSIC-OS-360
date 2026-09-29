@@ -105,9 +105,11 @@ order. **Production** has no deploy workflow in this repository: follow the same
   a value-only migration (`20260928000019`, `20260928000026`) takes ROW EXCLUSIVE and locks only
   the rows it updates — for `20260928000026`, every conversation holding a legacy MusicChat value
   and each tenant's settings row. Schedule a maintenance window when any of them is large.
-- MusicChat id collisions (`20260928000026`): tenants whose settings already use an English id next
-  to its legacy id keep both unchanged (and so do their conversations). List them before promoting:
-  `SELECT tenant_id FROM musicchat_automation_settings s WHERE EXISTS (SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof(s.menu_options) = 'array' THEN s.menu_options ELSE '[]' END) a, jsonb_array_elements(CASE WHEN jsonb_typeof(s.menu_options) = 'array' THEN s.menu_options ELSE '[]' END) b WHERE (a->>'id', b->>'id') IN (('producao','music_production'),('editora','publishing_distribution'),('financeiro','finance'),('conteudo','content'),('outros','other'),('engano','wrong_contact')));`
+- MusicChat id collisions (`20260928000026`): tenants whose settings (menu options or templates)
+  already use an English id next to its legacy id keep both unchanged (and so do their
+  conversations). List the candidates before promoting:
+  `SELECT s.tenant_id, p.legacy, p.english FROM musicchat_automation_settings s CROSS JOIN LATERAL (SELECT array_agg(x.id) AS ids FROM (SELECT e->>'id' AS id FROM jsonb_array_elements(CASE WHEN jsonb_typeof(s.menu_options) = 'array' THEN s.menu_options ELSE '[]' END) e UNION SELECT e->>'id' FROM jsonb_array_elements(CASE WHEN jsonb_typeof(s.templates) = 'array' THEN s.templates ELSE '[]' END) e) x) u CROSS JOIN (VALUES ('producao','music_production'),('editora','publishing_distribution'),('financeiro','finance'),('conteudo','content'),('outros','other'),('engano','wrong_contact')) p(legacy, english) WHERE u.ids @> ARRAY[p.legacy, p.english];`
+  (the used-id set is menu options plus templates, exactly as the migration computes it).
 
 **Recovery:** every migration's `down()` reverses renames, keys and values.
 - Release statuses/types (`20260928000019`) are restored from `metadata.legacy_status` /

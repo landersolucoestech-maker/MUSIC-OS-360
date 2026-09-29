@@ -1,7 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
 import { Loader2 } from "lucide-react";
-import { useEvents } from "@/modules/events/hooks/useEvents";
 import { useFinancialCategoryRulesStore } from "@/modules/accounting/hooks/useFinancialCategoryRulesStore";
 import type { TransactionFormEntity } from "@/modules/accounting/mappers";
 import { useTransactionFormController } from "./hooks/useTransactionFormController";
@@ -22,7 +21,6 @@ export function TransactionFormModal({
   transaction,
   mode,
 }: TransactionFormModalProps) {
-  const { events } = useEvents();
   const { rules: categoryRules } = useFinancialCategoryRulesStore();
 
   const form = useTransactionFormController({
@@ -30,7 +28,6 @@ export function TransactionFormModal({
     mode,
     transaction,
     onClose: () => onOpenChange(false),
-    events,
   });
   const rules = form.visibleRules;
   const disabled = form.isViewMode || form.isSubmitting;

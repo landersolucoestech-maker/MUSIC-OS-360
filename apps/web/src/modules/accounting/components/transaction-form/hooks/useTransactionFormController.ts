@@ -16,6 +16,7 @@ import type { TransactionEntityLink } from "@/modules/accounting/types/accountin
 import { useFinancialCategoryRulesStore } from "@/modules/accounting/hooks/useFinancialCategoryRulesStore";
 import { getFinalRule, getLinksFromRule, toRuleLink } from "@/modules/accounting/utils/financialRules.utils";
 import { useFinancialRules, type FinancialRulesResult } from "./useFinancialRules";
+import { useArtistEvents } from "@/modules/events/hooks/useArtistEvents";
 import { useFinancialValidation } from "./useFinancialValidation";
 import type { ValidationErrors } from "@/modules/accounting/components/transaction-form/validation/financial-form-validation";
 import {
@@ -23,19 +24,11 @@ import {
   getHiddenFieldResets,
 } from "@/modules/accounting/components/transaction-form/rules/financial-reset-rules";
 
-interface Event {
-  id: string;
-  artist_id?: string | null;
-  title: string;
-  start_date?: string | null;
-}
-
 export interface UseTransactionFormControllerOptions {
   open: boolean;
   mode: "create" | "edit" | "view";
   transaction?: TransactionFormEntity;
   onClose: () => void;
-  events: Event[];
 }
 
 export interface UseTransactionFormControllerReturn {
@@ -98,9 +91,11 @@ export function useTransactionFormController({
   mode,
   transaction,
   onClose,
-  events,
 }: UseTransactionFormControllerOptions): UseTransactionFormControllerReturn {
   const [formData, setFormData] = useState<TransactionFormData>(initialFormData);
+  // The event picker lists the selected artist's events: sweep all of them (the
+  // unfiltered events list is capped at the 50 oldest of the tenant).
+  const { events } = useArtistEvents(formData.artistId || undefined, open);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
   const { addTransaction, updateTransaction } = useTransactions();

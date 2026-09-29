@@ -16,6 +16,7 @@ import {
 
 const NONE = "__none__";
 export const MISSING_MEMBER_LABEL = "Usuário não encontrado na equipe";
+export const NAME_UNAVAILABLE_LABEL = "Nome indisponível no momento";
 
 interface MusicChatMemberPickerProps {
   value: string | null | undefined;
@@ -29,9 +30,11 @@ interface MusicChatMemberPickerProps {
 export function MusicChatMemberPicker({ value, onChange, label, noneLabel = "Nenhum", className }: MusicChatMemberPickerProps) {
   const [search, setSearch] = useState("");
   const { members, isLoading, error } = useMusicChatTeamMembers(search.trim());
-  const { names, isLoading: resolving } = useMusicChatMemberNames([value]);
+  const { names, isLoading: resolving, error: namesError } = useMusicChatMemberNames([value]);
   const currentListed = !!value && members.some((member) => member.auth_user_id === value);
-  const currentLabel = value ? names.get(value) ?? (resolving ? "Carregando…" : MISSING_MEMBER_LABEL) : null;
+  const currentLabel = value
+    ? names.get(value) ?? (resolving ? "Carregando…" : namesError ? NAME_UNAVAILABLE_LABEL : MISSING_MEMBER_LABEL)
+    : null;
 
   return (
     <div className={className ?? "space-y-1"}>

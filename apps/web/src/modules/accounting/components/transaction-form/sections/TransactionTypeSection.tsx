@@ -1,3 +1,4 @@
+import { formatDate } from "@/shared/lib/format-utils";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Label } from "@/shared/ui/label";
@@ -21,7 +22,7 @@ import {
 
 interface Artist { id: string; stage_name: string }
 interface Project { id: string; title: string }
-interface Event { id: string; title: string; start_date?: string | null }
+interface Event { id: string; title: string; starts_at?: string | null }
 
 interface TransactionTypeSectionProps {
   formData: TransactionFormData;
@@ -198,9 +199,9 @@ export function TransactionTypeSection({
               label="Show / Evento"
               value={formData.eventId}
               onChange={(value) => updateField("eventId", value)}
-              options={(formData.artistId ? filteredEvents : filteredEvents).map((event) => ({
+              options={filteredEvents.map((event) => ({
                 value: event.id,
-                label: event.start_date ? `${event.title} (${event.start_date})` : event.title,
+                label: event.starts_at ? `${event.title} (${formatDate(event.starts_at)})` : event.title,
               }))}
               placeholder={filteredEvents.length === 0 ? "Nenhum evento encontrado" : "Selecione o evento"}
               error={errors.eventId}

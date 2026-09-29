@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, NotFoundException, ValidationPipe } from '@nestjs/common';
 import {
   CloseConversationDto,
   ConversationServiceStatus,
@@ -109,6 +109,7 @@ function makeService(conversationMetadata: Record<string, unknown> = {}) {
     create: jest.fn((v: unknown) => ({ id: 'msg-1', created_at: new Date(), metadata: {}, ...(v as object) })),
     save: jest.fn(async (v: unknown) => v),
     update: jest.fn().mockResolvedValue({ affected: 1 }),
+    count: jest.fn().mockResolvedValue(0),
   };
   const eventRepo = { create: jest.fn((v: unknown) => v), save: jest.fn().mockResolvedValue({}) };
   // Active org members of t1 (see tenant-members.ts).
@@ -133,7 +134,7 @@ function makeService(conversationMetadata: Record<string, unknown> = {}) {
   };
   const ws = { sendToTenant: jest.fn() };
   const svc = new MusicChatAutomationService(ds as never, { enqueue: jest.fn() } as never, {} as never, ws as never);
-  return { svc, settings, settingsRepo, convRepo, convQb, memberQb };
+  return { svc, settings, settingsRepo, convRepo, convQb, memberQb, conv };
 }
 
 function routedMetadata(convRepo: { update: jest.Mock }) {
@@ -208,12 +209,14 @@ describe('updateSettings: legacy ids never collide with ids already in use', () 
     expect(updates.templates.map((t) => t.id)).toEqual(['outros', 'other']);
   });
 
-  it('checks the stored templates when the payload only replaces the menu options', async () => {
+  it('an options-only save maps a legacy option onto the stored (already English) template', async () => {
+    // Stored templates were renamed by migration 26; a pre-CZ-045 build sends only `producao`.
     const { svc, settings, settingsRepo } = makeService();
-    settings.templates = [{ id: 'other', title: 'Other', body: 'y' }, { id: 'shows', title: 'Shows', body: 'Ok' }];
-    await svc.updateSettings('t1', 'u1', { menu_options: [option('outros', 1)] });
-    const [, updates] = settingsRepo.update.mock.calls[0] as [unknown, { menu_options: Array<{ id: string }> }];
-    expect(updates.menu_options.map((o) => o.id)).toEqual(['outros']);
+    settings.templates = [{ id: 'music_production', title: 'Produção', body: 'y' }, { id: 'shows', title: 'Shows', body: 'Ok' }];
+    await svc.updateSettings('t1', 'u1', { menu_options: [option('producao', 1)] });
+    const [, updates] = settingsRepo.update.mock.calls[0] as [unknown, { menu_options: Array<{ id: string; responseTemplateId: string }>; templates?: unknown }];
+    expect(updates.menu_options.map((o) => [o.id, o.responseTemplateId])).toEqual([['music_production', 'music_production']]);
+    expect(updates).not.toHaveProperty('templates');
   });
 
   it('rejects a payload with two entries sharing one id (400) and writes nothing', async () => {
@@ -252,10 +255,62 @@ describe('updateSettings: assignees and recipients are tenant members', () => {
     expect(memberQb.where).toHaveBeenCalledWith('m.tenant_id = :tenantId', { tenantId: 't1' });
   });
 
-  it('does not fail a save on an id that was already stored', async () => {
+  it('does not fail a save on an id left unchanged in the same field', async () => {
     const { svc, settings, settingsRepo } = makeService();
-    Object.assign(settings, { supervisor_user_id: 'legacy-free-text' });
-    await svc.updateSettings('t1', 'u1', { supervisor_user_id: 'legacy-free-text', enabled: true });
+    Object.assign(settings, {
+      supervisor_user_id: 'legacy-free-text',
+      escalation_rules: [{ id: 'r1', afterMinutes: 5, level: 'supervisor', recipientRole: 'supervisor', recipientUserId: 'gone-member' }],
+    });
+    Object.assign(settings.menu_options[0], { defaultAssignee: 'old-assignee' });
+    await svc.updateSettings('t1', 'u1', {
+      supervisor_user_id: 'legacy-free-text',
+      escalation_rules: [{ id: 'r1', afterMinutes: 10, level: 'supervisor', recipientRole: 'supervisor', recipientUserId: 'gone-member' }],
+      menu_options: [{ ...settings.menu_options[0], label: 'Shows (novo)' } as never],
+      enabled: true,
+    });
     expect(settingsRepo.update).toHaveBeenCalledTimes(1);
+  });
+
+  it('a stored value copied into another field (or another option) is validated like a new one', async () => {
+    const copies = [
+      { manager_user_id: 'legacy-free-text' },
+      { escalation_rules: [{ id: 'r2', afterMinutes: 5, level: 'manager', recipientRole: 'manager', recipientUserId: 'legacy-free-text' }] },
+      { menu_options: [{ id: 'other-option', order: 3, label: 'X', responseTemplateId: 'shows', queue: 'A', sector: 'T', defaultAssignee: 'legacy-free-text' }] },
+    ];
+    for (const payload of copies) {
+      const { svc, settings, settingsRepo } = makeService();
+      Object.assign(settings, { supervisor_user_id: 'legacy-free-text' });
+      await expect(svc.updateSettings('t1', 'u1', payload)).rejects.toThrow(BadRequestException);
+      expect(settingsRepo.update).not.toHaveBeenCalled();
+    }
+  });
+});
+
+describe('MusicChat manual notifications and escalation recipients', () => {
+  const notification = { conversationId: 'conv-1', level: 'supervisor', recipientUserId: 'supervisor-1', channel: 'in_app' as const, title: 'T' };
+
+  it('rejects a recipient that is not an active member of the tenant (400) and a conversation of another tenant (404)', async () => {
+    const { svc, convRepo } = makeService();
+    const send = jest.spyOn(svc, 'sendNotification').mockResolvedValue({ created: true, data: {} as never });
+    await expect(svc.sendManualNotification('t1', { ...notification, recipientUserId: 'user-of-other-tenant' })).rejects.toThrow(BadRequestException);
+    convRepo.findOne.mockResolvedValueOnce(null);
+    await expect(svc.sendManualNotification('t1', notification)).rejects.toThrow(NotFoundException);
+    expect(convRepo.findOne).toHaveBeenLastCalledWith({ where: expect.objectContaining({ id: 'conv-1', tenant_id: 't1' }) });
+    expect(send).not.toHaveBeenCalled();
+    await svc.sendManualNotification('t1', notification);
+    expect(send).toHaveBeenCalledWith('t1', notification);
+  });
+
+  it('a blank stored escalation recipient falls back to the supervisor instead of skipping the escalation', async () => {
+    const { svc, settings, convQb, conv } = makeService({ service_status: 'waiting_agent' });
+    Object.assign(settings, {
+      supervisor_user_id: 'supervisor-1',
+      escalation_rules: [{ id: 'r1', afterMinutes: 5, level: 'supervisor', recipientRole: 'supervisor', recipientUserId: '', channels: ['in_app'], active: true }],
+    });
+    Object.assign(conv, { created_at: new Date(Date.now() - 60 * 60_000), status: 'open' });
+    convQb.getMany.mockResolvedValue([conv]);
+    const send = jest.spyOn(svc, 'sendNotification').mockResolvedValue({ created: true, data: {} as never });
+    await svc.runEscalation('t1');
+    expect(send).toHaveBeenCalledWith('t1', expect.objectContaining({ recipientUserId: 'supervisor-1' }));
   });
 });

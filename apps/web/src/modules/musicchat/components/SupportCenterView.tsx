@@ -343,8 +343,12 @@ export function SupportCenterView({
   const [transferOpen, setTransferOpen] = useState(false);
   const [transferTarget, setTransferTarget] = useState("");
   const [transferSearch, setTransferSearch] = useState("");
-  const { members: transferCandidates, isLoading: loadingTransferCandidates, error: transferCandidatesError } =
-    useMusicChatTeamMembers(transferSearch.trim(), transferOpen);
+  const {
+    members: transferCandidates,
+    isLoading: loadingTransferCandidates,
+    isSearching: searchingTransferCandidates,
+    error: transferCandidatesError,
+  } = useMusicChatTeamMembers(transferSearch, transferOpen);
   const [pendingAttachments, setPendingAttachments] = useState<ChatAttachmentData[]>([]);
   const [isSending, setIsSending] = useState(false);
   const sendAttemptRef = useRef<{ key: string; signature: string } | null>(null);
@@ -569,8 +573,11 @@ export function SupportCenterView({
     if (!selectedConversation || !transferTarget) return;
     const target = transferCandidates.find((member) => member.auth_user_id === transferTarget);
     try {
+      // The member taking over the conversation is now attending it (same status the
+      // transfer always set), stored atomically with the new assignee.
       const updated = await musicChatConversationsService.transfer(selectedConversation.id, {
         assigneeId: transferTarget,
+        serviceStatus: "in_progress",
         expectedUpdatedAt: getExpectedUpdatedAt(selectedConversation),
       });
       setConversations((previous) => previous.map((item) => item.id === updated.id ? updated : item));
@@ -1050,14 +1057,18 @@ export function SupportCenterView({
                         <Input
                           id="musicchat-transfer-search"
                           value={transferSearch}
-                          onChange={(event) => setTransferSearch(event.target.value)}
+                          onChange={(event) => {
+                            // A new search can hide the selected member: never submit a choice the user no longer sees.
+                            setTransferSearch(event.target.value);
+                            setTransferTarget("");
+                          }}
                           placeholder="Buscar por nome ou e-mail"
                           className="h-8 text-xs"
                         />
                         {transferCandidatesError ? (
                           <p className="text-xs text-destructive" role="alert">Não foi possível carregar a equipe.</p>
                         ) : (
-                          <Select value={transferTarget} onValueChange={setTransferTarget} disabled={loadingTransferCandidates}>
+                          <Select value={transferTarget} onValueChange={setTransferTarget} disabled={loadingTransferCandidates || searchingTransferCandidates}>
                             <SelectTrigger className="h-8 text-xs" aria-label="Responsável">
                               <SelectValue placeholder={loadingTransferCandidates ? "Carregando equipe…" : "Selecionar responsável"} />
                             </SelectTrigger>
@@ -1075,7 +1086,12 @@ export function SupportCenterView({
                           </Select>
                         )}
                       </div>
-                      <Button size="sm" className="h-8 w-full text-xs" disabled={!transferTarget} onClick={handleTransfer}>
+                      <Button
+                        size="sm"
+                        className="h-8 w-full text-xs"
+                        disabled={!transferTarget || !transferCandidates.some((member) => member.auth_user_id === transferTarget)}
+                        onClick={handleTransfer}
+                      >
                         Confirmar transferência
                       </Button>
                     </PopoverContent>

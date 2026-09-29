@@ -21,21 +21,15 @@ describe("fetchDashboardEvents", () => {
     listPaged.mockReset();
   });
 
-  it("counts today and the month from the API total of starts_at-bounded queries", async () => {
-    listPaged.mockImplementation((_t: string, o: Opts) => {
-      if (o.orderBy) return Promise.resolve(page([], 0, o.pageSize));
-      const from = new Date(o.filters.dateFrom);
-      return Promise.resolve(page([{ id: "x" }], from.getDate() === 1 ? 312 : 7, o.pageSize));
-    });
-    const result = await fetchDashboardEvents(now);
-    expect(result.todayCount).toBe(7);
+  it("counts the month from the API total of a starts_at query bounded in the system timezone", async () => {
+    listPaged.mockImplementation((_t: string, o: Opts) =>
+      Promise.resolve(o.orderBy ? page([], 0, o.pageSize) : page([{ id: "x" }], 312, o.pageSize)));
+    // 2030-11-01T01:00Z is still 31/10/2030 22:00 in America/Sao_Paulo: October, whatever the browser timezone.
+    const result = await fetchDashboardEvents(new Date("2030-11-01T01:00:00.000Z"));
     expect(result.monthCount).toBe(312);
     const bounded = listPaged.mock.calls.map(([, o]) => o as Opts).filter((o) => !o.orderBy);
-    const today = bounded.find((o) => new Date(o.filters.dateFrom).getDate() === 10)!;
-    expect(new Date(today.filters.dateFrom)).toEqual(new Date(2030, 9, 10, 0, 0, 0, 0));
-    expect(new Date(today.filters.dateTo)).toEqual(new Date(2030, 9, 10, 23, 59, 59, 999));
-    const month = bounded.find((o) => new Date(o.filters.dateFrom).getDate() === 1)!;
-    expect(new Date(month.filters.dateTo)).toEqual(new Date(2030, 9, 31, 23, 59, 59, 999));
+    expect(bounded).toHaveLength(1);
+    expect(bounded[0].filters).toEqual({ dateFrom: "2030-10-01T03:00:00.000Z", dateTo: "2030-11-01T02:59:59.999Z" });
   });
 
   it("asks for upcoming events from now, ascending, and drops closed statuses", async () => {
@@ -50,6 +44,7 @@ describe("fetchDashboardEvents", () => {
     });
     const result = await fetchDashboardEvents(now);
     expect(result.upcoming.map((e) => e.id)).toEqual(["b", "d"]);
+    expect(result.upcomingIncomplete).toBe(false);
     const upcomingCall = listPaged.mock.calls.map(([, o]) => o as Opts).find((o) => o.orderBy)!;
     expect(upcomingCall.filters.dateFrom).toBe(now.toISOString());
     expect(upcomingCall.orderBy).toEqual({ column: "starts_at", ascending: true });
@@ -66,5 +61,16 @@ describe("fetchDashboardEvents", () => {
     const result = await fetchDashboardEvents(now);
     expect(result.upcoming).toHaveLength(UPCOMING_APPOINTMENTS_LIMIT);
     expect(result.upcoming[0].id).toBe("ok0");
+  });
+
+  it("flags an incomplete list when closed events fill every scanned page", async () => {
+    listPaged.mockImplementation((_t: string, o: Opts) => {
+      if (!o.orderBy) return Promise.resolve(page([], 0, o.pageSize));
+      const items = Array.from({ length: o.pageSize }, (_, i) => ({ id: `p${o.page}-${i}`, status: "cancelled" }));
+      return Promise.resolve({ ...page(items, o.pageSize * 10, o.pageSize), page: o.page });
+    });
+    const result = await fetchDashboardEvents(now);
+    expect(result.upcoming).toEqual([]);
+    expect(result.upcomingIncomplete).toBe(true);
   });
 });

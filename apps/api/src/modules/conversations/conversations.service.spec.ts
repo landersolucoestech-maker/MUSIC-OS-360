@@ -143,6 +143,42 @@ describe('ConversationsService — assignee must be an active member of the tena
     expect(mockDs._memberRepo._qb.andWhere).toHaveBeenCalledWith('m.deleted_at IS NULL');
   });
 
+  it('create and update reject a non-member assignee and write nothing; an unchanged assignee is not re-validated', async () => {
+    const { service, mockDs } = buildService({ affected: 1 });
+    await expect(service.createConversation(TENANT, 'user-a', { subject: 'X', assigned_to: 'ghost' } as any)).rejects.toThrow(BadRequestException);
+    expect(mockDs._convRepo.save).not.toHaveBeenCalled();
+    await expect(service.updateConversation(TENANT, CONV_ID, { assigned_to: 'ghost' } as any)).rejects.toThrow(BadRequestException);
+    expect(mockDs._convRepo.update).not.toHaveBeenCalled();
+    // baseConv.assigned_to is 'user-a': re-sending it skips the membership lookup.
+    mockDs._memberRepo.createQueryBuilder.mockClear();
+    await service.updateConversation(TENANT, CONV_ID, { assigned_to: 'user-a' } as any);
+    expect(mockDs._memberRepo.createQueryBuilder).not.toHaveBeenCalled();
+    await service.createConversation(TENANT, 'user-a', { subject: 'Y', assigned_to: 'user-b' } as any);
+    expect(mockDs._convRepo.save).toHaveBeenCalled();
+  });
+
+  it('transfer stores the requested service status together with the new assignee', async () => {
+    const { service, mockDs } = buildService({ affected: 1 });
+    await service.transfer(TENANT, 'user-a', CONV_ID, { assignee_id: 'user-b', service_status: 'in_progress' as any });
+    const [, payload] = mockDs._convRepo.update.mock.calls[0];
+    expect(payload).toMatchObject({ assigned_to: 'user-b', metadata: expect.objectContaining({ service_status: 'in_progress' }) });
+  });
+
+  it('a blank assignee id is null after validation (never stored as an empty string)', async () => {
+    const { ValidationPipe } = await import('@nestjs/common');
+    const { AssignConversationDto, TransferConversationDto, UpdateConversationDto } = await import('./dto/conversations.dto');
+    const { UpdateMusicChatAutomationSettingsDto } = await import('./dto/musicchat-automation.dto');
+    const pipe = new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true, transformOptions: { enableImplicitConversion: true } });
+    const run = (metatype: new () => object, value: object) => pipe.transform(value, { type: 'body', metatype });
+    expect(await run(AssignConversationDto, { assignee_id: '' })).toMatchObject({ assignee_id: null });
+    expect(await run(TransferConversationDto, { assignee_id: '  ' })).toMatchObject({ assignee_id: null });
+    expect(await run(UpdateConversationDto, { assigned_to: '' })).toMatchObject({ assigned_to: null });
+    expect(await run(UpdateMusicChatAutomationSettingsDto, {
+      supervisor_user_id: '', manager_user_id: '',
+      escalation_rules: [{ id: 'r1', afterMinutes: 5, level: 'supervisor', recipientRole: 'supervisor', recipientUserId: '' }],
+    })).toMatchObject({ supervisor_user_id: null, manager_user_id: null, escalation_rules: [expect.objectContaining({ recipientUserId: null })] });
+  });
+
   it('assign rejects a non-member and still allows clearing the assignee', async () => {
     const { service, mockDs } = buildService({ affected: 1 });
     await expect(service.assign(TENANT, CONV_ID, 'ghost')).rejects.toThrow(BadRequestException);

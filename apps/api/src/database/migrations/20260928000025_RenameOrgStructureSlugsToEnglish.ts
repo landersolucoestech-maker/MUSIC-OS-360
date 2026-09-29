@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { assertMigrationRoleBypassesRls } from '../migration-guards';
 
 /**
  * 20260928000025_RenameOrgStructureSlugsToEnglish
@@ -95,10 +96,12 @@ export class RenameOrgStructureSlugsToEnglish20260928000025 implements Migration
   name = 'RenameOrgStructureSlugsToEnglish20260928000025';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await apply(queryRunner, false);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await apply(queryRunner, true);
   }
 }

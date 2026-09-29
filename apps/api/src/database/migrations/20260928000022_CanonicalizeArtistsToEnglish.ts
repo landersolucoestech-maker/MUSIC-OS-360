@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { assertMigrationRoleBypassesRls } from '../migration-guards';
 
 /**
  * 20260928000022_CanonicalizeArtistsToEnglish
@@ -296,12 +297,13 @@ function backfill(key: string, column: string, kind: ColumnKind): string {
  * pre-CZ-042 API). Only non-NULL columns are written: a NULL column either had
  * no value (the key was already removed by up()) or holds a value up() could
  * not copy, which up() left in metadata and must survive (database re-review
- * of ceea2e4).
+ * of ceea2e4). A metadata value that is not an object (array/string) is left
+ * untouched — the document is never replaced (the value stays in its column).
  */
 function writeBack(key: string, column: string): string {
   return `UPDATE "artists" SET "metadata" = COALESCE(CASE WHEN jsonb_typeof("metadata") = 'object' THEN "metadata" END, '{}'::jsonb)
             || jsonb_build_object('${key}', to_jsonb("${column}"))
-          WHERE "${column}" IS NOT NULL`;
+          WHERE "${column}" IS NOT NULL AND ("metadata" IS NULL OR jsonb_typeof("metadata") IN ('object', 'null'))`;
 }
 
 function renameMetadataKey(from: string, to: string): string {
@@ -317,6 +319,7 @@ export class CanonicalizeArtistsToEnglish20260928000022 implements MigrationInte
   name = 'CanonicalizeArtistsToEnglish20260928000022';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
     for (const [from, to] of COLUMNS) await queryRunner.query(renameColumn(from, to));
     await queryRunner.query(renameConstraint('chk_artists_status_cadastro', 'chk_artists_registration_status'));
@@ -359,6 +362,7 @@ export class CanonicalizeArtistsToEnglish20260928000022 implements MigrationInte
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
     await queryRunner.query(HELPERS);
     await queryRunner.query(

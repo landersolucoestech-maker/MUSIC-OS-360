@@ -6,11 +6,12 @@ import { renderWithProviders } from "./_helpers/render-with-providers";
 /**
  * I1 / N4 / N5 — Dashboard-level coverage of the events KPI and the upcoming
  * appointments: they come from the starts_at-scoped useDashboardEvents
- * (not the 50 oldest events), render starts_at in the system timezone, and a
- * failed events query is shown as unavailable instead of "0" / "no appointments".
+ * (not the 50 oldest events), render starts_at in the SYSTEM timezone
+ * (America/Sao_Paulo) even when the browser runs in UTC, and a failed events
+ * query is shown as unavailable instead of "0" / "no appointments".
  */
 const ORIGINAL_TZ = process.env.TZ;
-beforeAll(() => { process.env.TZ = "America/Sao_Paulo"; });
+beforeAll(() => { process.env.TZ = "UTC"; });
 afterAll(() => { process.env.TZ = ORIGINAL_TZ; });
 
 vi.mock("@/shared/components/MainLayout", () => ({
@@ -49,8 +50,8 @@ describe("<Dashboard /> events", () => {
 
   it("shows the API month count and the upcoming appointments at their local date and time", async () => {
     eventsState.dashboardEvents = {
-      todayCount: 2,
       monthCount: 137,
+      upcomingIncomplete: false,
       upcoming: [{ id: "e-1", title: "Show Noturno", type: "show", status: "confirmed", starts_at: "2030-10-11T00:30:00.000Z" }],
     };
     renderDashboard();
@@ -59,6 +60,13 @@ describe("<Dashboard /> events", () => {
     expect(item).toHaveTextContent("Show Noturno");
     expect(item).toHaveTextContent("10/10/2030");
     expect(item).toHaveTextContent("21:30");
+    expect(screen.queryByText("Nenhum compromisso agendado")).not.toBeInTheDocument();
+  });
+
+  it("an upcoming list cut short by closed events says so instead of claiming there are none", async () => {
+    eventsState.dashboardEvents = { monthCount: 400, upcoming: [], upcomingIncomplete: true };
+    renderDashboard();
+    expect(await screen.findByTestId("dashboard-upcoming-incomplete")).toBeInTheDocument();
     expect(screen.queryByText("Nenhum compromisso agendado")).not.toBeInTheDocument();
   });
 

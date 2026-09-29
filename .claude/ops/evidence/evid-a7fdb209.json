@@ -1,0 +1,12 @@
+{
+  "id": "evid-a7fdb209",
+  "createdAt": "2026-09-29T05:54:21.157Z",
+  "type": "REVIEW",
+  "reviewer": "frontend-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "48de4bb frontend re-review: N1-N9, L1-L6, I1, I3 closed; MEDIUM M1 Vision360 overview/evolution/activity show false zero/empty events while the artist events sweep loads or fails; LOW Dashboard uses browser timezone; LOW failed/flickering member name lookup; LOW invisible transfer target; LOW no search debounce; INFO a-g",
+  "workspaceFingerprint": "1955bf1ad745b294be264d214f490c2d389c0e1a954ed8843dee79ffc389ecf0",
+  "fingerprintStatus": "BOUND",
+  "head": "ef14a873f9d828743834c6877b2e9ff917a92fb9"
+}

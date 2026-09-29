@@ -1,5 +1,5 @@
 import { Injectable, Inject, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import {
   ConversationEntity,
@@ -152,13 +152,14 @@ export class MusicChatAutomationService {
   async updateSettings(tenantId: string, userId: string, dto: UpdateMusicChatAutomationSettingsDto) {
     const current = await this.getSettings(tenantId);
     // A pre-CZ-045 web build sends Portuguese option/template ids and priorities.
-    // Ids already used by the saved document (the payload, or the stored array it
-    // does not replace) decide which legacy ids may be renamed.
+    // The ids of the arrays this payload replaces decide which legacy ids may be
+    // renamed (a stored array the payload does not replace is already canonical:
+    // an option `producao` sent alone maps to the stored `music_production`
+    // template instead of pointing at a template that no longer exists).
     const storedOptions = (current.menu_options ?? []) as MusicChatMenuOptionDto[];
-    const storedTemplates = (current.templates ?? []) as MusicChatTemplateDto[];
     const idMap = legacyMenuIdMap([
-      ...(dto.menu_options ?? storedOptions).map((option) => option.id),
-      ...(dto.templates ?? storedTemplates).map((template) => template.id),
+      ...(dto.menu_options ?? []).map((option) => option.id),
+      ...(dto.templates ?? []).map((template) => template.id),
     ]);
     const menuOptionsInput = dto.menu_options?.map((option) => canonicalMenuOption(option, idMap));
     const templatesInput = dto.templates?.map((template) => canonicalTemplate(template, idMap));
@@ -166,13 +167,21 @@ export class MusicChatAutomationService {
     if (duplicate) {
       throw new BadRequestException(`Há mais de uma opção ou resposta com o identificador "${duplicate}".`);
     }
-    // Ids already stored are left alone (a save must not fail on a value it did not change);
-    // every new or changed id must be an active member of this tenant.
-    await this.assertTenantMembers(tenantId, current, [
-      ...(menuOptionsInput ?? []).map((option) => option.defaultAssignee),
-      ...(dto.escalation_rules ?? []).map((rule) => rule.recipientUserId),
-      dto.supervisor_user_id,
-      dto.manager_user_id,
+    // Every new or changed member id must be an active member of this tenant. A
+    // value left unchanged in the same field (same option / rule / setting) is not
+    // re-validated, so a save never fails on a value it did not touch — but a
+    // stored value copied into another field is validated like any new one.
+    const storedAssignee = new Map(storedOptions.map((option) => [option.id, option.defaultAssignee ?? null]));
+    const storedRecipient = new Map(
+      ((current.escalation_rules ?? []) as MusicChatEscalationRuleDto[]).map((rule) => [rule.id, rule.recipientUserId ?? null]),
+    );
+    const changed = (value: string | null | undefined, stored: string | null | undefined) =>
+      value && value !== (stored ?? null) ? value : null;
+    await assertActiveTenantMembers(this.orgMemberRepo!, tenantId, [
+      ...(menuOptionsInput ?? []).map((option) => changed(option.defaultAssignee, storedAssignee.get(option.id))),
+      ...(dto.escalation_rules ?? []).map((rule) => changed(rule.recipientUserId, storedRecipient.get(rule.id))),
+      changed(dto.supervisor_user_id, current.supervisor_user_id),
+      changed(dto.manager_user_id, current.manager_user_id),
     ]);
     const menuOptions = menuOptionsInput ?? storedOptions;
     const { expectedUpdatedAt, ...restDto } = dto;
@@ -192,21 +201,6 @@ export class MusicChatAutomationService {
     );
     await this.recordEvent(tenantId, null, 'automation.settings_updated', 'Configurações de automação do MusicChat atualizadas', { keys: Object.keys(dto) }, userId);
     return this.getSettings(tenantId);
-  }
-
-  /** Every user id the settings route conversations or notifications to is an active member of this tenant. */
-  private async assertTenantMembers(
-    tenantId: string,
-    current: MusicChatAutomationSettingsEntity,
-    userIds: ReadonlyArray<string | null | undefined>,
-  ): Promise<void> {
-    const stored = new Set<unknown>([
-      ...((current.menu_options ?? []) as MusicChatMenuOptionDto[]).map((option) => option.defaultAssignee),
-      ...((current.escalation_rules ?? []) as MusicChatEscalationRuleDto[]).map((rule) => rule.recipientUserId),
-      current.supervisor_user_id,
-      current.manager_user_id,
-    ]);
-    await assertActiveTenantMembers(this.orgMemberRepo!, tenantId, userIds.filter((id) => !stored.has(id)));
   }
 
   async handleInboundMessage(tenantId: string, dto: MusicChatInboundMessageDto) {
@@ -275,8 +269,9 @@ export class MusicChatAutomationService {
 
       for (const rule of rules) {
         if (minutes < rule.afterMinutes) continue;
+        // `||`: a blank stored recipient (saved before blank ids became null) falls back too.
         const recipient = rule.recipientUserId
-          ?? (rule.recipientRole === 'manager' ? settings.manager_user_id : settings.supervisor_user_id);
+          || (rule.recipientRole === 'manager' ? settings.manager_user_id : settings.supervisor_user_id);
         if (!recipient) continue;
         const notification = await this.sendNotification(tenantId, {
           conversationId: conversation.id,
@@ -292,6 +287,21 @@ export class MusicChatAutomationService {
     }
 
     return { processed: conversations.length, notifications: created };
+  }
+
+  /**
+   * POST .../automation/notifications (manual): the conversation must belong to the
+   * tenant and the recipient must be an active member of it — the same rule as
+   * every other assignee/recipient. The escalation run calls sendNotification()
+   * directly with the tenant's stored settings.
+   */
+  async sendManualNotification(tenantId: string, dto: SendMusicChatNotificationDto) {
+    const conversation = await this.convRepo!.findOne({
+      where: { id: dto.conversationId, tenant_id: tenantId, deleted_at: IsNull() } as any,
+    });
+    if (!conversation) throw new NotFoundException('Conversa não encontrada.');
+    await assertActiveTenantMembers(this.orgMemberRepo!, tenantId, [dto.recipientUserId]);
+    return this.sendNotification(tenantId, dto);
   }
 
   async sendNotification(tenantId: string, dto: SendMusicChatNotificationDto): Promise<{ created: boolean; data: MusicChatAutomationNotificationEntity }> {

@@ -52,10 +52,12 @@ export class QueryInternalMembersDto {
   search?: string;
 
   @ApiPropertyOptional({ description: 'Also list the caller (pickers where one may choose oneself, e.g. a MusicChat assignee)' })
-  @IsOptional() @Transform(({ value }) => value === 'true' || value === true) @IsBoolean()
+  // Read the raw query value: with enableImplicitConversion, `value` is already
+  // Boolean("false") === true before this transform runs.
+  @IsOptional() @Transform(({ obj }) => obj.include_self === 'true' || obj.include_self === true) @IsBoolean()
   include_self?: boolean;
 
-  @ApiPropertyOptional({ type: [String], description: 'Resolve exactly these auth_user_ids (comma-separated), including the caller and inactive members; search/include_self are ignored' })
+  @ApiPropertyOptional({ type: [String], description: 'Resolve exactly these auth_user_ids (comma-separated), including the caller and inactive members (an inactive member returns its name only, never its e-mail); search/include_self are ignored' })
   @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? value.split(',').map((id) => id.trim()).filter(Boolean) : value))
   @IsArray() @ArrayMaxSize(100) @IsString({ each: true }) @MaxLength(255, { each: true })

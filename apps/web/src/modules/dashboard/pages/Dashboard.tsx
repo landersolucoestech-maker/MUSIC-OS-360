@@ -16,7 +16,7 @@ import { differenceInDays } from "date-fns";
 import { useMetrics } from "../hooks/useMetrics";
 import { useOperationalDashboard } from "../hooks/useOperationalDashboard";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
-import { formatCurrency } from "@/shared/lib/format-utils";
+import { formatCurrency, formatDate, formatTime } from "@/shared/lib/format-utils";
 import { DashboardSkeleton } from "@/shared/components/PageSkeletons";
 import { UnavailableState } from "@/shared/components/UnavailableState";
 import { ArtistVision360Modal } from "@/modules/artist/components/ArtistVision360Modal";
@@ -301,7 +301,7 @@ function getInitials(name: string): string {
 
 export default function Dashboard() {
   const [visao360Modal, setVisao360Modal] = useState<{ open: boolean; artist?: Artist }>({ open: false });
-  const { dashboardMetrics, artistasMetrics: artistsMetrics, isLoading, upcomingEvents, eventsUnavailable, error: metricsError, refetch: refetchMetrics } = useMetrics();
+  const { dashboardMetrics, artistasMetrics: artistsMetrics, isLoading, upcomingEvents, eventsUnavailable, upcomingIncomplete, error: metricsError, refetch: refetchMetrics } = useMetrics();
 
   // ── Activity state ──────────────────────────────────────────────────────────
   const [activities, setActivities] = useState<ActivityItem[]>([]);
@@ -646,12 +646,10 @@ export default function Dashboard() {
                     >
                       <div className="flex shrink-0 items-center gap-2 sm:w-16 sm:flex-col sm:items-center sm:gap-0 sm:text-center">
                         <span className="text-xs font-sans font-semibold text-foreground">
-                          {when.toLocaleDateString("pt-BR")}
+                          {formatDate(when)}
                         </span>
                         <span className="text-xs font-sans text-primary sm:mt-0.5">
-                          {when.getHours() === 0 && when.getMinutes() === 0
-                            ? "Dia inteiro"
-                            : when.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                          {formatTime(when) === "00:00" ? "Dia inteiro" : formatTime(when)}
                         </span>
                       </div>
                       <div className="hidden w-px self-stretch bg-primary/20 sm:block" />
@@ -673,12 +671,17 @@ export default function Dashboard() {
                     <Calendar className="h-6 w-6 text-muted-foreground" />
                   </div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Nenhum compromisso agendado
+                    {upcomingIncomplete ? "Nenhum compromisso aberto entre os próximos da agenda" : "Nenhum compromisso agendado"}
                   </p>
                   <p className="text-xs text-muted-foreground/60 mt-1">
                     Os próximos eventos, reuniões e produções aparecerão aqui.
                   </p>
                 </div>
+              )}
+              {!eventsUnavailable && upcomingIncomplete && (
+                <p className="mt-3 text-xs text-muted-foreground" role="status" data-testid="dashboard-upcoming-incomplete">
+                  Há muitos compromissos encerrados à frente: consulte a agenda completa para ver todos os próximos.
+                </p>
               )}
               <Link to="/agenda" className="mt-4 block">
                 <Button

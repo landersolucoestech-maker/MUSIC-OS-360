@@ -32,7 +32,7 @@ vi.mock("@/modules/artist/hooks/useArtists", () => ({
 }));
 
 vi.mock("@/modules/dashboard/hooks/useDashboardEvents", () => ({
-  useDashboardEvents: () => ({ dashboardEvents: { todayCount: 0, monthCount: 0, upcoming: [] }, isLoading: false, error: null, refetch: vi.fn() }),
+  useDashboardEvents: () => ({ dashboardEvents: { monthCount: 0, upcoming: [], upcomingIncomplete: false }, isLoading: false, error: null, refetch: vi.fn() }),
 }));
 
 vi.mock("@/modules/releases/hooks/useReleases", () => ({

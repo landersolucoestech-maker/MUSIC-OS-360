@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T05:52:58.981Z",
+  "updatedAt": "2026-09-29T10:19:09.869Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -973,6 +973,52 @@
         }
       ],
       "createdAt": "2026-09-29T05:52:19.987Z"
+    },
+    {
+      "id": "req-8e14163c",
+      "text": "Close the 48de4bb re-reviews: frontend M1, L1-L4, I-a..I-g; security LOW-1..LOW-4, INFO-5/6; database LOW-A/B, INFO-A..E",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-a0b6ab70",
+          "text": "Web typecheck, lint and full vitest pass in America/Sao_Paulo and UTC (Vision360 events gating, Dashboard system timezone, member hooks, transfer tests)",
+          "evidenceIds": [
+            "evid-97f7a0e2",
+            "evid-d98a98bd",
+            "evid-b8f3e238",
+            "evid-2d7a2d9f"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-1390aabc",
+          "text": "API typecheck, lint and full jest pass (member validation per field, blank ids, include_self, inactive e-mail, manual notification, migration guard)",
+          "evidenceIds": [
+            "evid-77dca7bb",
+            "evid-469b773d",
+            "evid-2b67aafd"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-e826a17e",
+          "text": "Both migration verifiers pass on a fresh seeded _mig database (non-object metadata probe included)",
+          "evidenceIds": [
+            "evid-630c2a66",
+            "evid-50b703a4"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-3da9bd32",
+          "text": "naming:check passes",
+          "evidenceIds": [
+            "evid-018894fa"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-29T10:09:50.162Z"
     }
   ],
   "findings": [
@@ -2800,9 +2846,11 @@
       "line": null,
       "summary": "DB re-review ceea2e4 NEW-HIGH-1: down() writeBack writes JSON null over values up() kept in metadata (invalid date/over-long/non-JSON) -> lost on re-apply",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-28T21:43:51.496Z"
+      "createdAt": "2026-09-28T21:43:51.496Z",
+      "justification": "down() writes back only non-NULL columns (migration 22 writeBack); verifier check 'down: values up() could not copy survive in metadata' passes on the current workspace (evid-630c2a66).",
+      "resolvedAt": "2026-09-29T10:19:09.805Z"
     },
     {
       "id": "find-613d036d",
@@ -2968,9 +3016,11 @@
       "line": null,
       "summary": "DB re-review d1daf89 HIGH-A: cz042_try_date dd/mm/yyyy via to_date accepts zero parts (00/00/1990 -> 1990-01-01) and up() then deletes metadata.data_nascimento -> invented birth date, original lost",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T02:57:38.047Z"
+      "createdAt": "2026-09-29T02:57:38.047Z",
+      "justification": "cz042_try_date accepts a date only when it round-trips exactly; verifier check 'artists: zero-part date is not invented (NULL column, original kept in metadata)' passes (evid-630c2a66).",
+      "resolvedAt": "2026-09-29T10:19:09.869Z"
     },
     {
       "id": "find-35c9e731",
@@ -3028,9 +3078,11 @@
       "line": null,
       "summary": "FE re-review b875241 N1: Vision360 default tab Resumo Executivo/Resumo Financeiro show R$ 0,00 while transactions load or after failure; no truncation notice (M4 partial)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.328Z"
+      "createdAt": "2026-09-29T05:00:09.328Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:07.893Z"
     },
     {
       "id": "find-6f4f9018",
@@ -3040,9 +3092,11 @@
       "line": null,
       "summary": "N2: formatDateDMY slices the UTC day of real instants (events.starts_at, activity/milestones) -> evening show a day late; calendar fields compared as instants in contract expiry and next release (M1 partial)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.406Z"
+      "createdAt": "2026-09-29T05:00:09.406Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:07.952Z"
     },
     {
       "id": "find-c7f6f892",
@@ -3052,9 +3106,11 @@
       "line": null,
       "summary": "N3: M1 contract-date test does not pin TZ -> passes on pre-fix code in UTC CI (false green); no release/goal/overview/instant cases",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.478Z"
+      "createdAt": "2026-09-29T05:00:09.478Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.022Z"
     },
     {
       "id": "find-2d490d7a",
@@ -3064,9 +3120,11 @@
       "line": null,
       "summary": "N4: useEvents lists starts_at ascending without limit -> API default page = 50 oldest events; Dashboard upcoming/metrics and Vision360 next show miss upcoming events",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.548Z"
+      "createdAt": "2026-09-29T05:00:09.548Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.106Z"
     },
     {
       "id": "find-458431a7",
@@ -3076,9 +3134,11 @@
       "line": null,
       "summary": "N5: Dashboard and useMetrics read legacy data/start_date/horario_inicio instead of starts_at (breaks when E6 drops data)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.629Z"
+      "createdAt": "2026-09-29T05:00:09.629Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.176Z"
     },
     {
       "id": "find-de44e670",
@@ -3088,9 +3148,11 @@
       "line": null,
       "summary": "N6: MusicChat transfer targets are hardcoded fake people, write unread metadata.assignee_name and bypass PATCH /conversations/:id/transfer (no assignment, audit or event)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.700Z"
+      "createdAt": "2026-09-29T05:00:09.700Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.238Z"
     },
     {
       "id": "find-279f827d",
@@ -3100,9 +3162,11 @@
       "line": null,
       "summary": "N7: MusicChat shows raw user ids as message author and assignee (and copies them into lead/contact responsible)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.782Z"
+      "createdAt": "2026-09-29T05:00:09.782Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.312Z"
     },
     {
       "id": "find-321dad11",
@@ -3112,9 +3176,11 @@
       "line": null,
       "summary": "N8: menu option/escalation/supervisor/manager user ids typed as free text and written to conversations.assigned_to; server only IsString",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.880Z"
+      "createdAt": "2026-09-29T05:00:09.880Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.389Z"
     },
     {
       "id": "find-317c1356",
@@ -3124,9 +3190,11 @@
       "line": null,
       "summary": "N9: settings page loading state is dead; on GET error shows developer copy and Save overwrites the tenant config with hardcoded client defaults branded Lander Records (concurrency check skipped)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:09.951Z"
+      "createdAt": "2026-09-29T05:00:09.951Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.479Z"
     },
     {
       "id": "find-98aa408a",
@@ -3136,9 +3204,11 @@
       "line": null,
       "summary": "L1: dead user.cargo read (/users never returns cargo)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.026Z"
+      "createdAt": "2026-09-29T05:00:10.026Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.568Z"
     },
     {
       "id": "find-712bcead",
@@ -3148,9 +3218,11 @@
       "line": null,
       "summary": "L2: queue/sector read meta.queue_id ?? meta.queue (two keys for one concept; UUID shown after a real transfer)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.116Z"
+      "createdAt": "2026-09-29T05:00:10.116Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.644Z"
     },
     {
       "id": "find-50eace32",
@@ -3160,9 +3232,11 @@
       "line": null,
       "summary": "L3: Support* types declared twice (SupportCenterView and conversations.service)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.192Z"
+      "createdAt": "2026-09-29T05:00:10.192Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.724Z"
     },
     {
       "id": "find-89dfd773",
@@ -3172,9 +3246,11 @@
       "line": null,
       "summary": "L4: missing created_at shows today as Data do Cadastro (made-up fallback)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.281Z"
+      "createdAt": "2026-09-29T05:00:10.281Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.816Z"
     },
     {
       "id": "find-f1587a49",
@@ -3184,9 +3260,11 @@
       "line": null,
       "summary": "L5: Activity/History tabs use artistTransactions without loading/error handling (partial timeline silently)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.356Z"
+      "createdAt": "2026-09-29T05:00:10.356Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.905Z"
     },
     {
       "id": "find-277ddada",
@@ -3196,9 +3274,11 @@
       "line": null,
       "summary": "L6: garbled/stale comments (SupportCenterView website chat, Dashboard/useMetrics say backend returns data)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.433Z"
+      "createdAt": "2026-09-29T05:00:10.433Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:08.982Z"
     },
     {
       "id": "find-ff0fb364",
@@ -3208,9 +3288,11 @@
       "line": null,
       "summary": "I1: no Dashboard-level test proves hidden cancelled/completed/held events",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.508Z"
+      "createdAt": "2026-09-29T05:00:10.508Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:09.058Z"
     },
     {
       "id": "find-34ed971c",
@@ -3220,9 +3302,11 @@
       "line": null,
       "summary": "I2: useAllTransactions returns error even with cached data -> failed background refetch hides valid totals",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.582Z"
+      "createdAt": "2026-09-29T05:00:10.582Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:09.117Z"
     },
     {
       "id": "find-c93f0c38",
@@ -3232,9 +3316,11 @@
       "line": null,
       "summary": "I3: MusicChat settings query key not tenant-scoped (safe only if tenant switch clears the cache)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.653Z"
+      "createdAt": "2026-09-29T05:00:10.653Z",
+      "justification": "Fixed in 48de4bb; frontend re-review of 48de4bb (evid-a7fdb209) verified this claim closed against the code.",
+      "resolvedAt": "2026-09-29T10:19:09.184Z"
     },
     {
       "id": "find-e168d0e0",
@@ -3244,9 +3330,11 @@
       "line": null,
       "summary": "DB re-review b875241 LOW-1: updateSettings maps legacy option/template ids unconditionally -> recreates duplicate ids migration 26 avoids (wrong template body, lost own id on down)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.727Z"
+      "createdAt": "2026-09-29T05:00:10.727Z",
+      "justification": "Fixed in 48de4bb; database re-review of 48de4bb (evid-66e50446) verified the claim; verifier probes pass (evid-630c2a66/evid-50b703a4).",
+      "resolvedAt": "2026-09-29T10:19:09.248Z"
     },
     {
       "id": "find-80974fd7",
@@ -3256,9 +3344,11 @@
       "line": null,
       "summary": "LOW-2: over-long responsavel_cargo + cargo_responsavel: alias fills the column, down() overwrites the only copy of the newer over-long value",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.798Z"
+      "createdAt": "2026-09-29T05:00:10.798Z",
+      "justification": "Fixed in 48de4bb; database re-review of 48de4bb (evid-66e50446) verified the claim; verifier probes pass (evid-630c2a66/evid-50b703a4).",
+      "resolvedAt": "2026-09-29T10:19:09.314Z"
     },
     {
       "id": "find-45a66462",
@@ -3268,9 +3358,11 @@
       "line": null,
       "summary": "LOW-3: docs say owner/bypass suffices; FORCE RLS tables need BYPASSRLS/superuser or UPDATEs silently match 0 rows; no pre-flight/guard",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.872Z"
+      "createdAt": "2026-09-29T05:00:10.872Z",
+      "justification": "Fixed in 48de4bb; database re-review of 48de4bb (evid-66e50446) verified the claim; verifier probes pass (evid-630c2a66/evid-50b703a4).",
+      "resolvedAt": "2026-09-29T10:19:09.385Z"
     },
     {
       "id": "find-6770f283",
@@ -3280,9 +3372,11 @@
       "line": null,
       "summary": "LOW-4: migration 26 docs overstate down() exactness, omit audit payloads, wrong lock scope, no collision pre-promotion query",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:10.943Z"
+      "createdAt": "2026-09-29T05:00:10.943Z",
+      "justification": "Fixed in 48de4bb; database re-review of 48de4bb (evid-66e50446) verified the claim; verifier probes pass (evid-630c2a66/evid-50b703a4).",
+      "resolvedAt": "2026-09-29T10:19:09.452Z"
     },
     {
       "id": "find-bc5770ce",
@@ -3292,9 +3386,11 @@
       "line": null,
       "summary": "LOW-5: CLIENT_ALIAS over-long->NULL check passes on old code (no stale cep); no probe for LOW-2 or collision-tenant conversation",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:11.043Z"
+      "createdAt": "2026-09-29T05:00:11.043Z",
+      "justification": "Fixed in 48de4bb; database re-review of 48de4bb (evid-66e50446) verified the claim; verifier probes pass (evid-630c2a66/evid-50b703a4).",
+      "resolvedAt": "2026-09-29T10:19:09.525Z"
     },
     {
       "id": "find-f35a1d98",
@@ -3304,9 +3400,11 @@
       "line": null,
       "summary": "INFO-1: conversations.selected_menu_option uses the global id map, not the per-tenant one",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:11.122Z"
+      "createdAt": "2026-09-29T05:00:11.122Z",
+      "justification": "Fixed in 48de4bb; database re-review of 48de4bb (evid-66e50446) verified the claim; verifier probes pass (evid-630c2a66/evid-50b703a4).",
+      "resolvedAt": "2026-09-29T10:19:09.613Z"
     },
     {
       "id": "find-7be050bb",
@@ -3316,9 +3414,11 @@
       "line": null,
       "summary": "INFO-2: clients interacoes JSON text not parsed like artists (try_jsonb)",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:11.206Z"
+      "createdAt": "2026-09-29T05:00:11.206Z",
+      "justification": "Fixed in 48de4bb; database re-review of 48de4bb (evid-66e50446) verified the claim; verifier probes pass (evid-630c2a66/evid-50b703a4).",
+      "resolvedAt": "2026-09-29T10:19:09.678Z"
     },
     {
       "id": "find-da97f84d",
@@ -3328,9 +3428,191 @@
       "line": null,
       "summary": "INFO-3: metadata key legacy_cargo_responsavel not registered in the canonical map",
       "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:11.283Z",
+      "justification": "Fixed in 48de4bb; database re-review of 48de4bb (evid-66e50446) verified the claim; verifier probes pass (evid-630c2a66/evid-50b703a4).",
+      "resolvedAt": "2026-09-29T10:19:09.741Z"
+    },
+    {
+      "id": "find-5c2319b0",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "line": null,
+      "summary": "48de4bb FE M1: Vision360 overview/evolution/activity show false zero/empty events while the artist events sweep loads or fails",
+      "rootCause": null,
       "disposition": null,
       "evidenceIds": [],
-      "createdAt": "2026-09-29T05:00:11.283Z"
+      "createdAt": "2026-09-29T05:54:35.832Z"
+    },
+    {
+      "id": "find-892bbf59",
+      "category": "correctness",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+      "line": null,
+      "summary": "48de4bb FE L1: Dashboard dates and day/month boundaries use the browser timezone, not the system timezone",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:35.907Z"
+    },
+    {
+      "id": "find-297f7232",
+      "category": "ux",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/musicchat/hooks/useMusicChatTeamMembers.ts",
+      "line": null,
+      "summary": "48de4bb FE L2: failed member-name lookup shown as 'not found'; names flicker when the id set changes",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:35.976Z"
+    },
+    {
+      "id": "find-46642af4",
+      "category": "ux",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+      "line": null,
+      "summary": "48de4bb FE L3: transfer target hidden by a new search stays submittable",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.066Z"
+    },
+    {
+      "id": "find-ea12be90",
+      "category": "performance",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/musicchat/hooks/useMusicChatTeamMembers.ts",
+      "line": null,
+      "summary": "48de4bb FE L4: member search requests per keystroke without debounce",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.153Z"
+    },
+    {
+      "id": "find-af7ad052",
+      "category": "correctness",
+      "severity": "INFO",
+      "file": "apps/web/src/modules/dashboard/hooks/useDashboardEvents.ts",
+      "line": null,
+      "summary": "48de4bb FE I-a..I-g: upcoming empty after 200 closed events, unused todayCount, TransactionFormModal useEvents 50-oldest, transfer drops in_progress, test date will expire, settings query not gated on tenant, hook-level coverage",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.235Z"
+    },
+    {
+      "id": "find-4392de83",
+      "category": "security",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/internal-chat/dto/internal-chat.dto.ts",
+      "line": null,
+      "summary": "48de4bb SEC LOW-1: include_self=false parsed as true (implicit conversion before @Transform)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.328Z"
+    },
+    {
+      "id": "find-63b63c35",
+      "category": "security",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/internal-chat/internal-chat.service.ts",
+      "line": null,
+      "summary": "48de4bb SEC LOW-2: ids lookup exposes inactive members' e-mail to viewers",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.400Z"
+    },
+    {
+      "id": "find-08aff1d1",
+      "category": "security",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+      "line": null,
+      "summary": "48de4bb SEC LOW-3: stored-id exemption pooled across fields lets unvalidated ids move between fields",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.488Z"
+    },
+    {
+      "id": "find-e44cbaab",
+      "category": "data-integrity",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/conversations/tenant-members.ts",
+      "line": null,
+      "summary": "48de4bb SEC LOW-4/DB INFO-E: empty-string assignee/recipient persisted, skips escalation fallback",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.564Z"
+    },
+    {
+      "id": "find-fc63967a",
+      "category": "security",
+      "severity": "INFO",
+      "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+      "line": null,
+      "summary": "48de4bb SEC INFO-5/6: manual notification recipient unchecked; create/update negative tests missing",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.629Z"
+    },
+    {
+      "id": "find-b37b91ac",
+      "category": "performance",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migrations/20260928000026_CanonicalizeMusicChatValuesToEnglish.ts",
+      "line": null,
+      "summary": "48de4bb DB LOW-A: correlated temp-table subquery per conversation",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.732Z"
+    },
+    {
+      "id": "find-f737f799",
+      "category": "docs",
+      "severity": "LOW",
+      "file": "docs/engineering/database.md",
+      "line": null,
+      "summary": "48de4bb DB LOW-B: collision pre-flight query ignores template ids",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.802Z"
+    },
+    {
+      "id": "find-a823c555",
+      "category": "data-integrity",
+      "severity": "INFO",
+      "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+      "line": null,
+      "summary": "48de4bb DB INFO-A: options-only save can point an option at a missing template",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.886Z"
+    },
+    {
+      "id": "find-f8a17c46",
+      "category": "data-integrity",
+      "severity": "INFO",
+      "file": "apps/api/src/database/migrations/20260928000023_CanonicalizeClientsToEnglish.ts",
+      "line": null,
+      "summary": "48de4bb DB INFO-B/C/D: down() replaces non-object metadata; alias stale duplicate; no RLS-bypass guard in data migrations",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:54:36.982Z"
     }
   ],
   "evidenceIds": [
@@ -3715,7 +3997,20 @@
     "evid-ce1a8661",
     "evid-710a3c39",
     "evid-fd71106c",
-    "evid-ca613560"
+    "evid-ca613560",
+    "evid-e1bd6dec",
+    "evid-66e50446",
+    "evid-a7fdb209",
+    "evid-97f7a0e2",
+    "evid-d98a98bd",
+    "evid-b8f3e238",
+    "evid-2d7a2d9f",
+    "evid-77dca7bb",
+    "evid-469b773d",
+    "evid-2b67aafd",
+    "evid-630c2a66",
+    "evid-50b703a4",
+    "evid-018894fa"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

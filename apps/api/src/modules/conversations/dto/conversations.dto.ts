@@ -6,6 +6,9 @@ import {
 } from 'class-validator';
 import { canonicalServiceStatus } from '../musicchat-vocabulary';
 
+/** A blank member id means "no member": stored as null, never as '' (which no lookup matches). */
+export const blankToNull = ({ value }: { value: unknown }) => (typeof value === 'string' && value.trim() === '' ? null : value);
+
 export enum ConversationStatus  { OPEN = 'open', PENDING = 'pending', CLOSED = 'closed', SPAM = 'spam' }
 export enum ConversationChannel {
   INTERNAL = 'internal',
@@ -40,7 +43,7 @@ export class CreateConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID()   contact_id?: string;
   @ApiProperty()         @IsString()  @MaxLength(500) subject:    string;
   @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationChannel) channel?: ConversationChannel;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assigned_to?: string;
+  @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) assigned_to?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
   @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
@@ -52,7 +55,7 @@ export class UpdateConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationStatus)  status?:      ConversationStatus;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500)  subject?:     string;
   @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationChannel) channel?:     ConversationChannel;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assigned_to?:   string;
+  @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) assigned_to?:   string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
   @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
@@ -115,14 +118,16 @@ export class CreateNoteDto {
 }
 
 export class AssignConversationDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assignee_id?: string | null;
+  @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) assignee_id?: string | null;
 }
 
 export class TransferConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assignee_id?: string | null;
+  @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) assignee_id?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(1000) reason?: string;
+  /** Service status set together with the transfer (e.g. in_progress when an agent takes it over). */
+  @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
   /** Optimistic concurrency (Task M) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }

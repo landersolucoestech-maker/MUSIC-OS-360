@@ -72,7 +72,7 @@ export class MusicChatAutomationController {
     @CurrentTenant() tenant: { id: string },
     @Body() dto: SendMusicChatNotificationDto,
   ) {
-    return this.service.sendNotification(tenant.id, dto);
+    return this.service.sendManualNotification(tenant.id, dto);
   }
 
   @Post('notifications/:id/retry')

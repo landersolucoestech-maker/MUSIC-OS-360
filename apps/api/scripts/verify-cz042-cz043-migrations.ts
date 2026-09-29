@@ -54,7 +54,9 @@ const CLIENT_OVERLONG_TITLE = '40000000-0000-0000-0000-0000000000f8';
 const CLIENT_CLEARED_TITLE = '40000000-0000-0000-0000-0000000000f9';
 /** interacoes stored as JSON text (INFO-2). */
 const CLIENT_JSON_TEXT = '40000000-0000-0000-0000-0000000000fa';
-const CLIENT_PROBES = [CLIENT, CLIENT_ALIAS, CLIENT_OVERLONG_TITLE, CLIENT_CLEARED_TITLE, CLIENT_JSON_TEXT];
+/** metadata that is a JSON array, not an object: down() must leave it untouched (48de4bb INFO-B). */
+const CLIENT_ARRAY_METADATA = '40000000-0000-0000-0000-0000000000fb';
+const CLIENT_PROBES = [CLIENT, CLIENT_ALIAS, CLIENT_OVERLONG_TITLE, CLIENT_CLEARED_TITLE, CLIENT_JSON_TEXT, CLIENT_ARRAY_METADATA];
 const RELEASE_CHANGED = '40000000-0000-0000-0000-0000000000f3';
 const RELEASE_PLANTED = '40000000-0000-0000-0000-0000000000f4';
 
@@ -141,6 +143,10 @@ async function main(): Promise<void> {
     );
     await db.query(`UPDATE clients SET responsavel_cargo = 'Cargo antigo na coluna' WHERE id = $1`, [CLIENT_CLEARED_TITLE]);
     await db.query(
+      `INSERT INTO clients (id, tenant_id, nome, categoria, perfil, razao_social, metadata) VALUES ($1, $2, 'Probe array metadata', 'PARTNER', 'outros', 'ACME Ltda', '["nota antiga"]')`,
+      [CLIENT_ARRAY_METADATA, tenant],
+    );
+    await db.query(
       `INSERT INTO releases (id, tenant_id, title, status, type) VALUES ($1, $3, 'Probe R1', 'Rascunho ', 'single'), ($2, $3, 'Probe R2', 'em_producao', ' LP')`,
       [RELEASE_CHANGED, RELEASE_PLANTED, tenant],
     );
@@ -203,6 +209,8 @@ async function main(): Promise<void> {
     check('down: the over-long job title (only copy) is not overwritten by the alias',
       [cod['responsavel_cargo'], (cod['metadata'] as Record<string, unknown>)['responsavel_cargo'], 'cargo_responsavel' in (cod['metadata'] as object)],
       [null, 'T'.repeat(120), false]);
+    const cam = await one(db, `SELECT razao_social, metadata FROM clients WHERE id = $1`, [CLIENT_ARRAY_METADATA]);
+    check('down: non-object metadata is left untouched (the value stays in its column)', [cam['razao_social'], cam['metadata']], ['ACME Ltda', ['nota antiga']]);
     const cd = await one(db, `SELECT metadata FROM clients WHERE id = $1`, [CLIENT]);
     check('down: client edit written back to legacy metadata key', (cd['metadata'] as Record<string, unknown>)['responsavel_email'], 'b@x.com');
     check('down: values up() could not copy survive in metadata', [typeof adm['endereco'], adm['data_nascimento']], ['string', '31/02/1990']);

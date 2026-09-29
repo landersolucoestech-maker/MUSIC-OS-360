@@ -151,6 +151,9 @@ describe("<ArtistVision360Modal /> finance tab states", () => {
   });
 
   it("an evening show (21:30 in America/Sao_Paulo = next day in UTC) stays on its own day", async () => {
+    // "Próximo Show" only lists future shows: pin the clock so the fixture stays in the future.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-09-29T12:00:00.000Z"));
     eventsState.events = [{ id: "e-1", title: "Show Noturno", type: "show", status: "confirmed", starts_at: "2030-10-11T00:30:00.000Z" }];
     renderModal();
     expect(await screen.findByText("10/10/2030")).toBeInTheDocument();
@@ -162,6 +165,27 @@ describe("<ArtistVision360Modal /> finance tab states", () => {
       fireEvent.click(tab);
     });
     expect(await screen.findByText("21:30")).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
+  it("default tab: no zero shows / 'Nenhum agendado' while the artist events load", async () => {
+    eventsState.isLoading = true;
+    renderModal();
+    expect(await screen.findByTestId("vision360-overview-confirmed-shows")).toHaveTextContent("Carregando…");
+    expect(screen.getByTestId("vision360-overview-next-show")).toHaveTextContent("Carregando…");
+    // Only the next-release widget (no events involved) may say "Nenhum agendado".
+    expect(screen.getAllByText("Nenhum agendado")).toHaveLength(1);
+    expect(screen.getByTestId("vision360-events-loading")).toBeInTheDocument();
+  });
+
+  it("default tab: after the events sweep failed, unavailable values and a retry", async () => {
+    eventsState.error = new Error("boom");
+    renderModal();
+    expect(await screen.findByTestId("vision360-overview-confirmed-shows")).toHaveTextContent("Indisponível");
+    expect(screen.getByTestId("vision360-overview-next-show")).toHaveTextContent("Indisponível");
+    expect(screen.getAllByText("Nenhum agendado")).toHaveLength(1);
+    fireEvent.click(within(screen.getByTestId("vision360-events-error")).getByRole("button", { name: "Tentar novamente" }));
+    expect(eventsState.refetch).toHaveBeenCalledTimes(1);
   });
 
   it("the next release date stored as UTC midnight renders as the stored calendar day", async () => {

@@ -200,7 +200,8 @@ export class InternalChatService {
    * Organization members — never external clients/contacts. Default: active
    * colleagues other than the caller (starting an internal conversation);
    * `include_self` adds the caller (assignee pickers); `ids` resolves known
-   * user ids to names (message authors, assignees), active or not.
+   * user ids to names (message authors, assignees), active or not — an inactive
+   * member's e-mail is never returned.
    */
   async searchMembers(tenantId: string, authUserId: string, query: QueryInternalMembersDto) {
     const qb = this.memberRepo!
@@ -220,6 +221,8 @@ export class InternalChatService {
     }
 
     const members = await qb.orderBy('m.full_name', 'ASC').take(query.ids ? query.ids.length : 50).getMany();
-    return members.map((m) => ({ auth_user_id: m.auth_user_id, full_name: m.full_name, email: m.email }));
+    // An inactive member (reachable only through `ids`, to name a past author) is
+    // shown by name only: its e-mail is not exposed to the rest of the team.
+    return members.map((m) => ({ auth_user_id: m.auth_user_id, full_name: m.full_name, email: m.is_active ? m.email : null }));
   }
 }

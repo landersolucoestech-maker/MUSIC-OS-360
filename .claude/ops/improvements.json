@@ -54,5 +54,12 @@
     "scope": "rules",
     "createdAt": "2026-09-28T16:10:31.042Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-e9c33621",
+    "text": "Vitest: beforeEach(() => mock.mockReset()) returns the mock, which vitest calls as a cleanup hook with no args (spurious extra call, TypeError in the mock implementation). Use a block body. Seen twice in this mission; a lint rule (no implicit return in beforeEach) would enforce it.",
+    "scope": "rules",
+    "createdAt": "2026-09-29T10:06:45.140Z",
+    "appliedAt": null
   }
 ]

@@ -252,6 +252,40 @@ describe("InternalChatService — participant authorization (isolation from 'Cen
     await expect(service.searchMembers(TENANT, ME, { ids: [] })).resolves.toEqual([]);
   });
 
+  it('include_self=false (or any value other than true) never includes the caller, with the app ValidationPipe options', async () => {
+    const { ValidationPipe } = await import('@nestjs/common');
+    const { QueryInternalMembersDto } = await import('./dto/internal-chat.dto');
+    const pipe = new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true, transformOptions: { enableImplicitConversion: true } });
+    const parse = (query: object) => pipe.transform(query, { type: 'query', metatype: QueryInternalMembersDto }) as Promise<{ include_self?: boolean }>;
+    expect((await parse({ include_self: 'false' })).include_self).toBe(false);
+    expect((await parse({ include_self: '0' })).include_self).toBe(false);
+    expect((await parse({ include_self: 'true' })).include_self).toBe(true);
+    expect((await parse({})).include_self).toBeUndefined();
+  });
+
+  it('an inactive member resolved by id is returned by name only, never with its e-mail', async () => {
+    const { service, memberRepo } = buildService({
+      members: [
+        { tenant_id: TENANT, auth_user_id: OTHER, is_active: false, full_name: 'Ex-colega', email: 'ex@example.com' },
+        { tenant_id: TENANT, auth_user_id: 'active-1', is_active: true, full_name: 'Ativa', email: 'ativa@example.com' },
+      ],
+    });
+    memberRepo.createQueryBuilder.mockImplementationOnce(() => {
+      const qb: any = {
+        where: jest.fn(() => qb), andWhere: jest.fn(() => qb), orderBy: jest.fn(() => qb), take: jest.fn(() => qb),
+        getMany: jest.fn().mockResolvedValue([
+          { auth_user_id: OTHER, is_active: false, full_name: 'Ex-colega', email: 'ex@example.com' },
+          { auth_user_id: 'active-1', is_active: true, full_name: 'Ativa', email: 'ativa@example.com' },
+        ]),
+      };
+      return qb;
+    });
+    await expect(service.searchMembers(TENANT, ME, { ids: [OTHER, 'active-1'] })).resolves.toEqual([
+      { auth_user_id: OTHER, full_name: 'Ex-colega', email: null },
+      { auth_user_id: 'active-1', full_name: 'Ativa', email: 'ativa@example.com' },
+    ]);
+  });
+
   it('QueryInternalMembersDto parses include_self and a comma-separated ids list, capped at 100', async () => {
     const { validate } = await import('class-validator');
     const { plainToInstance } = await import('class-transformer');

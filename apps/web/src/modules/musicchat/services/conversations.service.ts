@@ -319,10 +319,11 @@ export const musicChatConversationsService = {
   /** PATCH /conversations/:id/transfer — reassigns and records the transfer (metadata.transfers, audit, realtime). */
   async transfer(
     conversationId: string,
-    input: { assigneeId: string; reason?: string; expectedUpdatedAt?: string },
+    input: { assigneeId: string; serviceStatus?: SupportStatus; reason?: string; expectedUpdatedAt?: string },
   ): Promise<SupportConversation> {
     const raw = await api.patch<RawConversation>(`/conversations/${conversationId}/transfer`, {
       assignee_id: input.assigneeId,
+      service_status: input.serviceStatus,
       reason: input.reason,
       expectedUpdatedAt: input.expectedUpdatedAt,
     });
