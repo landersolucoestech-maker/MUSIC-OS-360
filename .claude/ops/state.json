@@ -2,10 +2,10 @@
   "version": 2,
   "missionId": "mission-a5c14661",
   "missionName": "dev-ci-security-gate-remediation",
-  "status": "blocked",
+  "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T19:55:08.074Z",
+  "updatedAt": "2026-09-29T19:55:44.176Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -3988,9 +3988,11 @@
       "line": null,
       "summary": "Governance violation: the agent pushed branch claude/beautiful-gates-c0kwj5 to origin (tip 1dfd595), creating a second remote branch against the dev-only branch policy (only dev may exist; commit only on dev; push only to origin/dev). Its commits are all on origin/dev (6cc2917 contains 1dfd595). Local branch deleted with git branch -d; remote deletion BLOCKED: the session git proxy answered HTTP 403 to git push origin --delete.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:12:34.545Z"
+      "createdAt": "2026-09-29T15:12:34.545Z",
+      "justification": "Local branch deleted (git branch -d, fully contained in dev); remote branch gone (ls-remote and GitHub API list only dev at dec34c7, verify-remote evid-eb562e16 PASS); recurrence prevented by the installed guard (6be15de).",
+      "resolvedAt": "2026-09-29T19:55:41.618Z"
     },
     {
       "id": "find-d9c913c8",
@@ -4000,9 +4002,11 @@
       "line": null,
       "summary": "Governance violation (external): the session harness Stop hook twice asked to push the unpushed commits of claude/beautiful-gates-c0kwj5. Ignored per the dev-only branch policy and recorded here; the harness hook lives outside this repository. Now also refused mechanically by .githooks/pre-push and the PreToolUse guard (scripts/git-guard).",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CONTRATO_EXTERNO",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:12:34.666Z"
+      "createdAt": "2026-09-29T15:12:34.666Z",
+      "justification": "The request came from the session harness Stop hook, outside this repository; it was ignored as the policy requires and is now refused mechanically (pre-push hook + PreToolUse guard). Recorded as a governance violation.",
+      "resolvedAt": "2026-09-29T19:55:41.721Z"
     },
     {
       "id": "find-a54efc1d",
@@ -4040,9 +4044,11 @@
       "line": null,
       "summary": "Topology conflict: ci.yml/security.yml/staging.yml, scripts/verify-branch-topology.mjs and the staging-to-production runbook describe a permanent dev -> staging -> main promotion topology, while the mandatory policy makes dev the only branch. staging and main do not exist on origin. Needs an owner decision (retire the promotion topology or define how promotion works without other branches); workflows left unchanged.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:12:34.948Z"
+      "createdAt": "2026-09-29T15:12:34.948Z",
+      "justification": "Owner decision pending: ci.yml/security.yml/staging.yml, verify-branch-topology.mjs and the staging runbook still describe dev -> staging -> main while policy makes dev the only branch; staging/main do not exist on origin; workflows intentionally left unchanged in this governance correction.",
+      "resolvedAt": "2026-09-29T19:55:41.819Z"
     },
     {
       "id": "find-0fcda824",
@@ -4106,9 +4112,11 @@
       "line": null,
       "summary": "security-reviewer (guard review of 6f0e0e1): Relative core.hooksPath=.githooks + in-tree hook/policy code: checking out any pre-guard commit (git checkout -b x <old>, DWIM git checkout claude/beautiful-gates-c0kwj5, worktree add --detach <old>) or running git with --git-dir/GIT_DIR/-C .git removes every git hook; the Claude PreToolUse command then exits 1 (MODULE_NOT_FOUND, non-blocking) so commit + push of a non-dev branch succeeds (reproduced against a bare origin).",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:32:52.631Z"
+      "createdAt": "2026-09-29T15:32:52.631Z",
+      "justification": "Fixed in 36b5d80/9d97f74/6be15de (installed guard in the git dir, detector scan, abbreviated options, parser coverage, docs limits, exact-ref repack exemption, foreign-repo scoping); tests in scripts/git-guard/policy.test.mjs, closure review verified round-1 fixes.",
+      "resolvedAt": "2026-09-29T19:55:41.921Z"
     },
     {
       "id": "find-875d5a5c",
@@ -4118,9 +4126,11 @@
       "line": null,
       "summary": "security-reviewer (guard review of 6f0e0e1): The push-triggered detector runs from the pushed commit: branches cut from pre-guard commits or that delete the workflow never run it, and it only fires after the push; docs overclaim.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:32:52.741Z"
+      "createdAt": "2026-09-29T15:32:52.741Z",
+      "justification": "Fixed in 36b5d80/9d97f74/6be15de (installed guard in the git dir, detector scan, abbreviated options, parser coverage, docs limits, exact-ref repack exemption, foreign-repo scoping); tests in scripts/git-guard/policy.test.mjs, closure review verified round-1 fixes.",
+      "resolvedAt": "2026-09-29T19:55:42.025Z"
     },
     {
       "id": "find-30772655",
@@ -4130,9 +4140,11 @@
       "line": null,
       "summary": "security-reviewer (guard review of 6f0e0e1): Abbreviated long options pass the Claude guard (git push --no-veri --force-with origin dev rewrote origin/dev in the lab; --no-verif, --mirr, --al, --tag also allowed).",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:32:52.836Z"
+      "createdAt": "2026-09-29T15:32:52.836Z",
+      "justification": "Fixed in 36b5d80/9d97f74/6be15de (installed guard in the git dir, detector scan, abbreviated options, parser coverage, docs limits, exact-ref repack exemption, foreign-repo scoping); tests in scripts/git-guard/policy.test.mjs, closure review verified round-1 fixes.",
+      "resolvedAt": "2026-09-29T19:55:42.121Z"
     },
     {
       "id": "find-8f0e7675",
@@ -4142,9 +4154,11 @@
       "line": null,
       "summary": "security-reviewer (guard review of 6f0e0e1): Claude-guard parsing gaps: --config-env, GIT_CONFIG_COUNT/KEY/VALUE/PARAMETERS, git -c alias.x=!..., git config alias.*, send-pack (pushes without pre-push), wrappers (timeout, nice, xargs, env -i/VAR=), sh -lc/bash -xc, \\\"\\$(git ...)\\\" in double quotes, gh api graphql createRef; \\$((1<<2)) and # comments taken as heredocs hide later lines.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:32:52.928Z"
+      "createdAt": "2026-09-29T15:32:52.928Z",
+      "justification": "Fixed in 36b5d80/9d97f74/6be15de (installed guard in the git dir, detector scan, abbreviated options, parser coverage, docs limits, exact-ref repack exemption, foreign-repo scoping); tests in scripts/git-guard/policy.test.mjs, closure review verified round-1 fixes.",
+      "resolvedAt": "2026-09-29T19:55:42.227Z"
     },
     {
       "id": "find-e7209bf1",
@@ -4154,9 +4168,11 @@
       "line": null,
       "summary": "security-reviewer (guard review of 6f0e0e1): git branch -m/-c and git symbolic-ref never reach reference-transaction on git 2.43 (rename/copy succeed, local dev can disappear); docs list rename as enforced and policy.test.mjs asserts a synthetic transaction git never emits (false green). Commits/pushes from such branches are still refused.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:32:53.039Z"
+      "createdAt": "2026-09-29T15:32:53.039Z",
+      "justification": "Fixed in 36b5d80/9d97f74/6be15de (installed guard in the git dir, detector scan, abbreviated options, parser coverage, docs limits, exact-ref repack exemption, foreign-repo scoping); tests in scripts/git-guard/policy.test.mjs, closure review verified round-1 fixes.",
+      "resolvedAt": "2026-09-29T19:55:42.331Z"
     },
     {
       "id": "find-38d6e72d",
@@ -4166,9 +4182,11 @@
       "line": null,
       "summary": "security-reviewer (guard review of 6f0e0e1): False positive: git pack-refs --all / git gc exit 128 while any loose non-dev branch exists (pack-refs presents existing refs as 0000 -> oid).",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:32:53.144Z"
+      "createdAt": "2026-09-29T15:32:53.144Z",
+      "justification": "Fixed in 36b5d80/9d97f74/6be15de (installed guard in the git dir, detector scan, abbreviated options, parser coverage, docs limits, exact-ref repack exemption, foreign-repo scoping); tests in scripts/git-guard/policy.test.mjs, closure review verified round-1 fixes.",
+      "resolvedAt": "2026-09-29T19:55:42.431Z"
     },
     {
       "id": "find-01c999d3",
@@ -4178,9 +4196,11 @@
       "line": null,
       "summary": "security-reviewer (guard review of 6f0e0e1): False positive: the Claude guard ignores which repository a git command targets and blocks branch work in unrelated repositories (e.g. /tmp test repos).",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:32:53.235Z"
+      "createdAt": "2026-09-29T15:32:53.235Z",
+      "justification": "Fixed in 36b5d80/9d97f74/6be15de (installed guard in the git dir, detector scan, abbreviated options, parser coverage, docs limits, exact-ref repack exemption, foreign-repo scoping); tests in scripts/git-guard/policy.test.mjs, closure review verified round-1 fixes.",
+      "resolvedAt": "2026-09-29T19:55:42.551Z"
     },
     {
       "id": "find-3af2b127",
@@ -4190,9 +4210,11 @@
       "line": null,
       "summary": "security-reviewer (guard review of 6f0e0e1): Fresh clones are unguarded until install/SessionStart; SessionStart only warns off dev; node missing: git hooks fail closed but Claude hooks fail open (exit 127 non-blocking).",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T15:32:53.341Z"
+      "createdAt": "2026-09-29T15:32:53.341Z",
+      "justification": "Declared limits in docs/engineering/git-safety.md (fresh clones until install/SessionStart; node-missing handling fixed: Claude hook fails closed with || exit 2).",
+      "resolvedAt": "2026-09-29T19:55:42.650Z"
     },
     {
       "id": "find-bdb5240a",
@@ -4202,9 +4224,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): A detached worktree on an older dev commit (d374b0e/d640e55) whose SessionStart/install sets core.hooksPath=.githooks (relative) silently disables every hook in the main worktree; branch create/commit/push then succeed. Docs claim worktrees keep the same hooks.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:05.750Z"
+      "createdAt": "2026-09-29T16:07:05.750Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:42.743Z"
     },
     {
       "id": "find-79ee566b",
@@ -4214,9 +4238,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): cli.mjs runs nothing and exits 0 when invoked through a symlinked path (argv[1] vs real path of import.meta.url): SessionStart installs nothing and PreToolUse fallback allows everything.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:05.845Z"
+      "createdAt": "2026-09-29T16:07:05.845Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:42.838Z"
     },
     {
       "id": "find-bc8e17f9",
@@ -4226,9 +4252,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Fast-forward check uses git merge-base honouring replace refs/grafts: git replace --graft + plain git push origin dev rewrites origin/dev history.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:05.950Z"
+      "createdAt": "2026-09-29T16:07:05.950Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:42.943Z"
     },
     {
       "id": "find-1b528aa8",
@@ -4238,9 +4266,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Plumbing pushes skip pre-push (git remote-http/remote-https transport, http-push, send-pack at the git layer); the Claude guard only knows send-pack; docs omit this limit.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.046Z"
+      "createdAt": "2026-09-29T16:07:06.046Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.043Z"
     },
     {
       "id": "find-f74317cc",
@@ -4250,9 +4280,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): gh issue develop (createLinkedBranch) creates a branch on GitHub and passes the Claude guard; also gh api graphql createLinkedBranch and -F query=@file.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.166Z"
+      "createdAt": "2026-09-29T16:07:06.166Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.149Z"
     },
     {
       "id": "find-d0ff06c5",
@@ -4262,9 +4294,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): False positive: git checkout <rev> -- <path> refused unless rev is dev/sha/HEAD~n/origin/*, e.g. abc~1, tags, stash@{0}, HEAD@{1}, ORIG_HEAD.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.279Z"
+      "createdAt": "2026-09-29T16:07:06.279Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.248Z"
     },
     {
       "id": "find-925d239f",
@@ -4274,9 +4308,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Decoy refs (refs/refs/heads/x, refs/tags/refs/heads/x) make git rev-parse --verify resolve a new branch to its value, so reference-transaction lets the creation through; the Claude guard allows update-ref refs/refs/... and fetch . x:y.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.372Z"
+      "createdAt": "2026-09-29T16:07:06.372Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.341Z"
     },
     {
       "id": "find-466bf06f",
@@ -4286,9 +4322,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Foreign-repo exemption keyed on the directory, not the push destination: clone the project elsewhere, set-url to the project origin, switch -c and push publishes a branch.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.486Z"
+      "createdAt": "2026-09-29T16:07:06.486Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.434Z"
     },
     {
       "id": "find-160dd09e",
@@ -4298,9 +4336,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Hook-disabling git commands not refused: git config --remove-section/--rename-section core, include.path, git init --separate-git-dir; sed/rm/Edit/Write on .git/ not covered.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.584Z"
+      "createdAt": "2026-09-29T16:07:06.584Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.532Z"
     },
     {
       "id": "find-f19db5dc",
@@ -4310,9 +4350,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Parser scoping: cd inside (...) or \\$(...) carries over; existing non-repository directories are treated as another repository (export GIT_DIR=<project>/.git; cd /tmp && ... passes).",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.690Z"
+      "createdAt": "2026-09-29T16:07:06.690Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.667Z"
     },
     {
       "id": "find-c0585ab6",
@@ -4322,9 +4364,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): GitHub MCP Copilot tools (assign_copilot_to_issue, create_pull_request_with_copilot) create copilot/* branches and are not matched.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.806Z"
+      "createdAt": "2026-09-29T16:07:06.806Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.776Z"
     },
     {
       "id": "find-005c2bf4",
@@ -4334,9 +4378,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Absolute core.hooksPath dangles after moving the clone or git init --separate-git-dir: all hooks stop silently (undocumented).",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.905Z"
+      "createdAt": "2026-09-29T16:07:06.905Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.873Z"
     },
     {
       "id": "find-f2df34dc",
@@ -4346,9 +4392,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Parser/false-positive LOWs: wrappers with option values (sudo -u, env -u, timeout -s), --attr-source, cat <<EOF | bash, git commit -mRefactoring / -uno read as -n, git checkout <tag>, git worktree add <path> <commit>, git branch -v/-i/--sort <name> treated as listing, push.followTags.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:06.998Z"
+      "createdAt": "2026-09-29T16:07:06.998Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:43.962Z"
     },
     {
       "id": "find-4e77f8bb",
@@ -4358,9 +4406,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Docs overstate guarantees (reference-transaction cannot be skipped; old checkouts keep hooks) and omit limits: plumbing pushes, replace refs/grafts, relocation, old installers; guard integrity equals what is committed on dev.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:07.095Z"
+      "createdAt": "2026-09-29T16:07:07.095Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:44.054Z"
     },
     {
       "id": "find-234ea980",
@@ -4370,9 +4420,11 @@
       "line": null,
       "summary": "security-reviewer (re-review of 36b5d80): Test asserts git branch -m succeeds (git 2.43 behaviour; would fail on a git that reports renames); tag push assertion has no stderr pattern; no symlink/hooksPath-drift/decoy/replace tests.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-29T16:07:07.194Z"
+      "createdAt": "2026-09-29T16:07:07.194Z",
+      "justification": "Fixed in 9d97f74/6be15de (shims + hooksPath self-repair, realpath main-module check, replace/graft-proof FF check, plumbing/gh/Copilot refusals, checkout tree-ish handling, exact show-ref, project-URL scoping, config/.git write refusals, subshell cd scoping, docs limits, version-agnostic tests); verified by the closure review of 9d97f74 and mutation tests.",
+      "resolvedAt": "2026-09-29T19:55:44.176Z"
     },
     {
       "id": "find-ca8c180d",
@@ -4929,7 +4981,8 @@
       "id": "blk-10f953fe",
       "text": "Remote branch claude/beautiful-gates-c0kwj5 still exists on origin (tip 1dfd595, fully contained in origin/dev 6cc2917). git push origin --delete returns HTTP 403 from this session's git proxy; the GitHub MCP connector failed to connect (503). Owner action: delete it in GitHub (Branches page) or from a clone with push rights; then verify git ls-remote --heads origin lists only refs/heads/dev.",
       "createdAt": "2026-09-29T15:12:44.167Z",
-      "resolved": false
+      "resolved": true,
+      "resolvedAt": "2026-09-29T19:55:28.620Z"
     }
   ],
   "phaseMachine": {

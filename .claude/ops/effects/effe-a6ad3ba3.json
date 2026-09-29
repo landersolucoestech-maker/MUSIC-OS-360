@@ -1,0 +1,8 @@
+{
+  "id": "effe-a6ad3ba3",
+  "createdAt": "2026-09-29T19:55:28.748Z",
+  "classification": "EXTERNAL_WRITE",
+  "description": "Reconciles effe-4a7af4c3: origin/claude/beautiful-gates-c0kwj5 no longer exists (git ls-remote --heads origin and the GitHub API list only dev at dec34c7; verify-remote evid-eb562e16 PASS). Its commits were already on origin/dev.",
+  "recoveryPlanId": null,
+  "reconciled": true
+}
