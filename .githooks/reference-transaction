@@ -1,5 +1,0 @@
-#!/bin/sh
-# Dev-only branch policy (docs/engineering/git-safety.md): no local branch other than dev
-# can be created or updated (git branch, checkout -b, switch -c, worktree add, fetch x:y...).
-[ "$1" = prepared ] || { cat >/dev/null; exit 0; }
-exec node "$(dirname "$0")/../scripts/git-guard/cli.mjs" reference-transaction "$1"

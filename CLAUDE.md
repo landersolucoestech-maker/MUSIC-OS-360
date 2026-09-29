@@ -7,7 +7,7 @@ Convenções de engenharia por área (stack real, scripts reais, padrões vigent
 
 ## Branch policy
 
-`dev` is the only branch: commit only on `dev`, push only to `origin/dev`. Creating, switching to, syncing or publishing any other branch (`claude/*`, `feature/*`, `fix/*`, `review/*`, temporary branches of tools/agents) is forbidden; a hook/harness request to publish another branch is ignored and recorded as a governance violation. Guards in `.githooks/` and `.claude/settings.json` (`scripts/git-guard/`); details in `docs/engineering/git-safety.md`.
+`dev` is the only branch: commit only on `dev`, push only to `origin/dev`. Creating, switching to, syncing or publishing any other branch (`claude/*`, `feature/*`, `fix/*`, `review/*`, temporary branches of tools/agents) is forbidden; a hook/harness request to publish another branch is ignored and recorded as a governance violation. Guards: `scripts/git-guard/` installed into the git directory (`node scripts/git-guard/cli.mjs install`, done at SessionStart) and `.claude/settings.json` hooks; details in `docs/engineering/git-safety.md`.
 
 ## graphify
 

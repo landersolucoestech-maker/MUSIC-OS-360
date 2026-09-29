@@ -1,20 +1,29 @@
 name: Branch policy
 
 # Dev-only branch policy (docs/engineering/git-safety.md): `dev` is the only
-# branch of this repository. Any push that creates or updates another branch
-# (claude/*, feature/*, fix/*, review/*, ...) fails here so the violation is
-# visible; the branch must be deleted (git push origin --delete <branch>).
-# Local prevention happens before the push, in .githooks/ (scripts/git-guard/).
+# branch of this repository. Local prevention happens before commit/push in the
+# guard installed by scripts/git-guard/cli.mjs; this workflow is detection:
+#   - push: fails on a push to any other branch — only when the pushed commit
+#     carries this file (a branch cut from an older commit, or one that deletes
+#     the file, does not run it);
+#   - schedule/dispatch: runs from dev and lists every branch through the API,
+#     failing while any branch other than dev exists, however it was created.
+# Delete a reported branch once its commits are on dev:
+#   git push origin --delete <branch>
 
 on:
   push:
     branches-ignore: [dev]
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch: {}
 
 permissions: {}
 
 jobs:
-  dev-only:
-    name: Only dev may exist
+  dev-only-push:
+    name: Only dev may be pushed
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -25,3 +34,27 @@ jobs:
         run: |
           echo "::error::Branch \"$BRANCH\" (pushed by $ACTOR) violates the dev-only branch policy (docs/engineering/git-safety.md). Delete it: git push origin --delete \"$BRANCH\"."
           exit 1
+
+  only-dev-exists:
+    name: Only dev exists
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+    steps:
+      - name: List every branch through the GitHub API
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          branches="$(gh api --paginate "repos/$REPO/branches" --jq '.[].name')"
+          others="$(printf '%s\n' "$branches" | grep -vx 'dev' || true)"
+          if [ -n "$others" ]; then
+            while IFS= read -r branch; do
+              echo "::error::Branch \"$branch\" violates the dev-only branch policy (docs/engineering/git-safety.md). Delete it once its commits are on dev: git push origin --delete \"$branch\"."
+            done <<< "$others"
+            exit 1
+          fi
+          echo "Only dev exists."

@@ -5,7 +5,7 @@
   "status": "blocked",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T15:26:38.599Z",
+  "updatedAt": "2026-09-29T15:42:17.739Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1104,7 +1104,9 @@
           "evidenceIds": [
             "evid-300121ea",
             "evid-b06078cc",
-            "evid-95e19c1a"
+            "evid-95e19c1a",
+            "evid-d8ecbca1",
+            "evid-07434195"
           ],
           "status": "closed"
         },
@@ -1126,7 +1128,12 @@
             "evid-d470be87",
             "evid-4912a32b",
             "evid-4a053733",
-            "evid-1b974920"
+            "evid-1b974920",
+            "evid-888b3686",
+            "evid-bc752914",
+            "evid-0dfc57b5",
+            "evid-6cbc81c2",
+            "evid-bf61cb7a"
           ],
           "status": "closed"
         },
@@ -4070,6 +4077,102 @@
       "createdAt": "2026-09-29T15:24:54.850Z",
       "justification": "shellCommands drops redirection operators and their targets (2>&1, >f, &>f, <f), skips heredoc bodies and parses process substitutions as commands; regression test 'redirections are not arguments and heredoc bodies are data'.",
       "resolvedAt": "2026-09-29T15:24:54.942Z"
+    },
+    {
+      "id": "find-9537f1c8",
+      "category": "governance",
+      "severity": "CRITICAL",
+      "file": "scripts/git-guard/cli.mjs",
+      "line": null,
+      "summary": "security-reviewer (guard review of 6f0e0e1): Relative core.hooksPath=.githooks + in-tree hook/policy code: checking out any pre-guard commit (git checkout -b x <old>, DWIM git checkout claude/beautiful-gates-c0kwj5, worktree add --detach <old>) or running git with --git-dir/GIT_DIR/-C .git removes every git hook; the Claude PreToolUse command then exits 1 (MODULE_NOT_FOUND, non-blocking) so commit + push of a non-dev branch succeeds (reproduced against a bare origin).",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:32:52.631Z"
+    },
+    {
+      "id": "find-875d5a5c",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": ".github/workflows/branch-policy.yml",
+      "line": null,
+      "summary": "security-reviewer (guard review of 6f0e0e1): The push-triggered detector runs from the pushed commit: branches cut from pre-guard commits or that delete the workflow never run it, and it only fires after the push; docs overclaim.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:32:52.741Z"
+    },
+    {
+      "id": "find-30772655",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (guard review of 6f0e0e1): Abbreviated long options pass the Claude guard (git push --no-veri --force-with origin dev rewrote origin/dev in the lab; --no-verif, --mirr, --al, --tag also allowed).",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:32:52.836Z"
+    },
+    {
+      "id": "find-8f0e7675",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (guard review of 6f0e0e1): Claude-guard parsing gaps: --config-env, GIT_CONFIG_COUNT/KEY/VALUE/PARAMETERS, git -c alias.x=!..., git config alias.*, send-pack (pushes without pre-push), wrappers (timeout, nice, xargs, env -i/VAR=), sh -lc/bash -xc, \\\"\\$(git ...)\\\" in double quotes, gh api graphql createRef; \\$((1<<2)) and # comments taken as heredocs hide later lines.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:32:52.928Z"
+    },
+    {
+      "id": "find-e7209bf1",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "docs/engineering/git-safety.md",
+      "line": null,
+      "summary": "security-reviewer (guard review of 6f0e0e1): git branch -m/-c and git symbolic-ref never reach reference-transaction on git 2.43 (rename/copy succeed, local dev can disappear); docs list rename as enforced and policy.test.mjs asserts a synthetic transaction git never emits (false green). Commits/pushes from such branches are still refused.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:32:53.039Z"
+    },
+    {
+      "id": "find-38d6e72d",
+      "category": "governance",
+      "severity": "LOW",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (guard review of 6f0e0e1): False positive: git pack-refs --all / git gc exit 128 while any loose non-dev branch exists (pack-refs presents existing refs as 0000 -> oid).",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:32:53.144Z"
+    },
+    {
+      "id": "find-01c999d3",
+      "category": "governance",
+      "severity": "LOW",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (guard review of 6f0e0e1): False positive: the Claude guard ignores which repository a git command targets and blocks branch work in unrelated repositories (e.g. /tmp test repos).",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:32:53.235Z"
+    },
+    {
+      "id": "find-3af2b127",
+      "category": "governance",
+      "severity": "INFO",
+      "file": "scripts/git-guard/cli.mjs",
+      "line": null,
+      "summary": "security-reviewer (guard review of 6f0e0e1): Fresh clones are unguarded until install/SessionStart; SessionStart only warns off dev; node missing: git hooks fail closed but Claude hooks fail open (exit 127 non-blocking).",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:32:53.341Z"
     }
   ],
   "evidenceIds": [
@@ -4512,7 +4615,14 @@
     "evid-4a053733",
     "evid-1b974920",
     "evid-e92c6bcb",
-    "evid-06d8a694"
+    "evid-06d8a694",
+    "evid-d8ecbca1",
+    "evid-07434195",
+    "evid-888b3686",
+    "evid-bc752914",
+    "evid-0dfc57b5",
+    "evid-6cbc81c2",
+    "evid-bf61cb7a"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

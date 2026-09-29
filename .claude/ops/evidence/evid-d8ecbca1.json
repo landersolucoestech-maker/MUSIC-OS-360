@@ -1,0 +1,12 @@
+{
+  "id": "evid-d8ecbca1",
+  "createdAt": "2026-09-29T15:32:53.494Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Adversarial review of 6f0e0e1 (dev-only guard): CRITICAL fail-open when the checked-out tree predates the guard or git runs with --git-dir/-C .git (relative hooksPath, in-tree code, Claude hook exit 1 non-blocking); MEDIUM detector evasion, abbreviated options, parser gaps, rename/symbolic-ref invisible to reference-transaction with overclaiming docs/test; LOW pack-refs/gc and foreign-repo false positives. Normal dev flows verified working.",
+  "workspaceFingerprint": "d367257851c27fae134cd62483384c161c900378843fdeac816546e8231f9710",
+  "fingerprintStatus": "BOUND",
+  "head": "6f0e0e1b5fde386197535a39ba6ae160e0c0078c"
+}
