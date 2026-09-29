@@ -5,7 +5,7 @@
   "status": "blocked",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T15:25:52.071Z",
+  "updatedAt": "2026-09-29T15:26:38.599Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1093,7 +1093,8 @@
             "evid-107da9c3",
             "evid-cbedb541",
             "evid-e88dccdd",
-            "evid-b6a6741b"
+            "evid-b6a6741b",
+            "evid-e92c6bcb"
           ],
           "status": "closed"
         },
@@ -1134,7 +1135,8 @@
           "text": "origin has no branch other than dev (git ls-remote --heads origin lists only refs/heads/dev).",
           "evidenceIds": [
             "evid-4bbb767b",
-            "evid-96983966"
+            "evid-96983966",
+            "evid-06d8a694"
           ],
           "status": "open"
         }
@@ -4508,7 +4510,9 @@
     "evid-d470be87",
     "evid-4912a32b",
     "evid-4a053733",
-    "evid-1b974920"
+    "evid-1b974920",
+    "evid-e92c6bcb",
+    "evid-06d8a694"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
