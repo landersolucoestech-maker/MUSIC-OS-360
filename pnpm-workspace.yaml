@@ -10,7 +10,12 @@ packages:
 # exhaustion, GHSA id 1130713, fixed >=4.2.7) — added that entry and
 # relocated the rest verbatim so they actually take effect again.
 overrides:
-  "js-yaml@>=4.0.0 <4.3.0": ">=4.3.0"
+  # advisories 1123911/1138115/1193727 (js-yaml 4.x merge-key/!!omap quadratic
+  # CPU, fixed >=4.3.2) -- bounded to the 4.x line its consumers declare
+  # (@nestjs/swagger pins 4.1.0, @eslint/eslintrc ^4.1.1): the prior open
+  # ">=4.3.0" resolved to js-yaml 5.2.2, a major no consumer asked for, which
+  # carries advisory 1239991 (5.x, fixed >=5.4.1).
+  "js-yaml@>=4.0.0 <4.3.2": ">=4.3.2 <5.0.0"
   # advisory 1193790/1193791/1193792/1193793 (multer DoS/file-descriptor-leak/
   # size-limit-bypass, fixed >=2.3.0) -- widened from the prior <2.2.0/>=2.2.0
   # pin, which had stopped catching the currently-resolved 2.2.0 itself.
