@@ -64,6 +64,19 @@ test('shell parsing: quotes, chains, subshells and nested shells', () => {
   assert.deepEqual(checkShellCommand(`echo "git checkout -b feature/x"`), []);
 });
 
+test('shell parsing: redirections are not arguments and heredoc bodies are data', () => {
+  assert.deepEqual(shellCommands('git push origin HEAD:dev 2>&1 | tail -3'), [['git', 'push', 'origin', 'HEAD:dev'], ['tail', '-3']]);
+  assert.deepEqual(shellCommands('git push origin dev >/dev/null 2>>err.log </dev/null &>all.log'), [['git', 'push', 'origin', 'dev']]);
+  assert.deepEqual(shellCommands('echo a2>f'), [['echo', 'a2']]);
+  for (const command of [
+    'git push origin HEAD:dev 2>&1 | tail -3', 'git push origin dev > out.txt 2>&1', 'git push -u origin dev &>/dev/null',
+    "cat > msg.txt <<'EOF'\ngit push origin claude/x\ngit checkout -b feature/x\nEOF\ngit commit -F msg.txt",
+    'python3 - <<-EOF\n\tgit switch -c x\n\tEOF',
+  ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
+  assert.equal(checkShellCommand("cat <<'EOF'\nharmless\nEOF\ngit push origin HEAD:feature/x 2>&1").length, 1);
+  assert.equal(checkShellCommand('diff <(git checkout -b x) y').length, 1);
+});
+
 test('Claude guard refuses branch creation, switching, renames and hook bypasses', () => {
   const refused = [
     'git checkout -b claude/x', 'git checkout -B x origin/dev', 'git checkout --orphan x', 'git checkout -t origin/main',

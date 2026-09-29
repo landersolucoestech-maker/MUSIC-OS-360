@@ -86,20 +86,31 @@ export function checkPush({ remote, updates, currentBranchRef, isAncestor }) {
 
 // ─── Claude Code PreToolUse guard ───────────────────────────────────────────
 
-/** Splits a shell command line into simple commands and words (quotes honoured, no expansion). */
+/**
+ * Splits a shell command line into simple commands and words (quotes honoured,
+ * no expansion). Redirections (`2>&1`, `>/dev/null`, `&>f`, `<in`) are not
+ * words, and heredoc bodies (`<<EOF ... EOF`) are data, not commands.
+ */
 export function shellCommands(command) {
   const commands = [];
   let words = [];
   let word = '';
   let hasWord = false;
   let quote = null;
+  let redirectTarget = null; // null, or the redirection operator whose target word comes next
+  const heredocs = []; // delimiters whose bodies start after the next unquoted newline
   const endWord = () => {
-    if (hasWord) words.push(word);
+    if (hasWord) {
+      if (redirectTarget === '<<' || redirectTarget === '<<-') heredocs.push({ delimiter: word, stripTabs: redirectTarget === '<<-' });
+      if (redirectTarget) redirectTarget = null;
+      else words.push(word);
+    }
     word = '';
     hasWord = false;
   };
   const endCommand = () => {
     endWord();
+    redirectTarget = null;
     if (words.length) commands.push(words);
     words = [];
   };
@@ -118,7 +129,35 @@ export function shellCommands(command) {
       if (command[i + 1] !== '\n') word += command[i + 1];
       hasWord = hasWord || command[i + 1] !== '\n';
       i += 1;
-    } else if (ch === ';' || ch === '|' || ch === '&' || ch === '\n' || ch === '(' || ch === ')' || ch === '`') {
+    } else if ((ch === '<' || ch === '>') && command[i + 1] === '(') {
+      endCommand(); // process substitution: its content is a command
+      i += 1;
+    } else if (ch === '<' || ch === '>' || (ch === '&' && command[i + 1] === '>')) {
+      if (hasWord && /^\d+$/.test(word)) {
+        word = ''; // file descriptor number of `2>`
+        hasWord = false;
+      } else {
+        endWord();
+      }
+      let operator = ch;
+      while ('<>|'.includes(command[i + 1] ?? '\0') && operator.length < 3) operator += command[++i];
+      if (command[i + 1] === '&' || (operator === '<<' && command[i + 1] === '-')) operator += command[++i];
+      redirectTarget = operator;
+    } else if (ch === '\n') {
+      endCommand(); // also registers a heredoc whose delimiter ends this line
+      if (!heredocs.length) continue;
+      let position = i + 1;
+      for (const { delimiter, stripTabs } of heredocs) {
+        while (position < command.length) {
+          const end = command.indexOf('\n', position) === -1 ? command.length : command.indexOf('\n', position);
+          const line = stripTabs ? command.slice(position, end).replace(/^\t+/, '') : command.slice(position, end);
+          position = end + 1;
+          if (line === delimiter) break;
+        }
+      }
+      heredocs.length = 0;
+      i = position - 1;
+    } else if (ch === ';' || ch === '|' || ch === '&' || ch === '(' || ch === ')' || ch === '`') {
       endCommand();
     } else if (ch === '$' && command[i + 1] === '(') {
       endCommand();

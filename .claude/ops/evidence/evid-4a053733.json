@@ -1,0 +1,15 @@
+{
+  "id": "evid-4a053733",
+  "createdAt": "2026-09-29T15:25:09.095Z",
+  "type": "COMMAND",
+  "label": "node .claude/runtime/validate-pack.mjs",
+  "command": "node .claude/runtime/validate-pack.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "{\n  \"status\": \"PASS\",\n  \"reasons\": [],\n  \"missingPaths\": [],\n  \"countProblems\": [],\n  \"invalidAgents\": [],\n  \"invalidSkills\": [],\n  \"policyErrors\": []\n}",
+  "stderrTail": "",
+  "workspaceFingerprint": "b0e2ee2e4f35fb5d4c93c04926f078b8d56cc7b6eba2fec5afb7124141718853",
+  "fingerprintStatus": "BOUND",
+  "head": "d374b0e224182eeb5f7135a6de677398ed427049",
+  "durationMs": 94
+}

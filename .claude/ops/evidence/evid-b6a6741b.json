@@ -1,0 +1,15 @@
+{
+  "id": "evid-b6a6741b",
+  "createdAt": "2026-09-29T15:25:03.175Z",
+  "type": "COMMAND",
+  "label": "node scripts/git-guard/cli.mjs verify",
+  "command": "node scripts/git-guard/cli.mjs verify",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "[git-guard] dev (d374b0e224182eeb5f7135a6de677398ed427049) differs from origin/dev (6cc2917834b0f2766b3116cdaa441a1879611b01)",
+  "workspaceFingerprint": "b0e2ee2e4f35fb5d4c93c04926f078b8d56cc7b6eba2fec5afb7124141718853",
+  "fingerprintStatus": "BOUND",
+  "head": "d374b0e224182eeb5f7135a6de677398ed427049",
+  "durationMs": 105
+}

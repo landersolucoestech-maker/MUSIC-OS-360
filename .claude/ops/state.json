@@ -5,7 +5,7 @@
   "status": "blocked",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T15:23:13.608Z",
+  "updatedAt": "2026-09-29T15:25:52.071Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1092,7 +1092,8 @@
           "evidenceIds": [
             "evid-107da9c3",
             "evid-cbedb541",
-            "evid-e88dccdd"
+            "evid-e88dccdd",
+            "evid-b6a6741b"
           ],
           "status": "closed"
         },
@@ -1101,7 +1102,8 @@
           "text": "The guards refuse, against a real repository, creating another branch (branch/checkout -b/switch -c/worktree add), committing off dev and pushing anything but dev to origin/dev (other branch, other remote, tags, non-fast-forward, deleting dev), while dev->origin/dev and deleting forbidden branches still work; the Claude PreToolUse guard refuses the same commands and branch-creating tools; the tests fail when the guards are disabled; CI runs them.",
           "evidenceIds": [
             "evid-300121ea",
-            "evid-b06078cc"
+            "evid-b06078cc",
+            "evid-95e19c1a"
           ],
           "status": "closed"
         },
@@ -1118,7 +1120,12 @@
             "evid-882a8032",
             "evid-701e9680",
             "evid-a9fc45c4",
-            "evid-118c3879"
+            "evid-118c3879",
+            "evid-21f48fe3",
+            "evid-d470be87",
+            "evid-4912a32b",
+            "evid-4a053733",
+            "evid-1b974920"
           ],
           "status": "closed"
         },
@@ -4047,6 +4054,20 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-29T15:18:56.081Z"
+    },
+    {
+      "id": "find-a0cf61bf",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "False positive of the new PreToolUse guard: shellCommands treated redirections as words, so 'git push origin HEAD:dev 2>&1' was refused (the '2>' word read as a refspec); heredoc bodies were parsed as commands.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:24:54.850Z",
+      "justification": "shellCommands drops redirection operators and their targets (2>&1, >f, &>f, <f), skips heredoc bodies and parses process substitutions as commands; regression test 'redirections are not arguments and heredoc bodies are data'.",
+      "resolvedAt": "2026-09-29T15:24:54.942Z"
     }
   ],
   "evidenceIds": [
@@ -4480,7 +4501,14 @@
     "evid-701e9680",
     "evid-a9fc45c4",
     "evid-118c3879",
-    "evid-96983966"
+    "evid-96983966",
+    "evid-b6a6741b",
+    "evid-95e19c1a",
+    "evid-21f48fe3",
+    "evid-d470be87",
+    "evid-4912a32b",
+    "evid-4a053733",
+    "evid-1b974920"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
