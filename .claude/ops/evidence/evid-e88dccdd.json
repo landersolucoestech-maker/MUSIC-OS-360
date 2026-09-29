@@ -1,0 +1,15 @@
+{
+  "id": "evid-e88dccdd",
+  "createdAt": "2026-09-29T15:22:16.495Z",
+  "type": "COMMAND",
+  "label": "node scripts/git-guard/cli.mjs verify",
+  "command": "node scripts/git-guard/cli.mjs verify",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "[git-guard] OK: HEAD=refs/heads/dev at 6cc2917834b0f2766b3116cdaa441a1879611b01, = origin/dev; only local branch: dev; core.hooksPath=.githooks.",
+  "stderrTail": "",
+  "workspaceFingerprint": "7375da9825c373fd67d9debe948bd54cf771ae47a9fedf2d2c5fe4f401ad4958",
+  "fingerprintStatus": "BOUND",
+  "head": "6cc2917834b0f2766b3116cdaa441a1879611b01",
+  "durationMs": 91
+}

@@ -68,5 +68,12 @@
     "scope": "runtime",
     "createdAt": "2026-09-29T10:30:10.629Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-f5d0d6e6",
+    "text": "Concrete defect: session harness instructions (develop/push on claude/<session> branch, Stop hook asking to push it) overrode the repository's dev-only branch policy and a second remote branch was published. Deterministic control now exists (scripts/git-guard + .githooks + .claude/settings.json hooks + CI test); future rule work should prefer extending that guard over prose reminders.",
+    "scope": "runtime",
+    "createdAt": "2026-09-29T15:14:16.159Z",
+    "appliedAt": null
   }
 ]

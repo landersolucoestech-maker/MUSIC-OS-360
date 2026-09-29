@@ -12,8 +12,36 @@
       "Bash(git push --force*)",
       "Bash(git reset --hard*)",
       "Bash(git clean -f*)",
-      "Bash(rm -rf /*)"
+      "Bash(rm -rf /*)",
+      "Bash(git push --no-verify*)",
+      "Bash(git commit --no-verify*)",
+      "Bash(git checkout -b*)",
+      "Bash(git switch -c*)"
     ]
   },
-  "_comment": "Generic, safe defaults shipped with the pack: read-only git inspection and the pack's own deterministic runtime scripts are pre-allowed since they are LOCAL_WRITE at most and fully covered by tests; destructive git operations are explicitly denied by default per .claude/rules/git-safety.md. A target project's own settings.json is never overwritten by the installer (see installer/install.mjs skip-customized behavior) — this file only applies where the target has none yet."
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/git-guard/cli.mjs\" session-start"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|EnterWorktree|Agent|Task|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/git-guard/cli.mjs\" claude-pre-tool-use"
+          }
+        ]
+      }
+    ]
+  },
+  "_comment": "Generic, safe defaults shipped with the pack: read-only git inspection and the pack's own deterministic runtime scripts are pre-allowed since they are LOCAL_WRITE at most and fully covered by tests; destructive git operations are explicitly denied by default per .claude/rules/git-safety.md. A target project's own settings.json is never overwritten by the installer (see installer/install.mjs skip-customized behavior) — this file only applies where the target has none yet.",
+  "_comment_git_guard": "Dev-only branch policy (docs/engineering/git-safety.md): SessionStart activates the versioned git hooks (core.hooksPath=.githooks) and states the policy; PreToolUse refuses git/gh commands, GitHub API tools, worktree isolation and remote sessions that would create, switch to or push any branch other than dev. The git hooks are the authoritative layer; these are defence in depth for agents."
 }

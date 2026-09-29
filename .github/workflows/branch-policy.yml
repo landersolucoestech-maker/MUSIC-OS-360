@@ -1,0 +1,27 @@
+name: Branch policy
+
+# Dev-only branch policy (docs/engineering/git-safety.md): `dev` is the only
+# branch of this repository. Any push that creates or updates another branch
+# (claude/*, feature/*, fix/*, review/*, ...) fails here so the violation is
+# visible; the branch must be deleted (git push origin --delete <branch>).
+# Local prevention happens before the push, in .githooks/ (scripts/git-guard/).
+
+on:
+  push:
+    branches-ignore: [dev]
+
+permissions: {}
+
+jobs:
+  dev-only:
+    name: Only dev may exist
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Refuse any branch other than dev
+        env:
+          BRANCH: ${{ github.ref_name }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          echo "::error::Branch \"$BRANCH\" (pushed by $ACTOR) violates the dev-only branch policy (docs/engineering/git-safety.md). Delete it: git push origin --delete \"$BRANCH\"."
+          exit 1

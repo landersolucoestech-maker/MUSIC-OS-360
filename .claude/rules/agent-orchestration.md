@@ -20,7 +20,7 @@ For L3+ work, do not let the implementation-engineer's own self-review satisfy i
 
 ## Parallelism
 
-Parallel read-only investigation/review is encouraged when independent. Parallel writers require disjoint ownership or isolated worktrees. Never allow two agents to write the same file concurrently.
+Parallel read-only investigation/review is encouraged when independent. Parallel writers require disjoint file ownership; this repository forbids any branch other than `dev`, so worktrees are detached, read-only review checkouts and never a writer's isolation mechanism. Never allow two agents to write the same file concurrently.
 
 ## Delegation constraints
 

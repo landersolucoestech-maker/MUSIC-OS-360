@@ -11,7 +11,7 @@ For every non-trivial request:
 3. formalize explicit requirements, constraints and non-requirements for L2+ work;
 4. run `node .claude/runtime/impact.mjs` and use the maximum of operator-declared and runtime-detected impact;
 5. select the smallest dynamic execution graph that covers the detected signals;
-6. isolate writers by file ownership/worktree when parallel work exists;
+6. isolate writers by disjoint file ownership when parallel work exists (no extra branches or writable worktrees: `dev` is the only branch, see `git-safety.md`);
 7. execute, verify, review, remediate, re-verify and run the deterministic completion gate.
 
 ## 2. Impact levels

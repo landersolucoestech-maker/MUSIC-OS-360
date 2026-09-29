@@ -1,0 +1,3 @@
+#!/bin/sh
+# Dev-only branch policy (docs/engineering/git-safety.md): commits only on dev.
+exec node "$(dirname "$0")/../scripts/git-guard/cli.mjs" pre-commit

@@ -1,10 +1,9 @@
-// Git worktree isolation for concurrent writers — a real, dependency-free git
-// feature (no vendoring needed) implementing .claude/rules/agent-orchestration.md's
-// "Parallel writers require disjoint ownership or isolated worktrees." When two
-// implementer batches must run concurrently on genuinely overlapping paths (not
-// just disjoint ones ownership.json can already separate), each gets its own
-// worktree — a real, separate working directory sharing the same .git history —
-// so neither can corrupt the other's uncommitted changes.
+// Git worktree isolation — a real, dependency-free git feature (no vendoring
+// needed). In this repository worktrees are detached checkouts for isolated
+// read-only work (reviews against an exact commit): the dev-only branch policy
+// (docs/engineering/git-safety.md) forbids the extra branch a writable worktree
+// would need, so concurrent writers are separated by disjoint file ownership
+// (.claude/rules/agent-orchestration.md).
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { run } from "./exec.mjs";
@@ -13,18 +12,21 @@ export function worktreesDir(repoRoot) {
   return join(repoRoot, ".claude", "ops", "worktrees");
 }
 
-/** Creates a new worktree at .claude/ops/worktrees/<name> on a new branch
- * <branchPrefix>/<name> off the current HEAD. Fails loudly (returns ok:false)
- * rather than silently if the name is already in use or git itself fails —
- * never guesses a fallback path. */
-export function createWorktree(repoRoot, name, { branchPrefix = "eos-worktree" } = {}) {
+/** Creates a new worktree at .claude/ops/worktrees/<name> on a DETACHED HEAD
+ * at the current commit. It never creates a branch: this repository allows no
+ * branch other than dev (docs/engineering/git-safety.md; the reference-transaction
+ * hook refuses any other refs/heads/*), and commits are allowed only on dev, so
+ * a worktree is an isolated read-only/review checkout — parallel writers need
+ * disjoint file ownership instead. Fails loudly (returns ok:false) rather than
+ * silently if the name is already in use or git itself fails — never guesses a
+ * fallback path. */
+export function createWorktree(repoRoot, name) {
   const dir = join(worktreesDir(repoRoot), name);
   if (existsSync(dir)) return { ok: false, reason: "WORKTREE_ALREADY_EXISTS", dir };
   mkdirSync(worktreesDir(repoRoot), { recursive: true });
-  const branch = `${branchPrefix}/${name}`;
-  const result = run("git", ["worktree", "add", "-b", branch, dir], { cwd: repoRoot });
+  const result = run("git", ["worktree", "add", "--detach", dir], { cwd: repoRoot });
   if (!result.ok) return { ok: false, reason: "GIT_WORKTREE_ADD_FAILED", detail: result.stderr, dir };
-  return { ok: true, dir, branch };
+  return { ok: true, dir, branch: null };
 }
 
 export function listWorktrees(repoRoot) {

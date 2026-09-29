@@ -2,10 +2,10 @@
   "version": 2,
   "missionId": "mission-a5c14661",
   "missionName": "dev-ci-security-gate-remediation",
-  "status": "active",
+  "status": "blocked",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T10:55:51.041Z",
+  "updatedAt": "2026-09-29T15:23:13.608Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1078,6 +1078,61 @@
         }
       ],
       "createdAt": "2026-09-29T10:47:15.076Z"
+    },
+    {
+      "id": "req-6c093022",
+      "text": "Git governance correction: dev is the only branch; local dev aligned with origin/dev and checked out; every other local and remote branch removed (claude/beautiful-gates-c0kwj5 included); versioned guards make any commit off dev, any other branch creation and any push other than dev->origin/dev fail before it happens; the violation is recorded.",
+      "nonRequirements": [
+        "No functional product code change; no rewrite of the dev -> staging -> main deployment workflows (owner decision, find-aff10709); no deletion of dev history."
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-b5204c90",
+          "text": "The checkout is on branch dev (HEAD = refs/heads/dev), local dev equals origin/dev and no other local branch exists: the pre-commit guard accepts the current checkout.",
+          "evidenceIds": [
+            "evid-107da9c3",
+            "evid-cbedb541",
+            "evid-e88dccdd"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-ac0488c2",
+          "text": "The guards refuse, against a real repository, creating another branch (branch/checkout -b/switch -c/worktree add), committing off dev and pushing anything but dev to origin/dev (other branch, other remote, tags, non-fast-forward, deleting dev), while dev->origin/dev and deleting forbidden branches still work; the Claude PreToolUse guard refuses the same commands and branch-creating tools; the tests fail when the guards are disabled; CI runs them.",
+          "evidenceIds": [
+            "evid-300121ea",
+            "evid-b06078cc"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-10175254",
+          "text": "The new guard code passes lint, naming:check and the repository's branch/workflow verifiers.",
+          "evidenceIds": [
+            "evid-2ce122d7",
+            "evid-ed8bbeb7",
+            "evid-c1b1eb47",
+            "evid-6120f074",
+            "evid-54622b04",
+            "evid-6ba719cc",
+            "evid-882a8032",
+            "evid-701e9680",
+            "evid-a9fc45c4",
+            "evid-118c3879"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-5f37ba9e",
+          "text": "origin has no branch other than dev (git ls-remote --heads origin lists only refs/heads/dev).",
+          "evidenceIds": [
+            "evid-4bbb767b",
+            "evid-96983966"
+          ],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-29T15:12:44.287Z"
     }
   ],
   "findings": [
@@ -3888,6 +3943,110 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-29T10:35:37.778Z"
+    },
+    {
+      "id": "find-3863e2fb",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": ".git/refs",
+      "line": null,
+      "summary": "Governance violation: the agent pushed branch claude/beautiful-gates-c0kwj5 to origin (tip 1dfd595), creating a second remote branch against the dev-only branch policy (only dev may exist; commit only on dev; push only to origin/dev). Its commits are all on origin/dev (6cc2917 contains 1dfd595). Local branch deleted with git branch -d; remote deletion BLOCKED: the session git proxy answered HTTP 403 to git push origin --delete.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:12:34.545Z"
+    },
+    {
+      "id": "find-d9c913c8",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": ".claude/settings.json",
+      "line": null,
+      "summary": "Governance violation (external): the session harness Stop hook twice asked to push the unpushed commits of claude/beautiful-gates-c0kwj5. Ignored per the dev-only branch policy and recorded here; the harness hook lives outside this repository. Now also refused mechanically by .githooks/pre-push and the PreToolUse guard (scripts/git-guard).",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:12:34.666Z"
+    },
+    {
+      "id": "find-a54efc1d",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "Prevention gap: nothing in the repository stopped a commit off dev, the creation of another local branch or a push to a branch other than origin/dev (no hooks, no Claude guard, no CI check), so the violation above was possible.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:12:34.759Z",
+      "justification": "Guards added: .githooks (reference-transaction/pre-commit/pre-merge-commit/pre-push) + .claude/settings.json SessionStart/PreToolUse + CI test + branch-policy.yml; proven by evid-b06078cc (real-repo integration test) and evid-e88dccdd.",
+      "resolvedAt": "2026-09-29T15:23:13.325Z"
+    },
+    {
+      "id": "find-cc131c53",
+      "category": "docs",
+      "severity": "LOW",
+      "file": "docs/engineering/git-safety.md",
+      "line": null,
+      "summary": "docs/engineering/git-safety.md stated that .github/workflows/branch-policy.yml deletes non-permanent branches on a schedule; that workflow did not exist (stale documentation hid the absence of any branch control).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:12:34.852Z",
+      "justification": "docs/engineering/git-safety.md rewritten to describe the actual controls; branch-policy.yml now exists (detector, fail-only).",
+      "resolvedAt": "2026-09-29T15:23:13.414Z"
+    },
+    {
+      "id": "find-aff10709",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "docs/runbooks/staging-to-production.md",
+      "line": null,
+      "summary": "Topology conflict: ci.yml/security.yml/staging.yml, scripts/verify-branch-topology.mjs and the staging-to-production runbook describe a permanent dev -> staging -> main promotion topology, while the mandatory policy makes dev the only branch. staging and main do not exist on origin. Needs an owner decision (retire the promotion topology or define how promotion works without other branches); workflows left unchanged.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:12:34.948Z"
+    },
+    {
+      "id": "find-0fcda824",
+      "category": "A",
+      "severity": "MEDIUM",
+      "file": ".claude/runtime/lib/worktree.mjs",
+      "line": 25,
+      "summary": "git-auditor: tracked governance runtime createWorktree() runs 'git worktree add -b eos-worktree/<name>', i.e. creates a branch other than dev, and .claude/rules/00-execution-protocol.md step 6 plus .claude/rules/agent-orchestration.md (Parallelism) still instruct isolated worktrees for parallel writers, contradicting the dev-only branch policy. No caller found in tracked .claude/ (dead code today). Mitigated locally by .githooks/reference-transaction when core.hooksPath=.githooks, but the Claude PreToolUse guard does not see git spawned from node. Pre-existing, not introduced by this diff; needs owner decision (use --detach / remove helper / amend both rules).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:18:55.466Z",
+      "justification": ".claude/runtime/lib/worktree.mjs createWorktree now uses git worktree add --detach (no branch); rules 00-execution-protocol step 6 and agent-orchestration no longer prescribe writable worktrees; exercised under the hooks (create/list/remove, no branch).",
+      "resolvedAt": "2026-09-29T15:23:13.518Z"
+    },
+    {
+      "id": "find-c6e31652",
+      "category": "L",
+      "severity": "MEDIUM",
+      "file": ".claude/settings.json",
+      "line": null,
+      "summary": "git-auditor: remote branch creation through the GitHub API bypasses every pre-execution layer of the dev-only guard. The PreToolUse matcher (Bash|EnterWorktree|Agent|Task|mcp__.*__create_session) and checkShellCommand only inspect git invocations, so 'gh api repos/.../git/refs', 'gh pr create --head <x>' and GitHub MCP tools (create_branch, push_files, create_or_update_file with a branch, create_pull_request) are not refused; git hooks never see them; .github/workflows/branch-policy.yml only detects after the fact and the GitHub ruleset restricting branch creation to dev is not configured (acknowledged in docs/engineering/git-safety.md). A GitHub MCP connector exists in this session environment.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:18:55.795Z",
+      "justification": "PreToolUse matcher now covers mcp__.*; checkToolUse refuses create_branch (non-dev), create_pull_request, update_pull_request_branch, push_files/create_or_update_file/delete_file on non-dev; checkShellCommand refuses gh pr create/checkout and gh api writes to git/refs or branch rename (deleting non-dev refs allowed); tests in evid-b06078cc.",
+      "resolvedAt": "2026-09-29T15:23:13.608Z"
+    },
+    {
+      "id": "find-f9552ac3",
+      "category": "N",
+      "severity": "INFO",
+      "file": "refs/stash",
+      "line": null,
+      "summary": "git-auditor: pre-existing stash@{0} (4cd3aaf, 2026-09-29 04:52 UTC, 'On claude/beautiful-gates-c0kwj5: alt DB-block implementation (session 01Df7) - superseded by d1daf89/b875241; DB-M2 parts to port') holds index/worktree content that is not on dev (only its base 6dffc9a is). Correctly preserved by the branch cleanup; it is not a branch and does not violate the dev-only policy, but it must not be dropped without an owner decision on the 'DB-M2 parts to port'.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T15:18:56.081Z"
     }
   ],
   "evidenceIds": [
@@ -4304,7 +4463,24 @@
     "evid-ad56e3d0",
     "evid-ae416a64",
     "evid-fc7eb2e1",
-    "evid-60141462"
+    "evid-60141462",
+    "evid-107da9c3",
+    "evid-300121ea",
+    "evid-2ce122d7",
+    "evid-ed8bbeb7",
+    "evid-c1b1eb47",
+    "evid-6120f074",
+    "evid-54622b04",
+    "evid-4bbb767b",
+    "evid-cbedb541",
+    "evid-e88dccdd",
+    "evid-b06078cc",
+    "evid-6ba719cc",
+    "evid-882a8032",
+    "evid-701e9680",
+    "evid-a9fc45c4",
+    "evid-118c3879",
+    "evid-96983966"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
@@ -4314,7 +4490,14 @@
     "chec-95050d7d"
   ],
   "touchedFiles": [],
-  "blockers": [],
+  "blockers": [
+    {
+      "id": "blk-10f953fe",
+      "text": "Remote branch claude/beautiful-gates-c0kwj5 still exists on origin (tip 1dfd595, fully contained in origin/dev 6cc2917). git push origin --delete returns HTTP 403 from this session's git proxy; the GitHub MCP connector failed to connect (503). Owner action: delete it in GitHub (Branches page) or from a clone with push rights; then verify git ls-remote --heads origin lists only refs/heads/dev.",
+      "createdAt": "2026-09-29T15:12:44.167Z",
+      "resolved": false
+    }
+  ],
   "phaseMachine": {
     "sequence": [
       "PHASE_0_NAMING",

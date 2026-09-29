@@ -1,0 +1,8 @@
+{
+  "id": "effe-4a7af4c3",
+  "createdAt": "2026-09-29T15:12:44.065Z",
+  "classification": "EXTERNAL_WRITE",
+  "description": "UNAUTHORIZED (governance violation find-3863e2fb): earlier push of branch claude/beautiful-gates-c0kwj5 to origin (tip 1dfd595). Compensation: delete the remote branch (git push origin --delete claude/beautiful-gates-c0kwj5); its commits are on origin/dev. Attempted 2026-09-29: HTTP 403 from the session git proxy / 503 credential service; NOT reconciled.",
+  "recoveryPlanId": null,
+  "reconciled": false
+}

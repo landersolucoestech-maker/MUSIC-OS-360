@@ -49,6 +49,9 @@ jobs:
       - name: Verify permanent branch topology
         run: node scripts/verify-branch-topology.mjs
 
+      - name: Branch policy guard (dev-only; hooks, Claude guard and detector stay wired)
+        run: node --test scripts/git-guard/policy.test.mjs
+
       - name: Naming check (ratchet, canonical map vs schema, generated docs in sync, guard tests)
         run: pnpm run naming:check
 

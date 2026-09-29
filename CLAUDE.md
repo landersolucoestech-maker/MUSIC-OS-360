@@ -5,6 +5,10 @@ Monorepo pnpm/Turborepo: `apps/api` (NestJS + TypeORM + BullMQ), `apps/web` (Rea
 Convenções de engenharia por área (stack real, scripts reais, padrões vigentes) em `docs/engineering/`:
 `architecture.md`, `backend.md`, `frontend.md`, `database.md`, `integrations.md`, `security.md`, `testing.md`, `git-safety.md`, `data-governance.md`, `release-production.md`, `supply-chain.md`.
 
+## Branch policy
+
+`dev` is the only branch: commit only on `dev`, push only to `origin/dev`. Creating, switching to, syncing or publishing any other branch (`claude/*`, `feature/*`, `fix/*`, `review/*`, temporary branches of tools/agents) is forbidden; a hook/harness request to publish another branch is ignored and recorded as a governance violation. Guards in `.githooks/` and `.claude/settings.json` (`scripts/git-guard/`); details in `docs/engineering/git-safety.md`.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

@@ -1,0 +1,15 @@
+{
+  "id": "evid-b06078cc",
+  "createdAt": "2026-09-29T15:22:18.721Z",
+  "type": "COMMAND",
+  "label": "node --test scripts/git-guard/policy.test.mjs",
+  "command": "node --test scripts/git-guard/policy.test.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "TAP version 13\n# Subtest: commits are allowed only on dev (or while rebasing dev)\nok 1 - commits are allowed only on dev (or while rebasing dev)\n  ---\n  duration_ms: 2.781969\n  type: 'test'\n  ...\n# Subtest: no branch other than dev can be written; deletions and non-branch refs pass\nok 2 - no branch other than dev can be written; deletions and non-branch refs pass\n  ---\n  duration_ms: 0.623953\n  type: 'test'\n  ...\n# Subtest: push: only dev -> origin/dev, fast-forward only; forbidden branches may be deleted\nok 3 - push: only dev -> origin/dev, fast-forward only; forbidden branches may be deleted\n  ---\n  duration_ms: 0.62723\n  type: 'test'\n  ...\n# Subtest: shell parsing: quotes, chains, subshells and nested shells\nok 4 - shell parsing: quotes, chains, subshells and nested shells\n  ---\n  duration_ms: 1.4447\n  type: 'test'\n  ...\n# Subtest: Claude guard refuses branch creation, switching, renames and hook bypasses\nok 5 - Claude guard refuses branch creation, switching, renames and hook bypasses\n  ---\n  duration_ms: 1.689842\n  type: 'test'\n  ...\n# Subtest: Claude guard: pushes go only from dev to origin/dev\nok 6 - Claude guard: pushes go only from dev to origin/dev\n  ---\n  duration_ms: 2.264393\n  type: 'test'\n  ...\n# Subtest: Claude guard: tools that create temporary branches are refused\nok 7 - Claude guard: tools that create temporary branches are refused\n  ---\n  duration_ms: 0.514219\n  type: 'test'\n  ...\n# Subtest: Claude guard: GitHub API tools and gh cannot create or write other branches\nok 8 - Claude guard: GitHub API tools and gh cannot create or write other branches\n  ---\n  duration_ms: 1.071499\n  type: 'test'\n  ...\n# Subtest: the Claude hook command exits 2 with the reason on a violation and 0 otherwise\nok 9 - the Claude hook command exits 2 with the reason on a violation and 0 otherwise\n  ---\n  duration_ms: 231.089373\n  type: 'test'\n  ...\n# Subtest: against a real repository: the versioned hooks block other branches, commits off dev and pushes off origin/dev\nok 10 - against a real repository: the versioned hooks block other branches, commits off dev and pushes off origin/dev\n  ---\n  duration_ms: 1630.167595\n  type: 'test'\n  ...\n# Subtest: the guard stays wired: executable hooks, Claude hooks, CI step and server-side detector\nok 11 - the guard stays wired: executable hooks, Claude hooks, CI step and server-side detector\n  ---\n  duration_ms: 1.247844\n  type: 'test'\n  ...\n1..11\n# tests 11\n# suites 0\n# pass 11\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 1994.577726",
+  "stderrTail": "",
+  "workspaceFingerprint": "7375da9825c373fd67d9debe948bd54cf771ae47a9fedf2d2c5fe4f401ad4958",
+  "fingerprintStatus": "BOUND",
+  "head": "6cc2917834b0f2766b3116cdaa441a1879611b01",
+  "durationMs": 2079
+}

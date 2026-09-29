@@ -1,0 +1,12 @@
+{
+  "id": "evid-cbedb541",
+  "createdAt": "2026-09-29T15:19:05.728Z",
+  "type": "REVIEW",
+  "reviewer": "git-auditor",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Read-only git audit at HEAD=refs/heads/dev 6cc2917 (= origin/dev, ahead/behind 0/0, upstream origin/dev). Local branches: dev only; worktrees: main only (prune dry-run empty); packed-refs empty; no branch.<other> config; core.hooksPath=.githooks (file:.git/config, not overridden by env GIT_CONFIG_*); no push.default/remote.origin.push/aliases. origin/claude/beautiful-gates-c0kwj5 (1dfd595) is an ancestor of origin/dev (rev-list origin/dev..claude = 0); all reflog-recorded commits of the deleted branch are in origin/dev; shallow clone does not weaken this since the tip itself is reachable from dev. Delta = exactly the declared scope (scripts/git-guard/*, .githooks/* 100755, branch-policy.yml, ci.yml one step, settings.json, both git-safety.md, CLAUDE.md, .claude/ops records incl. 8 new evidence files + 1 effect file); new files are intent-to-add only (nothing staged). No apps/**, packages/**, lockfile or .env* changes; no secret patterns. No baseline record exists (record list --kind baseline empty), so the delta was checked against the declared scope + req-6c093022 instead. OPEN/BLOCKED: remote branch still on origin (blk-10f953fe, ac-5f37ba9e FAIL evid-4bbb767b). New findings: find-0fcda824 (worktree.mjs creates eos-worktree/* branches; rules still prescribe worktrees), find-c6e31652 (GitHub API/MCP branch creation not guarded pre-execution), find-f9552ac3 (preserved stash, INFO).",
+  "workspaceFingerprint": "7670b6f46c63de7f03b6e9f89d6d0b1ac06a8f68dd38fcc72b33089f7845bd9b",
+  "fingerprintStatus": "BOUND",
+  "head": "6cc2917834b0f2766b3116cdaa441a1879611b01"
+}

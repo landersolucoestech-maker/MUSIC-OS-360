@@ -1,0 +1,3 @@
+#!/bin/sh
+# Dev-only branch policy (docs/engineering/git-safety.md): push only dev to origin/dev, never forced.
+exec node "$(dirname "$0")/../scripts/git-guard/cli.mjs" pre-push "$1" "$2"

@@ -1,0 +1,15 @@
+{
+  "id": "evid-882a8032",
+  "createdAt": "2026-09-29T15:22:21.095Z",
+  "type": "COMMAND",
+  "label": "node scripts/verify-branch-topology.mjs",
+  "command": "node scripts/verify-branch-topology.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ Branch topology verified: dev -> staging -> main",
+  "stderrTail": "",
+  "workspaceFingerprint": "7375da9825c373fd67d9debe948bd54cf771ae47a9fedf2d2c5fe4f401ad4958",
+  "fingerprintStatus": "BOUND",
+  "head": "6cc2917834b0f2766b3116cdaa441a1879611b01",
+  "durationMs": 67
+}
