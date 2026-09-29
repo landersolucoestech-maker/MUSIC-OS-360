@@ -240,6 +240,151 @@ test('project URLs compare in one canonical spelling', async () => {
   assert.notEqual(normalizeUrl('https://github.com/o/other'), canonical);
 });
 
+test('closure matrix F1–F9 (review of ee75d57): historical families stay closed', () => {
+  const hd = (msg) => `git commit -q -m "$(cat <<'EOF'\n${msg}\nEOF\n)"`;
+  const cases = {
+    F1: { refused: [`${hd("fix: don't break things")} && git push -q --no-verify origin HEAD:claude/leak`, `${hd('fix: it\'s (half "done')} && git -c core.hooksPath=/dev/null push -q origin HEAD:claude/leak3`],
+      allowed: [hd("fix: don't break things"), `${hd("fix: it's done (really)")} && git push origin HEAD:dev`] },
+    F2: { refused: ['for i in 1 2 3 4; do git push -u origin claude/x && break; sleep $((2**i)); done', 'if false; then :; elif true; then git push origin HEAD:claude/elif; fi', 'until git push origin HEAD:claude/until; do sleep 1; done', '! git push origin HEAD:claude/bang', '{ git push origin HEAD:claude/brace; }'],
+      allowed: ['for i in 1 2 3 4; do git push -u origin dev && break; sleep $((2**i)); done'] },
+    F3: { refused: ['GH_PAGER=cat gh issue develop 3 --name claude/x', 'timeout 30 gh api repos/o/r/git/refs -f ref=refs/heads/claude/x -f sha=abc', "/usr/bin/env sh -c 'git push origin HEAD:claude/x'", "sudo bash -c 'git branch claude/x'", "echo claude/x | xargs sh -c 'git branch \"$0\"'", 'find . -maxdepth 0 -exec git branch claude/y \\;'],
+      allowed: ['GIT_TRACE=1 git push origin HEAD:dev', 'timeout 120 pnpm test'] },
+    F4: { refused: ['gh agent-task create "fix"', 'gh issue create -t x --assignee @copilot', 'gh issue edit 3 --add-assignee @copilot'], allowed: ['gh issue edit 3 --add-assignee octocat'] },
+    F5: { refused: ["echo 'git push origin HEAD:claude/x' | bash", "bash <<< 'git push origin HEAD:claude/x'", "cat <<'EOF' | bash\ngit push origin HEAD:claude/x\nEOF"], allowed: ['bash scripts/check.sh && git status'] },
+    F6: { refused: [], allowed: ['git checkout -- a.ts', 'git restore a.ts', 'git checkout HEAD -- a.ts'] },
+    F7: { refused: ['git commit -m x -n', 'git commit --no-verify -m x'], allowed: ['git commit -m "-n flag removed"', 'git commit -am "-n x"', 'git commit --message="-n x"'] },
+    F8: { refused: ["echo 'ref: refs/heads/claude/x' > .git/HEAD", "printf '%s\\n' abc > .git/refs/heads/claude/x", 'cp /tmp/x .git/packed-refs', 'tee .git/HEAD < x', "sed -i 's/dev/claude/' .git/HEAD"], allowed: ['cat .git/HEAD', "echo 'node_modules' >> .gitignore", 'cp tpl.yml .github/workflows/x.yml'] },
+  };
+  for (const [family, { refused: bad, allowed: good }] of Object.entries(cases)) {
+    for (const command of bad) assert.ok(refused(command), `${family} must refuse: ${command}`);
+    for (const command of good) assert.deepEqual(checkShellCommand(command, 'dev'), [], `${family} must allow: ${command}`);
+  }
+  // F6 with the real path lookup of a deleted tracked file, F9 through a symlinked project path (see the real-repository test)
+  assert.deepEqual(checkShellCommand('git checkout a.ts', 'dev', { resolveRevision: (name) => (name === 'a.ts' ? 'path' : null) }), []);
+  const isGitDirPath = (file) => file.includes('/.git/');
+  assert.equal(checkToolUse({ tool_name: 'Write', tool_input: { file_path: '/link/.git/config' } }, 'dev', { isGitDirPath }).length, 1, 'F9');
+});
+
+test('N1: $(…) and backticks in an unquoted heredoc body are commands; a quoted delimiter keeps the body literal', () => {
+  for (const command of [
+    'git commit -q -F - <<EOF\nfix: $(git push -q --no-verify origin HEAD:claude/hdbody)\nEOF',
+    'cat > msg.txt <<EOF\n`git push origin HEAD:claude/hdbt`\nEOF',
+    'cat <<EOF\nnested $(echo $(git branch claude/nested))\nEOF',
+    'cat <<EOF\nbuilt $(date)\nthen $(git switch -c claude/second)\nEOF',
+    'cat <<-EOF\n\t$(git push origin HEAD:claude/tab)\n\tEOF',
+    'cat <<EOF\n$(git status\nEOF',
+  ]) assert.ok(refused(command), command);
+  for (const command of [
+    "git commit -F - <<'EOF'\nfix: $(git push origin HEAD:claude/literal)\nEOF",
+    'git commit -F - <<"EOF"\nfix: `git branch claude/literal`\nEOF',
+    'git commit -F - <<\\EOF\nfix: $(git switch -c claude/literal)\nEOF',
+    'cat > notes.md <<EOF\nbuilt at $(date) from $(git rev-parse --short HEAD)\nEOF',
+    'cat <<EOF\ndon\'t (worry) about "quotes" here\nEOF',
+    'cat <<EOF\nuse \\$(git push origin HEAD:claude/x) literally\nEOF',
+    "python3 - <<'PY'\nprint('echo x > .git/HEAD is only text here')\nPY",
+    'git commit -m "docs: never run echo x > .git/HEAD"',
+  ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
+  // a large unquoted body (a generated file, arithmetic included) is scanned in linear time
+  const body = `${'row $x (y) "z" \'w\' '.repeat(12000)}$((i + 1))\n`.repeat(2);
+  const started = process.hrtime.bigint();
+  assert.deepEqual(checkShellCommand(`cat > big.txt <<EOF\n${body}EOF`, 'dev'), []);
+  assert.ok(refused(`cat > big.txt <<EOF\n${body}$(git branch claude/tail)\nEOF`), 'a command after a large body');
+  assert.ok(Number(process.hrtime.bigint() - started) / 1e6 < 3000, 'large heredoc bodies stay fast');
+});
+
+test('N2: `-c --` before the command string of a shell', () => {
+  for (const command of [
+    "sh -c -- 'git push origin HEAD:forbidden'", 'bash -c -- "git branch claude/x"', "bash -lc -- 'git checkout -b x'",
+    "zsh -c -- 'git push origin HEAD:x'", "dash -c -- 'git switch -c y'",
+  ]) assert.ok(refused(command), command);
+  for (const command of ["bash -c -- 'git status'", "sh -c -- 'pnpm test'"]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
+});
+
+test('N3: Copilot assignment in any flag spelling, any case', () => {
+  for (const command of [
+    'gh issue edit 3 --add-assignee=@copilot', 'gh issue edit 3 --assignee=Copilot', 'gh issue create -t x -a=@Copilot',
+    'gh issue create -t x -a@copilot', 'gh issue edit 3 --add-assignee=@me,@copilot', 'gh issue create -t x --assignee=COPILOT',
+    'gh pr edit 5 --add-assignee @copilot',
+  ]) assert.ok(refused(command), command);
+  for (const command of [
+    'gh issue edit 3 --add-assignee=octocat', 'gh issue create -t x -a=@me', 'gh issue edit 3 --remove-assignee @copilot', 'gh issue list --assignee @copilot',
+  ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
+});
+
+test('N4: gh api issue mutations that assign Copilot', () => {
+  for (const command of [
+    "gh api -X PATCH repos/o/r/issues/3 -f 'assignees[]=Copilot'", "gh api --method POST repos/o/r/issues -f title=x -f 'assignees[]=copilot'",
+    "gh api -X PUT repos/o/r/issues/3/assignees -F 'assignees[]=Copilot'", 'gh api repos/o/r/issues/3 -X PATCH --field=assignees[]=Copilot',
+    'gh api -X PATCH repos/o/r/issues/3 --input body.json',
+    "gh api graphql -f query='mutation { replaceActorsForAssignable(input: {assignableId: \"x\", actorIds: [\"y\"]}) { clientMutationId } }'",
+  ]) assert.ok(refused(command), command);
+  for (const command of [
+    'gh api repos/o/r/issues/3', 'gh api "repos/o/r/issues?assignee=Copilot"', 'gh api -X PATCH repos/o/r/issues/3 -f state=closed',
+    "gh api -X DELETE repos/o/r/issues/3/assignees -f 'assignees[]=Copilot'", 'gh api repos/o/copilot-demo/issues/3',
+    "gh api repos/o/r/issues -f 'title=Copilot docs' -f 'body=mention copilot'", 'gh api -X GET repos/o/r/issues -f assignee=Copilot',
+  ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
+  assert.ok(refused("gh api repos/o/r/issues -f title=x -f assignee=copilot-swe-agent"), 'implicit POST with a Copilot assignee');
+});
+
+test('N5: .git destinations after "=", "/" or at the start of a token, whatever the program', () => {
+  for (const command of [
+    'dd if=x of=.git/HEAD', 'wget -O .git/packed-refs https://x', 'tar -xf a.tar -C .git', 'unzip x.zip -d .git/refs',
+    'install -D x .git/hooks/pre-push', 'rsync -a x/ .git/', 'cp x --target-directory=.git/refs/heads', 'rm -rf .git',
+    'mv x ./.git/HEAD', 'ln -sf x "$PWD/.git/HEAD"', 'find .git -name x -delete', "awk -i inplace '{print}' .git/config",
+    'echo x >.git/HEAD', 'cmd 2>> "/repo/.git/packed-refs"', 'echo x | tee -a /repo/.git/config',
+    'find ./.git/refs -type f -delete', 'find .git -exec rm {} +', 'find -L .git -delete', 'find . -name x -exec rm -rf .git \\;',
+    'find . -execdir mv {} .git/HEAD \\;', 'find . -exec echo {} \\; -ok rm .git/config \\;', 'find . -fprint .git/HEAD',
+    'rsync -a --exclude=node_modules x/ .git/', 'tar --exclude=.git -xf a.tar -C .git', 'rsync -a x/ --ignore-existing .git/',
+    'tar -xf a.tar --exclude-vcs --directory=.git', 'rsync -a x/ --exclude --exclude .git/',
+    // script text redirecting into .git, and wrappers whose option values hide the writer (refused before the N5 rework too)
+    `awk '{print > ".git/HEAD"}' x`, `perl -e 'open F, ">.git/HEAD"'`, `node -e "require('child_process').execSync('echo x > .git/HEAD')"`,
+    `python3 -c "import os; os.system('echo x >> .git/config')"`, 'env -u cat tee .git/HEAD', 'flock cat tee .git/HEAD',
+    'xargs -I cat tee .git/HEAD', 'strace -o cat tee .git/HEAD', 'sudo -u echo tee .git/HEAD', 'echo x >&.git/HEAD',
+  ]) assert.ok(refused(command), command);
+  for (const command of [
+    'cat .git/HEAD', 'ls -la .git/refs/heads', 'grep -r x .git/config', 'sed -n 1p .git/HEAD', 'find .git -name HEAD', 'du -sh .git',
+    'stat .git/HEAD', 'sha256sum .git/git-guard/policy.mjs', 'node .git/git-guard/cli.mjs verify', "echo 'x' >> .gitignore",
+    'cp tpl.yml .github/workflows/x.yml', 'mv origin.git backup.git', 'cp a.txt b.gitkeep', 'echo done > build/.gitkeep',
+    "find . -type f -not -path './.git/*' -exec wc -l {} +", "find . -path ./.git -prune -o -name '*.ts' -exec grep -l x {} +",
+    'rsync -a --exclude=.git src/ dst/', 'rsync -a --exclude .git src/ dst/', 'tar --exclude=.git -czf x.tgz .', 'zip -r x.zip . --exclude=.git/*',
+    'find . -name x -exec cat .git/HEAD \\;', 'find . -name .git -type d', 'grep -rn --exclude-dir .git foo .',
+  ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
+});
+
+test('N6: push config — reads and single-branch per-command overrides pass, persistent or redirecting writes do not', () => {
+  for (const command of [
+    'git config push.default', 'git config --get push.default', 'git config get push.default', 'git config --list',
+    'git config --show-origin --get remote.origin.push', 'git -c push.default=current push', 'git -c push.default=simple push origin dev',
+  ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
+  for (const command of [
+    'git config push.default matching', 'git config push.default current', 'git config set push.default current',
+    "git config remote.origin.push 'refs/heads/*:refs/heads/*'", 'git config --add remote.origin.push x', 'git config --unset remote.origin.push',
+    'git -c push.default=matching push', 'git -c remote.origin.push=refs/heads/dev:refs/heads/claude/x push', 'git -c remote.origin.mirror=true push origin',
+  ]) assert.ok(refused(command), command);
+});
+
+test('N7: pushing the current branch by substitution is dev only when the branch is provably dev', () => {
+  for (const command of [
+    'git push origin "$(git rev-parse --abbrev-ref HEAD)"', 'git push -u origin "$(git branch --show-current)"', 'git push origin $(git symbolic-ref --short HEAD)',
+  ]) {
+    assert.deepEqual(checkShellCommand(command, 'dev'), [], `${command} on dev`);
+    assert.ok(refused(command, null), `${command} with an unknown branch`);
+    assert.ok(refused(command, 'claude/x'), `${command} on another branch`);
+  }
+  for (const command of [
+    'git push origin "$(git rev-parse --abbrev-ref HEAD):claude/x"', 'git push origin "$(echo claude/x)"', 'git push origin "$(git branch --show-current)-x"',
+    'git push origin "$(git rev-parse --abbrev-ref HEAD)$(echo x)"', 'git push origin "$BRANCH"', 'git push origin "$(git rev-parse --abbrev-ref HEAD) "',
+  ]) assert.ok(refused(command), command);
+});
+
+test('N8: the Monitor tool runs shell commands under the same policy', () => {
+  const monitor = (command) => ({ tool_name: 'Monitor', tool_input: { command, description: 'watch', timeout_ms: 60000 } });
+  assert.equal(checkToolUse(monitor('git push origin HEAD:claude/x'), 'dev').length, 1);
+  assert.equal(checkToolUse(monitor('while true; do git branch claude/y; sleep 5; done'), 'dev').length, 1);
+  assert.deepEqual(checkToolUse(monitor('tail -f app.log | grep --line-buffered ERROR'), 'dev'), []);
+  assert.deepEqual(checkToolUse({ tool_name: 'Monitor', tool_input: { ws: { url: 'wss://example.com/events' }, description: 'events', timeout_ms: 60000 } }, 'dev'), []);
+});
+
 const cli = path.join(repoRoot, 'scripts/git-guard/cli.mjs');
 const settings = JSON.parse(readFileSync(path.join(repoRoot, '.claude/settings.json'), 'utf8'));
 const hookCommand = (event) => settings.hooks[event].flatMap((entry) => entry.hooks.map((hook) => hook.command)).find((command) => command.includes('git-guard'));
@@ -253,6 +398,8 @@ test('the Claude hook blocks (exit 2) on a violation, on a broken payload and wh
   assert.match(blocked.stderr, /origin\/dev/);
   assert.equal(run({ tool_name: 'Bash', tool_input: { command: 'git status' }, cwd: repoRoot }).status, 0);
   assert.equal(spawnSync(process.execPath, [cli, 'claude-pre-tool-use'], { input: '{', encoding: 'utf8' }).status, 2);
+  const monitorBlocked = run({ tool_name: 'Monitor', tool_input: { command: 'git push origin HEAD:claude/monitor', description: 'watch', timeout_ms: 60000 }, cwd: repoRoot });
+  assert.equal(monitorBlocked.status, 2, 'Monitor payload through the real hook entry point');
 
   // The command wired in .claude/settings.json fails closed: no guard anywhere -> exit 2, not a non-blocking error.
   const empty = mkdtempSync(path.join(tmpdir(), 'git-guard-empty-'));
@@ -427,7 +574,7 @@ test('the guard stays wired: fallback shims, Claude hooks fail closed, CI runs t
   assert.match(preToolUse, /git-guard\/cli\.mjs.* claude-pre-tool-use \|\| exit 2$/);
   assert.match(preToolUse, /--git-common-dir/, 'prefers the installed guard');
   const matcher = settings.hooks.PreToolUse.find((entry) => JSON.stringify(entry).includes('claude-pre-tool-use')).matcher;
-  for (const tool of ['Bash', 'Edit', 'Write', 'MultiEdit', 'EnterWorktree', 'Agent', 'mcp__Claude_Code_Remote__create_session', 'mcp__github__create_branch', 'mcp__github__push_files']) {
+  for (const tool of ['Bash', 'Monitor', 'Edit', 'Write', 'MultiEdit', 'EnterWorktree', 'Agent', 'mcp__Claude_Code_Remote__create_session', 'mcp__github__create_branch', 'mcp__github__push_files']) {
     assert.match(tool, new RegExp(`^(?:${matcher})$`), `matcher covers ${tool}`);
   }
   assert.match(readFileSync(path.join(repoRoot, '.github/workflows/ci.yml'), 'utf8'), /node --test scripts\/git-guard\/policy\.test\.mjs/);
