@@ -107,7 +107,8 @@ kubectl rollout undo deployment/api -n prod
 - Sentry error rate drops back below 1%
 
 **Time**: 2–5min. **Caveat**: do NOT rollback past a migration boundary
-without §3 — the old code may fail against the newer schema.
+without §3 — the old code may fail against the newer schema. `db:check` fails
+when the database holds migrations the image does not ship.
 
 ---
 
@@ -123,19 +124,28 @@ docker exec musicos360_db psql -U musicos360 -d musicos360 -c \
   "SELECT name FROM musicos360_migrations ORDER BY id DESC LIMIT 1;"
 ```
 
-**Rollback last migration**:
+**Order (no build may serve a schema it cannot read — see
+`docs/engineering/database.md`, "Reverse transition")**:
+
+1. Stop every API instance (HTTP + in-process workers) — §5 maintenance mode
+   or scale to zero — and confirm `/api/v1/health/live` no longer answers 200.
+2. Roll the database back, from the NEWER build (it holds the `down()` code),
+   to the last migration of the build you are going back to:
+
 ```bash
 # Production (uses TypeORM data-source.ts via tsx)
-DATABASE_URL='<prod-url>' DB_SSL=true CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING \
-  pnpm --filter @music-os-360/api db:rollback
+DATABASE_URL='<prod-url>' DB_SSL=true NODE_ENV=production CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING \
+  pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts rollback:to <LastMigrationOfOlderBuild>
 
 # Local Docker
 DATABASE_URL='postgresql://musicos360:musicos360_dev@localhost:5432/musicos360' DB_SSL=false \
-  pnpm --filter @music-os-360/api db:rollback
+  pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts rollback:to <LastMigrationOfOlderBuild>
 ```
 
-**Then**: rollback the API image (§2) to a build that doesn't expect the
-rolled-back migration.
+   Staging: `staging.yml` → `workflow_dispatch` on `staging` with
+   `rollback_to_migration` (stops the build itself and never deploys).
+3. Deploy the older API image (§2); `db:check` with that image must pass.
+4. Start it, validate, then leave maintenance mode.
 
 **Validation**:
 - `pnpm --filter @music-os-360/api db:check` → "Sem migrations pendentes"

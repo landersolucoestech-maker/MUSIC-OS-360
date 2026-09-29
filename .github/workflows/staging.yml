@@ -6,11 +6,21 @@ name: Staging CI/CD
 #   STAGING_DATABASE_URL
 #   STAGING_APP_DATABASE_URL
 #   STAGING_API_URL
-#   STAGING_DEPLOY_WEBHOOK_URL
+#   STAGING_DEPLOY_WEBHOOK_URL   deploys the checked-out build and (re)starts it
+#   STAGING_STOP_WEBHOOK_URL     stops EVERY instance of the running API build
+#                                (API + in-process workers) — required before any
+#                                schema change (migration or rollback)
 # Optional, for the authenticated smoke test:
 #   STAGING_SMOKE_TOKEN
 #   STAGING_SMOKE_TENANT
 # Never use production secrets in this workflow.
+#
+# Deploy order (DB-M2, docs/engineering/database.md "Deploy order"): the
+# technical-language migrations rename columns in place, so no build may serve
+# against a schema it cannot read. A schema change therefore runs as
+#   stop the running build -> prove it is down -> migrate/roll back -> deploy
+#   the matching build -> prove it is up -> smoke,
+# and a build older than the database is never deployed (db:check:state).
 
 on:
   push:
@@ -18,16 +28,22 @@ on:
   workflow_dispatch:
     inputs:
       apply_migrations:
-        description: "Apply pending TypeORM migrations to staging (unchecked = read-only db:check + RLS/isolation verification only)"
+        description: "Apply pending TypeORM migrations to staging (stops the running build first; unchecked = read-only checks only)"
         type: boolean
         default: false
+      rollback_to_migration:
+        description: "Roll the staging database back until this migration is the last applied one (stops the running build; no deploy). Empty = normal run."
+        type: string
+        default: ""
 
 permissions:
   contents: read
 
+# A deploy is never cancelled half-way (a cancelled run could leave the build
+# stopped mid-migration); later runs queue behind it.
 concurrency:
-  group: staging-${{ github.ref }}
-  cancel-in-progress: true
+  group: staging-deploy
+  cancel-in-progress: false
 
 jobs:
   quality:
@@ -48,16 +64,22 @@ jobs:
       - run: pnpm build
 
   migrations-staging:
-    name: migrations and isolation checks in staging
+    name: schema gate, stop, migrations and isolation checks in staging
     needs: [quality]
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     environment: staging
+    outputs:
+      rollback: ${{ steps.plan.outputs.rollback }}
     env:
       DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
       APP_DATABASE_URL: ${{ secrets.STAGING_APP_DATABASE_URL }}
+      STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+      STAGING_STOP_WEBHOOK_URL: ${{ secrets.STAGING_STOP_WEBHOOK_URL }}
       DATABASE_SESSION_CONTEXT_ENABLED: "true"
       NODE_ENV: staging
+      ROLLBACK_TO_MIGRATION: ${{ inputs.rollback_to_migration }}
+      APPLY_MIGRATIONS: ${{ inputs.apply_migrations }}
     steps:
       - uses: actions/checkout@v4
 
@@ -76,29 +98,65 @@ jobs:
       - name: Validate Supabase project ref is STAGING (never DEV/MAIN) before any query
         run: pnpm --filter @music-os-360/api exec tsx scripts/verify-supabase-staging-ref.ts
 
-      - name: db:check staging (read-only — always runs)
-        id: check
-        run: pnpm --filter @music-os-360/api db:check
-        continue-on-error: true
+      - name: Schema state vs this build (read-only — always runs)
+        id: state
+        run: pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts check:state
 
-      - name: Require explicit authorization to apply pending migrations
-        if: steps.check.outcome == 'failure' && inputs.apply_migrations != true
+      - name: Plan the schema change (fail closed)
+        id: plan
+        env:
+          PENDING: ${{ steps.state.outputs.pending }}
+          UNKNOWN_APPLIED: ${{ steps.state.outputs.unknown_applied }}
         run: |
-          echo "::error::Pending migrations found on staging, but apply_migrations was not checked. Re-run this workflow on branch staging with 'Apply pending TypeORM migrations to staging' checked to authorize."
-          exit 1
+          set -euo pipefail
+          test -n "$PENDING" && test -n "$UNKNOWN_APPLIED" || { echo "::error::schema state unreadable"; exit 1; }
+          if [ "$UNKNOWN_APPLIED" != "0" ]; then
+            echo "::error::The staging database has $UNKNOWN_APPLIED applied migration(s) this build does not ship: it is older than the schema and must not be deployed. Roll the database back first (rollback_to_migration, from the newer build)."
+            exit 1
+          fi
+          change=none
+          if [ -n "$ROLLBACK_TO_MIGRATION" ]; then
+            [ "$APPLY_MIGRATIONS" != "true" ] || { echo "::error::apply_migrations and rollback_to_migration are mutually exclusive"; exit 1; }
+            [ "$PENDING" = "0" ] || { echo "::error::rollback_to_migration requires the database to be at this build's schema first"; exit 1; }
+            change=rollback
+          elif [ "$PENDING" != "0" ]; then
+            [ "$APPLY_MIGRATIONS" = "true" ] || { echo "::error::$PENDING pending migration(s) on staging, but apply_migrations was not checked. Re-run this workflow on branch staging with 'Apply pending TypeORM migrations to staging' checked to authorize."; exit 1; }
+            change=migrate
+          fi
+          if [ "$change" != "none" ]; then
+            [ "$GITHUB_REF" = "refs/heads/staging" ] || { echo "::error::schema changes run only from branch staging (the build deployed right after them)"; exit 1; }
+            test -n "$STAGING_STOP_WEBHOOK_URL" || { echo "::error::STAGING_STOP_WEBHOOK_URL is not configured: the running build cannot be stopped, so the schema is not changed"; exit 1; }
+            test -n "$STAGING_API_URL" || { echo "::error::STAGING_API_URL is not configured: cannot prove the running build stopped"; exit 1; }
+          fi
+          echo "change=$change" >> "$GITHUB_OUTPUT"
+          echo "rollback=$([ "$change" = rollback ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "Schema change planned: $change"
 
-      - name: db:migrate staging (only with explicit authorization)
-        if: steps.check.outcome == 'failure' && inputs.apply_migrations == true
+      - name: Stop the running staging build (before any schema change)
+        if: steps.plan.outputs.change != 'none'
+        run: curl --fail --silent --show-error --request POST "$STAGING_STOP_WEBHOOK_URL"
+
+      - name: Prove no build is serving (health endpoint down for 3 consecutive probes)
+        if: steps.plan.outputs.change != 'none'
+        run: node scripts/wait-for-http-state.mjs --url "$STAGING_API_URL/api/v1/health/live" --until down --consecutive 3 --interval 5 --timeout 300
+
+      - name: db:migrate staging (build stopped, explicit authorization)
+        if: steps.plan.outputs.change == 'migrate'
         run: pnpm --filter @music-os-360/api db:migrate
 
-      - name: db:check staging (confirm zero pending after migrate)
-        if: steps.check.outcome == 'failure' && inputs.apply_migrations == true
+      - name: db:rollback:to staging (build stopped, explicit request)
+        if: steps.plan.outputs.change == 'rollback'
+        run: pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts rollback:to "$ROLLBACK_TO_MIGRATION"
+
+      - name: db:check staging (database exactly at this build's schema)
+        if: steps.plan.outputs.change != 'rollback'
         run: pnpm --filter @music-os-360/api db:check
 
       - name: Migration source-of-truth guard (no dual tracking, no drift)
         run: node scripts/verify-migration-source-of-truth.mjs
 
       - name: blocking RLS and tenant checks
+        if: steps.plan.outputs.change != 'rollback'
         run: |
           pnpm --filter @music-os-360/api verify:rls
           pnpm --filter @music-os-360/api verify:tenant-isolation
@@ -106,19 +164,25 @@ jobs:
   deploy-staging:
     name: deploy staging
     needs: [migrations-staging]
-    if: github.ref == 'refs/heads/staging'
+    if: github.ref == 'refs/heads/staging' && needs.migrations-staging.outputs.rollback != 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     environment: staging
     steps:
-      - name: require staging deploy hook
+      - uses: actions/checkout@v4
+      - name: require staging deploy hook and API URL
         env:
           STAGING_DEPLOY_WEBHOOK_URL: ${{ secrets.STAGING_DEPLOY_WEBHOOK_URL }}
-        run: test -n "$STAGING_DEPLOY_WEBHOOK_URL"
-      - name: trigger real staging deploy
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+        run: test -n "$STAGING_DEPLOY_WEBHOOK_URL" && test -n "$STAGING_API_URL"
+      - name: trigger real staging deploy (starts the build matching the schema)
         env:
           STAGING_DEPLOY_WEBHOOK_URL: ${{ secrets.STAGING_DEPLOY_WEBHOOK_URL }}
         run: curl --fail --silent --show-error --request POST "$STAGING_DEPLOY_WEBHOOK_URL"
+      - name: Prove the deployed build is serving (health up for 3 consecutive probes)
+        env:
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+        run: node scripts/wait-for-http-state.mjs --url "$STAGING_API_URL/api/v1/health/ready" --until up --consecutive 3 --interval 10 --timeout 900
 
   smoke-staging:
     name: smoke staging
@@ -148,4 +212,6 @@ jobs:
 # - dev receives development work;
 # - staging receives only code approved on dev;
 # - main receives only code validated on the staging branch;
-# - migrations stay blocked without explicit authorization.
+# - migrations stay blocked without explicit authorization;
+# - a schema change (migration or rollback) never runs while a build serves,
+#   and no build is deployed over a schema newer than its own.

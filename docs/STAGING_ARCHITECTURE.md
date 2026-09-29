@@ -128,12 +128,14 @@ conector do claude.ai) ou credenciais fornecidas diretamente:
   TikTok, SoundCloud, DocuSign, Google Ads, ACRCloud, Autentique) — exigem
   criação/configuração de app nas respectivas plataformas, fora do alcance
   de qualquer ferramenta disponível aqui.
-- **Plataforma de deploy** (API + Web) — nenhum `vercel.json`/`railway.toml`/
-  `render.yaml`/`Procfile` existe no repositório; o único projeto Vercel
-  acessível (`lander-launchpad`) é um projeto não relacionado. `staging.yml`
-  já está desenhado para ser agnóstico de plataforma (dispara um
-  `STAGING_DEPLOY_WEBHOOK_URL` genérico) — falta o serviço em si existir em
-  algum provedor com credencial acessível.
+- **Deploy platform** (API + Web) — no `vercel.json`/`railway.toml`/
+  `render.yaml`/`Procfile` exists in the repository; the only reachable Vercel
+  project (`lander-launchpad`) is unrelated. `staging.yml` is platform-agnostic:
+  it calls a generic `STAGING_STOP_WEBHOOK_URL` (must stop every API instance,
+  workers included, and keep it stopped) before any schema change and a generic
+  `STAGING_DEPLOY_WEBHOOK_URL` (deploys the checked-out build and starts it) —
+  see `docs/engineering/database.md`, "Deploy order". The service itself still
+  has to exist on a provider with reachable credentials.
 
 ## Estado do GitHub Environment `staging`
 

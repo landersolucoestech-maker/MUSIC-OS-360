@@ -41,6 +41,11 @@ jobs:
       - name: Verify critical workflows present
         run: node scripts/verify-critical-workflows.mjs
 
+      - name: Staging deploy order guard (DB-M2 — no build serves while the schema changes)
+        run: |
+          node scripts/verify-staging-deploy-order.mjs
+          node --test scripts/verify-staging-deploy-order.test.mjs scripts/wait-for-http-state.test.mjs
+
       - name: Verify permanent branch topology
         run: node scripts/verify-branch-topology.mjs
 
@@ -313,6 +318,24 @@ jobs:
         run: pnpm --filter @music-os-360/api db:check
       - name: verify:realtime-external — must report APPLIED_AND_VERIFIED once fully converged
         run: pnpm --filter @music-os-360/api verify:realtime-external
+      - name: Create a disposable *_mig database for the migration round-trip verifications
+        run: |
+          PGPASSWORD=ci_only_ephemeral_password_ba3f0d psql -h localhost -U musicos360 -d musicos360 -v ON_ERROR_STOP=1 -c "CREATE DATABASE musicos360_mig"
+          PGPASSWORD=ci_only_ephemeral_password_ba3f0d psql -h localhost -U musicos360 -d musicos360_mig -v ON_ERROR_STOP=1 -f apps/api/scripts/local-auth-shim.sql
+      - name: Migrate and seed the disposable *_mig database (the verifiers need a tenant)
+        env:
+          DATABASE_URL: postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:5432/musicos360_mig
+        run: |
+          pnpm --filter @music-os-360/api db:migrate
+          pnpm --filter @music-os-360/api db:seed
+      - name: verify:cz042-cz043-migrations — lossless up/down/re-up of migrations 19, 22 and 23
+        env:
+          DATABASE_URL: postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:5432/musicos360_mig
+        run: pnpm --filter @music-os-360/api verify:cz042-cz043-migrations
+      - name: verify:cz045-musicchat-migration — up/down/re-up of migration 26
+        env:
+          DATABASE_URL: postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:5432/musicos360_mig
+        run: pnpm --filter @music-os-360/api verify:cz045-musicchat-migration
       - name: test:e2e (RLS real via Postgres — blocking)
         run: pnpm --filter @music-os-360/api test:e2e
 

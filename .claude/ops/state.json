@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T05:46:40.842Z",
+  "updatedAt": "2026-09-29T05:52:58.981Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -951,6 +951,28 @@
         }
       ],
       "createdAt": "2026-09-29T05:38:52.750Z"
+    },
+    {
+      "id": "req-b93b20d9",
+      "text": "DB-M2: no build serves while the staging schema changes (stop + prove down before migrate/rollback, db:check fails on a database ahead of the build, rollback:to, deploy proves up), and both migration verifiers run in CI",
+      "nonRequirements": [
+        "Production has no deploy workflow in this repository; production follows the documented manual order"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-62f5eb2e",
+          "text": "Deploy-order guard and its tests pass; db-ops check:state/rollback:to/db:check behave on a disposable database; migrate-application spec and api typecheck pass; naming:check passes",
+          "evidenceIds": [
+            "evid-2b449f96",
+            "evid-ce1a8661",
+            "evid-710a3c39",
+            "evid-fd71106c",
+            "evid-ca613560"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-29T05:52:19.987Z"
     }
   ],
   "findings": [
@@ -3688,7 +3710,12 @@
     "evid-bdd2ab35",
     "evid-c42457f2",
     "evid-2b55eebb",
-    "evid-d8c80675"
+    "evid-d8c80675",
+    "evid-2b449f96",
+    "evid-ce1a8661",
+    "evid-710a3c39",
+    "evid-fd71106c",
+    "evid-ca613560"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

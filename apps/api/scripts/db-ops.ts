@@ -15,8 +15,14 @@
  */
 
 import 'reflect-metadata';
+import { appendFileSync } from 'fs';
+import { MigrationExecutor } from 'typeorm';
 import { AppDataSource } from '../src/database/datasource';
-import { migrateApplication as migrateApplicationCore, checkApplication as checkApplicationCore } from '../src/database/migrate-application';
+import {
+  migrateApplication as migrateApplicationCore,
+  checkApplication as checkApplicationCore,
+  checkAppliedMigrationsKnown,
+} from '../src/database/migrate-application';
 
 const COMMAND = process.argv[2];
 const ARG     = process.argv[3];
@@ -101,17 +107,18 @@ async function checkApplication(): Promise<void> {
   }
 }
 
-async function rollback(): Promise<void> {
-  if (isProduction) {
-    const confirm = process.env['CONFIRM_ROLLBACK'];
-    if (confirm !== 'YES_I_KNOW_WHAT_I_AM_DOING') {
-      console.error(
-        '\n[db:rollback] FORBIDDEN in production without explicit confirmation.\n' +
-        'Set CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING to proceed.\n',
-      );
-      process.exit(1);
-    }
+function requireRollbackConfirmation(command: string): void {
+  if (isProduction && process.env['CONFIRM_ROLLBACK'] !== 'YES_I_KNOW_WHAT_I_AM_DOING') {
+    console.error(
+      `\n[${command}] FORBIDDEN in production without explicit confirmation.\n` +
+      'Set CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING to proceed.\n',
+    );
+    process.exit(1);
   }
+}
+
+async function rollback(): Promise<void> {
+  requireRollbackConfirmation('db:rollback');
 
   console.log('\n[db:rollback] Reverting the last migration…');
   await AppDataSource.initialize();
@@ -119,17 +126,84 @@ async function rollback(): Promise<void> {
   console.log('[db:rollback] Migration revertida.\n');
 }
 
+/**
+ * Fails (exit 1) when the database is not exactly at this build's schema:
+ * pending migrations (this build would run against an older schema) or applied
+ * migrations this build does not ship (an older build over a newer schema —
+ * roll the database back first, see docs/engineering/database.md). Deploy
+ * gates rely on both directions.
+ */
 async function check(): Promise<void> {
   console.log('\n[db:check] Checking migration state…\n');
   await AppDataSource.initialize();
 
+  const unknownApplied = await checkAppliedMigrationsKnown(AppDataSource);
   const hasPending = await AppDataSource.showMigrations();
-  if (!hasPending) {
+  if (unknownApplied.length > 0) {
+    console.log(
+      `⚠ ${unknownApplied.length} applied migration(s) are not part of this build — the database is ahead of it:\n` +
+      unknownApplied.map((n) => `  [x] ${n}`).join('\n') + '\n',
+    );
+  }
+  if (hasPending) console.log('⚠ There are pending migrations — run: npm run db:migrate\n');
+  if (!hasPending && unknownApplied.length === 0) {
     console.log('✓ No pending migrations — schema in sync.\n');
-  } else {
-    console.log('⚠ There are pending migrations — run: npm run db:migrate\n');
+    return;
+  }
+  process.exit(1);
+}
+
+/**
+ * check:state — read-only schema/build state for deploy gates: the number of
+ * pending migrations and of applied migrations this build does not ship. Also
+ * appended as `pending=<n>` / `unknown_applied=<n>` to $GITHUB_OUTPUT when set.
+ * Always exits 0 on a readable state (the caller decides).
+ */
+async function checkState(): Promise<void> {
+  await AppDataSource.initialize();
+  const unknownApplied = await checkAppliedMigrationsKnown(AppDataSource);
+  const queryRunner = AppDataSource.createQueryRunner();
+  let pending: string[];
+  try {
+    pending = (await new MigrationExecutor(AppDataSource, queryRunner).getPendingMigrations()).map((m) => m.name);
+  } finally {
+    await queryRunner.release();
+  }
+  console.log(`[db:check:state] pending=${pending.length} unknown_applied=${unknownApplied.length}`);
+  for (const name of pending) console.log(`  [ ] ${name}`);
+  for (const name of unknownApplied) console.log(`  [x] ${name} (not part of this build)`);
+  const outputFile = process.env['GITHUB_OUTPUT'];
+  if (outputFile) appendFileSync(outputFile, `pending=${pending.length}\nunknown_applied=${unknownApplied.length}\n`);
+}
+
+/**
+ * rollback:to <MigrationName> — reverts migrations one by one (each down() in
+ * its own transaction) until <MigrationName> is the last applied one. The
+ * target must be part of this build and currently applied. Same production
+ * confirmation as db:rollback.
+ */
+async function rollbackTo(): Promise<void> {
+  const target = ARG;
+  if (!target) {
+    console.error('\n[db:rollback:to] Usage: db-ops.ts rollback:to <MigrationName>\n');
     process.exit(1);
   }
+  requireRollbackConfirmation('db:rollback:to');
+  await AppDataSource.initialize();
+  if (!AppDataSource.migrations.some((m) => (m.name ?? m.constructor.name) === target)) {
+    throw new Error(`"${target}" is not a migration of this build.`);
+  }
+  const lastApplied = async (): Promise<string | undefined> => {
+    const rows = await AppDataSource.query(`SELECT name FROM musicos360_migrations ORDER BY id DESC LIMIT 1`);
+    return rows[0]?.name;
+  };
+  const applied = await AppDataSource.query(`SELECT 1 FROM musicos360_migrations WHERE name = $1`, [target]);
+  if (applied.length === 0) throw new Error(`"${target}" is not applied: nothing to roll back to.`);
+  while ((await lastApplied()) !== target) {
+    console.log(`[db:rollback:to] Reverting ${await lastApplied()}…`);
+    await AppDataSource.undoLastMigration({ transaction: 'each' });
+  }
+  console.log(`[db:rollback:to] ${target} is now the last applied migration.\n`);
 }
 
 async function reset(): Promise<void> {
@@ -198,13 +272,15 @@ async function main(): Promise<void> {
       case 'migrate:application': await migrateApplication();  break;
       case 'rollback':           await rollback();             break;
       case 'check':              await check();                break;
+      case 'check:state':        await checkState();           break;
+      case 'rollback:to':        await rollbackTo();           break;
       case 'check:application':  await checkApplication();     break;
       case 'reset':              await reset();                break;
       case 'generate':           await generate();             break;
       case 'seed:operational':   await seedOperational();      break;
       default:
         console.error(`\n[db-ops] Unknown command: '${COMMAND ?? ''}'`);
-        console.error('Valid commands: migrate | migrate:application | rollback | check | check:application | reset | generate | seed:operational\n');
+        console.error('Valid commands: migrate | migrate:application | rollback | rollback:to | check | check:state | check:application | reset | generate | seed:operational\n');
         process.exit(1);
     }
   } catch (err) {

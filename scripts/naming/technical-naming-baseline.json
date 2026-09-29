@@ -1,6 +1,6 @@
 {
  "totals": {
-  "doc": 11094,
+  "doc": 11035,
   "eventQueueJob": 12,
   "frontendRoute": 13,
   "identifier": 659,
@@ -39,7 +39,7 @@
   "doc::docs/RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md": 72,
   "doc::docs/ROADMAP_IMPLEMENTATION.md": 129,
   "doc::docs/STAGE_4_CANONICAL_BASELINE_157_80.md": 42,
-  "doc::docs/STAGING_ARCHITECTURE.md": 106,
+  "doc::docs/STAGING_ARCHITECTURE.md": 100,
   "doc::docs/STRUCTURAL_MAP.md": 228,
   "doc::docs/SUPABASE_ENVIRONMENTS.md": 31,
   "doc::docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md": 408,
@@ -155,7 +155,6 @@
   "doc::docs/runbooks/dr.md": 33,
   "doc::docs/runbooks/migration-reconciliation.md": 46,
   "doc::docs/runbooks/release-baseline-157-80.md": 156,
-  "doc::docs/runbooks/staging-to-production.md": 53,
   "doc::reports/CLEANUP_REPORT.md": 140,
   "doc::reports/phase3-architecture.md": 30,
   "eventQueueJob::apps/web/src/modules/events/components/SchedulerFormModal.tsx::name::entrevistas": 1,

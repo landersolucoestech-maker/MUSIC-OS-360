@@ -1,0 +1,15 @@
+{
+  "id": "evid-ce1a8661",
+  "createdAt": "2026-09-29T05:52:20.604Z",
+  "type": "COMMAND",
+  "label": "node --test scripts/verify-staging-deploy-order.test.mjs scripts/wait-for-http-state.test.mjs",
+  "command": "node --test scripts/verify-staging-deploy-order.test.mjs scripts/wait-for-http-state.test.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "TAP version 13\n# Subtest: the committed staging.yml passes\nok 1 - the committed staging.yml passes\n  ---\n  duration_ms: 4.968052\n  type: 'test'\n  ...\n# Subtest: migrating before the build is proven down fails\nok 2 - migrating before the build is proven down fails\n  ---\n  duration_ms: 1.170458\n  type: 'test'\n  ...\n# Subtest: an unconditional db:migrate fails\nok 3 - an unconditional db:migrate fails\n  ---\n  duration_ms: 1.888611\n  type: 'test'\n  ...\n# Subtest: a missing stop hook guard or a missing older-build refusal fails\nok 4 - a missing stop hook guard or a missing older-build refusal fails\n  ---\n  duration_ms: 1.007949\n  type: 'test'\n  ...\n# Subtest: deploying after a rollback, skipping the up probe, or cancelling in progress fails\nok 5 - deploying after a rollback, skipping the up probe, or cancelling in progress fails\n  ---\n  duration_ms: 1.822101\n  type: 'test'\n  ...\n# Subtest: a db:migrate outside the gated job fails\nok 6 - a db:migrate outside the gated job fails\n  ---\n  duration_ms: 1.430374\n  type: 'test'\n  ...\n# Subtest: down needs N consecutive non-200 probes; a 200 in between restarts the count\nok 7 - down needs N consecutive non-200 probes; a 200 in between restarts the count\n  ---\n  duration_ms: 1.101952\n  type: 'test'\n  ...\n# Subtest: up needs N consecutive 200 probes\nok 8 - up needs N consecutive 200 probes\n  ---\n  duration_ms: 0.218864\n  type: 'test'\n  ...\n# Subtest: arguments are validated (fail closed)\nok 9 - arguments are validated (fail closed)\n  ---\n  duration_ms: 2.48349\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 120.978362",
+  "stderrTail": "",
+  "workspaceFingerprint": "b9aed08b2e9273bab068a6c33a36893afb2ee27dbf18daeec043cd3d616291b0",
+  "fingerprintStatus": "BOUND",
+  "head": "48de4bb00e15226c9dbdf01460588342b8beeeb2",
+  "durationMs": 189
+}

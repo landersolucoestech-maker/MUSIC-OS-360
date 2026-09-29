@@ -51,18 +51,43 @@ description: Migrations, RLS, and schema conventions
 These migrations rename columns **in place** (guarded, reversible) and remap persisted values to
 English. They are not expand/contract: the running API must match the schema.
 
-**Deploy order (mandatory):**
-1. Stop (or drain) the API/worker pods — an old API against a renamed column fails every query of
-   that table.
+**Deploy order (mandatory; forward: old API + old DB -> new API + new DB):**
+1. Stop every instance of the running API build (HTTP and the in-process BullMQ workers and
+   schedulers — they share the process) and prove it is down: `/api/v1/health/live` stops answering
+   200. An old API against a renamed column fails every query of that table.
 2. Run the pre-flight queries below against the target database and resolve anything they return.
-3. `db:migrate`, then `db:check` (zero pending).
-4. Start the new API/worker build.
+3. `db:migrate` (each migration in its own transaction), then `db:check` — it fails on pending
+   migrations **and** on applied migrations the build does not ship (database ahead of the build).
+4. Start the new API/worker build and prove it is up (`/api/v1/health/ready` = 200), then smoke test.
 5. Deploy the new web build. Until every browser reloads, an old web build keeps sending the
-   pre-rename payload: the API accepts it as deprecated input (`*-legacy-fields.ts`), drops the
-   values an old build could not have read on edit (form defaults, empty lists), and never lets an
-   empty deprecated value overwrite a canonical one.
+   pre-rename payload: the API accepts it as deprecated input (`*-legacy-fields.ts`,
+   `musicchat-vocabulary.ts`), drops the values an old build could not have read on edit (form
+   defaults, empty lists), and never lets an empty deprecated value overwrite a canonical one.
 
 The reverse order (new web first) fails every save with 400/422 against the old API.
+
+**Staging** enforces this in `.github/workflows/staging.yml` (`workflow_dispatch` on branch
+`staging` with `apply_migrations`): `db-ops check:state` refuses a build older than the database;
+the `STAGING_STOP_WEBHOOK_URL` hook stops the running build and `scripts/wait-for-http-state.mjs`
+proves it is down (3 consecutive non-200 probes) before `db:migrate`; the deploy job proves the new
+build is up before the smoke test. Without the stop hook the workflow refuses to change the schema.
+Platform contract: the stop hook stops *all* instances and keeps them stopped (no auto-restart); the
+deploy hook deploys the checked-out build and starts it. Runs are queued, never cancelled mid-flight.
+`scripts/verify-staging-deploy-order.mjs` (CI `quality` job) fails when the workflow drifts from this
+order. **Production** has no deploy workflow in this repository: follow the same steps by hand
+(maintenance mode / stop per `docs/RUNBOOK_ROLLBACK.md` first).
+
+**Reverse transition (rollback: new API + new DB -> old API + old DB):**
+1. Stop every instance of the new build and prove it is down (as in step 1 above).
+2. From the new build (it holds the `down()` code), roll the database back to the last migration of
+   the old build: `pnpm --filter @music-os-360/api exec tsx scripts/db-ops.ts rollback:to <Migration>`
+   — one migration at a time, each `down()` in its own transaction, newest first. In production set
+   `CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING`. Staging: `staging.yml` with
+   `rollback_to_migration` (stops the build first; never deploys).
+3. Deploy the old build: `db:check` must pass (nothing pending, nothing unknown applied). Staging:
+   revert the `staging` branch to the old build and push — the normal pipeline deploys it; a run of a
+   newer build meanwhile stops at `db-ops check:state` (pending migrations without authorization).
+4. Prove it is up and smoke test.
 
 **Pre-flight queries (read-only):**
 - The migration role must bypass RLS. The data steps are plain UPDATEs, and the tenant tables use
@@ -117,7 +142,4 @@ The reverse order (new web first) fails every save with 400/422 against the old 
   `DB_SSL=false DATABASE_URL=…/musicos360_mig pnpm --filter @music-os-360/api verify:cz042-cz043-migrations`
   and `… verify:cz045-musicchat-migration` (each removes only the probe rows/tenants it created).
   Both run as the migration role, which must be superuser or `BYPASSRLS` (first pre-flight query).
-
-**Known gap (not enforced by CI):** `.github/workflows/staging.yml` runs `db:migrate` while the
-previous build is still serving; step 1 above (stop/drain) must be done by the operator until the
-workflow gains a drain step (blocker BLK-DEPLOY-DRAIN-STEP).
+  CI runs both on a fresh, seeded `musicos360_mig` in the `db-verify-fresh-postgres` job.

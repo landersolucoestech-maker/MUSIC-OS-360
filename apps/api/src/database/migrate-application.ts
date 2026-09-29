@@ -75,6 +75,30 @@ export async function migrateApplication(dataSource: DataSource): Promise<Migrat
   }
 }
 
+/**
+ * Applied migrations the build does not ship: the database is ahead of (or
+ * diverged from) this build — e.g. an older build about to be deployed over a
+ * newer schema. That build cannot read the schema, so a deploy gate must stop.
+ */
+export function unknownAppliedMigrations(appliedNames: readonly string[], buildNames: readonly string[]): string[] {
+  const known = new Set(buildNames);
+  return appliedNames.filter((name) => !known.has(name));
+}
+
+/** Names of the migrations applied to the database that this build (dataSource.migrations) does not contain. */
+export async function checkAppliedMigrationsKnown(dataSource: DataSource): Promise<string[]> {
+  const queryRunner = dataSource.createQueryRunner();
+  const executor = new MigrationExecutor(dataSource, queryRunner);
+  try {
+    await executor.showMigrations(); // ensures the tracking table exists — see migrateApplication() above
+    const applied = (await executor.getExecutedMigrations()).map((m: Migration) => m.name);
+    const build = dataSource.migrations.map((m) => m.name ?? m.constructor.name);
+    return unknownAppliedMigrations(applied, build);
+  } finally {
+    await queryRunner.release();
+  }
+}
+
 export interface CheckApplicationResult {
   applicationPending: string[];
   nonApplicationPending: string[];

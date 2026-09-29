@@ -1,0 +1,15 @@
+{
+  "id": "evid-710a3c39",
+  "createdAt": "2026-09-29T05:52:26.373Z",
+  "type": "COMMAND",
+  "label": "corepack pnpm --filter @music-os-360/api exec jest src/database/migrate-application.spec.ts",
+  "command": "corepack pnpm --filter @music-os-360/api exec jest src/database/migrate-application.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "b9aed08b2e9273bab068a6c33a36893afb2ee27dbf18daeec043cd3d616291b0",
+  "fingerprintStatus": "BOUND",
+  "head": "48de4bb00e15226c9dbdf01460588342b8beeeb2",
+  "durationMs": 5647
+}
