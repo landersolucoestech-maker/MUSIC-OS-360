@@ -1,0 +1,12 @@
+{
+  "id": "evid-2aff2552",
+  "createdAt": "2026-09-29T16:07:07.333Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Re-review of 36b5d80: HIGH old-installer hooksPath drift from a detached worktree, symlinked cli path runs nothing, replace/graft defeats the FF check, plumbing pushes, gh issue develop, checkout <rev> -- <path> false positive; MEDIUM decoy refs, clone+set-url path, config section/include/separate-git-dir, parser scoping, Copilot MCP tools, relocation; LOW parser gaps/false positives, doc overclaims. Normal dev work at the git layer verified working.",
+  "workspaceFingerprint": "7a9b3a3a1ca9f669e5854b824cfe36bc977491fcec2cd57803e86f123132f6f8",
+  "fingerprintStatus": "BOUND",
+  "head": "f9a82cc803f90e19242efef710cb36cd8a1197fd"
+}

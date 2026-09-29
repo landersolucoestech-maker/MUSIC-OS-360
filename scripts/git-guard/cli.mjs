@@ -19,7 +19,7 @@
  * ref update or push. The Claude hook exits 2 (tool call blocked).
  */
 import { execFileSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -40,12 +40,23 @@ export function hookScript(name) {
   return `#!/bin/sh\n# Installed by scripts/git-guard/cli.mjs install — dev-only branch policy (docs/engineering/git-safety.md).\n${early}exec node "$(dirname "$0")/../cli.mjs" ${HOOK_ARGUMENTS[name]}\n`;
 }
 
-function git(args, cwd) {
+function git(args, cwd, env = process.env) {
   try {
-    return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 16 * 1024 * 1024 }).trim();
+    return execFileSync('git', args, { cwd, env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 16 * 1024 * 1024 }).trim();
   } catch {
     return null;
   }
+}
+
+/** Ancestry on the real commit graph: replace refs and grafts cannot fake a fast-forward. */
+function isAncestor(ancestor, descendant, cwd) {
+  const env = { ...process.env, GIT_NO_REPLACE_OBJECTS: '1', GIT_GRAFT_FILE: '/dev/null' };
+  return git(['--no-replace-objects', 'merge-base', '--is-ancestor', ancestor, descendant], cwd, env) !== null;
+}
+
+/** Exact ref lookup (`git rev-parse` would also accept decoys such as refs/tags/refs/heads/x). */
+function exactRefValue(ref, cwd) {
+  return git(['show-ref', '--verify', '--hash', ref], cwd) || null;
 }
 
 function gitRaw(args, cwd) {
@@ -166,6 +177,34 @@ export function verifyClone(cwd) {
   return problems;
 }
 
+/** Reinstalls the guard when core.hooksPath or the installed hooks drifted; returns a problem or null. */
+function ensureInstalled(cwd) {
+  const home = guardHome(cwd);
+  const hooksDir = home && path.join(home, 'hooks');
+  const healthy = hooksDir && git(['config', '--get', 'core.hooksPath'], cwd) === hooksDir
+    && Object.keys(HOOK_ARGUMENTS).every((name) => existsSync(path.join(hooksDir, name)) && readFileSync(path.join(hooksDir, name), 'utf8') === hookScript(name))
+    && GUARD_FILES.every((file) => existsSync(path.join(home, file)));
+  if (healthy) return null;
+  const result = installGuard(cwd);
+  return result.ok ? null : result.message;
+}
+
+function normalizeUrl(url) {
+  return url.replace(/\/+$/, '').replace(/\.git$/, '');
+}
+
+function remoteUrls(dir) {
+  return [...new Set(lines(git(['remote', '-v'], dir) ?? '').map((line) => line.split(/\s+/)[1]).filter(Boolean))]
+    .flatMap((url) => [url, normalizeUrl(url)]);
+}
+
+/** Every spelling of this project's origin and location that another repository could use as a remote. */
+function projectLocations(projectDir, projectCommon) {
+  const root = git(['rev-parse', '--show-toplevel'], projectDir);
+  const locations = [...remoteUrls(projectDir), projectDir, projectCommon, root].filter(Boolean);
+  return [...new Set(locations.flatMap((location) => [location, normalizeUrl(location), `${normalizeUrl(location)}.git`, `file://${location}`]))];
+}
+
 function main(argv) {
   const [command, ...rest] = argv;
   switch (command) {
@@ -177,7 +216,7 @@ function main(argv) {
     }
     case 'reference-transaction': {
       if (rest[0] !== 'prepared') return;
-      const violations = checkRefTransaction(lines(readStdin()), (ref) => git(['rev-parse', '-q', '--verify', ref]));
+      const violations = checkRefTransaction(lines(readStdin()), (ref) => exactRefValue(ref));
       if (violations.length) fail(violations);
       return;
     }
@@ -186,7 +225,7 @@ function main(argv) {
         remote: rest[0],
         updates: lines(readStdin()),
         currentBranchRef: currentBranchRef(),
-        isAncestor: (ancestor, descendant) => git(['merge-base', '--is-ancestor', ancestor, descendant]) !== null,
+        isAncestor: (ancestor, descendant) => isAncestor(ancestor, descendant),
       });
       if (violations.length) fail(violations);
       return;
@@ -201,13 +240,36 @@ function main(argv) {
       const projectDir = [process.env.CLAUDE_PROJECT_DIR, payload?.cwd].find((dir) => dir && existsSync(dir)) ?? process.cwd();
       const cwd = payload?.cwd && existsSync(payload.cwd) ? payload.cwd : projectDir;
       const projectCommon = commonDir(projectDir);
+      // Self-repair: an older installer (e.g. from a worktree on an old commit) or a moved clone
+      // can leave core.hooksPath pointing elsewhere; put the installed guard back before anything runs.
+      const guardProblem = projectCommon ? ensureInstalled(projectDir) : null;
+      const projectUrls = projectCommon ? projectLocations(projectDir, projectCommon) : [];
       const branch = currentBranchRef(projectDir)?.replace(/^refs\/heads\//, '') ?? null;
       const violations = checkToolUse(payload, branch, {
         cwd,
-        // Only a directory known to belong to another repository is exempt; unknown means ours.
-        isProjectDir: (dir) => !existsSync(dir) || commonDir(dir) === projectCommon,
-        pathExists: (relativePath, dir) => existsSync(path.resolve(dir ?? cwd, relativePath)),
+        projectUrls,
+        // Only an existing repository whose remotes are not this project's is exempt; anything unknown is ours.
+        isProjectDir: (dir) => {
+          if (!existsSync(dir)) return true;
+          const common = commonDir(dir);
+          if (!common || common === projectCommon) return true;
+          return remoteUrls(dir).some((url) => projectUrls.includes(url));
+        },
+        resolveRevision: (name, dir) => {
+          const base = dir ?? cwd;
+          if (existsSync(path.resolve(base, name))) return 'path';
+          if (git(['show-ref', '--verify', '-q', `refs/heads/${name}`], base) !== null) return 'branch';
+          return git(['rev-parse', '--verify', '-q', `${name}^{commit}`], base) ? 'commit' : null;
+        },
+        isGitDirPath: (file) => {
+          if (!projectCommon) return false;
+          const absolute = path.resolve(cwd, file);
+          return absolute === projectCommon || absolute.startsWith(`${projectCommon}${path.sep}`);
+        },
       });
+      if (guardProblem && payload?.tool_name === 'Bash' && /\b(git|gh)\b/.test(String(payload?.tool_input?.command ?? ''))) {
+        violations.push(`the git guard is not installed (${guardProblem}); run: node ${SOURCE_DIR}/cli.mjs install`);
+      }
       if (violations.length) fail(violations, 2);
       return;
     }
@@ -250,7 +312,16 @@ function main(argv) {
   }
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+function isMainModule() {
+  try {
+    // Real paths on both sides: invoked through a symlink, argv[1] keeps the link while import.meta.url does not.
+    return Boolean(process.argv[1]) && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
   try {
     main(process.argv.slice(2));
   } catch (error) {

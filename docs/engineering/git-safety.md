@@ -17,19 +17,24 @@ description: Git safety and branch policy for this repo
   `git push origin --delete <branch>`) once its commits are proven to be on `origin/dev`; it is
   never synchronized with `dev`.
 
-Enforcement (`scripts/git-guard/policy.mjs` is the single implementation):
+Enforcement (`scripts/git-guard/policy.mjs` is the single implementation). Threat model: the local
+layers stop accidental and tool/agent-driven violations (a harness asking to push a session branch,
+a tool creating a temporary branch) before they happen; they are not a sandbox against someone
+deliberately working around git. The GitHub ruleset below is the only boundary for that.
 
 | Layer | Where | What it refuses |
 | --- | --- | --- |
-| Git hooks (authoritative, local) | installed by `scripts/git-guard/cli.mjs install` into `<git-common-dir>/git-guard/` (absolute `core.hooksPath`) | `reference-transaction`: writing a new value to any `refs/heads/*` other than `dev` (git branch, checkout -b, switch -c, worktree add, update-ref, fetch x:y, a commit on such a branch); `pre-commit`/`pre-merge-commit`: committing anywhere but `dev`; `pre-push`: any remote other than `origin`, any target other than `refs/heads/dev`, pushing from a branch other than `dev`, tags, non-fast-forward (rewritten) `dev`, deleting `dev` |
-| Claude Code hooks (agents) | `.claude/settings.json` | `SessionStart` installs/refreshes the guard and states the policy; `PreToolUse` runs the installed guard, fails closed (`\|\| exit 2`) and refuses before they run: the same git commands (abbreviated long options included), `git checkout <branch>`, `branch -m/-c`, `symbolic-ref`, `--no-verify`, any `core.hooksPath`/`--config-env`/`GIT_CONFIG_*`/alias override, `send-pack`, `gh pr create`/`gh api` ref writes, GitHub MCP tools that create branches or pull requests or write to another branch, `EnterWorktree`, agents with worktree/remote isolation and remote sessions without `outcome_branch: dev`. Git commands aimed at another repository are not checked |
-| CI | `.github/workflows/ci.yml` | `node --test scripts/git-guard/policy.test.mjs` (real repositories: old checkouts, worktrees, `--git-dir`, rename, pack-refs, tampering) fails if the guard, the Claude wiring or the detector is removed or weakened |
+| Git hooks (authoritative, local) | installed by `scripts/git-guard/cli.mjs install` into `<git-common-dir>/git-guard/` from the version committed on `dev`, absolute `core.hooksPath`; `.githooks/` holds fallback shims that run the same installed guard | `reference-transaction`: writing a new value to any `refs/heads/*` other than `dev` (git branch, checkout -b, switch -c, worktree add, update-ref, fetch x:y, a commit on such a branch), checked with an exact ref lookup; `pre-commit`/`pre-merge-commit`: committing anywhere but `dev`; `pre-push`: any remote other than `origin`, any target other than `refs/heads/dev`, pushing from a branch other than `dev`, tags, non-fast-forward `dev` (checked on the real graph, ignoring replace refs and grafts), deleting `dev` |
+| Claude Code hooks (agents) | `.claude/settings.json` | `SessionStart` (re)installs the guard and states the policy; `PreToolUse` runs the installed guard, repairs `core.hooksPath` drift, fails closed (`\|\| exit 2`) and refuses before they run: branch-creating/switching git commands (abbreviated options included), `branch -m/-c`, `symbolic-ref`, `--no-verify`, hook-disabling config (`core.hooksPath`, `--config-env`, `GIT_CONFIG_*`, aliases, includes, section removal, `init --separate-git-dir`), `git replace`, plumbing pushes (`send-pack`, `remote-*`, `http-push`), writes into `.git/` (Bash and Edit/Write), `gh pr create`/`gh issue develop`/`gh api` ref writes, GitHub MCP tools that create branches, pull requests or Copilot branches or write to another branch, `EnterWorktree`, agents with worktree/remote isolation and remote sessions without `outcome_branch: dev`. Git commands in another existing repository whose remotes are not this project's are not checked |
+| CI | `.github/workflows/ci.yml` | `node --test scripts/git-guard/policy.test.mjs` (real repositories: old checkouts, worktrees, `--git-dir`, `-C .git`, decoy refs, replace/graft, hooks-path drift, symlinked paths, rename, pack-refs/gc, tampering) fails if the guard, the Claude wiring or the detector is removed or weakened |
 | Server-side detection | `.github/workflows/branch-policy.yml` | hourly (and on demand) from `dev`: fails while any branch other than `dev` exists on GitHub, however it was created; also fails a push to another branch when the pushed commit carries the workflow |
 
-The guard installed in the git directory is the version committed on `dev` (then `origin/dev`);
-the checked-out tree never decides what runs, so checking out an old commit, a detached worktree or
-`git --git-dir`/`-C .git` keeps the same hooks. Install it in every clone (Claude Code sessions do
-it at `SessionStart`) and check a clone with `verify`:
+The installed guard is the version committed on `dev` (then `origin/dev`): uncommitted edits and
+the checked-out tree never decide what runs, so an old checkout, a detached worktree or
+`git --git-dir`/`-C .git` keep the same hooks, and a worktree on an old commit whose installer
+points `core.hooksPath` at `.githooks` still runs it through the shims (the next Claude tool call
+restores the absolute path). Install it in every clone (Claude Code sessions do it at
+`SessionStart`) and check a clone with `verify`:
 
 ```bash
 node scripts/git-guard/cli.mjs install        # <git-common-dir>/git-guard + core.hooksPath
@@ -37,18 +42,23 @@ node scripts/git-guard/cli.mjs verify         # on dev, only dev, = origin/dev, 
 node scripts/git-guard/cli.mjs verify-remote  # origin has no branch other than dev
 ```
 
-Limits of the local layers (why the GitHub ruleset below is still required):
+Known limits of the local layers (why the GitHub ruleset is required):
 
-- a fresh clone is unguarded until `install`/`SessionStart` runs;
-- `git commit --no-verify` / `git push --no-verify` skip `pre-commit`/`pre-push` (the Claude guard
-  refuses them; `reference-transaction` still refuses other branches);
+- a fresh clone is unguarded until `install`/`SessionStart` runs; moving a clone or
+  `git init --separate-git-dir` leaves `core.hooksPath` dangling until the next `install`;
+- the guard is exactly what is committed on `dev`: a weakened guard committed there is installed;
+- outside Claude Code, `git commit/push --no-verify`, git plumbing that pushes without `pre-push`
+  (`send-pack`, `remote-https`), hook-disabling config, replace refs/grafts and direct edits of
+  `.git/` are not prevented locally (the Claude guard refuses them for agents);
 - git 2.43 does not report `git branch -m/-c` or `git symbolic-ref` to `reference-transaction`:
   commits and pushes from such a branch are still refused, `verify` reports it;
-- someone without the guard (another machine, the GitHub web UI or API) is only detected afterwards.
+- anyone without the guard (another machine, the GitHub web UI or API) is only detected afterwards,
+  by the hourly scan.
 
 The durable server-side boundary is a GitHub ruleset that restricts branch creation to `dev` and
 blocks force pushes and deletion of `dev`; it is configured in the repository settings, not in
-this tree. Deleting a forbidden branch stays allowed by every local layer.
+this tree. Deleting a forbidden branch stays allowed by every local layer. A user with
+`push.followTags=true` must not create local annotated tags on `dev` (tag pushes are refused).
 
 `.github/workflows/staging.yml`, `ci.yml`, `security.yml` and
 `docs/runbooks/staging-to-production.md` still describe a `dev -> staging -> main` promotion

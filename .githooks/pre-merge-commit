@@ -1,0 +1,5 @@
+#!/bin/sh
+# Fallback shim (dev-only branch policy, docs/engineering/git-safety.md): the guard lives in the
+# git directory (node scripts/git-guard/cli.mjs install). If an older installer pointed
+# core.hooksPath at .githooks, these shims still run that installed guard (fail closed if missing).
+exec node "$(git rev-parse --path-format=absolute --git-common-dir)/git-guard/cli.mjs" pre-merge-commit

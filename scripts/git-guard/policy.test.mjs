@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -58,7 +58,7 @@ test('shell parsing: quotes, chains, substitutions, nested shells, redirections,
   assert.deepEqual(shellCommands(`cd /repo && git commit -m "a && b; c" || echo 'git push x'`), [
     ['cd', '/repo'], ['git', 'commit', '-m', 'a && b; c'], ['echo', 'git push x'],
   ]);
-  assert.deepEqual(shellCommands('x=$(git rev-parse HEAD)'), [['x='], ['git', 'rev-parse', 'HEAD']]);
+  assert.deepEqual(shellCommands('x=$(git rev-parse HEAD)'), [['git', 'rev-parse', 'HEAD'], ['x=$(git rev-parse HEAD)']]);
   assert.deepEqual(shellCommands('git push origin HEAD:dev 2>&1 | tail -3'), [['git', 'push', 'origin', 'HEAD:dev'], ['tail', '-3']]);
   assert.deepEqual(shellCommands('git push origin dev >/dev/null 2>>err.log </dev/null &>all.log'), [['git', 'push', 'origin', 'dev']]);
   assert.deepEqual(shellCommands('echo a2>f'), [['echo', 'a2']]);
@@ -69,6 +69,7 @@ test('shell parsing: quotes, chains, substitutions, nested shells, redirections,
     "bash <<'EOF'\ngit checkout -b feature/x\nEOF",
     "cat <<'EOF'\nharmless\nEOF\ngit push origin HEAD:feature/x 2>&1",
     'x=$((1<<2))\ngit branch feature/after-arithmetic', '# a comment <<EOF\ngit branch feature/after-comment',
+    "cat <<'EOF' | bash\ngit branch feature/piped\nEOF",
   ]) assert.ok(refused(command), command);
   for (const command of [
     'git push origin HEAD:dev 2>&1 | tail -3', 'git push origin dev > out.txt 2>&1', 'git push -u origin dev &>/dev/null',
@@ -91,6 +92,11 @@ test('Claude guard refuses branch creation, switching, renames and hook bypasses
     'git send-pack ../o.git dev:refs/heads/x', 'git-send-pack ../o.git dev:refs/heads/x',
     'git commit --no-verify -m x', 'git commit --no-verif -m x', 'git commit -nm x', 'git merge --no-veri x', 'git -C /repo checkout -b x',
     'timeout 60 git branch x', 'nice -n 10 git switch -c x', 'env -i PATH=/usr/bin git branch x', 'xargs -n1 git branch', 'env FOO=1 git checkout -b x',
+    'sudo -u root git branch x', 'env -u X git branch x', 'timeout -s KILL 60 git branch x', 'git --attr-source HEAD branch x',
+    'git config --remove-section core', 'git config --rename-section core x', 'git config include.path /tmp/x', 'git init --separate-git-dir=/tmp/g',
+    'git replace --graft HEAD abc1234', 'git update-ref refs/replace/abc def', 'git remote-https origin https://x/y', 'git-remote-https origin x', 'git http-push x',
+    'git branch -v newname', 'git branch --sort=refname newname', 'git push --receive-pack=x origin dev',
+    'rm -rf .git/git-guard', 'sed -i s/x/y/ .git/config', 'echo x > .git/config', 'cp a .git/hooks/pre-push', 'printf x >> /repo/.git/info/grafts',
   ]) assert.ok(refused(command), command);
   assert.ok(refused('git commit -m x', 'claude/beautiful-gates-c0kwj5'));
 
@@ -103,8 +109,15 @@ test('Claude guard refuses branch creation, switching, renames and hook bypasses
     'git worktree add --detach ../review HEAD', 'git config --get core.hooksPath', 'git config --list',
     'git commit -m "fix: core.hooksPath is managed by the guard"', 'git fetch origin dev', 'git log --oneline -3', 'timeout 60 git push origin HEAD:dev',
     'echo git branch x', 'grep -rn "git checkout -b" docs',
+    'git checkout abc1234~1 -- a.ts', 'git checkout v1.2.0 -- f', 'git checkout stash@{0} -- a.ts', 'git checkout HEAD@{1} -- a.ts',
+    'git checkout ORIG_HEAD -- f', 'git checkout main -- f', 'git commit -mRefactoring', 'git commit -uno -m x', 'git commit -am "x"',
+    'git replace --list', 'cat .git/config', 'node .git/git-guard/cli.mjs verify', 'git worktree add ../w abc1234',
   ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
-  assert.deepEqual(checkShellCommand('git checkout src/a.ts', 'dev', { pathExists: (p) => p === 'src/a.ts' }), []);
+  const resolveRevision = (name) => ({ 'src/a.ts': 'path', 'v1.2.0': 'commit', legacy: 'branch' })[name] ?? null;
+  assert.deepEqual(checkShellCommand('git checkout src/a.ts', 'dev', { resolveRevision }), []);
+  assert.deepEqual(checkShellCommand('git checkout v1.2.0', 'dev', { resolveRevision }), []);
+  assert.ok(refused('git checkout legacy', 'dev', { resolveRevision }));
+  assert.ok(refused('git checkout claude/beautiful-gates-c0kwj5', 'dev', { resolveRevision }), 'DWIM from origin');
 });
 
 test('Claude guard: pushes go only from dev to origin/dev; abbreviated options are recognised', () => {
@@ -130,6 +143,16 @@ test('Claude guard: git commands aimed at another repository are not this policy
   assert.ok(refused('git --git-dir=/repo/.git branch x', 'dev', options));
   assert.ok(refused('cd "$DIR" && git branch x', 'dev', options), 'unknown directory counts as this repository');
   assert.ok(refused('cd /tmp/lab && cd /repo && git branch x', 'dev', options));
+  assert.ok(refused('(cd /tmp/lab && ls) && git push --no-verify origin HEAD:claude/x', 'dev', options), 'cd in a subshell does not leak');
+  assert.ok(refused('echo "$(cd /tmp/lab)" && git branch x', 'dev', options), 'cd in a substitution does not leak');
+  assert.ok(refused('export GIT_DIR=/repo/.git; cd /tmp/lab && git branch x', 'dev', options));
+  assert.ok(refused('export GIT_DIR="$D"; cd /tmp/lab && git branch x', 'dev', options));
+  const withUrls = { ...options, projectUrls: ['https://github.com/o/r', 'https://github.com/o/r.git', '/repo'] };
+  assert.ok(refused('cd /tmp/lab && git remote set-url origin https://github.com/o/r.git', 'dev', withUrls));
+  assert.ok(refused('cd /tmp/lab && git remote add up /repo', 'dev', withUrls));
+  assert.ok(refused('cd /tmp/lab && git remote set-url origin "$(git -C /repo remote get-url origin)"', 'dev', withUrls));
+  assert.ok(refused('cd /tmp/lab && git push https://github.com/o/r.git dev:claude/x', 'dev', withUrls));
+  assert.deepEqual(checkShellCommand('cd /tmp/lab && git remote add origin https://example.com/lab.git', 'dev', withUrls), []);
 });
 
 test('Claude guard: tools that create temporary branches are refused', () => {
@@ -141,6 +164,11 @@ test('Claude guard: tools that create temporary branches are refused', () => {
   assert.deepEqual(checkToolUse({ tool_name: 'mcp__Claude_Code_Remote__create_session', tool_input: { outcome_branch: 'dev' } }), []);
   assert.equal(checkToolUse({ tool_name: 'Bash', tool_input: { command: 'git checkout -b x' } }, 'dev').length, 1);
   assert.deepEqual(checkToolUse({ tool_name: 'Read', tool_input: { file_path: '/x' } }), []);
+  const isGitDirPath = (file) => file.startsWith('/repo/.git/');
+  for (const tool_name of ['Edit', 'Write', 'MultiEdit']) {
+    assert.equal(checkToolUse({ tool_name, tool_input: { file_path: '/repo/.git/config' } }, 'dev', { isGitDirPath }).length, 1, tool_name);
+  }
+  assert.deepEqual(checkToolUse({ tool_name: 'Edit', tool_input: { file_path: '/repo/src/a.ts' } }, 'dev', { isGitDirPath }), []);
 });
 
 test('Claude guard: GitHub API tools and gh cannot create or write other branches', () => {
@@ -151,6 +179,8 @@ test('Claude guard: GitHub API tools and gh cannot create or write other branche
     ['mcp__github__push_files', { branch: 'fix/x', files: [] }],
     ['mcp__github__create_or_update_file', { branch: 'review/x', path: 'a' }],
     ['mcp__github__delete_file', { path: 'a' }],
+    ['mcp__github__assign_copilot_to_issue', { issueNumber: 1 }],
+    ['mcp__github__create_pull_request_with_copilot', { problem_statement: 'x' }],
   ]) assert.equal(checkToolUse({ tool_name, tool_input }).length, 1, tool_name);
   assert.deepEqual(checkToolUse({ tool_name: 'mcp__github__push_files', tool_input: { branch: 'dev', files: [] } }), []);
   assert.deepEqual(checkToolUse({ tool_name: 'mcp__github__list_branches', tool_input: {} }), []);
@@ -160,10 +190,12 @@ test('Claude guard: GitHub API tools and gh cannot create or write other branche
     'gh api --method PATCH repos/o/r/git/refs/heads/dev -F force=true', 'gh api -X DELETE repos/o/r/git/refs/heads/dev',
     'gh api -X POST repos/o/r/branches/dev/rename -f new_name=main',
     'gh api graphql -f query=\'mutation { createRef(input: {repositoryId: "x", name: "refs/heads/x", oid: "y"}) { ref { id } } }\'',
+    'gh issue develop 12 --name claude/x --checkout', 'gh api graphql -f query=\'mutation { createLinkedBranch(input: {}) { linkedBranch { id } } }\'',
+    'gh api graphql -F query=@mutation.graphql', 'gh repo sync',
   ]) assert.ok(refused(command), command);
   for (const command of [
     'gh api repos/o/r/branches', 'gh api repos/o/r/git/refs/heads/dev', 'gh pr list', 'gh run view 1',
-    'gh api -X DELETE repos/o/r/git/refs/heads/claude/beautiful-gates-c0kwj5', 'gh api graphql -f query=\'{ viewer { login } }\'',
+    'gh api -X DELETE repos/o/r/git/refs/heads/claude/beautiful-gates-c0kwj5', 'gh api graphql -f query=\'{ viewer { login } }\'', 'gh issue develop --list 12',
   ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
 });
 
@@ -214,6 +246,7 @@ test('against a real repository: the installed guard survives old checkouts, wor
 
     mkdirSync(path.join(clone, 'scripts'), { recursive: true });
     cpSync(path.join(repoRoot, 'scripts/git-guard'), path.join(clone, 'scripts/git-guard'), { recursive: true });
+    cpSync(path.join(repoRoot, '.githooks'), path.join(clone, '.githooks'), { recursive: true });
     assert.equal(git(['add', '.']).status, 0);
     assert.equal(git(['commit', '-qm', 'guard']).status, 0);
     const install = spawnSync(process.execPath, ['scripts/git-guard/cli.mjs', 'install'], { cwd: clone, env, encoding: 'utf8' });
@@ -256,17 +289,29 @@ test('against a real repository: the installed guard survives old checkouts, wor
     refusedBy(git([`--git-dir=${path.join(clone, '.git')}`, 'branch', 'x'], work), only, '--git-dir');
     refusedBy(git(['-C', '.git', 'branch', 'x']), only, '-C .git');
 
-    // rename is invisible to reference-transaction on some git versions: commit/push still refused, verify reports it
-    assert.equal(git(['branch', '-m', 'dev', 'feature/renamed']).status, 0);
-    refusedBy(git(['commit', '-q', '--allow-empty', '-m', 'r']), /commits are allowed only on "dev"/, 'commit on a renamed branch');
-    refusedBy(git(['push', 'origin', 'feature/renamed']), /pushes go only to origin\/dev/, 'push of a renamed branch');
-    refusedBy(spawnSync(process.execPath, [path.join(hooksDir, '..', 'cli.mjs'), 'verify'], { cwd: clone, env, encoding: 'utf8' }), /not refs\/heads\/dev/, 'verify after rename');
-    assert.equal(git(['branch', '-m', 'feature/renamed', 'dev']).status, 0);
+    // decoy refs whose DWIM lookup matches the new branch's value do not let it through
+    assert.equal(git(['tag', 'refs/heads/feature/c']).status, 0);
+    refusedBy(git(['branch', 'feature/c']), only, 'branch behind a decoy tag');
+    refusedBy(git(['fetch', '-q', '.', 'dev:refs/heads/feature/c']), only, 'fetch behind a decoy tag');
+    assert.equal(git(['tag', '-d', 'refs/heads/feature/c']).status, 0);
+    assert.equal(git(['update-ref', 'refs/refs/heads/feature/b', 'HEAD']).status, 0);
+    refusedBy(git(['branch', 'feature/b']), only, 'branch behind a decoy ref');
+    assert.equal(git(['update-ref', '-d', 'refs/refs/heads/feature/b']).status, 0);
+
+    // rename is invisible to reference-transaction on some git versions: either it is refused, or
+    // commit/push from the renamed branch are refused and verify reports it
+    if (git(['branch', '-m', 'dev', 'feature/renamed']).status === 0) {
+      refusedBy(git(['commit', '-q', '--allow-empty', '-m', 'r']), /commits are allowed only on "dev"/, 'commit on a renamed branch');
+      refusedBy(git(['push', 'origin', 'feature/renamed']), /pushes go only to origin\/dev/, 'push of a renamed branch');
+      refusedBy(spawnSync(process.execPath, [path.join(hooksDir, '..', 'cli.mjs'), 'verify'], { cwd: clone, env, encoding: 'utf8' }), /not refs\/heads\/dev/, 'verify after rename');
+      assert.equal(git(['branch', '-m', 'feature/renamed', 'dev']).status, 0);
+    }
+    assert.equal(git(['symbolic-ref', 'HEAD']).stdout.trim(), 'refs/heads/dev');
 
     // pushes
     refusedBy(git(['push', 'origin', 'dev:refs/heads/claude/beautiful-gates-c0kwj5']), /pushes go only to origin\/dev/, 'push to another branch');
     assert.equal(git(['tag', 'v1']).status, 0);
-    assert.notEqual(git(['push', 'origin', 'v1']).status, 0, 'tag push');
+    refusedBy(git(['push', 'origin', 'v1']), /pushes go only to origin\/dev/, 'tag push');
     assert.equal(git(['ls-remote', '--heads', '--tags', 'origin']).stdout.trim().split('\n').length, 1, 'origin only has dev');
 
     // normal work on dev
@@ -276,6 +321,37 @@ test('against a real repository: the installed guard survives old checkouts, wor
     assert.equal(git(['rev-parse', 'dev'], origin).stdout.trim(), git(['rev-parse', 'HEAD']).stdout.trim());
     const verify = spawnSync(process.execPath, ['scripts/git-guard/cli.mjs', 'verify'], { cwd: clone, env, encoding: 'utf8' });
     assert.equal(verify.status, 0, verify.stderr);
+
+    // a replace ref/graft cannot pass a rewritten dev off as a fast-forward
+    const published = git(['rev-parse', 'HEAD']).stdout.trim();
+    assert.equal(git(['reset', '-q', '--soft', 'HEAD~1']).status, 0);
+    assert.equal(git(['commit', '-qm', 'rewritten']).status, 0);
+    const rewritten = git(['rev-parse', 'HEAD']).stdout.trim();
+    assert.equal(git(['replace', '--graft', rewritten, published]).status, 0);
+    refusedBy(git(['push', 'origin', 'dev']), /not an ancestor/, 'push of a grafted rewrite');
+    assert.equal(git(['replace', '-d', rewritten]).status, 0);
+    assert.equal(git(['reset', '-q', '--hard', published]).status, 0);
+
+    // an older installer pointing core.hooksPath at the in-tree .githooks: the shims still run the
+    // installed guard, and the Claude hook puts the absolute hooks path back
+    assert.equal(git(['config', 'core.hooksPath', '.githooks']).status, 0);
+    refusedBy(git(['branch', 'drift/x']), only, 'branch with the fallback shims');
+    const repair = spawnSync(process.execPath, ['scripts/git-guard/cli.mjs', 'claude-pre-tool-use'], {
+      cwd: clone, env: { ...env, CLAUDE_PROJECT_DIR: clone }, encoding: 'utf8', input: '{"tool_name":"Read","tool_input":{"file_path":"a.txt"}}',
+    });
+    assert.equal(repair.status, 0, repair.stderr);
+    assert.equal(git(['config', '--get', 'core.hooksPath']).stdout.trim(), hooksDir, 'hooks path repaired');
+
+    // invoked through a symlinked path, the CLI still runs (and still blocks)
+    const link = path.join(work, 'link');
+    symlinkSync(clone, link);
+    const viaLink = spawnSync(process.execPath, [path.join(link, 'scripts/git-guard/cli.mjs'), 'verify'], { cwd: clone, env, encoding: 'utf8' });
+    assert.equal(viaLink.status, 0, viaLink.stderr);
+    assert.match(viaLink.stdout, /OK:/);
+    const blockedViaLink = spawnSync(process.execPath, [path.join(link, 'scripts/git-guard/cli.mjs'), 'claude-pre-tool-use'], {
+      cwd: clone, env: { ...env, CLAUDE_PROJECT_DIR: link }, encoding: 'utf8', input: '{"tool_name":"Bash","tool_input":{"command":"git checkout -b claude/x"}}',
+    });
+    assert.equal(blockedViaLink.status, 2, blockedViaLink.stderr);
 
     // a tampered installed guard is reported, and install restores the committed version
     appendFileSync(path.join(clone, '.git', 'git-guard', 'policy.mjs'), '\n// tampered\n');
@@ -287,13 +363,18 @@ test('against a real repository: the installed guard survives old checkouts, wor
   }
 });
 
-test('the guard stays wired: Claude hooks fail closed, CI runs these tests, the detector scans every branch', () => {
+test('the guard stays wired: fallback shims, Claude hooks fail closed, CI runs these tests, the detector scans every branch', () => {
+  for (const hook of ['pre-commit', 'pre-merge-commit', 'pre-push', 'reference-transaction']) {
+    const file = path.join(repoRoot, '.githooks', hook);
+    assert.ok(statSync(file).mode & 0o111, `${hook} shim must be executable`);
+    assert.match(readFileSync(file, 'utf8'), /--git-common-dir\)\/git-guard\/cli\.mjs" (pre-commit|pre-merge-commit|pre-push|reference-transaction)/, hook);
+  }
   assert.match(hookCommand('SessionStart'), /scripts\/git-guard\/cli\.mjs.* session-start$/);
   const preToolUse = hookCommand('PreToolUse');
   assert.match(preToolUse, /git-guard\/cli\.mjs.* claude-pre-tool-use \|\| exit 2$/);
   assert.match(preToolUse, /--git-common-dir/, 'prefers the installed guard');
   const matcher = settings.hooks.PreToolUse.find((entry) => JSON.stringify(entry).includes('claude-pre-tool-use')).matcher;
-  for (const tool of ['Bash', 'EnterWorktree', 'Agent', 'mcp__Claude_Code_Remote__create_session', 'mcp__github__create_branch', 'mcp__github__push_files']) {
+  for (const tool of ['Bash', 'Edit', 'Write', 'MultiEdit', 'EnterWorktree', 'Agent', 'mcp__Claude_Code_Remote__create_session', 'mcp__github__create_branch', 'mcp__github__push_files']) {
     assert.match(tool, new RegExp(`^(?:${matcher})$`), `matcher covers ${tool}`);
   }
   assert.match(readFileSync(path.join(repoRoot, '.github/workflows/ci.yml'), 'utf8'), /node --test scripts\/git-guard\/policy\.test\.mjs/);

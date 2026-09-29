@@ -1,0 +1,15 @@
+{
+  "id": "evid-f0088d3f",
+  "createdAt": "2026-09-29T16:13:44.913Z",
+  "type": "COMMAND",
+  "label": "pnpm exec eslint scripts/git-guard",
+  "command": "pnpm exec eslint scripts/git-guard",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "8c32b1a17b6da9bf07c68f67570b081e72964b337d6fbc68e55ae9af6eddb15c",
+  "fingerprintStatus": "BOUND",
+  "head": "f9a82cc803f90e19242efef710cb36cd8a1197fd",
+  "durationMs": 2113
+}

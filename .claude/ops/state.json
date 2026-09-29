@@ -5,7 +5,7 @@
   "status": "blocked",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T15:43:09.934Z",
+  "updatedAt": "2026-09-29T16:14:29.892Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1107,7 +1107,9 @@
             "evid-b06078cc",
             "evid-95e19c1a",
             "evid-d8ecbca1",
-            "evid-07434195"
+            "evid-07434195",
+            "evid-2aff2552",
+            "evid-07b3753e"
           ],
           "status": "closed"
         },
@@ -1134,7 +1136,12 @@
             "evid-bc752914",
             "evid-0dfc57b5",
             "evid-6cbc81c2",
-            "evid-bf61cb7a"
+            "evid-bf61cb7a",
+            "evid-f0088d3f",
+            "evid-0ba704d1",
+            "evid-4cec4b42",
+            "evid-10616c66",
+            "evid-3e71c53e"
           ],
           "status": "closed"
         },
@@ -4175,6 +4182,186 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-29T15:32:53.341Z"
+    },
+    {
+      "id": "find-bdb5240a",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": ".claude/settings.json",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): A detached worktree on an older dev commit (d374b0e/d640e55) whose SessionStart/install sets core.hooksPath=.githooks (relative) silently disables every hook in the main worktree; branch create/commit/push then succeed. Docs claim worktrees keep the same hooks.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:05.750Z"
+    },
+    {
+      "id": "find-79ee566b",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/cli.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): cli.mjs runs nothing and exits 0 when invoked through a symlinked path (argv[1] vs real path of import.meta.url): SessionStart installs nothing and PreToolUse fallback allows everything.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:05.845Z"
+    },
+    {
+      "id": "find-bc8e17f9",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/cli.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Fast-forward check uses git merge-base honouring replace refs/grafts: git replace --graft + plain git push origin dev rewrites origin/dev history.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:05.950Z"
+    },
+    {
+      "id": "find-1b528aa8",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Plumbing pushes skip pre-push (git remote-http/remote-https transport, http-push, send-pack at the git layer); the Claude guard only knows send-pack; docs omit this limit.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.046Z"
+    },
+    {
+      "id": "find-f74317cc",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): gh issue develop (createLinkedBranch) creates a branch on GitHub and passes the Claude guard; also gh api graphql createLinkedBranch and -F query=@file.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.166Z"
+    },
+    {
+      "id": "find-d0ff06c5",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): False positive: git checkout <rev> -- <path> refused unless rev is dev/sha/HEAD~n/origin/*, e.g. abc~1, tags, stash@{0}, HEAD@{1}, ORIG_HEAD.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.279Z"
+    },
+    {
+      "id": "find-925d239f",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/cli.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Decoy refs (refs/refs/heads/x, refs/tags/refs/heads/x) make git rev-parse --verify resolve a new branch to its value, so reference-transaction lets the creation through; the Claude guard allows update-ref refs/refs/... and fetch . x:y.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.372Z"
+    },
+    {
+      "id": "find-466bf06f",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Foreign-repo exemption keyed on the directory, not the push destination: clone the project elsewhere, set-url to the project origin, switch -c and push publishes a branch.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.486Z"
+    },
+    {
+      "id": "find-160dd09e",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Hook-disabling git commands not refused: git config --remove-section/--rename-section core, include.path, git init --separate-git-dir; sed/rm/Edit/Write on .git/ not covered.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.584Z"
+    },
+    {
+      "id": "find-f19db5dc",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Parser scoping: cd inside (...) or \\$(...) carries over; existing non-repository directories are treated as another repository (export GIT_DIR=<project>/.git; cd /tmp && ... passes).",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.690Z"
+    },
+    {
+      "id": "find-c0585ab6",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): GitHub MCP Copilot tools (assign_copilot_to_issue, create_pull_request_with_copilot) create copilot/* branches and are not matched.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.806Z"
+    },
+    {
+      "id": "find-005c2bf4",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/cli.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Absolute core.hooksPath dangles after moving the clone or git init --separate-git-dir: all hooks stop silently (undocumented).",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.905Z"
+    },
+    {
+      "id": "find-f2df34dc",
+      "category": "governance",
+      "severity": "LOW",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Parser/false-positive LOWs: wrappers with option values (sudo -u, env -u, timeout -s), --attr-source, cat <<EOF | bash, git commit -mRefactoring / -uno read as -n, git checkout <tag>, git worktree add <path> <commit>, git branch -v/-i/--sort <name> treated as listing, push.followTags.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:06.998Z"
+    },
+    {
+      "id": "find-4e77f8bb",
+      "category": "governance",
+      "severity": "LOW",
+      "file": "docs/engineering/git-safety.md",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Docs overstate guarantees (reference-transaction cannot be skipped; old checkouts keep hooks) and omit limits: plumbing pushes, replace refs/grafts, relocation, old installers; guard integrity equals what is committed on dev.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:07.095Z"
+    },
+    {
+      "id": "find-234ea980",
+      "category": "governance",
+      "severity": "INFO",
+      "file": "scripts/git-guard/policy.test.mjs",
+      "line": null,
+      "summary": "security-reviewer (re-review of 36b5d80): Test asserts git branch -m succeeds (git 2.43 behaviour; would fail on a git that reports renames); tag push assertion has no stderr pattern; no symlink/hooksPath-drift/decoy/replace tests.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:07:07.194Z"
     }
   ],
   "evidenceIds": [
@@ -4626,7 +4813,14 @@
     "evid-6cbc81c2",
     "evid-bf61cb7a",
     "evid-5e364cf0",
-    "evid-5fd99216"
+    "evid-5fd99216",
+    "evid-2aff2552",
+    "evid-07b3753e",
+    "evid-f0088d3f",
+    "evid-0ba704d1",
+    "evid-4cec4b42",
+    "evid-10616c66",
+    "evid-3e71c53e"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

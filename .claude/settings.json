@@ -25,14 +25,14 @@
         "hooks": [
           {
             "type": "command",
-            "command": "G=\"$CLAUDE_PROJECT_DIR/scripts/git-guard/cli.mjs\"; [ -f \"$G\" ] || G=\"$(git -C \"$CLAUDE_PROJECT_DIR\" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)/git-guard/cli.mjs\"; node \"$G\" session-start"
+            "command": "G=\"$(git -C \"$CLAUDE_PROJECT_DIR\" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)/git-guard/cli.mjs\"; [ -f \"$G\" ] || G=\"$CLAUDE_PROJECT_DIR/scripts/git-guard/cli.mjs\"; node \"$G\" session-start"
           }
         ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash|EnterWorktree|Agent|Task|mcp__.*",
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|EnterWorktree|Agent|Task|mcp__.*",
         "hooks": [
           {
             "type": "command",
@@ -43,5 +43,5 @@
     ]
   },
   "_comment": "Generic, safe defaults shipped with the pack: read-only git inspection and the pack's own deterministic runtime scripts are pre-allowed since they are LOCAL_WRITE at most and fully covered by tests; destructive git operations are explicitly denied by default per .claude/rules/git-safety.md. A target project's own settings.json is never overwritten by the installer (see installer/install.mjs skip-customized behavior) — this file only applies where the target has none yet.",
-  "_comment_git_guard": "Dev-only branch policy (docs/engineering/git-safety.md): SessionStart installs the guard into <git-common-dir>/git-guard (from the version committed on dev) and points core.hooksPath at it, then states the policy; PreToolUse runs the installed guard (fallback: the working tree) and fails closed (|| exit 2), refusing git/gh commands, GitHub API tools, worktree isolation and remote sessions that would create, switch to or push any branch other than dev. The installed git hooks are the authoritative layer; these are defence in depth for agents."
+  "_comment_git_guard": "Dev-only branch policy (docs/engineering/git-safety.md): SessionStart runs the guard installed in <git-common-dir>/git-guard (fallback: the working tree), which (re)installs it from the version committed on dev and states the policy; PreToolUse runs the installed guard, repairs core.hooksPath drift and fails closed (|| exit 2), refusing git/gh commands, GitHub API tools, edits inside the git directory, worktree isolation and remote sessions that would create, switch to or push any branch other than dev. The installed git hooks are the authoritative local layer; the GitHub ruleset is the server-side boundary."
 }
