@@ -65,21 +65,22 @@ import { ArtistEvolutionSection } from "@/modules/artist/components/ArtistEvolut
 import { PositioningCard } from "@/modules/artist/components/PositioningCard";
 import { ArtistPlatformMetrics } from "@/modules/artist/components/ArtistPlatformMetrics";
 
-const formatDateDMY = (d?: string | null): string => {
-  if (!d) return "Não informado";
-  if (/^\d{2}-\d{2}-\d{4}$/.test(d)) return d;
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(d)) return d.replace(/\//g, "-");
-  const datePart = d.split("T")[0];
-  const parts = datePart.split("-");
-  if (parts.length === 3 && parts[0].length === 4) {
-    const [year, month, day] = parts;
-    return `${day.padStart(2, "0")}-${month.padStart(2, "0")}-${year}`;
-  }
-  return d;
+/**
+ * "instant": a real moment (event start, record creation) — shown as its day in
+ * the system timezone, so a show at 21:00 in America/Sao_Paulo stays on its own day.
+ * "calendar": a date-only field (release date, birth date, publish date) —
+ * shown as stored, never shifted by a timezone.
+ */
+type DateKind = "instant" | "calendar";
+
+/** DD/MM/YYYY of a Vision360 date of the given kind; a PT-BR placeholder when absent. */
+const formatDayLabel = (value: string | null | undefined, kind: DateKind): string => {
+  if (!value) return "Não informado";
+  return kind === "instant" ? formatDate(value) : formatCalendarDateLabel(value, "Não informado");
 };
 
 // imports moved here after CircularProgress was removed
-import { formatCalendarDateLabel, formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
+import { calendarDay, calendarDaysBetween, formatCalendarDateLabel, formatCurrency, formatDate, formatDateTime, formatTime, getCurrencyToneClass, getMonetarySemanticClass, todayCalendarDay } from "@/shared/lib/format-utils";
 import { useWorks } from "@/modules/catalog/hooks/useWorks";
 import { usePhonograms } from "@/modules/catalog/hooks/usePhonograms";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
@@ -95,7 +96,7 @@ import {
 import { truncatedTransactionsNotice, useAllTransactions } from "@/modules/accounting/hooks/useAllTransactions";
 import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
 import { ContractStatusBadge } from "@/modules/contracts/components/ContractStatusBadge";
-import { useEvents } from "@/modules/events/hooks/useEvents";
+import { useArtistEvents } from "@/modules/events/hooks/useArtistEvents";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 import { useMarketingContents } from "@/modules/marketing/hooks/useMarketingContents";
 import { useMarketingCampaigns } from "@/modules/marketing/hooks/useMarketingCampaigns";
@@ -357,9 +358,47 @@ export function ArtistVision360Modal({
     total: artistTransactionsTotal,
     isLoading: artistTransactionsLoading,
     error: artistTransactionsError,
+    refetch: refetchArtistTransactions,
   } = useAllTransactions({ enabled: open && Boolean(artistId), artistId });
+  // Transaction-derived amounts are never rendered while the sweep is loading or
+  // after it failed: R$ 0,00 would be read as a real total.
+  const transactionsReady = !artistTransactionsLoading && !artistTransactionsError;
+  const transactionAmountLabel = (value: number): string =>
+    artistTransactionsLoading ? "Carregando…" : artistTransactionsError ? "Indisponível" : formatCurrency(value);
+  const transactionAmountTone = (value: number): string => (transactionsReady ? getCurrencyToneClass(value) : "text-muted-foreground");
+  // Timelines that include transaction items say so while those items are missing.
+  const transactionTimelineNotice = artistTransactionsLoading ? (
+    <p className="text-sm text-muted-foreground" role="status" data-testid="vision360-timeline-transactions-loading">
+      Carregando transações… os itens financeiros aparecem em seguida.
+    </p>
+  ) : artistTransactionsError ? (
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-timeline-transactions-error">
+      <span>Não foi possível carregar as transações: os itens financeiros não aparecem nesta lista.</span>
+      <Button type="button" variant="outline" size="sm" onClick={() => void refetchArtistTransactions()}>
+        Tentar novamente
+      </Button>
+    </div>
+  ) : null;
   const { contacts } = useContacts(open);
-  const { events: actualEvents } = useEvents(open, artistId);
+  const {
+    events: actualEvents,
+    isLoading: artistEventsLoading,
+    error: artistEventsError,
+    truncated: artistEventsTruncated,
+    refetch: refetchArtistEvents,
+  } = useArtistEvents(artistId, open);
+  const artistEventsNotice = artistEventsLoading ? (
+    <p className="text-sm text-muted-foreground" role="status" data-testid="vision360-events-loading">Carregando agenda…</p>
+  ) : artistEventsError ? (
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-events-error">
+      <span>Não foi possível carregar a agenda do artista.</span>
+      <Button type="button" variant="outline" size="sm" onClick={() => void refetchArtistEvents()}>
+        Tentar novamente
+      </Button>
+    </div>
+  ) : artistEventsTruncated ? (
+    <p className="text-sm text-muted-foreground" role="status" data-testid="vision360-events-truncated">A agenda exibe apenas parte dos compromissos deste artista.</p>
+  ) : null;
   const { data: marketingContents = [] } = useMarketingContents(open);
   const { data: marketingCampaigns = [] } = useMarketingCampaigns(open);
 
@@ -408,32 +447,33 @@ export function ArtistVision360Modal({
     type: string;
     descricao: string;
     data: string;
+    dataKind: DateKind;
     responsavel: string;
   }[] = [];
   actualContracts.forEach((c) => {
     const d = (c as { created_at?: string }).created_at;
-    if (d) activityTimelineItems.push({ id: `mv-ctr-${c.id}`, type: "Jurídico", descricao: `Contrato: ${c.title}`, data: d, responsavel: "Admin" });
+    if (d) activityTimelineItems.push({ id: `mv-ctr-${c.id}`, type: "Jurídico", descricao: `Contrato: ${c.title}`, data: d, dataKind: "instant", responsavel: "Admin" });
   });
   artistTransactions.forEach((t) => {
     const d = t.created_at ?? t.transaction_date;
-    if (d) activityTimelineItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", descricao: t.description ?? (t.type === "revenue" ? "Pagamento recebido" : "Despesa registrada"), data: d, responsavel: "Financeiro" });
+    if (d) activityTimelineItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", descricao: t.description ?? (t.type === "revenue" ? "Pagamento recebido" : "Despesa registrada"), data: d, dataKind: t.created_at ? "instant" : "calendar", responsavel: "Financeiro" });
   });
   actualEvents.forEach((e) => {
     const ev = e as { starts_at?: string; type?: string; created_at?: string };
     const d = ev.starts_at ?? ev.created_at;
-    if (d) activityTimelineItems.push({ id: `mv-evt-${e.id}`, type: "Agenda", descricao: `${getBackendEventTypeLabel(ev.type)}: ${e.title}`, data: d, responsavel: "—" });
+    if (d) activityTimelineItems.push({ id: `mv-evt-${e.id}`, type: "Agenda", descricao: `${getBackendEventTypeLabel(ev.type)}: ${e.title}`, data: d, dataKind: "instant", responsavel: "—" });
   });
   actualReleases.forEach((l: any) => {
     const d = l.created_at ?? l.release_date;
-    if (d) activityTimelineItems.push({ id: `mv-lan-${l.id}`, type: "Produção", descricao: `Lançamento: ${l.title ?? ""}`, data: d, responsavel: "Admin" });
+    if (d) activityTimelineItems.push({ id: `mv-lan-${l.id}`, type: "Produção", descricao: `Lançamento: ${l.title ?? ""}`, data: d, dataKind: l.created_at ? "instant" : "calendar", responsavel: "Admin" });
   });
   actualCampaigns.forEach((c) => {
-    const d = c.startDate ?? c.createdAt;
-    if (d) activityTimelineItems.push({ id: `mv-cmp-${c.id}`, type: "Marketing", descricao: `Campanha: ${c.name}`, data: d, responsavel: c.owner || "—" });
+    const d = c.startDate || c.createdAt;
+    if (d) activityTimelineItems.push({ id: `mv-cmp-${c.id}`, type: "Marketing", descricao: `Campanha: ${c.name}`, data: d, dataKind: c.startDate ? "calendar" : "instant", responsavel: c.owner || "—" });
   });
   actualContent.forEach((c) => {
-    const d = c.publishDate ?? c.createdAt;
-    if (d) activityTimelineItems.push({ id: `mv-cnt-${c.id}`, type: "Marketing", descricao: `Conteúdo: ${c.title}`, data: d, responsavel: c.owner || "—" });
+    const d = c.publishDate || c.createdAt;
+    if (d) activityTimelineItems.push({ id: `mv-cnt-${c.id}`, type: "Marketing", descricao: `Conteúdo: ${c.title}`, data: d, dataKind: c.publishDate ? "calendar" : "instant", responsavel: c.owner || "—" });
   });
   activityTimelineItems.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
 
@@ -459,25 +499,27 @@ export function ArtistVision360Modal({
         new Date(e.starts_at).getTime() >= nowTs,
     )
     .sort((a, b) => new Date(a.starts_at!).getTime() - new Date(b.starts_at!).getTime())[0];
+  // release_date is a calendar day: a release dated today (in the system timezone) is still "next".
+  const todayDay = todayCalendarDay();
   const nextRelease = (actualReleases as any[])
-    .filter((l) => l.release_date && new Date(l.release_date).getTime() >= nowTs)
-    .sort((a, b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime())[0];
+    .filter((l) => calendarDay(l.release_date) !== "" && calendarDay(l.release_date) >= todayDay)
+    .sort((a, b) => calendarDay(a.release_date).localeCompare(calendarDay(b.release_date)))[0];
 
   // ── Evolution: derived milestones ──────────────────────────────────────
-  const evolutionMilestones: { id: string; label: string; descricao: string; data: string }[] = [];
-  if (artist?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artist.created_at });
+  const evolutionMilestones: { id: string; label: string; descricao: string; data: string; dataKind: DateKind }[] = [];
+  if (artist?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artist.created_at, dataKind: "instant" });
   const firstRelease = (actualReleases as any[])
     .filter((l) => l.created_at || l.release_date)
     .sort((a, b) => new Date(a.created_at ?? a.release_date).getTime() - new Date(b.created_at ?? b.release_date).getTime())[0];
-  if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.release_date });
+  if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.release_date, dataKind: firstRelease.created_at ? "instant" : "calendar" });
   const firstShow = (actualEvents as any[])
     .filter((e) => ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) && e.starts_at)
     .sort((a, b) => new Date(a.starts_at!).getTime() - new Date(b.starts_at!).getTime())[0];
-  if (firstShow) evolutionMilestones.push({ id: "m-show", label: "Primeira Turnê/Show", descricao: firstShow.title, data: firstShow.starts_at! });
+  if (firstShow) evolutionMilestones.push({ id: "m-show", label: "Primeira Turnê/Show", descricao: firstShow.title, data: firstShow.starts_at!, dataKind: "instant" });
   const firstContract = (actualContracts as any[])
     .filter((c) => c.created_at)
     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0];
-  if (firstContract) evolutionMilestones.push({ id: "m-ctr", label: "Contrato Assinado", descricao: firstContract.title, data: firstContract.created_at });
+  if (firstContract) evolutionMilestones.push({ id: "m-ctr", label: "Contrato Assinado", descricao: firstContract.title, data: firstContract.created_at, dataKind: "instant" });
   evolutionMilestones.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
 
   // ── Real finance ──────────────────────────────────────────────────
@@ -507,16 +549,15 @@ export function ArtistVision360Modal({
     .reduce((sum, t) => sum + toNumber(t.amount), 0);
 
   // ── Contract metrics ───────────────────────────────────────────────────
-  const today = new Date();
-  const in60Days = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
   const ACTIVE_STATUSES = ["signed", "in_force"];
   const activeContracts = actualContracts.filter((c) =>
     ACTIVE_STATUSES.includes(c.status ?? ""),
   ).length;
   const expiringContracts = actualContracts.filter((c) => {
     if (!c.end_date || !ACTIVE_STATUSES.includes(c.status ?? "")) return false;
-    const endDate = new Date(c.end_date);
-    return endDate > today && endDate <= in60Days;
+    // end_date is a calendar day: a contract ending today is still expiring.
+    const daysLeft = calendarDaysBetween(todayDay, c.end_date);
+    return daysLeft >= 0 && daysLeft <= 60;
   }).length;
   const filteredContracts = actualContracts.filter((c) => {
     const cfg = CONTRACT_FILTERS.find((f) => f.key === contractFilter);
@@ -838,22 +879,24 @@ export function ArtistVision360Modal({
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <DollarSign className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className={`text-lg font-bold ${getCurrencyToneClass(totalRevenue)}`}>{formatCurrency(totalRevenue)}</p>
+                      <p className={`text-lg font-bold ${transactionAmountTone(totalRevenue)}`} data-testid="vision360-overview-revenue">{transactionAmountLabel(totalRevenue)}</p>
                       <p className="text-xs text-muted-foreground">Receita Total</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <DollarSign className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className={`text-lg font-bold ${getCurrencyToneClass(-totalExpenses)}`}>{formatCurrency(-totalExpenses)}</p>
+                      <p className={`text-lg font-bold ${transactionAmountTone(-totalExpenses)}`}>{transactionAmountLabel(-totalExpenses)}</p>
                       <p className="text-xs text-muted-foreground">Despesas Totais</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <TrendingUp className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className={`text-lg font-bold ${getCurrencyToneClass(totalBalance)}`}>{formatCurrency(totalBalance)}</p>
+                      <p className={`text-lg font-bold ${transactionAmountTone(totalBalance)}`}>{transactionAmountLabel(totalBalance)}</p>
                       <p className="text-xs text-muted-foreground">Lucro Líquido</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <BarChart3 className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className="text-lg font-bold">{overallRoi != null ? `${Math.round(overallRoi * 100)}%` : "—"}</p>
+                      <p className="text-lg font-bold">
+                        {!transactionsReady ? transactionAmountLabel(0) : overallRoi != null ? `${Math.round(overallRoi * 100)}%` : "—"}
+                      </p>
                       <p className="text-xs text-muted-foreground">ROI Geral</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
@@ -880,7 +923,7 @@ export function ArtistVision360Modal({
                     {nextShow ? (
                       <>
                         <p className="text-sm font-semibold truncate">{nextShow.title}</p>
-                        <p className="text-xs text-muted-foreground">{formatDateDMY(nextShow.starts_at)}</p>
+                        <p className="text-xs text-muted-foreground">{formatDayLabel(nextShow.starts_at, "instant")}</p>
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Nenhum agendado</p>
@@ -895,7 +938,7 @@ export function ArtistVision360Modal({
                     {nextRelease ? (
                       <>
                         <p className="text-sm font-semibold truncate">{nextRelease.title}</p>
-                        <p className="text-xs text-muted-foreground">{formatDateDMY(nextRelease.release_date)}</p>
+                        <p className="text-xs text-muted-foreground">{formatDayLabel(nextRelease.release_date, "calendar")}</p>
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Nenhum agendado</p>
@@ -1059,7 +1102,25 @@ export function ArtistVision360Modal({
                     <DollarSign className="h-5 w-5 text-muted-foreground" />
                     <h3 className="font-semibold">Resumo Financeiro</h3>
                   </div>
-                  <div className="grid grid-cols-4 gap-4">
+                  {artistTransactionsLoading ? (
+                    <p className="text-sm text-muted-foreground" role="status" data-testid="vision360-overview-finance-loading">
+                      Carregando transações…
+                    </p>
+                  ) : artistTransactionsError ? (
+                    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-overview-finance-error">
+                      <span>Não foi possível carregar as transações deste artista.</span>
+                      <Button type="button" variant="outline" size="sm" onClick={() => void refetchArtistTransactions()}>
+                        Tentar novamente
+                      </Button>
+                    </div>
+                  ) : (
+                  <>
+                  {artistTransactionsTruncated && (
+                    <p className="mb-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-overview-finance-truncated">
+                      {truncatedTransactionsNotice(artistTransactions.length, artistTransactionsTotal)}
+                    </p>
+                  )}
+                  <div className="grid grid-cols-4 gap-4" data-testid="vision360-overview-finance-values">
                     <div>
                       <p className="text-sm text-muted-foreground">Receitas</p>
                       <p className={`text-xl font-bold ${getCurrencyToneClass(totalRevenue)}`}>
@@ -1087,6 +1148,8 @@ export function ArtistVision360Modal({
                       </p>
                     </div>
                   </div>
+                  </>
+                  )}
                 </CardContent>
               </Card>
 
@@ -1227,7 +1290,7 @@ export function ArtistVision360Modal({
                         Data de Nascimento
                       </p>
                       <p className="text-sm font-medium">
-                        {formatDateDMY(artist.birthDate ?? null)}
+                        {formatDayLabel(artist.birthDate ?? null, "calendar")}
                       </p>
                     </div>
                     <div>
@@ -1669,9 +1732,7 @@ export function ArtistVision360Modal({
               <div className="text-sm text-muted-foreground">
                 <span>Data do Cadastro: </span>
                 <span>
-                  {artist.created_at
-                    ? new Date(artist.created_at).toLocaleDateString("pt-BR")
-                    : new Date().toLocaleDateString("pt-BR")}
+                  {formatDayLabel(artist.created_at, "instant")}
                 </span>
               </div>
             </TabsContent>
@@ -2062,9 +2123,12 @@ export function ArtistVision360Modal({
                   Carregando transações…
                 </p>
               ) : artistTransactionsError ? (
-                <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-finance-error">
-                  Não foi possível carregar as transações deste artista. Tente novamente.
-                </p>
+                <div className="flex flex-wrap items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-finance-error">
+                  <span>Não foi possível carregar as transações deste artista.</span>
+                  <Button type="button" variant="outline" size="sm" onClick={() => void refetchArtistTransactions()}>
+                    Tentar novamente
+                  </Button>
+                </div>
               ) : (
               <>
               {artistTransactionsTruncated && (
@@ -2246,21 +2310,10 @@ export function ArtistVision360Modal({
                   {filteredContracts.length > 0 ? (
                     <div className="space-y-3">
                       {filteredContracts.map((contract) => {
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const in30Days = new Date(today);
-                        in30Days.setDate(in30Days.getDate() + 30);
-                        const endDate = contract.end_date
-                          ? new Date(contract.end_date)
-                          : null;
-                        const expiring =
-                          endDate && endDate >= today && endDate <= in30Days;
-                        const daysRemaining = endDate
-                          ? Math.ceil(
-                              (endDate.getTime() - today.getTime()) /
-                                (1000 * 60 * 60 * 24),
-                            )
-                          : null;
+                        // end_date is a calendar day, compared with today's day in the system timezone.
+                        const daysLeft = contract.end_date ? calendarDaysBetween(todayDay, contract.end_date) : Number.NaN;
+                        const daysRemaining = Number.isNaN(daysLeft) ? null : daysLeft;
+                        const expiring = daysRemaining !== null && daysRemaining >= 0 && daysRemaining <= 30;
 
                         return (
                           <div
@@ -2596,7 +2649,7 @@ export function ArtistVision360Modal({
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-2">
                               <p className="text-sm font-medium">{m.label}</p>
-                              <span className="text-xs text-muted-foreground shrink-0">{formatDateDMY(m.data)}</span>
+                              <span className="text-xs text-muted-foreground shrink-0">{formatDayLabel(m.data, m.dataKind)}</span>
                             </div>
                             <p className="text-xs text-muted-foreground truncate">{m.descricao}</p>
                           </div>
@@ -2624,7 +2677,9 @@ export function ArtistVision360Modal({
                 ))}
               </div>
 
-              {filteredSchedule.length === 0 ? (
+              {artistEventsNotice}
+
+              {artistEventsLoading || artistEventsError ? null : filteredSchedule.length === 0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
                     <Calendar className="h-10 w-10 text-muted-foreground/30" />
@@ -2657,9 +2712,9 @@ export function ArtistVision360Modal({
                             key={e.id}
                             className="grid grid-cols-[88px_60px_110px_minmax(0,1fr)_minmax(0,1fr)_110px] gap-3 px-1 py-2 items-center text-sm"
                           >
-                            <span className="text-muted-foreground">{formatDateDMY(e.starts_at)}</span>
+                            <span className="text-muted-foreground">{formatDayLabel(e.starts_at, "instant")}</span>
                             <span className="text-muted-foreground">
-                              {e.starts_at ? new Date(e.starts_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "—"}
+                              {e.starts_at ? formatTime(e.starts_at) : "—"}
                             </span>
                             <span className="truncate">{getBackendEventTypeLabel(e.type)}</span>
                             <span className="truncate font-medium">{e.title}</span>
@@ -2731,7 +2786,7 @@ export function ArtistVision360Modal({
                               {CONTENT_TYPE_LABELS[String(c.type ?? "").toLowerCase()] ?? formatStatusPtBr(c.type)}
                             </span>
                             <span className="truncate text-muted-foreground">{c.format || "—"}</span>
-                            <span className="text-muted-foreground">{formatDateDMY(c.publishDate)}</span>
+                            <span className="text-muted-foreground">{formatDayLabel(c.publishDate, "calendar")}</span>
                             <span>
                               <Badge variant="outline" className="text-xs">
                                 {CONTENT_STATUS_LABELS[String(c.status ?? "").toLowerCase()] ?? formatStatusPtBr(c.status)}
@@ -2749,6 +2804,7 @@ export function ArtistVision360Modal({
 
             {/* Activity */}
             <TabsContent value="movimentacao" className="p-6 space-y-6 mt-0">
+              {transactionTimelineNotice}
               {activityTimelineItems.length === 0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
@@ -2780,7 +2836,7 @@ export function ArtistVision360Modal({
                             key={m.id}
                             className="grid grid-cols-[110px_110px_minmax(0,1fr)_120px] gap-3 px-1 py-2 items-center text-sm"
                           >
-                            <span className="text-muted-foreground">{formatDateDMY(m.data)}</span>
+                            <span className="text-muted-foreground">{formatDayLabel(m.data, m.dataKind)}</span>
                             <span>
                               <Badge variant="outline" className="text-xs">{m.type}</Badge>
                             </span>
@@ -2802,6 +2858,7 @@ export function ArtistVision360Modal({
                     <History className="h-5 w-5 text-muted-foreground" />
                     <h3 className="font-semibold">Histórico de Atividades</h3>
                   </div>
+                  {transactionTimelineNotice && <div className="mb-4">{transactionTimelineNotice}</div>}
 
                   {actualHistory.length > 0 ? (
                     <>
@@ -2819,8 +2876,7 @@ export function ArtistVision360Modal({
                               className="grid grid-cols-[140px_120px_130px_minmax(0,1fr)] gap-3 px-1 py-2 items-center text-sm"
                             >
                               <span className="text-muted-foreground">
-                                {new Date(item.data).toLocaleDateString("pt-BR")}{" "}
-                                {new Date(item.data).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                                {formatDateTime(item.data)}
                               </span>
                               <span className="flex items-center gap-1 truncate">
                                 <User className="h-3 w-3 text-muted-foreground shrink-0" />

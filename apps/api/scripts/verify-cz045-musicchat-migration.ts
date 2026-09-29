@@ -47,6 +47,9 @@ const COLLISION_TEMPLATES = [{ id: 'outros', title: 'Outros Assuntos', body: 'a'
 const CONV_LEGACY = '45000000-0000-0000-0000-0000000000c1';
 const CONV_OTHER = '45000000-0000-0000-0000-0000000000c2';
 const CONV_NEW_BUILD = '45000000-0000-0000-0000-0000000000c3';
+/** Conversations of the collision tenant: one on its legacy 'outros', one on its own 'other'. */
+const CONV_COLLISION_LEGACY = '45000000-0000-0000-0000-0000000000c4';
+const CONV_COLLISION_OWN = '45000000-0000-0000-0000-0000000000c5';
 
 let failures = 0;
 // jsonb does not keep object key order — compare with keys sorted (array order still matters).
@@ -100,7 +103,7 @@ async function main(): Promise<void> {
   const tenant = TENANT_PROBE;
   // Only the verifier's own probe tenants/rows are ever deleted.
   const cleanup = async (): Promise<void> => {
-    await db.query(`DELETE FROM conversations WHERE id = ANY($1::uuid[])`, [[CONV_LEGACY, CONV_OTHER, CONV_NEW_BUILD]]);
+    await db.query(`DELETE FROM conversations WHERE id = ANY($1::uuid[])`, [[CONV_LEGACY, CONV_OTHER, CONV_NEW_BUILD, CONV_COLLISION_LEGACY, CONV_COLLISION_OWN]]);
     await db.query(`DELETE FROM musicchat_automation_settings WHERE tenant_id = ANY($1::uuid[])`, [PROBE_TENANTS]);
     await db.query(`DELETE FROM tenants WHERE id = ANY($1::uuid[])`, [PROBE_TENANTS]);
   };
@@ -127,6 +130,11 @@ async function main(): Promise<void> {
     await db.query(
       `INSERT INTO conversations (id, tenant_id, subject, metadata) VALUES ($1, $3, 'Probe legacy', $4), ($2, $3, 'Probe other', $5)`,
       [CONV_LEGACY, CONV_OTHER, tenant, JSON.stringify(LEGACY_CONVERSATION), JSON.stringify(OTHER_CONVERSATION)],
+    );
+    await db.query(
+      `INSERT INTO conversations (id, tenant_id, subject, metadata) VALUES ($1, $3, 'Probe collision legacy', $4), ($2, $3, 'Probe collision own', $5)`,
+      [CONV_COLLISION_LEGACY, CONV_COLLISION_OWN, TENANT_COLLISION,
+        JSON.stringify({ selected_menu_option: 'outros', priority: 'media' }), JSON.stringify({ selected_menu_option: 'other', priority: 'baixa' })],
     );
     const settings = async (id: string) => (await db.query(`SELECT menu_options, templates FROM musicchat_automation_settings WHERE tenant_id = $1`, [id])).rows[0];
     const metadata = async (id: string) => (await db.query(`SELECT metadata FROM conversations WHERE id = $1`, [id])).rows[0]?.metadata;
@@ -155,6 +163,9 @@ async function main(): Promise<void> {
       [collisionUp.menu_options.map((o: { id: string; responseTemplateId: string; priority: string }) => [o.id, o.responseTemplateId, o.priority]),
         collisionUp.templates.map((t: { id: string }) => t.id)],
       [[['outros', 'outros', 'medium'], ['other', 'other', 'low']], ['outros', 'other']]);
+    check('up: collision-tenant conversations keep pointing at their own option (per-tenant id map)',
+      [await metadata(CONV_COLLISION_LEGACY), await metadata(CONV_COLLISION_OWN)],
+      [{ selected_menu_option: 'outros', priority: 'medium' }, { selected_menu_option: 'other', priority: 'low' }]);
 
     // ── a conversation written by the new build, then rollback ─────────────────
     await db.query(
@@ -173,6 +184,9 @@ async function main(): Promise<void> {
     const collisionDown = await settings(TENANT_COLLISION);
     check('down: collision tenant restored exactly (its own \'other\' is not renamed)', [collisionDown.menu_options, collisionDown.templates],
       [COLLISION_OPTIONS, COLLISION_TEMPLATES]);
+    check('down: collision-tenant conversations restored exactly',
+      [await metadata(CONV_COLLISION_LEGACY), await metadata(CONV_COLLISION_OWN)],
+      [{ selected_menu_option: 'outros', priority: 'media' }, { selected_menu_option: 'other', priority: 'baixa' }]);
 
     // ── re-apply ────────────────────────────────────────────────────────────────
     dbOps('migrate');

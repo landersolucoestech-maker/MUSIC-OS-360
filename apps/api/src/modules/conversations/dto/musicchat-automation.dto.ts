@@ -20,7 +20,7 @@ export class MusicChatMenuOptionDto {
   @ApiProperty() @IsString() @IsNotEmpty() responseTemplateId: string;
   @ApiProperty() @IsString() @IsNotEmpty() queue: string;
   @ApiProperty() @IsString() @IsNotEmpty() sector: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() defaultAssignee?: string | null;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) defaultAssignee?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsArray() tags?: string[];
   @ApiPropertyOptional() @IsOptional() @IsString() priority?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;
@@ -39,7 +39,7 @@ export class MusicChatEscalationRuleDto {
   @ApiProperty() @IsNumber() afterMinutes: number;
   @ApiProperty() @IsString() @IsNotEmpty() level: string;
   @ApiProperty() @IsString() @IsNotEmpty() recipientRole: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() recipientUserId?: string | null;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) recipientUserId?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsArray() channels?: string[];
   @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;
 }
@@ -59,8 +59,8 @@ export class UpdateMusicChatAutomationSettingsDto {
   @ApiPropertyOptional() @IsOptional() @IsObject() return_to_menu_rule?: Record<string, unknown>;
   @ApiPropertyOptional({ type: [MusicChatEscalationRuleDto] }) @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => MusicChatEscalationRuleDto) escalation_rules?: MusicChatEscalationRuleDto[];
   @ApiPropertyOptional() @IsOptional() @IsObject() notification_channels?: Record<string, unknown>;
-  @ApiPropertyOptional() @IsOptional() @IsString() supervisor_user_id?: string | null;
-  @ApiPropertyOptional() @IsOptional() @IsString() manager_user_id?: string | null;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) supervisor_user_id?: string | null;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) manager_user_id?: string | null;
   /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }

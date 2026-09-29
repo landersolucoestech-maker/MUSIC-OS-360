@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsString, IsOptional, IsEnum, IsArray, ArrayMinSize, ArrayMaxSize,
-  IsNotEmpty, MaxLength, ValidateNested, IsUrl,
+  IsNotEmpty, MaxLength, ValidateNested, IsUrl, IsBoolean,
 } from 'class-validator';
 
 export enum InternalConversationType { DIRECT = 'direct', GROUP = 'group' }
@@ -50,4 +50,14 @@ export class QueryInternalMembersDto {
   @ApiPropertyOptional()
   @IsOptional() @IsString() @MaxLength(255)
   search?: string;
+
+  @ApiPropertyOptional({ description: 'Also list the caller (pickers where one may choose oneself, e.g. a MusicChat assignee)' })
+  @IsOptional() @Transform(({ value }) => value === 'true' || value === true) @IsBoolean()
+  include_self?: boolean;
+
+  @ApiPropertyOptional({ type: [String], description: 'Resolve exactly these auth_user_ids (comma-separated), including the caller and inactive members; search/include_self are ignored' })
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.split(',').map((id) => id.trim()).filter(Boolean) : value))
+  @IsArray() @ArrayMaxSize(100) @IsString({ each: true }) @MaxLength(255, { each: true })
+  ids?: string[];
 }

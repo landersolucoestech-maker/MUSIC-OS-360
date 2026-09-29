@@ -24,8 +24,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *    the column) — also on a re-apply after a rollback, when the pre-CZ-043 web
  *    wrote these fields to metadata again. A copied key leaves metadata (the
  *    column is the single copy — no stale plaintext duplicate of responsible
- *    e-mail/phone); a value that does not fit stays as historical data. The legacy `cargo_responsavel` key feeds
- *    responsible_job_title too. The plaintext cpf/cnpj copies in metadata are
+ *    e-mail/phone); a value that does not fit stays as historical data. The
+ *    legacy `cargo_responsavel` key only fills a responsible_job_title that
+ *    `responsavel_cargo` left empty; otherwise it is parked as
+ *    `legacy_cargo_responsavel` (never read). interacoes stored as JSON text
+ *    is parsed like the artists' arrays. The plaintext cpf/cnpj copies in metadata are
  *    NOT touched here (BLK-CRM-PII-PLAINTEXT: needs an encryption backfill).
  * 3. Values: person_type pessoa_fisica/person -> individual, pessoa_juridica
  *    -> company; interactions item keys data/horario/descricao ->
@@ -79,8 +82,9 @@ const METADATA_TO_COLUMN: ReadonlyArray<[key: string, column: string, maxLength:
   ['responsavel_nome', 'responsible_name', 150],
   ['responsavel_email', 'responsible_email', 150],
   ['responsavel_telefone', 'responsible_phone', 30],
-  ['responsavel_cargo', 'responsible_job_title', 100],
+  // The older alias runs first: it must see whether the current key is present.
   ['cargo_responsavel', 'responsible_job_title', 100],
+  ['responsavel_cargo', 'responsible_job_title', 100],
   ['interacoes', 'interactions', 'jsonb'],
 ];
 
@@ -146,27 +150,46 @@ export class CanonicalizeClientsToEnglish20260928000023 implements MigrationInte
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
     for (const [from, to] of COLUMNS) await queryRunner.query(renameColumn(from, to));
+    await queryRunner.query(`
+      CREATE OR REPLACE FUNCTION pg_temp.cz043_try_jsonb_array(j jsonb) RETURNS jsonb
+      LANGUAGE plpgsql IMMUTABLE AS $fn$
+      DECLARE parsed jsonb;
+      BEGIN
+        IF j IS NULL THEN RETURN NULL; END IF;
+        IF jsonb_typeof(j) = 'array' THEN RETURN j; END IF;
+        IF jsonb_typeof(j) <> 'string' THEN RETURN NULL; END IF;
+        parsed := (j #>> '{}')::jsonb;
+        RETURN CASE WHEN jsonb_typeof(parsed) = 'array' THEN parsed END;
+      EXCEPTION WHEN others THEN RETURN NULL;
+      END $fn$`);
 
     for (const [key, column, maxLength] of METADATA_TO_COLUMN) {
       // The metadata key, when PRESENT, is the live copy (the pre-CZ-043 web wrote these
       // fields only to metadata, also while rolled back): it wins over the column and
       // null/'' clears it. A value that does not fit sets the column to NULL and stays
       // in metadata as historical data (same rule as artists, migration 22).
+      // Older alias of responsible_job_title: it only fills a column the current key left
+      // empty. When the column has a value, or the current key `responsavel_cargo` is still
+      // in metadata (a value that did not fit, kept as historical data — database re-review
+      // of b875241, LOW-2), the alias is parked under a key nothing reads, so it can never
+      // refill a cleared job title nor let down() overwrite that newer value (LOW-C).
+      const aliasBlocked = `("${column}" IS NOT NULL OR "metadata" ? 'responsavel_cargo')`;
       if (key === 'cargo_responsavel') {
-        // Older alias of responsible_job_title: it only fills an empty column; once the
-        // column has a value it is parked under a key nothing reads, so it can never
-        // refill a job title cleared later (database re-review of d1daf89, LOW-C).
         await queryRunner.query(`
           UPDATE "clients" SET "metadata" = ("metadata" - 'cargo_responsavel')
               || jsonb_build_object('legacy_cargo_responsavel', "metadata"->'cargo_responsavel')
           WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? 'cargo_responsavel'
-            AND "${column}" IS NOT NULL AND NOT "metadata" ? 'legacy_cargo_responsavel'`);
+            AND ${aliasBlocked} AND NOT "metadata" ? 'legacy_cargo_responsavel'`);
       }
-      const onlyIfEmpty = key === 'cargo_responsavel' ? `AND "${column}" IS NULL` : '';
+      const onlyIfEmpty = key === 'cargo_responsavel' ? `AND NOT ${aliasBlocked}` : '';
       if (maxLength === 'jsonb') {
+        // An array, or JSON text holding an array (as artists, migration 22), is copied;
+        // null/'' clear the column; anything else stays in metadata as historical data.
+        const parsed = `pg_temp.cz043_try_jsonb_array("metadata"->'${key}')`;
+        const cleared = `(jsonb_typeof("metadata"->'${key}') = 'null' OR "metadata"->>'${key}' = '')`;
         await queryRunner.query(`
-          UPDATE "clients" SET "${column}" = CASE WHEN jsonb_typeof("metadata"->'${key}') = 'array' THEN "metadata"->'${key}' END,
-            "metadata" = CASE WHEN jsonb_typeof("metadata"->'${key}') IN ('array', 'null') THEN "metadata" - '${key}' ELSE "metadata" END
+          UPDATE "clients" SET "${column}" = ${parsed},
+            "metadata" = CASE WHEN ${parsed} IS NOT NULL OR ${cleared} THEN "metadata" - '${key}' ELSE "metadata" END
           WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}' ${onlyIfEmpty}`);
         continue;
       }
@@ -212,10 +235,9 @@ export class CanonicalizeClientsToEnglish20260928000023 implements MigrationInte
     await queryRunner.query(`UPDATE "clients" SET "person_type" = 'pessoa_juridica' WHERE "person_type" = 'company'`);
     // The pre-CZ-043 web reads the form from metadata: give it the current column values
     // (interactions after the key/type reversal above, i.e. in the legacy vocabulary).
-    const written = new Set<string>();
     for (const [key, column] of METADATA_TO_COLUMN) {
-      if (written.has(column) && key === 'cargo_responsavel') continue;
-      written.add(column);
+      // The job title goes back under its current key only; the alias is never rewritten.
+      if (key === 'cargo_responsavel') continue;
       await queryRunner.query(`
         UPDATE "clients" SET "metadata" = COALESCE(CASE WHEN jsonb_typeof("metadata") = 'object' THEN "metadata" END, '{}'::jsonb)
           || jsonb_build_object('${key}', to_jsonb("${column}"))

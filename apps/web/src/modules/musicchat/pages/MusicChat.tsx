@@ -21,7 +21,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Headphones, Plus, Settings, Users } from "lucide-react";
 import { useTenant } from "@/app/providers/TenantContext";
 import { InternalChatView } from "@/modules/musicchat-internal/components/InternalChatView";
-import { SupportCenterView, type SupportConversation } from "../components/SupportCenterView";
+import { SupportCenterView } from "../components/SupportCenterView";
+import type { SupportConversation } from "../services/conversations.service";
 import { NewConversationDialog } from "../components/NewConversationDialog";
 
 type MusicChatArea = "internal" | "support";

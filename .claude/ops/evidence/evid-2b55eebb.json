@@ -1,0 +1,15 @@
+{
+  "id": "evid-2b55eebb",
+  "createdAt": "2026-09-29T05:46:12.276Z",
+  "type": "COMMAND",
+  "label": "corepack pnpm --filter @music-os-360/api verify:cz042-cz043-migrations",
+  "command": "corepack pnpm --filter @music-os-360/api verify:cz042-cz043-migrations",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "> @music-os-360/api@0.0.1 verify:cz042-cz043-migrations /home/user/MUSIC-OS-360/apps/api\n> tsx scripts/verify-cz042-cz043-migrations.ts\n\n✓ artists: cleared bank_name (metadata null) wins over stale column\n✓ artists: cleared pix_key (metadata '') wins over stale column\n✓ artists: bank_account from metadata\n✓ artists: invalid date -> NULL\n✓ artists: invalid date kept in metadata\n✓ artists: jsonb key present as null -> NULL column, key removed\n✓ artists: dd/mm/yyyy birth date parsed\n✓ artists: zero-part date is not invented (NULL column, original kept in metadata)\n✓ artists: over-long address -> NULL\n✓ artists: over-long address kept in metadata\n✓ artists: copied keys leave metadata\n✓ artists: profile_type case/space-insensitive\n✓ artists: specialties case-insensitive\n✓ artists: JSON-text relationships parsed + type mapped\n✓ artists: gender case-insensitive\n✓ clients: responsible_email backfilled\n✓ clients: cargo_responsavel backfilled\n✓ clients: empty interaction item stays {}\n✓ clients: copied keys leave metadata\n✓ clients: newer key wins; superseded cargo_responsavel parked (never refills); over-long cep clears the stale column + kept\n✓ clients: an over-long current job title is kept and the older alias never fills the column\n✓ clients: a cleared current job title wins over the stale column and the older alias\n✓ clients: interacoes as JSON text parsed, keys/types mapped, key removed\n✓ releases: legacy statuses/types mapped\n✓ down: artist edits written back to legacy metadata keys\n✓ down: artist legacy columns hold the edits\n✓ down: the over-long job title (only copy) is not overwritten by the alias\n✓ down: client edit written back to legacy metadata key\n✓ down: values up() could not copy survive in metadata\n✓ down: status changed after up() is not reverted; planted legacy_status dropped\n✓ re-up: artist edits survive rollback + re-apply\n✓ re-up: uncopied values still kept in metadata\n✓ re-up: client edit and clear made while rolled back win\n✓ re-up: over-long job title still kept; alias still parked\n\n[verify-cz042-cz043] all checks passed",
+  "stderrTail": "",
+  "workspaceFingerprint": "ceba1d4d409adf433080e97fe6c547fbc0e3bf0359d53dabe6ac2d6907225483",
+  "fingerprintStatus": "BOUND",
+  "head": "b87524193e6cb58949e3c4b25566d8772e2c3d33",
+  "durationMs": 108127
+}

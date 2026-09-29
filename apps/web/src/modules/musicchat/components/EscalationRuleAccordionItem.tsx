@@ -8,6 +8,7 @@ import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Switch } from "@/shared/ui/switch";
 import type { MusicChatEscalationRule, MusicChatNotificationChannel } from "../types/musicchat-automation.types";
+import { MusicChatMemberPicker } from "./MusicChatMemberPicker";
 
 interface ChannelOption {
   value: MusicChatNotificationChannel;
@@ -102,11 +103,10 @@ export function EscalationRuleAccordionItem({
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Usuário específico opcional</Label>
-            <Input
-              value={rule.recipientUserId ?? ""}
-              onChange={(event) => onChange({ recipientUserId: event.target.value || null })}
-              className="h-8 text-sm"
-              placeholder="ID do usuário"
+            <MusicChatMemberPicker
+              value={rule.recipientUserId}
+              onChange={(userId) => onChange({ recipientUserId: userId })}
+              label="Usuário específico"
             />
           </div>
           <div className="flex items-end gap-2">

@@ -79,4 +79,25 @@ describe("useAllTransactions — P&L data covers every page, not the API's defau
     await client.invalidateQueries({ queryKey: [...QUERY_KEYS.TRANSACTIONS] });
     await waitFor(() => expect(listPaged).toHaveBeenCalledTimes(2));
   });
+
+  it("a failed first load surfaces the error", async () => {
+    listPaged.mockRejectedValue(new Error("boom"));
+    const { wrapper } = makeWrapper();
+    const { result } = renderHook(() => useAllTransactions(), { wrapper });
+    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error));
+    expect(result.current.transactions).toEqual([]);
+  });
+
+  it("a failed background refetch keeps the loaded sweep instead of an error", async () => {
+    listPaged.mockResolvedValueOnce({ items: rows(0, 3), page: 1, pageSize: 200, total: 3, totalPages: 1 } as never);
+    const { wrapper } = makeWrapper();
+    const { result } = renderHook(() => useAllTransactions(), { wrapper });
+    await waitFor(() => expect(result.current.transactions).toHaveLength(3));
+    listPaged.mockRejectedValue(new Error("network"));
+    await result.current.refetch();
+    await waitFor(() => expect(listPaged).toHaveBeenCalledTimes(2));
+    expect(result.current.error).toBeNull();
+    expect(result.current.transactions).toHaveLength(3);
+  });
 });
+

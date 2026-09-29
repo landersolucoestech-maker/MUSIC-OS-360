@@ -230,6 +230,40 @@ describe("InternalChatService — participant authorization (isolation from 'Cen
     expect(results.every((m) => m.auth_user_id !== ME)).toBe(true);
   });
 
+  it('member directory filters: tenant always; default excludes the caller and inactive members; include_self keeps the caller; ids resolves exact ids', async () => {
+    const { service, memberRepo } = buildService();
+    const lastQb = () => memberRepo.createQueryBuilder.mock.results.at(-1)!.value as { where: jest.Mock; andWhere: jest.Mock; take: jest.Mock };
+    const andWhereSql = () => lastQb().andWhere.mock.calls.map(([sql]: [string]) => sql);
+
+    await service.searchMembers(TENANT, ME, {});
+    expect(lastQb().where).toHaveBeenCalledWith('m.tenant_id = :tenantId', { tenantId: TENANT });
+    expect(andWhereSql()).toEqual(expect.arrayContaining(['m.deleted_at IS NULL', 'm.is_active = true', 'm.auth_user_id != :authUserId']));
+
+    await service.searchMembers(TENANT, ME, { include_self: true });
+    expect(andWhereSql()).toContain('m.is_active = true');
+    expect(andWhereSql()).not.toContain('m.auth_user_id != :authUserId');
+
+    await service.searchMembers(TENANT, ME, { ids: [ME, OTHER], search: 'x' });
+    expect(lastQb().where).toHaveBeenCalledWith('m.tenant_id = :tenantId', { tenantId: TENANT });
+    expect(lastQb().andWhere).toHaveBeenCalledWith('m.auth_user_id IN (:...ids)', { ids: [ME, OTHER] });
+    expect(andWhereSql()).not.toContain('m.auth_user_id != :authUserId');
+    expect(lastQb().take).toHaveBeenCalledWith(2);
+
+    await expect(service.searchMembers(TENANT, ME, { ids: [] })).resolves.toEqual([]);
+  });
+
+  it('QueryInternalMembersDto parses include_self and a comma-separated ids list, capped at 100', async () => {
+    const { validate } = await import('class-validator');
+    const { plainToInstance } = await import('class-transformer');
+    const { QueryInternalMembersDto } = await import('./dto/internal-chat.dto');
+    const dto = plainToInstance(QueryInternalMembersDto, { include_self: 'true', ids: 'a, b,,c' });
+    expect(dto.include_self).toBe(true);
+    expect(dto.ids).toEqual(['a', 'b', 'c']);
+    expect(await validate(dto)).toHaveLength(0);
+    const tooMany = plainToInstance(QueryInternalMembersDto, { ids: Array.from({ length: 101 }, (_, i) => `u${i}`).join(',') });
+    expect((await validate(tooMany)).some((e) => e.property === 'ids')).toBe(true);
+  });
+
   it('listMyConversations scopes the participant fan-out query by tenant_id (regression: was derivation-only)', async () => {
     const { service, convRepo } = buildService();
     convRepo.find = jest.fn().mockResolvedValue([{ id: CONV_ID, tenant_id: TENANT, updated_at: new Date(), deleted_at: null }]);

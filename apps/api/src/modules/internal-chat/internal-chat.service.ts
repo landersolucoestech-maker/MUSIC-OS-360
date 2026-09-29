@@ -196,20 +196,30 @@ export class InternalChatService {
     return this.participantRepo!.save(participant);
   }
 
-  /** Organization members eligible to start an internal conversation — never external clients/contacts. */
+  /**
+   * Organization members — never external clients/contacts. Default: active
+   * colleagues other than the caller (starting an internal conversation);
+   * `include_self` adds the caller (assignee pickers); `ids` resolves known
+   * user ids to names (message authors, assignees), active or not.
+   */
   async searchMembers(tenantId: string, authUserId: string, query: QueryInternalMembersDto) {
     const qb = this.memberRepo!
       .createQueryBuilder('m')
       .where('m.tenant_id = :tenantId', { tenantId })
-      .andWhere('m.is_active = true')
-      .andWhere('m.deleted_at IS NULL')
-      .andWhere('m.auth_user_id != :authUserId', { authUserId });
+      .andWhere('m.deleted_at IS NULL');
 
-    if (query.search) {
-      qb.andWhere('(m.full_name ILIKE :search OR m.email ILIKE :search)', { search: `%${query.search}%` });
+    if (query.ids) {
+      if (query.ids.length === 0) return [];
+      qb.andWhere('m.auth_user_id IN (:...ids)', { ids: query.ids });
+    } else {
+      qb.andWhere('m.is_active = true');
+      if (!query.include_self) qb.andWhere('m.auth_user_id != :authUserId', { authUserId });
+      if (query.search) {
+        qb.andWhere('(m.full_name ILIKE :search OR m.email ILIKE :search)', { search: `%${query.search}%` });
+      }
     }
 
-    const members = await qb.orderBy('m.full_name', 'ASC').take(50).getMany();
+    const members = await qb.orderBy('m.full_name', 'ASC').take(query.ids ? query.ids.length : 50).getMany();
     return members.map((m) => ({ auth_user_id: m.auth_user_id, full_name: m.full_name, email: m.email }));
   }
 }

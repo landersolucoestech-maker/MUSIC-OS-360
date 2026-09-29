@@ -3,7 +3,6 @@ import { ChevronRight, Plus, Save, Trash2, Zap } from "lucide-react";
 import { useSkillRun } from "@/shared/hooks/useSkillRun";
 import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 import { MainLayout } from "@/shared/components/MainLayout";
-import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/ui/collapsible";
@@ -13,6 +12,9 @@ import { Switch } from "@/shared/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Textarea } from "@/shared/ui/textarea";
 import { EscalationRulesEditor } from "../components/EscalationRulesEditor";
+import { MusicChatMemberPicker } from "../components/MusicChatMemberPicker";
+import { UnavailableState } from "@/shared/components/UnavailableState";
+import { toUserMessage } from "@/shared/lib/errors";
 import { TriageMenuBuilder } from "../components/TriageMenuBuilder";
 import { useMusicChatAutomationSettings } from "../hooks/useMusicChatAutomationSettings";
 import { useMusicChatTriageRules } from "../hooks/useMusicChatTriageRules";
@@ -39,61 +41,6 @@ type EditableSettings = Pick<
   | "manager_user_id"
 >;
 
-const INITIAL_REQUIRED_FIELDS = [
-  "Nome do contratante ou empresa",
-  "Nome do responsável",
-  "Cidade e Estado",
-  "Data do evento",
-  "Local do evento",
-  "Tipo de evento",
-  "Artista desejado",
-  "Público estimado",
-  "Telefone para contato",
-  "E-mail",
-];
-
-const FALLBACK_SETTINGS: EditableSettings = {
-  enabled: true,
-  welcome_message:
-    "Olá! Seja bem-vindo(a) à Central de Atendimento da Lander Records. Para direcionarmos seu atendimento, escolha uma das opções abaixo respondendo com o número correspondente.",
-  main_menu_message:
-    "1. Contratação de Shows\n2. Produção Musical\n3. Editora Musical e Distribuição\n4. Design Gráfico e Criação\n5. Financeiro\n6. Redação & Conteúdo\n7. Outros Assuntos\n8. Contato por Engano",
-  menu_options: [
-    { id: "shows", order: 1, label: "Contratação de Shows", responseTemplateId: "shows", queue: "Comercial", sector: "Shows", defaultAssignee: null, tags: ["Show", "Comercial"], priority: "high", active: true, required_fields: INITIAL_REQUIRED_FIELDS, optional_fields: [] },
-    { id: "music_production", order: 2, label: "Produção Musical", responseTemplateId: "music_production", queue: "Produção Musical", sector: "Produção", defaultAssignee: null, tags: ["Produção Musical"], priority: "medium", active: true },
-    { id: "publishing_distribution", order: 3, label: "Editora Musical e Distribuição", responseTemplateId: "publishing_distribution", queue: "Catálogo", sector: "Editora/Distribuição", defaultAssignee: null, tags: ["Editora", "Distribuição"], priority: "medium", active: true },
-    { id: "design", order: 4, label: "Design Gráfico e Criação", responseTemplateId: "design", queue: "Marketing", sector: "Criação", defaultAssignee: null, tags: ["Design"], priority: "medium", active: true },
-    { id: "finance", order: 5, label: "Financeiro", responseTemplateId: "finance", queue: "Financeiro", sector: "Financeiro", defaultAssignee: null, tags: ["Financeiro"], priority: "high", active: true },
-    { id: "content", order: 6, label: "Redação & Conteúdo", responseTemplateId: "content", queue: "Marketing", sector: "Conteúdo", defaultAssignee: null, tags: ["Conteúdo"], priority: "medium", active: true },
-    { id: "other", order: 7, label: "Outros Assuntos", responseTemplateId: "other", queue: "Atendimento", sector: "Suporte", defaultAssignee: null, tags: ["Outros Assuntos"], priority: "medium", active: true },
-    { id: "wrong_contact", order: 8, label: "Contato por Engano", responseTemplateId: "wrong_contact", queue: "Atendimento", sector: "Triagem", defaultAssignee: null, tags: ["Contato por Engano"], priority: "low", active: true },
-  ],
-  templates: [
-    { id: "shows", title: "Contratação de Shows", body: "Perfeito. Vamos direcionar seu atendimento para contratação de shows. Nossa equipe comercial irá analisar as informações e retornar com os próximos passos." },
-    { id: "music_production", title: "Produção Musical", body: "Recebemos sua solicitação sobre produção musical. A equipe responsável irá continuar o atendimento por aqui." },
-    { id: "publishing_distribution", title: "Editora Musical e Distribuição", body: "Obrigado pelo contato. Vamos encaminhar sua solicitação para a equipe de editora musical e distribuição." },
-    { id: "design", title: "Design Gráfico e Criação", body: "Sua demanda de design e criação foi registrada. O setor criativo dará sequência ao atendimento." },
-    { id: "finance", title: "Financeiro", body: "Vamos encaminhar seu atendimento para o financeiro. Para agilizar, envie o máximo de detalhes sobre sua solicitação." },
-    { id: "content", title: "Redação & Conteúdo", body: "Sua solicitação de redação e conteúdo foi recebida e direcionada para a equipe responsável." },
-    { id: "other", title: "Outros Assuntos", body: "Certo. Vamos analisar seu assunto e direcionar para a fila responsável." },
-    { id: "wrong_contact", title: "Contato por Engano", body: "Sem problemas. Encerramos esta triagem como contato por engano. Se precisar falar conosco, envie uma nova mensagem." },
-  ],
-  required_fields: INITIAL_REQUIRED_FIELDS,
-  optional_fields: [],
-  invalid_option_message: "Não consegui identificar essa opção. Responda apenas com o número de uma das opções do menu principal.",
-  absence_message: "No momento não identificamos uma resposta válida. Você pode responder com o número da opção desejada para continuar.",
-  out_of_hours_message: "Recebemos sua mensagem fora do horário de atendimento. Sua solicitação foi registrada e será tratada no próximo período útil.",
-  closing_message: "Atendimento encerrado. Obrigado por falar com a Lander Records.",
-  return_to_menu_rule: { enabled: true, commands: ["0", "menu", "voltar", "inicio"] },
-  escalation_rules: [
-    { id: "supervisor-5m", afterMinutes: 5, level: "supervisor", recipientRole: "supervisor", recipientUserId: null, channels: ["in_app"], active: true },
-    { id: "manager-10m", afterMinutes: 10, level: "manager", recipientRole: "manager", recipientUserId: null, channels: ["in_app"], active: true },
-  ],
-  notification_channels: { in_app: true, whatsapp: false, sms: false },
-  supervisor_user_id: null,
-  manager_user_id: null,
-};
-
 function toEditable(settings: MusicChatAutomationSettings): EditableSettings {
   return {
     enabled: settings.enabled,
@@ -101,7 +48,7 @@ function toEditable(settings: MusicChatAutomationSettings): EditableSettings {
     main_menu_message: settings.main_menu_message,
     menu_options: settings.menu_options ?? [],
     templates: settings.templates ?? [],
-    required_fields: settings.required_fields?.length ? settings.required_fields : INITIAL_REQUIRED_FIELDS,
+    required_fields: settings.required_fields ?? [],
     optional_fields: settings.optional_fields ?? [],
     invalid_option_message: settings.invalid_option_message,
     absence_message: settings.absence_message,
@@ -202,18 +149,53 @@ function FieldListEditor({ title, description, fields, emptyText, onChange }: Fi
   );
 }
 
+/**
+ * Loads the tenant's settings before anything is editable: while loading or
+ * after a failed load there is nothing to save (a save would overwrite the
+ * tenant's configuration with values it never had).
+ */
 export default function MusicChatAutomationSettings() {
-  const { settings, isLoading, isError, updateSettings } = useMusicChatAutomationSettings();
+  const { settings, isLoading, error, refetch, updateSettings } = useMusicChatAutomationSettings();
+
+  if (settings) return <MusicChatAutomationSettingsEditor settings={settings} updateSettings={updateSettings} />;
+
+  return (
+    <MainLayout
+      title="Automações do MusicChat"
+      description="Configure mensagens automáticas, triagem, campos coletados, filas, templates, notificações e escalonamentos."
+    >
+      {isLoading ? (
+        <Card>
+          <CardContent className="p-6 text-sm text-muted-foreground" role="status">Carregando configurações…</CardContent>
+        </Card>
+      ) : (
+        <UnavailableState
+          title="Não foi possível carregar as configurações do MusicChat"
+          description={error ? toUserMessage(error) : "A API não respondeu. Tente novamente."}
+          onRetry={() => void refetch()}
+        />
+      )}
+    </MainLayout>
+  );
+}
+
+interface MusicChatAutomationSettingsEditorProps {
+  settings: MusicChatAutomationSettings;
+  updateSettings: ReturnType<typeof useMusicChatAutomationSettings>["updateSettings"];
+}
+
+function MusicChatAutomationSettingsEditor({ settings, updateSettings }: MusicChatAutomationSettingsEditorProps) {
   const { runEscalations } = useMusicChatTriageRules();
   const automationAudit = useSkillRun<Record<string, unknown>>("/conversations/musicchat/automation/audit");
   const automationBuilder = useSkillRun<Record<string, unknown>>("/conversations/musicchat/automation/builder-suggestions");
-  const [draft, setDraft] = useState<EditableSettings>(FALLBACK_SETTINGS);
-  const [openServiceQuestionnaires, setOpenServiceQuestionnaires] = useState<Record<string, boolean>>({
-    [FALLBACK_SETTINGS.menu_options[0]?.id ?? "shows"]: true,
+  const [draft, setDraft] = useState<EditableSettings>(() => toEditable(settings));
+  const [openServiceQuestionnaires, setOpenServiceQuestionnaires] = useState<Record<string, boolean>>(() => {
+    const first = settings.menu_options?.[0]?.id;
+    return first ? { [first]: true } : {};
   });
 
   useEffect(() => {
-    if (settings) setDraft(toEditable(settings));
+    setDraft(toEditable(settings));
   }, [settings]);
 
   const previewMenu = useMemo(() => {
@@ -353,20 +335,7 @@ export default function MusicChatAutomationSettings() {
         </div>
       }
     >
-      {isLoading && !draft ? (
-        <Card>
-          <CardContent className="p-6 text-sm text-muted-foreground">Carregando configurações...</CardContent>
-        </Card>
-      ) : (
         <div className="space-y-4">
-          {isError && (
-            <Alert>
-              <AlertTitle>Modo frontend liberado</AlertTitle>
-              <AlertDescription>
-                A API não respondeu agora, então carreguei os padrões editáveis para você continuar ajustando o frontend.
-              </AlertDescription>
-            </Alert>
-          )}
 
           <Tabs defaultValue="mensagens" className="space-y-4">
             <TabsList>
@@ -485,18 +454,18 @@ export default function MusicChatAutomationSettings() {
                 <CardContent className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-1.5">
                     <Label>Supervisor padrão</Label>
-                    <Input
-                      value={draft.supervisor_user_id ?? ""}
-                      onChange={(event) => patch({ supervisor_user_id: event.target.value || null })}
-                      placeholder="ID do usuário supervisor"
+                    <MusicChatMemberPicker
+                      value={draft.supervisor_user_id}
+                      onChange={(userId) => patch({ supervisor_user_id: userId })}
+                      label="Supervisor padrão"
                     />
                   </div>
                   <div className="space-y-1.5">
                     <Label>Gestor padrão</Label>
-                    <Input
-                      value={draft.manager_user_id ?? ""}
-                      onChange={(event) => patch({ manager_user_id: event.target.value || null })}
-                      placeholder="ID do usuário gestor"
+                    <MusicChatMemberPicker
+                      value={draft.manager_user_id}
+                      onChange={(userId) => patch({ manager_user_id: userId })}
+                      label="Gestor padrão"
                     />
                   </div>
                 </CardContent>
@@ -632,7 +601,6 @@ export default function MusicChatAutomationSettings() {
             </TabsContent>
           </Tabs>
         </div>
-      )}
     </MainLayout>
   );
 }

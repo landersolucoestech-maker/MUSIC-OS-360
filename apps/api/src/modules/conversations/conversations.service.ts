@@ -15,7 +15,9 @@ import {
   ConversationEntity,
   ConversationMessageEntity,
   ConversationNoteEntity,
+  OrgMemberEntity,
 } from '../../database/entities';
+import { assertActiveTenantMembers } from './tenant-members';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { RealtimeService }              from '../../core/realtime/realtime.service';
 import { WhatsAppCloudProvider }        from '../integrations/whatsapp/whatsapp-cloud.provider';
@@ -44,6 +46,7 @@ export class ConversationsService {
   private readonly convRepo:    Repository<ConversationEntity>        | null = null;
   private readonly msgRepo:     Repository<ConversationMessageEntity>  | null = null;
   private readonly noteRepo:    Repository<ConversationNoteEntity>     | null = null;
+  private readonly memberRepo:  Repository<OrgMemberEntity>            | null = null;
 
   constructor(
     @Inject(DATA_SOURCE) ds: DataSource | null,
@@ -55,6 +58,7 @@ export class ConversationsService {
       this.convRepo  = ds.getRepository(ConversationEntity);
       this.msgRepo   = ds.getRepository(ConversationMessageEntity);
       this.noteRepo  = ds.getRepository(ConversationNoteEntity);
+      this.memberRepo = ds.getRepository(OrgMemberEntity);
     }
   }
 
@@ -120,6 +124,7 @@ export class ConversationsService {
       ...(dto.tags ? { tags: dto.tags } : {}),
     };
 
+    await assertActiveTenantMembers(this.memberRepo!, tenantId, [dto.assigned_to]);
     const conv = this.convRepo!.create({
       tenant_id:   tenantId,
       contact_id:  dto.contact_id  ?? null,
@@ -159,6 +164,9 @@ export class ConversationsService {
     dto:      UpdateConversationDto,
   ): Promise<ConversationEntity> {
     const current = await this.findConversationById(tenantId, id);
+    if (dto.assigned_to != null && dto.assigned_to !== current.assigned_to) {
+      await assertActiveTenantMembers(this.memberRepo!, tenantId, [dto.assigned_to]);
+    }
 
     const updates: Partial<ConversationEntity> = { updated_at: new Date() } as any;
     if (dto.status      != null) (updates as any).status      = dto.status;
@@ -361,6 +369,7 @@ export class ConversationsService {
 
   async assign(tenantId: string, conversationId: string, assigneeId: string | null): Promise<ConversationEntity> {
     await this.findConversationById(tenantId, conversationId);
+    await assertActiveTenantMembers(this.memberRepo!, tenantId, [assigneeId]);
     await this.convRepo!.update(
       { id: conversationId, tenant_id: tenantId } as any,
       { assigned_to: assigneeId, updated_at: new Date() } as any,
@@ -383,6 +392,7 @@ export class ConversationsService {
     dto: TransferConversationDto,
   ): Promise<ConversationEntity> {
     const conv = await this.findConversationById(tenantId, conversationId);
+    await assertActiveTenantMembers(this.memberRepo!, tenantId, [dto.assignee_id]);
     const transfers = Array.isArray((conv.metadata as any)?.transfers)
       ? (conv.metadata as any).transfers
       : [];

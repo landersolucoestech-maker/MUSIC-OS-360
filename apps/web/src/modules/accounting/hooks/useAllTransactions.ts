@@ -50,7 +50,8 @@ export function useAllTransactions({ enabled = true, artistId }: UseAllTransacti
     /** true when the sweep stopped at the safety ceiling before covering every transaction. */
     truncated: query.data?.truncated ?? false,
     isLoading: query.isLoading,
-    error: query.error,
+    /** Only a failure with no loaded sweep: a failed background refetch keeps the loaded totals visible. */
+    error: query.data === undefined ? query.error : null,
     refetch: query.refetch,
   };
 }

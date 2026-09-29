@@ -1,0 +1,12 @@
+{
+  "id": "evid-a08e7179",
+  "createdAt": "2026-09-29T05:00:11.545Z",
+  "type": "REVIEW",
+  "reviewer": "database-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "DB re-review of b875241: HIGH-A, LOW-B fixed; LOW-A, LOW-D partial; LOW-C fixed except LOW-2 edge; new LOW-1..5, INFO-1..3 (no HIGH/MEDIUM)",
+  "workspaceFingerprint": "a6af29e84deebd9b8ddab6d65f91cde7b65e6496a34ad3fb8441a4cd1ce9f14e",
+  "fingerprintStatus": "BOUND",
+  "head": "b87524193e6cb58949e3c4b25566d8772e2c3d33"
+}

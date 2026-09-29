@@ -1,0 +1,12 @@
+{
+  "id": "evid-cee8799e",
+  "createdAt": "2026-09-29T05:00:11.421Z",
+  "type": "REVIEW",
+  "reviewer": "frontend-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Frontend re-review of b875241: M2/M3/M5 fixed, M1/M4 partial; N1-N9 (N6, N9 HIGH), L1-L6, I1-I3",
+  "workspaceFingerprint": "a6af29e84deebd9b8ddab6d65f91cde7b65e6496a34ad3fb8441a4cd1ce9f14e",
+  "fingerprintStatus": "BOUND",
+  "head": "b87524193e6cb58949e3c4b25566d8772e2c3d33"
+}

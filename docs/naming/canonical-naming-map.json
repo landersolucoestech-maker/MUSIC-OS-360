@@ -6566,6 +6566,22 @@
       "status": "ACTIVE"
     },
     {
+      "item": "clients.metadata key legacy_cargo_responsavel (parked pre-CZ-043 job-title alias)",
+      "path": "apps/api/src/database/migrations/20260928000023_CanonicalizeClientsToEnglish.ts",
+      "currentName": "legacy_cargo_responsavel",
+      "surface": "objectKey",
+      "layer": "database",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "CZ-043: the older alias cargo_responsavel of responsible_job_title is parked under this key when responsible_job_title already has a value or the current key responsavel_cargo is present, so it can never refill a cleared job title nor let down() overwrite a newer value. Historical data: nothing reads it.",
+      "consumer": "none (historical data kept for audit)",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "remove the key in an authorized data cleanup once the pre-CZ-043 metadata history is no longer needed",
+      "targetState": "responsible_job_title column only",
+      "blocker": "destructive data change (L5) needs explicit authorization",
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
       "item": "CZ-039 import spec sends pre-rename spreadsheet headers",
       "path": "apps/api/src/modules/reports/import/import-mapper.service.spec.ts",
       "currentName": "*",

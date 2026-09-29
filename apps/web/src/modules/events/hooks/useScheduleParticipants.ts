@@ -109,7 +109,8 @@ export function useScheduleParticipants(search: string = "", pendingArtistId?: s
       label: String(user.full_name || user.email || "Sem nome"),
       email: user.email ? String(user.email) : undefined,
       phone: user.phone ? String(user.phone) : undefined,
-      category: user.cargo ? String(user.cargo) : "Usuário",
+      // /users returns no job title (the old `cargo` read was always empty).
+      category: "Usuário",
     }));
 
     const contactOptions = contacts.map((contact) => ({

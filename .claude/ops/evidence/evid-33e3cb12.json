@@ -1,0 +1,15 @@
+{
+  "id": "evid-33e3cb12",
+  "createdAt": "2026-09-29T05:41:20.566Z",
+  "type": "COMMAND",
+  "label": "corepack pnpm --filter @music-os-360/web typecheck",
+  "command": "corepack pnpm --filter @music-os-360/web typecheck",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "> @music-os-360/web@0.0.1 typecheck /home/user/MUSIC-OS-360/apps/web\n> tsc --noEmit -p tsconfig.app.json",
+  "stderrTail": "",
+  "workspaceFingerprint": "ceba1d4d409adf433080e97fe6c547fbc0e3bf0359d53dabe6ac2d6907225483",
+  "fingerprintStatus": "BOUND",
+  "head": "b87524193e6cb58949e3c4b25566d8772e2c3d33",
+  "durationMs": 31098
+}

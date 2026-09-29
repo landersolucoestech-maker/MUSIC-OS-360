@@ -7,6 +7,7 @@ import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Switch } from "@/shared/ui/switch";
 import type { MusicChatMenuOption, MusicChatPriority, MusicChatTemplate } from "../types/musicchat-automation.types";
+import { MusicChatMemberPicker } from "./MusicChatMemberPicker";
 
 interface PriorityOption {
   value: MusicChatPriority;
@@ -111,11 +112,10 @@ export function MenuQueueAccordionItem({
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Responsável padrão</Label>
-            <Input
-              value={option.defaultAssignee ?? ""}
-              onChange={(event) => onChange({ defaultAssignee: event.target.value || null })}
-              className="h-8 text-sm"
-              placeholder="ID do usuário"
+            <MusicChatMemberPicker
+              value={option.defaultAssignee}
+              onChange={(userId) => onChange({ defaultAssignee: userId })}
+              label="Responsável padrão"
             />
           </div>
           <div className="space-y-1.5">

@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { transactionTypeRegisteredPtBr } from "@music-os-360/types";
-import { isUpcomingAppointmentStatus } from "@/modules/dashboard/lib/appointments";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
@@ -16,7 +15,6 @@ import { Link } from "react-router-dom";
 import { differenceInDays } from "date-fns";
 import { useMetrics } from "../hooks/useMetrics";
 import { useOperationalDashboard } from "../hooks/useOperationalDashboard";
-import type { EventWithRelations } from "@/modules/events/hooks/useEvents";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 import { formatCurrency } from "@/shared/lib/format-utils";
 import { DashboardSkeleton } from "@/shared/components/PageSkeletons";
@@ -56,21 +54,6 @@ function appointmentCategoryLabel(type: unknown): string {
 
 // Combines date (date-only or ISO) + "HH:mm" time into a comparable Date.
 // Without a time, assumes end of day to keep the appointment visible all day.
-function appointmentDateTime(raw: unknown, time: unknown): Date | null {
-  if (typeof raw !== "string" || !raw) return null;
-  // `raw` is already the real event timestamp (`data` column, time included) —
-  // an explicit `horario` (override) takes priority; without it, uses the time that
-  // already comes in the timestamp itself instead of inventing 23:59 (event.horario_inicio
-  // never existed on the backend, so that fallback always fired before).
-  if (typeof time === "string" && /^\d{1,2}:\d{2}/.test(time)) {
-    const datePart = raw.includes("T") ? raw.slice(0, 10) : raw;
-    const dt = new Date(`${datePart}T${time.slice(0, 5)}:00`);
-    return Number.isFinite(dt.getTime()) ? dt : null;
-  }
-  const dt = new Date(raw);
-  return Number.isFinite(dt.getTime()) ? dt : null;
-}
-
 // ─── Audit Log → ActivityItem mapper ────────────────────────────────────────
 // Keyed by the canonical entity key resolved in lib/audit-activity (PT-BR labels live there).
 const ENTITY_ICON: Record<string, React.ReactNode> = {
@@ -318,7 +301,7 @@ function getInitials(name: string): string {
 
 export default function Dashboard() {
   const [visao360Modal, setVisao360Modal] = useState<{ open: boolean; artist?: Artist }>({ open: false });
-  const { dashboardMetrics, artistasMetrics: artistsMetrics, isLoading, eventos: events, error: metricsError, refetch: refetchMetrics } = useMetrics();
+  const { dashboardMetrics, artistasMetrics: artistsMetrics, isLoading, upcomingEvents, eventsUnavailable, error: metricsError, refetch: refetchMetrics } = useMetrics();
 
   // ── Activity state ──────────────────────────────────────────────────────────
   const [activities, setActivities] = useState<ActivityItem[]>([]);
@@ -472,29 +455,15 @@ export default function Dashboard() {
   const { totalArtistas: totalArtists, contratosAtivos: activeContracts, contratosVencendo: expiringContracts, receitaMensal: monthlyIncome, eventosMes: eventsMonth, artistasDestaque: featuredArtists } =
     dashboardMetrics;
 
-  // Upcoming appointments: only future events (date/time >= now), without the
-  // closed/canceled/archived ones, in chronological order and limited to 5.
-  // Tenant scoping is already guaranteed by the data layer (useEventos → tenant).
-  const upcomingAppointments = useMemo(() => {
-    const nowMs = Date.now();
-    return events
-      .map((calendarEvent) => {
-        // The frontend uses `start_date`; the backend returns `data` in the timestamp column.
-        const raw =
-          (calendarEvent.start_date as string | null | undefined) ??
-          ((calendarEvent as { data?: string | null }).data ?? null);
-        return { event: calendarEvent, when: appointmentDateTime(raw, calendarEvent.horario_inicio) };
-      })
-      .filter(
-        (item): item is { event: EventWithRelations; when: Date } => {
-          if (!item.when) return false;
-          if (item.when.getTime() < nowMs) return false;
-          return isUpcomingAppointmentStatus(item.event.status);
-        },
-      )
-      .sort((a, b) => a.when.getTime() - b.when.getTime())
-      .slice(0, 5);
-  }, [events]);
+  // Upcoming appointments: the API already returns only events starting from now,
+  // in chronological order, without the closed statuses (useDashboardEvents).
+  const upcomingAppointments = useMemo(
+    () => upcomingEvents.flatMap((calendarEvent) => {
+      const when = calendarEvent.starts_at ? new Date(calendarEvent.starts_at) : null;
+      return when && Number.isFinite(when.getTime()) ? [{ event: calendarEvent, when }] : [];
+    }),
+    [upcomingEvents],
+  );
 
   const artistsWithEvents = useMemo(
     () => featuredArtists.map((a) => ({
@@ -564,10 +533,10 @@ export default function Dashboard() {
           />
           <StatCard
             label="Eventos do Mês"
-            value={eventsMonth}
+            value={eventsUnavailable ? "—" : eventsMonth}
             icon={Calendar}
             accent="primary"
-            sub={<span>{eventsMonth === 1 ? "evento" : "eventos"} no mês atual</span>}
+            sub={<span>{eventsUnavailable ? "agenda indisponível" : eventsMonth === 1 ? "evento no mês atual" : "eventos no mês atual"}</span>}
           />
         </div>
 
@@ -660,13 +629,20 @@ export default function Dashboard() {
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col pt-0">
-              {upcomingAppointments.length > 0 ? (
+              {eventsUnavailable ? (
+                <UnavailableState
+                  title="Agenda indisponível"
+                  description="Não foi possível carregar os próximos compromissos."
+                  onRetry={refetchMetrics}
+                  className="flex-1 py-8"
+                />
+              ) : upcomingAppointments.length > 0 ? (
                 <ul className="flex-1 divide-y divide-border/60">
                   {upcomingAppointments.map(({ event: calendarEvent, when }) => (
                     <li
                       key={calendarEvent.id}
                       className="flex flex-col gap-1 py-3 first:pt-0 sm:flex-row sm:items-start sm:gap-3"
-                      data-testid={`compromisso-${calendarEvent.id}`}
+                      data-testid={`appointment-${calendarEvent.id}`}
                     >
                       <div className="flex shrink-0 items-center gap-2 sm:w-16 sm:flex-col sm:items-center sm:gap-0 sm:text-center">
                         <span className="text-xs font-sans font-semibold text-foreground">

@@ -40,7 +40,7 @@ export class CreateConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID()   contact_id?: string;
   @ApiProperty()         @IsString()  @MaxLength(500) subject:    string;
   @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationChannel) channel?: ConversationChannel;
-  @ApiPropertyOptional() @IsOptional() @IsString() assigned_to?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assigned_to?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
   @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
@@ -52,7 +52,7 @@ export class UpdateConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationStatus)  status?:      ConversationStatus;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500)  subject?:     string;
   @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationChannel) channel?:     ConversationChannel;
-  @ApiPropertyOptional() @IsOptional() @IsString() assigned_to?:   string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assigned_to?:   string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
   @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
@@ -65,7 +65,7 @@ export class UpdateConversationDto {
 export class QueryConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationStatus)  status?:      ConversationStatus;
   @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationChannel) channel?:     ConversationChannel;
-  @ApiPropertyOptional() @IsOptional() @IsString() assigned_to?:   string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assigned_to?:   string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() tag_id?: string;
@@ -115,13 +115,13 @@ export class CreateNoteDto {
 }
 
 export class AssignConversationDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() assignee_id?: string | null;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assignee_id?: string | null;
 }
 
 export class TransferConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() assignee_id?: string | null;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) assignee_id?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(1000) reason?: string;
   /** Optimistic concurrency (Task M) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;

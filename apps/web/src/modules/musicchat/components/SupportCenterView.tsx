@@ -43,7 +43,21 @@ import { contactFormToContactInput } from "@/modules/crm-relationships/services/
 import { SchedulerFormModal } from "@/modules/events/components/SchedulerFormModal";
 import { useMusicChatAutomationSettings } from "@/modules/musicchat/hooks/useMusicChatAutomationSettings";
 import { useMusicChatTriageRules } from "@/modules/musicchat/hooks/useMusicChatTriageRules";
-import { musicChatConversationsService } from "@/modules/musicchat/services/conversations.service";
+import {
+  musicChatConversationsService,
+  type DeadlineState,
+  type SupportChannel,
+  type SupportConversation,
+  type SupportMessage,
+  type SupportStatus,
+} from "@/modules/musicchat/services/conversations.service";
+import {
+  UNASSIGNED_LABEL,
+  UNKNOWN_MEMBER_LABEL,
+  memberDisplayName,
+  useMusicChatMemberNames,
+  useMusicChatTeamMembers,
+} from "@/modules/musicchat/hooks/useMusicChatTeamMembers";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useUploadToR2, type UploadCategory } from "@/shared/hooks/useUploadToR2";
 import { useWsEvent } from "@/shared/hooks/useWsEvent";
@@ -70,64 +84,6 @@ import {
 import { SiFacebook, SiInstagram, SiTiktok } from "react-icons/si";
 
 import { toUserMessage } from "@/shared/lib/errors";
-type SupportChannel = "whatsapp" | "instagram" | "facebook" | "tiktok" | "site" | "custom";
-type SupportStatus =
-  | "new"
-  | "waiting_agent"
-  | "in_progress"
-  | "waiting_customer"
-  | "resolved"
-  | "archived";
-type DeadlineState = "on_track" | "at_risk" | "overdue";
-
-export interface SupportConversation {
-  id: string;
-  customer: string;
-  handle: string;
-  phone: string;
-  instagram: string;
-  email: string;
-  originLabel: string;
-  channel: SupportChannel;
-  queue: string;
-  sector: string;
-  status: SupportStatus;
-  assignee: string;
-  protocol: string;
-  sla: number;
-  remainingTimeLabel: string;
-  deadlineState: DeadlineState;
-  tags: string[];
-  /** Subject of the website form (origin "Site"). */
-  assunto?: string;
-  lastMessage: string;
-  lastMessageAt: string;
-  createdAt: string;
-  lastReplyAt: string;
-  unread: number;
-  value: string;
-  crmSummary: {
-    existingCustomer: boolean;
-    lead: string;
-    openDeal: string;
-    stage: string;
-  };
-  auditTrail: string[];
-  /** Optimistic concurrency (Task M) — see useConcurrencyConflict. */
-  updated_at: string;
-}
-
-interface SupportMessage {
-  id: string;
-  sender: "customer" | "agent" | "system";
-  author: string;
-  body: string;
-  time: string;
-  attachments?: ChatAttachmentData[];
-  deliveryStatus?: "sent" | "failed" | "internal_only";
-  deliveryFailureCopy?: string;
-}
-
 const statusLabels: Record<SupportStatus, string> = {
   new: "Nova",
   waiting_agent: "Aguardando Atendimento",
@@ -201,7 +157,6 @@ function recordingDurationLabel(seconds: number) {
   return `${minutes}:${rest}`;
 }
 
-const teamMembers = ["Ana Mendes", "Lucas Araujo", "Bianca Rocha", "Sem responsável"];
 
 // Persisted in sessionStorage (not React state) because SupportCenterView fully unmounts when
 // the user switches to the Chat Interno tab and back (no forceMount, by design — see
@@ -250,7 +205,7 @@ function buildConversationContext(conversation: SupportConversation) {
   ].filter(Boolean).join("\n");
 }
 
-function buildLeadInitialValue(conversation: SupportConversation): Partial<LeadFormPayload> {
+function buildLeadInitialValue(conversation: SupportConversation, assigneeName: string): Partial<LeadFormPayload> {
   return {
     name: conversation.customer,
     email: conversation.email,
@@ -263,14 +218,13 @@ function buildLeadInitialValue(conversation: SupportConversation): Partial<LeadF
     entryDate: new Date().toISOString().split("T")[0],
     leadStatus: "new",
     priority: conversation.deadlineState === "overdue" ? "high" : "medium",
-    responsiblePerson: conversation.assignee === "Sem responsável" ? "" : conversation.assignee,
+    responsiblePerson: assigneeName,
     interactions: [],
     uploads: [],
   };
 }
 
-function buildContactInitialValue(conversation: SupportConversation): Partial<ContactFormValues> {
-  const responsible = conversation.assignee === "Sem responsável" ? "" : conversation.assignee;
+function buildContactInitialValue(conversation: SupportConversation, assigneeName: string): Partial<ContactFormValues> {
   return {
     personType: "individual",
     individualName: conversation.customer,
@@ -278,7 +232,7 @@ function buildContactInitialValue(conversation: SupportConversation): Partial<Co
     phone: conversation.phone || conversation.handle,
     category: "",
     priority: conversation.deadlineState === "overdue" ? "high" : "medium",
-    responsibleName: responsible,
+    responsibleName: assigneeName,
     interactions: [],
     attachments: [],
     notes: buildConversationContext(conversation),
@@ -388,6 +342,9 @@ export function SupportCenterView({
   const [tagOpen, setTagOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [transferTarget, setTransferTarget] = useState("");
+  const [transferSearch, setTransferSearch] = useState("");
+  const { members: transferCandidates, isLoading: loadingTransferCandidates, error: transferCandidatesError } =
+    useMusicChatTeamMembers(transferSearch.trim(), transferOpen);
   const [pendingAttachments, setPendingAttachments] = useState<ChatAttachmentData[]>([]);
   const [isSending, setIsSending] = useState(false);
   const sendAttemptRef = useRef<{ key: string; signature: string } | null>(null);
@@ -403,11 +360,10 @@ export function SupportCenterView({
   // marketing integration (posts/ads) via OAuth — there is no real
   // messages/DM webhook for any of these channels (only WhatsApp has one). Showing
   // "connected" here would be misleading — always unavailable for messaging
-  // until a real messaging integration exists. Website: there is no widget/embed;
-  // for website chat nor a public visitor-session endpoint on the backend —
-  // the "site"/custom channel today only exists for the static form (subject
-  // field), not for real-time conversation. One more channel in the list,
-  // honestly unavailable — it is not the official/default channel.
+  // until a real messaging integration exists. Website: there is no chat widget
+  // and no public visitor-session endpoint on the backend — the "site"/custom
+  // channel only carries the static contact form (subject field), not a
+  // real-time conversation, so it is listed as unavailable too.
   const messagingChannels = [
     { id: "facebook", label: "Facebook", connected: false, icon: SiFacebook },
     { id: "instagram", label: "Instagram", connected: false, icon: SiInstagram },
@@ -520,7 +476,7 @@ export function SupportCenterView({
     const active = conversations.filter((c) => c.status !== "archived");
     return {
       newCount: active.filter((c) => c.status === "new").length,
-      unassignedCount: active.filter((c) => c.assignee === "Sem responsável").length,
+      unassignedCount: active.filter((c) => !c.assigneeId).length,
       resolvedCount: active.filter((c) => c.status === "resolved").length,
     };
   }, [conversations]);
@@ -531,6 +487,15 @@ export function SupportCenterView({
   const isClosed = selectedConversation?.status === "resolved" || selectedConversation?.status === "archived";
 
   const messages = selectedConversation ? messagesByConv[selectedConversation.id] ?? [] : [];
+  // Names of the members this view shows (assignees and message authors) — never their raw ids.
+  const { nameOf: memberName } = useMusicChatMemberNames([
+    ...conversations.map((conversation) => conversation.assigneeId),
+    ...messages.map((message) => message.authorId),
+  ]);
+  const assigneeLabel = (conversation: SupportConversation) =>
+    conversation.assigneeId ? memberName(conversation.assigneeId, UNKNOWN_MEMBER_LABEL) : UNASSIGNED_LABEL;
+  /** The assignee's name for CRM forms; empty when unassigned or not resolvable. */
+  const assigneeNameForCrm = (conversation: SupportConversation) => memberName(conversation.assigneeId, "");
 
   // Restore only — writes happen directly in the draft/attachment handlers below, not via a
   // second effect keyed on `draft`/`pendingAttachments` (that would race this restore: it would
@@ -602,16 +567,17 @@ export function SupportCenterView({
 
   const handleTransfer = async () => {
     if (!selectedConversation || !transferTarget) return;
+    const target = transferCandidates.find((member) => member.auth_user_id === transferTarget);
     try {
-      const updated = await musicChatConversationsService.update(selectedConversation.id, {
-        metadata: { assignee_name: transferTarget },
-        service_status: "in_progress",
+      const updated = await musicChatConversationsService.transfer(selectedConversation.id, {
+        assigneeId: transferTarget,
         expectedUpdatedAt: getExpectedUpdatedAt(selectedConversation),
       });
       setConversations((previous) => previous.map((item) => item.id === updated.id ? updated : item));
-      toast.success(`Conversa transferida para ${transferTarget}.`);
+      toast.success(`Conversa transferida para ${target ? memberDisplayName(target) : "o responsável selecionado"}.`);
       setTransferOpen(false);
       setTransferTarget("");
+      setTransferSearch("");
     } catch (err) {
       if (handleConcurrencyConflict(err, "conversa")) return;
       toast.error("Não foi possível transferir a conversa.");
@@ -1080,19 +1046,34 @@ export function SupportCenterView({
                     </PopoverTrigger>
                     <PopoverContent align="end" className="w-64 space-y-3">
                       <div className="space-y-1">
-                        <Label className="text-xs">Transferir para</Label>
-                        <Select value={transferTarget} onValueChange={setTransferTarget}>
-                          <SelectTrigger className="h-8 text-xs">
-                            <SelectValue placeholder="Selecionar responsável" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {teamMembers.map((member) => (
-                              <SelectItem key={member} value={member}>
-                                {member}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <Label className="text-xs" htmlFor="musicchat-transfer-search">Transferir para</Label>
+                        <Input
+                          id="musicchat-transfer-search"
+                          value={transferSearch}
+                          onChange={(event) => setTransferSearch(event.target.value)}
+                          placeholder="Buscar por nome ou e-mail"
+                          className="h-8 text-xs"
+                        />
+                        {transferCandidatesError ? (
+                          <p className="text-xs text-destructive" role="alert">Não foi possível carregar a equipe.</p>
+                        ) : (
+                          <Select value={transferTarget} onValueChange={setTransferTarget} disabled={loadingTransferCandidates}>
+                            <SelectTrigger className="h-8 text-xs" aria-label="Responsável">
+                              <SelectValue placeholder={loadingTransferCandidates ? "Carregando equipe…" : "Selecionar responsável"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {transferCandidates.length === 0 ? (
+                                <p className="px-2 py-1.5 text-xs text-muted-foreground">Nenhum membro encontrado.</p>
+                              ) : (
+                                transferCandidates.map((member) => (
+                                  <SelectItem key={member.auth_user_id} value={member.auth_user_id}>
+                                    {memberDisplayName(member)}
+                                  </SelectItem>
+                                ))
+                              )}
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                       <Button size="sm" className="h-8 w-full text-xs" disabled={!transferTarget} onClick={handleTransfer}>
                         Confirmar transferência
@@ -1124,7 +1105,9 @@ export function SupportCenterView({
                       }`}
                     >
                       <div className="mb-1 flex items-center justify-between gap-4">
-                        <span className="text-[11px] font-medium opacity-80">{message.author}</span>
+                        <span className="text-[11px] font-medium opacity-80">
+                          {message.authorId ? memberName(message.authorId, message.author) : message.author}
+                        </span>
                         <span className="text-[10px] opacity-70">{message.time}</span>
                       </div>
                       {message.body && <p className="text-sm leading-relaxed">{message.body}</p>}
@@ -1376,7 +1359,7 @@ export function SupportCenterView({
                   </div>
                   <div>
                     <p className="text-muted-foreground">Responsável</p>
-                    <p className="font-medium text-foreground">{selectedConversation.assignee}</p>
+                    <p className="font-medium text-foreground">{assigneeLabel(selectedConversation)}</p>
                   </div>
                 </div>
               </div>
@@ -1565,7 +1548,7 @@ export function SupportCenterView({
                   </div>
                   <div>
                     <p className="text-muted-foreground">Responsável</p>
-                    <p className="font-medium text-foreground">{selectedConversation.assignee}</p>
+                    <p className="font-medium text-foreground">{assigneeLabel(selectedConversation)}</p>
                   </div>
                 </div>
               </div>
@@ -1580,14 +1563,14 @@ export function SupportCenterView({
           open={leadModalOpen}
           onOpenChange={setLeadModalOpen}
           mode="create"
-          initialValue={buildLeadInitialValue(selectedConversation)}
+          initialValue={buildLeadInitialValue(selectedConversation, assigneeNameForCrm(selectedConversation))}
           onSubmit={handleLeadSubmit}
         />
         <ContactFormModal
           open={contactModalOpen}
           onOpenChange={setContactModalOpen}
           mode="create"
-          initialValue={buildContactInitialValue(selectedConversation)}
+          initialValue={buildContactInitialValue(selectedConversation, assigneeNameForCrm(selectedConversation))}
           onSubmit={handleContactSubmit}
         />
         <SchedulerFormModal

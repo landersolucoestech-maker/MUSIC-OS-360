@@ -111,18 +111,29 @@ function makeService(conversationMetadata: Record<string, unknown> = {}) {
     update: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const eventRepo = { create: jest.fn((v: unknown) => v), save: jest.fn().mockResolvedValue({}) };
+  // Active org members of t1 (see tenant-members.ts).
+  const members = ['agent-1', 'supervisor-1'];
+  let wanted: string[] = [];
+  let memberTenant: string | undefined;
+  const memberQb: Record<string, jest.Mock> = {};
+  memberQb.select = jest.fn(() => memberQb);
+  memberQb.where = jest.fn((_sql: string, p: { tenantId: string }) => { memberTenant = p.tenantId; return memberQb; });
+  memberQb.andWhere = jest.fn((_sql: string, p?: { wanted?: string[] }) => { if (p?.wanted) wanted = p.wanted; return memberQb; });
+  memberQb.getRawMany = jest.fn(async () => (memberTenant === 't1' ? wanted.filter((id) => members.includes(id)) : []).map((id) => ({ auth_user_id: id })));
+  const memberRepo = { createQueryBuilder: jest.fn(() => memberQb) };
   const ds = {
     getRepository: jest.fn((entity: { name: string }) => {
       if (entity.name === 'MusicChatAutomationSettingsEntity') return settingsRepo;
       if (entity.name === 'ConversationEntity') return convRepo;
       if (entity.name === 'ConversationMessageEntity') return msgRepo;
       if (entity.name === 'MusicChatAutomationEventEntity') return eventRepo;
+      if (entity.name === 'OrgMemberEntity') return memberRepo;
       return {};
     }),
   };
   const ws = { sendToTenant: jest.fn() };
   const svc = new MusicChatAutomationService(ds as never, { enqueue: jest.fn() } as never, {} as never, ws as never);
-  return { svc, settingsRepo, convRepo, convQb };
+  return { svc, settings, settingsRepo, convRepo, convQb, memberQb };
 }
 
 function routedMetadata(convRepo: { update: jest.Mock }) {
@@ -174,5 +185,77 @@ describe('MusicChatAutomationService (CZ-045 values)', () => {
     const [, updates] = settingsRepo.update.mock.calls[0] as [unknown, Record<string, unknown>];
     expect(updates).not.toHaveProperty('menu_options');
     expect(updates).not.toHaveProperty('templates');
+  });
+});
+
+/**
+ * LOW-1 (b875241 DB re-review): a legacy id is renamed only when its English
+ * target is not already used by the saved document — the same rule as
+ * migration 20260928000026 — and a payload that would still hold two entries
+ * with one id is rejected instead of stored.
+ */
+describe('updateSettings: legacy ids never collide with ids already in use', () => {
+  const option = (id: string, order: number) => ({ id, order, label: id, responseTemplateId: id, queue: 'A', sector: 'T', active: true });
+
+  it('keeps a legacy id whose English target is already used by the payload', async () => {
+    const { svc, settingsRepo } = makeService();
+    await svc.updateSettings('t1', 'u1', {
+      menu_options: [option('outros', 1), option('other', 2)],
+      templates: [{ id: 'outros', title: 'Outros', body: 'x' }, { id: 'other', title: 'Other', body: 'y' }],
+    });
+    const [, updates] = settingsRepo.update.mock.calls[0] as [unknown, { menu_options: Array<{ id: string }>; templates: Array<{ id: string }> }];
+    expect(updates.menu_options.map((o) => o.id)).toEqual(['outros', 'other']);
+    expect(updates.templates.map((t) => t.id)).toEqual(['outros', 'other']);
+  });
+
+  it('checks the stored templates when the payload only replaces the menu options', async () => {
+    const { svc, settings, settingsRepo } = makeService();
+    settings.templates = [{ id: 'other', title: 'Other', body: 'y' }, { id: 'shows', title: 'Shows', body: 'Ok' }];
+    await svc.updateSettings('t1', 'u1', { menu_options: [option('outros', 1)] });
+    const [, updates] = settingsRepo.update.mock.calls[0] as [unknown, { menu_options: Array<{ id: string }> }];
+    expect(updates.menu_options.map((o) => o.id)).toEqual(['outros']);
+  });
+
+  it('rejects a payload with two entries sharing one id (400) and writes nothing', async () => {
+    const { svc, settingsRepo } = makeService();
+    await expect(svc.updateSettings('t1', 'u1', { menu_options: [option('shows', 1), option('shows', 2)] }))
+      .rejects.toThrow(BadRequestException);
+    await expect(svc.updateSettings('t1', 'u1', { templates: [{ id: 'x', title: 'a', body: 'a' }, { id: 'x', title: 'b', body: 'b' }] }))
+      .rejects.toThrow(BadRequestException);
+    expect(settingsRepo.update).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * N8: users the settings route conversations or notifications to must be
+ * active members of the tenant; values already stored are not re-validated.
+ */
+describe('updateSettings: assignees and recipients are tenant members', () => {
+  it('rejects a free-text or foreign assignee, recipient, supervisor or manager (400) and writes nothing', async () => {
+    const payloads = [
+      { menu_options: [{ id: 'shows', order: 1, label: 'Shows', responseTemplateId: 'shows', queue: 'A', sector: 'T', defaultAssignee: 'Maria' }] },
+      { escalation_rules: [{ id: 'r1', afterMinutes: 5, level: 'supervisor', recipientRole: 'supervisor', recipientUserId: 'user-of-other-tenant' }] },
+      { supervisor_user_id: 'ghost' },
+      { manager_user_id: 'ghost' },
+    ];
+    for (const payload of payloads) {
+      const { svc, settingsRepo } = makeService();
+      await expect(svc.updateSettings('t1', 'u1', payload)).rejects.toThrow(BadRequestException);
+      expect(settingsRepo.update).not.toHaveBeenCalled();
+    }
+  });
+
+  it('accepts active members of the tenant', async () => {
+    const { svc, settingsRepo, memberQb } = makeService();
+    await svc.updateSettings('t1', 'u1', { supervisor_user_id: 'supervisor-1', manager_user_id: 'agent-1' });
+    expect(settingsRepo.update).toHaveBeenCalledTimes(1);
+    expect(memberQb.where).toHaveBeenCalledWith('m.tenant_id = :tenantId', { tenantId: 't1' });
+  });
+
+  it('does not fail a save on an id that was already stored', async () => {
+    const { svc, settings, settingsRepo } = makeService();
+    Object.assign(settings, { supervisor_user_id: 'legacy-free-text' });
+    await svc.updateSettings('t1', 'u1', { supervisor_user_id: 'legacy-free-text', enabled: true });
+    expect(settingsRepo.update).toHaveBeenCalledTimes(1);
   });
 });

@@ -10,16 +10,17 @@
  * which already computes everything via COUNT/SUM in the database (see AnalyticsService.getDashboard) —
  * instead of downloading the whole contracts/transactions/clients tables just to
  * sum them on the client. Only the lists whose RECORDS (not
- * aggregates) are displayed are still fetched: artists and events (for "highlights" and "upcoming
- * appointments"), releases/projects (to count per artist in the highlights).
+ * aggregates) are displayed are still fetched: artists (for "highlights") and
+ * releases/projects (to count per artist in the highlights). Event counts and the
+ * upcoming appointments come from starts_at-scoped queries (useDashboardEvents).
  */
 import { useMemo } from "react";
 import { useArtists, type Artist } from "@/modules/artist/hooks/useArtists";
-import { useEvents, type EventWithRelations } from "@/modules/events/hooks/useEvents";
+import type { EventWithRelations } from "@/modules/events/hooks/useEvents";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useOperationalDashboard } from "./useOperationalDashboard";
-import { isToday, startOfMonth, endOfMonth, parseISO } from "date-fns";
+import { useDashboardEvents } from "./useDashboardEvents";
 
 interface FeaturedArtist {
   id: string;
@@ -39,10 +40,6 @@ interface ArtistsMetrics {
   totalArtistas: number;
   comContrato: number;
   ativos: number;
-  totalShows: number;
-  showsAgendados: number;
-  showsRealizados: number;
-  receitaTotal: number;
 }
 
 interface DashboardMetrics {
@@ -58,7 +55,10 @@ interface DashboardMetrics {
 export interface UseMetricsReturn {
   artistasMetrics: ArtistsMetrics;
   dashboardMetrics: DashboardMetrics;
-  eventos: EventWithRelations[];
+  /** Next open appointments (starts_at >= now), at most UPCOMING_APPOINTMENTS_LIMIT. */
+  upcomingEvents: EventWithRelations[];
+  /** The events queries failed with nothing cached: event counts/appointments are unknown, not zero. */
+  eventsUnavailable: boolean;
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -66,7 +66,7 @@ export interface UseMetricsReturn {
 
 export function useMetrics(): UseMetricsReturn {
   const { artists, isLoading: loadingArtists, error: errArtists, refetch: refetchArtists } = useArtists();
-  const { events, isLoading: loadingEvents, error: errEvents, refetch: refetchEvents } = useEvents();
+  const { dashboardEvents, isLoading: loadingEvents, error: errEvents, refetch: refetchEvents } = useDashboardEvents();
   const { releases: releasesData, isLoading: loadingReleases, error: errReleases, refetch: refetchReleases } = useReleases();
   const { projects, isLoading: loadingProjects, error: errProjects, refetch: refetchProjects } = useProjects();
   const { dashboard, isLoading: loadingAgg, error: errAgg, refetch: refetchAgg } = useOperationalDashboard();
@@ -79,7 +79,7 @@ export function useMetrics(): UseMetricsReturn {
   // unavailability, not real data — Dashboard.tsx uses this to decide
   // between showing the KPIs or a "could not load" banner.
   const error = (errArtists || errEvents || errReleases || errProjects || errAgg) &&
-    artists.length === 0 && events.length === 0 && releasesData.length === 0 &&
+    artists.length === 0 && !dashboardEvents && releasesData.length === 0 &&
     projects.length === 0 && !dashboard
     ? (errArtists || errEvents || errReleases || errProjects || errAgg)
     : null;
@@ -100,62 +100,16 @@ export function useMetrics(): UseMetricsReturn {
     const activeArtists = statusCounts
       ? (statusCounts["active"] ?? 0) + (statusCounts["signed"] ?? 0)
       : artists.filter(a => a.status === "active" || a.status === "signed").length;
-    const shows = events;
-    const totalShows = shows.length;
-    const scheduledShows = shows.filter(e => {
-      const s = (e.status ?? "").toLowerCase();
-      return s === "confirmado" || s === "pendente" || s === "negociacao";
-    }).length;
-    const completedShows = shows.filter(e => (e.status ?? "").toLowerCase() === "realizado").length;
-    const totalIncome = shows
-      .filter(e => {
-        const s = (e.status ?? "").toLowerCase();
-        return s === "confirmado" || s === "realizado";
-      })
-      .reduce((acc, e) => acc + ((e as Record<string, unknown>)["fee_amount"] as number || 0), 0);
 
     return {
       total: artists.length,
       totalArtistas: dashboard?.artists ?? artists.length,
       comContrato: artistsWithContract,
       ativos: activeArtists,
-      totalShows,
-      showsAgendados: scheduledShows,
-      showsRealizados: completedShows,
-      receitaTotal: totalIncome,
     };
-  }, [artists, events, dashboard]);
+  }, [artists, dashboard]);
 
   const dashboardMetrics = useMemo<DashboardMetrics>(() => {
-    const today = new Date();
-    const monthStart = startOfMonth(today);
-    const monthEnd = endOfMonth(today);
-
-    // The backend returns the timestamp in the `data` column; the mock uses `start_date`.
-    // Accept both to avoid a zeroed count in HTTP mode.
-    const readEventData = (e: Record<string, unknown>): string | null => {
-      const v =
-        (e["start_date"] as string | null | undefined) ??
-        (e["data"]        as string | null | undefined) ??
-        null;
-      return v ?? null;
-    };
-
-    const todayEvents = events.filter(e => {
-      const raw = readEventData(e as Record<string, unknown>);
-      if (!raw) return false;
-      try { return isToday(parseISO(raw)); } catch { return false; }
-    }).length;
-
-    const eventsMonth = events.filter(e => {
-      const raw = readEventData(e as Record<string, unknown>);
-      if (!raw) return false;
-      try {
-        const d = parseISO(raw);
-        return d >= monthStart && d <= monthEnd;
-      } catch { return false; }
-    }).length;
-
     const artistsWithMetrics: FeaturedArtist[] = artists.map(artist => {
       const releases = releasesData.filter(l => l.artist_id === artist.id).length;
       const projectsCount = projects.filter(p => p.artist_id === artist.id).length;
@@ -197,19 +151,17 @@ export function useMetrics(): UseMetricsReturn {
       contratosAtivos: dashboard?.active_contracts_count ?? 0,
       contratosVencendo: dashboard?.contracts_expiring_soon_count ?? 0,
       receitaMensal: dashboard?.revenue_current_month ?? 0,
-      eventosHoje: todayEvents,
-      eventosMes: eventsMonth,
+      eventosHoje: dashboardEvents?.todayCount ?? 0,
+      eventosMes: dashboardEvents?.monthCount ?? 0,
       artistasDestaque: featuredArtists,
     };
-  }, [artists, events, releasesData, projects, dashboard]);
+  }, [artists, dashboardEvents, releasesData, projects, dashboard]);
 
   return {
     artistasMetrics: artistsMetrics,
     dashboardMetrics,
-    // Exposed for whoever needs the raw list (e.g. Dashboard.tsx builds the
-    // "upcoming appointments") without needing a second observer of
-    // useEventos() just for that — same query, same cache, a single fetch.
-    eventos: events,
+    upcomingEvents: dashboardEvents?.upcoming ?? [],
+    eventsUnavailable: !!errEvents && !dashboardEvents,
     isLoading,
     error,
     refetch,

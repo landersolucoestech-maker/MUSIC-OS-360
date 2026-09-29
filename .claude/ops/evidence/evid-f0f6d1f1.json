@@ -1,0 +1,15 @@
+{
+  "id": "evid-f0f6d1f1",
+  "createdAt": "2026-09-29T05:39:33.640Z",
+  "type": "COMMAND",
+  "label": "corepack pnpm --filter @music-os-360/api typecheck && corepack pnpm --filter @music-os-360/api lint && corepack pnpm --filter @music-os-360/api exec jest",
+  "command": "corepack pnpm --filter @music-os-360/api typecheck && corepack pnpm --filter @music-os-360/api lint && corepack pnpm --filter @music-os-360/api exec jest",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "> @music-os-360/api@0.0.1 typecheck /home/user/MUSIC-OS-360/apps/api\n> tsc -p tsconfig.build.json --noEmit \\&\\& corepack pnpm --filter \\@music-os-360/api lint \\&\\& corepack pnpm --filter \\@music-os-360/api exec jest\n\nerror TS5023: Unknown compiler option '--filter'.\nerror TS5083: Cannot read file 'music-os-360/api'.\nerror TS5023: Unknown compiler option '--filter'.\nerror TS5083: Cannot read file 'music-os-360/api'.\n/home/user/MUSIC-OS-360/apps/api:\n ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @music-os-360/api@0.0.1 typecheck: `tsc -p tsconfig.build.json --noEmit \\&\\& corepack pnpm --filter \\@music-os-360/api lint \\&\\& corepack pnpm --filter \\@music-os-360/api exec jest`\nExit status 1",
+  "stderrTail": "",
+  "workspaceFingerprint": "ceba1d4d409adf433080e97fe6c547fbc0e3bf0359d53dabe6ac2d6907225483",
+  "fingerprintStatus": "BOUND",
+  "head": "b87524193e6cb58949e3c4b25566d8772e2c3d33",
+  "durationMs": 1643
+}

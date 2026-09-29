@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T03:10:49.029Z",
+  "updatedAt": "2026-09-29T05:46:40.842Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -902,6 +902,55 @@
         }
       ],
       "createdAt": "2026-09-26T04:09:29.761Z"
+    },
+    {
+      "id": "req-09fc9add",
+      "text": "Close the b875241 re-reviews: frontend N1-N9, L1-L6, I1-I3 and database LOW-1..LOW-5, INFO-1..INFO-3",
+      "nonRequirements": [
+        "Z6-D/Z6-E/Z7 naming work and the DB-M2 deploy-order port are separate commits"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-53af6ecf",
+          "text": "Web: typecheck, lint and the full vitest suite exit 0 in America/Sao_Paulo and in UTC (Dashboard/Vision360/MusicChat tests included)",
+          "evidenceIds": [
+            "evid-33e3cb12",
+            "evid-aaf60f27",
+            "evid-bdd2ab35",
+            "evid-c42457f2"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-fa1ecbe3",
+          "text": "API: typecheck, lint and the full jest suite exit 0 (tenant-member negative tests, LOW-1 duplicate-id tests, members directory tests)",
+          "evidenceIds": [
+            "evid-f0f6d1f1",
+            "evid-73f2c204",
+            "evid-ac46684e",
+            "evid-e9c00c05"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-e8b6671a",
+          "text": "DB: verify:cz042-cz043-migrations and verify:cz045-musicchat-migration pass on a disposable _mig database with the new LOW-2/INFO-1/INFO-2 probes",
+          "evidenceIds": [
+            "evid-2b55eebb",
+            "evid-d8c80675"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-b8d30a1b",
+          "text": "naming:check exits 0",
+          "evidenceIds": [
+            "evid-f51dfcf6"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-29T05:38:52.750Z"
     }
   ],
   "findings": [
@@ -2948,6 +2997,318 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-29T02:57:38.339Z"
+    },
+    {
+      "id": "find-40c8c5fd",
+      "category": "ui-copy",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "line": null,
+      "summary": "FE re-review b875241 N1: Vision360 default tab Resumo Executivo/Resumo Financeiro show R$ 0,00 while transactions load or after failure; no truncation notice (M4 partial)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.328Z"
+    },
+    {
+      "id": "find-6f4f9018",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "line": null,
+      "summary": "N2: formatDateDMY slices the UTC day of real instants (events.starts_at, activity/milestones) -> evening show a day late; calendar fields compared as instants in contract expiry and next release (M1 partial)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.406Z"
+    },
+    {
+      "id": "find-c7f6f892",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/test/ArtistVision360Modal.finance.test.tsx",
+      "line": null,
+      "summary": "N3: M1 contract-date test does not pin TZ -> passes on pre-fix code in UTC CI (false green); no release/goal/overview/instant cases",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.478Z"
+    },
+    {
+      "id": "find-2d490d7a",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/events/hooks/useEvents.ts",
+      "line": null,
+      "summary": "N4: useEvents lists starts_at ascending without limit -> API default page = 50 oldest events; Dashboard upcoming/metrics and Vision360 next show miss upcoming events",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.548Z"
+    },
+    {
+      "id": "find-458431a7",
+      "category": "contract",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+      "line": null,
+      "summary": "N5: Dashboard and useMetrics read legacy data/start_date/horario_inicio instead of starts_at (breaks when E6 drops data)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.629Z"
+    },
+    {
+      "id": "find-de44e670",
+      "category": "correctness",
+      "severity": "HIGH",
+      "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+      "line": null,
+      "summary": "N6: MusicChat transfer targets are hardcoded fake people, write unread metadata.assignee_name and bypass PATCH /conversations/:id/transfer (no assignment, audit or event)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.700Z"
+    },
+    {
+      "id": "find-279f827d",
+      "category": "ui-copy",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/musicchat/services/conversations.service.ts",
+      "line": null,
+      "summary": "N7: MusicChat shows raw user ids as message author and assignee (and copies them into lead/contact responsible)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.782Z"
+    },
+    {
+      "id": "find-321dad11",
+      "category": "correctness",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/musicchat/components/MenuQueueAccordionItem.tsx",
+      "line": null,
+      "summary": "N8: menu option/escalation/supervisor/manager user ids typed as free text and written to conversations.assigned_to; server only IsString",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.880Z"
+    },
+    {
+      "id": "find-317c1356",
+      "category": "data-integrity",
+      "severity": "HIGH",
+      "file": "apps/web/src/modules/musicchat/pages/MusicChatAutomationSettings.tsx",
+      "line": null,
+      "summary": "N9: settings page loading state is dead; on GET error shows developer copy and Save overwrites the tenant config with hardcoded client defaults branded Lander Records (concurrency check skipped)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:09.951Z"
+    },
+    {
+      "id": "find-98aa408a",
+      "category": "dead-code",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/events/hooks/useScheduleParticipants.ts",
+      "line": null,
+      "summary": "L1: dead user.cargo read (/users never returns cargo)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.026Z"
+    },
+    {
+      "id": "find-712bcead",
+      "category": "naming",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/musicchat/services/conversations.service.ts",
+      "line": null,
+      "summary": "L2: queue/sector read meta.queue_id ?? meta.queue (two keys for one concept; UUID shown after a real transfer)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.116Z"
+    },
+    {
+      "id": "find-50eace32",
+      "category": "dead-code",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+      "line": null,
+      "summary": "L3: Support* types declared twice (SupportCenterView and conversations.service)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.192Z"
+    },
+    {
+      "id": "find-89dfd773",
+      "category": "ui-copy",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "line": null,
+      "summary": "L4: missing created_at shows today as Data do Cadastro (made-up fallback)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.281Z"
+    },
+    {
+      "id": "find-f1587a49",
+      "category": "correctness",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "line": null,
+      "summary": "L5: Activity/History tabs use artistTransactions without loading/error handling (partial timeline silently)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.356Z"
+    },
+    {
+      "id": "find-277ddada",
+      "category": "dead-code",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+      "line": null,
+      "summary": "L6: garbled/stale comments (SupportCenterView website chat, Dashboard/useMetrics say backend returns data)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.433Z"
+    },
+    {
+      "id": "find-ff0fb364",
+      "category": "correctness",
+      "severity": "INFO",
+      "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+      "line": null,
+      "summary": "I1: no Dashboard-level test proves hidden cancelled/completed/held events",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.508Z"
+    },
+    {
+      "id": "find-34ed971c",
+      "category": "correctness",
+      "severity": "INFO",
+      "file": "apps/web/src/modules/accounting/hooks/useAllTransactions.ts",
+      "line": null,
+      "summary": "I2: useAllTransactions returns error even with cached data -> failed background refetch hides valid totals",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.582Z"
+    },
+    {
+      "id": "find-c93f0c38",
+      "category": "security",
+      "severity": "INFO",
+      "file": "apps/web/src/modules/musicchat/hooks/useMusicChatAutomationSettings.ts",
+      "line": null,
+      "summary": "I3: MusicChat settings query key not tenant-scoped (safe only if tenant switch clears the cache)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.653Z"
+    },
+    {
+      "id": "find-e168d0e0",
+      "category": "data-integrity",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+      "line": null,
+      "summary": "DB re-review b875241 LOW-1: updateSettings maps legacy option/template ids unconditionally -> recreates duplicate ids migration 26 avoids (wrong template body, lost own id on down)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.727Z"
+    },
+    {
+      "id": "find-80974fd7",
+      "category": "data-integrity",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migrations/20260928000023_CanonicalizeClientsToEnglish.ts",
+      "line": null,
+      "summary": "LOW-2: over-long responsavel_cargo + cargo_responsavel: alias fills the column, down() overwrites the only copy of the newer over-long value",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.798Z"
+    },
+    {
+      "id": "find-45a66462",
+      "category": "data-integrity",
+      "severity": "LOW",
+      "file": "docs/engineering/database.md",
+      "line": null,
+      "summary": "LOW-3: docs say owner/bypass suffices; FORCE RLS tables need BYPASSRLS/superuser or UPDATEs silently match 0 rows; no pre-flight/guard",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.872Z"
+    },
+    {
+      "id": "find-6770f283",
+      "category": "data-integrity",
+      "severity": "LOW",
+      "file": "docs/engineering/database.md",
+      "line": null,
+      "summary": "LOW-4: migration 26 docs overstate down() exactness, omit audit payloads, wrong lock scope, no collision pre-promotion query",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:10.943Z"
+    },
+    {
+      "id": "find-bc5770ce",
+      "category": "data-integrity",
+      "severity": "LOW",
+      "file": "apps/api/scripts/verify-cz042-cz043-migrations.ts",
+      "line": null,
+      "summary": "LOW-5: CLIENT_ALIAS over-long->NULL check passes on old code (no stale cep); no probe for LOW-2 or collision-tenant conversation",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:11.043Z"
+    },
+    {
+      "id": "find-f35a1d98",
+      "category": "data-integrity",
+      "severity": "INFO",
+      "file": "apps/api/src/database/migrations/20260928000026_CanonicalizeMusicChatValuesToEnglish.ts",
+      "line": null,
+      "summary": "INFO-1: conversations.selected_menu_option uses the global id map, not the per-tenant one",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:11.122Z"
+    },
+    {
+      "id": "find-7be050bb",
+      "category": "data-integrity",
+      "severity": "INFO",
+      "file": "apps/api/src/database/migrations/20260928000023_CanonicalizeClientsToEnglish.ts",
+      "line": null,
+      "summary": "INFO-2: clients interacoes JSON text not parsed like artists (try_jsonb)",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:11.206Z"
+    },
+    {
+      "id": "find-da97f84d",
+      "category": "naming",
+      "severity": "INFO",
+      "file": "apps/api/src/database/migrations/20260928000023_CanonicalizeClientsToEnglish.ts",
+      "line": null,
+      "summary": "INFO-3: metadata key legacy_cargo_responsavel not registered in the canonical map",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T05:00:11.283Z"
     }
   ],
   "evidenceIds": [
@@ -3314,7 +3675,20 @@
     "evid-b76ff2c1",
     "evid-c3b5c74c",
     "evid-5f312b4e",
-    "evid-0aaf96bb"
+    "evid-0aaf96bb",
+    "evid-cee8799e",
+    "evid-a08e7179",
+    "evid-f51dfcf6",
+    "evid-f0f6d1f1",
+    "evid-73f2c204",
+    "evid-ac46684e",
+    "evid-e9c00c05",
+    "evid-33e3cb12",
+    "evid-aaf60f27",
+    "evid-bdd2ab35",
+    "evid-c42457f2",
+    "evid-2b55eebb",
+    "evid-d8c80675"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

@@ -44,16 +44,37 @@ export const canonicalServiceStatus = ({ value }: { value: unknown }) => canonic
 interface MenuOptionLike { id: string; responseTemplateId: string; priority?: string }
 interface TemplateLike { id: string }
 
+/**
+ * Legacy -> canonical id map for one tenant's settings: a default id is mapped
+ * only when its English target is not already used (same rule as migration
+ * 20260928000026), so a tenant holding both `outros` and its own `other` never
+ * ends up with two options sharing one id.
+ */
+export function legacyMenuIdMap(usedIds: Iterable<string>): Readonly<Record<string, string>> {
+  const used = new Set(usedIds);
+  return Object.fromEntries(Object.entries(LEGACY_MENU_OPTION_IDS).filter(([, target]) => !used.has(target)));
+}
+
 /** Maps a pre-CZ-045 settings payload (menu option ids, template ids, priorities). */
-export function canonicalMenuOption<T extends MenuOptionLike>(option: T): T {
+export function canonicalMenuOption<T extends MenuOptionLike>(option: T, idMap: Readonly<Record<string, string>> = LEGACY_MENU_OPTION_IDS): T {
   return {
     ...option,
-    id: canonical(LEGACY_MENU_OPTION_IDS, option.id) as string,
-    responseTemplateId: canonical(LEGACY_MENU_OPTION_IDS, option.responseTemplateId) as string,
+    id: canonical(idMap, option.id) as string,
+    responseTemplateId: canonical(idMap, option.responseTemplateId) as string,
     ...(option.priority !== undefined ? { priority: canonical(LEGACY_PRIORITIES, option.priority) as string } : {}),
   };
 }
 
-export function canonicalTemplate<T extends TemplateLike>(template: T): T {
-  return { ...template, id: canonical(LEGACY_MENU_OPTION_IDS, template.id) as string };
+export function canonicalTemplate<T extends TemplateLike>(template: T, idMap: Readonly<Record<string, string>> = LEGACY_MENU_OPTION_IDS): T {
+  return { ...template, id: canonical(idMap, template.id) as string };
+}
+
+/** The first id used by more than one entry, if any. */
+export function duplicateId(entries: ReadonlyArray<{ id: string }>): string | null {
+  const seen = new Set<string>();
+  for (const { id } of entries) {
+    if (seen.has(id)) return id;
+    seen.add(id);
+  }
+  return null;
 }

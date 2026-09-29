@@ -65,6 +65,24 @@ export function calendarDay(value: unknown): string {
   return /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : "";
 }
 
+/** Today's calendar day (YYYY-MM-DD) in the system timezone (not the browser's, not UTC). */
+export function todayCalendarDay(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: SYSTEM_REGIONAL_SETTINGS.timezone,
+  }).format(now);
+}
+
+/** Whole days from calendar day `from` to calendar day `to` (negative when `to` is earlier); NaN when either is not a calendar day. */
+export function calendarDaysBetween(from: unknown, to: unknown): number {
+  const start = calendarDay(from);
+  const end = calendarDay(to);
+  if (!start || !end) return Number.NaN;
+  return Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000);
+}
+
 /** DD/MM/AAAA of a calendar day (see calendarDay) without timezone conversion; "-" when absent. */
 export function formatCalendarDate(value: unknown): string {
   const day = calendarDay(value);
@@ -88,6 +106,18 @@ export function formatCalendarDateLabel(value: unknown, empty = "-"): string {
     return "Data inválida";
   }
   return formatCalendarDate(day);
+}
+
+/** HH:MM (24h) of an instant in the system timezone; "-" when absent/invalid. */
+export function formatTime(date: string | Date | null | undefined): string {
+  const d = toDate(date);
+  if (!d) return "-";
+  return new Intl.DateTimeFormat(SYSTEM_REGIONAL_SETTINGS.locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+    timeZone: SYSTEM_REGIONAL_SETTINGS.timezone,
+  }).format(d);
 }
 
 export function formatDateTime(date: string | Date | null | undefined): string {

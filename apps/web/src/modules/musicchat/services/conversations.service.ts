@@ -4,9 +4,9 @@
  * MusicChat Inbox (product decision 2026-08-22): real client for the
  * existing backend `/conversations` (ConversationsController/Service,
  * apps/api/src/modules/conversations). Maps the real entity
- * (tenant/status/channel/metadata) to the existing UI model in
- * shared/pages/MusicChat.tsx (SupportConversation/SupportMessage) — that
- * component was already done; only this service was missing.
+ * (tenant/status/channel/metadata) to the Support Center UI model
+ * (SupportConversation/SupportMessage, declared here and used by
+ * components/SupportCenterView.tsx).
  *
  * Fields with no real source on the backend (unread count, SLA/deadline, CRM
  * summary beyond contact_id, per-message protocol) get
@@ -52,10 +52,10 @@ interface RawMessage {
   created_at: string;
 }
 
-// ── Types of the existing UI model (shared/pages/MusicChat.tsx) ──────────
-type SupportChannel = "whatsapp" | "instagram" | "facebook" | "tiktok" | "site" | "custom";
-type SupportStatus = "new" | "waiting_agent" | "in_progress" | "waiting_customer" | "resolved" | "archived";
-type DeadlineState = "on_track" | "at_risk" | "overdue";
+// ── UI model of the Support Center (components/SupportCenterView.tsx) ─────
+export type SupportChannel = "whatsapp" | "instagram" | "facebook" | "tiktok" | "site" | "custom";
+export type SupportStatus = "new" | "waiting_agent" | "in_progress" | "waiting_customer" | "resolved" | "archived";
+export type DeadlineState = "on_track" | "at_risk" | "overdue";
 
 export interface SupportConversation {
   id: string;
@@ -69,12 +69,14 @@ export interface SupportConversation {
   queue: string;
   sector: string;
   status: SupportStatus;
-  assignee: string;
+  /** Auth user id of the assigned member (conversations.assigned_to); the view shows the member's name. */
+  assigneeId: string | null;
   protocol: string;
   sla: number;
   remainingTimeLabel: string;
   deadlineState: DeadlineState;
   tags: string[];
+  /** Subject of the website form (origin "Site"). */
   assunto?: string;
   lastMessage: string;
   lastMessageAt: string;
@@ -84,13 +86,17 @@ export interface SupportConversation {
   value: string;
   crmSummary: { existingCustomer: boolean; lead: string; openDeal: string; stage: string };
   auditTrail: string[];
+  /** Optimistic concurrency (Task M) — see useConcurrencyConflict. */
   updated_at: string;
 }
 
 export interface SupportMessage {
   id: string;
   sender: "customer" | "agent" | "system";
+  /** PT-BR label for customer/system messages; for agent messages a fallback until authorId resolves to a name. */
   author: string;
+  /** Auth user id of the agent who sent it (messages.sender_id); agent messages only. */
+  authorId?: string;
   body: string;
   time: string;
   attachments?: ChatAttachmentData[];
@@ -195,10 +201,12 @@ function mapConversation(raw: RawConversation): SupportConversation {
     email: str(meta["email"]),
     originLabel: CHANNEL_ORIGIN_LABEL[raw.channel],
     channel: CHANNEL_TO_SUPPORT[raw.channel],
-    queue: str(meta["queue_id"] ?? meta["queue"]),
-    sector: str(meta["sector_id"] ?? meta["sector"]),
+    // Queue/sector names written by the triage routing (menu option queue/sector).
+    // queue_id/sector_id are opaque ids from /transfer and are never shown.
+    queue: str(meta["queue"]),
+    sector: str(meta["sector"]),
     status: serviceStatus || STATUS_TO_SUPPORT[raw.status],
-    assignee: raw.assigned_to ?? "Sem responsável",
+    assigneeId: raw.assigned_to,
     protocol: protocolFromId(raw.id),
     // No real SLA configured for conversations on the backend (unlike
     // support_tickets, which has a real sla_deadline) — fixed neutral default,
@@ -237,7 +245,8 @@ function mapMessage(raw: RawMessage): SupportMessage {
   return {
     id: raw.id,
     sender,
-    author: sender === "customer" ? "Cliente" : sender === "system" ? "Sistema" : raw.sender_id,
+    author: sender === "customer" ? "Cliente" : sender === "system" ? "Sistema" : "Agente",
+    authorId: sender === "agent" ? raw.sender_id : undefined,
     body: raw.body,
     time: formatTime(raw.created_at),
     attachments,
@@ -304,6 +313,19 @@ export const musicChatConversationsService = {
 
   async update(conversationId: string, patch: ConversationUpdatePayload): Promise<SupportConversation> {
     const raw = await api.patch<RawConversation>(`/conversations/${conversationId}`, patch);
+    return mapConversation(raw);
+  },
+
+  /** PATCH /conversations/:id/transfer — reassigns and records the transfer (metadata.transfers, audit, realtime). */
+  async transfer(
+    conversationId: string,
+    input: { assigneeId: string; reason?: string; expectedUpdatedAt?: string },
+  ): Promise<SupportConversation> {
+    const raw = await api.patch<RawConversation>(`/conversations/${conversationId}/transfer`, {
+      assignee_id: input.assigneeId,
+      reason: input.reason,
+      expectedUpdatedAt: input.expectedUpdatedAt,
+    });
     return mapConversation(raw);
   },
 

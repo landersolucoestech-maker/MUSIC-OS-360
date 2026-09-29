@@ -19,7 +19,10 @@ import {
   WRONG_CONTACT_OPTION_ID,
   canonicalMenuOption,
   canonicalTemplate,
+  duplicateId,
+  legacyMenuIdMap,
 } from './musicchat-vocabulary';
+import { assertActiveTenantMembers } from './tenant-members';
 import type {
   MusicChatEscalationRuleDto,
   MusicChatInboundMessageDto,
@@ -149,13 +152,34 @@ export class MusicChatAutomationService {
   async updateSettings(tenantId: string, userId: string, dto: UpdateMusicChatAutomationSettingsDto) {
     const current = await this.getSettings(tenantId);
     // A pre-CZ-045 web build sends Portuguese option/template ids and priorities.
-    const menuOptionsInput = dto.menu_options?.map(canonicalMenuOption);
-    const menuOptions = menuOptionsInput ?? (current.menu_options as MusicChatMenuOptionDto[]);
+    // Ids already used by the saved document (the payload, or the stored array it
+    // does not replace) decide which legacy ids may be renamed.
+    const storedOptions = (current.menu_options ?? []) as MusicChatMenuOptionDto[];
+    const storedTemplates = (current.templates ?? []) as MusicChatTemplateDto[];
+    const idMap = legacyMenuIdMap([
+      ...(dto.menu_options ?? storedOptions).map((option) => option.id),
+      ...(dto.templates ?? storedTemplates).map((template) => template.id),
+    ]);
+    const menuOptionsInput = dto.menu_options?.map((option) => canonicalMenuOption(option, idMap));
+    const templatesInput = dto.templates?.map((template) => canonicalTemplate(template, idMap));
+    const duplicate = duplicateId(menuOptionsInput ?? []) ?? duplicateId(templatesInput ?? []);
+    if (duplicate) {
+      throw new BadRequestException(`Há mais de uma opção ou resposta com o identificador "${duplicate}".`);
+    }
+    // Ids already stored are left alone (a save must not fail on a value it did not change);
+    // every new or changed id must be an active member of this tenant.
+    await this.assertTenantMembers(tenantId, current, [
+      ...(menuOptionsInput ?? []).map((option) => option.defaultAssignee),
+      ...(dto.escalation_rules ?? []).map((rule) => rule.recipientUserId),
+      dto.supervisor_user_id,
+      dto.manager_user_id,
+    ]);
+    const menuOptions = menuOptionsInput ?? storedOptions;
     const { expectedUpdatedAt, ...restDto } = dto;
     const updates = {
       ...restDto,
       ...(menuOptionsInput ? { menu_options: menuOptionsInput } : {}),
-      ...(dto.templates ? { templates: dto.templates.map(canonicalTemplate) } : {}),
+      ...(templatesInput ? { templates: templatesInput } : {}),
       ...(dto.menu_options ? { main_menu_message: dto.main_menu_message ?? buildMainMenu(menuOptions) } : {}),
       updated_by: userId,
     };
@@ -168,6 +192,21 @@ export class MusicChatAutomationService {
     );
     await this.recordEvent(tenantId, null, 'automation.settings_updated', 'Configurações de automação do MusicChat atualizadas', { keys: Object.keys(dto) }, userId);
     return this.getSettings(tenantId);
+  }
+
+  /** Every user id the settings route conversations or notifications to is an active member of this tenant. */
+  private async assertTenantMembers(
+    tenantId: string,
+    current: MusicChatAutomationSettingsEntity,
+    userIds: ReadonlyArray<string | null | undefined>,
+  ): Promise<void> {
+    const stored = new Set<unknown>([
+      ...((current.menu_options ?? []) as MusicChatMenuOptionDto[]).map((option) => option.defaultAssignee),
+      ...((current.escalation_rules ?? []) as MusicChatEscalationRuleDto[]).map((rule) => rule.recipientUserId),
+      current.supervisor_user_id,
+      current.manager_user_id,
+    ]);
+    await assertActiveTenantMembers(this.orgMemberRepo!, tenantId, userIds.filter((id) => !stored.has(id)));
   }
 
   async handleInboundMessage(tenantId: string, dto: MusicChatInboundMessageDto) {

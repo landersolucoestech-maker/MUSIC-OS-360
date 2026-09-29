@@ -196,3 +196,49 @@ describe("musicChatConversationsService service_status mapping (CZ-045)", () => 
     expect(apiMock.patch).toHaveBeenCalledWith("/conversations/conv-2", { service_status: "in_progress" });
   });
 });
+
+/**
+ * N6/N7/L2: the service never exposes raw member ids as display text, reads
+ * only the queue/sector names, and transfers through PATCH /transfer.
+ */
+describe("musicChatConversationsService member ids, queue names and transfer", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const raw = {
+    id: "conv-2", tenant_id: "tenant-1", contact_id: null, subject: "Assunto",
+    status: "open" as const, channel: "whatsapp" as const, assigned_to: "auth-user-7",
+    last_message_at: null, created_by: null,
+    created_at: "2026-08-23T09:00:00.000Z", updated_at: "2026-08-23T10:00:00.000Z",
+    metadata: { queue: "Comercial", sector: "Shows", queue_id: "5b0f3c1e-0000-4000-8000-000000000001", sector_id: "5b0f3c1e-0000-4000-8000-000000000002" },
+  };
+
+  it("maps assigned_to to assigneeId and shows queue/sector names, never the opaque ids", async () => {
+    apiMock.get.mockResolvedValue(raw);
+    const conversation = await musicChatConversationsService.get("conv-2");
+    expect(conversation.assigneeId).toBe("auth-user-7");
+    expect(conversation.queue).toBe("Comercial");
+    expect(conversation.sector).toBe("Shows");
+    expect(conversation).not.toHaveProperty("assignee");
+  });
+
+  it("an agent message keeps the sender id apart from its display label", async () => {
+    apiMock.get.mockResolvedValue([
+      { id: "m1", conversation_id: "conv-2", body: "Oi", sender_id: "auth-user-7", sender_type: "user", attachments: [], metadata: {}, created_at: "2026-08-23T10:00:00.000Z" },
+      { id: "m2", conversation_id: "conv-2", body: "Olá", sender_id: "contact-1", sender_type: "contact", attachments: [], metadata: {}, created_at: "2026-08-23T10:01:00.000Z" },
+    ]);
+    const [agent, customer] = await musicChatConversationsService.messages("conv-2");
+    expect(agent).toEqual(expect.objectContaining({ sender: "agent", author: "Agente", authorId: "auth-user-7" }));
+    expect(customer).toEqual(expect.objectContaining({ sender: "customer", author: "Cliente" }));
+    expect(customer.authorId).toBeUndefined();
+  });
+
+  it("transfer() calls PATCH /conversations/:id/transfer with assignee_id and the concurrency token", async () => {
+    apiMock.patch.mockResolvedValue(raw);
+    await musicChatConversationsService.transfer("conv-2", { assigneeId: "auth-user-7", expectedUpdatedAt: raw.updated_at });
+    expect(apiMock.patch).toHaveBeenCalledWith("/conversations/conv-2/transfer", {
+      assignee_id: "auth-user-7",
+      reason: undefined,
+      expectedUpdatedAt: raw.updated_at,
+    });
+  });
+});

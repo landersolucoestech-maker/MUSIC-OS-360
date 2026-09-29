@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { ConversationsService } from './conversations.service';
 import { ConversationEntity } from '../../database/entities';
 import { DOMAIN_EVENTS } from '../../core/events/events.service';
@@ -28,6 +28,20 @@ const baseConv = {
   updated_at: NOW,
 } as unknown as ConversationEntity;
 
+/** org_members of TENANT (active, not deleted) — the only valid assignees. */
+const TENANT_MEMBERS = ['user-a', 'user-b'];
+
+function buildMemberRepo(members: string[] = TENANT_MEMBERS) {
+  const qb: Record<string, jest.Mock> = {};
+  let tenantFilter: string | undefined;
+  let wanted: string[] = [];
+  qb.select = jest.fn(() => qb);
+  qb.where = jest.fn((_sql: string, params: { tenantId: string }) => { tenantFilter = params.tenantId; return qb; });
+  qb.andWhere = jest.fn((_sql: string, params?: { wanted?: string[] }) => { if (params?.wanted) wanted = params.wanted; return qb; });
+  qb.getRawMany = jest.fn(async () => (tenantFilter === TENANT ? wanted.filter((id) => members.includes(id)) : []).map((id) => ({ auth_user_id: id })));
+  return { createQueryBuilder: jest.fn(() => qb), _qb: qb };
+}
+
 function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
   const qbResult = { getOne: jest.fn().mockResolvedValue(baseConv) };
   const convRepo = {
@@ -38,9 +52,11 @@ function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
     create: jest.fn((data: unknown) => ({ id: 'msg-1', created_at: NOW, metadata: {}, ...(data as object) })),
     save: jest.fn(async (entity: unknown) => entity),
   };
+  const memberRepo = buildMemberRepo();
   return {
-    getRepository: jest.fn(() => convRepo),
+    getRepository: jest.fn((entity: { name?: string }) => (entity?.name === 'OrgMemberEntity' ? memberRepo : convRepo)),
     _convRepo: convRepo,
+    _memberRepo: memberRepo,
   };
 }
 
@@ -102,6 +118,37 @@ describe('ConversationsService.transfer() — Task M optimistic concurrency', ()
     });
     const [, payload] = mockDs._convRepo.update.mock.calls[0];
     expect(payload).not.toHaveProperty('expectedUpdatedAt');
+  });
+});
+
+/**
+ * N8: an assignee is an active org member of the conversation's tenant. Free
+ * text, a user of another tenant or an inactive member is rejected before any
+ * write; clearing the assignee stays allowed.
+ */
+describe('ConversationsService — assignee must be an active member of the tenant', () => {
+  it('transfer to a user who is not a member of this tenant is rejected and writes nothing', async () => {
+    const { service, mockDs, mockWs } = buildService({ affected: 1 });
+    await expect(service.transfer(TENANT, 'user-a', CONV_ID, { assignee_id: 'user-of-other-tenant' })).rejects.toThrow(BadRequestException);
+    await expect(service.transfer(TENANT, 'user-a', CONV_ID, { assignee_id: 'Maria Souza' })).rejects.toThrow(BadRequestException);
+    expect(mockDs._convRepo.update).not.toHaveBeenCalled();
+    expect(mockWs.sendToTenant).not.toHaveBeenCalled();
+  });
+
+  it('the membership lookup is scoped to the caller tenant', async () => {
+    const { service, mockDs } = buildService({ affected: 1 });
+    await expect(service.transfer('tenant-other', 'user-a', CONV_ID, { assignee_id: 'user-b' })).rejects.toThrow(BadRequestException);
+    expect(mockDs._memberRepo._qb.where).toHaveBeenCalledWith('m.tenant_id = :tenantId', { tenantId: 'tenant-other' });
+    expect(mockDs._memberRepo._qb.andWhere).toHaveBeenCalledWith('m.is_active = true');
+    expect(mockDs._memberRepo._qb.andWhere).toHaveBeenCalledWith('m.deleted_at IS NULL');
+  });
+
+  it('assign rejects a non-member and still allows clearing the assignee', async () => {
+    const { service, mockDs } = buildService({ affected: 1 });
+    await expect(service.assign(TENANT, CONV_ID, 'ghost')).rejects.toThrow(BadRequestException);
+    expect(mockDs._convRepo.update).not.toHaveBeenCalled();
+    await service.assign(TENANT, CONV_ID, null);
+    expect(mockDs._convRepo.update).toHaveBeenCalledWith({ id: CONV_ID, tenant_id: TENANT }, expect.objectContaining({ assigned_to: null }));
   });
 });
 
