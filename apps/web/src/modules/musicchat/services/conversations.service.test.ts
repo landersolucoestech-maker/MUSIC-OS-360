@@ -147,3 +147,52 @@ describe("musicChatConversationsService HTTP envelope contract", () => {
     expect(key1).not.toBe(key2);
   });
 });
+
+// CZ-045: service_status values are English. A value this build does not know
+// (e.g. a pre-CZ-045 Portuguese value read before migration 26 ran) must not
+// reach the UI maps as an unknown key — it falls back to the status derived
+// from the conversation's own state.
+describe("musicChatConversationsService service_status mapping (CZ-045)", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const base = {
+    id: "conv-2",
+    tenant_id: "tenant-1",
+    contact_id: null,
+    subject: "Assunto",
+    channel: "whatsapp" as const,
+    assigned_to: null,
+    last_message_at: null,
+    created_by: null,
+    created_at: "2026-08-23T09:00:00.000Z",
+    updated_at: "2026-08-23T10:00:00.000Z",
+  };
+
+  it.each([
+    ["new", "new"],
+    ["waiting_agent", "waiting_agent"],
+    ["in_progress", "in_progress"],
+    ["waiting_customer", "waiting_customer"],
+    ["resolved", "resolved"],
+    ["archived", "archived"],
+  ])("keeps the canonical service_status %s", async (stored, expected) => {
+    apiMock.get.mockResolvedValue({ ...base, status: "open", metadata: { service_status: stored } });
+    await expect(musicChatConversationsService.get("conv-2")).resolves.toMatchObject({ status: expected });
+  });
+
+  it.each([
+    ["unknown_status", "open", "in_progress"],
+    ["closed_by_bot", "closed", "resolved"],
+    ["", "pending", "waiting_agent"],
+    ["constructor", "spam", "archived"],
+  ])("unknown service_status %j falls back to the backend status %s", async (stored, status, expected) => {
+    apiMock.get.mockResolvedValue({ ...base, status, metadata: { service_status: stored } });
+    await expect(musicChatConversationsService.get("conv-2")).resolves.toMatchObject({ status: expected });
+  });
+
+  it("sends the canonical service_status on update", async () => {
+    apiMock.patch.mockResolvedValue({ ...base, status: "open", metadata: { service_status: "in_progress" } });
+    await musicChatConversationsService.update("conv-2", { service_status: "in_progress" });
+    expect(apiMock.patch).toHaveBeenCalledWith("/conversations/conv-2", { service_status: "in_progress" });
+  });
+});

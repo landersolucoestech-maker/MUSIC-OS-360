@@ -12,10 +12,10 @@ interface Props {
 }
 
 const PRIORITIES: Array<{ value: MusicChatPriority; label: string }> = [
-  { value: "baixa", label: "Baixa" },
-  { value: "media", label: "Média" },
-  { value: "alta", label: "Alta" },
-  { value: "critica", label: "Crítica" },
+  { value: "low", label: "Baixa" },
+  { value: "medium", label: "Média" },
+  { value: "high", label: "Alta" },
+  { value: "critical", label: "Crítica" },
 ];
 
 function tagsToText(tags: string[]) {
@@ -43,7 +43,7 @@ export function TriageMenuBuilder({ options, templates, onChange }: Props) {
 
   const add = () => {
     const nextOrder = sortedOptions.length > 0 ? Math.max(...sortedOptions.map((option) => option.order)) + 1 : 1;
-    const id = `opcao-${Date.now()}`;
+    const id = `option-${Date.now()}`;
     onChange([
       ...options,
       {
@@ -55,7 +55,7 @@ export function TriageMenuBuilder({ options, templates, onChange }: Props) {
         sector: "Triagem",
         defaultAssignee: null,
         tags: [],
-        priority: "media",
+        priority: "medium",
         active: true,
       },
     ]);

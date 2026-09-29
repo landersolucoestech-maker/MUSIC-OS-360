@@ -72,12 +72,12 @@ import { SiFacebook, SiInstagram, SiTiktok } from "react-icons/si";
 import { toUserMessage } from "@/shared/lib/errors";
 type SupportChannel = "whatsapp" | "instagram" | "facebook" | "tiktok" | "site" | "custom";
 type SupportStatus =
-  | "nova"
-  | "aguardando_atendimento"
-  | "em_atendimento"
-  | "aguardando_cliente"
-  | "resolvida"
-  | "arquivada";
+  | "new"
+  | "waiting_agent"
+  | "in_progress"
+  | "waiting_customer"
+  | "resolved"
+  | "archived";
 type DeadlineState = "on_track" | "at_risk" | "overdue";
 
 export interface SupportConversation {
@@ -129,12 +129,12 @@ interface SupportMessage {
 }
 
 const statusLabels: Record<SupportStatus, string> = {
-  nova: "Nova",
-  aguardando_atendimento: "Aguardando Atendimento",
-  em_atendimento: "Em Atendimento",
-  aguardando_cliente: "Aguardando Cliente",
-  resolvida: "Resolvida",
-  arquivada: "Arquivada",
+  new: "Nova",
+  waiting_agent: "Aguardando Atendimento",
+  in_progress: "Em Atendimento",
+  waiting_customer: "Aguardando Cliente",
+  resolved: "Resolvida",
+  archived: "Arquivada",
 };
 
 const channelLabels: Record<SupportChannel, string> = {
@@ -156,12 +156,12 @@ const channelStyles: Record<SupportChannel, string> = {
 };
 
 const statusStyles: Record<SupportStatus, string> = {
-  nova: "border-sky-500/30 bg-sky-500/10 text-sky-700",
-  aguardando_atendimento: "border-amber-500/30 bg-amber-500/10 text-amber-700",
-  em_atendimento: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700",
-  aguardando_cliente: "border-orange-500/30 bg-orange-500/10 text-orange-700",
-  resolvida: "border-muted bg-muted text-muted-foreground",
-  arquivada: "border-border bg-background text-muted-foreground",
+  new: "border-sky-500/30 bg-sky-500/10 text-sky-700",
+  waiting_agent: "border-amber-500/30 bg-amber-500/10 text-amber-700",
+  in_progress: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700",
+  waiting_customer: "border-orange-500/30 bg-orange-500/10 text-orange-700",
+  resolved: "border-muted bg-muted text-muted-foreground",
+  archived: "border-border bg-background text-muted-foreground",
 };
 
 const deadlineLabels: Record<DeadlineState, string> = {
@@ -504,7 +504,7 @@ export function SupportCenterView({
       // in the default active list ("todos") archived conversations stay hidden.
       const matchesStatus =
         statusFilter === "todos"
-          ? conversation.status !== "arquivada"
+          ? conversation.status !== "archived"
           : conversation.status === statusFilter;
       const matchesQuery =
         query.length === 0 ||
@@ -517,18 +517,18 @@ export function SupportCenterView({
 
   // Real statistics computed from the loaded list — never fixed numbers.
   const conversationStats = useMemo(() => {
-    const active = conversations.filter((c) => c.status !== "arquivada");
+    const active = conversations.filter((c) => c.status !== "archived");
     return {
-      novas: active.filter((c) => c.status === "nova").length,
-      semResponsavel: active.filter((c) => c.assignee === "Sem responsável").length,
-      resolvidas: active.filter((c) => c.status === "resolvida").length,
+      newCount: active.filter((c) => c.status === "new").length,
+      unassignedCount: active.filter((c) => c.assignee === "Sem responsável").length,
+      resolvedCount: active.filter((c) => c.status === "resolved").length,
     };
   }, [conversations]);
 
   const selectedConversation =
     filteredConversations.find((conversation) => conversation.id === selectedId) ?? filteredConversations[0];
 
-  const isClosed = selectedConversation?.status === "resolvida" || selectedConversation?.status === "arquivada";
+  const isClosed = selectedConversation?.status === "resolved" || selectedConversation?.status === "archived";
 
   const messages = selectedConversation ? messagesByConv[selectedConversation.id] ?? [] : [];
 
@@ -605,7 +605,7 @@ export function SupportCenterView({
     try {
       const updated = await musicChatConversationsService.update(selectedConversation.id, {
         metadata: { assignee_name: transferTarget },
-        service_status: "em_atendimento",
+        service_status: "in_progress",
         expectedUpdatedAt: getExpectedUpdatedAt(selectedConversation),
       });
       setConversations((previous) => previous.map((item) => item.id === updated.id ? updated : item));
@@ -1010,9 +1010,9 @@ export function SupportCenterView({
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
             {[
-              ["Novas", String(conversationStats.novas)],
-              ["Resolvidas", String(conversationStats.resolvidas)],
-              ["Sem resp.", String(conversationStats.semResponsavel)],
+              ["Novas", String(conversationStats.newCount)],
+              ["Resolvidas", String(conversationStats.resolvedCount)],
+              ["Sem resp.", String(conversationStats.unassignedCount)],
             ].map(([label, value]) => (
               <div key={label} className="rounded-md border border-border bg-muted/30 px-2 py-2">
                 <p className="text-sm font-semibold text-foreground">{value}</p>
@@ -1488,7 +1488,7 @@ export function SupportCenterView({
                     variant="outline"
                     size="sm"
                     className="h-8 justify-start gap-1.5 text-xs"
-                    disabled={selectedConversation.status === "arquivada"}
+                    disabled={selectedConversation.status === "archived"}
                     onClick={handleArchive}
                   >
                     <Archive className="h-3.5 w-3.5" />

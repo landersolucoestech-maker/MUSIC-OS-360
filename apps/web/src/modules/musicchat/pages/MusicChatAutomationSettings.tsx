@@ -59,24 +59,24 @@ const FALLBACK_SETTINGS: EditableSettings = {
   main_menu_message:
     "1. Contratação de Shows\n2. Produção Musical\n3. Editora Musical e Distribuição\n4. Design Gráfico e Criação\n5. Financeiro\n6. Redação & Conteúdo\n7. Outros Assuntos\n8. Contato por Engano",
   menu_options: [
-    { id: "shows", order: 1, label: "Contratação de Shows", responseTemplateId: "shows", queue: "Comercial", sector: "Shows", defaultAssignee: null, tags: ["Show", "Comercial"], priority: "alta", active: true, required_fields: INITIAL_REQUIRED_FIELDS, optional_fields: [] },
-    { id: "producao", order: 2, label: "Produção Musical", responseTemplateId: "producao", queue: "Produção Musical", sector: "Produção", defaultAssignee: null, tags: ["Produção Musical"], priority: "media", active: true },
-    { id: "editora", order: 3, label: "Editora Musical e Distribuição", responseTemplateId: "editora", queue: "Catálogo", sector: "Editora/Distribuição", defaultAssignee: null, tags: ["Editora", "Distribuição"], priority: "media", active: true },
-    { id: "design", order: 4, label: "Design Gráfico e Criação", responseTemplateId: "design", queue: "Marketing", sector: "Criação", defaultAssignee: null, tags: ["Design"], priority: "media", active: true },
-    { id: "financeiro", order: 5, label: "Financeiro", responseTemplateId: "financeiro", queue: "Financeiro", sector: "Financeiro", defaultAssignee: null, tags: ["Financeiro"], priority: "alta", active: true },
-    { id: "conteudo", order: 6, label: "Redação & Conteúdo", responseTemplateId: "conteudo", queue: "Marketing", sector: "Conteúdo", defaultAssignee: null, tags: ["Conteúdo"], priority: "media", active: true },
-    { id: "outros", order: 7, label: "Outros Assuntos", responseTemplateId: "outros", queue: "Atendimento", sector: "Suporte", defaultAssignee: null, tags: ["Outros Assuntos"], priority: "media", active: true },
-    { id: "engano", order: 8, label: "Contato por Engano", responseTemplateId: "engano", queue: "Atendimento", sector: "Triagem", defaultAssignee: null, tags: ["Contato por Engano"], priority: "baixa", active: true },
+    { id: "shows", order: 1, label: "Contratação de Shows", responseTemplateId: "shows", queue: "Comercial", sector: "Shows", defaultAssignee: null, tags: ["Show", "Comercial"], priority: "high", active: true, required_fields: INITIAL_REQUIRED_FIELDS, optional_fields: [] },
+    { id: "music_production", order: 2, label: "Produção Musical", responseTemplateId: "music_production", queue: "Produção Musical", sector: "Produção", defaultAssignee: null, tags: ["Produção Musical"], priority: "medium", active: true },
+    { id: "publishing_distribution", order: 3, label: "Editora Musical e Distribuição", responseTemplateId: "publishing_distribution", queue: "Catálogo", sector: "Editora/Distribuição", defaultAssignee: null, tags: ["Editora", "Distribuição"], priority: "medium", active: true },
+    { id: "design", order: 4, label: "Design Gráfico e Criação", responseTemplateId: "design", queue: "Marketing", sector: "Criação", defaultAssignee: null, tags: ["Design"], priority: "medium", active: true },
+    { id: "finance", order: 5, label: "Financeiro", responseTemplateId: "finance", queue: "Financeiro", sector: "Financeiro", defaultAssignee: null, tags: ["Financeiro"], priority: "high", active: true },
+    { id: "content", order: 6, label: "Redação & Conteúdo", responseTemplateId: "content", queue: "Marketing", sector: "Conteúdo", defaultAssignee: null, tags: ["Conteúdo"], priority: "medium", active: true },
+    { id: "other", order: 7, label: "Outros Assuntos", responseTemplateId: "other", queue: "Atendimento", sector: "Suporte", defaultAssignee: null, tags: ["Outros Assuntos"], priority: "medium", active: true },
+    { id: "wrong_contact", order: 8, label: "Contato por Engano", responseTemplateId: "wrong_contact", queue: "Atendimento", sector: "Triagem", defaultAssignee: null, tags: ["Contato por Engano"], priority: "low", active: true },
   ],
   templates: [
     { id: "shows", title: "Contratação de Shows", body: "Perfeito. Vamos direcionar seu atendimento para contratação de shows. Nossa equipe comercial irá analisar as informações e retornar com os próximos passos." },
-    { id: "producao", title: "Produção Musical", body: "Recebemos sua solicitação sobre produção musical. A equipe responsável irá continuar o atendimento por aqui." },
-    { id: "editora", title: "Editora Musical e Distribuição", body: "Obrigado pelo contato. Vamos encaminhar sua solicitação para a equipe de editora musical e distribuição." },
+    { id: "music_production", title: "Produção Musical", body: "Recebemos sua solicitação sobre produção musical. A equipe responsável irá continuar o atendimento por aqui." },
+    { id: "publishing_distribution", title: "Editora Musical e Distribuição", body: "Obrigado pelo contato. Vamos encaminhar sua solicitação para a equipe de editora musical e distribuição." },
     { id: "design", title: "Design Gráfico e Criação", body: "Sua demanda de design e criação foi registrada. O setor criativo dará sequência ao atendimento." },
-    { id: "financeiro", title: "Financeiro", body: "Vamos encaminhar seu atendimento para o financeiro. Para agilizar, envie o máximo de detalhes sobre sua solicitação." },
-    { id: "conteudo", title: "Redação & Conteúdo", body: "Sua solicitação de redação e conteúdo foi recebida e direcionada para a equipe responsável." },
-    { id: "outros", title: "Outros Assuntos", body: "Certo. Vamos analisar seu assunto e direcionar para a fila responsável." },
-    { id: "engano", title: "Contato por Engano", body: "Sem problemas. Encerramos esta triagem como contato por engano. Se precisar falar conosco, envie uma nova mensagem." },
+    { id: "finance", title: "Financeiro", body: "Vamos encaminhar seu atendimento para o financeiro. Para agilizar, envie o máximo de detalhes sobre sua solicitação." },
+    { id: "content", title: "Redação & Conteúdo", body: "Sua solicitação de redação e conteúdo foi recebida e direcionada para a equipe responsável." },
+    { id: "other", title: "Outros Assuntos", body: "Certo. Vamos analisar seu assunto e direcionar para a fila responsável." },
+    { id: "wrong_contact", title: "Contato por Engano", body: "Sem problemas. Encerramos esta triagem como contato por engano. Se precisar falar conosco, envie uma nova mensagem." },
   ],
   required_fields: INITIAL_REQUIRED_FIELDS,
   optional_fields: [],
@@ -257,7 +257,7 @@ export default function MusicChatAutomationSettings() {
   };
 
   const addServiceQuestionnaire = () => {
-    const id = `questionario-${Date.now()}`;
+    const id = `questionnaire-${Date.now()}`;
     const order = Math.max(0, ...draft.menu_options.map((option) => option.order)) + 1;
     const newOption = {
       id,
@@ -268,7 +268,7 @@ export default function MusicChatAutomationSettings() {
       sector: "Triagem",
       defaultAssignee: null,
       tags: [],
-      priority: "media" as const,
+      priority: "medium" as const,
       active: true,
       required_fields: [],
       optional_fields: [],

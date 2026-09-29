@@ -14,6 +14,12 @@ import { RealtimeService } from '../../core/realtime/realtime.service';
 import { WhatsAppCloudProvider } from '../integrations/whatsapp/whatsapp-cloud.provider';
 import { RECIPIENT_PHONE_MISSING, toWhatsAppDeliveryFailure } from '../integrations/whatsapp/whatsapp.errors';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { ConversationServiceStatus } from './dto/conversations.dto';
+import {
+  WRONG_CONTACT_OPTION_ID,
+  canonicalMenuOption,
+  canonicalTemplate,
+} from './musicchat-vocabulary';
 import type {
   MusicChatEscalationRuleDto,
   MusicChatInboundMessageDto,
@@ -30,25 +36,25 @@ const INVALID_OPTION =
   'Não consegui identificar essa opção. Responda apenas com o número de uma das opções do menu principal.';
 
 const DEFAULT_OPTIONS: MusicChatMenuOptionDto[] = [
-  { id: 'shows', order: 1, label: 'Contratação de Shows', responseTemplateId: 'shows', queue: 'Comercial', sector: 'Shows', tags: ['Show', 'Comercial'], priority: 'alta', active: true },
-  { id: 'producao', order: 2, label: 'Produção Musical', responseTemplateId: 'producao', queue: 'Produção Musical', sector: 'Produção', tags: ['Produção Musical'], priority: 'media', active: true },
-  { id: 'editora', order: 3, label: 'Editora Musical e Distribuição', responseTemplateId: 'editora', queue: 'Catálogo', sector: 'Editora/Distribuição', tags: ['Editora', 'Distribuição'], priority: 'media', active: true },
-  { id: 'design', order: 4, label: 'Design Gráfico e Criação', responseTemplateId: 'design', queue: 'Marketing', sector: 'Criação', tags: ['Design'], priority: 'media', active: true },
-  { id: 'financeiro', order: 5, label: 'Financeiro', responseTemplateId: 'financeiro', queue: 'Financeiro', sector: 'Financeiro', tags: ['Financeiro'], priority: 'alta', active: true },
-  { id: 'conteudo', order: 6, label: 'Redação & Conteúdo', responseTemplateId: 'conteudo', queue: 'Marketing', sector: 'Conteúdo', tags: ['Conteúdo'], priority: 'media', active: true },
-  { id: 'outros', order: 7, label: 'Outros Assuntos', responseTemplateId: 'outros', queue: 'Atendimento', sector: 'Suporte', tags: ['Outros Assuntos'], priority: 'media', active: true },
-  { id: 'engano', order: 8, label: 'Contato por Engano', responseTemplateId: 'engano', queue: 'Atendimento', sector: 'Triagem', tags: ['Contato por Engano'], priority: 'baixa', active: true },
+  { id: 'shows', order: 1, label: 'Contratação de Shows', responseTemplateId: 'shows', queue: 'Comercial', sector: 'Shows', tags: ['Show', 'Comercial'], priority: 'high', active: true },
+  { id: 'music_production', order: 2, label: 'Produção Musical', responseTemplateId: 'music_production', queue: 'Produção Musical', sector: 'Produção', tags: ['Produção Musical'], priority: 'medium', active: true },
+  { id: 'publishing_distribution', order: 3, label: 'Editora Musical e Distribuição', responseTemplateId: 'publishing_distribution', queue: 'Catálogo', sector: 'Editora/Distribuição', tags: ['Editora', 'Distribuição'], priority: 'medium', active: true },
+  { id: 'design', order: 4, label: 'Design Gráfico e Criação', responseTemplateId: 'design', queue: 'Marketing', sector: 'Criação', tags: ['Design'], priority: 'medium', active: true },
+  { id: 'finance', order: 5, label: 'Financeiro', responseTemplateId: 'finance', queue: 'Financeiro', sector: 'Financeiro', tags: ['Financeiro'], priority: 'high', active: true },
+  { id: 'content', order: 6, label: 'Redação & Conteúdo', responseTemplateId: 'content', queue: 'Marketing', sector: 'Conteúdo', tags: ['Conteúdo'], priority: 'medium', active: true },
+  { id: 'other', order: 7, label: 'Outros Assuntos', responseTemplateId: 'other', queue: 'Atendimento', sector: 'Suporte', tags: ['Outros Assuntos'], priority: 'medium', active: true },
+  { id: WRONG_CONTACT_OPTION_ID, order: 8, label: 'Contato por Engano', responseTemplateId: WRONG_CONTACT_OPTION_ID, queue: 'Atendimento', sector: 'Triagem', tags: ['Contato por Engano'], priority: 'low', active: true },
 ];
 
 const DEFAULT_TEMPLATES: MusicChatTemplateDto[] = [
   { id: 'shows', title: 'Contratação de Shows', body: 'Perfeito. Vamos direcionar seu atendimento para contratação de shows. Nossa equipe comercial irá analisar as informações e retornar com os próximos passos.' },
-  { id: 'producao', title: 'Produção Musical', body: 'Recebemos sua solicitação sobre produção musical. A equipe responsável irá continuar o atendimento por aqui.' },
-  { id: 'editora', title: 'Editora Musical e Distribuição', body: 'Obrigado pelo contato. Vamos encaminhar sua solicitação para a equipe de editora musical e distribuição.' },
+  { id: 'music_production', title: 'Produção Musical', body: 'Recebemos sua solicitação sobre produção musical. A equipe responsável irá continuar o atendimento por aqui.' },
+  { id: 'publishing_distribution', title: 'Editora Musical e Distribuição', body: 'Obrigado pelo contato. Vamos encaminhar sua solicitação para a equipe de editora musical e distribuição.' },
   { id: 'design', title: 'Design Gráfico e Criação', body: 'Sua demanda de design e criação foi registrada. O setor criativo dará sequência ao atendimento.' },
-  { id: 'financeiro', title: 'Financeiro', body: 'Vamos encaminhar seu atendimento para o financeiro. Para agilizar, envie o máximo de detalhes sobre sua solicitação.' },
-  { id: 'conteudo', title: 'Redação & Conteúdo', body: 'Sua solicitação de redação e conteúdo foi recebida e direcionada para a equipe responsável.' },
-  { id: 'outros', title: 'Outros Assuntos', body: 'Certo. Vamos analisar seu assunto e direcionar para a fila responsável.' },
-  { id: 'engano', title: 'Contato por Engano', body: 'Sem problemas. Encerramos esta triagem como contato por engano. Se precisar falar conosco, envie uma nova mensagem.' },
+  { id: 'finance', title: 'Financeiro', body: 'Vamos encaminhar seu atendimento para o financeiro. Para agilizar, envie o máximo de detalhes sobre sua solicitação.' },
+  { id: 'content', title: 'Redação & Conteúdo', body: 'Sua solicitação de redação e conteúdo foi recebida e direcionada para a equipe responsável.' },
+  { id: 'other', title: 'Outros Assuntos', body: 'Certo. Vamos analisar seu assunto e direcionar para a fila responsável.' },
+  { id: WRONG_CONTACT_OPTION_ID, title: 'Contato por Engano', body: 'Sem problemas. Encerramos esta triagem como contato por engano. Se precisar falar conosco, envie uma nova mensagem.' },
 ];
 
 const DEFAULT_REQUIRED_FIELDS = [
@@ -142,10 +148,14 @@ export class MusicChatAutomationService {
 
   async updateSettings(tenantId: string, userId: string, dto: UpdateMusicChatAutomationSettingsDto) {
     const current = await this.getSettings(tenantId);
-    const menuOptions = dto.menu_options ?? (current.menu_options as MusicChatMenuOptionDto[]);
+    // A pre-CZ-045 web build sends Portuguese option/template ids and priorities.
+    const menuOptionsInput = dto.menu_options?.map(canonicalMenuOption);
+    const menuOptions = menuOptionsInput ?? (current.menu_options as MusicChatMenuOptionDto[]);
     const { expectedUpdatedAt, ...restDto } = dto;
     const updates = {
       ...restDto,
+      ...(menuOptionsInput ? { menu_options: menuOptionsInput } : {}),
+      ...(dto.templates ? { templates: dto.templates.map(canonicalTemplate) } : {}),
       ...(dto.menu_options ? { main_menu_message: dto.main_menu_message ?? buildMainMenu(menuOptions) } : {}),
       updated_by: userId,
     };
@@ -210,7 +220,9 @@ export class MusicChatAutomationService {
     const qb = this.convRepo!
       .createQueryBuilder('c')
       .where('c.tenant_id = :tenantId AND c.status = :status AND c.deleted_at IS NULL', { tenantId, status: 'open' })
-      .andWhere("COALESCE(c.metadata->>'service_status', '') IN ('nova', 'aguardando_atendimento')");
+      .andWhere("COALESCE(c.metadata->>'service_status', '') IN (:...waitingStatuses)", {
+        waitingStatuses: [ConversationServiceStatus.NEW, ConversationServiceStatus.WAITING_AGENT],
+      });
     if (conversationId) qb.andWhere('c.id = :conversationId', { conversationId });
     const conversations = await qb.getMany();
     const created: MusicChatAutomationNotificationEntity[] = [];
@@ -421,7 +433,7 @@ export class MusicChatAutomationService {
         ...(dto.metadata ?? {}),
         external_contact_id: dto.externalContactId,
         automation_state: 'new',
-        service_status: 'nova',
+        service_status: ConversationServiceStatus.NEW,
         customer: dto.customerName,
       },
       created_by: 'musicchat-automation',
@@ -529,10 +541,12 @@ export class MusicChatAutomationService {
       metadata: {
         ...(conversation.metadata ?? {}),
         automation_state: 'routed',
-        service_status: option.id === 'engano' ? 'resolvida' : 'aguardando_atendimento',
+        service_status: option.id === WRONG_CONTACT_OPTION_ID
+          ? ConversationServiceStatus.RESOLVED
+          : ConversationServiceStatus.WAITING_AGENT,
         queue: option.queue,
         sector: option.sector,
-        priority: option.priority ?? 'media',
+        priority: option.priority ?? 'medium',
         tags,
         selected_menu_option: option.id,
         required_fields: option.required_fields ?? [],

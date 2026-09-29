@@ -35,6 +35,7 @@ import type {
   ReopenConversationDto,
   TransferConversationDto,
 } from './dto/conversations.dto';
+import { ConversationServiceStatus } from './dto/conversations.dto';
 
 @Injectable()
 export class ConversationsService {
@@ -115,7 +116,7 @@ export class ConversationsService {
       ...(dto.metadata ?? {}),
       ...(dto.queue_id ? { queue_id: dto.queue_id } : {}),
       ...(dto.sector_id ? { sector_id: dto.sector_id } : {}),
-      ...(dto.service_status ? { service_status: dto.service_status } : { service_status: 'nova' }),
+      ...(dto.service_status ? { service_status: dto.service_status } : { service_status: ConversationServiceStatus.NEW }),
       ...(dto.tags ? { tags: dto.tags } : {}),
     };
 
@@ -438,7 +439,7 @@ export class ConversationsService {
 
     const metadata = {
       ...(conv.metadata ?? {}),
-      service_status: dto.service_status ?? 'resolvida',
+      service_status: dto.service_status ?? ConversationServiceStatus.RESOLVED,
       closure: {
         reason: dto.reason,
         crm_actions: dto.crm_actions ?? {},
@@ -473,7 +474,7 @@ export class ConversationsService {
 
     const metadata = {
       ...(conv.metadata ?? {}),
-      service_status: 'em_atendimento',
+      service_status: ConversationServiceStatus.IN_PROGRESS,
       reopened: {
         reason: dto.reason ?? null,
         reopened_by: userId,

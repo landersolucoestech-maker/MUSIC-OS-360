@@ -1966,6 +1966,23 @@
       "definition": "slug is the technical identifier; name holds the PT-BR display text.",
       "producers": "seed 05_org_structure_seed",
       "consumers": "none in API/web (org chart grants no permission)"
+    },
+    {
+      "id": "CZ-045",
+      "status": "done",
+      "disposition": "DONE",
+      "layer": "database, api, web",
+      "language": "Portuguese",
+      "renameRequired": "yes",
+      "migrationRequired": "yes",
+      "evidence": "migration 20260928000026 verified up/down/up on disposable PostgreSQL 16 (verify:cz045-musicchat-migration: legacy conversation metadata and settings arrays, custom ids/non-string values/empty arrays kept, new-build values mapped back on down); musicchat-vocabulary.spec (pre-CZ-045 service_status on create/update/query/close, unknown values rejected, legacy settings save stored canonically, wrong-contact routing); web conversations.service tests (canonical and unknown service_status)",
+      "concept": "MusicChat triage vocabulary (service status, priority, default menu option ids)",
+      "businessConcept": "The MusicChat inbox service state of a conversation, the priority of a triage menu option and the ids of the default triage menu options and their response templates.",
+      "currentTechnicalName": "conversations.metadata.service_status nova/aguardando_atendimento/em_atendimento/aguardando_cliente/resolvida/arquivada; metadata.priority and menu_options[].priority baixa/media/alta/critica; menu_options[].id/responseTemplateId, templates[].id and metadata.selected_menu_option producao/editora/financeiro/conteudo/outros/engano; new option ids opcao-<ts>/questionario-<ts>",
+      "canonicalEnglishName": "service_status new/waiting_agent/in_progress/waiting_customer/resolved/archived (ConversationServiceStatus); priority low/medium/high/critical; option/template ids music_production/publishing_distribution/finance/content/other/wrong_contact (shows/design unchanged); new option ids option-<ts>/questionnaire-<ts>",
+      "definition": "Technical values only: labels, queue/sector names, template titles and bodies stay PT-BR display data. Reversible migration remaps exact legacy values in conversation metadata and per-tenant settings (custom ids already stored are opaque and kept; automation event payloads are audit history, not rewritten). The API maps pre-CZ-045 service_status input and legacy settings payloads (musicchat-vocabulary.ts); the web falls back to the conversation status for a service_status it does not know.",
+      "producers": "ConversationsService (create/update/close/reopen), MusicChatAutomationService (inbound triage, routing, settings), apps/web SupportCenterView, MusicChatAutomationSettings/TriageMenuBuilder",
+      "consumers": "conversations list filter, MusicChat escalation, apps/web SupportCenterView (labels/styles/stats), conversations.service mapConversation, MenuQueueAccordionItem"
     }
   ],
   "renames": [],

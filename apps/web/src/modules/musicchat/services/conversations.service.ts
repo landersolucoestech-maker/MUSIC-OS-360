@@ -54,7 +54,7 @@ interface RawMessage {
 
 // ── Types of the existing UI model (shared/pages/MusicChat.tsx) ──────────
 type SupportChannel = "whatsapp" | "instagram" | "facebook" | "tiktok" | "site" | "custom";
-type SupportStatus = "nova" | "aguardando_atendimento" | "em_atendimento" | "aguardando_cliente" | "resolvida" | "arquivada";
+type SupportStatus = "new" | "waiting_agent" | "in_progress" | "waiting_customer" | "resolved" | "archived";
 type DeadlineState = "on_track" | "at_risk" | "overdue";
 
 export interface SupportConversation {
@@ -146,20 +146,24 @@ const CHANNEL_ORIGIN_LABEL: Record<BackendConversationChannel, string> = {
 };
 
 const STATUS_TO_SUPPORT: Record<BackendConversationStatus, SupportStatus> = {
-  open: "em_atendimento",
-  pending: "aguardando_atendimento",
-  closed: "resolvida",
-  spam: "arquivada",
+  open: "in_progress",
+  pending: "waiting_agent",
+  closed: "resolved",
+  spam: "archived",
 };
 
 const SUPPORT_TO_STATUS: Record<SupportStatus, BackendConversationStatus> = {
-  nova: "open",
-  aguardando_atendimento: "pending",
-  em_atendimento: "open",
-  aguardando_cliente: "pending",
-  resolvida: "closed",
-  arquivada: "spam",
+  new: "open",
+  waiting_agent: "pending",
+  in_progress: "open",
+  waiting_customer: "pending",
+  resolved: "closed",
+  archived: "spam",
 };
+
+function isSupportStatus(value: string): value is SupportStatus {
+  return Object.prototype.hasOwnProperty.call(SUPPORT_TO_STATUS, value);
+}
 
 function str(value: unknown, fallback = ""): string {
   return typeof value === "string" && value.length > 0 ? value : fallback;
@@ -176,7 +180,10 @@ function protocolFromId(id: string): string {
 
 function mapConversation(raw: RawConversation): SupportConversation {
   const meta = raw.metadata ?? {};
-  const serviceStatus = str(meta["service_status"]) as SupportStatus | "";
+  // Unknown service_status (none stored yet, or a value this build does not know)
+  // falls back to the status derived from the conversation's own state.
+  const storedServiceStatus = str(meta["service_status"]);
+  const serviceStatus = isSupportStatus(storedServiceStatus) ? storedServiceStatus : "";
   const tags = Array.isArray(meta["tags"]) ? (meta["tags"] as unknown[]).filter((t): t is string => typeof t === "string") : [];
 
   return {

@@ -1,4 +1,4 @@
-export type MusicChatPriority = "baixa" | "media" | "alta" | "critica";
+export type MusicChatPriority = "low" | "medium" | "high" | "critical";
 export type MusicChatNotificationChannel = "in_app" | "whatsapp" | "sms";
 
 export interface MusicChatMenuOption {

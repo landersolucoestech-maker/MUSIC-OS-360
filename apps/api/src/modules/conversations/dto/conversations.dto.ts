@@ -1,9 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsString, IsOptional, IsUUID, IsEnum, IsNotEmpty, MaxLength, IsArray, IsObject,
   ArrayMaxSize, ValidateNested, IsUrl,
 } from 'class-validator';
+import { canonicalServiceStatus } from '../musicchat-vocabulary';
 
 export enum ConversationStatus  { OPEN = 'open', PENDING = 'pending', CLOSED = 'closed', SPAM = 'spam' }
 export enum ConversationChannel {
@@ -19,13 +20,15 @@ export enum ConversationChannel {
   CUSTOM = 'custom',
 }
 export enum MessageSenderType  { USER = 'user', CONTACT = 'contact', SYSTEM = 'system', AI = 'ai' }
+// CZ-045: a pre-CZ-045 web build sends the Portuguese values — mapped before
+// validation by canonicalServiceStatus (musicchat-vocabulary.ts).
 export enum ConversationServiceStatus {
-  NEW = 'nova',
-  WAITING_ATTENDANCE = 'aguardando_atendimento',
-  IN_ATTENDANCE = 'em_atendimento',
-  WAITING_CUSTOMER = 'aguardando_cliente',
-  RESOLVED = 'resolvida',
-  ARCHIVED = 'arquivada',
+  NEW = 'new',
+  WAITING_AGENT = 'waiting_agent',
+  IN_PROGRESS = 'in_progress',
+  WAITING_CUSTOMER = 'waiting_customer',
+  RESOLVED = 'resolved',
+  ARCHIVED = 'archived',
 }
 export enum ConversationDistributionMode {
   MANUAL = 'manual',
@@ -40,7 +43,7 @@ export class CreateConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() assigned_to?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
+  @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
   @ApiPropertyOptional() @IsOptional() @IsArray() tags?: string[];
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
 }
@@ -52,7 +55,7 @@ export class UpdateConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() assigned_to?:   string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
+  @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
   @ApiPropertyOptional() @IsOptional() @IsArray() tags?: string[];
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
   /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
@@ -66,7 +69,7 @@ export class QueryConversationDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() queue_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sector_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() tag_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
+  @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
   @ApiPropertyOptional() @IsOptional() @IsString() sla_state?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() search?:         string;
   @ApiPropertyOptional() @IsOptional() limit?:  number;
@@ -126,7 +129,7 @@ export class TransferConversationDto {
 
 export class CloseConversationDto {
   @ApiProperty() @IsString() @IsNotEmpty() @MaxLength(1000) reason: string;
-  @ApiPropertyOptional() @IsOptional() @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
+  @ApiPropertyOptional() @IsOptional() @Transform(canonicalServiceStatus) @IsEnum(ConversationServiceStatus) service_status?: ConversationServiceStatus;
   @ApiPropertyOptional() @IsOptional() @IsObject() crm_actions?: Record<string, unknown>;
 }
 
