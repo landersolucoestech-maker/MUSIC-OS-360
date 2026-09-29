@@ -25,15 +25,16 @@ deliberately working around git. The GitHub ruleset below is the only boundary f
 | Layer | Where | What it refuses |
 | --- | --- | --- |
 | Git hooks (authoritative, local) | installed by `scripts/git-guard/cli.mjs install` into `<git-common-dir>/git-guard/` from the version committed on `dev`, absolute `core.hooksPath`; `.githooks/` holds fallback shims that run the same installed guard | `reference-transaction`: writing a new value to any `refs/heads/*` other than `dev` (git branch, checkout -b, switch -c, worktree add, update-ref, fetch x:y, a commit on such a branch), checked with an exact ref lookup; `pre-commit`/`pre-merge-commit`: committing anywhere but `dev`; `pre-push`: any remote other than `origin`, any target other than `refs/heads/dev`, pushing from a branch other than `dev`, tags, non-fast-forward `dev` (checked on the real graph, ignoring replace refs and grafts), deleting `dev` |
-| Claude Code hooks (agents) | `.claude/settings.json` | `SessionStart` (re)installs the guard and states the policy; `PreToolUse` runs the installed guard, repairs `core.hooksPath` drift, fails closed (`\|\| exit 2`) and refuses before they run: branch-creating/switching git commands (abbreviated options included), `branch -m/-c`, `symbolic-ref`, `--no-verify`, hook-disabling config (`core.hooksPath`, `--config-env`, `GIT_CONFIG_*`, aliases, includes, section removal, `init --separate-git-dir`), `git replace`, plumbing pushes (`send-pack`, `remote-*`, `http-push`), writes into `.git/` (Bash and Edit/Write), `gh pr create`/`gh issue develop`/`gh api` ref writes, GitHub MCP tools that create branches, pull requests or Copilot branches or write to another branch, `EnterWorktree`, agents with worktree/remote isolation and remote sessions without `outcome_branch: dev`. Git commands in another existing repository whose remotes are not this project's are not checked |
+| Claude Code hooks (agents) | `.claude/settings.json` | `SessionStart` (re)installs the guard and states the policy; `PreToolUse` runs the installed guard, repairs `core.hooksPath` drift, fails closed (`\|\| exit 2`) and refuses before they run: branch-creating/switching git commands (abbreviated options included), `branch -m/-c`, `symbolic-ref`, `--no-verify`, hook-disabling config (`core.hooksPath`, `--config-env`, `GIT_CONFIG_*`, aliases, includes, section removal, `init --separate-git-dir`), `git replace`, plumbing pushes (`send-pack`, `remote-*`, `http-push`), writes into `.git/` (Bash and Edit/Write), `gh pr create`/`gh issue develop`/`gh api` ref writes, GitHub MCP tools that create branches, pull requests or Copilot branches or write to another branch, `EnterWorktree`, agents with worktree/remote isolation and remote sessions without `outcome_branch: dev`. Commands are read as shell text: git/gh/shells are recognised behind `if`/`do`/`!`/`{`, `VAR=value` and wrappers (`env`, `sudo`, `timeout`, `nice`, `xargs`, `find -exec`…), inside `$(…)`, backticks, `sh -c`, `eval`, `rebase -x`, `bisect run` and heredocs or here-strings read by a shell; a command with an unterminated quote, substitution or heredoc that mentions git/gh is refused. Git commands in another existing repository whose remotes are not this project's are not checked |
 | CI | `.github/workflows/ci.yml` | `node --test scripts/git-guard/policy.test.mjs` (real repositories: old checkouts, worktrees, `--git-dir`, `-C .git`, decoy refs, replace/graft, hooks-path drift, symlinked paths, rename, pack-refs/gc, tampering) fails if the guard, the Claude wiring or the detector is removed or weakened |
 | Server-side detection | `.github/workflows/branch-policy.yml` | hourly (and on demand) from `dev`: fails while any branch other than `dev` exists on GitHub, however it was created; also fails a push to another branch when the pushed commit carries the workflow |
 
 The installed guard is the version committed on `dev` (then `origin/dev`): uncommitted edits and
 the checked-out tree never decide what runs, so an old checkout, a detached worktree or
-`git --git-dir`/`-C .git` keep the same hooks, and a worktree on an old commit whose installer
-points `core.hooksPath` at `.githooks` still runs it through the shims (the next Claude tool call
-restores the absolute path). Install it in every clone (Claude Code sessions do it at
+`git --git-dir`/`-C .git` keep the same hooks. An installer from an older commit (d374b0e–6f0e0e1)
+points `core.hooksPath` at the relative `.githooks`: checkouts that carry the shims (9d97f74 and
+later) still run the installed guard through them, checkouts older than that run no hooks until
+the next Claude tool call restores the absolute path (or `install` is run). Install it in every clone (Claude Code sessions do it at
 `SessionStart`) and check a clone with `verify`:
 
 ```bash
@@ -50,6 +51,9 @@ Known limits of the local layers (why the GitHub ruleset is required):
 - outside Claude Code, `git commit/push --no-verify`, git plumbing that pushes without `pre-push`
   (`send-pack`, `remote-https`), hook-disabling config, replace refs/grafts and direct edits of
   `.git/` are not prevented locally (the Claude guard refuses them for agents);
+- the Claude guard reads shell text, not what other interpreters run: git or the GitHub API driven
+  from `node -e`, `python -c`, `curl`, package scripts, `git submodule foreach`, or user aliases
+  that already exist in git config are not inspected (the git hooks still apply to git itself);
 - git 2.43 does not report `git branch -m/-c` or `git symbolic-ref` to `reference-transaction`:
   commits and pushes from such a branch are still refused, `verify` reports it;
 - anyone without the guard (another machine, the GitHub web UI or API) is only detected afterwards,

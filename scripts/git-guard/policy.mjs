@@ -93,63 +93,76 @@ export function checkPush({ remote, updates, currentBranchRef, isAncestor }) {
 // ─── Claude Code PreToolUse guard ───────────────────────────────────────────
 // Defence in depth for agents: refuses branch-creating commands and tools
 // before they run, so an agent following a harness/tool instruction never gets
-// that far. It is a best-effort command reader, not a sandbox; the installed
-// git hooks and, server-side, the GitHub ruleset are the boundaries.
+// that far. It reads shell text conservatively (git/gh/shells are found at any
+// position of a simple command; anything it cannot parse is refused when it
+// mentions git or gh). It is not a sandbox; the installed git hooks and,
+// server-side, the GitHub ruleset are the boundaries.
 
 const SHELLS = new Set(['sh', 'bash', 'zsh', 'dash', 'ksh']);
 const HEREDOC_DELIMITER = /^[A-Za-z_][A-Za-z0-9_.-]*$/;
 const SUBSHELL_OPEN = '\u0000(';
 const SUBSHELL_CLOSE = '\u0000)';
+const MENTIONS_GIT = /(^|[^A-Za-z0-9_.-])(git|gh)([^A-Za-z0-9_.]|$)/;
+const RESERVED = new Set(['if', 'then', 'elif', 'else', 'fi', 'do', 'done', 'while', 'until', 'for', 'in', 'case', 'esac', '!', '{', '}', '[[', ']]', 'time', 'function', 'select', 'coproc']);
+const ENV_ASSIGNMENT = /^[A-Za-z_][A-Za-z0-9_]*=/;
 
 function basename(word) {
   return (word ?? '').split('/').pop();
 }
 
-/** Index of the `))` closing an arithmetic `$((`/`((` opened at `start`, or the end of the text. */
-function arithmeticEnd(text, start) {
-  const end = text.indexOf('))', start);
-  return end === -1 ? text.length - 1 : end + 1;
-}
-
-/** Index of the `)` closing a `$(` whose content starts at `start` (quotes skipped), or -1. */
-function substitutionEnd(text, start) {
-  let depth = 1;
-  let quote = null;
-  for (let i = start; i < text.length; i += 1) {
-    const ch = text[i];
-    if (quote) {
-      if (ch === quote) quote = null;
-      else if (ch === '\\' && quote === '"') i += 1;
-    } else if (ch === "'" || ch === '"') {
-      quote = ch;
-    } else if (ch === '(') {
-      depth += 1;
-    } else if (ch === ')' && --depth === 0) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-/** Simple commands plus subshell markers, so a `cd` inside `( … )` / `$( … )` does not leak out. */
-function shellTokens(command, depth = 0) {
+/**
+ * Tokenizes shell text into simple commands (arrays of words) plus subshell
+ * markers. Quotes are honoured without expansion; `$( … )`, backticks and
+ * process substitutions are tokenized recursively (heredocs inside them
+ * included) and emitted as nested commands; redirections are dropped (a
+ * here-string or heredoc read by a shell is tokenized as commands; other
+ * heredoc bodies are data); `#` comments and arithmetic are skipped. `mode`
+ * is 'top', 'subst' (ends at the matching `)`) or 'backtick'.
+ * Returns { commands, end, incomplete } — `incomplete` when a quote,
+ * substitution or heredoc is never closed.
+ */
+function tokenize(text, start = 0, mode = 'top', depth = 0) {
   const commands = [];
   let words = [];
   let word = '';
   let hasWord = false;
   let quote = null;
-  let redirectTarget = null; // null, or the redirection operator whose target word comes next
-  let lineStart = 0;
-  const heredocs = []; // bodies start after the next unquoted newline
-  const nested = (text) => {
-    if (depth >= 4) return;
-    commands.push([SUBSHELL_OPEN], ...shellTokens(text, depth + 1), [SUBSHELL_CLOSE]);
+  let redirectTarget = null;
+  let incomplete = false;
+  let parens = 0;
+  const heredocs = [];
+  const program = () => basename(words.find((w) => !ENV_ASSIGNMENT.test(w) && !RESERVED.has(w)));
+  const nestedAt = (from, innerMode) => {
+    if (depth >= 6) {
+      incomplete = true;
+      return text.length;
+    }
+    const inner = tokenize(text, from, innerMode, depth + 1);
+    commands.push([SUBSHELL_OPEN], ...inner.commands, [SUBSHELL_CLOSE]);
+    if (inner.incomplete || inner.end === -1) incomplete = true;
+    return inner.end === -1 ? text.length : inner.end;
+  };
+  const nestedText = (body) => {
+    if (depth >= 6) {
+      incomplete = true;
+      return;
+    }
+    const inner = tokenize(body, 0, 'top', depth + 1);
+    commands.push([SUBSHELL_OPEN], ...inner.commands, [SUBSHELL_CLOSE]);
+    if (inner.incomplete) incomplete = true;
   };
   const endWord = () => {
     if (hasWord) {
-      if ((redirectTarget === '<<' || redirectTarget === '<<-') && HEREDOC_DELIMITER.test(word)) {
-        const program = basename(words.find((w) => !/^[A-Za-z_][A-Za-z0-9_]*=/.test(w)));
-        heredocs.push({ delimiter: word, stripTabs: redirectTarget === '<<-', shell: SHELLS.has(program) });
+      if (redirectTarget === '<<' || redirectTarget === '<<-') {
+        if (HEREDOC_DELIMITER.test(word)) {
+          heredocs.push({ delimiter: word, stripTabs: redirectTarget === '<<-', shell: SHELLS.has(program()) });
+          words.readsHeredoc = true;
+        } else {
+          incomplete = true;
+        }
+      } else if (redirectTarget === '<<<' && SHELLS.has(program())) {
+        nestedText(word); // bash <<< 'git …'
+        words.readsHeredoc = true;
       }
       if (redirectTarget) redirectTarget = null;
       else words.push(word);
@@ -163,54 +176,59 @@ function shellTokens(command, depth = 0) {
     if (words.length) commands.push(words);
     words = [];
   };
-  for (let i = 0; i < command.length; i += 1) {
-    const ch = command[i];
-    if (quote) {
-      if (ch === quote) {
+  for (let i = start; i < text.length; i += 1) {
+    const ch = text[i];
+    if (quote === "'") {
+      if (ch === "'") quote = null;
+      else word += ch;
+      continue;
+    }
+    if (quote === '"') {
+      if (ch === '"') {
         quote = null;
-      } else if (quote === '"' && ch === '$' && command[i + 1] === '(' && command[i + 2] !== '(') {
-        const end = substitutionEnd(command, i + 2);
-        const stop = end === -1 ? command.length : end;
-        nested(command.slice(i + 2, stop));
-        word += command.slice(i, stop + 1);
-        i = stop;
-      } else if (quote === '"' && ch === '`') {
-        const end = command.indexOf('`', i + 1);
-        const stop = end === -1 ? command.length : end;
-        nested(command.slice(i + 1, stop));
-        i = stop;
-      } else if (ch === '\\' && quote === '"' && i + 1 < command.length) {
-        word += command[++i];
+      } else if (ch === '\\' && i + 1 < text.length) {
+        word += text[++i];
+      } else if (ch === '$' && text[i + 1] === '(' && text[i + 2] !== '(') {
+        const end = nestedAt(i + 2, 'subst');
+        word += text.slice(i, end + 1);
+        i = end;
+      } else if (ch === '`') {
+        i = nestedAt(i + 1, 'backtick');
       } else {
         word += ch;
       }
       continue;
     }
+    if (mode === 'backtick' && ch === '`') {
+      endCommand();
+      return { commands, end: i, incomplete };
+    }
     if (ch === "'" || ch === '"') {
       quote = ch;
       hasWord = true;
-    } else if (ch === '\\' && i + 1 < command.length) {
-      if (command[i + 1] !== '\n') word += command[i + 1];
-      hasWord = hasWord || command[i + 1] !== '\n';
+    } else if (ch === '\\' && i + 1 < text.length) {
+      if (text[i + 1] !== '\n') {
+        word += text[i + 1];
+        hasWord = true;
+      }
       i += 1;
     } else if (ch === '#' && !hasWord) {
-      while (i + 1 < command.length && command[i + 1] !== '\n') i += 1; // comment
-    } else if ((ch === '$' && command[i + 1] === '(' && command[i + 2] === '(') || (ch === '(' && command[i + 1] === '(' && !hasWord)) {
-      i = arithmeticEnd(command, i); // arithmetic, never a command
-    } else if (ch === '$' && command[i + 1] === '(') {
-      const end = substitutionEnd(command, i + 2);
-      const stop = end === -1 ? command.length : end;
-      nested(command.slice(i + 2, stop));
-      word += command.slice(i, stop + 1);
+      while (i + 1 < text.length && text[i + 1] !== '\n') i += 1; // comment
+    } else if (((ch === '$' && text[i + 1] === '(' && text[i + 2] === '(') || (ch === '(' && text[i + 1] === '(' && !hasWord))
+      && text.indexOf('))', i) !== -1 && !MENTIONS_GIT.test(text.slice(i, text.indexOf('))', i)))) {
+      i = text.indexOf('))', i) + 1; // arithmetic, never a command (a `((` hiding git is parsed as subshells)
+    } else if (ch === '$' && text[i + 1] === '(') {
+      const end = nestedAt(i + 2, 'subst');
+      word += text.slice(i, end + 1);
       hasWord = true;
-      i = stop;
-    } else if ((ch === '<' || ch === '>') && command[i + 1] === '(') {
-      const end = substitutionEnd(command, i + 2); // process substitution: its content is a command
-      const stop = end === -1 ? command.length : end;
+      i = end;
+    } else if (ch === '`') {
+      i = nestedAt(i + 1, 'backtick');
+      hasWord = true;
+    } else if ((ch === '<' || ch === '>') && text[i + 1] === '(') {
       endWord();
-      nested(command.slice(i + 2, stop));
-      i = stop;
-    } else if (ch === '<' || ch === '>' || (ch === '&' && command[i + 1] === '>')) {
+      i = nestedAt(i + 2, 'subst'); // process substitution
+    } else if (ch === '<' || ch === '>' || (ch === '&' && text[i + 1] === '>')) {
       if (hasWord && /^\d+$/.test(word)) {
         word = ''; // file descriptor number of `2>`
         hasWord = false;
@@ -218,38 +236,49 @@ function shellTokens(command, depth = 0) {
         endWord();
       }
       let operator = ch;
-      while ('<>|'.includes(command[i + 1] ?? '\0') && operator.length < 3) operator += command[++i];
-      if (command[i + 1] === '&' || (operator === '<<' && command[i + 1] === '-')) operator += command[++i];
+      while ('<>|'.includes(text[i + 1] ?? '\0') && operator.length < 3) operator += text[++i];
+      if (text[i + 1] === '&' || (operator === '<<' && text[i + 1] === '-')) operator += text[++i];
       redirectTarget = operator;
     } else if (ch === '\n') {
+      const line = text.slice(text.lastIndexOf('\n', i - 1) + 1, i);
+      const pipesIntoShell = /\|\s*(\S*\/)?(sudo\s+|env\s+)?(\S*\/)?(ba|z|da|k)?sh\b/.test(line); // cat <<EOF | bash
       endCommand(); // also registers a heredoc whose delimiter ends this line
-      const line = command.slice(lineStart, i);
-      lineStart = i + 1;
       if (!heredocs.length) continue;
-      const pipedToShell = /\|\s*(sudo\s+)?(\S*\/)?(ba|z|da|k)?sh\b/.test(line); // cat <<EOF | bash
       let position = i + 1;
       for (const { delimiter, stripTabs, shell } of heredocs) {
         const body = [];
-        while (position < command.length) {
-          const next = command.indexOf('\n', position);
-          const end = next === -1 ? command.length : next;
-          const bodyLine = stripTabs ? command.slice(position, end).replace(/^\t+/, '') : command.slice(position, end);
+        let closed = false;
+        while (position < text.length) {
+          const next = text.indexOf('\n', position);
+          const end = next === -1 ? text.length : next;
+          const bodyLine = stripTabs ? text.slice(position, end).replace(/^\t+/, '') : text.slice(position, end);
           position = end + 1;
-          if (bodyLine === delimiter) break;
+          if (bodyLine === delimiter) {
+            closed = true;
+            break;
+          }
           body.push(bodyLine);
         }
-        if (shell || pipedToShell) nested(body.join('\n')); // a shell runs the body
+        if (!closed) incomplete = true;
+        if (shell || pipesIntoShell) nestedText(body.join('\n')); // a shell runs the body
       }
       heredocs.length = 0;
       i = position - 1;
-      lineStart = position;
     } else if (ch === '(') {
       endCommand();
+      parens += 1;
       commands.push([SUBSHELL_OPEN]);
     } else if (ch === ')') {
       endCommand();
-      commands.push([SUBSHELL_CLOSE]);
-    } else if (ch === ';' || ch === '|' || ch === '&' || ch === '`') {
+      if (parens > 0) {
+        parens -= 1;
+        commands.push([SUBSHELL_CLOSE]);
+      } else if (mode === 'subst') {
+        return { commands, end: i, incomplete };
+      } else {
+        commands.push([SUBSHELL_CLOSE]); // e.g. a case pattern
+      }
+    } else if (ch === ';' || ch === '|' || ch === '&') {
       endCommand();
     } else if (/\s/.test(ch)) {
       endWord();
@@ -259,69 +288,78 @@ function shellTokens(command, depth = 0) {
     }
   }
   endCommand();
-  return commands;
+  if (quote || heredocs.length) incomplete = true;
+  if (mode !== 'top') return { commands, end: -1, incomplete: true };
+  return { commands, end: text.length, incomplete };
 }
 
 /**
  * Splits a shell command line into simple commands and words (quotes honoured,
- * no expansion). Redirections (`2>&1`, `>/dev/null`, `&>f`, `<in`) are not
- * words; heredoc bodies are data unless a shell reads them; command
- * substitutions (also inside double quotes) and process substitutions are
- * parsed as commands; `#` comments and arithmetic `$((…))` are skipped.
+ * no expansion). Redirections are not words; heredoc bodies are data unless a
+ * shell reads them; substitutions are tokenized as commands (emitted before
+ * the command that uses them); `#` comments and arithmetic are skipped.
  */
 export function shellCommands(command) {
-  return shellTokens(command).filter((words) => words[0] !== SUBSHELL_OPEN && words[0] !== SUBSHELL_CLOSE);
+  return tokenize(command).commands.filter((words) => words[0] !== SUBSHELL_OPEN && words[0] !== SUBSHELL_CLOSE);
 }
 
-const ENV_ASSIGNMENT = /^[A-Za-z_][A-Za-z0-9_]*=/;
 const HOOK_BYPASS_ENV = /^GIT_CONFIG_(COUNT|KEY_\d+|VALUE_\d+|PARAMETERS)=/;
-const WRAPPERS = new Set(['sudo', 'env', 'command', 'exec', 'nohup', 'time', 'timeout', 'nice', 'ionice', 'xargs', 'stdbuf', 'setsid', 'chronic', 'unbuffer', 'builtin', 'doas', 'flock']);
 const GIT_GLOBAL_OPTIONS_WITH_VALUE = new Set(['-C', '-c', '--git-dir', '--work-tree', '--namespace', '--exec-path', '--config-env', '--super-prefix', '--attr-source', '--list-cmds']);
 const GIT_PLUMBING_PROGRAM = /^git-(send-pack|receive-pack|http-push|remote-[a-z0-9]+)$/;
 const PLUMBING_PUSH = /^(send-pack|receive-pack|http-push|remote-[a-z0-9]+)$/;
 const LIST_WITH_PATTERN_OPTIONS = ['--list', '--contains', '--no-contains', '--merged', '--no-merged', '--points-at', '--all', '--remotes'];
 const LIST_ONLY_BRANCH_OPTIONS = [...LIST_WITH_PATTERN_OPTIONS, '--verbose', '--show-current', '--format', '--sort', '--column', '--no-column', '--color', '--no-color', '--ignore-case', '--abbrev', '--no-abbrev'];
-const REF_WRITING_SUBCOMMANDS = new Set(['branch', 'checkout', 'switch', 'push', 'update-ref', 'symbolic-ref', 'worktree', 'fetch', 'replace', 'remote', 'config']);
+const REF_WRITING_SUBCOMMANDS = new Set(['branch', 'checkout', 'switch', 'push', 'update-ref', 'symbolic-ref', 'worktree', 'fetch', 'replace', 'remote', 'config', 'stash', 'subtree']);
+// Options whose value is a separate word (so `-m "-n flag"` is a message, not -n).
+const VALUE_OPTIONS = {
+  commit: { short: 'mFCct', long: ['--message', '--file', '--reuse-message', '--reedit-message', '--template', '--author', '--date', '--fixup', '--squash', '--trailer', '--cleanup', '--pathspec-from-file'] },
+  push: { short: 'o', long: ['--push-option', '--repo', '--receive-pack', '--exec', '--recurse-submodules', '--signed'] },
+  merge: { short: 'mFsX', long: ['--message', '--file', '--strategy', '--strategy-option', '--cleanup', '--into-name'] },
+  rebase: { short: 'xsX', long: ['--exec', '--strategy', '--strategy-option', '--onto', '--whitespace'] },
+};
 
-/**
- * Returns { env, viaXargs, globals, sub, args } for a word list that runs git
- * (possibly behind VAR=value assignments and wrappers such as
- * env/sudo/timeout/nice/xargs, whose own options and values are skipped), or
- * null when it is not git.
- */
-function parseGit(words) {
-  const env = [];
-  let viaXargs = false;
-  let wrapped = false;
-  let index = 0;
-  for (; index < words.length; index += 1) {
-    const current = words[index];
-    const name = basename(current);
-    if (name === 'git' || GIT_PLUMBING_PROGRAM.test(name)) break;
-    if (WRAPPERS.has(name)) {
-      wrapped = true;
-      if (name === 'xargs') viaXargs = true;
-    } else if (ENV_ASSIGNMENT.test(current)) {
-      env.push(current);
-    } else if (!wrapped) {
-      return null; // not a wrapper chain: `echo git ...`, `grep git ...`
+/** Removes option values that are separate words (`-m msg`, `-amsg` stays, `--message msg`). */
+function withoutOptionValues(sub, args) {
+  const spec = VALUE_OPTIONS[sub];
+  if (!spec) return args;
+  const kept = [];
+  for (let i = 0; i < args.length; i += 1) {
+    const arg = args[i];
+    kept.push(arg);
+    if (arg === '--') {
+      kept.push(...args.slice(i + 1));
+      break;
+    }
+    if (/^-[A-Za-z]+$/.test(arg)) {
+      const letters = arg.slice(1);
+      const valueAt = [...letters].findIndex((letter) => spec.short.includes(letter));
+      if (valueAt === letters.length - 1) i += 1; // `-am msg`: the next word is the value
+    } else if (spec.long.includes(arg)) {
+      i += 1;
     }
   }
-  if (index >= words.length) return null;
+  return kept;
+}
+
+/** The git invocation starting at words[index] ({ env, viaXargs, globals, sub, args }). */
+function parseGitAt(words, index) {
+  const before = words.slice(0, index);
+  const env = before.filter((word) => ENV_ASSIGNMENT.test(word));
+  const viaXargs = before.some((word) => basename(word) === 'xargs');
   const program = basename(words[index]);
   if (program !== 'git') return { env, viaXargs, globals: [], sub: program.slice('git-'.length), args: words.slice(index + 1) };
   const globals = [];
-  index += 1;
-  while (index < words.length && words[index].startsWith('-')) {
-    const option = words[index];
+  let i = index + 1;
+  while (i < words.length && words[i].startsWith('-')) {
+    const option = words[i];
     globals.push(option);
     if (GIT_GLOBAL_OPTIONS_WITH_VALUE.has(option)) {
-      globals.push(words[index + 1] ?? '');
-      index += 1;
+      globals.push(words[i + 1] ?? '');
+      i += 1;
     }
-    index += 1;
+    i += 1;
   }
-  return { env, viaXargs, globals, sub: words[index] ?? '', args: words.slice(index + 1) };
+  return { env, viaXargs, globals, sub: words[i] ?? '', args: words.slice(i + 1) };
 }
 
 /** Git accepts any unambiguous prefix of a long option (`--no-veri` = `--no-verify`). */
@@ -389,7 +427,10 @@ function isDetachingRevision(target, resolveRevision) {
   return resolveRevision(target) === 'commit';
 }
 
-function checkGitInvocation({ env, viaXargs, globals, sub, args }, { currentBranch, resolveRevision }) {
+function checkGitInvocation(invocation, context) {
+  const { env, viaXargs, globals, sub } = invocation;
+  const { currentBranch, resolveRevision, checkNested } = context;
+  const args = withoutOptionValues(sub, invocation.args);
   const violations = [];
   const refuse = (message) => violations.push(`${message} Policy: work only on "${ALLOWED_BRANCH}", push only to ${ALLOWED_REMOTE}/${ALLOWED_BRANCH} (docs/engineering/git-safety.md).`);
 
@@ -397,17 +438,28 @@ function checkGitInvocation({ env, viaXargs, globals, sub, args }, { currentBran
 
   // Anything that could switch the git hooks off, rewrite history invisibly or push around pre-push.
   const configReadOnly = sub === 'config' && (hasOption(args, '--get', '--get-all', '--get-regexp', '--list', '--show-origin', '--show-scope') || hasShortFlag(args, 'l'));
+  const pushConfig = /^(push\.default|remote\..+\.(push|mirror))$/i;
   if (env.some((word) => HOOK_BYPASS_ENV.test(word))) refuse('GIT_CONFIG_* overrides can disable the branch guard.');
   if (globals.some((word) => optionMatches(word, '--config-env'))) refuse('--config-env can disable the branch guard.');
-  if (globals.some((word) => /^(alias|include|includeif)\./i.test(word))) refuse('Defining git aliases or config includes on the command line is forbidden.');
+  if (globals.some((word) => /^(alias|include|includeif)\./i.test(word) || pushConfig.test(word.split('=')[0]))) refuse('Defining git aliases, config includes or push refspecs on the command line is forbidden.');
   if ([...env, ...globals, ...(sub === 'config' && !configReadOnly ? args : [])].some((word) => /hookspath/i.test(word))) refuse('core.hooksPath is managed only by scripts/git-guard/cli.mjs install.');
   if (sub === 'config' && !configReadOnly) {
-    if (args.some((word) => /^(alias|include|includeif)\./i.test(word))) refuse('Defining git aliases or config includes is forbidden.');
+    if (args.some((word) => /^(alias|include|includeif)\./i.test(word) || pushConfig.test(word))) refuse('Defining git aliases, config includes or push refspecs is forbidden.');
     if (hasOption(args, '--remove-section', '--rename-section')) refuse('Removing or renaming git config sections can disable the branch guard.');
   }
   if (PLUMBING_PUSH.test(sub)) refuse(`git ${sub} pushes without the pre-push hook.`);
   if (sub === 'init' && hasOption(args, '--separate-git-dir')) refuse('git init --separate-git-dir moves the git directory away from the installed guard.');
   if (sub === 'replace' && !(hasOption(args, '--list', '--delete') || hasShortFlag(args, 'l') || hasShortFlag(args, 'd'))) refuse('git replace rewrites history invisibly to the fast-forward check.');
+  if (sub === 'stash' && args[0] === 'branch') refuse('git stash branch creates a branch.');
+  if (sub === 'subtree' && (args[0] === 'push' || hasOption(args, '--branch') || hasShortFlag(args, 'b'))) refuse('git subtree push/--branch writes other branches.');
+  if (sub === 'rebase') {
+    const raw = invocation.args;
+    raw.forEach((arg, i) => {
+      if (arg === '-x' || arg === '--exec') checkNested(raw[i + 1] ?? '');
+      else if (arg.startsWith('--exec=')) checkNested(arg.slice('--exec='.length));
+    });
+  }
+  if (sub === 'bisect' && args[0] === 'run') checkNested(args.slice(1).join(' '));
 
   switch (sub) {
     case 'checkout': {
@@ -466,6 +518,10 @@ function checkGitInvocation({ env, viaXargs, globals, sub, args }, { currentBran
       }
       break;
     case 'update-ref': {
+      if (hasOption(args, '--stdin')) {
+        refuse('git update-ref --stdin writes refs that cannot be checked.');
+        break;
+      }
       const ref = args.find((arg) => !arg.startsWith('-'));
       const deleting = hasShortFlag(args, 'd');
       if (ref && !deleting && ((ref.startsWith('refs/heads/') && ref !== ALLOWED_REF) || ref.startsWith('refs/replace/'))) refuse(`Writing "${ref}" is forbidden.`);
@@ -497,8 +553,6 @@ function checkGitInvocation({ env, viaXargs, globals, sub, args }, { currentBran
   return violations;
 }
 
-const PUSH_OPTIONS_WITH_VALUE = new Set(['--repo', '--receive-pack', '--exec', '-o', '--push-option']);
-
 function checkPushCommand(args, currentBranch) {
   const violations = [];
   if (hasOption(args, '--all', '--mirror', '--tags', '--follow-tags', '--branches')) violations.push('Pushing all branches/tags is forbidden.');
@@ -506,14 +560,7 @@ function checkPushCommand(args, currentBranch) {
   if (hasOption(args, '--no-verify')) violations.push('Skipping the pre-push hook (--no-verify) is forbidden.');
   if (hasOption(args, '--receive-pack', '--exec')) violations.push('Overriding the remote receive-pack is forbidden.');
   const deleting = hasOption(args, '--delete') || hasShortFlag(args, 'd', 'o');
-  const positional = [];
-  for (let i = 0; i < args.length; i += 1) {
-    if (PUSH_OPTIONS_WITH_VALUE.has(args[i])) {
-      i += 1;
-    } else if (!args[i].startsWith('-')) {
-      positional.push(args[i]);
-    }
-  }
+  const positional = args.filter((arg, i) => !arg.startsWith('-') && !['-o', '--push-option', '--repo', '--receive-pack', '--exec'].includes(args[i - 1]));
   const [remote, ...refspecs] = positional;
   if (remote && remote !== ALLOWED_REMOTE) violations.push(`Pushing to "${remote}" is forbidden.`);
   if (deleting) {
@@ -541,6 +588,7 @@ function checkPushCommand(args, currentBranch) {
 }
 
 const GH_WRITE_FIELD_OPTIONS = new Set(['-f', '-F', '--field', '--raw-field', '--input']);
+const COPILOT = /copilot/i;
 
 /** `gh` (GitHub CLI) invocations that create or move branches on GitHub, bypassing git and its hooks. */
 function checkGhInvocation(words) {
@@ -548,10 +596,12 @@ function checkGhInvocation(words) {
   const refuse = (message) => [`${message} Policy: "${ALLOWED_BRANCH}" is the only branch (docs/engineering/git-safety.md).`];
   if (sub === 'pr' && ['create', 'checkout'].includes(action)) return refuse(`gh pr ${action} needs a branch other than "${ALLOWED_BRANCH}".`);
   if (sub === 'issue' && action === 'develop' && !words.some((word) => word === '--list' || word === '-l')) return refuse('gh issue develop creates a branch on GitHub.');
+  if (sub === 'issue' && ['create', 'edit'].includes(action) && words.some((word, i) => COPILOT.test(word) && /^(-a|--assignee|--add-assignee)(=|$)/.test(words[i - 1] ?? word))) return refuse('Assigning an issue to Copilot makes it create a copilot/* branch.');
+  if (sub === 'agent-task' && action === 'create') return refuse('gh agent-task create makes Copilot create a branch.');
   if (sub === 'repo' && action === 'sync') return refuse('gh repo sync force-updates branches.');
   if (sub !== 'api') return [];
   if (action === 'graphql') {
-    if (words.some((word) => /\b(createRef|updateRefs?|createLinkedBranch|createCommitOnBranch)\b/.test(word))) return refuse('GraphQL ref mutations write branches on GitHub.');
+    if (words.some((word) => /\b(createRef|updateRefs?|createLinkedBranch|createCommitOnBranch|addAssigneesToAssignable)\b/.test(word))) return refuse('GraphQL mutations that write branches (or assign Copilot) are forbidden.');
     if (words.some((word) => /^(query|mutation)=@/.test(word) || word === '--input')) return refuse('A GraphQL query read from a file cannot be checked.');
     return [];
   }
@@ -561,6 +611,7 @@ function checkGhInvocation(words) {
   const method = (inlineMethod ?? (methodIndex !== -1 ? words[methodIndex + 1] : null) ?? (words.some((word) => GH_WRITE_FIELD_OPTIONS.has(word)) ? 'POST' : 'GET')).toUpperCase();
   if (method === 'GET') return [];
   if (/\/branches\/[^/]+\/rename/.test(endpoint) || /\/merge-upstream$/.test(endpoint)) return refuse('Renaming or syncing a GitHub branch is forbidden.');
+  if (/\/assignees$/.test(endpoint) && words.some((word) => COPILOT.test(word))) return refuse('Assigning Copilot makes it create a copilot/* branch.');
   if (/\/git\/refs/.test(endpoint)) {
     if (method === 'DELETE' && !/\/git\/refs\/heads\/dev$/.test(endpoint)) return [];
     return refuse(`gh api ${method} ${endpoint} writes a Git ref on GitHub.`);
@@ -587,9 +638,31 @@ function gitTargetDir({ env, globals }, cwd, exportedGitDir) {
   return gitDir !== null ? resolve(dir, gitDir) : dir;
 }
 
-// Paths whose modification switches the guard off or rewrites history invisibly.
-const PROTECTED_GIT_PATH = /(^|\/)\.git\/(config|git-guard|hooks|info\/grafts|commondir|worktrees\/[^/\s]+\/(config|commondir))\b/;
-const WRITING_PROGRAMS = new Set(['rm', 'mv', 'cp', 'sed', 'perl', 'tee', 'truncate', 'ln', 'chmod', 'install', 'rsync', 'dd', 'unlink', 'shred']);
+// Anything under a .git directory: config, hooks, refs, HEAD, packed-refs, grafts, the installed guard.
+const GIT_DIR_PATH = /(^|\/)\.git(\/|$)/;
+const WRITING_PROGRAMS = new Set(['rm', 'mv', 'cp', 'sed', 'perl', 'tee', 'truncate', 'ln', 'chmod', 'install', 'rsync', 'dd', 'unlink', 'shred', 'touch', 'mkdir']);
+const WRAPPERS = new Set(['sudo', 'env', 'command', 'exec', 'nohup', 'time', 'timeout', 'nice', 'ionice', 'xargs', 'stdbuf', 'setsid', 'chronic', 'unbuffer', 'builtin', 'doas', 'flock', 'watch', 'parallel', 'strace', 'ltrace', 'script']);
+const EXEC_OPTIONS = new Set(['-exec', '-execdir', '-ok', '-okdir']); // find … -exec git …
+
+/**
+ * words[index] is a program being run: only reserved words (if/then/do/!/{…),
+ * VAR=value assignments and wrappers (with their own options and values)
+ * precede it, or it follows find's -exec.
+ */
+function inCommandPosition(words, index) {
+  if (EXEC_OPTIONS.has(words[index - 1])) return true;
+  let wrapped = false;
+  for (const word of words.slice(0, index)) {
+    if (WRAPPERS.has(basename(word))) wrapped = true;
+    else if (!(RESERVED.has(word) || ENV_ASSIGNMENT.test(word) || wrapped)) return false;
+  }
+  return true;
+}
+
+/** First word that is the command itself (after reserved words and VAR=value assignments). */
+function leadingWord(words) {
+  return words.find((word) => !RESERVED.has(word) && !ENV_ASSIGNMENT.test(word));
+}
 
 /**
  * Guard for a Bash command about to run. Options: `cwd` (directory the command
@@ -597,18 +670,25 @@ const WRITING_PROGRAMS = new Set(['rm', 'mv', 'cp', 'sed', 'perl', 'tee', 'trunc
  * another repository whose remotes are not this project's — git commands there
  * are not this policy's business); `resolveRevision(name, dir)` ('branch' |
  * 'commit' | 'path' | null, to tell `git checkout <file|tag>` from a branch);
- * `projectUrls` (this project's origin URL and paths, which another repository
- * may not adopt as a remote).
+ * `isProjectUrl(url)` (this project's origin or location, which another
+ * repository may not push to or adopt as a remote).
  */
-export function checkShellCommand(command, currentBranch = null, options = {}) {
-  const { cwd = null, isProjectDir = () => true, resolveRevision = () => null, projectUrls = [] } = options;
+export function checkShellCommand(command, currentBranch = null, options = {}, depth = 0) {
+  const { cwd = null, isProjectDir = () => true, resolveRevision = () => null } = options;
+  const isProjectUrl = options.isProjectUrl ?? ((url) => (options.projectUrls ?? []).includes(url));
   const violations = [];
   const refuse = (message) => violations.push(`${message} Policy: "${ALLOWED_BRANCH}" is the only branch (docs/engineering/git-safety.md).`);
-  if (/(>>?|>\|)\s*["']?\S*\.git\/(config|git-guard|hooks|info\/grafts|commondir)\b/.test(command)) refuse('Writing into the git directory can disable the branch guard.');
+  const { commands, incomplete } = tokenize(command);
+  if (incomplete && MENTIONS_GIT.test(command)) refuse('This command has an unterminated quote, substitution or heredoc, so its git/gh commands cannot be checked; split or fix it.');
+  if (/(>>?|>\||&>)\s*["']?(?:[^\s"'>&]*\/)?\.git(\/|["'\s;|&)]|$)/.test(command)) refuse('Writing into the git directory can disable the branch guard.');
   const dirs = [];
   let dir = cwd;
   let exportedGitDir = null; // null: none, undefined: exported with an unknown value
-  for (const words of shellTokens(command)) {
+  const checkNested = (text, nestedDir) => {
+    if (depth < 4) violations.push(...checkShellCommand(text, currentBranch, { ...options, cwd: nestedDir }, depth + 1));
+    else refuse('Nested commands are too deep to check.');
+  };
+  for (const words of commands) {
     if (words[0] === SUBSHELL_OPEN) {
       dirs.push(dir);
       continue;
@@ -617,50 +697,67 @@ export function checkShellCommand(command, currentBranch = null, options = {}) {
       if (dirs.length) dir = dirs.pop();
       continue;
     }
-    const program = basename(words[0]);
-    if (program === 'cd' || program === 'pushd') {
-      const target = words[1];
+    const lead = basename(leadingWord(words));
+    if (lead === 'cd' || lead === 'pushd') {
+      const target = words[words.indexOf(leadingWord(words)) + 1];
       dir = !target || /[$~`]/.test(target) || target === '-' ? null : path.isAbsolute(target) ? path.normalize(target) : dir === null ? null : path.resolve(dir, target);
       continue;
     }
-    if (['export', 'declare', 'typeset', 'set', 'env'].includes(program) || words.every((word) => ENV_ASSIGNMENT.test(word))) {
-      if (words.some((word) => HOOK_BYPASS_ENV.test(word))) refuse('GIT_CONFIG_* overrides can disable the branch guard.');
-      const gitDir = words.find((word) => /^GIT_(DIR|COMMON_DIR|WORK_TREE)=/.test(word));
-      if (gitDir) exportedGitDir = /[$~`]/.test(gitDir) ? undefined : gitDir.slice(gitDir.indexOf('=') + 1);
+    if (words.some((word) => HOOK_BYPASS_ENV.test(word))) refuse('GIT_CONFIG_* overrides can disable the branch guard.');
+    const gitDirAssignment = words.find((word) => /^GIT_(DIR|COMMON_DIR|WORK_TREE)=/.test(word));
+    if (gitDirAssignment && (['export', 'declare', 'typeset'].includes(lead) || words.every((word) => ENV_ASSIGNMENT.test(word)))) {
+      exportedGitDir = /[$~`]/.test(gitDirAssignment) ? undefined : gitDirAssignment.slice(gitDirAssignment.indexOf('=') + 1);
     }
-    if (WRITING_PROGRAMS.has(program) && words.slice(1).some((word) => PROTECTED_GIT_PATH.test(word))) refuse(`${program} on the git directory can disable the branch guard.`);
-    const git = parseGit(words);
-    if (git) {
-      const target = gitTargetDir(git, dir, exportedGitDir);
-      const pushesToProject = git.sub === 'push' && git.args.some((arg) => projectUrls.includes(arg));
-      if (target === null || isProjectDir(target) || pushesToProject) {
-        violations.push(...checkGitInvocation(git, { currentBranch, resolveRevision: (name) => resolveRevision(name, target) }));
-      } else if (git.sub === 'remote' && ['add', 'set-url'].includes(git.args[0])) {
-        const url = git.args.filter((arg) => !arg.startsWith('-'))[2];
-        if (!url || /[$`]/.test(url) || projectUrls.includes(url)) refuse('Another repository may not adopt this project\'s origin as a remote.');
+    if (words.some((word) => WRITING_PROGRAMS.has(basename(word))) && words.some((word) => GIT_DIR_PATH.test(word))) {
+      refuse('Writing into the git directory can disable the branch guard.');
+    }
+    words.forEach((word, index) => {
+      const name = basename(word);
+      if (!inCommandPosition(words, index)) return;
+      if (name === 'git' || GIT_PLUMBING_PROGRAM.test(name)) {
+        const git = parseGitAt(words, index);
+        const target = gitTargetDir(git, dir, exportedGitDir);
+        const pushesToProject = git.sub === 'push' && git.args.some((arg) => isProjectUrl(arg));
+        if (target === null || isProjectDir(target) || pushesToProject) {
+          violations.push(...checkGitInvocation(git, {
+            currentBranch,
+            resolveRevision: (revision) => resolveRevision(revision, target),
+            checkNested: (text) => checkNested(text, target),
+          }));
+        } else if (git.sub === 'remote' && ['add', 'set-url'].includes(git.args[0])) {
+          const url = git.args.filter((arg) => !arg.startsWith('-'))[2];
+          if (!url || /[$`]/.test(url) || isProjectUrl(url)) refuse('Another repository may not adopt this project\'s origin as a remote.');
+        }
+      } else if (name === 'gh') {
+        violations.push(...checkGhInvocation(words.slice(index)));
+      } else if (SHELLS.has(name)) {
+        const rest = words.slice(index + 1);
+        const flag = rest.findIndex((arg) => /^-[A-Za-z]*c[A-Za-z]*$/.test(arg));
+        if (flag !== -1) checkNested(rest[flag + 1] ?? '', dir);
+        else if (!words.readsHeredoc && !rest.some((arg) => !arg.startsWith('-')) && MENTIONS_GIT.test(command)) {
+          refuse(`${name} reading commands from its input cannot be checked; run the git/gh commands directly.`);
+        }
+      } else if (name === 'eval') {
+        checkNested(words.slice(index + 1).join(' '), dir);
       }
-    }
-    if (program === 'gh') violations.push(...checkGhInvocation(words));
-    // sh -c / bash -lc / eval: inspect the nested command line too.
-    const shellFlag = SHELLS.has(program) ? words.findIndex((word, index) => index > 0 && /^-[A-Za-z]*c[A-Za-z]*$/.test(word)) : -1;
-    const nested = shellFlag !== -1 ? words[shellFlag + 1] : program === 'eval' ? words.slice(1).join(' ') : null;
-    if (nested) violations.push(...checkShellCommand(nested, currentBranch, { ...options, cwd: dir }));
+    });
   }
-  return violations;
+  return [...new Set(violations)];
 }
 
 /**
  * Claude Code PreToolUse payload ({ tool_name, tool_input }). Blocks the tools
  * that create branches on their own: git/gh commands, worktree isolation,
  * remote sessions that would push to a session-derived branch, GitHub API
- * tools that create branches or pull requests or write to a branch other than
- * dev, and file edits inside the git directory (`isGitDirPath(path)`).
+ * tools that create branches or pull requests (or delegate to Copilot) or write
+ * to a branch other than dev, and file edits inside the git directory
+ * (`isGitDirPath(path)`).
  */
 export function checkToolUse(payload, currentBranch = null, options = {}) {
   const tool = payload?.tool_name ?? '';
   const input = payload?.tool_input ?? {};
   const { isGitDirPath = () => false } = options;
-  if (tool === 'Bash') return checkShellCommand(String(input.command ?? ''), currentBranch, options);
+  if (tool === 'Bash' || tool === 'PowerShell') return checkShellCommand(String(input.command ?? ''), currentBranch, options);
   if (['Edit', 'Write', 'MultiEdit', 'NotebookEdit'].includes(tool)) {
     const file = input.file_path ?? input.notebook_path;
     return file && isGitDirPath(file) ? [`${tool} inside the git directory (${file}) can disable the branch guard; forbidden.`] : [];
@@ -679,6 +776,9 @@ export function checkToolUse(payload, currentBranch = null, options = {}) {
   if (/^mcp__/.test(tool)) {
     if (/__(create_pull_request|update_pull_request_branch|assign_copilot_to_issue|create_pull_request_with_copilot)$/.test(tool)) {
       return [`${tool} creates or moves a branch other than "${ALLOWED_BRANCH}"; forbidden by the dev-only branch policy.`];
+    }
+    if (/__(issue_write|create_issue|update_issue|add_issue_assignees?)$/.test(tool) && COPILOT.test(JSON.stringify(input.assignees ?? input.assignee ?? ''))) {
+      return [`${tool} assigns Copilot, which creates a copilot/* branch; forbidden by the dev-only branch policy.`];
     }
     if (/__create_branch$/.test(tool) && input.branch !== ALLOWED_BRANCH) {
       return [`${tool} would create branch "${input.branch ?? '?'}"; "${ALLOWED_BRANCH}" is the only branch allowed.`];

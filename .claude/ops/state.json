@@ -5,7 +5,7 @@
   "status": "blocked",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T16:15:16.918Z",
+  "updatedAt": "2026-09-29T19:54:24.176Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1110,7 +1110,9 @@
             "evid-d8ecbca1",
             "evid-07434195",
             "evid-2aff2552",
-            "evid-07b3753e"
+            "evid-07b3753e",
+            "evid-ed27c32a",
+            "evid-09a3b7d5"
           ],
           "status": "closed"
         },
@@ -1142,7 +1144,12 @@
             "evid-0ba704d1",
             "evid-4cec4b42",
             "evid-10616c66",
-            "evid-3e71c53e"
+            "evid-3e71c53e",
+            "evid-2cb8fd41",
+            "evid-5b571d4b",
+            "evid-24b0e912",
+            "evid-ed5d05f8",
+            "evid-581729ed"
           ],
           "status": "closed"
         },
@@ -4364,6 +4371,78 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-29T16:07:07.194Z"
+    },
+    {
+      "id": "find-ca8c180d",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (closure review of 9d97f74): Claude guard: a heredoc inside \"$(…)\" (the default commit-message form) with a contraction/stray quote or paren makes substitutionEnd run to the end and hides every later command; --no-verify / -c core.hooksPath pushes of claude/* were published in the lab.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:32:32.432Z"
+    },
+    {
+      "id": "find-75c9d608",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (closure review of 9d97f74): Claude guard: commands after if/then/elif/else/do/while/until/!/{ are never inspected (retry loops); send-pack, --no-verify and -c hooksPath pushes published.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:32:32.532Z"
+    },
+    {
+      "id": "find-254f96ee",
+      "category": "governance",
+      "severity": "HIGH",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (closure review of 9d97f74): Claude guard: gh and sh -c/eval are only inspected as the first word: GH_PAGER=cat gh issue develop, timeout gh api .../git/refs, /usr/bin/env sh -c \"git push --no-verify ...\" pass.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:32:32.624Z"
+    },
+    {
+      "id": "find-40e50ed7",
+      "category": "governance",
+      "severity": "MEDIUM",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (closure review of 9d97f74): gh agent-task create and gh issue create/edit --add-assignee @copilot (and MCP issue tools assigning Copilot) delegate to Copilot, which creates copilot/* branches; not refused.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:32:32.722Z"
+    },
+    {
+      "id": "find-140d9a98",
+      "category": "governance",
+      "severity": "LOW",
+      "file": "scripts/git-guard/policy.mjs",
+      "line": null,
+      "summary": "security-reviewer (closure review of 9d97f74): LOWs: pipe/here-string into a shell not inspected; git checkout <deleted-file> refused; git commit -m \"-n ...\" read as --no-verify; Bash writes to .git/refs, .git/HEAD, packed-refs not refused; isGitDirPath compares a real path with a symlinked project path.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:32:32.820Z"
+    },
+    {
+      "id": "find-d0ab8f09",
+      "category": "governance",
+      "severity": "INFO",
+      "file": "docs/engineering/git-safety.md",
+      "line": null,
+      "summary": "security-reviewer (closure review of 9d97f74): INFO: shims only exist from 9d97f74 (worktrees on older commits run no hooks after an old installer until the next Claude tool call repairs); stash branch, update-ref --stdin, subtree push, push.default=matching, remote.origin.push unseen by the parser (git hooks cover them); rebase -x, bisect run, node -e/python -c/curl not inspected; project URL spelling variants; PowerShell-style tools not matched.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T16:32:32.923Z"
     }
   ],
   "evidenceIds": [
@@ -4824,7 +4903,14 @@
     "evid-10616c66",
     "evid-3e71c53e",
     "evid-f40a2be9",
-    "evid-7b5c2d19"
+    "evid-7b5c2d19",
+    "evid-ed27c32a",
+    "evid-09a3b7d5",
+    "evid-2cb8fd41",
+    "evid-5b571d4b",
+    "evid-24b0e912",
+    "evid-ed5d05f8",
+    "evid-581729ed"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

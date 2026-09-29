@@ -189,20 +189,26 @@ function ensureInstalled(cwd) {
   return result.ok ? null : result.message;
 }
 
-function normalizeUrl(url) {
-  return url.replace(/\/+$/, '').replace(/\.git$/, '');
+/** Canonical spelling of a remote URL or path: no credentials, scheme/host lower case, no ./ or trailing / or .git. */
+export function normalizeUrl(url) {
+  let value = String(url).trim();
+  if (value.startsWith('file://')) value = value.slice('file://'.length);
+  const scp = /^([^@/:]+@)?([^/:]+):(?!\/)(.+)$/.exec(value); // git@github.com:o/r.git
+  if (scp && !/^[a-z]+:\/\//i.test(value)) value = `ssh://${scp[2]}/${scp[3]}`;
+  const match = /^([a-z][a-z0-9+.-]*):\/\/(?:[^@/]*@)?([^/]+)(\/.*)?$/i.exec(value);
+  if (match) value = `${match[2].toLowerCase()}${path.posix.normalize(match[3] ?? '/')}`;
+  else if (path.isAbsolute(value)) value = path.normalize(existsSync(value) ? realpathSync(value) : value);
+  return value.replace(/\/+$/, '').replace(/\.git$/, '').replace(/\/+$/, '');
 }
 
 function remoteUrls(dir) {
-  return [...new Set(lines(git(['remote', '-v'], dir) ?? '').map((line) => line.split(/\s+/)[1]).filter(Boolean))]
-    .flatMap((url) => [url, normalizeUrl(url)]);
+  return [...new Set(lines(git(['remote', '-v'], dir) ?? '').map((line) => line.split(/\s+/)[1]).filter(Boolean).map(normalizeUrl))];
 }
 
-/** Every spelling of this project's origin and location that another repository could use as a remote. */
+/** Canonical locations of this project (its remotes, work tree and git directory). */
 function projectLocations(projectDir, projectCommon) {
   const root = git(['rev-parse', '--show-toplevel'], projectDir);
-  const locations = [...remoteUrls(projectDir), projectDir, projectCommon, root].filter(Boolean);
-  return [...new Set(locations.flatMap((location) => [location, normalizeUrl(location), `${normalizeUrl(location)}.git`, `file://${location}`]))];
+  return [...new Set([...remoteUrls(projectDir), ...[projectDir, projectCommon, root].filter(Boolean).map(normalizeUrl)])];
 }
 
 function main(argv) {
@@ -244,10 +250,11 @@ function main(argv) {
       // can leave core.hooksPath pointing elsewhere; put the installed guard back before anything runs.
       const guardProblem = projectCommon ? ensureInstalled(projectDir) : null;
       const projectUrls = projectCommon ? projectLocations(projectDir, projectCommon) : [];
+      const projectCommonReal = projectCommon && existsSync(projectCommon) ? realpathSync(projectCommon) : projectCommon;
       const branch = currentBranchRef(projectDir)?.replace(/^refs\/heads\//, '') ?? null;
       const violations = checkToolUse(payload, branch, {
         cwd,
-        projectUrls,
+        isProjectUrl: (url) => projectUrls.includes(normalizeUrl(url)),
         // Only an existing repository whose remotes are not this project's is exempt; anything unknown is ours.
         isProjectDir: (dir) => {
           if (!existsSync(dir)) return true;
@@ -258,13 +265,17 @@ function main(argv) {
         resolveRevision: (name, dir) => {
           const base = dir ?? cwd;
           if (existsSync(path.resolve(base, name))) return 'path';
+          if (git(['ls-files', '--error-unmatch', '--', name], base) !== null) return 'path'; // a tracked file deleted in the work tree
           if (git(['show-ref', '--verify', '-q', `refs/heads/${name}`], base) !== null) return 'branch';
           return git(['rev-parse', '--verify', '-q', `${name}^{commit}`], base) ? 'commit' : null;
         },
         isGitDirPath: (file) => {
-          if (!projectCommon) return false;
-          const absolute = path.resolve(cwd, file);
-          return absolute === projectCommon || absolute.startsWith(`${projectCommon}${path.sep}`);
+          if (!projectCommonReal) return false;
+          // Real paths on both sides (the project may be opened through a symlink); a new file resolves through its directory.
+          let absolute = path.resolve(cwd, file);
+          const existing = [absolute, path.dirname(absolute)].find((candidate) => existsSync(candidate));
+          if (existing) absolute = path.join(realpathSync(existing), existing === absolute ? '' : path.basename(absolute));
+          return absolute === projectCommonReal || absolute.startsWith(`${projectCommonReal}${path.sep}`) || /(^|\/)\.git(\/|$)/.test(absolute);
         },
       });
       if (guardProblem && payload?.tool_name === 'Bash' && /\b(git|gh)\b/.test(String(payload?.tool_input?.command ?? ''))) {

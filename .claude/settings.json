@@ -32,7 +32,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|EnterWorktree|Agent|Task|mcp__.*",
+        "matcher": "Bash|PowerShell|Edit|Write|MultiEdit|NotebookEdit|EnterWorktree|Agent|Task|mcp__.*",
         "hooks": [
           {
             "type": "command",

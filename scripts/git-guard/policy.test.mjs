@@ -199,6 +199,47 @@ test('Claude guard: GitHub API tools and gh cannot create or write other branche
   ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
 });
 
+test('Claude guard: common command shapes cannot hide git/gh (closure review)', () => {
+  const heredocCommit = (message) => `git commit -q -m "$(cat <<'EOF'\n${message}\nEOF\n)"`;
+  for (const command of [
+    `${heredocCommit("fix: don't break things")} && git push -q --no-verify origin HEAD:claude/leak`,
+    `${heredocCommit("fix: it's (half done")} && git -c core.hooksPath=/dev/null push -q origin HEAD:claude/leak3`,
+    'git commit -m "unterminated && git push origin HEAD:claude/x',
+    'for i in 1 2 3 4; do git push -u origin claude/x && break; sleep $((2**i)); done',
+    'if git diff --quiet; then git push -q --no-verify origin HEAD:claude/if; fi',
+    '{ git -c core.hooksPath=/dev/null push -q origin HEAD:claude/brace; }', '! git send-pack /o dev:refs/heads/claude/sp',
+    'while read b; do git branch "$b"; done < names.txt', 'time git switch -c x',
+    'GH_PAGER=cat gh issue develop 3 --name claude/x', 'timeout 30 gh api repos/o/r/git/refs -f ref=refs/heads/x -f sha=abc',
+    "/usr/bin/env sh -c 'git push --no-verify origin HEAD:claude/x'", "sudo bash -c 'git branch x'", "xargs -I{} sh -c 'git branch {}'",
+    'find . -name x -exec git branch y \\;', '((cd x); (git push origin HEAD:claude/x))',
+    'gh agent-task create "fix the bug"', 'gh issue edit 3 --add-assignee @copilot', 'gh issue create -t x --assignee Copilot',
+    "echo 'git push origin HEAD:claude/x' | bash", "bash <<< 'git push origin HEAD:claude/x'",
+    'git commit -m x -n', 'echo x > .git/refs/heads/feature/direct', "printf 'ref: refs/heads/x' > .git/HEAD", 'tee .git/packed-refs < refs.txt',
+    'cp /tmp/HEAD .git/HEAD', 'git stash branch x', 'git update-ref --stdin < updates.txt', 'git subtree push --prefix=lib origin lib-branch',
+    'git config push.default matching', 'git config remote.origin.push "refs/heads/*:refs/heads/*"', 'git -c remote.origin.mirror=true push origin',
+    'git rebase -x "git push origin HEAD:claude/x" HEAD~2', 'git rebase --exec="git branch y" HEAD~1', 'git bisect run git branch x',
+  ]) assert.ok(refused(command), command);
+  for (const command of [
+    heredocCommit("fix: don't break things"), `${heredocCommit("fix: it's done (really)")} && git push origin HEAD:dev`,
+    'for i in 1 2 3; do git push origin HEAD:dev && break; sleep $((2**i)); done', 'if git diff --quiet; then echo clean; fi',
+    'git commit -m "-n flag removed"', 'bash scripts/check.sh && git status', 'cat .git/HEAD', 'ls .git/refs/heads',
+    'git rebase -x "pnpm test" HEAD~2', 'gh issue edit 3 --add-assignee octocat', 'gh issue develop --list 3', 'echo git branch x',
+  ]) assert.deepEqual(checkShellCommand(command, 'dev'), [], command);
+  assert.equal(checkToolUse({ tool_name: 'mcp__github__issue_write', tool_input: { method: 'update', assignees: ['Copilot'] } }).length, 1);
+  assert.deepEqual(checkToolUse({ tool_name: 'mcp__github__issue_write', tool_input: { method: 'update', assignees: ['octocat'] } }), []);
+  assert.equal(checkToolUse({ tool_name: 'PowerShell', tool_input: { command: 'git push origin HEAD:claude/x' } }, 'dev').length, 1);
+});
+
+test('project URLs compare in one canonical spelling', async () => {
+  const { normalizeUrl } = await import('./cli.mjs');
+  const canonical = normalizeUrl('https://github.com/o/r');
+  for (const spelling of ['https://github.com/o/r.git', 'https://user:token@GitHub.com/o/r.git/', 'git@github.com:o/r.git', 'ssh://git@github.com/o/./r', 'http://github.com/o/r/']) {
+    assert.equal(normalizeUrl(spelling), canonical, spelling);
+  }
+  assert.equal(normalizeUrl('file:///srv/./repo/'), normalizeUrl('/srv/repo'));
+  assert.notEqual(normalizeUrl('https://github.com/o/other'), canonical);
+});
+
 const cli = path.join(repoRoot, 'scripts/git-guard/cli.mjs');
 const settings = JSON.parse(readFileSync(path.join(repoRoot, '.claude/settings.json'), 'utf8'));
 const hookCommand = (event) => settings.hooks[event].flatMap((entry) => entry.hooks.map((hook) => hook.command)).find((command) => command.includes('git-guard'));
@@ -352,6 +393,18 @@ test('against a real repository: the installed guard survives old checkouts, wor
       cwd: clone, env: { ...env, CLAUDE_PROJECT_DIR: link }, encoding: 'utf8', input: '{"tool_name":"Bash","tool_input":{"command":"git checkout -b claude/x"}}',
     });
     assert.equal(blockedViaLink.status, 2, blockedViaLink.stderr);
+    const writeViaLink = spawnSync(process.execPath, [path.join(link, 'scripts/git-guard/cli.mjs'), 'claude-pre-tool-use'], {
+      cwd: link, env: { ...env, CLAUDE_PROJECT_DIR: link }, encoding: 'utf8', input: JSON.stringify({ tool_name: 'Write', tool_input: { file_path: path.join(link, '.git', 'config') }, cwd: link }),
+    });
+    assert.equal(writeViaLink.status, 2, 'Write into .git through a symlinked project path');
+
+    // restoring a tracked file deleted in the work tree is not a branch checkout
+    rmSync(path.join(clone, 'a.txt'));
+    const restore = spawnSync(process.execPath, ['scripts/git-guard/cli.mjs', 'claude-pre-tool-use'], {
+      cwd: clone, env: { ...env, CLAUDE_PROJECT_DIR: clone }, encoding: 'utf8', input: JSON.stringify({ tool_name: 'Bash', tool_input: { command: 'git checkout a.txt' }, cwd: clone }),
+    });
+    assert.equal(restore.status, 0, restore.stderr);
+    assert.equal(git(['checkout', '--', 'a.txt']).status, 0);
 
     // a tampered installed guard is reported, and install restores the committed version
     appendFileSync(path.join(clone, '.git', 'git-guard', 'policy.mjs'), '\n// tampered\n');

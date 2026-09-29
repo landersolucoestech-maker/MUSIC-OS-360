@@ -1,0 +1,12 @@
+{
+  "id": "evid-ed27c32a",
+  "createdAt": "2026-09-29T16:32:33.068Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Closure review of 9d97f74: Round 1/2 fixes and the git-hook layer verified with real git; Claude-layer fail-opens: heredoc inside $(…), commands after shell reserved words, gh/sh -c behind wrappers (HIGH); gh Copilot delegation (MEDIUM); LOW parser gaps/false positives.",
+  "workspaceFingerprint": "f54b8184e1185edc6efd75d048b616eea3988ac4757d0521b8d1ebae22d26af4",
+  "fingerprintStatus": "BOUND",
+  "head": "da54adf221849a16dea2bd99ca236cdfa409b84d"
+}
