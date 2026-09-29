@@ -1,0 +1,15 @@
+{
+  "id": "evid-5fd99216",
+  "createdAt": "2026-09-29T15:43:09.928Z",
+  "type": "COMMAND",
+  "label": "node scripts/git-guard/cli.mjs verify-remote",
+  "command": "node scripts/git-guard/cli.mjs verify-remote",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "[git-guard] origin branches: refs/heads/claude/beautiful-gates-c0kwj5, refs/heads/dev; only refs/heads/dev is allowed",
+  "workspaceFingerprint": "6c0273cdb8902f9298b9d080819e2257d1cd358b193560d1ed2419d66a81c8a5",
+  "fingerprintStatus": "BOUND",
+  "head": "36b5d804a5c9810d659b7e9b7d81be2071cbdff8",
+  "durationMs": 1003
+}
