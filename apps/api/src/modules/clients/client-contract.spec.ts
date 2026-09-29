@@ -31,7 +31,7 @@ const LEGACY_WEB_CREATE = {
 
 function makeService(rows: Record<string, unknown>[] = []) {
   const qb: Record<string, jest.Mock> = {};
-  for (const m of ['where', 'andWhere', 'orderBy', 'skip', 'take']) qb[m] = jest.fn(() => qb);
+  for (const m of ['where', 'andWhere', 'orderBy', 'addOrderBy', 'skip', 'take']) qb[m] = jest.fn(() => qb);
   qb['getOne'] = jest.fn(async () => rows[0] ?? null);
   qb['getManyAndCount'] = jest.fn(async () => [rows, rows.length]);
   const repo = {
@@ -103,6 +103,7 @@ describe('Client request/response contract (CZ-043)', () => {
     const { svc, qb } = makeService();
     await svc.list('t1', { type: 'company' } as never);
     expect(qb['andWhere']).toHaveBeenCalledWith('c.person_type = :personType', { personType: 'company' });
+    expect(qb['addOrderBy']).toHaveBeenCalledWith('c.id', 'ASC'); // deterministic paging for offset sweeps
   });
 
   it('an old-build EDIT never wipes the stored metadata; a canonical metadata edit is merged (CT-D3)', async () => {

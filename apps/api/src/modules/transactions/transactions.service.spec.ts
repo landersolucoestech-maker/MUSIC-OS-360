@@ -414,4 +414,16 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     ).resolves.toBeDefined();
     expect(query).not.toHaveBeenCalled();
   });
+
+  it('list: orders by transaction_date with an id tie-break (deterministic offset paging for full sweeps)', async () => {
+    const qb: Record<string, jest.Mock> = {};
+    for (const m of ['where', 'andWhere', 'orderBy', 'addOrderBy', 'skip', 'take']) qb[m] = jest.fn(() => qb);
+    qb['getManyAndCount'] = jest.fn(async () => [[], 0]);
+    const repo = { createQueryBuilder: jest.fn(() => qb) };
+    const service = new TransactionsService({ getRepository: jest.fn(() => repo) } as never, undefined as never, undefined as never, undefined as never);
+    await service.list(TENANT, { offset: 200, limit: 200 } as any);
+    expect(qb['orderBy']).toHaveBeenCalledWith('t.transaction_date', 'DESC');
+    expect(qb['addOrderBy']).toHaveBeenCalledWith('t.id', 'ASC');
+    expect(qb['skip']).toHaveBeenCalledWith(200);
+  });
 });

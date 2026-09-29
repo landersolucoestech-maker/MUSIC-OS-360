@@ -50,6 +50,7 @@ function makeQb(getOneValue: unknown = artistOfA) {
     where:           jest.fn(),
     andWhere:        jest.fn(),
     orderBy:         jest.fn(),
+    addOrderBy:      jest.fn(),
     skip:            jest.fn(),
     take:            jest.fn(),
     getOne:          jest.fn().mockResolvedValue(getOneValue),
@@ -59,6 +60,7 @@ function makeQb(getOneValue: unknown = artistOfA) {
   qb.where.mockReturnValue(qb);
   qb.andWhere.mockReturnValue(qb);
   qb.orderBy.mockReturnValue(qb);
+  qb.addOrderBy.mockReturnValue(qb);
   qb.skip.mockReturnValue(qb);
   qb.take.mockReturnValue(qb);
 

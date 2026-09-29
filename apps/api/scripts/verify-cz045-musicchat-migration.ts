@@ -34,6 +34,16 @@ if (!dbName.endsWith('_mig')) {
 const API_DIR = path.resolve(__dirname, '..');
 const TARGET = 'RenameOrgStructureSlugsToEnglish20260928000025';
 const TENANT_EMPTY = '45000000-0000-0000-0000-0000000000e1';
+// Dedicated probe tenants: the verifier never touches an existing tenant's settings row.
+const TENANT_PROBE = '45000000-0000-0000-0000-0000000000e2';
+const TENANT_COLLISION = '45000000-0000-0000-0000-0000000000e3';
+const PROBE_TENANTS = [TENANT_PROBE, TENANT_EMPTY, TENANT_COLLISION];
+/** A tenant that already uses the canonical id 'other' next to the legacy 'outros'. */
+const COLLISION_OPTIONS = [
+  { id: 'outros', order: 1, label: 'Outros Assuntos', responseTemplateId: 'outros', queue: 'Atendimento', sector: 'Suporte', priority: 'media' },
+  { id: 'other', order: 2, label: 'Outro (próprio)', responseTemplateId: 'other', queue: 'Atendimento', sector: 'Suporte', priority: 'baixa' },
+];
+const COLLISION_TEMPLATES = [{ id: 'outros', title: 'Outros Assuntos', body: 'a' }, { id: 'other', title: 'Outro (próprio)', body: 'b' }];
 const CONV_LEGACY = '45000000-0000-0000-0000-0000000000c1';
 const CONV_OTHER = '45000000-0000-0000-0000-0000000000c2';
 const CONV_NEW_BUILD = '45000000-0000-0000-0000-0000000000c3';
@@ -87,42 +97,32 @@ const OTHER_CONVERSATION = { service_status: 'status_desconhecido', priority: 5,
 async function main(): Promise<void> {
   const db = new Client({ connectionString: url, ssl: process.env.DB_SSL === 'false' ? false : undefined });
   await db.connect();
-  let tenant = '';
-  let savedSettings: Record<string, unknown> | undefined;
+  const tenant = TENANT_PROBE;
+  // Only the verifier's own probe tenants/rows are ever deleted.
   const cleanup = async (): Promise<void> => {
     await db.query(`DELETE FROM conversations WHERE id = ANY($1::uuid[])`, [[CONV_LEGACY, CONV_OTHER, CONV_NEW_BUILD]]);
-    await db.query(`DELETE FROM musicchat_automation_settings WHERE tenant_id = ANY($1::uuid[])`, [[tenant, TENANT_EMPTY].filter(Boolean)]);
-    await db.query(`DELETE FROM tenants WHERE id = $1`, [TENANT_EMPTY]);
-    if (savedSettings) {
-      const columns = Object.keys(savedSettings);
-      await db.query(
-        `INSERT INTO musicchat_automation_settings (${columns.map((c) => `"${c}"`).join(', ')}) VALUES (${columns.map((_, i) => `$${i + 1}`).join(', ')})`,
-        columns.map((c) => {
-          const value = savedSettings![c];
-          return value !== null && typeof value === 'object' && !(value instanceof Date) ? JSON.stringify(value) : value;
-        }),
-      );
-      savedSettings = undefined;
-    }
+    await db.query(`DELETE FROM musicchat_automation_settings WHERE tenant_id = ANY($1::uuid[])`, [PROBE_TENANTS]);
+    await db.query(`DELETE FROM tenants WHERE id = ANY($1::uuid[])`, [PROBE_TENANTS]);
   };
   try {
     dbOps('migrate');
     const demo = (await db.query(`SELECT id, org_id FROM tenants WHERE id <> $1 AND deleted_at IS NULL ORDER BY created_at LIMIT 1`, [TENANT_EMPTY])).rows[0];
     if (!demo) throw new Error('no tenant found in the disposable database (seed it first)');
-    tenant = demo.id as string;
-    savedSettings = (await db.query(`SELECT * FROM musicchat_automation_settings WHERE tenant_id = $1`, [tenant])).rows[0];
     await cleanup();
     await db.query(
-      `INSERT INTO tenants (id, org_id, name, slug) VALUES ($1, $2, 'CZ-045 probe', 'cz045-probe')`,
-      [TENANT_EMPTY, demo.org_id],
+      `INSERT INTO tenants (id, org_id, name, slug) VALUES ($1, $4, 'CZ-045 probe', 'cz045-probe'), ($2, $4, 'CZ-045 empty', 'cz045-empty'),
+         ($3, $4, 'CZ-045 collision', 'cz045-collision')`,
+      [TENANT_PROBE, TENANT_EMPTY, TENANT_COLLISION, demo.org_id],
     );
     await rollbackTo(db, TARGET);
 
     // ── legacy (pre-CZ-045) shape ─────────────────────────────────────────────
     const settingsColumns = `tenant_id, welcome_message, main_menu_message, invalid_option_message, absence_message, out_of_hours_message, closing_message, menu_options, templates`;
     await db.query(
-      `INSERT INTO musicchat_automation_settings (${settingsColumns}) VALUES ($1, 'Olá', '1. Shows', 'x', 'x', 'x', 'x', $2, $3), ($4, 'Olá', '', 'x', 'x', 'x', 'x', '[]', '[]')`,
-      [tenant, JSON.stringify(LEGACY_OPTIONS), JSON.stringify(LEGACY_TEMPLATES), TENANT_EMPTY],
+      `INSERT INTO musicchat_automation_settings (${settingsColumns}) VALUES ($1, 'Olá', '1. Shows', 'x', 'x', 'x', 'x', $2, $3), ($4, 'Olá', '', 'x', 'x', 'x', 'x', '[]', '[]'),
+         ($5, 'Olá', '', 'x', 'x', 'x', 'x', $6, $7)`,
+      [tenant, JSON.stringify(LEGACY_OPTIONS), JSON.stringify(LEGACY_TEMPLATES), TENANT_EMPTY,
+        TENANT_COLLISION, JSON.stringify(COLLISION_OPTIONS), JSON.stringify(COLLISION_TEMPLATES)],
     );
     await db.query(
       `INSERT INTO conversations (id, tenant_id, subject, metadata) VALUES ($1, $3, 'Probe legacy', $4), ($2, $3, 'Probe other', $5)`,
@@ -150,6 +150,11 @@ async function main(): Promise<void> {
       { ...LEGACY_TEMPLATES[0], id: 'wrong_contact' }, { ...LEGACY_TEMPLATES[1], id: 'other' }, LEGACY_TEMPLATES[2],
     ]);
     check('up: empty arrays stay empty', await settings(TENANT_EMPTY), { menu_options: [], templates: [] });
+    const collisionUp = await settings(TENANT_COLLISION);
+    check('up: a legacy id whose English target the tenant already uses is kept (ids stay unique; priorities mapped)',
+      [collisionUp.menu_options.map((o: { id: string; responseTemplateId: string; priority: string }) => [o.id, o.responseTemplateId, o.priority]),
+        collisionUp.templates.map((t: { id: string }) => t.id)],
+      [[['outros', 'outros', 'medium'], ['other', 'other', 'low']], ['outros', 'other']]);
 
     // ── a conversation written by the new build, then rollback ─────────────────
     await db.query(
@@ -165,6 +170,9 @@ async function main(): Promise<void> {
     const down = await settings(tenant);
     check('down: settings restored exactly', [down.menu_options, down.templates], [LEGACY_OPTIONS, LEGACY_TEMPLATES]);
     check('down: empty arrays stay empty', await settings(TENANT_EMPTY), { menu_options: [], templates: [] });
+    const collisionDown = await settings(TENANT_COLLISION);
+    check('down: collision tenant restored exactly (its own \'other\' is not renamed)', [collisionDown.menu_options, collisionDown.templates],
+      [COLLISION_OPTIONS, COLLISION_TEMPLATES]);
 
     // ── re-apply ────────────────────────────────────────────────────────────────
     dbOps('migrate');

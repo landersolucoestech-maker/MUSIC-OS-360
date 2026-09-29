@@ -220,10 +220,17 @@ const HELPERS = `
 
   CREATE OR REPLACE FUNCTION pg_temp.cz042_try_date(t text) RETURNS date
   LANGUAGE plpgsql IMMUTABLE AS $fn$
+  DECLARE d date;
   BEGIN
-    IF t ~ '^\\d{2}/\\d{2}/\\d{4}$' THEN RETURN to_date(t, 'DD/MM/YYYY'); END IF;
+    -- dd/mm/yyyy: to_date() accepts zero/overflowing parts ('00/00/1990' -> 1990-01-01),
+    -- so the parse only counts when it round-trips to the exact same text.
+    IF t ~ '^\\d{2}/\\d{2}/\\d{4}$' THEN
+      d := to_date(t, 'DD/MM/YYYY');
+      RETURN CASE WHEN to_char(d, 'DD/MM/YYYY') = t THEN d END;
+    END IF;
     IF t IS NULL OR t !~ '^\\d{4}-\\d{2}-\\d{2}' THEN RETURN NULL; END IF;
-    RETURN substr(t, 1, 10)::date;
+    d := substr(t, 1, 10)::date;
+    RETURN CASE WHEN to_char(d, 'YYYY-MM-DD') = substr(t, 1, 10) THEN d END;
   EXCEPTION WHEN others THEN RETURN NULL;
   END $fn$;
 

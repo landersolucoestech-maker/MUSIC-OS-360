@@ -12,7 +12,9 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * and sector names) is display data and is left untouched.
  *
  * Only exact legacy values are remapped (custom option ids such as
- * `opcao-<timestamp>` are opaque and kept), so up() is idempotent. down()
+ * `opcao-<timestamp>` are opaque and kept), so up() is idempotent. A default
+ * option/template id is renamed only when the tenant does not already use the
+ * target id (no duplicate ids; down() restores exactly). down()
  * maps the canonical values back, which is what the pre-CZ-045 build reads,
  * including values the new build wrote after up(). Historical automation
  * event payloads (musicchat_automation_events.payload) are an audit trail
@@ -78,20 +80,38 @@ async function apply(queryRunner: QueryRunner, reverse: boolean): Promise<void> 
   );
 
   await queryRunner.query(
-    `WITH remapped AS (
+    `WITH row_ids AS (
+       -- Every option/template id already used by the tenant's settings.
+       SELECT s."id",
+              COALESCE((SELECT jsonb_agg(DISTINCT x.id)
+                          FROM (SELECT e ->> 'id' AS id FROM jsonb_array_elements(s."menu_options") e
+                                UNION SELECT e ->> 'id' FROM jsonb_array_elements(s."templates") e) x
+                         WHERE x.id IS NOT NULL), '[]'::jsonb) AS ids
+         FROM "musicchat_automation_settings" s
+        WHERE jsonb_typeof(s."menu_options") = 'array' AND jsonb_typeof(s."templates") = 'array'
+     ), row_maps AS (
+       -- A default id is renamed only when its target is not already used by this tenant
+       -- (a tenant holding both 'outros' and its own 'other' keeps both untouched, so the
+       -- ids stay unique and down() restores exactly).
+       SELECT r."id",
+              COALESCE((SELECT jsonb_object_agg(m.key, m.value)
+                          FROM jsonb_each($1::jsonb) m
+                         WHERE NOT r.ids ? (m.value #>> '{}')), '{}'::jsonb) AS id_map
+         FROM row_ids r
+     ), remapped AS (
        SELECT s."id",
               (SELECT jsonb_agg(
                         pg_temp.musicchat_remap_key(
                           pg_temp.musicchat_remap_key(
-                            pg_temp.musicchat_remap_key(e.opt, 'id', $1::jsonb),
-                            'responseTemplateId', $1::jsonb),
+                            pg_temp.musicchat_remap_key(e.opt, 'id', rm.id_map),
+                            'responseTemplateId', rm.id_map),
                           'priority', $2::jsonb)
                         ORDER BY e.ord)
                  FROM jsonb_array_elements(s."menu_options") WITH ORDINALITY AS e(opt, ord)) AS menu_options,
-              (SELECT jsonb_agg(pg_temp.musicchat_remap_key(e.tpl, 'id', $1::jsonb) ORDER BY e.ord)
+              (SELECT jsonb_agg(pg_temp.musicchat_remap_key(e.tpl, 'id', rm.id_map) ORDER BY e.ord)
                  FROM jsonb_array_elements(s."templates") WITH ORDINALITY AS e(tpl, ord)) AS templates
          FROM "musicchat_automation_settings" s
-        WHERE jsonb_typeof(s."menu_options") = 'array' AND jsonb_typeof(s."templates") = 'array'
+         JOIN row_maps rm ON rm."id" = s."id"
      )
      UPDATE "musicchat_automation_settings" s
         SET "menu_options" = COALESCE(r.menu_options, s."menu_options"),

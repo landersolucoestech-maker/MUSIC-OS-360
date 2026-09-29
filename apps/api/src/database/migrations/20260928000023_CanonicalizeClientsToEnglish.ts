@@ -149,25 +149,34 @@ export class CanonicalizeClientsToEnglish20260928000023 implements MigrationInte
 
     for (const [key, column, maxLength] of METADATA_TO_COLUMN) {
       // The metadata key, when PRESENT, is the live copy (the pre-CZ-043 web wrote these
-      // fields only to metadata, also while rolled back): it wins over the column, and
-      // null/'' clears it. Exception: `cargo_responsavel` is an older alias of the same
-      // column and only fills it when still empty.
+      // fields only to metadata, also while rolled back): it wins over the column and
+      // null/'' clears it. A value that does not fit sets the column to NULL and stays
+      // in metadata as historical data (same rule as artists, migration 22).
+      if (key === 'cargo_responsavel') {
+        // Older alias of responsible_job_title: it only fills an empty column; once the
+        // column has a value it is parked under a key nothing reads, so it can never
+        // refill a job title cleared later (database re-review of d1daf89, LOW-C).
+        await queryRunner.query(`
+          UPDATE "clients" SET "metadata" = ("metadata" - 'cargo_responsavel')
+              || jsonb_build_object('legacy_cargo_responsavel', "metadata"->'cargo_responsavel')
+          WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? 'cargo_responsavel'
+            AND "${column}" IS NOT NULL AND NOT "metadata" ? 'legacy_cargo_responsavel'`);
+      }
       const onlyIfEmpty = key === 'cargo_responsavel' ? `AND "${column}" IS NULL` : '';
       if (maxLength === 'jsonb') {
         await queryRunner.query(`
           UPDATE "clients" SET "${column}" = CASE WHEN jsonb_typeof("metadata"->'${key}') = 'array' THEN "metadata"->'${key}' END,
-            "metadata" = "metadata" - '${key}'
-          WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}'
-            AND jsonb_typeof("metadata"->'${key}') IN ('array', 'null') ${onlyIfEmpty}`);
+            "metadata" = CASE WHEN jsonb_typeof("metadata"->'${key}') IN ('array', 'null') THEN "metadata" - '${key}' ELSE "metadata" END
+          WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}' ${onlyIfEmpty}`);
         continue;
       }
       const text = `NULLIF("metadata"->>'${key}', '')`;
       const fits = maxLength === null ? 'true' : `length(${text}) <= ${maxLength}`;
-      // A value that does not fit is not copied and stays in metadata (historical data).
       await queryRunner.query(`
-        UPDATE "clients" SET "${column}" = ${text}, "metadata" = "metadata" - '${key}'
+        UPDATE "clients" SET "${column}" = CASE WHEN ${text} IS NULL OR ${fits} THEN ${text} END,
+          "metadata" = CASE WHEN ${text} IS NULL OR ${fits} THEN "metadata" - '${key}' ELSE "metadata" END
         WHERE jsonb_typeof("metadata") = 'object' AND "metadata" ? '${key}'
-          AND jsonb_typeof("metadata"->'${key}') IN ('string', 'null') AND (${text} IS NULL OR ${fits}) ${onlyIfEmpty}`);
+          AND jsonb_typeof("metadata"->'${key}') IN ('string', 'null') ${onlyIfEmpty}`);
     }
     // profile is NOT NULL (default fallback 'outros'): the form value wins over the fallback.
     await queryRunner.query(`

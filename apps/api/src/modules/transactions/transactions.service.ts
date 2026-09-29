@@ -228,7 +228,9 @@ export class TransactionsService {
     const q = query as AnyRecord;
     const qb = this.baseQb(tenantId, query);
 
+    // id tie-break: rows sharing a date must page deterministically (offset sweeps).
     qb.orderBy('t.transaction_date', q.ascending ? 'ASC' : 'DESC')
+      .addOrderBy('t.id', 'ASC')
       .skip((q.offset as number) ?? 0)
       .take((q.limit as number) ?? 50);
 

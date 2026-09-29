@@ -3,9 +3,9 @@
   "doc": 11094,
   "eventQueueJob": 12,
   "frontendRoute": 13,
-  "identifier": 666,
+  "identifier": 664,
   "objectKey": 1509,
-  "value": 4068
+  "value": 4064
  },
  "debt": {
   "doc::.claude/skills/safe-db-rename/SKILL.md": 2,
@@ -443,8 +443,6 @@
   "identifier::apps/web/src/modules/dashboard/hooks/useMetrics.ts::property::totalArtistas": 2,
   "identifier::apps/web/src/modules/dashboard/pages/Dashboard.tsx::property::nome": 2,
   "identifier::apps/web/src/modules/events/components/SchedulerViewModal.tsx::property::concluido": 1,
-  "identifier::apps/web/src/modules/events/hooks/useScheduleParticipants.ts::property::departamento": 1,
-  "identifier::apps/web/src/modules/events/hooks/useScheduleParticipants.ts::property::telefone": 1,
   "identifier::apps/web/src/modules/events/lib/event-type.test.ts::variable::backendTypeInvalido": 1,
   "identifier::apps/web/src/modules/events/lib/event-type.test.ts::variable::semMetadata": 1,
   "identifier::apps/web/src/modules/events/types/events.types.ts::property::artistas": 1,
@@ -3142,10 +3140,6 @@
   "value::apps/web/src/modules/dashboard/hooks/useMetrics.ts::string::negociacao": 1,
   "value::apps/web/src/modules/dashboard/hooks/useMetrics.ts::string::pendente": 1,
   "value::apps/web/src/modules/dashboard/hooks/useMetrics.ts::string::realizado": 2,
-  "value::apps/web/src/modules/dashboard/pages/Dashboard.tsx::string::arquivado": 1,
-  "value::apps/web/src/modules/dashboard/pages/Dashboard.tsx::string::cancelado": 1,
-  "value::apps/web/src/modules/dashboard/pages/Dashboard.tsx::string::concluido": 1,
-  "value::apps/web/src/modules/dashboard/pages/Dashboard.tsx::string::realizado": 1,
   "value::apps/web/src/modules/events/components/SchedulerFormModal.tsx::string::agendado": 5,
   "value::apps/web/src/modules/events/components/SchedulerFormModal.tsx::string::cancelado": 2,
   "value::apps/web/src/modules/events/components/SchedulerFormModal.tsx::string::concluido": 5,

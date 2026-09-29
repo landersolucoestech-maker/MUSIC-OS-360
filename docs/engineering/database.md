@@ -70,7 +70,7 @@ The reverse order (new web first) fails every save with 400/422 against the old 
   `SELECT type, count(*) FROM transactions WHERE lower(type) NOT IN ('receita','despesa','investimento','imposto','transferencia','revenue','expense','investment','tax','transfer') GROUP BY 1;`
   Fix or map those rows, then `ALTER TABLE transactions VALIDATE CONSTRAINT chk_transactions_type;`.
 - Table sizes (the renames and remaps take an ACCESS EXCLUSIVE lock for the whole migration;
-  each migration sets `lock_timeout = '15s'`): `SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE relname IN ('works','phonograms','transactions','artists','clients','releases');`
+  each migration sets `lock_timeout = '15s'`): `SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE relname IN ('works','phonograms','transactions','artists','clients','releases','conversations','musicchat_automation_settings');`
   Schedule a maintenance window when any of them is large.
 
 **Recovery:** every migration's `down()` reverses renames, keys and values.
@@ -84,10 +84,21 @@ The reverse order (new web first) fails every save with 400/422 against the old 
   kept in metadata as historical data. `down()` writes every non-NULL column back to its legacy
   metadata key, so the pre-rename API sees the edits made after `up()`, and a re-apply re-derives
   the same columns — including edits and clears the old web made while rolled back.
+  Clients follow the same rule; the older alias `cargo_responsavel` only fills an empty job title
+  and is otherwise parked as `legacy_cargo_responsavel` (never read), so it cannot refill a
+  cleared value on re-apply. Dates are parsed from ISO or `dd/mm/yyyy` only when the text
+  round-trips exactly (`00/00/1990` stays in metadata, the column stays NULL).
 - `20260928000025` (org-chart slugs): `down()` reverts only rows that still carry the seeded
   default name. Run seeds after migrations (the seed writes the English slugs).
+- `20260928000026` (MusicChat vocabulary, CZ-045): `conversations.metadata` service status,
+  priority and selected option, and each tenant's `musicchat_automation_settings` option/template
+  ids and priorities. Exact legacy values only; a default id is renamed only when the tenant does
+  not already use the English target id (ids stay unique). `down()` maps back exactly.
 - Proof on a disposable copy (refuses any database not named `*_mig`):
-  `DB_SSL=false DATABASE_URL=…/musicos360_mig pnpm --filter @music-os-360/api verify:cz042-cz043-migrations`.
+  `DB_SSL=false DATABASE_URL=…/musicos360_mig pnpm --filter @music-os-360/api verify:cz042-cz043-migrations`
+  and `… verify:cz045-musicchat-migration` (each removes only the probe rows/tenants it created).
+  Both run as the migration role; with a role that does not bypass RLS the UPDATEs would match
+  zero rows, so run migrations with the owner/bypass connection documented in `DATABASE_URL`.
 
 **Known gap (not enforced by CI):** `.github/workflows/staging.yml` runs `db:migrate` while the
 previous build is still serving; step 1 above (stop/drain) must be done by the operator until the

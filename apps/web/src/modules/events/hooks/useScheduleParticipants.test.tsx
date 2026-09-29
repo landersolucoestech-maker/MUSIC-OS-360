@@ -80,4 +80,22 @@ describe("useScheduleParticipants", () => {
     await settle();
     expect(mockedFindById).not.toHaveBeenCalled();
   });
+
+  it("employees: reads the canonical department/phone fields and falls back to the accented PT-BR category", async () => {
+    mockedListPaged.mockImplementation((async (table: string, options: { pageSize: number }) => {
+      const items = table === "employees"
+        ? [
+          { id: "emp-1", name: "Ana", phone: "+55 11 90000-0000", department: "Financeiro" },
+          { id: "emp-2", name: "Bia" },
+        ]
+        : [];
+      return { items, page: 1, pageSize: options.pageSize, total: items.length, totalPages: 1 };
+    }) as typeof storage.listPaged);
+
+    const { result } = renderHook(() => useScheduleParticipants(""), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.participants.filter((p) => p.source === "employee")).toHaveLength(2), { timeout: 2000 });
+    const [ana, bia] = result.current.participants.filter((p) => p.source === "employee");
+    expect(ana).toMatchObject({ label: "Ana", phone: "+55 11 90000-0000", category: "Financeiro" });
+    expect(bia.category).toBe("Funcionário");
+  });
 });

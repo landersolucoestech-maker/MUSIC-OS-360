@@ -66,7 +66,9 @@ export class ClientsService {
     if (q['category']) qb.andWhere('c.category = :category', { category: q['category'] });
     if (q['search'])   qb.andWhere('c.name ILIKE :search',    { search: `%${q['search']}%` });
 
+    // id tie-break: bulk-imported rows share created_at; offset sweeps must be deterministic.
     qb.orderBy('c.created_at', q['ascending'] ? 'ASC' : 'DESC')
+      .addOrderBy('c.id', 'ASC')
       .skip(typeof q['offset'] === 'number' ? q['offset'] : 0)
       .take(typeof q['limit']  === 'number' ? q['limit']  : 50);
 

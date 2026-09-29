@@ -45,6 +45,7 @@ export class EventsService {
     const qb = this.baseQb(tenantId, query);
 
     qb.orderBy('e.starts_at', q['ascending'] ? 'ASC' : 'DESC')
+      .addOrderBy('e.id', 'ASC') // deterministic paging for offset sweeps
       .skip(typeof q['offset'] === 'number' ? q['offset'] : 0)
       .take(typeof q['limit']  === 'number' ? q['limit']  : 50);
 

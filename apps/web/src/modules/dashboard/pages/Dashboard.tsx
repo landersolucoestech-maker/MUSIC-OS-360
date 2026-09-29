@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { transactionTypeRegisteredPtBr } from "@music-os-360/types";
+import { isUpcomingAppointmentStatus } from "@/modules/dashboard/lib/appointments";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
@@ -46,15 +47,8 @@ const MAX_ITEMS = 30;
 // events.type only stores the backend's coarse enum — see
 // modules/events/lib/event-type.ts for the real pt-BR labels.
 
-// Statuses that remove the event from the upcoming appointments list (past/closed).
-const HIDDEN_APPOINTMENT_STATUSES = new Set([
-  "cancelado", "concluido", "realizado", "arquivado",
-]);
 
-function normalizeSlug(value: unknown): string {
-  if (typeof value !== "string") return "";
-  return value.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-}
+
 
 function appointmentCategoryLabel(type: unknown): string {
   return getBackendEventTypeLabel(typeof type === "string" ? type : undefined);
@@ -495,7 +489,7 @@ export default function Dashboard() {
         (item): item is { event: EventWithRelations; when: Date } => {
           if (!item.when) return false;
           if (item.when.getTime() < nowMs) return false;
-          return !HIDDEN_APPOINTMENT_STATUSES.has(normalizeSlug(item.event.status));
+          return isUpcomingAppointmentStatus(item.event.status);
         },
       )
       .sort((a, b) => a.when.getTime() - b.when.getTime())

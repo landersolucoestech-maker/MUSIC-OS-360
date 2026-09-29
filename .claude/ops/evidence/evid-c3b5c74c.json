@@ -1,0 +1,12 @@
+{
+  "id": "evid-c3b5c74c",
+  "createdAt": "2026-09-29T02:57:37.974Z",
+  "type": "REVIEW",
+  "reviewer": "database-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "d1daf89: prior 6 fixed; HIGH-A dd/mm parse accepts zero parts (00/00/1990) and deletes original; LOW-A 26 id collisions; LOW-B cz045 verifier restore bug; LOW-C clients non-fitting value/cargo_responsavel refill; LOW-D docs",
+  "workspaceFingerprint": "894c1520bb5c83645f776388f08807765cb53ecd82f1ddc2780d0d6c31fded32",
+  "fingerprintStatus": "BOUND",
+  "head": "d1daf89941169f321ee498768b56c631c7727890"
+}

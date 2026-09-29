@@ -355,6 +355,8 @@ export function ArtistVision360Modal({
     transactions: artistTransactions,
     truncated: artistTransactionsTruncated,
     total: artistTransactionsTotal,
+    isLoading: artistTransactionsLoading,
+    error: artistTransactionsError,
   } = useAllTransactions({ enabled: open && Boolean(artistId), artistId });
   const { contacts } = useContacts(open);
   const { events: actualEvents } = useEvents(open, artistId);
@@ -1993,11 +1995,7 @@ export function ArtistVision360Modal({
                                     {release.title}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {release.release_date
-                                      ? new Date(
-                                          release.release_date,
-                                        ).toLocaleDateString("pt-BR")
-                                      : "Sem data"}
+                                    {formatCalendarDateLabel(release.release_date, "Sem data")}
                                   </p>
                                 </div>
                                 <Badge
@@ -2059,6 +2057,16 @@ export function ArtistVision360Modal({
 
             {/* Finance */}
             <TabsContent value="financeiro" className="p-6 space-y-6 mt-0">
+              {artistTransactionsLoading ? (
+                <p className="text-sm text-muted-foreground" role="status" data-testid="vision360-finance-loading">
+                  Carregando transações…
+                </p>
+              ) : artistTransactionsError ? (
+                <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-finance-error">
+                  Não foi possível carregar as transações deste artista. Tente novamente.
+                </p>
+              ) : (
+              <>
               {artistTransactionsTruncated && (
                 <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive" role="alert" data-testid="vision360-finance-truncated">
                   {truncatedTransactionsNotice(artistTransactions.length, artistTransactionsTotal)}
@@ -2180,6 +2188,8 @@ export function ArtistVision360Modal({
                   )}
                 </CardContent>
               </Card>
+              </>
+              )}
             </TabsContent>
 
             {/* Contracts */}
@@ -2270,17 +2280,9 @@ export function ArtistVision360Modal({
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground">
-                                {contract.start_date
-                                  ? new Date(
-                                      contract.start_date,
-                                    ).toLocaleDateString("pt-BR")
-                                  : "—"}
+                                {formatCalendarDateLabel(contract.start_date, "—")}
                                 {" → "}
-                                {contract.end_date
-                                  ? new Date(
-                                      contract.end_date,
-                                    ).toLocaleDateString("pt-BR")
-                                  : "Indeterminado"}
+                                {formatCalendarDateLabel(contract.end_date, "Indeterminado")}
                               </p>
                               {contract.fixed_value != null && (
                                 <p className="text-xs text-muted-foreground">
@@ -2531,13 +2533,9 @@ export function ArtistVision360Modal({
                                   <Calendar className="h-3 w-3" />
                                   {startDate && endDate && (
                                     <span>
-                                      {new Date(startDate).toLocaleDateString(
-                                        "pt-BR",
-                                      )}{" "}
+                                      {formatCalendarDateLabel(startDate)}{" "}
                                       -{" "}
-                                      {new Date(endDate).toLocaleDateString(
-                                        "pt-BR",
-                                      )}
+                                      {formatCalendarDateLabel(endDate)}
                                     </span>
                                   )}
                                 </div>

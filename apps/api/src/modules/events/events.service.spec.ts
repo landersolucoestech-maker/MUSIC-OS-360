@@ -22,6 +22,7 @@ const buildMockQb = (getOneValue: any = mockEvent) => {
     where:           jest.fn(),
     andWhere:        jest.fn(),
     orderBy:         jest.fn(),
+    addOrderBy:      jest.fn(),
     skip:            jest.fn(),
     take:            jest.fn(),
     getOne:          jest.fn().mockResolvedValue(getOneValue),
@@ -30,6 +31,7 @@ const buildMockQb = (getOneValue: any = mockEvent) => {
   qb.where.mockReturnValue(qb);
   qb.andWhere.mockReturnValue(qb);
   qb.orderBy.mockReturnValue(qb);
+  qb.addOrderBy.mockReturnValue(qb);
   qb.skip.mockReturnValue(qb);
   qb.take.mockReturnValue(qb);
   return qb;
@@ -256,6 +258,8 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
     it('list() orders by e.starts_at — canonical read since phase E4', async () => {
       await service.list(TENANT, {} as never);
       expect(mockDs._repo._qb.orderBy).toHaveBeenCalledWith('e.starts_at', 'DESC');
+      // Deterministic paging: offset sweeps (fetchAllPages) must not skip/duplicate same-instant rows.
+      expect(mockDs._repo._qb.addOrderBy).toHaveBeenCalledWith('e.id', 'ASC');
       expect(mockDs._repo._qb.orderBy).not.toHaveBeenCalledWith('e.data', expect.anything());
     });
 

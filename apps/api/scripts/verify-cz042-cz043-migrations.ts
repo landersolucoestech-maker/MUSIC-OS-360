@@ -43,7 +43,9 @@ const API_DIR = path.resolve(__dirname, '..');
 const TARGET = 'CanonicalizeWorksToEnglish20260928000018';
 const ARTIST = '40000000-0000-0000-0000-0000000000f1';
 const ARTIST_DMY = '40000000-0000-0000-0000-0000000000f5';
+const ARTIST_ZERO_DATE = '40000000-0000-0000-0000-0000000000f6';
 const CLIENT = '40000000-0000-0000-0000-0000000000f2';
+const CLIENT_ALIAS = '40000000-0000-0000-0000-0000000000f7';
 const RELEASE_CHANGED = '40000000-0000-0000-0000-0000000000f3';
 const RELEASE_PLANTED = '40000000-0000-0000-0000-0000000000f4';
 
@@ -74,8 +76,8 @@ async function one<T = Record<string, unknown>>(db: Client, sql: string, params:
 }
 
 async function cleanup(db: Client): Promise<void> {
-  await db.query(`DELETE FROM artists WHERE id = ANY($1::uuid[])`, [[ARTIST, ARTIST_DMY]]);
-  await db.query(`DELETE FROM clients WHERE id = $1`, [CLIENT]);
+  await db.query(`DELETE FROM artists WHERE id = ANY($1::uuid[])`, [[ARTIST, ARTIST_DMY, ARTIST_ZERO_DATE]]);
+  await db.query(`DELETE FROM clients WHERE id = ANY($1::uuid[])`, [[CLIENT, CLIENT_ALIAS]]);
   await db.query(`DELETE FROM releases WHERE id = ANY($1::uuid[])`, [[RELEASE_CHANGED, RELEASE_PLANTED]]);
 }
 
@@ -103,12 +105,21 @@ async function main(): Promise<void> {
       `INSERT INTO artists (id, tenant_id, nome_artistico, metadata) VALUES ($1, $2, 'Probe DMY', $3)`,
       [ARTIST_DMY, tenant, JSON.stringify({ data_nascimento: '15/03/1985' })],
     );
+    // '00/00/1990' is a common "unknown" placeholder: to_date() alone would invent 1990-01-01.
+    await db.query(
+      `INSERT INTO artists (id, tenant_id, nome_artistico, metadata) VALUES ($1, $2, 'Probe zero date', $3)`,
+      [ARTIST_ZERO_DATE, tenant, JSON.stringify({ data_nascimento: '00/00/1990' })],
+    );
     await db.query(
       `INSERT INTO clients (id, tenant_id, nome, categoria, perfil, metadata) VALUES ($1, $2, 'Probe Cliente', 'PARTNER', 'outros', $3)`,
       [CLIENT, tenant, JSON.stringify({
         responsavel_email: 'a@x.com', cargo_responsavel: 'Diretora',
         interacoes: [{}, { type: 'ligacao', data: '2026-01-01' }],
       })],
+    );
+    await db.query(
+      `INSERT INTO clients (id, tenant_id, nome, categoria, perfil, metadata) VALUES ($1, $2, 'Probe Alias', 'PARTNER', 'outros', $3)`,
+      [CLIENT_ALIAS, tenant, JSON.stringify({ responsavel_cargo: 'Gerente', cargo_responsavel: 'Cargo antigo', cep: '0'.repeat(20) })],
     );
     await db.query(
       `INSERT INTO releases (id, tenant_id, title, status, type) VALUES ($1, $3, 'Probe R1', 'Rascunho ', 'single'), ($2, $3, 'Probe R2', 'em_producao', ' LP')`,
@@ -127,6 +138,9 @@ async function main(): Promise<void> {
     check('artists: jsonb key present as null -> NULL column, key removed', [a['music_tags'], 'tags_musicais' in am], [null, false]);
     const dmy = await one(db, `SELECT birth_date::text AS birth_date, metadata FROM artists WHERE id = $1`, [ARTIST_DMY]);
     check('artists: dd/mm/yyyy birth date parsed', [dmy['birth_date'], 'data_nascimento' in (dmy['metadata'] as object)], ['1985-03-15', false]);
+    const zero = await one(db, `SELECT birth_date, metadata FROM artists WHERE id = $1`, [ARTIST_ZERO_DATE]);
+    check('artists: zero-part date is not invented (NULL column, original kept in metadata)',
+      [zero['birth_date'], (zero['metadata'] as Record<string, unknown>)['data_nascimento']], [null, '00/00/1990']);
     check('artists: over-long address -> NULL', a['address'], null);
     check('artists: over-long address kept in metadata', typeof am['endereco'], 'string');
     check('artists: copied keys leave metadata', ['banco', 'chave_pix', 'conta', 'relacionamentos'].filter((k) => k in am), []);
@@ -139,6 +153,10 @@ async function main(): Promise<void> {
     check('clients: cargo_responsavel backfilled', c['responsible_job_title'], 'Diretora');
     check('clients: empty interaction item stays {}', c['interactions'], [{}, { date: '2026-01-01', type: 'call' }]);
     check('clients: copied keys leave metadata', c['metadata'], {});
+    const ca = await one(db, `SELECT responsible_job_title, zip_code, metadata FROM clients WHERE id = $1`, [CLIENT_ALIAS]);
+    check('clients: newer key wins; superseded cargo_responsavel parked (never refills); over-long value -> NULL + kept',
+      [ca['responsible_job_title'], ca['zip_code'], ca['metadata']],
+      ['Gerente', null, { cep: '0'.repeat(20), legacy_cargo_responsavel: 'Cargo antigo' }]);
     const r = await db.query(`SELECT id, status, type FROM releases WHERE id = ANY($1::uuid[]) ORDER BY id`, [[RELEASE_CHANGED, RELEASE_PLANTED]]);
     check('releases: legacy statuses/types mapped', r.rows.map((x) => [x.status, x.type]), [['draft', 'single'], ['draft', 'album']]);
 

@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-29T02:40:27.014Z",
+  "updatedAt": "2026-09-29T03:10:49.029Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -888,7 +888,9 @@
             "evid-943e3fe1",
             "evid-65da5b70",
             "evid-c22acf50",
-            "evid-b76ff2c1"
+            "evid-b76ff2c1",
+            "evid-5f312b4e",
+            "evid-0aaf96bb"
           ],
           "status": "closed"
         },
@@ -2874,6 +2876,78 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-29T02:31:43.384Z"
+    },
+    {
+      "id": "find-07c909a1",
+      "category": "naming",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/settings/hooks/useUsers.ts",
+      "line": null,
+      "summary": "Z6-E residual: UserAccount keeps PT keys/values cargo and status ativo/inativo (web-only model); users.cargo read by schedule participants",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:50:33.872Z"
+    },
+    {
+      "id": "find-d94940a2",
+      "category": "data",
+      "severity": "HIGH",
+      "file": "apps/api/src/database/migrations/20260928000022_CanonicalizeArtistsToEnglish.ts",
+      "line": null,
+      "summary": "DB re-review d1daf89 HIGH-A: cz042_try_date dd/mm/yyyy via to_date accepts zero parts (00/00/1990 -> 1990-01-01) and up() then deletes metadata.data_nascimento -> invented birth date, original lost",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:57:38.047Z"
+    },
+    {
+      "id": "find-35c9e731",
+      "category": "data",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migrations/20260928000026_CanonicalizeMusicChatValuesToEnglish.ts",
+      "line": null,
+      "summary": "LOW-A: legacy id + existing English id in same tenant -> duplicate option/template ids after up; down renames tenant's own id",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:57:38.119Z"
+    },
+    {
+      "id": "find-33868f5d",
+      "category": "test",
+      "severity": "LOW",
+      "file": "apps/api/scripts/verify-cz045-musicchat-migration.ts",
+      "line": null,
+      "summary": "LOW-B: verifier restores/deletes the demo tenant's real settings row when one exists",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:57:38.192Z"
+    },
+    {
+      "id": "find-f507f4f3",
+      "category": "data",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migrations/20260928000023_CanonicalizeClientsToEnglish.ts",
+      "line": null,
+      "summary": "LOW-C: clients keep old column when metadata value does not fit (artists set NULL); superseded cargo_responsavel can refill a cleared job title on re-apply",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:57:38.265Z"
+    },
+    {
+      "id": "find-08823a63",
+      "category": "docs",
+      "severity": "LOW",
+      "file": "docs/engineering/database.md",
+      "line": null,
+      "summary": "LOW-D: no recovery note/verify command for migration 26; pre-flight table sizes omit conversations",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-29T02:57:38.339Z"
     }
   ],
   "evidenceIds": [
@@ -3237,7 +3311,10 @@
     "evid-4641a465",
     "evid-b54240f6",
     "evid-c22acf50",
-    "evid-b76ff2c1"
+    "evid-b76ff2c1",
+    "evid-c3b5c74c",
+    "evid-5f312b4e",
+    "evid-0aaf96bb"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

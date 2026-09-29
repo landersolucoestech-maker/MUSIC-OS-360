@@ -56,6 +56,7 @@ function makeQb(getOneValue: unknown = artistA) {
     where:           jest.fn(),
     andWhere:        jest.fn(),
     orderBy:         jest.fn(),
+    addOrderBy:      jest.fn(),
     skip:            jest.fn(),
     take:            jest.fn(),
     getOne:          jest.fn().mockResolvedValue(getOneValue),
@@ -65,6 +66,7 @@ function makeQb(getOneValue: unknown = artistA) {
   qb.where.mockReturnValue(qb);
   qb.andWhere.mockReturnValue(qb);
   qb.orderBy.mockReturnValue(qb);
+  qb.addOrderBy.mockReturnValue(qb);
   qb.skip.mockReturnValue(qb);
   qb.take.mockReturnValue(qb);
 
@@ -127,6 +129,7 @@ describe('ArtistsService', () => {
     await service.list(TENANT_A, { orderBy: "id; DROP TABLE artists;--" } as any);
 
     expect(ds._repo._qb.orderBy).toHaveBeenCalledWith('a.created_at', 'DESC');
+    expect(ds._repo._qb.addOrderBy).toHaveBeenCalledWith('a.id', 'ASC'); // deterministic paging
   });
 
   it('find-924ed503: list() accepts an orderBy from the allow-list normally', async () => {

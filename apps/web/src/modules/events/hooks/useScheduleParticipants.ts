@@ -28,8 +28,8 @@ interface EmployeeLookup {
   name?: string | null;
   full_name?: string | null;
   email?: string | null;
-  telefone?: string | null;
-  departamento?: string | null;
+  phone?: string | null;
+  department?: string | null;
 }
 
 export const scheduleParticipantKey = (participant: Pick<ScheduleParticipant, "source" | "id">) =>
@@ -99,17 +99,17 @@ export function useScheduleParticipants(search: string = "", pendingArtistId?: s
       id: String(employee.id),
       label: String(employee.name || employee.full_name || employee.email || "Sem nome"),
       email: employee.email ? String(employee.email) : undefined,
-      phone: employee.telefone ? String(employee.telefone) : undefined,
-      category: employee.departamento ? String(employee.departamento) : "Funcionario",
+      phone: employee.phone ? String(employee.phone) : undefined,
+      category: employee.department ? String(employee.department) : "Funcionário",
     }));
 
     const userOptions = (users as any[]).map((user) => ({
       source: "user" as const,
       id: String(user.id),
-      label: String(user.full_name || user.nome || user.email || "Sem nome"),
+      label: String(user.full_name || user.email || "Sem nome"),
       email: user.email ? String(user.email) : undefined,
       phone: user.phone ? String(user.phone) : undefined,
-      category: user.cargo ? String(user.cargo) : "Usuario",
+      category: user.cargo ? String(user.cargo) : "Usuário",
     }));
 
     const contactOptions = contacts.map((contact) => ({

@@ -179,6 +179,7 @@ export class ArtistsService {
       'created_at',
     );
     qb.orderBy(`a.${orderField}`, query.ascending ? 'ASC' : 'DESC')
+      .addOrderBy('a.id', 'ASC') // deterministic paging for offset sweeps
       .skip(query.offset ?? 0)
       .take(query.limit ?? 50);
 

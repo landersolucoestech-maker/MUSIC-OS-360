@@ -1,0 +1,15 @@
+{
+  "id": "evid-0aaf96bb",
+  "createdAt": "2026-09-29T03:10:49.025Z",
+  "type": "COMMAND",
+  "label": "pnpm -s --filter @music-os-360/api verify:cz045-musicchat-migration",
+  "command": "pnpm -s --filter @music-os-360/api verify:cz045-musicchat-migration",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ up: 026 applied\n✓ up: conversation service_status/priority/selected_menu_option remapped, other keys untouched\n✓ up: unknown status, non-string priority and custom option id kept\n✓ up: menu options remapped in order, labels/custom ids/non-objects kept\n✓ up: template ids remapped, titles/bodies kept\n✓ up: empty arrays stay empty\n✓ up: a legacy id whose English target the tenant already uses is kept (ids stay unique; priorities mapped)\n✓ down: legacy conversation restored exactly\n✓ down: other conversation unchanged\n✓ down: new-build values mapped to what the old build reads\n✓ down: settings restored exactly\n✓ down: empty arrays stay empty\n✓ down: collision tenant restored exactly (its own 'other' is not renamed)\n✓ re-up: same result as the first up()\n\n[verify-cz045] all checks passed",
+  "stderrTail": "",
+  "workspaceFingerprint": "7c5e617a68505f604cd5a0e4b0997fdf0c3889c4449d0c92a2c2dd7b877cc7cb",
+  "fingerprintStatus": "BOUND",
+  "head": "d1daf89941169f321ee498768b56c631c7727890",
+  "durationMs": 31475
+}
