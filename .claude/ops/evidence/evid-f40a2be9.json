@@ -1,0 +1,15 @@
+{
+  "id": "evid-f40a2be9",
+  "createdAt": "2026-09-29T16:15:15.334Z",
+  "type": "COMMAND",
+  "label": "node scripts/git-guard/cli.mjs verify",
+  "command": "node scripts/git-guard/cli.mjs verify",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "[git-guard] OK: HEAD=refs/heads/dev at 9d97f74cdc7c7850a8f2b23af21d82b3de2b5a2d, = origin/dev; only local branch: dev; guard installed and current (core.hooksPath=/home/user/MUSIC-OS-360/.git/git-guard/hooks).",
+  "stderrTail": "",
+  "workspaceFingerprint": "04aca1bffee6747838eaf1f768e20b2f8e66add0e12d9375f001171abf8d38ba",
+  "fingerprintStatus": "BOUND",
+  "head": "9d97f74cdc7c7850a8f2b23af21d82b3de2b5a2d",
+  "durationMs": 121
+}
