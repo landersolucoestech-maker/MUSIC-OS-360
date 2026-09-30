@@ -224,16 +224,26 @@ export function useAbramusRegisterWork() {
       // register the same work twice. Fresh key per mutationFn invocation
       // (i.e. per user-initiated attempt), same convention as
       // signing.service.ts's sendForSigning.
+      // The API requires a non-empty composer: fail here with PT-BR copy instead of a 400 round-trip.
+      const [composer, ...coComposers] = input.composers.map((c) => c.trim()).filter(Boolean);
+      if (!composer) {
+        throw new UserFacingError(
+          "Abramus work registration requires at least one composer",
+          "Informe ao menos um compositor para registrar a obra na ABRAMUS.",
+          "ABRAMUS_COMPOSER_REQUIRED",
+        );
+      }
+      // Canonical (English) API contract; the API maps it to the Abramus external vocabulary.
       const res = await api.post<{ external_id?: string; code?: string; iswc?: string | null }>(
         "/integrations/abramus/register-work",
         {
           title: input.title,
-          compositor: input.compositores[0] ?? "",
-          coautores: input.compositores.slice(1),
+          composer,
+          co_composers: coComposers,
           iswc: input.iswc,
-          genero: input.genero,
-          duracao: input.duracao,
-          editora: input.editora,
+          genre: input.genre,
+          duration: input.duration,
+          publisher: input.publisher,
         },
         { headers: { "X-Idempotency-Key": crypto.randomUUID() } },
       );

@@ -68,11 +68,24 @@ export class AbramusService extends IntegrationBaseService {
     return this.request(tenantId, `/api/v1/works?q=${encodeURIComponent(query)}&limit=${limit}`);
   }
 
-  async registerWork(tenantId: string, workData: {
-    title: string; compositor: string; iswc?: string;
-    genero?: string; duracao?: string; editora?: string; coautores?: string[];
+  /**
+   * Adapter boundary: the ONLY place that knows the Abramus external field names
+   * (compositor/coautores/genero/duracao/editora — permanent external contract).
+   */
+  async registerWork(tenantId: string, work: {
+    title: string; composer: string; co_composers?: string[]; iswc?: string;
+    genre?: string; duration?: string; publisher?: string;
   }) {
-    return this.request(tenantId, '/api/v1/works', { method: 'POST', body: JSON.stringify(workData) });
+    const externalBody = {
+      title: work.title,
+      compositor: work.composer,
+      iswc: work.iswc,
+      genero: work.genre,
+      duracao: work.duration,
+      editora: work.publisher,
+      coautores: work.co_composers,
+    };
+    return this.request(tenantId, '/api/v1/works', { method: 'POST', body: JSON.stringify(externalBody) });
   }
 
   async getStatements(tenantId: string, periodo?: string, limit = 20) {

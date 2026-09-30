@@ -38,10 +38,12 @@ import {
   OAuthInitDto,
   OAuthExchangeDto,
   RegisterAbramusWorkDto,
+  ABRAMUS_WORK_DEPRECATED_FIELDS,
   ConfigureSoundCloudDto,
   OAuthCodeStateDto,
   AutentiqueWebhookDto,
 } from './dto/integrations.dto';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import { integrationNotConfigured } from '../../core/errors/integration-not-configured';
 
 const GENERIC_OAUTH_PLATFORMS = new Set([
@@ -1060,17 +1062,17 @@ export class IntegrationsController {
   @Audit('integration.abramus_work_registered')
   @ApiOperation({ summary: 'Register a work in Abramus (manager+)' })
   abramusRegisterWork(@Request() req: any, @Body() body: RegisterAbramusWorkDto) {
-    // AbramusService.registerWork uses `title` (not `titulo`) in the real Abramus
-    // API call — mapped explicitly here to keep that existing wire contract while
-    // the request body becomes validated.
+    // Deprecated Portuguese names are folded into the canonical ones (canonical wins);
+    // AbramusService maps the canonical shape to the Abramus external field names.
+    const work = applyDeprecatedFieldAliases(body, ABRAMUS_WORK_DEPRECATED_FIELDS);
     return this.abramus.registerWork(req.tenant?.id ?? req.tenantId, {
-      title: body.titulo,
-      compositor: body.compositor,
-      iswc: body.iswc,
-      genero: body.genero,
-      duracao: body.duracao,
-      editora: body.editora,
-      coautores: body.coautores,
+      title: work.title,
+      composer: work.composer,
+      co_composers: work.co_composers,
+      iswc: work.iswc,
+      genre: work.genre,
+      duration: work.duration,
+      publisher: work.publisher,
     });
   }
 

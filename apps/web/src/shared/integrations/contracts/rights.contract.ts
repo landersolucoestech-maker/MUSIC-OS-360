@@ -83,11 +83,11 @@ export interface RightsRegistrationStatus {
 
 export interface RegisterWorkInput {
   title: string;
-  compositores: string[];
-  letristas?: string[];
-  editora?: string;
-  genero?: string;
-  duracao?: string;
+  composers: string[];
+  lyricists?: string[];
+  publisher?: string;
+  genre?: string;
+  duration?: string;
   /** Existing ISWC (when available); otherwise the entity generates it */
   iswc?: string;
   /** Local work ID in the catalog */

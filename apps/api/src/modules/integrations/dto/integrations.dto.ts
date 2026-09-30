@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsNotEmpty, IsBase64, IsIn, IsArray, IsEmail, IsObject, Matches } from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty, IsBase64, IsIn, IsArray, IsEmail, IsObject, Matches, ValidateIf } from 'class-validator';
+import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 // find-89cba006: RegisterAbramusWorkDto/ConfigureSoundCloudDto/OAuthCodeStateDto/
@@ -193,27 +194,68 @@ export class ExternalDataStatusCheckDto {
   idempotencyKey?: string;
 }
 
-export class RegisterAbramusWorkDto {
-  @ApiProperty() @IsString() @IsNotEmpty()
-  titulo!: string;
+/**
+ * Deploy-skew window: Portuguese field names a pre-canonical web build sends
+ * (see applyDeprecatedFieldAliases). The Abramus EXTERNAL vocabulary
+ * (compositor/coautores/genero/duracao/editora) lives only in AbramusService.
+ */
+export const ABRAMUS_WORK_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
+  titulo: 'title',
+  compositor: 'composer',
+  coautores: 'co_composers',
+  genero: 'genre',
+  duracao: 'duration',
+  editora: 'publisher',
+};
 
-  @ApiProperty() @IsString() @IsNotEmpty()
-  compositor!: string;
+export class RegisterAbramusWorkDto {
+  // Required unless the deprecated alias is sent; an explicitly sent empty value always fails.
+  @ApiProperty() @ValidateIf((o: RegisterAbramusWorkDto) => o.title !== undefined || o.titulo == null)
+  @IsString() @IsNotEmpty()
+  title!: string;
+
+  @ApiPropertyOptional({ deprecated: true, description: 'Deprecated alias of title.' })
+  @IsOptional() @IsString() @IsNotEmpty()
+  titulo?: string;
+
+  @ApiProperty() @ValidateIf((o: RegisterAbramusWorkDto) => o.composer !== undefined || o.compositor == null)
+  @IsString() @IsNotEmpty()
+  composer!: string;
+
+  @ApiPropertyOptional({ deprecated: true, description: 'Deprecated alias of composer.' })
+  @IsOptional() @IsString() @IsNotEmpty()
+  compositor?: string;
+
+  @ApiPropertyOptional({ type: [String] }) @IsOptional() @IsArray() @IsString({ each: true })
+  co_composers?: string[];
+
+  @ApiPropertyOptional({ type: [String], deprecated: true, description: 'Deprecated alias of co_composers.' })
+  @IsOptional() @IsArray() @IsString({ each: true })
+  coautores?: string[];
 
   @ApiPropertyOptional() @IsOptional() @IsString()
   iswc?: string;
 
   @ApiPropertyOptional() @IsOptional() @IsString()
+  genre?: string;
+
+  @ApiPropertyOptional({ deprecated: true, description: 'Deprecated alias of genre.' })
+  @IsOptional() @IsString()
   genero?: string;
 
   @ApiPropertyOptional() @IsOptional() @IsString()
+  duration?: string;
+
+  @ApiPropertyOptional({ deprecated: true, description: 'Deprecated alias of duration.' })
+  @IsOptional() @IsString()
   duracao?: string;
 
   @ApiPropertyOptional() @IsOptional() @IsString()
-  editora?: string;
+  publisher?: string;
 
-  @ApiPropertyOptional({ type: [String] }) @IsOptional() @IsArray() @IsString({ each: true })
-  coautores?: string[];
+  @ApiPropertyOptional({ deprecated: true, description: 'Deprecated alias of publisher.' })
+  @IsOptional() @IsString()
+  editora?: string;
 }
 
 export class ConfigureSoundCloudDto {

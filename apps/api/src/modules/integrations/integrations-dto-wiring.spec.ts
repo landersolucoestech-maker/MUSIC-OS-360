@@ -91,23 +91,50 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
   afterEach(() => jest.clearAllMocks());
 
   describe('POST /integrations/abramus/register-work', () => {
-    it('absent titulo → 400, service not called', async () => {
-      await request(app.getHttpServer())
-        .post('/integrations/abramus/register-work')
-        .send({ compositor: 'Fulano' })
-        .expect(400);
+    const post = (body: object) => request(app.getHttpServer()).post('/integrations/abramus/register-work').send(body);
+
+    it('absent title (and titulo) → 400, service not called', async () => {
+      await post({ composer: 'Fulano' }).expect(400);
       expect(abramus.registerWork).not.toHaveBeenCalled();
     });
 
-    it('valid payload → 201, mapped titulo→title in the service', async () => {
-      await request(app.getHttpServer())
-        .post('/integrations/abramus/register-work')
-        .send({ titulo: 'Obra X', compositor: 'Fulano' })
-        .expect(201);
+    it('absent composer (and compositor) → 400, service not called', async () => {
+      await post({ title: 'Obra X' }).expect(400);
+      expect(abramus.registerWork).not.toHaveBeenCalled();
+    });
+
+    it('web-shaped canonical body → 201, service receives the canonical shape', async () => {
+      await post({
+        title: 'Obra X', composer: 'Fulano', co_composers: ['Beltrano'], iswc: 'T-123',
+        genre: 'Pop', duration: '3:20', publisher: 'Editora Y',
+      }).expect(201);
+      expect(abramus.registerWork).toHaveBeenCalledWith('tenant-1', {
+        title: 'Obra X', composer: 'Fulano', co_composers: ['Beltrano'], iswc: 'T-123',
+        genre: 'Pop', duration: '3:20', publisher: 'Editora Y',
+      });
+    });
+
+    it('legacy Portuguese body still accepted → mapped to canonical', async () => {
+      await post({
+        titulo: 'Obra X', compositor: 'Fulano', coautores: ['Beltrano'], genero: 'Pop',
+        duracao: '3:20', editora: 'Editora Y',
+      }).expect(201);
+      expect(abramus.registerWork).toHaveBeenCalledWith('tenant-1', {
+        title: 'Obra X', composer: 'Fulano', co_composers: ['Beltrano'], iswc: undefined,
+        genre: 'Pop', duration: '3:20', publisher: 'Editora Y',
+      });
+    });
+
+    it('canonical wins when both canonical and legacy names are sent', async () => {
+      await post({ title: 'Novo', titulo: 'Velho', composer: 'Novo C', compositor: 'Velho C' }).expect(201);
       expect(abramus.registerWork).toHaveBeenCalledWith('tenant-1', expect.objectContaining({
-        title: 'Obra X',
-        compositor: 'Fulano',
+        title: 'Novo', composer: 'Novo C',
       }));
+    });
+
+    it('unknown key → 400', async () => {
+      await post({ title: 'Obra X', composer: 'Fulano', unknownField: 1 }).expect(400);
+      expect(abramus.registerWork).not.toHaveBeenCalled();
     });
   });
 
