@@ -143,7 +143,7 @@ export class ImportEngineService {
 
     const contract = getReportFormContract(entity);
     const typeMap = buildLogicalTypeMap(report, contract);
-    const parsed = this.parser.parse(
+    const parsed = await this.parser.parse(
       file.filename,
       file.content,
       reportSheetName(report, entity),

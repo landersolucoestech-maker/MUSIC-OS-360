@@ -38,6 +38,7 @@ import {
   normalizeToBackendType,
 } from "@/modules/events/lib/event-type";
 import { splitDateTime, combineDateTime } from "@/modules/events/lib/date-time";
+import { readSpreadsheetRows } from "@/shared/lib/xlsx-isolated";
 const getXLSX = () => import("xlsx");
 
 type Event = Record<string, any>;
@@ -247,12 +248,8 @@ export default function Schedule() {
     if (!file) return;
 
     try {
-      const XLSX = await getXLSX();
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: "array" });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const data: Record<string, any>[] = XLSX.utils.sheet_to_json(worksheet);
+      const { rows } = await readSpreadsheetRows(await file.arrayBuffer());
+      const data: Record<string, any>[] = rows;
       
       if (data.length === 0) {
         toast.error("Arquivo Excel vazio");

@@ -181,7 +181,7 @@ const App = () => {
             <RealtimeLayer />
             <TooltipProvider>
               <Sonner />
-              <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <BrowserRouter>
                 <AuthDisabledBanner />
                 <DevAuthBypassBanner />
                 <TenantContextErrorBanner />

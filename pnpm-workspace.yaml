@@ -33,6 +33,11 @@ overrides:
   "express>body-parser": ">=2.3.0"
   "@nestjs/platform-express>body-parser": ">=1.20.6 <2.0.0"
   "@nestjs/typeorm>uuid": ">=11.1.1"
+  # advisories 1114301/1114726 (file-type ASF infinite loop / ZIP decompression
+  # bomb, fixed >=21.3.2) -- @nestjs/common 10.4.22 (last 10.x) pins 20.4.1 and
+  # only consumes `fileTypeFromBuffer` (FileTypeValidator, lazy import()), an
+  # API 21.x keeps; 21.x needs Node >=20 (CI, Docker builder and runtime are 20).
+  "@nestjs/common>file-type": ">=21.3.2 <22.0.0"
   "socket.io-parser@>=4.0.0 <4.2.7": ">=4.2.7"
   "dompurify@<=3.4.12": "3.4.13"
   # advisory 1158518/1193689/1193692/1193696/1193700/1193705/1193708/1193709/

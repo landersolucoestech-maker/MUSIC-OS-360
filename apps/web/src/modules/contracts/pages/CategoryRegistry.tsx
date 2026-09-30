@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef } from "react";
 import * as XLSX from "xlsx";
+import { readSpreadsheetRows } from "@/shared/lib/xlsx-isolated";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
@@ -170,12 +171,9 @@ export default function CategoryRegistry({
     if (!file) return;
     e.target.value = "";
     const reader = new FileReader();
-    reader.onload = (ev) => {
+    reader.onload = async (ev) => {
       try {
-        const data = new Uint8Array(ev.target?.result as ArrayBuffer);
-        const wb = XLSX.read(data, { type: "array" });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json<Record<string, string>>(ws);
+        const { rows } = await readSpreadsheetRows(ev.target?.result as ArrayBuffer);
         let added = 0;
         let skipped = 0;
         for (const row of rows) {

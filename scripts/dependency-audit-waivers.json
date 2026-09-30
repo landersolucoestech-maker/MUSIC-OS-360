@@ -4,71 +4,37 @@
       "advisoryId": 1108110,
       "package": "xlsx",
       "severity": "high",
-      "reason": "CVE-2023-30533 (prototype pollution). Sem versão corrigida publicada no npm — SheetJS removeu patches pós-0.20.2 do registry por disputa de distribuição; correções seguem só no CDN oficial deles. import-parser.service.ts é reachable via upload de usuário; mitigação interina de limites de tamanho/linhas/colunas aplicada em apps/api/src/modules/reports/import/import-parser.service.ts.",
+      "reason": "CVE-2023-30533 (prototype pollution ao LER um arquivo forjado). xlsx 0.18.5 é a última versão no npm; a correção (>=0.19.3) só existe na distribuição oficial da SheetJS (cdn.sheetjs.com), fora do registry. Renovado em 2026-09-30 com a exploitability removida: toda leitura de planilha não confiável roda isolada — na API em worker thread descartável (apps/api/src/modules/reports/import/xlsx-isolated-reader.ts, via core/security/disposable-worker.ts: realm V8 próprio, env vazio, deadline 10 s, só dados clonados voltam); no web em Web Worker (apps/web/src/shared/lib/xlsx-isolated.ts + xlsx-read.worker.ts). Um protótipo poluído morre com o worker e não alcança o processo/página. A escrita de planilhas (export) não é afetada pelo advisory.",
+      "evidence": "Testes: disposable-worker.spec.ts (poluição no worker não chega ao processo; env vazio), import-parser.service.spec.ts ('runs SheetJS in another realm' falha se o parse voltar a ser in-process), xlsx-isolated.test.ts (worker terminado, bytes transferidos) e as guardas dependency-waiver-reachability.spec.ts / xlsx-isolated.test.ts (XLSX.read só dentro do worker). Worker web validado em Chromium real.",
+      "decision": "RENEW_WITH_EVIDENCE",
       "owner": "landersolucoestech@gmail.com",
       "introduced": "2026-07-31",
-      "reviewBy": "2026-09-30",
-      "closeCondition": "Migrar para o build do CDN oficial da SheetJS pós-registry-dispute, ou substituir a biblioteca no caminho de import, com evidência de teste antes de produção."
+      "reviewBy": "2026-10-31",
+      "closeCondition": "Instalar SheetJS CE >= 0.20.3 da distribuição oficial (https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz, integrity fixada no lockfile) em apps/api e apps/web, com as suítes de import/export verdes — bloqueado em 2026-09-30 apenas porque o egress do ambiente de desenvolvimento nega cdn.sheetjs.com; ou substituir a biblioteca. Manter o isolamento até lá."
     },
     {
       "advisoryId": 1108111,
       "package": "xlsx",
       "severity": "high",
-      "reason": "CVE-2024-22363 (ReDoS). Mesma causa raiz do advisory 1108110 — sem versão corrigida no npm.",
+      "reason": "CVE-2024-22363 (ReDoS ao ler). Mesma causa raiz do advisory 1108110 (correção >=0.20.2 só fora do npm). Renovado em 2026-09-30 com a exploitability removida: o parse isolado tem deadline (API 10 s, web 15 s) e o worker é terminado — CPU descontrolada não bloqueia o event loop da API nem a UI.",
+      "evidence": "disposable-worker.spec.ts ('terminates runaway CPU at the deadline while this event loop keeps running'), import-parser.service.spec.ts (deadline -> rejeição PT-BR, causa técnica só no log; event loop livre durante o parse), xlsx-isolated.test.ts (worker terminado no deadline).",
+      "decision": "RENEW_WITH_EVIDENCE",
       "owner": "landersolucoestech@gmail.com",
       "introduced": "2026-07-31",
-      "reviewBy": "2026-09-30",
+      "reviewBy": "2026-10-31",
       "closeCondition": "Mesma condição do advisory 1108110."
-    },
-    {
-      "advisoryId": 1114301,
-      "package": "file-type",
-      "severity": "moderate",
-      "reason": "CVE-2026-31808 (loop infinito em parser ASF). Confirmado via `pnpm why file-type`: é dependência interna de @nestjs/common@10.4.22 (não uma lib chamada diretamente pelo app) — forçar override para 21.x arrisca quebrar o uso interno do NestJS sem visibilidade sobre a API real consumida. Tende a resolver-se junto do bump NestJS 10 -> 11 (advisory 1117063).",
-      "owner": "landersolucoestech@gmail.com",
-      "introduced": "2026-07-31",
-      "reviewBy": "2026-09-30",
-      "closeCondition": "Revalidar após a migração NestJS 10 -> 11; se @nestjs/common ainda não tiver subido file-type sozinho, aplicar override escopado (\"@nestjs/common>file-type\") e validar os fluxos de upload afetados."
-    },
-    {
-      "advisoryId": 1114726,
-      "package": "file-type",
-      "severity": "moderate",
-      "reason": "CVE-2026-32630 (ZIP decompression bomb). Mesma causa raiz do advisory 1114301 — dependência interna de @nestjs/common@10.4.22.",
-      "owner": "landersolucoestech@gmail.com",
-      "introduced": "2026-07-31",
-      "reviewBy": "2026-09-30",
-      "closeCondition": "Mesma condição do advisory 1114301."
     },
     {
       "advisoryId": 1117063,
       "package": "@nestjs/core",
       "severity": "moderate",
-      "reason": "CVE-2026-35515. Requer major bump 10.x -> 11.x, com regressão completa em guards/interceptors/pipes/TypeORM/Swagger customizados. Não é um bump seguro para aplicar sem análise dedicada.",
+      "reason": "CVE-2026-35515 (injeção de campos SSE em SseStream._transform). Correção só em @nestjs/core >= 11.1.18; 10.4.22 é o último 10.x (sem backport). Não alcançável: o caminho SSE do @nestjs/core só é ativado para handlers com SSE_METADATA ('__sse__'), definido apenas por @Sse(); a API não tem nenhum handler @Sse, nem os módulos Nest de terceiros que ela carrega (@bull-board/nestjs, @nestjs/terminus, @nestjs/swagger, @nestjs/bullmq, @nestjs/event-emitter, @nestjs/typeorm, @nestjs/config).",
+      "evidence": "apps/api/src/core/security/dependency-waiver-reachability.spec.ts falha se aparecer @Sse(, SSE_METADATA, SseStream ou text/event-stream em apps/api/src; varredura dos pacotes de terceiros em 2026-09-30 sem ocorrências.",
+      "decision": "RENEW_WITH_EVIDENCE",
       "owner": "landersolucoestech@gmail.com",
       "introduced": "2026-07-31",
-      "reviewBy": "2026-09-30",
-      "closeCondition": "Parte dedicada de migração NestJS 10 -> 11 com suíte de regressão completa, antes de produção."
-    },
-    {
-      "advisoryId": 1124268,
-      "package": "react-router",
-      "severity": "moderate",
-      "reason": "CVE-2026-53669 (open redirect via backslash). Fix requer migração de react-router-dom 6.x para o pacote unificado react-router 7.x — mudança de API relevante em toda a árvore de rotas do apps/web.",
-      "owner": "landersolucoestech@gmail.com",
-      "introduced": "2026-07-31",
-      "reviewBy": "2026-09-30",
-      "closeCondition": "Migração dedicada para react-router 7.x, validada com suíte completa de rotas, antes de produção. Mitigação interina: auditoria de todo destino de <Link>/navigate() controlado por usuário."
-    },
-    {
-      "advisoryId": 1124272,
-      "package": "react-router",
-      "severity": "moderate",
-      "reason": "CVE-2026-53666 (constructor injection via deserializeErrors em SSR hydration). Mesma migração necessária do advisory 1124268.",
-      "owner": "landersolucoestech@gmail.com",
-      "introduced": "2026-07-31",
-      "reviewBy": "2026-09-30",
-      "closeCondition": "Mesma condição do advisory 1124268."
+      "reviewBy": "2026-12-31",
+      "closeCondition": "Migração dedicada NestJS 10 -> 11 (@nestjs/core >= 11.1.18) com suíte de regressão completa, antes de produção; antes disso, qualquer handler @Sse exige a migração (a guarda de reachability bloqueia o CI)."
     }
   ]
 }

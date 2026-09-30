@@ -4,6 +4,7 @@ import * as XLSX from "xlsx";
 import { toast } from "sonner";
 
 import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
+import { readSpreadsheetRows } from "@/shared/lib/xlsx-isolated";
 export interface XlsxColumn {
   key: string;
   label: string;
@@ -66,24 +67,17 @@ export function parseXlsx(file: File): Promise<Record<string, string>[]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const buffer = e.target?.result as ArrayBuffer;
-        const workbook = XLSX.read(buffer, { type: "array" });
+        // SheetJS native object mode, in an isolated worker: first row becomes property keys.
+        // raw:false converts every cell to a string; defval:"" fills empty cells.
+        const { sheetNames, rows: rawRows } = await readSpreadsheetRows(buffer, { defval: "", raw: false });
 
-        const sheetName = workbook.SheetNames[0];
-        if (!sheetName) {
+        if (sheetNames.length === 0) {
           reject(new UserFacingError("Workbook has no sheets", "O arquivo não contém planilhas."));
           return;
         }
-
-        const worksheet = workbook.Sheets[sheetName];
-        // Use SheetJS native object mode: first row becomes property keys automatically.
-        // raw:false converts every cell to a string; defval:"" fills empty cells.
-        const rawRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet, {
-          defval: "",
-          raw: false,
-        });
 
         if (rawRows.length === 0) {
           reject(new UserFacingError("Sheet needs a header row and at least one data row", "O arquivo deve ter pelo menos um cabeçalho e uma linha de dados."));

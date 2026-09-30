@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import * as XLSX from "xlsx";
+import { readSpreadsheetRows } from "@/shared/lib/xlsx-isolated";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
@@ -415,15 +416,11 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
     e.target.value = "";
 
     const reader = new FileReader();
-    reader.onload = (ev) => {
+    reader.onload = async (ev) => {
       try {
-        const data = new Uint8Array(ev.target?.result as ArrayBuffer);
-        const wb = XLSX.read(data, { type: "array" });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        if (!ws) throw new Error("no sheet");
-
-        // sheet_to_json returns rows as plain objects keyed by header names
-        const rawRows: unknown[] = XLSX.utils.sheet_to_json(ws, { defval: "" });
+        // Rows as plain objects keyed by header names, parsed in an isolated worker
+        const { sheetNames, rows: rawRows } = await readSpreadsheetRows(ev.target?.result as ArrayBuffer, { defval: "" });
+        if (sheetNames.length === 0) throw new Error("no sheet");
 
         // Map spreadsheet column names → our internal field names
         const remapped = rawRows.map((r) => {

@@ -50,8 +50,7 @@ import {
   formValuesToArtistPayload,
 } from "@/modules/artist/forms/artist-form.definition";
 import { RequirePermission } from "@/shared/components/RequirePermission";
-
-const getXLSX = () => import("xlsx");
+import { readSpreadsheetRows } from "@/shared/lib/xlsx-isolated";
 
 // Task H: relationship type (exclusive/partner/independent) comes ready
 // from the backend (ArtistsService.list()/relationshipStats() — classification by
@@ -122,11 +121,7 @@ export default function Artists() {
     const file = event.target.files?.[0];
     if (!file) return;
     try {
-      const XLSX = await getXLSX();
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: "array" });
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const data: Record<string, unknown>[] = XLSX.utils.sheet_to_json(worksheet);
+      const { rows: data } = await readSpreadsheetRows(await file.arrayBuffer());
       if (data.length === 0) {
         toast.error("Arquivo Excel vazio");
         return;

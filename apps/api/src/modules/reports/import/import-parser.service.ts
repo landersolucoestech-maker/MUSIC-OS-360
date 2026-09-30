@@ -1,8 +1,9 @@
 /**
- * Fail-closed parser for an XLSX workbook with exactly one sheet.
+ * Fail-closed parser for an XLSX workbook with exactly one sheet. The OpenXML
+ * parse itself runs isolated (xlsx-isolated-reader.ts); this service decides.
  */
-import { BadRequestException, Injectable } from '@nestjs/common';
-import * as XLSX from 'xlsx';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { DisposableWorkerError } from '../../../core/security/disposable-worker';
 import { isWritableKey } from '../../../core/security/safe-object';
 import {
   IMPORT_MAX_BYTES,
@@ -11,9 +12,11 @@ import {
   IMPORT_MAX_ROWS,
   IMPORT_MAX_UNCOMPRESSED_BYTES,
   IMPORT_MAX_ZIP_ENTRIES,
+  IMPORT_PARSE_TIMEOUT_MS,
   type ImportFormat,
   type ParsedFile,
 } from './import.types';
+import { OpenXmlParseError, readWorkbookIsolated, type IsolatedWorkbook } from './xlsx-isolated-reader';
 
 const ZIP_LOCAL_FILE_HEADER = 0x04034b50;
 const ZIP_CENTRAL_DIRECTORY_HEADER = 0x02014b50;
@@ -35,6 +38,8 @@ const CORRUPT_WORKBOOK_MESSAGE =
   'Planilha XLSX rejeitada. O arquivo não é uma planilha XLSX válida ou está corrompido.';
 const OVERSIZED_CONTENT_MESSAGE =
   'Planilha XLSX rejeitada. O conteúdo da planilha excede o limite permitido.';
+const PARSE_TIMEOUT_MESSAGE =
+  'Planilha XLSX rejeitada. O processamento da planilha excedeu o tempo limite.';
 
 /**
  * Structural (ZIP/OpenXML container) rejection. The user only gets `message`
@@ -154,17 +159,11 @@ function assertSafeZipContainer(content: Buffer): void {
   }
 }
 
-function assertNoFormulasOrMerges(sheet: XLSX.WorkSheet): void {
-  const merges = sheet['!merges'] ?? [];
-  if (merges.length > 0) {
+function assertNoFormulasOrMerges(workbook: IsolatedWorkbook): void {
+  if (workbook.mergeCount > 0) {
     throw invalidWorkbook('Células mescladas não são permitidas.');
   }
-
-  for (const address of Object.keys(sheet)) {
-    if (address.startsWith('!')) continue;
-    const cell = sheet[address] as XLSX.CellObject | undefined;
-    if (cell?.f) throw invalidWorkbook(`Fórmula não permitida na célula ${address}.`);
-  }
+  if (workbook.formulaCell) throw invalidWorkbook(`Fórmula não permitida na célula ${workbook.formulaCell}.`);
 }
 
 function assertHeaders(headers: string[]): void {
@@ -186,7 +185,11 @@ function assertHeaders(headers: string[]): void {
 
 @Injectable()
 export class ImportParserService {
-  parse(filename: string, content: Buffer, expectedSheetName?: string): ParsedFile {
+  private readonly logger = new Logger(ImportParserService.name);
+  /** Deadline of the isolated OpenXML parse. */
+  protected parseTimeoutMs = IMPORT_PARSE_TIMEOUT_MS;
+
+  async parse(filename: string, content: Buffer, expectedSheetName?: string): Promise<ParsedFile> {
     formatFromName(filename);
     if (!content || content.length === 0) throw new BadRequestException('Arquivo vazio.');
     if (content.length > IMPORT_MAX_BYTES) {
@@ -194,57 +197,44 @@ export class ImportParserService {
     }
     assertSafeZipContainer(content);
 
-    let workbook: XLSX.WorkBook;
+    let workbook: IsolatedWorkbook;
     try {
-      workbook = XLSX.read(content, {
-        type: 'buffer',
+      workbook = await readWorkbookIsolated(content, {
         sheetRows: IMPORT_MAX_ROWS + 2,
-        cellDates: true,
-        cellFormula: true,
-        bookVBA: true,
+        maxColumns: IMPORT_MAX_COLUMNS,
+        timeoutMs: this.parseTimeoutMs,
       });
     } catch (error) {
-      throw rejectedContainer(
-        `OpenXML parse failure: ${error instanceof Error ? error.message : String(error)}.`,
-      );
+      throw this.parseRejection(error);
     }
 
-    if ((workbook as XLSX.WorkBook & { vbaraw?: unknown }).vbaraw) {
+    if (workbook.hasVba) {
       throw invalidWorkbook('Macros não são permitidas.');
     }
-    if (workbook.SheetNames.length !== 1) {
+    if (workbook.sheetNames.length !== 1) {
       throw new BadRequestException({
         error: 'SINGLE_SHEET_REQUIRED',
-        message: `O arquivo deve conter exatamente uma aba. Abas encontradas: ${workbook.SheetNames.length}.`,
+        message: `O arquivo deve conter exatamente uma aba. Abas encontradas: ${workbook.sheetNames.length}.`,
       });
     }
 
-    const sheetName = workbook.SheetNames[0]!;
+    const sheetName = workbook.sheetNames[0]!;
     if (expectedSheetName && sheetName !== expectedSheetName.slice(0, 31)) {
       throw invalidWorkbook(
         `Nome da aba inválido. Esperado: "${expectedSheetName.slice(0, 31)}"; recebido: "${sheetName}".`,
       );
     }
-    const sheetVisibility = workbook.Workbook?.Sheets?.[0]?.Hidden ?? 0;
-    if (sheetVisibility !== 0) throw invalidWorkbook('A única aba da planilha deve estar visível.');
+    if (workbook.firstSheetHidden !== 0) throw invalidWorkbook('A única aba da planilha deve estar visível.');
 
-    const sheet = workbook.Sheets[sheetName];
-    if (!sheet) throw rejectedContainer('Declared sheet not found in the workbook.');
-    assertNoFormulasOrMerges(sheet);
+    if (!workbook.firstSheetFound) throw rejectedContainer('Declared sheet not found in the workbook.');
+    assertNoFormulasOrMerges(workbook);
 
-    const reference = sheet['!ref'];
-    if (!reference) throw new BadRequestException('Planilha vazia.');
-    const range = XLSX.utils.decode_range(reference);
-    if (range.e.c + 1 > IMPORT_MAX_COLUMNS) {
+    if (!workbook.ref || workbook.lastColumnIndex === null) throw new BadRequestException('Planilha vazia.');
+    if (workbook.lastColumnIndex + 1 > IMPORT_MAX_COLUMNS) {
       throw invalidWorkbook(`Quantidade de colunas excede o limite de ${IMPORT_MAX_COLUMNS}.`);
     }
 
-    const matrix = XLSX.utils.sheet_to_json<unknown[]>(sheet, {
-      header: 1,
-      defval: '',
-      raw: false,
-      blankrows: false,
-    });
+    const matrix = workbook.matrix;
     if (matrix.length === 0) throw new BadRequestException('Planilha vazia.');
 
     const headers = (matrix[0] as unknown[]).map((header) => String(header ?? '').trim());
@@ -264,5 +254,20 @@ export class ImportParserService {
     });
 
     return { format: 'xlsx', headers, rows };
+  }
+
+  /** The technical diagnosis goes to the log; the response carries a static reason and PT-BR copy. */
+  private parseRejection(error: unknown): BadRequestException {
+    const detail = error instanceof Error ? error.message : String(error);
+    if (error instanceof DisposableWorkerError && error.failure === 'timeout') {
+      this.logger.warn(`XLSX import rejected: OpenXML parse timed out (${detail}).`);
+      return rejectedContainer('OpenXML parse exceeded the time limit.', PARSE_TIMEOUT_MESSAGE);
+    }
+    if (error instanceof OpenXmlParseError) {
+      this.logger.warn(`XLSX import rejected: OpenXML parse failure (${detail}).`);
+      return rejectedContainer('OpenXML parse failure.');
+    }
+    this.logger.error(`XLSX import rejected: isolated OpenXML parser failed (${detail}).`);
+    return rejectedContainer('OpenXML parser unavailable.');
   }
 }

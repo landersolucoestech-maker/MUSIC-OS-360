@@ -8,6 +8,8 @@ export const IMPORT_MAX_BYTES = 1024 * 1024;
 export const IMPORT_MAX_ZIP_ENTRIES = 1000;
 export const IMPORT_MAX_UNCOMPRESSED_BYTES = 20 * 1024 * 1024;
 export const IMPORT_MAX_COMPRESSION_RATIO = 100;
+/** Deadline of the isolated OpenXML parse (a 1 MB workbook parses in well under 1 s). */
+export const IMPORT_PARSE_TIMEOUT_MS = 10_000;
 
 export interface ParsedFile {
   format: ImportFormat;
