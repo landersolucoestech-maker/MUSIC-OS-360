@@ -1,13 +1,11 @@
 name: CI
 
 on:
-  # Permanent promotion topology:
-  #   dev -> staging -> main
-  # Development, homologation and production remain isolated.
+  # Branch policy: dev is the only branch (docs/engineering/git-safety.md).
   push:
-    branches: [dev, staging, main]
+    branches: [dev]
   pull_request:
-    branches: [dev, staging, main]
+    branches: [dev]
   workflow_dispatch: {}
 
 concurrency:
@@ -46,7 +44,7 @@ jobs:
           node scripts/verify-staging-deploy-order.mjs
           node --test scripts/verify-staging-deploy-order.test.mjs scripts/wait-for-http-state.test.mjs
 
-      - name: Verify permanent branch topology
+      - name: Verify dev-only branch topology
         run: node scripts/verify-branch-topology.mjs
 
       - name: Branch policy guard (dev-only; hooks, Claude guard and detector stay wired)
@@ -457,18 +455,3 @@ jobs:
       - name: verify:realtime-external (physical state, independent of tracking) — read-only
         if: steps.gate.outputs.enabled == 'true'
         run: pnpm --filter @music-os-360/api verify:realtime-external
-
-  release-tag:
-    name: Tag Release
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set SENTRY_RELEASE
-        run: echo "SENTRY_RELEASE=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-      - name: Annotate deployment
-        run: |
-          echo "Release ${{ env.SENTRY_RELEASE }} ready for deployment"
-          echo "SENTRY_RELEASE=${{ env.SENTRY_RELEASE }}" >> $GITHUB_OUTPUT
-        id: release

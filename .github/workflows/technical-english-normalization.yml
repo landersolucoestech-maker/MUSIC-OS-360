@@ -1,28 +1,35 @@
 name: Technical English Normalization Runner
 
+# Manual, read-only tool. It never commits or pushes: a maintainer downloads the
+# generated patch, reviews it and applies it through the guarded local workflow
+# (dev is the only branch; docs/engineering/git-safety.md). It is intentionally
+# NOT triggered by commit messages.
 on:
-  push:
-    branches: [dev]
+  workflow_dispatch:
+    inputs:
+      cluster:
+        description: "Cluster to normalize (the runner authorizes only this one)"
+        required: true
+        type: choice
+        options:
+          - artist
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: technical-english-normalization-dev
+  group: technical-english-normalization
   cancel-in-progress: false
 
 jobs:
   normalize:
-    if: contains(github.event.head_commit.message, '[run-tech-english:')
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
-      - name: Check out exact dev head
+      - name: Check out the dispatching dev head
         uses: actions/checkout@v4
         with:
-          ref: dev
           fetch-depth: 0
 
       - name: Set up pnpm
@@ -39,32 +46,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Resolve requested cluster
-        id: cluster
-        shell: bash
-        run: |
-          set -euo pipefail
-          cluster="$(printf '%s' "$COMMIT_MESSAGE" | sed -n 's/.*\[run-tech-english:\([^]]*\)\].*/\1/p')"
-          case "$cluster" in
-            artist|hr|contracts|accounting|catalog) ;;
-            *) echo "Unsupported or missing cluster: $cluster" >&2; exit 1 ;;
-          esac
-          echo "name=$cluster" >> "$GITHUB_OUTPUT"
-          echo "Running technical-English normalization cluster: $cluster"
-
-      - name: Record baseline typecheck
-        id: baseline
-        shell: bash
-        run: |
-          set +e
-          pnpm --filter @music-os-360/web typecheck 2>&1 | tee /tmp/typecheck-before.log
-          code=${PIPESTATUS[0]}
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          echo "Baseline web typecheck exit code: $code"
-          exit 0
-
       - name: Execute deterministic normalization
-        run: node scripts/run-technical-english-normalization.mjs "${{ steps.cluster.outputs.name }}"
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+        run: node scripts/run-technical-english-normalization.mjs "$CLUSTER"
 
       - name: Verify protected Engineering OS paths are untouched
         shell: bash
@@ -83,46 +68,21 @@ jobs:
           git diff --stat
 
       - name: Run web typecheck after normalization
-        shell: bash
-        run: |
-          set -o pipefail
-          pnpm --filter @music-os-360/web typecheck 2>&1 | tee /tmp/typecheck-after.log
+        run: pnpm --filter @music-os-360/web typecheck
 
       - name: Run web regression tests after normalization
         run: pnpm --filter @music-os-360/web test:run
 
-      - name: Stage only normalized web source changes
+      - name: Export the patch (no commit, no push)
         shell: bash
         run: |
           set -euo pipefail
-          git add -u -- apps/web/src
-          if git diff --cached --quiet; then
-            echo 'No staged normalization changes.' >&2
-            exit 1
-          fi
-          if git diff --cached --name-only | grep -E '^(\.claude/|\.gitignore$)'; then
-            echo 'Protected path detected in staged patch.' >&2
-            exit 1
-          fi
-          git diff --cached --check
-          git diff --cached --stat
-          git diff --cached --name-status
+          git diff -- apps/web/src > normalization.patch
+          test -s normalization.patch || { echo 'No normalization changes.' >&2; exit 1; }
 
-      - name: Commit normalized cluster
-        shell: bash
-        run: |
-          set -euo pipefail
-          cluster="${{ steps.cluster.outputs.name }}"
-          case "$cluster" in
-            artist) message='refactor(artists): normalize internal naming to English' ;;
-            hr) message='refactor(hr): normalize employee-domain internal naming' ;;
-            contracts) message='refactor(contracts): normalize internal naming to English' ;;
-            accounting) message='refactor(accounting): normalize internal naming to English' ;;
-            catalog) message='refactor(catalog): normalize licensing and participant naming' ;;
-          esac
-          git config user.name 'MUSIC OS 360 Normalization Runner'
-          git config user.email 'actions@users.noreply.github.com'
-          git commit -m "$message"
-
-      - name: Push without force
-        run: git push origin HEAD:dev
+      - name: Upload the patch for maintainer review
+        uses: actions/upload-artifact@v4
+        with:
+          name: technical-english-normalization-patch
+          path: normalization.patch
+          retention-days: 14

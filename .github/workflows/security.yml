@@ -1,11 +1,11 @@
 name: Security Scan
 
 on:
-  # Permanent promotion topology: dev -> staging -> main.
+  # Branch policy: dev is the only branch (docs/engineering/git-safety.md).
   push:
-    branches: [dev, staging, main]
+    branches: [dev]
   pull_request:
-    branches: [dev, staging, main]
+    branches: [dev]
   schedule:
     # Run weekly on Monday at 08:00 UTC regardless of pushes
     - cron: "0 8 * * 1"
@@ -54,7 +54,7 @@ jobs:
   sbom:
     name: Generate SBOM
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
 

@@ -141,9 +141,10 @@ Known limits of the local layers:
 Deleting a forbidden branch stays allowed by every local layer. A user with `push.followTags=true`
 must not create local annotated tags on `dev` (tag pushes are refused).
 
-`.github/workflows/staging.yml`, `ci.yml`, `security.yml` and
-`docs/runbooks/staging-to-production.md` still describe a `dev -> staging -> main` promotion
-topology. Neither `staging` nor `main` exists on `origin`; under this policy they are not created.
+CI is aligned with this policy: `ci.yml` and `security.yml` run on `dev` only, `staging.yml` is a
+manual dispatch from `dev` (staging is an environment, not a branch) and there is no `main` branch
+(`scripts/verify-branch-topology.mjs` enforces it). The technical-English normalization workflow is a
+manual, read-only tool that exports a patch and never commits or pushes.
 
 ## Other rules
 

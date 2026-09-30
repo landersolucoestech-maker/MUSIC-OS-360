@@ -1,7 +1,7 @@
 name: Staging CI/CD
 
-# Acceptance gate for the permanent `staging` branch.
-# Every change bound for production must follow dev -> staging -> main.
+# Acceptance gate for the `staging` environment (not a branch).
+# dev is the only branch; this workflow runs by manual dispatch from dev.
 # Requires secrets from the GitHub Environment `staging`, isolated from production:
 #   STAGING_DATABASE_URL
 #   STAGING_APP_DATABASE_URL
@@ -26,11 +26,9 @@ name: Staging CI/CD
 #   build is up -> smoke,
 # and a build older than the database is never deployed (db:check:state).
 # The `staging` GitHub Environment should require reviewers and allow only the
-# `staging` branch (repository settings — see docs/RUNBOOK_ROLLBACK.md).
+# `dev` branch (repository settings — see docs/RUNBOOK_ROLLBACK.md).
 
 on:
-  push:
-    branches: [staging]
   workflow_dispatch:
     inputs:
       apply_migrations:
@@ -59,7 +57,7 @@ permissions:
 # schema (see the plan step) and get their own group, so they cannot replace a
 # pending staging deploy.
 concurrency:
-  group: ${{ github.ref == 'refs/heads/staging' && 'staging-deploy' || format('staging-readonly-{0}', github.run_id) }}
+  group: ${{ github.ref == 'refs/heads/dev' && 'staging-deploy' || format('staging-readonly-{0}', github.run_id) }}
   cancel-in-progress: false
 
 jobs:
@@ -142,11 +140,11 @@ jobs:
             # rollback:to validates the whole revert list before reverting anything.
             change=rollback
           elif [ "$PENDING" != "0" ]; then
-            [ "$APPLY_MIGRATIONS" = "true" ] || { echo "::error::$PENDING pending migration(s) on staging, but apply_migrations was not checked. Re-run this workflow on branch staging with 'Apply pending TypeORM migrations to staging' checked to authorize."; exit 1; }
+            [ "$APPLY_MIGRATIONS" = "true" ] || { echo "::error::$PENDING pending migration(s) on staging, but apply_migrations was not checked. Re-run this workflow on branch dev with 'Apply pending TypeORM migrations to staging' checked to authorize."; exit 1; }
             change=migrate
           fi
           if [ "$change" != "none" ]; then
-            [ "$GITHUB_REF" = "refs/heads/staging" ] || { echo "::error::schema changes run only from branch staging (the build deployed right after them)"; exit 1; }
+            [ "$GITHUB_REF" = "refs/heads/dev" ] || { echo "::error::schema changes run only from branch dev (the build deployed right after them)"; exit 1; }
             test -n "$STAGING_STOP_WEBHOOK_URL" || { echo "::error::STAGING_STOP_WEBHOOK_URL is not configured: the running build cannot be stopped, so the schema is not changed"; exit 1; }
             test -n "$STAGING_API_URL" || { echo "::error::STAGING_API_URL is not configured: cannot prove the running build stopped"; exit 1; }
           fi
@@ -203,7 +201,7 @@ jobs:
   deploy-staging:
     name: deploy staging
     needs: [migrations-staging]
-    if: github.ref == 'refs/heads/staging' && needs.migrations-staging.outputs.rollback != 'true'
+    if: github.ref == 'refs/heads/dev' && needs.migrations-staging.outputs.rollback != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: staging
@@ -233,7 +231,7 @@ jobs:
   smoke-staging:
     name: smoke staging
     needs: [deploy-staging]
-    if: github.ref == 'refs/heads/staging'
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: staging
@@ -256,8 +254,8 @@ jobs:
 
 # Promotion rule:
 # - dev receives development work;
-# - staging receives only code approved on dev;
-# - main receives only code validated on the staging branch;
+# - staging is an environment that receives code from dev by manual dispatch;
+# - production is released by an owner-authorized manual action (no main branch);
 # - migrations stay blocked without explicit authorization;
 # - a schema change (migration or rollback) never runs while a build serves,
 #   and no build is deployed over a schema newer than its own.
