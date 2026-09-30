@@ -6,7 +6,7 @@ import {
 } from "../constants/marketing.constants";
 import { getFormatViolation } from "../config/social-formats";
 import { UserFacingError } from "@/shared/lib/errors";
-import { canonicalPriority } from "../utils/marketing-legacy-vocabulary";
+import { canonicalApproval, canonicalPriority } from "../utils/marketing-legacy-vocabulary";
 import { deriveContentDisplayStatus } from "../utils/marketing-content-status";
 import { targetTypeFromWire, targetTypeToWire } from "../utils/marketing-content-wire";
 import type {
@@ -227,7 +227,7 @@ function contentFromApi(row: RecordRow): MarketingContent {
     ...row,
     targetType: targetTypeFromWire(row.targetType),
     channels: meta.channels ?? undefined,
-    approval: row.approval ?? meta.approval ?? "pendente",
+    approval: canonicalApproval([row.approval, meta.approval].find((v) => v !== null && v !== undefined && v !== "")),
     files: row.files ?? [],
     notes: row.notes ?? "",
     owner: row.owner ?? "",
@@ -461,7 +461,7 @@ function assetFromApi(row: RecordRow): MarketingAsset {
     artistId: row.artist_id,
     department: meta.department,
     owner: meta.owner ?? row.created_by ?? "",
-    approval: row.status === "approved" ? "aprovado" : row.status === "rejected" ? "rejeitado" : "pendente",
+    approval: row.status === "approved" ? "approved" : row.status === "rejected" ? "rejected" : "pending",
     url: row.file_url ?? "",
     thumbnailUrl: row.thumbnail_url ?? undefined,
     tags: row.tags ?? [],
@@ -540,7 +540,7 @@ async function deliverableFromApi(row: RecordRow): Promise<MarketingDeliverable>
     title: row.title,
     description: row.description ?? "",
     type: String(row.asset_type ?? "OTHER").toLowerCase(),
-    approval: row.status === "approved" ? "aprovado" : row.status === "rejected" ? "rejeitado" : row.status === "in_review" ? "em_revisao" : "pendente",
+    approval: row.status === "approved" ? "approved" : row.status === "rejected" ? "rejected" : row.status === "in_review" ? "in_review" : "pending",
     fileUrl: row.file_url ?? "",
     fileName: meta.fileName ?? row.title,
     mimeType: row.mime_type ?? "",
@@ -612,7 +612,7 @@ const deliverablesApi = {
     }));
   },
   async setApproval(id: ID, approval: DeliverableApproval) {
-    if (approval === "em_revisao") {
+    if (approval === "in_review") {
       await api.post(`/marketing/assets/${id}/request-approval`, {});
       return deliverableFromApi(await api.get<RecordRow>(`/marketing/assets/${id}`));
     }
@@ -620,7 +620,7 @@ const deliverablesApi = {
     const pending = approvals.find((item) => item.status === "pending");
     if (!pending) throw new Error("[marketing] asset has no pending approval");
     await api.post(`/marketing/assets/approvals/${pending.id}/decision`, {
-      status: approval === "aprovado" ? "approved" : "rejected",
+      status: approval === "approved" ? "approved" : "rejected",
     });
     return deliverableFromApi(await api.get<RecordRow>(`/marketing/assets/${id}`));
   },
@@ -731,20 +731,20 @@ async function analytics(): Promise<AnalyticsOverview> {
     engagement: item.engagement, clicks: 0, conversions: item.conversions, roi: 0,
   }));
   const breakdownByDimension: Record<AnalyticsDimension, AnalyticsBreakdownRow[]> = {
-    projeto_musical: projectBreakdown,
-    campanha: campaignBreakdown,
-    canal: channelBreakdown,
-    periodo: periodBreakdown,
-    responsavel: responsibleBreakdown,
-    tipo_conteudo: contentTypeBreakdown,
-    artista: projectBreakdown,
-    empresa: typeBreakdown,
+    music_project: projectBreakdown,
+    campaign: campaignBreakdown,
+    channel: channelBreakdown,
+    period: periodBreakdown,
+    owner: responsibleBreakdown,
+    content_type: contentTypeBreakdown,
+    artist: projectBreakdown,
+    company: typeBreakdown,
   };
   return {
     totals: {
       ...totals,
       audienceGrowth: 0,
-      approvalRate: contents.length ? contents.filter((item) => item.approval === "aprovado").length / contents.length * 100 : 0,
+      approvalRate: contents.length ? contents.filter((item) => item.approval === "approved").length / contents.length * 100 : 0,
       deliveries: tasks.filter((item) => item.status === "done").length,
       tasksDone: tasks.filter((item) => item.status === "done").length,
       activeProjects: projects.filter((item) => item.status === "em_andamento").length,
@@ -781,7 +781,7 @@ export const marketingService = {
     const [campaigns, projects, contents, briefings, tasks, activity] = await Promise.all([
       campaignsApi.list(), projectsApi.list(), contentsApi.list(), briefingsApi.list(), tasksApi.list(), this.getActivity(),
     ]);
-    const pendingApprovals = contents.filter((item) => item.approval === "pendente");
+    const pendingApprovals = contents.filter((item) => item.approval === "pending");
     const upcoming = contents.filter((item) => item.status !== "published")
       .sort((a, b) => a.publishDate.localeCompare(b.publishDate)).slice(0, 5);
     return {

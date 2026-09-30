@@ -144,11 +144,13 @@ export type ContentStatus =
  */
 export type ContentDisplayStatus = ContentStatus | "overdue";
 
-export type ApprovalStatus =
-  | "pendente"
-  | "aprovado"
-  | "reprovado"
-  | "ajustes_solicitados";
+/**
+ * Canonical (technical, English) approval state of a content or asset. Same
+ * vocabulary as the asset-approval API (marketing-assets.dto.ts); PT-BR labels
+ * live in APPROVAL_STATUS_LABEL. A content's approval is persisted in
+ * marketing_content_posts.metadata.approval (chk_marketing_content_posts_metadata_approval).
+ */
+export type ApprovalStatus = "pending" | "approved" | "rejected" | "revision_requested";
 
 export type BriefingType =
   | "campanha"
@@ -562,7 +564,7 @@ export type DeliverableType =
   | "template"
   | "other";
 
-export type DeliverableApproval = "pendente" | "em_revisao" | "aprovado" | "rejeitado";
+export type DeliverableApproval = "pending" | "in_review" | "approved" | "rejected";
 
 export interface DeliverableVersion {
   id: ID;
@@ -674,14 +676,14 @@ export interface AutomationRun {
 // ---------------------------------------------------------------------------
 
 export type AnalyticsDimension =
-  | "projeto_musical"
-  | "campanha"
-  | "canal"
-  | "periodo"
-  | "responsavel"
-  | "tipo_conteudo"
-  | "artista"
-  | "empresa";
+  | "music_project"
+  | "campaign"
+  | "channel"
+  | "period"
+  | "owner"
+  | "content_type"
+  | "artist"
+  | "company";
 
 export interface AnalyticsSeriesPoint {
   label: string;

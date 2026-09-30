@@ -139,7 +139,7 @@ export default function Calendar() {
   const createContent = useCreateContent();
   const updateContent = useUpdateContent();
 
-  const [view, setView] = useState<MarketingCalendarViewMode>("semana");
+  const [view, setView] = useState<MarketingCalendarViewMode>("week");
   const [referenceDate, setReferenceDate] = useState(() => new Date());
   const [channelFilter, setChannelFilter] = useState(ALL_FILTER);
   const [typeFilter, setTypeFilter] = useState(ALL_FILTER);
@@ -164,8 +164,8 @@ export default function Calendar() {
   const metrics = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const limite = new Date(today);
-    limite.setDate(limite.getDate() + 7);
+    const limit = new Date(today);
+    limit.setDate(limit.getDate() + 7);
 
     const scheduled = contents.filter((content) => content.status === "scheduled").length;
     const published = contents.filter((content) => content.status === "published").length;
@@ -174,10 +174,10 @@ export default function Calendar() {
       const data = new Date(content.publishDate);
       if (Number.isNaN(data.getTime())) return false;
       data.setHours(0, 0, 0, 0);
-      return data >= today && data <= limite;
+      return data >= today && data <= limit;
     }).length;
 
-    return { total: contents.length, agendados: scheduled, publicados: published, proximos7Dias: next7Days };
+    return { total: contents.length, scheduled, published, next7Days };
   }, [contents]);
 
   const periodLabel = formatPeriodLabel(view, referenceDate);
@@ -226,9 +226,9 @@ export default function Calendar() {
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <MetricCard title="Conteúdos" value={metrics.total} description="no total" icon={CalendarDays} accent="primary" />
-            <MetricCard title="Agendados" value={metrics.agendados} description="aguardando publicação" icon={Clock} accent="warning" />
-            <MetricCard title="Publicados" value={metrics.publicados} description="conteúdos publicados" icon={CheckCircle2} accent="success" />
-            <MetricCard title="Próximos 7 dias" value={metrics.proximos7Dias} description="na próxima semana" icon={CalendarClock} accent="primary" />
+            <MetricCard title="Agendados" value={metrics.scheduled} description="aguardando publicação" icon={Clock} accent="warning" />
+            <MetricCard title="Publicados" value={metrics.published} description="conteúdos publicados" icon={CheckCircle2} accent="success" />
+            <MetricCard title="Próximos 7 dias" value={metrics.next7Days} description="na próxima semana" icon={CalendarClock} accent="primary" />
           </div>
 
           <div className="flex flex-wrap items-center gap-2 rounded-lg bg-muted/30 p-3">
@@ -257,10 +257,10 @@ export default function Calendar() {
               value={view}
               onValueChange={(value) => setView(value as MarketingCalendarViewMode)}
               options={[
-                { value: "dia", label: "Dia" },
-                { value: "semana", label: "Semana" },
-                { value: "mes", label: "Mês" },
-                { value: "ano", label: "Ano" },
+                { value: "day", label: "Dia" },
+                { value: "week", label: "Semana" },
+                { value: "month", label: "Mês" },
+                { value: "year", label: "Ano" },
               ]}
               className="w-[100px]"
             />
@@ -634,7 +634,7 @@ function ContentScheduleModal({
               </div>
 
               <FieldBlock label="Plataformas (publicação multiplataforma)" required error={errors.channels}>
-                <div className="flex flex-wrap gap-1.5" data-testid="select-plataforma">
+                <div className="flex flex-wrap gap-1.5" data-testid="select-platform">
                   {PUBLISH_PLATFORMS.map((option) => {
                     const active = values.channels.includes(option.value);
                     const isPrimary = values.channel === option.value;
@@ -667,7 +667,7 @@ function ContentScheduleModal({
 
               <FieldBlock label="Tipo de conteúdo" required error={errors.type}>
                 <Select value={values.type} onValueChange={(value) => handleTypeChange(value as ContentType)}>
-                  <SelectTrigger data-testid="select-type-conteudo">
+                  <SelectTrigger data-testid="select-content-type">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -695,7 +695,7 @@ function ContentScheduleModal({
               <div className="grid gap-2 sm:grid-cols-2">
                 <FieldBlock label="Data" required error={errors.publishDate}>
                   <DatePickerField
-                    data-testid="input-data-publicação"
+                    data-testid="input-publish-date"
                     value={values.publishDate}
                     onChange={(date) => setValue("publishDate", date)}
                     placeholder="Selecionar data"
@@ -706,7 +706,7 @@ function ContentScheduleModal({
                   <div className="relative">
                     <Clock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
-                      data-testid="input-horário"
+                      data-testid="input-publish-time"
                       type="time"
                       value={values.publishTime}
                       onChange={(event) => setValue("publishTime", event.target.value)}
@@ -718,7 +718,7 @@ function ContentScheduleModal({
 
               <FieldBlock label="Legenda / Copy" required error={errors.copy} counter={`${values.copy.length}/2200`}>
                 <Textarea
-                  data-testid="input-legenda"
+                  data-testid="input-caption"
                   value={values.copy}
                   maxLength={2200}
                   onChange={(event) => setValue("copy", event.target.value)}
@@ -1789,15 +1789,15 @@ function capitalize(value: string): string {
 }
 
 function formatPeriodLabel(view: MarketingCalendarViewMode, date: Date): string {
-  if (view === "dia") {
+  if (view === "day") {
     return capitalize(
       date.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }),
     );
   }
-  if (view === "mes") {
+  if (view === "month") {
     return capitalize(date.toLocaleDateString("pt-BR", { month: "long", year: "numeric" }));
   }
-  if (view === "ano") {
+  if (view === "year") {
     return String(date.getFullYear());
   }
   return formatWeekRange(date);
@@ -1805,10 +1805,10 @@ function formatPeriodLabel(view: MarketingCalendarViewMode, date: Date): string 
 
 function shiftDate(date: Date, view: MarketingCalendarViewMode, delta: number): Date {
   const next = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  if (view === "dia") next.setDate(next.getDate() + delta);
-  else if (view === "semana") next.setDate(next.getDate() + delta * 7);
-  else if (view === "mes") next.setMonth(next.getMonth() + delta);
-  else if (view === "ano") next.setFullYear(next.getFullYear() + delta);
+  if (view === "day") next.setDate(next.getDate() + delta);
+  else if (view === "week") next.setDate(next.getDate() + delta * 7);
+  else if (view === "month") next.setMonth(next.getMonth() + delta);
+  else if (view === "year") next.setFullYear(next.getFullYear() + delta);
   return next;
 }
 

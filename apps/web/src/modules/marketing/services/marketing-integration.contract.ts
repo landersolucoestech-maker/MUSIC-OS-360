@@ -23,14 +23,14 @@ export type IntegrationProviderKey =
   | "spotify_ads"
   | "tiktok_ads"
   | "crm"
-  | "portal_noticias"
+  | "news_portal"
   | "storage"
   | "ai"
-  | "distribuicao_digital"
-  | "producao_musical"
-  | "administracao_musical"
-  | "comunicacao"
-  | "comercial";
+  | "digital_distribution"
+  | "music_production"
+  | "music_administration"
+  | "communications"
+  | "commercial";
 
 export type IntegrationCategory = "social" | "ads" | "crm" | "content" | "storage" | "ai" | "internal";
 
@@ -83,14 +83,14 @@ export const INTEGRATION_CATALOGUE: IntegrationDescriptor[] = [
   { key: "spotify_ads", label: "Spotify Ads", category: "ads", available: false },
   { key: "tiktok_ads", label: "TikTok Ads", category: "ads", available: false },
   { key: "crm", label: "CRM", category: "crm", available: false },
-  { key: "portal_noticias", label: "Portal de Notícias", category: "content", available: false },
+  { key: "news_portal", label: "Portal de Notícias", category: "content", available: false },
   { key: "storage", label: "Armazenamento", category: "storage", available: false },
   { key: "ai", label: "IA", category: "ai", available: false },
-  { key: "distribuicao_digital", label: "Distribuição Digital", category: "internal", available: false },
-  { key: "producao_musical", label: "Produção Musical", category: "internal", available: false },
-  { key: "administracao_musical", label: "Administração Musical", category: "internal", available: false },
-  { key: "comunicacao", label: "Comunicação", category: "internal", available: false },
-  { key: "comercial", label: "Comercial", category: "internal", available: false },
+  { key: "digital_distribution", label: "Distribuição Digital", category: "internal", available: false },
+  { key: "music_production", label: "Produção Musical", category: "internal", available: false },
+  { key: "music_administration", label: "Administração Musical", category: "internal", available: false },
+  { key: "communications", label: "Comunicação", category: "internal", available: false },
+  { key: "commercial", label: "Comercial", category: "internal", available: false },
 ];
 
 /** Maps a content channel to its publishing provider key, when one exists. */
@@ -103,5 +103,5 @@ export const CHANNEL_TO_PROVIDER: Partial<Record<ContentChannel, IntegrationProv
   reels: "instagram",
   stories: "instagram",
   shorts: "youtube",
-  portal_noticias: "portal_noticias",
+  portal_noticias: "news_portal",
 };

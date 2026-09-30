@@ -144,3 +144,33 @@ export const canonicalMarketingContentTargetType = ({ value }: { value: unknown 
 /** class-transformer @Transform: maps a deprecated Portuguese content type before validation. */
 export const canonicalMarketingContentType = ({ value }: { value: unknown }) =>
   canonical(LEGACY_MARKETING_CONTENT_TYPES, value);
+
+/**
+ * Approval state of a content, stored in `marketing_content_posts.metadata.approval`
+ * (jsonb, no column) and restricted by chk_marketing_content_posts_metadata_approval.
+ * Same words as the asset-approval decisions (marketing-assets.dto.ts).
+ */
+export const MARKETING_CONTENT_APPROVALS = ['pending', 'approved', 'rejected', 'revision_requested'] as const;
+export type MarketingContentApproval = (typeof MARKETING_CONTENT_APPROVALS)[number];
+
+export const LEGACY_MARKETING_CONTENT_APPROVALS: Readonly<Record<string, MarketingContentApproval>> = {
+  pendente: 'pending',
+  aprovado: 'approved',
+  reprovado: 'rejected',
+  ajustes_solicitados: 'revision_requested',
+};
+
+/**
+ * class-transformer @Transform: maps a deprecated Portuguese `metadata.approval`
+ * (sent by a web build released before the vocabulary was canonicalized) before
+ * validation. Anything that is not a plain object, or holds no legacy spelling,
+ * passes through untouched for the validator to judge.
+ */
+export const canonicalMarketingContentMetadata = ({ value }: { value: unknown }) => {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
+  const approval = (value as Record<string, unknown>).approval;
+  if (typeof approval === 'string' && Object.prototype.hasOwnProperty.call(LEGACY_MARKETING_CONTENT_APPROVALS, approval)) {
+    return { ...(value as Record<string, unknown>), approval: LEGACY_MARKETING_CONTENT_APPROVALS[approval] };
+  }
+  return value;
+};

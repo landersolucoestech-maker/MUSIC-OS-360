@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BR_STATES } from "./br-locations";
 
-export interface IbgeMunicipio {
+export interface IbgeMunicipality {
   id: number;
   nome: string;
   microrregiao: {
@@ -15,7 +15,7 @@ export interface IbgeMunicipio {
 }
 
 export interface LocationOption {
-  uf: string;
+  stateCode: string;
   city: string;
   label: string;
   lat?: number;
@@ -24,52 +24,52 @@ export interface LocationOption {
 
 const IBGE_BASE = "https://servicodados.ibge.gov.br/api/v1";
 
-const municipiosCache = new Map<string, IbgeMunicipio[]>();
+const municipalitiesCache = new Map<string, IbgeMunicipality[]>();
 
-async function fetchMunicipiosByUf(uf: string): Promise<IbgeMunicipio[]> {
-  if (municipiosCache.has(uf)) return municipiosCache.get(uf)!;
-  const res = await fetch(`${IBGE_BASE}/localidades/estados/${uf}/municipios?orderBy=nome`);
-  if (!res.ok) throw new Error(`IBGE: failed to fetch cities for ${uf}`);
-  const data: IbgeMunicipio[] = await res.json();
-  municipiosCache.set(uf, data);
+async function fetchMunicipalitiesByStateCode(stateCode: string): Promise<IbgeMunicipality[]> {
+  if (municipalitiesCache.has(stateCode)) return municipalitiesCache.get(stateCode)!;
+  const res = await fetch(`${IBGE_BASE}/localidades/estados/${stateCode}/municipios?orderBy=nome`);
+  if (!res.ok) throw new Error(`IBGE: failed to fetch cities for ${stateCode}`);
+  const data: IbgeMunicipality[] = await res.json();
+  municipalitiesCache.set(stateCode, data);
   return data;
 }
 
-export function useIbgeMunicipios(uf: string | null) {
-  const [municipios, setMunicipios] = useState<IbgeMunicipio[]>([]);
+export function useIbgeMunicipalities(stateCode: string | null) {
+  const [municipalities, setMunicipalities] = useState<IbgeMunicipality[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!uf) {
-      setMunicipios([]);
+    if (!stateCode) {
+      setMunicipalities([]);
       return;
     }
     setLoading(true);
     setError(null);
-    fetchMunicipiosByUf(uf)
-      .then((data) => setMunicipios(data))
+    fetchMunicipalitiesByStateCode(stateCode)
+      .then((data) => setMunicipalities(data))
       .catch(() => setError("Não foi possível carregar as cidades. Tente novamente."))
       .finally(() => setLoading(false));
-  }, [uf]);
+  }, [stateCode]);
 
   const options: LocationOption[] = useMemo(
     () =>
-      municipios.map((m) => ({
-        uf,
+      municipalities.map((m) => ({
+        stateCode,
         city: m.nome,
-        label: `${uf} - ${m.nome}`,
+        label: `${stateCode} - ${m.nome}`,
       } as LocationOption)),
-    [municipios, uf],
+    [municipalities, stateCode],
   );
 
   return { options, loading, error };
 }
 
 export const STATE_OPTIONS: LocationOption[] = BR_STATES.map((s) => ({
-  uf: s.uf,
+  stateCode: s.stateCode,
   city: `${s.name} (todo o estado)`,
-  label: `${s.uf} - ${s.name} (todo o estado)`,
+  label: `${s.stateCode} - ${s.name} (todo o estado)`,
 }));
 
 const NOMINATIM_BASE = "https://nominatim.openstreetmap.org";

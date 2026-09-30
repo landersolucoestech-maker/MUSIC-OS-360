@@ -6,9 +6,11 @@ import {
   UpdateMarketingContentDto,
 } from './marketing-contents.dto';
 import {
+  LEGACY_MARKETING_CONTENT_APPROVALS,
   LEGACY_MARKETING_CONTENT_STATUSES,
   LEGACY_MARKETING_CONTENT_TARGET_TYPES,
   LEGACY_MARKETING_CONTENT_TYPES,
+  MARKETING_CONTENT_APPROVALS,
   MARKETING_CONTENT_STATUSES,
   MARKETING_CONTENT_TARGET_TYPES,
   MARKETING_CONTENT_TYPES,
@@ -104,7 +106,46 @@ describe('CreateMarketingContentDto vocabulary (S8)', () => {
       owner: 'Marketing',
       format: 'Feed',
       files: [{ id: 'f1', name: 'a.png', url: 'https://cdn.example/a.png', kind: 'image/png' }],
-      metadata: { creative: { version: 1 }, approval: 'pendente', channels: ['instagram', 'facebook'] },
-    })).resolves.toMatchObject({ status: 'scheduled', targetType: 'company' });
+      metadata: { creative: { version: 1 }, approval: 'pending', channels: ['instagram', 'facebook'] },
+    })).resolves.toMatchObject({
+      status: 'scheduled',
+      targetType: 'company',
+      metadata: { creative: { version: 1 }, approval: 'pending', channels: ['instagram', 'facebook'] },
+    });
+  });
+});
+
+describe('CreateMarketingContentDto metadata.approval vocabulary', () => {
+  it.each([...MARKETING_CONTENT_APPROVALS])('accepts the canonical approval %s unchanged (create, update)', async (approval) => {
+    await expect(validate(CreateMarketingContentDto, { ...base, metadata: { approval } })).resolves.toMatchObject({ metadata: { approval } });
+    await expect(validate(UpdateMarketingContentDto, { metadata: { approval } })).resolves.toMatchObject({ metadata: { approval } });
+  });
+
+  it.each(Object.entries(LEGACY_MARKETING_CONTENT_APPROVALS))('maps the deprecated approval %s to %s and keeps the other metadata keys (create, update)', async (legacy, canonical) => {
+    const metadata = { creative: { version: 1 }, approval: legacy };
+    await expect(validate(CreateMarketingContentDto, { ...base, metadata })).resolves.toMatchObject({ metadata: { creative: { version: 1 }, approval: canonical } });
+    await expect(validate(UpdateMarketingContentDto, { metadata })).resolves.toMatchObject({ metadata: { creative: { version: 1 }, approval: canonical } });
+  });
+
+  it('the legacy map only produces values the database CHECK accepts', () => {
+    for (const v of Object.values(LEGACY_MARKETING_CONTENT_APPROVALS)) expect(MARKETING_CONTENT_APPROVALS).toContain(v);
+  });
+
+  it.each(['rejeitado', 'Aprovado', 'approved ', '', 'constructor', '__proto__', 3, true, {}, []])(
+    'rejects the unknown metadata.approval %j',
+    async (approval) => {
+      await expect(validate(CreateMarketingContentDto, { ...base, metadata: { approval } })).rejects.toBeInstanceOf(BadRequestException);
+      await expect(validate(UpdateMarketingContentDto, { metadata: { approval } })).rejects.toBeInstanceOf(BadRequestException);
+    },
+  );
+
+  it('does not constrain metadata without an approval (free-form keys stay free)', async () => {
+    await expect(validate(CreateMarketingContentDto, { ...base, metadata: { creative: { version: 1 }, anything: 'goes' } })).resolves.toBeDefined();
+    await expect(validate(CreateMarketingContentDto, { ...base, metadata: { approval: null } })).resolves.toBeDefined();
+    await expect(validate(CreateMarketingContentDto, base)).resolves.toBeDefined();
+  });
+
+  it.each(['text', 5, ['approval']])('still rejects a non-object metadata %j', async (metadata) => {
+    await expect(validate(CreateMarketingContentDto, { ...base, metadata })).rejects.toBeInstanceOf(BadRequestException);
   });
 });

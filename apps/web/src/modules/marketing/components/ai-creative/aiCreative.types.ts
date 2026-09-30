@@ -12,7 +12,7 @@ import type {
   MarketingTarget,
 } from "../../types/marketing.types";
 
-export type AiTab = "ideias" | "perfil" | "pitching" | "tendencias" | "analytics" | "planejamento" | "historico";
+export type AiTab = "ideas" | "profile" | "pitching" | "trends" | "analytics" | "planning" | "history";
 
 export type TargetOption = {
   id: string;

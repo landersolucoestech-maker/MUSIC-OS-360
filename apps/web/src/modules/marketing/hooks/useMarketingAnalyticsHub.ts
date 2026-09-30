@@ -35,7 +35,7 @@ export function useMarketingAnalyticsHub() {
 
   const [context, setContextState] = useState<AnalyticsContext>("overview");
   const [platform, setPlatformState] = useState<PlatformId>("overview");
-  const [dimension, setDimensionState] = useState<BreakdownDimension>("campanha");
+  const [dimension, setDimensionState] = useState<BreakdownDimension>("campaign");
 
   // Validate raw Select values before narrowing — never trust the string blindly.
   const setContext = (value: string) => {

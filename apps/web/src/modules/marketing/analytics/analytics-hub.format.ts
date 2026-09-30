@@ -89,18 +89,18 @@ export const CONTEXT_OPTIONS: { value: AnalyticsContext; label: string }[] = [
 ];
 
 export const BREAKDOWN_OPTIONS: { value: BreakdownDimension; label: string }[] = [
-  { value: "campanha", label: "Campanha" },
-  { value: "canal", label: "Canal" },
-  { value: "plataforma", label: "Plataforma" },
-  { value: "artista", label: "Artista" },
-  { value: "projeto_musical", label: "Projeto Musical" },
-  { value: "empresa", label: "Empresa" },
-  { value: "musica", label: "Música" },
-  { value: "lancamento", label: "Lançamento" },
-  { value: "periodo", label: "Período" },
-  { value: "responsavel", label: "Responsável" },
-  { value: "tipo_conteudo", label: "Tipo de conteúdo" },
-  { value: "territorio", label: "Território" },
+  { value: "campaign", label: "Campanha" },
+  { value: "channel", label: "Canal" },
+  { value: "platform", label: "Plataforma" },
+  { value: "artist", label: "Artista" },
+  { value: "music_project", label: "Projeto Musical" },
+  { value: "company", label: "Empresa" },
+  { value: "music", label: "Música" },
+  { value: "release", label: "Lançamento" },
+  { value: "period", label: "Período" },
+  { value: "owner", label: "Responsável" },
+  { value: "content_type", label: "Tipo de conteúdo" },
+  { value: "territory", label: "Território" },
 ];
 
 // ---------------------------------------------------------------------------

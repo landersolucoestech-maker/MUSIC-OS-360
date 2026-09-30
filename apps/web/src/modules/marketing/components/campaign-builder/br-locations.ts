@@ -6,7 +6,7 @@
  */
 
 export interface BrLocation {
-  uf: string;
+  stateCode: string;
   city: string;
   label: string;
 }
@@ -41,21 +41,21 @@ const RAW: Array<[string, string[]]> = [
   ['TO', ['Palmas', 'Araguaína']],
 ];
 
-export const BR_STATES: Array<{ uf: string; name: string }> = [
-  { uf: 'AC', name: 'Acre' }, { uf: 'AL', name: 'Alagoas' }, { uf: 'AP', name: 'Amapá' },
-  { uf: 'AM', name: 'Amazonas' }, { uf: 'BA', name: 'Bahia' }, { uf: 'CE', name: 'Ceará' },
-  { uf: 'DF', name: 'Distrito Federal' }, { uf: 'ES', name: 'Espírito Santo' }, { uf: 'GO', name: 'Goiás' },
-  { uf: 'MA', name: 'Maranhão' }, { uf: 'MT', name: 'Mato Grosso' }, { uf: 'MS', name: 'Mato Grosso do Sul' },
-  { uf: 'MG', name: 'Minas Gerais' }, { uf: 'PA', name: 'Pará' }, { uf: 'PB', name: 'Paraíba' },
-  { uf: 'PR', name: 'Paraná' }, { uf: 'PE', name: 'Pernambuco' }, { uf: 'PI', name: 'Piauí' },
-  { uf: 'RJ', name: 'Rio de Janeiro' }, { uf: 'RN', name: 'Rio Grande do Norte' }, { uf: 'RS', name: 'Rio Grande do Sul' },
-  { uf: 'RO', name: 'Rondônia' }, { uf: 'RR', name: 'Roraima' }, { uf: 'SC', name: 'Santa Catarina' },
-  { uf: 'SP', name: 'São Paulo' }, { uf: 'SE', name: 'Sergipe' }, { uf: 'TO', name: 'Tocantins' },
+export const BR_STATES: Array<{ stateCode: string; name: string }> = [
+  { stateCode: 'AC', name: 'Acre' }, { stateCode: 'AL', name: 'Alagoas' }, { stateCode: 'AP', name: 'Amapá' },
+  { stateCode: 'AM', name: 'Amazonas' }, { stateCode: 'BA', name: 'Bahia' }, { stateCode: 'CE', name: 'Ceará' },
+  { stateCode: 'DF', name: 'Distrito Federal' }, { stateCode: 'ES', name: 'Espírito Santo' }, { stateCode: 'GO', name: 'Goiás' },
+  { stateCode: 'MA', name: 'Maranhão' }, { stateCode: 'MT', name: 'Mato Grosso' }, { stateCode: 'MS', name: 'Mato Grosso do Sul' },
+  { stateCode: 'MG', name: 'Minas Gerais' }, { stateCode: 'PA', name: 'Pará' }, { stateCode: 'PB', name: 'Paraíba' },
+  { stateCode: 'PR', name: 'Paraná' }, { stateCode: 'PE', name: 'Pernambuco' }, { stateCode: 'PI', name: 'Piauí' },
+  { stateCode: 'RJ', name: 'Rio de Janeiro' }, { stateCode: 'RN', name: 'Rio Grande do Norte' }, { stateCode: 'RS', name: 'Rio Grande do Sul' },
+  { stateCode: 'RO', name: 'Rondônia' }, { stateCode: 'RR', name: 'Roraima' }, { stateCode: 'SC', name: 'Santa Catarina' },
+  { stateCode: 'SP', name: 'São Paulo' }, { stateCode: 'SE', name: 'Sergipe' }, { stateCode: 'TO', name: 'Tocantins' },
 ];
 
 export const BR_LOCATIONS: BrLocation[] = [
   // Whole-state options ("UF - Todo o estado")
-  ...BR_STATES.map((s) => ({ uf: s.uf, city: `${s.name} (todo o estado)`, label: `${s.uf} - ${s.name} (todo o estado)` })),
+  ...BR_STATES.map((s) => ({ stateCode: s.stateCode, city: `${s.name} (todo o estado)`, label: `${s.stateCode} - ${s.name} (todo o estado)` })),
   // City options
-  ...RAW.flatMap(([uf, cities]) => cities.map((city) => ({ uf, city, label: `${uf} - ${city}` }))),
+  ...RAW.flatMap(([stateCode, cities]) => cities.map((city) => ({ stateCode, city, label: `${stateCode} - ${city}` }))),
 ];

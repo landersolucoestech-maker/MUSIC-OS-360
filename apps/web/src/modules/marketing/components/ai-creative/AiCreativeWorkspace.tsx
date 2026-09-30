@@ -20,13 +20,13 @@ import { HistoryTab } from "./HistoryTab";
 import { PlanningTab } from "./PlanningTab";
 
 const TABS: Array<{ value: AiTab; label: string; icon: typeof Sparkles }> = [
-  { value: "ideias", label: "Ideias", icon: Lightbulb },
-  { value: "perfil", label: "Perfil", icon: UserRound },
+  { value: "ideas", label: "Ideias", icon: Lightbulb },
+  { value: "profile", label: "Perfil", icon: UserRound },
   { value: "pitching", label: "Pitching", icon: Send },
-  { value: "tendencias", label: "Tendências", icon: TrendingUp },
+  { value: "trends", label: "Tendências", icon: TrendingUp },
   { value: "analytics", label: "Métricas", icon: BarChart3 },
-  { value: "planejamento", label: "Planejamento", icon: CalendarDays },
-  { value: "historico", label: "Histórico", icon: Clock },
+  { value: "planning", label: "Planejamento", icon: CalendarDays },
+  { value: "history", label: "Histórico", icon: Clock },
 ];
 
 function isAiTab(value: string): value is AiTab {
@@ -43,7 +43,7 @@ export function AiCreativeWorkspace() {
   const { data: tasks = [] } = useMarketingTasks();
   const { data: analytics } = useMarketingAnalytics();
   const generate = useGenerateAi();
-  const [activeTab, setActiveTab] = useState<AiTab>("ideias");
+  const [activeTab, setActiveTab] = useState<AiTab>("ideas");
 
   const campaignOptions = useMemo<TargetOption[]>(() => (
     campaigns
@@ -80,7 +80,7 @@ export function AiCreativeWorkspace() {
         ))}
       </TabsList>
 
-      <TabsContent value="ideias">
+      <TabsContent value="ideas">
         <IdeasTab
           campaignOptions={campaignOptions}
           suggestions={suggestions}
@@ -88,7 +88,7 @@ export function AiCreativeWorkspace() {
           isGenerating={generate.isPending}
         />
       </TabsContent>
-      <TabsContent value="perfil">
+      <TabsContent value="profile">
         <ProfileTab
           sources={{
             releases,
@@ -117,7 +117,7 @@ export function AiCreativeWorkspace() {
           isGenerating={generate.isPending}
         />
       </TabsContent>
-      <TabsContent value="tendencias">
+      <TabsContent value="trends">
         <TrendsTab companyName={companyName} suggestions={suggestions} onGenerate={handleGenerate} isGenerating={generate.isPending} />
       </TabsContent>
       <TabsContent value="analytics">
@@ -131,14 +131,14 @@ export function AiCreativeWorkspace() {
           isGenerating={generate.isPending}
         />
       </TabsContent>
-      <TabsContent value="planejamento">
+      <TabsContent value="planning">
         <PlanningTab
           releaseOptions={releases.map((release) => ({ id: release.id, label: release.title, helper: release.music_genre || undefined }))}
           onGenerate={handleGenerate}
           isGenerating={generate.isPending}
         />
       </TabsContent>
-      <TabsContent value="historico">
+      <TabsContent value="history">
         <HistoryTab suggestions={suggestions} onGenerate={handleGenerate} />
       </TabsContent>
     </Tabs>

@@ -3,7 +3,6 @@ import type { AiGeneratedResult, AiSuggestion } from "../../types/marketing.type
 export const MAX_WAV_SIZE_BYTES = 80 * 1024 * 1024;
 export const ACCEPTED_AUDIO_MIME = ["audio/wav", "audio/x-wav"];
 export const ACCEPTED_AUDIO_EXTENSIONS = [".wav"];
-export const MUSICAL_PROJECT_TYPES = new Set(["album", "ep", "single", "videoclipe", "show", "tour", "podcast"]);
 
 export const AI_KIND_LABEL: Record<AiSuggestion["kind"], string> = {
   analise_fonograma: "Análise fonográfica",

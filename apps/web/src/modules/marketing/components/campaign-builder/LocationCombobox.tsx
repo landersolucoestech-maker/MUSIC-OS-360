@@ -14,7 +14,7 @@ import {
 } from "@/shared/ui/command";
 import { cn } from "@/shared/lib/utils";
 import { BR_STATES } from "./br-locations";
-import { useIbgeMunicipios, geocodeLocation } from "./useIbgeLocations";
+import { useIbgeMunicipalities, geocodeLocation } from "./useIbgeLocations";
 
 interface Props {
   value: string;
@@ -23,11 +23,11 @@ interface Props {
 
 export function LocationCombobox({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const [selectedUf, setSelectedUf] = useState<string | null>(null);
+  const [selectedStateCode, setSelectedStateCode] = useState<string | null>(null);
   const [stateSearch, setStateSearch] = useState("");
   const [citySearch, setCitySearch] = useState("");
 
-  const { options: cityOptions, loading: loadingCities } = useIbgeMunicipios(selectedUf);
+  const { options: cityOptions, loading: loadingCities } = useIbgeMunicipalities(selectedStateCode);
 
   const selected = useMemo(
     () => value.split(",").map((s) => s.trim()).filter(Boolean),
@@ -53,7 +53,7 @@ export function LocationCombobox({ value, onChange }: Props) {
       BR_STATES.filter(
         (s) =>
           s.name.toLowerCase().includes(stateSearch.toLowerCase()) ||
-          s.uf.toLowerCase().includes(stateSearch.toLowerCase()),
+          s.stateCode.toLowerCase().includes(stateSearch.toLowerCase()),
       ),
     [stateSearch],
   );
@@ -86,7 +86,7 @@ export function LocationCombobox({ value, onChange }: Props) {
         </PopoverTrigger>
 
         <PopoverContent className="w-[340px] p-0" align="start">
-          {selectedUf === null ? (
+          {selectedStateCode === null ? (
             <Command>
               <CommandInput
                 placeholder="Buscar estado..."
@@ -97,14 +97,14 @@ export function LocationCombobox({ value, onChange }: Props) {
                 <CommandEmpty>Nenhum estado encontrado.</CommandEmpty>
                 <CommandGroup heading="Estados">
                   {filteredStates.map((s) => {
-                    const stateLabel = `${s.uf} - ${s.name} (todo o estado)`;
+                    const stateLabel = `${s.stateCode} - ${s.name} (todo o estado)`;
                     const active = selected.includes(stateLabel);
                     return (
                       <CommandItem
-                        key={s.uf}
-                        value={s.uf}
+                        key={s.stateCode}
+                        value={s.stateCode}
                         onSelect={() => {
-                          setSelectedUf(s.uf);
+                          setSelectedStateCode(s.stateCode);
                           setStateSearch("");
                           setCitySearch("");
                         }}
@@ -115,7 +115,7 @@ export function LocationCombobox({ value, onChange }: Props) {
                             className={cn("h-4 w-4 shrink-0", active ? "opacity-100" : "opacity-0")}
                           />
                           <span>
-                            <span className="font-sans text-[11px] text-muted-foreground">{s.uf}</span>
+                            <span className="font-sans text-[11px] text-muted-foreground">{s.stateCode}</span>
                             {" "}
                             {s.name}
                           </span>
@@ -136,14 +136,14 @@ export function LocationCombobox({ value, onChange }: Props) {
                   size="sm"
                   className="mr-2 h-6 px-2 text-xs"
                   onClick={() => {
-                    setSelectedUf(null);
+                    setSelectedStateCode(null);
                     setCitySearch("");
                   }}
                 >
                   ← Estados
                 </Button>
                 <span className="text-xs font-medium">
-                  {BR_STATES.find((s) => s.uf === selectedUf)?.name}
+                  {BR_STATES.find((s) => s.stateCode === selectedStateCode)?.name}
                 </span>
               </div>
               <CommandInput
@@ -162,8 +162,8 @@ export function LocationCombobox({ value, onChange }: Props) {
                     <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
                     <CommandGroup heading="Todo o estado">
                       {(() => {
-                        const stateName = BR_STATES.find((s) => s.uf === selectedUf)?.name ?? selectedUf;
-                        const stateLabel = `${selectedUf} - ${stateName} (todo o estado)`;
+                        const stateName = BR_STATES.find((s) => s.stateCode === selectedStateCode)?.name ?? selectedStateCode;
+                        const stateLabel = `${selectedStateCode} - ${stateName} (todo o estado)`;
                         const active = selected.includes(stateLabel);
                         return (
                           <CommandItem
@@ -180,7 +180,7 @@ export function LocationCombobox({ value, onChange }: Props) {
                       })()}
                     </CommandGroup>
                     <CommandSeparator />
-                    <CommandGroup heading={`Municípios de ${selectedUf} (${filteredCities.length})`}>
+                    <CommandGroup heading={`Municípios de ${selectedStateCode} (${filteredCities.length})`}>
                       {filteredCities.map((loc) => {
                         const active = selected.includes(loc.label);
                         return (

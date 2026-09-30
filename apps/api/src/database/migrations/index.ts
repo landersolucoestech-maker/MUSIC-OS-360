@@ -325,6 +325,7 @@ import { CanonicalizeContractServiceTypeValuesAndIndex20260930000002 } from './2
 import { AddEnglishRoleSlugAliases20260930000001 } from './20260930000001_AddEnglishRoleSlugAliases';
 import { BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010 } from './20260930000010_BackfillAndRestrictInvoicePaymentMethodToEnglish';
 import { ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011 } from './20260930000011_ValidateTransactionTypeAndRestrictFinancialRuleVocabulary';
+import { BackfillAndRestrictMarketingContentApprovalToEnglish20260930000003 } from './20260930000003_BackfillAndRestrictMarketingContentApprovalToEnglish';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -633,4 +634,5 @@ export const ALL_MIGRATIONS = [
   AddEnglishRoleSlugAliases20260930000001,
   BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010,
   ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011,
+  BackfillAndRestrictMarketingContentApprovalToEnglish20260930000003,
 ] as const;

@@ -96,7 +96,7 @@ export function toMarketingContentInput(
     // Publishing rule: only company content can publish (via an integration).
     // Artist/music project content always stays "scheduled" (internal scheduling only).
     status: values.targetType === "empresa" ? values.status : "scheduled",
-    approval: current?.approval ?? "pendente",
+    approval: current?.approval ?? "pending",
     publishDate: values.publishDate,
     publishTime: values.publishTime,
     owner: current?.owner ?? "Marketing",

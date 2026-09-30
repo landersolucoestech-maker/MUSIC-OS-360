@@ -53,7 +53,7 @@ function normalizeProjectAsset(asset: ProjectAsset): MarketingAsset {
     taskId: asset.taskId ?? (metadata.taskId as string | undefined),
     sourceDepartment: asset.sourceDepartment ?? (metadata.sourceDepartment as string | undefined),
     owner: asset.owner ?? "Sistema",
-    approval: asset.approval ?? "aprovado",
+    approval: asset.approval ?? "approved",
     url: asset.url ?? asset.file_url ?? "",
     thumbnailUrl: asset.thumbnailUrl ?? asset.thumbnail_url ?? undefined,
     tags: asset.tags ?? [],

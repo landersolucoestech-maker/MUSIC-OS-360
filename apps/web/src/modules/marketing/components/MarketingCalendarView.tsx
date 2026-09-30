@@ -8,7 +8,7 @@ import { cn } from "@/shared/lib/utils";
 import { CONTENT_CHANNEL_LABEL, CONTENT_STATUS_TONE, TONE_CLASS } from "../constants/marketing.constants";
 import type { MarketingContent } from "../types/marketing.types";
 
-export type MarketingCalendarViewMode = "dia" | "semana" | "mes" | "ano";
+export type MarketingCalendarViewMode = "day" | "week" | "month" | "year";
 
 interface MarketingCalendarViewProps {
   view: MarketingCalendarViewMode;
@@ -89,9 +89,9 @@ function ContentItem({
 }
 
 export function MarketingCalendarView({ view, referenceDate, contents, onSelect }: MarketingCalendarViewProps) {
-  if (view === "dia") return <DayView referenceDate={referenceDate} contents={contents} onSelect={onSelect} />;
-  if (view === "semana") return <WeekView referenceDate={referenceDate} contents={contents} onSelect={onSelect} />;
-  if (view === "ano") return <YearView referenceDate={referenceDate} contents={contents} />;
+  if (view === "day") return <DayView referenceDate={referenceDate} contents={contents} onSelect={onSelect} />;
+  if (view === "week") return <WeekView referenceDate={referenceDate} contents={contents} onSelect={onSelect} />;
+  if (view === "year") return <YearView referenceDate={referenceDate} contents={contents} />;
   return <MonthView referenceDate={referenceDate} contents={contents} onSelect={onSelect} />;
 }
 

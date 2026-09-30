@@ -391,8 +391,8 @@ function DeliverableCard({
             size="sm"
             variant="outline"
             className="h-7 px-2 text-[11px]"
-            disabled={setApproval.isPending || d.approval === "aprovado"}
-            onClick={() => setApproval.mutate({ id: d.id, approval: "aprovado" })}
+            disabled={setApproval.isPending || d.approval === "approved"}
+            onClick={() => setApproval.mutate({ id: d.id, approval: "approved" })}
           >
             <CheckCircle2 className="mr-1 h-3.5 w-3.5 text-emerald-600" /> Aprovar
           </Button>
@@ -401,8 +401,8 @@ function DeliverableCard({
             size="sm"
             variant="outline"
             className="h-7 px-2 text-[11px]"
-            disabled={setApproval.isPending || d.approval === "rejeitado"}
-            onClick={() => setApproval.mutate({ id: d.id, approval: "rejeitado" })}
+            disabled={setApproval.isPending || d.approval === "rejected"}
+            onClick={() => setApproval.mutate({ id: d.id, approval: "rejected" })}
           >
             <XCircle className="mr-1 h-3.5 w-3.5 text-red-600" /> Rejeitar
           </Button>

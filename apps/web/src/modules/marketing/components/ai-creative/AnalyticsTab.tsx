@@ -47,7 +47,7 @@ export function AnalyticsTab({
               <SignalGrid analytics={analytics} />
               <Ranking title="Conteúdos com melhor resultado" items={topContents.map((item) => `${item.title} · ${item.channel}`)} />
               <Ranking title="Campanhas com melhor resultado" items={topCampaigns.map((item) => `${item.name} · ${item.platforms.join(", ")}`)} />
-              <Ranking title="Plataformas com melhor resultado" items={analytics?.breakdownByDimension?.canal?.map((item) => item.label) ?? []} />
+              <Ranking title="Plataformas com melhor resultado" items={analytics?.breakdownByDimension?.channel?.map((item) => item.label) ?? []} />
             </div>
           ) : (
             <div className="rounded-lg border border-dashed border-border p-8 text-center">

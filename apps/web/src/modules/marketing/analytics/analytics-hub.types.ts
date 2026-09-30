@@ -25,18 +25,18 @@ export type AnalyticsContext =
 
 /** Breakdown dimensions for the detail table. */
 export type BreakdownDimension =
-  | "campanha"
-  | "canal"
-  | "plataforma"
-  | "artista"
-  | "projeto_musical"
-  | "empresa"
-  | "musica"
-  | "lancamento"
-  | "periodo"
-  | "responsavel"
-  | "tipo_conteudo"
-  | "territorio";
+  | "campaign"
+  | "channel"
+  | "platform"
+  | "artist"
+  | "music_project"
+  | "company"
+  | "music"
+  | "release"
+  | "period"
+  | "owner"
+  | "content_type"
+  | "territory";
 
 /** Where the displayed data comes from. Drives the (single) data alert. */
 export type DataSourceStatus = "simulated" | "partial" | "live";
@@ -101,7 +101,7 @@ export interface ArtistPerformance {
   topContent: string;
 }
 
-export type MusicFormat = "single" | "ep" | "album" | "videoclipe";
+export type MusicFormat = "single" | "ep" | "album" | "music_video";
 
 export interface MusicPerformance {
   id: string;

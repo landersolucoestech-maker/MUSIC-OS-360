@@ -112,18 +112,19 @@ function campaignPlatforms(campaigns: MarketingCampaign[]): PlatformBlock[] {
 
 function platformBreakdown(campaigns: MarketingCampaign[]): BreakdownRow[] {
   return campaignPlatforms(campaigns).map((block) => {
+    // Keyed by the stable metric id, never by the PT-BR display label.
     const metrics = Object.fromEntries(
-      block.groups.flatMap((group) => group.metrics.map((metric) => [metric.label, metric.value ?? 0])),
+      block.groups.flatMap((group) => group.metrics.map((metric) => [metric.id, metric.value ?? 0])),
     );
     return {
       key: block.id,
       label: block.label,
       platform: block.id,
-      reach: Number(metrics["Alcance"] ?? 0),
-      impressions: Number(metrics["Impressões"] ?? 0),
-      engagement: Number(metrics["Engajamento"] ?? 0),
-      clicks: Number(metrics["Cliques"] ?? 0),
-      conversions: Number(metrics["Conversões"] ?? 0),
+      reach: Number(metrics[`${block.id}-reach`] ?? 0),
+      impressions: Number(metrics[`${block.id}-impressions`] ?? 0),
+      engagement: Number(metrics[`${block.id}-engagement`] ?? 0),
+      clicks: Number(metrics[`${block.id}-clicks`] ?? 0),
+      conversions: Number(metrics[`${block.id}-conversions`] ?? 0),
       roi: 0,
     };
   });
@@ -169,18 +170,18 @@ export function buildAnalyticsHubModel(
   const source = overview?.breakdownByDimension;
   const unavailable: BreakdownRow[] = [];
   const breakdown: Record<BreakdownDimension, BreakdownRow[]> = {
-    campanha: mapRows(source?.campanha),
-    canal: mapRows(source?.canal),
-    plataforma: platformBreakdown(campaigns),
-    artista: mapRows(source?.artista),
-    projeto_musical: mapRows(source?.projeto_musical),
-    empresa: mapRows(source?.empresa),
-    musica: unavailable,
-    lancamento: unavailable,
-    periodo: mapRows(source?.periodo),
-    responsavel: mapRows(source?.responsavel),
-    tipo_conteudo: mapRows(source?.tipo_conteudo),
-    territorio: unavailable,
+    campaign: mapRows(source?.campaign),
+    channel: mapRows(source?.channel),
+    platform: platformBreakdown(campaigns),
+    artist: mapRows(source?.artist),
+    music_project: mapRows(source?.music_project),
+    company: mapRows(source?.company),
+    music: unavailable,
+    release: unavailable,
+    period: mapRows(source?.period),
+    owner: mapRows(source?.owner),
+    content_type: mapRows(source?.content_type),
+    territory: unavailable,
   };
   return {
     dataSource: "partial",

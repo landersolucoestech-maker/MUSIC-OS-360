@@ -108,11 +108,11 @@ export default function Tasks() {
   // (searchable: true in the FieldDef) — which is why it uses fetchAllLabels (real
   // pagination, no cap) instead of useArtistas()/useClientes() (capped at 50 per tenant).
   const { data: artistNameOptions = [] } = useQuery({
-    queryKey: ["marketing-task-target-names", "artistas"],
+    queryKey: ["marketing-task-target-names", "artists"],
     queryFn: () => fetchAllLabels("artists", (a) => a.stage_name as string | undefined),
   });
   const { data: companyNameOptions = [] } = useQuery({
-    queryKey: ["marketing-task-target-names", "clientes"],
+    queryKey: ["marketing-task-target-names", "clients"],
     queryFn: () => fetchAllLabels("clients", (c) => c.name as string | undefined),
   });
   const { data: projects = [] } = useMarketingProjects();
@@ -158,10 +158,10 @@ export default function Tasks() {
     const toDoStatuses = new Set<TaskStatus>(["backlog", "pending"]);
     return {
       total: tasks.length,
-      concluidas: tasks.filter((task) => task.status === "done").length,
-      aFazer: tasks.filter((task) => toDoStatuses.has(task.status)).length,
-      emAndamento: tasks.filter((task) => task.status === "in_progress").length,
-      revisao: tasks.filter((task) => task.status === "review").length,
+      done: tasks.filter((task) => task.status === "done").length,
+      toDo: tasks.filter((task) => toDoStatuses.has(task.status)).length,
+      inProgress: tasks.filter((task) => task.status === "in_progress").length,
+      review: tasks.filter((task) => task.status === "review").length,
     };
   }, [tasks]);
 
@@ -308,10 +308,10 @@ export default function Tasks() {
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <TaskKpi label="Total de Tarefas" value={taskKpis.total} caption="demandas cadastradas" icon={ListChecks} />
-            <TaskKpi label="Concluídas" value={taskKpis.concluidas} caption="finalizadas" icon={CheckCircle} tone="success" />
-            <TaskKpi label="A Fazer" value={taskKpis.aFazer} caption="backlog e a fazer" icon={CalendarClock} tone="info" />
-            <TaskKpi label="Em Andamento" value={taskKpis.emAndamento} caption="em execução" icon={MoreHorizontal} tone="warning" />
-            <TaskKpi label="Revisão" value={taskKpis.revisao} caption="em revisão" icon={AlertTriangle} tone="danger" />
+            <TaskKpi label="Concluídas" value={taskKpis.done} caption="finalizadas" icon={CheckCircle} tone="success" />
+            <TaskKpi label="A Fazer" value={taskKpis.toDo} caption="backlog e a fazer" icon={CalendarClock} tone="info" />
+            <TaskKpi label="Em Andamento" value={taskKpis.inProgress} caption="em execução" icon={MoreHorizontal} tone="warning" />
+            <TaskKpi label="Revisão" value={taskKpis.review} caption="em revisão" icon={AlertTriangle} tone="danger" />
           </div>
 
           <MarketingFilters

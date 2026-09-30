@@ -242,7 +242,7 @@ export default function Campaigns() {
         title="Campanhas de Marketing"
         description="Planeje, execute e monitore campanhas e tráfego pago"
         actions={
-          <Button size="sm" onClick={openCreate} className="h-8 text-xs gap-1.5" data-testid="button-nova-campanha">
+          <Button size="sm" onClick={openCreate} className="h-8 text-xs gap-1.5" data-testid="button-new-campaign">
             <PlusCircle className="h-3.5 w-3.5" />
             Nova Campanha
           </Button>
@@ -378,12 +378,12 @@ function CampaignTable({
   const [sortState, setSortState] = useState<TableSortState>(null);
   const sortedCampaigns = useMemo(
     () => sortTableRows(campaigns, sortState, (campaign, key) => {
-      if (key === "contexto") return campaign.targetName || campaign.owner || "Empresa";
-      if (key === "plataforma") return allPlatformsLabel(campaign.platforms);
+      if (key === "context") return campaign.targetName || campaign.owner || "Empresa";
+      if (key === "platform") return allPlatformsLabel(campaign.platforms);
       if (key === "status") return statusLabel(campaign.status);
       if (key === "budget") return campaign.budget;
-      if (key === "gasto") return campaignSpend(campaign);
-      if (key === "cliques") return campaign.metrics.clicks;
+      if (key === "spend") return campaignSpend(campaign);
+      if (key === "clicks") return campaign.metrics.clicks;
       return (campaign as unknown as Record<string, unknown>)[key];
     }),
     [campaigns, sortState],
@@ -451,17 +451,17 @@ function CampaignTable({
       <Table className="min-w-[900px]">
         <TableHeader>
           <TableRow>
-            <SortableTableHead sortKey="selecionar" sortState={sortState} onSort={() => undefined} disabled className="w-9">
+            <SortableTableHead sortKey="select" sortState={sortState} onSort={() => undefined} disabled className="w-9">
               <span className="sr-only">Selecionar</span>
             </SortableTableHead>
             <SortableTableHead sortKey="name" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Nome</SortableTableHead>
-            <SortableTableHead sortKey="contexto" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Contexto</SortableTableHead>
-            <SortableTableHead sortKey="plataforma" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Plataforma</SortableTableHead>
+            <SortableTableHead sortKey="context" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Contexto</SortableTableHead>
+            <SortableTableHead sortKey="platform" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Plataforma</SortableTableHead>
             <SortableTableHead sortKey="status" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Status</SortableTableHead>
             <SortableTableHead sortKey="budget" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Orçamento</SortableTableHead>
-            <SortableTableHead sortKey="gasto" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Gasto</SortableTableHead>
-            <SortableTableHead sortKey="cliques" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Cliques</SortableTableHead>
-            <SortableTableHead sortKey="acoes" sortState={sortState} onSort={() => undefined} disabled className="text-right">Ações</SortableTableHead>
+            <SortableTableHead sortKey="spend" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Gasto</SortableTableHead>
+            <SortableTableHead sortKey="clicks" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Cliques</SortableTableHead>
+            <SortableTableHead sortKey="actions" sortState={sortState} onSort={() => undefined} disabled className="text-right">Ações</SortableTableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

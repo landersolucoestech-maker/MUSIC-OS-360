@@ -9,12 +9,17 @@ import {
   IsString,
   IsUUID,
   MaxLength,
+  Validate,
+  ValidatorConstraint,
+  type ValidatorConstraintInterface,
 } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import {
+  canonicalMarketingContentMetadata,
   canonicalMarketingContentStatus,
   canonicalMarketingContentTargetType,
   canonicalMarketingContentType,
+  MARKETING_CONTENT_APPROVALS,
   MARKETING_CONTENT_STATUSES,
   MARKETING_CONTENT_TARGET_TYPES,
   MARKETING_CONTENT_TYPES,
@@ -22,6 +27,21 @@ import {
 
 export const MARKETING_CONTENT_CHANNELS = ['instagram', 'facebook', 'tiktok', 'youtube', 'twitter', 'threads'] as const;
 export const MARKETING_PUBLICATION_STATUSES = ['pending', 'queued', 'publishing', 'published', 'failed', 'cancelled'] as const;
+
+/** `metadata` is free-form except `approval`, which the database restricts (chk_marketing_content_posts_metadata_approval). */
+@ValidatorConstraint({ name: 'marketingContentMetadata', async: false })
+class MarketingContentMetadataConstraint implements ValidatorConstraintInterface {
+  validate(value: unknown): boolean {
+    if (value === null || typeof value !== 'object') return true; // @IsObject reports the wrong type
+    const approval = (value as Record<string, unknown>).approval;
+    return approval === undefined || approval === null ||
+      (typeof approval === 'string' && (MARKETING_CONTENT_APPROVALS as readonly string[]).includes(approval));
+  }
+
+  defaultMessage(): string {
+    return `metadata.approval must be one of the following values: ${MARKETING_CONTENT_APPROVALS.join(', ')}`;
+  }
+}
 
 export class MarketingContentFileDto {
   @ApiProperty()
@@ -117,7 +137,9 @@ export class CreateMarketingContentDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @Transform(canonicalMarketingContentMetadata)
   @IsObject()
+  @Validate(MarketingContentMetadataConstraint)
   metadata?: Record<string, unknown>;
 }
 

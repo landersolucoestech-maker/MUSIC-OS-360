@@ -21,6 +21,8 @@ import {
 import { PLATFORM_FORMATS } from "../config/social-formats";
 import { deriveContentDisplayStatus } from "../utils/marketing-content-status";
 import { targetTypeFromWire, targetTypeToWire } from "../utils/marketing-content-wire";
+import { canonicalApproval } from "../utils/marketing-legacy-vocabulary";
+import { APPROVAL_STATUS_LABEL, APPROVAL_STATUS_OPTIONS, APPROVAL_STATUS_TONE } from "../constants/marketing.constants";
 import type { ContentStatus, ContentType, MarketingContent, MarketingTarget } from "../types/marketing.types";
 
 /**
@@ -45,7 +47,7 @@ function baseContent(over: Partial<MarketingContent> = {}): Omit<MarketingConten
     channel: "instagram",
     channels: ["instagram", "facebook"],
     status: "scheduled",
-    approval: "pendente",
+    approval: "pending",
     publishDate: "2026-07-01",
     publishTime: "10:00",
     owner: "Marketing",
@@ -145,8 +147,8 @@ describe("marketing content vocabulary (S8)", () => {
     for (const key of Object.keys(body)) expect(allowed).toContain(key);
     expect(body).not.toHaveProperty("approval");
     expect(body).not.toHaveProperty("channels");
-    expect(body.metadata).toEqual({ creative: { version: 1 }, approval: "pendente", channels: ["instagram", "facebook"] });
-    expect(created.approval).toBe("pendente");
+    expect(body.metadata).toEqual({ creative: { version: 1 }, approval: "pending", channels: ["instagram", "facebook"] });
+    expect(created.approval).toBe("pending");
     expect(created.channels).toEqual(["instagram", "facebook"]);
   });
 
@@ -160,6 +162,73 @@ describe("marketing content vocabulary (S8)", () => {
   it("reading an unknown target type from the API fails loudly instead of guessing", async () => {
     apiMock.get.mockResolvedValueOnce([{ ...dtoFromBody({ status: "scheduled" }), targetType: "empresa" }]);
     await expect(marketingService.contents.list()).rejects.toThrow(/unknown content target type received/);
+  });
+});
+
+/**
+ * Contract with chk_marketing_content_posts_metadata_approval (migration
+ * 20260930000003) and marketing-vocabulary.ts. Duplicated on purpose so a drift
+ * on either side fails here.
+ */
+const DB_APPROVALS = ["pending", "approved", "rejected", "revision_requested"] as const;
+
+describe("marketing content approval vocabulary", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("the selectable approvals are exactly the persisted vocabulary, each with a PT-BR label and a tone", () => {
+    expect(APPROVAL_STATUS_OPTIONS.map((o) => o.value).sort()).toEqual([...DB_APPROVALS].sort());
+    for (const approval of DB_APPROVALS) {
+      expect(APPROVAL_STATUS_LABEL[approval]).toBeTruthy();
+      expect(APPROVAL_STATUS_LABEL[approval]).not.toBe(approval);
+      expect(APPROVAL_STATUS_TONE[approval]).toBeTruthy();
+    }
+  });
+
+  it.each<[string, string]>([
+    ["pendente", "pending"],
+    ["aprovado", "approved"],
+    ["reprovado", "rejected"],
+    ["ajustes_solicitados", "revision_requested"],
+    ...DB_APPROVALS.map((value): [string, string] => [value, value]),
+  ])("canonicalApproval(%s) -> %s", (input, expected) => {
+    expect(canonicalApproval(input)).toBe(expected);
+  });
+
+  it.each([undefined, null, "", "constructor", "Aprovado", "rejeitado", 3, {}, ["approved"]])(
+    "canonicalApproval degrades %s to pending without throwing",
+    (value) => {
+      expect(canonicalApproval(value)).toBe("pending");
+    },
+  );
+
+  it("reading a row that still holds a legacy approval (pre-migration build) yields the canonical value", async () => {
+    apiMock.get.mockResolvedValueOnce([
+      { ...dtoFromBody({ status: "scheduled" }), metadata: { approval: "ajustes_solicitados" } },
+      { ...dtoFromBody({ status: "scheduled" }), metadata: { approval: "approved" } },
+      { ...dtoFromBody({ status: "scheduled" }), metadata: {} },
+    ]);
+    const contents = await marketingService.contents.list();
+    expect(contents.map((c) => c.approval)).toEqual(["revision_requested", "approved", "pending"]);
+  });
+
+  it("one unknown / non-string approval degrades that row to pending and keeps the rest of the list", async () => {
+    apiMock.get.mockResolvedValueOnce([
+      { ...dtoFromBody({ status: "scheduled" }), metadata: { approval: "unknown_value" } },
+      { ...dtoFromBody({ status: "scheduled" }), metadata: { approval: 3 } },
+      { ...dtoFromBody({ status: "scheduled" }), metadata: { approval: "approved" } },
+    ]);
+    const contents = await marketingService.contents.list();
+    expect(contents.map((c) => c.approval)).toEqual(["pending", "pending", "approved"]);
+  });
+
+  it("an empty-string row approval falls through to metadata.approval like null", async () => {
+    apiMock.get.mockResolvedValueOnce([
+      { ...dtoFromBody({ status: "scheduled" }), approval: "", metadata: { approval: "rejected" } },
+      { ...dtoFromBody({ status: "scheduled" }), approval: null, metadata: { approval: "rejected" } },
+      { ...dtoFromBody({ status: "scheduled" }), approval: "", metadata: {} },
+    ]);
+    const contents = await marketingService.contents.list();
+    expect(contents.map((c) => c.approval)).toEqual(["rejected", "rejected", "pending"]);
   });
 });
 

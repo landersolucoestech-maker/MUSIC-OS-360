@@ -269,19 +269,19 @@ export const CONTENT_STATUS_TONE: Record<ContentDisplayStatus, Tone> = {
 // ---------------------------------------------------------------------------
 
 export const APPROVAL_STATUS_OPTIONS: Option<ApprovalStatus>[] = [
-  { value: "pendente", label: "Pendente" },
-  { value: "aprovado", label: "Aprovado" },
-  { value: "reprovado", label: "Reprovado" },
-  { value: "ajustes_solicitados", label: "Ajustes Solicitados" },
+  { value: "pending", label: "Pendente" },
+  { value: "approved", label: "Aprovado" },
+  { value: "rejected", label: "Reprovado" },
+  { value: "revision_requested", label: "Ajustes Solicitados" },
 ];
 
 export const APPROVAL_STATUS_LABEL = optionLabels(APPROVAL_STATUS_OPTIONS);
 
 export const APPROVAL_STATUS_TONE: Record<ApprovalStatus, Tone> = {
-  pendente: "pending",
-  aprovado: "success",
-  reprovado: "danger",
-  ajustes_solicitados: "warning",
+  pending: "pending",
+  approved: "success",
+  rejected: "danger",
+  revision_requested: "warning",
 };
 
 // ---------------------------------------------------------------------------
@@ -574,19 +574,19 @@ export const DELIVERABLE_TYPE_OPTIONS: Option<DeliverableType>[] = [
 export const DELIVERABLE_TYPE_LABEL = optionLabels(DELIVERABLE_TYPE_OPTIONS);
 
 export const DELIVERABLE_APPROVAL_OPTIONS: Option<DeliverableApproval>[] = [
-  { value: "pendente", label: "Pendente" },
-  { value: "em_revisao", label: "Em Revisão" },
-  { value: "aprovado", label: "Aprovado" },
-  { value: "rejeitado", label: "Rejeitado" },
+  { value: "pending", label: "Pendente" },
+  { value: "in_review", label: "Em Revisão" },
+  { value: "approved", label: "Aprovado" },
+  { value: "rejected", label: "Rejeitado" },
 ];
 
 export const DELIVERABLE_APPROVAL_LABEL = optionLabels(DELIVERABLE_APPROVAL_OPTIONS);
 
 export const DELIVERABLE_APPROVAL_TONE: Record<DeliverableApproval, Tone> = {
-  pendente: "pending",
-  em_revisao: "warning",
-  aprovado: "success",
-  rejeitado: "danger",
+  pending: "pending",
+  in_review: "warning",
+  approved: "success",
+  rejected: "danger",
 };
 
 // ---------------------------------------------------------------------------
