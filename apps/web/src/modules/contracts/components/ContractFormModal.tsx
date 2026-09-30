@@ -310,8 +310,8 @@ const ContractForm = ({
                     )}
                     {form.watch("payment_type") === "recebimentos externos de direitos" && (
                       <div className="space-y-2">
-                        <Label htmlFor="recebimentos externos de direitos_pct_sel">Termos externos de direitos (%)</Label>
-                        <Input id="recebimentos externos de direitos_pct_sel" type="number" step="0.01" min="0" max="100" placeholder="0,00"
+                        <Label htmlFor="external_rights_percentage_sel">Termos externos de direitos (%)</Label>
+                        <Input id="external_rights_percentage_sel" type="number" step="0.01" min="0" max="100" placeholder="0,00"
                           {...form.register("external_rights_percentage", { valueAsNumber: true })} />
                       </div>
                     )}

@@ -1014,7 +1014,7 @@ export class ContractServiceTypeEntity {
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) category: string | null;
   @Column({ type: 'jsonb', default: [] }) client_types: string[];
-  @Column({ type: 'varchar', length: 50, default: 'valor_fixo' }) financial_model: string;
+  @Column({ type: 'varchar', length: 50, default: 'fixed_value' }) financial_model: string;
   @Column({ type: 'boolean', default: false }) requires_external_rights_terms: boolean;
   @Column({ type: 'boolean', default: false }) requires_fixed_value: boolean;
   @Column({ type: 'boolean', default: false }) requires_advance: boolean;
@@ -1032,7 +1032,7 @@ export class ContractServiceTypeEntity {
   @Column({ type: 'jsonb', nullable: true }) signature_settings: unknown;
   @Column({ type: 'jsonb', nullable: true }) branding_settings: unknown;
   @Column({ type: 'varchar', length: 10, default: 'BRL' }) financial_currency: string;
-  @Column({ type: 'varchar', length: 50, default: 'unico' }) financial_payment_frequency: string;
+  @Column({ type: 'varchar', length: 50, default: 'one_time' }) financial_payment_frequency: string;
   @Column({ type: 'numeric', precision: 5, scale: 2, nullable: true }) financial_penalty_percentage: string | null;
   @Column({ type: 'numeric', precision: 5, scale: 2, nullable: true }) financial_interest_percentage: string | null;
   @Column({ type: 'int', nullable: true }) financial_due_days: number | null;

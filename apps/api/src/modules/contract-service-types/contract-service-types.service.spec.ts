@@ -57,8 +57,8 @@ describe('ContractServiceTypesService', () => {
     const dto = {
       name: 'Distribuição',
       slug: 'distribuicao',
-      client_types: ['artista'],
-      financial_model: 'valor_fixo',
+      client_types: ['artist'],
+      financial_model: 'fixed_value',
       created_at: '2020-01-01T00:00:00.000Z',
       updated_at: '2020-01-01T00:00:00.000Z',
     };

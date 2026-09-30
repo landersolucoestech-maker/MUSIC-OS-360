@@ -1,10 +1,7 @@
 {
- "total": 5,
+ "total": 2,
  "debt": {
-  "schema::default-value::contract_service_types.financial_model::valor_fixo": 1,
-  "schema::default-value::contract_service_types.financial_payment_frequency::unico": 1,
   "schema::default-value::organizations.industry::gravadora": 1,
-  "schema::default-value::releases.status::planejamento": 1,
-  "schema::index::contracts.idx_contracts_data_fim": 1
+  "schema::default-value::releases.status::planejamento": 1
  }
 }

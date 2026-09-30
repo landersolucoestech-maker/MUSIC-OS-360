@@ -28,7 +28,7 @@ describe('ContractServiceTypesController', () => {
   });
 
   it('create delegates tenant + dto', async () => {
-    const dto = { name: 'Distribuição', slug: 'distribuicao', client_types: ['artista'], financial_model: 'valor_fixo' };
+    const dto = { name: 'Distribuição', slug: 'distribuicao', client_types: ['artist'], financial_model: 'fixed_value' };
     await controller.create(tenant, dto as never);
     expect(svc.create).toHaveBeenCalledWith('tenant-1', dto);
   });

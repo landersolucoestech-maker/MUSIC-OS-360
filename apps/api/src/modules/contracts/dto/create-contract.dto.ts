@@ -34,7 +34,7 @@ export class CreateContractDto {
   @MaxLength(100)
   type?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-do-artista', deprecated: true, description: 'Use "artist_id".' })
+  @ApiPropertyOptional({ example: 'artist-uuid', deprecated: true, description: 'Use "artist_id".' })
   @IsOptional()
   @IsUUID()
   artistId?: string;

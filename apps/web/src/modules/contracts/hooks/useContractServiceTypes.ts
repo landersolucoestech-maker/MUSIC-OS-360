@@ -11,8 +11,15 @@ import type {
 } from "@/modules/contracts/types/contracts.types";
 
 import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
-export type ClientType = "artista" | "pessoa_fisica" | "pessoa_juridica";
-export type FinancialModel = "valor_fixo" | "recebimentos externos de direitos" | "misto" | "recorrente";
+import {
+  normalizeClientTypes,
+  normalizeFinancialModel,
+  normalizePaymentFrequency,
+  type ClientType,
+  type FinancialModel,
+} from "@/modules/contracts/lib/contract-service-type-vocabulary";
+
+export type { ClientType, FinancialModel };
 
 export interface ContractServiceType {
   id: string;
@@ -77,8 +84,8 @@ function rowToType(row: StorageRow): ContractServiceType {
     slug: String(row.slug ?? ""),
     description: row.description != null ? String(row.description) : null,
     category: row.category != null ? String(row.category) : null,
-    client_types: Array.isArray(row.client_types) ? (row.client_types as ClientType[]) : [],
-    financial_model: (row.financial_model as FinancialModel) ?? "valor_fixo",
+    client_types: normalizeClientTypes(row.client_types),
+    financial_model: normalizeFinancialModel(row.financial_model),
     requires_external_rights_terms: Boolean(row.requires_external_rights_terms),
     requires_fixed_value: Boolean(row.requires_fixed_value),
     requires_advance: Boolean(row.requires_advance),
@@ -99,7 +106,7 @@ function rowToType(row: StorageRow): ContractServiceType {
     signature_settings: parseJson<SignatureSettings | null>(row.signature_settings, null),
     branding_settings: parseJson<BrandingSettings | null>(row.branding_settings, null),
     financial_currency: String(row.financial_currency ?? "BRL"),
-    financial_payment_frequency: String(row.financial_payment_frequency ?? "unico"),
+    financial_payment_frequency: normalizePaymentFrequency(row.financial_payment_frequency),
     financial_penalty_percentage: row.financial_penalty_percentage != null ? Number(row.financial_penalty_percentage) : null,
     financial_interest_percentage: row.financial_interest_percentage != null ? Number(row.financial_interest_percentage) : null,
     financial_due_days: row.financial_due_days != null ? Number(row.financial_due_days) : null,

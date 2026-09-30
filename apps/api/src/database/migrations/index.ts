@@ -321,6 +321,7 @@ import { ArtistsTimestampTzFix20260818000001 } from './20260818000001_ArtistsTim
 import { CasTimestampTzSystemicFix20260818000002 } from './20260818000002_CasTimestampTzSystemicFix';
 import { RemoveArtistLegacyMetricColumns20260821000001 } from './20260821000001_RemoveArtistLegacyMetricColumns';
 import { DropArtistTipoColumn20260821000002 } from './20260821000002_DropArtistTipoColumn';
+import { CanonicalizeContractServiceTypeValuesAndIndex20260930000002 } from './20260930000002_CanonicalizeContractServiceTypeValuesAndIndex';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -625,4 +626,5 @@ export const ALL_MIGRATIONS = [
   CanonicalizeMusicChatValuesToEnglish20260928000026,
   AddBacklogToMarketingTaskStatusCheck20260929000001,
   BackfillAndRestrictMarketingContentVocabularyToEnglish20260929000002,
+  CanonicalizeContractServiceTypeValuesAndIndex20260930000002,
 ] as const;

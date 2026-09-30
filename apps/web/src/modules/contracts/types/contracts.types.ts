@@ -2,6 +2,7 @@ import type { ArtistRef, ClientRef } from "@/shared/types/refs";
 import type { ContractStatusValue, ContractType } from "@/shared/types/enums";
 import type { ContractSigner } from "@/modules/contracts/lib/contract-schema";
 import type { UploadedFile } from "@/shared/components/FileUpload";
+import type { PaymentFrequency } from "@/modules/contracts/lib/contract-service-type-vocabulary";
 
 export type { ContractStatusValue, ContractType };
 
@@ -161,7 +162,7 @@ export interface FinancialSettings {
   supportEnabled: boolean;
   allowInstallments: boolean;
   currency: string;
-  paymentFrequency: "unico" | "mensal" | "trimestral" | "anual";
+  paymentFrequency: PaymentFrequency;
   penaltyPercentage: number | null;
   interestPercentage: number | null;
   defaultDueDays: number | null;

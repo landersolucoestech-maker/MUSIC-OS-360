@@ -1,14 +1,19 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsArray, IsBoolean, IsIn, IsInt, IsNumber, IsOptional, IsString, MaxLength, Min,
 } from 'class-validator';
 import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
+import {
+  CONTRACT_SERVICE_TYPE_CLIENT_TYPES,
+  CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS,
+  canonicalContractServiceTypeClientTypes,
+  canonicalContractServiceTypeFinancialModel,
+  canonicalContractServiceTypePaymentFrequency,
+} from '../contract-service-type.vocabulary';
 
 /** CZ-026 deploy-skew window: field names a pre-canonical web build still sends (see applyDeprecatedFieldAliases). */
 export const CONTRACT_SERVICE_TYPE_DEPRECATED_FIELDS: DeprecatedFieldAliases = { conteudo: 'content' };
-
-const CLIENT_TYPES = ['artista', 'pessoa_fisica', 'pessoa_juridica'] as const;
-const FINANCIAL_MODELS = ['valor_fixo', 'recebimentos externos de direitos', 'misto', 'recorrente'] as const;
 
 export class CreateContractServiceTypeDto {
   @ApiProperty({ example: 'Contrato de Distribuição' })
@@ -25,12 +30,14 @@ export class CreateContractServiceTypeDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100)
   category?: string | null;
 
-  @ApiProperty({ enum: CLIENT_TYPES, isArray: true })
-  @IsArray() @IsIn(CLIENT_TYPES, { each: true })
+  @ApiProperty({ enum: CONTRACT_SERVICE_TYPE_CLIENT_TYPES, isArray: true, description: 'Deprecated Portuguese members are still accepted and mapped.' })
+  @Transform(canonicalContractServiceTypeClientTypes)
+  @IsArray() @IsIn(CONTRACT_SERVICE_TYPE_CLIENT_TYPES, { each: true })
   client_types!: string[];
 
-  @ApiProperty({ enum: FINANCIAL_MODELS })
-  @IsIn(FINANCIAL_MODELS)
+  @ApiProperty({ enum: CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS, description: 'Deprecated Portuguese values are still accepted and mapped.' })
+  @Transform(canonicalContractServiceTypeFinancialModel)
+  @IsIn(CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS)
   financial_model!: string;
 
   @ApiPropertyOptional() @IsOptional() @IsBoolean()
@@ -89,7 +96,9 @@ export class CreateContractServiceTypeDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10)
   financial_currency?: string;
 
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50)
+  @ApiPropertyOptional({ example: 'one_time', description: 'one_time | monthly | quarterly | yearly. Deprecated Portuguese values are still accepted and mapped.' })
+  @Transform(canonicalContractServiceTypePaymentFrequency)
+  @IsOptional() @IsString() @MaxLength(50)
   financial_payment_frequency?: string;
 
   @ApiPropertyOptional() @IsOptional() @IsNumber()
