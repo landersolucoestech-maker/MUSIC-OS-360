@@ -47,8 +47,8 @@ describe("readSpreadsheetRows — SheetJS runs in a Web Worker (advisories 11081
     const buffer = new ArrayBuffer(8);
     const pending = readSpreadsheetRows(buffer, { defval: "" });
     expect(worker.posted).toEqual([{ message: { buffer, options: { defval: "" } }, transfer: [buffer] }]);
-    worker.reply({ ok: true, sheetNames: ["Dados"], rows: [{ Nome: "Ana" }] });
-    await expect(pending).resolves.toEqual({ sheetNames: ["Dados"], rows: [{ Nome: "Ana" }] });
+    worker.reply({ ok: true, sheetNames: ["Dados"], rows: [{ Name: "Ana" }] });
+    await expect(pending).resolves.toEqual({ sheetNames: ["Dados"], rows: [{ Name: "Ana" }] });
     expect(worker.terminate).toHaveBeenCalledTimes(1);
   });
 
@@ -88,8 +88,8 @@ describe("readSpreadsheetRows — SheetJS runs in a Web Worker (advisories 11081
 
 describe("readFirstSheet — the worker body", () => {
   it("reads the first sheet with the requested sheet_to_json options", () => {
-    const reply = readFirstSheet({ buffer: workbookBytes([["Nome", "Código"], ["Ana", "007"]]), options: { defval: "" } });
-    expect(reply).toEqual({ ok: true, sheetNames: ["Dados"], rows: [{ Nome: "Ana", Código: "007" }] });
+    const reply = readFirstSheet({ buffer: workbookBytes([["Name", "Code"], ["Ana", "007"]]), options: { defval: "" } });
+    expect(reply).toEqual({ ok: true, sheetNames: ["Dados"], rows: [{ Name: "Ana", Code: "007" }] });
   });
 
   it("answers a failure (never throws) for bytes that are not a workbook", () => {
