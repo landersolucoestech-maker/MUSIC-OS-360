@@ -8142,6 +8142,22 @@
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": "CZ-045 web release",
       "status": "ACTIVE"
+    },
+    {
+      "item": "data-audit runner legacy-key regression fixtures",
+      "path": "apps/web/src/shared/lib/audit/runner.test.ts",
+      "currentName": "*",
+      "surface": "objectKey",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Fixtures proving the deprecated Portuguese input aliases (projects genero, licenses cliente/valor) do not satisfy the canonical response fields music_genre, client_name and amount that the audit runner reads.",
+      "consumer": "apps/web/src/shared/lib/audit/runner.ts",
+      "owner": "web platform owner",
+      "removalCondition": "delete these fixtures together with the deprecated licensing and projects input aliases once every deployed web build sends only the canonical contract",
+      "targetState": "no legacy-key fixtures",
+      "blocker": null,
+      "dependency": "removal of the deprecated licensing/projects DTO aliases",
+      "status": "ACTIVE"
     }
   ],
   "blockers": [

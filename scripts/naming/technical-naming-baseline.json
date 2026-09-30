@@ -5,7 +5,7 @@
   "frontendRoute": 13,
   "identifier": 658,
   "objectKey": 1503,
-  "value": 4056
+  "value": 4050
  },
  "debt": {
   "doc::.claude/skills/safe-db-rename/SKILL.md": 2,
@@ -4319,15 +4319,11 @@
   "value::apps/web/src/shared/lib/audit/runner.ts::literal-type::obrigatorio": 1,
   "value::apps/web/src/shared/lib/audit/runner.ts::literal-type::recomendado": 1,
   "value::apps/web/src/shared/lib/audit/runner.ts::string::artistas": 1,
-  "value::apps/web/src/shared/lib/audit/runner.ts::string::cliente": 2,
-  "value::apps/web/src/shared/lib/audit/runner.ts::string::genero": 1,
   "value::apps/web/src/shared/lib/audit/runner.ts::string::lancamentos": 1,
-  "value::apps/web/src/shared/lib/audit/runner.ts::string::nome": 2,
+  "value::apps/web/src/shared/lib/audit/runner.ts::string::nome": 1,
   "value::apps/web/src/shared/lib/audit/runner.ts::string::obrigatorio": 37,
-  "value::apps/web/src/shared/lib/audit/runner.ts::string::projeto": 1,
   "value::apps/web/src/shared/lib/audit/runner.ts::string::recomendado": 36,
   "value::apps/web/src/shared/lib/audit/runner.ts::string::rh": 1,
-  "value::apps/web/src/shared/lib/audit/runner.ts::string::valor": 1,
   "value::apps/web/src/shared/lib/audit/types.ts::literal-type::artistas": 1,
   "value::apps/web/src/shared/lib/audit/types.ts::literal-type::lancamentos": 1,
   "value::apps/web/src/shared/lib/audit/types.ts::literal-type::obrigatorio": 1,
