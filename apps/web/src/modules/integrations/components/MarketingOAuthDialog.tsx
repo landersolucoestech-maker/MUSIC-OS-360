@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback, type ComponentType, type CSSProperties } from "react";
-import { getAccessToken } from "@/shared/lib/api-client";
+import { getAccessToken, resolveApiUserMessage } from "@/shared/lib/api-client";
 import { API_BASE_URL } from "@/shared/lib/env";
 import { toast } from "sonner";
 import {
@@ -588,11 +588,12 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
       if (!res.ok) {
         popup.close();
         popupRef.current = null;
-        const body = await res.json().catch(() => ({})) as Record<string, unknown>;
-        // API HttpException messages are PT-BR user copy; anything else stays in the log.
-        const apiMessage = typeof body["message"] === "string" ? body["message"] : null;
-        console.error("[OAuth] /oauth/init failed:", res.status, body["message"]);
-        toast.error(apiMessage ?? "Não foi possível iniciar a conexão com a plataforma. Tente novamente.");
+        const parsed: unknown = await res.json().catch(() => null);
+        const body = (typeof parsed === "object" && parsed !== null ? parsed : {}) as { message?: unknown; error?: unknown };
+        // Only copy that passes the api-client policy (known code or PT-BR text) is shown; raw
+        // server text is replaced by mapped PT-BR copy and never reaches the toast or the log.
+        console.error("[OAuth] /oauth/init failed:", res.status, typeof body.error === "string" ? body.error : undefined);
+        toast.error(resolveApiUserMessage(res.status, body));
         return;
       }
       const data = (await res.json()) as { exchange_token: string };

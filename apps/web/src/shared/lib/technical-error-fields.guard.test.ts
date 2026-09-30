@@ -27,11 +27,10 @@ const RAW_MESSAGE = String.raw`(?:\(\s*\w+\s+as\s+\{[^}]*\}\s*\)\??|\b(?:err|err
 const TECHNICAL_ARG_OF_USER_FACING_ERROR = /UserFacingError\(\s*`/;
 
 /**
- * KNOWN DEBT: raw `body["message"]` toast outside this slice's write scope. Listed so the guard stays
- * green without loosening the pattern; the entry must be removed when the file is fixed (the test
- * below fails if a listed file no longer matches).
+ * Files allowed to keep a raw `body["message"]` sink. Empty: the last entry (MarketingOAuthDialog)
+ * was fixed to go through resolveApiUserMessage. Do not add entries; route through the policy.
  */
-const KNOWN_BODY_MESSAGE_DEBT = new Set(["modules/integrations/components/MarketingOAuthDialog.tsx"]);
+const KNOWN_BODY_MESSAGE_DEBT = new Set<string>();
 
 /**
  * Non-JSX sinks that put text in front of the user (toast, state later rendered).
