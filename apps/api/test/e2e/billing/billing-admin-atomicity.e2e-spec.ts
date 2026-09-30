@@ -58,7 +58,7 @@ describe('BillingService.updateAdminTenant — atomicity against real Postgres (
     orgId = randomUUID();
     await owner.query(
       `INSERT INTO organizations (id, name, slug, plan, billing_status, industry, address, config, metadata)
-       VALUES ($1, 'P0-A-R6 E2E Org', $2, 'starter', 'trial', 'gravadora', '{}'::jsonb, '{}'::jsonb, '{}'::jsonb)`,
+       VALUES ($1, 'P0-A-R6 E2E Org', $2, 'starter', 'trial', 'record_label', '{}'::jsonb, '{}'::jsonb, '{}'::jsonb)`,
       [orgId, `p0a-r6-org-${randomUUID().slice(0, 8)}`],
     );
 

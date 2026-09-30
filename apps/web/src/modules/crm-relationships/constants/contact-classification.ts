@@ -7,7 +7,10 @@
 // - Category: relationship → `clients.category` (Contact.category; slugs of the
 //   ContactType enum, keeping the existing filters/"Segmento" column).
 // - Contact profile: specific identity → `clients.profile` (Contact.profile;
-//   PT slug VALUES unchanged — taxonomy decision pending; always shown through
+//   English snake_case machine VALUES, PT-BR labels; mirrors the API vocabulary
+//   apps/api/src/modules/clients/client-profile-vocabulary.ts. Rows saved before
+//   PV1 may still hold the Portuguese slugs: LEGACY_CONTACT_PROFILES /
+//   canonicalContactProfile() read them as canonical. Always shown through
 //   profileLabel()).
 //
 // The whole relationship is centralized here — no scattered ifs/switches.
@@ -43,110 +46,178 @@ export const CONTACT_CATEGORY_OPTIONS: ClassificationOption[] = [
 ];
 
 const opt = (value: string, label: string): ClassificationOption => ({ value, label });
-const OUTROS = opt("outros", "Outros");
+const OTHER = opt("other", "Outros");
 
 // Profiles per contact type + category.
 // Category keys = CONTACT_CATEGORY_OPTIONS slugs.
 export const CONTACT_PROFILES: Record<PersonType, Record<string, ClassificationOption[]>> = {
   individual: {
     CORPORATE_CLIENT: [
-      opt("artista_banda", "Artista/Banda"),
-      opt("empresario_artistico", "Empresário Artístico"),
-      opt("influenciador", "Influenciador"),
-      opt("contratante_show", "Contratante de Show"),
-      opt("parceiros", "Parceiros"),
-      OUTROS,
+      opt("artist_or_band", "Artista/Banda"),
+      opt("artist_manager", "Empresário Artístico"),
+      opt("influencer", "Influenciador"),
+      opt("show_booker", "Contratante de Show"),
+      opt("partner", "Parceiros"),
+      OTHER,
     ],
     PARTNER: [
-      opt("empresario_artistico", "Empresário Artístico"),
-      opt("parceiro_comercial", "Parceiro Comercial"),
-      opt("influenciador", "Influenciador"),
-      OUTROS,
+      opt("artist_manager", "Empresário Artístico"),
+      opt("business_partner", "Parceiro Comercial"),
+      opt("influencer", "Influenciador"),
+      OTHER,
     ],
-    SUPPLIER: [OUTROS],
+    SUPPLIER: [OTHER],
     SERVICE_PROVIDER: [
-      opt("advogado", "Advogado"),
-      opt("a_e_r", "A&R"),
+      opt("lawyer", "Advogado"),
+      opt("a_and_r", "A&R"),
       opt("beatmaker", "Beatmaker"),
-      opt("compositor", "Compositor"),
-      opt("coach_vocal", "Coach Vocal"),
-      opt("contador", "Contador"),
-      opt("curador_musical", "Curador Musical"),
+      opt("composer", "Compositor"),
+      opt("vocal_coach", "Coach Vocal"),
+      opt("accountant", "Contador"),
+      opt("music_curator", "Curador Musical"),
       opt("designer", "Designer"),
-      opt("diretor", "Diretor"),
-      opt("diretor_de_video", "Diretor de Vídeo"),
-      opt("editor_de_video", "Editor de Vídeo"),
-      opt("engenheiro_de_som", "Engenheiro de Som"),
-      opt("fotografo", "Fotógrafo"),
-      opt("jornalista", "Jornalista"),
+      opt("director", "Diretor"),
+      opt("video_director", "Diretor de Vídeo"),
+      opt("video_editor", "Editor de Vídeo"),
+      opt("sound_engineer", "Engenheiro de Som"),
+      opt("photographer", "Fotógrafo"),
+      opt("journalist", "Jornalista"),
       opt("manager", "Manager"),
-      opt("masterizador", "Masterizador"),
+      opt("mastering_engineer", "Masterizador"),
       opt("mix_engineer", "Mix Engineer"),
       opt("motion_designer", "Motion Designer"),
-      opt("operador_de_camera", "Operador de Câmera"),
-      opt("produtor_executivo", "Produtor Executivo"),
-      opt("produtor_musical", "Produtor Musical"),
-      opt("programador", "Programador"),
-      opt("psicologo", "Psicólogo"),
-      OUTROS,
+      opt("camera_operator", "Operador de Câmera"),
+      opt("executive_producer", "Produtor Executivo"),
+      opt("music_producer", "Produtor Musical"),
+      opt("developer", "Programador"),
+      opt("psychologist", "Psicólogo"),
+      OTHER,
     ],
-    INVESTOR: [opt("investidor", "Investidor"), opt("fundo_de_investimento", "Fundo de Investimento"), OUTROS],
-    COLLECTIVE_MANAGEMENT_ORGANIZATION: [OUTROS],
+    INVESTOR: [opt("investor", "Investidor"), opt("investment_fund", "Fundo de Investimento"), OTHER],
+    COLLECTIVE_MANAGEMENT_ORGANIZATION: [OTHER],
   },
   company: {
     CORPORATE_CLIENT: [
-      opt("empresa", "Empresa"),
-      opt("marca", "Marca"),
-      opt("contratante_show", "Contratante de Show"),
-      opt("produtora_de_eventos", "Produtora de Eventos"),
-      OUTROS,
+      opt("company", "Empresa"),
+      opt("brand", "Marca"),
+      opt("show_booker", "Contratante de Show"),
+      opt("event_producer", "Produtora de Eventos"),
+      OTHER,
     ],
     PARTNER: [
-      opt("agencia", "Agência"),
-      opt("agencia_de_booking", "Agência de Booking"),
-      opt("agencia_de_modelos", "Agência de Modelos"),
-      opt("agencia_de_publicidade", "Agência de Publicidade"),
-      opt("distribuidora_digital", "Distribuidora Digital"),
-      opt("empresa", "Empresa"),
-      opt("gravadora_selo", "Gravadora/Selo"),
-      opt("parceiro_comercial", "Parceiro Comercial"),
-      opt("patrocinador", "Patrocinador"),
-      opt("plataforma_digital", "Plataforma Digital"),
-      opt("produtora_audiovisual", "Produtora Audiovisual"),
-      opt("produtora_de_eventos", "Produtora de Eventos"),
-      OUTROS,
+      opt("agency", "Agência"),
+      opt("booking_agency", "Agência de Booking"),
+      opt("model_agency", "Agência de Modelos"),
+      opt("advertising_agency", "Agência de Publicidade"),
+      opt("digital_distributor", "Distribuidora Digital"),
+      opt("company", "Empresa"),
+      opt("record_label", "Gravadora/Selo"),
+      opt("business_partner", "Parceiro Comercial"),
+      opt("sponsor", "Patrocinador"),
+      opt("digital_platform", "Plataforma Digital"),
+      opt("audiovisual_production_company", "Produtora Audiovisual"),
+      opt("event_producer", "Produtora de Eventos"),
+      OTHER,
     ],
     SUPPLIER: [
-      opt("banco", "Banco"),
-      opt("cartorio", "Cartório"),
+      opt("bank", "Banco"),
+      opt("notary_office", "Cartório"),
       opt("cloud_provider", "Cloud Provider"),
-      opt("construtora", "Construtora"),
-      opt("empresa_de_ia", "Empresa de IA"),
-      opt("empresa_de_internet", "Empresa de Internet"),
-      opt("empresa_de_som", "Empresa de Som"),
-      opt("estudio", "Estúdio"),
-      opt("gateway_de_pagamento", "Gateway de Pagamento"),
+      opt("construction_company", "Construtora"),
+      opt("ai_company", "Empresa de IA"),
+      opt("internet_company", "Empresa de Internet"),
+      opt("sound_company", "Empresa de Som"),
+      opt("studio", "Estúdio"),
+      opt("payment_gateway", "Gateway de Pagamento"),
       opt("hosting", "Hosting"),
-      opt("oficina_mecanica", "Oficina Mecânica"),
-      opt("sala_de_ensaio", "Sala de Ensaio"),
-      OUTROS,
+      opt("auto_repair_shop", "Oficina Mecânica"),
+      opt("rehearsal_room", "Sala de Ensaio"),
+      OTHER,
     ],
     SERVICE_PROVIDER: [
-      opt("produtora_audiovisual", "Produtora Audiovisual"),
-      opt("estudio", "Estúdio"),
-      opt("agencia", "Agência"),
-      OUTROS,
+      opt("audiovisual_production_company", "Produtora Audiovisual"),
+      opt("studio", "Estúdio"),
+      opt("agency", "Agência"),
+      OTHER,
     ],
-    INVESTOR: [opt("fundo_de_investimento", "Fundo de Investimento"), opt("investidor", "Investidor"), OUTROS],
+    INVESTOR: [opt("investment_fund", "Fundo de Investimento"), opt("investor", "Investidor"), OTHER],
     COLLECTIVE_MANAGEMENT_ORGANIZATION: [
       opt("abramus", "ABRAMUS"),
       opt("ecad", "ECAD"),
       opt("inpi", "INPI"),
-      opt("prefeitura", "Prefeitura"),
-      OUTROS,
+      opt("city_hall", "Prefeitura"),
+      OTHER,
     ],
   },
 };
+
+/** Deprecated Portuguese profile slug -> canonical value (mirrors the API map and migration 20260930000012). */
+export const LEGACY_CONTACT_PROFILES: Readonly<Record<string, string>> = {
+  a_e_r: "a_and_r",
+  advogado: "lawyer",
+  agencia: "agency",
+  agencia_de_booking: "booking_agency",
+  agencia_de_modelos: "model_agency",
+  agencia_de_publicidade: "advertising_agency",
+  artista_banda: "artist_or_band",
+  banco: "bank",
+  cartorio: "notary_office",
+  coach_vocal: "vocal_coach",
+  compositor: "composer",
+  construtora: "construction_company",
+  contador: "accountant",
+  contratante_show: "show_booker",
+  curador_musical: "music_curator",
+  diretor: "director",
+  diretor_de_video: "video_director",
+  distribuidora_digital: "digital_distributor",
+  editor_de_video: "video_editor",
+  empresa: "company",
+  empresa_de_ia: "ai_company",
+  empresa_de_internet: "internet_company",
+  empresa_de_som: "sound_company",
+  empresario_artistico: "artist_manager",
+  engenheiro_de_som: "sound_engineer",
+  estudio: "studio",
+  fotografo: "photographer",
+  fundo_de_investimento: "investment_fund",
+  gateway_de_pagamento: "payment_gateway",
+  gravadora_selo: "record_label",
+  influenciador: "influencer",
+  investidor: "investor",
+  jornalista: "journalist",
+  marca: "brand",
+  masterizador: "mastering_engineer",
+  oficina_mecanica: "auto_repair_shop",
+  operador_de_camera: "camera_operator",
+  outros: "other",
+  parceiro_comercial: "business_partner",
+  parceiros: "partner",
+  patrocinador: "sponsor",
+  plataforma_digital: "digital_platform",
+  prefeitura: "city_hall",
+  produtor_executivo: "executive_producer",
+  produtor_musical: "music_producer",
+  produtora_audiovisual: "audiovisual_production_company",
+  produtora_de_eventos: "event_producer",
+  programador: "developer",
+  psicologo: "psychologist",
+  sala_de_ensaio: "rehearsal_room",
+};
+
+/** Default profile of a contact created without one (was "outros"). */
+export const DEFAULT_CONTACT_PROFILE = "other";
+
+/** Canonical profile of a stored/raw value: canonical wins, deprecated slugs are mapped, unknown values are kept (never guessed). */
+export function canonicalContactProfile(value: string): string {
+  const key = value.trim().toLowerCase();
+  if (CANONICAL_CONTACT_PROFILES.has(key)) return key;
+  return Object.prototype.hasOwnProperty.call(LEGACY_CONTACT_PROFILES, key) ? LEGACY_CONTACT_PROFILES[key] : value;
+}
+
+const CANONICAL_CONTACT_PROFILES: ReadonlySet<string> = new Set(
+  Object.values(CONTACT_PROFILES).flatMap((byCategory) => Object.values(byCategory).flatMap((options) => options.map((o) => o.value))),
+);
 
 /** Valid profiles for a Type + Category combination. */
 export function getProfiles(type: PersonType, categorySlug: string): ClassificationOption[] {
@@ -161,8 +232,9 @@ export const UNKNOWN_PROFILE_LABEL = "Perfil não cadastrado";
  * first, then in the whole catalog (a legacy profile saved under another
  * category keeps its real label); never returns the raw slug.
  */
-export function profileLabel(slug: string, type?: PersonType, categorySlug?: string): string {
-  if (!slug) return "";
+export function profileLabel(rawSlug: string, type?: PersonType, categorySlug?: string): string {
+  if (!rawSlug) return "";
+  const slug = canonicalContactProfile(rawSlug);
   if (type && categorySlug) {
     const scoped = getProfiles(type, categorySlug).find((o) => o.value === slug);
     if (scoped) return scoped.label;
@@ -182,8 +254,9 @@ export function profileLabel(slug: string, type?: PersonType, categorySlug?: str
  */
 export function ensureProfileOption(
   list: ClassificationOption[],
-  value: string,
+  rawValue: string,
 ): ClassificationOption[] {
+  const value = rawValue ? canonicalContactProfile(rawValue) : rawValue;
   if (!value || list.some((o) => o.value === value)) return list;
   return [...list, opt(value, profileLabel(value))];
 }

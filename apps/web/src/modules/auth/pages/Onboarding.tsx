@@ -8,13 +8,18 @@ import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { toast } from "sonner";
 import { useTenant } from "@/app/providers/TenantContext";
+import {
+  ONBOARDING_INDUSTRY_OPTIONS,
+  normalizeOrganizationIndustry,
+  type OrganizationIndustry,
+} from "../constants/organization-industry";
 
 import { toUserMessage } from "@/shared/lib/errors";
 export default function Onboarding() {
   const navigate = useNavigate();
   const { tenant, setTenant } = useTenant();
   const [companyName, setCompanyName] = useState(tenant.name);
-  const [segment, setSegment] = useState(tenant.industry || "gravadora");
+  const [segment, setSegment] = useState<OrganizationIndustry>(normalizeOrganizationIndustry(tenant.industry));
   const [logoUrl, setLogoUrl] = useState(tenant.config.logoUrl ?? "");
   const [timezone, setTimezone] = useState(tenant.meta.timezone);
   const [saving, setSaving] = useState(false);
@@ -35,7 +40,7 @@ export default function Onboarding() {
       setTenant((current) => ({
         ...current,
         name: companyName.trim(),
-        industry: segment as typeof current.industry,
+        industry: segment,
         config: { ...current.config, logoUrl: logoUrl.trim() || undefined },
         onboarding: {
           ...current.onboarding,
@@ -73,15 +78,12 @@ export default function Onboarding() {
           </div>
           <div className="space-y-2">
             <Label>Segmento</Label>
-            <Select value={segment} onValueChange={(value) => setSegment(value as typeof segment)}>
+            <Select value={segment} onValueChange={(value) => setSegment(value as OrganizationIndustry)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="gravadora">Gravadora</SelectItem>
-                <SelectItem value="editora">Editora musical</SelectItem>
-                <SelectItem value="distribuidora">Distribuidora</SelectItem>
-                <SelectItem value="agencia">Agência</SelectItem>
-                <SelectItem value="publisher">Publisher</SelectItem>
-                <SelectItem value="outro">Outro</SelectItem>
+                {ONBOARDING_INDUSTRY_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

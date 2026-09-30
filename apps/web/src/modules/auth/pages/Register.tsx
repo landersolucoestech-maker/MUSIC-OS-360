@@ -4,6 +4,10 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/shared/ui/button";
+import {
+  REGISTER_INDUSTRY_OPTIONS,
+  REGISTER_INDUSTRY_VALUES,
+} from "../constants/organization-industry";
 import { Checkbox } from "@/shared/ui/checkbox";
 import {
   Select,
@@ -74,7 +78,7 @@ const step1Schema = z.object({
   companyName:     z.string().min(2, "Nome da empresa obrigatório"),
   tradeName:       z.string().min(2, "Nome fantasia obrigatório"),
   cnpj:            z.string().min(14, "CNPJ inválido"),
-  segment:         z.enum(["gravadora", "editora", "produtora", "escritorio"]),
+  segment:         z.enum(REGISTER_INDUSTRY_VALUES),
   address:         z.string().min(5, "Endereço obrigatório"),
   city:            z.string().min(2, "Cidade obrigatória"),
   state:           z.string().length(2, "UF com 2 letras"),
@@ -124,12 +128,7 @@ const STEPS = [
 ] as const;
 
 const STATES_BR = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
-const SEGMENTS  = [
-  { value: "gravadora",  label: "Gravadora" },
-  { value: "editora",    label: "Editora Musical" },
-  { value: "produtora",  label: "Produtora Musical" },
-  { value: "escritorio", label: "Escritório Artístico" },
-];
+const SEGMENTS  = REGISTER_INDUSTRY_OPTIONS;
 
 /* ── shared field ── */
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
@@ -157,7 +156,7 @@ export default function Register() {
   /* collected data across steps */
   const [data, setData] = useState<Partial<Step1 & Step2 & Step3 & Step4>>({});
 
-  const form1 = useForm<Step1>({ resolver: zodResolver(step1Schema), defaultValues: { segment: "gravadora", state: "SP" } });
+  const form1 = useForm<Step1>({ resolver: zodResolver(step1Schema), defaultValues: { segment: REGISTER_INDUSTRY_VALUES[0], state: "SP" } });
   const form2 = useForm<Step2>({ resolver: zodResolver(step2Schema) });
   const form3 = useForm<Step3>({ resolver: zodResolver(step3Schema) });
   const form4 = useForm<Step4>({ resolver: zodResolver(step4Schema), defaultValues: { activationPlanId: "" } });

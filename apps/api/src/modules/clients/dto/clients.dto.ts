@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn, IsEmail, MaxLength, IsInt, Min, IsNotEmpty, IsArray, IsObject, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { transformClientProfile } from '../client-profile-vocabulary';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 const PERSON_TYPES = ['individual', 'company'] as const;
@@ -26,7 +27,8 @@ export class CreateClientDto {
   @ApiProperty() @IsString() @MaxLength(255) name!: string;
   @ApiPropertyOptional({ enum: PERSON_TYPES }) @IsOptional() @IsIn(PERSON_TYPES) person_type?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) category?: string | null;
-  @ApiPropertyOptional({ description: 'Profile slug (taxonomy unchanged)' }) @IsOptional() @IsString() @MaxLength(100) profile?: string | null;
+  @ApiPropertyOptional({ description: 'Profile id (English snake_case, see client-profile-vocabulary.ts); deprecated Portuguese slugs are mapped to it' })
+  @Transform(transformClientProfile) @IsOptional() @IsString() @MaxLength(100) profile?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsString() photo_url?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) individual_name?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) legal_name?: string | null;
@@ -74,6 +76,8 @@ export class QueryClientDto extends PaginationDto {
   @ApiPropertyOptional({ enum: PERSON_TYPES }) @IsOptional() @IsString() person_type?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "person_type".' }) @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() category?: string;
+  @ApiPropertyOptional({ description: 'Profile id; deprecated Portuguese slugs are mapped to the canonical id' })
+  @Transform(transformClientProfile) @IsOptional() @IsString() @MaxLength(100) profile?: string;
 }
 
 const TIMELINE_TYPES = ['note', 'call', 'meeting', 'email', 'whatsapp', 'other', 'nota', 'ligacao', 'reuniao', 'outro'] as const;

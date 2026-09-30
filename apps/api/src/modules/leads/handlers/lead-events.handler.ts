@@ -13,6 +13,7 @@ import {
 import { DOMAIN_EVENTS, EventsService } from '../../../core/events/events.service';
 import type { DomainEvent } from '../../../core/events/events.service';
 import type { LeadConvertedPayload } from '../../../core/events/domain-events.types';
+import { DEFAULT_CLIENT_PROFILE } from '../../clients/client-profile-vocabulary';
 
 @Injectable()
 export class LeadEventsHandler {
@@ -125,7 +126,7 @@ export class LeadEventsHandler {
               tenant_id: tenantId,
               name,
               category: createdCategory,
-              profile: 'outros',
+              profile: DEFAULT_CLIENT_PROFILE,
               person_type: createdPersonType,
               responsible_name: convertedBy,
               notes: `Convertido de lead ${leadId} em ${convertedAt}`,

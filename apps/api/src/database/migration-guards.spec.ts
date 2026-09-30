@@ -30,6 +30,9 @@ describe('data migrations call the RLS-bypass guard before any other SQL', () =>
     ['./migrations/20260930000010_BackfillAndRestrictInvoicePaymentMethodToEnglish', 'BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010'],
     ['./migrations/20260930000011_ValidateTransactionTypeAndRestrictFinancialRuleVocabulary', 'ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011'],
     ['./migrations/20260930000003_BackfillAndRestrictMarketingContentApprovalToEnglish', 'BackfillAndRestrictMarketingContentApprovalToEnglish20260930000003'],
+    ['./migrations/20260930000012_BackfillClientProfileToEnglish', 'BackfillClientProfileToEnglish20260930000012'],
+    ['./migrations/20260930000013_BackfillOrganizationIndustryToEnglish', 'BackfillOrganizationIndustryToEnglish20260930000013'],
+    ['./migrations/20260930000014_BackfillReleaseStatusDefaultToDraft', 'BackfillReleaseStatusDefaultToDraft20260930000014'],
   ] as const;
 
   it.each(migrations)('%s up() and down() stop at the guard without a bypassing role', async (path, className) => {

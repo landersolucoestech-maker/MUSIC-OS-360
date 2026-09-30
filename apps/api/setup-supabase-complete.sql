@@ -91,7 +91,7 @@ BEGIN
 
   -- ── 1. Organization ──────────────────────────────────────────────────────────
   INSERT INTO organizations (id, name, slug, plan, billing_status, industry)
-  VALUES (v_org_id, v_org_name, v_org_slug, 'enterprise', 'active', 'gravadora')
+  VALUES (v_org_id, v_org_name, v_org_slug, 'enterprise', 'active', 'record_label')
   ON CONFLICT (id) DO UPDATE SET
     name           = EXCLUDED.name,
     billing_status = EXCLUDED.billing_status;

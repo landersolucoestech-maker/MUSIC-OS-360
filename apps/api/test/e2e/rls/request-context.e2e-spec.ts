@@ -53,7 +53,7 @@ async function ensureE2eTenants(owner: DataSource): Promise<void> {
         'music-os-360-e2e',
         'starter',
         'trial',
-        'gravadora',
+        'record_label',
         '{}'::jsonb,
         '{}'::jsonb,
         '{}'::jsonb

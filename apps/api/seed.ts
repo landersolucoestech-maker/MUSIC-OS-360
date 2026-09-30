@@ -52,7 +52,7 @@ async function seed() {
         `INSERT INTO organizations (name, slug, plan, billing_status, industry)
          VALUES ($1, $2, $3, $4, $5)
          RETURNING id`,
-        ['Music OS 360 Demo', 'music-os-360-demo', 'professional', 'trial', 'gravadora'],
+        ['Music OS 360 Demo', 'music-os-360-demo', 'professional', 'trial', 'record_label'],
       );
       orgId = org.id;
       console.log('✅  Organization created:', orgId);

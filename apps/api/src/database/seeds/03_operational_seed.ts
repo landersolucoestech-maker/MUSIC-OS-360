@@ -29,7 +29,7 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
 
   await ds.query(`
     INSERT INTO organizations (id, name, slug, plan, billing_status, industry)
-    VALUES ($1, $2, $3, 'enterprise', 'active', 'gravadora')
+    VALUES ($1, $2, $3, 'enterprise', 'active', 'record_label')
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
       billing_status = EXCLUDED.billing_status
@@ -76,7 +76,7 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
   await ds.query(`
     INSERT INTO clients
       (id, tenant_id, person_type, category, profile, name, legal_name, priority, status, interactions, created_by)
-    VALUES ($1, $2, 'company', 'producer', 'outros', 'Maria Produtora', 'Gravadora Demo Records', 'high', 'active',
+    VALUES ($1, $2, 'company', 'producer', 'other', 'Maria Produtora', 'Gravadora Demo Records', 'high', 'active',
       $3::jsonb, $4)
     ON CONFLICT (id) DO NOTHING
   `, [contactId, tenantId, JSON.stringify([{ event_type: 'contact.created', summary: 'Contato criado via seed operacional', actor_id: effectiveAdminSub, at: new Date().toISOString() }]), effectiveAdminSub]);

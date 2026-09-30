@@ -8,6 +8,7 @@ import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { StorageService, type UploadCategory } from '../../storage/storage.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import type { CreateClientDto, UpdateClientDto, QueryClientDto } from './dto/clients.dto';
+import { DEFAULT_CLIENT_PROFILE } from './client-profile-vocabulary';
 import { canonicalClientTimelineType, canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
 
 /** Persisted client columns accepted from the (canonical) request. */
@@ -64,6 +65,7 @@ export class ClientsService {
     if (q['status'])   qb.andWhere('c.status = :status',      { status:   q['status'] });
     if (q['person_type']) qb.andWhere('c.person_type = :personType', { personType: q['person_type'] });
     if (q['category']) qb.andWhere('c.category = :category', { category: q['category'] });
+    if (q['profile'])  qb.andWhere('c.profile = :profile',    { profile:  q['profile'] });
     if (q['search'])   qb.andWhere('c.name ILIKE :search',    { search: `%${q['search']}%` });
 
     // id tie-break: bulk-imported rows share created_at; offset sweeps must be deterministic.
@@ -304,7 +306,7 @@ export class ClientsService {
    * optional — explicit fallbacks instead of letting the INSERT fail with a
    * NOT NULL violation. */
   private static readonly DEFAULT_CATEGORY = 'CORPORATE_CLIENT';
-  private static readonly DEFAULT_PROFILE = 'outros';
+  private static readonly DEFAULT_PROFILE = DEFAULT_CLIENT_PROFILE;
 
   /** Canonical DTO -> persisted columns (only the keys sent; `undefined` = untouched). */
   private toColumns(input: Record<string, unknown>, isCreate = false): Record<string, unknown> {

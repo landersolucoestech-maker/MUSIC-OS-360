@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { CreateClientDto, UpdateClientDto } from './dto/clients.dto';
+import { CreateClientDto, QueryClientDto, UpdateClientDto } from './dto/clients.dto';
 import { ClientsService } from './clients.service';
 import { canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
 
@@ -171,5 +171,36 @@ describe('Client request/response contract (CZ-043)', () => {
     const updated = canonicalizeClientInput({ metadata: pii }, { update: true }) as Record<string, unknown>;
     expect(updated['metadata']).toEqual({ leadId: 'lead-1' });
     expect(JSON.stringify(created)).not.toMatch(/a@b\.c|x@y\.z/);
+  });
+});
+
+describe('clients.profile vocabulary (PV1): deprecated Portuguese slugs are accepted and canonicalized', () => {
+  const dto = (cls: new () => object, payload: object) => plainToInstance(cls as never, payload) as Record<string, unknown>;
+
+  it('DTO transform maps a deprecated slug to the canonical id; canonical wins; unknown is kept', () => {
+    expect(dto(CreateClientDto, { name: 'A', profile: 'gravadora_selo' })['profile']).toBe('record_label');
+    expect(dto(CreateClientDto, { name: 'A', profile: 'record_label' })['profile']).toBe('record_label');
+    expect(dto(CreateClientDto, { name: 'A', profile: 'manager' })['profile']).toBe('manager');
+    expect(dto(UpdateClientDto, { profile: 'cartorio' })['profile']).toBe('notary_office');
+    expect(dto(CreateClientDto, { name: 'A', profile: 'produtora' })['profile']).toBe('produtora');
+    expect(validateSync(plainToInstance(CreateClientDto, { name: 'A', profile: 'gravadora_selo' }))).toEqual([]);
+    expect(validateSync(plainToInstance(CreateClientDto, { name: 'A', profile: 'record_label' }))).toEqual([]);
+  });
+
+  it('canonicalizeClientInput maps the `perfil` alias and the legacy metadata copy', () => {
+    expect(canonicalizeClientInput({ name: 'A', perfil: 'empresario_artistico' } as never)).toMatchObject({ profile: 'artist_manager' });
+    expect(canonicalizeClientInput({ name: 'A', profile: 'outros' } as never)).toMatchObject({ profile: 'other' });
+    expect(canonicalizeClientInput({ name: 'A', profile: 'other' } as never)).toMatchObject({ profile: 'other' });
+  });
+
+  it('list filter accepts a deprecated slug and canonicalizes it', () => {
+    expect(canonicalizeClientQuery({ profile: 'gravadora_selo' } as never)).toMatchObject({ profile: 'record_label' });
+    expect(dto(QueryClientDto, { profile: 'compositor' })['profile']).toBe('composer');
+  });
+
+  it('create() without a profile falls back to the canonical default', async () => {
+    const { svc, repo } = makeService();
+    await svc.create('t1', 'u1', { name: 'Sem perfil' } as never);
+    expect((repo.save.mock.calls[0][0] as Record<string, unknown>)['profile']).toBe('other');
   });
 });

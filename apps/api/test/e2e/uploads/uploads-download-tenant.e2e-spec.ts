@@ -47,7 +47,7 @@ describe('GET /uploads/:fileId/download is tenant-scoped (real Postgres, app rol
     for (let i = 0; i < 2; i++) {
       await owner.query(
         `INSERT INTO organizations (id, name, slug, plan, billing_status, industry, address, config, metadata)
-         VALUES ($1, 'Upl E2E Org', $2, 'starter', 'active', 'gravadora', '{}'::jsonb, '{}'::jsonb, '{}'::jsonb)`,
+         VALUES ($1, 'Upl E2E Org', $2, 'starter', 'active', 'record_label', '{}'::jsonb, '{}'::jsonb, '{}'::jsonb)`,
         [orgs[i], `upl-e2e-${orgs[i].slice(0, 8)}`],
       );
       await owner.query(

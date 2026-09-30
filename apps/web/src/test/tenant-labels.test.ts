@@ -29,11 +29,11 @@ describe("tenant-labels", () => {
   });
 
   describe("INDUSTRY_LABEL", () => {
-    it("has label for gravadora", () => {
-      expect(INDUSTRY_LABEL.gravadora).toBe("Gravadora");
+    it("has PT-BR label for record_label", () => {
+      expect(INDUSTRY_LABEL.record_label).toBe("Gravadora");
     });
-    it("has label for editora", () => {
-      expect(INDUSTRY_LABEL.editora).toBe("Editora Musical");
+    it("has PT-BR label for music_publisher", () => {
+      expect(INDUSTRY_LABEL.music_publisher).toBe("Editora Musical");
     });
   });
 

@@ -24,7 +24,7 @@ export async function seedDefaultTenant(ds: DataSource): Promise<SeedResult> {
 
   await ds.query(`
     INSERT INTO organizations (id, name, slug, plan, billing_status, industry)
-    VALUES ($1, $2, $3, 'enterprise', 'active', 'gravadora')
+    VALUES ($1, $2, $3, 'enterprise', 'active', 'record_label')
     ON CONFLICT (id) DO UPDATE
       SET name = EXCLUDED.name, slug = EXCLUDED.slug
   `, [orgId, orgName, orgSlug]);

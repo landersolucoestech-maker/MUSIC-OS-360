@@ -326,6 +326,9 @@ import { AddEnglishRoleSlugAliases20260930000001 } from './20260930000001_AddEng
 import { BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010 } from './20260930000010_BackfillAndRestrictInvoicePaymentMethodToEnglish';
 import { ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011 } from './20260930000011_ValidateTransactionTypeAndRestrictFinancialRuleVocabulary';
 import { BackfillAndRestrictMarketingContentApprovalToEnglish20260930000003 } from './20260930000003_BackfillAndRestrictMarketingContentApprovalToEnglish';
+import { BackfillClientProfileToEnglish20260930000012 } from './20260930000012_BackfillClientProfileToEnglish';
+import { BackfillOrganizationIndustryToEnglish20260930000013 } from './20260930000013_BackfillOrganizationIndustryToEnglish';
+import { BackfillReleaseStatusDefaultToDraft20260930000014 } from './20260930000014_BackfillReleaseStatusDefaultToDraft';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -635,4 +638,7 @@ export const ALL_MIGRATIONS = [
   BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010,
   ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011,
   BackfillAndRestrictMarketingContentApprovalToEnglish20260930000003,
+  BackfillClientProfileToEnglish20260930000012,
+  BackfillOrganizationIndustryToEnglish20260930000013,
+  BackfillReleaseStatusDefaultToDraft20260930000014,
 ] as const;

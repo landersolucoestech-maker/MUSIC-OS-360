@@ -76,7 +76,7 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     expect(created['segmento']).toBeUndefined();
     expect(created['responsavel']).toBeUndefined();
     expect(created['category']).toBe('CORPORATE_CLIENT');
-    expect(created['profile']).toBe('outros');
+    expect(created['profile']).toBe('other');
     expect(created['responsible_name']).toBe('user-1');
     expect(clientRepo.save).toHaveBeenCalledTimes(1);
   });

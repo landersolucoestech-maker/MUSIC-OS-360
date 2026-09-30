@@ -14,6 +14,7 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { INTERACTION_KEYS, INTERACTION_TYPES } from '../leads/lead-vocabulary';
 import { CreateClientDto } from './dto/clients.dto';
+import { canonicalClientProfile } from './client-profile-vocabulary';
 
 export const CLIENT_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   type: 'person_type',
@@ -191,6 +192,8 @@ export function canonicalizeClientInput<T extends object>(input: T, options: { u
   const out = applyDeprecatedFieldAliases(raw, CLIENT_DEPRECATED_FIELDS);
   if (out['person_type'] !== undefined) out['person_type'] = canonicalClientPersonType(out['person_type']);
   if (out['interactions'] !== undefined) out['interactions'] = canonicalClientInteractions(out['interactions']);
+  // Deprecated Portuguese profile slugs (web build before PV1, `perfil` alias, legacy metadata copy) -> canonical; canonical wins.
+  if (out['profile'] !== undefined) out['profile'] = canonicalClientProfile(out['profile']);
   dropInvalidUnfoldedValues(out, unfolded);
   return out as T;
 }
@@ -199,5 +202,6 @@ export function canonicalizeClientInput<T extends object>(input: T, options: { u
 export function canonicalizeClientQuery<T extends object>(query: T): T {
   const out = applyDeprecatedFieldAliases({ ...(query as Record<string, unknown>) }, { type: 'person_type' });
   if (out['person_type'] !== undefined) out['person_type'] = canonicalClientPersonType(out['person_type']);
+  if (out['profile'] !== undefined) out['profile'] = canonicalClientProfile(out['profile']);
   return out as T;
 }

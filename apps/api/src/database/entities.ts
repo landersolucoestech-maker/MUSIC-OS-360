@@ -68,7 +68,7 @@ export class OrganizationEntity {
   @Column({ type: 'varchar', length: 100, unique: true }) slug: string;
   @Column({ type: 'varchar', length: 50, default: TenantPlan.STARTER }) plan: TenantPlan;
   @Column({ type: 'varchar', length: 50, default: BillingStatus.TRIAL }) billing_status: BillingStatus;
-  @Column({ type: 'varchar', length: 100, default: 'gravadora' }) industry: string;
+  @Column({ type: 'varchar', length: 100, default: 'record_label' }) industry: string;
   @Column({ type: 'text', nullable: true }) cnpj_encrypted: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) phone: string | null;
   @Column({ type: 'jsonb', default: {} }) address: Record<string, unknown>;

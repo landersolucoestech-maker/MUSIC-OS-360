@@ -8,6 +8,7 @@ import { api, getAccessToken } from "@/shared/lib/api-client";
 import { IntegrationError } from "@/shared/lib/errors";
 import { useAuth } from "./AuthContext";
 import type { SaasAuthContext } from "@/shared/types/saas-context";
+import { DEFAULT_ORGANIZATION_INDUSTRY, type OrganizationIndustry } from "@/modules/auth/constants/organization-industry";
 import { SYSTEM_REGIONAL_SETTINGS } from "@/shared/lib/system-regional-settings";
 
 // ─── Plan & billing ───────────────────────────────────────────────────────────
@@ -17,7 +18,7 @@ export type TenantBillingStatus  =
   | "active" | "trial" | "suspended" | "cancelled"
   // Delinquency enforcement states (source of truth = backend tenant_billing_state)
   | "past_due" | "payment_grace" | "read_only";
-export type TenantIndustry       = "gravadora" | "editora" | "distribuidora" | "agencia" | "publisher" | "outro";
+export type TenantIndustry       = OrganizationIndustry;
 
 // ─── RBAC — Permissions ───────────────────────────────────────────────────────
 
@@ -134,7 +135,7 @@ const BASE_TENANT: Tenant = {
   name:     "",
   slug:     "",
   plan:     "starter",
-  industry: "gravadora",
+  industry: DEFAULT_ORGANIZATION_INDUSTRY,
   cnpj:     "",
   phone:    "",
   address:  "",

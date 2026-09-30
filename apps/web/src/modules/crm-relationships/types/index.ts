@@ -148,7 +148,7 @@ export type Contact = {
   personType: PersonType;
   /** Relationship category slug (`clients.category`, ContactType slugs). */
   category?: ContactType;
-  /** Profile slug (`clients.profile`; PT slug taxonomy unchanged — labels via profileLabel()). */
+  /** Profile slug (`clients.profile`; English machine ids, PT-BR labels via profileLabel()). */
   profile?: string;
   /** Display name: individual name (individual) or trade/legal name (company). */
   name: string;

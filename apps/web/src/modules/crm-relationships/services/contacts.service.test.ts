@@ -64,7 +64,7 @@ const wireRow: ApiClient = {
   tenant_id: "t1",
   person_type: "company",
   category: "PARTNER",
-  profile: "gravadora_selo",
+  profile: "record_label",
   name: "Selo X",
   photo_url: "https://cdn/x.png",
   individual_name: null,
@@ -129,7 +129,7 @@ const companyForm: ContactFormValues = {
   tradeName: "Selo X",
   cnpj: "12.345.678/0001-90",
   category: "PARTNER",
-  profile: "gravadora_selo",
+  profile: "record_label",
   email: "",
   phone: "(11) 90000-0000",
   zipCode: "01000-000",
@@ -157,7 +157,7 @@ describe("CZ-043 wire mapping — /clients canonical contract", () => {
       id: "c1",
       personType: "company",
       category: "PARTNER",
-      profile: "gravadora_selo",
+      profile: "record_label",
       name: "Selo X",
       photoUrl: "https://cdn/x.png",
       legalName: "Selo X Ltda",
@@ -188,6 +188,11 @@ describe("CZ-043 wire mapping — /clients canonical contract", () => {
     ]);
     expect(contact).not.toHaveProperty("payloadOperacional");
     expect(contact).not.toHaveProperty("metadata");
+  });
+
+  it("reads a not-yet-migrated Portuguese profile slug as the canonical English id", () => {
+    expect(wireToContact({ ...wireRow, profile: "gravadora_selo" }).profile).toBe("record_label");
+    expect(wireToContact({ ...wireRow, profile: "record_label" }).profile).toBe("record_label");
   });
 
   it("does not resurrect a legacy metadata copy even if a stale server still sent one", () => {

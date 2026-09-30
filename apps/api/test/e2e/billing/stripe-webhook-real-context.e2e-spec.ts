@@ -90,7 +90,7 @@ describe('Stripe webhook -> billing state, production wiring on real Postgres', 
 
     await owner.query(
       `INSERT INTO organizations (id, name, slug, plan, billing_status, industry, address, config, metadata)
-       VALUES ($1, 'Stripe E2E Org', $2, 'starter', 'active', 'gravadora', '{}'::jsonb, '{}'::jsonb, '{}'::jsonb)`,
+       VALUES ($1, 'Stripe E2E Org', $2, 'starter', 'active', 'record_label', '{}'::jsonb, '{}'::jsonb, '{}'::jsonb)`,
       [orgId, `stripe-e2e-${orgId.slice(0, 8)}`],
     );
     await owner.query(

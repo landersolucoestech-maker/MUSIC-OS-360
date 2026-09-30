@@ -36,7 +36,7 @@ async function seed() {
   } else {
     const inserted = await sql`
       INSERT INTO organizations (name, slug, plan, billing_status, industry)
-      VALUES ('Music OS 360 Demo', 'music-os-360-demo', 'professional', 'trial', 'gravadora')
+      VALUES ('Music OS 360 Demo', 'music-os-360-demo', 'professional', 'trial', 'record_label')
       RETURNING id
     `;
     orgId = inserted[0].id;

@@ -97,7 +97,7 @@ describe('Signature webhooks (Autentique/DocuSign) on real Postgres', () => {
     for (const [org, tenant] of [[orgA, tenantA], [orgB, tenantB]]) {
       await owner.query(
         `INSERT INTO organizations (id, name, slug, plan, billing_status, industry, address, config, metadata)
-         VALUES ($1, 'Sig E2E Org', $2, 'starter', 'active', 'gravadora', '{}'::jsonb, '{}'::jsonb, '{}'::jsonb)`,
+         VALUES ($1, 'Sig E2E Org', $2, 'starter', 'active', 'record_label', '{}'::jsonb, '{}'::jsonb, '{}'::jsonb)`,
         [org, `sig-e2e-${org.slice(0, 8)}`],
       );
       await owner.query(

@@ -7,6 +7,7 @@
  */
 
 import { getAccessToken } from "@/shared/lib/api-client";
+import { ORGANIZATION_INDUSTRY_LABELS_PT_BR } from "@/modules/auth/constants/organization-industry";
 import type {
   TenantPlan,
   TenantBillingStatus,
@@ -27,14 +28,7 @@ export const PLAN_LABEL: Record<TenantPlan, string> = {
 };
 
 /** Industry display labels */
-export const INDUSTRY_LABEL: Record<TenantIndustry, string> = {
-  gravadora:     "Gravadora",
-  editora:       "Editora Musical",
-  distribuidora: "Distribuidora",
-  agencia:       "Agência Artística",
-  publisher:     "Publisher",
-  outro:         "Outro",
-};
+export const INDUSTRY_LABEL: Record<TenantIndustry, string> = ORGANIZATION_INDUSTRY_LABELS_PT_BR;
 
 /** Billing status labels */
 export const BILLING_STATUS_LABEL: Record<TenantBillingStatus, string> = {

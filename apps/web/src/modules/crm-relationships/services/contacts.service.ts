@@ -23,6 +23,7 @@
  */
 import type { Contact, ContactAttachment, ContactInput, Interaction } from "../types";
 import type { ContactFormValues } from "../modals/ContactFormModal";
+import { canonicalContactProfile } from "../constants/contact-classification";
 import {
   clientsService,
   type ApiClient,
@@ -53,7 +54,7 @@ export function wireToContact(c: ApiClient): Contact {
     id: c.id,
     personType: c.person_type,
     category: c.category ?? undefined,
-    profile: opt(c.profile),
+    profile: c.profile ? canonicalContactProfile(c.profile) : opt(c.profile),
     name: c.name,
     photoUrl: opt(c.photo_url),
     individualName: opt(c.individual_name),

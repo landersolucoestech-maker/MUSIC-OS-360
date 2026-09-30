@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
 import { PROVISIONING_DATA_SOURCE } from '../../database/database.tokens';
 import type { ProvisionWorkspaceDto } from './dto/provision-workspace.dto';
+import { DEFAULT_ORGANIZATION_INDUSTRY } from './organization-industry';
 
 interface ExistingMembership {
   org_id: string;
@@ -118,7 +119,7 @@ export class WorkspaceProvisioningService {
           [
             dto.organizationName.trim(),
             dto.workspaceSlug,
-            dto.segment ?? 'gravadora',
+            dto.segment ?? DEFAULT_ORGANIZATION_INDUSTRY,
             dto.phone ?? null,
             JSON.stringify({
               line1: dto.address ?? null,

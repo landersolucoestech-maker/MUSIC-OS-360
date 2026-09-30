@@ -7,14 +7,15 @@ import {
   IsUrl,
   MaxLength,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { ORGANIZATION_INDUSTRIES, transformOrganizationIndustry } from '../organization-industry';
 
 export class CompleteOnboardingDto {
   @ApiProperty() @IsString() @MaxLength(255) companyName!: string;
 
-  @ApiProperty({
-    enum: ['gravadora', 'editora', 'distribuidora', 'agencia', 'publisher', 'outro'],
-  })
-  @IsIn(['gravadora', 'editora', 'distribuidora', 'agencia', 'publisher', 'outro'])
+  @ApiProperty({ enum: ORGANIZATION_INDUSTRIES })
+  @Transform(transformOrganizationIndustry)
+  @IsIn(ORGANIZATION_INDUSTRIES)
   segment!: string;
 
   @ApiPropertyOptional()

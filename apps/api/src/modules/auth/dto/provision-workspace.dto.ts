@@ -7,6 +7,8 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { ORGANIZATION_INDUSTRIES, transformOrganizationIndustry } from '../organization-industry';
 
 export class ProvisionWorkspaceDto {
   @ApiProperty() @IsString() @MaxLength(255) organizationName!: string;
@@ -16,9 +18,10 @@ export class ProvisionWorkspaceDto {
   @Matches(/^[a-z0-9-]{2,100}$/)
   workspaceSlug!: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: ORGANIZATION_INDUSTRIES })
+  @Transform(transformOrganizationIndustry)
   @IsOptional()
-  @IsIn(['gravadora', 'editora', 'distribuidora', 'indie', 'outro'])
+  @IsIn(ORGANIZATION_INDUSTRIES)
   segment?: string;
 
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) tradeName?: string;

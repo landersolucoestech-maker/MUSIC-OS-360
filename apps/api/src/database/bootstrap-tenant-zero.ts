@@ -127,7 +127,7 @@ export async function bootstrapTenantZero(ds: DataSource, realOwner?: RealOwnerI
   await ds.query(
     `
     INSERT INTO organizations (id, name, slug, plan, billing_status, industry, is_system_tenant)
-    VALUES ($1, $2, $3, 'enterprise', 'active', 'gravadora', true)
+    VALUES ($1, $2, $3, 'enterprise', 'active', 'record_label', true)
     ON CONFLICT (id) DO UPDATE
       SET name = EXCLUDED.name, slug = EXCLUDED.slug, is_system_tenant = true
     `,
