@@ -12,11 +12,11 @@ import { toUserMessage } from "@/shared/lib/errors";
 interface UserEditorModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  usuario?: UserAccount;
+  user?: UserAccount;
   mode: "create" | "edit";
 }
 
-export function UserEditorModal({ open, onOpenChange, usuario: member, mode }: UserEditorModalProps) {
+export function UserEditorModal({ open, onOpenChange, user: member, mode }: UserEditorModalProps) {
   const { updateUser } = useUsers();
   const { roles, inviteUser } = useRoles();
   const assignableRoles = useMemo(

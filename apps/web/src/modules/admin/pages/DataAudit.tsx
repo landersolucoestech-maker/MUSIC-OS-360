@@ -29,17 +29,17 @@ import { cn } from "@/shared/lib/utils";
 
 type CompletenessFilter = "all" | "complete" | "incomplete";
 type AuditPanelTabId =
-  | "artistas"
-  | "projetos"
-  | "obras"
-  | "fonogramas"
-  | "lancamentos"
-  | "contratos"
-  | "financeiro"
-  | "agenda"
-  | "inventario"
+  | "artists"
+  | "projects"
+  | "works"
+  | "phonograms"
+  | "releases"
+  | "contracts"
+  | "finance"
+  | "schedule"
+  | "inventory"
   | "crm"
-  | "servicos";
+  | "services";
 
 const AUDIT_PANEL_TABS: {
   id: AuditPanelTabId;
@@ -49,24 +49,24 @@ const AUDIT_PANEL_TABS: {
   entityType?: string;
   icon: React.ComponentType<{ className?: string }>;
 }[] = [
-  { id: "artistas", label: "Artistas", title: "Auditoria de Artistas", module: "artistas", icon: Users },
-  { id: "projetos", label: "Projetos", title: "Auditoria de Projetos", module: "projects", icon: Folder },
-  { id: "obras", label: "Obras", title: "Auditoria de Obras", module: "catalog", entityType: "Obra", icon: Music },
-  { id: "fonogramas", label: "Fonogramas", title: "Auditoria de Fonogramas", module: "catalog", entityType: "Fonograma", icon: Disc3 },
-  { id: "lancamentos", label: "Lançamentos", title: "Auditoria de Lançamentos", module: "lancamentos", icon: Rocket },
-  { id: "contratos", label: "Contratos", title: "Auditoria de Contratos", module: "contracts", icon: FileText },
-  { id: "financeiro", label: "Financeiro", title: "Auditoria de Financeiro", module: "accounting", icon: DollarSign },
-  { id: "agenda", label: "Agenda", title: "Auditoria de Agenda", module: "events", icon: Calendar },
-  { id: "inventario", label: "Inventário", title: "Auditoria de Inventário", module: "inventory", icon: Package },
+  { id: "artists", label: "Artistas", title: "Auditoria de Artistas", module: "artists", icon: Users },
+  { id: "projects", label: "Projetos", title: "Auditoria de Projetos", module: "projects", icon: Folder },
+  { id: "works", label: "Obras", title: "Auditoria de Obras", module: "catalog", entityType: "Obra", icon: Music },
+  { id: "phonograms", label: "Fonogramas", title: "Auditoria de Fonogramas", module: "catalog", entityType: "Fonograma", icon: Disc3 },
+  { id: "releases", label: "Lançamentos", title: "Auditoria de Lançamentos", module: "releases", icon: Rocket },
+  { id: "contracts", label: "Contratos", title: "Auditoria de Contratos", module: "contracts", icon: FileText },
+  { id: "finance", label: "Financeiro", title: "Auditoria de Financeiro", module: "accounting", icon: DollarSign },
+  { id: "schedule", label: "Agenda", title: "Auditoria de Agenda", module: "events", icon: Calendar },
+  { id: "inventory", label: "Inventário", title: "Auditoria de Inventário", module: "inventory", icon: Package },
   { id: "crm", label: "CRM", title: "Auditoria de CRM", module: "crm", icon: Contact },
-  { id: "servicos", label: "Serviços", title: "Auditoria de Serviços", module: null, icon: Settings },
+  { id: "services", label: "Serviços", title: "Auditoria de Serviços", module: null, icon: Settings },
 ];
 
 function DataTab() {
   const navigate = useNavigate();
   const { data, isLoading, error, refetch } = useAudit();
 
-  const [activeAuditTab, setActiveAuditTab] = useState<AuditPanelTabId>("artistas");
+  const [activeAuditTab, setActiveAuditTab] = useState<AuditPanelTabId>("artists");
   const [completenessFilter, setCompletenessFilter] = useState<CompletenessFilter>("incomplete");
 
   const records = data?.records ?? [];

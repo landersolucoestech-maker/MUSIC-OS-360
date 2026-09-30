@@ -15,11 +15,11 @@ import { useUsers } from "@/modules/settings/hooks/useUsers";
 interface UserFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  usuario?: any;
+  user?: any;
   mode: "create" | "edit" | "view";
 }
 
-const NIVEIS_ACESSO = [
+const ACCESS_LEVELS = [
   { value: "admin_master", label: "Administrador Master", description: "Acesso total a todos os módulos e configurações do sistema." },
   { value: "ar_gestao", label: "A&R / Gestão Artística", description: "Gestão de artistas, projetos, lançamentos e repertório." },
   { value: "financeiro_contabil", label: "Contabilidade", description: "Acesso ao módulo de Contabilidade: transações e notas fiscais." },
@@ -30,7 +30,7 @@ const NIVEIS_ACESSO = [
   { value: "leitor", label: "Leitor (somente leitura)", description: "Visualização sem permissão de edição ou criação." },
 ];
 
-export function UserFormModal({ open, onOpenChange, usuario: member, mode }: UserFormModalProps) {
+export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFormModalProps) {
   const { updateUser } = useUsers();
 
   const isViewMode = mode === "view";
@@ -47,33 +47,33 @@ export function UserFormModal({ open, onOpenChange, usuario: member, mode }: Use
     resolver: zodResolver(userSchema),
     mode: "onChange",
     defaultValues: {
-      nome: "",
+      name: "",
       email: "",
-      telefone: "",
+      phone: "",
       status: "ativo",
-      nivel_acesso: "",
+      accessLevel: "",
     },
   });
 
-  const nivelAcesso = watch("nivel_acesso");
+  const accessLevel = watch("accessLevel");
 
   useEffect(() => {
     if (open) {
       if (member && (mode === "edit" || mode === "view")) {
         reset({
-          nome: member.name || "",
+          name: member.name || "",
           email: member.email || "",
-          telefone: member.telefone || "",
+          phone: member.telefone || "",
           status: member.status || "ativo",
-          nivel_acesso: member.role || "",
+          accessLevel: member.role || "",
         });
       } else {
         reset({
-          nome: "",
+          name: "",
           email: "",
-          telefone: "",
+          phone: "",
           status: "ativo",
-          nivel_acesso: "",
+          accessLevel: "",
         });
       }
     }
@@ -86,9 +86,9 @@ export function UserFormModal({ open, onOpenChange, usuario: member, mode }: Use
       if (mode === "edit" && member?.id) {
         await updateUser.mutateAsync({
           id: member.id,
-          full_name: data.nome,
-          phone: data.telefone ?? undefined,
-          cargo: data.nivel_acesso || undefined,
+          full_name: data.name,
+          phone: data.phone ?? undefined,
+          cargo: data.accessLevel || undefined,
         });
       } else if (mode === "create") {
         // Users are created through the auth signup flow
@@ -100,7 +100,7 @@ export function UserFormModal({ open, onOpenChange, usuario: member, mode }: Use
     }
   };
 
-  const selectedNivel = NIVEIS_ACESSO.find((n) => n.value === nivelAcesso);
+  const selectedAccessLevel = ACCESS_LEVELS.find((level) => level.value === accessLevel);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -127,10 +127,10 @@ export function UserFormModal({ open, onOpenChange, usuario: member, mode }: Use
                   label="Nome Completo"
                   required
                   containerClassName="md:col-span-2"
-                  {...register("nome")}
+                  {...register("name")}
                   disabled={isViewMode}
                   placeholder="Digite o nome completo"
-                  error={errors.nome?.message}
+                  error={errors.name?.message}
                 />
 
                 <FormField
@@ -146,10 +146,10 @@ export function UserFormModal({ open, onOpenChange, usuario: member, mode }: Use
 
                 <FormField
                   label="Telefone"
-                  {...register("telefone")}
+                  {...register("phone")}
                   disabled={isViewMode}
                   placeholder="(00) 00000-0000"
-                  error={errors.telefone?.message}
+                  error={errors.phone?.message}
                 />
 
                 <div className="space-y-1.5">
@@ -172,31 +172,31 @@ export function UserFormModal({ open, onOpenChange, usuario: member, mode }: Use
                 </div>
 
                 <div className="space-y-1.5 md:col-span-2">
-                  <Label htmlFor="nivelAcesso">Nível de Acesso (Perfil)</Label>
+                  <Label htmlFor="accessLevel">Nível de Acesso (Perfil)</Label>
                   <Select
-                    value={nivelAcesso || ""}
-                    onValueChange={(v) => setValue("nivel_acesso", v)}
+                    value={accessLevel || ""}
+                    onValueChange={(v) => setValue("accessLevel", v)}
                     disabled={isViewMode}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o perfil" />
                     </SelectTrigger>
                     <SelectContent>
-                      {NIVEIS_ACESSO.map((nivel) => (
-                        <SelectItem key={nivel.value} value={nivel.value}>
-                          {nivel.label}
+                      {ACCESS_LEVELS.map((level) => (
+                        <SelectItem key={level.value} value={level.value}>
+                          {level.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FieldError error={errors.nivel_acesso?.message} />
+                  <FieldError error={errors.accessLevel?.message} />
                 </div>
               </div>
 
-              {selectedNivel && (
+              {selectedAccessLevel && (
                 <Alert className="mt-4">
                   <Info className="h-4 w-4" />
-                  <AlertDescription>{selectedNivel.description}</AlertDescription>
+                  <AlertDescription>{selectedAccessLevel.description}</AlertDescription>
                 </Alert>
               )}
             </CardContent>

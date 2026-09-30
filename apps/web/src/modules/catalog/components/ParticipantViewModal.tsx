@@ -47,7 +47,7 @@ export function ParticipantViewModal({
   if (!artist) return null;
 
   const fullName = artist.fullName || artist.stageName || "";
-  const pseudonimo = artist.stageName || "";
+  const pseudonym = artist.stageName || "";
   const personType = derivePersonType(artist);
   const gender = artist.gender ?? "";
   const birthDate = formatDateDMY(artist.birthDate);
@@ -57,7 +57,7 @@ export function ParticipantViewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md bg-card border-border" data-testid="modal-participante-view">
+      <DialogContent className="max-w-md bg-card border-border" data-testid="modal-participant-view">
         <DialogHeader>
           <DialogTitle className="text-sm font-semibold text-foreground">
             Visualizar Participante
@@ -74,7 +74,7 @@ export function ParticipantViewModal({
               value={fullName}
               disabled
               className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
-              data-testid="input-participante-nome"
+              data-testid="input-participant-name"
             />
           </div>
 
@@ -83,16 +83,16 @@ export function ParticipantViewModal({
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Pseudônimo</Label>
               <Input
-                value={pseudonimo}
+                value={pseudonym}
                 disabled
                 className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
-                data-testid="input-participante-pseudonimo"
+                data-testid="input-participant-pseudonym"
               />
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Tipo de Pessoa</Label>
               <Select value={personType} disabled>
-                <SelectTrigger className="bg-muted/30 text-sm h-9" data-testid="select-participante-type-pessoa">
+                <SelectTrigger className="bg-muted/30 text-sm h-9" data-testid="select-participant-person-type">
                   <SelectValue placeholder="—" />
                 </SelectTrigger>
                 <SelectContent>
@@ -104,7 +104,7 @@ export function ParticipantViewModal({
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Gênero</Label>
               <Select value={gender} disabled>
-                <SelectTrigger className="bg-muted/30 text-sm h-9" data-testid="select-participante-genero">
+                <SelectTrigger className="bg-muted/30 text-sm h-9" data-testid="select-participant-gender">
                   <SelectValue placeholder="—" />
                 </SelectTrigger>
                 <SelectContent>
@@ -125,7 +125,7 @@ export function ParticipantViewModal({
                 disabled
                 placeholder="DD/MM/AAAA"
                 className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
-                data-testid="input-participante-data-nascimento"
+                data-testid="input-participant-birth-date"
               />
             </div>
             <div className="space-y-1">
@@ -134,7 +134,7 @@ export function ParticipantViewModal({
                 value={taxId}
                 disabled
                 className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
-                data-testid="input-participante-cpf-cnpj"
+                data-testid="input-participant-cpf-cnpj"
               />
             </div>
             <div className="space-y-1">
@@ -143,7 +143,7 @@ export function ParticipantViewModal({
                 value={cae}
                 disabled
                 className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
-                data-testid="input-participante-cae"
+                data-testid="input-participant-cae"
               />
             </div>
           </div>

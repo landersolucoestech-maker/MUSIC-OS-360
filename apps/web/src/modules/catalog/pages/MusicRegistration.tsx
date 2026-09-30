@@ -332,10 +332,10 @@ export default function MusicRegistry() {
   const { stats: phonogramsStats } = usePhonogramsStats();
   const activeStats = activeTab === "fonogramas" ? phonogramsStats : worksStats;
   const pending = activeStats.byGroup["pending"] ?? 0;
-  const emAnalise = (activeStats.byGroup["under_review"] ?? 0) + (activeStats.byGroup["in_review"] ?? 0);
-  const registrados = activeStats.byGroup["registered"] ?? 0;
+  const underReview = (activeStats.byGroup["under_review"] ?? 0) + (activeStats.byGroup["in_review"] ?? 0);
+  const registered = activeStats.byGroup["registered"] ?? 0;
   const total = activeStats.total;
-  const approvalRate = total > 0 ? Math.round((registrados / total) * 100) : 0;
+  const approvalRate = total > 0 ? Math.round((registered / total) * 100) : 0;
 
   const handleDelete = () => {
     if (deleteModal.item) {
@@ -358,7 +358,7 @@ export default function MusicRegistry() {
             ? setPhonogramModal({ open: true, mode: "create" })
             : setWorkTypeSelectorOpen(true)
           }
-          data-testid="button-nova-obra"
+          data-testid="button-new-work"
         >
           <PlusCircle className="h-3.5 w-3.5" />
           {activeTab === "fonogramas" ? "Novo Fonograma" : "Nova Obra"}
@@ -389,8 +389,8 @@ export default function MusicRegistry() {
             accent="primary"
           />
           <MetricCard title="Pendentes de Registro" value={pending} description="aguardando análise" icon={FileText} accent="warning" />
-          <MetricCard title="Em Análise" value={emAnalise} description="aguardando aprovação" icon={Clock} accent="warning" />
-          <MetricCard title="Registro Aceito" value={registrados} description="aprovados" icon={CheckCircle} accent="success" />
+          <MetricCard title="Em Análise" value={underReview} description="aguardando aprovação" icon={Clock} accent="warning" />
+          <MetricCard title="Registro Aceito" value={registered} description="aprovados" icon={CheckCircle} accent="success" />
           <MetricCard title="Taxa de Aprovação" value={`${approvalRate}%`} description={activeTab === "fonogramas" ? "fonogramas aprovados" : "obras aprovadas"} icon={CheckCircle} accent="primary" />
         </div>
 
@@ -468,8 +468,8 @@ export default function MusicRegistry() {
             </Select>
           )}
           {activeTab === "fonogramas" && (
-            <Select value={linkedWorkFilter} onValueChange={setLinkedWorkFilter} data-testid="select-filter-obra-vinculada">
-              <SelectTrigger className="w-auto min-w-[160px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-obra-vinculada">
+            <Select value={linkedWorkFilter} onValueChange={setLinkedWorkFilter} data-testid="select-filter-linked-work">
+              <SelectTrigger className="w-auto min-w-[160px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-linked-work">
                 <SelectValue placeholder="Todos os Fonogramas" />
               </SelectTrigger>
               <SelectContent>
@@ -480,8 +480,8 @@ export default function MusicRegistry() {
             </Select>
           )}
           {activeTab === "fonogramas" && (
-            <Select value={phonogramEcadFilter} onValueChange={setPhonogramEcadFilter} data-testid="select-filter-fonograma-ecad">
-              <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-fonograma-ecad">
+            <Select value={phonogramEcadFilter} onValueChange={setPhonogramEcadFilter} data-testid="select-filter-phonogram-ecad">
+              <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-phonogram-ecad">
                 <SelectValue placeholder="Todos ECAD" />
               </SelectTrigger>
               <SelectContent>
@@ -516,7 +516,7 @@ export default function MusicRegistry() {
             </SelectContent>
           </Select>
           {(searchTerm !== "" || statusFilter !== "all-status" || genreFilter !== "all-genre" || workOriginFilter !== "all-origins" || projectFilter !== "all-projects" || linkedWorkFilter !== "all-obras" || ecadFilter !== "all-ecad" || phonogramEcadFilter !== "all-ecad") && (
-            <Button variant="outline" onClick={() => { setSearchTerm(""); setStatusFilter("all-status"); setGenreFilter("all-genre"); setWorkOriginFilter("all-origins"); setProjectFilter("all-projects"); setLinkedWorkFilter("all-obras"); setEcadFilter("all-ecad"); setPhonogramEcadFilter("all-ecad"); }} data-testid="button-limpar-filtros">
+            <Button variant="outline" onClick={() => { setSearchTerm(""); setStatusFilter("all-status"); setGenreFilter("all-genre"); setWorkOriginFilter("all-origins"); setProjectFilter("all-projects"); setLinkedWorkFilter("all-obras"); setEcadFilter("all-ecad"); setPhonogramEcadFilter("all-ecad"); }} data-testid="button-clear-filters">
               Limpar
             </Button>
           )}
@@ -536,13 +536,13 @@ export default function MusicRegistry() {
                       checked={selectedPhonogramIds.length === phonogramsPg.pageItems.length && phonogramsPg.pageItems.length > 0}
                       onCheckedChange={() => toggleSelectAllPhonograms()}
                       aria-label="Selecionar todos"
-                      data-testid="checkbox-select-all-fonogramas"
+                      data-testid="checkbox-select-all-phonograms"
                     />
                     <span className="text-xs text-muted-foreground">
                       {selectedPhonogramIds.length > 0 ? `${selectedPhonogramIds.length} fonograma(s) selecionado(s)` : "Selecionar todos"}
                     </span>
                     {selectedPhonogramIds.length > 0 && (
-                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeletePhonograms} data-testid="button-bulk-delete-fonogramas">
+                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeletePhonograms} data-testid="button-bulk-delete-phonograms">
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir ({selectedPhonogramIds.length})
                       </Button>
@@ -576,16 +576,16 @@ export default function MusicRegistry() {
                             <Checkbox
                               checked={selectedPhonogramIds.includes(phonogram.id)}
                               onCheckedChange={() => toggleSelectPhonogram(phonogram.id)}
-                              data-testid={`checkbox-fonograma-${phonogram.id}`}
+                              data-testid={`checkbox-phonogram-${phonogram.id}`}
                             />
                           </TableCell>
                           <TableCell className="py-3">
-                            <span className="font-medium block truncate" data-testid={`text-fonograma-title-${phonogram.id}`}>{phonogram.title}</span>
+                            <span className="font-medium block truncate" data-testid={`text-phonogram-title-${phonogram.id}`}>{phonogram.title}</span>
                             {!phonogram.work_id && (
                               <Badge
                                 variant="warning"
                                 className="mt-1 text-xs gap-1"
-                                data-testid={`badge-sem-obra-${phonogram.id}`}
+                                data-testid={`badge-no-work-${phonogram.id}`}
                               >
                                 <LinkIcon className="h-3 w-3" />
                                 Sem obra vinculada

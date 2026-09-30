@@ -177,10 +177,10 @@ export function PayrollFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-lg max-h-[90vh] overflow-y-auto"
-        data-testid="folha-pagamento-form-modal"
+        data-testid="payroll-payment-form-modal"
       >
         <DialogHeader>
-          <DialogTitle data-testid="folha-pagamento-form-title">
+          <DialogTitle data-testid="payroll-payment-form-title">
             {title}
           </DialogTitle>
         </DialogHeader>
@@ -197,7 +197,7 @@ export function PayrollFormModal({
               searchPlaceholder="Buscar por nome…"
               emptyText="Nenhum funcionário encontrado"
               disabled={isViewMode}
-              data-testid="select-funcionario-id"
+              data-testid="select-employee-id"
             />
             {selectedEmployee && (
               <p className="text-xs text-muted-foreground">
@@ -219,7 +219,7 @@ export function PayrollFormModal({
               onChange={setReferenceMonth}
               disabled={isViewMode}
               placeholder="Selecione o mês"
-              data-testid="monthpicker-mes-referencia"
+              data-testid="monthpicker-reference-month"
             />
           </div>
 
@@ -289,7 +289,7 @@ export function PayrollFormModal({
                 onChange={setPaymentDate}
                 disabled={isViewMode}
                 placeholder="Selecione a data"
-                data-testid="datepicker-data-pagamento"
+                data-testid="datepicker-payment-date"
               />
             </div>
             <div className="space-y-2">
@@ -299,7 +299,7 @@ export function PayrollFormModal({
                 onValueChange={setStatus}
                 disabled={isViewMode}
               >
-                <SelectTrigger data-testid="select-status-pagamento">
+                <SelectTrigger data-testid="select-status-payment">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -330,7 +330,7 @@ export function PayrollFormModal({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            data-testid="button-cancel-pagamento"
+            data-testid="button-cancel-payment"
           >
             {isViewMode ? "Fechar" : "Cancelar"}
           </Button>
@@ -338,7 +338,7 @@ export function PayrollFormModal({
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              data-testid="button-save-pagamento"
+              data-testid="button-save-payment"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {mode === "create" ? "Criar Registro" : "Salvar Alterações"}

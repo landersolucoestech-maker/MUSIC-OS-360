@@ -11,10 +11,10 @@ import { formatPersonName } from "@/shared/lib/format-name";
 interface UserViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  usuario?: any;
+  user?: any;
 }
 
-export function UserViewModal({ open, onOpenChange, usuario: member }: UserViewModalProps) {
+export function UserViewModal({ open, onOpenChange, user: member }: UserViewModalProps) {
   if (!member) return null;
 
   const getStatusBadge = (status: string) => {
@@ -43,11 +43,11 @@ export function UserViewModal({ open, onOpenChange, usuario: member }: UserViewM
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shrink-0">
               <span className="text-primary-foreground text-xl font-semibold">
-                {member.iniciais || member.nome?.charAt(0) || "U"}
+                {member.initials || member.fullName?.charAt(0) || "U"}
               </span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-foreground">{formatPersonName(member.nome, member.nome)}</h2>
+              <h2 className="text-xl font-bold text-foreground">{formatPersonName(member.fullName, member.fullName)}</h2>
               <p className="text-muted-foreground">{member.cargo}</p>
             </div>
           </div>
@@ -91,14 +91,14 @@ export function UserViewModal({ open, onOpenChange, usuario: member }: UserViewM
               <p className="text-sm text-muted-foreground">Telefone</p>
               <div className="flex items-center gap-1.5">
                 <Phone className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{member.telefone || "-"}</span>
+                <span className="font-medium text-foreground">{member.phone || "-"}</span>
               </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Criado em</p>
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{member.criadoEm || "-"}</span>
+                <span className="font-medium text-foreground">{member.createdAtLabel || "-"}</span>
               </div>
             </div>
           </div>

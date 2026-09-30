@@ -620,13 +620,13 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
             {linkedWork ? (
               <div
                 className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border"
-                data-testid="obra-vinculada-card"
+                data-testid="linked-work-card"
               >
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                   <Music className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium" data-testid="text-obra-vinculada-title">
+                  <p className="font-medium" data-testid="text-linked-work-title">
                     {linkedWork.title}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -639,7 +639,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                     variant="ghost"
                     size="icon"
                     onClick={() => setLinkedWork(null)}
-                    data-testid="button-remove-obra-vinculada"
+                    data-testid="button-remove-linked-work"
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -663,7 +663,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                         disabled={isViewMode}
                         placeholder="Digite para buscar uma obra..."
                         className="pl-10"
-                        data-testid="input-buscar-obra"
+                        data-testid="input-search-work"
                       />
                     </div>
                   </PopoverTrigger>
@@ -776,7 +776,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                     selectWork();
                                   }
                                 }}
-                                data-testid={`option-obra-${work.id}`}
+                                data-testid={`option-work-${work.id}`}
                               >
                                 <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
                                   <Music className="h-4 w-4 text-primary-foreground" />
@@ -797,7 +797,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                         ) : (
                           <p
                             className="text-sm text-muted-foreground text-center py-4"
-                            data-testid="text-empty-obras"
+                            data-testid="text-empty-works"
                           >
                             Nenhuma obra registrada encontrada.
                           </p>
@@ -843,7 +843,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                   variant="outline"
                   disabled={isViewMode}
                   onClick={() => setSearchOpen(true)}
-                  data-testid="button-buscar-obra"
+                  data-testid="button-search-work"
                 >
                   <Search className="w-4 h-4 mr-2" /> Buscar
                 </Button>
@@ -851,7 +851,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
               {!isViewMode && (
                 <p
                   className="text-xs text-muted-foreground mt-1"
-                  data-testid="hint-obra-vinculada-empty"
+                  data-testid="hint-linked-work-empty"
                 >
                   Nenhuma obra vinculada — recomendado para rastreabilidade de recebimentos externos de direitos
                 </p>
@@ -913,21 +913,21 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Emissão</span>
-                <DatePickerField value={issueDate} onChange={setIssueDate} disabled={isViewMode} placeholder="Data" data-testid="datepicker-emissao" />
+                <DatePickerField value={issueDate} onChange={setIssueDate} disabled={isViewMode} placeholder="Data" data-testid="datepicker-issue-date" />
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Gravação Original</span>
-                <DatePickerField value={recordingDate} onChange={setRecordingDate} disabled={isViewMode} placeholder="Data" data-testid="datepicker-gravacao-original" />
+                <DatePickerField value={recordingDate} onChange={setRecordingDate} disabled={isViewMode} placeholder="Data" data-testid="datepicker-original-recording-date" />
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Lançamento</span>
-                <DatePickerField value={releaseDate} onChange={setReleaseDate} disabled={isViewMode} placeholder="Data" data-testid="datepicker-lancamento" />
+                <DatePickerField value={releaseDate} onChange={setReleaseDate} disabled={isViewMode} placeholder="Data" data-testid="datepicker-release-date" />
               </div>
               <div className="col-span-4">
                 <span className="text-xs text-muted-foreground mb-1 block">Duração</span>
                 <div className="flex items-center gap-1">
                   <Input
-                    data-testid="input-duracao-minutos"
+                    data-testid="input-duration-minutes"
                     className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationMinutesError ? "border-destructive focus-visible:ring-destructive" : ""}`}
                     value={durationMinutes}
                     onChange={(e) => setDurationMinutes(e.target.value)}
@@ -936,7 +936,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                   />
                   <span className="text-xs text-muted-foreground shrink-0">min</span>
                   <Input
-                    data-testid="input-duracao-segundos"
+                    data-testid="input-duration-seconds"
                     className={`h-8 w-12 min-w-0 text-center px-2 text-sm ${durationSecondsError ? "border-destructive focus-visible:ring-destructive" : ""}`}
                     value={durationSeconds}
                     onChange={(e) => setDurationSeconds(e.target.value)}
@@ -1129,7 +1129,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
               {isViewMode ? "Fechar" : "Cancelar"}
             </Button>
             {!isViewMode && (
-              <Button type="submit" size="sm" className="h-8 text-xs gap-1.5" disabled={hasDurationError || submitting} data-testid="button-submit-fonograma">
+              <Button type="submit" size="sm" className="h-8 text-xs gap-1.5" disabled={hasDurationError || submitting} data-testid="button-submit-phonogram">
                 {submitting
                   ? (mode === "create" ? "Cadastrando..." : "Atualizando...")
                   : (mode === "create" ? "Cadastrar Fonograma" : "Atualizar Fonograma")}

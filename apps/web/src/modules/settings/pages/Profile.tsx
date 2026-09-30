@@ -23,7 +23,7 @@ const POSITION_OPTIONS = [
   "Diretor(a)", "Gerente", "Coordenador(a)", "Analista",
   "Assistente", "Produtor(a)", "Estagiário(a)", "Outro",
 ];
-const NIVEL_ACESSO_OPTIONS = ["Administrador", "Gestor", "Editor", "Usuário"];
+const ACCESS_LEVEL_OPTIONS = ["Administrador", "Gestor", "Editor", "Usuário"];
 
 function getInitials(name: string): string {
   return name
@@ -57,52 +57,52 @@ export default function Profile() {
   })();
 
   const [formData, setFormData] = useState({
-    nome: resolvedName,
+    name: resolvedName,
     email: user?.email || "",
-    telefone: userSettings.phone || "",
-    setor: userSettings.setor || "",
-    cargo: userSettings.cargo || "",
-    nivelAcesso: resolvedRole,
+    phone: userSettings.phone || "",
+    department: userSettings.setor || "",
+    position: userSettings.cargo || "",
+    accessLevel: resolvedRole,
   });
 
   // Syncs the form when userSettings loads from localStorage or the user changes
   useEffect(() => {
     if (loading) return;
     setFormData({
-      nome: userSettings.full_name
+      name: userSettings.full_name
         || (user?.user_metadata?.full_name as string | undefined)
         || user?.email?.split("@")[0]
         || "",
       email: user?.email || "",
-      telefone: userSettings.phone || "",
-      setor: userSettings.setor || "",
-      cargo: userSettings.cargo || "",
-      nivelAcesso: resolvedRole,
+      phone: userSettings.phone || "",
+      department: userSettings.setor || "",
+      position: userSettings.cargo || "",
+      accessLevel: resolvedRole,
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, userSettings.full_name, userSettings.phone, userSettings.cargo, userSettings.setor, user?.id]);
 
   const handleSave = async () => {
     await saveUserSettings({
-      full_name: formData.nome,
-      phone: formData.telefone,
-      setor: formData.setor,
-      cargo: formData.cargo,
+      full_name: formData.name,
+      phone: formData.phone,
+      setor: formData.department,
+      cargo: formData.position,
     });
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setFormData({
-      nome: userSettings.full_name
+      name: userSettings.full_name
         || (user?.user_metadata?.full_name as string | undefined)
         || user?.email?.split("@")[0]
         || "",
       email: user?.email || "",
-      telefone: userSettings.phone || "",
-      setor: userSettings.setor || "",
-      cargo: userSettings.cargo || "",
-      nivelAcesso: resolvedRole,
+      phone: userSettings.phone || "",
+      department: userSettings.setor || "",
+      position: userSettings.cargo || "",
+      accessLevel: resolvedRole,
     });
     setIsEditing(false);
   };
@@ -150,7 +150,7 @@ export default function Profile() {
     toast.success("Avatar removido.");
   };
 
-  const displayName = userSettings.full_name || formData.nome;
+  const displayName = userSettings.full_name || formData.name;
   const avatarUrl = userSettings.avatar_url;
 
   return (
@@ -244,30 +244,30 @@ export default function Profile() {
                   <span className="text-muted-foreground">Função:</span>
                   <Badge variant="outline" className="flex items-center gap-1">
                     <Shield className="h-3 w-3" />
-                    {formData.nivelAcesso}
+                    {formData.accessLevel}
                   </Badge>
                 </div>
-                {formData.cargo && (
+                {formData.position && (
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Cargo:</span>
                     <Badge variant="outline" className="flex items-center gap-1">
                       <User className="h-3 w-3" />
-                      {formData.cargo}
+                      {formData.position}
                     </Badge>
                   </div>
                 )}
-                {formData.setor && (
+                {formData.department && (
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Setor:</span>
                     <Badge variant="outline" className="flex items-center gap-1">
                       <Shield className="h-3 w-3" />
-                      {formData.setor}
+                      {formData.department}
                     </Badge>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Phone className="h-4 w-4" />
-                  <span className="text-sm">{formData.telefone}</span>
+                  <span className="text-sm">{formData.phone}</span>
                 </div>
               </div>
             </CardContent>
@@ -301,10 +301,10 @@ export default function Profile() {
                 <div className="space-y-2">
                   <Label>Nome Completo</Label>
                   <Input
-                    value={formData.nome}
+                    value={formData.name}
                     readOnly={!isEditing}
                     className={!isEditing ? "bg-muted" : ""}
-                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     data-testid="input-full-name"
                   />
                 </div>
@@ -320,23 +320,23 @@ export default function Profile() {
                 <div className="space-y-2">
                   <Label>Telefone</Label>
                   <Input
-                    value={formData.telefone}
+                    value={formData.phone}
                     readOnly={!isEditing}
                     className={!isEditing ? "bg-muted" : ""}
-                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     data-testid="input-phone"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Setor</Label>
                   <Select
-                    value={formData.setor || undefined}
-                    onValueChange={(v) => setFormData({ ...formData, setor: v })}
+                    value={formData.department || undefined}
+                    onValueChange={(v) => setFormData({ ...formData, department: v })}
                     disabled={!isEditing}
                   >
                     <SelectTrigger
                       className={cn("h-9", !isEditing && "bg-muted")}
-                      data-testid="select-setor"
+                      data-testid="select-department"
                     >
                       <SelectValue placeholder="Selecione o setor" />
                     </SelectTrigger>
@@ -350,13 +350,13 @@ export default function Profile() {
                 <div className="space-y-2">
                   <Label>Cargo</Label>
                   <Select
-                    value={formData.cargo || undefined}
-                    onValueChange={(v) => setFormData({ ...formData, cargo: v })}
+                    value={formData.position || undefined}
+                    onValueChange={(v) => setFormData({ ...formData, position: v })}
                     disabled={!isEditing}
                   >
                     <SelectTrigger
                       className={cn("h-9", !isEditing && "bg-muted")}
-                      data-testid="select-cargo"
+                      data-testid="select-position"
                     >
                       <SelectValue placeholder="Selecione o cargo" />
                     </SelectTrigger>
@@ -370,12 +370,12 @@ export default function Profile() {
               </div>
               <div className="space-y-2">
                 <Label>Nível de Acesso</Label>
-                <Select value={formData.nivelAcesso || undefined} disabled>
-                  <SelectTrigger className="h-9 bg-muted" data-testid="select-nivel-acesso">
+                <Select value={formData.accessLevel || undefined} disabled>
+                  <SelectTrigger className="h-9 bg-muted" data-testid="select-access-level">
                     <SelectValue placeholder="—" />
                   </SelectTrigger>
                   <SelectContent>
-                    {NIVEL_ACESSO_OPTIONS.map((n) => (
+                    {ACCESS_LEVEL_OPTIONS.map((n) => (
                       <SelectItem key={n} value={n}>{n}</SelectItem>
                     ))}
                   </SelectContent>
@@ -415,21 +415,21 @@ export default function Profile() {
             <div className="grid gap-4 md:grid-cols-3">
               <div
                 className="flex items-center gap-3 p-4 rounded-lg border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
-                data-testid="card-alterar-senha"
+                data-testid="card-change-password"
               >
                 <Shield className="h-5 w-5 text-muted-foreground" />
                 <span>Alterar Senha</span>
               </div>
               <div
                 className="flex items-center gap-3 p-4 rounded-lg border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
-                data-testid="card-ativar-2fa"
+                data-testid="card-enable-2fa"
               >
                 <Smartphone className="h-5 w-5 text-muted-foreground" />
                 <span>Ativar 2FA</span>
               </div>
               <div
                 className="flex items-center gap-3 p-4 rounded-lg border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
-                data-testid="card-historico-login"
+                data-testid="card-history-login"
               >
                 <History className="h-5 w-5 text-muted-foreground" />
                 <span>Histórico de Login</span>

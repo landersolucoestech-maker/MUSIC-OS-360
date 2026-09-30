@@ -301,7 +301,7 @@ function getInitials(name: string): string {
 
 export default function Dashboard() {
   const [visao360Modal, setVisao360Modal] = useState<{ open: boolean; artist?: Artist }>({ open: false });
-  const { dashboardMetrics, artistasMetrics: artistsMetrics, isLoading, upcomingEvents, eventsUnavailable, upcomingIncomplete, error: metricsError, refetch: refetchMetrics } = useMetrics();
+  const { dashboardMetrics, artistsMetrics, isLoading, upcomingEvents, eventsUnavailable, upcomingIncomplete, error: metricsError, refetch: refetchMetrics } = useMetrics();
 
   // ── Activity state ──────────────────────────────────────────────────────────
   const [activities, setActivities] = useState<ActivityItem[]>([]);
@@ -452,7 +452,7 @@ export default function Dashboard() {
 
   // ── Derived data ────────────────────────────────────────────────────────────
 
-  const { totalArtistas: totalArtists, contratosAtivos: activeContracts, contratosVencendo: expiringContracts, receitaMensal: monthlyIncome, eventosMes: eventsMonth, artistasDestaque: featuredArtists } =
+  const { totalArtists, activeContracts, expiringContracts, monthlyRevenue: monthlyIncome, eventsMonth, featuredArtists } =
     dashboardMetrics;
 
   // Upcoming appointments: the API already returns only events starting from now,
@@ -470,9 +470,9 @@ export default function Dashboard() {
       id: a.id,
       name: a.stageName,
       genre: a.musicGenre || "Outro",
-      releases: a.lancamentos,
+      releases: a.releasesCount,
       streams: a.streams, // may be null → the UI shows "–"
-      projects: a.projetos,
+      projects: a.projectsCount,
       photoUrl: a.photoUrl,
     })),
     [featuredArtists],
@@ -502,7 +502,7 @@ export default function Dashboard() {
             accent="primary"
             sub={
               <span>
-                <span className="font-sans font-semibold text-success">{artistsMetrics.comContrato}</span>
+                <span className="font-sans font-semibold text-success">{artistsMetrics.withContract}</span>
                 {" "}com contrato ativo
               </span>
             }

@@ -38,17 +38,17 @@ import {
 
 import { toUserMessage } from "@/shared/lib/errors";
 /* ── types ── */
-type TabKey = "usuarios" | "geral" | "email" | "seguranca" | "notificacoes" | "webhooks" | "chaves-api" | "integracoes";
+type TabKey = "users" | "general" | "email" | "security" | "notifications" | "webhooks" | "api-keys" | "integrations";
 
 const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: "geral",        label: "Geral",       icon: Settings  },
+  { key: "general",       label: "Geral",       icon: Settings  },
   { key: "email",        label: "E-mail",       icon: Mail      },
-  { key: "seguranca",    label: "Segurança",    icon: Shield    },
-  { key: "notificacoes", label: "Notificações", icon: Bell      },
+  { key: "security",   label: "Segurança",    icon: Shield    },
+  { key: "notifications", label: "Notificações", icon: Bell      },
   { key: "webhooks",     label: "Webhooks",     icon: Webhook   },
-  { key: "chaves-api",   label: "Chaves API",   icon: KeyRound  },
-  { key: "integracoes",  label: "Integrações",  icon: Zap       },
-  { key: "usuarios",     label: "Usuários",     icon: Users     },
+  { key: "api-keys",  label: "Chaves API",   icon: KeyRound  },
+  { key: "integrations", label: "Integrações",  icon: Zap       },
+  { key: "users",    label: "Usuários",     icon: Users     },
 ];
 
 /* ── integration helpers ── */
@@ -240,7 +240,7 @@ function TabEmail() {
   );
 }
 
-function TabSeguranca() {
+function TabSecurity() {
   return (
     <div className="space-y-4">
       <Section title="Política de Senhas">
@@ -290,7 +290,7 @@ function TabSeguranca() {
   );
 }
 
-function TabNotificacoes() {
+function TabNotifications() {
   return (
     <div className="space-y-4">
       <Section title="Canais de Notificação">
@@ -786,18 +786,18 @@ function TabUsers() {
 }
 
 const TAB_PANELS: Record<TabKey, React.ComponentType> = {
-  usuarios:     TabUsers,
-  geral:        TabGeneral,
-  email:        TabEmail,
-  seguranca:    TabSeguranca,
-  notificacoes: TabNotificacoes,
-  webhooks:     TabWebhooks,
-  "chaves-api": TabApiKeys,
-  integracoes:  TabIntegrations,
+  users:         TabUsers,
+  general:       TabGeneral,
+  email:         TabEmail,
+  security:      TabSecurity,
+  notifications: TabNotifications,
+  webhooks:      TabWebhooks,
+  "api-keys":    TabApiKeys,
+  integrations:  TabIntegrations,
 };
 
 export default function AdminSettings() {
-  const [activeTab, setActiveTab] = useState<TabKey>("geral");
+  const [activeTab, setActiveTab] = useState<TabKey>("general");
   const Panel = TAB_PANELS[activeTab];
 
   return (

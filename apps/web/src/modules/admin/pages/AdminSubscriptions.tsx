@@ -257,8 +257,8 @@ export default function AdminSubscriptions() {
 
   const kpis = useMemo(() => ({
     total: subs.length,
-    ativas: subs.filter((s) => s.status === "active").length,
-    inadimplentes: subs.filter((s) => ["past_due", "payment_grace", "read_only", "suspended", "unpaid"].includes(s.status)).length,
+    active: subs.filter((s) => s.status === "active").length,
+    overdue: subs.filter((s) => ["past_due", "payment_grace", "read_only", "suspended", "unpaid"].includes(s.status)).length,
     mrr: subs.filter((s) => s.status === "active").reduce((acc, s) => acc + s.mrr, 0),
   }), [subs]);
 
@@ -339,8 +339,8 @@ export default function AdminSubscriptions() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: "Total de Assinaturas", value: kpis.total, icon: Receipt },
-            { label: "Ativas", value: kpis.ativas, icon: CheckCircle2 },
-            { label: "Inadimplentes", value: kpis.inadimplentes, icon: AlertTriangle },
+            { label: "Ativas", value: kpis.active, icon: CheckCircle2 },
+            { label: "Inadimplentes", value: kpis.overdue, icon: AlertTriangle },
             { label: "MRR (ativas)", value: fmtBRL(kpis.mrr), icon: DollarSign },
           ].map(({ label, value, icon: Icon }) => (
             <div key={label} className="rounded-2xl border border-border bg-card p-4">

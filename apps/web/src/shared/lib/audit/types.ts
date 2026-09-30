@@ -1,7 +1,7 @@
-export type AuditSeverity = "obrigatorio" | "recomendado";
+export type AuditSeverity = "required" | "recommended";
 
 export type AuditModuleId =
-  | "artistas"
+  | "artists"
   | "catalog"
   | "contracts"
   | "crm"
@@ -13,7 +13,7 @@ export type AuditModuleId =
   | "marketing"
   | "monitoring"
   | "projects"
-  | "lancamentos"
+  | "releases"
   | "rh";
 
 export interface AuditIssue {
@@ -47,8 +47,8 @@ export interface AuditModuleSummary {
 
 export interface AuditSummary {
   total_issues: number;
-  obrigatorio: number;
-  recomendado: number;
+  required: number;
+  recommended: number;
   total_records: number;
   complete_records: number;
   incomplete_records: number;
@@ -64,7 +64,7 @@ export interface AuditResult {
 }
 
 export const AUDIT_MODULES: { id: AuditModuleId; label: string }[] = [
-  { id: "artistas", label: "Artistas" },
+  { id: "artists", label: "Artistas" },
   { id: "catalog", label: "Catálogo" },
   { id: "contracts", label: "Contratos" },
   { id: "crm", label: "CRM" },
@@ -76,7 +76,7 @@ export const AUDIT_MODULES: { id: AuditModuleId; label: string }[] = [
   { id: "marketing", label: "Marketing" },
   { id: "monitoring", label: "Monitoramento" },
   { id: "projects", label: "Projetos" },
-  { id: "lancamentos", label: "Lançamentos" },
+  { id: "releases", label: "Lançamentos" },
   { id: "rh", label: "RH" },
 ];
 

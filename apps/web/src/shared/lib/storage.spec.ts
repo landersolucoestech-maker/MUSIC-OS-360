@@ -24,21 +24,21 @@ describe("storage.list", () => {
   });
 
   it("preserves array responses", async () => {
-    apiMock.get.mockResolvedValueOnce([{ id: "1", nome: "Item" }]);
+    apiMock.get.mockResolvedValueOnce([{ id: "1", name: "Item" }]);
 
     await expect(storage.list("items" as StorageTable)).resolves.toEqual([
-      { id: "1", nome: "Item" },
+      { id: "1", name: "Item" },
     ]);
   });
 
   it("unwraps the paginated envelope returned by the controllers", async () => {
     apiMock.get.mockResolvedValueOnce({
-      data: [{ id: "1", nome: "Item" }],
+      data: [{ id: "1", name: "Item" }],
       meta: { total: 1, limit: 50, offset: 0 },
     });
 
     await expect(storage.list("items" as StorageTable)).resolves.toEqual([
-      { id: "1", nome: "Item" },
+      { id: "1", name: "Item" },
     ]);
   });
 

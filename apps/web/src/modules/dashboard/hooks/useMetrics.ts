@@ -5,8 +5,8 @@
  * It belongs to the dashboard module — it is NOT shared, because it imports directly
  * from domain modules. Shared never imports from modules.
  *
- * Task G: counts/sums (totalArtistas, contratosAtivos, contratosVencendo,
- * receitaMensal) now come from useOperationalDashboard() — GET /analytics/dashboard,
+ * Task G: counts/sums (totalArtists, activeContracts, expiringContracts,
+ * monthlyRevenue) now come from useOperationalDashboard() — GET /analytics/dashboard,
  * which already computes everything via COUNT/SUM in the database (see AnalyticsService.getDashboard) —
  * instead of downloading the whole contracts/transactions/clients tables just to
  * sum them on the client. Only the lists whose RECORDS (not
@@ -26,10 +26,10 @@ interface FeaturedArtist {
   id: string;
   stageName: string;
   musicGenre: string | null;
-  lancamentos: number;
+  releasesCount: number;
   /** null = streams data not integrated yet (do not display as 0). */
   streams: number | null;
-  projetos: number;
+  projectsCount: number;
   photoUrl: string | null;
   /** The full artist record — opened by the 360 view. */
   artist: Artist;
@@ -37,22 +37,22 @@ interface FeaturedArtist {
 
 interface ArtistsMetrics {
   total: number;
-  totalArtistas: number;
-  comContrato: number;
-  ativos: number;
+  totalArtists: number;
+  withContract: number;
+  active: number;
 }
 
 interface DashboardMetrics {
-  totalArtistas: number;
-  contratosAtivos: number;
-  contratosVencendo: number;
-  receitaMensal: number;
-  eventosMes: number;
-  artistasDestaque: FeaturedArtist[];
+  totalArtists: number;
+  activeContracts: number;
+  expiringContracts: number;
+  monthlyRevenue: number;
+  eventsMonth: number;
+  featuredArtists: FeaturedArtist[];
 }
 
 export interface UseMetricsReturn {
-  artistasMetrics: ArtistsMetrics;
+  artistsMetrics: ArtistsMetrics;
   dashboardMetrics: DashboardMetrics;
   /** Next open appointments (starts_at >= now), at most UPCOMING_APPOINTMENTS_LIMIT. */
   upcomingEvents: EventWithRelations[];
@@ -93,7 +93,7 @@ export function useMetrics(): UseMetricsReturn {
     // from the GET /analytics/dashboard aggregate (real COUNT in the database, never
     // capped) covers exactly "artists with an active contract", without needing
     // a new endpoint. It falls back to the capped array (artistas.length) only if the
-    // aggregate has not loaded yet — same fallback pattern as totalArtistas.
+    // aggregate has not loaded yet — same fallback pattern as totalArtists.
     const statusCounts = dashboard?.artists_by_status;
     const artistsWithContract = statusCounts
       ? (statusCounts["signed"] ?? 0)
@@ -104,9 +104,9 @@ export function useMetrics(): UseMetricsReturn {
 
     return {
       total: artists.length,
-      totalArtistas: dashboard?.artists ?? artists.length,
-      comContrato: artistsWithContract,
-      ativos: activeArtists,
+      totalArtists: dashboard?.artists ?? artists.length,
+      withContract: artistsWithContract,
+      active: activeArtists,
     };
   }, [artists, dashboard]);
 
@@ -132,9 +132,9 @@ export function useMetrics(): UseMetricsReturn {
         id: artist.id,
         stageName: artist.stageName,
         musicGenre: artist.musicGenre ?? null,
-        lancamentos: releases,
+        releasesCount: releases,
         streams,
-        projetos: projectsCount,
+        projectsCount,
         photoUrl: artist.photoUrl ?? null,
         artist,
       };
@@ -142,23 +142,23 @@ export function useMetrics(): UseMetricsReturn {
 
     const featuredArtists = artistsWithMetrics
       .sort((a, b) => {
-        if (b.lancamentos !== a.lancamentos) return b.lancamentos - a.lancamentos;
-        return b.projetos - a.projetos;
+        if (b.releasesCount !== a.releasesCount) return b.releasesCount - a.releasesCount;
+        return b.projectsCount - a.projectsCount;
       })
       .slice(0, 4);
 
     return {
-      totalArtistas: dashboard?.artists ?? artists.length,
-      contratosAtivos: dashboard?.active_contracts_count ?? 0,
-      contratosVencendo: dashboard?.contracts_expiring_soon_count ?? 0,
-      receitaMensal: dashboard?.revenue_current_month ?? 0,
-      eventosMes: dashboardEvents?.monthCount ?? 0,
-      artistasDestaque: featuredArtists,
+      totalArtists: dashboard?.artists ?? artists.length,
+      activeContracts: dashboard?.active_contracts_count ?? 0,
+      expiringContracts: dashboard?.contracts_expiring_soon_count ?? 0,
+      monthlyRevenue: dashboard?.revenue_current_month ?? 0,
+      eventsMonth: dashboardEvents?.monthCount ?? 0,
+      featuredArtists,
     };
   }, [artists, dashboardEvents, releasesData, projects, dashboard]);
 
   return {
-    artistasMetrics: artistsMetrics,
+    artistsMetrics,
     dashboardMetrics,
     upcomingEvents: dashboardEvents?.upcoming ?? [],
     eventsUnavailable: !!errEvents && !dashboardEvents,

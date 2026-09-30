@@ -7,7 +7,7 @@ import { toUserMessage } from "@/shared/lib/errors";
 /**
  * The company's registration settings — persisted in the real backend
  * (GET/PATCH /company-settings, tenant-scoped, RLS + encrypted CNPJ).
- * Keeps the same flat pt-BR shape used by the Settings screen and by the
+ * Keeps the same flat shape used by the Settings screen and by the
  * invoice form, mapping to/from the backend's nested DTO.
  */
 export interface CompanySettings {
@@ -18,17 +18,17 @@ export interface CompanySettings {
   fantasy_name: string;
   cnpj: string;
   inscricao_estadual: string;
-  cep: string;
-  logradouro: string;
-  numero: string;
-  complemento: string;
-  cidade: string;
-  estado: string;
-  telefone: string;
-  responsavel: string;
-  banco: string;
-  agencia: string;
-  conta: string;
+  zipCode: string;
+  street: string;
+  number: string;
+  complement: string;
+  city: string;
+  state: string;
+  phone: string;
+  contactName: string;
+  bankName: string;
+  agency: string;
+  account: string;
 }
 
 interface CompanySettingsResponse {
@@ -50,17 +50,17 @@ const defaultCompanySettings: CompanySettings = {
   fantasy_name: "",
   cnpj: "",
   inscricao_estadual: "",
-  cep: "",
-  logradouro: "",
-  numero: "",
-  complemento: "",
-  cidade: "",
-  estado: "",
-  telefone: "",
-  responsavel: "",
-  banco: "",
-  agencia: "",
-  conta: "",
+  zipCode: "",
+  street: "",
+  number: "",
+  complement: "",
+  city: "",
+  state: "",
+  phone: "",
+  contactName: "",
+  bankName: "",
+  agency: "",
+  account: "",
 };
 
 function toCompanySettings(res: CompanySettingsResponse): CompanySettings {
@@ -71,17 +71,17 @@ function toCompanySettings(res: CompanySettingsResponse): CompanySettings {
     fantasy_name: res.tradeName ?? "",
     cnpj: res.cnpj ?? "",
     inscricao_estadual: res.stateRegistration ?? "",
-    cep: address.zipCode ?? "",
-    logradouro: address.street ?? "",
-    numero: address.number ?? "",
-    complemento: address.complement ?? "",
-    cidade: address.city ?? "",
-    estado: address.state ?? "",
-    telefone: res.phone ?? "",
-    responsavel: res.contactName ?? "",
-    banco: banking.bankName ?? "",
-    agencia: banking.agency ?? "",
-    conta: banking.account ?? "",
+    zipCode: address.zipCode ?? "",
+    street: address.street ?? "",
+    number: address.number ?? "",
+    complement: address.complement ?? "",
+    city: address.city ?? "",
+    state: address.state ?? "",
+    phone: res.phone ?? "",
+    contactName: res.contactName ?? "",
+    bankName: banking.bankName ?? "",
+    agency: banking.agency ?? "",
+    account: banking.account ?? "",
   };
 }
 
@@ -91,20 +91,20 @@ function toUpdateDto(company: Partial<CompanySettings>) {
     tradeName: company.fantasy_name,
     cnpj: company.cnpj || undefined,
     stateRegistration: company.inscricao_estadual,
-    contactName: company.responsavel,
+    contactName: company.contactName,
     address: {
-      zipCode: company.cep,
-      street: company.logradouro,
-      number: company.numero,
-      complement: company.complemento,
-      city: company.cidade,
-      state: company.estado,
+      zipCode: company.zipCode,
+      street: company.street,
+      number: company.number,
+      complement: company.complement,
+      city: company.city,
+      state: company.state,
     },
-    phone: company.telefone,
+    phone: company.phone,
     banking: {
-      bankName: company.banco,
-      agency: company.agencia,
-      account: company.conta,
+      bankName: company.bankName,
+      agency: company.agency,
+      account: company.account,
     },
   };
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const userSchema = z.object({
-  nome: z.string()
+  name: z.string()
     .min(2, "Nome deve ter no mínimo 2 caracteres")
     .max(150, "Nome deve ter no máximo 150 caracteres")
     .trim(),
@@ -9,7 +9,7 @@ export const userSchema = z.object({
     .min(1, "Email é obrigatório")
     .email("Email inválido")
     .max(100, "Email deve ter no máximo 100 caracteres"),
-  telefone: z.string()
+  phone: z.string()
     .max(20, "Telefone deve ter no máximo 20 caracteres")
     .optional()
     .nullable()
@@ -17,11 +17,11 @@ export const userSchema = z.object({
   status: z.enum(["ativo", "inativo", "suspenso"], {
     errorMap: () => ({ message: "Selecione um status válido" })
   }),
-  setor: z.string()
+  department: z.string()
     .optional()
     .nullable()
     .or(z.literal("")),
-  nivel_acesso: z.string()
+  accessLevel: z.string()
     .optional()
     .nullable()
     .or(z.literal("")),

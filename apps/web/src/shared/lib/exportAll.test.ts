@@ -9,10 +9,10 @@ vi.mock("@/shared/lib/storage", async () => {
 
 const mockedListPaged = vi.mocked(storage.listPaged);
 
-interface FakeRow { id: string; nome: string }
+interface FakeRow { id: string; name: string }
 
 function fakeDataset(size: number): FakeRow[] {
-  return Array.from({ length: size }, (_, i) => ({ id: `id-${i + 1}`, nome: `Registro ${i + 1}` }));
+  return Array.from({ length: size }, (_, i) => ({ id: `id-${i + 1}`, name: `Registro ${i + 1}` }));
 }
 
 describe("fetchAllPages", () => {

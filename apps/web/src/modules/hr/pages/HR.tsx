@@ -103,7 +103,7 @@ const STATUS_VARIANT_PAYMENT: Record<string, BadgeVariant> = {
   cancelled: "neutral",
 };
 
-const STATUS_VARIANT_AUSENCIA: Record<string, BadgeVariant> = {
+const LEAVE_STATUS_VARIANT: Record<string, BadgeVariant> = {
   pending: "warning",
   approved: "success",
   rejected: "danger",
@@ -139,7 +139,7 @@ export default function HR() {
     deleteLeaveRequest,
   } = useLeaveRequests();
 
-  const [activeTab, setActiveTab] = useState("funcionarios");
+  const [activeTab, setActiveTab] = useState("employees");
 
   const [employeeSearch, setEmployeeSearch] = useState("");
   const [employeeStatusFilter, setEmployeeStatusFilter] = useState("all");
@@ -211,8 +211,8 @@ export default function HR() {
   const {
     documents,
     isLoading: loadingDocs,
-    addDocumento: addDocument,
-    deleteDocumento: deleteDocument,
+    addDocument,
+    deleteDocument,
   } = useEmployeeDocuments(docEmployeeId || undefined);
 
   // KPIs — exact aggregation over the whole tenant (GET /hr/employees/stats),
@@ -220,9 +220,9 @@ export default function HR() {
   const { stats: employeesStats } = useEmployeesStats();
   const kpiCounts = {
     total: employeesStats.total,
-    ativos: employeesStats.byGroup["active"] ?? 0,
+    active: employeesStats.byGroup["active"] ?? 0,
     onLeave: employeesStats.byGroup["on_vacation"] ?? 0,
-    afastados: employeesStats.byGroup["on_leave"] ?? 0,
+    absent: employeesStats.byGroup["on_leave"] ?? 0,
   };
 
   const debouncedEmployeeSearch = useDebounce(employeeSearch, 300);
@@ -247,7 +247,7 @@ export default function HR() {
     page: employeePage, pageSize: employeePageSize, search: debouncedEmployeeSearch || undefined,
     status: employeeStatusFilter !== "all" ? employeeStatusFilter : undefined,
     department: employeeDepartmentFilter !== "all" ? employeeDepartmentFilter : undefined,
-    enabled: activeTab === "funcionarios",
+    enabled: activeTab === "employees",
   });
   const filteredEmployees = employeePageItems;
   const employeesPg = { pageItems: employeePageItems, total: employeeTotal, page: employeePage, pageSize: employeePageSize, setPage: setEmployeePage, setPageSize: setEmployeePageSize };
@@ -259,7 +259,7 @@ export default function HR() {
     page: payrollPage, pageSize: payrollPageSize, search: debouncedPayrollSearch || undefined,
     referenceMonth: payrollMonthFilter || undefined,
     status: payrollStatusFilter !== "all" ? payrollStatusFilter : undefined,
-    enabled: activeTab === "folha",
+    enabled: activeTab === "payroll",
   });
   const filteredPayroll = payrollPageItems;
   const payrollPg = { pageItems: payrollPageItems, total: totalPayroll, page: payrollPage, pageSize: payrollPageSize, setPage: setPayrollPage, setPageSize: setPayrollPageSize };
@@ -270,7 +270,7 @@ export default function HR() {
   } = useLeaveRequestsPaginated({
     page: leavePage, pageSize: leavePageSize, search: debouncedLeaveSearch || undefined,
     status: leaveStatusFilter !== "all" ? leaveStatusFilter : undefined,
-    enabled: activeTab === "ferias",
+    enabled: activeTab === "leave",
   });
   const filteredLeave = leavePageItems;
   const leavePg = { pageItems: leavePageItems, total: totalLeave, page: leavePage, pageSize: leavePageSize, setPage: setLeavePage, setPageSize: setLeavePageSize };
@@ -390,17 +390,17 @@ export default function HR() {
                 size="sm"
                 className="gap-2"
                 onClick={
-                  activeTab === "funcionarios"
+                  activeTab === "employees"
                     ? () => setEmployeeFormModal({ open: true, mode: "create" })
-                    : activeTab === "folha"
+                    : activeTab === "payroll"
                     ? () => setPayrollFormModal({ open: true, mode: "create" })
                     : () => setLeaveFormModal({ open: true, mode: "create" })
                 }
                 data-testid="button-new-header"
               >
                 <Plus className="h-4 w-4" />
-                {activeTab === "funcionarios" ? "Novo Funcionário"
-                  : activeTab === "folha" ? "Novo Registro"
+                {activeTab === "employees" ? "Novo Funcionário"
+                  : activeTab === "payroll" ? "Novo Registro"
                   : "Nova Ausência"}
               </Button>
             </RequirePermission>
@@ -412,7 +412,7 @@ export default function HR() {
         {(employeePageError || payrollPageError || leavePageError) && (
           <div
             className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 px-4 py-3"
-            data-testid="rh-load-warning"
+            data-testid="hr-load-warning"
           >
             <p className="text-sm text-muted-foreground">
               Não foi possível carregar os dados de RH agora. Exibindo a página vazia.
@@ -441,35 +441,35 @@ export default function HR() {
               </div>
             </CardContent>
           </Card>
-          <Card data-testid="kpi-ativos">
+          <Card data-testid="kpi-active">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="p-2 rounded-lg bg-emerald-500/10">
                 <UserCheck className="h-5 w-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold" data-testid="text-kpi-ativos">{kpiCounts.ativos}</p>
+                <p className="text-2xl font-bold" data-testid="text-kpi-active">{kpiCounts.active}</p>
                 <p className="text-xs text-muted-foreground">Ativos</p>
               </div>
             </CardContent>
           </Card>
-          <Card data-testid="kpi-ferias">
+          <Card data-testid="kpi-vacation">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="p-2 rounded-lg bg-info/10">
                 <Palmtree className="h-5 w-5 text-info" />
               </div>
               <div>
-                <p className="text-2xl font-bold" data-testid="text-kpi-ferias">{kpiCounts.onLeave}</p>
+                <p className="text-2xl font-bold" data-testid="text-kpi-vacation">{kpiCounts.onLeave}</p>
                 <p className="text-xs text-muted-foreground">Férias</p>
               </div>
             </CardContent>
           </Card>
-          <Card data-testid="kpi-afastados">
+          <Card data-testid="kpi-absent">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="p-2 rounded-lg bg-warning/10">
                 <UserX className="h-5 w-5 text-warning" />
               </div>
               <div>
-                <p className="text-2xl font-bold" data-testid="text-kpi-afastados">{kpiCounts.afastados}</p>
+                <p className="text-2xl font-bold" data-testid="text-kpi-absent">{kpiCounts.absent}</p>
                 <p className="text-xs text-muted-foreground">Afastados</p>
               </div>
             </CardContent>
@@ -477,15 +477,15 @@ export default function HR() {
         </div>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="flex-wrap h-auto">
-            <TabsTrigger value="funcionarios" className="flex items-center gap-2" data-testid="tab-funcionarios">
+            <TabsTrigger value="employees" className="flex items-center gap-2" data-testid="tab-employees">
               <Users className="h-4 w-4" />
               Funcionários
             </TabsTrigger>
-            <TabsTrigger value="folha" className="flex items-center gap-2" data-testid="tab-folha">
+            <TabsTrigger value="payroll" className="flex items-center gap-2" data-testid="tab-payroll">
               <DollarSign className="h-4 w-4" />
               Folha de Pagamento
             </TabsTrigger>
-            <TabsTrigger value="ferias" className="flex items-center gap-2" data-testid="tab-ferias">
+            <TabsTrigger value="leave" className="flex items-center gap-2" data-testid="tab-leave">
               <CalendarDays className="h-4 w-4" />
               Férias e Ausências
             </TabsTrigger>
@@ -494,7 +494,7 @@ export default function HR() {
               Documentos
             </TabsTrigger>
           </TabsList>
-          {activeTab === "funcionarios" && (
+          {activeTab === "employees" && (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-4">
               <div className="relative flex-1 min-w-[220px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -503,12 +503,12 @@ export default function HR() {
                   value={employeeSearch}
                   onChange={(e) => setEmployeeSearch(e.target.value)}
                   className="h-8 pl-9 text-sm bg-card border-border"
-                  data-testid="input-search-funcionarios"
+                  data-testid="input-search-employees"
                 />
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Select value={employeeStatusFilter} onValueChange={setEmployeeStatusFilter}>
-                  <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-status-func">
+                  <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-status-employee">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -521,7 +521,7 @@ export default function HR() {
                   </SelectContent>
                 </Select>
                 <Select value={employeeDepartmentFilter} onValueChange={setEmployeeDepartmentFilter}>
-                  <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-setor">
+                  <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-department">
                     <SelectValue placeholder="Setor" />
                   </SelectTrigger>
                   <SelectContent>
@@ -534,7 +534,7 @@ export default function HR() {
               </div>
             </div>
           )}
-          {activeTab === "folha" && (
+          {activeTab === "payroll" && (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center mt-4">
               {/* Date picker — always immediately to the left of the search */}
               <MonthPickerField
@@ -542,7 +542,7 @@ export default function HR() {
                 onChange={setPayrollMonthFilter}
                 placeholder="Filtrar por mês"
                 className="w-[160px] h-8 text-sm bg-card border-border shrink-0"
-                data-testid="monthpicker-filter-mes-folha"
+                data-testid="monthpicker-filter-payroll-month"
               />
               <div className="relative flex-1 min-w-[220px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -551,11 +551,11 @@ export default function HR() {
                   value={payrollSearch}
                   onChange={(e) => setPayrollSearch(e.target.value)}
                   className="h-8 pl-9 text-sm bg-card border-border"
-                  data-testid="input-search-folha"
+                  data-testid="input-search-payroll"
                 />
               </div>
               <Select value={payrollStatusFilter} onValueChange={setPayrollStatusFilter}>
-                <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border shrink-0" data-testid="select-filter-status-folha">
+                <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border shrink-0" data-testid="select-filter-status-payroll">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -569,7 +569,7 @@ export default function HR() {
               </Select>
             </div>
           )}
-          {activeTab === "ferias" && (
+          {activeTab === "leave" && (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-4">
               <div className="relative flex-1 min-w-[220px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -578,12 +578,12 @@ export default function HR() {
                   value={leaveSearch}
                   onChange={(e) => setLeaveSearch(e.target.value)}
                   className="h-8 pl-9 text-sm bg-card border-border"
-                  data-testid="input-search-ferias"
+                  data-testid="input-search-leave"
                 />
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Select value={leaveStatusFilter} onValueChange={setLeaveStatusFilter}>
-                  <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-status-ferias">
+                  <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-status-leave">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -599,7 +599,7 @@ export default function HR() {
             </div>
           )}
 
-          <TabsContent value="funcionarios" className="mt-6 space-y-6">
+          <TabsContent value="employees" className="mt-6 space-y-6">
             {filteredEmployees.length === 0 ? (
               employeePageError && employeeTotal === 0 ? (
                 <UnavailableState onRetry={() => refetchEmployeePage()} />
@@ -642,7 +642,7 @@ export default function HR() {
                   </div>
                 }
               />
-              <Table data-testid="table-funcionarios">
+              <Table data-testid="table-employees">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[36px]"></TableHead>
@@ -658,12 +658,12 @@ export default function HR() {
                 </TableHeader>
                 <TableBody>
                   {employeesPg.pageItems.map((f) => (
-                    <TableRow key={f.id} data-testid={`row-funcionario-${f.id}`} className={selectedEmployeeIds.includes(f.id) ? "bg-muted/20" : ""}>
+                    <TableRow key={f.id} data-testid={`row-employee-${f.id}`} className={selectedEmployeeIds.includes(f.id) ? "bg-muted/20" : ""}>
                       <TableCell>
                         <Checkbox
                           checked={selectedEmployeeIds.includes(f.id)}
                           onCheckedChange={() => toggleSelectFunc(f.id)}
-                          data-testid={`checkbox-funcionario-${f.id}`}
+                          data-testid={`checkbox-employee-${f.id}`}
                           aria-label={`Selecionar ${f.name}`}
                         />
                       </TableCell>
@@ -682,24 +682,24 @@ export default function HR() {
                           {(f.status || "active").charAt(0).toUpperCase() + (f.status || "active").slice(1)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-xs" data-testid={`text-usuario-vinculo-${f.id}`}>
+                      <TableCell className="text-muted-foreground text-xs" data-testid={`text-linked-user-${f.id}`}>
                         {getUserName(f.linked_user_id ?? null) || "—"}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-actions-func-${f.id}`}>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-actions-employee-${f.id}`}>
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setEmployeeFormModal({ open: true, mode: "view", employee: f })} data-testid={`button-view-func-${f.id}`}>
+                            <DropdownMenuItem onClick={() => setEmployeeFormModal({ open: true, mode: "view", employee: f })} data-testid={`button-view-employee-${f.id}`}>
                               <Eye className="mr-2 h-4 w-4" /> Visualizar
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setEmployeeFormModal({ open: true, mode: "edit", employee: f })} data-testid={`button-edit-func-${f.id}`}>
+                            <DropdownMenuItem onClick={() => setEmployeeFormModal({ open: true, mode: "edit", employee: f })} data-testid={`button-edit-employee-${f.id}`}>
                               <Pencil className="mr-2 h-4 w-4" /> Editar
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive" onClick={() => setEmployeeDeleteModal({ open: true, employee: f })} data-testid={`button-delete-func-${f.id}`}>
+                            <DropdownMenuItem className="text-destructive" onClick={() => setEmployeeDeleteModal({ open: true, employee: f })} data-testid={`button-delete-employee-${f.id}`}>
                               <Trash2 className="mr-2 h-4 w-4" /> Excluir
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -723,7 +723,7 @@ export default function HR() {
             )}
           </TabsContent>
 
-          <TabsContent value="folha" className="mt-6 space-y-6">
+          <TabsContent value="payroll" className="mt-6 space-y-6">
             {isLoadingPayrollPage ? (
               <div className="flex items-center justify-center h-32">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -758,7 +758,7 @@ export default function HR() {
                         size="sm"
                         className="h-8 text-xs gap-1.5"
                         onClick={() => setPayrollBulkDeleteModal({ open: true, ids: filteredPayroll.filter((fp) => selectedPayrollIds.includes(fp.id)).map((fp) => fp.id) })}
-                        data-testid="button-delete-selected-folha"
+                        data-testid="button-delete-selected-payroll"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir selecionados
@@ -768,7 +768,7 @@ export default function HR() {
                       checked={filteredPayroll.length > 0 && filteredPayroll.every((fp) => selectedPayrollIds.includes(fp.id))}
                       onCheckedChange={toggleSelectAllPayroll}
                       aria-label="Selecionar todos os registros de pagamento"
-                      data-testid="checkbox-select-all-folha"
+                      data-testid="checkbox-select-all-payroll"
                     />
                     <span className="text-xs text-muted-foreground">
                       {selectedPayrollIds.length > 0 ? `${filteredPayroll.filter((fp) => selectedPayrollIds.includes(fp.id)).length} selecionado(s)` : "Selecionar todos"}
@@ -777,7 +777,7 @@ export default function HR() {
                 }
                 description="Acompanhe salários, descontos, bônus, valores líquidos, status e datas de pagamento."
               />
-              <Table data-testid="table-folha">
+              <Table data-testid="table-payroll">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[36px]"></TableHead>
@@ -794,13 +794,13 @@ export default function HR() {
                 </TableHeader>
                 <TableBody>
                   {payrollPg.pageItems.map((fp) => (
-                    <TableRow key={fp.id} data-testid={`row-folha-${fp.id}`}>
+                    <TableRow key={fp.id} data-testid={`row-payroll-${fp.id}`}>
                       <TableCell>
                         <Checkbox
                           checked={selectedPayrollIds.includes(fp.id)}
                           onCheckedChange={() => toggleSelectPayroll(fp.id)}
                           aria-label={`Selecionar registro de pagamento ${fp.id}`}
-                          data-testid={`checkbox-folha-${fp.id}`}
+                          data-testid={`checkbox-payroll-${fp.id}`}
                         />
                       </TableCell>
                       <TableCell className="font-medium"><EmployeeNameCell id={fp.employee_id ?? null} /></TableCell>
@@ -824,18 +824,18 @@ export default function HR() {
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-actions-folha-${fp.id}`}>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-actions-payroll-${fp.id}`}>
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setPayrollFormModal({ open: true, mode: "view", record: fp })} data-testid={`button-view-folha-${fp.id}`}>
+                            <DropdownMenuItem onClick={() => setPayrollFormModal({ open: true, mode: "view", record: fp })} data-testid={`button-view-payroll-${fp.id}`}>
                               <Eye className="mr-2 h-4 w-4" /> Visualizar
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setPayrollFormModal({ open: true, mode: "edit", record: fp })} data-testid={`button-edit-folha-${fp.id}`}>
+                            <DropdownMenuItem onClick={() => setPayrollFormModal({ open: true, mode: "edit", record: fp })} data-testid={`button-edit-payroll-${fp.id}`}>
                               <Pencil className="mr-2 h-4 w-4" /> Editar
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive" onClick={() => setPayrollDeleteModal({ open: true, record: fp })} data-testid={`button-delete-folha-${fp.id}`}>
+                            <DropdownMenuItem className="text-destructive" onClick={() => setPayrollDeleteModal({ open: true, record: fp })} data-testid={`button-delete-payroll-${fp.id}`}>
                               <Trash2 className="mr-2 h-4 w-4" /> Excluir
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -859,7 +859,7 @@ export default function HR() {
             )}
           </TabsContent>
 
-          <TabsContent value="ferias" className="mt-6 space-y-6">
+          <TabsContent value="leave" className="mt-6 space-y-6">
             {isLoadingLeavePage ? (
               <div className="flex items-center justify-center h-32">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -894,7 +894,7 @@ export default function HR() {
                         size="sm"
                         className="h-8 text-xs gap-1.5"
                         onClick={() => setLeaveBulkDeleteModal({ open: true, ids: filteredLeave.filter((fa) => selectedLeaveIds.includes(fa.id)).map((fa) => fa.id) })}
-                        data-testid="button-delete-selected-ferias"
+                        data-testid="button-delete-selected-leave"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir selecionados
@@ -904,7 +904,7 @@ export default function HR() {
                       checked={filteredLeave.length > 0 && filteredLeave.every((fa) => selectedLeaveIds.includes(fa.id))}
                       onCheckedChange={toggleSelectAllLeave}
                       aria-label="Selecionar todos os registros de férias"
-                      data-testid="checkbox-select-all-ferias"
+                      data-testid="checkbox-select-all-leave"
                     />
                     <span className="text-xs text-muted-foreground">
                       {selectedLeaveIds.length > 0 ? `${filteredLeave.filter((fa) => selectedLeaveIds.includes(fa.id)).length} selecionado(s)` : "Selecionar todos"}
@@ -913,7 +913,7 @@ export default function HR() {
                 }
                 description="Acompanhe solicitações de férias, ausências, períodos, quantidade de dias e status de aprovação."
               />
-              <Table data-testid="table-ferias">
+              <Table data-testid="table-leave">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[36px]"></TableHead>
@@ -928,13 +928,13 @@ export default function HR() {
                 </TableHeader>
                 <TableBody>
                   {leavePg.pageItems.map((fa) => (
-                    <TableRow key={fa.id} data-testid={`row-ferias-${fa.id}`}>
+                    <TableRow key={fa.id} data-testid={`row-leave-${fa.id}`}>
                       <TableCell>
                         <Checkbox
                           checked={selectedLeaveIds.includes(fa.id)}
                           onCheckedChange={() => toggleSelectLeave(fa.id)}
                           aria-label={`Selecionar registro de férias ${fa.id}`}
-                          data-testid={`checkbox-ferias-${fa.id}`}
+                          data-testid={`checkbox-leave-${fa.id}`}
                         />
                       </TableCell>
                       <TableCell className="font-medium"><EmployeeNameCell id={fa.employee_id ?? null} /></TableCell>
@@ -945,7 +945,7 @@ export default function HR() {
                       <TableCell className="text-muted-foreground">{formatDate(fa.end_date)}</TableCell>
                       <TableCell className="text-center">{fa.total_days ?? "—"}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_VARIANT_AUSENCIA[fa.status || "pending"] || "neutral"}>
+                        <Badge variant={LEAVE_STATUS_VARIANT[fa.status || "pending"] || "neutral"}>
                           {leaveStatusLabel(fa.status || "pending")}
                         </Badge>
                       </TableCell>
@@ -963,18 +963,18 @@ export default function HR() {
                           )}
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-actions-ferias-${fa.id}`}>
+                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-actions-leave-${fa.id}`}>
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "view", leaveRequest: fa })} data-testid={`button-view-ferias-${fa.id}`}>
+                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "view", leaveRequest: fa })} data-testid={`button-view-leave-${fa.id}`}>
                                 <Eye className="mr-2 h-4 w-4" /> Visualizar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "edit", leaveRequest: fa })} data-testid={`button-edit-ferias-${fa.id}`}>
+                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "edit", leaveRequest: fa })} data-testid={`button-edit-leave-${fa.id}`}>
                                 <Pencil className="mr-2 h-4 w-4" /> Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive" onClick={() => setLeaveDeleteModal({ open: true, leaveRequest: fa })} data-testid={`button-delete-ferias-${fa.id}`}>
+                              <DropdownMenuItem className="text-destructive" onClick={() => setLeaveDeleteModal({ open: true, leaveRequest: fa })} data-testid={`button-delete-leave-${fa.id}`}>
                                 <Trash2 className="mr-2 h-4 w-4" /> Excluir
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -1011,7 +1011,7 @@ export default function HR() {
                     placeholder="Selecione um funcionário"
                     searchPlaceholder="Buscar por nome…"
                     emptyText="Nenhum funcionário encontrado"
-                    data-testid="select-doc-funcionario"
+                    data-testid="select-doc-employee"
                   />
                 </div>
               </div>
@@ -1032,7 +1032,7 @@ export default function HR() {
                       <div className="space-y-2">
                         <Label>Tipo de Documento</Label>
                         <Select value={docType} onValueChange={setDocType}>
-                          <SelectTrigger data-testid="select-type-documento">
+                          <SelectTrigger data-testid="select-type-document">
                             <SelectValue placeholder="Selecione o tipo" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1048,7 +1048,7 @@ export default function HR() {
                           placeholder="Descrição opcional do documento"
                           value={docDescription}
                           onChange={(e) => setDocDescription(e.target.value)}
-                          data-testid="input-doc-descricao"
+                          data-testid="input-doc-description"
                         />
                       </div>
                     </div>
@@ -1093,7 +1093,7 @@ export default function HR() {
                       </TableHeader>
                       <TableBody>
                         {(documents || []).map((doc) => (
-                          <TableRow key={doc.id} data-testid={`row-documento-${doc.id}`}>
+                          <TableRow key={doc.id} data-testid={`row-document-${doc.id}`}>
                             <TableCell>
                               <Badge variant="secondary">{doc.tipo_documento || "Outro"}</Badge>
                             </TableCell>

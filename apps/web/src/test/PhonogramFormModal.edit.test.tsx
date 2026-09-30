@@ -177,7 +177,7 @@ describe("PhonogramFormModal edit mode", () => {
     // Linked obra is hydrated
     let linkedWorkTitle: HTMLElement | undefined;
     await waitFor(() => {
-      linkedWorkTitle = screen.getByTestId("text-obra-vinculada-title");
+      linkedWorkTitle = screen.getByTestId("text-linked-work-title");
       expect(linkedWorkTitle).toHaveTextContent("Canção Vinculada");
     });
     // Composers of the linked work come from its canonical `composer_names` (CZ-039)
@@ -190,8 +190,8 @@ describe("PhonogramFormModal edit mode", () => {
     expect(screen.getByDisplayValue("12345")).toBeInTheDocument();
 
     // Duration
-    expect(screen.getByTestId("input-duracao-minutos")).toHaveValue("4");
-    expect(screen.getByTestId("input-duracao-segundos")).toHaveValue("20");
+    expect(screen.getByTestId("input-duration-minutes")).toHaveValue("4");
+    expect(screen.getByTestId("input-duration-seconds")).toHaveValue("20");
 
     // The legacy cod_ecad is not read
     expect(screen.getByTestId("input-cod-ecad")).toHaveValue("");
@@ -214,7 +214,7 @@ describe("PhonogramFormModal edit mode", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId("text-obra-vinculada-title")).toBeInTheDocument();
+      expect(screen.getByTestId("text-linked-work-title")).toBeInTheDocument();
     });
 
     // Edit ISRC designacao
@@ -225,7 +225,7 @@ describe("PhonogramFormModal edit mode", () => {
     const checkboxes = screen.getAllByRole("checkbox");
     fireEvent.click(checkboxes[checkboxes.length - 1]);
 
-    fireEvent.click(screen.getByTestId("button-submit-fonograma"));
+    fireEvent.click(screen.getByTestId("button-submit-phonogram"));
 
     await waitFor(() => {
       expect(updatePhonogramMock).toHaveBeenCalledTimes(1);
@@ -283,9 +283,9 @@ describe("PhonogramFormModal edit mode", () => {
       />
     );
 
-    fireEvent.click(screen.getByTestId("button-buscar-obra"));
+    fireEvent.click(screen.getByTestId("button-search-work"));
 
-    const option = await screen.findByTestId("option-obra-obra-99");
+    const option = await screen.findByTestId("option-work-obra-99");
     fireEvent.click(option);
 
     await waitFor(() => {

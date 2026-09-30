@@ -33,8 +33,8 @@ export function useEmployeeDocuments(employeeId?: string) {
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addDocumento: result.create,
-    updateDocumento: result.update,
-    deleteDocumento: result.delete,
+    addDocument: result.create,
+    updateDocument: result.update,
+    deleteDocument: result.delete,
   };
 }

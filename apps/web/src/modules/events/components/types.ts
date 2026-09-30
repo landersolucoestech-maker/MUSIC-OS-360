@@ -20,11 +20,11 @@ export type ScheduleEvent = {
 };
 
 export type SchedulerViewMode =
-  | "dia"
-  | "semana"
-  | "mes"
-  | "ano"
-  | "lista"
+  | "day"
+  | "week"
+  | "month"
+  | "year"
+  | "list"
   | "feed";
 
 export type SchedulerOption = {

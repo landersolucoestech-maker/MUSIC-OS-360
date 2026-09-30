@@ -60,10 +60,10 @@ const getStatusBadge = (status: string) => {
 };
 
 const VIEW_OPTIONS: { value: SchedulerViewMode; label: string }[] = [
-  { value: "dia", label: "Dia" },
-  { value: "semana", label: "Semana" },
-  { value: "mes", label: "Mês" },
-  { value: "ano", label: "Ano" },
+  { value: "day", label: "Dia" },
+  { value: "week", label: "Semana" },
+  { value: "month", label: "Mês" },
+  { value: "year", label: "Ano" },
 ];
 
 // Chip color per status (same identity as the content calendar).
@@ -155,7 +155,7 @@ export default function Schedule() {
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; event?: Event }>({ open: false, mode: "create" });
   const [viewModal, setViewModal] = useState<{ open: boolean; event?: Event }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; event?: Event }>({ open: false });
-  const [viewMode, setViewMode] = useState<SchedulerViewMode>("semana");
+  const [viewMode, setViewMode] = useState<SchedulerViewMode>("week");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all-type");
@@ -167,9 +167,9 @@ export default function Schedule() {
   // backend's default limit=50 and events silently disappeared in
   // any navigated month, in tenants with more than 50 events in total).
   const { periodStart, periodEnd } = useMemo(() => {
-    if (viewMode === "dia") return { periodStart: startOfDay(currentDate), periodEnd: endOfDay(currentDate) };
-    if (viewMode === "mes") return { periodStart: startOfMonth(currentDate), periodEnd: endOfMonth(currentDate) };
-    if (viewMode === "ano") return { periodStart: startOfYear(currentDate), periodEnd: endOfYear(currentDate) };
+    if (viewMode === "day") return { periodStart: startOfDay(currentDate), periodEnd: endOfDay(currentDate) };
+    if (viewMode === "month") return { periodStart: startOfMonth(currentDate), periodEnd: endOfMonth(currentDate) };
+    if (viewMode === "year") return { periodStart: startOfYear(currentDate), periodEnd: endOfYear(currentDate) };
     return { periodStart: startOfWeek(currentDate, { weekStartsOn: 1 }), periodEnd: endOfWeek(currentDate, { weekStartsOn: 1 }) };
   }, [viewMode, currentDate]);
 
@@ -352,15 +352,15 @@ export default function Schedule() {
   };
 
   const periodLabel = useMemo(() => {
-    if (viewMode === "semana") {
+    if (viewMode === "week") {
       const start = startOfWeek(currentDate, { weekStartsOn: 1 });
       const end = endOfWeek(currentDate, { weekStartsOn: 1 });
       return `${format(start, "d", { locale: ptBR })} — ${format(end, "d 'de' MMMM, yyyy", { locale: ptBR })}`;
     }
-    if (viewMode === "mes") {
+    if (viewMode === "month") {
       return format(currentDate, "MMMM 'de' yyyy", { locale: ptBR });
     }
-    if (viewMode === "ano") {
+    if (viewMode === "year") {
       return format(currentDate, "yyyy", { locale: ptBR });
     }
     return format(currentDate, "d 'de' MMMM yyyy", { locale: ptBR });
@@ -368,14 +368,14 @@ export default function Schedule() {
 
   const goToToday = () => setCurrentDate(new Date());
   const goPrev = () => {
-    if (viewMode === "semana") setCurrentDate((date) => subWeeks(date, 1));
-    if (viewMode === "mes") setCurrentDate((date) => subMonths(date, 1));
-    if (viewMode === "ano") setCurrentDate((date) => subYears(date, 1));
+    if (viewMode === "week") setCurrentDate((date) => subWeeks(date, 1));
+    if (viewMode === "month") setCurrentDate((date) => subMonths(date, 1));
+    if (viewMode === "year") setCurrentDate((date) => subYears(date, 1));
   };
   const goNext = () => {
-    if (viewMode === "semana") setCurrentDate((date) => addWeeks(date, 1));
-    if (viewMode === "mes") setCurrentDate((date) => addMonths(date, 1));
-    if (viewMode === "ano") setCurrentDate((date) => addYears(date, 1));
+    if (viewMode === "week") setCurrentDate((date) => addWeeks(date, 1));
+    if (viewMode === "month") setCurrentDate((date) => addMonths(date, 1));
+    if (viewMode === "year") setCurrentDate((date) => addYears(date, 1));
   };
 
   const hasActiveFilters = searchTerm !== "" || typeFilter !== "all-type" || statusFilter !== "all-status";
@@ -496,7 +496,7 @@ export default function Schedule() {
               )
             ) : (
               <EntityCalendarView
-                view={(viewMode === "dia" || viewMode === "semana" || viewMode === "mes" || viewMode === "ano") ? viewMode : "mes"}
+                view={(viewMode === "day" || viewMode === "week" || viewMode === "month" || viewMode === "year") ? viewMode : "month"}
                 referenceDate={currentDate}
                 events={calendarEvents}
                 onSelect={openEventView}

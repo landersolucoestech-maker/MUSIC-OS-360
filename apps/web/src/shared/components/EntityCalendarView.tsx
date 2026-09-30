@@ -7,7 +7,7 @@
 
 import { cn } from "@/shared/lib/utils";
 
-export type EntityCalendarViewMode = "dia" | "semana" | "mes" | "ano";
+export type EntityCalendarViewMode = "day" | "week" | "month" | "year";
 
 export interface CalendarEvent {
   id: string;
@@ -90,9 +90,9 @@ function EventItem({ event, onSelect }: { event: CalendarEvent; onSelect?: (id: 
 }
 
 export function EntityCalendarView({ view, referenceDate, events, onSelect }: EntityCalendarViewProps) {
-  if (view === "dia") return <DayView referenceDate={referenceDate} events={events} onSelect={onSelect} />;
-  if (view === "semana") return <WeekView referenceDate={referenceDate} events={events} onSelect={onSelect} />;
-  if (view === "ano") return <YearView referenceDate={referenceDate} events={events} />;
+  if (view === "day") return <DayView referenceDate={referenceDate} events={events} onSelect={onSelect} />;
+  if (view === "week") return <WeekView referenceDate={referenceDate} events={events} onSelect={onSelect} />;
+  if (view === "year") return <YearView referenceDate={referenceDate} events={events} />;
   return <MonthView referenceDate={referenceDate} events={events} onSelect={onSelect} />;
 }
 

@@ -20,8 +20,8 @@ import { ptBR } from "date-fns/locale";
 export default function UsersPage() {
   const { users, isLoading } = useUsers();
   const { roles } = useRoles();
-  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; usuario?: UserAccount }>({ open: false, mode: "create" });
-  const [viewModal, setViewModal] = useState<{ open: boolean; usuario?: UserAccount }>({ open: false });
+  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; user?: UserAccount }>({ open: false, mode: "create" });
+  const [viewModal, setViewModal] = useState<{ open: boolean; user?: UserAccount }>({ open: false });
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all-roles");
   const [statusFilter, setStatusFilter] = useState("all-status");
@@ -148,7 +148,7 @@ export default function UsersPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.map((member) => (
-                    <TableRow key={member.id} data-testid={`row-usuario-${member.id}`}>
+                    <TableRow key={member.id} data-testid={`row-user-${member.id}`}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-semibold text-xs shrink-0">
@@ -174,15 +174,14 @@ export default function UsersPage() {
                             variant="ghost"
                             size="sm"
                             className="h-7 w-7 p-0"
-                            data-testid={`button-ver-usuario-${member.id}`}
+                            data-testid={`button-view-user-${member.id}`}
                             onClick={() => setViewModal({
                               open: true,
-                              usuario: {
+                              user: {
                                 ...member,
-                                nome: member.full_name,
-                                iniciais: initials(member.full_name),
-                                telefone: member.phone,
-                                criadoEm: formatDate(member.created_at),
+                                fullName: member.full_name,
+                                initials: initials(member.full_name),
+                                createdAtLabel: formatDate(member.created_at),
                               } as UserAccount,
                             })}
                           >
@@ -192,8 +191,8 @@ export default function UsersPage() {
                             variant="ghost"
                             size="sm"
                             className="h-7 w-7 p-0"
-                            data-testid={`button-editar-usuario-${member.id}`}
-                            onClick={() => setFormModal({ open: true, mode: "edit", usuario: member })}
+                            data-testid={`button-edit-user-${member.id}`}
+                            onClick={() => setFormModal({ open: true, mode: "edit", user: member })}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -211,12 +210,12 @@ export default function UsersPage() {
       <UserViewModal
         open={viewModal.open}
         onOpenChange={(open) => setViewModal((current) => ({ ...current, open }))}
-        usuario={viewModal.usuario}
+        user={viewModal.user}
       />
       <UserEditorModal
         open={formModal.open}
         onOpenChange={(open) => setFormModal((current) => ({ ...current, open }))}
-        usuario={formModal.usuario}
+        user={formModal.user}
         mode={formModal.mode}
       />
     </MainLayout>

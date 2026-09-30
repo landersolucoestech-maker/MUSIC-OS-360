@@ -11,7 +11,7 @@ import type {
 type FieldRule = {
   key: string;
   label: string;
-  severity: "obrigatorio" | "recomendado";
+  severity: "required" | "recommended";
 };
 
 type AuditConfig = {
@@ -40,18 +40,18 @@ const editPath = (path: string, row: StorageRow) => `${path}?edit=${row.id}`;
 
 const CONFIGS: AuditConfig[] = [
   {
-    module: "artistas",
+    module: "artists",
     table: "artists",
     entityType: "Artista",
     fixPath: (row) => editPath("/artists", row),
     label: (row) => entityLabel(row, ["stage_name", "full_name", "email"], "Artista sem nome"),
     fields: [
-      { key: "stage_name", label: "Nome artístico", severity: "obrigatorio" },
-      { key: "music_genre", label: "Gênero musical", severity: "obrigatorio" },
-      { key: "email", label: "E-mail", severity: "obrigatorio" },
-      { key: "phone", label: "Telefone", severity: "recomendado" },
-      { key: "cpf_cnpj", label: "CPF/CNPJ", severity: "recomendado" },
-      { key: "status", label: "Status", severity: "recomendado" },
+      { key: "stage_name", label: "Nome artístico", severity: "required" },
+      { key: "music_genre", label: "Gênero musical", severity: "required" },
+      { key: "email", label: "E-mail", severity: "required" },
+      { key: "phone", label: "Telefone", severity: "recommended" },
+      { key: "cpf_cnpj", label: "CPF/CNPJ", severity: "recommended" },
+      { key: "status", label: "Status", severity: "recommended" },
     ],
   },
   {
@@ -61,11 +61,11 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => editPath("/projects", row),
     label: (row) => entityLabel(row, ["title"], "Projeto sem título"),
     fields: [
-      { key: "title", label: "Título", severity: "obrigatorio" },
-      { key: "type", label: "Tipo", severity: "obrigatorio" },
-      { key: "status", label: "Status", severity: "obrigatorio" },
-      { key: "music_genre", label: "Gênero musical", severity: "recomendado" },
-      { key: "artist_id", label: "Artista vinculado", severity: "recomendado" },
+      { key: "title", label: "Título", severity: "required" },
+      { key: "type", label: "Tipo", severity: "required" },
+      { key: "status", label: "Status", severity: "required" },
+      { key: "music_genre", label: "Gênero musical", severity: "recommended" },
+      { key: "artist_id", label: "Artista vinculado", severity: "recommended" },
     ],
   },
   {
@@ -75,11 +75,11 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => `/music-registration?editWork=${row.id}`,
     label: (row) => entityLabel(row, ["title", "iswc", "ecad_code"], "Obra sem título"),
     fields: [
-      { key: "title", label: "Título", severity: "obrigatorio" },
-      { key: "composer_names|composer_name", label: "Compositores", severity: "obrigatorio" },
-      { key: "music_genre", label: "Gênero", severity: "recomendado" },
-      { key: "iswc", label: "ISWC", severity: "recomendado" },
-      { key: "ecad_code", label: "Código ECAD", severity: "recomendado" },
+      { key: "title", label: "Título", severity: "required" },
+      { key: "composer_names|composer_name", label: "Compositores", severity: "required" },
+      { key: "music_genre", label: "Gênero", severity: "recommended" },
+      { key: "iswc", label: "ISWC", severity: "recommended" },
+      { key: "ecad_code", label: "Código ECAD", severity: "recommended" },
     ],
   },
   {
@@ -89,27 +89,27 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => `/music-registration?phonogram=${row.id}`,
     label: (row) => entityLabel(row, ["title", "nome", "isrc"], "Fonograma sem título"),
     fields: [
-      { key: "title", label: "Título", severity: "obrigatorio" },
-      { key: "isrc", label: "ISRC", severity: "obrigatorio" },
-      { key: "artist_id", label: "Artista vinculado", severity: "recomendado" },
-      { key: "work_id", label: "Obra vinculada", severity: "recomendado" },
-      { key: "music_genre", label: "Gênero musical", severity: "recomendado" },
+      { key: "title", label: "Título", severity: "required" },
+      { key: "isrc", label: "ISRC", severity: "required" },
+      { key: "artist_id", label: "Artista vinculado", severity: "recommended" },
+      { key: "work_id", label: "Obra vinculada", severity: "recommended" },
+      { key: "music_genre", label: "Gênero musical", severity: "recommended" },
     ],
   },
   {
-    module: "lancamentos",
+    module: "releases",
     table: "releases",
     entityType: "Lançamento",
     fixPath: (row) => editPath("/releases", row),
     label: (row) => entityLabel(row, ["title", "upc", "isrc_global"], "Lançamento sem título"),
     fields: [
-      { key: "title", label: "Título", severity: "obrigatorio" },
-      { key: "type", label: "Tipo", severity: "obrigatorio" },
-      { key: "status", label: "Status", severity: "obrigatorio" },
-      { key: "artist_id", label: "Artista vinculado", severity: "obrigatorio" },
-      { key: "release_date", label: "Data de lançamento", severity: "recomendado" },
-      { key: "distributor", label: "Distribuidora", severity: "recomendado" },
-      { key: "platforms", label: "Plataformas", severity: "recomendado" },
+      { key: "title", label: "Título", severity: "required" },
+      { key: "type", label: "Tipo", severity: "required" },
+      { key: "status", label: "Status", severity: "required" },
+      { key: "artist_id", label: "Artista vinculado", severity: "required" },
+      { key: "release_date", label: "Data de lançamento", severity: "recommended" },
+      { key: "distributor", label: "Distribuidora", severity: "recommended" },
+      { key: "platforms", label: "Plataformas", severity: "recommended" },
     ],
   },
   {
@@ -119,12 +119,12 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => editPath("/contracts", row),
     label: (row) => entityLabel(row, ["title", "type"], "Contrato sem título"),
     fields: [
-      { key: "title", label: "Título", severity: "obrigatorio" },
-      { key: "type", label: "Tipo", severity: "obrigatorio" },
-      { key: "status", label: "Status", severity: "obrigatorio" },
-      { key: "start_date", label: "Data de início", severity: "recomendado" },
-      { key: "end_date", label: "Data de fim", severity: "recomendado" },
-      { key: "file_url", label: "Arquivo do contrato", severity: "recomendado" },
+      { key: "title", label: "Título", severity: "required" },
+      { key: "type", label: "Tipo", severity: "required" },
+      { key: "status", label: "Status", severity: "required" },
+      { key: "start_date", label: "Data de início", severity: "recommended" },
+      { key: "end_date", label: "Data de fim", severity: "recommended" },
+      { key: "file_url", label: "Arquivo do contrato", severity: "recommended" },
     ],
   },
   {
@@ -134,12 +134,12 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => editPath("/accounting", row),
     label: (row) => entityLabel(row, ["description", "category"], "Transação sem descrição"),
     fields: [
-      { key: "description", label: "Descrição", severity: "obrigatorio" },
-      { key: "type", label: "Tipo", severity: "obrigatorio" },
-      { key: "category", label: "Categoria", severity: "obrigatorio" },
-      { key: "amount", label: "Valor", severity: "obrigatorio" },
-      { key: "transaction_date", label: "Data", severity: "obrigatorio" },
-      { key: "status", label: "Status", severity: "recomendado" },
+      { key: "description", label: "Descrição", severity: "required" },
+      { key: "type", label: "Tipo", severity: "required" },
+      { key: "category", label: "Categoria", severity: "required" },
+      { key: "amount", label: "Valor", severity: "required" },
+      { key: "transaction_date", label: "Data", severity: "required" },
+      { key: "status", label: "Status", severity: "recommended" },
     ],
   },
   {
@@ -149,10 +149,10 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => editPath("/agenda", row),
     label: (row) => entityLabel(row, ["title", "venue"], "Evento sem título"),
     fields: [
-      { key: "title", label: "Título", severity: "obrigatorio" },
-      { key: "starts_at", label: "Data de início", severity: "obrigatorio" },
-      { key: "venue", label: "Local", severity: "recomendado" },
-      { key: "artist_id", label: "Artista vinculado", severity: "recomendado" },
+      { key: "title", label: "Título", severity: "required" },
+      { key: "starts_at", label: "Data de início", severity: "required" },
+      { key: "venue", label: "Local", severity: "recommended" },
+      { key: "artist_id", label: "Artista vinculado", severity: "recommended" },
     ],
   },
   {
@@ -162,11 +162,11 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => editPath("/inventory", row),
     label: (row) => entityLabel(row, ["name", "category"], "Item sem nome"),
     fields: [
-      { key: "name", label: "Nome", severity: "obrigatorio" },
-      { key: "category", label: "Categoria", severity: "obrigatorio" },
-      { key: "status", label: "Status", severity: "obrigatorio" },
-      { key: "unit_price", label: "Valor", severity: "recomendado" },
-      { key: "storage_location", label: "Localização", severity: "recomendado" },
+      { key: "name", label: "Nome", severity: "required" },
+      { key: "category", label: "Categoria", severity: "required" },
+      { key: "status", label: "Status", severity: "required" },
+      { key: "unit_price", label: "Valor", severity: "recommended" },
+      { key: "storage_location", label: "Localização", severity: "recommended" },
     ],
   },
   {
@@ -176,11 +176,11 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => editPath("/crm", row),
     label: (row) => entityLabel(row, ["name", "legal_name", "email"], "Contato sem nome"),
     fields: [
-      { key: "name", label: "Nome", severity: "obrigatorio" },
-      { key: "email", label: "E-mail", severity: "recomendado" },
-      { key: "phone", label: "Telefone", severity: "recomendado" },
-      { key: "category", label: "Categoria", severity: "recomendado" },
-      { key: "status", label: "Status", severity: "recomendado" },
+      { key: "name", label: "Nome", severity: "required" },
+      { key: "email", label: "E-mail", severity: "recommended" },
+      { key: "phone", label: "Telefone", severity: "recommended" },
+      { key: "category", label: "Categoria", severity: "recommended" },
+      { key: "status", label: "Status", severity: "recommended" },
     ],
   },
   {
@@ -192,10 +192,10 @@ const CONFIGS: AuditConfig[] = [
     // Keys of the /leads response (CZ-033); the lead origin lives inside
     // crmInternalData, which this one-level check does not read.
     fields: [
-      { key: "name", label: "Nome", severity: "obrigatorio" },
-      { key: "email", label: "E-mail", severity: "obrigatorio" },
-      { key: "phone", label: "Telefone", severity: "recomendado" },
-      { key: "status", label: "Status", severity: "recomendado" },
+      { key: "name", label: "Nome", severity: "required" },
+      { key: "email", label: "E-mail", severity: "required" },
+      { key: "phone", label: "Telefone", severity: "recommended" },
+      { key: "status", label: "Status", severity: "recommended" },
     ],
   },
   {
@@ -205,10 +205,10 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => editPath("/licensing", row),
     label: (row) => entityLabel(row, ["title", "client_name", "project_name"], "Licença sem título"),
     fields: [
-      { key: "title", label: "Título", severity: "obrigatorio" },
-      { key: "client_name", label: "Cliente", severity: "obrigatorio" },
-      { key: "amount", label: "Valor", severity: "recomendado" },
-      { key: "status", label: "Status", severity: "recomendado" },
+      { key: "title", label: "Título", severity: "required" },
+      { key: "client_name", label: "Cliente", severity: "required" },
+      { key: "amount", label: "Valor", severity: "recommended" },
+      { key: "status", label: "Status", severity: "recommended" },
     ],
   },
   {
@@ -218,11 +218,11 @@ const CONFIGS: AuditConfig[] = [
     fixPath: (row) => editPath("/hr", row),
     label: (row) => entityLabel(row, ["name", "email", "job_title"], "Funcionário sem nome"),
     fields: [
-      { key: "name", label: "Nome completo", severity: "obrigatorio" },
-      { key: "email", label: "E-mail", severity: "obrigatorio" },
-      { key: "cpf", label: "CPF", severity: "recomendado" },
-      { key: "phone", label: "Telefone", severity: "recomendado" },
-      { key: "job_title", label: "Cargo", severity: "recomendado" },
+      { key: "name", label: "Nome completo", severity: "required" },
+      { key: "email", label: "E-mail", severity: "required" },
+      { key: "cpf", label: "CPF", severity: "recommended" },
+      { key: "phone", label: "Telefone", severity: "recommended" },
+      { key: "job_title", label: "Cargo", severity: "recommended" },
     ],
   },
 ];
@@ -237,8 +237,8 @@ function missingLabels(row: StorageRow, fields: FieldRule[], severity: FieldRule
 }
 
 function buildRecord(config: AuditConfig, row: StorageRow): AuditRecord {
-  const requiredMissing = missingLabels(row, config.fields, "obrigatorio");
-  const recommendedMissing = missingLabels(row, config.fields, "recomendado");
+  const requiredMissing = missingLabels(row, config.fields, "required");
+  const recommendedMissing = missingLabels(row, config.fields, "recommended");
   const filled = config.fields.length - requiredMissing.length - recommendedMissing.length;
   return {
     id: `${config.table}-${row.id}`,
@@ -273,7 +273,7 @@ export async function runAudit(): Promise<AuditResult> {
       ? [{
           id: `${record.id}-required`,
           module: record.module,
-          severity: "obrigatorio" as const,
+          severity: "required" as const,
           entity_type: record.entity_type,
           entity_label: record.entity_label,
           missing_fields: record.missing_fields,
@@ -285,7 +285,7 @@ export async function runAudit(): Promise<AuditResult> {
       ? [{
           id: `${record.id}-recommended`,
           module: record.module,
-          severity: "recomendado" as const,
+          severity: "recommended" as const,
           entity_type: record.entity_type,
           entity_label: record.entity_label,
           missing_fields: record.recommended_missing_fields,
@@ -317,8 +317,8 @@ export async function runAudit(): Promise<AuditResult> {
     modules,
     summary: {
       total_issues: issues.length,
-      obrigatorio: issues.filter((issue) => issue.severity === "obrigatorio").length,
-      recomendado: issues.filter((issue) => issue.severity === "recomendado").length,
+      required: issues.filter((issue) => issue.severity === "required").length,
+      recommended: issues.filter((issue) => issue.severity === "recommended").length,
       total_records: totalRecords,
       complete_records: completeRecords,
       incomplete_records: totalRecords - completeRecords,

@@ -76,11 +76,11 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-hidden rounded-[28px] bg-card ring-1 ring-border/10" data-testid="modal-evento-view">
+      <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-hidden rounded-[28px] bg-card ring-1 ring-border/10" data-testid="modal-event-view">
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/10">
           <div className="flex flex-col gap-3">
             <div className="min-w-0">
-              <DialogTitle className="text-2xl font-semibold tracking-tight" data-testid="text-evento-title">{event.title}</DialogTitle>
+              <DialogTitle className="text-2xl font-semibold tracking-tight" data-testid="text-event-title">{event.title}</DialogTitle>
               <DialogDescription className="mt-2 text-sm text-muted-foreground">
                 Detalhes completos do evento
               </DialogDescription>
@@ -124,7 +124,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                         <User className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold truncate" data-testid="text-evento-artista">
+                        <p className="font-semibold truncate" data-testid="text-event-artist">
                           {participant.label}
                         </p>
                         {participant.category && (
@@ -153,7 +153,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                     <User className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate" data-testid="text-evento-artista">
+                    <p className="font-semibold truncate" data-testid="text-event-artist">
                       {artist.stage_name || "—"}
                     </p>
                     {artist.music_genre && (
@@ -196,7 +196,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                   <Card>
                     <CardContent className="p-4">
                       <p className="text-xs text-muted-foreground">Cachê</p>
-                      <p className={`text-xl font-bold mt-1 ${getMonetarySemanticClass("neutral")}`} data-testid="text-evento-cache">
+                      <p className={`text-xl font-bold mt-1 ${getMonetarySemanticClass("neutral")}`} data-testid="text-event-fee">
                         {formatCurrency(event.fee_amount)}
                       </p>
                     </CardContent>
@@ -222,7 +222,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
             <Section title="Descrição" icon={FileText}>
               <Card>
                 <CardContent className="p-4">
-                  <p className="text-sm text-foreground whitespace-pre-wrap" data-testid="text-evento-descricao">
+                  <p className="text-sm text-foreground whitespace-pre-wrap" data-testid="text-event-description">
                     {event.description}
                   </p>
                 </CardContent>
@@ -243,11 +243,11 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
         </div>
 
         <DialogFooter className="mt-4 flex justify-end gap-2 border-t border-border/20 px-6 pb-6 pt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-fechar-evento">
+          <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-close-event">
             Fechar
           </Button>
           {onEdit && (
-            <Button onClick={onEdit} data-testid="button-editar-evento-view">
+            <Button onClick={onEdit} data-testid="button-edit-event-view">
               <Pencil className="h-4 w-4 mr-2" />
               Editar
             </Button>

@@ -13,17 +13,17 @@ vi.mock("@/shared/lib/storage", async () => {
 const mockedListPaged = vi.mocked(storage.listPaged);
 const mockedFindById = vi.mocked(storage.findById);
 
-interface FakeRow { id: string; nome: string }
+interface FakeRow { id: string; name: string }
 
 // 75 records — more than the backend's old limit=50 default.
 const FAKE_DATASET: FakeRow[] = Array.from({ length: 75 }, (_, i) => ({
   id: `id-${i + 1}`,
-  nome: `Artista ${i + 1}`,
+  name: `Artista ${i + 1}`,
 }));
 
 function fakeBackend(_table: string, options: { page: number; pageSize: number; filters?: Record<string, unknown> }) {
   const search = (options.filters?.search as string | undefined)?.toLowerCase();
-  const rows = search ? FAKE_DATASET.filter((r) => r.nome.toLowerCase().includes(search)) : FAKE_DATASET.slice(0, options.pageSize);
+  const rows = search ? FAKE_DATASET.filter((r) => r.name.toLowerCase().includes(search)) : FAKE_DATASET.slice(0, options.pageSize);
   const total = search ? rows.length : FAKE_DATASET.length;
   return Promise.resolve({
     items: rows.slice(0, options.pageSize), page: options.page, pageSize: options.pageSize, total,
@@ -142,7 +142,7 @@ describe("useEntityById", () => {
   });
 
   it("resolves a record beyond the first 50 via a direct GET /:resource/:id", async () => {
-    mockedFindById.mockResolvedValue({ id: "id-75", nome: "Artista 75" });
+    mockedFindById.mockResolvedValue({ id: "id-75", name: "Artista 75" });
     const { result } = renderHook(() => useEntityById<FakeRow>("artists", "id-75"), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.entity?.id).toBe("id-75"));

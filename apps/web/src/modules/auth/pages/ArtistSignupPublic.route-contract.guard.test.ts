@@ -33,6 +33,6 @@ describe("ArtistSignupPublic — real contract with /public/artist-registration"
 
   it("preserves fields without their own DTO column via additionalData (drops no data)", () => {
     expect(SOURCE).toMatch(/additionalData/);
-    expect(SOURCE).toMatch(/banco:\s*banco/);
+    expect(SOURCE).toMatch(/banco:\s*bank\b/);
   });
 });

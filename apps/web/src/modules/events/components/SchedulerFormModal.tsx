@@ -617,7 +617,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
                       onKeyDown={(e) => e.stopPropagation()}
                       placeholder="Buscar artista ou funcionário…"
                       className="h-7 pl-7 text-xs"
-                      data-testid="input-buscar-participante"
+                      data-testid="input-search-participant"
                     />
                   </div>
                   {participants.length === 0 ? (
@@ -675,7 +675,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
                 disabled={isViewMode}
                 placeholder="Selecione a data"
                 className={errors.startDate ? "border-destructive" : ""}
-                data-testid="datepicker-data-inicio"
+                data-testid="datepicker-start-date"
               />
               <FieldError error={errors.startDate} />
             </div>
@@ -703,7 +703,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
                 onChange={(iso) => setFormData({ ...formData, endDate: iso ? parseISO(iso) : undefined })}
                 disabled={isViewMode}
                 placeholder="Selecione a data (opcional)"
-                data-testid="datepicker-data-fim"
+                data-testid="datepicker-end-date"
               />
             </div>
 

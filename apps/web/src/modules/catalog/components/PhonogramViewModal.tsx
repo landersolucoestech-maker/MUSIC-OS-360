@@ -234,9 +234,9 @@ export function PhonogramViewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] p-0" data-testid="dialog-fonograma-view">
+      <DialogContent className="max-w-2xl max-h-[90vh] p-0" data-testid="dialog-phonogram-view">
         <DialogHeader className="p-6 pb-4">
-          <DialogTitle data-testid="text-fonograma-view-title">Detalhes do Fonograma</DialogTitle>
+          <DialogTitle data-testid="text-phonogram-view-title">Detalhes do Fonograma</DialogTitle>
           <DialogDescription>Informações completas do fonograma</DialogDescription>
         </DialogHeader>
 
@@ -280,7 +280,7 @@ export function PhonogramViewModal({
                   <div className="flex-1 min-w-0">
                     <p
                       className="font-medium text-foreground truncate"
-                      data-testid="text-obra-vinculada-title"
+                      data-testid="text-linked-work-title"
                     >
                       {workTitle || "—"}
                     </p>

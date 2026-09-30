@@ -274,10 +274,10 @@ export default function SettingsPage() {
   const { data: nfeStatus } = useNfeStatus();
 
   // State for the Users tab
-  const [userFormModal, setUserFormModal] = useState<{ open: boolean; mode: "create" | "edit"; usuario?: UserAccount }>({ open: false, mode: "create" });
-  const [userViewModal, setUserViewModal] = useState<{ open: boolean; usuario?: UserAccount }>({ open: false });
+  const [userFormModal, setUserFormModal] = useState<{ open: boolean; mode: "create" | "edit"; user?: UserAccount }>({ open: false, mode: "create" });
+  const [userViewModal, setUserViewModal] = useState<{ open: boolean; user?: UserAccount }>({ open: false });
   const [userSearchTerm, setUserSearchTerm] = useState("");
-  const [userPositionFilter, setUserPositionFilter] = useState("all-cargo");
+  const [userPositionFilter, setUserPositionFilter] = useState("all-position");
   const [userStatusFilter, setUserStatusFilter] = useState("all-status");
 
   const filteredUsers = useMemo(() => {
@@ -285,19 +285,19 @@ export default function SettingsPage() {
       const matchesSearch = 
         (member.full_name?.toLowerCase().includes(userSearchTerm.toLowerCase()) || false) ||
         (member.email?.toLowerCase().includes(userSearchTerm.toLowerCase()) || false);
-      const matchesPosition = userPositionFilter === "all-cargo" ||
+      const matchesPosition = userPositionFilter === "all-position" ||
         (userPositionFilter === "admin" && member.role === "admin") ||
-        (userPositionFilter === "usuario" && member.role !== "admin");
+        (userPositionFilter === "user" && member.role !== "admin");
       const matchesStatus = userStatusFilter === "all-status" || member.status === userStatusFilter;
       return matchesSearch && matchesPosition && matchesStatus;
     });
   }, [users, userSearchTerm, userPositionFilter, userStatusFilter]);
 
-  const hasActiveUserFilters = userSearchTerm !== "" || userPositionFilter !== "all-cargo" || userStatusFilter !== "all-status";
+  const hasActiveUserFilters = userSearchTerm !== "" || userPositionFilter !== "all-position" || userStatusFilter !== "all-status";
 
   const clearUserFilters = () => {
     setUserSearchTerm("");
-    setUserPositionFilter("all-cargo");
+    setUserPositionFilter("all-position");
     setUserStatusFilter("all-status");
   };
 
@@ -746,25 +746,25 @@ export default function SettingsPage() {
     <MainLayout title="Configurações" description="Gerencie as configurações do sistema e preferências">
       <div className="space-y-6">
         {/* Tabs */}
-        <Tabs defaultValue="empresa">
+        <Tabs defaultValue="company">
           <TabsList className="flex-wrap h-auto">
-            <TabsTrigger value="empresa" className="flex items-center gap-2">
+            <TabsTrigger value="company" className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />
               Empresa
             </TabsTrigger>
-            <TabsTrigger value="automacoes" className="flex items-center gap-2">
+            <TabsTrigger value="automations" className="flex items-center gap-2">
               <Zap className="h-4 w-4" />
               Automações
             </TabsTrigger>
-            <TabsTrigger value="seguranca" className="flex items-center gap-2">
+            <TabsTrigger value="security" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               Segurança
             </TabsTrigger>
-            <TabsTrigger value="integracoes" className="flex items-center gap-2">
+            <TabsTrigger value="integrations" className="flex items-center gap-2">
               <Link className="h-4 w-4" />
               Integrações
             </TabsTrigger>
-            <TabsTrigger value="cadastro-publico" className="flex items-center gap-2">
+            <TabsTrigger value="public-signup" className="flex items-center gap-2">
               <Globe2 className="h-4 w-4" />
               Cadastro Público
             </TabsTrigger>
@@ -772,14 +772,14 @@ export default function SettingsPage() {
               <CreditCard className="h-4 w-4" />
               Cobrança
             </TabsTrigger>
-            <TabsTrigger value="usuarios" className="flex items-center gap-2">
+            <TabsTrigger value="users" className="flex items-center gap-2">
               <UserCog className="h-4 w-4" />
               Usuários
             </TabsTrigger>
           </TabsList>
 
           {/* Company */}
-          <TabsContent value="empresa" className="mt-6 space-y-6">
+          <TabsContent value="company" className="mt-6 space-y-6">
             {!tenant.onboarding.completed && (
               <AiSkillRunPanel
                 title="Progresso de onboarding"
@@ -836,21 +836,21 @@ export default function SettingsPage() {
                           </Badge>
                         </div>
                       )}
-                      {companySettings.telefone && (
+                      {companySettings.phone && (
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-sm text-muted-foreground">Telefone:</span>
                           <Badge variant="outline" className="flex items-center gap-1">
                             <Smartphone className="h-3 w-3" />
-                            {companySettings.telefone}
+                            {companySettings.phone}
                           </Badge>
                         </div>
                       )}
-                      {companySettings.responsavel && (
+                      {companySettings.contactName && (
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-sm text-muted-foreground">Responsável:</span>
                           <Badge variant="outline" className="flex items-center gap-1">
                             <User className="h-3 w-3" />
-                            {companySettings.responsavel}
+                            {companySettings.contactName}
                           </Badge>
                         </div>
                       )}
@@ -912,8 +912,8 @@ export default function SettingsPage() {
                   <Label>Endereço Completo</Label>
                   <Input
                     placeholder="Rua A, nº 58, Bairro Vila Império, Governador Valadares/MG, CEP 35050-560"
-                    value={companySettings.logradouro}
-                    onChange={(e) => setCompanySettings({ ...companySettings, logradouro: e.target.value })}
+                    value={companySettings.street}
+                    onChange={(e) => setCompanySettings({ ...companySettings, street: e.target.value })}
                     disabled={!isEditingCompany}
                   />
                 </div>
@@ -923,8 +923,8 @@ export default function SettingsPage() {
                     <Label>Telefone/WhatsApp</Label>
                     <Input
                       placeholder="(00) 00000-0000"
-                      value={companySettings.telefone}
-                      onChange={(e) => setCompanySettings({ ...companySettings, telefone: e.target.value })}
+                      value={companySettings.phone}
+                      onChange={(e) => setCompanySettings({ ...companySettings, phone: e.target.value })}
                       disabled={!isEditingCompany}
                     />
                   </div>
@@ -932,8 +932,8 @@ export default function SettingsPage() {
                     <Label>Responsável</Label>
                     <Input
                       placeholder="Admin MusicOS 360"
-                      value={companySettings.responsavel}
-                      onChange={(e) => setCompanySettings({ ...companySettings, responsavel: e.target.value })}
+                      value={companySettings.contactName}
+                      onChange={(e) => setCompanySettings({ ...companySettings, contactName: e.target.value })}
                       disabled={!isEditingCompany}
                     />
                   </div>
@@ -993,7 +993,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* Automations */}
-          <TabsContent value="automacoes" className="mt-6 space-y-6">
+          <TabsContent value="automations" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1208,15 +1208,15 @@ export default function SettingsPage() {
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label>Frequência de envio</Label>
-                      <Select defaultValue="imediato">
+                      <Select defaultValue="immediate">
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione a frequência" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="imediato">Imediato</SelectItem>
-                          <SelectItem value="diario">Diário (resumo)</SelectItem>
-                          <SelectItem value="semanal">Semanal</SelectItem>
-                          <SelectItem value="evento">Por evento/gatilho</SelectItem>
+                          <SelectItem value="immediate">Imediato</SelectItem>
+                          <SelectItem value="daily">Diário (resumo)</SelectItem>
+                          <SelectItem value="weekly">Semanal</SelectItem>
+                          <SelectItem value="event">Por evento/gatilho</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1252,7 +1252,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* Security */}
-          <TabsContent value="seguranca" className="mt-6 space-y-6">
+          <TabsContent value="security" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1370,7 +1370,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* Integrations */}
-          <TabsContent value="integracoes" className="mt-6 space-y-6">
+          <TabsContent value="integrations" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1679,7 +1679,7 @@ export default function SettingsPage() {
             />
           </TabsContent>
 
-          <TabsContent value="cadastro-publico" className="mt-6 space-y-6">
+          <TabsContent value="public-signup" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -2078,7 +2078,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* Users */}
-          <TabsContent value="usuarios" className="mt-6 space-y-6">
+          <TabsContent value="users" className="mt-6 space-y-6">
             {/* Metrics */}
             <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
               {[
@@ -2357,12 +2357,12 @@ export default function SettingsPage() {
       <UserViewModal
         open={userViewModal.open}
         onOpenChange={(open) => setUserViewModal({ ...userViewModal, open })}
-        usuario={userViewModal.usuario}
+        user={userViewModal.user}
       />
       <UserFormModal
         open={userFormModal.open}
         onOpenChange={(open) => setUserFormModal({ ...userFormModal, open })}
-        usuario={userFormModal.usuario}
+        user={userFormModal.user}
         mode={userFormModal.mode}
       />
 

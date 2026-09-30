@@ -39,7 +39,7 @@ import { useArtists } from "@/modules/artist/hooks/useArtists";
 
 const MUSIC_GENRES = MUSICAL_GENRE_LABELS;
 
-const BANCOS = [
+const BANKS = [
   "Banco do Brasil", "Bradesco", "Caixa Econômica", "Itaú", "Santander",
   "Nubank", "Inter", "C6 Bank", "PicPay", "Mercado Pago", "Outro",
 ];
@@ -69,7 +69,7 @@ const DISTRIBUTORS_OPTIONS = [
   { id: "outros",    label: "Outros" },
 ];
 
-const ESPECIALIDADES = Object.entries(SPECIALTY_LABELS).map(([value, label]) => ({ value, label }));
+const SPECIALTIES = Object.entries(SPECIALTY_LABELS).map(([value, label]) => ({ value, label }));
 
 // ─── Types (same as ArtistaFormModal) ─────────────────────────────────────────
 
@@ -144,9 +144,9 @@ export default function ArtistSignupPublic() {
   // Step 1: Basic information
   const [stageName, setStageName]   = useState("");
   const [musicGenre, setMusicGenre]   = useState("");
-  const [especialidades, setEspecialidades] = useState<string[]>([]);
-  const [biografia, setBiografia]           = useState("");
-  const [fotoUrl, setFotoUrl]               = useState("");
+  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [biography, setBiography]           = useState("");
+  const [photoUrl, setPhotoUrl]               = useState("");
   const [personalDocumentsUrl, setPersonalDocumentsUrl] = useState("");
   const [presskitUrl, setPresskitUrl]       = useState("");
 
@@ -161,8 +161,8 @@ export default function ArtistSignupPublic() {
   const [email, setEmail]             = useState("");
 
   // Step 3: Bank details
-  const [banco, setBanco]             = useState("");
-  const [agencia, setAgencia]         = useState("");
+  const [bank, setBank]             = useState("");
+  const [agency, setAgency]         = useState("");
   const [account, setAccount]             = useState("");
   const [pixKey, setPixKey]       = useState("");
   const [accountHolder, setAccountHolder] = useState("");
@@ -223,8 +223,8 @@ export default function ArtistSignupPublic() {
   };
 
   // ── Especialidades toggle ──────────────────────────────────────────────────
-  const toggleEspecialidade = (value: string, checked: boolean) => {
-    setEspecialidades((prev) =>
+  const toggleSpecialty = (value: string, checked: boolean) => {
+    setSpecialties((prev) =>
       checked ? [...prev, value] : prev.filter((x) => x !== value)
     );
   };
@@ -315,7 +315,7 @@ export default function ArtistSignupPublic() {
     }
 
     if (s === 2) {
-      if (!name.trim())    e.nome    = "Obrigatório";
+      if (!name.trim())    e.name    = "Obrigatório";
       if (!email.trim())   e.email   = "Obrigatório";
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "E-mail inválido";
     }
@@ -379,16 +379,16 @@ export default function ArtistSignupPublic() {
       const additionalData: Record<string, unknown> = {
         nomeCivil: name.trim() || null,
         genero: genre || null,
-        especialidades: especialidades.length > 0 ? especialidades : null,
-        fotoUrl: fotoUrl || null,
+        especialidades: specialties.length > 0 ? specialties : null,
+        fotoUrl: photoUrl || null,
         documentosPessoaisUrl: personalDocumentsUrl || null,
         presskitUrl: presskitUrl || null,
         dataNascimento: birthDate || null,
         cpfCnpj: cpfCnpj || null,
         rg: rg || null,
         endereco: address || null,
-        banco: banco || null,
-        agencia: agencia || null,
+        banco: bank || null,
+        agencia: agency || null,
         conta: account || null,
         chavePix: pixKey || null,
         titularConta: accountHolder || null,
@@ -408,7 +408,7 @@ export default function ArtistSignupPublic() {
           email: email.trim(),
           phone: phone.trim() || undefined,
           musicalGenre: musicGenre || undefined,
-          message: biografia.trim() || undefined,
+          message: biography.trim() || undefined,
           socialLinks,
           additionalData,
           acceptedTerms,
@@ -574,9 +574,9 @@ export default function ArtistSignupPublic() {
               <Label className="text-sm">Foto de Perfil</Label>
               <div className="flex items-center gap-4">
                 <div className="relative shrink-0">
-                  {fotoUrl ? (
+                  {photoUrl ? (
                     <img
-                      src={fotoUrl}
+                      src={photoUrl}
                       alt="Avatar"
                       className="h-20 w-20 rounded-full object-cover border-2 border-border"
                     />
@@ -602,10 +602,10 @@ export default function ArtistSignupPublic() {
                     <Camera className="h-4 w-4" />
                     Selecionar foto
                   </label>
-                  {fotoUrl && (
+                  {photoUrl && (
                     <button
                       type="button"
-                      onClick={() => setFotoUrl("")}
+                      onClick={() => setPhotoUrl("")}
                       className="inline-flex items-center gap-1.5 text-xs text-destructive hover:underline"
                       data-testid="button-remove-foto"
                     >
@@ -630,7 +630,7 @@ export default function ArtistSignupPublic() {
                     }
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                      setFotoUrl(ev.target?.result as string ?? "");
+                      setPhotoUrl(ev.target?.result as string ?? "");
                     };
                     reader.readAsDataURL(file);
                   }}
@@ -651,9 +651,9 @@ export default function ArtistSignupPublic() {
                   value={stageName}
                   onChange={(e) => { setStageName(e.target.value); clearError("nomeArtistico"); }}
                   data-testid="input-nome-artistico"
-                  className={errors.nomeArtistico ? "border-destructive" : ""}
+                  className={errors.nameArtistico ? "border-destructive" : ""}
                 />
-                {errors.nomeArtistico && <p className="text-xs text-destructive">{errors.nomeArtistico}</p>}
+                {errors.nameArtistico && <p className="text-xs text-destructive">{errors.nameArtistico}</p>}
               </div>
               <div className="space-y-1.5 col-span-2 sm:col-span-1">
                 <Label className="text-sm">Gênero Musical <span className="text-destructive">*</span></Label>
@@ -677,12 +677,12 @@ export default function ArtistSignupPublic() {
             <div className="space-y-2">
               <Label className="text-sm">Especialidade / Função</Label>
               <div className="flex flex-wrap gap-4">
-                {ESPECIALIDADES.map((esp) => (
+                {SPECIALTIES.map((esp) => (
                   <div key={esp.value} className="flex items-center space-x-2">
                     <Checkbox
                       id={`esp-${esp.value}`}
-                      checked={especialidades.includes(esp.value)}
-                      onCheckedChange={(checked) => toggleEspecialidade(esp.value, !!checked)}
+                      checked={specialties.includes(esp.value)}
+                      onCheckedChange={(checked) => toggleSpecialty(esp.value, !!checked)}
                     />
                     <Label htmlFor={`esp-${esp.value}`} className="text-sm cursor-pointer">{esp.label}</Label>
                   </div>
@@ -715,8 +715,8 @@ export default function ArtistSignupPublic() {
               <Textarea
                 placeholder="Trajetória, conquistas e estilo musical…"
                 className="min-h-[100px]"
-                value={biografia}
-                onChange={(e) => setBiografia(e.target.value)}
+                value={biography}
+                onChange={(e) => setBiography(e.target.value)}
                 data-testid="textarea-biografia"
               />
             </div>
@@ -740,11 +740,11 @@ export default function ArtistSignupPublic() {
                 <Input
                   placeholder="Nome conforme documento"
                   value={name}
-                  onChange={(e) => { setName(e.target.value); clearError("nome"); }}
+                  onChange={(e) => { setName(e.target.value); clearError("name"); }}
                   data-testid="input-nome-civil"
-                  className={errors.nome ? "border-destructive" : ""}
+                  className={errors.name ? "border-destructive" : ""}
                 />
-                {errors.nome && <p className="text-xs text-destructive">{errors.nome}</p>}
+                {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
               </div>
               <div className="space-y-1.5 col-span-2 sm:col-span-1">
                 <Label className="text-sm">Data de Nascimento</Label>
@@ -842,12 +842,12 @@ export default function ArtistSignupPublic() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-sm">Banco</Label>
-                <Select value={banco} onValueChange={setBanco}>
+                <Select value={bank} onValueChange={setBank}>
                   <SelectTrigger data-testid="select-banco">
                     <SelectValue placeholder="Selecione o banco" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
-                    {BANCOS.map((b) => (
+                    {BANKS.map((b) => (
                       <SelectItem key={b} value={b}>{b}</SelectItem>
                     ))}
                   </SelectContent>
@@ -857,8 +857,8 @@ export default function ArtistSignupPublic() {
                 <Label className="text-sm">Agência</Label>
                 <Input
                   placeholder="0000"
-                  value={agencia}
-                  onChange={(e) => setAgencia(e.target.value)}
+                  value={agency}
+                  onChange={(e) => setAgency(e.target.value)}
                   data-testid="input-agencia"
                 />
               </div>
@@ -1171,7 +1171,7 @@ export default function ArtistSignupPublic() {
                     contact.categoria === "empresario" ||
                     contact.categoria === "gestor" ||
                     profileType === "com_empresario";
-                  const outrosEntry = contact.distribuidoras.find((d) => d.id === "outros");
+                  const othersEntry = contact.distribuidoras.find((d) => d.id === "outros");
 
                   return (
                     <div
@@ -1313,7 +1313,7 @@ export default function ArtistSignupPublic() {
                               );
                             })}
                           </div>
-                          {outrosEntry && !outrosEntry.nomeCustom && (
+                          {othersEntry && !othersEntry.nomeCustom && (
                             <p className="text-xs text-muted-foreground ml-6">
                               Preencha o nome da distribuidora para ativar o e-mail de share.
                             </p>

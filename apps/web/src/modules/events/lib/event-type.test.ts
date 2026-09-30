@@ -41,9 +41,9 @@ describe("buildGranularToBackendTypeMap", () => {
   });
 
   it("ignores items without a valid metadata.backend_type (injects no garbage into the filter)", () => {
-    const semMetadata: OperationalListItem = { ...item("x", "recording"), metadata: undefined };
-    const backendTypeInvalido: OperationalListItem = { ...item("y", "not-a-real-type") };
-    const map = buildGranularToBackendTypeMap([semMetadata, backendTypeInvalido]);
+    const withoutMetadata: OperationalListItem = { ...item("x", "recording"), metadata: undefined };
+    const invalidBackendType: OperationalListItem = { ...item("y", "not-a-real-type") };
+    const map = buildGranularToBackendTypeMap([withoutMetadata, invalidBackendType]);
     expect(map).toEqual({});
   });
 });

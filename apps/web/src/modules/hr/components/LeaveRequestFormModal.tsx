@@ -220,7 +220,7 @@ export function LeaveRequestFormModal({
               emptyText="Nenhum funcionário encontrado"
               disabled={isViewMode}
               invalid={!!errors.employeeId}
-              data-testid="select-funcionario-id"
+              data-testid="select-employee-id"
             />
             {errors.employeeId && (
               <p className="text-sm text-destructive">{errors.employeeId}</p>
@@ -265,7 +265,7 @@ export function LeaveRequestFormModal({
                 disabled={isViewMode}
                 placeholder="Selecione a data"
                 className={errors.start_date ? "border-destructive" : ""}
-                data-testid="datepicker-data-inicio"
+                data-testid="datepicker-start-date"
               />
               {errors.start_date && (
                 <p className="text-sm text-destructive">{errors.start_date}</p>
@@ -279,7 +279,7 @@ export function LeaveRequestFormModal({
                 disabled={isViewMode}
                 placeholder="Selecione a data"
                 className={errors.end_date ? "border-destructive" : ""}
-                data-testid="datepicker-data-fim"
+                data-testid="datepicker-end-date"
               />
               {errors.end_date && (
                 <p className="text-sm text-destructive">{errors.end_date}</p>
@@ -294,7 +294,7 @@ export function LeaveRequestFormModal({
               value={totalDays}
               readOnly
               disabled
-              data-testid="input-dias-totais"
+              data-testid="input-total-days"
             />
           </div>
 
@@ -325,7 +325,7 @@ export function LeaveRequestFormModal({
               value={approvedBy}
               onChange={(e) => setApprovedBy(e.target.value)}
               disabled={isViewMode}
-              data-testid="input-aprovado-por"
+              data-testid="input-approved-by"
             />
           </div>
 

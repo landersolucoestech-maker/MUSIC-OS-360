@@ -14,7 +14,7 @@ const mockedListPaged = vi.mocked(storage.listPaged);
 
 interface FakeRow {
   id: string;
-  nome: string;
+  name: string;
 }
 
 // Simulates a tenant with 75 records — more than the backend's old default of 50
@@ -22,7 +22,7 @@ interface FakeRow {
 // old limit silently blocked everything.
 const FAKE_DATASET: FakeRow[] = Array.from({ length: 75 }, (_, i) => ({
   id: `id-${i + 1}`,
-  nome: `Registro ${i + 1}`,
+  name: `Registro ${i + 1}`,
 }));
 
 function usePaginatedFakeRows(config: Parameters<typeof usePaginatedDataQuery<FakeRow>>[0]) {
@@ -32,7 +32,7 @@ function usePaginatedFakeRows(config: Parameters<typeof usePaginatedDataQuery<Fa
 function fakeBackend(_table: string, options: { page: number; pageSize: number; filters?: Record<string, unknown>; signal?: AbortSignal }) {
   let rows = FAKE_DATASET;
   const search = options.filters?.search as string | undefined;
-  if (search) rows = rows.filter((r) => r.nome.toLowerCase().includes(search.toLowerCase()));
+  if (search) rows = rows.filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
   const status = options.filters?.status as string | undefined;
   if (status) rows = []; // no fake record has a status — simulates a restrictive filter
   const total = rows.length;

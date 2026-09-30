@@ -125,7 +125,7 @@ export function useInvoiceForm({
     setFormData((prev) => {
       const isDefault = !prev.codigo_municipio || prev.codigo_municipio === "3550308";
       if (!isDefault) return prev;
-      const city = (companySettings.cidade || "").toLowerCase();
+      const city = (companySettings.city || "").toLowerCase();
       return { ...prev, codigo_municipio: city.includes("são paulo") ? "3550308" : prev.codigo_municipio };
     });
   }, [companySettings, mode, open]);

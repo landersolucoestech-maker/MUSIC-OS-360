@@ -152,8 +152,8 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
 
 interface SelectedProject {
   id: string;
-  nome: string;
-  artistaNome?: string | null;
+  name: string;
+  artistName?: string | null;
 }
 
 interface WorkFormModalProps {
@@ -271,12 +271,12 @@ export function WorkFormModal({
     if (linkedProject) {
       setSelectedProject({
         id: linkedProject.id,
-        nome: linkedProject.title ?? (linkedProject.nome as string) ?? "",
-        artistaNome: (linkedProject.artistas?.stage_name ?? null) as string | null,
+        name: linkedProject.title ?? (linkedProject.nome as string) ?? "",
+        artistName: (linkedProject.artistas?.stage_name ?? null) as string | null,
       });
     } else {
       // Still loading — keeps the ID with a placeholder until the lookup by ID resolves.
-      setSelectedProject({ id: linkedProjectId, nome: "Projeto vinculado" });
+      setSelectedProject({ id: linkedProjectId, name: "Projeto vinculado" });
     }
   }, [open, linkedProjectId, linkedProject]);
 
@@ -519,11 +519,11 @@ export function WorkFormModal({
                     className="font-medium truncate"
                     data-testid="text-linked-project-name"
                   >
-                    {selectedProject.nome}
+                    {selectedProject.name}
                   </p>
-                  {selectedProject.artistaNome && (
+                  {selectedProject.artistName && (
                     <p className="text-xs text-muted-foreground truncate">
-                      {selectedProject.artistaNome}
+                      {selectedProject.artistName}
                     </p>
                   )}
                 </div>
@@ -584,8 +584,8 @@ export function WorkFormModal({
                           const selectProject = async () => {
                             setSelectedProject({
                               id: pId,
-                              nome: pNameDisplay,
-                              artistaNome: pArtistNameDisplay || null,
+                              name: pNameDisplay,
+                              artistName: pArtistNameDisplay || null,
                             });
                             // Auto-fill fields from project registration
                             if (!workTitleValue && p.title) setWorkTitle(p.title as string);

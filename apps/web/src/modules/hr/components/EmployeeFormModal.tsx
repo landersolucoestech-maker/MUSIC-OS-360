@@ -51,7 +51,7 @@ export function EmployeeFormModal({
   const { users, isLoading: loadingUsers } = useUsers();
   const isViewMode = mode === "view";
 
-  const [activeTab, setActiveTab] = useState("pessoal");
+  const [activeTab, setActiveTab] = useState("personal");
   const [fullName, setFullName] = useState("");
   const [cpf, setCpf] = useState("");
   const [rg, setRg] = useState("");
@@ -108,7 +108,7 @@ export function EmployeeFormModal({
         setLinkUserId("");
       }
       setErrors({});
-      setActiveTab("pessoal");
+      setActiveTab("personal");
     }
   }, [open, mode, employee]);
 
@@ -140,7 +140,7 @@ export function EmployeeFormModal({
       });
       setErrors(newErrors);
       if (newErrors.fullName || newErrors.email || newErrors.cpf || newErrors.rg || newErrors.birthDate || newErrors.phone || newErrors.address) {
-        setActiveTab("pessoal");
+        setActiveTab("personal");
       }
       return false;
     }
@@ -210,10 +210,10 @@ export function EmployeeFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-2xl max-h-[90vh] overflow-y-auto"
-        data-testid="funcionario-form-modal"
+        data-testid="employee-form-modal"
       >
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2" data-testid="funcionario-form-title">
+          <DialogTitle className="flex items-center gap-2" data-testid="employee-form-title">
             <User className="h-5 w-5" />
             {title}
           </DialogTitle>
@@ -223,24 +223,24 @@ export function EmployeeFormModal({
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger
-              value="pessoal"
+              value="personal"
               className="flex items-center gap-2"
-              data-testid="tab-dados-pessoais"
+              data-testid="tab-personal-data"
             >
               <User className="h-4 w-4" />
               Dados Pessoais
             </TabsTrigger>
             <TabsTrigger
-              value="profissional"
+              value="professional"
               className="flex items-center gap-2"
-              data-testid="tab-profissional"
+              data-testid="tab-professional"
             >
               <Briefcase className="h-4 w-4" />
               Profissional
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="pessoal" className="space-y-4">
+          <TabsContent value="personal" className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="nome_completo">
                 Nome Completo <span className="text-destructive">*</span>
@@ -261,7 +261,7 @@ export function EmployeeFormModal({
                 }}
                 disabled={isViewMode}
                 className={errors.fullName ? "border-destructive" : ""}
-                data-testid="input-nome-completo"
+                data-testid="input-full-name"
               />
               {errors.fullName && (
                 <p className="text-xs text-destructive">{errors.fullName}</p>
@@ -301,7 +301,7 @@ export function EmployeeFormModal({
                   onChange={setBirthDate}
                   disabled={isViewMode}
                   placeholder="Selecione a data"
-                  data-testid="datepicker-data-nascimento"
+                  data-testid="datepicker-birth-date"
                 />
               </div>
               <div className="space-y-1.5">
@@ -351,13 +351,13 @@ export function EmployeeFormModal({
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   disabled={isViewMode}
-                  data-testid="input-endereco"
+                  data-testid="input-address"
                 />
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="profissional" className="space-y-4">
+          <TabsContent value="professional" className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="job_title">Cargo</Label>
@@ -418,7 +418,7 @@ export function EmployeeFormModal({
                   onChange={setHireDate}
                   disabled={isViewMode}
                   placeholder="Selecione a data"
-                  data-testid="datepicker-data-admissao"
+                  data-testid="datepicker-admission-date"
                 />
               </div>
             </div>
@@ -485,7 +485,7 @@ export function EmployeeFormModal({
                   onValueChange={(v) => setLinkUserId(v === "none" ? "" : v)}
                   disabled={isViewMode}
                 >
-                  <SelectTrigger data-testid="select-vinculo-usuario">
+                  <SelectTrigger data-testid="select-linked-user">
                     <SelectValue placeholder={loadingUsers ? "Carregando..." : "Nenhum (sem vínculo)"} />
                   </SelectTrigger>
                   <SelectContent>
@@ -517,7 +517,7 @@ export function EmployeeFormModal({
             <Button
               onClick={handleSubmit}
               disabled={saving}
-              data-testid="button-save-funcionario"
+              data-testid="button-save-employee"
             >
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {mode === "create" ? "Cadastrar" : "Salvar"}
