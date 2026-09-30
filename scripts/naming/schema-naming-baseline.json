@@ -1,7 +1,4 @@
 {
- "total": 2,
- "debt": {
-  "schema::default-value::organizations.industry::gravadora": 1,
-  "schema::default-value::releases.status::planejamento": 1
- }
+ "total": 0,
+ "debt": {}
 }
