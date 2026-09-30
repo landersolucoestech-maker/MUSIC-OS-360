@@ -1,15 +1,15 @@
-# ⚡ QUICK START GUIDE — Começar a Implementação Hoje
+# ⚡ QUICK START GUIDE — Start Implementing Today
 
-**Guia prático para setup, primeiros passos, e troubleshooting**
+**Practical guide for setup, first steps, and troubleshooting**
 
 ---
 
-## 🚀 SETUP INICIAL (30 minutos)
+## 🚀 INITIAL SETUP (30 minutes)
 
-### 1. Criar Pastas Estrutura
+### 1. Create the Folder Structure
 
 ```bash
-# Terminal no workspace
+# Terminal at the workspace root
 cd apps/web/src/modules
 
 # Workspace module
@@ -25,9 +25,9 @@ mkdir -p shared-workspace-components/{cards,metrics,timelines,tables,sidebars}
 mkdir -p contexts/{artist-workspace,release-workspace}
 ```
 
-### 2. Copiar Template Básico
+### 2. Copy the Basic Template
 
-**Arquivo: `workspace/types/workspace.types.ts`**
+**File: `workspace/types/workspace.types.ts`**
 
 ```typescript
 export type WorkspaceType = 'artist' | 'release' | 'campaign' | 'project' | 'contract';
@@ -66,9 +66,9 @@ export interface WorkspaceContextValue {
 }
 ```
 
-### 3. Criar Context Provider
+### 3. Create the Context Provider
 
-**Arquivo: `workspace/providers/WorkspaceContext.tsx`**
+**File: `workspace/providers/WorkspaceContext.tsx`**
 
 ```typescript
 import { createContext, useContext, ReactNode } from 'react';
@@ -79,7 +79,7 @@ export const WorkspaceContext = createContext<WorkspaceContextValue | null>(null
 export function useWorkspaceContext() {
   const context = useContext(WorkspaceContext);
   if (!context) {
-    throw new Error('useWorkspaceContext deve estar dentro WorkspaceProvider');
+    throw new Error('useWorkspaceContext must be used within WorkspaceProvider');
   }
   return context;
 }
@@ -99,9 +99,9 @@ export function WorkspaceProvider({
 }
 ```
 
-### 4. Criar Hook Base
+### 4. Create the Base Hook
 
-**Arquivo: `workspace/hooks/useWorkspace.ts`**
+**File: `workspace/hooks/useWorkspace.ts`**
 
 ```typescript
 import { useState } from 'react';
@@ -158,9 +158,9 @@ export function useWorkspace(
 
 ---
 
-## 🎨 CRIAR PRIMEIRO COMPONENTE
+## 🎨 CREATE THE FIRST COMPONENT
 
-**Arquivo: `shared-workspace-components/cards/WorkspaceCard.tsx`**
+**File: `shared-workspace-components/cards/WorkspaceCard.tsx`**
 
 ```typescript
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
@@ -207,9 +207,9 @@ export function WorkspaceCard({
 
 ---
 
-## 📊 TESTE LOCAL (Sem Backend)
+## 📊 LOCAL TEST (Without Backend)
 
-Testar sem ter endpoints do backend ainda:
+Test without the backend endpoints being available yet:
 
 ```typescript
 // workspace/hooks/useWorkspace.ts (mock version)
@@ -256,11 +256,11 @@ export function useWorkspace(workspaceType: WorkspaceType, workspaceId: string) 
 
 ---
 
-## 🔧 BACKEND SETUP (30 minutos)
+## 🔧 BACKEND SETUP (30 minutes)
 
-### 1. Criar Entity TypeORM
+### 1. Create the TypeORM Entity
 
-**Arquivo: `apps/api/src/modules/activity-log/entities/activity-log.entity.ts`**
+**File: `apps/api/src/modules/activity-log/entities/activity-log.entity.ts`**
 
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Index } from 'typeorm';
@@ -300,17 +300,17 @@ export class ActivityLog {
 }
 ```
 
-### 2. Criar Migration
+### 2. Create the Migration
 
 ```bash
 npm run typeorm migration:generate -- CreateActivityLogs
 ```
 
-Verificar arquivo gerado em `apps/api/src/migrations/`
+Check the file generated in `apps/api/src/migrations/`
 
-### 3. Criar Service
+### 3. Create the Service
 
-**Arquivo: `apps/api/src/modules/activity-log/activity-log.service.ts`**
+**File: `apps/api/src/modules/activity-log/activity-log.service.ts`**
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -349,9 +349,9 @@ export class ActivityLogService {
 }
 ```
 
-### 4. Criar Controller
+### 4. Create the Controller
 
-**Arquivo: `apps/api/src/modules/activity-log/activity-log.controller.ts`**
+**File: `apps/api/src/modules/activity-log/activity-log.controller.ts`**
 
 ```typescript
 import { Controller, Post, Get, Body, Query } from '@nestjs/common';
@@ -373,10 +373,10 @@ export class ActivityLogController {
 }
 ```
 
-### 5. Registrar no Module
+### 5. Register in the Module
 
 ```typescript
-// app.module.ts ou activity-log.module.ts
+// app.module.ts or activity-log.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivityLog } from './entities/activity-log.entity';
@@ -399,10 +399,10 @@ npm run typeorm migration:run
 
 ---
 
-## 🧪 TESTAR ENDPOINTS
+## 🧪 TEST ENDPOINTS
 
 ```bash
-# POST /api/activities (criar)
+# POST /api/activities (create)
 curl -X POST http://localhost:3000/api/activities \
   -H "Content-Type: application/json" \
   -d '{
@@ -414,15 +414,15 @@ curl -X POST http://localhost:3000/api/activities \
     "user_name": "João"
   }'
 
-# GET /api/activities (listar)
+# GET /api/activities (list)
 curl http://localhost:3000/api/activities?entityType=artist&entityId=123e4567-e89b-12d3-a456-426614174000
 ```
 
 ---
 
-## 🎯 PRIMEIRA PÁGINA: Artist Overview
+## 🎯 FIRST PAGE: Artist Overview
 
-**Arquivo: `apps/web/src/modules/workspace/contexts/artist-workspace/pages/ArtistOverview.tsx`**
+**File: `apps/web/src/modules/workspace/contexts/artist-workspace/pages/ArtistOverview.tsx`**
 
 ```typescript
 import { useWorkspaceContext } from '@/modules/workspace/providers/WorkspaceContext';
@@ -461,9 +461,9 @@ export function ArtistOverview() {
 
 ---
 
-## 🔗 REGISTRAR ROTA
+## 🔗 REGISTER THE ROUTE
 
-**Arquivo: `apps/web/src/app/routes/workspace.routes.tsx`** (nova)
+**File: `apps/web/src/app/routes/workspace.routes.tsx`** (new)
 
 ```typescript
 import { lazy } from 'react';
@@ -488,7 +488,7 @@ export const workspaceRoutes = [
 ];
 ```
 
-**Registrar em `app/routes/index.tsx`:**
+**Register in `app/routes/index.tsx`:**
 
 ```typescript
 import { workspaceRoutes } from './workspace.routes';
@@ -497,24 +497,24 @@ export const routes = [
   ...publicRoutes,
   ...workspaceRoutes,
   ...accountingRoutes,
-  // ... outros
+  // ... others
 ];
 ```
 
 ---
 
-## 🧪 TESTAR LOCALMENTE
+## 🧪 TEST LOCALLY
 
 ```bash
 # Terminal 1: Frontend
 cd apps/web
 npm run dev
 
-# Terminal 2: Backend (se necessário)
+# Terminal 2: Backend (if needed)
 cd apps/api
 npm run start:dev
 
-# Visitar no browser
+# Open in the browser
 http://localhost:5173/workspace/artist/test-artist-id
 ```
 
@@ -522,38 +522,38 @@ http://localhost:5173/workspace/artist/test-artist-id
 
 ## 🐛 TROUBLESHOOTING
 
-### Error: "useWorkspaceContext deve estar dentro WorkspaceProvider"
+### Error: "useWorkspaceContext must be used within WorkspaceProvider"
 ```
-Solução: Verificar que ArtistWorkspaceLayout está envolvendo o component em WorkspaceProvider
-```
-
-### Activities não carregam
-```
-Solução: 
-1. Verificar que API endpoint existe
-2. Testar endpoint com curl
-3. Verificar console do browser (network tab)
+Solution: Check that ArtistWorkspaceLayout wraps the component in WorkspaceProvider
 ```
 
-### Tipos não encontram
+### Activities do not load
 ```
-Solução:
-1. Verificar que workspace/types/workspace.types.ts existe
-2. Verificar imports: import type { WorkspaceType } from '...'
-3. npm run build para ver erros completos
+Solution:
+1. Check that the API endpoint exists
+2. Test the endpoint with curl
+3. Check the browser console (network tab)
 ```
 
-### Style issues (Tailwind não funciona)
+### Types are not found
 ```
-Solução:
-1. Verificar que classes usam naming padrão (w-4, h-4, etc)
-2. Verificar que tailwind.config.ts inclui src/modules/**
-3. Limpar cache: rm -rf .next ou npm run clean
+Solution:
+1. Check that workspace/types/workspace.types.ts exists
+2. Check imports: import type { WorkspaceType } from '...'
+3. Run npm run build to see the full errors
+```
+
+### Style issues (Tailwind does not work)
+```
+Solution:
+1. Check that classes use the standard naming (w-4, h-4, etc)
+2. Check that tailwind.config.ts includes src/modules/**
+3. Clear the cache: rm -rf .next or npm run clean
 ```
 
 ---
 
-## 📚 REFERÊNCIAS RÁPIDAS
+## 📚 QUICK REFERENCES
 
 ### Query Component Data
 ```typescript
@@ -585,34 +585,34 @@ await fetch('/api/activities', {
 
 ---
 
-## ✅ CHECKLIST PRIMEIRO DIA
+## ✅ FIRST-DAY CHECKLIST
 
-- [ ] Pastas estructura criadas
-- [ ] Types definidos
-- [ ] Context criado
-- [ ] Hook básico funciona
-- [ ] First component renderiza
+- [ ] Folder structure created
+- [ ] Types defined
+- [ ] Context created
+- [ ] Basic hook works
+- [ ] First component renders
 - [ ] Backend setup (ActivityLog)
-- [ ] Endpoints testados
-- [ ] Primeira página funciona
-- [ ] Rota registrada
-- [ ] Pode navegar no browser
+- [ ] Endpoints tested
+- [ ] First page works
+- [ ] Route registered
+- [ ] Can navigate in the browser
 
 ---
 
-## 🎉 PARABÉNS!
+## 🎉 CONGRATULATIONS!
 
-Se chegou aqui, você tem:
-- ✅ Infraestrutura workspace funcionando
+If you got here, you have:
+- ✅ Workspace infrastructure working
 - ✅ Activity logging setup
-- ✅ Primeira página renderizando
-- ✅ Dados fluindo do backend ao frontend
+- ✅ First page rendering
+- ✅ Data flowing from the backend to the frontend
 
-**Próximo passo**: Implementar mais abas da Artist Workspace (releases, campaigns, etc)
+**Next step**: Implement more tabs of the Artist Workspace (releases, campaigns, etc)
 
 ---
 
-**Dúvidas?** Consultar:
+**Questions?** See:
 1. [RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md](./RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md)
 2. [PHASE_1_IMPLEMENTATION_GUIDE.md](./PHASE_1_IMPLEMENTATION_GUIDE.md)
 3. [ARCHITECTURE_DECISION_RECORDS.md](./ARCHITECTURE_DECISION_RECORDS.md)

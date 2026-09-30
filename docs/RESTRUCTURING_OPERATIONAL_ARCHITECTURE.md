@@ -1,243 +1,243 @@
-# 🎵 MUSIC OS 360 — ARQUITETURA OPERACIONAL CONTEXTUAL DEFINITIVA
+# 🎵 MUSIC OS 360 — DEFINITIVE CONTEXTUAL OPERATIONAL ARCHITECTURE
 
-**Versão**: 1.0 — Reestruturação Completa  
-**Data**: 2026-05-20  
-**Status**: Planejamento → Implementação Gradual  
+**Version**: 1.0 — Complete Restructuring  
+**Date**: 2026-05-20  
+**Status**: Planning → Gradual Implementation  
 
 ---
 
-## 📋 ÍNDICE
+## 📋 TABLE OF CONTENTS
 
-1. [Análise da Estrutura Atual](#análise-atual)
-2. [Visão Nova: Workspaces Operacionais](#visão-nova)
-3. [Arquitetura Contextual](#arquitetura)
-4. [Navegação Inteligente](#navegação)
-5. [Padrões Globais de UX](#padrões-ux)
-6. [Estrutura Técnica](#estrutura-técnica)
-7. [Hierarquia de Rotas](#rotas)
-8. [Sistema de Componentes](#componentes)
+1. [Analysis of the Current Structure](#current-analysis)
+2. [New Vision: Operational Workspaces](#new-vision)
+3. [Contextual Architecture](#architecture)
+4. [Smart Navigation](#navigation)
+5. [Global UX Standards](#ux-standards)
+6. [Technical Structure](#technical-structure)
+7. [Route Hierarchy](#routes)
+8. [Component System](#components)
 9. [Activity & Realtime System](#activity-system)
-10. [Estratégia de Implementação](#implementação)
+10. [Implementation Strategy](#implementation)
 
 ---
 
-## 1. ANÁLISE DA ESTRUTURA ATUAL {#análise-atual}
+## 1. ANALYSIS OF THE CURRENT STRUCTURE {#current-analysis}
 
-### Módulos Existentes (Fragmentados)
+### Existing Modules (Fragmented)
 ```
-accounting/     → Transações, Nota Fiscal
+accounting/     → Transactions, Invoices
 admin/          → Admin Panel
-ai/             → IA Criativa
-artist/         → Artistas
-auth/           → Autenticação
-catalog/        → Catálogo de Obras
-contracts/      → Contratos
+ai/             → Creative AI
+artist/         → Artists
+auth/           → Authentication
+catalog/        → Works Catalog
+contracts/      → Contracts
 crm/            → CRM
-dashboard/      → Dashboard genérico
+dashboard/      → Generic Dashboard
 events/         → Agenda
-integrations/   → Integrações
-inventory/      → Inventário
+integrations/   → Integrations
+inventory/      → Inventory
 leads/          → Leads
-licensing/      → Licenciamento
+licensing/      → Licensing
 marketing/      → Marketing
 monitoring/     → Rights Monitoring
-projects/       → Projetos
-releases/       → Distribuição de Releases
-reports/        → Relatórios
-rh/             → Recursos Humanos
-settings/       → Configurações
-support/        → Suporte
+projects/       → Projects
+releases/       → Release Distribution
+reports/        → Reports
+rh/             → Human Resources
+settings/       → Settings
+support/        → Support
 ```
 
-### Problema Identificado
-- **Navegação em menus**: 22+ módulos soltos
-- **Perda de contexto**: usuario navega de módulo em módulo
-- **Falta de unificação**: Artista, Release, Projeto estão separados
-- **UX fragmentada**: cada módulo com seu próprio padrão
-- **Sem timelines**: Sem rastreamento de atividade integrada
-- **Sem contexto operacional**: tudo isolado
+### Identified Problem
+- **Menu navigation**: 22+ loose modules
+- **Loss of context**: the user navigates from module to module
+- **Lack of unification**: Artist, Release, Project are separate
+- **Fragmented UX**: each module with its own pattern
+- **No timelines**: no integrated activity tracking
+- **No operational context**: everything isolated
 
-### Entidades Principais Identificadas
-- **Artista** (core)
-- **Lançamento** (Release - core)
-- **Obra** (Composição - core)
-- **Contrato** (core)
-- **Transação** (financeiro)
-- **Campanha** (marketing)
-- **Projeto** (generic tasks)
-- **Tarefa** (tasks)
-- **Evento** (calendar)
-- **Nota Fiscal** (fiscal)
-- **Compartilhamento** (shares/recebimentos externos de direitos)
+### Main Entities Identified
+- **Artist** (`Artista`, core)
+- **Release** (`Lançamento`, core)
+- **Work** (`Obra`, composition, core)
+- **Contract** (`Contrato`, core)
+- **Transaction** (`Transação`, financial)
+- **Campaign** (`Campanha`, marketing)
+- **Project** (`Projeto`, generic tasks)
+- **Task** (`Tarefa`)
+- **Event** (`Evento`, calendar)
+- **Invoice** (`Nota Fiscal`, fiscal)
+- **Sharing** (`Compartilhamento`, shares/external rights receipts)
 
 ---
 
-## 2. VISÃO NOVA: WORKSPACES OPERACIONAIS {#visão-nova}
+## 2. NEW VISION: OPERATIONAL WORKSPACES {#new-vision}
 
-### Conceito Central
+### Core Concept
 
-**NÃO** módulos soltos.  
-**SIM** contextos operacionais integrados.
+**NOT** loose modules.  
+**YES** integrated operational contexts.
 
 ```
-Workspace = Centro Operacional Contextual de uma Entidade
+Workspace = Contextual Operational Center of an Entity
 ```
 
-### Os 5 Workspaces Principais
+### The 5 Main Workspaces
 
 #### **1️⃣ ARTIST WORKSPACE**
-Central operacional da carreira do artista.
+Operational hub of the artist's career.
 
 ```
 /workspace/artist/:artistId
 
-├── Overview              (KPIs, releases, campanhas ativas)
-├── Releases              (todos os lançamentos)
-├── Campaigns             (campanhas vinculadas)
-├── Collaborations        (parcerias ativas)
-├── Financeiro            (receitas, recebimentos externos de direitos)
-├── Contracts             (contratos ativos e arquivados)
-├── Tasks                 (tarefas do artista)
-├── Assets                (avatares, fotos, etc)
-├── Team                  (equipe, colaboradores)
-├── Calendar              (eventos e datas importantes)
+├── Overview              (KPIs, releases, active campaigns)
+├── Releases              (all releases)
+├── Campaigns             (linked campaigns)
+├── Collaborations        (active partnerships)
+├── Financeiro (Financial)  (revenue, external rights receipts)
+├── Contracts             (active and archived contracts)
+├── Tasks                 (artist tasks)
+├── Assets                (avatars, photos, etc)
+├── Team                  (team, collaborators)
+├── Calendar              (events and important dates)
 ├── Analytics             (streams, performance)
-├── Activity Timeline     (histórico de operações)
-├── Conversations         (comentários e mentions)
-├── Approvals             (pendências de aprovação)
-└── Settings              (configurações do artista)
+├── Activity Timeline     (history of operations)
+├── Conversations         (comments and mentions)
+├── Approvals             (pending approvals)
+└── Settings              (artist settings)
 ```
 
-**Sensação esperada**: "Tudo da carreira do artista está aqui"
+**Expected feeling**: "Everything about the artist's career is here"
 
 ---
 
 #### **2️⃣ RELEASE WORKSPACE**
-Central operacional do lançamento.
+Operational hub of the release.
 
 ```
 /workspace/release/:releaseId
 
-├── Overview              (status, progresso, KPIs)
-├── Distribution          (plataformas, datas de lançamento)
-├── Assets                (capas, thumbnails, vídeos)
-├── Marketing             (campanhas vinculadas)
-├── Content Calendar      (calendário de posts)
-├── Tasks                 (tarefas do lançamento)
-├── Team                  (artistas, produtores, features)
-├── Schedule              (timeline de ações)
-├── Pre-release           (pré-save, playlist pitching)
-├── Financial             (custos, receitas)
-├── Recebimentos externos de direitos             (splits de compositor)
+├── Overview              (status, progress, KPIs)
+├── Distribution          (platforms, release dates)
+├── Assets                (covers, thumbnails, videos)
+├── Marketing             (linked campaigns)
+├── Content Calendar      (post calendar)
+├── Tasks                 (release tasks)
+├── Team                  (artists, producers, features)
+├── Schedule              (action timeline)
+├── Pre-release           (pre-save, playlist pitching)
+├── Financial             (costs, revenue)
+├── Recebimentos externos de direitos (External rights receipts)  (songwriter splits)
 ├── Analytics             (streams, listeners)
-├── Approvals             (aprovações pendentes)
-├── Deliverables          (arquivos necessários)
-├── Activity Timeline     (operações do release)
-└── Conversations         (discussões do projeto)
+├── Approvals             (pending approvals)
+├── Deliverables          (required files)
+├── Activity Timeline     (release operations)
+└── Conversations         (project discussions)
 ```
 
-**Sensação esperada**: "Controlo toda a operação desse lançamento sem sair daqui"
+**Expected feeling**: "I control the whole operation of this release without leaving here"
 
 ---
 
 #### **3️⃣ CAMPAIGN WORKSPACE**
-Central operacional de campanhas de marketing.
+Operational hub of marketing campaigns.
 
 ```
 /workspace/campaign/:campaignId
 
-├── Overview              (metas, budget, KPIs)
-├── Goals                 (objetivos e métricas)
-├── Budget                (alocação, despesas)
-├── Tasks                 (tarefas da campanha)
+├── Overview              (goals, budget, KPIs)
+├── Goals                 (objectives and metrics)
+├── Budget                (allocation, expenses)
+├── Tasks                 (campaign tasks)
 ├── Content               (posts, stories, reels)
-├── Assets                (banners, imagens)
-├── Creators              (influencers, colaboradores)
-├── Timeline              (marcos da campanha)
-├── Schedule              (posts agendados)
+├── Assets                (banners, images)
+├── Creators              (influencers, collaborators)
+├── Timeline              (campaign milestones)
+├── Schedule              (scheduled posts)
 ├── Channels              (Instagram, TikTok, etc)
-├── Analytics             (engajamento, conversão)
-├── Reports               (relatórios de performance)
-├── Activity              (histórico de operações)
-└── Conversations         (discussões)
+├── Analytics             (engagement, conversion)
+├── Reports               (performance reports)
+├── Activity              (history of operations)
+└── Conversations         (discussions)
 ```
 
-**Sensação esperada**: "A campanha toda em um só lugar"
+**Expected feeling**: "The whole campaign in a single place"
 
 ---
 
 #### **4️⃣ PROJECT WORKSPACE**
-Central operacional de projetos genéricos.
+Operational hub of generic projects.
 
 ```
 /workspace/project/:projectId
 
-├── Overview              (status, progresso)
-├── Tasks                 (tarefas kanban/lista)
+├── Overview              (status, progress)
+├── Tasks                 (kanban/list tasks)
 ├── Timeline              (milestones)
-├── Team                  (membros)
-├── Assets                (arquivos)
-├── Budget                (orçamento)
-├── Schedule              (calendário)
-├── Analytics             (KPIs customizados)
-├── Activity              (histórico)
-└── Conversations         (discussões)
+├── Team                  (members)
+├── Assets                (files)
+├── Budget                (budget)
+├── Schedule              (calendar)
+├── Analytics             (custom KPIs)
+├── Activity              (history)
+└── Conversations         (discussions)
 ```
 
 ---
 
 #### **5️⃣ CONTRACT WORKSPACE**
-Central operacional de contrato.
+Operational hub of the contract.
 
 ```
 /workspace/contract/:contractId
 
-├── Overview              (status, datas importantes)
-├── Document              (visualizador de contrato)
-├── Financial             (valores, pagamentos)
-├── Parties               (envolvidos)
-├── Obligations           (obrigações)
-├── Milestones            (marcos)
-├── Tasks                 (tarefas associadas)
-├── History               (timeline de eventos)
-├── Approvals             (assinaturas)
-├── Activity              (mudanças)
-└── Conversations         (discussões)
+├── Overview              (status, important dates)
+├── Document              (contract viewer)
+├── Financial             (amounts, payments)
+├── Parties               (parties involved)
+├── Obligations           (obligations)
+├── Milestones            (milestones)
+├── Tasks                 (associated tasks)
+├── History               (event timeline)
+├── Approvals             (signatures)
+├── Activity              (changes)
+└── Conversations         (discussions)
 ```
 
 ---
 
-### Workspaces Secundários (Contextos Menores)
+### Secondary Workspaces (Smaller Contexts)
 
-#### **OBRA WORKSPACE** `/workspace/work/:workId`
+#### **WORK WORKSPACE (`OBRA WORKSPACE`)** `/workspace/work/:workId`
 ```
-├── Overview              (metadados, ISWC)
-├── Registros             (direitos, ECAD)
-├── Compartilhamento      (shares de compositor)
-├── Releases              (em quais releases usada)
-├── Recebimentos externos de direitos             (histórico de recebimentos externos de direitos)
-├── Aprovações            (registro, aprovação)
-└── Activity              (histórico)
+├── Overview              (metadata, ISWC)
+├── Registros (Registrations)  (rights, ECAD)
+├── Compartilhamento (Sharing) (songwriter shares)
+├── Releases              (which releases use it)
+├── Recebimentos externos de direitos (External rights receipts)  (history of external rights receipts)
+├── Aprovações (Approvals)  (registration, approval)
+└── Activity              (history)
 ```
 
-#### **EVENTO WORKSPACE** `/workspace/event/:eventId`
+#### **EVENT WORKSPACE (`EVENTO WORKSPACE`)** `/workspace/event/:eventId`
 ```
-├── Overview              (data, local, detalhes)
-├── Lineup                (artistas)
-├── Tasks                 (tarefas do evento)
-├── Budget                (custos)
-├── Timeline              (cronograma)
-├── Team                  (equipe de produção)
-├── Logistics             (transporte, hospedagem)
-├── Analytics             (comercial, attendance)
-└── Activity              (histórico)
+├── Overview              (date, venue, details)
+├── Lineup                (artists)
+├── Tasks                 (event tasks)
+├── Budget                (costs)
+├── Timeline              (schedule)
+├── Team                  (production team)
+├── Logistics             (transport, lodging)
+├── Analytics             (commercial, attendance)
+└── Activity              (history)
 ```
 
 ---
 
-## 3. ARQUITETURA CONTEXTUAL {#arquitetura}
+## 3. CONTEXTUAL ARCHITECTURE {#architecture}
 
-### 3.1 Organização de Rotas
+### 3.1 Route Organization
 
 ```
 /workspace
@@ -307,7 +307,7 @@ Central operacional de contrato.
     /approvals
     /activity
 
-/library (acesso rápido a todos os recursos)
+/library (quick access to all resources)
   /artists
   /releases
   /campaigns
@@ -316,7 +316,7 @@ Central operacional de contrato.
   /works
   /events
 
-/dashboard (visão geral da organização)
+/dashboard (organization overview)
   /overview
   /kpis
   /recent-activity
@@ -330,11 +330,11 @@ Central operacional de contrato.
   /notifications
 ```
 
-### 3.2 Estrutura de Pasta de Módulos Reorganizada
+### 3.2 Reorganized Module Folder Structure
 
 ```
 apps/web/src/modules/
-├── workspace/                      # NOVO: Orquestrador de workspaces
+├── workspace/                      # NEW: Workspace orchestrator
 │   ├── components/
 │   │   ├── WorkspaceShell.tsx
 │   │   ├── WorkspaceNav.tsx
@@ -352,37 +352,37 @@ apps/web/src/modules/
 │   └── types/
 │       └── workspace.types.ts
 │
-├── contexts/                       # NOVO: Contextos operacionais
+├── contexts/                       # NEW: Operational contexts
 │   ├── artist-workspace/
 │   ├── release-workspace/
 │   ├── campaign-workspace/
 │   ├── project-workspace/
 │   └── contract-workspace/
 │
-├── artist/                         # REFACTOR: De módulo isolado a provedor de dados
+├── artist/                         # REFACTOR: From isolated module to data provider
 │   ├── components/
-│   │   └── → movidos para workspace/contexts/artist-workspace
+│   │   └── → moved to workspace/contexts/artist-workspace
 │   ├── pages/
-│   │   └── → arquivado (usar workspace)
+│   │   └── → archived (use workspace)
 │   ├── services/
 │   ├── hooks/
 │   ├── types/
 │   └── queries/
 │
-├── releases/                       # REFACTOR: De módulo isolado a provedor de dados
+├── releases/                       # REFACTOR: From isolated module to data provider
 │   ├── components/
 │   ├── services/
 │   ├── hooks/
 │   ├── types/
 │   └── queries/
 │
-├── campaigns/                      # NOVO: Extrair de marketing
+├── campaigns/                      # NEW: Extract from marketing
 │   ├── components/
 │   ├── services/
 │   ├── types/
 │   └── queries/
 │
-├── activity-log/                   # NOVO: Activity system centralizado
+├── activity-log/                   # NEW: Centralized activity system
 │   ├── components/
 │   │   ├── ActivityTimeline.tsx
 │   │   ├── ActivityCard.tsx
@@ -392,7 +392,7 @@ apps/web/src/modules/
 │   ├── types/
 │   └── queries/
 │
-├── shared-workspace-components/    # NOVO: Componentes reutilizáveis
+├── shared-workspace-components/    # NEW: Reusable components
 │   ├── OverviewCard.tsx
 │   ├── MetricsGrid.tsx
 │   ├── TimelineSection.tsx
@@ -402,27 +402,27 @@ apps/web/src/modules/
 │   ├── ContextualQuickActions.tsx
 │   └── WorkspaceEmptyState.tsx
 │
-└── [outros módulos se mantêm, mas descentralizados]
+└── [other modules stay, but decentralized]
 ```
 
 ---
 
-## 4. NAVEGAÇÃO INTELIGENTE {#navegação}
+## 4. SMART NAVIGATION {#navigation}
 
-### 4.1 Sidebar Contextual
+### 4.1 Contextual Sidebar
 
-**Hoje**: Menu genérico com 22 módulos  
-**Amanhã**: Sidebar que muda conforme o contexto
+**Today**: Generic menu with 22 modules  
+**Tomorrow**: Sidebar that changes according to the context
 
 ```
-ESTRUTURA DO SIDEBAR CONTEXTUAL
+CONTEXTUAL SIDEBAR STRUCTURE
 
 ┌─────────────────────────────────────┐
 │ 🎵 Music OS 360                     │
 ├─────────────────────────────────────┤
 │ [Current Workspace Indicator]       │
 │                                     │
-│ 🎤 MC Lander                        │  ← Contexto atual
+│ 🎤 MC Lander                        │  ← Current context
 │ Artist Workspace                    │
 ├─────────────────────────────────────┤
 │ WORKSPACE NAVIGATION                │
@@ -454,7 +454,7 @@ ESTRUTURA DO SIDEBAR CONTEXTUAL
 └─────────────────────────────────────┘
 ```
 
-### 4.2 Breadcrumb Operacional
+### 4.2 Operational Breadcrumb
 
 ```
 Music OS → Workspace: Artist MC Lander → Overview
@@ -465,7 +465,7 @@ Music OS → Workspace: Artist MC Lander → Overview
 ### 4.3 Command Center (⌘K / Ctrl+K)
 
 ```
-Fuzzy search global + ações contextuais:
+Global fuzzy search + contextual actions:
 
 > artist mc lander
   🎤 Go to Artist Workspace
@@ -486,15 +486,15 @@ Fuzzy search global + ações contextuais:
   🗓️ View Schedule
 ```
 
-### 4.4 Quick Actions Contextual
+### 4.4 Contextual Quick Actions
 
-Em cada workspace, top-right:
+In each workspace, top-right:
 
 ```
 [+ Add] [⋯ More] [? Help]
 ```
 
-Que expande para:
+Which expands to:
 ```
 + Create Release
 + Add Collaborator
@@ -505,9 +505,9 @@ Que expande para:
 
 ---
 
-## 5. PADRÕES GLOBAIS DE UX {#padrões-ux}
+## 5. GLOBAL UX STANDARDS {#ux-standards}
 
-### 5.1 Anatomia de um Workspace
+### 5.1 Anatomy of a Workspace
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -529,7 +529,7 @@ Que expande para:
 │          │                                                   │
 │          ├─────────────────────────────────────────────────┤
 │          │ Contextual Sidebar (Right, Optional)             │
-│          │ - Timeline Compacta                              │
+│          │ - Compact Timeline                               │
 │          │ - Quick Stats                                    │
 │          │ - Pending Actions                                │
 │          │ - Recent Activity                                │
@@ -537,10 +537,10 @@ Que expande para:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 5.2 Padrão de Card Padronizado
+### 5.2 Standardized Card Pattern
 
 ```tsx
-// WorkspaceCard - padrão reutilizável
+// WorkspaceCard - reusable pattern
 <Card className="workspace-card">
   <CardHeader>
     <div className="flex items-start justify-between">
@@ -561,17 +561,18 @@ Que expande para:
 </Card>
 ```
 
-### 5.3 Timeline Activity Padrão
+### 5.3 Standard Activity Timeline
 
 ```
-Timeline compacta com:
-- Ícone de operação
+Compact timeline with:
+- Operation icon
 - Timestamp
-- Descrição
-- Autor (avatar)
-- Contexto (link)
+- Description
+- Author (avatar)
+- Context (link)
 
-Exemplo:
+Example (PT-BR UI copy: "Release distributed to DSPs, 2 hours ago by João Silva";
+"Asset approved, 4 hours ago by Maria Santos"; "Payment processed, 1 day ago"):
 ┌─────────────────────────────────────────┐
 │ 📤 Release distribuído para DSPs        │
 │ há 2 horas por João Silva               │
@@ -584,20 +585,20 @@ Exemplo:
 └─────────────────────────────────────────┘
 ```
 
-### 5.4 Estados Visuais Padronizados
+### 5.4 Standardized Visual States
 
 ```
-Estado       | Cor          | Ícone        | Sentido
-─────────────┼──────────────┼──────────────┼──────────
-Ativo        | Green        | CheckCircle  | Operacional
-Pendente     | Amber        | Clock        | Aguardando
-Bloqueado    | Red          | AlertCircle  | Atenção
-Rascunho     | Gray         | FileText     | Incompleto
-Arquivado    | Muted        | Archive      | Histórico
-Processando  | Blue         | Loader       | Em progresso
+State (PT-BR label)  | Color        | Icon         | Meaning
+────────────────────┼──────────────┼──────────────┼──────────
+Ativo (Active)      | Green        | CheckCircle  | Operational
+Pendente (Pending)  | Amber        | Clock        | Waiting
+Bloqueado (Blocked) | Red          | AlertCircle  | Attention
+Rascunho (Draft)    | Gray         | FileText     | Incomplete
+Arquivado (Archived)| Muted        | Archive      | History
+Processando (Processing) | Blue    | Loader       | In progress
 ```
 
-### 5.5 Padrão de Tabla Workspace
+### 5.5 Workspace Table Pattern
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -607,18 +608,19 @@ Processando  | Blue         | Loader       | Em progresso
 │ ☐ ... | ✓  ... | ... | @... | ⋯             │
 └──────────────────────────────────────────────┘
 
-Sempre:
-- Checkbox para bulk actions
-- Status com badge visual
-- Data de criação/modificação
-- Proprietário/autor
-- Menu de ações (⋯)
+Always:
+- Checkbox for bulk actions
+- Status with a visual badge
+- Creation/modification date
+- Owner/author
+- Actions menu (⋯)
 ```
 
 ### 5.6 Empty States
 
 ```
-Ao abrir um workspace vazio:
+When opening an empty workspace (PT-BR UI copy: "No release registered" /
+"Start creating your first release"):
 
     🎵
     
@@ -631,27 +633,27 @@ Nenhum lançamento registrado
 
 ---
 
-## 6. ESTRUTURA TÉCNICA {#estrutura-técnica}
+## 6. TECHNICAL STRUCTURE {#technical-structure}
 
 ### 6.1 Context Architecture
 
 ```typescript
 // contexts/WorkspaceContext.tsx
 interface WorkspaceContextValue {
-  // Identificação
+  // Identification
   workspaceType: 'artist' | 'release' | 'campaign' | 'project' | 'contract';
   workspaceId: string;
   
-  // Entidade
+  // Entity
   entity: Artist | Release | Campaign | Project | Contract;
   isLoading: boolean;
   error: Error | null;
   
-  // Navegação
+  // Navigation
   currentTab: string;
   setCurrentTab: (tab: string) => void;
   
-  // Estado de UI
+  // UI state
   selectedItems: string[];
   setSelectedItems: (ids: string[]) => void;
   
@@ -667,43 +669,43 @@ interface WorkspaceContextValue {
 export const WorkspaceContext = React.createContext<WorkspaceContextValue | null>(null);
 ```
 
-### 6.2 Hook Padrão
+### 6.2 Standard Hook
 
 ```typescript
 // hooks/useWorkspaceContext.ts
 export function useWorkspaceContext() {
   const context = useContext(WorkspaceContext);
   if (!context) {
-    throw new Error('useWorkspaceContext deve ser usado dentro WorkspaceProvider');
+    throw new Error('useWorkspaceContext must be used within WorkspaceProvider');
   }
   return context;
 }
 ```
 
-### 6.3 Estrutura de Query
+### 6.3 Query Structure
 
 ```typescript
 // queries/useArtistWorkspace.ts
 export function useArtistWorkspace(artistId: string) {
-  // Carrega artista
+  // Load artist
   const artist = useQuery({
     queryKey: ['artist', artistId],
     queryFn: () => artistService.getById(artistId),
   });
   
-  // Carrega releases
+  // Load releases
   const releases = useQuery({
     queryKey: ['releases', artistId],
     queryFn: () => releaseService.getByArtist(artistId),
   });
   
-  // Carrega activities
+  // Load activities
   const activities = useQuery({
     queryKey: ['activities', artistId],
     queryFn: () => activityService.getByEntity('artist', artistId),
   });
   
-  // Carrega financial
+  // Load financial
   const financial = useQuery({
     queryKey: ['financial', artistId],
     queryFn: () => financialService.getByArtist(artistId),
@@ -731,7 +733,7 @@ export function useWorkspaceRealtime(
   const { supabase } = useSupabase();
   
   useEffect(() => {
-    // Inscrever-se a atualizações
+    // Subscribe to updates
     const channel = supabase
       .channel(`workspace:${workspaceType}:${entityId}`)
       .on(
@@ -743,7 +745,7 @@ export function useWorkspaceRealtime(
           filter: `id=eq.${entityId}`,
         },
         (payload) => {
-          // Atualizar contexto
+          // Update context
           invalidateQuery([workspaceType, entityId]);
         }
       )
@@ -759,7 +761,7 @@ export function useWorkspaceRealtime(
 ```typescript
 // services/activityService.ts
 export class ActivityService {
-  // Registra uma ação
+  // Records an action
   async logActivity(data: {
     entityType: 'artist' | 'release' | 'campaign' | 'project' | 'contract';
     entityId: string;
@@ -774,7 +776,7 @@ export class ActivityService {
     });
   }
   
-  // Carrega activities de uma entidade
+  // Loads the activities of an entity
   async getByEntity(entityType: string, entityId: string) {
     return db
       .select()
@@ -789,9 +791,9 @@ export class ActivityService {
 
 ---
 
-## 7. HIERARQUIA DE ROTAS {#rotas}
+## 7. ROUTE HIERARCHY {#routes}
 
-### 7.1 Arquivo de Rotas Reorganizado
+### 7.1 Reorganized Routes File
 
 ```typescript
 // app/routes/workspace.routes.tsx
@@ -907,9 +909,9 @@ export const libraryRoutes = [
 
 ---
 
-## 8. SISTEMA DE COMPONENTES {#componentes}
+## 8. COMPONENT SYSTEM {#components}
 
-### 8.1 Componentes Reutilizáveis para Workspaces
+### 8.1 Reusable Components for Workspaces
 
 ```typescript
 // components/shared-workspace/WorkspaceCard.tsx
@@ -1119,7 +1121,7 @@ export function WorkspaceContextualSidebar({
 }
 ```
 
-### 8.2 Layout Componentes
+### 8.2 Layout Components
 
 ```typescript
 // layouts/WorkspaceLayout.tsx
@@ -1194,16 +1196,16 @@ export function WorkspaceLayout({
 CREATE TABLE activity_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
-  -- Entidade e Operação
+  -- Entity and Operation
   entity_type VARCHAR NOT NULL,  -- 'artist', 'release', 'campaign', etc
   entity_id UUID NOT NULL,
   action VARCHAR NOT NULL,       -- 'created', 'updated', 'approved', etc
   
-  -- Descrição e Metadata
+  -- Description and Metadata
   description TEXT NOT NULL,
   metadata JSONB,
   
-  -- Autor
+  -- Author
   user_id UUID NOT NULL,
   user_name VARCHAR,
   user_avatar_url TEXT,
@@ -1211,7 +1213,7 @@ CREATE TABLE activity_logs (
   -- Timestamps
   created_at TIMESTAMP DEFAULT NOW(),
   
-  -- Índices
+  -- Indexes
   INDEX (entity_type, entity_id, created_at DESC),
   INDEX (user_id),
   FOREIGN KEY (user_id) REFERENCES users(id)
@@ -1266,7 +1268,7 @@ export async function logActivity(
   });
 }
 
-// Exemplo de uso:
+// Usage example (the activity description is PT-BR user-facing copy: "Release ... was updated"):
 app.patch('/api/releases/:id', async (req, res) => {
   const release = await updateRelease(req.params.id, req.body);
   
@@ -1285,91 +1287,91 @@ app.patch('/api/releases/:id', async (req, res) => {
 
 ---
 
-## 10. ESTRATÉGIA DE IMPLEMENTAÇÃO {#implementação}
+## 10. IMPLEMENTATION STRATEGY {#implementation}
 
-### 10.1 Timeline de Implementação (Não-disruptiva)
+### 10.1 Implementation Timeline (Non-disruptive)
 
 ```
-FASE 1: Fundação (Semanas 1-2)
-├── [ ] Criar estrutura de pastas para workspace/
-├── [ ] Implementar WorkspaceContext
-├── [ ] Criar hooks base (useWorkspaceContext, etc)
-├── [ ] Implementar ActivityService no backend
-├── [ ] Criar tabelas de activity_logs e realtime_subscribers
-└── Resultado: Infraestrutura técnica pronta
+PHASE 1: Foundation (Weeks 1-2)
+├── [ ] Create the folder structure for workspace/
+├── [ ] Implement WorkspaceContext
+├── [ ] Create base hooks (useWorkspaceContext, etc)
+├── [ ] Implement ActivityService in the backend
+├── [ ] Create the activity_logs and realtime_subscribers tables
+└── Result: Technical infrastructure ready
 
-FASE 2: Artist Workspace (Semanas 3-4)
-├── [ ] Criar ArtistWorkspaceLayout
-├── [ ] Implementar Artist Overview
-├── [ ] Integrar Releases view
-├── [ ] Adicionar Activity Timeline
-├── [ ] Conectar Financial view
-└── Resultado: Artist Workspace funcional
+PHASE 2: Artist Workspace (Weeks 3-4)
+├── [ ] Create ArtistWorkspaceLayout
+├── [ ] Implement Artist Overview
+├── [ ] Integrate Releases view
+├── [ ] Add Activity Timeline
+├── [ ] Connect Financial view
+└── Result: Artist Workspace functional
 
-FASE 3: Release Workspace (Semanas 5-6)
-├── [ ] Criar ReleaseWorkspaceLayout
-├── [ ] Implementar Release Overview
-├── [ ] Integrar Distribution view
-├── [ ] Adicionar Assets management
-├── [ ] Conectar Analytics
-└── Resultado: Release Workspace funcional
+PHASE 3: Release Workspace (Weeks 5-6)
+├── [ ] Create ReleaseWorkspaceLayout
+├── [ ] Implement Release Overview
+├── [ ] Integrate Distribution view
+├── [ ] Add Assets management
+├── [ ] Connect Analytics
+└── Result: Release Workspace functional
 
-FASE 4: Campaign Workspace (Semana 7)
-├── [ ] Criar CampaignWorkspaceLayout
-├── [ ] Implementar Campaign Overview
-├── [ ] Integrar Goals e Budget
-├── [ ] Adicionar Analytics
-└── Resultado: Campaign Workspace funcional
+PHASE 4: Campaign Workspace (Week 7)
+├── [ ] Create CampaignWorkspaceLayout
+├── [ ] Implement Campaign Overview
+├── [ ] Integrate Goals and Budget
+├── [ ] Add Analytics
+└── Result: Campaign Workspace functional
 
-FASE 5: Library & Navigation (Semana 8)
-├── [ ] Criar Library pages (Artists, Releases, etc)
-├── [ ] Implementar Contextual Sidebar
-├── [ ] Adicionar Command Center (⌘K)
-├── [ ] Integrar Quick Actions
-└── Resultado: Navegação contextual completa
+PHASE 5: Library & Navigation (Week 8)
+├── [ ] Create Library pages (Artists, Releases, etc)
+├── [ ] Implement Contextual Sidebar
+├── [ ] Add Command Center (⌘K)
+├── [ ] Integrate Quick Actions
+└── Result: Complete contextual navigation
 
-FASE 6: Polish & Optimization (Semana 9)
-├── [ ] Testes de performance
+PHASE 6: Polish & Optimization (Week 9)
+├── [ ] Performance tests
 ├── [ ] Realtime synchronization testing
 ├── [ ] UI/UX refinements
-├── [ ] Documentação
-└── Resultado: Sistema pronto para produção
+├── [ ] Documentation
+└── Result: System ready for production
 ```
 
-### 10.2 Estratégia Zero-Breaking-Changes
+### 10.2 Zero-Breaking-Changes Strategy
 
-**Todos os módulos antigos se mantêm funcionais**
+**All the old modules stay functional**
 
 ```
-Hoje:
+Today:
 /artistas         → Artist List Page
 /accounting       → Accounting Page
 
-Depois (adição, não substituição):
-/artistas                  → Artist List (mantém funcionando)
-/accounting                → Accounting (mantém funcionando)
+After (addition, not replacement):
+/artistas                  → Artist List (keeps working)
+/accounting                → Accounting (keeps working)
 
-/workspace/artist/:id      → Artist Workspace (novo)
-/workspace/release/:id     → Release Workspace (novo)
+/workspace/artist/:id      → Artist Workspace (new)
+/workspace/release/:id     → Release Workspace (new)
 
-Gradualmente:
-1. Adicionar links para workspaces nos módulos antigos
-2. Atualizar sidebar para mostrar ambas rotas
-3. Migrar dados e relacionamentos
-4. Deprecar módulos antigos após validação
+Gradually:
+1. Add links to workspaces in the old modules
+2. Update the sidebar to show both routes
+3. Migrate data and relationships
+4. Deprecate the old modules after validation
 ```
 
-### 10.3 Checklist de Implementação
+### 10.3 Implementation Checklist
 
 ```
-SETUP INICIAL
-[ ] Criar pasta /modules/workspace
-[ ] Criar /modules/activity-log
-[ ] Criar /modules/shared-workspace-components
-[ ] Setup de types e interfaces
-[ ] Setup de queries e services
+INITIAL SETUP
+[ ] Create the /modules/workspace folder
+[ ] Create /modules/activity-log
+[ ] Create /modules/shared-workspace-components
+[ ] Setup of types and interfaces
+[ ] Setup of queries and services
 
-PRIMEIRA ENTIDADE (Artist)
+FIRST ENTITY (Artist)
 [ ] ArtistWorkspaceLayout.tsx
 [ ] WorkspaceContext (artist-specific)
 [ ] useArtistWorkspace hook
@@ -1378,24 +1380,24 @@ PRIMEIRA ENTIDADE (Artist)
 [ ] Artist Financial section
 [ ] Artist Activity Timeline
 [ ] Artist Settings
-[ ] Link do módulo artist → workspace
+[ ] Link from the artist module → workspace
 
-SEGUNDA ENTIDADE (Release)
+SECOND ENTITY (Release)
 [ ] ReleaseWorkspaceLayout.tsx
 [ ] useReleaseWorkspace hook
 [ ] Release Overview
 [ ] Release Distribution
 [ ] Release Assets
 [ ] Release Analytics
-[ ] Link do módulo releases → workspace
+[ ] Link from the releases module → workspace
 
-TERCEIRA ENTIDADE (Campaign)
+THIRD ENTITY (Campaign)
 [ ] CampaignWorkspaceLayout.tsx
 [ ] useCampaignWorkspace hook
 [ ] Campaign Overview
-[ ] Campaign Goals e Budget
+[ ] Campaign Goals and Budget
 [ ] Campaign Analytics
-[ ] Link do módulo marketing → workspace
+[ ] Link from the marketing module → workspace
 
 LIBRARY & NAVIGATION
 [ ] /library/artists page
@@ -1414,86 +1416,86 @@ ACTIVITY SYSTEM
 [ ] Activity feed in workspaces
 
 TESTING & OPTIMIZATION
-[ ] Teste de performance
-[ ] Teste de realtime
-[ ] Teste de UX
-[ ] Documentação
-[ ] Deploy gradual
+[ ] Performance test
+[ ] Realtime test
+[ ] UX test
+[ ] Documentation
+[ ] Gradual deploy
 ```
 
-### 10.4 Prioridades Técnicas
+### 10.4 Technical Priorities
 
 ```
-MUST HAVE (Semanas 1-4)
-✓ WorkspaceContext funcionando
-✓ Artist Workspace básico
+MUST HAVE (Weeks 1-4)
+✓ WorkspaceContext working
+✓ Basic Artist Workspace
 ✓ Activity logging
-✓ Performance aceita
+✓ Accepted performance
 
-SHOULD HAVE (Semanas 5-7)
+SHOULD HAVE (Weeks 5-7)
 - Release Workspace
 - Campaign Workspace
 - Realtime sync
 - Contextual sidebar
 
-NICE TO HAVE (Semana 8+)
+NICE TO HAVE (Week 8+)
 - Command Center
 - Advanced analytics
-- Automations leves
+- Light automations
 - Custom workspaces
 ```
 
 ---
 
-## 11. RESULTADO FINAL ESPERADO
+## 11. EXPECTED FINAL RESULT
 
-### Como Será a Experiência
+### What the Experience Will Be Like
 
 ```
-Usuário abre a aplicação
+User opens the application
 ↓
-Navega para Artistas (Library)
+Navigates to Artists (Library)
 ↓
-Clica em "MC Lander"
+Clicks on "MC Lander"
 ↓
-Abre Artist Workspace
+Opens the Artist Workspace
 
-[Visão de 360° da carreira do artista]
-├── Overview com KPIs
-├── Releases ativas (3)
-├── Campanhas em andamento (1)
-├── Financeiro do período
-├── Tarefas pendentes (5)
-├── Timeline de atividades (últimas 2h)
-├── Equipe e colaboradores
+[360° view of the artist's career]
+├── Overview with KPIs
+├── Active releases (3)
+├── Campaigns in progress (1)
+├── Financials of the period
+├── Pending tasks (5)
+├── Activity timeline (last 2h)
+├── Team and collaborators
 └── Quick actions
 
-Usuário clica em um release
+User clicks on a release
 ↓
-Abre Release Workspace
+Opens the Release Workspace
 
-[Visão de 360° daquele lançamento]
-├── Status de distribuição
-├── Assets pendentes
-├── Campanhas vinculadas
-├── Tarefas do release
-├── Analytics em tempo real
-├── Timeline de operações
-└── Equipe envolvida
+[360° view of that release]
+├── Distribution status
+├── Pending assets
+├── Linked campaigns
+├── Release tasks
+├── Real-time analytics
+├── Operations timeline
+└── Team involved
 
-Sensação: "Tudo conectado. Tudo aqui. Operação fluida."
+Feeling: "Everything connected. Everything here. Smooth operation."
 ```
 
 ---
 
-## 12. PRÓXIMOS PASSOS
+## 12. NEXT STEPS
 
-1. **Validação da Arquitetura**: Revisão com time
-2. **Setup de Estrutura**: Criar pastas e arquivos base
-3. **Implementação Phase 1**: Fundação técnica
-4. **Prototipagem Artist Workspace**: Validar UX
-5. **Rollout Gradual**: Teste, feedback, otimização
+1. **Architecture Validation**: Review with the team
+2. **Structure Setup**: Create base folders and files
+3. **Phase 1 Implementation**: Technical foundation
+4. **Artist Workspace Prototyping**: Validate the UX
+5. **Gradual Rollout**: Test, feedback, optimization
 
 ---
 
-**Este é o blueprint para transformar Music OS 360 de um conjunto de módulos fragmentados em um sistema operacional musical moderno, contextual, fluido e absolutamente organizado.**
+**This is the blueprint for transforming Music OS 360 from a set of fragmented modules into a modern, contextual, fluid and thoroughly organized music operating system.**

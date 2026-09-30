@@ -1,97 +1,97 @@
-# 🗺️ MUSIC OS 360 — ROADMAP EXECUTIVO & ESTRATÉGIA DE MIGRAÇÃO
+# 🗺️ MUSIC OS 360 — EXECUTIVE ROADMAP & MIGRATION STRATEGY
 
-**Documento Master: Timeline, Prioridades e Estratégia Zero-Breaking-Changes**
-
----
-
-## 📊 VISÃO GERAL
-
-### Estado Atual (Hoje)
-- 22 módulos fragmentados
-- Navegação linear por menu
-- Sem contextualização
-- UX quebrada entre módulos
-- Sem activity system integrado
-
-### Estado Alvo (Semana 9)
-- 5 workspaces contextuais (Artist, Release, Campaign, Project, Contract)
-- Navegação inteligente e contextual
-- Activity timeline em todos os workspaces
-- Library centralizada
-- Experiência unificada
-- Módulos antigos ainda funcionam
+**Master Document: Timeline, Priorities and Zero-Breaking-Changes Strategy**
 
 ---
 
-## 🎯 ESTRATÉGIA EXECUTIVA
+## 📊 OVERVIEW
 
-### Princípio: Non-Breaking Gradual Migration
+### Current State (Today)
+- 22 fragmented modules
+- Linear menu navigation
+- No contextualization
+- Broken UX across modules
+- No integrated activity system
+
+### Target State (Week 9)
+- 5 contextual workspaces (Artist, Release, Campaign, Project, Contract)
+- Smart, contextual navigation
+- Activity timeline in all workspaces
+- Centralized Library
+- Unified experience
+- Old modules still work
+
+---
+
+## 🎯 EXECUTIVE STRATEGY
+
+### Principle: Non-Breaking Gradual Migration
 
 ```
-SEMANA 1-2: Fundar infraestrutura
-  ├─ Novos workspaces não quebram código antigo
-  ├─ Rotas novas coexistem com rotas antigas
-  └─ Dados compartilhados = sem duplicação
+WEEK 1-2: Lay the infrastructure
+  ├─ New workspaces do not break old code
+  ├─ New routes coexist with old routes
+  └─ Shared data = no duplication
 
-SEMANA 3-4: Validar Artist Workspace
-  ├─ Usuários testam novo padrão
-  ├─ Módulo artist antigo ainda funciona
-  └─ Links podem apontar para novo ou antigo
+WEEK 3-4: Validate the Artist Workspace
+  ├─ Users test the new pattern
+  ├─ The old artist module still works
+  └─ Links can point to the new or the old one
 
-SEMANA 5-8: Expandir outros workspaces
+WEEK 5-8: Expand the other workspaces
   ├─ Release, Campaign, Project, Contract
-  ├─ Library unificada
-  └─ Navegação contextual completa
+  ├─ Unified Library
+  └─ Complete contextual navigation
 
-SEMANA 9: Polish & Go-Live
-  ├─ Deprecation paths para módulos antigos
-  ├─ Performance otimizada
-  └─ Documentação completa
+WEEK 9: Polish & Go-Live
+  ├─ Deprecation paths for old modules
+  ├─ Optimized performance
+  └─ Complete documentation
 
-MANUTENÇÃO: Remover legado (Após validação)
-  ├─ Deprecate rotas antigas (2-3 meses)
-  ├─ Mover dados finais
-  └─ Remover código legado
+MAINTENANCE: Remove legacy (after validation)
+  ├─ Deprecate old routes (2-3 months)
+  ├─ Move final data
+  └─ Remove legacy code
 ```
 
 ---
 
-## 📅 TIMELINE DETALHADA
+## 📅 DETAILED TIMELINE
 
-### SEMANA 1 — SETUP & INFRAESTRUTURA
+### WEEK 1 — SETUP & INFRASTRUCTURE
 
-#### Seg-Qua: Backend Setup
-- [ ] Criar tabela `activity_logs`
-- [ ] Criar tabela `realtime_subscribers`
-- [ ] Criar `ActivityLogService` (NestJS)
-- [ ] Criar endpoints:
-  - `POST /api/activities` (crear activity)
-  - `GET /api/activities?entityType=X&entityId=Y` (listar)
-- [ ] Criar migrations TypeORM
-- [ ] Adicionar índices BD para performance
-- [ ] Testar endpoints com Postman
+#### Mon-Wed: Backend Setup
+- [ ] Create the `activity_logs` table
+- [ ] Create the `realtime_subscribers` table
+- [ ] Create `ActivityLogService` (NestJS)
+- [ ] Create endpoints:
+  - `POST /api/activities` (create activity)
+  - `GET /api/activities?entityType=X&entityId=Y` (list)
+- [ ] Create TypeORM migrations
+- [ ] Add DB indexes for performance
+- [ ] Test endpoints with Postman
 
-**Dúvidas técnicas?** Parar em backup de dados
+**Technical doubts?** Stop at a data backup
 
-#### Qui-Sex: Frontend Setup
-- [ ] Criar pastas estructura `/workspace`, `/activity-log`, `/shared-workspace-components`
-- [ ] Criar types em `workspace.types.ts`
-- [ ] Criar `WorkspaceContext` e `WorkspaceProvider`
-- [ ] Criar hooks: `useWorkspace`, `useActivityLog`
-- [ ] Criar componentes: `WorkspaceCard`, `WorkspaceMetrics`, `ActivityTimeline`
-- [ ] Testar que tudo importa sem erros
+#### Thu-Fri: Frontend Setup
+- [ ] Create the folder structure `/workspace`, `/activity-log`, `/shared-workspace-components`
+- [ ] Create types in `workspace.types.ts`
+- [ ] Create `WorkspaceContext` and `WorkspaceProvider`
+- [ ] Create hooks: `useWorkspace`, `useActivityLog`
+- [ ] Create components: `WorkspaceCard`, `WorkspaceMetrics`, `ActivityTimeline`
+- [ ] Test that everything imports without errors
 
-**Resultado da Semana 1**: Infraestrutura técnica funcionando ✓
+**Result of Week 1**: Technical infrastructure working ✓
 
 ---
 
-### SEMANA 2 — ARTIST WORKSPACE (Fase Inicial)
+### WEEK 2 — ARTIST WORKSPACE (Initial Phase)
 
-#### Seg-Qua: Estrutura Artist Workspace
-- [ ] Criar arquivo `ArtistWorkspaceLayout.tsx`
-- [ ] Criar arquivo `useArtistWorkspace.ts` hook
-- [ ] Criar arquivos de overview page (`ArtistOverview.tsx`)
-- [ ] Setup de rotas em `workspace.routes.tsx`:
+#### Mon-Wed: Artist Workspace Structure
+- [ ] Create the `ArtistWorkspaceLayout.tsx` file
+- [ ] Create the `useArtistWorkspace.ts` hook file
+- [ ] Create the overview page files (`ArtistOverview.tsx`)
+- [ ] Set up routes in `workspace.routes.tsx`:
   ```typescript
   {
     path: "/workspace/artist/:artistId",
@@ -99,204 +99,204 @@ MANUTENÇÃO: Remover legado (Após validação)
     children: [...]
   }
   ```
-- [ ] Conectar hook ao contexto
-- [ ] Testar loading state
+- [ ] Connect the hook to the context
+- [ ] Test the loading state
 
-#### Qui-Sex: Artist Overview Implementation
-- [ ] `ArtistOverview` page componente
-- [ ] Renderizar `WorkspaceMetrics` com dados do artista
-- [ ] Renderizar `ActivityTimeline` com últimas atividades
-- [ ] Renderizar releases recentes (card)
-- [ ] Renderizar campanhas ativas (card)
-- [ ] Testar navegação e loading
-- [ ] Documentar padrão no README
+#### Thu-Fri: Artist Overview Implementation
+- [ ] `ArtistOverview` page component
+- [ ] Render `WorkspaceMetrics` with the artist's data
+- [ ] Render `ActivityTimeline` with the latest activities
+- [ ] Render recent releases (card)
+- [ ] Render active campaigns (card)
+- [ ] Test navigation and loading
+- [ ] Document the pattern in the README
 
-**Resultado da Semana 2**: Artist Workspace básico funcionando ✓
-
----
-
-### SEMANA 3 — ARTIST WORKSPACE (Expansão)
-
-#### Seg-Qua: Artist Tabs
-- [ ] Implementar aba `Releases`
-  - [ ] Listagem de releases do artista
-  - [ ] Filtros por status
-  - [ ] Link para Release Workspace
-- [ ] Implementar aba `Campaigns`
-  - [ ] Listagem de campanhas
-  - [ ] Status e budget
-  - [ ] Link para Campaign Workspace
-
-#### Qui-Sex: Artist Financial & Settings
-- [ ] Implementar aba `Financial`
-  - [ ] Resumo financeiro (receitas, recebimentos externos de direitos)
-  - [ ] Gráficos de renda
-- [ ] Implementar aba `Settings`
-  - [ ] Configurações do artista
-  - [ ] Integração com módulo artist existente
-- [ ] Testar todas as abas
-
-**Resultado da Semana 3**: Artist Workspace completo e operacional ✓
-
-**VALIDAÇÃO CHECKPOINT**: Usuários testam Artist Workspace, coletar feedback
+**Result of Week 2**: Basic Artist Workspace working ✓
 
 ---
 
-### SEMANA 4 — INTEGRAÇÃO & LINKS
+### WEEK 3 — ARTIST WORKSPACE (Expansion)
 
-#### Seg-Qua: Links do módulo artist antigo
-- [ ] Adicionar botão "Open in Workspace" no módulo artist
-- [ ] Link para `/workspace/artist/:id`
-- [ ] Manter módulo antigo funcionando em paralelo
-- [ ] Sidebar navigation: mostrar ambas rotas
-- [ ] Mensagem: "Novo: Clique para abrir novo Artist Workspace"
+#### Mon-Wed: Artist Tabs
+- [ ] Implement the `Releases` tab
+  - [ ] List of the artist's releases
+  - [ ] Filters by status
+  - [ ] Link to the Release Workspace
+- [ ] Implement the `Campaigns` tab
+  - [ ] List of campaigns
+  - [ ] Status and budget
+  - [ ] Link to the Campaign Workspace
 
-#### Qui-Sex: Activity Logging
-- [ ] Implementar `logActivity` middleware no backend
-- [ ] Adicionar logging em todas operações de artista:
-  - Criação de artista
-  - Atualização de dados
-  - Criação de release
-  - Aprovação de conteúdo
-- [ ] Testar que activities aparecem em timeline
-- [ ] Implementar realtime com Supabase
+#### Thu-Fri: Artist Financial & Settings
+- [ ] Implement the `Financial` tab
+  - [ ] Financial summary (revenue, external rights receipts)
+  - [ ] Income charts
+- [ ] Implement the `Settings` tab
+  - [ ] Artist settings
+  - [ ] Integration with the existing artist module
+- [ ] Test all tabs
 
-**Resultado da Semana 4**: Artist Workspace integrado ao sistema ✓
+**Result of Week 3**: Artist Workspace complete and operational ✓
+
+**VALIDATION CHECKPOINT**: Users test the Artist Workspace, collect feedback
 
 ---
 
-### SEMANA 5 — RELEASE WORKSPACE
+### WEEK 4 — INTEGRATION & LINKS
 
-#### Seg-Qua: Estrutura Release Workspace
-- [ ] Criar `ReleaseWorkspaceLayout.tsx`
-- [ ] Criar `useReleaseWorkspace.ts` hook
-- [ ] Criar `ReleaseOverview.tsx`
-- [ ] Setup de rotas para Release Workspace
-- [ ] Conectar a dados do módulo releases existente
+#### Mon-Wed: Links from the old artist module
+- [ ] Add an "Open in Workspace" button in the artist module
+- [ ] Link to `/workspace/artist/:id`
+- [ ] Keep the old module working in parallel
+- [ ] Sidebar navigation: show both routes
+- [ ] Message (PT-BR UI copy, kept verbatim): "Novo: Clique para abrir novo Artist Workspace" ("New: Click to open the new Artist Workspace")
 
-#### Qui-Sex: Release Overview & Tabs
+#### Thu-Fri: Activity Logging
+- [ ] Implement the `logActivity` middleware in the backend
+- [ ] Add logging to all artist operations:
+  - Artist creation
+  - Data update
+  - Release creation
+  - Content approval
+- [ ] Test that activities appear in the timeline
+- [ ] Implement realtime with Supabase
+
+**Result of Week 4**: Artist Workspace integrated into the system ✓
+
+---
+
+### WEEK 5 — RELEASE WORKSPACE
+
+#### Mon-Wed: Release Workspace Structure
+- [ ] Create `ReleaseWorkspaceLayout.tsx`
+- [ ] Create the `useReleaseWorkspace.ts` hook
+- [ ] Create `ReleaseOverview.tsx`
+- [ ] Set up routes for the Release Workspace
+- [ ] Connect to the data of the existing releases module
+
+#### Thu-Fri: Release Overview & Tabs
 - [ ] `ReleaseOverview` page
-- [ ] KPIs: streams, distribuição status
-- [ ] Aba `Distribution`: plataformas, datas
-- [ ] Aba `Assets`: capas, arquivos
-- [ ] Aba `Team`: artistas, produtores
-- [ ] Testar navegação
+- [ ] KPIs: streams, distribution status
+- [ ] `Distribution` tab: platforms, dates
+- [ ] `Assets` tab: covers, files
+- [ ] `Team` tab: artists, producers
+- [ ] Test navigation
 
-**Resultado da Semana 5**: Release Workspace básico ✓
-
----
-
-### SEMANA 6 — RELEASE WORKSPACE (Expansão)
-
-#### Seg-Qua: Release Analytics & Financial
-- [ ] Aba `Analytics`: gráficos de streams, listeners
-- [ ] Aba `Financial`: custos, receitas
-- [ ] Aba `Recebimentos externos de direitos`: splits de compositor
-- [ ] Integrar com dados de accounting
-
-#### Qui-Sex: Release Marketing & Tasks
-- [ ] Aba `Marketing`: campanhas vinculadas
-- [ ] Aba `Tasks`: kanban de tarefas
-- [ ] Aba `Schedule`: timeline de ações
-- [ ] Activity timeline completa
-- [ ] Testar integração com campanhas
-
-**Resultado da Semana 6**: Release Workspace completo ✓
+**Result of Week 5**: Basic Release Workspace ✓
 
 ---
 
-### SEMANA 7 — CAMPAIGN WORKSPACE
+### WEEK 6 — RELEASE WORKSPACE (Expansion)
 
-#### Seg-Qua: Campaign Workspace
-- [ ] Criar `CampaignWorkspaceLayout.tsx`
-- [ ] Criar `useCampaignWorkspace.ts`
+#### Mon-Wed: Release Analytics & Financial
+- [ ] `Analytics` tab: streams, listeners charts
+- [ ] `Financial` tab: costs, revenue
+- [ ] `Recebimentos externos de direitos` (External rights receipts) tab: songwriter splits
+- [ ] Integrate with accounting data
+
+#### Thu-Fri: Release Marketing & Tasks
+- [ ] `Marketing` tab: linked campaigns
+- [ ] `Tasks` tab: task kanban
+- [ ] `Schedule` tab: action timeline
+- [ ] Complete activity timeline
+- [ ] Test integration with campaigns
+
+**Result of Week 6**: Release Workspace complete ✓
+
+---
+
+### WEEK 7 — CAMPAIGN WORKSPACE
+
+#### Mon-Wed: Campaign Workspace
+- [ ] Create `CampaignWorkspaceLayout.tsx`
+- [ ] Create `useCampaignWorkspace.ts`
 - [ ] `CampaignOverview.tsx`
-- [ ] Setup rotas
-- [ ] Abas: `Goals`, `Budget`, `Tasks`, `Content`
+- [ ] Set up routes
+- [ ] Tabs: `Goals`, `Budget`, `Tasks`, `Content`
 
-#### Qui-Sex: Campaign Advanced
-- [ ] Aba `Creators`: influencers, colaboradores
-- [ ] Aba `Analytics`: engajamento, conversão
-- [ ] Aba `Reports`: geração de relatórios
+#### Thu-Fri: Campaign Advanced
+- [ ] `Creators` tab: influencers, collaborators
+- [ ] `Analytics` tab: engagement, conversion
+- [ ] `Reports` tab: report generation
 - [ ] Activity timeline
-- [ ] Testar integração com marketing módulo
+- [ ] Test integration with the marketing module
 
-**Resultado da Semana 7**: Campaign Workspace funcional ✓
-
----
-
-### SEMANA 8 — LIBRARY & NAVEGAÇÃO CONTEXTUAL
-
-#### Seg-Qua: Library Pages
-- [ ] `/library/artists` - Listagem all artists
-- [ ] `/library/releases` - Listagem all releases
-- [ ] `/library/campaigns` - Listagem all campaigns
-- [ ] `/library/projects` - Listagem all projects
-- [ ] `/library/contracts` - Listagem all contracts
-- [ ] Cada item com link para workspace
-- [ ] Filtros e busca
-
-#### Qui-Sex: Navegação Avançada
-- [ ] Implementar `WorkspaceSidebar` contextual
-- [ ] Implementar `Command Center` (⌘K)
-- [ ] Implementar `Quick Actions`
-- [ ] Implementar `Breadcrumbs` operacionais
-- [ ] Testar todas navegações
-
-**Resultado da Semana 8**: Sistema de navegação completo ✓
+**Result of Week 7**: Campaign Workspace functional ✓
 
 ---
 
-### SEMANA 9 — POLISH & GO-LIVE
+### WEEK 8 — LIBRARY & CONTEXTUAL NAVIGATION
 
-#### Seg-Ter: Performance & Optimization
+#### Mon-Wed: Library Pages
+- [ ] `/library/artists` - List of all artists
+- [ ] `/library/releases` - List of all releases
+- [ ] `/library/campaigns` - List of all campaigns
+- [ ] `/library/projects` - List of all projects
+- [ ] `/library/contracts` - List of all contracts
+- [ ] Each item with a link to its workspace
+- [ ] Filters and search
+
+#### Thu-Fri: Advanced Navigation
+- [ ] Implement the contextual `WorkspaceSidebar`
+- [ ] Implement the `Command Center` (⌘K)
+- [ ] Implement `Quick Actions`
+- [ ] Implement operational `Breadcrumbs`
+- [ ] Test all navigations
+
+**Result of Week 8**: Complete navigation system ✓
+
+---
+
+### WEEK 9 — POLISH & GO-LIVE
+
+#### Mon-Tue: Performance & Optimization
 - [ ] Lighthouse audit
-- [ ] React Query caching otimizado
-- [ ] Realtime subscriptions testado
-- [ ] Bundle size análise
-- [ ] Lazy loading de componentes
+- [ ] Optimized React Query caching
+- [ ] Realtime subscriptions tested
+- [ ] Bundle size analysis
+- [ ] Lazy loading of components
 
-#### Qua-Qui: Testing & QA
-- [ ] Testar todos workspaces
-- [ ] Testar navegação completa
-- [ ] Testar activity logging
-- [ ] Testar realtime sync
+#### Wed-Thu: Testing & QA
+- [ ] Test all workspaces
+- [ ] Test complete navigation
+- [ ] Test activity logging
+- [ ] Test realtime sync
 - [ ] User acceptance testing (UAT)
 
-#### Sex: Deploy & Documentation
-- [ ] Deploy para staging
-- [ ] Deploy para produção (gradual rollout)
-- [ ] Documentação de usuário
-- [ ] Documentação técnica
-- [ ] Treinamento de time
+#### Fri: Deploy & Documentation
+- [ ] Deploy to staging
+- [ ] Deploy to production (gradual rollout)
+- [ ] User documentation
+- [ ] Technical documentation
+- [ ] Team training
 
-**Resultado da Semana 9**: Sistema pronto para produção ✓
+**Result of Week 9**: System ready for production ✓
 
 ---
 
-## 🎯 PRIORIDADES CRÍTICAS
+## 🎯 CRITICAL PRIORITIES
 
-### MUST HAVE (Semanas 1-4)
-1. ✓ Activity logging funcionando
-2. ✓ Artist Workspace operacional
-3. ✓ Sem breaking changes
-4. ✓ Performance aceitável
+### MUST HAVE (Weeks 1-4)
+1. ✓ Activity logging working
+2. ✓ Artist Workspace operational
+3. ✓ No breaking changes
+4. ✓ Acceptable performance
 
-### SHOULD HAVE (Semanas 5-8)
-1. Release Workspace completo
-2. Campaign Workspace completo
-3. Library unificada
-4. Navegação contextual
+### SHOULD HAVE (Weeks 5-8)
+1. Complete Release Workspace
+2. Complete Campaign Workspace
+3. Unified Library
+4. Contextual navigation
 
-### NICE TO HAVE (Semana 9+)
-1. Command Center avançado
-2. Automações leves
+### NICE TO HAVE (Week 9+)
+1. Advanced Command Center
+2. Light automations
 3. Custom reports
 4. Advanced analytics
 
 ---
 
-## 📊 DEPENDÊNCIAS TÉCNICAS
+## 📊 TECHNICAL DEPENDENCIES
 
 ### Backend
 
@@ -304,7 +304,7 @@ MANUTENÇÃO: Remover legado (Após validação)
 ✓ PostgreSQL (activity_logs table)
 ✓ TypeORM (migrations)
 ✓ NestJS (ActivityLogService)
-✓ Supabase Realtime (opcional, para sync)
+✓ Supabase Realtime (optional, for sync)
 ```
 
 ### Frontend
@@ -321,89 +321,89 @@ MANUTENÇÃO: Remover legado (Após validação)
 
 ```
 ? Supabase Realtime
-? WebSockets (para activity notifications)
+? WebSockets (for activity notifications)
 ? Analytics (Mixpanel, Segment)
 ```
 
 ---
 
-## 🔄 FLUXO DE IMPLEMENTAÇÃO POR ITEM
+## 🔄 IMPLEMENTATION FLOW PER ITEM
 
-### Exemplo: Artist Workspace Overview
+### Example: Artist Workspace Overview
 
 ```
 PLANNING (15 min)
-├─ Revisar tipos necessários
-├─ Planejar layout
-└─ Identificar dados necessários
+├─ Review the required types
+├─ Plan the layout
+└─ Identify the required data
 
-BACKEND (1-2 horas)
-├─ Verificar endpoint GET /api/artists/:id
-├─ Verificar endpoint GET /api/activities
-├─ Testar com Postman
-└─ Confirmar que dados estão corretos
+BACKEND (1-2 hours)
+├─ Check the GET /api/artists/:id endpoint
+├─ Check the GET /api/activities endpoint
+├─ Test with Postman
+└─ Confirm that the data is correct
 
-FRONTEND (2-3 horas)
-├─ Criar useArtistWorkspace hook
-├─ Criar ArtistOverview.tsx
-├─ Integrar WorkspaceMetrics component
-├─ Integrar ActivityTimeline component
-├─ Testar loading states
-└─ Testar error handling
+FRONTEND (2-3 hours)
+├─ Create the useArtistWorkspace hook
+├─ Create ArtistOverview.tsx
+├─ Integrate the WorkspaceMetrics component
+├─ Integrate the ActivityTimeline component
+├─ Test loading states
+└─ Test error handling
 
-INTEGRATION (1 hora)
-├─ Conectar em rotas
-├─ Testar navegação
-├─ Adicionar link do módulo antigo
-└─ Testar em browser
+INTEGRATION (1 hour)
+├─ Connect to routes
+├─ Test navigation
+├─ Add a link from the old module
+└─ Test in the browser
 
-TESTING (1 hora)
+TESTING (1 hour)
 ├─ Manual testing
 ├─ Performance check
 ├─ Accessibility check
-└─ Documento padrão
+└─ Document the pattern
 
-TOTAL: ~6-8 horas por feature
+TOTAL: ~6-8 hours per feature
 ```
 
 ---
 
-## 🚀 ESTRATÉGIA DE ROLLOUT EM PRODUÇÃO
+## 🚀 PRODUCTION ROLLOUT STRATEGY
 
-### Fase 1: Staging (Semana 9, Dia 3-4)
+### Phase 1: Staging (Week 9, Day 3-4)
 ```
-Deploy para staging
-Todos da equipe testam
-Coletar bugs, issues
-Fixar críticos
+Deploy to staging
+Everyone on the team tests
+Collect bugs, issues
+Fix the critical ones
 ```
 
-### Fase 2: Closed Beta (Semana 9, Dia 5)
+### Phase 2: Closed Beta (Week 9, Day 5)
 ```
-Deploy para produção
-Enable para 10% de usuários
+Deploy to production
+Enable for 10% of users
 Monitor performance
-Coletar feedback
+Collect feedback
 ```
 
-### Fase 3: Open Beta (Semana 10, Dia 1)
+### Phase 3: Open Beta (Week 10, Day 1)
 ```
-Enable para 50% de usuários
+Enable for 50% of users
 Monitor crashes, errors
-Suporte ativo
+Active support
 ```
 
-### Fase 4: General Availability (Semana 10+)
+### Phase 4: General Availability (Week 10+)
 ```
-Enable para 100% de usuários
-Deprecate módulos antigos
-Migração de dados final
-Remover legacy code
+Enable for 100% of users
+Deprecate old modules
+Final data migration
+Remove legacy code
 ```
 
 ---
 
-## 📈 MÉTRICAS DE SUCESSO
+## 📈 SUCCESS METRICS
 
 ### Performance
 ```
@@ -431,66 +431,66 @@ Realtime latency: < 100ms
 
 ---
 
-## 🐛 PLANO DE CONTINGÊNCIA
+## 🐛 CONTINGENCY PLAN
 
-### Se Timeline Atrasar
+### If the Timeline Slips
 ```
-Semana N → Semana N+1: Estender deadline
-Priorizar: Artist Workspace
-Postergar: Campaign Workspace (Semana 10)
-Postergar: Project Workspace (Semana 11)
+Week N → Week N+1: Extend the deadline
+Prioritize: Artist Workspace
+Postpone: Campaign Workspace (Week 10)
+Postpone: Project Workspace (Week 11)
 ```
 
-### Se Performance Falhar
+### If Performance Fails
 ```
-Implementar:
-- Pagination agressiva
+Implement:
+- Aggressive pagination
 - Lazy loading
-- Caching mais agressivo
+- More aggressive caching
 - Defer activity logs
 ```
 
-### Se Bugs Críticos
+### If Critical Bugs
 ```
 Rollback:
-- Semana 9 Dia 5: Fácil rollback
-- Coexistência de rotas antigas
-- Zero perda de dados
+- Week 9 Day 5: Easy rollback
+- Coexistence of old routes
+- Zero data loss
 ```
 
 ---
 
-## 📋 CHECKLIST FINAL (Semana 9, Dia 5)
+## 📋 FINAL CHECKLIST (Week 9, Day 5)
 
 ```
 BACKEND
-[ ] Activity logging funciona
-[ ] Realtime sync testado
+[ ] Activity logging works
+[ ] Realtime sync tested
 [ ] Performance load tested
-[ ] Backups feitos
-[ ] Monitores configurados
+[ ] Backups done
+[ ] Monitors configured
 
 FRONTEND
-[ ] Todos workspaces testados
-[ ] Navegação completa funciona
-[ ] Mobile responsivo testado
+[ ] All workspaces tested
+[ ] Complete navigation works
+[ ] Mobile responsiveness tested
 [ ] Accessibility verified (WCAG AA)
-[ ] Bundle size otimizado
+[ ] Bundle size optimized
 
 INTEGRATION
-[ ] Links do módulo antigo → novo
-[ ] Sidebar contextual funciona
-[ ] Command Center funciona
-[ ] Breadcrumbs funcionam
+[ ] Links from the old module → new
+[ ] Contextual sidebar works
+[ ] Command Center works
+[ ] Breadcrumbs work
 
 DOCUMENTATION
-[ ] Usuário: Como usar workspaces
-[ ] Dev: Como estender workspaces
-[ ] Architecture: Diagrama completo
-[ ] API: Documentação endpoints
+[ ] User: How to use workspaces
+[ ] Dev: How to extend workspaces
+[ ] Architecture: Complete diagram
+[ ] API: Endpoint documentation
 
 QA
-[ ] UAT passed (10 usuários)
+[ ] UAT passed (10 users)
 [ ] Performance audit passed
 [ ] Security audit passed
 [ ] Analytics integration passed
@@ -505,7 +505,7 @@ DEPLOYMENT
 
 ---
 
-## 👥 RESPONSABILIDADES DO TIME
+## 👥 TEAM RESPONSIBILITIES
 
 ### Backend Team (2-3 devs)
 - Activity logging system
@@ -517,7 +517,7 @@ DEPLOYMENT
 ### Frontend Team (2-3 devs)
 - Workspace layouts
 - Components
-- Hooks e providers
+- Hooks and providers
 - Navigation
 - UI/UX implementation
 
@@ -529,8 +529,8 @@ DEPLOYMENT
 - UAT coordination
 
 ### Product Manager
-- Priorização
-- Comunicação com usuários
+- Prioritization
+- Communication with users
 - Feedback collection
 - Timeline management
 
@@ -543,13 +543,13 @@ DEPLOYMENT
 
 ---
 
-## 💬 COMUNICAÇÃO INTERNA
+## 💬 INTERNAL COMMUNICATION
 
 ### Weekly Standups
 ```
-Seg: Planning para semana
-Qua: Mid-week check-in
-Sex: Retrospectiva e blockers
+Mon: Planning for the week
+Wed: Mid-week check-in
+Fri: Retrospective and blockers
 ```
 
 ### Slack Channels
@@ -562,36 +562,36 @@ Sex: Retrospectiva e blockers
 
 ### Decision Log
 ```
-Todas decisões arquiteturais documentadas
-Raciocínio e trade-offs explicados
-Link na wiki do projeto
+All architectural decisions documented
+Reasoning and trade-offs explained
+Link in the project wiki
 ```
 
 ---
 
-## 📞 SUPORTE AOS USUÁRIOS
+## 📞 USER SUPPORT
 
 ### Pre-Launch
 ```
 - Tutorial videos
 - Documentation
 - FAQ page
-- Webinar de launch
+- Launch webinar
 ```
 
 ### Post-Launch
 ```
 - Support hotline
 - Discord community
-- Weekly sync com power users
+- Weekly sync with power users
 - Feedback forms
 ```
 
 ---
 
-## 🎓 TREINAMENTO
+## 🎓 TRAINING
 
-### Internal (Time)
+### Internal (Team)
 ```
 - Architecture walkthrough
 - Code patterns
@@ -609,6 +609,6 @@ Link na wiki do projeto
 
 ---
 
-**Este roadmap é living document. Será atualizado semanalmente conforme progresso.**
+**This roadmap is a living document. It will be updated weekly as progress is made.**
 
 **Status atual**: Ready for Phase 1 ✓

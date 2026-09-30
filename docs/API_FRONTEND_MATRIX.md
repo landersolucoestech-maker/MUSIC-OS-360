@@ -1,32 +1,32 @@
 # API Frontend Matrix
 
-| Frontend | Endpoint esperado | Backend atual | Status | Observacao |
+| Frontend | Expected endpoint | Current backend | Status | Notes |
 |---|---|---|---|---|
-| Dashboard | metricas diversas | parcial/mock | incompleto | Consolidar depois da Fase 1. |
-| Artistas | `/artists` | `ArtistsModule` | existe | Reaproveitavel. |
-| Catalogo/Works | `/works`, `/phonograms` | `WorksModule`, `PhonogramsModule` | existe | Reaproveitavel. |
-| Contratos | `/contracts`, `/contract-templates` | existe | existe | Reaproveitavel. |
-| Financeiro | `/transactions`, `/invoices` | existe | existe | Reaproveitavel. |
-| Agenda | `/events` | `EventsModule` | existe | Base para calendario operacional. |
-| Inventario | pendente | inexistente | bloqueado em producao | Frontend existe, mas `api-client` agora marca `inventario` como pendente; em producao falha em vez de mockar. |
-| CRM | `/clients`, `/leads`, `/lead-interactions` | existe parcial | incompleto | Precisa virar CRM canonico em fase futura. |
-| Marketing | `/campaigns`, `/briefings` | existe parcial | reaproveitavel | Base para campanhas musicais. |
-| Projetos/Releases | `/projects`, `/releases` | existe | existe | Reaproveitavel. |
-| Suporte | `/support-tickets` | existe | existe | Validar filtros tenant-aware. |
-| Uploads | `/uploads` | existe | validar | Confirmar ownership por tenant/user. |
-| Notifications | `/notifications` | existe | validar | Confirmar ownership por tenant/user. |
-| AI | `/ai/*` | existe | reaproveitavel | Base para IA operacional. |
-| Integrations | `/integrations` | existe | validar | Separar mocks e providers reais. |
-| Users/RBAC | `/users` | existe | ajustado | Usa `auth_user_id` e Supabase Auth. |
-| RH funcionarios | `/hr/employees` | `HrModule` | existe | Corrigido mapeamento frontend que apontava para `/employees`. |
-| RH folha | `/hr/payroll` | `HrModule` | existe | Corrigido mapeamento frontend que apontava para `/payroll`. |
-| RH afastamentos | `/hr/leave-requests` | `HrModule` | existe | Corrigido mapeamento frontend que apontava para `/leave`. |
-| Conteudos/deteccoes | `/content-detections` | `ContentDetectionsModule` | existe | Corrigido alias `conteudos`; `deteccoes` ja estava correto. |
-| Marketing tasks | pendente | inexistente | bloqueado em producao | `tarefas_marketing` sem controller backend; dev-only fallback explicito. |
-| Monitoramentos | pendente | inexistente | bloqueado em producao | `monitoramentos` sem controller backend; dev-only fallback explicito. |
-| Licencas | pendente | inexistente | bloqueado em producao | Futuro modulo de licensing; nao usar mock em producao. |
-| Rules/financial rules | pendente | inexistente | bloqueado em producao | `regras` e `regras_financeiras` sem controller backend. |
-| Roles/permissions CRUD | pendente | inexistente | bloqueado em producao | Permissoes sao computadas via backend/auth context; nao existe CRUD canonico ainda. |
+| Dashboard | various metrics | partial/mock | incomplete | Consolidate after Phase 1. |
+| Artists | `/artists` | `ArtistsModule` | exists | Reusable. |
+| Catalog/Works | `/works`, `/phonograms` | `WorksModule`, `PhonogramsModule` | exists | Reusable. |
+| Contracts | `/contracts`, `/contract-templates` | exists | exists | Reusable. |
+| Finance | `/transactions`, `/invoices` | exists | exists | Reusable. |
+| Agenda | `/events` | `EventsModule` | exists | Basis for the operational calendar. |
+| Inventory | pending | nonexistent | blocked in production | The frontend exists, but `api-client` now marks `inventario` as pending; in production it fails instead of mocking. |
+| CRM | `/clients`, `/leads`, `/lead-interactions` | partially exists | incomplete | Must become the canonical CRM in a future phase. |
+| Marketing | `/campaigns`, `/briefings` | partially exists | reusable | Basis for music campaigns. |
+| Projects/Releases | `/projects`, `/releases` | exists | exists | Reusable. |
+| Support | `/support-tickets` | exists | exists | Validate tenant-aware filters. |
+| Uploads | `/uploads` | exists | to validate | Confirm ownership by tenant/user. |
+| Notifications | `/notifications` | exists | to validate | Confirm ownership by tenant/user. |
+| AI | `/ai/*` | exists | reusable | Basis for operational AI. |
+| Integrations | `/integrations` | exists | to validate | Separate mocks from real providers. |
+| Users/RBAC | `/users` | exists | adjusted | Uses `auth_user_id` and Supabase Auth. |
+| HR employees | `/hr/employees` | `HrModule` | exists | Fixed frontend mapping that pointed to `/employees`. |
+| HR payroll | `/hr/payroll` | `HrModule` | exists | Fixed frontend mapping that pointed to `/payroll`. |
+| HR leave | `/hr/leave-requests` | `HrModule` | exists | Fixed frontend mapping that pointed to `/leave`. |
+| Content/detections | `/content-detections` | `ContentDetectionsModule` | exists | Fixed the `conteudos` alias; `deteccoes` was already correct. |
+| Marketing tasks | pending | nonexistent | blocked in production | `tarefas_marketing` has no backend controller; explicit dev-only fallback. |
+| Monitoring | pending | nonexistent | blocked in production | `monitoramentos` has no backend controller; explicit dev-only fallback. |
+| Licenses | pending | nonexistent | blocked in production | Future licensing module; do not use a mock in production. |
+| Rules/financial rules | pending | nonexistent | blocked in production | `regras` and `regras_financeiras` have no backend controller. |
+| Roles/permissions CRUD | pending | nonexistent | blocked in production | Permissions are computed via the backend/auth context; there is no canonical CRUD yet. |
 
 ## Production Rule
 

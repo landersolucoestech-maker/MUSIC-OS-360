@@ -1,51 +1,51 @@
-# Matriz de Ambientes Supabase
+# Supabase Environments Matrix
 
-> Fonte única de decisão sobre **qual projeto Supabase cada ambiente pode usar**.
-> Nasceu do incidente de isolamento de 2026-07-16/17 (migration e fixture de
-> verificação aplicadas na branch MAIN acreditando ser DEV).
+> Single source of decision on **which Supabase project each environment may use**.
+> Born from the isolation incident of 2026-07-16/17 (a migration and a verification
+> fixture were applied to the MAIN branch in the belief that it was DEV).
 
-## Matriz (imutável por ambiente)
+## Matrix (immutable per environment)
 
-| NODE_ENV | Ref permitido | URL | Observações |
+| NODE_ENV | Allowed ref | URL | Notes |
 |---|---|---|---|
-| `development` | `rypnevnfipygyhysqpdo` | https://rypnevnfipygyhysqpdo.supabase.co | Ambiente **DEV**. Único aceito localmente. |
-| `test` | *(nenhum remoto)* | — | Sem fallback silencioso: qualquer ref Supabase resolvido é erro. Postgres local é permitido. |
-| `staging` | `jjnnjnxjkqipgqebijen` | https://jjnnjnxjkqipgqebijen.supabase.co | Ambiente **staging** persistente. |
-| `production` | `sxmfeocztlztvpdnxayk` | https://sxmfeocztlztvpdnxayk.supabase.co | Projeto principal usado exclusivamente para produção após liberação formal. |
+| `development` | `rypnevnfipygyhysqpdo` | https://rypnevnfipygyhysqpdo.supabase.co | **DEV** environment. The only one accepted locally. |
+| `test` | *(no remote)* | — | No silent fallback: any resolved Supabase ref is an error. A local Postgres is allowed. |
+| `staging` | `jjnnjnxjkqipgqebijen` | https://jjnnjnxjkqipgqebijen.supabase.co | Persistent **staging** environment. |
+| `production` | `sxmfeocztlztvpdnxayk` | https://sxmfeocztlztvpdnxayk.supabase.co | Main project, used exclusively for production after formal release. |
 
-O ref de produção `sxmfeocztlztvpdnxayk` corresponde ao projeto Supabase principal (`main`). Ele deve permanecer sem alterações até a aprovação formal da promoção para produção.
+The production ref `sxmfeocztlztvpdnxayk` corresponds to the main Supabase project (`main`). It must remain untouched until the promotion to production is formally approved.
 
-Refs banidos permanentes:
+Permanently banned refs:
 
-- `mkyvkciwyhfawmvluugb` — branch preview sem tabelas públicas;
-- `sxdhnhoupjrnntrmjtyn` — primeiro branch DEV, excluído;
-- `jtizbxbrwyczbkdiruoq` — ref legado/obsoleto que não pertence à matriz atual.
+- `mkyvkciwyhfawmvluugb` — preview branch without public tables;
+- `sxdhnhoupjrnntrmjtyn` — first DEV branch, deleted;
+- `jtizbxbrwyczbkdiruoq` — legacy/obsolete ref that does not belong to the current matrix.
 
-## Regras de seleção
+## Selection rules
 
-1. **A identidade do ambiente é o project ref/hostname real** extraído de `SUPABASE_URL`, `DATABASE_URL` e JWTs — nunca o nome do arquivo `.env`, o diretório ou a intenção declarada.
-2. Denylist cruzada: o ref de um ambiente é explicitamente proibido nos demais, mesmo que alguém edite a allowlist.
-3. Todas as variáveis (`SUPABASE_URL`, `VITE_SUPABASE_URL`, `DATABASE_URL`, `DIRECT_DATABASE_URL`, `APP_DATABASE_URL` e o `payload.ref` dos JWTs) devem apontar para o mesmo projeto; divergência é erro fatal.
-4. Hostname `*.supabase.co/com` sem ref extraível é erro.
-5. O ambiente `production` só aceita `sxmfeocztlztvpdnxayk`.
-6. Nenhuma migration ou alteração pode ser aplicada ao projeto de produção antes da liberação formal.
+1. **Environment identity is the real project ref/hostname** extracted from `SUPABASE_URL`, `DATABASE_URL` and JWTs — never the `.env` file name, the directory or the declared intent.
+2. Cross denylist: an environment's ref is explicitly forbidden in the others, even if someone edits the allowlist.
+3. All variables (`SUPABASE_URL`, `VITE_SUPABASE_URL`, `DATABASE_URL`, `DIRECT_DATABASE_URL`, `APP_DATABASE_URL` and the JWTs' `payload.ref`) must point to the same project; a mismatch is a fatal error.
+4. A `*.supabase.co/com` hostname without an extractable ref is an error.
+5. The `production` environment only accepts `sxmfeocztlztvpdnxayk`.
+6. No migration or change may be applied to the production project before formal release.
 
-## Procedimento de confirmação administrativa
+## Administrative confirmation procedure
 
-Antes de apontar qualquer ambiente para um ref:
+Before pointing any environment at a ref:
 
-1. Confirmar via dashboard Supabase ou API de gerenciamento qual projeto o ref representa.
-2. Registrar a confirmação no PR que alterar as constantes.
-3. Atualizar os três validadores em conjunto:
+1. Confirm via the Supabase dashboard or the management API which project the ref represents.
+2. Record the confirmation in the PR that changes the constants.
+3. Update the three validators together:
    - `apps/api/src/core/config/env.schema.ts`;
    - `scripts/env-check.mjs`;
    - `apps/web/scripts/assert-supabase-env.mjs`.
-4. Atualizar os testes de matriz e os workflows que contenham refs hardcoded.
+4. Update the matrix tests and the workflows that contain hardcoded refs.
 
-## Onde o guard atua
+## Where the guard acts
 
-- **Boot da API** (`main.ts` → `collectSupabaseEnvErrors`): fail-closed.
-- **Gate de repositório** (`pnpm env:check` → `scripts/env-check.mjs`).
-- **Dev/build do frontend** (`assert-supabase-env.mjs` via Vite).
-- **Testes** (`env.schema.spec.ts`).
-- **CI/CD**, antes de build, migrations ou deploy.
+- **API boot** (`main.ts` → `collectSupabaseEnvErrors`): fail-closed.
+- **Repository gate** (`pnpm env:check` → `scripts/env-check.mjs`).
+- **Frontend dev/build** (`assert-supabase-env.mjs` via Vite).
+- **Tests** (`env.schema.spec.ts`).
+- **CI/CD**, before build, migrations or deploy.

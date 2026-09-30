@@ -1,204 +1,204 @@
-# MUSIC OS 360 — Governança e Documentação Operacional Oficial
+# MUSIC OS 360 — Official Governance and Operational Documentation
 
-> Versão canónica da arquitectura, convenções, entidades, estados, permissões, fluxos e contratos da plataforma.
-> Este documento é normativo — toda contribuição ao codebase deve estar em conformidade.
-
----
-
-## Índice
-
-1. [Visão Geral da Plataforma](#1-visão-geral-da-plataforma)
-2. [Stack Técnico](#2-stack-técnico)
-3. [Estrutura de Directórios](#3-estrutura-de-directórios)
-4. [Convenções Obrigatórias de Nomenclatura](#4-convenções-obrigatórias-de-nomenclatura)
-5. [Módulos do Sistema](#5-módulos-do-sistema)
-6. [Entidades de Domínio e Relacionamentos](#6-entidades-de-domínio-e-relacionamentos)
-7. [Máquinas de Estado](#7-máquinas-de-estado)
-8. [Sistema de Permissões RBAC](#8-sistema-de-permissões-rbac)
-9. [Feature Flags e Planos de Billing](#9-feature-flags-e-planos-de-billing)
-10. [Fluxos Operacionais](#10-fluxos-operacionais)
-11. [Integrações](#11-integrações)
-12. [Contratos de Integração](#12-contratos-de-integração)
-13. [Padrões Visuais](#13-padrões-visuais)
-14. [Padrões de Componentes](#14-padrões-de-componentes)
-15. [Padrões de Formulários](#15-padrões-de-formulários)
-16. [Camada de Dados (Standalone)](#16-camada-de-dados-standalone)
-17. [Segurança e Dados Sensíveis](#17-segurança-e-dados-sensíveis)
-18. [Limitações de Âmbito](#18-limitações-de-âmbito)
-19. [Fontes de Verdade no Codebase](#19-fontes-de-verdade-no-codebase)
+> Canonical version of the platform's architecture, conventions, entities, states, permissions, flows and contracts.
+> This document is normative — every contribution to the codebase must comply with it.
 
 ---
 
-## 1. Visão Geral da Plataforma
+## Table of Contents
 
-**MUSIC OS 360** é um ERP Musical SaaS multi-tenant que centraliza todas as operações de uma empresa de música — label, editora ou distribuidora — numa única plataforma 360°.
+1. [Platform Overview](#1-platform-overview)
+2. [Technical Stack](#2-technical-stack)
+3. [Directory Structure](#3-directory-structure)
+4. [Mandatory Naming Conventions](#4-mandatory-naming-conventions)
+5. [System Modules](#5-system-modules)
+6. [Domain Entities and Relationships](#6-domain-entities-and-relationships)
+7. [State Machines](#7-state-machines)
+8. [RBAC Permission System](#8-rbac-permission-system)
+9. [Feature Flags and Billing Plans](#9-feature-flags-and-billing-plans)
+10. [Operational Flows](#10-operational-flows)
+11. [Integrations](#11-integrations)
+12. [Integration Contracts](#12-integration-contracts)
+13. [Visual Standards](#13-visual-standards)
+14. [Component Standards](#14-component-standards)
+15. [Form Standards](#15-form-standards)
+16. [Data Layer (Standalone)](#16-data-layer-standalone)
+17. [Security and Sensitive Data](#17-security-and-sensitive-data)
+18. [Scope Limitations](#18-scope-limitations)
+19. [Sources of Truth in the Codebase](#19-sources-of-truth-in-the-codebase)
 
-### Proposta de valor
+---
 
-| Área | O que a plataforma resolve |
+## 1. Platform Overview
+
+**MUSIC OS 360** is a multi-tenant music ERP SaaS that centralizes all the operations of a music company — label, publisher or distributor — in a single 360° platform.
+
+### Value proposition
+
+| Area | What the platform solves |
 |------|---------------------------|
-| Artistas | Perfil centralizado, métricas de plataformas, visão 360° |
-| Catálogo | Obras, fonogramas, ISRC/ISWC, shares de direitos |
-| Contratos | Templates, assinatura digital, alertas de vencimento |
-| Accounting | P&L por artista/projecto, fluxo de caixa, notas fiscais |
-| CRM | Clientes, contactos, leads em pipeline Kanban |
-| Marketing | Campanhas, calendário editorial, IA Criativa |
-| Operações | Eventos, inventário, RH |
-| Monitoramento | Takedowns, conciliação ECAD |
-| Licenciamento | Sincronia, mecânica, streaming, performance |
+| Artists | Centralized profile, platform metrics, 360° view |
+| Catalog | Works, phonograms, ISRC/ISWC, rights shares |
+| Contracts | Templates, digital signature, expiry alerts |
+| Accounting | P&L per artist/project, cash flow, invoices (notas fiscais) |
+| CRM | Clients, contacts, leads in a Kanban pipeline |
+| Marketing | Campaigns, editorial calendar, Creative AI |
+| Operations | Events, inventory, HR |
+| Monitoring | Takedowns, ECAD reconciliation |
+| Licensing | Sync, mechanical, streaming, performance |
 
-### Público-alvo
+### Target audience
 
-- Labels independentes
-- Editoras musicais
-- Distribuidoras
-- Gestoras de artistas (multi-artista)
+- Independent labels
+- Music publishers
+- Distributors
+- Artist management companies (multi-artist)
 
-### Modelo de negócio
+### Business model
 
-SaaS multi-tenant com planos **Starter**, **Professional** e **Enterprise**.  
-Billing via Stripe (futuro). Trial gratuito no onboarding.
+Multi-tenant SaaS with **Starter**, **Professional** and **Enterprise** plans.  
+Billing via Stripe (future). Free trial at onboarding.
 
 ---
 
-## 2. Stack Técnico
+## 2. Technical Stack
 
-| Camada | Tecnologia | Versão |
+| Layer | Technology | Version |
 |--------|-----------|--------|
 | Frontend | React | 18 |
-| Linguagem | TypeScript | strict |
+| Language | TypeScript | strict |
 | Build | Vite + SWC | — |
-| Roteamento | React Router | v6 |
-| Dados (cliente) | TanStack Query | v5 |
+| Routing | React Router | v6 |
+| Data (client) | TanStack Query | v5 |
 | UI Components | shadcn/ui + Radix | — |
 | CSS | Tailwind CSS | — |
-| Formulários | react-hook-form + Zod | — |
-| Gráficos | Recharts | — |
-| Ícones | lucide-react + react-icons/si | — |
-| Dados | MOCK_DATA + localStorage | standalone |
-| Fontes | Plus Jakarta Sans + IBM Plex Mono | — |
+| Forms | react-hook-form + Zod | — |
+| Charts | Recharts | — |
+| Icons | lucide-react + react-icons/si | — |
+| Data | MOCK_DATA + localStorage | standalone |
+| Fonts | Plus Jakarta Sans + IBM Plex Mono | — |
 
-**Modo actual:** standalone (sem backend). Todos os dados vivem em `localStorage` sob a chave `musicos360_mock_data`.
+**Current mode:** standalone (no backend). All data lives in `localStorage` under the key `musicos360_mock_data`.
 
 ---
 
-## 3. Estrutura de Directórios
+## 3. Directory Structure
 
 ```
 client/src/
 ├── app/
 │   ├── providers/          # AuthProvider, TenantProvider, TenantContext
-│   └── routes/             # Ficheiros de rotas por domínio (*.routes.tsx)
-├── modules/                # Módulos de domínio
-│   ├── <domínio>/
-│   │   ├── adapters/       # Adaptadores domínio ↔ contratos externos
-│   │   ├── application/    # Use-cases e orquestradores de UI
-│   │   ├── components/     # Componentes React do módulo
-│   │   ├── domain/         # Regras de negócio puras
-│   │   ├── hooks/          # Hooks React do módulo
-│   │   ├── mappers/        # FONTE ÚNICA: form ↔ entidade
-│   │   ├── pages/          # Páginas (route components)
-│   │   ├── services/       # Acesso a dados
-│   │   └── types/          # Interfaces e tipos do domínio
+│   └── routes/             # Route files per domain (*.routes.tsx)
+├── modules/                # Domain modules
+│   ├── <domain>/
+│   │   ├── adapters/       # Domain ↔ external contract adapters
+│   │   ├── application/    # Use cases and UI orchestrators
+│   │   ├── components/     # React components of the module
+│   │   ├── domain/         # Pure business rules
+│   │   ├── hooks/          # React hooks of the module
+│   │   ├── mappers/        # SINGLE SOURCE: form ↔ entity
+│   │   ├── pages/          # Pages (route components)
+│   │   ├── services/       # Data access
+│   │   └── types/          # Domain interfaces and types
 │   └── integrations/
-│       └── hooks/          # Stub hooks para todas as integrações
+│       └── hooks/          # Stub hooks for all integrations
 └── shared/
-    ├── components/         # Componentes genuinamente cross-domain
+    ├── components/         # Genuinely cross-domain components
     ├── config/             # queryClient, CACHE_TIMES
     ├── data/               # mockData.ts (MOCK_DATA)
-    ├── design-system/      # Design tokens e padrões
-    ├── governance/         # ESTA CAMADA — convenções e documentação
-    ├── hooks/              # Hooks cross-domain
+    ├── design-system/      # Design tokens and standards
+    ├── governance/         # THIS LAYER — conventions and documentation
+    ├── hooks/              # Cross-domain hooks
     ├── infrastructure/     # ErrorBoundary, AdminRoute, RealtimeLayer
-    ├── integrations/       # Tipos, registry e contratos de integração
+    ├── integrations/       # Integration types, registry and contracts
     ├── layouts/            # MainLayout, PageHeader
-    ├── lib/                # Utilitários puros cross-domain
-    ├── providers/          # Barrels de providers e hooks
-    ├── types/              # Tipos partilhados (enums, refs)
-    └── ui/                 # shadcn/Radix primitivos
+    ├── lib/                # Pure cross-domain utilities
+    ├── providers/          # Provider and hook barrels
+    ├── types/              # Shared types (enums, refs)
+    └── ui/                 # shadcn/Radix primitives
 ```
 
 ---
 
-## 4. Convenções Obrigatórias de Nomenclatura
+## 4. Mandatory Naming Conventions
 
-> Fonte TypeScript: `shared/governance/naming.ts`
+> TypeScript source: `shared/governance/naming.ts`
 
-### Ficheiros
+### Files
 
-| Tipo | Padrão | Exemplo |
+| Type | Pattern | Example |
 |------|--------|---------|
-| Componente React | `PascalCase.tsx` | `ArtistaCard.tsx` |
+| React component | `PascalCase.tsx` | `ArtistaCard.tsx` |
 | Hook | `use{Name}.ts` | `useArtistaForm.ts` |
-| Serviço | `{name}.service.ts` | `artist.service.ts` |
+| Service | `{name}.service.ts` | `artist.service.ts` |
 | Mapper | `{entity}Mappers.ts` | `artistaMappers.ts` |
-| Tipos | `{entity}.types.ts` | `artista.types.ts` |
-| Contrato | `{concern}.contract.ts` | `auth.contract.ts` |
-| Adaptador | `{concern}.adapter.ts` | `streaming.adapter.ts` |
-| Constantes | `{concern}-constants.ts` | `transacao-constants.ts` |
-| Rotas | `{domain}.routes.tsx` | `artist.routes.tsx` |
+| Types | `{entity}.types.ts` | `artista.types.ts` |
+| Contract | `{concern}.contract.ts` | `auth.contract.ts` |
+| Adapter | `{concern}.adapter.ts` | `streaming.adapter.ts` |
+| Constants | `{concern}-constants.ts` | `transacao-constants.ts` |
+| Routes | `{domain}.routes.tsx` | `artist.routes.tsx` |
 
-### Componentes — sufixos obrigatórios
+### Components — mandatory suffixes
 
 `Card` · `Table` · `Modal` · `Form` · `Page` · `Badge` · `Panel` · `Drawer` · `Section` · `Widget` · `Chart` · `Skeleton` · `Empty` · `Header`
 
-**Proibido:** `Component`, `Container`, `Wrapper`, `Index`, `Manager`, `Handler`, `Controller`
+**Forbidden:** `Component`, `Container`, `Wrapper`, `Index`, `Manager`, `Handler`, `Controller`
 
-### Hooks — categorias
+### Hooks — categories
 
-| Categoria | Padrão | Exemplo |
+| Category | Pattern | Example |
 |-----------|--------|---------|
-| Dados | `use{Entity}List` / `use{Entity}Detail` | `useArtistaList` |
-| Formulário | `use{Entity}Form` | `useContratoForm` |
-| Mutação | `use{Verb}{Entity}` | `useCreateTransacao` |
-| Integração | `use{ServiceName}` | `useSpotify` |
+| Data | `use{Entity}List` / `use{Entity}Detail` | `useArtistaList` |
+| Form | `use{Entity}Form` | `useContratoForm` |
+| Mutation | `use{Verb}{Entity}` | `useCreateTransacao` |
+| Integration | `use{ServiceName}` | `useSpotify` |
 | UI | `use{Concern}` | `useCommandPalette` |
-| Contexto | `use{ContextName}` | `useTenant` |
+| Context | `use{ContextName}` | `useTenant` |
 
-### Língua
+### Language
 
-- **Português** para nomes de domínio (entidades, campos, enums)
-- **Inglês** para infra-estrutura (props, estado UI, utilitários)
+- **Portuguese** for domain names (entities, fields, enums)
+- **English** for infrastructure (props, UI state, utilities)
 
 ### Enums
 
-**Proibido:** `enum TypeScript`  
-**Correcto:** `type Status = 'ativo' | 'inativo'` em `shared/types/enums.ts`
+**Forbidden:** TypeScript `enum`  
+**Correct:** `type Status = 'ativo' | 'inativo'` in `shared/types/enums.ts`
 
-### Chaves localStorage
+### localStorage keys
 
-Prefixo obrigatório: `musicos360_`
+Mandatory prefix: `musicos360_`
 
-| Chave | Uso |
+| Key | Usage |
 |-------|-----|
-| `musicos360_mock_data` | Dados mock principais |
+| `musicos360_mock_data` | Main mock data |
 | `musicos360_rt` | Refresh token |
-| `musicos360_tenant` | Dados do tenant activo |
-| `musicos360_<id>_credentials` | Credenciais de integração |
+| `musicos360_tenant` | Active tenant data |
+| `musicos360_<id>_credentials` | Integration credentials |
 
-**Proibido:** chaves com prefixo `lander_` ou `lander360_` (obsoletas)
+**Forbidden:** keys with the `lander_` or `lander360_` prefix (obsolete)
 
-### Eventos de window
+### Window events
 
-Prefixo obrigatório: `musicos360:`
+Mandatory prefix: `musicos360:`
 
 `musicos360:dataChanged` · `musicos360:tenantChanged` · `musicos360:authChanged` · `musicos360:themeChanged`
 
 ---
 
-## 5. Módulos do Sistema
+## 5. System Modules
 
-> Fonte TypeScript: `shared/governance/modules.ts`
+> TypeScript source: `shared/governance/modules.ts`
 
-| Módulo | Rota | Entidades Primárias | Status |
+| Module | Route | Primary Entities | Status |
 |--------|------|---------------------|--------|
 | `artists` | `/artistas` | Artista | production |
-| `catalog` | `/catalogo` | Obra, Fonograma | production |
+| `catalog` | `/catalogo` | `Obra`, `Fonograma` | production |
 | `releases` | `/lancamentos` | Lancamento, Share | production |
 | `contracts` | `/contratos` | Contrato, TemplateContrato | production |
 | `accounting` | `/accounting` | Transacao, NotaFiscal | production |
-| `crm` | `/crm` | Cliente, Contato | production |
-| `marketing` | `/marketing` | Campanha, Conteudo | production |
+| `crm` | `/crm` | `Cliente`, `Contato` | production |
+| `marketing` | `/marketing` | `Campanha`, `Conteudo` | production |
 | `events` | `/operacoes/eventos` | Evento | production |
 | `inventory` | `/operacoes/inventario` | Inventario | production |
 | `rh` | `/operacoes/rh` | Funcionario, FeriasAusencia | production |
@@ -209,19 +209,19 @@ Prefixo obrigatório: `musicos360:`
 | `audit` | `/admin/auditoria` | AuditLog | stub |
 | `settings` | `/configuracoes` | Tenant, User, Role | production |
 
-### Regra da camada `shared/`
+### Rule for the `shared/` layer
 
-**Pode ir em `shared/`:** tipos cross-domain (2+ módulos), primitivos UI, componentes genuinamente cross-domain, infra-estrutura de app, providers, config, hooks cross-domain, utilitários puros, contratos de integração, governance.
+**May go in `shared/`:** cross-domain types (2+ modules), UI primitives, genuinely cross-domain components, app infrastructure, providers, config, cross-domain hooks, pure utilities, integration contracts, governance.
 
-**Não pode ir em `shared/`:** lógica de módulo único, componentes de módulo único, serviços com domínio específico, mappers de entidade.
+**May not go in `shared/`:** single-module logic, single-module components, domain-specific services, entity mappers.
 
 ---
 
-## 6. Entidades de Domínio e Relacionamentos
+## 6. Domain Entities and Relationships
 
-> Fonte TypeScript: `shared/governance/entities.ts`
+> TypeScript source: `shared/governance/entities.ts`
 
-### Mapa de relacionamentos
+### Relationship map
 
 ```
 Artista ──────────────────────────────────────────────────────────────────────┐
@@ -229,96 +229,96 @@ Artista ────────────────────────
   │ N:N → Obra (via Share.artista_id)                                         │
   │ N:N → Lancamento (via artista_ids[])                                      │
   │ 1:N → ArtistaRelacionamento (relacionamentos[])                            │
-  └── central de todas as entidades operacionais                              │
+  └── hub of all operational entities                                         │
                                                                               │
 Obra ─────────────────────────────────────────────────────────────────────────┤
   │ ISWC · cod_ecad · cod_ubc                                                 │
   │ 1:N → Fonograma (obra_id)                                                 │
-  │ 1:N → Share (composição)                                                  │
+  │ 1:N → Share (composition)                                                 │
   │ 1:N → Licenca (obra_id)                                                   │
-  └── base de arrecadação ECAD/UBC                                           │
+  └── basis of ECAD/UBC collection                                           │
                                                                               │
 Fonograma ───────────────────────────────────────────────────────────────────┤
   │ ISRC · cod_ecad · UPC                                                     │
-  │ N:1 → Obra (obra_id) [obrigatório]                                        │
+  │ N:1 → Obra (obra_id) [required]                                           │
   │ N:N → Lancamento (fonograma_ids[])                                        │
   │ 1:N → Share (master)                                                      │
-  └── base de Content ID e claims de streaming                               │
+  └── basis of Content ID and streaming claims                               │
                                                                               │
 Share ───────────────────────────────────────────────────────────────────────┤
-  │ tipo: composição | master | editorial | performance | sincronia           │
-  │ direção: entrada | saída                                                  │
+  │ tipo (type): composição (composition) | master | editorial | performance | sincronia (sync) │
+  │ direção (direction): entrada (in) | saída (out)                           │
   │ N:1 → Obra · N:1 → Fonograma · N:1 → Artista                            │
-  └── soma de percentuais deve ser 100% por tipo                             │
+  └── sum of percentages must be 100% per type                               │
                                                                               │
 Lancamento ──────────────────────────────────────────────────────────────────┤
   │ UPC · EAN                                                                 │
   │ N:N → Artista · N:N → Fonograma                                           │
-  └── produto comercial de distribuição                                      │
+  └── commercial distribution product                                        │
                                                                               │
 Contrato ────────────────────────────────────────────────────────────────────┤
   │ autentique_document_id                                                    │
   │ N:1 → Artista · N:1 → Cliente                                             │
-  └── suporte a assinatura digital                                           │
+  └── digital signature support                                              │
                                                                               │
 Transacao ───────────────────────────────────────────────────────────────────┤
   │ ofx_id · nota_fiscal_id                                                   │
   │ N:1 → Artista · N:1 → Projeto · N:1 → NotaFiscal                         │
-  └── base de P&L, fluxo de caixa, recoupment                               │
+  └── basis of P&L, cash flow, recoupment                                    │
                                                                               │
 Lead ─────────────────────────────────────────────────────────────────────────┤
   │ N:1 → Cliente · N:1 → Artista                                             │
-  └── pipeline Kanban: novo→fechado/perdido                                  │
+  └── Kanban pipeline: novo (new)→fechado (won)/perdido (lost)               │
                                                                               │
 Takedown ─────────────────────────────────────────────────────────────────────┤
   │ url_infracao                                                              │
   │ N:1 → Obra · N:1 → Fonograma                                              │
-  └── protecção de direitos cross-plataforma                                 │
+  └── cross-platform rights protection                                       │
                                                                               │
 Licenca ──────────────────────────────────────────────────────────────────────┘
   │ N:1 → Obra · N:1 → Cliente · N:1 → Contrato
-  └── sincronia · mecânica · performance · streaming
+  └── sync · mechanical · performance · streaming
 ```
 
-### EntityRef — referências cross-domain
+### EntityRef — cross-domain references
 
-Módulos nunca importam a entidade completa de outro módulo.  
-Usam `{NomeEntidade}Ref` de `shared/types/refs.ts`:
+Modules never import the full entity of another module.  
+They use `{EntityName}Ref` from `shared/types/refs.ts`:
 
 ```typescript
-// CORRECTO
+// CORRECT
 import type { ArtistaRef } from "@/shared/types/refs";
 
-// PROIBIDO
+// FORBIDDEN
 import type { Artista } from "@/modules/artist/types/artista.types";
-// (em módulos que não sejam o artist)
+// (in modules other than artist)
 ```
 
-Refs disponíveis: `ArtistaRef` · `ClienteRef` · `ObraRef` · `FonogramaRef` · `LancamentoRef` · `ProjetoRef` · `ContratoRef` · `FuncionarioRef`
+Available refs: `ArtistaRef` · `ClienteRef` · `ObraRef` · `FonogramaRef` · `LancamentoRef` · `ProjetoRef` · `ContratoRef` · `FuncionarioRef`
 
 ---
 
-## 7. Máquinas de Estado
+## 7. State Machines
 
-> Fonte TypeScript: `shared/governance/states.ts`
+> TypeScript source: `shared/governance/states.ts`
 
-### Regra de cor semântica (obrigatória)
+### Semantic color rule (mandatory)
 
-| Cor | Estados |
+| Color | States |
 |-----|---------|
-| 🟢 Verde | activo · vigente · publicado · concluído · aprovado · emitido · fechado · registado |
-| 🔵 Azul | em curso · agendado · enviado · processando · em contacto · produção · entregue |
-| 🟡 Amarelo | pendente · rascunho · análise · planeamento · a vencer · suspenso · negociação |
-| ⚫ Cinza | inactivo · arquivado · encerrado · ex-artista · liquidado · pausado |
-| 🔴 Vermelho | **EXCLUSIVO:** cancelado · rejeitado · vencido · desligado · falhou · perdido |
+| 🟢 Green | active (`activo`) · in force (`vigente`) · published (`publicado`) · completed (`concluído`) · approved (`aprovado`) · issued (`emitido`) · closed (`fechado`) · registered (`registado`) |
+| 🔵 Blue | in progress (`em curso`) · scheduled (`agendado`) · sent (`enviado`) · processing (`processando`) · in contact (`em contacto`) · production (`produção`) · delivered (`entregue`) |
+| 🟡 Yellow | pending (`pendente`) · draft (`rascunho`) · under review (`análise`) · planning (`planeamento`) · expiring (`a vencer`) · suspended (`suspenso`) · negotiation (`negociação`) |
+| ⚫ Gray | inactive (`inactivo`) · archived (`arquivado`) · closed (`encerrado`) · former artist (`ex-artista`) · settled (`liquidado`) · paused (`pausado`) |
+| 🔴 Red | **EXCLUSIVE:** cancelled (`cancelado`) · rejected (`rejeitado`) · expired (`vencido`) · terminated (`desligado`) · failed (`falhou`) · lost (`perdido`) |
 
-**Proibido:** usar vermelho para estados neutros ou de progresso.
+**Forbidden:** using red for neutral or progress states.
 
-### Entidades com máquina de estado documentada
+### Entities with a documented state machine
 
 `Artista` · `Contrato` · `Transacao` · `NotaFiscal` · `Obra` · `Fonograma` · `Lancamento` · `Share` · `Lead` · `Takedown` · `Evento` · `Projeto` · `Campanha` · `Funcionario` · `Licenca`
 
-### Exemplo — Contrato
+### Example — Contrato (Contract)
 
 ```
 rascunho → aguardando_assinatura → vigente → vencendo → vencido → encerrado
@@ -327,58 +327,58 @@ rascunho → aguardando_assinatura → vigente → vencendo → vencido → ence
 
 ---
 
-## 8. Sistema de Permissões RBAC
+## 8. RBAC Permission System
 
-> Fonte TypeScript: `shared/governance/permissions.ts`  
-> Implementação: `app/providers/TenantContext.tsx`
+> TypeScript source: `shared/governance/permissions.ts`  
+> Implementation: `app/providers/TenantContext.tsx`
 
-### Hierarquia de papéis
+### Role hierarchy
 
 ```
 owner > admin > manager > editor > viewer
 ```
 
-### Matriz de permissões (read / write / delete / export)
+### Permission matrix (read / write / delete / export)
 
-| Módulo | owner | admin | manager | editor | viewer |
+| Module | owner | admin | manager | editor | viewer |
 |--------|-------|-------|---------|--------|--------|
-| Todos os módulos operacionais | ✓✓✓✓ | ✓✓✓✓ | ✓✓✓✓ | ✓✓✗✓ | ✓✗✗✓ |
+| All operational modules | ✓✓✓✓ | ✓✓✓✓ | ✓✓✓✓ | ✓✓✗✓ | ✓✗✗✓ |
 | audit | ✓✓✓✓ | ✓✓✓✓ | ✓✗✗✓ | ✗✗✗✗ | ✗✗✗✗ |
 | settings | ✓✓✓✓ | ✓✓✓✓ | ✓✗✗✓ | ✗✗✗✗ | ✗✗✗✗ |
 
-### Padrão de uso na UI
+### Usage pattern in the UI
 
 ```tsx
-// Verificar acesso a módulo
+// Check module access
 const { tenant } = useTenant();
 if (!tenant.permissions.artists.read) return <NoAccess />;
 
-// Verificar operação
+// Check operation (the button label is PT-BR UI copy: "Create Transaction")
 const canWrite = tenant.permissions.accounting.write;
 <Button disabled={!canWrite}>Criar Transação</Button>
 
-// Verificar feature flag
+// Check feature flag
 if (!tenant.features.moduleMonitoring) return <UpgradePrompt />;
 
-// Rota restrita
+// Restricted route
 <AdminRoute roles={["owner", "admin"]}>
   <AuditPage />
 </AdminRoute>
 ```
 
-**Proibido:** verificar `tenant.role` directamente nos componentes.
+**Forbidden:** checking `tenant.role` directly in components.
 
 ---
 
-## 9. Feature Flags e Planos de Billing
+## 9. Feature Flags and Billing Plans
 
-> Fonte TypeScript: `shared/lib/feature-flags.ts`
+> TypeScript source: `shared/lib/feature-flags.ts`
 
-### Módulos por plano
+### Modules per plan
 
-| Módulo/Feature | Starter | Professional | Enterprise |
+| Module/Feature | Starter | Professional | Enterprise |
 |----------------|---------|-------------|------------|
-| Módulos core | ✓ | ✓ | ✓ |
+| Core modules | ✓ | ✓ | ✓ |
 | monitoring | ✗ | ✓ | ✓ |
 | licensing | ✗ | ✓ | ✓ |
 | rh | ✗ | ✓ | ✓ |
@@ -388,56 +388,56 @@ if (!tenant.features.moduleMonitoring) return <UpgradePrompt />;
 | whitelabel | ✗ | ✗ | ✓ |
 | multiTenantAdmin | ✗ | ✗ | ✓ |
 
-### Integrações activas por plano (standalone)
+### Active integrations per plan (standalone)
 
-Apenas **Abramus** está funcional em modo standalone.  
-Todas as outras integrações lançam `DisabledIntegrationError` (status 503).
+Only **Abramus** is functional in standalone mode.  
+All other integrations throw `DisabledIntegrationError` (status 503).
 
 ---
 
-## 10. Fluxos Operacionais
+## 10. Operational Flows
 
-> Fonte TypeScript: `shared/governance/flows.ts`
+> TypeScript source: `shared/governance/flows.ts`
 
-| ID | Fluxo | Módulos envolvidos |
+| ID | Flow | Modules involved |
 |----|-------|-------------------|
-| F01 | Integração de Novo Artista | crm → artists → contracts → catalog |
-| F02 | Lançamento Musical | catalog → releases → marketing → monitoring |
-| F03 | Ciclo de Contrato | contracts + artists + crm |
-| F04 | Ciclo Financeiro | accounting + artists + projects |
-| F05 | Lead → Cliente → Contrato | crm → contracts |
-| F06 | Campanha de Marketing | marketing + releases |
-| F07 | Takedown de Conteúdo | monitoring + catalog |
-| F08 | Conciliação ECAD | monitoring → catalog → accounting |
-| F09 | Licenciamento de Obra | licensing → catalog → contracts → accounting |
-| F10 | Onboarding de Novo Tenant | settings → artists → catalog → contracts |
+| F01 | New Artist Onboarding | crm → artists → contracts → catalog |
+| F02 | Music Release | catalog → releases → marketing → monitoring |
+| F03 | Contract Cycle | contracts + artists + crm |
+| F04 | Financial Cycle | accounting + artists + projects |
+| F05 | Lead → Client → Contract | crm → contracts |
+| F06 | Marketing Campaign | marketing + releases |
+| F07 | Content Takedown | monitoring + catalog |
+| F08 | ECAD Reconciliation | monitoring → catalog → accounting |
+| F09 | Work Licensing | licensing → catalog → contracts → accounting |
+| F10 | New Tenant Onboarding | settings → artists → catalog → contracts |
 
-### Fluxo F01 — Integração de Artista (resumo)
-
-```
-Lead (CRM) → Artista (prospecto) → Contrato (rascunho)
-  → Enviar Autentique → Artista (contratado) → Obras/Fonogramas (catálogo)
-  → Artista (ativo)
-```
-
-### Fluxo F02 — Lançamento (resumo)
+### Flow F01 — Artist Onboarding (summary)
 
 ```
-Obras+Fonogramas (catálogo) → Lançamento (análise)
-  → Shares definidos → Aprovado → Entregue (distribuidora)
-  → Campanha de marketing → Publicado → Monitoramento activo
+Lead (CRM) → Artista (prospect) → Contrato (draft)
+  → Send via Autentique → Artista (signed) → Obras/Fonogramas (catalog)
+  → Artista (active)
+```
+
+### Flow F02 — Release (summary)
+
+```
+Obras+Fonogramas (catalog) → Lançamento (under review)
+  → Shares defined → Approved → Delivered (distributor)
+  → Marketing campaign → Published → Monitoring active
 ```
 
 ---
 
-## 11. Integrações
+## 11. Integrations
 
-> Fonte TypeScript: `shared/integrations/registry.ts`  
+> TypeScript source: `shared/integrations/registry.ts`  
 > Hooks: `modules/integrations/hooks/`
 
-### Registry das 19 integrações
+### Registry of the 19 integrations
 
-| ID | Nome | Categoria | Estado | Hook |
+| ID | Name | Category | State | Hook |
 |----|------|-----------|--------|------|
 | `Supabase Auth` | Supabase Auth | auth | stub | `useSupabaseAuth` |
 | `r2` | Cloudflare R2 | storage | stub | `useR2` |
@@ -456,34 +456,34 @@ Obras+Fonogramas (catálogo) → Lançamento (análise)
 | `soundcloud` | SoundCloud | streaming | stub | `useSoundCloud` |
 | `ecad` | ECAD | rights | stub | `useEcad` |
 | `ubc` | UBC | rights | stub | `useUbc` |
-| `abramus` | Abramus | rights | **funcional** | `useAbramus` |
+| `abramus` | Abramus | rights | **functional** | `useAbramus` |
 | `musicroomchat` | MusicChat | chat | stub | `useChat` |
 
-### Padrão de integração desabilitada
+### Disabled integration pattern
 
 ```typescript
-// Todas as integrações stub lançam DisabledIntegrationError
+// All stub integrations throw DisabledIntegrationError
 export function disabledIntegration(name: string): never {
   throw new DisabledIntegrationError(name); // status: 503
 }
 ```
 
-### Migração de integração (roadmap)
+### Integration migration (roadmap)
 
-Para activar uma integração stub:
-1. Instalar o SDK da integração
-2. Configurar credenciais via variáveis de ambiente (`VITE_*`)
-3. Implementar o contrato (`shared/integrations/contracts/`)
-4. Substituir o hook stub pela implementação real
-5. Atualizar o registry (status: `active`)
+To activate a stub integration:
+1. Install the integration's SDK
+2. Configure credentials through environment variables (`VITE_*`)
+3. Implement the contract (`shared/integrations/contracts/`)
+4. Replace the stub hook with the real implementation
+5. Update the registry (status: `active`)
 
 ---
 
-## 12. Contratos de Integração
+## 12. Integration Contracts
 
-> Fonte TypeScript: `shared/integrations/contracts/`
+> TypeScript source: `shared/integrations/contracts/`
 
-| Contrato | Ficheiro | Providers cobertos |
+| Contract | File | Providers covered |
 |----------|----------|-------------------|
 | Auth | `auth.contract.ts` | Supabase Auth |
 | Storage | `storage.contract.ts` | Cloudflare R2 |
@@ -495,71 +495,73 @@ Para activar uma integração stub:
 | Rights | `rights.contract.ts` | ECAD, UBC, Abramus |
 | Chat | `chat.contract.ts` | MusicChat |
 
-### Adaptadores de domínio
+### Domain adapters
 
-| Adaptador | Localização | Propósito |
+| Adapter | Location | Purpose |
 |-----------|-------------|-----------|
-| `streaming.adapter.ts` | `modules/artist/adapters/` | Artista ↔ perfis de streaming |
+| `streaming.adapter.ts` | `modules/artist/adapters/` | Artista ↔ streaming profiles |
 | `rights.adapter.ts` | `modules/monitoring/adapters/` | Takedown ↔ APIs ECAD/UBC/Abramus |
 
 ---
 
-## 13. Padrões Visuais
+## 13. Visual Standards
 
 ### Design tokens
 
 ```css
-/* Cor principal */
+/* Primary color */
 --primary: hsl(217, 91%, 60%);    /* enterprise blue */
 --background: hsl(222, 47%, 4%); /* dark navy */
 
-/* Fontes */
+/* Fonts */
 font-family: 'Plus Jakarta Sans', sans-serif;
-font-family: 'IBM Plex Mono', monospace; /* dados numéricos */
+font-family: 'IBM Plex Mono', monospace; /* numeric data */
 ```
 
-### Hierarquia de superfícies
+### Surface hierarchy
 
-1. Background da página (`bg-background`)
-2. Cards e painéis (`bg-card` / `bg-muted/30`)
-3. Inputs e campos (`bg-input`)
-4. Elementos elevados (`shadow-md` + `ring-1 ring-border`)
+1. Page background (`bg-background`)
+2. Cards and panels (`bg-card` / `bg-muted/30`)
+3. Inputs and fields (`bg-input`)
+4. Elevated elements (`shadow-md` + `ring-1 ring-border`)
 
-### Regras de cor semântica (reforço)
+### Semantic color rules (reinforcement)
 
-- **Verde** → activo, publicado, concluído, aprovado, emitido
-- **Azul** → em curso, agendado, processando, enviado
-- **Amarelo** → pendente, rascunho, análise, a vencer
-- **Cinza** → inactivo, arquivado, encerrado
-- **Vermelho** → **EXCLUSIVO**: cancelado, rejeitado, vencido, falhou, valores negativos
+- **Green** → active, published, completed, approved, issued
+- **Blue** → in progress, scheduled, processing, sent
+- **Yellow** → pending, draft, under review, expiring
+- **Gray** → inactive, archived, closed
+- **Red** → **EXCLUSIVE**: cancelled, rejected, expired, failed, negative values
+
+(The status values themselves are the Portuguese ones listed in section 7.)
 
 ### Sidebar
 
-O cabeçalho da sidebar exibe obrigatoriamente:
-- Nome: **MUSIC OS 360**
-- Subtítulo: **ERP OPERACIONAL MUSICAL**
-- Badge: **SISTEMA MULTI-TENANT**
-- Label **Tenant Atual** + nome do tenant
+The sidebar header must display (PT-BR UI copy, kept verbatim):
+- Name: **MUSIC OS 360**
+- Subtitle: **ERP OPERACIONAL MUSICAL** ("musical operational ERP")
+- Badge: **SISTEMA MULTI-TENANT** ("multi-tenant system")
+- Label **Tenant Atual** ("Current Tenant") + the tenant name
 
 ---
 
-## 14. Padrões de Componentes
+## 14. Component Standards
 
-### Estrutura obrigatória de um componente de página
+### Mandatory structure of a page component
 
 ```tsx
-// 1. Import de tipos e hooks
-// 2. Definição de tipos locais (se necessário)
-// 3. Componente principal com data-testid no elemento raiz
-// 4. Estados de loading (Skeleton)
-// 5. Estado vazio (Empty)
-// 6. Conteúdo principal
-// 7. Modais e drawers no fim do JSX
+// 1. Import of types and hooks
+// 2. Definition of local types (if needed)
+// 3. Main component with data-testid on the root element
+// 4. Loading states (Skeleton)
+// 5. Empty state (Empty)
+// 6. Main content
+// 7. Modals and drawers at the end of the JSX
 ```
 
-### data-testid obrigatório
+### Mandatory data-testid
 
-Todo elemento interactivo e todo dado dinâmico relevante deve ter `data-testid`:
+Every interactive element and every relevant piece of dynamic data must have a `data-testid`:
 
 ```tsx
 <Button data-testid="button-create-artista">Criar Artista</Button>
@@ -568,23 +570,23 @@ Todo elemento interactivo e todo dado dinâmico relevante deve ter `data-testid`
 <span data-testid="text-saldo-total">{saldo}</span>
 ```
 
-### Skeleton durante loading
+### Skeleton while loading
 
 ```tsx
 if (isLoading) return <ArtistaCardSkeleton />;
 if (!data?.length) return <ArtistaEmpty />;
 ```
 
-### Modais
+### Modals
 
-Sempre usar `Dialog` do Radix via shadcn.  
-Nomear: `{Entidade}FormModal` para criação/edição, `{Entidade}ViewModal` para visualização.
+Always use the Radix `Dialog` via shadcn.  
+Naming: `{Entity}FormModal` for creation/editing, `{Entity}ViewModal` for viewing.
 
 ---
 
-## 15. Padrões de Formulários
+## 15. Form Standards
 
-### Stack obrigatória
+### Mandatory stack
 
 ```tsx
 const form = useForm<ArtistaFormValues>({
@@ -593,10 +595,10 @@ const form = useForm<ArtistaFormValues>({
 });
 ```
 
-### Schema Zod
+### Zod schema
 
 ```typescript
-// em módulo (não em shared)
+// in a module (not in shared)
 const artistaFormSchema = z.object({
   nome_artistico: z.string().min(1, "Obrigatório"),
   // ...
@@ -604,43 +606,43 @@ const artistaFormSchema = z.object({
 type ArtistaFormValues = z.infer<typeof artistaFormSchema>;
 ```
 
-### Mapper — fonte única de verdade
+### Mapper — single source of truth
 
 ```typescript
-// Nunca transformar dados directamente no componente
-// Sempre usar o mapper do módulo
+// Never transform data directly in the component
+// Always use the module's mapper
 import { toFormArtista, fromFormArtista } from "@/modules/artist/mappers/artistaMappers";
 ```
 
-### Validação
+### Validation
 
-- `zodResolver` para validação declarativa
-- `form.formState.errors` para debug de erros de validação
-- Mensagens de erro em Português
-- Campos com `required` explícitos no schema
+- `zodResolver` for declarative validation
+- `form.formState.errors` for debugging validation errors
+- Error messages in Portuguese (PT-BR end-user copy)
+- Fields with explicit `required` in the schema
 
 ---
 
-## 16. Camada de Dados (Standalone)
+## 16. Data Layer (Standalone)
 
 ### MockData
 
 ```typescript
-// Chave localStorage
+// localStorage key
 const KEY = "musicos360_mock_data";
 
-// Estrutura
+// Structure
 interface MockData {
   artistas: Artista[];
   obras: Obra[];
   fonogramas: Fonograma[];
   contratos: Contrato[];
   transacoes: Transacao[];
-  // ... todas as entidades
+  // ... all entities
 }
 ```
 
-### Padrão de serviço
+### Service pattern
 
 ```typescript
 // modules/{domain}/services/{entity}.service.ts
@@ -662,94 +664,94 @@ export function createArtista(payload: ArtistaInsert): Artista {
 ### TanStack Query
 
 ```typescript
-// Nunca definir queryFn inline em componentes
-// Usar hook do módulo
+// Never define queryFn inline in components
+// Use the module's hook
 const { data, isLoading } = useArtistaList();
 
-// Cache times: CACHE_TIMES de shared/config
-// Invalidar após mutações
+// Cache times: CACHE_TIMES from shared/config
+// Invalidate after mutations
 queryClient.invalidateQueries({ queryKey: ["artistas"] });
 ```
 
 ---
 
-## 17. Segurança e Dados Sensíveis
+## 17. Security and Sensitive Data
 
-| Campo | Visível para | Mascarado para |
+| Field | Visible to | Masked for |
 |-------|-------------|----------------|
 | CPF/CNPJ | owner, admin, manager | editor, viewer |
-| Salários | owner, admin | manager, editor, viewer |
-| Credenciais de integração | ninguém (UI) | todos |
-| Tokens de auth | ninguém | todos |
+| Salaries | owner, admin | manager, editor, viewer |
+| Integration credentials | nobody (UI) | everyone |
+| Auth tokens | nobody | everyone |
 
-### Regras
+### Rules
 
-- Credenciais em localStorage apenas em modo standalone; backend Vault no futuro
-- `musicos360_rt` eliminado no logout
-- Nunca logar tokens, chaves ou passwords em `console.*`
-- Dados sensíveis mascarados com `***` em listas e exportações para papéis sem acesso
+- Credentials in localStorage only in standalone mode; backend Vault in the future
+- `musicos360_rt` removed on logout
+- Never log tokens, keys or passwords in `console.*`
+- Sensitive data masked with `***` in lists and exports for roles without access
 
 ---
 
-## 18. Limitações de Âmbito
+## 18. Scope Limitations
 
-### O que o sistema NÃO faz (por design)
+### What the system does NOT do (by design)
 
-| Tema | Clarificação |
+| Topic | Clarification |
 |------|-------------|
-| **Recebimentos externos de direitos como domínio** | "Recebimentos externos de direitos" é APENAS uma categoria de transação no Accounting. Não existe módulo de recebimentos externos de direitos. Não existe motor de splits/distribuição. |
-| **Contabilidade de artistas** | O módulo Accounting é da empresa (label/editora), não do artista individual |
-| **Analytics individual de artista** | Analytics é apenas para perfis de empresa (YouTube, TikTok, Instagram, Meta Ads, Google Ads). Análise individual → Visão 360° modal no módulo Artists |
-| **IA como módulo** | Não existe módulo "IA Assistente". IA existe apenas como botões de formulário em Marketing e Artists (`AIGenerateButton`) |
-| **Motor de pagamentos** | Stripe é para billing SaaS do tenant, não para pagamentos a artistas |
-| **Cálculo de splits** | Shares documentam participações percentuais mas não calculam distribuição de receitas |
+| **External rights receipts as a domain** | "External rights receipts" (`Recebimentos externos de direitos`) is ONLY a transaction category in Accounting. There is no external-rights-receipts module. There is no splits/distribution engine. |
+| **Artist accounting** | The Accounting module belongs to the company (label/publisher), not to the individual artist |
+| **Individual artist analytics** | Analytics is only for company profiles (YouTube, TikTok, Instagram, Meta Ads, Google Ads). Individual analysis → 360° View modal in the Artists module |
+| **AI as a module** | There is no "AI Assistant" module. AI exists only as form buttons in Marketing and Artists (`AIGenerateButton`) |
+| **Payments engine** | Stripe is for the tenant's SaaS billing, not for payments to artists |
+| **Split calculation** | Shares document percentage participations but do not calculate revenue distribution |
 
-### Âmbito exacto do Accounting
+### Exact scope of Accounting
 
 ```
-Accounting = receita - despesa = lucro líquido
-           + P&L por artista e projecto
+Accounting = revenue - expenses = net profit
+           + P&L per artist and project
            + recoupment tracking
-           + fluxo de caixa
-           + conciliação OFX
-           + emissão de notas fiscais
+           + cash flow
+           + OFX reconciliation
+           + issuance of invoices (notas fiscais)
 
-NÃO inclui:
-  - Cálculo de recebimentos externos de direitos
-  - Motor de splits / distribuição
-  - Pagamentos a artistas
-  - Integração com sistemas de distribuição
+Does NOT include:
+  - Calculation of external rights receipts
+  - Splits / distribution engine
+  - Payments to artists
+  - Integration with distribution systems
 ```
 
 ---
 
-## 19. Fontes de Verdade no Codebase
+## 19. Sources of Truth in the Codebase
 
-| Assunto | Localização canónica |
+| Subject | Canonical location |
 |---------|---------------------|
-| Enums de status e tipos | `shared/types/enums.ts` |
+| Status and type enums | `shared/types/enums.ts` |
 | EntityRefs cross-domain | `shared/types/refs.ts` |
 | Feature flags | `shared/lib/feature-flags.ts` |
-| Registry de integrações | `shared/integrations/registry.ts` |
-| Contratos de integração | `shared/integrations/contracts/` |
-| Convenções de nomenclatura | `shared/governance/naming.ts` |
-| Registo de módulos | `shared/governance/modules.ts` |
-| Catálogo de entidades | `shared/governance/entities.ts` |
-| Máquinas de estado + cores | `shared/governance/states.ts` |
-| Permissões RBAC | `shared/governance/permissions.ts` |
-| Fluxos operacionais | `shared/governance/flows.ts` |
-| Permissões por papel (impl.) | `app/providers/TenantContext.tsx` |
+| Integrations registry | `shared/integrations/registry.ts` |
+| Integration contracts | `shared/integrations/contracts/` |
+| Naming conventions | `shared/governance/naming.ts` |
+| Modules registry | `shared/governance/modules.ts` |
+| Entities catalog | `shared/governance/entities.ts` |
+| State machines + colors | `shared/governance/states.ts` |
+| RBAC permissions | `shared/governance/permissions.ts` |
+| Operational flows | `shared/governance/flows.ts` |
+| Permissions per role (impl.) | `app/providers/TenantContext.tsx` |
 | Design tokens | `client/src/index.css` |
 | Tailwind config | `tailwind.config.ts` |
 | Mock data principal | `shared/data/mockData.ts` |
-| Mapper de artistas | `modules/artist/mappers/artistaMappers.ts` |
-| Mapper de catálogo | `modules/catalog/mappers/registroMusicasMappers.ts` |
-| Normalização cross-domain | `shared/lib/normalize.ts` |
-| Isolamento multi-tenant | `shared/lib/tenant-isolation.ts` |
-| Integração desabilitada | `shared/lib/disabled-integration.ts` |
+| Artists mapper | `modules/artist/mappers/artistaMappers.ts` |
+| Catalog mapper | `modules/catalog/mappers/registroMusicasMappers.ts` |
+| Cross-domain normalization | `shared/lib/normalize.ts` |
+| Multi-tenant isolation | `shared/lib/tenant-isolation.ts` |
+| Disabled integration | `shared/lib/disabled-integration.ts` |
 
 ---
 
-*Este documento é gerado a partir das fontes TypeScript em `shared/governance/` e é normativo para toda a contribuição ao MUSIC OS 360.*
+*This document is generated from the TypeScript sources in `shared/governance/` and is normative for every contribution to MUSIC OS 360.*
 
-*Última atualização sincronizada com: ETAPA 11 — Governança Definitiva*
+*Last update synchronized with: STAGE 11 (`ETAPA 11`) — Definitive Governance*

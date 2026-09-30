@@ -1,63 +1,63 @@
 # Disaster Recovery Runbook — MUSIC OS 360
 
-> **Status:** procedimento definido · **tempos medidos: PENDENTE do drill real (PS-02)**.
-> Este runbook não pode ser marcado PASS até um restore drill real preencher a seção "Tempos medidos".
+> **Status:** procedure defined · **measured times: PENDING the real drill (PS-02)**.
+> This runbook cannot be marked PASS until a real restore drill fills in the "Measured times" section.
 
-## Alvos (metas)
-| Métrica | Alvo | Base |
+## Targets
+| Metric | Target | Basis |
 |---|---|---|
-| **RPO** (perda máxima de dados) | ≤ 24h | backup diário 03:00 UTC (`.github/workflows/backup.yml`). Para RPO menor, habilitar PITR do Supabase. |
-| **RTO** (tempo até restaurar serviço) | ≤ 4h | a comprovar no drill |
+| **RPO** (maximum data loss) | ≤ 24h | daily backup at 03:00 UTC (`.github/workflows/backup.yml`). For a lower RPO, enable Supabase PITR. |
+| **RTO** (time to restore service) | ≤ 4h | to be proven in the drill |
 
-## Ativos de backup (mecanismo real)
-- **Workflow:** `.github/workflows/backup.yml` — `pg_dump --no-owner --no-privileges` → cifra com **age** → upload **R2/S3** (`aws s3`), retenção **30 dias**, cron `0 3 * * *` + `workflow_dispatch`.
-- **Restore drill automatizado:** job `restore-drill` (segundas) baixa o último backup, restaura em Postgres descartável e compara row-counts.
-- **Scripts:** `scripts/pg-backup.sh` (local/remote), `scripts/pg-backup-cron.sh` (cifrado).
-- **Secrets necessários (repo):** `DATABASE_URL_PROD`, `BACKUP_BUCKET`, `AWS_ENDPOINT_URL`, `BACKUP_R2_ACCESS_KEY_ID`, `BACKUP_R2_SECRET_ACCESS_KEY`, `BACKUP_AGE_RECIPIENT`.
+## Backup assets (actual mechanism)
+- **Workflow:** `.github/workflows/backup.yml` — `pg_dump --no-owner --no-privileges` → encrypts with **age** → uploads to **R2/S3** (`aws s3`), **30-day** retention, cron `0 3 * * *` + `workflow_dispatch`.
+- **Automated restore drill:** the `restore-drill` job (Mondays) downloads the latest backup, restores it into a disposable Postgres and compares row counts.
+- **Scripts:** `scripts/pg-backup.sh` (local/remote), `scripts/pg-backup-cron.sh` (encrypted).
+- **Required secrets (repo):** `DATABASE_URL_PROD`, `BACKUP_BUCKET`, `AWS_ENDPOINT_URL`, `BACKUP_R2_ACCESS_KEY_ID`, `BACKUP_R2_SECRET_ACCESS_KEY`, `BACKUP_AGE_RECIPIENT`.
 
-> ⚠️ **Pré-condição não satisfeita:** hoje `backup.yml` e os scripts estão **fora da branch default** (untracked) → o GitHub Actions **não executa** (`workflow backup.yml not found on the default branch`). Passo 0 obrigatório: commitar na default branch + configurar os secrets.
+> ⚠️ **Precondition not met:** today `backup.yml` and the scripts are **outside the default branch** (untracked) → GitHub Actions **does not run** (`workflow backup.yml not found on the default branch`). Mandatory step 0: commit to the default branch + configure the secrets.
 
-## Procedimento de Restore (completo)
-1. **Localizar backup:** `aws --endpoint-url $AWS_ENDPOINT_URL s3 ls s3://$BACKUP_BUCKET/musicos360-prod/ | sort | tail -1`.
-2. **Baixar + descriptografar:** `aws s3 cp` → `age -d -i <key>` → `dump.sql`.
-3. **Preparar alvo:** Postgres vazio (Supabase branch descartável ou container `postgres:16`).
-4. **Restaurar:** `psql "$TARGET_URL" -f dump.sql` (medir início/fim).
-5. **Validar integridade:** rodar a matriz de row-counts abaixo (diff = 0).
-6. **Validar app:** apontar API para o alvo, `GET /health` → 200; smoke de login + leitura tenant-scoped.
-7. **Registrar** tempos e evidências nesta página.
+## Restore Procedure (complete)
+1. **Locate the backup:** `aws --endpoint-url $AWS_ENDPOINT_URL s3 ls s3://$BACKUP_BUCKET/musicos360-prod/ | sort | tail -1`.
+2. **Download + decrypt:** `aws s3 cp` → `age -d -i <key>` → `dump.sql`.
+3. **Prepare the target:** empty Postgres (disposable Supabase branch or `postgres:16` container).
+4. **Restore:** `psql "$TARGET_URL" -f dump.sql` (measure start/end).
+5. **Validate integrity:** run the row-count matrix below (diff = 0).
+6. **Validate the app:** point the API at the target, `GET /health` → 200; smoke test of login + tenant-scoped read.
+7. **Record** times and evidence on this page.
 
-### Matriz de validação (row-counts antes/depois)
-| Tabela crítica | count origem | count restaurado | diff |
+### Validation matrix (row counts before/after)
+| Critical table | source count | restored count | diff |
 |---|---|---|---|
-| tenants | _pendente_ | _pendente_ | _pendente_ |
+| tenants | _pending_ | _pending_ | _pending_ |
 | organizations | | | |
 | org_members | | | |
 | artists | | | |
 | contracts | | | |
 | billing_subscriptions | | | |
 | invoices | | | |
-| **Critério** | | | **diff total = 0** |
+| **Criterion** | | | **diff total = 0** |
 
-## Tempos medidos (a preencher no drill real — PS-02)
-| Evento | Timestamp | Duração |
+## Measured times (to be filled in during the real drill — PS-02)
+| Event | Timestamp | Duration |
 |---|---|---|
-| Início do restore | _pendente_ | |
-| Fim do restore (dados) | _pendente_ | |
-| App saudável (RTO) | _pendente_ | |
-| **RPO efetivo** (idade do backup) | _pendente_ | |
+| Restore start | _pending_ | |
+| Restore end (data) | _pending_ | |
+| App healthy (RTO) | _pending_ | |
+| **Effective RPO** (age of the backup) | _pending_ | |
 
-## Responsáveis
-| Papel | Responsabilidade |
+## Owners
+| Role | Responsibility |
 |---|---|
-| On-call SRE | Executar restore, medir RTO |
-| DBA/Owner | Validar integridade, aprovar |
-| Eng. Lead | Decisão de failover, comunicação |
+| On-call SRE | Run the restore, measure RTO |
+| DBA/Owner | Validate integrity, approve |
+| Eng. Lead | Failover decision, communication |
 
-## Checklist de aprovação DR
-- [ ] Passo 0: `backup.yml` + scripts na default branch + secrets configurados
-- [ ] Backup diário executou ≥3× (evidência: runs do Actions)
-- [ ] Restore drill real executado
-- [ ] Matriz row-counts com diff = 0
-- [ ] `GET /health` 200 no alvo restaurado
-- [ ] RPO ≤ 24h e RTO ≤ 4h **medidos**
-- [ ] Tempos e evidências registrados acima
+## DR approval checklist
+- [ ] Step 0: `backup.yml` + scripts on the default branch + secrets configured
+- [ ] Daily backup ran ≥3× (evidence: Actions runs)
+- [ ] Real restore drill executed
+- [ ] Row-count matrix with diff = 0
+- [ ] `GET /health` 200 on the restored target
+- [ ] RPO ≤ 24h e RTO ≤ 4h **measured**
+- [ ] Times and evidence recorded above

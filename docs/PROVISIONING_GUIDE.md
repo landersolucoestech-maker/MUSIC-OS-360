@@ -1,185 +1,185 @@
-# MUSIC OS 360 — Guia de Provisionamento Real
+# MUSIC OS 360 — Real Provisioning Guide
 
-> **Objetivo**: Transformar o código em plataforma operacional conectada ao Supabase real.  
-> **Status**: Ativo — execute na ordem abaixo.  
-> **Última atualização**: 2026-05-21
-
----
-
-## Pré-requisitos
-
-Antes de começar:
-- [ ] Conta Supabase criada em [supabase.com](https://supabase.com)
-- [ ] Projeto Supabase criado (Free tier aceite para dev/staging)
-- [ ] Node.js 20+ instalado
-- [ ] pnpm instalado (`npm i -g pnpm`)
-- [ ] Dependências instaladas: `pnpm install`
+> **Goal**: Turn the code into an operational platform connected to the real Supabase.  
+> **Status**: Active — run in the order below.  
+> **Last updated**: 2026-05-21
 
 ---
 
-## Fase 16 — Provisionamento do Banco de Dados
+## Prerequisites
 
-### Passo 1: Criar projeto Supabase
+Before you start:
+- [ ] Supabase account created at [supabase.com](https://supabase.com)
+- [ ] Supabase project created (Free tier is acceptable for dev/staging)
+- [ ] Node.js 20+ installed
+- [ ] pnpm installed (`npm i -g pnpm`)
+- [ ] Dependencies installed: `pnpm install`
 
-1. Acesse [app.supabase.com](https://app.supabase.com)
-2. Clique em **New Project**
-3. Escolha uma região próxima (ex: São Paulo - `sa-east-1`)
-4. Anote a senha do banco — você precisará dela
-5. Aguarde o projeto inicializar (~2 minutos)
+---
 
-### Passo 2: Obter credenciais
+## Phase 16 — Database Provisioning
 
-No painel Supabase:
-- **Settings → API** → copie:
+### Step 1: Create the Supabase project
+
+1. Go to [app.supabase.com](https://app.supabase.com)
+2. Click **New Project**
+3. Pick a nearby region (e.g. São Paulo - `sa-east-1`)
+4. Write down the database password — you will need it
+5. Wait for the project to initialize (~2 minutes)
+
+### Step 2: Get the credentials
+
+In the Supabase dashboard:
+- **Settings → API** → copy:
   - `Project URL` → `SUPABASE_URL`
   - `anon public` → `SUPABASE_ANON_KEY`
   - `service_role` → `SUPABASE_SERVICE_ROLE_KEY`
-- **Settings → Database** → Connection String → `URI` mode → copie para `DATABASE_URL`
+- **Settings → Database** → Connection String → `URI` mode → copy to `DATABASE_URL`
 
-### Passo 3: Configurar variáveis de ambiente
+### Step 3: Configure environment variables
 
 ```bash
-# Edite com suas credenciais reais (arquivo já existe na raiz, fora do Git)
-nano .env.development  # ou use seu editor preferido
+# Edit with your real credentials (the file already exists at the root, outside Git)
+nano .env.development  # or use your preferred editor
 ```
 
-Variáveis obrigatórias:
+Required variables:
 ```
-DATABASE_URL=postgres://postgres:SENHA@db.REF.supabase.co:5432/postgres
+DATABASE_URL=postgres://postgres:PASSWORD@db.REF.supabase.co:5432/postgres
 SUPABASE_URL=https://REF.supabase.co
 SUPABASE_ANON_KEY=eyJ...
-ENCRYPTION_KEY=<64-hex-chars>  # gere com: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+ENCRYPTION_KEY=<64-hex-chars>  # generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 CORS_ORIGINS=http://localhost:5173
 ```
 
-### Passo 4: Executar migrations
+### Step 4: Run migrations
 
 ```bash
 cd apps/api
 npm run db:migrate
 ```
 
-Resultado esperado:
+Expected result (literal script output, which is in Portuguese):
 ```
 [db:migrate] Aplicando migrations…
 [db:migrate] Migrations aplicadas com sucesso.
 ```
 
-### Passo 5: Verificar provisionamento
+### Step 5: Verify provisioning
 
 ```bash
 npm run verify:supabase
 ```
 
-Este script verifica automaticamente:
-- ✓ Variáveis de ambiente presentes
-- ✓ Conectividade com PostgreSQL
-- ✓ Migrations executadas
-- ✓ Todas as tabelas existem (~60 tabelas)
-- ✓ RLS habilitado em tabelas multi-tenant
-- ✓ Políticas RLS existentes
-- ✓ Coluna `tenant_id` presente
+This script automatically checks:
+- ✓ Environment variables present
+- ✓ Connectivity to PostgreSQL
+- ✓ Migrations executed
+- ✓ All tables exist (~60 tables)
+- ✓ RLS enabled on multi-tenant tables
+- ✓ RLS policies exist
+- ✓ `tenant_id` column present
 
-Se algum item falhar, o script reporta o problema e sai com código 1.
+If any item fails, the script reports the problem and exits with code 1.
 
-**Para corrigir RLS automaticamente:**
+**To fix RLS automatically:**
 ```bash
 npm run verify:rls -- --fix
 ```
 
-### Passo 6: Aplicar JWT Hook do Supabase
+### Step 6: Apply the Supabase JWT Hook
 
-Este hook garante que `app.current_tenant_id` seja definido automaticamente por cada request:
+This hook guarantees that `app.current_tenant_id` is set automatically on every request:
 
 ```bash
-# Execute o SQL no Supabase SQL Editor:
+# Run the SQL in the Supabase SQL Editor:
 # apps/api/supabase-jwt-hook.sql
 ```
 
-Ou via CLI Supabase:
+Or via the Supabase CLI:
 ```bash
 supabase db execute --file apps/api/supabase-jwt-hook.sql
 ```
 
 ---
 
-## Fase 17 — Seed Operacional
+## Phase 17 — Operational Seed
 
-### Passo 7: Criar usuário no Supabase Auth
+### Step 7: Create a user in Supabase Auth
 
 1. Supabase Dashboard → **Authentication → Users**
-2. Clique em **Invite User** ou **Create User**
-3. Email: `admin@musicos360.dev` (ou seu email real)
-4. Copie o UUID do usuário criado
+2. Click **Invite User** or **Create User**
+3. Email: `admin@musicos360.dev` (or your real email)
+4. Copy the UUID of the created user
 
-### Passo 8: Configurar seed
+### Step 8: Configure the seed
 
 ```bash
-# No .env.development, defina:
-SEED_ADMIN_SUB=<uuid-do-usuario-supabase>
+# In .env.development, set:
+SEED_ADMIN_SUB=<supabase-user-uuid>
 SEED_ADMIN_EMAIL=admin@musicos360.dev
 ```
 
-### Passo 9: Executar seed operacional
+### Step 9: Run the operational seed
 
 ```bash
 npm run db:seed:operational
 ```
 
-Cria:
+Creates:
 - Organization + Tenant
 - Admin member (owner)
-- Billing subscription enterprise
-- Artista demo
+- Enterprise billing subscription
+- Demo artist
 - CRM Contact + Company + Tag
-- Pipeline com 3 stages + 1 opportunity
-- Campanha + task
-- Formulário de captura
-- Contrato rascunho
-- Transação financeira
+- Pipeline with 3 stages + 1 opportunity
+- Campaign + task
+- Capture form
+- Draft contract
+- Financial transaction
 
 ---
 
-## Fase 18 — Validar Tenant Isolation
+## Phase 18 — Validate Tenant Isolation
 
 ```bash
 npm run verify:tenant-isolation
 ```
 
-Este script:
-1. Cria 2 tenants temporários
-2. Insere dados em cada tenant
-3. Tenta leitura, update e delete cross-tenant
-4. Confirma que RLS bloqueia todos os acessos cruzados
-5. Remove dados de teste (cleanup automático)
+This script:
+1. Creates 2 temporary tenants
+2. Inserts data in each tenant
+3. Attempts cross-tenant read, update and delete
+4. Confirms that RLS blocks all cross-tenant access
+5. Removes test data (automatic cleanup)
 
-**Critério de aceite**: 7/7 testes passam.
+**Acceptance criterion**: 7/7 tests pass.
 
 ---
 
-## Fase 19 — Integrações Reais
+## Phase 19 — Real Integrations
 
-### Status por integração
+### Status per integration
 
-| Integração | Variável | Status | Notas |
+| Integration | Variable | Status | Notes |
 |-----------|---------|--------|-------|
-| Supabase Auth | `SUPABASE_URL` + `SUPABASE_ANON_KEY` | **OBRIGATÓRIO** | JWT validation |
-| Supabase DB | `DATABASE_URL` | **OBRIGATÓRIO** | Todas as operações |
-| Redis/BullMQ | `REDIS_URL` | OPCIONAL | Degrada graciosamente |
-| Stripe | `STRIPE_SECRET_KEY` | OPCIONAL (billing) | Planos pagos |
-| Sentry | `SENTRY_DSN` | RECOMENDADO | Observabilidade |
-| Cloudflare R2 | `R2_ACCESS_KEY_ID` | OPCIONAL (uploads) | Armazenamento de ficheiros |
-| Anthropic | `ANTHROPIC_API_KEY` | OPCIONAL (AI) | Funcionalidades IA |
-| ACRCloud | `ACRCLOUD_ACCESS_KEY` | OPCIONAL | Detecção de conteúdo |
-| Spotify | `SPOTIFY_CLIENT_ID` | OPCIONAL | Integração streaming |
-| Email | `RESEND_API_KEY` | RECOMENDADO | Notificações |
+| Supabase Auth | `SUPABASE_URL` + `SUPABASE_ANON_KEY` | **REQUIRED** | JWT validation |
+| Supabase DB | `DATABASE_URL` | **REQUIRED** | All operations |
+| Redis/BullMQ | `REDIS_URL` | OPTIONAL | Degrades gracefully |
+| Stripe | `STRIPE_SECRET_KEY` | OPTIONAL (billing) | Paid plans |
+| Sentry | `SENTRY_DSN` | RECOMMENDED | Observability |
+| Cloudflare R2 | `R2_ACCESS_KEY_ID` | OPTIONAL (uploads) | File storage |
+| Anthropic | `ANTHROPIC_API_KEY` | OPTIONAL (AI) | AI features |
+| ACRCloud | `ACRCLOUD_ACCESS_KEY` | OPTIONAL | Content detection |
+| Spotify | `SPOTIFY_CLIENT_ID` | OPTIONAL | Streaming integration |
+| Email | `RESEND_API_KEY` | RECOMMENDED | Notifications |
 
-**Para cada integração, teste conectividade:**
+**For each integration, test connectivity:**
 ```bash
 GET /api/v1/health
 ```
 
-Resposta completa:
+Full response:
 ```json
 {
   "status": "ok",
@@ -191,177 +191,177 @@ Resposta completa:
 }
 ```
 
-Se Redis estiver `down`, a API continua em modo degradado — aceitável.  
-Se Database estiver `down`, a API falha completamente — critical.
+If Redis is `down`, the API keeps running in degraded mode — acceptable.  
+If the Database is `down`, the API fails completely — critical.
 
 ---
 
-## Fase 20 — Smoke Test Ponta a Ponta
+## Phase 20 — End-to-End Smoke Test
 
-### Passo 10: Obter JWT real
+### Step 10: Get a real JWT
 
-1. Frontend: faça login com o usuário criado no Passo 7
-2. No browser DevTools → Network → qualquer request à API → copie o `Authorization: Bearer ...` header
-3. Ou via Supabase SDK:
+1. Frontend: log in with the user created in Step 7
+2. In the browser DevTools → Network → any API request → copy the `Authorization: Bearer ...` header
+3. Or via the Supabase SDK:
 ```javascript
 const { data } = await supabase.auth.signInWithPassword({ email, password });
 const token = data.session.access_token;
 ```
 
-### Passo 11: Executar smoke test
+### Step 11: Run the smoke test
 
 ```bash
 API_URL=http://localhost:3001 \
-SMOKE_TOKEN=<jwt-real> \
+SMOKE_TOKEN=<real-jwt> \
 SMOKE_TENANT=10000000-0000-0000-0000-000000000002 \
 npm run smoke-test
 ```
 
-O smoke test verifica:
+The smoke test checks:
 1. Health check 200
-2. Endpoint protegido sem token → 401
+2. Protected endpoint without a token → 401
 3. Analytics dashboard
-4. Listar artistas
-5. Criar artista
-6. Listar pipelines
-7. Listar CRM contacts
-8. Listar campanhas
+4. List artists
+5. Create artist
+6. List pipelines
+7. List CRM contacts
+8. List campaigns
 9. Analytics revenue
-10. Submit formulário público
-11. Cross-tenant bloqueado (RLS)
+10. Submit public form
+11. Cross-tenant blocked (RLS)
 12. Audit trail
 13. Conversations
-14. Cleanup automático
+14. Automatic cleanup
 
-**Critério de aceite**: todos os testes passam (testes com `SKIP` são aceitáveis se sem credenciais).
+**Acceptance criterion**: all tests pass (tests marked `SKIP` are acceptable when credentials are missing).
 
-### Passo 12: Verificar provisionamento completo
+### Step 12: Verify full provisioning
 
 ```bash
 npm run provision
 ```
 
-Executa em sequência: `verify:supabase` → `verify:rls` → `verify:tenant-isolation`
+Runs in sequence: `verify:supabase` → `verify:rls` → `verify:tenant-isolation`
 
 ---
 
-## Frontend — Configuração
+## Frontend — Configuration
 
 ### apps/web/.env.development
 
 ```bash
 cp apps/web/.env.production apps/web/.env.development
-# Edite com suas variáveis VITE_* reais de DEV
+# Edit with your real DEV VITE_* variables
 ```
 
-Variáveis obrigatórias para o frontend:
+Required variables for the frontend:
 ```
 VITE_API_URL=http://localhost:3001/api/v1
 VITE_SUPABASE_URL=https://REF.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJ...
 ```
 
-### Iniciar frontend
+### Start the frontend
 
 ```bash
 cd apps/web
 npm run dev
 ```
 
-O frontend irá autenticar via Supabase Auth, obter um JWT, e enviá-lo para a API nos headers `Authorization: Bearer <jwt>` e `X-Tenant-ID: <tenant-uuid>`.
+The frontend will authenticate through Supabase Auth, obtain a JWT, and send it to the API in the `Authorization: Bearer <jwt>` and `X-Tenant-ID: <tenant-uuid>` headers.
 
 ---
 
-## Checklist Final de Provisionamento
+## Final Provisioning Checklist
 
 ```
-FASE 16 — Banco de Dados
-  [ ] Projeto Supabase criado
-  [ ] DATABASE_URL configurado
-  [ ] SUPABASE_URL + SUPABASE_ANON_KEY configurados
-  [ ] ENCRYPTION_KEY gerado (64 hex)
-  [ ] npm run db:migrate → sem erros
-  [ ] npm run verify:supabase → ✓ tudo verde
-  [ ] npm run verify:rls → ✓ todas as tabelas com RLS
-  [ ] JWT Hook aplicado (supabase-jwt-hook.sql)
+PHASE 16 — Database
+  [ ] Supabase project created
+  [ ] DATABASE_URL configured
+  [ ] SUPABASE_URL + SUPABASE_ANON_KEY configured
+  [ ] ENCRYPTION_KEY generated (64 hex)
+  [ ] npm run db:migrate → no errors
+  [ ] npm run verify:supabase → ✓ all green
+  [ ] npm run verify:rls → ✓ all tables with RLS
+  [ ] JWT Hook applied (supabase-jwt-hook.sql)
 
-FASE 17 — Dados Operacionais
-  [ ] Usuário criado no Supabase Auth
-  [ ] SEED_ADMIN_SUB configurado
-  [ ] npm run db:seed:operational → dados criados
-  [ ] Login real funciona no frontend
-  [ ] Dashboard carrega dados reais
+PHASE 17 — Operational Data
+  [ ] User created in Supabase Auth
+  [ ] SEED_ADMIN_SUB configured
+  [ ] npm run db:seed:operational → data created
+  [ ] Real login works in the frontend
+  [ ] Dashboard loads real data
 
-FASE 18 — Tenant Isolation
-  [ ] npm run verify:tenant-isolation → 7/7 testes passam
-  [ ] Cross-tenant bloqueado confirmado
+PHASE 18 — Tenant Isolation
+  [ ] npm run verify:tenant-isolation → 7/7 tests pass
+  [ ] Cross-tenant blocking confirmed
 
-FASE 19 — Integrações
-  [ ] Supabase Auth: CONECTADO
-  [ ] PostgreSQL: CONECTADO
-  [ ] Redis: CONECTADO ou OPCIONAL
-  [ ] Stripe: CONFIGURADO ou PENDENTE (billing)
-  [ ] Storage: CONFIGURADO ou PENDENTE
-  [ ] Email: CONFIGURADO ou PENDENTE
-  [ ] IA providers: CONFIGURADO ou PENDENTE
+PHASE 19 — Integrations
+  [ ] Supabase Auth: CONNECTED
+  [ ] PostgreSQL: CONNECTED
+  [ ] Redis: CONNECTED or OPTIONAL
+  [ ] Stripe: CONFIGURED or PENDING (billing)
+  [ ] Storage: CONFIGURED or PENDING
+  [ ] Email: CONFIGURED or PENDING
+  [ ] AI providers: CONFIGURED or PENDING
   [ ] GET /api/v1/health → status: ok
 
-FASE 20 — Smoke Test
-  [ ] API inicia sem erros
-  [ ] npm run smoke-test → todos os testes passam
-  [ ] Login real funciona
-  [ ] CRUD artista funciona
-  [ ] Pipeline kanban funciona
-  [ ] CRM contacts funciona
-  [ ] Formulário submit público funciona
-  [ ] RLS bloqueia cross-tenant
-  [ ] Logs aparecem no Sentry (se configurado)
+PHASE 20 — Smoke Test
+  [ ] API starts without errors
+  [ ] npm run smoke-test → all tests pass
+  [ ] Real login works
+  [ ] Artist CRUD works
+  [ ] Pipeline kanban works
+  [ ] CRM contacts work
+  [ ] Public form submit works
+  [ ] RLS blocks cross-tenant
+  [ ] Logs appear in Sentry (if configured)
 ```
 
 ---
 
-## Status de Classificação por Componente
+## Classification Status per Component
 
-| Componente | IMPLEMENTADO | PROVISIONADO | CONECTADO | TESTADO | VALIDADO |
+| Component | IMPLEMENTED | PROVISIONED | CONNECTED | TESTED | VALIDATED |
 |-----------|:---:|:---:|:---:|:---:|:---:|
-| Auth (Supabase JWT) | ✓ | Depende de .env.development | Depende de .env.development | ✓ | Após smoke test |
-| Database (PostgreSQL) | ✓ | Após db:migrate | Após verify | ✓ | Após verify:supabase |
-| RLS / Tenant Isolation | ✓ | Após db:migrate | ✓ | Após verify:rls | Após verify:tenant-isolation |
-| BullMQ / Redis | ✓ | OPCIONAL | OPCIONAL | ✓ | Após health check |
-| Billing / Stripe | ✓ | Após .env.development config | Após .env.development config | Parcial | Após webhook test |
-| CRM Canonical | ✓ | Após db:migrate | ✓ | ✓ | Após smoke test |
-| Pipelines | ✓ | Após db:migrate | ✓ | ✓ | Após smoke test |
-| Campaigns | ✓ | Após db:migrate | ✓ | ✓ | Após smoke test |
-| Analytics | ✓ | Após db:migrate | ✓ | ✓ | Após smoke test |
-| AI Governance | ✓ | Após db:migrate | OPCIONAL | ✓ | Após AI key config |
-| Conversations | ✓ | Após db:migrate | ✓ | ✓ | Após smoke test |
-| Forms | ✓ | Após db:migrate | ✓ | ✓ | Após smoke test |
-| Workflow Automation | ✓ | Após db:migrate | ✓ | ✓ | Após events test |
-| Observability (Sentry) | ✓ | OPCIONAL | OPCIONAL | ✓ | Após SENTRY_DSN config |
+| Auth (Supabase JWT) | ✓ | Depends on .env.development | Depends on .env.development | ✓ | After smoke test |
+| Database (PostgreSQL) | ✓ | After db:migrate | After verify | ✓ | After verify:supabase |
+| RLS / Tenant Isolation | ✓ | After db:migrate | ✓ | After verify:rls | After verify:tenant-isolation |
+| BullMQ / Redis | ✓ | OPTIONAL | OPTIONAL | ✓ | After health check |
+| Billing / Stripe | ✓ | After .env.development config | After .env.development config | Partial | After webhook test |
+| CRM Canonical | ✓ | After db:migrate | ✓ | ✓ | After smoke test |
+| Pipelines | ✓ | After db:migrate | ✓ | ✓ | After smoke test |
+| Campaigns | ✓ | After db:migrate | ✓ | ✓ | After smoke test |
+| Analytics | ✓ | After db:migrate | ✓ | ✓ | After smoke test |
+| AI Governance | ✓ | After db:migrate | OPTIONAL | ✓ | After AI key config |
+| Conversations | ✓ | After db:migrate | ✓ | ✓ | After smoke test |
+| Forms | ✓ | After db:migrate | ✓ | ✓ | After smoke test |
+| Workflow Automation | ✓ | After db:migrate | ✓ | ✓ | After events test |
+| Observability (Sentry) | ✓ | OPTIONAL | OPTIONAL | ✓ | After SENTRY_DSN config |
 
 ---
 
 ## Troubleshooting
 
-**Problema: `DATABASE_URL: connection refused`**
-- Verifique se a URL usa o host correto do Supabase
-- Em dev sem SSL: remova `?sslmode=require` da URL
+**Problem: `DATABASE_URL: connection refused`**
+- Check that the URL uses the correct Supabase host
+- In dev without SSL: remove `?sslmode=require` from the URL
 
-**Problema: `JWT validation failed`**
-- Verifique `SUPABASE_URL` — deve ser `https://REF.supabase.co` (sem `/` no fim)
-- Verifique se o token não expirou (1 hora por padrão)
+**Problem: `JWT validation failed`**
+- Check `SUPABASE_URL` — it must be `https://REF.supabase.co` (no trailing `/`)
+- Check that the token has not expired (1 hour by default)
 
-**Problema: `RLS: permission denied for table`**
-- Execute `npm run verify:rls -- --fix` para aplicar políticas
-- Verifique se `supabase-jwt-hook.sql` foi executado
+**Problem: `RLS: permission denied for table`**
+- Run `npm run verify:rls -- --fix` to apply the policies
+- Check that `supabase-jwt-hook.sql` was executed
 
-**Problema: `app.current_tenant_id not set`**
-- Verifique o `TenantGuard` — header `X-Tenant-ID` é obrigatório
-- O frontend deve enviar `X-Tenant-ID` em todos os requests autenticados
+**Problem: `app.current_tenant_id not set`**
+- Check the `TenantGuard` — the `X-Tenant-ID` header is required
+- The frontend must send `X-Tenant-ID` on every authenticated request
 
-**Problema: Coverage abaixo do threshold após seed**
-- Execute `npm run test:ci` — deve passar com 13+ suites
-- Não misture seed com ambiente de testes
+**Problem: Coverage below threshold after seed**
+- Run `npm run test:ci` — it must pass with 13+ suites
+- Do not mix the seed with the test environment
 
 **Problema: `ENCRYPTION_KEY must be 64 hex chars`**
 ```bash

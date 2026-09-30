@@ -1,164 +1,164 @@
 # RELEASE RUNBOOK - CANONICAL BASELINE 157/80
 
-Data: 2026-07-04
-Status: runbook oficial de release baseado no baseline canonico atual
-Fonte canonica: `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
+Date: 2026-07-04
+Status: official release runbook based on the current canonical baseline
+Canonical source: `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
 
-## 1. Objetivo
+## 1. Objective
 
-Definir o procedimento seguro de validacao de release do MUSIC OS 360 a partir do baseline canonico:
+Define the safe release validation procedure for MUSIC OS 360 starting from the canonical baseline:
 
 ```text
 public_tables = 157
 musicos360_migrations = 80
 ```
 
-Este runbook substitui qualquer roteiro baseado no baseline historico `61/14` e bloqueia definitivamente waves antigas.
+This runbook replaces any script based on the historical `61/14` baseline and permanently blocks the old waves.
 
-## 2. Bloqueios Obrigatorios
+## 2. Mandatory Blocks
 
-Os documentos abaixo sao historicos e nao podem orientar execucao de release ou migrations:
+The documents below are historical and must not guide the execution of a release or of migrations:
 
-- `docs/runbooks/migration-reconciliation.md` (versionado, marcado OBSOLETO)
-- ETAPA 3B - Mirror Restore NO-GO Report (relatorio de sessao, nao versionado)
-- ETAPA 3B.1 - Supabase-Compatible Mirror Report (relatorio de sessao, nao versionado)
+- `docs/runbooks/migration-reconciliation.md` (versioned, marked OBSOLETE)
+- STAGE 3B - Mirror Restore NO-GO Report (session report, not versioned)
+- STAGE 3B.1 - Supabase-Compatible Mirror Report (session report, not versioned)
 
-A decisao tecnica que encerra o impasse 3B/3B.1 esta registrada na secao 6 de
+The technical decision that closes the 3B/3B.1 impasse is recorded in section 6 of
 `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`.
 
-Bloqueio explicito:
+Explicit block:
 
 ```text
-ETAPA 3C antiga = BLOQUEADA
-Waves antigas = BLOQUEADAS
-Runbook 61/14 = NAO EXECUTAR
+Old STAGE 3C = BLOCKED
+Old waves = BLOCKED
+Runbook 61/14 = DO NOT EXECUTE
 ```
 
-## 3. Regras De Seguranca
+## 3. Safety Rules
 
-- Nao executar nada contra producao sem aprovacao explicita.
-- Nao executar migrations neste runbook.
-- Nao alterar banco.
-- Nao alterar `.env`.
-- Nao imprimir secrets.
-- Nao executar Stripe live.
-- Nao executar deploy de producao.
-- Rodar comandos permitidos somente contra staging/mirror isolado.
-- Parar imediatamente se houver risco de tocar production `DATABASE_URL`.
+- Do not run anything against production without explicit approval.
+- Do not run migrations in this runbook.
+- Do not change the database.
+- Do not change `.env`.
+- Do not print secrets.
+- Do not run Stripe live.
+- Do not run a production deploy.
+- Run allowed commands only against an isolated staging/mirror.
+- Stop immediately if there is a risk of touching the production `DATABASE_URL`.
 
-## 4. Pre-Flight Obrigatorio
+## 4. Mandatory Pre-Flight
 
-Antes de qualquer validacao:
+Before any validation:
 
-1. Confirmar branch/release candidate.
-2. Confirmar que o ambiente alvo e staging ou mirror isolado.
-3. Confirmar que variaveis de staging nao apontam para producao.
-4. Confirmar que `DATABASE_URL` e `APP_DATABASE_URL` do processo apontam para staging/mirror.
-5. Confirmar que `DATABASE_SESSION_CONTEXT_ENABLED=true`.
-6. Confirmar que Stripe esta em test-mode.
-7. Confirmar que Resend usa dominio/remetente de staging.
-8. Confirmar que Sentry usa projeto/environment de staging.
-9. Confirmar que R2 usa bucket staging.
+1. Confirm the branch/release candidate.
+2. Confirm that the target environment is staging or an isolated mirror.
+3. Confirm that the staging variables do not point to production.
+4. Confirm that the process `DATABASE_URL` and `APP_DATABASE_URL` point to staging/mirror.
+5. Confirm that `DATABASE_SESSION_CONTEXT_ENABLED=true`.
+6. Confirm that Stripe is in test-mode.
+7. Confirm that Resend uses the staging domain/sender.
+8. Confirm that Sentry uses the staging project/environment.
+9. Confirm that R2 uses the staging bucket.
 
-Se qualquer item falhar:
+If any item fails:
 
 ```text
 NO-GO
 ```
 
-## 5. Validacao Do Baseline Atual
+## 5. Current Baseline Validation
 
-Objetivo: provar que o ambiente alvo esta no baseline canonico `157/80`.
+Goal: prove that the target environment is on the canonical `157/80` baseline.
 
-Validar:
+Validate:
 
 - `public_tables = 157`
 - `public.musicos360_migrations = 80`
-- sem migrations pendentes inesperadas
-- registry de migrations consistente
-- schema compativel com `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
+- no unexpected pending migrations
+- consistent migrations registry
+- schema compatible with `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
 
-Comando permitido, somente contra staging/mirror:
+Allowed command, only against staging/mirror:
 
 ```bash
 corepack pnpm --filter @music-os-360/api db:check
 ```
 
-Resultado esperado:
+Expected result:
 
 ```text
 PASS
-0 migrations pendentes inesperadas
-baseline 157/80 confirmado
+0 unexpected pending migrations
+baseline 157/80 confirmed
 ```
 
-NO-GO se:
+NO-GO if:
 
-- baseline divergir de `157/80`;
-- aparecer migration pendente inesperada;
-- o comando apontar para producao;
-- a conexao usar role indevida para runtime;
-- `db:check` falhar.
+- the baseline diverges from `157/80`;
+- an unexpected pending migration appears;
+- the command points to production;
+- the connection uses an improper role for runtime;
+- `db:check` fails.
 
-## 6. Checagem De Novas Migrations Futuras
+## 6. Check of Future New Migrations
 
-Este runbook nao executa migrations. Para novas migrations futuras:
+This runbook does not run migrations. For new future migrations:
 
-1. Confirmar Task ID e RFC quando aplicavel.
-2. Confirmar que a migration existe no repo.
-3. Confirmar que a migration nao pertence a waves antigas.
-4. Confirmar que a migration foi ensaiada em mirror/staging descartavel.
-5. Confirmar rollback/forward-fix.
-6. Confirmar revisao manual para schema/RLS/billing/auth/RBAC/storage.
+1. Confirm the Task ID and RFC where applicable.
+2. Confirm that the migration exists in the repo.
+3. Confirm that the migration does not belong to the old waves.
+4. Confirm that the migration was rehearsed on a disposable mirror/staging.
+5. Confirm rollback/forward-fix.
+6. Confirm manual review for schema/RLS/billing/auth/RBAC/storage.
 
-Comando proibido neste runbook sem aprovacao explicita:
+Command forbidden in this runbook without explicit approval:
 
 ```bash
 corepack pnpm --filter @music-os-360/api db:migrate
 ```
 
-Se houver migration nova:
+If there is a new migration:
 
 ```text
-NO-GO ate existir runbook especifico de migration futura
+NO-GO until a specific future-migration runbook exists
 ```
 
-## 7. Validacao De RLS
+## 7. RLS Validation
 
-Objetivo: garantir que RLS/FORCE RLS e policies criticas estao ativas no staging/mirror.
+Goal: ensure that RLS/FORCE RLS and critical policies are active on staging/mirror.
 
-Validar:
+Validate:
 
-- policies ativas;
-- FORCE RLS nas tabelas tenant-scoped criticas;
-- runtime app role sem `BYPASSRLS`;
-- contexto de sessao tenant funcionando.
+- active policies;
+- FORCE RLS on the critical tenant-scoped tables;
+- runtime app role without `BYPASSRLS`;
+- tenant session context working.
 
-Comandos permitidos, somente contra staging/mirror:
+Allowed commands, only against staging/mirror:
 
 ```bash
 corepack pnpm --filter @music-os-360/api db:check
 corepack pnpm --filter @music-os-360/api test:e2e
 ```
 
-NO-GO se:
+NO-GO if:
 
-- qualquer policy critica estiver ausente;
-- app role tiver `BYPASSRLS`;
-- E2E de RLS falhar;
-- datasource nao inicializar.
+- any critical policy is missing;
+- the app role has `BYPASSRLS`;
+- the RLS E2E fails;
+- the datasource does not initialize.
 
-## 8. Validacao De Tenant Isolation
+## 8. Tenant Isolation Validation
 
-Objetivo: provar que Tenant A nao le nem escreve dados do Tenant B.
+Goal: prove that Tenant A neither reads nor writes Tenant B data.
 
-Comando permitido:
+Allowed command:
 
 ```bash
 corepack pnpm --filter @music-os-360/api verify:tenant-isolation
 ```
 
-Resultado esperado:
+Expected result:
 
 ```text
 PASS
@@ -166,90 +166,90 @@ cross-tenant read = 0
 cross-tenant write = 0
 ```
 
-NO-GO se:
+NO-GO if:
 
-- qualquer leitura cross-tenant for possivel;
-- qualquer escrita cross-tenant for possivel;
-- script falhar sem evidencia clara;
-- script rodar contra ambiente nao-staging.
+- any cross-tenant read is possible;
+- any cross-tenant write is possible;
+- the script fails without clear evidence;
+- the script runs against a non-staging environment.
 
-## 9. Validacao De RBAC Readiness
+## 9. RBAC Readiness Validation
 
-Objetivo: validar readiness do RBAC em ambiente staging/mirror com decision logs reais.
+Goal: validate RBAC readiness in the staging/mirror environment with real decision logs.
 
-Comando permitido:
+Allowed command:
 
 ```bash
 corepack pnpm --filter @music-os-360/api rbac:readiness
 ```
 
-Resultado esperado:
+Expected result:
 
 ```text
 PASS
->=1000 decisions quando aplicavel
->=10 endpoints quando aplicavel
->=5 resources quando aplicavel
->=5 roles quando aplicavel
->=3 tenants quando aplicavel
+>=1000 decisions when applicable
+>=10 endpoints when applicable
+>=5 resources when applicable
+>=5 roles when applicable
+>=3 tenants when applicable
 cross-tenant = 0
 resolver failures = 0
 ```
 
-NO-GO se:
+NO-GO if:
 
-- readiness falhar;
-- decision logs forem insuficientes;
-- houver divergencia allow/deny;
-- houver cross-tenant finding;
-- houver rota protegida sem criterio de permission esperado.
+- readiness fails;
+- decision logs are insufficient;
+- there is an allow/deny divergence;
+- there is a cross-tenant finding;
+- there is a protected route without the expected permission criterion.
 
-## 10. Validacao De Storage
+## 10. Storage Validation
 
-Objetivo: validar R2/S3 staging e isolamento por tenant.
+Goal: validate R2/S3 staging and per-tenant isolation.
 
-Comando permitido:
+Allowed command:
 
 ```bash
 corepack pnpm --filter @music-os-360/api storage:e2e
 ```
 
-Validar:
+Validate:
 
 - HeadBucket;
 - PutObject;
 - GetObject;
 - Presigned PUT;
 - Presigned GET;
-- ListObjects por prefixo tenant;
+- ListObjects by tenant prefix;
 - DeleteObject;
-- isolamento por tenant.
+- per-tenant isolation.
 
-NO-GO se:
+NO-GO if:
 
-- qualquer operacao falhar;
-- bucket for de producao;
-- prefixo tenant estiver ausente;
-- signed URL nao for validada;
-- delete/cleanup falhar.
+- any operation fails;
+- the bucket is a production bucket;
+- the tenant prefix is missing;
+- the signed URL is not validated;
+- delete/cleanup fails.
 
-## 11. Validacao De Billing Staging
+## 11. Staging Billing Validation
 
-Objetivo: validar billing sem tocar Stripe live.
+Goal: validate billing without touching Stripe live.
 
-Obrigatorio:
+Required:
 
 - Stripe test-mode;
-- webhook secret de staging;
-- customer test;
-- checkout session test;
-- subscription test;
+- staging webhook secret;
+- test customer;
+- test checkout session;
+- test subscription;
 - upgrade/downgrade test;
-- cancelamento test;
-- reativacao test;
-- eventos assinados recebidos em staging.
+- cancellation test;
+- reactivation test;
+- signed events received in staging.
 
-Eventos minimos:
+Minimum events:
 
 - `checkout.session.completed`
 - `customer.subscription.created`
@@ -258,42 +258,42 @@ Eventos minimos:
 - `invoice.paid`
 - `invoice.payment_failed`
 
-NO-GO se:
+NO-GO if:
 
-- qualquer chave Stripe live estiver no ambiente;
-- webhook assinatura falhar;
-- idempotencia falhar;
-- persistencia local nao ocorrer;
-- billing guard nao refletir `read_only`/`suspended` quando aplicavel.
+- any Stripe live key is in the environment;
+- webhook signature verification fails;
+- idempotency fails;
+- local persistence does not happen;
+- the billing guard does not reflect `read_only`/`suspended` where applicable.
 
-## 12. Validacao De Resend Staging
+## 12. Staging Resend Validation
 
-Objetivo: validar email transacional em dominio/remetente staging.
+Goal: validate transactional email on the staging domain/sender.
 
-Validar:
+Validate:
 
-- `RESEND_API_KEY` staging;
-- `RESEND_FROM_EMAIL` staging;
+- staging `RESEND_API_KEY`;
+- staging `RESEND_FROM_EMAIL`;
 - SPF;
 - DKIM;
 - DMARC;
-- envio de boas-vindas;
-- envio de redefinicao de senha;
-- envio de convite;
-- envio de notificacao administrativa.
+- sending of the welcome email;
+- sending of the password reset email;
+- sending of the invitation email;
+- sending of the administrative notification email.
 
-NO-GO se:
+NO-GO if:
 
-- dominio nao estiver validado;
-- remetente apontar para producao indevidamente;
-- qualquer envio obrigatorio falhar;
-- bounce/rejection nao for monitorado.
+- the domain is not validated;
+- the sender improperly points to production;
+- any required send fails;
+- bounce/rejection is not monitored.
 
-## 13. Validacao De Sentry Staging
+## 13. Staging Sentry Validation
 
-Objetivo: validar observabilidade ponta a ponta.
+Goal: validate end-to-end observability.
 
-Validar:
+Validate:
 
 - frontend exception capture;
 - backend exception capture;
@@ -301,19 +301,19 @@ Validar:
 - sourcemaps;
 - traces;
 - correlation id;
-- tenant context sem PII indevida.
+- tenant context without improper PII.
 
-NO-GO se:
+NO-GO if:
 
-- DSN apontar para projeto errado;
-- sourcemap nao resolver;
-- backend nao capturar exception controlada;
-- frontend nao capturar exception controlada;
-- traces nao correlacionarem request frontend/backend.
+- the DSN points to the wrong project;
+- the sourcemap does not resolve;
+- the backend does not capture a controlled exception;
+- the frontend does not capture a controlled exception;
+- traces do not correlate the frontend/backend request.
 
-## 14. Quality Gates Gerais
+## 14. General Quality Gates
 
-Comandos permitidos:
+Allowed commands:
 
 ```bash
 corepack pnpm typecheck
@@ -322,55 +322,55 @@ corepack pnpm build
 corepack pnpm --filter @music-os-360/api test:e2e
 ```
 
-Resultado esperado:
+Expected result:
 
 - typecheck PASS;
 - lint PASS;
 - build PASS;
 - E2E PASS.
 
-NO-GO se qualquer gate falhar.
+NO-GO if any gate fails.
 
 ## 15. Security Gate
 
-Obrigatorio:
+Required:
 
 - secret scan;
 - `gitleaks` PASS;
-- nenhum secret staging ausente;
-- nenhum secret de producao em staging;
-- CORS/CSP/security headers revisados;
-- webhooks com assinatura e protecao contra replay quando aplicavel.
+- no staging secret missing;
+- no production secret in staging;
+- CORS/CSP/security headers reviewed;
+- webhooks with signature and replay protection where applicable.
 
-NO-GO se:
+NO-GO if:
 
-- `gitleaks` falhar;
-- secret real estiver versionado;
-- staging usar credencial de producao;
-- webhook sem assinatura for exposto.
+- `gitleaks` fails;
+- a real secret is versioned;
+- staging uses a production credential;
+- a webhook without a signature is exposed.
 
-## 16. Deploy E Smoke Staging
+## 16. Staging Deploy and Smoke
 
-Este runbook nao executa deploy automaticamente.
+This runbook does not run the deploy automatically.
 
-Antes de GO:
+Before GO:
 
-- deploy staging deve existir;
-- deploy staging deve passar;
-- smoke staging deve passar;
-- rollback staging deve estar documentado;
-- runbook de incidentes deve estar atualizado.
+- the staging deploy must exist;
+- the staging deploy must pass;
+- the staging smoke must pass;
+- the staging rollback must be documented;
+- the incident runbook must be up to date.
 
-NO-GO se:
+NO-GO if:
 
-- deploy staging nao existir;
-- deploy depender de placeholder;
-- smoke staging falhar;
-- rollback staging nao estiver testado ou documentado.
+- the staging deploy does not exist;
+- the deploy depends on a placeholder;
+- the staging smoke fails;
+- the staging rollback is not tested or documented.
 
-## 17. Comandos Permitidos
+## 17. Allowed Commands
 
-Somente contra staging/mirror isolado quando aplicavel:
+Only against an isolated staging/mirror when applicable:
 
 ```bash
 corepack pnpm --filter @music-os-360/api db:check
@@ -383,31 +383,31 @@ corepack pnpm lint
 corepack pnpm build
 ```
 
-## 18. Comandos Proibidos Sem Aprovacao Explicita
+## 18. Commands Forbidden Without Explicit Approval
 
 ```bash
 corepack pnpm --filter @music-os-360/api db:migrate
 db:push
 deploy
 stripe live
-qualquer comando contra production DATABASE_URL
-qualquer wave antiga
-ETAPA 3C antiga
+any command against the production DATABASE_URL
+any old wave
+old STAGE 3C
 ```
 
-Tambem proibido:
+Also forbidden:
 
-- alterar `.env` durante este runbook;
-- imprimir secrets;
-- aplicar migrations em producao;
-- usar runbook `61/14`;
-- usar owner/postgres como `APP_DATABASE_URL` runtime.
+- changing `.env` during this runbook;
+- printing secrets;
+- applying migrations in production;
+- using the `61/14` runbook;
+- using owner/postgres as the runtime `APP_DATABASE_URL`.
 
-## 19. Criterio De GO
+## 19. GO Criterion
 
-GO somente se todos forem verdadeiros:
+GO only if all of the following are true:
 
-- baseline `157/80` confirmado;
+- baseline `157/80` confirmed;
 - `db:check` PASS;
 - E2E PASS;
 - tenant isolation PASS;
@@ -419,50 +419,50 @@ GO somente se todos forem verdadeiros:
 - `gitleaks` PASS;
 - deploy staging PASS;
 - smoke staging PASS;
-- nenhum P0 aberto;
-- nenhum P1 bloqueante aberto;
-- risco de tocar producao = 0.
+- no open P0;
+- no blocking open P1;
+- risk of touching production = 0.
 
-## 20. Criterio De NO-GO
+## 20. NO-GO Criterion
 
-NO-GO se qualquer item ocorrer:
+NO-GO if any item occurs:
 
-- qualquer migration pendente inesperada aparecer;
-- baseline divergir de `157/80`;
-- qualquer gate RLS/RBAC/tenant/storage falhar;
-- qualquer secret staging ausente;
-- qualquer secret staging apontar para producao;
-- deploy staging nao existir;
-- smoke staging falhar;
-- `gitleaks` falhar;
-- houver risco de tocar producao;
-- houver P0 aberto;
-- houver P1 bloqueante aberto.
+- any unexpected pending migration appears;
+- the baseline diverges from `157/80`;
+- any RLS/RBAC/tenant/storage gate fails;
+- any staging secret is missing;
+- any staging secret points to production;
+- the staging deploy does not exist;
+- the staging smoke fails;
+- `gitleaks` fails;
+- there is a risk of touching production;
+- there is an open P0;
+- there is a blocking open P1.
 
 ## 21. Rollback
 
-Este runbook nao aplica mudancas, portanto nao deve exigir rollback de banco.
+This runbook does not apply changes, so it must not require a database rollback.
 
-Rollback operacional para validacoes:
+Operational rollback for validations:
 
-1. Parar no primeiro gate que falhar.
-2. Preservar logs do comando.
-3. Confirmar que nenhum comando proibido foi executado.
-4. Se o deploy staging falhar, executar rollback staging conforme runbook do provider.
-5. Se smoke staging falhar apos deploy, reverter para ultimo release staging conhecido e abrir incidente interno.
-6. Nao promover para producao.
+1. Stop at the first gate that fails.
+2. Preserve the command logs.
+3. Confirm that no forbidden command was executed.
+4. If the staging deploy fails, run the staging rollback according to the provider's runbook.
+5. If the staging smoke fails after the deploy, revert to the last known staging release and open an internal incident.
+6. Do not promote to production.
 
-Rollback proibido:
+Forbidden rollback:
 
-- rollback manual em producao sem RFC/aprovacao;
-- `db:rollback` em producao sem runbook especifico;
-- restaurar dump em producao como acao improvisada.
+- manual rollback in production without an RFC/approval;
+- `db:rollback` in production without a specific runbook;
+- restoring a dump in production as an improvised action.
 
-## 22. Veredito Do Runbook
+## 22. Runbook Verdict
 
-Este documento cria o processo operacional seguro para releases futuras baseadas em `157/80`.
+This document creates the safe operational process for future releases based on `157/80`.
 
-Ele nao declara GO de producao.
+It does not declare a production GO.
 
 Status:
 

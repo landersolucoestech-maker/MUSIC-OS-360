@@ -1,84 +1,84 @@
 # RBAC Execution Flow
 
-## Pipeline Real
+## Actual Pipeline
 
-Ordem global registrada em `AppModule`:
+Global order registered in `AppModule`:
 
 1. `RateLimitGuard`
 2. `JwtAuthGuard`
 3. `TenantGuard`
 4. `RolesGuard`
 5. `PermissionsGuard`
-6. interceptors de contexto RLS, métricas, auditoria e handler
+6. interceptors for RLS context, metrics, auditing and the handler
 
-`RequestIdMiddleware` e `CorrelationMiddleware` executam antes dos guards.
-Todo request recebe `requestId` e `traceId`; `traceparent`, `X-Trace-ID`,
-`X-Correlation-ID` e `X-Request-ID` válidos são propagados.
+`RequestIdMiddleware` and `CorrelationMiddleware` run before the guards.
+Every request receives a `requestId` and a `traceId`; valid `traceparent`,
+`X-Trace-ID`, `X-Correlation-ID` and `X-Request-ID` headers are propagated.
 
-## Fontes De Autoridade
+## Sources Of Authority
 
-- ACTIVE: `RolesGuard`, usando `org_members.role`, `@RequireRole` e a
-  hierarquia legada.
-- SHADOW: `PermissionResolverService.resolvePersisted`, usando
+- ACTIVE: `RolesGuard`, using `org_members.role`, `@RequireRole` and the
+  legacy hierarchy.
+- SHADOW: `PermissionResolverService.resolvePersisted`, using
   `org_members.role_id`, `roles`, `role_inheritance`, `role_permissions`,
-  `permissions` e dependências ativas.
-- `RBAC_PERSISTED_AUTHORITY=SHADOW` não altera a resposta HTTP.
-- `RbacService.getEffectivePermissions` mantém fallback legado apenas para
-  consumidores de compatibilidade. O avaliador SHADOW não usa esse fallback,
-  evitando falsos matches quando banco ou `role_id` estão indisponíveis.
+  `permissions` and active dependencies.
+- `RBAC_PERSISTED_AUTHORITY=SHADOW` does not change the HTTP response.
+- `RbacService.getEffectivePermissions` keeps a legacy fallback only for
+  compatibility consumers. The SHADOW evaluator does not use this fallback,
+  which avoids false matches when the database or `role_id` is unavailable.
 
-## Ordem Da Decisão
+## Decision Order
 
-Rotas com `@RequirePermission`:
+Routes with `@RequirePermission`:
 
-1. `RolesGuard` calcula ACTIVE.
-2. Se ACTIVE negar, ele executa e persiste SHADOW antes de lançar 403.
-3. Se ACTIVE permitir, grava o estado no request.
-4. `PermissionsGuard` executa SHADOW, compara e persiste.
-5. Em SHADOW, a resposta continua sendo ACTIVE.
+1. `RolesGuard` computes ACTIVE.
+2. If ACTIVE denies, it runs and persists SHADOW before throwing 403.
+3. If ACTIVE allows, it stores the state on the request.
+4. `PermissionsGuard` runs SHADOW, compares and persists.
+5. In SHADOW mode, the response is still ACTIVE.
 
-Resultados possíveis: `ALLOW_MATCH`, `DENY_MATCH`, `WOULD_ALLOW` e
+Possible outcomes: `ALLOW_MATCH`, `DENY_MATCH`, `WOULD_ALLOW` and
 `WOULD_DENY`.
 
-Rotas apenas com `@RequireRole` não mudariam com a ativação do
-`PermissionsGuard`; elas continuam sob a hierarquia legada e não geram uma
-comparação de permissão. Essa cobertura deve permanecer visível no inventário
-antes de qualquer promoção.
+Routes with only `@RequireRole` would not change once `PermissionsGuard` is
+activated; they remain under the legacy hierarchy and do not produce a
+permission comparison. This coverage gap must stay visible in the inventory
+before any promotion.
 
-## Tenant E Membership
+## Tenant And Membership
 
-`TenantGuard` exige:
+`TenantGuard` requires:
 
-- JWT com `app_metadata.org_id`;
-- `X-Tenant-ID` compatível com o tenant resolvido;
-- membership ativa para `(tenant_id, auth_user_id)`.
+- a JWT with `app_metadata.org_id`;
+- an `X-Tenant-ID` compatible with the resolved tenant;
+- an active membership for `(tenant_id, auth_user_id)`.
 
-O bootstrap usa `ADMIN_DATA_SOURCE` somente para identidade pré-RLS. Tenant e
-membership têm cache Redis compartilhado com TTL de 60 segundos. Mutações de
-membership invalidam a chave compartilhada. Sem Redis, o guard consulta
-PostgreSQL diretamente.
+Bootstrap uses `ADMIN_DATA_SOURCE` only for pre-RLS identity. Tenant and
+membership share a Redis cache with a 60-second TTL. Membership mutations
+invalidate the shared key. Without Redis, the guard queries
+PostgreSQL directly.
 
 ## Cache
 
-- L1: mapa local por instância, TTL de 60 segundos.
-- L2: Redis em `rbac:value:*`.
-- Índice de invalidação: `rbac:role:{roleId}:keys`.
-- Canal pub/sub: `rbac:cache:invalidate`.
-- Mutações de roles, grants, herança, dependências e conflitos invalidam roles
-  descendentes e todas as instâncias.
-- Falha Redis é degradada para PostgreSQL/L1 e enviada ao Sentry como
+- L1: per-instance local map, 60-second TTL.
+- L2: Redis under `rbac:value:*`.
+- Invalidation index: `rbac:role:{roleId}:keys`.
+- Pub/sub channel: `rbac:cache:invalidate`.
+- Mutations of roles, grants, inheritance, dependencies and conflicts
+  invalidate descendant roles and all instances.
+- A Redis failure degrades to PostgreSQL/L1 and is sent to Sentry as
   `cache_failure`.
 
-## Persistência E Auditoria
+## Persistence And Auditing
 
-Cada permissão avaliada gera uma linha em `rbac_decision_logs`, particionada por
-`created_at`, com índices de tempo, tenant, usuário, role, request, resource e
-action. A retenção é configurada por `RBAC_DECISION_RETENTION_DAYS`.
+Each evaluated permission produces a row in `rbac_decision_logs`, partitioned by
+`created_at`, with indexes on time, tenant, user, role, request, resource and
+action. Retention is configured by `RBAC_DECISION_RETENTION_DAYS`.
 
-O mesmo evento gera entradas append-only em `audit_logs` para decisão,
-divergência e cache. Falhas de persistência nunca alteram a autorização.
+The same event produces append-only entries in `audit_logs` for the decision,
+divergence and cache. Persistence failures never change the authorization.
 
-## Observabilidade
+## Observability
 
 - Prometheus: `rbac_requests_total`, `rbac_allow_total`, `rbac_deny_total`,
   `rbac_would_allow_total`, `rbac_would_deny_total`,
@@ -86,14 +86,14 @@ divergência e cache. Falhas de persistência nunca alteram a autorização.
 - Grafana: `infra/observability/grafana/dashboards/rbac-shadow.json`.
 - Sentry: `would_allow`, `would_deny`, `authorization_failure`,
   `cache_failure`, `resolver_failure`.
-- Readiness real: `npm run rbac:readiness` em `apps/api`.
+- Real readiness: `npm run rbac:readiness` in `apps/api`.
 
-## Fallbacks Reais
+## Actual Fallbacks
 
-- JWT inválido: 401, sem RBAC.
-- Tenant/membership ausente: 401/403.
-- Resolver persistido indisponível: SHADOW registra DENY e
-  `resolver_failure`; ACTIVE continua vigente.
-- Redis indisponível: consulta PostgreSQL.
-- Telemetria indisponível: decisão continua, erro é logado/Sentry.
-- Modo `ON`: não foi ativado por esta implementação.
+- Invalid JWT: 401, no RBAC.
+- Missing tenant/membership: 401/403.
+- Persisted resolver unavailable: SHADOW records DENY and
+  `resolver_failure`; ACTIVE remains in force.
+- Redis unavailable: query PostgreSQL.
+- Telemetry unavailable: the decision proceeds, the error is logged/sent to Sentry.
+- `ON` mode: not activated by this implementation.

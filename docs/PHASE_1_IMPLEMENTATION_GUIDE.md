@@ -1,14 +1,14 @@
-# 🎵 MUSIC OS 360 — GUIA PRÁTICO DE IMPLEMENTAÇÃO FASE 1
+# 🎵 MUSIC OS 360 — PHASE 1 PRACTICAL IMPLEMENTATION GUIDE
 
-**Fase 1: Fundação Técnica e Infraestrutura de Workspaces**  
-**Duração**: 2 semanas  
-**Objetivo**: Preparar a base técnica para todos os workspaces
+**Phase 1: Technical Foundation and Workspace Infrastructure**  
+**Duration**: 2 weeks  
+**Goal**: Prepare the technical foundation for all workspaces
 
 ---
 
-## 📦 SETUP INICIAL DA ESTRUTURA
+## 📦 INITIAL STRUCTURE SETUP
 
-### 1. Criar Pastas Base
+### 1. Create the Base Folders
 
 ```bash
 # Workspace Orchestration
@@ -17,7 +17,7 @@ mkdir -p apps/web/src/modules/workspace/{components,hooks,layouts,types,provider
 # Activity System
 mkdir -p apps/web/src/modules/activity-log/{components,hooks,services,queries,types}
 
-# Shared Components para Workspaces
+# Shared Components for Workspaces
 mkdir -p apps/web/src/modules/shared-workspace-components/{cards,metrics,timelines,tables,sidebars}
 
 # Workspace Contexts
@@ -73,11 +73,11 @@ export interface WorkspaceEntity {
 }
 
 export interface WorkspaceContextValue {
-  // Identificação
+  // Identification
   workspaceType: WorkspaceType;
   workspaceId: string;
   
-  // Entidade
+  // Entity
   entity: WorkspaceEntity | null;
   isLoadingEntity: boolean;
   errorEntity: Error | null;
@@ -146,7 +146,7 @@ export const WorkspaceContext = createContext<WorkspaceContextValue | null>(null
 export function useWorkspaceContext() {
   const context = useContext(WorkspaceContext);
   if (!context) {
-    throw new Error('useWorkspaceContext deve ser usado dentro WorkspaceProvider');
+    throw new Error('useWorkspaceContext must be used within WorkspaceProvider');
   }
   return context;
 }
@@ -168,9 +168,9 @@ export function WorkspaceProvider({
 
 ---
 
-## 🎣 HOOKS BASE
+## 🎣 BASE HOOKS
 
-### 1. Hook Genérico de Workspace
+### 1. Generic Workspace Hook
 
 ```typescript
 // apps/web/src/modules/workspace/hooks/useWorkspace.ts
@@ -192,7 +192,7 @@ export function useWorkspace(
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Carrega a entidade
+  // Load the entity
   const {
     data: entity,
     isPending: isLoadingEntity,
@@ -208,7 +208,7 @@ export function useWorkspace(
     },
   });
 
-  // Carrega activities
+  // Load activities
   const {
     data: activities = [],
     isPending: isLoadingActivities,
@@ -226,8 +226,8 @@ export function useWorkspace(
 
   // Setup realtime subscription (Supabase)
   useEffect(() => {
-    // Aqui conectaria ao canal realtime
-    // Exemplo: supabase.channel(`${workspaceType}:${workspaceId}`).on('*', ...).subscribe()
+    // Here it would connect to the realtime channel
+    // Example: supabase.channel(`${workspaceType}:${workspaceId}`).on('*', ...).subscribe()
   }, [workspaceType, workspaceId]);
 
   return {
@@ -250,7 +250,7 @@ export function useWorkspace(
 }
 ```
 
-### 2. Hook para Activity Log
+### 2. Activity Log Hook
 
 ```typescript
 // apps/web/src/modules/activity-log/hooks/useActivityLog.ts
@@ -265,7 +265,7 @@ export function useActivityLog(
 ) {
   const queryClient = useQueryClient();
 
-  // Carrega activities
+  // Load activities
   const {
     data: activities = [],
     isPending: isLoading,
@@ -281,7 +281,7 @@ export function useActivityLog(
     },
   });
 
-  // Mutation para registrar atividade
+  // Mutation to record an activity
   const logActivity = useMutation({
     mutationFn: async (data: {
       action: Activity['action'];
@@ -313,7 +313,7 @@ export function useActivityLog(
 
 ---
 
-## 📊 SERVIÇOS
+## 📊 SERVICES
 
 ### 1. Activity Service (Backend)
 
@@ -362,7 +362,7 @@ export class ActivityLogService {
   }
 
   private broadcastActivity(activity: ActivityLog) {
-    // Implementar com Supabase Realtime ou similar
+    // Implement with Supabase Realtime or similar
     // supabase.channel(`workspace:${activity.entity_type}:${activity.entity_id}`)
     //   .send('broadcast', { event: 'activity_created', payload: activity });
   }
@@ -426,7 +426,7 @@ export class ActivityLog {
 
 ## 🎨 COMPONENTES COMPARTILHADOS
 
-### 1. Workspace Card Padrão
+### 1. Standard Workspace Card
 
 ```typescript
 // apps/web/src/modules/shared-workspace-components/cards/WorkspaceCard.tsx
@@ -657,7 +657,7 @@ export function ActivityTimeline({
 
 ---
 
-## 📑 LAYOUT BASE
+## 📑 BASE LAYOUT
 
 ### WorkspaceLayout Principal
 
@@ -770,40 +770,40 @@ export function WorkspaceLayout({
 
 ---
 
-## ✅ CHECKLIST IMPLEMENTAÇÃO FASE 1
+## ✅ PHASE 1 IMPLEMENTATION CHECKLIST
 
 ```
-SETUP ESTRUTURAL
-[ ] Criar pastas workspace/, activity-log/, shared-workspace-components/
-[ ] Criar arquivo workspace.types.ts com todas interfaces
-[ ] Criar WorkspaceContext e WorkspaceProvider
-[ ] Criar hooks base (useWorkspace, useActivityLog)
+STRUCTURAL SETUP
+[ ] Create the workspace/, activity-log/, shared-workspace-components/ folders
+[ ] Create the workspace.types.ts file with all interfaces
+[ ] Create WorkspaceContext and WorkspaceProvider
+[ ] Create the base hooks (useWorkspace, useActivityLog)
 
 BACKEND
-[ ] Criar entidade ActivityLog no TypeORM
-[ ] Criar ActivityLogService com create() e getByEntity()
-[ ] Criar endpoints POST /api/activities e GET /api/activities
-[ ] Criar migrations para activity_logs table
-[ ] Adicionar índices para performance
+[ ] Create the ActivityLog entity in TypeORM
+[ ] Create ActivityLogService with create() and getByEntity()
+[ ] Create the POST /api/activities and GET /api/activities endpoints
+[ ] Create migrations for the activity_logs table
+[ ] Add indexes for performance
 
-COMPONENTES
-[ ] Implementar WorkspaceCard
-[ ] Implementar WorkspaceMetrics
-[ ] Implementar ActivityTimeline
-[ ] Implementar WorkspaceLayout
+COMPONENTS
+[ ] Implement WorkspaceCard
+[ ] Implement WorkspaceMetrics
+[ ] Implement ActivityTimeline
+[ ] Implement WorkspaceLayout
 
-INTEGRAÇÃO
-[ ] Conectar hooks aos endpoints API
-[ ] Testar queries e mutations
-[ ] Implementar error handling
-[ ] Adicionar loading states
+INTEGRATION
+[ ] Connect the hooks to the API endpoints
+[ ] Test queries and mutations
+[ ] Implement error handling
+[ ] Add loading states
 
-DOCUMENTAÇÃO
-[ ] Documentar interfaces e tipos
-[ ] Criar exemplo de uso
-[ ] Documentar padrões
+DOCUMENTATION
+[ ] Document interfaces and types
+[ ] Create a usage example
+[ ] Document patterns
 ```
 
 ---
 
-**Próximo passo: FASE 2 — Artist Workspace Implementation**
+**Next step: PHASE 2 — Artist Workspace Implementation**

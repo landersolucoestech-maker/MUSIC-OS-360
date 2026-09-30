@@ -1,50 +1,50 @@
 # 🎨 MUSIC OS 360 — DESIGN SYSTEM & UI/UX STANDARDS
 
-**Padrões Visuais, Componentes e Experiência de Usuário para Workspaces**
+**Visual Standards, Components and User Experience for Workspaces**
 
 ---
 
-## 🎯 PRINCÍPIOS DE DESIGN
+## 🎯 DESIGN PRINCIPLES
 
-### 1. Simplicidade Contextual
-- Mostrar apenas o relevante para o contexto atual
-- Sem overload de informação
-- Hierarquia visual clara
+### 1. Contextual Simplicity
+- Show only what is relevant to the current context
+- No information overload
+- Clear visual hierarchy
 
-### 2. Consistência Global
-- Mesmo padrão em todos os workspaces
-- Componentes reutilizáveis
-- Tokens de design únicos
+### 2. Global Consistency
+- Same pattern in all workspaces
+- Reusable components
+- Single design tokens
 
-### 3. Profundidade Sem Complexidade
-- Ações progressivas (básico → avançado)
-- Minimizar navegação
-- Maximizar contextualização
+### 3. Depth Without Complexity
+- Progressive actions (basic → advanced)
+- Minimize navigation
+- Maximize contextualization
 
-### 4. Fluidez Operacional
-- Transições suaves
-- Feedback imediato
-- Estado sempre claro
+### 4. Operational Fluidity
+- Smooth transitions
+- Immediate feedback
+- State always clear
 
 ---
 
-## 🎨 PALETA DE CORES E TOKENS
+## 🎨 COLOR PALETTE AND TOKENS
 
 ### Design Tokens
 
 ```css
 /* Status Colors */
---status-success: #10b981;      /* Aprovado, Publicado, Ativo */
---status-warning: #f59e0b;      /* Pendente, Atenção */
---status-error: #ef4444;        /* Erro, Cancelado */
---status-info: #3b82f6;         /* Informação, Processando */
---status-muted: #6b7280;        /* Arquivado, Inativo */
+--status-success: #10b981;      /* Approved, Published, Active */
+--status-warning: #f59e0b;      /* Pending, Attention */
+--status-error: #ef4444;        /* Error, Cancelled */
+--status-info: #3b82f6;         /* Information, Processing */
+--status-muted: #6b7280;        /* Archived, Inactive */
 
 /* Action Colors */
---action-primary: #7c3aed;      /* Ações principais */
---action-secondary: #64748b;    /* Ações secundárias */
---action-success: #10b981;      /* Confirmar, Salvar */
---action-danger: #ef4444;       /* Deletar, Cancelar */
+--action-primary: #7c3aed;      /* Primary actions */
+--action-secondary: #64748b;    /* Secondary actions */
+--action-success: #10b981;      /* Confirm, Save */
+--action-danger: #ef4444;       /* Delete, Cancel */
 
 /* Entity Type Colors */
 --entity-artist: #8b5cf6;       /* Purple */
@@ -68,7 +68,7 @@
 
 ---
 
-## 📐 TIPOGRAFIA
+## 📐 TYPOGRAPHY
 
 ### Hierarchy
 
@@ -92,9 +92,9 @@ Mono: "Fira Code", "Monaco", "Courier New", monospace
 
 ---
 
-## 📦 COMPONENTES PADRONIZADOS
+## 📦 STANDARDIZED COMPONENTS
 
-### 1. Card Padrão (Workspace Card)
+### 1. Standard Card (Workspace Card)
 
 ```
 ┌─────────────────────────────────┐
@@ -115,10 +115,10 @@ Specs:
 - Gap between sections: 12px
 ```
 
-### 2. Badge Padrão
+### 2. Standard Badge
 
 ```
-Status Badges:
+Status Badges (PT-BR UI labels: Publicado = Published, Pendente = Pending, Cancelado = Cancelled):
 ┌──────────────┐
 │ ✓ Publicado  │  → Green, filled
 └──────────────┘
@@ -135,15 +135,15 @@ Action Badges:
 [New] [In Progress] [Review] [Done]
 ```
 
-### 3. Button Padronizado
+### 3. Standardized Button
 
 ```
-PRIMARY (Ação principal)
+PRIMARY (Main action)
 ┌─────────────────┐
 │ + Create Release│  → Background: primary, Text: white
 └─────────────────┘
 
-SECONDARY (Ação secundária)
+SECONDARY (Secondary action)
 ┌──────────────┐
 │ Edit Details │  → Background: secondary, Text: foreground
 └──────────────┘
@@ -153,7 +153,7 @@ GHOST (Link-like)
 │ View Details│  → No background, Text: primary
 └─────────────┘
 
-DESTRUCTIVE (Ações destrutivas)
+DESTRUCTIVE (Destructive actions)
 ┌───────────────┐
 │ Delete Item   │  → Background: red, Text: white
 └───────────────┘
@@ -162,7 +162,7 @@ Icon Buttons:
 [⋯] [↗] [✎] [✗]  → 32x32px, Ghost variant
 ```
 
-### 4. Input Padrão
+### 4. Standard Input
 
 ```
 Textbox:
@@ -220,7 +220,7 @@ Active tab: border-b primary, text foreground
     └─ [✗] Delete
 ```
 
-### 7. Modais e Drawers
+### 7. Modals and Drawers
 
 ```
 Modal (Center):
@@ -248,7 +248,7 @@ Drawer (Right-side):
 Width: 480px (tablet), 360px (mobile)
 ```
 
-### 8. Table Padrão
+### 8. Standard Table
 
 ```
 ┌──┬────────┬──────────┬──────────┬──────────┬────────┐
@@ -261,11 +261,11 @@ Width: 480px (tablet), 360px (mobile)
 
 - Alternating row colors (zebra striping)
 - Hover row: bg slightly darker
-- Checkbox para bulk actions
-- Status com badge visual
+- Checkbox for bulk actions
+- Status with a visual badge
 ```
 
-### 9. Timeline Activity
+### 9. Activity Timeline
 
 ```
 ┌────────────────────────────────────┐
@@ -304,11 +304,11 @@ Dot color = action type
 
 ## 🎯 WORKSPACE LAYOUTS
 
-### Layout Tipo 1: Overview (Artista/Release)
+### Layout Type 1: Overview (Artist/Release)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ Sidebar │ Header: Artista Name | Status | Quick Actions        │
+│ Sidebar │ Header: Artist Name | Status | Quick Actions        │
 │         ├─────────────────────────────────────────────────────┤
 │         │ Tabs: Overview | Releases | Campaigns | Financial... │
 │         ├─────────────────────────────────────────────────────┤
@@ -332,12 +332,12 @@ Dot color = action type
 │         │ └──────────────────┘  └──────────────────┘          │
 │         │                                                      │
 ├─────────┼─────────────────────────────────────────────────────┤
-│Timeline │ [Activity compacta]                                  │
+│Timeline │ [Compact activity]                                   │
 │Activity │                                                      │
 └─────────┴─────────────────────────────────────────────────────┘
 ```
 
-### Layout Tipo 2: Data-Heavy (Marketing/Analytics)
+### Layout Type 2: Data-Heavy (Marketing/Analytics)
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -369,7 +369,7 @@ Dot color = action type
 └─────────┴──────────────────────────────────────────────┘
 ```
 
-### Layout Tipo 3: Task Management (Kanban/List)
+### Layout Type 3: Task Management (Kanban/List)
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -398,7 +398,7 @@ Dot color = action type
 
 ---
 
-## 🔄 STATES E TRANSITIONS
+## 🔄 STATES AND TRANSITIONS
 
 ### Loading State
 
@@ -408,7 +408,7 @@ Skeleton placeholders:
 │ [█████░░░░]          │  ← Shimmer effect
 └──────────────────────┘
 
-Componentes principais shows skeletons
+Main components show skeletons
 - Cards show 3 cards skeleton
 - Table shows 5 rows skeleton
 - Timeline shows 3 items skeleton
@@ -441,7 +441,7 @@ Componentes principais shows skeletons
 ┌───────────────────────────────────────┐
 │ ✓ Operation completed successfully    │
 │ "Item created"                        │
-│ Auto-dismiss após 4 segundos          │
+│ Auto-dismiss after 4 seconds          │
 └───────────────────────────────────────┘
 ```
 
@@ -449,7 +449,7 @@ Componentes principais shows skeletons
 
 ## 🎬 ANIMATIONS & TRANSITIONS
 
-### Durações Padrão
+### Standard Durations
 
 ```
 Fast:       150ms  (hover states, quick feedback)
@@ -465,7 +465,7 @@ Loading:        ease-out
 Modals:         cubic-bezier(0.34, 1.56, 0.64, 1)
 ```
 
-### Exemplos
+### Examples
 
 ```
 Hover State:
@@ -511,17 +511,17 @@ Contextual Sidebar:
 
 ---
 
-## ♿ ACESSIBILIDADE
+## ♿ ACCESSIBILITY
 
 ### Keyboard Navigation
 
 ```
-Tab:        Navegar entre elementos
-Shift+Tab:  Navegar reverso
-Enter:      Ativar botão/link
+Tab:        Navigate between elements
+Shift+Tab:  Navigate backwards
+Enter:      Activate button/link
 Space:      Toggle checkbox
-Escape:     Fechar modal/dropdown
-Arrow keys: Navegar em dropdowns/tabs
+Escape:     Close modal/dropdown
+Arrow keys: Navigate in dropdowns/tabs
 ```
 
 ### ARIA Labels
@@ -538,10 +538,10 @@ Arrow keys: Navegar em dropdowns/tabs
 ### Color Contrast
 
 ```
-Mínimo WCAG AA: 4.5:1 (texto normal)
-Mínimo WCAG AA: 3:1 (texto grande, elementos UI)
-Evitar: só cores para comunicar
-Adicionar: ícones, textos, padrões
+Minimum WCAG AA: 4.5:1 (normal text)
+Minimum WCAG AA: 3:1 (large text, UI elements)
+Avoid: communicating with color only
+Add: icons, text, patterns
 ```
 
 ---
@@ -549,35 +549,35 @@ Adicionar: ícones, textos, padrões
 ## 🎨 WORKSPACE-SPECIFIC STYLING
 
 ### Artist Workspace
-- Cor primária: Purple (#8b5cf6)
-- Ícone: 🎤
-- Tema: Carreira e performance
+- Primary color: Purple (#8b5cf6)
+- Icon: 🎤
+- Theme: Career and performance
 
 ### Release Workspace
-- Cor primária: Blue (#3b82f6)
-- Ícone: 🎵
-- Tema: Distribuição e operação
+- Primary color: Blue (#3b82f6)
+- Icon: 🎵
+- Theme: Distribution and operations
 
 ### Campaign Workspace
-- Cor primária: Pink (#ec4899)
-- Ícone: 📢
-- Tema: Marketing e analytics
+- Primary color: Pink (#ec4899)
+- Icon: 📢
+- Theme: Marketing and analytics
 
 ### Project Workspace
-- Cor primária: Teal (#14b8a6)
-- Ícone: 📋
-- Tema: Tasks e gerenciamento
+- Primary color: Teal (#14b8a6)
+- Icon: 📋
+- Theme: Tasks and management
 
 ### Contract Workspace
-- Cor primária: Amber (#f59e0b)
-- Ícone: 📄
-- Tema: Legal e obrigações
+- Primary color: Amber (#f59e0b)
+- Icon: 📄
+- Theme: Legal and obligations
 
 ---
 
-## 📚 COMPONENTES REUTILIZÁVEIS
+## 📚 REUSABLE COMPONENTS
 
-**Todos implementados em:**  
+**All implemented in:**  
 `apps/web/src/modules/shared-workspace-components/`
 
 ```
@@ -597,7 +597,7 @@ Adicionar: ícones, textos, padrões
 
 ---
 
-## 🔍 EXEMPLO: Artist Workspace - Overview
+## 🔍 EXAMPLE: Artist Workspace - Overview
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -635,11 +635,13 @@ Adicionar: ícones, textos, padrões
 └─────────────────────────────────────────────────────────┘
 ```
 
+(PT-BR UI copy in the mock-up: `Publicado há 2 meses` / `há 4 meses` = "Published 2 / 4 months ago".)
+
 ---
 
-**Este design system garante:**
-- ✓ Consistência visual
-- ✓ Acessibilidade
-- ✓ Responsividade
+**This design system guarantees:**
+- ✓ Visual consistency
+- ✓ Accessibility
+- ✓ Responsiveness
 - ✓ Performance
-- ✓ Experiência premium
+- ✓ Premium experience

@@ -1,14 +1,14 @@
-# ADR: CRM Canonico Musical
+# ADR: Canonical Music CRM
 
 ## Status
 
-Proposto para fase futura.
+Proposed for a future phase.
 
-## Decisao
+## Decision
 
-Nao criar CRM novo na Fase 0. A base atual de `clients`, `leads` e `lead-interactions` sera auditada e depois migrada para um modelo canonico de contatos, organizacoes, artistas, oportunidades e timeline.
+Do not create a new CRM in Phase 0. The current `clients`, `leads` and `lead-interactions` base will be audited and then migrated to a canonical model of contacts, organizations, artists, opportunities and a timeline.
 
-## Entidades futuras
+## Future entities
 
 - contacts
 - companies
@@ -23,6 +23,6 @@ Nao criar CRM novo na Fase 0. A base atual de `clients`, `leads` e `lead-interac
 - custom_fields
 - activity_logs
 
-## Motivo
+## Rationale
 
-O produto precisa evoluir para CRM musical sem duplicar logica existente nem quebrar modulos atuais.
+The product needs to evolve into a music CRM without duplicating existing logic or breaking current modules.

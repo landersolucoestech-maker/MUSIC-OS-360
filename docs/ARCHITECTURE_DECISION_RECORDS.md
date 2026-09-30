@@ -1,69 +1,69 @@
 # 📐 MUSIC OS 360 — ARCHITECTURE DECISION RECORDS (ADRs)
 
-**Documentação das decisões arquiteturais principais, contexto, e trade-offs**
+**Documentation of the main architectural decisions, context, and trade-offs**
 
 ---
 
-## ADR-001: Workspaces Contextuais como Padrão Principal
+## ADR-001: Contextual Workspaces as the Main Pattern
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Music OS 360 tinha 22 módulos fragmentados, navegação linear em menu, perda de contexto entre operações, UX quebrada.
+### Context
+Music OS 360 had 22 fragmented modules, linear menu navigation, loss of context between operations, and a broken UX.
 
 ### Decision
-Implementar Workspaces Contextuais como padrão principal de organização.
+Implement Contextual Workspaces as the main organization pattern.
 
-**Workspace** = Centro operacional contextual de uma entidade (Artist, Release, Campaign, etc)
+**Workspace** = Contextual operational center of an entity (Artist, Release, Campaign, etc)
 
 ### Rationale
-- ✅ Reduz navegação necessária (menos cliques)
-- ✅ Mantém contexto operacional
-- ✅ Agrupa operações relacionadas
-- ✅ Escalável para novas entidades
-- ✅ Melhora UX significativamente
+- ✅ Reduces the navigation needed (fewer clicks)
+- ✅ Keeps the operational context
+- ✅ Groups related operations
+- ✅ Scalable to new entities
+- ✅ Significantly improves the UX
 
 ### Alternatives Considered
-1. **Dashboard centralizado gigante**: ❌ Poluído, sem contexto
-2. **Modular menu expansível**: ❌ Segue sendo fragmentado
-3. **SPA com states globais**: ❌ Complexo, difícil de manter
+1. **Giant centralized dashboard**: ❌ Cluttered, no context
+2. **Expandable modular menu**: ❌ Still fragmented
+3. **SPA with global states**: ❌ Complex, hard to maintain
 
 ### Trade-offs
-- ❌ Requer infraestrutura nova (Context, activity system)
-- ❌ Mais componentes reutilizáveis
-- ❌ Maior bundle size (mitigado por lazy loading)
-- ✅ Experiência é drasticamente melhor
+- ❌ Requires new infrastructure (Context, activity system)
+- ❌ More reusable components
+- ❌ Larger bundle size (mitigated by lazy loading)
+- ✅ The experience is drastically better
 
 ### Implementation
-Rotas: `/workspace/:type/:id`  
+Routes: `/workspace/:type/:id`  
 Context: `WorkspaceContext`  
-Tabs: Navegação horizontal integrada
+Tabs: Integrated horizontal navigation
 
 ---
 
-## ADR-002: Activity Logging Centralizado
+## ADR-002: Centralized Activity Logging
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Sem rastreamento de operações, usuários não sabem histórico de mudanças, difícil auditoria, sem timeline de eventos.
+### Context
+Without tracking of operations, users do not know the history of changes, auditing is hard, and there is no event timeline.
 
 ### Decision
-Implementar Activity Logging System centralizado.
+Implement a centralized Activity Logging System.
 
-**Cada ação gera um `ActivityLog`:**
-- Criação, atualização, deletion
-- Aprovação, rejeição, publicação
-- Qualquer operação significativa
+**Each action generates an `ActivityLog`:**
+- Creation, update, deletion
+- Approval, rejection, publication
+- Any significant operation
 
 ### Rationale
-- ✅ Auditoria automática
-- ✅ Timeline operacional
-- ✅ Rastreamento de mudanças
-- ✅ Notificações em tempo real
-- ✅ Compliance e regulação
+- ✅ Automatic auditing
+- ✅ Operational timeline
+- ✅ Change tracking
+- ✅ Real-time notifications
+- ✅ Compliance and regulation
 
 ### Schema
 ```
@@ -88,40 +88,40 @@ activity_logs (
 - Display: `ActivityTimeline` component
 
 ### Trade-offs
-- ❌ Storage adicional (mitigado por archiving)
-- ❌ Queries podem ficar lentas (índices)
-- ✅ Visibilidade operacional
+- ❌ Additional storage (mitigated by archiving)
+- ❌ Queries may become slow (indexes)
+- ✅ Operational visibility
 
 ---
 
-## ADR-003: Coexistência de Rotas Antigas e Novas
+## ADR-003: Coexistence of Old and New Routes
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-22 módulos já existem em produção com usuários dependentes deles.
+### Context
+22 modules already exist in production with users who depend on them.
 
 ### Decision
 **Zero-Breaking-Changes Strategy:**
-- Rotas antigas continuam funcionando
-- Rotas novas (`/workspace/*`) coexistem
-- Links podem apontar para um ou outro
-- Migração gradual, não disruptiva
+- Old routes keep working
+- New routes (`/workspace/*`) coexist
+- Links can point to either
+- Gradual, non-disruptive migration
 
 ### Implementation
 ```
-// Ambas funcionam simultaneamente
-/artistas                         # Módulo antigo (mantém funcionando)
-/workspace/artist/:id            # Novo workspace
+// Both work simultaneously
+/artistas                         # Old module (keeps working)
+/workspace/artist/:id            # New workspace
 
-/lancamentos                      # Módulo antigo
-/workspace/release/:id           # Novo workspace
+/lancamentos                      # Old module
+/workspace/release/:id           # New workspace
 ```
 
-### Links de Transição
+### Transition Links
 ```
-// No módulo antigo
+// In the old module
 <Button onClick={() => navigate(`/workspace/artist/${artistId}`)}>
   Open in new Workspace
 </Button>
@@ -129,36 +129,36 @@ activity_logs (
 
 ### Deprecation Timeline
 ```
-Semana 1-8:   Ambas rotas funcionam (parallel)
-Semana 9-12:  Avisos de deprecation (soft)
-Semana 13+:   Remoção de rotas antigas
+Week 1-8:   Both routes work (parallel)
+Week 9-12:  Deprecation warnings (soft)
+Week 13+:   Removal of old routes
 ```
 
 ### Rationale
-- ✅ Zero risco de quebrar produção
-- ✅ Usuários podem migrar no seu tempo
-- ✅ Feedback real de produção antes de remover
-- ✅ Segurança operacional
+- ✅ Zero risk of breaking production
+- ✅ Users can migrate at their own pace
+- ✅ Real production feedback before removing
+- ✅ Operational safety
 
 ### Trade-offs
-- ❌ Código duplicado temporariamente
-- ❌ Manutenção de ambos
-- ✅ Segurança é prioridade
+- ❌ Temporarily duplicated code
+- ❌ Maintenance of both
+- ✅ Safety is the priority
 
 ---
 
-## ADR-004: React Context + TanStack Query Para State Management
+## ADR-004: React Context + TanStack Query for State Management
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Necessidade de state management para workspaces sem over-engineering.
+### Context
+Need for state management for workspaces without over-engineering.
 
 ### Decision
 - **React Context**: UI state (currentTab, selectedItems, sidebarOpen)
 - **TanStack Query**: Server state (entity, activities, financials)
-- **Não usar Redux, Zustand**: Over-engineering
+- **Do not use Redux, Zustand**: Over-engineering
 
 ### Architecture
 ```
@@ -178,10 +178,10 @@ Necessidade de state management para workspaces sem over-engineering.
 ```
 
 ### Rationale
-- ✅ React Query: queries automáticas, caching, retry
-- ✅ Context: simples, sem dependências extras
-- ✅ Separação clara: server vs UI state
-- ✅ Menos boilerplate
+- ✅ React Query: automatic queries, caching, retry
+- ✅ Context: simple, no extra dependencies
+- ✅ Clear separation: server vs UI state
+- ✅ Less boilerplate
 
 ### Hooks Pattern
 ```typescript
@@ -191,33 +191,33 @@ const { currentTab, setCurrentTab } = useWorkspaceContext(); // UI state
 ```
 
 ### Trade-offs
-- ❌ Sem time-travel debugging (Redux)
-- ❌ Sem Redux DevTools
-- ✅ Muito mais simples
-- ✅ Performance suficiente
+- ❌ No time-travel debugging (Redux)
+- ❌ No Redux DevTools
+- ✅ Much simpler
+- ✅ Sufficient performance
 
 ---
 
-## ADR-005: Activity Timeline como Primeiro-Class Feature
+## ADR-005: Activity Timeline as a First-Class Feature
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Usuários não veem o que aconteceu com uma operação, histórico invisível, difícil colaboração.
+### Context
+Users cannot see what happened with an operation, the history is invisible, collaboration is hard.
 
 ### Decision
-**Activity Timeline é exibido em todo workspace:**
-- Sidebar direita sempre mostra últimas atividades
-- Timeline compacta mas informativa
-- Clicável para mais detalhes
-- Realtime quando possível
+**The Activity Timeline is shown in every workspace:**
+- The right sidebar always shows the latest activities
+- Compact but informative timeline
+- Clickable for more details
+- Realtime when possible
 
 ### Components
 ```
-ActivityTimeline          # Exibe lista de atividades
-ActivityCard             # Um item de atividade
-ActivityFeed             # Feed em tempo real
+ActivityTimeline          # Displays the list of activities
+ActivityCard             # A single activity item
+ActivityFeed             # Real-time feed
 ```
 
 ### Display Pattern
@@ -225,42 +225,43 @@ ActivityFeed             # Feed em tempo real
 ┌──────────────────────────────┐
 │ ACTIVITY (Right Sidebar)     │
 ├──────────────────────────────┤
-│ ● Release distribuído        │ ← Dot indica ação
-│   há 2h por João             │ ← Timestamp, autor
+│ ● Release distribuído        │ ← Dot indicates the action
+│   há 2h por João             │ ← Timestamp, author
 │                              │
 │ ● Assets aprovados           │
 │   há 4h por Maria            │
 │                              │
 │ ● Campanha iniciada          │
 │   há 1d                      │
+(PT-BR UI copy: "Release distributed", "2h ago by João", "Assets approved", "Campaign started", "1d ago")
 └──────────────────────────────┘
 ```
 
 ### Rationale
-- ✅ Visibilidade operacional
-- ✅ Colaboração melhor
-- ✅ Rastreamento automático
-- ✅ Auditoria built-in
+- ✅ Operational visibility
+- ✅ Better collaboration
+- ✅ Automatic tracking
+- ✅ Built-in auditing
 
 ### Trade-offs
-- ❌ Requer activity logging system
-- ✅ Transparência operacional
+- ❌ Requires the activity logging system
+- ✅ Operational transparency
 
 ---
 
-## ADR-006: Realtime Subscriptions com Supabase (Optional)
+## ADR-006: Realtime Subscriptions with Supabase (Optional)
 
 ### Status
-⏳ Opcional na Fase 1 (Implementar Fase 2)
+⏳ Optional in Phase 1 (Implement in Phase 2)
 
-### Contexto
-Múltiplos usuários editando o mesmo workspace precisam ver mudanças em tempo real.
+### Context
+Multiple users editing the same workspace need to see changes in real time.
 
 ### Decision
-Usar Supabase Realtime para:
-- Atualizar activities em tempo real
-- Notificar mudanças de status
-- Sincronizar dados entre usuários
+Use Supabase Realtime to:
+- Update activities in real time
+- Notify status changes
+- Synchronize data between users
 
 ### Schema
 ```
@@ -285,111 +286,111 @@ supabase.channel(`workspace:artist:${artistId}`)
 ```
 
 ### Trade-offs
-- ❌ Dependência externa (Supabase)
-- ❌ Custo adicional
-- ✅ Sync em tempo real
-- ✅ Melhor UX colaborativa
+- ❌ External dependency (Supabase)
+- ❌ Additional cost
+- ✅ Real-time sync
+- ✅ Better collaborative UX
 
 ### Alternative: WebSockets
-- Mais controle
-- Mais complexo de gerenciar
-- Supabase é mais fácil
+- More control
+- More complex to manage
+- Supabase is easier
 
 ---
 
-## ADR-007: 5 Workspaces Principais (Não infinitos)
+## ADR-007: 5 Main Workspaces (Not Infinite)
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Devemos criar exatamente quantos workspaces? Risco de proliferação.
+### Context
+Exactly how many workspaces should we create? Risk of proliferation.
 
 ### Decision
-Começar com 5 workspaces principais:
-1. **Artist**: Carreira do artista
-2. **Release**: Lançamento de música
-3. **Campaign**: Campanha de marketing
-4. **Project**: Projeto genérico (tasks)
-5. **Contract**: Gerenciamento de contrato
+Start with 5 main workspaces:
+1. **Artist**: The artist's career
+2. **Release**: Music release
+3. **Campaign**: Marketing campaign
+4. **Project**: Generic project (tasks)
+5. **Contract**: Contract management
 
-E 3 secundários:
-- **Work**: Obra/Composição
-- **Event**: Evento
-- **Client**: Cliente (CRM)
+And 3 secondary ones:
+- **Work**: Work/Composition (`Obra`)
+- **Event**: Event
+- **Client**: Client (CRM)
 
 ### Rationale
-- ✅ Cobre 80% dos casos de uso
-- ✅ Não é infinito (mantém foco)
-- ✅ Extensível para novos tipos
-- ✅ Cada um tem propósito claro
+- ✅ Covers 80% of the use cases
+- ✅ Not infinite (keeps focus)
+- ✅ Extensible to new types
+- ✅ Each one has a clear purpose
 
 ### How to Add New Workspace
 ```
-1. Criar WorkspaceContext
-2. Criar hooks
-3. Criar layout
-4. Criar pages/tabs
-5. Adicionar em rotas
-6. Linkar de módulo relacionado
+1. Create the WorkspaceContext
+2. Create hooks
+3. Create the layout
+4. Create pages/tabs
+5. Add to routes
+6. Link from the related module
 ```
 
 ### Trade-offs
-- ❌ Nem tudo pode ser workspace
-- ✅ Foco e consistência
+- ❌ Not everything can be a workspace
+- ✅ Focus and consistency
 
 ---
 
-## ADR-008: Tabs Horizontal para Navegação dentro Workspace
+## ADR-008: Horizontal Tabs for Navigation inside a Workspace
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Como organizar múltiplas seções dentro de um workspace?
+### Context
+How to organize multiple sections inside a workspace?
 
 ### Decision
-Usar **Tabs Horizontal** (não sidebar):
+Use **Horizontal Tabs** (not a sidebar):
 - Overview | Releases | Campaigns | Financial | ...
-- Sempre visível
-- Rápido switching
-- Mobile: scroll horizontal
+- Always visible
+- Fast switching
+- Mobile: horizontal scroll
 
 ### Pattern
 ```
 ┌─────────────────────────────────┐
-│ [Overview] [Releases] [Tasks] ▶ │  ← Tabs com scroll
+│ [Overview] [Releases] [Tasks] ▶ │  ← Tabs with scroll
 └─────────────────────────────────┘
 
-Click → Muda conteúdo abaixo
+Click → Changes the content below
 ```
 
 ### Rationale
-- ✅ Menos sidebar visual
-- ✅ Mais espaço de conteúdo
-- ✅ Fácil descobrir abas
+- ✅ Less visual sidebar
+- ✅ More content space
+- ✅ Tabs are easy to discover
 - ✅ Mobile friendly
 
-### Alternative: Sidebar dentro workspace
-- Menos espaço de conteúdo
-- Mais confuso com sidebar global
+### Alternative: Sidebar inside the workspace
+- Less content space
+- More confusing alongside the global sidebar
 
 ### Trade-offs
-- ❌ Menos abas visíveis por vez (solução: scroll)
-- ✅ Interface limpa
+- ❌ Fewer tabs visible at a time (solution: scroll)
+- ✅ Clean interface
 
 ---
 
-## ADR-009: Componentes Reutilizáveis em shared-workspace-components
+## ADR-009: Reusable Components in shared-workspace-components
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Cada workspace precisa exibir: cards, métricas, timelines, tabelas padrão.
+### Context
+Each workspace needs to display: cards, metrics, timelines, standard tables.
 
 ### Decision
-Criar pasta `/shared-workspace-components` com componentes reutilizáveis:
+Create a `/shared-workspace-components` folder with reusable components:
 - `WorkspaceCard`
 - `WorkspaceMetrics`
 - `ActivityTimeline`
@@ -398,32 +399,32 @@ Criar pasta `/shared-workspace-components` com componentes reutilizáveis:
 - Etc...
 
 ### Rationale
-- ✅ DRY: Não repetir código
-- ✅ Consistência: Mesmo padrão
-- ✅ Manutenção: Fixar bug uma vez
-- ✅ Escalabilidade: Novo workspace rápido
+- ✅ DRY: Do not repeat code
+- ✅ Consistency: Same pattern
+- ✅ Maintenance: Fix a bug once
+- ✅ Scalability: New workspace is quick
 
 ### Governance
 ```
-Antes de criar novo componente:
-✓ Checkar se existe similar
-✓ Se existe, reutilizar
-✓ Se não, criar genérico e reutilizável
+Before creating a new component:
+✓ Check whether a similar one exists
+✓ If it exists, reuse it
+✓ If not, create a generic and reusable one
 ```
 
 ### Trade-offs
-- ❌ Mais componentes no início
-- ✅ Menos código repetido depois
+- ❌ More components at the start
+- ✅ Less repeated code later
 
 ---
 
-## ADR-010: Formato de URL: /workspace/{type}/{id}/tabs?
+## ADR-010: URL Format: /workspace/{type}/{id}/tabs?
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Como estruturar URLs de workspace?
+### Context
+How to structure workspace URLs?
 
 ### Decision
 ```
@@ -435,9 +436,9 @@ Como estruturar URLs de workspace?
 /workspace/release/:releaseId/distribution
 ```
 
-**Default**: `/overview` se não especificado
+**Default**: `/overview` if not specified
 
-### Query Params (Opcional)
+### Query Params (Optional)
 ```
 ?filter=status:active
 ?sort=date:desc
@@ -446,35 +447,35 @@ Como estruturar URLs de workspace?
 
 ### Rationale
 - ✅ RESTful
-- ✅ Fácil deeplink
+- ✅ Easy deeplink
 - ✅ Bookmarkable
-- ✅ State na URL
+- ✅ State in the URL
 
 ### Implementation
 ```typescript
-// useWorkspaceContext() lê currentTab da URL
-// navigate(`/workspace/${type}/${id}/${tab}`) muda URL
+// useWorkspaceContext() reads currentTab from the URL
+// navigate(`/workspace/${type}/${id}/${tab}`) changes the URL
 ```
 
 ### Trade-offs
-- ❌ URL um pouco longa
-- ✅ Todos os estados são compartilháveis
+- ❌ Slightly long URL
+- ✅ All states are shareable
 
 ---
 
-## ADR-011: Performance: Lazy Loading e Code Splitting
+## ADR-011: Performance: Lazy Loading and Code Splitting
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Muitos workspaces, muitos componentes = bundle grande.
+### Context
+Many workspaces, many components = large bundle.
 
 ### Decision
-- Componentes de workspace: `lazy()`
-- Tabs: carregam sob demanda
-- Activity timeline: virtual scrolling se > 100 items
-- Analytics charts: recharts dinâmico
+- Workspace components: `lazy()`
+- Tabs: load on demand
+- Activity timeline: virtual scrolling if > 100 items
+- Analytics charts: dynamic recharts
 
 ### Implementation
 ```typescript
@@ -495,192 +496,192 @@ const ArtistReleases = lazy(() => import('./pages/ArtistReleases'));
 - TTI: < 3.5s
 
 ### Trade-offs
-- ❌ Mais setup inicial
-- ✅ Mais rápido em produção
+- ❌ More initial setup
+- ✅ Faster in production
 
 ---
 
-## ADR-012: Não criar workflow engine massivo
+## ADR-012: Do Not Build a Massive Workflow Engine
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Tentação: criar workflow engine automático complexo.
+### Context
+Temptation: build a complex automatic workflow engine.
 
 ### Decision
-**NÃO fazer:**
-- Workflow engine complexo
+**DO NOT:**
+- Complex workflow engine
 - BPM (Business Process Management)
 - Rules engine
-- Automações mágicas
+- Magic automations
 
-**SIM fazer:**
-- Automações simples e óbvias
-- Ações manuais claras
-- Transições de status explícitas
-- Activity logging de tudo
+**DO:**
+- Simple and obvious automations
+- Clear manual actions
+- Explicit status transitions
+- Activity logging of everything
 
-### Automações Simples
+### Simple Automations
 ```
-Release aprovada
-  → Criar tarefas de marketing
-  → Avisar equipe
+Release approved
+  → Create marketing tasks
+  → Notify the team
 
-Campaign finalizada
-  → Gerar relatório
-  → Atualizar analytics
+Campaign finished
+  → Generate report
+  → Update analytics
 ```
 
 ### Rationale
-- ✅ Simples de entender
-- ✅ Fácil manutenção
-- ✅ Não é "caixa preta"
-- ❌ Menos automação que poderia ter
+- ✅ Simple to understand
+- ✅ Easy to maintain
+- ✅ Not a "black box"
+- ❌ Less automation than it could have
 
 ### Trade-offs
-- ❌ Menos automação
-- ✅ Muito mais simples
-- ✅ Usuários entendem o que acontece
+- ❌ Less automation
+- ✅ Much simpler
+- ✅ Users understand what happens
 
 ---
 
-## ADR-013: Sem "Superpowers" Ocultas
+## ADR-013: No Hidden "Superpowers"
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Às vezes queremos criar features "escondidas" para power users.
+### Context
+Sometimes we want to create "hidden" features for power users.
 
 ### Decision
-**Todos os features devem ser óbvios:**
-- Se existe um botão, é visível
-- Se existe uma ação, está no menu
-- Sem atalhos escondidos
-- Sem "Easter eggs" operacionais
+**All features must be obvious:**
+- If a button exists, it is visible
+- If an action exists, it is in the menu
+- No hidden shortcuts
+- No operational "Easter eggs"
 
 ### Rationale
-- ✅ Interface clara
-- ✅ Sem confusão
-- ✅ Acessível para todos
-- ✅ Documentação simples
+- ✅ Clear interface
+- ✅ No confusion
+- ✅ Accessible to everyone
+- ✅ Simple documentation
 
 ### Exception
-- Atalhos de teclado (⌘K, etc) podem ser descobertos
+- Keyboard shortcuts (⌘K, etc) may be discovered
 
 ---
 
-## ADR-014: Arquivo Único de Activity Log (Não um por entity)
+## ADR-014: Single Activity Log Table (Not One per Entity)
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Devemos ter uma tabela `activity_logs` ou uma por entity type?
+### Context
+Should we have a single `activity_logs` table or one per entity type?
 
 ### Decision
-**Uma única tabela `activity_logs`** com campos:
+**A single `activity_logs` table** with the fields:
 - `entity_type` (VARCHAR)
 - `entity_id` (UUID)
 
-Não criar tabelas separadas:
+Do not create separate tables:
 - `artist_activities`
 - `release_activities`
 - `campaign_activities`
 
 ### Rationale
-- ✅ Queries mais fáceis
-- ✅ Busca global possível
-- ✅ Menos tabelas
-- ✅ Índices simples
+- ✅ Easier queries
+- ✅ Global search possible
+- ✅ Fewer tables
+- ✅ Simple indexes
 
-### Indices
+### Indexes
 ```sql
 INDEX (entity_type, entity_id, created_at DESC)
 INDEX (user_id)
 ```
 
 ### Trade-offs
-- ❌ Tabela potencialmente grande
-- ✅ Mais simples
+- ❌ Potentially large table
+- ✅ Simpler
 
 ---
 
-## ADR-015: User Avatar em Activity (Não só nome)
+## ADR-015: User Avatar in Activity (Not Only the Name)
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Activity log mostra quem fez a ação. Só nome ou incluir avatar?
+### Context
+The activity log shows who performed the action. Only the name or include the avatar?
 
 ### Decision
-Incluir `user_avatar_url` em cada activity log.
+Include `user_avatar_url` in each activity log.
 
 **Schema:**
 ```
 user_id UUID
 user_name VARCHAR
-user_avatar_url VARCHAR  ← Adicionar isso
+user_avatar_url VARCHAR  ← Add this
 ```
 
 ### Rationale
-- ✅ Timeline mais visual
-- ✅ Identidade rápida
-- ✅ Melhor UX
-- ✅ Pouco overhead
+- ✅ More visual timeline
+- ✅ Quick identification
+- ✅ Better UX
+- ✅ Little overhead
 
 ### Display
 ```
 ┌─────────────┐
-│ ● [👤] Release distribuído
+│ ● [👤] Release distribuído (PT-BR UI copy: "Release distributed")
 │    João Silva
 │    2h ago
 └─────────────┘
 ```
 
 ### Trade-offs
-- ❌ Mais dados armazenados
-- ✅ Interface melhor
+- ❌ More stored data
+- ✅ Better interface
 
 ---
 
-## ADR-016: Não Sobre-Otimizar Cedo
+## ADR-016: Do Not Over-Optimize Early
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-Tentação: otimizar tudo desde dia 1.
+### Context
+Temptation: optimize everything from day 1.
 
 ### Decision
-**Implementar simples primeiro:**
-- Depois: medir performance
-- Depois: otimizar o que realmente é problema
+**Implement simple first:**
+- Then: measure performance
+- Then: optimize what is really a problem
 
-### Roadmap de Performance
-- Semana 1-8: Funcional, não otimizado
-- Semana 9: Medir com Lighthouse
-- Se score < 80: otimizar
-- Se score > 80: está bom
+### Performance Roadmap
+- Weeks 1-8: Functional, not optimized
+- Week 9: Measure with Lighthouse
+- If score < 80: optimize
+- If score > 80: it is fine
 
 ### Trade-offs
-- ❌ Desenvolvimento mais rápido
-- ✅ Melhor do que premature optimization
+- ❌ Faster development
+- ✅ Better than premature optimization
 
 ---
 
-## ADR-017: TypeScript Strict Mode Obrigatório
+## ADR-017: TypeScript Strict Mode Is Mandatory
 
 ### Status
-✅ Aceito (2026-05-20)
+✅ Accepted (2026-05-20)
 
-### Contexto
-TypeScript config deve ser rigoroso?
+### Context
+Should the TypeScript config be strict?
 
 ### Decision
-**Sim, strict mode everywhere:**
+**Yes, strict mode everywhere:**
 
 ```json
 {
@@ -696,18 +697,18 @@ TypeScript config deve ser rigoroso?
 ```
 
 ### Rationale
-- ✅ Menos bugs
-- ✅ Melhor autocompletar
-- ✅ Refactoring seguro
-- ✅ Documentação inline
+- ✅ Fewer bugs
+- ✅ Better autocompletion
+- ✅ Safe refactoring
+- ✅ Inline documentation
 
 ### Trade-offs
-- ❌ Mais verboso
-- ✅ Mais seguro
+- ❌ More verbose
+- ✅ Safer
 
 ---
 
-## Próximas ADRs (Em desenvolvimento)
+## Upcoming ADRs (In development)
 
 - ADR-018: Testing Strategy (E2E, Integration, Unit)
 - ADR-019: Error Handling Pattern
@@ -716,6 +717,6 @@ TypeScript config deve ser rigoroso?
 
 ---
 
-**Este documento é evolução. Será atualizado conforme novas decisões forem tomadas.**
+**This document is a living record. It will be updated as new decisions are made.**
 
-**Última atualização**: 2026-05-20
+**Last updated**: 2026-05-20

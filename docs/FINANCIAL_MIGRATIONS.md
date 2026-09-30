@@ -1,66 +1,66 @@
-# Migrations do Domínio Financeiro (M0–M9)
+# Financial Domain Migrations (M0–M9)
 
-> Materialização da especificação da **Fase 12 — Financial Database Design**
-> (decisões oficiais das Fases 11/12, Q1–Q10). Criadas na **Fase 13A** —
-> **NENHUMA executada ainda**; a execução no branch DEV é a **Fase 13B** e
-> exige autorização própria.
+> Materialization of the **Phase 12 — Financial Database Design** specification
+> (official decisions of Phases 11/12, Q1–Q10). Created in **Phase 13A** —
+> **NONE executed yet**; execution on the DEV branch is **Phase 13B** and
+> requires its own authorization.
 
-## Sequência (ordem obrigatória)
+## Sequence (mandatory order)
 
-| M | Arquivo (`apps/api/src/database/migrations/`) | Conteúdo |
+| M | File (`apps/api/src/database/migrations/`) | Content |
 |---|---|---|
-| M0 | `20260718000000_FinancialPrereqs.ts` | pgcrypto (idempotente) + `UNIQUE (tenant_id, id)` em projects/artists/phonograms/releases/clients/contracts/events (base das FKs compostas — I6) |
-| M1 | `20260718000001_FinancialEnums.ts` | 9 enums fechados (status SEM paid/received/overdue/partially — `settled` unificado; `overdue` é derivado) |
-| M2 | `20260718000002_FinancialCategories.ts` | templates globais (somente leitura) + categorias por tenant (hierarquia ≤3, natureza → linha do P&L, desativação lógica, trigger de nível) |
-| M3 | `20260718000003_FinancialPartiesAccounts.ts` | contas financeiras (saldo derivado), contrapartes (FK tipada opcional p/ artists/clients), centros de custo |
-| M4 | `20260718000004_FinancialTransactions.ts` | transações v2 (competência/vencimento/liquidação, moeda, parcelas, estorno) + máquina de estados + imutabilidade de settled + optimistic locking |
-| M5 | `20260718000005_TransactionAllocations.ts` | alocações em DIMENSÕES PARALELAS (project/artist/phonogram/release) + `fn_largest_remainder` + constraint trigger deferred de somas (I5/I7) |
-| M6 | `20260718000006_FinancialBudgets.ts` | orçamento por projeto (1 vigente) + revisões append-only |
-| M7 | `20260718000007_FinancialRls.ts` | ENABLE+FORCE RLS + policies `_isolation`/`migrator_admin_all` + grants condicionais (roles `musicos_*` NÃO são criadas em migration) |
-| M8 | `20260718000008_PerformanceMetricEntries.ts` | métricas de desempenho (nunca transação — I12), dedupe UNIQUE parcial, correção via supersede, RLS própria |
-| M9 | `20260718000009_FinancialOperationalBridges.ts` | `financial_project_id` opcional em marketing/audiovisual_projects (Q6/Q7 — sem associação automática) |
+| M0 | `20260718000000_FinancialPrereqs.ts` | pgcrypto (idempotent) + `UNIQUE (tenant_id, id)` on projects/artists/phonograms/releases/clients/contracts/events (basis for the composite FKs — I6) |
+| M1 | `20260718000001_FinancialEnums.ts` | 9 closed enums (status WITHOUT paid/received/overdue/partially — unified `settled`; `overdue` is derived) |
+| M2 | `20260718000002_FinancialCategories.ts` | global templates (read-only) + per-tenant categories (hierarchy ≤3, nature → P&L line, logical deactivation, level trigger) |
+| M3 | `20260718000003_FinancialPartiesAccounts.ts` | financial accounts (derived balance), counterparties (optional typed FK to artists/clients), cost centers |
+| M4 | `20260718000004_FinancialTransactions.ts` | v2 transactions (accrual/due/settlement dates, currency, installments, reversal) + state machine + settled immutability + optimistic locking |
+| M5 | `20260718000005_TransactionAllocations.ts` | allocations in PARALLEL DIMENSIONS (project/artist/phonogram/release) + `fn_largest_remainder` + deferred constraint trigger for sums (I5/I7) |
+| M6 | `20260718000006_FinancialBudgets.ts` | per-project budget (1 active) + append-only revisions |
+| M7 | `20260718000007_FinancialRls.ts` | ENABLE+FORCE RLS + `_isolation`/`migrator_admin_all` policies + conditional grants (`musicos_*` roles are NOT created in a migration) |
+| M8 | `20260718000008_PerformanceMetricEntries.ts` | performance metrics (never a transaction — I12), partial UNIQUE dedupe, correction via supersede, own RLS |
+| M9 | `20260718000009_FinancialOperationalBridges.ts` | optional `financial_project_id` on marketing/audiovisual_projects (Q6/Q7 — no automatic association) |
 
-## Dependências externas (provisionamento, fora de migration)
+## External dependencies (provisioning, outside migrations)
 
-- Roles de cluster `musicos_migrator`/`musicos_app`: grants e policy do
-  migrator são **condicionais** (`IF EXISTS pg_roles`) — sem as roles, a
-  migration passa e os grants ficam pendentes de reexecução do provisionamento.
-- `private_get_tenant_id()`: criada pela cadeia existente
-  (`20260612000001_PortableRlsTenantContext`) — M7/M8 rodam **depois** na ordem
-  natural da cadeia.
-- Seed dos templates de categoria: **carga técnica via `db:seed`** (estrutura e
-  dados separados — nenhuma migration insere dados).
+- Cluster roles `musicos_migrator`/`musicos_app`: the grants and the
+  migrator policy are **conditional** (`IF EXISTS pg_roles`) — without the roles, the
+  migration passes and the grants stay pending until provisioning is re-run.
+- `private_get_tenant_id()`: created by the existing chain
+  (`20260612000001_PortableRlsTenantContext`) — M7/M8 run **after** it in the
+  natural order of the chain.
+- Seed of the category templates: **technical load via `db:seed`** (structure and
+  data kept separate — no migration inserts data).
 
-## Invariantes protegidas no banco
+## Invariants protected in the database
 
-I1 (amount>0) · I5/I7 (somas por dimensão, maior resto, trigger deferred) ·
-I6 (FKs compostas com tenant — cross-tenant impossível) · I8 (settled imutável)
-· I9/I10 (RESTRICT + desativação lógica) · I16 (status↔settlement_date) ·
-I17 (dedupe + correção referenciada) · máquina de estados
-(`pending→settled|cancelled`, `settled→reversed`) · exclusão física proibida
-(transações e métricas) · transferência sem alocação e sem P&L (trigger).
-As demais invariantes (I2/I3/I11/I13/I14/I15) são de consulta/serviço e serão
-protegidas no backend + testes de conciliação (fase de backend).
+I1 (amount>0) · I5/I7 (sums per dimension, largest remainder, deferred trigger) ·
+I6 (composite FKs with tenant — cross-tenant is impossible) · I8 (settled is immutable)
+· I9/I10 (RESTRICT + logical deactivation) · I16 (status↔settlement_date) ·
+I17 (dedupe + referenced correction) · state machine
+(`pending→settled|cancelled`, `settled→reversed`) · physical deletion forbidden
+(transactions and metrics) · transfer without allocation and without P&L (trigger).
+The remaining invariants (I2/I3/I11/I13/I14/I15) are query/service-level and will be
+protected in the backend + reconciliation tests (backend phase).
 
-## Algoritmo de maior resto
+## Largest remainder algorithm
 
-Normativo na Fase 12 §10. Duas materializações equivalentes:
-`fn_largest_remainder(numeric, numeric[])` (SQL, M5 — para import/validação) e
-`apps/api/src/modules/financial/domain/largest-remainder.ts` (TypeScript puro,
-BigInt, sem float — caminho de escrita do backend). Desempate: maior fração;
-empate → menor índice de entrada. Parcela que resulte em R$ 0,00 → rejeição.
+Normative in Phase 12 §10. Two equivalent materializations:
+`fn_largest_remainder(numeric, numeric[])` (SQL, M5 — for import/validation) and
+`apps/api/src/modules/financial/domain/largest-remainder.ts` (pure TypeScript,
+BigInt, no float — the backend write path). Tie-break: largest fraction;
+on a tie → lowest input index. An installment that results in R$ 0.00 → rejection.
 
-## Testes desta fase (sem banco)
+## Tests of this phase (no database)
 
-- `largest-remainder.spec.ts` — casos mínimos do mandato + normativos.
-- `financial-migrations.static.spec.ts` — contratos estáticos (existência,
-  ordem, up/down, ausência de secrets/refs proibidos/OWNER TO/seeds,
-  FKs compostas, RLS+FORCE, CASCADE restrito aos 2 casos justificados).
+- `largest-remainder.spec.ts` — minimum cases from the mandate + normative ones.
+- `financial-migrations.static.spec.ts` — static contracts (existence,
+  order, up/down, absence of secrets/forbidden refs/OWNER TO/seeds,
+  composite FKs, RLS+FORCE, CASCADE restricted to the 2 justified cases).
 
-## Fase 13B (execução no DEV) — pré-requisitos
+## Phase 13B (execution on DEV) — prerequisites
 
-Senha do DEV resetada · token temporário revogado · `SUPABASE_ACCESS_TOKEN`
-ausente · `.env` local exclusivamente no DEV (`rypnevnfipygyhysqpdo`) ·
-`env:check` verde · guards de banco ativos (commit `79519134`) · working tree
-conhecido · provisionamento de roles antes de M7 · plano de rollback = `down()`
-por migration (DEV vazio dispensa backup).
+DEV password reset · temporary token revoked · `SUPABASE_ACCESS_TOKEN`
+absent · local `.env` exclusively pointing at DEV (`rypnevnfipygyhysqpdo`) ·
+`env:check` green · database guards active (commit `79519134`) · known
+working tree · role provisioning before M7 · rollback plan = `down()`
+per migration (an empty DEV needs no backup).
