@@ -7,6 +7,7 @@ import { DatabaseContextService } from '../../database/database-context.service'
 import { MarketingContentPostEntity } from '../../database/entities';
 import { MARKETING_PUBLISHING_JOB_NAMES, QUEUE_NAMES } from '../queue.constants';
 import type { PublishContentJobPayload } from '../services/marketing-publishing-queue.service';
+import { MARKETING_CONTENT_STATUS } from '../../modules/marketing/marketing-vocabulary';
 
 @Processor(QUEUE_NAMES.MARKETING_PUBLISHING)
 @Injectable()
@@ -51,7 +52,7 @@ export class MarketingPublishingProcessor extends WorkerHost {
       this.logger.warn(`[marketing-publishing] content not found id=${data.contentId}`);
       return;
     }
-    if (row.status !== 'agendado' || row.publication_status === 'published') return;
+    if (row.status !== MARKETING_CONTENT_STATUS.SCHEDULED || row.publication_status === 'published') return;
 
     // find-61333a55: the read-then-write above is a TOCTOU race — two
     // concurrently-enqueued jobs for the same content can both pass the
@@ -63,7 +64,7 @@ export class MarketingPublishingProcessor extends WorkerHost {
       .update(MarketingContentPostEntity)
       .set({ publication_status: 'publishing', publication_error: null } as never)
       .where('id = :id AND tenant_id = :tenantId', { id: row.id, tenantId: row.tenant_id })
-      .andWhere("status = 'agendado'")
+      .andWhere('status = :scheduled', { scheduled: MARKETING_CONTENT_STATUS.SCHEDULED })
       .andWhere("publication_status IS DISTINCT FROM 'published'")
       .andWhere("publication_status IS DISTINCT FROM 'publishing'")
       .execute();
@@ -75,7 +76,7 @@ export class MarketingPublishingProcessor extends WorkerHost {
     try {
       const result = await this.publish(row);
       await repo.update({ id: row.id, tenant_id: row.tenant_id } as never, {
-        status: 'publicado',
+        status: MARKETING_CONTENT_STATUS.PUBLISHED,
         publication_status: 'published',
         provider_post_id: result.providerPostId,
         published_at: new Date(),
@@ -84,7 +85,7 @@ export class MarketingPublishingProcessor extends WorkerHost {
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       await repo.update({ id: row.id, tenant_id: row.tenant_id } as never, {
-        status: 'falhou',
+        status: MARKETING_CONTENT_STATUS.FAILED,
         publication_status: 'failed',
         publication_error: message,
       } as never);

@@ -130,7 +130,7 @@ export async function runAutomationFlow(
   const flow = getFlow(options.flowType);
   if (!flow) throw new Error(`[marketing] unknown flow ${options.flowType}`);
 
-  const priority: Priority = options.priority ?? "media";
+  const priority: Priority = options.priority ?? "normal";
   const baseOffset = options.startOffsetDays ?? 3;
 
   const created: MarketingTask[] = [];
@@ -140,7 +140,7 @@ export async function runAutomationFlow(
       title: `${step.task} — ${options.reference}`,
       description: `Tarefa gerada automaticamente pelo ${flow.name}.`,
       type: step.type,
-      status: "a_fazer",
+      status: "pending",
       priority,
       owner: "",
       sector: step.sector,

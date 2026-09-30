@@ -1,7 +1,9 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
+  IsIn,
   IsObject,
   IsOptional,
   IsString,
@@ -9,6 +11,12 @@ import {
   MaxLength,
 } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import {
+  canonicalMarketingTaskPriority,
+  canonicalMarketingTaskStatus,
+  MARKETING_TASK_PRIORITIES,
+  MARKETING_TASK_STATUSES,
+} from '../marketing-vocabulary';
 
 export class RunCopywritingDto {
   @ApiPropertyOptional()
@@ -39,14 +47,16 @@ export class CreateMarketingTaskDto {
   @IsString()
   description?: string | null;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: MARKETING_TASK_STATUSES })
   @IsOptional()
-  @IsString()
+  @Transform(canonicalMarketingTaskStatus)
+  @IsIn(MARKETING_TASK_STATUSES)
   status?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: MARKETING_TASK_PRIORITIES })
   @IsOptional()
-  @IsString()
+  @Transform(canonicalMarketingTaskPriority)
+  @IsIn(MARKETING_TASK_PRIORITIES)
   priority?: string;
 
   @ApiPropertyOptional()
@@ -91,9 +101,10 @@ export class QueryMarketingTaskDto extends PaginationDto {
   @IsUUID()
   marketingProjectId?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: MARKETING_TASK_STATUSES })
   @IsOptional()
-  @IsString()
+  @Transform(canonicalMarketingTaskStatus)
+  @IsIn(MARKETING_TASK_STATUSES)
   status?: string;
 
   @ApiPropertyOptional()

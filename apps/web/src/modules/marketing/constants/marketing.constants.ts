@@ -16,6 +16,7 @@ import type {
   CampaignStatus,
   CampaignType,
   ContentChannel,
+  ContentDisplayStatus,
   ContentStatus,
   ContentType,
   DeliverableApproval,
@@ -88,24 +89,19 @@ export const MARKETING_TARGET_LABEL = optionLabels(MARKETING_TARGET_OPTIONS);
 // ---------------------------------------------------------------------------
 
 export const PRIORITY_OPTIONS: Option<Priority>[] = [
-  { value: "baixa", label: "Baixa" },
-  { value: "media", label: "Média" },
-  { value: "alta", label: "Alta" },
-  { value: "urgente", label: "Urgente" },
+  { value: "low", label: "Baixa" },
+  { value: "normal", label: "Média" },
+  { value: "high", label: "Alta" },
+  { value: "urgent", label: "Urgente" },
 ];
 
-export const PRIORITY_LABEL: Record<Priority, string> = {
-  baixa: "Baixa",
-  media: "Média",
-  alta: "Alta",
-  urgente: "Urgente",
-};
+export const PRIORITY_LABEL: Record<Priority, string> = optionLabels(PRIORITY_OPTIONS);
 
 export const PRIORITY_TONE: Record<Priority, Tone> = {
-  baixa: "neutral",
-  media: "info",
-  alta: "warning",
-  urgente: "danger",
+  low: "neutral",
+  normal: "info",
+  high: "warning",
+  urgent: "danger",
 };
 
 // ---------------------------------------------------------------------------
@@ -204,18 +200,18 @@ export const CONTENT_TYPE_OPTIONS: Option<ContentType>[] = [
   { value: "reels", label: "Reels" },
   { value: "shorts", label: "Shorts" },
   { value: "video", label: "Vídeo" },
-  { value: "carrossel", label: "Carrossel" },
-  { value: "anuncio", label: "Anúncio" },
-  { value: "rede_social", label: "Rede Social" },
-  { value: "institucional", label: "Institucional" },
-  { value: "comercial", label: "Comercial" },
-  { value: "artista", label: "Artista" },
-  { value: "bastidores", label: "Bastidores" },
-  { value: "reuniao", label: "Reunião" },
-  { value: "evento", label: "Evento" },
+  { value: "carousel", label: "Carrossel" },
+  { value: "ad", label: "Anúncio" },
+  { value: "social_media", label: "Rede Social" },
+  { value: "institutional", label: "Institucional" },
+  { value: "commercial", label: "Comercial" },
+  { value: "artist", label: "Artista" },
+  { value: "behind_the_scenes", label: "Bastidores" },
+  { value: "meeting", label: "Reunião" },
+  { value: "event", label: "Evento" },
   { value: "portal", label: "Portal de Notícias" },
   { value: "blog", label: "Blog" },
-  { value: "publicidade", label: "Material Publicitário" },
+  { value: "advertising", label: "Material Publicitário" },
 ];
 
 export const CONTENT_TYPE_LABEL = optionLabels(CONTENT_TYPE_OPTIONS);
@@ -244,26 +240,28 @@ export const CONTENT_CHANNEL_OPTIONS: Option<ContentChannel>[] = [
 
 export const CONTENT_CHANNEL_LABEL = optionLabels(CONTENT_CHANNEL_OPTIONS);
 
+/** Selectable (persisted) statuses -- exactly chk_marketing_content_posts_status. */
 export const CONTENT_STATUS_OPTIONS: Option<ContentStatus>[] = [
-  { value: "ideia", label: "Ideia" },
-  { value: "producao", label: "Produção" },
-  { value: "revisao", label: "Revisão" },
-  { value: "agendado", label: "Agendado" },
-  { value: "publicado", label: "Publicado" },
-  { value: "falhou", label: "Falhou" },
-  { value: "atrasado", label: "Atrasado" },
+  { value: "draft", label: "Rascunho" },
+  { value: "scheduled", label: "Agendado" },
+  { value: "published", label: "Publicado" },
+  { value: "cancelled", label: "Cancelado" },
+  { value: "failed", label: "Falhou" },
 ];
 
-export const CONTENT_STATUS_LABEL = optionLabels(CONTENT_STATUS_OPTIONS);
+/** Labels for everything the UI can display, including the derived `overdue`. */
+export const CONTENT_STATUS_LABEL: Record<ContentDisplayStatus, string> = {
+  ...optionLabels(CONTENT_STATUS_OPTIONS),
+  overdue: "Atrasado",
+};
 
-export const CONTENT_STATUS_TONE: Record<ContentStatus, Tone> = {
-  ideia: "neutral",
-  producao: "info",
-  revisao: "purple",
-  agendado: "warning",
-  publicado: "success",
-  falhou: "danger",
-  atrasado: "danger",
+export const CONTENT_STATUS_TONE: Record<ContentDisplayStatus, Tone> = {
+  draft: "neutral",
+  scheduled: "warning",
+  published: "success",
+  cancelled: "neutral",
+  failed: "danger",
+  overdue: "danger",
 };
 
 // ---------------------------------------------------------------------------
@@ -490,31 +488,33 @@ export const CONTEXT_SECTOR_TYPE_OPTIONS: Record<MarketingTarget, Record<string,
 
 export const TASK_STATUS_OPTIONS: Option<TaskStatus>[] = [
   { value: "backlog", label: "Backlog" },
-  { value: "a_fazer", label: "A Fazer" },
-  { value: "em_andamento", label: "Em Andamento" },
-  { value: "revisao", label: "Revisão" },
-  { value: "concluida", label: "Concluída" },
-  { value: "bloqueada", label: "Bloqueada" },
+  { value: "pending", label: "A Fazer" },
+  { value: "in_progress", label: "Em Andamento" },
+  { value: "review", label: "Revisão" },
+  { value: "done", label: "Concluída" },
+  { value: "blocked", label: "Bloqueada" },
+  { value: "cancelled", label: "Cancelada" },
 ];
 
 export const TASK_STATUS_LABEL = optionLabels(TASK_STATUS_OPTIONS);
 
 export const TASK_STATUS_TONE: Record<TaskStatus, Tone> = {
   backlog: "neutral",
-  a_fazer: "info",
-  em_andamento: "warning",
-  revisao: "purple",
-  concluida: "success",
-  bloqueada: "danger",
+  pending: "info",
+  in_progress: "warning",
+  review: "purple",
+  done: "success",
+  blocked: "danger",
+  cancelled: "neutral",
 };
 
 /** Ordered columns used by the task board. */
 export const TASK_BOARD_COLUMNS: TaskStatus[] = [
   "backlog",
-  "a_fazer",
-  "em_andamento",
-  "revisao",
-  "concluida",
+  "pending",
+  "in_progress",
+  "review",
+  "done",
 ];
 
 // ---------------------------------------------------------------------------

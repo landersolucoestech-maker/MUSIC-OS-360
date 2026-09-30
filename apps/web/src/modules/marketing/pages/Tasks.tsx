@@ -76,7 +76,7 @@ import {
   type TaskTargetOptions,
 } from "../forms/marketing-forms";
 import { formatDate } from "../utils/marketing-format";
-import type { MarketingTask } from "../types/marketing.types";
+import type { MarketingTask, TaskStatus } from "../types/marketing.types";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllLabels } from "@/shared/lib/fetch-all-labels";
 import { useMarketingProjects } from "../hooks/useMarketingProjects";
@@ -155,13 +155,13 @@ export default function Tasks() {
   const { page, pageSize, total, pageItems, setPage, setPageSize } = usePagination(filtered, 10);
 
   const taskKpis = useMemo(() => {
-    const aFazerStatuses = new Set(["backlog", "a_fazer"]);
+    const toDoStatuses = new Set<TaskStatus>(["backlog", "pending"]);
     return {
       total: tasks.length,
-      concluidas: tasks.filter((task) => task.status === "concluida").length,
-      aFazer: tasks.filter((task) => aFazerStatuses.has(task.status)).length,
-      emAndamento: tasks.filter((task) => task.status === "em_andamento").length,
-      revisao: tasks.filter((task) => task.status === "revisao").length,
+      concluidas: tasks.filter((task) => task.status === "done").length,
+      aFazer: tasks.filter((task) => toDoStatuses.has(task.status)).length,
+      emAndamento: tasks.filter((task) => task.status === "in_progress").length,
+      revisao: tasks.filter((task) => task.status === "review").length,
     };
   }, [tasks]);
 

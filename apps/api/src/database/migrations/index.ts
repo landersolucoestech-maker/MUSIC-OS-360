@@ -305,6 +305,8 @@ import { CanonicalizeClientsToEnglish20260928000023 } from './20260928000023_Can
 import { RenameExternalSourceColumnsToEnglish20260928000024 } from './20260928000024_RenameExternalSourceColumnsToEnglish';
 import { RenameOrgStructureSlugsToEnglish20260928000025 } from './20260928000025_RenameOrgStructureSlugsToEnglish';
 import { CanonicalizeMusicChatValuesToEnglish20260928000026 } from './20260928000026_CanonicalizeMusicChatValuesToEnglish';
+import { AddBacklogToMarketingTaskStatusCheck20260929000001 } from './20260929000001_AddBacklogToMarketingTaskStatusCheck';
+import { BackfillAndRestrictMarketingContentVocabularyToEnglish20260929000002 } from './20260929000002_BackfillAndRestrictMarketingContentVocabularyToEnglish';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -621,4 +623,6 @@ export const ALL_MIGRATIONS = [
   RenameExternalSourceColumnsToEnglish20260928000024,
   RenameOrgStructureSlugsToEnglish20260928000025,
   CanonicalizeMusicChatValuesToEnglish20260928000026,
+  AddBacklogToMarketingTaskStatusCheck20260929000001,
+  BackfillAndRestrictMarketingContentVocabularyToEnglish20260929000002,
 ] as const;

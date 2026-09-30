@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
@@ -10,9 +11,16 @@ import {
   MaxLength,
 } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import {
+  canonicalMarketingContentStatus,
+  canonicalMarketingContentTargetType,
+  canonicalMarketingContentType,
+  MARKETING_CONTENT_STATUSES,
+  MARKETING_CONTENT_TARGET_TYPES,
+  MARKETING_CONTENT_TYPES,
+} from '../marketing-vocabulary';
 
 export const MARKETING_CONTENT_CHANNELS = ['instagram', 'facebook', 'tiktok', 'youtube', 'twitter', 'threads'] as const;
-export const MARKETING_CONTENT_STATUSES = ['rascunho', 'agendado', 'publicado', 'cancelado', 'falhou'] as const;
 export const MARKETING_PUBLICATION_STATUSES = ['pending', 'queued', 'publishing', 'published', 'failed', 'cancelled'] as const;
 
 export class MarketingContentFileDto {
@@ -40,8 +48,9 @@ export class CreateMarketingContentDto {
   @MaxLength(500)
   title!: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ enum: MARKETING_CONTENT_TARGET_TYPES })
+  @Transform(canonicalMarketingContentTargetType)
+  @IsIn(MARKETING_CONTENT_TARGET_TYPES)
   targetType!: string;
 
   @ApiProperty()
@@ -53,12 +62,14 @@ export class CreateMarketingContentDto {
   @IsIn(MARKETING_CONTENT_CHANNELS)
   channel!: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ enum: MARKETING_CONTENT_TYPES })
+  @Transform(canonicalMarketingContentType)
+  @IsIn(MARKETING_CONTENT_TYPES)
   type!: string;
 
   @ApiPropertyOptional({ enum: MARKETING_CONTENT_STATUSES })
   @IsOptional()
+  @Transform(canonicalMarketingContentStatus)
   @IsIn(MARKETING_CONTENT_STATUSES)
   status?: string;
 
@@ -123,6 +134,7 @@ export class QueryMarketingContentDto extends PaginationDto {
 
   @ApiPropertyOptional({ enum: MARKETING_CONTENT_STATUSES })
   @IsOptional()
+  @Transform(canonicalMarketingContentStatus)
   @IsIn(MARKETING_CONTENT_STATUSES)
   status?: string;
 

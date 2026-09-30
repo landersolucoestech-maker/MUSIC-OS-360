@@ -13,6 +13,7 @@ import type {
   QueryMarketingTaskDto,
   UpdateMarketingTaskDto,
 } from './dto/marketing-tasks.dto';
+import { MARKETING_TASK_DONE_STATUS } from './marketing-vocabulary';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 
 @Injectable()
@@ -107,7 +108,7 @@ export class MarketingTasksService {
         dependencies: dto.dependencies,
         metrics: dto.metrics,
         metadata: dto.metadata,
-        completed_at: dto.status === 'completed' || dto.status === 'concluida'
+        completed_at: dto.status === MARKETING_TASK_DONE_STATUS
           ? current.completed_at ?? new Date()
           : undefined,
         updated_by: userId,

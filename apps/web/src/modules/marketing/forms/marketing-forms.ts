@@ -101,7 +101,7 @@ export function projectInitialValues(project?: MarketingProject): FormValues {
     name: project?.name ?? "",
     type: project?.type ?? "lancamento_musical",
     status: project?.status ?? "planejamento",
-    priority: project?.priority ?? "media",
+    priority: project?.priority ?? "normal",
     owner: project?.owner ?? "",
     startDate: project?.startDate ?? "",
     endDate: project?.endDate ?? "",
@@ -354,7 +354,7 @@ export function toBriefingInput(values: FormValues): CreateInput<MarketingBriefi
 
 /**
  * Lean field set for the "Nova Tarefa" modal — only what's needed to create the
- * operational record. Status defaults to "a_fazer" and the longer description is
+ * operational record. Status defaults to "pending" (A Fazer) and the longer description is
  * filled later in the edit flow.
  */
 /** Field shared by create/edit: searchable target picker dependent on Contexto. */
@@ -439,8 +439,8 @@ export function taskInitialValues(task?: MarketingTask): FormValues {
     // Department and type start empty on creation — the department is mandatory and the type is only
     // enabled/selectable after a compatible department is chosen.
     type: task?.type ?? "",
-    status: task?.status ?? "a_fazer",
-    priority: task?.priority ?? "media",
+    status: task?.status ?? "pending",
+    priority: task?.priority ?? "normal",
     owner: task?.owner ?? "",
     sector: task?.sector ?? "",
     deadline: task?.deadline ?? "",

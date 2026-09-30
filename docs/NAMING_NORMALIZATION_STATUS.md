@@ -99,6 +99,8 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-043 | Client (CRM contact) | done | DONE | no |
 | CZ-044 | Org-chart slugs (departments, positions, job functions) | done | DONE | no |
 | CZ-045 | MusicChat triage vocabulary (service status, priority, default menu option ids) | done | DONE | no |
+| CZ-046 | Marketing task status and priority vocabulary | done | DONE | no |
+| CZ-047 | Marketing content post status, target type and content type vocabulary | done | DONE | no |
 
-Concepts: 93. Renames: 0. Exceptions: 448. Blockers: 14.
-By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 77, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 95. Renames: 0. Exceptions: 456. Blockers: 15.
+By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 79, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

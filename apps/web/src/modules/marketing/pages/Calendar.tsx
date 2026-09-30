@@ -118,7 +118,7 @@ const CONTENT_CONTEXT_OPTIONS: { value: MarketingTarget; label: string }[] = [
 const FILTER_TYPE_OPTIONS: { value: ContentType; label: string }[] = [
   { value: "feed", label: "Feed" },
   { value: "post", label: "Post" },
-  { value: "carrossel", label: "Carrossel" },
+  { value: "carousel", label: "Carrossel" },
   { value: "stories", label: "Stories" },
   { value: "reels", label: "Reels" },
   { value: "shorts", label: "Shorts" },
@@ -167,8 +167,8 @@ export default function Calendar() {
     const limite = new Date(today);
     limite.setDate(limite.getDate() + 7);
 
-    const scheduled = contents.filter((content) => content.status === "agendado").length;
-    const published = contents.filter((content) => content.status === "publicado").length;
+    const scheduled = contents.filter((content) => content.status === "scheduled").length;
+    const published = contents.filter((content) => content.status === "published").length;
     const next7Days = contents.filter((content) => {
       if (!content.publishDate) return false;
       const data = new Date(content.publishDate);
@@ -383,7 +383,7 @@ function ContentScheduleModal({
       targetName: targetType === "empresa" ? "Empresa" : "",
       releaseId: "none",
       // Non-company content is internal scheduling only: clears publishing/integration.
-      status: targetType === "empresa" ? prev.status : "agendado",
+      status: targetType === "empresa" ? prev.status : "scheduled",
       integratedAccountId: targetType === "empresa" ? prev.integratedAccountId : "none",
     }));
     setErrors((prev) => ({ ...prev, targetType: undefined, targetName: undefined, integratedAccountId: undefined }));
@@ -485,22 +485,22 @@ function ContentScheduleModal({
 
   /**
    * Finalizes the content applying the publishing rule (ITEM 6):
-   *  - publish=true is only allowed for company content and requires an integrated account → status "publicado".
-   *  - otherwise → status "agendado" (internal scheduling).
+   *  - publish=true is only allowed for company content and requires an integrated account → enters the publishing queue.
+   *  - otherwise → status "scheduled" (internal scheduling).
    */
   const finalize = (publish: boolean) => {
     // "Publish via integration" (ITEM 6) must enter the real publishing
-    // queue (scheduleIfNeeded only fires for the "agendado" status — see
+    // queue (scheduleIfNeeded only fires for the "scheduled" status — see
     // marketing-contents.service.ts) to actually try to publish via
-    // MarketingPublishingProcessor. Setting "publicado" directly here skipped
+    // MarketingPublishingProcessor. Setting "published" directly here skipped
     // the whole queue: the content was marked as published without
     // any real call to the platform ever happening. delay=0 when
     // scheduled_for has already passed/is now, so this still publishes immediately
     // when the chosen date/time is "now".
     const nextStatus: ContentStatus = !isCompany
-      ? "agendado"
+      ? "scheduled"
       : publish
-        ? "agendado"
+        ? "scheduled"
         : values.status;
     const nextValues: ContentFormValues = { ...values, status: nextStatus };
 

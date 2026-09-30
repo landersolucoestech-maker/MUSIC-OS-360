@@ -26,7 +26,7 @@ import type {
   ApprovalStatus,
   BriefingStatus,
   CampaignStatus,
-  ContentStatus,
+  ContentDisplayStatus,
   ProjectStatus,
   TaskStatus,
 } from "../types/marketing.types";
@@ -55,7 +55,7 @@ export function CampaignStatusBadge({ status }: { status: CampaignStatus }) {
   return <MarketingBadge tone={CAMPAIGN_STATUS_TONE[status]}>{CAMPAIGN_STATUS_LABEL[status]}</MarketingBadge>;
 }
 
-export function ContentStatusBadge({ status }: { status: ContentStatus }) {
+export function ContentStatusBadge({ status }: { status: ContentDisplayStatus }) {
   return <MarketingBadge tone={CONTENT_STATUS_TONE[status]}>{CONTENT_STATUS_LABEL[status]}</MarketingBadge>;
 }
 

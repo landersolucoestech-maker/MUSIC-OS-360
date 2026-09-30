@@ -6,6 +6,9 @@ import {
 } from "../constants/marketing.constants";
 import { getFormatViolation } from "../config/social-formats";
 import { UserFacingError } from "@/shared/lib/errors";
+import { canonicalPriority } from "../utils/marketing-legacy-vocabulary";
+import { deriveContentDisplayStatus } from "../utils/marketing-content-status";
+import { targetTypeFromWire, targetTypeToWire } from "../utils/marketing-content-wire";
 import type {
   ActivityEvent,
   AiSuggestion,
@@ -65,7 +68,7 @@ function projectFromApi(row: RecordRow): MarketingProject {
     name: row.title,
     type: String(row.type ?? "custom").toLowerCase(),
     status: meta.uiStatus ?? row.status ?? "planejamento",
-    priority: meta.uiPriority ?? row.priority ?? "media",
+    priority: canonicalPriority(row.priority),
     owner: meta.owner ?? "",
     team: meta.team ?? [],
     startDate: row.starts_at ?? "",
@@ -92,13 +95,12 @@ function projectToApi(input: Partial<MarketingProject>) {
     title: input.name,
     description: input.description,
     status: input.status === "em_andamento" ? "active" : input.status,
-    priority: input.priority === "media" ? "normal" : input.priority,
+    priority: input.priority,
     artistId: input.artistId,
     startsAt: input.startDate || null,
     endsAt: input.endDate || null,
     metadata: {
       uiStatus: input.status,
-      uiPriority: input.priority,
       owner: input.owner,
       team: input.team,
       objective: input.objective,
@@ -220,9 +222,12 @@ const campaignsApi: ResourceLike<MarketingCampaign> = {
 };
 
 function contentFromApi(row: RecordRow): MarketingContent {
+  const meta = metadata(row);
   return {
     ...row,
-    approval: row.approval ?? metadata(row).approval ?? "pendente",
+    targetType: targetTypeFromWire(row.targetType),
+    channels: meta.channels ?? undefined,
+    approval: row.approval ?? meta.approval ?? "pendente",
     files: row.files ?? [],
     notes: row.notes ?? "",
     owner: row.owner ?? "",
@@ -231,17 +236,51 @@ function contentFromApi(row: RecordRow): MarketingContent {
   } as MarketingContent;
 }
 
+/**
+ * Builds exactly the body CreateMarketingContentDto / UpdateMarketingContentDto
+ * accept (the global ValidationPipe forbids unknown properties). `approval` and
+ * the multi-platform `channels` selection have no column: they travel in
+ * `metadata`, where contentFromApi reads them back. Only keys present in
+ * `input` are sent, so a partial update never blanks the others.
+ */
+function contentToApi(input: Partial<MarketingContent>) {
+  const extras: Record<string, unknown> = {};
+  if (input.approval !== undefined) extras.approval = input.approval;
+  if (input.channels !== undefined) extras.channels = input.channels;
+  const metadataBody = input.metadata !== undefined || Object.keys(extras).length > 0
+    ? { ...(input.metadata ?? {}), ...extras }
+    : undefined;
+  return {
+    title: input.title,
+    targetType: input.targetType === undefined ? undefined : targetTypeToWire(input.targetType),
+    targetName: input.targetName,
+    channel: input.channel,
+    type: input.type,
+    status: input.status,
+    publishDate: input.publishDate,
+    publishTime: input.publishTime,
+    copy: input.copy,
+    notes: input.notes,
+    owner: input.owner,
+    campaignId: input.campaignId,
+    releaseId: input.releaseId,
+    format: input.format,
+    files: input.files,
+    metadata: metadataBody,
+  };
+}
+
 const contentsApi: ResourceLike<MarketingContent> = {
   async list() {
     return rows(await api.get<ApiList<RecordRow>>("/marketing/contents?limit=100")).map(contentFromApi);
   },
   async create(input) {
     assertValidContent(input.channel, input.type, input.files ?? []);
-    return contentFromApi(await api.post<RecordRow>("/marketing/contents", input));
+    return contentFromApi(await api.post<RecordRow>("/marketing/contents", contentToApi(input)));
   },
   async update(id, patch, expectedUpdatedAt) {
     if (patch.channel && patch.type) assertValidContent(patch.channel, patch.type, patch.files ?? []);
-    return contentFromApi(await api.patch<RecordRow>(`/marketing/contents/${id}`, { ...patch, expectedUpdatedAt }));
+    return contentFromApi(await api.patch<RecordRow>(`/marketing/contents/${id}`, { ...contentToApi(patch), expectedUpdatedAt }));
   },
   async remove(id) {
     await api.delete(`/marketing/contents/${id}`);
@@ -331,8 +370,8 @@ function taskFromApi(row: RecordRow): MarketingTask {
     targetId: meta.targetId,
     targetName: meta.targetName,
     type: meta.uiType ?? row.kind ?? "outro",
-    status: meta.uiStatus ?? row.status ?? "a_fazer",
-    priority: meta.uiPriority ?? row.priority ?? "media",
+    status: row.status,
+    priority: row.priority,
     owner: meta.owner ?? row.assigned_to ?? "",
     sector: meta.sector ?? "",
     deadline: iso(row.due_date),
@@ -373,8 +412,6 @@ function taskToApi(input: Partial<MarketingTask>) {
       targetId: input.targetId,
       targetName: input.targetName,
       uiType: input.type,
-      uiStatus: input.status,
-      uiPriority: input.priority,
       owner: input.owner,
       sector: input.sector,
       campaignId: input.campaignId,
@@ -708,11 +745,11 @@ async function analytics(): Promise<AnalyticsOverview> {
       ...totals,
       audienceGrowth: 0,
       approvalRate: contents.length ? contents.filter((item) => item.approval === "aprovado").length / contents.length * 100 : 0,
-      deliveries: tasks.filter((item) => item.status === "concluida").length,
-      tasksDone: tasks.filter((item) => item.status === "concluida").length,
+      deliveries: tasks.filter((item) => item.status === "done").length,
+      tasksDone: tasks.filter((item) => item.status === "done").length,
       activeProjects: projects.filter((item) => item.status === "em_andamento").length,
-      publishedContents: contents.filter((item) => item.status === "publicado").length,
-      lateContents: contents.filter((item) => item.status === "atrasado").length,
+      publishedContents: contents.filter((item) => item.status === "published").length,
+      lateContents: contents.filter((item) => deriveContentDisplayStatus(item) === "overdue").length,
       runningCampaigns: campaigns.filter((item) => item.status === "ativa").length,
     },
     series,
@@ -745,24 +782,24 @@ export const marketingService = {
       campaignsApi.list(), projectsApi.list(), contentsApi.list(), briefingsApi.list(), tasksApi.list(), this.getActivity(),
     ]);
     const pendingApprovals = contents.filter((item) => item.approval === "pendente");
-    const upcoming = contents.filter((item) => item.status !== "publicado")
+    const upcoming = contents.filter((item) => item.status !== "published")
       .sort((a, b) => a.publishDate.localeCompare(b.publishDate)).slice(0, 5);
     return {
       kpis: {
         activeCampaigns: campaigns.filter((item) => item.status === "ativa").length,
         activeProjects: projects.filter((item) => item.status === "em_andamento").length,
-        scheduledContents: contents.filter((item) => item.status === "agendado").length,
-        pendingTasks: tasks.filter((item) => item.status !== "concluida").length,
+        scheduledContents: contents.filter((item) => item.status === "scheduled").length,
+        pendingTasks: tasks.filter((item) => item.status !== "done" && item.status !== "cancelled").length,
         openBriefings: briefings.filter((item) => !["approved", "completed", "cancelled"].includes(item.status)).length,
         pendingApprovals: pendingApprovals.length,
         upcomingDeliveries: upcoming.length,
         sectorPerformance: 0,
       },
       alerts: [
-        ...contents.filter((item) => item.status === "atrasado").map((item) => ({
+        ...contents.filter((item) => deriveContentDisplayStatus(item) === "overdue").map((item) => ({
           id: `content-${item.id}`, level: "critical" as const, message: `Conteúdo atrasado: ${item.title}`,
         })),
-        ...tasks.filter((item) => item.status === "bloqueada").map((item) => ({
+        ...tasks.filter((item) => item.status === "blocked").map((item) => ({
           id: `task-${item.id}`, level: "warning" as const, message: `Tarefa bloqueada: ${item.title}`,
         })),
       ],

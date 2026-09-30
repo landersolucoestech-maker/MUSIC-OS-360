@@ -166,20 +166,21 @@ const SCHEDULE_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> 
 // ── Contents: labels and filters ───────────────────────────────────────────
 const CONTENT_TYPE_LABELS: Record<string, string> = {
   post: "Post", feed: "Feed", stories: "Stories", reels: "Reels", shorts: "Shorts",
-  video: "Vídeo", carrossel: "Carrossel", anuncio: "Anúncio", rede_social: "Rede Social",
-  institucional: "Institucional", comercial: "Comercial", artista: "Artista",
-  bastidores: "Bastidores", reuniao: "Reunião", evento: "Evento", portal: "Portal",
-  blog: "Blog", publicidade: "Publicidade",
+  video: "Vídeo", carousel: "Carrossel", ad: "Anúncio", social_media: "Rede Social",
+  institutional: "Institucional", commercial: "Comercial", artist: "Artista",
+  behind_the_scenes: "Bastidores", meeting: "Reunião", event: "Evento", portal: "Portal",
+  blog: "Blog", advertising: "Publicidade",
 };
+// Persisted content statuses (chk_marketing_content_posts_status). The old
+// idea / production / review stages were never persistable and were removed.
 const CONTENT_STATUS_LABELS: Record<string, string> = {
-  ideia: "Planejado", producao: "Em Produção", revisao: "Em Revisão",
-  agendado: "Agendado", publicado: "Publicado", falhou: "Falhou", atrasado: "Atrasado",
+  draft: "Rascunho", scheduled: "Agendado", published: "Publicado",
+  cancelled: "Cancelado", failed: "Falhou",
 };
 const CONTENT_FILTERS: Array<{ key: string; label: string; status?: string[] }> = [
   { key: "todos", label: "Todos" },
-  { key: "planejados", label: "Planejados", status: ["ideia", "agendado"] },
-  { key: "producao", label: "Em Produção", status: ["producao", "revisao"] },
-  { key: "publicado", label: "Publicado", status: ["publicado"] },
+  { key: "planejados", label: "Planejados", status: ["draft", "scheduled"] },
+  { key: "publicado", label: "Publicado", status: ["published"] },
 ];
 
 interface GoalFormState {
@@ -493,7 +494,7 @@ export function ArtistVision360Modal({
     (c) => String(c.status ?? "").toLowerCase() === "active",
   ).length;
   const pendingContent = actualContent.filter((c) =>
-    ["ideia", "producao", "revisao", "agendado", "atrasado"].includes(String(c.status ?? "").toLowerCase()),
+    ["draft", "scheduled"].includes(String(c.status ?? "").toLowerCase()),
   ).length;
   const nextShow = (actualEvents as any[])
     .filter(

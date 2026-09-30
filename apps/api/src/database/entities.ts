@@ -3103,7 +3103,7 @@ export class MarketingContentPostEntity {
   @Column({ type: 'varchar', length: 500 }) target_name: string;
   @Column({ type: 'varchar', length: 40 }) channel: string;
   @Column({ type: 'varchar', length: 40 }) content_type: string;
-  @Column({ type: 'varchar', length: 40, default: 'agendado' }) status: string;
+  @Column({ type: 'varchar', length: 40, default: 'scheduled' }) status: string;
   @Column({ type: 'varchar', length: 40, default: 'pending' }) publication_status: string;
   @Column({ type: 'date' }) publish_date: string;
   @Column({ type: 'varchar', length: 10 }) publish_time: string;

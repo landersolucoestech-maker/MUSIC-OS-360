@@ -68,7 +68,7 @@ export function initialContentForm(content?: MarketingContent | null): ContentFo
     notes: content?.notes ?? "",
     hashtags: "",
     location: "",
-    status: content?.status ?? "agendado",
+    status: content?.status ?? "scheduled",
     integratedAccountId: "none",
     media: (content?.files ?? []).map((file) => ({
       url: file.url,
@@ -94,8 +94,8 @@ export function toMarketingContentInput(
     channel: values.channel,
     channels: values.channels,
     // Publishing rule: only company content can publish (via an integration).
-    // Artist/music project content always stays "agendado" (internal scheduling only).
-    status: values.targetType === "empresa" ? values.status : "agendado",
+    // Artist/music project content always stays "scheduled" (internal scheduling only).
+    status: values.targetType === "empresa" ? values.status : "scheduled",
     approval: current?.approval ?? "pendente",
     publishDate: values.publishDate,
     publishTime: values.publishTime,

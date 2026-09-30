@@ -40,7 +40,7 @@ export function loadArtistContext(
     artistRecord?.youtubeSubscribers ? `YouTube inscritos: ${artistRecord.youtubeSubscribers}` : "",
   ].filter(Boolean);
   const releaseDates = releases.map((item) => item.release_date).filter(Boolean).map(String).sort();
-  const completedTasks = tasks.filter((item) => item.status === "concluida").length;
+  const completedTasks = tasks.filter((item) => item.status === "done").length;
   const frequency = estimateReleaseFrequency(releaseDates);
 
   return {

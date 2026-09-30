@@ -17,7 +17,7 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
   function makeRow(overrides: Record<string, unknown> = {}) {
     return {
       id: 'content-1', tenant_id: 'tenant-1', channel: 'instagram',
-      status: 'agendado', publication_status: null, ...overrides,
+      status: 'scheduled', publication_status: null, ...overrides,
     };
   }
 
@@ -63,11 +63,13 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
       expect.objectContaining({ publication_status: 'publishing' }),
     );
     expect(qb.execute).toHaveBeenCalled();
+    // The claim query filters on the canonical status (bound parameter, no Portuguese literal).
+    expect(qb.andWhere).toHaveBeenCalledWith('status = :scheduled', { scheduled: 'scheduled' });
     // The second update (recording the publish failure) still goes through
     // the plain repo.update() — only the initial claim needed to be atomic.
     expect(repo.update).toHaveBeenCalledWith(
       { id: 'content-1', tenant_id: 'tenant-1' },
-      expect.objectContaining({ status: 'falhou', publication_status: 'failed' }),
+      expect.objectContaining({ status: 'failed', publication_status: 'failed' }),
     );
   });
 
@@ -90,6 +92,35 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
     // the claim guard correctly skipped publish() for the loser.
   });
 
+  it('a content still holding a non-canonical status is not processed (no claim, no publish)', async () => {
+    const { repo, manager, qb } = makeJob(makeRow({ status: 'agendado' }));
+    const processor = new MarketingPublishingProcessor({ manager } as never, undefined);
+
+    await processor.process({
+      name: MARKETING_PUBLISHING_JOB_NAMES.PUBLISH_CONTENT,
+      data: { tenantId: 'tenant-1', userId: 'u1', contentId: 'content-1' },
+    } as never);
+
+    expect(qb.execute).not.toHaveBeenCalled();
+    expect(repo.update).not.toHaveBeenCalled();
+  });
+
+  it('a successful publish records the canonical published status', async () => {
+    const { repo, manager } = makeJob(makeRow());
+    const processor = new MarketingPublishingProcessor({ manager } as never, undefined);
+    (processor as unknown as { publish: () => Promise<{ providerPostId: string }> }).publish = async () => ({ providerPostId: 'ext-1' });
+
+    await processor.process({
+      name: MARKETING_PUBLISHING_JOB_NAMES.PUBLISH_CONTENT,
+      data: { tenantId: 'tenant-1', userId: 'u1', contentId: 'content-1' },
+    } as never);
+
+    expect(repo.update).toHaveBeenCalledWith(
+      { id: 'content-1', tenant_id: 'tenant-1' },
+      expect.objectContaining({ status: 'published', publication_status: 'published', provider_post_id: 'ext-1' }),
+    );
+  });
+
   it('fail-closed: rejects a job with no tenantId before touching the DB', async () => {
     const ds = { manager: {} };
     const dbContext = { runInTenantContext: jest.fn() };
@@ -104,7 +135,7 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
   });
 
   it('without dbContext (fallback): still uses ds.manager directly, behavior preserved', async () => {
-    const { repo, manager } = makeJob(makeRow({ status: 'publicado', publication_status: 'published' }));
+    const { repo, manager } = makeJob(makeRow({ status: 'published', publication_status: 'published' }));
     const ds = { manager };
     const processor = new MarketingPublishingProcessor(ds as never, undefined);
 

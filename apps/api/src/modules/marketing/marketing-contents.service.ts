@@ -7,6 +7,7 @@ import type { CreateMarketingContentDto, QueryMarketingContentDto, UpdateMarketi
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { safeOrderBy } from '../../common/utils/safe-order-by';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
+import { MARKETING_CONTENT_STATUS } from './marketing-vocabulary';
 
 @Injectable()
 export class MarketingContentsService {
@@ -64,8 +65,8 @@ export class MarketingContentsService {
       target_name: dto.targetName,
       channel: dto.channel,
       content_type: dto.type,
-      status: dto.status ?? 'agendado',
-      publication_status: dto.status === 'rascunho' ? 'pending' : 'queued',
+      status: dto.status ?? MARKETING_CONTENT_STATUS.SCHEDULED,
+      publication_status: dto.status === MARKETING_CONTENT_STATUS.DRAFT ? 'pending' : 'queued',
       publish_date: dto.publishDate,
       publish_time: dto.publishTime,
       scheduled_for: scheduledFor,
@@ -108,7 +109,7 @@ export class MarketingContentsService {
     const publishTime = dto.publishTime ?? current.publish_time;
     const scheduledFor = this.resolveScheduledFor(publishDate, publishTime);
     const status = dto.status ?? current.status;
-    const shouldRequeue = status === 'agendado' && (
+    const shouldRequeue = status === MARKETING_CONTENT_STATUS.SCHEDULED && (
       dto.publishDate !== undefined ||
       dto.publishTime !== undefined ||
       current.publication_status === 'failed' ||
@@ -154,7 +155,7 @@ export class MarketingContentsService {
 
   async archive(tenantId: string, userId: string, id: string) {
     await this.r.update({ id, tenant_id: tenantId } as never, {
-      status: 'cancelado',
+      status: MARKETING_CONTENT_STATUS.CANCELLED,
       publication_status: 'cancelled',
       updated_by: userId,
       deleted_at: new Date(),
@@ -163,7 +164,7 @@ export class MarketingContentsService {
   }
 
   private async scheduleIfNeeded(row: MarketingContentPostEntity, userId: string) {
-    if (row.status !== 'agendado') return;
+    if (row.status !== MARKETING_CONTENT_STATUS.SCHEDULED) return;
     const jobId = await this.publishingQueue.enqueueContentPublish({
       tenantId: row.tenant_id,
       userId,

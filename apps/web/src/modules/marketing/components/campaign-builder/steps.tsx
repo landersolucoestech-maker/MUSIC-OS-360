@@ -167,7 +167,7 @@ export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
   // Content-driven flow: only PUBLISHED contents of the selected project can be
   // promoted (no campaigns for inexistent/unpublished assets).
   const { data: contents } = useMarketingContents();
-  const publishedContents = (contents ?? []).filter((c) => c.projectId === state.project && c.status === "publicado");
+  const publishedContents = (contents ?? []).filter((c) => c.projectId === state.project && c.status === "published");
   const selectedContent = (contents ?? []).find((c) => c.id === state.contentId);
 
   const togglePublishChannel = (channel: ContentChannel) => setState((c) => {
@@ -577,7 +577,7 @@ const CHANNEL_TO_AD_PLATFORM: Partial<Record<ContentChannel, CampaignPlatform>> 
 function creativeTypeFromContent(content: MarketingContent): CreativeType {
   const kind = content.files?.[0]?.kind ?? "";
   if (kind.startsWith("audio")) return "audio";
-  if (content.type === "carrossel") return "carrossel";
+  if (content.type === "carousel") return "carrossel";
   if (["reels", "shorts", "video", "stories"].includes(content.type)) return "video";
   return "imagem";
 }

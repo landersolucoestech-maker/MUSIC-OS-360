@@ -24,7 +24,11 @@ export type ISODate = string;
 // Shared enumerations (string-literal unions; option lists live in constants)
 // ---------------------------------------------------------------------------
 
-export type Priority = "baixa" | "media" | "alta" | "urgente";
+/**
+ * Canonical (technical, English) priority. Equal to the persisted value
+ * (chk_marketing_tasks_priority); PT-BR labels live in PRIORITY_LABEL.
+ */
+export type Priority = "low" | "normal" | "high" | "urgent";
 
 export type MarketingTarget =
   | "projeto_musical"
@@ -107,27 +111,38 @@ export type ContentType =
   | "reels"
   | "shorts"
   | "video"
-  | "carrossel"
-  | "anuncio"
-  | "rede_social"
-  | "institucional"
-  | "comercial"
-  | "artista"
-  | "bastidores"
-  | "reuniao"
-  | "evento"
+  | "carousel"
+  | "ad"
+  | "social_media"
+  | "institutional"
+  | "commercial"
+  | "artist"
+  | "behind_the_scenes"
+  | "meeting"
+  | "event"
   | "portal"
   | "blog"
-  | "publicidade";
+  | "advertising";
 
+/**
+ * Persisted content lifecycle, identical to chk_marketing_content_posts_status.
+ * PT-BR labels live in CONTENT_STATUS_LABEL. The former web-only pipeline
+ * stages (idea / production / review) were never persistable (the API rejected
+ * them) and are gone; see ContentDisplayStatus for the derived `overdue`.
+ */
 export type ContentStatus =
-  | "ideia"
-  | "producao"
-  | "revisao"
-  | "agendado"
-  | "publicado"
-  | "falhou"
-  | "atrasado";
+  | "draft"
+  | "scheduled"
+  | "published"
+  | "cancelled"
+  | "failed";
+
+/**
+ * What the UI shows: the persisted status, plus `overdue` -- derived, never
+ * stored: a `scheduled` content whose publish date/time has already passed
+ * (see deriveContentDisplayStatus).
+ */
+export type ContentDisplayStatus = ContentStatus | "overdue";
 
 export type ApprovalStatus =
   | "pendente"
@@ -240,13 +255,19 @@ export type TaskType =
   | "influenciadores"
   | "aprovacao_conteudo";
 
+/**
+ * Canonical (technical, English) task status. Equal to the persisted value
+ * (chk_marketing_tasks_status); PT-BR labels live in TASK_STATUS_LABEL.
+ * `backlog` is a distinct persisted state (own board column, own DB value).
+ */
 export type TaskStatus =
   | "backlog"
-  | "a_fazer"
-  | "em_andamento"
-  | "revisao"
-  | "concluida"
-  | "bloqueada";
+  | "pending"
+  | "in_progress"
+  | "review"
+  | "blocked"
+  | "done"
+  | "cancelled";
 
 export type AssetCategory =
   | "capa"

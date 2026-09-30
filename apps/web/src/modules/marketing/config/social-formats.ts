@@ -8,7 +8,7 @@
  *
  * The "Content Type" is the ONLY source of truth for the publication format —
  * there is intentionally NO separate carousel toggle/switch/flag. Carousel
- * behaviour is derived exclusively from `spec.carousel` (type === "carrossel").
+ * behaviour is derived exclusively from `spec.carousel` (type === "carousel").
  *
  * Consumed by:
  *  - the content form / preview UI (Calendario.tsx)
@@ -115,13 +115,13 @@ export interface FormatSpec {
 export const PLATFORM_FORMATS: Record<SocialPlatform, FormatSpec[]> = {
   instagram: [
     { type: "feed", label: "Feed", aspect: "1:1", carousel: false, media: "both", multiple: false, chrome: "ig-feed" },
-    { type: "carrossel", label: "Carrossel", aspect: "1:1", carousel: true, media: "both", multiple: true, chrome: "ig-feed" },
+    { type: "carousel", label: "Carrossel", aspect: "1:1", carousel: true, media: "both", multiple: true, chrome: "ig-feed" },
     { type: "stories", label: "Stories", aspect: "9:16", carousel: false, media: "both", multiple: false, chrome: "ig-story" },
     { type: "reels", label: "Reels", aspect: "9:16", carousel: false, media: "video", multiple: false, chrome: "ig-reel" },
   ],
   facebook: [
     { type: "feed", label: "Feed", aspect: "4:5", carousel: false, media: "both", multiple: false, chrome: "fb-feed" },
-    { type: "carrossel", label: "Carrossel", aspect: "1:1", carousel: true, media: "both", multiple: true, chrome: "fb-feed" },
+    { type: "carousel", label: "Carrossel", aspect: "1:1", carousel: true, media: "both", multiple: true, chrome: "fb-feed" },
     { type: "stories", label: "Stories", aspect: "9:16", carousel: false, media: "both", multiple: false, chrome: "fb-story" },
     { type: "reels", label: "Reels", aspect: "9:16", carousel: false, media: "video", multiple: false, chrome: "fb-reel" },
   ],
@@ -136,14 +136,14 @@ export const PLATFORM_FORMATS: Record<SocialPlatform, FormatSpec[]> = {
   ],
   twitter: [
     { type: "post", label: "Post", aspect: "16:9", carousel: false, media: "both", multiple: false, chrome: "x-feed" },
-    { type: "carrossel", label: "Carrossel", aspect: "1:1", carousel: true, media: "both", multiple: true, chrome: "x-feed" },
+    { type: "carousel", label: "Carrossel", aspect: "1:1", carousel: true, media: "both", multiple: true, chrome: "x-feed" },
     { type: "reels", label: "Reels", aspect: "9:16", carousel: false, media: "video", multiple: false, chrome: "x-vertical" },
     { type: "shorts", label: "Shorts", aspect: "9:16", carousel: false, media: "video", multiple: false, chrome: "x-vertical" },
     { type: "stories", label: "Stories", aspect: "9:16", carousel: false, media: "both", multiple: false, chrome: "x-vertical" },
   ],
   threads: [
     { type: "post", label: "Post", aspect: "1:1", carousel: false, media: "both", multiple: false, chrome: "threads" },
-    { type: "carrossel", label: "Carrossel", aspect: "1:1", carousel: true, media: "both", multiple: true, chrome: "threads" },
+    { type: "carousel", label: "Carrossel", aspect: "1:1", carousel: true, media: "both", multiple: true, chrome: "threads" },
   ],
 };
 
