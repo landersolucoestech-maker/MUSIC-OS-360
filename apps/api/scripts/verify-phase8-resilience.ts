@@ -289,9 +289,9 @@ async function validateHealth(token: string, tenantId: string) {
     artists: artists.res.status,
     dashboard: dashboard.res.status,
   };
-  expect('banco', live.res.status === 200, '/health/live did not become 200', evidence.health);
-  expect('banco', ready.res.status === 200, 'current /health/ready did not become 200', evidence.health);
-  expect('banco', artists.res.ok && dashboard.res.ok, 'base DB endpoints did not respond 2xx', evidence.health);
+  expect('database', live.res.status === 200, '/health/live did not become 200', evidence.health);
+  expect('database', ready.res.status === 200, 'current /health/ready did not become 200', evidence.health);
+  expect('database', artists.res.ok && dashboard.res.ok, 'base DB endpoints did not respond 2xx', evidence.health);
 }
 
 async function validateRedisDegraded(token: string, tenantId: string, core: Awaited<ReturnType<typeof createCoreData>>) {
@@ -451,7 +451,7 @@ async function validateSecurity(pg: PgClient, token: string, tenantId: string, c
   const xss = await http('POST', '/artists', {
     token,
     tenantId,
-    body: { stage_name: `<script>alert('${runId}')</script>`, status: 'ativo', metadata: { runId, xss: true } },
+    body: { stage_name: `<script>alert('${runId}')</script>`, status: 'active', metadata: { runId, xss: true } },
   });
 
   let downloadAfterDeleteStatus: number | null = null;
@@ -481,16 +481,16 @@ async function validateSecurity(pg: PgClient, token: string, tenantId: string, c
     xss: xss.res.status,
     downloadAfterDelete: downloadAfterDeleteStatus,
   };
-  expect('seguranca', invalidJwt.res.status === 401, 'invalid JWT did not return 401', evidence.security);
-  expect('seguranca', expiredJwt.res.status === 401, 'expired JWT did not return 401', evidence.security);
-  expect('seguranca', badTenant.res.status === 403, 'invalid tenant header did not return 403', evidence.security);
-  expect('seguranca', noAuth.res.status === 401, 'no auth did not return 401', evidence.security);
-  expect('seguranca', noTenant.res.status === 403, 'no tenant did not return 403', evidence.security);
-  expect('seguranca', invalidExt.res.status === 400, 'invalid extension/MIME did not return 400', evidence.security);
-  expect('seguranca', oversize.res.status === 400, 'oversize did not return 400', evidence.security);
-  expect('seguranca', traversal.res.ok && !String(traversal.json?.key ?? '').includes('/../'), 'path traversal was not neutralized in the key', evidence.security);
-  expect('seguranca', injection.res.ok && xss.res.ok, 'SQL/XSS payloads caused an HTTP error', evidence.security);
-  expect('seguranca', downloadAfterDeleteStatus === 404, 'download after delete did not return 404', evidence.security);
+  expect('security', invalidJwt.res.status === 401, 'invalid JWT did not return 401', evidence.security);
+  expect('security', expiredJwt.res.status === 401, 'expired JWT did not return 401', evidence.security);
+  expect('security', badTenant.res.status === 403, 'invalid tenant header did not return 403', evidence.security);
+  expect('security', noAuth.res.status === 401, 'no auth did not return 401', evidence.security);
+  expect('security', noTenant.res.status === 403, 'no tenant did not return 403', evidence.security);
+  expect('security', invalidExt.res.status === 400, 'invalid extension/MIME did not return 400', evidence.security);
+  expect('security', oversize.res.status === 400, 'oversize did not return 400', evidence.security);
+  expect('security', traversal.res.ok && !String(traversal.json?.key ?? '').includes('/../'), 'path traversal was not neutralized in the key', evidence.security);
+  expect('security', injection.res.ok && xss.res.ok, 'SQL/XSS payloads caused an HTTP error', evidence.security);
+  expect('security', downloadAfterDeleteStatus === 404, 'download after delete did not return 404', evidence.security);
 }
 
 async function validateRecovery(token: string, tenantId: string, releaseId: string) {

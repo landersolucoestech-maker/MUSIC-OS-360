@@ -92,7 +92,7 @@ async function http(method, path, { token, tenantId, body } = {}) {
   requests.push(record);
 
   if ([400, 401, 403, 404, 409, 422, 500].includes(res.status)) {
-    fail(`HTTP ${res.status} em ${method} ${path}`, record);
+    fail(`HTTP ${res.status} on ${method} ${path}`, record);
   }
   return { res, json: unwrap(json), rawJson: json, text };
 }
@@ -114,7 +114,7 @@ async function waitFor(check, label, timeoutMs = 8000) {
     if (last) return last;
     await new Promise((resolve) => setTimeout(resolve, 400));
   }
-  fail(`Timeout aguardando ${label}`, { last });
+  fail(`Timeout waiting for ${label}`, { last });
   return null;
 }
 
@@ -234,7 +234,7 @@ async function main() {
   checks.releases = { id: releaseId, created: releaseCreate.res.status, patched: releasePatch.res.status, artist: releaseReload.json?.artistas?.nome_artistico, status: releaseReload.json?.status };
 
   const dbRelease = await dbOne(pg, "select id, tenant_id, artista_id, titulo, metadata from releases where id = $1", [releaseId]);
-  expect(dbRelease?.tenant_id === tenantId && dbRelease?.artista_id === artistId, "DB release relacao/tenant incorreta", { dbRelease });
+  expect(dbRelease?.tenant_id === tenantId && dbRelease?.artista_id === artistId, "DB release relation/tenant incorrect", { dbRelease });
 
   const clientPayload = {
     name: base.clientName,
@@ -359,7 +359,7 @@ async function main() {
   expect(txPatch.res.ok, "PATCH /transactions failed", { status: txPatch.res.status, body: txPatch.json });
   expect(Number(txReload.json?.valor ?? txReload.json?.amount) === 1500, "Transaction did not persist the edited amount", { txReload: txReload.json });
   expect(beforeDashboardText !== afterDashboardText || afterDashboardText.includes(txId), "Finance dashboard did not reflect an observable change", { before: dashboardBeforeTx.json, after: dashboardAfterTx.json });
-  checks.financeiro = { id: txId, created: txCreate.res.status, patched: txPatch.res.status, listed: Boolean(listedTx), dashboardChanged: beforeDashboardText !== afterDashboardText || afterDashboardText.includes(txId) };
+  checks.finance = { id: txId, created: txCreate.res.status, patched: txPatch.res.status, listed: Boolean(listedTx), dashboardChanged: beforeDashboardText !== afterDashboardText || afterDashboardText.includes(txId) };
 
   const dbTx = await dbOne(pg, "select id, tenant_id, tipo, categoria, valor, status from transactions where id = $1", [txId]);
   expect(dbTx?.tenant_id === tenantId && Number(dbTx?.valor) === 1500, "DB transaction did not persist amount/tenant", { dbTx });
@@ -407,7 +407,7 @@ async function main() {
     const dbConvertedLead = await waitFor(async () => {
       const row = await dbOne(pg, "select id, cliente_id, status from leads where id = $1", [leadId]);
       return row?.cliente_id ? row : null;
-    }, "conversao lead->cliente", 6000);
+    }, "lead->client conversion", 6000);
     if (dbConvertedLead?.cliente_id) {
       convertedClient = (await http("GET", `/clients/${dbConvertedLead.cliente_id}`, { token, tenantId })).json;
       currentLead = { ...currentLead, cliente_id: dbConvertedLead.cliente_id, status: dbConvertedLead.status };
@@ -417,7 +417,7 @@ async function main() {
   checks.crm = { id: leadId, created: leadCreate.res.status, patched: leadPatch.res.status, convertedClientId: convertedClient?.id || null, finalStatus: currentLead?.status };
 
   const dbLead = await dbOne(pg, "select id, tenant_id, status, cliente_id from leads where id = $1", [leadId]);
-  expect(dbLead?.tenant_id === tenantId, "DB lead tenant incorreto", { dbLead });
+  expect(dbLead?.tenant_id === tenantId, "DB lead tenant incorrect", { dbLead });
 
   const expectedAudit = [
     ["artist.created", artistId],

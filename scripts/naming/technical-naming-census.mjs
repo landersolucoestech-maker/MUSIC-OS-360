@@ -72,6 +72,12 @@ export const DETECTOR_FIXTURES = new Set([
   "scripts/naming/schema-naming-census.test.mjs",
   "apps/api/src/database/pt-column-naming-baseline.guard.spec.ts",
 ]);
+/**
+ * Third-party ecosystem file names that collide with Portuguese words ("Cargo.lock" is the Rust
+ * lockfile, not "cargo" = job role). Matched exactly and case-sensitively, so a real `cargo`
+ * property or column is still reported. Never add a name this repository controls.
+ */
+export const EXTERNAL_TOOL_NAMES = new Set(["Cargo.lock", "Cargo.toml"]);
 /** Published migrations are immutable history (class names are tracked in musicos360_migrations). */
 export const isMigration = (f) => /(^|\/)migrations\//.test(f);
 const isBookkeeping = (f) => f.startsWith(".claude/ops/");
@@ -178,6 +184,7 @@ export function scanSource(relPath, text) {
     if (fixture || !nameNode || !(ts.isIdentifier(nameNode) || ts.isStringLiteral(nameNode))) return;
     if (ts.isStringLiteral(nameNode)) claimed.add(nameNode);
     const name = nameNode.text;
+    if (EXTERNAL_TOOL_NAMES.has(name)) return;
     if (TECHNICAL_NAME.test(name.replace(/[A-Z]/g, (c) => c.toLowerCase())) && ptWords(name).length) add("objectKey", "object-key", name, lineOf(at));
   };
   const isEnvSchema = relPath.endsWith("env.schema.ts");

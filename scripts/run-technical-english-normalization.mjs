@@ -1,3 +1,15 @@
+/**
+ * Mechanical technical-English normalization runner (invoked by
+ * .github/workflows/technical-english-normalization.yml with a cluster name).
+ *
+ * The Portuguese words in this file are DATA, not naming debt: every Portuguese
+ * literal below is the OLD side of a historical rename table (old Portuguese
+ * identifier or path fragment -> new English one). The tool must keep matching the
+ * legacy spelling to rewrite it, so these literals stay until the last cluster that
+ * uses them has been applied and the runner is retired. They are tracked as
+ * historical rename-table entries (technical tooling, not product surface); the
+ * new side of every pair is English.
+ */
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
@@ -41,6 +53,10 @@ function writeIfChanged(file, source, next) {
   return true;
 }
 
+/**
+ * HISTORICAL RENAME TABLE (artist cluster): [old Portuguese identifier, new English identifier].
+ * Keys are legacy spellings on purpose; do not "translate" them or the runner stops matching.
+ */
 const EXACT = new Map([
   ["Artista", "Artist"],
   ["Artistas", "Artists"],
@@ -109,6 +125,7 @@ const EXACT = new Map([
   ["EMPTY_ARTISTAS", "EMPTY_ARTISTS"],
 ]);
 
+/** HISTORICAL RENAME TABLE: [old Portuguese identifier suffix, new English suffix]. */
 const PORTUGUESE_SUFFIXES = [
   ["Visao360", "Overview360"],
   ["Evolucao", "Evolution"],
@@ -206,6 +223,7 @@ function rewriteIdentifiers() {
 
 function transformPath(file) {
   let next = file;
+  // HISTORICAL RENAME TABLE for file paths: [old Portuguese path fragment, new English fragment].
   const replacements = [
     ["ArtistaVisao360", "ArtistOverview360"],
     ["ArtistaEvolucao", "ArtistEvolution"],

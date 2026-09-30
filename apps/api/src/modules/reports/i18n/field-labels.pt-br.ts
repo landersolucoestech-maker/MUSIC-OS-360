@@ -10,22 +10,30 @@
  *
  * Canonical keys in camelCase. `normalizeFieldKey` converts snake_case,
  * kebab-case and PascalCase to the canonical form before the lookup.
+ *
+ * Readers: a key is looked up only through `tryGetFieldLabelPtBr` /
+ * `getFieldLabelPtBr` by (a) entity-metadata column names, (b) report contract ids
+ * (export/import headers, sort/filter copy), (c) request field names rendered by
+ * core/pipes/validation-messages (DTO/zod property names, including deprecated
+ * request aliases). Keys whose technical name is Portuguese (legacy) must say which
+ * reader keeps them alive with a trailing `// reader: <kinds>` comment, where kinds
+ * are `entity-column`, `report-contract` and `request-field`; field-labels.readers.spec.ts
+ * verifies the claim. A Portuguese-named key that no reader reaches is dead and is removed.
  */
 
 /** Canonical dictionary (camelCase → pt-BR). Single source of truth for the labels. */
 export const FIELD_LABELS_PT_BR = {
   // ── Identity / person ───────────────────────────────────────────────────────
   name: 'Nome',
-  nome: 'Nome',
+  nome: 'Nome', // reader: report-contract request-field
   fullName: 'Nome completo',
-  nomeArtistico: 'Nome artístico',
-  nomeCivil: 'Nome civil',
-  nomeCompleto: 'Nome completo',
+  nomeArtistico: 'Nome artístico', // reader: request-field
+  nomeCivil: 'Nome civil', // reader: request-field
   legalName: 'Razão social',
-  razaoSocial: 'Razão social',
+  razaoSocial: 'Razão social', // reader: request-field
   tradeName: 'Nome fantasia',
   companyName: 'Empresa',
-  empresa: 'Empresa',
+  empresa: 'Empresa', // reader: request-field
   responsible: 'Responsável',
   department: 'Departamento',
   linkedUserId: 'Usuário vinculado',
@@ -33,17 +41,17 @@ export const FIELD_LABELS_PT_BR = {
   hiredAt: 'Data de admissão',
   salary: 'Salário',
   contractType: 'Tipo de contrato',
-  responsavel: 'Responsável',
-  titularConta: 'Titular da conta',
+  responsavel: 'Responsável', // reader: request-field
+  titularConta: 'Titular da conta', // reader: request-field
 
   // ── Contact ─────────────────────────────────────────────────────────────────
   contactType: 'Tipo de contato',
   documentType: 'Tipo de documento',
   documentNumber: 'Número do documento',
-  cpfCnpj: 'CPF/CNPJ',
-  rg: 'RG',
+  cpfCnpj: 'CPF/CNPJ', // reader: report-contract request-field
+  rg: 'RG', // reader: entity-column report-contract request-field
   phone: 'Telefone',
-  telefone: 'Telefone',
+  telefone: 'Telefone', // reader: request-field
   whatsapp: 'WhatsApp',
   email: 'E-mail',
   instagram: 'Instagram',
@@ -54,121 +62,113 @@ export const FIELD_LABELS_PT_BR = {
 
   // ── Address ─────────────────────────────────────────────────────────────────
   address: 'Endereço',
-  endereco: 'Endereço',
+  endereco: 'Endereço', // reader: request-field
   city: 'Cidade',
-  cidade: 'Cidade',
+  cidade: 'Cidade', // reader: request-field
   state: 'Estado',
-  estado: 'Estado',
+  estado: 'Estado', // reader: request-field
   country: 'País',
-  pais: 'País',
   zipCode: 'CEP',
-  cep: 'CEP',
+  cep: 'CEP', // reader: request-field
 
   // ── Content / CRM ───────────────────────────────────────────────────────────
   notes: 'Observações',
-  observacao: 'Observação',
-  notasInternas: 'Notas internas',
+  observacao: 'Observação', // reader: request-field
+  notasInternas: 'Notas internas', // reader: request-field
   internalNotes: 'Notas internas',
   description: 'Descrição',
-  descricao: 'Descrição',
+  descricao: 'Descrição', // reader: request-field
   content: 'Conteúdo',
   tags: 'Etiquetas',
   status: 'Situação',
-  situacao: 'Situação',
   priority: 'Prioridade',
-  prioridade: 'Prioridade',
+  prioridade: 'Prioridade', // reader: request-field
   timeline: 'Histórico',
   attachments: 'Anexos',
-  anexos: 'Anexos',
-  assunto: 'Assunto',
   title: 'Título',
-  funcao: 'Função',
+  funcao: 'Função', // reader: request-field
 
   // ── Artistas / streaming ────────────────────────────────────────────────────
-  generoMusical: 'Gênero musical',
   musicGenre: 'Gênero musical',
-  faseCarreira: 'Fase da carreira',
-  dataNascimento: 'Data de nascimento',
+  faseCarreira: 'Fase da carreira', // reader: request-field
+  dataNascimento: 'Data de nascimento', // reader: request-field
   // The artist team's career manager (manager_name/manager_contact) — distinct
   // from the agent ("Empresário", agent_*). managerNome/managerContato keep the
   // pre-CZ-042 headers for deprecated keys and old spreadsheets.
   managerName: 'Nome do gestor de carreira',
-  managerNome: 'Nome do empresário',
+  managerNome: 'Nome do empresário', // reader: request-field
   managerContact: 'Contato do gestor de carreira',
-  managerContato: 'Contato do empresário',
-  produtorExecutivo: 'Produtor executivo',
-  agenciaBooking: 'Agência de booking',
-  labelParceira: 'Selo parceiro',
+  managerContato: 'Contato do empresário', // reader: request-field
+  produtorExecutivo: 'Produtor executivo', // reader: request-field
+  agenciaBooking: 'Agência de booking', // reader: request-field
+  labelParceira: 'Selo parceiro', // reader: request-field
   signingPlatform: 'Plataforma de assinatura',
   spotifyUrl: 'Link do Spotify',
   youtubeUrl: 'Link do YouTube',
   soundcloudUrl: 'Link do SoundCloud',
   appleMusicUrl: 'Link do Apple Music',
   deezerUrl: 'Link do Deezer',
-  fotoUrl: 'Foto',
+  fotoUrl: 'Foto', // reader: request-field
   presskitUrl: 'Press kit',
-  documentosPessoaisUrl: 'Documentos pessoais',
-  galeriaUrls: 'Galeria',
-  spotifyOuvintes: 'Ouvintes no Spotify',
-  youtubeInscritos: 'Inscritos no YouTube',
-  instagramSeguidores: 'Seguidores no Instagram',
-  tiktokSeguidores: 'Seguidores no TikTok',
+  documentosPessoaisUrl: 'Documentos pessoais', // reader: request-field
+  galeriaUrls: 'Galeria', // reader: request-field
+  spotifyOuvintes: 'Ouvintes no Spotify', // reader: request-field
+  youtubeInscritos: 'Inscritos no YouTube', // reader: request-field
+  instagramSeguidores: 'Seguidores no Instagram', // reader: request-field
+  tiktokSeguidores: 'Seguidores no TikTok', // reader: request-field
   instagramUrl: 'Link do Instagram',
   tiktokUrl: 'Link do TikTok',
   templateId: 'Template do contrato',
-  appleMusicAlbunsUrl: 'Álbuns no Apple Music',
-  soundcloudSeguidoresUrl: 'Seguidores no SoundCloud',
-  deezerFas: 'Fãs no Deezer',
-  tagsMusicais: 'Etiquetas musicais',
-  tipoPerfil: 'Tipo de perfil',
-  relacionamentos: 'Relacionamentos',
-  contatosEquipe: 'Contatos da equipe',
-  contatosVinculados: 'Contatos vinculados',
-  distribuidorasSelecionadas: 'Distribuidoras selecionadas',
-  distribuidorasGerais: 'Distribuidoras gerais',
-  distribuidorasEmails: 'E-mails das distribuidoras',
-  distribuidorasEmpresaSelecionadas: 'Distribuidoras da empresa',
-  distribuidorasEmpresaEmails: 'E-mails das distribuidoras (empresa)',
-  empresarioId: 'Empresário (ID)',
-  empresarioNome: 'Empresário',
-  empresarioEmail: 'E-mail do empresário',
-  empresarioTelefone: 'Telefone do empresário',
-  gravadoraId: 'Gravadora (ID)',
-  gravadoraNome: 'Gravadora',
-  gravadoraEmail: 'E-mail da gravadora',
-  gravadoraTelefone: 'Telefone da gravadora',
-  gravadoraResponsavelId: 'Responsável na gravadora (ID)',
-  gravadoraResponsavelNome: 'Responsável na gravadora',
-  gravadoraResponsavelEmail: 'E-mail do responsável na gravadora',
-  gravadoraResponsavelTelefone: 'Telefone do responsável na gravadora',
+  appleMusicAlbunsUrl: 'Álbuns no Apple Music', // reader: request-field
+  soundcloudSeguidoresUrl: 'Seguidores no SoundCloud', // reader: request-field
+  deezerFas: 'Fãs no Deezer', // reader: request-field
+  tagsMusicais: 'Etiquetas musicais', // reader: request-field
+  tipoPerfil: 'Tipo de perfil', // reader: request-field
+  relacionamentos: 'Relacionamentos', // reader: request-field
+  contatosEquipe: 'Contatos da equipe', // reader: request-field
+  contatosVinculados: 'Contatos vinculados', // reader: request-field
+  distribuidorasSelecionadas: 'Distribuidoras selecionadas', // reader: request-field
+  distribuidorasGerais: 'Distribuidoras gerais', // reader: request-field
+  distribuidorasEmails: 'E-mails das distribuidoras', // reader: request-field
+  distribuidorasEmpresaSelecionadas: 'Distribuidoras da empresa', // reader: request-field
+  distribuidorasEmpresaEmails: 'E-mails das distribuidoras (empresa)', // reader: request-field
+  empresarioId: 'Empresário (ID)', // reader: request-field
+  empresarioNome: 'Empresário', // reader: request-field
+  empresarioEmail: 'E-mail do empresário', // reader: request-field
+  empresarioTelefone: 'Telefone do empresário', // reader: request-field
+  gravadoraId: 'Gravadora (ID)', // reader: request-field
+  gravadoraNome: 'Gravadora', // reader: request-field
+  gravadoraEmail: 'E-mail da gravadora', // reader: request-field
+  gravadoraTelefone: 'Telefone da gravadora', // reader: request-field
+  gravadoraResponsavelId: 'Responsável na gravadora (ID)', // reader: request-field
+  gravadoraResponsavelNome: 'Responsável na gravadora', // reader: request-field
+  gravadoraResponsavelEmail: 'E-mail do responsável na gravadora', // reader: request-field
+  gravadoraResponsavelTelefone: 'Telefone do responsável na gravadora', // reader: request-field
   clientId: 'Cliente (ID)',
   workId: 'Obra (ID)',
   autentiqueDocId: 'Documento Autentique (ID)',
-  cpf: 'CPF',
+  cpf: 'CPF', // reader: report-contract request-field
 
   // ── Finance / contracts ─────────────────────────────────────────────────────
-  numero: 'Número',
-  valor: 'Valor',
+  numero: 'Número', // reader: request-field
+  valor: 'Valor', // reader: request-field
   fixedValue: 'Valor Fixo',
-  emissao: 'Emissão',
+  emissao: 'Emissão', // reader: request-field
   issueDate: 'Emissão',
-  vencimento: 'Vencimento',
-  comissao: 'Comissão',
-  porcentagem: 'Porcentagem',
-  participacao: 'Participação',
+  vencimento: 'Vencimento', // reader: request-field
+  participacao: 'Participação', // reader: request-field
   participation: 'Participação',
-  dataInicio: 'Data de início',
-  dataFim: 'Data de fim',
-  banco: 'Banco',
-  agencia: 'Agência',
-  conta: 'Conta',
-  chavePix: 'Chave Pix',
-  temperatura: 'Temperatura',
+  dataInicio: 'Data de início', // reader: request-field
+  dataFim: 'Data de fim', // reader: request-field
+  banco: 'Banco', // reader: request-field
+  agencia: 'Agência', // reader: request-field
+  conta: 'Conta', // reader: request-field
+  chavePix: 'Chave Pix', // reader: request-field
   type: 'Tipo',
   // "clientType" serves leads.client_type (the lead's client type);
   // transactions.counterparty_type is the financial counterparty (CZ-041).
   clientType: 'Tipo de cliente',
-  tipoPessoa: 'Tipo de pessoa',
+  tipoPessoa: 'Tipo de pessoa', // reader: request-field
   serviceType: 'Tipo de serviço',
   financialModel: 'Modelo financeiro',
   requiresExternalRightsTerms: 'Exige termos de direitos externos',
@@ -186,7 +186,7 @@ export const FIELD_LABELS_PT_BR = {
   financialDueDays: 'Prazo de vencimento (dias)',
 
   // ── Extra bank/streaming fields ─────────────────────────────────────────────
-  slugArtistico: 'Identificador público',
+  slugArtistico: 'Identificador público', // reader: request-field
 
   // ── Common technical fields (STEP 5) ────────────────────────────────────────
   createdAt: 'Criado em',
@@ -197,7 +197,7 @@ export const FIELD_LABELS_PT_BR = {
   projectId: 'Projeto',
   releaseId: 'Lançamento',
   contractId: 'Contrato',
-  contratoId: 'Contrato',
+  contratoId: 'Contrato', // reader: request-field
   amount: 'Valor',
   amountDue: 'Valor devido',
   amountPaid: 'Valor pago',
@@ -225,91 +225,87 @@ export const FIELD_LABELS_PT_BR = {
   approvedBy: 'Aprovado por',
   archived: 'Arquivado',
   archivedAt: 'Arquivado em',
-  arquivoUrl: 'Arquivo',
-  artista: 'Artista',
+  arquivoUrl: 'Arquivo', // reader: request-field
+  artista: 'Artista', // reader: report-contract request-field
   assetType: 'Tipo de ativo',
   assignedTo: 'Responsável',
-  ativo: 'Ativo',
   autoGenerated: 'Gerado automaticamente',
   autoStage: 'Estágio automático',
   budgetActual: 'Orçamento real',
   budgetEstimated: 'Orçamento estimado',
   calculation_method: 'Método de cálculo',
   coverUrl: 'Capa',
-  cargo: 'Cargo',
-  categoria: 'Categoria',
+  cargo: 'Cargo', // reader: request-field
+  categoria: 'Categoria', // reader: request-field
   category: 'Categoria',
   categoryKind: 'Tipo de categoria',
   channel: 'Canal',
-  cliente: 'Cliente',
-  coCompositores: 'Co-compositores',
+  cliente: 'Cliente', // reader: request-field
+  coCompositores: 'Co-compositores', // reader: report-contract
   // Renamed from `codAbramus` (20260718000017) — code at any collective
   // management society (ABRAMUS/UBC/SOCINPRO/others), not only ABRAMUS.
-  codEntidade: 'Código de Cadastro da Sociedade',
+  codEntidade: 'Código de Cadastro da Sociedade', // reader: request-field
   societyCode: 'Código de Cadastro da Sociedade',
   codEcad: 'Código ECAD',
   ecadCode: 'Código ECAD',
   code: 'Código',
   color: 'Cor',
   completedAt: 'Concluído em',
-  compositor: 'Compositor',
+  compositor: 'Compositor', // reader: request-field
   composerName: 'Compositor',
-  compositores: 'Compositores',
+  compositores: 'Compositores', // reader: report-contract request-field
   composerNames: 'Compositores',
-  comprovanteUrl: 'Comprovante',
   conditions: 'Condições',
   contactCount: 'Total de contatos',
   contentType: 'Tipo de conteúdo',
-  conteudo: 'Conteúdo',
+  conteudo: 'Conteúdo', // reader: request-field
   context: 'Contexto',
   copy: 'Texto',
   copyrightOwner: 'Titular do direito autoral',
   copyrightYear: 'Ano do direito autoral',
   countryOfRecording: 'País de gravação',
-  cpfCnpjEncrypted: 'CPF/CNPJ (criptografado)',
-  cpfEncrypted: 'CPF (criptografado)',
+  cpfCnpjEncrypted: 'CPF/CNPJ (criptografado)', // reader: entity-column report-contract
+  cpfEncrypted: 'CPF (criptografado)', // reader: entity-column report-contract
   createdBy: 'Criado por',
   currentVersion: 'Versão atual',
   data: 'Data',
-  dataAdmissao: 'Data de admissão',
-  dataDemissao: 'Data de demissão',
-  dataEmissao: 'Data de emissão',
-  dataEntrada: 'Data de entrada',
-  dataLancamento: 'Data de lançamento',
-  dataVencimento: 'Data de vencimento',
+  dataAdmissao: 'Data de admissão', // reader: request-field
+  dataDemissao: 'Data de demissão', // reader: request-field
+  dataEmissao: 'Data de emissão', // reader: request-field
+  dataEntrada: 'Data de entrada', // reader: request-field
+  dataLancamento: 'Data de lançamento', // reader: request-field
   deliveryDate: 'Data de entrega',
   deliveryNotes: 'Notas de entrega',
-  departamento: 'Departamento',
+  departamento: 'Departamento', // reader: request-field
   dependencies: 'Dependências',
   depthLevel: 'Nível de profundidade',
-  detentores: 'Detentores',
+  detentores: 'Detentores', // reader: report-contract
   director: 'Diretor',
   distributor: 'Distribuidora',
   documents: 'Documentos',
   durationSec: 'Duração (s)',
   durationSeconds: 'Duração (s)',
   durationText: 'Duração',
-  editora: 'Editora',
+  editora: 'Editora', // reader: request-field
   publisherName: 'Editora',
   emailEncrypted: 'E-mail (criptografado)',
-  especialidades: 'Especialidades',
-  exclusivo: 'Exclusivo',
+  especialidades: 'Especialidades', // reader: request-field
+  exclusivo: 'Exclusivo', // reader: request-field
   exclusive: 'Exclusivo',
   expectedCloseDate: 'Data prevista de fechamento',
   externalReference: 'Referência externa',
   fields: 'Campos',
   fileUrl: 'Arquivo',
   files: 'Arquivos',
-  fonte: 'Fonte',
   format: 'Formato',
-  genero: 'Gênero',
+  genero: 'Gênero', // reader: request-field
   goals: 'Metas',
-  gravadora: 'Gravadora',
+  gravadora: 'Gravadora', // reader: request-field
   recordLabelName: 'Gravadora',
   recordLabel: 'Gravadora',
   icon: 'Ícone',
   industry: 'Setor',
-  interpretes: 'Intérpretes',
+  interpretes: 'Intérpretes', // reader: report-contract request-field
   isActive: 'Ativo',
   isInstrumental: 'Instrumental',
   isrc: 'ISRC',
@@ -321,9 +317,7 @@ export const FIELD_LABELS_PT_BR = {
   local: 'Local',
   venue: 'Local',
   lyrics: 'Letra',
-  letra: 'Letra',
-  managerContatoEncrypted: 'Contato do empresário (criptografado)',
-  metaValor: 'Meta de valor',
+  letra: 'Letra', // reader: report-contract request-field
   metadata: 'Metadados',
   metrics: 'Métricas',
   // Child sheet "Músicas do Projeto" (Part 87) — see
@@ -332,58 +326,47 @@ export const FIELD_LABELS_PT_BR = {
   soloFeat: 'Solo/Feat',
   originalRemix: 'Original/Remix',
   audioUrl: 'Áudio',
-  // Correlation column between the main sheet and child sheets (Part 87) —
-  // never persisted, it exists only inside the XLSX file.
-  projetoRef: 'Projeto ID de referência',
-  midiaDestino: 'Mídia de destino',
+  midiaDestino: 'Mídia de destino', // reader: request-field
   mimeType: 'Tipo de arquivo',
-  moeda: 'Moeda',
-  motivo: 'Motivo',
-  numeroNotaFiscal: 'Número da nota fiscal',
+  moeda: 'Moeda', // reader: request-field
+  motivo: 'Motivo', // reader: request-field
+  numeroNotaFiscal: 'Número da nota fiscal', // reader: entity-column report-contract request-field
   objective: 'Objetivo',
-  objetivo: 'Objetivo',
-  obraMusical: 'Obra musical',
-  orcamento: 'Orçamento',
+  obraMusical: 'Obra musical', // reader: request-field
+  orcamento: 'Orçamento', // reader: request-field
   budget: 'Orçamento',
   orgSlug: 'Identificador da organização',
   externalSource: 'Origem externa',
   externalSourceSyncedAt: 'Sincronizado em (origem externa)',
-  origemLead: 'Origem do lead',
   owner: 'Proprietário',
   path: 'Caminho',
-  periodo: 'Período',
+  periodo: 'Período', // reader: request-field
   phoneEncrypted: 'Telefone (criptografado)',
   pipelineStage: 'Estágio do funil',
-  plataforma: 'Plataforma',
+  plataforma: 'Plataforma', // reader: request-field
   platform: 'Plataforma',
-  prazo: 'Prazo',
   dueAt: 'Prazo',
-  probabilidadeFechamento: 'Probabilidade de fechamento',
   probability: 'Probabilidade',
   producer: 'Produtor',
   productionCompany: 'Produtora',
-  produtores: 'Produtores',
-  projeto: 'Projeto',
+  produtores: 'Produtores', // reader: report-contract request-field
+  projeto: 'Projeto', // reader: request-field
   protected: 'Protegido',
-  proximoFollowUp: 'Próximo follow-up',
   publicationError: 'Erro de publicação',
   publicationStatus: 'Situação da publicação',
   publishDate: 'Data de publicação',
   publishTime: 'Horário de publicação',
   published: 'Publicado',
   publishedAt: 'Publicado em',
-  quantidade: 'Quantidade',
+  quantidade: 'Quantidade', // reader: request-field
   recordingDate: 'Data de gravação',
-  referencia: 'Referência',
   registryStatus: 'Situação do registro',
   releaseDate: 'Data de lançamento',
   resolution: 'Resolução',
   resolvedAt: 'Resolvido em',
-  resposta: 'Resposta',
-  salario: 'Salário',
+  salario: 'Salário', // reader: request-field
   scheduledFor: 'Agendado para',
   score: 'Pontuação',
-  segmento: 'Segmento',
   settings: 'Configurações',
   sizeBytes: 'Tamanho (bytes)',
   slaBreached: 'SLA violado',
@@ -397,21 +380,19 @@ export const FIELD_LABELS_PT_BR = {
   stageHistory: 'Histórico de estágios',
   startDate: 'Data de início',
   endDate: 'Data de fim',
-  statusCadastro: 'Situação do cadastro',
+  statusCadastro: 'Situação do cadastro', // reader: request-field
   subject: 'Assunto',
   submissionCount: 'Total de envios',
   systemCategory: 'Categoria do sistema',
   targetName: 'Nome do alvo',
   targetType: 'Tipo de alvo',
   taskKey: 'Chave da tarefa',
-  telefoneEncrypted: 'Telefone (criptografado)',
-  territorio: 'Território',
+  territorio: 'Território', // reader: request-field
   thumbnailUrl: 'Miniatura',
   ticketNumber: 'Número do chamado',
-  tipoContrato: 'Tipo de contrato',
-  tipoUso: 'Tipo de uso',
-  tomadorDocEncrypted: 'Documento do tomador (criptografado)',
-  tomadorNome: 'Nome do tomador',
+  tipoContrato: 'Tipo de contrato', // reader: request-field
+  tipoUso: 'Tipo de uso', // reader: request-field
+  tomadorDocEncrypted: 'Documento do tomador (criptografado)', // reader: entity-column report-contract
   transactionTypes: 'Tipos de transação',
   treeOrder: 'Ordem na árvore',
   upc: 'UPC',
@@ -419,82 +400,77 @@ export const FIELD_LABELS_PT_BR = {
   uploadedBy: 'Enviado por',
   url: 'Link',
   usageCount: 'Total de usos',
-  valorAtual: 'Valor atual',
-  valorEstimado: 'Valor estimado',
-  valorUnitario: 'Valor unitário',
   unitPrice: 'Valor unitário',
   value: 'Valor',
-  variaveis: 'Variáveis',
   variables: 'Variáveis',
   version: 'Versão',
   versionTitle: 'Título da versão',
-  versoes: 'Versões',
+  versoes: 'Versões', // reader: request-field
   versions: 'Versões',
   // ── Work form fields (2026-07-12 rule) ──────────────────────────────────────
-  idioma: 'Idioma',
+  idioma: 'Idioma', // reader: request-field
   instrumental: 'Instrumental',
-  criadaPorIa: 'Criada por IA',
-  tipoIa: 'Tipo de IA',
+  criadaPorIa: 'Criada por IA', // reader: request-field
+  tipoIa: 'Tipo de IA', // reader: request-field
   aiUsageLevel: 'Tipo de IA',
-  iaHarmonia: 'IA — Harmonia',
+  iaHarmonia: 'IA — Harmonia', // reader: request-field
   aiHarmony: 'IA — Harmonia',
-  iaMelodia: 'IA — Melodia',
+  iaMelodia: 'IA — Melodia', // reader: request-field
   aiMelody: 'IA — Melodia',
-  iaLetra: 'IA — Letra',
+  iaLetra: 'IA — Letra', // reader: request-field
   aiLyrics: 'IA — Letra',
-  outrosTitulos: 'Outros títulos',
-  referenciasConexas: 'Referências conexas',
+  outrosTitulos: 'Outros títulos', // reader: request-field
+  referenciasConexas: 'Referências conexas', // reader: request-field
   relatedReferences: 'Referências conexas',
-  letraCompleta: 'Letra completa',
-  participantes: 'Participantes',
+  letraCompleta: 'Letra completa', // reader: request-field
+  participantes: 'Participantes', // reader: request-field
   participants: 'Participantes',
-  letristas: 'Letristas',
+  letristas: 'Letristas', // reader: request-field
   translatorNames: 'Tradutores',
-  tipoObra: 'Tipo de obra',
+  tipoObra: 'Tipo de obra', // reader: request-field
   workOrigin: 'Tipo de obra',
   // ── Phonogram form fields (2026-07-12 rule) ─────────────────────────────────
-  agregadora: 'Agregadora',
+  agregadora: 'Agregadora', // reader: request-field
   aggregator: 'Agregadora',
-  isrcPais: 'ISRC — País',
+  isrcPais: 'ISRC — País', // reader: request-field
   isrcCountryCode: 'ISRC — País',
-  isrcRegistrante: 'ISRC — Registrante',
+  isrcRegistrante: 'ISRC — Registrante', // reader: request-field
   isrcRegistrantCode: 'ISRC — Registrante',
-  isrcAno: 'ISRC — Ano',
+  isrcAno: 'ISRC — Ano', // reader: request-field
   isrcYear: 'ISRC — Ano',
-  isrcDesignacao: 'ISRC — Designação',
+  isrcDesignacao: 'ISRC — Designação', // reader: request-field
   isrcDesignationCode: 'ISRC — Designação',
-  nacional: 'Nacional',
+  nacional: 'Nacional', // reader: request-field
   isNational: 'Nacional',
-  pubSimultanea: 'Publicação simultânea',
+  pubSimultanea: 'Publicação simultânea', // reader: request-field
   isSimultaneousPublication: 'Publicação simultânea',
-  gravacaoOriginal: 'Gravação original',
-  duracaoMin: 'Duração (minutos)',
-  duracaoSeg: 'Duração (segundos)',
-  midia: 'Mídia',
+  gravacaoOriginal: 'Gravação original', // reader: request-field
+  duracaoMin: 'Duração (minutos)', // reader: request-field
+  duracaoSeg: 'Duração (segundos)', // reader: request-field
+  midia: 'Mídia', // reader: request-field
   mediaType: 'Mídia',
-  classificacao: 'Classificação',
+  classificacao: 'Classificação', // reader: request-field
   recordingClassification: 'Classificação',
-  paisOrigem: 'País de origem',
-  paisPublicacao: 'País de publicação',
+  paisOrigem: 'País de origem', // reader: request-field
+  paisPublicacao: 'País de publicação', // reader: request-field
   publicationCountry: 'País de publicação',
-  arquivoAudio: 'Arquivo de áudio',
+  arquivoAudio: 'Arquivo de áudio', // reader: request-field
   audioFile: 'Arquivo de áudio',
   audioFileId: 'ID do arquivo de áudio',
   // ── Clients/Contacts (2026-07-12 rule: 1 column per field) ───────────────────
   individualName: 'Nome (pessoa física)',
-  cnpj: 'CNPJ',
-  foto: 'Foto',
-  perfil: 'Perfil',
-  logradouro: 'Logradouro',
-  complemento: 'Complemento',
-  bairro: 'Bairro',
-  enderecoCompleto: 'Endereço completo',
-  statusContato: 'Status do contato',
-  prioridadeContato: 'Prioridade do contato',
-  responsavelNome: 'Nome do responsável',
-  responsavelEmail: 'E-mail do responsável',
-  responsavelTelefone: 'Telefone do responsável',
-  responsavelCargo: 'Cargo do responsável',
+  cnpj: 'CNPJ', // reader: request-field
+  foto: 'Foto', // reader: request-field
+  perfil: 'Perfil', // reader: request-field
+  logradouro: 'Logradouro', // reader: request-field
+  complemento: 'Complemento', // reader: request-field
+  bairro: 'Bairro', // reader: request-field
+  enderecoCompleto: 'Endereço completo', // reader: request-field
+  prioridadeContato: 'Prioridade do contato', // reader: request-field
+  responsavelNome: 'Nome do responsável', // reader: request-field
+  responsavelEmail: 'E-mail do responsável', // reader: request-field
+  responsavelTelefone: 'Telefone do responsável', // reader: request-field
+  responsavelCargo: 'Cargo do responsável', // reader: request-field
   // clients (CZ-043: canonical column keys, same visible headers)
   personType: 'Tipo de pessoa',
   profile: 'Perfil',
@@ -507,50 +483,50 @@ export const FIELD_LABELS_PT_BR = {
   responsiblePhone: 'Telefone do responsável',
   responsibleJobTitle: 'Cargo do responsável',
   // ── Events (2026-07-12 rule: 1 column per field) ────────────────────────────
-  contatoLocal: 'Contato do local',
+  contatoLocal: 'Contato do local', // reader: request-field
   venueContact: 'Contato do local',
   feeAmount: 'Valor do cachê',
-  publicoEsperado: 'Público esperado',
+  publicoEsperado: 'Público esperado', // reader: request-field
   expectedAttendance: 'Público esperado',
   // ── Invoices (2026-07-12 rule: 1 column per field) ──────────────────────────
-  serie: 'Série',
-  tipoNota: 'Tipo de nota',
-  naturezaOperacao: 'Natureza da operação',
-  codigoServicoMunicipal: 'Código de serviço municipal',
-  codigoMunicipio: 'Código do município',
-  cfop: 'CFOP',
+  serie: 'Série', // reader: entity-column report-contract request-field
+  tipoNota: 'Tipo de nota', // reader: entity-column report-contract request-field
+  naturezaOperacao: 'Natureza da operação', // reader: entity-column report-contract request-field
+  codigoServicoMunicipal: 'Código de serviço municipal', // reader: entity-column report-contract request-field
+  codigoMunicipio: 'Código do município', // reader: entity-column report-contract request-field
+  cfop: 'CFOP', // reader: entity-column report-contract request-field
   serviceDescription: 'Descrição dos serviços',
-  tomadorCnpj: 'CNPJ do tomador',
-  tomadorRazaoSocial: 'Razão social do tomador',
-  tomadorInscricaoEstadual: 'Inscrição estadual do tomador',
-  tomadorInscricaoMunicipal: 'Inscrição municipal do tomador',
-  tomadorEmail: 'E-mail do tomador',
-  tomadorAddress: 'Endereço do tomador',
-  tomadorCity: 'Cidade do tomador',
-  tomadorUf: 'UF do tomador',
-  tomadorCep: 'CEP do tomador',
+  tomadorCnpj: 'CNPJ do tomador', // reader: entity-column report-contract request-field
+  tomadorRazaoSocial: 'Razão social do tomador', // reader: request-field
+  tomadorInscricaoEstadual: 'Inscrição estadual do tomador', // reader: entity-column report-contract request-field
+  tomadorInscricaoMunicipal: 'Inscrição municipal do tomador', // reader: entity-column report-contract request-field
+  tomadorEmail: 'E-mail do tomador', // reader: entity-column report-contract request-field
+  tomadorAddress: 'Endereço do tomador', // reader: entity-column report-contract request-field
+  tomadorCity: 'Cidade do tomador', // reader: entity-column report-contract request-field
+  tomadorUf: 'UF do tomador', // reader: entity-column report-contract request-field
+  tomadorCep: 'CEP do tomador', // reader: entity-column report-contract request-field
   serviceAmount: 'Valor dos serviços',
   deductionsAmount: 'Valor das deduções',
-  baseCalculo: 'Base de cálculo',
-  aliquotaIss: 'Alíquota de ISS',
-  issAmount: 'Valor do ISS',
-  issRetido: 'ISS retido',
-  pisAmount: 'Valor do PIS',
-  cofinsAmount: 'Valor do COFINS',
-  inssAmount: 'Valor do INSS',
-  irAmount: 'Valor do IR',
-  csllAmount: 'Valor do CSLL',
+  baseCalculo: 'Base de cálculo', // reader: entity-column report-contract request-field
+  aliquotaIss: 'Alíquota de ISS', // reader: entity-column report-contract request-field
+  issAmount: 'Valor do ISS', // reader: entity-column report-contract request-field
+  issRetido: 'ISS retido', // reader: entity-column report-contract request-field
+  pisAmount: 'Valor do PIS', // reader: entity-column report-contract request-field
+  cofinsAmount: 'Valor do COFINS', // reader: entity-column report-contract request-field
+  inssAmount: 'Valor do INSS', // reader: entity-column report-contract request-field
+  irAmount: 'Valor do IR', // reader: entity-column report-contract request-field
+  csllAmount: 'Valor do CSLL', // reader: entity-column report-contract request-field
   netAmount: 'Valor líquido',
-  formaPagamento: 'Forma de pagamento',
-  condicaoPagamento: 'Condição de pagamento',
+  formaPagamento: 'Forma de pagamento', // reader: request-field
+  condicaoPagamento: 'Condição de pagamento', // reader: request-field
   urlPdf: 'PDF da nota',
   // ── Licenses (2026-07-12 rule: 1 column per field) ──────────────────────────
   remunerationType: 'Tipo de remuneração',
   // ── Takedowns (2026-07-12 rule: 1 column per field) ─────────────────────────
-  obraAfetada: 'Obra afetada',
-  urlInfracao: 'Link da infração',
-  evidencias: 'Evidências',
-  dataIdentificacao: 'Data de identificação',
+  obraAfetada: 'Obra afetada', // reader: request-field
+  urlInfracao: 'Link da infração', // reader: request-field
+  evidencias: 'Evidências', // reader: request-field
+  dataIdentificacao: 'Data de identificação', // reader: request-field
   // ── Financial transactions (CZ-041: 1 canonical column per field) ────────
   transactionType: 'Tipo de transação',
   counterpartyType: 'Tipo de cliente',
@@ -576,7 +552,7 @@ export const FIELD_LABELS_PT_BR = {
   // AudiovisualProjectFormModal.tsx / LancamentoViewModal.tsx (Part 50) ──────
   musicTitle: 'Título da música',
   artistName: 'Nome do artista',
-  videomaker: 'Videomaker',
+  videomaker: 'Videomaker', // reader: request-field
   videographer: 'Videomaker',
   editor: 'Editor',
   shootingDate: 'Data da gravação',
@@ -604,12 +580,11 @@ export const FIELD_LABELS_PT_BR = {
   detectedAt: 'Detectado em',
 
   // ── Part 89 — Distribution (releases) ───────────────────────────────────────
-  lancamentoRef: 'Lançamento (ID de referência)',
   schedule: 'Cronograma',
-  variosArtistas: 'Vários artistas',
-  generoSecundario: 'Gênero secundário',
-  copyrightDataLancamento: 'Ano de copyright (lançamento)',
-  copyrightDataGravacao: 'Ano de copyright (gravação)',
+  variosArtistas: 'Vários artistas', // reader: report-contract
+  generoSecundario: 'Gênero secundário', // reader: report-contract
+  copyrightDataLancamento: 'Ano de copyright (lançamento)', // reader: report-contract
+  copyrightDataGravacao: 'Ano de copyright (gravação)', // reader: report-contract
   ownUpc: 'UPC próprio',
   territory: 'Território',
   releaseTime: 'Horário de lançamento',
@@ -617,13 +592,13 @@ export const FIELD_LABELS_PT_BR = {
   preOrder: 'Pré-venda',
   noPreviewsDuringPreOrder: 'Sem prévias durante a pré-venda',
   pricing: 'Precificação',
-  artistasAdicionaisAlbum: 'Artistas adicionais do álbum',
-  isVersionAlternativa: 'É versão alternativa',
-  tipoVersao: 'Tipo de versão',
+  artistasAdicionaisAlbum: 'Artistas adicionais do álbum', // reader: report-contract
+  isVersionAlternativa: 'É versão alternativa', // reader: report-contract
+  tipoVersao: 'Tipo de versão', // reader: report-contract
   versionCustomName: 'Descrição da versão customizada',
   aiAssistanceLevel: 'Nível de assistência de IA',
   explicit: 'Conteúdo explícito',
-  faixaIdioma: 'Idioma da faixa',
+  faixaIdioma: 'Idioma da faixa', // reader: report-contract
 
   // ── Part 89 — Shares ─────────────────────────────────────────────────────────
   // `percentual` (WorkParticipantEntity) remains — shares migrated to
@@ -631,7 +606,7 @@ export const FIELD_LABELS_PT_BR = {
   // (RenameSharePartyFieldsToEnglish), but the key is still live for
   // work participants.
   shareType: 'Tipo de share',
-  percentual: 'Percentual',
+  percentual: 'Percentual', // reader: request-field
   percentage: 'Percentual',
   direction: 'Direção',
   holder: 'Detentor',
@@ -649,18 +624,11 @@ export const FIELD_LABELS_PT_BR = {
 
   // ── Part 89 — Financial transactions / Invoice / Calendar ───────────────────
   eventId: 'Evento vinculado',
-  notaFiscalRef: 'Nota fiscal (ID de referência)',
-  codigoServico: 'Código do serviço',
-  valorTotal: 'Valor total',
+  codigoServico: 'Código do serviço', // reader: request-field
   totalAmount: 'Valor total',
-  eventoRef: 'Evento (ID de referência)',
   label: 'Nome',
 
   // ── Part 89 — CRM: Leads ────────────────────────────────────────────────────
-  tipoLead: 'Tipo de lead',
-  servico: 'Serviço',
-  nomeArtistaServico: 'Nome do artista/banda',
-  campanhaMarketing: 'Campanha de marketing',
   statusLead: 'Status do lead',
   uploads: 'Anexos',
 
@@ -699,7 +667,7 @@ export const FIELD_LABELS_PT_BR = {
   // invoices (CZ-036) — same headers as the pre-rename columns.
   invoiceNumber: 'Número',
   issuedAt: 'Data de emissão',
-  tomadorLegalName: 'Razão social do tomador',
+  tomadorLegalName: 'Razão social do tomador', // reader: entity-column report-contract request-field
   paymentMethod: 'Forma de pagamento',
   paymentTerms: 'Condição de pagamento',
   invoiceDueAt: 'Data de vencimento',

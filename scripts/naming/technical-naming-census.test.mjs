@@ -363,3 +363,10 @@ const suffix = "/mês";`;
   assert.deepEqual(names(hits, "frontendRoute"), []);
   assert.deepEqual(names(hits, "value"), []);
 });
+
+test("external tool names: Rust Cargo.lock/Cargo.toml keys are not Portuguese; a real `cargo` key still is", () => {
+  const lock = scanSource(".claude/runtime/discovery-engine.mjs", `const M = { "Cargo.lock": "cargo", "Cargo.toml": "cargo", "pnpm-lock.yaml": "pnpm" };`);
+  assert.deepEqual(names(lock, "objectKey"), []);
+  assert.deepEqual(names(scanSource("apps/api/src/a.ts", `const row = { cargo: 1 };`), "objectKey"), ["cargo"]);
+  assert.deepEqual(names(scanSource("apps/api/src/a.ts", `const row = { "cargo.lock": 1 };`), "identifier"), ["cargo.lock"]);
+});
