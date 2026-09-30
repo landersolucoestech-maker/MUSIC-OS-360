@@ -444,7 +444,20 @@ export class UsersService {
       throw new BadRequestException('Este papel não pode ser atribuído por este fluxo.');
     }
     const actorLevel = levels.get(actorRole) ?? ROLE_HIERARCHY[actorRole] ?? 0;
-    const targetLevel = levels.get(targetRole) ?? ROLE_HIERARCHY[targetRole] ?? 0;
+    // Fail-closed: a target role with no known level (absent from the DB rows
+    // AND from ROLE_HIERARCHY) must never be assignable. Previously the `?? 0`
+    // fallback gave it level 0, which passed the ceiling check for any actor.
+    const knownTargetLevel = levels.get(targetRole) ?? ROLE_HIERARCHY[targetRole];
+    if (knownTargetLevel === undefined || !Number.isFinite(knownTargetLevel)) {
+      this.logger.warn(`assertCanAssignRole rejected unknown target role "${targetRole}" (no DB level, not in ROLE_HIERARCHY)`);
+      throw new BadRequestException({
+        statusCode: 400,
+        error: 'Bad Request',
+        code: 'ROLE_UNKNOWN',
+        message: 'Papel desconhecido. Não é possível atribuí-lo.',
+      });
+    }
+    const targetLevel = knownTargetLevel;
     if (targetLevel >= actorLevel && actorRole !== 'owner' && actorRole !== 'tenant_owner' && actorRole !== 'super_admin') {
       throw new BadRequestException('Não é permitido atribuir um papel igual ou superior ao próprio nível');
     }

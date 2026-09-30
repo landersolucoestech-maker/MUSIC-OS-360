@@ -217,7 +217,10 @@ export class RbacService {
   }
 
   hasRole(userRole: string, required: string): boolean {
-    return (ROLE_HIERARCHY[userRole] ?? 0) >= (ROLE_HIERARCHY[required] ?? 0);
+    // Fail closed: an unknown required role must never be satisfiable (it used to count as level 0,
+    // so every caller passed). Mirrors RolesGuard, where an unknown required role counts as level 99.
+    if (!Object.prototype.hasOwnProperty.call(ROLE_HIERARCHY, required)) return false;
+    return (ROLE_HIERARCHY[userRole] ?? 0) >= ROLE_HIERARCHY[required];
   }
 
   can(role: string, resource: Resource, action: Action): boolean {
