@@ -62,6 +62,17 @@ export interface ReportFormContract {
   searchableColumns?: string[];
   /** Repeatable fields flattened into rows of the same XLSX sheet. */
   repeatingGroup?: ReportRepeatingGroupSpec;
+  /**
+   * Deprecated logical column ids -> canonical contract key. Only for external
+   * scripts that still send an id from before the English rename (`columns=`,
+   * `sort=` and filter keys of the export). Canonical wins; removed after one
+   * release. See `canonicalizeDeprecatedColumnId`.
+   */
+  deprecatedColumnAliases?: Record<string, string>;
+  /** Contract keys that stay sortable although their DB column name is not a contract key. */
+  extraSortableColumns?: string[];
+  /** Contract keys that stay filterable although their DB column name is not a contract key. */
+  extraFilterableColumns?: string[];
 }
 
 const col = (key: string, physical?: string): ReportFieldSpec => ({ key, storage: 'column', physical });
@@ -286,16 +297,25 @@ const CLIENTS_CONTRACT: ReportFormContract = {
 };
 
 // ─── Projects ────────────────────────────────────────────────────────────────
-// Canonical source: ProjetoFormModal.tsx. A single sheet; one row per track.
+// Canonical source: the project form modal. A single sheet; one row per track.
+// Logical ids are English but NOT the bare physical names (`type`, `title`,
+// `status`): the pt-BR header comes from the single global label dictionary, where
+// `type`/`title`/`status` carry other labels ("Tipo", "Título", "Situação"), and
+// the exported XLSX headers of this sheet must stay identical.
 const PROJECTS_CONTRACT: ReportFormContract = {
   tableName: 'projects',
-  identityColumn: 'nome_ep_album',
+  identityColumn: 'projectTitle',
   fields: [
-    col('tipo_lancamento', 'type'),
-    col('nome_ep_album', 'title'),
+    col('projectType', 'type'),
+    col('projectTitle', 'title'),
     col('notes'),
-    col('status_projeto', 'status'),
+    col('projectStatus', 'status'),
   ],
+  deprecatedColumnAliases: {
+    tipo_lancamento: 'projectType',
+    nome_ep_album: 'projectTitle',
+    status_projeto: 'projectStatus',
+  },
   excludedFormFields: {
     metadata: 'raw internal jsonb object',
     artist_id: 'no matching field in the Create/Edit modal',
@@ -555,7 +575,7 @@ const EVENTS_CONTRACT: ReportFormContract = {
   tableName: 'events',
   identityColumn: 'title',
   fields: [
-    col('title'), col('type'), col('data'), col('end_date'), col('venue'),
+    col('title'), col('type'), col('eventDate', 'starts_at'), col('end_date'), col('venue'),
     col('venue_contact'), col('address'), col('fee_amount'), col('expected_attendance'),
     col('description'), col('notes'), col('status'),
   ],
@@ -571,9 +591,18 @@ const EVENTS_CONTRACT: ReportFormContract = {
   formFieldAliases: {
     title: 'title',
     type: 'type',
-    startsAt: 'data',
+    startsAt: 'eventDate',
     endsAt: 'end_date',
   },
+  // `data` is the legacy start column (kept equal to `starts_at` by the DB trigger);
+  // the contract reads/writes the canonical `starts_at`. `eventDate` (not `starts_at`)
+  // because the header must stay "Data" and `startsAt` is labelled "Início".
+  deprecatedColumnAliases: {
+    data: 'eventDate',
+    starts_at: 'eventDate',
+  },
+  extraSortableColumns: ['eventDate'],
+  extraFilterableColumns: ['eventDate'],
   repeatingGroup: {
       key: 'participants',
       fields: [
@@ -818,3 +847,14 @@ export function contractMetadataFields(contract: ReportFormContract): Record<str
   return out;
 }
 
+
+/**
+ * Maps a deprecated logical column id of `tableName` to its canonical contract key.
+ * Unknown ids and ids of contracts without aliases are returned unchanged (they are
+ * validated downstream exactly as before).
+ */
+export function canonicalizeDeprecatedColumnId(tableName: string, id: string): string {
+  const aliases = REPORT_FORM_CONTRACTS[tableName]?.deprecatedColumnAliases;
+  if (!aliases || !Object.prototype.hasOwnProperty.call(aliases, id)) return id;
+  return aliases[id]!;
+}

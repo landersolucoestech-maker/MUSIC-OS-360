@@ -67,18 +67,18 @@ describe("reportsApi — reports center, real data only", () => {
       blob: vi.fn().mockResolvedValue(blob),
     } as unknown as Response);
 
-    const result = await reportsApi.exportBlob("artistas", {
+    const result = await reportsApi.exportBlob("artists", {
       format: "xlsx",
-      columns: ["nome", "status"],
-      filters: { status: "ativo", vazio: "" },
-      sort: "nome",
+      columns: ["name", "status"],
+      filters: { status: "ativo", empty: "" },
+      sort: "name",
       order: "ASC",
       page: 2,
       pageSize: 50,
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "http://localhost:3001/api/v1/reports/entities/artistas/export?format=xlsx&columns=nome%2Cstatus&sort=nome&order=ASC&page=2&pageSize=50&status=ativo",
+      "http://localhost:3001/api/v1/reports/entities/artists/export?format=xlsx&columns=name%2Cstatus&sort=name&order=ASC&page=2&pageSize=50&status=ativo",
       {
         headers: {
           Authorization: "Bearer access-token",
@@ -98,7 +98,7 @@ describe("reportsApi — reports center, real data only", () => {
       text: vi.fn().mockResolvedValue("serviço indisponível"),
     } as unknown as Response);
 
-    const failure = reportsApi.exportBlob("artistas", { format: "xlsx" });
+    const failure = reportsApi.exportBlob("artists", { format: "xlsx" });
     // Technical diagnostic keeps the status and raw body; the user copy never does.
     await expect(failure).rejects.toThrow("Export failed (HTTP 503): serviço indisponível");
     await expect(failure).rejects.toMatchObject({
@@ -113,9 +113,9 @@ describe("reportsApi — reports center, real data only", () => {
       contentBase64: "abc",
     };
 
-    reportsApi.importValidate("artistas", body);
+    reportsApi.importValidate("artists", body);
 
-    expect(apiClientMock.post).toHaveBeenCalledWith("/reports/entities/artistas/import/validate", body);
+    expect(apiClientMock.post).toHaveBeenCalledWith("/reports/entities/artists/import/validate", body);
   });
 
   it("sends importCommit to the real API", () => {
@@ -125,9 +125,9 @@ describe("reportsApi — reports center, real data only", () => {
       contentBase64: "abc",
     };
 
-    reportsApi.importCommit("artistas", body);
+    reportsApi.importCommit("artists", body);
 
-    expect(apiClientMock.post).toHaveBeenCalledWith("/reports/entities/artistas/import/commit", body);
+    expect(apiClientMock.post).toHaveBeenCalledWith("/reports/entities/artists/import/commit", body);
   });
 
   describe("triggerBlobDownload — does not revoke the URL before the download starts", () => {

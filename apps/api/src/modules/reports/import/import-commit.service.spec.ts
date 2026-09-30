@@ -152,11 +152,11 @@ describe('ImportCommitService — ISRC normalization/validation (find-fb2cfb1b)'
 describe('ImportCommitService — repeating group on the same sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
-    identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
-    exportableColumns: ['tipo_lancamento', 'nome_ep_album', 'trackName'],
-    importableColumns: ['tipo_lancamento', 'nome_ep_album', 'trackName'],
+    identityColumn: 'projectTitle', displayColumn: 'projectTitle', dateColumn: 'created_at',
+    exportableColumns: ['projectType', 'projectTitle', 'trackName'],
+    importableColumns: ['projectType', 'projectTitle', 'trackName'],
     filterableColumns: [], sortableColumns: [], searchableColumns: [], sensitiveColumns: [],
-    requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
+    requiredImportColumns: ['projectTitle'], supportsExport: true, supportsImport: true,
   };
 
   function projectsValidation(trackRows?: unknown[]): ImportValidationResult {
@@ -165,7 +165,7 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
       totalRows: 1, validRows: 1, invalidRows: 0,
       rows: [{
         index: 0,
-        data: { tipo_lancamento: 'ep', nome_ep_album: 'Meu EP' },
+        data: { projectType: 'ep', projectTitle: 'Meu EP' },
         valid: true, errors: [], warnings: [],
         repeatingGroups: trackRows ? { tracks: trackRows } : undefined,
       }],

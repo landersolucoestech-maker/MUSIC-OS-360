@@ -25,6 +25,7 @@ import { IMPORT_MAX_BYTES, type ImportValidationResult } from './import/import.t
 import type { EntitiesInventory } from './entity-metadata.types';
 import type { ReportEntityDefinition } from './definitions/report-entity-definition.types';
 import { isSafeKey } from '../../core/security/safe-object';
+import { canonicalizeDeprecatedColumnId } from './form-contracts/report-form-contracts';
 
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const MAX_BASE64_LENGTH = Math.ceil(IMPORT_MAX_BYTES / 3) * 4 + 4;
@@ -71,6 +72,33 @@ function decodeImportBody(body: ImportUploadDto): Buffer {
     });
   }
   return content;
+}
+
+/**
+ * Deploy-skew window: external scripts may still send a logical column id from before
+ * the English rename (`columns=`, `sort=`, filter keys). Rewrites them to the contract's
+ * canonical id; a canonical id sent together with its deprecated alias wins (the
+ * de-duplication keeps a single entry, and for filters the canonical value is kept).
+ */
+export function canonicalizeExportParams(tableName: string, params: ExportQueryParams): ExportQueryParams {
+  const columns = params.columns
+    ? Array.from(new Set(params.columns.map((column) => canonicalizeDeprecatedColumnId(tableName, column))))
+    : undefined;
+  let filters: Record<string, string> | undefined;
+  if (params.filters) {
+    filters = Object.create(null) as Record<string, string>;
+    for (const [key, value] of Object.entries(params.filters)) {
+      const canonical = canonicalizeDeprecatedColumnId(tableName, key);
+      if (canonical !== key && Object.prototype.hasOwnProperty.call(params.filters, canonical)) continue;
+      filters[canonical] = value;
+    }
+  }
+  return {
+    ...params,
+    columns,
+    filters,
+    sort: params.sort ? canonicalizeDeprecatedColumnId(tableName, params.sort) : params.sort,
+  };
 }
 
 export function parseExportParams(
@@ -169,7 +197,7 @@ export class ReportsController {
     @Query() query: Record<string, string | string[] | undefined>,
     @Res() response: Response,
   ): Promise<void> {
-    const params = parseExportParams(query);
+    const params = canonicalizeExportParams(entity, parseExportParams(query));
     const result = await this.exportEngine.export(
       entity,
       params,

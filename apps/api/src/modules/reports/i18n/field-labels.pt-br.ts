@@ -727,9 +727,12 @@ export const FIELD_LABELS_PT_BR = {
   executionPlan: 'Plano de ação operacional',
   aiRecommendations: 'Recomendações da IA',
 
-  tipoLancamento: 'Tipo de Lançamento',
-  nomeEpAlbum: 'Nome do EP/Álbum',
-  statusProjeto: 'Status',
+  // Projects contract logical ids (header text unchanged; see PROJECTS_CONTRACT).
+  projectType: 'Tipo de Lançamento',
+  projectTitle: 'Nome do EP/Álbum',
+  projectStatus: 'Status',
+  // Events contract: starts_at is exported/imported under the historical "Data" header.
+  eventDate: 'Data',
   // projects.tracks repeating group (CZ-031) — same headers as before.
   trackName: 'Nome da música',
   trackDurationMinutes: 'Duração — Minutos',

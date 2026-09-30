@@ -146,11 +146,11 @@ describe('ImportEngineService — single-sheet XLSX', () => {
 describe('ImportEngineService — projects on a single sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
-    identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
-    exportableColumns: ['tipo_lancamento', 'nome_ep_album', 'notes', 'status_projeto', 'trackName', 'soloFeat', 'originalRemix', 'instrumental', 'trackDurationMinutes', 'trackDurationSeconds', 'musicGenre', 'trackLanguage', 'composers', 'performers', 'producers', 'lyrics', 'audioFiles', 'sort_order'],
-    importableColumns: ['tipo_lancamento', 'nome_ep_album', 'notes', 'status_projeto', 'trackName', 'soloFeat', 'originalRemix', 'instrumental', 'trackDurationMinutes', 'trackDurationSeconds', 'musicGenre', 'trackLanguage', 'composers', 'performers', 'producers', 'lyrics', 'audioFiles', 'sort_order'],
+    identityColumn: 'projectTitle', displayColumn: 'projectTitle', dateColumn: 'created_at',
+    exportableColumns: ['projectType', 'projectTitle', 'notes', 'projectStatus', 'trackName', 'soloFeat', 'originalRemix', 'instrumental', 'trackDurationMinutes', 'trackDurationSeconds', 'musicGenre', 'trackLanguage', 'composers', 'performers', 'producers', 'lyrics', 'audioFiles', 'sort_order'],
+    importableColumns: ['projectType', 'projectTitle', 'notes', 'projectStatus', 'trackName', 'soloFeat', 'originalRemix', 'instrumental', 'trackDurationMinutes', 'trackDurationSeconds', 'musicGenre', 'trackLanguage', 'composers', 'performers', 'producers', 'lyrics', 'audioFiles', 'sort_order'],
     filterableColumns: [], sortableColumns: [], searchableColumns: [], sensitiveColumns: [],
-    requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
+    requiredImportColumns: ['projectTitle'], supportsExport: true, supportsImport: true,
   };
   const projectsReport = {
     tableName: 'projects', label: 'Projetos', reportable: true, hasSoftDelete: false,
@@ -178,12 +178,12 @@ describe('ImportEngineService — projects on a single sheet', () => {
     const result = await makeProjectsEngine().validateFile('projects', file, 't');
     expect(result.rows).toHaveLength(2);
     expect(result.rows[0].data).toMatchObject({
-      nome_ep_album: 'Meu EP',
+      projectTitle: 'Meu EP',
       trackName: 'Faixa 1',
       composers: 'Fulano | Ciclano',
     });
     expect(result.rows[1].data).toMatchObject({
-      nome_ep_album: 'Meu EP',
+      projectTitle: 'Meu EP',
       trackName: 'Faixa 2',
       composers: 'Beltrano',
     });

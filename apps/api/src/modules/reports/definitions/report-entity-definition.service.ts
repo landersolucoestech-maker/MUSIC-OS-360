@@ -84,7 +84,8 @@ export class ReportEntityDefinitionService {
       .filter((column) => (
         FILTERABLE_HINTS.test(column.name) || column.isEnum || column.type === 'Boolean' || DATE_TYPES.has(column.type)
       ) && sqlSafe(column.name))
-      .map((column) => column.name);
+      .map((column) => column.name)
+      .concat(contract.extraFilterableColumns ?? []);
 
     const sortableColumns = Array.from(new Set([
       identityColumn,
@@ -92,6 +93,7 @@ export class ReportEntityDefinitionService {
       ...visible
         .filter((column) => (NUMERIC_TYPES.has(column.type) || DATE_TYPES.has(column.type)) && sqlSafe(column.name))
         .map((column) => column.name),
+      ...(contract.extraSortableColumns ?? []),
     ]));
 
     const searchableColumns = contract.searchableColumns ?? visible

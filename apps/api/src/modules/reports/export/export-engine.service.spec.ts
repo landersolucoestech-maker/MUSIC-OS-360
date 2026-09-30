@@ -138,22 +138,22 @@ describe('ExportEngineService — computed report (Contabilidade): canonical ord
 describe('Projetos — workbook faithful to the modal and with a single sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
-    identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
+    identityColumn: 'projectTitle', displayColumn: 'projectTitle', dateColumn: 'created_at',
     exportableColumns: [
-      'tipo_lancamento', 'nome_ep_album', 'notes', 'status_projeto',
+      'projectType', 'projectTitle', 'notes', 'projectStatus',
       'trackName', 'soloFeat', 'originalRemix', 'instrumental',
       'trackDurationMinutes', 'trackDurationSeconds', 'musicGenre', 'trackLanguage',
       'composers', 'performers', 'producers', 'lyrics', 'audioFiles', 'sort_order',
     ],
     importableColumns: [], filterableColumns: [], sortableColumns: ['created_at'], searchableColumns: [],
-    sensitiveColumns: [], requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
+    sensitiveColumns: [], requiredImportColumns: ['projectTitle'], supportsExport: true, supportsImport: true,
   };
 
   it('repeats general data per track, without technical IDs or a second sheet', async () => {
     const query = jest.fn()
       .mockResolvedValueOnce([{
         __internal_id: '00000000-0000-0000-0000-000000000001',
-        tipo_lancamento: 'ep', nome_ep_album: 'Meu EP', notes: 'Obs', status_projeto: 'em_andamento',
+        projectType: 'ep', projectTitle: 'Meu EP', notes: 'Obs', projectStatus: 'em_andamento',
       }])
       .mockResolvedValueOnce([
         { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'nao', duration_minutes: '3', duration_seconds: '5', music_genre: 'pop', language: 'portugues', lyrics: 'Letra 1', audio_url: 'audio-1.wav', sort_order: 0 },
