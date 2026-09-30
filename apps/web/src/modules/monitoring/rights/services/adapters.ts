@@ -87,7 +87,7 @@ export const ecadApiAdapter = {
   name: "ECAD API" as const,
   enabled: false,
 
-  fetchCollection(_periodo: string, _config: EcadApiConfig): Promise<unknown[]> {
+  fetchCollection(_period: string, _config: EcadApiConfig): Promise<unknown[]> {
     throw new Error("ECAD API integration not yet enabled.");
   },
 

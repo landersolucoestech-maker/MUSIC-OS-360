@@ -31,7 +31,7 @@ export function useReleasesPaginated({ page, pageSize, search, status, type, art
   });
 
   return {
-    lancamentos: result.items,
+    releases: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,

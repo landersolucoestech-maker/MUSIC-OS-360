@@ -49,7 +49,7 @@ describe("ProjectFormModal — main artist and budget (GAP-0001)", () => {
   it("create sends artist_id and numeric budget", async () => {
     render(<ProjectFormModal open onOpenChange={() => {}} mode="create" />);
     fillSingleName();
-    fireEvent.click(screen.getByTestId("select-projeto-artista"));
+    fireEvent.click(screen.getByTestId("select-project-artist"));
     fireEvent.change(screen.getByTestId("input-project-budget"), { target: { value: "15000.50" } });
     fireEvent.click(screen.getByRole("button", { name: /criar projeto/i }));
 
@@ -85,7 +85,7 @@ describe("ProjectFormModal — main artist and budget (GAP-0001)", () => {
       id: "p1", title: "Faixa", type: "single", status: "planning", updated_at: "2026-09-01T00:00:00Z",
       artist_id: "22222222-2222-4222-8222-222222222222", budget: "2500.00",
     };
-    render(<ProjectFormModal open onOpenChange={() => {}} mode="edit" projeto={project} />);
+    render(<ProjectFormModal open onOpenChange={() => {}} mode="edit" project={project} />);
     expect((screen.getByTestId("input-project-budget") as HTMLInputElement).value).toBe("2500.00");
     fireEvent.click(screen.getByRole("button", { name: /^salvar$/i }));
     await waitFor(() => expect(updateMutate).toHaveBeenCalledTimes(1));

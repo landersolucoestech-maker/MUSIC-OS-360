@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const projectSchema = z.object({
-  tipoLancamento: z.string()
+  releaseType: z.string()
     .min(1, "Tipo de lançamento é obrigatório"),
-  nomeEP: z.string()
+  epName: z.string()
     .max(200, "Título deve ter no máximo 200 caracteres")
     .optional()
     .or(z.literal("")),

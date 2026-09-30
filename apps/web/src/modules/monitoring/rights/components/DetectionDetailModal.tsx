@@ -36,7 +36,7 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
   if (!detection) return null;
 
   const status = STATUS_CONFIG[detection.status];
-  const catalog = detection.obra;
+  const catalog = detection.work;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -87,7 +87,7 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-border/60 bg-muted/20 p-3">
                 <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Compositor(es)" value={catalog.composer_names?.length ? catalog.composer_names.join(", ") : (catalog.composer_name || "—")} />
                 <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Publisher / Editora" value={catalog.publisher_name || "—"} />
-                <Row icon={<Tag className="h-3.5 w-3.5" />} label="Gênero" value={catalog.genero || "—"} />
+                <Row icon={<Tag className="h-3.5 w-3.5" />} label="Gênero" value={catalog.genre || "—"} />
                 <Row icon={<Clock3 className="h-3.5 w-3.5" />} label="Duração" value={catalog.duration_text || "—"} />
                 {catalog.iswc && (
                   <Row icon={<Hash className="h-3.5 w-3.5" />} label="ISWC" value={catalog.iswc} mono />

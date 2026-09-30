@@ -26,7 +26,7 @@ const BASE_DETECTION: DetectionRow = {
   metadata: {},
   created_at: "2026-05-08T14:32:00",
   updated_at: "2026-05-08T14:32:00",
-  obra: {
+  work: {
     id: "obra-001",
     title: "Noite de Luz",
     composer_name: "Vitória Carvalho",
@@ -36,7 +36,7 @@ const BASE_DETECTION: DetectionRow = {
     iswc: "T-123.456.789-0",
     ecad_code: "ECAD-0001-VL",
     society_code: "ABR-001-2025",
-    genero: "Pop",
+    genre: "Pop",
     duration_text: "3:42",
     status: "registrado",
   },
@@ -56,7 +56,7 @@ const ORPHAN_DETECTION: DetectionRow = {
   metadata: {},
   created_at: "2026-05-02T11:20:00",
   updated_at: "2026-05-02T11:20:00",
-  obra: undefined,
+  work: undefined,
 };
 
 function renderModal(detection: DetectionRow | null, open = true) {
@@ -67,7 +67,7 @@ function renderModal(detection: DetectionRow | null, open = true) {
 
 /** BASE_DETECTION with its catalog work (CatalogWorkRef) patched. */
 function withCatalogWork(patch: Record<string, unknown>): DetectionRow {
-  return { ...BASE_DETECTION, obra: { ...BASE_DETECTION.obra!, ...patch } };
+  return { ...BASE_DETECTION, work: { ...BASE_DETECTION.work!, ...patch } };
 }
 
 describe("<DetectionDetailModal /> — with catalog data", () => {

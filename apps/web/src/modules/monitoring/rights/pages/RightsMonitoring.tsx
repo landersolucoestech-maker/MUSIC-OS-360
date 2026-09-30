@@ -38,7 +38,7 @@ import type { WorkWithRelations } from "@/modules/catalog/types/catalog.types";
 import type { CatalogWorkRef } from "../types";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
-type Tab = "detections" | "ecad" | "divergencias";
+type Tab = "detections" | "ecad" | "divergences";
 
 const fmtBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
@@ -81,7 +81,7 @@ export default function RightsMonitoring() {
 
   const workQueries = useQueries({
     queries: workIds.map((id) => ({
-      queryKey: ["byId", "obras", id],
+      queryKey: ["byId", "works", id],
       queryFn: () => storage.findById<WorkWithRelations & { id: string }>("works", id),
       staleTime: 30_000,
     })),
@@ -91,7 +91,7 @@ export default function RightsMonitoring() {
   function handleSync() {
     refetchDet();
     refetchEcad();
-    queryClient.invalidateQueries({ queryKey: ["byId", "obras"] });
+    queryClient.invalidateQueries({ queryKey: ["byId", "works"] });
   }
 
   // Catalog index by work id — real enrichment (work_id is the
@@ -111,10 +111,10 @@ export default function RightsMonitoring() {
         iswc: o.iswc ?? null,
         ecad_code: o.ecad_code ?? null,
         society_code: o.society_code ?? null,
-        genero: o.music_genre ?? null,
+        genre: o.music_genre ?? null,
         status: (o.status as string) ?? null,
         duration_text: o.duration_text ?? null,
-        artista_nome: o.artistas?.stage_name ?? null,
+        artist_name: o.artistas?.stage_name ?? null,
       });
     });
     return map;
@@ -123,18 +123,18 @@ export default function RightsMonitoring() {
   const artistOptions = useMemo(() => {
     const names = new Set<string>();
     for (const o of workIndex.values()) {
-      if (o.artista_nome) names.add(o.artista_nome);
+      if (o.artist_name) names.add(o.artist_name);
     }
     return [...names].sort((a, b) => a.localeCompare(b, "pt-BR"));
   }, [workIndex]);
 
   const enrichedDetections: DetectionRow[] = useMemo(
-    () => detections.map((det) => ({ ...det, obra: det.work_id ? workIndex.get(det.work_id) : undefined })),
+    () => detections.map((det) => ({ ...det, work: det.work_id ? workIndex.get(det.work_id) : undefined })),
     [detections, workIndex],
   );
 
   const enrichedReports: EcadReportRow[] = useMemo(
-    () => reports.map((r) => ({ ...r, obra: r.work_id ? workIndex.get(r.work_id) : undefined })),
+    () => reports.map((r) => ({ ...r, work: r.work_id ? workIndex.get(r.work_id) : undefined })),
     [reports, workIndex],
   );
 
@@ -149,7 +149,7 @@ export default function RightsMonitoring() {
 
   const filtered = useMemo(() => {
     return enrichedDetections.filter((det) => {
-      if (artistFilter !== "all" && det.obra?.artista_nome !== artistFilter) return false;
+      if (artistFilter !== "all" && det.work?.artist_name !== artistFilter) return false;
       if (dateFrom) {
         const d = det.detected_at.split("T")[0];
         if (d < dateFrom) return false;
@@ -161,7 +161,7 @@ export default function RightsMonitoring() {
       if (search.trim()) {
         const q = search.toLowerCase();
         const match =
-          (det.obra?.title ?? det.detected_title ?? "").toLowerCase().includes(q) ||
+          (det.work?.title ?? det.detected_title ?? "").toLowerCase().includes(q) ||
           det.platform.toLowerCase().includes(q) ||
           detectionTypeLabel(det.type).toLowerCase().includes(q);
         if (!match) return false;
@@ -174,7 +174,7 @@ export default function RightsMonitoring() {
 
   const completed = filtered.filter((d) => d.status === "completed").length;
   const pending  = filtered.filter((d) => d.status === "pending").length;
-  const matched    = filtered.filter((d) => d.obra?.ecad_code).length;
+  const matched    = filtered.filter((d) => d.work?.ecad_code).length;
   const matchRate  = filtered.length > 0 ? Math.round((matched / filtered.length) * 100) : 0;
   const receivedEcadAmount = enrichedReports
     .filter((r) => r.status === EcadReportStatus.COMPLETED)
@@ -184,19 +184,19 @@ export default function RightsMonitoring() {
   // work with no registered ecad_code (no ECAD reconciliation possible).
   const dynamicDivergences: Divergence[] = useMemo(() =>
     filtered
-      .filter((det) => !det.obra || !det.obra.ecad_code)
+      .filter((det) => !det.work || !det.work.ecad_code)
       .map((det) => ({
         id: `div-${det.id}`,
-        type: det.obra ? "Obra sem código ECAD" : "Detecção sem obra vinculada",
-        descricao: det.obra
-          ? `Detecção em "${det.platform}" está vinculada à obra "${det.obra.title}", mas ela não possui código ECAD cadastrado.`
+        type: det.work ? "Obra sem código ECAD" : "Detecção sem obra vinculada",
+        description: det.work
+          ? `Detecção em "${det.platform}" está vinculada à obra "${det.work.title}", mas ela não possui código ECAD cadastrado.`
           : `Detecção em "${det.platform}" (${det.detected_title ?? "sem título"}) não possui obra vinculada no catálogo interno.`,
-        obra: det.obra?.title,
-        origem: det.platform,
-        severity: det.obra ? "media" as const : "alta" as const,
-        risco_score: det.obra ? 45 : 65,
+        work: det.work?.title,
+        origin: det.platform,
+        severity: det.work ? "medium" as const : "high" as const,
+        risk_score: det.work ? 45 : 65,
         data: det.detected_at.split("T")[0],
-        status: "aberta" as const,
+        status: "open" as const,
       })),
     [filtered],
   );
@@ -207,16 +207,16 @@ export default function RightsMonitoring() {
     );
   }, [dynamicDivergences, divOverrides]);
 
-  const openDivergences = allDivergences.filter((d) => d.status !== "resolvida");
+  const openDivergences = allDivergences.filter((d) => d.status !== "resolved");
 
   const handleResolveDivergence = (updated: Divergence) => {
     setDivOverrides((prev) => ({
       ...prev,
       [updated.id]: {
         status: updated.status,
-        observacoes: updated.observacoes,
-        data_resolucao: updated.data_resolucao,
-        historico: updated.historico,
+        notes: updated.notes,
+        resolved_at: updated.resolved_at,
+        history: updated.history,
       },
     }));
   };
@@ -224,7 +224,7 @@ export default function RightsMonitoring() {
   const TABS: { key: Tab; label: string; icon: React.ReactNode; badge?: number }[] = [
     { key: "detections",   label: "Detecções",     icon: <Shield className="h-4 w-4" /> },
     { key: "ecad",         label: "ECAD",          icon: <EcadIcon className="h-4 w-4" />, badge: enrichedReports.length },
-    { key: "divergencias", label: "Divergências",  icon: <AlertTriangle className="h-4 w-4" />, badge: openDivergences.length },
+    { key: "divergences", label: "Divergências",  icon: <AlertTriangle className="h-4 w-4" />, badge: openDivergences.length },
   ];
 
   function handleViewDetail(det: DetectionRow) {
@@ -300,10 +300,10 @@ export default function RightsMonitoring() {
               </div>
               <div className="relative min-w-[220px] flex-1">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <Input placeholder="Buscar obra, plataforma, tipo..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8 h-8 text-sm bg-card border-border" data-testid="input-search-execucoes" />
+                <Input placeholder="Buscar obra, plataforma, tipo..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8 h-8 text-sm bg-card border-border" data-testid="input-search-executions" />
               </div>
               <Select value={artistFilter} onValueChange={setArtistFilter}>
-                <SelectTrigger className="h-8 w-auto min-w-[142px] shrink-0 bg-card border-border text-sm" data-testid="select-artista-filter">
+                <SelectTrigger className="h-8 w-auto min-w-[142px] shrink-0 bg-card border-border text-sm" data-testid="select-artist-filter">
                   <SelectValue placeholder="Todos os artistas" />
                 </SelectTrigger>
                 <SelectContent>
@@ -398,7 +398,7 @@ export default function RightsMonitoring() {
                         <FeatureGate key={r.id} feature="moduleMonitoring" featureName="Monitoramento">
                           <TableRow>
                             <TableCell className="font-semibold">{r.period}</TableCell>
-                            <TableCell className="text-sm text-muted-foreground hidden md:table-cell">{r.obra?.title ?? r.work_id ?? "—"}</TableCell>
+                            <TableCell className="text-sm text-muted-foreground hidden md:table-cell">{r.work?.title ?? r.work_id ?? "—"}</TableCell>
                             <TableCell className="text-sm text-muted-foreground hidden lg:table-cell">{formatRightsDate(r.created_at)}</TableCell>
                             <TableCell className="text-right">{fmtBRL(Number(r.net_amount ?? r.gross_amount ?? 0))}</TableCell>
                             <TableCell><Badge variant={ecadReportStatusVariant(r.status)}>{ecadReportStatusLabel(r.status)}</Badge></TableCell>
@@ -418,11 +418,11 @@ export default function RightsMonitoring() {
           </TabsContent>
 
           {/* ── Discrepancies ── */}
-          <TabsContent value="divergencias" className="mt-0">
+          <TabsContent value="divergences" className="mt-0">
             <Card className="border-border/60">
               <CardContent className="p-0">
                 <DivergencesPanel
-                  divergencias={allDivergences}
+                  divergences={allDivergences}
                   onResolve={(d) => { setSelectedDivergence(d); setResolverOpen(true); }}
                 />
               </CardContent>
@@ -435,7 +435,7 @@ export default function RightsMonitoring() {
         <DetectionDetailModal detection={selectedExec} open={detailOpen} onOpenChange={setDetailOpen} />
         <ECADViewModal report={selectedEcad} open={ecadDetailOpen} onOpenChange={setEcadDetailOpen} />
         <ResolveDivergenceModal
-          divergencia={selectedDivergence}
+          divergence={selectedDivergence}
           open={resolverOpen}
           onOpenChange={setResolverOpen}
           onSubmit={handleResolveDivergence}

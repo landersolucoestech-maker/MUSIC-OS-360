@@ -30,18 +30,18 @@ export interface ProjectWorkSummary extends WorkRef {
 
 export interface ProjectWithRelations extends Project {
   artistas?: ArtistRef | null;
-  obras?: ProjectWorkSummary[] | null;
+  works?: ProjectWorkSummary[] | null;
 }
 
 export interface ProjectWithRelationsExtended extends ProjectWithRelations {
-  total_obras?: number;
-  obras_concluidas?: number;
-  compositor?: string | null;
-  interprete?: string | null;
-  editora?: string | null;
-  progresso?: number | null;
-  gasto?: number | null;
-  nome?: string | null;
-  data_prevista_fim?: string | null;
+  total_works?: number;
+  completed_works?: number;
+  composer?: string | null;
+  performer?: string | null;
+  publisher?: string | null;
+  progress?: number | null;
+  spent?: number | null;
+  name?: string | null;
+  expected_end_date?: string | null;
 }
 

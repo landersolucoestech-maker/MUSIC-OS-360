@@ -98,8 +98,8 @@ function freshVersion(overrides: Partial<ArtistWireRecord> = {}): ArtistWireReco
   };
 }
 
-const nameInput = () => screen.getByTestId("input-nome-artistico") as HTMLInputElement;
-const saveButton = () => screen.getByTestId("button-salvar-modal") as HTMLButtonElement;
+const nameInput = () => screen.getByTestId("input-stage-name") as HTMLInputElement;
+const saveButton = () => screen.getByTestId("button-save-modal") as HTMLButtonElement;
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -179,14 +179,14 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     });
 
     await waitFor(() => {
-      const inputs = screen.getAllByTestId("input-nome-artistico");
+      const inputs = screen.getAllByTestId("input-stage-name");
       expect((inputs[inputs.length - 1] as HTMLInputElement).value).toBe("Editado ciclo 1");
     });
 
-    const inputs2 = screen.getAllByTestId("input-nome-artistico");
+    const inputs2 = screen.getAllByTestId("input-stage-name");
     fireEvent.change(inputs2[inputs2.length - 1], { target: { value: "Editado ciclo 2" } });
 
-    const buttons2 = screen.getAllByTestId("button-salvar-modal");
+    const buttons2 = screen.getAllByTestId("button-save-modal");
     fireEvent.click(buttons2[buttons2.length - 1]);
 
     await waitFor(() => expect(onSuccess2).toHaveBeenCalledTimes(1));

@@ -284,7 +284,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
               <div className="space-y-2">
                 <Label>Lançamento</Label>
                 <Select value={formData.release_id} onValueChange={(v) => handleChange("release_id", v)}>
-                  <SelectTrigger data-testid="select-lancamento-distribuido">
+                  <SelectTrigger data-testid="select-distributed-release">
                     <SelectValue placeholder="Selecione o lançamento" />
                   </SelectTrigger>
                   <SelectContent>
@@ -421,7 +421,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
           <div className="space-y-2">
             <Label htmlFor="observacoes">Observações adicionais</Label>
             <Textarea id="observacoes" placeholder="Informações adicionais sobre este share..."
-              value={formData.notes} onChange={(e) => handleChange("notes", e.target.value)} rows={2} data-testid="textarea-observacoes" />
+              value={formData.notes} onChange={(e) => handleChange("notes", e.target.value)} rows={2} data-testid="textarea-notes" />
           </div>
         </div>
 
@@ -429,7 +429,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
           <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-cancel">
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting} data-testid="button-salvar">
+          <Button onClick={handleSubmit} disabled={isSubmitting} data-testid="button-save">
             {isSubmitting ? "Salvando..." : isEditing ? "Salvar Alterações" : "Registrar Share"}
           </Button>
         </div>

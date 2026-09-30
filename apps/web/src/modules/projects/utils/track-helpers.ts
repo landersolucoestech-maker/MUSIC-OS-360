@@ -15,7 +15,7 @@ export interface TrackData {
   audioUrl?: string;
   /** Local-only: file metadata derived from a local File pick or a HEAD request on audioUrl.
    *  Never persisted to descricao JSON. */
-  arquivoAudio?: { name: string; size: number } | null;
+  audioFile?: { name: string; size: number } | null;
 }
 
 export interface TrackInfo {
@@ -50,8 +50,8 @@ function joinArray(arr: string[] | string | undefined | null): string {
 
 export function getTrackInfo(m: TrackData): TrackInfo {
   const min = m.durationMinutes || "";
-  const seg = m.durationSeconds || "";
-  const duration = min && seg ? `${min}:${seg.padStart(2, "0")}` : min ? `${min}:00` : "";
+  const seconds = m.durationSeconds || "";
+  const duration = min && seconds ? `${min}:${seconds.padStart(2, "0")}` : min ? `${min}:00` : "";
   return {
     name: m.name || "",
     genre: m.genre || "",

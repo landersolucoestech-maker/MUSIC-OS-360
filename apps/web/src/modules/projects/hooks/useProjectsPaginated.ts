@@ -12,10 +12,10 @@ export interface UseProjectsPaginatedParams {
   status?: string;
   type?: string;
   artistId?: string;
-  genero?: string;
+  genre?: string;
 }
 
-export function useProjectsPaginated({ page, pageSize, search, status, type, artistId, genero: genre }: UseProjectsPaginatedParams) {
+export function useProjectsPaginated({ page, pageSize, search, status, type, artistId, genre }: UseProjectsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
   if (type) filters.type = type;

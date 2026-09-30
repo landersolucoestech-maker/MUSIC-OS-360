@@ -434,14 +434,14 @@ export default function Shares() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                data-testid={`button-ver-${share.id}`}
+                                data-testid={`button-view-${share.id}`}
                                 onClick={() => setViewModal({ open: true, share })}
                               >
                                 <Eye className="h-4 w-4 mr-2" />
                                 Visualizar
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                data-testid={`button-editar-${share.id}`}
+                                data-testid={`button-edit-${share.id}`}
                                 onClick={() => setFormModal({ open: true, share })}
                               >
                                 <Pencil className="h-4 w-4 mr-2" />
@@ -449,7 +449,7 @@ export default function Shares() {
                               </DropdownMenuItem>
                               {isPending && share.direction === "receivable" && (
                                 <DropdownMenuItem
-                                  data-testid={`button-receber-${share.id}`}
+                                  data-testid={`button-receive-${share.id}`}
                                   onClick={() => handleRegisterSettlement(share, ShareStatus.RECEIVED)}
                                 >
                                   <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
@@ -458,7 +458,7 @@ export default function Shares() {
                               )}
                               {isPending && share.direction === "payable" && (
                                 <DropdownMenuItem
-                                  data-testid={`button-enviar-${share.id}`}
+                                  data-testid={`button-send-${share.id}`}
                                   onClick={() => handleRegisterSettlement(share, ShareStatus.SENT)}
                                 >
                                   <Send className="h-4 w-4 mr-2 text-orange-600" />
@@ -467,7 +467,7 @@ export default function Shares() {
                               )}
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
-                                data-testid={`button-excluir-${share.id}`}
+                                data-testid={`button-delete-${share.id}`}
                                 className="text-destructive"
                                 onClick={() => setDeleteModal({ open: true, share })}
                               >

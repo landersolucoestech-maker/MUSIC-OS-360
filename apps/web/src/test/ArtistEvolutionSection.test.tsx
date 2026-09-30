@@ -109,16 +109,16 @@ describe("<ArtistEvolutionSection />", () => {
     deezerMock.mockReturnValue(emptyQuery());
     renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
-    expect(screen.getByTestId("section-evolucao")).toBeInTheDocument();
-    expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
+    expect(screen.getByTestId("section-evolution")).toBeInTheDocument();
+    expect(screen.getByTestId("text-evolution-status")).toHaveTextContent(
       /sem histórico/i,
     );
-    expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-message")).toHaveTextContent(
       /ainda não há histórico suficiente/i,
     );
     // aggregate metrics do not appear when trackedCount === 0
     expect(
-      screen.queryByTestId("text-evolucao-pct-medio"),
+      screen.queryByTestId("text-evolution-avg-pct"),
     ).not.toBeInTheDocument();
   });
 
@@ -137,22 +137,22 @@ describe("<ArtistEvolutionSection />", () => {
 
     renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
-    expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-status")).toHaveTextContent(
       /sem histórico/i,
     );
-    expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-message")).toHaveTextContent(
       /ainda não há histórico suficiente/i,
     );
     // The aggregate metrics block (balance / avg pct / platforms) only
     // appears when trackedCount > 0.
     expect(
-      screen.queryByTestId("text-evolucao-plataformas"),
+      screen.queryByTestId("text-evolution-platforms"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("text-evolucao-saldo"),
+      screen.queryByTestId("text-evolution-balance"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("text-evolucao-pct-medio"),
+      screen.queryByTestId("text-evolution-avg-pct"),
     ).not.toBeInTheDocument();
   });
 
@@ -181,26 +181,26 @@ describe("<ArtistEvolutionSection />", () => {
 
     renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
-    expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-status")).toHaveTextContent(
       /estável/i,
     );
     // 3 tracked platforms, all with zero variation
-    expect(screen.getByTestId("text-evolucao-plataformas")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-platforms")).toHaveTextContent(
       /3 de 7/,
     );
     // Total absolute balance = 0; the component formats it as "+0"
-    expect(screen.getByTestId("text-evolucao-saldo")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-balance")).toHaveTextContent(
       /^\+0$/,
     );
     // Average variation = 0%
-    expect(screen.getByTestId("text-evolucao-pct-medio")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-avg-pct")).toHaveTextContent(
       /0/,
     );
     // The verdict message mentions stability across the platforms
-    expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-message")).toHaveTextContent(
       /est[aá]vel/i,
     );
-    expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-message")).toHaveTextContent(
       /Spotify, YouTube, Deezer/,
     );
   });
@@ -222,21 +222,21 @@ describe("<ArtistEvolutionSection />", () => {
 
     renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
-    expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-status")).toHaveTextContent(
       /em crescimento/i,
     );
     // 2 platforms with history, 1 without history (deezer)
-    expect(screen.getByTestId("text-evolucao-plataformas")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-platforms")).toHaveTextContent(
       /2 de 7/,
     );
     // absolute balance: +200 (spotify) + +200 (youtube) = +400
-    expect(screen.getByTestId("text-evolucao-saldo")).toHaveTextContent(/400/);
+    expect(screen.getByTestId("text-evolution-balance")).toHaveTextContent(/400/);
     // average variation: (20% + 40%) / 2 = 30%
-    expect(screen.getByTestId("text-evolucao-pct-medio")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-avg-pct")).toHaveTextContent(
       /\+30/,
     );
     // message mentions the tracked platforms
-    expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-message")).toHaveTextContent(
       /Spotify, YouTube/i,
     );
   });
@@ -263,13 +263,13 @@ describe("<ArtistEvolutionSection />", () => {
 
     renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
-    expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-status")).toHaveTextContent(
       /em queda/i,
     );
-    expect(screen.getByTestId("text-evolucao-plataformas")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-platforms")).toHaveTextContent(
       /3 de 7/,
     );
-    expect(screen.getByTestId("text-evolucao-saldo")).toHaveTextContent(/350/);
+    expect(screen.getByTestId("text-evolution-balance")).toHaveTextContent(/350/);
   });
 
   it("platforms without a registered ID: cards show missing-config label", () => {
@@ -309,17 +309,17 @@ describe("<ArtistEvolutionSection />", () => {
 
     renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
-    expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-status")).toHaveTextContent(
       /em crescimento/i,
     );
     // The detailed block (balance / avg pct / platforms) is replaced by a
     // skeleton while some hook is still loading. But the verdict message
     // already mentions the platform that has history (Spotify).
-    expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
+    expect(screen.getByTestId("text-evolution-message")).toHaveTextContent(
       /Spotify/,
     );
     expect(
-      screen.queryByTestId("text-evolucao-plataformas"),
+      screen.queryByTestId("text-evolution-platforms"),
     ).not.toBeInTheDocument();
   });
 });

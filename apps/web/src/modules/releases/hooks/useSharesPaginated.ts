@@ -47,7 +47,7 @@ export function useSharesPaginated({ page, pageSize, search, direction, status, 
   };
 }
 
-interface DirecaoStatusRow {
+interface DirectionStatusRow {
   direction: string | null;
   status: string;
   cnt: number;
@@ -64,9 +64,9 @@ const EMPTY_SHARE_KPIS: ShareKPIs = { toReceive: 0, received: 0, toSend: 0, sent
 
 /** GET /shares/stats — exact direction×status distribution, whole tenant (Task H). */
 export function useSharesStats() {
-  const query = useQuery<DirecaoStatusRow[]>({
+  const query = useQuery<DirectionStatusRow[]>({
     queryKey: [...QUERY_KEYS.SHARES, "stats"],
-    queryFn: ({ signal }) => api.get<DirecaoStatusRow[]>("/shares/stats", { signal }),
+    queryFn: ({ signal }) => api.get<DirectionStatusRow[]>("/shares/stats", { signal }),
     staleTime: 30_000,
   });
 

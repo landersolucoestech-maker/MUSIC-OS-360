@@ -23,9 +23,9 @@ import { toUserMessage } from "@/shared/lib/errors";
 interface ProjectFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  projeto?: any;
+  project?: any;
   mode: "create" | "edit" | "view";
-  onConcluido?: (projectId: string) => void;
+  onCompleted?: (projectId: string) => void;
 }
 
 interface TrackData {
@@ -42,7 +42,7 @@ interface TrackData {
   performers: string[];
   producers: string[];
   lyrics: string;
-  arquivoAudio: { name: string; size: number } | null;
+  audioFile: { name: string; size: number } | null;
   audioUrl?: string;
   _uploading?: boolean;
 }
@@ -54,7 +54,7 @@ interface UploadedAudio {
 
 const musicGenres = MUSICAL_GENRES;
 
-const idiomas = LANGUAGES;
+const languages = LANGUAGES;
 
 const formatFileSize = (bytes: number) => {
   if (bytes === 0) return '0 Bytes';
@@ -78,7 +78,7 @@ const createEmptyTrack = (): TrackData => ({
   performers: [""],
   producers: [""],
   lyrics: "",
-  arquivoAudio: null,
+  audioFile: null,
 });
 
 // Normalize stored enum values to match Select option values exactly.
@@ -181,7 +181,7 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
   );
 }
 
-export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, onConcluido: onCompleted }: ProjectFormModalProps) {
+export function ProjectFormModal({ open, onOpenChange, project, mode, onCompleted }: ProjectFormModalProps) {
   const { addProject, updateProject } = useProjects();
   const { upload: uploadToR2 } = useUploadToR2();
 
@@ -229,8 +229,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
     if (mode === "view") return;
 
     const validation = projectSchema.safeParse({
-      tipoLancamento: releaseType,
-      nomeEP: epName || "",
+      releaseType: releaseType,
+      epName: epName || "",
       status: status || "",
       notes: notes || "",
     });
@@ -265,7 +265,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
 
     // Removes local-only fields (File metadata, upload flag) before sending —
     // tracks go to their own storage (project_tracks), never again serialized into descricao.
-    const tracksToSave = tracks.map(({ arquivoAudio: _a, _uploading: _u, ...m }) => m);
+    const tracksToSave = tracks.map(({ audioFile: _a, _uploading: _u, ...m }) => m);
 
     // Persists the first track's genre as a direct field for efficient filtering
     const genre = tracks[0]?.genre || null;
@@ -376,7 +376,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
     }
 
     // Show local file immediately for UX feedback
-    updateTrack(trackId, 'arquivoAudio', { name: file.name, size: file.size });
+    updateTrack(trackId, 'audioFile', { name: file.name, size: file.size });
     updateTrack(trackId, '_uploading', true);
 
     try {
@@ -394,7 +394,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
         : toUserMessage(err, "Erro no upload do áudio");
       toast.error(`Upload falhou: ${msg}`);
       // Never fakes success: without a real URL, removes the displayed local file.
-      updateTrack(trackId, 'arquivoAudio', null);
+      updateTrack(trackId, 'audioFile', null);
     } finally {
       updateTrack(trackId, '_uploading', false);
     }
@@ -491,7 +491,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
           <Select value={track.language} onValueChange={(v) => updateTrack(track.id, 'language', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue placeholder="Selecione o idioma" /></SelectTrigger>
             <SelectContent>
-              {idiomas.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}
+              {languages.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -607,7 +607,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
           className="hidden"
           disabled={isViewMode}
         />
-        {track.arquivoAudio ? (
+        {track.audioFile ? (
           <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border">
             <div className="flex items-center gap-3">
               {track._uploading ? (
@@ -616,9 +616,9 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
                 <FileAudio className="w-8 h-8 text-primary" />
               )}
               <div>
-                <p className="text-sm font-medium">{track.arquivoAudio.name}</p>
+                <p className="text-sm font-medium">{track.audioFile.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {formatFileSize(track.arquivoAudio.size)}
+                  {formatFileSize(track.audioFile.size)}
                   {track._uploading && " — enviando..."}
                   {!track._uploading && track.audioUrl && " — link gerado ✓"}
                 </p>
@@ -647,7 +647,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
                 <Button
                   type="button" variant="ghost" size="sm"
                   onClick={() => {
-                    updateTrack(track.id, 'arquivoAudio', null);
+                    updateTrack(track.id, 'audioFile', null);
                     updateTrack(track.id, 'audioUrl', undefined);
                   }}
                   disabled={!!track._uploading}
@@ -754,7 +754,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
                 placeholder="Selecione o artista"
                 searchPlaceholder="Buscar artista..."
                 disabled={isViewMode}
-                data-testid="select-projeto-artista"
+                data-testid="select-project-artist"
               />
             </div>
             <div className="space-y-2">

@@ -61,7 +61,7 @@ export interface Release {
   cover_url?: string | null;
   distributor?: string | null;
   platforms?: string[] | null;
-  fonograma_ids?: string[] | null;
+  phonogram_ids?: string[] | null;
   notes?: string | null;
   isrc_global?: string | null;
   upc?: string | null;
@@ -74,7 +74,7 @@ export interface Release {
   record_label?: string | null;
   copyright?: string | null;
   work_id?: string | null;
-  fonograma_id?: string | null;
+  phonogram_id?: string | null;
   // ── Internal status × platform status separation ─────────────────────────────
   /** Internal operational status (control). See `release-status`. */
   internal_status?: string | null;
@@ -148,8 +148,8 @@ export type ShareInsert = Omit<Share, "id" | "user_id" | "created_at" | "updated
 export type ShareUpdate = Partial<ShareInsert>;
 
 export interface ShareWithRelations extends Share {
-  obras?: WorkRef | null;
-  artistas?: ArtistRef | null;
+  work?: WorkRef | null;
+  artist?: ArtistRef | null;
 }
 
 export interface ShareHistoryEntry {

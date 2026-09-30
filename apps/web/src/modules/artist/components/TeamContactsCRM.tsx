@@ -145,7 +145,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
             size="sm"
             className="h-7 text-xs gap-1"
             onClick={() => setSearchOpen((v) => !v)}
-            data-testid="button-vincular-contato-crm"
+            data-testid="button-link-crm-contact"
           >
             <Link2 className="h-3 w-3" />
             Vincular Contato do CRM
@@ -156,7 +156,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
             size="sm"
             className="h-7 text-xs gap-1"
             onClick={() => setNewContactOpen(true)}
-            data-testid="button-novo-contato-crm"
+            data-testid="button-new-crm-contact"
           >
             <Plus className="h-3 w-3" />
             Novo Contato
@@ -166,7 +166,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
 
       {/* CRM contact search */}
       {searchOpen && (
-        <div className="space-y-2 rounded-lg border bg-muted/10 p-3" data-testid="crm-contato-search">
+        <div className="space-y-2 rounded-lg border bg-muted/10 p-3" data-testid="crm-contact-search">
           <div className="relative">
             <Search className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -175,7 +175,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar contato do CRM por nome, categoria, telefone ou e-mail…"
               className="h-8 pl-7 text-sm"
-              data-testid="input-crm-contato-search"
+              data-testid="input-crm-contact-search"
             />
           </div>
           <div className="max-h-56 space-y-1 overflow-y-auto">
@@ -190,7 +190,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                   type="button"
                   onClick={() => addLink(c.id)}
                   className="flex w-full items-center justify-between rounded-md border border-transparent px-2 py-1.5 text-left hover:border-border hover:bg-background"
-                  data-testid={`crm-contato-result-${c.id}`}
+                  data-testid={`crm-contact-result-${c.id}`}
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{c.name}</p>
@@ -214,7 +214,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
           Nenhum contato vinculado. Use "Vincular Contato do CRM" ou "Novo Contato".
         </p>
       ) : (
-        <div className="space-y-2" data-testid="equipe-vinculada">
+        <div className="space-y-2" data-testid="linked-team">
           {value.map((link) => {
             const contact = contactById.get(link.contactId);
             const showDistributors = contact ? DISTRIBUTOR_CONTACT_TYPES.has(contact.category) : false;
@@ -223,7 +223,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
               <div
                 key={link.contactId}
                 className="rounded-lg border bg-muted/20 p-3"
-                data-testid={`contato-vinculado-${link.contactId}`}
+                data-testid={`linked-contact-${link.contactId}`}
               >
                 <div className="flex items-start justify-between gap-2">
                   {contact ? (
@@ -250,7 +250,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                     size="sm"
                     className="h-6 w-6 shrink-0 p-0 text-muted-foreground hover:text-destructive"
                     onClick={() => removeLink(link.contactId)}
-                    data-testid={`button-remover-vinculo-${link.contactId}`}
+                    data-testid={`button-remove-link-${link.contactId}`}
                   >
                     <X className="h-3.5 w-3.5" />
                   </Button>

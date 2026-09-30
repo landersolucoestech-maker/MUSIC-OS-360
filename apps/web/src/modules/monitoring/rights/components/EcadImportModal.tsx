@@ -11,13 +11,13 @@ import { Upload, FileText, CheckCircle, AlertTriangle, X, RefreshCw, ChevronRigh
 type ImportStep = "idle" | "uploading" | "parsing" | "normalizing" | "matching" | "done" | "error";
 
 interface ParsePreview {
-  total_linhas: number;
-  obras_detectadas: number;
-  periodo: string;
-  valor_total: number;
-  linhas_ok: number;
-  linhas_erro: number;
-  amostra: { isrc: string; obra: string; interprete: string; periodo: string; execucoes: number; valor: number }[];
+  total_rows: number;
+  detected_works: number;
+  period: string;
+  total_amount: number;
+  rows_ok: number;
+  rows_error: number;
+  sample: { isrc: string; work: string; performer: string; period: string; executions: number; amount: number }[];
 }
 
 const PIPELINE_STEPS = [
@@ -166,17 +166,17 @@ export function EcadImportModal({ open, onOpenChange }: Props) {
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-muted/40 rounded-lg p-3 border border-border/60">
                   <p className="text-xs text-muted-foreground mb-1">Linhas Processadas</p>
-                  <p className="text-lg font-bold tabular-nums">{preview.total_linhas.toLocaleString("pt-BR")}</p>
-                  <p className="text-xs text-success mt-0.5">{preview.linhas_ok} OK · {preview.linhas_erro} erro</p>
+                  <p className="text-lg font-bold tabular-nums">{preview.total_rows.toLocaleString("pt-BR")}</p>
+                  <p className="text-xs text-success mt-0.5">{preview.rows_ok} OK · {preview.rows_error} erro</p>
                 </div>
                 <div className="bg-muted/40 rounded-lg p-3 border border-border/60">
                   <p className="text-xs text-muted-foreground mb-1">Obras Detectadas</p>
-                  <p className="text-lg font-bold tabular-nums">{preview.obras_detectadas}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">período {preview.periodo}</p>
+                  <p className="text-lg font-bold tabular-nums">{preview.detected_works}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">período {preview.period}</p>
                 </div>
                 <div className="bg-muted/40 rounded-lg p-3 border border-border/60">
                   <p className="text-xs text-muted-foreground mb-1">Valor Total</p>
-                  <p className="text-lg font-bold tabular-nums">{fmtBRL(preview.valor_total)}</p>
+                  <p className="text-lg font-bold tabular-nums">{fmtBRL(preview.total_amount)}</p>
                   <p className="text-xs text-success mt-0.5">Conciliado</p>
                 </div>
               </div>
@@ -185,7 +185,7 @@ export function EcadImportModal({ open, onOpenChange }: Props) {
                 <div className="rounded-lg border border-border/60 overflow-hidden">
                   <ListSectionHeader
                     title="Amostra de Dados"
-                    count={preview.amostra.length}
+                    count={preview.sample.length}
                     description="Confira uma prévia das obras, ISRCs, execuções e valores importados"
                     className="px-3 pt-3"
                   />
@@ -200,13 +200,13 @@ export function EcadImportModal({ open, onOpenChange }: Props) {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {preview.amostra.map((row, i) => (
+                      {preview.sample.map((row, i) => (
                         <TableRow key={i}>
                           <TableCell><code className="font-sans text-muted-foreground">{row.isrc}</code></TableCell>
-                          <TableCell className="font-medium">{row.obra}</TableCell>
-                          <TableCell className="text-muted-foreground hidden sm:table-cell">{row.interprete}</TableCell>
-                          <TableCell className="text-right tabular-nums">{row.execucoes}</TableCell>
-                          <TableCell className="text-right tabular-nums font-medium">{fmtBRL(row.valor)}</TableCell>
+                          <TableCell className="font-medium">{row.work}</TableCell>
+                          <TableCell className="text-muted-foreground hidden sm:table-cell">{row.performer}</TableCell>
+                          <TableCell className="text-right tabular-nums">{row.executions}</TableCell>
+                          <TableCell className="text-right tabular-nums font-medium">{fmtBRL(row.amount)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

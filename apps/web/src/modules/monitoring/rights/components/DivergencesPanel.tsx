@@ -9,58 +9,58 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertTriangle, XCircle, Info, CheckCircle, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Trash2 } from "lucide-react";
 import { formatRightsDate } from "../utils/date-format";
 
-export type DivergenceSeverity = "critica" | "alta" | "media" | "baixa";
+export type DivergenceSeverity = "critical" | "high" | "medium" | "low";
 
 export interface DivergenceHistoryEntry {
   data: string;
-  acao: string;
-  por?: string;
+  action: string;
+  by?: string;
 }
 
 export interface Divergence {
   id: string;
   type: string;
-  descricao: string;
-  obra?: string;
+  description: string;
+  work?: string;
   isrc?: string;
-  origem?: string;
+  origin?: string;
   severity: DivergenceSeverity;
-  risco_score: number;
+  risk_score: number;
   data: string;
-  status: "aberta" | "em_resolucao" | "resolvida";
+  status: "open" | "in_resolution" | "resolved";
   // Traceability fields (optional; fed by the resolution flow)
-  data_criacao?: string;
-  responsavel?: string;
-  observacoes?: string;
-  data_resolucao?: string;
-  historico?: DivergenceHistoryEntry[];
+  created_at?: string;
+  owner?: string;
+  notes?: string;
+  resolved_at?: string;
+  history?: DivergenceHistoryEntry[];
 }
 
 const SEVERITY_CONFIG: Record<DivergenceSeverity, { label: string; variant: BadgeVariant; icon: ReactNode; border: string }> = {
-  critica: { label: "Crítica",  variant: "danger",  icon: <XCircle className="h-4 w-4 text-destructive" />,    border: "border-l-destructive" },
-  alta:    { label: "Alta",     variant: "warning", icon: <AlertTriangle className="h-4 w-4 text-orange-500" />, border: "border-l-orange-500" },
-  media:   { label: "Média",    variant: "warning", icon: <AlertTriangle className="h-4 w-4 text-warning" />,    border: "border-l-warning" },
-  baixa:   { label: "Baixa",    variant: "neutral", icon: <Info className="h-4 w-4 text-muted-foreground" />,    border: "border-l-border" },
+  critical: { label: "Crítica",  variant: "danger",  icon: <XCircle className="h-4 w-4 text-destructive" />,    border: "border-l-destructive" },
+  high:    { label: "Alta",     variant: "warning", icon: <AlertTriangle className="h-4 w-4 text-orange-500" />, border: "border-l-orange-500" },
+  medium:   { label: "Média",    variant: "warning", icon: <AlertTriangle className="h-4 w-4 text-warning" />,    border: "border-l-warning" },
+  low:   { label: "Baixa",    variant: "neutral", icon: <Info className="h-4 w-4 text-muted-foreground" />,    border: "border-l-border" },
 };
 
 
 interface Props {
-  divergencias: Divergence[];
+  divergences: Divergence[];
   onResolve?: (div: Divergence) => void;
   onBulkDelete?: (ids: string[]) => void;
 }
 
-type SortKey = "type" | "obra" | "isrc" | "origem" | "severity" | "risco_score" | "data" | "status";
+type SortKey = "type" | "work" | "isrc" | "origin" | "severity" | "risk_score" | "data" | "status";
 type SortDirection = "asc" | "desc";
 
-export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkDelete }: Props) {
+export function DivergencesPanel({ divergences, onResolve, onBulkDelete }: Props) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("data");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const abertas = divergences.filter(d => d.status !== "resolvida");
+  const openDivergences = divergences.filter(d => d.status !== "resolved");
   const sortedDivergences = useMemo(() => {
     const normalise = (value: unknown) => value ?? "";
-    return [...abertas].sort((a, b) => {
+    return [...openDivergences].sort((a, b) => {
       const av = normalise(a[sortKey]);
       const bv = normalise(b[sortKey]);
       if (typeof av === "number" && typeof bv === "number") {
@@ -69,9 +69,9 @@ export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkD
       const result = String(av).localeCompare(String(bv), "pt-BR", { sensitivity: "base", numeric: true });
       return sortDirection === "asc" ? result : -result;
     });
-  }, [abertas, sortDirection, sortKey]);
+  }, [openDivergences, sortDirection, sortKey]);
   const divergencesPg = usePagination(sortedDivergences, 10);
-  const allSelected = abertas.length > 0 && selectedIds.length === abertas.length;
+  const allSelected = openDivergences.length > 0 && selectedIds.length === openDivergences.length;
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -99,7 +99,7 @@ export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkD
   };
 
   const toggleSelectAll = () => {
-    setSelectedIds(allSelected ? [] : abertas.map((d) => d.id));
+    setSelectedIds(allSelected ? [] : openDivergences.map((d) => d.id));
   };
 
   const toggleSelect = (id: string) => {
@@ -112,7 +112,7 @@ export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkD
     setSelectedIds([]);
   };
 
-  if (abertas.length === 0) {
+  if (openDivergences.length === 0) {
     return (
       <>
         <ListSectionHeader
@@ -133,7 +133,7 @@ export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkD
     <>
       <ListSectionHeader
         title="Painel de Divergências"
-        count={abertas.length}
+        count={openDivergences.length}
         description="Inconsistências detectadas entre execuções monitoradas e relatórios ECAD"
         action={
           <div className="flex flex-wrap items-center justify-end gap-3">
@@ -144,7 +144,7 @@ export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkD
                 size="sm"
                 className="h-8 text-xs gap-1.5"
                 onClick={handleBulkDelete}
-                data-testid="button-delete-selected-divergencias"
+                data-testid="button-delete-selected-divergences"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Excluir selecionadas
@@ -154,7 +154,7 @@ export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkD
               checked={allSelected}
               onCheckedChange={toggleSelectAll}
               aria-label="Selecionar todas as divergências"
-              data-testid="checkbox-select-all-divergencias"
+              data-testid="checkbox-select-all-divergences"
             />
             <span className="text-xs text-muted-foreground">
               {selectedIds.length > 0 ? `${selectedIds.length} selecionada(s)` : "Selecionar todos"}
@@ -167,11 +167,11 @@ export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkD
           <TableRow>
             <TableHead className="w-8"></TableHead>
             <TableHead><SortButton keyName="type" label="Tipo" /></TableHead>
-            <TableHead><SortButton keyName="obra" label="Obra" /></TableHead>
+            <TableHead><SortButton keyName="work" label="Obra" /></TableHead>
             <TableHead><SortButton keyName="isrc" label="ISRC" /></TableHead>
-            <TableHead><SortButton keyName="origem" label="Origem" /></TableHead>
+            <TableHead><SortButton keyName="origin" label="Origem" /></TableHead>
             <TableHead><SortButton keyName="severity" label="Severidade" /></TableHead>
-            <TableHead><SortButton keyName="risco_score" label="Risco" /></TableHead>
+            <TableHead><SortButton keyName="risk_score" label="Risco" /></TableHead>
             <TableHead><SortButton keyName="data" label="Data" /></TableHead>
             <TableHead><SortButton keyName="status" label="Status" /></TableHead>
             <TableHead className="text-right">Ações</TableHead>
@@ -181,29 +181,29 @@ export function DivergencesPanel({ divergencias: divergences, onResolve, onBulkD
           {divergencesPg.pageItems.map((div) => {
             const cfg = SEVERITY_CONFIG[div.severity];
             return (
-              <TableRow key={div.id} data-testid={`row-divergencia-${div.id}`} className={selectedIds.includes(div.id) ? "bg-muted/20" : ""}>
+              <TableRow key={div.id} data-testid={`row-divergence-${div.id}`} className={selectedIds.includes(div.id) ? "bg-muted/20" : ""}>
                 <TableCell>
                   <Checkbox
                     checked={selectedIds.includes(div.id)}
                     onCheckedChange={() => toggleSelect(div.id)}
                     aria-label={`Selecionar divergência ${div.type}`}
-                    data-testid={`checkbox-divergencia-${div.id}`}
+                    data-testid={`checkbox-divergence-${div.id}`}
                   />
                 </TableCell>
                 <TableCell>
                   <p className="max-w-[260px] truncate font-medium">{div.type}</p>
-                  <p className="max-w-[320px] truncate text-xs text-muted-foreground">{div.descricao}</p>
+                  <p className="max-w-[320px] truncate text-xs text-muted-foreground">{div.description}</p>
                 </TableCell>
-                <TableCell className="text-sm">{div.obra || "—"}</TableCell>
+                <TableCell className="text-sm">{div.work || "—"}</TableCell>
                 <TableCell className="text-sm">{div.isrc || "—"}</TableCell>
-                <TableCell className="text-sm">{div.origem || "—"}</TableCell>
+                <TableCell className="text-sm">{div.origin || "—"}</TableCell>
                 <TableCell>
                   <Badge variant={cfg.variant} className="gap-1">{cfg.icon}{cfg.label}</Badge>
                 </TableCell>
-                <TableCell className="text-sm">Risco {div.risco_score}/100</TableCell>
+                <TableCell className="text-sm">Risco {div.risk_score}/100</TableCell>
                 <TableCell className="text-sm whitespace-nowrap">{formatRightsDate(div.data)}</TableCell>
                 <TableCell>
-                  {div.status === "em_resolucao" ? <Badge variant="info">Em resolução</Badge> : <Badge variant="warning">Aberta</Badge>}
+                  {div.status === "in_resolution" ? <Badge variant="info">Em resolução</Badge> : <Badge variant="warning">Aberta</Badge>}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button

@@ -136,10 +136,10 @@ describe("RightsMonitoring page — 'Divergências' tab badge", () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByTestId("tab-divergencias")).toBeDefined();
+      expect(screen.getByTestId("tab-divergences")).toBeDefined();
     });
 
-    const divTab = screen.getByTestId("tab-divergencias");
+    const divTab = screen.getByTestId("tab-divergences");
 
     // Only det-011 (work_id null) is unreconciled — det-001 has a matched obra
     // with ecad_code, but that match resolves asynchronously (GET /works/:id),
@@ -154,10 +154,10 @@ describe("RightsMonitoring page — 'Divergências' tab badge", () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByTestId("tab-divergencias")).toBeDefined();
+      expect(screen.getByTestId("tab-divergences")).toBeDefined();
     });
 
-    const divTab = screen.getByTestId("tab-divergencias");
+    const divTab = screen.getByTestId("tab-divergences");
     await act(async () => {
       fireEvent.pointerDown(divTab, { button: 0, ctrlKey: false });
       fireEvent.mouseDown(divTab, { button: 0 });

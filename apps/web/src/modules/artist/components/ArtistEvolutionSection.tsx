@@ -111,8 +111,8 @@ function aggregateVerdict(platforms: PlatformInput[]): {
   if (totalDelta > 0 || ups > downs) direction = "up";
   else if (totalDelta < 0 || downs > ups) direction = "down";
 
-  const fontes = tracked.map((p) => p.label).join(", ");
-  const verbo =
+  const sources = tracked.map((p) => p.label).join(", ");
+  const verb =
     direction === "up"
       ? "está crescendo"
       : direction === "down"
@@ -121,8 +121,8 @@ function aggregateVerdict(platforms: PlatformInput[]): {
 
   const message =
     direction === "flat"
-      ? `Audiência estável em ${tracked.length} plataforma${tracked.length === 1 ? "" : "s"} acompanhada${tracked.length === 1 ? "" : "s"} (${fontes}).`
-      : `O artista ${verbo} no total das ${tracked.length} plataforma${tracked.length === 1 ? "" : "s"} acompanhada${tracked.length === 1 ? "" : "s"} (${fontes}).`;
+      ? `Audiência estável em ${tracked.length} plataforma${tracked.length === 1 ? "" : "s"} acompanhada${tracked.length === 1 ? "" : "s"} (${sources}).`
+      : `O artista ${verb} no total das ${tracked.length} plataforma${tracked.length === 1 ? "" : "s"} acompanhada${tracked.length === 1 ? "" : "s"} (${sources}).`;
 
   return {
     direction,
@@ -254,14 +254,14 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
   }
 
   return (
-    <div className="space-y-6" data-testid="section-evolucao">
+    <div className="space-y-6" data-testid="section-evolution">
       {/* Aggregated verdict */}
       <Card
         className={cn(
           "ring-1 ring-offset-0 transition-colors",
           verdictStyle.ringClass,
         )}
-        data-testid="card-evolucao-veredito"
+        data-testid="card-evolution-verdict"
       >
         <CardContent className="p-5">
           <div className="flex items-start gap-4">
@@ -278,7 +278,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <h3
                   className={cn("text-xl font-bold", verdictStyle.className)}
-                  data-testid="text-evolucao-status"
+                  data-testid="text-evolution-status"
                 >
                   {verdict.trackedCount === 0
                     ? "Sem histórico"
@@ -296,7 +296,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
               </div>
               <p
                 className="text-sm text-muted-foreground mt-1"
-                data-testid="text-evolucao-mensagem"
+                data-testid="text-evolution-message"
               >
                 {verdict.message}
               </p>
@@ -313,7 +313,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
                     </dt>
                     <dd
                       className={cn("font-semibold", verdictStyle.className)}
-                      data-testid="text-evolucao-pct-medio"
+                      data-testid="text-evolution-avg-pct"
                     >
                       {fmtPercent(verdict.avgPercent)}
                     </dd>
@@ -324,7 +324,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
                     </dt>
                     <dd
                       className={cn("font-semibold", verdictStyle.className)}
-                      data-testid="text-evolucao-saldo"
+                      data-testid="text-evolution-balance"
                     >
                       {verdict.totalDelta !== null
                         ? `${verdict.totalDelta >= 0 ? "+" : "−"}${fmtNumber(Math.abs(verdict.totalDelta))}`
@@ -337,7 +337,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
                     </dt>
                     <dd
                       className="font-semibold"
-                      data-testid="text-evolucao-plataformas"
+                      data-testid="text-evolution-platforms"
                     >
                       {verdict.trackedCount} de {platforms.length}
                     </dd>
@@ -363,7 +363,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           points={spotifyQ.data}
           metric="followers"
           metricLabel="Seguidores"
-          testIdPrefix="evolucao-spotify"
+          testIdPrefix="evolution-spotify"
         />
         <ArtistEvolutionCard
           title="YouTube"
@@ -377,7 +377,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           points={youtubeQ.data}
           metric="followers"
           metricLabel="Inscritos"
-          testIdPrefix="evolucao-youtube"
+          testIdPrefix="evolution-youtube"
         />
         <ArtistEvolutionCard
           title="Deezer"
@@ -391,7 +391,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           points={deezerQ.data}
           metric="followers"
           metricLabel="Fãs"
-          testIdPrefix="evolucao-deezer"
+          testIdPrefix="evolution-deezer"
         />
         <ArtistEvolutionCard
           title="SoundCloud"
@@ -405,7 +405,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           points={soundcloudQ.data}
           metric="followers"
           metricLabel="Seguidores"
-          testIdPrefix="evolucao-soundcloud"
+          testIdPrefix="evolution-soundcloud"
         />
         <ArtistEvolutionCard
           title="Apple Music"
@@ -419,7 +419,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           points={appleMusicQ.data}
           metric="followers"
           metricLabel="Ouvintes"
-          testIdPrefix="evolucao-applemusic"
+          testIdPrefix="evolution-applemusic"
         />
         <ArtistEvolutionCard
           title="Instagram"
@@ -433,7 +433,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           points={instagramQ.data}
           metric="followers"
           metricLabel="Seguidores"
-          testIdPrefix="evolucao-instagram"
+          testIdPrefix="evolution-instagram"
         />
         <ArtistEvolutionCard
           title="TikTok"
@@ -447,7 +447,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           points={tiktokQ.data}
           metric="followers"
           metricLabel="Seguidores"
-          testIdPrefix="evolucao-tiktok"
+          testIdPrefix="evolution-tiktok"
         />
       </div>
 

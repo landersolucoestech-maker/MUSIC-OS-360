@@ -58,9 +58,9 @@ export default function Projects() {
   // missing data, were migrated below to a direct lookup by ID.
   const { projects: rawProjects, isLoading, deleteProject } = useProjects();
 
-  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; projeto?: any }>({ open: false, mode: "create" });
-  const [viewModal, setViewModal] = useState<{ open: boolean; projeto?: any }>({ open: false });
-  const [deleteModal, setDeleteModal] = useState<{ open: boolean; projeto?: any }>({ open: false });
+  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; project?: any }>({ open: false, mode: "create" });
+  const [viewModal, setViewModal] = useState<{ open: boolean; project?: any }>({ open: false });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; project?: any }>({ open: false });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,7 +79,7 @@ export default function Projects() {
   const { entity: deepLinkProject } = useEntityById<ProjectWithRelationsExtended>("projects", projectIdParam ?? undefined);
   useEffect(() => {
     if (!projectIdParam || !deepLinkProject) return;
-    setViewModal({ open: true, projeto: deepLinkProject });
+    setViewModal({ open: true, project: deepLinkProject });
     const next = new URLSearchParams(searchParams);
     next.delete("project");
     setSearchParams(next, { replace: true });
@@ -127,7 +127,7 @@ export default function Projects() {
     status: statusFilter !== "all" ? statusFilter : undefined,
     type: typeFilter !== "all" ? typeFilter : undefined,
     artistId: artistFilter !== "all" ? artistFilter : undefined,
-    genero: genreFilter !== "all" ? genreFilter : undefined,
+    genre: genreFilter !== "all" ? genreFilter : undefined,
   });
 
   // Task J: per-row artist name, resolved by direct ID (GET
@@ -164,8 +164,8 @@ export default function Projects() {
   const { stats: projectsStats } = useProjectsStats();
 
   const handleDelete = () => {
-    if (deleteModal.projeto) {
-      deleteProject.mutate(deleteModal.projeto.id);
+    if (deleteModal.project) {
+      deleteProject.mutate(deleteModal.project.id);
       setDeleteModal({ open: false });
     }
   };
@@ -201,7 +201,7 @@ export default function Projects() {
         size="sm"
         className="h-8 text-xs gap-1.5"
         onClick={() => setFormModal({ open: true, mode: "create" })}
-        data-testid="button-novo-projeto"
+        data-testid="button-new-project"
       >
         <PlusCircle className="h-3.5 w-3.5" />
         Novo Projeto
@@ -216,9 +216,9 @@ export default function Projects() {
     if (status in tally) tally[status as keyof typeof tally] += count;
   }
   const metrics = {
-    ativos: tally.in_progress,
-    concluidos: tally.completed,
-    rascunhos: tally.planning,
+    active: tally.in_progress,
+    completed: tally.completed,
+    drafts: tally.planning,
     total: projectsStats.total,
   };
 
@@ -234,9 +234,9 @@ export default function Projects() {
     <MainLayout title="Projetos" description="Gestão completa de projetos musicais" actions={headerActions}>
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <MetricCard title="Projetos Ativos" value={metrics.ativos} description="em desenvolvimento" icon={Clock} accent="primary" />
-          <MetricCard title="Concluídos" value={metrics.concluidos} description="projetos finalizados" icon={TrendingUp} accent="success" />
-          <MetricCard title="Rascunhos" value={metrics.rascunhos} description="em planejamento" icon={FileText} accent="warning" />
+          <MetricCard title="Projetos Ativos" value={metrics.active} description="em desenvolvimento" icon={Clock} accent="primary" />
+          <MetricCard title="Concluídos" value={metrics.completed} description="projetos finalizados" icon={TrendingUp} accent="success" />
+          <MetricCard title="Rascunhos" value={metrics.drafts} description="em planejamento" icon={FileText} accent="warning" />
           <MetricCard title="Total de Projetos" value={metrics.total} description="cadastrados no sistema" icon={LayoutGrid} accent="primary" />
         </div>
 
@@ -274,11 +274,11 @@ export default function Projects() {
                 onChange={(id) => setArtistFilter(id)}
                 placeholder="Todos Artista"
                 searchPlaceholder="Buscar artista..."
-                data-testid="select-filter-artista"
+                data-testid="select-filter-artist"
               />
             </div>
             {artistFilter !== "all" && (
-              <Button variant="ghost" size="sm" onClick={() => setArtistFilter("all")} data-testid="button-limpar-filtro-artista">
+              <Button variant="ghost" size="sm" onClick={() => setArtistFilter("all")} data-testid="button-clear-artist-filter">
                 ×
               </Button>
             )}
@@ -292,7 +292,7 @@ export default function Projects() {
               <SelectItem value="album">Álbum</SelectItem>
               <SelectItem value="ep">EP</SelectItem>
               <SelectItem value="single">Single</SelectItem>
-              <SelectItem value="turne">Turnê</SelectItem>
+              <SelectItem value="tour">Turnê</SelectItem>
             </SelectContent>
           </Select>
           <Select value={genreFilter} onValueChange={setGenreFilter}>
@@ -361,7 +361,7 @@ export default function Projects() {
                   {pageProjects.map((project) => {
                     const info = getFirstTrackInfo(project);
                     return (
-                      <TableRow key={project.id} data-testid={`row-projeto-${project.id}`} className={selectedIds.includes(project.id) ? "bg-muted/20" : ""}>
+                      <TableRow key={project.id} data-testid={`row-project-${project.id}`} className={selectedIds.includes(project.id) ? "bg-muted/20" : ""}>
                         <TableCell>
                           <Checkbox
                             checked={selectedIds.includes(project.id)}
@@ -406,13 +406,13 @@ export default function Projects() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setViewModal({ open: true, projeto: project })} data-testid={`button-view-${project.id}`}>
+                              <DropdownMenuItem onClick={() => setViewModal({ open: true, project })} data-testid={`button-view-${project.id}`}>
                                 <Eye className="h-4 w-4 mr-2" /> Ver
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setFormModal({ open: true, mode: "edit", projeto: project })} data-testid={`button-edit-${project.id}`}>
+                              <DropdownMenuItem onClick={() => setFormModal({ open: true, mode: "edit", project })} data-testid={`button-edit-${project.id}`}>
                                 <Pencil className="h-4 w-4 mr-2" /> Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setDeleteModal({ open: true, projeto: project })} className="text-destructive" data-testid={`button-delete-${project.id}`}>
+                              <DropdownMenuItem onClick={() => setDeleteModal({ open: true, project })} className="text-destructive" data-testid={`button-delete-${project.id}`}>
                                 <Trash2 className="h-4 w-4 mr-2" /> Excluir
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -452,9 +452,9 @@ export default function Projects() {
       {/* Outside the isLoading gate on purpose — same bug as /artists
           (Task C): ProjectFormModal calls useProjects() again only for
           the mutations, the same query as the isLoading above. */}
-      <ProjectFormModal key={formModal.mode === "create" ? "create" : (formModal.projeto?.id ?? "edit")} open={formModal.open} onOpenChange={(open) => setFormModal(prev => ({ ...prev, open }))} projeto={formModal.projeto} mode={formModal.mode} onConcluido={(id) => navigate(`/music-registration?newWork=${id}`)} />
-      <ProjectViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} projeto={viewModal.projeto} />
-      <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Projeto" description={`Tem certeza que deseja excluir o projeto "${deleteModal.projeto?.title}"?`} onConfirm={handleDelete} />
+      <ProjectFormModal key={formModal.mode === "create" ? "create" : (formModal.project?.id ?? "edit")} open={formModal.open} onOpenChange={(open) => setFormModal(prev => ({ ...prev, open }))} project={formModal.project} mode={formModal.mode} onCompleted={(id) => navigate(`/music-registration?newWork=${id}`)} />
+      <ProjectViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} project={viewModal.project} />
+      <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Projeto" description={`Tem certeza que deseja excluir o projeto "${deleteModal.project?.title}"?`} onConfirm={handleDelete} />
     </>
   );
 }

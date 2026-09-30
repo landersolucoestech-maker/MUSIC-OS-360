@@ -135,13 +135,13 @@ const splitNames = (s: string | null | undefined): string[] => {
  */
 async function findPhonogramByTitle(title: string): Promise<FonogramaWithRelations | undefined> {
   if (!title.trim()) return undefined;
-  const alvo = normStr(title);
+  const target = normStr(title);
   const { items } = await storage.listPaged<FonogramaWithRelations & { id: string }>("phonograms", {
     page: 1,
     pageSize: 5,
     filters: { search: title },
   });
-  return items.find((f) => normStr(f.title ?? "") === alvo);
+  return items.find((f) => normStr(f.title ?? "") === target);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -275,7 +275,7 @@ interface ReleaseTrack {
   letra: string;
   explicit: string;
   // file
-  arquivoAudio: File | null;
+  audioFile: File | null;
   audioUrl?: string;
   _uploading?: boolean;
 }
@@ -325,7 +325,7 @@ const createReleaseTrack = (id = Date.now()): ReleaseTrack => ({
   idioma: "pt-br",
   letra: "",
   explicit: "no",
-  arquivoAudio: null,
+  audioFile: null,
 });
 
 const DEFAULT_EXTRA: ExtraFields = {
@@ -544,7 +544,7 @@ export function ReleaseFormModal({
       : {};
 
     if (release && Array.isArray(meta["faixas"]) && (meta["faixas"] as unknown[]).length > 0) {
-      setTracks((meta["faixas"] as ReleaseTrack[]).map(f => ({ ...f, arquivoAudio: null })));
+      setTracks((meta["faixas"] as ReleaseTrack[]).map(f => ({ ...f, audioFile: null })));
     } else {
       setTracks([createReleaseTrack(1)]);
     }
@@ -687,7 +687,7 @@ export function ReleaseFormModal({
     setTracks((prev) => prev.map((f) => (f.id === id ? { ...f, [k]: v } : f)));
 
   const handleTrackAudioUpload = async (trackId: number, file: File) => {
-    updF(trackId, "arquivoAudio", file);
+    updF(trackId, "audioFile", file);
     updF(trackId, "_uploading", true);
     try {
       const { publicUrl } = await uploadToR2({
@@ -703,7 +703,7 @@ export function ReleaseFormModal({
         ? toUserMessage(err)
         : toUserMessage(err, "Erro no upload do áudio");
       toast.error(`Upload falhou: ${msg}`);
-      updF(trackId, "arquivoAudio", null);
+      updF(trackId, "audioFile", null);
     } finally {
       updF(trackId, "_uploading", false);
     }
@@ -883,7 +883,7 @@ export function ReleaseFormModal({
     try {
       const payload = formToReleasePayload(formData, mode === "edit" ? "edit" : "create");
       // Persist faixas and extraFields in metadata for edit round-trips
-      const savableTracks = tracks.map(({ arquivoAudio: _a, _uploading: _u, ...f }) => f);
+      const savableTracks = tracks.map(({ audioFile: _a, _uploading: _u, ...f }) => f);
       const enrichedMeta: Record<string, unknown> = {
         ...(typeof payload["metadata"] === "object" && payload["metadata"] !== null
           ? (payload["metadata"] as Record<string, unknown>)
@@ -1051,7 +1051,7 @@ export function ReleaseFormModal({
                     disabled={isViewMode}
                     placeholder="Buscar projeto..."
                     className="pl-10"
-                    data-testid="input-buscar-projeto"
+                    data-testid="input-search-project"
                   />
                   {formData.projectSeed && !isViewMode && (
                     <button
@@ -1092,7 +1092,7 @@ export function ReleaseFormModal({
                               handleSelectProject(p);
                             }
                           }}
-                          data-testid={`option-projeto-${p.id}`}
+                          data-testid={`option-project-${p.id}`}
                         >
                           <div className="w-8 h-8 bg-primary rounded flex items-center justify-center shrink-0">
                             <Folder className="h-4 w-4 text-foreground" />
@@ -1210,7 +1210,7 @@ export function ReleaseFormModal({
                       disabled={isViewMode}
                       placeholder="Buscar artista..."
                       className="pl-10"
-                      data-testid="input-buscar-artista"
+                      data-testid="input-search-artist"
                     />
                     {formData.artist_id && !isViewMode && (
                       <button
@@ -1251,7 +1251,7 @@ export function ReleaseFormModal({
                                 handleSelectArtist(a.id);
                               }
                             }}
-                            data-testid={`option-artista-${a.id}`}
+                            data-testid={`option-artist-${a.id}`}
                           >
                             <div className="w-8 h-8 bg-primary rounded flex items-center justify-center shrink-0">
                               <Music className="h-4 w-4 text-foreground" />
@@ -1300,7 +1300,7 @@ export function ReleaseFormModal({
                 onValueChange={(v) => setFormData({ ...formData, genre: v })}
                 disabled={isViewMode}
               >
-                <SelectTrigger data-testid="select-genero">
+                <SelectTrigger data-testid="select-genre">
                   <SelectValue placeholder="Selecione o gênero" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1926,10 +1926,10 @@ export function ReleaseFormModal({
                 <p className="text-sm text-muted-foreground">
                   WAV (recomendado) ou MP3 — máx. 25 MB
                 </p>
-                {track.arquivoAudio ? (
+                {track.audioFile ? (
                   <div className="mt-2">
                     <p className="text-sm text-foreground font-medium">
-                      {track.arquivoAudio.name}
+                      {track.audioFile.name}
                       {track._uploading && " — enviando..."}
                       {!track._uploading && track.audioUrl && " — link gerado ✓"}
                     </p>
@@ -2059,7 +2059,7 @@ export function ReleaseFormModal({
               className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-muted-foreground/50 transition-colors"
               onClick={() =>
                 !isViewMode && !isUploadingCover &&
-                document.getElementById("capa-principal")?.click()
+                document.getElementById("main-cover")?.click()
               }
             >
               {isUploadingCover ? (
@@ -2124,7 +2124,7 @@ export function ReleaseFormModal({
             </div>
 
             <input
-              id="capa-principal"
+              id="main-cover"
               type="file"
               accept=".jpg,.jpeg,.png"
               className="hidden"

@@ -139,7 +139,7 @@ export default function Takedowns() {
   const allPageSelected = rows.length > 0 && rows.every(({ n }) => selectedTakedownIds.includes(n.id));
 
   const headerActions = (
-    <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setTakedownModal({ open: true, mode: "create" })} data-testid="button-novo-takedown">
+    <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setTakedownModal({ open: true, mode: "create" })} data-testid="button-new-takedown">
       <PlusCircle className="h-3.5 w-3.5" />
       Novo Takedown
     </Button>

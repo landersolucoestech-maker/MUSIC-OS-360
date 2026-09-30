@@ -105,7 +105,7 @@ function DistributorsField({
                     onChange={(e) => updateCustomName(e.target.value)}
                     placeholder="Nome da distribuidora…"
                     className="h-8 text-sm"
-                    data-testid="input-geral-dist-nome-custom"
+                    data-testid="input-general-dist-custom-name"
                   />
                   {(entry?.customName ?? "").trim().length > 0 && (
                     <Input
@@ -114,7 +114,7 @@ function DistributorsField({
                       type="email"
                       placeholder="E-mail de share…"
                       className="h-8 text-sm"
-                      data-testid="input-geral-dist-email-outros"
+                      data-testid="input-general-dist-email-other"
                     />
                   )}
                 </div>
@@ -578,7 +578,7 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
             variant="outline"
             onClick={() => handleClose(false)}
             disabled={isSubmitting}
-            data-testid="button-cancelar-modal"
+            data-testid="button-cancel-modal"
           >
             Cancelar
           </Button>
@@ -586,7 +586,7 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
             onClick={rhfSubmit(onSubmit, onInvalid)}
             disabled={isSubmitting || (isEditing && !hydratedArtist)}
             className="gap-2"
-            data-testid="button-salvar-modal"
+            data-testid="button-save-modal"
           >
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {isEditing && !hydratedArtist ? "Carregando versão atual…" : isEditing ? "Salvar Alterações" : "Criar Artista"}

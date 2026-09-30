@@ -72,9 +72,9 @@ export default function Artists() {
   const isLoading = allArtistsLoading;
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("todos");
-  const [genreFilter, setGenreFilter] = useState<string>("todos");
-  const [profileFilter, setProfileFilter] = useState<string>("todos");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [genreFilter, setGenreFilter] = useState<string>("all");
+  const [profileFilter, setProfileFilter] = useState<string>("all");
 
   const [createModal, setCreateModal] = useState(false);
   const [editModal, setEditModal] = useState<{ open: boolean; artist?: Artist }>({ open: false });
@@ -93,15 +93,15 @@ export default function Artists() {
     artists: pageItemsRaw, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
   } = useArtistsPaginated({
     page, pageSize, search: debouncedSearch || undefined,
-    relationship: statusFilter !== "todos" ? (statusFilter as ArtistRelationshipType) : undefined,
-    genre: genreFilter !== "todos" ? genreFilter : undefined,
+    relationship: statusFilter !== "all" ? (statusFilter as ArtistRelationshipType) : undefined,
+    genre: genreFilter !== "all" ? genreFilter : undefined,
   });
 
   // profileFilter (profile_type) is not a server-side filter on the TypeORM entity —
   // client-side refinement applied only over the already-loaded page
   // (documented limitation; doesn't affect total/pagination, which stay exact).
   const pageItems = useMemo(() => {
-    if (profileFilter === "todos") return pageItemsRaw;
+    if (profileFilter === "all") return pageItemsRaw;
     return pageItemsRaw.filter(
       (a) => ((a.profileType as string | null | undefined) || "independent") === profileFilter,
     );
@@ -146,12 +146,12 @@ export default function Artists() {
 
   const clearFilters = () => {
     setSearchTerm("");
-    setStatusFilter("todos");
-    setProfileFilter("todos");
-    setGenreFilter("todos");
+    setStatusFilter("all");
+    setProfileFilter("all");
+    setGenreFilter("all");
   };
 
-  const hasActiveFilters = searchTerm !== "" || statusFilter !== "todos" || genreFilter !== "todos" || profileFilter !== "todos";
+  const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || genreFilter !== "all" || profileFilter !== "all";
 
   const getInitials = (name: string) =>
     name.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase();
@@ -277,7 +277,7 @@ export default function Artists() {
                 <SelectValue placeholder="Todos os artistas" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todos">Todos os artistas</SelectItem>
+                <SelectItem value="all">Todos os artistas</SelectItem>
                 <SelectItem value={ArtistRelationshipType.EXCLUSIVE}>Exclusivo</SelectItem>
                 <SelectItem value={ArtistRelationshipType.PARTNER}>Parceiro</SelectItem>
                 <SelectItem value={ArtistRelationshipType.INDEPENDENT}>Independente</SelectItem>
@@ -288,7 +288,7 @@ export default function Artists() {
                 <SelectValue placeholder="Todos os Perfis" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todos">Todos os Perfis</SelectItem>
+                <SelectItem value="all">Todos os Perfis</SelectItem>
                 {Object.entries(PROFILE_TYPE_LABELS).sort(([, a], [, b]) => a.localeCompare(b, "pt-BR")).map(([value, label]) => (
                   <SelectItem key={value} value={value}>{label}</SelectItem>
                 ))}
@@ -299,7 +299,7 @@ export default function Artists() {
                 <SelectValue placeholder="Todos Gêneros" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todos">Todos Gêneros</SelectItem>
+                <SelectItem value="all">Todos Gêneros</SelectItem>
                 {uniqueGenres.map((g) => (
                   <SelectItem key={g} value={g}>{g.charAt(0).toUpperCase() + g.slice(1)}</SelectItem>
                 ))}

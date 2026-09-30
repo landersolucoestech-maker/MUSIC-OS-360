@@ -138,9 +138,9 @@ test.describe('Part 84 — functional product sweep', () => {
 
     await page.goto('/artists', { waitUntil: 'networkidle' });
     await page.getByTestId('button-novo-artista').click();
-    await page.getByTestId('input-nome-artistico').fill(nome);
-    await page.getByTestId('input-nome-civil').fill(nome);
-    await page.getByTestId('button-salvar-modal').click();
+    await page.getByTestId('input-stage-name').fill(nome);
+    await page.getByTestId('input-legal-name').fill(nome);
+    await page.getByTestId('button-save-modal').click();
     await page.waitForTimeout(1000);
     if (created400Body) throw new Error(`POST /artists 400: ${created400Body}`);
     await expect(page.getByText(nome).first()).toBeVisible({ timeout: 10_000 });

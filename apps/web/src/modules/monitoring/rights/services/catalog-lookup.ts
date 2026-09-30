@@ -16,7 +16,7 @@ export interface CatalogWork {
   iswc: string | null;
   ecad_code: string | null;
   society_code: string | null;
-  genero: string;
+  genre: string;
   status: string;
   duration_text: string;
 }

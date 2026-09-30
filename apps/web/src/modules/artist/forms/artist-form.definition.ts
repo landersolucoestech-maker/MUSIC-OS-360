@@ -190,11 +190,11 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
         id: "stageName", label: "Nome Artístico", type: "text", required: true,
         requiredMessage: "Nome artístico é obrigatório",
         maxLength: { value: 150, message: "Nome artístico deve ter no máximo 150 caracteres" },
-        placeholder: "Nome usado profissionalmente", testId: "input-nome-artistico",
+        placeholder: "Nome usado profissionalmente", testId: "input-stage-name",
       },
       {
         id: "musicGenre", label: "Gênero Musical", type: "select",
-        options: MUSIC_GENRE_OPTIONS, placeholder: "Selecione o gênero", testId: "select-genero",
+        options: MUSIC_GENRE_OPTIONS, placeholder: "Selecione o gênero", testId: "select-genre",
       },
       {
         id: "specialties", label: "Especialidade / Função", type: "multicheck", fullWidth: true,
@@ -211,7 +211,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
       {
         id: "biography", label: "Biografia", type: "textarea", fullWidth: true,
         maxLength: { value: 5000, message: "Biografia deve ter no máximo 5000 caracteres" },
-        placeholder: "Trajetória, conquistas e estilo musical…", testId: "textarea-biografia",
+        placeholder: "Trajetória, conquistas e estilo musical…", testId: "textarea-biography",
       },
     ],
   },
@@ -223,9 +223,9 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
         id: "fullName", label: "Nome Completo", type: "text", required: true,
         requiredMessage: "Nome completo é obrigatório",
         maxLength: { value: 150, message: "Nome completo deve ter no máximo 150 caracteres" },
-        placeholder: "Nome conforme documento", testId: "input-nome-civil",
+        placeholder: "Nome conforme documento", testId: "input-legal-name",
       },
-      { id: "birthDate", label: "Data de Nascimento", type: "date", testId: "datepicker-data-nascimento" },
+      { id: "birthDate", label: "Data de Nascimento", type: "date", testId: "datepicker-birth-date" },
       {
         id: "taxId", label: "CPF", type: "text",
         maxLength: { value: 20, message: "CPF/CNPJ inválido" },
@@ -237,19 +237,19 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
         placeholder: "00.000.000-0", testId: "input-rg",
       },
       {
-        id: "gender", label: "Gênero", type: "select", testId: "select-genero-pessoa",
+        id: "gender", label: "Gênero", type: "select", testId: "select-person-gender",
         options: GENDER_OPTIONS,
         placeholder: "Selecione o gênero",
       },
       {
         id: "address", label: "Endereço Completo", type: "text",
         maxLength: { value: 300, message: "Endereço deve ter no máximo 300 caracteres" },
-        placeholder: "Rua, número, bairro, cidade, CEP", testId: "input-endereco",
+        placeholder: "Rua, número, bairro, cidade, CEP", testId: "input-address",
       },
       {
         id: "phone", label: "Telefone", type: "tel",
         maxLength: { value: 20, message: "Telefone inválido" },
-        placeholder: "(11) 99999-9999", testId: "input-telefone",
+        placeholder: "(11) 99999-9999", testId: "input-phone",
       },
       {
         id: "email", label: "E-mail", type: "email",
@@ -296,7 +296,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
     fields: [
       {
         id: "profileType", label: "Perfil Comercial", type: "select", fullWidth: true,
-        options: PROFILE_TYPE_OPTIONS, placeholder: "Selecione o perfil", testId: "select-type-perfil",
+        options: PROFILE_TYPE_OPTIONS, placeholder: "Selecione o perfil", testId: "select-profile-type",
       },
       { id: "linkedContacts", label: "Equipe / Contatos (CRM)", type: "crm-contacts", fullWidth: true },
     ],
@@ -317,7 +317,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
         id: "internalNotes", label: "Notas Internas", type: "textarea", fullWidth: true,
         maxLength: { value: 5000, message: "Notas devem ter no máximo 5000 caracteres" },
         placeholder: "Notas internas, rider técnico, preferências, informações adicionais…",
-        testId: "textarea-observacoes",
+        testId: "textarea-notes",
       },
     ],
   },

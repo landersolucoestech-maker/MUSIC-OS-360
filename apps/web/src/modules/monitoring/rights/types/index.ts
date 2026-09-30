@@ -20,10 +20,10 @@ export interface CatalogWorkRef {
   iswc: string | null;
   ecad_code: string | null;
   society_code: string | null;
-  genero: string | null;
+  genre: string | null;
   status: string | null;
   duration_text: string | null;
-  artista_nome?: string | null;
+  artist_name?: string | null;
 }
 
 export interface ContentDetection {

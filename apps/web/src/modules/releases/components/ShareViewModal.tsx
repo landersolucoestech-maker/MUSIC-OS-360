@@ -85,10 +85,10 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
    */
   const pickShareTitle = (): string | null => {
     const workTitle = linkedWork?.title;
-    const lancTitle = releases.find((l) => l.id === str("release_id"))?.title;
+    const releaseTitle = releases.find((l) => l.id === str("release_id"))?.title;
     return (
       workTitle ||
-      lancTitle ||
+      releaseTitle ||
       str("music_title") ||
       str("titulo_obra") ||
       str("trackTitle") ||
@@ -106,7 +106,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   const linkedName = linkedArtistResolved?.stageName ?? null;
 
   const directionLabel = SHARE_DIRECTION_LABELS[str("direction") ?? ""] ?? null;
-  const registradoEm = str("created_at") ? formatDate(str("created_at")) : null;
+  const registeredAt = str("created_at") ? formatDate(str("created_at")) : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -177,7 +177,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
               <Field label="Tipo" value={shareTypeLabel(shareType)} />
               {share.total_amount != null && <Field label="Valor combinado" value={formatCurrency(share.total_amount)} />}
               {share.settled_amount != null && <Field label="Valor liquidado" value={formatCurrency(share.settled_amount)} />}
-              {registradoEm && <Field label="Registrado em" value={registradoEm} icon={Calendar} />}
+              {registeredAt && <Field label="Registrado em" value={registeredAt} icon={Calendar} />}
             </CardContent>
           </Card>
 

@@ -7,7 +7,7 @@ import {
 } from "./catalog-lookup";
 
 const makeWork = (overrides: Partial<CatalogWork> = {}): CatalogWork => ({
-  id: "obra-test-1",
+  id: "work-test-1",
   title: "Test Song",
   composer_name: "Test Composer",
   composer_names: ["Test Composer"],
@@ -16,8 +16,8 @@ const makeWork = (overrides: Partial<CatalogWork> = {}): CatalogWork => ({
   iswc: "T-000.000.001-0",
   ecad_code: "ECAD-TEST-001",
   society_code: "ABR-TEST-001",
-  genero: "Pop",
-  status: "registrado",
+  genre: "Pop",
+  status: "registered",
   duration_text: "3:30",
   ...overrides,
 });
@@ -26,7 +26,7 @@ describe("buildIsrcIndex", () => {
   it("builds a Map indexed by ISRC", () => {
     const works = [
       makeWork({ isrc: "BRMSC2500001", title: "Song A" }),
-      makeWork({ id: "obra-2", isrc: "BRMSC2500002", title: "Song B" }),
+      makeWork({ id: "work-2", isrc: "BRMSC2500002", title: "Song B" }),
     ];
     const index = buildIsrcIndex(works);
     expect(index.size).toBe(2);
@@ -53,7 +53,7 @@ describe("buildIsrcIndex", () => {
   it("last obra wins when duplicate ISRCs exist", () => {
     const works = [
       makeWork({ isrc: "BRMSC2500001", title: "First" }),
-      makeWork({ id: "obra-dup", isrc: "BRMSC2500001", title: "Second" }),
+      makeWork({ id: "work-dup", isrc: "BRMSC2500001", title: "Second" }),
     ];
     const index = buildIsrcIndex(works);
     expect(index.size).toBe(1);
@@ -70,7 +70,7 @@ describe("computeEcadMatchRate", () => {
   it("returns 100 when all ISRCs have a catalog work with ecad_code", () => {
     const works = [
       makeWork({ isrc: "ISRC-A", ecad_code: "ECAD-001" }),
-      makeWork({ id: "obra-b", isrc: "ISRC-B", ecad_code: "ECAD-002" }),
+      makeWork({ id: "work-b", isrc: "ISRC-B", ecad_code: "ECAD-002" }),
     ];
     const index = buildIsrcIndex(works);
     expect(computeEcadMatchRate(["ISRC-A", "ISRC-B"], index)).toBe(100);
@@ -90,8 +90,8 @@ describe("computeEcadMatchRate", () => {
   it("computes partial match rate (rounded)", () => {
     const works = [
       makeWork({ isrc: "ISRC-A", ecad_code: "ECAD-001" }),
-      makeWork({ id: "obra-b", isrc: "ISRC-B", ecad_code: null }),
-      makeWork({ id: "obra-c", isrc: "ISRC-C", ecad_code: "ECAD-003" }),
+      makeWork({ id: "work-b", isrc: "ISRC-B", ecad_code: null }),
+      makeWork({ id: "work-c", isrc: "ISRC-C", ecad_code: "ECAD-003" }),
     ];
     const index = buildIsrcIndex(works);
     const rate = computeEcadMatchRate(["ISRC-A", "ISRC-B", "ISRC-C"], index);
@@ -108,8 +108,8 @@ describe("computeEcadMatchRate", () => {
   it("rounds result (e.g. 1/3 → 33)", () => {
     const works = [
       makeWork({ isrc: "ISRC-A", ecad_code: "ECAD-001" }),
-      makeWork({ id: "obra-b", isrc: "ISRC-B", ecad_code: null }),
-      makeWork({ id: "obra-c", isrc: "ISRC-C", ecad_code: null }),
+      makeWork({ id: "work-b", isrc: "ISRC-B", ecad_code: null }),
+      makeWork({ id: "work-c", isrc: "ISRC-C", ecad_code: null }),
     ];
     const index = buildIsrcIndex(works);
     expect(computeEcadMatchRate(["ISRC-A", "ISRC-B", "ISRC-C"], index)).toBe(33);

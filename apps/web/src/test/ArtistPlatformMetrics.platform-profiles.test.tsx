@@ -386,7 +386,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
 
     expect(await screen.findByTestId("button-sync-spotify-artist-1")).toHaveAttribute("type", "button");
     expect(screen.getByTestId("button-sync-youtube-artist-1")).toHaveAttribute("type", "button");
-    expect(screen.getByTestId("button-atualizar-metricas-artist-1")).toHaveAttribute("type", "button");
+    expect(screen.getByTestId("button-refresh-metrics-artist-1")).toHaveAttribute("type", "button");
   });
 
   it("clicking YouTube calls the endpoint with platform youtube", async () => {
@@ -469,7 +469,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
 
     renderMetrics();
 
-    const updateButton = await screen.findByTestId("button-atualizar-metricas-artist-1");
+    const updateButton = await screen.findByTestId("button-refresh-metrics-artist-1");
     await waitFor(() => expect(updateButton).not.toBeDisabled());
     fireEvent.click(updateButton);
 

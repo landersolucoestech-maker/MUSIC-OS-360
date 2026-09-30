@@ -43,7 +43,7 @@ const baseProps = {
   accent: "#1DB954",
   metric: "followers" as const,
   metricLabel: "Seguidores",
-  testIdPrefix: "evolucao-spotify",
+  testIdPrefix: "evolution-spotify",
 };
 
 describe("computeEvolutionSummary", () => {
@@ -150,16 +150,16 @@ describe("<ArtistEvolutionCard />", () => {
       />,
     );
     expect(
-      screen.getByTestId("evolucao-spotify-empty"),
+      screen.getByTestId("evolution-spotify-empty"),
     ).toHaveTextContent(/sem histórico suficiente/i);
     expect(
-      screen.queryByTestId("evolucao-spotify-trend"),
+      screen.queryByTestId("evolution-spotify-trend"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("evolucao-spotify-chart"),
+      screen.queryByTestId("evolution-spotify-chart"),
     ).not.toBeInTheDocument();
     // current still exists but shows "—" because there is no value
-    expect(screen.getByTestId("evolucao-spotify-current")).toHaveTextContent("—");
+    expect(screen.getByTestId("evolution-spotify-current")).toHaveTextContent("—");
   });
 
   it("1 snapshot: shows the current value but still no trend or chart", () => {
@@ -170,17 +170,17 @@ describe("<ArtistEvolutionCard />", () => {
         points={[point("2026-04-30T06:20:00Z", 1234)]}
       />,
     );
-    expect(screen.getByTestId("evolucao-spotify-current")).toHaveTextContent(
+    expect(screen.getByTestId("evolution-spotify-current")).toHaveTextContent(
       "1.234",
     );
     expect(
-      screen.getByTestId("evolucao-spotify-empty"),
+      screen.getByTestId("evolution-spotify-empty"),
     ).toBeInTheDocument();
     expect(
-      screen.queryByTestId("evolucao-spotify-trend"),
+      screen.queryByTestId("evolution-spotify-trend"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByTestId("evolucao-spotify-chart"),
+      screen.queryByTestId("evolution-spotify-chart"),
     ).not.toBeInTheDocument();
   });
 
@@ -196,18 +196,18 @@ describe("<ArtistEvolutionCard />", () => {
         ]}
       />,
     );
-    expect(screen.getByTestId("evolucao-spotify-current")).toHaveTextContent(
+    expect(screen.getByTestId("evolution-spotify-current")).toHaveTextContent(
       "1.500",
     );
-    const trend = screen.getByTestId("evolucao-spotify-trend");
+    const trend = screen.getByTestId("evolution-spotify-trend");
     expect(trend).toBeInTheDocument();
     expect(trend).toHaveAttribute("aria-label", "Métrica em crescimento");
-    expect(screen.getByTestId("evolucao-spotify-percent")).toHaveTextContent(
+    expect(screen.getByTestId("evolution-spotify-percent")).toHaveTextContent(
       /\+50/,
     );
-    expect(screen.getByTestId("evolucao-spotify-chart")).toBeInTheDocument();
+    expect(screen.getByTestId("evolution-spotify-chart")).toBeInTheDocument();
     // absolute delta: +500 (formatted as 500)
-    expect(screen.getByTestId("evolucao-spotify-delta")).toHaveTextContent(
+    expect(screen.getByTestId("evolution-spotify-delta")).toHaveTextContent(
       /500 no per/i,
     );
   });
@@ -223,15 +223,15 @@ describe("<ArtistEvolutionCard />", () => {
         ]}
       />,
     );
-    expect(screen.getByTestId("evolucao-spotify-current")).toHaveTextContent(
+    expect(screen.getByTestId("evolution-spotify-current")).toHaveTextContent(
       "1.500",
     );
-    const trend = screen.getByTestId("evolucao-spotify-trend");
+    const trend = screen.getByTestId("evolution-spotify-trend");
     expect(trend).toHaveAttribute("aria-label", "Métrica em queda");
-    expect(screen.getByTestId("evolucao-spotify-percent")).toHaveTextContent(
+    expect(screen.getByTestId("evolution-spotify-percent")).toHaveTextContent(
       /−25/,
     );
-    expect(screen.getByTestId("evolucao-spotify-chart")).toBeInTheDocument();
+    expect(screen.getByTestId("evolution-spotify-chart")).toBeInTheDocument();
   });
 
   it("2+ equal snapshots: shows trend flat and 0%", () => {
@@ -245,12 +245,12 @@ describe("<ArtistEvolutionCard />", () => {
         ]}
       />,
     );
-    const trend = screen.getByTestId("evolucao-spotify-trend");
+    const trend = screen.getByTestId("evolution-spotify-trend");
     expect(trend).toHaveAttribute("aria-label", "Métrica estável");
-    expect(screen.getByTestId("evolucao-spotify-percent")).toHaveTextContent(
+    expect(screen.getByTestId("evolution-spotify-percent")).toHaveTextContent(
       /\+0/,
     );
-    expect(screen.getByTestId("evolucao-spotify-chart")).toBeInTheDocument();
+    expect(screen.getByTestId("evolution-spotify-chart")).toBeInTheDocument();
   });
 
   it("isMissingConfig: renders the label for an unconfigured platform", () => {
@@ -265,7 +265,7 @@ describe("<ArtistEvolutionCard />", () => {
     );
     expect(screen.getByText(/sem perfil cadastrado/i)).toBeInTheDocument();
     expect(
-      screen.queryByTestId("evolucao-spotify-current"),
+      screen.queryByTestId("evolution-spotify-current"),
     ).not.toBeInTheDocument();
   });
 
@@ -278,7 +278,7 @@ describe("<ArtistEvolutionCard />", () => {
       />,
     );
     expect(
-      screen.queryByTestId("evolucao-spotify-current"),
+      screen.queryByTestId("evolution-spotify-current"),
     ).not.toBeInTheDocument();
     // two skeletons (value + chart)
     expect(container.querySelectorAll(".bg-muted").length)
@@ -296,7 +296,7 @@ describe("<ArtistEvolutionCard />", () => {
     );
     expect(screen.getByText(/falha ao carregar/i)).toBeInTheDocument();
     expect(
-      screen.queryByTestId("evolucao-spotify-current"),
+      screen.queryByTestId("evolution-spotify-current"),
     ).not.toBeInTheDocument();
   });
 });

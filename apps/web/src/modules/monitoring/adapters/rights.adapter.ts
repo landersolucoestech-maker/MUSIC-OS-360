@@ -29,24 +29,24 @@ export interface RightsRecord {
   external_id: string;
   isrc?: string | null;
   iswc?: string | null;
-  obra_titulo?: string | null;
-  fonograma_titulo?: string | null;
-  periodo_inicio: string;
-  periodo_fim: string;
-  valor_bruto_cents: number;
-  moeda: "BRL";
-  status: "pendente" | "conciliado" | "divergente" | "cancelado";
-  plataformas?: string[];
-  observacoes?: string | null;
+  work_title?: string | null;
+  recording_title?: string | null;
+  period_start: string;
+  period_end: string;
+  gross_amount_cents: number;
+  currency: "BRL";
+  status: "pending" | "reconciled" | "divergent" | "cancelled";
+  platforms?: string[];
+  notes?: string | null;
 }
 
 /** Query sent to the rights APIs */
 export interface RightsQuery {
   isrc?: string;
   iswc?: string;
-  periodo_inicio: string;
-  periodo_fim: string;
-  fontes?: Array<"ecad" | "ubc" | "abramus">;
+  period_start: string;
+  period_end: string;
+  sources?: Array<"ecad" | "ubc" | "abramus">;
 }
 
 // ─── Adapter output types ────────────────────────────────────────────────────
@@ -59,13 +59,13 @@ export interface MonitoringRightsEntry {
   isrc: string | null;
   iswc: string | null;
   title: string | null;
-  periodo: string;
-  valor_bruto_brl: string;
+  period: string;
+  gross_amount_brl: string;
   status: RightsRecord["status"];
   status_label: string;
-  plataformas: string[];
-  observacoes: string | null;
-  conciliado_em: string | null;
+  platforms: string[];
+  notes: string | null;
+  reconciled_at: string | null;
 }
 
 // ─── Static mappings ──────────────────────────────────────────────────────────
@@ -77,10 +77,10 @@ const SOURCE_LABELS: Record<RightsRecord["source"], string> = {
 };
 
 const STATUS_LABELS: Record<RightsRecord["status"], string> = {
-  pendente: "Pendente",
-  conciliado: "Conciliado",
-  divergente: "Divergente",
-  cancelado: "Cancelado",
+  pending: "Pendente",
+  reconciled: "Conciliado",
+  divergent: "Divergente",
+  cancelled: "Cancelado",
 };
 
 // ─── Adaptation functions ─────────────────────────────────────────────────────
@@ -90,12 +90,12 @@ const STATUS_LABELS: Record<RightsRecord["status"], string> = {
  * FUTURE MIGRATION: receive real data from useEcadArrecadacao / useUbcDistribuicao.
  */
 export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
-  const grossAmountBrl = (record.valor_bruto_cents / 100).toLocaleString("pt-BR", {
+  const grossAmountBrl = (record.gross_amount_cents / 100).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
 
-  const periodo = `${formatPeriodo(record.periodo_inicio)} – ${formatPeriodo(record.periodo_fim)}`;
+  const period = `${formatPeriod(record.period_start)} – ${formatPeriod(record.period_end)}`;
 
   return {
     id: `${record.source}_${record.external_id}`,
@@ -103,14 +103,14 @@ export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
     source_label: SOURCE_LABELS[record.source],
     isrc: record.isrc ?? null,
     iswc: record.iswc ?? null,
-    title: record.fonograma_titulo ?? record.obra_titulo ?? null,
-    periodo,
-    valor_bruto_brl: grossAmountBrl,
+    title: record.recording_title ?? record.work_title ?? null,
+    period,
+    gross_amount_brl: grossAmountBrl,
     status: record.status,
     status_label: STATUS_LABELS[record.status],
-    plataformas: record.plataformas ?? [],
-    observacoes: record.observacoes ?? null,
-    conciliado_em: record.status === "conciliado" ? new Date().toISOString() : null,
+    platforms: record.platforms ?? [],
+    notes: record.notes ?? null,
+    reconciled_at: record.status === "reconciled" ? new Date().toISOString() : null,
   };
 }
 
@@ -123,19 +123,19 @@ export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
  */
 export function toRightsQuery(
   takedown: Takedown,
-  options: { periodo_inicio: string; periodo_fim: string; fontes?: RightsQuery["fontes"] }
+  options: { period_start: string; period_end: string; sources?: RightsQuery["sources"] }
 ): RightsQuery {
   return {
     isrc: extractIsrcFromTakedown(takedown),
-    periodo_inicio: options.periodo_inicio,
-    periodo_fim: options.periodo_fim,
-    fontes: options.fontes,
+    period_start: options.period_start,
+    period_end: options.period_end,
+    sources: options.sources,
   };
 }
 
 // ─── Internal utilities ───────────────────────────────────────────────────────
 
-function formatPeriodo(iso: string): string {
+function formatPeriod(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString("pt-BR", {
       month: "short",

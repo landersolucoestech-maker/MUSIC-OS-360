@@ -15,7 +15,7 @@ import { EcadReportStatus } from "@music-os-360/types";
 import { ecadReportStatusLabel, ecadReportTypeLabel } from "@/modules/monitoring/rights/utils/ecad-labels";
 
 export interface EcadReportRow extends EcadReport {
-  obra?: CatalogWorkRef;
+  work?: CatalogWorkRef;
 }
 
 interface ECADViewModalProps {
@@ -79,11 +79,11 @@ export function ECADViewModal({ open, onOpenChange, report }: ECADViewModalProps
               <div className="px-4 py-3 border-b border-border">
                 <p className="text-sm font-semibold text-foreground">Obra vinculada</p>
               </div>
-              {report.obra ? (
+              {report.work ? (
                 <div className="p-4 text-sm space-y-1">
-                  <p className="font-medium text-foreground">{report.obra.title}</p>
-                  <p className="text-muted-foreground">{report.obra.composer_name || "—"} · {report.obra.publisher_name || "—"}</p>
-                  <p className="text-xs text-muted-foreground">Cód. ECAD: {report.obra.ecad_code || "—"}</p>
+                  <p className="font-medium text-foreground">{report.work.title}</p>
+                  <p className="text-muted-foreground">{report.work.composer_name || "—"} · {report.work.publisher_name || "—"}</p>
+                  <p className="text-xs text-muted-foreground">Cód. ECAD: {report.work.ecad_code || "—"}</p>
                 </div>
               ) : (
                 <p className="p-4 text-sm text-muted-foreground">

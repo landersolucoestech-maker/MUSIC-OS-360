@@ -327,7 +327,7 @@ export function ArtistPlatformMetrics({
           className="text-muted-foreground gap-1 h-7"
           onClick={refresh}
           disabled={isFetching || syncPlatformProfile.isPending || !hasAnyProfileInput}
-          data-testid={`button-atualizar-metricas-${artistId}`}
+          data-testid={`button-refresh-metrics-${artistId}`}
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isFetching || syncPlatformProfile.isPending ? "animate-spin" : ""}`} />
           Atualizar

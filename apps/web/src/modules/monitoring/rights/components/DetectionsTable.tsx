@@ -16,7 +16,7 @@ const STATUS_CONFIG: Record<DetectionStatus, { label: string; variant: BadgeVari
 };
 
 export interface DetectionRow extends ContentDetection {
-  obra?: CatalogWorkRef;
+  work?: CatalogWorkRef;
 }
 
 interface Props {
@@ -57,7 +57,7 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
           {detections.map((det) => {
             const status = STATUS_CONFIG[det.status];
             const dt = formatRightsDateTime(det.detected_at);
-            const matched = Boolean(det.obra?.ecad_code);
+            const matched = Boolean(det.work?.ecad_code);
             return (
               <TableRow key={det.id} data-testid={`row-exec-${det.id}`}>
                 {onToggleSelect && (
@@ -65,17 +65,17 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
                     <Checkbox
                       checked={selectedIds?.includes(det.id)}
                       onCheckedChange={() => onToggleSelect(det.id)}
-                      aria-label={`Selecionar ${det.obra?.title ?? det.detected_title ?? det.id}`}
-                      data-testid={`checkbox-deteccao-${det.id}`}
+                      aria-label={`Selecionar ${det.work?.title ?? det.detected_title ?? det.id}`}
+                      data-testid={`checkbox-detection-${det.id}`}
                     />
                   </TableCell>
                 )}
                 <TableCell className="py-3">
                   <div className="min-w-0 max-w-[240px]">
                     <p className="font-semibold text-foreground leading-tight truncate">
-                      {det.obra?.title ?? det.detected_title ?? "—"}
+                      {det.work?.title ?? det.detected_title ?? "—"}
                     </p>
-                    {!det.obra && (
+                    {!det.work && (
                       <p className="text-xs text-destructive mt-0.5 truncate">Sem vínculo com obra do catálogo</p>
                     )}
                   </div>

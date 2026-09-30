@@ -15,7 +15,7 @@ import { resolveAllowedTransitions, WorkflowTransition } from "@/shared/lib/work
 interface ProjectViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  projeto?: any;
+  project?: any;
 }
 
 const soloFeatLabel: Record<string, string> = { solo: "Solo", feat: "Feat" };
@@ -28,7 +28,7 @@ function capitalize(s: string) {
 }
 
 export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps>(
-  function ProjectViewModal({ open, onOpenChange, projeto: project }, ref) {
+  function ProjectViewModal({ open, onOpenChange, project }, ref) {
     const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
       table:    'projects',
       id:       project?.id ?? '',
@@ -120,7 +120,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                           <CardContent className="p-4 space-y-4">
                             {/* Title and badges */}
                             <div className="flex items-start justify-between gap-2">
-                              <h4 className="font-medium" data-testid={`text-view-musica-nome-${idx}`}>
+                              <h4 className="font-medium" data-testid={`text-view-track-name-${idx}`}>
                                 {tracks.length > 1 ? `${idx + 1}. ` : ""}{info.name || project.title}
                               </h4>
                               <div className="flex items-center gap-1 flex-wrap justify-end">
@@ -256,7 +256,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                     </div>
                     <Card className="bg-muted/30">
                       <CardContent className="p-4">
-                        <p className="text-sm whitespace-pre-wrap" data-testid="text-view-observacoes">
+                        <p className="text-sm whitespace-pre-wrap" data-testid="text-view-notes">
                           {project.notes}
                         </p>
                       </CardContent>
@@ -273,34 +273,34 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground" />
                     <h3 className="font-semibold">Obras Vinculadas</h3>
-                    <Badge variant="secondary" data-testid="badge-obras-total">
-                      {Array.isArray(project.obras) ? project.obras.length : 0}
+                    <Badge variant="secondary" data-testid="badge-works-total">
+                      {Array.isArray(project.works) ? project.works.length : 0}
                     </Badge>
                   </div>
-                  {Array.isArray(project.obras) && project.obras.length > 0 && (
+                  {Array.isArray(project.works) && project.works.length > 0 && (
                     <Link
                       to={`/music-registration?project=${project.id}`}
                       className="text-xs text-destructive hover:underline inline-flex items-center gap-1"
                       onClick={() => onOpenChange(false)}
-                      data-testid="link-ver-todas-obras"
+                      data-testid="link-view-all-works"
                     >
                       Ver todas <ExternalLink className="h-3 w-3" />
                     </Link>
                   )}
                 </div>
-                {Array.isArray(project.obras) && project.obras.length > 0 ? (
+                {Array.isArray(project.works) && project.works.length > 0 ? (
                   <Card className="bg-muted/30">
                     <CardContent className="p-2">
                       <ul className="divide-y divide-border">
-                        {project.obras.map((work: any) => (
+                        {project.works.map((work: any) => (
                           <li
                             key={work.id}
                             className="flex items-center justify-between gap-2 px-2 py-2"
-                            data-testid={`row-obra-${work.id}`}
+                            data-testid={`row-work-${work.id}`}
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <Music2 className="h-4 w-4 text-warning shrink-0" />
-                              <span className="text-sm font-medium truncate" data-testid={`text-obra-title-${work.id}`}>
+                              <span className="text-sm font-medium truncate" data-testid={`text-work-title-${work.id}`}>
                                 {work.title}
                               </span>
                               {work.status && (
@@ -313,7 +313,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                               to={`/music-registration?project=${project.id}&work=${work.id}`}
                               className="text-xs text-destructive hover:underline inline-flex items-center gap-1 shrink-0"
                               onClick={() => onOpenChange(false)}
-                              data-testid={`link-obra-${work.id}`}
+                              data-testid={`link-work-${work.id}`}
                             >
                               Abrir <ExternalLink className="h-3 w-3" />
                             </Link>
@@ -325,7 +325,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                 ) : (
                   <Card className="bg-muted/30">
                     <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground" data-testid="text-no-obras">
+                      <p className="text-sm text-muted-foreground" data-testid="text-no-works">
                         Nenhuma obra vinculada a este projeto ainda.
                       </p>
                     </CardContent>

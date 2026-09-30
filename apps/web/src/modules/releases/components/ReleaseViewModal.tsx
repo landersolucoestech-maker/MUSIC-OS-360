@@ -131,7 +131,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   // via storage.findById, never scanning usePhonograms()/
   // useArtistas() without a filter (Task J).
   const phonogramIds = useMemo(
-    () => (Array.isArray(release?.fonograma_ids) ? (release!.fonograma_ids as string[]) : []),
+    () => (Array.isArray(release?.phonogram_ids) ? (release!.phonogram_ids as string[]) : []),
     [release],
   );
   const [resolvedPhonograms, setResolvedPhonograms] = useState<Record<string, FonogramaWithRelations>>({});
@@ -202,7 +202,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   const copyrightRecordingYear = textValue(metadata["copyrightDataGravacao"]);
 
   // Subgenre + selected platforms
-  const subgenero = textValue(metadata["generoSecundario"]) ?? textValue(metadata["genero_secundario"]);
+  const subgenre = textValue(metadata["generoSecundario"]) ?? textValue(metadata["genero_secundario"]);
   const platformsArr = Array.isArray(release.platforms) ? release.platforms.filter(Boolean) : [];
   const platformsLabel = platformsArr.length > 0 ? platformsArr.join(", ") : null;
 
@@ -268,7 +268,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Tipo" value={typeInfo.label} />
             <Field label="Gênero" value={musicGenreLabel(release.music_genre)} />
-            <Field label="Subgênero" value={subgenero} />
+            <Field label="Subgênero" value={subgenre} />
             <Field label="Idioma" value={languageLabel} />
             <Field label="Gravadora / Selo" value={release.record_label} />
             <Field label="Plataformas selecionadas" value={platformsLabel} />

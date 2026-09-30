@@ -62,7 +62,7 @@ function getCountdown(date: string | null | undefined, now: number): Countdown {
 
 interface ReleaseCardProps {
   release: Release & Record<string, unknown>;
-  artista?: Artist;
+  artist?: Artist;
   now: number;
   selected: boolean;
   onToggleSelect: () => void;
@@ -76,7 +76,7 @@ interface ReleaseCardProps {
  * Release card with automatic contrast: detects the cover's luminance and adapts
  * text/badges/chrome for legibility over both light and dark covers.
  */
-function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, onView, onEdit, onMetrics, onDelete }: ReleaseCardProps) {
+function ReleaseCard({ release, artist, now, selected, onToggleSelect, onView, onEdit, onMetrics, onDelete }: ReleaseCardProps) {
   const artworkUrl = getReleaseArtworkUrl(release);
   const { mode } = useImageContrast(artworkUrl);
   const status = cardStatusClasses(release, mode);
@@ -92,7 +92,7 @@ function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, 
 
   return (
     <Card
-      data-testid={`card-lancamento-${release.id}`}
+      data-testid={`card-release-${release.id}`}
       className="relative flex flex-col overflow-hidden border-border bg-background text-foreground"
     >
       <div className="relative h-96 overflow-hidden">
@@ -113,7 +113,7 @@ function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, 
             onCheckedChange={onToggleSelect}
             onClick={(event) => event.stopPropagation()}
             aria-label={`Selecionar lançamento ${release.title}`}
-            data-testid={`checkbox-lancamento-${release.id}`}
+            data-testid={`checkbox-release-${release.id}`}
           />
           <Badge className={`border px-2 py-1 text-[10px] font-bold tracking-[0.18em] ${status.className} no-default-hover-elevate no-default-active-elevate`}>
             {status.label}
@@ -128,17 +128,17 @@ function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, 
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 border-border bg-background/95 text-muted-foreground">
-              <DropdownMenuItem data-testid={`button-ver-lancamento-${release.id}`} onClick={onView}>
+              <DropdownMenuItem data-testid={`button-view-release-${release.id}`} onClick={onView}>
                 <Eye className="mr-2 h-4 w-4" /> Ver detalhes
               </DropdownMenuItem>
-              <DropdownMenuItem data-testid={`button-editar-lancamento-${release.id}`} onClick={onEdit}>
+              <DropdownMenuItem data-testid={`button-edit-release-${release.id}`} onClick={onEdit}>
                 <Pencil className="mr-2 h-4 w-4" /> Editar
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onMetrics}>
                 <BarChart3 className="mr-2 h-4 w-4" /> Métricas
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-muted" />
-              <DropdownMenuItem className="text-rose-600 focus:text-rose-700" data-testid={`button-excluir-lancamento-${release.id}`} onClick={onDelete}>
+              <DropdownMenuItem className="text-rose-600 focus:text-rose-700" data-testid={`button-delete-release-${release.id}`} onClick={onDelete}>
                 <Trash2 className="mr-2 h-4 w-4" /> Excluir
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -154,10 +154,10 @@ function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, 
               {genre}
             </Badge>
           </div>
-          <h3 className={`line-clamp-2 text-2xl font-black leading-tight tracking-normal ${text}`} data-testid={`text-lancamento-title-${release.id}`}>
+          <h3 className={`line-clamp-2 text-2xl font-black leading-tight tracking-normal ${text}`} data-testid={`text-release-title-${release.id}`}>
             {release.title}
           </h3>
-          <p className={`mt-1 text-sm font-medium ${subtext}`} data-testid={`text-lancamento-artista-${release.id}`}>
+          <p className={`mt-1 text-sm font-medium ${subtext}`} data-testid={`text-release-artist-${release.id}`}>
             {artist?.stageName || "Artista não vinculado"}
           </p>
           {showCountdown && (
@@ -270,7 +270,7 @@ export default function Releases() {
   }, [debouncedSearch, typeFilter, statusFilter, artistFilter]);
 
   const {
-    lancamentos: pageItems, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
+    releases: pageItems, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
   } = useReleasesPaginated({
     page, pageSize, search: debouncedSearch || undefined,
     // A display group covers several backend statuses (e.g. "Pendente" = review + scheduled).
@@ -333,7 +333,7 @@ export default function Releases() {
   };
 
   const headerActions = (
-    <Button size="sm" className="gap-2 bg-primary" data-testid="button-novo-lancamento" onClick={() => setFormModal({ open: true, mode: "create" })}>
+    <Button size="sm" className="gap-2 bg-primary" data-testid="button-new-release" onClick={() => setFormModal({ open: true, mode: "create" })}>
       <Plus className="h-4 w-4" />
       Novo Lançamento
     </Button>
@@ -427,7 +427,7 @@ export default function Releases() {
               onChange={(id) => setArtistFilter(id)}
               placeholder="Todos Artistas"
               searchPlaceholder="Buscar artista..."
-              data-testid="select-filter-artista"
+              data-testid="select-filter-artist"
             />
           </div>
           {hasActiveFilters && (
@@ -447,7 +447,7 @@ export default function Releases() {
                       checked={selectedIds.length === pageItems.length && pageItems.length > 0}
                       onCheckedChange={toggleSelectAll}
                       aria-label="Selecionar todos os lançamentos"
-                      data-testid="checkbox-select-all-lancamentos"
+                      data-testid="checkbox-select-all-releases"
                     />
                     <span className="text-xs text-muted-foreground">
                       {selectedIds.length > 0 ? `${selectedIds.length} lançamento(s) selecionado(s)` : "Selecionar todos"}
@@ -468,7 +468,7 @@ export default function Releases() {
                     <ReleaseCard
                       key={release.id}
                       release={release}
-                      artista={getArtistById(release.artist_id ?? null)}
+                      artist={getArtistById(release.artist_id ?? null)}
                       now={now}
                       selected={selectedIds.includes(release.id)}
                       onToggleSelect={() => toggleSelect(release.id)}

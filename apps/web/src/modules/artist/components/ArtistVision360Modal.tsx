@@ -118,9 +118,9 @@ const CHANNEL_LABELS: Record<string, string> = {
   campanha: "Campanha", portal_noticias: "Portal", material_publicitario: "Publicidade",
 };
 const CAMPAIGN_SECTIONS: Array<{ key: string; label: string; status: string[] }> = [
-  { key: "ativas", label: "Campanhas Ativas", status: ["active", "paused"] },
-  { key: "encerradas", label: "Campanhas Encerradas", status: ["completed", "cancelled"] },
-  { key: "planejadas", label: "Campanhas Planejadas", status: ["draft", "agendada"] },
+  { key: "active", label: "Campanhas Ativas", status: ["active", "paused"] },
+  { key: "closed", label: "Campanhas Encerradas", status: ["completed", "cancelled"] },
+  { key: "planned", label: "Campanhas Planejadas", status: ["draft", "agendada"] },
 ];
 
 // ── Finance: revenue by nature ──────────────────────────────────────
@@ -133,15 +133,15 @@ const NATURE_BUCKETS: Array<{ label: string; keywords: string[] }> = [
 ];
 
 // ── Contracts: filters by type ────────────────────────────────────────────
-const CONTRACT_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> = [
-  { key: "todos", label: "Todos" },
-  { key: "empresarial", label: "Empresarial", tipos: ["exclusivo", "nao_exclusivo", "gestao", "representacao"] },
-  { key: "distribuicao", label: "Distribuição", tipos: ["distribuicao"] },
-  { key: "licenciamento", label: "Licenciamento", tipos: ["licenciamento"] },
-  { key: "producao", label: "Produção", tipos: ["producao"] },
-  { key: "parcerias", label: "Parcerias", tipos: ["parceria"] },
-  { key: "servicos", label: "Serviços", tipos: ["servicos"] },
-  { key: "outros", label: "Outros", tipos: ["outro"] },
+const CONTRACT_FILTERS: Array<{ key: string; label: string; types?: string[] }> = [
+  { key: "all", label: "Todos" },
+  { key: "business", label: "Empresarial", types: ["exclusivo", "nao_exclusivo", "gestao", "representacao"] },
+  { key: "distribution", label: "Distribuição", types: ["distribuicao"] },
+  { key: "licensing", label: "Licenciamento", types: ["licenciamento"] },
+  { key: "production", label: "Produção", types: ["producao"] },
+  { key: "partnerships", label: "Parcerias", types: ["parceria"] },
+  { key: "services", label: "Serviços", types: ["servicos"] },
+  { key: "other", label: "Outros", types: ["outro"] },
 ];
 
 // ── Agenda: labels and filters ─────────────────────────────────────────────
@@ -153,14 +153,14 @@ const EVENT_STATUS_LABELS: Record<string, string> = {
   planejado: "Planejado", agendado: "Agendado", confirmado: "Confirmado",
   realizado: "Realizado", concluido: "Concluído", cancelado: "Cancelado", adiado: "Adiado",
 };
-const SCHEDULE_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> = [
-  { key: "todos", label: "Todos" },
-  { key: "shows", label: "Shows", tipos: ["show", "festival"] },
-  { key: "reunioes", label: "Reuniões", tipos: ["meeting"] },
-  { key: "entrevistas", label: "Entrevistas", tipos: ["interview"] },
-  { key: "gravacoes", label: "Gravações/Ensaios", tipos: ["recording"] },
-  { key: "turnes", label: "Turnês", tipos: ["tour"] },
-  { key: "outros", label: "Outros", tipos: ["other"] },
+const SCHEDULE_FILTERS: Array<{ key: string; label: string; types?: string[] }> = [
+  { key: "all", label: "Todos" },
+  { key: "shows", label: "Shows", types: ["show", "festival"] },
+  { key: "meetings", label: "Reuniões", types: ["meeting"] },
+  { key: "interviews", label: "Entrevistas", types: ["interview"] },
+  { key: "recordings", label: "Gravações/Ensaios", types: ["recording"] },
+  { key: "tours", label: "Turnês", types: ["tour"] },
+  { key: "other", label: "Outros", types: ["other"] },
 ];
 
 // ── Contents: labels and filters ───────────────────────────────────────────
@@ -178,9 +178,9 @@ const CONTENT_STATUS_LABELS: Record<string, string> = {
   cancelled: "Cancelado", failed: "Falhou",
 };
 const CONTENT_FILTERS: Array<{ key: string; label: string; status?: string[] }> = [
-  { key: "todos", label: "Todos" },
-  { key: "planejados", label: "Planejados", status: ["draft", "scheduled"] },
-  { key: "publicado", label: "Publicado", status: ["published"] },
+  { key: "all", label: "Todos" },
+  { key: "planned", label: "Planejados", status: ["draft", "scheduled"] },
+  { key: "published", label: "Publicado", status: ["published"] },
 ];
 
 interface GoalFormState {
@@ -217,17 +217,17 @@ interface ArtistVision360ModalProps {
 
 const getHistoryIcon = (type: string) => {
   switch (type) {
-    case "criacao":
+    case "creation":
       return <Plus className="h-4 w-4" />;
-    case "edicao":
+    case "edit":
       return <Edit className="h-4 w-4" />;
-    case "obra":
+    case "work":
       return <Music className="h-4 w-4" />;
-    case "contrato":
+    case "contract":
       return <FileText className="h-4 w-4" />;
-    case "financeiro":
+    case "finance":
       return <DollarSign className="h-4 w-4" />;
-    case "exclusao":
+    case "deletion":
       return <Trash2 className="h-4 w-4" />;
     case "status":
       return <Zap className="h-4 w-4" />;
@@ -238,19 +238,19 @@ const getHistoryIcon = (type: string) => {
 
 const getHistoryBadge = (type: string) => {
   switch (type) {
-    case "criacao":
+    case "creation":
       return <Badge variant="success">Criação</Badge>;
-    case "edicao":
+    case "edit":
       return <Badge variant="info">Edição</Badge>;
-    case "obra":
+    case "work":
       return <Badge variant="info">Obra</Badge>;
-    case "contrato":
+    case "contract":
       return (
         <Badge variant="warning">Contrato</Badge>
       );
-    case "financeiro":
+    case "finance":
       return <Badge variant="success">Financeiro</Badge>;
-    case "exclusao":
+    case "deletion":
       return <Badge variant="danger">Exclusão</Badge>;
     case "status":
       return <Badge variant="info">Status</Badge>;
@@ -417,18 +417,18 @@ export function ArtistVision360Modal({
       .filter((c): c is NonNullable<typeof c> => Boolean(c));
   }, [artist, contacts]);
 
-  const [activeTab, setActiveTab] = useState("visao-geral");
+  const [activeTab, setActiveTab] = useState("overview");
   const [showGoalForm, setShowGoalForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
-  const [scheduleFilter, setScheduleFilter] = useState("todos");
-  const [contentFilter, setContentFilter] = useState("todos");
-  const [contractFilter, setContractFilter] = useState("todos");
+  const [scheduleFilter, setScheduleFilter] = useState("all");
+  const [contentFilter, setContentFilter] = useState("all");
+  const [contractFilter, setContractFilter] = useState("all");
 
   // ── Schedule (artist events) ────────────────────────────────────────
   const filteredSchedule = (actualEvents as any[]).filter((e) => {
     const cfg = SCHEDULE_FILTERS.find((f) => f.key === scheduleFilter);
-    if (!cfg || !cfg.tipos) return true;
-    return cfg.tipos.includes(String(e.type ?? "").toLowerCase());
+    if (!cfg || !cfg.types) return true;
+    return cfg.types.includes(String(e.type ?? "").toLowerCase());
   });
 
   // ── Contents (the artist's marketing contents) ─────────────────────────
@@ -450,35 +450,35 @@ export function ArtistVision360Modal({
   const activityTimelineItems: {
     id: string;
     type: string;
-    descricao: string;
+    description: string;
     data: string;
     dataKind: DateKind;
-    responsavel: string;
+    owner: string;
   }[] = [];
   actualContracts.forEach((c) => {
     const d = (c as { created_at?: string }).created_at;
-    if (d) activityTimelineItems.push({ id: `mv-ctr-${c.id}`, type: "Jurídico", descricao: `Contrato: ${c.title}`, data: d, dataKind: "instant", responsavel: "Admin" });
+    if (d) activityTimelineItems.push({ id: `mv-ctr-${c.id}`, type: "Jurídico", description: `Contrato: ${c.title}`, data: d, dataKind: "instant", owner: "Admin" });
   });
   artistTransactions.forEach((t) => {
     const d = t.created_at ?? t.transaction_date;
-    if (d) activityTimelineItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", descricao: t.description ?? (t.type === "revenue" ? "Pagamento recebido" : "Despesa registrada"), data: d, dataKind: t.created_at ? "instant" : "calendar", responsavel: "Financeiro" });
+    if (d) activityTimelineItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", description: t.description ?? (t.type === "revenue" ? "Pagamento recebido" : "Despesa registrada"), data: d, dataKind: t.created_at ? "instant" : "calendar", owner: "Financeiro" });
   });
   actualEvents.forEach((e) => {
     const ev = e as { starts_at?: string; type?: string; created_at?: string };
     const d = ev.starts_at ?? ev.created_at;
-    if (d) activityTimelineItems.push({ id: `mv-evt-${e.id}`, type: "Agenda", descricao: `${getBackendEventTypeLabel(ev.type)}: ${e.title}`, data: d, dataKind: "instant", responsavel: "—" });
+    if (d) activityTimelineItems.push({ id: `mv-evt-${e.id}`, type: "Agenda", description: `${getBackendEventTypeLabel(ev.type)}: ${e.title}`, data: d, dataKind: "instant", owner: "—" });
   });
   actualReleases.forEach((l: any) => {
     const d = l.created_at ?? l.release_date;
-    if (d) activityTimelineItems.push({ id: `mv-lan-${l.id}`, type: "Produção", descricao: `Lançamento: ${l.title ?? ""}`, data: d, dataKind: l.created_at ? "instant" : "calendar", responsavel: "Admin" });
+    if (d) activityTimelineItems.push({ id: `mv-lan-${l.id}`, type: "Produção", description: `Lançamento: ${l.title ?? ""}`, data: d, dataKind: l.created_at ? "instant" : "calendar", owner: "Admin" });
   });
   actualCampaigns.forEach((c) => {
     const d = c.startDate || c.createdAt;
-    if (d) activityTimelineItems.push({ id: `mv-cmp-${c.id}`, type: "Marketing", descricao: `Campanha: ${c.name}`, data: d, dataKind: c.startDate ? "calendar" : "instant", responsavel: c.owner || "—" });
+    if (d) activityTimelineItems.push({ id: `mv-cmp-${c.id}`, type: "Marketing", description: `Campanha: ${c.name}`, data: d, dataKind: c.startDate ? "calendar" : "instant", owner: c.owner || "—" });
   });
   actualContent.forEach((c) => {
     const d = c.publishDate || c.createdAt;
-    if (d) activityTimelineItems.push({ id: `mv-cnt-${c.id}`, type: "Marketing", descricao: `Conteúdo: ${c.title}`, data: d, dataKind: c.publishDate ? "calendar" : "instant", responsavel: c.owner || "—" });
+    if (d) activityTimelineItems.push({ id: `mv-cnt-${c.id}`, type: "Marketing", description: `Conteúdo: ${c.title}`, data: d, dataKind: c.publishDate ? "calendar" : "instant", owner: c.owner || "—" });
   });
   activityTimelineItems.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
 
@@ -511,20 +511,20 @@ export function ArtistVision360Modal({
     .sort((a, b) => calendarDay(a.release_date).localeCompare(calendarDay(b.release_date)))[0];
 
   // ── Evolution: derived milestones ──────────────────────────────────────
-  const evolutionMilestones: { id: string; label: string; descricao: string; data: string; dataKind: DateKind }[] = [];
-  if (artist?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artist.created_at, dataKind: "instant" });
+  const evolutionMilestones: { id: string; label: string; description: string; data: string; dataKind: DateKind }[] = [];
+  if (artist?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", description: "Artista cadastrado no sistema", data: artist.created_at, dataKind: "instant" });
   const firstRelease = (actualReleases as any[])
     .filter((l) => l.created_at || l.release_date)
     .sort((a, b) => new Date(a.created_at ?? a.release_date).getTime() - new Date(b.created_at ?? b.release_date).getTime())[0];
-  if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.release_date, dataKind: firstRelease.created_at ? "instant" : "calendar" });
+  if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", description: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.release_date, dataKind: firstRelease.created_at ? "instant" : "calendar" });
   const firstShow = (actualEvents as any[])
     .filter((e) => ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) && e.starts_at)
     .sort((a, b) => new Date(a.starts_at!).getTime() - new Date(b.starts_at!).getTime())[0];
-  if (firstShow) evolutionMilestones.push({ id: "m-show", label: "Primeira Turnê/Show", descricao: firstShow.title, data: firstShow.starts_at!, dataKind: "instant" });
+  if (firstShow) evolutionMilestones.push({ id: "m-show", label: "Primeira Turnê/Show", description: firstShow.title, data: firstShow.starts_at!, dataKind: "instant" });
   const firstContract = (actualContracts as any[])
     .filter((c) => c.created_at)
     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0];
-  if (firstContract) evolutionMilestones.push({ id: "m-ctr", label: "Contrato Assinado", descricao: firstContract.title, data: firstContract.created_at, dataKind: "instant" });
+  if (firstContract) evolutionMilestones.push({ id: "m-ctr", label: "Contrato Assinado", description: firstContract.title, data: firstContract.created_at, dataKind: "instant" });
   evolutionMilestones.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
 
   // ── Real finance ──────────────────────────────────────────────────
@@ -566,65 +566,65 @@ export function ArtistVision360Modal({
   }).length;
   const filteredContracts = actualContracts.filter((c) => {
     const cfg = CONTRACT_FILTERS.find((f) => f.key === contractFilter);
-    if (!cfg || !cfg.tipos) return true;
-    return cfg.tipos.includes(String(c.type ?? "").toLowerCase());
+    if (!cfg || !cfg.types) return true;
+    return cfg.types.includes(String(c.type ?? "").toLowerCase());
   });
 
   // ── History derived from real data ───────────────────────────────────
   const actualHistory: {
     id: string;
     type: string;
-    descricao: string;
+    description: string;
     data: string;
-    usuario: string;
+    user: string;
   }[] = [];
   if (artist?.created_at) {
     actualHistory.push({
-      id: "criacao",
-      type: "criacao",
-      descricao: "Artista cadastrado no sistema",
+      id: "creation",
+      type: "creation",
+      description: "Artista cadastrado no sistema",
       data: artist.created_at,
-      usuario: "Admin",
+      user: "Admin",
     });
   }
   actualContracts.forEach((c) => {
     if (c.created_at)
       actualHistory.push({
         id: `ctr-${c.id}`,
-        type: "contrato",
-        descricao: `Contrato assinado: ${c.title}`,
+        type: "contract",
+        description: `Contrato assinado: ${c.title}`,
         data: c.created_at,
-        usuario: "Admin",
+        user: "Admin",
       });
   });
   actualWorks.slice(0, 5).forEach((o: any) => {
     if (o.created_at)
       actualHistory.push({
         id: `obra-${o.id}`,
-        type: "obra",
-        descricao: `Obra registrada: ${o.title}`,
+        type: "work",
+        description: `Obra registrada: ${o.title}`,
         data: o.created_at,
-        usuario: "Produtor",
+        user: "Produtor",
       });
   });
   actualReleases.slice(0, 5).forEach((l: any) => {
     if (l.created_at)
       actualHistory.push({
         id: `lanc-${l.id}`,
-        type: "obra",
-        descricao: `Lançamento registrado: ${l.title}`,
+        type: "work",
+        description: `Lançamento registrado: ${l.title}`,
         data: l.created_at,
-        usuario: "Admin",
+        user: "Admin",
       });
   });
   artistTransactions.slice(0, 3).forEach((t) => {
     if (t.created_at)
       actualHistory.push({
         id: `txn-${t.id}`,
-        type: "financeiro",
-        descricao: t.description ?? "",
+        type: "finance",
+        description: t.description ?? "",
         data: t.created_at,
-        usuario: "Financeiro",
+        user: "Financeiro",
       });
   });
   // Status-change events derived from the artist's current status
@@ -646,9 +646,9 @@ export function ArtistVision360Modal({
     actualHistory.push({
       id: `status-${artist.status}`,
       type: "status",
-      descricao: label,
+      description: label,
       data: artist.updated_at,
-      usuario: "Admin",
+      user: "Admin",
     });
   }
   actualHistory.sort(
@@ -795,19 +795,19 @@ export function ArtistVision360Modal({
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-1 flex-col min-h-0 bg-card">
           <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent h-auto p-0 overflow-x-auto shrink-0">
             <TabsTrigger
-              value="visao-geral"
+              value="overview"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
             >
               Visão Geral
             </TabsTrigger>
             <TabsTrigger
-              value="perfil"
+              value="profile"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
             >
               Perfil
             </TabsTrigger>
             <TabsTrigger
-              value="catalogo"
+              value="catalog"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
             >
               Catálogo
@@ -819,21 +819,21 @@ export function ArtistVision360Modal({
               Agenda
             </TabsTrigger>
             <TabsTrigger
-              value="financeiro"
+              value="finance"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
             >
               Financeiro
             </TabsTrigger>
             <TabsTrigger
-              value="contratos"
+              value="contracts"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
             >
               Contratos
             </TabsTrigger>
             <TabsTrigger
-              value="evolucao"
+              value="evolution"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
-              data-testid="tab-evolucao"
+              data-testid="tab-evolution"
             >
               Evolução
             </TabsTrigger>
@@ -844,19 +844,19 @@ export function ArtistVision360Modal({
               Marketing
             </TabsTrigger>
             <TabsTrigger
-              value="conteudos"
+              value="contents"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
             >
               Conteúdos
             </TabsTrigger>
             <TabsTrigger
-              value="movimentacao"
+              value="movements"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
             >
               Movimentação
             </TabsTrigger>
             <TabsTrigger
-              value="historico"
+              value="history"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3 whitespace-nowrap"
             >
               Histórico
@@ -876,7 +876,7 @@ export function ArtistVision360Modal({
             aria-label="Conteúdo da Visão 360"
           >
             {/* Overview */}
-            <TabsContent value="visao-geral" className="p-6 space-y-6 mt-0">
+            <TabsContent value="overview" className="p-6 space-y-6 mt-0">
               {/* Executive KPIs */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
@@ -1230,7 +1230,7 @@ export function ArtistVision360Modal({
             </TabsContent>
 
             {/* Profile */}
-            <TabsContent value="perfil" className="p-6 space-y-6 mt-0">
+            <TabsContent value="profile" className="p-6 space-y-6 mt-0">
               {/* Basic information */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
@@ -1752,7 +1752,7 @@ export function ArtistVision360Modal({
             </TabsContent>
 
             {/* Media */}
-            <TabsContent value="midia" className="p-6 space-y-6 mt-0">
+            <TabsContent value="media" className="p-6 space-y-6 mt-0">
               {/* Photo gallery */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
@@ -1841,7 +1841,7 @@ export function ArtistVision360Modal({
                         <div
                           key={idx}
                           className="flex items-center justify-between p-3 bg-background/50 rounded-lg border border-border/50"
-                          data-testid={`row-documento-${idx}`}
+                          data-testid={`row-document-${idx}`}
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             <FileText className="h-4 w-4 text-primary shrink-0" />
@@ -1856,7 +1856,7 @@ export function ArtistVision360Modal({
                           </div>
                           <StoredFileLink url={doc.url}
                             className="shrink-0 ml-4"
-                            data-testid={`link-documento-${idx}`}>
+                            data-testid={`link-document-${idx}`}>
                             <Button
                               variant="outline"
                               size="sm"
@@ -1913,7 +1913,7 @@ export function ArtistVision360Modal({
             </TabsContent>
 
             {/* Catalog */}
-            <TabsContent value="catalogo" className="p-6 space-y-6 mt-0">
+            <TabsContent value="catalog" className="p-6 space-y-6 mt-0">
               {/* Statistics */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
@@ -2131,7 +2131,7 @@ export function ArtistVision360Modal({
             </TabsContent>
 
             {/* Finance */}
-            <TabsContent value="financeiro" className="p-6 space-y-6 mt-0">
+            <TabsContent value="finance" className="p-6 space-y-6 mt-0">
               {artistTransactionsLoading ? (
                 <p className="text-sm text-muted-foreground" role="status" data-testid="vision360-finance-loading">
                   Carregando transações…
@@ -2271,7 +2271,7 @@ export function ArtistVision360Modal({
             </TabsContent>
 
             {/* Contracts */}
-            <TabsContent value="contratos" className="p-6 space-y-6 mt-0">
+            <TabsContent value="contracts" className="p-6 space-y-6 mt-0">
               {/* Contract metrics */}
               <div className="grid grid-cols-3 gap-4">
                 <Card className="bg-muted/30">
@@ -2361,7 +2361,7 @@ export function ArtistVision360Modal({
                               <ContractStatusBadge contracts={[contract]} />
                               {contract.file_url && (
                                 <StoredFileLink url={contract.file_url as string}
-                                  data-testid={`link-contrato-pdf-${contract.id}`}>
+                                  data-testid={`link-contract-pdf-${contract.id}`}>
                                   <Button
                                     variant="outline"
                                     size="sm"
@@ -2631,7 +2631,7 @@ export function ArtistVision360Modal({
             </TabsContent>
 
             {/* Evolution */}
-            <TabsContent value="evolucao" className="p-6 space-y-6 mt-0">
+            <TabsContent value="evolution" className="p-6 space-y-6 mt-0">
               <ArtistEvolutionSection artist={artist} />
 
               {/* ══ AUDIENCE HEALTH (audience-health AI Skill over the already-computed Career Stage + Market Benchmark) ══ */}
@@ -2666,7 +2666,7 @@ export function ArtistVision360Modal({
                               <p className="text-sm font-medium">{m.label}</p>
                               <span className="text-xs text-muted-foreground shrink-0">{formatDayLabel(m.data, m.dataKind)}</span>
                             </div>
-                            <p className="text-xs text-muted-foreground truncate">{m.descricao}</p>
+                            <p className="text-xs text-muted-foreground truncate">{m.description}</p>
                           </div>
                         </div>
                       ))}
@@ -2749,7 +2749,7 @@ export function ArtistVision360Modal({
             </TabsContent>
 
             {/* Contents */}
-            <TabsContent value="conteudos" className="p-6 space-y-6 mt-0">
+            <TabsContent value="contents" className="p-6 space-y-6 mt-0">
               <div className="flex flex-wrap gap-2">
                 {CONTENT_FILTERS.map((f) => (
                   <Button
@@ -2818,7 +2818,7 @@ export function ArtistVision360Modal({
             </TabsContent>
 
             {/* Activity */}
-            <TabsContent value="movimentacao" className="p-6 space-y-6 mt-0">
+            <TabsContent value="movements" className="p-6 space-y-6 mt-0">
               {transactionTimelineNotice}
               {artistEventsNotice}
               {activityTimelineItems.length === 0 ? (
@@ -2860,8 +2860,8 @@ export function ArtistVision360Modal({
                             <span>
                               <Badge variant="outline" className="text-xs">{m.type}</Badge>
                             </span>
-                            <span className="truncate">{m.descricao}</span>
-                            <span className="truncate text-muted-foreground">{m.responsavel}</span>
+                            <span className="truncate">{m.description}</span>
+                            <span className="truncate text-muted-foreground">{m.owner}</span>
                           </div>
                         ))}
                       </div>
@@ -2871,7 +2871,7 @@ export function ArtistVision360Modal({
               )}
             </TabsContent>
 
-            <TabsContent value="historico" className="p-6 space-y-6 mt-0">
+            <TabsContent value="history" className="p-6 space-y-6 mt-0">
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -2900,12 +2900,12 @@ export function ArtistVision360Modal({
                               </span>
                               <span className="flex items-center gap-1 truncate">
                                 <User className="h-3 w-3 text-muted-foreground shrink-0" />
-                                {item.usuario}
+                                {item.user}
                               </span>
                               <span>{getHistoryBadge(item.type)}</span>
                               <span className="flex items-center gap-2 truncate">
                                 <span className="text-muted-foreground shrink-0">{getHistoryIcon(item.type)}</span>
-                                <span className="truncate">{item.descricao}</span>
+                                <span className="truncate">{item.description}</span>
                               </span>
                             </div>
                           ))}
