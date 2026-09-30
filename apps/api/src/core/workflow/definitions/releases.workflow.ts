@@ -19,13 +19,13 @@ export const RELEASES_WORKFLOW: WorkflowDefinition<string> = {
       from:  ReleaseStatus.DRAFT,
       to:    ReleaseStatus.METADATA_PENDING,
       label: 'Preencher Metadados',
-      roles: ['super_admin','tenant_owner','owner','admin','editor','manager','produtor','marketing_manager'],
+      roles: ['super_admin','tenant_owner','owner','admin','editor','manager','produtor','producer','marketing_manager'],
     },
     {
       from:  ReleaseStatus.METADATA_PENDING,
       to:    ReleaseStatus.ASSETS_PENDING,
       label: 'Enviar Assets',
-      roles: ['super_admin','tenant_owner','owner','admin','editor','manager','produtor','marketing_manager'],
+      roles: ['super_admin','tenant_owner','owner','admin','editor','manager','produtor','producer','marketing_manager'],
       guard: async (ctx) => {
         const entity = ctx.entity;
         if (!entity['title'] && !entity['title']) {
@@ -38,7 +38,7 @@ export const RELEASES_WORKFLOW: WorkflowDefinition<string> = {
       from:  ReleaseStatus.ASSETS_PENDING,
       to:    ReleaseStatus.REVIEW,
       label: 'Enviar para Revisão',
-      roles: ['super_admin','tenant_owner','owner','admin','editor','manager','produtor','marketing_manager'],
+      roles: ['super_admin','tenant_owner','owner','admin','editor','manager','produtor','producer','marketing_manager'],
       guard: async (ctx) => {
         const entity = ctx.entity;
         if (!entity['cover_url'] && !entity['coverUrl']) {

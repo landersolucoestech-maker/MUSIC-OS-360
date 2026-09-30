@@ -380,7 +380,16 @@ export class RbacAdminService {
   // creation time -- the authoritative source is the live global roles
   // table, not a hardcoded enum list, so this also covers any global role
   // added later without a code change here.
+  //
+  // Also reject every ROLE_HIERARCHY key regardless of DB rows: RolesGuard
+  // authorizes on ROLE_HIERARCHY[org_members.role] (a string), so a tenant
+  // custom role named like a code-known slug (e.g. the English aliases legal,
+  // sales, producer, collaborator, hr_manager) would gain that level before
+  // the global alias rows exist (deploy window) or if they are ever removed.
   private async assertSlugNotReserved(slug: string): Promise<void> {
+    if (Object.prototype.hasOwnProperty.call(ROLE_HIERARCHY, slug)) {
+      throw new ForbiddenException(`O identificador de papel "${slug}" é reservado pelo sistema.`);
+    }
     const [existing] = (await this.ds.query(
       `SELECT 1 FROM "roles" WHERE "tenant_id" IS NULL AND "slug" = $1 AND "deleted_at" IS NULL`,
       [slug],

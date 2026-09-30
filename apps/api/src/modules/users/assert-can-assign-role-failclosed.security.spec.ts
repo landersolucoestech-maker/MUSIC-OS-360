@@ -28,7 +28,7 @@ describe('UsersService.assertCanAssignRole — fail-closed on unknown roles', ()
       const svc = makeService([{ slug: actor, hierarchy_level: ROLE_HIERARCHY[actor], is_assignable: true }]);
       const err = await call(svc, actor, 'ghost_role').catch((e) => e);
       expect(err).toBeInstanceOf(BadRequestException);
-      expect((err as BadRequestException).getResponse()).toMatchObject({ code: 'ROLE_UNKNOWN' });
+      expect((err as BadRequestException).getResponse()).toMatchObject({ error: 'ROLE_UNKNOWN' });
     },
   );
 
@@ -95,9 +95,9 @@ describe('UsersService.assertCanAssignRole — known-role table (identical to ba
     }
   }
 
-  it('covers all 20 slugs', () => {
-    expect(slugs).toHaveLength(20);
-    expect(cases).toHaveLength(400);
+  it('covers all 25 slugs (20 persisted + 5 English aliases, RBAC expand step)', () => {
+    expect(slugs).toHaveLength(25);
+    expect(cases).toHaveLength(625);
   });
 
   it.each(cases)('actor=%s target=%s allowed=%s (code-map levels, no DB rows)', async (actor, target, ok) => {
@@ -106,4 +106,20 @@ describe('UsersService.assertCanAssignRole — known-role table (identical to ba
     if (ok) await expect(res).resolves.toBeUndefined();
     else await expect(res).rejects.toBeInstanceOf(BadRequestException);
   });
+});
+
+describe('UsersService.assertCanAssignRole — English role aliases are inert (RBAC expand step)', () => {
+  const aliases = ['legal', 'sales', 'producer', 'collaborator', 'hr_manager'];
+  const actors = ['super_admin', 'tenant_owner', 'owner', 'admin', 'manager', 'editor', 'viewer'];
+
+  it.each(aliases.flatMap((alias) => actors.map((actor) => [actor, alias] as const)))(
+    'actor=%s cannot assign target=%s while its roles row is is_assignable=false',
+    async (actor, alias) => {
+      const svc = makeService([
+        { slug: actor, hierarchy_level: 100, is_assignable: true },
+        { slug: alias, hierarchy_level: 40, is_assignable: false },
+      ]);
+      await expect(call(svc, actor, alias)).rejects.toBeInstanceOf(BadRequestException);
+    },
+  );
 });

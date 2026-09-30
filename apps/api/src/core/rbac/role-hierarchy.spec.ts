@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { ROLE_HIERARCHY } from './role-hierarchy';
+import { ENGLISH_ROLE_ALIASES, ROLE_HIERARCHY } from './role-hierarchy';
+import { ROLE_PERMISSIONS } from './rbac.service';
 import { ROLE_HIERARCHY as ROLE_HIERARCHY_VIA_SERVICE } from './rbac.service';
 
 /**
@@ -29,11 +30,29 @@ const EXPECTED_LEVELS: Record<string, number> = {
   artista: 30,
   colaborador: 20,
   viewer: 10,
+  // English aliases (RBAC expand step): same level as the canonical Portuguese role.
+  legal: 55,
+  sales: 45,
+  producer: 40,
+  collaborator: 20,
+  hr_manager: 55,
+};
+
+const EXPECTED_ENGLISH_ALIASES: Record<string, string> = {
+  legal: 'juridico',
+  sales: 'comercial',
+  producer: 'produtor',
+  collaborator: 'colaborador',
+  hr_manager: 'rh_manager',
 };
 
 const SEED_SOURCE = readFileSync(join(__dirname, '../../database/seeds/04_rbac_seed.ts'), 'utf8');
 const MIGRATION_SOURCE = readFileSync(
   join(__dirname, '../../database/migrations/20260610000002_CreateRolesAndRolePermissions.ts'),
+  'utf8',
+);
+const ALIAS_MIGRATION_SOURCE = readFileSync(
+  join(__dirname, '../../database/migrations/20260930000001_AddEnglishRoleSlugAliases.ts'),
   'utf8',
 );
 
@@ -54,7 +73,7 @@ describe('ROLE_HIERARCHY characterization', () => {
     expect(ROLE_HIERARCHY_VIA_SERVICE).toBe(ROLE_HIERARCHY);
   });
 
-  it('has exactly the 20 known slugs with the pinned level for each', () => {
+  it('has exactly the 25 known slugs (20 persisted + 5 English aliases) with the pinned level for each', () => {
     expect({ ...ROLE_HIERARCHY }).toEqual(EXPECTED_LEVELS);
   });
 
@@ -80,16 +99,43 @@ describe('role catalog parity (seed / migration <-> ROLE_HIERARCHY)', () => {
     expect(objectKeys(SEED_SOURCE, 'ROLE_NAMES').sort()).toEqual(hierarchySlugs);
   });
 
-  it('every slug of the roles migration seed is in ROLE_HIERARCHY with the same level, and vice versa', () => {
+  it('the original roles migration seeds the 20 legacy slugs with the same level as ROLE_HIERARCHY', () => {
     const rows = [...MIGRATION_SOURCE.matchAll(/\(NULL::uuid,\s*'([a-z_]+)',\s*'[^']*',\s*(\d+),/g)];
     const bySlug = Object.fromEntries(rows.map((m) => [m[1], Number(m[2])]));
-    expect(Object.keys(bySlug).sort()).toEqual(hierarchySlugs);
-    expect(bySlug).toEqual({ ...ROLE_HIERARCHY });
+    const legacy = Object.keys(ROLE_HIERARCHY).filter((slug) => !(slug in EXPECTED_ENGLISH_ALIASES));
+    expect(Object.keys(bySlug).sort()).toEqual(legacy.sort());
+    for (const slug of legacy) expect(bySlug[slug]).toBe(ROLE_HIERARCHY[slug]);
   });
 
-  it('seed ALIASES are exactly artista->artist and tenant_owner->owner', () => {
+  it('the English-alias migration pairs are exactly ENGLISH_ROLE_ALIASES (alias -> canonical Portuguese slug)', () => {
+    const pairs = [...ALIAS_MIGRATION_SOURCE.matchAll(/\['([a-z_]+)',\s*'([a-z_]+)'\]/g)].map((m) => [m[1], m[2]]);
+    expect(Object.fromEntries(pairs)).toEqual(EXPECTED_ENGLISH_ALIASES);
+    expect(pairs).toHaveLength(Object.keys(EXPECTED_ENGLISH_ALIASES).length);
+  });
+
+  it('ENGLISH_ROLE_ALIASES is pinned (alias -> canonical Portuguese slug, never the reverse)', () => {
+    expect({ ...ENGLISH_ROLE_ALIASES }).toEqual(EXPECTED_ENGLISH_ALIASES);
+  });
+
+  it('seed ALIASES are exactly the legacy pairs plus the spread of ENGLISH_ROLE_ALIASES (single source)', () => {
+    const block = /const ALIASES[^=]*=\s*\{([\s\S]*?)\n\};/.exec(SEED_SOURCE);
+    expect(block).not.toBeNull();
+    expect(block![1]).toContain('...ENGLISH_ROLE_ALIASES');
     expect(objectEntries(SEED_SOURCE, 'ALIASES')).toEqual({ artista: 'artist', tenant_owner: 'owner' });
   });
+
+  it('seed keeps every English alias non-assignable (derived from ENGLISH_ROLE_ALIASES)', () => {
+    expect(SEED_SOURCE).toMatch(/NON_ASSIGNABLE = new Set<string>\(\['super_admin', \.\.\.Object\.keys\(ENGLISH_ROLE_ALIASES\)\]\)/);
+  });
+
+  it.each(Object.entries(EXPECTED_ENGLISH_ALIASES))(
+    'English alias %s grants exactly what %s grants (level and legacy permission matrix)',
+    (alias, canonical) => {
+      expect(ROLE_HIERARCHY[alias]).toBe(ROLE_HIERARCHY[canonical]);
+      expect(ROLE_PERMISSIONS[alias]).toEqual(ROLE_PERMISSIONS[canonical]);
+      expect(ROLE_PERMISSIONS[alias].length).toBeGreaterThan(0);
+    },
+  );
 
   it('every alias resolves to the same level as its canonical role', () => {
     for (const [alias, canonical] of Object.entries(objectEntries(SEED_SOURCE, 'ALIASES'))) {

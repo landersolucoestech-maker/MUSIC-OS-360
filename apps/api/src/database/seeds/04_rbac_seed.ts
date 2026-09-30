@@ -3,7 +3,7 @@
  *
  * Populates the GLOBAL authorization catalog (tenant-independent):
  *   - permissions     → union of the resource:action keys of the legacy ROLE_PERMISSIONS matrix;
- *   - roles           → ensures the 20 global roles (idempotent; preserves hierarchy_level);
+ *   - roles           → ensures the 25 global roles (20 + 5 non-assignable English aliases) (idempotent; preserves hierarchy_level);
  *   - role_permissions → derived EXACTLY from ROLE_PERMISSIONS, guaranteeing parity.
  *
  * Aliases (artista→artist, tenant_owner→owner) do NOT receive their own role_permissions:
@@ -13,11 +13,15 @@
  */
 import { DataSource } from 'typeorm';
 import { ROLE_PERMISSIONS, ROLE_HIERARCHY } from '../../core/rbac/rbac.service';
+import { ENGLISH_ROLE_ALIASES } from '../../core/rbac/role-hierarchy';
 
 /** Aliases → canonical role. Excluded from the role_permissions seed (they inherit from the canonical role). */
 const ALIASES: Record<string, string> = {
   artista: 'artist',
   tenant_owner: 'owner',
+  // RBAC expand step (English naming): English alias -> Portuguese slug still persisted in
+  // org_members.role. Single source: ENGLISH_ROLE_ALIASES (pinned by role-hierarchy.spec.ts).
+  ...ENGLISH_ROLE_ALIASES,
 };
 
 /** PT-BR display names of the global roles (aligned with migration M2). */
@@ -42,9 +46,16 @@ const ROLE_NAMES: Record<string, string> = {
   artista: 'Artista (legado)',
   colaborador: 'Colaborador',
   viewer: 'Visualizador',
+  // English aliases share the PT-BR display name of their canonical role.
+  legal: 'Jurídico',
+  sales: 'Comercial',
+  producer: 'Produtor',
+  collaborator: 'Colaborador',
+  hr_manager: 'Gerente de RH',
 };
 
-const NON_ASSIGNABLE = new Set<string>(['super_admin']);
+// English aliases stay non-assignable until the org_members backfill (expand step): no member can hold them.
+const NON_ASSIGNABLE = new Set<string>(['super_admin', ...Object.keys(ENGLISH_ROLE_ALIASES)]);
 
 const FINANCIAL_PERMISSION_GRANTS: Record<string, string[]> = {
   'financial_category:read': [
@@ -191,6 +202,18 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
     const level = ROLE_HIERARCHY[slug];
     const name = ROLE_NAMES[slug] ?? slug;
     const assignable = !NON_ASSIGNABLE.has(slug);
+    // An English alias must never shadow a live tenant custom role with the same slug (the
+    // migration pre-flight refuses this state; the seed skips the alias instead of widening it).
+    if (Object.prototype.hasOwnProperty.call(ENGLISH_ROLE_ALIASES, slug)) {
+      const [collision] = (await ds.query(
+        `SELECT 1 FROM "roles" WHERE "slug" = $1::varchar AND "tenant_id" IS NOT NULL AND "deleted_at" IS NULL LIMIT 1`,
+        [slug],
+      )) as unknown[];
+      if (collision) {
+        console.warn(`[rbac-seed] skipping global alias role "${slug}": a live tenant custom role uses this slug; rename it first`);
+        continue;
+      }
+    }
     await ds.query(
       `INSERT INTO "roles" ("tenant_id", "slug", "name", "hierarchy_level", "is_system", "is_assignable")
        SELECT NULL::uuid, $1::varchar, $2::varchar, $3::int, TRUE, $4::boolean

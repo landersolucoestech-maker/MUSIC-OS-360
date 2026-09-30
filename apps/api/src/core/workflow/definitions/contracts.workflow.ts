@@ -18,13 +18,13 @@ export const CONTRACTS_WORKFLOW: WorkflowDefinition<string> = {
       from:  ContractStatus.DRAFT,
       to:    ContractStatus.UNDER_REVIEW,
       label: 'Enviar para Análise',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','juridico'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','juridico','legal'],
     },
     {
       from:  ContractStatus.UNDER_REVIEW,
       to:    ContractStatus.DRAFT,
       label: 'Retornar para Rascunho',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','juridico'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','juridico','legal'],
     },
     {
       from:  ContractStatus.UNDER_REVIEW,

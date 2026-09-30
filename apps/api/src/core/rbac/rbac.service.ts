@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { SystemRole, FunctionalRole } from '@music-os-360/types';
 import { PermissionResolverService, type MemberAuthzContext } from './permission-resolver.service';
-import { ROLE_HIERARCHY } from './role-hierarchy';
+import { ENGLISH_ROLE_ALIASES, ROLE_HIERARCHY } from './role-hierarchy';
 
 export type { MemberAuthzContext };
 
@@ -197,6 +197,12 @@ export const ROLE_PERMISSIONS: Record<string, Array<`${Resource}:${Action}`>> = 
     'artist:read',
   ],
 };
+
+// RBAC expand step: an English alias grants exactly the permissions of its canonical Portuguese role
+// (same as the seed, where aliases inherit through roles.canonical_role_id). Copied, never widened.
+for (const [alias, canonical] of Object.entries(ENGLISH_ROLE_ALIASES)) {
+  ROLE_PERMISSIONS[alias] = [...ROLE_PERMISSIONS[canonical]];
+}
 
 @Injectable()
 export class RbacService {

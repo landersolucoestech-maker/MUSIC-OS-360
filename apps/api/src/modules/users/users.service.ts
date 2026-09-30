@@ -452,8 +452,7 @@ export class UsersService {
       this.logger.warn(`assertCanAssignRole rejected unknown target role "${targetRole}" (no DB level, not in ROLE_HIERARCHY)`);
       throw new BadRequestException({
         statusCode: 400,
-        error: 'Bad Request',
-        code: 'ROLE_UNKNOWN',
+        error: 'ROLE_UNKNOWN',
         message: 'Papel desconhecido. Não é possível atribuí-lo.',
       });
     }

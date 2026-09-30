@@ -1,6 +1,7 @@
 import { ForbiddenException } from '@nestjs/common';
 import { RbacAdminService } from './rbac-admin.service';
 import { UsersService } from './users.service';
+import { ROLE_HIERARCHY } from '../../core/rbac/role-hierarchy';
 
 /**
  * find-986186c1 / find-4d418e9c: a tenant admin could create a
@@ -62,6 +63,46 @@ describe('RBAC reserved-slug collision (find-986186c1)', () => {
         service.duplicateRole('tenant-a', 'user-a', 'owner', 'role-a', { name: 'Copy', slug: 'admin' } as never),
       ).rejects.toBeInstanceOf(ForbiddenException);
       expect(mutations.createRole).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('ROLE_HIERARCHY keys are reserved even when no global DB row exists (RBAC English alias deploy window)', () => {
+    const mutations = { grantRolePermission: jest.fn(), createRole: jest.fn() };
+    beforeEach(() => jest.clearAllMocks());
+
+    it.each([...Object.keys(ROLE_HIERARCHY)])('createRole rejects slug %s with no DB lookup needed', async (slug) => {
+      const ds = { query: jest.fn().mockResolvedValue([]) }; // no live global row at all
+      const service = new RbacAdminService(ds as never, mutations as never);
+      await expect(
+        service.createRole('tenant-a', 'user-a', 'owner', { name: 'X', slug } as never),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+      expect(mutations.createRole).not.toHaveBeenCalled();
+    });
+
+    it.each(['legal', 'sales', 'producer', 'collaborator', 'hr_manager'])(
+      'duplicateRole rejects the English alias slug %s (explicit and name-derived) with no global row',
+      async (slug) => {
+        for (const dto of [{ name: 'Copy', slug }, { name: slug }]) {
+          const ds = {
+            query: jest.fn().mockResolvedValue([{ tenant_id: 'tenant-a', hierarchy_level: 10, description: null, is_system: false }]),
+          };
+          const service = new RbacAdminService(ds as never, mutations as never);
+          await expect(
+            service.duplicateRole('tenant-a', 'user-a', 'owner', 'role-a', dto as never),
+          ).rejects.toBeInstanceOf(ForbiddenException);
+        }
+        expect(mutations.createRole).not.toHaveBeenCalled();
+      },
+    );
+
+    it('a non-reserved slug is still accepted', async () => {
+      const ds = { query: jest.fn().mockResolvedValue([]) };
+      mutations.createRole.mockResolvedValueOnce({ id: 'role-y' });
+      const service = new RbacAdminService(ds as never, mutations as never);
+      jest.spyOn(service, 'listRoles').mockResolvedValueOnce([{ id: 'role-y' }] as never);
+      await expect(
+        service.createRole('tenant-a', 'user-a', 'owner', { name: 'Sales Lead BR', slug: 'sales_lead_br' } as never),
+      ).resolves.toEqual({ id: 'role-y' });
     });
   });
 

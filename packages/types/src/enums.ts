@@ -49,6 +49,18 @@ export enum FunctionalRole {
   RH_MANAGER         = "rh_manager",
   RADIO              = "radio",
   TV                 = "tv",
+  /**
+   * English aliases of the Portuguese slugs above (RBAC expand step, see
+   * ENGLISH_ROLE_ALIASES in apps/api core/rbac/role-hierarchy.ts). Each resolves to exactly
+   * the level/permissions of its canonical Portuguese slug and stays non-assignable
+   * (roles.is_assignable = false) until the org_members backfill. Do not remove the Portuguese
+   * members: they are persisted in roles.slug / org_members.role.
+   */
+  LEGAL              = "legal",
+  SALES              = "sales",
+  PRODUCER           = "producer",
+  COLLABORATOR       = "collaborator",
+  HR_MANAGER         = "hr_manager",
 }
 
 /** Union of every role recognized by the system */

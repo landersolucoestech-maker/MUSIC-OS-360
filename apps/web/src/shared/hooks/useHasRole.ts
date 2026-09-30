@@ -16,6 +16,13 @@ export type AppRole =
   | "comercial"
   | "colaborador"
   | "rh_manager"
+  // English aliases (RBAC expand step): same level as the Portuguese slug still persisted
+  // in org_members.role / the JWT. Never remove the Portuguese members before the contract step.
+  | "legal"
+  | "sales"
+  | "producer"
+  | "collaborator"
+  | "hr_manager"
   | "viewer";
 
 /** Numeric hierarchy: lower = more privileged (mirrors backend ROLE_HIERARCHY). */
@@ -27,11 +34,16 @@ const ROLE_HIERARCHY: Record<AppRole, number> = {
   accounting:        3,
   juridico:          3,
   rh_manager:        3,
+  legal:             3,
+  hr_manager:        3,
   marketing_manager: 4,
   comercial:         4,
   produtor:          4,
+  sales:             4,
+  producer:          4,
   artista:           5,
   colaborador:       6,
+  collaborator:      6,
   viewer:            7,
 };
 
@@ -48,6 +60,11 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   comercial:         "Comercial",
   colaborador:       "Colaborador",
   rh_manager:        "Recursos Humanos",
+  legal:             "Jurídico / Contratos",
+  sales:             "Comercial",
+  producer:          "Produtor Musical",
+  collaborator:      "Colaborador",
+  hr_manager:        "Recursos Humanos",
   viewer:            "Visualizador",
 };
 

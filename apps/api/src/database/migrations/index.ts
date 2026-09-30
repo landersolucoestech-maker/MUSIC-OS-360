@@ -322,6 +322,7 @@ import { CasTimestampTzSystemicFix20260818000002 } from './20260818000002_CasTim
 import { RemoveArtistLegacyMetricColumns20260821000001 } from './20260821000001_RemoveArtistLegacyMetricColumns';
 import { DropArtistTipoColumn20260821000002 } from './20260821000002_DropArtistTipoColumn';
 import { CanonicalizeContractServiceTypeValuesAndIndex20260930000002 } from './20260930000002_CanonicalizeContractServiceTypeValuesAndIndex';
+import { AddEnglishRoleSlugAliases20260930000001 } from './20260930000001_AddEnglishRoleSlugAliases';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -627,4 +628,5 @@ export const ALL_MIGRATIONS = [
   AddBacklogToMarketingTaskStatusCheck20260929000001,
   BackfillAndRestrictMarketingContentVocabularyToEnglish20260929000002,
   CanonicalizeContractServiceTypeValuesAndIndex20260930000002,
+  AddEnglishRoleSlugAliases20260930000001,
 ] as const;

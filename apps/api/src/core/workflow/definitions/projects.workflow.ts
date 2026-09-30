@@ -18,13 +18,13 @@ export const PROJECTS_WORKFLOW: WorkflowDefinition<string> = {
       from:  ProjectStatus.PLANNING,
       to:    ProjectStatus.IN_PROGRESS,
       label: 'Iniciar Projeto',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','produtor'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','produtor','producer'],
     },
     {
       from:  ProjectStatus.IN_PROGRESS,
       to:    ProjectStatus.REVIEW,
       label: 'Enviar para Revisão',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','produtor'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','produtor','producer'],
     },
     {
       from:  ProjectStatus.REVIEW,
