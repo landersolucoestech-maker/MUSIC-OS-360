@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ContractStatus } from "../lib/contract-status";
 
 export const SIGNER_ROLES = ["artista", "label", "produtor", "empresario"] as const;
 export type ContractSignerRole = typeof SIGNER_ROLES[number];
@@ -21,10 +22,7 @@ export type ContractSigner = z.infer<typeof contractSignerSchema>;
 export const contractSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
   service_type: z.string().min(1, "Tipo de serviço é obrigatório"),
-  status: z.enum([
-    "pendente", "signed", "awaiting_signature", "active", "in_force",
-    "expirado", "rescindido", "cancelled", "draft",
-  ]).default("draft"),
+  status: z.nativeEnum(ContractStatus).default(ContractStatus.DRAFT),
   file_url: z.string().optional(),
   version_notes: z.string().optional(),
   release_id: z.string().optional(),

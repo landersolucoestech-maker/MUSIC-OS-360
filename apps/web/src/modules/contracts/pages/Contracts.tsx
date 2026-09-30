@@ -10,6 +10,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import { CONTRACT_STATUS_OPTIONS, contractStatusBucket } from "@/modules/contracts/lib/contract-status";
 import { SigningPlatformBadge } from "@/modules/contracts/components/SigningPlatformBadge";
 import {
   FileText, Clock, CheckCircle, Plus, Search,
@@ -125,26 +126,12 @@ export default function Contracts() {
   // ── Contract KPIs: PARTITION by status → the sum of the buckets = list total ──
   // Each contract falls into EXACTLY one bucket (unknown status → "Em Análise"),
   // guaranteeing Total = active + signed + pending + under review + closed.
-  const norm = (s?: string | null) => (s ?? "").toLowerCase();
-  const EM_VIGOR_STATUSES = new Set(["in_force", "active"]);
-  const SIGNED_STATUSES = new Set(["signed"]);
-  const AGUARDANDO_STATUSES = new Set(["awaiting_signature", "pendente"]);
-  const ENCERRADO_STATUSES = new Set(["expirado", "rescindido", "cancelled", "terminated"]);
-  const bucketOf = (status?: string | null): "vigente" | "assinado" | "aguardando" | "encerrado" | "analise" => {
-    const s = norm(status);
-    if (EM_VIGOR_STATUSES.has(s)) return "vigente";
-    if (SIGNED_STATUSES.has(s)) return "assinado";
-    if (AGUARDANDO_STATUSES.has(s)) return "aguardando";
-    if (ENCERRADO_STATUSES.has(s)) return "encerrado";
-    return "analise"; // draft / under_review / negotiation / any unknown status
-  };
-
-  const tally = { vigente: 0, assinado: 0, aguardando: 0, analise: 0, encerrado: 0 };
+  const tally = { in_force: 0, signed: 0, awaiting_signature: 0, under_review: 0, closed: 0 };
   let effectiveAmount = 0;
   for (const [status, count] of Object.entries(contractsStats.byGroup)) {
-    const b = bucketOf(status);
+    const b = contractStatusBucket(status);
     tally[b] += count;
-    if (b === "vigente" || b === "assinado") effectiveAmount += contractsStats.sumByGroup?.[status] ?? 0;
+    if (b === "in_force" || b === "signed") effectiveAmount += contractsStats.sumByGroup?.[status] ?? 0;
   }
   const totalContracts = contractsStats.total;
   const today = new Date();
@@ -188,38 +175,38 @@ export default function Contracts() {
           />
           <MetricCard
             title="Vigentes"
-            value={tally.vigente}
+            value={tally.in_force}
             description="em vigor"
             icon={CheckCircle}
             accent="success"
           />
           <MetricCard
             title="Assinados"
-            value={tally.assinado}
+            value={tally.signed}
             description="aguardando vigência"
             icon={PenLine}
             accent="primary"
           />
           <MetricCard
             title="Aguardando Assinatura"
-            value={tally.aguardando}
+            value={tally.awaiting_signature}
             description="pendentes de assinar"
             icon={Clock}
-            accent={tally.aguardando > 0 ? "warning" : "primary"}
+            accent={tally.awaiting_signature > 0 ? "warning" : "primary"}
           />
           <MetricCard
             title="Em Análise"
-            value={tally.analise}
+            value={tally.under_review}
             description="rascunho / negociação"
             icon={FileText}
             accent="primary"
           />
           <MetricCard
             title="Encerrados"
-            value={tally.encerrado}
-            description="expirados / rescindidos / cancelados"
+            value={tally.closed}
+            description="vencidos / encerrados / cancelados"
             icon={AlertCircle}
-            accent={tally.encerrado > 0 ? "warning" : "primary"}
+            accent={tally.closed > 0 ? "warning" : "primary"}
           />
           <MetricCard
             title="Valor Total"
@@ -259,15 +246,9 @@ export default function Contracts() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-status">Todos os status</SelectItem>
-              <SelectItem value="signed">Assinado</SelectItem>
-              <SelectItem value="in_force">Vigente</SelectItem>
-              <SelectItem value="active">Ativo</SelectItem>
-              <SelectItem value="awaiting_signature">Aguardando Assinatura</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="draft">Rascunho</SelectItem>
-              <SelectItem value="expirado">Expirado</SelectItem>
-              <SelectItem value="rescindido">Rescindido</SelectItem>
-              <SelectItem value="cancelled">Cancelado</SelectItem>
+              {CONTRACT_STATUS_OPTIONS.map(([value, label]) => (
+                <SelectItem key={value} value={value}>{label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={platformFilter} onValueChange={setPlatformFilter}>

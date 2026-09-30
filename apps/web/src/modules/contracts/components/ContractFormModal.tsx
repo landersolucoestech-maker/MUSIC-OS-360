@@ -28,18 +28,8 @@ import { useContractServiceTypes } from "@/modules/contracts/hooks/useContractSe
 import { useContractTemplates } from "@/modules/contracts/hooks/useContractTemplates";
 import { useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
 import { UserPlus, X } from "lucide-react";
+import { CONTRACT_STATUS_OPTIONS, ContractStatus } from "@/modules/contracts/lib/contract-status";
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: "Rascunho",
-  pendente: "Pendente",
-  awaiting_signature: "Aguardando Assinatura",
-  signed: "Assinado",
-  active: "Ativo",
-  in_force: "Vigente",
-  expirado: "Expirado",
-  rescindido: "Rescindido",
-  cancelled: "Cancelado",
-};
 
 // ── ContractForm ─────────────────────────────────────────────────────────────
 /** REM-02: attached documents are not part of the zod schema (they need no
@@ -70,7 +60,7 @@ const ContractForm = ({
 
   const form = useForm<ContractFormData>({
     resolver: zodResolver(contractSchema),
-    defaultValues: { status: "draft", registry_office: false, signers: [], ...initialData },
+    defaultValues: { status: ContractStatus.DRAFT, registry_office: false, signers: [], ...initialData },
   });
 
   const serviceTypeValue = form.watch("service_type");
@@ -153,7 +143,7 @@ const ContractForm = ({
 
   useEffect(() => {
     if (initialData) {
-      form.reset({ status: "draft", registry_office: false, signers: [], ...initialData });
+      form.reset({ status: ContractStatus.DRAFT, registry_office: false, signers: [], ...initialData });
       setDocuments(initialData.documents ?? []);
     }
   }, [initialData, form]);
@@ -228,7 +218,7 @@ const ContractForm = ({
                   <SelectValue placeholder="Selecione o status" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                  {CONTRACT_STATUS_OPTIONS.map(([value, label]) => (
                     <SelectItem key={value} value={value}>{label}</SelectItem>
                   ))}
                 </SelectContent>
@@ -570,7 +560,7 @@ function contractToFormData(c: ContractWithRelations): Partial<ContractFormSubmi
   return {
     title:        c.title ?? "",
     service_type: serviceType,
-    status:       status ?? "draft",
+    status:       status ?? ContractStatus.DRAFT,
     file_url:     c.file_url ?? undefined,
     release_id: c.release_id ?? undefined,
     start_date:   c.start_date ? new Date(c.start_date) : undefined,

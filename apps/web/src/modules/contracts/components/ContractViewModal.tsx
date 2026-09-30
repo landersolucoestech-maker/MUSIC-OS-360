@@ -20,6 +20,7 @@ import { DocumentStatusBadge, SignerStatusBadge } from "@/modules/contracts/comp
 import { DocumentTimeline } from "@/modules/contracts/components/DocumentTimeline";
 import { SIGNER_ROLE_LABEL } from "@/modules/contracts/lib/contract-schema";
 import { contractPartyLabel } from "@/modules/contracts/lib/contract-party";
+import { contractSignedAt } from "@/modules/contracts/lib/contract-signed-at";
 import { SigningPlatformBadge } from "@/modules/contracts/components/SigningPlatformBadge";
 import { SendForSigningDialog } from "@/modules/contracts/components/SendForSigningDialog";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
@@ -161,7 +162,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                     { label: "Início", value: formatDateDashes(contract.start_date) },
                     { label: "Término", value: contract.end_date ? formatDateDashes(contract.end_date) : "Indeterminado" },
                     { label: "Valor", value: contract.fixed_value != null ? <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contract.fixed_value)}</span> : "—" },
-                    { label: "Assinado em", value: formatDateDashes(contract.assinado_em) },
+                    { label: "Assinado em", value: formatDateDashes(contractSignedAt(contract)) },
                   ].map(({ label, value }) => (
                     <div key={label}>
                       <p className="text-xs text-muted-foreground mb-0.5">{label}</p>

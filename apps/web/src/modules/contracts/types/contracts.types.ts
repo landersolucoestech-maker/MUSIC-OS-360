@@ -51,7 +51,8 @@ export interface Contract {
   exclusive?: boolean | null;
   notes?: string | null;
   template_id?: string | null;
-  assinado_em?: string | null;
+  /** Server-owned jsonb; `signed_at` is the contract signed-at date (see lib/contract-signed-at). */
+  metadata?: Record<string, unknown> | null;
   file_url?: string | null;
   autentique_doc_id?: string | null;
   signing_platform?: SigningPlatform | null;

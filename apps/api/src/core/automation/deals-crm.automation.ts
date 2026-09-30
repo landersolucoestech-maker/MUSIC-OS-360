@@ -36,7 +36,7 @@ interface ContractRow {
   title: string;
   type: string;
   status: string;
-  valor: string | null;
+  fixed_value: string | null;
   start_date: string | Date | null;
   end_date: string | Date | null;
 }
@@ -76,7 +76,7 @@ export class DealsCrmAutomation {
         title: c.title,
         type: c.type,
         stage: mapContractStatusToDealStage(c.status),
-        value: c.valor != null ? Number(c.valor) : null,
+        value: c.fixed_value != null ? Number(c.fixed_value) : null,
       };
       if (c.start_date) deal.startDate = new Date(c.start_date).toISOString();
       if (c.end_date) deal.endDate = new Date(c.end_date).toISOString();

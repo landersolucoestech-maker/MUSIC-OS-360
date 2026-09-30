@@ -31,9 +31,9 @@ function makeFailingAi() {
 const CLIENT = { name: 'Banda Aurora Produções', category: 'CORPORATE_CLIENT' };
 
 const CONTRACTS = [
-  { id: 'c1', title: 'Contrato de distribuição', type: 'distribuicao', status: 'signed', valor: '5000.00', start_date: '2026-01-01', end_date: '2026-12-31' },
-  { id: 'c2', title: 'Contrato de shows', type: 'shows', status: 'expiring', valor: null, start_date: '2026-01-01', end_date: '2026-02-01' },
-  { id: 'c3', title: 'Contrato antigo', type: 'gestao', status: 'cancelled', valor: '1000.00', start_date: null, end_date: null },
+  { id: 'c1', title: 'Contrato de distribuição', type: 'distribuicao', status: 'signed', fixed_value: '5000.00', start_date: '2026-01-01', end_date: '2026-12-31' },
+  { id: 'c2', title: 'Contrato de shows', type: 'shows', status: 'expiring', fixed_value: null, start_date: '2026-01-01', end_date: '2026-02-01' },
+  { id: 'c3', title: 'Contrato antigo', type: 'gestao', status: 'cancelled', fixed_value: '1000.00', start_date: null, end_date: null },
 ];
 
 function makeClients(client: unknown = CLIENT, contracts: unknown = CONTRACTS) {
@@ -68,11 +68,26 @@ describe('DealsCrmAutomation (ON_DEMAND: POST /clients/:id/ai/deals-crm)', () =>
     expect(aiCalls[0][0].prompt).toContain('estágio: won'); // signed -> won
     expect(aiCalls[0][0].prompt).toContain('estágio: at_risk'); // expiring -> at_risk
     expect(aiCalls[0][0].prompt).toContain('estágio: lost'); // cancelled -> lost
-    expect(aiCalls[0][0].prompt).toContain('valor: 5000'); // real valor echoed
-    expect(aiCalls[0][0].prompt).toContain('valor: não informado'); // null valor never fabricated
+    expect(aiCalls[0][0].prompt).toContain('valor: 5000'); // real fixed_value echoed
+    expect(aiCalls[0][0].prompt).toContain('valor: não informado'); // null fixed_value never fabricated
 
     expect(result.parsed.pipelineSummary).toBeTruthy();
     expect(skillRun.succeed).toHaveBeenCalled();
+  });
+
+  it('reads the fixed_value column exactly as ClientsService.getContracts selects it (no legacy valor key)', async () => {
+    const skillRun = makeSkillRun();
+    const ai = makeAi(VALID_JSON);
+    // Same shape as the SELECT in ClientsService.getContracts: id, title, type, status, fixed_value, start_date, end_date, created_at
+    const row = { id: 'c9', title: 'Contrato real', type: 'shows', status: 'active', fixed_value: '7300.50', start_date: null, end_date: null, created_at: '2026-01-01' };
+    const clients = makeClients(CLIENT, [row]);
+    const handler = new DealsCrmAutomation(skillRun as never, ai as never, clients as never);
+
+    await handler.run('t1', 'u1', 'client-1');
+
+    const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string }]>;
+    expect(aiCalls[0][0].prompt).toContain('valor: 7300.5');
+    expect(aiCalls[0][0].prompt).not.toContain('valor: não informado');
   });
 
   it('client without contracts: builds the input with deals=[]', async () => {

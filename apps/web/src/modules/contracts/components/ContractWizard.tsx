@@ -26,6 +26,7 @@ import { SIGNING_PLATFORM_LABEL, type SigningPlatform } from "@/modules/contract
 import { cn } from "@/shared/lib/utils";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
 import { UserFacingError } from "@/shared/lib/errors";
+import { CONTRACT_STATUS_OPTIONS } from "@/modules/contracts/lib/contract-status";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -145,17 +146,6 @@ const WIZARD_STEPS = [
   { label: "Revisão",     icon: ClipboardList },
 ];
 
-const STATUS_LABELS: Record<string, string> = {
-  draft:                 "Rascunho",
-  pendente:              "Pendente",
-  awaiting_signature:    "Aguardando Assinatura",
-  signed:                "Assinado",
-  active:                "Ativo",
-  in_force:              "Vigente",
-  expirado:              "Expirado",
-  rescindido:            "Rescindido",
-  cancelled:             "Cancelado",
-};
 
 const EMPTY_PARTY: PartyData = { type: "pf", origin: "manual" };
 
@@ -918,7 +908,7 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
           <Select value={m.status} onValueChange={(v) => setMeta({ status: v })}>
             <SelectTrigger data-testid="select-wizard-status"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {Object.entries(STATUS_LABELS).map(([value, label]) => (
+              {CONTRACT_STATUS_OPTIONS.map(([value, label]) => (
                 <SelectItem key={value} value={value}>{label}</SelectItem>
               ))}
             </SelectContent>
