@@ -2,7 +2,8 @@
  * Fail-closed parser for an XLSX workbook with exactly one sheet. The OpenXML
  * parse itself runs isolated (xlsx-isolated-reader.ts); this service decides.
  */
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
+import { ConcurrencyLimitError } from '../../../core/security/concurrency-limiter';
 import { DisposableWorkerError } from '../../../core/security/disposable-worker';
 import { isWritableKey } from '../../../core/security/safe-object';
 import {
@@ -189,7 +190,8 @@ export class ImportParserService {
   /** Deadline of the isolated OpenXML parse. */
   protected parseTimeoutMs = IMPORT_PARSE_TIMEOUT_MS;
 
-  async parse(filename: string, content: Buffer, expectedSheetName?: string): Promise<ParsedFile> {
+  /** `tenantId` bounds how many parses one tenant may have in flight. */
+  async parse(filename: string, content: Buffer, expectedSheetName?: string, tenantId?: string): Promise<ParsedFile> {
     formatFromName(filename);
     if (!content || content.length === 0) throw new BadRequestException('Arquivo vazio.');
     if (content.length > IMPORT_MAX_BYTES) {
@@ -203,7 +205,7 @@ export class ImportParserService {
         sheetRows: IMPORT_MAX_ROWS + 2,
         maxColumns: IMPORT_MAX_COLUMNS,
         timeoutMs: this.parseTimeoutMs,
-      });
+      }, tenantId);
     } catch (error) {
       throw this.parseRejection(error);
     }
@@ -257,8 +259,15 @@ export class ImportParserService {
   }
 
   /** The technical diagnosis goes to the log; the response carries a static reason and PT-BR copy. */
-  private parseRejection(error: unknown): BadRequestException {
+  private parseRejection(error: unknown): BadRequestException | ServiceUnavailableException {
     const detail = error instanceof Error ? error.message : String(error);
+    if (error instanceof ConcurrencyLimitError) {
+      this.logger.warn(`XLSX import refused: isolated parser busy (${error.reason}).`);
+      return new ServiceUnavailableException({
+        error: 'IMPORT_PARSER_BUSY',
+        message: 'Muitas planilhas em processamento no momento. Tente novamente em instantes.',
+      });
+    }
     if (error instanceof DisposableWorkerError && error.failure === 'timeout') {
       this.logger.warn(`XLSX import rejected: OpenXML parse timed out (${detail}).`);
       return rejectedContainer('OpenXML parse exceeded the time limit.', PARSE_TIMEOUT_MESSAGE);

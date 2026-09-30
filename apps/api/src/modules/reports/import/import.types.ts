@@ -10,6 +10,14 @@ export const IMPORT_MAX_UNCOMPRESSED_BYTES = 20 * 1024 * 1024;
 export const IMPORT_MAX_COMPRESSION_RATIO = 100;
 /** Deadline of the isolated OpenXML parse (a 1 MB workbook parses in well under 1 s). */
 export const IMPORT_PARSE_TIMEOUT_MS = 10_000;
+/**
+ * Isolated parses per API process: at most 2 at once, 4 waiting, 2 in flight per tenant.
+ * One parse at the upload ceiling takes ~2 s and ~150 MB; unbounded, 16 concurrent
+ * uploads timed out and reached 2.3 GB RSS on a 4-core host.
+ */
+export const IMPORT_MAX_CONCURRENT_PARSES = 2;
+export const IMPORT_MAX_QUEUED_PARSES = 4;
+export const IMPORT_MAX_PARSES_PER_TENANT = 2;
 
 export interface ParsedFile {
   format: ImportFormat;

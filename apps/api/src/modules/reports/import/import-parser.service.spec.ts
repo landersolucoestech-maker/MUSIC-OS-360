@@ -1,9 +1,12 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Logger, ServiceUnavailableException } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ImportParserService } from './import-parser.service';
 import {
   IMPORT_MAX_BYTES,
   IMPORT_MAX_COLUMNS,
+  IMPORT_MAX_CONCURRENT_PARSES,
+  IMPORT_MAX_PARSES_PER_TENANT,
+  IMPORT_MAX_QUEUED_PARSES,
   IMPORT_MAX_ROWS,
   IMPORT_MAX_UNCOMPRESSED_BYTES,
 } from './import.types';
@@ -300,5 +303,74 @@ describe('ImportParserService — isolated OpenXML parse (advisories 1108110 / 1
       clearInterval(interval);
     }
     expect(ticks).toBeGreaterThan(0);
+  });
+
+  it('rejects a workbook carrying macros before any parse', async () => {
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet([['a'], ['1']]), 'Dados');
+    (workbook as XLSX.WorkBook & { vbaraw?: Buffer }).vbaraw = Buffer.from('vba project');
+    const content = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsm', bookVBA: true }) as Buffer;
+    const body = await rejectionBody(() => service.parse('artists.xlsx', content));
+    expect(body.message).toBe('Planilha XLSX rejeitada. Macros e vínculos externos não são permitidos.');
+  });
+
+  it('maps a crashed parser worker to safe PT-BR copy and logs the cause', async () => {
+    const workers = await import('../../../core/security/disposable-worker');
+    const run = jest
+      .spyOn(workers, 'runInDisposableWorker')
+      .mockRejectedValueOnce(new workers.DisposableWorkerError('crashed', 'worker exited with code 134 before replying'));
+    const error = jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+    try {
+      const body = await rejectionBody(() => service.parse('artists.xlsx', workbookBuffer([['a'], ['1']])));
+      expect(body).toEqual({
+        error: 'INVALID_XLSX_WORKBOOK',
+        message: 'Planilha XLSX rejeitada. O arquivo não é uma planilha XLSX válida ou está corrompido.',
+        reason: 'OpenXML parser unavailable.',
+      });
+      expect(error).toHaveBeenCalledWith(expect.stringContaining('code 134'));
+    } finally {
+      run.mockRestore();
+      error.mockRestore();
+    }
+  });
+});
+
+describe('ImportParserService — bounded parser concurrency', () => {
+  const service = new ImportParserService();
+  const content = workbookBuffer([['name'], ['Ana']]);
+
+  async function outcomes(tenants: string[]): Promise<{ parsed: number; busy: RejectionBody[] }> {
+    const warn = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    try {
+      const results = await Promise.allSettled(tenants.map((tenant) => service.parse('artists.xlsx', content, undefined, tenant)));
+      const busy = results
+        .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+        .map((result) => {
+          expect(result.reason).toBeInstanceOf(ServiceUnavailableException);
+          return (result.reason as ServiceUnavailableException).getResponse() as RejectionBody;
+        });
+      return { parsed: results.filter((result) => result.status === 'fulfilled').length, busy };
+    } finally {
+      warn.mockRestore();
+    }
+  }
+
+  it(`runs at most ${IMPORT_MAX_CONCURRENT_PARSES} parses with ${IMPORT_MAX_QUEUED_PARSES} waiting; the rest get a fast busy answer`, async () => {
+    const tenants = Array.from({ length: 10 }, (_, index) => `tenant-${index}`);
+    const { parsed, busy } = await outcomes(tenants);
+    expect(parsed).toBe(IMPORT_MAX_CONCURRENT_PARSES + IMPORT_MAX_QUEUED_PARSES);
+    expect(busy).toHaveLength(tenants.length - parsed);
+    expect(busy[0]).toEqual({
+      error: 'IMPORT_PARSER_BUSY',
+      message: 'Muitas planilhas em processamento no momento. Tente novamente em instantes.',
+    });
+  });
+
+  it(`lets one tenant hold at most ${IMPORT_MAX_PARSES_PER_TENANT} parses in flight`, async () => {
+    const { parsed, busy } = await outcomes(Array.from({ length: 6 }, () => 'tenant-a'));
+    expect(parsed).toBe(IMPORT_MAX_PARSES_PER_TENANT);
+    expect(busy).toHaveLength(6 - IMPORT_MAX_PARSES_PER_TENANT);
+    const afterwards = await service.parse('artists.xlsx', content, undefined, 'tenant-a');
+    expect(afterwards.rows).toHaveLength(1);
   });
 });

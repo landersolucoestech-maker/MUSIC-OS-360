@@ -9,7 +9,13 @@
  * The worker only reports facts about the workbook and the first sheet as a
  * matrix of strings; every acceptance decision stays in ImportParserService.
  */
+import { ConcurrencyLimiter } from '../../../core/security/concurrency-limiter';
 import { runInDisposableWorker } from '../../../core/security/disposable-worker';
+import {
+  IMPORT_MAX_CONCURRENT_PARSES,
+  IMPORT_MAX_PARSES_PER_TENANT,
+  IMPORT_MAX_QUEUED_PARSES,
+} from './import.types';
 
 export interface IsolatedWorkbook {
   sheetNames: string[];
@@ -103,20 +109,33 @@ try {
 }
 `;
 
-export async function readWorkbookIsolated(content: Buffer, limits: IsolatedReadLimits): Promise<IsolatedWorkbook> {
-  const reply = await runInDisposableWorker<WorkerReply>(
-    XLSX_WORKER_SOURCE,
-    {
-      xlsxPath: require.resolve('xlsx'),
-      content: new Uint8Array(content),
-      sheetRows: limits.sheetRows,
-      maxColumns: limits.maxColumns,
-    },
-    {
-      timeoutMs: limits.timeoutMs,
-      resourceLimits: { maxOldGenerationSizeMb: 256, maxYoungGenerationSizeMb: 32 },
-    },
-  );
+/** One per API process: parses beyond it are refused with ConcurrencyLimitError (see import.types.ts). */
+const PARSE_SLOTS = new ConcurrencyLimiter({
+  maxActive: IMPORT_MAX_CONCURRENT_PARSES,
+  maxQueued: IMPORT_MAX_QUEUED_PARSES,
+  maxPerKey: IMPORT_MAX_PARSES_PER_TENANT,
+});
+
+export async function readWorkbookIsolated(
+  content: Buffer,
+  limits: IsolatedReadLimits,
+  tenantKey?: string,
+): Promise<IsolatedWorkbook> {
+  const parse = (): Promise<WorkerReply> =>
+    runInDisposableWorker<WorkerReply>(
+      XLSX_WORKER_SOURCE,
+      {
+        xlsxPath: require.resolve('xlsx'),
+        content: new Uint8Array(content),
+        sheetRows: limits.sheetRows,
+        maxColumns: limits.maxColumns,
+      },
+      {
+        timeoutMs: limits.timeoutMs,
+        resourceLimits: { maxOldGenerationSizeMb: 256, maxYoungGenerationSizeMb: 32 },
+      },
+    );
+  const reply = await PARSE_SLOTS.run(parse, tenantKey);
   if (!reply.ok) throw new OpenXmlParseError(reply.detail);
   return reply.workbook;
 }

@@ -17,7 +17,7 @@
       "package": "xlsx",
       "severity": "high",
       "reason": "CVE-2024-22363 (ReDoS ao ler). Mesma causa raiz do advisory 1108110 (correção >=0.20.2 só fora do npm). Renovado em 2026-09-30 com a exploitability removida: o parse isolado tem deadline (API 10 s, web 15 s) e o worker é terminado — CPU descontrolada não bloqueia o event loop da API nem a UI.",
-      "evidence": "disposable-worker.spec.ts ('terminates runaway CPU at the deadline while this event loop keeps running'), import-parser.service.spec.ts (deadline -> rejeição PT-BR, causa técnica só no log; event loop livre durante o parse), xlsx-isolated.test.ts (worker terminado no deadline).",
+      "evidence": "disposable-worker.spec.ts ('terminates runaway CPU at the deadline while this event loop keeps running'), import-parser.service.spec.ts (deadline -> rejeição PT-BR, causa técnica só no log; event loop livre durante o parse), xlsx-isolated.test.ts (worker terminado no deadline). Desde 2026-09-30 os parses da API também são limitados por processo (core/security/concurrency-limiter.ts: 2 ativos, 4 na fila, 2 por tenant; excedente recebe 503 IMPORT_PARSER_BUSY): 32 uploads simultâneos no teto de tamanho ficaram em 516 MB de RSS e 0 timeouts (antes: 3,4 GB e todos em timeout).",
       "decision": "RENEW_WITH_EVIDENCE",
       "owner": "landersolucoestech@gmail.com",
       "introduced": "2026-07-31",

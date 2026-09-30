@@ -147,6 +147,7 @@ export class ImportEngineService {
       file.filename,
       file.content,
       reportSheetName(report, entity),
+      tenantId,
     );
     const headerMapping = this.mapper.build(def, parsed.headers);
     return this.validator.validate(def, typeMap, headerMapping, parsed.rows, entity);
