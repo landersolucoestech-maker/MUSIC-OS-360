@@ -15,6 +15,7 @@ import {
   ConflictError,
   IntegrationError,
   PasswordChangeRequiredError,
+  DEFAULT_USER_ERROR_MESSAGE,
 } from "./errors";
 import { API_BASE_URL, DEV_AUTH_BYPASS } from "./env";
 
@@ -95,16 +96,124 @@ export const PENDING_TABLES = {
 /** Every table key the storage layer resolves (a typo or a removed key fails typecheck). */
 export type StorageTable = keyof typeof TABLE_ENDPOINT | keyof typeof PENDING_TABLES;
 
+/**
+ * Stable machine codes the API puts in the `error` field, each with the PT-BR
+ * default copy the UI falls back to when the server text is missing or unsafe.
+ * Keep in sync with the API's `error: 'CODE'` producers (canonical map).
+ */
+export const KNOWN_API_ERROR_CODES: Readonly<Record<string, string>> = {
+  VALIDATION_FAILED: "Os dados enviados são inválidos. Revise os campos e tente novamente.",
+  MUST_CHANGE_PASSWORD: "Troca de senha obrigatória antes de continuar.",
+  TENANT_SUSPENDED: "O workspace está suspenso. Entre em contato com o suporte.",
+  TENANT_READ_ONLY: "O workspace está em modo somente leitura.",
+  PERMISSION_DENIED: "Você não tem permissão para realizar esta ação.",
+  PLAN_LIMIT_REACHED: "O limite do seu plano foi atingido.",
+  R2_NOT_CONFIGURED: "O envio de arquivos não está disponível no momento.",
+  INVITE_CREATE_FAILED: "Não foi possível criar o convite. Tente novamente.",
+  INVITE_METADATA_FAILED: "Não foi possível criar o convite. Tente novamente.",
+  INVITE_RESEND_FAILED: "Não foi possível reenviar o convite. Tente novamente.",
+  SESSION_UPDATE_FAILED: "Não foi possível atualizar a sessão. Tente novamente.",
+  ROLE_UNKNOWN: "Papel desconhecido. Não é possível atribuí-lo.",
+  SYNC_QUEUE_UNAVAILABLE: "A sincronização está indisponível no momento. Tente novamente.",
+  PROFILE_NOT_FOUND: "Perfil não encontrado.",
+  INVALID_XLSX_WORKBOOK: "A planilha enviada é inválida.",
+  SINGLE_SHEET_REQUIRED: "A planilha deve conter uma única aba.",
+  UNSUPPORTED_IMPORT_FORMAT: "Formato de importação não suportado.",
+  UNSUPPORTED_EXPORT_FORMAT: "Formato de exportação não suportado.",
+  INVALID_IMPORT_SIZE: "O arquivo de importação excede o tamanho permitido.",
+  INVALID_IMPORT_ENCODING: "A codificação do arquivo de importação é inválida.",
+  IMPORT_PARSER_BUSY: "A importação está ocupada. Tente novamente em instantes.",
+  REPORT_ENTITY_NOT_AVAILABLE: "Este relatório não está disponível.",
+  REPORT_CONTRACT_REQUIRED: "Selecione um contrato para gerar este relatório.",
+  REPORT_EXPORT_TOO_LARGE: "O relatório é grande demais para exportar. Refine os filtros.",
+};
+
+/** PT-BR defaults by HTTP status, used when the server text cannot be trusted. */
+const STATUS_DEFAULT_COPY: Readonly<Record<number, string>> = {
+  400: "Os dados enviados são inválidos. Revise e tente novamente.",
+  401: "Sua sessão expirou. Entre novamente.",
+  403: "Você não tem permissão para realizar esta ação.",
+  404: "Não encontramos o recurso solicitado.",
+  409: "Não foi possível concluir a operação por conflito com outros dados.",
+  413: "O conteúdo enviado excede o limite permitido.",
+  422: "Os dados enviados são inválidos. Revise e tente novamente.",
+  429: "Muitas tentativas. Aguarde um instante e tente novamente.",
+};
+const SERVER_ERROR_COPY = "O servidor encontrou um problema. Tente novamente em instantes.";
+
+/** Provider / database / runtime vocabulary that is never end-user copy. */
+const TECHNICAL_TEXT = new RegExp(
+  [
+    String.raw`\b(?:ECONN\w*|ETIMEDOUT|ENOTFOUND|EAI_AGAIN|EPIPE|SQLSTATE)\b`,
+    String.raw`duplicate key|violates|unique constraint|foreign key|null value in column|syntax error at`,
+    String.raw`password authentication|authentication failed|permission denied for|relation ".*" (?:does not|already)`,
+    String.raw`\b(?:TypeError|ReferenceError|RangeError|SyntaxError|QueryFailedError|EntityNotFound\w*)\b`,
+    String.raw`^\s*(?:[A-Z]\w*)?Error:`,
+    String.raw`\bat\s+\S+.*:\d+(?::\d+)?\)?`,
+    String.raw`node_modules|\.(?:ts|js|mjs):\d+`,
+    String.raw`\b\d{1,3}(?:\.\d{1,3}){3}\b`,
+    String.raw`:\d{4,5}\b`,
+    String.raw`\b(?:postgres(?:ql)?|mysql|redis|amqp|mongodb):\/\/`,
+    String.raw`\b(?:supabase|typeorm|bullmq|pg_|gotrue)\b`,
+    String.raw`[\r\n]`,
+  ].join("|"),
+  "i",
+);
+
+/** PT-BR signal: accented letters or common PT-BR function words. English provider text has neither. */
+const PT_BR_SIGNAL =
+  /[áàâãéêíóôõúç]|(?<![\p{L}])(?:não|para|com|deve|devem|informe|seu|sua|você|já|está|foi|uma|dos|das|pelo|pela|inválid\w*|obrigat\w*|suspenso|permitid\w*|encontrad\w*)(?![\p{L}])/iu;
+
+const MAX_COPY_LENGTH = 300;
+
+/** Own-property check: `constructor`/`__proto__` are not codes. */
+function isKnownApiErrorCode(code: string): boolean {
+  return Object.prototype.hasOwnProperty.call(KNOWN_API_ERROR_CODES, code);
+}
+
+function isSafeCopy(text: unknown): text is string {
+  return typeof text === "string" && text.trim().length > 0 && text.length <= MAX_COPY_LENGTH && !TECHNICAL_TEXT.test(text);
+}
+
+function defaultCopyFor(status: number, code: string | undefined): string {
+  if (code && isKnownApiErrorCode(code)) return KNOWN_API_ERROR_CODES[code];
+  if (status >= 500) return SERVER_ERROR_COPY;
+  return STATUS_DEFAULT_COPY[status] ?? DEFAULT_USER_ERROR_MESSAGE;
+}
+
+/**
+ * Decides which text of an API error body may become end-user copy.
+ *
+ * The server's `message` is used only when it is the API's own PT-BR copy:
+ *  - the body carries a KNOWN stable code (VALIDATION_FAILED shape included) and the text is
+ *    free of technical vocabulary; or
+ *  - the text is free of technical vocabulary AND carries a PT-BR signal (the API's own
+ *    HttpException copy is PT-BR by contract, enforced by http-exception-copy.guard.spec).
+ * Everything else (English/raw provider or database text, stack lines, oversized text) is
+ * replaced by PT-BR copy mapped from the code or the HTTP status.
+ */
+export function resolveApiUserMessage(
+  status: number,
+  body: { message?: unknown; error?: unknown },
+): string {
+  const code = typeof body.error === "string" ? body.error : undefined;
+  const known = code !== undefined && isKnownApiErrorCode(code);
+  const candidates = (Array.isArray(body.message) ? body.message : [body.message]).filter(isSafeCopy);
+  const trusted = candidates.filter((text) => known || PT_BR_SIGNAL.test(text));
+  // A partly-unsafe validation list still shows its safe entries; nothing safe -> mapped default.
+  if (trusted.length > 0) return trusted.join("; ");
+  return defaultCopyFor(status, code);
+}
+
 async function mapError(res: Response): Promise<never> {
   let body: { message?: string | string[]; error?: string } = {};
   try {
     body = (await res.json()) as typeof body;
   } catch {}
 
-  const rawMsg = body.message;
-  // The API's HTTP exception messages are end-user copy (PT-BR) by contract;
-  // they become `userMessage`. `technical` is the internal diagnostic.
-  const userMessage = Array.isArray(rawMsg) ? rawMsg.join("; ") : rawMsg;
+  // `userMessage` is end-user copy (PT-BR); it is never the raw server text unless it passes
+  // resolveApiUserMessage. `technical` is the internal diagnostic and never rendered.
+  const userMessage = resolveApiUserMessage(res.status, body);
   const technical = `API responded ${res.status}${body.error ? ` (${body.error})` : ""}`;
 
   switch (res.status) {

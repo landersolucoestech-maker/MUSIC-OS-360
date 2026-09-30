@@ -14,6 +14,7 @@ import type {
 import type { IntegrationRuntimeStatus } from "@/shared/integrations/types";
 
 import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
+import { resolveApiUserMessage } from "@/shared/lib/api-client";
 import { DisabledIntegrationError } from "@/shared/lib/disabled-integration";
 
 export interface ACRCloudStatus extends IntegrationRuntimeStatus {
@@ -52,10 +53,10 @@ async function callAcrcloudApi<T>(
   });
 
   if (!res.ok) {
-    const err = await res.json().catch((): { error?: string; message?: string } => ({}));
+    const err = await res.json().catch((): { error?: string; message?: unknown } => ({}));
     throw new UserFacingError(
       `ACRCloud request failed (HTTP ${res.status})${err.error ? `: ${err.error}` : ""}`,
-      err.message ?? "Não foi possível concluir o reconhecimento de áudio. Tente novamente.",
+      resolveApiUserMessage(res.status, err),
     );
   }
 

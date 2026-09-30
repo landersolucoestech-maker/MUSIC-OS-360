@@ -20,6 +20,7 @@
 
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/shared/lib/env";
+import { resolveApiUserMessage } from "@/shared/lib/api-client";
 import { toUserMessage } from "@/shared/lib/errors";
 
 type ExchangeState =
@@ -102,12 +103,9 @@ export default function OAuthCallbackPage() {
         });
 
         if (!res.ok) {
-          // The API message is PT-BR end-user copy by contract; the HTTP status is not.
-          const body = await res.json().catch(() => ({})) as Record<string, unknown>;
-          const msg  =
-            (typeof body["message"] === "string" ? body["message"] : undefined) ??
-            (Array.isArray(body["message"]) ? (body["message"] as string[])[0] : undefined) ??
-            "Não foi possível concluir a conexão. Tente novamente.";
+          // Only the API's own PT-BR copy is shown; raw/English text is mapped by code/status.
+          const body = await res.json().catch(() => ({})) as { message?: unknown; error?: unknown };
+          const msg  = resolveApiUserMessage(res.status, body);
           setState({ status: "error", message: msg });
           return;
         }

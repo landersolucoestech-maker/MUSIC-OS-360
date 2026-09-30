@@ -12,6 +12,9 @@ const SRC = join(__dirname, "..", "..");
 const RENDERED_TECHNICAL_FIELD =
   /\{[^{}]*\.(last_error|lastError|delivery_error|deliveryError|error_message|errorMessage|publication_error|publicationError|provider_error|providerError|failure_reason|failureReason)\b[^{}]*\}|\{\s*(err|error|e)\??\.message\s*\}/;
 
+/** The single place that decides which API body text may become user copy (resolveApiUserMessage). */
+const BODY_MESSAGE_POLICY_FILES = new Set(["shared/lib/api-client.ts"]);
+
 /** Developer-only diagnostics (rendered behind IS_DEV). */
 const DEV_ONLY_FILES = new Set(["shared/infrastructure/ErrorFallback.tsx"]);
 
@@ -20,16 +23,28 @@ const TECHNICAL_FIELDS =
 /** `(err as { message?: string }).message` or a plain `err.message` / `error?.message` / `e.message`. */
 const RAW_MESSAGE = String.raw`(?:\(\s*\w+\s+as\s+\{[^}]*\}\s*\)\??|\b(?:err|error|e)\??)\.message\b`;
 
+/** `new UserFacingError(`technical ${err.message}`, "PT-BR")`: the interpolation is the internal English diagnostic, not user copy. */
+const TECHNICAL_ARG_OF_USER_FACING_ERROR = /UserFacingError\(\s*`/;
+
+/**
+ * KNOWN DEBT: raw `body["message"]` toast outside this slice's write scope. Listed so the guard stays
+ * green without loosening the pattern; the entry must be removed when the file is fixed (the test
+ * below fails if a listed file no longer matches).
+ */
+const KNOWN_BODY_MESSAGE_DEBT = new Set(["modules/integrations/components/MarketingOAuthDialog.tsx"]);
+
 /**
  * Non-JSX sinks that put text in front of the user (toast, state later rendered).
  * Deliberately narrow: `describeAuthError({ message: err.message })` and
  * `toUserMessage(err)` are safe mappers and must not match.
  */
-const TECHNICAL_SINKS: Array<{ name: string; re: RegExp }> = [
+const TECHNICAL_SINKS: Array<{ name: string; re: RegExp; unless?: RegExp }> = [
   { name: "toast(raw message)", re: new RegExp(String.raw`toast\.\w+\(\s*${RAW_MESSAGE}`) },
   { name: "toast(`...${raw message}`)", re: new RegExp(String.raw`toast\.\w+\(\s*` + "`" + String.raw`[^` + "`" + String.raw`]*\$\{\s*${RAW_MESSAGE}`) },
   { name: "toast(technical field)", re: new RegExp(String.raw`toast\.\w+\(.*\.(?:${TECHNICAL_FIELDS})\b`) },
   { name: "cast message with literal fallback", re: new RegExp(String.raw`\(\s*\w+\s+as\s+\{\s*message\??:\s*string\s*\}\s*\)\??\.message\s*\?\?\s*["'` + "`" + String.raw`][^"'` + "`" + String.raw`]`) },
+  { name: "raw server/exception message with literal fallback", re: /\b(?:err|error|body|data|payload)\??\.message\s*\?\?\s*["'`][^"'`]/, unless: TECHNICAL_ARG_OF_USER_FACING_ERROR },
+  { name: "raw API body message", re: /\bbody(?:\[\s*["']message["']\s*\]|\??\.message\b)/ },
   { name: "setError(String(err))", re: /\bset\w*Error\(\s*String\(\s*(?:err|error|e)\s*\)\s*\)/ },
 ];
 
@@ -66,18 +81,27 @@ describe("technical error fields are never rendered", () => {
   });
 
   it("no toast / error state sink forwards a raw exception message or technical field", () => {
-    const offenders = sourceFiles(SRC, [".ts", ".tsx"]).flatMap((file) =>
+    const offenders = sourceFiles(SRC, [".ts", ".tsx"]).filter((file) => {
+      const rel = relative(SRC, file).split("\\").join("/");
+      return !BODY_MESSAGE_POLICY_FILES.has(rel) && !KNOWN_BODY_MESSAGE_DEBT.has(rel);
+    }).flatMap((file) =>
       readFileSync(file, "utf8")
         .split("\n")
         .map((line, i) => ({ line, n: i + 1 }))
         .filter(({ line }) => !/^\s*(\/\/|\*)/.test(line))
         .flatMap(({ line, n }) =>
-          TECHNICAL_SINKS.filter(({ re }) => re.test(line)).map(
+          TECHNICAL_SINKS.filter(({ re, unless }) => re.test(line) && !unless?.test(line)).map(
             ({ name }) => `${relative(SRC, file)}:${n} [${name}] ${line.trim()}`,
           ),
         ),
     );
     expect(offenders).toEqual([]);
+  });
+
+  it("the known-debt allowlist only lists files that still leak", () => {
+    for (const rel of KNOWN_BODY_MESSAGE_DEBT) {
+      expect(readFileSync(join(SRC, rel), "utf8")).toMatch(/\bbody\[\s*["']message["']\s*\]/);
+    }
   });
 
   it("the sink patterns catch the leak shapes", () => {
@@ -91,6 +115,9 @@ describe("technical error fields are never rendered", () => {
     expect(hit("const label = (e as { message?: string }).message ?? 'Erro';")).toBe(true);
     expect(hit("setError(String(err))")).toBe(true);
     expect(hit(".catch((e) => setLoadError(String(e)))")).toBe(true);
+    expect(hit('err.message ?? "Não foi possível concluir o reconhecimento."')).toBe(true);
+    expect(hit('(typeof body["message"] === "string" ? body["message"] : undefined) ??')).toBe(true);
+    expect(hit("setState({ status: 'error', message: body.message })")).toBe(true);
   });
 
   it("the sink patterns leave the safe mappers alone", () => {
@@ -100,6 +127,7 @@ describe("technical error fields are never rendered", () => {
     expect(hit("toast.error(`IA: ${toUserMessage(error)}`);")).toBe(false);
     expect(hit('setError("Não foi possível carregar as cidades. Tente novamente.")')).toBe(false);
     expect(hit("console.error(err.message)")).toBe(false);
+    expect(hit("const msg = resolveApiUserMessage(res.status, body);")).toBe(false);
     expect(hit("toast.error(validation.error ?? \"Arquivo inválido.\");")).toBe(false);
   });
 

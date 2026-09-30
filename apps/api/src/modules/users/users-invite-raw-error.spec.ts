@@ -88,4 +88,35 @@ describe('UsersService invitations - provider error text never reaches the respo
     expect(body).toEqual({ message: 'Não foi possível reenviar o convite. Tente novamente.', error: 'INVITE_RESEND_FAILED' });
     expect(warn.mock.calls.some(([m]) => String(m).includes(RAW))).toBe(true);
   });
+
+  it('redacts e-mail addresses and credentials from the logged provider text', async () => {
+    mockInvite.mockResolvedValue({
+      data: { user: null },
+      error: { message: 'User maria@example.com already registered password=hunter2' },
+    });
+    await bodyOf(build(inviteQueries()).invite('t', 'a@b.co', 'r', 'i', 'owner'));
+    const logged = warn.mock.calls.map(([m]) => String(m)).join('\n');
+    expect(logged).toContain('inviteUserByEmail failed');
+    expect(logged).not.toContain('maria@example.com');
+    expect(logged).not.toContain('hunter2');
+  });
+
+  it('resend: redacts the e-mail from the logged generateLink error', async () => {
+    const query = jest.fn()
+      .mockResolvedValueOnce([{ id: 'i', email: 'a@b.co', role_slug: 'editor', tenant_name: 'T' }])
+      .mockResolvedValueOnce([{ slug: 'owner', hierarchy_level: 100 }])
+      .mockResolvedValue([]);
+    mockGenerateLink.mockResolvedValue({ data: {}, error: { message: 'no user for maria@example.com' } });
+    await bodyOf(build(query).resendInvitation('t', 'i', 'inviter', 'owner'));
+    expect(warn.mock.calls.map(([m]) => String(m)).join('\n')).not.toContain('maria@example.com');
+  });
+
+  it('metadata update failure: redacts the logged text', async () => {
+    mockInvite.mockResolvedValue({ data: { user: { id: 'u' } }, error: null });
+    mockUpdate.mockResolvedValue({ error: { message: 'bad token=abc.def for maria@example.com' } });
+    await bodyOf(build(inviteQueries()).invite('t', 'a@b.co', 'r', 'i', 'owner'));
+    const logged = warn.mock.calls.map(([m]) => String(m)).join('\n');
+    expect(logged).not.toContain('maria@example.com');
+    expect(logged).not.toContain('abc.def');
+  });
 });

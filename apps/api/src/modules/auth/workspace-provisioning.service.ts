@@ -5,6 +5,7 @@ import {
   Logger,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { redactDiagnosticText } from '../../core/filters/redact-diagnostic';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
@@ -180,7 +181,7 @@ export class WorkspaceProvisioningService {
         },
       });
       if (error) {
-        this.logger.error(`Supabase updateUserById (workspace provisioning) failed: ${error.message}`);
+        this.logger.error(`Supabase updateUserById (workspace provisioning) failed: ${redactDiagnosticText(error.message)}`);
         throw new ServiceUnavailableException({
           message: 'Não foi possível atualizar a sessão. Tente novamente.',
           error: 'SESSION_UPDATE_FAILED',
@@ -207,7 +208,7 @@ export class WorkspaceProvisioningService {
       this.logger.error(JSON.stringify({
         event: 'workspace_provisioning_failed',
         user_id: user.userId,
-        error: error instanceof Error ? error.message : String(error),
+        error: redactDiagnosticText(error instanceof Error ? error.message : String(error)),
       }));
       throw error;
     } finally {

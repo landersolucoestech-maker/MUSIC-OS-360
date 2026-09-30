@@ -10,6 +10,7 @@ import { RbacDistributedCacheService } from '../../core/rbac/rbac-distributed-ca
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
 import { ROLE_HIERARCHY } from '../../core/rbac/role-hierarchy';
+import { redactDiagnosticText } from '../../core/filters/redact-diagnostic';
 import { MailService } from '../../core/mail/mail.service';
 import { PlanLimitService } from '../../core/billing/plan-limit.service';
 
@@ -187,7 +188,7 @@ export class UsersService {
       data: { org_id: tenant.org_id, tenant_id: tenantId, tenant_slug: tenant.slug, role },
     });
     if (error || !data.user) {
-      this.logger.warn(`Supabase inviteUserByEmail failed: ${error?.message ?? 'no user returned'}`);
+      this.logger.warn(`Supabase inviteUserByEmail failed: ${redactDiagnosticText(error?.message) || 'no user returned'}`);
       throw new ConflictException({
         message: 'Não foi possível criar o convite. Tente novamente.',
         error: 'INVITE_CREATE_FAILED',
@@ -199,7 +200,7 @@ export class UsersService {
     });
     if (metadataResult.error) {
       await supabase.auth.admin.deleteUser(data.user.id, true).catch(() => undefined);
-      this.logger.warn(`Supabase updateUserById (invite app_metadata) failed: ${metadataResult.error.message}`);
+      this.logger.warn(`Supabase updateUserById (invite app_metadata) failed: ${redactDiagnosticText(metadataResult.error.message)}`);
       throw new ConflictException({
         message: 'Não foi possível criar o convite. Tente novamente.',
         error: 'INVITE_METADATA_FAILED',
@@ -270,7 +271,7 @@ export class UsersService {
       },
     });
     if (error || !data.properties?.action_link) {
-      this.logger.warn(`Supabase generateLink (invite resend) failed: ${error?.message ?? 'no action link returned'}`);
+      this.logger.warn(`Supabase generateLink (invite resend) failed: ${redactDiagnosticText(error?.message) || 'no action link returned'}`);
       throw new ConflictException({
         message: 'Não foi possível reenviar o convite. Tente novamente.',
         error: 'INVITE_RESEND_FAILED',

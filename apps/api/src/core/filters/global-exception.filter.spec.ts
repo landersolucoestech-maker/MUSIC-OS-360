@@ -29,6 +29,7 @@ jest.mock('../../instrument', () => ({
   },
 }));
 
+import { Logger } from '@nestjs/common';
 import { GlobalExceptionFilter } from './global-exception.filter';
 
 function buildHost(request: Record<string, unknown> = {}) {
@@ -149,5 +150,26 @@ describe('GlobalExceptionFilter - technical text never reaches the response body
     expect(body.path).toBe('/api/v1/auth/callback');
     expect(JSON.stringify(body)).not.toContain('secret');
     expect(JSON.stringify(body)).not.toContain('a@b.co');
+  });
+});
+
+describe('GlobalExceptionFilter - unhandled-error log is redacted, Sentry keeps the original', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it('logs message and stack without e-mail/credentials while Sentry receives the untouched exception', () => {
+    const logSpy = jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    const err = new Error('insert failed for maria@example.com via postgres://svc:S3cr3tPw@db:5432/x');
+    const filter = new GlobalExceptionFilter();
+    const { host } = buildHost();
+
+    filter.catch(err, host);
+
+    const logged = logSpy.mock.calls.map((c) => c.map(String).join(' ')).join('\n');
+    expect(logged).toContain('Unhandled error');
+    expect(logged).not.toContain('maria@example.com');
+    expect(logged).not.toContain('S3cr3tPw');
+    expect(logged).toMatch(/at .*:\d+:\d+/); // stack preserved in the log
+    expect(mockCaptureException).toHaveBeenCalledWith(err);
+    expect((mockCaptureException.mock.calls.at(-1)?.[0] as Error).stack).toContain('maria@example.com');
   });
 });

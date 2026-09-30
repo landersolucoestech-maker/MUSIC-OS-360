@@ -10,6 +10,7 @@ import { Request, Response } from 'express';
 import { v4 as uuidv4 }     from 'uuid';
 import { Sentry }            from '../../instrument';
 import { redactUrl }         from '../security/redact';
+import { redactDiagnosticText } from './redact-diagnostic';
 
 /** Request path with the query string and fragment dropped: query values may carry tokens or PII. */
 function pathWithoutQuery(url: string | undefined): string {
@@ -68,7 +69,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         error = 'CorsException';
         message = 'Origem não autorizada';
       } else {
-        this.logger.error(`Unhandled error: ${exception.message}`, exception.stack);
+        // Log line is redacted (message and stack embed provider/DB text: e-mails, DSNs, tokens);
+        // Sentry below still receives the original exception with its full stack.
+        this.logger.error(
+          `Unhandled error: ${redactDiagnosticText(exception.message)}`,
+          redactDiagnosticText(exception.stack),
+        );
         this.reportToSentry(exception, request, requestId);
       }
     }
