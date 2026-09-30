@@ -1,3 +1,5 @@
+> Historical document (English label). Kept as recorded; not the current contract.
+
 # MUSIC OS 360 - Blueprint Enterprise Definitivo
 
 Data da analise: 2026-07-09  

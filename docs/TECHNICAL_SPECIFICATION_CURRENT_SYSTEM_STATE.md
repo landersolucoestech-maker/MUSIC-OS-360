@@ -1,3 +1,5 @@
+> Historical document (English label). Kept as recorded; not the current contract.
+
 # ESPECIFICAÇÃO TÉCNICA COMPLETA DO ESTADO ATUAL DO SISTEMA
 
 Data da auditoria local: 2026-07-06.

@@ -128,14 +128,14 @@ client/src/
 
 | Type | Pattern | Example |
 |------|--------|---------|
-| React component | `PascalCase.tsx` | `ArtistaCard.tsx` |
-| Hook | `use{Name}.ts` | `useArtistaForm.ts` |
+| React component | `PascalCase.tsx` | `ArtistCard.tsx` |
+| Hook | `use{Name}.ts` | `useArtistForm.ts` |
 | Service | `{name}.service.ts` | `artist.service.ts` |
-| Mapper | `{entity}Mappers.ts` | `artistaMappers.ts` |
-| Types | `{entity}.types.ts` | `artista.types.ts` |
+| Mapper | `{entity}Mappers.ts` | `artistMappers.ts` |
+| Types | `{entity}.types.ts` | `artist.types.ts` |
 | Contract | `{concern}.contract.ts` | `auth.contract.ts` |
 | Adapter | `{concern}.adapter.ts` | `streaming.adapter.ts` |
-| Constants | `{concern}-constants.ts` | `transacao-constants.ts` |
+| Constants | `{concern}-constants.ts` | `transaction-constants.ts` |
 | Routes | `{domain}.routes.tsx` | `artist.routes.tsx` |
 
 ### Components — mandatory suffixes
@@ -148,22 +148,24 @@ client/src/
 
 | Category | Pattern | Example |
 |-----------|--------|---------|
-| Data | `use{Entity}List` / `use{Entity}Detail` | `useArtistaList` |
-| Form | `use{Entity}Form` | `useContratoForm` |
-| Mutation | `use{Verb}{Entity}` | `useCreateTransacao` |
+| Data | `use{Entity}List` / `use{Entity}Detail` | `useArtistList` |
+| Form | `use{Entity}Form` | `useContractForm` |
+| Mutation | `use{Verb}{Entity}` | `useCreateTransaction` |
 | Integration | `use{ServiceName}` | `useSpotify` |
 | UI | `use{Concern}` | `useCommandPalette` |
 | Context | `use{ContextName}` | `useTenant` |
 
 ### Language
 
-- **Portuguese** for domain names (entities, fields, enums)
-- **English** for infrastructure (props, UI state, utilities)
+- **English** for all technical/internal names: identifiers, types, enums, DB schema (tables/columns), API keys/fields, log messages, event/queue names and scripts.
+- **PT-BR only for end-user UI copy** (labels, toasts, error messages), humanized and correctly accented; never a raw enum value or snake_case key.
+- **Portuguese vendor/external fields** are allowed only at adapter boundaries (the adapter maps them to canonical English names).
+- **Legacy Portuguese aliases** are tolerated only when mapped, deprecated and ledgered in `docs/naming/canonical-naming-map.json`, with an owner, test coverage and an explicit removal condition.
 
 ### Enums
 
 **Forbidden:** TypeScript `enum`  
-**Correct:** `type Status = 'ativo' | 'inativo'` in `shared/types/enums.ts`
+**Correct:** `type Status = 'active' | 'inactive'` in `shared/types/enums.ts`
 
 ### localStorage keys
 
@@ -290,7 +292,7 @@ They use `{EntityName}Ref` from `shared/types/refs.ts`:
 import type { ArtistaRef } from "@/shared/types/refs";
 
 // FORBIDDEN
-import type { Artista } from "@/modules/artist/types/artista.types";
+import type { Artista } from "@/modules/artist/types/artist.types";
 // (in modules other than artist)
 ```
 
@@ -573,7 +575,7 @@ Every interactive element and every relevant piece of dynamic data must have a `
 ### Skeleton while loading
 
 ```tsx
-if (isLoading) return <ArtistaCardSkeleton />;
+if (isLoading) return <ArtistCardSkeleton />;
 if (!data?.length) return <ArtistaEmpty />;
 ```
 
@@ -611,7 +613,7 @@ type ArtistaFormValues = z.infer<typeof artistaFormSchema>;
 ```typescript
 // Never transform data directly in the component
 // Always use the module's mapper
-import { toFormArtista, fromFormArtista } from "@/modules/artist/mappers/artistaMappers";
+import { toFormArtista, fromFormArtista } from "@/modules/artist/mappers/artistMappers";
 ```
 
 ### Validation
@@ -666,7 +668,7 @@ export function createArtista(payload: ArtistaInsert): Artista {
 ```typescript
 // Never define queryFn inline in components
 // Use the module's hook
-const { data, isLoading } = useArtistaList();
+const { data, isLoading } = useArtistList();
 
 // Cache times: CACHE_TIMES from shared/config
 // Invalidate after mutations
@@ -744,7 +746,7 @@ Does NOT include:
 | Design tokens | `client/src/index.css` |
 | Tailwind config | `tailwind.config.ts` |
 | Mock data principal | `shared/data/mockData.ts` |
-| Artists mapper | `modules/artist/mappers/artistaMappers.ts` |
+| Artists mapper | `modules/artist/mappers/artistMappers.ts` |
 | Catalog mapper | `modules/catalog/mappers/registroMusicasMappers.ts` |
 | Cross-domain normalization | `shared/lib/normalize.ts` |
 | Multi-tenant isolation | `shared/lib/tenant-isolation.ts` |

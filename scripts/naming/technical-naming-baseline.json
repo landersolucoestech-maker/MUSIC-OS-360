@@ -1,6 +1,6 @@
 {
  "totals": {
-  "doc": 9255,
+  "doc": 9047,
   "eventQueueJob": 12,
   "frontendRoute": 11,
   "identifier": 506,
@@ -18,12 +18,11 @@
   "doc::docs/BLUEPRINT_ENTERPRISE.md": 237,
   "doc::docs/DB_AUDIT_2026-07-05.md": 57,
   "doc::docs/ENTERPRISE_BLUEPRINT_FINAL_2026-07-09.md": 309,
-  "doc::docs/EXECUTIVE_SUMMARY.md": 109,
   "doc::docs/FORM_DATABASE_ALIGNMENT_AUDIT.md": 688,
   "doc::docs/NAMING_NORMALIZATION_CANONICAL_MAP.md": 17,
   "doc::docs/PROVISIONING_GUIDE.md": 1,
   "doc::docs/STAGE_4_CANONICAL_BASELINE_157_80.md": 42,
-  "doc::docs/STAGING_ARCHITECTURE.md": 100,
+  "doc::docs/STAGING_ARCHITECTURE.md": 1,
   "doc::docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md": 408,
   "doc::docs/backend-v2/00-repository-state.md": 32,
   "doc::docs/backend-v2/01-working-tree-audit.md": 55,

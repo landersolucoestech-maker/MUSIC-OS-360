@@ -1,3 +1,5 @@
+> Historical document (English label). Kept as recorded; not the current contract.
+
 # ETAPA 4 - CANONICAL BASELINE 157/80
 
 Data de validacao: 2026-07-05

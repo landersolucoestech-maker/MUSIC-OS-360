@@ -1,3 +1,5 @@
+> Historical document (English label). Kept as recorded; not the current contract.
+
 # Auditoria de Alinhamento Formulários × Banco de Dados
 
 > Fase 13B (retomada) — mandato: nenhuma migration financeira adicional roda
