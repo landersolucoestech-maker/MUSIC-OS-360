@@ -4,7 +4,7 @@
   "eventQueueJob": 12,
   "frontendRoute": 11,
   "identifier": 304,
-  "objectKey": 870,
+  "objectKey": 869,
   "value": 2874
  },
  "debt": {
@@ -895,7 +895,6 @@
   "objectKey::apps/web/src/modules/projects/components/ProjectViewModal.tsx::object-key::nao": 1,
   "objectKey::apps/web/src/modules/projects/components/ProjectViewModal.tsx::object-key::sim": 1,
   "objectKey::apps/web/src/modules/projects/pages/Projects.tsx::object-key::artistas": 1,
-  "objectKey::apps/web/src/modules/projects/schemas/project-schema.ts::object-key::observacoes": 1,
   "objectKey::apps/web/src/modules/releases/components/ReleaseFormModal.tsx::object-key::artista": 2,
   "objectKey::apps/web/src/modules/releases/components/ReleaseFormModal.tsx::object-key::artistasAdicionais": 1,
   "objectKey::apps/web/src/modules/releases/components/ReleaseFormModal.tsx::object-key::artistasAdicionaisAlbum": 3,

@@ -8,7 +8,7 @@ export const projectSchema = z.object({
     .optional()
     .or(z.literal("")),
   status: z.string().optional().or(z.literal("")),
-  observacoes: z.string()
+  notes: z.string()
     .max(2000, "Observações deve ter no máximo 2000 caracteres")
     .optional()
     .or(z.literal("")),

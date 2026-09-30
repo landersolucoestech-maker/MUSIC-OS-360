@@ -63,7 +63,7 @@ export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFo
         reset({
           name: member.name || "",
           email: member.email || "",
-          phone: member.telefone || "",
+          phone: member.phone || "",
           status: member.status || "ativo",
           accessLevel: member.role || "",
         });
