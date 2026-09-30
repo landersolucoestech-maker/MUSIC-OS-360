@@ -66,11 +66,11 @@ const eventTypes = [
 ];
 
 const statusOptions = [
-  { value: "agendado", label: "Agendado" },
-  { value: "confirmado", label: "Confirmado" },
-  { value: "pendente", label: "Pendente" },
-  { value: "concluido", label: "Concluído" },
-  { value: "cancelado", label: "Cancelado" },
+  { value: "scheduled", label: "Agendado" },
+  { value: "confirmed", label: "Confirmado" },
+  { value: "pending", label: "Pendente" },
+  { value: "completed", label: "Concluído" },
+  { value: "cancelled", label: "Cancelado" },
 ];
 
 
@@ -108,19 +108,24 @@ const eventTypeAliases: Record<string, string> = {
   tour: "shows",
 };
 
+// Form status ids are the canonical English EventStatus values. The PT-BR
+// keys below are input-only aliases: callers outside this module (e.g. the
+// MusicChat prefill) and legacy drafts still hand the form PT-BR status words.
 const statusAliases: Record<string, string> = {
-  realizado: "concluido",
-  concluido: "concluido",
-  negociacao: "pendente",
+  agendado: "scheduled",
+  confirmado: "confirmed",
+  pendente: "pending",
+  concluido: "completed",
+  cancelado: "cancelled",
+  realizado: "completed",
+  negociacao: "pending",
+  adiado: "postponed",
+  planejado: "planned",
   // The real events.status from the backend is canonical English (EventStatus from
   // @music-os-360/types) — without this, editing an existing event matched
   // no Select option (it stayed blank).
-  scheduled: "agendado",
-  planned: "agendado",
-  confirmed: "confirmado",
-  held: "concluido",
-  completed: "concluido",
-  cancelled: "cancelado",
+  planned: "scheduled",
+  held: "completed",
 };
 
 const normalizeSelectValue = (value: unknown, aliases: Record<string, string>) => {
@@ -195,7 +200,7 @@ const getInitialFormData = (event?: any) => {
     eventType: normalizeSelectValue(event?.type, eventTypeAliases),
     artistId: event?.artist_id || "",
     participants: normalizeScheduleParticipants(event?.participants ?? meta["participants"]),
-    status: normalizeSelectValue(event?.status, statusAliases) || "agendado",
+    status: normalizeSelectValue(event?.status, statusAliases) || "scheduled",
     startDate: normalizeEventDate(event?.starts_at),
     startTime: normalizeTimeValue(toDateOrUndefined(event?.starts_at)),
     endDate: normalizeEventDate(event?.end_date),
@@ -323,7 +328,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
     ...formData,
     title: String(formData.title || event?.title || "").trim(),
     eventType: normalizeSelectValue(formData.eventType || event?.type, eventTypeAliases),
-    status: normalizeSelectValue(formData.status || event?.status, statusAliases) || "agendado",
+    status: normalizeSelectValue(formData.status || event?.status, statusAliases) || "scheduled",
     startDate: normalizeDate(formData.startDate) ?? normalizeEventDate(event?.starts_at),
     endDate: normalizeDate(formData.endDate) ?? normalizeEventDate(event?.end_date),
     startTime: normalizeTimeValue(formData.startTime),
@@ -434,21 +439,15 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
     return Number.isFinite(n) ? n : undefined;
   };
 
-  // Maps frontend status (pt-BR) → backend UpdateEventDto.status enum.
+  // Maps the form status id (English, already alias-normalized) → backend UpdateEventDto.status enum.
   // Backend enum (EventStatus, @music-os-360/types): planned | scheduled |
   // confirmed | held | completed | cancelled | postponed
   const mapStatusToBackend = (status: string): string | undefined => {
     const s = (status || "").toLowerCase();
     const map: Record<string, string> = {
-      agendado:    "scheduled",
-      pendente:    "scheduled",
-      confirmado:  "confirmed",
-      cancelado:   "cancelled",
-      concluido:   "completed",
-      realizado:   "held",
-      planejado:   "planned",
+      pending:     "scheduled",
+      planned:     "planned",
       postponed:   "postponed",
-      adiado:      "postponed",
       scheduled:   "scheduled",
       confirmed:   "confirmed",
       cancelled:   "cancelled",

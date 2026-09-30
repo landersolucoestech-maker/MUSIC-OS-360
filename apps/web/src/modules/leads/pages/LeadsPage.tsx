@@ -33,7 +33,7 @@ export default function LeadsPage() {
   const [editingLead,      setEditingLead]      = useState<Lead | null>(null);
   const [viewLead,         setViewLead]         = useState<Lead | null>(null);
   const [contactModalOpen, setContactModalOpen] = useState(false);
-  const [activeTab,        setActiveTab]        = useState<"contatos" | "leads">("contatos");
+  const [activeTab,        setActiveTab]        = useState<"contacts" | "leads">("contacts");
 
   const responsiblePeople = useMemo(
     () => Array.from(
@@ -65,10 +65,10 @@ export default function LeadsPage() {
       contacts.filter((c) => c.category !== undefined && types.includes(c.category)).length;
     return {
       total:        contacts.length,
-      clientes:     countBy(["CORPORATE_CLIENT"]),
-      parceiros:    countBy(["PARTNER"]),
-      fornecedores: countBy(["SUPPLIER"]),
-      prestadores:  countBy(["SERVICE_PROVIDER"]),
+      clients:      countBy(["CORPORATE_CLIENT"]),
+      partners:     countBy(["PARTNER"]),
+      suppliers:    countBy(["SUPPLIER"]),
+      providers:    countBy(["SERVICE_PROVIDER"]),
     };
   }, [contacts]);
 
@@ -116,13 +116,13 @@ export default function LeadsPage() {
       description="Central de relacionamento operacional"
       actions={topbarActions}
     >
-      {activeTab === "contatos" ? (
+      {activeTab === "contacts" ? (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-testid="contatos-kpis">
           <Kpi label="Total de contatos" value={contactsKpis.total}        />
-          <Kpi label="Clientes"          value={contactsKpis.clientes}     />
-          <Kpi label="Parceiros"         value={contactsKpis.parceiros}    />
-          <Kpi label="Fornecedores"      value={contactsKpis.fornecedores} />
-          <Kpi label="Prestadores"       value={contactsKpis.prestadores}  />
+          <Kpi label="Clientes"          value={contactsKpis.clients}      />
+          <Kpi label="Parceiros"         value={contactsKpis.partners}     />
+          <Kpi label="Fornecedores"      value={contactsKpis.suppliers}    />
+          <Kpi label="Prestadores"       value={contactsKpis.providers}    />
         </section>
       ) : (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-testid="leads-kpis">
@@ -136,7 +136,7 @@ export default function LeadsPage() {
 
       <Tabs
         value={activeTab}
-        onValueChange={(v) => setActiveTab(v as "contatos" | "leads")}
+        onValueChange={(v) => setActiveTab(v as "contacts" | "leads")}
         className="mt-6 space-y-6"
       >
         <TabsList
@@ -144,7 +144,7 @@ export default function LeadsPage() {
           data-testid="crm-tabs-list"
         >
           <TabsTrigger
-            value="contatos"
+            value="contacts"
             className="relative h-10 gap-2 rounded-none border-b-2 border-transparent bg-transparent px-4 text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground"
             data-testid="tab-contatos"
           >
@@ -167,7 +167,7 @@ export default function LeadsPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="contatos" data-testid="tab-content-contatos">
+        <TabsContent value="contacts" data-testid="tab-content-contatos">
           <ContactsPanel />
         </TabsContent>
 

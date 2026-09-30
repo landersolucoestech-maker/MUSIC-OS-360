@@ -2,8 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
-import { Checkbox } from "@/shared/ui/checkbox";
-import { Calendar, Clock, MapPin, User, Phone, Mail, Users, DollarSign, Tag, FileText, Pencil, Building2, CheckSquare } from "lucide-react";
+import { Calendar, Clock, MapPin, User, Phone, Mail, Users, DollarSign, Tag, FileText, Pencil, Building2 } from "lucide-react";
 import { formatCurrency, formatDate, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { normalizeScheduleParticipants, useScheduleParticipants } from "@/modules/events/hooks/useScheduleParticipants";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
@@ -74,8 +73,6 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
             category: "Artista",
           }]
         : [];
-  const checklist: Array<{ item: string; concluido: boolean }> = Array.isArray(event.checklist) ? event.checklist : [];
-  const checklistDone = checklist.filter(c => c.concluido).length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -228,24 +225,6 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                   <p className="text-sm text-foreground whitespace-pre-wrap" data-testid="text-evento-descricao">
                     {event.description}
                   </p>
-                </CardContent>
-              </Card>
-            </Section>
-          )}
-
-          {/* CHECKLIST */}
-          {checklist.length > 0 && (
-            <Section title={`Checklist (${checklistDone}/${checklist.length})`} icon={CheckSquare}>
-              <Card>
-                <CardContent className="p-4 space-y-2">
-                  {checklist.map((c, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm">
-                      <Checkbox checked={c.concluido} disabled className="pointer-events-none" />
-                      <span className={c.concluido ? "line-through text-muted-foreground" : "text-foreground"}>
-                        {c.item}
-                      </span>
-                    </div>
-                  ))}
                 </CardContent>
               </Card>
             </Section>

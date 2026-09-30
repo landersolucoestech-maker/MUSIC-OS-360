@@ -14,21 +14,21 @@ import type { Contact, ContactType } from "../types";
 // Quick filters by category
 // ─────────────────────────────────────────────
 type TypeFilter =
-  | "todos"
-  | "clientes"
-  | "parceiros"
-  | "fornecedores"
-  | "contratantes"
-  | "prestadores";
+  | "all"
+  | "clients"
+  | "partners"
+  | "suppliers"
+  | "contractors"
+  | "providers";
 
 const FILTERS: ReadonlyArray<{ value: TypeFilter; label: string; types: ContactType[] }> = [
-  { value: "todos",        label: "Todos",        types: [] },
-  { value: "clientes",     label: "Clientes",     types: ["CORPORATE_CLIENT"] },
-  { value: "parceiros",    label: "Parceiros",    types: ["PARTNER"] },
-  { value: "fornecedores", label: "Fornecedores", types: ["SUPPLIER"] },
+  { value: "all",          label: "Todos",        types: [] },
+  { value: "clients",      label: "Clientes",     types: ["CORPORATE_CLIENT"] },
+  { value: "partners",     label: "Parceiros",    types: ["PARTNER"] },
+  { value: "suppliers",    label: "Fornecedores", types: ["SUPPLIER"] },
   // ✅ "BRAND" removed — it does not exist in ContactType
-  { value: "contratantes", label: "Contratantes", types: ["CORPORATE_CLIENT"] },
-  { value: "prestadores",  label: "Prestadores",  types: ["SERVICE_PROVIDER"] },
+  { value: "contractors",  label: "Contratantes", types: ["CORPORATE_CLIENT"] },
+  { value: "providers",    label: "Prestadores",  types: ["SERVICE_PROVIDER"] },
 ];
 
 // ─────────────────────────────────────────────
@@ -42,7 +42,7 @@ export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, neve
   function ContactsPanel(_, ref) {
     const { contacts, isLoading, createContact, updateContact, deleteContact } = useContacts();
 
-    const [filter, setFilter]         = useState<TypeFilter>("todos");
+    const [filter, setFilter]         = useState<TypeFilter>("all");
     const [search, setSearch]         = useState("");
     const [viewContact, setViewContact] = useState<Contact | null>(null);
     const [editContact, setEditContact] = useState<Contact | null>(null);
