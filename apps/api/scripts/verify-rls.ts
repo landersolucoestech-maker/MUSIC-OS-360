@@ -138,8 +138,8 @@ async function main(): Promise<void> {
     if (tableOk) {
       console.log(`  ✓  ${table}`);
       for (const policy of policies) {
-        const qualSnippet = policy.qual ? policy.qual.substring(0, 80) : '—';
-        console.log(`       [${policy.cmd.padEnd(6)}] ${policy.policyname}: ${qualSnippet}`);
+        const policyExpressionSnippet = policy.qual ? policy.qual.substring(0, 80) : '—';
+        console.log(`       [${policy.cmd.padEnd(6)}] ${policy.policyname}: ${policyExpressionSnippet}`);
       }
     } else {
       console.log(`  ✗  ${table}`);

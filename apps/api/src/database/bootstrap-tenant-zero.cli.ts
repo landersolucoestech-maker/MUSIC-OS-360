@@ -110,7 +110,7 @@ async function run(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`\n[MUSIC OS 360] Bootstrap do tenant-zero — LANDER RECORDS (env=${env}, owner=${ownerEmail ? 'real' : 'sintético'})…`);
+  console.log(`\n[MUSIC OS 360] Tenant-zero bootstrap — LANDER RECORDS (env=${env}, owner=${ownerEmail ? 'real' : 'synthetic'})…`);
 
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
@@ -144,7 +144,7 @@ async function run(): Promise<void> {
     );
 
     if (realOwner) {
-      console.log(`  ✓ Owner real: ${realOwner.email} (${ownerCreated ? 'criado agora' : 'já existia, reutilizado'})`);
+      console.log(`  ✓ Real owner: ${realOwner.email} (${ownerCreated ? 'created now' : 'already existed, reused'})`);
       if (provisionalPassword) {
         const acceptedRisk = process.env['TENANT_ZERO_PRINT_PASSWORD_I_ACCEPT_THE_RISK'] === 'yes';
         if (process.stdout.isTTY || acceptedRisk) {

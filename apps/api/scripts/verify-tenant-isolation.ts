@@ -248,7 +248,7 @@ async function main(): Promise<void> {
       await client.query(`DELETE FROM organizations WHERE id IN ($1, $2)`, [orgA, orgB]);
       ok('Test data removed');
     } catch (cleanErr) {
-      console.warn(`  ⚠  Cleanup parcial: ${(cleanErr as Error).message}`);
+      console.warn(`  ⚠  Partial cleanup: ${(cleanErr as Error).message}`);
     }
 
     await client.end();

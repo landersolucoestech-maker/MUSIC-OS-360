@@ -241,7 +241,11 @@ describe('ArtistsService', () => {
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
     const error = await service.update(TENANT_A, USER_ID, 'artist-001', { status: 'active' } as any).catch((e: Error) => e);
-    expect((error as Error).message).toBe('Gênero musical obrigatório para ativar o artista; Informe e-mail ou telefone para ativar o artista');
+    expect((error as any).getResponse()).toEqual({
+      statusCode: 400,
+      error: 'VALIDATION_FAILED',
+      message: ['Gênero musical obrigatório para ativar o artista', 'Informe e-mail ou telefone para ativar o artista'],
+    });
     expect((error as Error).message).not.toMatch(/music_genre|\bphone\b|\bemail\b/);
     expect(ds._repo.update).not.toHaveBeenCalled();
   });

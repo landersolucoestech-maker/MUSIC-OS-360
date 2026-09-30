@@ -5,13 +5,13 @@ import { EVENT_LABELS } from './notification.handler';
 /** Notification titles are end-user copy: no raw status enum, UUID or entity type. */
 describe('notification titles carry no technical identifiers', () => {
   const payload: Record<string, unknown> = {
-    stageName: 'Ana', title: 'Contrato X', numero: '123', valor: '1500.5', fileName: 'capa.png',
+    stageName: 'Ana', title: 'Contrato X', invoiceNumber: '123', amount: '1500.5', fileName: 'capa.png',
     newStatus: 'under_review', toStatus: 'distributed', entityType: 'release', type: 'income',
     transactionId: '7f3c9b2e-0000-4000-8000-000000000001',
     invoiceId: '7f3c9b2e-0000-4000-8000-000000000002',
     artistId: '7f3c9b2e-0000-4000-8000-000000000003',
     entityId: '7f3c9b2e-0000-4000-8000-000000000004',
-    email: 'a@b.co', name: 'Conta', nome: 'Lead', daysLeft: 3, dataVencimento: '2026-10-01',
+    email: 'a@b.co', name: 'Conta', daysLeft: 3, dueAt: '2026-10-01',
   };
 
   it.each(Object.keys(EVENT_LABELS))('%s', (event) => {

@@ -124,7 +124,7 @@ export class ContractWorkflowHandler {
             tenantId,
             title,
             artistId: artistId ?? null,
-            valor: amountStr,
+            amount: amountStr,
             readyAt: signedAt,
             integrations: ['distribution', 'financial', 'society-data-exchange'],
           },

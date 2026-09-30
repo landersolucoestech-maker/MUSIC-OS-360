@@ -136,7 +136,7 @@ export class WorkflowExecutionService {
           executionId,
           tenantId: params.tenantId,
           ruleId: params.ruleId,
-          errorMessage: params.error ?? 'Todas as ações falharam',
+          errorCode: 'WORKFLOW_EXECUTION_FAILED',
           finishedAt: finishedAt.toISOString(),
         },
       });

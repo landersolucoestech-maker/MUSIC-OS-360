@@ -497,7 +497,8 @@ export class ArtistsService {
       if (!genre)                 errors.push('Gênero musical obrigatório para ativar o artista');
       if (!hasEmail && !hasPhone) errors.push('Informe e-mail ou telefone para ativar o artista');
 
-      if (errors.length > 0) throw new BadRequestException(errors.join('; '));
+      // Same wire shape as the global ValidationPipe: stable code + PT-BR message list.
+      if (errors.length > 0) throw new BadRequestException({ statusCode: 400, error: 'VALIDATION_FAILED', message: errors });
     }
 
     // signed: a contract must be linked in the update or already exist

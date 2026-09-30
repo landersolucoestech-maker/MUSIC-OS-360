@@ -130,7 +130,7 @@ describe('PHASE 3J — transparent tenant context in the request-path (real Post
   let appProxied: DataSource;
   let dbContext: DatabaseContextService;
   // Captured ONCE, outside any context — exactly like the services do.
-  let convRepoCapturadoNoConstrutor: Repository<ConversationEntity>;
+  let conversationRepoCapturedAtConstruction: Repository<ConversationEntity>;
   const TAG = `RC_${Date.now()}`;
   const tagA = `${TAG}_A`;
   const tagB = `${TAG}_B`;
@@ -149,7 +149,7 @@ describe('PHASE 3J — transparent tenant context in the request-path (real Post
       { get: () => 'true' } as unknown as ConstructorParameters<typeof DatabaseContextService>[1],
     );
     // ↓↓↓ captured in the "constructor" (no active context) — the point that broke in 3I
-    convRepoCapturadoNoConstrutor = appProxied.getRepository(ConversationEntity);
+    conversationRepoCapturedAtConstruction = appProxied.getRepository(ConversationEntity);
 
     await owner.query(
       `INSERT INTO conversations (id,tenant_id,subject,status,channel) VALUES (gen_random_uuid(),$1,$2,'pending','whatsapp')`,
@@ -168,7 +168,7 @@ describe('PHASE 3J — transparent tenant context in the request-path (real Post
   });
 
   it('WITHOUT context (bug 3I reproduced): captured repo sees 0 rows in conversations FORCE-RLS', async () => {
-    const rows = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagA as never } });
+    const rows = await conversationRepoCapturedAtConstruction.find({ where: { subject: tagA as never } });
     expect(rows.length).toBe(0); // private_get_tenant_id() = NULL → deny
   });
 
@@ -177,8 +177,8 @@ describe('PHASE 3J — transparent tenant context in the request-path (real Post
       const pid = (await appProxied.query(`SELECT private_get_tenant_id() p`))[0].p;
       expect(pid).toBe(TENANT_A);
 
-      const a = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagA as never } });
-      const b = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagB as never } });
+      const a = await conversationRepoCapturedAtConstruction.find({ where: { subject: tagA as never } });
+      const b = await conversationRepoCapturedAtConstruction.find({ where: { subject: tagB as never } });
       expect(a.length).toBe(1);   // sees A
       expect(b.length).toBe(0);   // does NOT see B (RLS isolation)
     });
@@ -186,8 +186,8 @@ describe('PHASE 3J — transparent tenant context in the request-path (real Post
 
   it('WITH context (Tenant B): the SAME repo sees only B', async () => {
     await dbContext.runInTenantContext({ tenantId: TENANT_B, orgId: null, role: null }, async () => {
-      const a = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagA as never } });
-      const b = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagB as never } });
+      const a = await conversationRepoCapturedAtConstruction.find({ where: { subject: tagA as never } });
+      const b = await conversationRepoCapturedAtConstruction.find({ where: { subject: tagB as never } });
       expect(a.length).toBe(0);
       expect(b.length).toBe(1);
     });
@@ -197,8 +197,8 @@ describe('PHASE 3J — transparent tenant context in the request-path (real Post
     // Valid INSERT (there's no rollback at the end of the context — runInTenantContext commits;
     // that's why we use a subject with TAG and clean up in afterAll).
     await dbContext.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, async () => {
-      const saved = await convRepoCapturadoNoConstrutor.save(
-        convRepoCapturadoNoConstrutor.create({
+      const saved = await conversationRepoCapturedAtConstruction.save(
+        conversationRepoCapturedAtConstruction.create({
           tenant_id: TENANT_A, subject: `${TAG}_INS_A`, status: 'pending' as never, channel: 'whatsapp' as never,
         }),
       );
@@ -212,8 +212,8 @@ describe('PHASE 3J — transparent tenant context in the request-path (real Post
     let code = '';
     try {
       await dbContext.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, async () => {
-        await convRepoCapturadoNoConstrutor.save(
-          convRepoCapturadoNoConstrutor.create({
+        await conversationRepoCapturedAtConstruction.save(
+          conversationRepoCapturedAtConstruction.create({
             tenant_id: TENANT_B, subject: `${TAG}_INS_X`, status: 'pending' as never, channel: 'whatsapp' as never,
           }),
         );

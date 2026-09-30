@@ -145,12 +145,12 @@ interface TableCfg {
   replaceFixtureForValidInsert?: boolean;
 }
 
-const SUBLOTE_A: TableCfg[] = [
+const SUBBATCH_A: TableCfg[] = [
   { table: 'inventory_items', extra: () => ({ name: 'RLS_TEST' }) },
   { table: 'licenses',        extra: () => ({ title: 'RLS_TEST' }) },
   { table: 'financial_rules', extra: () => ({ name: 'RLS_TEST', type: 'tax' }) },
 ];
-const SUBLOTE_B: TableCfg[] = [
+const SUBBATCH_B: TableCfg[] = [
   { table: 'assets',           extra: () => ({ name: 'RLS_TEST', source: 'upload' }) },
   { table: 'asset_versions',   extra: () => ({ asset_id: randomUUID(), file_url: 'http://x/a' }) },
   { table: 'project_assets',   extra: () => ({ project_id: randomUUID(), asset_id: randomUUID() }) },
@@ -160,7 +160,7 @@ const SUBLOTE_B: TableCfg[] = [
 
 // PHASE 3D — Batch 3C-A (19 tables). uuid columns without FK use a random
 // uuid; the 3 with a real FK seed the parent per tenant via `parents`.
-const SUBLOTE_3CA: TableCfg[] = [
+const SUBBATCH_3CA: TableCfg[] = [
   { table: 'audiovisual_projects',        extra: () => ({ title: 'RLS_TEST' }) },
   { table: 'audiovisual_briefings',       extra: () => ({ audiovisual_project_id: randomUUID() }) },
   { table: 'audiovisual_shots',           extra: () => ({ audiovisual_project_id: randomUUID() }) },
@@ -187,7 +187,7 @@ const SUBLOTE_3CA: TableCfg[] = [
                                           extra: (fk) => ({ artist_id: fk.artist_id, platform: 'spotify_' + randomUUID().slice(0, 8) }) },
 ];
 
-const SUBLOTE_MUSICCHAT_AUTOMATION: TableCfg[] = [
+const SUBBATCH_MUSICCHAT_AUTOMATION: TableCfg[] = [
   {
     table: 'musicchat_automation_settings',
     replaceFixtureForValidInsert: true,
@@ -225,7 +225,7 @@ const SUBLOTE_MUSICCHAT_AUTOMATION: TableCfg[] = [
   },
 ];
 
-const SUBLOTE_SKILL_WORKFLOW_EXECUTIONS: TableCfg[] = [
+const SUBBATCH_SKILL_WORKFLOW_EXECUTIONS: TableCfg[] = [
   {
     table: 'skill_runs',
     extra: () => ({
@@ -244,7 +244,7 @@ const SUBLOTE_SKILL_WORKFLOW_EXECUTIONS: TableCfg[] = [
 
 // PHASE 3V-A — representatives of the 3 harmonized families (RAW ::uuid → standard).
 // Same uniform policy applied to all 21; here we validate the behavior.
-const SUBLOTE_HARMONIZED_3VA: TableCfg[] = [
+const SUBBATCH_HARMONIZED_3VA: TableCfg[] = [
   { table: 'conversations',    extra: () => ({}) },                                  // FORCE-RLS
   // 'forms' removed: table dropped by DropGenericFormsModule20260822000005
   // (deliberate product decision — the generic forms module was retired).
@@ -253,7 +253,7 @@ const SUBLOTE_HARMONIZED_3VA: TableCfg[] = [
 
 // PHASE 3V-B — representatives of the 2 harmonized families (RAW ::text → standard).
 // financial_* (FORCE ON) and marketing_* (FORCE OFF); identical policy to the 15.
-const SUBLOTE_HARMONIZED_3VB: TableCfg[] = [
+const SUBBATCH_HARMONIZED_3VB: TableCfg[] = [
   {
     table: 'financial_categories',
     extra: () => ({
@@ -317,13 +317,13 @@ describe('RLS isolation harness (PHASE 3B) — real PostgreSQL', () => {
   };
 
   const ALL = [
-    ...SUBLOTE_A,
-    ...SUBLOTE_B,
-    ...SUBLOTE_3CA,
-    ...SUBLOTE_MUSICCHAT_AUTOMATION,
-    ...SUBLOTE_SKILL_WORKFLOW_EXECUTIONS,
-    ...SUBLOTE_HARMONIZED_3VA,
-    ...SUBLOTE_HARMONIZED_3VB,
+    ...SUBBATCH_A,
+    ...SUBBATCH_B,
+    ...SUBBATCH_3CA,
+    ...SUBBATCH_MUSICCHAT_AUTOMATION,
+    ...SUBBATCH_SKILL_WORKFLOW_EXECUTIONS,
+    ...SUBBATCH_HARMONIZED_3VA,
+    ...SUBBATCH_HARMONIZED_3VB,
   ];
 
   describe.each(ALL)('%s', (cfg: TableCfg) => {

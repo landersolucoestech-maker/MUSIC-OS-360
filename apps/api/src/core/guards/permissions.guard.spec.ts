@@ -158,7 +158,7 @@ describe('PermissionsGuard — enforcement ON', () => {
 
 // ── Parity / coexistence @RequireRole + @RequirePermission ────────────────────
 describe('Coexistence @RequireRole + @RequirePermission (pilot parity)', () => {
-  class PilotoArtistsController {
+  class PilotArtistsController {
     @RequireRole('viewer')
     @RequirePermission('artist:read')
     list(): void {}
@@ -171,7 +171,7 @@ describe('Coexistence @RequireRole + @RequirePermission (pilot parity)', () => {
     @RequirePermission('artist:delete')
     remove(): void {}
   }
-  const proto = PilotoArtistsController.prototype;
+  const proto = PilotArtistsController.prototype;
 
   it('each route carries BOTH metadata sets (role + permission)', () => {
     expect(Reflect.getMetadata(ROLES_KEY, proto.list)).toEqual(['viewer']);

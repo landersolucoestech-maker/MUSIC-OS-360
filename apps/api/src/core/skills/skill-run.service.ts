@@ -15,6 +15,7 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { SkillRunEntity, SkillRunLogEntity } from '../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../events/events.service';
 import { CorrelationContext } from '../events/correlation.context';
+import type { ApiErrorCode } from '@music-os-360/types';
 
 export type SkillRunStatus = 'pending' | 'running' | 'success' | 'failed' | 'cancelled';
 export type SkillLogLevel = 'debug' | 'info' | 'warn' | 'error';
@@ -33,6 +34,17 @@ export interface SkillRunStartParams {
 export interface SkillRunContext {
   runId: string;
   log: (level: SkillLogLevel, message: string, payload?: Record<string, unknown>) => Promise<void>;
+}
+
+/**
+ * Wire shape of a skill run. The persisted `error_message` (raw runtime/provider
+ * text) stays internal: clients receive the stable `error_code` only.
+ */
+export type PublicSkillRun = Omit<SkillRunEntity, 'error_message'> & { error_code: ApiErrorCode | null };
+
+export function toPublicSkillRun(run: SkillRunEntity): PublicSkillRun {
+  const { error_message: rawError, ...rest } = run;
+  return { ...rest, error_code: run.status === 'failed' || rawError ? 'SKILL_RUN_FAILED' : null };
 }
 
 @Injectable()
@@ -148,7 +160,7 @@ export class SkillRunService {
       tenantId,
       aggregateType: 'skill_run',
       aggregateId: runId,
-      payload: { skillRunId: runId, tenantId, skillName, errorMessage, finishedAt: finishedAt.toISOString() },
+      payload: { skillRunId: runId, tenantId, skillName, errorCode: 'SKILL_RUN_FAILED', finishedAt: finishedAt.toISOString() },
     });
   }
 
@@ -156,7 +168,7 @@ export class SkillRunService {
   async listRuns(
     tenantId: string,
     opts: { skillName?: string; status?: string; limit?: number; offset?: number } = {},
-  ): Promise<{ data: SkillRunEntity[]; total: number; limit: number; offset: number }> {
+  ): Promise<{ data: PublicSkillRun[]; total: number; limit: number; offset: number }> {
     const limit = Math.min(Math.max(Number(opts.limit) || 25, 1), 100);
     const offset = Math.max(Number(opts.offset) || 0, 0);
     if (!this.runRepo) return { data: [], total: 0, limit, offset };
@@ -171,7 +183,7 @@ export class SkillRunService {
       take: limit,
       skip: offset,
     });
-    return { data, total, limit, offset };
+    return { data: data.map(toPublicSkillRun), total, limit, offset };
   }
 
   /**
@@ -202,14 +214,18 @@ export class SkillRunService {
   async getRun(
     tenantId: string,
     runId: string,
-  ): Promise<{ run: SkillRunEntity; logs: SkillRunLogEntity[] } | null> {
+  ): Promise<{ run: PublicSkillRun; logs: SkillRunLogEntity[] } | null> {
     if (!this.runRepo) return null;
     const run = await this.runRepo.findOne({ where: { id: runId, tenant_id: tenantId } });
     if (!run) return null;
     const logs = this.logRepo
       ? await this.logRepo.find({ where: { skill_run_id: runId }, order: { created_at: 'ASC' } })
       : [];
-    return { run, logs };
+    // error-level lines carry raw runtime/provider text: they stay in the table, the wire gets the stable code.
+    const publicLogs = logs.map((l) =>
+      l.level === 'error' ? { ...l, message: 'SKILL_RUN_FAILED', payload: null } : l,
+    );
+    return { run: toPublicSkillRun(run), logs: publicLogs };
   }
 
   /**

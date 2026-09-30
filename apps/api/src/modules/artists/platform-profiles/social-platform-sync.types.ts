@@ -1,3 +1,4 @@
+import { classifyFailureCode, type ApiErrorCode } from '@music-os-360/types';
 import type { ArtistPlatformProfileEntity } from '../../../database/entities';
 
 export const SOCIAL_PLATFORMS = ['spotify', 'youtube', 'deezer', 'soundcloud', 'instagram', 'tiktok', 'apple-music'] as const;
@@ -110,4 +111,24 @@ export function toSocialPlatformSnapshot(entity: ArtistPlatformProfileEntity): S
     last_synced_at: entity.last_synced_at,
     last_error: entity.last_error,
   };
+}
+
+/**
+ * Public wire shape of a platform profile snapshot. The persisted `last_error`
+ * text (provider/HTTP/database diagnostics) never crosses the network: clients
+ * get the stable `last_error_code` only.
+ *
+ * `last_error` is kept for one release as a DEPRECATED alias that carries the
+ * same stable code (the web type still declares the field); remove it once the
+ * web type reads `last_error_code`.
+ */
+export type PublicSocialPlatformProfile = Omit<SocialPlatformProfileSnapshot, 'last_error'> & {
+  last_error_code: ApiErrorCode | null;
+  /** @deprecated carries the stable code, never raw text. Use `last_error_code`. */
+  last_error: ApiErrorCode | null;
+};
+
+export function toPublicSocialPlatformProfile(snapshot: SocialPlatformProfileSnapshot): PublicSocialPlatformProfile {
+  const code = snapshot.last_error ? classifyFailureCode(snapshot.last_error, 'SYNC_FAILED') : null;
+  return { ...snapshot, last_error_code: code, last_error: code };
 }

@@ -20,12 +20,12 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     const afterHeader = migrationSrc.split('newColumns = `')[1];
     const idIdx = afterHeader.indexOf('id ');
     const tenantIdx = afterHeader.indexOf('tenant_id ');
-    const fotoIdx = afterHeader.indexOf('foto_url ');
+    const photoUrlIdx = afterHeader.indexOf('foto_url ');
     const stageNameIdx = afterHeader.indexOf('nome_artistico ');
     expect(idIdx).toBeGreaterThanOrEqual(0);
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(fotoIdx).toBeGreaterThan(tenantIdx);
-    expect(stageNameIdx).toBeGreaterThan(fotoIdx);
+    expect(photoUrlIdx).toBeGreaterThan(tenantIdx);
+    expect(stageNameIdx).toBeGreaterThan(photoUrlIdx);
   });
 
   it('does not recreate org_slug in the new table (orphan removed) but validates it holds no data first', () => {

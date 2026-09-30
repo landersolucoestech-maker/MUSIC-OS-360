@@ -43,7 +43,7 @@ async function run(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`\n[MUSIC OS 360] Iniciando seeds (env=${env})…`);
+  console.log(`\n[MUSIC OS 360] Starting seeds (env=${env})…`);
 
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
@@ -60,7 +60,7 @@ async function run(): Promise<void> {
     const rbac = await seedRbac(AppDataSource);
     console.log(`  ✓ RBAC: ${rbac.permissions} permissions, ${rbac.roles} roles, ${rbac.rolePermissions} role_permissions`);
     const org = await seedOrgStructure(AppDataSource);
-    console.log(`  ✓ Organograma: ${org.tenants} tenant(s) × (${org.perTenant.departments} departments, ${org.perTenant.positions} positions, ${org.perTenant.jobFunctions} job_functions)`);
+    console.log(`  ✓ Org structure: ${org.tenants} tenant(s) × (${org.perTenant.departments} departments, ${org.perTenant.positions} positions, ${org.perTenant.jobFunctions} job_functions)`);
 
     console.log('\n[MUSIC OS 360] Seeds completed successfully.\n');
   } catch (err) {

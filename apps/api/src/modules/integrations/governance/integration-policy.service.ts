@@ -31,6 +31,7 @@ import {
   BillingPlanEntity,
   type IntegrationAudience,
 } from '../../../database/entities';
+import { classifyFailureCode, type ApiErrorCode } from '@music-os-360/types';
 import {
   ExternalProviderStatus,
   IntegrationStatus,
@@ -79,7 +80,8 @@ export interface ResolvedIntegration {
   connectionStatus: ExternalProviderStatus;
   missingRequirements: string[];
   lastErrorAt: string | null;
-  lastErrorReason: string | null;
+  /** Stable failure class; the raw reason stays in integration metadata (internal). */
+  lastErrorCode: ApiErrorCode | null;
 }
 
 export interface TenantPolicyContext {
@@ -359,7 +361,7 @@ export class IntegrationPolicyService {
       connectionStatus,
       missingRequirements,
       lastErrorAt:     isError ? ((integ?.metadata?.['last_failure_at'] as string) ?? null) : null,
-      lastErrorReason: isError ? ((integ?.metadata?.['last_failure_reason'] as string) ?? null) : null,
+      lastErrorCode: isError ? classifyFailureCode(integ?.metadata?.['last_failure_reason'], 'INTEGRATION_CALL_FAILED') : null,
     };
   }
 

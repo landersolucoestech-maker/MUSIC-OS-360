@@ -21,7 +21,7 @@ import { SyncPlatformProfileDto } from './dto/sync-platform-profile.dto';
 import { ArtistPlatformProfilesService } from './platform-profiles/artist-platform-profiles.service';
 import { ArtistMetricSnapshotsService } from './platform-profiles/artist-metric-snapshots.service';
 import { ArtistExternalProfileSyncService } from './platform-profiles/artist-external-profile-sync.service';
-import { isSocialPlatform } from './platform-profiles/social-platform-sync.types';
+import { isSocialPlatform, toPublicSocialPlatformProfile } from './platform-profiles/social-platform-sync.types';
 import { isMetricKey, type MetricKey } from './platform-profiles/metric-keys';
 import { computeGrowth, STANDARD_GROWTH_PERIODS_DAYS } from './platform-profiles/metric-growth.util';
 import { CareerStageService } from './platform-profiles/analytics/career-stage.service';
@@ -85,7 +85,7 @@ export class ArtistsController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     await this.service.findById(tenant.id, id);
-    return this.platformProfiles.findByArtist(tenant.id, id);
+    return (await this.platformProfiles.findByArtist(tenant.id, id)).map(toPublicSocialPlatformProfile);
   }
 
   @Get(':id/platform-profiles/:platform')
@@ -99,7 +99,8 @@ export class ArtistsController {
   ) {
     if (!isSocialPlatform(platform)) throw new BadRequestException('Plataforma inválida para sync de perfil do artista');
     await this.service.findById(tenant.id, id);
-    return this.platformProfiles.findByArtistAndPlatform(tenant.id, id, platform);
+    const snapshot = await this.platformProfiles.findByArtistAndPlatform(tenant.id, id, platform);
+    return snapshot ? toPublicSocialPlatformProfile(snapshot) : null;
   }
 
   @Get(':id/platform-profiles/:platform/history')

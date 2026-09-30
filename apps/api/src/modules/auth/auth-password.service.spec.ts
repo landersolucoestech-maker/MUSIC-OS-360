@@ -98,12 +98,12 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
   });
 
   it('does not block the change when the reuse check is not verifiable (no SUPABASE_ANON_KEY)', async () => {
-    const configSemAnon = {
+    const configWithoutAnonKey = {
       get: (key: string) => ({ SUPABASE_URL: 'https://test.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'service-role-key' })[key],
     } as any;
     updateUserByIdMock.mockResolvedValue({ data: {}, error: null });
     const audit = { log: jest.fn() };
-    const svc = new AuthPasswordService(configSemAnon, null, audit as any);
+    const svc = new AuthPasswordService(configWithoutAnonKey, null, audit as any);
 
     await expect(
       svc.changeRequiredPassword(buildAuth({ must_change_password: true }), 'tenant-1', dto(STRONG_PASSWORD), null),

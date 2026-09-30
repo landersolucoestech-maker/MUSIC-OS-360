@@ -8,6 +8,7 @@ import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { safeOrderBy } from '../../common/utils/safe-order-by';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { MARKETING_CONTENT_STATUS } from './marketing-vocabulary';
+import { classifyFailureCode } from '@music-os-360/types';
 
 @Injectable()
 export class MarketingContentsService {
@@ -213,7 +214,8 @@ export class MarketingContentsService {
       files: row.files ?? [],
       metadata: row.metadata ?? {},
       publishedAt: row.published_at?.toISOString(),
-      publicationError: row.publication_error ?? undefined,
+      // Raw provider text stays in the publication_error column (internal); clients get a stable code.
+      publicationErrorCode: row.publication_error ? classifyFailureCode(row.publication_error, 'PUBLICATION_FAILED') : undefined,
       createdAt: row.created_at.toISOString(),
       updatedAt: row.updated_at.toISOString(),
     };

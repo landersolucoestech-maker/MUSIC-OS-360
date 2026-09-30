@@ -84,11 +84,11 @@ async function bootstrap() {
   const port = process.env['PORT'] ?? 3001;
   await app.listen(port);
 
-  logger.log(`🎵 MUSIC OS 360° API rodando em http://localhost:${port}/api/v1`);
+  logger.log(`🎵 MUSIC OS 360° API listening on http://localhost:${port}/api/v1`);
 
   const { isProdLike } = await import('./core/config/runtime-environment');
   if (!isProdLike(process.env['NODE_ENV'])) {
-    logger.log(`📚 Swagger em http://localhost:${port}/docs`);
+    logger.log(`📚 Swagger at http://localhost:${port}/docs`);
   }
 }
 

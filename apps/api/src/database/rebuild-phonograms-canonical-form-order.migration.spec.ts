@@ -18,11 +18,11 @@ describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
     const tenantIdx = block.indexOf('tenant_id ');
     const workIdx = block.indexOf('obra_id ');
     const titleIdx = block.indexOf('titulo ');
-    const codEntidadeIdx = block.indexOf('cod_entidade ');
+    const entityCodeIdx = block.indexOf('cod_entidade ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
     expect(workIdx).toBeGreaterThan(tenantIdx);
     expect(titleIdx).toBeGreaterThan(workIdx);
-    expect(codEntidadeIdx).toBeGreaterThan(titleIdx);
+    expect(entityCodeIdx).toBeGreaterThan(titleIdx);
   });
 
   it('participacao and arquivo_audio (real, visible sections) come before the legacy fields', () => {

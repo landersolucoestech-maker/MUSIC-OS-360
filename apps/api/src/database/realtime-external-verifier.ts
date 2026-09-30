@@ -48,12 +48,12 @@ export interface RealtimeStateResult {
 // operators. Matching against the whole operator expression would be fragile —
 // pg_get_expr() may reformat it in ways that vary by Postgres
 // version.
-const EXPECTED_POLICIES: Record<string, { qualIncludes: string[] }> = {
+const EXPECTED_POLICIES: Record<string, { expressionFragments: string[] }> = {
   tenant_can_receive_broadcast: {
-    qualIncludes: ["'broadcast'", "'tenant:'", "'app_metadata'", "'org_id'"],
+    expressionFragments: ["'broadcast'", "'tenant:'", "'app_metadata'", "'org_id'"],
   },
   user_can_receive_own_broadcast: {
-    qualIncludes: ["'broadcast'", "'user:'", "'sub'"],
+    expressionFragments: ["'broadcast'", "'user:'", "'sub'"],
   },
 };
 
@@ -98,7 +98,7 @@ export function evaluateRealtimeState(input: RealtimeStateInput): RealtimeStateR
     const expected = EXPECTED_POLICIES[policy.policyname];
     if (!expected) continue;
     const qual = policy.qual ?? '';
-    const missing = expected.qualIncludes.filter((fragment) => !qual.includes(fragment));
+    const missing = expected.expressionFragments.filter((fragment) => !qual.includes(fragment));
     if (missing.length > 0) {
       return {
         state: 'INVALID_POLICY',

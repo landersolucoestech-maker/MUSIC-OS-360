@@ -17,6 +17,7 @@ import {
   PasswordChangeRequiredError,
   DEFAULT_USER_ERROR_MESSAGE,
 } from "./errors";
+import { API_ERROR_CODE_COPY_PT_BR } from "@music-os-360/types";
 import { API_BASE_URL, DEV_AUTH_BYPASS } from "./env";
 
 export interface ApiResponse<T> {
@@ -101,32 +102,7 @@ export type StorageTable = keyof typeof TABLE_ENDPOINT | keyof typeof PENDING_TA
  * default copy the UI falls back to when the server text is missing or unsafe.
  * Keep in sync with the API's `error: 'CODE'` producers (canonical map).
  */
-export const KNOWN_API_ERROR_CODES: Readonly<Record<string, string>> = {
-  VALIDATION_FAILED: "Os dados enviados são inválidos. Revise os campos e tente novamente.",
-  MUST_CHANGE_PASSWORD: "Troca de senha obrigatória antes de continuar.",
-  TENANT_SUSPENDED: "O workspace está suspenso. Entre em contato com o suporte.",
-  TENANT_READ_ONLY: "O workspace está em modo somente leitura.",
-  PERMISSION_DENIED: "Você não tem permissão para realizar esta ação.",
-  PLAN_LIMIT_REACHED: "O limite do seu plano foi atingido.",
-  R2_NOT_CONFIGURED: "O envio de arquivos não está disponível no momento.",
-  INVITE_CREATE_FAILED: "Não foi possível criar o convite. Tente novamente.",
-  INVITE_METADATA_FAILED: "Não foi possível criar o convite. Tente novamente.",
-  INVITE_RESEND_FAILED: "Não foi possível reenviar o convite. Tente novamente.",
-  SESSION_UPDATE_FAILED: "Não foi possível atualizar a sessão. Tente novamente.",
-  ROLE_UNKNOWN: "Papel desconhecido. Não é possível atribuí-lo.",
-  SYNC_QUEUE_UNAVAILABLE: "A sincronização está indisponível no momento. Tente novamente.",
-  PROFILE_NOT_FOUND: "Perfil não encontrado.",
-  INVALID_XLSX_WORKBOOK: "A planilha enviada é inválida.",
-  SINGLE_SHEET_REQUIRED: "A planilha deve conter uma única aba.",
-  UNSUPPORTED_IMPORT_FORMAT: "Formato de importação não suportado.",
-  UNSUPPORTED_EXPORT_FORMAT: "Formato de exportação não suportado.",
-  INVALID_IMPORT_SIZE: "O arquivo de importação excede o tamanho permitido.",
-  INVALID_IMPORT_ENCODING: "A codificação do arquivo de importação é inválida.",
-  IMPORT_PARSER_BUSY: "A importação está ocupada. Tente novamente em instantes.",
-  REPORT_ENTITY_NOT_AVAILABLE: "Este relatório não está disponível.",
-  REPORT_CONTRACT_REQUIRED: "Selecione um contrato para gerar este relatório.",
-  REPORT_EXPORT_TOO_LARGE: "O relatório é grande demais para exportar. Refine os filtros.",
-};
+export const KNOWN_API_ERROR_CODES: Readonly<Record<string, string>> = API_ERROR_CODE_COPY_PT_BR;
 
 /** PT-BR defaults by HTTP status, used when the server text cannot be trusted. */
 const STATUS_DEFAULT_COPY: Readonly<Record<number, string>> = {

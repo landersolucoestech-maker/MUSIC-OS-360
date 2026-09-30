@@ -203,7 +203,7 @@ async function main(): Promise<void> {
       await client.query(`DELETE FROM organizations WHERE id IN ($1, $2)`, [orgA, orgB]);
       ok('Synthetic data removed — zero residue');
     } catch (cleanErr) {
-      console.warn(`  ⚠  Cleanup parcial: ${(cleanErr as Error).message}`);
+      console.warn(`  ⚠  Partial cleanup: ${(cleanErr as Error).message}`);
     }
     await client.end();
   }
@@ -213,7 +213,7 @@ async function main(): Promise<void> {
   console.log(`  Tests failed : ${failed}`);
 
   if (failed === 0) {
-    console.log('\n  ✓ contract_service_types CRUD + tenant isolation VALIDADOS na DEV real.\n');
+    console.log('\n  ✓ contract_service_types CRUD + tenant isolation VALIDATED on real DEV.\n');
   } else {
     console.log('\n  ✗ CRITICAL FAILURES detected in contract_service_types.\n');
     process.exit(1);

@@ -71,6 +71,11 @@ describe('SkillRunService', () => {
     );
     const emitted = events.emitTyped.mock.calls.map((c: unknown[]) => c[0]);
     expect(emitted).toContain('skill.failed');
+    // Response-leak regression: the event payload carries a stable code, never the raw text.
+    const failed = events.emitTyped.mock.calls.find((c: unknown[]) => c[0] === 'skill.failed');
+    expect(failed?.[1].payload).toMatchObject({ errorCode: 'SKILL_RUN_FAILED' });
+    expect(JSON.stringify(failed?.[1].payload)).not.toContain('boom');
+    expect(failed?.[1].payload).not.toHaveProperty('errorMessage');
   });
 
   it('listRuns returns a paginated result and respects limits; getRun brings run + logs', async () => {

@@ -2,9 +2,17 @@ import { Injectable, Inject, NotFoundException, BadRequestException } from '@nes
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { SocietySyncJobEntity } from '../../../database/entities';
-import { SocietyDriver, SocietyName, SocietySyncJobStatus } from '@music-os-360/types';
+import { SocietyDriver, SocietyName, SocietySyncJobStatus, classifyFailureCode, type ApiErrorCode } from '@music-os-360/types';
 import { SocietyAdapterRegistry } from '../adapters/society-adapter.registry';
 import type { RunSyncDto } from '../dto/operations.dto';
+
+/** Wire shape of a sync job: the raw `error_message` stays internal, clients get `error_code`. */
+export type PublicSocietySyncJob = Omit<SocietySyncJobEntity, 'error_message'> & { error_code: ApiErrorCode | null };
+
+export function toPublicSocietySyncJob(job: SocietySyncJobEntity): PublicSocietySyncJob {
+  const { error_message: rawError, ...rest } = job;
+  return { ...rest, error_code: rawError ? classifyFailureCode(rawError, 'INTEGRATION_CALL_FAILED') : null };
+}
 
 /**
  * Status reconciliation jobs. With the MANUAL_EXPORT driver there is no external

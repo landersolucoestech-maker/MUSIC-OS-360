@@ -1,3 +1,4 @@
+import type { ApiErrorCode } from '@music-os-360/types';
 /**
  * domain-events.types.ts
  *
@@ -145,7 +146,7 @@ export interface ContractIntegrationReadyPayload {
   tenantId:     string;
   title:       string;
   artistId:     string | null;
-  valor:        string | null;
+  amount:       string | null;
   readyAt:      string;
   integrations: string[];
 }
@@ -537,7 +538,8 @@ export interface SkillFailedPayload {
   skillRunId:   string;
   tenantId:     string;
   skillName:    string;
-  errorMessage: string;
+  /** Stable code only; raw failure text stays in skill_run_logs / skill_runs.error_message. */
+  errorCode:    ApiErrorCode;
   finishedAt:   string;
 }
 
@@ -584,7 +586,8 @@ export interface WorkflowExecutionFailedPayload {
   executionId:  string;
   tenantId:     string | null;
   ruleId:       string;
-  errorMessage: string;
+  /** Stable code only; raw failure text stays in workflow_executions.error_message. */
+  errorCode:    ApiErrorCode;
   finishedAt:   string;
 }
 

@@ -12,7 +12,7 @@ import { casUpdate } from './optimistic-update.util';
  */
 interface TestRow {
   id: string;
-  nome?: string;
+  name?: string;
   x?: number;
 }
 
@@ -23,8 +23,8 @@ describe('casUpdate', () => {
 
   it('without expectedUpdatedAt: behaves exactly like a plain repo.update() (backward compatible)', async () => {
     const repo = buildRepo(1);
-    await casUpdate<TestRow>(repo, { id: '1' }, { nome: 'x' }, undefined);
-    expect(repo.update).toHaveBeenCalledWith({ id: '1' }, { nome: 'x' });
+    await casUpdate<TestRow>(repo, { id: '1' }, { name: 'x' }, undefined);
+    expect(repo.update).toHaveBeenCalledWith({ id: '1' }, { name: 'x' });
   });
 
   it('with expectedUpdatedAt: includes updated_at in the UPDATE criteria as a millisecond-truncated comparison', async () => {
@@ -35,11 +35,11 @@ describe('casUpdate', () => {
     // be a Raw() with date_trunc on both sides.
     const repo = buildRepo(1);
     const t = new Date('2026-08-14T10:00:00.000Z');
-    await casUpdate<TestRow>(repo, { id: '1' }, { nome: 'x' }, t.toISOString());
+    await casUpdate<TestRow>(repo, { id: '1' }, { name: 'x' }, t.toISOString());
 
     expect(repo.update).toHaveBeenCalledTimes(1);
     const [criteria, payload] = repo.update.mock.calls[0];
-    expect(payload).toEqual({ nome: 'x' });
+    expect(payload).toEqual({ name: 'x' });
     expect(criteria.id).toBe('1');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const op = criteria.updated_at as any;
@@ -55,7 +55,7 @@ describe('casUpdate', () => {
     // this test). B tries to save still against T0 -> WHERE does not match -> 0 rows.
     const repo = buildRepo(0);
     const t0 = new Date('2026-08-14T10:00:00.000Z').toISOString();
-    await expect(casUpdate<TestRow>(repo, { id: '1' }, { nome: 'edição de B' }, t0))
+    await expect(casUpdate<TestRow>(repo, { id: '1' }, { name: 'edição de B' }, t0))
       .rejects.toThrow(ConflictException);
     // B's write is never applied unconditionally after the 409 —
     // repo.update was called only ONCE, with the conditional criterion.
@@ -64,7 +64,7 @@ describe('casUpdate', () => {
 
   it('malformed expectedUpdatedAt -> 400, never silently ignored and applied without CAS', async () => {
     const repo = buildRepo(1);
-    await expect(casUpdate<TestRow>(repo, { id: '1' }, { nome: 'x' }, 'não-é-uma-data'))
+    await expect(casUpdate<TestRow>(repo, { id: '1' }, { name: 'x' }, 'não-é-uma-data'))
       .rejects.toThrow(BadRequestException);
     expect(repo.update).not.toHaveBeenCalled();
   });

@@ -395,9 +395,9 @@ export class LeadsService {
     const expectedUpdatedAt = dtoMap['expectedUpdatedAt'] as string | undefined;
     const conflictMessage = 'Este lead foi alterado por outro usuário desde que você o carregou. Recarregue e tente novamente.';
 
-    const { status: _s, email, phone, expectedUpdatedAt: _eua, ...restFields } = dtoMap;
+    const { status: _s, email, phone, expectedUpdatedAt: _expectedUpdatedAt, ...restFields } = dtoMap;
     void _s;
-    void _eua;
+    void _expectedUpdatedAt;
 
     const nonStatusUpdates: Record<string, unknown> = {
       updated_at: new Date(),
