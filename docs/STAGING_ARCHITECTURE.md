@@ -128,9 +128,8 @@ conector do claude.ai) ou credenciais fornecidas diretamente:
   TikTok, SoundCloud, DocuSign, Google Ads, ACRCloud, Autentique) — exigem
   criação/configuração de app nas respectivas plataformas, fora do alcance
   de qualquer ferramenta disponível aqui.
-- **Deploy platform** (API + Web) — no `vercel.json`/`railway.toml`/
-  `render.yaml`/`Procfile` exists in the repository; the only reachable Vercel
-  project (`lander-launchpad`) is unrelated. `staging.yml` is platform-agnostic:
+- **Deploy platform** (API + Web) — no platform-specific deploy manifest
+  exists in the repository. `staging.yml` is platform-agnostic:
   it calls a generic `STAGING_STOP_WEBHOOK_URL` (must stop every API instance,
   workers included, and keep it stopped) before any schema change and a generic
   `STAGING_DEPLOY_WEBHOOK_URL` (receives `{"ref":"<commit>"}`, deploys that commit and starts it with `BUILD_SHA=<commit>`, which `/api/v1/health/live` reports) —

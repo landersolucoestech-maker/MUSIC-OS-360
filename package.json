@@ -29,6 +29,7 @@
     "cleanup:check": "node scripts/cleanup/cleanup-check.mjs",
     "verify:critical-workflows": "node scripts/verify-critical-workflows.mjs",
     "verify:xlsx-only": "node scripts/verify-xlsx-only.mjs",
+    "verify:provider-residue": "node scripts/verify-provider-residue.mjs",
     "naming:census": "node scripts/naming/technical-naming-census.mjs --report",
     "naming:baseline": "node scripts/naming/technical-naming-census.mjs --write",
     "naming:generate": "node scripts/naming/render-naming-docs.mjs",

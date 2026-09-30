@@ -42,12 +42,8 @@ Always announce in `#ops-incident` Slack before executing a destructive step.
 Web is a static SPA. The simplest rollback is to redeploy the previous commit
 on the hosting platform.
 
-**Vercel/Netlify**:
-```bash
-# CLI rollback (Vercel)
-vercel rollback <previous-deployment-url>
-# or via dashboard: Project → Deployments → "..." on previous → Promote to production
-```
+**Static hosting platform**: redeploy the previous web build artifact (previous
+commit or image digest) using the platform's own rollback mechanism.
 
 **Cloudflare Pages**:
 - Dashboard → Pages → musicos360-web → Deployments → previous → "Rollback to this deployment"
@@ -291,7 +287,7 @@ If using a canary deployment (10% traffic to new version):
 kubectl patch service api -n prod --type=merge -p '{"spec":{"selector":{"version":"stable"}}}'
 ```
 
-Vercel/Netlify: re-promote previous build (§1 pattern).
+Static hosting: re-promote previous build (§1 pattern).
 
 Fly.io: `fly scale count 0 --process new-version`
 

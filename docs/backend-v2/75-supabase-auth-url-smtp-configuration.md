@@ -106,12 +106,12 @@ http://localhost:5000
 STAGING_WEB_URL:
 UNRESOLVED — nenhum domínio de staging real está comprometido no repositório. .env.staging define
   apenas `STAGING_API_URL=https://<STAGING_API_URL>` (placeholder), sem nenhuma variável de URL do WEB
-  de staging. Nenhum vercel.json/config de deployment contém um domínio.
+  de staging. Nenhum arquivo de configuração de deployment do repositório contém um domínio.
 
 PRODUCTION_WEB_URL:
 UNRESOLVED — .env.production define `FRONTEND_URL=https://<PRODUCTION_FRONTEND_DOMAIN>` (placeholder,
-  registrado deliberadamente assim no PROMPT 82, sem inventar domínio). apps/web/vercel.json não declara
-  alias/domínio (esse tipo de configuração vive no próprio Dashboard da Vercel, não no repositório).
+  registrado deliberadamente assim no PROMPT 82, sem inventar domínio). Nenhum arquivo do repositório declara
+  alias/domínio (esse tipo de configuração vive na plataforma de hospedagem, não no repositório).
 ```
 
 ---

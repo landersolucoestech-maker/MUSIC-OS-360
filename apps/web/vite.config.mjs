@@ -15,11 +15,13 @@ assertWebSupabaseEnv(guardMode, __dirname);
 
 // Part 75 — the commit actually packaged into the bundle, so the login screen
 // can show a safe environment/build identifier (never full URLs/keys) and
-// remove ambiguity about "which deploy is this". Vercel exposes the SHA via
-// VERCEL_GIT_COMMIT_SHA (not VITE_-prefixed, so it never reaches the client on
-// its own); outside Vercel (local build), it falls back to the real git HEAD.
+// remove ambiguity about "which deploy is this". An explicit BUILD_SHA (the same
+// variable the API health endpoint reports; injected by the build tooling and
+// not VITE_-prefixed, so it never reaches the client on its own) wins;
+// otherwise it falls back to the real git HEAD, then to "unknown".
 function resolveCommitSha() {
-  if (process.env.VERCEL_GIT_COMMIT_SHA) return process.env.VERCEL_GIT_COMMIT_SHA;
+  const explicitSha = process.env.BUILD_SHA?.trim();
+  if (explicitSha) return explicitSha;
   try {
     return execSync("git rev-parse HEAD", { cwd: __dirname }).toString().trim();
   } catch {

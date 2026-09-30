@@ -124,7 +124,7 @@ Cada workspace segue o **mesmo padrão visual e técnico**.
 ```
 Frontend:  React, TypeScript, Tailwind, shadcn/ui
 Backend:   NestJS, TypeORM, PostgreSQL
-Deploy:    Docker, Vercel/Railway
+Deploy:    Docker
 ```
 
 ### Novo Tecnicamente

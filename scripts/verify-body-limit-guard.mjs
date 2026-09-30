@@ -26,7 +26,7 @@ import ts from 'typescript';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // BUG FIXED: was apps/api/src/main.ts — the express.json({...}) body-limit
 // middleware moved to create-app.ts when main.ts's bootstrap() was
-// extracted into a shared createApp() (Vercel packaging part), so this
+// extracted into a shared createApp(), so this
 // path check had gone stale and started reporting a false "missing
 // entirely" the moment CI actually ran to completion again.
 const TARGET = path.resolve(__dirname, '..', 'apps/api/src/create-app.ts');

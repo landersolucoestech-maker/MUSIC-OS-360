@@ -48,7 +48,7 @@ Every production feature must satisfy:
 ## Current Execution Cut (2026-05-21) — ALL PHASES COMPLETE
 
 ### Phases 0–5 (Foundation — completed)
-- Removed runtime auth bypass surface and all Clerk references.
+- Removed runtime auth bypass surface and the legacy third-party auth provider references.
 - Kept explicit local `MOCK_MODE` for development only; production builds force it off.
 - Made production database/tenant/auth failures fail closed instead of passthrough.
 - Removed the duplicated workspace lockfile.

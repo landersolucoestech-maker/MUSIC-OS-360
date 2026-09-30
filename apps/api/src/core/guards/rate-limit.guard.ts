@@ -20,9 +20,8 @@ function firstForwardedIp(value: unknown): string | null {
 /**
  * find-fd6b5b2b: CF-Connecting-IP/X-Real-IP/X-Forwarded-For are all fully
  * client-settable and were trusted unconditionally, with no validation that
- * a trusted proxy actually set them — this app's confirmed deployment model
- * is dual (Docker long-running + Vercel serverless, docs/backend-v2/61),
- * with no single verified fronting-proxy topology. Trusting these headers
+ * a trusted proxy actually set them — this app's deployment model (Docker,
+ * long-running) has no single verified fronting-proxy topology. Trusting these headers
  * unconditionally let an attacker mint a fresh rate-limit bucket on every
  * request just by rotating the header value, defeating brute-force
  * protection on auth routes entirely.

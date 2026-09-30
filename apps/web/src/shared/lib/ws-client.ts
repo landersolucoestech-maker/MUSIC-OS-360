@@ -7,8 +7,8 @@ import { ALL_WS_EVENT_NAMES } from '@/shared/lib/ws-events';
 /**
  * Realtime transport for domain-event delivery — replaces the previous
  * Socket.IO client (`socket.io-client` + a persistent WS connection to the
- * NestJS API). Vercel Functions can't hold a persistent WebSocket between
- * invocations, so broadcasts now travel through Supabase Realtime instead:
+ * NestJS API). The API no longer holds a persistent WebSocket per client, so
+ * broadcasts now travel through Supabase Realtime instead:
  * the backend publishes to `tenant:<org_id>` / `user:<user_id>` topics
  * (see apps/api/src/core/realtime/realtime.service.ts), and this module
  * subscribes to both as PRIVATE channels — access is enforced by the RLS

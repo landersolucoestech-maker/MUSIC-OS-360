@@ -2,8 +2,8 @@
  * core/realtime/realtime.service.ts
  *
  * RealtimeService — replaces the Socket.IO WsGateway (core/websocket/) with
- * Supabase Realtime Broadcast, since Vercel Functions cannot hold a
- * persistent WebSocket connection between invocations.
+ * Supabase Realtime Broadcast, so the API does not need to hold a persistent
+ * WebSocket connection per client.
  *
  * Every broadcast is sent server-side using the service_role key, which
  * bypasses RLS entirely — no client is ever authorized to publish a domain
