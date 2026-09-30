@@ -24,10 +24,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <div className="bg-popover border border-border rounded-lg p-3">
         <p className="font-medium text-foreground mb-2">{label}</p>
         {payload.map((entry: any) => (
-          <p key={entry.name} className="text-sm" style={{ color: entry.color }}>
-            {entry.name === "receitas" && "Receitas: "}
-            {entry.name === "despesas" && "Despesas: "}
-            {entry.name === "lucro" && "Lucro: "}
+          <p key={entry.dataKey} className="text-sm" style={{ color: entry.color }}>
+            {entry.dataKey === "revenue" && "Receitas: "}
+            {entry.dataKey === "expenses" && "Despesas: "}
+            {entry.dataKey === "profit" && "Lucro: "}
             {formatCurrency(entry.value)}
           </p>
         ))}
@@ -75,9 +75,9 @@ export function FinanceChart() {
 
       return {
         name: label.charAt(0).toUpperCase() + label.slice(1),
-        receitas: income,
-        despesas: expenses,
-        lucro: income - expenses,
+        revenue: income,
+        expenses,
+        profit: income - expenses,
       };
     });
   }, [transactions]);
@@ -119,27 +119,30 @@ export function FinanceChart() {
               />
               <Area
                 type="monotone"
-                dataKey="receitas"
+                dataKey="revenue"
+                name="Receitas"
                 stroke="hsl(142, 76%, 36%)"
                 strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#colorReceitas)"
+                fill="url(#colorRevenue)"
               />
               <Area
                 type="monotone"
-                dataKey="despesas"
+                dataKey="expenses"
+                name="Despesas"
                 stroke="hsl(0, 84%, 60%)"
                 strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#colorDespesas)"
+                fill="url(#colorExpenses)"
               />
               <Area
                 type="monotone"
-                dataKey="lucro"
+                dataKey="profit"
+                name="Lucro"
                 stroke="hsl(221, 83%, 53%)"
                 strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#colorLucro)"
+                fill="url(#colorProfit)"
               />
             </AreaChart>
           </ResponsiveContainer>

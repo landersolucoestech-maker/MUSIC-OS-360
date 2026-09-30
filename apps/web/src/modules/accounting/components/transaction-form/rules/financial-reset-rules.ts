@@ -124,15 +124,15 @@ export function applyResets(
 }
 
 const HIDDEN_FIELD_RULES: Partial<Record<keyof FinancialFormRules, (keyof TransactionFormData)[]>> = {
-  exibirItemInvestimento: ["investmentItem"],
-  exibirArtista: ["artistId"],
-  exibirProjeto: ["projectId"],
-  exibirEvento: ["eventId"],
-  exibirFornecedor: ["counterpartyName"],
-  exibirOrgaoArrecadador: ["taxAuthority"],
-  exibirMotivoViagem: ["travelReason"],
-  exibirAdvertisingName: ["advertisingName"],
-  exibirParcelamento: ["installmentCount", "installmentInterval", "firstInstallmentDate"],
+  showInvestmentItem: ["investmentItem"],
+  showArtist: ["artistId"],
+  showProject: ["projectId"],
+  showEvent: ["eventId"],
+  showSupplier: ["counterpartyName"],
+  showCollectingAgency: ["taxAuthority"],
+  showTravelReason: ["travelReason"],
+  showAdvertisingName: ["advertisingName"],
+  showInstallments: ["installmentCount", "installmentInterval", "firstInstallmentDate"],
 };
 
 function getResetValue(field: keyof TransactionFormData): string {

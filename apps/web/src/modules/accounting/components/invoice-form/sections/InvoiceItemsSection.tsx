@@ -37,7 +37,7 @@ export function InvoiceItemsSection({
   return (
     <>
       {/* ── SERVICES / ITEMS ── */}
-      <section className="space-y-4" data-testid="section-servicos">
+      <section className="space-y-4" data-testid="section-services">
         <h3 className="text-base font-semibold border-b pb-1">Serviços</h3>
 
         <div className="space-y-2">
@@ -72,7 +72,7 @@ export function InvoiceItemsSection({
               <div
                 key={i}
                 className="grid grid-cols-12 gap-2 items-end p-3 border border-border rounded-lg"
-                data-testid={`item-nota-${i}`}
+                data-testid={`item-invoice-${i}`}
               >
                 <div className="col-span-12 md:col-span-5 space-y-1">
                   <Label className="text-xs">Descrição</Label>
@@ -138,7 +138,7 @@ export function InvoiceItemsSection({
                 <p className="text-xs text-muted-foreground">Total dos Serviços</p>
                 <p
                   className="text-xl font-bold text-foreground"
-                  data-testid="text-total-servicos"
+                  data-testid="text-total-services"
                 >
                   {fmt(formData.service_amount)}
                 </p>
@@ -149,17 +149,17 @@ export function InvoiceItemsSection({
       </section>
 
       {/* ── TAXES ── */}
-      <section className="space-y-4" data-testid="section-tributos">
+      <section className="space-y-4" data-testid="section-taxes">
         <h3 className="text-base font-semibold border-b pb-1">Tributos</h3>
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">{rules.tributosSectionDesc}</p>
+          <p className="text-sm text-muted-foreground">{rules.taxesSectionDescription}</p>
           {!disabled && (
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={recalculateTaxes}
-              data-testid="button-recalcular"
+              data-testid="button-recalculate"
             >
               <Calculator className="h-4 w-4 mr-1" />
               Recalcular
@@ -311,8 +311,8 @@ export function InvoiceItemsSection({
         <Card className="bg-primary/5 border-primary/20">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-xs text-muted-foreground">{rules.valorLiquidoLabel}</p>
-              <p className="text-2xl font-bold text-primary" data-testid="text-valor-liquido">
+              <p className="text-xs text-muted-foreground">{rules.netAmountLabel}</p>
+              <p className="text-2xl font-bold text-primary" data-testid="text-net-amount">
                 {fmt(formData.net_amount)}
               </p>
             </div>

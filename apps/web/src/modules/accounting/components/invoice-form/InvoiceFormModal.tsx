@@ -36,14 +36,14 @@ export function InvoiceFormModal({
 
   const title =
     mode === "create"
-      ? rules.isEntrada
+      ? rules.isInflow
         ? "Registrar Nota de Entrada"
         : "Emitir Nota Fiscal"
       : mode === "edit"
-        ? rules.isEntrada
+        ? rules.isInflow
           ? "Editar Nota de Entrada"
           : "Editar Nota Fiscal"
-        : rules.isEntrada
+        : rules.isInflow
           ? "Visualizar Nota de Entrada"
           : "Visualizar Nota Fiscal";
 
@@ -51,7 +51,7 @@ export function InvoiceFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-5xl max-h-[92vh] overflow-y-auto"
-        data-testid="modal-nota-fiscal"
+        data-testid="modal-invoice"
       >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -62,13 +62,13 @@ export function InvoiceFormModal({
                 Nº {formData.invoice_number}/{formData.serie}
               </Badge>
             )}
-            <Badge variant={rules.isEntrada ? "secondary" : "default"} className="ml-1 gap-1">
-              {rules.isEntrada ? (
+            <Badge variant={rules.isInflow ? "secondary" : "default"} className="ml-1 gap-1">
+              {rules.isInflow ? (
                 <ArrowDownLeft className="h-3 w-3" />
               ) : (
                 <ArrowUpRight className="h-3 w-3" />
               )}
-              {rules.isEntrada ? "Entrada" : "Saída"}
+              {rules.isInflow ? "Entrada" : "Saída"}
             </Badge>
           </DialogTitle>
         </DialogHeader>
@@ -115,7 +115,7 @@ export function InvoiceFormModal({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              data-testid="button-cancelar-nf"
+              data-testid="button-cancel-invoice"
             >
               {isViewMode ? "Fechar" : "Cancelar"}
             </Button>
@@ -123,11 +123,11 @@ export function InvoiceFormModal({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                data-testid="button-salvar-nf"
+                data-testid="button-save-invoice"
               >
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {mode === "create"
-                  ? rules.isEntrada
+                  ? rules.isInflow
                     ? "Registrar Entrada"
                     : "Emitir Nota"
                   : "Salvar Alterações"}

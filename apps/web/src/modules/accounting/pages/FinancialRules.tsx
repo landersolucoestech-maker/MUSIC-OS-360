@@ -166,7 +166,7 @@ export default function FinancialRules() {
             <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
               <Link to="/accounting"><ArrowLeft className="h-3.5 w-3.5" /> Voltar ao Financeiro</Link>
             </Button>
-            <Button size="sm" className="h-8 gap-1.5 text-xs" onClick={openCreate} data-testid="button-nova-regra-financeira">
+            <Button size="sm" className="h-8 gap-1.5 text-xs" onClick={openCreate} data-testid="button-new-financial-rule">
               <Plus className="h-3.5 w-3.5" /> Nova Regra
             </Button>
           </div>
@@ -203,7 +203,7 @@ export default function FinancialRules() {
                   </TableHeader>
                   <TableBody>
                     {rules.map((rule) => (
-                      <TableRow key={rule.id} data-testid={`row-regra-financeira-${rule.id}`}>
+                      <TableRow key={rule.id} data-testid={`row-financial-rule-${rule.id}`}>
                         <TableCell>
                           <p className="font-medium text-foreground">{rule.name}</p>
                           {rule.category && <p className="text-xs text-muted-foreground">{rule.category}</p>}

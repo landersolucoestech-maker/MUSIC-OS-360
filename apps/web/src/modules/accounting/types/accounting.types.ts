@@ -23,11 +23,11 @@ export type {
 
 /** Managerial entities eligible to be linked to a financial entry (P&L traceability). */
 export type TransactionEntityType =
-  | "projeto"
-  | "artista"
-  | "empresa"
-  | "campanha"
-  | "evento";
+  | "project"
+  | "artist"
+  | "company"
+  | "campaign"
+  | "event";
 
 /**
  * Managerial link of a financial entry to a system entity.

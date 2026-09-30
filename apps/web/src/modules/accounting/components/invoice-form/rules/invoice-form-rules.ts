@@ -47,7 +47,7 @@ export interface InvoiceFormData {
   payment_terms: string;
   items: InvoiceLineItem[];
   url_pdf: string;
-  observacoes: string;
+  notes: string;
 }
 
 export const INITIAL_ITEM: InvoiceLineItem = {
@@ -96,31 +96,31 @@ export const INITIAL_FORM_DATA: InvoiceFormData = {
   payment_terms: "30 dias",
   items: [{ ...INITIAL_ITEM }],
   url_pdf: "",
-  observacoes: "",
+  notes: "",
 };
 
 export interface InvoiceFormRules {
-  isEntrada: boolean;
+  isInflow: boolean;
   tomadorSectionLabel: string;
   prestadorCardLabel: string;
-  clienteSelectLabel: string;
-  valorLiquidoLabel: string;
-  tributosSectionDesc: string;
+  clientSelectLabel: string;
+  netAmountLabel: string;
+  taxesSectionDescription: string;
 }
 
 export function computeInvoiceRules(operationType: InvoiceOperationType): InvoiceFormRules {
-  const isInflow = operationType === "entrada";
+  const isInflow = operationType === "inflow";
   return {
-    isEntrada: isInflow,
+    isInflow: isInflow,
     tomadorSectionLabel: isInflow ? "Fornecedor / Emitente" : "Tomador",
     prestadorCardLabel: isInflow
       ? "Tomador (sua empresa, configurada em Empresa)"
       : "Prestador (configurado em Empresa)",
-    clienteSelectLabel: isInflow
+    clientSelectLabel: isInflow
       ? "Fornecedor Cadastrado (preenche automaticamente)"
       : "Cliente Cadastrado (preenche automaticamente)",
-    valorLiquidoLabel: isInflow ? "Valor Líquido a Pagar" : "Valor Líquido a Receber",
-    tributosSectionDesc: isInflow
+    netAmountLabel: isInflow ? "Valor Líquido a Pagar" : "Valor Líquido a Receber",
+    taxesSectionDescription: isInflow
       ? "Tributos retidos / pagos sobre o valor da nota."
       : "Tributos calculados automaticamente sobre o valor dos serviços.",
   };

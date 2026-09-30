@@ -32,15 +32,15 @@ export function validateTransactionForm(
     errors.transactionType = "Selecione o tipo de transação";
   }
 
-  if (rules.exibirTipoCliente && !f.counterpartyType) {
+  if (rules.showClientType && !f.counterpartyType) {
     errors.counterpartyType = "Selecione o tipo de cliente";
   }
 
-  if (rules.exibirCategoria && !f.category) {
+  if (rules.showCategory && !f.category) {
     errors.category = "Selecione a categoria";
   }
 
-  if (rules.exibirSubcategoria && !f.subcategory) {
+  if (rules.showSubcategory && !f.subcategory) {
     errors.subcategory = "Selecione a subcategoria";
   }
 
@@ -61,27 +61,27 @@ export function validateTransactionForm(
     errors.paymentMethod = "Selecione a forma de pagamento";
   }
 
-  if (rules.exibirArtista && !f.artistId) {
+  if (rules.showArtist && !f.artistId) {
     errors.artistId = "Selecione o artista";
   }
 
-  if (rules.exibirProjeto && rules.projetoObrigatorio && f.artistId && !f.projectId) {
+  if (rules.showProject && rules.projectRequired && f.artistId && !f.projectId) {
     errors.projectId = "Selecione o projeto";
   }
 
-  if (rules.exibirEvento && f.artistId && !f.eventId) {
+  if (rules.showEvent && f.artistId && !f.eventId) {
     errors.eventId = "Selecione o show/evento";
   }
 
-  if (rules.exibirMotivoViagem && !f.travelReason?.trim()) {
+  if (rules.showTravelReason && !f.travelReason?.trim()) {
     errors.travelReason = "Informe o motivo da viagem";
   }
 
-  if (rules.exibirAdvertisingName && !f.advertisingName?.trim()) {
+  if (rules.showAdvertisingName && !f.advertisingName?.trim()) {
     errors.advertisingName = "Informe o nome da publicidade";
   }
 
-  if (rules.exibirOrgaoArrecadador && !f.taxAuthority) {
+  if (rules.showCollectingAgency && !f.taxAuthority) {
     errors.taxAuthority = "Selecione o órgão arrecadador";
   }
 
@@ -90,7 +90,7 @@ export function validateTransactionForm(
     errors.referenceMonth = "Informe a competência no formato MM/AAAA";
   }
 
-  if (rules.exibirParcelamento) {
+  if (rules.showInstallments) {
     const installmentCount = parsePositiveInteger(f.installmentCount);
     if (!Number.isInteger(installmentCount) || installmentCount < 2) {
       errors.installmentCount = "Mínimo 2 parcelas";

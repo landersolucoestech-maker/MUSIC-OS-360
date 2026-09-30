@@ -77,7 +77,7 @@ export function useInvoiceForm({
   const { addInvoice, updateInvoice } = useInvoices();
   const { companySettings } = useCompanySettings();
 
-  const [operationType, setOperationType] = useState<InvoiceOperationType>(defaultOperationType ?? "saida");
+  const [operationType, setOperationType] = useState<InvoiceOperationType>(defaultOperationType ?? "outflow");
   const [formData, setFormData] = useState<InvoiceFormData>({ ...INITIAL_FORM_DATA });
   const [validationErrors, setValidationErrors] = useState<InvoiceValidationErrors>({});
 
@@ -87,7 +87,7 @@ export function useInvoiceForm({
 
   useEffect(() => {
     if (invoice && (mode === "edit" || mode === "view")) {
-      const { type, observacoesLimpas: cleanNotes } = parseOperationType(invoice.notes);
+      const { type, cleanedNotes: cleanNotes } = parseOperationType(invoice.notes);
       const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const netAmount = numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const servicesDescription = invoice.service_description ?? "";
@@ -96,7 +96,7 @@ export function useInvoiceForm({
       setFormData({
         ...INITIAL_FORM_DATA,
         ...invoice,
-        observacoes: cleanNotes,
+        notes: cleanNotes,
         tomador_legal_name: recipientLegalName,
         service_description: servicesDescription,
         service_amount: servicesAmount,
@@ -112,7 +112,7 @@ export function useInvoiceForm({
           : [{ ...INITIAL_ITEM, description: servicesDescription, unit_price: servicesAmount, total_amount: servicesAmount }],
       });
     } else if (!invoice && open) {
-      setOperationType(defaultOperationType ?? "saida");
+      setOperationType(defaultOperationType ?? "outflow");
       setFormData({ ...INITIAL_FORM_DATA, issued_at: new Date(), items: [{ ...INITIAL_ITEM }] });
     }
     setValidationErrors({});
@@ -132,8 +132,8 @@ export function useInvoiceForm({
     if (isViewMode) return;
     const amount = Number(formData.service_amount) || 0;
     if (amount === 0) return;
-    const deducoes = Number(formData.deductions_amount) || 0;
-    const calculationBase = +(amount - deducoes).toFixed(2);
+    const deductions = Number(formData.deductions_amount) || 0;
+    const calculationBase = +(amount - deductions).toFixed(2);
     const aliquotaIss = Number(formData.aliquota_iss) || 0;
     const issAmount = +(calculationBase * (aliquotaIss / 100)).toFixed(2);
     const pisAmount = +(amount * 0.0065).toFixed(2);
@@ -198,8 +198,8 @@ export function useInvoiceForm({
 
   const recalculateTaxes = useCallback(() => {
     const amount = Number(formData.service_amount) || 0;
-    const deducoes = Number(formData.deductions_amount) || 0;
-    const calculationBase = amount - deducoes;
+    const deductions = Number(formData.deductions_amount) || 0;
+    const calculationBase = amount - deductions;
     const issAmount = +(calculationBase * ((Number(formData.aliquota_iss) || 0) / 100)).toFixed(2);
     const pisAmount = +(amount * 0.0065).toFixed(2);
     const cofinsAmount = +(amount * 0.03).toFixed(2);
@@ -258,7 +258,7 @@ export function useInvoiceForm({
       due_at: formData.due_at ? format(formData.due_at, "yyyy-MM-dd") : null,
       status: formData.status,
       url_pdf: formData.url_pdf || null,
-      notes: serializeOperationType(operationType, formData.observacoes?.trim() || "") || null,
+      notes: serializeOperationType(operationType, formData.notes?.trim() || "") || null,
       natureza_operacao: formData.natureza_operacao,
       codigo_servico_municipal: formData.codigo_servico_municipal,
       codigo_municipio: formData.codigo_municipio,

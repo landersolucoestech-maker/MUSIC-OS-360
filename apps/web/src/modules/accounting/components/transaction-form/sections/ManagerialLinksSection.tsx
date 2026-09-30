@@ -17,11 +17,11 @@ import type {
 export type EntityOptions = Record<TransactionEntityType, { value: string; label: string }[]>;
 
 const ENTITY_TYPE_OPTIONS: { value: TransactionEntityType; label: string }[] = [
-  { value: "projeto", label: "Projeto" },
-  { value: "artista", label: "Artista" },
-  { value: "empresa", label: "Empresa" },
-  { value: "campanha", label: "Campanha" },
-  { value: "evento", label: "Evento" },
+  { value: "project", label: "Projeto" },
+  { value: "artist", label: "Artista" },
+  { value: "company", label: "Empresa" },
+  { value: "campaign", label: "Campanha" },
+  { value: "event", label: "Evento" },
 ];
 
 interface Props {
@@ -40,7 +40,7 @@ export function ManagerialLinksSection({ links, onChange, disabled, entityOption
     onChange(links.map((l, i) => (i === index ? { ...l, ...patch } : l)));
 
   const add = () =>
-    onChange([...links, { entityType: "projeto", entityId: "", entityName: "", allocationPercent: undefined }]);
+    onChange([...links, { entityType: "project", entityId: "", entityName: "", allocationPercent: undefined }]);
 
   const remove = (index: number) => onChange(links.filter((_, i) => i !== index));
 

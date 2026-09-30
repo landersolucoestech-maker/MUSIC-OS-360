@@ -48,7 +48,7 @@ function KpiCards({
             <div className="p-2 bg-green-500/10 rounded-lg"><TrendingUp className="h-5 w-5 text-green-500" /></div>
             <div>
               <p className="text-sm text-muted-foreground">Receita Total</p>
-              <p className="text-lg font-bold text-green-600" data-testid="metric-receitas">{formatCurrency(incomeTotal)}</p>
+              <p className="text-lg font-bold text-green-600" data-testid="metric-revenue">{formatCurrency(incomeTotal)}</p>
             </div>
           </div>
         </CardContent>
@@ -59,7 +59,7 @@ function KpiCards({
             <div className="p-2 bg-red-500/10 rounded-lg"><TrendingDown className="h-5 w-5 text-red-500" /></div>
             <div>
               <p className="text-sm text-muted-foreground">Despesa Total</p>
-              <p className={`text-lg font-bold ${expensesTotal > 0 ? "text-destructive" : "text-muted-foreground"}`} data-testid="metric-despesas">{expensesTotal > 0 ? formatCurrency(-expensesTotal) : formatCurrency(expensesTotal)}</p>
+              <p className={`text-lg font-bold ${expensesTotal > 0 ? "text-destructive" : "text-muted-foreground"}`} data-testid="metric-expenses">{expensesTotal > 0 ? formatCurrency(-expensesTotal) : formatCurrency(expensesTotal)}</p>
             </div>
           </div>
         </CardContent>
@@ -72,7 +72,7 @@ function KpiCards({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Lucro Líquido</p>
-              <p className={`text-lg font-bold ${netProfit > 0 ? "text-green-600" : netProfit < 0 ? "text-destructive" : "text-muted-foreground"}`} data-testid="metric-lucro">
+              <p className={`text-lg font-bold ${netProfit > 0 ? "text-green-600" : netProfit < 0 ? "text-destructive" : "text-muted-foreground"}`} data-testid="metric-profit">
                 {netProfit >= 0 ? "+" : ""}{formatCurrency(netProfit)}
               </p>
             </div>
@@ -85,7 +85,7 @@ function KpiCards({
             <div className="p-2 bg-primary/10 rounded-lg"><RotateCcw className="h-5 w-5 text-primary" /></div>
             <div>
               <p className="text-sm text-muted-foreground">Margem Líquida</p>
-              <p className={`text-lg font-bold ${netMargin >= 0 ? "text-primary" : "text-destructive"}`} data-testid="metric-margem">
+              <p className={`text-lg font-bold ${netMargin >= 0 ? "text-primary" : "text-destructive"}`} data-testid="metric-margin">
                 {netMargin.toFixed(1)}%
               </p>
             </div>
@@ -192,7 +192,7 @@ export default function ProfitAndLoss() {
     queryKey: [...QUERY_KEYS.ARTISTS, "all-names"],
     queryFn: async () => (await fetchAllPages<{ id: string; stage_name?: string | null }>("artists")).items,
   });
-  const [activeTab, setActiveTab] = useState("todos");
+  const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -339,7 +339,7 @@ export default function ProfitAndLoss() {
               className="pl-9 h-8 text-sm bg-card border-border"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              data-testid="input-search-contabilidade"
+              data-testid="input-search-accounting"
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
@@ -360,16 +360,16 @@ export default function ProfitAndLoss() {
         {/* KPIs — always visible above the tabs */}
         <KpiCards incomeTotal={incomeTotal} expensesTotal={expensesTotal} netProfit={netProfit} netMargin={netMargin} />
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} data-testid="tabs-contabilidade">
+        <Tabs value={activeTab} onValueChange={setActiveTab} data-testid="tabs-accounting">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="todos" data-testid="tab-todos">Todos</TabsTrigger>
-            <TabsTrigger value="empresa" data-testid="tab-empresa">P&amp;L Empresa</TabsTrigger>
-            <TabsTrigger value="projetos" data-testid="tab-projetos">P&amp;L Projetos</TabsTrigger>
-            <TabsTrigger value="artistas" data-testid="tab-artistas">P&amp;L Artistas</TabsTrigger>
+            <TabsTrigger value="all" data-testid="tab-all">Todos</TabsTrigger>
+            <TabsTrigger value="company" data-testid="tab-company">P&amp;L Empresa</TabsTrigger>
+            <TabsTrigger value="projects" data-testid="tab-projects">P&amp;L Projetos</TabsTrigger>
+            <TabsTrigger value="artists" data-testid="tab-artists">P&amp;L Artistas</TabsTrigger>
           </TabsList>
 
           {/* ── ALL: every view stacked ──────────────────────────────── */}
-          <TabsContent value="todos" className="space-y-6 mt-6">
+          <TabsContent value="all" className="space-y-6 mt-6">
             <PlCompanyTable {...plCompanyProps} />
 
             {/* Projects (compact) */}
@@ -448,12 +448,12 @@ export default function ProfitAndLoss() {
           </TabsContent>
 
           {/* ── COMPANY P&L ──────────────────────────────────────────────── */}
-          <TabsContent value="empresa" className="space-y-4 mt-6">
+          <TabsContent value="company" className="space-y-4 mt-6">
             <PlCompanyTable {...plCompanyProps} />
           </TabsContent>
 
           {/* ── PROJECTS P&L ─────────────────────────────────────────────── */}
-          <TabsContent value="projetos" className="space-y-4 mt-6">
+          <TabsContent value="projects" className="space-y-4 mt-6">
             <Card>
               <CardContent className="p-0">
                 <ListSectionHeader
@@ -499,7 +499,7 @@ export default function ProfitAndLoss() {
           </TabsContent>
 
           {/* ── ARTISTS P&L ──────────────────────────────────────────────── */}
-          <TabsContent value="artistas" className="space-y-4 mt-6">
+          <TabsContent value="artists" className="space-y-4 mt-6">
             <Card>
               <CardContent className="p-0">
                 <ListSectionHeader
@@ -528,7 +528,7 @@ export default function ProfitAndLoss() {
                     ) : (
                       <>
                         {plByArtist.map((a) => (
-                          <TableRow key={a.id} data-testid={`row-artista-${a.id}`}>
+                          <TableRow key={a.id} data-testid={`row-artist-${a.id}`}>
                             <TableCell className="font-medium">{a.name}</TableCell>
                             <TableCell className="text-right text-green-600">{a.totalRevenue > 0 ? formatCurrency(a.totalRevenue) : "—"}</TableCell>
                             <TableCell className="text-right text-destructive">{a.totalExpenses > 0 ? formatCurrency(-a.totalExpenses) : "—"}</TableCell>

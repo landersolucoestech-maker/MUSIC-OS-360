@@ -74,7 +74,7 @@ export default function Invoices() {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [createType, setCreateType] = useState<InvoiceOperationType>("saida");
+  const [createType, setCreateType] = useState<InvoiceOperationType>("outflow");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [isViewOpen, setIsViewOpen] = useState(false);
@@ -149,9 +149,9 @@ export default function Invoices() {
       (invoice.tomador_email || "").toLowerCase().includes(rawSearch);
     const matchesStatus = statusFilter === "all" || invoice.status === statusFilter;
     const matchesType = typeFilter === "all" || invoice._operationType === typeFilter;
-    const emissao = String(invoice.issued_at ?? "").slice(0, 10);
-    const matchesStart = !startDate || (emissao && emissao >= startDate);
-    const matchesEnd = !endDate || (emissao && emissao <= endDate);
+    const issueDate = String(invoice.issued_at ?? "").slice(0, 10);
+    const matchesStart = !startDate || (issueDate && issueDate >= startDate);
+    const matchesEnd = !endDate || (issueDate && issueDate <= endDate);
     return matchesSearch && matchesStatus && matchesType && matchesStart && matchesEnd;
   });
 
@@ -159,8 +159,8 @@ export default function Invoices() {
 
   // Metrics
   const totalRegistered = invoicesWithType.length;
-  const outgoingInvoices = invoicesWithType.filter((n: any) => n._operationType === "saida");
-  const incomingInvoices = invoicesWithType.filter((n: any) => n._operationType === "entrada");
+  const outgoingInvoices = invoicesWithType.filter((n: any) => n._operationType === "outflow");
+  const incomingInvoices = invoicesWithType.filter((n: any) => n._operationType === "inflow");
   const outgoingTotal = outgoingInvoices.reduce((acc: number, n: any) => acc + (getInvoiceDisplayValue(n) ?? 0), 0);
   const incomingTotal = incomingInvoices.reduce((acc: number, n: any) => acc + (getInvoiceDisplayValue(n) ?? 0), 0);
   const balance = outgoingTotal - incomingTotal;
@@ -177,13 +177,13 @@ export default function Invoices() {
   };
 
   const getTypeBadge = (type: InvoiceOperationType) =>
-    type === "entrada" ? (
-      <Badge variant="secondary" className="gap-1" data-testid="badge-type-entrada">
+    type === "inflow" ? (
+      <Badge variant="secondary" className="gap-1" data-testid="badge-type-inflow">
         <ArrowDownLeft className="h-3 w-3" />
         Entrada
       </Badge>
     ) : (
-      <Badge variant="default" className="gap-1" data-testid="badge-type-saida">
+      <Badge variant="default" className="gap-1" data-testid="badge-type-outflow">
         <ArrowUpRight className="h-3 w-3" />
         Saída
       </Badge>
@@ -193,17 +193,17 @@ export default function Invoices() {
   const headerActions = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="sm" className="gap-2" data-testid="button-registrar-invoice">
+        <Button size="sm" className="gap-2" data-testid="button-register-invoice">
           <Plus className="h-4 w-4" />
           Registrar Nota
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleCreate("saida")} data-testid="menu-registrar-saida">
+        <DropdownMenuItem onClick={() => handleCreate("outflow")} data-testid="menu-register-outflow">
           <ArrowUpRight className="h-4 w-4 mr-2" />
           Registrar Saída
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleCreate("entrada")} data-testid="menu-registrar-entrada">
+        <DropdownMenuItem onClick={() => handleCreate("inflow")} data-testid="menu-register-inflow">
           <ArrowDownLeft className="h-4 w-4 mr-2" />
           Registrar Entrada
         </DropdownMenuItem>
@@ -222,7 +222,7 @@ export default function Invoices() {
                 <div className="p-2 bg-primary/10 rounded-lg"><FileText className="h-5 w-5 text-primary" /></div>
                 <div className="min-w-0">
                   <p className="text-sm text-muted-foreground">Total</p>
-                  <p className="text-xl font-bold text-foreground" data-testid="metric-total-registradas">{totalRegistered}</p>
+                  <p className="text-xl font-bold text-foreground" data-testid="metric-total-registered">{totalRegistered}</p>
                 </div>
               </div>
             </CardContent>
@@ -233,7 +233,7 @@ export default function Invoices() {
                 <div className="p-2 bg-green-500/10 rounded-lg"><ArrowUpRight className="h-5 w-5 text-green-500" /></div>
                 <div className="min-w-0">
                   <p className="text-sm text-muted-foreground">Saídas</p>
-                  <p className="text-xl font-bold text-foreground" data-testid="metric-outgoingInvoices-qtd">{outgoingInvoices.length}</p>
+                  <p className="text-xl font-bold text-foreground" data-testid="metric-outgoing-invoices-count">{outgoingInvoices.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -244,7 +244,7 @@ export default function Invoices() {
                 <div className="p-2 bg-yellow-500/10 rounded-lg"><ArrowDownLeft className="h-5 w-5 text-yellow-500" /></div>
                 <div className="min-w-0">
                   <p className="text-sm text-muted-foreground">Entradas</p>
-                  <p className="text-xl font-bold text-foreground" data-testid="metric-incomingInvoices-qtd">{incomingInvoices.length}</p>
+                  <p className="text-xl font-bold text-foreground" data-testid="metric-incoming-invoices-count">{incomingInvoices.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -255,7 +255,7 @@ export default function Invoices() {
                 <div className="p-2 bg-green-500/10 rounded-lg"><ArrowUpRight className="h-5 w-5 text-green-500" /></div>
                 <div className="min-w-0">
                   <p className="text-sm text-muted-foreground">Valor Saídas</p>
-                  <p className={`text-base font-bold leading-tight ${getMonetarySemanticClass("positive")}`} data-testid="metric-valor-outgoingInvoices">{formatCurrency(outgoingTotal)}</p>
+                  <p className={`text-base font-bold leading-tight ${getMonetarySemanticClass("positive")}`} data-testid="metric-outgoing-invoices-amount">{formatCurrency(outgoingTotal)}</p>
                 </div>
               </div>
             </CardContent>
@@ -266,7 +266,7 @@ export default function Invoices() {
                 <div className="p-2 bg-yellow-500/10 rounded-lg"><ArrowDownLeft className="h-5 w-5 text-yellow-500" /></div>
                 <div className="min-w-0">
                   <p className="text-sm text-muted-foreground">Valor Entradas</p>
-                  <p className={`text-base font-bold leading-tight ${getMonetarySemanticClass("negative")}`} data-testid="metric-valor-incomingInvoices">{formatCurrency(-incomingTotal)}</p>
+                  <p className={`text-base font-bold leading-tight ${getMonetarySemanticClass("negative")}`} data-testid="metric-incoming-invoices-amount">{formatCurrency(-incomingTotal)}</p>
                 </div>
               </div>
             </CardContent>
@@ -312,7 +312,7 @@ export default function Invoices() {
               className="pl-9 h-8 text-sm bg-card border-border"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              data-testid="input-busca-nf"
+              data-testid="input-search-invoice"
             />
           </div>
           <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as TypeFilter)}>
@@ -321,8 +321,8 @@ export default function Invoices() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all" data-testid="filter-type-all">Todas</SelectItem>
-              <SelectItem value="saida" data-testid="filter-type-saida">Saída</SelectItem>
-              <SelectItem value="entrada" data-testid="filter-type-entrada">Entrada</SelectItem>
+              <SelectItem value="outflow" data-testid="filter-type-outflow">Saída</SelectItem>
+              <SelectItem value="inflow" data-testid="filter-type-inflow">Entrada</SelectItem>
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -353,13 +353,13 @@ export default function Invoices() {
                       checked={selectedIds.length === filteredInvoices.length && filteredInvoices.length > 0}
                       onCheckedChange={toggleSelectAll}
                       aria-label="Selecionar todas as notas fiscais"
-                      data-testid="checkbox-select-all-notas"
+                      data-testid="checkbox-select-all-invoices"
                     />
                     <span className="text-xs text-muted-foreground">
                       {selectedIds.length > 0 ? `${selectedIds.length} nota(s) selecionada(s)` : "Selecionar todos"}
                     </span>
                     {selectedIds.length > 0 && (
-                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDelete} data-testid="button-bulk-delete-notas">
+                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDelete} data-testid="button-bulk-delete-invoices">
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir ({selectedIds.length})
                       </Button>
@@ -475,17 +475,17 @@ export default function Invoices() {
               {!searchTerm && statusFilter === "all" && typeFilter === "all" && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button className="gap-2" data-testid="button-registrar-primeira-invoice">
+                    <Button className="gap-2" data-testid="button-register-first-invoice">
                       <Plus className="h-4 w-4" />
                       Registrar Primeira Nota
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="center">
-                    <DropdownMenuItem onClick={() => handleCreate("saida")}>
+                    <DropdownMenuItem onClick={() => handleCreate("outflow")}>
                       <ArrowUpRight className="h-4 w-4 mr-2" />
                       Registrar Saída
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleCreate("entrada")}>
+                    <DropdownMenuItem onClick={() => handleCreate("inflow")}>
                       <ArrowDownLeft className="h-4 w-4 mr-2" />
                       Registrar Entrada
                     </DropdownMenuItem>

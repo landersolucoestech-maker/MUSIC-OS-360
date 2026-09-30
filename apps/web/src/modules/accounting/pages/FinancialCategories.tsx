@@ -208,7 +208,7 @@ export default function FinancialCategories() {
                       checked={allPageSelected}
                       onCheckedChange={toggleSelectAllVisible}
                       aria-label="Selecionar todas as categorias visíveis"
-                      data-testid="checkbox-select-all-categorias-financeiras"
+                      data-testid="checkbox-select-all-financial-categories"
                     />
                     <span className="text-xs text-muted-foreground">
                       {selectedVisibleCount > 0 ? `${selectedVisibleCount} selecionada(s)` : "Selecionar todos"}
@@ -220,7 +220,7 @@ export default function FinancialCategories() {
                         size="sm"
                         className="h-8 text-xs gap-1.5"
                         onClick={() => setBulkDeleteOpen(true)}
-                        data-testid="button-delete-selected-categorias-financeiras"
+                        data-testid="button-delete-selected-financial-categories"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir Selecionados
@@ -258,7 +258,7 @@ export default function FinancialCategories() {
                             checked={selectedIds.includes(rule.id)}
                             onCheckedChange={() => toggleSelect(rule.id)}
                             aria-label={`Selecionar categoria ${rule.category}`}
-                            data-testid={`checkbox-categoria-financeira-${rule.id}`}
+                            data-testid={`checkbox-financial-category-${rule.id}`}
                           />
                         </TableCell>
                         <TableCell className="font-medium">{rule.category}</TableCell>

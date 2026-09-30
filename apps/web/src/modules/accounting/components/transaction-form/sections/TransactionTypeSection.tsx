@@ -170,7 +170,7 @@ export function TransactionTypeSection({
                 searchPlaceholder="Buscar artista…"
                 disabled={disabled}
                 invalid={Boolean(errors.artistId)}
-                data-testid="combobox-artista-vinculado"
+                data-testid="combobox-linked-artist"
               />
               <FieldError error={errors.artistId} />
             </div>
@@ -188,7 +188,7 @@ export function TransactionTypeSection({
                 searchPlaceholder="Buscar projeto…"
                 disabled={disabled}
                 invalid={Boolean(errors.projectId)}
-                data-testid="combobox-projeto-vinculado"
+                data-testid="combobox-linked-project"
               />
               <FieldError error={errors.projectId} />
             </div>
@@ -272,7 +272,7 @@ export function TransactionTypeSection({
             />
           )}
 
-          {selectedLink === null && rules.exibirOrgaoArrecadador && formData.category && (
+          {selectedLink === null && rules.showCollectingAgency && formData.category && (
             <FormInputField
               label="Órgão Arrecadador"
               value={formData.taxAuthority}
@@ -283,10 +283,10 @@ export function TransactionTypeSection({
             />
           )}
 
-          {selectedLink === "Projeto" && rules.exibirProjeto && formData.artistId && (
+          {selectedLink === "Projeto" && rules.showProject && formData.artistId && (
             <div className="space-y-2">
               <Label className="text-sm">
-                Projeto / Música{rules.projetoObrigatorio ? "" : " (opcional)"}
+                Projeto / Música{rules.projectRequired ? "" : " (opcional)"}
               </Label>
               <AsyncEntityCombobox<Project>
                 table="projects"
@@ -298,7 +298,7 @@ export function TransactionTypeSection({
                 searchPlaceholder="Buscar projeto…"
                 disabled={disabled}
                 invalid={Boolean(errors.projectId)}
-                data-testid="combobox-projeto-musica"
+                data-testid="combobox-music-project"
               />
               <FieldError error={errors.projectId} />
             </div>

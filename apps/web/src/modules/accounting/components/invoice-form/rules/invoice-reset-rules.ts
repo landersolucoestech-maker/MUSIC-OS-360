@@ -10,7 +10,7 @@ interface ConditionalReset {
 
 type ResetEntry = SimpleReset | ConditionalReset;
 
-export const NF_RESET_MAP: Partial<Record<keyof InvoiceFormData, ResetEntry[]>> = {
+export const INVOICE_RESET_MAP: Partial<Record<keyof InvoiceFormData, ResetEntry[]>> = {
   tipo_nota: [
     {
       field: "codigo_servico_municipal",
@@ -31,7 +31,7 @@ export function applyResets(
   field: keyof InvoiceFormData,
   newValue: any,
 ): Partial<InvoiceFormData> {
-  const entries = NF_RESET_MAP[field];
+  const entries = INVOICE_RESET_MAP[field];
   if (!entries || entries.length === 0) return {};
 
   const resets: Partial<InvoiceFormData> = {};

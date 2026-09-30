@@ -59,7 +59,7 @@ export function DetailsSection({
   return (
     <>
       {/* ── IDENTIFICATION ── */}
-      <section className="space-y-4" data-testid="section-identificacao">
+      <section className="space-y-4" data-testid="section-identification">
         <h3 className="text-base font-semibold border-b pb-1">Identificação</h3>
 
         {companySettings && (
@@ -159,7 +159,7 @@ export function DetailsSection({
               onChange={(iso) => updateField("issued_at", iso ? parseISO(iso) : undefined)}
               disabled={disabled}
               placeholder="Selecione a data"
-              data-testid="datepicker-data-emissao"
+              data-testid="datepicker-issue-date"
             />
           </div>
           <div className="space-y-2">
@@ -240,7 +240,7 @@ export function DetailsSection({
         <h3 className="text-base font-semibold border-b pb-1">{rules.tomadorSectionLabel}</h3>
 
         <div className="space-y-2">
-          <Label>{rules.clienteSelectLabel}</Label>
+          <Label>{rules.clientSelectLabel}</Label>
           <AsyncEntityCombobox<InvoiceClientLookup>
             table="clients"
             getLabel={(c) => c.name}
@@ -249,7 +249,7 @@ export function DetailsSection({
             placeholder="Selecione um cliente"
             searchPlaceholder="Buscar client…"
             disabled={disabled}
-            data-testid="combobox-client-nf"
+            data-testid="combobox-client-invoice"
           />
         </div>
 

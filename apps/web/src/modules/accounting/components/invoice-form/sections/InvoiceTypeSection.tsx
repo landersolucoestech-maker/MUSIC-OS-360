@@ -10,17 +10,17 @@ interface InvoiceTypeSectionProps {
 
 export function InvoiceTypeSection({ operationType, disabled, onChange }: InvoiceTypeSectionProps) {
   return (
-    <section className="space-y-3" data-testid="section-type-operacao">
+    <section className="space-y-3" data-testid="section-type-operation">
       <h3 className="text-base font-semibold border-b pb-1">Tipo de Operação</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <button
           type="button"
-          onClick={() => !disabled && onChange("saida")}
+          onClick={() => !disabled && onChange("outflow")}
           disabled={disabled}
-          data-testid="button-type-saida"
+          data-testid="button-type-outflow"
           className={cn(
             "flex items-start gap-3 rounded-lg border-2 p-4 text-left transition-colors",
-            operationType === "saida"
+            operationType === "outflow"
               ? "border-primary bg-primary/5"
               : "border-border hover:border-primary/50",
             disabled && "cursor-not-allowed opacity-70",
@@ -29,7 +29,7 @@ export function InvoiceTypeSection({ operationType, disabled, onChange }: Invoic
           <div
             className={cn(
               "flex h-9 w-9 shrink-0 items-center justify-center rounded-md",
-              operationType === "saida"
+              operationType === "outflow"
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground",
             )}
@@ -44,12 +44,12 @@ export function InvoiceTypeSection({ operationType, disabled, onChange }: Invoic
 
         <button
           type="button"
-          onClick={() => !disabled && onChange("entrada")}
+          onClick={() => !disabled && onChange("inflow")}
           disabled={disabled}
-          data-testid="button-type-entrada"
+          data-testid="button-type-inflow"
           className={cn(
             "flex items-start gap-3 rounded-lg border-2 p-4 text-left transition-colors",
-            operationType === "entrada"
+            operationType === "inflow"
               ? "border-primary bg-primary/5"
               : "border-border hover:border-primary/50",
             disabled && "cursor-not-allowed opacity-70",
@@ -58,7 +58,7 @@ export function InvoiceTypeSection({ operationType, disabled, onChange }: Invoic
           <div
             className={cn(
               "flex h-9 w-9 shrink-0 items-center justify-center rounded-md",
-              operationType === "entrada"
+              operationType === "inflow"
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground",
             )}

@@ -30,20 +30,20 @@ export function useInvoices() {
     queryKey: [...QUERY_KEYS.INVOICES],
     table: "invoices",
     onMutationSuccess: {
-      onCreate: (nf) =>
+      onCreate: (invoice) =>
         emit(DomainEvents.INVOICE_CREATED, {
-          id: (nf as InvoiceWithRelations & { id: string }).id,
-          invoiceNumber: (nf as InvoiceWithRelations & { invoice_number?: string }).invoice_number ?? undefined,
-          client_id: (nf as InvoiceWithRelations & { client_id?: string }).client_id ?? undefined,
-          amount: invoiceValue(nf),
+          id: (invoice as InvoiceWithRelations & { id: string }).id,
+          invoiceNumber: (invoice as InvoiceWithRelations & { invoice_number?: string }).invoice_number ?? undefined,
+          client_id: (invoice as InvoiceWithRelations & { client_id?: string }).client_id ?? undefined,
+          amount: invoiceValue(invoice),
           org_id: orgId,
         }),
-      onUpdate: (nf) =>
+      onUpdate: (invoice) =>
         emit(DomainEvents.INVOICE_UPDATED, {
-          id: (nf as InvoiceWithRelations & { id: string }).id,
-          invoiceNumber: (nf as InvoiceWithRelations & { invoice_number?: string }).invoice_number ?? undefined,
-          client_id: (nf as InvoiceWithRelations & { client_id?: string }).client_id ?? undefined,
-          amount: invoiceValue(nf),
+          id: (invoice as InvoiceWithRelations & { id: string }).id,
+          invoiceNumber: (invoice as InvoiceWithRelations & { invoice_number?: string }).invoice_number ?? undefined,
+          client_id: (invoice as InvoiceWithRelations & { client_id?: string }).client_id ?? undefined,
+          amount: invoiceValue(invoice),
           org_id: orgId,
         }),
       onDelete: (id) =>

@@ -74,7 +74,7 @@ export function PaymentSection({
             placeholder="Selecione a data"
             error={errors.transactionDate}
             required
-            data-testid="datepicker-data-transacao"
+            data-testid="datepicker-transaction-date"
           />
 
           <FormSelectField
@@ -86,7 +86,7 @@ export function PaymentSection({
           />
         </div>
 
-        {rules.exibirParcelamento && (
+        {rules.showInstallments && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-border">
             <FormInputField
               label="Quantidade de Parcelas"
@@ -116,14 +116,14 @@ export function PaymentSection({
               placeholder="Selecione a data"
               error={errors.firstInstallmentDate}
               required
-              data-testid="datepicker-data-primeira-parcela"
+              data-testid="datepicker-first-installment-date"
             />
 
-            {rules.valorParcela && (
+            {rules.installmentAmount && (
               <div className="space-y-2">
                 <p className="text-sm">Valor por Parcela</p>
                 <div className="h-8 px-3 py-1 border border-border rounded-md bg-muted/50 flex items-center">
-                  <span className="text-sm font-medium">R$ {rules.valorParcela}</span>
+                  <span className="text-sm font-medium">R$ {rules.installmentAmount}</span>
                 </div>
               </div>
             )}

@@ -33,37 +33,37 @@ const baseForm: TransactionFormData = {
 };
 
 const noRules: FinancialFormRules = {
-  exibirTipoCliente: false,
-  exibirCategoria: false,
-  exibirSubcategoria: false,
-  exibirItemInvestimento: false,
-  exibirArtista: false,
-  exibirProjeto: false,
-  projetoObrigatorio: false,
-  exibirEvento: false,
-  exibirFornecedor: false,
-  exibirOrgaoArrecadador: false,
-  exibirMotivoViagem: false,
-  exibirAdvertisingName: false,
-  exibirParcelamento: false,
-  labelTipoCliente: "Tipo de Cliente",
+  showClientType: false,
+  showCategory: false,
+  showSubcategory: false,
+  showInvestmentItem: false,
+  showArtist: false,
+  showProject: false,
+  projectRequired: false,
+  showEvent: false,
+  showSupplier: false,
+  showCollectingAgency: false,
+  showTravelReason: false,
+  showAdvertisingName: false,
+  showInstallments: false,
+  clientTypeLabel: "Tipo de Cliente",
 };
 
 const allRules: FinancialFormRules = {
-  exibirTipoCliente: true,
-  exibirCategoria: true,
-  exibirSubcategoria: true,
-  exibirItemInvestimento: false,
-  exibirArtista: true,
-  exibirProjeto: true,
-  projetoObrigatorio: true,
-  exibirEvento: true,
-  exibirFornecedor: true,
-  exibirOrgaoArrecadador: false,
-  exibirMotivoViagem: false,
-  exibirAdvertisingName: false,
-  exibirParcelamento: false,
-  labelTipoCliente: "Para quem pagar",
+  showClientType: true,
+  showCategory: true,
+  showSubcategory: true,
+  showInvestmentItem: false,
+  showArtist: true,
+  showProject: true,
+  projectRequired: true,
+  showEvent: true,
+  showSupplier: true,
+  showCollectingAgency: false,
+  showTravelReason: false,
+  showAdvertisingName: false,
+  showInstallments: false,
+  clientTypeLabel: "Para quem pagar",
 };
 
 function form(overrides: Partial<TransactionFormData>): TransactionFormData {
@@ -132,7 +132,7 @@ describe("counterpartyType validation", () => {
   it("errors when exibirTipoCliente is true and counterpartyType is empty", () => {
     const errors = validateTransactionForm(
       form({ counterpartyType: "" }),
-      rules({ exibirTipoCliente: true }),
+      rules({ showClientType: true }),
     );
     expect(errors.counterpartyType).toBe("Selecione o tipo de cliente");
   });
@@ -140,7 +140,7 @@ describe("counterpartyType validation", () => {
   it("no error when exibirTipoCliente is false, even if counterpartyType is empty", () => {
     const errors = validateTransactionForm(
       form({ counterpartyType: "" }),
-      rules({ exibirTipoCliente: false }),
+      rules({ showClientType: false }),
     );
     expect(errors.counterpartyType).toBeUndefined();
   });
@@ -148,7 +148,7 @@ describe("counterpartyType validation", () => {
   it("no error when exibirTipoCliente is true and counterpartyType is provided", () => {
     const errors = validateTransactionForm(
       form({ counterpartyType: "company" }),
-      rules({ exibirTipoCliente: true }),
+      rules({ showClientType: true }),
     );
     expect(errors.counterpartyType).toBeUndefined();
   });
@@ -159,7 +159,7 @@ describe("category validation", () => {
   it("errors when exibirCategoria is true and category is empty", () => {
     const errors = validateTransactionForm(
       form({ category: "" }),
-      rules({ exibirCategoria: true }),
+      rules({ showCategory: true }),
     );
     expect(errors.category).toBe("Selecione a categoria");
   });
@@ -167,7 +167,7 @@ describe("category validation", () => {
   it("no error when exibirCategoria is false and category is empty", () => {
     const errors = validateTransactionForm(
       form({ category: "" }),
-      rules({ exibirCategoria: false }),
+      rules({ showCategory: false }),
     );
     expect(errors.category).toBeUndefined();
   });
@@ -178,7 +178,7 @@ describe("subcategory validation", () => {
   it("errors when exibirSubcategoria is true and subcategory is empty", () => {
     const errors = validateTransactionForm(
       form({ subcategory: "" }),
-      rules({ exibirSubcategoria: true }),
+      rules({ showSubcategory: true }),
     );
     expect(errors.subcategory).toBe("Selecione a subcategoria");
   });
@@ -186,7 +186,7 @@ describe("subcategory validation", () => {
   it("no error when exibirSubcategoria is false and subcategory is empty", () => {
     const errors = validateTransactionForm(
       form({ subcategory: "" }),
-      rules({ exibirSubcategoria: false }),
+      rules({ showSubcategory: false }),
     );
     expect(errors.subcategory).toBeUndefined();
   });
@@ -197,7 +197,7 @@ describe("artistId validation", () => {
   it("errors when exibirArtista is true and artistId is empty", () => {
     const errors = validateTransactionForm(
       form({ artistId: "" }),
-      rules({ exibirArtista: true }),
+      rules({ showArtist: true }),
     );
     expect(errors.artistId).toBe("Selecione o artista");
   });
@@ -205,7 +205,7 @@ describe("artistId validation", () => {
   it("no error when exibirArtista is false and artistId is empty", () => {
     const errors = validateTransactionForm(
       form({ artistId: "" }),
-      rules({ exibirArtista: false }),
+      rules({ showArtist: false }),
     );
     expect(errors.artistId).toBeUndefined();
   });
@@ -213,7 +213,7 @@ describe("artistId validation", () => {
   it("no error when exibirArtista is true and artistId is provided", () => {
     const errors = validateTransactionForm(
       form({ artistId: "artista-1" }),
-      rules({ exibirArtista: true }),
+      rules({ showArtist: true }),
     );
     expect(errors.artistId).toBeUndefined();
   });
@@ -224,7 +224,7 @@ describe("projectId validation", () => {
   it("errors when projeto is visible, obrigatorio, artist is linked but projeto is empty", () => {
     const errors = validateTransactionForm(
       form({ artistId: "artista-1", projectId: "" }),
-      rules({ exibirProjeto: true, projetoObrigatorio: true }),
+      rules({ showProject: true, projectRequired: true }),
     );
     expect(errors.projectId).toBe("Selecione o projeto");
   });
@@ -232,7 +232,7 @@ describe("projectId validation", () => {
   it("no error when projetoObrigatorio is false even if projeto is empty", () => {
     const errors = validateTransactionForm(
       form({ artistId: "artista-1", projectId: "" }),
-      rules({ exibirProjeto: true, projetoObrigatorio: false }),
+      rules({ showProject: true, projectRequired: false }),
     );
     expect(errors.projectId).toBeUndefined();
   });
@@ -240,7 +240,7 @@ describe("projectId validation", () => {
   it("no error when projeto is visible+obrigatorio but artistId is empty", () => {
     const errors = validateTransactionForm(
       form({ artistId: "", projectId: "" }),
-      rules({ exibirProjeto: true, projetoObrigatorio: true }),
+      rules({ showProject: true, projectRequired: true }),
     );
     expect(errors.projectId).toBeUndefined();
   });
@@ -248,7 +248,7 @@ describe("projectId validation", () => {
   it("no error when exibirProjeto is false even if all conditions are met", () => {
     const errors = validateTransactionForm(
       form({ artistId: "artista-1", projectId: "" }),
-      rules({ exibirProjeto: false, projetoObrigatorio: true }),
+      rules({ showProject: false, projectRequired: true }),
     );
     expect(errors.projectId).toBeUndefined();
   });
@@ -256,7 +256,7 @@ describe("projectId validation", () => {
   it("no error when projectId is provided", () => {
     const errors = validateTransactionForm(
       form({ artistId: "artista-1", projectId: "proj-1" }),
-      rules({ exibirProjeto: true, projetoObrigatorio: true }),
+      rules({ showProject: true, projectRequired: true }),
     );
     expect(errors.projectId).toBeUndefined();
   });
@@ -267,7 +267,7 @@ describe("eventId validation", () => {
   it("errors when exibirEvento is true, artist is linked but evento is empty", () => {
     const errors = validateTransactionForm(
       form({ artistId: "artista-1", eventId: "" }),
-      rules({ exibirEvento: true }),
+      rules({ showEvent: true }),
     );
     expect(errors.eventId).toBe("Selecione o show/evento");
   });
@@ -275,7 +275,7 @@ describe("eventId validation", () => {
   it("no error when exibirEvento is true but artistId is empty", () => {
     const errors = validateTransactionForm(
       form({ artistId: "", eventId: "" }),
-      rules({ exibirEvento: true }),
+      rules({ showEvent: true }),
     );
     expect(errors.eventId).toBeUndefined();
   });
@@ -283,7 +283,7 @@ describe("eventId validation", () => {
   it("no error when exibirEvento is false even if artist is linked", () => {
     const errors = validateTransactionForm(
       form({ artistId: "artista-1", eventId: "" }),
-      rules({ exibirEvento: false }),
+      rules({ showEvent: false }),
     );
     expect(errors.eventId).toBeUndefined();
   });
@@ -291,7 +291,7 @@ describe("eventId validation", () => {
   it("no error when eventId is provided", () => {
     const errors = validateTransactionForm(
       form({ artistId: "artista-1", eventId: "evento-1" }),
-      rules({ exibirEvento: true }),
+      rules({ showEvent: true }),
     );
     expect(errors.eventId).toBeUndefined();
   });
@@ -302,7 +302,7 @@ describe("travelReason validation", () => {
   it("errors when exibirMotivoViagem is true and travelReason is empty", () => {
     const errors = validateTransactionForm(
       form({ travelReason: "" }),
-      rules({ exibirMotivoViagem: true }),
+      rules({ showTravelReason: true }),
     );
     expect(errors.travelReason).toBe("Informe o motivo da viagem");
   });
@@ -310,7 +310,7 @@ describe("travelReason validation", () => {
   it("errors when exibirMotivoViagem is true and travelReason is whitespace", () => {
     const errors = validateTransactionForm(
       form({ travelReason: "  " }),
-      rules({ exibirMotivoViagem: true }),
+      rules({ showTravelReason: true }),
     );
     expect(errors.travelReason).toBe("Informe o motivo da viagem");
   });
@@ -318,7 +318,7 @@ describe("travelReason validation", () => {
   it("no error when exibirMotivoViagem is false", () => {
     const errors = validateTransactionForm(
       form({ travelReason: "" }),
-      rules({ exibirMotivoViagem: false }),
+      rules({ showTravelReason: false }),
     );
     expect(errors.travelReason).toBeUndefined();
   });
@@ -326,7 +326,7 @@ describe("travelReason validation", () => {
   it("no error when travelReason is provided", () => {
     const errors = validateTransactionForm(
       form({ travelReason: "Turnê nacional" }),
-      rules({ exibirMotivoViagem: true }),
+      rules({ showTravelReason: true }),
     );
     expect(errors.travelReason).toBeUndefined();
   });
@@ -337,7 +337,7 @@ describe("advertisingName validation", () => {
   it("errors when exibirAdvertisingName is true and advertisingName is empty", () => {
     const errors = validateTransactionForm(
       form({ advertisingName: "" }),
-      rules({ exibirAdvertisingName: true }),
+      rules({ showAdvertisingName: true }),
     );
     expect(errors.advertisingName).toBe("Informe o nome da publicidade");
   });
@@ -345,7 +345,7 @@ describe("advertisingName validation", () => {
   it("errors when advertisingName is whitespace", () => {
     const errors = validateTransactionForm(
       form({ advertisingName: "  " }),
-      rules({ exibirAdvertisingName: true }),
+      rules({ showAdvertisingName: true }),
     );
     expect(errors.advertisingName).toBe("Informe o nome da publicidade");
   });
@@ -353,7 +353,7 @@ describe("advertisingName validation", () => {
   it("no error when exibirAdvertisingName is false", () => {
     const errors = validateTransactionForm(
       form({ advertisingName: "" }),
-      rules({ exibirAdvertisingName: false }),
+      rules({ showAdvertisingName: false }),
     );
     expect(errors.advertisingName).toBeUndefined();
   });
@@ -361,7 +361,7 @@ describe("advertisingName validation", () => {
   it("no error when advertisingName is provided", () => {
     const errors = validateTransactionForm(
       form({ advertisingName: "Campanha Verão" }),
-      rules({ exibirAdvertisingName: true }),
+      rules({ showAdvertisingName: true }),
     );
     expect(errors.advertisingName).toBeUndefined();
   });
@@ -372,7 +372,7 @@ describe("taxAuthority validation", () => {
   it("errors when exibirOrgaoArrecadador is true and taxAuthority is empty", () => {
     const errors = validateTransactionForm(
       form({ taxAuthority: "" }),
-      rules({ exibirOrgaoArrecadador: true }),
+      rules({ showCollectingAgency: true }),
     );
     expect(errors.taxAuthority).toBe("Selecione o órgão arrecadador");
   });
@@ -380,7 +380,7 @@ describe("taxAuthority validation", () => {
   it("no error when exibirOrgaoArrecadador is false", () => {
     const errors = validateTransactionForm(
       form({ taxAuthority: "" }),
-      rules({ exibirOrgaoArrecadador: false }),
+      rules({ showCollectingAgency: false }),
     );
     expect(errors.taxAuthority).toBeUndefined();
   });
@@ -388,7 +388,7 @@ describe("taxAuthority validation", () => {
   it("no error when taxAuthority is provided", () => {
     const errors = validateTransactionForm(
       form({ taxAuthority: "Receita Federal" }),
-      rules({ exibirOrgaoArrecadador: true }),
+      rules({ showCollectingAgency: true }),
     );
     expect(errors.taxAuthority).toBeUndefined();
   });
@@ -399,7 +399,7 @@ describe("parcelamento validation", () => {
   it("errors on installmentCount < 2 when parcelamento is visible", () => {
     const errors = validateTransactionForm(
       form({ installmentCount: "1", firstInstallmentDate: "2026-06-01" }),
-      rules({ exibirParcelamento: true }),
+      rules({ showInstallments: true }),
     );
     expect(errors.installmentCount).toBe("Mínimo 2 parcelas");
   });
@@ -407,7 +407,7 @@ describe("parcelamento validation", () => {
   it("errors on empty installmentCount when parcelamento is visible", () => {
     const errors = validateTransactionForm(
       form({ installmentCount: "", firstInstallmentDate: "2026-06-01" }),
-      rules({ exibirParcelamento: true }),
+      rules({ showInstallments: true }),
     );
     expect(errors.installmentCount).toBe("Mínimo 2 parcelas");
   });
@@ -415,7 +415,7 @@ describe("parcelamento validation", () => {
   it("no error on installmentCount = 2 with date", () => {
     const errors = validateTransactionForm(
       form({ installmentCount: "2", firstInstallmentDate: "2026-06-01" }),
-      rules({ exibirParcelamento: true }),
+      rules({ showInstallments: true }),
     );
     expect(errors.installmentCount).toBeUndefined();
   });
@@ -423,7 +423,7 @@ describe("parcelamento validation", () => {
   it("errors on missing firstInstallmentDate when parcelamento is visible", () => {
     const errors = validateTransactionForm(
       form({ installmentCount: "3", firstInstallmentDate: "" }),
-      rules({ exibirParcelamento: true }),
+      rules({ showInstallments: true }),
     );
     expect(errors.firstInstallmentDate).toBe("Informe a data da primeira parcela");
   });
@@ -431,7 +431,7 @@ describe("parcelamento validation", () => {
   it("no error on firstInstallmentDate when provided", () => {
     const errors = validateTransactionForm(
       form({ installmentCount: "3", firstInstallmentDate: "2026-06-01" }),
-      rules({ exibirParcelamento: true }),
+      rules({ showInstallments: true }),
     );
     expect(errors.firstInstallmentDate).toBeUndefined();
   });
@@ -439,7 +439,7 @@ describe("parcelamento validation", () => {
   it("no parcelamento errors when exibirParcelamento is false", () => {
     const errors = validateTransactionForm(
       form({ installmentCount: "", firstInstallmentDate: "" }),
-      rules({ exibirParcelamento: false }),
+      rules({ showInstallments: false }),
     );
     expect(errors.installmentCount).toBeUndefined();
     expect(errors.firstInstallmentDate).toBeUndefined();

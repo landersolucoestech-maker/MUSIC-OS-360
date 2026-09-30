@@ -36,7 +36,7 @@ function currentPdf(url: string): UploadedFile[] {
 
 export function PaymentSection({ formData, disabled, updateField }: PaymentSectionProps) {
   return (
-    <section className="space-y-4" data-testid="section-pagamento">
+    <section className="space-y-4" data-testid="section-payment">
       <h3 className="text-base font-semibold border-b pb-1">Pagamento</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -71,7 +71,7 @@ export function PaymentSection({ formData, disabled, updateField }: PaymentSecti
             onChange={(iso) => updateField("due_at", iso ? parseISO(iso) : undefined)}
             disabled={disabled}
             placeholder="Selecione a data"
-            data-testid="datepicker-vencimento"
+            data-testid="datepicker-due-date"
           />
         </div>
       </div>
@@ -102,8 +102,8 @@ export function PaymentSection({ formData, disabled, updateField }: PaymentSecti
       <div className="space-y-2">
         <Label>Observações</Label>
         <Textarea
-          value={formData.observacoes}
-          onChange={(event) => updateField("observacoes", event.target.value)}
+          value={formData.notes}
+          onChange={(event) => updateField("notes", event.target.value)}
           placeholder="Observações adicionais..."
           rows={3}
           disabled={disabled}

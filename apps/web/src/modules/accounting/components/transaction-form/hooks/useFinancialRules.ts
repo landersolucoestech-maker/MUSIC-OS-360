@@ -16,10 +16,10 @@ interface Event  { id: string; artist_id?: string | null; title: string; starts_
 
 export interface FinancialRulesResult extends FinancialFormRules {
   categories:          { value: string; label: string }[];
-  subcategorias:       { value: string; label: string }[];
-  itensInvestimento:   { value: string; label: string }[];
+  subcategories:       { value: string; label: string }[];
+  investmentItems:   { value: string; label: string }[];
   filteredEvents:    Event[];
-  valorParcela:        string | null;
+  installmentAmount:        string | null;
 }
 
 interface UseFinancialRulesOptions {
@@ -53,7 +53,7 @@ export function useFinancialRules({
     [formData.transactionType, formData.counterpartyType],
   );
 
-  const subcategorias = useMemo(
+  const subcategories = useMemo(
     () => getSubcategoriesForCategory(formData.transactionType, formData.counterpartyType, formData.category),
     [formData.transactionType, formData.counterpartyType, formData.category],
   );
@@ -82,9 +82,9 @@ export function useFinancialRules({
   return {
     ...rules,
     categories,
-    subcategorias,
-    itensInvestimento: investmentItems,
+    subcategories,
+    investmentItems,
     filteredEvents,
-    valorParcela: installmentAmount,
+    installmentAmount,
   };
 }

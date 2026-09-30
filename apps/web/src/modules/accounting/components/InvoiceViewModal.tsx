@@ -67,11 +67,11 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
   // Hook before the early return (rules of hooks).
   const partyName = useInvoicePartyName(invoice);
   if (!invoice) return null;
-  const { type: operationType, observacoesLimpas: cleanedNotes } = parseOperationType(invoice.notes);
-  const isInflow = operationType === "entrada";
+  const { type: operationType, cleanedNotes: cleanedNotes } = parseOperationType(invoice.notes);
+  const isInflow = operationType === "inflow";
   const items: any[] = Array.isArray(invoice.items) ? invoice.items : [];
   const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
-  const totalRetencoes =
+  const totalWithholdings =
     (invoice.iss_retido ? Number(invoice.iss_amount || 0) : 0) +
     Number(invoice.pis_amount || 0) +
     Number(invoice.cofins_amount || 0) +
@@ -80,13 +80,13 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
     Number(invoice.inss_amount || 0);
   const netAmount =
     numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ??
-    Math.max(servicesAmount - totalRetencoes, 0);
-  const signedNotaValue = isInflow ? -netAmount : netAmount;
+    Math.max(servicesAmount - totalWithholdings, 0);
+  const signedInvoiceValue = isInflow ? -netAmount : netAmount;
   const signedServicesValue = isInflow ? -servicesAmount : servicesAmount;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto" data-testid="modal-nota-fiscal-view">
+      <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto" data-testid="modal-invoice-view">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
@@ -210,11 +210,11 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
               <div className="flex items-center justify-between pt-3 border-t border-border">
                 <div>
                   <p className="text-xs text-muted-foreground">Total Retenções</p>
-                  <p className="text-sm font-semibold text-destructive">{formatCurrency(-totalRetencoes)}</p>
+                  <p className="text-sm font-semibold text-destructive">{formatCurrency(-totalWithholdings)}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground">{isInflow ? "Valor Líquido a Pagar" : "Valor Líquido a Receber"}</p>
-                  <p className={`text-2xl font-bold ${getCurrencyToneClass(signedNotaValue)}`} data-testid="text-nf-valor-liquido">{formatCurrency(signedNotaValue)}</p>
+                  <p className={`text-2xl font-bold ${getCurrencyToneClass(signedInvoiceValue)}`} data-testid="text-invoice-net-amount">{formatCurrency(signedInvoiceValue)}</p>
                 </div>
               </div>
             </CardContent>
@@ -249,16 +249,16 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
             <Card>
               <CardHeader className="pb-2"><CardTitle className="text-sm">Observações</CardTitle></CardHeader>
               <CardContent>
-                <p className="text-sm whitespace-pre-wrap text-muted-foreground" data-testid="text-nf-observacoes">{cleanedNotes}</p>
+                <p className="text-sm whitespace-pre-wrap text-muted-foreground" data-testid="text-invoice-notes">{cleanedNotes}</p>
               </CardContent>
             </Card>
           )}
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-fechar-nf-view">Fechar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-close-invoice-view">Fechar</Button>
           {onEdit && (
-            <Button onClick={onEdit} data-testid="button-editar-nf-view"><Pencil className="h-4 w-4 mr-2" />Editar</Button>
+            <Button onClick={onEdit} data-testid="button-edit-invoice-view"><Pencil className="h-4 w-4 mr-2" />Editar</Button>
           )}
         </DialogFooter>
       </DialogContent>
