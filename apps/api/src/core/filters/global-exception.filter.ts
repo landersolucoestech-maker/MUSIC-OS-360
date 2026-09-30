@@ -11,6 +11,11 @@ import { v4 as uuidv4 }     from 'uuid';
 import { Sentry }            from '../../instrument';
 import { redactUrl }         from '../security/redact';
 
+/** Request path with the query string and fragment dropped: query values may carry tokens or PII. */
+function pathWithoutQuery(url: string | undefined): string {
+  return (url ?? '').split(/[?#]/, 1)[0];
+}
+
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
@@ -73,7 +78,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message,
       error,
       timestamp: new Date().toISOString(),
-      path:      request.url,
+      path:      pathWithoutQuery(request.url),
       requestId,
       correlationId,
       traceId,

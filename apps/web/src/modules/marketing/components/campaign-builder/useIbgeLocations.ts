@@ -49,7 +49,7 @@ export function useIbgeMunicipios(uf: string | null) {
     setError(null);
     fetchMunicipiosByUf(uf)
       .then((data) => setMunicipios(data))
-      .catch((err) => setError(String(err)))
+      .catch(() => setError("Não foi possível carregar as cidades. Tente novamente."))
       .finally(() => setLoading(false));
   }, [uf]);
 

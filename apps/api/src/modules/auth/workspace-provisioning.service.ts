@@ -179,7 +179,13 @@ export class WorkspaceProvisioningService {
           role: membership.role,
         },
       });
-      if (error) throw new ServiceUnavailableException(error.message);
+      if (error) {
+        this.logger.error(`Supabase updateUserById (workspace provisioning) failed: ${error.message}`);
+        throw new ServiceUnavailableException({
+          message: 'Não foi possível atualizar a sessão. Tente novamente.',
+          error: 'SESSION_UPDATE_FAILED',
+        });
+      }
 
       await queryRunner.commitTransaction();
       this.logger.log(JSON.stringify({

@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, Logger, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { OrgMemberEntity } from '../../database/entities';
@@ -15,6 +15,7 @@ import { PlanLimitService } from '../../core/billing/plan-limit.service';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   private readonly repo: Repository<OrgMemberEntity> | null = null;
 
   constructor(
@@ -186,7 +187,11 @@ export class UsersService {
       data: { org_id: tenant.org_id, tenant_id: tenantId, tenant_slug: tenant.slug, role },
     });
     if (error || !data.user) {
-      throw new ConflictException(error?.message ?? 'Não foi possível criar o convite');
+      this.logger.warn(`Supabase inviteUserByEmail failed: ${error?.message ?? 'no user returned'}`);
+      throw new ConflictException({
+        message: 'Não foi possível criar o convite. Tente novamente.',
+        error: 'INVITE_CREATE_FAILED',
+      });
     }
 
     const metadataResult = await supabase.auth.admin.updateUserById(data.user.id, {
@@ -194,7 +199,11 @@ export class UsersService {
     });
     if (metadataResult.error) {
       await supabase.auth.admin.deleteUser(data.user.id, true).catch(() => undefined);
-      throw new ConflictException(metadataResult.error.message);
+      this.logger.warn(`Supabase updateUserById (invite app_metadata) failed: ${metadataResult.error.message}`);
+      throw new ConflictException({
+        message: 'Não foi possível criar o convite. Tente novamente.',
+        error: 'INVITE_METADATA_FAILED',
+      });
     }
 
     const membership = await this.create(tenantId, {
@@ -261,7 +270,11 @@ export class UsersService {
       },
     });
     if (error || !data.properties?.action_link) {
-      throw new ConflictException(error?.message ?? 'Não foi possível reenviar o convite');
+      this.logger.warn(`Supabase generateLink (invite resend) failed: ${error?.message ?? 'no action link returned'}`);
+      throw new ConflictException({
+        message: 'Não foi possível reenviar o convite. Tente novamente.',
+        error: 'INVITE_RESEND_FAILED',
+      });
     }
     await this.mail.send({
       to: String(invitation['email']),

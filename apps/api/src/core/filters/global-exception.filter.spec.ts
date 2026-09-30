@@ -120,3 +120,34 @@ describe('GlobalExceptionFilter', () => {
     }));
   });
 });
+
+describe('GlobalExceptionFilter - technical text never reaches the response body', () => {
+  const RAW = 'ECONNREFUSED 10.0.0.5:5432 password authentication failed';
+
+  it('an unhandled Error yields the generic PT-BR message without the raw text or a stack', () => {
+    const filter = new GlobalExceptionFilter();
+    const { host, json } = buildHost();
+
+    filter.catch(new Error(RAW), host);
+
+    const body = json.mock.calls[0][0];
+    expect(body.message).toBe('Erro interno do servidor');
+    const serialized = JSON.stringify(body);
+    expect(serialized).not.toContain('ECONNREFUSED');
+    expect(serialized).not.toContain('password authentication');
+    expect(serialized).not.toMatch(/\bat .*\(.*:\d+:\d+\)/);
+    expect(serialized).not.toContain('stack');
+  });
+
+  it('does not echo the query string (tokens, PII) in `path`', () => {
+    const filter = new GlobalExceptionFilter();
+    const { host, json } = buildHost({ url: '/api/v1/auth/callback?token=secret&email=a@b.co#frag' });
+
+    filter.catch(new BadRequestException('payload inválido'), host);
+
+    const body = json.mock.calls[0][0];
+    expect(body.path).toBe('/api/v1/auth/callback');
+    expect(JSON.stringify(body)).not.toContain('secret');
+    expect(JSON.stringify(body)).not.toContain('a@b.co');
+  });
+});

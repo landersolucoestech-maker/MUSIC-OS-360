@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { CompanyLogo } from "@/shared/ui/company-logo";
+import { toUserMessage } from "@/shared/lib/errors";
 import { useTenant } from "@/app/providers/TenantContext";
 import {
   companyLogoService,
@@ -57,7 +58,7 @@ export function LogoUploader() {
       reflectInTenant(url);
       toast.success("Logo atualizada com sucesso.");
     } catch (err) {
-      toast.error((err as { message?: string })?.message ?? "Falha ao salvar a logo.");
+      toast.error(toUserMessage(err, "Falha ao salvar a logo."));
     } finally {
       setIsBusy(false);
     }
@@ -71,7 +72,7 @@ export function LogoUploader() {
       reflectInTenant(null);
       toast.success("Logo removida.");
     } catch (err) {
-      toast.error((err as { message?: string })?.message ?? "Falha ao remover a logo.");
+      toast.error(toUserMessage(err, "Falha ao remover a logo."));
     } finally {
       setIsBusy(false);
     }
