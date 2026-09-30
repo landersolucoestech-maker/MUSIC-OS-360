@@ -15,7 +15,8 @@ import {
   transactionStatusChangedCopy,
 } from './i18n/transaction-copy.pt-br';
 import type { QueryTransactionDto } from './dto/query-transaction.dto';
-import { canonicalTransactionType } from './transaction-legacy-fields';
+import { canonicalTransactionType, TRANSACTION_QUERY_DEPRECATED_FIELDS } from './transaction-legacy-fields';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import type { TransactionDetailsDTO } from './dto/transaction-details.dto';
 import type {
   CreateTransactionDto,
@@ -207,7 +208,7 @@ export class TransactionsService {
   }
 
   private baseQb(tenantId: string, query: QueryTransactionDto) {
-    const q = query as AnyRecord;
+    const q = applyDeprecatedFieldAliases(query as AnyRecord, TRANSACTION_QUERY_DEPRECATED_FIELDS);
     const qb = this.repo!
       .createQueryBuilder('t')
       .where('t.tenant_id = :tenantId', { tenantId })

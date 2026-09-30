@@ -73,11 +73,11 @@ export class UpdateShareDto extends PartialType(CreateShareDto) {
 }
 
 export class QueryShareDto extends PaginationDto {
-  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias, not read by the service. Use "work_id".' })
-  @IsOptional() @IsString() workId?: string;
-  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias, not read by the service. Use "phonogram_id".' })
-  @IsOptional() @IsString() trackId?: string;
-  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias, not read by the service. Use "party_role".' })
+  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias, mapped to "work_id" by the service (canonical wins when both are sent).' })
+  @IsOptional() @IsUUID() workId?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias, mapped to "phonogram_id" by the service (canonical wins when both are sent).' })
+  @IsOptional() @IsUUID() trackId?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias, mapped to "party_role" by the service (canonical wins when both are sent).' })
   @IsOptional() @IsString() role?: string;
 
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;

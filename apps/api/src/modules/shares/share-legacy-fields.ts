@@ -26,6 +26,17 @@ export const SHARE_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   historico: 'history',
 };
 
+/**
+ * Deprecated QUERY-string keys (list/stats filters) → canonical filter keys.
+ * Applied by SharesService.baseQb before any filter is read, so an old web
+ * build's filtered list is filtered, never silently returned unfiltered.
+ */
+export const SHARE_QUERY_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
+  workId: 'work_id',
+  trackId: 'phonogram_id',
+  role: 'party_role',
+};
+
 /** Keys of a history[] entry (append-only audit trail). `percentual` in old
  * entries is historical data (readers fall back to it) and is not remapped. */
 export const SHARE_HISTORY_ENTRY_DEPRECATED_FIELDS: DeprecatedFieldAliases = {

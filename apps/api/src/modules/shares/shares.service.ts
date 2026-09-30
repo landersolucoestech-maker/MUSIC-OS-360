@@ -6,7 +6,7 @@ import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { assertSplitBudgetNotExceeded } from './share-split-invariant.util';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
-import { SHARE_DEPRECATED_FIELDS, canonicalizeShareHistory, canonicalizeShareValues } from './share-legacy-fields';
+import { SHARE_DEPRECATED_FIELDS, SHARE_QUERY_DEPRECATED_FIELDS, canonicalizeShareHistory, canonicalizeShareValues } from './share-legacy-fields';
 import type { CreateShareDto, UpdateShareDto, QueryShareDto } from './dto/shares.dto';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class SharesService {
   }
 
   private baseQb(tenantId: string, query: QueryShareDto) {
-    const q = canonicalizeShareValues(query as Record<string, unknown>);
+    const q = canonicalizeShareValues(applyDeprecatedFieldAliases(query as Record<string, unknown>, SHARE_QUERY_DEPRECATED_FIELDS));
     const qb = this.repo!
       .createQueryBuilder('s')
       .where('s.tenant_id = :tenantId', { tenantId })

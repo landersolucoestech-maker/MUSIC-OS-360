@@ -36,6 +36,11 @@ export const TRANSACTION_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   anexoNome: 'attachmentName',
 };
 
+/** Deprecated QUERY-string keys (list filters) → canonical filter keys. */
+export const TRANSACTION_QUERY_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
+  artistId: 'artist_id',
+};
+
 export const TRANSACTION_TYPES = ['revenue', 'expense', 'investment', 'tax', 'transfer'] as const;
 export const COUNTERPARTY_TYPES = ['company', 'artist', 'individual', 'government', 'own_account'] as const;
 export const PAYMENT_METHODS = ['pix', 'ted', 'boleto', 'credit_card', 'debit_card', 'cash', 'check'] as const;

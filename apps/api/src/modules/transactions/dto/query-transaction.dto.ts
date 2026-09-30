@@ -8,7 +8,7 @@ export class QueryTransactionDto extends PaginationDto {
   @IsString()
   status?: string;
 
-  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias, not read by the service. Use "artist_id".' })
+  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias, mapped to "artist_id" by the service (canonical wins when both are sent).' })
   @IsOptional()
   @IsUUID()
   artistId?: string;
