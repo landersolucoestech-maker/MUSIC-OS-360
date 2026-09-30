@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { ActivityLogEntity } from '../../database/entities';
+import { toPublicActivityLog } from './activity-log.public';
 import type { CreateActivityLogDto, QueryActivityLogDto } from './dto/activity-log.dto';
 
 @Injectable()
@@ -42,6 +43,6 @@ export class ActivityLogsService {
       qb.andWhere('a.entity_id = :entityId', { entityId: query.entityId });
     }
 
-    return qb.getMany();
+    return (await qb.getMany()).map(toPublicActivityLog);
   }
 }

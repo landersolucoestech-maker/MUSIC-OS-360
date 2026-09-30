@@ -322,8 +322,8 @@ test("prose: single weak-signal Portuguese titles are caught; English titles nam
 
 test("legal-domain exceptions apply to their words: names built only from them are covered, others are not", async () => {
   const { exceptionIndex } = await import("./canonical-map.mjs");
-  const idx = exceptionIndex({ exceptions: ["tomador", "nfe", "cpf", "cnpj"].map((n) => ({ currentName: n, path: "*", status: "ACTIVE" })) });
-  for (const covered of ["tomador_email", "NfeConfigDialog.tsx", "cpfCnpj"]) assert.ok(idx.get("apps/web/src/a.ts", covered), covered);
+  const idx = exceptionIndex({ exceptions: ["tomador", "prestador", "cpf", "cnpj"].map((n) => ({ currentName: n, path: "*", status: "ACTIVE" })) });
+  for (const covered of ["tomador_email", "PrestadorConfigDialog.tsx", "cpfCnpj"]) assert.ok(idx.get("apps/web/src/a.ts", covered), covered);
   for (const notCovered of ["tomador_razao_social", "nomeCnpj"]) assert.equal(idx.get("apps/web/src/a.ts", notCovered), undefined, notCovered);
 });
 
@@ -369,4 +369,42 @@ test("external tool names: Rust Cargo.lock/Cargo.toml keys are not Portuguese; a
   assert.deepEqual(names(lock, "objectKey"), []);
   assert.deepEqual(names(scanSource("apps/api/src/a.ts", `const row = { cargo: 1 };`), "objectKey"), ["cargo"]);
   assert.deepEqual(names(scanSource("apps/api/src/a.ts", `const row = { "cargo.lock": 1 };`), "identifier"), ["cargo.lock"]);
+});
+
+test("lexicon: `eua` abbreviation and NF-e/NFS-e/NFC-e fiscal document types are external vocabulary", () => {
+  assert.deepEqual(ptWords("_eua"), []);
+  assert.deepEqual(ptWords("expectedUpdatedAt_eua"), []);
+  for (const n of ["nfse", "nfe", "nfce", "NFe", "NFSe", "NFCe", "NfeConfigDialog", "useNfse", "NFCe_SERIES", "isNFe"]) assert.deepEqual(ptWords(n), [], n);
+  const src = `export const FISCAL_DOC_TYPES = ["nfse", "nfe", "nfce"] as const;`;
+  assert.deepEqual(names(scanSource("apps/api/src/modules/invoices/invoice-schema.ts", src), "value"), []);
+  // Portuguese words next to them are still reported
+  assert.deepEqual(ptWords("nfeTomador"), ["tomador"]);
+});
+
+test("lexicon: pg_policies `qual` column compounds are technical, Portuguese `qual_*` names still are not", () => {
+  assert.deepEqual(ptWords("qual"), []);
+  assert.deepEqual(ptWords("qualSnippet"), []);
+  assert.deepEqual(ptWords("qualIncludes"), []);
+  assert.deepEqual(ptWords("policy_qual_expr"), []);
+  assert.equal(ptWords("qual_artista").includes("artista"), true);
+});
+
+test("user-input vocabulary: only the exact value in the exact file is exempt", () => {
+  const src = `const PARTICLES = new Set(["das", "dos"]); const other = "projeto";`;
+  assert.deepEqual(names(scanSource("apps/web/src/shared/lib/format-name.ts", src), "value"), ["projeto"]);
+  assert.deepEqual(names(scanSource("apps/web/src/shared/lib/other.ts", `const x = "das";`), "value"), ["das"]);
+  assert.deepEqual(names(scanSource("apps/api/src/modules/reports/import/import-validation.service.ts", `const t = ["sim", "verdadeiro"]; const u = "lancamento";`), "value"), ["lancamento"]);
+});
+
+test("detector fixtures: audit tooling and the rename table are vocabulary, their identifiers are still checked", () => {
+  const src = `const OLD = "artistaService"; const salvarProjeto = 1;`;
+  for (const f of [".audit-runtime/census-pt-columns.ts", "scripts/run-technical-english-normalization.mjs"]) {
+    const hits = scanSource(f, src);
+    assert.deepEqual(names(hits, "value"), [], f);
+    assert.deepEqual(names(hits, "identifier"), ["salvarProjeto"], f);
+  }
+});
+
+test("UX: `itemLabel` literals are user-visible copy", () => {
+  assert.deepEqual(names(scanSource("apps/web/src/List.tsx", `export const L = () => <Picker itemLabel="projeto" />;`), "value"), []);
 });

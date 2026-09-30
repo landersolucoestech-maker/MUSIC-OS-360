@@ -277,7 +277,10 @@ describe('ConversationsService.addMessage() — real delivery on the external ch
       })),
     }));
 
-    await expect(service.addMessage(TENANT, 'user-a', CONV_ID, { body: 'oi' })).resolves.toBeDefined();
+    const returned = await service.addMessage(TENANT, 'user-a', CONV_ID, { body: 'oi' });
+    // The response carries the stable code only; the raw provider text is never returned.
+    expect(returned.metadata).toMatchObject({ delivery_status: 'failed', delivery_error_code: 'WHATSAPP_UPSTREAM_ERROR' });
+    expect(JSON.stringify(returned)).not.toContain('responded 401');
     const updateCalls = mockDs._convRepo.update.mock.calls;
     const metadataUpdate = updateCalls.find(([, payload]) => (payload as any)?.metadata?.delivery_status === 'failed');
     expect(metadataUpdate).toBeDefined();

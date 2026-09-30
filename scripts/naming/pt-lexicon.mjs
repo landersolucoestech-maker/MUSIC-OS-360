@@ -17,6 +17,10 @@ export const VOCABULARY = path.join(here, "pt-vocabulary.txt");
  * English or technical words that look Portuguese to a frequency table (English plurals such as
  * "todos", acronyms such as "rtp"/"bom", proper names such as "portugal"). The vocabulary file
  * already excludes them; they are re-applied here so a hand edit of the file cannot bring one back.
+ *
+ * Also listed: `eua` (abbreviation such as `_eua` = expectedUpdatedAt; "EUA" = United States only
+ * appears in end-user copy) and `nfe`/`nfse`/`nfce` (Brazilian fiscal document types NF-e, NFS-e and
+ * NFC-e: external contract vocabulary that must be spelled exactly as the tax authorities name them).
  */
 export const EN_OVERRIDES = new Set(`
 meta audiovisual param params num resolver resolvers pos logo logos whatsapp util utils alias aliases dom infra era inclusive final
@@ -24,6 +28,7 @@ portal extras indices lateral del resp cid enc cnt evt inp zap usp obs pag segs 
 electronica latam cinema lucida palatino perpetua sistina alef eacute aacute agrave atilde iacute oacute uacute ecirc ocirc acirc
 ccedil otilde emites fintx principal opa cheque municipal regime auto twitter blog ranking sms pdf org deezer integral grave label status
 data total normal real dao tempo rtp todo soa avc bom modulo ver algo nas vao uff ora vim cores reviver devolve ecad musicos ipi series ibge
+eua nfe nfse nfce
 `.split(/\s+/).filter(Boolean));
 
 function loadVocabulary(file = VOCABULARY) {
@@ -36,6 +41,8 @@ export const PT_TOKENS = loadVocabulary();
 
 export function splitWords(name) {
   return name
+    // NFe / NFSe / NFCe are single words (the camelCase split would read them as "n fe", "nf se")
+    .replace(/NF(?:S|C)?e(?![a-z])/g, (m) => m.toLowerCase())
     .normalize("NFD").replace(/[̀-ͯ]/g, "")
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
@@ -65,7 +72,12 @@ const SOLO_AMBIGUOUS = new Set(["em", "qual", "com", "por", "sem", "para", "tem"
 export function ptWords(name) {
   const words = splitWords(name);
   if (words.length === 1 && SOLO_AMBIGUOUS.has(words[0])) return [];
-  return words.filter(isPtWord);
+  const hits = words.filter(isPtWord);
+  // `qual` is the pg_policies.qual column (the policy USING expression): a compound such as
+  // qualSnippet / qualIncludes whose only Portuguese word is `qual` is that column, not Portuguese.
+  // A genuine Portuguese name carries more vocabulary (qual_artista).
+  if (words.length > 1 && hits.length === 1 && hits[0] === "qual") return [];
+  return hits;
 }
 
 const PT_PROSE = /\b(e|o|os|ao|aos|da|de|na|em|mesma|mesmas|mesmos|exatamente|acima|abaixo|ausente|usa|nenhum|nenhuma|efetivamente|n[aã]o|para|com|sem|quando|porque|pois|deve|devem|est[aá]|s[aã]o|tamb[eé]m|ent[aã]o|j[aá]|ainda|aqui|isso|este|esta|esse|essa|pelo|pela|pelos|pelas|uma|um|dos|das|nos|nas|mas|ou|se|que|como|onde|quem|mesmo|apenas|sempre|nunca|antes|depois|agora|cada|todo|toda|todos|todas|seu|sua|seus|suas|foi|ser|ter|tem|fazer|feito|pode|podem|precisa|caso|sobre|entre|at[eé]|voc[eê])\b/gi;

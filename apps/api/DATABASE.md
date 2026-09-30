@@ -4,85 +4,86 @@
 - **Engine**: PostgreSQL 15+ (Supabase)
 - **ORM**: TypeORM 0.3.x
 - **Migrations table**: `musicos360_migrations`
-- **Schema governance**: migrations versionadas — `synchronize: false` sempre
+- **Schema governance**: versioned migrations, `synchronize: false` always
 
 ---
 
-## Fonte única de migrations (canonical source)
+## Single source of migrations (canonical source)
 
-**As migrations oficiais deste projeto vivem exclusivamente em
-`apps/api/src/database/migrations/` e são executadas pelo runner TypeORM do
-próprio projeto (`db:migrate` / `db:check`, ver [scripts/db-ops.ts](scripts/db-ops.ts)).
-O tracking canônico do que já foi aplicado é a tabela `musicos360_migrations`.**
+**The official migrations of this project live exclusively in
+`apps/api/src/database/migrations/` and are executed by the project's own
+TypeORM runner (`db:migrate` / `db:check`, see [scripts/db-ops.ts](scripts/db-ops.ts)).
+The canonical tracking of what has already been applied is the
+`musicos360_migrations` table.**
 
-Não existe — e não deve passar a existir — um segundo tracker concorrente:
+There is no second, competing tracker, and there must never be one:
 
-- `supabase/migrations/` contém apenas 2 arquivos SQL antigos (snapshot inicial
-  + uma reconciliação pontual). **Não é a fonte de verdade e não deve ser
-  atualizado em paralelo** a cada migration TypeORM nova. Não criar backfill
-  artificial ali só para "sincronizar" com o Supabase Branching — isso criaria
-  exatamente o tracker duplo que este documento existe para evitar, sem
-  nenhum ganho real (o schema já é validado por `db:check` + fresh-DB CI).
-- **Supabase Branching** (o mecanismo nativo de branches do Supabase, visível
-  no dashboard) observa `supabase/migrations/` para decidir o status de uma
-  branch. Como este projeto nunca alimentou esse mecanismo, o badge de status
-  de uma branch (ex.: `MIGRATIONS_FAILED` na branch DEV) é **metadata
-  histórica do Supabase Branching, sem relação com a saúde real do schema**.
-  Não reflete migrations pendentes, RLS quebrado, ou qualquer problema atual —
-  só reflete que o Branching nunca reconheceu o histórico real de migrations
-  (que está inteiramente em `musicos360_migrations`).
-- A saúde real do banco é determinada por, nesta ordem: `db:check` (zero
-  migrations pendentes), a suíte de fresh-DB em CI (migrations aplicam limpo
-  em um Postgres novo), e as verificações de RLS/tenant-isolation
-  (`verify:rls`, `verify:tenant-isolation`) — nunca pelo status de branch do
-  Supabase.
-- Nenhuma migration deve ser aplicada manualmente (SQL solto via editor/CLI)
-  sem passar pelo runner e sem ficar registrada em `musicos360_migrations`.
-  Uma aplicação que não registra a migration cria exatamente a divergência
-  entre "schema real" e "tracking oficial" que este documento existe para
-  prevenir.
-- Não editar tabelas internas do Supabase (`supabase_migrations.*` ou
-  equivalentes) para forjar/"consertar" o status de uma branch. Se o
-  Branching precisar reconhecer o histórico real algum dia, isso é uma
-  decisão arquitetural separada (backfillar `supabase/migrations/` de forma
-  deliberada, ou desativar formalmente o Branching para este projeto) — não
-  um ajuste manual de estado interno.
+- `supabase/migrations/` holds only 2 old SQL files (initial snapshot plus one
+  one-off reconciliation). **It is not the source of truth and must not be
+  updated in parallel** with every new TypeORM migration. Do not create
+  artificial backfills there just to "sync" with Supabase Branching: that
+  would create exactly the double tracker this document exists to prevent,
+  with no real gain (the schema is already validated by `db:check` + the
+  fresh-DB CI).
+- **Supabase Branching** (Supabase's native branch mechanism, visible in the
+  dashboard) watches `supabase/migrations/` to decide a branch's status. Since
+  this project never fed that mechanism, a branch status badge (e.g.
+  `MIGRATIONS_FAILED` on the DEV branch) is **historical Supabase Branching
+  metadata, unrelated to the real health of the schema**. It does not reflect
+  pending migrations, broken RLS, or any current problem; it only reflects
+  that Branching never recognized the real migration history (which lives
+  entirely in `musicos360_migrations`).
+- The real health of the database is determined by, in this order: `db:check`
+  (zero pending migrations), the fresh-DB suite in CI (migrations apply
+  cleanly on a new Postgres), and the RLS/tenant-isolation checks
+  (`verify:rls`, `verify:tenant-isolation`), never by the Supabase branch
+  status.
+- No migration may be applied manually (loose SQL via editor/CLI) without
+  going through the runner and being recorded in `musicos360_migrations`. An
+  application that does not record the migration creates exactly the
+  divergence between "real schema" and "official tracking" that this
+  document exists to prevent.
+- Do not edit Supabase internal tables (`supabase_migrations.*` or
+  equivalents) to forge or "fix" a branch status. If Branching ever needs to
+  recognize the real history, that is a separate architectural decision
+  (deliberately backfill `supabase/migrations/`, or formally disable
+  Branching for this project), not a manual edit of internal state.
 
-Um guard de CI (`scripts/verify-migration-source-of-truth.mjs`) falha o build
-se essa fonte única for violada silenciosamente — ver seção de CI abaixo.
+A CI guard (`scripts/verify-migration-source-of-truth.mjs`) fails the build if
+this single source is silently violated; see the CI section below.
 
-### Registro único de migrations (resolvido na Parte 61)
+### Single migration registry (resolved in Part 61)
 
-`src/database/migrations/index.ts` exporta `ALL_MIGRATIONS` — a única lista
-de migrations do projeto. Tanto `src/database/datasource.ts` (o runner real
-por trás de `db:migrate`/`db:check`/CI) quanto `src/database/database.module.ts`
-(o `ADMIN_DATA_SOURCE` da aplicação NestJS, usado por `MigrationValidatorService`
-para checar migrations pendentes no boot) importam exatamente o mesmo array.
+`src/database/migrations/index.ts` exports `ALL_MIGRATIONS`, the only list of
+migrations in the project. Both `src/database/datasource.ts` (the real runner
+behind `db:migrate`/`db:check`/CI) and `src/database/database.module.ts` (the
+NestJS application's `ADMIN_DATA_SOURCE`, used by `MigrationValidatorService`
+to check pending migrations at boot) import exactly the same array.
 
-Isso substitui um estado anterior onde `datasource.ts` descobria migrations
-via glob (`migrations/*.{ts,js}`, sempre atualizado automaticamente) enquanto
-`database.module.ts` mantinha seu próprio array explícito, import por import —
-que ficou **defasado em ~50 migrations** (nada entre `20260712000001` e
-`20260719000025`) sem que ninguém notasse, porque nada comparava os dois.
-Isso é um risco real, não cosmético: `MigrationValidatorService` usa esse
-array para decidir, no boot, se existem migrations pendentes (fatal em
-produção) — um array defasado significa que esse último-recurso de segurança
-fica cego exatamente para as migrations mais recentes.
+This replaces a previous state where `datasource.ts` discovered migrations via
+a glob (`migrations/*.{ts,js}`, always automatically up to date) while
+`database.module.ts` kept its own explicit array, import by import, which
+became **~50 migrations out of date** (nothing between `20260712000001` and
+`20260719000025`) without anyone noticing, because nothing compared the two.
+This is a real risk, not a cosmetic one: `MigrationValidatorService` uses that
+array to decide at boot whether pending migrations exist (fatal in production);
+an outdated array means this last-resort safety net is blind to exactly the
+most recent migrations.
 
-`scripts/verify-migration-source-of-truth.mjs` roda em CI e falha o build se
-`migrations/index.ts` e o conteúdo real de `migrations/` voltarem a divergir
-(arquivo sem entrada no registro, ou entrada sem arquivo correspondente).
+`scripts/verify-migration-source-of-truth.mjs` runs in CI and fails the build
+if `migrations/index.ts` and the real contents of `migrations/` diverge again
+(a file with no registry entry, or an entry with no matching file).
 
-**Ao adicionar uma nova migration**: depois de gerar o arquivo (ver "Fluxo de
-desenvolvimento normal" abaixo), adicionar o import + a entrada em
-`migrations/index.ts`. Esse é o único lugar a atualizar — nem `datasource.ts`
-nem `database.module.ts` precisam de nenhuma alteração.
+**When adding a new migration**: after generating the file (see "Normal
+development flow" below), add the import + the entry in
+`migrations/index.ts`. That is the only place to update; neither
+`datasource.ts` nor `database.module.ts` needs any change.
 
 ---
 
-## Pré-requisitos
+## Prerequisites
 
-Definir a variável de ambiente `DATABASE_URL` (no seu gerenciador de secrets/`.env` local) antes de qualquer operação:
+Set the `DATABASE_URL` environment variable (in your secrets manager or local `.env`) before any operation:
 
 ```
 DATABASE_URL=postgresql://postgres:<password>@<host>:5432/postgres
@@ -90,119 +91,125 @@ DATABASE_URL=postgresql://postgres:<password>@<host>:5432/postgres
 
 ---
 
-## Comandos
+## Commands
 
 ```bash
-# Aplicar todas as migrations pendentes (dev + produção)
+# Apply all pending migrations (dev + production)
 npm run db:migrate
 
-# Reverter a última migration (PROIBIDO em produção sem CONFIRM_ROLLBACK)
+# Revert the last migration (FORBIDDEN in production without CONFIRM_ROLLBACK)
 npm run db:rollback
 
-# Ver estado das migrations — sai com código 1 se existirem pendentes
+# Show migration state; exits with code 1 if any are pending
 npm run db:check
 
-# Popular base de dados com dados de desenvolvimento
+# Populate the database with development data
 npm run db:seed
 
-# [DEV ONLY] Drop total + migrate + seed  (BLOQUEADO em NODE_ENV=production)
+# [DEV ONLY] Full drop + migrate + seed  (BLOCKED when NODE_ENV=production)
 npm run db:reset
 
-# Gerar uma nova migration baseada nas entidades TypeORM
-npm run db:generate -- NomeDaMigration
-# Executar manualmente o comando gerado como output do script acima
+# Generate a new migration based on the TypeORM entities
+npm run db:generate -- MigrationName
+# Manually run the command printed as output by the script above
 ```
+
+> Note: the repository's package manager is `pnpm` (see `.github/PULL_REQUEST_TEMPLATE.md`); the `npm run` form above is kept from the original document and the scripts are defined in `apps/api/package.json`, so `pnpm run <script>` is equivalent.
 
 ---
 
-## Fluxo de desenvolvimento normal
+## Normal development flow
 
 ```
-1. Alterar entidade em src/database/entities.ts
-2. npm run db:generate -- DescricaoDaMudanca
-3. Revisar o ficheiro gerado em src/database/migrations/
-4. Adicionar o import + a entrada em src/database/migrations/index.ts
-   (verify-migration-source-of-truth.mjs falha o CI se esquecer este passo)
+1. Change the entity in src/database/entities.ts
+2. npm run db:generate -- ChangeDescription
+3. Review the generated file in src/database/migrations/
+4. Add the import + the entry in src/database/migrations/index.ts
+   (verify-migration-source-of-truth.mjs fails CI if this step is forgotten)
 5. npm run db:migrate
-6. Testar localmente
-7. Commit do ficheiro de migration + a atualização de index.ts junto com a
-   alteração da entidade
+6. Test locally
+7. Commit the migration file + the index.ts update together with the
+   entity change
 ```
 
 ---
 
-## Tabelas do schema
+## Schema tables
 
-| Grupo         | Tabelas                                                            |
+> Partial, illustrative grouping: it does not list every table. The entity
+> count below (138) is the verified figure; this table was not regenerated
+> from `entities.ts` and may be missing tables added later.
+
+| Group         | Tables                                                             |
 |---------------|---------------------------------------------------------------------|
 | Multi-tenant  | organizations, tenants, org_members, billing_subscriptions         |
-| Catálogo      | artists, works, phonograms, shares                                 |
-| Contratos     | contracts, contract_templates                                      |
-| Financeiro    | transactions, invoices                                             |
+| Catalog       | artists, works, phonograms, shares                                 |
+| Contracts     | contracts, contract_templates                                      |
+| Financial     | transactions, invoices                                             |
 | CRM           | clients, leads, lead_interactions                                  |
 | Marketing     | campaigns, briefings                                               |
-| Operações     | events, projects, releases                                         |
-| Monitoramento | takedowns, content_detections, ecad_reports, artist_goals         |
-| RH            | employees, payroll_entries, leave_requests                         |
-| Plataforma    | uploads, integrations, oauth_connections, webhook_events           |
-| Sistema       | audit_logs, ai_jobs, notifications, support_tickets                |
+| Operations    | events, projects, releases                                         |
+| Monitoring    | takedowns, content_detections, ecad_reports, artist_goals         |
+| HR            | employees, payroll_entries, leave_requests                         |
+| Platform      | uploads, integrations, oauth_connections, webhook_events           |
+| System        | audit_logs, ai_jobs, notifications, support_tickets                |
 
-**Total: 138 tabelas** (contagem de `@Entity(...)` em `apps/api/src/database/entities.ts`)
+**Total: 138 tables** (count of `@Entity(...)` in `apps/api/src/database/entities.ts`)
 
 ---
 
-## Políticas de segurança
+## Security policies
 
-### Migrations em produção
-- `synchronize: false` está hardcoded — nunca alterar
-- `db:reset` é bloqueado em `NODE_ENV=production`
-- `db:rollback` em produção requer `CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING`
-- `MigrationValidatorService` mata o processo no boot se existirem migrations pendentes em produção
+### Migrations in production
+- `synchronize: false` is hardcoded; never change it
+- `db:reset` is blocked when `NODE_ENV=production`
+- `db:rollback` in production requires `CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING`
+- `MigrationValidatorService` kills the process at boot if pending migrations exist in production
 
-### Dados sensíveis
-- Campos `*_encrypted` contêm dados cifrados via serviço `EncryptionService`
-- Nunca logar ou expor esses campos em raw
+### Sensitive data
+- `*_encrypted` fields hold data encrypted by the `EncryptionService`
+- Never log or expose these fields raw
 
 ### Seeds
-- Seeds executam com `ON CONFLICT DO NOTHING` — idempotentes
-- Em produção, requerem a flag `--force` explícita
+- Seeds run with `ON CONFLICT DO NOTHING`, so they are idempotent
+- In production they require the explicit `--force` flag
 
 ---
 
-## Adicionar nova migration
+## Adding a new migration
 
 ```bash
-# 1. Fazer a alteração na entidade (entities.ts)
-# 2. Gerar a migration com TypeORM CLI:
+# 1. Make the change in the entity (entities.ts)
+# 2. Generate the migration with the TypeORM CLI:
 npx typeorm migration:generate \
   -d src/database/datasource.ts \
-  src/database/migrations/$(date +%Y%m%d%H%M%S)_NomeDaMigration
+  src/database/migrations/$(date +%Y%m%d%H%M%S)_MigrationName
 
-# 3. Verificar o SQL gerado
-# 4. Aplicar:
+# 3. Check the generated SQL
+# 4. Apply:
 npm run db:migrate
 ```
 
 ---
 
-## Convenções de nomes
+## Naming conventions
 
-| Tipo                | Padrão                                 | Exemplo                              |
+| Type                | Pattern                                | Example                              |
 |---------------------|----------------------------------------|--------------------------------------|
 | Migration file      | `YYYYMMDDHHMMSS_PascalCase.ts`         | `20240615120000_AddArtistBio.ts`     |
 | Class name          | `PascalCase + timestamp`               | `AddArtistBio20240615120000`         |
-| Índice              | `idx_<tabela>_<coluna(s)>`             | `idx_artists_tenant_id`              |
-| Índice único        | `uq_<tabela>_<coluna(s)>`              | `uq_tenants_slug`                    |
-| FK                  | `fk_<tabela>_<campo>_<ref_tabela>`     | `fk_artists_tenant_id_tenants`       |
+| Index               | `idx_<table>_<column(s)>`              | `idx_artists_tenant_id`              |
+| Unique index        | `uq_<table>_<column(s)>`               | `uq_tenants_slug`                    |
+| FK                  | `fk_<table>_<field>_<ref_table>`       | `fk_artists_tenant_id_tenants`       |
 
 ---
 
 ## Troubleshooting
 
-**`DATABASE_URL não definida`** — Definir a variável de ambiente no seu gerenciador de secrets (não em `.env` em produção).
+**`DATABASE_URL not defined`**: set the environment variable in your secrets manager (not in `.env` in production).
 
-**`Existem migrations pendentes`** — Executar `npm run db:migrate`.
+**`Pending migrations exist`**: run `npm run db:migrate`.
 
-**`Falha ao conectar PostgreSQL`** — Verificar se o Supabase está ligado e o `DATABASE_URL` está correcto.
+**`Failed to connect to PostgreSQL`**: check that Supabase is up and `DATABASE_URL` is correct.
 
-**`relation "xxx" already exists`** — A migration usa `IF NOT EXISTS` — pode ser re-executada com segurança.
+**`relation "xxx" already exists`**: the migration uses `IF NOT EXISTS`, so it can be safely re-run.

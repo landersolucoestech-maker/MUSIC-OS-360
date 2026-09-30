@@ -42,6 +42,9 @@ export const API_ERROR_CODE_COPY_PT_BR = {
   SKILL_RUN_FAILED: "A execução da skill falhou. Tente novamente.",
   WORKFLOW_EXECUTION_FAILED: "A execução do fluxo falhou. Tente novamente.",
   INTEGRATION_CALL_FAILED: "A chamada à integração falhou. Tente novamente.",
+  DATABASE_UNAVAILABLE: "O serviço está temporariamente indisponível. Tente novamente em instantes.",
+  DELIVERY_FAILED: "Não foi possível entregar a mensagem. Tente novamente.",
+  SIGNATURE_PROVIDER_FAILED: "O provedor de assinatura não respondeu. Tente novamente.",
 } as const;
 
 export type ApiErrorCode = keyof typeof API_ERROR_CODE_COPY_PT_BR;

@@ -6,6 +6,7 @@
  * An internal note is visible only to the team, never to the contact.
  */
 
+import { toPublicConversationMessage } from './conversation-message.public';
 import {
   Injectable, Inject, NotFoundException, ForbiddenException, Logger,
 } from '@nestjs/common';
@@ -231,7 +232,7 @@ export class ConversationsService {
       .take(boundedLimit)
       .getManyAndCount();
 
-    return { data, meta: { total, offset, limit: boundedLimit } };
+    return { data: data.map(toPublicConversationMessage), meta: { total, offset, limit: boundedLimit } };
   }
 
   async addMessage(
@@ -282,7 +283,7 @@ export class ConversationsService {
       deliveryStatus: (saved.metadata as Record<string, unknown> | null)?.['delivery_status'] ?? null,
     });
 
-    return saved;
+    return toPublicConversationMessage(saved);
   }
 
   /**

@@ -68,9 +68,28 @@ export const VENDORED = new Set(["apps/web/public/pdf.mjs", "apps/web/public/pdf
  */
 export const DETECTOR_FIXTURES = new Set([
   "scripts/naming/pt-lexicon.mjs",
+  "scripts/naming/technical-naming-census.mjs",
   "scripts/naming/technical-naming-census.test.mjs",
   "scripts/naming/schema-naming-census.test.mjs",
   "apps/api/src/database/pt-column-naming-baseline.guard.spec.ts",
+  // old -> new rename table: the legacy Portuguese names are the data it maps away from
+  "scripts/run-technical-english-normalization.mjs",
+]);
+/** Audit tooling (forensic/runtime audit scripts) is detector vocabulary, not product naming. */
+export const DETECTOR_FIXTURE_PREFIXES = [".audit-runtime/"];
+const isDetectorFixture = (f) => DETECTOR_FIXTURES.has(f) || DETECTOR_FIXTURE_PREFIXES.some((p) => f.startsWith(p));
+/**
+ * Portuguese words that are genuine END-USER INPUT vocabulary in one specific file: surname
+ * particles (`das`, `dos`), boolean answers typed in Portuguese spreadsheets and chat (`sim`,
+ * `nao`, `verdadeiro`, `falso`), chat navigation commands (`inicio`, `voltar`) and the defensive
+ * redaction key `senha`. Exact file + exact value only, so any other string in the file is still checked.
+ */
+export const USER_INPUT_VOCABULARY = new Map([
+  ["apps/web/src/shared/lib/format-name.ts", new Set(["das", "dos"])],
+  ["apps/web/src/shared/lib/security.ts", new Set(["senha"])],
+  ["apps/web/src/shared/lib/normalize.ts", new Set(["sim", "nao"])],
+  ["apps/api/src/modules/reports/import/import-validation.service.ts", new Set(["sim", "nao", "verdadeiro", "falso"])],
+  ["apps/api/src/modules/conversations/musicchat-automation.service.ts", new Set(["inicio", "voltar"])],
 ]);
 /**
  * Third-party ecosystem file names that collide with Portuguese words ("Cargo.lock" is the Rust
@@ -89,7 +108,7 @@ export const VALUE_SHAPE = /^[a-z][a-zA-Z0-9]*(?:[_-][a-zA-Z0-9]+)*$/;
 /** JSX attributes and object properties whose string value is user-visible text. */
 const UX_KEYS = new Set(["aria-label", "aria-description", "aria-placeholder", "aria-roledescription", "aria-valuetext", "title", "placeholder",
   "alt", "label", "description", "helperText", "tooltip", "emptyMessage", "emptyText", "subtitle", "hint", "message", "text", "confirmText",
-  "cancelText", "successMessage", "errorMessage", "heading", "caption", "labelPt", "labelPtBr", "displayPtBr"]);
+  "cancelText", "itemLabel", "successMessage", "errorMessage", "heading", "caption", "labelPt", "labelPtBr", "displayPtBr"]);
 
 /**
  * Real comments of a source file: the leading trivia of every token in the AST.
@@ -157,7 +176,8 @@ export function scanSource(relPath, text) {
   const hits = scanPath(relPath).map((h) => ({ ...h, name: h.surface === "filename" ? h.name : h.name.split("/").pop() }));
   const add = (surface, kind, name, line) => hits.push({ surface, kind, name, line });
   if (!/\.(ts|tsx|mts|cts|mjs|cjs|js)$/.test(relPath)) return hits;
-  const fixture = DETECTOR_FIXTURES.has(relPath);
+  const fixture = isDetectorFixture(relPath);
+  const userInput = USER_INPUT_VOCABULARY.get(relPath);
 
   const kind = relPath.endsWith("x") ? ts.ScriptKind.TSX : /\.(mjs|cjs|js)$/.test(relPath) ? ts.ScriptKind.JS : ts.ScriptKind.TS;
   const sf = ts.createSourceFile(relPath, text, ts.ScriptTarget.Latest, true, kind);
@@ -296,7 +316,7 @@ export function scanSource(relPath, text) {
       }
     }
     if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) && !claimed.has(n) && VALUE_SHAPE.test(n.text)
-      && !isModuleSpecifier(n) && !isUxValue(n) && ptWords(n.text).length) {
+      && !isModuleSpecifier(n) && !isUxValue(n) && !userInput?.has(n.text) && ptWords(n.text).length) {
       const p = n.parent;
       const isKey = (ts.isPropertyAssignment(p) || ts.isPropertySignature(p) || ts.isPropertyDeclaration(p) || ts.isMethodDeclaration(p) || ts.isEnumMember(p)) && p.name === n;
       if (!isKey) add("value", ts.isLiteralTypeNode(p) ? "literal-type" : ts.isEnumMember(p) ? "enum-value" : "string", n.text, lineOf(n));

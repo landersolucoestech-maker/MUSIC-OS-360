@@ -37,6 +37,7 @@ import { DatabaseContextService } from '../../../database/database-context.servi
 import { IntegrationEntity, ContractEntity } from '../../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
+import { providerCallFailed } from '../provider-failure';
 import { WebhookService } from '../webhooks/webhook.service';
 import { IntegrationBaseService } from '../integration-base.service';
 import { TenantBootstrapResolver } from '../../../database/tenant-bootstrap.resolver';
@@ -130,7 +131,7 @@ export class DocuSignService {
       const isTimeout = (err as Error).name === 'AbortError';
       const message   = isTimeout ? `DocuSign API timeout (${FETCH_TIMEOUT_MS}ms)` : String(err);
       await this.recordFailure(tenantId, message);
-      throw new ServiceUnavailableException(message);
+      throw providerCallFailed(this.logger, 'DocuSign', message);
     }
   }
 
@@ -304,7 +305,7 @@ export class DocuSignService {
     if (!res.ok) {
       const errMsg = String(data['message'] ?? data['errorCode'] ?? `DocuSign API error (HTTP ${res.status})`);
       await this.recordFailure(params.tenantId, errMsg);
-      throw new ServiceUnavailableException(errMsg);
+      throw providerCallFailed(this.logger, 'DocuSign', errMsg);
     }
 
     const envelopeId = data['envelopeId'] as string | undefined;

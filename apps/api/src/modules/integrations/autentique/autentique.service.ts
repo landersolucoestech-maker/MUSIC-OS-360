@@ -24,6 +24,7 @@ import { IntegrationEntity, ContractEntity } from '../../../database/entities';
 import { EncryptionService } from '../../../core/security/encryption.service';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
+import { providerCallFailed } from '../provider-failure';
 import { WebhookService } from '../webhooks/webhook.service';
 import { IntegrationStatus } from '@music-os-360/types';
 import { TenantBootstrapResolver } from '../../../database/tenant-bootstrap.resolver';
@@ -117,7 +118,7 @@ export class AutentiqueService {
       const isTimeout = (err as Error).name === 'AbortError';
       const message   = isTimeout ? `Autentique API timeout (${FETCH_TIMEOUT_MS}ms)` : String(err);
       await this.recordFailure(tenantId, message);
-      throw new ServiceUnavailableException(message);
+      throw providerCallFailed(this.logger, 'Autentique', message);
     }
   }
 
@@ -218,7 +219,7 @@ export class AutentiqueService {
     if (data.errors) {
       const errMsg = String(data.errors[0]?.message ?? 'Autentique API error');
       await this.recordFailure(params.tenantId, errMsg);
-      throw new ServiceUnavailableException(errMsg);
+      throw providerCallFailed(this.logger, 'Autentique', errMsg);
     }
 
     const docId = data.data.createDocument.id as string;

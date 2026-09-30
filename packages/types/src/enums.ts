@@ -612,16 +612,6 @@ export enum PricingVariableType {
   SELECT     = "select",
 }
 
-export enum PricingRuleCategory {
-  CUSTO     = "custo",
-  IMPOSTO   = "imposto",
-  COMISSAO  = "comissao",
-  DESCONTO  = "desconto",
-  MARGEM    = "margem",
-  ADICIONAL = "adicional",
-  CUSTOM    = "custom",
-}
-
 export enum QuoteApprovalAction {
   SUBMIT  = "submit",
   APPROVE = "approve",

@@ -1,54 +1,54 @@
-## Descrição
+## Description
 
-<!-- O QUE esta PR muda e POR QUE. Não descreva o que o código faz — descreva a motivação. -->
+<!-- WHAT this PR changes and WHY. Do not describe what the code does; describe the motivation. -->
 
-## Tipo de mudança
+## Type of change
 
 - [ ] Bug fix
-- [ ] Nova feature
-- [ ] Refactor (sem mudança de comportamento)
+- [ ] New feature
+- [ ] Refactor (no behavior change)
 - [ ] Breaking change
-- [ ] Documentação / configuração
+- [ ] Documentation / configuration
 
-## Checklist obrigatório
+## Required checklist
 
-### Qualidade
-- [ ] `pnpm typecheck` passa sem erros
-- [ ] `pnpm lint` passa sem erros
-- [ ] Testes relevantes adicionados ou atualizados
-- [ ] Nenhum `console.log` de debug deixado no código
+### Quality
+- [ ] `pnpm typecheck` passes without errors
+- [ ] `pnpm lint` passes without errors
+- [ ] Relevant tests added or updated
+- [ ] No debug `console.log` left in the code
 
-### Segurança
-- [ ] Nenhuma chave, token ou segredo hardcoded
-- [ ] Inputs validados com Zod no endpoint (backend) ou no formulário (frontend)
-- [ ] Permissões RBAC verificadas (qual role pode acessar este recurso?)
-- [ ] Dados sensíveis (CPF, CNPJ, PIX, contas bancárias) tratados com cuidado
+### Security
+- [ ] No hardcoded key, token, or secret
+- [ ] Inputs validated with Zod at the endpoint (backend) or in the form (frontend)
+- [ ] RBAC permissions checked (which role may access this resource?)
+- [ ] Sensitive data (CPF, CNPJ, PIX, bank accounts) handled with care
 
 ### Multi-tenancy
-- [ ] Toda query filtra por `org_id` (nunca retorna dados cross-tenant)
-- [ ] Guards `TenantGuard` ou equivalente aplicados nos controllers afetados
+- [ ] Every query filters by `tenant_id` (never returns cross-tenant data)
+- [ ] `TenantGuard` or equivalent applied on the affected controllers
 
 ### Package manager
-- [ ] Apenas `pnpm` usado — nenhum `npm install` ou `yarn add` executado
-- [ ] Nenhum `package-lock.json` ou `yarn.lock` adicionado/modificado
+- [ ] Only `pnpm` used: no `npm install` or `yarn add` executed
+- [ ] No `package-lock.json` or `yarn.lock` added/modified
 
-### Banco de dados (se aplicável)
-- [ ] Migration criada para qualquer mudança de schema
-- [ ] Migration é reversível (tem `down`)
-- [ ] Nenhum dado existente quebrado
+### Database (if applicable)
+- [ ] Migration created for any schema change
+- [ ] Migration is reversible (has `down`)
+- [ ] No existing data broken
 
-### Documentação
-- [ ] `docs/GOVERNANCE.md` atualizado se entidade ou módulo novo foi criado
-- [ ] Campos novos documentados no DTO correspondente
+### Documentation
+- [ ] `docs/GOVERNANCE.md` updated if a new entity or module was created
+- [ ] New fields documented in the matching DTO
 
-## Como testar
+## How to test
 
-<!-- Passos para o revisor reproduzir e validar manualmente. -->
+<!-- Steps for the reviewer to reproduce and manually validate. -->
 
 1. 
 2. 
 3. 
 
-## Branches relacionadas / backlog
+## Related branches / backlog
 
-<!-- Se esta PR implementa um item do docs/BACKLOG.md, referencie o ID aqui (ex.: BACKLOG-007). -->
+<!-- If this PR implements an item from docs/BACKLOG.md, reference its ID here (e.g. BACKLOG-007). -->
