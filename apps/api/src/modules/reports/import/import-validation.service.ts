@@ -2,6 +2,7 @@
  * Validates XLSX rows against the contract and the metadata without persisting data.
  */
 import { Injectable } from '@nestjs/common';
+import { isAllowedImportValue } from './import-value-canonicalizers';
 import { valueFromExportLabel } from '../i18n/value-labels.pt-br';
 import { getReportFormContract } from '../form-contracts/report-form-contracts';
 import { getFieldLabelPtBr, normalizeFieldKey } from '../i18n/field-labels.pt-br';
@@ -118,6 +119,8 @@ export class ImportValidationService {
         const coerced = coerce(row[header] ?? '', typeMap[column], valueFromExportLabel(definition.tableName, column, row[header]));
         if (!coerced.ok) {
           rowErrors.push({ column, message: coerced.message ?? 'valor inválido' });
+        } else if (!isAllowedImportValue(definition.tableName, column, coerced.value)) {
+          rowErrors.push({ column, message: 'valor fora do conjunto permitido' });
         } else {
           data[column] = coerced.value;
         }

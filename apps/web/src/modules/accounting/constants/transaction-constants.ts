@@ -291,7 +291,6 @@ export const artistFeeTypes = [
 ];
 
 // ==================== REVENUE - COMPANY (the person counterparty uses the same) ====================
-// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> FINANCIAL_CATEGORIES
 
 export const companyRevenueCategories = [
   { value: "receitas-musicais", label: "Receitas Musicais" },
@@ -302,7 +301,6 @@ export const companyRevenueCategories = [
 ];
 
 // Music revenue subcategories
-// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_RECEITAS_MUSICAIS
 export const musicRevenueTypes = [
   { value: "participacao-show-evento", label: "Participação em Show/Evento" },
   { value: "venda-show-fechado", label: "Venda de Show Fechado" },
@@ -333,7 +331,6 @@ export const musicRevenueRequiringArtistOnly = [
 ];
 
 // Services subcategories (revenue)
-// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS
 export const revenueServiceTypes = [
   { value: "producao-musical", label: "Produção Musical" },
   { value: "producao-audiovisual", label: "Produção audiovisual" },
@@ -353,7 +350,6 @@ export const revenueServiceTypes = [
 ];
 
 // Services (revenue) with artist + project
-// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS (requiresArtist + requiresProject)
 export const revenueServicesRequiringArtistAndProject = [
   "producao-musical",
   "producao-audiovisual",
@@ -367,7 +363,6 @@ export const revenueServicesRequiringArtistAndProject = [
 ];
 
 // Services (revenue) with the artist only (no mandatory project)
-// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS (requiresArtist: true, requiresProject: false)
 export const revenueServicesRequiringArtistOnly = [
   "criacao-site",
   "gestao-redes-sociais",
@@ -375,7 +370,6 @@ export const revenueServicesRequiringArtistOnly = [
 ];
 
 // Products subcategories (revenue)
-// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_PRODUTOS
 export const revenueProductTypes = [
   { value: "venda-merchandising", label: "Venda de Merchandising" },
   { value: "venda-produtos-fisicos", label: "Venda de Produtos Físicos" },
@@ -388,7 +382,6 @@ export const revenueProductTypes = [
 ];
 
 // Contractual revenue subcategories
-// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_CONTRATUAIS
 export const contractualRevenueTypes = [
   { value: "repasse-contrato", label: "Repasse de Contrato" },
   { value: "comissao", label: "Comissão" },
@@ -521,16 +514,6 @@ export const transferCategories = [
   { value: "aplicacao", label: "Aplicação" },
   { value: "resgate", label: "Resgate" },
 ];
-
-
-export const collectingAgencies = [
-  { id: "1", nome: "Receita Federal" },
-  { id: "2", nome: "Prefeitura Municipal" },
-  { id: "3", nome: "INSS" },
-  { id: "4", nome: "Secretaria da Fazenda" },
-  { id: "5", nome: "SEFAZ Estadual" },
-];
-
 
 // ==================== HELPERS ====================
 

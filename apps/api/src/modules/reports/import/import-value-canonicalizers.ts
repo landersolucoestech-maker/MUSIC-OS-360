@@ -17,6 +17,7 @@ import { canonicalCrmInternalData, canonicalLeadServiceType, canonicalServicePay
 import { LANGUAGE_LABEL_TO_CODE, LEGACY_WORK_VALUES } from '../../works/work-legacy-fields';
 import { LEGACY_PHONOGRAM_VALUES, canonicalCountryCode } from '../../phonograms/phonogram-legacy-fields';
 import { LEGACY_TRANSACTION_VALUES } from '../../transactions/transaction-legacy-fields';
+import { canonicalInvoicePaymentMethod, INVOICE_PAYMENT_METHODS } from '../../invoices/invoice-legacy-fields';
 import { isMultiValueLabelColumn, valueFromExportLabel } from '../i18n/value-labels.pt-br';
 import { canonicalClientPersonType, canonicalClientPriority } from '../../clients/client-legacy-fields';
 import {
@@ -114,7 +115,27 @@ const CANONICALIZERS: Readonly<Record<string, Readonly<Record<string, ColumnCano
     payment_type: fromMap(LEGACY_TRANSACTION_VALUES.paymentType),
     installment_interval: fromMap(LEGACY_TRANSACTION_VALUES.installmentInterval),
   },
+  // An old invoices export carries dinheiro/cartao_credito/... (chk_invoices_payment_method).
+  invoices: { payment_method: canonicalInvoicePaymentMethod },
 };
+
+/**
+ * Closed vocabularies enforced by a database CHECK that the import writes with a
+ * raw INSERT. The validation step rejects a cell outside the set (row error)
+ * so the commit never reaches the constraint (which would surface as a 500).
+ * The cell is compared AFTER canonicalization (deprecated aliases accepted).
+ */
+const CLOSED_VOCABULARIES: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
+  invoices: { payment_method: INVOICE_PAYMENT_METHODS },
+};
+
+/** False when `table.column` has a closed vocabulary and the (non-empty) cell is not in it once canonicalized. */
+export function isAllowedImportValue(table: string, physicalColumn: string, value: unknown): boolean {
+  const allowed = CLOSED_VOCABULARIES[table]?.[physicalColumn];
+  if (!allowed || value === null || value === undefined || value === '') return true;
+  const canonical = canonicalImportValue(table, physicalColumn, value);
+  return typeof canonical === 'string' && allowed.includes(canonical);
+}
 
 /** Canonical value of an imported cell for `table.column` (unchanged when no mapping applies). */
 export function canonicalImportValue(table: string, physicalColumn: string, value: unknown): unknown {

@@ -3,6 +3,8 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { InvoicesService } from './invoices.service';
 import { CreateInvoiceDto } from './dto/invoices.dto';
+import { INVOICE_PAYMENT_METHODS, canonicalInvoicePaymentMethod } from './invoice-legacy-fields';
+import { PAYMENT_METHODS } from '../transactions/transaction-legacy-fields';
 
 /**
  * CZ-036: generic invoice fields are English (NFS-e fiscal terms kept).
@@ -66,5 +68,76 @@ describe('Invoice request contract (CZ-036)', () => {
     expect(events.emitTyped).toHaveBeenCalledWith('invoice.created', expect.objectContaining({
       payload: expect.objectContaining({ invoiceNumber: '123', amount: '1000' }),
     }));
+  });
+});
+
+describe('Invoice payment_method vocabulary (chk_invoices_payment_method)', () => {
+  const persistedMethod = async (payload: Record<string, unknown>) => {
+    const { service, repo } = makeService();
+    await service.create('tenant-1', 'user-1', payload as never);
+    return (repo.create.mock.calls[0][0] as Record<string, unknown>)['payment_method'];
+  };
+
+  it('reuses the transactions payment method vocabulary and adds only the undecided transferencia', () => {
+    expect(INVOICE_PAYMENT_METHODS).toEqual([...PAYMENT_METHODS, 'transferencia']);
+  });
+
+  it.each([
+    ['dinheiro', 'cash'], ['cartao_credito', 'credit_card'], ['cartao_debito', 'debit_card'], ['cheque', 'check'],
+    ['Cartao_Credito', 'credit_card'], [' dinheiro ', 'cash'],
+    ['pix', 'pix'], ['boleto', 'boleto'], ['cash', 'cash'], ['credit_card', 'credit_card'], ['ted', 'ted'], ['PIX', 'pix'],
+  ])('a pre-change web build sending payment_method=%j persists %s', async (sent, stored) => {
+    expect(await persistedMethod({ payment_method: sent })).toBe(stored);
+  });
+
+  it('transferencia has no unambiguous canonical value: it is kept as-is, never guessed as ted', async () => {
+    expect(canonicalInvoicePaymentMethod('transferencia')).toBe('transferencia');
+    expect(await persistedMethod({ payment_method: 'transferencia' })).toBe('transferencia');
+  });
+
+  it('the deprecated key forma_pagamento carries deprecated values too', async () => {
+    expect(await persistedMethod({ forma_pagamento: 'cartao_debito' })).toBe('debit_card');
+  });
+
+  it('the canonical key wins over the deprecated key (value then mapped)', async () => {
+    expect(await persistedMethod({ payment_method: 'cash', forma_pagamento: 'pix' })).toBe('cash');
+    expect(await persistedMethod({ payment_method: 'dinheiro', forma_pagamento: 'pix' })).toBe('cash');
+  });
+
+  it.each([null, '', '  '])('%j clears the method', async (blank) => {
+    expect(await persistedMethod({ payment_method: blank })).toBeNull();
+  });
+
+  it('an absent method is not written (update patches stay partial)', async () => {
+    const { service, repo } = makeService();
+    await service.create('tenant-1', 'user-1', { invoice_number: '1' } as never);
+    expect(repo.create.mock.calls[0][0]).not.toHaveProperty('payment_method');
+  });
+
+  it.each(['alien', 'cartao', 'Transferência', 42, {}])('rejects %j before it can reach the CHECK', async (bad) => {
+    const { service, repo } = makeService();
+    await expect(service.create('tenant-1', 'user-1', { payment_method: bad } as never)).rejects.toThrow('Forma de pagamento inválida.');
+    expect(repo.save).not.toHaveBeenCalled();
+  });
+
+  it('update maps and rejects the same way', async () => {
+    const found = { id: 'inv-1', status: 'draft', type: 'nfse' };
+    const qb = { where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), getOne: jest.fn(async () => found) };
+    const update = jest.fn(async () => ({ affected: 1 }));
+    const repo = { createQueryBuilder: jest.fn(() => qb), update, manager: { connection: { query: jest.fn() } } };
+    const ds = { getRepository: jest.fn(() => repo) };
+    const enc = { encryptNullable: jest.fn(), decryptNullable: jest.fn(() => null) };
+    const service = new InvoicesService(ds as never, enc as never);
+    await expect(service.update('t', 'u', 'inv-1', { payment_method: 'alien' } as never)).rejects.toThrow('Forma de pagamento inválida.');
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('the Stripe subscription barrier is unchanged: list/findById still exclude type=stripe_subscription', async () => {
+    const qb = { where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), orderBy: jest.fn().mockReturnThis(), skip: jest.fn().mockReturnThis(), take: jest.fn().mockReturnThis(), getManyAndCount: jest.fn(async () => [[], 0]), getOne: jest.fn(async () => ({ id: 'i' })) };
+    const ds = { getRepository: jest.fn(() => ({ createQueryBuilder: jest.fn(() => qb) })) };
+    const service = new InvoicesService(ds as never, { decryptNullable: jest.fn(() => null) } as never);
+    await service.list('t', {} as never);
+    await service.findById('t', 'i');
+    expect(qb.andWhere.mock.calls.filter(([sql]) => sql === "i.type != 'stripe_subscription'")).toHaveLength(2);
   });
 });

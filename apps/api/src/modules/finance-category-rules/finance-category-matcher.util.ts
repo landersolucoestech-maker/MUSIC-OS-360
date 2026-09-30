@@ -45,9 +45,9 @@ export function normalizeMatchText(value: string): string {
  */
 export function matchCategoryRule<T extends MatchableCategoryRule>(
   rules: T[],
-  input: { descricao: string; transactionType: string },
+  input: { description: string; transactionType: string },
 ): T | null {
-  const haystack = normalizeMatchText(input.descricao ?? '');
+  const haystack = normalizeMatchText(input.description ?? '');
   if (!haystack) return null;
 
   const candidates = rules.filter(

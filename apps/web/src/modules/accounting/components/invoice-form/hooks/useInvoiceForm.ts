@@ -8,6 +8,7 @@ import { parseOperationType, serializeOperationType } from "@/modules/accounting
 import { invoiceSchema } from "@/modules/accounting/schemas/invoice-schema";
 import { validateInvoiceForm, type InvoiceValidationErrors } from "@/modules/accounting/components/invoice-form/validation/invoice-form-validation";
 import { applyResets } from "@/modules/accounting/components/invoice-form/rules/invoice-reset-rules";
+import { canonicalInvoicePaymentMethod } from "@/modules/accounting/constants/invoice-payment-methods";
 import { useInvoiceRules } from "./useInvoiceRules";
 import {
   type InvoiceFormData,
@@ -97,6 +98,7 @@ export function useInvoiceForm({
         ...INITIAL_FORM_DATA,
         ...invoice,
         notes: cleanNotes,
+        payment_method: invoice.payment_method ? canonicalInvoicePaymentMethod(invoice.payment_method) : invoice.payment_method,
         tomador_legal_name: recipientLegalName,
         service_description: servicesDescription,
         service_amount: servicesAmount,

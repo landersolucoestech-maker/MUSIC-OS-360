@@ -323,6 +323,8 @@ import { RemoveArtistLegacyMetricColumns20260821000001 } from './20260821000001_
 import { DropArtistTipoColumn20260821000002 } from './20260821000002_DropArtistTipoColumn';
 import { CanonicalizeContractServiceTypeValuesAndIndex20260930000002 } from './20260930000002_CanonicalizeContractServiceTypeValuesAndIndex';
 import { AddEnglishRoleSlugAliases20260930000001 } from './20260930000001_AddEnglishRoleSlugAliases';
+import { BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010 } from './20260930000010_BackfillAndRestrictInvoicePaymentMethodToEnglish';
+import { ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011 } from './20260930000011_ValidateTransactionTypeAndRestrictFinancialRuleVocabulary';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -629,4 +631,6 @@ export const ALL_MIGRATIONS = [
   BackfillAndRestrictMarketingContentVocabularyToEnglish20260929000002,
   CanonicalizeContractServiceTypeValuesAndIndex20260930000002,
   AddEnglishRoleSlugAliases20260930000001,
+  BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010,
+  ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011,
 ] as const;

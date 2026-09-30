@@ -6,16 +6,7 @@ import { DatePickerField } from "@/shared/ui/date-picker-field";
 import { FileUpload, type UploadedFile } from "@/shared/components/FileUpload";
 import { format, parseISO } from "date-fns";
 import type { InvoiceFormData } from "@/modules/accounting/components/invoice-form/rules/invoice-form-rules";
-
-const paymentMethodOptions = [
-  { value: "dinheiro", label: "Dinheiro" },
-  { value: "pix", label: "PIX" },
-  { value: "transferencia", label: "Transferência" },
-  { value: "boleto", label: "Boleto" },
-  { value: "cartao_credito", label: "Cartão de Crédito" },
-  { value: "cartao_debito", label: "Cartão de Débito" },
-  { value: "cheque", label: "Cheque" },
-];
+import { invoicePaymentMethodOptions } from "@/modules/accounting/constants/invoice-payment-methods";
 
 interface PaymentSectionProps {
   formData: InvoiceFormData;
@@ -49,7 +40,7 @@ export function PaymentSection({ formData, disabled, updateField }: PaymentSecti
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              {paymentMethodOptions.map((option) => (
+              {invoicePaymentMethodOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
               ))}
             </SelectContent>

@@ -6,6 +6,7 @@ vi.mock("@/modules/accounting/services/accounting.service", () => ({
 }));
 
 import { accountingService } from "@/modules/accounting/services/accounting.service";
+import { TRANSACTION_STATUS_LABELS_PT_BR, TRANSACTION_TYPE_LABELS_PT_BR, TransactionStatus } from "@music-os-360/types";
 import { TransactionViewModal } from "./TransactionViewModal";
 
 const originalTz = process.env.TZ;
@@ -86,5 +87,26 @@ describe("TransactionViewModal", () => {
     const modal = await open({ ...detail, status: "mystery_status" });
     expect(within(modal).getAllByText("Status não reconhecido").length).toBeGreaterThan(0);
     expect(within(modal).queryByText("Pendente")).toBeNull();
+  });
+
+  it.each(Object.values(TransactionStatus))(
+    "renders the shared-registry PT-BR label for the canonical status %s",
+    async (status) => {
+      const modal = await open({ ...detail, status });
+      expect(within(modal).getAllByText(TRANSACTION_STATUS_LABELS_PT_BR[status]).length).toBeGreaterThan(0);
+    },
+  );
+
+  it.each(["pago", "pendente", "cancelado", "aprovado", "atrasado", "parcial", "estornado", "processando"])(
+    "treats the retired Portuguese status key %s as unrecognized (unstorable by chk_transactions_status)",
+    async (status) => {
+      const modal = await open({ ...detail, status });
+      expect(within(modal).getAllByText("Status não reconhecido").length).toBeGreaterThan(0);
+    },
+  );
+
+  it.each(Object.entries(TRANSACTION_TYPE_LABELS_PT_BR))("renders the shared-registry label for the type %s", async (type, label) => {
+    const modal = await open({ ...detail, type });
+    expect(within(modal).getAllByText(label).length).toBeGreaterThan(0);
   });
 });

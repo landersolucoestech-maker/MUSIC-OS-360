@@ -1,4 +1,4 @@
-import { canonicalImportJsonColumn, canonicalImportValue } from './import-value-canonicalizers';
+import { canonicalImportJsonColumn, canonicalImportValue, isAllowedImportValue } from './import-value-canonicalizers';
 
 /**
  * The reports import writes rows with its own INSERT (import-commit.service),
@@ -132,5 +132,31 @@ describe('canonicalImportValue — artists labels round-trip (CT-D2)', () => {
     expect(canonicalImportValue('artists', 'profile_type', 'Com gravadora')).toBe('record_label');
     expect(canonicalImportValue('artists', 'registration_status', 'Suspenso')).toBe('suspended');
     expect(canonicalImportValue('artists', 'registration_status', 'inactive')).toBe('inactive');
+  });
+});
+
+describe('canonicalImportValue — invoices.payment_method (chk_invoices_payment_method)', () => {
+  it.each([
+    ['dinheiro', 'cash'], ['Cartao_Credito', 'credit_card'], ['cartao_debito', 'debit_card'], ['cheque', 'check'],
+    ['PIX', 'pix'], ['boleto', 'boleto'], ['cash', 'cash'], ['transferencia', 'transferencia'],
+  ])('%j -> %s', (cell, canonical) => {
+    expect(canonicalImportValue('invoices', 'payment_method', cell)).toBe(canonical);
+  });
+
+  it('an unknown value is left as-is (never guessed)', () => {
+    expect(canonicalImportValue('invoices', 'payment_method', 'alien')).toBe('alien');
+  });
+});
+
+describe('isAllowedImportValue — invoices.payment_method', () => {
+  it.each(['cash', 'credit_card', 'pix', 'boleto', 'transferencia', 'dinheiro', ' Cartao_Debito ', 'CHEQUE', '', null])('accepts %j', (cell) => {
+    expect(isAllowedImportValue('invoices', 'payment_method', cell)).toBe(true);
+  });
+  it.each(['alien', 'cartão de crédito', 'credit card', 42])('rejects %j', (cell) => {
+    expect(isAllowedImportValue('invoices', 'payment_method', cell)).toBe(false);
+  });
+  it('does not restrict other columns', () => {
+    expect(isAllowedImportValue('invoices', 'notes', 'alien')).toBe(true);
+    expect(isAllowedImportValue('transactions', 'payment_method', 'alien')).toBe(true);
   });
 });

@@ -8,6 +8,7 @@ import { FileText, Calendar, Building2, MapPin, Mail, ExternalLink, Pencil, Rece
 import { formatCurrency, formatDate, getCurrencyToneClass } from "@/shared/lib/format-utils";
 import { formatCpfCnpj } from "@/shared/lib/br-validators";
 import { parseOperationType } from "@/modules/accounting/types/invoice-type";
+import { invoicePaymentMethodLabel } from "@/modules/accounting/constants/invoice-payment-methods";
 import { openStoredFile } from "@/shared/lib/stored-file";
 import { toast } from "sonner";
 import { useInvoicePartyName } from "@/modules/accounting/hooks/useInvoicePartyName";
@@ -23,16 +24,6 @@ const invoiceTypeLabels: Record<string, string> = {
   nfse: "NFS-e (Serviço)",
   nfe: "NF-e (Produto)",
   nfce: "NFC-e (Consumidor)",
-};
-
-const paymentMethodLabels: Record<string, string> = {
-  dinheiro: "Dinheiro",
-  pix: "PIX",
-  transferencia: "Transferência",
-  boleto: "Boleto",
-  cartao_credito: "Cartão de Crédito",
-  cartao_debito: "Cartão de Débito",
-  cheque: "Cheque",
 };
 
 const getStatusBadge = (status: string) => {
@@ -224,7 +215,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><CreditCard className="h-4 w-4" />Pagamento</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <Field label="Forma Pagamento" value={paymentMethodLabels[invoice.payment_method] || invoice.payment_method} />
+              <Field label="Forma Pagamento" value={invoicePaymentMethodLabel(invoice.payment_method)} />
               <Field label="Condição" value={invoice.payment_terms} />
               <Field label="Vencimento" value={invoice.due_at && (
                 <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" />{formatDate(invoice.due_at)}</span>

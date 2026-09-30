@@ -5,6 +5,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { INVOICE_PAYMENT_METHODS } from '../invoice-legacy-fields';
 
 const FISCAL_DOCUMENT_TYPES = ['nfse', 'nfe', 'nfce'] as const;
 
@@ -73,7 +74,8 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) csll_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) net_amount?: number;
 
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) payment_method?: string;
+  @ApiPropertyOptional({ enum: [...INVOICE_PAYMENT_METHODS], description: 'Canonical payment method (same vocabulary as transactions). Deprecated Portuguese values (dinheiro, cartao_credito, cartao_debito, cheque) are accepted and mapped; membership is enforced by InvoicesService.' })
+  @IsOptional() @IsString() @MaxLength(100) payment_method?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(200) payment_terms?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(1000) url_pdf?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2000) notes?: string;

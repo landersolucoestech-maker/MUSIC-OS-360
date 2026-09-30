@@ -125,7 +125,7 @@ export class FinanceCategoryRulesService {
       .limit(500)
       .getRawAndEntities();
 
-    const matched = matchCategoryRule(entities, { descricao: description, transactionType });
+    const matched = matchCategoryRule(entities, { description, transactionType });
     if (!matched) return null;
 
     const index = entities.indexOf(matched);

@@ -15,11 +15,8 @@ import {
   FileText,
   History,
   Landmark,
-  Loader2,
   ReceiptText,
   RefreshCcw,
-  RotateCcw,
-  Timer,
   TrendingDown,
   TrendingUp,
   XCircle,
@@ -28,7 +25,14 @@ import {
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 import { storedFileDisplayName } from "@/shared/lib/stored-file";
 import { paymentMethods, paymentTypes, transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
-import { TRANSACTION_COUNTERPARTY_TYPE_LABELS_PT_BR, TRANSACTION_INSTALLMENT_INTERVAL_LABELS_PT_BR } from "@music-os-360/types";
+import {
+  TRANSACTION_COUNTERPARTY_TYPE_LABELS_PT_BR,
+  TRANSACTION_INSTALLMENT_INTERVAL_LABELS_PT_BR,
+  TRANSACTION_TYPE_LABELS_PT_BR,
+  TransactionStatus,
+  TransactionType as TransactionTypeValue,
+  statusLabelPtBr,
+} from "@music-os-360/types";
 import type { TransactionType } from "@/modules/accounting/types/accounting.types";
 
 type Detail = Record<string, unknown>;
@@ -50,35 +54,35 @@ type TypeMeta = {
 /** Keyed by the canonical `type` values (CZ-041); labels are PT-BR display text. */
 const transactionTypeMeta: Record<TransactionType, TypeMeta> = {
   revenue: {
-    label: "Receita",
+    label: TRANSACTION_TYPE_LABELS_PT_BR[TransactionTypeValue.REVENUE],
     icon: TrendingUp,
     badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700",
     amountClass: "text-emerald-600",
     sign: "+",
   },
   expense: {
-    label: "Despesa",
+    label: TRANSACTION_TYPE_LABELS_PT_BR[TransactionTypeValue.EXPENSE],
     icon: TrendingDown,
     badgeClass: "border-rose-200 bg-rose-50 text-rose-700",
     amountClass: "text-rose-600",
     sign: "-",
   },
   tax: {
-    label: "Imposto",
+    label: TRANSACTION_TYPE_LABELS_PT_BR[TransactionTypeValue.TAX],
     icon: ReceiptText,
     badgeClass: "border-amber-200 bg-amber-50 text-amber-700",
     amountClass: "text-amber-600",
     sign: "-",
   },
   investment: {
-    label: "Investimento",
+    label: TRANSACTION_TYPE_LABELS_PT_BR[TransactionTypeValue.INVESTMENT],
     icon: Briefcase,
     badgeClass: "border-sky-200 bg-sky-50 text-sky-700",
     amountClass: "text-sky-600",
     sign: "-",
   },
   transfer: {
-    label: "Transferência",
+    label: TRANSACTION_TYPE_LABELS_PT_BR[TransactionTypeValue.TRANSFER],
     icon: RefreshCcw,
     badgeClass: "border-slate-200 bg-slate-50 text-slate-700",
     amountClass: "text-slate-800",
@@ -101,28 +105,31 @@ function typeMetaOf(type: string): TypeMeta {
     : unknownTypeMeta;
 }
 
-// PT-BR keys (pendente/aprovado/pago/atrasado/parcial/cancelado/cancelada/
-// estornado/processando) are kept as display-only fallbacks for any
-// transaction row still holding a legacy status string — TransactionStatus
-// (packages/types/src/enums.ts) itself is English-only going forward
-// (pending/paid/confirmed/completed/scheduled/cancelled).
-const statusMeta: Record<string, { label: string; icon: LucideIcon; badgeClass: string; dotClass: string }> = {
-  pending: { label: "Pendente", icon: Clock, badgeClass: "border-amber-200 bg-amber-50 text-amber-700", dotClass: "bg-amber-500" },
-  scheduled: { label: "Agendado", icon: Clock, badgeClass: "border-amber-200 bg-amber-50 text-amber-700", dotClass: "bg-amber-500" },
-  confirmed: { label: "Confirmado", icon: CheckCircle2, badgeClass: "border-blue-200 bg-blue-50 text-blue-700", dotClass: "bg-blue-500" },
-  completed: { label: "Concluído", icon: CheckCircle2, badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700", dotClass: "bg-emerald-500" },
-  paid: { label: "Pago", icon: CheckCircle2, badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700", dotClass: "bg-emerald-500" },
-  cancelled: { label: "Cancelado", icon: XCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-muted-foreground", dotClass: "bg-zinc-500" },
-  pendente: { label: "Pendente", icon: Clock, badgeClass: "border-amber-200 bg-amber-50 text-amber-700", dotClass: "bg-amber-500" },
-  aprovado: { label: "Aprovado", icon: CheckCircle2, badgeClass: "border-blue-200 bg-blue-50 text-blue-700", dotClass: "bg-blue-500" },
-  pago: { label: "Pago", icon: CheckCircle2, badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700", dotClass: "bg-emerald-500" },
-  atrasado: { label: "Atrasado", icon: AlertCircle, badgeClass: "border-rose-200 bg-rose-50 text-rose-700", dotClass: "bg-rose-500" },
-  parcial: { label: "Parcial", icon: Timer, badgeClass: "border-orange-200 bg-orange-50 text-orange-700", dotClass: "bg-orange-500" },
-  cancelado: { label: "Cancelado", icon: XCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-muted-foreground", dotClass: "bg-zinc-500" },
-  cancelada: { label: "Cancelado", icon: XCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-muted-foreground", dotClass: "bg-zinc-500" },
-  estornado: { label: "Estornado", icon: RotateCcw, badgeClass: "border-primary/30 bg-primary-soft text-primary", dotClass: "bg-primary" },
-  processando: { label: "Processando", icon: Loader2, badgeClass: "border-cyan-200 bg-cyan-50 text-cyan-700", dotClass: "bg-cyan-500" },
+/**
+ * Presentation (icon/colors) per canonical TransactionStatus value. The PT-BR
+ * label is NOT owned here: it comes from the shared registry
+ * (TRANSACTION_STATUS_LABELS_PT_BR in packages/types). The DB CHECK
+ * chk_transactions_status makes any other value unstorable.
+ */
+type StatusStyle = { icon: LucideIcon; badgeClass: string; dotClass: string };
+
+const statusStyle: Record<TransactionStatus, StatusStyle> = {
+  [TransactionStatus.PENDING]: { icon: Clock, badgeClass: "border-amber-200 bg-amber-50 text-amber-700", dotClass: "bg-amber-500" },
+  [TransactionStatus.SCHEDULED]: { icon: Clock, badgeClass: "border-amber-200 bg-amber-50 text-amber-700", dotClass: "bg-amber-500" },
+  [TransactionStatus.CONFIRMED]: { icon: CheckCircle2, badgeClass: "border-blue-200 bg-blue-50 text-blue-700", dotClass: "bg-blue-500" },
+  [TransactionStatus.COMPLETED]: { icon: CheckCircle2, badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700", dotClass: "bg-emerald-500" },
+  [TransactionStatus.PAID]: { icon: CheckCircle2, badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700", dotClass: "bg-emerald-500" },
+  [TransactionStatus.CANCELLED]: { icon: XCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-muted-foreground", dotClass: "bg-zinc-500" },
 };
+
+/** Status outside the known values: never relabeled as "Pendente". */
+const UNKNOWN_STATUS_LABEL = "Status não reconhecido";
+
+function statusMetaOf(status: string): (StatusStyle & { label: string }) | null {
+  const label = statusLabelPtBr("transaction", status);
+  if (label === null) return null;
+  return { label, ...statusStyle[status as TransactionStatus] };
+}
 
 /** PT-BR labels of the canonical payment_method / payment_type values — single source: transaction-constants. */
 const paymentMethodLabels: Record<string, string> = Object.fromEntries(paymentMethods.map((o) => [o.value, o.label]));
@@ -227,16 +234,15 @@ function TypeBadge({ type }: { type: string }) {
   );
 }
 
-/** Status outside the known values: never relabeled as "Pendente". */
-const unknownStatusMeta = { label: "Status não reconhecido", icon: AlertCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-zinc-700", dotClass: "bg-zinc-500" };
+const unknownStatusMeta = { label: UNKNOWN_STATUS_LABEL, icon: AlertCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-zinc-700", dotClass: "bg-zinc-500" };
 
 function StatusBadge({ status }: { status: string }) {
-  const meta = statusMeta[status] ?? unknownStatusMeta;
+  const meta = statusMetaOf(status) ?? unknownStatusMeta;
   const Icon = meta.icon;
   return (
     <Badge variant="outline" className={cn("h-7 gap-1.5 rounded-full px-3 font-medium", meta.badgeClass)}>
       <span className={cn("h-1.5 w-1.5 rounded-full", meta.dotClass)} />
-      <Icon className={cn("h-3.5 w-3.5", status === "processando" && "animate-spin")} />
+      <Icon className="h-3.5 w-3.5" />
       {meta.label}
     </Badge>
   );
@@ -549,7 +555,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
                   {signedAmount > 0 ? "+" : ""}{formatCurrency(signedAmount)}
                 </p>
                 <div className="space-y-3">
-                  <DetailRow label="Status" value={statusMeta[status]?.label ?? "Status não reconhecido"} />
+                  <DetailRow label="Status" value={statusMetaOf(status)?.label ?? UNKNOWN_STATUS_LABEL} />
                   <DetailRow label="Data" value={mainDate} />
                   <DetailRow label="Método" value={method} />
                   <DetailRow label="Tipo" value={paymentType} />

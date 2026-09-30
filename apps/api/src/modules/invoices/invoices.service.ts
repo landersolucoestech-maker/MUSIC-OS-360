@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional, NotFoundException, ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, Inject, Optional, BadRequestException, NotFoundException, ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { InvoiceEntity } from '../../database/entities';
@@ -10,7 +10,12 @@ import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-
 import type { CreateInvoiceDto, UpdateInvoiceDto, QueryInvoiceDto } from './dto/invoices.dto';
 import { invoiceCancelledCopy, invoiceCreatedCopy, invoiceStatusChangedCopy } from './i18n/invoice-copy.pt-br';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
-import { INVOICE_DEPRECATED_FIELDS, INVOICE_ITEM_DEPRECATED_FIELDS } from './invoice-legacy-fields';
+import {
+  INVOICE_DEPRECATED_FIELDS,
+  INVOICE_ITEM_DEPRECATED_FIELDS,
+  INVOICE_PAYMENT_METHODS,
+  canonicalInvoicePaymentMethod,
+} from './invoice-legacy-fields';
 
 const CANCELLED_STATUSES = new Set(['cancelled']);
 const ISSUED_STATUSES = new Set(['issued']);
@@ -47,6 +52,20 @@ export class InvoicesService {
     return mapped;
   }
 
+  /**
+   * Canonical payment method (deprecated Portuguese values mapped). null / a blank
+   * value clear the field; anything outside the vocabulary is rejected here
+   * with a clear error instead of reaching chk_invoices_payment_method.
+   */
+  private canonicalPaymentMethod(value: unknown): string | null {
+    if (value === null || (typeof value === 'string' && value.trim() === '')) return null;
+    const canonical = canonicalInvoicePaymentMethod(value);
+    if (typeof canonical !== 'string' || !INVOICE_PAYMENT_METHODS.includes(canonical)) {
+      throw new BadRequestException('Forma de pagamento inválida.');
+    }
+    return canonical;
+  }
+
   private normalizePayload(dto: CreateInvoiceDto | UpdateInvoiceDto): Record<string, unknown> {
     // Pre-CZ-036 names -> canonical (the item-level aliases too).
     const input = applyDeprecatedFieldAliases(dto as unknown as Record<string, unknown>, INVOICE_DEPRECATED_FIELDS);
@@ -56,6 +75,8 @@ export class InvoicesService {
         applyDeprecatedFieldAliases(item, INVOICE_ITEM_DEPRECATED_FIELDS),
       );
     }
+
+    if (input['payment_method'] !== undefined) payload['payment_method'] = this.canonicalPaymentMethod(input['payment_method']);
 
     if (input['tipo_nota'] !== undefined) payload['type'] = input['tipo_nota'];
     if (input['service_amount'] !== undefined) payload['legacy_amount'] = input['service_amount'];
@@ -87,7 +108,7 @@ export class InvoicesService {
 
     const fiscalDocumentType = query.tipo_nota ?? query.type;
     if (fiscalDocumentType) {
-      qb.andWhere('(i.tipo_nota = :tipoNota OR i.type = :tipoNota)', { tipoNota: fiscalDocumentType });
+      qb.andWhere('(i.tipo_nota = :fiscalDocumentType OR i.type = :fiscalDocumentType)', { fiscalDocumentType });
     }
     if (query.client_id) qb.andWhere('i.client_id = :clientId', { clientId: query.client_id });
     if (query.artistId) qb.andWhere('i.prestador_id = :prestadorId', { prestadorId: query.artistId });
