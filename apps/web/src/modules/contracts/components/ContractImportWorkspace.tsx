@@ -599,8 +599,8 @@ export function ContractImportWorkspace({
                   {(
                     [
                       { value: "template", label: "Template" },
-                      { value: "variaveis", label: "Variáveis" },
-                      { value: "categorias", label: "Categorias" },
+                      { value: "variables", label: "Variáveis" },
+                      { value: "categories", label: "Categorias" },
                       { value: "preview", label: "Pré-visualização" },
                     ] as const
                   ).map((tab) => (
@@ -646,12 +646,12 @@ export function ContractImportWorkspace({
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="ws-categoria" className="text-xs">
+                        <Label htmlFor="ws-category" className="text-xs">
                           Categoria do Template
                         </Label>
                         <Select value={category} onValueChange={setCategory}>
                           <SelectTrigger
-                            id="ws-categoria"
+                            id="ws-category"
                             className="h-9"
                             data-testid="select-template-category"
                           >
@@ -791,7 +791,7 @@ export function ContractImportWorkspace({
 
             {/* ── Tab: variables ── */}
             <TabsContent
-              value="variaveis"
+              value="variables"
               className="flex-1 overflow-hidden mt-0 data-[state=inactive]:hidden"
             >
               <VariableRegistry asModal onClose={() => {}} />
@@ -799,7 +799,7 @@ export function ContractImportWorkspace({
 
             {/* ── Tab: Categorias ── */}
             <TabsContent
-              value="categorias"
+              value="categories"
               className="flex-1 overflow-hidden mt-0 data-[state=inactive]:hidden"
             >
               <CategoryRegistry asModal onClose={() => {}} />

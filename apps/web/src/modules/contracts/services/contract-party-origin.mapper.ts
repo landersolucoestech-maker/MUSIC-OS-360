@@ -2,9 +2,9 @@ import { CONTRACT_TYPES } from "../constants/contract-types";
 import type { ContractPartyOrigin } from "../domain/contract-party-origin";
 
 const ARTIST_TYPES: string[] = [
-  ...CONTRACT_TYPES.ARTISTICOS,
+  ...CONTRACT_TYPES.ARTISTIC,
   ...CONTRACT_TYPES.SHOWS,
-  ...CONTRACT_TYPES.MARCAS_PUBLICIDADE,
+  ...CONTRACT_TYPES.BRANDS_ADVERTISING,
   "Parceria entre Artistas",
   "Colaboração Musical (Feat com estrutura contratual)",
 ];

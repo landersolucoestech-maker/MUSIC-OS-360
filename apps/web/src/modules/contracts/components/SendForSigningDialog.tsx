@@ -25,7 +25,7 @@ import { toUserMessage } from "@/shared/lib/errors";
 interface SendForSigningDialogProps {
   open:           boolean;
   onOpenChange:   (open: boolean) => void;
-  contrato:       ContractWithRelations;
+  contract:       ContractWithRelations;
   onSuccess?:     (documentId: string, provider: SigningProviderId) => void;
 }
 
@@ -42,7 +42,7 @@ const PROVIDER_SELECTED: Record<SigningProviderId, string> = {
 export function SendForSigningDialog({
   open,
   onOpenChange,
-  contrato: contract,
+  contract,
   onSuccess,
 }: SendForSigningDialogProps) {
   const { data: providers = [], isLoading: loadingProviders } = useSigningProviders();

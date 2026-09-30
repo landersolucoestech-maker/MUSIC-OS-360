@@ -1,5 +1,5 @@
 export const CONTRACT_TYPES = {
-  SERVICOS: [
+  SERVICES: [
     "Produção Musical",
     "Produção Audiovisual",
     "Produção Executiva",
@@ -16,7 +16,7 @@ export const CONTRACT_TYPES = {
     "Gestão de Catálogo",
   ],
 
-  COLABORADORES: [
+  COLLABORATORS: [
     "Designer Gráfico",
     "Videomaker / Filmmaker",
     "Fotógrafo",
@@ -28,14 +28,14 @@ export const CONTRACT_TYPES = {
     "Equipe Técnica",
   ],
 
-  ARTISTICOS: [
+  ARTISTIC: [
     "Agenciamento Artístico",
     "Empresariamento 360",
     "Empresariamento 360 com Investimento",
     "Co-Management",
   ],
 
-  FONOGRAFICOS: [
+  PHONOGRAPHIC: [
     "Contrato de Gravação",
     "Licenciamento de Fonograma",
     "Cessão de Fonograma",
@@ -43,7 +43,7 @@ export const CONTRACT_TYPES = {
     "Label Services",
   ],
 
-  EDITORIAIS: [
+  PUBLISHING: [
     "Cessão de Direitos Autorais",
     "Edição Musical",
     "Coedição Musical",
@@ -51,7 +51,7 @@ export const CONTRACT_TYPES = {
     "Split Sheet",
   ],
 
-  LICENCIAMENTO: [
+  LICENSING: [
     "Obra Musical",
     "Fonograma",
     "Sincronização (Filmes, Séries, Novelas, Games, Ads)",
@@ -64,11 +64,11 @@ export const CONTRACT_TYPES = {
     "Contrato de Turnê",
   ],
 
-  DISTRIBUICAO: [
+  DISTRIBUTION: [
     "Termo de Distribuição Digital de Fonograma",
   ],
 
-  PARCERIAS: [
+  PARTNERSHIPS: [
     "Parceria entre Artistas",
     "Parceria entre Gravadoras",
     "Parceria com Produtores",
@@ -76,14 +76,14 @@ export const CONTRACT_TYPES = {
     "Colaboração Musical (Feat com estrutura contratual)",
   ],
 
-  MARCAS_PUBLICIDADE: [
+  BRANDS_ADVERTISING: [
     "Endorsement",
     "Publicidade com Artista",
     "Contrato com Influenciador / Creator",
     "Licenciamento de Imagem",
   ],
 
-  JURIDICOS: [
+  LEGAL: [
     "NDA (Acordo de Confidencialidade)",
     "Cessão de Uso de Imagem e Voz",
     "Termos de Uso de Conteúdo",
@@ -91,7 +91,7 @@ export const CONTRACT_TYPES = {
     "Procuração Artística",
   ],
 
-  RESCISAO: [
+  TERMINATION: [
     "Distrato Contratual",
     "Rescisão Unilateral",
     "Rescisão por Inadimplemento",

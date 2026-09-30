@@ -45,7 +45,7 @@ export interface DocumentLog {
 
 export type SigningProviderLabel = "autentique" | "clicksign" | "docusign";
 
-export interface VinculadoDocument {
+export interface LinkedDocument {
   id: string;
   org_id: string;
   template_id?: string;

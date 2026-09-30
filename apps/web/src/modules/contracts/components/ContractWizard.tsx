@@ -27,45 +27,21 @@ import { cn } from "@/shared/lib/utils";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
 import { UserFacingError } from "@/shared/lib/errors";
 import { CONTRACT_STATUS_OPTIONS } from "@/modules/contracts/lib/contract-status";
+import {
+  DEFAULT_PARTY, MARITAL_STATUSES, MARITAL_STATUS_LABELS_PT_BR, PARTY_TYPE_LABELS_PT_BR,
+  maritalStatusDocumentText, normalizeSavedParty, normalizeWizardSignerRecord,
+  type PartyData, type PartyOrigin, type PartyType,
+} from "@/modules/contracts/lib/contract-wizard-party";
 
 // ── Types ──────────────────────────────────────────────────────────────────
-
-type PartyType = "pf" | "pj" | "artista";
-type PartyOrigin = "manual" | "crm" | "artistas";
-
-interface PartyData {
-  type: PartyType;
-  origin: PartyOrigin;
-  sourceId?: string;
-  nome?: string;
-  nome_artistico?: string;
-  nome_civil?: string;
-  cpf?: string;
-  cnpj?: string;
-  rg?: string;
-  email?: string;
-  telefone?: string;
-  endereco?: string;
-  nacionalidade?: string;
-  profissao?: string;
-  estado_civil?: string;
-  razao_social?: string;
-  representante_legal?: string;
-  cpf_representante?: string;
-  rg_representante?: string;
-  nacionalidade_representante?: string;
-  estado_civil_representante?: string;
-  profissao_representante?: string;
-  endereco_representante?: string;
-}
 
 interface WizardSigner {
   id: string;
   role: string;
   name: string;
   email: string;
-  obrigatorio: boolean;
-  ordem: number;
+  required: boolean;
+  order: number;
   provider: SigningPlatform | "";
 }
 
@@ -104,7 +80,7 @@ interface WizardState {
   templateId: string;
   templateName: string;
   /** Canonical category slug (service_type), e.g. "gravacao" — used as contract type */
-  templateTipoServico: string;
+  templateServiceType: string;
   templateContent: string;
   partyRoles: string[];
   /** Union of roles from SIGNATURE.* INITIALS.* SIGN_DATE.* */
@@ -147,14 +123,13 @@ const WIZARD_STEPS = [
 ];
 
 
-const EMPTY_PARTY: PartyData = { type: "pf", origin: "manual" };
 
 const EMPTY_META: WizardMeta = {
   title: "", status: "draft", start_date: "", end_date: "", observations: "", value: "",
 };
 
 const EMPTY_WIZARD: WizardState = {
-  templateId: "", templateName: "", templateTipoServico: "", templateContent: "",
+  templateId: "", templateName: "", templateServiceType: "", templateContent: "",
   partyRoles: [], signatureRoles: [], manifestVars: [],
   parties: {}, variables: {}, signers: [], meta: EMPTY_META,
 };
@@ -246,41 +221,45 @@ function parseManifest(raw: string | null | undefined, content: string, partyRol
 function resolvePartyField(party: PartyData, field: string): string {
   const f = field.toUpperCase();
   if (f === "NAME" || f === "NOME") {
-    if (party.type === "pj") return party.razao_social || "";
-    if (party.type === "artista") return party.nome_artistico || party.nome_civil || party.nome || "";
-    return party.nome || "";
+    if (party.type === "company") return party.legal_name || "";
+    if (party.type === "artist") return party.stage_name || party.full_name || party.name || "";
+    return party.name || "";
   }
   const MAP: Record<string, keyof PartyData> = {
     CPF:                 "cpf",
     CNPJ:                "cnpj",
     RG:                  "rg",
     EMAIL:               "email",
-    TELEFONE:            "telefone",
-    CELULAR:             "telefone",
-    ENDERECO:            "endereco",
-    ADDRESS:             "endereco",
-    NACIONALIDADE:       "nacionalidade",
-    PROFISSAO:           "profissao",
-    ESTADO_CIVIL:        "estado_civil",
-    RAZAO_SOCIAL:        "razao_social",
+    TELEFONE:            "phone",
+    CELULAR:             "phone",
+    ENDERECO:            "address",
+    ADDRESS:             "address",
+    NACIONALIDADE:       "nationality",
+    PROFISSAO:           "occupation",
+    ESTADO_CIVIL:        "marital_status",
+    RAZAO_SOCIAL:        "legal_name",
     // Portuguese-style keys
-    REPRESENTANTE_LEGAL: "representante_legal",
-    CPF_REPRESENTANTE:   "cpf_representante",
-    RG_REPRESENTANTE:    "rg_representante",
+    REPRESENTANTE_LEGAL: "legal_representative",
+    CPF_REPRESENTANTE:   "legal_representative_cpf",
+    RG_REPRESENTANTE:    "legal_representative_rg",
     // English-style aliases (used by templates created in the template editor)
-    LEGAL_REPRESENTATIVE:             "representante_legal",
-    REPRESENTATIVE_NAME:              "representante_legal",
-    LEGAL_REPRESENTATIVE_CPF:         "cpf_representante",
-    LEGAL_REPRESENTATIVE_RG:          "rg_representante",
-    LEGAL_REPRESENTATIVE_NATIONALITY: "nacionalidade_representante",
-    LEGAL_REPRESENTATIVE_MARITAL_STATUS: "estado_civil_representante",
-    LEGAL_REPRESENTATIVE_OCCUPATION:  "profissao_representante",
-    LEGAL_REPRESENTATIVE_ADDRESS:     "endereco_representante",
-    NOME_ARTISTICO:      "nome_artistico",
-    NOME_CIVIL:          "nome_civil",
+    LEGAL_REPRESENTATIVE:             "legal_representative",
+    REPRESENTATIVE_NAME:              "legal_representative",
+    LEGAL_REPRESENTATIVE_CPF:         "legal_representative_cpf",
+    LEGAL_REPRESENTATIVE_RG:          "legal_representative_rg",
+    LEGAL_REPRESENTATIVE_NATIONALITY: "legal_representative_nationality",
+    LEGAL_REPRESENTATIVE_MARITAL_STATUS: "legal_representative_marital_status",
+    LEGAL_REPRESENTATIVE_OCCUPATION:  "legal_representative_occupation",
+    LEGAL_REPRESENTATIVE_ADDRESS:     "legal_representative_address",
+    NOME_ARTISTICO:      "stage_name",
+    NOME_CIVIL:          "full_name",
   };
   const key = MAP[f];
-  return key ? String(party[key] || "") : "";
+  if (!key) return "";
+  const value = String(party[key] || "");
+  return key === "marital_status" || key === "legal_representative_marital_status"
+    ? maritalStatusDocumentText(value)
+    : value;
 }
 
 /**
@@ -390,7 +369,7 @@ function PartyCard({
     [party, onChange],
   );
 
-  const icons: Record<PartyType, typeof User> = { pf: User, pj: Building2, artista: Music };
+  const icons: Record<PartyType, typeof User> = { individual: User, company: Building2, artist: Music };
   const Icon = icons[party.type];
 
   return (
@@ -405,13 +384,13 @@ function PartyCard({
           <Label className="text-xs">Tipo</Label>
           <Select
             value={party.type}
-            onValueChange={(v) => set({ type: v as PartyType, nome: "", cpf: "", cnpj: "", email: "", sourceId: undefined })}
+            onValueChange={(v) => set({ type: v as PartyType, name: "", cpf: "", cnpj: "", email: "", sourceId: undefined })}
           >
             <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="pf">Pessoa Física</SelectItem>
-              <SelectItem value="pj">Pessoa Jurídica</SelectItem>
-              <SelectItem value="artista">Artista</SelectItem>
+              {(Object.keys(PARTY_TYPE_LABELS_PT_BR) as PartyType[]).map((type) => (
+                <SelectItem key={type} value={type}>{PARTY_TYPE_LABELS_PT_BR[type]}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -422,7 +401,7 @@ function PartyCard({
             <SelectContent>
               <SelectItem value="manual">Manual</SelectItem>
               <SelectItem value="crm">CRM</SelectItem>
-              {party.type === "artista" && <SelectItem value="artistas">Artistas</SelectItem>}
+              {party.type === "artist" && <SelectItem value="artists">Artistas</SelectItem>}
             </SelectContent>
           </Select>
         </div>
@@ -438,29 +417,29 @@ function PartyCard({
             placeholder="Selecionar contato…"
             searchPlaceholder="Buscar por nome…"
             emptyText="Nenhum contato encontrado"
-            data-testid="combobox-crm-contato"
+            data-testid="combobox-crm-contact"
             onChange={(id, c) => {
               if (!c) return;
               // `/clients` row — CZ-043 canonical keys.
-              const isPF = c.person_type === "individual";
+              const isIndividual = c.person_type === "individual";
               const doc = String(c.cpf_cnpj || "");
               set({
                 sourceId: id,
-                nome: String(c.name || ""),
-                cpf: isPF ? doc : "",
-                cnpj: !isPF ? doc : "",
+                name: String(c.name || ""),
+                cpf: isIndividual ? doc : "",
+                cnpj: !isIndividual ? doc : "",
                 email: String(c.email || ""),
-                telefone: String(c.phone || ""),
-                endereco: String(c.address || ""),
-                razao_social: String(c.legal_name || c.name || ""),
-                representante_legal: String(c.responsible_name || ""),
+                phone: String(c.phone || ""),
+                address: String(c.address || ""),
+                legal_name: String(c.legal_name || c.name || ""),
+                legal_representative: String(c.responsible_name || ""),
               });
             }}
           />
         </div>
       )}
 
-      {party.origin === "artistas" && (
+      {party.origin === "artists" && (
         <div className="space-y-1">
           <Label className="text-xs">Selecionar Artista</Label>
           <AsyncEntityCombobox<Record<string, unknown> & { id: string }>
@@ -470,14 +449,14 @@ function PartyCard({
             placeholder="Selecionar artista…"
             searchPlaceholder="Buscar por nome…"
             emptyText="Nenhum artista encontrado"
-            data-testid="combobox-artista"
+            data-testid="combobox-artist"
             onChange={(id, a) => {
               if (!a) return;
               set({
                 sourceId: id,
                 // Artist row keys: canonical CZ-042 contract (stage_name/full_name/cpf_cnpj).
-                nome_artistico: String(a.stage_name || ""),
-                nome_civil: String(a.full_name || ""),
+                stage_name: String(a.stage_name || ""),
+                full_name: String(a.full_name || ""),
                 cpf: String(a.cpf_cnpj || ""),
                 email: String(a.email || ""),
               });
@@ -487,54 +466,52 @@ function PartyCard({
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {party.type === "artista" && (
+        {party.type === "artist" && (
           <>
             <div className="space-y-1">
               <Label className="text-xs">Nome Artístico</Label>
-              <Input className="h-8 text-xs" value={party.nome_artistico || ""} onChange={(e) => set({ nome_artistico: e.target.value })} placeholder="Nome artístico" />
+              <Input className="h-8 text-xs" value={party.stage_name || ""} onChange={(e) => set({ stage_name: e.target.value })} placeholder="Nome artístico" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Nome Civil</Label>
-              <Input className="h-8 text-xs" value={party.nome_civil || ""} onChange={(e) => set({ nome_civil: e.target.value })} placeholder="Nome completo" />
+              <Input className="h-8 text-xs" value={party.full_name || ""} onChange={(e) => set({ full_name: e.target.value })} placeholder="Nome completo" />
             </div>
           </>
         )}
 
-        {party.type === "pf" && (
+        {party.type === "individual" && (
           <>
             <div className="space-y-1 col-span-2 sm:col-span-1">
               <Label className="text-xs">Nome Completo</Label>
-              <Input className="h-8 text-xs" value={party.nome || ""} onChange={(e) => set({ nome: e.target.value })} placeholder="Nome" />
+              <Input className="h-8 text-xs" value={party.name || ""} onChange={(e) => set({ name: e.target.value })} placeholder="Nome" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Nacionalidade</Label>
-              <Input className="h-8 text-xs" value={party.nacionalidade || ""} onChange={(e) => set({ nacionalidade: e.target.value })} placeholder="Brasileiro(a)" />
+              <Input className="h-8 text-xs" value={party.nationality || ""} onChange={(e) => set({ nationality: e.target.value })} placeholder="Brasileiro(a)" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Profissão</Label>
-              <Input className="h-8 text-xs" value={party.profissao || ""} onChange={(e) => set({ profissao: e.target.value })} placeholder="Profissão" />
+              <Input className="h-8 text-xs" value={party.occupation || ""} onChange={(e) => set({ occupation: e.target.value })} placeholder="Profissão" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Estado Civil</Label>
-              <Select value={party.estado_civil || ""} onValueChange={(v) => set({ estado_civil: v })}>
+              <Select value={party.marital_status || ""} onValueChange={(v) => set({ marital_status: v })}>
                 <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="solteiro">Solteiro(a)</SelectItem>
-                  <SelectItem value="casado">Casado(a)</SelectItem>
-                  <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-                  <SelectItem value="viuvo">Viúvo(a)</SelectItem>
-                  <SelectItem value="uniao_estavel">União Estável</SelectItem>
+                  {MARITAL_STATUSES.map((status) => (
+                    <SelectItem key={status} value={status}>{MARITAL_STATUS_LABELS_PT_BR[status]}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </>
         )}
 
-        {party.type === "pj" && (
+        {party.type === "company" && (
           <>
             <div className="space-y-1 col-span-2">
               <Label className="text-xs">Razão Social</Label>
-              <Input className="h-8 text-xs" value={party.razao_social || ""} onChange={(e) => set({ razao_social: e.target.value })} placeholder="Razão social" />
+              <Input className="h-8 text-xs" value={party.legal_name || ""} onChange={(e) => set({ legal_name: e.target.value })} placeholder="Razão social" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">CNPJ</Label>
@@ -542,51 +519,49 @@ function PartyCard({
             </div>
             <div className="space-y-1 col-span-2">
               <Label className="text-xs">Endereço</Label>
-              <Input className="h-8 text-xs" value={party.endereco || ""} onChange={(e) => set({ endereco: e.target.value })} placeholder="Rua, número, cidade - UF" />
+              <Input className="h-8 text-xs" value={party.address || ""} onChange={(e) => set({ address: e.target.value })} placeholder="Rua, número, cidade - UF" />
             </div>
             <div className="space-y-1 col-span-2 border-t border-border pt-2 mt-1">
               <p className="text-[10px] font-medium text-muted-foreground  tracking-wide">Dados do Representante Legal</p>
             </div>
             <div className="space-y-1 col-span-2">
               <Label className="text-xs">Nome do Representante Legal</Label>
-              <Input className="h-8 text-xs" value={party.representante_legal || ""} onChange={(e) => set({ representante_legal: e.target.value })} placeholder="Nome completo" />
+              <Input className="h-8 text-xs" value={party.legal_representative || ""} onChange={(e) => set({ legal_representative: e.target.value })} placeholder="Nome completo" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Nacionalidade (Repr.)</Label>
-              <Input className="h-8 text-xs" value={party.nacionalidade_representante || ""} onChange={(e) => set({ nacionalidade_representante: e.target.value })} placeholder="Ex: brasileiro(a)" />
+              <Input className="h-8 text-xs" value={party.legal_representative_nationality || ""} onChange={(e) => set({ legal_representative_nationality: e.target.value })} placeholder="Ex: brasileiro(a)" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Profissão (Repr.)</Label>
-              <Input className="h-8 text-xs" value={party.profissao_representante || ""} onChange={(e) => set({ profissao_representante: e.target.value })} placeholder="Profissão" />
+              <Input className="h-8 text-xs" value={party.legal_representative_occupation || ""} onChange={(e) => set({ legal_representative_occupation: e.target.value })} placeholder="Profissão" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Estado Civil (Repr.)</Label>
-              <Select value={party.estado_civil_representante || "none"} onValueChange={(v) => set({ estado_civil_representante: v === "none" ? "" : v })}>
+              <Select value={party.legal_representative_marital_status || "none"} onValueChange={(v) => set({ legal_representative_marital_status: v === "none" ? "" : v })}>
                 <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">—</SelectItem>
-                  <SelectItem value="solteiro">Solteiro(a)</SelectItem>
-                  <SelectItem value="casado">Casado(a)</SelectItem>
-                  <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-                  <SelectItem value="viuvo">Viúvo(a)</SelectItem>
-                  <SelectItem value="uniao_estavel">União Estável</SelectItem>
+                  {MARITAL_STATUSES.map((status) => (
+                    <SelectItem key={status} value={status}>{MARITAL_STATUS_LABELS_PT_BR[status]}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1 col-span-2">
               <Label className="text-xs">Endereço (Repr.)</Label>
-              <Input className="h-8 text-xs" value={party.endereco_representante || ""} onChange={(e) => set({ endereco_representante: e.target.value })} placeholder="Rua, número, cidade - UF" />
+              <Input className="h-8 text-xs" value={party.legal_representative_address || ""} onChange={(e) => set({ legal_representative_address: e.target.value })} placeholder="Rua, número, cidade - UF" />
             </div>
           </>
         )}
 
         <div className="space-y-1">
-          <Label className="text-xs">CPF {party.type === "pj" ? "(Repr.)" : ""}</Label>
+          <Label className="text-xs">CPF {party.type === "company" ? "(Repr.)" : ""}</Label>
           <Input className="h-8 text-xs font-sans" value={party.cpf || ""} onChange={(e) => set({ cpf: e.target.value })} placeholder="000.000.000-00" />
         </div>
 
         <div className="space-y-1">
-          <Label className="text-xs">RG {party.type === "pj" ? "(Repr.)" : ""}</Label>
+          <Label className="text-xs">RG {party.type === "company" ? "(Repr.)" : ""}</Label>
           <Input className="h-8 text-xs font-sans" value={party.rg || ""} onChange={(e) => set({ rg: e.target.value })} placeholder="RG" />
         </div>
 
@@ -595,10 +570,10 @@ function PartyCard({
           <Input className="h-8 text-xs" type="email" value={party.email || ""} onChange={(e) => set({ email: e.target.value })} placeholder="email@exemplo.com" />
         </div>
 
-        {party.type !== "pj" && (
+        {party.type !== "company" && (
           <div className="space-y-1 col-span-2">
             <Label className="text-xs">Endereço</Label>
-            <Input className="h-8 text-xs" value={party.endereco || ""} onChange={(e) => set({ endereco: e.target.value })} placeholder="Rua, número, cidade - UF" />
+            <Input className="h-8 text-xs" value={party.address || ""} onChange={(e) => set({ address: e.target.value })} placeholder="Rua, número, cidade - UF" />
           </div>
         )}
       </div>
@@ -737,8 +712,8 @@ function SignerRow({
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
             <Checkbox
-              checked={signer.obrigatorio}
-              onCheckedChange={(v) => set({ obrigatorio: Boolean(v) })}
+              checked={signer.required}
+              onCheckedChange={(v) => set({ required: Boolean(v) })}
             />
             Obrigatório
           </label>
@@ -758,7 +733,7 @@ function SignerRow({
         </div>
         <div className="space-y-1">
           <Label className="text-xs">Ordem</Label>
-          <Input className="h-8 text-xs" type="number" min={1} value={signer.ordem} onChange={(e) => set({ ordem: Number(e.target.value) })} />
+          <Input className="h-8 text-xs" type="number" min={1} value={signer.order} onChange={(e) => set({ order: Number(e.target.value) })} />
         </div>
         <div className="space-y-1">
           <Label className="text-xs">Plataforma</Label>
@@ -833,9 +808,9 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
   const filledParties = state.partyRoles.filter((r) => {
     const p = state.parties[r];
     if (!p) return false;
-    if (p.type === "artista") return !!(p.nome_artistico || p.nome_civil);
-    if (p.type === "pj") return !!p.razao_social;
-    return !!p.nome;
+    if (p.type === "artist") return !!(p.stage_name || p.full_name);
+    if (p.type === "company") return !!p.legal_name;
+    return !!p.name;
   }).length;
 
   const resolvedVars = Object.values(state.variables).filter((v) => v.trim()).length;
@@ -857,7 +832,7 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
         <div className="space-y-1.5">
           <Label>Título do Contrato *</Label>
           <Input
-            data-testid="input-title-revisao"
+            data-testid="input-title-review"
             value={m.title}
             onChange={(e) => setMeta({ title: e.target.value })}
             placeholder="Ex: Contrato de Empresariamento Artístico"
@@ -871,7 +846,7 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
               value={m.start_date}
               onChange={(v) => setMeta({ start_date: v || "" })}
               placeholder="Selecione"
-              data-testid="datepicker-wizard-inicio"
+              data-testid="datepicker-wizard-start"
             />
           </div>
           <div className="space-y-1.5">
@@ -880,7 +855,7 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
               value={m.end_date}
               onChange={(v) => setMeta({ end_date: v || "" })}
               placeholder="Selecione"
-              data-testid="datepicker-wizard-fim"
+              data-testid="datepicker-wizard-end"
             />
           </div>
         </div>
@@ -895,7 +870,7 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
               value={m.value}
               onChange={(e) => setMeta({ value: e.target.value })}
               placeholder="0,00"
-              data-testid="input-valor-revisao"
+              data-testid="input-value-review"
             />
           </div>
           <p className="text-xs text-muted-foreground">
@@ -934,10 +909,10 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
 interface ContractWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  contrato?: ContractWithRelations | null;
+  contract?: ContractWithRelations | null;
 }
 
-export function ContractWizard({ open, onOpenChange, contrato: contract }: ContractWizardProps) {
+export function ContractWizard({ open, onOpenChange, contract }: ContractWizardProps) {
   const [step, setStep] = useState(1);
   const [state, setState] = useState<WizardState>(EMPTY_WIZARD);
   const [isSaving, setIsSaving] = useState(false);
@@ -957,7 +932,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
       const tmpl = templates.find((t) => t.id === contract.template_id);
 
       // FIX: parse saved wizard blob from notes to hydrate parties/variables
-      let savedBlob: { parties?: Record<string, PartyData>; variables?: Record<string, string> } = {};
+      let savedBlob: { parties?: Record<string, unknown>; variables?: Record<string, string> } = {};
       try {
         if (contract.notes && contract.notes.startsWith("{")) {
           savedBlob = JSON.parse(contract.notes);
@@ -981,36 +956,29 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
         // Seed party entries; prefer saved data over empty shells
         const initialParties: Record<string, PartyData> = {};
         for (const role of partyRoles) {
-          initialParties[role] = (savedBlob.parties?.[role] as PartyData | undefined) ?? { type: "pf", origin: "manual" };
+          const savedParty = savedBlob.parties?.[role];
+          initialParties[role] = savedParty === undefined ? { ...DEFAULT_PARTY } : normalizeSavedParty(savedParty);
         }
 
         const savedSigners: WizardSigner[] = Array.isArray(contract.signers)
           ? (contract.signers as unknown[]).map((s, i) => {
-              const r = s as Record<string, unknown>;
-              return {
-                id:          String(i),
-                role:        String(r.role ?? "OUTRO"),
-                name:        String(r.name ?? r.nome ?? ""),
-                email:       String(r.email ?? ""),
-                obrigatorio: Boolean(r.obrigatorio ?? true),
-                ordem:       Number(r.ordem ?? i + 1),
-                provider:    (r.provider as SigningPlatform) || "" as const,
-              };
+              const record = normalizeWizardSignerRecord(s, i);
+              return { ...record, id: String(i), provider: (record.provider as SigningPlatform) || "" as const };
             })
           : signatureRoles.map((role, i) => ({
               id: `sig-${Date.now()}-${i}`,
               role,
               name: "",
               email: "",
-              obrigatorio: true,
-              ordem: i + 1,
+              required: true,
+              order: i + 1,
               provider: "",
             }));
 
         setState({
           templateId:          tmpl.id,
           templateName:        tmpl.name,
-          templateTipoServico: tmpl.service_type || "",
+          templateServiceType: tmpl.service_type || "",
           templateContent:     tmpl.content,
           partyRoles,
           signatureRoles,
@@ -1039,7 +1007,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
 
     const initialParties: Record<string, PartyData> = {};
     for (const role of partyRoles) {
-      initialParties[role] = { type: "pf", origin: "manual" };
+      initialParties[role] = { ...DEFAULT_PARTY };
     }
 
     const initialSigners: WizardSigner[] = signatureRoles.map((role, i) => ({
@@ -1047,8 +1015,8 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
       role,
       name:        "",
       email:       "",
-      obrigatorio: true,
-      ordem:       i + 1,
+      required:    true,
+      order:       i + 1,
       provider:    "",
     }));
 
@@ -1056,7 +1024,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
       ...prev,
       templateId:          t.id,
       templateName:        t.name,
-      templateTipoServico: t.service_type || "",
+      templateServiceType: t.service_type || "",
       templateContent:     t.content,
       partyRoles,
       signatureRoles,
@@ -1085,7 +1053,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
     const id = `sig-${Date.now()}`;
     setState((p) => ({
       ...p,
-      signers: [...p.signers, { id, role: "OUTRO", name: "", email: "", obrigatorio: false, ordem: p.signers.length + 1, provider: "" }],
+      signers: [...p.signers, { id, role: "OUTRO", name: "", email: "", required: false, order: p.signers.length + 1, provider: "" }],
     }));
   }, []);
 
@@ -1137,7 +1105,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
       const payload: ContractInsert = {
         title:           state.meta.title.trim(),
         template_id:      state.templateId || null,
-        type:             state.templateTipoServico || state.templateName || null,
+        type:             state.templateServiceType || state.templateName || null,
         status:           resolvedStatus,
         start_date:      state.meta.start_date || null,
         end_date:         state.meta.end_date    || null,
@@ -1145,8 +1113,8 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
         notes:            wizardBlob,
         signing_platform: provider,
         // Deliberately map WizardSigner to the persisted WizardSignerRecord shape
-        signers: state.signers.map(({ name, email, role, obrigatorio: required, ordem, provider }): WizardSignerRecord => ({
-          name, email, role, obrigatorio: required, ordem, provider,
+        signers: state.signers.map(({ name, email, role, required, order, provider }): WizardSignerRecord => ({
+          name, email, role, required, order, provider,
         })),
       };
 
@@ -1208,7 +1176,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
                 <PartyCard
                   key={role}
                   role={role}
-                  party={state.parties[role] || EMPTY_PARTY}
+                  party={state.parties[role] || DEFAULT_PARTY}
                   onChange={(p) => updateParty(role, p)}
                 />
               ))
@@ -1393,7 +1361,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
                     onClick={() => setStep((s) => s + 1)}
                     disabled={!canAdvance || isSaving}
                     type="button"
-                    data-testid="button-wizard-avancar"
+                    data-testid="button-wizard-next"
                   >
                     Avançar
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -1407,7 +1375,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
                       onClick={() => handleSave(false)}
                       disabled={!canAdvance || isSaving}
                       type="button"
-                      data-testid="button-wizard-rascunho"
+                      data-testid="button-wizard-draft"
                     >
                       {isSaving ? "A guardar…" : "Guardar Rascunho"}
                     </Button>
@@ -1417,7 +1385,7 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
                       onClick={() => handleSave(true)}
                       disabled={!canAdvance || isSaving || state.signers.length === 0}
                       type="button"
-                      data-testid="button-wizard-assinar"
+                      data-testid="button-wizard-sign"
                     >
                       <PenLine className="h-3.5 w-3.5" />
                       Enviar para Assinatura

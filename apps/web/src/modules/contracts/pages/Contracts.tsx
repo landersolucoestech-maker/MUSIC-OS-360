@@ -43,14 +43,14 @@ export default function Contracts() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [wizardOpen, setWizardOpen] = useState(false);
-  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; contrato?: any }>({ open: false, mode: "edit" });
-  const [viewModal, setViewModal] = useState<{ open: boolean; contrato?: any }>({ open: false });
-  const [deleteModal, setDeleteModal] = useState<{ open: boolean; contrato?: any }>({ open: false });
+  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; contract?: any }>({ open: false, mode: "edit" });
+  const [viewModal, setViewModal] = useState<{ open: boolean; contract?: any }>({ open: false });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; contract?: any }>({ open: false });
 
   useEditQueryParam(
     "edit",
     contracts,
-    useCallback((contract) => setFormModal({ open: true, mode: "edit", contrato: contract }), []),
+    useCallback((contract) => setFormModal({ open: true, mode: "edit", contract: contract }), []),
     "contracts",
   );
 
@@ -117,8 +117,8 @@ export default function Contracts() {
   };
 
   const handleDelete = () => {
-    if (deleteModal.contrato) {
-      deleteContract.mutate(deleteModal.contrato.id);
+    if (deleteModal.contract) {
+      deleteContract.mutate(deleteModal.contract.id);
       setDeleteModal({ open: false });
     }
   };
@@ -155,7 +155,7 @@ export default function Contracts() {
             Templates
           </Button>
           <RequirePermission module="contracts" action="write">
-            <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setWizardOpen(true)} data-testid="button-novo-contrato">
+            <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setWizardOpen(true)} data-testid="button-new-contract">
               <Plus className="h-3.5 w-3.5" />
               Novo Contrato
             </Button>
@@ -324,7 +324,7 @@ export default function Contracts() {
                     const diff = end ? Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)) : null;
                     const nearExpiry = diff !== null && diff >= 0 && diff <= 30;
                     return (
-                      <TableRow key={contract.id} data-testid={`row-contrato-${contract.id}`}>
+                      <TableRow key={contract.id} data-testid={`row-contract-${contract.id}`}>
                         <TableCell>
                           <Checkbox
                             checked={selectedIds.includes(contract.id)}
@@ -356,22 +356,22 @@ export default function Contracts() {
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-acoes-contrato-${contract.id}`}>
+                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-actions-contract-${contract.id}`}>
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setViewModal({ open: true, contrato: contract })}>
+                              <DropdownMenuItem onClick={() => setViewModal({ open: true, contract: contract })}>
                                 <Eye className="h-3.5 w-3.5 mr-2" /> Ver
                               </DropdownMenuItem>
                               <RequirePermission module="contracts" action="write">
-                                <DropdownMenuItem onClick={() => setFormModal({ open: true, mode: "edit", contrato: contract })}>
+                                <DropdownMenuItem onClick={() => setFormModal({ open: true, mode: "edit", contract: contract })}>
                                   <Pencil className="h-3.5 w-3.5 mr-2" /> Editar
                                 </DropdownMenuItem>
                               </RequirePermission>
                               <RequirePermission module="contracts" action="delete">
                                 <DropdownMenuItem
-                                  onClick={() => setDeleteModal({ open: true, contrato: contract })}
+                                  onClick={() => setDeleteModal({ open: true, contract: contract })}
                                   className="text-destructive focus:text-destructive"
                                 >
                                   <Trash2 className="h-3.5 w-3.5 mr-2" /> Excluir
@@ -425,8 +425,8 @@ export default function Contracts() {
       <ContractViewModal
         open={viewModal.open}
         onOpenChange={(open) => setViewModal({ ...viewModal, open })}
-        contrato={viewModal.contrato}
-        onEdit={() => setFormModal({ open: true, mode: "edit", contrato: viewModal.contrato })}
+        contract={viewModal.contract}
+        onEdit={() => setFormModal({ open: true, mode: "edit", contract: viewModal.contract })}
       />
       <ContractWizard
         open={wizardOpen}
@@ -435,13 +435,13 @@ export default function Contracts() {
       <ContractWizard
         open={formModal.open && formModal.mode === "edit"}
         onOpenChange={(open) => setFormModal({ ...formModal, open })}
-        contrato={formModal.contrato}
+        contract={formModal.contract}
       />
       <DeleteConfirmModal
         open={deleteModal.open}
         onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })}
         title="Excluir Contrato"
-        description={`Tem certeza que deseja excluir o contrato "${deleteModal.contrato?.title}"?`}
+        description={`Tem certeza que deseja excluir o contrato "${deleteModal.contract?.title}"?`}
         onConfirm={handleDelete}
       />
     </>

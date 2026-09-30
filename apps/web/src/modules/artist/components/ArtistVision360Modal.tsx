@@ -2358,7 +2358,7 @@ export function ArtistVision360Modal({
                               )}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                              <ContractStatusBadge contratos={[contract]} />
+                              <ContractStatusBadge contracts={[contract]} />
                               {contract.file_url && (
                                 <StoredFileLink url={contract.file_url as string}
                                   data-testid={`link-contrato-pdf-${contract.id}`}>

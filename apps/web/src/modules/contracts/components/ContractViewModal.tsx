@@ -39,11 +39,11 @@ interface ContractWithWorkflow extends ContractWithRelations {
 interface ContractViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  contrato?: ContractWithWorkflow;
+  contract?: ContractWithWorkflow;
   onEdit?: () => void;
 }
 
-export function ContractViewModal({ open, onOpenChange, contrato: contract, onEdit }: ContractViewModalProps) {
+export function ContractViewModal({ open, onOpenChange, contract, onEdit }: ContractViewModalProps) {
   const { releases } = useReleases();
   const navigate = useNavigate();
   const { data: allDocuments = [] } = useDocuments();
@@ -63,7 +63,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
     detail?.status ?? contract.status,
     detail?.allowed_transitions,
   );
-  const vinculadoDoc = allDocuments.find((d) => d.contract_id === contract.id);
+  const linkedDoc = allDocuments.find((d) => d.contract_id === contract.id);
   const contractSigners = Array.isArray(contract.signers) ? contract.signers : [];
 
   const linkedRelease: ReleaseWithRelations | undefined = contract.release_id
@@ -80,12 +80,12 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
   const in30Days = new Date(today);
   in30Days.setDate(in30Days.getDate() + 30);
   const endDate = contract.end_date ? new Date(contract.end_date) : null;
-  const expirando = endDate && endDate >= today && endDate <= in30Days;
+  const expiring = endDate && endDate >= today && endDate <= in30Days;
   const remainingDays = endDate
     ? Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
-  const alreadySent = vinculadoDoc !== undefined;
+  const alreadySent = linkedDoc !== undefined;
 
   return (
     <>
@@ -104,7 +104,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <StatusBadge status={contract.status ?? ""} />
                   <SigningPlatformBadge platform={contract.signing_platform} />
-                  {expirando && (
+                  {expiring && (
                     <Badge variant="warning" className="gap-1">
                       <AlertCircle className="h-3 w-3" />
                       Expira em {remainingDays}d
@@ -113,8 +113,8 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                   {contract.exclusive && (
                     <Badge variant="outline" className="text-[11px]">Exclusivo</Badge>
                   )}
-                  {vinculadoDoc && (
-                    <DocumentStatusBadge status={vinculadoDoc.status} />
+                  {linkedDoc && (
+                    <DocumentStatusBadge status={linkedDoc.status} />
                   )}
                 </div>
                 {allowedTransitions.length > 0 && (
@@ -131,20 +131,20 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
           </DialogHeader>
 
           {/* ── Tabs ── */}
-          <Tabs defaultValue="informacoes" className="flex flex-col flex-1 overflow-hidden">
+          <Tabs defaultValue="info" className="flex flex-col flex-1 overflow-hidden">
             <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent h-auto p-0 shrink-0">
               {[
-                { value: "informacoes", label: "Informações" },
-                { value: "assinatura",  label: `Assinatura${contractSigners.length > 0 ? ` (${contractSigners.length})` : ""}` },
-                { value: "arquivo",     label: "Arquivo" },
+                { value: "info", label: "Informações" },
+                { value: "signature",  label: `Assinatura${contractSigners.length > 0 ? ` (${contractSigners.length})` : ""}` },
+                { value: "file",     label: "Arquivo" },
                 { value: "versions",     label: `Versões${versions.length > 0 ? ` (${versions.length})` : ""}` },
                 { value: "documents",  label: `Documentos${documents.length > 0 ? ` (${documents.length})` : ""}` },
-                { value: "lancamento",  label: "Lançamento" },
+                { value: "release",  label: "Lançamento" },
               ].map((tab) => (
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
-                  data-testid={`tab-contrato-${tab.value}`}
+                  data-testid={`tab-contract-${tab.value}`}
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-5 py-3 text-sm font-medium"
                 >
                   {tab.label}
@@ -154,7 +154,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
 
             <ScrollArea className="flex-1">
               {/* ── Information ── */}
-              <TabsContent value="informacoes" className="p-6 space-y-5 mt-0">
+              <TabsContent value="info" className="p-6 space-y-5 mt-0">
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {[
                     { label: "Artista / Cliente", value: contractPartyLabel(contract) },
@@ -193,7 +193,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
               </TabsContent>
 
               {/* ── Digital signature ── */}
-              <TabsContent value="assinatura" className="p-6 mt-0 space-y-5" data-testid="tab-content-assinatura">
+              <TabsContent value="signature" className="p-6 mt-0 space-y-5" data-testid="tab-content-signature">
                 {/* Contract signatories (inline, from the form) */}
                 {contractSigners.length > 0 ? (
                   <div>
@@ -270,31 +270,31 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                 )}
 
                 {/* If a linked document exists, shows status + platform + timeline */}
-                {vinculadoDoc && (
+                {linkedDoc && (
                   <>
                     <div className="border-t border-border pt-5">
                       <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-medium text-muted-foreground  tracking-wide">
                           Processo de Assinatura Digital
                         </p>
-                        <SigningPlatformBadge platform={vinculadoDoc.signing_provider} />
+                        <SigningPlatformBadge platform={linkedDoc.signing_provider} />
                       </div>
                       <div className="flex items-center gap-3 p-4 bg-muted/20 border border-border rounded-lg mb-4">
                         <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                           <PenLine className="h-4.5 w-4.5 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{vinculadoDoc.title}</p>
+                          <p className="text-sm font-medium truncate">{linkedDoc.title}</p>
                           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                            <DocumentStatusBadge status={vinculadoDoc.status} />
-                            {vinculadoDoc.signed_at && (
+                            <DocumentStatusBadge status={linkedDoc.status} />
+                            {linkedDoc.signed_at && (
                               <span className="text-xs text-muted-foreground">
-                                Assinado em {formatDateDashes(vinculadoDoc.signed_at)}
+                                Assinado em {formatDateDashes(linkedDoc.signed_at)}
                               </span>
                             )}
                           </div>
                         </div>
-                        {alreadySent && contractSigners.length > 0 && vinculadoDoc.status !== "signed" && (
+                        {alreadySent && contractSigners.length > 0 && linkedDoc.status !== "signed" && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -308,9 +308,9 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                         )}
                       </div>
 
-                      {vinculadoDoc.signers.length > 0 && (
+                      {linkedDoc.signers.length > 0 && (
                         <div className="space-y-2 mb-4">
-                          {vinculadoDoc.signers.map((signer) => (
+                          {linkedDoc.signers.map((signer) => (
                             <div
                               key={signer.id}
                               className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg"
@@ -345,12 +345,12 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                         </div>
                       )}
 
-                      {vinculadoDoc.logs.length > 0 && (
+                      {linkedDoc.logs.length > 0 && (
                         <div>
                           <p className="text-xs font-medium text-muted-foreground  tracking-wide mb-3">
                             Histórico de eventos
                           </p>
-                          <DocumentTimeline logs={vinculadoDoc.logs} />
+                          <DocumentTimeline logs={linkedDoc.logs} />
                         </div>
                       )}
                     </div>
@@ -359,7 +359,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
               </TabsContent>
 
               {/* ── File ── */}
-              <TabsContent value="arquivo" className="p-6 mt-0" data-testid="tab-content-arquivo">
+              <TabsContent value="file" className="p-6 mt-0" data-testid="tab-content-file">
                 {contract.file_url ? (
                   <Card className="bg-muted/20">
                     <CardContent className="p-8 flex flex-col items-center gap-5 text-center">
@@ -372,7 +372,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                           {storedFileDisplayName(contract.file_url)}
                         </p>
                       </div>
-                      <Button asChild className="gap-2" data-testid="button-open-arquivo">
+                      <Button asChild className="gap-2" data-testid="button-open-file">
                         <StoredFileLink url={contract.file_url}>
                           <ExternalLink className="h-4 w-4" />
                           Abrir PDF
@@ -485,7 +485,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
               </TabsContent>
 
               {/* ── Release ── */}
-              <TabsContent value="lancamento" className="p-6 mt-0" data-testid="tab-content-lancamento">
+              <TabsContent value="release" className="p-6 mt-0" data-testid="tab-content-release">
                 {linkedRelease ? (
                   <Card className="bg-muted/20">
                     <CardContent className="p-5 flex items-start gap-4">
@@ -526,7 +526,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                             onOpenChange(false);
                             navigate(`/releases?view=${linkedRelease.id}`);
                           }}
-                          data-testid="button-ver-lancamento"
+                          data-testid="button-view-release"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                           Ver em Lançamentos
@@ -569,7 +569,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
       <SendForSigningDialog
         open={sendDialogOpen}
         onOpenChange={setSendDialogOpen}
-        contrato={contract}
+        contract={contract}
       />
     </>
   );

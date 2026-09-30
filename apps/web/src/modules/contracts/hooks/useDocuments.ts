@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { VinculadoDocument } from "@/modules/contracts/types/document-types";
+import type { LinkedDocument } from "@/modules/contracts/types/document-types";
 
 // Linked documents do not have a real endpoint yet: reading reports the
 // true (empty) state and writing fails explicitly. Simulating
@@ -13,12 +13,12 @@ export const CONTRACTS_DOC_KEYS = {
 };
 
 // Stable reference — see shared/hooks/useDataQuery.ts for the reason.
-const EMPTY_DOCUMENTS: VinculadoDocument[] = [];
+const EMPTY_DOCUMENTS: LinkedDocument[] = [];
 
 export function useDocuments() {
   const query = useQuery({
     queryKey: CONTRACTS_DOC_KEYS.documents,
-    queryFn:  async (): Promise<VinculadoDocument[]> => [],
+    queryFn:  async (): Promise<LinkedDocument[]> => [],
     staleTime: 1000 * 30,
   });
   return { ...query, data: query.data ?? EMPTY_DOCUMENTS };
@@ -27,7 +27,7 @@ export function useDocuments() {
 export function useSaveDocument() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (_doc: VinculadoDocument): Promise<VinculadoDocument> => {
+    mutationFn: async (_doc: LinkedDocument): Promise<LinkedDocument> => {
       toast.error(DOCUMENTS_BACKEND_UNAVAILABLE);
       throw new Error(DOCUMENTS_BACKEND_UNAVAILABLE);
     },

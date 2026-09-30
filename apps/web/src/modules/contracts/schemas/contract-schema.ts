@@ -30,7 +30,7 @@ export const contractSchema = z.object({
   end_date: z.date().optional(),
   registry_office: z.boolean().optional(),
   registry_date: z.date().optional(),
-  payment_type: z.enum(["valor_fixo", "recebimentos externos de direitos"]).optional(),
+  payment_type: z.enum(["fixed_value", "recebimentos externos de direitos"]).optional(),
   fixed_value: z.number().optional(),
   external_rights_percentage: z.number().min(0).max(100).optional(),
   advance_payment: z.number().optional(),

@@ -85,18 +85,18 @@ export default function ContractTemplates() {
   const [selectedTemplateIds, setSelectedTemplateIds] = useState<string[]>([]);
 
   const [search, setSearch] = useState("");
-  const [filterType, setFilterType] = useState<"all" | "semantico" | "padrao">("all");
-  const [filterStatus, setFilterStatus] = useState<"all" | "ativo" | "inativo">("all");
+  const [filterType, setFilterType] = useState<"all" | "semantic" | "standard">("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all");
   const [sortState, setSortState] = useState<TableSortState>(null);
 
   const filteredTemplates = useMemo(() => {
     const q = search.trim().toLowerCase();
     return templates.filter((template) => {
       if (q && !template.name.toLowerCase().includes(q) && !(template.description ?? "").toLowerCase().includes(q)) return false;
-      if (filterType === "semantico" && template.service_type !== "semantico") return false;
-      if (filterType === "padrao" && template.service_type === "semantico") return false;
-      if (filterStatus === "ativo" && !template.active) return false;
-      if (filterStatus === "inativo" && template.active) return false;
+      if (filterType === "semantic" && template.service_type !== "semantico") return false;
+      if (filterType === "standard" && template.service_type === "semantico") return false;
+      if (filterStatus === "active" && !template.active) return false;
+      if (filterStatus === "inactive" && template.active) return false;
       return true;
     });
   }, [templates, search, filterType, filterStatus]);
@@ -104,7 +104,7 @@ export default function ContractTemplates() {
   const sortedTemplates = useMemo(
     () => sortTableRows(filteredTemplates, sortState, (template, key) => {
       if (key === "name") return template.name;
-      if (key === "categoria") return templateCategory(template, categories);
+      if (key === "category") return templateCategory(template, categories);
       if (key === "status") return templateStatus(template);
       if (key === "created_at") return template.created_at;
       return (template as Record<string, unknown>)[key];
@@ -198,7 +198,7 @@ export default function ContractTemplates() {
           size="sm"
           className="h-8 text-xs gap-1.5"
           onClick={() => setIsWorkspaceOpen(true)}
-          data-testid="button-novo-template"
+          data-testid="button-new-template"
         >
           <Plus className="h-3.5 w-3.5" />
           Novo Template
@@ -210,7 +210,7 @@ export default function ContractTemplates() {
           {[
             { title: "Total de Templates", value: templates.length, sub: "todos os tipos", icon: FileText },
             { title: "Semânticos (IA)", value: semanticCount, sub: "gerados por IA", icon: Sparkles },
-            { title: "Ativos", value: activeCount, sub: "disponiveis", icon: FileText },
+            { title: "Ativos", value: activeCount, sub: "disponíveis", icon: FileText },
             { title: "Variáveis Mapeadas", value: totalVars, sub: "em todos os templates", icon: Sparkles },
           ].map(({ title, value, sub, icon: Icon }) => (
             <Card key={title}>
@@ -254,8 +254,8 @@ export default function ContractTemplates() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os tipos</SelectItem>
-              <SelectItem value="semantico">Semântico (IA)</SelectItem>
-              <SelectItem value="padrao">Padrão</SelectItem>
+              <SelectItem value="semantic">Semântico (IA)</SelectItem>
+              <SelectItem value="standard">Padrão</SelectItem>
             </SelectContent>
           </Select>
 
@@ -265,8 +265,8 @@ export default function ContractTemplates() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="ativo">Ativo</SelectItem>
-              <SelectItem value="inativo">Inativo</SelectItem>
+              <SelectItem value="active">Ativo</SelectItem>
+              <SelectItem value="inactive">Inativo</SelectItem>
             </SelectContent>
           </Select>
 
@@ -342,7 +342,7 @@ export default function ContractTemplates() {
                   <TableRow>
                     <TableHead className="w-8"></TableHead>
                     <SortableTableHead sortKey="name" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Nome</SortableTableHead>
-                    <SortableTableHead sortKey="categoria" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Categoria</SortableTableHead>
+                    <SortableTableHead sortKey="category" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Categoria</SortableTableHead>
                     <SortableTableHead sortKey="status" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Status</SortableTableHead>
                     <SortableTableHead sortKey="created_at" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Data de Criação</SortableTableHead>
                     <TableHead className="text-right">Ações</TableHead>

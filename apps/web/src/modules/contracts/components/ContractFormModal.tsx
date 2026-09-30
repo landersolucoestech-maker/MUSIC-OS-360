@@ -29,6 +29,7 @@ import { useContractTemplates } from "@/modules/contracts/hooks/useContractTempl
 import { useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
 import { UserPlus, X } from "lucide-react";
 import { CONTRACT_STATUS_OPTIONS, ContractStatus } from "@/modules/contracts/lib/contract-status";
+import { isWizardSignerRecord } from "@/modules/contracts/lib/contract-wizard-party";
 
 
 // ── ContractForm ─────────────────────────────────────────────────────────────
@@ -44,7 +45,7 @@ interface ContractFormProps {
   isLoading?: boolean;
   artists?: Array<{ id: string; name: string }>;
   /** id of the contract being edited — organizes the attachment folder in R2 (undefined on create). */
-  contratoId?: string;
+  contractId?: string;
 }
 
 const ContractForm = ({
@@ -53,7 +54,7 @@ const ContractForm = ({
   initialData,
   isLoading = false,
   artists = [],
-  contratoId: contractId,
+  contractId,
 }: ContractFormProps) => {
   const [documents, setDocuments] = useState<UploadedFile[]>(initialData?.documents ?? []);
   const { releases } = useReleases();
@@ -290,18 +291,18 @@ const ContractForm = ({
                       <Label>Tipo de Pagamento</Label>
                       <Select
                         value={form.watch("payment_type")}
-                        onValueChange={(value) => form.setValue("payment_type", value as "valor_fixo" | "recebimentos externos de direitos")}
+                        onValueChange={(value) => form.setValue("payment_type", value as "fixed_value" | "recebimentos externos de direitos")}
                       >
                         <SelectTrigger data-testid="select-payment-type">
                           <SelectValue placeholder="Selecione o tipo de pagamento" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="valor_fixo">Valor Fixo</SelectItem>
+                          <SelectItem value="fixed_value">Valor Fixo</SelectItem>
                           <SelectItem value="recebimentos externos de direitos">Recebimentos externos de direitos</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                    {form.watch("payment_type") === "valor_fixo" && (
+                    {form.watch("payment_type") === "fixed_value" && (
                       <div className="space-y-2">
                         <Label htmlFor="fixed_value_sel">Valor do Serviço (R$)</Label>
                         <Input id="fixed_value_sel" type="number" step="0.01" placeholder="0,00"
@@ -376,7 +377,7 @@ const ContractForm = ({
               id="file_url"
               {...form.register("file_url")}
               placeholder="https://drive.google.com/file/d/... ou link do PDF"
-              data-testid="input-arquivo-url"
+              data-testid="input-file-url"
             />
             <p className="text-xs text-muted-foreground">Cole o link público do PDF do contrato (Google Drive, Dropbox, etc.)</p>
           </div>
@@ -396,7 +397,7 @@ const ContractForm = ({
               value={form.watch("release_id") || "none"}
               onValueChange={(value) => form.setValue("release_id", value === "none" ? undefined : value)}
             >
-              <SelectTrigger data-testid="select-lancamento-id">
+              <SelectTrigger data-testid="select-release-id">
                 <SelectValue placeholder="Selecionar lançamento" />
               </SelectTrigger>
               <SelectContent>
@@ -568,7 +569,7 @@ function contractToFormData(c: ContractWithRelations): Partial<ContractFormSubmi
     fixed_value:  c.fixed_value ?? undefined,
     observations: c.notes?.startsWith("{") ? undefined : (c.notes ?? undefined),
     signers:      Array.isArray(c.signers)
-      ? c.signers.filter((s): s is ContractSigner => !("obrigatorio" in s))
+      ? c.signers.filter((s): s is ContractSigner => !isWizardSignerRecord(s))
       : [],
     documents:   Array.isArray(c.documents) ? (c.documents as UploadedFile[]) : [],
   };
@@ -578,7 +579,7 @@ function contractToFormData(c: ContractWithRelations): Partial<ContractFormSubmi
 interface ContractFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  contrato?: ContractWithRelations;
+  contract?: ContractWithRelations;
   mode?: "create" | "edit";
   prefill?: { title: string; notes: string };
 }
@@ -586,7 +587,7 @@ interface ContractFormModalProps {
 export const ContractFormModal = ({
   open,
   onOpenChange,
-  contrato: contract,
+  contract,
   mode = "create",
   prefill,
 }: ContractFormModalProps) => {
@@ -683,7 +684,7 @@ export const ContractFormModal = ({
             onSubmit={handleSubmit}
             onCancel={() => onOpenChange(false)}
             isLoading={addContract.isPending || updateContract.isPending}
-            contratoId={contract?.id}
+            contractId={contract?.id}
             initialData={
               contract
                 ? contractToFormData(contract)

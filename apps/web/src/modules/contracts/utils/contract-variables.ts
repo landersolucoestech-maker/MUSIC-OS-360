@@ -23,7 +23,7 @@ const CATEGORY_ORDER: VariableCategory[] = [
   "personalizada",
 ];
 
-const PF_FIELDS: Array<{ suffix: string; label: string; description: string; example: string; type: ContractVariable["type"] }> = [
+const INDIVIDUAL_FIELDS: Array<{ suffix: string; label: string; description: string; example: string; type: ContractVariable["type"] }> = [
   { suffix: "NOME_COMPLETO", label: "Nome Completo", description: "Nome civil completo do participante", example: "João da Silva", type: "text" },
   { suffix: "NOME_ARTISTICO", label: "Nome Artístico", description: "Nome artístico ou pseudónimo", example: "JoãoArt", type: "text" },
   { suffix: "CPF", label: "CPF", description: "Cadastro de Pessoa Física (000.000.000-00)", example: "000.000.000-00", type: "text" },
@@ -43,7 +43,7 @@ const PF_FIELDS: Array<{ suffix: string; label: string; description: string; exa
   { suffix: "BANCO", label: "Banco", description: "Nome do banco/instituição financeira", example: "Banco do Brasil", type: "text" },
 ];
 
-const PJ_FIELDS: Array<{ suffix: string; label: string; description: string; example: string; type: ContractVariable["type"] }> = [
+const COMPANY_FIELDS: Array<{ suffix: string; label: string; description: string; example: string; type: ContractVariable["type"] }> = [
   { suffix: "RAZAO_SOCIAL", label: "Razão Social", description: "Nome jurídico registrado na junta comercial", example: "Empresa Ltda", type: "text" },
   { suffix: "NOME_FANTASIA", label: "Nome Fantasia", description: "Nome comercial ou fantasia", example: "Empresa Music", type: "text" },
   { suffix: "CNPJ", label: "CNPJ", description: "Cadastro Nacional de Pessoa Jurídica", example: "00.000.000/0001-00", type: "text" },
@@ -60,7 +60,7 @@ const PJ_FIELDS: Array<{ suffix: string; label: string; description: string; exa
 ];
 
 export function generateParticipantVariables(role: ParticipantRole, entityType: EntityType): ContractVariable[] {
-  const fields = entityType === "pessoa_fisica" ? PF_FIELDS : PJ_FIELDS;
+  const fields = entityType === "pessoa_fisica" ? INDIVIDUAL_FIELDS : COMPANY_FIELDS;
   const p = role;
   return fields.map((f) => ({
     id: `${p}_${f.suffix}`,

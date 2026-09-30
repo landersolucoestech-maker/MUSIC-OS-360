@@ -26,14 +26,16 @@ export const SIGNING_PLATFORM_LABEL: Readonly<Record<SigningPlatform, string>> =
 /**
  * Signer record persisted by ContractWizard.
  * Richer than the legacy ContractSigner — keeps wizard-specific fields
- * (obrigatorio, ordem, provider) alongside the canonical name/email/role.
+ * (required, order, provider) alongside the canonical name/email/role. Records saved
+ * before the English rename carry `obrigatorio`/`ordem`; read them through
+ * normalizeWizardSignerRecord (lib/contract-wizard-party.ts).
  */
 export interface WizardSignerRecord {
   name: string;
   email: string;
   role: string;
-  obrigatorio: boolean;
-  ordem: number;
+  required: boolean;
+  order: number;
   provider: string;
 }
 
