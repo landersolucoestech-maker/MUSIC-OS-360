@@ -1864,6 +1864,17 @@ export class OperationalListItemEntity {
   @Column({ type: 'integer', default: 0 }) order: number;
   @Column({ type: 'varchar', length: 100, nullable: true }) group: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
+  /**
+   * Provenance (migration 20260930000016). 'platform' = seeded default proven by an
+   * exact (kind, slug, name) match, 'tenant' = created through the API by a tenant,
+   * NULL = predates the column and was not proven to be a platform default.
+   * Tenant-authored content is never translated.
+   */
+  @Column({ type: 'varchar', length: 10, nullable: true }) origin: 'platform' | 'tenant' | null;
+  /** Stable English id of a platform default (`<kind>.<id>`), independent of slug/name edits. */
+  @Column({ type: 'varchar', length: 150, nullable: true }) stable_key: string | null;
+  /** Previous (Portuguese) slug of a platform default renamed to its canonical English slug; read-only alias. */
+  @Column({ type: 'varchar', length: 100, nullable: true }) legacy_slug: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;

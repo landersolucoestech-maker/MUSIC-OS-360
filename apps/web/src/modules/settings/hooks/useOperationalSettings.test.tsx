@@ -43,7 +43,9 @@ describe("useOperationalSettings", () => {
     const { result } = renderHook(() => useOperationalSettings());
 
     const options = result.current.getOptionsByKind("event_type");
-    expect(options).toContainEqual({ value: "ensaios", label: "Ensaios" });
+    // exactly a pre-OL1 platform default -> read under its canonical English slug
+    expect(options).toContainEqual({ value: "rehearsals", label: "Ensaios" });
+    expect(options.some((o) => o.value === "ensaios")).toBe(false);
     expect(options).toContainEqual({ value: "shows", label: "Shows" });
     expect(options.some((o) => o.value === "desativado")).toBe(false);
   });
@@ -67,5 +69,33 @@ describe("useOperationalSettings", () => {
 
     expect(settingsService.saveOperationalLists).toHaveBeenCalled();
     expect(result.current.getItemsByKind("event_type").some((i) => i.slug === "gravacao")).toBe(true);
+  });
+
+  it("legacy reader: edited or tenant-authored items keep their slug, exact legacy defaults are read as canonical without duplicates", () => {
+    vi.mocked(settingsService.getOperationalLists).mockReturnValue([
+      { ...ROWS[1], id: "a", name: "Ensaios de banda" }, // edited name -> NOT proven platform, untouched
+      { ...ROWS[0], id: "b", kind: "lead_status", name: "Novo lead", slug: "novo_lead" }, // pre-OL1 API seed
+      { ...ROWS[0], id: "c", kind: "lead_type", name: "Meu tipo", slug: "artista_banda" }, // tenant content on a legacy slug
+    ] as never);
+    const { result } = renderHook(() => useOperationalSettings());
+
+    const eventSlugs = result.current.getItemsByKind("event_type").map((i) => i.slug);
+    expect(eventSlugs).toContain("ensaios");
+    expect(eventSlugs).toContain("rehearsals"); // default still appended next to the edited legacy-slug row
+    const statuses = result.current.getItemsByKind("lead_status");
+    expect(statuses.filter((i) => i.slug === "new")).toHaveLength(1);
+    expect(statuses.some((i) => i.slug === "novo_lead")).toBe(false);
+    expect(result.current.getItemsByKind("lead_type").find((i) => i.id === "c")?.slug).toBe("artista_banda");
+  });
+
+  it("default canonical slugs: lead_status is the LeadStatus enum, events/leads/services are English, labels stay pt-BR", async () => {
+    const { LeadStatus } = await import("@music-os-360/types");
+    const { result } = renderHook(() => useOperationalSettings());
+    expect(result.current.getOptionsByKind("lead_status").map((o) => o.value).sort()).toEqual(Object.values(LeadStatus).sort());
+    expect(result.current.getOptionsByKind("event_type").map((o) => o.value)).toEqual([
+      "studio_sessions", "rehearsals", "photo_shoots", "shows", "interviews", "podcasts", "tv_shows", "radio", "content_production", "meetings",
+    ]);
+    expect(result.current.getOptionsByKind("lead_type")[0]).toEqual({ value: "artist_or_band", label: "Artista / Banda" });
+    expect(result.current.getOptionsByKind("service_interest").some((o) => o.value === "other" && o.label === "Outro")).toBe(true);
   });
 });

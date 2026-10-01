@@ -329,6 +329,7 @@ import { BackfillAndRestrictMarketingContentApprovalToEnglish20260930000003 } fr
 import { BackfillClientProfileToEnglish20260930000012 } from './20260930000012_BackfillClientProfileToEnglish';
 import { BackfillOrganizationIndustryToEnglish20260930000013 } from './20260930000013_BackfillOrganizationIndustryToEnglish';
 import { BackfillReleaseStatusDefaultToDraft20260930000014 } from './20260930000014_BackfillReleaseStatusDefaultToDraft';
+import { ClassifyOperationalListPlatformDefaultsToEnglish20260930000016 } from './20260930000016_ClassifyOperationalListPlatformDefaultsToEnglish';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -641,4 +642,5 @@ export const ALL_MIGRATIONS = [
   BackfillClientProfileToEnglish20260930000012,
   BackfillOrganizationIndustryToEnglish20260930000013,
   BackfillReleaseStatusDefaultToDraft20260930000014,
+  ClassifyOperationalListPlatformDefaultsToEnglish20260930000016,
 ] as const;

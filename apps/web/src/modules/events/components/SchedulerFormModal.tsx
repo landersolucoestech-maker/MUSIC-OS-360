@@ -31,7 +31,14 @@ import {
 } from "@/modules/events/hooks/useScheduleParticipants";
 import { useOperationalSettings } from "@/modules/settings/hooks/useOperationalSettings";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
-import { buildGranularToBackendTypeMap, normalizeToBackendType } from "@/modules/events/lib/event-type";
+import {
+  ARTIST_RELATED_EVENT_CATEGORIES,
+  EVENT_CATEGORY_OPTIONS,
+  VENUE_CRM_EVENT_CATEGORIES,
+  buildGranularToBackendTypeMap,
+  canonicalEventCategory,
+  eventCategoryToBackendType,
+} from "@/modules/events/lib/event-type";
 
 interface SchedulerFormModalProps {
   open: boolean;
@@ -52,18 +59,9 @@ interface LocalCRMLookup {
   state?: string | null;
 }
 
-const eventTypes = [
-  { value: "sessoes_estudio", label: "Sessões de estúdio" },
-  { value: "ensaios", label: "Ensaios" },
-  { value: "sessoes_fotos", label: "Sessões de fotos" },
-  { value: "shows", label: "Shows" },
-  { value: "entrevistas", label: "Entrevistas" },
-  { value: "podcasts", label: "Podcasts" },
-  { value: "programas_tv", label: "Programas de TV" },
-  { value: "radio", label: "Rádio" },
-  { value: "producao_conteudo", label: "Produção de conteúdo" },
-  { value: "reunioes", label: "Reuniões" },
-];
+// Fallback category list when no operational item is configured: canonical English ids,
+// pt-BR labels (lib/event-type.ts).
+const eventTypes = EVENT_CATEGORY_OPTIONS;
 
 const statusOptions = [
   { value: "scheduled", label: "Agendado" },
@@ -74,39 +72,10 @@ const statusOptions = [
 ];
 
 
-const artistRelatedTypes = [
-  "sessoes_estudio",
-  "ensaios",
-  "sessoes_fotos",
-  "shows",
-  "entrevistas",
-  "podcasts",
-  "programas_tv",
-  "radio",
-  "producao_conteudo",
-];
+const artistRelatedTypes = ARTIST_RELATED_EVENT_CATEGORIES;
 
 // Event types that should pull the venue from the CRM
-const venueTypesCrm = ["shows", "programas_tv", "radio", "podcasts"];
-
-const eventTypeAliases: Record<string, string> = {
-  show: "shows",
-  show_teatro: "shows",
-  festival: "shows",
-  rodeio: "shows",
-  lancamento: "shows",
-  evento_corporativo: "shows",
-  reuniao: "reunioes",
-  reunioes: "reunioes",
-  // Persisted events only keep the backend's coarse enum (events.type,
-  // without the original granular category) — when editing, the select must
-  // resolve those values to a representative granular category instead
-  // of staying blank.
-  recording: "sessoes_estudio",
-  meeting: "reunioes",
-  interview: "entrevistas",
-  tour: "shows",
-};
+const venueTypesCrm = VENUE_CRM_EVENT_CATEGORIES;
 
 // Form status ids are the canonical English EventStatus values. The PT-BR
 // keys below are input-only aliases: callers outside this module (e.g. the
@@ -197,7 +166,7 @@ const getInitialFormData = (event?: any) => {
   const meta = (event?.metadata as Record<string, unknown> | undefined) ?? {};
   return {
     title: (legacyTitle(event) as string | undefined) || "",
-    eventType: normalizeSelectValue(event?.type, eventTypeAliases),
+    eventType: canonicalEventCategory(event?.type),
     artistId: event?.artist_id || "",
     participants: normalizeScheduleParticipants(event?.participants ?? meta["participants"]),
     status: normalizeSelectValue(event?.status, statusAliases) || "scheduled",
@@ -277,7 +246,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const isArtistRelated = artistRelatedTypes.includes(formData.eventType);
   
   // Show the venue fields when artist-related OR a meeting
-  const showLocalFields = isArtistRelated || formData.eventType === "reunioes";
+  const showLocalFields = isArtistRelated || formData.eventType === "meetings";
   
   // Show the show-only fields
   const isShow = formData.eventType === "shows";
@@ -327,7 +296,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const getNormalizedFormData = (): SchedulerFormData => ({
     ...formData,
     title: String(formData.title || event?.title || "").trim(),
-    eventType: normalizeSelectValue(formData.eventType || event?.type, eventTypeAliases),
+    eventType: canonicalEventCategory(formData.eventType || event?.type),
     status: normalizeSelectValue(formData.status || event?.status, statusAliases) || "scheduled",
     startDate: normalizeDate(formData.startDate) ?? normalizeEventDate(event?.starts_at),
     endDate: normalizeDate(formData.endDate) ?? normalizeEventDate(event?.end_date),
@@ -389,36 +358,9 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   // interview|tour|other — the only thing events.type actually stores).
   // Primary source: metadata.backend_type of each category configured in
   // Settings → Operational (granularToBackendType, lib/event-type.ts).
-  // The table below is only the fallback for legacy/hand-typed slugs that
-  // match no configured category.
-  const legacyTypeToBackendType: Record<string, string> = {
-    shows:           "show",
-    show:            "show",
-    show_teatro:     "show",
-    festival:        "festival",
-    rodeio:          "show",
-    lancamento:      "show",
-    evento_corporativo: "other",
-    gravacao:        "recording",
-    gravacoes:       "recording",
-    recording:       "recording",
-    reuniao:         "meeting",
-    reunioes:        "meeting",
-    meeting:         "meeting",
-    entrevista:      "interview",
-    entrevistas:     "interview",
-    interview:       "interview",
-    programas_tv:    "interview",
-    radio:           "interview",
-    podcasts:        "interview",
-    tour:            "tour",
-    turne:           "tour",
-  };
-  const mapTypeToBackendType = (type: string): string => {
-    const t = (type || "").toLowerCase();
-    if (granularToBackendType[t]) return granularToBackendType[t];
-    return legacyTypeToBackendType[t] ?? "other";
-  };
+  // lib/event-type.ts is the fallback for legacy/hand-typed slugs that match no
+  // configured category.
+  const mapTypeToBackendType = (type: string): string => eventCategoryToBackendType(type, granularToBackendType);
 
   // Combine `YYYY-MM-DD` + `HH:mm` → ISO datetime string for backend.
   const combineDateAndTime = (date: Date | undefined, time: string): string | undefined => {
@@ -547,7 +489,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   };
 
   const getLocalPlaceholder = () => {
-    if (formData.eventType === "reunioes") {
+    if (formData.eventType === "meetings") {
       return "Nome do local da reunião";
     }
     return "Nome do venue / casa de show";

@@ -3,6 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { OperationalListItemEntity } from '../../database/entities';
 import { OPERATIONAL_LIST_DEFAULTS } from './operational-lists.defaults';
+import { operationalStableKey } from './operational-list-vocabulary';
 import type {
   CreateOperationalListItemDto,
   UpdateOperationalListItemDto,
@@ -42,6 +43,8 @@ export class OperationalListsService {
           order: item.order,
           group: item.group ?? null,
           metadata: item.metadata ?? {},
+          origin: 'platform',
+          stable_key: operationalStableKey(item.kind, item.slug),
         })) as any,
       )
       .orIgnore()
@@ -58,6 +61,9 @@ export class OperationalListsService {
 
     if (query.kind !== undefined) qb.andWhere('i.kind = :kind', { kind: query.kind });
     if (query.active !== undefined) qb.andWhere('i.active = :active', { active: query.active });
+    // A platform default renamed to its canonical English slug keeps the old slug
+    // in legacy_slug: lookups by slug resolve either (compat window, OL1).
+    if (query.slug !== undefined) qb.andWhere('(i.slug = :slug OR i.legacy_slug = :slug)', { slug: query.slug });
 
     qb.orderBy('i.kind', 'ASC').addOrderBy('i.order', 'ASC').addOrderBy('i.name', 'ASC')
       .skip(query.offset ?? 0)
@@ -76,19 +82,22 @@ export class OperationalListsService {
     return result;
   }
 
+  /** Live item of a list by slug OR legacy slug (the alias of a renamed platform default). The
+   * unique indexes and the create/update clash checks keep at most one live row per value. */
+  async findBySlug(tenantId: string, kind: string, slug: string): Promise<OperationalListItemEntity | null> {
+    return this.repo!
+      .createQueryBuilder('i')
+      .where('i.tenant_id = :tenantId AND i.kind = :kind AND i.deleted_at IS NULL', { tenantId, kind })
+      .andWhere('(i.slug = :slug OR i.legacy_slug = :slug)', { slug })
+      .getOne();
+  }
+
   async create(
     tenantId: string,
     userId: string,
     dto: CreateOperationalListItemDto,
   ): Promise<OperationalListItemEntity> {
-    const existing = await this.repo!
-      .createQueryBuilder('i')
-      .where('i.tenant_id = :tenantId AND i.kind = :kind AND i.slug = :slug AND i.deleted_at IS NULL', {
-        tenantId,
-        kind: dto.kind,
-        slug: dto.slug,
-      })
-      .getOne();
+    const existing = await this.findBySlug(tenantId, dto.kind, dto.slug);
     if (existing) throw new ConflictException(`Já existe um item com o identificador "${dto.slug}" nesta lista.`);
 
     const entity = this.repo!.create({
@@ -101,6 +110,7 @@ export class OperationalListsService {
       order: dto.order ?? 0,
       group: dto.group ?? null,
       metadata: dto.metadata ?? {},
+      origin: 'tenant',
       created_by: userId,
       updated_by: userId,
     });
@@ -113,7 +123,15 @@ export class OperationalListsService {
     id: string,
     dto: UpdateOperationalListItemDto,
   ): Promise<OperationalListItemEntity> {
-    await this.findById(tenantId, id);
+    const current = await this.findById(tenantId, id);
+    const nextSlug = dto.slug ?? current.slug;
+    const nextKind = dto.kind ?? current.kind;
+    if (dto.slug !== undefined || dto.kind !== undefined) {
+      const clash = await this.findBySlug(tenantId, nextKind, nextSlug);
+      if (clash && clash.id !== id) {
+        throw new ConflictException(`Já existe um item com o identificador "${nextSlug}" nesta lista.`);
+      }
+    }
     const updates: Record<string, unknown> = { updated_by: userId, updated_at: new Date() };
     for (const key of ['kind', 'name', 'slug', 'description', 'active', 'order', 'group', 'metadata'] as const) {
       if (dto[key] !== undefined) updates[key] = dto[key];

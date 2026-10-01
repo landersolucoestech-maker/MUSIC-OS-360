@@ -55,8 +55,12 @@ describe('OperationalListsService', () => {
       expect(repo.count).toHaveBeenCalledWith({ where: { tenant_id: 'tenant-1' } });
       expect(repo._qb['insert']).toHaveBeenCalled();
       expect(repo._qb['orIgnore']).toHaveBeenCalled();
-      const inserted = (repo._qb['values'] as jest.Mock).mock.calls[0][0] as unknown[];
+      const inserted = (repo._qb['values'] as jest.Mock).mock.calls[0][0] as Array<Record<string, unknown>>;
       expect(inserted).toHaveLength(OPERATIONAL_LIST_DEFAULTS.length);
+      // bootstrapped defaults carry provenance + the English stable key
+      expect(inserted.every((row) => row['origin'] === 'platform')).toBe(true);
+      expect(new Set(inserted.map((row) => row['stable_key'])).size).toBe(inserted.length);
+      expect(inserted.find((row) => row['kind'] === 'lead_status' && row['slug'] === 'new')).toMatchObject({ stable_key: 'lead_status.new', name: 'Novo' });
     });
 
     it('does not reseed when the tenant already has items', async () => {
@@ -74,6 +78,14 @@ describe('OperationalListsService', () => {
 
       expect(repo._qb['andWhere']).toHaveBeenCalledWith('i.kind = :kind', { kind: 'event_type' });
       expect(repo._qb['andWhere']).toHaveBeenCalledWith('i.active = :active', { active: true });
+    });
+
+    it('resolves a slug filter through the legacy alias too', async () => {
+      const { svc, repo } = makeService([{ id: 'x', tenant_id: 'tenant-1' }]);
+
+      await svc.list('tenant-1', { kind: 'lead_type', slug: 'artista_banda' } as any);
+
+      expect(repo._qb['andWhere']).toHaveBeenCalledWith('(i.slug = :slug OR i.legacy_slug = :slug)', { slug: 'artista_banda' });
     });
   });
 
@@ -98,6 +110,27 @@ describe('OperationalListsService', () => {
       expect(saved['tenant_id']).toBe('tenant-1');
       expect(saved['created_by']).toBe('user-1');
       expect(saved['updated_by']).toBe('user-1');
+      expect(saved['origin']).toBe('tenant');
+    });
+
+    it('treats the legacy alias of a platform default as taken (409) and looks up slug OR legacy_slug', async () => {
+      const { svc, repo } = makeService([]);
+      (repo._qb['getOne'] as jest.Mock).mockResolvedValueOnce({ id: 'platform-row', slug: 'artist_or_band', legacy_slug: 'artista_banda' });
+
+      await expect(
+        svc.create('tenant-1', 'user-1', { kind: 'lead_type', slug: 'artista_banda', name: 'X' } as any),
+      ).rejects.toThrow(ConflictException);
+      expect(repo._qb['andWhere']).toHaveBeenCalledWith('(i.slug = :slug OR i.legacy_slug = :slug)', { slug: 'artista_banda' });
+    });
+  });
+
+  describe('findBySlug', () => {
+    it('returns the live row matching the canonical slug or the legacy alias, scoped to the tenant and kind', async () => {
+      const row = { id: 'p', slug: 'artist_or_band', legacy_slug: 'artista_banda' };
+      const { svc, repo } = makeService([row]);
+
+      await expect(svc.findBySlug('tenant-1', 'lead_type', 'artista_banda')).resolves.toBe(row);
+      expect(repo._qb['where']).toHaveBeenCalledWith('i.tenant_id = :tenantId AND i.kind = :kind AND i.deleted_at IS NULL', { tenantId: 'tenant-1', kind: 'lead_type' });
     });
   });
 
@@ -122,6 +155,28 @@ describe('OperationalListsService', () => {
       expect(updateCall['active']).toBe(false);
       expect(updateCall['updated_by']).toBe('user-2');
       expect(updateCall['name']).toBeUndefined();
+    });
+  });
+
+  describe('update slug clash', () => {
+    it('rejects renaming a slug onto another live row (or its legacy alias) with 409', async () => {
+      const existing = { id: 'uuid-1', tenant_id: 'tenant-1', kind: 'lead_type', slug: 'x', name: 'X' };
+      const { svc, repo } = makeService([existing]);
+      (repo._qb['getOne'] as jest.Mock)
+        .mockResolvedValueOnce(existing)
+        .mockResolvedValueOnce({ id: 'other', slug: 'artist_or_band', legacy_slug: 'artista_banda' });
+
+      await expect(svc.update('tenant-1', 'user-2', 'uuid-1', { slug: 'artista_banda' } as any)).rejects.toThrow(ConflictException);
+      expect(repo.update).not.toHaveBeenCalled();
+    });
+
+    it('allows re-saving the same slug on the same row', async () => {
+      const existing = { id: 'uuid-1', tenant_id: 'tenant-1', kind: 'lead_type', slug: 'x', name: 'X' };
+      const { svc, repo } = makeService([existing]);
+      (repo._qb['getOne'] as jest.Mock).mockImplementation(async () => existing);
+
+      await svc.update('tenant-1', 'user-2', 'uuid-1', { slug: 'x' } as any);
+      expect(repo.update).toHaveBeenCalled();
     });
   });
 

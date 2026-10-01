@@ -33,6 +33,7 @@ import {
   useScheduleParticipants,
 } from "@/modules/events/hooks/useScheduleParticipants";
 import {
+  EVENT_CATEGORY_OPTIONS,
   buildGranularToBackendTypeMap,
   getBackendEventTypeLabel,
   normalizeToBackendType,
@@ -80,16 +81,7 @@ const STATUS_TONE: Record<string, string> = {
 
 const TYPE_OPTIONS = [
   { value: "all-type", label: "Todos Tipos" },
-  { value: "shows", label: "Shows" },
-  { value: "sessoes_estudio", label: "Sessões de Estúdio" },
-  { value: "ensaios", label: "Ensaios" },
-  { value: "sessoes_fotos", label: "Sessões de Fotos" },
-  { value: "entrevistas", label: "Entrevistas" },
-  { value: "podcasts", label: "Podcasts" },
-  { value: "programas_tv", label: "Programas de TV" },
-  { value: "radio", label: "Rádio" },
-  { value: "producao_conteudo", label: "Produção de Conteúdo" },
-  { value: "reunioes", label: "Reuniões" },
+  ...EVENT_CATEGORY_OPTIONS,
 ];
 
 // value = real events.status sent as a filter to the backend (e.status = :status,

@@ -22,5 +22,7 @@ export class UpdateOperationalListItemDto extends PartialType(CreateOperationalL
 
 export class QueryOperationalListItemDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() kind?: string;
+  /** Matches the slug or the legacy slug (pre-OL1 Portuguese alias) of a platform default. */
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) slug?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() @Type(() => Boolean) active?: boolean;
 }
