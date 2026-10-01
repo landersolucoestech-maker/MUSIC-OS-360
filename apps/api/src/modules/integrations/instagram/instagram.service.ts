@@ -5,6 +5,7 @@ import { DATA_SOURCE }        from '../../../database/database.module';
 import { EncryptionService }  from '../../../core/security/encryption.service';
 import { IntegrationBaseService } from '../integration-base.service';
 import { redactDiagnosticText } from '../../../core/filters/redact-diagnostic';
+import { integrationFailure } from '../integration-failure';
 
 const META_API = 'https://graph.facebook.com/v19.0';
 const PROVIDER = 'instagram';
@@ -66,7 +67,7 @@ export class InstagramService extends IntegrationBaseService {
       try {
         await this.fetch(`${META_API}/me/permissions?access_token=${conn.accessToken}`, { method: 'DELETE' });
       } catch (err) {
-        this.logger.warn(`Instagram/Meta: failed to revoke token at Meta (${userId}@${tenantId}, ${provider}) — ${String(err)}`);
+        this.logger.warn(`Instagram/Meta: failed to revoke token at Meta (${userId}@${tenantId}, ${provider}) — ${redactDiagnosticText(String(err))}`);
       }
     }
     await this.disconnectOAuth(tenantId, userId, provider);
@@ -99,18 +100,18 @@ export class InstagramService extends IntegrationBaseService {
         expiresIn:   json.expires_in ?? 5_184_000,
         scopes:      conn.scopes ?? SCOPES,
       });
-      this.logger.log(`Instagram/Meta: token renovado (${userId}@${tenantId}, ${provider})`);
+      this.logger.log(`Instagram/Meta: token renewed (${userId}@${tenantId}, ${provider})`);
       return true;
     } catch (err) {
       await this.markOAuthNeedsReauth(tenantId, userId, provider);
-      this.logger.warn(`Instagram/Meta: failed to refresh token (${userId}@${tenantId}, ${provider}) — ${String(err)}`);
+      this.logger.warn(`Instagram/Meta: failed to refresh token (${userId}@${tenantId}, ${provider}) — ${redactDiagnosticText(String(err))}`);
       return false;
     }
   }
 
   async getAccountMetrics(tenantId: string, userId: string) {
     let conn = await this.getOAuthConnection(tenantId, userId, PROVIDER);
-    if (!conn) return { error: 'Instagram not connected' };
+    if (!conn) return integrationFailure(this.logger, 'PROVIDER_NOT_CONNECTED');
 
     const REFRESH_WINDOW_MS = 7 * 24 * 60 * 60 * 1000; // renews starting 7 days before expiry
     const expiringSoon = !!conn.expires_at && conn.expires_at.getTime() - Date.now() < REFRESH_WINDOW_MS;
@@ -118,24 +119,23 @@ export class InstagramService extends IntegrationBaseService {
       const refreshed = await this.refreshLongLivedToken(tenantId, userId, PROVIDER);
       conn = refreshed ? await this.getOAuthConnection(tenantId, userId, PROVIDER) : conn;
     }
-    if (!conn) return { error: 'Instagram not connected' };
+    if (!conn) return integrationFailure(this.logger, 'PROVIDER_NOT_CONNECTED');
     const token = conn.accessToken;
 
     const pagesRes = await this.fetch(`${META_API}/me/accounts?access_token=${token}`);
     const pages    = await pagesRes.json() as any;
     if (pages.error) {
       if (pages.error.code === 190) await this.markOAuthNeedsReauth(tenantId, userId, PROVIDER);
-      this.logger.warn(`Instagram pages lookup failed: ${redactDiagnosticText(String(pages.error?.message ?? ''))}`);
-      return { error: pages.error.code === 190 ? 'PROVIDER_UNAUTHORIZED' : 'INTEGRATION_CALL_FAILED' };
+      return integrationFailure(this.logger, pages.error.code === 190 ? 'PROVIDER_UNAUTHORIZED' : 'INTEGRATION_CALL_FAILED', pages.error?.message);
     }
 
     const pageData = pages.data?.[0];
-    if (!pageData) return { error: 'No Facebook page found' };
+    if (!pageData) return integrationFailure(this.logger, 'PROVIDER_RESOURCE_NOT_FOUND');
 
     const igRes  = await this.fetch(`${META_API}/${pageData.id}?fields=instagram_business_account&access_token=${pageData.access_token}`);
     const igData = await igRes.json() as any;
     const igId   = igData.instagram_business_account?.id;
-    if (!igId) return { error: 'Instagram Business account not found' };
+    if (!igId) return integrationFailure(this.logger, 'PROVIDER_RESOURCE_NOT_FOUND');
 
     const metricsRes = await this.fetch(`${META_API}/${igId}?fields=username,name,biography,followers_count,follows_count,media_count,profile_picture_url&access_token=${pageData.access_token}`);
     const metrics    = await metricsRes.json() as any;

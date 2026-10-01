@@ -206,7 +206,8 @@ export interface ExternalDataSyncFailedPayload {
   artistId:   string;
   jobId:      string;
   society:    string;
-  error:      string;
+  /** Stable code (ApiErrorCode); raw failure text is never part of the event. */
+  errorCode:  string;
   retryCount: number;
   failedAt:   string;
 }

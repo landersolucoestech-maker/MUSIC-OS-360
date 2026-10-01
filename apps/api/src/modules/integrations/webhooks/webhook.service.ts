@@ -18,6 +18,7 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { WebhookEventEntity } from '../../../database/entities';
 import { WebhookEventStatus } from '@music-os-360/types';
+import { redactDiagnosticText } from '../../../core/filters/redact-diagnostic';
 
 export interface WebhookIngestResult {
   isDuplicate: boolean;
@@ -120,12 +121,12 @@ export class WebhookService {
           .update(WebhookEventEntity)
           .set({
             status:      WebhookEventStatus.FAILED,
-            error:       (error ?? 'unknown error').substring(0, 2000),
+            error:       redactDiagnosticText(error ?? 'unknown error').substring(0, 2000),
             retry_count: () => 'retry_count + 1',
           } as any)
           .where('id = :id', { id: eventId })
           .execute();
-        this.logger.warn(`[webhook] Marked FAILED: id=${eventId} error=${error?.substring(0, 100)}`);
+        this.logger.warn(`[webhook] Marked FAILED: id=${eventId} error=${redactDiagnosticText(error).substring(0, 100)}`);
       }
     } catch (err) {
       this.logger.error(`[webhook] markProcessed failed: ${String(err)}`);

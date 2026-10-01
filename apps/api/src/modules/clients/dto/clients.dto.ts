@@ -7,6 +7,7 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 const PERSON_TYPES = ['individual', 'company'] as const;
 const PRIORITIES = ['low', 'medium', 'high', 'strategic'] as const;
 const INTERACTION_TYPES = ['call', 'whatsapp', 'email', 'meeting', 'proposal', 'follow_up', 'note'] as const;
+const TIMELINE_TYPES = ['note', 'call', 'meeting', 'email', 'whatsapp', 'other'] as const;
 const STATUSES = ['active', 'inactive', 'prospect'] as const;
 
 /** One CRM interaction (CZ-043: English item keys; PT-BR labels live in the web). */
@@ -80,10 +81,8 @@ export class QueryClientDto extends PaginationDto {
   @Transform(transformClientProfile) @IsOptional() @IsString() @MaxLength(100) profile?: string;
 }
 
-const TIMELINE_TYPES = ['note', 'call', 'meeting', 'email', 'whatsapp', 'other', 'nota', 'ligacao', 'reuniao', 'outro'] as const;
-
 export class CreateClientTimelineEntryDto {
-  @ApiProperty({ enum: ['note', 'call', 'meeting', 'email', 'whatsapp', 'other'], description: 'Legacy nota/ligacao/reuniao/outro accepted (deprecated)' })
+  @ApiProperty({ enum: TIMELINE_TYPES })
   @IsIn(TIMELINE_TYPES) type!: string;
   @ApiProperty() @IsString() @IsNotEmpty() @MaxLength(2000) description!: string;
 }

@@ -124,15 +124,3 @@ export function canonicalizePhonogramInput<T extends object>(input: T, options: 
   if (out['participation'] !== undefined) out['participation'] = canonicalParticipation(out['participation']);
   return out as T;
 }
-
-/** Maps pre-CZ-040 query names/values (obra_vinculada sem-obra/com-obra, ecad com-ecad/sem-ecad). */
-export function canonicalizePhonogramQuery<T extends object>(query: T): T {
-  const out = { ...(query as Record<string, unknown>) };
-  if (out['has_work'] === undefined && typeof out['obra_vinculada'] === 'string') {
-    out['has_work'] = out['obra_vinculada'] === 'com-obra' ? 'true' : out['obra_vinculada'] === 'sem-obra' ? 'false' : undefined;
-  }
-  delete out['obra_vinculada'];
-  if (out['ecad'] === 'com-ecad') out['ecad'] = 'with_code';
-  else if (out['ecad'] === 'sem-ecad') out['ecad'] = 'without_code';
-  return out as T;
-}

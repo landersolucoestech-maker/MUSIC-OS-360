@@ -226,7 +226,7 @@ export class QueueModule {
 
     connection.on('error', logRedisError);
     connection.on('ready', () => {
-      moduleLogger.log('Redis pronto para BullMQ');
+      moduleLogger.log('Redis ready for BullMQ');
     });
     connection.on('reconnecting', logRedisReconnect);
 

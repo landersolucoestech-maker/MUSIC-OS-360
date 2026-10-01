@@ -241,7 +241,6 @@ export const FIELD_LABELS_PT_BR = {
   categoryKind: 'Tipo de categoria',
   channel: 'Canal',
   cliente: 'Cliente', // reader: request-field
-  coCompositores: 'Co-compositores', // reader: report-contract
   // Renamed from `codAbramus` (20260718000017) — code at any collective
   // management society (ABRAMUS/UBC/SOCINPRO/others), not only ABRAMUS.
   codEntidade: 'Código de Cadastro da Sociedade', // reader: request-field
@@ -279,7 +278,6 @@ export const FIELD_LABELS_PT_BR = {
   departamento: 'Departamento', // reader: request-field
   dependencies: 'Dependências',
   depthLevel: 'Nível de profundidade',
-  detentores: 'Detentores', // reader: report-contract
   director: 'Diretor',
   distributor: 'Distribuidora',
   documents: 'Documentos',
@@ -305,7 +303,7 @@ export const FIELD_LABELS_PT_BR = {
   recordLabel: 'Gravadora',
   icon: 'Ícone',
   industry: 'Setor',
-  interpretes: 'Intérpretes', // reader: report-contract request-field
+  interpretes: 'Intérpretes', // reader: request-field
   isActive: 'Ativo',
   isInstrumental: 'Instrumental',
   isrc: 'ISRC',
@@ -349,7 +347,7 @@ export const FIELD_LABELS_PT_BR = {
   probability: 'Probabilidade',
   producer: 'Produtor',
   productionCompany: 'Produtora',
-  produtores: 'Produtores', // reader: report-contract request-field
+  produtores: 'Produtores', // reader: request-field
   projeto: 'Projeto', // reader: request-field
   protected: 'Protegido',
   publicationError: 'Erro de publicação',

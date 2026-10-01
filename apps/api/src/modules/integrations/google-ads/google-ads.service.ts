@@ -5,6 +5,7 @@ import { DATA_SOURCE }        from '../../../database/database.module';
 import { EncryptionService }  from '../../../core/security/encryption.service';
 import { IntegrationBaseService } from '../integration-base.service';
 
+import { integrationFailure, codeForUpstreamStatus } from '../integration-failure';
 const GOOGLE_AUTH  = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN = 'https://oauth2.googleapis.com/token';
 const GAD_API      = 'https://googleads.googleapis.com/v17';
@@ -69,15 +70,15 @@ export class GoogleAdsService extends IntegrationBaseService {
     if (data.error) throw new Error(data.error_description ?? data.error);
 
     await this.saveOAuthTokens({ tenantId, userId, provider: PROVIDER, accessToken: data.access_token, refreshToken: data.refresh_token, expiresIn: data.expires_in, scopes: SCOPES });
-    this.logger.log(`Google Ads OAuth: ${userId}@${tenantId} conectado`);
+    this.logger.log(`Google Ads OAuth: ${userId}@${tenantId} connected`);
   }
 
   async getCampaigns(tenantId: string, userId: string) {
     const creds = await this.loadCredentials<GAdsCreds>(tenantId, PROVIDER);
-    if (!creds) return { error: 'Google Ads not configured (developer_token)' };
+    if (!creds) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
 
     const conn = await this.getOAuthConnection(tenantId, userId, PROVIDER);
-    if (!conn) return { error: 'Google Ads OAuth not connected' };
+    if (!conn) return integrationFailure(this.logger, 'PROVIDER_NOT_CONNECTED');
 
     const query = `
       SELECT campaign.id, campaign.name, campaign.status,
@@ -93,7 +94,7 @@ export class GoogleAdsService extends IntegrationBaseService {
       body: JSON.stringify({ query }),
     });
 
-    if (!res.ok) return { error: `Google Ads API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const d = await res.json() as any;
     return (d.results ?? []).map((r: any) => ({
       id: r.campaign?.id ?? '', name: r.campaign?.name ?? '', status: r.campaign?.status ?? '',

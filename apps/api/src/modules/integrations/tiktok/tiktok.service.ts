@@ -5,6 +5,7 @@ import { DATA_SOURCE }        from '../../../database/database.module';
 import { EncryptionService }  from '../../../core/security/encryption.service';
 import { IntegrationBaseService } from '../integration-base.service';
 
+import { integrationFailure, codeForUpstreamStatus } from '../integration-failure';
 const TT_ADS_API    = 'https://business-api.tiktok.com/open_api/v1.3';
 const TT_OAUTH      = 'https://www.tiktok.com/v2/auth/authorize';
 const TT_TOKEN      = 'https://open.tiktokapis.com/v2/oauth/token';
@@ -41,21 +42,21 @@ export class TikTokService extends IntegrationBaseService {
 
   async getAdsCampaigns(tenantId: string) {
     const creds = await this.loadCredentials<AdsCreds>(tenantId, PROVIDER_ADS);
-    if (!creds) return { error: 'TikTok Ads not configured' };
+    if (!creds) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
 
     const res = await this.fetch(
       `${TT_ADS_API}/campaign/get/?advertiser_id=${creds.advertiser_id}&fields=["campaign_id","campaign_name","status","budget","objective_type"]`,
       { headers: { 'Access-Token': creds.access_token } },
     );
-    if (!res.ok) return { error: `TikTok Ads API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const d = await res.json() as any;
-    if (d.code !== 0) return { error: d.message ?? 'TikTok Ads error' };
+    if (d.code !== 0) return integrationFailure(this.logger, 'INTEGRATION_CALL_FAILED', d.message);
     return d.data?.list ?? [];
   }
 
   async getAdsInsights(tenantId: string, startDate: string, endDate: string) {
     const creds = await this.loadCredentials<AdsCreds>(tenantId, PROVIDER_ADS);
-    if (!creds) return { error: 'TikTok Ads not configured' };
+    if (!creds) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
 
     const body = {
       advertiser_id: creds.advertiser_id,
@@ -70,7 +71,7 @@ export class TikTokService extends IntegrationBaseService {
       headers: { 'Access-Token': creds.access_token, 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
-    if (!res.ok) return { error: `TikTok Ads API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const d = await res.json() as any;
     return d.data?.list ?? [];
   }

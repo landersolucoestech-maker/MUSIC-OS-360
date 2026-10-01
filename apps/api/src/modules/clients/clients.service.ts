@@ -9,7 +9,7 @@ import { StorageService, type UploadCategory } from '../../storage/storage.servi
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import type { CreateClientDto, UpdateClientDto, QueryClientDto } from './dto/clients.dto';
 import { DEFAULT_CLIENT_PROFILE } from './client-profile-vocabulary';
-import { canonicalClientTimelineType, canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
+import { canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
 
 /** Persisted client columns accepted from the (canonical) request. */
 const CLIENT_COLUMNS = [
@@ -173,7 +173,7 @@ export class ClientsService {
     return this.activityLogs.create(tenantId, userId, {
       entity_type: TIMELINE_ENTITY_TYPE,
       entity_id: id,
-      action: canonicalClientTimelineType(input.type) as string,
+      action: input.type,
       description: input.description,
       metadata: {},
     });

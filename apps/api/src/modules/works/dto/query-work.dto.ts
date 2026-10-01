@@ -28,9 +28,9 @@ export class QueryWorkDto extends PaginationDto {
   @IsString()
   project_id?: string;
 
-  @ApiPropertyOptional({ enum: ['with_code', 'without_code'], description: 'Legacy values com-ecad/sem-ecad are still accepted.' })
+  @ApiPropertyOptional({ enum: ['with_code', 'without_code'] })
   @IsOptional()
-  @IsIn(['with_code', 'without_code', 'com-ecad', 'sem-ecad'])
+  @IsIn(['with_code', 'without_code'])
   ecad?: string;
 
   @ApiPropertyOptional()

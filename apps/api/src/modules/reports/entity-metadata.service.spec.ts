@@ -1,4 +1,4 @@
-import { EntityMetadataService } from './entity-metadata.service';
+import { EntityMetadataService, IDENTITY_COLUMN_NAMES } from './entity-metadata.service';
 import { EntityCategory } from './entity-metadata.types';
 
 /**
@@ -105,5 +105,20 @@ describe('EntityMetadataService — entity-driven inventory', () => {
     expect(typeof e!.hasSoftDelete).toBe('boolean');
     expect(typeof e!.hasTimestamps).toBe('boolean');
     expect(Array.isArray(e!.risks)).toBe(true);
+  });
+});
+
+describe('EntityMetadataService — identity column probes are English only', () => {
+  const REMOVED_PT_PROBES = ['nome', 'nome_fantasia', 'razao_social', 'numero', 'codigo', 'assunto', 'descricao', 'referencia'];
+
+  it('no longer probes Portuguese column names', () => {
+    for (const probe of REMOVED_PT_PROBES) expect(IDENTITY_COLUMN_NAMES.has(probe)).toBe(false);
+  });
+
+  it('proof of no live consumer: no registered entity column carries a removed Portuguese probe name', () => {
+    const inv = new EntityMetadataService().scan();
+    const offenders = inv.entities.flatMap((e) =>
+      e.columns.filter((c) => REMOVED_PT_PROBES.includes(c.name)).map((c) => `${e.tableName}.${c.name}`));
+    expect(offenders).toEqual([]);
   });
 });

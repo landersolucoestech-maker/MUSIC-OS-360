@@ -143,4 +143,23 @@ describe('RecordingRegistryValidationService', () => {
     );
     expect(codes(issues)).toContain('recording_no_interpreter');
   });
+
+  it('free-text Portuguese roles (persisted party_role is free text) still satisfy interpreter/producer requirements', () => {
+    const issues = recording.validate(
+      asRec({ ...valid(), artist_id: null, phonographic_producer_id: null }),
+      [share({ party_role: 'Cantor', holder_name: 'A' }), share({ party_role: 'Produtor fonográfico', holder_name: 'B' })],
+    );
+    expect(codes(issues)).not.toContain('recording_main_artist_required');
+    expect(codes(issues)).not.toContain('recording_producer_required');
+  });
+});
+
+describe('WorkRegistryValidationService — Portuguese publisher tolerance', () => {
+  it('a free-text "Editora" role is excluded from the author count like the canonical publisher role', () => {
+    const issues = work.validate(
+      asWork({ title: 'X', ai_used: false }),
+      [share({ percentage: '100', party_role: 'Editora Musical', holder_name: 'E', deleted_at: null })],
+    );
+    expect(codes(issues)).toContain('work_no_author');
+  });
 });

@@ -219,8 +219,6 @@ const WORKS_CONTRACT: ReportFormContract = {
     authors: 'relationship (authors/percentages) managed on the dedicated shares screen',
     shares: 'relationship in its own table (shares), reportable separately',
     participants: 'relationship normalized into work_participants (migration 20260718000011), reportable separately',
-    co_compositores: 'column removed (20260718000011) — no active writer, no real data lost',
-    detentores: 'column removed (20260718000011) — no active writer, no real data lost',
     abramus_protocol: 'orphan column removed (20260718000016) — never written by any real flow',
   },
 };
@@ -253,14 +251,9 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
     metadata: 'raw internal jsonb object',
     fileUrl: 'hypothetical field that does not exist in the DTO — the real upload flow fills audio_file_id (see the read-only entry above) and audio_file',
     abramus_protocol: 'orphan column removed (20260718000016) — never written by any real flow',
-    compositores: 'column removed (20260923000002) — no active writer, superseded by participation (jsonb)',
-    interpretes: 'column removed (20260923000002) — no active writer, superseded by participation (jsonb)',
-    produtores: 'column removed (20260923000002) — no active writer, superseded by participation (jsonb)',
   },
   formFieldAliases: {
-    titulo: 'title',
     duration: 'duration_text',
-    duracao: 'duration_text',
     artistId: 'artist_id',
     workId: 'work_id',
   },

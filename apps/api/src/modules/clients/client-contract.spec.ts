@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { CreateClientDto, QueryClientDto, UpdateClientDto } from './dto/clients.dto';
+import { CreateClientDto, CreateClientTimelineEntryDto, QueryClientDto, UpdateClientDto } from './dto/clients.dto';
 import { ClientsService } from './clients.service';
 import { canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
 
@@ -202,5 +202,14 @@ describe('clients.profile vocabulary (PV1): deprecated Portuguese slugs are acce
     const { svc, repo } = makeService();
     await svc.create('t1', 'u1', { name: 'Sem perfil' } as never);
     expect((repo.save.mock.calls[0][0] as Record<string, unknown>)['profile']).toBe('other');
+  });
+
+  it('timeline entry types are English only (the nota/ligacao/reuniao/outro aliases were removed: no live consumer)', () => {
+    for (const type of ['note', 'call', 'meeting', 'email', 'whatsapp', 'other']) {
+      expect(validateSync(plainToInstance(CreateClientTimelineEntryDto, { type, description: 'x' }))).toEqual([]);
+    }
+    for (const type of ['nota', 'ligacao', 'reuniao', 'outro']) {
+      expect(validateSync(plainToInstance(CreateClientTimelineEntryDto, { type, description: 'x' })).length).toBeGreaterThan(0);
+    }
   });
 });

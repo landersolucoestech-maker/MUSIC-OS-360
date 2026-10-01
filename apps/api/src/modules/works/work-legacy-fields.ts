@@ -75,7 +75,6 @@ export const LANGUAGE_LABEL_TO_CODE: Readonly<Record<string, string>> = {
 /** Query values sent by a pre-CZ-039 build. */
 export const LEGACY_WORK_QUERY_VALUES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   project_id: { 'no-projeto': 'none', 'sem-projeto': 'none' },
-  ecad: { 'com-ecad': 'with_code', 'sem-ecad': 'without_code' },
   work_origin: LEGACY_WORK_VALUES.work_origin,
 };
 
@@ -140,7 +139,7 @@ export function canonicalizeWorkInput<T extends object>(input: T, options: { upd
   return out as T;
 }
 
-/** Maps pre-CZ-039 query names/values (tipo_obra, no-projeto, com-ecad/sem-ecad). */
+/** Maps pre-CZ-039 query names/values (tipo_obra, no-projeto). */
 export function canonicalizeWorkQuery<T extends object>(query: T): T {
   const out = applyDeprecatedFieldAliases(query as Record<string, unknown>, { tipo_obra: 'work_origin' });
   for (const [column, map] of Object.entries(LEGACY_WORK_QUERY_VALUES)) {

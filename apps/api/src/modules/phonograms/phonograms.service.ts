@@ -15,7 +15,7 @@ import {
   resolvePhonogramQueryAliases,
   type ResolvedPhonogramWriteFields,
 } from './phonogram-legacy-alias.util';
-import { canonicalizePhonogramInput, canonicalizePhonogramQuery } from './phonogram-legacy-fields';
+import { canonicalizePhonogramInput } from './phonogram-legacy-fields';
 
 @Injectable()
 export class PhonogramsService {
@@ -46,7 +46,7 @@ export class PhonogramsService {
 
   /** Base QueryBuilder (tenant + not-deleted + filters) shared by list() and stats(). */
   private baseQb(tenantId: string, query: QueryPhonogramDto): { qb: SelectQueryBuilder<PhonogramEntity>; legacyAliasesUsed: string[] } {
-    const q = canonicalizePhonogramQuery(query as Record<string, unknown>);
+    const q = query as unknown as Record<string, unknown>;
     const { normalized: resolvedQuery, legacyAliasesUsed } = resolvePhonogramQueryAliases(q);
 
     const qb = this.repo!

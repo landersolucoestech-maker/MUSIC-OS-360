@@ -3,6 +3,7 @@ import { assertAllowedHost, assertSafePathSegment, assertSafeLimit } from '../..
 import { CircuitBreaker } from '../../../core/resilience/circuit-breaker';
 import { resilientFetch } from '../../../core/resilience/resilient-fetch';
 
+import { integrationFailure, codeForUpstreamStatus } from '../integration-failure';
 const DEEZER_API = 'https://api.deezer.com';
 const DEEZER_HOSTS = ['api.deezer.com'] as const;
 
@@ -25,7 +26,7 @@ export class DeezerService {
     const id = assertSafePathSegment(artistId, 'artistId');
     const url = assertAllowedHost(`${DEEZER_API}/artist/${encodeURIComponent(id)}`, DEEZER_HOSTS);
     const res = await this.fetch(url);
-    if (!res.ok) return { error: `Deezer API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const d = await res.json() as any;
     return {
       artistId: String(d.id),
@@ -60,7 +61,7 @@ export class DeezerService {
     const id = assertSafePathSegment(albumId, 'albumId');
     const url = assertAllowedHost(`${DEEZER_API}/album/${encodeURIComponent(id)}`, DEEZER_HOSTS);
     const res = await this.fetch(url);
-    if (!res.ok) return { error: `Deezer API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const d = await res.json() as any;
     return {
       albumId:   String(d.id),

@@ -187,11 +187,11 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   society_validation_errors: EntityCategory.INFRA,
 };
 
-const IDENTITY_COLUMN_NAMES = new Set([
-  'name', 'nome', 'stage_name', 'full_name', 'nome_fantasia', 'trade_name',
-  'individual_name', 'razao_social',
-  'title', 'title', 'numero', 'codigo', 'code', 'slug', 'email', 'label',
-  'assunto', 'descricao', 'description', 'referencia', 'ref',
+export const IDENTITY_COLUMN_NAMES: ReadonlySet<string> = new Set([
+  'name', 'stage_name', 'full_name', 'trade_name',
+  'individual_name',
+  'title', 'code', 'slug', 'email', 'label',
+  'description', 'ref',
   // Part 89 — identity columns of the new modules in the closed registry.
   'detected_title', 'music_title',
 ]);

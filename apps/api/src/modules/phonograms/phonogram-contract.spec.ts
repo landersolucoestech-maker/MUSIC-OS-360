@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CreatePhonogramDto } from './dto/create-phonogram.dto';
 import { QueryPhonogramDto } from './dto/query-phonogram.dto';
-import { PHONOGRAM_DEPRECATED_FIELDS, canonicalizePhonogramInput, canonicalizePhonogramQuery } from './phonogram-legacy-fields';
+import { PHONOGRAM_DEPRECATED_FIELDS, canonicalizePhonogramInput } from './phonogram-legacy-fields';
 
 /**
  * CZ-040: phonogram fields, values, participation keys and query values are
@@ -95,9 +95,10 @@ describe('Phonogram request contract (CZ-040)', () => {
     expect(filled['participation']).toEqual({ performers: [{ name: 'A', percentage: '100' }] });
   });
 
-  it('maps the pre-CZ-040 query values', () => {
-    expect(errorsFor(QueryPhonogramDto, { obra_vinculada: 'sem-obra', ecad: 'com-ecad' })).toEqual([]);
-    expect(canonicalizePhonogramQuery({ obra_vinculada: 'sem-obra', ecad: 'com-ecad' })).toEqual({ has_work: 'false', ecad: 'with_code' });
-    expect(canonicalizePhonogramQuery({ obra_vinculada: 'com-obra' })).toEqual({ has_work: 'true' });
+  it('accepts only the canonical query vocabulary (the pre-CZ-040 obra_vinculada / com-ecad / sem-ecad values were removed: no live consumer)', () => {
+    expect(errorsFor(QueryPhonogramDto, { has_work: 'false', ecad: 'with_code' })).toEqual([]);
+    expect(errorsFor(QueryPhonogramDto, { ecad: 'com-ecad' })).not.toEqual([]);
+    expect(errorsFor(QueryPhonogramDto, { ecad: 'sem-ecad' })).not.toEqual([]);
+    expect(errorsFor(QueryPhonogramDto, { obra_vinculada: 'sem-obra' })).not.toEqual([]);
   });
 });

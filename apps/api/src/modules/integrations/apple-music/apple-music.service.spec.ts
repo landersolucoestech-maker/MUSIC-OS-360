@@ -71,7 +71,7 @@ describe('AppleMusicService', () => {
 
   it('without credentials configured: returns an explicit error, never calls the Apple API', async () => {
     const result = await service.getArtistFromCatalog(TENANT_A, 'some-id');
-    expect(result).toEqual({ error: 'Apple Music not configured' });
+    expect(result).toEqual({ error: 'PROVIDER_NOT_CONFIGURED' });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -119,6 +119,6 @@ describe('AppleMusicService', () => {
     fetchMock.mockResolvedValueOnce({ ok: false, status: 401 });
 
     const result = await service.getArtistFromCatalog(TENANT_A, 'artist-id-123');
-    expect(result).toEqual({ error: 'Apple Music API error: 401' });
+    expect(result).toEqual({ error: 'PROVIDER_UNAUTHORIZED' });
   });
 });

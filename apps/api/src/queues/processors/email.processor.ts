@@ -166,6 +166,6 @@ export class EmailProcessor extends WorkerHost {
         return;
     }
 
-    this.logger.log(`[emails] job="${job.name}" id=${job.id} enviado`);
+    this.logger.log(`[emails] job="${job.name}" id=${job.id} sent`);
   }
 }

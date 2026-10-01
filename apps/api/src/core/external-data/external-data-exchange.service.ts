@@ -24,7 +24,8 @@ import {
   ExternalDataWebhookPayload,
   SocietyDataSubmissionPayload,
 } from './external-data.types';
-import { WebhookEventStatus } from '@music-os-360/types';
+import { WebhookEventStatus, classifyFailureCode } from '@music-os-360/types';
+import { redactDiagnosticText } from '../filters/redact-diagnostic';
 
 type EntityType = 'artist' | 'release' | 'work' | 'phonogram';
 
@@ -387,7 +388,8 @@ export class ExternalDataExchangeService {
     } catch (err) {
       await this.webhookEvents!.update({ id: saved.id } as any, {
         status: WebhookEventStatus.FAILED,
-        error: (err as Error).message,
+        // Internal column only: redacted raw text, never returned or emitted.
+        error: redactDiagnosticText((err as Error).message).substring(0, 2000),
         retry_count: 1,
       } as any);
       throw err;
@@ -638,7 +640,7 @@ export class ExternalDataExchangeService {
         artistId,
         jobId,
         society: providerId,
-        error: (err as Error).message,
+        errorCode: classifyFailureCode((err as Error).message, 'SYNC_FAILED'),
         retryCount: 0,
         failedAt: new Date().toISOString(),
       },

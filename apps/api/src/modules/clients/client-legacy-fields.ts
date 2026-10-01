@@ -52,7 +52,6 @@ export const CLIENT_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
 export const CLIENT_PERSON_TYPES = ['individual', 'company'] as const;
 export const CLIENT_PRIORITIES = ['low', 'medium', 'high', 'strategic'] as const;
 export const CLIENT_INTERACTION_TYPES = ['call', 'whatsapp', 'email', 'meeting', 'proposal', 'follow_up', 'note'] as const;
-export const CLIENT_TIMELINE_TYPES = ['note', 'call', 'meeting', 'email', 'whatsapp', 'other'] as const;
 
 const LEGACY_PERSON_TYPES: Readonly<Record<string, string>> = {
   person: 'individual', pessoa_fisica: 'individual', pessoa_juridica: 'company',
@@ -60,9 +59,6 @@ const LEGACY_PERSON_TYPES: Readonly<Record<string, string>> = {
 /** Pre-English priority values (same vocabulary as the lead CRM priority, plus "estratégica"). */
 const LEGACY_PRIORITIES: Readonly<Record<string, string>> = {
   baixa: 'low', media: 'medium', 'média': 'medium', alta: 'high', estrategica: 'strategic', 'estratégica': 'strategic',
-};
-export const LEGACY_TIMELINE_TYPES: Readonly<Record<string, string>> = {
-  nota: 'note', ligacao: 'call', reuniao: 'meeting', outro: 'other',
 };
 /** Keys of the pre-CZ-043 "payloadOperacional" metadata copy — never persisted again. */
 const LEGACY_METADATA_FORM_KEYS = [
@@ -92,7 +88,6 @@ const mapValue = (map: Readonly<Record<string, string>>, value: unknown): unknow
 
 export const canonicalClientPersonType = (value: unknown): unknown => mapValue(LEGACY_PERSON_TYPES, value);
 export const canonicalClientPriority = (value: unknown): unknown => mapValue(LEGACY_PRIORITIES, value);
-export const canonicalClientTimelineType = (value: unknown): unknown => mapValue(LEGACY_TIMELINE_TYPES, value);
 
 /** Interaction items: data/horario/descricao -> date/time/description; PT types -> English (lead vocabulary). */
 export function canonicalClientInteractions(value: unknown): unknown {

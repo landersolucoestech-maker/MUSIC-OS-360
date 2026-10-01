@@ -42,6 +42,8 @@ export const API_ERROR_CODE_COPY_PT_BR = {
   SKILL_RUN_FAILED: "A execução da skill falhou. Tente novamente.",
   WORKFLOW_EXECUTION_FAILED: "A execução do fluxo falhou. Tente novamente.",
   INTEGRATION_CALL_FAILED: "A chamada à integração falhou. Tente novamente.",
+  PROVIDER_NOT_CONNECTED: "A integração não está conectada. Conecte a conta e tente novamente.",
+  PROVIDER_RESOURCE_NOT_FOUND: "O recurso não foi encontrado na integração.",
   DATABASE_UNAVAILABLE: "O serviço está temporariamente indisponível. Tente novamente em instantes.",
   DELIVERY_FAILED: "Não foi possível entregar a mensagem. Tente novamente.",
   SIGNATURE_PROVIDER_FAILED: "O provedor de assinatura não respondeu. Tente novamente.",

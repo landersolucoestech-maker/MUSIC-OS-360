@@ -32,8 +32,8 @@ import { SkillRunService } from '../../core/skills/skill-run.service';
 import { AssetClassificationService } from './asset-classification.service';
 import { canonicalAssetType } from '../../common/compat/asset-type';
 
-const PROJECT_ENTITY_ALIASES = new Set(['project', 'projeto', 'projects', 'projetos']);
-const TASK_ENTITY_ALIASES = new Set(['task', 'tarefa', 'tasks', 'tarefas', 'marketing_task', 'marketing_tasks', 'audiovisual_task']);
+const PROJECT_ENTITY_ALIASES = new Set(['project', 'projects']);
+const TASK_ENTITY_ALIASES = new Set(['task', 'tasks', 'marketing_task', 'marketing_tasks', 'audiovisual_task']);
 
 export interface AssetLinkResult {
   assetId: string;

@@ -88,9 +88,14 @@ describe('Work request contract (CZ-039)', () => {
     expect(canonicalizeWorkInput(oldBuildEdit)).toMatchObject({ ai_used: false, is_instrumental: false, work_origin: 'reference' });
   });
 
-  it('maps the pre-CZ-039 query values', () => {
-    expect(errorsFor(QueryWorkDto, { tipo_obra: 'autoral', ecad: 'com-ecad', project_id: 'no-projeto' })).toEqual([]);
-    expect(canonicalizeWorkQuery({ tipo_obra: 'autoral', ecad: 'sem-ecad', project_id: 'no-projeto' }))
+  it('maps the pre-CZ-039 query values still in use (tipo_obra, no-projeto)', () => {
+    expect(errorsFor(QueryWorkDto, { tipo_obra: 'autoral', ecad: 'with_code', project_id: 'no-projeto' })).toEqual([]);
+    expect(canonicalizeWorkQuery({ tipo_obra: 'autoral', ecad: 'without_code', project_id: 'no-projeto' }))
       .toEqual({ work_origin: 'original', ecad: 'without_code', project_id: 'none' });
+  });
+
+  it('rejects the removed com-ecad / sem-ecad query values (no live consumer)', () => {
+    expect(errorsFor(QueryWorkDto, { ecad: 'com-ecad' })).not.toEqual([]);
+    expect(errorsFor(QueryWorkDto, { ecad: 'sem-ecad' })).not.toEqual([]);
   });
 });

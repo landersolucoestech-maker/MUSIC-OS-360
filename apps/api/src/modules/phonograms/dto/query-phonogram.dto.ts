@@ -48,13 +48,8 @@ export class QueryPhonogramDto extends PaginationDto {
   @IsIn(['true', 'false'])
   has_work?: string;
 
-  @ApiPropertyOptional({ deprecated: true, enum: ['com-obra', 'sem-obra'], description: 'Deprecated (CZ-040): use "has_work".' })
+  @ApiPropertyOptional({ enum: ['with_code', 'without_code'] })
   @IsOptional()
-  @IsIn(['com-obra', 'sem-obra'])
-  obra_vinculada?: string;
-
-  @ApiPropertyOptional({ enum: ['with_code', 'without_code'], description: 'Legacy values com-ecad/sem-ecad are still accepted.' })
-  @IsOptional()
-  @IsIn(['with_code', 'without_code', 'com-ecad', 'sem-ecad'])
+  @IsIn(['with_code', 'without_code'])
   ecad?: string;
 }

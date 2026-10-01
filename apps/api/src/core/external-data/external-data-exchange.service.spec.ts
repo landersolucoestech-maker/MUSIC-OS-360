@@ -275,3 +275,36 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
     expect(webhookEventsRepo.update).not.toHaveBeenCalled();
   });
 });
+
+describe('ExternalDataExchangeService — failure surfaces carry codes, never raw text', () => {
+  it('sync_failed event payload has errorCode and no raw error text', () => {
+    const emitTyped = jest.fn();
+    const svc = new ExternalDataExchangeService(makeDs({}), {} as never, { emitTyped } as never, makeTenantResolver() as never);
+    (svc as unknown as { emitFailed: (...a: unknown[]) => void }).emitFailed(
+      'tenant-1', 'user-1', 'artist-1', 'job-1', 'abramus',
+      new Error('connect ECONNREFUSED 10.0.0.5 token=abc123 foo@bar.com'),
+    );
+    const payload = emitTyped.mock.calls[0][1].payload;
+    expect(payload.errorCode).toBe('SYNC_FAILED');
+    expect(payload).not.toHaveProperty('error');
+    expect(JSON.stringify(payload)).not.toMatch(/ECONNREFUSED|abc123|foo@bar/);
+  });
+
+  it('persists a redacted internal error on the webhook row when processing fails', async () => {
+    const registry = makeRegistry({ providerEventId: 'evt-9', submissionId: 'sub-real', raw: {} });
+    const { svc, webhookEventsRepo } = makeServiceWithWebhookRepo(
+      { submissions: [{ provider: 'abramus', submission_id: 'sub-real', tenant_id: 'tenant-real' }], webhookEvent: null },
+      makeTenantResolver(),
+      registry,
+    );
+    jest.spyOn(svc as unknown as { applyWebhook: () => Promise<void> }, 'applyWebhook').mockRejectedValue(new Error('boom token=abc123 foo@bar.com'));
+    await expect(svc.ingestWebhook({
+      providerId: 'abramus', kind: 'society', payload: { id: 'evt-9' },
+      signature: sign({ id: 'evt-9' }, 'shh'), secret: 'shh',
+    })).rejects.toThrow();
+    const failed = webhookEventsRepo.update.mock.calls.find((c: unknown[]) => (c[1] as { status?: string }).status === WebhookEventStatus.FAILED);
+    expect(failed).toBeDefined();
+    const err = (failed![1] as { error: string }).error;
+    expect(err).not.toMatch(/abc123|foo@bar/);
+  });
+});

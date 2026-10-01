@@ -13,6 +13,7 @@ import {
   assertSafeQueryValue,
 } from '../../../core/resilience/safe-url';
 
+import { integrationFailure, codeForUpstreamStatus } from '../integration-failure';
 const APPLE_API = 'https://api.music.apple.com/v1';
 const APPLE_HOSTS = ['api.music.apple.com'] as const;
 const APPLE_SEARCH_TYPES = ['artists', 'albums', 'songs', 'playlists', 'music-videos', 'stations'] as const;
@@ -61,12 +62,12 @@ export class AppleMusicService extends IntegrationBaseService {
 
   async getArtistFromCatalog(tenantId: string, artistId: string, storefront = 'br') {
     const token = await this.getToken(tenantId);
-    if (!token) return { error: 'Apple Music not configured' };
+    if (!token) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
     const sf = assertSafeStorefront(storefront);
     const id = assertSafePathSegment(artistId, 'artistId');
     const url = assertAllowedHost(`${APPLE_API}/catalog/${encodeURIComponent(sf)}/artists/${encodeURIComponent(id)}`, APPLE_HOSTS);
     const res = await this.fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) return { error: `Apple Music API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const d    = await res.json() as any;
     const attr = d.data?.[0]?.attributes ?? {};
     return {
@@ -79,7 +80,7 @@ export class AppleMusicService extends IntegrationBaseService {
 
   async searchCatalog(tenantId: string, term: string, types = 'artists,albums', storefront = 'br', limit = 10) {
     const token = await this.getToken(tenantId);
-    if (!token) return { error: 'Apple Music not configured' };
+    if (!token) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
     const sf = assertSafeStorefront(storefront);
     const safeTerm = assertSafeQueryValue(term, 'term');
     const safeTypes = assertSafeTypes(types, APPLE_SEARCH_TYPES);
@@ -87,7 +88,7 @@ export class AppleMusicService extends IntegrationBaseService {
     const qs = new URLSearchParams({ term: safeTerm, types: safeTypes, limit: String(lim) }).toString();
     const url = assertAllowedHost(`${APPLE_API}/catalog/${encodeURIComponent(sf)}/search?${qs}`, APPLE_HOSTS);
     const res = await this.fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) return { error: `Apple Music API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     return res.json();
   }
 }

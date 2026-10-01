@@ -112,6 +112,17 @@ describe('AssetLinkingService.processUpload', () => {
     expect(emitted).toContain('asset.linked_to_task');
   });
 
+  it.each(['projeto', 'tarefa'])('does not link a removed Portuguese origin alias (%s): the asset is only registered', async (entity) => {
+    const { ds, repos } = makeDs({ ...uploadRow, entity, entity_id: 'x-1' });
+    const svc = new AssetLinkingService(ds as never, events() as never, skillRuns() as never, classification() as never);
+
+    const result = await svc.processUpload({ ...basePayload, entityType: entity, entityId: 'x-1' });
+
+    expect(result).toEqual({ assetId: 'asset-1', linkedProjectId: null, linkedTaskId: null });
+    expect(repos.get(ProjectAssetEntity)!.save).not.toHaveBeenCalled();
+    expect(repos.get(TaskAssetEntity)!.save).not.toHaveBeenCalled();
+  });
+
   it('without DATA_SOURCE returns null (safe noop)', async () => {
     const svc = new AssetLinkingService(null, events() as never, skillRuns() as never, classification() as never);
     await expect(svc.processUpload(basePayload)).resolves.toBeNull();

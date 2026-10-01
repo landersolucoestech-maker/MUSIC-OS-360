@@ -6,6 +6,7 @@ import { EncryptionService }  from '../../../core/security/encryption.service';
 import { IntegrationBaseService } from '../integration-base.service';
 import { assertAllowedHost, assertSafePathSegment, assertSafeLimit, assertSafeQueryValue } from '../../../core/resilience/safe-url';
 
+import { integrationFailure, codeForUpstreamStatus } from '../integration-failure';
 const SC_API = 'https://api.soundcloud.com';
 const SC_HOSTS = ['api.soundcloud.com'] as const;
 
@@ -33,12 +34,12 @@ export class SoundCloudService extends IntegrationBaseService {
 
   async resolveUser(url: string) {
     const cid = this.clientId;
-    if (!cid) return { error: 'SoundCloud not configured' };
+    if (!cid) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
     const safeResolveUrl = assertSafeQueryValue(url, 'url', 512);
     const qs = new URLSearchParams({ url: safeResolveUrl, client_id: cid }).toString();
     const safeUrl = assertAllowedHost(`${SC_API}/resolve?${qs}`, SC_HOSTS);
     const res = await this.fetch(safeUrl);
-    if (!res.ok) return { error: `SoundCloud API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const d = await res.json() as any;
     return {
       id: String(d.id), username: d.username ?? '', displayName: d.full_name ?? d.username ?? '',
@@ -49,12 +50,12 @@ export class SoundCloudService extends IntegrationBaseService {
 
   async getTrackStats(trackId: string) {
     const cid = this.clientId;
-    if (!cid) return { error: 'SoundCloud not configured' };
+    if (!cid) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
     const id = assertSafePathSegment(trackId, 'trackId');
     const qs = new URLSearchParams({ client_id: cid }).toString();
     const safeUrl = assertAllowedHost(`${SC_API}/tracks/${encodeURIComponent(id)}?${qs}`, SC_HOSTS);
     const res = await this.fetch(safeUrl);
-    if (!res.ok) return { error: `SoundCloud API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const d = await res.json() as any;
     return {
       id: String(d.id), title: d.title ?? '', plays: d.playback_count ?? 0, likes: d.likes_count ?? 0,

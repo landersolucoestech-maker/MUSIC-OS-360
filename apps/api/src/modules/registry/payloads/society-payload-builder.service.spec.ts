@@ -52,6 +52,20 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — share eligibility (P
     expect(payload.splits[0].name).toBe('Autor A');
   });
 
+  it('free-text Portuguese publisher role ("Editora ...", persisted party_role is free text) is still routed to publishers; canonical roles unchanged', async () => {
+    const svc = new SocietyPayloadBuilderService(makeDs({
+      works: [baseWork],
+      shares: [
+        { id: 's1', share_type: null, deleted_at: null, holder_name: 'Autor A', percentage: '50', party_role: 'author' },
+        { id: 's2', share_type: null, deleted_at: null, holder_name: 'Editora B', percentage: '30', party_role: 'Editora Musical' },
+        { id: 's3', share_type: null, deleted_at: null, holder_name: 'Pub C', percentage: '20', party_role: 'publisher' },
+      ],
+    }));
+    const payload = await svc.buildWorkPayload('t1', 'w1');
+    expect(payload.publishers.map((p) => p.name).sort()).toEqual(['Editora B', 'Pub C']);
+    expect(payload.authors.map((p) => p.name)).toEqual(['Autor A']);
+  });
+
   it('excludes a financial/pending share (share_type set) from the payload', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],

@@ -263,7 +263,7 @@ async function reset(): Promise<void> {
   console.log('[db:reset] Criando schema do zero…');
   await AppDataSource.runMigrations({ transaction: 'each' });
 
-  console.log('[db:reset] Executando seeds…');
+  console.log('[db:reset] Running seeds...');
   // Dynamic import to avoid automatic execution
   const { seedDefaultTenant } = await import('../src/database/seeds/01_default_tenant');
   const { seedAdminUser }     = await import('../src/database/seeds/02_admin_user');

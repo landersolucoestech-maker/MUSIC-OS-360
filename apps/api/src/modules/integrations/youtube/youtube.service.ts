@@ -3,6 +3,7 @@ import { ConfigService }      from '@nestjs/config';
 import { CircuitBreaker } from '../../../core/resilience/circuit-breaker';
 import { resilientFetch } from '../../../core/resilience/resilient-fetch';
 
+import { integrationFailure, codeForUpstreamStatus } from '../integration-failure';
 const YT_API = 'https://www.googleapis.com/youtube/v3';
 
 @Injectable()
@@ -27,14 +28,14 @@ export class YouTubeService {
   }
 
   async getChannelStats(channelId: string) {
-    if (!this.apiKey) return { error: 'YouTube API not configured' };
+    if (!this.apiKey) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
     const res = await this.fetch(
       `${YT_API}/channels?part=statistics,snippet&id=${channelId}&key=${this.apiKey}`,
     );
-    if (!res.ok) return { error: `YouTube API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const data = await res.json() as any;
     const item = data.items?.[0];
-    if (!item) return { error: 'Channel not found' };
+    if (!item) return integrationFailure(this.logger, 'PROVIDER_RESOURCE_NOT_FOUND');
     return {
       channelId,
       title:        item.snippet?.title ?? '',
@@ -48,14 +49,14 @@ export class YouTubeService {
   }
 
   async getVideoStats(videoId: string) {
-    if (!this.apiKey) return { error: 'YouTube API not configured' };
+    if (!this.apiKey) return integrationFailure(this.logger, 'PROVIDER_NOT_CONFIGURED');
     const res = await this.fetch(
       `${YT_API}/videos?part=statistics,snippet&id=${videoId}&key=${this.apiKey}`,
     );
-    if (!res.ok) return { error: `YouTube API error: ${res.status}` };
+    if (!res.ok) return integrationFailure(this.logger, codeForUpstreamStatus(res.status), `upstream status ${res.status}`);
     const data = await res.json() as any;
     const item = data.items?.[0];
-    if (!item) return { error: 'Video not found' };
+    if (!item) return integrationFailure(this.logger, 'PROVIDER_RESOURCE_NOT_FOUND');
     return {
       videoId,
       title:        item.snippet?.title ?? '',
