@@ -941,3 +941,71 @@ test('SEC2 regressions: ordinary dev workflow stays allowed', () => {
     'git bisect start && git bisect good && git bisect bad',
   ]);
 });
+
+test('SEC3 F-GG1: dynamic git words and aliases that hide git are refused', () => {
+  mustRefuse([
+    'x=push; git $x --no-verify origin main',
+    'git $(echo push) --no-verify origin main',
+    'git `echo push` --no-verify origin main',
+    'git -c $x push',
+    'git ${x} origin dev',
+    'git "$@"',
+    "shopt -s expand_aliases\nalias p='git push --no-verify origin main'\np",
+    "alias p='gh pr merge 5'",
+    'alias gp="git push --no-verify"',
+  ]);
+  mustAllow([
+    'git -C "$PWD" status',
+    'git push origin dev',
+    'alias ll="ls -la"',
+    'cd "$(git rev-parse --show-toplevel)" && git status',
+  ]);
+});
+
+test('SEC3 F-GG3: command-executing git settings and env are inspected', () => {
+  const evil = "git push --no-verify origin HEAD:main";
+  mustRefuse([
+    `git -c core.pager='${evil}' log`,
+    `GIT_PAGER='${evil}' git log`,
+    `git -c credential.helper='!${evil}' fetch`,
+    `git -c core.sshCommand='${evil}' fetch`,
+    `git -c core.fsmonitor='${evil}' status`,
+    `git -c diff.external='${evil}' diff`,
+    `git -c core.editor='${evil}' commit`,
+    `GIT_SSH_COMMAND='sh -c "${evil}"' git fetch`,
+    `GIT_EDITOR='${evil}' git commit`,
+    `GIT_ASKPASS='${evil}' git fetch`,
+    `git filter-branch --tree-filter '${evil}' HEAD`,
+    `git filter-branch --index-filter '${evil}' HEAD`,
+    `git filter-branch --msg-filter '${evil}' HEAD`,
+    `git filter-branch --env-filter '${evil}' HEAD`,
+    `git fetch --upload-pack '${evil}' origin`,
+    `git ls-remote --upload-pack='${evil}' origin`,
+    `git clone --upload-pack '${evil}' x y`,
+    `git archive --exec '${evil}' HEAD`,
+    `git grep -O'${evil}' foo`,
+    'git --exec-path=/tmp/evil push origin dev',
+    'GIT_EXEC_PATH=/tmp/evil git push origin dev',
+    `sh -c 'git "$@"' _ push --no-verify origin main`,
+    `bash -c 'gh "$@"' _ pr merge 5`,
+    `sh -c 'git $*' _ push --no-verify origin main`,
+    "printf '[core]\\nhooksPath=/dev/null' > /tmp/h.cfg && GIT_CONFIG_GLOBAL=/tmp/h.cfg git push origin dev",
+    'GIT_CONFIG_SYSTEM=/tmp/h.cfg git push origin dev',
+    'HOME=/tmp/evil git push origin dev',
+    'XDG_CONFIG_HOME=/tmp/evil git push origin dev',
+  ]);
+  mustAllow([
+    'git -c core.pager=less log',
+    "GIT_PAGER=cat git log",
+    "GIT_EDITOR=true git commit --amend --no-edit",
+    'git -c user.name=x log',
+    "git fetch --upload-pack=git-upload-pack origin",
+    'git grep -n foo',
+    'git push origin dev',
+    'git commit -m "it\'s a fix"',
+    'git commit -m "$(cat <<\'EOF\'\nfix: it\'s fine\nEOF\n)"',
+    'cd "$(git rev-parse --show-toplevel)" && git push origin dev',
+    'HOME=/tmp npm test',
+    'sh -c \'echo "$@"\' _ a b',
+  ]);
+});

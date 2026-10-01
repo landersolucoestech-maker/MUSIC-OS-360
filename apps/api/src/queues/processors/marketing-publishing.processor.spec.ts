@@ -157,3 +157,30 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
     expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
   });
 });
+
+describe('MarketingPublishingProcessor: persisted publication_error is redacted (SEC3 F-A2-1)', () => {
+  it('stores neither e-mails nor secrets nor more than 500 chars of the provider failure', async () => {
+    const update = jest.fn(async () => ({ affected: 1 }));
+    const qb: Record<string, jest.Mock> = {};
+    ['update', 'set', 'where', 'andWhere'].forEach((k) => { qb[k] = jest.fn(() => qb); });
+    qb['execute'] = jest.fn(async () => ({ affected: 1 }));
+    const repo = {
+      findOne: jest.fn(async () => ({ id: 'c1', tenant_id: 't1', channel: 'instagram', status: 'scheduled', publication_status: null })),
+      update,
+      createQueryBuilder: jest.fn(() => qb),
+    };
+    const processor = new MarketingPublishingProcessor({ manager: { getRepository: () => repo } } as never, undefined);
+    (processor as unknown as { publish: () => Promise<never> }).publish = async () => {
+      throw new Error(`provider said: owner@label.com access_token=tok-SECRET-123 ${'x'.repeat(2000)}`);
+    };
+    await expect(processor.process({
+      name: MARKETING_PUBLISHING_JOB_NAMES.PUBLISH_CONTENT,
+      data: { tenantId: 't1', userId: 'u1', contentId: 'c1' },
+    } as never)).rejects.toThrow();
+    const failed = (update.mock.calls as unknown as Array<[unknown, { publication_error?: string }]>).map((c) => c[1]).find((v) => v.publication_error);
+    expect(failed?.publication_error).toBeDefined();
+    expect(failed!.publication_error).not.toContain('owner@label.com');
+    expect(failed!.publication_error).not.toContain('tok-SECRET-123');
+    expect(failed!.publication_error!.length).toBeLessThanOrEqual(500);
+  });
+});

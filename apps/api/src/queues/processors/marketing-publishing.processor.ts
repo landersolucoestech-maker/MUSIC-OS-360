@@ -8,6 +8,7 @@ import { MarketingContentPostEntity } from '../../database/entities';
 import { MARKETING_PUBLISHING_JOB_NAMES, QUEUE_NAMES } from '../queue.constants';
 import type { PublishContentJobPayload } from '../services/marketing-publishing-queue.service';
 import { MARKETING_CONTENT_STATUS } from '../../modules/marketing/marketing-vocabulary';
+import { redactForStorage } from '../../core/filters/redact-diagnostic';
 
 @Processor(QUEUE_NAMES.MARKETING_PUBLISHING)
 @Injectable()
@@ -87,7 +88,7 @@ export class MarketingPublishingProcessor extends WorkerHost {
       await repo.update({ id: row.id, tenant_id: row.tenant_id } as never, {
         status: MARKETING_CONTENT_STATUS.FAILED,
         publication_status: 'failed',
-        publication_error: message,
+        publication_error: redactForStorage(message),
       } as never);
       throw err;
     }

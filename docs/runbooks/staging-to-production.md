@@ -90,6 +90,7 @@ The canonical English vocabulary migrations (`20260930000012` to `20260930000025
 - The previous build does not know the canonical slugs: its lookups by renamed operational-list slugs (`20260930000016`) miss the renamed platform rows until it is replaced, and any write of an old Portuguese value into a column that now has a CHECK is rejected. Stop the previous API instances and workers in the same swap that runs the migrations (the staging workflow does this: `STAGING_STOP_WEBHOOK_URL`).
 - Run the "Vocabulary pre-flight queries" below in every environment first; residue values abort a guarded migration and block the whole pending batch.
 - Several migrations rewrite most rows of a table in one transaction (`transactions`, `clients`): run them in a low-traffic window, with a recent backup, and exercise the reverse `down()` order on a disposable PostgreSQL before production (`20260930000022` first, then `16`, `18`, `19`, `25`, `24`, `21`, `17`, `23`).
+- The backfill side tables keep before/after jsonb (including third-party personal data) and are not removed by tenant deletion. Run the per-tenant erasure SQL of `docs/engineering/backfill-side-tables-retention.md` on every tenant deletion or erasure request, and purge the tables with the gated draft `migration-drafts/20260930000050_PurgeBackfillSideTables.ts` only after the rollback window ends and the pre-flight residue is 0 in every environment (the draft is not registered; take a backup first, the purge is irreversible).
 
 ## Vocabulary pre-flight queries
 

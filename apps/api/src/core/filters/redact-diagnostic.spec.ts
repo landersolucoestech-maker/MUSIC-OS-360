@@ -1,4 +1,4 @@
-import { redactDiagnosticText } from './redact-diagnostic';
+import { redactDiagnosticText, redactForStorage } from './redact-diagnostic';
 
 describe('redactDiagnosticText', () => {
   it('redacts e-mail addresses', () => {
@@ -57,5 +57,60 @@ describe('redactDiagnosticText', () => {
   it('still redacts an e-mail and credentials inside the first 4000 chars of a long message', () => {
     const out = redactDiagnosticText(`user a@b.com ${'z'.repeat(9000)} postgres://u:pw@h/db`);
     expect(out).not.toContain('a@b.com');
+  });
+
+  describe('SEC3 F-SEC-R1: no bounded-quantifier leaks', () => {
+    it('redacts a connection-string password longer than the old 256 bound, and a long user', () => {
+      const out = redactDiagnosticText(`postgres://user:${'p'.repeat(300)}@db.host/x`);
+      expect(out).toBe('postgres://[REDACTED]@db.host/x');
+      expect(redactDiagnosticText(`postgres://${'u'.repeat(200)}:pw@db.host/x`)).not.toContain('uuuu');
+      expect(redactDiagnosticText(`${'A'.repeat(40)}://user:pw@host`)).not.toContain('pw@');
+    });
+    it('redacts a 100-char and a 300-char e-mail local part entirely', () => {
+      expect(redactDiagnosticText(`${'a'.repeat(100)}@example.com`)).toBe('[REDACTED]');
+      expect(redactDiagnosticText(`x ${'a.b'.repeat(100)}@example.com y`)).toBe('x [REDACTED] y');
+    });
+    it('redacts unicode e-mail addresses', () => {
+      expect(redactDiagnosticText('josé@example.com e 山田@example.jp')).toBe('[REDACTED] e [REDACTED]');
+    });
+    it('redacts a secret that straddles the 4000-char cut (cut happens after redaction)', () => {
+      const bearer = redactDiagnosticText(`${'x'.repeat(3985)} Bearer abcdefghijklmnopqrstuvwxyz`);
+      expect(bearer).not.toContain('abc');
+      const pwd = redactDiagnosticText(`${'x'.repeat(3995)} password=hunter2`);
+      expect(pwd).not.toContain('hunter2');
+      const mail = redactDiagnosticText(`${'x'.repeat(3990)} someone.long@example.com`);
+      expect(mail).not.toContain('someone');
+      expect(mail).not.toContain('@example');
+      expect(mail.endsWith('…[truncated]')).toBe(true);
+    });
+    it('redacts an unterminated quoted secret', () => {
+      expect(redactDiagnosticText('password="abc def ghi')).not.toContain('abc');
+    });
+    it('keeps the ReDoS guarantee on adversarial 4000-char inputs (< 50 ms each)', () => {
+      const inputs = [
+        'a'.repeat(4000), 'pass'.repeat(1000), '-'.repeat(4000), 'a@'.repeat(2000), 'a.'.repeat(2000),
+        'a://'.repeat(1000), 'a://u:'.repeat(660), `${'a'.repeat(60)}@${'b.'.repeat(1900)}`,
+        `a://${'b:'.repeat(2000)}`, `${'a'.repeat(2000)}@${'b'.repeat(2000)}`, 'a@b.'.repeat(1000), 'eyJ'.repeat(1300),
+      ];
+      for (const input of inputs) {
+        const t = process.hrtime.bigint();
+        redactDiagnosticText(input);
+        expect(Number(process.hrtime.bigint() - t) / 1e6).toBeLessThan(50);
+      }
+    });
+  });
+});
+
+describe('redactForStorage (SEC3 F-A2-1)', () => {
+  it('redacts and caps persisted text', () => {
+    const out = redactForStorage(new Error(`boom for a@b.com password=hunter2 ${'z'.repeat(2000)}`));
+    expect(out).not.toContain('a@b.com');
+    expect(out).not.toContain('hunter2');
+    expect(out.length).toBeLessThanOrEqual(500);
+  });
+  it('handles non-strings and empty values', () => {
+    expect(redactForStorage(undefined)).toBe('');
+    expect(redactForStorage(null)).toBe('');
+    expect(redactForStorage(42)).toBe('42');
   });
 });

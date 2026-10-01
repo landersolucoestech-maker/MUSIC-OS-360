@@ -24,6 +24,7 @@ import { IntegrationEntity, ContractEntity } from '../../../database/entities';
 import { EncryptionService } from '../../../core/security/encryption.service';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
+import { redactForStorage } from '../../../core/filters/redact-diagnostic';
 import { providerCallFailed } from '../provider-failure';
 import { WebhookService } from '../webhooks/webhook.service';
 import { IntegrationStatus } from '@music-os-360/types';
@@ -209,7 +210,7 @@ export class AutentiqueService {
           entity_id:    params.contractId,
           action:       'send_for_signature_failed',
           description:  `Falha ao enviar contrato "${params.name}" para Autentique`,
-          metadata:     { error: String(err), provider: 'autentique' },
+          metadata:     { error: redactForStorage(err), provider: 'autentique' },
         }).catch(() => {});
       }
       throw err;

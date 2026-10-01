@@ -90,7 +90,7 @@ describe('shared URL validators (SEC1 / find-77526160)', () => {
       expect(hasSafeUrlValues({ [key]: 'https://ok.example/a.png' })).toBe(true);
     });
   it('hasSafeUrlValues inspects url-ish keys at any depth', () => {
-    expect(hasSafeUrlValues({ audio_master_url: 'https://x.example/a.wav', lyrics: 'javascript:not a url key' })).toBe(true);
+    expect(hasSafeUrlValues({ audio_master_url: 'https://x.example/a.wav', lyrics: 'javascript is not a url' })).toBe(true);
     expect(hasSafeUrlValues({ a: { b: [{ previewUrl: 'javascript:alert(1)' }] } })).toBe(false);
     expect(hasSafeUrlValues({ links: ['https://ok.example', 'javascript:alert(1)'] })).toBe(false);
     expect(hasSafeUrlValues({ link: 'java\tscript:alert(1)' })).toBe(false);
@@ -154,5 +154,21 @@ describe('other DTOs feeding raw hrefs/srcs', () => {
     await expect(validate(CreateTakedownDto, { title: 'T', platform: 'p', reason: 'r', infringing_url: 'https://example.com/x' })).resolves.toBeDefined();
     expect(await plainErrors(CreateProjectDto, { title: 't', type: 'single', tracks: [{ id: '1', name: 'n', audioUrl: 'r2://b/tenants/t/audio/f/a.wav' }] })).toEqual([]);
     expect(await plainErrors(CreateMarketingContentDto, { ...CONTENT, files: [{ id: '1', name: 'n', url: 'https://cdn.example/a.mp4' }] })).toEqual([]);
+  });
+});
+
+describe('SEC3 F-SEC-U1: value-based executable-scheme rejection for any key', () => {
+  const KEYS = ['icon', 'banner', 'poster', 'audio', 'video', 'media', 'file', 'attachment', 'background', 'coverArt', 'profile_pic', 'stream', 'page', 'site', 'homepage', 'origin', 'redirect', 'callback', 'endpoint', 'webhook', 'source', 'sources', 'target', 'action', 'data', 'path', 'location', 'URL', 'Url', 'LINK', 'ImageSRC', 'note'];
+  it.each(KEYS)('rejects javascript: under key %s', (key) => {
+    expect(hasSafeUrlValues({ [key]: 'javascript:alert(1)' })).toBe(false);
+  });
+  it.each(['JaVaScRiPt:1', 'java\tscript:alert(1)', 'java\nscript:alert(1)', '  javascript:alert(1)', '\u0001javascript:alert(1)', 'data:text/html,<script>1</script>', 'DATA:text/html;base64,AA==', 'vbscript:msgbox(1)'])('rejects %j under any key, also nested', (value) => {
+    expect(hasSafeUrlValues({ whatever: value })).toBe(false);
+    expect(hasSafeUrlValues({ a: { b: [{ c: value }] } })).toBe(false);
+    expect(hasSafeUrlValues([value])).toBe(false);
+  });
+  it('still accepts ordinary free-form values', () => {
+    expect(hasSafeUrlValues({ note: 'see https://example.com', title: 'javascript is fun', icon: 'play', n: 3, ok: null })).toBe(true);
+    expect(hasSafeUrlValues({ url: 'https://example.com/a', coverArt: 'r2://b/k.png' })).toBe(true);
   });
 });

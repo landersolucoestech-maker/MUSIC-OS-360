@@ -38,6 +38,7 @@ import { IntegrationEntity, ContractEntity } from '../../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { providerCallFailed } from '../provider-failure';
+import { redactForStorage } from '../../../core/filters/redact-diagnostic';
 import { WebhookService } from '../webhooks/webhook.service';
 import { IntegrationBaseService } from '../integration-base.service';
 import { TenantBootstrapResolver } from '../../../database/tenant-bootstrap.resolver';
@@ -290,7 +291,7 @@ export class DocuSignService {
           entity_id:   params.contractId,
           action:      'send_for_signature_failed',
           description: `Falha ao enviar contrato "${params.name}" para DocuSign`,
-          metadata:    { error: String(err), provider: PROVIDER },
+          metadata:    { error: redactForStorage(err), provider: PROVIDER },
         }).catch(() => {});
       }
       throw err;

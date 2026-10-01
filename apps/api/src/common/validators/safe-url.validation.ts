@@ -144,14 +144,25 @@ export function HasHttpUrlItems(key: string, validationOptions?: ValidationOptio
 }
 
 /** JSON keys whose value the web binds to href/src: url, fileUrl, audio_url, link, previewUrl, hrefs, srcs, uri, website, avatar, image, cover, thumbnail, download… */
-const URL_KEY = /(^|[_-])(url|link|href|src)s?$|[a-z](Url|Link|Href|Src)s?$/;
+const URL_KEY = /(^|[_-])(url|link|href|src)s?$|[a-z](Url|Link|Href|Src)s?$/i;
 // Other keys that hold a link in practice (S2-2): matched case-insensitively on the key's last word.
 const URL_KEY_NOUNS = /(^|[_-]|[a-z])(uri|website|avatar|image|photo|picture|logo|cover|thumbnail|thumb|download|permalink)s?$/i;
 const MAX_JSON_DEPTH = 6;
+// Value-based rule for ANY key (SEC3 F-SEC-U1): a string that a browser would read as an executable
+// scheme. Browsers drop tab/LF/CR anywhere and leading C0/space; internal spaces are kept.
+// eslint-disable-next-line no-control-regex
+const LEADING_NOISE = /^[\u0000-\u0020\u007f\u00a0\u1680\u180e\u2000-\u200d\u2028\u2029\u202f\u205f\u2060\u3000\ufeff]+/;
+const EXECUTABLE_SCHEME = /^(javascript|data|vbscript):/i;
+
+/** True when `value` starts (after browser normalisation) with javascript:, data: or vbscript:. */
+export function hasExecutableScheme(value: string): boolean {
+  return EXECUTABLE_SCHEME.test(value.replace(/[\t\n\r]/g, '').replace(LEADING_NOISE, ''));
+}
 
 /** True when every url-ish key anywhere in `value` (objects/arrays, bounded depth) holds a safe link. */
 export function hasSafeUrlValues(value: unknown, depth = 0): boolean {
   if (depth > MAX_JSON_DEPTH) return false;
+  if (typeof value === 'string') return !hasExecutableScheme(value);
   if (Array.isArray(value)) return value.every((item) => hasSafeUrlValues(item, depth + 1));
   if (value === null || typeof value !== 'object') return true;
   return Object.entries(value as Record<string, unknown>).every(([key, item]) => {

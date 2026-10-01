@@ -264,3 +264,22 @@ describe('DocuSignService.handleWebhook', () => {
     });
   });
 });
+
+describe('DocuSignService.sendForSignature: persisted failure is redacted (SEC3 F-A2-1)', () => {
+  it('activity_logs metadata.error holds no e-mail/secret and at most 500 chars', async () => {
+    const create = jest.fn(async () => ({}));
+    const integrationBase = { getOAuthConnection: jest.fn(async () => ({ accessToken: 'tok', metadata: { docusign_account_id: 'a', docusign_base_uri: 'https://x.example' } })) };
+    const ds = { getRepository: jest.fn(() => ({})) };
+    const service = new DocuSignService(
+      ds as never, { get: jest.fn() } as never, integrationBase as never, undefined, { create } as never,
+    );
+    (service as unknown as { timedFetch: jest.Mock }).timedFetch = jest.fn().mockRejectedValue(new Error(`fetch failed for owner@label.com Bearer abcdefgh12345678 ${'y'.repeat(2000)}`));
+    await expect(service.sendForSignature({
+      tenantId: 't1', userId: 'u1', contractId: 'c1', name: 'N', fileBase64: 'Zg==', signers: [{ name: 'A', email: 'a@b.co' }],
+    })).rejects.toThrow();
+    const meta = (create.mock.calls[0] as unknown as [string, string, { metadata: { error: string } }])[2].metadata;
+    expect(meta.error).not.toContain('owner@label.com');
+    expect(meta.error).not.toContain('abcdefgh12345678');
+    expect(meta.error.length).toBeLessThanOrEqual(500);
+  });
+});

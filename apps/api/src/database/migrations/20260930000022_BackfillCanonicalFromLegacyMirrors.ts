@@ -58,6 +58,12 @@ async function hasColumn(queryRunner: QueryRunner, table: string, column: string
   return rows.length > 0;
 }
 
+/** Whether a public table exists (down() must not fail on a second run, after the tracking tables were dropped). */
+async function hasTable(queryRunner: QueryRunner, table: string): Promise<boolean> {
+  const rows: Array<{ t: string | null }> = await queryRunner.query(`SELECT to_regclass($1) AS t`, [`public."${table}"`]);
+  return rows[0]?.t != null;
+}
+
 async function count(queryRunner: QueryRunner, sql: string): Promise<number> {
   const rows: Array<{ n: number }> = await queryRunner.query(sql);
   return rows[0]?.n ?? 0;
@@ -113,11 +119,14 @@ export class BackfillCanonicalFromLegacyMirrors20260930000022 implements Migrati
     await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
 
-    await queryRunner.query(`
+    // A second down() finds the tracking tables already dropped: nothing left to revert, and it must not fail.
+    if (await hasTable(queryRunner, INVOICES_BACKFILL)) {
+      await queryRunner.query(`
       UPDATE "invoices" i SET "service_amount" = NULL
       FROM "${INVOICES_BACKFILL}" b
       WHERE b."id" = i."id" AND i."service_amount" IS NOT DISTINCT FROM i."legacy_amount"`);
-    if (await hasColumn(queryRunner, 'takedowns', 'url')) {
+    }
+    if (await hasTable(queryRunner, TAKEDOWNS_BACKFILL) && await hasColumn(queryRunner, 'takedowns', 'url')) {
       await queryRunner.query(`
       UPDATE "takedowns" t SET "infringing_url" = NULL
       FROM "${TAKEDOWNS_BACKFILL}" b

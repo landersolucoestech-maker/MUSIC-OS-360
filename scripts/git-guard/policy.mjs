@@ -352,7 +352,14 @@ export function shellCommands(command) {
   return tokenize(command).commands.filter((words) => words.length && words[0] !== SUBSHELL_OPEN && words[0] !== SUBSHELL_CLOSE).map((words) => [...words]);
 }
 
-const HOOK_BYPASS_ENV = /^GIT_CONFIG_(COUNT|KEY_\d+|VALUE_\d+|PARAMETERS)=/;
+const HOOK_BYPASS_ENV = /^(GIT_CONFIG(_(COUNT|KEY_\d+|VALUE_\d+|PARAMETERS|GLOBAL|SYSTEM|NOSYSTEM))?|GIT_EXEC_PATH)=/;
+// HOME / XDG_CONFIG_HOME relocate the global git config (hooksPath=/dev/null); only suspicious next to git/gh.
+const CONFIG_HOME_ENV = /^(HOME|XDG_CONFIG_HOME)=/;
+// Environment variables and `-c` keys whose value is a command git runs (checked as shell text).
+const COMMAND_ENV = /^(GIT_(PAGER|EDITOR|SEQUENCE_EDITOR|SSH|SSH_COMMAND|EXTERNAL_DIFF|ASKPASS|PROXY_COMMAND)|SSH_ASKPASS|PAGER|EDITOR|VISUAL)=/;
+const COMMAND_CONFIG_KEY = /^(core\.(pager|editor|sshcommand|fsmonitor|askpass|gitproxy)|sequence\.editor|credential\..*helper|diff\..*(external|textconv)|filter\..*|gpg\..*program|sendemail\.smtpserver|uploadpack\..*|receive\..*|merge\..*\.driver|mergetool\..*cmd|difftool\..*cmd)$/i;
+const COMMAND_OPTION = /^--(upload-pack|receive-pack|exec|extcmd|open-files-in-pager|exec-path)(=|$)/;
+const POSITIONAL_FORWARD = /\$(\{?[@*0-9]|\{[@*0-9])/;
 const GIT_GLOBAL_OPTIONS_WITH_VALUE = new Set(['-C', '-c', '--git-dir', '--work-tree', '--namespace', '--exec-path', '--config-env', '--super-prefix', '--attr-source', '--list-cmds']);
 const GIT_PLUMBING_PROGRAM = /^git-(send-pack|receive-pack|http-push|remote-[a-z0-9]+)$/;
 const PLUMBING_PUSH = /^(send-pack|receive-pack|http-push|remote-[a-z0-9]+)$/;
@@ -418,17 +425,23 @@ function parseGitAt(words, index) {
   const program = basename(words[index]);
   if (program !== 'git') return { env, viaXargs, globals: [], sub: program.slice('git-'.length), args: words.slice(index + 1) };
   const globals = [];
+  let dynamicWord = false; // subcommand or global option word that is itself an expansion
   let i = index + 1;
   while (i < words.length && words[i].startsWith('-')) {
     const option = words[i];
+    if (/[$`]/.test(option) || option === '') dynamicWord = true;
     globals.push(option);
     if (GIT_GLOBAL_OPTIONS_WITH_VALUE.has(option)) {
       globals.push(words[i + 1] ?? '');
+      // `-c $x` / `-c $x=y` hides the config key; values of -C/--git-dir etc. may be expansions.
+      if (option === '-c' && /[$`]/.test((words[i + 1] ?? '').split('=')[0])) dynamicWord = true;
       i += 1;
     }
     i += 1;
   }
-  return { env, viaXargs, globals, sub: words[i] ?? '', args: words.slice(i + 1) };
+  const sub = words[i] ?? '';
+  if (/[$`]/.test(sub) || words[i] === '') dynamicWord = true; // a backtick substitution is tokenized to an empty word
+  return { env, viaXargs, globals, sub, args: words.slice(i + 1), dynamicWord };
 }
 
 /** Git accepts any unambiguous prefix of a long option (`--no-veri` = `--no-verify`). */
@@ -503,6 +516,31 @@ function checkGitInvocation(invocation, context) {
   const violations = [];
   const refuse = (message) => violations.push(`${message} Policy: work only on "${ALLOWED_BRANCH}", push only to ${ALLOWED_REMOTE}/${ALLOWED_BRANCH} (docs/engineering/git-safety.md).`);
 
+  if (invocation.dynamicWord) refuse('A git subcommand or global option that comes from an expansion cannot be checked; write it literally.');
+  if (env.some((word) => CONFIG_HOME_ENV.test(word))) refuse('HOME/XDG_CONFIG_HOME can redirect the git config that holds the branch guard.');
+  if (globals.some((word) => /^--exec-path=/.test(word))) refuse('--exec-path replaces the git helper programs.');
+  // Command-executing settings: the command text is checked like any other shell command.
+  env.filter((word) => COMMAND_ENV.test(word)).forEach((word) => checkNested(word.slice(word.indexOf('=') + 1)));
+  globals.forEach((word) => {
+    const eq = word.indexOf('=');
+    if (eq !== -1 && COMMAND_CONFIG_KEY.test(word.slice(0, eq))) checkNested(word.slice(eq + 1).replace(/^!/, ''));
+  });
+  {
+    const raw = invocation.args;
+    raw.forEach((arg, i) => {
+      if (sub === 'filter-branch' && !arg.startsWith('-')) checkNested(arg);
+      if (sub === 'filter-branch' && /^--[a-z-]+=/.test(arg)) checkNested(arg.slice(arg.indexOf('=') + 1));
+      if (['fetch', 'pull', 'ls-remote', 'clone', 'archive', 'push', 'grep'].includes(sub)) {
+        const m = COMMAND_OPTION.exec(arg);
+        if (m) {
+          if (m[1] === 'exec-path') refuse('--exec-path replaces the git helper programs.');
+          else checkNested(arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : raw[i + 1] ?? '');
+        } else if (sub !== 'archive' && /^-u./s.test(arg) && ['fetch', 'ls-remote', 'clone'].includes(sub)) checkNested(arg.slice(2));
+        else if (sub === 'grep' && /^-O./s.test(arg)) checkNested(arg.slice(2));
+        else if (sub === 'grep' && arg === '-O') checkNested(raw[i + 1] ?? '');
+      }
+    });
+  }
   if (viaXargs && REF_WRITING_SUBCOMMANDS.has(sub)) refuse(`git ${sub} through xargs takes arguments that cannot be checked.`);
 
   // Anything that could switch the git hooks off, rewrite history invisibly or push around pre-push.
@@ -967,6 +1005,9 @@ export function checkShellCommand(command, currentBranch = null, options = {}, d
       continue;
     }
     if (words.some((word) => HOOK_BYPASS_ENV.test(word))) refuse('GIT_CONFIG_* overrides can disable the branch guard.');
+    if (MENTIONS_GIT.test(command) && words.some((word) => CONFIG_HOME_ENV.test(word))) refuse('HOME/XDG_CONFIG_HOME can redirect the git config that holds the branch guard.');
+    words.filter((word) => COMMAND_ENV.test(word)).forEach((word) => checkNested(word.slice(word.indexOf('=') + 1), dir));
+    if (lead === 'alias' && words.slice(1).some((word) => MENTIONS_GIT.test(word.slice(word.indexOf('=') + 1)))) refuse('An alias whose body runs git/gh hides the command from the checks; run git/gh directly.');
     const gitDirAssignment = words.find((word) => /^GIT_(DIR|COMMON_DIR|WORK_TREE)=/.test(word));
     if (gitDirAssignment && (['export', 'declare', 'typeset'].includes(lead) || words.every((word) => ENV_ASSIGNMENT.test(word)))) {
       exportedGitDir = /[$~`]/.test(gitDirAssignment) ? undefined : gitDirAssignment.slice(gitDirAssignment.indexOf('=') + 1);
@@ -1007,7 +1048,9 @@ export function checkShellCommand(command, currentBranch = null, options = {}, d
         }
         if (flag !== -1) {
           if (DYNAMIC_COMMAND_TEXT.test(rest[commandAt] ?? '') && MENTIONS_GIT.test(command)) refuse(`${name} -c with an expansion as its command cannot be checked; run the git/gh commands directly.`);
-          checkNested(rest[commandAt] ?? '', dir);
+          const text = rest[commandAt] ?? '';
+          if (POSITIONAL_FORWARD.test(text) && MENTIONS_GIT.test(text) && rest.length > commandAt + 1) refuse(`${name} -c forwarding positional parameters to git/gh cannot be checked; run the git/gh commands directly.`);
+          checkNested(text, dir);
         }
         else if (!words.readsHeredoc && !rest.some((arg) => !arg.startsWith('-')) && MENTIONS_GIT.test(command)) {
           refuse(`${name} reading commands from its input cannot be checked; run the git/gh commands directly.`);

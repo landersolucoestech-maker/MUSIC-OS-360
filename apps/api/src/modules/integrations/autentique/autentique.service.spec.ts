@@ -271,3 +271,22 @@ describe('AutentiqueService webhook tenant context', () => {
     expect(webhookSvc.ingest).toHaveBeenCalledWith(expect.objectContaining({ externalId: 'doc-z:document.signed' }));
   });
 });
+
+describe('AutentiqueService.sendForSignature: persisted failure is redacted (SEC3 F-A2-1)', () => {
+  it('activity_logs metadata.error holds no e-mail/secret and at most 500 chars', async () => {
+    const create = jest.fn(async () => ({}));
+    const ds = { getRepository: jest.fn(() => ({})) };
+    const service = new AutentiqueService(
+      ds as never, {} as never, {} as never, undefined as never, { create } as never, undefined as never,
+    );
+    (service as unknown as { getToken: jest.Mock }).getToken = jest.fn().mockResolvedValue('tok');
+    (service as unknown as { timedFetch: jest.Mock }).timedFetch = jest.fn().mockRejectedValue(new Error(`fetch failed for owner@label.com Bearer abcdefgh12345678 ${'y'.repeat(2000)}`));
+    await expect(service.sendForSignature({
+      tenantId: 't1', contractId: 'c1', name: 'N', fileBase64: 'Zg==', signers: [{ name: 'A', email: 'a@b.co' }],
+    })).rejects.toThrow();
+    const meta = (create.mock.calls[0] as unknown as [string, string, { metadata: { error: string } }])[2].metadata;
+    expect(meta.error).not.toContain('owner@label.com');
+    expect(meta.error).not.toContain('abcdefgh12345678');
+    expect(meta.error.length).toBeLessThanOrEqual(500);
+  });
+});

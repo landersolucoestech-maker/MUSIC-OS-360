@@ -3,11 +3,12 @@ import { ALL_MIGRATIONS } from './migrations';
 
 type Call = { sql: string; params?: unknown[] };
 
-function runner(counts: { invoices?: number; takedowns?: number; bypass?: boolean; urlColumn?: boolean } = {}) {
+function runner(counts: { invoices?: number; takedowns?: number; bypass?: boolean; urlColumn?: boolean; tablesGone?: boolean } = {}) {
   const calls: Call[] = [];
   const query = jest.fn(async (sql: string, params?: unknown[]) => {
     calls.push({ sql, params });
     if (sql.includes('rolbypassrls')) return [{ bypass: counts.bypass ?? true }];
+    if (sql.includes('to_regclass')) return [{ t: counts.tablesGone ? null : 'tracking' }];
     if (sql.includes('information_schema.columns')) return (counts.urlColumn ?? true) ? [{ ok: 1 }] : [];
     if (sql.includes('WITH moved AS') && sql.includes('"invoices"')) return [{ n: counts.invoices ?? 3 }];
     if (sql.includes('WITH moved AS') && sql.includes('"takedowns"')) return [{ n: counts.takedowns ?? 2 }];
@@ -103,5 +104,14 @@ describe('BackfillCanonicalFromLegacyMirrors20260930000022 (LC1 expand, no drop)
     expect(all).not.toContain('UPDATE "takedowns"');
     expect(all).not.toContain('"url"');
     expect(all).toContain('UPDATE "invoices"');
+  });
+
+  it('SEC3 F-MG3: a second down() (tracking tables already gone) does not run any UPDATE and does not fail', async () => {
+    const { query, calls } = runner({ tablesGone: true });
+    await expect(migration.down({ query } as never)).resolves.toBeUndefined();
+    const all = calls.map((c) => c.sql).join('\n');
+    expect(all).toContain('to_regclass');
+    expect(all).not.toMatch(/UPDATE "(invoices|takedowns)"/);
+    expect(all).toContain('DROP TABLE IF EXISTS');
   });
 });
