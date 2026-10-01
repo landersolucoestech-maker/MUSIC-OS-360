@@ -2,9 +2,10 @@ import {
   IsString, IsOptional, MaxLength, IsObject, IsArray, IsEnum, IsNumber, Matches, IsUUID, ValidateIf,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { ArtistStatus } from '@music-os-360/types';
 import { APPLE_MUSIC_URL_PATTERN } from '../platform-profiles/apple-music-url.util';
-import { ARTIST_GENDERS, ARTIST_PROFILE_TYPES, ARTIST_SPECIALTIES } from '../artist-legacy-fields';
+import { ARTIST_GENDERS, ARTIST_PROFILE_TYPES, ARTIST_SPECIALTIES, canonicalArtistNestedColumn } from '../artist-legacy-fields';
 import { HasHttpUrlItems, IsHttpUrl } from '../artist-url.validation';
 
 // The same patterns used by the manual-sync extractors
@@ -17,6 +18,9 @@ const DEEZER_URL_PATTERN = /^https?:\/\/(?:www\.)?deezer\.com\/(?:[a-z]{2}\/)?ar
 const SOUNDCLOUD_URL_PATTERN = /^https?:\/\/(?:www\.|m\.)?soundcloud\.com\/[A-Za-z0-9_-]+\/?(?:[?#].*)?$/i;
 const INSTAGRAM_URL_PATTERN = /^https?:\/\/(?:www\.)?instagram\.com\/[A-Za-z0-9._]{1,30}\/?(?:[?#].*)?$/i;
 const TIKTOK_URL_PATTERN = /^https?:\/\/(?:www\.)?tiktok\.com\/@[A-Za-z0-9._]{1,24}\/?(?:[?#].*)?$/i;
+
+/** Legacy distributor id `outros` -> `other` before validation (the DTO is also the PATCH base). */
+const canonicalDistributors = (column: string) => ({ value }: { value: unknown }) => canonicalArtistNestedColumn(column, value);
 
 const DEPRECATED = (canonical: string) => ({ deprecated: true, description: `Deprecated (CZ-042): use "${canonical}".` });
 
@@ -91,14 +95,14 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) record_label_contact_phone?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(150) record_label_contact_email?: string;
   // Items: { type, name, phone, email, office?, crc?, responsibles?: [{ name, phone, email }], distributors?: [{ customName?, ... }] }
-  @ApiPropertyOptional() @IsOptional() @IsArray() relationships?: unknown[];
+  @ApiPropertyOptional() @Transform(canonicalDistributors('relationships')) @IsOptional() @IsArray() relationships?: unknown[];
 
   // ── Distributors ─────────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsObject() selected_distributors?: Record<string, boolean>;
   @ApiPropertyOptional() @IsOptional() @IsObject() distributor_emails?: Record<string, string>;
   @ApiPropertyOptional() @IsOptional() @IsObject() company_selected_distributors?: Record<string, boolean>;
   @ApiPropertyOptional() @IsOptional() @IsObject() company_distributor_emails?: Record<string, string>;
-  @ApiPropertyOptional() @IsOptional() @IsArray() general_distributors?: unknown[];
+  @ApiPropertyOptional() @Transform(canonicalDistributors('general_distributors')) @IsOptional() @IsArray() general_distributors?: unknown[];
 
   // ── Documents / media ────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsArray() @IsHttpUrl({ each: true }) gallery_urls?: string[];
@@ -114,9 +118,9 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) booking_agency?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) partner_label?: string;
   // Links to CRM contacts (references only: { contactId, distributors? })
-  @ApiPropertyOptional() @IsOptional() @IsArray() linked_contacts?: unknown[];
+  @ApiPropertyOptional() @Transform(canonicalDistributors('linked_contacts')) @IsOptional() @IsArray() linked_contacts?: unknown[];
   // @deprecated Embedded contacts (legacy / public self-signup): { name, category, phone, email, distributors }.
-  @ApiPropertyOptional() @IsOptional() @IsArray() team_contacts?: unknown[];
+  @ApiPropertyOptional() @Transform(canonicalDistributors('team_contacts')) @IsOptional() @IsArray() team_contacts?: unknown[];
 
   // ── Internal ─────────────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() internal_notes?: string;

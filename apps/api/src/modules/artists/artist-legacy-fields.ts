@@ -149,9 +149,33 @@ function canonicalNestedKeys(value: unknown): unknown {
   return renamed;
 }
 
-/** Canonical jsonb value of a nested-item column (keys) — relationships also get canonical `type` values. */
+/** Legacy distributor id -> canonical id (exact match; `outros` = "other"). Persisted in artists jsonb. */
+export const LEGACY_DISTRIBUTOR_IDS: Readonly<Record<string, string>> = { outros: 'other' };
+
+export const canonicalDistributorId = (value: unknown): unknown =>
+  typeof value === 'string' && Object.prototype.hasOwnProperty.call(LEGACY_DISTRIBUTOR_IDS, value) ? LEGACY_DISTRIBUTOR_IDS[value] : value;
+
+const canonicalDistributorEntries = (value: unknown): unknown =>
+  Array.isArray(value)
+    ? value.map((entry) => (isPlainObject(entry) && entry.id !== undefined ? { ...entry, id: canonicalDistributorId(entry.id) } : entry))
+    : value;
+
+/**
+ * Distributor ids live in general_distributors[].id and in the `distributors`
+ * list of relationships / linked_contacts / team_contacts items.
+ */
+function canonicalDistributorIds(column: string, value: unknown): unknown {
+  if (!Array.isArray(value)) return value;
+  if (column === 'general_distributors') return canonicalDistributorEntries(value);
+  if (column !== 'relationships' && column !== 'linked_contacts' && column !== 'team_contacts') return value;
+  return value.map((item) =>
+    isPlainObject(item) && item.distributors !== undefined ? { ...item, distributors: canonicalDistributorEntries(item.distributors) } : item,
+  );
+}
+
+/** Canonical jsonb value of a nested-item column (keys, distributor ids) — relationships also get canonical `type` values. */
 export function canonicalArtistNestedColumn(column: string, value: unknown): unknown {
-  const out = canonicalNestedKeys(value);
+  const out = canonicalDistributorIds(column, canonicalNestedKeys(value));
   if (column !== 'relationships' || !Array.isArray(out)) return out;
   return out.map((item) =>
     isPlainObject(item) && item.type !== undefined

@@ -23,6 +23,7 @@ import { contactFormToContactInput } from "@/modules/crm-relationships/services/
 import { ContactFormModal, type ContactFormValues } from "@/modules/crm-relationships/modals/ContactFormModal";
 import { contactTypeOptions, labelFor } from "@/modules/crm-relationships/constants";
 import type { Contact } from "@/modules/crm-relationships/types";
+import { isOtherDistributorId } from "@/modules/artist/lib/distributor-id";
 import type { DistributorEntry } from "@/modules/artist/types/artist.types";
 
 // ─── Types ────────────────────────────────────────────────────────
@@ -48,7 +49,7 @@ const DISTRIBUTORS_OPTIONS = [
   { id: "symphonic", label: "Symphonic" },
   { id: "musicpro", label: "MusicPro" },
   { id: "somvibe", label: "Somvibe" },
-  { id: "outros", label: "Outros" },
+  { id: "other", label: "Outros" },
 ];
 
 // CRM categories (Contact.category) that keep the distributors section:
@@ -114,7 +115,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
     const link = value.find((v) => v.contactId === contactId);
     if (!link) return;
     const next = checked
-      ? [...link.distributors, { id: distId, email: "", customName: distId === "outros" ? "" : undefined }]
+      ? [...link.distributors, { id: distId, email: "", customName: isOtherDistributorId(distId) ? "" : undefined }]
       : link.distributors.filter((d) => d.id !== distId);
     updateDistributors(contactId, next);
   }
@@ -283,7 +284,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                               </Label>
                             </div>
 
-                            {isChecked && dist.id === "outros" && (
+                            {isChecked && isOtherDistributorId(dist.id) && (
                               <div className="ml-6 space-y-1.5">
                                 <Input
                                   value={entry?.customName ?? ""}
@@ -309,7 +310,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                               </div>
                             )}
 
-                            {isChecked && dist.id !== "outros" && (
+                            {isChecked && !isOtherDistributorId(dist.id) && (
                               <div className="ml-6">
                                 <Input
                                   value={entry?.email ?? ""}

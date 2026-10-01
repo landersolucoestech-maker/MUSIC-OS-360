@@ -43,6 +43,7 @@ describe('data migrations call the RLS-bypass guard before any other SQL', () =>
     ['./migrations/20260930000022_BackfillCanonicalFromLegacyMirrors', 'BackfillCanonicalFromLegacyMirrors20260930000022'],
     ['./migrations/20260930000018_BackfillTransactionTaxonomyToEnglish', 'BackfillTransactionTaxonomyToEnglish20260930000018'],
     ['./migrations/20260930000026_BackfillMarketingVocabularyToEnglish', 'BackfillMarketingVocabularyToEnglish20260930000026'],
+    ['./migrations/20260930000027_BackfillArtistDistributorIdOtherToEnglish', 'BackfillArtistDistributorIdOtherToEnglish20260930000027'],
   ] as const;
 
   it.each(migrations)('%s up() and down() stop at the guard without a bypassing role', async (path, className) => {

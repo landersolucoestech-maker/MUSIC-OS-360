@@ -28,6 +28,7 @@ import type {
   DistributorEntry,
 } from "@/modules/artist/types/artist.types";
 import type { ArtistRelationshipType } from "@music-os-360/types";
+import { canonicalDistributorId } from "@/modules/artist/lib/distributor-id";
 
 // ─── Internal utilities ──────────────────────────────────────────
 
@@ -520,10 +521,10 @@ const SCALAR_FIELDS = [
 ] as const satisfies ReadonlyArray<readonly [keyof Artist, keyof ArtistWireRecord]>;
 
 function distributorFromWire(d: WireDistributorEntry): DistributorEntry {
-  return { id: d.id, email: d.email, ...(d.customName !== undefined ? { customName: d.customName } : {}) };
+  return { id: canonicalDistributorId(d.id), email: d.email, ...(d.customName !== undefined ? { customName: d.customName } : {}) };
 }
 function distributorToWire(d: DistributorEntry): WireDistributorEntry {
-  return { id: d.id, email: d.email, ...(d.customName !== undefined ? { customName: d.customName } : {}) };
+  return { id: canonicalDistributorId(d.id), email: d.email, ...(d.customName !== undefined ? { customName: d.customName } : {}) };
 }
 
 function responsibleFromWire(r: WireResponsiblePerson): ArtistResponsible {
@@ -751,7 +752,7 @@ function buildLegacyDistributors(
   if (!selected) return [];
   return Object.entries(selected)
     .filter(([, isSelected]) => isSelected)
-    .map(([id]) => ({ id, email: emails?.[id] ?? "" }));
+    .map(([id]) => ({ id: canonicalDistributorId(id), email: emails?.[id] ?? "" }));
 }
 
 /**

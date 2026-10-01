@@ -45,6 +45,7 @@ import { useClients } from "@/modules/crm-relationships/hooks/useContacts";
 import { TeamContactsCRM } from "@/modules/artist/components/TeamContactsCRM";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";
+import { isOtherDistributorId } from "@/modules/artist/lib/distributor-id";
 import type { DistributorEntry } from "@/modules/artist/types/artist.types";
 import type { UrlValidationState } from "@/modules/artist/mappers";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
@@ -68,7 +69,7 @@ function DistributorsField({
 }) {
   const toggle = (distId: string, checked: boolean) => {
     if (checked) {
-      onChange([...value, { id: distId, email: "", customName: distId === "outros" ? "" : undefined }]);
+      onChange([...value, { id: distId, email: "", customName: isOtherDistributorId(distId) ? "" : undefined }]);
     } else {
       onChange(value.filter((d) => d.id !== distId));
     }
@@ -76,7 +77,7 @@ function DistributorsField({
   const updateEmail = (distId: string, email: string) =>
     onChange(value.map((d) => (d.id === distId ? { ...d, email } : d)));
   const updateCustomName = (customName: string) =>
-    onChange(value.map((d) => (d.id === "outros" ? { ...d, customName } : d)));
+    onChange(value.map((d) => (isOtherDistributorId(d.id) ? { ...d, customName } : d)));
 
   return (
     <>
@@ -98,7 +99,7 @@ function DistributorsField({
                 </Label>
               </div>
 
-              {isChecked && dist.id === "outros" && (
+              {isChecked && isOtherDistributorId(dist.id) && (
                 <div className="ml-6 space-y-1.5">
                   <Input
                     value={entry?.customName ?? ""}
@@ -120,7 +121,7 @@ function DistributorsField({
                 </div>
               )}
 
-              {isChecked && dist.id !== "outros" && (
+              {isChecked && !isOtherDistributorId(dist.id) && (
                 <div className="ml-6">
                   <Input
                     value={entry?.email ?? ""}
@@ -137,7 +138,7 @@ function DistributorsField({
         })}
       </div>
 
-      {value.some((d) => d.id === "outros" && !(d.customName ?? "").trim()) && (
+      {value.some((d) => isOtherDistributorId(d.id) && !(d.customName ?? "").trim()) && (
         <p className="text-xs text-muted-foreground ml-6">
           Preencha o nome da distribuidora para ativar o e-mail de share.
         </p>

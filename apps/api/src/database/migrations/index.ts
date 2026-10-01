@@ -339,6 +339,7 @@ import { BackfillExternalRightsReceiptsToCanonical20260930000017 } from './20260
 import { BackfillCanonicalFromLegacyMirrors20260930000022 } from './20260930000022_BackfillCanonicalFromLegacyMirrors';
 import { BackfillTransactionTaxonomyToEnglish20260930000018 } from './20260930000018_BackfillTransactionTaxonomyToEnglish';
 import { BackfillMarketingVocabularyToEnglish20260930000026 } from './20260930000026_BackfillMarketingVocabularyToEnglish';
+import { BackfillArtistDistributorIdOtherToEnglish20260930000027 } from './20260930000027_BackfillArtistDistributorIdOtherToEnglish';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -661,4 +662,5 @@ export const ALL_MIGRATIONS = [
   BackfillCanonicalFromLegacyMirrors20260930000022,
   BackfillTransactionTaxonomyToEnglish20260930000018,
   BackfillMarketingVocabularyToEnglish20260930000026,
+  BackfillArtistDistributorIdOtherToEnglish20260930000027,
 ] as const;

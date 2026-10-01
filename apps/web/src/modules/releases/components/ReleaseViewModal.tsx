@@ -16,6 +16,7 @@ import {
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import type { FonogramaWithRelations } from "@/modules/catalog/hooks/usePhonograms";
+import { participantNames } from "@/modules/catalog/lib/phonogram-participants";
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { StatusBadge } from "@/shared/components/StatusBadge";
@@ -94,7 +95,7 @@ function creditName(value: unknown): string {
   return String(value ?? "").trim();
 }
 
-/** `legacyKey`: the Portuguese spelling still carried by catalog (phonogram) rows. */
+/** `legacyKey`: the Portuguese spelling of release.metadata tracks not yet backfilled. */
 function aggregateField(tracks: any[], key: string, legacyKey?: string): string {
   const values = tracks
     .flatMap((f) => {
@@ -188,12 +189,17 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   const formattedReleaseDate = formatReleaseDate(release.release_date);
   const languageLabel = releaseLanguageLabel(release.language);
 
+  // Catalog tracks are phonograms: credits come from the structured `participation`.
   const catalogTracks = phonogramIds
     .map((id) => resolvedPhonograms[id])
-    .filter(Boolean);
+    .filter(Boolean)
+    .map((phonogram) => ({
+      performers: participantNames(phonogram, "performers"),
+      producers: participantNames(phonogram, "phonographic_producers"),
+    }));
   const tracks = trackMetadata.length > 0 ? trackMetadata : catalogTracks;
   const composers = aggregateField(tracks, "composers", "compositores");
-  const performers = aggregateField(tracks, "interpretes");
+  const performers = aggregateField(tracks, "performers");
   const producers = aggregateField(tracks, "producers", "produtores");
   const hasAssets = Object.values(assets).some(Boolean) || Boolean(coverUrl);
   const hasSchedule = Object.values(schedule).some(Boolean);

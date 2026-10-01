@@ -1,9 +1,9 @@
 {
  "totals": {
   "doc": 8727,
-  "identifier": 32,
+  "identifier": 29,
   "objectKey": 171,
-  "value": 704
+  "value": 691
  },
  "debt": {
   "doc::docs/BLUEPRINT_ENTERPRISE.md": 237,
@@ -128,9 +128,6 @@
   "identifier::apps/web/src/modules/catalog/components/PhonogramFormModal.tsx::property::nome": 1,
   "identifier::apps/web/src/modules/catalog/components/PhonogramFormModal.tsx::property::produtores": 1,
   "identifier::apps/web/src/modules/catalog/components/WorkFormModal.tsx::property::nome": 1,
-  "identifier::apps/web/src/modules/catalog/types/catalog.types.ts::property::compositores": 1,
-  "identifier::apps/web/src/modules/catalog/types/catalog.types.ts::property::interpretes": 1,
-  "identifier::apps/web/src/modules/catalog/types/catalog.types.ts::property::produtores": 1,
   "identifier::apps/web/src/modules/integrations/hooks/useAbramus.ts::property::artista_nome": 1,
   "identifier::apps/web/src/modules/integrations/hooks/useAbramus.ts::property::compositores": 1,
   "identifier::apps/web/src/modules/integrations/hooks/useAbramus.ts::property::data_registro": 1,
@@ -539,7 +536,6 @@
   "value::apps/web/src/modules/artist/components/ArtistFormModal.sections-removed.guard.test.ts::string::select-status-artista": 1,
   "value::apps/web/src/modules/artist/components/ArtistFormModal.sections-removed.guard.test.ts::string::select-type-artista": 1,
   "value::apps/web/src/modules/artist/components/ArtistFormModal.tsx::string::foto": 1,
-  "value::apps/web/src/modules/artist/components/ArtistFormModal.tsx::string::outros": 5,
   "value::apps/web/src/modules/artist/components/ArtistVision360Modal.tsx::string::distribuicao": 1,
   "value::apps/web/src/modules/artist/components/ArtistVision360Modal.tsx::string::exclusivo": 1,
   "value::apps/web/src/modules/artist/components/ArtistVision360Modal.tsx::string::gestao": 1,
@@ -552,7 +548,6 @@
   "value::apps/web/src/modules/artist/components/ArtistVision360Modal.tsx::string::servicos": 1,
   "value::apps/web/src/modules/artist/components/PositioningCard.tsx::string::insuficiente": 1,
   "value::apps/web/src/modules/artist/components/PositioningCard.tsx::string::moderada": 1,
-  "value::apps/web/src/modules/artist/components/TeamContactsCRM.tsx::string::outros": 4,
   "value::apps/web/src/modules/artist/forms/artist-form.definition.ts::string::data_nascimento": 1,
   "value::apps/web/src/modules/artist/forms/artist-form.definition.ts::string::documentos_pessoais_url": 1,
   "value::apps/web/src/modules/artist/forms/artist-form.definition.ts::string::genero_musical": 1,
@@ -560,13 +555,9 @@
   "value::apps/web/src/modules/artist/forms/artist-form.definition.ts::string::nome_civil": 1,
   "value::apps/web/src/modules/artist/forms/artist-form.definition.ts::string::notas_internas": 1,
   "value::apps/web/src/modules/artist/forms/artist-form.definition.ts::string::observacoes": 1,
-  "value::apps/web/src/modules/artist/forms/artist-form.definition.ts::string::outros": 1,
   "value::apps/web/src/modules/artist/forms/artist-form.definition.ts::string::tipo_perfil": 1,
   "value::apps/web/src/modules/auth/pages/Register.tsx::string::acceptLgpd": 1,
-  "value::apps/web/src/modules/catalog/pages/MusicRegistration.tsx::string::compositores": 1,
   "value::apps/web/src/modules/catalog/pages/MusicRegistration.tsx::string::genero_musical": 2,
-  "value::apps/web/src/modules/catalog/pages/MusicRegistration.tsx::string::interpretes": 1,
-  "value::apps/web/src/modules/catalog/pages/MusicRegistration.tsx::string::produtores": 1,
   "value::apps/web/src/modules/catalog/services/music-registration.mapper.ts::string::sim": 1,
   "value::apps/web/src/modules/contracts/components/ContractFormModal.tsx::string::artista": 1,
   "value::apps/web/src/modules/contracts/components/ContractFormModal.tsx::string::distribuicao": 1,

@@ -5,7 +5,7 @@ import { DISTRIBUTOR_OPTIONS } from "@/modules/artist/forms/artist-form.definiti
 describe("distributorLabel", () => {
   it("labels every id the artist form writes", () => {
     for (const option of DISTRIBUTOR_OPTIONS) {
-      if (option.id === "outros") continue;
+      if (option.id === "other") continue;
       expect(distributorLabel(option.id)).toBe(option.label);
     }
   });
@@ -15,9 +15,11 @@ describe("distributorLabel", () => {
     expect(distributorLabel("tunecore")).toBe("TuneCore");
   });
 
-  it("uses the custom name for 'outros'", () => {
-    expect(distributorLabel("outros", " Minha Distro ")).toBe("Minha Distro");
-    expect(distributorLabel("outros", "")).toBe("Outros");
+  it("uses the custom name for 'other' and for the legacy 'outros'", () => {
+    for (const id of ["other", "outros"]) {
+      expect(distributorLabel(id, " Minha Distro ")).toBe("Minha Distro");
+      expect(distributorLabel(id, "")).toBe("Outros");
+    }
   });
 
   it("never shows a raw unknown id", () => {

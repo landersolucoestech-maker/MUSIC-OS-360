@@ -29,6 +29,7 @@ import {
   type WorkEcadFilter,
   type WorkOrigin,
 } from "@/modules/catalog/constants/work-options";
+import { PHONOGRAM_LIST_PARTICIPANT_COLUMNS, participantNames, phonogramListSortValue } from "@/modules/catalog/lib/phonogram-participants";
 import type { PhonogramEcadFilter, PhonogramHasWorkFilter } from "@/modules/catalog/constants/phonogram-options";
 import { PhonogramFormModal } from "@/modules/catalog/components/PhonogramFormModal";
 import { PhonogramViewModal } from "@/modules/catalog/components/PhonogramViewModal";
@@ -82,7 +83,7 @@ const getSortText = (value: unknown): string => {
 const getPhonogramSortValue = (phonogram: Phonogram, key: string): unknown => {
   if (key === "genero_musical") return getPhonogramGenreDisplay(phonogram);
   if (key === "title") return phonogram.title ?? "";
-  return getSortText((phonogram as Record<string, unknown>)[key]);
+  return phonogramListSortValue(phonogram, key);
 };
 
 const getWorkSortValue = (work: Work, key: string): unknown => {
@@ -562,9 +563,9 @@ export default function MusicRegistry() {
                         <SortableTableHead sortKey="society_code" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Cód. Sociedade</SortableTableHead>
                         <SortableTableHead sortKey="ecad_code" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Cód. ECAD</SortableTableHead>
                         <SortableTableHead sortKey="isrc" sortState={phonogramSort} onSort={togglePhonogramSort}>ISRC</SortableTableHead>
-                        <SortableTableHead sortKey="compositores" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[130px]">Compositores</SortableTableHead>
-                        <SortableTableHead sortKey="interpretes" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Intérpretes</SortableTableHead>
-                        <SortableTableHead sortKey="produtores" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Produtor</SortableTableHead>
+                        {PHONOGRAM_LIST_PARTICIPANT_COLUMNS.map((column) => (
+                          <SortableTableHead key={column.key} sortKey={column.key} sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">{column.label}</SortableTableHead>
+                        ))}
                         <SortableTableHead sortKey="genero_musical" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Gênero</SortableTableHead>
                         <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
@@ -603,9 +604,12 @@ export default function MusicRegistry() {
                           <TableCell className="py-3 text-sm">{phonogram.society_code || "-"}</TableCell>
                           <TableCell className="py-3 text-sm">{phonogram.ecad_code || "-"}</TableCell>
                           <TableCell className="py-3 text-sm">{phonogram.isrc || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[140px] truncate" title={phonogram.compositores || undefined}>{phonogram.compositores || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[120px] truncate" title={phonogram.interpretes || undefined}>{phonogram.interpretes || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm max-w-[120px] truncate" title={phonogram.produtores || undefined}>{phonogram.produtores || "-"}</TableCell>
+                          {PHONOGRAM_LIST_PARTICIPANT_COLUMNS.map((column) => {
+                            const names = participantNames(phonogram, column.key);
+                            return (
+                              <TableCell key={column.key} className="py-3 text-sm max-w-[140px] truncate" title={names || undefined} data-testid={`cell-phonogram-${column.key}-${phonogram.id}`}>{names || "-"}</TableCell>
+                            );
+                          })}
                           <TableCell className="py-3 text-sm max-w-[120px] truncate" title={getPhonogramGenreDisplay(phonogram)}>
                             {getPhonogramGenre(phonogram) ? (
                               getPhonogramGenre(phonogram)

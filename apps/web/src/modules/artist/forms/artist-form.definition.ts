@@ -164,7 +164,7 @@ export const DISTRIBUTOR_OPTIONS = [
   { id: "symphonic", label: "Symphonic" },
   { id: "musicpro",  label: "MusicPro" },
   { id: "somvibe",   label: "Somvibe" },
-  { id: "outros",    label: "Outros" },
+  { id: "other",     label: "Outros" },
 ] as const;
 
 const SPECIALTY_OPTIONS = Object.entries(SPECIALTY_LABELS).map(

@@ -50,7 +50,7 @@ const WIRE: ArtistWireRecord = {
       office: "SP",
       crc: "123",
       responsibles: [{ name: "Ana", phone: "(11) 2222-2222", email: "ana@x.com" }],
-      distributors: [{ id: "outros", email: "d@x.com", customName: "Minha Distro" }],
+      distributors: [{ id: "other", email: "d@x.com", customName: "Minha Distro" }],
     },
   ],
   spotify_url: "https://open.spotify.com/artist/4ZzZzZzZzZzZzZzZzZzZzZ",
@@ -104,7 +104,7 @@ const WIRE: ArtistWireRecord = {
   booking_agency: "Booking",
   partner_label: "Parceira",
   documents: [{ name: "contrato.pdf", url: "https://cdn/x/c.pdf" }],
-  general_distributors: [{ id: "outros", email: "g@x.com", customName: "Outra" }],
+  general_distributors: [{ id: "other", email: "g@x.com", customName: "Outra" }],
   linked_contacts: [{ contactId: "ct-1", distributors: [{ id: "onerpm", email: "l@x.com" }] }],
   team_contacts: [
     { name: "Bia", category: "booker", phone: "(11) 4444-4444", email: "bia@x.com", distributors: [] },
@@ -170,10 +170,10 @@ describe("artist wire boundary (CZ-042 canonical contract)", () => {
         office: "SP",
         crc: "123",
         responsibles: [{ name: "Ana", phone: "(11) 2222-2222", email: "ana@x.com" }],
-        distributors: [{ id: "outros", email: "d@x.com", customName: "Minha Distro" }],
+        distributors: [{ id: "other", email: "d@x.com", customName: "Minha Distro" }],
       },
     ]);
-    expect(a.generalDistributors).toEqual([{ id: "outros", email: "g@x.com", customName: "Outra" }]);
+    expect(a.generalDistributors).toEqual([{ id: "other", email: "g@x.com", customName: "Outra" }]);
     expect(a.linkedContacts).toEqual([{ contactId: "ct-1", distributors: [{ id: "onerpm", email: "l@x.com" }] }]);
     expect(a.teamContacts).toEqual([
       { name: "Bia", category: "booker", phone: "(11) 4444-4444", email: "bia@x.com", distributors: [] },

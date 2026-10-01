@@ -128,11 +128,8 @@ export interface Phonogram {
   duration_seconds?: number | null;
   type?: string | null;
   status?: PhonogramStatusValue | string | null;
-  // Dropped columns (20260923000002_DropDeadPhonogramsLegacyParticipantColumns):
-  // the API no longer returns them; still read by the MusicRegistration list.
-  compositores?: string | null;
-  interpretes?: string | null;
-  produtores?: string | null;
+  // compositores/interpretes/produtores were dropped by
+  // 20260923000002_DropDeadPhonogramsLegacyParticipantColumns: read `participation`.
   record_label_name?: string | null;
   /** PhonogramAggregator value. */
   aggregator?: string | null;
