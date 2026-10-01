@@ -4,6 +4,11 @@ import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.tokens';
 import { canonicalPlanFeatures } from '../../common/compat/plan-features';
 
+/** Deprecated alias for one release window: web builds older than migration 20260930000024 still read `moduleRh`. Remove after old web builds are gone. */
+function withLegacyHrFeatureAlias(features: Record<string, unknown>): Record<string, unknown> {
+  return 'moduleHr' in features && !('moduleRh' in features) ? { ...features, moduleRh: features['moduleHr'] } : features;
+}
+
 interface AuthClaims {
   email?: string;
   app_metadata?: Record<string, unknown>;
@@ -77,7 +82,7 @@ export class AuthContextService {
         active: asBoolean(tenant?.['active'], true),
         plan: asString(tenant?.['plan'], 'starter'),
         // dual-read: tenants.features may still carry the legacy `moduleRh` key until migration 20260930000024 ran
-        features: canonicalPlanFeatures(asObject(tenant?.['features'])),
+        features: withLegacyHrFeatureAlias(canonicalPlanFeatures(asObject(tenant?.['features']))),
         settings: asObject(tenant?.['settings']),
       },
       membership: {

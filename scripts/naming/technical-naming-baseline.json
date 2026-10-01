@@ -4,7 +4,7 @@
   "eventQueueJob": 6,
   "identifier": 64,
   "objectKey": 522,
-  "value": 1613
+  "value": 1612
  },
  "debt": {
   "doc::docs/BLUEPRINT_ENTERPRISE.md": 237,
@@ -1035,7 +1035,6 @@
   "value::apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx::string::independente": 4,
   "value::apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx::string::juridico": 1,
   "value::apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx::string::nome": 1,
-  "value::apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx::string::nomeArtistico": 1,
   "value::apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx::string::outros": 12,
   "value::apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx::string::telefone": 1,
   "value::apps/web/src/modules/auth/pages/Register.tsx::string::acceptLgpd": 1,

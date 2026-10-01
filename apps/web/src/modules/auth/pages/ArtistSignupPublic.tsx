@@ -310,7 +310,7 @@ export default function ArtistSignupPublic() {
     const e: Record<string, string> = {};
 
     if (s === 1) {
-      if (!stageName.trim()) e.nomeArtistico = "Obrigatório";
+      if (!stageName.trim()) e.stageName = "Obrigatório";
       if (!musicGenre)        e.generoMusical  = "Obrigatório";
     }
 
@@ -649,11 +649,11 @@ export default function ArtistSignupPublic() {
                 <Input
                   placeholder="Nome usado profissionalmente"
                   value={stageName}
-                  onChange={(e) => { setStageName(e.target.value); clearError("nomeArtistico"); }}
+                  onChange={(e) => { setStageName(e.target.value); clearError("stageName"); }}
                   data-testid="input-stage-name"
-                  className={errors.nameArtistico ? "border-destructive" : ""}
+                  className={errors.stageName ? "border-destructive" : ""}
                 />
-                {errors.nameArtistico && <p className="text-xs text-destructive">{errors.nameArtistico}</p>}
+                {errors.stageName && <p className="text-xs text-destructive">{errors.stageName}</p>}
               </div>
               <div className="space-y-1.5 col-span-2 sm:col-span-1">
                 <Label className="text-sm">Gênero Musical <span className="text-destructive">*</span></Label>

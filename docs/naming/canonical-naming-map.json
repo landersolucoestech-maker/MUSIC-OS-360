@@ -24362,6 +24362,38 @@
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "persisted jsonb vocabulary release PJ1",
       "status": "ACTIVE"
+    },
+    {
+      "item": "deprecated plan feature key alias (moduleRh echo) `moduleRh`",
+      "path": "apps/api/src/modules/auth/auth-context.service.ts",
+      "currentName": "moduleRh",
+      "surface": "objectKey",
+      "layer": "api",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "The auth context echoes the legacy moduleRh feature key (same value as moduleHr) so old web builds keep showing the HR module during the rollout window.",
+      "consumer": "auth context features echo for web builds older than migration 20260930000024",
+      "owner": "auth owner (Phase 0 naming)",
+      "removalCondition": "remove one release after the web build reading moduleHr is deployed everywhere",
+      "targetState": "English canonical values only",
+      "blocker": "old web build retirement",
+      "dependency": "plan feature key rename PJ1",
+      "status": "ACTIVE"
+    },
+    {
+      "item": "deprecated plan feature key alias (moduleRh echo) `moduleRh`",
+      "path": "apps/api/src/modules/auth/auth-context.service.ts",
+      "currentName": "moduleRh",
+      "surface": "value",
+      "layer": "api",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "The auth context echoes the legacy moduleRh feature key (same value as moduleHr) so old web builds keep showing the HR module during the rollout window.",
+      "consumer": "auth context features echo for web builds older than migration 20260930000024",
+      "owner": "auth owner (Phase 0 naming)",
+      "removalCondition": "remove one release after the web build reading moduleHr is deployed everywhere",
+      "targetState": "English canonical values only",
+      "blocker": "old web build retirement",
+      "dependency": "plan feature key rename PJ1",
+      "status": "ACTIVE"
     }
   ],
   "blockers": [

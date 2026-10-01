@@ -8,13 +8,13 @@ describe('AuthContextService — workspace.features canonical keys (dual-read of
   it('returns moduleHr for a tenant row that still stores the legacy moduleRh key', async () => {
     const svc = new AuthContextService(rbac as never, null);
     const ctx = await svc.build(auth, { id: 't1', features: { moduleRh: true, moduleCrm: true, integrations: { a: 1 } } }, {});
-    expect(ctx.workspace.features).toEqual({ moduleHr: true, moduleCrm: true, integrations: { a: 1 } });
+    expect(ctx.workspace.features).toEqual({ moduleHr: true, moduleRh: true, moduleCrm: true, integrations: { a: 1 } });
   });
 
   it('canonical wins when a row carries both', async () => {
     const svc = new AuthContextService(rbac as never, null);
     const ctx = await svc.build(auth, { id: 't1', features: { moduleRh: true, moduleHr: false } }, {});
-    expect(ctx.workspace.features).toEqual({ moduleHr: false });
+    expect(ctx.workspace.features).toEqual({ moduleHr: false, moduleRh: false }); // moduleRh is the deprecated echo of the canonical value
   });
 });
 
