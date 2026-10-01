@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Indexes — Schema `public` (649)
 
 | TABLE | INDEX_NAME | UNIQUE | PRIMARY | METHOD | DEFINITION | PARTIAL_PREDICATE |

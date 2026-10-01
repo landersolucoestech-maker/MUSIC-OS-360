@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 28 — Resolução Final dos 5 Mocks Ainda Não Classificados
 
 Continuação read-only de [`27-runtime-mock-audit.md`](./27-runtime-mock-audit.md) (`UNRESOLVED_MOCKS: 5`). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum doc anterior foi modificado. Nenhum mock foi removido. Os 20 arquivos `MEMORY` (zustand) não foram analisados.

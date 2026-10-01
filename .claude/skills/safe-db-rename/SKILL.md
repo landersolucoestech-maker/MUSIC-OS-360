@@ -55,9 +55,8 @@ broken between steps.
 ## 6. Migration preservation
 
 Never edit or renumber an already-applied migration to reflect the rename — write a new migration
-implementing the expand step, per `.claude/rules/00-execution-protocol.md` ("Migrations históricas
-já aplicadas não devem ser reescritas indiscriminadamente" / already-applied migrations are not
-rewritten). The rename's full history stays visible across migration files.
+implementing the expand step, per the mission rule that already-applied historical migrations must
+not be rewritten indiscriminately. The rename's full history stays visible across migration files.
 
 ## 7. Existing data
 

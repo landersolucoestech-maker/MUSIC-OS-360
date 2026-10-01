@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 16 — Resolução Final das 9 Permissões Incertas
 
 Continuação read-only de [`15-frontend-auth-permission-contracts.md`](./15-frontend-auth-permission-contracts.md). Nenhum arquivo foi alterado. Doc 15 não foi modificado. Todos os 9 casos foram resolvidos inteiramente a partir de `apps/web/**` — `apps/api` não foi necessário.

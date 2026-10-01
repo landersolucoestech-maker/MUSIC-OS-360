@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # MUSIC OS 360 — COMPLETE EXHAUSTIVE PROJECT VERIFICATION (Single Final Consolidation Document)
 
 **DOCUMENT STATUS:** COMPLETED — all 15 Parts (I to XV) and the "Validation" section are present; see §0 (Methodological Note) and the "Validation" section at the end for the per-section coverage/confidence breakdown.

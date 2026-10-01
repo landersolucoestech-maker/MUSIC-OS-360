@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Padrões Semânticos — Tenant, Financeiro, JSON/JSONB, Soft-Delete/Auditoria
 
 ## Colunas relacionadas a tenant/organização (147)

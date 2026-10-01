@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Module: auth (Authentication / Session / Tenant / RBAC)
 
 Phase 2 of Prompt 100. Scope: `apps/web/src/app/providers/AuthContext.tsx` (central hub),

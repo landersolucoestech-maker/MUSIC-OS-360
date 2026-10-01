@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Module: `releases` — Zero-Gap Field Traceability Audit
 
 STATUS: COMPLETE

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 00 — Estado Atual do Repositório
 
 Documento gerado por inspeção read-only. Nenhuma alteração foi feita em `apps/web`, `apps/api`, banco de dados, Supabase, dependências ou migrations durante esta análise.

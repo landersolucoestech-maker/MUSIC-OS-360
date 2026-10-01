@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 37 — Contrato Canônico Final Aprovado do Frontend
 
 Versão final do contrato canônico, incorporando exclusivamente as resoluções do [`35-canonical-contract-incomplete-resolution.md`](./35-canonical-contract-incomplete-resolution.md) e [`36-canonical-contract-conflict-resolution.md`](./36-canonical-contract-conflict-resolution.md) sobre o [`34-canonical-frontend-contract.md`](./34-canonical-frontend-contract.md) (não alterado). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhuma arquitetura foi definida, nenhum endpoint/tabela/migration foi criado. Nenhum contrato além dos 2 já resolvidos (docs 35/36) foi reinterpretado — as seções A.1 a A.19, A.21 e A.22 e a seção B (Realtime) do doc34 são reproduzidas sem nenhuma mudança de conteúdo.

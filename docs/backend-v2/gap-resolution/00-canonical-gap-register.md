@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Registro Canônico de Gaps — Fase 3 / Etapa 1
 
 **Status:** CONCLUÍDO — consolidação, deduplicação e ordenação por dependência.

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 63 — Decisão Final: Versão e Política TypeScript da `apps/api-v2`
 
 Definição read-only da versão exata de TypeScript e da política de compilação/strictness da futura `apps/api-v2`, com verificação em fontes oficiais/primárias atuais. Stack já fechada (Node 24, NestJS 11.1.28, Drizzle, PostgreSQL 17, container long-running — docs 58/59/60/61) não reaberta. Nenhum `tsconfig`/`package.json`/`pnpm-lock.yaml` foi alterado, nenhuma dependência foi instalada. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy) e shared packages não foram alterados.

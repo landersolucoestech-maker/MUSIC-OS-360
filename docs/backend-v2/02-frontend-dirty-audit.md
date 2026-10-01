@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 02 — Auditoria das Alterações Não Commitadas em `apps/web`
 
 Documento gerado por inspeção read-only, escopo restrito a `apps/web/**`. Nenhum arquivo foi editado, nenhum comando de escrita Git foi executado.

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 77 — Resolução da Exposição de `DOCUSIGN_PRIVATE_KEY`
 
 Investigação read-only (nenhum valor secreto foi lido, recuperado ou impresso — histórico ou atual) sobre se a chave privada `DOCUSIGN_PRIVATE_KEY`, encontrada em histórico Git durante a auditoria do Prompt 87 (commit `b4b741bf`, arquivo `attached_assets/Pasted--BLOCO-09-TODAS-AS-IN-...txt`, linhas 106/941), ainda possui qualquer validade ou dependência operacional no MUSIC OS 360. Nenhum banco foi alterado. Nenhuma migration foi executada. Nenhum `.env` foi alterado. Nenhum código foi alterado (frontend, legacy ou apps/api-v2). SMTP não foi tratado. Nenhuma operação foi feita contra a conta DocuSign real.

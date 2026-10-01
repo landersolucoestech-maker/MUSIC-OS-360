@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 08 — Resolução Final dos 4 Requests Incertos (com evidência do backend legacy)
 
 Continuação read-only de [`07-http-request-unknowns-resolution.md`](./07-http-request-unknowns-resolution.md). Escopo de consulta: `apps/web/**` (já coberto no Prompt 10) + `apps/api/**`, restrito exclusivamente aos endpoints/DTOs/schemas/controllers diretamente ligados aos 4 casos abaixo — nenhuma auditoria geral do backend foi feita. Nenhum arquivo foi alterado (nem `apps/web`, nem `apps/api`). Doc 07 não foi modificado.

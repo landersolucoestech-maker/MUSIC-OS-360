@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 38 — Inventário de Domínios do Sistema (a partir do Contrato Canônico Final)
 
 Classificação read-only dos 250 endpoints HTTP e 22 eventos realtime do [`37-canonical-frontend-contract-final.md`](./37-canonical-frontend-contract-final.md) em domínios funcionais, por responsabilidade de negócio. Nenhum arquivo foi alterado. Nenhuma arquitetura, ordem de implementação, schema, tabela ou migration foi definida.

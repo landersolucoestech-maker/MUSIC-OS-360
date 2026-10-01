@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 46 — Estratégia de Migrations do Database v2
 
 Decisão read-only baseada em [`42-api-v2-technical-constraints.md`](./42-api-v2-technical-constraints.md) e [`45-api-v2-database-access-decision.md`](./45-api-v2-database-access-decision.md). `Database access: Drizzle ORM` permanece fixo, não reaberto. Nenhuma migration/schema/tabela foi criada. Nenhuma conexão ao banco foi feita. Supabase não foi alterado. Nenhuma dependência foi instalada. `apps/api-v2` não foi criado. `apps/web` e `apps/api` (legacy) não foram alterados.

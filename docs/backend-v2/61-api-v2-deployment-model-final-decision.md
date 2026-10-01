@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 61 — Decisão Final: Modelo de Deployment da `apps/api-v2`
 
 Definição read-only de onde e como a futura `apps/api-v2` roda em produção, reavaliando genuinamente as 3 opções pedidas sem herdar automaticamente o modelo dual do legacy. Stack já fechada (Node 24, NestJS 11.1.28, Express 5.2.1, Drizzle, PostgreSQL 17/Supabase — docs 58/59/60) não reaberta. Nenhum Dockerfile/config Vercel/nginx/workflow foi criado ou alterado, nenhum worker/queue foi criado, nenhuma dependência foi instalada. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy) e infraestrutura não foram alterados.

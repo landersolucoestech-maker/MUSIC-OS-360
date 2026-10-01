@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Module `integrations` — Zero-Gap Audit (Phase 2, Prompt 106)
 
 STATUS: **COMPLETE** — UNMAPPED_PROVIDERS: 0.

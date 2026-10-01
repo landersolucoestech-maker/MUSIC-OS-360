@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 07 — Resolução das Incertezas de Request (UNKNOWN_FIELDS / UNKNOWN_TYPES)
 
 Rastreamento read-only, exclusivamente dentro de `apps/web/**`, dos 14 casos `REQUESTS_WITH_UNKNOWN_FIELDS` e 9 casos `REQUESTS_WITH_UNKNOWN_TYPES` listados em [`06-http-request-contracts.md`](./06-http-request-contracts.md). Nenhum arquivo foi alterado, `apps/api` não foi consultado, responses não foram analisadas. Doc 06 não foi modificado.

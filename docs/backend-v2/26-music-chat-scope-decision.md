@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 26 — Decisão de Escopo: MusicChat (D2)
 
 Verificação read-only para `D2` (doc24 — [`24-required-functional-decisions.md`](./24-required-functional-decisions.md)). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum tipo ou código de MusicChat foi removido. Nenhum doc anterior foi modificado. Nenhuma tabela/schema/endpoint/migration foi criada. D1 (distribuidoras) não foi tratado nesta etapa.

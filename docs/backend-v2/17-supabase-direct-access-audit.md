@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 17 — Auditoria do Único Acesso Direto ao Supabase no Frontend
 
 Continuação read-only de [`03-frontend-changes-audit.md`](./03-frontend-changes-audit.md) (classificação `SUPABASE_DIRECT`) e [`04-frontend-data-access-points.md`](./04-frontend-data-access-points.md). Nenhum arquivo foi alterado. Nenhum doc anterior foi modificado. `apps/api` não foi consultado — não foi necessário para responder ao escopo desta etapa.

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 78 — Inventário Estrutural Completo do Database Atual (pré-schema v2)
 
 Auditoria read-only, gerada por introspecção real e programática contra o PostgreSQL 17 do projeto MUSIC OS 360, branch **DEV** (`rypnevnfipygyhysqpdo`), via `DATABASE_URL` local (nunca impressa). Nenhuma escrita foi feita: apenas `SELECT` contra `information_schema`/`pg_catalog`. Nenhum schema, tabela, migration, RLS, Auth, Storage, Realtime, frontend ou legacy foi alterado. Nenhum dado de linha (conteúdo real de registros) foi consultado — somente metadata estrutural (catálogo). Nenhuma credencial foi impressa.

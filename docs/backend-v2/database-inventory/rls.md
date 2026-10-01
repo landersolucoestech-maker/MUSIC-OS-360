@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # RLS — Schema `public`
 
 ## Status (141 tabelas)

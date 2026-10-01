@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 40 — Resolução das 2 Dependências de Domínio Não Resolvidas
 
 Continuação read-only de [`39-domain-dependency-map.md`](./39-domain-dependency-map.md) (`UNRESOLVED_DEPENDENCIES: 2` — `reports` e `dashboard`). Nenhum arquivo foi alterado. O mapa de dependências (doc39) não foi alterado. Nenhuma outra das 82 dependências já classificadas foi reanalisada. `apps/api` não foi consultado — o frontend já foi suficiente para os dois casos.

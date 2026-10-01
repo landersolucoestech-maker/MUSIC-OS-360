@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 66 — Decisão Final: Stack de Auth/JWT da `apps/api-v2`
 
 Definição read-only da implementação técnica de validação de JWT do Supabase Auth (provedor de identidade preservado, não alterado) para a futura `apps/api-v2`, com verificação em fontes oficiais/primárias atuais. Fluxo conceitual de auth/tenant (doc49), configuração/secrets (doc53) e regras de comportamento de negócio (doc62) não reabertos — apenas a biblioteca/implementação técnica de validação criptográfica do JWT é decidida aqui. Nenhum AuthGuard/middleware foi criado, nenhuma dependência foi instalada. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy), Supabase Auth, usuários e banco não foram alterados.

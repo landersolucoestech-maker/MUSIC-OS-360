@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 52 — Estratégia de Observabilidade da `apps/api-v2`
 
 Definição read-only de logging, correlação de requests, métricas e tracing, sobre a arquitetura em camadas já aprovada ([`47`](./47-api-v2-layered-architecture.md)), o RequestContext já aprovado ([`49`](./49-auth-tenant-request-context.md)), o modelo de erros já aprovado ([`50`](./50-api-v2-error-model.md)) e a estratégia de transações já aprovada ([`51`](./51-api-v2-transaction-strategy.md)). Nenhum logger, interceptor, middleware, health endpoint, OpenTelemetry ou métrica foi configurado/instalado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy) e o deployment não foram alterados.

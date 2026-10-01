@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 13 — Erros e Status HTTP Tratados Explicitamente pelo Frontend
 
 Extraído a partir dos docs [05](./05-http-endpoint-inventory.md), [09](./09-http-response-contracts.md) e [11](./11-http-response-final-resolution.md), mais leitura direta de `apps/web/src/shared/lib/errors.ts` e dos call sites que capturam erros. Escopo: `apps/web/**`. `apps/api` não foi consultado. Nenhum arquivo foi alterado. Permissões/autorização e regras de negócio não foram analisadas — só o tratamento de erro em si.

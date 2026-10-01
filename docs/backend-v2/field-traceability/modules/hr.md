@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Module: `rh` — Zero-Gap Field Traceability Audit
 
 STATUS: COMPLETE

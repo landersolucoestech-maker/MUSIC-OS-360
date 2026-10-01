@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 65 — Versões Exatas de Drizzle e Driver PostgreSQL da `apps/api-v2`
 
 Definição read-only das versões exatas e do driver PostgreSQL da camada de persistência já decidida (Drizzle ORM, doc45/58, não reaberta), com verificação em fontes oficiais/primárias atuais. Deployment (long-running container, doc61) e a escolha Drizzle-vs-TypeORM (doc58) não reabertos. Nenhuma dependência foi instalada, nenhum `package.json`/`pnpm-lock.yaml` foi alterado, nenhum schema/migration foi criado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy), banco e Supabase não foram alterados.

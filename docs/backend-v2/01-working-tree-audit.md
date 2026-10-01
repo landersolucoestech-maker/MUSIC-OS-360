@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 01 — Auditoria das Alterações Não Commitadas
 
 Documento gerado por inspeção read-only (`git status --short`, `git diff --stat`, `git diff --name-status`, `git diff --cached --name-status`, `git ls-files --others --exclude-standard`). Nenhum arquivo existente foi alterado, nenhum comando de escrita (`add`/`commit`/`stash`/`checkout`/`restore`/`reset`/`clean`/`tag`) foi executado.

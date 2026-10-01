@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 19 — Mapa dos 6 Usos de Storage Local que Exigem Backend
 
 Continuação read-only de [`18-local-storage-audit.md`](./18-local-storage-audit.md) (`BACKEND_REQUIRED_USAGES: 6`) e [`05-http-endpoint-inventory.md`](./05-http-endpoint-inventory.md) (inventário de 250 endpoints únicos). Nenhum arquivo foi alterado. Nenhum doc anterior foi modificado. `apps/api` não foi consultado. Nenhum endpoint foi inventado — todo `SIM`/`NÃO` abaixo foi verificado linha a linha contra o inventário do doc05.

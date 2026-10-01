@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 53 — Estratégia de Configuração e Secrets da `apps/api-v2`
 
 Definição read-only de como a `apps/api-v2` carrega, valida, expõe internamente e protege configuração/secrets, sobre as restrições técnicas já levantadas ([`42`](./42-api-v2-technical-constraints.md)), a arquitetura em camadas já aprovada ([`47`](./47-api-v2-layered-architecture.md)), o RequestContext já aprovado ([`49`](./49-auth-tenant-request-context.md)) e a estratégia de observabilidade já aprovada ([`52`](./52-api-v2-observability-strategy.md)). Nenhum `.env`/`.env.example` foi criado ou alterado, nenhum ConfigModule/schema de validação foi criado, `apps/api-v2` não foi criado, nenhuma dependência foi instalada, o deployment não foi alterado. `apps/web` e `apps/api` (legacy) não foram alterados.

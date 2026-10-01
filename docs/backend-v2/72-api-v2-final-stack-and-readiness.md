@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 72 — Stack Final Consolidada da API v2 e Prontidão para Scaffold
 
 Consolidação read-only de todas as 21 decisões técnicas já aprovadas (docs 47-71) para a futura `apps/api-v2`, com verificação de lacunas estruturais restantes antes do scaffold físico. Nenhuma decisão anterior foi reaberta ou alterada. Nenhum código/schema/migration/Dockerfile/tsconfig/dependência foi criado ou instalado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy), banco, Supabase e Git não foram alterados.

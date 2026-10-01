@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Módulo `marketing` — Auditoria Zero-Gap (Fase 2, Prompt 110)
 
 STATUS: **COMPLETE** — UNMAPPED_*: 0, UNKNOWN_FIELD_CLASSIFICATIONS: 0.

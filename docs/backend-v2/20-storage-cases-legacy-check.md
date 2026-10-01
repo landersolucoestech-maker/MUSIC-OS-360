@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 20 — Verificação no Backend Legacy dos 5 Casos Sem Endpoint
 
 Continuação read-only de [`19-backend-required-storage-map.md`](./19-backend-required-storage-map.md) (`CASES_WITHOUT_EXISTING_HTTP_ENDPOINT: 5` — Casos 1, 2, 3, 4 e 5 do doc19; o Caso 6 do doc19 já tinha endpoint e está fora do escopo desta etapa). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum doc anterior foi modificado. Nenhum endpoint foi criado ou proposto — apenas verificado se já existe.

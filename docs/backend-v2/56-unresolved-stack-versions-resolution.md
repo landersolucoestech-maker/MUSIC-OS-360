@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 56 — Resolução das 7 Versões Ainda Não Identificadas
 
 Continuação read-only de [`55-exact-current-stack-inventory.md`](./55-exact-current-stack-inventory.md) (`PACKAGES_WITH_UNRESOLVED_VERSION: 7`). Nenhuma stack foi reanalisada além destes 7 itens. Nenhuma recomendação foi feita. Nenhum pacote foi instalado/atualizado/removido, `package.json`/`pnpm-lock.yaml` não foram alterados, Supabase/banco/frontend/backend não foram alterados. `apps/api-v2` não foi criado. Nenhum documento anterior foi modificado.

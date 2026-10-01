@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 04 — Arquitetura da Camada HTTP do Frontend (`apps/web`)
 
 Mapeamento read-only, a partir de [`03-frontend-data-access-surface.md`](./03-frontend-data-access-surface.md), aprofundando os arquivos que efetivamente implementam ou configuram transporte HTTP. Nenhum arquivo foi alterado. Não foram listados endpoints, bodies ou responses específicas de domínio.

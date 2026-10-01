@@ -43,7 +43,7 @@ test.describe('CRM (leads/contacts) — no mocked data', () => {
     });
 
     if (page.url().includes('/change-required-password')) {
-      test.skip(true, 'Conta em troca de senha obrigatória — sem senha final estável para este E2E.');
+      test.skip(true, 'Account is in a forced password change — no stable final password for this E2E.');
     }
 
     await test.step('opens the CRM (contacts tab) and confirms a real backend call', async () => {

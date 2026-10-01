@@ -58,7 +58,7 @@ test('expired waiver -> FAIL', () => {
   const waivers = loadWaivers(waiverFileWith([{ advisoryId: 4, package: 'qux', reviewBy: '2025-01-01' }]));
   const { unauthorized } = evaluate(advisories, waivers, NOW);
   assert.equal(unauthorized.length, 1);
-  assert.match(unauthorized[0].cause, /expirado/);
+  assert.match(unauthorized[0].cause, /expired/);
 });
 
 test('waiver with wrong package -> FAIL', () => {

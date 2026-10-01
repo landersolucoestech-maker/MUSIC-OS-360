@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 25 — Decisão Funcional Aprovada: Integração com Distribuidoras (D1)
 
 Registro da decisão humana para `D1` (doc24 — [`24-required-functional-decisions.md`](./24-required-functional-decisions.md)). Nenhuma implementação foi feita nesta etapa. `D2` (MusicChat) não foi tratado — permanece `REQUIRES_DECISION`, sem alteração. Nenhum doc anterior foi modificado. Nenhum arquivo de `apps/web` ou `apps/api` foi alterado.

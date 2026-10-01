@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 58 — Decisão Final: TypeORM vs. Drizzle para a `apps/api-v2`
 
 Reavaliação genuína e independente da camada de acesso ao PostgreSQL da futura `apps/api-v2`, conforme exigido pelo prompt ("não escolher TypeORM apenas porque já existe, não escolher Drizzle apenas porque já foi decidido anteriormente"). Esta etapa reabre deliberadamente a decisão do doc45 — não reafirma por inércia; os 15 critérios pedidos foram reavaliados do zero, e 1 deles mudou de conclusão em relação ao doc45 (migrations — ver seção própria). Nenhum código foi escrito, nenhuma dependência foi instalada/atualizada, nenhum schema/migration foi criado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy), banco, Supabase e Git não foram alterados.

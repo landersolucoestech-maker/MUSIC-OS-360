@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Cross-check: Banco Real vs. Frontend (apps/web)
 
 Método heurístico: busca textual (nome exato snake_case ou variante camelCase) de cada uma das 142 tabelas em todo o código-fonte de apps/web/src (.ts/.tsx). Isto é um SINAL aproximado, não uma prova definitiva — subestima consumo real quando o frontend usa apenas o path do endpoint HTTP ou um nome de campo diferente do nome da tabela.

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 30 — Auditoria dos Serviços Externos Acessados pelo Frontend
 
 Continuação read-only de [`03-frontend-data-access-surface.md`](./03-frontend-data-access-surface.md) (`EXTERNAL_SERVICE_FILES: 3`). Nenhum arquivo foi alterado. Nenhuma integração foi corrigida ou implementada. Nenhuma credencial foi alterada. `apps/api` não foi consultado — toda evidência de mediação por backend vem de comentários e do comportamento observável nos 3 arquivos do frontend (ex.: o comentário de `OAuthCallbackPage.tsx` que descreve o que o backend faz, tratado como declaração de design, não como verificação do código do backend em si).

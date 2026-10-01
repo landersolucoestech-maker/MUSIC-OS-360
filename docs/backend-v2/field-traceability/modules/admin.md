@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Módulo: admin (Painel Super Admin)
 
 Fase 2 do Prompt 97. Escopo: `apps/web/src/modules/admin/**` completo (9 páginas, 5 serviços reais,

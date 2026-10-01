@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 60 — Decisão Final: Versão do Node.js para a `apps/api-v2`
 
 Definição read-only da versão de Node.js da futura `apps/api-v2`, reavaliando genuinamente entre manter Node 20 (versão do projeto atual, doc57) ou adotar uma LTS mais recente, com verificação em fontes oficiais atuais (nodejs.org, Vercel). Nenhum `.nvmrc`/`package.json`/`engines`/Dockerfile/GitHub Actions/config Vercel foi alterado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy) e deployment não foram alterados.

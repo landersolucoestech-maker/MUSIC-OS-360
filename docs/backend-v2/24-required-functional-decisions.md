@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 24 — Decisões Funcionais Pendentes de Aprovação Humana
 
 Continuação read-only de [`21-storage-required-functional-contracts.md`](./21-storage-required-functional-contracts.md), [`22-storage-functional-unknowns-resolution.md`](./22-storage-functional-unknowns-resolution.md) e [`23-storage-contract-final-conflicts.md`](./23-storage-contract-final-conflicts.md) (`BEHAVIORS_REQUIRING_DECISION: 2` — Caso 4 e Caso 5). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum doc anterior foi modificado. Nenhuma decisão foi tomada nesta etapa — apenas formuladas para aprovação humana. Nenhuma recomendação abaixo foi aplicada como escolha final.

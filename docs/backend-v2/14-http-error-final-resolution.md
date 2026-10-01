@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 14 — Resolução Final do Error Shape Restante
 
 Continuação read-only de [`13-http-error-contracts.md`](./13-http-error-contracts.md). Nenhum arquivo foi alterado. Doc 13 não foi modificado.

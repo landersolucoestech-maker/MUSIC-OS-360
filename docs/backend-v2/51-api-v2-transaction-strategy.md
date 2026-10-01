@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 51 — Estratégia de Transações da `apps/api-v2`
 
 Definição read-only de como a `apps/api-v2` abre, propaga, confirma e reverte transações PostgreSQL via Drizzle ORM, sobre a decisão de acesso a banco já aprovada ([`45`](./45-api-v2-database-access-decision.md)), a arquitetura em camadas já aprovada ([`47`](./47-api-v2-layered-architecture.md)), o RequestContext já aprovado ([`49`](./49-auth-tenant-request-context.md)) e o modelo de erros já aprovado ([`50`](./50-api-v2-error-model.md)). Nenhum TransactionManager, repository, código Drizzle, banco, schema ou migration foi criado. `apps/api-v2` não foi criado. Nenhuma dependência foi instalada. `apps/web` e `apps/api` (legacy) não foram alterados.

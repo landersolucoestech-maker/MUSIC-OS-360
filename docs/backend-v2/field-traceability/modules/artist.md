@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Module: artist (Artists)
 
 Phase 2 of Prompt 98. Scope: all of `apps/web/src/modules/artist/**` + real dependencies

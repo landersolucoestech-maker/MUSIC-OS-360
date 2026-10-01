@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 12 — Paginação, Filtros, Busca e Ordenação nas Chamadas HTTP do Frontend
 
 Extraído dos docs [05](./05-http-endpoint-inventory.md), [06](./06-http-request-contracts.md), [08](./08-http-request-final-resolution.md), [09](./09-http-response-contracts.md) e [11](./11-http-response-final-resolution.md). Escopo: `apps/web/**`, apenas os 270 call sites já inventariados no doc 05 (os endpoints da Apêndice B do doc 06, encontrados por limitação de regex, não foram re-analisados aqui pela mesma razão de consistência já aplicada nos docs anteriores). `apps/api` não foi consultado. Nenhum arquivo foi alterado. Erros HTTP, permissões e regras de negócio não foram analisados.

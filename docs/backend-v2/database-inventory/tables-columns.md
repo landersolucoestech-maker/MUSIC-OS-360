@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Tabelas e Colunas — Schema `public` (zero exceções)
 
 Total de tabelas: 142. Total de colunas: 2382.

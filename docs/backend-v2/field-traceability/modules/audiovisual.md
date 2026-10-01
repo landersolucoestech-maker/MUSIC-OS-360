@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Module: audiovisual (Audiovisual Productions)
 
 Phase 2 of Prompt 99. Scope: all of `apps/web/src/modules/audiovisual/**` (2 pages + 1 orphaned

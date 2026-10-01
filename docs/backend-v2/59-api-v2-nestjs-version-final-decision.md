@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 59 — Decisão Final: Versão do NestJS para a `apps/api-v2`
 
 Definição read-only da versão exata de NestJS/adapter HTTP da futura `apps/api-v2`, reavaliando genuinamente entre manter NestJS 10 (versão do legacy, doc57) ou adotar a versão estável atual, conforme exigido pelo prompt. Framework/adapter em si (NestJS + platform-express) já aprovado nos docs 43/44, não reaberto — apenas a VERSÃO exata é decidida aqui. Nenhum código foi escrito, nenhuma dependência foi instalada/atualizada. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy), banco e deployment não foram alterados.

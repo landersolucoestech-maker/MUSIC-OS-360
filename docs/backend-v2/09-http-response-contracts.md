@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 09 — Contratos de Response Esperados pelo Frontend
 
 Extraído a partir de [`05`](./05-http-endpoint-inventory.md), [`06`](./06-http-request-contracts.md) e [`08`](./08-http-request-final-resolution.md). Nenhum arquivo foi alterado, `apps/api` não foi consultado nesta etapa. Escopo: apenas como o retorno é consumido no frontend (uso real: destructuring, `.data`, mappers, tipos genéricos) — erros, status HTTP, permissões e regras de negócio não foram analisados.

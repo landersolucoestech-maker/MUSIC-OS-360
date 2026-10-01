@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 29 — Auditoria dos Usos de Memória do Frontend (zustand)
 
 Continuação read-only de [`03-frontend-data-access-surface.md`](./03-frontend-data-access-surface.md) (`MEMORY_FILES: 20`). Nenhum arquivo foi alterado. Nenhum estado em memória foi removido. `apps/api` não foi consultado (a única referência a um endpoint do doc05 abaixo é citação de um documento já produzido nesta auditoria de `apps/web`, não uma nova consulta a `apps/api`).

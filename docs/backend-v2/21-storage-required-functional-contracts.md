@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 21 — Contrato Funcional dos 5 Casos de Storage Local Sem Endpoint
 
 Continuação read-only de [`19-backend-required-storage-map.md`](./19-backend-required-storage-map.md) e [`20-storage-cases-legacy-check.md`](./20-storage-cases-legacy-check.md). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum doc anterior foi modificado. Nenhum path, método HTTP, controller, service, repository, tabela, migration ou DTO de backend foi definido — apenas o comportamento funcional exigido, comprovado pelo código atual.

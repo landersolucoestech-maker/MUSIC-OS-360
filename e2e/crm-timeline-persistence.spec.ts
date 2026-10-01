@@ -28,7 +28,7 @@ test.describe('CRM — contact/client timeline survives a reload (real persisten
   test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
 
   test('a note recorded on the timeline stays after a full page reload', async ({ page }) => {
-    const noteText = `[E2E automatizado — Parte 80] verificação de persistência da timeline ${Date.now()}`;
+    const noteText = `[E2E automated — Part 80] timeline persistence check ${Date.now()}`;
 
     await test.step('login institucional real', async () => {
       await page.goto('/auth', { waitUntil: 'networkidle' });
@@ -39,7 +39,7 @@ test.describe('CRM — contact/client timeline survives a reload (real persisten
     });
 
     if (page.url().includes('/change-required-password')) {
-      test.skip(true, 'Conta em troca de senha obrigatória — sem senha final estável para este E2E.');
+      test.skip(true, 'Account is in a forced password change — no stable final password for this E2E.');
     }
 
     let contactId = '';

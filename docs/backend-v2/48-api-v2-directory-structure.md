@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 48 — Estrutura de Diretórios da `apps/api-v2`
 
 Definição read-only da estrutura física de diretórios, derivada exclusivamente da arquitetura em 8 camadas já aprovada em [`47-api-v2-layered-architecture.md`](./47-api-v2-layered-architecture.md), aplicada aos 35 domínios de [`38-domain-inventory.md`](./38-domain-inventory.md) na ordem de [`41-domain-implementation-order.md`](./41-domain-implementation-order.md). Nenhum diretório ou arquivo foi criado. `apps/api-v2` não foi criado. `apps/web` e `apps/api` (legacy) não foram alterados.

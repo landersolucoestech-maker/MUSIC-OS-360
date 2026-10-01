@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 75 — Auditoria de Site URL, Redirect URLs e SMTP do Supabase Auth (MUSIC OS 360)
 
 Auditoria parcial: esta sessão NÃO possui acesso autenticado ao projeto Supabase real ("MUSIC OS 360") — nem via MCP (`plugin:supabase:supabase` requer autorização não disponível neste ambiente não-interativo), nem via Supabase CLI (`npx supabase projects list` falhou por ausência de perfil/token de login válido). Como consequência, a CONFIGURAÇÃO ATUAL de Site URL/Redirect URLs/SMTP do projeto real **não pôde ser lida**, e nenhuma alteração foi ou poderia ter sido feita no projeto remoto. Este documento registra apenas o que é determinável a partir do repositório (código do frontend, arquivos de ambiente da raiz) — os requisitos derivados dele — e marca explicitamente como pendente tudo que dependeria de acesso ao painel/API do Supabase.

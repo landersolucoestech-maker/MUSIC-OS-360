@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 33 — Contratos de Eventos Realtime/Assíncronos do Frontend
 
 Continuação read-only de [`17-supabase-direct-access-audit.md`](./17-supabase-direct-access-audit.md), [`30-external-service-audit.md`](./30-external-service-audit.md) e [`31-external-service-final-resolution.md`](./31-external-service-final-resolution.md). Nenhum arquivo foi alterado. Nenhum channel/evento foi criado. `apps/api` não foi consultado — a única referência a `apps/api` é a citação do comentário já existente em `ws-events.ts` ("Keep in sync with apps/api/src/core/realtime/realtime.service.ts"), tratada como texto do frontend, não como verificação do backend.

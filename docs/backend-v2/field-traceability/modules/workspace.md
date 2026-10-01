@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Module: `workspace` — Zero-Gap Field Traceability Audit (FINAL MODULE)
 
 STATUS: COMPLETE

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Módulo `monitoring` — Auditoria Zero-Gap (Fase 2, Prompt 111)
 
 STATUS: **COMPLETE** — UNMAPPED_*: 0, UNKNOWN_MONITORING_CLASSIFICATIONS: 0.

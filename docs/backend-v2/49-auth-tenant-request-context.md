@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 49 — Fluxo de Auth, Usuário e Tenant da `apps/api-v2`
 
 Definição read-only do fluxo de autenticação/tenant/contexto de request, aplicando a arquitetura em camadas já aprovada ([`47`](./47-api-v2-layered-architecture.md), [`48`](./48-api-v2-directory-structure.md)) sobre os contratos reais já mapeados em [`15`](./15-frontend-auth-permission-contracts.md)/[`16`](./16-permission-final-resolution.md)/[`17`](./17-supabase-direct-access-audit.md)/[`37`](./37-canonical-frontend-contract-final.md). Nenhum código, guard, módulo, tabela ou migration foi criado. `apps/api-v2` não foi criado. Nenhuma dependência foi instalada. Supabase não foi alterado. `apps/web` e `apps/api` (legacy) não foram alterados.

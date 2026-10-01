@@ -27,13 +27,13 @@ async function assertNoImportExportButtons(page: Page, path: string) {
   await page.waitForTimeout(1500);
   const importBtn = page.locator('[data-testid*="import" i]');
   const exportBtn = page.locator('[data-testid*="export" i]');
-  await expect(importBtn, `${path}: nenhum botão de import deveria existir`).toHaveCount(0);
-  await expect(exportBtn, `${path}: nenhum botão de export deveria existir`).toHaveCount(0);
+  await expect(importBtn, `${path}: no import button should exist`).toHaveCount(0);
+  await expect(exportBtn, `${path}: no export button should exist`).toHaveCount(0);
 }
 
 test.describe('Part 86 — import/export centralized in the reports center', () => {
   for (const mod of MODULES_WITHOUT_IMPORT_EXPORT) {
-    test(`${mod.name}: sem botão Importar/Exportar próprio`, async ({ page }) => {
+    test(`${mod.name}: no own Import/Export button`, async ({ page }) => {
       await assertNoImportExportButtons(page, mod.path);
     });
   }

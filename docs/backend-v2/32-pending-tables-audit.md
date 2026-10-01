@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 32 — Auditoria de `PENDING_TABLES` e Tabelas Sem Endpoint
 
 Continuação read-only de [`04-http-client-architecture.md`](./04-http-client-architecture.md), [`05-http-endpoint-inventory.md`](./05-http-endpoint-inventory.md), [`27-runtime-mock-audit.md`](./27-runtime-mock-audit.md) e [`28-runtime-mock-final-resolution.md`](./28-runtime-mock-final-resolution.md). Nenhum arquivo foi alterado. `PENDING_TABLES`/`TABLE_ENDPOINT` não foram alterados. Nenhum endpoint foi criado. `apps/api` não foi consultado.

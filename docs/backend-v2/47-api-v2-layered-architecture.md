@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 47 — Camadas e Direção de Dependências da `apps/api-v2`
 
 Definição read-only da arquitetura lógica (camadas + direção de dependência permitida) da futura `apps/api-v2`, sobre as decisões já fixadas em [`43`](./43-api-v2-http-framework-decision.md)/[`44`](./44-api-v2-http-framework-final-resolution.md) (NestJS/platform-express, validação class-validator+class-transformer), [`45`](./45-api-v2-database-access-decision.md) (Drizzle ORM) e [`46`](./46-database-v2-migration-strategy.md) (Drizzle Kit + SQL manual controlado), aplicada aos 35 domínios e à ordem de dependências já registrados em [`38`](./38-domain-inventory.md) e [`41`](./41-domain-implementation-order.md). Nenhuma estrutura de diretórios, código, schema ou entidade foi criada. `apps/api-v2` não foi criado. `apps/web` e `apps/api` (legacy) não foram alterados.

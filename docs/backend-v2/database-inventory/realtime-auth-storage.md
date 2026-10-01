@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Realtime, Auth e Storage — Dependências
 
 ## Publications

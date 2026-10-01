@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 68 — Stack Final de Observabilidade da `apps/api-v2`
 
 Decisão arquitetural fechada e definitiva, sem alternativas em aberto. Nenhum código/pacote/configuração foi criado ou instalado. Nenhuma decisão arquitetural anterior (docs 50/52/53/61/67, entre outras) foi reaberta. Nenhum layout, UX, contrato funcional, autenticação, tenant isolation, RLS, integração, persistência funcional, frontend, backend legacy ou deployment foi alterado. `apps/api-v2` não foi criado. Nenhum commit foi executado.

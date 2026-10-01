@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 10 — Resolução das Incertezas de Response (usando apenas o frontend)
 
 Rastreamento read-only, exclusivamente em `apps/web/**`, dos casos `UNKNOWN_FIELD`/`UNKNOWN_TYPE`/`UNDETERMINED_SHAPE` identificados em [`09-http-response-contracts.md`](./09-http-response-contracts.md). `apps/api` não foi consultado. Nenhum arquivo foi alterado. Doc 09 não foi modificado.

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 43 — Decisão do Framework HTTP da `apps/api-v2`
 
 Decisão read-only baseada exclusivamente nas restrições reais registradas em [`42-api-v2-technical-constraints.md`](./42-api-v2-technical-constraints.md), no contrato canônico final ([`37-canonical-frontend-contract-final.md`](./37-canonical-frontend-contract-final.md) — 250 endpoints/22 eventos realtime/9 exceções funcionais) e na ordem de domínios ([`41-domain-implementation-order.md`](./41-domain-implementation-order.md) — 35 domínios, dependências AUTH/TENANT/PERMISSION universais). Nenhum código foi escrito. `apps/api-v2` não foi criado. Nenhuma dependência foi instalada. Nenhum `package.json` foi alterado. `apps/web` e `apps/api` (legacy) não foram alterados.

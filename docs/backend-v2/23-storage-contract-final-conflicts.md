@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 23 — Resolução do Input Conflitante e dos 2 Comportamentos Restantes
 
 Continuação read-only de [`21-storage-required-functional-contracts.md`](./21-storage-required-functional-contracts.md) e [`22-storage-functional-unknowns-resolution.md`](./22-storage-functional-unknowns-resolution.md) (`INPUTS_CONFLICTING: 1`, `BEHAVIORS_REMAINING: 2`). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum doc anterior foi modificado. Nenhum endpoint/path/método/DTO/tabela/migration foi definido.

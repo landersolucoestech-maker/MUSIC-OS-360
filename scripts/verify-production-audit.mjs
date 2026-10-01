@@ -117,7 +117,7 @@ export function evaluate(advisories, waivers, now = new Date()) {
       continue;
     }
     if (waiver.reviewBy < today) {
-      unauthorized.push({ ...advisory, cause: `waiver expirado em ${waiver.reviewBy}` });
+      unauthorized.push({ ...advisory, cause: `waiver expired on ${waiver.reviewBy}` });
       continue;
     }
     accepted.push({ ...advisory, waiver });

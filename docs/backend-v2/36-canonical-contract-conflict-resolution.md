@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 36 — Resolução do Único Contrato HTTP Conflitante
 
 Continuação read-only de [`35-canonical-contract-incomplete-resolution.md`](./35-canonical-contract-incomplete-resolution.md) (`CONTRACTS_CONFLICTING: 1` — Caso 2, ACRCloud). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum endpoint legacy foi corrigido. Nenhum doc anterior foi modificado. Nenhum outro endpoint foi analisado.

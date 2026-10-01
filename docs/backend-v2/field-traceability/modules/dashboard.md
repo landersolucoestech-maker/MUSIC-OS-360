@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Module `dashboard` — Zero-Gap Audit (Phase 2, Prompt 104)
 
 STATUS: **COMPLETE** — UNMAPPED_*: 0, UNKNOWN_DASHBOARD_CLASSIFICATIONS: 0.

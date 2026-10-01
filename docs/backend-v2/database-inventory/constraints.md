@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Constraints — Schema `public`
 
 ## Foreign Keys (191)

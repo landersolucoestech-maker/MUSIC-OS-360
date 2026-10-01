@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 22 — Resolução das Incertezas dos 5 Contratos Funcionais
 
 Continuação read-only de [`21-storage-required-functional-contracts.md`](./21-storage-required-functional-contracts.md) (`UNRESOLVED_INPUTS: 2`, `UNRESOLVED_OUTPUTS: 3`, `UNRESOLVED_BEHAVIORS: 2` — 7 itens). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum doc anterior foi modificado. Nenhum endpoint/path/método/DTO/tabela/migration foi definido.

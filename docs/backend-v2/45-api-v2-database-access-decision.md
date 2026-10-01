@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 45 — Decisão da Camada de Acesso ao PostgreSQL da `apps/api-v2`
 
 Decisão read-only baseada nas restrições reais registradas em [`42-api-v2-technical-constraints.md`](./42-api-v2-technical-constraints.md), [`43-api-v2-http-framework-decision.md`](./43-api-v2-http-framework-decision.md) e [`44-api-v2-http-framework-final-resolution.md`](./44-api-v2-http-framework-final-resolution.md). Framework (NestJS/platform-express) e validação padrão (class-validator/class-transformer) permanecem fixos, não reabertos. Nenhum banco/schema/migration/repository foi criado. Nenhum código foi escrito. `apps/api-v2` não foi criado. Nenhuma dependência foi instalada. Nenhum `package.json` foi alterado. `apps/web` e `apps/api` (legacy) não foram alterados.

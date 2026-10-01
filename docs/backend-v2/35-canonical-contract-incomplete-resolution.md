@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 35 — Resolução dos 2 Contratos HTTP Incompletos
 
 Continuação read-only de [`34-canonical-frontend-contract.md`](./34-canonical-frontend-contract.md) (`CONTRACT_INCOMPLETE: 2` — seção A.20). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. O contrato canônico (doc34) não foi alterado nesta etapa. Nenhum outro endpoint foi analisado.

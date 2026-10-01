@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 57 — Stack Exata e Consolidada do Projeto Atual
 
 Visão consolidada e definitiva da stack tecnológica atual do MUSIC OS 360, produzida exclusivamente a partir de [`54`](./54-current-project-stack-audit.md), [`55`](./55-exact-current-stack-inventory.md) e [`56`](./56-unresolved-stack-versions-resolution.md) — nenhuma nova auditoria foi realizada. Nenhuma recomendação de mudança foi feita. Nenhuma comparação com a `apps/api-v2` foi feita. Nenhum pacote foi instalado/atualizado/removido. `apps/web`, `apps/api` (legacy), banco, Supabase e Git não foram alterados. `apps/api-v2` não foi criado. Nenhum documento anterior foi modificado.

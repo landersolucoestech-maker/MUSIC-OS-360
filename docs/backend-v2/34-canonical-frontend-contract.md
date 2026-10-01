@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 34 — Contrato Canônico do Frontend (Consolidação)
 
 Consolidação read-only de todos os contratos já extraídos e resolvidos entre os docs 03-33 desta auditoria. Nenhum arquivo foi alterado. Nenhum backend, banco, tabela ou `apps/api-v2` foi criado. Nenhum requisito foi reinterpretado — todo valor abaixo é uma citação direta de um documento anterior já aprovado, nunca uma nova dedução. Onde um documento anterior já declarou "0 remanescentes", este documento herda esse resultado sem reabrir a questão.

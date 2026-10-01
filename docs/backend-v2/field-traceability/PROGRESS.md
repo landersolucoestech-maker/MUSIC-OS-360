@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Progress tracker — Prompt 96 (field-level zero-gap audit)
 
 Resumable checkpoint. STATUS: BLOQUEADO at the boundary below — continue from here in the next

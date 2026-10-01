@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 50 — Modelo de Erros e Exceptions da `apps/api-v2`
 
 Definição read-only do modelo único de erros, aplicando a arquitetura em camadas já aprovada ([`47`](./47-api-v2-layered-architecture.md)) e o fluxo de auth/tenant já aprovado ([`49`](./49-auth-tenant-request-context.md)) sobre os contratos reais já mapeados em [`13`](./13-http-error-contracts.md)/[`14`](./14-http-error-final-resolution.md)/[`37`](./37-canonical-frontend-contract-final.md). Nenhuma exception class, filter, controller ou middleware foi criado. `apps/api-v2` não foi criado. Nenhuma dependência foi instalada. `apps/web` e `apps/api` (legacy) não foram alterados.

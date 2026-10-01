@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 76 — Resolução da Exposição de `ENCRYPTION_IV_SECRET`
 
 Investigação read-only (nenhum valor comprometido foi lido, recuperado ou impresso) sobre se o identificador `ENCRYPTION_IV_SECRET` — encontrado em histórico Git durante a auditoria do Prompt 87 (commit `2c215cb7`, arquivo `attached_assets/Pasted--PROMPT-MESTRE-DEFINITIVO-MUSIC-OS-360-ENTERPRISE-Stack_1778630533508.txt`) — ainda possui qualquer uso, dependência de runtime ou dependência de dados persistidos no MUSIC OS 360 atual. Nenhum banco foi alterado. Nenhuma migration foi executada. Nenhum `.env` foi alterado nesta etapa. DocuSign não foi tratado. Nenhum valor real (antigo ou atual) foi impresso em nenhum momento desta investigação.

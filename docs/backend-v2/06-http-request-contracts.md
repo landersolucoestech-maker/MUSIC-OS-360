@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 06 — Contratos de Request dos Endpoints HTTP do Frontend
 
 Extraído a partir de [`05-http-endpoint-inventory.md`](./05-http-endpoint-inventory.md). Nenhum arquivo foi alterado. Escopo desta etapa: path params, query params, request body, headers específicos por chamada. Response bodies, status codes, paginação de resposta, permissões e regras de negócio **não foram analisados**.

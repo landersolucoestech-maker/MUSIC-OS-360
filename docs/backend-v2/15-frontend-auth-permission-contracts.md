@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 15 — Autenticação, Tenant e Permissões no Frontend
 
 Rastreamento read-only em `apps/web/**`. `apps/api` não foi consultado. Nenhum arquivo foi alterado. Regras de negócio fora do escopo (autenticação/tenant/RBAC) não foram analisadas.

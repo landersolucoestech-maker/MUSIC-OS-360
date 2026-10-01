@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 05 — Inventário de Endpoints HTTP do Frontend (`apps/web`)
 
 Mapeamento read-only, a partir de [`03-frontend-data-access-surface.md`](./03-frontend-data-access-surface.md) e [`04-http-client-architecture.md`](./04-http-client-architecture.md). Nenhum arquivo foi alterado. Não foram analisados request bodies, response schemas, paginação, filtros, sorting, permissões, status codes ou tratamento de erro específico de domínio — apenas método, path/expressão, arquivo de origem e cliente.

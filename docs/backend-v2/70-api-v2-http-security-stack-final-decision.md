@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 70 — Stack Final de Segurança HTTP e Rate Limiting da `apps/api-v2`
 
 Definição read-only das bibliotecas e políticas de segurança HTTP da futura `apps/api-v2`, com verificação de versões em fontes primárias. Fluxo de auth/tenant (doc49), modelo de erro (doc50), configuração/secrets (doc53), versão NestJS (doc59), deployment (doc61), stack de auth/JWT (doc66) e observabilidade (doc68) não reabertos. Nenhum pacote foi instalado, nenhum `main.ts`/Helmet/CORS/throttler/middleware foi criado ou configurado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy), deployment e Git não foram alterados.

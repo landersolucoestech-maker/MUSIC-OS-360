@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 31 — Resolução da Integração Incerta e da Credencial Exposta
 
 Continuação read-only de [`30-external-service-audit.md`](./30-external-service-audit.md) (`UNRESOLVED_INTEGRATIONS: 1`, `BROWSER_EXPOSED_CREDENTIAL_CASES: 1`). Nenhum arquivo foi alterado. Nenhuma credencial foi movida, revogada ou alterada. Nenhum `.env` foi alterado. Nenhuma integração foi implementada. Nenhuma documentação externa foi pesquisada — a resolução usa apenas evidência já produzida em `apps/web/**` e nos docs desta auditoria (doc19-21, doc25). `apps/api` não foi consultado — não foi estritamente necessário, dado que `OAuthCallbackPage.tsx` já documenta explicitamente a mediação de servidor (doc30, Caso 2).

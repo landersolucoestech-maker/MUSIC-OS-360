@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 74 — Contrato Zero-Gap da Reconstrução Completa do Backend
 
 Definição read-only dos critérios obrigatórios de completude e rastreabilidade que governarão toda a reconstrução da `apps/api-v2` daqui em diante, sobre o contrato canônico do frontend (doc37), as regras de preservação comportamental (doc62), a arquitetura em camadas (doc47), o fluxo de auth/tenant (doc49) e o namespace de banco (doc73), nenhum reaberto aqui. Este documento não implementa nada — é o CRITÉRIO DE ACEITE que toda etapa futura de reconstrução de domínio deverá satisfazer antes de ser considerada concluída. Nenhuma tabela, migration, schema, componente, hook ou export foi criado/alterado. Nenhum banco (local ou remoto) foi alterado. Supabase não foi alterado. `apps/web` e `apps/api` (legacy) não foram alterados. Git não foi modificado.

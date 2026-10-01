@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Enums, Views e Materialized Views
 
 ## Enums (25 enums, 119 valores)

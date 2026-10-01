@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Módulo `leads` — Auditoria Zero-Gap (Fase 2, Prompt 108)
 
 STATUS: **COMPLETE** — UNMAPPED_*: 0, UNKNOWN_FIELD_CLASSIFICATIONS: 0.

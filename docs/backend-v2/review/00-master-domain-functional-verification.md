@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # MUSIC OS 360 — MASTER DOMAIN & FUNCTIONAL VERIFICATION
 
 Documento de consolidação final do "zero-gap field-traceability audit". Fontes primárias:

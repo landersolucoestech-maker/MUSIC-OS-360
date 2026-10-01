@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 41 — Ordem de Implementação dos 35 Domínios
 
 Ordenação topológica read-only dos 35 domínios do [`38-domain-inventory.md`](./38-domain-inventory.md), respeitando integralmente as dependências obrigatórias aprovadas nos docs [`39`](./39-domain-dependency-map.md) e [`40`](./40-domain-dependency-final-resolution.md). Nenhuma arquitetura interna, controller, service, repository, schema ou migration foi definida. Nenhum arquivo foi alterado.

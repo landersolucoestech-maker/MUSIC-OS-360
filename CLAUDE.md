@@ -1,8 +1,8 @@
 # MUSIC OS 360
 
-Monorepo pnpm/Turborepo: `apps/api` (NestJS + TypeORM + BullMQ), `apps/web` (React 18 + Vite + TanStack Query), `packages/*`. PostgreSQL/Supabase com isolamento por tenant.
+Monorepo pnpm/Turborepo: `apps/api` (NestJS + TypeORM + BullMQ), `apps/web` (React 18 + Vite + TanStack Query), `packages/*`. PostgreSQL/Supabase with per-tenant isolation.
 
-Convenções de engenharia por área (stack real, scripts reais, padrões vigentes) em `docs/engineering/`:
+Per-area engineering conventions (real stack, real scripts, current patterns) live in `docs/engineering/`:
 `architecture.md`, `backend.md`, `frontend.md`, `database.md`, `integrations.md`, `security.md`, `testing.md`, `git-safety.md`, `data-governance.md`, `release-production.md`, `supply-chain.md`.
 
 ## Branch policy

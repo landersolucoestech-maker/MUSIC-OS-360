@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Módulo: accounting (Financeiro / Contabilidade / Nota Fiscal / Categorias)
 
 Fase 2 do Prompt 96. Escopo: `apps/web/src/modules/accounting/**` completo — 5 páginas, 22

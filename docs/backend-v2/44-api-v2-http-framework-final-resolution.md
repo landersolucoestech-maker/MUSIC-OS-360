@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 44 — Resolução Final da Pendência do Framework HTTP
 
 Continuação read-only de [`43-api-v2-http-framework-decision.md`](./43-api-v2-http-framework-decision.md) (`UNRESOLVED_FRAMEWORK_DECISIONS: 1`). `SELECTED_FRAMEWORK: NestJS (platform-express)` não foi reavaliado nem alterado. Nenhum código foi escrito, `apps/api-v2` não foi criado, nenhuma dependência foi instalada, nenhum `package.json` foi alterado. `apps/web` e `apps/api` (legacy) não foram alterados.

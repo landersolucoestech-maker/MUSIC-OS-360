@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 69 — Stack Final de Testes e Quality Gates da `apps/api-v2`
 
 Definição read-only da stack de testes e gates obrigatórios da futura `apps/api-v2`, com verificação de versões em fontes primárias (npm registry). Arquitetura em camadas (doc47), modelo de erro (doc50), estratégia transacional (doc51), regras de preservação comportamental (doc62), stack assíncrona (doc67) e observabilidade (doc68) não reabertas. Nenhum teste/config Jest/banco de teste/CI foi criado ou alterado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy) e Git não foram alterados.

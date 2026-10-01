@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 42 — Restrições Técnicas para `apps/api-v2`
 
 Inventário read-only das restrições técnicas reais já existentes no repositório, para uso posterior no desenho de `apps/api-v2`. Nenhuma arquitetura foi definida, nenhum framework/ORM/migration tool foi escolhido, `apps/api-v2` não foi criado, nenhuma dependência foi instalada/atualizada, `apps/web` e `apps/api` (legacy) não foram alterados.

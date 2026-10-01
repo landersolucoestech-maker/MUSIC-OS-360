@@ -1,14 +1,12 @@
 {
  "totals": {
-  "doc": 8731,
+  "doc": 8727,
   "eventQueueJob": 6,
   "identifier": 92,
   "objectKey": 592,
   "value": 1878
  },
  "debt": {
-  "doc::.claude/skills/safe-db-rename/SKILL.md": 2,
-  "doc::CLAUDE.md": 2,
   "doc::docs/BLUEPRINT_ENTERPRISE.md": 237,
   "doc::docs/DB_AUDIT_2026-07-05.md": 57,
   "doc::docs/ENTERPRISE_BLUEPRINT_FINAL_2026-07-09.md": 309,

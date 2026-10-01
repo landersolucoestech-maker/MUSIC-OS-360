@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 73 — Decisão Final: Namespace PostgreSQL da `apps/api-v2`
 
 Definição read-only do namespace/schema PostgreSQL onde as tabelas de negócio da futura `apps/api-v2` residirão, resolvendo o bloqueio explícito registrado no PROMPT 83 (nenhum documento anterior definia `public` vs. schema privado). Framework, Drizzle ORM, driver `pg`, estratégia de migrations (Drizzle Kit + SQL manual controlado) e o mecanismo de RLS via `set_config('app.current_tenant_id', ..., true)` (docs 45/47/49/51) permanecem fixos, não reabertos aqui — apenas o NAMESPACE de destino das tabelas é decidido. Nenhum schema PostgreSQL, migration ou tabela foi criado. Nenhuma dependência foi instalada. Nenhum Drizzle schema foi alterado. `apps/api-v2` não teve código alterado. Supabase remoto não foi alterado. `apps/web` e `apps/api` (legacy) não foram alterados. Git não foi modificado.

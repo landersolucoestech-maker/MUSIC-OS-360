@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Functions e Triggers
 
 ## Functions — schema `public` (19)

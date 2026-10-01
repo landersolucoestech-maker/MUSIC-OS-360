@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 80 — Cross-check código × banco: recálculo e resolução final
 
 Read-only. Nenhum schema v2, migration, alteração de banco, entidade legacy, frontend ou

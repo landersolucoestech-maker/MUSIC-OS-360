@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 71 — Convenção Final de Arquivos `.env` por Ambiente
 
 Definição read-only da convenção única de arquivos de configuração por ambiente do MUSIC OS 360, para uso a partir da reconstrução da API v2. Nenhum arquivo `.env`/`.env.example`/`.env.staging.example`/`.gitignore` foi renomeado, criado ou alterado. Nenhum valor/secret foi alterado. Vite, NestJS, Docker, CI/CD e Git não foram alterados. `apps/api-v2` não foi criado.

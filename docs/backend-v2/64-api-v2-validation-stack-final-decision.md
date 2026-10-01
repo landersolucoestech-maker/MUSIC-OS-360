@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 64 — Decisão Final: Stack de Validação da `apps/api-v2`
 
 Reavaliação genuína da decisão de validação/DTOs registrada no doc44 (class-validator+class-transformer como padrão, Zod como escape hatch), agora com NestJS 11.1.28 e TypeScript 6.0.3 já fechados (docs 59/63) — informação que não estava disponível quando o doc44 foi escrito. Framework (NestJS/platform-express), arquitetura em camadas (doc47) e modelo de erro (doc50) não reabertos. Nenhum código/DTO/ValidationPipe foi criado, nenhuma dependência foi instalada. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy) e modelo de erro não foram alterados.

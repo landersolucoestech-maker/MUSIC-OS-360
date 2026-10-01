@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 27 — Auditoria dos Mocks de Runtime do Frontend
 
 Continuação read-only de [`03-frontend-data-access-surface.md`](./03-frontend-data-access-surface.md) (`MOCK_FILES: 5`). Nenhum arquivo foi alterado, em `apps/web` ou `apps/api`. Nenhum doc anterior foi modificado. Nenhum mock foi removido ou corrigido. `apps/api` não foi consultado. Os 20 arquivos `MEMORY` (zustand stores) não foram analisados, conforme proibido.

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 62 — Regras de Preservação Comportamental e Consistência Entre Módulos
 
 Definição read-only das regras obrigatórias para que a reconstrução da `apps/api-v2` preserve o comportamento funcional já congelado, sobre o contrato canônico (doc37), o inventário e mapa de dependências de domínios (docs 38/39/41), a arquitetura em camadas (doc47) e a estratégia transacional (doc51) já aprovados — nenhum reaberto aqui. Nenhum código, schema, migration ou dependência foi criado/alterado. Nenhum event bus/queue foi escolhido. Nenhum P&L/transaction foi implementado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy) e Git não foram alterados.

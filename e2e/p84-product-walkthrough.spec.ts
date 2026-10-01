@@ -116,7 +116,7 @@ test.describe('Part 84 — functional product sweep', () => {
     }
     console.log('=== END REPORT ===\n');
 
-    expect(broken, `Módulos com bug real reproduzido: ${JSON.stringify(broken.map((b) => b.name))}`).toEqual([]);
+    expect(broken, `Modules with a reproduced real bug: ${JSON.stringify(broken.map((b) => b.name))}`).toEqual([]);
   });
 
   test('create a synthetic artist, reload, confirm real persistence', async ({ page }) => {

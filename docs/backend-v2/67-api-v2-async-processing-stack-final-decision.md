@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 67 — Decisão Final: Stack de Filas, Jobs e Processamento Assíncrono da `apps/api-v2`
 
 Definição read-only da stack de queues/background jobs/workers/scheduled jobs/retries/delayed jobs da futura `apps/api-v2`, reavaliando genuinamente frente ao legacy (BullMQ+Redis), com verificação de versões em fontes primárias (npm registry). Estratégia transacional (doc51), observabilidade (doc52), deployment long-running (doc61) e regras de preservação de comportamento (doc62) não reabertos. Nenhuma dependência foi instalada, nenhum worker/queue/cron/outbox foi criado. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy), banco e deployment não foram alterados.

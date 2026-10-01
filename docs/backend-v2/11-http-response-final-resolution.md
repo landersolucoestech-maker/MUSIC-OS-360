@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 11 — Resolução Final das 13 Incertezas de Response (com evidência do backend legacy)
 
 Continuação read-only de [`10-http-response-unknowns-resolution.md`](./10-http-response-unknowns-resolution.md). Escopo: `apps/web/**` (já coberto) + apenas os controllers/services/DTOs de `apps/api/**` diretamente ligados a cada um dos 13 casos — nenhuma auditoria geral do backend. Nenhum arquivo foi alterado. Doc 10 não foi modificado. Erros HTTP e permissões não foram analisados (as rotas de integração e a de billing admin têm guards de auth/role, mas isso não foi examinado aqui).

@@ -6,7 +6,7 @@ description: Global residual search after a batch of fixes — old naming/aliase
 # Residue Search
 
 Grep-based search is auxiliary here, not sufficient on its own — a hit still needs to be read in
-context before it gets a disposition (mission Section 4, "buscas automáticas são auxiliares").
+context before it gets a disposition (mission Section 4, "automatic searches are auxiliary").
 
 ## Search set (non-exhaustive — extend per what this project actually uses)
 

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 79 — Resolução dos 23 Objetos `UNKNOWN` do Database Atual
 
 Investigação read-only (mesma conexão MUSIC OS 360 / DEV / `rypnevnfipygyhysqpdo`, somente leitura — nenhum `CREATE`/`ALTER`/`DROP`/`INSERT`/`UPDATE`/`DELETE`/`GRANT`/`REVOKE` executado) resolvendo os 23 objetos classificados como `UNKNOWN` no doc78 (todos eram as 23 tabelas `LIVE_ONLY` do cross-check código×banco do doc78/code-vs-live.md). Não foram resolvidos nesta etapa: `LIVE_ONLY_OBJECTS`/`CODE_ONLY_OBJECTS`/`LIVE_CODE_MISMATCHES` como métrica (permanecem 23/9/32, reservados para etapa futura), estrutura interna de JSONB, dependências lógicas de Storage, e rastreabilidade endpoint→tabela do frontend. Nenhum schema `app`, migration, RLS, Auth, Storage, Realtime, Supabase, frontend, legacy ou código funcional foi alterado.

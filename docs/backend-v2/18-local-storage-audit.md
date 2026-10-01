@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 18 — Classificação do Uso de Storage Local do Frontend
 
 Continuação read-only de [`03-frontend-data-access-surface.md`](./03-frontend-data-access-surface.md) (lista `STORAGE_LOCAL`, 36 arquivos). Nenhum arquivo foi alterado. Nenhum doc anterior foi modificado. `apps/api` não foi consultado. Nenhum `localStorage`/`sessionStorage` foi removido ou corrigido.

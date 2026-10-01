@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 39 — Mapa de Dependências entre Domínios
 
 Análise read-only dos 35 domínios do [`38-domain-inventory.md`](./38-domain-inventory.md). Nenhuma ordem de implementação, arquitetura, tabela ou migration foi definida. Nenhum arquivo foi alterado. Nenhum domínio novo foi criado (nenhum erro comprovado foi encontrado no doc38).

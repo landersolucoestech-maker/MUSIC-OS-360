@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 54 — Auditoria da Stack Tecnológica Atual do Projeto
 
 Auditoria read-only da stack real em uso hoje no monorepo (`apps/web`, `apps/api`, `packages/**`, configuração raiz, CI/CD, deployment). Fonte de verdade: código e arquivos reais do repositório, não convenção/nome. Nenhuma tecnologia foi instalada, removida, atualizada ou substituída. `apps/api-v2` não foi criado. `apps/web` e `apps/api` (legacy) não foram alterados.

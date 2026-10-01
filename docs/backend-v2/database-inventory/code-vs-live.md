@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Cross-check: Banco Real (live) vs. Código TypeORM (apps/api)
 
 Método: extração de todos os `@Entity('nome_tabela')` declarados em apps/api/src (128 nomes distintos), comparados contra as 142 tabelas base reais do schema `public`.

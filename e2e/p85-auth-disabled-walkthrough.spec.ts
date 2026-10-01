@@ -39,7 +39,7 @@ test('AUTH_DISABLED: root opens straight on the dashboard, no login, shows LANDE
 
   test.skip(
     !page.url().includes('/dashboard'),
-    'AUTH_DISABLED não está ativo neste ambiente (root não redirecionou para /dashboard) — defina AUTH_DISABLED=true e VITE_AUTH_DISABLED=true em .env/.env.development para rodar esta suíte.',
+    'AUTH_DISABLED is not active in this environment (root did not redirect to /dashboard) — set AUTH_DISABLED=true and VITE_AUTH_DISABLED=true in .env/.env.development to run this suite.',
   );
 
   const bodyText = await page.locator('body').innerText();
@@ -51,7 +51,7 @@ test('AUTH_DISABLED: every module opens without redirecting to login/auth', asyn
   await page.goto('/', { waitUntil: 'networkidle' });
   test.skip(
     !page.url().includes('/dashboard'),
-    'AUTH_DISABLED não está ativo neste ambiente — ver teste anterior.',
+    'AUTH_DISABLED is not active in this environment — see the previous test.',
   );
 
   const broken: string[] = [];

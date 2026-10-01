@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 81 — Auditoria exaustiva campo-a-campo: database ↔ backend (Fase 1 de 2)
 
 STATUS: BLOQUEADO (fronteira determinística, não silenciosa). Fase 1 (database ↔ backend) está

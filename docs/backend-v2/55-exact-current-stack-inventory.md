@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 55 — Inventário Exato da Stack Atual
 
 Fotografia técnica exata da stack atual, complementando [`54-current-project-stack-audit.md`](./54-current-project-stack-audit.md) com versões efetivamente RESOLVIDAS (`pnpm-lock.yaml`), não apenas declaradas. Nenhuma decisão de manutenção/substituição/atualização foi tomada. Nenhum pacote foi instalado/removido. `package.json`/`pnpm-lock.yaml` não foram alterados. `apps/api-v2` não foi criado. `apps/web`, `apps/api` (legacy), banco e Supabase não foram alterados.

@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Schemas — Inventário Completo
 
 Fonte: MUSIC OS 360 / DEV / rypnevnfipygyhysqpdo (leitura, PostgreSQL 17). Gerado programaticamente a partir de introspecção real via information_schema/pg_catalog.

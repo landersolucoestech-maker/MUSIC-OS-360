@@ -1,5 +1,5 @@
 // Real CodeQL CLI adapter — NOT a reimplementation of CodeQL (section 19:
-// "NÃO recrie CodeQL"). Two independent capabilities, since both are
+// "do NOT re-implement CodeQL"). Two independent capabilities, since both are
 // legitimate real-world flows:
 //   - runCodeQLAnalysis: actually invokes `codeql database create` +
 //     `codeql database analyze` when policy authorizes it (SAFE_ACTIVE,

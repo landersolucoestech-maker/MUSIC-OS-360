@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # 03 — Superfície de Acesso a Dados do Frontend (`apps/web`)
 
 Mapeamento read-only de todos os pontos de acesso a dados em `apps/web/**`. Nenhum arquivo foi alterado. Esta etapa **não** extrai endpoints, request/response bodies, permissões, paginação, filtros, erros ou regras de negócio — apenas localiza e classifica os pontos de acesso, conforme escopo do prompt.
