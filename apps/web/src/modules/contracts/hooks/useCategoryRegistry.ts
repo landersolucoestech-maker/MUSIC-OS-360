@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { localStore } from "@/shared/lib/local-store";
+import { sameContractCategory } from "@/modules/contracts/lib/contract-category-slugs";
 
 const STORAGE_KEY = "contract_categories";
 
@@ -51,7 +52,10 @@ export function contractCategoryLabel(
   slug: string | null | undefined,
 ): string {
   if (!slug) return DEFAULT_CATEGORY_LABEL;
-  return categories.find((c) => c.value === slug)?.label ?? UNKNOWN_CATEGORY_LABEL;
+  // The registry may still hold the legacy spelling of a platform-owned slug while
+  // the API now stores the canonical one (and vice-versa): match both.
+  const found = categories.find((c) => c.value === slug) ?? categories.find((c) => sameContractCategory(c.value, slug));
+  return found?.label ?? UNKNOWN_CATEGORY_LABEL;
 }
 
 function buildSeeds(): ContractCategory[] {

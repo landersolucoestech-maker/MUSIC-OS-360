@@ -11,7 +11,7 @@ import {
   LEGACY_PAYMENT_FREQUENCIES,
   PAYMENT_FREQUENCIES,
   PAYMENT_FREQUENCY_LABELS_PT_BR,
-  UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL,
+  LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE,
   normalizeClientTypes,
   normalizeFinancialModel,
   normalizePaymentFrequency,
@@ -29,7 +29,7 @@ describe("contract service type vocabulary (web mirror of the API contract)", ()
     expect(Object.keys(CLIENT_TYPE_LABELS_PT_BR).sort()).toEqual([...CLIENT_TYPES].sort());
     expect(Object.keys(PAYMENT_FREQUENCY_LABELS_PT_BR).sort()).toEqual([...PAYMENT_FREQUENCIES].sort());
     expect(Object.keys(FINANCIAL_MODEL_LABELS_PT_BR).sort()).toEqual(
-      [...CANONICAL_FINANCIAL_MODELS, UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL].sort(),
+      [...CANONICAL_FINANCIAL_MODELS].sort(),
     );
   });
 
@@ -56,16 +56,22 @@ describe("contract service type vocabulary (web mirror of the API contract)", ()
     expect(normalizePaymentFrequency(undefined)).toBe("one_time");
   });
 
-  it("keeps the external-rights value and unknown values UNMAPPED (pending owner decision)", () => {
-    expect(normalizeFinancialModel(UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL)).toBe(UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL);
+  it("dual-reads the external-rights phrase: legacy -> canonical id; unknown values still pass through", () => {
+    expect(normalizeFinancialModel(LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE)).toBe("external_rights_receipts");
+    expect(normalizeFinancialModel("external_rights_receipts")).toBe("external_rights_receipts");
+    expect(FINANCIAL_MODEL_LABELS_PT_BR.external_rights_receipts).toBe("Recebimentos externos de direitos");
     expect(normalizeFinancialModel("royalties")).toBe("royalties");
     expect(normalizePaymentFrequency("semestral")).toBe("semestral");
-    expect(Object.keys(LEGACY_FINANCIAL_MODELS)).not.toContain(UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL);
+    expect(Object.keys(LEGACY_FINANCIAL_MODELS)).toContain(LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE);
   });
 
-  it("the form no longer uses the persisted phrase as a DOM id (value untouched)", () => {
+  it("the form writes the canonical payment_type id (the legacy phrase is no longer a form value)", () => {
     const modal = readFileSync(resolve(__dirname, "../components/ContractFormModal.tsx"), "utf8");
     expect(modal).not.toMatch(/id="[^"]*\s[^"]*"/);
-    expect(modal).toContain('value="recebimentos externos de direitos"');
+    expect(modal).toContain('value="external_rights_receipts"');
+    expect(modal).not.toContain('value="recebimentos externos de direitos"');
+    const schema = readFileSync(resolve(__dirname, "../schemas/contract-schema.ts"), "utf8");
+    expect(schema).toContain('"external_rights_receipts"');
+    expect(schema).not.toContain("recebimentos externos de direitos");
   });
 });

@@ -16,15 +16,16 @@ export const CLIENT_TYPES = ["artist", "individual", "company"] as const;
 export type ClientType = (typeof CLIENT_TYPES)[number];
 
 /**
- * PENDING OWNER DECISION: the persisted value below has no canonical mapping yet and is
- * deliberately NOT translated (see findings/contracts-taxonomy.md). It is a valid,
- * pass-through `financial_model` until the owner decides.
+ * 'recebimentos externos de direitos' is persisted-legacy spelling of the canonical
+ * `external_rights_receipts` (CT1, API migration 20260930000017). It is READ-compat only:
+ * rows written before the backfill are normalized through LEGACY_FINANCIAL_MODELS;
+ * the web never writes it. PT-BR label: "Recebimentos externos de direitos".
  */
-export const UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL = "recebimentos externos de direitos" as const;
+export const LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE = "recebimentos externos de direitos" as const;
 
-export const CANONICAL_FINANCIAL_MODELS = ["fixed_value", "mixed", "recurring"] as const;
+export const CANONICAL_FINANCIAL_MODELS = ["fixed_value", "mixed", "recurring", "external_rights_receipts"] as const;
 export type CanonicalFinancialModel = (typeof CANONICAL_FINANCIAL_MODELS)[number];
-export type FinancialModel = CanonicalFinancialModel | typeof UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL;
+export type FinancialModel = CanonicalFinancialModel;
 
 export const PAYMENT_FREQUENCIES = ["one_time", "monthly", "quarterly", "yearly"] as const;
 export type PaymentFrequency = (typeof PAYMENT_FREQUENCIES)[number];
@@ -38,11 +39,12 @@ export const LEGACY_CLIENT_TYPES: Readonly<Record<string, ClientType>> = {
   pessoa_juridica: "company",
 };
 
-/** The external-rights phrase and 'royalties' are deliberately absent (unmapped). */
+/** 'royalties' is deliberately absent (unmapped); the external-rights phrase maps to its canonical id. */
 export const LEGACY_FINANCIAL_MODELS: Readonly<Record<string, CanonicalFinancialModel>> = {
   valor_fixo: "fixed_value",
   misto: "mixed",
   recorrente: "recurring",
+  [LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE]: "external_rights_receipts",
 };
 
 export const LEGACY_PAYMENT_FREQUENCIES: Readonly<Record<string, PaymentFrequency>> = {
@@ -85,7 +87,7 @@ export const FINANCIAL_MODEL_LABELS_PT_BR: Readonly<Record<FinancialModel, strin
   fixed_value: "Valor fixo",
   mixed: "Misto",
   recurring: "Recorrente",
-  [UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL]: "Recebimentos externos de direitos",
+  external_rights_receipts: "Recebimentos externos de direitos",
 };
 
 export const PAYMENT_FREQUENCY_LABELS_PT_BR: Readonly<Record<PaymentFrequency, string>> = {

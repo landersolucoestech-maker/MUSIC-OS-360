@@ -395,9 +395,21 @@ export const contractualRevenueTypes = [
 
 // ==================== REVENUE - ARTIST ====================
 
+/**
+ * Canonical id of the artist-revenue category (API migration 20260930000017). Rows written
+ * before the backfill hold the legacy phrase: read them through
+ * `canonicalTransactionCategory`. The web only writes the canonical id.
+ */
+export const EXTERNAL_RIGHTS_RECEIPTS_CATEGORY = "external_rights_receipts";
+export const LEGACY_EXTERNAL_RIGHTS_RECEIPTS_CATEGORY = "recebimentos externos de direitos";
+
+export function canonicalTransactionCategory(value: string): string {
+  return value === LEGACY_EXTERNAL_RIGHTS_RECEIPTS_CATEGORY ? EXTERNAL_RIGHTS_RECEIPTS_CATEGORY : value;
+}
+
 export const artistRevenueCategories = [
   { value: "cache-show", label: "Cachê de show" },
-  { value: "recebimentos externos de direitos", label: "Recebimentos externos de direitos" },
+  { value: EXTERNAL_RIGHTS_RECEIPTS_CATEGORY, label: "Recebimentos externos de direitos" },
   { value: "direitos-autorais", label: "Direitos autorais" },
   { value: "licenciamento", label: "Licenciamento" },
   { value: "adiantamento", label: "Adiantamento" },
@@ -681,7 +693,7 @@ const SLUG_PATTERN = /^[a-z0-9_-]+$/;
 export function transactionCategoryLabel(value: string | null | undefined): string {
   const text = typeof value === "string" ? value.trim() : "";
   if (!text) return "Sem categoria";
-  const slugLabel = CATEGORY_LABEL_BY_SLUG.get(text);
+  const slugLabel = CATEGORY_LABEL_BY_SLUG.get(canonicalTransactionCategory(text));
   if (slugLabel) return slugLabel;
   if (!SLUG_PATTERN.test(text)) return text;
   // Taxonomy slugs separate words with "-"; the shared dictionary/humanizer keys use "_".

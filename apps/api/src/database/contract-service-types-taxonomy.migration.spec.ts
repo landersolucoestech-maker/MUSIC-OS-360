@@ -7,7 +7,7 @@ import {
   LEGACY_CONTRACT_SERVICE_TYPE_CLIENT_TYPES,
   LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS,
   LEGACY_CONTRACT_SERVICE_TYPE_PAYMENT_FREQUENCIES,
-  UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL,
+  LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE,
 } from '../modules/contract-service-types/contract-service-type.vocabulary';
 import { getMetadataArgsStorage } from 'typeorm';
 import { ContractServiceTypeEntity } from './entities';
@@ -25,8 +25,12 @@ function runner() {
   return { query, calls };
 }
 
+// The external-rights phrase is handled by its own migration (20260930000017), not by this one.
+const migration2FinancialModels = Object.entries(LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS)
+  .filter(([legacy]) => legacy !== LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE);
+
 const legacyPairs = [
-  ...Object.entries(LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS),
+  ...migration2FinancialModels,
   ...Object.entries(LEGACY_CONTRACT_SERVICE_TYPE_PAYMENT_FREQUENCIES),
 ];
 
@@ -74,19 +78,19 @@ describe('CanonicalizeContractServiceTypeValuesAndIndex20260930000002', () => {
     for (const c of calls) expect(c.sql).not.toContain('updated_at');
     for (const canonical of [
       ...Object.values(LEGACY_CONTRACT_SERVICE_TYPE_CLIENT_TYPES),
-      ...Object.values(LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS),
+      ...migration2FinancialModels.map(([, canonical]) => canonical),
       ...Object.values(LEGACY_CONTRACT_SERVICE_TYPE_PAYMENT_FREQUENCIES),
     ]) {
       expect([...CONTRACT_SERVICE_TYPE_CLIENT_TYPES, ...CONTRACT_SERVICE_TYPE_CANONICAL_FINANCIAL_MODELS, ...CONTRACT_SERVICE_TYPE_PAYMENT_FREQUENCIES]).toContain(canonical);
     }
   });
 
-  it("leaves 'recebimentos externos de direitos' and 'royalties' UNMAPPED and adds NO constraint", async () => {
+  it("leaves 'recebimentos externos de direitos' (handled by 20260930000017) and 'royalties' alone and adds NO constraint", async () => {
     const { query, calls } = runner();
     await migration.up({ query } as never);
     await migration.down({ query } as never);
     const sqlText = calls.map((c) => c.sql + JSON.stringify(c.params ?? [])).join('\n');
-    expect(sqlText).not.toContain(UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL);
+    expect(sqlText).not.toContain(LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE);
     expect(sqlText).not.toContain('royalties');
     expect(sqlText).not.toContain('external_rights');
     expect(sqlText).not.toMatch(/ADD CONSTRAINT|CHECK\s*\(/);
@@ -117,7 +121,7 @@ describe('CanonicalizeContractServiceTypeValuesAndIndex20260930000002', () => {
     const scalar = calls.filter((c) => c.sql.includes('WITH updated AS') && Array.isArray(c.params) && c.params.length === 2);
     expect(scalar.map((c) => c.params)).toEqual([
       ...Object.entries(LEGACY_CONTRACT_SERVICE_TYPE_PAYMENT_FREQUENCIES).map(([legacy, canonical]) => [canonical, legacy]),
-      ...Object.entries(LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS).map(([legacy, canonical]) => [canonical, legacy]),
+      ...migration2FinancialModels.map(([legacy, canonical]) => [canonical, legacy]),
     ]);
     const sqlText = calls.map((c) => c.sql).join('\n');
     expect(sqlText).toContain(`"financial_model" SET DEFAULT 'valor_fixo'`);

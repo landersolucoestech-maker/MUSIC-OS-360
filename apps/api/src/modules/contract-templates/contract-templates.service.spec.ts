@@ -46,7 +46,7 @@ function updated(repo: ReturnType<typeof makeRepo>) {
 }
 
 describe("ContractTemplatesService — the form's real contract (Task U)", () => {
-  it('create: persists name/service_type/content/active exactly as sent', async () => {
+  it('create: persists name/service_type (canonical)/content/active', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       name: 'Template Exclusividade', service_type: 'semantico', content: '{{NOME}}', active: true,
@@ -54,7 +54,7 @@ describe("ContractTemplatesService — the form's real contract (Task U)", () =>
 
     const row = created(repo);
     expect(row['name']).toBe('Template Exclusividade');
-    expect(row['service_type']).toBe('semantico');
+    expect(row['service_type']).toBe('semantic'); // platform-owned legacy slug written canonical
     expect(row['content']).toBe('{{NOME}}');
     expect(row['active']).toBe(true);
     expect(row['tenant_id']).toBe('tenant-1');

@@ -27,6 +27,7 @@ import type { ContractSigner } from "@/modules/contracts/lib/contract-schema";
 import { useContractServiceTypes } from "@/modules/contracts/hooks/useContractServiceTypes";
 import { useContractTemplates } from "@/modules/contracts/hooks/useContractTemplates";
 import { useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
+import { sameContractCategory } from "@/modules/contracts/lib/contract-category-slugs";
 import { UserPlus, X } from "lucide-react";
 import { CONTRACT_STATUS_OPTIONS, ContractStatus } from "@/modules/contracts/lib/contract-status";
 import { isWizardSignerRecord } from "@/modules/contracts/lib/contract-wizard-party";
@@ -86,6 +87,13 @@ const ContractForm = ({
       producao: "producao_musical",
       publicitario: "publicidade",
       semantico: "outros",
+      // Canonical spellings written by the API (platform-owned categories).
+      exclusivity: "agenciamento",
+      recording: "producao_musical",
+      rights_assignment: "licenciamento",
+      production: "producao_musical",
+      advertising: "publicidade",
+      semantic: "outros",
     };
     if (MAP[slug]) return MAP[slug];
     // prefix match: "empresariamento_360" → "empresariamento"
@@ -124,7 +132,7 @@ const ContractForm = ({
       const cstSlug = normalizeToCst(raw);
       if (!cstSlug) continue;
       // tries to find the label in the CategoryRegistry by the template slug
-      const cat = registryCategories.find((c) => c.value === raw);
+      const cat = registryCategories.find((c) => c.value === raw) ?? registryCategories.find((c) => sameContractCategory(c.value, raw));
       if (cat) map.set(cstSlug, cat.label);
     }
     return map;
@@ -291,14 +299,14 @@ const ContractForm = ({
                       <Label>Tipo de Pagamento</Label>
                       <Select
                         value={form.watch("payment_type")}
-                        onValueChange={(value) => form.setValue("payment_type", value as "fixed_value" | "recebimentos externos de direitos")}
+                        onValueChange={(value) => form.setValue("payment_type", value as "fixed_value" | "external_rights_receipts")}
                       >
                         <SelectTrigger data-testid="select-payment-type">
                           <SelectValue placeholder="Selecione o tipo de pagamento" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="fixed_value">Valor Fixo</SelectItem>
-                          <SelectItem value="recebimentos externos de direitos">Recebimentos externos de direitos</SelectItem>
+                          <SelectItem value="external_rights_receipts">Recebimentos externos de direitos</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -309,7 +317,7 @@ const ContractForm = ({
                           {...form.register("fixed_value", { valueAsNumber: true })} />
                       </div>
                     )}
-                    {form.watch("payment_type") === "recebimentos externos de direitos" && (
+                    {form.watch("payment_type") === "external_rights_receipts" && (
                       <div className="space-y-2">
                         <Label htmlFor="external_rights_percentage_sel">Termos externos de direitos (%)</Label>
                         <Input id="external_rights_percentage_sel" type="number" step="0.01" min="0" max="100" placeholder="0,00"

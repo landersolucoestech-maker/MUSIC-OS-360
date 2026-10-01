@@ -330,6 +330,7 @@ import { BackfillClientProfileToEnglish20260930000012 } from './20260930000012_B
 import { BackfillOrganizationIndustryToEnglish20260930000013 } from './20260930000013_BackfillOrganizationIndustryToEnglish';
 import { BackfillReleaseStatusDefaultToDraft20260930000014 } from './20260930000014_BackfillReleaseStatusDefaultToDraft';
 import { ClassifyOperationalListPlatformDefaultsToEnglish20260930000016 } from './20260930000016_ClassifyOperationalListPlatformDefaultsToEnglish';
+import { BackfillExternalRightsReceiptsToCanonical20260930000017 } from './20260930000017_BackfillExternalRightsReceiptsToCanonical';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -643,4 +644,5 @@ export const ALL_MIGRATIONS = [
   BackfillOrganizationIndustryToEnglish20260930000013,
   BackfillReleaseStatusDefaultToDraft20260930000014,
   ClassifyOperationalListPlatformDefaultsToEnglish20260930000016,
+  BackfillExternalRightsReceiptsToCanonical20260930000017,
 ] as const;

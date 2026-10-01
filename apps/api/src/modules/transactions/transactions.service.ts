@@ -4,6 +4,7 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { TransactionEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
+import { canonicalExternalRightsReceipts, externalRightsReceiptsVariants } from '../../common/compat/external-rights-receipts';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { FinanceCategoryRulesService } from '../finance-category-rules/finance-category-rules.service';
@@ -99,9 +100,9 @@ function buildPersistencePayload(
     payload.created_by = userId;
     // category is NOT NULL in the DB; the validator does not require it for `transfer`,
     // so we apply a defensive default on creation to avoid 23502 → 500.
-    payload.category = (input.category && String(input.category).trim()) || UNCATEGORIZED_PLACEHOLDER;
+    payload.category = canonicalExternalRightsReceipts((input.category && String(input.category).trim()) || UNCATEGORIZED_PLACEHOLDER);
   } else if (input.category !== undefined) {
-    payload.category = input.category || UNCATEGORIZED_PLACEHOLDER;
+    payload.category = canonicalExternalRightsReceipts(input.category || UNCATEGORIZED_PLACEHOLDER);
   }
   if (input.transactionType !== undefined && input.transactionType !== null) payload.type = input.transactionType;
   if (input.description !== undefined) payload.description = input.description;
@@ -216,7 +217,12 @@ export class TransactionsService {
 
     if (q.status)     qb.andWhere('t.status = :status', { status: q.status });
     if (q.type)       qb.andWhere('t.type = :type', { type: canonicalTransactionType(q.type) });
-    if (q.category)   qb.andWhere('t.category = :category', { category: q.category });
+    if (q.category) {
+      // The external-rights category matches both its canonical id and the legacy phrase (expand/contract).
+      const categories = externalRightsReceiptsVariants(String(q.category));
+      if (categories.length > 1) qb.andWhere('t.category IN (:...categories)', { categories });
+      else                       qb.andWhere('t.category = :category', { category: q.category });
+    }
     if (q.artist_id) qb.andWhere('t.artist_id = :artistId', { artistId: q.artist_id });
     if (q.dateFrom)   qb.andWhere('t.transaction_date >= :dateFrom', { dateFrom: q.dateFrom });
     if (q.dateTo)     qb.andWhere('t.transaction_date <= :dateTo', { dateTo: q.dateTo });

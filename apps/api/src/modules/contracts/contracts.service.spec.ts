@@ -97,7 +97,7 @@ describe('ContractsService.create — template_id/signers/type default (C1 prere
       title: 'Contrato X', type: 'gravacao',
     } as unknown as CreateContractDto);
 
-    expect(created(repo)['type']).toBe('gravacao');
+    expect(created(repo)['type']).toBe('recording');
   });
 
   it('absent template_id is not persisted (final filter drops null/undefined)', async () => {
@@ -191,7 +191,7 @@ describe('ContractsService.create — alias consolidation (Phase 5 / C1)', () =>
 
     const row = createdC1(repo);
     expect(row['title']).toBe('Contrato X');
-    expect(row['type']).toBe('gravacao');
+    expect(row['type']).toBe('recording');
     expect(row['artist_id']).toBe('11111111-1111-4111-8111-111111111111');
     expect(row['fixed_value']).toBe('10');
     expect(row['titulo']).toBeUndefined();
@@ -367,19 +367,31 @@ describe('ContractsService.list — canonical and legacy filters (Phase 5 / C1)'
   it('filters by canonical type', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { type: 'gravacao' } as unknown as QueryContractDto);
-    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
+    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type IN (:...types)', { types: ['recording', 'gravacao'] });
+  });
+
+  it('matches both spellings of a platform-owned category slug (canonical query)', async () => {
+    const { svc, repo } = makeServiceC1([baseContractRow()]);
+    await svc.list('tenant-1', { type: 'recording' } as unknown as QueryContractDto);
+    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type IN (:...types)', { types: ['recording', 'gravacao'] });
+  });
+
+  it('keeps the exact match for tenant-owned / shared slugs', async () => {
+    const { svc, repo } = makeServiceC1([baseContractRow()]);
+    await svc.list('tenant-1', { type: 'distribuicao' } as unknown as QueryContractDto);
+    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'distribuicao' });
   });
 
   it('filters by the legacy tipo (translated to type)', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { tipo: 'gravacao' } as unknown as QueryContractDto);
-    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
+    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type IN (:...types)', { types: ['recording', 'gravacao'] });
   });
 
   it('equivalent type and tipo are accepted', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { type: 'gravacao', tipo: 'gravacao' } as unknown as QueryContractDto);
-    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
+    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type IN (:...types)', { types: ['recording', 'gravacao'] });
   });
 
   it('conflicting type and tipo are rejected before building the query', async () => {
@@ -498,5 +510,36 @@ describe('ContractsService — provider signature linkage is server-owned', () =
     expect(meta['provider']).toBe('docusign');
     expect(meta['provider_status']).toBe('awaiting_signature');
     expect(meta['currency']).toBe('USD');
+  });
+});
+
+describe('ContractsService — category slug canonicalization (CT1)', () => {
+  it('create writes the canonical slug for a platform-owned legacy slug; tenant slugs are untouched', async () => {
+    const { svc, repo } = makeServiceC1();
+    await svc.create('tenant-1', 'user-1', { title: 'X', type: 'gravacao' } as unknown as CreateContractDto);
+    expect(createdC1(repo)['type']).toBe('recording');
+    const second = makeServiceC1();
+    await second.svc.create('tenant-1', 'user-1', { title: 'X', type: 'empresariamento_360' } as unknown as CreateContractDto);
+    expect(createdC1(second.repo)['type']).toBe('empresariamento_360');
+  });
+
+  it('update writes the canonical slug', async () => {
+    const { svc, repo } = makeServiceC1([baseContractRow()]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { type: 'cessao_direitos' } as unknown as UpdateContractDto);
+    expect(updatedC1(repo)['type']).toBe('rights_assignment');
+  });
+
+  it('typeFacets counts contracts per persisted type over the whole tenant', async () => {
+    const qb: Record<string, jest.Mock> = {};
+    for (const m of ['where', 'andWhere', 'select', 'addSelect', 'groupBy']) qb[m] = jest.fn(() => qb);
+    qb['getRawMany'] = jest.fn(async () => [{ grp: 'recording', cnt: '2' }, { grp: 'gravacao', cnt: '1' }, { grp: 'custom_x', cnt: '4' }]);
+    const repo = { createQueryBuilder: jest.fn(() => qb) };
+    const ds = { getRepository: jest.fn(() => repo), query: jest.fn() } as never;
+    const svc = new ContractsService(ds, { getAllowedTransitions: jest.fn(() => []) } as never, { emitTyped: jest.fn() } as never, { enforce: jest.fn() } as never);
+    const res = await svc.typeFacets('tenant-1');
+    expect(res.byGroup).toEqual({ recording: 2, gravacao: 1, custom_x: 4 });
+    expect(res.total).toBe(7);
+    expect(qb['groupBy']).toHaveBeenCalledWith('c.type');
+    expect(qb['where']).toHaveBeenCalledWith('c.tenant_id = :tenantId', { tenantId: 'tenant-1' });
   });
 });

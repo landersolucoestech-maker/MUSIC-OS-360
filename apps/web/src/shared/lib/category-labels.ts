@@ -6,6 +6,7 @@
 
 const CATEGORY_LABELS: Record<string, string> = {
   // ── Finance ─────────────────────────────────────────────────────────────────────
+  external_rights_receipts: "Recebimentos externos de direitos",
   "recebimentos externos de direitos": "Recebimentos externos de direitos",
   recebimentos_externos_de_direitos: "Recebimentos externos de direitos",
   cache: "Cachê de Shows",
@@ -49,6 +50,15 @@ const CATEGORY_LABELS: Record<string, string> = {
   parcerias_comerciais: "Parcerias Comerciais",
   exclusividade: "Exclusividade",
   gravacao: "Gravação",
+  // Canonical English ids of the platform-owned contract categories (legacy slugs above/below).
+  recording: "Gravação",
+  rights_assignment: "Cessão de Direitos",
+  production: "Produção",
+  exclusivity: "Exclusividade",
+  advertising: "Publicitário",
+  semantic: "Semântico (IA)",
+  publicitario: "Publicitário",
+  semantico: "Semântico (IA)",
   gravacao_distribuicao: "Gravação e Distribuição",
   cessao_direitos: "Cessão de Direitos",
   direitos_autorais: "Direitos Autorais",

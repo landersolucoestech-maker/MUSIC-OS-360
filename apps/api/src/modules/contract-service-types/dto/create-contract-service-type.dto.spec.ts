@@ -10,7 +10,8 @@ import {
   LEGACY_CONTRACT_SERVICE_TYPE_CLIENT_TYPES,
   LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS,
   LEGACY_CONTRACT_SERVICE_TYPE_PAYMENT_FREQUENCIES,
-  UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL,
+  EXTERNAL_RIGHTS_RECEIPTS,
+  LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE,
 } from '../contract-service-type.vocabulary';
 
 /** Same options as the global pipe in create-app.ts. */
@@ -43,10 +44,11 @@ describe('contract service type vocabulary', () => {
     }
   });
 
-  it('keeps the external-rights value UNMAPPED: accepted as-is, never a canonical or a legacy-map key', () => {
-    expect(CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS).toContain(UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL);
-    expect(CONTRACT_SERVICE_TYPE_CANONICAL_FINANCIAL_MODELS).not.toContain(UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL);
-    expect(Object.keys(LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS)).not.toContain(UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL);
+  it('external-rights: canonical id is accepted; the legacy phrase is a deprecated input mapped to it; royalties stays unmapped', () => {
+    expect(CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS).toContain(EXTERNAL_RIGHTS_RECEIPTS);
+    expect(CONTRACT_SERVICE_TYPE_CANONICAL_FINANCIAL_MODELS).toContain(EXTERNAL_RIGHTS_RECEIPTS);
+    expect(CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS).not.toContain(LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE);
+    expect(LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS[LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE]).toBe(EXTERNAL_RIGHTS_RECEIPTS);
     expect(Object.keys(LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS)).not.toContain('royalties');
   });
 });
@@ -85,12 +87,11 @@ describe('CreateContractServiceTypeDto legacy-input normalizer', () => {
     expect(dto.client_types).toEqual(['artist', 'company']);
   });
 
-  it('passes the unmapped external-rights value through untouched (owner decision pending)', async () => {
-    const dto = await validate(CreateContractServiceTypeDto, {
-      ...base,
-      financial_model: UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL,
-    });
-    expect(dto.financial_model).toBe(UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL);
+  it('writes the canonical external-rights id for the legacy phrase and keeps the canonical id as-is', async () => {
+    const legacy = await validate(CreateContractServiceTypeDto, { ...base, financial_model: LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE });
+    expect(legacy.financial_model).toBe(EXTERNAL_RIGHTS_RECEIPTS);
+    const canonical = await validate(CreateContractServiceTypeDto, { ...base, financial_model: EXTERNAL_RIGHTS_RECEIPTS });
+    expect(canonical.financial_model).toBe(EXTERNAL_RIGHTS_RECEIPTS);
   });
 
   it.each([

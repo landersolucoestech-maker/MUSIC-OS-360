@@ -8,6 +8,7 @@ import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-
 import { groupCount, type GroupStatsResult } from '../../common/stats/group-count.util';
 import type { CreateContractDto } from './dto/create-contract.dto';
 import type { UpdateContractDto } from './dto/update-contract.dto';
+import { canonicalContractCategorySlug, contractCategorySlugVariants } from './contract-category-slugs';
 import type { QueryContractDto }  from './dto/query-contract.dto';
 import { ContractStatus } from '@music-os-360/types';
 import { WorkflowService } from '../../core/workflow/workflow.service';
@@ -64,7 +65,12 @@ export class ContractsService {
       .andWhere('c.deleted_at IS NULL');
 
     if (q['status'])              qb.andWhere('c.status = :status',        { status:    q['status'] });
-    if (resolvedQuery.type)       qb.andWhere('c.type = :type',            { type:      resolvedQuery.type });
+    if (resolvedQuery.type) {
+      // Platform-owned category slugs match both the canonical and the legacy spelling.
+      const typeVariants = contractCategorySlugVariants(resolvedQuery.type);
+      if (typeVariants.length > 1) qb.andWhere('c.type IN (:...types)', { types: typeVariants });
+      else                         qb.andWhere('c.type = :type',        { type:  resolvedQuery.type });
+    }
     if (resolvedQuery.artist_id) qb.andWhere('c.artist_id = :artistId', { artistId: resolvedQuery.artist_id });
     if (q['search'])              qb.andWhere('c.title ILIKE :search',    { search: `%${q['search']}%` });
     if (q['signing_platform'] === 'none') qb.andWhere('c.signing_platform IS NULL');
@@ -83,6 +89,18 @@ export class ContractsService {
         limit:  typeof q['limit']  === 'number' ? q['limit']  : 50,
       },
     };
+  }
+
+  /**
+   * Count per `contracts.type` over the whole tenant: the facet that feeds the
+   * Contracts type filter, so a type present in data is always filterable.
+   */
+  async typeFacets(tenantId: string): Promise<GroupStatsResult> {
+    const qb = this.repo!
+      .createQueryBuilder('c')
+      .where('c.tenant_id = :tenantId', { tenantId })
+      .andWhere('c.deleted_at IS NULL');
+    return groupCount(qb, 'c', 'type');
   }
 
   /**
@@ -166,6 +184,7 @@ export class ContractsService {
     const normalized = this.buildEntityPayload(rest, resolved);
     // contracts.type is NOT NULL; the wizard may not have a service type defined.
     if (normalized['type'] == null) normalized['type'] = 'outro';
+    else if (typeof normalized['type'] === 'string') normalized['type'] = canonicalContractCategorySlug(normalized['type']);
 
     await assertSameTenantFk(this.ds!, 'artists', normalized['artist_id'] as string | undefined, tenantId, 'Artista');
     await assertSameTenantFk(this.ds!, 'clients', normalized['client_id'] as string | undefined, tenantId, 'Cliente');
@@ -220,6 +239,7 @@ export class ContractsService {
 
     const normalized = this.buildEntityPayload(restFields, resolved);
     // No type='outro' default here — an absent PATCH must not force a value.
+    if (typeof normalized['type'] === 'string') normalized['type'] = canonicalContractCategorySlug(normalized['type']);
     // A client metadata update replaces the column: carry the server-owned
     // provider linkage over, or the signature webhook can no longer find the
     // contract (DocuSign resolves by metadata.provider_doc_id).

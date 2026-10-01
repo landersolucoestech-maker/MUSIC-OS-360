@@ -46,6 +46,14 @@ export class ContractsController {
     return this.service.stats(tenant.id);
   }
 
+  @Get('type-facets')
+  @RequireRole('viewer')
+  @RequirePermission('contract:read')
+  @ApiOperation({ summary: 'Count of contracts per type (category slug), over the whole tenant' })
+  typeFacets(@CurrentTenant() tenant: { id: string }) {
+    return this.service.typeFacets(tenant.id);
+  }
+
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('contract:read')

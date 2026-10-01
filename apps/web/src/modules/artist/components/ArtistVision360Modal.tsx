@@ -138,7 +138,7 @@ const CONTRACT_FILTERS: Array<{ key: string; label: string; types?: string[] }> 
   { key: "business", label: "Empresarial", types: ["exclusivo", "nao_exclusivo", "gestao", "representacao"] },
   { key: "distribution", label: "Distribuição", types: ["distribuicao"] },
   { key: "licensing", label: "Licenciamento", types: ["licenciamento"] },
-  { key: "production", label: "Produção", types: ["producao"] },
+  { key: "production", label: "Produção", types: ["producao", "production"] },
   { key: "partnerships", label: "Parcerias", types: ["parceria"] },
   { key: "services", label: "Serviços", types: ["servicos"] },
   { key: "other", label: "Outros", types: ["outro"] },

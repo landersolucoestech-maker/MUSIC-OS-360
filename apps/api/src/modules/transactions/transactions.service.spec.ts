@@ -426,4 +426,28 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     expect(qb['addOrderBy']).toHaveBeenCalledWith('t.id', 'ASC');
     expect(qb['skip']).toHaveBeenCalledWith(200);
   });
+
+  it('list: the external-rights category filter matches the canonical id and the legacy phrase; other categories stay exact', async () => {
+    const qb: Record<string, jest.Mock> = {};
+    for (const m of ['where', 'andWhere', 'orderBy', 'addOrderBy', 'skip', 'take']) qb[m] = jest.fn(() => qb);
+    qb['getManyAndCount'] = jest.fn(async () => [[], 0]);
+    const repo = { createQueryBuilder: jest.fn(() => qb) };
+    const service = new TransactionsService({ getRepository: jest.fn(() => repo) } as never, undefined as never, undefined as never, undefined as never);
+    await service.list(TENANT, { category: 'external_rights_receipts' } as any);
+    expect(qb['andWhere']).toHaveBeenCalledWith('t.category IN (:...categories)', {
+      categories: ['external_rights_receipts', 'recebimentos externos de direitos'],
+    });
+    qb['andWhere'].mockClear();
+    await service.list(TENANT, { category: 'marketing' } as any);
+    expect(qb['andWhere']).toHaveBeenCalledWith('t.category = :category', { category: 'marketing' });
+  });
+
+  it('create: persists the canonical external-rights category for the legacy phrase', async () => {
+    const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
+    await service.create(TENANT, 'user-1', {
+      transactionType: 'revenue', description: 'X', category: 'recebimentos externos de direitos', amount: '50',
+    } as any);
+    const created = (repo.create as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+    expect(created['category']).toBe('external_rights_receipts');
+  });
 });

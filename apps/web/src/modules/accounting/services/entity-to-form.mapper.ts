@@ -4,7 +4,7 @@
  */
 
 import { calendarDay } from "@/shared/lib/format-utils";
-import { initialFormData } from "@/modules/accounting/constants/transaction-constants";
+import { canonicalTransactionCategory, initialFormData } from "@/modules/accounting/constants/transaction-constants";
 import type { TransactionFormData } from "@/modules/accounting/constants/transaction-constants";
 
 /**
@@ -63,7 +63,7 @@ export function transactionToFormFields(t: TransactionFormEntity | null | undefi
     entityLinks: Array.isArray(t.entityLinks) ? (t.entityLinks as TransactionFormData["entityLinks"]) : [],
     transactionType:        str(t.type),
     counterpartyType:       str(t.counterparty_type),
-    category:               str(t.category),
+    category:               canonicalTransactionCategory(str(t.category)),
     subcategory:            str(t.subcategory),
     description:            str(t.description),
     amount:                 str(t.amount),

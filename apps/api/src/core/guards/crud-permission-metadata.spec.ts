@@ -179,6 +179,7 @@ const expectedRoutes: ExpectedRoute[] = [
   { controller: ContractsController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'contract:read' },
   // Task H: count + sum of value by status across the entire tenant (exact KPIs).
   { controller: ContractsController, methodName: 'stats', httpMethod: RequestMethod.GET, path: 'stats', role: 'viewer', permission: 'contract:read' },
+  { controller: ContractsController, methodName: 'typeFacets', httpMethod: RequestMethod.GET, path: 'type-facets', role: 'viewer', permission: 'contract:read' },
   { controller: ContractsController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'contract:read' },
   { controller: ContractsController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'contract:create' },
   { controller: ContractsController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'editor', permission: 'contract:update' },

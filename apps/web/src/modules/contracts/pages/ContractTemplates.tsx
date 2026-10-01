@@ -30,6 +30,7 @@ import {
   useCategoryRegistry,
   type ContractCategory,
 } from "@/modules/contracts/hooks/useCategoryRegistry";
+import { isSemanticContractCategory } from "@/modules/contracts/lib/contract-category-slugs";
 import type { SemanticTemplateManifest } from "@/modules/contracts/types/contracts.types";
 
 function parseManifest(template: ContractTemplateRow): SemanticTemplateManifest | null {
@@ -93,8 +94,8 @@ export default function ContractTemplates() {
     const q = search.trim().toLowerCase();
     return templates.filter((template) => {
       if (q && !template.name.toLowerCase().includes(q) && !(template.description ?? "").toLowerCase().includes(q)) return false;
-      if (filterType === "semantic" && template.service_type !== "semantico") return false;
-      if (filterType === "standard" && template.service_type === "semantico") return false;
+      if (filterType === "semantic" && !isSemanticContractCategory(template.service_type)) return false;
+      if (filterType === "standard" && isSemanticContractCategory(template.service_type)) return false;
       if (filterStatus === "active" && !template.active) return false;
       if (filterStatus === "inactive" && template.active) return false;
       return true;
@@ -175,7 +176,7 @@ export default function ContractTemplates() {
     setIsEditOpen(true);
   };
 
-  const semanticCount = templates.filter((template) => template.service_type === "semantico").length;
+  const semanticCount = templates.filter((template) => isSemanticContractCategory(template.service_type)).length;
   const activeCount = templates.filter((template) => template.active).length;
   const totalVars = templates.reduce((acc, template) => acc + countVariables(template), 0);
 
@@ -351,7 +352,7 @@ export default function ContractTemplates() {
                 <TableBody>
                   {pageItems.map((template) => {
                     const clauseTypes = getClauseTypes(template);
-                    const isSemantic = template.service_type === "semantico";
+                    const isSemantic = isSemanticContractCategory(template.service_type);
                     return (
                       <TableRow key={template.id} className="cursor-pointer" onClick={() => handleViewClick(template)} data-testid={`row-template-${template.id}`}>
                         <TableCell onClick={(e) => e.stopPropagation()}>

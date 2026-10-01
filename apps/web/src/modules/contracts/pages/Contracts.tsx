@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ import { ContractWizard } from "@/modules/contracts/components/ContractWizard";
 import { ContractViewModal } from "@/modules/contracts/components/ContractViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { useContracts } from "@/modules/contracts/hooks/useContracts";
-import { useContractsPaginated, useContractsStats } from "@/modules/contracts/hooks/useContractsPaginated";
+import { useContractsPaginated, useContractsStats, useContractTypeFacets } from "@/modules/contracts/hooks/useContractsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { formatCurrency, formatDateDashes, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { formatCategoryLabel } from "@/shared/lib/category-labels";
@@ -36,6 +36,9 @@ import { usePagination } from "@/shared/hooks/usePagination";
 import { cn } from "@/shared/lib/utils";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { contractPartyLabel } from "@/modules/contracts/lib/contract-party";
+import { buildContractTypeFilterOptions } from "@/modules/contracts/lib/contract-type-filter";
+import { useContractServiceTypes } from "@/modules/contracts/hooks/useContractServiceTypes";
+import { useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
 
 export default function Contracts() {
   const navigate = useNavigate();
@@ -91,6 +94,15 @@ export default function Contracts() {
   // that it now iterates over {status: count} (5-10 entries) instead of the full
   // contract list.
   const { stats: contractsStats } = useContractsStats();
+  // Type filter options come from data: the tenant's contract service types (the
+  // form's canonical source), the category registry and the types present in contracts.
+  const { allServiceTypes } = useContractServiceTypes(null);
+  const { categories: registryCategories } = useCategoryRegistry();
+  const { facets: typeFacets } = useContractTypeFacets();
+  const typeFilterOptions = useMemo(
+    () => buildContractTypeFilterOptions(allServiceTypes, registryCategories, Object.keys(typeFacets.byGroup)),
+    [allServiceTypes, registryCategories, typeFacets.byGroup],
+  );
 
   const toggleSelectAll = () => {
     if (selectedIds.length === filteredContracts.length && filteredContracts.length > 0) {
@@ -234,10 +246,9 @@ export default function Contracts() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-type">Todos os tipos</SelectItem>
-              <SelectItem value="agenciamento">Agenciamento</SelectItem>
-              <SelectItem value="distribuicao">Distribuição</SelectItem>
-              <SelectItem value="licenciamento">Licenciamento</SelectItem>
-              <SelectItem value="edicao">Edição</SelectItem>
+              {typeFilterOptions.map((o) => (
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>

@@ -16,6 +16,9 @@ import {
   Building2, User, Music,
 } from "lucide-react";
 import { useContractTemplates } from "@/modules/contracts/hooks/useContractTemplates";
+import {
+  PLACEHOLDER_RE, SIGNATURE_GROUPS, canonicalPlaceholderField, isNonPartyGroup, isPartyEntityField, partyKeyForPlaceholderField,
+} from "@/modules/contracts/lib/contract-placeholders";
 import { contractCategoryLabel, useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
 import { useContracts } from "@/modules/contracts/hooks/useContracts";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
@@ -95,24 +98,6 @@ interface WizardState {
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
-const SIGNATURE_GROUPS = new Set(["SIGNATURE", "INITIALS", "SIGN_DATE"]);
-const NON_PARTY_GROUPS = new Set([
-  "SIGNATURE", "INITIALS", "SIGN_DATE",
-  "CONTRACT", "FINANCIAL", "VIGENCIA", "OBRA", "OBRA_MUSICAL",
-  "SYSTEM", "DATA", "PRAZO", "PENALTY",
-]);
-const ENTITY_FIELDS = new Set([
-  "NAME", "NOME", "CPF", "CNPJ", "RG", "EMAIL", "ADDRESS", "ENDERECO",
-  "TELEFONE", "CELULAR", "NACIONALIDADE", "PROFISSAO", "ESTADO_CIVIL",
-  "RAZAO_SOCIAL", "REPRESENTANTE_LEGAL", "CPF_REPRESENTANTE", "RG_REPRESENTANTE",
-  "NOME_ARTISTICO", "NOME_CIVIL",
-  // English-style aliases used by templates created in the template editor
-  "LEGAL_REPRESENTATIVE", "REPRESENTATIVE_NAME",
-  "LEGAL_REPRESENTATIVE_CPF", "LEGAL_REPRESENTATIVE_RG",
-  "LEGAL_REPRESENTATIVE_NATIONALITY", "LEGAL_REPRESENTATIVE_MARITAL_STATUS",
-  "LEGAL_REPRESENTATIVE_OCCUPATION", "LEGAL_REPRESENTATIVE_ADDRESS",
-]);
-
 const WIZARD_STEPS = [
   { label: "Template",    icon: FileText },
   { label: "Partes",      icon: Users },
@@ -136,8 +121,6 @@ const EMPTY_WIZARD: WizardState = {
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-const PLACEHOLDER_RE = /\{\{([A-Z][A-Z0-9_]*)\.([A-Z0-9_]+)\}\}/g;
-
 function extractGroups(content: string): Map<string, Set<string>> {
   const map = new Map<string, Set<string>>();
   for (const [, group, field] of content.matchAll(PLACEHOLDER_RE)) {
@@ -151,8 +134,8 @@ function extractPartyRoles(content: string): string[] {
   const groups = extractGroups(content);
   return [...groups.entries()]
     .filter(([group, fields]) =>
-      !NON_PARTY_GROUPS.has(group) &&
-      [...fields].some((f) => ENTITY_FIELDS.has(f)),
+      !isNonPartyGroup(group) &&
+      [...fields].some((f) => isPartyEntityField(f)),
     )
     .map(([group]) => group);
 }
@@ -219,42 +202,15 @@ function parseManifest(raw: string | null | undefined, content: string, partyRol
 }
 
 function resolvePartyField(party: PartyData, field: string): string {
-  const f = field.toUpperCase();
-  if (f === "NAME" || f === "NOME") {
+  // Internal processing uses the canonical field id; the authored token (NOME,
+  // TELEFONE, ...) is only mapped at this boundary and never rewritten.
+  const canonicalField = canonicalPlaceholderField(field);
+  if (canonicalField === "NAME") {
     if (party.type === "company") return party.legal_name || "";
     if (party.type === "artist") return party.stage_name || party.full_name || party.name || "";
     return party.name || "";
   }
-  const MAP: Record<string, keyof PartyData> = {
-    CPF:                 "cpf",
-    CNPJ:                "cnpj",
-    RG:                  "rg",
-    EMAIL:               "email",
-    TELEFONE:            "phone",
-    CELULAR:             "phone",
-    ENDERECO:            "address",
-    ADDRESS:             "address",
-    NACIONALIDADE:       "nationality",
-    PROFISSAO:           "occupation",
-    ESTADO_CIVIL:        "marital_status",
-    RAZAO_SOCIAL:        "legal_name",
-    // Portuguese-style keys
-    REPRESENTANTE_LEGAL: "legal_representative",
-    CPF_REPRESENTANTE:   "legal_representative_cpf",
-    RG_REPRESENTANTE:    "legal_representative_rg",
-    // English-style aliases (used by templates created in the template editor)
-    LEGAL_REPRESENTATIVE:             "legal_representative",
-    REPRESENTATIVE_NAME:              "legal_representative",
-    LEGAL_REPRESENTATIVE_CPF:         "legal_representative_cpf",
-    LEGAL_REPRESENTATIVE_RG:          "legal_representative_rg",
-    LEGAL_REPRESENTATIVE_NATIONALITY: "legal_representative_nationality",
-    LEGAL_REPRESENTATIVE_MARITAL_STATUS: "legal_representative_marital_status",
-    LEGAL_REPRESENTATIVE_OCCUPATION:  "legal_representative_occupation",
-    LEGAL_REPRESENTATIVE_ADDRESS:     "legal_representative_address",
-    NOME_ARTISTICO:      "stage_name",
-    NOME_CIVIL:          "full_name",
-  };
-  const key = MAP[f];
+  const key = partyKeyForPlaceholderField(canonicalField);
   if (!key) return "";
   const value = String(party[key] || "");
   return key === "marital_status" || key === "legal_representative_marital_status"

@@ -66,3 +66,21 @@ export function useContractsStats() {
     error: query.error,
   };
 }
+
+/**
+ * Count per persisted `contracts.type` over the WHOLE TENANT — GET
+ * /contracts/type-facets. Feeds the Contracts type filter so every type present
+ * in data is selectable.
+ */
+export function useContractTypeFacets() {
+  const query = useQuery<ContractStats>({
+    queryKey: [...QUERY_KEYS.CONTRACTS, "type-facets"],
+    queryFn: ({ signal }) => api.get<ContractStats>("/contracts/type-facets", { signal }),
+    staleTime: 30_000,
+  });
+  return {
+    facets: query.data ?? EMPTY_STATS,
+    isLoading: query.isLoading,
+    error: query.error,
+  };
+}

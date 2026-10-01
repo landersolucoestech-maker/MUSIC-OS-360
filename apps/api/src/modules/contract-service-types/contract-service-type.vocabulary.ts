@@ -20,24 +20,19 @@ export const CONTRACT_SERVICE_TYPE_CLIENT_TYPES = ['artist', 'individual', 'comp
 export type ContractServiceTypeClientType = (typeof CONTRACT_SERVICE_TYPE_CLIENT_TYPES)[number];
 
 /**
- * PENDING OWNER DECISION (see findings/contracts-taxonomy.md): the persisted value
- * 'recebimentos externos de direitos' (probably the artifact of an earlier mass
- * rewrite of 'royalties') has NO canonical mapping yet. It stays a valid,
- * unmapped, pass-through value: never translated on input, never rewritten by the
- * migration, never given a CHECK constraint. Replace this constant by the canonical
- * value only after the owner decides (and add the backfill in a new migration).
+ * 'recebimentos externos de direitos' (probably the artifact of an earlier mass rewrite
+ * of 'royalties') is now the canonical `external_rights_receipts` (CT1, migration
+ * 20260930000017). The phrase is kept ONLY as a deprecated input / read spelling
+ * (LEGACY map below + web dual-read); it is never written again.
  */
-export const UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL = 'recebimentos externos de direitos' as const;
+export { EXTERNAL_RIGHTS_RECEIPTS, LEGACY_EXTERNAL_RIGHTS_RECEIPTS_PHRASE } from '../../common/compat/external-rights-receipts';
 
-export const CONTRACT_SERVICE_TYPE_CANONICAL_FINANCIAL_MODELS = ['fixed_value', 'mixed', 'recurring'] as const;
+export const CONTRACT_SERVICE_TYPE_CANONICAL_FINANCIAL_MODELS = ['fixed_value', 'mixed', 'recurring', 'external_rights_receipts'] as const;
 export type ContractServiceTypeCanonicalFinancialModel =
   (typeof CONTRACT_SERVICE_TYPE_CANONICAL_FINANCIAL_MODELS)[number];
 
-/** Values the API accepts for `financial_model`: canonical + the one unmapped pass-through value. */
-export const CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS = [
-  ...CONTRACT_SERVICE_TYPE_CANONICAL_FINANCIAL_MODELS,
-  UNMAPPED_EXTERNAL_RIGHTS_FINANCIAL_MODEL,
-] as const;
+/** Values the API accepts for `financial_model` after the deprecated spellings were mapped (canonical only). */
+export const CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS = CONTRACT_SERVICE_TYPE_CANONICAL_FINANCIAL_MODELS;
 
 /**
  * Precedent for monthly/quarterly/yearly: artist goal periods (GOAL_PERIODS).
@@ -54,13 +49,14 @@ export const LEGACY_CONTRACT_SERVICE_TYPE_CLIENT_TYPES: Readonly<Record<string, 
   pessoa_juridica: 'company',
 };
 
-/** 'recebimentos externos de direitos' and 'royalties' are deliberately absent: unmapped until the owner decides. */
+/** 'royalties' is deliberately absent (unmapped, never seen in code); the external-rights phrase maps to its canonical id. */
 export const LEGACY_CONTRACT_SERVICE_TYPE_FINANCIAL_MODELS: Readonly<
   Record<string, ContractServiceTypeCanonicalFinancialModel>
 > = {
   valor_fixo: 'fixed_value',
   misto: 'mixed',
   recorrente: 'recurring',
+  'recebimentos externos de direitos': 'external_rights_receipts',
 };
 
 export const LEGACY_CONTRACT_SERVICE_TYPE_PAYMENT_FREQUENCIES: Readonly<
