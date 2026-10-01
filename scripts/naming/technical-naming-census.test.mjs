@@ -448,6 +448,12 @@ test("Swagger examples: @ApiProperty({ example }) is documentation, an enum/defa
   assert.deepEqual(names(scanSource("apps/api/src/modules/x/dto/x.dto.ts", src), "value"), ["gravacao"]);
 });
 
+test("ABRAMUS vendor row fields are external property names in useAbramus.ts only", () => {
+  const src = `type Row = { duracao?: string; compositores?: string[]; data_registro?: string; artista_nome?: string };`;
+  assert.deepEqual(names(scanSource("apps/web/src/modules/integrations/hooks/useAbramus.ts", src), "identifier"), []);
+  assert.deepEqual(names(scanSource("apps/web/src/modules/other/Other.ts", src), "identifier"), ["duracao", "compositores", "data_registro", "artista_nome"]);
+});
+
 test("fixture record ids: an uppercase code with a number (ABR-123) is not a Portuguese word; the rest of the value is still checked", () => {
   assert.equal(stripRecordId("abramus-result-ABR-123"), "abramus-result-");
   assert.deepEqual(names(scanSource("apps/web/src/test/Row.test.tsx", `screen.getByTestId("abramus-result-ABR-123"); screen.getByTestId("badge-already-imported-ABR-123");`), "value"), []);

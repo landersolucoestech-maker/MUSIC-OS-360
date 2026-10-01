@@ -128,7 +128,7 @@ describe('Per-plan entitlement — composition', () => {
 
 describe('Classification — internal/billing outside the commercial catalog', () => {
   for (const c of [IntegrationClassification.INTERNAL_PLATFORM, IntegrationClassification.PLATFORM_BILLING]) {
-    it(`${c} nunca é descoberto nem usável, mesmo publicado e com audiência all`, async () => {
+    it(`${c} is never discoverable nor usable, even when published with audience all`, async () => {
       const [r] = await buildPolicy({
         rows: [row({ classification: c, view_audience: aud('all'), use_audience: aud('all') })],
         oauth: CONNECTED,

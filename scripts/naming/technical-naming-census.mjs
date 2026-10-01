@@ -122,12 +122,14 @@ export const PT_CONTENT_VOCABULARY = new Map([
 ]);
 /**
  * Property names that belong to a third-party payload we only read: ViaCEP (logradouro, bairro,
- * localidade, uf, ...) and IBGE localities (nome, sigla, mesorregiao, ...). Exact file + exact
+ * localidade, uf, ...), IBGE localities (nome, sigla, mesorregiao, ...) and ABRAMUS rows (duracao, compositores, ...). Exact file + exact
  * name; applies to identifier and object-key surfaces.
  */
 export const EXTERNAL_PROPERTY_NAMES = new Map([
   ["apps/web/src/shared/lib/masks.ts", new Set(["cep", "logradouro", "complemento", "bairro", "localidade", "uf", "erro"])],
   ["apps/web/src/modules/marketing/components/campaign-builder/useIbgeLocations.ts", new Set(["nome", "sigla", "UF", "mesorregiao", "microrregiao"])],
+  // ABRAMUS search rows: vendor-shaped fields read once at the adapter boundary (fromAbramusVendorRow) and mapped to English.
+  ["apps/web/src/modules/integrations/hooks/useAbramus.ts", new Set(["duracao", "genero", "compositores", "letristas", "gravadora", "produtores", "data_registro", "artista_nome"])],
 ]);
 /**
  * Calls whose string arguments after the first are user-visible nouns/participles composed

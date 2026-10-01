@@ -569,7 +569,7 @@ export function ArtistVision360Modal({
   actualWorks.slice(0, 5).forEach((o: any) => {
     if (o.created_at)
       actualHistory.push({
-        id: `obra-${o.id}`,
+        id: `work-${o.id}`,
         type: "work",
         description: `Obra registrada: ${o.title}`,
         data: o.created_at,
@@ -579,7 +579,7 @@ export function ArtistVision360Modal({
   actualReleases.slice(0, 5).forEach((l: any) => {
     if (l.created_at)
       actualHistory.push({
-        id: `lanc-${l.id}`,
+        id: `release-${l.id}`,
         type: "work",
         description: `Lançamento registrado: ${l.title}`,
         data: l.created_at,

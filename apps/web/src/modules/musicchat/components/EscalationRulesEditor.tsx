@@ -38,7 +38,7 @@ export function EscalationRulesEditor({ rules, onChange }: Props) {
   };
 
   const add = () => {
-    const id = `escalonamento-${Date.now()}`;
+    const id = `escalation-${Date.now()}`;
     onChange([
       ...rules,
       {

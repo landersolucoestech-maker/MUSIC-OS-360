@@ -24,7 +24,7 @@ export class CreateShareDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) holderDoc?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
-  // ── Form fields (EXACT keys of SharePendenteFormModal) ───────────────────────
+  // ── Form fields (EXACT keys of the web share form (ShareFormModal)) ───────────────────────
   // Product rule 2026-07-12: each form field has its own physical column.
   // `percentage` also covers the old legacy EN alias (same name, same
   // column since 2026-09-13/RenameSharePartyFieldsToEnglish — see toColumns()).

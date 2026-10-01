@@ -6,6 +6,7 @@
  */
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { EventsService } from '../../../core/events/events.service';
+import { redactForStorage } from '../../../core/filters/redact-diagnostic';
 import type { ExportFormat } from './export.types';
 
 export const REPORT_EXPORT_EVENT = 'report.exported';
@@ -43,7 +44,8 @@ export class ExportAuditService {
         format: entry.format,
         recordCount: entry.recordCount,
         status: entry.status,
-        error: entry.error ?? null,
+        // Never persist raw exception text in the event stream (tokens, DSNs, e-mails).
+        error: entry.error ? redactForStorage(entry.error) : null,
       },
     });
   }

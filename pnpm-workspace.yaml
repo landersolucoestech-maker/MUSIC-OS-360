@@ -2,7 +2,7 @@ packages:
   - "apps/*"
   - "packages/*"
 
-# Moved from package.json's "pnpm.overrides" (Parte 84) — pnpm no longer
+# Moved from package.json's "pnpm.overrides" (Part 84) — pnpm no longer
 # reads that field ("The pnpm field in package.json is no longer read by
 # pnpm... pnpm.overrides"), which meant every entry below was silently
 # inert. Discovered chasing a real, newly-surfaced CI failure (Dependency

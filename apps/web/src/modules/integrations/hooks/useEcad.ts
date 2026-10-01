@@ -98,7 +98,7 @@ export function useEcadDeleteCredentials() {
 
 export function useEcadCollection(period: string, enabled = true) {
   return useQuery<EcadCollectionSummary>({
-    queryKey: ["ecad", "arrecadacao", period],
+    queryKey: ["ecad", "collections", period],
     queryFn: async (): Promise<EcadCollectionSummary> => ecadUnavailable(),
     enabled: enabled && Boolean(period),
     staleTime: 300_000,

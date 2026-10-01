@@ -127,7 +127,7 @@ exit 1
 EOF
 chmod +x "$MOCKBIN/age"
 run_script BACKUP_AGE_RECIPIENT=age1fakekeyxxxxxxxx
-check "exit != 0 (age falhou)" "$([ "$LAST_CODE" != "0" ] && echo 1 || echo 0)"
+check "exit != 0 (age failed)" "$([ "$LAST_CODE" != "0" ] && echo 1 || echo 0)"
 check "no upload called" "$(uploads_called && echo 0 || echo 1)"
 
 echo

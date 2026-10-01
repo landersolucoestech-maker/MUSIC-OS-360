@@ -22,7 +22,7 @@ node_modules/
 .env
 .env.*
 !.env.*.example
-# Root .env.staging / .env.production (Parte 82): renamed from the old
+# Root .env.staging / .env.production (Part 82): renamed from the old
 # .env.staging.example / .env.example — placeholders only, safe to version.
 # Real secrets are injected outside Git (CI/CD secrets, deployment platform),
 # never filled into these files. .env.development stays gitignored (real

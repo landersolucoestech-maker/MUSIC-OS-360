@@ -108,7 +108,7 @@ function readBaseline(): Set<string> {
 }
 
 describe('Permanent guard: the census of PT-suspect physical columns does not diverge without triage (naming-closure Phase 4)', () => {
-  it('o baseline commitado existe (.audit-runtime/pt-column-census.jsonl)', () => {
+  it('the committed baseline exists (.audit-runtime/pt-column-census.jsonl)', () => {
     expect(fs.existsSync(BASELINE_PATH)).toBe(true);
   });
 

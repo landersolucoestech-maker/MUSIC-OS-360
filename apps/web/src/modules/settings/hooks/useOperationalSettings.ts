@@ -101,7 +101,7 @@ export const DEFAULT_CONTACT_CATEGORIES: OperationalListItem[] = [
   { id: "contact-category-other", kind: "contact_category", name: "Outro", slug: "OTHER", description: "Categoria genérica para contato.", active: true, order: 999, group: "Contatos" },
 ];
 
-export const DEFAULT_CONTACT_PF_CLASSIFICATIONS: OperationalListItem[] = [
+export const DEFAULT_CONTACT_INDIVIDUAL_CLASSIFICATIONS: OperationalListItem[] = [
   { id: "contact-individual-artist-agent", kind: "contact_individual_classification", name: "Agente Artístico", slug: "ARTIST_AGENT", description: "Pessoa física que atua como agente artístico.", active: true, order: 10, group: "Pessoa Física" },
   { id: "contact-individual-press-office", kind: "contact_individual_classification", name: "Assessoria de Imprensa", slug: "PRESS_OFFICE", description: "Profissional de imprensa ou PR.", active: true, order: 20, group: "Pessoa Física" },
   { id: "contact-individual-videomaker", kind: "contact_individual_classification", name: "Videomaker", slug: "VIDEOMAKER", description: "Profissional de vídeo.", active: true, order: 30, group: "Pessoa Física" },
@@ -168,7 +168,7 @@ export const DEFAULT_OPERATIONAL_LISTS = [
   ...DEFAULT_LEAD_STATUSES,
   ...DEFAULT_LEAD_SEGMENTS,
   ...DEFAULT_CONTACT_CATEGORIES,
-  ...DEFAULT_CONTACT_PF_CLASSIFICATIONS,
+  ...DEFAULT_CONTACT_INDIVIDUAL_CLASSIFICATIONS,
   ...DEFAULT_CONTACT_PJ_CLASSIFICATIONS,
   ...DEFAULT_EVENT_TYPES,
   ...DEFAULT_MARKETING_CONTEXTS,
@@ -185,7 +185,7 @@ export const DEFAULT_OPERATIONAL_LISTS_BY_KIND: Record<OperationalListKind, Oper
   lead_status: DEFAULT_LEAD_STATUSES,
   lead_segment: DEFAULT_LEAD_SEGMENTS,
   contact_category: DEFAULT_CONTACT_CATEGORIES,
-  contact_individual_classification: DEFAULT_CONTACT_PF_CLASSIFICATIONS,
+  contact_individual_classification: DEFAULT_CONTACT_INDIVIDUAL_CLASSIFICATIONS,
   contact_company_classification: DEFAULT_CONTACT_PJ_CLASSIFICATIONS,
   event_type: DEFAULT_EVENT_TYPES,
   marketing_context: DEFAULT_MARKETING_CONTEXTS,

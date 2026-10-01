@@ -1048,12 +1048,12 @@ export default function ArtistSignupPublic() {
                   <div key={dist.id} className="space-y-1.5">
                     <div className="flex items-center gap-2">
                       <Checkbox
-                        id={`geral-dist-${dist.id}`}
+                        id={`general-dist-${dist.id}`}
                         checked={isChecked}
                         onCheckedChange={(checked) => toggleDistGeneral(dist.id, !!checked)}
                         data-testid={`checkbox-general-dist-${dist.id}`}
                       />
-                      <Label htmlFor={`geral-dist-${dist.id}`} className="text-sm cursor-pointer font-medium">
+                      <Label htmlFor={`general-dist-${dist.id}`} className="text-sm cursor-pointer font-medium">
                         {dist.label}
                       </Label>
                     </div>

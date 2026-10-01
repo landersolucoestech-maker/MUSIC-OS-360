@@ -8,7 +8,7 @@ global:
 scrape_configs:
   - job_name: 'musicos360-api'
     metrics_path: /metrics
-    # bearer_token: '<METRICS_TOKEN>'   # descomente se a API exigir token
+    # bearer_token: '<METRICS_TOKEN>'   # uncomment if the API requires a token
     static_configs:
       - targets: ['api:3001']
         labels:

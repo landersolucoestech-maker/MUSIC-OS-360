@@ -736,7 +736,7 @@ async function analytics(): Promise<AnalyticsOverview> {
   const NUMERIC_METRIC_KEYS = ["reach", "impressions", "engagement", "clicks", "conversions", "roi", "costPerResult"] as const;
   const byDate = new Map<string, MetricSnapshot>();
   campaigns.forEach((item) => {
-    const label = item.startDate ? item.startDate.slice(0, 7) : "sem-data";
+    const label = item.startDate ? item.startDate.slice(0, 7) : "Sem data";
     const current = byDate.get(label) ?? { ...EMPTY_METRICS };
     const value = sumMetrics([item]);
     NUMERIC_METRIC_KEYS.forEach((metric) => {

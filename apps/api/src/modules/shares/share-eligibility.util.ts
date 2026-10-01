@@ -2,7 +2,7 @@
  * Share eligibility for registration submission (ABRAMUS/ECAD/etc.).
  *
  * TRANSITIONAL rule (Phase 5 / C6): `share_type` is only written by the
- * financial/pending flow (SharePendenteFormModal → shares.service.ts::toColumns()).
+ * financial/pending flow (ShareFormModal → shares.service.ts::toColumns()).
  * The registration flow (fields holder_name/party_role/percentage/
  * holder_document, fed via the holderName/role/holderDoc aliases)
  * never sets

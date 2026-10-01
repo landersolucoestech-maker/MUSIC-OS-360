@@ -35,8 +35,8 @@ function conversationTitle(conversation: InternalConversation, selfAuthUserId: s
 // when the user switches to the Central de Atendimento tab (no forceMount, by design —
 // see MusicChat.tsx). Without this, an in-progress draft or the selected conversation is
 // silently lost on every tab switch.
-const SELECTED_ID_KEY = "musicchat-interno:selected-id";
-const draftKey = (conversationId: string) => `musicchat-interno:draft:${conversationId}`;
+const SELECTED_ID_KEY = "musicchat-internal:selected-id";
+const draftKey = (conversationId: string) => `musicchat-internal:draft:${conversationId}`;
 
 export function InternalChatView() {
   const { user } = useAuth();

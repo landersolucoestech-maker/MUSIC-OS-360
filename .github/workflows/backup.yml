@@ -60,7 +60,7 @@ jobs:
         run: bash scripts/pg-backup-cron.sh
 
   # Optional weekly restore drill — pulls latest backup into a throwaway PG,
-  # runs paridade-check, reports row counts. Failure pages on-call.
+  # runs the parity check, reports row counts. Failure pages on-call.
   restore-drill:
     name: Weekly restore drill
     if: github.event_name == 'schedule'
@@ -97,7 +97,7 @@ jobs:
           aws --endpoint-url "$AWS_ENDPOINT_URL" s3 cp "s3://${{ secrets.BACKUP_BUCKET }}/musicos360-prod/$LATEST" /tmp/backup.age
           age --decrypt -i <(echo "${{ secrets.BACKUP_AGE_IDENTITY }}") -o /tmp/backup.sql /tmp/backup.age
 
-      - name: Restore + paridade
+      - name: Restore + parity
         env:
           PGPASSWORD: drill
         run: |

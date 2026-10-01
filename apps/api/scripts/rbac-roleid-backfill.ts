@@ -9,7 +9,7 @@
  * Usage:
  *   MODE=dryrun      tsx scripts/rbac-roleid-backfill.ts   (default — does not write)
  *   MODE=apply       tsx scripts/rbac-roleid-backfill.ts   (only applies if the dry-run is 100% valid)
- *   MODE=rollback-sim tsx scripts/rbac-roleid-backfill.ts  (simulates the reversal; does not write)
+ *   MODE=rollback-dry-run tsx scripts/rbac-roleid-backfill.ts  (simulates the reversal; does not write)
  */
 import 'reflect-metadata';
 import { AppDataSource } from '../src/database/datasource';
@@ -71,7 +71,7 @@ async function main() {
   for (const r of report) byCls[r.cls] = (byCls[r.cls] ?? 0) + 1;
   console.log('classifications:', byCls, '| valid:', valid, '| invalid:', invalid, '| already filled:', alreadyFilled);
 
-  if (mode === 'rollback-sim') {
+  if (mode === 'rollback-dry-run') {
     const filled = report.filter((r) => r.status === 'JA_PREENCHIDO').length;
     console.log(`\n[ROLLBACK-SIM] records with role_id filled that would go back to NULL: ${filled}. Reversible: YES. Dependencies: none (role remains the legacy source). NO WRITES.`);
     await ds.destroy(); return;

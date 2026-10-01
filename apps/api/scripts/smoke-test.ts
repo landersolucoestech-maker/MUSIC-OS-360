@@ -126,7 +126,7 @@ async function healthCheck(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  console.log('\nMUSIC OS 360 - Smoke Test Ponta a Ponta\n');
+  console.log('\nMUSIC OS 360 - End-to-End Smoke Test\n');
   console.log(`  API_URL: ${API_URL}`);
 
   try {

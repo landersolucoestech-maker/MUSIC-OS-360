@@ -79,7 +79,7 @@ async function main(): Promise<void> {
   let failed = 0;
 
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║   MUSIC OS 360 — Fase 18: Tenant Isolation Test           ║');
+  console.log('║   MUSIC OS 360 — Phase 18: Tenant Isolation Test          ║');
   console.log('╚══════════════════════════════════════════════════════════╝\n');
 
   const { Client } = await import('pg');

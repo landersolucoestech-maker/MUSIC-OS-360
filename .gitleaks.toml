@@ -36,7 +36,7 @@ paths = [
   # regexes below instead — a real secret pasted into any doc is now detected.
 ]
 regexes = [
-  # Parte 85: tenant-zero (LANDER RECORDS) public identity UUIDs, mirrored
+  # Part 85: tenant-zero (LANDER RECORDS) public identity UUIDs, mirrored
   # in the web app (AuthContext.tsx / TenantContext.tsx) for display only
   # under AUTH_DISABLED (dev-only bypass). Deterministic UUIDv5 values, the
   # source of truth is apps/api/src/database/tenant-zero.constants.ts, not
