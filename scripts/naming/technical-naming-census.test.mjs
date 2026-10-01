@@ -8,7 +8,8 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { scanSource, compare, census } from "./technical-naming-census.mjs";
+import { scanSource, compare, census, stripRecordId } from "./technical-naming-census.mjs";
+import { loadAuthority } from "./canonical-map.mjs";
 import { ptWords, isPtProse } from "./pt-lexicon.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -445,4 +446,44 @@ test("Swagger examples: @ApiProperty({ example }) is documentation, an enum/defa
   @ApiProperty({ default: 'gravacao' }) other!: string;
 }`;
   assert.deepEqual(names(scanSource("apps/api/src/modules/x/dto/x.dto.ts", src), "value"), ["gravacao"]);
+});
+
+test("fixture record ids: an uppercase code with a number (ABR-123) is not a Portuguese word; the rest of the value is still checked", () => {
+  assert.equal(stripRecordId("abramus-result-ABR-123"), "abramus-result-");
+  assert.deepEqual(names(scanSource("apps/web/src/test/Row.test.tsx", `screen.getByTestId("abramus-result-ABR-123"); screen.getByTestId("badge-already-imported-ABR-123");`), "value"), []);
+  assert.deepEqual(names(scanSource("apps/web/src/test/Row.test.tsx", `screen.getByTestId("abramus-faixa-ABR-123"); const q = "abr";`), "value"), ["abramus-faixa-ABR-123", "abr"]);
+});
+
+test("capitalized Portuguese values: a classification field written or compared verbatim is data, label maps and free text are not", () => {
+  const caps = (path, src) => scanSource(path, src).filter((h) => h.kind === "capitalized-string").map((h) => h.name);
+  const persisted = `const tasks = [{ sector: "Comunicação", task: "Escrever copy" }, { sector: "Administração Musical", task: "Registrar" }];
+if (row.sector === "Distribuição Digital") {}
+const q = { queue: "Atendimento" };`;
+  assert.deepEqual(caps("apps/web/src/modules/marketing/services/x.ts", persisted), ["Comunicação", "Administração Musical", "Distribuição Digital", "Atendimento"]);
+  // UX: label/title keys, English-keyed label maps, sentences and messages never match
+  assert.deepEqual(caps("apps/web/src/Page.tsx", `const a = { label: "Comunicação", title: "Administração Musical" }; const m = { pending: "Pendente", sector: "Preencha o setor." }; const s = { sector: "Um setor de comunicação" };`), []);
+  // PT-BR label resources are display text by construction
+  assert.deepEqual(caps("apps/api/src/modules/reports/i18n/field-labels.pt-br.ts", `export const L = { sector: "Setor", department: "Departamento" };`), []);
+  // a name that is not Portuguese is not reported
+  assert.deepEqual(caps("apps/web/src/modules/x.ts", `const p = { sector: "Marketing", queue: "Ana Maria" };`), []);
+  // generic keys are not persisted-field keys
+  assert.deepEqual(caps("apps/web/src/modules/x.ts", `const p = { name: "Comunicação", type: "Financeiro" };`), []);
+});
+
+test("living glossary/map docs: only whole-document ledger rows with surface doc exempt Markdown, for the two documents that are the Portuguese vocabulary", () => {
+  const LIVING = new Set(["docs/engineering/ux-language-glossary.md", "docs/NAMING_NORMALIZATION_CANONICAL_MAP.md"]);
+  const rows = loadAuthority().exceptions.filter((e) => e.surface === "doc");
+  assert.ok(rows.length >= 2, "both living documents are ledgered");
+  for (const e of rows) {
+    assert.ok(LIVING.has(e.path), `${e.path}: a whole-document exemption is reserved for the glossary and the generated map`);
+    assert.equal(e.currentName, "*");
+    assert.equal(e.exceptionClass, "UX_TEXT");
+    assert.ok(e.reason.length > 60 && e.removalCondition);
+  }
+  const c = census();
+  for (const f of LIVING) {
+    assert.ok(`doc::${f}` in c.excepted, `${f} is counted as excepted`);
+    assert.ok(!(`doc::${f}` in c.debt), `${f} is not debt`);
+  }
+  assert.ok(Object.keys(c.debt).some((k) => k.startsWith("doc::docs/") && !k.endsWith("CANONICAL_MAP.md")), "other documents are still counted");
 });

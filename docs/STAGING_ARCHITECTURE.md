@@ -121,8 +121,8 @@ None of these is actionable without prior human authorization (via claude.ai
 connector settings) or credentials provided directly:
 
 - **Cloudflare** (DNS + R2) — MCP not authorized.
-- **Stripe** (test mode, produtos, webhook) — MCP not authorized.
-- **Resend/SMTP** — no credential e sem MCP.
+- **Stripe** (test mode, products, webhook) — MCP not authorized.
+- **Resend/SMTP** — no credential and no MCP.
 - **Sentry** — MCP not authorized.
 - **All third-party OAuth integrations** (Spotify, YouTube/Google, Meta,
   TikTok, SoundCloud, DocuSign, Google Ads, ACRCloud, Autentique) — they require

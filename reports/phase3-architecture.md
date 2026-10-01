@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # Fase 3 — Auditoria Read-Only: Arquitetura e Monorepo
 
 Auditoria conduzida sequencialmente (sem sub-agentes paralelos, após um lote anterior de 8 agentes paralelos ter esgotado o limite de sessão antes de persistir achados). Escopo: `pnpm-workspace.yaml`, `turbo.json`, `tsconfig*`, `apps/*`, `packages/*`, limites entre módulos, scripts de build.

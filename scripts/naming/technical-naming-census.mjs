@@ -149,6 +149,23 @@ export const layerOf = (f) => (f.startsWith("apps/web") ? "web" : f.startsWith("
 const TECHNICAL_NAME = /^[a-z0-9][a-z0-9_.:-]*$/; // event/queue/job/i18n-key shaped (never a UX label)
 /** Token-shaped string values: snake_case, kebab-case or camelCase, starting lowercase, no spaces. Accent-aware (\p{L}): "áudio", "iluminação" are token-shaped too. */
 export const VALUE_SHAPE = /^\p{Ll}[\p{L}\p{N}]*(?:[_-][\p{L}\p{N}]+)*$/u;
+/**
+ * Capitalized / accented Portuguese values that are persisted or compared as DATA ("Comunicação",
+ * "Administração Musical": a marketing sector stored verbatim). One to four capitalized words, optionally
+ * joined by Portuguese connectors, letters only (no digits or punctuation, so sentences and messages are
+ * not matched). Reported only where the literal is data, not text: see isDataPosition.
+ */
+export const CAPITALIZED_VALUE_SHAPE = /^\p{Lu}\p{Ll}+(?:\s+(?:(?:de|da|do|das|dos|e)\s+)?\p{Lu}\p{Ll}+){0,2}$/u;
+/** PT-BR label resources (`*.pt-br.ts`, `*-labels.ts`): their string values are display text by construction. */
+export const isLabelResource = (f) => /\.pt-br\.[tj]sx?$/.test(f) || /(^|[-./])labels?\.[tj]sx?$/.test(f);
+/** Names of classification fields whose value is persisted/compared verbatim (see CAPITALIZED_VALUE_SHAPE). */
+export const PERSISTED_FIELD_KEYS = new Set(["sector", "department", "queue", "segment", "stage", "phase"]);
+/**
+ * Fixture record ids made of an uppercase code and a number ("ABR-123", "REL-7"): the code is an
+ * abbreviation of the fixture, not a Portuguese word (`abr` = abril). Only the trailing code is
+ * ignored; every other segment of the value is still checked.
+ */
+export const stripRecordId = (text) => text.replace(/(^|[-_])[A-Z]{2,6}-\d+$/, "$1");
 /** JSX attributes and object properties whose string value is user-visible text. */
 const UX_KEYS = new Set(["aria-label", "aria-description", "aria-placeholder", "aria-roledescription", "aria-valuetext", "title", "placeholder",
   "alt", "label", "description", "helperText", "tooltip", "emptyMessage", "emptyText", "subtitle", "hint", "message", "text", "confirmText",
@@ -294,6 +311,19 @@ export function scanSource(relPath, text) {
     }
     return false;
   };
+  // A literal that is data rather than text: the value of a classification field written or compared
+  // verbatim ({ sector: "Comunicação" }, row.status === "Pendente", case on a `.sector`). Label maps
+  // keyed by English ids ({ pending: "Pendente" }) and free text are UX, not data, and are not matched.
+  const keyText = (k) => (k ? k.getText(sf).replace(/^["']|["']$/g, "") : "");
+  const isDataPosition = (n) => {
+    const p = n.parent;
+    if (ts.isPropertyAssignment(p) && p.initializer === n) return PERSISTED_FIELD_KEYS.has(keyText(p.name));
+    if (ts.isBinaryExpression(p) && ["===", "!==", "==", "!="].includes(p.operatorToken.getText(sf))) {
+      const other = p.left === n ? p.right : p.left;
+      return ts.isPropertyAccessExpression(other) && PERSISTED_FIELD_KEYS.has(other.name.text);
+    }
+    return false;
+  };
   let controllerBase = null;
   const isRouteSource = relPath.startsWith("apps/web/") || relPath.startsWith("e2e/");
 
@@ -372,10 +402,15 @@ export function scanSource(relPath, text) {
       }
     }
     if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) && !claimed.has(n) && VALUE_SHAPE.test(n.text)
-      && !isModuleSpecifier(n) && !isUxValue(n) && !contentWords.has(n.text) && ptWords(n.text).length) {
+      && !isModuleSpecifier(n) && !isUxValue(n) && !contentWords.has(n.text) && ptWords(stripRecordId(n.text)).length) {
       const p = n.parent;
       const isKey = (ts.isPropertyAssignment(p) || ts.isPropertySignature(p) || ts.isPropertyDeclaration(p) || ts.isMethodDeclaration(p) || ts.isEnumMember(p)) && p.name === n;
       if (!isKey) add("value", ts.isLiteralTypeNode(p) ? "literal-type" : ts.isEnumMember(p) ? "enum-value" : "string", n.text, lineOf(n));
+    }
+    if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) && !claimed.has(n) && CAPITALIZED_VALUE_SHAPE.test(n.text)
+      && !isLabelResource(relPath) && isDataPosition(n) && !isModuleSpecifier(n) && !isUxValue(n) && !contentWords.has(n.text) && ptWords(n.text).length) {
+      claimed.add(n);
+      add("value", "capitalized-string", n.text, lineOf(n));
     }
     ts.forEachChild(n, visit);
   };
