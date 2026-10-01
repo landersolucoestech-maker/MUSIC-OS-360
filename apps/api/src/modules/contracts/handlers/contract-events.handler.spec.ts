@@ -78,7 +78,7 @@ describe('ContractEventsHandler — onContractSigned', () => {
 
     expect(financialRules.evaluateRules).toHaveBeenCalledWith(
       't1', 'contract.signed',
-      expect.objectContaining({ entityId: 'c1', entityType: 'contract', amount: 5000, category: 'contratos' }),
+      expect.objectContaining({ entityId: 'c1', entityType: 'contract', amount: 5000, category: 'contracts' }),
     );
   });
 

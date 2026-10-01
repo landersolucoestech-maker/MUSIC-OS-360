@@ -72,7 +72,7 @@ describe("applyResets — counterpartyType", () => {
 // ── category resets ────────────────────────────────────────────────────────
 describe("applyResets — category", () => {
   it("resets subcategory and all downstream fields", () => {
-    const result = applyResets("category", "servicos");
+    const result = applyResets("category", "services");
     expect(result.subcategory).toBe("");
     expect(result.investmentItem).toBe("");
     expect(result.artistId).toBe("");
@@ -132,7 +132,7 @@ describe("applyResets — paymentType", () => {
 // ── fields with no reset entries ───────────────────────────────────────────
 describe("applyResets — fields not in RESET_MAP", () => {
   it("resets dependent linkage fields for subcategory", () => {
-    const result = applyResets("subcategory", "design-grafico");
+    const result = applyResets("subcategory", "graphic_design");
     expect(result).toMatchObject({
       artistId: "",
       projectId: "",

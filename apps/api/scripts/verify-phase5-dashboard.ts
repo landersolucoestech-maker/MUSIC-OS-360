@@ -133,20 +133,20 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
     const r = await call('POST', '/events', { ...ctx, body: { title: `${tag}_EVENT_FUTURE_${i}_${TS}`, type: 'show', startsAt: tomorrowIso } });
     const id = pickId(r.body); if (id) out.events.push(id); else console.log(`  !  event(tom) POST status=${r.status} ${JSON.stringify(r.body).slice(0,150)}`);
   }
-  // Revenue transactions require counterpartyType. category='outros' avoids requiring an artist/subcategory.
+  // Revenue transactions require counterpartyType. category='other' avoids requiring an artist/subcategory.
   const today = new Date().toISOString().slice(0,10);
   for (let i = 0; i < opts.txRevenueThisMonth; i++) {
-    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'revenue', counterpartyType: 'company', category: 'outros', description: `${tag}_TX_REV_${i}_${TS}`, amount: '1000.00', transactionDate: today, paymentMethod: 'pix', status: 'paid' } });
+    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'revenue', counterpartyType: 'company', category: 'other', description: `${tag}_TX_REV_${i}_${TS}`, amount: '1000.00', transactionDate: today, paymentMethod: 'pix', status: 'paid' } });
     const id = pickId(r.body); if (id) out.tx.push(id); else console.log(`  !  tx-rev POST status=${r.status} ${JSON.stringify(r.body).slice(0,200)}`);
   }
   for (let i = 0; i < opts.txExpenseThisMonth; i++) {
-    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'expense', counterpartyType: 'company', category: 'outros', description: `${tag}_TX_EXP_${i}_${TS}`, amount: '300.00', transactionDate: today, paymentMethod: 'pix', status: 'paid' } });
+    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'expense', counterpartyType: 'company', category: 'other', description: `${tag}_TX_EXP_${i}_${TS}`, amount: '300.00', transactionDate: today, paymentMethod: 'pix', status: 'paid' } });
     const id = pickId(r.body); if (id) out.tx.push(id); else console.log(`  !  tx-exp POST status=${r.status} ${JSON.stringify(r.body).slice(0,200)}`);
   }
   // A transaction from another month (60 days ago)
   const other = new Date(Date.now() - 60 * 86400000).toISOString().slice(0,10);
   for (let i = 0; i < opts.txRevenueOtherMonth; i++) {
-    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'revenue', counterpartyType: 'company', category: 'outros', description: `${tag}_TX_OLD_${i}_${TS}`, amount: '9999.00', transactionDate: other, paymentMethod: 'pix', status: 'paid' } });
+    const r = await call('POST', '/transactions', { ...ctx, body: { transactionType: 'revenue', counterpartyType: 'company', category: 'other', description: `${tag}_TX_OLD_${i}_${TS}`, amount: '9999.00', transactionDate: other, paymentMethod: 'pix', status: 'paid' } });
     const id = pickId(r.body); if (id) out.tx.push(id); else console.log(`  !  tx-old POST status=${r.status} ${JSON.stringify(r.body).slice(0,200)}`);
   }
   // Leads

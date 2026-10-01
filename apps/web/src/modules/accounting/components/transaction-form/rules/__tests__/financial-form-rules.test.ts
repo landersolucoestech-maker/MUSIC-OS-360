@@ -113,30 +113,30 @@ describe("showSubcategory", () => {
     expect(rules.showSubcategory).toBe(false);
   });
 
-  it("is true for expense company servicos", () => {
+  it("is true for expense company services", () => {
     const rules = computeFinancialRules(form({
-      transactionType: "expense", counterpartyType: "company", category: "servicos",
+      transactionType: "expense", counterpartyType: "company", category: "services",
     }));
     expect(rules.showSubcategory).toBe(true);
   });
 
-  it("is true for expense artist caches", () => {
+  it("is true for expense artist performance_fees", () => {
     const rules = computeFinancialRules(form({
-      transactionType: "expense", counterpartyType: "artist", category: "caches",
+      transactionType: "expense", counterpartyType: "artist", category: "performance_fees",
     }));
     expect(rules.showSubcategory).toBe(true);
   });
 
-  it("is true for revenue company receitas-musicais", () => {
+  it("is true for revenue company music_revenue", () => {
     const rules = computeFinancialRules(form({
-      transactionType: "revenue", counterpartyType: "company", category: "receitas-musicais",
+      transactionType: "revenue", counterpartyType: "company", category: "music_revenue",
     }));
     expect(rules.showSubcategory).toBe(true);
   });
 
-  it("is false for expense artist suporte-financeiro (no subcategories)", () => {
+  it("is false for expense artist financial_support (no subcategories)", () => {
     const rules = computeFinancialRules(form({
-      transactionType: "expense", counterpartyType: "artist", category: "suporte-financeiro",
+      transactionType: "expense", counterpartyType: "artist", category: "financial_support",
     }));
     expect(rules.showSubcategory).toBe(false);
   });
@@ -145,7 +145,7 @@ describe("showSubcategory", () => {
 // ── showInvestmentItem ─────────────────────────────────────────────────
 describe("showInvestmentItem", () => {
   it("is false when not investment", () => {
-    const rules = computeFinancialRules(form({ transactionType: "expense", category: "equipamentos" }));
+    const rules = computeFinancialRules(form({ transactionType: "expense", category: "equipment" }));
     expect(rules.showInvestmentItem).toBe(false);
   });
 
@@ -154,13 +154,13 @@ describe("showInvestmentItem", () => {
     expect(rules.showInvestmentItem).toBe(false);
   });
 
-  it("is true for investment + equipamentos", () => {
-    const rules = computeFinancialRules(form({ transactionType: "investment", category: "equipamentos" }));
+  it("is true for investment + equipment", () => {
+    const rules = computeFinancialRules(form({ transactionType: "investment", category: "equipment" }));
     expect(rules.showInvestmentItem).toBe(true);
   });
 
-  it("is true for investment + tecnologia", () => {
-    const rules = computeFinancialRules(form({ transactionType: "investment", category: "tecnologia" }));
+  it("is true for investment + technology", () => {
+    const rules = computeFinancialRules(form({ transactionType: "investment", category: "technology" }));
     expect(rules.showInvestmentItem).toBe(true);
   });
 
@@ -169,13 +169,13 @@ describe("showInvestmentItem", () => {
     expect(rules.showInvestmentItem).toBe(true);
   });
 
-  it("is true for investment + formacao", () => {
-    const rules = computeFinancialRules(form({ transactionType: "investment", category: "formacao" }));
+  it("is true for investment + training", () => {
+    const rules = computeFinancialRules(form({ transactionType: "investment", category: "training" }));
     expect(rules.showInvestmentItem).toBe(true);
   });
 
-  it("is true for investment + infraestrutura", () => {
-    const rules = computeFinancialRules(form({ transactionType: "investment", category: "infraestrutura" }));
+  it("is true for investment + infrastructure", () => {
+    const rules = computeFinancialRules(form({ transactionType: "investment", category: "infrastructure" }));
     expect(rules.showInvestmentItem).toBe(true);
   });
 });
@@ -187,18 +187,18 @@ describe("showArtist", () => {
     expect(rules.showArtist).toBe(false);
   });
 
-  it("is true for expense company servicos + design-grafico (expenseServicesRequiringArtistAndProject)", () => {
+  it("is true for expense company services + graphic_design (expenseServicesRequiringArtistAndProject)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "servicos", subcategory: "design-grafico",
+      category: "services", subcategory: "graphic_design",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is false for expense company servicos + assessoria-juridica (not in expenseServicesRequiringArtistAndProject)", () => {
+  it("is false for expense company services + legal_advisory (not in expenseServicesRequiringArtistAndProject)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "servicos", subcategory: "assessoria-juridica",
+      category: "services", subcategory: "legal_advisory",
     }));
     expect(rules.showArtist).toBe(false);
   });
@@ -206,7 +206,7 @@ describe("showArtist", () => {
   it("is true for expense company marketing + any subcategory", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "marketing", subcategory: "anuncios",
+      category: "marketing", subcategory: "ads",
     }));
     expect(rules.showArtist).toBe(true);
   });
@@ -219,82 +219,82 @@ describe("showArtist", () => {
     expect(rules.showArtist).toBe(false);
   });
 
-  it("is true for expense company viagens + passagens", () => {
+  it("is true for expense company travel + travel_tickets", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "viagens", subcategory: "passagens",
+      category: "travel", subcategory: "travel_tickets",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is true for expense company produtos + equipamentos", () => {
+  it("is true for expense company products + equipment", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "produtos", subcategory: "equipamentos",
+      category: "products", subcategory: "equipment",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is true for expense company suporte-financeiro (no subcategory needed)", () => {
+  it("is true for expense company financial_support (no subcategory needed)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "suporte-financeiro",
+      category: "financial_support",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is true for expense artist caches + show-evento", () => {
+  it("is true for expense artist performance_fees + show_event", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "artist",
-      category: "caches", subcategory: "show-evento",
+      category: "performance_fees", subcategory: "show_event",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is true for expense artist suporte-financeiro (no subcategory needed)", () => {
+  it("is true for expense artist financial_support (no subcategory needed)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "artist",
-      category: "suporte-financeiro",
+      category: "financial_support",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is true for revenue company receitas-musicais + external-rights-streaming", () => {
+  it("is true for revenue company music_revenue + external_rights_streaming", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "receitas-musicais", subcategory: "external-rights-streaming",
+      category: "music_revenue", subcategory: "external_rights_streaming",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is true for revenue company servicos + producao-musical (revenueServicesRequiringArtistAndProject)", () => {
+  it("is true for revenue company services + music_production (revenueServicesRequiringArtistAndProject)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "servicos", subcategory: "producao-musical",
+      category: "services", subcategory: "music_production",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is true for revenue company servicos + criacao-site (revenueServicesRequiringArtistOnly)", () => {
+  it("is true for revenue company services + website_creation (revenueServicesRequiringArtistOnly)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "servicos", subcategory: "criacao-site",
+      category: "services", subcategory: "website_creation",
     }));
     expect(rules.showArtist).toBe(true);
   });
 
-  it("is false for revenue company servicos + consultoria (not in either list)", () => {
+  it("is false for revenue company services + consulting (not in either list)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "servicos", subcategory: "consultoria",
+      category: "services", subcategory: "consulting",
     }));
     expect(rules.showArtist).toBe(false);
   });
 
-  it("is true for revenue company produtos + venda-merchandising", () => {
+  it("is true for revenue company products + merchandise_sales", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "produtos", subcategory: "venda-merchandising",
+      category: "products", subcategory: "merchandise_sales",
     }));
     expect(rules.showArtist).toBe(true);
   });
@@ -302,18 +302,18 @@ describe("showArtist", () => {
 
 // ── showProject ──────────────────────────────────────────────────────────
 describe("showProject", () => {
-  it("is true for expense company servicos + design-grafico", () => {
+  it("is true for expense company services + graphic_design", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "servicos", subcategory: "design-grafico",
+      category: "services", subcategory: "graphic_design",
     }));
     expect(rules.showProject).toBe(true);
   });
 
-  it("is false for expense company servicos + assessoria-juridica", () => {
+  it("is false for expense company services + legal_advisory", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "servicos", subcategory: "assessoria-juridica",
+      category: "services", subcategory: "legal_advisory",
     }));
     expect(rules.showProject).toBe(false);
   });
@@ -321,7 +321,7 @@ describe("showProject", () => {
   it("is true for expense company marketing + subcategory + artistId", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "marketing", subcategory: "anuncios", artistId: "artist-1",
+      category: "marketing", subcategory: "ads", artistId: "artist-1",
     }));
     expect(rules.showProject).toBe(true);
   });
@@ -329,39 +329,39 @@ describe("showProject", () => {
   it("is false for expense company marketing without artistId", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "marketing", subcategory: "anuncios",
+      category: "marketing", subcategory: "ads",
     }));
     expect(rules.showProject).toBe(false);
   });
 
-  it("is true for revenue company receitas-musicais + direitos-autorais", () => {
+  it("is true for revenue company music_revenue + copyright", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "receitas-musicais", subcategory: "direitos-autorais",
+      category: "music_revenue", subcategory: "copyright",
     }));
     expect(rules.showProject).toBe(true);
   });
 
-  it("is false for revenue company receitas-musicais + participacao-show-evento (not in musicRevenueRequiringArtistAndProject)", () => {
+  it("is false for revenue company music_revenue + show_event_participation (not in musicRevenueRequiringArtistAndProject)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "receitas-musicais", subcategory: "participacao-show-evento",
+      category: "music_revenue", subcategory: "show_event_participation",
     }));
     expect(rules.showProject).toBe(false);
   });
 
-  it("is true for revenue company servicos + producao-musical", () => {
+  it("is true for revenue company services + music_production", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "servicos", subcategory: "producao-musical",
+      category: "services", subcategory: "music_production",
     }));
     expect(rules.showProject).toBe(true);
   });
 
-  it("is false for revenue company servicos + criacao-site (artist only, no project)", () => {
+  it("is false for revenue company services + website_creation (artist only, no project)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "servicos", subcategory: "criacao-site",
+      category: "services", subcategory: "website_creation",
     }));
     expect(rules.showProject).toBe(false);
   });
@@ -369,10 +369,10 @@ describe("showProject", () => {
 
 // ── projectRequired ─────────────────────────────────────────────────────
 describe("projectRequired", () => {
-  it("is true for expense company servicos + design-grafico", () => {
+  it("is true for expense company services + graphic_design", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "servicos", subcategory: "design-grafico",
+      category: "services", subcategory: "graphic_design",
     }));
     expect(rules.projectRequired).toBe(true);
   });
@@ -380,39 +380,39 @@ describe("projectRequired", () => {
   it("is false for expense company marketing (artist optional, project conditional)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "marketing", subcategory: "anuncios",
+      category: "marketing", subcategory: "ads",
     }));
     expect(rules.projectRequired).toBe(false);
   });
 
-  it("is true for revenue company receitas-musicais + external-rights-streaming", () => {
+  it("is true for revenue company music_revenue + external_rights_streaming", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "receitas-musicais", subcategory: "external-rights-streaming",
+      category: "music_revenue", subcategory: "external_rights_streaming",
     }));
     expect(rules.projectRequired).toBe(true);
   });
 
-  it("is false for revenue company receitas-musicais + participacao-show-evento", () => {
+  it("is false for revenue company music_revenue + show_event_participation", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "receitas-musicais", subcategory: "participacao-show-evento",
+      category: "music_revenue", subcategory: "show_event_participation",
     }));
     expect(rules.projectRequired).toBe(false);
   });
 
-  it("is true for revenue company servicos + producao-musical", () => {
+  it("is true for revenue company services + music_production", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "servicos", subcategory: "producao-musical",
+      category: "services", subcategory: "music_production",
     }));
     expect(rules.projectRequired).toBe(true);
   });
 
-  it("is false for revenue company servicos + criacao-site", () => {
+  it("is false for revenue company services + website_creation", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "servicos", subcategory: "criacao-site",
+      category: "services", subcategory: "website_creation",
     }));
     expect(rules.projectRequired).toBe(false);
   });
@@ -425,58 +425,58 @@ describe("showEvent", () => {
     expect(rules.showEvent).toBe(false);
   });
 
-  it("is true for expense company produtos + cenografia-pirotecnia", () => {
+  it("is true for expense company products + set_design_pyrotechnics", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "produtos", subcategory: "cenografia-pirotecnia",
+      category: "products", subcategory: "set_design_pyrotechnics",
     }));
     expect(rules.showEvent).toBe(true);
   });
 
-  it("is false for expense company produtos + equipamentos (not in expenseProductsRequiringEvent)", () => {
+  it("is false for expense company products + equipment (not in expenseProductsRequiringEvent)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "produtos", subcategory: "equipamentos",
+      category: "products", subcategory: "equipment",
     }));
     expect(rules.showEvent).toBe(false);
   });
 
-  it("is true for expense artist caches + show-evento", () => {
+  it("is true for expense artist performance_fees + show_event", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "artist",
-      category: "caches", subcategory: "show-evento",
+      category: "performance_fees", subcategory: "show_event",
     }));
     expect(rules.showEvent).toBe(true);
   });
 
-  it("is false for expense artist caches + publicidade", () => {
+  it("is false for expense artist performance_fees + advertising", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "artist",
-      category: "caches", subcategory: "publicidade",
+      category: "performance_fees", subcategory: "advertising",
     }));
     expect(rules.showEvent).toBe(false);
   });
 
-  it("is true for revenue company receitas-musicais + participacao-show-evento", () => {
+  it("is true for revenue company music_revenue + show_event_participation", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "receitas-musicais", subcategory: "participacao-show-evento",
+      category: "music_revenue", subcategory: "show_event_participation",
     }));
     expect(rules.showEvent).toBe(true);
   });
 
-  it("is true for revenue company receitas-musicais + venda-show-fechado", () => {
+  it("is true for revenue company music_revenue + closed_show_sale", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "receitas-musicais", subcategory: "venda-show-fechado",
+      category: "music_revenue", subcategory: "closed_show_sale",
     }));
     expect(rules.showEvent).toBe(true);
   });
 
-  it("is false for revenue company receitas-musicais + direitos-autorais", () => {
+  it("is false for revenue company music_revenue + copyright", () => {
     const rules = computeFinancialRules(form({
       transactionType: "revenue", counterpartyType: "company",
-      category: "receitas-musicais", subcategory: "direitos-autorais",
+      category: "music_revenue", subcategory: "copyright",
     }));
     expect(rules.showEvent).toBe(false);
   });
@@ -538,27 +538,27 @@ describe("showCollectingAgency", () => {
 // ── showTravelReason ─────────────────────────────────────────────────────
 describe("showTravelReason", () => {
   it("is false when not expense viagem", () => {
-    const rules = computeFinancialRules(form({ transactionType: "expense", counterpartyType: "company", category: "servicos", subcategory: "design-grafico" }));
+    const rules = computeFinancialRules(form({ transactionType: "expense", counterpartyType: "company", category: "services", subcategory: "graphic_design" }));
     expect(rules.showTravelReason).toBe(false);
   });
 
-  it("is false for expense company viagens without subcategory", () => {
-    const rules = computeFinancialRules(form({ transactionType: "expense", counterpartyType: "company", category: "viagens" }));
+  it("is false for expense company travel without subcategory", () => {
+    const rules = computeFinancialRules(form({ transactionType: "expense", counterpartyType: "company", category: "travel" }));
     expect(rules.showTravelReason).toBe(false);
   });
 
-  it("is true for expense company viagens + passagens", () => {
+  it("is true for expense company travel + travel_tickets", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "viagens", subcategory: "passagens",
+      category: "travel", subcategory: "travel_tickets",
     }));
     expect(rules.showTravelReason).toBe(true);
   });
 
-  it("is true for expense individual viagens + hospedagem", () => {
+  it("is true for expense individual travel + lodging", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "individual",
-      category: "viagens", subcategory: "hospedagem",
+      category: "travel", subcategory: "lodging",
     }));
     expect(rules.showTravelReason).toBe(true);
   });
@@ -566,23 +566,23 @@ describe("showTravelReason", () => {
 
 // ── showAdvertisingName ──────────────────────────────────────────────────
 describe("showAdvertisingName", () => {
-  it("is false for non-artist caches publicidade scenarios", () => {
-    const rules = computeFinancialRules(form({ transactionType: "expense", counterpartyType: "artist", category: "caches", subcategory: "show-evento" }));
+  it("is false for non-artist performance_fees advertising scenarios", () => {
+    const rules = computeFinancialRules(form({ transactionType: "expense", counterpartyType: "artist", category: "performance_fees", subcategory: "show_event" }));
     expect(rules.showAdvertisingName).toBe(false);
   });
 
-  it("is true for expense artist caches + publicidade", () => {
+  it("is true for expense artist performance_fees + advertising", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "artist",
-      category: "caches", subcategory: "publicidade",
+      category: "performance_fees", subcategory: "advertising",
     }));
     expect(rules.showAdvertisingName).toBe(true);
   });
 
-  it("is false for expense company marketing (not artist caches)", () => {
+  it("is false for expense company marketing (not artist performance_fees)", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "marketing", subcategory: "anuncios",
+      category: "marketing", subcategory: "ads",
     }));
     expect(rules.showAdvertisingName).toBe(false);
   });
@@ -629,3 +629,19 @@ describe("clientTypeLabel", () => {
   });
 });
 
+
+// Legacy readers: rows not yet reached by migration 20260930000018 still hold the old
+// kebab-case Portuguese slugs; they must behave exactly like their canonical twins.
+describe("computeFinancialRules - legacy slug read-compat", () => {
+  const LEGACY_AND_CANONICAL: ReadonlyArray<[string, string, string, string]> = [
+    ["servicos", "design-grafico", "services", "graphic_design"],
+    ["produtos", "cenografia-pirotecnia", "products", "set_design_pyrotechnics"],
+    ["caches", "show-evento", "performance_fees", "show_event"],
+  ];
+  it.each(LEGACY_AND_CANONICAL)("treats %s + %s like %s + %s", (legacyCategory, legacySubcategory, category, subcategory) => {
+    const common = { transactionType: "expense", counterpartyType: legacyCategory === "caches" ? "artist" : "company" } as const;
+    const legacy = computeFinancialRules(form({ ...common, category: legacyCategory, subcategory: legacySubcategory }));
+    const canonical = computeFinancialRules(form({ ...common, category, subcategory }));
+    expect(legacy).toEqual(canonical);
+  });
+});

@@ -268,7 +268,7 @@ async function createSetFor(
       amount:          '1500.00',
       transactionDate:  new Date().toISOString().slice(0, 10),
       paymentMethod: 'pix',
-      category:        'outros',
+      category:        'other',
     },
   });
   if (tx.status === 201 || tx.status === 200) {

@@ -25,7 +25,7 @@ const mockTx = {
   id: TX_ID,
   tenant_id: TENANT,
   type: 'revenue',
-  category: 'outros',
+  category: 'other',
   status: 'pending',
   amount: '100',
   metadata: {},
@@ -61,7 +61,7 @@ describe('toTransactionDetails — English output contract (naming-canonical, CZ
       description: 'Aluguel de estúdio',
       amount: '250.50',
       transaction_date: new Date('2026-08-01T00:00:00.000Z'),
-      category: 'servicos',
+      category: 'services',
       subcategory: 'estudio',
       notes: 'pago via pix',
       payment_method: 'pix',
@@ -89,7 +89,7 @@ describe('toTransactionDetails — English output contract (naming-canonical, CZ
     expect(dto.type).toBe('expense');
     expect(dto.description).toBe('Aluguel de estúdio');
     expect(dto.amount).toBe(250.5);
-    expect(dto.category).toBe('servicos');
+    expect(dto.category).toBe('services');
     expect(dto.subcategory).toBe('estudio');
     expect(dto.note).toBe('pago via pix');
     expect(dto.paymentMethod).toBe('pix');
@@ -225,7 +225,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     expect(mockDs._repo.save).toHaveBeenCalled();
   });
 
-  it("category 'outros' + a matching rule: applies the suggested category", async () => {
+  it("legacy category 'outros' (read-compat) + a matching rule: applies the suggested category", async () => {
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'rule-1' });
 
     const saved = await service.create(TENANT, 'u1', {
@@ -235,21 +235,21 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     expect(saved.category).toBe('streaming');
   });
 
-  it("absent category (default 'outros') + matching rule: applies the suggested category", async () => {
-    const { service } = await buildServiceWithMatcher({ categoryId: 'cat-2', categoryName: 'servicos', ruleId: 'rule-2' });
+  it("absent category (default 'other') + matching rule: applies the suggested category", async () => {
+    const { service } = await buildServiceWithMatcher({ categoryId: 'cat-2', categoryName: 'services', ruleId: 'rule-2' });
 
     const saved = await service.create(TENANT, 'u1', {
       transactionType: 'revenue', description: 'Recebimento de show', amount: '500',
     } as any);
 
-    expect(saved.category).toBe('servicos');
+    expect(saved.category).toBe('services');
   });
 
-  it("category 'outros' with no matching rule: keeps the placeholder 'other'", async () => {
+  it("category 'other' with no matching rule: keeps the placeholder 'other'", async () => {
     const { service, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
-      transactionType: 'expense', description: 'Compra qualquer', category: 'outros', amount: '20',
+      transactionType: 'expense', description: 'Compra qualquer', category: 'other', amount: '20',
     } as any);
 
     expect(saved.category).toBe('other');
@@ -261,7 +261,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const otherTenant = 'tenant-other';
 
     await service.create(otherTenant, 'u1', {
-      transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '10',
+      transactionType: 'expense', description: 'Pagamento Spotify', category: 'other', amount: '10',
     } as any);
 
     expect(suggestFn).toHaveBeenCalledWith(otherTenant, 'EXPENSE', 'Pagamento Spotify');
@@ -271,7 +271,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const { service, suggestFn } = await buildServiceWithMatcher({ categoryId: 'c', categoryName: 's', ruleId: 'r' });
 
     const saved = await service.create(TENANT, 'u1', {
-      transactionType: 'transfer', description: 'Transferência entre contas', category: 'outros', amount: '10',
+      transactionType: 'transfer', description: 'Transferência entre contas', category: 'other', amount: '10',
     } as any);
 
     expect(suggestFn).not.toHaveBeenCalled();
@@ -282,7 +282,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const { service } = await buildServiceWithMatcher(new Error('finance-category-rules DB down'));
 
     const saved = await service.create(TENANT, 'u1', {
-      transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '10',
+      transactionType: 'expense', description: 'Pagamento Spotify', category: 'other', amount: '10',
     } as any);
 
     expect(saved.category).toBe('other');
@@ -299,9 +299,9 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, financeCategoryRules);
 
     const ofxRows = [
-      { transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '20' },
-      { transactionType: 'expense', description: 'Corrida Uber', category: 'outros', amount: '35' },
-      { transactionType: 'expense', description: 'Padaria do bairro', category: 'outros', amount: '15' },
+      { transactionType: 'expense', description: 'Pagamento Spotify', category: 'other', amount: '20' },
+      { transactionType: 'expense', description: 'Corrida Uber', category: 'other', amount: '35' },
+      { transactionType: 'expense', description: 'Padaria do bairro', category: 'other', amount: '15' },
     ];
 
     const results = [];
@@ -318,7 +318,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, undefined as any);
 
     const saved = await service.create(TENANT, 'u1', {
-      transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '10',
+      transactionType: 'expense', description: 'Pagamento Spotify', category: 'other', amount: '10',
     } as any);
 
     expect(saved.category).toBe('other');
