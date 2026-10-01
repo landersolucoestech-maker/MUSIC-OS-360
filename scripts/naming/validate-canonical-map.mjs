@@ -16,7 +16,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { loadAuthority, validateStructure } from "./canonical-map.mjs";
+import { loadAuthority, validateStructure, rowsWithoutCoveringTest } from "./canonical-map.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(here, "../..");
@@ -79,6 +79,11 @@ function main() {
   if (problems.length) {
     console.error(`canonical naming map validation failed (${problems.length}):\n  ${problems.join("\n  ")}`);
     process.exit(1);
+  }
+  const untested = rowsWithoutCoveringTest(map);
+  const temporary = (map.exceptions ?? []).filter((e) => e.status === "ACTIVE" && e.exceptionClass === "TEMPORARY_MIGRATION_COMPATIBILITY").length;
+  if (untested.length) {
+    console.warn(`warning: ${untested.length}/${temporary} ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY rows have no coveringTest (not a failure; add the test path that proves the alias)`);
   }
   console.log(`canonical naming map valid: structure ok, ${checked} column assertions against ${byTable.size} tables`);
 }

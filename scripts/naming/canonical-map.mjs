@@ -48,6 +48,9 @@ export function validateStructure(map) {
     if (e.surface && !["apiRoute", "comment", "dbColumn", "directory", "doc", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "testTitle", "value", "schema"].includes(e.surface)) {
       p.push(`exception ${label}: unknown surface '${e.surface}'`);
     }
+    if (e.coveringTest != null && (typeof e.coveringTest !== "string" || !e.coveringTest || !fs.existsSync(path.join(ROOT, e.coveringTest)))) {
+      p.push(`exception ${label}: coveringTest '${e.coveringTest}' is not an existing repo path`);
+    }
     if (e.exceptionClass === "TEMPORARY_MIGRATION_COMPATIBILITY" && (!e.owner || !e.targetState || !e.removalCondition || /never|none|permanent/i.test(e.removalCondition))) {
       p.push(`exception ${label}: TEMPORARY_MIGRATION_COMPATIBILITY needs owner, targetState and a real removal condition (it must not become permanent)`);
     }
@@ -60,6 +63,15 @@ export function validateStructure(map) {
     if (!Array.isArray(g.relatedTerms)) p.push(`glossary ${g.term}: missing relatedTerms`);
   }
   return p;
+}
+
+/**
+ * Non-failing quality report: ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY rows that name no
+ * `coveringTest` (optional field: repo-relative path of the test that proves the alias
+ * still works, so its removal is machine-checkable). Returns the rows without one.
+ */
+export function rowsWithoutCoveringTest(map) {
+  return (map.exceptions ?? []).filter((e) => e.status === "ACTIVE" && e.exceptionClass === "TEMPORARY_MIGRATION_COMPATIBILITY" && !e.coveringTest);
 }
 
 /**
