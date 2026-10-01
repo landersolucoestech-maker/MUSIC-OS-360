@@ -7,6 +7,7 @@ import {
 import { Badge } from "@/shared/ui/badge";
 import { User, Mail, Phone, Building2, Calendar, Shield } from "lucide-react";
 import { formatPersonName } from "@/shared/lib/format-name";
+import { normalizeUserStatus, userStatusLabel } from "@/modules/settings/lib/user-status";
 
 interface UserViewModalProps {
   open: boolean;
@@ -18,14 +19,8 @@ export function UserViewModal({ open, onOpenChange, user: member }: UserViewModa
   if (!member) return null;
 
   const getStatusBadge = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case "ativo":
-        return <Badge variant="success">{status}</Badge>;
-      case "inativo":
-        return <Badge variant="neutral">{status}</Badge>;
-      default:
-        return <Badge variant="neutral">{status}</Badge>;
-    }
+    const canonical = normalizeUserStatus(status, "inactive");
+    return <Badge variant={canonical === "active" ? "success" : "neutral"}>{userStatusLabel(status)}</Badge>;
   };
 
   return (

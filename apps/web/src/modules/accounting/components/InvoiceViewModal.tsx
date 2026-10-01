@@ -28,7 +28,7 @@ const invoiceTypeLabels: Record<string, string> = {
 
 const getStatusBadge = (status: string) => {
   switch (status?.toLowerCase()) {
-    case "paid": case "pago": return <Badge variant="success">Paga</Badge>;
+    case "paid": return <Badge variant="success">Paga</Badge>;
     case "issued": return <Badge variant="info">Emitida</Badge>;
     case "pending": return <Badge variant="warning">Pendente</Badge>;
     case "cancelled": return <Badge variant="neutral">Cancelada</Badge>;

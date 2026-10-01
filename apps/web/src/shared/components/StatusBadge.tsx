@@ -12,33 +12,48 @@ import { STATUS_LABELS_PT_BR_BY_DOMAIN, statusLabelPtBr, type StatusDomain } fro
  */
 
 // ── Semantic map status → variant ───────────────────────────────────────────
-// When the same term appears in different domains, we use the most
-// common meaning; screens that need another variant pass `variant` explicitly.
+// Keys are canonical English. When the same term appears in different domains,
+// we use the most common meaning; screens that need another variant pass
+// `variant` explicitly.
 const SUCCESS = [
-  "active", "ativo", "ativa", "executed", "registered", "concluido", "aprovado",
-  "publicado", "pago",
+  "active", "executed", "registered", "completed", "approved", "published", "paid",
   "recorded", "finished", "delivered", "signed", "resolved",
-  "conectado", "confirmed", "available",
+  "connected", "confirmed", "available",
 ];
 const INFO = [
-  "em_andamento", "proposal", "recording", "editing", "post_production",
-  "partially_signed", "open", "in_progress",
-  "producao", "reserved",
+  "in_progress", "proposal", "recording", "editing", "post_production",
+  "partially_signed", "open", "in_production", "reserved",
 ];
 const WARNING = [
-  "pending", "pendente", "metadata_pending", "assets_pending",
-  "analysis", "negotiation", "in_negotiation", "agendado", "agendada",
-  "scheduled", "lead", "pausado", "onboarding", "planejamento",
+  "pending", "metadata_pending", "assets_pending",
+  "analysis", "negotiation", "in_negotiation",
+  "scheduled", "lead", "paused", "onboarding", "planning",
   "waiting_customer", "pending_signature",
-  "review", "revisao", "in_use", "on_loan", "maintenance",
+  "review", "in_use", "on_loan", "maintenance",
 ];
 const DANGER = [
-  "cancelled", "cancelado", "rejected", "rejeitado", "expired", "inativo",
-  "inactive", "atrasado", "failed", "damaged", "discarded",
+  "cancelled", "rejected", "expired", "inactive", "overdue", "failed", "damaged", "discarded",
 ];
 const NEUTRAL = [
-  "rascunho", "draft", "closed", "not_started", "archived", "arquivado", "backlog",
+  "draft", "closed", "not_started", "archived", "backlog",
 ];
+
+/**
+ * Dual-read: Portuguese status slugs still emitted by older persisted payloads
+ * (marketing UI slugs, pre-canonicalization rows) resolve to the canonical English
+ * key before any lookup. Ledger: owner web shared/components; remove when no
+ * emitting screen or stored payload passes Portuguese slugs.
+ */
+const LEGACY_STATUS_ALIASES: Record<string, string> = {
+  ativo: "active", ativa: "active", inativo: "inactive",
+  concluido: "completed", aprovado: "approved", publicado: "published", pago: "paid",
+  conectado: "connected", em_andamento: "in_progress", pendente: "pending",
+  agendado: "scheduled", agendada: "scheduled", pausado: "paused",
+  planejamento: "planning", cancelado: "cancelled", rejeitado: "rejected",
+  atrasado: "overdue", rascunho: "draft", arquivado: "archived",
+  revisao: "review", producao: "in_production", em_producao: "in_production",
+  analise: "analysis", em_analise: "analysis", concluida: "completed",
+};
 
 function buildMap(list: string[], variant: BadgeVariant): Record<string, BadgeVariant> {
   return Object.fromEntries(list.map((k) => [k, variant]));
@@ -53,17 +68,16 @@ const statusVariants: Record<string, BadgeVariant> = {
 };
 
 const statusLabels: Record<string, string> = {
-  active: "Ativo", ativo: "Ativo", ativa: "Ativa",
-  pending: "Pendente", pendente: "Pendente", metadata_pending: "Pendente", assets_pending: "Pendente",
-  confirmed: "Confirmado", cancelled: "Cancelado", cancelado: "Cancelado",
+  active: "Ativo", pending: "Pendente", metadata_pending: "Pendente", assets_pending: "Pendente",
+  confirmed: "Confirmado", cancelled: "Cancelado",
   executed: "Executado", registered: "Registrado", analysis: "Em Análise",
-  rejected: "Rejeitado", rejeitado: "Rejeitado", expired: "Expirado",
+  rejected: "Rejeitado", expired: "Expirado",
   negotiation: "Em Negociação", in_negotiation: "Em Negociação",
-  proposal: "Proposta Enviada", lead: "Lead", inativo: "Inativo", inactive: "Inativo",
+  proposal: "Proposta Enviada", lead: "Lead", inactive: "Inativo",
   signed: "Contratado",
-  agendado: "Agendado", concluido: "Concluído", aprovado: "Aprovado", em_andamento: "Em Andamento", rascunho: "Rascunho",
-  planejamento: "Planejamento", publicado: "Publicado",
-  pago: "Pago",
+  scheduled: "Agendado", completed: "Concluído", approved: "Aprovado", in_progress: "Em Andamento", draft: "Rascunho",
+  planning: "Planejamento", published: "Publicado",
+  paid: "Pago", in_production: "Em Produção",
 };
 
 /**
@@ -83,7 +97,8 @@ const canonicalStatusLabels: Record<string, string> = Object.values(STATUS_LABEL
 export const UNKNOWN_STATUS_LABEL = "Status não reconhecido";
 
 function normalizeKey(status: string | null | undefined): string {
-  return status?.toLowerCase().replace(/ /g, "_") || "";
+  const key = status?.toLowerCase().replace(/ /g, "_") || "";
+  return LEGACY_STATUS_ALIASES[key] ?? key;
 }
 
 /** Resolves a status (any module) to one of the 5 canonical variants. */

@@ -25,6 +25,7 @@ import { useInventoryPaginated, useInventoryStats } from "@/modules/inventory/ho
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { InventoryStatus } from "@music-os-360/types";
+import { INVENTORY_CATEGORY_OPTIONS } from "@/modules/inventory/constants";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
 // Location dropdown → the storage_location values stored in the database.
@@ -140,7 +141,7 @@ export default function Inventory() {
 
         <div className="flex items-center gap-4 rounded-lg bg-muted/30 p-3">
           <div className="relative flex-1"><Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Buscar equipamentos por nome, categoria ou local..." className="pl-10 h-8 text-sm bg-card border-border" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /></div>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Categoria" /></SelectTrigger><SelectContent><SelectItem value="all-category">Todos Categoria</SelectItem><SelectItem value="áudio">Áudio</SelectItem><SelectItem value="vídeo">Vídeo</SelectItem><SelectItem value="computador">Computador</SelectItem><SelectItem value="iluminação">Iluminação</SelectItem><SelectItem value="estrutura">Estrutura</SelectItem></SelectContent></Select>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Categoria" /></SelectTrigger><SelectContent><SelectItem value="all-category">Todos Categoria</SelectItem>{INVENTORY_CATEGORY_OPTIONS.map((category) => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent></Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Status" /></SelectTrigger><SelectContent><SelectItem value="all-status">Todos Status</SelectItem><SelectItem value={InventoryStatus.IN_USE}>Em Uso</SelectItem><SelectItem value={InventoryStatus.AVAILABLE}>Disponível</SelectItem><SelectItem value={InventoryStatus.MAINTENANCE}>Manutenção</SelectItem></SelectContent></Select>
           <Select value={localFilter} onValueChange={setLocalFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Local" /></SelectTrigger><SelectContent><SelectItem value="all-local">Todos Local</SelectItem><SelectItem value="studio1">Estúdio 1</SelectItem><SelectItem value="studio2">Estúdio 2</SelectItem><SelectItem value="office">Escritório</SelectItem><SelectItem value="stock">Estoque</SelectItem></SelectContent></Select>
           {hasActiveFilters && <Button variant="outline" onClick={handleClearFilters}>Limpar</Button>}

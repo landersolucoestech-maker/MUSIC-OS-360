@@ -337,16 +337,16 @@ function MusicChatAutomationSettingsEditor({ settings, updateSettings }: MusicCh
     >
         <div className="space-y-4">
 
-          <Tabs defaultValue="mensagens" className="space-y-4">
+          <Tabs defaultValue="messages" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="mensagens">Mensagens</TabsTrigger>
+              <TabsTrigger value="messages">Mensagens</TabsTrigger>
               <TabsTrigger value="menu">Menu e filas</TabsTrigger>
-              <TabsTrigger value="escalonamento">Escalonamento</TabsTrigger>
+              <TabsTrigger value="escalation">Escalonamento</TabsTrigger>
               <TabsTrigger value="templates">Templates</TabsTrigger>
-              <TabsTrigger value="ia-diagnostico">Diagnóstico IA</TabsTrigger>
+              <TabsTrigger value="ai-diagnostics">Diagnóstico IA</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="mensagens" className="space-y-4">
+            <TabsContent value="messages" className="space-y-4">
               <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between gap-4">
@@ -446,7 +446,7 @@ function MusicChatAutomationSettingsEditor({ settings, updateSettings }: MusicCh
               </Card>
             </TabsContent>
 
-            <TabsContent value="escalonamento" className="space-y-4">
+            <TabsContent value="escalation" className="space-y-4">
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base">Responsáveis padrão</CardTitle>
@@ -569,7 +569,7 @@ function MusicChatAutomationSettingsEditor({ settings, updateSettings }: MusicCh
               </Card>
             </TabsContent>
 
-            <TabsContent value="ia-diagnostico" className="space-y-4">
+            <TabsContent value="ai-diagnostics" className="space-y-4">
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base">Auditoria da automação (IA)</CardTitle>

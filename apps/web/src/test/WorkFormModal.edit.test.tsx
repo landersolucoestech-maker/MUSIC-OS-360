@@ -70,7 +70,7 @@ vi.mock("@/shared/lib/storage", async () => {
         if (table === "projects") {
           return {
             items: [
-              { id: "project-99", title: "Projeto Raro", status: "concluido", artist_id: "art-99" },
+              { id: "project-99", title: "Projeto Raro", status: "completed", artist_id: "art-99" },
             ],
             page: 1,
             pageSize: 20,

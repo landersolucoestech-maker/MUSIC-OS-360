@@ -10,6 +10,7 @@ import { useRoles } from "@/modules/settings/hooks/useRoles";
 import { toCanonicalRoleSlug } from "@music-os-360/types";
 
 import { toUserMessage } from "@/shared/lib/errors";
+import { normalizeUserStatus } from "@/modules/settings/lib/user-status";
 interface UserEditorModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -36,7 +37,7 @@ export function UserEditorModal({ open, onOpenChange, user: member, mode }: User
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [status, setStatus] = useState<"ativo" | "inativo">("ativo");
+  const [status, setStatus] = useState<"active" | "inactive">("active");
   const [roleSlug, setRoleSlug] = useState("");
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export function UserEditorModal({ open, onOpenChange, user: member, mode }: User
     setName(member?.full_name ?? "");
     setEmail(member?.email ?? "");
     setPhone(member?.phone ?? "");
-    setStatus(member?.status ?? "ativo");
+    setStatus(normalizeUserStatus(member?.status) === "active" ? "active" : "inactive");
     setRoleSlug(toCanonicalRoleSlug(member?.role ?? ""));
   }, [open, member]);
 
@@ -110,11 +111,11 @@ export function UserEditorModal({ open, onOpenChange, user: member, mode }: User
               </div>
               <div className="space-y-1.5">
                 <Label>Status</Label>
-                <Select value={status} onValueChange={(value) => setStatus(value as "ativo" | "inativo")}>
+                <Select value={status} onValueChange={(value) => setStatus(value as "active" | "inactive")}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ativo">Ativo</SelectItem>
-                    <SelectItem value="inativo">Inativo</SelectItem>
+                    <SelectItem value="active">Ativo</SelectItem>
+                    <SelectItem value="inactive">Inativo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

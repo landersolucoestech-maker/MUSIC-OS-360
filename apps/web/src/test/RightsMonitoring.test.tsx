@@ -22,7 +22,7 @@ vi.mock("@/shared/components/MainLayout", () => ({
 
 const DETECTIONS = [
   {
-    id: "det-001", work_id: "obra-001", artist_id: null,
+    id: "det-001", work_id: "work-001", artist_id: null,
     platform: "YouTube", detected_title: "Noite de Luz", url: "https://youtube.com/x",
     score: "0.92", status: "completed", type: "unauthorized_use",
     detected_at: "2026-05-08T14:32:00", metadata: {}, created_at: "2026-05-08T14:32:00", updated_at: "2026-05-08T14:32:00",
@@ -37,7 +37,7 @@ const DETECTIONS = [
 
 const WORKS = [
   {
-    id: "obra-001", title: "Noite de Luz",
+    id: "work-001", title: "Noite de Luz",
     composer_name: "Vitória Carvalho", composer_names: ["Vitória Carvalho", "Lucas Mendes"],
     publisher_name: "MusicOS Publishing", isrc: "BRMSC2500001", iswc: "T-123.456.789-0",
     society_code: "ABR-001-2025", ecad_code: "ECAD-0001-VL",

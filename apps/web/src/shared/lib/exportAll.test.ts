@@ -40,10 +40,10 @@ describe("fetchAllPages", () => {
 
   it("preserves the active filters on every fetched page", async () => {
     mockedListPaged.mockResolvedValue({ items: [], page: 1, pageSize: 200, total: 0, totalPages: 1 });
-    await fetchAllPages<FakeRow>("events", { filters: { type: "show", status: "confirmado" } });
+    await fetchAllPages<FakeRow>("events", { filters: { type: "show", status: "confirmed" } });
 
     const calledOptions = mockedListPaged.mock.calls[0][1] as { filters?: Record<string, unknown> };
-    expect(calledOptions.filters).toEqual({ type: "show", status: "confirmado" });
+    expect(calledOptions.filters).toEqual({ type: "show", status: "confirmed" });
   });
 
   it("respects the safety ceiling (maxRecords) and reports truncated:true instead of running forever", async () => {

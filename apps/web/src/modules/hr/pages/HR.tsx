@@ -1053,7 +1053,7 @@ export default function HR() {
                       </div>
                     </div>
                     <FileUpload
-                      folder="documents-rh"
+                      folder="hr-documents"
                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                       maxSize={10}
                       multiple

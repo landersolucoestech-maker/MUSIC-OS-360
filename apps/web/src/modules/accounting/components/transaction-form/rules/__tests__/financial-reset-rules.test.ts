@@ -93,14 +93,14 @@ describe("applyResets — category", () => {
 // ── artistId resets ────────────────────────────────────────────────
 describe("applyResets — artistId", () => {
   it("resets projectId, eventId, contractId", () => {
-    const result = applyResets("artistId", "artista-1");
+    const result = applyResets("artistId", "artist-1");
     expect(result.projectId).toBe("");
     expect(result.eventId).toBe("");
     expect(result.contractId).toBe("");
   });
 
   it("does not reset unrelated fields", () => {
-    const result = applyResets("artistId", "artista-1");
+    const result = applyResets("artistId", "artist-1");
     expect(result.transactionType).toBeUndefined();
     expect(result.category).toBeUndefined();
     expect(result.subcategory).toBeUndefined();

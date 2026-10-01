@@ -14,6 +14,7 @@ import {
 import type { Transaction } from "@/modules/accounting/hooks/useTransactions";
 import { truncatedTransactionsNotice, useAllTransactions } from "@/modules/accounting/hooks/useAllTransactions";
 import { formatCurrency } from "@/shared/lib/format-utils";
+import { UNCATEGORIZED_CATEGORY } from "@/modules/accounting/constants/transaction-category-slugs";
 import { canonicalTransactionCategory, transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllPages } from "@/shared/lib/exportAll";
@@ -30,7 +31,7 @@ function catLabel(cat: string) {
 function totalsByCategory(rows: Transaction[]): { category: string; amount: number }[] {
   const map: Record<string, number> = {};
   // A category stored under its legacy slug and under its canonical id is ONE bucket (TX1).
-  rows.forEach((t) => { const c = canonicalTransactionCategory(t.category ?? "outras"); map[c] = (map[c] ?? 0) + toNumber(t.amount); });
+  rows.forEach((t) => { const c = canonicalTransactionCategory(t.category ?? UNCATEGORIZED_CATEGORY); map[c] = (map[c] ?? 0) + toNumber(t.amount); });
   return Object.entries(map).map(([category, amount]) => ({ category, amount })).sort((a, b) => b.amount - a.amount);
 }
 

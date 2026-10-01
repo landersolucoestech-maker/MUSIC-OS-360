@@ -70,7 +70,7 @@ describe("reportsApi — reports center, real data only", () => {
     const result = await reportsApi.exportBlob("artists", {
       format: "xlsx",
       columns: ["name", "status"],
-      filters: { status: "ativo", empty: "" },
+      filters: { status: "active", empty: "" },
       sort: "name",
       order: "ASC",
       page: 2,
@@ -78,7 +78,7 @@ describe("reportsApi — reports center, real data only", () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "http://localhost:3001/api/v1/reports/entities/artists/export?format=xlsx&columns=name%2Cstatus&sort=name&order=ASC&page=2&pageSize=50&status=ativo",
+      "http://localhost:3001/api/v1/reports/entities/artists/export?format=xlsx&columns=name%2Cstatus&sort=name&order=ASC&page=2&pageSize=50&status=active",
       {
         headers: {
           Authorization: "Bearer access-token",

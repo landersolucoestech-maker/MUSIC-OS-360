@@ -34,34 +34,34 @@ describe("RequirePermission / PermissionGate", () => {
   it("does not render children when NOT authorized (shows the fallback)", () => {
     state.allow = false;
     render(
-      <RequirePermission module="artists" action="delete" fallback={<span>sem-acesso</span>}>
+      <RequirePermission module="artists" action="delete" fallback={<span>no-access</span>}>
         <button>Excluir</button>
       </RequirePermission>,
     );
     expect(screen.queryByText("Excluir")).not.toBeInTheDocument();
-    expect(screen.getByText("sem-acesso")).toBeInTheDocument();
+    expect(screen.getByText("no-access")).toBeInTheDocument();
   });
 
   it("while loading renders loadingFallback and NEVER opens children", () => {
     state.loading = true;
     state.allow = true; // even with allow, loading takes precedence (fail-closed)
     render(
-      <RequirePermission module="accounting" action="export" loadingFallback={<span>carregando</span>}>
+      <RequirePermission module="accounting" action="export" loadingFallback={<span>loading</span>}>
         <button>Exportar</button>
       </RequirePermission>,
     );
     expect(screen.queryByText("Exportar")).not.toBeInTheDocument();
-    expect(screen.getByText("carregando")).toBeInTheDocument();
+    expect(screen.getByText("loading")).toBeInTheDocument();
   });
 
   it("PermissionGate is an alias and respects the fallback", () => {
     state.allow = false;
     render(
-      <PermissionGate module="contracts" action="delete" fallback={<span>bloqueado</span>}>
+      <PermissionGate module="contracts" action="delete" fallback={<span>blocked</span>}>
         <button>Apagar</button>
       </PermissionGate>,
     );
-    expect(screen.getByText("bloqueado")).toBeInTheDocument();
+    expect(screen.getByText("blocked")).toBeInTheDocument();
   });
 
   it("useHasPermission mirrors canModule", () => {

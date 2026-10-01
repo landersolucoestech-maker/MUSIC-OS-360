@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema, type UserFormData } from "@/modules/settings/lib/user-schema";
 import { FormField, FieldError } from "@/shared/components/FormField";
 import { useUsers } from "@/modules/settings/hooks/useUsers";
+import { normalizeUserStatus } from "@/modules/settings/lib/user-status";
 import { toCanonicalRoleSlug } from "@music-os-360/types";
 interface UserFormModalProps {
   open: boolean;
@@ -55,7 +56,7 @@ export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFo
       name: "",
       email: "",
       phone: "",
-      status: "ativo",
+      status: "active",
       accessLevel: "",
     },
   });
@@ -69,7 +70,7 @@ export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFo
           name: member.name || "",
           email: member.email || "",
           phone: member.phone || "",
-          status: member.status || "ativo",
+          status: normalizeUserStatus(member.status) as UserFormData["status"],
           // Dual-read: a member persisted under a legacy slug (juridico, artista, ...) selects its canonical option.
           accessLevel: toCanonicalRoleSlug(member.role || ""),
         });
@@ -78,7 +79,7 @@ export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFo
           name: "",
           email: "",
           phone: "",
-          status: "ativo",
+          status: "active",
           accessLevel: "",
         });
       }
@@ -169,9 +170,9 @@ export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFo
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ativo">Ativo</SelectItem>
-                      <SelectItem value="inativo">Inativo</SelectItem>
-                      <SelectItem value="suspenso">Suspenso</SelectItem>
+                      <SelectItem value="active">Ativo</SelectItem>
+                      <SelectItem value="inactive">Inativo</SelectItem>
+                      <SelectItem value="suspended">Suspenso</SelectItem>
                     </SelectContent>
                   </Select>
                   <FieldError error={errors.status?.message} />

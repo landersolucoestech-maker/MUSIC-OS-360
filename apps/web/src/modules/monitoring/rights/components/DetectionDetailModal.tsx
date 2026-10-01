@@ -6,6 +6,7 @@ import type { DetectionStatus } from "../types";
 import type { DetectionRow } from "./DetectionsTable";
 import { formatRightsDateTime } from "../utils/date-format";
 import { safeHref } from "@/shared/lib/safe-url";
+import { statusLabel } from "@/shared/components/StatusBadge";
 
 const STATUS_CONFIG: Record<DetectionStatus, { label: string; variant: BadgeVariant; icon: React.ReactNode }> = {
   completed:    { label: "Concluído",    variant: "success", icon: <CheckCircle className="h-3.5 w-3.5" /> },
@@ -110,7 +111,7 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
                 <Row
                   icon={<Tag className="h-3.5 w-3.5" />}
                   label="Status no Catálogo"
-                  value={<span className="capitalize text-xs">{catalog.status || "—"}</span>}
+                  value={<span className="text-xs">{statusLabel(catalog.status, "work")}</span>}
                 />
               </div>
             ) : (

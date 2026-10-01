@@ -424,7 +424,7 @@ const ContractForm = ({
         <CardHeader><CardTitle>Documentos Anexos</CardTitle></CardHeader>
         <CardContent>
           <FileUpload
-            folder="contratos/documents"
+            folder="contracts/documents"
             accept="application/pdf,image/*"
             maxSize={20}
             multiple

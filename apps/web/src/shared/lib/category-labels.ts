@@ -10,7 +10,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   "recebimentos externos de direitos": "Recebimentos externos de direitos",
   recebimentos_externos_de_direitos: "Recebimentos externos de direitos",
   cache: "Cachê de Shows",
-  "cachê": "Cachê de Shows",
   licenciamento: "Licenciamento",
   licenciamento_musical: "Licenciamento Musical",
   distribuicao: "Distribuição",
@@ -108,7 +107,8 @@ function titleCase(text: string): string {
 export function formatCategoryLabel(value: unknown): string {
   if (value == null || value === "") return "—";
   const raw = String(value).trim();
-  const key = raw.toLowerCase();
+  // Accent-blind lookup: a stored "cachê" resolves to the unaccented slug key.
+  const key = raw.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (CATEGORY_LABELS[key]) return CATEGORY_LABELS[key];
   if (CATEGORY_LABELS[raw]) return CATEGORY_LABELS[raw];
   // Fallback: removes underscores and applies Title Case (guarantees no "_").

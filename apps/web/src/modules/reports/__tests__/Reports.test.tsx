@@ -36,7 +36,7 @@ const entities = [
     label: "Monitoramento (Pendente)",
     category: "REPORTABLE",
     reportable: true,
-    columns: [{ name: "plataforma", label: "Plataforma" }],
+    columns: [{ name: "platform", label: "Plataforma" }],
     risks: [],
   },
 ];

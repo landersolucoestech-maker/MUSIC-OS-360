@@ -365,7 +365,7 @@ export default function Accounting() {
                   {pageItems.map((transaction) => {
                     const isRevenue = transaction.type === "revenue";
                     const description = transaction.description ?? "Transação sem descrição";
-                    const category = transaction.category ?? "sem_categoria";
+                    const category = transaction.category ?? "";
                     const transactionDate = transaction.transaction_date ?? "";
                     const amount = toNumber(transaction.amount);
 

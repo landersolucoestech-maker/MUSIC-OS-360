@@ -329,8 +329,8 @@ export function SupportCenterView({
   // Chat Interno tab and back (this view has no forceMount, by design).
   const [selectedId, setSelectedId] = useState(() => sessionStorage.getItem("musicchat-support:selected-id") ?? "");
   const [loadingConversations, setLoadingConversations] = useState(true);
-  const [channelFilter, setChannelFilter] = useState<string>("todos");
-  const [statusFilter, setStatusFilter] = useState<string>("todos");
+  const [channelFilter, setChannelFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [draft, setDraft] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -457,11 +457,11 @@ export function SupportCenterView({
   const filteredConversations = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     return conversations.filter((conversation) => {
-      const matchesChannel = channelFilter === "todos" || conversation.channel === channelFilter;
+      const matchesChannel = channelFilter === "all" || conversation.channel === channelFilter;
       // "Arquivada" only appears when the status filter explicitly selects it;
-      // in the default active list ("todos") archived conversations stay hidden.
+      // in the default active list ("all") archived conversations stay hidden.
       const matchesStatus =
-        statusFilter === "todos"
+        statusFilter === "all"
           ? conversation.status !== "archived"
           : conversation.status === statusFilter;
       const matchesQuery =
@@ -957,7 +957,7 @@ export function SupportCenterView({
                 <SelectValue placeholder="Canal" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todos">Todos os canais</SelectItem>
+                <SelectItem value="all">Todos os canais</SelectItem>
                 {Object.entries(channelLabels).map(([value, label]) => (
                   <SelectItem key={value} value={value}>
                     {label}
@@ -970,7 +970,7 @@ export function SupportCenterView({
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todos">Todos status</SelectItem>
+                <SelectItem value="all">Todos status</SelectItem>
                 {Object.entries(statusLabels).map(([value, label]) => (
                   <SelectItem key={value} value={value}>
                     {label}

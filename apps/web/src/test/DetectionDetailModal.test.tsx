@@ -14,7 +14,7 @@ import type { DetectionRow } from "@/modules/monitoring/rights/components/Detect
 
 const BASE_DETECTION: DetectionRow = {
   id: "det-001",
-  work_id: "obra-001",
+  work_id: "work-001",
   artist_id: null,
   platform: "YouTube",
   detected_title: "Noite de Luz",
@@ -27,7 +27,7 @@ const BASE_DETECTION: DetectionRow = {
   created_at: "2026-05-08T14:32:00",
   updated_at: "2026-05-08T14:32:00",
   work: {
-    id: "obra-001",
+    id: "work-001",
     title: "Noite de Luz",
     composer_name: "Vitória Carvalho",
     composer_names: ["Vitória Carvalho", "Lucas Mendes"],
@@ -38,7 +38,7 @@ const BASE_DETECTION: DetectionRow = {
     society_code: "ABR-001-2025",
     genre: "Pop",
     duration_text: "3:42",
-    status: "registrado",
+    status: "registered",
   },
 };
 

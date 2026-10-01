@@ -5,6 +5,7 @@ import { api } from "@/shared/lib/api-client";
 import { useAuth } from "@/app/providers/AuthContext";
 
 import { toUserMessage } from "@/shared/lib/errors";
+import { normalizeUserStatus } from "@/modules/settings/lib/user-status";
 export interface UserAccount {
   id: string;
   email: string;
@@ -13,7 +14,7 @@ export interface UserAccount {
   avatar_url: string | null;
   role: string;
   cargo: string | null;
-  status: "ativo" | "inativo";
+  status: "active" | "inactive";
   created_at: string;
 }
 
@@ -53,7 +54,8 @@ export interface UpdateUserInput {
   id: string;
   full_name?: string;
   phone?: string;
-  status?: "ativo" | "inativo";
+  /** Canonical English; legacy ativo/inativo is still accepted (dual-read). */
+  status?: "active" | "inactive" | "ativo" | "inativo";
   role?: string;
   /** Legacy form compatibility: `cargo` always represented the role slug. */
   cargo?: string;
@@ -68,7 +70,7 @@ function mapUser(user: ApiUser): UserAccount {
     avatar_url: user.avatar_url ?? null,
     role: user.role_slug ?? user.role ?? "viewer",
     cargo: user.cargo ?? null,
-    status: user.is_active && user.status !== "inactive" ? "ativo" : "inativo",
+    status: user.is_active && user.status !== "inactive" ? "active" : "inactive",
     created_at: user.created_at,
   };
 }
@@ -100,7 +102,7 @@ export function useUsers() {
       // 'owner', protects the last owner) — the generic profile PATCH no longer
       // accepts this field.
       if (status !== undefined) {
-        await api.patch(`/users/${id}/status`, { status: status === "ativo" ? "active" : "inactive" });
+        await api.patch(`/users/${id}/status`, { status: normalizeUserStatus(status) === "active" ? "active" : "inactive" });
       }
 
       const effectiveRole = role ?? position;

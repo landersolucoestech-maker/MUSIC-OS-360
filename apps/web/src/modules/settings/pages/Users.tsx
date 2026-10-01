@@ -14,6 +14,7 @@ import { EmptyState } from "@/shared/components/EmptyState";
 import { useUsers, type UserAccount } from "@/modules/settings/hooks/useUsers";
 import { useRoles } from "@/modules/settings/hooks/useRoles";
 import { formatPersonName } from "@/shared/lib/format-name";
+import { normalizeUserStatus, userStatusLabel } from "@/modules/settings/lib/user-status";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -113,8 +114,8 @@ export default function UsersPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-status">Todos os status</SelectItem>
-              <SelectItem value="ativo">Ativo</SelectItem>
-              <SelectItem value="inativo">Inativo</SelectItem>
+              <SelectItem value="active">Ativo</SelectItem>
+              <SelectItem value="inactive">Inativo</SelectItem>
             </SelectContent>
           </Select>
 
@@ -164,8 +165,8 @@ export default function UsersPage() {
                       <TableCell className="text-muted-foreground text-sm">{member.phone || "—"}</TableCell>
                       <TableCell className="text-muted-foreground text-sm">{formatDate(member.created_at)}</TableCell>
                       <TableCell>
-                        <Badge className={`text-xs ${member.status === "ativo" ? "bg-success" : "bg-gray-500"} text-foreground`}>
-                          {member.status === "ativo" ? "Ativo" : "Inativo"}
+                        <Badge className={`text-xs ${member.status === "active" ? "bg-success" : "bg-gray-500"} text-foreground`}>
+                          {userStatusLabel(member.status)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">

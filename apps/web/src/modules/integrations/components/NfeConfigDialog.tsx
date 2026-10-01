@@ -43,7 +43,7 @@ const PROVIDER_OPTIONS: { value: string; label: string }[] = [
   { value: "nfeio", label: "NFe.io" },
   { value: "emites", label: "Emites" },
   { value: "plugnotas", label: "PlugNotas" },
-  { value: "proprio", label: "Integração própria" },
+  { value: "custom", label: "Integração própria" },
 ];
 
 export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
@@ -98,7 +98,7 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
       certificate_type: certificateType,
       certificate_serial: certificateSerial.trim() || undefined,
       provider_token: providerToken.trim() || undefined,
-      provider: provider as "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio",
+      provider: provider as "focusnfe" | "nfeio" | "emites" | "plugnotas" | "custom",
     });
     toast.success("NF-e configurada com sucesso!");
     setProviderToken("");

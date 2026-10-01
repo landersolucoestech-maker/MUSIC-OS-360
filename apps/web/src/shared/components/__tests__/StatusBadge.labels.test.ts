@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { STATUS_LABELS_PT_BR_BY_DOMAIN, type StatusDomain } from "@music-os-360/types";
-import { UNKNOWN_STATUS_LABEL, statusLabel } from "../StatusBadge";
+import { UNKNOWN_STATUS_LABEL, statusLabel, statusToVariant } from "../StatusBadge";
 
 const domains = Object.keys(STATUS_LABELS_PT_BR_BY_DOMAIN) as StatusDomain[];
 
@@ -27,5 +27,18 @@ describe("statusLabel — PT-BR only", () => {
   it("never prettifies an unknown value into English", () => {
     expect(statusLabel("totally_new_state")).toBe(UNKNOWN_STATUS_LABEL);
     expect(statusLabel("awaiting_signature")).toBe("Aguardando assinatura");
+  });
+});
+
+describe("legacy Portuguese status slugs (dual-read)", () => {
+  it.each([
+    ["concluido", "Concluído", "success"],
+    ["em_andamento", "Em Andamento", "info"],
+    ["pendente", "Pendente", "warning"],
+    ["cancelado", "Cancelado", "danger"],
+    ["rascunho", "Rascunho", "neutral"],
+  ])("%s resolves to the canonical label and variant", (legacy, label, variant) => {
+    expect(statusLabel(legacy)).toBe(label);
+    expect(statusToVariant(legacy)).toBe(variant);
   });
 });

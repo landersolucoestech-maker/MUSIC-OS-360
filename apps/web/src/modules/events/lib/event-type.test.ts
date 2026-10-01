@@ -66,7 +66,7 @@ describe("normalizeToBackendType", () => {
   });
 
   it("falls back to 'other' for an unknown/absent value (never breaks the filter)", () => {
-    expect(normalizeToBackendType("categoria-inexistente", map)).toBe("other");
+    expect(normalizeToBackendType("unknown-category", map)).toBe("other");
     expect(normalizeToBackendType(undefined, map)).toBe("other");
     expect(normalizeToBackendType(null, map)).toBe("other");
     expect(normalizeToBackendType("", map)).toBe("other");
@@ -88,6 +88,6 @@ describe("getBackendEventTypeLabel", () => {
   it("never throws and always returns something displayable for an absent/unknown value", () => {
     expect(getBackendEventTypeLabel(undefined)).toBe("Evento");
     expect(getBackendEventTypeLabel(null)).toBe("Evento");
-    expect(getBackendEventTypeLabel("valor-nunca-visto")).toBe("valor-nunca-visto");
+    expect(getBackendEventTypeLabel("never-seen-value")).toBe("never-seen-value");
   });
 });

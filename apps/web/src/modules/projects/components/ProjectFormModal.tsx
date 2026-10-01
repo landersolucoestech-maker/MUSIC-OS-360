@@ -85,15 +85,16 @@ const createEmptyTrack = (): TrackData => ({
 // Normalize stored enum values to match Select option values exactly.
 // Handles capitalization differences, accent variants and legacy typos.
 function normType(v: string | null | undefined): string {
-  const s = (v || "").toLowerCase().trim();
-  if (s === "álbum" || s === "album") return "album";
+  // Accent-blind: legacy stored "álbum" resolves to "album".
+  const s = (v || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (s === "album") return "album";
   if (s === "ep") return "ep";
   return "single";
 }
 function normStatus(v: string | null | undefined): string {
-  const s = (v || "").toLowerCase().trim();
+  const s = (v || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (s === "in_progress" || s === "em_andamento" || s === "andamento") return "in_progress";
-  if (s === "completed" || s === "concluido" || s === "concluído") return "completed";
+  if (s === "completed" || s === "concluido") return "completed";
   if (s === "cancelled" || s === "cancelado") return "cancelled";
   return "planning";
 }

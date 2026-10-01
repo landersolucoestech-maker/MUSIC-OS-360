@@ -101,7 +101,7 @@ export default function MusicRegistry() {
   const { phonograms, isLoading: loadingPhonograms, deletePhonogram, addPhonogram } = usePhonograms();
   const { projects: allProjects } = useProjects();
   const { artists: signedArtists } = useSignedArtists();
-  const [activeTab, setActiveTab] = useState("obras");
+  const [activeTab, setActiveTab] = useState("works");
   const [selectedWorkIds, setSelectedWorkIds] = useState<string[]>([]);
   const toggleSelectAllWorks = () => {
     if (selectedWorkIds.length === worksPg.pageItems.length && worksPg.pageItems.length > 0) {
@@ -142,7 +142,7 @@ export default function MusicRegistry() {
   const [workSort, setWorkSort] = useState<TableSortState>(null);
   const [workOriginFilter, setWorkOriginFilter] = useState("all-origins");
   const [projectFilter, setProjectFilter] = useState("all-projects");
-  const [linkedWorkFilter, setLinkedWorkFilter] = useState("all-obras");
+  const [linkedWorkFilter, setLinkedWorkFilter] = useState("all-linked");
   const [ecadFilter, setEcadFilter] = useState("all-ecad");
   const [phonogramEcadFilter, setPhonogramEcadFilter] = useState("all-ecad");
   const [workModal, setWorkModal] = useState<{ open: boolean; mode: "create" | "edit"; work?: Partial<Work>; workOrigin?: WorkOrigin }>({
@@ -191,7 +191,7 @@ export default function MusicRegistry() {
     let consumed = false;
 
     if (newWorkParam) {
-      setActiveTab("obras");
+      setActiveTab("works");
       setProjectFilter(newWorkParam);
       setPendingProjectId(newWorkParam);
       setWorkTypeSelectorOpen(true);
@@ -200,7 +200,7 @@ export default function MusicRegistry() {
     }
 
     if (projectParam) {
-      setActiveTab("obras");
+      setActiveTab("works");
       setProjectFilter(projectParam);
       next.delete("project");
       consumed = true;
@@ -208,7 +208,7 @@ export default function MusicRegistry() {
 
     if (workParam) {
       if (deepLinkWork) {
-        setActiveTab("obras");
+        setActiveTab("works");
         setWorkViewModal({ open: true, work: deepLinkWork });
       }
       // Whether or not the obra was found, drop the param so we don't loop.
@@ -218,7 +218,7 @@ export default function MusicRegistry() {
 
     if (editWorkParam) {
       if (deepLinkEditWork) {
-        setActiveTab("obras");
+        setActiveTab("works");
         setWorkModal({ open: true, mode: "edit", work: deepLinkEditWork });
       }
       next.delete("editWork");
@@ -227,7 +227,7 @@ export default function MusicRegistry() {
 
     if (phonogramParam) {
       if (deepLinkPhonogram) {
-        setActiveTab("fonogramas");
+        setActiveTab("phonograms");
         setPhonogramModal({ open: true, mode: "edit", phonogram: deepLinkPhonogram });
       }
       next.delete("phonogram");
@@ -276,7 +276,7 @@ export default function MusicRegistry() {
     musicGenre: genreFilter !== "all-genre" ? genreFilter : undefined,
     projectId: projectFilter !== "all-projects" ? projectFilter : undefined,
     ecad: ecadFilter !== "all-ecad" ? (ecadFilter as WorkEcadFilter) : undefined,
-    enabled: activeTab === "obras",
+    enabled: activeTab === "works",
   });
   const worksPg = useMemo(() => ({
     pageItems: workSort ? sortTableRows(workPageItems, workSort, getWorkSortValue) : workPageItems,
@@ -293,9 +293,9 @@ export default function MusicRegistry() {
     page: phonogramPage, pageSize: phonogramPageSize, search: debouncedSearch || undefined,
     status: statusFilter !== "all-status" ? statusFilter : undefined,
     musicGenre: genreFilter !== "all-genre" ? genreFilter : undefined,
-    hasWork: linkedWorkFilter !== "all-obras" ? (linkedWorkFilter as PhonogramHasWorkFilter) : undefined,
+    hasWork: linkedWorkFilter !== "all-linked" ? (linkedWorkFilter as PhonogramHasWorkFilter) : undefined,
     ecad: phonogramEcadFilter !== "all-ecad" ? (phonogramEcadFilter as PhonogramEcadFilter) : undefined,
-    enabled: activeTab === "fonogramas",
+    enabled: activeTab === "phonograms",
   });
   const phonogramsPg = useMemo(() => ({
     pageItems: phonogramSort ? sortTableRows(phonogramPageItems, phonogramSort, getPhonogramSortValue) : phonogramPageItems,
@@ -307,11 +307,11 @@ export default function MusicRegistry() {
   }), [phonogramPageItems, phonogramSort, phonogramTotal, phonogramPage, phonogramPageSize]);
 
   const isLoading = loadingWorks || loadingPhonograms ||
-    (activeTab === "fonogramas" ? isLoadingPhonogramPage : isLoadingWorkPage);
+    (activeTab === "phonograms" ? isLoadingPhonogramPage : isLoadingWorkPage);
 
   const { genres: worksGenres } = useWorksGenres();
   const { genres: phonogramsGenres } = usePhonogramsGenres();
-  const uniqueGenres = activeTab === "fonogramas" ? phonogramsGenres : worksGenres;
+  const uniqueGenres = activeTab === "phonograms" ? phonogramsGenres : worksGenres;
 
   const availableProjects = useMemo(() => {
     const map = new Map<string, string>();
@@ -330,7 +330,7 @@ export default function MusicRegistry() {
   // computed only over the currently loaded page/list (Task H).
   const { stats: worksStats } = useWorksStats();
   const { stats: phonogramsStats } = usePhonogramsStats();
-  const activeStats = activeTab === "fonogramas" ? phonogramsStats : worksStats;
+  const activeStats = activeTab === "phonograms" ? phonogramsStats : worksStats;
   const pending = activeStats.byGroup["pending"] ?? 0;
   const underReview = (activeStats.byGroup["under_review"] ?? 0) + (activeStats.byGroup["in_review"] ?? 0);
   const registered = activeStats.byGroup["registered"] ?? 0;
@@ -339,7 +339,7 @@ export default function MusicRegistry() {
 
   const handleDelete = () => {
     if (deleteModal.item) {
-      if (deleteModal.type === "fonograma") {
+      if (deleteModal.type === "phonogram") {
         deletePhonogram.mutate(deleteModal.item.id);
       } else {
         deleteWork.mutate(deleteModal.item.id);
@@ -354,14 +354,14 @@ export default function MusicRegistry() {
         <Button
           size="sm"
           className="h-8 text-xs gap-1.5"
-          onClick={() => activeTab === "fonogramas"
+          onClick={() => activeTab === "phonograms"
             ? setPhonogramModal({ open: true, mode: "create" })
             : setWorkTypeSelectorOpen(true)
           }
           data-testid="button-new-work"
         >
           <PlusCircle className="h-3.5 w-3.5" />
-          {activeTab === "fonogramas" ? "Novo Fonograma" : "Nova Obra"}
+          {activeTab === "phonograms" ? "Novo Fonograma" : "Nova Obra"}
         </Button>
       </RequirePermission>
     </>
@@ -382,35 +382,35 @@ export default function MusicRegistry() {
         {/* Metrics */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           <MetricCard
-            title={activeTab === "fonogramas" ? "Total de Fonogramas" : "Total de Obras"}
+            title={activeTab === "phonograms" ? "Total de Fonogramas" : "Total de Obras"}
             value={total}
             description="registrados no sistema"
-            icon={activeTab === "fonogramas" ? Disc : Music}
+            icon={activeTab === "phonograms" ? Disc : Music}
             accent="primary"
           />
           <MetricCard title="Pendentes de Registro" value={pending} description="aguardando análise" icon={FileText} accent="warning" />
           <MetricCard title="Em Análise" value={underReview} description="aguardando aprovação" icon={Clock} accent="warning" />
           <MetricCard title="Registro Aceito" value={registered} description="aprovados" icon={CheckCircle} accent="success" />
-          <MetricCard title="Taxa de Aprovação" value={`${approvalRate}%`} description={activeTab === "fonogramas" ? "fonogramas aprovados" : "obras aprovadas"} icon={CheckCircle} accent="primary" />
+          <MetricCard title="Taxa de Aprovação" value={`${approvalRate}%`} description={activeTab === "phonograms" ? "fonogramas aprovados" : "obras aprovadas"} icon={CheckCircle} accent="primary" />
         </div>
 
 
         {/* Tabs */}
         <div className="flex items-center gap-2">
           <Button 
-            variant={activeTab === "obras" ? "default" : "outline"}
+            variant={activeTab === "works" ? "default" : "outline"}
             size="sm"
-            onClick={() => setActiveTab("obras")}
-            className={activeTab === "obras" ? "gap-2 bg-muted text-foreground hover:bg-muted" : "gap-2"}
+            onClick={() => setActiveTab("works")}
+            className={activeTab === "works" ? "gap-2 bg-muted text-foreground hover:bg-muted" : "gap-2"}
           >
             <Music className="h-4 w-4" />
             Obras
           </Button>
           <Button 
-            variant={activeTab === "fonogramas" ? "default" : "outline"}
+            variant={activeTab === "phonograms" ? "default" : "outline"}
             size="sm"
-            onClick={() => setActiveTab("fonogramas")}
-            className={activeTab === "fonogramas" ? "gap-2 bg-muted text-foreground hover:bg-muted" : "gap-2"}
+            onClick={() => setActiveTab("phonograms")}
+            className={activeTab === "phonograms" ? "gap-2 bg-muted text-foreground hover:bg-muted" : "gap-2"}
           >
             <Disc className="h-4 w-4" />
             Fonogramas
@@ -422,13 +422,13 @@ export default function MusicRegistry() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder={activeTab === "fonogramas" ? "Buscar fonograma por título..." : "Buscar obra por título..."}
+              placeholder={activeTab === "phonograms" ? "Buscar fonograma por título..." : "Buscar obra por título..."}
               className="pl-10 h-8 text-sm bg-card border-border"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          {activeTab === "obras" && availableProjects.length > 0 && (
+          {activeTab === "works" && availableProjects.length > 0 && (
             <Select value={projectFilter} onValueChange={setProjectFilter}>
               <SelectTrigger className="w-auto min-w-[150px] shrink-0 h-8 text-sm bg-card border-border" data-testid="select-filter-project">
                 <SelectValue placeholder="Todos Projetos" />
@@ -442,7 +442,7 @@ export default function MusicRegistry() {
               </SelectContent>
             </Select>
           )}
-          {activeTab === "obras" && (
+          {activeTab === "works" && (
             <Select value={ecadFilter} onValueChange={setEcadFilter} data-testid="select-filter-ecad">
               <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-ecad">
                 <SelectValue placeholder="Todos ECAD" />
@@ -454,7 +454,7 @@ export default function MusicRegistry() {
               </SelectContent>
             </Select>
           )}
-          {activeTab === "obras" && (
+          {activeTab === "works" && (
             <Select value={workOriginFilter} onValueChange={setWorkOriginFilter} data-testid="select-filter-work-origin">
               <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-work-origin">
                 <SelectValue placeholder="Todos Tipos" />
@@ -467,19 +467,19 @@ export default function MusicRegistry() {
               </SelectContent>
             </Select>
           )}
-          {activeTab === "fonogramas" && (
+          {activeTab === "phonograms" && (
             <Select value={linkedWorkFilter} onValueChange={setLinkedWorkFilter} data-testid="select-filter-linked-work">
               <SelectTrigger className="w-auto min-w-[160px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-linked-work">
                 <SelectValue placeholder="Todos os Fonogramas" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-obras">Todos os Fonogramas</SelectItem>
+                <SelectItem value="all-linked">Todos os Fonogramas</SelectItem>
                 <SelectItem value="false">Sem obra vinculada</SelectItem>
                 <SelectItem value="true">Com obra vinculada</SelectItem>
               </SelectContent>
             </Select>
           )}
-          {activeTab === "fonogramas" && (
+          {activeTab === "phonograms" && (
             <Select value={phonogramEcadFilter} onValueChange={setPhonogramEcadFilter} data-testid="select-filter-phonogram-ecad">
               <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border" data-testid="trigger-filter-phonogram-ecad">
                 <SelectValue placeholder="Todos ECAD" />
@@ -515,15 +515,15 @@ export default function MusicRegistry() {
               ))}
             </SelectContent>
           </Select>
-          {(searchTerm !== "" || statusFilter !== "all-status" || genreFilter !== "all-genre" || workOriginFilter !== "all-origins" || projectFilter !== "all-projects" || linkedWorkFilter !== "all-obras" || ecadFilter !== "all-ecad" || phonogramEcadFilter !== "all-ecad") && (
-            <Button variant="outline" onClick={() => { setSearchTerm(""); setStatusFilter("all-status"); setGenreFilter("all-genre"); setWorkOriginFilter("all-origins"); setProjectFilter("all-projects"); setLinkedWorkFilter("all-obras"); setEcadFilter("all-ecad"); setPhonogramEcadFilter("all-ecad"); }} data-testid="button-clear-filters">
+          {(searchTerm !== "" || statusFilter !== "all-status" || genreFilter !== "all-genre" || workOriginFilter !== "all-origins" || projectFilter !== "all-projects" || linkedWorkFilter !== "all-linked" || ecadFilter !== "all-ecad" || phonogramEcadFilter !== "all-ecad") && (
+            <Button variant="outline" onClick={() => { setSearchTerm(""); setStatusFilter("all-status"); setGenreFilter("all-genre"); setWorkOriginFilter("all-origins"); setProjectFilter("all-projects"); setLinkedWorkFilter("all-linked"); setEcadFilter("all-ecad"); setPhonogramEcadFilter("all-ecad"); }} data-testid="button-clear-filters">
               Limpar
             </Button>
           )}
         </div>
 
         {/* Content - Fonogramas */}
-        {activeTab === "fonogramas" && (
+        {activeTab === "phonograms" && (
           <Card className="bg-card border-border">
             <CardContent>
               <ListSectionHeader
@@ -638,7 +638,7 @@ export default function MusicRegistry() {
                                   Fazer Lançamento
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  onClick={() => setDeleteModal({ open: true, item: phonogram, type: "fonograma" })}
+                                  onClick={() => setDeleteModal({ open: true, item: phonogram, type: "phonogram" })}
                                   className="text-destructive"
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
@@ -676,7 +676,7 @@ export default function MusicRegistry() {
         )}
 
         {/* Content - Obras */}
-        {activeTab === "obras" && (
+        {activeTab === "works" && (
           <Card className="bg-card border-border">
             <CardContent>
               <ListSectionHeader
@@ -772,7 +772,7 @@ export default function MusicRegistry() {
                                   disabled={work.status === "under_review"}
                                   title={work.status === "under_review" ? "Obra em análise — aguarde a conclusão antes de registrar um fonograma" : undefined}
                                   onClick={() => {
-                                    setActiveTab("fonogramas");
+                                    setActiveTab("phonograms");
                                     setPhonogramModal({ open: true, mode: "create", phonogram: { work_id: work.id } });
                                   }}
                                 >
@@ -780,7 +780,7 @@ export default function MusicRegistry() {
                                   Registrar Fonograma
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  onClick={() => setDeleteModal({ open: true, item: work, type: "obra" })}
+                                  onClick={() => setDeleteModal({ open: true, item: work, type: "work" })}
                                   className="text-destructive"
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
@@ -881,8 +881,8 @@ export default function MusicRegistry() {
         open={deleteModal.open}
         onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })}
         onConfirm={handleDelete}
-        title={deleteModal.type === "fonograma" ? "Excluir Fonograma" : "Excluir Obra"}
-        description={`Tem certeza que deseja excluir ${deleteModal.type === "fonograma" ? "este fonograma" : "esta obra"}? Esta ação não pode ser desfeita.`}
+        title={deleteModal.type === "phonogram" ? "Excluir Fonograma" : "Excluir Obra"}
+        description={`Tem certeza que deseja excluir ${deleteModal.type === "phonogram" ? "este fonograma" : "esta obra"}? Esta ação não pode ser desfeita.`}
       />
       <ContractFormModal
         open={contractModal.open}

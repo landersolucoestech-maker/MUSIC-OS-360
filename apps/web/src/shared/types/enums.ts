@@ -77,17 +77,8 @@ export type ArtistGender = "male" | "female";
 /** Derived from ContractStatus — source of truth: @music-os-360/types */
 export type ContractStatusValue = `${ContractStatus}`;
 
-export type ContractType =
-  | "exclusivo"
-  | "nao_exclusivo"
-  | "licenciamento"
-  | "distribuicao"
-  | "producao"
-  | "representacao"
-  | "parceria"
-  | "servicos"
-  | "gestao"
-  | "outro";
+/** Free-form catalog value (contract service type slug configured per tenant); not a closed enum. */
+export type ContractType = string;
 
 // ── Transaction / Accounting ──────────────────────────────────────────────────
 
@@ -125,13 +116,8 @@ export type TransactionInstallmentInterval = "monthly" | "biweekly" | "weekly";
 /** Derived from InvoiceStatus — source of truth: @music-os-360/types */
 export type InvoiceStatusValue = `${InvoiceStatus}`;
 
-export type InvoiceType =
-  | "nfs"
-  | "nfe"
-  | "nfce"
-  | "nfse"
-  | "recibo"
-  | "outro";
+/** Fiscal document types accepted by the API (FISCAL_DOCUMENT_TYPES in invoices.dto.ts). */
+export type InvoiceType = "nfse" | "nfe" | "nfce";
 
 // ── Work / Catalog ───────────────────────────────────────────────────────────
 
@@ -203,18 +189,8 @@ export type ClientSegment =
 
 // ── Event ─────────────────────────────────────────────────────────────────────
 
-export type EventType =
-  | "show"
-  | "festival"
-  | "gravacao"
-  | "videoclipe"
-  | "ensaio"
-  | "reuniao"
-  | "workshop"
-  | "lancamento"
-  | "live"
-  | "streaming"
-  | "outro";
+/** Coarse enum persisted in events.type (CreateEventDto.type; see events/lib/event-type.ts). */
+export type EventType = "show" | "festival" | "recording" | "meeting" | "interview" | "tour" | "other";
 
 /** Derived from EventStatus — source of truth: @music-os-360/types */
 export type EventStatusValue = `${EventStatus}`;
@@ -224,42 +200,13 @@ export type EventStatusValue = `${EventStatus}`;
 /** Derived from ProjectStatus — source of truth: @music-os-360/types */
 export type ProjectStatusValue = `${ProjectStatus}`;
 
-export type ProjectType =
-  | "album"
-  | "ep"
-  | "single"
-  | "videoclipe"
-  | "show"
-  | "tour"
-  | "campanha"
-  | "podcast"
-  | "outro";
+/** Values accepted by projects.type (projects.dto.ts TYPES). */
+export type ProjectType = "album" | "ep" | "single" | "video" | "tour" | "podcast" | "other";
 
 // ── Marketing ─────────────────────────────────────────────────────────────────
 
 /** Derived from CampaignStatus — source of truth: @music-os-360/types */
 export type CampaignStatusValue = `${CampaignStatus}`;
-
-export type CampaignType =
-  | "digital"
-  | "impressa"
-  | "outdoor"
-  | "radio"
-  | "tv"
-  | "influencer"
-  | "email"
-  | "sms"
-  | "push"
-  | "release"
-  | "outro";
-
-export type ContentStatus =
-  | "rascunho"
-  | "revisao"
-  | "aprovado"
-  | "agendado"
-  | "publicado"
-  | "arquivado";
 
 // ── RH ────────────────────────────────────────────────────────────────────────
 

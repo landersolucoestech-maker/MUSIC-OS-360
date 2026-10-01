@@ -87,10 +87,54 @@ const isDetectorFixture = (f) => DETECTOR_FIXTURES.has(f) || DETECTOR_FIXTURE_PR
 export const USER_INPUT_VOCABULARY = new Map([
   ["apps/web/src/shared/lib/format-name.ts", new Set(["das", "dos"])],
   ["apps/web/src/shared/lib/security.ts", new Set(["senha"])],
-  ["apps/web/src/shared/lib/normalize.ts", new Set(["sim", "nao"])],
-  ["apps/api/src/modules/reports/import/import-validation.service.ts", new Set(["sim", "nao", "verdadeiro", "falso"])],
-  ["apps/api/src/modules/conversations/musicchat-automation.service.ts", new Set(["inicio", "voltar"])],
+  ["apps/web/src/shared/lib/normalize.ts", new Set(["sim", "nao", "não"])],
+  ["apps/api/src/modules/reports/import/import-validation.service.ts", new Set(["sim", "nao", "não", "verdadeiro", "falso"])],
+  ["apps/api/src/modules/conversations/musicchat-automation.service.ts", new Set(["inicio", "início", "voltar"])],
 ]);
+/**
+ * Portuguese words that are the DATA a file processes, not names the engineering team chose:
+ * keyword probes of classifiers/planners matched against user-supplied filenames and titles,
+ * Portuguese tokens parsed from (or fed to) LLM output and spreadsheet cells, and the example
+ * column label of the Portuguese import template. Exact file + exact value, like
+ * USER_INPUT_VOCABULARY, so any other string in the file is still checked.
+ */
+export const PT_CONTENT_VOCABULARY = new Map([
+  ["apps/api/src/modules/assets/asset-classification.service.ts", new Set(["capa", "clipe", "videoclipe", "contrato", "guia"])],
+  ["apps/api/src/core/automation/project-planning.automation.ts", new Set(["lancamento", "lançamento", "fonograma", "musica", "música", "turne", "turnê", "clipe", "obra"])],
+  ["apps/web/src/modules/accounting/data/finance-category-rules.config.ts", new Set(["impulsionamento", "licenciamento", "mixagem", "masterização", "estúdio", "sincronização"])],
+  ["apps/api/src/modules/reports/import/import-engine.service.ts", new Set(["exemplo"])],
+  ["packages/ai-skills/src/ad-creative/parser.ts", new Set(["neutro", "direto"])],
+  ["packages/ai-skills/src/analytics-tracking/prompt.ts", new Set(["nenhum"])],
+  ["packages/ai-skills/src/audiovisual-briefing/parser.ts", new Set(["sim", "nao", "não", "videoclipe", "baixo", "médio", "alto"])],
+  ["packages/ai-skills/src/campaign-report/parser.ts", new Set(["geral", "cancelada", "concluída", "desempenho"])],
+  ["packages/ai-skills/src/campaign-report/prompt.ts", new Set(["cancelada", "concluída"])],
+  ["packages/ai-skills/src/campaign-strategy/parser.ts", new Set(["geral"])],
+  ["packages/ai-skills/src/catalog-metadata-validator/parser.ts", new Set(["sim", "nao", "não"])],
+  ["packages/ai-skills/src/onboarding-cro/prompt.ts", new Set(["pendente", "concluído"])],
+  ["packages/ai-skills/src/postiz/parser.ts", new Set(["conectado"])],
+  ["packages/ai-skills/src/postiz/prompt.ts", new Set(["não"])],
+  ["packages/ai-skills/src/release-checklist/parser.ts", new Set(["sim", "nao", "não"])],
+  ["packages/ai-skills/src/release-checklist/prompt.ts", new Set(["sim", "não"])],
+  ["packages/ai-skills/src/seo-audit/parser.ts", new Set(["presente", "ausente"])],
+  ["packages/ai-skills/src/seo-audit/prompt.ts", new Set(["sim", "não"])],
+  ["packages/ai-skills/src/social-content/parser.ts", new Set(["neutro", "direto"])],
+  ["packages/ai-skills/src/support-triage/parser.ts", new Set(["sim", "nao", "não", "alta", "baixa", "crítica"])],
+]);
+/**
+ * Property names that belong to a third-party payload we only read: ViaCEP (logradouro, bairro,
+ * localidade, uf, ...) and IBGE localities (nome, sigla, mesorregiao, ...). Exact file + exact
+ * name; applies to identifier and object-key surfaces.
+ */
+export const EXTERNAL_PROPERTY_NAMES = new Map([
+  ["apps/web/src/shared/lib/masks.ts", new Set(["cep", "logradouro", "complemento", "bairro", "localidade", "uf", "erro"])],
+  ["apps/web/src/modules/marketing/components/campaign-builder/useIbgeLocations.ts", new Set(["nome", "sigla", "UF", "mesorregiao", "microrregiao"])],
+]);
+/**
+ * Calls whose string arguments after the first are user-visible nouns/participles composed
+ * into a PT-BR toast ("Obra excluída com sucesso"): handleConcurrencyConflict(err, "evento"),
+ * reportBulkResult(result, "excluída", "obra").
+ */
+export const UX_ARGUMENT_CALLEES = new Set(["handleConcurrencyConflict", "reportBulkResult"]);
 /**
  * Third-party ecosystem file names that collide with Portuguese words ("Cargo.lock" is the Rust
  * lockfile, not "cargo" = job role). Matched exactly and case-sensitively, so a real `cargo`
@@ -103,12 +147,12 @@ const isBookkeeping = (f) => f.startsWith(".claude/ops/");
 
 export const layerOf = (f) => (f.startsWith("apps/web") ? "web" : f.startsWith("apps/api") ? "api" : f.startsWith("packages") ? "packages" : "scripts");
 const TECHNICAL_NAME = /^[a-z0-9][a-z0-9_.:-]*$/; // event/queue/job/i18n-key shaped (never a UX label)
-/** Token-shaped string values: snake_case, kebab-case or camelCase, starting lowercase, no spaces. */
-export const VALUE_SHAPE = /^[a-z][a-zA-Z0-9]*(?:[_-][a-zA-Z0-9]+)*$/;
+/** Token-shaped string values: snake_case, kebab-case or camelCase, starting lowercase, no spaces. Accent-aware (\p{L}): "áudio", "iluminação" are token-shaped too. */
+export const VALUE_SHAPE = /^\p{Ll}[\p{L}\p{N}]*(?:[_-][\p{L}\p{N}]+)*$/u;
 /** JSX attributes and object properties whose string value is user-visible text. */
 const UX_KEYS = new Set(["aria-label", "aria-description", "aria-placeholder", "aria-roledescription", "aria-valuetext", "title", "placeholder",
   "alt", "label", "description", "helperText", "tooltip", "emptyMessage", "emptyText", "subtitle", "hint", "message", "text", "confirmText",
-  "cancelText", "itemLabel", "successMessage", "errorMessage", "heading", "caption", "labelPt", "labelPtBr", "displayPtBr"]);
+  "cancelText", "itemLabel", "ariaLabel", "sub", "subvalue", "successMessage", "errorMessage", "heading", "caption", "labelPt", "labelPtBr", "displayPtBr"]);
 
 /**
  * Real comments of a source file: the leading trivia of every token in the AST.
@@ -177,7 +221,8 @@ export function scanSource(relPath, text) {
   const add = (surface, kind, name, line) => hits.push({ surface, kind, name, line });
   if (!/\.(ts|tsx|mts|cts|mjs|cjs|js)$/.test(relPath)) return hits;
   const fixture = isDetectorFixture(relPath);
-  const userInput = USER_INPUT_VOCABULARY.get(relPath);
+  const contentWords = new Set([...(USER_INPUT_VOCABULARY.get(relPath) ?? []), ...(PT_CONTENT_VOCABULARY.get(relPath) ?? [])]);
+  const externalProps = EXTERNAL_PROPERTY_NAMES.get(relPath);
 
   const kind = relPath.endsWith("x") ? ts.ScriptKind.TSX : /\.(mjs|cjs|js)$/.test(relPath) ? ts.ScriptKind.JS : ts.ScriptKind.TS;
   const sf = ts.createSourceFile(relPath, text, ts.ScriptTarget.Latest, true, kind);
@@ -190,6 +235,7 @@ export function scanSource(relPath, text) {
     if (ts.isStringLiteral(nameNode)) claimed.add(nameNode);
     // i18n/label maps: string-literal keys are technical keys; values are UX and never scanned
     if (ts.isStringLiteral(nameNode) && !TECHNICAL_NAME.test(name)) return;
+    if (externalProps?.has(name)) return;
     if (ptWords(name).length) add("identifier", kind, name, lineOf(at));
   };
   const isEnvAccess = (e) => ts.isPropertyAccessExpression(e) && e.name.text === "env"
@@ -204,7 +250,7 @@ export function scanSource(relPath, text) {
     if (fixture || !nameNode || !(ts.isIdentifier(nameNode) || ts.isStringLiteral(nameNode))) return;
     if (ts.isStringLiteral(nameNode)) claimed.add(nameNode);
     const name = nameNode.text;
-    if (EXTERNAL_TOOL_NAMES.has(name)) return;
+    if (EXTERNAL_TOOL_NAMES.has(name) || externalProps?.has(name)) return;
     if (TECHNICAL_NAME.test(name.replace(/[A-Z]/g, (c) => c.toLowerCase())) && ptWords(name).length) add("objectKey", "object-key", name, lineOf(at));
   };
   const isEnvSchema = relPath.endsWith("env.schema.ts");
@@ -235,7 +281,17 @@ export function scanSource(relPath, text) {
       const attr = ts.isJsxAttribute(p) ? p : p.parent;
       return UX_KEYS.has(attr.name.getText(sf));
     }
-    if (ts.isPropertyAssignment(p) && p.initializer === n) return UX_KEYS.has(p.name.getText(sf).replace(/^["']|["']$/g, ""));
+    if (ts.isPropertyAssignment(p) && p.initializer === n) {
+      const key = p.name.getText(sf).replace(/^["']|["']$/g, "");
+      // Swagger documentation: @ApiProperty({ example: 'uuid-do-contrato' }) is sample text, not a value.
+      if (key === "example" && ts.isObjectLiteralExpression(p.parent) && ts.isCallExpression(p.parent.parent)
+        && /^ApiProperty(Optional)?$/.test(p.parent.parent.expression.getText(sf))) return true;
+      return UX_KEYS.has(key);
+    }
+    if (ts.isCallExpression(p) && p.arguments.indexOf(n) > 0) {
+      const callee = ts.isIdentifier(p.expression) ? p.expression.text : ts.isPropertyAccessExpression(p.expression) ? p.expression.name.text : "";
+      return UX_ARGUMENT_CALLEES.has(callee);
+    }
     return false;
   };
   let controllerBase = null;
@@ -316,7 +372,7 @@ export function scanSource(relPath, text) {
       }
     }
     if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) && !claimed.has(n) && VALUE_SHAPE.test(n.text)
-      && !isModuleSpecifier(n) && !isUxValue(n) && !userInput?.has(n.text) && ptWords(n.text).length) {
+      && !isModuleSpecifier(n) && !isUxValue(n) && !contentWords.has(n.text) && ptWords(n.text).length) {
       const p = n.parent;
       const isKey = (ts.isPropertyAssignment(p) || ts.isPropertySignature(p) || ts.isPropertyDeclaration(p) || ts.isMethodDeclaration(p) || ts.isEnumMember(p)) && p.name === n;
       if (!isKey) add("value", ts.isLiteralTypeNode(p) ? "literal-type" : ts.isEnumMember(p) ? "enum-value" : "string", n.text, lineOf(n));

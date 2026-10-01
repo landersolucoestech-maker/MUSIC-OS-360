@@ -118,8 +118,8 @@ export function KnowledgeBaseManager() {
   const isLoading = loadingArticles || loadingCategories;
 
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("todas");
-  const [typeFilter, setTypeFilter] = useState("todos");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<KnowledgeArticle | null>(null);
   const [form, setForm] = useState<ArticleFormState>(EMPTY_FORM);
@@ -133,8 +133,8 @@ export function KnowledgeBaseManager() {
     return [...articles]
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .filter((article) => {
-        const matchesCategory = categoryFilter === "todas" || article.category_id === categoryFilter;
-        const matchesType = typeFilter === "todos" || (article.type ?? "article") === typeFilter;
+        const matchesCategory = categoryFilter === "all" || article.category_id === categoryFilter;
+        const matchesType = typeFilter === "all" || (article.type ?? "article") === typeFilter;
         const matchesTerm =
           !term ||
           article.title.toLowerCase().includes(term) ||
@@ -275,7 +275,7 @@ export function KnowledgeBaseManager() {
               <SelectValue placeholder="Categoria" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="todas">Todas as categorias</SelectItem>
+              <SelectItem value="all">Todas as categorias</SelectItem>
               {SUPPORT_KNOWLEDGE_CATEGORIES.map((cat) => (
                 <SelectItem key={cat.id} value={cat.id}>
                   {cat.name}
@@ -288,7 +288,7 @@ export function KnowledgeBaseManager() {
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="todos">Todos os tipos</SelectItem>
+              <SelectItem value="all">Todos os tipos</SelectItem>
               {TYPE_OPTIONS.map((t) => (
                 <SelectItem key={t.value} value={t.value}>
                   {t.label}

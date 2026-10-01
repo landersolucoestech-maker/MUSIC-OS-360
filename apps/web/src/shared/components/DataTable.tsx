@@ -109,7 +109,7 @@ export function DataTable<T extends Record<string, unknown>>({
 
     // Apply filters
     Object.entries(filterValues).forEach(([key, value]) => {
-      if (value && value !== "todos") {
+      if (value && value !== "all") {
         result = result.filter((item) => String(item[key as keyof T]) === value);
       }
     });
@@ -167,7 +167,7 @@ export function DataTable<T extends Record<string, unknown>>({
     setFilterValues({});
   };
 
-  const hasActiveFilters = searchTerm !== "" || Object.values(filterValues).some(v => v && v !== "todos");
+  const hasActiveFilters = searchTerm !== "" || Object.values(filterValues).some(v => v && v !== "all");
 
   if (isLoading) {
     return (
@@ -252,7 +252,7 @@ export function DataTable<T extends Record<string, unknown>>({
             {filters.map((filter) => (
               <Select
                 key={filter.key}
-                value={filterValues[filter.key] || "todos"}
+                value={filterValues[filter.key] || "all"}
                 onValueChange={(value) =>
                   setFilterValues((prev) => ({ ...prev, [filter.key]: value }))
                 }
@@ -261,7 +261,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   <SelectValue placeholder={filter.label} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todos">Todos</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   {filter.options.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}

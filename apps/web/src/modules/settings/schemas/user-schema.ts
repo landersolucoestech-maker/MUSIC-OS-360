@@ -14,7 +14,7 @@ export const userSchema = z.object({
     .optional()
     .nullable()
     .or(z.literal("")),
-  status: z.enum(["ativo", "inativo", "suspenso"], {
+  status: z.enum(["active", "inactive", "suspended"], {
     errorMap: () => ({ message: "Selecione um status válido" })
   }),
   department: z.string()

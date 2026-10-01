@@ -141,6 +141,7 @@ import {
 } from "@/shared/integrations";
 
 import { toUserMessage } from "@/shared/lib/errors";
+import { normalizeUserStatus } from "@/modules/settings/lib/user-status";
 import { describeAuthError } from "@/shared/lib/auth-error-messages";
 function formatRoleName(name: string): string {
   return name.replace(/_/g, " ");
@@ -288,7 +289,7 @@ export default function SettingsPage() {
       const matchesPosition = userPositionFilter === "all-position" ||
         (userPositionFilter === "admin" && member.role === "admin") ||
         (userPositionFilter === "user" && member.role !== "admin");
-      const matchesStatus = userStatusFilter === "all-status" || member.status === userStatusFilter;
+      const matchesStatus = userStatusFilter === "all-status" || normalizeUserStatus(member.status) === userStatusFilter;
       return matchesSearch && matchesPosition && matchesStatus;
     });
   }, [users, userSearchTerm, userPositionFilter, userStatusFilter]);
@@ -2082,7 +2083,7 @@ export default function SettingsPage() {
             {/* Metrics */}
             <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
               {[
-                { label: "Usuários Ativos", value: users.filter((u) => (u.status ?? "ativo") === "ativo").length, icon: Users },
+                { label: "Usuários Ativos", value: users.filter((u) => normalizeUserStatus(u.status) === "active").length, icon: Users },
                 { label: "Convites Pendentes", value: teamInvites.length, icon: Mail },
                 { label: "Papéis Configurados", value: roles.length, icon: Shield },
                 { label: "Permissões Totais", value: permissions.length, icon: Key },
@@ -2191,7 +2192,7 @@ export default function SettingsPage() {
                           </SelectContent>
                         </Select>
                         <Select 
-                          value={member.status || "ativo"}
+                          value={normalizeUserStatus(member.status)}
                           onValueChange={(value) => {
                             // Update status logic
                           }}
@@ -2200,9 +2201,9 @@ export default function SettingsPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="ativo">Ativo</SelectItem>
-                            <SelectItem value="inativo">Inativo</SelectItem>
-                            <SelectItem value="pendente">Pendente</SelectItem>
+                            <SelectItem value="active">Ativo</SelectItem>
+                            <SelectItem value="inactive">Inativo</SelectItem>
+                            <SelectItem value="invited">Pendente</SelectItem>
                           </SelectContent>
                         </Select>
                         <Button 

@@ -317,7 +317,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
             planId: context.workspace.plan || prev.billing.planId,
           },
         }));
-        devTenantLog("Tenant sincronizado via /auth/context:", {
+        devTenantLog("Tenant synced via /auth/context:", {
           id: context.workspace.id,
           role: context.membership.role,
           permissions: context.membership.permissions.length,
@@ -325,7 +325,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       })
       .catch((error: unknown) => {
         if (!active) return;
-        devTenantLog("Falha ao sincronizar /auth/context; usando JWT/localStorage", error);
+        devTenantLog("Failed to sync /auth/context; falling back to JWT/localStorage", error);
         setContextLoading(false);
         setContextError(
           error instanceof IntegrationError && error.statusCode === 503
@@ -416,7 +416,7 @@ export function useSyncTenantFromJWT(_userEmail?: string): void {
     // JWT claims (app_metadata.role + app_metadata.org_id via Hook)
     const token = getAccessToken();
     if (!token) {
-      devTenantLog("Nenhum token em memória — aguardando login");
+      devTenantLog("No in-memory token: waiting for login");
       return;
     }
 
@@ -427,7 +427,7 @@ export function useSyncTenantFromJWT(_userEmail?: string): void {
     const claimRole  = decoded.app_metadata?.role   ?? decoded.role;
     const claimOrgId = decoded.app_metadata?.org_id ?? decoded.org_id;
 
-    devTenantLog("JWT claims lidas:", {
+    devTenantLog("JWT claims read:", {
       org_id:  claimOrgId ?? "(ausente — ativar Custom Access Token Hook no Supabase)",
       role:    claimRole  ?? "(ausente)",
       source:  decoded.app_metadata?.org_id ? "app_metadata (hook)" : "top-level (fallback)",
@@ -442,7 +442,7 @@ export function useSyncTenantFromJWT(_userEmail?: string): void {
       id:          claimOrgId ?? prev.id,
       permissions: ROLE_PERMISSIONS[tenantRole],
     }));
-    devTenantLog(`Permissões elevadas para role "${tenantRole}" (org: ${claimOrgId ?? "mantida"})`);
+    devTenantLog(`Permissions elevated for role "${tenantRole}" (org: ${claimOrgId ?? "kept"})`);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -455,7 +455,7 @@ export function useSyncTenantFromJWT(_userEmail?: string): void {
   // without a reload — the hook's new claims become active immediately
   useEffect(() => {
     const handler = () => {
-      devTenantLog("TOKEN_REFRESHED recebido — re-sincronizando claims do JWT");
+      devTenantLog("TOKEN_REFRESHED received: re-syncing JWT claims");
       syncFromJwt();
     };
     window.addEventListener("musicos360:auth:tokenRefreshed", handler);

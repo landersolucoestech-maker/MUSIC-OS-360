@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { inventorySchema, type InventoryFormData } from "@/modules/inventory/lib/inventory-schema";
-import { INVENTORY_STATUS_VALUES, isInventoryStatus } from "@/modules/inventory/constants";
+import { INVENTORY_CATEGORY_OPTIONS, INVENTORY_STATUS_VALUES, isInventoryStatus } from "@/modules/inventory/constants";
 import { InventoryStatus, INVENTORY_STATUS_LABELS_PT_BR } from "@music-os-360/types";
 import { FieldError } from "@/shared/components/FormField";
 import { useInventory } from "@/modules/inventory/hooks/useInventory";
@@ -43,18 +43,7 @@ const departmentOptions = [
   "Tecnologia / TI",
 ];
 
-const categoryOptions = [
-  "Áudio",
-  "Computador",
-  "Escritório",
-  "Estrutura",
-  "Iluminação",
-  "Mobília",
-  "Software",
-  "Vídeo",
-  "Outros",
-];
-
+const categoryOptions = INVENTORY_CATEGORY_OPTIONS;
 const statusOptions = INVENTORY_STATUS_VALUES.map((value) => ({ value, label: INVENTORY_STATUS_LABELS_PT_BR[value] }));
 
 export function InventoryFormModal({ open, onOpenChange, item, mode }: InventoryFormModalProps) {

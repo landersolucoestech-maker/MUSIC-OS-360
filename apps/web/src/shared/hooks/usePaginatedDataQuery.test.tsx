@@ -118,7 +118,7 @@ describe("usePaginatedDataQuery", () => {
 
   it("extra filters (e.g. status) reach the backend and may empty the result without breaking pagination", async () => {
     const { result } = renderHook(
-      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 1, pageSize: 10, filters: { status: "ativo" } }),
+      () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artists", page: 1, pageSize: 10, filters: { status: "active" } }),
       { wrapper: createWrapper() },
     );
 
@@ -139,7 +139,7 @@ describe("usePaginatedDataQuery", () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.total).toBe(75);
 
-    rerender({ filters: { status: "ativo" } });
+    rerender({ filters: { status: "active" } });
     await waitFor(() => expect(result.current.total).toBe(0));
 
     expect(mockedListPaged).toHaveBeenCalledTimes(2);

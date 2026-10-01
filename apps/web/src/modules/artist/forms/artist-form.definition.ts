@@ -184,7 +184,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
     fields: [
       {
         id: "photoUrl", label: "Imagem do Artista", type: "file", fullWidth: true,
-        file: { folder: "artistas/fotos", accept: "image/*", maxSize: 5, circular: true },
+        file: { folder: "artists/fotos", accept: "image/*", maxSize: 5, circular: true },
       },
       {
         id: "stageName", label: "Nome Artístico", type: "text", required: true,
@@ -202,11 +202,11 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
       },
       {
         id: "personalDocumentsUrl", label: "Documentos Pessoais (PDF)", type: "file", fullWidth: true,
-        file: { folder: "artistas/documents", accept: "application/pdf", maxSize: 5 },
+        file: { folder: "artists/documents", accept: "application/pdf", maxSize: 5 },
       },
       {
         id: "pressKitUrl", label: "Presskit / Media Kit", type: "file", fullWidth: true,
-        file: { folder: "artistas/presskit", accept: "application/pdf,.zip", maxSize: 10 },
+        file: { folder: "artists/presskit", accept: "application/pdf,.zip", maxSize: 10 },
       },
       {
         id: "biography", label: "Biografia", type: "textarea", fullWidth: true,

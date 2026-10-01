@@ -121,7 +121,7 @@ const getAcceptedTypesText = (accept?: string): string => {
 };
 
 export function FileUpload({
-  folder = "geral",
+  folder = "general",
   accept,
   maxSize = 50,
   multiple = false,

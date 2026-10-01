@@ -23,7 +23,7 @@ beforeEach(() => {
 });
 
 function capturedSheet(data: Record<string, unknown>[]): unknown[][] {
-  exportToXlsx(data, columns, "teste");
+  exportToXlsx(data, columns, "test");
   return lastAoa!;
 }
 

@@ -33,12 +33,12 @@ describe("storage.listPaged", () => {
     await storage.listPaged("artists", {
       page: 1,
       pageSize: 20,
-      filters: { status: "ativo", search: "banda" },
+      filters: { status: "active", search: "band" },
       orderBy: { column: "stage_name", ascending: true },
     });
     const url = mockedGet.mock.calls[0][0] as string;
-    expect(url).toContain("status=ativo");
-    expect(url).toContain("search=banda");
+    expect(url).toContain("status=active");
+    expect(url).toContain("search=band");
     expect(url).toContain("orderBy=stage_name");
     expect(url).toContain("ascending=true");
   });

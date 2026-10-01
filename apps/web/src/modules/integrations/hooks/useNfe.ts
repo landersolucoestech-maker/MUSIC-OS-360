@@ -27,7 +27,7 @@ interface NfeCredentials {
   certificate_type: NfeCertificateType;
   certificate_serial?: string;
   provider_token?: string;
-  provider: "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio";
+  provider: "focusnfe" | "nfeio" | "emites" | "plugnotas" | "custom";
   saved_at: string;
 }
 
@@ -45,7 +45,11 @@ export interface NfeStatus {
 function loadCredentials(): NfeCredentials | null {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const creds = JSON.parse(raw) as NfeCredentials;
+    // Dual-read: sessions saved before the rename stored provider "proprio".
+    if ((creds.provider as string) === "proprio") creds.provider = "custom";
+    return creds;
   } catch {
     return null;
   }

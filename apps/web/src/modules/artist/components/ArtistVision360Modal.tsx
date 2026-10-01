@@ -97,6 +97,7 @@ import {
 import { truncatedTransactionsNotice, useAllTransactions } from "@/modules/accounting/hooks/useAllTransactions";
 import { toNumber } from "@/modules/accounting/pages/profit-and-loss-calc";
 import { ContractStatusBadge } from "@/modules/contracts/components/ContractStatusBadge";
+import { statusLabel } from "@/shared/components/StatusBadge";
 import { useArtistEvents } from "@/modules/events/hooks/useArtistEvents";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 import { useMarketingContents } from "@/modules/marketing/hooks/useMarketingContents";
@@ -283,18 +284,6 @@ const getProjectStatusBadgeClass = (status?: string | null) => {
   return "bg-gray-600 text-white border-gray-600";
 };
 
-const STATUS_LABELS_PT_BR: Record<string, string> = {
-  analise: "Análise",
-  em_analise: "Em Análise",
-  em_producao: "Em Produção",
-  em_andamento: "Em Andamento",
-  concluido: "Concluído",
-  concluida: "Concluída",
-  ativo: "Ativo",
-  registrado: "Registrado",
-  pendente: "Pendente",
-};
-
 /** PT-BR status label: the domain's canonical labels first; never the raw value. */
 const formatStatusPtBr = (status?: string | null, domain?: StatusDomain): string => {
   const normalized = (status ?? "").trim().toLowerCase();
@@ -307,7 +296,8 @@ const formatStatusPtBr = (status?: string | null, domain?: StatusDomain): string
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[\s-]+/g, "_");
 
-  return STATUS_LABELS_PT_BR[key] ?? "Status não reconhecido";
+  // Legacy Portuguese slugs (em_andamento, concluido...) resolve inside the shared resolver (dual-read).
+  return statusLabel(key);
 };
 
 export function ArtistVision360Modal({

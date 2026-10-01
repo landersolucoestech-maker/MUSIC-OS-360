@@ -36,7 +36,7 @@ describe("UserFormModal ACCESS_LEVELS", () => {
   });
 
   it.each([["juridico"], ["legal"]])("prefills a member persisted as %s with the Jurídico option", (role) => {
-    const member = { id: "u1", name: "Ana", email: "ana@example.com", phone: null, status: "ativo", role };
+    const member = { id: "u1", name: "Ana", email: "ana@example.com", phone: null, status: "active", role };
     render(<UserFormModal open onOpenChange={() => {}} user={member} mode="edit" />);
     expect(screen.getAllByText("Jurídico").length).toBeGreaterThan(0);
   });

@@ -28,6 +28,7 @@ import { useAuth } from "@/app/providers/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import {
   activationPlansService,
+  activationPlanPeriodSuffix,
   type ActivationPlan,
 } from "@/modules/auth/services/activation-plans.service";
 import { describeAuthError } from "@/shared/lib/auth-error-messages";
@@ -575,7 +576,7 @@ export default function Register() {
                                 style: "currency",
                                 currency: plan.currency ?? "BRL",
                               }).format(plan.price)}
-                              {plan.period === "mensal" ? "/mês" : plan.period === "anual" ? "/ano" : ""}
+                              {activationPlanPeriodSuffix(plan.period)}
                             </span>
                           ) : null}
                         </button>

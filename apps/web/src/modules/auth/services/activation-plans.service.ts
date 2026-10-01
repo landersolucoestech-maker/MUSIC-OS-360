@@ -16,6 +16,28 @@
  */
 import { publicApi } from "@/shared/lib/api-client";
 
+export type ActivationPlanPeriod = "monthly" | "yearly" | "trial";
+
+/**
+ * Dual-read of the period: the contract is still only documented here (no API
+ * route yet), so a backend/seed may send the PT-BR slugs (mensal | anual) or the
+ * billing interval vocabulary (month | year); all resolve to the canonical value.
+ */
+export function normalizeActivationPlanPeriod(value: unknown): ActivationPlanPeriod | null {
+  switch (typeof value === "string" ? value.trim().toLowerCase() : "") {
+    case "monthly": case "month": case "mensal": return "monthly";
+    case "yearly": case "year": case "anual": return "yearly";
+    case "trial": return "trial";
+    default: return null;
+  }
+}
+
+/** PT-BR price suffix shown next to the plan price. */
+export function activationPlanPeriodSuffix(period: unknown): string {
+  const normalized = normalizeActivationPlanPeriod(period);
+  return normalized === "monthly" ? "/mês" : normalized === "yearly" ? "/ano" : "";
+}
+
 /** Public model of an activation plan (subset exposed to registration). */
 export interface ActivationPlan {
   /** Stable plan identifier (uuid in production). Sent as activationPlanId. */
@@ -28,8 +50,8 @@ export interface ActivationPlan {
   price?: number | null;
   /** ISO currency of the price (e.g. "BRL"). */
   currency?: string | null;
-  /** Billing/usage period. */
-  period?: "mensal" | "anual" | "trial" | null;
+  /** Billing/usage period (canonical English; see normalizeActivationPlanPeriod for dual-read). */
+  period?: ActivationPlanPeriod | null;
   /** Trial days, when applicable. */
   trialDays?: number | null;
   /** Display order defined by the admin (asc). */
@@ -52,6 +74,6 @@ export const activationPlansService = {
    */
   async listPublicPlans(): Promise<ActivationPlan[]> {
     const plans = await publicApi.get<ActivationPlan[]>("/public/activation-plans");
-    return sortByOrder(plans ?? []);
+    return sortByOrder((plans ?? []).map((plan) => ({ ...plan, period: normalizeActivationPlanPeriod(plan.period) })));
   },
 };

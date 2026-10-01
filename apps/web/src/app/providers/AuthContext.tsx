@@ -235,7 +235,7 @@ function SupabaseAuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }).catch((error: unknown) => {
       clearApiSessionState();
-      devLog("Falha no bootstrap da sessão", error);
+      devLog("Session bootstrap failed", error);
       setLoading(false);
     });
 
@@ -252,7 +252,7 @@ function SupabaseAuthProvider({ children }: { children: React.ReactNode }) {
                 setLoading(false);
               })
               .catch((error: unknown) => {
-                devLog("Falha ao provisionar workspace", error);
+                devLog("Workspace provisioning failed", error);
                 setLoading(false);
               });
           }, 0);
@@ -263,20 +263,20 @@ function SupabaseAuthProvider({ children }: { children: React.ReactNode }) {
         setUser(s.user);
 
         logJwtClaims(sbSession.access_token, event);
-        devLog(`Tenant resolvido: ${s.user.org_id ?? "(sem org — hook ativo?)"}`);
-        devLog(`Role resolvida: ${s.user.role ?? "(sem role)"}`);
+        devLog(`Tenant resolved: ${s.user.org_id ?? "(no org: is the hook active?)"}`);
+        devLog(`Role resolved: ${s.user.role ?? "(no role)"}`);
 
         if (event === "TOKEN_REFRESHED") {
           window.dispatchEvent(new CustomEvent("musicos360:auth:tokenRefreshed", {
             detail: { access_token: sbSession.access_token },
           }));
-          devLog("TOKEN_REFRESHED — evento musicos360:auth:tokenRefreshed despachado");
+          devLog("TOKEN_REFRESHED: musicos360:auth:tokenRefreshed event dispatched");
         }
       } else {
         setSession(null);
         setUser(null);
         clearApiSessionState();
-        devLog(`Sessão encerrada (${event})`);
+        devLog(`Session ended (${event})`);
       }
       setLoading(false);
     });

@@ -408,3 +408,41 @@ test("detector fixtures: audit tooling and the rename table are vocabulary, thei
 test("UX: `itemLabel` literals are user-visible copy", () => {
   assert.deepEqual(names(scanSource("apps/web/src/List.tsx", `export const L = () => <Picker itemLabel="projeto" />;`), "value"), []);
 });
+
+test("values: VALUE_SHAPE is accent-aware, so accented machine values are no longer invisible", () => {
+  const src = `const kinds = ['iluminação', 'lançamento']; const label = "Iluminação"; const x = "não é";`;
+  assert.deepEqual(names(scanSource("apps/web/src/inv.tsx", src), "value").sort(), ["iluminação", "lançamento"].sort());
+});
+
+test("values: PT content vocabulary (keyword probes, LLM tokens) is exempt only for the exact value in the exact file", () => {
+  const src = `if (has('capa', 'cover')) return 'x'; const bad = 'projeto';`;
+  assert.deepEqual(names(scanSource("apps/api/src/modules/assets/asset-classification.service.ts", src), "value"), ["projeto"]);
+  assert.deepEqual(names(scanSource("apps/api/src/modules/assets/other.service.ts", `const k = 'capa';`), "value"), ["capa"]);
+  assert.deepEqual(names(scanSource("packages/ai-skills/src/support-triage/parser.ts", `const t = ["sim", "não", "alta"]; const u = "urgente";`), "value"), ["urgente"]);
+  assert.deepEqual(names(scanSource("apps/web/src/shared/lib/normalize.ts", `const t = ["sim", "não"];`), "value"), []);
+});
+
+test("external property names: ViaCEP and IBGE payload keys are exempt only in their reader files", () => {
+  const src = `export interface Payload { logradouro: string; bairro: string; uf: string }
+const row = { localidade: "x" };`;
+  assert.deepEqual(names(scanSource("apps/web/src/shared/lib/masks.ts", src), "identifier"), []);
+  assert.deepEqual(names(scanSource("apps/web/src/shared/lib/masks.ts", src), "objectKey"), []);
+  assert.deepEqual(names(scanSource("apps/web/src/shared/lib/other.ts", src), "identifier").sort(), ["bairro", "logradouro", "uf"]);
+  assert.deepEqual(names(scanSource("apps/web/src/modules/marketing/components/campaign-builder/useIbgeLocations.ts", `interface L { sigla: string; mesorregiao: string }`), "identifier"), []);
+});
+
+test("UX arguments: handleConcurrencyConflict / reportBulkResult nouns are copy; other calls are still checked", () => {
+  const src = `handleConcurrencyConflict(error, "evento");
+reportBulkResult(result, "excluída", "obra");
+register("evento");`;
+  assert.deepEqual(names(scanSource("apps/web/src/Page.tsx", src), "value"), ["evento"]);
+});
+
+test("Swagger examples: @ApiProperty({ example }) is documentation, an enum/default value is not", () => {
+  const src = `class D {
+  @ApiProperty({ example: 'uuid-do-contrato' }) id!: string;
+  @ApiPropertyOptional({ example: 'gravacao' }) type?: string;
+  @ApiProperty({ default: 'gravacao' }) other!: string;
+}`;
+  assert.deepEqual(names(scanSource("apps/api/src/modules/x/dto/x.dto.ts", src), "value"), ["gravacao"]);
+});
