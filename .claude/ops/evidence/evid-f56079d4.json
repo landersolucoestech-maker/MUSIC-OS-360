@@ -1,0 +1,15 @@
+{
+  "id": "evid-f56079d4",
+  "createdAt": "2026-10-01T18:11:01.222Z",
+  "type": "COMMAND",
+  "label": "web vitest full",
+  "command": "node apps/web/node_modules/vitest/vitest.mjs run --root apps/web --config apps/web/vitest.config.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "✘ [ERROR] Could not resolve \"/tmp/music-os-360-apply/apps/web/apps/web/vitest.config.mjs\"\n\nfailed to load config from /tmp/music-os-360-apply/apps/web/apps/web/vitest.config.mjs\n\n⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯\nError: Build failed with 1 error:\nerror: Could not resolve \"/tmp/music-os-360-apply/apps/web/apps/web/vitest.config.mjs\"\n    at failureErrorWithLog (/tmp/music-os-360-apply/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:1472:15)\n    at /tmp/music-os-360-apply/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:945:25\n    at runOnEndCallbacks (/tmp/music-os-360-apply/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:1315:45)\n    at buildResponseToResult (/tmp/music-os-360-apply/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:943:7)\n    at /tmp/music-os-360-apply/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:970:16\n    at responseCallbacks.<computed> (/tmp/music-os-360-apply/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:622:9)\n    at handleIncomingPacket (/tmp/music-os-360-apply/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:677:12)\n    at Socket.readFromStdout (/tmp/music-os-360-apply/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:600:7)\n    at Socket.emit (node:events:519:28)\n    at addChunk (node:internal/streams/readable:561:12) {\n  errors: [Getter/Setter],\n  warnings: [Getter/Setter]\n}",
+  "workspaceFingerprint": "bc6e610d80b55783020967c973d6729c0f753e21c7e34d04c772211cf8f0c249",
+  "fingerprintStatus": "BOUND",
+  "head": "c18af766c8749ebe1fa090473c77b4562ea2b4be",
+  "durationMs": 315
+}

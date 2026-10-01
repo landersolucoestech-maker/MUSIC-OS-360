@@ -1,0 +1,15 @@
+{
+  "id": "evid-587c2607",
+  "createdAt": "2026-10-01T18:09:12.018Z",
+  "type": "COMMAND",
+  "label": "migration source of truth",
+  "command": "node scripts/verify-migration-source-of-truth.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓  supabase/migrations/ matches the frozen allowlist\n  ✓  no TypeORM/Supabase migration name or timestamp collision\n  ✓  datasource.ts still points at the canonical runner/tracking table\n  ✓  migrations/index.ts registry matches disk exactly (unexplained drift only)\n  ℹ  2 migration(s) deliberately unregistered (INTENTIONALLY_UNREGISTERED_MIGRATIONS):\n     - DropOrphanContactsSatelliteTables20260713000002\n     - PROPOSAL_BackfillArtistGoalStatusToEnglish20260910900001\n\nMigration source-of-truth guard PASSED.",
+  "stderrTail": "",
+  "workspaceFingerprint": "8edb0efc802ec94c02f6462cceb0fc293db3d092b00476ed3edd26d8e675138a",
+  "fingerprintStatus": "BOUND",
+  "head": "ee9009badd634b97015b4c372c3cd8877be41817",
+  "durationMs": 62
+}

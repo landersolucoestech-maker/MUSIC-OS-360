@@ -1,0 +1,15 @@
+{
+  "id": "evid-5711c45e",
+  "createdAt": "2026-10-01T18:09:12.776Z",
+  "type": "COMMAND",
+  "label": "critical workflows",
+  "command": "node scripts/verify-critical-workflows.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "✓ verify:critical-workflows — 4 workflows present, not empty in the current working tree.",
+  "stderrTail": "⚠️  ci.yml: present (js-yaml unavailable — syntax parse skipped)\n⚠️  security.yml: present (js-yaml unavailable — syntax parse skipped)\n⚠️  staging.yml: present (js-yaml unavailable — syntax parse skipped)\n⚠️  backup.yml: present (js-yaml unavailable — syntax parse skipped)\n[xlsx-only] incompatible residues found:\n- apps/api/src/modules/reports/export/export-audit.service.spec.ts:8 — legacy delimited format\n- apps/api/src/modules/reports/export/export-audit.service.spec.ts:19 — legacy delimited format",
+  "workspaceFingerprint": "8edb0efc802ec94c02f6462cceb0fc293db3d092b00476ed3edd26d8e675138a",
+  "fingerprintStatus": "BOUND",
+  "head": "ee9009badd634b97015b4c372c3cd8877be41817",
+  "durationMs": 453
+}
