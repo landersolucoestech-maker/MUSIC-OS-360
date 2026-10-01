@@ -1,3 +1,4 @@
+import type { LyricsSentiment, LyricsTone } from "./lyricsVocabulary";
 import type { TrackLyricsAnalysis } from "./types";
 
 export function analyzeLyricsDraft(lyric: string): TrackLyricsAnalysis {
@@ -44,13 +45,13 @@ function inferTheme(text: string) {
   return "tema principal a consolidar";
 }
 
-function inferSentiment(text: string) {
+function inferSentiment(text: string): LyricsSentiment {
   const lower = text.toLowerCase();
-  if (lower.includes("dor") || lower.includes("choro") || lower.includes("saudade")) return "melancolico";
-  if (lower.includes("festa") || lower.includes("feliz") || lower.includes("brilhar")) return "positivo";
-  return "misto";
+  if (lower.includes("dor") || lower.includes("choro") || lower.includes("saudade")) return "melancholic";
+  if (lower.includes("festa") || lower.includes("feliz") || lower.includes("brilhar")) return "positive";
+  return "mixed";
 }
 
-function inferTone(text: string) {
-  return text.length > 1200 ? "narrativo" : "direto";
+function inferTone(text: string): LyricsTone {
+  return text.length > 1200 ? "narrative" : "direct";
 }

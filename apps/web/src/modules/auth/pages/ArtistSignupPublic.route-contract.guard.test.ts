@@ -16,6 +16,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "ArtistSignupPublic.tsx"), "utf8");
+const PAYLOAD_SOURCE = fs.readFileSync(path.resolve(__dirname, "artist-registration-payload.ts"), "utf8");
 
 describe("ArtistSignupPublic — real contract with /public/artist-registration", () => {
   it("calls the real backend route (not /public/artists, which never existed)", () => {
@@ -33,6 +34,7 @@ describe("ArtistSignupPublic — real contract with /public/artist-registration"
 
   it("preserves fields without their own DTO column via additionalData (drops no data)", () => {
     expect(SOURCE).toMatch(/additionalData/);
-    expect(SOURCE).toMatch(/banco:\s*bank\b/);
+    expect(SOURCE).toMatch(/buildArtistRegistrationAdditionalData\(/);
+    expect(PAYLOAD_SOURCE).toMatch(/bank:\s*input\.bank\b/);
   });
 });

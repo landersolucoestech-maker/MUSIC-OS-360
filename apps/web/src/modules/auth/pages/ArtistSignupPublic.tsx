@@ -34,6 +34,11 @@ import { publicApi } from "@/shared/lib/api-client";
 import { CompanyLogo } from "@/shared/ui/company-logo";
 import { companyLogoService } from "@/modules/settings/services/company-logo.service";
 import { useArtists } from "@/modules/artist/hooks/useArtists";
+import {
+  buildArtistRegistrationAdditionalData,
+  type DistributorEntry,
+  type TeamContact,
+} from "./artist-registration-payload";
 
 // ─── Same constants as ArtistaFormModal ───────────────────────────────────────
 
@@ -45,17 +50,17 @@ const BANKS = [
 ];
 
 const PROFILE_TYPE_OPTIONS = [
-  { value: "independente",   label: "Independente" },
-  { value: "com_empresario", label: "Com empresário" },
+  { value: "independent",   label: "Independente" },
+  { value: "managed", label: "Com empresário" },
 ];
 
 const TEAM_CATEGORIES = [
   { value: "booker",          label: "Booker" },
-  { value: "assessoria",      label: "Assessoria de Imprensa" },
-  { value: "juridico",        label: "Jurídico" },
-  { value: "financeiro",      label: "Financeiro" },
-  { value: "contador",        label: "Contador" },
-  { value: "editora_musical", label: "Editora Musical" },
+  { value: "press_office",      label: "Assessoria de Imprensa" },
+  { value: "legal",        label: "Jurídico" },
+  { value: "finance",      label: "Financeiro" },
+  { value: "accountant",        label: "Contador" },
+  { value: "publisher", label: "Editora Musical" },
   { value: "roadie",          label: "Roadie" },
 ];
 
@@ -66,29 +71,15 @@ const DISTRIBUTORS_OPTIONS = [
   { id: "symphonic", label: "Symphonic" },
   { id: "musicpro",  label: "MusicPro" },
   { id: "somvibe",   label: "Somvibe" },
-  { id: "outros",    label: "Outros" },
+  { id: "other",    label: "Outros" },
 ];
 
 const SPECIALTIES = Object.entries(SPECIALTY_LABELS).map(([value, label]) => ({ value, label }));
 
 // ─── Types (same as ArtistaFormModal) ─────────────────────────────────────────
 
-interface DistributorEntry {
-  id: string;
-  email: string;
-  nomeCustom?: string;
-}
-
-interface TeamContact {
-  nome: string;
-  categoria: string;
-  telefone: string;
-  email: string;
-  distribuidoras: DistributorEntry[];
-}
-
 const EMPTY_CONTACT: TeamContact = {
-  nome: "", categoria: "", telefone: "", email: "", distribuidoras: [],
+  name: "", category: "", phone: "", email: "", distributors: [],
 };
 
 // ─── Steps ────────────────────────────────────────────────────────────────────
@@ -155,7 +146,7 @@ export default function ArtistSignupPublic() {
   const [birthDate, setBirthDate] = useState("");
   const [cpfCnpj, setCpfCnpj]         = useState("");
   const [rg, setRg]                   = useState("");
-  const [genre, setGenre]           = useState("");
+  const [gender, setGender]           = useState("");
   const [address, setAddress]       = useState("");
   const [phone, setPhone]       = useState("");
   const [email, setEmail]             = useState("");
@@ -180,7 +171,7 @@ export default function ArtistSignupPublic() {
   const [generalDistributors, setGeneralDistributors] = useState<DistributorEntry[]>([]);
 
   // Step 6: Profile type + team
-  const [profileType, setProfileType]       = useState("independente");
+  const [profileType, setProfileType]       = useState("independent");
   const [teamContacts, setTeamContacts] = useState<TeamContact[]>([{ ...EMPTY_CONTACT }]);
 
   // Step 7: Notes
@@ -205,7 +196,7 @@ export default function ArtistSignupPublic() {
 
   // ── Ensure at least one empty equipe card when perfil changes ─────────────
   useEffect(() => {
-    const PROFILES_WITH_TEAM = ["independente", "com_empresario"];
+    const PROFILES_WITH_TEAM = ["independent", "managed"];
     if (PROFILES_WITH_TEAM.includes(profileType) && teamContacts.length === 0) {
       setTeamContacts([{ ...EMPTY_CONTACT }]);
     }
@@ -234,7 +225,7 @@ export default function ArtistSignupPublic() {
     if (checked) {
       setGeneralDistributors((prev) => [
         ...prev,
-        { id: distId, email: "", nomeCustom: distId === "outros" ? "" : undefined },
+        { id: distId, email: "", customName: distId === "other" ? "" : undefined },
       ]);
     } else {
       setGeneralDistributors((prev) => prev.filter((d) => d.id !== distId));
@@ -249,7 +240,7 @@ export default function ArtistSignupPublic() {
 
   const updateDistGeneralCustomName = (customName: string) => {
     setGeneralDistributors((prev) =>
-      prev.map((d) => (d.id === "outros" ? { ...d, nomeCustom: customName } : d))
+      prev.map((d) => (d.id === "other" ? { ...d, customName: customName } : d))
     );
   };
 
@@ -271,13 +262,13 @@ export default function ArtistSignupPublic() {
         if (checked) {
           return {
             ...c,
-            distribuidoras: [
-              ...c.distribuidoras,
-              { id: distId, email: "", nomeCustom: distId === "outros" ? "" : undefined },
+            distributors: [
+              ...c.distributors,
+              { id: distId, email: "", customName: distId === "other" ? "" : undefined },
             ],
           };
         }
-        return { ...c, distribuidoras: c.distribuidoras.filter((d) => d.id !== distId) };
+        return { ...c, distributors: c.distributors.filter((d) => d.id !== distId) };
       })
     );
   };
@@ -286,7 +277,7 @@ export default function ArtistSignupPublic() {
     setTeamContacts((prev) =>
       prev.map((c, i) =>
         i === contactIdx
-          ? { ...c, distribuidoras: c.distribuidoras.map((d) => d.id === distId ? { ...d, email } : d) }
+          ? { ...c, distributors: c.distributors.map((d) => d.id === distId ? { ...d, email } : d) }
           : c
       )
     );
@@ -296,7 +287,7 @@ export default function ArtistSignupPublic() {
     setTeamContacts((prev) =>
       prev.map((c, i) =>
         i === contactIdx
-          ? { ...c, distribuidoras: c.distribuidoras.map((d) => d.id === "outros" ? { ...d, nomeCustom: customName } : d) }
+          ? { ...c, distributors: c.distributors.map((d) => d.id === "other" ? { ...d, customName: customName } : d) }
           : c
       )
     );
@@ -311,7 +302,7 @@ export default function ArtistSignupPublic() {
 
     if (s === 1) {
       if (!stageName.trim()) e.stageName = "Obrigatório";
-      if (!musicGenre)        e.generoMusical  = "Obrigatório";
+      if (!musicGenre)        e.musicalGenre  = "Obrigatório";
     }
 
     if (s === 2) {
@@ -376,27 +367,27 @@ export default function ArtistSignupPublic() {
       if (appleMusic) socialLinks.appleMusic = appleMusic;
       if (soundcloud) socialLinks.soundcloud = soundcloud;
 
-      const additionalData: Record<string, unknown> = {
-        nomeCivil: name.trim() || null,
-        genero: genre || null,
-        especialidades: specialties.length > 0 ? specialties : null,
-        fotoUrl: photoUrl || null,
-        documentosPessoaisUrl: personalDocumentsUrl || null,
-        presskitUrl: presskitUrl || null,
-        dataNascimento: birthDate || null,
-        cpfCnpj: cpfCnpj || null,
-        rg: rg || null,
-        endereco: address || null,
-        banco: bank || null,
-        agencia: agency || null,
-        conta: account || null,
-        chavePix: pixKey || null,
-        titularConta: accountHolder || null,
-        tipoPerfil: profileType,
-        contatosEquipe: teamContacts.length > 0 ? teamContacts : null,
-        distribuidorasGerais: generalDistributors.length > 0 ? generalDistributors : null,
-        notasInternas: internalNotes || null,
-      };
+      const additionalData = buildArtistRegistrationAdditionalData({
+        legalName: name,
+        gender,
+        specialties,
+        photoUrl,
+        personalDocumentsUrl,
+        presskitUrl,
+        birthDate,
+        taxId: cpfCnpj,
+        rg,
+        address,
+        bank,
+        agency,
+        account,
+        pixKey,
+        accountHolder,
+        profileType,
+        teamContacts,
+        generalDistributors,
+        internalNotes,
+      });
 
       const result = await publicApi.post<{ id: string; protocol?: string }>(
         "/public/artist-registration",
@@ -659,9 +650,9 @@ export default function ArtistSignupPublic() {
                 <Label className="text-sm">Gênero Musical <span className="text-destructive">*</span></Label>
                 <Select
                   value={musicGenre}
-                  onValueChange={(v) => { setMusicGenre(v); clearError("generoMusical"); }}
+                  onValueChange={(v) => { setMusicGenre(v); clearError("musicalGenre"); }}
                 >
-                  <SelectTrigger data-testid="select-music-genre" className={errors.generoMusical ? "border-destructive" : ""}>
+                  <SelectTrigger data-testid="select-music-genre" className={errors.musicalGenre ? "border-destructive" : ""}>
                     <SelectValue placeholder="Selecione o gênero" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
@@ -670,7 +661,7 @@ export default function ArtistSignupPublic() {
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.generoMusical && <p className="text-xs text-destructive">{errors.generoMusical}</p>}
+                {errors.musicalGenre && <p className="text-xs text-destructive">{errors.musicalGenre}</p>}
               </div>
             </div>
 
@@ -781,13 +772,13 @@ export default function ArtistSignupPublic() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-sm">Gênero</Label>
-                <Select value={genre} onValueChange={setGenre}>
+                <Select value={gender} onValueChange={setGender}>
                   <SelectTrigger data-testid="select-gender">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
-                    <SelectItem value="Masculino">Masculino</SelectItem>
-                    <SelectItem value="Feminino">Feminino</SelectItem>
+                    <SelectItem value="male">Masculino</SelectItem>
+                    <SelectItem value="female">Feminino</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1067,16 +1058,16 @@ export default function ArtistSignupPublic() {
                       </Label>
                     </div>
 
-                    {isChecked && dist.id === "outros" && (
+                    {isChecked && dist.id === "other" && (
                       <div className="ml-6 space-y-1.5">
                         <Input
-                          value={entry?.nomeCustom ?? ""}
+                          value={entry?.customName ?? ""}
                           onChange={(e) => updateDistGeneralCustomName(e.target.value)}
                           placeholder="Nome da distribuidora…"
                           className="h-8 text-sm"
                           data-testid="input-general-dist-name-custom"
                         />
-                        {(entry?.nomeCustom ?? "").trim().length > 0 && (
+                        {(entry?.customName ?? "").trim().length > 0 && (
                           <Input
                             value={entry?.email ?? ""}
                             onChange={(e) => updateDistGeneralEmail(dist.id, e.target.value)}
@@ -1089,7 +1080,7 @@ export default function ArtistSignupPublic() {
                       </div>
                     )}
 
-                    {isChecked && dist.id !== "outros" && (
+                    {isChecked && dist.id !== "other" && (
                       <div className="ml-6">
                         <Input
                           value={entry?.email ?? ""}
@@ -1106,7 +1097,7 @@ export default function ArtistSignupPublic() {
               })}
             </div>
 
-            {generalDistributors.some((d) => d.id === "outros" && !(d.nomeCustom ?? "").trim()) && (
+            {generalDistributors.some((d) => d.id === "other" && !(d.customName ?? "").trim()) && (
               <p className="text-xs text-muted-foreground ml-6">
                 Preencha o nome da distribuidora para ativar o e-mail de share.
               </p>
@@ -1142,7 +1133,7 @@ export default function ArtistSignupPublic() {
             <Separator />
 
             {/* Dynamic team — same logic as ArtistaFormModal */}
-            {["independente", "com_empresario"].includes(profileType) && (
+            {["independent", "managed"].includes(profileType) && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <Label className="text-sm text-muted-foreground">Equipe / Contatos</Label>
@@ -1167,11 +1158,11 @@ export default function ArtistSignupPublic() {
 
                 {teamContacts.map((contact, idx) => {
                   const isPublisher =
-                    contact.categoria === "editora_musical" ||
-                    contact.categoria === "empresario" ||
-                    contact.categoria === "gestor" ||
-                    profileType === "com_empresario";
-                  const othersEntry = contact.distribuidoras.find((d) => d.id === "outros");
+                    contact.category === "publisher" ||
+                    contact.category === "agent" ||
+                    contact.category === "manager" ||
+                    profileType === "managed";
+                  const othersEntry = contact.distributors.find((d) => d.id === "other");
 
                   return (
                     <div
@@ -1197,23 +1188,23 @@ export default function ArtistSignupPublic() {
                       </div>
 
                       {/* Name + category */}
-                      <div className={profileType === "com_empresario" ? "space-y-1.5" : "grid grid-cols-2 gap-3"}>
+                      <div className={profileType === "managed" ? "space-y-1.5" : "grid grid-cols-2 gap-3"}>
                         <div className="space-y-1.5">
                           <Label className="text-xs">Nome</Label>
                           <Input
-                            value={contact.nome}
-                            onChange={(e) => updateContact(idx, "nome", e.target.value)}
+                            value={contact.name}
+                            onChange={(e) => updateContact(idx, "name", e.target.value)}
                             placeholder="Nome completo"
                             className="h-8 text-sm"
                             data-testid={`input-contact-name-${idx}`}
                           />
                         </div>
-                        {profileType !== "com_empresario" && (
+                        {profileType !== "managed" && (
                           <div className="space-y-1.5">
                             <Label className="text-xs">Categoria</Label>
                             <Select
-                              value={contact.categoria}
-                              onValueChange={(v) => updateContact(idx, "categoria", v)}
+                              value={contact.category}
+                              onValueChange={(v) => updateContact(idx, "category", v)}
                             >
                               <SelectTrigger className="h-8 text-sm" data-testid={`select-contact-category-${idx}`}>
                                 <SelectValue placeholder="Selecione…" />
@@ -1233,8 +1224,8 @@ export default function ArtistSignupPublic() {
                         <div className="space-y-1.5">
                           <Label className="text-xs">Telefone</Label>
                           <Input
-                            value={contact.telefone}
-                            onChange={(e) => updateContact(idx, "telefone", e.target.value)}
+                            value={contact.phone}
+                            onChange={(e) => updateContact(idx, "phone", e.target.value)}
                             placeholder="(00) 00000-0000"
                             className="h-8 text-sm"
                             data-testid={`input-contact-phone-${idx}`}
@@ -1259,7 +1250,7 @@ export default function ArtistSignupPublic() {
                           <Label className="text-xs text-muted-foreground">Distribuidoras</Label>
                           <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                             {DISTRIBUTORS_OPTIONS.map((dist) => {
-                              const dEntry = contact.distribuidoras.find((d) => d.id === dist.id);
+                              const dEntry = contact.distributors.find((d) => d.id === dist.id);
                               const dChecked = !!dEntry;
                               return (
                                 <div key={dist.id} className="space-y-1.5">
@@ -1275,16 +1266,16 @@ export default function ArtistSignupPublic() {
                                     </Label>
                                   </div>
 
-                                  {dChecked && dist.id === "outros" && (
+                                  {dChecked && dist.id === "other" && (
                                     <div className="ml-6 space-y-1.5">
                                       <Input
-                                        value={dEntry?.nomeCustom ?? ""}
+                                        value={dEntry?.customName ?? ""}
                                         onChange={(e) => updateDistTeamCustomName(idx, e.target.value)}
                                         placeholder="Nome da distribuidora…"
                                         className="h-7 text-xs"
                                         data-testid={`input-dist-name-custom-${idx}`}
                                       />
-                                      {(dEntry?.nomeCustom ?? "").trim().length > 0 && (
+                                      {(dEntry?.customName ?? "").trim().length > 0 && (
                                         <Input
                                           value={dEntry?.email ?? ""}
                                           onChange={(e) => updateDistTeamEmail(idx, dist.id, e.target.value)}
@@ -1297,7 +1288,7 @@ export default function ArtistSignupPublic() {
                                     </div>
                                   )}
 
-                                  {dChecked && dist.id !== "outros" && (
+                                  {dChecked && dist.id !== "other" && (
                                     <div className="ml-6">
                                       <Input
                                         value={dEntry?.email ?? ""}
@@ -1313,7 +1304,7 @@ export default function ArtistSignupPublic() {
                               );
                             })}
                           </div>
-                          {othersEntry && !othersEntry.nomeCustom && (
+                          {othersEntry && !othersEntry.customName && (
                             <p className="text-xs text-muted-foreground ml-6">
                               Preencha o nome da distribuidora para ativar o e-mail de share.
                             </p>
@@ -1356,7 +1347,7 @@ export default function ArtistSignupPublic() {
                         value: generalDistributors
                           .map((d) => {
                             const opt = DISTRIBUTORS_OPTIONS.find((o) => o.id === d.id);
-                            return d.id === "outros" ? (d.nomeCustom || "Outros") : (opt?.label ?? d.id);
+                            return d.id === "other" ? (d.customName || "Outros") : (opt?.label ?? d.id);
                           })
                           .join(", "),
                       }

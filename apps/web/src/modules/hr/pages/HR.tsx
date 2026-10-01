@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { LEAVE_STATUS_OPTIONS, contractTypeLabel, leaveStatusLabel, leaveTypeLabel } from "@/modules/hr/constants";
 import { MonthPickerField } from "@/shared/ui/month-picker-field";
-import { toast } from "sonner";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { ListSectionHeader } from "@/shared/components/ListSectionHeader";
@@ -14,7 +13,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { TablePagination } from "@/shared/ui/table-pagination";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { Checkbox } from "@/shared/ui/checkbox";
 import {
   Select,
@@ -60,7 +58,6 @@ import {
 } from "@/modules/hr/components/HRViewModals";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
-import { FileUpload, UploadedFile } from "@/shared/components/FileUpload";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
 import { formatCurrency, formatDate, getMonetarySemanticClass } from "@/shared/lib/format-utils";
@@ -81,14 +78,8 @@ import {
   usePayrollPaginated, useLeaveRequestsPaginated,
 } from "@/modules/hr/hooks/useHRPaginated";
 import { useUsers } from "@/modules/settings/hooks/useUsers";
-import {
-  useEmployeeDocuments,
-  DOCUMENT_TYPES,
-} from "@/modules/hr/hooks/useEmployeeDocuments";
-import type { EmployeeDocument } from "@/modules/hr/hooks/useEmployeeDocuments";
-import { Label } from "@/shared/ui/label";
+import { EmployeeDocumentsUnavailable } from "@/modules/hr/components/EmployeeDocumentsUnavailable";
 import { FeatureGate } from '@/shared/components/FeatureGate';
-import { StoredFileLink } from "@/shared/components/StoredFileLink";
 const STATUS_VARIANT_EMPLOYEE: Record<string, BadgeVariant> = {
   active: "success",
   inactive: "neutral",
@@ -199,21 +190,6 @@ export default function HR() {
   }>({ open: false });
   const [selectedLeaveIds, setSelectedLeaveIds] = useState<string[]>([]);
   const [leaveBulkDeleteModal, setLeaveBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
-
-  const [docEmployeeId, setDocEmployeeId] = useState("");
-  const [docType, setDocType] = useState("");
-  const [docDescription, setDocDescription] = useState("");
-  const [docDeleteModal, setDocDeleteModal] = useState<{
-    open: boolean;
-    document?: EmployeeDocument;
-  }>({ open: false });
-
-  const {
-    documents,
-    isLoading: loadingDocs,
-    addDocument,
-    deleteDocument,
-  } = useEmployeeDocuments(docEmployeeId || undefined);
 
   // KPIs — exact aggregation over the whole tenant (GET /hr/employees/stats),
   // never computed over the loaded page only (Task H).
@@ -340,35 +316,6 @@ export default function HR() {
     } as any);
   };
 
-  const handleDeleteDocument = () => {
-    if (docDeleteModal.document) {
-      deleteDocument.mutate(docDeleteModal.document.id);
-      setDocDeleteModal({ open: false });
-    }
-  };
-
-  const handleDocUploadComplete = async (files: UploadedFile[]) => {
-    if (!docEmployeeId) {
-      toast.error("Selecione um funcionário primeiro");
-      return;
-    }
-    for (const file of files) {
-      try {
-        await addDocument.mutateAsync({
-          funcionario_id: docEmployeeId,
-          tipo_documento: docType || "Outro",
-          nome_arquivo: file.name,
-          url_arquivo: file.url || file.path,
-          descricao: docDescription.trim() || null,
-        });
-      } catch {
-        toast.error(`Erro ao registrar documento: ${file.name}`);
-      }
-    }
-    setDocDescription("");
-    setDocType("");
-  };
-
   return (
     <FeatureGate feature="moduleHr" featureName="Recursos Humanos">
     <>
@@ -381,7 +328,7 @@ export default function HR() {
     ) : (
     <MainLayout
       title="Recursos Humanos"
-      description="Gestão de funcionários, folha de pagamento, férias e documentos"
+      description="Gestão de funcionários, folha de pagamento e férias"
       actions={
         <div className="flex items-center gap-2">
           {activeTab !== "documents" && (
@@ -999,133 +946,8 @@ export default function HR() {
             )}
           </TabsContent>
 
-          <TabsContent value="documents" className="mt-6 space-y-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap items-center gap-2 flex-1">
-                <div className="w-[250px]">
-                  <AsyncEntityCombobox<Employee>
-                    table="employees"
-                    value={docEmployeeId || null}
-                    onChange={(id) => setDocEmployeeId(id || "")}
-                    getLabel={(f) => f.name ?? ""}
-                    placeholder="Selecione um funcionário"
-                    searchPlaceholder="Buscar por nome…"
-                    emptyText="Nenhum funcionário encontrado"
-                    data-testid="select-doc-employee"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {!docEmployeeId ? (
-              <EmptyState
-                icon={FileText}
-                title="Selecione um funcionário"
-                description="Escolha um funcionário na lista acima para visualizar e gerenciar seus documentos."
-              />
-            ) : (
-              <div className="space-y-6">
-                <Card>
-                  <CardContent className="p-4 space-y-4">
-                    <h3 className="font-semibold text-sm" data-testid="text-upload-title">Enviar Novo Documento</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Tipo de Documento</Label>
-                        <Select value={docType} onValueChange={setDocType}>
-                          <SelectTrigger data-testid="select-type-document">
-                            <SelectValue placeholder="Selecione o tipo" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {DOCUMENT_TYPES.map((t) => (
-                              <SelectItem key={t} value={t}>{t}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Descrição</Label>
-                        <Input
-                          placeholder="Descrição opcional do documento"
-                          value={docDescription}
-                          onChange={(e) => setDocDescription(e.target.value)}
-                          data-testid="input-doc-description"
-                        />
-                      </div>
-                    </div>
-                    <FileUpload
-                      folder="hr-documents"
-                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                      maxSize={10}
-                      multiple
-                      onUploadComplete={handleDocUploadComplete}
-                      data-testid="file-upload-documents"
-                    />
-                  </CardContent>
-                </Card>
-
-                {loadingDocs ? (
-                  <div className="flex items-center justify-center h-32">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                  </div>
-                ) : (documents || []).length === 0 ? (
-                  <EmptyState
-                    icon={FileText}
-                    title="Nenhum documento encontrado"
-                    description="Envie documentos usando o formulário acima."
-                  />
-                ) : (
-                  <Card data-testid="table-documents">
-                    <CardContent className="pt-0">
-                    <ListSectionHeader
-                      title="Documentos"
-                      count={(documents || []).length}
-                      description="Acompanhe documentos de funcionários, tipos, vencimentos, anexos e status."
-                    />
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Tipo</TableHead>
-                          <TableHead>Arquivo</TableHead>
-                          <TableHead>Descrição</TableHead>
-                          <TableHead>Data</TableHead>
-                          <TableHead className="text-right">Ações</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {(documents || []).map((doc) => (
-                          <TableRow key={doc.id} data-testid={`row-document-${doc.id}`}>
-                            <TableCell>
-                              <Badge variant="secondary">{doc.tipo_documento || "Outro"}</Badge>
-                            </TableCell>
-                            <TableCell>
-                              <StoredFileLink url={doc.url_arquivo ?? undefined}
-                                className="text-primary hover:underline"
-                                data-testid={`link-doc-${doc.id}`}>
-                                {doc.nome_arquivo}
-                              </StoredFileLink>
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">{doc.descricao || "-"}</TableCell>
-                            <TableCell className="text-muted-foreground">{formatDate(doc.created_at)}</TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-destructive"
-                                onClick={() => setDocDeleteModal({ open: true, document: doc })}
-                                data-testid={`button-delete-doc-${doc.id}`}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            )}
+          <TabsContent value="documents" className="mt-6">
+            <EmployeeDocumentsUnavailable />
           </TabsContent>
         </Tabs>
       </div>
@@ -1209,14 +1031,6 @@ export default function HR() {
         onConfirm={handleBulkDeleteLeave}
         title="Excluir registros de férias e ausências"
         description={`Tem certeza que deseja excluir ${leaveBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
-      />
-
-      <DeleteConfirmModal
-        open={docDeleteModal.open}
-        onOpenChange={(open) => setDocDeleteModal({ ...docDeleteModal, open })}
-        onConfirm={handleDeleteDocument}
-        title="Excluir Documento"
-        description={`Tem certeza que deseja excluir o documento "${docDeleteModal.document?.nome_arquivo}"? Esta ação não pode ser desfeita.`}
       />
     </>
     </FeatureGate>

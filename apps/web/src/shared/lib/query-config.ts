@@ -89,7 +89,6 @@ export const QUERY_KEYS = {
   EMPLOYEES: ["employees"] as const,
   PAYROLL: ["payroll"] as const,
   LEAVE_REQUESTS: ["leave-requests"] as const,
-  EMPLOYEE_DOCUMENTS: ["employee-documents"] as const,
   
   // Auth & RBAC
   ROLES: ["roles"] as const,

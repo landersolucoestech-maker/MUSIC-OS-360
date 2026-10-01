@@ -41,7 +41,7 @@ export interface WorkRef {
   id: string;
   title: string;
   status?: string | null;
-  genero?: string | null;
+  genre?: string | null;
   isrc?: string | null;
 }
 

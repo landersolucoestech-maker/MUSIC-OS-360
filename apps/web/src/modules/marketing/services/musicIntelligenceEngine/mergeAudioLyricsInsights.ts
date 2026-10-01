@@ -1,9 +1,10 @@
 import { PENDING_VALUE, isPendingValue } from "./pending";
+import { lyricsSentimentLabel, normalizeLyricsSentiment } from "./lyricsVocabulary";
 import type { TrackAudioAnalysis, TrackDiagnosis, TrackLyricsAnalysis } from "./types";
 
 export function mergeAudioLyricsInsights(audio: TrackAudioAnalysis, lyrics: TrackLyricsAnalysis): TrackDiagnosis {
   const missingData = Array.from(new Set([...audio.missingData, ...lyrics.missingData]));
-  const mood = audio.mood && !isPendingValue(audio.mood) ? audio.mood : lyrics.sentiment || PENDING_VALUE;
+  const mood = audio.mood && !isPendingValue(audio.mood) ? audio.mood : lyricsSentimentLabel(lyrics.sentiment) || PENDING_VALUE;
 
   return {
     genre: audio.genrePrediction || PENDING_VALUE,
@@ -13,14 +14,14 @@ export function mergeAudioLyricsInsights(audio: TrackAudioAnalysis, lyrics: Trac
     mood,
     energy: audio.energy || PENDING_VALUE,
     theme: lyrics.mainTheme || PENDING_VALUE,
-    sentiment: lyrics.sentiment || PENDING_VALUE,
+    sentiment: lyricsSentimentLabel(lyrics.sentiment) || PENDING_VALUE,
     targetAudience: lyrics.targetAudience || PENDING_VALUE,
     editorialTags: lyrics.editorialTags,
     playlistFit: buildPlaylistFit(mood, lyrics.mainTheme),
     platformPriority: buildPlatformPriority(audio.energy, lyrics.hooks.length),
     commercialPotential: audio.energy === "alta" ? "alto para campanhas digitais e vídeos curtos" : "médio, depende de narrativa e segmentação",
     viralPotential: lyrics.hooks.length >= 2 ? "bom potencial de cortes com frases fortes" : "potencial dependente de gancho audiovisual",
-    syncPotential: lyrics.sentiment === "melancolico" ? "bom para cenas emocionais/reflexivas" : "a validar por briefing de marcas e audiovisual",
+    syncPotential: normalizeLyricsSentiment(lyrics.sentiment) === "melancholic" ? "bom para cenas emocionais/reflexivas" : "a validar por briefing de marcas e audiovisual",
     differentiators: [
       lyrics.mainTheme ? `Tema editorial: ${lyrics.mainTheme}` : "",
       audio.mood && !isPendingValue(audio.mood) ? `Mood sonoro: ${audio.mood}` : "",

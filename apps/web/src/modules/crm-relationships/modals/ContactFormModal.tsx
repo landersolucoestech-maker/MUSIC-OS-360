@@ -651,7 +651,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="CEP">
-              <Input value={state.zipCode} onChange={(e) => set("zipCode", maskCEP(e.target.value))} onBlur={handleZipCodeBlur} placeholder="00000-000" data-testid="input-cep" />
+              <Input value={state.zipCode} onChange={(e) => set("zipCode", maskCEP(e.target.value))} onBlur={handleZipCodeBlur} placeholder="00000-000" data-testid="input-postal-code" />
               {zipCodeLoading && <p className="text-xs text-muted-foreground">Buscando endereço...</p>}
             </Field>
           </div>

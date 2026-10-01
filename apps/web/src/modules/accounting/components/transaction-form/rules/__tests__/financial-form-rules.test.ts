@@ -321,7 +321,7 @@ describe("showProject", () => {
   it("is true for expense company marketing + subcategory + artistId", () => {
     const rules = computeFinancialRules(form({
       transactionType: "expense", counterpartyType: "company",
-      category: "marketing", subcategory: "anuncios", artistId: "artista-1",
+      category: "marketing", subcategory: "anuncios", artistId: "artist-1",
     }));
     expect(rules.showProject).toBe(true);
   });

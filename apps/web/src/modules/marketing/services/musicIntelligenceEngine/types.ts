@@ -1,3 +1,4 @@
+import type { LyricsSentiment, LyricsTone } from "./lyricsVocabulary";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import type { ReleaseWithRelations } from "@/modules/releases/hooks/useReleases";
 import type {
@@ -47,9 +48,10 @@ export type TrackLyricsAnalysis = {
   provider: string;
   mainTheme?: string;
   secondaryThemes: string[];
-  sentiment?: string;
+  /** Canonical English id (see lyricsVocabulary.ts); stored legacy tokens are read through normalizeLyricsSentiment. */
+  sentiment?: LyricsSentiment;
   narrativeType?: string;
-  tone?: string;
+  tone?: LyricsTone;
   hooks: string[];
   viralPhrases: string[];
   keywords: string[];

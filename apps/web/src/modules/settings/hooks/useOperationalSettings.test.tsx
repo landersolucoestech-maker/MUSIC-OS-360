@@ -15,7 +15,7 @@ import { useOperationalSettings, DEFAULT_EVENT_TYPES } from "./useOperationalSet
 const ROWS = [
   { id: "1", tenant_id: "t1", kind: "event_type", name: "Shows", slug: "shows", description: null, active: true, order: 40, group: "Agenda", metadata: {} },
   { id: "2", tenant_id: "t1", kind: "event_type", name: "Ensaios", slug: "ensaios", description: null, active: true, order: 20, group: "Agenda", metadata: {} },
-  { id: "3", tenant_id: "t1", kind: "event_type", name: "Desativado", slug: "desativado", description: null, active: false, order: 10, group: "Agenda", metadata: {} },
+  { id: "3", tenant_id: "t1", kind: "event_type", name: "Desativado", slug: "disabled", description: null, active: false, order: 10, group: "Agenda", metadata: {} },
   { id: "4", tenant_id: "t1", kind: "lead_type", name: "Artista", slug: "artista", description: null, active: true, order: 10, group: "Musical", metadata: {} },
 ];
 
@@ -47,7 +47,7 @@ describe("useOperationalSettings", () => {
     expect(options).toContainEqual({ value: "rehearsals", label: "Ensaios" });
     expect(options.some((o) => o.value === "ensaios")).toBe(false);
     expect(options).toContainEqual({ value: "shows", label: "Shows" });
-    expect(options.some((o) => o.value === "desativado")).toBe(false);
+    expect(options.some((o) => o.value === "disabled")).toBe(false);
   });
 
   it("getItemsByKind does not mix other taxonomies (returns only items of the requested kind)", () => {

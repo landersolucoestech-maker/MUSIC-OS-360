@@ -5,7 +5,7 @@
  * without direct coupling.
  *
  * Implemented handlers:
- * - CONTRACT_CREATED → sets the artist status to "signed" (+ contrato_id)
+ * - CONTRACT_CREATED → sets the artist status to "signed" (+ contract_id)
  * - TRANSACTION_CREATED → flags the artist/global P&L as stale in storage
  * - ARTIST_CREATED, LEAD_CONVERTED, MUSIC_REGISTERED → dev-only diagnostic log
  *
@@ -31,7 +31,7 @@ function initConsistencyHooks(): void {
       if (artist && artist.status !== "signed") {
         await storage.update("artists", artist_id, {
           status: "signed",
-          contrato_id: id,
+          contract_id: id,
         });
       }
     } catch {

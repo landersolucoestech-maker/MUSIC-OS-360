@@ -71,19 +71,3 @@ export interface LeaveRequest {
 
 export type LeaveRequestInsert = Omit<LeaveRequest, "id" | "created_at" | "updated_at">;
 export type LeaveRequestUpdate = Partial<LeaveRequestInsert>;
-
-export interface EmployeeDocument {
-  id: string;
-  user_id?: string;
-  funcionario_id?: string | null;
-  tipo_documento?: string | null;
-  nome_arquivo?: string | null;
-  url_arquivo?: string | null;
-  descricao?: string | null;
-  created_at?: string;
-  updated_at?: string;
-  [key: string]: unknown;
-}
-
-export type EmployeeDocumentInsert = Omit<EmployeeDocument, "id" | "user_id" | "created_at" | "updated_at">;
-export type EmployeeDocumentUpdate = Partial<EmployeeDocumentInsert>;
