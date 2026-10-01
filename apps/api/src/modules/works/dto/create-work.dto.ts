@@ -1,6 +1,7 @@
 import { IsString, IsOptional, IsArray, IsObject, IsBoolean, IsUUID, IsIn, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { LEGACY_WORK_VALUES, WORK_AI_USAGE_LEVELS, WORK_ORIGINS } from '../work-legacy-fields';
+import { HasSafeUrlValues } from '../../../common/validators/safe-url.validation';
 
 const DEPRECATED = (canonical: string) => ({ deprecated: true, description: `Deprecated (CZ-039): use "${canonical}".` });
 // Legacy Portuguese values are still accepted and mapped by the service (work-legacy-fields.ts).
@@ -88,7 +89,7 @@ export class CreateWorkDto {
   @ApiPropertyOptional() @IsOptional() @IsArray() related_references?: unknown[];
   @ApiPropertyOptional() @IsOptional() @IsString() lyrics?: string;
   @ApiPropertyOptional({ description: 'Items {id, name, role, link, percentage}; role: publisher | administrator | composer_author | translator | unspecified.' })
-  @IsOptional() @IsArray() participants?: unknown[];
+  @IsOptional() @IsArray() @HasSafeUrlValues() participants?: unknown[];
   @ApiPropertyOptional({ type: [String], description: 'Derived from participants with role translator.' })
   @IsOptional() @IsArray() translator_names?: unknown[];
   @ApiPropertyOptional() @IsOptional() @IsUUID() project_id?: string;

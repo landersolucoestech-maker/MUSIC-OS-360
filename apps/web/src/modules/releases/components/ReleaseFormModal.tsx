@@ -69,6 +69,7 @@ import {
 } from "@/modules/releases/mappers";
 
 import { toUserMessage } from "@/shared/lib/errors";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
 // ─────────────────────────────────────────────────────────────────────────────
 // STEP LABELS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1934,15 +1935,13 @@ export function ReleaseFormModal({
                       {!track._uploading && track.audioUrl && " — link gerado ✓"}
                     </p>
                     {!track._uploading && track.audioUrl && (
-                      <a
-                        href={track.audioUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <StoredFileLink
+                        url={track.audioUrl}
                         className="text-xs text-primary hover:underline"
                         onClick={(e) => e.stopPropagation()}
                       >
                         Ver link de download
-                      </a>
+                      </StoredFileLink>
                     )}
                   </div>
                 ) : (

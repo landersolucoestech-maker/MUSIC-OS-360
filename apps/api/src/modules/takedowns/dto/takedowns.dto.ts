@@ -8,6 +8,7 @@ import {
   TAKEDOWN_PRIORITIES,
   TAKEDOWN_TYPES,
 } from '../takedown-legacy-fields';
+import { IsSafeUrlText, MAX_URL_LENGTH } from '../../../common/validators/safe-url.validation';
 
 // The CHECK constraint chk_takedowns_status only allows TakedownStatus. Before
 // CZ-034 this DTO only accepted Portuguese statuses, so every save and every
@@ -26,7 +27,7 @@ export class CreateTakedownDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) affected_work?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) artist_name?: string;
   @ApiProperty() @ValidateIf((o: CreateTakedownDto) => o.plataforma === undefined) @IsString() @MaxLength(100) platform!: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() infringing_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(MAX_URL_LENGTH) @IsSafeUrlText() infringing_url?: string;
   @ApiProperty() @ValidateIf((o: CreateTakedownDto) => o.motivo === undefined) @IsString() reason!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional({ enum: TAKEDOWN_PRIORITIES }) @IsOptional() @IsIn(ACCEPTED_TAKEDOWN_PRIORITIES) priority?: string;
@@ -45,7 +46,7 @@ export class CreateTakedownDto {
   @ApiPropertyOptional({ deprecated: true, description: 'Use "affected_work".' }) @IsOptional() @IsString() @MaxLength(500) obra_afetada?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "artist_name".' }) @IsOptional() @IsString() @MaxLength(255) artista?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "platform".' }) @IsOptional() @IsString() @MaxLength(100) plataforma?: string;
-  @ApiPropertyOptional({ deprecated: true, description: 'Use "infringing_url".' }) @IsOptional() @IsString() url_infracao?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "infringing_url".' }) @IsOptional() @IsString() @MaxLength(MAX_URL_LENGTH) @IsSafeUrlText() url_infracao?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "reason".' }) @IsOptional() @IsString() motivo?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "priority".' }) @IsOptional() @IsIn(ACCEPTED_TAKEDOWN_PRIORITIES) prioridade?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "identified_at".' }) @IsOptional() @IsString() data_identificacao?: string;

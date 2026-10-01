@@ -5,6 +5,7 @@ import { CheckCircle, AlertTriangle, XCircle, Clock, Archive, BookOpen, Tag, Has
 import type { DetectionStatus } from "../types";
 import type { DetectionRow } from "./DetectionsTable";
 import { formatRightsDateTime } from "../utils/date-format";
+import { safeHref } from "@/shared/lib/safe-url";
 
 const STATUS_CONFIG: Record<DetectionStatus, { label: string; variant: BadgeVariant; icon: React.ReactNode }> = {
   completed:    { label: "Concluído",    variant: "success", icon: <CheckCircle className="h-3.5 w-3.5" /> },
@@ -65,7 +66,9 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
                 <Row
                   icon={<Link2 className="h-3.5 w-3.5" />}
                   label="URL"
-                  value={<a href={detection.url} target="_blank" rel="noreferrer" className="text-primary hover:underline break-all">{detection.url}</a>}
+                  value={safeHref(detection.url)
+                    ? <a href={safeHref(detection.url)} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{detection.url}</a>
+                    : <span className="break-all">{detection.url}</span>}
                 />
               )}
               <Row

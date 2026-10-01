@@ -583,3 +583,204 @@ test('the guard stays wired: fallback shims, Claude hooks fail closed, CI runs t
   assert.match(detector, /schedule:/);
   assert.match(detector, /repos\/\$REPO\/branches/);
 });
+
+// ─── SEC1: tokenizer / command-position bypasses (find-ca8c180d, find-75c9d608, find-254f96ee) ───
+// Synthetic command strings only: the policy function never runs them.
+const BAD_PUSHES = [
+  'git push --no-verify origin dev',
+  'git -c core.hooksPath=/dev/null push origin dev',
+  'git push --force origin dev',
+  'git push origin feature/x',
+];
+
+test('SEC1-a: a heredoc inside $(…) with an apostrophe or stray paren does not hide later commands', () => {
+  const heredocs = [
+    'msg=$(cat <<EOF\ndon\'t panic\nEOF\n)',
+    'msg=$(cat <<EOF\nit\'s (fine\nEOF\n)',
+    'msg=$(cat <<EOF\nstray ) paren\nEOF\n)',
+    'msg=$(cat <<\'EOF\'\ndon\'t "panic\nEOF\n)',
+    'git commit -m "$(cat <<EOF\nfix: don\'t break\nEOF\n)"',
+    'git commit -m "$(cat <<\'EOF\'\nfix: don\'t break (really\nEOF\n)"',
+  ];
+  for (const head of heredocs) {
+    for (const bad of BAD_PUSHES) {
+      assert.equal(refused(`${head}\n${bad}`), true, `${head} / ${bad}`);
+      assert.equal(refused(`${head} && ${bad}`), true, `${head} && ${bad}`);
+      assert.equal(refused(`${head}; ${bad}`), true, `${head}; ${bad}`);
+    }
+  }
+  // unterminated region that mentions git: fails closed
+  assert.equal(refused('x=$(cat <<EOF\ndon\'t\ngit push origin dev'), true);
+  assert.equal(refused('echo $(git status\ngit push --no-verify origin dev'), true);
+});
+
+test('SEC1-a: regressions: legitimate commands with heredoc messages stay allowed', () => {
+  assert.equal(refused('git commit -m "$(cat <<\'EOF\'\nfix: don\'t break the build (really)\n\nCo-Authored-By: x\nEOF\n)"'), false);
+  assert.equal(refused('git commit -m "$(cat <<EOF\nfix: don\'t break\nEOF\n)"'), false);
+  assert.equal(refused('git commit -F - <<EOF\nit\'s fine (ok\nEOF'), false);
+  assert.equal(refused('git commit -m "$(cat <<\'EOF\'\nmsg\nEOF\n)" && git push origin dev'), false);
+  assert.equal(refused('git push origin dev'), false);
+  assert.equal(refused('git push'), false);
+});
+
+test('SEC1-b: commands after if/then/elif/else/do/while/until/!/{ are inspected', () => {
+  for (const bad of BAD_PUSHES) {
+    const shapes = [
+      `if true; then ${bad}; fi`,
+      `if ! ${bad}; then echo x; fi`,
+      `if false; then :; elif true; then ${bad}; fi`,
+      `if false; then :; else ${bad}; fi`,
+      `for i in 1 2 3; do ${bad} && break; done`,
+      `while ! ${bad}; do sleep 1; done`,
+      `until ${bad}; do sleep 1; done`,
+      `while true; do ${bad}; done`,
+      `! ${bad}`,
+      `{ ${bad}; }`,
+      `{ ${bad}\n}`,
+      `( ${bad} )`,
+      `for i in 1 2 3; do\n  ${bad} && break\n  sleep 2\ndone`,
+      `retry() { ${bad}; }; retry`,
+      `function retry { ${bad}; }`,
+      `case x in x) ${bad};; esac`,
+      `time ${bad}`,
+      `if true\nthen\n  ${bad}\nfi`,
+      `until ${bad}\ndo\n sleep 1\ndone`,
+    ];
+    for (const shape of shapes) assert.equal(refused(shape), true, shape);
+  }
+  assert.equal(refused('send_pack_marker=1; if true; then git send-pack origin dev; fi'), true);
+  assert.equal(refused('for i in 1 2 3; do git send-pack origin refs/heads/dev && break; done'), true);
+  assert.equal(refused('while ! git push origin dev; do sleep 2; done'), false);
+  assert.equal(refused('for i in 1 2 3; do git push origin dev && break; sleep 2; done'), false);
+  assert.equal(refused('if git push origin dev; then echo ok; else echo fail; fi'), false);
+});
+
+test('SEC1-c: gh, sh -c and eval are inspected in any command position (env assignments, wrappers, paths)', () => {
+  const ghBad = [
+    'gh issue develop 12',
+    'gh api -X POST repos/o/r/git/refs -f ref=refs/heads/x -f sha=abc',
+    'gh pr create --fill',
+  ];
+  const prefixes = [
+    'GH_PAGER=cat ',
+    'GH_PAGER=cat GH_NO_UPDATE_NOTIFIER=1 ',
+    'timeout 30 ',
+    'timeout -s KILL 30 ',
+    'env ',
+    'env -i ',
+    'env FOO=bar ',
+    '/usr/bin/env ',
+    'nice -n 10 ',
+    'command ',
+    'exec ',
+    'sudo ',
+    'sudo -u root ',
+    'nohup ',
+    'xargs ',
+    'if true; then ',
+    'while true; do ',
+    '! ',
+    '{ ',
+    'time ',
+    'FOO=1 timeout 5 env BAR=2 ',
+  ];
+  for (const bad of ghBad) {
+    for (const prefix of prefixes) assert.equal(refused(`${prefix}${bad}`), true, `${prefix}${bad}`);
+    assert.equal(refused(`/usr/bin/${bad}`), true, `/usr/bin/${bad}`);
+  }
+  const nested = [
+    'git push --no-verify origin dev',
+    'git -c core.hooksPath=/dev/null push origin dev',
+    'git push origin feature/x',
+  ];
+  for (const inner of nested) {
+    const shells = [
+      `sh -c "${inner}"`,
+      `bash -c '${inner}'`,
+      `bash -lc '${inner}'`,
+      `/usr/bin/env sh -c "${inner}"`,
+      `env bash -c "${inner}"`,
+      `env -i FOO=1 sh -c "${inner}"`,
+      `timeout 10 sh -c "${inner}"`,
+      `timeout 10 bash -c "${inner}"`,
+      `nice -n 5 sh -c "${inner}"`,
+      `command sh -c "${inner}"`,
+      `exec sh -c "${inner}"`,
+      `sudo sh -c "${inner}"`,
+      `sudo -u root bash -c "${inner}"`,
+      `FOO=1 sh -c "${inner}"`,
+      `if true; then sh -c "${inner}"; fi`,
+      `while true; do /bin/bash -c "${inner}"; done`,
+      `xargs -I{} sh -c "${inner}"`,
+      `eval "${inner}"`,
+      `env eval "${inner}"`,
+      `FOO=1 eval "${inner}"`,
+      `timeout 5 eval "${inner}"`,
+      `command eval "${inner}"`,
+      `if true; then eval "${inner}"; fi`,
+      `sh -c "sh -c \\"${inner}\\""`,
+      `eval "eval '${inner}'"`,
+      `echo '${inner}' | sh`,
+      `echo '${inner}' | bash -s`,
+      `sh <<EOF\n${inner}\nEOF`,
+    ];
+    for (const shape of shells) assert.equal(refused(shape), true, shape);
+  }
+  assert.equal(refused('GH_PAGER=cat gh issue list'), false);
+  assert.equal(refused('timeout 30 gh api repos/o/r/git/refs/heads/dev'), false);
+  assert.equal(refused('timeout 30 gh pr view 3'), false);
+  assert.equal(refused('/usr/bin/env sh -c "git push origin dev"'), false);
+  assert.equal(refused('env FOO=1 bash -c "git status"'), false);
+});
+
+test('SEC1-d: more wrappers and deferred/dynamic execution are inspected (fail closed)', () => {
+  const bad = 'git push --no-verify origin dev';
+  const shapes = [
+    `function retry { ${bad}; }`,
+    `function retry\n{\n  ${bad}\n}`,
+    `retry() { ${bad}; }`,
+    `trap '${bad}' EXIT`,
+    `trap "${bad}" EXIT INT`,
+    `env -S "${bad}"`,
+    `env --split-string="${bad}"`,
+    `env -iS "${bad}"`,
+    `su -c "${bad}"`,
+    `su root -c "${bad}"`,
+    `script -qc "${bad}" /dev/null`,
+    `busybox sh -c "${bad}"`,
+    `. /dev/stdin <<EOF\n${bad}\nEOF`,
+    `source /dev/stdin <<EOF\n${bad}\nEOF`,
+    `. <(echo "${bad}")`,
+    `bash -c "$(echo '${bad}')"`,
+    `eval "$(echo '${bad}')"`,
+    `g=git; $g push --no-verify`,
+    `g=git; "\${g}" push --no-verify`,
+    `$(echo git) push --no-verify`,
+    // ANSI-C quoting must not desynchronise the quote tracking
+    `echo $'\\'' ; ${bad} ; echo $'\\''`,
+    `echo $'it\\'s' ; ${bad}`,
+    // heredoc/backtick/nested substitution shapes with contractions
+    `echo \`cat <<EOF\nit's\nEOF\n\`; ${bad}`,
+    `x=$(cat <<EOF\n$(echo it's)\nEOF\n); ${bad}`,
+    `x=$(cat <<A\n$(cat <<B\nit's\nB\n)\nA\n); ${bad}`,
+    `x=$(cat <<EOF\nit's\nEOF); ${bad}`,
+    `cat <<EOF; ${bad}\nbody\nEOF`,
+    `cat <<A <<B\n1\nA\n2\nB\n${bad}`,
+  ];
+  for (const shape of shapes) assert.equal(refused(shape), true, shape);
+  // regressions: ordinary shapes stay allowed
+  const allowed = [
+    'cd "$(git rev-parse --show-toplevel)" && git push origin dev',
+    '"$(git rev-parse --show-toplevel)/scripts/x.sh"',
+    '$CLAUDE_PROJECT_DIR/.claude/hooks/x.sh',
+    'trap "rm -f /tmp/x" EXIT; git push origin dev',
+    'env -S "git status"',
+    'su -c "ls"',
+    'function retry { git push origin dev; }; retry',
+    'echo $\'it\\\'s\'; git status',
+    'x=$(cat <<EOF\nit\'s\nEOF\n); git push origin dev',
+    'source ./env.sh && git push origin dev',
+    'git commit -m "$(cat <<\'EOF\'\nit\'s (ok\nEOF\n)"',
+  ];
+  for (const shape of allowed) assert.equal(refused(shape), false, shape);
+});

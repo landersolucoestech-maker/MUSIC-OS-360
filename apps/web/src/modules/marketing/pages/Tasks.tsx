@@ -81,6 +81,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchAllLabels } from "@/shared/lib/fetch-all-labels";
 import { useMarketingProjects } from "../hooks/useMarketingProjects";
 import { useOperationalSettings } from "@/modules/settings/hooks/useOperationalSettings";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
 
 type TaskModalMode = "create" | "edit";
 
@@ -542,13 +543,13 @@ function TaskViewModal({
                     </p>
                   </div>
                 </div>
-                <a
-                  href={task.referenceAudio.url}
+                <StoredFileLink
+                  url={task.referenceAudio.url}
                   download={task.referenceAudio.fileName}
                   className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-sm font-medium transition-colors hover:bg-muted"
                 >
                   <Download className="h-3.5 w-3.5" /> Baixar Música de Referência
-                </a>
+                </StoredFileLink>
               </div>
             ) : (
               <p className="rounded-lg border border-dashed border-border p-3 text-sm italic text-muted-foreground">

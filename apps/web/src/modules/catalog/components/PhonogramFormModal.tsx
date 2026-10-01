@@ -50,6 +50,7 @@ import {
 import { phonogramSchema } from "@/modules/catalog/lib/phonogram-schema";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
 import { toUserMessage } from "@/shared/lib/errors";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
 
 // `composer_names` is typed as string[], but a legacy record may carry a
 // string or null. Normalizes safely.
@@ -1072,15 +1073,13 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                           {!audioUploading && audioFile.url && " — link gerado ✓"}
                         </p>
                         {!audioUploading && audioFile.url && (
-                          <a
-                            href={audioFile.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <StoredFileLink
+                            url={audioFile.url}
                             className="text-xs text-primary hover:underline flex items-center gap-1 mt-0.5"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Link className="w-3 h-3" /> Ver link de download
-                          </a>
+                          </StoredFileLink>
                         )}
                       </div>
                     </div>

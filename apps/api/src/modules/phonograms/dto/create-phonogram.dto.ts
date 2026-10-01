@@ -2,6 +2,7 @@ import { IsString, IsOptional, IsInt, IsObject, IsUUID, IsArray, IsBoolean, IsIn
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { LEGACY_PHONOGRAM_VALUES, PHONOGRAM_MEDIA_TYPES, PHONOGRAM_RECORDING_CLASSIFICATIONS } from '../phonogram-legacy-fields';
+import { IsHttpOrStorageUrl, MAX_URL_LENGTH } from '../../../common/validators/safe-url.validation';
 
 const DEPRECATED = (canonical: string) => ({ deprecated: true, description: `Deprecated (CZ-040): use "${canonical}".` });
 // Legacy Portuguese values are still accepted and mapped by the service (phonogram-legacy-fields.ts).
@@ -103,6 +104,8 @@ export class CreatePhonogramDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @MaxLength(MAX_URL_LENGTH)
+  @IsHttpOrStorageUrl()
   fileUrl?: string;
 
   @ApiPropertyOptional({ example: 'active' })

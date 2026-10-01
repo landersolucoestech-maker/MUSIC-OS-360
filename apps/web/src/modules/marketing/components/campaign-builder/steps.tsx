@@ -35,6 +35,8 @@ import type { ContentChannel, MarketingContent, MarketingTarget } from "../../ty
 import { formatDate } from "../../utils/marketing-format";
 import { LocationCombobox } from "./LocationCombobox";
 import { CampaignGeoMap } from "./CampaignGeoMap";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { safeImageSrc, safeMediaSrc } from "@/shared/lib/safe-url";
 
 const PLATFORMS = Object.keys(PLATFORM_LABEL) as CampaignPlatform[];
 const TYPES: CreativeType[] = ["imagem", "video", "carrossel", "audio", "texto"];
@@ -303,8 +305,8 @@ export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
             {selectedContent && (
               <div className="flex gap-3 rounded-lg border border-border p-2">
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded border border-border bg-muted">
-                  {selectedContent.files[0]?.url ? (
-                    <img src={selectedContent.files[0].url} alt={selectedContent.title} className="h-full w-full object-cover" />
+                  {safeImageSrc(selectedContent.files[0]?.url) ? (
+                    <img src={safeImageSrc(selectedContent.files[0].url)} alt={selectedContent.title} className="h-full w-full object-cover" />
                   ) : (
                     <Play className="h-4 w-4 text-muted-foreground" />
                   )}
@@ -318,7 +320,7 @@ export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
                     <Badge variant="secondary" className="text-[10px]">{CONTENT_STATUS_LABEL[selectedContent.status] ?? selectedContent.status}</Badge>
                   </div>
                   {selectedContent.files[0]?.url && (
-                    <a href={selectedContent.files[0].url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-primary underline">Abrir conteúdo</a>
+                    <StoredFileLink url={selectedContent.files[0].url} className="text-[11px] text-primary underline">Abrir conteúdo</StoredFileLink>
                   )}
                 </div>
               </div>
@@ -449,8 +451,8 @@ export function CampaignCreativesStep({ state, setState }: BuilderStepProps) {
               return (
                 <div key={content.id} className="flex gap-2 rounded-lg border border-border bg-background p-2">
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded border border-border bg-muted">
-                    {content.files[0]?.url ? (
-                      <img src={content.files[0].url} alt={content.title} className="h-full w-full object-cover" />
+                    {safeImageSrc(content.files[0]?.url) ? (
+                      <img src={safeImageSrc(content.files[0].url)} alt={content.title} className="h-full w-full object-cover" />
                     ) : (
                       <Play className="h-4 w-4 text-muted-foreground" />
                     )}
@@ -639,10 +641,10 @@ function acceptFor(placement: CampaignPlacement): string {
 
 function CreativeMedia({ creative }: { creative: CampaignCreative }) {
   if (creative.previewUrl && creative.mimeType?.startsWith("image/")) {
-    return <img src={creative.previewUrl} alt={creative.name} className="absolute inset-0 h-full w-full object-cover" />;
+    return <img src={safeMediaSrc(creative.previewUrl)} alt={creative.name} className="absolute inset-0 h-full w-full object-cover" />;
   }
   if (creative.previewUrl && creative.mimeType?.startsWith("video/")) {
-    return <video src={creative.previewUrl} className="absolute inset-0 h-full w-full object-cover" muted controls />;
+    return <video src={safeMediaSrc(creative.previewUrl)} className="absolute inset-0 h-full w-full object-cover" muted controls />;
   }
   return (
     <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/50">

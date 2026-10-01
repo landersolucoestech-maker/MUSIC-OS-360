@@ -38,6 +38,7 @@ import { shareFlowFromReleaseUrl } from "@/modules/releases/services/share-from-
 import type { Release } from "@/modules/releases/types";
 import type { Artist } from "@/modules/artist/types/artist.types";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
+import { safeImageSrc } from "@/shared/lib/safe-url";
 
 
 function getReleaseArtworkUrl(release: Release & Record<string, unknown>): string | null {
@@ -97,7 +98,7 @@ function ReleaseCard({ release, artist, now, selected, onToggleSelect, onView, o
     >
       <div className="relative h-96 overflow-hidden">
         {artworkUrl ? (
-          <img src={artworkUrl} alt={release.title} className="absolute inset-0 h-full w-full object-cover" />
+          <img src={safeImageSrc(artworkUrl)} alt={release.title} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-muted">
             <Music className="h-20 w-20 text-muted-foreground" />

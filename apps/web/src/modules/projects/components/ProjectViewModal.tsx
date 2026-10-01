@@ -11,6 +11,7 @@ import { WorkflowTransitionPanel } from "@/shared/components/WorkflowTransitionP
 import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";
 import { resolveAllowedTransitions, WorkflowTransition } from "@/shared/lib/workflow-transitions";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
 
 interface ProjectViewModalProps {
   open: boolean;
@@ -212,15 +213,13 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                             {info.audioUrl && (
                               <div>
                                 <span className="text-xs font-medium text-muted-foreground block mb-1">Áudio</span>
-                                <a
-                                  href={info.audioUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                <StoredFileLink
+                                  url={info.audioUrl}
                                   className="text-sm text-primary hover:underline inline-flex items-center gap-1"
                                   data-testid={`link-view-audio-${idx}`}
                                 >
                                   <ExternalLink className="h-3.5 w-3.5" /> Ouvir / baixar áudio
-                                </a>
+                                </StoredFileLink>
                               </div>
                             )}
                           </CardContent>

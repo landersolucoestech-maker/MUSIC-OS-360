@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/shared/ui/card";
 import { ASSET_CATEGORY_LABEL } from "../constants/marketing.constants";
 import type { MarketingAsset } from "../types/marketing.types";
 import { ApprovalBadge } from "./MarketingStatusBadge";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { safeImageSrc } from "@/shared/lib/safe-url";
 
 interface MarketingAssetCardProps {
   asset: MarketingAsset;
@@ -21,9 +23,9 @@ export function MarketingAssetCard({ asset, onClick }: MarketingAssetCardProps) 
       role={onClick ? "button" : undefined}
     >
       <div className="relative aspect-video bg-muted flex items-center justify-center overflow-hidden">
-        {asset.thumbnailUrl ? (
+        {safeImageSrc(asset.thumbnailUrl) ? (
           <img
-            src={asset.thumbnailUrl}
+            src={safeImageSrc(asset.thumbnailUrl)}
             alt={asset.name}
             className="h-full w-full object-cover"
             loading="lazy"
@@ -38,16 +40,14 @@ export function MarketingAssetCard({ asset, onClick }: MarketingAssetCardProps) 
       <CardContent className="p-3 space-y-2">
         <div className="flex items-start justify-between gap-2">
           <p className="text-sm font-medium leading-snug line-clamp-1">{asset.name}</p>
-          <a
-            href={asset.url}
-            target="_blank"
-            rel="noreferrer"
+          <StoredFileLink
+            url={asset.url}
             onClick={(e) => e.stopPropagation()}
             className="text-muted-foreground hover:text-foreground shrink-0"
             aria-label="Abrir ativo"
           >
             <ExternalLink className="h-3.5 w-3.5" />
-          </a>
+          </StoredFileLink>
         </div>
         <p className="text-[11px] text-muted-foreground">
           {ASSET_CATEGORY_LABEL[asset.category]}

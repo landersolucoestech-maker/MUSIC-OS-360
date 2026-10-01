@@ -4,6 +4,7 @@ import { Badge } from "@/shared/ui/badge";
 import { AlertTriangle, Link2, Music, Calendar, FileText, ExternalLink } from "lucide-react";
 import { formatTakedownDate, normalizeTakedown, statusBadge, typeBadge, priorityLabel } from "@/modules/monitoring/lib/takedown-format";
 import type { Takedown } from "@/modules/monitoring/types/monitoring.types";
+import { safeHref } from "@/shared/lib/safe-url";
 
 interface TakedownViewModalProps {
   open: boolean;
@@ -83,7 +84,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
               <div>
                 <span className="text-sm text-muted-foreground">URL do Conteúdo Infrator</span>
                 <a
-                  href={url.startsWith("http") ? url : `https://${url}`}
+                  href={safeHref(/^https?:\/\//i.test(url) ? url : `https://${url}`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1 text-primary hover:underline font-medium break-all"

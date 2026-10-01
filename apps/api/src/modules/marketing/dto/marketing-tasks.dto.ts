@@ -17,6 +17,7 @@ import {
   MARKETING_TASK_PRIORITIES,
   MARKETING_TASK_STATUSES,
 } from '../marketing-vocabulary';
+import { HasSafeUrlValues } from '../../../common/validators/safe-url.validation';
 
 export class RunCopywritingDto {
   @ApiPropertyOptional()
@@ -87,6 +88,7 @@ export class CreateMarketingTaskDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
+  @HasSafeUrlValues()
   metadata?: Record<string, unknown>;
 }
 

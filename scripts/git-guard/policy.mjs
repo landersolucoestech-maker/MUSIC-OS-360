@@ -99,12 +99,18 @@ export function checkPush({ remote, updates, currentBranchRef, isAncestor }) {
 // server-side, the GitHub ruleset are the boundaries.
 
 const SHELLS = new Set(['sh', 'bash', 'zsh', 'dash', 'ksh']);
+// Programs that run text they read from stdin/heredocs/files as shell commands.
+const SCRIPT_RUNNERS = new Set([...SHELLS, 'source', '.']);
 const HEREDOC_DELIMITER = /^[A-Za-z_][A-Za-z0-9_.-]*$/;
 const SUBSHELL_OPEN = '\u0000(';
 const SUBSHELL_CLOSE = '\u0000)';
 const MENTIONS_GIT = /(^|[^A-Za-z0-9_.-])(git|gh)([^A-Za-z0-9_.]|$)/;
 const RESERVED = new Set(['if', 'then', 'elif', 'else', 'fi', 'do', 'done', 'while', 'until', 'for', 'in', 'case', 'esac', '!', '{', '}', '[[', ']]', 'time', 'function', 'select', 'coproc']);
 const ENV_ASSIGNMENT = /^[A-Za-z_][A-Za-z0-9_]*=/;
+// A program name or `-c` text that is wholly an expansion (`$g`, `${G:-git}`, `$(echo git)`, an empty
+// backtick substitution): its value is the command, which the tokenizer cannot see.
+const DYNAMIC_COMMAND_WORD = /^(\$\{[^}]*\}|\$[A-Za-z_@*][A-Za-z0-9_]*|\$\(.*\)|)$/s;
+const DYNAMIC_COMMAND_TEXT = /^\s*\$[({A-Za-z_]/;
 
 function basename(word) {
   return (word ?? '').split('/').pop();
@@ -174,12 +180,12 @@ function tokenize(text, start = 0, mode = 'top', depth = 0) {
     if (hasWord) {
       if (redirectTarget === '<<' || redirectTarget === '<<-') {
         if (HEREDOC_DELIMITER.test(word)) {
-          heredocs.push({ delimiter: word, stripTabs: redirectTarget === '<<-', shell: SHELLS.has(program()), expands: !wordQuoted });
+          heredocs.push({ delimiter: word, stripTabs: redirectTarget === '<<-', shell: SCRIPT_RUNNERS.has(program()), expands: !wordQuoted });
           words.readsHeredoc = true;
         } else {
           incomplete = true;
         }
-      } else if (redirectTarget === '<<<' && SHELLS.has(program())) {
+      } else if (redirectTarget === '<<<' && SCRIPT_RUNNERS.has(program())) {
         nestedText(word); // bash <<< 'git …'
         words.readsHeredoc = true;
       } else if (redirectTarget && redirectTarget.includes('>') && !(redirectTarget.endsWith('&') && /^(\d+|-)$/.test(word))) {
@@ -225,7 +231,21 @@ function tokenize(text, start = 0, mode = 'top', depth = 0) {
       endCommand();
       return { commands, end: i, incomplete };
     }
-    if (ch === "'" || ch === '"') {
+    if (ch === '$' && text[i + 1] === "'") {
+      // ANSI-C quoting: `\'` is an escaped quote inside it (unlike plain single quotes).
+      let k = i + 2;
+      while (k < text.length && text[k] !== "'") k += text[k] === '\\' ? 2 : 1;
+      if (k >= text.length) {
+        incomplete = true;
+        word += text.slice(i + 2);
+        i = text.length;
+      } else {
+        word += text.slice(i + 2, k);
+        i = k;
+      }
+      hasWord = true;
+      wordQuoted = true;
+    } else if (ch === "'" || ch === '"') {
       quote = ch;
       hasWord = true;
       wordQuoted = true;
@@ -780,7 +800,7 @@ function writesIntoGitDir(words) {
   return !READ_ONLY_PROGRAMS.has(program);
 }
 
-const WRAPPERS = new Set(['sudo', 'env', 'command', 'exec', 'nohup', 'time', 'timeout', 'nice', 'ionice', 'xargs', 'stdbuf', 'setsid', 'chronic', 'unbuffer', 'builtin', 'doas', 'flock', 'watch', 'parallel', 'strace', 'ltrace', 'script']);
+const WRAPPERS = new Set(['sudo', 'env', 'command', 'exec', 'nohup', 'time', 'timeout', 'nice', 'ionice', 'xargs', 'stdbuf', 'setsid', 'chronic', 'unbuffer', 'builtin', 'doas', 'flock', 'watch', 'parallel', 'strace', 'ltrace', 'busybox', 'fakeroot', 'taskset', 'numactl', 'chroot', 'unshare', 'nsenter', 'runuser', 'setpriv', 'prlimit', 'systemd-run', 'xvfb-run', 'ssh-agent', 'dbus-run-session', 'proxychains', 'proxychains4', 'torsocks', 'firejail', 'bwrap', 'cpulimit', 'chpst']);
 const EXEC_OPTIONS = new Set(['-exec', '-execdir', '-ok', '-okdir']); // find … -exec git …
 
 /**
@@ -791,11 +811,14 @@ const EXEC_OPTIONS = new Set(['-exec', '-execdir', '-ok', '-okdir']); // find �
 function inCommandPosition(words, index) {
   if (EXEC_OPTIONS.has(words[index - 1])) return true;
   let wrapped = false;
+  let skipName = false; // `function name { … }`: the name is not a command
   for (const word of words.slice(0, index)) {
-    if (WRAPPERS.has(basename(word))) wrapped = true;
+    if (skipName) skipName = false;
+    else if (word === 'function') skipName = true;
+    else if (WRAPPERS.has(basename(word))) wrapped = true;
     else if (!(RESERVED.has(word) || ENV_ASSIGNMENT.test(word) || wrapped)) return false;
   }
-  return true;
+  return !skipName;
 }
 
 /** First word that is the command itself (after reserved words and VAR=value assignments). */
@@ -850,6 +873,9 @@ export function checkShellCommand(command, currentBranch = null, options = {}, d
     words.forEach((word, index) => {
       const name = basename(word);
       if (!inCommandPosition(words, index)) return;
+      if (index === programIndex(words) && DYNAMIC_COMMAND_WORD.test(word) && /git|gh/.test(command)) {
+        refuse('A command whose program name comes from an expansion cannot be checked; write git/gh literally.');
+      }
       if (name === 'git' || GIT_PLUMBING_PROGRAM.test(name)) {
         const git = parseGitAt(words, index);
         const target = gitTargetDir(git, dir, exportedGitDir);
@@ -870,12 +896,36 @@ export function checkShellCommand(command, currentBranch = null, options = {}, d
         const rest = words.slice(index + 1);
         const flag = rest.findIndex((arg) => /^-[A-Za-z]*c[A-Za-z]*$/.test(arg));
         const commandAt = rest[flag + 1] === '--' ? flag + 2 : flag + 1; // `sh -c -- 'cmd'`
-        if (flag !== -1) checkNested(rest[commandAt] ?? '', dir);
+        if (flag !== -1) {
+          if (DYNAMIC_COMMAND_TEXT.test(rest[commandAt] ?? '') && MENTIONS_GIT.test(command)) refuse(`${name} -c with an expansion as its command cannot be checked; run the git/gh commands directly.`);
+          checkNested(rest[commandAt] ?? '', dir);
+        }
         else if (!words.readsHeredoc && !rest.some((arg) => !arg.startsWith('-')) && MENTIONS_GIT.test(command)) {
           refuse(`${name} reading commands from its input cannot be checked; run the git/gh commands directly.`);
         }
       } else if (name === 'eval') {
-        checkNested(words.slice(index + 1).join(' '), dir);
+        const text = words.slice(index + 1).join(' ');
+        if (DYNAMIC_COMMAND_TEXT.test(text) && MENTIONS_GIT.test(command)) refuse('eval of an expansion cannot be checked; run the git/gh commands directly.');
+        checkNested(text, dir);
+      } else if (name === 'trap') {
+        const action = words.slice(index + 1).find((arg) => !arg.startsWith('-'));
+        if (action) checkNested(action, dir); // runs later, on the signal/exit
+      } else if (name === 'env') {
+        // `env -S 'git push …'` splits and runs its string.
+        words.slice(index + 1).forEach((arg, k, rest) => {
+          const split = /^-[A-Za-z]*S/.exec(arg);
+          if (split) checkNested(arg.slice(split[0].length) || rest[k + 1] || '', dir);
+          else if (arg.startsWith('--split-string')) checkNested(arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : rest[k + 1] ?? '', dir);
+        });
+      } else if (name === 'su' || name === 'script') {
+        words.slice(index + 1).forEach((arg, k, rest) => {
+          if (/^-[A-Za-z]*c$/.test(arg) || arg === '--command') checkNested(rest[k + 1] ?? '', dir);
+          else if (arg.startsWith('--command=')) checkNested(arg.slice('--command='.length), dir);
+        });
+      } else if (name === 'source' || name === '.') {
+        const files = words.slice(index + 1).filter((arg) => !arg.startsWith('-'));
+        const fromInput = !files.length || files.some((arg) => /^(\/dev\/(stdin|fd\/|tty)|\/proc\/self\/fd\/)/.test(arg));
+        if (fromInput && !words.readsHeredoc && MENTIONS_GIT.test(command)) refuse(`${name} reading commands from its input cannot be checked; run the git/gh commands directly.`);
       }
     });
   }

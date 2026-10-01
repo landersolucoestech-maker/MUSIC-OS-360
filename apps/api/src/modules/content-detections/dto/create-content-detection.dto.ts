@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsUrl, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsUrl, IsUUID, MaxLength } from 'class-validator';
+import { IsSafeUrlText, MAX_URL_LENGTH } from '../../../common/validators/safe-url.validation';
 
 export class CreateContentDetectionDto {
   @IsString()
@@ -18,6 +19,8 @@ export class CreateContentDetectionDto {
 
   @IsOptional()
   @IsUrl()
+  @MaxLength(MAX_URL_LENGTH)
+  @IsSafeUrlText()
   url?: string;
 
   @IsOptional()

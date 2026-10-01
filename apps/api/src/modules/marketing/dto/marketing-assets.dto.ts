@@ -9,6 +9,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { IsHttpOrStorageUrl, MAX_URL_LENGTH } from '../../../common/validators/safe-url.validation';
 
 export const MARKETING_ASSET_TYPES = [
   'AUDIO',
@@ -44,6 +45,8 @@ export class CreateMarketingAssetDto {
 
   @ApiProperty()
   @IsString()
+  @MaxLength(MAX_URL_LENGTH)
+  @IsHttpOrStorageUrl()
   fileUrl!: string;
 
   @ApiPropertyOptional()
@@ -54,6 +57,8 @@ export class CreateMarketingAssetDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @MaxLength(MAX_URL_LENGTH)
+  @IsHttpOrStorageUrl()
   thumbnailUrl?: string | null;
 
   @ApiPropertyOptional()

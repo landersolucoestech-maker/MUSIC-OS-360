@@ -3,6 +3,7 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { useBilling } from "@/app/providers/BillingContext";
+import { safeHref } from "@/shared/lib/safe-url";
 
 function formatAmount(amount?: number): string {
   if (typeof amount !== "number") return "Valor pendente indisponível";
@@ -37,7 +38,7 @@ export default function BillingBlockedPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild disabled={!billing.invoiceUrl}>
-                <a href={billing.invoiceUrl ?? "/settings/billing"} target={billing.invoiceUrl ? "_blank" : undefined} rel="noreferrer">
+                <a href={safeHref(billing.invoiceUrl) ?? "/settings/billing"} target={safeHref(billing.invoiceUrl) ? "_blank" : undefined} rel="noopener noreferrer">
                   <CreditCard className="mr-2 h-4 w-4" />
                   Pagar agora
                 </a>

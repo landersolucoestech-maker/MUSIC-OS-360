@@ -9,6 +9,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { HasSafeUrlValues } from '../../../common/validators/safe-url.validation';
 
 export const MARKETING_PROJECT_TYPES = [
   'MUSIC_PROJECT',
@@ -116,21 +117,25 @@ export class CreateMarketingProjectDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
+  @HasSafeUrlValues()
   goals?: Record<string, unknown>;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
+  @HasSafeUrlValues()
   metrics?: Record<string, unknown>;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
+  @HasSafeUrlValues()
   context?: Record<string, unknown>;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
+  @HasSafeUrlValues()
   metadata?: Record<string, unknown>;
 }
 

@@ -3,6 +3,7 @@ import { IsString, IsOptional, IsIn, IsNumber, IsDate, MaxLength } from 'class-v
 import { Type } from 'class-transformer';
 import { CampaignStatus } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { HasSafeUrlValues } from '../../../common/validators/safe-url.validation';
 
 const TYPES    = ['social', 'ads', 'email', 'influencer', 'pr', 'launch', 'other'] as const;
 const STATUSES = Object.values(CampaignStatus) as string[];
@@ -18,7 +19,7 @@ export class CreateCampaignDto {
   @ApiPropertyOptional({ type: String, format: 'date-time' })
   @IsOptional() @Type(() => Date) @IsDate() endsAt?: Date;
   @ApiPropertyOptional() @IsOptional() platforms?: unknown[];
-  @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
+  @ApiPropertyOptional() @IsOptional() @HasSafeUrlValues() metadata?: Record<string, unknown>;
 }
 
 export class UpdateCampaignDto extends PartialType(CreateCampaignDto) {

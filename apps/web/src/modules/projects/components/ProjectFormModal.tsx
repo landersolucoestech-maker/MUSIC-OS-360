@@ -19,6 +19,7 @@ import { LANGUAGES } from "@/constants/languages";
 import { Plus, Upload, X, Music, FileAudio, Loader2, Link } from "lucide-react";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
 import { toUserMessage } from "@/shared/lib/errors";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
 
 interface ProjectFormModalProps {
   open: boolean;
@@ -623,15 +624,13 @@ export function ProjectFormModal({ open, onOpenChange, project, mode, onComplete
                   {!track._uploading && track.audioUrl && " — link gerado ✓"}
                 </p>
                 {!track._uploading && track.audioUrl && (
-                  <a
-                    href={track.audioUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <StoredFileLink
+                    url={track.audioUrl}
                     className="text-xs text-primary hover:underline flex items-center gap-1 mt-0.5"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Link className="w-3 h-3" /> Ver link de download
-                  </a>
+                  </StoredFileLink>
                 )}
               </div>
             </div>
@@ -664,15 +663,13 @@ export function ProjectFormModal({ open, onOpenChange, project, mode, onComplete
               <FileAudio className="w-8 h-8 text-primary" />
               <div>
                 <p className="text-sm font-medium">{track.audioUrl.split("/").pop() || "Áudio remoto"}</p>
-                <a
-                  href={track.audioUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <StoredFileLink
+                  url={track.audioUrl}
                   className="text-xs text-primary hover:underline flex items-center gap-1"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Link className="w-3 h-3" /> Ver link de download
-                </a>
+                </StoredFileLink>
               </div>
             </div>
             {!isViewMode && (

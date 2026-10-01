@@ -24,6 +24,7 @@ import {
   MARKETING_CONTENT_TARGET_TYPES,
   MARKETING_CONTENT_TYPES,
 } from '../marketing-vocabulary';
+import { HasSafeUrlValues, IsHttpOrStorageUrl, MAX_URL_LENGTH } from '../../../common/validators/safe-url.validation';
 
 export const MARKETING_CONTENT_CHANNELS = ['instagram', 'facebook', 'tiktok', 'youtube', 'twitter', 'threads'] as const;
 export const MARKETING_PUBLICATION_STATUSES = ['pending', 'queued', 'publishing', 'published', 'failed', 'cancelled'] as const;
@@ -54,6 +55,8 @@ export class MarketingContentFileDto {
 
   @ApiProperty()
   @IsString()
+  @MaxLength(MAX_URL_LENGTH)
+  @IsHttpOrStorageUrl()
   url!: string;
 
   @ApiPropertyOptional()
@@ -133,6 +136,7 @@ export class CreateMarketingContentDto {
   @ApiPropertyOptional({ type: [MarketingContentFileDto] })
   @IsOptional()
   @IsArray()
+  @HasSafeUrlValues()
   files?: MarketingContentFileDto[];
 
   @ApiPropertyOptional()
@@ -140,6 +144,7 @@ export class CreateMarketingContentDto {
   @Transform(canonicalMarketingContentMetadata)
   @IsObject()
   @Validate(MarketingContentMetadataConstraint)
+  @HasSafeUrlValues()
   metadata?: Record<string, unknown>;
 }
 

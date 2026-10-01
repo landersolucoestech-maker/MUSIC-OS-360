@@ -32,6 +32,7 @@ import {
   workIsInstrumental,
   parseDurationText,
 } from "@/modules/catalog/mappers";
+import { safeHref } from "@/shared/lib/safe-url";
 
 interface WorkViewModalProps {
   open: boolean;
@@ -239,16 +240,18 @@ export function WorkViewModal({
                           <span className="font-medium text-foreground block">
                             {p.name || "—"}
                           </span>
-                          {p.link && (
+                          {p.link && (safeHref(p.link) ? (
                             <a
-                              href={p.link}
+                              href={safeHref(p.link)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-xs text-primary hover:underline truncate block"
                             >
                               {p.link}
                             </a>
-                          )}
+                          ) : (
+                            <span className="text-xs text-muted-foreground truncate block">{p.link}</span>
+                          ))}
                         </div>
                         <Badge
                           variant="outline"

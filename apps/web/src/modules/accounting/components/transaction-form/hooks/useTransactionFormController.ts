@@ -106,7 +106,7 @@ export function useTransactionFormController({
   } = useArtistEvents(formData.artistId || undefined, open);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
-  const { addTransaction, updateTransaction } = useTransactions();
+  const { addTransaction, updateTransaction } = useTransactions(false); // mutations only: no list sweep
   const { rules: categoryRules } = useFinancialCategoryRulesStore();
   const {
     errors,

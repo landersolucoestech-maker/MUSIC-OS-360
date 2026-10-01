@@ -6,6 +6,7 @@ import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
+import { IsHttpOrStorageUrl, MAX_URL_LENGTH } from '../../../common/validators/safe-url.validation';
 
 /** Deploy-skew window: field names a pre-canonical web build still sends (see applyDeprecatedFieldAliases). */
 export const AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS: DeprecatedFieldAliases = { videomaker: 'videographer' };
@@ -145,8 +146,8 @@ export class CreateDeliverableDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) format?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) resolution?: string;
   @ApiPropertyOptional() @IsOptional() @IsInt() @Min(0) duration_sec?: number;
-  @ApiPropertyOptional() @IsOptional() @IsString() file_url?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() thumbnail_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(MAX_URL_LENGTH) @IsHttpOrStorageUrl() file_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(MAX_URL_LENGTH) @IsHttpOrStorageUrl() thumbnail_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() delivery_notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
 }

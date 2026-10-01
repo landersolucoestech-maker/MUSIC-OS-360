@@ -11,17 +11,18 @@ import { toast } from "sonner";
 import { openStoredFile, uploadFileIdFromUrl } from "@/shared/lib/stored-file";
 import { safeLinkHref } from "@/shared/lib/safe-url";
 
-interface StoredFileLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "onClick"> {
+interface StoredFileLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
   url: string | null | undefined;
   children: ReactNode;
 }
 
 export const StoredFileLink = forwardRef<HTMLAnchorElement, StoredFileLinkProps>(
-  function StoredFileLink({ url, children, target: _target, rel: _rel, ...rest }, ref) {
+  function StoredFileLink({ url, children, target: _target, rel: _rel, onClick, ...rest }, ref) {
     const isUpload = uploadFileIdFromUrl(url) !== null;
     const href = isUpload ? "#" : safeLinkHref(url);
 
     function handleClick(e: MouseEvent<HTMLAnchorElement>) {
+      onClick?.(e);
       if (!isUpload) return;
       e.preventDefault();
       openStoredFile(url).catch(() => {

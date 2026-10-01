@@ -20,11 +20,57 @@ function parse(url: string): URL | null {
   }
 }
 
-/** Returns `url` if it is a safe link scheme (http/https/mailto), else "". */
+/**
+ * A scheme-relative or backslash-relative reference (`//evil.test`, `/\\evil.test`,
+ * `\\evil.test`) is resolved by browsers against the current scheme to another
+ * origin: never a legitimate in-app link, so it is rejected like a dangerous scheme.
+ */
+// eslint-disable-next-line no-control-regex -- C0 controls are exactly what browsers strip around a URL
+const NETWORK_PATH_REFERENCE = /^[\s\u0000-\u001f]*[/\\][/\\]/;
+// eslint-disable-next-line no-control-regex
+const ASCII_CONTROL = /[\u0000-\u001f\u007f]/;
+
+/**
+ * Returns `url` if it is a safe link (absolute http/https/mailto, or a same-origin
+ * relative path), else "". Scheme-relative `//host` references are rejected.
+ */
 export function safeLinkHref(url: string | null | undefined): string {
-  if (!url) return "";
+  if (!url || typeof url !== "string") return "";
+  if (NETWORK_PATH_REFERENCE.test(url)) return "";
   const u = parse(url);
   return u && SAFE_LINK_SCHEMES.has(u.protocol) ? url : "";
+}
+
+/**
+ * The single guard for a raw `href` bound to API/user data that is not a stored
+ * file (those go through StoredFileLink): the trimmed value when it is an
+ * absolute http:, https: or mailto: URL, otherwise undefined (render the text
+ * without a link). Relative and scheme-relative references, control characters
+ * and whitespace-obfuscated schemes (`java\tscript:`, ` javascript:`) are rejected.
+ */
+export function safeHref(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (!trimmed || ASCII_CONTROL.test(trimmed)) return undefined;
+  const scheme = /^([A-Za-z][A-Za-z0-9+.-]*):/.exec(trimmed);
+  if (!scheme || !["http", "https", "mailto"].includes(scheme[1].toLowerCase())) return undefined;
+  let parsed: URL;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    return undefined;
+  }
+  if (!SAFE_LINK_SCHEMES.has(parsed.protocol)) return undefined;
+  if (parsed.protocol !== "mailto:" && !parsed.hostname) return undefined;
+  return trimmed;
+}
+
+/** `src` of an <audio>/<video>/<img> fed by API data: http(s)/blob only, else "" (nothing is rendered). */
+export function safeMediaSrc(url: string | null | undefined): string {
+  if (!url || typeof url !== "string") return "";
+  if (NETWORK_PATH_REFERENCE.test(url)) return "";
+  const u = parse(url);
+  return u && SAFE_IMAGE_SCHEMES.has(u.protocol) ? url : "";
 }
 
 const EXTERNAL_URL_SCHEMES = new Set(["http:", "https:"]);
@@ -54,7 +100,8 @@ export function safeExternalUrl(value: unknown): string | undefined {
 
 /** Returns `url` if it is a safe image source (http/https/blob or data:image/*), else "". */
 export function safeImageSrc(url: string | null | undefined): string {
-  if (!url) return "";
+  if (!url || typeof url !== "string") return "";
+  if (NETWORK_PATH_REFERENCE.test(url)) return "";
   const u = parse(url);
   if (!u) return "";
   if (SAFE_IMAGE_SCHEMES.has(u.protocol)) return url;

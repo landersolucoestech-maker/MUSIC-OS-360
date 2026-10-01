@@ -5,6 +5,7 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 import { ReleaseStatus } from '@music-os-360/types';
 
 import { RELEASE_LEGACY_TYPES, RELEASE_TYPES } from '../release-legacy-fields';
+import { HasSafeUrlValues, IsHttpOrStorageUrl, MAX_URL_LENGTH } from '../../../common/validators/safe-url.validation';
 
 // Legacy Portuguese values (compilacao, outro) are still accepted and mapped to
 // the canonical type by the service (release-legacy-fields.ts, CZ-038).
@@ -24,8 +25,8 @@ export class CreateReleaseDto {
   @IsDate()
   releasedAt?: Date;
   @ApiPropertyOptional() @IsOptional() platforms?: string[];
-  @ApiPropertyOptional() @IsOptional() coverUrl?: string;
-  @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(MAX_URL_LENGTH) @IsHttpOrStorageUrl() coverUrl?: string;
+  @ApiPropertyOptional() @IsOptional() @HasSafeUrlValues() metadata?: Record<string, unknown>;
 
   // ── Form fields (EXACT keys of ReleaseFormModal) ────────────────────────────
   // Product rule 2026-07-12: each form field has its own physical column.
@@ -36,14 +37,14 @@ export class CreateReleaseDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) copyright?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) music_genre?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) language?: string;
-  @ApiPropertyOptional() @IsOptional() assets?: Record<string, unknown>;
-  @ApiPropertyOptional() @IsOptional() schedule?: Record<string, unknown>;
+  @ApiPropertyOptional() @IsOptional() @HasSafeUrlValues() assets?: Record<string, unknown>;
+  @ApiPropertyOptional() @IsOptional() @HasSafeUrlValues() schedule?: Record<string, unknown>;
 
   // ── Deprecated Portuguese names (CZ-038, RELEASE_DEPRECATED_FIELDS) ──────────
   @ApiPropertyOptional(DEPRECATED('internal_notes')) @IsOptional() @IsString() notas_internas?: string;
   @ApiPropertyOptional(DEPRECATED('record_label')) @IsOptional() @IsString() @MaxLength(255) gravadora?: string;
   @ApiPropertyOptional(DEPRECATED('language')) @IsOptional() @IsString() @MaxLength(50) idioma?: string;
-  @ApiPropertyOptional(DEPRECATED('schedule')) @IsOptional() cronograma?: Record<string, unknown>;
+  @ApiPropertyOptional(DEPRECATED('schedule')) @IsOptional() @HasSafeUrlValues() cronograma?: Record<string, unknown>;
 }
 
 export class UpdateReleaseDto extends PartialType(CreateReleaseDto) {

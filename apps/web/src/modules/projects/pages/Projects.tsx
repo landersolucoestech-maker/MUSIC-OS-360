@@ -31,6 +31,7 @@ import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { storage } from "@/shared/lib/storage";
 import type { ProjectWithRelationsExtended } from "@/modules/projects/types/projects-extensions";
 import { getFirstTrackInfo, parseTracksFromProject } from "@/modules/projects/lib/track-helpers";
+import { safeImageSrc } from "@/shared/lib/safe-url";
 
 // In mock mode (and over HTTP — /projects does not join the artist) the
 // backend does not return the embedded `artist` relation. Inject it manually
@@ -377,7 +378,7 @@ export default function Projects() {
                               return (
                                 <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted flex items-center justify-center">
                                   {cover ? (
-                                    <img src={cover} alt={project.title} className="h-full w-full object-cover" />
+                                    <img src={safeImageSrc(cover)} alt={project.title} className="h-full w-full object-cover" />
                                   ) : (
                                     <Music className="h-4 w-4 text-muted-foreground" />
                                   )}

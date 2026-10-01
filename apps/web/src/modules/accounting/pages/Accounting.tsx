@@ -41,7 +41,7 @@ import { ofxLineToTransactionPayload, parseOfxStatement } from "@/modules/accoun
 type Transaction = TransactionWithRelations;
 
 export default function Accounting() {
-  const { transactions, deleteTransaction, addTransaction } = useTransactions();
+  const { deleteTransaction, addTransaction } = useTransactions(false); // mutations only: the table is paged server-side
   const ofxInputRef = useRef<HTMLInputElement>(null);
 
   // KPIs — exact aggregation over the whole tenant (GET /transactions/stats),
@@ -52,13 +52,6 @@ export default function Accounting() {
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; transaction?: Transaction }>({ open: false, mode: "create" });
   const [viewModal, setViewModal] = useState<{ open: boolean; transactionId?: string }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; transaction?: Transaction }>({ open: false });
-
-  useEditQueryParam(
-    "edit",
-    transactions,
-    useCallback((transaction: Transaction) => setFormModal({ open: true, mode: "edit", transaction }), []),
-    "transactions",
-  );
 
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -127,6 +120,15 @@ export default function Accounting() {
     dateFrom: startDate || undefined,
     dateTo: endDate || undefined,
   });
+
+  // ?edit=<id> deep link: the page's rows first, otherwise the row is fetched by id
+  // (never searched in a capped list).
+  useEditQueryParam(
+    "edit",
+    pageItems,
+    useCallback((transaction: Transaction) => setFormModal({ open: true, mode: "edit", transaction }), []),
+    "transactions",
+  );
 
   const handleClearFilters = () => {
     setSearchTerm(""); setStartDate(""); setEndDate("");
