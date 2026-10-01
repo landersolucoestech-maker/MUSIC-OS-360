@@ -49,6 +49,15 @@ async function createTrackingTable(queryRunner: QueryRunner, table: string): Pro
     END $$;`);
 }
 
+/** Whether a column exists on a public table. takedowns.url was removed by 20260719000016; skip the mirror when it is absent. */
+async function hasColumn(queryRunner: QueryRunner, table: string, column: string): Promise<boolean> {
+  const rows: Array<{ ok: number }> = await queryRunner.query(
+    `SELECT 1 AS ok FROM information_schema.columns WHERE table_schema = 'public' AND table_name = $1 AND column_name = $2 LIMIT 1`,
+    [table, column],
+  );
+  return rows.length > 0;
+}
+
 async function count(queryRunner: QueryRunner, sql: string): Promise<number> {
   const rows: Array<{ n: number }> = await queryRunner.query(sql);
   return rows[0]?.n ?? 0;
@@ -75,7 +84,8 @@ export class BackfillCanonicalFromLegacyMirrors20260930000022 implements Migrati
       )
       SELECT count(*)::int AS n FROM moved`);
 
-    const takedowns = await count(queryRunner, `
+    const takedownsMirror = await hasColumn(queryRunner, 'takedowns', 'url');
+    const takedowns = !takedownsMirror ? 0 : await count(queryRunner, `
       WITH moved AS (
         UPDATE "takedowns" SET "infringing_url" = "url"
         WHERE "infringing_url" IS NULL AND "url" IS NOT NULL
@@ -90,11 +100,12 @@ export class BackfillCanonicalFromLegacyMirrors20260930000022 implements Migrati
     // Report only (never abort, never rewrite): both columns set but different. Counts, no values.
     const invoiceDivergent = await count(queryRunner,
       `SELECT count(*)::int AS n FROM "invoices" WHERE "service_amount" IS NOT NULL AND "legacy_amount" IS NOT NULL AND "service_amount" <> "legacy_amount"`);
-    const takedownDivergent = await count(queryRunner,
+    const takedownDivergent = !takedownsMirror ? 0 : await count(queryRunner,
       `SELECT count(*)::int AS n FROM "takedowns" WHERE "infringing_url" IS NOT NULL AND "url" IS NOT NULL AND "infringing_url" <> "url"`);
     console.log(
       `[BackfillCanonicalFromLegacyMirrors] invoices.service_amount filled: ${invoices} row(s) (still divergent from legacy_amount, untouched: ${invoiceDivergent}); ` +
-        `takedowns.infringing_url filled: ${takedowns} row(s) (still divergent from url, untouched: ${takedownDivergent})`,
+        `takedowns.infringing_url filled: ${takedowns} row(s) (still divergent from url, untouched: ${takedownDivergent})` +
+        (takedownsMirror ? '' : ' [takedowns.url column absent: mirror skipped]'),
     );
   }
 
@@ -106,10 +117,12 @@ export class BackfillCanonicalFromLegacyMirrors20260930000022 implements Migrati
       UPDATE "invoices" i SET "service_amount" = NULL
       FROM "${INVOICES_BACKFILL}" b
       WHERE b."id" = i."id" AND i."service_amount" IS NOT DISTINCT FROM i."legacy_amount"`);
-    await queryRunner.query(`
+    if (await hasColumn(queryRunner, 'takedowns', 'url')) {
+      await queryRunner.query(`
       UPDATE "takedowns" t SET "infringing_url" = NULL
       FROM "${TAKEDOWNS_BACKFILL}" b
       WHERE b."id" = t."id" AND t."infringing_url" IS NOT DISTINCT FROM t."url"`);
+    }
     await queryRunner.query(`DROP TABLE IF EXISTS "${INVOICES_BACKFILL}"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "${TAKEDOWNS_BACKFILL}"`);
   }

@@ -3,11 +3,12 @@ import { ALL_MIGRATIONS } from './migrations';
 
 type Call = { sql: string; params?: unknown[] };
 
-function runner(counts: { invoices?: number; takedowns?: number; bypass?: boolean } = {}) {
+function runner(counts: { invoices?: number; takedowns?: number; bypass?: boolean; urlColumn?: boolean } = {}) {
   const calls: Call[] = [];
   const query = jest.fn(async (sql: string, params?: unknown[]) => {
     calls.push({ sql, params });
     if (sql.includes('rolbypassrls')) return [{ bypass: counts.bypass ?? true }];
+    if (sql.includes('information_schema.columns')) return (counts.urlColumn ?? true) ? [{ ok: 1 }] : [];
     if (sql.includes('WITH moved AS') && sql.includes('"invoices"')) return [{ n: counts.invoices ?? 3 }];
     if (sql.includes('WITH moved AS') && sql.includes('"takedowns"')) return [{ n: counts.takedowns ?? 2 }];
     if (sql.includes('count(*)::int AS n')) return [{ n: 0 }];
@@ -92,5 +93,15 @@ describe('BackfillCanonicalFromLegacyMirrors20260930000022 (LC1 expand, no drop)
       await expect(migration[direction]({ query } as never)).rejects.toThrow(/BYPASSRLS/);
       expect(query).toHaveBeenCalledTimes(1);
     }
+  });
+  it('skips the takedowns mirror (up and down) when takedowns.url no longer exists', async () => {
+    const { query, calls } = runner({ urlColumn: false });
+    await migration.up({ query } as never);
+    await migration.down({ query } as never);
+    const all = calls.map((c) => c.sql).join('\n');
+    expect(all).toContain('information_schema.columns');
+    expect(all).not.toContain('UPDATE "takedowns"');
+    expect(all).not.toContain('"url"');
+    expect(all).toContain('UPDATE "invoices"');
   });
 });
