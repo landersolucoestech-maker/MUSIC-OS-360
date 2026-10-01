@@ -21,6 +21,18 @@ const base = (p: Partial<ExportQueryParams> = {}): ExportQueryParams => ({ forma
 describe('ExportQueryBuilderService — entity-driven safe query', () => {
   const svc = new ExportQueryBuilderService();
 
+  it('TX1: a transactions category filter matches the canonical id and its legacy spellings; other values stay exact', () => {
+    const tx: ReportEntityDefinition = { ...DEF, tableName: 'transactions', exportableColumns: ['category', 'description'], filterableColumns: ['category', 'status'] };
+    const q = svc.build(tx, base({ columns: ['category'], filters: { category: 'music_revenue' } }), 't');
+    expect(q.sql).toContain('"category" = ANY($2::text[])');
+    expect(q.parameters[1]).toEqual(['music_revenue', 'receitas-musicais']);
+    const legacy = svc.build(tx, base({ columns: ['category'], filters: { category: 'receitas-musicais' } }), 't');
+    expect(legacy.parameters[1]).toEqual(['music_revenue', 'receitas-musicais']);
+    const exact = svc.build(tx, base({ columns: ['category'], filters: { category: 'Receitas Musicais' } }), 't');
+    expect(exact.sql).toContain('"category" = $2');
+    expect(exact.parameters[1]).toBe('Receitas Musicais');
+  });
+
   it('builds SELECT with explicit columns (never SELECT *) + tenant always', () => {
     const q = svc.build(DEF, base(), 'tenant-1');
     expect(q.sql).toContain('SELECT "stage_name", "email_encrypted" AS "email", "status" FROM "artists"');

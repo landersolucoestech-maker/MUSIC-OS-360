@@ -9,7 +9,7 @@ import { canonicalizeTransactionInput, canonicalTransactionType } from './transa
 const CANONICAL = {
   transactionType: 'expense',
   counterpartyType: 'company',
-  category: 'outros',
+  category: 'other',
   description: 'Aluguel sala',
   amount: '250.00',
   transactionDate: '2026-09-01',

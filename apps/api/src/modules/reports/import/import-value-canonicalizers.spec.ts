@@ -47,6 +47,19 @@ describe('canonicalImportValue', () => {
     expect(canonicalImportValue('transactions', 'type', 'DESPESA')).toBe('expense');
   });
 
+  it('TX1: transactions category/subcategory legacy slugs are canonical; free text and canonical ids are untouched', () => {
+    expect(canonicalImportValue('transactions', 'category', 'receitas-musicais')).toBe('music_revenue');
+    expect(canonicalImportValue('transactions', 'category', 'outros')).toBe('other');
+    expect(canonicalImportValue('transactions', 'category', 'recebimentos externos de direitos')).toBe('external_rights_receipts');
+    expect(canonicalImportValue('transactions', 'subcategory', 'direitos-autorais')).toBe('copyright');
+    expect(canonicalImportValue('transactions', 'category', 'music_revenue')).toBe('music_revenue');
+    expect(canonicalImportValue('transactions', 'category', 'Receitas Musicais')).toBe('Receitas Musicais');
+    expect(canonicalImportValue('transactions', 'category', 'marketing')).toBe('marketing');
+    expect(canonicalImportValue('transactions', 'category', null)).toBeNull();
+    // other tables keep their own columns
+    expect(canonicalImportValue('invoices', 'category', 'outros')).toBe('outros');
+  });
+
   it('leaves canonical values, other columns, other tables and non-strings untouched', () => {
     expect(canonicalImportValue('shares', 'status', 'sent')).toBe('sent');
     expect(canonicalImportValue('shares', 'holder', 'autor')).toBe('autor');

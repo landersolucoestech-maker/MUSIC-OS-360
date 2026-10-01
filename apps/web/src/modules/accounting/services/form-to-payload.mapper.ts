@@ -4,6 +4,7 @@
  */
 
 import type { TransactionFormData } from "@/modules/accounting/constants/transaction-constants";
+import { canonicalTransactionSlug } from "@/modules/accounting/constants/transaction-category-slugs";
 
 /**
  * Request body of POST/PUT/PATCH /transactions — exactly the canonical
@@ -20,7 +21,7 @@ import type { TransactionFormData } from "@/modules/accounting/constants/transac
  * Values of transactionType/counterpartyType/paymentMethod/paymentType/
  * installmentInterval are the canonical English values carried by the form
  * state itself (see transaction-constants.ts option lists) — no translation
- * happens here. Category/subcategory slugs are forwarded unchanged.
+ * happens here. Category/subcategory slugs are forwarded as the canonical English ids (a legacy slug in a loaded row is mapped; free text is unchanged).
  */
 export interface TransactionFormPayload {
   transactionType: string | null;
@@ -87,8 +88,8 @@ export function formToTransactionPayload(f: TransactionFormData): TransactionFor
   return {
     transactionType:        str(f.transactionType),
     counterpartyType:       str(f.counterpartyType),
-    category:               str(f.category),
-    subcategory:            str(f.subcategory),
+    category:               canonicalTransactionSlug(str(f.category)),
+    subcategory:            canonicalTransactionSlug(str(f.subcategory)),
     description:            str(f.description),
     amount:                 parseMoney(f.amount),
     transactionDate:        str(f.transactionDate),

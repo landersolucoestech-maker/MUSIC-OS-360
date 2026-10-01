@@ -261,7 +261,30 @@ describe('ImportCommitService — transactions: physical columns and category (T
     await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(financeCategoryRules.suggestCategoryForTransaction).not.toHaveBeenCalled();
     const { params } = insertCall(qr);
-    expect(params).toContain('aluguel');
+    expect(params).toContain('rent');
+    expect(params).not.toContain('aluguel');
+  });
+
+  it('TX1: a legacy taxonomy slug in the category cell is stored canonical; free text is stored as typed', async () => {
+    const legacy = makeTxSvc({ row: { transaction_type: 'revenue', category: 'receitas-musicais', description: 'Streaming' } });
+    await legacy.svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
+    expect(insertCall(legacy.qr).params).toContain('music_revenue');
+    const text = makeTxSvc({ row: { transaction_type: 'revenue', category: 'Receitas Musicais', description: 'Streaming' } });
+    await text.svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
+    expect(insertCall(text.qr).params).toContain('Receitas Musicais');
+  });
+
+  it('TX1: the legacy placeholder "outros" in the cell is still auto-categorized (and stored as other without a match)', async () => {
+    const hit = makeTxSvc({
+      row: { transaction_type: 'expense', category: 'outros', description: 'Compra de cabos' },
+      suggestion: { categoryId: 'cat-1', categoryName: 'equipamentos', ruleId: 'rule-1' },
+    });
+    await hit.svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
+    expect(hit.financeCategoryRules.suggestCategoryForTransaction).toHaveBeenCalled();
+    expect(insertCall(hit.qr).params).toContain('equipamentos');
+    const miss = makeTxSvc({ row: { transaction_type: 'expense', category: 'outros', description: 'Item' }, suggestion: null });
+    await miss.svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
+    expect(insertCall(miss.qr).params).toContain('other');
   });
 
   it('empty category in the spreadsheet triggers the matcher and applies the suggestion (same service as manual creation)', async () => {
@@ -275,21 +298,21 @@ describe('ImportCommitService — transactions: physical columns and category (T
     expect(params).toContain('equipamentos');
   });
 
-  it('empty category with no match falls back to "outros" and the INSERT still satisfies the NOT NULL column', async () => {
+  it('empty category with no match falls back to "other" and the INSERT still satisfies the NOT NULL column', async () => {
     const { svc, qr } = makeTxSvc({ row: { transaction_type: 'expense', category: '', description: 'Item desconhecido' }, suggestion: null });
     const result = await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(result.importedRows).toBe(1);
     const { sql, params } = insertCall(qr);
     expect(sql).toContain('"category"');
-    expect(params).toContain('outros');
+    expect(params).toContain('other');
   });
 
-  it('unavailable matcher (exception) does not break the import — falls back to "outros"', async () => {
+  it('unavailable matcher (exception) does not break the import — falls back to "other"', async () => {
     const { svc, qr } = makeTxSvc({ row: { transaction_type: 'expense', category: '', description: 'Item X' }, suggestThrows: true });
     const result = await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(result.importedRows).toBe(1);
     const { params } = insertCall(qr);
-    expect(params).toContain('outros');
+    expect(params).toContain('other');
   });
 });
 

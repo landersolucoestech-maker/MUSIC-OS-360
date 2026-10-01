@@ -10,6 +10,7 @@
  */
 
 import type { TransactionPaymentMethod, TransactionType } from "@/modules/accounting/types/accounting.types";
+import { UNCATEGORIZED_CATEGORY } from "@/modules/accounting/constants/transaction-category-slugs";
 
 /** One <STMTTRN> block of an OFX file, already normalized. */
 export interface OfxStatementLine {
@@ -36,10 +37,11 @@ export interface OfxTransactionPayload {
 
 /**
  * Category slug for rows that were not classified yet. The imported row must
- * carry a category (the API requires one for revenue/expense); "outros" is an
- * existing slug of the current taxonomy (values unchanged by CZ-041).
+ * carry a category (the API requires one for revenue/expense); "other" is the
+ * canonical id of the uncategorized placeholder (legacy "outros", TX1) and is the
+ * only value the API auto-categorizes by keyword rule.
  */
-export const OFX_UNCLASSIFIED_CATEGORY = "outros";
+export const OFX_UNCLASSIFIED_CATEGORY = UNCATEGORIZED_CATEGORY;
 
 /**
  * An OFX line carries no counterparty classification, but the API requires

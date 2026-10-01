@@ -21,8 +21,9 @@ describe("transaction category labels — one PT-BR label per stored value", () 
     expect(conflicts).toEqual([]);
   });
 
-  it("resolves the previously conflicting slugs to a single label", () => {
+  it("resolves the previously conflicting slugs to a single label (legacy and canonical spelling alike)", () => {
     expect(transactionCategoryLabel("design-grafico")).toBe("Design gráfico");
+    expect(transactionCategoryLabel("graphic_design")).toBe("Design gráfico");
     expect(transactionCategoryLabel("direitos-autorais")).toBe("Direitos autorais");
     expect(transactionCategoryLabel("producao-audiovisual")).toBe("Produção audiovisual");
     expect(transactionCategoryLabel("locacao-equipamentos")).toBe("Locação de equipamentos");
@@ -61,7 +62,7 @@ describe("Accounting category filter options", () => {
 
   it("includes the OFX placeholder and every top-level taxonomy slug", () => {
     expect(values.has(OFX_UNCLASSIFIED_CATEGORY)).toBe(true);
-    for (const slug of ["servicos", "receitas-musicais", "caches", "equipamentos", "iss", "entre-contas"]) {
+    for (const slug of ["services", "music_revenue", "performance_fees", "equipment", "iss", "between_accounts"]) {
       expect(values.has(slug)).toBe(true);
     }
   });

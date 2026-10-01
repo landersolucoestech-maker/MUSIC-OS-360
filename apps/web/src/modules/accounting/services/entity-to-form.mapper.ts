@@ -64,7 +64,7 @@ export function transactionToFormFields(t: TransactionFormEntity | null | undefi
     transactionType:        str(t.type),
     counterpartyType:       str(t.counterparty_type),
     category:               canonicalTransactionCategory(str(t.category)),
-    subcategory:            str(t.subcategory),
+    subcategory:            canonicalTransactionCategory(str(t.subcategory)),
     description:            str(t.description),
     amount:                 str(t.amount),
     transactionDate:        calendarDay(t.transaction_date),

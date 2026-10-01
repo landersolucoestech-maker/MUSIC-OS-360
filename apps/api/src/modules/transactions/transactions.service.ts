@@ -4,7 +4,7 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { TransactionEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
-import { canonicalExternalRightsReceipts, externalRightsReceiptsVariants } from '../../common/compat/external-rights-receipts';
+import { canonicalTransactionSlug, isUncategorizedCategory, transactionSlugVariants, UNCATEGORIZED_CATEGORY } from './transaction-category-slugs';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { FinanceCategoryRulesService } from '../finance-category-rules/finance-category-rules.service';
@@ -37,7 +37,7 @@ const CANCELLED_STATUSES = new Set(['cancelled']);
  * The only value treated as "eligible for auto-categorization" — any
  * other explicit category is always preserved (never overwritten).
  */
-export const UNCATEGORIZED_PLACEHOLDER = 'outros';
+export const UNCATEGORIZED_PLACEHOLDER = UNCATEGORIZED_CATEGORY; // 'other' (TX1; the legacy 'outros' is still recognized on read)
 
 /** finance_category_keyword_rules only covers REVENUE/EXPENSE — other types (investment, tax, transfer) are never eligible. */
 export function toRuleTransactionType(transactionType: unknown): 'REVENUE' | 'EXPENSE' | null {
@@ -100,9 +100,9 @@ function buildPersistencePayload(
     payload.created_by = userId;
     // category is NOT NULL in the DB; the validator does not require it for `transfer`,
     // so we apply a defensive default on creation to avoid 23502 → 500.
-    payload.category = canonicalExternalRightsReceipts((input.category && String(input.category).trim()) || UNCATEGORIZED_PLACEHOLDER);
+    payload.category = canonicalTransactionSlug((input.category && String(input.category).trim()) || UNCATEGORIZED_PLACEHOLDER);
   } else if (input.category !== undefined) {
-    payload.category = canonicalExternalRightsReceipts(input.category || UNCATEGORIZED_PLACEHOLDER);
+    payload.category = canonicalTransactionSlug(input.category || UNCATEGORIZED_PLACEHOLDER);
   }
   if (input.transactionType !== undefined && input.transactionType !== null) payload.type = input.transactionType;
   if (input.description !== undefined) payload.description = input.description;
@@ -111,7 +111,7 @@ function buildPersistencePayload(
   if (input.status !== undefined && input.status !== null) payload.status = input.status;
   for (const [field, column] of FIELD_TO_COLUMN) {
     if (input[field] === undefined) continue;
-    const value = input[field];
+    const value = field === 'subcategory' ? canonicalTransactionSlug(input[field]) : input[field];
     payload[column] = value === '' ? null : value;
   }
   if (input.installmentCount !== undefined) {
@@ -218,8 +218,8 @@ export class TransactionsService {
     if (q.status)     qb.andWhere('t.status = :status', { status: q.status });
     if (q.type)       qb.andWhere('t.type = :type', { type: canonicalTransactionType(q.type) });
     if (q.category) {
-      // The external-rights category matches both its canonical id and the legacy phrase (expand/contract).
-      const categories = externalRightsReceiptsVariants(String(q.category));
+      // Platform-owned slugs match both the canonical id and every legacy spelling (expand/contract, TX1).
+      const categories = transactionSlugVariants(String(q.category));
       if (categories.length > 1) qb.andWhere('t.category IN (:...categories)', { categories });
       else                       qb.andWhere('t.category = :category', { category: q.category });
     }
@@ -425,17 +425,17 @@ export class TransactionsService {
    * Task W — keyword auto-categorization on transaction creation
    * (covers manual creation and the OFX import, which reuses this same
    * endpoint). Acts only when the resolved category is the placeholder
-   * "outros" (an unchanged category slug) — any real category, chosen manually or by
+   * "other" (legacy "outros" is also recognized) — any real category, chosen manually or by
    * any other flow, is never overwritten. Never crosses tenants (the rules
    * lookup is already scoped by tenantId). If there is no matching
-   * rule, or the matcher is unavailable, keeps "outros".
+   * rule, or the matcher is unavailable, keeps the placeholder.
    */
   private async resolveCategory(
     tenantId: string,
     dto: CreateTransactionDto,
     currentCategory: string,
   ): Promise<string> {
-    if (currentCategory.trim().toLowerCase() !== UNCATEGORIZED_PLACEHOLDER) {
+    if (!isUncategorizedCategory(currentCategory)) {
       return currentCategory;
     }
 

@@ -245,14 +245,14 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     expect(saved.category).toBe('servicos');
   });
 
-  it("category 'outros' with no matching rule: keeps 'outros'", async () => {
+  it("category 'outros' with no matching rule: keeps the placeholder 'other'", async () => {
     const { service, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
       transactionType: 'expense', description: 'Compra qualquer', category: 'outros', amount: '20',
     } as any);
 
-    expect(saved.category).toBe('outros');
+    expect(saved.category).toBe('other');
     expect(suggestFn).toHaveBeenCalledWith(TENANT, 'EXPENSE', 'Compra qualquer');
   });
 
@@ -275,17 +275,17 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     } as any);
 
     expect(suggestFn).not.toHaveBeenCalled();
-    expect(saved.category).toBe('outros');
+    expect(saved.category).toBe('other');
   });
 
-  it('matcher unavailable/error: does not block creation, falls back to outros', async () => {
+  it('matcher unavailable/error: does not block creation, falls back to other', async () => {
     const { service } = await buildServiceWithMatcher(new Error('finance-category-rules DB down'));
 
     const saved = await service.create(TENANT, 'u1', {
       transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '10',
     } as any);
 
-    expect(saved.category).toBe('outros');
+    expect(saved.category).toBe('other');
   });
 
   it('batch import (multiple OFX transactions in sequence): each is categorized independently and deterministically', async () => {
@@ -309,7 +309,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
       results.push(await service.create(TENANT, 'u1', row as any));
     }
 
-    expect(results.map((r) => r.category)).toEqual(['streaming', 'transporte', 'outros']);
+    expect(results.map((r) => r.category)).toEqual(['streaming', 'transporte', 'other']);
     expect(suggestFn).toHaveBeenCalledTimes(3);
   });
 
@@ -321,7 +321,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
       transactionType: 'expense', description: 'Pagamento Spotify', category: 'outros', amount: '10',
     } as any);
 
-    expect(saved.category).toBe('outros');
+    expect(saved.category).toBe('other');
   });
 });
 
@@ -435,7 +435,7 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     const service = new TransactionsService({ getRepository: jest.fn(() => repo) } as never, undefined as never, undefined as never, undefined as never);
     await service.list(TENANT, { category: 'external_rights_receipts' } as any);
     expect(qb['andWhere']).toHaveBeenCalledWith('t.category IN (:...categories)', {
-      categories: ['external_rights_receipts', 'recebimentos externos de direitos'],
+      categories: ['external_rights_receipts', 'external-rights-receipts', 'recebimentos externos de direitos'],
     });
     qb['andWhere'].mockClear();
     await service.list(TENANT, { category: 'marketing' } as any);
@@ -449,5 +449,35 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     } as any);
     const created = (repo.create as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
     expect(created['category']).toBe('external_rights_receipts');
+  });
+
+  it('TX1 list: a platform slug filter matches the canonical id and every legacy spelling, in either direction', async () => {
+    const qb: Record<string, jest.Mock> = {};
+    for (const m of ['where', 'andWhere', 'orderBy', 'addOrderBy', 'skip', 'take']) qb[m] = jest.fn(() => qb);
+    qb['getManyAndCount'] = jest.fn(async () => [[], 0]);
+    const repo = { createQueryBuilder: jest.fn(() => qb) };
+    const service = new TransactionsService({ getRepository: jest.fn(() => repo) } as never, undefined as never, undefined as never, undefined as never);
+    for (const input of ['music_revenue', 'receitas-musicais']) {
+      qb['andWhere'].mockClear();
+      await service.list(TENANT, { category: input } as any);
+      expect(qb['andWhere']).toHaveBeenCalledWith('t.category IN (:...categories)', { categories: ['music_revenue', 'receitas-musicais'] });
+    }
+    qb['andWhere'].mockClear();
+    await service.list(TENANT, { category: 'Receitas Musicais' } as any);
+    expect(qb['andWhere']).toHaveBeenCalledWith('t.category = :category', { category: 'Receitas Musicais' });
+  });
+
+  it('TX1 create: legacy category/subcategory slugs are persisted canonical; the legacy placeholder becomes other; free text is kept', async () => {
+    const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
+    await service.create(TENANT, 'user-1', {
+      transactionType: 'revenue', description: 'X', category: 'receitas-musicais', subcategory: 'direitos-autorais', amount: '50',
+    } as any);
+    const created = (repo.create as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+    expect(created['category']).toBe('music_revenue');
+    expect(created['subcategory']).toBe('copyright');
+    await service.create(TENANT, 'user-1', {
+      transactionType: 'revenue', description: 'Y', category: 'Receitas Musicais', amount: '50',
+    } as any);
+    expect((repo.create as jest.Mock).mock.calls[1][0]['category']).toBe('Receitas Musicais');
   });
 });

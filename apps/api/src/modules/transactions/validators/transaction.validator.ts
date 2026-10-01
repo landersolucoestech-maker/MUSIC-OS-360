@@ -7,6 +7,7 @@ import {
   TRANSACTION_TYPES,
   canonicalizeTransactionInput,
 } from '../transaction-legacy-fields';
+import { canonicalTransactionSlug } from '../transaction-category-slugs';
 
 // ── Canonical enum values (CZ-041; PT-BR labels live in the web UI) ───────────
 // 'aprovado'/'atrasado' were UI-only decorative labels with zero backend
@@ -17,26 +18,29 @@ const STATUS = ['pending', 'paid', 'confirmed', 'completed', 'scheduled', 'cance
 
 // ── Subcategory sets used in conditional validation ────────────────────────────
 
+// TX1: the sets hold the canonical English ids; request values are canonicalized
+// first (legacy kebab-case Portuguese slugs are accepted as deprecated input, see
+// transaction-category-slugs.ts).
 const expenseServicesWithArtistAndProject = new Set([
-  'design-grafico', 'producao-audiovisual', 'licenciamento-obras',
-  'direitos-autorais', 'fotografia-audiovisual', 'sampling-clearance',
+  'graphic_design', 'audiovisual_production', 'works_licensing',
+  'copyright', 'photography_audiovisual', 'sampling_clearance',
 ]);
 
-const expenseProductsWithEvent = new Set(['cenografia-pirotecnia']);
+const expenseProductsWithEvent = new Set(['set_design_pyrotechnics']);
 
 const musicIncomeWithArtistAndProject = new Set([
-  'direitos-autorais', 'direitos-conexos', 'recebimentos-externos-streaming',
-  'licenciamento-obra', 'licenciamento-fonograma', 'sincronizacao', 'venda-beats',
+  'copyright', 'neighboring_rights', 'external_rights_streaming',
+  'work_licensing', 'phonogram_licensing', 'synchronization', 'beat_sales',
 ]);
 
 const incomeServicesWithArtistAndProject = new Set([
-  'producao-musical', 'producao-audiovisual', 'marketing-divulgacao',
-  'design-grafico', 'trafego-pago', 'gravacao-estudio',
-  'mixagem', 'masterizacao', 'sessao-producao',
+  'music_production', 'audiovisual_production', 'marketing_promotion',
+  'graphic_design', 'paid_traffic', 'studio_recording',
+  'mixing', 'mastering', 'production_session',
 ]);
 
 const incomeServicesWithArtist = new Set([
-  'criacao-site', 'gestao-redes-sociais', 'ensaio',
+  'website_creation', 'social_media_management', 'rehearsal',
 ]);
 
 // ── Shared field declarations ──────────────────────────────────────────────────
@@ -153,13 +157,13 @@ function validateInstallments(data: PartialPayloadForValidation, ctx: z.Refineme
 /**
  * Validates all transaction-type-specific conditional fields.
  * Requires transactionType to be present — enforced by both schemas.
- * Category/subcategory slugs are the (unchanged) taxonomy values.
+ * Category/subcategory slugs are the canonical English taxonomy ids (the preprocess maps the legacy ones).
  */
 function validateConditionalByType(data: PayloadForValidation, ctx: z.RefinementCtx): void {
   const type              = data.transactionType;
   const counterpartyType  = data.counterpartyType;
-  const category          = data.category;
-  const subcategory       = data.subcategory ?? '';
+  const category          = canonicalTransactionSlug(data.category);
+  const subcategory       = canonicalTransactionSlug(data.subcategory ?? '') as string;
   const linkedArtist      = data.artistId;
 
   const isTax             = type === 'tax';
@@ -181,16 +185,16 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a categoria', path: ['category'] });
   }
 
-  const isServiceExpense                  = isExpense && isCompanyOrPerson && category === 'servicos';
+  const isServiceExpense                  = isExpense && isCompanyOrPerson && category === 'services';
   const isMarketingExpense                = isExpense && isCompanyOrPerson && category === 'marketing';
-  const isTravelExpense                   = isExpense && isCompanyOrPerson && category === 'viagens';
-  const isProductExpense                  = isExpense && isCompanyOrPerson && category === 'produtos';
-  const isFinancialSupportExpense        = isExpense && isCompanyOrPerson && category === 'suporte-financeiro';
-  const isArtistFeeExpense            = isExpense && isArtist && category === 'caches';
-  const isArtistFinancialSupportExpense = isExpense && isArtist && category === 'suporte-financeiro';
-  const isMusicIncome                  = isIncome && isCompanyOrPerson && category === 'receitas-musicais';
-  const isServiceIncome                  = isIncome && isCompanyOrPerson && category === 'servicos';
-  const isProductIncome                  = isIncome && isCompanyOrPerson && category === 'produtos';
+  const isTravelExpense                   = isExpense && isCompanyOrPerson && category === 'travel';
+  const isProductExpense                  = isExpense && isCompanyOrPerson && category === 'products';
+  const isFinancialSupportExpense        = isExpense && isCompanyOrPerson && category === 'financial_support';
+  const isArtistFeeExpense            = isExpense && isArtist && category === 'performance_fees';
+  const isArtistFinancialSupportExpense = isExpense && isArtist && category === 'financial_support';
+  const isMusicIncome                  = isIncome && isCompanyOrPerson && category === 'music_revenue';
+  const isServiceIncome                  = isIncome && isCompanyOrPerson && category === 'services';
+  const isProductIncome                  = isIncome && isCompanyOrPerson && category === 'products';
 
   const needsSubcategory =
     isServiceExpense || isMarketingExpense || isTravelExpense ||
@@ -235,8 +239,8 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
 
   const needsEvent =
     (isProductExpense     && expenseProductsWithEvent.has(subcategory)) ||
-    (isArtistFeeExpense && subcategory === 'show-evento') ||
-    (isMusicIncome     && ['participacao-show-evento', 'venda-show-fechado'].includes(subcategory));
+    (isArtistFeeExpense && subcategory === 'show_event') ||
+    (isMusicIncome     && ['show_event_participation', 'closed_show_sale'].includes(subcategory));
 
   if (needsEvent && linkedArtist && !data.eventId) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o show/evento', path: ['eventId'] });
@@ -246,7 +250,7 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o motivo da viagem', path: ['travelReason'] });
   }
 
-  if (isArtistFeeExpense && subcategory === 'publicidade' && !data.advertisingName?.trim()) {
+  if (isArtistFeeExpense && subcategory === 'advertising' && !data.advertisingName?.trim()) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o nome da publicidade', path: ['advertisingName'] });
   }
 

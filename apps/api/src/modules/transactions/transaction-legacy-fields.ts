@@ -8,6 +8,7 @@
  * of the API only ever sees canonical keys/values. Responses are canonical.
  */
 import { applyDeprecatedFieldAliases, type DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import { canonicalTransactionSlug } from './transaction-category-slugs';
 
 export const TRANSACTION_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   tipoTransacao: 'transactionType',
@@ -72,6 +73,11 @@ export function canonicalizeTransactionInput(input: unknown): unknown {
   const out = applyDeprecatedFieldAliases(input as Record<string, unknown>, TRANSACTION_DEPRECATED_FIELDS);
   for (const [key, map] of Object.entries(LEGACY_TRANSACTION_VALUES)) {
     if (out[key] !== undefined) out[key] = mapValue(map, out[key]);
+  }
+  // TX1: platform-owned category/subcategory slugs (legacy kebab-case Portuguese -> canonical English;
+  // free text and canonical ids pass through untouched).
+  for (const key of ['category', 'subcategory'] as const) {
+    if (typeof out[key] === 'string') out[key] = canonicalTransactionSlug(out[key]);
   }
   return out;
 }

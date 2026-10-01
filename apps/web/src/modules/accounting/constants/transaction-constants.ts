@@ -1,5 +1,10 @@
 
 import { formatCategoryLabel } from "@/shared/lib/category-labels";
+import {
+  EXTERNAL_RIGHTS_RECEIPTS_CATEGORY,
+  LEGACY_EXTERNAL_RIGHTS_RECEIPTS_CATEGORY,
+  canonicalTransactionSlug,
+} from "@/modules/accounting/constants/transaction-category-slugs";
 import type {
   TransactionCounterpartyType,
   TransactionEntityLink,
@@ -16,7 +21,10 @@ import type {
  * CZ-041 wire contract (camelCase request keys); values of the option-backed
  * fields (transactionType, counterpartyType, paymentMethod, paymentType,
  * installmentInterval) are the canonical English wire values. Category and
- * subcategory keep their current slug values (taxonomy decision pending).
+ * subcategory option values are the canonical English taxonomy ids
+ * (transaction-category-slugs.ts); the PT-BR text of each option is its display label
+ * (the label registry below). Rows stored with a legacy slug are read through
+ * canonicalTransactionSlug.
  */
 export interface TransactionFormData {
   /** Managerial links (P&L) — mandatory ≥1. Multiple ones with allocation. */
@@ -161,77 +169,77 @@ export const installmentIntervals: { value: TransactionInstallmentInterval; labe
 // ==================== EXPENSE - COMPANY ====================
 
 export const companyExpenseCategories = [
-  { value: "servicos", label: "Serviços" },
-  { value: "produtos", label: "Produtos" },
-  { value: "administrativo", label: "Administrativo" },
+  { value: "services", label: "Serviços" },
+  { value: "products", label: "Produtos" },
+  { value: "administrative", label: "Administrativo" },
   { value: "marketing", label: "Marketing" },
-  { value: "viagens", label: "Viagens" },
-  { value: "suporte-financeiro", label: "Suporte Financeiro" },
+  { value: "travel", label: "Viagens" },
+  { value: "financial_support", label: "Suporte Financeiro" },
 ];
 
 // ==================== EXPENSE - PERSON ====================
 
 export const individualExpenseCategories = [
-  { value: "remuneracao", label: "Remuneração" },
-  { value: "servicos-pf", label: "Serviços Pessoa Física" },
-  { value: "reembolso", label: "Reembolso" },
+  { value: "compensation", label: "Remuneração" },
+  { value: "individual_services", label: "Serviços Pessoa Física" },
+  { value: "reimbursement", label: "Reembolso" },
 ];
 
 // Compensation subcategories (person)
 export const individualCompensationTypes = [
-  { value: "salario", label: "Salário" },
-  { value: "pro-labore", label: "Pró-labore" },
-  { value: "pagamento-diaria", label: "Pagamento por diária" },
-  { value: "hora-extra", label: "Hora extra" },
-  { value: "comissao", label: "Comissão" },
-  { value: "bonus-premiacao", label: "Bônus / Premiação" },
+  { value: "salary", label: "Salário" },
+  { value: "pro_labore", label: "Pró-labore" },
+  { value: "daily_rate_payment", label: "Pagamento por diária" },
+  { value: "overtime", label: "Hora extra" },
+  { value: "commission", label: "Comissão" },
+  { value: "bonus_award", label: "Bônus / Premiação" },
 ];
 
 // Individual (natural person) services subcategories (person)
 export const individualServiceTypes = [
   { value: "freelancer", label: "Freelancer" },
-  { value: "prestador-autonomo", label: "Prestador autônomo" },
-  { value: "consultoria", label: "Consultoria" },
+  { value: "independent_contractor", label: "Prestador autônomo" },
+  { value: "consulting", label: "Consultoria" },
 ];
 
 // Reimbursement subcategories (Person)
 export const individualReimbursementTypes = [
-  { value: "reembolso-transporte", label: "Reembolso de transporte" },
-  { value: "reembolso-alimentacao", label: "Reembolso de alimentação" },
-  { value: "reembolso-hospedagem", label: "Reembolso de hospedagem" },
-  { value: "reembolso-materiais", label: "Reembolso de materiais" },
+  { value: "transport_reimbursement", label: "Reembolso de transporte" },
+  { value: "meal_reimbursement", label: "Reembolso de alimentação" },
+  { value: "lodging_reimbursement", label: "Reembolso de hospedagem" },
+  { value: "materials_reimbursement", label: "Reembolso de materiais" },
 ];
 
 // ==================== SERVICES (expense) ====================
 
 export const expenseServiceTypes = [
-  { value: "design-grafico", label: "Design gráfico" },
-  { value: "producao-audiovisual", label: "Produção audiovisual" },
-  { value: "licenciamento-obras", label: "Licenciamento de obras" },
-  { value: "direitos-autorais", label: "Direitos autorais" },
-  { value: "fotografia-audiovisual", label: "Fotografia / Audiovisual" },
-  { value: "sampling-clearance", label: "Sampling clearance" },
-  { value: "assessoria-juridica", label: "Assessoria jurídica" },
-  { value: "contabil-fiscal", label: "Contábil / Fiscal" },
-  { value: "ti-desenvolvimento-saas", label: "TI / Desenvolvimento / SaaS" },
+  { value: "graphic_design", label: "Design gráfico" },
+  { value: "audiovisual_production", label: "Produção audiovisual" },
+  { value: "works_licensing", label: "Licenciamento de obras" },
+  { value: "copyright", label: "Direitos autorais" },
+  { value: "photography_audiovisual", label: "Fotografia / Audiovisual" },
+  { value: "sampling_clearance", label: "Sampling clearance" },
+  { value: "legal_advisory", label: "Assessoria jurídica" },
+  { value: "accounting_tax", label: "Contábil / Fiscal" },
+  { value: "it_development_saas", label: "TI / Desenvolvimento / SaaS" },
 ];
 
 // Services that require artist + project (mandatory)
 export const expenseServicesRequiringArtistAndProject = [
-  "design-grafico",
-  "producao-audiovisual",
-  "licenciamento-obras",
-  "direitos-autorais",
-  "fotografia-audiovisual",
-  "sampling-clearance",
+  "graphic_design",
+  "audiovisual_production",
+  "works_licensing",
+  "copyright",
+  "photography_audiovisual",
+  "sampling_clearance",
 ];
 
 // ==================== MARKETING (Expense) ====================
 
 export const marketingExpenseTypes = [
-  { value: "marketing-trafego-pr", label: "Marketing / Tráfego / PR" },
-  { value: "anuncios", label: "Anúncios" },
-  { value: "brindes-promocionais", label: "Brindes promocionais" },
+  { value: "marketing_traffic_pr", label: "Marketing / Tráfego / PR" },
+  { value: "ads", label: "Anúncios" },
+  { value: "promotional_gifts", label: "Brindes promocionais" },
 ];
 
 // Marketing: artist mandatory, project optional
@@ -239,11 +247,11 @@ export const marketingExpenseTypes = [
 // ==================== TRAVEL (Expense) ====================
 
 export const travelExpenseTypes = [
-  { value: "passagens", label: "Passagens" },
-  { value: "hospedagem", label: "Hospedagem" },
-  { value: "alimentacao", label: "Alimentação" },
-  { value: "transporte", label: "Transporte" },
-  { value: "locacao-equipamentos", label: "Locação de equipamentos" },
+  { value: "travel_tickets", label: "Passagens" },
+  { value: "lodging", label: "Hospedagem" },
+  { value: "meals", label: "Alimentação" },
+  { value: "transport", label: "Transporte" },
+  { value: "equipment_rental", label: "Locação de equipamentos" },
 ];
 
 // Travel: artist mandatory + travel reason mandatory
@@ -251,146 +259,146 @@ export const travelExpenseTypes = [
 // ==================== PRODUCTS (Expense) ====================
 
 export const expenseProductTypes = [
-  { value: "equipamentos", label: "Equipamentos" },
+  { value: "equipment", label: "Equipamentos" },
   { value: "merchandising", label: "Merchandising" },
-  { value: "cenografia-pirotecnia", label: "Cenografia / Pirotecnia" },
+  { value: "set_design_pyrotechnics", label: "Cenografia / Pirotecnia" },
 ];
 
 // Equipment and merchandising: only the artist is mandatory
 // Set design/pyrotechnics: artist mandatory + event/show mandatory
-export const expenseProductsRequiringEvent = ["cenografia-pirotecnia"];
+export const expenseProductsRequiringEvent = ["set_design_pyrotechnics"];
 
 // ==================== ADMINISTRATIVE (Expense) ====================
 
 export const administrativeExpenseTypes = [
-  { value: "aluguel", label: "Aluguel" },
-  { value: "agua", label: "Água" },
-  { value: "luz", label: "Luz" },
+  { value: "rent", label: "Aluguel" },
+  { value: "water", label: "Água" },
+  { value: "electricity", label: "Luz" },
   { value: "internet", label: "Internet" },
-  { value: "telefonia", label: "Telefonia" },
-  { value: "correios-logistica", label: "Correios / Logística" },
-  { value: "taxas-bancarias", label: "Taxas bancárias" },
-  { value: "impostos", label: "Impostos" },
-  { value: "juros", label: "Juros" },
-  { value: "multas", label: "Multas" },
+  { value: "telephony", label: "Telefonia" },
+  { value: "postal_logistics", label: "Correios / Logística" },
+  { value: "bank_fees", label: "Taxas bancárias" },
+  { value: "taxes", label: "Impostos" },
+  { value: "interest", label: "Juros" },
+  { value: "fines", label: "Multas" },
   { value: "iof", label: "IOF" },
-  { value: "tarifas-plataformas", label: "Tarifas de plataformas" },
+  { value: "platform_fees", label: "Tarifas de plataformas" },
 ];
 
 // ==================== EXPENSE - ARTIST ====================
 
 export const artistExpenseCategories = [
-  { value: "caches", label: "Cachês" },
-  { value: "suporte-financeiro", label: "Suporte Financeiro" },
+  { value: "performance_fees", label: "Cachês" },
+  { value: "financial_support", label: "Suporte Financeiro" },
 ];
 
 // Performance fee subcategories (artist)
 export const artistFeeTypes = [
-  { value: "show-evento", label: "Show / Evento" },
-  { value: "publicidade", label: "Publicidade" },
+  { value: "show_event", label: "Show / Evento" },
+  { value: "advertising", label: "Publicidade" },
 ];
 
 // ==================== REVENUE - COMPANY (the person counterparty uses the same) ====================
 
 export const companyRevenueCategories = [
-  { value: "receitas-musicais", label: "Receitas Musicais" },
-  { value: "servicos", label: "Serviços" },
-  { value: "produtos", label: "Produtos" },
-  { value: "receitas-contratuais", label: "Receitas Contratuais" },
+  { value: "music_revenue", label: "Receitas Musicais" },
+  { value: "services", label: "Serviços" },
+  { value: "products", label: "Produtos" },
+  { value: "contractual_revenue", label: "Receitas Contratuais" },
   { value: "receitas-internas", label: "Receitas Internas" },
 ];
 
 // Music revenue subcategories
 export const musicRevenueTypes = [
-  { value: "participacao-show-evento", label: "Participação em Show/Evento" },
-  { value: "venda-show-fechado", label: "Venda de Show Fechado" },
-  { value: "direitos-autorais", label: "Direitos autorais" },
-  { value: "direitos-conexos", label: "Direitos Conexos" },
-  { value: "external-rights-streaming", label: "Recebimentos externos de streaming" },
-  { value: "licenciamento-obra", label: "Licenciamento de Obra" },
-  { value: "licenciamento-fonograma", label: "Licenciamento de Fonograma" },
-  { value: "sincronizacao", label: "Sincronização" },
-  { value: "venda-beats", label: "Venda de Beats" },
+  { value: "show_event_participation", label: "Participação em Show/Evento" },
+  { value: "closed_show_sale", label: "Venda de Show Fechado" },
+  { value: "copyright", label: "Direitos autorais" },
+  { value: "neighboring_rights", label: "Direitos Conexos" },
+  { value: "external_rights_streaming", label: "Recebimentos externos de streaming" },
+  { value: "work_licensing", label: "Licenciamento de Obra" },
+  { value: "phonogram_licensing", label: "Licenciamento de Fonograma" },
+  { value: "synchronization", label: "Sincronização" },
+  { value: "beat_sales", label: "Venda de Beats" },
 ];
 
 // Music revenues with artist + project
 export const musicRevenueRequiringArtistAndProject = [
-  "direitos-autorais",
-  "direitos-conexos",
-  "external-rights-streaming",
-  "licenciamento-obra",
-  "licenciamento-fonograma",
-  "sincronizacao",
-  "venda-beats",
+  "copyright",
+  "neighboring_rights",
+  "external_rights_streaming",
+  "work_licensing",
+  "phonogram_licensing",
+  "synchronization",
+  "beat_sales",
 ];
 
 // Music revenues with the artist only (no project)
 export const musicRevenueRequiringArtistOnly = [
-  "participacao-show-evento",
-  "venda-show-fechado",
+  "show_event_participation",
+  "closed_show_sale",
 ];
 
 // Services subcategories (revenue)
 export const revenueServiceTypes = [
-  { value: "producao-musical", label: "Produção Musical" },
-  { value: "producao-audiovisual", label: "Produção audiovisual" },
-  { value: "marketing-divulgacao", label: "Marketing / Divulgação" },
-  { value: "design-grafico", label: "Design gráfico" },
-  { value: "criacao-site", label: "Criação de Site" },
-  { value: "gestao-redes-sociais", label: "Gestão de Redes Sociais" },
-  { value: "trafego-pago", label: "Tráfego Pago" },
-  { value: "consultoria", label: "Consultoria" },
-  { value: "gravacao-estudio", label: "Gravação em Estúdio" },
-  { value: "mixagem", label: "Mixagem" },
-  { value: "masterizacao", label: "Masterização" },
-  { value: "sessao-producao", label: "Sessão de Produção" },
-  { value: "ensaio", label: "Ensaio" },
-  { value: "locacao-estudio", label: "Locação de Estúdio" },
-  { value: "locacao-equipamentos", label: "Locação de equipamentos" },
+  { value: "music_production", label: "Produção Musical" },
+  { value: "audiovisual_production", label: "Produção audiovisual" },
+  { value: "marketing_promotion", label: "Marketing / Divulgação" },
+  { value: "graphic_design", label: "Design gráfico" },
+  { value: "website_creation", label: "Criação de Site" },
+  { value: "social_media_management", label: "Gestão de Redes Sociais" },
+  { value: "paid_traffic", label: "Tráfego Pago" },
+  { value: "consulting", label: "Consultoria" },
+  { value: "studio_recording", label: "Gravação em Estúdio" },
+  { value: "mixing", label: "Mixagem" },
+  { value: "mastering", label: "Masterização" },
+  { value: "production_session", label: "Sessão de Produção" },
+  { value: "rehearsal", label: "Ensaio" },
+  { value: "studio_rental", label: "Locação de Estúdio" },
+  { value: "equipment_rental", label: "Locação de equipamentos" },
 ];
 
 // Services (revenue) with artist + project
 export const revenueServicesRequiringArtistAndProject = [
-  "producao-musical",
-  "producao-audiovisual",
-  "marketing-divulgacao",
-  "design-grafico",
-  "trafego-pago",
-  "gravacao-estudio",
-  "mixagem",
-  "masterizacao",
-  "sessao-producao",
+  "music_production",
+  "audiovisual_production",
+  "marketing_promotion",
+  "graphic_design",
+  "paid_traffic",
+  "studio_recording",
+  "mixing",
+  "mastering",
+  "production_session",
 ];
 
 // Services (revenue) with the artist only (no mandatory project)
 export const revenueServicesRequiringArtistOnly = [
-  "criacao-site",
-  "gestao-redes-sociais",
-  "ensaio",
+  "website_creation",
+  "social_media_management",
+  "rehearsal",
 ];
 
 // Products subcategories (revenue)
 export const revenueProductTypes = [
-  { value: "venda-merchandising", label: "Venda de Merchandising" },
-  { value: "venda-produtos-fisicos", label: "Venda de Produtos Físicos" },
-  { value: "venda-produtos-digitais", label: "Venda de Produtos Digitais" },
-  { value: "venda-nfts", label: "Venda de NFTs / Ativos Digitais" },
-  { value: "beats-avulsos", label: "Beats Avulsos" },
-  { value: "pack-beats", label: "Pack de Beats" },
-  { value: "sample-packs", label: "Sample Packs" },
-  { value: "presets-plugins", label: "Presets / Plugins" },
+  { value: "merchandise_sales", label: "Venda de Merchandising" },
+  { value: "physical_product_sales", label: "Venda de Produtos Físicos" },
+  { value: "digital_product_sales", label: "Venda de Produtos Digitais" },
+  { value: "nft_digital_asset_sales", label: "Venda de NFTs / Ativos Digitais" },
+  { value: "single_beats", label: "Beats Avulsos" },
+  { value: "beat_packs", label: "Pack de Beats" },
+  { value: "sample_packs", label: "Sample Packs" },
+  { value: "presets_plugins", label: "Presets / Plugins" },
 ];
 
 // Contractual revenue subcategories
 export const contractualRevenueTypes = [
   { value: "repasse-contrato", label: "Repasse de Contrato" },
-  { value: "comissao", label: "Comissão" },
-  { value: "fee-administrativo", label: "Fee Administrativo" },
-  { value: "reembolso-recebido", label: "Reembolso Recebido" },
-  { value: "multa-contratual", label: "Multa Contratual" },
-  { value: "bonus-incentivo", label: "Bônus / Incentivo" },
-  { value: "patrocinio", label: "Patrocínio" },
-  { value: "apoio-cultural", label: "Apoio Cultural / Incentivo Fiscal" },
+  { value: "commission", label: "Comissão" },
+  { value: "administrative_fee", label: "Fee Administrativo" },
+  { value: "reimbursement_received", label: "Reembolso Recebido" },
+  { value: "contractual_fine", label: "Multa Contratual" },
+  { value: "bonus_incentive", label: "Bônus / Incentivo" },
+  { value: "sponsorship", label: "Patrocínio" },
+  { value: "cultural_support", label: "Apoio Cultural / Incentivo Fiscal" },
 ];
 
 // ==================== REVENUE - ARTIST ====================
@@ -400,104 +408,108 @@ export const contractualRevenueTypes = [
  * before the backfill hold the legacy phrase: read them through
  * `canonicalTransactionCategory`. The web only writes the canonical id.
  */
-export const EXTERNAL_RIGHTS_RECEIPTS_CATEGORY = "external_rights_receipts";
-export const LEGACY_EXTERNAL_RIGHTS_RECEIPTS_CATEGORY = "recebimentos externos de direitos";
+export { EXTERNAL_RIGHTS_RECEIPTS_CATEGORY, LEGACY_EXTERNAL_RIGHTS_RECEIPTS_CATEGORY };
 
+/**
+ * Canonical id of a stored category or subcategory: the external-rights phrase and
+ * every legacy Portuguese taxonomy slug (TX1, migration 20260930000018) map to the
+ * canonical English id; anything else (canonical ids, free text) is returned untouched.
+ */
 export function canonicalTransactionCategory(value: string): string {
-  return value === LEGACY_EXTERNAL_RIGHTS_RECEIPTS_CATEGORY ? EXTERNAL_RIGHTS_RECEIPTS_CATEGORY : value;
+  return canonicalTransactionSlug(value);
 }
 
 export const artistRevenueCategories = [
-  { value: "cache-show", label: "Cachê de show" },
+  { value: "show_fee", label: "Cachê de show" },
   { value: EXTERNAL_RIGHTS_RECEIPTS_CATEGORY, label: "Recebimentos externos de direitos" },
-  { value: "direitos-autorais", label: "Direitos autorais" },
-  { value: "licenciamento", label: "Licenciamento" },
-  { value: "adiantamento", label: "Adiantamento" },
-  { value: "outros", label: "Outros" },
+  { value: "copyright", label: "Direitos autorais" },
+  { value: "licensing", label: "Licenciamento" },
+  { value: "advance", label: "Adiantamento" },
+  { value: "other", label: "Outros" },
 ];
 
 // ==================== INVESTMENT ====================
 
 export const investmentCategories = [
-  { value: "equipamentos", label: "Equipamentos" },
-  { value: "infraestrutura", label: "Infraestrutura" },
-  { value: "tecnologia", label: "Tecnologia" },
+  { value: "equipment", label: "Equipamentos" },
+  { value: "infrastructure", label: "Infraestrutura" },
+  { value: "technology", label: "Tecnologia" },
   { value: "marketing", label: "Marketing" },
-  { value: "formacao", label: "Formação / Capacitação" },
+  { value: "training", label: "Formação / Capacitação" },
 ];
 
 // Items per Investment category
 export const investmentEquipmentItems = [
-  { value: "microfone", label: "Microfone" },
-  { value: "fone-ouvido", label: "Fone de ouvido" },
-  { value: "mesa-som", label: "Mesa de som" },
-  { value: "monitor-referencia", label: "Monitor de referência" },
-  { value: "interface-audio", label: "Interface de áudio" },
-  { value: "instrumento-musical", label: "Instrumento musical" },
+  { value: "microphone", label: "Microfone" },
+  { value: "headphones", label: "Fone de ouvido" },
+  { value: "mixing_console", label: "Mesa de som" },
+  { value: "reference_monitor", label: "Monitor de referência" },
+  { value: "audio_interface", label: "Interface de áudio" },
+  { value: "musical_instrument", label: "Instrumento musical" },
   { value: "camera", label: "Câmera" },
-  { value: "iluminacao", label: "Iluminação" },
-  { value: "computador", label: "Computador / Notebook" },
-  { value: "acessorios", label: "Acessórios" },
-  { value: "outros", label: "Outros" },
+  { value: "lighting", label: "Iluminação" },
+  { value: "computer", label: "Computador / Notebook" },
+  { value: "accessories", label: "Acessórios" },
+  { value: "other", label: "Outros" },
 ];
 
 export const investmentInfrastructureItems = [
-  { value: "reforma-escritorio", label: "Reforma de escritório" },
-  { value: "reforma-estudio", label: "Reforma de estúdio" },
-  { value: "mobiliario", label: "Mobiliário" },
-  { value: "tratamento-acustico", label: "Tratamento acústico" },
-  { value: "ar-condicionado", label: "Ar condicionado" },
-  { value: "eletrica", label: "Instalação elétrica" },
+  { value: "office_renovation", label: "Reforma de escritório" },
+  { value: "studio_renovation", label: "Reforma de estúdio" },
+  { value: "furniture", label: "Mobiliário" },
+  { value: "acoustic_treatment", label: "Tratamento acústico" },
+  { value: "air_conditioning", label: "Ar condicionado" },
+  { value: "electrical_installation", label: "Instalação elétrica" },
   { value: "internet", label: "Internet" },
-  { value: "seguranca", label: "Segurança" },
-  { value: "outros", label: "Outros" },
+  { value: "security", label: "Segurança" },
+  { value: "other", label: "Outros" },
 ];
 
 export const investmentTechnologyItems = [
-  { value: "software-daw", label: "Software DAW" },
-  { value: "plugins-vst", label: "Plugins / VST" },
-  { value: "licenca-software", label: "Licença de software" },
-  { value: "servicos-cloud", label: "Serviços de cloud" },
+  { value: "daw_software", label: "Software DAW" },
+  { value: "vst_plugins", label: "Plugins / VST" },
+  { value: "software_license", label: "Licença de software" },
+  { value: "cloud_services", label: "Serviços de cloud" },
   { value: "streaming", label: "Plataforma de streaming" },
-  { value: "armazenamento", label: "Armazenamento" },
-  { value: "crm-erp", label: "CRM / ERP" },
-  { value: "automacao", label: "Automação" },
-  { value: "ia", label: "Inteligência Artificial" },
-  { value: "outros", label: "Outros" },
+  { value: "storage", label: "Armazenamento" },
+  { value: "crm_erp", label: "CRM / ERP" },
+  { value: "automation", label: "Automação" },
+  { value: "ai", label: "Inteligência Artificial" },
+  { value: "other", label: "Outros" },
 ];
 
 export const investmentMarketingItems = [
   { value: "branding", label: "Branding" },
   { value: "website", label: "Site" },
-  { value: "redes-sociais", label: "Redes sociais" },
-  { value: "assessoria-imprensa", label: "Assessoria de imprensa" },
-  { value: "material-promocional", label: "Material promocional" },
-  { value: "evento-lancamento", label: "Evento de lançamento" },
-  { value: "pesquisa-mercado", label: "Pesquisa de mercado" },
-  { value: "fotografia", label: "Fotografia" },
-  { value: "videoclipe", label: "Videoclipe" },
-  { value: "outros", label: "Outros" },
+  { value: "social_media", label: "Redes sociais" },
+  { value: "press_relations", label: "Assessoria de imprensa" },
+  { value: "promotional_material", label: "Material promocional" },
+  { value: "launch_event", label: "Evento de lançamento" },
+  { value: "market_research", label: "Pesquisa de mercado" },
+  { value: "photography", label: "Fotografia" },
+  { value: "music_video", label: "Videoclipe" },
+  { value: "other", label: "Outros" },
 ];
 
 export const investmentTrainingItems = [
-  { value: "curso-producao", label: "Curso de produção musical" },
-  { value: "curso-mixagem", label: "Curso de mixagem / masterização" },
-  { value: "curso-gestao", label: "Curso de gestão" },
-  { value: "curso-marketing", label: "Curso de marketing" },
+  { value: "production_course", label: "Curso de produção musical" },
+  { value: "mixing_mastering_course", label: "Curso de mixagem / masterização" },
+  { value: "management_course", label: "Curso de gestão" },
+  { value: "marketing_course", label: "Curso de marketing" },
   { value: "workshop", label: "Workshop" },
-  { value: "mentoria", label: "Mentoria" },
-  { value: "certificacao", label: "Certificação" },
-  { value: "evento-networking", label: "Evento / Networking" },
-  { value: "outros", label: "Outros" },
+  { value: "mentoring", label: "Mentoria" },
+  { value: "certification", label: "Certificação" },
+  { value: "networking_event", label: "Evento / Networking" },
+  { value: "other", label: "Outros" },
 ];
 
 export const getInvestmentItemsByCategory = (category: string): { value: string; label: string }[] => {
-  switch (category) {
-    case "equipamentos": return investmentEquipmentItems;
-    case "infraestrutura": return investmentInfrastructureItems;
-    case "tecnologia": return investmentTechnologyItems;
+  switch (canonicalTransactionSlug(category)) {
+    case "equipment": return investmentEquipmentItems;
+    case "infrastructure": return investmentInfrastructureItems;
+    case "technology": return investmentTechnologyItems;
     case "marketing": return investmentMarketingItems;
-    case "formacao": return investmentTrainingItems;
+    case "training": return investmentTrainingItems;
     default: return [];
   }
 };
@@ -512,19 +524,19 @@ export const taxCategories = [
   { value: "cofins", label: "COFINS" },
   { value: "csll", label: "CSLL" },
   { value: "icms", label: "ICMS" },
-  { value: "simples-nacional", label: "Simples Nacional" },
+  { value: "simples_nacional", label: "Simples Nacional" },
   { value: "das", label: "DAS" },
   { value: "iptu", label: "IPTU" },
   { value: "ipva", label: "IPVA" },
-  { value: "outros", label: "Outros" },
+  { value: "other", label: "Outros" },
 ];
 
 // ==================== TRANSFER ====================
 
 export const transferCategories = [
-  { value: "entre-contas", label: "Entre contas" },
-  { value: "aplicacao", label: "Aplicação" },
-  { value: "resgate", label: "Resgate" },
+  { value: "between_accounts", label: "Entre contas" },
+  { value: "investment_application", label: "Aplicação" },
+  { value: "investment_redemption", label: "Resgate" },
 ];
 
 // ==================== HELPERS ====================
@@ -561,11 +573,12 @@ export const getCategoriesForTransactionType = (
 export const getSubcategoriesForCategory = (
   transactionType: string,
   counterpartyType: string,
-  category: string
+  rawCategory: string
 ): { value: string; label: string }[] => {
+  const category = canonicalTransactionSlug(rawCategory);
   // Artist + Expense
   if (counterpartyType === "artist" && transactionType === "expense") {
-    if (category === "caches") return artistFeeTypes;
+    if (category === "performance_fees") return artistFeeTypes;
     return [];
   }
 
@@ -573,21 +586,21 @@ export const getSubcategoriesForCategory = (
   if (counterpartyType === "company") {
     if (transactionType === "expense") {
       switch (category) {
-        case "servicos": return expenseServiceTypes;
-        case "produtos": return expenseProductTypes;
-        case "administrativo": return administrativeExpenseTypes;
+        case "services": return expenseServiceTypes;
+        case "products": return expenseProductTypes;
+        case "administrative": return administrativeExpenseTypes;
         case "marketing": return marketingExpenseTypes;
-        case "viagens": return travelExpenseTypes;
+        case "travel": return travelExpenseTypes;
         default: return [];
       }
     }
 
     if (transactionType === "revenue") {
       switch (category) {
-        case "receitas-musicais": return musicRevenueTypes;
-        case "servicos": return revenueServiceTypes;
-        case "produtos": return revenueProductTypes;
-        case "receitas-contratuais": return contractualRevenueTypes;
+        case "music_revenue": return musicRevenueTypes;
+        case "services": return revenueServiceTypes;
+        case "products": return revenueProductTypes;
+        case "contractual_revenue": return contractualRevenueTypes;
         default: return [];
       }
     }
@@ -597,19 +610,19 @@ export const getSubcategoriesForCategory = (
   if (counterpartyType === "individual") {
     if (transactionType === "expense") {
       switch (category) {
-        case "remuneracao": return individualCompensationTypes;
-        case "servicos-pf": return individualServiceTypes;
-        case "reembolso": return individualReimbursementTypes;
+        case "compensation": return individualCompensationTypes;
+        case "individual_services": return individualServiceTypes;
+        case "reimbursement": return individualReimbursementTypes;
         default: return [];
       }
     }
 
     if (transactionType === "revenue") {
       switch (category) {
-        case "receitas-musicais": return musicRevenueTypes;
-        case "servicos": return revenueServiceTypes;
-        case "produtos": return revenueProductTypes;
-        case "receitas-contratuais": return contractualRevenueTypes;
+        case "music_revenue": return musicRevenueTypes;
+        case "services": return revenueServiceTypes;
+        case "products": return revenueProductTypes;
+        case "contractual_revenue": return contractualRevenueTypes;
         default: return [];
       }
     }
@@ -623,27 +636,27 @@ export const getSubcategoriesForCategory = (
 
 // Checks whether an expense service requires artist + project
 export const isServiceRequiringArtistAndProject = (subcategory: string): boolean => {
-  return expenseServicesRequiringArtistAndProject.includes(subcategory);
+  return expenseServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(subcategory));
 };
 
 // Checks whether an expense product requires an event
 export const isProductRequiringEvent = (subcategory: string): boolean => {
-  return expenseProductsRequiringEvent.includes(subcategory);
+  return expenseProductsRequiringEvent.includes(canonicalTransactionSlug(subcategory));
 };
 
 // Checks whether a music revenue requires artist + project
 export const isMusicRevenueRequiringArtistAndProject = (subcategory: string): boolean => {
-  return musicRevenueRequiringArtistAndProject.includes(subcategory);
+  return musicRevenueRequiringArtistAndProject.includes(canonicalTransactionSlug(subcategory));
 };
 
 // Checks whether a revenue service requires artist + project
 export const isRevenueServiceRequiringArtistAndProject = (subcategory: string): boolean => {
-  return revenueServicesRequiringArtistAndProject.includes(subcategory);
+  return revenueServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(subcategory));
 };
 
 // Checks whether a revenue service requires only the artist
 export const isRevenueServiceRequiringArtistOnly = (subcategory: string): boolean => {
-  return revenueServicesRequiringArtistOnly.includes(subcategory);
+  return revenueServicesRequiringArtistOnly.includes(canonicalTransactionSlug(subcategory));
 };
 
 
@@ -671,8 +684,9 @@ const TOP_LEVEL_CATEGORY_LISTS: ReadonlyArray<ReadonlyArray<{ value: string; lab
 ];
 
 /**
- * Stored business data (taxonomy decision pending — canonical map
- * BLK-TRANSACTION-CATEGORY-TAXONOMY); the UI never shows the raw slug.
+ * PT-BR label registry of the platform taxonomy: canonical English id -> display
+ * label (the text users always saw). Legacy slugs are canonicalized before the
+ * lookup (transactionCategoryLabel); the UI never shows the raw slug.
  */
 const CATEGORY_LABEL_BY_SLUG: ReadonlyMap<string, string> = new Map(
   TRANSACTION_CATEGORY_OPTION_LISTS.flatMap((options) => options.map((o) => [o.value, o.label] as const)),
@@ -709,8 +723,9 @@ export const LEGACY_CATEGORY_SUFFIX = " (classificação anterior)";
  * - `ruleCategories`: categories of the category-rule store (what the
  *   transaction form writes) and names of the tenant's financial categories
  *   (what the server keyword rules write);
- * - every top-level taxonomy slug (historical rows, OFX placeholder "outros").
- * The API filters by exact value, so a slug whose label equals a rule
+ * - every top-level taxonomy slug (historical rows, OFX placeholder "other").
+ * The API filters by exact value and expands a platform slug to every persisted
+ * spelling (canonical + legacy), so the option value is the canonical id. A slug whose label equals a rule
  * category is kept as its own option, marked with LEGACY_CATEGORY_SUFFIX.
  */
 export function buildTransactionCategoryFilterOptions(
@@ -718,7 +733,7 @@ export function buildTransactionCategoryFilterOptions(
 ): Array<{ value: string; label: string }> {
   const byValue = new Map<string, string>();
   for (const raw of ruleCategories) {
-    const value = typeof raw === "string" ? raw.trim() : "";
+    const value = typeof raw === "string" ? canonicalTransactionCategory(raw.trim()) : "";
     if (value && !byValue.has(value)) byValue.set(value, transactionCategoryLabel(value));
   }
   const ruleLabels = new Set(Array.from(byValue.values()).map((label) => label.toLocaleLowerCase("pt-BR")));

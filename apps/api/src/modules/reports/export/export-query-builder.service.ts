@@ -11,6 +11,7 @@ import {
   getReportFormContract,
 } from '../form-contracts/report-form-contracts';
 import { fieldCopyPtBr } from '../i18n/report-copy.pt-br';
+import { transactionSlugVariants } from '../../transactions/transaction-category-slugs';
 
 const IDENT = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -84,6 +85,15 @@ export class ExportQueryBuilderService {
     if (params.filters) {
       for (const [key, value] of Object.entries(params.filters)) {
         if (!def.filterableColumns.includes(key)) throw new BadRequestException(`O filtro por ${fieldCopyPtBr(key)} não é permitido nesta exportação.`);
+        // TX1: platform-owned transaction taxonomy slugs match every persisted spelling (canonical + legacy).
+        const variants = def.tableName === 'transactions' && physical(key) === 'category' && typeof value === 'string'
+          ? transactionSlugVariants(value)
+          : [];
+        if (variants.length > 1) {
+          parameters.push(variants);
+          where.push(`${quote(physical(key))} = ANY($${parameters.length}::text[])`);
+          continue;
+        }
         parameters.push(value);
         where.push(`${quote(physical(key))} = $${parameters.length}`);
       }

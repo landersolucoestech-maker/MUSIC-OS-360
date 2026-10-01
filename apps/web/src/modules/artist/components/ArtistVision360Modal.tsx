@@ -89,6 +89,7 @@ import { useGoals } from "@/modules/marketing/hooks/useGoals";
 import type { Goal, GoalType } from "@/modules/marketing/types/marketing.types";
 import { ArtistGoalStatus, ARTIST_GOAL_STATUS_LABELS_PT_BR, statusLabelPtBr, type StatusDomain } from "@music-os-360/types";
 import { transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
+import { NATURE_BUCKETS, matchesNatureBucket } from "@/modules/artist/lib/revenue-nature";
 import {
   useContracts,
   type ContractWithRelations,
@@ -123,14 +124,7 @@ const CAMPAIGN_SECTIONS: Array<{ key: string; label: string; status: string[] }>
   { key: "planned", label: "Campanhas Planejadas", status: ["draft", "agendada"] },
 ];
 
-// ── Finance: revenue by nature ──────────────────────────────────────
-const NATURE_BUCKETS: Array<{ label: string; keywords: string[] }> = [
-  { label: "Royalties", keywords: ["royalt"] },
-  { label: "Shows", keywords: ["show", "cache", "cachê"] },
-  { label: "Licenciamentos", keywords: ["licenc", "sync"] },
-  { label: "Publicidade", keywords: ["public", "publi", "ads", "anuncio", "patroc"] },
-  { label: "Distribuição", keywords: ["distrib", "streaming"] },
-];
+// ── Finance: revenue by nature (NATURE_BUCKETS in ../lib/revenue-nature) ──
 
 // ── Contracts: filters by type ────────────────────────────────────────────
 const CONTRACT_FILTERS: Array<{ key: string; label: string; types?: string[] }> = [
@@ -539,11 +533,11 @@ export function ArtistVision360Modal({
   const revenueByNature = NATURE_BUCKETS.map((b) => ({
     label: b.label,
     total: paidRevenue
-      .filter((t) => b.keywords.some((k) => String(t.category ?? "").toLowerCase().includes(k)))
+      .filter((t) => matchesNatureBucket(b, t.category))
       .reduce((s, t) => s + toNumber(t.amount), 0),
   }));
   const revenueByNatureOther = paidRevenue
-    .filter((t) => !NATURE_BUCKETS.some((b) => b.keywords.some((k) => String(t.category ?? "").toLowerCase().includes(k))))
+    .filter((t) => !NATURE_BUCKETS.some((b) => matchesNatureBucket(b, t.category)))
     .reduce((s, t) => s + toNumber(t.amount), 0);
   const totalPending = artistTransactions
     .filter((t) => t.status === "pending")

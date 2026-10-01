@@ -17,6 +17,7 @@ import { canonicalCrmInternalData, canonicalLeadServiceType, canonicalServicePay
 import { LANGUAGE_LABEL_TO_CODE, LEGACY_WORK_VALUES } from '../../works/work-legacy-fields';
 import { LEGACY_PHONOGRAM_VALUES, canonicalCountryCode } from '../../phonograms/phonogram-legacy-fields';
 import { LEGACY_TRANSACTION_VALUES } from '../../transactions/transaction-legacy-fields';
+import { canonicalTransactionSlug } from '../../transactions/transaction-category-slugs';
 import { canonicalInvoicePaymentMethod, INVOICE_PAYMENT_METHODS } from '../../invoices/invoice-legacy-fields';
 import { isMultiValueLabelColumn, valueFromExportLabel } from '../i18n/value-labels.pt-br';
 import { canonicalClientPersonType, canonicalClientPriority } from '../../clients/client-legacy-fields';
@@ -114,6 +115,9 @@ const CANONICALIZERS: Readonly<Record<string, Readonly<Record<string, ColumnCano
     payment_method: fromMap(LEGACY_TRANSACTION_VALUES.paymentMethod),
     payment_type: fromMap(LEGACY_TRANSACTION_VALUES.paymentType),
     installment_interval: fromMap(LEGACY_TRANSACTION_VALUES.installmentInterval),
+    // TX1: platform-owned taxonomy slugs; free text (user/rule category names) passes through untouched.
+    category: canonicalTransactionSlug,
+    subcategory: canonicalTransactionSlug,
   },
   // An old invoices export carries dinheiro/cartao_credito/... (chk_invoices_payment_method).
   invoices: { payment_method: canonicalInvoicePaymentMethod },

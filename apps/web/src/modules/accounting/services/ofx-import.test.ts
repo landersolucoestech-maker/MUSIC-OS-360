@@ -47,7 +47,7 @@ describe("OFX import → canonical POST /transactions body", () => {
     expect(ofxLineToTransactionPayload(credit)).toEqual({
       transactionType: "revenue",
       counterpartyType: "company",
-      category: "outros",
+      category: "other",
       description: "Spotify royalties",
       amount: 1500.5,
       transactionDate: "2026-05-10",

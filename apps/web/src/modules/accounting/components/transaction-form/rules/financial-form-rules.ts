@@ -9,6 +9,7 @@ import {
   revenueServicesRequiringArtistAndProject,
   revenueServicesRequiringArtistOnly,
 } from "@/modules/accounting/constants/transaction-constants";
+import { canonicalTransactionSlug } from "@/modules/accounting/constants/transaction-category-slugs";
 
 export interface FinancialFormRules {
   showClientType:      boolean;
@@ -52,7 +53,10 @@ interface RuleContext {
   hasTransactionType: boolean;
 }
 
-function buildContext(f: TransactionFormData): RuleContext {
+// Category/subcategory are compared by their canonical English id; a stored row that still
+// holds the legacy Portuguese slug (not yet backfilled) behaves exactly like its canonical twin.
+function buildContext(raw: TransactionFormData): RuleContext {
+  const f = { ...raw, category: canonicalTransactionSlug(raw.category) };
   const isTax       = f.transactionType === "tax";
   const isTransfer = f.transactionType === "transfer";
   const isInvestment  = f.transactionType === "investment";
@@ -65,16 +69,16 @@ function buildContext(f: TransactionFormData): RuleContext {
   return {
     isTax, isTransfer, isInvestment, isExpense, isRevenue,
     isCompany, isArtist, isPerson, isCompanyOrPerson,
-    isExpenseService:             isExpense && isCompanyOrPerson && f.category === "servicos",
+    isExpenseService:             isExpense && isCompanyOrPerson && f.category === "services",
     isExpenseMarketing:           isExpense && isCompanyOrPerson && f.category === "marketing",
-    isExpenseTravel:              isExpense && isCompanyOrPerson && f.category === "viagens",
-    isExpenseProduct:             isExpense && isCompanyOrPerson && f.category === "produtos",
-    isExpenseFinancialSupport:   isExpense && isCompanyOrPerson && f.category === "suporte-financeiro",
-    isExpenseArtistFees:       isExpense && isArtist && f.category === "caches",
-    isExpenseArtistFinancialSupport: isExpense && isArtist && f.category === "suporte-financeiro",
-    isRevenueMusic: isRevenue && isCompanyOrPerson && f.category === "receitas-musicais",
-    isRevenueService: isRevenue && isCompanyOrPerson && f.category === "servicos",
-    isRevenueProduct: isRevenue && isCompanyOrPerson && f.category === "produtos",
+    isExpenseTravel:              isExpense && isCompanyOrPerson && f.category === "travel",
+    isExpenseProduct:             isExpense && isCompanyOrPerson && f.category === "products",
+    isExpenseFinancialSupport:   isExpense && isCompanyOrPerson && f.category === "financial_support",
+    isExpenseArtistFees:       isExpense && isArtist && f.category === "performance_fees",
+    isExpenseArtistFinancialSupport: isExpense && isArtist && f.category === "financial_support",
+    isRevenueMusic: isRevenue && isCompanyOrPerson && f.category === "music_revenue",
+    isRevenueService: isRevenue && isCompanyOrPerson && f.category === "services",
+    isRevenueProduct: isRevenue && isCompanyOrPerson && f.category === "products",
     hasTransactionType: Boolean(f.transactionType),
   };
 }
@@ -105,7 +109,7 @@ export const DISPLAY_RULES: Record<BooleanRuleKey, RulePredicate> = {
   },
 
   showArtist: (f, ctx) =>
-    (ctx.isExpenseService  && expenseServicesRequiringArtistAndProject.includes(f.subcategory)) ||
+    (ctx.isExpenseService  && expenseServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(f.subcategory))) ||
     (ctx.isExpenseMarketing && Boolean(f.subcategory)) ||
     (ctx.isExpenseTravel   && Boolean(f.subcategory)) ||
     (ctx.isExpenseProduct  && Boolean(f.subcategory)) ||
@@ -114,26 +118,26 @@ export const DISPLAY_RULES: Record<BooleanRuleKey, RulePredicate> = {
     ctx.isExpenseArtistFinancialSupport ||
     (ctx.isRevenueMusic && Boolean(f.subcategory)) ||
     (ctx.isRevenueService && (
-      revenueServicesRequiringArtistAndProject.includes(f.subcategory) ||
-      revenueServicesRequiringArtistOnly.includes(f.subcategory)
+      revenueServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(f.subcategory)) ||
+      revenueServicesRequiringArtistOnly.includes(canonicalTransactionSlug(f.subcategory))
     )) ||
     (ctx.isRevenueProduct && Boolean(f.subcategory)),
 
   showProject: (f, ctx) =>
-    (ctx.isExpenseService   && expenseServicesRequiringArtistAndProject.includes(f.subcategory)) ||
+    (ctx.isExpenseService   && expenseServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(f.subcategory))) ||
     (ctx.isExpenseMarketing && Boolean(f.subcategory) && Boolean(f.artistId)) ||
-    (ctx.isRevenueMusic   && musicRevenueRequiringArtistAndProject.includes(f.subcategory)) ||
-    (ctx.isRevenueService   && revenueServicesRequiringArtistAndProject.includes(f.subcategory)),
+    (ctx.isRevenueMusic   && musicRevenueRequiringArtistAndProject.includes(canonicalTransactionSlug(f.subcategory))) ||
+    (ctx.isRevenueService   && revenueServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(f.subcategory))),
 
   projectRequired: (f, ctx) =>
-    (ctx.isExpenseService  && expenseServicesRequiringArtistAndProject.includes(f.subcategory)) ||
-    (ctx.isRevenueMusic  && musicRevenueRequiringArtistAndProject.includes(f.subcategory)) ||
-    (ctx.isRevenueService  && revenueServicesRequiringArtistAndProject.includes(f.subcategory)),
+    (ctx.isExpenseService  && expenseServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(f.subcategory))) ||
+    (ctx.isRevenueMusic  && musicRevenueRequiringArtistAndProject.includes(canonicalTransactionSlug(f.subcategory))) ||
+    (ctx.isRevenueService  && revenueServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(f.subcategory))),
 
   showEvent: (f, ctx) =>
-    (ctx.isExpenseProduct      && expenseProductsRequiringEvent.includes(f.subcategory)) ||
-    (ctx.isExpenseArtistFees && f.subcategory === "show-evento") ||
-    (ctx.isRevenueMusic       && ["participacao-show-evento", "venda-show-fechado"].includes(f.subcategory)),
+    (ctx.isExpenseProduct      && expenseProductsRequiringEvent.includes(canonicalTransactionSlug(f.subcategory))) ||
+    (ctx.isExpenseArtistFees && canonicalTransactionSlug(f.subcategory) === "show_event") ||
+    (ctx.isRevenueMusic       && ["show_event_participation", "closed_show_sale"].includes(canonicalTransactionSlug(f.subcategory))),
 
   showSupplier: (_f, ctx) => (ctx.isExpense || ctx.isRevenue) && ctx.isCompanyOrPerson,
 
@@ -141,7 +145,7 @@ export const DISPLAY_RULES: Record<BooleanRuleKey, RulePredicate> = {
 
   showTravelReason: (f, ctx) => ctx.isExpenseTravel && Boolean(f.subcategory),
 
-  showAdvertisingName: (f, ctx) => ctx.isExpenseArtistFees && f.subcategory === "publicidade",
+  showAdvertisingName: (f, ctx) => ctx.isExpenseArtistFees && canonicalTransactionSlug(f.subcategory) === "advertising",
 
   showInstallments: (f) => f.paymentType === "installments",
 };

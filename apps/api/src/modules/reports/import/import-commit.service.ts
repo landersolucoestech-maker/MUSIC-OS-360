@@ -27,6 +27,7 @@ import type { RowValidation } from './import.types';
 import { FinanceCategoryRulesService } from '../../finance-category-rules/finance-category-rules.service';
 import { canonicalImportJsonColumn, canonicalImportValue } from './import-value-canonicalizers';
 import { UNCATEGORIZED_PLACEHOLDER, toRuleTransactionType } from '../../transactions/transactions.service';
+import { canonicalTransactionSlug, isUncategorizedCategory } from '../../transactions/transaction-category-slugs';
 import { canonicalTransactionType } from '../../transactions/transaction-legacy-fields';
 import { artistUrlFieldViolations } from '../../artists/artist-input-sanitizer';
 
@@ -378,7 +379,7 @@ export class ImportCommitService {
 
   /**
    * `transactions.category` is NOT NULL without a default. Manual creation
-   * (TransactionsService) already falls back to "outros" + rule-based
+   * (TransactionsService) already falls back to "other" + rule-based
    * auto-categorization (Task W); the XLSX importer had neither — an
    * empty cell broke the INSERT. Reuses the same
    * FinanceCategoryRulesService.suggestCategoryForTransaction used by
@@ -391,9 +392,10 @@ export class ImportCommitService {
     tenantId: string,
   ): Promise<void> {
     const raw = rowData['category'];
-    let category = (typeof raw === 'string' && raw.trim()) || UNCATEGORIZED_PLACEHOLDER;
+    // TX1: the import writes with its own INSERT, so it applies the same legacy -> canonical slug mapping.
+    let category = canonicalTransactionSlug((typeof raw === 'string' && raw.trim()) || UNCATEGORIZED_PLACEHOLDER) as string;
 
-    if (category.toLowerCase() === UNCATEGORIZED_PLACEHOLDER && this.financeCategoryRules) {
+    if (isUncategorizedCategory(category) && this.financeCategoryRules) {
       const ruleType = toRuleTransactionType(canonicalTransactionType(rowData['transaction_type']));
       const description = rowData['description'];
       if (ruleType && typeof description === 'string' && description.trim()) {
