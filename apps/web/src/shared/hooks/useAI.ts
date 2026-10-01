@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { toUserMessage } from "@/shared/lib/errors";
 export type AIGenerateType =
   | "bio"
-  | "descricao"
+  | "description"
   | "copy"
   | "briefing"
   | "insights"

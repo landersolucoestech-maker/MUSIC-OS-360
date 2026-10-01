@@ -474,7 +474,7 @@ export default function ProfitAndLoss() {
                   </TableHeader>
                   <TableBody>
                     {plByProject.map((p) => (
-                      <TableRow key={p.id} data-testid={`row-projeto-${p.id}`}>
+                      <TableRow key={p.id} data-testid={`row-project-${p.id}`}>
                         <TableCell className="font-medium max-w-xs truncate">{p.name}</TableCell>
                         <TableCell className="text-muted-foreground">{catLabel(p.category)}</TableCell>
                         <TableCell className="text-right text-green-600">{p.revenue > 0 ? formatCurrency(p.revenue) : "—"}</TableCell>

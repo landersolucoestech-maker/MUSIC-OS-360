@@ -36,8 +36,8 @@ export interface AbramusSyncSummary {
   started_at: string;
   finished_at: string;
   duration_ms: number;
-  obras: AbramusSyncCategorySummary;
-  fonogramas: AbramusSyncCategorySummary;
+  works: AbramusSyncCategorySummary;
+  phonograms: AbramusSyncCategorySummary;
   total_fetched: number;
   total_inserted: number;
   total_updated: number;
@@ -63,6 +63,31 @@ export interface AbramusSearchResult {
   title: string;
   iswc?: string | null;
   isrc?: string | null;
+  duration?: string | null;
+  genre?: string | null;
+  composers?: string[] | null;
+  lyricists?: string[] | null;
+  label?: string | null;
+  producers?: string[] | null;
+  registered_at?: string | null;
+  artist_name?: string | null;
+}
+
+export type AbramusKind = "works" | "phonograms";
+
+export interface AbramusSearchResponse {
+  results: AbramusSearchResult[];
+  total?: number;
+  has_more?: boolean;
+  error?: string;
+}
+
+/**
+ * Adapter boundary (read side): the Abramus search endpoint is proxied as-is, so
+ * rows may carry the Abramus external Portuguese field names. They are translated
+ * here into the English internal model; nothing else in the web knows them.
+ */
+type AbramusVendorRow = Partial<AbramusSearchResult> & {
   duracao?: string | null;
   genero?: string | null;
   compositores?: string[] | null;
@@ -71,15 +96,26 @@ export interface AbramusSearchResult {
   produtores?: string[] | null;
   data_registro?: string | null;
   artista_nome?: string | null;
+};
+interface AbramusVendorSearchResponse extends Omit<AbramusSearchResponse, "results"> {
+  results?: AbramusVendorRow[];
 }
 
-export type AbramusKind = "obras" | "fonogramas";
-
-export interface AbramusSearchResponse {
-  results: AbramusSearchResult[];
-  total?: number;
-  has_more?: boolean;
-  error?: string;
+function fromAbramusVendorRow(row: AbramusVendorRow): AbramusSearchResult {
+  return {
+    external_id: row.external_id ?? "",
+    title: row.title ?? "",
+    iswc: row.iswc,
+    isrc: row.isrc,
+    duration: row.duration ?? row.duracao,
+    genre: row.genre ?? row.genero,
+    composers: row.composers ?? row.compositores,
+    lyricists: row.lyricists ?? row.letristas,
+    label: row.label ?? row.gravadora,
+    producers: row.producers ?? row.produtores,
+    registered_at: row.registered_at ?? row.data_registro,
+    artist_name: row.artist_name ?? row.artista_nome,
+  };
 }
 
 export interface AbramusLocalMatch {
@@ -138,10 +174,12 @@ export function useAbramusSearch(kind: AbramusKind, query: string) {
   const trimmed = query.trim();
   return useQuery<AbramusSearchResponse>({
     queryKey: ["abramus", "search", kind, trimmed],
-    queryFn: async () =>
-      api.get<AbramusSearchResponse>(
+    queryFn: async () => {
+      const res = await api.get<AbramusVendorSearchResponse>(
         `/integrations/abramus/search-work?q=${encodeURIComponent(trimmed)}&kind=${kind}`,
-      ),
+      );
+      return { ...res, results: (res?.results ?? []).map(fromAbramusVendorRow) };
+    },
     enabled: trimmed.length >= 2,
     staleTime: 30_000,
   });
@@ -165,7 +203,7 @@ export function useAbramusSearchArtists(query: string) {
 export function useAbramusImport(kind: AbramusKind) {
   return useMutation({
     mutationFn: async (_input: { external_id: string; record?: AbramusSearchResult }): Promise<{ record?: AbramusSearchResult }> =>
-      backendUnavailable(kind === "obras" ? "Importação de obras do ABRAMUS" : "Importação de fonogramas do ABRAMUS"),
+      backendUnavailable(kind === "works" ? "Importação de obras do ABRAMUS" : "Importação de fonogramas do ABRAMUS"),
     onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
@@ -249,7 +287,7 @@ export function useAbramusRegisterWork() {
       );
       return {
         entity: "abramus",
-        kind: "obra",
+        kind: "work",
         local_id: input.local_id,
         external_id: res.external_id ?? "",
         code: res.code ?? res.external_id ?? "",
@@ -259,7 +297,7 @@ export function useAbramusRegisterWork() {
       };
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["obras"] });
+      queryClient.invalidateQueries({ queryKey: ["works"] });
       queryClient.invalidateQueries({ queryKey: ["abramus", "registration-history"] });
       toast.success(`Obra registrada na ABRAMUS. Código: ${data.code}${data.iswc ? ` | ISWC: ${data.iswc}` : ""}`);
     },

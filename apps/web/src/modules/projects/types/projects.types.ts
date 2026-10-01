@@ -29,7 +29,7 @@ export interface ProjectWorkSummary extends WorkRef {
 }
 
 export interface ProjectWithRelations extends Project {
-  artistas?: ArtistRef | null;
+  artist?: ArtistRef | null;
   works?: ProjectWorkSummary[] | null;
 }
 

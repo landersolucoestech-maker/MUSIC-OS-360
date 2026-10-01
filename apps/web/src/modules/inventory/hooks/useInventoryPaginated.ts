@@ -30,7 +30,7 @@ export function useInventoryPaginated({ page, pageSize, search, status, category
   });
 
   return {
-    inventario: result.items,
+    items: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,

@@ -23,7 +23,7 @@ import {
   useNfeStatus,
   useNfeSaveCredentials,
   useNfeDeleteCredentials,
-  type NfeAmbiente,
+  type NfeEnvironment,
   type NfeCertificateType,
 } from "@/modules/integrations/hooks/useNfe";
 
@@ -38,7 +38,7 @@ const REGIME_OPTIONS: { value: string; label: string }[] = [
   { value: "lucro_real", label: "Lucro Real" },
 ];
 
-const PROVEDOR_OPTIONS: { value: string; label: string }[] = [
+const PROVIDER_OPTIONS: { value: string; label: string }[] = [
   { value: "focusnfe", label: "Focus NFe" },
   { value: "nfeio", label: "NFe.io" },
   { value: "emites", label: "Emites" },
@@ -54,30 +54,30 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
   const [cnpj, setCnpj] = useState("");
   const [ie, setIe] = useState("");
   const [regime, setRegime] = useState<string>("simples_nacional");
-  const [ambiente, setAmbiente] = useState<NfeAmbiente>("homologacao");
+  const [environment, setEnvironment] = useState<NfeEnvironment>("sandbox");
   const [certificateType, setCertificateType] = useState<NfeCertificateType>("A1");
   const [certificateSerial, setCertificateSerial] = useState("");
-  const [tokenProvedor, setTokenProvedor] = useState("");
-  const [provedor, setProvedor] = useState<string>("focusnfe");
+  const [providerToken, setProviderToken] = useState("");
+  const [provider, setProvider] = useState<string>("focusnfe");
 
   useEffect(() => {
     if (!open) return;
     const s = status;
     if (s?.connected) {
       setCnpj(s.cnpj ?? "");
-      setRegime(s.regime_tributario ?? "simples_nacional");
-      setAmbiente(s.ambiente ?? "homologacao");
-      setCertificateType(s.certificado_tipo ?? "A1");
-      setProvedor(s.provedor ?? "focusnfe");
+      setRegime(s.tax_regime ?? "simples_nacional");
+      setEnvironment(s.environment ?? "sandbox");
+      setCertificateType(s.certificate_type ?? "A1");
+      setProvider(s.provider ?? "focusnfe");
     } else {
       setCnpj("");
       setIe("");
       setRegime("simples_nacional");
-      setAmbiente("homologacao");
+      setEnvironment("sandbox");
       setCertificateType("A1");
       setCertificateSerial("");
-      setTokenProvedor("");
-      setProvedor("focusnfe");
+      setProviderToken("");
+      setProvider("focusnfe");
     }
   }, [open, status]);
 
@@ -86,22 +86,22 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
       toast.error("Informe o CNPJ da empresa emissora.");
       return;
     }
-    if (!tokenProvedor.trim() && !status?.connected) {
-      toast.error("Informe o Token do provedor NF-e.");
+    if (!providerToken.trim() && !status?.connected) {
+      toast.error("Informe o Token do provider NF-e.");
       return;
     }
     await saveMutation.mutateAsync({
       cnpj: cnpj.trim().replace(/\D/g, ""),
       ie: ie.trim() || undefined,
-      regime_tributario: regime as "simples_nacional" | "lucro_presumido" | "lucro_real",
-      ambiente,
-      certificado_tipo: certificateType,
-      certificado_serial: certificateSerial.trim() || undefined,
-      token_provedor: tokenProvedor.trim() || undefined,
-      provedor: provedor as "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio",
+      tax_regime: regime as "simples_nacional" | "lucro_presumido" | "lucro_real",
+      environment,
+      certificate_type: certificateType,
+      certificate_serial: certificateSerial.trim() || undefined,
+      provider_token: providerToken.trim() || undefined,
+      provider: provider as "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio",
     });
     toast.success("NF-e configurada com sucesso!");
-    setTokenProvedor("");
+    setProviderToken("");
   };
 
   const handleDelete = async () => {
@@ -109,13 +109,13 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
     toast.info("Configuração de NF-e removida.");
     setCnpj("");
     setIe("");
-    setTokenProvedor("");
+    setProviderToken("");
     setCertificateSerial("");
   };
 
   const canSave =
     cnpj.trim().length > 0 &&
-    (tokenProvedor.trim().length > 0 || Boolean(status?.connected));
+    (providerToken.trim().length > 0 || Boolean(status?.connected));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -139,14 +139,14 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-success">NF-e configurada</p>
                   <p className="text-xs text-muted-foreground">
-                    CNPJ: {status.cnpj} · Ambiente: {status.ambiente === "producao" ? "Produção" : "Homologação"}
+                    CNPJ: {status.cnpj} · Ambiente: {status.environment === "production" ? "Produção" : "Homologação"}
                   </p>
                 </div>
                 <Badge
                   variant="secondary"
-                  className={status.ambiente === "producao" ? "text-[10px] bg-success/10 text-success" : "text-[10px]"}
+                  className={status.environment === "production" ? "text-[10px] bg-success/10 text-success" : "text-[10px]"}
                 >
-                  {status.ambiente === "producao" ? "Produção" : "Homologação"}
+                  {status.environment === "production" ? "Produção" : "Homologação"}
                 </Badge>
               </div>
             )}
@@ -192,13 +192,13 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
               </div>
               <div className="space-y-1.5">
                 <Label>Ambiente</Label>
-                <Select value={ambiente} onValueChange={(v) => setAmbiente(v as NfeAmbiente)}>
-                  <SelectTrigger data-testid="select-nfe-ambiente">
+                <Select value={environment} onValueChange={(v) => setEnvironment(v as NfeEnvironment)}>
+                  <SelectTrigger data-testid="select-nfe-environment">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="homologacao">Homologação (teste)</SelectItem>
-                    <SelectItem value="producao">Produção</SelectItem>
+                    <SelectItem value="sandbox">Homologação (teste)</SelectItem>
+                    <SelectItem value="production">Produção</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -236,12 +236,12 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
 
             <div className="space-y-1.5">
               <Label>Provedor NF-e</Label>
-              <Select value={provedor} onValueChange={setProvedor}>
-                <SelectTrigger data-testid="select-nfe-provedor">
+              <Select value={provider} onValueChange={setProvider}>
+                <SelectTrigger data-testid="select-nfe-provider">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {PROVEDOR_OPTIONS.map((o) => (
+                  {PROVIDER_OPTIONS.map((o) => (
                     <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                   ))}
                 </SelectContent>
@@ -255,9 +255,9 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
               <Input
                 id="nfe-token"
                 type="password"
-                placeholder={status?.connected ? "Deixe em branco para manter o atual" : "Token de autenticação do provedor"}
-                value={tokenProvedor}
-                onChange={(e) => setTokenProvedor(e.target.value)}
+                placeholder={status?.connected ? "Deixe em branco para manter o atual" : "Token de autenticação do provider"}
+                value={providerToken}
+                onChange={(e) => setProviderToken(e.target.value)}
                 data-testid="input-nfe-token"
               />
             </div>

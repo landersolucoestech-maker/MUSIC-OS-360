@@ -25,23 +25,23 @@ const ALL_VALUE = "__all__";
 
 const captureStatusOptions = [
   { value: "", label: "Todos" },
-  { value: "agendada", label: "Agendada" },
-  { value: "em gravação", label: "Em Gravação" },
-  { value: "gravada", label: "Gravada" },
+  { value: "scheduled", label: "Agendada" },
+  { value: "recording", label: "Em Gravação" },
+  { value: "recorded", label: "Gravada" },
 ];
 
 const editingStatusOptions = [
   { value: "", label: "Todos" },
-  { value: "não iniciada", label: "Não Iniciada" },
-  { value: "em edição", label: "Em Edição" },
-  { value: "finalizada", label: "Finalizada" },
+  { value: "not_started", label: "Não Iniciada" },
+  { value: "editing", label: "Em Edição" },
+  { value: "finished", label: "Finalizada" },
 ];
 
 const approvalStatusOptions = [
   { value: "", label: "Todos" },
-  { value: "pendente", label: "Pendente" },
-  { value: "em revisao", label: "Em Revisão" },
-  { value: "aprovado", label: "Aprovado" },
+  { value: "pending", label: "Pendente" },
+  { value: "review", label: "Em Revisão" },
+  { value: "approved", label: "Aprovado" },
 ];
 
 function normalizeSelectValue(value: string) {

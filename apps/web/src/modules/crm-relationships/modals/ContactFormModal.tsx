@@ -306,7 +306,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
         )}
         <Field label="Prioridade">
           <Select value={state.priority} onValueChange={(v) => set("priority", v as ContactPriority)}>
-            <SelectTrigger data-testid="select-prioridade"><SelectValue placeholder="Selecione" /></SelectTrigger>
+            <SelectTrigger data-testid="select-priority"><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
               {contactPriorityOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
             </SelectContent>
@@ -320,43 +320,43 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
     <>
       <div className="flex items-center justify-between border-b pb-1 pt-2">
         <p className="text-sm font-semibold tracking-wider text-muted-foreground">Histórico de Interações</p>
-        <Button type="button" variant="outline" size="sm" onClick={addInteraction} data-testid="button-add-interacao">
+        <Button type="button" variant="outline" size="sm" onClick={addInteraction} data-testid="button-add-interaction">
           <Plus className="h-4 w-4 mr-1" />
           Adicionar interação
         </Button>
       </div>
       {state.interactions.length === 0 && (
-        <p className="text-sm italic text-muted-foreground" data-testid="interacoes-empty">Nenhuma interação registrada.</p>
+        <p className="text-sm italic text-muted-foreground" data-testid="interactions-empty">Nenhuma interação registrada.</p>
       )}
       {state.interactions.map((it, idx) => (
-        <div key={it.id} className="rounded-md border bg-muted/20 p-4 space-y-3" data-testid={`interacao-card-${it.id}`}>
+        <div key={it.id} className="rounded-md border bg-muted/20 p-4 space-y-3" data-testid={`interaction-card-${it.id}`}>
           <div className="flex items-center justify-between">
             <p className="flex items-center gap-2 text-sm font-medium">
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
               Interação {idx + 1}
             </p>
-            <button type="button" onClick={() => removeInteraction(it.id)} className="text-muted-foreground hover:text-destructive" aria-label="Remover interação" data-testid={`button-remove-interacao-${it.id}`}>
+            <button type="button" onClick={() => removeInteraction(it.id)} className="text-muted-foreground hover:text-destructive" aria-label="Remover interação" data-testid={`button-remove-interaction-${it.id}`}>
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <Field label="Tipo">
               <Select value={it.type} onValueChange={(v) => updateInteraction(it.id, "type", v)}>
-                <SelectTrigger data-testid={`select-interacao-type-${it.id}`}><SelectValue /></SelectTrigger>
+                <SelectTrigger data-testid={`select-interaction-type-${it.id}`}><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {INTERACTION_TYPE_OPTIONS.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
                 </SelectContent>
               </Select>
             </Field>
             <Field label="Data">
-              <DatePickerField value={it.date} onChange={(v) => updateInteraction(it.id, "date", v)} placeholder="Selecione a data" data-testid={`datepicker-interacao-${it.id}`} />
+              <DatePickerField value={it.date} onChange={(v) => updateInteraction(it.id, "date", v)} placeholder="Selecione a data" data-testid={`datepicker-interaction-${it.id}`} />
             </Field>
             <Field label="Horário">
-              <Input type="time" value={it.time} onChange={(e) => updateInteraction(it.id, "time", e.target.value)} data-testid={`input-interacao-horario-${it.id}`} />
+              <Input type="time" value={it.time} onChange={(e) => updateInteraction(it.id, "time", e.target.value)} data-testid={`input-interaction-time-${it.id}`} />
             </Field>
           </div>
           <Field label="Descrição">
-            <Textarea value={it.description} onChange={(e) => updateInteraction(it.id, "description", e.target.value)} placeholder="Descreva a interação..." className="min-h-[80px]" data-testid={`textarea-interacao-${it.id}`} />
+            <Textarea value={it.description} onChange={(e) => updateInteraction(it.id, "description", e.target.value)} placeholder="Descreva a interação..." className="min-h-[80px]" data-testid={`textarea-interaction-${it.id}`} />
           </Field>
         </div>
       ))}
@@ -375,13 +375,13 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
           <label className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium hover:bg-accent hover:text-accent-foreground">
             <Upload className="h-3.5 w-3.5" />
             Anexar arquivos
-            <input type="file" multiple className="hidden" onChange={(event) => { addAttachments(event.target.files); event.target.value = ""; }} data-testid="input-contato-attachments" />
+            <input type="file" multiple className="hidden" onChange={(event) => { addAttachments(event.target.files); event.target.value = ""; }} data-testid="input-contact-attachments" />
           </label>
         </div>
         {state.attachments.length === 0 ? (
-          <p className="text-sm italic text-muted-foreground" data-testid="contato-attachments-empty">Nenhum anexo adicionado.</p>
+          <p className="text-sm italic text-muted-foreground" data-testid="contact-attachments-empty">Nenhum anexo adicionado.</p>
         ) : (
-          <div className="grid gap-2 sm:grid-cols-2" data-testid="contato-attachments-list">
+          <div className="grid gap-2 sm:grid-cols-2" data-testid="contact-attachments-list">
             {state.attachments.map((attachment) => (
               <div key={attachment.id} className="flex min-w-0 items-center justify-between gap-2 rounded-md border bg-background px-3 py-2">
                 <div className="min-w-0">
@@ -403,16 +403,16 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
     <>
       <SectionHeader title="Observações" />
       <Field label="Notas">
-        <Textarea value={state.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Anotações sobre o contato, contexto operacional, histórico relevante..." className="min-h-[100px]" data-testid="textarea-observacoes" />
+        <Textarea value={state.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Anotações sobre o contato, contexto operacional, histórico relevante..." className="min-h-[100px]" data-testid="textarea-notes" />
       </Field>
     </>
   );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" data-testid="contato-form-modal">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" data-testid="contact-form-modal">
         <DialogHeader>
-          <DialogTitle data-testid="contato-form-title">
+          <DialogTitle data-testid="contact-form-title">
             {mode === "create" ? "Novo Contato" : "Editar Contato"}
           </DialogTitle>
           <DialogDescription>
@@ -427,7 +427,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field label="Tipo de Contato *">
               <Select value={state.personType} onValueChange={(v) => changeType(v as PersonType)}>
-                <SelectTrigger data-testid="select-type-contato">
+                <SelectTrigger data-testid="select-type-contact">
                   <SelectValue placeholder="Selecione o Tipo de Contato" />
                 </SelectTrigger>
                 <SelectContent>
@@ -439,7 +439,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
             </Field>
             <Field label="Categoria *">
               <Select value={state.category} onValueChange={changeCategory} disabled={!state.personType}>
-                <SelectTrigger data-testid="select-categoria">
+                <SelectTrigger data-testid="select-category">
                   <SelectValue placeholder="Selecione a Categoria" />
                 </SelectTrigger>
                 <SelectContent>
@@ -451,7 +451,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
             </Field>
             <Field label="Perfil do Contato *">
               <Select value={state.profile} onValueChange={(v) => set("profile", v)} disabled={!state.category}>
-                <SelectTrigger data-testid="select-perfil">
+                <SelectTrigger data-testid="select-profile">
                   <SelectValue placeholder="Selecione o Perfil do Contato" />
                 </SelectTrigger>
                 <SelectContent>
@@ -478,7 +478,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                         onClick={() => set("photoUrl", "")}
                         className="absolute -top-1 -right-1 rounded-full bg-destructive p-0.5 text-destructive-foreground"
                         aria-label="Remover foto"
-                        data-testid="button-remove-foto"
+                        data-testid="button-remove-photo"
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -495,7 +495,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                       accept="image/*"
                       className="hidden"
                       onChange={(e) => handlePhotoSelect(e.target.files?.[0] ?? null)}
-                      data-testid="input-pf-foto"
+                      data-testid="input-individual-photo"
                     />
                   </label>
                 </div>
@@ -507,7 +507,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.individualName}
                     onChange={(e) => set("individualName", e.target.value)}
                     placeholder="Nome da pessoa"
-                    data-testid="input-pf-nome"
+                    data-testid="input-individual-name"
                   />
                 </Field>
                 <Field label="CPF">
@@ -515,7 +515,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.cpf}
                     onChange={(e) => set("cpf", maskCPF(e.target.value))}
                     placeholder="000.000.000-00"
-                    data-testid="input-pf-cpf"
+                    data-testid="input-individual-cpf"
                   />
                 </Field>
               </div>
@@ -535,7 +535,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.phone}
                     onChange={(e) => set("phone", maskPhone(e.target.value))}
                     placeholder="(00) 00000-0000"
-                    data-testid="input-telefone"
+                    data-testid="input-phone"
                   />
                 </Field>
               </div>
@@ -545,7 +545,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.instagram}
                     onChange={(e) => set("instagram", e.target.value)}
                     placeholder="@usuario"
-                    data-testid="input-pf-instagram"
+                    data-testid="input-individual-instagram"
                   />
                 </Field>
                 <Field label="Função">
@@ -553,7 +553,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.jobTitle}
                     onChange={(e) => set("jobTitle", e.target.value)}
                     placeholder="Ex: produtor, técnico, fotógrafo"
-                    data-testid="input-pf-funcao"
+                    data-testid="input-individual-role"
                   />
                 </Field>
               </div>
@@ -566,7 +566,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.legalName}
                     onChange={(e) => set("legalName", e.target.value)}
                     placeholder="Razão social da empresa"
-                    data-testid="input-pj-razao-social"
+                    data-testid="input-pj-legal-name"
                   />
                 </Field>
                 <Field label="Nome Fantasia">
@@ -574,7 +574,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.tradeName}
                     onChange={(e) => set("tradeName", e.target.value)}
                     placeholder="Nome fantasia"
-                    data-testid="input-pj-nome-fantasia"
+                    data-testid="input-pj-trade-name"
                   />
                 </Field>
               </div>
@@ -612,7 +612,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.phone}
                     onChange={(e) => set("phone", maskPhone(e.target.value))}
                     placeholder="(00) 00000-0000"
-                    data-testid="input-telefone"
+                    data-testid="input-phone"
                   />
                 </Field>
               </div>
@@ -624,28 +624,28 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
 
           <div className="grid grid-cols-2 gap-4">
             <Field label="Logradouro">
-              <Input value={state.street} onChange={(e) => set("street", e.target.value)} placeholder="Rua, avenida..." data-testid="input-logradouro" />
+              <Input value={state.street} onChange={(e) => set("street", e.target.value)} placeholder="Rua, avenida..." data-testid="input-street" />
             </Field>
             <Field label="Número">
-              <Input value={state.streetNumber} onChange={(e) => set("streetNumber", e.target.value)} placeholder="Ex: 123" data-testid="input-numero" />
+              <Input value={state.streetNumber} onChange={(e) => set("streetNumber", e.target.value)} placeholder="Ex: 123" data-testid="input-number" />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Complemento">
-              <Input value={state.addressComplement} onChange={(e) => set("addressComplement", e.target.value)} placeholder="Apto, sala, bloco..." data-testid="input-complemento" />
+              <Input value={state.addressComplement} onChange={(e) => set("addressComplement", e.target.value)} placeholder="Apto, sala, bloco..." data-testid="input-complement" />
             </Field>
             <Field label="Bairro">
-              <Input value={state.neighborhood} onChange={(e) => set("neighborhood", e.target.value)} placeholder="Bairro" data-testid="input-bairro" />
+              <Input value={state.neighborhood} onChange={(e) => set("neighborhood", e.target.value)} placeholder="Bairro" data-testid="input-neighborhood" />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Cidade">
-              <Input value={state.city} onChange={(e) => set("city", e.target.value)} placeholder="Cidade" data-testid="input-cidade" />
+              <Input value={state.city} onChange={(e) => set("city", e.target.value)} placeholder="Cidade" data-testid="input-city" />
             </Field>
             <Field label="Estado">
               <Select value={state.state} onValueChange={(v) => set("state", v)}>
-                <SelectTrigger data-testid="select-estado"><SelectValue placeholder="UF" /></SelectTrigger>
-                <SelectContent>{BR_STATES.map((uf) => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}</SelectContent>
+                <SelectTrigger data-testid="select-state"><SelectValue placeholder="UF" /></SelectTrigger>
+                <SelectContent>{BR_STATES.map((stateCode) => <SelectItem key={stateCode} value={stateCode}>{stateCode}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
           </div>
@@ -669,7 +669,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.responsibleName}
                     onChange={(e) => set("responsibleName", e.target.value)}
                     placeholder="Nome de quem cuida do relacionamento"
-                    data-testid="input-resp-nome"
+                    data-testid="input-resp-name"
                   />
                 </Field>
                 <Field label="Cargo do Responsável">
@@ -677,7 +677,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.responsibleJobTitle}
                     onChange={(e) => set("responsibleJobTitle", e.target.value)}
                     placeholder="Cargo na sua equipe"
-                    data-testid="input-resp-cargo"
+                    data-testid="input-resp-position"
                   />
                 </Field>
               </div>
@@ -697,7 +697,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                     value={state.responsiblePhone}
                     onChange={(e) => set("responsiblePhone", maskPhone(e.target.value))}
                     placeholder="(00) 00000-0000"
-                    data-testid="input-resp-telefone"
+                    data-testid="input-resp-phone"
                   />
                 </Field>
               </div>

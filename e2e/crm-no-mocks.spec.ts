@@ -48,7 +48,7 @@ test.describe('CRM (leads/contacts) — no mocked data', () => {
 
     await test.step('opens the CRM (contacts tab) and confirms a real backend call', async () => {
       await page.goto('/leads', { waitUntil: 'networkidle' });
-      await expect(page.locator('[data-testid="tab-content-contatos"]')).toBeVisible({ timeout: 10_000 });
+      await expect(page.locator('[data-testid="tab-content-contacts"]')).toBeVisible({ timeout: 10_000 });
       expect(apiCalls.some((u) => u.includes('/api/v1/clients'))).toBe(true);
     });
 

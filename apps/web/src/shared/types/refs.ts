@@ -80,7 +80,7 @@ export interface ContractRef {
 /** Lightweight reference to an Employee. */
 export interface EmployeeRef {
   id: string;
-  nome: string;
-  cargo?: string | null;
+  name: string;
+  job_title?: string | null;
 }
 

@@ -77,7 +77,7 @@ export default function SupportDashboard() {
           <Link
             to="/support/tickets/new"
             className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card p-8 hover:border-primary/40 hover:bg-primary/[0.02] transition-all group"
-            data-testid="quick-novo-ticket"
+            data-testid="quick-new-ticket"
           >
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-500/10 group-hover:bg-green-500/20 transition-colors">
               <Plus className="h-7 w-7 text-green-400" />
@@ -105,7 +105,7 @@ export default function SupportDashboard() {
           <Link
             to="/support/tickets"
             className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card p-8 hover:border-primary/40 hover:bg-primary/[0.02] transition-all group"
-            data-testid="quick-meus-tickets"
+            data-testid="quick-my-tickets"
           >
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500/10 group-hover:bg-orange-500/20 transition-colors">
               <Ticket className="h-7 w-7 text-orange-400" />

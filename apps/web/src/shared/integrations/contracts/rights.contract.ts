@@ -20,7 +20,7 @@
 
 export type RightsEntityId = "ecad" | "ubc" | "abramus";
 
-export type RightsKind = "obra" | "fonograma";
+export type RightsKind = "work" | "phonogram";
 
 // ─── Search DTOs ──────────────────────────────────────────────────────────────
 
@@ -37,14 +37,14 @@ export interface RightsSearchResult {
   title: string;
   iswc?: string | null;
   isrc?: string | null;
-  compositores?: string[] | null;
-  interpretes?: string[] | null;
-  gravadora?: string | null;
-  produtores?: string[] | null;
-  genero?: string | null;
-  artista_nome?: string | null;
-  duracao?: string | null;
-  data_registro?: string | null;
+  composers?: string[] | null;
+  performers?: string[] | null;
+  label?: string | null;
+  producers?: string[] | null;
+  genre?: string | null;
+  artist_name?: string | null;
+  duration?: string | null;
+  registered_at?: string | null;
 }
 
 // ─── Artist search DTOs ───────────────────────────────────────────────────────
@@ -56,13 +56,13 @@ export interface ArtistSearchQuery {
 
 export interface ArtistSearchResult {
   external_id: string;
-  nome: string;
-  type: "compositor" | "interprete" | "produtor" | "editora" | "gravadora";
-  numero_filiado?: string | null;
-  obras_count?: number | null;
-  fonogramas_count?: number | null;
-  generos?: string[] | null;
-  data_filiacao?: string | null;
+  name: string;
+  type: "composer" | "performer" | "producer" | "publisher" | "label";
+  member_number?: string | null;
+  works_count?: number | null;
+  phonograms_count?: number | null;
+  genres?: string[] | null;
+  affiliated_at?: string | null;
 }
 
 // ─── Registration DTOs ────────────────────────────────────────────────────────
@@ -96,12 +96,12 @@ export interface RegisterWorkInput {
 
 export interface RegisterPhonogramInput {
   title: string;
-  interpretes: string[];
-  compositores?: string[];
-  produtores?: string[];
-  gravadora?: string;
-  genero?: string;
-  duracao?: string;
+  performers: string[];
+  composers?: string[];
+  producers?: string[];
+  label?: string;
+  genre?: string;
+  duration?: string;
   /** Existing ISRC (when available); otherwise the entity generates it */
   isrc?: string;
   /** Linked work (ISWC or external_id) */
@@ -146,7 +146,7 @@ export interface GenerateISWCInput {
   /** Local work ID in the catalog */
   local_work_id: string;
   title: string;
-  compositores: string[];
+  composers: string[];
   /** When an ISWC already exists, returns it */
   existing_iswc?: string | null;
 }
@@ -160,10 +160,10 @@ export interface GenerateISWCResult {
 
 export interface GenerateISRCInput {
   /** Local phonogram ID in the catalog */
-  local_fonograma_id: string;
+  local_phonogram_id: string;
   title: string;
-  interprete: string;
-  ano?: number;
+  performer: string;
+  year?: number;
   /** Registrant country (e.g. "BR") */
   country_code?: string;
   /** Registrant code (e.g. "MSC") */
@@ -174,7 +174,7 @@ export interface GenerateISRCInput {
 
 export interface GenerateISRCResult {
   isrc: string;
-  local_fonograma_id: string;
+  local_phonogram_id: string;
   source: "existing" | "generated" | "assigned_by_entity";
   generated_at: string;
 }
@@ -182,34 +182,34 @@ export interface GenerateISRCResult {
 // ─── Collection DTOs ──────────────────────────────────────────────────────────
 
 export type CollectionType =
-  | "execucao_publica"   // radio, TV, live concerts
+  | "public_performance"   // radio, TV, live concerts
   | "streaming"          // digital platforms
-  | "sincronizacao"      // films, series, advertising
-  | "mecanica"           // mechanical reproduction, CDs
-  | "sonorizacao";       // commercial establishments
+  | "synchronization"    // films, series, advertising
+  | "mechanical"         // mechanical reproduction, CDs
+  | "commercial_venue";       // commercial establishments
 
 export interface CollectionEntry {
   id: string;
   entity: RightsEntityId;
   type: CollectionType;
   work_id?: string | null;
-  fonograma_id?: string | null;
-  periodo: string;                // "YYYY-MM"
-  valor_bruto_cents: number;
-  valor_liquido_cents: number;
-  execucoes?: number;
-  fonte?: string;                 // ex.: "Globo", "Spotify Brasil"
-  referencia?: string;
+  phonogram_id?: string | null;
+  period: string;                // "YYYY-MM"
+  gross_amount_cents: number;
+  net_amount_cents: number;
+  performances?: number;
+  source?: string;                 // ex.: "Globo", "Spotify Brasil"
+  reference?: string;
   created_at: string;
 }
 
 export interface CollectionSummary {
   entity: RightsEntityId;
-  periodo: string;
-  total_bruto_cents: number;
-  total_liquido_cents: number;
-  total_execucoes: number;
-  por_tipo: Record<CollectionType, number>;
+  period: string;
+  total_gross_cents: number;
+  total_net_cents: number;
+  total_performances: number;
+  by_type: Record<CollectionType, number>;
 }
 
 // ─── Reconciliation DTOs ─────────────────────────────────────────────────────
@@ -219,7 +219,7 @@ export interface ReconciliationResult {
     local_id: string;
     external_id: string;
     title: string;
-    diferenca_cents: number;
+    difference_cents: number;
   }>;
   unmatched_local: string[];   // Local IDs without a match
   unmatched_external: string[]; // External IDs without a local match
@@ -291,13 +291,13 @@ export interface IRightsProvider {
   // ── Collection ──────────────────────────────────────────────────────────────
 
   /** Looks up collection for a period */
-  getCollection(periodo: string): Promise<CollectionEntry[]>;
+  getCollection(period: string): Promise<CollectionEntry[]>;
 
   /** Collection summary for a period */
-  getCollectionSummary(periodo: string): Promise<CollectionSummary>;
+  getCollectionSummary(period: string): Promise<CollectionSummary>;
 
   /** Reconciles received collection with the local catalog */
-  conciliar(periodo: string): Promise<ReconciliationResult>;
+  reconcile(period: string): Promise<ReconciliationResult>;
 
   // ── Health ──────────────────────────────────────────────────────────────────
 
@@ -308,8 +308,8 @@ export interface IRightsProvider {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /** localStorage key for cached collection data */
-export function collectionStorageKey(entity: RightsEntityId, periodo: string): string {
-  return `musicos360_${entity}_arrecadacao_${periodo}`;
+export function collectionStorageKey(entity: RightsEntityId, period: string): string {
+  return `musicos360_${entity}_arrecadacao_${period}`;
 }
 
 /** Generates a canonical ISWC (format T-XXXXXXXXX-C) — MOCK only */

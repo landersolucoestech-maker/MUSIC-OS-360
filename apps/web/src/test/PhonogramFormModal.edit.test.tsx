@@ -54,12 +54,12 @@ vi.mock("@/modules/artist/hooks/useArtists", async () => {
   return {
     ...actual,
     useArtists: () => ({
-      artistas: [] as any[],
+      artists: [] as any[],
       isLoading: false,
       error: null,
-      addArtista: { mutateAsync: vi.fn() },
-      updateArtista: { mutateAsync: vi.fn() },
-      deleteArtista: { mutateAsync: vi.fn() },
+      addArtist: { mutateAsync: vi.fn() },
+      updateArtist: { mutateAsync: vi.fn() },
+      deleteArtist: { mutateAsync: vi.fn() },
     }),
   };
 });
@@ -194,7 +194,7 @@ describe("PhonogramFormModal edit mode", () => {
     expect(screen.getByTestId("input-duration-seconds")).toHaveValue("20");
 
     // The legacy cod_ecad is not read
-    expect(screen.getByTestId("input-cod-ecad")).toHaveValue("");
+    expect(screen.getByTestId("input-ecad-code")).toHaveValue("");
 
     // Phonographic producers read from the canonical participation
     const nameInputs = screen
@@ -217,9 +217,9 @@ describe("PhonogramFormModal edit mode", () => {
       expect(screen.getByTestId("text-linked-work-title")).toBeInTheDocument();
     });
 
-    // Edit ISRC designacao
-    const designacao = screen.getByDisplayValue("12345") as HTMLInputElement;
-    fireEvent.change(designacao, { target: { value: "99999" } });
+    // Edit ISRC designationInput
+    const designationInput = screen.getByDisplayValue("12345") as HTMLInputElement;
+    fireEvent.change(designationInput, { target: { value: "99999" } });
 
     // Accept terms
     const checkboxes = screen.getAllByRole("checkbox");

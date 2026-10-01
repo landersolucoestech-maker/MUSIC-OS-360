@@ -361,16 +361,11 @@ export const TICKET_PRIORITY_LABELS: Record<TicketPriority, string> = {
 };
 
 export const TICKET_CATEGORY_LABELS: Record<TicketCategory, string> = {
-  financeiro: "Financeiro",
-  analytics: "Métricas",
-  distribuicao: "Distribuição",
-  contratos: "Contratos",
-  artistas: "Artistas",
-  projetos: "Projetos",
-  usuarios: "Usuários",
-  permissoes: "Permissões",
-  integracoes: "Integrações",
-  outro: "Outro",
+  billing: "Financeiro e cobrança",
+  technical: "Problema técnico",
+  "feature-request": "Sugestão de funcionalidade",
+  access: "Acesso e permissões",
+  other: "Outro",
 };
 
 export const REQUEST_STATUS_LABELS: Record<SupportRequest["status"], string> = {

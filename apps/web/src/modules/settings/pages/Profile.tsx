@@ -60,8 +60,8 @@ export default function Profile() {
     name: resolvedName,
     email: user?.email || "",
     phone: userSettings.phone || "",
-    department: userSettings.setor || "",
-    position: userSettings.cargo || "",
+    department: userSettings.department || "",
+    position: userSettings.position || "",
     accessLevel: resolvedRole,
   });
 
@@ -75,19 +75,19 @@ export default function Profile() {
         || "",
       email: user?.email || "",
       phone: userSettings.phone || "",
-      department: userSettings.setor || "",
-      position: userSettings.cargo || "",
+      department: userSettings.department || "",
+      position: userSettings.position || "",
       accessLevel: resolvedRole,
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, userSettings.full_name, userSettings.phone, userSettings.cargo, userSettings.setor, user?.id]);
+  }, [loading, userSettings.full_name, userSettings.phone, userSettings.position, userSettings.department, user?.id]);
 
   const handleSave = async () => {
     await saveUserSettings({
       full_name: formData.name,
       phone: formData.phone,
-      setor: formData.department,
-      cargo: formData.position,
+      department: formData.department,
+      position: formData.position,
     });
     setIsEditing(false);
   };
@@ -100,8 +100,8 @@ export default function Profile() {
         || "",
       email: user?.email || "",
       phone: userSettings.phone || "",
-      department: userSettings.setor || "",
-      position: userSettings.cargo || "",
+      department: userSettings.department || "",
+      position: userSettings.position || "",
       accessLevel: resolvedRole,
     });
     setIsEditing(false);

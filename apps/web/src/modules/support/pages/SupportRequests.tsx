@@ -115,7 +115,7 @@ export default function SupportRequests() {
       title="Solicitações"
       description="Funcionalidades e melhorias solicitadas pela comunidade"
       actions={
-        <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setShowModal(true)} data-testid="button-nova-solicitacao">
+        <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setShowModal(true)} data-testid="button-new-request">
           <Plus className="h-3.5 w-3.5" /> Nova Solicitação
         </Button>
       }

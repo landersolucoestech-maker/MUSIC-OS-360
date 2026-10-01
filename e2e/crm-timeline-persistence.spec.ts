@@ -46,37 +46,37 @@ test.describe('CRM — contact/client timeline survives a reload (real persisten
 
     await test.step('opens contacts and the first existing contact', async () => {
       await page.goto('/leads', { waitUntil: 'networkidle' });
-      await page.locator('[data-testid="tab-content-contatos"]').waitFor({ timeout: 10_000 });
+      await page.locator('[data-testid="tab-content-contacts"]').waitFor({ timeout: 10_000 });
 
-      const firstRow = page.locator('[data-testid^="contato-row-"]').first();
+      const firstRow = page.locator('[data-testid^="contact-row-"]').first();
       await firstRow.waitFor({ timeout: 10_000 });
       const rowTestId = await firstRow.getAttribute('data-testid');
-      contactId = rowTestId!.replace('contato-row-', '');
+      contactId = rowTestId!.replace('contact-row-', '');
 
-      await page.locator(`[data-testid="contato-actions-${contactId}"]`).click();
-      await page.locator(`[data-testid="contato-action-view-${contactId}"]`).click();
-      await expect(page.locator('[data-testid="contato-view-modal"]')).toBeVisible({ timeout: 10_000 });
+      await page.locator(`[data-testid="contact-actions-${contactId}"]`).click();
+      await page.locator(`[data-testid="contact-action-view-${contactId}"]`).click();
+      await expect(page.locator('[data-testid="contact-view-modal"]')).toBeVisible({ timeout: 10_000 });
     });
 
     await test.step('records a note on the real timeline (persisted in activity_logs)', async () => {
-      await expect(page.locator('[data-testid="contato-view-timeline"]')).toBeVisible();
-      await page.locator('[data-testid="contato-view-timeline-input"]').fill(noteText);
-      await page.locator('[data-testid="contato-view-timeline-add"]').click();
-      await expect(page.locator('[data-testid="contato-view-timeline"]')).toContainText(noteText, { timeout: 10_000 });
+      await expect(page.locator('[data-testid="contact-view-timeline"]')).toBeVisible();
+      await page.locator('[data-testid="contact-view-timeline-input"]').fill(noteText);
+      await page.locator('[data-testid="contact-view-timeline-add"]').click();
+      await expect(page.locator('[data-testid="contact-view-timeline"]')).toContainText(noteText, { timeout: 10_000 });
     });
 
     await test.step('closes the modal, reloads the page from scratch and reopens the same contact', async () => {
       await page.locator('[data-testid="button-close-view"]').click();
       await page.reload({ waitUntil: 'networkidle' });
 
-      await page.locator('[data-testid="tab-content-contatos"]').waitFor({ timeout: 10_000 });
-      await page.locator(`[data-testid="contato-actions-${contactId}"]`).click();
-      await page.locator(`[data-testid="contato-action-view-${contactId}"]`).click();
-      await expect(page.locator('[data-testid="contato-view-modal"]')).toBeVisible({ timeout: 10_000 });
+      await page.locator('[data-testid="tab-content-contacts"]').waitFor({ timeout: 10_000 });
+      await page.locator(`[data-testid="contact-actions-${contactId}"]`).click();
+      await page.locator(`[data-testid="contact-action-view-${contactId}"]`).click();
+      await expect(page.locator('[data-testid="contact-view-modal"]')).toBeVisible({ timeout: 10_000 });
     });
 
     await test.step('the note recorded before the reload is still there (proof of real persistence)', async () => {
-      await expect(page.locator('[data-testid="contato-view-timeline"]')).toContainText(noteText, { timeout: 10_000 });
+      await expect(page.locator('[data-testid="contact-view-timeline"]')).toContainText(noteText, { timeout: 10_000 });
     });
   });
 });

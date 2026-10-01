@@ -16,7 +16,6 @@ export function useWorks(enabled = true, artistId?: string) {
     // different server-side filter (see Task G).
     queryKey: artistId ? [...QUERY_KEYS.WORKS, "by-artist", artistId] : [...QUERY_KEYS.WORKS],
     table: "works",
-    select: "*, artistas(*), projetos(id, title)",
     enabled,
     filters: artistId ? { artist_id: artistId } : undefined,
     additionalInvalidateKeys: [[...QUERY_KEYS.PROJECTS]],

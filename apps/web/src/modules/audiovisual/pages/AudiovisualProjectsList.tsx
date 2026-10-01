@@ -64,11 +64,11 @@ function projectMatchesFilters(project: AudiovisualProject, filters: Audiovisual
     ) ||
       matchesTextFilter(getArtistValue(project), query)) &&
     matchesTextFilter(
-      getProjectValue(project, ["capture_status", "captureStatus", "captation_status", "captationStatus"]),
+      getProjectValue(project, ["capture_status", "captureStatus"]),
       filters.captureStatus,
     ) &&
     matchesTextFilter(
-      getProjectValue(project, ["editing_status", "editingStatus", "edition_status", "editionStatus"]),
+      getProjectValue(project, ["editing_status", "editingStatus"]),
       filters.editingStatus,
     ) &&
     matchesTextFilter(
@@ -81,15 +81,15 @@ function projectMatchesFilters(project: AudiovisualProject, filters: Audiovisual
 function KpiCards({ rows }: { rows: AudiovisualProject[] }) {
   const row = (p: AudiovisualProject) => p as AudiovisualProject & Record<string, any>;
   const total = rows.length;
-  const emProducao = rows.filter((p) =>
+  const inProduction = rows.filter((p) =>
     ["production", "post_production", "editing", "recording"].includes(
       String(row(p).status ?? row(p).final_status ?? row(p).editing_status ?? row(p).capture_status),
     ),
   ).length;
-  const aguardando = rows.filter((p) =>
+  const awaitingApproval = rows.filter((p) =>
     ["pending", "review"].includes(String(row(p).approval_status)),
   ).length;
-  const concluidas = rows.filter((p) =>
+  const completed = rows.filter((p) =>
     ["finished", "published", "delivered", "approved"].includes(
       String(row(p).final_status ?? row(p).status ?? row(p).approval_status),
     ),
@@ -97,9 +97,9 @@ function KpiCards({ rows }: { rows: AudiovisualProject[] }) {
   const budget = rows.reduce((sum, p) => sum + (Number(row(p).budget_estimated ?? row(p).budget) || 0), 0);
   const cards = [
     { label: "Total de produções", value: String(total), icon: Film },
-    { label: "Em produção", value: String(emProducao), icon: ClipboardList },
-    { label: "Aguardando aprovação", value: String(aguardando), icon: CalendarDays },
-    { label: "Concluídas", value: String(concluidas), icon: PackageCheck },
+    { label: "Em produção", value: String(inProduction), icon: ClipboardList },
+    { label: "Aguardando aprovação", value: String(awaitingApproval), icon: CalendarDays },
+    { label: "Concluídas", value: String(completed), icon: PackageCheck },
     {
       label: "Orçamento total",
       value: budget.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),

@@ -187,10 +187,6 @@ export type ShareType = "internal_release" | "external_receivable";
 /** Derived from LeadStatus — source of truth: @music-os-360/types */
 export type LeadStatus = `${PkgLeadStatus}`;
 
-export type LeadPriority = "alta" | "media" | "baixa";
-
-export type LeadTemperature = "quente" | "morno" | "frio";
-
 /** Derived from ClientStatus — source of truth: @music-os-360/types */
 export type ClientStatusValue = `${ClientStatus}`;
 

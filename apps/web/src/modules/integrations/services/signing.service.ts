@@ -35,7 +35,7 @@ const PROVIDER_ENDPOINT: Record<SigningProviderId, string> = {
 };
 
 export interface SendForSigningInput {
-  contratoId: string;
+  contractId: string;
   title: string;
   /** Public URL of the file to sign (contracts.file_url). */
   fileUrl: string;
@@ -83,7 +83,7 @@ export const signingService = {
    * for an intentional user-initiated retry of the same attempt.
    */
   async sendForSigning(input: SendForSigningInput, idempotencyKey: string = crypto.randomUUID()): Promise<SendForSigningResult> {
-    const { contratoId: contractId, title, fileUrl, signers } = input;
+    const { contractId, title, fileUrl, signers } = input;
 
     if (!fileUrl) {
       throw new UserFacingError("Contract has no file URL", "Este contrato não possui um arquivo (URL) cadastrado. Adicione a URL do PDF antes de enviar para assinatura.");

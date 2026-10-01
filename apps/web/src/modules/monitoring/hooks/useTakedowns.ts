@@ -8,7 +8,6 @@ export function useTakedowns() {
   const result = useDataQuery<Takedown>({
     queryKey: [...QUERY_KEYS.TAKEDOWNS],
     table: "takedowns",
-    select: "*, obras(*), fonogramas(*)",
   }, {
     create: { success: "Takedown criado com sucesso!", error: "Erro ao criar takedown" },
     update: { success: "Takedown atualizado com sucesso!", error: "Erro ao atualizar takedown" },

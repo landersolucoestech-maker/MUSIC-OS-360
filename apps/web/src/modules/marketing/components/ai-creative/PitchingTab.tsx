@@ -28,12 +28,12 @@ export function PitchingTab({
 
   const releaseOptions = useMemo<TargetOption[]>(() => (
     sources.releases
-      .filter((item) => !artist || item.artist_id === artist.id || item.artistas?.id === artist.id)
+      .filter((item) => !artist || item.artist_id === artist.id || item.artist?.id === artist.id)
       .map((item) => ({
         id: item.id,
         label: item.title,
         helper: [
-          item.artistas?.stage_name,
+          item.artist?.stage_name,
           item.music_genre,
           item.status ? (statusLabelPtBr("release", item.status) ?? "Status não reconhecido") : undefined,
         ].filter(Boolean).join(" · ") || undefined,

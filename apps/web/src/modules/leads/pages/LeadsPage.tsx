@@ -86,7 +86,7 @@ export default function LeadsPage() {
       variant="outline"
       onClick={() => navigate("/reports")}
       title="Exporta pela Central de Relatórios (dados completos do workspace)"
-      data-testid="button-exportar-crm"
+      data-testid="button-export-crm"
     >
       <Download className="mr-1 h-4 w-4" />
       Exportar
@@ -97,12 +97,12 @@ export default function LeadsPage() {
     <div className="flex items-center gap-2">
       {exportButton}
       {activeTab === "leads" ? (
-        <Button size="sm" onClick={openCreate} data-testid="button-novo-lead">
+        <Button size="sm" onClick={openCreate} data-testid="button-new-lead">
           <Plus className="mr-1 h-4 w-4" />
           Novo Lead
         </Button>
       ) : (
-        <Button size="sm" onClick={() => setContactModalOpen(true)} data-testid="button-novo-contato">
+        <Button size="sm" onClick={() => setContactModalOpen(true)} data-testid="button-new-contact">
           <Plus className="mr-1 h-4 w-4" />
           Novo Contato
         </Button>
@@ -117,7 +117,7 @@ export default function LeadsPage() {
       actions={topbarActions}
     >
       {activeTab === "contacts" ? (
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-testid="contatos-kpis">
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-testid="contacts-kpis">
           <Kpi label="Total de contatos" value={contactsKpis.total}        />
           <Kpi label="Clientes"          value={contactsKpis.clients}      />
           <Kpi label="Parceiros"         value={contactsKpis.partners}     />
@@ -146,7 +146,7 @@ export default function LeadsPage() {
           <TabsTrigger
             value="contacts"
             className="relative h-10 gap-2 rounded-none border-b-2 border-transparent bg-transparent px-4 text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground"
-            data-testid="tab-contatos"
+            data-testid="tab-contacts"
           >
             <Users className="h-4 w-4" />
             Contatos
@@ -167,7 +167,7 @@ export default function LeadsPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="contacts" data-testid="tab-content-contatos">
+        <TabsContent value="contacts" data-testid="tab-content-contacts">
           <ContactsPanel />
         </TabsContent>
 

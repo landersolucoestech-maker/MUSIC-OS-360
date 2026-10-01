@@ -31,6 +31,6 @@ export type EventInsert = Omit<Event, "id" | "user_id" | "created_at" | "updated
 export type EventUpdate = Partial<EventInsert>;
 
 export interface EventWithRelations extends Event {
-  artistas?: ArtistRef | null;
+  artist?: ArtistRef | null;
 }
 

@@ -30,7 +30,7 @@ export function loadReleaseContext(
     credits: pickReleaseString(releaseRecord, ["credits", "compositores", "produtores"]),
     references: pickReleaseString(releaseRecord, ["referencias", "references", "press_release"]),
     artistHistory: sources.releases
-      .filter((item) => item.artist_id === artist.id || item.artistas?.id === artist.id)
+      .filter((item) => item.artist_id === artist.id || item.artist?.id === artist.id)
       .map((item) => `${item.title}${item.release_date ? ` (${item.release_date})` : ""}`),
     relatedCampaigns: sources.campaigns.filter((item) => item.targetId === release.id || item.targetId === artist.id),
     relatedMetrics: sources.analytics ? [

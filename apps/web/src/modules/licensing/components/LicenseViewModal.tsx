@@ -11,7 +11,7 @@ interface ClientOption { id: string; name: string }
 interface LicenseViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  licenca?: any;
+  license?: any;
 }
 
 const getStatusBadge = (status?: string | null) => (
@@ -27,7 +27,7 @@ function Field({ label, value, icon, valueClassName }: { label: React.ReactNode;
   );
 }
 
-export function LicenseViewModal({ open, onOpenChange, licenca: license }: LicenseViewModalProps) {
+export function LicenseViewModal({ open, onOpenChange, license }: LicenseViewModalProps) {
   // Fetches DIRECTLY by ID (GET /works/:id, GET /clients/:id) — does not depend on the
   // work/client being among the first 50 loaded by useWorks() /
   // an unfiltered client listing (Task J).

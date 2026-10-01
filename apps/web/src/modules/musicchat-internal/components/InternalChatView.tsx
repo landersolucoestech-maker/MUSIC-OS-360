@@ -148,7 +148,7 @@ export function InternalChatView() {
               size="sm"
               variant="outline"
               className="h-8 gap-1.5 text-xs"
-              data-testid="button-nova-conversa-interna"
+              data-testid="button-new-internal-conversation"
               onClick={() => setNewConversationOpen(true)}
             >
               <Plus className="h-3.5 w-3.5" />

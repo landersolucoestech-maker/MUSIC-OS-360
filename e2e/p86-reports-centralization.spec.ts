@@ -25,8 +25,8 @@ async function assertNoImportExportButtons(page: Page, path: string) {
   // still loading", a false confidence.
   await expect(page.locator('table, [role="table"], main, [data-testid$="-loading"]').first()).toBeVisible({ timeout: 15_000 });
   await page.waitForTimeout(1500);
-  const importBtn = page.locator('[data-testid*="import" i], [data-testid*="importar" i]');
-  const exportBtn = page.locator('[data-testid*="export" i], [data-testid*="exportar" i]');
+  const importBtn = page.locator('[data-testid*="import" i]');
+  const exportBtn = page.locator('[data-testid*="export" i]');
   await expect(importBtn, `${path}: nenhum botão de import deveria existir`).toHaveCount(0);
   await expect(exportBtn, `${path}: nenhum botão de export deveria existir`).toHaveCount(0);
 }

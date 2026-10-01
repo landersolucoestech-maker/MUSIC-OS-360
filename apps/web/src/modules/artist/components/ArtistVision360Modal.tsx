@@ -149,10 +149,6 @@ const CONTRACT_FILTERS: Array<{ key: string; label: string; types?: string[] }> 
 // meeting/interview/tour/other) — see modules/events/lib/event-type.ts for the
 // real labels. "Ensaios" and "Gravações" become a single filter because the
 // real column does not distinguish them (both coarsen to "recording").
-const EVENT_STATUS_LABELS: Record<string, string> = {
-  planejado: "Planejado", agendado: "Agendado", confirmado: "Confirmado",
-  realizado: "Realizado", concluido: "Concluído", cancelado: "Cancelado", adiado: "Adiado",
-};
 const SCHEDULE_FILTERS: Array<{ key: string; label: string; types?: string[] }> = [
   { key: "all", label: "Todos" },
   { key: "shows", label: "Shows", types: ["show", "festival"] },
@@ -2736,7 +2732,7 @@ export function ArtistVision360Modal({
                             <span className="truncate text-muted-foreground">{e.venue || "—"}</span>
                             <span>
                               <Badge variant="outline" className="text-xs">
-                                {EVENT_STATUS_LABELS[String(e.status ?? "").toLowerCase()] ?? formatStatusPtBr(e.status)}
+                                {formatStatusPtBr(e.status, "event")}
                               </Badge>
                             </span>
                           </div>

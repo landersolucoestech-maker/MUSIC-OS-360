@@ -16,18 +16,18 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const STORAGE_KEY = "musicos360_nfe_credentials";
 
-export type NfeAmbiente = "producao" | "homologacao";
+export type NfeEnvironment = "production" | "sandbox";
 export type NfeCertificateType = "A1" | "A3";
 
 interface NfeCredentials {
   cnpj: string;
   ie?: string;
-  regime_tributario: "simples_nacional" | "lucro_presumido" | "lucro_real";
-  ambiente: NfeAmbiente;
-  certificado_tipo: NfeCertificateType;
-  certificado_serial?: string;
-  token_provedor?: string;
-  provedor: "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio";
+  tax_regime: "simples_nacional" | "lucro_presumido" | "lucro_real";
+  environment: NfeEnvironment;
+  certificate_type: NfeCertificateType;
+  certificate_serial?: string;
+  provider_token?: string;
+  provider: "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio";
   saved_at: string;
 }
 
@@ -35,10 +35,10 @@ export interface NfeStatus {
   connected: boolean;
   has_credentials: boolean;
   cnpj?: string;
-  ambiente?: NfeAmbiente;
-  provedor?: string;
-  certificado_tipo?: NfeCertificateType;
-  regime_tributario?: string;
+  environment?: NfeEnvironment;
+  provider?: string;
+  certificate_type?: NfeCertificateType;
+  tax_regime?: string;
   saved_at?: string;
 }
 
@@ -61,10 +61,10 @@ export function useNfeStatus() {
         connected: true,
         has_credentials: true,
         cnpj: creds.cnpj,
-        ambiente: creds.ambiente,
-        provedor: creds.provedor,
-        certificado_tipo: creds.certificado_tipo,
-        regime_tributario: creds.regime_tributario,
+        environment: creds.environment,
+        provider: creds.provider,
+        certificate_type: creds.certificate_type,
+        tax_regime: creds.tax_regime,
         saved_at: creds.saved_at,
       };
     },

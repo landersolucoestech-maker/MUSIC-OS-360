@@ -33,16 +33,16 @@ import type { ProjectWithRelationsExtended } from "@/modules/projects/types/proj
 import { getFirstTrackInfo, parseTracksFromProject } from "@/modules/projects/lib/track-helpers";
 
 // In mock mode (and over HTTP — /projects does not join the artist) the
-// backend does not return the embedded `artistas` relation. Inject it manually
+// backend does not return the embedded `artist` relation. Inject it manually
 // from the id→artist map — used both in the full list (deep link,
 // genre dropdown) and in the current page coming from the backend.
-function withArtist<T extends { artist_id?: string | null; artistas?: unknown }>(
+function withArtist<T extends { artist_id?: string | null; artist?: unknown }>(
   list: T[],
   artistsById: Record<string, any>,
 ): T[] {
   return list.map(p => ({
     ...p,
-    artistas: p.artistas ?? (p.artist_id ? artistsById[p.artist_id] : undefined),
+    artist: p.artist ?? (p.artist_id ? artistsById[p.artist_id] : undefined),
   }));
 }
 
@@ -386,8 +386,8 @@ export default function Projects() {
                             })()}
                             <div className="min-w-0">
                               <p className="font-medium truncate" data-testid={`text-title-${project.id}`}>{project.title}</p>
-                              {project.artistas?.stage_name && (
-                                <p className="text-xs text-muted-foreground truncate">{project.artistas.stage_name}</p>
+                              {project.artist?.stage_name && (
+                                <p className="text-xs text-muted-foreground truncate">{project.artist.stage_name}</p>
                               )}
                             </div>
                           </div>

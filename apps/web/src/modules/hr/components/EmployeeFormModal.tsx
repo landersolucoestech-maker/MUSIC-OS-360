@@ -242,11 +242,11 @@ export function EmployeeFormModal({
 
           <TabsContent value="personal" className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="nome_completo">
+              <Label htmlFor="full_name">
                 Nome Completo <span className="text-destructive">*</span>
               </Label>
               <Input
-                id="nome_completo"
+                id="full_name"
                 placeholder="Nome completo do funcionário"
                 value={fullName}
                 onChange={(e) => {
@@ -295,7 +295,7 @@ export function EmployeeFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="data_nascimento">Data de Nascimento</Label>
+                <Label htmlFor="birth_date">Data de Nascimento</Label>
                 <DatePickerField
                   value={birthDate}
                   onChange={setBirthDate}
@@ -344,9 +344,9 @@ export function EmployeeFormModal({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="endereco">Endereço</Label>
+                <Label htmlFor="address">Endereço</Label>
                 <Input
-                  id="endereco"
+                  id="address"
                   placeholder="Endereço completo"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
@@ -425,9 +425,9 @@ export function EmployeeFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="salario_base">Salário Base (R$)</Label>
+                <Label htmlFor="base_salary">Salário Base (R$)</Label>
                 <Input
-                  id="salario_base"
+                  id="base_salary"
                   type="number"
                   min="0"
                   step="0.01"

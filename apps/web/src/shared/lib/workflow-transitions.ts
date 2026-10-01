@@ -29,7 +29,7 @@ function buildAllowed(defs: RawDef[], currentStatus: string): WorkflowTransition
 }
 
 // ─── Releases ───────────────────────────────────────────────────────────────
-// Conforme spec: draft → metadata_pending → assets_pending → review → approved →
+// Per spec: draft → metadata_pending → assets_pending → review → approved →
 //                scheduled → distributed → released → archived / cancelled
 
 const RELEASES_DEFS: RawDef[] = [
@@ -47,55 +47,58 @@ const RELEASES_DEFS: RawDef[] = [
 ];
 
 // ─── Contracts ──────────────────────────────────────────────────────────────
+// Canonical ContractStatus values (packages/types) — mirrors contracts.workflow.ts.
 
 const CONTRACTS_DEFS: RawDef[] = [
-  { from: 'rascunho',               to: 'em_analise',           label: 'Enviar para Análise' },
-  { from: 'em_analise',             to: 'rascunho',             label: 'Retornar para Rascunho' },
-  { from: 'em_analise',             to: 'aguardando_assinatura',label: 'Aprovar para Assinatura' },
-  { from: 'aguardando_assinatura',  to: 'assinado',             label: 'Registrar Assinatura' },
-  { from: 'assinado',               to: 'vigente',              label: 'Ativar Contrato' },
-  { from: 'vigente',                to: 'vencendo',             label: 'Marcar como Vencendo' },
-  { from: ['vencendo', 'vigente'],  to: 'vencido',              label: 'Registrar Vencimento' },
-  { from: ['vencido', 'vigente', 'assinado'], to: 'encerrado',  label: 'Encerrar Contrato' },
-  { from: ['rascunho', 'em_analise', 'aguardando_assinatura'], to: 'cancelado', label: 'Cancelar' },
+  { from: 'draft',                  to: 'under_review',         label: 'Enviar para Análise' },
+  { from: 'under_review',           to: 'draft',                label: 'Retornar para Rascunho' },
+  { from: 'under_review',           to: 'awaiting_signature',   label: 'Aprovar para Assinatura' },
+  { from: 'awaiting_signature',     to: 'signed',               label: 'Registrar Assinatura' },
+  { from: 'signed',                 to: 'in_force',             label: 'Ativar Contrato' },
+  { from: 'in_force',               to: 'expiring',             label: 'Marcar como Vencendo' },
+  { from: ['expiring', 'in_force'], to: 'expired',              label: 'Registrar Vencimento' },
+  { from: ['expired', 'in_force', 'signed'], to: 'terminated', label: 'Encerrar Contrato' },
+  { from: ['draft', 'under_review', 'awaiting_signature'], to: 'cancelled', label: 'Cancelar' },
 ];
 
 // ─── Leads ──────────────────────────────────────────────────────────────────
+// Canonical LeadStatus values (packages/types) — mirrors leads.workflow.ts.
 
 const LEADS_DEFS: RawDef[] = [
-  { from: 'novo',                 to: 'contato',     label: 'Iniciar Contato' },
-  { from: ['novo', 'contato'],    to: 'em_contato',  label: 'Em Contato' },
-  { from: ['contato', 'em_contato'], to: 'qualificado', label: 'Qualificar Lead' },
-  { from: 'qualificado',          to: 'proposta',    label: 'Enviar Proposta' },
-  { from: 'proposta',             to: 'negociacao',  label: 'Em Negociação' },
-  { from: ['proposta', 'negociacao'], to: 'fechado', label: 'Fechar Negócio' },
-  { from: ['novo', 'contato', 'em_contato', 'qualificado', 'proposta', 'negociacao'],
-    to: 'perdido', label: 'Marcar como Perdido' },
-  { from: ['perdido', 'inativo'], to: 'novo',    label: 'Reativar Lead' },
-  { from: ['fechado', 'perdido'], to: 'inativo', label: 'Arquivar' },
+  { from: 'new',                   to: 'contacted',   label: 'Iniciar Contato' },
+  { from: ['new', 'contacted'],    to: 'in_contact',  label: 'Em Contato' },
+  { from: ['contacted', 'in_contact'], to: 'qualified', label: 'Qualificar Lead' },
+  { from: 'qualified',             to: 'proposal',    label: 'Enviar Proposta' },
+  { from: 'proposal',              to: 'negotiation', label: 'Em Negociação' },
+  { from: ['proposal', 'negotiation'], to: 'closed',  label: 'Fechar Negócio' },
+  { from: ['new', 'contacted', 'in_contact', 'qualified', 'proposal', 'negotiation'],
+    to: 'lost', label: 'Marcar como Perdido' },
+  { from: ['lost', 'inactive'],    to: 'new',         label: 'Reativar Lead' },
+  { from: ['closed', 'lost'],      to: 'inactive',    label: 'Arquivar' },
 ];
 
 // ─── Campaigns ──────────────────────────────────────────────────────────────
+// Canonical CampaignStatus values (packages/types) — mirrors campaigns.workflow.ts.
 
 const CAMPAIGNS_DEFS: RawDef[] = [
-  { from: 'rascunho',             to: 'planejamento', label: 'Iniciar Planejamento' },
-  { from: 'planejamento',         to: 'ativa',        label: 'Ativar Campanha' },
-  { from: 'ativa',                to: 'pausada',      label: 'Pausar Campanha' },
-  { from: 'pausada',              to: 'ativa',        label: 'Retomar Campanha' },
-  { from: ['ativa', 'pausada'],   to: 'concluida',    label: 'Concluir Campanha' },
-  { from: ['rascunho', 'planejamento', 'ativa', 'pausada'], to: 'cancelada', label: 'Cancelar Campanha' },
+  { from: 'draft',                to: 'planning',     label: 'Iniciar Planejamento' },
+  { from: 'planning',             to: 'active',       label: 'Ativar Campanha' },
+  { from: 'active',               to: 'paused',       label: 'Pausar Campanha' },
+  { from: 'paused',               to: 'active',       label: 'Retomar Campanha' },
+  { from: ['active', 'paused'],   to: 'completed',    label: 'Concluir Campanha' },
+  { from: ['draft', 'planning', 'active', 'paused'], to: 'cancelled', label: 'Cancelar Campanha' },
 ];
 
 // ─── Projects ───────────────────────────────────────────────────────────────
-// Per spec: `planejamento` → `em_andamento` → `revisao` → `concluido` / `cancelado`
+// Canonical ProjectStatus values: planning → in_progress → review → completed / cancelled
 
 const PROJECTS_DEFS: RawDef[] = [
-  { from: 'planejamento',                      to: 'em_andamento', label: 'Iniciar Projeto' },
-  { from: 'em_andamento',                      to: 'revisao',      label: 'Enviar para Revisão' },
-  { from: 'revisao',                           to: 'em_andamento', label: 'Solicitar Alterações' },
-  { from: 'revisao',                           to: 'concluido',    label: 'Concluir Projeto' },
-  { from: ['planejamento', 'em_andamento', 'revisao'],
-    to: 'cancelado', label: 'Cancelar Projeto' },
+  { from: 'planning',                          to: 'in_progress',  label: 'Iniciar Projeto' },
+  { from: 'in_progress',                       to: 'review',       label: 'Enviar para Revisão' },
+  { from: 'review',                            to: 'in_progress',  label: 'Solicitar Alterações' },
+  { from: 'review',                            to: 'completed',    label: 'Concluir Projeto' },
+  { from: ['planning', 'in_progress', 'review'],
+    to: 'cancelled', label: 'Cancelar Projeto' },
 ];
 
 // ─── Tickets ────────────────────────────────────────────────────────────────

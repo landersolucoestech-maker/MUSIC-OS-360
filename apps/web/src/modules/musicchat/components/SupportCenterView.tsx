@@ -240,17 +240,15 @@ function buildContactInitialValue(conversation: SupportConversation, assigneeNam
 }
 
 function buildEventInitialValue(conversation: SupportConversation) {
+  // Canonical event fields (the scheduler form reads type/status/venue/venue_contact/description/notes).
   return {
     title: `Atendimento - ${conversation.customer}`,
-    tipoEvento: "reunioes",
-    tipo_evento: "reunioes",
-    status: "agendado",
-    startDate: new Date(),
-    horarioInicio: "",
-    nomeLocal: conversation.originLabel,
-    contatoLocal: conversation.phone || conversation.handle,
-    descricao: buildConversationContext(conversation),
-    observacoes: `Criado a partir do MusicChat. ${conversation.protocol}`,
+    type: "meeting",
+    status: "scheduled",
+    venue: conversation.originLabel,
+    venue_contact: conversation.phone || conversation.handle,
+    description: buildConversationContext(conversation),
+    notes: `Criado a partir do MusicChat. ${conversation.protocol}`,
   };
 }
 

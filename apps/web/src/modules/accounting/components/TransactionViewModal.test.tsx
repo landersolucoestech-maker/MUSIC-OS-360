@@ -35,8 +35,8 @@ const detail = {
 async function open(data: Record<string, unknown>) {
   vi.mocked(accountingService.getTransaction).mockResolvedValue(data as never);
   render(<TransactionViewModal open onOpenChange={() => {}} transactionId="t1" />);
-  await waitFor(() => expect(screen.getByTestId("text-transacao-descricao")).toBeInTheDocument());
-  return screen.getByTestId("modal-transacao-view");
+  await waitFor(() => expect(screen.getByTestId("text-transaction-description")).toBeInTheDocument());
+  return screen.getByTestId("modal-transaction-view");
 }
 
 beforeEach(() => vi.clearAllMocks());

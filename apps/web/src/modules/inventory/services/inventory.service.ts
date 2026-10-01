@@ -10,7 +10,7 @@ export const inventoryService = {
     return storage.list("inventory_items", { filters: { category } });
   },
   async listLowStock(threshold = 5) {
-    const items = await storage.list<{ id: string; quantidade: number }>("inventory_items");
-    return items.filter((i) => (i.quantidade ?? 0) <= threshold);
+    const items = await storage.list<{ id: string; quantity: number }>("inventory_items");
+    return items.filter((i) => (i.quantity ?? 0) <= threshold);
   },
 };

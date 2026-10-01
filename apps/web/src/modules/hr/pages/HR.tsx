@@ -627,14 +627,14 @@ export default function HR() {
                     <Checkbox
                       checked={selectedEmployeeIds.length === filteredEmployees.length && filteredEmployees.length > 0}
                       onCheckedChange={toggleSelectAllFuncs}
-                      data-testid="checkbox-select-all-funcs"
+                      data-testid="checkbox-select-all-employees"
                       aria-label="Selecionar todos"
                     />
                     <span className="text-xs text-muted-foreground">
                       {selectedEmployeeIds.length > 0 ? `${selectedEmployeeIds.length} selecionado(s)` : "Selecionar todos"}
                     </span>
                     {selectedEmployeeIds.length > 0 && (
-                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeleteFuncs} data-testid="button-bulk-delete-funcs">
+                      <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeleteFuncs} data-testid="button-bulk-delete-employees">
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir ({selectedEmployeeIds.length})
                       </Button>

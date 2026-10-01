@@ -59,7 +59,7 @@ export interface SigningDocument {
    */
   signing_url?: string | null;
   /** Associated local contract ID */
-  contrato_id?: string;
+  contract_id?: string;
 }
 
 export interface CreateSigningDocumentParams {
@@ -72,7 +72,7 @@ export interface CreateSigningDocumentParams {
   /** Message for the signers */
   message?: string;
   /** Local contract ID for cross-reference */
-  contrato_id?: string;
+  contract_id?: string;
 }
 
 export interface SigningWebhookEvent {
@@ -99,7 +99,7 @@ export interface ISigningProvider {
   getDocument(documentId: string): Promise<SigningDocument>;
 
   /** Lists documents (optionally filtered by local contract) */
-  listDocuments(params?: { contrato_id?: string; status?: SigningStatus }): Promise<SigningDocument[]>;
+  listDocuments(params?: { contract_id?: string; status?: SigningStatus }): Promise<SigningDocument[]>;
 
   /** Cancels an open document */
   cancelDocument(documentId: string): Promise<void>;

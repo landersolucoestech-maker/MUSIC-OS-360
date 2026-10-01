@@ -34,7 +34,7 @@ export type PaymentStatus =
 
 export interface SubscriptionFeatures {
   maxArtists: number | "unlimited";
-  maxObras: number | "unlimited";
+  maxWorks: number | "unlimited";
   maxUsers: number | "unlimited";
   hasAnalytics: boolean;
   hasAdvancedReports: boolean;
@@ -131,7 +131,7 @@ export interface IPaymentsProvider {
 export const PLAN_FEATURES: Record<SubscriptionPlan, SubscriptionFeatures> = {
   starter: {
     maxArtists: 5,
-    maxObras: 100,
+    maxWorks: 100,
     maxUsers: 3,
     hasAnalytics: false,
     hasAdvancedReports: false,
@@ -140,7 +140,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, SubscriptionFeatures> = {
   },
   professional: {
     maxArtists: 25,
-    maxObras: 1000,
+    maxWorks: 1000,
     maxUsers: 10,
     hasAnalytics: true,
     hasAdvancedReports: true,
@@ -149,7 +149,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, SubscriptionFeatures> = {
   },
   enterprise: {
     maxArtists: "unlimited",
-    maxObras: "unlimited",
+    maxWorks: "unlimited",
     maxUsers: "unlimited",
     hasAnalytics: true,
     hasAdvancedReports: true,
@@ -158,7 +158,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, SubscriptionFeatures> = {
   },
   custom: {
     maxArtists: "unlimited",
-    maxObras: "unlimited",
+    maxWorks: "unlimited",
     maxUsers: "unlimited",
     hasAnalytics: true,
     hasAdvancedReports: true,

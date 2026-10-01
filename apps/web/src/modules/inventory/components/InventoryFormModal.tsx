@@ -91,9 +91,9 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
 
   // Compute the total value automatically
   const totalValue = useMemo(() => {
-    const qtd = quantity || 0;
+    const quantityValue = quantity || 0;
     const unitAmount = unitValue || 0;
-    const total = qtd * unitAmount;
+    const total = quantityValue * unitAmount;
     return total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   }, [quantity, unitValue]);
 
@@ -347,7 +347,7 @@ export function InventoryFormModal({ open, onOpenChange, item, mode }: Inventory
                     onChange={(iso) => setValue("entryDate", iso)}
                     disabled={isViewMode}
                     placeholder="Selecione a data"
-                    data-testid="datepicker-data-entrada"
+                    data-testid="datepicker-entry-date"
                   />
                 </div>
                 <div className="space-y-2">

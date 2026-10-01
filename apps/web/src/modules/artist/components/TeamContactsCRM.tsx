@@ -292,7 +292,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                                   }
                                   placeholder="Nome da distribuidora…"
                                   className="h-7 text-xs"
-                                  data-testid={`input-dist-nome-custom-${link.contactId}`}
+                                  data-testid={`input-dist-name-custom-${link.contactId}`}
                                 />
                                 {(entry?.customName ?? "").trim().length > 0 && (
                                   <Input

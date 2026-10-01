@@ -33,8 +33,8 @@ export interface SendUserInviteInput {
 }
 
 export interface SendContractExpiryAlertInput {
-  contratoId:    string;
-  contratoTitle: string;
+  contractId:    string;
+  contractTitle: string;
   daysRemaining: number;
   to: { name: string; email: string };
 }
@@ -72,13 +72,13 @@ export const notificationsService = {
   },
 
   async sendContractExpiryAlert(input: SendContractExpiryAlertInput): Promise<void> {
-    const { contratoId: contractId, contratoTitle: contractTitle, daysRemaining, to } = input;
+    const { contractId, contractTitle, daysRemaining, to } = input;
 
     await emailAdapter.send({
       to,
       subject:      `Contrato vence em ${daysRemaining} dias: ${contractTitle}`,
       template_id:  "contract-expiry-alert",
-      template_vars: { contrato_title: contractTitle, days_remaining: daysRemaining },
+      template_vars: { contract_title: contractTitle, days_remaining: daysRemaining },
     });
 
     analyticsAdapter.track("contract.expiry_alert_sent", {
@@ -94,7 +94,7 @@ export const notificationsService = {
       to,
       subject:      `Lançamento ${status === "approved" ? "aprovado" : "rejeitado"}: ${releaseTitle}`,
       template_id:  status === "approved" ? "release-approved" : "release-rejected",
-      template_vars: { lancamento_title: releaseTitle, reason: reason ?? "" },
+      template_vars: { release_title: releaseTitle, rejection_reason: reason ?? "" },
     });
 
     analyticsAdapter.track(`release.${status}`, { release_id: releaseId });

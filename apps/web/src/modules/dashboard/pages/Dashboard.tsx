@@ -358,7 +358,7 @@ export default function Dashboard() {
     push({ icon: <FileText className="h-3.5 w-3.5" />, label: "Contrato assinado", description: "Assinatura registrada", badge: "Contrato", badgeVariant: "default" }),
   );
   useWsEvent("crm.lead.captured", (d) =>
-    push({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead capturado", description: (d as { nome?: string }).nome ?? "Nome não informado", badge: "CRM", badgeVariant: "default" }),
+    push({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead capturado", description: (d as { name?: string }).name ?? "Nome não informado", badge: "CRM", badgeVariant: "default" }),
   );
   useWsEvent("crm.lead.converted", () =>
     push({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead convertido", description: "Lead virou artista/cliente", badge: "CRM", badgeVariant: "default" }),
@@ -421,8 +421,8 @@ export default function Dashboard() {
       {
         event: "musicos360:LEAD_CAPTURED",
         fn: (e) => {
-          const d = (e as CustomEvent).detail as { nome?: string };
-          pushRef.current({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead capturado", description: d.nome ?? "–", badge: "CRM", badgeVariant: "default" });
+          const d = (e as CustomEvent).detail as { name?: string };
+          pushRef.current({ icon: <UserCheck className="h-3.5 w-3.5" />, label: "Lead capturado", description: d.name ?? "–", badge: "CRM", badgeVariant: "default" });
         },
       },
       {
@@ -710,7 +710,7 @@ export default function Dashboard() {
                 <Card
                   key={artist.id}
                   className="group relative overflow-hidden duration-200"
-                  data-testid={`card-artista-destaque-${artist.id}`}
+                  data-testid={`card-artist-featured-${artist.id}`}
                 >
                   {/* The artist image covers the whole card; default placeholder when there is no photo */}
                   {artist.photoUrl ? (
@@ -796,7 +796,7 @@ export default function Dashboard() {
                             artist: featuredArtists.find((a) => a.id === artist.id)?.artist,
                           })
                         }
-                        data-testid={`button-ver-perfil-${artist.id}`}
+                        data-testid={`button-view-profile-${artist.id}`}
                       >
                         Ver perfil 360°
                       </Button>

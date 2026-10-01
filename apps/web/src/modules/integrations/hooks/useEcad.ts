@@ -21,37 +21,37 @@ import { toUserMessage } from "@/shared/lib/errors";
 
 export interface EcadStatus extends IntegrationRuntimeStatus {
   integration_id:       "ecad";
-  associacao_filiada?:  string | null;
+  affiliated_association?:  string | null;
   username?:            string | null;
-  ultimo_relatorio_em?: string | null;
+  last_report_at?: string | null;
 }
 
 export interface EcadCollectionEntry {
   isrc:                 string;
   title:               string;
-  artista:              string;
-  periodo:              string;
-  fonte:                string;
-  execucoes:            number;
-  valor_bruto_cents:    number;
-  valor_liquido_cents:  number;
+  artist:              string;
+  period:              string;
+  source:                string;
+  performances:            number;
+  gross_amount_cents:    number;
+  net_amount_cents:  number;
 }
 
 export interface EcadCollectionSummary {
-  periodo:                string;
-  total_execucoes:        number;
-  valor_bruto_cents:      number;
-  valor_liquido_cents:    number;
-  obras:                  number;
+  period:                string;
+  total_performances:        number;
+  gross_amount_cents:      number;
+  net_amount_cents:    number;
+  works:                  number;
   entries:                EcadCollectionEntry[];
 }
 
 export interface EcadReconciliationResult {
-  total_fonogramas:     number;
-  conciliados:          number;
-  nao_encontrados:      number;
-  sem_cod_ecad:         number;
-  discrepancias:        number;
+  total_phonograms:     number;
+  reconciled:          number;
+  not_found:      number;
+  missing_ecad_code:         number;
+  discrepancies:        number;
 }
 
 const ECAD_UNAVAILABLE =
@@ -71,9 +71,9 @@ export function useEcadStatus() {
       integration_id:      "ecad",
       status:              "disconnected",
       connected:           false,
-      associacao_filiada:  null,
+      affiliated_association:  null,
       username:            null,
-      ultimo_relatorio_em: null,
+      last_report_at: null,
       last_error:          ECAD_UNAVAILABLE,
       last_checked_at:     new Date().toISOString(),
     }),
@@ -83,7 +83,7 @@ export function useEcadStatus() {
 
 export function useEcadSaveCredentials() {
   return useMutation({
-    mutationFn: async (_input: { associacao: string; username: string; password: string }) =>
+    mutationFn: async (_input: { association: string; username: string; password: string }) =>
       ecadUnavailable(),
     onError: (err: Error) => toast.error(toUserMessage(err)),
   });
@@ -96,25 +96,25 @@ export function useEcadDeleteCredentials() {
   });
 }
 
-export function useEcadCollection(periodo: string, enabled = true) {
+export function useEcadCollection(period: string, enabled = true) {
   return useQuery<EcadCollectionSummary>({
-    queryKey: ["ecad", "arrecadacao", periodo],
+    queryKey: ["ecad", "arrecadacao", period],
     queryFn: async (): Promise<EcadCollectionSummary> => ecadUnavailable(),
-    enabled: enabled && Boolean(periodo),
+    enabled: enabled && Boolean(period),
     staleTime: 300_000,
     retry: false,
   });
 }
 
 export function useEcadReconciliation() {
-  return useMutation<EcadReconciliationResult, Error, { periodo: string }>({
+  return useMutation<EcadReconciliationResult, Error, { period: string }>({
     mutationFn: async (_input) => ecadUnavailable(),
     onError: (err) => toast.error(`Erro na conciliação ECAD: ${toUserMessage(err)}`),
   });
 }
 
 export function useEcadImportReport() {
-  return useMutation<{ linhas: number; importadas: number }, Error, File>({
+  return useMutation<{ rows: number; imported: number }, Error, File>({
     mutationFn: async (_file: File) => ecadUnavailable(),
     onError: (err) => toast.error(`Erro ao importar relatório: ${toUserMessage(err)}`),
   });

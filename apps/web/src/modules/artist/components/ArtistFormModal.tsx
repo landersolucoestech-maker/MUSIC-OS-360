@@ -91,7 +91,7 @@ function DistributorsField({
                   id={`geral-dist-${dist.id}`}
                   checked={isChecked}
                   onCheckedChange={(checked) => toggle(dist.id, !!checked)}
-                  data-testid={`checkbox-geral-dist-${dist.id}`}
+                  data-testid={`checkbox-general-dist-${dist.id}`}
                 />
                 <Label htmlFor={`geral-dist-${dist.id}`} className="text-sm cursor-pointer font-medium">
                   {dist.label}
@@ -128,7 +128,7 @@ function DistributorsField({
                     type="email"
                     placeholder={`Email de share — ${dist.label}`}
                     className="h-8 text-sm"
-                    data-testid={`input-geral-dist-email-${dist.id}`}
+                    data-testid={`input-general-dist-email-${dist.id}`}
                   />
                 </div>
               )}

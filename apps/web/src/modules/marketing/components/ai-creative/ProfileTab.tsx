@@ -26,7 +26,7 @@ export function ProfileTab({
   const [artist, setArtist] = useState<TargetOption | null>(null);
 
   // Task J — the selected artist's catalog is fetched directly and scoped by
-  // artist_id (server-side), no longer filtering an unfiltered sources.obras/fonogramas
+  // artist_id (server-side), no longer filtering an unfiltered sources.works/phonograms
   // (capped at the tenant's first 50).
   const { entity: artistRecordWire } = useEntityById<ArtistWireRecord>("artists", artist?.id);
   const artistRecord: Artist | undefined = artistRecordWire ? wireToArtist(artistRecordWire) : undefined;
@@ -34,7 +34,7 @@ export function ProfileTab({
   const { phonograms } = usePhonograms(!!artist, artist?.id);
 
   const bundle = useMemo<ArtistProfileBundle | null>(
-    () => artist ? loadArtistContext(artist, sources, { artistRecord, obras: works, fonogramas: phonograms }) : null,
+    () => artist ? loadArtistContext(artist, sources, { artistRecord, works, phonograms }) : null,
     [artist, sources, artistRecord, works, phonograms],
   );
   const result = useMemo<AiGeneratedResult | null>(() => (

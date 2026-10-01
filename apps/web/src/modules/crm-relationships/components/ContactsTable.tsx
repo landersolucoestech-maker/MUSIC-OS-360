@@ -51,7 +51,7 @@ export function ContactsTable({ contacts, onView, onEdit, onDelete, onBulkDelete
   };
 
   return (
-    <Card data-testid="contatos-table">
+    <Card data-testid="contacts-table">
       <CardContent className="pt-0">
       <ListSectionHeader
         title="Lista de Contatos"
@@ -64,7 +64,7 @@ export function ContactsTable({ contacts, onView, onEdit, onDelete, onBulkDelete
               {selectedIds.length > 0 ? `${selectedIds.length} selecionado(s)` : "Selecionar todos"}
             </span>
             {selectedIds.length > 0 && (
-              <Button variant="destructive" size="sm" className="h-7 gap-1.5 text-xs" onClick={handleBulkDelete} disabled={!onBulkDelete} data-testid="button-bulk-delete-contatos">
+              <Button variant="destructive" size="sm" className="h-7 gap-1.5 text-xs" onClick={handleBulkDelete} disabled={!onBulkDelete} data-testid="button-bulk-delete-contacts">
                 <Trash2 className="h-3.5 w-3.5" /> Excluir ({selectedIds.length})
               </Button>
             )}
@@ -90,7 +90,7 @@ export function ContactsTable({ contacts, onView, onEdit, onDelete, onBulkDelete
             const legalName = contact.personType === "company" && contact.legalName && contact.legalName !== contact.name ? contact.legalName : "";
             const city = [contact.city, contact.state].filter(Boolean).join(" / ");
             return (
-              <TableRow key={contact.id} className={selectedIds.includes(contact.id) ? "bg-primary/5" : ""} data-testid={`contato-row-${contact.id}`}>
+              <TableRow key={contact.id} className={selectedIds.includes(contact.id) ? "bg-primary/5" : ""} data-testid={`contact-row-${contact.id}`}>
                 <TableCell>
                   <Checkbox checked={selectedIds.includes(contact.id)} onCheckedChange={() => toggleSelect(contact.id)} aria-label="Selecionar contato" />
                 </TableCell>
@@ -126,24 +126,24 @@ export function ContactsTable({ contacts, onView, onEdit, onDelete, onBulkDelete
                         size="icon"
                         className="h-8 w-8"
                         aria-label="Ações"
-                        data-testid={`contato-actions-${contact.id}`}
+                        data-testid={`contact-actions-${contact.id}`}
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onView?.(contact)} data-testid={`contato-action-view-${contact.id}`}>
+                      <DropdownMenuItem onClick={() => onView?.(contact)} data-testid={`contact-action-view-${contact.id}`}>
                         <Eye className="mr-2 h-4 w-4" />
                         Visualizar
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onEdit?.(contact)} data-testid={`contato-action-edit-${contact.id}`}>
+                      <DropdownMenuItem onClick={() => onEdit?.(contact)} data-testid={`contact-action-edit-${contact.id}`}>
                         <Pencil className="mr-2 h-4 w-4" />
                         Editar
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => onDelete?.(contact)}
                         className="text-destructive focus:text-destructive"
-                        data-testid={`contato-action-delete-${contact.id}`}
+                        data-testid={`contact-action-delete-${contact.id}`}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Excluir

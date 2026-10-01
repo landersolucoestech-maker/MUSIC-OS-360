@@ -3,17 +3,8 @@ export type SupportPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export type TicketStatus = SupportTicketStatus;
 export type TicketPriority = SupportPriority;
-export type TicketCategory =
-  | 'financeiro'
-  | 'analytics'
-  | 'distribuicao'
-  | 'contratos'
-  | 'artistas'
-  | 'projetos'
-  | 'usuarios'
-  | 'permissoes'
-  | 'integracoes'
-  | 'outro';
+/** Canonical `support_tickets.category` values (CreateSupportTicketDto CATEGORIES in the API). */
+export type TicketCategory = 'billing' | 'technical' | 'feature-request' | 'access' | 'other';
 
 export type SystemStatusLevel = 'operational' | 'degraded' | 'partial_outage' | 'major_outage' | 'maintenance' | 'offline';
 

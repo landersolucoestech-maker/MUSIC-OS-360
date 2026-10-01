@@ -34,8 +34,8 @@ const baseResult = {
   title: "Canção de Teste",
   iswc: "T-123456789-0",
   isrc: null,
-  artista_nome: "Artista X",
-  genero: "MPB",
+  artist_name: "Artista X",
+  genre: "MPB",
 };
 
 const setupHooks = ({
@@ -81,7 +81,7 @@ describe("AbramusSearchRow — already-imported flow", () => {
       ]),
     });
 
-    renderWith(<AbramusSearchRow kind="obras" query="canção" />);
+    renderWith(<AbramusSearchRow kind="works" query="canção" />);
 
     expect(
       screen.getByTestId("badge-already-imported-ABR-123")
@@ -91,7 +91,7 @@ describe("AbramusSearchRow — already-imported flow", () => {
   it("does NOT render the badge when there is no local match", () => {
     setupHooks({ lookup: new Map() });
 
-    renderWith(<AbramusSearchRow kind="obras" query="canção" />);
+    renderWith(<AbramusSearchRow kind="works" query="canção" />);
 
     expect(
       screen.queryByTestId("badge-already-imported-ABR-123")
@@ -107,7 +107,7 @@ describe("AbramusSearchRow — already-imported flow", () => {
     const onImported = vi.fn();
 
     renderWith(
-      <AbramusSearchRow kind="obras" query="canção" onImported={onImported} />
+      <AbramusSearchRow kind="works" query="canção" onImported={onImported} />
     );
 
     fireEvent.click(screen.getByTestId("abramus-result-ABR-123"));
@@ -132,7 +132,7 @@ describe("AbramusSearchRow — already-imported flow", () => {
 
     renderWith(
       <AbramusSearchRow
-        kind="fonogramas"
+        kind="phonograms"
         query="faixa"
         onImported={onImported}
       />
@@ -156,7 +156,7 @@ describe("AbramusSearchRow — already-imported flow", () => {
     const onImported = vi.fn();
 
     renderWith(
-      <AbramusSearchRow kind="obras" query="canção" onImported={onImported} />
+      <AbramusSearchRow kind="works" query="canção" onImported={onImported} />
     );
 
     fireEvent.click(screen.getByTestId("abramus-result-ABR-123"));

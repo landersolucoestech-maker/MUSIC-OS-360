@@ -66,12 +66,12 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
 
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
-    associacao: "",
+    association: "",
     username:   "",
     password:   "",
   });
 
-  const currentPeriodo = format(new Date(), "yyyy-MM", { locale: ptBR });
+  const currentPeriod = format(new Date(), "yyyy-MM", { locale: ptBR });
 
   const isConnected  = status?.connected ?? false;
   const isSaving     = saveCredentials.isPending;
@@ -81,14 +81,14 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
     saveCredentials.mutate({
-      associacao: form.associacao.trim(),
+      association: form.association.trim(),
       username:   form.username.trim(),
       password:   form.password.trim(),
     });
   }
 
-  function handleConciliar() {
-    reconciliation.mutate({ periodo: currentPeriodo });
+  function handleReconcile() {
+    reconciliation.mutate({ period: currentPeriod });
   }
 
   return (
@@ -113,9 +113,9 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
             <span className="font-medium">
               {isConnected ? "Conectado" : "Desconectado"}
             </span>
-            {isConnected && status?.associacao_filiada && (
+            {isConnected && status?.affiliated_association && (
               <span className="text-muted-foreground">
-                · {status.associacao_filiada}
+                · {status.affiliated_association}
               </span>
             )}
           </div>
@@ -140,15 +140,15 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid gap-4">
               <div className="grid gap-1.5">
-                <Label htmlFor="ecad-associacao" className="text-xs font-medium">
+                <Label htmlFor="ecad-association" className="text-xs font-medium">
                   Associação filiada <span className="text-destructive">*</span>
                 </Label>
                 <Input
-                  id="ecad-associacao"
+                  id="ecad-association"
                   placeholder="Ex.: ABRAMUS, UBC, AMAR, SICAM…"
-                  value={form.associacao}
-                  onChange={(e) => setForm((p) => ({ ...p, associacao: e.target.value }))}
-                  data-testid="input-ecad-associacao"
+                  value={form.association}
+                  onChange={(e) => setForm((p) => ({ ...p, association: e.target.value }))}
+                  data-testid="input-ecad-association"
                   disabled={isSaving}
                 />
               </div>
@@ -200,7 +200,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
             <Button
               type="submit"
               className="w-full"
-              disabled={isSaving || !form.associacao.trim() || !form.username.trim() || !form.password.trim()}
+              disabled={isSaving || !form.association.trim() || !form.username.trim() || !form.password.trim()}
               data-testid="button-ecad-save"
             >
               {isSaving ? (
@@ -227,15 +227,15 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
               {reconciliation.data && (
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="rounded bg-emerald-500/10 border border-emerald-500/20 py-2">
-                    <p className="text-base font-semibold text-emerald-600">{reconciliation.data.conciliados}</p>
+                    <p className="text-base font-semibold text-emerald-600">{reconciliation.data.reconciled}</p>
                     <p className="text-[11px] text-muted-foreground">Conciliados</p>
                   </div>
                   <div className="rounded bg-amber-500/10 border border-amber-500/20 py-2">
-                    <p className="text-base font-semibold text-amber-600">{reconciliation.data.discrepancias}</p>
+                    <p className="text-base font-semibold text-amber-600">{reconciliation.data.discrepancies}</p>
                     <p className="text-[11px] text-muted-foreground">Discrepâncias</p>
                   </div>
                   <div className="rounded bg-muted/40 border py-2">
-                    <p className="text-base font-semibold">{reconciliation.data.sem_cod_ecad}</p>
+                    <p className="text-base font-semibold">{reconciliation.data.missing_ecad_code}</p>
                     <p className="text-[11px] text-muted-foreground">Sem cód. ECAD</p>
                   </div>
                 </div>
@@ -244,9 +244,9 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
                 size="sm"
                 variant="outline"
                 className="w-full"
-                onClick={handleConciliar}
+                onClick={handleReconcile}
                 disabled={isConciling}
-                data-testid="button-ecad-conciliar"
+                data-testid="button-ecad-reconcile"
               >
                 {isConciling ? (
                   <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> Conciliando…</>
@@ -277,7 +277,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Shield className="h-3.5 w-3.5" />
                 <span>
-                  {status?.associacao_filiada} · Usuário: <strong>{status?.username}</strong>
+                  {status?.affiliated_association} · Usuário: <strong>{status?.username}</strong>
                 </span>
               </div>
               <AlertDialog>

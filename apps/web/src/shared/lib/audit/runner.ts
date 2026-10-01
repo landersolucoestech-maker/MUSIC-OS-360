@@ -87,7 +87,7 @@ const CONFIGS: AuditConfig[] = [
     table: "phonograms",
     entityType: "Fonograma",
     fixPath: (row) => `/music-registration?phonogram=${row.id}`,
-    label: (row) => entityLabel(row, ["title", "nome", "isrc"], "Fonograma sem título"),
+    label: (row) => entityLabel(row, ["title", "isrc"], "Fonograma sem título"),
     fields: [
       { key: "title", label: "Título", severity: "required" },
       { key: "isrc", label: "ISRC", severity: "required" },

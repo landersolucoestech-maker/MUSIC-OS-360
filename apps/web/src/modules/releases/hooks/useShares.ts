@@ -18,7 +18,6 @@ export function useShares() {
   const result = useDataQuery<ShareWithRelations>({
     queryKey: [...QUERY_KEYS.SHARES],
     table: "shares",
-    select: "*, obras(*), artistas(*)",
     onMutationSuccess: {
       onCreate: (s) =>
         emit(DomainEvents.SHARE_CREATED, {

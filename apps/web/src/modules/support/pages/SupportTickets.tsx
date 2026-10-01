@@ -335,7 +335,7 @@ export default function SupportTickets() {
   const [page, setPage]                       = useState(1);
 
   const [form, setForm] = useState({
-    subject: "", description: "", category: "outro" as TicketCategory, priority: "medium" as TicketPriority,
+    subject: "", description: "", category: "other" as TicketCategory, priority: "medium" as TicketPriority,
   });
 
   /* When updateTicket is called from drawer, also sync the activeTicket state */
@@ -365,7 +365,7 @@ export default function SupportTickets() {
     if (!form.subject.trim()) return;
     addTicket({ subject: form.subject, description: form.description, category: form.category, priority: form.priority, created_by: "Usuário Atual" });
     setShowModal(false);
-    setForm({ subject: "", description: "", category: "outro", priority: "medium" });
+    setForm({ subject: "", description: "", category: "other", priority: "medium" });
   }
 
   return (
@@ -373,7 +373,7 @@ export default function SupportTickets() {
       title="Tickets"
       description="Gerencie chamados de suporte"
       actions={
-        <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setShowModal(true)} data-testid="button-novo-ticket">
+        <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setShowModal(true)} data-testid="button-new-ticket">
           <Plus className="h-3.5 w-3.5" /> Novo Ticket
         </Button>
       }

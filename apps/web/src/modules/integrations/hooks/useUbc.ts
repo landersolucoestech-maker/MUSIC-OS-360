@@ -40,7 +40,7 @@ export interface UbcSyncSummary {
   started_at:     string;
   finished_at:    string;
   duration_ms:    number;
-  obras:          UbcSyncCategorySummary;
+  works:          UbcSyncCategorySummary;
   total_fetched:  number;
   total_inserted: number;
   total_updated:  number;
@@ -52,10 +52,10 @@ export type UbcSyncSchedule = "off" | "daily" | "weekly";
 
 export interface UbcStatus extends IntegrationRuntimeStatus {
   integration_id:      "ubc";
-  numero_filiado?:     string | null;
+  member_number?:     string | null;
   username?:           string | null;
   base_url?:           string | null;
-  ultimo_relatorio_em?: string | null;
+  last_report_at?: string | null;
   sync_schedule?:      UbcSyncSchedule;
   next_sync_at?:       string | null;
   last_sync_at?:       string | null;
@@ -66,16 +66,16 @@ export interface UbcSearchResult {
   external_id:     string;
   title:          string;
   iswc?:           string | null;
-  genero?:         string | null;
-  compositores?:   string[] | null;
-  letristas?:      string[] | null;
-  editora?:        string | null;
-  duracao?:        string | null;
-  data_registro?:  string | null;
-  artista_nome?:   string | null;
+  genre?:         string | null;
+  composers?:   string[] | null;
+  lyricists?:      string[] | null;
+  publisher?:        string | null;
+  duration?:        string | null;
+  registered_at?:  string | null;
+  artist_name?:   string | null;
 }
 
-export type UbcKind = "obras";
+export type UbcKind = "works";
 
 export interface UbcSearchResponse {
   results:   UbcSearchResult[];
@@ -106,7 +106,7 @@ export function useUbcStatus() {
       integration_id:  "ubc",
       status:          "disconnected",
       connected:       false,
-      numero_filiado:  null,
+      member_number:  null,
       username:        null,
       base_url:        null,
       last_error:      UBC_UNAVAILABLE,
@@ -122,7 +122,7 @@ export function useUbcStatus() {
 
 export function useUbcSaveCredentials() {
   return useMutation({
-    mutationFn: async (_input: { numero_filiado: string; username: string; password: string; base_url?: string }) =>
+    mutationFn: async (_input: { member_number: string; username: string; password: string; base_url?: string }) =>
       ubcUnavailable(),
     onError: (err: Error) => toast.error(toUserMessage(err)),
   });

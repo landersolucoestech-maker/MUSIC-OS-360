@@ -40,9 +40,9 @@ export default function Licensing() {
   const { licenses, isLoading, deleteLicense } = useLicenses();
 
   const [activeTab, setActiveTab] = useState("catalog");
-  const [licenseModal, setLicenseModal] = useState<{ open: boolean; mode: "create" | "edit"; licenca?: any }>({ open: false, mode: "create" });
-  const [viewModal, setViewModal] = useState<{ open: boolean; licenca?: any }>({ open: false });
-  const [deleteModal, setDeleteModal] = useState<{ open: boolean; licenca?: any }>({ open: false });
+  const [licenseModal, setLicenseModal] = useState<{ open: boolean; mode: "create" | "edit"; license?: any }>({ open: false, mode: "create" });
+  const [viewModal, setViewModal] = useState<{ open: boolean; license?: any }>({ open: false });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; license?: any }>({ open: false });
   const [bulkDeleteModal, setBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -182,8 +182,8 @@ export default function Licensing() {
   };
 
   const handleDelete = () => {
-    if (deleteModal.licenca) {
-      deleteLicense.mutate(deleteModal.licenca.id);
+    if (deleteModal.license) {
+      deleteLicense.mutate(deleteModal.license.id);
       setDeleteModal({ open: false });
     }
   };
@@ -206,7 +206,7 @@ export default function Licensing() {
 
   const headerActions = (
     <RequirePermission module="licensing" action="write">
-      <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setLicenseModal({ open: true, mode: "create" })} data-testid="button-nova-licenca">
+      <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setLicenseModal({ open: true, mode: "create" })} data-testid="button-new-license">
         <PlusCircle className="h-3.5 w-3.5" />Nova Licença
       </Button>
     </RequirePermission>
@@ -284,7 +284,7 @@ export default function Licensing() {
                   title="Lista de Licenças"
                   count={total}
                   description="Acompanhe licenças, clientes, mídias e valores contratados"
-                  action={renderSelectAction(pageItems, "checkbox-select-all-licencas")}
+                  action={renderSelectAction(pageItems, "checkbox-select-all-licenses")}
                 />
                 <Table>
                   <TableHeader>
@@ -307,7 +307,7 @@ export default function Licensing() {
                             checked={selectedLicenseIds.includes(license.id)}
                             onCheckedChange={() => toggleSelectLicense(license.id)}
                             aria-label={`Selecionar licença ${license.title || license.id}`}
-                            data-testid={`checkbox-licenca-${license.id}`}
+                            data-testid={`checkbox-license-${license.id}`}
                           />
                         </TableCell>
                         <TableCell className="font-medium">{license.title || "—"}</TableCell>
@@ -329,15 +329,15 @@ export default function Licensing() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca: license })}>
+                              <DropdownMenuItem onClick={() => setViewModal({ open: true, license: license })}>
                                 <Eye className="h-4 w-4 mr-2" />
                                 Ver
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", licenca: license })}>
+                              <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", license: license })}>
                                 <Pencil className="h-4 w-4 mr-2" />
                                 Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca: license })} className="text-destructive">
+                              <DropdownMenuItem onClick={() => setDeleteModal({ open: true, license: license })} className="text-destructive">
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Excluir
                               </DropdownMenuItem>
@@ -427,15 +427,15 @@ export default function Licensing() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca: license })}>
+                                <DropdownMenuItem onClick={() => setViewModal({ open: true, license: license })}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   Ver
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", licenca: license })}>
+                                <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", license: license })}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Editar
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca: license })} className="text-destructive">
+                                <DropdownMenuItem onClick={() => setDeleteModal({ open: true, license: license })} className="text-destructive">
                                   <Trash2 className="h-4 w-4 mr-2" />
                                   Excluir
                                 </DropdownMenuItem>
@@ -500,7 +500,7 @@ export default function Licensing() {
                               checked={selectedLicenseIds.includes(license.id)}
                               onCheckedChange={() => toggleSelectLicense(license.id)}
                               aria-label={`Selecionar licença ${license.title || license.id}`}
-                              data-testid={`checkbox-ativa-${license.id}`}
+                              data-testid={`checkbox-active-${license.id}`}
                             />
                           </TableCell>
                           <TableCell className="font-medium">{license.title || "—"}</TableCell>
@@ -522,15 +522,15 @@ export default function Licensing() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca: license })}>
+                                <DropdownMenuItem onClick={() => setViewModal({ open: true, license: license })}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   Ver
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", licenca: license })}>
+                                <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", license: license })}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Editar
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca: license })} className="text-destructive">
+                                <DropdownMenuItem onClick={() => setDeleteModal({ open: true, license: license })} className="text-destructive">
                                   <Trash2 className="h-4 w-4 mr-2" />
                                   Excluir
                                 </DropdownMenuItem>
@@ -573,10 +573,10 @@ export default function Licensing() {
           on that query; on error (backend down), refetchOnMount
           reopened isLoading, the gate unmounted the modal again — an infinite
           loading loop. Keeping them always mounted breaks the cycle. */}
-      <LicenseFormModal open={licenseModal.open} onOpenChange={(open) => setLicenseModal({ ...licenseModal, open })} licenca={licenseModal.licenca} mode={licenseModal.mode} />
-      <LicenseViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} licenca={viewModal.licenca} />
-      <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Licença" description={`Tem certeza que deseja excluir "${deleteModal.licenca?.title}"?`} onConfirm={handleDelete} />
-      <DeleteConfirmModal open={bulkDeleteModal.open} onOpenChange={(open) => setBulkDeleteModal({ ...bulkDeleteModal, open })} title="Excluir licenças selecionadas" description={`Tem certeza que deseja excluir ${bulkDeleteModal.ids.length} licenca(s) selecionada(s)?`} onConfirm={handleBulkDelete} />
+      <LicenseFormModal open={licenseModal.open} onOpenChange={(open) => setLicenseModal({ ...licenseModal, open })} license={licenseModal.license} mode={licenseModal.mode} />
+      <LicenseViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} license={viewModal.license} />
+      <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Licença" description={`Tem certeza que deseja excluir "${deleteModal.license?.title}"?`} onConfirm={handleDelete} />
+      <DeleteConfirmModal open={bulkDeleteModal.open} onOpenChange={(open) => setBulkDeleteModal({ ...bulkDeleteModal, open })} title="Excluir licenças selecionadas" description={`Tem certeza que deseja excluir ${bulkDeleteModal.ids.length} licença(s) selecionada(s)?`} onConfirm={handleBulkDelete} />
     </>
     </FeatureGate>
   );

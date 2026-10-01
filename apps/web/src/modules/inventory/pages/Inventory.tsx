@@ -30,10 +30,10 @@ import { FeatureGate } from '@/shared/components/FeatureGate';
 // Location dropdown → the storage_location values stored in the database.
 // Same translation that existed in the client-side .filter() before the migration.
 const LOCAL_FILTER_MAP: Record<string, string> = {
-  estudio1: "Estúdio 1",
-  estudio2: "Estúdio 2",
-  escritorio: "Escritório",
-  estoque: "Estoque",
+  studio1: "Estúdio 1",
+  studio2: "Estúdio 2",
+  office: "Escritório",
+  stock: "Estoque",
 };
 
 export default function Inventory() {
@@ -72,7 +72,7 @@ export default function Inventory() {
   useEffect(() => { setPage(0); }, [debouncedSearch, categoryFilter, statusFilter, localFilter]);
 
   const {
-    inventario: pageItems,
+    items: pageItems,
     total,
     isLoading: isLoadingPage,
     error: pageError,
@@ -106,10 +106,10 @@ export default function Inventory() {
 
   const metrics = {
     total: inventoryStats.total,
-    emUso: inventoryStats.byGroup[InventoryStatus.IN_USE] ?? 0,
-    disponiveis: inventoryStats.byGroup[InventoryStatus.AVAILABLE] ?? 0,
-    emManutencao: inventoryStats.byGroup[InventoryStatus.MAINTENANCE] ?? 0,
-    valorTotal: inventoryStats.totalSum ?? 0,
+    inUse: inventoryStats.byGroup[InventoryStatus.IN_USE] ?? 0,
+    available: inventoryStats.byGroup[InventoryStatus.AVAILABLE] ?? 0,
+    inMaintenance: inventoryStats.byGroup[InventoryStatus.MAINTENANCE] ?? 0,
+    totalValue: inventoryStats.totalSum ?? 0,
   };
 
   const headerActions = (
@@ -132,17 +132,17 @@ export default function Inventory() {
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           <MetricCard title="Total de Itens" value={metrics.total} description="equipamentos cadastrados" icon={Package} accent="primary" />
-          <MetricCard title="Em Uso" value={metrics.emUso} description="em operação" icon={Package} accent="primary" />
-          <MetricCard title="Em Manutenção" value={metrics.emManutencao} description="equipamentos" icon={Wrench} accent="warning" />
-          <MetricCard title="Disponíveis" value={metrics.disponiveis} description="prontos para uso" icon={CheckCircle} accent="success" />
-          <MetricCard title="Valor Total" value={formatCurrency(metrics.valorTotal)} description="patrimônio total" icon={DollarSign} accent="primary" />
+          <MetricCard title="Em Uso" value={metrics.inUse} description="em operação" icon={Package} accent="primary" />
+          <MetricCard title="Em Manutenção" value={metrics.inMaintenance} description="equipamentos" icon={Wrench} accent="warning" />
+          <MetricCard title="Disponíveis" value={metrics.available} description="prontos para uso" icon={CheckCircle} accent="success" />
+          <MetricCard title="Valor Total" value={formatCurrency(metrics.totalValue)} description="patrimônio total" icon={DollarSign} accent="primary" />
         </div>
 
         <div className="flex items-center gap-4 rounded-lg bg-muted/30 p-3">
           <div className="relative flex-1"><Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Buscar equipamentos por nome, categoria ou local..." className="pl-10 h-8 text-sm bg-card border-border" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /></div>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Categoria" /></SelectTrigger><SelectContent><SelectItem value="all-category">Todos Categoria</SelectItem><SelectItem value="áudio">Áudio</SelectItem><SelectItem value="vídeo">Vídeo</SelectItem><SelectItem value="computador">Computador</SelectItem><SelectItem value="iluminação">Iluminação</SelectItem><SelectItem value="estrutura">Estrutura</SelectItem></SelectContent></Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Status" /></SelectTrigger><SelectContent><SelectItem value="all-status">Todos Status</SelectItem><SelectItem value={InventoryStatus.IN_USE}>Em Uso</SelectItem><SelectItem value={InventoryStatus.AVAILABLE}>Disponível</SelectItem><SelectItem value={InventoryStatus.MAINTENANCE}>Manutenção</SelectItem></SelectContent></Select>
-          <Select value={localFilter} onValueChange={setLocalFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Local" /></SelectTrigger><SelectContent><SelectItem value="all-local">Todos Local</SelectItem><SelectItem value="estudio1">Estúdio 1</SelectItem><SelectItem value="estudio2">Estúdio 2</SelectItem><SelectItem value="escritorio">Escritório</SelectItem><SelectItem value="estoque">Estoque</SelectItem></SelectContent></Select>
+          <Select value={localFilter} onValueChange={setLocalFilter}><SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border"><SelectValue placeholder="Todos Local" /></SelectTrigger><SelectContent><SelectItem value="all-local">Todos Local</SelectItem><SelectItem value="studio1">Estúdio 1</SelectItem><SelectItem value="studio2">Estúdio 2</SelectItem><SelectItem value="office">Escritório</SelectItem><SelectItem value="stock">Estoque</SelectItem></SelectContent></Select>
           {hasActiveFilters && <Button variant="outline" onClick={handleClearFilters}>Limpar</Button>}
         </div>
 
@@ -193,16 +193,16 @@ export default function Inventory() {
                 </TableHeader>
                 <TableBody>
                   {pageItems.map((item: any) => (
-                    <TableRow key={item.id} data-testid={`card-inventario-${item.id}`} className={selectedIds.includes(item.id) ? "bg-muted/20" : ""}>
+                    <TableRow key={item.id} data-testid={`card-inventory-${item.id}`} className={selectedIds.includes(item.id) ? "bg-muted/20" : ""}>
                       <TableCell>
                         <Checkbox
                           checked={selectedIds.includes(item.id)}
                           onCheckedChange={() => toggleSelect(item.id)}
-                          data-testid={`checkbox-inventario-${item.id}`}
+                          data-testid={`checkbox-inventory-${item.id}`}
                           aria-label={`Selecionar ${item.name}`}
                         />
                       </TableCell>
-                      <TableCell className="font-medium" data-testid={`text-inventario-name-${item.id}`}>{item.name}</TableCell>
+                      <TableCell className="font-medium" data-testid={`text-inventory-name-${item.id}`}>{item.name}</TableCell>
                       <TableCell>
                         {item.category ? <Badge variant="outline" className="text-xs">{item.category}</Badge> : "—"}
                       </TableCell>
@@ -221,18 +221,18 @@ export default function Inventory() {
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-menu-inventario-${item.id}`}>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-menu-inventory-${item.id}`}>
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem data-testid={`button-ver-inventario-${item.id}`} onClick={() => setViewModal({ open: true, item })}>
+                            <DropdownMenuItem data-testid={`button-view-inventory-${item.id}`} onClick={() => setViewModal({ open: true, item })}>
                               <Eye className="h-4 w-4 mr-2" /> Ver
                             </DropdownMenuItem>
-                            <DropdownMenuItem data-testid={`button-editar-inventario-${item.id}`} onClick={() => setFormModal({ open: true, mode: "edit", item })}>
+                            <DropdownMenuItem data-testid={`button-edit-inventory-${item.id}`} onClick={() => setFormModal({ open: true, mode: "edit", item })}>
                               <Pencil className="h-4 w-4 mr-2" /> Editar
                             </DropdownMenuItem>
-                            <DropdownMenuItem data-testid={`button-excluir-inventario-${item.id}`} onClick={() => setDeleteModal({ open: true, item })} className="text-destructive">
+                            <DropdownMenuItem data-testid={`button-delete-inventory-${item.id}`} onClick={() => setDeleteModal({ open: true, item })} className="text-destructive">
                               <Trash2 className="h-4 w-4 mr-2" /> Excluir
                             </DropdownMenuItem>
                           </DropdownMenuContent>

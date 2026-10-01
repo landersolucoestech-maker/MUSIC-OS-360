@@ -93,8 +93,8 @@ export type TransactionInsert = Omit<Transaction, "id" | "user_id" | "created_at
 export type TransactionUpdate = Partial<TransactionInsert>;
 
 export interface TransactionWithRelations extends Transaction {
-  artistas?: ArtistRef | null;
-  clientes?: ClientRef | null;
+  artist?: ArtistRef | null;
+  client?: ClientRef | null;
 }
 
 export interface Invoice {

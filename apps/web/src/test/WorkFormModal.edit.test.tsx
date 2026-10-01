@@ -24,7 +24,7 @@ vi.mock("@/modules/catalog/hooks/useWorks", () => {
 });
 
 vi.mock("@/modules/artist/hooks/useSignedArtists", () => {
-  const stableReturn = { artistas: [] as any[], isLoading: false, error: null };
+  const stableReturn = { artists: [] as any[], isLoading: false, error: null };
   return { useSignedArtists: () => stableReturn };
 });
 
@@ -39,12 +39,12 @@ vi.mock("@/modules/artist/hooks/useArtists", async () => {
   return {
     ...actual,
     useArtists: () => ({
-      artistas: [] as any[],
+      artists: [] as any[],
       isLoading: false,
       error: null,
-      addArtista: { mutateAsync: vi.fn() },
-      updateArtista: { mutateAsync: vi.fn() },
-      deleteArtista: { mutateAsync: vi.fn() },
+      addArtist: { mutateAsync: vi.fn() },
+      updateArtist: { mutateAsync: vi.fn() },
+      deleteArtist: { mutateAsync: vi.fn() },
     }),
   };
 });
@@ -212,9 +212,9 @@ describe("WorkFormModal edit mode", () => {
     fireEvent.change(titleInput, { target: { value: "Canção Editada" } });
 
     // Accept terms (required)
-    const termosCheckbox = document.querySelector("#termos");
-    expect(termosCheckbox).toBeInTheDocument();
-    fireEvent.click(termosCheckbox!);
+    const termsCheckbox = document.querySelector("#terms");
+    expect(termsCheckbox).toBeInTheDocument();
+    fireEvent.click(termsCheckbox!);
 
     // Submit form
     const saveButton = screen.getByTestId("button-submit-work");

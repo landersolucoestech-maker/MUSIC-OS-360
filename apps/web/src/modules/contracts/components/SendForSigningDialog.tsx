@@ -58,7 +58,7 @@ export function SendForSigningDialog({
     setSending(true);
     try {
       const result = await signingService.sendForSigning({
-        contratoId: contract.id,
+        contractId: contract.id,
         title:      contract.title,
         fileUrl:    contract.file_url,
         signers:    signers.map((s) => ({ name: s.name, email: s.email })),

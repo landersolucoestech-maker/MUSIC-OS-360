@@ -77,7 +77,7 @@ export function AbramusSearchRow({
           <Link
             to="/settings"
             className="text-primary underline-offset-2 hover:underline"
-            data-testid="link-abramus-configurar"
+            data-testid="link-abramus-configure"
           >
             Configurar agora
           </Link>
@@ -145,7 +145,7 @@ export function AbramusSearchRow({
               <Link
                 to="/settings"
                 className="text-primary underline-offset-2 hover:underline"
-                data-testid="link-abramus-configurar"
+                data-testid="link-abramus-configure"
               >
                 Configurar agora
               </Link>
@@ -192,7 +192,7 @@ export function AbramusSearchRow({
   }
 
   const alreadyImportedToast =
-    kind === "obras"
+    kind === "works"
       ? "Obra já cadastrada — vinculada"
       : "Fonograma já cadastrado — vinculado";
 
@@ -224,9 +224,9 @@ export function AbramusSearchRow({
       <div className="space-y-1" data-testid="abramus-results-list">
         {results.map((item) => {
           const subtitle = [
-            item.artista_nome,
-            kind === "obras" ? item.iswc : item.isrc,
-            item.genero,
+            item.artist_name,
+            kind === "works" ? item.iswc : item.isrc,
+            item.genre,
           ]
             .filter(Boolean)
             .join(" • ");

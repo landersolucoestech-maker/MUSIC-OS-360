@@ -46,21 +46,21 @@ export interface FingerprintMatch {
   /** Confidence score 0–100 */
   score: number;
   title: string;
-  artista: string;
+  artist: string;
   isrc?: string | null;
   iswc?: string | null;
   album?: string | null;
-  gravadora?: string | null;
-  duracao_segundos?: number | null;
-  data_lancamento?: string | null;
-  genero?: string | null;
+  label?: string | null;
+  duration_seconds?: number | null;
+  released_at?: string | null;
+  genre?: string | null;
   /** ACRCloud internal identifier */
   external_id: string;
   /** Position in the clip where the track was detected (seconds) */
-  offset_segundos?: number | null;
+  offset_seconds?: number | null;
   /** Local work/phonogram ID when the match succeeds */
   local_work_id?: string | null;
-  local_fonograma_id?: string | null;
+  local_phonogram_id?: string | null;
 }
 
 export interface FingerprintResult {
@@ -77,7 +77,7 @@ export interface FingerprintResult {
 export interface PlayReport {
   id: string;
   title: string;
-  artista: string;
+  artist: string;
   isrc?: string | null;
   iswc?: string | null;
   source_type: MonitoringSourceType;
@@ -91,7 +91,7 @@ export interface PlayReport {
   /** Amount reported by an external platform in cents (BRL); no internal calculation */
   external_reported_amount_cents?: number | null;
   /** Local sound recording ID if the cross-match succeeds */
-  local_fonograma_id?: string | null;
+  local_phonogram_id?: string | null;
   local_work_id?: string | null;
   status: "pending" | "confirmed" | "disputed" | "paid";
 }
@@ -99,7 +99,7 @@ export interface PlayReport {
 export interface PlayReportQuery {
   isrc?: string;
   iswc?: string;
-  artista?: string;
+  artist?: string;
   title?: string;
   source_type?: MonitoringSourceType;
   /** Period start "YYYY-MM-DD" */
@@ -138,7 +138,7 @@ export interface MonitoringAlert {
   type: AlertType;
   severity: AlertSeverity;
   title: string;
-  artista?: string | null;
+  artist?: string | null;
   isrc?: string | null;
   iswc?: string | null;
   source_name?: string | null;
@@ -147,7 +147,7 @@ export interface MonitoringAlert {
   acknowledged: boolean;
   acknowledged_at?: string | null;
   local_work_id?: string | null;
-  local_fonograma_id?: string | null;
+  local_phonogram_id?: string | null;
 }
 
 // ─── Monitoring project DTOs ──────────────────────────────────────────────────
@@ -155,7 +155,7 @@ export interface MonitoringAlert {
 export interface MonitoringProject {
   id: string;
   name: string;
-  artista_nome?: string | null;
+  artist_name?: string | null;
   /** ISRCs to monitor */
   isrcs: string[];
   /** ISWCs to monitor */
@@ -172,7 +172,7 @@ export interface MonitoringProject {
 
 export interface CreateMonitoringProjectInput {
   name: string;
-  artista_nome?: string;
+  artist_name?: string;
   isrcs?: string[];
   iswcs?: string[];
   sources?: MonitoringSourceType[];
@@ -190,14 +190,14 @@ export interface MusicSearchQuery {
 export interface MusicSearchResult {
   external_id: string;
   title: string;
-  artista: string;
+  artist: string;
   isrc?: string | null;
   iswc?: string | null;
   album?: string | null;
-  gravadora?: string | null;
-  duracao_segundos?: number | null;
-  data_lancamento?: string | null;
-  genero?: string | null;
+  label?: string | null;
+  duration_seconds?: number | null;
+  released_at?: string | null;
+  genre?: string | null;
   total_plays_30d?: number | null;
 }
 

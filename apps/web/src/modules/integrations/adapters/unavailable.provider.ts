@@ -150,9 +150,9 @@ export function createUnavailableRightsProvider(entity: RightsEntityId): IRights
     generateISWC: (_input: GenerateISWCInput): Promise<GenerateISWCResult> => Promise.reject(unavailable(`rights:${entity}`)),
     generateISRC: (_input: GenerateISRCInput): Promise<GenerateISRCResult> => Promise.reject(unavailable(`rights:${entity}`)),
     syncAll: (): Promise<{ synced: number; errors: number }> => Promise.reject(unavailable(`rights:${entity}`)),
-    getCollection: (_periodo: string): Promise<CollectionEntry[]> => Promise.reject(unavailable(`rights:${entity}`)),
-    getCollectionSummary: (_periodo: string): Promise<CollectionSummary> => Promise.reject(unavailable(`rights:${entity}`)),
-    conciliar: (_periodo: string): Promise<ReconciliationResult> => Promise.reject(unavailable(`rights:${entity}`)),
+    getCollection: (_period: string): Promise<CollectionEntry[]> => Promise.reject(unavailable(`rights:${entity}`)),
+    getCollectionSummary: (_period: string): Promise<CollectionSummary> => Promise.reject(unavailable(`rights:${entity}`)),
+    reconcile: (_period: string): Promise<ReconciliationResult> => Promise.reject(unavailable(`rights:${entity}`)),
     verifyConnection: (): Promise<boolean> => Promise.reject(unavailable(`rights:${entity}`)),
   };
 }

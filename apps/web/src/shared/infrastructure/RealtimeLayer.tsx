@@ -8,8 +8,8 @@ import { QUERY_KEYS } from '@/shared/lib/query-config';
 
 /** Transaction type value (persisted, see TransactionType) → PT-BR toast title. */
 const TRANSACTION_TYPE_TOAST_TITLE: Readonly<Record<string, string>> = {
-  receita: 'Nova receita registrada',
-  despesa: 'Nova despesa registrada',
+  revenue: 'Nova receita registrada',
+  expense: 'Nova despesa registrada',
 };
 
 /**
@@ -81,7 +81,7 @@ function RealtimeSyncAndNotify() {
   });
 
   useWsEvent('crm.lead.captured', (d) => {
-    const name = (d as { nome?: string }).nome;
+    const name = (d as { name?: string }).name;
     toast.info('Novo lead capturado', {
       description: name ? `Lead "${name}" adicionado ao CRM` : undefined,
     });

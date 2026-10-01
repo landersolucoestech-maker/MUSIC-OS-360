@@ -121,7 +121,7 @@ test.describe('Part 84 — functional product sweep', () => {
 
   test('create a synthetic artist, reload, confirm real persistence', async ({ page }) => {
     test.setTimeout(60_000);
-    const nome = `QA P84 Artista ${Date.now()}`;
+    const artistName = `QA P84 Artista ${Date.now()}`;
 
     await page.goto('/auth', { waitUntil: 'networkidle' });
     await page.getByPlaceholder('Digite seu e-mail').fill(EMAIL!);
@@ -137,16 +137,16 @@ test.describe('Part 84 — functional product sweep', () => {
     });
 
     await page.goto('/artists', { waitUntil: 'networkidle' });
-    await page.getByTestId('button-novo-artista').click();
-    await page.getByTestId('input-stage-name').fill(nome);
-    await page.getByTestId('input-legal-name').fill(nome);
+    await page.getByTestId('button-new-artist').click();
+    await page.getByTestId('input-stage-name').fill(artistName);
+    await page.getByTestId('input-legal-name').fill(artistName);
     await page.getByTestId('button-save-modal').click();
     await page.waitForTimeout(1000);
     if (created400Body) throw new Error(`POST /artists 400: ${created400Body}`);
-    await expect(page.getByText(nome).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(artistName).first()).toBeVisible({ timeout: 10_000 });
 
     await page.reload({ waitUntil: 'networkidle' });
-    await expect(page.getByText(nome).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(artistName).first()).toBeVisible({ timeout: 10_000 });
 
     await page.evaluate(() => localStorage.clear());
   });

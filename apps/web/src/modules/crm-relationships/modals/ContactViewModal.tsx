@@ -110,12 +110,12 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-h-[90vh] max-w-3xl overflow-y-auto"
-        data-testid="contato-view-modal"
+        data-testid="contact-view-modal"
       >
         <DialogHeader>
           <DialogTitle
             className="flex items-center gap-3"
-            data-testid="contato-view-title"
+            data-testid="contact-view-title"
           >
             {safeImageSrc(contact.photoUrl) && (
               <img
@@ -243,7 +243,7 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
                   <div
                     key={it.id}
                     className="space-y-1 rounded-md border bg-muted/20 p-3"
-                    data-testid={`contato-view-interacao-${it.id}`}
+                    data-testid={`contact-view-interaction-${it.id}`}
                   >
                     <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground">
                       <MessageSquare className="h-3.5 w-3.5" />
@@ -259,7 +259,7 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
           </section>
 
           {/* ══ COMMERCIAL PIPELINE (deals-crm AI Skill over real contracts) ══ */}
-          <section className="space-y-3" data-testid="contato-view-deals-crm">
+          <section className="space-y-3" data-testid="contact-view-deals-crm">
             <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
               Pipeline Comercial (IA)
             </h3>
@@ -273,7 +273,7 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
           </section>
 
           {/* ══ TIMELINE (real, persisted in activity_logs) ══ */}
-          <section className="space-y-3" data-testid="contato-view-timeline">
+          <section className="space-y-3" data-testid="contact-view-timeline">
             <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
               Timeline
             </h3>
@@ -290,13 +290,13 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
                     void handleAddNote();
                   }
                 }}
-                data-testid="contato-view-timeline-input"
+                data-testid="contact-view-timeline-input"
               />
               <Button
                 type="button"
                 onClick={() => void handleAddNote()}
                 disabled={isSavingNote || !newNote.trim()}
-                data-testid="contato-view-timeline-add"
+                data-testid="contact-view-timeline-add"
               >
                 {isSavingNote ? <Loader2 className="h-4 w-4 animate-spin" /> : "Registrar"}
               </Button>
@@ -320,7 +320,7 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
                   <div
                     key={entry.id}
                     className="space-y-1 rounded-md border bg-muted/20 p-3"
-                    data-testid={`contato-view-timeline-entry-${entry.id}`}
+                    data-testid={`contact-view-timeline-entry-${entry.id}`}
                   >
                     <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground">
                       <Clock className="h-3.5 w-3.5" />

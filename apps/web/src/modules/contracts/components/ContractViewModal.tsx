@@ -453,7 +453,7 @@ export function ContractViewModal({ open, onOpenChange, contract, onEdit }: Cont
                       <div
                         key={`${d.path}-${index}`}
                         className="flex items-start gap-3 p-4 bg-muted/20 border border-border rounded-lg"
-                        data-testid={`documento-row-${index}`}
+                        data-testid={`document-row-${index}`}
                       >
                         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                           <FileText className="h-4 w-4 text-primary" />

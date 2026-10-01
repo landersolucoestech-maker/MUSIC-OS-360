@@ -432,7 +432,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] max-w-[920px] overflow-y-auto border-border/70 bg-card p-0" data-testid="modal-transacao-view">
+      <DialogContent className="max-h-[92vh] max-w-[920px] overflow-y-auto border-border/70 bg-card p-0" data-testid="modal-transaction-view">
         <DialogHeader className="px-6 py-5">
           <DialogTitle className="text-lg font-semibold text-foreground">Detalhes da Transação</DialogTitle>
         </DialogHeader>
@@ -454,7 +454,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
                   <StatusBadge status={status} />
                 </div>
                 <div className="mt-5 space-y-3">
-                  <h2 className="text-2xl font-semibold tracking-tight text-foreground" data-testid="text-transacao-descricao">
+                  <h2 className="text-2xl font-semibold tracking-tight text-foreground" data-testid="text-transaction-description">
                     {description}
                   </h2>
                   {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
@@ -551,7 +551,7 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
             <aside className="sticky top-0 space-y-6 border-l border-border/70 bg-muted/10 p-6">
               <div className="space-y-4 rounded-3xl border border-border/70 bg-card p-5">
                 <p className="text-xs  tracking-[0.15em] text-muted-foreground">Resumo</p>
-                <p className={cn("font-sans text-4xl font-semibold tracking-tight", getCurrencyToneClass(signedAmount))} data-testid="text-transacao-valor">
+                <p className={cn("font-sans text-4xl font-semibold tracking-tight", getCurrencyToneClass(signedAmount))} data-testid="text-transaction-value">
                   {signedAmount > 0 ? "+" : ""}{formatCurrency(signedAmount)}
                 </p>
                 <div className="space-y-3">

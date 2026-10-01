@@ -658,7 +658,7 @@ export default function SettingsPage() {
     saveUserSettings({
       full_name: userSettings.full_name,
       phone: userSettings.phone,
-      cargo: userSettings.cargo,
+      position: userSettings.position,
       notify_email: userSettings.notify_email,
       notify_push: userSettings.notify_push,
     });
@@ -705,11 +705,11 @@ export default function SettingsPage() {
 
   const handleSaveAutomations = () => {
     saveUserSettings({
-      auto_notificar_vencimento: userSettings.auto_notificar_vencimento,
-      auto_lembrete_renovacao: userSettings.auto_lembrete_renovacao,
-      auto_alerta_financeiro: userSettings.auto_alerta_financeiro,
+      auto_notify_expiry: userSettings.auto_notify_expiry,
+      auto_renewal_reminder: userSettings.auto_renewal_reminder,
+      auto_finance_alert: userSettings.auto_finance_alert,
       auto_backup: userSettings.auto_backup,
-      auto_relatorio_semanal: userSettings.auto_relatorio_semanal,
+      auto_weekly_report: userSettings.auto_weekly_report,
     });
   };
 
@@ -1056,8 +1056,8 @@ export default function SettingsPage() {
                         <p className="text-xs text-muted-foreground">Notificar quando um novo contrato for cadastrado</p>
                       </div>
                       <Switch 
-                        checked={userSettings.notify_contratos} 
-                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, notify_contratos: checked })} 
+                        checked={userSettings.notify_contracts}
+                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, notify_contracts: checked })}
                       />
                     </div>
                     <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
@@ -1066,8 +1066,8 @@ export default function SettingsPage() {
                         <p className="text-xs text-muted-foreground">Notificar 30, 15 e 7 dias antes do vencimento</p>
                       </div>
                       <Switch 
-                        checked={userSettings.auto_notificar_vencimento} 
-                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_notificar_vencimento: checked })} 
+                        checked={userSettings.auto_notify_expiry}
+                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_notify_expiry: checked })}
                       />
                     </div>
                     <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
@@ -1083,8 +1083,8 @@ export default function SettingsPage() {
                         <p className="text-xs text-muted-foreground">Disparada quando o contrato entra no período final</p>
                       </div>
                       <Switch 
-                        checked={userSettings.auto_lembrete_renovacao} 
-                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_lembrete_renovacao: checked })} 
+                        checked={userSettings.auto_renewal_reminder}
+                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_renewal_reminder: checked })}
                       />
                     </div>
                   </div>
@@ -1105,8 +1105,8 @@ export default function SettingsPage() {
                         <p className="text-xs text-muted-foreground">Configurável por valor mínimo</p>
                       </div>
                       <Switch 
-                        checked={userSettings.auto_alerta_financeiro} 
-                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_alerta_financeiro: checked })} 
+                        checked={userSettings.auto_finance_alert}
+                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_finance_alert: checked })}
                       />
                     </div>
                     <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
@@ -1115,8 +1115,8 @@ export default function SettingsPage() {
                         <p className="text-xs text-muted-foreground">Ex: novos lançamentos, cobranças ou pagamentos</p>
                       </div>
                       <Switch 
-                        checked={userSettings.notify_financeiro} 
-                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, notify_financeiro: checked })} 
+                        checked={userSettings.notify_finance}
+                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, notify_finance: checked })}
                       />
                     </div>
                     <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
@@ -1125,8 +1125,8 @@ export default function SettingsPage() {
                         <p className="text-xs text-muted-foreground">Receba um resumo das movimentações da semana</p>
                       </div>
                       <Switch 
-                        checked={userSettings.auto_relatorio_semanal} 
-                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_relatorio_semanal: checked })} 
+                        checked={userSettings.auto_weekly_report}
+                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_weekly_report: checked })}
                       />
                     </div>
                   </div>
@@ -1147,8 +1147,8 @@ export default function SettingsPage() {
                         <p className="text-xs text-muted-foreground">Atividades, financeiro e contratos</p>
                       </div>
                       <Switch 
-                        checked={userSettings.auto_relatorio_semanal} 
-                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_relatorio_semanal: checked })} 
+                        checked={userSettings.auto_weekly_report}
+                        onCheckedChange={(checked) => setUserSettings({ ...userSettings, auto_weekly_report: checked })}
                       />
                     </div>
                     <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">

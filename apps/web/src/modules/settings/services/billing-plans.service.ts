@@ -26,7 +26,7 @@ export interface BillingPlan {
   /** Numeric price value, when applicable (cents or units — defined by the Admin). */
   priceAmount?: number | null;
   /** Billing period. */
-  interval?: "mensal" | "anual" | null;
+  interval?: "month" | "year" | null;
   /** Features shown on the card. */
   features: string[];
   /** Seats included in the plan (null = unlimited). */

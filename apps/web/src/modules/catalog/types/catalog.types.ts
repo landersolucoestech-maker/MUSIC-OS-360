@@ -82,8 +82,8 @@ export type WorkInsert = Omit<Work, "id" | "user_id" | "created_at" | "updated_a
 export type WorkUpdate = Partial<WorkInsert>;
 
 export interface WorkWithRelations extends Work {
-  artistas?: ArtistRef | null;
-  projetos?: ProjectRef | null;
+  artist?: ArtistRef | null;
+  project?: ProjectRef | null;
 }
 
 /** Item of a `phonograms.participation` category (CZ-040). */
@@ -174,6 +174,6 @@ export type PhonogramInsert = Omit<Phonogram, "id" | "user_id" | "created_at" | 
 export type PhonogramUpdate = Partial<PhonogramInsert>;
 
 export interface PhonogramWithRelations extends Phonogram {
-  artistas?: ArtistRef | null;
+  artist?: ArtistRef | null;
 }
 

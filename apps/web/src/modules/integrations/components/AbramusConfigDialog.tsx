@@ -278,13 +278,13 @@ export function AbramusConfigDialog({
                     <div className="grid grid-cols-2 gap-2">
                       <SummaryCard
                         label="Obras"
-                        data={summary.obras}
-                        testid="abramus-summary-obras"
+                        data={summary.works}
+                        testid="abramus-summary-works"
                       />
                       <SummaryCard
                         label="Fonogramas"
-                        data={summary.fonogramas}
-                        testid="abramus-summary-fonogramas"
+                        data={summary.phonograms}
+                        testid="abramus-summary-phonograms"
                       />
                     </div>
                     <p

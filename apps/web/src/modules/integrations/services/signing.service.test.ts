@@ -44,7 +44,7 @@ describe("signingService.sendForSigning", () => {
     apiClientMock.post.mockResolvedValueOnce({ documentId: "doc-123" });
 
     const result = await signingService.sendForSigning({
-      contratoId: "c1",
+      contractId: "c1",
       title: "Contrato X",
       fileUrl: "https://storage.example/contratos/c1.pdf",
       signers: [{ name: "Ana", email: "ana@x.com" }],
@@ -77,7 +77,7 @@ describe("signingService.sendForSigning", () => {
     apiClientMock.post.mockResolvedValueOnce({ documentId: "env-999" });
 
     const result = await signingService.sendForSigning({
-      contratoId: "c1",
+      contractId: "c1",
       title: "Contrato X",
       fileUrl: "https://storage.example/contratos/c1.pdf",
       signers: [{ name: "Ana", email: "ana@x.com" }],
@@ -102,7 +102,7 @@ describe("signingService.sendForSigning", () => {
     apiClientMock.post.mockResolvedValueOnce({ documentId: "doc-1" });
 
     const result = await signingService.sendForSigning({
-      contratoId: "c1",
+      contractId: "c1",
       title: "Contrato X",
       fileUrl: "https://storage.example/contratos/c1.pdf",
       signers: [{ name: "Ana", email: "ana@x.com" }],
@@ -125,7 +125,7 @@ describe("signingService.sendForSigning", () => {
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({ ok: true, blob: async () => new Blob(["fake-pdf"]) });
     apiClientMock.post.mockResolvedValue({ documentId: "doc-1" });
 
-    const input = { contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] };
+    const input = { contractId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] };
     await signingService.sendForSigning(input);
     await signingService.sendForSigning(input);
 
@@ -142,7 +142,7 @@ describe("signingService.sendForSigning", () => {
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({ ok: true, blob: async () => new Blob(["fake-pdf"]) });
     apiClientMock.post.mockResolvedValue({ documentId: "doc-1" });
 
-    const input = { contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] };
+    const input = { contractId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] };
     await signingService.sendForSigning(input, "retry-key-123");
 
     expect(apiClientMock.post.mock.calls[0][2]).toEqual({ headers: { "X-Idempotency-Key": "retry-key-123" } });
@@ -151,14 +151,14 @@ describe("signingService.sendForSigning", () => {
 
   it("rejects when there is no file URL — never sends an empty document", async () => {
     await expect(
-      signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "", signers: [{ name: "A", email: "a@x.com" }] }),
+      signingService.sendForSigning({ contractId: "c1", title: "X", fileUrl: "", signers: [{ name: "A", email: "a@x.com" }] }),
     ).rejects.toMatchObject({ userMessage: expect.stringMatching(/não possui um arquivo/i) });
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
 
   it("rejects when there are no signers", async () => {
     await expect(
-      signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [] }),
+      signingService.sendForSigning({ contractId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [] }),
     ).rejects.toMatchObject({ userMessage: expect.stringMatching(/signatário/i) });
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
@@ -167,7 +167,7 @@ describe("signingService.sendForSigning", () => {
     (fetch as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error("network down"));
 
     await expect(
-      signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] }),
+      signingService.sendForSigning({ contractId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] }),
     ).rejects.toMatchObject({ userMessage: expect.stringMatching(/não foi possível baixar/i) });
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
@@ -176,7 +176,7 @@ describe("signingService.sendForSigning", () => {
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({ ok: false, status: 404 });
 
     await expect(
-      signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] }),
+      signingService.sendForSigning({ contractId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] }),
     ).rejects.toThrow(/404/);
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });

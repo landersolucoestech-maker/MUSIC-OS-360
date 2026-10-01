@@ -95,7 +95,7 @@ export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, neve
     }));
 
     return (
-      <div className="space-y-5" data-testid="contatos-panel">
+      <div className="space-y-5" data-testid="contacts-panel">
         {/* Search bar + filter */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center rounded-lg bg-muted/30 p-3">
           <Input
@@ -103,15 +103,15 @@ export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, neve
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nome, empresa, e-mail, telefone ou cidade"
             className="h-8 flex-1 text-sm"
-            data-testid="contatos-search"
+            data-testid="contacts-search"
           />
           <Select value={filter} onValueChange={(v) => setFilter(v as TypeFilter)}>
-            <SelectTrigger className="h-8 w-auto min-w-[140px] text-sm" data-testid="contatos-filtro-type">
+            <SelectTrigger className="h-8 w-auto min-w-[140px] text-sm" data-testid="contacts-filter-type">
               <SelectValue placeholder="Filtrar por tipo" />
             </SelectTrigger>
             <SelectContent>
               {FILTERS.map((f) => (
-                <SelectItem key={f.value} value={f.value} data-testid={`filtro-${f.value}`}>
+                <SelectItem key={f.value} value={f.value} data-testid={`filter-${f.value}`}>
                   {f.label}
                 </SelectItem>
               ))}
@@ -123,7 +123,7 @@ export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, neve
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Carregando contatos...</p>
         ) : filtered.length === 0 ? (
-          <p className="text-sm italic text-muted-foreground" data-testid="contatos-empty">
+          <p className="text-sm italic text-muted-foreground" data-testid="contacts-empty">
             Nenhum contato encontrado.
           </p>
         ) : (

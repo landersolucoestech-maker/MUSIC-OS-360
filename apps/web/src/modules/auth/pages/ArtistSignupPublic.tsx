@@ -586,7 +586,7 @@ export default function ArtistSignupPublic() {
                     </div>
                   )}
                   <label
-                    htmlFor="foto-upload"
+                    htmlFor="photo-upload"
                     className="absolute bottom-0 right-0 h-7 w-7 rounded-full bg-primary flex items-center justify-center cursor-pointer hover:bg-primary/90 transition-colors"
                     title="Alterar foto"
                   >
@@ -595,9 +595,9 @@ export default function ArtistSignupPublic() {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label
-                    htmlFor="foto-upload"
+                    htmlFor="photo-upload"
                     className="inline-flex items-center gap-2 text-sm font-medium text-primary cursor-pointer hover:underline"
-                    data-testid="label-upload-foto"
+                    data-testid="label-upload-photo"
                   >
                     <Camera className="h-4 w-4" />
                     Selecionar foto
@@ -607,7 +607,7 @@ export default function ArtistSignupPublic() {
                       type="button"
                       onClick={() => setPhotoUrl("")}
                       className="inline-flex items-center gap-1.5 text-xs text-destructive hover:underline"
-                      data-testid="button-remove-foto"
+                      data-testid="button-remove-photo"
                     >
                       <Trash2 className="h-3 w-3" />
                       Remover foto
@@ -616,11 +616,11 @@ export default function ArtistSignupPublic() {
                   <p className="text-xs text-muted-foreground">JPG, PNG ou WEBP — máx. 5 MB</p>
                 </div>
                 <input
-                  id="foto-upload"
+                  id="photo-upload"
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   className="hidden"
-                  data-testid="input-foto-upload"
+                  data-testid="input-photo-upload"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -650,7 +650,7 @@ export default function ArtistSignupPublic() {
                   placeholder="Nome usado profissionalmente"
                   value={stageName}
                   onChange={(e) => { setStageName(e.target.value); clearError("nomeArtistico"); }}
-                  data-testid="input-nome-artistico"
+                  data-testid="input-stage-name"
                   className={errors.nameArtistico ? "border-destructive" : ""}
                 />
                 {errors.nameArtistico && <p className="text-xs text-destructive">{errors.nameArtistico}</p>}
@@ -661,7 +661,7 @@ export default function ArtistSignupPublic() {
                   value={musicGenre}
                   onValueChange={(v) => { setMusicGenre(v); clearError("generoMusical"); }}
                 >
-                  <SelectTrigger data-testid="select-genero-musical" className={errors.generoMusical ? "border-destructive" : ""}>
+                  <SelectTrigger data-testid="select-music-genre" className={errors.generoMusical ? "border-destructive" : ""}>
                     <SelectValue placeholder="Selecione o gênero" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
@@ -696,7 +696,7 @@ export default function ArtistSignupPublic() {
                 placeholder="https://drive.google.com/… ou Dropbox"
                 value={personalDocumentsUrl}
                 onChange={(e) => setPersonalDocumentsUrl(e.target.value)}
-                data-testid="input-documents-pessoais-url"
+                data-testid="input-personal-documents-url"
               />
             </div>
 
@@ -717,7 +717,7 @@ export default function ArtistSignupPublic() {
                 className="min-h-[100px]"
                 value={biography}
                 onChange={(e) => setBiography(e.target.value)}
-                data-testid="textarea-biografia"
+                data-testid="textarea-biography"
               />
             </div>
           </div>
@@ -741,7 +741,7 @@ export default function ArtistSignupPublic() {
                   placeholder="Nome conforme documento"
                   value={name}
                   onChange={(e) => { setName(e.target.value); clearError("name"); }}
-                  data-testid="input-nome-civil"
+                  data-testid="input-legal-name"
                   className={errors.name ? "border-destructive" : ""}
                 />
                 {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
@@ -751,7 +751,7 @@ export default function ArtistSignupPublic() {
                 <DatePickerField
                   value={birthDate}
                   onChange={setBirthDate}
-                  data-testid="input-data-nascimento"
+                  data-testid="input-birth-date"
                   className="block"
                 />
               </div>
@@ -782,7 +782,7 @@ export default function ArtistSignupPublic() {
               <div className="space-y-1.5">
                 <Label className="text-sm">Gênero</Label>
                 <Select value={genre} onValueChange={setGenre}>
-                  <SelectTrigger data-testid="select-genero-pessoa">
+                  <SelectTrigger data-testid="select-gender">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
@@ -797,7 +797,7 @@ export default function ArtistSignupPublic() {
                   placeholder="Rua, número, bairro, cidade, CEP"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  data-testid="input-endereco"
+                  data-testid="input-address"
                 />
               </div>
             </div>
@@ -809,7 +809,7 @@ export default function ArtistSignupPublic() {
                   placeholder="(11) 99999-9999"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  data-testid="input-telefone"
+                  data-testid="input-phone"
                 />
               </div>
               <div className="space-y-1.5">
@@ -843,7 +843,7 @@ export default function ArtistSignupPublic() {
               <div className="space-y-1.5">
                 <Label className="text-sm">Banco</Label>
                 <Select value={bank} onValueChange={setBank}>
-                  <SelectTrigger data-testid="select-banco">
+                  <SelectTrigger data-testid="select-bank">
                     <SelectValue placeholder="Selecione o banco" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
@@ -859,7 +859,7 @@ export default function ArtistSignupPublic() {
                   placeholder="0000"
                   value={agency}
                   onChange={(e) => setAgency(e.target.value)}
-                  data-testid="input-agencia"
+                  data-testid="input-agency"
                 />
               </div>
             </div>
@@ -871,7 +871,7 @@ export default function ArtistSignupPublic() {
                   placeholder="00000-0"
                   value={account}
                   onChange={(e) => setAccount(e.target.value)}
-                  data-testid="input-conta"
+                  data-testid="input-account"
                 />
               </div>
               <div className="space-y-1.5">
@@ -880,7 +880,7 @@ export default function ArtistSignupPublic() {
                   placeholder="CPF, e-mail, telefone ou chave aleatória"
                   value={pixKey}
                   onChange={(e) => setPixKey(e.target.value)}
-                  data-testid="input-chave-pix"
+                  data-testid="input-pix-key"
                 />
               </div>
             </div>
@@ -891,7 +891,7 @@ export default function ArtistSignupPublic() {
                 placeholder="Nome completo do titular"
                 value={accountHolder}
                 onChange={(e) => setAccountHolder(e.target.value)}
-                data-testid="input-titular-conta"
+                data-testid="input-account-holder"
               />
             </div>
           </div>
@@ -1060,7 +1060,7 @@ export default function ArtistSignupPublic() {
                         id={`geral-dist-${dist.id}`}
                         checked={isChecked}
                         onCheckedChange={(checked) => toggleDistGeneral(dist.id, !!checked)}
-                        data-testid={`checkbox-geral-dist-${dist.id}`}
+                        data-testid={`checkbox-general-dist-${dist.id}`}
                       />
                       <Label htmlFor={`geral-dist-${dist.id}`} className="text-sm cursor-pointer font-medium">
                         {dist.label}
@@ -1074,7 +1074,7 @@ export default function ArtistSignupPublic() {
                           onChange={(e) => updateDistGeneralCustomName(e.target.value)}
                           placeholder="Nome da distribuidora…"
                           className="h-8 text-sm"
-                          data-testid="input-geral-dist-nome-custom"
+                          data-testid="input-general-dist-name-custom"
                         />
                         {(entry?.nomeCustom ?? "").trim().length > 0 && (
                           <Input
@@ -1083,7 +1083,7 @@ export default function ArtistSignupPublic() {
                             type="email"
                             placeholder="E-mail de share…"
                             className="h-8 text-sm"
-                            data-testid="input-geral-dist-email-outros"
+                            data-testid="input-general-dist-email-other"
                           />
                         )}
                       </div>
@@ -1097,7 +1097,7 @@ export default function ArtistSignupPublic() {
                           type="email"
                           placeholder={`Email de share — ${dist.label}`}
                           className="h-8 text-sm"
-                          data-testid={`input-geral-dist-email-${dist.id}`}
+                          data-testid={`input-general-dist-email-${dist.id}`}
                         />
                       </div>
                     )}
@@ -1128,7 +1128,7 @@ export default function ArtistSignupPublic() {
             <div className="space-y-1.5">
               <Label className="text-sm">Perfil Comercial <span className="text-destructive">*</span></Label>
               <Select value={profileType} onValueChange={setProfileType}>
-                <SelectTrigger data-testid="select-type-perfil">
+                <SelectTrigger data-testid="select-type-profile">
                   <SelectValue placeholder="Selecione o perfil" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border border-border z-50">
@@ -1152,7 +1152,7 @@ export default function ArtistSignupPublic() {
                     size="sm"
                     className="h-7 text-xs gap-1"
                     onClick={addContact}
-                    data-testid="button-add-contato"
+                    data-testid="button-add-contact"
                   >
                     <Plus className="h-3 w-3" />
                     Adicionar
@@ -1177,7 +1177,7 @@ export default function ArtistSignupPublic() {
                     <div
                       key={idx}
                       className="p-3 border rounded-lg space-y-3 bg-muted/20"
-                      data-testid={`card-contato-${idx}`}
+                      data-testid={`card-contact-${idx}`}
                     >
                       {/* Header */}
                       <div className="flex items-center justify-between">
@@ -1190,7 +1190,7 @@ export default function ArtistSignupPublic() {
                           size="sm"
                           className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
                           onClick={() => removeContact(idx)}
-                          data-testid={`button-remove-contato-${idx}`}
+                          data-testid={`button-remove-contact-${idx}`}
                         >
                           <X className="h-3.5 w-3.5" />
                         </Button>
@@ -1205,7 +1205,7 @@ export default function ArtistSignupPublic() {
                             onChange={(e) => updateContact(idx, "nome", e.target.value)}
                             placeholder="Nome completo"
                             className="h-8 text-sm"
-                            data-testid={`input-contato-nome-${idx}`}
+                            data-testid={`input-contact-name-${idx}`}
                           />
                         </div>
                         {profileType !== "com_empresario" && (
@@ -1215,7 +1215,7 @@ export default function ArtistSignupPublic() {
                               value={contact.categoria}
                               onValueChange={(v) => updateContact(idx, "categoria", v)}
                             >
-                              <SelectTrigger className="h-8 text-sm" data-testid={`select-contato-categoria-${idx}`}>
+                              <SelectTrigger className="h-8 text-sm" data-testid={`select-contact-category-${idx}`}>
                                 <SelectValue placeholder="Selecione…" />
                               </SelectTrigger>
                               <SelectContent className="bg-background border border-border z-50">
@@ -1237,7 +1237,7 @@ export default function ArtistSignupPublic() {
                             onChange={(e) => updateContact(idx, "telefone", e.target.value)}
                             placeholder="(00) 00000-0000"
                             className="h-8 text-sm"
-                            data-testid={`input-contato-telefone-${idx}`}
+                            data-testid={`input-contact-phone-${idx}`}
                           />
                         </div>
                         <div className="space-y-1.5">
@@ -1248,7 +1248,7 @@ export default function ArtistSignupPublic() {
                             type="email"
                             placeholder="email@exemplo.com"
                             className="h-8 text-sm"
-                            data-testid={`input-contato-email-${idx}`}
+                            data-testid={`input-contact-email-${idx}`}
                           />
                         </div>
                       </div>
@@ -1282,7 +1282,7 @@ export default function ArtistSignupPublic() {
                                         onChange={(e) => updateDistTeamCustomName(idx, e.target.value)}
                                         placeholder="Nome da distribuidora…"
                                         className="h-7 text-xs"
-                                        data-testid={`input-dist-nome-custom-${idx}`}
+                                        data-testid={`input-dist-name-custom-${idx}`}
                                       />
                                       {(dEntry?.nomeCustom ?? "").trim().length > 0 && (
                                         <Input
@@ -1381,7 +1381,7 @@ export default function ArtistSignupPublic() {
                 className="min-h-[120px]"
                 value={internalNotes}
                 onChange={(e) => setInternalNotes(e.target.value)}
-                data-testid="textarea-observacoes"
+                data-testid="textarea-notes"
               />
             </div>
             <label className="flex items-start gap-3 text-sm">

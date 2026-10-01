@@ -91,7 +91,7 @@ export const ecadApiAdapter = {
     throw new Error("ECAD API integration not yet enabled.");
   },
 
-  submitSetlist(_setlistId: string, _config: EcadApiConfig): Promise<{ protocolo: string }> {
+  submitSetlist(_setlistId: string, _config: EcadApiConfig): Promise<{ protocol: string }> {
     throw new Error("ECAD API integration not yet enabled.");
   },
 };

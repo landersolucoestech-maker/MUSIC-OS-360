@@ -18,25 +18,25 @@ export interface UserSettings {
   user_id?: string;
   full_name: string;
   phone: string;
-  cargo: string;
-  setor: string;
+  position: string;
+  department: string;
   avatar_url: string;
   notify_email: boolean;
   notify_push: boolean;
-  notify_lancamentos: boolean;
-  notify_contratos: boolean;
-  notify_financeiro: boolean;
+  notify_releases: boolean;
+  notify_contracts: boolean;
+  notify_finance: boolean;
   notify_marketing: boolean;
-  auto_notificar_vencimento: boolean;
-  auto_lembrete_renovacao: boolean;
-  auto_alerta_financeiro: boolean;
+  auto_notify_expiry: boolean;
+  auto_renewal_reminder: boolean;
+  auto_finance_alert: boolean;
   auto_backup: boolean;
-  auto_relatorio_semanal: boolean;
+  auto_weekly_report: boolean;
   automation_preferences: Record<string, {
     email?: boolean;
     push?: boolean;
     sms?: boolean;
-    frequency?: "imediato" | "diario" | "semanal" | "evento";
+    frequency?: "immediate" | "daily" | "weekly" | "event";
     preferred_time?: string;
     message?: string;
   }>;
@@ -45,31 +45,52 @@ export interface UserSettings {
 const defaultUserSettings: UserSettings = {
   full_name: "",
   phone: "",
-  cargo: "",
-  setor: "",
+  position: "",
+  department: "",
   avatar_url: "",
   notify_email: true,
   notify_push: false,
-  notify_lancamentos: true,
-  notify_contratos: true,
-  notify_financeiro: true,
+  notify_releases: true,
+  notify_contracts: true,
+  notify_finance: true,
   notify_marketing: false,
-  auto_notificar_vencimento: true,
-  auto_lembrete_renovacao: true,
-  auto_alerta_financeiro: false,
+  auto_notify_expiry: true,
+  auto_renewal_reminder: true,
+  auto_finance_alert: false,
   auto_backup: true,
-  auto_relatorio_semanal: false,
+  auto_weekly_report: false,
   automation_preferences: {},
 };
 
 const userKey = (id: string) => `musicos360_user_settings:${id}`;
 const orgSlugKey = (id: string) => `musicos360_org_slug:${id}`;
 
+/**
+ * Legacy compatibility (per-browser localStorage only): settings saved before the
+ * English rename used Portuguese keys. They are read once and re-saved under the
+ * canonical names. Owner: settings; remove once no stored payload can predate the rename.
+ */
+const LEGACY_USER_SETTINGS_KEYS: Readonly<Record<string, string>> = {
+  cargo: "position",
+  setor: "department",
+  notify_lancamentos: "notify_releases",
+  notify_contratos: "notify_contracts",
+  notify_financeiro: "notify_finance",
+  auto_notificar_vencimento: "auto_notify_expiry",
+  auto_lembrete_renovacao: "auto_renewal_reminder",
+  auto_alerta_financeiro: "auto_finance_alert",
+  auto_relatorio_semanal: "auto_weekly_report",
+};
+
 function readJSON<T extends object>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return fallback;
     const parsed = JSON.parse(raw) as Partial<T>;
+    for (const [legacyKey, canonicalKey] of Object.entries(LEGACY_USER_SETTINGS_KEYS)) {
+      const bag = parsed as Record<string, unknown>;
+      if (bag[legacyKey] !== undefined && bag[canonicalKey] === undefined) bag[canonicalKey] = bag[legacyKey];
+    }
     const sanitized = { ...fallback };
     for (const settingKey of Object.keys(fallback) as Array<keyof T>) {
       if (parsed[settingKey] !== undefined) {

@@ -87,7 +87,7 @@ export interface ArtistCreatedPayload {
 
 export interface MusicRegisteredPayload {
   work_id: string;
-  fonograma_id?: string;
+  phonogram_id?: string;
   title: string;
   org_id: string;
 }
@@ -95,7 +95,7 @@ export interface MusicRegisteredPayload {
 export interface ContractCreatedPayload {
   id: string;
   artist_id?: string;
-  valor?: number;
+  amount?: number;
   org_id: string;
 }
 
@@ -108,7 +108,7 @@ export interface ReleaseCreatedPayload {
 
 export interface LeadCapturedPayload {
   id: string;
-  nome: string;
+  name: string;
   org_id: string;
 }
 
@@ -157,7 +157,7 @@ export type DomainEventPayloads = {
   TRANSACTION_CREATED:   TransactionCreatedPayload;
   TRANSACTION_UPDATED:   Partial<TransactionCreatedPayload> & { id: string };
   TRANSACTION_DELETED:   { id: string; org_id: string };
-  FINANCE_CALCULATED:    { artist_id: string; valor: number; org_id: string };
+  FINANCE_CALCULATED:    { artist_id: string; amount: number; org_id: string };
   INVOICE_CREATED:       { id: string; invoiceNumber?: string; client_id?: string; amount?: number; org_id: string };
   INVOICE_UPDATED:       { id: string; invoiceNumber?: string; client_id?: string; amount?: number; org_id: string };
   INVOICE_DELETED:       { id: string; org_id: string };

@@ -32,7 +32,7 @@ interface ClientOption { id: string; name: string }
 interface LicenseFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  licenca?: any;
+  license?: any;
   mode: "create" | "edit" | "view";
 }
 
@@ -56,7 +56,7 @@ const DEFAULT_VALUES: LicenseFormData = {
   notes: "",
 };
 
-export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }: LicenseFormModalProps) {
+export function LicenseFormModal({ open, onOpenChange, license, mode }: LicenseFormModalProps) {
   const isViewMode = mode === "view";
   const title = mode === "create" ? "Nova Licença de Sync" : mode === "edit" ? "Editar Licença" : "Detalhes da Licença";
   const { addLicense, updateLicense } = useLicenses();
@@ -220,7 +220,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
                       searchPlaceholder="Buscar obra…"
                       disabled={isViewMode}
                       invalid={!!errors.workId}
-                      data-testid="select-obra-musical"
+                      data-testid="select-musical-work"
                     />
                   )}
                 />
@@ -353,7 +353,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
                   name="startDate"
                   control={control}
                   render={({ field }) => (
-                    <DatePickerField value={field.value ?? ""} onChange={field.onChange} disabled={isViewMode} placeholder="Selecione a data" displayFormat="dd/MM/yyyy" data-testid="datepicker-data-inicio" />
+                    <DatePickerField value={field.value ?? ""} onChange={field.onChange} disabled={isViewMode} placeholder="Selecione a data" displayFormat="dd/MM/yyyy" data-testid="datepicker-start-date" />
                   )}
                 />
               </div>
@@ -363,7 +363,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
                   name="endDate"
                   control={control}
                   render={({ field }) => (
-                    <DatePickerField value={field.value ?? ""} onChange={field.onChange} disabled={isViewMode} placeholder="Selecione a data" displayFormat="dd/MM/yyyy" data-testid="datepicker-data-fim" />
+                    <DatePickerField value={field.value ?? ""} onChange={field.onChange} disabled={isViewMode} placeholder="Selecione a data" displayFormat="dd/MM/yyyy" data-testid="datepicker-end-date" />
                   )}
                 />
               </div>

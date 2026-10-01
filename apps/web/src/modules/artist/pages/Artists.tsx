@@ -49,6 +49,7 @@ import {
   parseArtistImportRow,
   formValuesToArtistPayload,
 } from "@/modules/artist/forms/artist-form.definition";
+import type { BadgeVariant } from "@/shared/ui/badge";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { readSpreadsheetRows } from "@/shared/lib/xlsx-isolated";
 
@@ -56,10 +57,10 @@ import { readSpreadsheetRows } from "@/shared/lib/xlsx-isolated";
 // from the backend (ArtistsService.list()/relationshipStats() — classification by
 // active contract done server-side, against the whole tenant, not just the
 // loaded page).
-const RELATIONSHIP_BADGE: Record<ArtistRelationshipType, { label: string; status: string }> = {
-  [ArtistRelationshipType.EXCLUSIVE]:   { label: "Exclusivo",    status: "exclusivo" },
-  [ArtistRelationshipType.PARTNER]:     { label: "Parceiro",     status: "parceiro" },
-  [ArtistRelationshipType.INDEPENDENT]: { label: "Independente", status: "sem_contrato" },
+const RELATIONSHIP_BADGE: Record<ArtistRelationshipType, { label: string; variant: BadgeVariant }> = {
+  [ArtistRelationshipType.EXCLUSIVE]:   { label: "Exclusivo",    variant: "success" },
+  [ArtistRelationshipType.PARTNER]:     { label: "Parceiro",     variant: "info" },
+  [ArtistRelationshipType.INDEPENDENT]: { label: "Independente", variant: "neutral" },
 };
 
 export default function Artists() {
@@ -406,7 +407,7 @@ export default function Artists() {
                                 <h3 className="font-semibold text-sm leading-tight text-foreground">
                                   {artist.stageName}
                                 </h3>
-                                <StatusBadge status={relationship.status} label={relationship.label} />
+                                <StatusBadge status={artist.relationship ?? ArtistRelationshipType.INDEPENDENT} label={relationship.label} variant={relationship.variant} />
                               </div>
                               {Array.isArray(artist.specialties) && artist.specialties.length > 0 && (
                                 <p className="text-[11px] text-muted-foreground leading-tight">

@@ -700,7 +700,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                   composersToString(fullWork.composer_names) ||
                                   (typeof fullWork.composer_name === "string" ? fullWork.composer_name : "");
                                 // Resolve the musician/arranger from the project producers — DIRECT
-                                // lookup by ID (Task J: it used to scan the `projetos` array
+                                // lookup by ID (Task J: it used to scan the `projects` array
                                 // of an unfiltered useProjetos(), truncated at 50 per tenant).
                                 let sessionMusicians: PhonogramParticipant[] = [];
                                 if ((fullWork.project_id as string | null | undefined)) {
@@ -723,14 +723,14 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                 }
                                 // Resolve the artist for the performer:
                                 // 1) DB join (non-mock), 2) DIRECT lookup by ID (Task J — it used to
-                                // scan the `artistas` array of an unfiltered useArtistas(),
+                                // scan the `artists` array of an unfiltered useArtists(),
                                 // truncated at 50 artists per tenant; GET /artists/:id reaches
                                 // any artist of the tenant), 3) composer name match (only
                                 // when there is no artist_id — the same concession already accepted in
                                 // other migrations of this task).
                                 const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                                let artistName = fullWork.artistas?.stage_name as string | undefined;
-                                let artistId = fullWork.artistas?.id as string | undefined;
+                                let artistName = fullWork.artist?.stage_name as string | undefined;
+                                let artistId = fullWork.artist?.id as string | undefined;
                                 if (!artistName && (fullWork.artist_id as string | null | undefined)) {
                                   const byId = await storage.findById<ArtistWireRecord>("artists", fullWork.artist_id as string);
                                   if (byId) { const a = wireToArtist(byId); artistName = a.stageName; artistId = a.id; }
@@ -811,7 +811,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                           </p>
                         )}
                         <AbramusSearchRow
-                          kind="obras"
+                          kind="works"
                           query={searchWorkDebounced}
                           limit={LOCAL_RESULTS_LIMIT}
                           onImported={(rec) => {
@@ -824,9 +824,9 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                             setLinkedWork({
                               id: rec.localId,
                               title: rec.title ?? "",
-                              musicGenre: rec.genero ?? "",
-                              composers: Array.isArray(rec.compositores)
-                                ? rec.compositores.filter(Boolean).join(", ")
+                              musicGenre: rec.genre ?? "",
+                              composers: Array.isArray(rec.composers)
+                                ? rec.composers.filter(Boolean).join(", ")
                                 : "",
                               status: "registered",
                             });
@@ -872,7 +872,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
               </div>
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Código ECAD</span>
-                <Input value={ecadCode} onChange={(e) => setEcadCode(e.target.value)} disabled={isViewMode} placeholder="Código ECAD" className="h-8 text-sm min-w-0" data-testid="input-cod-ecad" />
+                <Input value={ecadCode} onChange={(e) => setEcadCode(e.target.value)} disabled={isViewMode} placeholder="Código ECAD" className="h-8 text-sm min-w-0" data-testid="input-ecad-code" />
               </div>
               <div className="col-span-3">
                 <span className="text-xs text-muted-foreground mb-1 block">Agregadora</span>
@@ -1113,12 +1113,12 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
           {!isViewMode && (
             <div className="flex items-center gap-2 p-4 bg-muted/10 rounded-lg border border-border">
               <Checkbox 
-                id="termos" 
+                id="terms"
                 checked={termsAccepted}
                 onCheckedChange={(checked) => setTermsAccepted(checked === true)}
                 className="border-primary data-[state=checked]:bg-primary"
               />
-              <label htmlFor="termos" className="text-sm">
+              <label htmlFor="terms" className="text-sm">
                 Aceito o Termo * - <a href="#" className="text-primary hover:underline">Leia e aceite os Termos de Uso</a>
               </label>
             </div>

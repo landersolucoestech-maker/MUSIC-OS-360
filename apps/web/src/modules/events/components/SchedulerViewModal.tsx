@@ -55,7 +55,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
 
   if (!event) return null;
 
-  const artist = event.artistas;
+  const artist = event.artist;
   const meta = (event.metadata as Record<string, unknown> | undefined) ?? {};
   const storedParticipants = normalizeScheduleParticipants(meta["participants"]);
   const legacyArtistParticipant = getArtistParticipantById(event.artist_id);

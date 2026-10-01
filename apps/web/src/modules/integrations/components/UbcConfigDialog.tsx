@@ -73,7 +73,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
 
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
-    numero_filiado: "",
+    member_number: "",
     username:       "",
     password:       "",
     base_url:       "",
@@ -87,7 +87,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
     saveCredentials.mutate({
-      numero_filiado: form.numero_filiado.trim(),
+      member_number: form.member_number.trim(),
       username:       form.username.trim(),
       password:       form.password.trim(),
       base_url:       form.base_url.trim() || undefined,
@@ -124,9 +124,9 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
             <span className="font-medium">
               {isConnected ? "Conectado" : "Desconectado"}
             </span>
-            {isConnected && status?.numero_filiado && (
+            {isConnected && status?.member_number && (
               <span className="text-muted-foreground">
-                · Filiado {status.numero_filiado}
+                · Filiado {status.member_number}
               </span>
             )}
           </div>
@@ -142,15 +142,15 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid gap-4">
               <div className="grid gap-1.5">
-                <Label htmlFor="ubc-filiado" className="text-xs font-medium">
+                <Label htmlFor="ubc-member-number" className="text-xs font-medium">
                   Número de Filiado <span className="text-destructive">*</span>
                 </Label>
                 <Input
-                  id="ubc-filiado"
+                  id="ubc-member-number"
                   placeholder="Ex.: 12345"
-                  value={form.numero_filiado}
-                  onChange={(e) => setForm((p) => ({ ...p, numero_filiado: e.target.value }))}
-                  data-testid="input-ubc-filiado"
+                  value={form.member_number}
+                  onChange={(e) => setForm((p) => ({ ...p, member_number: e.target.value }))}
+                  data-testid="input-ubc-member-number"
                   disabled={isSaving}
                 />
               </div>
@@ -216,7 +216,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
             <Button
               type="submit"
               className="w-full"
-              disabled={isSaving || !form.numero_filiado.trim() || !form.username.trim() || !form.password.trim()}
+              disabled={isSaving || !form.member_number.trim() || !form.username.trim() || !form.password.trim()}
               data-testid="button-ubc-save"
             >
               {isSaving ? (
@@ -293,7 +293,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Shield className="h-3.5 w-3.5" />
-                <span>Filiado: <strong>{status?.numero_filiado}</strong> · Usuário: <strong>{status?.username}</strong></span>
+                <span>Filiado: <strong>{status?.member_number}</strong> · Usuário: <strong>{status?.username}</strong></span>
               </div>
               <AlertDialog>
                 <AlertDialogTrigger asChild>

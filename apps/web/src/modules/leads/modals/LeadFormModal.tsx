@@ -533,7 +533,7 @@ export function LeadFormModal({
               <SelectField
                 value={values.state}
                 onChange={(v) => set("state", v)}
-                options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
+                options={BR_STATES.map((stateCode) => ({ value: stateCode, label: stateCode }))}
                 placeholder="UF"
                 testId="select-state"
               />
@@ -755,7 +755,7 @@ export function LeadFormModal({
                   <SelectField
                     value={values.event!.state}
                     onChange={(v) => setEvent("state", v)}
-                    options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
+                    options={BR_STATES.map((stateCode) => ({ value: stateCode, label: stateCode }))}
                     placeholder="UF"
                     testId="select-event-state"
                   />
@@ -848,7 +848,7 @@ export function LeadFormModal({
                   <SelectField
                     value={values.campaign!.state}
                     onChange={(v) => setCampaign("state", v)}
-                    options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
+                    options={BR_STATES.map((stateCode) => ({ value: stateCode, label: stateCode }))}
                     placeholder="UF"
                     testId="select-campaign-state"
                   />
@@ -928,7 +928,7 @@ export function LeadFormModal({
                   <SelectField
                     value={values.influencer!.state}
                     onChange={(v) => setInfluencer("state", v)}
-                    options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
+                    options={BR_STATES.map((stateCode) => ({ value: stateCode, label: stateCode }))}
                     placeholder="UF"
                     testId="select-influencer-state"
                   />

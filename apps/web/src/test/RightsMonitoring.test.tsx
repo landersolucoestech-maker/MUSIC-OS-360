@@ -42,7 +42,7 @@ const WORKS = [
     publisher_name: "MusicOS Publishing", isrc: "BRMSC2500001", iswc: "T-123.456.789-0",
     society_code: "ABR-001-2025", ecad_code: "ECAD-0001-VL",
     music_genre: "Pop", status: "registered", duration_text: "3:42",
-    artistas: { id: "art-1", stage_name: "Vitória Lunar" },
+    artist: { id: "art-1", stage_name: "Vitória Lunar" },
   },
 ];
 

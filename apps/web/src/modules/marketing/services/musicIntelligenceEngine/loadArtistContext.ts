@@ -8,18 +8,18 @@ import { estimateReleaseFrequency, inferCareerStage, mostCommon, score, stringif
  * Task J — works/phonograms/artistRecord arrive already resolved by the caller
  * (a server-side search scoped to the artist, via useWorks(true, artistId)/
  * usePhonograms(true, artistId)/useEntityById), no longer filtered from an unfiltered
- * sources.obras/sources.fonogramas/sources.artists (capped at the tenant's
+ * sources.works/sources.phonograms/sources.artists (capped at the tenant's
  * first 50).
  */
 export function loadArtistContext(
   artist: IntelligenceEntity,
   sources: IntelligenceSources,
-  catalog: { artistRecord?: Artist; obras: WorkWithRelations[]; fonogramas: PhonogramWithRelations[] },
+  catalog: { artistRecord?: Artist; works: WorkWithRelations[]; phonograms: PhonogramWithRelations[] },
 ): ArtistProfileContext {
   const artistRecord = catalog.artistRecord;
-  const works = catalog.obras;
-  const phonograms = catalog.fonogramas;
-  const releases = sources.releases.filter((item) => item.artist_id === artist.id || item.artistas?.id === artist.id);
+  const works = catalog.works;
+  const phonograms = catalog.phonograms;
+  const releases = sources.releases.filter((item) => item.artist_id === artist.id || item.artist?.id === artist.id);
   const projects = sources.projects.filter((item) => item.artistId === artist.id);
   const campaigns = sources.campaigns.filter((item) => item.targetType === "artista" && item.targetId === artist.id);
   const contents = sources.contents.filter((item) => item.targetType === "artista" && item.targetId === artist.id);
@@ -80,12 +80,12 @@ export function loadArtistContext(
       openTasks: tasks.length - completedTasks,
     },
     scores: {
-      geral: score(releases.length + campaigns.length + publicSignals.length + completedTasks, 24),
+      overall: score(releases.length + campaigns.length + publicSignals.length + completedTasks, 24),
       branding: score(publicSignals.length + contents.length, 16),
-      catalogo: score(releases.length + phonograms.length, 20),
-      engajamento: score(publicSignals.length + campaigns.length, 12),
-      consistencia: releaseDates.length >= 2 ? score(releaseDates.length, 10) : 20,
-      crescimento: score((artistRecord?.spotifyListeners ?? 0) / 1000 + releases.length, 120),
+      catalog: score(releases.length + phonograms.length, 20),
+      engagement: score(publicSignals.length + campaigns.length, 12),
+      consistency: releaseDates.length >= 2 ? score(releaseDates.length, 10) : 20,
+      growth: score((artistRecord?.spotifyListeners ?? 0) / 1000 + releases.length, 120),
     },
     bottleneck: inferBottleneck({ releases: releases.length, campaigns: campaigns.length, publicSignals: publicSignals.length, tasks: tasks.length }),
     actionPlan: {

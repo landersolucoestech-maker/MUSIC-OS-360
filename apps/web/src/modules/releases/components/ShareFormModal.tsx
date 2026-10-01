@@ -419,8 +419,8 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
               onChange={(e) => handleChange("agreement_url", e.target.value)} data-testid="input-agreement-url" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="observacoes">Observações adicionais</Label>
-            <Textarea id="observacoes" placeholder="Informações adicionais sobre este share..."
+            <Label htmlFor="notes">Observações adicionais</Label>
+            <Textarea id="notes" placeholder="Informações adicionais sobre este share..."
               value={formData.notes} onChange={(e) => handleChange("notes", e.target.value)} rows={2} data-testid="textarea-notes" />
           </div>
         </div>

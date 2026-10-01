@@ -9,6 +9,12 @@ import { UserFacingError } from "@/shared/lib/errors";
 import { canonicalApproval, canonicalPriority } from "../utils/marketing-legacy-vocabulary";
 import { deriveContentDisplayStatus } from "../utils/marketing-content-status";
 import { targetTypeFromWire, targetTypeToWire } from "../utils/marketing-content-wire";
+import {
+  projectStatusFromApi,
+  projectStatusToApi,
+  projectTypeFromApi,
+  projectTypeToApi,
+} from "./marketing-project-wire";
 import type {
   ActivityEvent,
   AiSuggestion,
@@ -66,8 +72,8 @@ function projectFromApi(row: RecordRow): MarketingProject {
   return {
     id: row.id,
     name: row.title,
-    type: String(row.type ?? "custom").toLowerCase(),
-    status: meta.uiStatus ?? row.status ?? "planejamento",
+    type: projectTypeFromApi(meta.uiType, row.type),
+    status: projectStatusFromApi(meta.uiStatus, row.status),
     priority: canonicalPriority(row.priority),
     owner: meta.owner ?? "",
     team: meta.team ?? [],
@@ -91,15 +97,16 @@ function projectFromApi(row: RecordRow): MarketingProject {
 
 function projectToApi(input: Partial<MarketingProject>) {
   return {
-    type: String(input.type ?? "custom").toUpperCase(),
+    type: projectTypeToApi(input.type),
     title: input.name,
     description: input.description,
-    status: input.status === "em_andamento" ? "active" : input.status,
+    status: projectStatusToApi(input.status),
     priority: input.priority,
     artistId: input.artistId,
     startsAt: input.startDate || null,
     endsAt: input.endDate || null,
     metadata: {
+      uiType: input.type,
       uiStatus: input.status,
       owner: input.owner,
       team: input.team,

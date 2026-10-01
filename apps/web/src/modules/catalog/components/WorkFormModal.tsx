@@ -272,7 +272,7 @@ export function WorkFormModal({
       setSelectedProject({
         id: linkedProject.id,
         name: linkedProject.title ?? (linkedProject.nome as string) ?? "",
-        artistName: (linkedProject.artistas?.stage_name ?? null) as string | null,
+        artistName: (linkedProject.artist?.stage_name ?? null) as string | null,
       });
     } else {
       // Still loading — keeps the ID with a placeholder until the lookup by ID resolves.
@@ -288,7 +288,7 @@ export function WorkFormModal({
   const { items: filteredCompletedProjects } = useEntityLookup<ProjetoWithRelations>({
     table: "projects",
     search: searchProject,
-    filters: { status: "concluido" },
+    filters: { status: "completed" },
     enabled: searchProjectOpen,
   });
 
@@ -580,7 +580,7 @@ export function WorkFormModal({
                           const pNameDisplay = (p.title ??
                             (p as { nome?: string }).nome ??
                             "") as string;
-                          const pArtistNameDisplay = (p.artistas?.stage_name ?? "") as string;
+                          const pArtistNameDisplay = (p.artist?.stage_name ?? "") as string;
                           const selectProject = async () => {
                             setSelectedProject({
                               id: pId,
@@ -680,7 +680,7 @@ export function WorkFormModal({
                         </p>
                       )}
                       <AbramusSearchRow
-                        kind="obras"
+                        kind="works"
                         query={debouncedSearchProject}
                         onImported={() => {
                           setSearchProject("");
@@ -1356,12 +1356,12 @@ export function WorkFormModal({
           {!isViewMode && (
             <div className="flex items-center gap-2 p-4 bg-muted/10 rounded-lg border border-border">
               <Checkbox
-                id="termos"
+                id="terms"
                 checked={termsAccepted}
                 onCheckedChange={(checked) => setTermsAccepted(checked === true)}
                 className="border-primary data-[state=checked]:bg-primary"
               />
-              <label htmlFor="termos" className="text-sm">
+              <label htmlFor="terms" className="text-sm">
                 Aceito o Termo -{" "}
                 <a href="#" className="text-primary hover:underline">
                   Leia e aceite os Termos de Uso

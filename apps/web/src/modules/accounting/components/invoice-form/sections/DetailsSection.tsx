@@ -32,7 +32,7 @@ const commonServiceCodes = [
   { value: "17.06", label: "17.06 - Propaganda e publicidade" },
 ];
 
-const ufOptions = [
+const stateOptions = [
   "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
   "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
 ];
@@ -118,7 +118,7 @@ export function DetailsSection({
               onChange={(e) => updateField("invoice_number", e.target.value)}
               placeholder="000001234"
               disabled={disabled}
-              data-testid="input-numero"
+              data-testid="input-number"
             />
           </div>
           <div className="space-y-2">
@@ -236,7 +236,7 @@ export function DetailsSection({
       </section>
 
       {/* ── SERVICE TAKER / SUPPLIER ── */}
-      <section className="space-y-4" data-testid="section-tomador">
+      <section className="space-y-4" data-testid="section-payer">
         <h3 className="text-base font-semibold border-b pb-1">{rules.tomadorSectionLabel}</h3>
 
         <div className="space-y-2">
@@ -264,7 +264,7 @@ export function DetailsSection({
               onBlur={(e) => updateField("tomador_cnpj", formatCpfCnpj(e.target.value))}
               placeholder="00.000.000/0001-00"
               disabled={disabled}
-              data-testid="input-tomador-cnpj"
+              data-testid="input-payer-cnpj"
               aria-invalid={!!validationErrors.tomador_cnpj}
               className={validationErrors.tomador_cnpj ? "border-destructive" : ""}
             />
@@ -358,9 +358,9 @@ export function DetailsSection({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {ufOptions.map((uf) => (
-                  <SelectItem key={uf} value={uf}>
-                    {uf}
+                {stateOptions.map((stateCode) => (
+                  <SelectItem key={stateCode} value={stateCode}>
+                    {stateCode}
                   </SelectItem>
                 ))}
               </SelectContent>

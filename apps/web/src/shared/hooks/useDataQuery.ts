@@ -36,8 +36,6 @@ type MutationSuccessCallbacks<T> = {
 type QueryConfig<T = object> = {
   queryKey: string[];
   table: StorageTable;
-  /** Kept for compatibility with legacy calls (not used in mock mode). */
-  select?: string;
   orderBy?: { column: string; ascending?: boolean };
   filters?: Record<string, unknown>;
   enabled?: boolean;

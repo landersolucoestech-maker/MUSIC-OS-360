@@ -89,7 +89,7 @@ export function useACRCloudIdentify() {
     onSuccess: (data) => {
       if (data.matched && data.best_match) {
         toast.success(
-          `Musica identificada: "${data.best_match.title}" - ${data.best_match.artista} (${data.best_match.score}% confiança)`,
+          `Musica identificada: "${data.best_match.title}" - ${data.best_match.artist} (${data.best_match.score}% confiança)`,
         );
       } else {
         toast.info("Nenhuma correspondência encontrada para o trecho de áudio.");

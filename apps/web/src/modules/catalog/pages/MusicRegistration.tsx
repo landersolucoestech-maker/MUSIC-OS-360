@@ -319,8 +319,8 @@ export default function MusicRegistry() {
       if (p?.id && p?.title) map.set(p.id, p.title);
     });
     works.forEach((o) => {
-      if (o.projetos?.id && o.projetos?.title && !map.has(o.projetos.id)) {
-        map.set(o.projetos.id, o.projetos.title);
+      if (o.project?.id && o.project?.title && !map.has(o.project.id)) {
+        map.set(o.project.id, o.project.title);
       }
     });
     return Array.from(map.entries()).map(([id, title]) => ({ id, title }));

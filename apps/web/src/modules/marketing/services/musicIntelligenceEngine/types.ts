@@ -131,12 +131,12 @@ export type ArtistProfileContext = {
     openTasks: number;
   };
   scores: {
-    geral: number;
+    overall: number;
     branding: number;
-    catalogo: number;
-    engajamento: number;
-    consistencia: number;
-    crescimento: number;
+    catalog: number;
+    engagement: number;
+    consistency: number;
+    growth: number;
   };
   bottleneck: string;
   actionPlan: {
