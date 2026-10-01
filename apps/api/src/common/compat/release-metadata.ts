@@ -72,7 +72,7 @@ export function renameKeys(obj: Json, renames: Readonly<Record<string, string>>)
   for (const [key, value] of Object.entries(obj)) {
     if (key === '__proto__') continue; // JSON.parse can create it as an own key; never copy it onto a plain object
     if (!has(renames, key)) {
-      if (!(key in out)) out[key] = value;
+      if (!has(out, key)) out[key] = value; // own-property check: `key in out` is true for constructor/toString/valueOf (SEC2 L1)
       continue;
     }
     renamed += 1;

@@ -78,11 +78,16 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   rh_manager:        "Recursos Humanos",
 };
 
-/** Returns the current user's role from the JWT. */
+/**
+ * Returns the current user's role. `user.role` is mapped from the server-set app_metadata.role
+ * (AuthContext.mapSupabaseUser never takes it from the end-user-editable user_metadata); the
+ * user_metadata.role fallback only serves the synthetic dev/auth-disabled users, which carry the
+ * same role in both places, and is already stripped of any raw user_metadata value for real sessions.
+ */
 export function useCurrentRole(): AppRole | null {
   const { user } = useAuth();
   if (!user) return null;
-  const raw = (user.user_metadata?.role as string) ?? (user as Record<string, unknown>)["role"];
+  const raw = (user as Record<string, unknown>)["role"] ?? user.user_metadata?.role;
   return (raw as AppRole) ?? null;
 }
 

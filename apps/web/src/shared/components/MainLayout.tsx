@@ -106,7 +106,7 @@ function TopbarUserMenu() {
 
   const userFullName = (user?.user_metadata?.full_name as string) || "Usuário";
   const userEmail = user?.email ?? "";
-  const userRole = (user?.user_metadata?.role as string) || (user as Record<string, unknown>)?.role as string || "";
+  const userRole = ((user as Record<string, unknown> | null)?.role as string) || (user?.user_metadata?.role as string) || "";
   const roleLabel = ROLE_LABEL[userRole] || "Usuário";
   const userInitials = userFullName
     .split(" ")

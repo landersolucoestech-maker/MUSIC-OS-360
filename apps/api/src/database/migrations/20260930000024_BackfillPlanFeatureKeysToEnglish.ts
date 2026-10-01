@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { assertMigrationRoleBypassesRls } from '../migration-guards';
-import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec } from '../jsonb-row-backfill';
+import { backfillRows, createBackfillLogTable, isEmptyJsonValue, restoreRows, type RowBackfillSpec } from '../jsonb-row-backfill';
 
 /**
  * 20260930000024_BackfillPlanFeatureKeysToEnglish (PJ1)
@@ -29,23 +29,28 @@ const CANONICAL = 'moduleHr';
 const NIL_UUID = `'00000000-0000-0000-0000-000000000000'::uuid`;
 
 /** Exported for the unit spec only. */
-export function canonicalFeaturesForBackfill(features: unknown): { value: unknown; changed: boolean; conflicts: number } {
-  if (features === null || typeof features !== 'object' || Array.isArray(features)) return { value: features, changed: false, conflicts: 0 };
+export function canonicalFeaturesForBackfill(features: unknown): { value: unknown; changed: boolean; conflicts: number; emptyCanonicalReplaced: number } {
+  if (features === null || typeof features !== 'object' || Array.isArray(features)) return { value: features, changed: false, conflicts: 0, emptyCanonicalReplaced: 0 };
   const source = features as Record<string, unknown>;
-  if (!Object.prototype.hasOwnProperty.call(source, LEGACY)) return { value: features, changed: false, conflicts: 0 };
+  if (!Object.prototype.hasOwnProperty.call(source, LEGACY)) return { value: features, changed: false, conflicts: 0, emptyCanonicalReplaced: 0 };
   const out: Record<string, unknown> = {};
   let conflicts = 0;
+  let emptyCanonicalReplaced = 0;
   for (const [key, value] of Object.entries(source)) {
     if (key === '__proto__') continue;
     if (key !== LEGACY) {
-      out[key] = value;
+      if (key !== CANONICAL || !Object.prototype.hasOwnProperty.call(out, CANONICAL)) out[key] = value;
     } else if (Object.prototype.hasOwnProperty.call(source, CANONICAL)) {
       conflicts += 1;
+      if (isEmptyJsonValue(source[CANONICAL]) && !isEmptyJsonValue(value)) {
+        emptyCanonicalReplaced += 1; // canonical is null/false-like empty: keep the legacy data (L2)
+        out[CANONICAL] = value;
+      }
     } else {
       out[CANONICAL] = value;
     }
   }
-  return { value: out, changed: true, conflicts };
+  return { value: out, changed: true, conflicts, emptyCanonicalReplaced };
 }
 
 const specFor = (table: 'tenants' | 'billing_plans', tenantIdSql: string): RowBackfillSpec => ({
@@ -57,8 +62,8 @@ const specFor = (table: 'tenants' | 'billing_plans', tenantIdSql: string): RowBa
   jsonbColumns: ['features'],
   candidatePredicate: `jsonb_typeof("features") = 'object' AND "features" ? '${LEGACY}'`,
   transform(row) {
-    const { value, changed, conflicts } = canonicalFeaturesForBackfill(row['features']);
-    return changed ? { set: { features: value }, conflicts } : null;
+    const { value, changed, conflicts, emptyCanonicalReplaced } = canonicalFeaturesForBackfill(row['features']);
+    return changed ? { set: { features: value }, conflicts, emptyCanonicalReplaced } : null;
   },
 });
 

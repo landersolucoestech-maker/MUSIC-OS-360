@@ -22,7 +22,9 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
  *      rows whose metadata is NULL or a jsonb object are rewritten (a
  *      non-object metadata cannot carry the marker); any remaining
  *      'planejamento' row is reported in the log, never coerced. `updated_at`
- *      is left alone (vocabulary rewrite, not a user edit).
+ *      is left alone (vocabulary rewrite, not a user edit). An existing
+ *      non-null metadata.legacy_status is KEPT (the first recorded spelling is
+ *      never overwritten, review L6).
  *
  * NOT decided here (owner decision BLK-RELEASES-STATUS-CHECK): rejeitado,
  * takedown, take_down and remocao have no ReleaseStatus equivalent; they are
@@ -51,7 +53,9 @@ export class BackfillReleaseStatusDefaultToDraft20260930000014 implements Migrat
     const [{ affected }] = await queryRunner.query(
       `WITH updated AS (
          UPDATE "releases"
-         SET "metadata" = COALESCE("metadata", '{}'::jsonb) || jsonb_build_object('legacy_status', "status"), "status" = $2
+         SET "metadata" = COALESCE("metadata", '{}'::jsonb)
+                       || jsonb_build_object('legacy_status', COALESCE(NULLIF("metadata"->'legacy_status', 'null'::jsonb), to_jsonb("status"))),
+             "status" = $2
          WHERE "status" = $1 AND ("metadata" IS NULL OR jsonb_typeof("metadata") = 'object')
          RETURNING id
        )

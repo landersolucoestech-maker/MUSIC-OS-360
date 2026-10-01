@@ -47,7 +47,15 @@ describe('BackfillReleaseStatusDefaultToDraft20260930000014', () => {
     expect(update.params).toEqual(['planejamento', 'draft']);
     expect(update.sql).toContain(`"status" = $1`);
     expect(update.sql).not.toMatch(/lower\(|trim\(|updated_at|IN \(/i);
-    expect(update.sql).toContain(`jsonb_build_object('legacy_status', "status")`);
+    expect(update.sql).toContain(`jsonb_build_object('legacy_status', COALESCE(NULLIF("metadata"->'legacy_status', 'null'::jsonb), to_jsonb("status")))`);
+  });
+
+  it('L6: an existing metadata.legacy_status is kept (first spelling wins), the new marker only fills a missing/null one', async () => {
+    const { query, calls } = runner();
+    await migration.up({ query } as never);
+    const sql = calls.find((c) => c.sql.includes('WITH updated AS'))!.sql.replace(/\s+/g, ' ');
+    // existing metadata first, then a legacy_status that is the EXISTING one unless it is absent/JSON null
+    expect(sql).toContain(`COALESCE("metadata", '{}'::jsonb) || jsonb_build_object('legacy_status', COALESCE(NULLIF("metadata"->'legacy_status', 'null'::jsonb), to_jsonb("status")))`);
   });
 
   it('does not decide or touch rejeitado / takedown / take_down / remocao, and adds no CHECK', async () => {

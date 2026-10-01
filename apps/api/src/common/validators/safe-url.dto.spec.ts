@@ -72,6 +72,23 @@ describe('shared URL validators (SEC1 / find-77526160)', () => {
     expect(isSafeUrlText('example.com:8080/x')).toBe(true);
     expect(isSafeUrlText(`https://example.com/${'a'.repeat(2100)}`)).toBe(false);
   });
+  it.each([
+    'javascript:1/alert(document.domain)', 'javascript:1?alert(1):0', 'JAVASCRIPT:12/alert(1)', 'javascript:1', 'javascript:0#\nalert(1)',
+    'data:1/x', 'vbscript:1/x', 'file:1/x', 'blob:1/x', 'about:1/x', 'java\tscript:1/x', 'foo:1/x',
+  ])('isSafeUrlText / hasSafeUrlValues reject digit-suffixed dangerous scheme %j (S2-1)', (value) => {
+    expect(isSafeUrlText(value)).toBe(false);
+    expect(hasSafeUrlValues({ url: value })).toBe(false);
+  });
+  it('isSafeUrlText still allows host:port only for host-looking names', () => {
+    expect(isSafeUrlText('localhost:3000/x')).toBe(true);
+    expect(isSafeUrlText('cdn.example.com:8443')).toBe(true);
+  });
+  it.each(['uri', 'website', 'avatar', 'image', 'cover', 'thumbnail', 'download', 'permalink', 'photo', 'logo', 'profile_image', 'coverImage', 'thumbnails'])(
+    'hasSafeUrlValues checks the %s key too (S2-2)', (key) => {
+      expect(hasSafeUrlValues({ [key]: 'javascript:alert(1)' })).toBe(false);
+      expect(hasSafeUrlValues({ [key]: 'javascript:1/x' })).toBe(false);
+      expect(hasSafeUrlValues({ [key]: 'https://ok.example/a.png' })).toBe(true);
+    });
   it('hasSafeUrlValues inspects url-ish keys at any depth', () => {
     expect(hasSafeUrlValues({ audio_master_url: 'https://x.example/a.wav', lyrics: 'javascript:not a url key' })).toBe(true);
     expect(hasSafeUrlValues({ a: { b: [{ previewUrl: 'javascript:alert(1)' }] } })).toBe(false);

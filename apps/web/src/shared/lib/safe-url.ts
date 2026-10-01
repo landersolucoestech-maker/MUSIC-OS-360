@@ -36,6 +36,8 @@ const ASCII_CONTROL = /[\u0000-\u001f\u007f]/;
  */
 export function safeLinkHref(url: string | null | undefined): string {
   if (!url || typeof url !== "string") return "";
+  // Browsers drop tab/LF/CR anywhere in a URL, so `/\t/evil.test` becomes `//evil.test`: no control chars at all.
+  if (ASCII_CONTROL.test(url)) return "";
   if (NETWORK_PATH_REFERENCE.test(url)) return "";
   const u = parse(url);
   return u && SAFE_LINK_SCHEMES.has(u.protocol) ? url : "";
@@ -68,6 +70,7 @@ export function safeHref(value: unknown): string | undefined {
 /** `src` of an <audio>/<video>/<img> fed by API data: http(s)/blob only, else "" (nothing is rendered). */
 export function safeMediaSrc(url: string | null | undefined): string {
   if (!url || typeof url !== "string") return "";
+  if (ASCII_CONTROL.test(url)) return "";
   if (NETWORK_PATH_REFERENCE.test(url)) return "";
   const u = parse(url);
   return u && SAFE_IMAGE_SCHEMES.has(u.protocol) ? url : "";
@@ -101,6 +104,7 @@ export function safeExternalUrl(value: unknown): string | undefined {
 /** Returns `url` if it is a safe image source (http/https/blob or data:image/*), else "". */
 export function safeImageSrc(url: string | null | undefined): string {
   if (!url || typeof url !== "string") return "";
+  if (ASCII_CONTROL.test(url)) return "";
   if (NETWORK_PATH_REFERENCE.test(url)) return "";
   const u = parse(url);
   if (!u) return "";

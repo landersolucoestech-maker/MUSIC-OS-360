@@ -122,6 +122,19 @@ describe('InstagramService', () => {
     expect(status).toEqual({ connected: true, needs_reauth: true });
   });
 
+  it('getAccountMetrics returns a stable code, never the raw Meta error text (S4-2)', async () => {
+    oauthRepo._seed({
+      tenant_id: TENANT_A, user_id: USER_A, provider: 'instagram', id: 'row-1',
+      access_token_encrypted: makeEncryption().encrypt('tok'),
+      expires_at: new Date(Date.now() + 90 * 24 * 3600 * 1000), scopes: 'instagram_basic',
+    });
+    fetchMock.mockResolvedValueOnce({ json: async () => ({ error: { code: 4, message: 'App 123 secret detail (#4) rate limit' } }) });
+    const res = await service.getAccountMetrics(TENANT_A, USER_A);
+    expect(res).toEqual({ error: 'INTEGRATION_CALL_FAILED' });
+    fetchMock.mockResolvedValueOnce({ json: async () => ({ error: { code: 190, message: 'Invalid OAuth access token' } }) });
+    expect(await service.getAccountMetrics(TENANT_A, USER_A)).toEqual({ error: 'PROVIDER_UNAUTHORIZED' });
+  });
+
   it('never leaks a refresh failure for one tenant into another tenant\'s status', async () => {
     oauthRepo._seed({
       tenant_id: TENANT_A, user_id: USER_A, provider: 'instagram', id: 'row-a',

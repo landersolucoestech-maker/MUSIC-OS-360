@@ -4,6 +4,7 @@ import { DataSource }         from 'typeorm';
 import { DATA_SOURCE }        from '../../../database/database.module';
 import { EncryptionService }  from '../../../core/security/encryption.service';
 import { IntegrationBaseService } from '../integration-base.service';
+import { redactDiagnosticText } from '../../../core/filters/redact-diagnostic';
 
 const META_API = 'https://graph.facebook.com/v19.0';
 const PROVIDER = 'instagram';
@@ -124,7 +125,8 @@ export class InstagramService extends IntegrationBaseService {
     const pages    = await pagesRes.json() as any;
     if (pages.error) {
       if (pages.error.code === 190) await this.markOAuthNeedsReauth(tenantId, userId, PROVIDER);
-      return { error: pages.error.message };
+      this.logger.warn(`Instagram pages lookup failed: ${redactDiagnosticText(String(pages.error?.message ?? ''))}`);
+      return { error: pages.error.code === 190 ? 'PROVIDER_UNAUTHORIZED' : 'INTEGRATION_CALL_FAILED' };
     }
 
     const pageData = pages.data?.[0];

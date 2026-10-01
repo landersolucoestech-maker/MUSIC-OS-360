@@ -6,6 +6,7 @@ import { Printer, Download, Copy } from "lucide-react";
 import type { ContractTemplateRow } from "@/modules/contracts/hooks/useContractTemplates";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
 import { toast } from "sonner";
+import { buildTemplatePrintHtml } from "@/modules/contracts/components/contractTemplatePrint";
 import { contractCategoryLabel, useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
 
 interface ContractTemplateViewModalProps {
@@ -25,24 +26,7 @@ export function ContractTemplateViewModal({
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
     if (printWindow) {
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>${template.name}</title>
-          <style>
-            body { font-family: 'Times New Roman', Times, serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.8; }
-            h1 { text-align: center; margin-bottom: 30px; }
-            .variable { background-color: #fff3cd; padding: 2px 6px; border-radius: 4px; font-family: Inter, system-ui, sans-serif; }
-            pre { white-space: pre-wrap; word-wrap: break-word; font-family: 'Times New Roman', Times, serif; }
-          </style>
-        </head>
-        <body>
-          <h1>${template.name}</h1>
-          <pre>${template.content ?? ""}</pre>
-        </body>
-        </html>
-      `);
+      printWindow.document.write(buildTemplatePrintHtml(template.name, template.content));
       printWindow.document.close();
       printWindow.print();
     }

@@ -10,6 +10,13 @@
  *
  * The key lives under QUERY_KEYS.TRANSACTIONS, so transaction mutations and
  * realtime invalidations (prefix match) refresh it too.
+ *
+ * Known cost (review S5-1, accepted): the sweep is capped at 5000 rows = up to 25 sequential
+ * 200-row requests per mounted consumer (ProfitAndLoss, FinanceChart, ArtistVision360Modal), and
+ * every TRANSACTIONS prefix invalidation re-runs it. tenant-scoped, server limit 200 enforced, so
+ * no data exposure. Follow-up: serve the totals from the server aggregate (/transactions/stats)
+ * or debounce the realtime invalidation; not done here because invalidation lives in the shared
+ * realtime layer and the aggregates need server-side support.
  */
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS, getCacheConfig } from "@/shared/lib/query-config";

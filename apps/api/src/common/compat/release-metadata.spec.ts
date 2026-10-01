@@ -89,3 +89,11 @@ describe('renameKeys', () => {
     expect(renameKeys({ a: 1, b: 2, c: 3 }, { a: 'b', c: 'd' })).toEqual({ value: { b: 2, d: 3 }, renamed: 2, conflicts: 1 });
   });
 });
+
+describe('renameKeys (SEC2 L1)', () => {
+  it('keeps keys named like Object.prototype members', () => {
+    const input = JSON.parse('{"faixas":[],"constructor":{"a":1},"toString":"t","valueOf":2}');
+    const { value } = renameKeys(input, { faixas: 'tracks' });
+    expect(value).toEqual({ tracks: [], constructor: { a: 1 }, toString: 't', valueOf: 2 });
+  });
+});

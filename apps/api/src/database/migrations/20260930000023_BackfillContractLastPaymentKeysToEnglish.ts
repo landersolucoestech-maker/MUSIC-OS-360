@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { assertMigrationRoleBypassesRls } from '../migration-guards';
-import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec } from '../jsonb-row-backfill';
+import { backfillRows, createBackfillLogTable, isEmptyJsonValue, restoreRows, type RowBackfillSpec } from '../jsonb-row-backfill';
 
 /**
  * 20260930000023_BackfillContractLastPaymentKeysToEnglish (PJ1)
@@ -29,26 +29,31 @@ const MAP: Readonly<Record<string, string>> = {
 const has = (o: object, k: string): boolean => Object.prototype.hasOwnProperty.call(o, k);
 
 /** Exported for the unit spec only. */
-export function canonicalContractMetadataForBackfill(metadata: unknown): { value: unknown; changed: boolean; conflicts: number } {
-  if (metadata === null || typeof metadata !== 'object' || Array.isArray(metadata)) return { value: metadata, changed: false, conflicts: 0 };
+export function canonicalContractMetadataForBackfill(metadata: unknown): { value: unknown; changed: boolean; conflicts: number; emptyCanonicalReplaced: number } {
+  if (metadata === null || typeof metadata !== 'object' || Array.isArray(metadata)) return { value: metadata, changed: false, conflicts: 0, emptyCanonicalReplaced: 0 };
   const source = metadata as Record<string, unknown>;
   const out: Record<string, unknown> = {};
   let changed = false;
   let conflicts = 0;
+  let emptyCanonicalReplaced = 0;
   for (const [key, value] of Object.entries(source)) {
     if (key === '__proto__') continue;
     if (!has(MAP, key)) {
-      out[key] = value;
+      if (!has(out, key)) out[key] = value; // a legacy key processed earlier may already hold the canonical slot
       continue;
     }
     changed = true;
     if (has(source, MAP[key])) {
       conflicts += 1;
+      if (isEmptyJsonValue(source[MAP[key]]) && !isEmptyJsonValue(value)) {
+        emptyCanonicalReplaced += 1; // canonical is null/''/[]: keep the legacy data (L2)
+        out[MAP[key]] = value;
+      }
       continue;
     }
     out[MAP[key]] = value;
   }
-  return { value: out, changed, conflicts };
+  return { value: out, changed, conflicts, emptyCanonicalReplaced };
 }
 
 const SPEC: RowBackfillSpec = {
@@ -59,8 +64,8 @@ const SPEC: RowBackfillSpec = {
   jsonbColumns: ['metadata'],
   candidatePredicate: `"metadata" ?| ARRAY[${Object.keys(MAP).map((k) => `'${k}'`).join(', ')}]::text[]`,
   transform(row) {
-    const { value, changed, conflicts } = canonicalContractMetadataForBackfill(row['metadata']);
-    return changed ? { set: { metadata: value }, conflicts } : null;
+    const { value, changed, conflicts, emptyCanonicalReplaced } = canonicalContractMetadataForBackfill(row['metadata']);
+    return changed ? { set: { metadata: value }, conflicts, emptyCanonicalReplaced } : null;
   },
 };
 

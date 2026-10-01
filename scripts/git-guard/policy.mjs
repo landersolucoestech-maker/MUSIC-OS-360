@@ -112,6 +112,10 @@ const ENV_ASSIGNMENT = /^[A-Za-z_][A-Za-z0-9_]*=/;
 const DYNAMIC_COMMAND_WORD = /^(\$\{[^}]*\}|\$[A-Za-z_@*][A-Za-z0-9_]*|\$\(.*\)|)$/s;
 const DYNAMIC_COMMAND_TEXT = /^\s*\$[({A-Za-z_]/;
 
+function shellQuote(word) {
+  return `'${String(word).replace(/'/g, `'\\''`)}'`;
+}
+
 function basename(word) {
   return (word ?? '').split('/').pop();
 }
@@ -513,6 +517,19 @@ function checkGitInvocation(invocation, context) {
     if (args.some((word) => /^(alias|include|includeif)\./i.test(word) || pushConfig.test(word))) refuse('Defining git aliases, config includes or push refspecs is forbidden.');
     if (hasOption(args, '--remove-section', '--rename-section')) refuse('Removing or renaming git config sections can disable the branch guard.');
   }
+  // Redirecting where origin pushes (exfiltration of dev): URL/pushurl rewrites and insteadOf rules.
+  const urlConfig = /^(remote\.[^=]+\.(url|pushurl)|url\..+\.(insteadof|pushinsteadof))$/i;
+  if (globals.some((word) => urlConfig.test(word.split('=')[0]))) refuse('Redirecting remotes (remote.*.url, pushurl, url.*.insteadOf) on the command line is forbidden.');
+  if (sub === 'config' && !configReadOnly && args.some((word) => urlConfig.test(word.split('=')[0]))) refuse('Changing remote URLs or url.*.insteadOf rewrites is forbidden.');
+  if (sub === 'remote' && ['set-url', 'seturl'].includes(args.find((arg) => !arg.startsWith('-')))) refuse('git remote set-url could redirect pushes away from origin.');
+  if (sub === 'push') {
+    invocation.args.forEach((arg, i, raw) => {
+      if (optionMatches(arg, '--repo')) {
+        const value = arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : raw[i + 1] ?? '';
+        if (value !== ALLOWED_REMOTE) refuse(`git push --repo "${value}" pushes somewhere other than "${ALLOWED_REMOTE}".`);
+      }
+    });
+  }
   if (PLUMBING_PUSH.test(sub)) refuse(`git ${sub} pushes without the pre-push hook.`);
   if (sub === 'init' && hasOption(args, '--separate-git-dir')) refuse('git init --separate-git-dir moves the git directory away from the installed guard.');
   if (sub === 'replace' && !(hasOption(args, '--list', '--delete') || hasShortFlag(args, 'l') || hasShortFlag(args, 'd'))) refuse('git replace rewrites history invisibly to the fast-forward check.');
@@ -523,9 +540,33 @@ function checkGitInvocation(invocation, context) {
     raw.forEach((arg, i) => {
       if (arg === '-x' || arg === '--exec') checkNested(raw[i + 1] ?? '');
       else if (arg.startsWith('--exec=')) checkNested(arg.slice('--exec='.length));
+      else {
+        // `-x"cmd"`, `-xcmd`, `-ix cmd`: a short cluster ending in x takes the rest (or the next word) as the command.
+        const cluster = /^-[A-Za-z]*?x(.*)$/s.exec(arg);
+        if (cluster && !arg.startsWith('--')) checkNested(cluster[1] || raw[i + 1] || '');
+      }
     });
   }
-  if (sub === 'bisect' && args[0] === 'run') checkNested(args.slice(1).join(' '));
+  // Commands git runs for the user: every word, the joined words and the shell-quoted join are checked as shell text.
+  const checkCommandWords = (words) => {
+    words.forEach((word) => checkNested(word));
+    checkNested(words.join(' '));
+    checkNested(words.map(shellQuote).join(' '));
+  };
+  const rawArgs = invocation.args;
+  if (sub === 'bisect' && rawArgs[0] === 'run') checkCommandWords(rawArgs.slice(1));
+  if (sub === 'submodule') {
+    const at = rawArgs.indexOf('foreach');
+    if (at !== -1) checkCommandWords(rawArgs.slice(at + 1).filter((word) => word !== '--recursive'));
+  }
+  if (sub === 'difftool' || sub === 'mergetool') {
+    rawArgs.forEach((arg, i) => {
+      if (arg === '-x' || optionMatches(arg, '--extcmd')) {
+        if (arg.includes('=')) checkNested(arg.slice(arg.indexOf('=') + 1));
+        else checkNested(rawArgs[i + 1] ?? '');
+      } else if (/^-x./s.test(arg)) checkNested(arg.slice(2));
+    });
+  }
 
   switch (sub) {
     case 'checkout': {
@@ -689,6 +730,8 @@ function checkGhInvocation(words) {
   if (sub === 'issue' && action === 'develop' && !words.some((word) => word === '--list' || word === '-l')) return refuse('gh issue develop creates a branch on GitHub.');
   if (['issue', 'pr'].includes(sub) && ['create', 'edit'].includes(action) && assignsCopilot(words)) return refuse('Assigning Copilot makes it create a copilot/* branch.');
   if (sub === 'agent-task' && action === 'create') return refuse('gh agent-task create makes Copilot create a branch.');
+  if (sub === 'alias' && ['set', 'import'].includes(action)) return refuse('gh alias set/import can hide a forbidden gh command behind an innocent name.');
+  if (sub === 'pr' && action === 'merge') return refuse('gh pr merge writes the base branch on GitHub.');
   if (sub === 'repo' && action === 'sync') return refuse('gh repo sync force-updates branches.');
   if (sub !== 'api') return [];
   if (action === 'graphql') {
@@ -699,7 +742,8 @@ function checkGhInvocation(words) {
   }
   const endpoint = words.slice(2).find((word) => !word.startsWith('-') && /(^|\/)(repos|git)\//.test(word)) ?? '';
   const methodIndex = words.findIndex((word) => word === '-X' || word === '--method');
-  const inlineMethod = words.find((word) => word.startsWith('--method='))?.slice('--method='.length);
+  const inlineMethod = words.find((word) => word.startsWith('--method='))?.slice('--method='.length)
+    ?? words.find((word) => /^-X.+/.test(word))?.slice(2).replace(/^=/, ''); // `-XPOST`, `-XDELETE`
   const method = (inlineMethod ?? (methodIndex !== -1 ? words[methodIndex + 1] : null) ?? (words.some((word) => GH_WRITE_FIELD_OPTIONS.has(word)) ? 'POST' : 'GET')).toUpperCase();
   if (method === 'GET') return [];
   if (/\/branches\/[^/]+\/rename/.test(endpoint) || /\/merge-upstream$/.test(endpoint)) return refuse('Renaming or syncing a GitHub branch is forbidden.');
@@ -707,6 +751,13 @@ function checkGhInvocation(words) {
     if (words.some((word) => word === '--input' || word.startsWith('--input='))) return refuse('An issue mutation read from a file cannot be checked for a Copilot assignment; pass the fields with -f.');
     const assignment = ghFieldValues(words).filter((field) => /^assignees?(\[\d*\])?=/i.test(field));
     if (assignment.some((field) => COPILOT.test(field.slice(field.indexOf('=') + 1)))) return refuse('Assigning Copilot makes it create a copilot/* branch.');
+  }
+  // The server-side ruleset is the real boundary: never edit or delete it, nor branch protection.
+  if (/\/(rulesets?|branches\/[^/]+\/protection)(\/|$)/.test(endpoint)) return refuse(`gh api ${method} ${endpoint} changes the repository's rulesets/branch protection.`);
+  if (/\/merges$/.test(endpoint) && method === 'POST') return refuse('gh api POST merges writes a branch on GitHub.');
+  if (/\/contents\//.test(endpoint) && ['PUT', 'POST', 'DELETE'].includes(method)) {
+    const onDev = ghFieldValues(words).some((field) => field === `branch=${ALLOWED_BRANCH}`);
+    if (!onDev) return refuse(`gh api ${method} ${endpoint} writes a file to a branch other than "${ALLOWED_BRANCH}" (pass -f branch=${ALLOWED_BRANCH}).`);
   }
   if (/\/git\/refs/.test(endpoint)) {
     if (method === 'DELETE' && !/\/git\/refs\/heads\/dev$/.test(endpoint)) return [];
@@ -738,6 +789,52 @@ function gitTargetDir({ env, globals }, cwd, exportedGitDir) {
 // at the start of a token or after "/" or "=" (`of=.git/HEAD`, `--target-directory=.git/refs`).
 // .gitignore, .github/, .gitkeep and names merely containing ".git" do not match.
 const GIT_DIR_PATH = /(^|[/=])\.git(\/|$)/;
+
+/** A glob component (`.gi*`, `.[g]it`, `.g?t`, `git-gua*`) as an anchored RegExp, or null when it has no glob character. */
+function globComponent(component) {
+  if (!/[*?[]/.test(component)) return null;
+  let source = '';
+  for (let i = 0; i < component.length; i += 1) {
+    const ch = component[i];
+    if (ch === '*') source += '.*';
+    else if (ch === '?') source += '.';
+    else if (ch === '[') {
+      const close = component.indexOf(']', i + 2);
+      if (close === -1) source += '\\[';
+      else {
+        source += `[${component.slice(i + 1, close).replace(/^!/, '^').replace(/\\/g, '\\\\')}]`;
+        i = close;
+      }
+    } else source += ch.replace(/[.+^${}()|\\\]]/g, '\\$&');
+  }
+  try {
+    return new RegExp(`^${source}$`);
+  } catch {
+    return /^[\s\S]*$/; // an unparsable glob: assume it could match
+  }
+}
+
+const GIT_DIR_SUBSTITUTION = /(--(absolute-)?git(-common)?-dir|\$\{?GIT_(COMMON_)?DIR\b)/;
+
+/** Whether a path word names the .git directory (also through globs or $(git rev-parse --git-common-dir)) or the installed guard. */
+function namesGitDirOrGuard(word) {
+  const value = word.startsWith('-') && word.includes('=') ? word.slice(word.indexOf('=') + 1) : word;
+  if (GIT_DIR_PATH.test(value)) return true;
+  if (/\$|`/.test(value) && GIT_DIR_SUBSTITUTION.test(value)) return true;
+  const parts = value.split('/');
+  return parts.some((part, i) => {
+    if (part === 'git-guard') return parts[i - 1] !== 'scripts'; // the installed guard dir; scripts/git-guard is the source tree
+    const glob = globComponent(part);
+    if (!glob) return false;
+    if (glob.test('.git')) return true;
+    return glob.test('git-guard') && i > 0 && (parts[i - 1] === '.git' || globComponent(parts[i - 1])?.test('.git') === true);
+  });
+}
+
+/** Whether `p` (a resolved directory) is inside a .git directory. */
+function insideGitDir(p) {
+  return typeof p === 'string' && p.split(/[\\/]/).includes('.git');
+}
 // Programs that never write the files named in their arguments. Anything else naming a .git path is
 // refused (fail closed); git/gh have their own rules; interpreters are a declared limit.
 const READ_ONLY_PROGRAMS = new Set([
@@ -763,8 +860,8 @@ const SCRIPT_REDIRECT_INTO_GIT_DIR = /(>>?|>\||&>)\s*["']?(?:[^\s"'>&]*\/)?\.git
 const SCRIPT_TEXT_READERS = new Set(['echo', 'printf', 'node', 'python', 'python3']);
 
 /** Whether a simple command writes into a .git directory through its arguments or redirections. */
-function writesIntoGitDir(words) {
-  if ((words.writesTo ?? []).some((target) => GIT_DIR_PATH.test(target))) return true;
+function writesIntoGitDir(words, inGitDir = false) {
+  if ((words.writesTo ?? []).some((target) => namesGitDirOrGuard(target) || inGitDir)) return true;
   const index = programIndex(words);
   if (index === -1) return false;
   const program = basename(words[index]);
@@ -779,7 +876,9 @@ function writesIntoGitDir(words) {
   if (program === 'git' || program === 'gh' || GIT_PLUMBING_PROGRAM.test(program) || SHELLS.has(program) || program === 'eval') return false;
   const scriptText = !READ_ONLY_PROGRAMS.has(program) || SCRIPT_TEXT_READERS.has(program);
   if (scriptText && args.some((arg) => SCRIPT_REDIRECT_INTO_GIT_DIR.test(arg))) return true;
-  if (!args.some((arg) => GIT_DIR_PATH.test(arg))) return false;
+  // After `cd .git` every relative argument is inside the git directory: name it explicitly.
+  if (inGitDir) args.push('.git/');
+  if (!args.some((arg) => namesGitDirOrGuard(arg))) return false;
   const wrapped = words.slice(0, index).some((word) => WRAPPERS.has(basename(word)));
   if (wrapped && args.some((arg) => WRITING_PROGRAMS.has(basename(arg)))) return true;
   if (program === 'sed') return args.some((arg) => /^-[A-Za-z]*i|^--in-place/.test(arg));
@@ -788,14 +887,14 @@ function writesIntoGitDir(words) {
     // -exec/-ok and the file written by -fprint/-fls are targets of their own.
     const first = args.findIndex((arg) => /^[-(!]/.test(arg));
     const startingPoints = first > 0 ? args.slice(0, first) : args;
-    if (startingPoints.some((arg) => GIT_DIR_PATH.test(arg)) && args.some((arg) => /^-(delete|exec|execdir|ok|okdir)$/.test(arg))) return true;
+    if ((inGitDir || startingPoints.some((arg) => namesGitDirOrGuard(arg))) && args.some((arg) => /^-(delete|exec|execdir|ok|okdir)$/.test(arg))) return true;
     const execCommand = (i) => {
       const rest = args.slice(i + 1);
       const end = rest.findIndex((word) => word === ';' || word === '+');
       return end === -1 ? rest : rest.slice(0, end);
     };
     return args.some((arg, i) => (/^-(fprint0?|fprintf|fls)$/.test(arg) && GIT_DIR_PATH.test(args[i + 1] ?? ''))
-      || (EXEC_OPTIONS.has(arg) && writesIntoGitDir(execCommand(i))));
+      || (EXEC_OPTIONS.has(arg) && writesIntoGitDir(execCommand(i), inGitDir)));
   }
   return !READ_ONLY_PROGRAMS.has(program);
 }
@@ -844,6 +943,7 @@ export function checkShellCommand(command, currentBranch = null, options = {}, d
   if (incomplete && MENTIONS_GIT.test(command)) refuse('This command has an unterminated quote, substitution or heredoc, so its git/gh commands cannot be checked; split or fix it.');
   const dirs = [];
   let dir = cwd;
+  let inGitDir = insideGitDir(cwd); // after `cd .git` (or through a glob / $(git rev-parse --git-common-dir)): relative writes land in the git directory
   let exportedGitDir = null; // null: none, undefined: exported with an unknown value
   const checkNested = (text, nestedDir) => {
     if (depth < 4) violations.push(...checkShellCommand(text, currentBranch, { ...options, cwd: nestedDir }, depth + 1));
@@ -851,17 +951,19 @@ export function checkShellCommand(command, currentBranch = null, options = {}, d
   };
   for (const words of commands) {
     if (words[0] === SUBSHELL_OPEN) {
-      dirs.push(dir);
+      dirs.push([dir, inGitDir]);
       continue;
     }
     if (words[0] === SUBSHELL_CLOSE) {
-      if (dirs.length) dir = dirs.pop();
+      if (dirs.length) [dir, inGitDir] = dirs.pop();
       continue;
     }
     const lead = basename(leadingWord(words));
     if (lead === 'cd' || lead === 'pushd') {
       const target = words[words.indexOf(leadingWord(words)) + 1];
+      const previous = dir;
       dir = !target || /[$~`]/.test(target) || target === '-' ? null : path.isAbsolute(target) ? path.normalize(target) : dir === null ? null : path.resolve(dir, target);
+      inGitDir = dir !== null ? insideGitDir(dir) : (namesGitDirOrGuard(target ?? '') || (inGitDir && previous === null && !path.isAbsolute(target ?? '')));
       continue;
     }
     if (words.some((word) => HOOK_BYPASS_ENV.test(word))) refuse('GIT_CONFIG_* overrides can disable the branch guard.');
@@ -869,7 +971,7 @@ export function checkShellCommand(command, currentBranch = null, options = {}, d
     if (gitDirAssignment && (['export', 'declare', 'typeset'].includes(lead) || words.every((word) => ENV_ASSIGNMENT.test(word)))) {
       exportedGitDir = /[$~`]/.test(gitDirAssignment) ? undefined : gitDirAssignment.slice(gitDirAssignment.indexOf('=') + 1);
     }
-    if (writesIntoGitDir(words)) refuse('Writing into the git directory can disable the branch guard.');
+    if (writesIntoGitDir(words, inGitDir)) refuse('Writing into the git directory can disable the branch guard.');
     words.forEach((word, index) => {
       const name = basename(word);
       if (!inCommandPosition(words, index)) return;
@@ -895,7 +997,14 @@ export function checkShellCommand(command, currentBranch = null, options = {}, d
       } else if (SHELLS.has(name)) {
         const rest = words.slice(index + 1);
         const flag = rest.findIndex((arg) => /^-[A-Za-z]*c[A-Za-z]*$/.test(arg));
-        const commandAt = rest[flag + 1] === '--' ? flag + 2 : flag + 1; // `sh -c -- 'cmd'`
+        // Option words after -c (`bash -c -l 'cmd'`, `bash -c -o pipefail 'cmd'`, `sh -c -- 'cmd'`) come before the command text.
+        let commandAt = flag + 1;
+        while (flag !== -1 && commandAt < rest.length && /^[-+]/.test(rest[commandAt])) {
+          const option = rest[commandAt];
+          commandAt += 1;
+          if (option === '--') break;
+          if (/^[-+][A-Za-z]*[oO]$/.test(option)) commandAt += 1; // `-o name` / `-O shopt` take a value
+        }
         if (flag !== -1) {
           if (DYNAMIC_COMMAND_TEXT.test(rest[commandAt] ?? '') && MENTIONS_GIT.test(command)) refuse(`${name} -c with an expansion as its command cannot be checked; run the git/gh commands directly.`);
           checkNested(rest[commandAt] ?? '', dir);

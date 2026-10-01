@@ -47,9 +47,10 @@ export function fakeRunner(db: FakeDb, isCandidate: (table: string, row: Row) =>
     }
     if (sql.includes('INSERT INTO') && sql.includes('"before", "after"')) {
       const [table_name, id, tenant_id, before, after] = params as string[];
-      if (!db.log.some((l) => l.table_name === table_name && l.id === id)) {
-        db.log.push({ table_name, id, tenant_id, before: JSON.parse(before) as Row, after: JSON.parse(after) as Row });
-      }
+      const existing = db.log.find((l) => l.table_name === table_name && l.id === id);
+      const entry = { table_name, id, tenant_id, before: JSON.parse(before) as Row, after: JSON.parse(after) as Row };
+      if (!existing) db.log.push(entry);
+      else if (sql.includes('DO UPDATE')) Object.assign(existing, entry);
       return [];
     }
     const update = /^UPDATE "(\w+)" SET (.+) WHERE "id" = \$1 AND (.+) RETURNING "id"/s.exec(sql);

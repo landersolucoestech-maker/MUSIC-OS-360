@@ -25,8 +25,18 @@ const STORAGE_REF = /^r2:\/\/[A-Za-z0-9][A-Za-z0-9._-]*\/[^\s<>"'`\\]+$/;
 // Characters browsers drop or ignore inside/around a scheme (tab, LF, CR, spaces, C0/DEL, NBSP, zero-width, BOM).
 // eslint-disable-next-line no-control-regex
 const SCHEME_NOISE = /[\u0000-\u0020\u007f\u00a0\u1680\u180e\u2000-\u200d\u2028\u2029\u202f\u205f\u2060\u3000\ufeff]/g;
-// A leading `name:` is a scheme unless it is `host:port` (digits then `/` or the end).
-const SCHEME = /^([a-z][a-z0-9+.-]*):(?!\d+(?:[/?#]|$))/i;
+// A leading `name:` is a scheme, unless it is a `host:port` (digits then `/`, `?`, `#` or the end)
+// whose name looks like a host (contains a dot, or is `localhost`). Dangerous scheme names are never
+// host:port, so `javascript:1/alert(1)` stays a scheme.
+const SCHEME = /^([a-z][a-z0-9+.-]*):/i;
+const HOST_PORT_TAIL = /^\d+(?:[/?#]|$)/;
+const DANGEROUS_SCHEMES = new Set(['javascript', 'data', 'vbscript', 'file', 'blob', 'about']);
+
+function looksLikeHostPort(name: string, rest: string): boolean {
+  if (DANGEROUS_SCHEMES.has(name)) return false;
+  if (!HOST_PORT_TAIL.test(rest)) return false;
+  return name === 'localhost' || name.includes('.');
+}
 
 /** True only for an absolute http(s) URL (whitespace, `javascript:`, `data:` and relative URLs are rejected). */
 export function isHttpUrl(value: unknown): value is string {
@@ -58,6 +68,7 @@ export function isSafeUrlText(value: unknown): value is string {
   const scheme = SCHEME.exec(compact);
   if (!scheme) return true;
   const name = scheme[1].toLowerCase();
+  if (looksLikeHostPort(name, compact.slice(scheme[0].length))) return true;
   if (name === 'r2') return isStorageRef(value.trim());
   return (name === 'http' || name === 'https') && isHttpUrl(value.trim());
 }
@@ -132,8 +143,10 @@ export function HasHttpUrlItems(key: string, validationOptions?: ValidationOptio
   );
 }
 
-/** JSON keys whose value the web binds to href/src: url, fileUrl, audio_url, link, previewUrl, hrefs, srcs… */
+/** JSON keys whose value the web binds to href/src: url, fileUrl, audio_url, link, previewUrl, hrefs, srcs, uri, website, avatar, image, cover, thumbnail, download… */
 const URL_KEY = /(^|[_-])(url|link|href|src)s?$|[a-z](Url|Link|Href|Src)s?$/;
+// Other keys that hold a link in practice (S2-2): matched case-insensitively on the key's last word.
+const URL_KEY_NOUNS = /(^|[_-]|[a-z])(uri|website|avatar|image|photo|picture|logo|cover|thumbnail|thumb|download|permalink)s?$/i;
 const MAX_JSON_DEPTH = 6;
 
 /** True when every url-ish key anywhere in `value` (objects/arrays, bounded depth) holds a safe link. */
@@ -142,7 +155,7 @@ export function hasSafeUrlValues(value: unknown, depth = 0): boolean {
   if (Array.isArray(value)) return value.every((item) => hasSafeUrlValues(item, depth + 1));
   if (value === null || typeof value !== 'object') return true;
   return Object.entries(value as Record<string, unknown>).every(([key, item]) => {
-    if (URL_KEY.test(key)) {
+    if (URL_KEY.test(key) || URL_KEY_NOUNS.test(key)) {
       if (item === null || item === undefined || item === '') return true;
       if (Array.isArray(item)) return item.every((entry) => entry === null || entry === '' || (typeof entry === 'string' ? isSafeUrlText(entry) : hasSafeUrlValues(entry, depth + 1)));
       if (typeof item === 'object') return hasSafeUrlValues(item, depth + 1);

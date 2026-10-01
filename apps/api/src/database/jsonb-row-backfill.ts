@@ -10,10 +10,12 @@ import type { QueryRunner } from 'typeorm';
  *  - The pure `transform(row)` returns the columns to change (or null when the
  *    row is already canonical -> skipped, so a re-run changes nothing).
  *  - Every rewritten row is first recorded in a side table with the BEFORE and AFTER
- *    value of the changed columns only (`ON CONFLICT DO NOTHING`: the first run's
- *    BEFORE is never overwritten by a replay). The side table is RLS-locked
- *    (enabled + forced, no policy, privileges revoked) and is NOT dropped by down():
- *    forensic data, drop it in a later migration.
+ *    value of the changed columns only. `ON CONFLICT DO UPDATE`: a row that is already
+ *    canonical is skipped, so a conflict only happens when the row is transformed AGAIN
+ *    (up -> down -> an older build edits it -> up) and its record must follow it; keeping
+ *    the stale BEFORE/AFTER would make the second down() restore nothing for that row (L4).
+ *    The side table is RLS-locked (enabled + forced, no policy, privileges revoked) and is
+ *    NOT dropped by down(): forensic data, drop it in a later migration.
  *  - The UPDATE is guarded: it only applies while each changed column still holds
  *    the value that was read (a concurrent user edit wins and the row is retried
  *    on the next run). `updated_at` is never touched (vocabulary rewrite, not a
@@ -23,6 +25,14 @@ import type { QueryRunner } from 'typeorm';
  *  - Logs are bounded: counts only, never row values.
  */
 export const BACKFILL_BATCH_SIZE = 500;
+
+/** A canonical value that carries no data: null, '', [] or {}. A legacy key holding data beats it (L2). */
+export function isEmptyJsonValue(value: unknown): boolean {
+  if (value === null || value === undefined || value === '') return true;
+  if (Array.isArray(value)) return value.length === 0;
+  if (typeof value === 'object') return Object.keys(value as object).length === 0;
+  return false;
+}
 
 export interface RowBackfillSpec {
   /** Migration name, for log lines. */
@@ -39,8 +49,12 @@ export interface RowBackfillSpec {
   tenantIdSql?: string;
   /** SQL predicate selecting candidate rows (static string). */
   candidatePredicate: string;
-  /** Pure rewrite: columns to change (value = new column value), or null to skip. `conflicts` counts keys where both spellings existed. */
-  transform(row: Record<string, unknown>): { set: Record<string, unknown>; conflicts: number } | null;
+  /**
+   * Pure rewrite: columns to change (value = new column value), or null to skip. `conflicts` counts keys where both
+   * spellings existed; `emptyCanonicalReplaced` those where the canonical value was empty (null/''/[]/{}) and the legacy
+   * value carried data, so the legacy value was kept.
+   */
+  transform(row: Record<string, unknown>): { set: Record<string, unknown>; conflicts: number; emptyCanonicalReplaced?: number } | null;
 }
 
 export async function createBackfillLogTable(queryRunner: QueryRunner, logTable: string): Promise<void> {
@@ -83,11 +97,12 @@ function bind(spec: RowBackfillSpec, column: string, value: unknown): unknown {
 export async function backfillRows(
   queryRunner: QueryRunner,
   spec: RowBackfillSpec,
-): Promise<{ rewritten: number; conflicts: number; skippedConcurrent: number }> {
+): Promise<{ rewritten: number; conflicts: number; emptyCanonicalReplaced: number; skippedConcurrent: number }> {
   const cols = [`"id"`, `${spec.tenantIdSql ?? '"tenant_id"'} AS "tenant_id"`, ...spec.columns.map((c) => `"${c}"`)].join(', ');
   let lastId = '00000000-0000-0000-0000-000000000000';
   let rewritten = 0;
   let conflicts = 0;
+  let emptyReplaced = 0;
   let skippedConcurrent = 0;
 
   for (;;) {
@@ -106,7 +121,8 @@ export async function backfillRows(
 
       await queryRunner.query(
         `INSERT INTO "${spec.logTable}" ("table_name", "id", "tenant_id", "before", "after")
-         VALUES ($1, $2, $3, $4::jsonb, $5::jsonb) ON CONFLICT ("table_name", "id") DO NOTHING`,
+         VALUES ($1, $2, $3, $4::jsonb, $5::jsonb)
+         ON CONFLICT ("table_name", "id") DO UPDATE SET "before" = EXCLUDED."before", "after" = EXCLUDED."after", "tenant_id" = EXCLUDED."tenant_id", "backed_up_at" = now()`,
         [spec.table, row['id'], row['tenant_id'], JSON.stringify(before), JSON.stringify(change.set)],
       );
 
@@ -126,6 +142,7 @@ export async function backfillRows(
       if (result.length > 0) {
         rewritten += 1;
         conflicts += change.conflicts;
+        emptyReplaced += change.emptyCanonicalReplaced ?? 0;
       } else {
         skippedConcurrent += 1;
       }
@@ -133,9 +150,9 @@ export async function backfillRows(
     if (rows.length < BACKFILL_BATCH_SIZE) break;
   }
   console.log(
-    `[${spec.migration}] ${spec.table}: ${rewritten} row(s) rewritten, ${conflicts} key conflict(s) resolved canonical-wins, ${skippedConcurrent} skipped (changed concurrently)`,
+    `[${spec.migration}] ${spec.table}: ${rewritten} row(s) rewritten, ${conflicts} key conflict(s) resolved canonical-wins (${emptyReplaced} of them kept the legacy value because the canonical one was empty), ${skippedConcurrent} skipped (changed concurrently)`,
   );
-  return { rewritten, conflicts, skippedConcurrent };
+  return { rewritten, conflicts, emptyCanonicalReplaced: emptyReplaced, skippedConcurrent };
 }
 
 /** down(): restore BEFORE for the rows recorded in the side table whose changed columns still hold AFTER. */

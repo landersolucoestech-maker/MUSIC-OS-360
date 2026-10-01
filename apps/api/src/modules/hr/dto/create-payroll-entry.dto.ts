@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsUrl, IsDateString, ValidateIf } from 'class-validator';
+import { IsString, IsOptional, IsDateString, ValidateIf } from 'class-validator';
+import { IsHttpOrStorageUrl } from '../../../common/validators/safe-url.validation';
 
 // Money fields are strings on the wire (entity decimals); the global pipe's
 // implicit conversion accepts the web form's numbers.
@@ -26,7 +27,7 @@ export class CreatePayrollEntryDto {
   @IsOptional() @IsDateString() payment_date?: string;
   @IsOptional() @IsString() status?: string;
   @IsOptional() @IsString() notes?: string;
-  @IsOptional() @IsUrl() file_url?: string;
+  @IsOptional() @IsHttpOrStorageUrl() file_url?: string;
   @IsOptional() @IsDateString() paid_at?: string;
   @IsOptional() metadata?: Record<string, unknown>;
 
@@ -39,6 +40,6 @@ export class CreatePayrollEntryDto {
   @ApiPropertyOptional({ deprecated: true, description: 'Use "net_salary".' }) @IsOptional() @IsString() salario_liquido?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "payment_date".' }) @IsOptional() @IsDateString() data_pagamento?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "paid_at".' }) @IsOptional() @IsDateString() pago_em?: string;
-  @ApiPropertyOptional({ deprecated: true, description: 'Use "file_url".' }) @IsOptional() @IsUrl() arquivo_url?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "file_url".' }) @IsOptional() @IsHttpOrStorageUrl() arquivo_url?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "notes".' }) @IsOptional() @IsString() observacoes?: string;
 }

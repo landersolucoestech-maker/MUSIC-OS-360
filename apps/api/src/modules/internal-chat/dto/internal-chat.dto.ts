@@ -2,8 +2,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsString, IsOptional, IsEnum, IsArray, ArrayMinSize, ArrayMaxSize,
-  IsNotEmpty, MaxLength, ValidateNested, IsUrl, IsBoolean,
+  IsNotEmpty, MaxLength, ValidateNested, IsBoolean,
 } from 'class-validator';
+import { IsHttpOrStorageUrl } from '../../../common/validators/safe-url.validation';
 
 export enum InternalConversationType { DIRECT = 'direct', GROUP = 'group' }
 
@@ -27,7 +28,7 @@ export class InternalMessageAttachmentDto {
   name: string;
 
   @ApiProperty()
-  @IsUrl({ require_tld: false })
+  @IsNotEmpty() @IsHttpOrStorageUrl()
   url: string;
 
   @ApiPropertyOptional()

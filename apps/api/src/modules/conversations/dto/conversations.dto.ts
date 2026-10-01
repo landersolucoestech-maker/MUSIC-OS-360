@@ -2,9 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsString, IsOptional, IsUUID, IsEnum, IsNotEmpty, MaxLength, IsArray, IsObject,
-  ArrayMaxSize, ValidateNested, IsUrl,
+  ArrayMaxSize, ValidateNested,
 } from 'class-validator';
 import { canonicalServiceStatus } from '../musicchat-vocabulary';
+import { IsHttpOrStorageUrl } from '../../../common/validators/safe-url.validation';
 
 /** A blank member id means "no member": stored as null, never as '' (which no lookup matches). */
 export const blankToNull = ({ value }: { value: unknown }) => (typeof value === 'string' && value.trim() === '' ? null : value);
@@ -97,7 +98,7 @@ export class MessageAttachmentDto {
   name: string;
 
   @ApiProperty()
-  @IsUrl({ require_tld: false })
+  @IsNotEmpty() @IsHttpOrStorageUrl()
   url: string;
 
   @ApiProperty()

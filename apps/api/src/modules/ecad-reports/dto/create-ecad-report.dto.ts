@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsUrl } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
+import { IsHttpOrStorageUrl } from '../../../common/validators/safe-url.validation';
 
 export class CreateEcadReportDto {
   @IsString()
@@ -24,7 +25,7 @@ export class CreateEcadReportDto {
   status?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsHttpOrStorageUrl()
   file_url?: string;
 
   @IsOptional()

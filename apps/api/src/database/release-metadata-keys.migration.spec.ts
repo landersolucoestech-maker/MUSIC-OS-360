@@ -111,4 +111,54 @@ describe('BackfillReleaseMetadataKeysToEnglish20260930000019', () => {
     expect(sql).toContain('REVOKE ALL ON TABLE "release_metadata_backfill_20260930" FROM PUBLIC');
     expect(sql).not.toContain('CREATE POLICY');
   });
+
+  it('L1: keys named like Object.prototype members (constructor, toString, valueOf) are preserved at every level', () => {
+    const metadata = JSON.parse(
+      '{"faixas":[{"artista":"X","constructor":"c","toString":"t","musicos":[{"nome":"M","valueOf":"v"}]}],"constructor":{"a":1},"valueOf":2,"__proto__":{"polluted":true}}',
+    );
+    const { value } = canonicalReleaseMetadataForBackfill(metadata) as { value: Record<string, any> };
+    expect(Object.prototype.hasOwnProperty.call(value, 'constructor')).toBe(true);
+    expect(value['constructor']).toEqual({ a: 1 });
+    expect(value['valueOf']).toBe(2);
+    expect(value['tracks'][0]).toEqual({ artist: 'X', constructor: 'c', toString: 't', musicians: [{ name: 'M', valueOf: 'v' }] });
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+  });
+
+  it('L2: an empty canonical value (null, [], {}, "") does not beat a legacy key that carries data; a non-empty canonical still wins', async () => {
+    const faixas = [{ title: 't', artista: 'X' }];
+    const cases: Array<[Record<string, unknown>, Record<string, unknown>]> = [
+      [{ faixas, tracks: [] }, { tracks: [{ title: 't', artist: 'X' }] }],
+      [{ tracks: [], faixas }, { tracks: [{ title: 't', artist: 'X' }] }],
+      [{ generoSecundario: 'Samba', secondaryGenre: null }, { secondaryGenre: 'Samba' }],
+      [{ generoSecundario: 'Samba', secondaryGenre: '' }, { secondaryGenre: 'Samba' }],
+      [{ variosArtistas: true, variousArtists: false }, { variousArtists: false }], // false is data: canonical wins
+      [{ generoSecundario: 'Samba', secondaryGenre: 'Rock' }, { secondaryGenre: 'Rock' }],
+      [{ faixas: [], tracks: [] }, { tracks: [] }], // nothing to rescue
+    ];
+    for (const [input, expected] of cases) {
+      expect(canonicalReleaseMetadataForBackfill(input).value).toEqual(expected);
+    }
+    const row = { id: '00000000-0000-0000-0000-000000000001', tenant_id: 't', metadata: { faixas, tracks: [] } };
+    const { db, runner } = setup([row]);
+    await migration.up(runner as never);
+    expect(db.tables.releases[0].metadata).toEqual({ tracks: [{ title: 't', artist: 'X' }] });
+    const logs = (console.log as unknown as jest.Mock).mock.calls.map((a) => String(a[0]));
+    expect(logs.some((l) => /1 key conflict.*1 of them kept the legacy value/.test(l))).toBe(true);
+  });
+
+  it('L4: up -> down -> edit by an old build -> up refreshes the side-table record, so the second down() restores it', async () => {
+    const row = { id: '00000000-0000-0000-0000-000000000001', tenant_id: 't', metadata: legacyMeta() as Record<string, unknown> };
+    const { db, runner } = setup([row]);
+    await migration.up(runner as never);
+    await migration.down(runner as never);
+    expect(row.metadata).toEqual(legacyMeta());
+    row.metadata = { ...legacyMeta(), generoSecundario: 'Forró', editedByOldBuild: true }; // an old build edits the restored row
+    const edited = JSON.parse(JSON.stringify(row.metadata));
+    await migration.up(runner as never);
+    expect(db.log).toHaveLength(1);
+    expect(db.log[0].before['metadata']).toEqual(edited); // refreshed, not the stale first BEFORE
+    expect((row.metadata as Record<string, unknown>)['secondaryGenre']).toBe('Forró');
+    await migration.down(runner as never);
+    expect(row.metadata).toEqual(edited); // the second down() restores the NEW BEFORE
+  });
 });

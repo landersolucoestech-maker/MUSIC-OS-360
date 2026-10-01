@@ -58,4 +58,43 @@ describe('BackfillContractLastPaymentKeysToEnglish20260930000023', () => {
     expect(rows[0].metadata).toEqual({ ultimo_pagamento_em: 'a' });
     expect(rows[1].metadata).toEqual({ last_payment_at: 'edited' });
   });
+
+  it('L1: keys named like Object.prototype members survive the rename', () => {
+    const metadata = JSON.parse('{"ultimo_pagamento_em":"d","constructor":{"a":1},"toString":"t","valueOf":2,"__proto__":{"x":1}}');
+    const { value } = canonicalContractMetadataForBackfill(metadata) as { value: Record<string, unknown> };
+    expect(value).toEqual({ last_payment_at: 'd', constructor: { a: 1 }, toString: 't', valueOf: 2 });
+    expect(Object.prototype.hasOwnProperty.call(value, 'constructor')).toBe(true);
+  });
+
+  it('L2: null/empty canonical loses to a legacy value with data (logged), a real canonical value still wins', async () => {
+    const rows = [
+      { id: ID(1), tenant_id: 't', metadata: { ultimo_pagamento_em: '2026-01-01', last_payment_at: null } },
+      { id: ID(2), tenant_id: 't', metadata: { last_payment_at: '', ultimo_pagamento_em: '2026-02-02' } },
+      { id: ID(3), tenant_id: 't', metadata: { ultimo_pagamento_em: 'old', last_payment_at: 'new' } },
+      { id: ID(4), tenant_id: 't', metadata: { ultimo_pagamento_em: null, last_payment_at: null } },
+    ];
+    const db = makeFakeDb({ contracts: rows });
+    await migration.up(fakeRunner(db, (_t, r) => hasLegacy(r['metadata'])) as never);
+    expect(rows.map((r) => r.metadata)).toEqual([
+      { last_payment_at: '2026-01-01' },
+      { last_payment_at: '2026-02-02' },
+      { last_payment_at: 'new' },
+      { last_payment_at: null },
+    ]);
+    const logs = (console.log as unknown as jest.Mock).mock.calls.map((a) => String(a[0]));
+    expect(logs.some((l) => /4 key conflict.*2 of them kept the legacy value/.test(l))).toBe(true);
+  });
+
+  it('L4: a re-transformed row refreshes its side-table record', async () => {
+    const row = { id: ID(1), tenant_id: 't', metadata: { ultimo_pagamento_em: 'a' } as Record<string, unknown> };
+    const db = makeFakeDb({ contracts: [row] });
+    const runner = fakeRunner(db, (_t, r) => hasLegacy(r['metadata']));
+    await migration.up(runner as never);
+    await migration.down(runner as never);
+    row.metadata = { ultimo_pagamento_em: 'b' };
+    await migration.up(runner as never);
+    expect(db.log[0].before['metadata']).toEqual({ ultimo_pagamento_em: 'b' });
+    await migration.down(runner as never);
+    expect(row.metadata).toEqual({ ultimo_pagamento_em: 'b' });
+  });
 });

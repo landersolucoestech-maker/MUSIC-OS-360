@@ -82,6 +82,7 @@ import type {
   MarketingDeliverable,
 } from "../types/marketing.types";
 import { MarketingBadge } from "./MarketingStatusBadge";
+import { safeLinkHref } from "@/shared/lib/safe-url";
 
 function formatSize(bytes: number): string {
   if (!bytes) return "—";
@@ -97,8 +98,10 @@ function formatDateTime(iso: string): string {
 }
 
 function triggerDownload(url: string, fileName: string) {
+  const href = safeLinkHref(url);
+  if (!href) return;
   const a = document.createElement("a");
-  a.href = url;
+  a.href = href;
   a.download = fileName || "entregavel";
   a.target = "_blank";
   a.rel = "noopener";

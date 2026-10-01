@@ -11,6 +11,7 @@ import {
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { fetchStoredFileBytes, openStoredFile, uploadFileIdFromUrl } from "@/shared/lib/stored-file";
 import { toast } from "sonner";
+import { safeLinkHref } from "@/shared/lib/safe-url";
 
 const pdfWorkerUrl = "/pdf.worker.min.mjs";
 const pdfRuntimeUrl = "/pdf.mjs";
@@ -83,8 +84,13 @@ function downloadAttachment(attachment: ChatAttachmentData) {
     openStoredFile(attachment.url).catch(() => toast.error("Não foi possível abrir o arquivo."));
     return;
   }
+  const href = safeLinkHref(attachment.url);
+  if (!href) {
+    toast.error("Link do anexo inválido.");
+    return;
+  }
   const anchor = document.createElement("a");
-  anchor.href = attachment.url;
+  anchor.href = href;
   anchor.download = attachment.name;
   document.body.appendChild(anchor);
   anchor.click();

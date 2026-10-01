@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { ROLE_LABELS, useCurrentRole, useHasRole, useIsExactRole, type AppRole } from "@/shared/hooks/useHasRole";
 import { useIsAdmin } from "@/shared/hooks/useIsAdmin";
 
-let mockUser: { user_metadata?: Record<string, unknown> } | null = null;
+let mockUser: { role?: string; user_metadata?: Record<string, unknown> } | null = null;
 vi.mock("@/app/providers/AuthContext", () => ({
   useAuth: () => ({ user: mockUser }),
 }));
@@ -140,5 +140,13 @@ describe("useHasRole (S4a canonical English slugs)", () => {
 
   it("every legacy slug keeps a label identical to its canonical slug (labels are the only Portuguese)", () => {
     for (const [legacy, canonical] of PAIRS) expect(ROLE_LABELS[legacy]).toBe(ROLE_LABELS[canonical]);
+  });
+});
+
+describe("useCurrentRole prefers the server-set role (S1-1)", () => {
+  it("uses user.role (mapped from app_metadata) over a user_metadata.role", () => {
+    mockUser = { role: "viewer", user_metadata: { role: "super_admin" } };
+    expect(renderHook(() => useCurrentRole()).result.current).toBe("viewer");
+    expect(renderHook(() => useHasRole("admin")).result.current).toBe(false);
   });
 });

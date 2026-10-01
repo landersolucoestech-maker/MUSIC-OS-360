@@ -37,4 +37,25 @@ describe('redactDiagnosticText', () => {
     expect(redactDiagnosticText(null)).toBe('');
     expect(redactDiagnosticText('')).toBe('');
   });
+
+  it('stays fast and bounded on adversarial long input (S4-1)', () => {
+    const inputs = [
+      `x://${'a'.repeat(80000)}`,
+      `${'a'.repeat(80000)}@`,
+      `${'a.'.repeat(40000)}`,
+      `a://${'b:'.repeat(40000)}`,
+      `${'a'.repeat(50000)}@${'b'.repeat(50000)}`,
+    ];
+    const t = Date.now();
+    for (const input of inputs) {
+      const out = redactDiagnosticText(input);
+      expect(out.length).toBeLessThanOrEqual(4100);
+    }
+    expect(Date.now() - t).toBeLessThan(1500);
+  });
+
+  it('still redacts an e-mail and credentials inside the first 4000 chars of a long message', () => {
+    const out = redactDiagnosticText(`user a@b.com ${'z'.repeat(9000)} postgres://u:pw@h/db`);
+    expect(out).not.toContain('a@b.com');
+  });
 });

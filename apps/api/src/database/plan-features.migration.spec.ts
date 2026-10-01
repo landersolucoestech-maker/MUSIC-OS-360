@@ -67,4 +67,30 @@ describe('BackfillPlanFeatureKeysToEnglish20260930000024', () => {
     expect(tenants[0].features).toEqual({ moduleRh: true });
     expect(tenants[1].features).toEqual({ moduleHr: false, extra: true });
   });
+
+  it('L1: other keys named like Object.prototype members are preserved', () => {
+    const features = JSON.parse('{"moduleRh":true,"constructor":1,"toString":2,"__proto__":{"x":1}}');
+    const { value } = canonicalFeaturesForBackfill(features) as { value: Record<string, unknown> };
+    expect(value).toEqual({ moduleHr: true, constructor: 1, toString: 2 });
+  });
+
+  it('L2: a null/empty canonical moduleHr does not beat a legacy moduleRh with data; an explicit canonical false still wins', () => {
+    expect(canonicalFeaturesForBackfill({ moduleRh: true, moduleHr: null })).toMatchObject({ value: { moduleHr: true }, conflicts: 1, emptyCanonicalReplaced: 1 });
+    expect(canonicalFeaturesForBackfill({ moduleHr: null, moduleRh: true }).value).toEqual({ moduleHr: true });
+    expect(canonicalFeaturesForBackfill({ moduleRh: true, moduleHr: false })).toMatchObject({ value: { moduleHr: false }, conflicts: 1, emptyCanonicalReplaced: 0 });
+    expect(canonicalFeaturesForBackfill({ moduleRh: null, moduleHr: null }).value).toEqual({ moduleHr: null });
+  });
+
+  it('L4: a re-transformed row refreshes its side-table record', async () => {
+    const tenants: Array<Record<string, unknown>> = [{ id: ID(1), features: { moduleRh: true } }];
+    const db = makeFakeDb({ tenants, billing_plans: [] });
+    const runner = fakeRunner(db, (_t, r) => legacy(r));
+    await migration.up(runner as never);
+    await migration.down(runner as never);
+    tenants[0].features = { moduleRh: false, extra: 1 };
+    await migration.up(runner as never);
+    expect(db.log[0].before['features']).toEqual({ moduleRh: false, extra: 1 });
+    await migration.down(runner as never);
+    expect(tenants[0].features).toEqual({ moduleRh: false, extra: 1 });
+  });
 });

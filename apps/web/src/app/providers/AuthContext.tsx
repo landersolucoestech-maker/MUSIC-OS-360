@@ -85,17 +85,22 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function mapSupabaseUser(u: SupabaseUser, jwtAppMeta?: Record<string, unknown>): User {
+/**
+ * The role comes ONLY from app_metadata (server-set: invite / workspace provisioning / access-token hook).
+ * user_metadata is end-user-editable in Supabase, so its `role` is never trusted nor exposed (S1-1);
+ * the API authorizes from org_members anyway, this keeps the UI gates honest.
+ */
+export function mapSupabaseUser(u: SupabaseUser, jwtAppMeta?: Record<string, unknown>): User {
   const meta = u.user_metadata as Record<string, unknown> | undefined;
   const app = u.app_metadata as Record<string, unknown> | undefined;
   const effectiveApp = { ...app, ...jwtAppMeta };
   return {
     id: u.id,
     email: u.email,
-    role: (effectiveApp?.["role"] ?? meta?.["role"]) as string | undefined,
+    role: effectiveApp?.["role"] as string | undefined,
     org_id: (effectiveApp?.["org_id"] ?? meta?.["org_id"]) as string | undefined,
     mustChangePassword: effectiveApp?.["must_change_password"] === true,
-    user_metadata: { ...meta, ...effectiveApp },
+    user_metadata: { ...meta, ...effectiveApp, role: effectiveApp?.["role"] },
   };
 }
 
