@@ -399,7 +399,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Variáveis");
     const date = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(wb, `variaveis-template-${date}.xlsx`);
+    XLSX.writeFile(wb, `variables-template-${date}.xlsx`);
     toast.success(`${variables.length} variáveis exportadas`);
   }
 

@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { GenerateAiHandler, TargetOption } from "./aiCreative.types";
 import type { PlanningContext } from "../../services/musicIntelligenceEngine";
 import { generatePlanningDraft } from "../../services/musicIntelligenceEngine";
+import { planningLabel } from "../../services/musicIntelligenceEngine/planningVocabulary";
 import { AsyncEntitySelect, EntitySelect, Field, ResultList, WorkflowSection } from "./Shared";
 
 export function PlanningTab({
@@ -20,7 +21,7 @@ export function PlanningTab({
   const [artist, setArtist] = useState<TargetOption | null>(null);
   const [release, setRelease] = useState<TargetOption | null>(null);
   const [objective, setObjective] = useState("crescimento e descoberta");
-  const [platform, setPlatform] = useState("multicanal");
+  const [platform, setPlatform] = useState("");
   const [period, setPeriod] = useState<"7" | "30" | "60" | "90">("30");
 
   const plan = useMemo<PlanningContext>(() => generatePlanningDraft({ artist: artist ?? undefined, release: release ?? undefined, objective, platform, period }), [artist, release, objective, platform, period]);
@@ -31,7 +32,7 @@ export function PlanningTab({
       targetType: artist ? "artist" : "company",
       targetId: artist?.id,
       targetName: artist?.label || "Empresa",
-      prompt: `Gerar plano executável de ${period} dias para ${artist?.label || "empresa"}${release ? ` / ${release.label}` : ""}. Objetivo: ${objective}. Plataforma: ${platform}. Itens sugeridos: ${plan.items.map((item) => item.title).join(", ")}.`,
+      prompt: `Gerar plano executável de ${period} dias para ${artist?.label || "empresa"}${release ? ` / ${release.label}` : ""}. Objetivo: ${objective}. Plataforma: ${platform || planningLabel(plan.platform)}. Itens sugeridos: ${plan.items.map((item) => item.title).join(", ")}.`,
       campaignObjective: objective,
       releasePhase: `${period} dias`,
       references: JSON.stringify(plan),
@@ -43,7 +44,7 @@ export function PlanningTab({
       question="O que deve ser feito nos próximos 30/60/90 dias?"
       result={
         <div className="space-y-4">
-          <ResultList title={`Plano de ${period} dias`} items={plan.items.map((item) => `${item.title} · D+${item.dueInDays} · ${item.channel} · ${item.priority}`)} />
+          <ResultList title={`Plano de ${period} dias`} items={plan.items.map((item) => `${item.title} · D+${item.dueInDays} · ${planningLabel(item.channel)} · ${planningLabel(item.priority)}`)} />
           <p className="text-xs text-muted-foreground">Cada item planejado está pronto para virar tarefa no módulo Tarefas quando a integração de criação operacional estiver conectada.</p>
         </div>
       }
@@ -55,7 +56,7 @@ export function PlanningTab({
           <Input value={objective} onChange={(event) => setObjective(event.target.value)} />
         </Field>
         <Field label="Plataforma">
-          <Input value={platform} onChange={(event) => setPlatform(event.target.value)} />
+          <Input value={platform} placeholder="Multicanal" onChange={(event) => setPlatform(event.target.value)} />
         </Field>
         <Field label="Período">
           <Select value={period} onValueChange={(value) => {

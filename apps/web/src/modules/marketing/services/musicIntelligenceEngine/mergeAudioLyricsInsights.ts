@@ -1,4 +1,5 @@
 import { PENDING_VALUE, isPendingValue } from "./pending";
+import { missingDataLabel } from "./missingDataVocabulary";
 import { audioLevelLabel, normalizeAudioLevel } from "./audioVocabulary";
 import { lyricsSentimentLabel, normalizeLyricsSentiment } from "./lyricsVocabulary";
 import type { TrackAudioAnalysis, TrackDiagnosis, TrackLyricsAnalysis } from "./types";
@@ -28,7 +29,7 @@ export function mergeAudioLyricsInsights(audio: TrackAudioAnalysis, lyrics: Trac
       audio.mood && !isPendingValue(audio.mood) ? `Mood sonoro: ${audio.mood}` : "",
       lyrics.hooks[0] ? `Frase forte: ${lyrics.hooks[0]}` : "",
     ].filter(Boolean),
-    risks: missingData.length ? [`Dados ausentes: ${missingData.join(", ")}`] : ["Validar fit editorial antes de envio massivo."],
+    risks: missingData.length ? [`Dados ausentes: ${missingData.map(missingDataLabel).join(", ")}`] : ["Validar fit editorial antes de envio massivo."],
     missingData,
   };
 }

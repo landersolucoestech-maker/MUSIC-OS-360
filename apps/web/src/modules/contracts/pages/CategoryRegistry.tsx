@@ -159,7 +159,7 @@ export default function CategoryRegistry({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "categorias_contratos.xlsx";
+    a.download = "contract_categories.xlsx";
     a.click();
     URL.revokeObjectURL(url);
     toast.success(`${categories.length} categoria(s) exportada(s)`);

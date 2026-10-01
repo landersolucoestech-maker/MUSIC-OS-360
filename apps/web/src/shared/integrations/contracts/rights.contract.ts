@@ -309,7 +309,7 @@ export interface IRightsProvider {
 
 /** localStorage key for cached collection data */
 export function collectionStorageKey(entity: RightsEntityId, period: string): string {
-  return `musicos360_${entity}_arrecadacao_${period}`;
+  return `musicos360_${entity}_collection_${period}`;
 }
 
 /** Generates a canonical ISWC (format T-XXXXXXXXX-C) — MOCK only */

@@ -156,9 +156,8 @@ describe('CreateTeamMemberDto', () => {
   });
 
   it('rejects a role outside the reconciled TEAM_ROLES enum (invalid enum)', async () => {
-    // "videomaker" was the frontend's divergent value before this phase's
-    // reconciliation — it no longer exists in TEAM_ROLES.
-    const errors = await validatePayload(CreateTeamMemberDto, { role: 'videomaker' });
+    // A value that is not in the reconciled TEAM_ROLES enum must be rejected.
+    const errors = await validatePayload(CreateTeamMemberDto, { role: 'unknown_role' });
     expect(errors.length).toBeGreaterThan(0);
   });
 

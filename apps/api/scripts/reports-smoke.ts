@@ -45,7 +45,7 @@ function workbookBody(names: string[]) {
   ]);
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Artistas');
   return {
-    filename: 'artistas.xlsx',
+    filename: 'artists.xlsx',
     contentBase64: XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' }) as string,
   };
 }
@@ -109,7 +109,7 @@ async function main(): Promise<void> {
     check(
       'workbook has a single Artistas sheet',
       exportedWorkbook.SheetNames.length === 1 && exportedWorkbook.SheetNames[0] === 'Artistas',
-      `abas=${exportedWorkbook.SheetNames.join(',')}`,
+      `sheets=${exportedWorkbook.SheetNames.join(',')}`,
     );
     const exportedRows = XLSX.utils.sheet_to_json<unknown[]>(
       exportedWorkbook.Sheets.Artistas!,

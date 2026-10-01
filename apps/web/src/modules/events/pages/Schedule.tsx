@@ -227,7 +227,7 @@ export default function Schedule() {
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Agenda");
-    XLSX.writeFile(workbook, `agenda_${new Date().toISOString().split('T')[0]}.xlsx`);
+    XLSX.writeFile(workbook, `schedule_${new Date().toISOString().split('T')[0]}.xlsx`);
     if (truncated) {
       toast.warning(`Exportação limitada a ${allEvents.length} evento(s) (volume muito grande) — refine os filtros para exportar o restante.`);
     } else {

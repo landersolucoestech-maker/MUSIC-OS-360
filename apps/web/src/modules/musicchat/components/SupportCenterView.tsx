@@ -799,7 +799,7 @@ export function SupportCenterView({
         }
 
         const extension = blob.type.includes("webm") ? "webm" : "ogg";
-        const name = `audio-atendimento-${new Date().toISOString().replace(/[:.]/g, "-")}.${extension}`;
+        const name = `support-audio-${new Date().toISOString().replace(/[:.]/g, "-")}.${extension}`;
         const audioFile = new File([blob], name, { type: blob.type || "audio/webm" });
         void uploadAttachment({ file: audioFile, category: "audio", entity: "conversation" })
           .then(({ publicUrl }) => {

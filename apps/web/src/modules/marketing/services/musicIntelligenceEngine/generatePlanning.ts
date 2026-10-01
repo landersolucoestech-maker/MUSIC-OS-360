@@ -1,3 +1,4 @@
+import { DEFAULT_PLANNING_PLATFORM, type PlanningItemType, type PlanningPriority } from "./planningVocabulary";
 import type { IntelligenceEntity, PlanningContext } from "./types";
 
 export function generatePlanningDraft(input: {
@@ -20,15 +21,15 @@ export function generatePlanningDraft(input: {
   return {
     ...input,
     objective: input.objective || "crescimento e descoberta",
-    platform: input.platform || "multicanal",
+    platform: input.platform || DEFAULT_PLANNING_PLATFORM,
     items: base.slice(0, input.period === "7" ? 4 : 7).map((title, index) => ({
       id: `plan-${input.period}-${index}`,
       title,
-      type: index < 2 ? "planejamento" : "execucao",
+      type: (index < 2 ? "planning" : "execution") satisfies PlanningItemType,
       dueInDays: Math.min(period, 2 + index * Math.max(1, Math.floor(period / 7))),
       owner: "Marketing",
-      channel: input.platform || "multicanal",
-      priority: index < 3 ? "alta" : "media",
+      channel: input.platform || DEFAULT_PLANNING_PLATFORM,
+      priority: (index < 3 ? "high" : "medium") satisfies PlanningPriority,
     })),
   };
 }

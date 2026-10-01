@@ -1,7 +1,7 @@
 {
  "totals": {
   "doc": 8696,
-  "value": 50
+  "value": 37
  },
  "debt": {
   "doc::docs/BLUEPRINT_ENTERPRISE.md": 237,
@@ -125,8 +125,6 @@
   "value::apps/api/scripts/verify-phase8-resilience.ts::string::produtos": 1,
   "value::apps/api/src/core/automation/deals-crm.automation.spec.ts::string::distribuicao": 1,
   "value::apps/api/src/core/automation/deals-crm.automation.spec.ts::string::gestao": 1,
-  "value::apps/api/src/database/seeds/05_org_structure_seed.ts::string::videomaker": 1,
-  "value::apps/api/src/modules/audiovisual/dto/audiovisual.dto.spec.ts::string::videomaker": 1,
   "value::apps/api/src/modules/contract-service-types/contract-service-types.controller.spec.ts::string::distribuicao": 1,
   "value::apps/api/src/modules/contract-service-types/contract-service-types.service.spec.ts::string::distribuicao": 5,
   "value::apps/api/src/modules/contract-templates/contract-templates.service.spec.ts::string::semantico": 1,
@@ -146,17 +144,7 @@
   "value::apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx::string::semantico": 1,
   "value::apps/web/src/modules/contracts/hooks/contract-category-label.test.ts::string::cessao_direitos": 2,
   "value::apps/web/src/modules/contracts/hooks/contract-category-label.test.ts::string::semantico": 2,
-  "value::apps/web/src/modules/marketing/components/ai-creative/PlanningTab.tsx::string::multicanal": 1,
   "value::apps/web/src/modules/marketing/components/campaign-builder/steps.tsx::string::campanha": 2,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeAudio.ts::string::genero": 1,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeAudio.ts::string::ponte": 1,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeAudio.ts::string::refrao": 1,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeAudio.ts::string::subgenero": 1,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeAudio.ts::string::verso": 1,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/generatePlanning.ts::string::alta": 1,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/generatePlanning.ts::string::execucao": 1,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/generatePlanning.ts::string::multicanal": 2,
-  "value::apps/web/src/modules/marketing/services/musicIntelligenceEngine/generatePlanning.ts::string::planejamento": 1,
   "value::scripts/generate-blueprint-appendices.mjs::string::classe": 1
  }
 }

@@ -59,7 +59,7 @@ describe("reportsApi — reports center, real data only", () => {
         get: vi.fn((name: string) => {
           if (name.toLowerCase() === "content-type") return XLSX_MIME;
           if (name.toLowerCase() === "content-disposition") {
-            return 'attachment; filename="artistas.xlsx"';
+            return 'attachment; filename="artists.xlsx"';
           }
           return null;
         }),
@@ -87,7 +87,7 @@ describe("reportsApi — reports center, real data only", () => {
         credentials: "include",
       },
     );
-    expect(result).toEqual({ blob, filename: "artistas.xlsx" });
+    expect(result).toEqual({ blob, filename: "artists.xlsx" });
   });
 
   it("exportBlob fails explicitly when the API responds with an error", async () => {
@@ -108,7 +108,7 @@ describe("reportsApi — reports center, real data only", () => {
 
   it("sends importValidate to the real API", () => {
     const body: ImportUploadBody = {
-      filename: "artistas.xlsx",
+      filename: "artists.xlsx",
       mimeType: XLSX_MIME,
       contentBase64: "abc",
     };
@@ -120,7 +120,7 @@ describe("reportsApi — reports center, real data only", () => {
 
   it("sends importCommit to the real API", () => {
     const body: ImportUploadBody = {
-      filename: "artistas.xlsx",
+      filename: "artists.xlsx",
       mimeType: XLSX_MIME,
       contentBase64: "abc",
     };

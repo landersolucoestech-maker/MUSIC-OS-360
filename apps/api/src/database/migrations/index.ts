@@ -344,6 +344,7 @@ import { BackfillCampaignBuilderStateToEnglish20260930000028 } from './202609300
 import { BackfillMarketingTaskSectorToEnglish20260930000029 } from './20260930000029_BackfillMarketingTaskSectorToEnglish';
 import { ClassifyMarketingAndContactOperationalListsToEnglish20260930000031 } from './20260930000031_ClassifyMarketingAndContactOperationalListsToEnglish';
 import { BackfillProjectTrackInstrumentalAndLanguageToEnglish20260930000032 } from './20260930000032_BackfillProjectTrackInstrumentalAndLanguageToEnglish';
+import { RenameVideomakerJobFunctionSlugToVideographer20260930000033 } from './20260930000033_RenameVideomakerJobFunctionSlugToVideographer';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -671,4 +672,5 @@ export const ALL_MIGRATIONS = [
   BackfillMarketingTaskSectorToEnglish20260930000029,
   ClassifyMarketingAndContactOperationalListsToEnglish20260930000031,
   BackfillProjectTrackInstrumentalAndLanguageToEnglish20260930000032,
+  RenameVideomakerJobFunctionSlugToVideographer20260930000033,
 ] as const;

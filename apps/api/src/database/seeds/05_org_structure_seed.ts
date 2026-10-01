@@ -41,7 +41,7 @@ const POSITIONS: Array<{ slug: string; name: string; departmentSlug: string | nu
 
 const JOB_FUNCTIONS: Array<{ slug: string; name: string; category: string }> = [
   { slug: 'designer', name: 'Designer', category: 'creative' },
-  { slug: 'videomaker', name: 'Videomaker', category: 'audiovisual' },
+  { slug: 'videographer', name: 'Videomaker', category: 'audiovisual' },
   { slug: 'video-editor', name: 'Editor de Vídeo', category: 'audiovisual' },
   { slug: 'motion-designer', name: 'Motion Designer', category: 'audiovisual' },
   { slug: 'photographer', name: 'Fotógrafo', category: 'audiovisual' },

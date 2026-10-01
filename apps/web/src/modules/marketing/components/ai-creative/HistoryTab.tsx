@@ -55,7 +55,7 @@ export function HistoryTab({
                       <Button variant="outline" size="sm" onClick={() => duplicate(item, onGenerate)}>
                         <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Duplicar
                       </Button>
-                      <ExportButton filename={`ia-criativa-${item.id}.json`} data={item} />
+                      <ExportButton filename={`ai-creative-${item.id}.json`} data={item} />
                     </div>
                   </div>
                 </article>
@@ -118,7 +118,7 @@ function HistoryDetails({
               <Button variant="outline" size="sm" onClick={() => navigator.clipboard?.writeText(JSON.stringify(suggestion, null, 2))}>
                 <Copy className="mr-1.5 h-3.5 w-3.5" /> Copiar JSON
               </Button>
-              <ExportButton filename={`ia-criativa-${suggestion.id}.json`} data={suggestion} />
+              <ExportButton filename={`ai-creative-${suggestion.id}.json`} data={suggestion} />
             </div>
           </>
         )}

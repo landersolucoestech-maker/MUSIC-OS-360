@@ -102,7 +102,7 @@ function triggerDownload(url: string, fileName: string) {
   if (!href) return;
   const a = document.createElement("a");
   a.href = href;
-  a.download = fileName || "entregavel";
+  a.download = fileName || "deliverable";
   a.target = "_blank";
   a.rel = "noopener";
   document.body.appendChild(a);

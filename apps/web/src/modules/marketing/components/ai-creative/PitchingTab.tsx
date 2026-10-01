@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { isPendingValue } from "../../services/musicIntelligenceEngine/pending";
+import { missingDataLabel } from "../../services/musicIntelligenceEngine/missingDataVocabulary";
 import { Disc3, FileAudio, ImageIcon, Send } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Textarea } from "@/shared/ui/textarea";
@@ -93,7 +94,7 @@ export function PitchingTab({
         upc: context.upc,
         releaseDate: context.releaseDate,
         credits: context.credits,
-        missingData: diagnosis.missingData.join(", "),
+        missingData: diagnosis.missingData.map(missingDataLabel).join(", "),
       },
     });
   };
@@ -189,7 +190,7 @@ function DiagnosisReview({ diagnosis }: { diagnosis: TrackDiagnosis }) {
         <DiagnosisValue label="Potencial comercial" value={diagnosis.commercialPotential} />
         <DiagnosisValue label="Potencial viral" value={diagnosis.viralPotential} />
         <DiagnosisValue label="Potencial de sincronização" value={diagnosis.syncPotential} />
-        <ReadOnlyList label="Dados ausentes" items={diagnosis.missingData.length ? diagnosis.missingData : ["Nenhuma pendência critica"]} />
+        <ReadOnlyList label="Dados ausentes" items={diagnosis.missingData.length ? diagnosis.missingData.map(missingDataLabel) : ["Nenhuma pendência critica"]} />
       </div>
     </section>
   );

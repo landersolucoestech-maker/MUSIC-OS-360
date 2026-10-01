@@ -12,7 +12,7 @@ export function analyzeLyricsDraft(lyric: string): TrackLyricsAnalysis {
       viralPhrases: [],
       keywords: [],
       editorialTags: [],
-      missingData: ["letra"],
+      missingData: ["lyrics"],
     };
   }
 

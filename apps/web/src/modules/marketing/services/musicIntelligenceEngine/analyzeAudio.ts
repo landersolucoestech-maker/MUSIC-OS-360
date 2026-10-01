@@ -7,8 +7,8 @@ export function analyzeAudioDraft(input: Pick<ReleaseContext, "audioUrl" | "genr
   if (!input.audioUrl) missingData.push("audio");
   if (!input.bpm) missingData.push("bpm");
   if (!input.mood) missingData.push("mood");
-  if (!input.genre) missingData.push("genero");
-  if (!input.subgenre) missingData.push("subgenero");
+  if (!input.genre) missingData.push("genre");
+  if (!input.subgenre) missingData.push("subgenre");
 
   return {
     status: input.audioUrl ? "completed" : "pending",
@@ -22,7 +22,7 @@ export function analyzeAudioDraft(input: Pick<ReleaseContext, "audioUrl" | "genr
     genrePrediction: input.genre || PENDING_VALUE,
     subgenrePrediction: input.subgenre || PENDING_VALUE,
     instrumentation: [],
-    structure: ["intro", "verso", "refrao", "ponte"].filter(() => Boolean(input.audioUrl)),
+    structure: ["intro", "verse", "chorus", "bridge"].filter(() => Boolean(input.audioUrl)),
     missingData,
   };
 }

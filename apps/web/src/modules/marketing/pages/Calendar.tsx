@@ -977,7 +977,7 @@ function CreativeSection({
     setExportError(null);
     try {
       const blob = await exportCreativeToPng(creative, aspect);
-      downloadBlob(blob, `${creative.templateKey || "criativo"}.png`);
+      downloadBlob(blob, `${creative.templateKey || "creative"}.png`);
     } catch (err) {
       setExportError(toUserMessage(err, "Falha inesperada ao exportar imagem."));
     } finally {
