@@ -1,3 +1,5 @@
+> Historical record. Kept as recorded; not the current contract.
+
 # CLEANUP REPORT - MUSIC OS 360
 
 Data: 2026-07-04
