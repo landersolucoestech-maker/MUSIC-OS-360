@@ -59,7 +59,7 @@ const NO_ACCESS:       TenantModulePermission = { read: false, write: false, del
 const MODULE_KEYS: TenantModuleKey[] = [
   "artists", "catalog", "releases", "contracts",
   "accounting", "crm", "marketing", "events",
-  "inventory", "rh", "monitoring", "licensing",
+  "inventory", "hr", "monitoring", "licensing",
   "projects", "leads", "audit", "settings", "musicchat",
 ];
 

@@ -6,7 +6,7 @@
  * queries usePermissions(), whose only source is membership.permissions.
  */
 import { usePermissions } from "./usePermissions";
-import { MODULE_RESOURCE } from "@/shared/lib/permission-map";
+import { MODULE_RESOURCE, permissionKeyEquivalents } from "@/shared/lib/permission-map";
 
 export type PermissionModule =
   | "catalog"
@@ -15,7 +15,7 @@ export type PermissionModule =
   | "artists"
   | "crm"
   | "marketing"
-  | "rh"
+  | "hr"
   | "settings"
   | "admin";
 
@@ -35,7 +35,9 @@ const ACTION_BACKEND: Record<PermissionAction, string[]> = {
 export function useCanAccess(module: PermissionModule, action: PermissionAction): boolean {
   const { hasAnyPermission } = usePermissions();
   const resource = MODULE_RESOURCE[module] ?? module;
-  return hasAnyPermission(ACTION_BACKEND[action].map((a) => `${resource}:${a}`));
+  return hasAnyPermission(
+    ACTION_BACKEND[action].flatMap((a) => permissionKeyEquivalents(`${resource}:${a}`)),
+  );
 }
 
 /** Actions allowed for the user in the module (derived from membership.permissions). */

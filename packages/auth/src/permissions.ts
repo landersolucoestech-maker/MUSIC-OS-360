@@ -14,6 +14,9 @@ export const RESOURCES = {
   PROJECTS: "projects",
   EVENTS: "events",
   INVENTORY: "inventory",
+  /** Canonical English key; persisted rows are still `rh:*` until the gated S4b rename (dual-read). */
+  HR: "hr",
+  /** @deprecated legacy spelling of HR, removed with S5. */
   RH: "rh",
   SETTINGS: "settings",
   LICENSING: "licensing",

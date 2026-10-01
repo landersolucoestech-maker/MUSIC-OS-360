@@ -212,7 +212,7 @@ const CONFIGS: AuditConfig[] = [
     ],
   },
   {
-    module: "rh",
+    module: "hr",
     table: "employees",
     entityType: "Funcionário",
     fixPath: (row) => editPath("/hr", row),

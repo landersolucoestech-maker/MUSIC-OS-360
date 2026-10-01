@@ -53,6 +53,13 @@ Code companion that ships with the migration (not in S4a): `ENGLISH_ROLE_ALIASES
 - Backup/PITR point recorded; operator runbook for the post-commit cache flush.
 - Product decision on `admin_master`, `ar_gestao`, `financeiro_contabil` (and whether `tenant_owner` is retired).
 
+### 3b. RBAC module key `rh` -> `hr` (R4 / R3-08)
+
+- Shipped (code only, dual-read): API `expandHrPermissionAliases` (applied in `RbacService.getEffectivePermissions` and `can`, so `/auth/context` `membership.permissions` carries both `rh:x` and `hr:x` for a persisted grant of either, same action only); web `permission-map` (`permissionKeyEquivalents`, `expandPermissionAliases`, used by `usePermissions` and `useCanAccess`); web module key `hr` (`TenantModuleKey`, `HR.tsx`, audit module id `hr`, `MODULE_RESOURCE.rh` kept as deprecated alias); `packages/auth` `RESOURCES.HR` added next to deprecated `RH`. The seed matrix and `ROLE_PERMISSIONS` still persist `rh:*` (no canonical write: it would break the S4b pre-flight).
+- Gated draft: `migration-drafts/20260930000051_RenameLegacyHrPermissionsInPlace.ts` renames `permissions` rows `rh:*` -> `hr:*` in place (same id), refuses if any `hr` row exists, needs `RBAC_S4B_CONFIRM=rename-legacy-hr-permissions-gates-satisfied` (distinct token), never registered (spec asserts). Same gates as section 3, plus: dual-read build on every runtime; flush the permission cache after commit. Code companion in the same release: flip `Resource`/seed matrix to `hr`, keep reading `rh` until S5.
+- S5: remove the `rh` spelling from `expandHrPermissionAliases`, web permission-map, `RESOURCES.RH`, `MODULE_RESOURCE.rh`.
+- `moduleRh` feature echo (`withLegacyHrFeatureAlias`, auth-context) is a separate plan-feature alias, verified intact (`auth-context.features.spec.ts`).
+
 ## 4. S5: retire the legacy slugs (GATED, not designed in code)
 
 Preconditions: S4b verified for at least 7 days and one token lifetime after the last backfill; zero rows referencing legacy slugs in `org_members.role`, `tenant_invitations` (via role_id), persisted workflow/automation role arrays (none today; definitions are code), external clients, exports and docs that send legacy role values (`ArtistSignupPublic` team categories are unrelated; contract signer roles `artista`/`produtor` in `contract-schema.ts` are a different vocabulary).

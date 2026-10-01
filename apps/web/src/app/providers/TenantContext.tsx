@@ -34,7 +34,7 @@ export interface TenantModulePermission {
 export type TenantModuleKey =
   | "artists" | "catalog" | "releases" | "contracts"
   | "accounting" | "crm" | "marketing" | "events"
-  | "inventory" | "rh" | "monitoring" | "licensing"
+  | "inventory" | "hr" | "monitoring" | "licensing"
   | "projects" | "leads" | "audit" | "settings" | "musicchat";
 
 export type TenantPermissions = Record<TenantModuleKey, TenantModulePermission>;

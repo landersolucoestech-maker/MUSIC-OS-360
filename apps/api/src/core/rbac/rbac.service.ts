@@ -39,10 +39,26 @@ export type Resource =
   | 'events'
   | 'inventory'
   | 'rh'
+  | 'hr'
   | 'settings'
   | 'licensing'
   | 'leads'
   | 'analytics';
+
+/**
+ * RBAC `hr` module key. Persisted permission rows (and the seed matrix above) still spell it `rh:*`
+ * until the gated S4b rename (migration-drafts/20260930000051_RenameLegacyHrPermissionsInPlace.ts).
+ * Both spellings are accepted on read: a grant of `rh:x` is a grant of `hr:x` and vice versa
+ * (same action only, never widened). Nothing is written under `hr:*` by the seed.
+ */
+export function expandHrPermissionAliases(permissions: readonly string[]): string[] {
+  const out = new Set<string>(permissions);
+  for (const key of permissions) {
+    if (key.startsWith('rh:')) out.add(`hr:${key.slice(3)}`);
+    else if (key.startsWith('hr:')) out.add(`rh:${key.slice(3)}`);
+  }
+  return [...out];
+}
 
 export type Action = 'read' | 'create' | 'update' | 'delete' | 'export' | 'approve';
 
@@ -219,7 +235,7 @@ export class RbacService {
    */
   async getEffectivePermissions(member: MemberAuthzContext): Promise<string[]> {
     const legacyRole = typeof member.role === 'string' && member.role.length > 0 ? member.role : SystemRole.VIEWER;
-    return this.resolver.resolve(member, () => this.getPermissions(legacyRole));
+    return expandHrPermissionAliases(await this.resolver.resolve(member, () => this.getPermissions(legacyRole)));
   }
 
   hasRole(userRole: string, required: string): boolean {
@@ -230,7 +246,7 @@ export class RbacService {
   }
 
   can(role: string, resource: Resource, action: Action): boolean {
-    const perms = this.getPermissions(role);
+    const perms = expandHrPermissionAliases(this.getPermissions(role));
     return perms.includes(`${resource}:${action}`);
   }
 

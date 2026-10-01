@@ -66,8 +66,8 @@ describe("RequirePermission / PermissionGate", () => {
 
   it("useHasPermission mirrors canModule", () => {
     state.allow = true;
-    expect(renderHook(() => useHasPermission("rh", "read")).result.current).toBe(true);
+    expect(renderHook(() => useHasPermission("hr", "read")).result.current).toBe(true);
     state.allow = false;
-    expect(renderHook(() => useHasPermission("rh", "read")).result.current).toBe(false);
+    expect(renderHook(() => useHasPermission("hr", "read")).result.current).toBe(false);
   });
 });

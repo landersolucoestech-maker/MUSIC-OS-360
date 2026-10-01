@@ -14,7 +14,7 @@ export type AuditModuleId =
   | "monitoring"
   | "projects"
   | "releases"
-  | "rh";
+  | "hr";
 
 export interface AuditIssue {
   id: string;
@@ -77,6 +77,6 @@ export const AUDIT_MODULES: { id: AuditModuleId; label: string }[] = [
   { id: "monitoring", label: "Monitoramento" },
   { id: "projects", label: "Projetos" },
   { id: "releases", label: "Lançamentos" },
-  { id: "rh", label: "RH" },
+  { id: "hr", label: "RH" },
 ];
 

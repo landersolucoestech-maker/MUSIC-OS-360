@@ -20,7 +20,9 @@ export const MODULE_RESOURCE: Record<string, string> = {
   marketing: "marketing",
   events: "events",
   inventory: "inventory",
-  rh: "rh",
+  hr: "hr",
+  /** Deprecated alias of `hr` (legacy Portuguese module key), kept one release for stale callers. */
+  rh: "hr",
   monitoring: "monitoring",
   licensing: "licensing",
   projects: "projects",
@@ -39,11 +41,36 @@ const TENANT_ACTION_BACKEND: Record<keyof TenantModulePermission, string[]> = {
   export: ["export"],
 };
 
+/**
+ * RBAC `hr` module key: persisted permissions are still `rh:*` until the gated S4b rename
+ * (docs/engineering/rbac-retirement-plan.md), the canonical English key is `hr:*`. Both spellings
+ * are accepted on read; a grant of one is exactly a grant of the other (never widened).
+ */
+const HR_PERMISSION_PREFIXES = ["hr:", "rh:"] as const;
+
+/** Candidate spellings of a permission key (the key itself first, then its HR twin). */
+export function permissionKeyEquivalents(key: string): string[] {
+  for (const prefix of HR_PERMISSION_PREFIXES) {
+    if (key.startsWith(prefix)) {
+      const other = HR_PERMISSION_PREFIXES.find((p) => p !== prefix) as string;
+      return [key, `${other}${key.slice(prefix.length)}`];
+    }
+  }
+  return [key];
+}
+
+/** Granted keys plus their HR twins (dual-read of `rh:*` / `hr:*`). */
+export function expandPermissionAliases(keys: readonly string[]): Set<string> {
+  const out = new Set<string>();
+  for (const key of keys) for (const k of permissionKeyEquivalents(key)) out.add(k);
+  return out;
+}
+
 /** Converts (module, coarse action) → list of candidate `resource:action` keys. */
 export function tenantModulePermissionKeys(
   module: TenantModuleKey,
   action: keyof TenantModulePermission,
 ): string[] {
   const resource = MODULE_RESOURCE[module] ?? module;
-  return (TENANT_ACTION_BACKEND[action] ?? []).map((a) => `${resource}:${a}`);
+  return (TENANT_ACTION_BACKEND[action] ?? []).flatMap((a) => permissionKeyEquivalents(`${resource}:${a}`));
 }

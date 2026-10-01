@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useTenant } from "@/app/providers/TenantContext";
 import type { TenantModuleKey, TenantModulePermission } from "@/app/providers/TenantContext";
 import { AUTH_DISABLED, IS_DEV } from "@/shared/lib/env";
-import { tenantModulePermissionKeys } from "@/shared/lib/permission-map";
+import { expandPermissionAliases, tenantModulePermissionKeys } from "@/shared/lib/permission-map";
 
 /**
  * usePermissions — SINGLE frontend authorization source (PHASE 7 / hardened in 7.1).
@@ -36,7 +36,7 @@ export function usePermissions(): UsePermissions {
     // missing permissions NEVER grant access.
     const devPermissive = AUTH_DISABLED || IS_DEV;
     const isLoadingPermissions = !devPermissive && permissionKeys === null;
-    const granted = new Set(permissionKeys ?? []);
+    const granted = expandPermissionAliases(permissionKeys ?? []);
 
     const hasPermission = (permission: string): boolean =>
       devPermissive ? true : granted.has(permission);

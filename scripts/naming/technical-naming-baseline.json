@@ -3,7 +3,7 @@
   "doc": 8696,
   "identifier": 9,
   "objectKey": 61,
-  "value": 328
+  "value": 321
  },
  "debt": {
   "doc::docs/BLUEPRINT_ENTERPRISE.md": 237,
@@ -275,7 +275,6 @@
   "value::apps/api/src/modules/works/works-field-contract.spec.ts::string::codigo_entidade": 1,
   "value::apps/api/src/queues/processors/marketing-publishing.processor.spec.ts::string::agendado": 1,
   "value::apps/api/src/storage/storage.service.ts::string::nenhuma": 1,
-  "value::apps/web/src/app/providers/TenantContext.tsx::literal-type::rh": 1,
   "value::apps/web/src/modules/artist/artist-type-canonical.guard.test.ts::string::tipo": 1,
   "value::apps/web/src/modules/artist/artist-type-canonical.guard.test.ts::string::tipoArtista": 3,
   "value::apps/web/src/modules/artist/components/ArtistFormModal.sections-removed.guard.test.ts::string::agenciaBooking": 1,
@@ -355,7 +354,6 @@
   "value::apps/web/src/modules/events/lib/event-type.test.ts::string::reunioes": 2,
   "value::apps/web/src/modules/events/lib/event-type.test.ts::string::sessoes_estudio": 3,
   "value::apps/web/src/modules/events/pages/schedule-locale.guard.test.ts::string::agosto": 2,
-  "value::apps/web/src/modules/hr/pages/HR.tsx::string::rh": 1,
   "value::apps/web/src/modules/integrations/hooks/useACRCloud.ts::string::ativado": 1,
   "value::apps/web/src/modules/integrations/hooks/useACRCloud.ts::string::pausado": 1,
   "value::apps/web/src/modules/integrations/hooks/useEcad.ts::string::arrecadacao": 1,
@@ -406,11 +404,7 @@
   "value::apps/web/src/modules/releases/pages/Releases.tsx::string::seg": 1,
   "value::apps/web/src/modules/settings/hooks/useOperationalSettings.test.tsx::string::artista": 2,
   "value::apps/web/src/modules/settings/hooks/useOperationalSettings.test.tsx::string::gravacao": 1,
-  "value::apps/web/src/shared/components/__tests__/RequirePermission.test.tsx::string::rh": 2,
   "value::apps/web/src/shared/hooks/useConcurrencyConflict.test.ts::string::contrato": 1,
-  "value::apps/web/src/shared/lib/audit/runner.ts::string::rh": 1,
-  "value::apps/web/src/shared/lib/audit/types.ts::literal-type::rh": 1,
-  "value::apps/web/src/shared/lib/audit/types.ts::string::rh": 1,
   "value::apps/web/src/shared/lib/category-labels.ts::string::dos": 1,
   "value::apps/web/src/shared/lib/env-auth-badge.test.ts::string::desconhecido": 2,
   "value::apps/web/src/shared/lib/env.ts::string::desconhecido": 2,

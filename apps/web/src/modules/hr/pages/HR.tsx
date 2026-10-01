@@ -332,7 +332,7 @@ export default function HR() {
       actions={
         <div className="flex items-center gap-2">
           {activeTab !== "documents" && (
-            <RequirePermission module="rh" action="write">
+            <RequirePermission module="hr" action="write">
               <Button
                 size="sm"
                 className="gap-2"
