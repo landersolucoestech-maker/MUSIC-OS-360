@@ -31,57 +31,63 @@ export type ISODate = string;
 export type Priority = "low" | "normal" | "high" | "urgent";
 
 export type MarketingTarget =
-  | "projeto_musical"
-  | "artista"
-  | "empresa";
+  | "music_project"
+  | "artist"
+  | "company";
 
 export type ProjectType =
-  | "lancamento_musical"
-  | "videoclipe"
+  | "music_release"
+  | "music_video"
   | "audiovisual"
-  | "campanha_institucional"
-  | "campanha_promocional"
-  | "evento"
-  | "conteudo_corporativo"
-  | "bastidores"
-  | "reuniao"
-  | "divulgacao_produto"
-  | "divulgacao_servico"
-  | "divulgacao_saas"
-  | "comunicacao_interna"
-  | "comunicacao_externa"
-  | "portal_noticias"
-  | "projeto_especial";
+  | "institutional_campaign"
+  | "promotional_campaign"
+  | "event"
+  | "corporate_content"
+  | "behind_the_scenes"
+  | "meeting"
+  | "product_promotion"
+  | "service_promotion"
+  | "saas_promotion"
+  | "internal_communication"
+  | "external_communication"
+  | "news_portal"
+  | "special_project";
 
 export type ProjectStatus =
-  | "planejamento"
-  | "em_andamento"
-  | "pausado"
-  | "concluido"
-  | "cancelado";
+  | "planning"
+  | "active"
+  | "paused"
+  | "completed"
+  | "cancelled";
 
 export type CampaignType =
-  | "institucional"
-  | "comercial"
-  | "artistica"
-  | "promocional"
-  | "lancamento_musical"
-  | "produto"
-  | "servico"
+  | "institutional"
+  | "commercial"
+  | "artistic"
+  | "promotional"
+  | "music_release"
+  | "product"
+  | "service"
   | "saas"
-  | "evento"
-  | "conteudo"
+  | "event"
+  | "content"
   | "branding"
-  | "trafego_pago"
-  | "organica";
+  | "paid_traffic"
+  | "organic";
 
+/** Canonical English; the campaign-builder API lifecycle (lower-cased) plus `cancelled`. */
 export type CampaignStatus =
-  | "rascunho"
-  | "agendada"
-  | "ativa"
-  | "pausada"
-  | "concluida"
-  | "cancelada";
+  | "draft"
+  | "ready"
+  | "pending_review"
+  | "scheduled"
+  | "active"
+  | "paused"
+  | "rejected"
+  | "completed"
+  | "failed"
+  | "archived"
+  | "cancelled";
 
 export type ContentChannel =
   | "instagram"
@@ -95,14 +101,14 @@ export type ContentChannel =
   | "reels"
   | "stories"
   | "blog"
-  | "portal_noticias"
+  | "news_portal"
   | "podcast"
-  | "campanha"
-  | "material_publicitario"
-  | "evento_interno"
-  | "evento_externo"
-  | "reuniao"
-  | "bastidores";
+  | "campaign"
+  | "advertising_material"
+  | "internal_event"
+  | "external_event"
+  | "meeting"
+  | "behind_the_scenes";
 
 export type ContentType =
   | "post"
@@ -153,19 +159,19 @@ export type ContentDisplayStatus = ContentStatus | "overdue";
 export type ApprovalStatus = "pending" | "approved" | "rejected" | "revision_requested";
 
 export type BriefingType =
-  | "campanha"
-  | "conteudo"
+  | "campaign"
+  | "content"
   | "design"
   | "audiovisual"
-  | "institucional"
-  | "comercial"
-  | "artistico"
-  | "evento"
-  | "produto"
-  | "servico"
+  | "institutional"
+  | "commercial"
+  | "artistic"
+  | "event"
+  | "product"
+  | "service"
   | "saas"
-  | "portal_noticias"
-  | "bastidores";
+  | "news_portal"
+  | "behind_the_scenes";
 
 // Canonical values match packages/types/src/enums.ts's BriefingStatus and the
 // live chk_briefings_status DB constraint -- display labels stay PT-BR (see
@@ -176,86 +182,86 @@ export type TaskType =
   | "design"
   | "audiovisual"
   | "copywriting"
-  | "publicacao"
-  | "campanha"
-  | "planejamento"
-  | "aprovacao"
-  | "revisao"
-  | "analise"
-  | "reuniao"
-  | "bastidor"
-  | "conteudo_institucional"
-  | "conteudo_comercial"
-  | "conteudo_artistico"
+  | "publishing"
+  | "campaign"
+  | "planning"
+  | "approval"
+  | "review"
+  | "analysis"
+  | "meeting"
+  | "behind_the_scenes_shot"
+  | "institutional_content"
+  | "commercial_content"
+  | "artistic_content"
   | "portal"
   | "crm"
-  | "trafego_pago"
+  | "paid_traffic"
   // Design
-  | "capa"
+  | "cover"
   | "banner"
   | "press_kit"
   | "flyer"
-  | "arte_redes_sociais"
-  | "identidade_visual"
+  | "social_media_art"
+  | "visual_identity"
   | "thumbnail"
-  | "material_promocional"
+  | "promotional_material"
   // Audiovisual
-  | "videoclipe"
-  | "video_redes_sociais"
+  | "music_video"
+  | "social_media_video"
   | "making_of"
-  | "bastidores"
+  | "behind_the_scenes"
   | "lyric_video"
   | "visualizer"
-  | "entrevista"
+  | "interview"
   | "podcast_video"
-  | "captacao_evento"
+  | "event_coverage"
   // Comercial / CRM
-  | "prospeccao"
-  | "negociacao"
+  | "prospecting"
+  | "negotiation"
   | "follow_up"
-  | "relacionamento"
+  | "relationship"
   // Digital distribution
-  | "planejamento_lancamento"
+  | "release_planning"
   // Company (corporate)
-  | "material_institucional"
-  | "apresentacao_comercial"
+  | "institutional_material"
+  | "commercial_presentation"
   | "folder"
-  | "video_institucional"
-  | "bastidores_empresa"
-  | "cobertura_evento_corporativo"
-  | "entrevista_corporativa"
-  | "campanha_institucional"
+  | "institutional_video"
+  | "company_behind_the_scenes"
+  | "corporate_event_coverage"
+  | "corporate_interview"
+  | "institutional_campaign"
   | "branding"
-  | "posicionamento_marca"
-  | "comunicados"
-  | "relacionamento_parceiros"
-  | "parcerias"
+  | "brand_positioning"
+  | "announcements"
+  | "partner_relationship"
+  | "partnerships"
   // Artist (career management)
-  | "planejamento_carreira"
-  | "gestao_agenda"
-  | "planejamento_estrategico"
-  | "assessoria_imprensa"
+  | "career_planning"
+  | "schedule_management"
+  | "strategic_planning"
+  | "press_relations"
   | "release"
-  | "branding_pessoal"
-  | "posicionamento"
-  | "estrategias_crescimento"
-  | "sessao_fotos"
-  | "conteudo_redes_sociais"
-  | "contratacoes"
+  | "personal_branding"
+  | "positioning"
+  | "growth_strategies"
+  | "photo_session"
+  | "social_media_content"
+  | "contracting"
   | "shows"
   // Music project (release/work)
   | "motion_cover"
-  | "arte_divulgacao"
+  | "promotional_art"
   | "teaser"
-  | "conteudo_lancamento"
-  | "distribuicao"
+  | "release_content"
+  | "distribution"
   | "metadata"
   | "pitching"
   | "pre_save"
-  | "campanha_lancamento"
-  | "divulgacao"
-  | "influenciadores"
-  | "aprovacao_conteudo";
+  | "release_campaign"
+  | "promotion"
+  | "influencers"
+  | "content_approval";
 
 /**
  * Canonical (technical, English) task status. Equal to the persisted value
@@ -272,32 +278,32 @@ export type TaskStatus =
   | "cancelled";
 
 export type AssetCategory =
-  | "capa"
-  | "arte_promocional"
+  | "cover"
+  | "promotional_art"
   | "banner"
   | "logo"
-  | "identidade_visual"
-  | "fotografia"
+  | "visual_identity"
+  | "photography"
   | "reels"
   | "video"
   | "teaser"
   | "shorts"
   | "press_kit"
   | "template"
-  | "documento_estrategico"
-  | "material_institucional"
-  | "material_comercial"
-  | "material_bastidores"
-  | "material_reuniao"
-  | "arquivo_portal"
-  | "asset_campanha";
+  | "strategic_document"
+  | "institutional_material"
+  | "commercial_material"
+  | "behind_the_scenes_material"
+  | "meeting_material"
+  | "portal_file"
+  | "campaign_asset";
 
 export type AutomationFlowType =
-  | "lancamento_musical"
-  | "conteudo_corporativo"
-  | "bastidores"
-  | "evento"
-  | "produto_servico_saas";
+  | "music_release"
+  | "corporate_content"
+  | "behind_the_scenes"
+  | "event"
+  | "product_service_saas";
 
 // ---------------------------------------------------------------------------
 // Value objects
@@ -518,7 +524,7 @@ export interface MarketingTask {
   files: LinkedFile[];
   /**
    * Reference track (WAV) linked automatically from the music
-   * project. Exclusive to the "projeto_musical" context — company/artist tasks
+   * project. Exclusive to the "music_project" context — company/artist tasks
    * do not have this link. Filled by the system, without manual upload.
    */
   referenceAudio?: ReferenceAudio;
@@ -752,21 +758,21 @@ export interface DashboardData {
 // ---------------------------------------------------------------------------
 
 export type AiTaskKind =
-  | "analise_fonograma"
-  | "analise_letra"
-  | "planejamento_campanha"
-  | "sugestao_conteudo"
-  | "legenda"
-  | "roteiro"
-  | "analise_artista"
-  | "analise_marca"
-  | "analise_empresa"
-  | "pitch_playlist"
-  | "pitch_imprensa"
-  | "posicionamento"
-  | "calendario_editorial"
-  | "conteudo_bastidores"
-  | "conteudo_corporativo";
+  | "phonogram_analysis"
+  | "lyrics_analysis"
+  | "campaign_planning"
+  | "content_suggestion"
+  | "caption"
+  | "script"
+  | "artist_analysis"
+  | "brand_analysis"
+  | "company_analysis"
+  | "playlist_pitch"
+  | "press_pitch"
+  | "positioning"
+  | "editorial_calendar"
+  | "behind_the_scenes_content"
+  | "corporate_content";
 
 export interface AiAudioMetadata {
   fileName: string;

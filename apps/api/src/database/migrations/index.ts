@@ -338,6 +338,7 @@ import { ClassifyOperationalListPlatformDefaultsToEnglish20260930000016 } from '
 import { BackfillExternalRightsReceiptsToCanonical20260930000017 } from './20260930000017_BackfillExternalRightsReceiptsToCanonical';
 import { BackfillCanonicalFromLegacyMirrors20260930000022 } from './20260930000022_BackfillCanonicalFromLegacyMirrors';
 import { BackfillTransactionTaxonomyToEnglish20260930000018 } from './20260930000018_BackfillTransactionTaxonomyToEnglish';
+import { BackfillMarketingVocabularyToEnglish20260930000026 } from './20260930000026_BackfillMarketingVocabularyToEnglish';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -659,4 +660,5 @@ export const ALL_MIGRATIONS = [
   BackfillExternalRightsReceiptsToCanonical20260930000017,
   BackfillCanonicalFromLegacyMirrors20260930000022,
   BackfillTransactionTaxonomyToEnglish20260930000018,
+  BackfillMarketingVocabularyToEnglish20260930000026,
 ] as const;

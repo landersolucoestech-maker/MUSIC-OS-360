@@ -1,5 +1,7 @@
 import { IsArray, IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, Min, Max } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { canonicalMarketingAiKind, canonicalMarketingTarget } from '../../marketing/marketing-vocabulary';
 
 export class AICompletionDto {
   @ApiProperty({ description: 'Skill / feature context (biography, campaign_copy, ...)' })
@@ -66,11 +68,13 @@ export class AnalyzeContractDto {
  * submitted here (find-62e6b1b1).
  */
 export class GenerateMarketingSuggestionDto {
-  @ApiProperty({ description: 'AI task type (e.g. sugestao_conteudo, legenda, roteiro)' })
+  @ApiProperty({ description: 'AI task type (e.g. content_suggestion, caption, script). Deprecated Portuguese values (sugestao_conteudo, legenda, roteiro, ...) are mapped to the canonical English ones.' })
+  @Transform(canonicalMarketingAiKind)
   @IsString() @IsNotEmpty()
   kind!: string;
 
-  @ApiProperty({ description: 'Target type (artista, empresa, projeto_musical)' })
+  @ApiProperty({ description: 'Target type (artist, company, music_project). Deprecated artista/empresa/projeto_musical are mapped.' })
+  @Transform(canonicalMarketingTarget)
   @IsString() @IsNotEmpty()
   targetType!: string;
 

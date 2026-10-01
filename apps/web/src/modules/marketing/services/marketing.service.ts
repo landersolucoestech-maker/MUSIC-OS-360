@@ -6,7 +6,18 @@ import {
 } from "../constants/marketing.constants";
 import { getFormatViolation } from "../config/social-formats";
 import { UserFacingError } from "@/shared/lib/errors";
-import { canonicalApproval, canonicalPriority } from "../utils/marketing-legacy-vocabulary";
+import { assetCategoryFromApi, assetTypeFromCategory } from "./marketing-asset-wire";
+import {
+  canonicalAiTaskKind,
+  canonicalApproval,
+  canonicalBriefingType,
+  canonicalCampaignStatus,
+  canonicalCampaignType,
+  canonicalContentChannels,
+  canonicalMarketingTarget,
+  canonicalPriority,
+  canonicalTaskType,
+} from "../utils/marketing-legacy-vocabulary";
 import { deriveContentDisplayStatus } from "../utils/marketing-content-status";
 import { targetTypeFromWire, targetTypeToWire } from "../utils/marketing-content-wire";
 import {
@@ -81,7 +92,7 @@ function projectFromApi(row: RecordRow): MarketingProject {
     endDate: row.ends_at ?? "",
     objective: meta.objective ?? "",
     audience: meta.audience ?? "",
-    channels: meta.channels ?? [],
+    channels: canonicalContentChannels(meta.channels) ?? [],
     description: row.description ?? "",
     taskIds: meta.taskIds ?? [],
     campaignIds: meta.campaignIds ?? [],
@@ -151,18 +162,18 @@ function campaignFromApi(row: RecordRow): MarketingCampaign {
   return {
     id: row.id,
     name: payload.name ?? row.name ?? "",
-    targetType: payload.promotedEntityType?.toLowerCase(),
+    targetType: canonicalMarketingTarget(payload.promotedEntityType),
     targetId: payload.promotedEntityId,
     targetName: payload.promotedEntityName,
-    type: payload.type ?? meta.type ?? "trafego",
+    type: canonicalCampaignType(payload.type ?? meta.type) ?? "paid_traffic",
     objective: payload.objective ?? row.objective ?? "",
     audience: typeof payload.audience === "string" ? payload.audience : JSON.stringify(payload.audience ?? {}),
     segmentation: payload.segmentation ?? "",
     budget: Number(payload.totalBudget ?? payload.dailyBudget ?? row.budget ?? 0),
     startDate: payload.startDate ?? row.start_date ?? "",
     endDate: payload.endDate ?? row.end_date ?? "",
-    platforms: payload.platforms ?? [],
-    status: String(row.status ?? payload.status ?? "DRAFT").toLowerCase(),
+    platforms: canonicalContentChannels(payload.platforms) ?? [],
+    status: canonicalCampaignStatus(row.status ?? payload.status),
     owner: payload.owner ?? "",
     projectId: payload.projectId,
     creativeAssetIds: payload.creativeAssetIds ?? [],
@@ -233,7 +244,7 @@ function contentFromApi(row: RecordRow): MarketingContent {
   return {
     ...row,
     targetType: targetTypeFromWire(row.targetType),
-    channels: meta.channels ?? undefined,
+    channels: canonicalContentChannels(meta.channels),
     approval: canonicalApproval([row.approval, meta.approval].find((v) => v !== null && v !== undefined && v !== "")),
     files: row.files ?? [],
     notes: row.notes ?? "",
@@ -300,7 +311,7 @@ function briefingFromApi(row: RecordRow): MarketingBriefing {
   return {
     id: row.id,
     title: row.titulo ?? row.title,
-    type: meta.type ?? "campanha",
+    type: canonicalBriefingType(meta.type) ?? "campaign",
     status: meta.uiStatus ?? row.status ?? "draft",
     objective: meta.objective ?? "",
     context: row.content ?? meta.context ?? "",
@@ -315,7 +326,7 @@ function briefingFromApi(row: RecordRow): MarketingBriefing {
     market: meta.market,
     competitors: meta.competitors,
     trends: meta.trends,
-    channels: meta.channels ?? [],
+    channels: canonicalContentChannels(meta.channels) ?? [],
     restrictions: meta.restrictions ?? "",
     resources: meta.resources,
     expectations: meta.expectations,
@@ -373,10 +384,10 @@ function taskFromApi(row: RecordRow): MarketingTask {
     id: row.id,
     title: row.title,
     description: row.description ?? "",
-    targetType: meta.targetType,
+    targetType: canonicalMarketingTarget(meta.targetType),
     targetId: meta.targetId,
     targetName: meta.targetName,
-    type: meta.uiType ?? row.kind ?? "outro",
+    type: canonicalTaskType(meta.uiType ?? row.kind ?? "other"),
     status: row.status,
     priority: row.priority,
     owner: meta.owner ?? row.assigned_to ?? "",
@@ -460,7 +471,7 @@ function assetFromApi(row: RecordRow): MarketingAsset {
   return {
     id: row.id,
     name: row.title,
-    category: String(row.asset_type ?? "OTHER").toLowerCase(),
+    category: assetCategoryFromApi(meta.category, row.asset_type),
     projectId: meta.projectId ?? row.marketing_project_id,
     taskId: meta.taskId,
     sourceDepartment: meta.sourceDepartment,
@@ -481,7 +492,7 @@ function assetFromApi(row: RecordRow): MarketingAsset {
 function assetToApi(input: Partial<MarketingAsset>) {
   return {
     title: input.name,
-    assetType: String(input.category ?? "other").toUpperCase(),
+    assetType: assetTypeFromCategory(input.category),
     fileUrl: input.url,
     description: input.notes,
     thumbnailUrl: input.thumbnailUrl,
@@ -491,7 +502,7 @@ function assetToApi(input: Partial<MarketingAsset>) {
     campaignId: input.campaignId,
     artistId: input.artistId,
     tags: input.tags,
-    metadata: { owner: input.owner, department: input.department },
+    metadata: { owner: input.owner, department: input.department, category: input.category },
   };
 }
 
@@ -754,10 +765,10 @@ async function analytics(): Promise<AnalyticsOverview> {
       approvalRate: contents.length ? contents.filter((item) => item.approval === "approved").length / contents.length * 100 : 0,
       deliveries: tasks.filter((item) => item.status === "done").length,
       tasksDone: tasks.filter((item) => item.status === "done").length,
-      activeProjects: projects.filter((item) => item.status === "em_andamento").length,
+      activeProjects: projects.filter((item) => item.status === "active").length,
       publishedContents: contents.filter((item) => item.status === "published").length,
       lateContents: contents.filter((item) => deriveContentDisplayStatus(item) === "overdue").length,
-      runningCampaigns: campaigns.filter((item) => item.status === "ativa").length,
+      runningCampaigns: campaigns.filter((item) => item.status === "active").length,
     },
     series,
     breakdownByDimension,
@@ -793,8 +804,8 @@ export const marketingService = {
       .sort((a, b) => a.publishDate.localeCompare(b.publishDate)).slice(0, 5);
     return {
       kpis: {
-        activeCampaigns: campaigns.filter((item) => item.status === "ativa").length,
-        activeProjects: projects.filter((item) => item.status === "em_andamento").length,
+        activeCampaigns: campaigns.filter((item) => item.status === "active").length,
+        activeProjects: projects.filter((item) => item.status === "active").length,
         scheduledContents: contents.filter((item) => item.status === "scheduled").length,
         pendingTasks: tasks.filter((item) => item.status !== "done" && item.status !== "cancelled").length,
         openBriefings: briefings.filter((item) => !["approved", "completed", "cancelled"].includes(item.status)).length,
@@ -835,8 +846,14 @@ export const marketingService = {
     return activityFromApi(row);
   },
 
-  getAiSuggestions(): Promise<AiSuggestion[]> {
-    return api.get<AiSuggestion[]>("/marketing/ai-suggestions");
+  async getAiSuggestions(): Promise<AiSuggestion[]> {
+    const list = await api.get<AiSuggestion[]>("/marketing/ai-suggestions");
+    return list.map((item) => ({
+      ...item,
+      kind: canonicalAiTaskKind(item.kind) as AiSuggestion["kind"],
+      targetType: canonicalMarketingTarget(item.targetType),
+      channels: canonicalContentChannels(item.channels),
+    }));
   },
 
   addAiSuggestion(suggestion: Omit<AiSuggestion, "id" | "at">): Promise<AiSuggestion> {

@@ -38,15 +38,15 @@ export function ProfileTab({
     [artist, sources, artistRecord, works, phonograms],
   );
   const result = useMemo<AiGeneratedResult | null>(() => (
-    artist ? getLatestResult(sources.suggestions.filter((item) => item.targetId === artist.id || item.targetName === artist.label), ["analise_artista"]) : null
+    artist ? getLatestResult(sources.suggestions.filter((item) => item.targetId === artist.id || item.targetName === artist.label), ["artist_analysis"]) : null
   ), [artist, sources.suggestions]);
   const canGenerate = Boolean(artist && bundle) && !isGenerating;
 
   const generate = () => {
     if (!artist || !bundle) return;
     onGenerate({
-      kind: "analise_artista",
-      targetType: "artista",
+      kind: "artist_analysis",
+      targetType: "artist",
       targetId: artist.id,
       targetName: artist.label,
       prompt: buildArtistProfilePrompt(bundle),

@@ -55,7 +55,7 @@ export const strategicBriefingEditFields: FieldDef[] = [
 export function strategicBriefingInitialValues(briefing?: MarketingBriefing): FormValues {
   return {
     title: briefing?.title ?? "",
-    type: briefing?.type ?? "campanha",
+    type: briefing?.type ?? "campaign",
     status: briefing?.status ?? "draft",
     deadline: briefing?.deadline ?? "",
     objective: briefing?.objective ?? "",

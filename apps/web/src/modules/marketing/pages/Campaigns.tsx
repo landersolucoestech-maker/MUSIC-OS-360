@@ -78,7 +78,7 @@ const PLATFORM_OPTIONS: {
   label: string;
 }[] = [
   { value: "facebook", label: "Meta Ads (Facebook + Instagram)" },
-  { value: "material_publicitario", label: "Google Ads" },
+  { value: "advertising_material", label: "Google Ads" },
   { value: "tiktok", label: "TikTok Ads" },
   { value: "podcast", label: "Spotify Ad Studio" },
   { value: "youtube", label: "YouTube Ads" },
@@ -120,21 +120,24 @@ function allPlatformsLabel(platforms: ContentChannel[]): string {
 }
 
 function statusLabel(status: CampaignStatus): string {
-  if (status === "agendada") return "Planejado";
+  if (status === "scheduled") return "Planejado";
   return CAMPAIGN_STATUS_LABEL[status] ?? status;
 }
 
 function statusVariant(status: CampaignStatus): BadgeVariant {
   switch (status) {
-    case "ativa":
-    case "concluida":
+    case "active":
+    case "completed":
       return "success";
-    case "agendada":
-    case "rascunho":
+    case "scheduled":
+    case "draft":
+    case "ready":
       return "info";
-    case "cancelada":
+    case "cancelled":
+    case "rejected":
+    case "failed":
       return "danger";
-    case "pausada":
+    case "paused":
     default:
       return "neutral";
   }
@@ -199,7 +202,7 @@ export default function Campaigns() {
     // integration writing isEstimated=false on at least one campaign flips this to "total" again.
     const clicksAllEstimated = campaigns.length > 0 && campaigns.every((c) => c.metrics.isEstimated !== false);
     return {
-      active: campaigns.filter((campaign) => campaign.status === "ativa").length,
+      active: campaigns.filter((campaign) => campaign.status === "active").length,
       budget,
       spend,
       clicks,
@@ -484,7 +487,7 @@ function CampaignTable({
                   <div className="max-w-[180px]">
                     <p className="truncate">{campaign.targetName || campaign.owner || "Empresa"}</p>
                     <p className="text-[11px] text-muted-foreground">
-                      {MARKETING_TARGET_LABEL[campaign.targetType ?? "empresa"]}
+                      {MARKETING_TARGET_LABEL[campaign.targetType ?? "company"]}
                     </p>
                   </div>
                 </TableCell>
@@ -656,7 +659,7 @@ function CampaignViewModal({
             </h3>
             <div className="mb-2 flex items-center gap-2 text-sm">
               <span className="text-muted-foreground">Contexto:</span>
-              <Badge variant="neutral">{MARKETING_TARGET_LABEL[campaign.targetType ?? "empresa"]}</Badge>
+              <Badge variant="neutral">{MARKETING_TARGET_LABEL[campaign.targetType ?? "company"]}</Badge>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {campaign.platforms.length ? (

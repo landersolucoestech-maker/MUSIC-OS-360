@@ -1,5 +1,6 @@
 import { marketingService } from "../services/marketing.service";
-import type { AssetCategory, MarketingAsset } from "../types/marketing.types";
+import type { MarketingAsset } from "../types/marketing.types";
+import { assetCategoryFromApi } from "../services/marketing-asset-wire";
 import { createResourceHooks } from "./useMarketingResource";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/shared/lib/api-client";
@@ -22,28 +23,9 @@ type ProjectAsset = MarketingAsset & {
   metadata?: Record<string, unknown>;
 };
 
-const ASSET_TYPE_CATEGORY: Record<string, AssetCategory> = {
-  AUDIO: "asset_campanha",
-  COVER: "capa",
-  ARTWORK: "arte_promocional",
-  PHOTO: "fotografia",
-  REEL: "reels",
-  TEASER: "teaser",
-  VISUALIZER: "video",
-  LYRIC_VIDEO: "video",
-  MUSIC_VIDEO: "video",
-  PRESS_KIT: "press_kit",
-  DOCUMENT: "documento_estrategico",
-  INSTITUTIONAL: "material_institucional",
-  AD_CREATIVE: "asset_campanha",
-  LOGO: "logo",
-  CORPORATE_MATERIAL: "material_comercial",
-  OTHER: "asset_campanha",
-};
-
 function normalizeProjectAsset(asset: ProjectAsset): MarketingAsset {
   const metadata = asset.metadata ?? {};
-  const category = asset.category ?? ASSET_TYPE_CATEGORY[asset.asset_type ?? ""] ?? "asset_campanha";
+  const category = asset.category ?? assetCategoryFromApi(metadata.category, asset.asset_type);
   const stamp = new Date().toISOString();
   return {
     ...asset,

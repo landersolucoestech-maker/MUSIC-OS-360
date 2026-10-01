@@ -77,7 +77,7 @@ export function HistoryTab({
 function duplicate(item: AiSuggestion, onGenerate: GenerateAiHandler) {
   onGenerate({
     kind: item.kind,
-    targetType: item.targetType ?? "empresa",
+    targetType: item.targetType ?? "company",
     targetId: item.targetId,
     targetName: item.targetName ?? "Empresa",
     prompt: item.prompt,

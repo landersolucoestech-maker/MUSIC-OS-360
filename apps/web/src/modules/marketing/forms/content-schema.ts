@@ -22,7 +22,7 @@ export const contentSchema = z
       .trim()
       .min(2, "Informe um título com pelo menos 2 caracteres.")
       .max(100, "Máximo de 100 caracteres."),
-    targetType: z.enum(["projeto_musical", "artista", "empresa"], {
+    targetType: z.enum(["music_project", "artist", "company"], {
       required_error: "Selecione o contexto.",
     }),
     targetName: z.string().trim().min(2, "Informe o projeto musical, artista ou empresa."),

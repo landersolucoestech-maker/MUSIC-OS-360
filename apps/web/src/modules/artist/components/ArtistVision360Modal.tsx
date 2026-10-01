@@ -110,19 +110,19 @@ import { safeExternalUrl, safeImageSrc } from "@/shared/lib/safe-url";
 
 // ── Marketing: campaign/channel labels ────────────────────────────────────
 const CAMPAIGN_STATUS_LABELS: Record<string, string> = {
-  rascunho: "Rascunho", agendada: "Agendada", ativa: "Ativa",
-  pausada: "Pausada", concluida: "Concluída", cancelada: "Cancelada",
+  draft: "Rascunho", scheduled: "Agendada", active: "Ativa",
+  paused: "Pausada", completed: "Concluída", cancelled: "Cancelada",
 };
 const CHANNEL_LABELS: Record<string, string> = {
   instagram: "Instagram", facebook: "Facebook", tiktok: "TikTok", youtube: "YouTube",
   twitter: "Twitter", threads: "Threads", linkedin: "LinkedIn", shorts: "Shorts",
   reels: "Reels", stories: "Stories", blog: "Blog", podcast: "Podcast",
-  campanha: "Campanha", portal_noticias: "Portal", material_publicitario: "Publicidade",
+  campaign: "Campanha", news_portal: "Portal", advertising_material: "Publicidade",
 };
 const CAMPAIGN_SECTIONS: Array<{ key: string; label: string; status: string[] }> = [
   { key: "active", label: "Campanhas Ativas", status: ["active", "paused"] },
   { key: "closed", label: "Campanhas Encerradas", status: ["completed", "cancelled"] },
-  { key: "planned", label: "Campanhas Planejadas", status: ["draft", "agendada"] },
+  { key: "planned", label: "Campanhas Planejadas", status: ["draft", "scheduled"] },
 ];
 
 // ── Finance: revenue by nature (NATURE_BUCKETS in ../lib/revenue-nature) ──
@@ -413,7 +413,7 @@ export function ArtistVision360Modal({
 
   // ── Contents (the artist's marketing contents) ─────────────────────────
   const actualContent = marketingContents.filter(
-    (c) => c.targetType === "artista" && c.targetId === artistId,
+    (c) => c.targetType === "artist" && c.targetId === artistId,
   );
   const filteredContent = actualContent.filter((c) => {
     const cfg = CONTENT_FILTERS.find((f) => f.key === contentFilter);
@@ -423,7 +423,7 @@ export function ArtistVision360Modal({
 
   // ── Marketing (artist campaigns) ───────────────────────────────────
   const actualCampaigns = marketingCampaigns.filter(
-    (c) => c.targetType === "artista" && c.targetId === artistId,
+    (c) => c.targetType === "artist" && c.targetId === artistId,
   );
 
   // ── Activity (operational timeline derived from the artist's data) ─────

@@ -1,8 +1,9 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn, IsDate, MaxLength } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { BriefingStatus } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { canonicalMarketingBriefingMetadata } from '../../marketing/marketing-vocabulary';
 
 // Was a hand-rolled, diverged local list (draft/review/approved/rejected/archived)
 // that matched neither the canonical BriefingStatus enum nor the live
@@ -19,7 +20,7 @@ export class CreateBriefingDto {
   @ApiPropertyOptional() @IsOptional() objectives?: unknown[];
   @ApiPropertyOptional({ type: String, format: 'date-time' })
   @IsOptional() @Type(() => Date) @IsDate() dueAt?: Date;
-  @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
+  @ApiPropertyOptional() @IsOptional() @Transform(canonicalMarketingBriefingMetadata) metadata?: Record<string, unknown>;
 }
 
 export class UpdateBriefingDto extends PartialType(CreateBriefingDto) {

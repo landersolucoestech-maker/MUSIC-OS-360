@@ -3,6 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
 import { DATA_SOURCE } from '../../database/database.tokens';
 import { ActivityLogEntity } from '../../database/entities';
+import { canonicalMarketingAiSuggestion } from './marketing-vocabulary';
 
 @Injectable()
 export class MarketingAiSuggestionsService {
@@ -24,13 +25,15 @@ export class MarketingAiSuggestionsService {
       take: 100,
     });
     return records.map((record) => ({
-      ...(record.metadata ?? {}),
+      ...canonicalMarketingAiSuggestion(record.metadata ?? {}),
       id: record.entity_id,
       at: record.created_at.toISOString(),
     }));
   }
 
-  async create(tenantId: string, userId: string, suggestion: Record<string, unknown>) {
+  async create(tenantId: string, userId: string, rawSuggestion: Record<string, unknown>) {
+    // writers are canonical: a deprecated Portuguese kind/targetType/channels from an older web build is mapped
+    const suggestion = canonicalMarketingAiSuggestion(rawSuggestion);
     const id = randomUUID();
     const record = await this.repo.save(this.repo.create({
       tenant_id: tenantId,

@@ -113,7 +113,7 @@ export const taskEditFields = (targetOptions: TaskTargetOptions): FieldDef[] => 
 /**
  * Finds the reference track (WAV) of a music project among the linked
  * files. Used to inherit the audio automatically in tasks of the
- * "projeto_musical" context — no manual upload. Returns undefined when there is no audio.
+ * "music_project" context — no manual upload. Returns undefined when there is no audio.
  */
 export function findProjectReferenceAudio(project?: MarketingProject | null): ReferenceAudio | undefined {
   if (!project) return undefined;
@@ -127,7 +127,7 @@ export function findProjectReferenceAudio(project?: MarketingProject | null): Re
 export function taskInitialValues(task?: MarketingTask): FormValues {
   return {
     title: task?.title ?? "",
-    targetType: task?.targetType ?? "empresa",
+    targetType: task?.targetType ?? "company",
     targetName: task?.targetName ?? "",
     // Department and type start empty on creation — the department is mandatory and the type is only
     // enabled/selectable after a compatible department is chosen.

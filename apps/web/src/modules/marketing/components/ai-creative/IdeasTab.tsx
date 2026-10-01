@@ -9,13 +9,13 @@ import { AsyncEntitySelect, BriefingTextarea, copyResult, EntitySelect, Field, R
 import { getLatestResult } from "./aiCreative.utils";
 
 const OBJECTIVES: Array<{ value: AiTaskKind; label: string }> = [
-  { value: "sugestao_conteudo", label: "Post" },
-  { value: "legenda", label: "Legenda" },
-  { value: "roteiro", label: "Roteiro" },
-  { value: "pitch_imprensa", label: "Press Release" },
-  { value: "planejamento_campanha", label: "Campanha" },
-  { value: "calendario_editorial", label: "Calendário Editorial" },
-  { value: "conteudo_corporativo", label: "E-mail Marketing" },
+  { value: "content_suggestion", label: "Post" },
+  { value: "caption", label: "Legenda" },
+  { value: "script", label: "Roteiro" },
+  { value: "press_pitch", label: "Press Release" },
+  { value: "campaign_planning", label: "Campanha" },
+  { value: "editorial_calendar", label: "Calendário Editorial" },
+  { value: "corporate_content", label: "E-mail Marketing" },
 ];
 
 function isIdeaObjective(value: string): value is AiTaskKind {
@@ -33,10 +33,10 @@ export function IdeasTab({
   onGenerate: GenerateAiHandler;
   isGenerating: boolean;
 }) {
-  const [context, setContext] = useState<"artista" | "projeto_musical">("artista");
+  const [context, setContext] = useState<"artist" | "music_project">("artist");
   const [target, setTarget] = useState<TargetOption | null>(null);
   const [campaign, setCampaign] = useState<TargetOption | null>(null);
-  const [objective, setObjective] = useState<AiTaskKind>("sugestao_conteudo");
+  const [objective, setObjective] = useState<AiTaskKind>("content_suggestion");
   const [briefing, setBriefing] = useState("");
   const [customCampaign, setCustomCampaign] = useState("");
 
@@ -70,7 +70,7 @@ export function IdeasTab({
           <Select
             value={context}
             onValueChange={(value) => {
-              if (value === "artista" || value === "projeto_musical") {
+              if (value === "artist" || value === "music_project") {
                 setContext(value);
                 setTarget(null);
               }
@@ -78,16 +78,16 @@ export function IdeasTab({
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="artista">Artista</SelectItem>
-              <SelectItem value="projeto_musical">Projeto</SelectItem>
+              <SelectItem value="artist">Artista</SelectItem>
+              <SelectItem value="music_project">Projeto</SelectItem>
             </SelectContent>
           </Select>
         </Field>
         <AsyncEntitySelect
-          label={context === "artista" ? "Artista" : "Projeto"}
+          label={context === "artist" ? "Artista" : "Projeto"}
           value={target?.id ?? ""}
-          table={context === "artista" ? "artists" : "projects"}
-          placeholder={context === "artista" ? "Selecione o artista" : "Selecione o projeto"}
+          table={context === "artist" ? "artists" : "projects"}
+          placeholder={context === "artist" ? "Selecione o artista" : "Selecione o projeto"}
           onChange={setTarget}
         />
         <EntitySelect

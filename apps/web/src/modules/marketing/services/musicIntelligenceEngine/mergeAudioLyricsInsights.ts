@@ -1,19 +1,20 @@
+import { PENDING_VALUE, isPendingValue } from "./pending";
 import type { TrackAudioAnalysis, TrackDiagnosis, TrackLyricsAnalysis } from "./types";
 
 export function mergeAudioLyricsInsights(audio: TrackAudioAnalysis, lyrics: TrackLyricsAnalysis): TrackDiagnosis {
   const missingData = Array.from(new Set([...audio.missingData, ...lyrics.missingData]));
-  const mood = audio.mood && audio.mood !== "pendente" ? audio.mood : lyrics.sentiment || "pendente";
+  const mood = audio.mood && !isPendingValue(audio.mood) ? audio.mood : lyrics.sentiment || PENDING_VALUE;
 
   return {
-    genre: audio.genrePrediction || "pendente",
-    subgenre: audio.subgenrePrediction || "pendente",
-    bpm: audio.bpm || "pendente",
-    key: audio.key || "pendente",
+    genre: audio.genrePrediction || PENDING_VALUE,
+    subgenre: audio.subgenrePrediction || PENDING_VALUE,
+    bpm: audio.bpm || PENDING_VALUE,
+    key: audio.key || PENDING_VALUE,
     mood,
-    energy: audio.energy || "pendente",
-    theme: lyrics.mainTheme || "pendente",
-    sentiment: lyrics.sentiment || "pendente",
-    targetAudience: lyrics.targetAudience || "pendente",
+    energy: audio.energy || PENDING_VALUE,
+    theme: lyrics.mainTheme || PENDING_VALUE,
+    sentiment: lyrics.sentiment || PENDING_VALUE,
+    targetAudience: lyrics.targetAudience || PENDING_VALUE,
     editorialTags: lyrics.editorialTags,
     playlistFit: buildPlaylistFit(mood, lyrics.mainTheme),
     platformPriority: buildPlatformPriority(audio.energy, lyrics.hooks.length),
@@ -22,7 +23,7 @@ export function mergeAudioLyricsInsights(audio: TrackAudioAnalysis, lyrics: Trac
     syncPotential: lyrics.sentiment === "melancolico" ? "bom para cenas emocionais/reflexivas" : "a validar por briefing de marcas e audiovisual",
     differentiators: [
       lyrics.mainTheme ? `Tema editorial: ${lyrics.mainTheme}` : "",
-      audio.mood && audio.mood !== "pendente" ? `Mood sonoro: ${audio.mood}` : "",
+      audio.mood && !isPendingValue(audio.mood) ? `Mood sonoro: ${audio.mood}` : "",
       lyrics.hooks[0] ? `Frase forte: ${lyrics.hooks[0]}` : "",
     ].filter(Boolean),
     risks: missingData.length ? [`Dados ausentes: ${missingData.join(", ")}`] : ["Validar fit editorial antes de envio massivo."],

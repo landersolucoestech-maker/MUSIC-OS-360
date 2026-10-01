@@ -77,9 +77,9 @@ export const TONE_CLASS: Record<Tone, string> = {
 // ---------------------------------------------------------------------------
 
 export const MARKETING_TARGET_OPTIONS: Option<MarketingTarget>[] = [
-  { value: "projeto_musical", label: "Projeto Musical" },
-  { value: "artista", label: "Artista" },
-  { value: "empresa", label: "Empresa" },
+  { value: "music_project", label: "Projeto Musical" },
+  { value: "artist", label: "Artista" },
+  { value: "company", label: "Empresa" },
 ];
 
 export const MARKETING_TARGET_LABEL = optionLabels(MARKETING_TARGET_OPTIONS);
@@ -109,42 +109,42 @@ export const PRIORITY_TONE: Record<Priority, Tone> = {
 // ---------------------------------------------------------------------------
 
 export const PROJECT_TYPE_OPTIONS: Option<ProjectType>[] = [
-  { value: "lancamento_musical", label: "Lançamento Musical" },
-  { value: "videoclipe", label: "Videoclipe" },
+  { value: "music_release", label: "Lançamento Musical" },
+  { value: "music_video", label: "Videoclipe" },
   { value: "audiovisual", label: "Projeto Audiovisual" },
-  { value: "campanha_institucional", label: "Campanha Institucional" },
-  { value: "campanha_promocional", label: "Campanha Promocional" },
-  { value: "evento", label: "Evento" },
-  { value: "conteudo_corporativo", label: "Conteúdo Corporativo" },
-  { value: "bastidores", label: "Bastidores" },
-  { value: "reuniao", label: "Reunião" },
-  { value: "divulgacao_produto", label: "Divulgação de Produto" },
-  { value: "divulgacao_servico", label: "Divulgação de Serviço" },
-  { value: "divulgacao_saas", label: "Divulgação de SaaS" },
-  { value: "comunicacao_interna", label: "Comunicação Interna" },
-  { value: "comunicacao_externa", label: "Comunicação Externa" },
-  { value: "portal_noticias", label: "Portal de Notícias" },
-  { value: "projeto_especial", label: "Projeto Especial" },
+  { value: "institutional_campaign", label: "Campanha Institucional" },
+  { value: "promotional_campaign", label: "Campanha Promocional" },
+  { value: "event", label: "Evento" },
+  { value: "corporate_content", label: "Conteúdo Corporativo" },
+  { value: "behind_the_scenes", label: "Bastidores" },
+  { value: "meeting", label: "Reunião" },
+  { value: "product_promotion", label: "Divulgação de Produto" },
+  { value: "service_promotion", label: "Divulgação de Serviço" },
+  { value: "saas_promotion", label: "Divulgação de SaaS" },
+  { value: "internal_communication", label: "Comunicação Interna" },
+  { value: "external_communication", label: "Comunicação Externa" },
+  { value: "news_portal", label: "Portal de Notícias" },
+  { value: "special_project", label: "Projeto Especial" },
 ];
 
 export const PROJECT_TYPE_LABEL = optionLabels(PROJECT_TYPE_OPTIONS);
 
 export const PROJECT_STATUS_OPTIONS: Option<ProjectStatus>[] = [
-  { value: "planejamento", label: "Planejamento" },
-  { value: "em_andamento", label: "Em Andamento" },
-  { value: "pausado", label: "Pausado" },
-  { value: "concluido", label: "Concluído" },
-  { value: "cancelado", label: "Cancelado" },
+  { value: "planning", label: "Planejamento" },
+  { value: "active", label: "Em Andamento" },
+  { value: "paused", label: "Pausado" },
+  { value: "completed", label: "Concluído" },
+  { value: "cancelled", label: "Cancelado" },
 ];
 
 export const PROJECT_STATUS_LABEL = optionLabels(PROJECT_STATUS_OPTIONS);
 
 export const PROJECT_STATUS_TONE: Record<ProjectStatus, Tone> = {
-  planejamento: "info",
-  em_andamento: "success",
-  pausado: "warning",
-  concluido: "neutral",
-  cancelado: "danger",
+  planning: "info",
+  active: "success",
+  paused: "warning",
+  completed: "neutral",
+  cancelled: "danger",
 };
 
 // ---------------------------------------------------------------------------
@@ -152,41 +152,51 @@ export const PROJECT_STATUS_TONE: Record<ProjectStatus, Tone> = {
 // ---------------------------------------------------------------------------
 
 export const CAMPAIGN_TYPE_OPTIONS: Option<CampaignType>[] = [
-  { value: "institucional", label: "Institucional" },
-  { value: "comercial", label: "Comercial" },
-  { value: "artistica", label: "Artística" },
-  { value: "promocional", label: "Promocional" },
-  { value: "lancamento_musical", label: "Lançamento Musical" },
-  { value: "produto", label: "Produto" },
-  { value: "servico", label: "Serviço" },
+  { value: "institutional", label: "Institucional" },
+  { value: "commercial", label: "Comercial" },
+  { value: "artistic", label: "Artística" },
+  { value: "promotional", label: "Promocional" },
+  { value: "music_release", label: "Lançamento Musical" },
+  { value: "product", label: "Produto" },
+  { value: "service", label: "Serviço" },
   { value: "saas", label: "SaaS" },
-  { value: "evento", label: "Evento" },
-  { value: "conteudo", label: "Conteúdo" },
+  { value: "event", label: "Evento" },
+  { value: "content", label: "Conteúdo" },
   { value: "branding", label: "Branding" },
-  { value: "trafego_pago", label: "Tráfego Pago" },
-  { value: "organica", label: "Orgânica" },
+  { value: "paid_traffic", label: "Tráfego Pago" },
+  { value: "organic", label: "Orgânica" },
 ];
 
 export const CAMPAIGN_TYPE_LABEL = optionLabels(CAMPAIGN_TYPE_OPTIONS);
 
 export const CAMPAIGN_STATUS_OPTIONS: Option<CampaignStatus>[] = [
-  { value: "rascunho", label: "Rascunho" },
-  { value: "agendada", label: "Agendada" },
-  { value: "ativa", label: "Ativa" },
-  { value: "pausada", label: "Pausada" },
-  { value: "concluida", label: "Concluída" },
-  { value: "cancelada", label: "Cancelada" },
+  { value: "draft", label: "Rascunho" },
+  { value: "ready", label: "Pronta" },
+  { value: "pending_review", label: "Em revisão" },
+  { value: "scheduled", label: "Agendada" },
+  { value: "active", label: "Ativa" },
+  { value: "paused", label: "Pausada" },
+  { value: "rejected", label: "Rejeitada" },
+  { value: "completed", label: "Concluída" },
+  { value: "failed", label: "Falhou" },
+  { value: "archived", label: "Arquivada" },
+  { value: "cancelled", label: "Cancelada" },
 ];
 
 export const CAMPAIGN_STATUS_LABEL = optionLabels(CAMPAIGN_STATUS_OPTIONS);
 
 export const CAMPAIGN_STATUS_TONE: Record<CampaignStatus, Tone> = {
-  rascunho: "neutral",
-  agendada: "info",
-  ativa: "success",
-  pausada: "warning",
-  concluida: "neutral",
-  cancelada: "danger",
+  draft: "neutral",
+  ready: "info",
+  pending_review: "warning",
+  scheduled: "info",
+  active: "success",
+  paused: "warning",
+  rejected: "danger",
+  completed: "neutral",
+  failed: "danger",
+  archived: "neutral",
+  cancelled: "danger",
 };
 
 // ---------------------------------------------------------------------------
@@ -228,14 +238,14 @@ export const CONTENT_CHANNEL_OPTIONS: Option<ContentChannel>[] = [
   { value: "reels", label: "Reels" },
   { value: "stories", label: "Stories" },
   { value: "blog", label: "Blog" },
-  { value: "portal_noticias", label: "Portal de Notícias" },
+  { value: "news_portal", label: "Portal de Notícias" },
   { value: "podcast", label: "Podcast" },
-  { value: "campanha", label: "Campanha" },
-  { value: "material_publicitario", label: "Material Publicitário" },
-  { value: "evento_interno", label: "Evento Interno" },
-  { value: "evento_externo", label: "Evento Externo" },
-  { value: "reuniao", label: "Reunião" },
-  { value: "bastidores", label: "Bastidores" },
+  { value: "campaign", label: "Campanha" },
+  { value: "advertising_material", label: "Material Publicitário" },
+  { value: "internal_event", label: "Evento Interno" },
+  { value: "external_event", label: "Evento Externo" },
+  { value: "meeting", label: "Reunião" },
+  { value: "behind_the_scenes", label: "Bastidores" },
 ];
 
 export const CONTENT_CHANNEL_LABEL = optionLabels(CONTENT_CHANNEL_OPTIONS);
@@ -289,19 +299,19 @@ export const APPROVAL_STATUS_TONE: Record<ApprovalStatus, Tone> = {
 // ---------------------------------------------------------------------------
 
 export const BRIEFING_TYPE_OPTIONS: Option<BriefingType>[] = [
-  { value: "campanha", label: "Campanha" },
-  { value: "conteudo", label: "Conteúdo" },
+  { value: "campaign", label: "Campanha" },
+  { value: "content", label: "Conteúdo" },
   { value: "design", label: "Design" },
   { value: "audiovisual", label: "Audiovisual" },
-  { value: "institucional", label: "Institucional" },
-  { value: "comercial", label: "Comercial" },
-  { value: "artistico", label: "Artístico" },
-  { value: "evento", label: "Evento" },
-  { value: "produto", label: "Produto" },
-  { value: "servico", label: "Serviço" },
+  { value: "institutional", label: "Institucional" },
+  { value: "commercial", label: "Comercial" },
+  { value: "artistic", label: "Artístico" },
+  { value: "event", label: "Evento" },
+  { value: "product", label: "Produto" },
+  { value: "service", label: "Serviço" },
   { value: "saas", label: "SaaS" },
-  { value: "portal_noticias", label: "Portal de Notícias" },
-  { value: "bastidores", label: "Bastidores" },
+  { value: "news_portal", label: "Portal de Notícias" },
+  { value: "behind_the_scenes", label: "Bastidores" },
 ];
 
 export const BRIEFING_TYPE_LABEL = optionLabels(BRIEFING_TYPE_OPTIONS);
@@ -334,86 +344,86 @@ export const TASK_TYPE_OPTIONS: Option<TaskType>[] = [
   { value: "design", label: "Design" },
   { value: "audiovisual", label: "Audiovisual" },
   { value: "copywriting", label: "Copywriting" },
-  { value: "publicacao", label: "Publicação" },
-  { value: "campanha", label: "Campanha" },
-  { value: "planejamento", label: "Planejamento" },
-  { value: "aprovacao", label: "Aprovação" },
-  { value: "revisao", label: "Revisão" },
-  { value: "analise", label: "Análise" },
-  { value: "reuniao", label: "Reunião" },
-  { value: "bastidor", label: "Bastidor" },
-  { value: "conteudo_institucional", label: "Conteúdo Institucional" },
-  { value: "conteudo_comercial", label: "Conteúdo Comercial" },
-  { value: "conteudo_artistico", label: "Conteúdo Artístico" },
+  { value: "publishing", label: "Publicação" },
+  { value: "campaign", label: "Campanha" },
+  { value: "planning", label: "Planejamento" },
+  { value: "approval", label: "Aprovação" },
+  { value: "review", label: "Revisão" },
+  { value: "analysis", label: "Análise" },
+  { value: "meeting", label: "Reunião" },
+  { value: "behind_the_scenes_shot", label: "Bastidor" },
+  { value: "institutional_content", label: "Conteúdo Institucional" },
+  { value: "commercial_content", label: "Conteúdo Comercial" },
+  { value: "artistic_content", label: "Conteúdo Artístico" },
   { value: "portal", label: "Portal" },
   { value: "crm", label: "CRM" },
-  { value: "trafego_pago", label: "Tráfego Pago" },
+  { value: "paid_traffic", label: "Tráfego Pago" },
   // Design
-  { value: "capa", label: "Capa" },
+  { value: "cover", label: "Capa" },
   { value: "banner", label: "Banner" },
   { value: "press_kit", label: "Press Kit" },
   { value: "flyer", label: "Flyer" },
-  { value: "arte_redes_sociais", label: "Arte para Redes Sociais" },
-  { value: "identidade_visual", label: "Identidade Visual" },
+  { value: "social_media_art", label: "Arte para Redes Sociais" },
+  { value: "visual_identity", label: "Identidade Visual" },
   { value: "thumbnail", label: "Thumbnail" },
-  { value: "material_promocional", label: "Material Promocional" },
+  { value: "promotional_material", label: "Material Promocional" },
   // Audiovisual
-  { value: "videoclipe", label: "Videoclipe" },
-  { value: "video_redes_sociais", label: "Vídeo para Redes Sociais" },
+  { value: "music_video", label: "Videoclipe" },
+  { value: "social_media_video", label: "Vídeo para Redes Sociais" },
   { value: "making_of", label: "Making Of" },
-  { value: "bastidores", label: "Bastidores" },
+  { value: "behind_the_scenes", label: "Bastidores" },
   { value: "lyric_video", label: "Lyric Video" },
   { value: "visualizer", label: "Visualizer" },
-  { value: "entrevista", label: "Entrevista" },
+  { value: "interview", label: "Entrevista" },
   { value: "podcast_video", label: "Podcast em Vídeo" },
-  { value: "captacao_evento", label: "Captação de Evento" },
+  { value: "event_coverage", label: "Captação de Evento" },
   // Sales / CRM
-  { value: "prospeccao", label: "Prospecção" },
-  { value: "negociacao", label: "Negociação" },
+  { value: "prospecting", label: "Prospecção" },
+  { value: "negotiation", label: "Negociação" },
   { value: "follow_up", label: "Follow-up" },
-  { value: "relacionamento", label: "Relacionamento" },
+  { value: "relationship", label: "Relacionamento" },
   // Digital distribution
-  { value: "planejamento_lancamento", label: "Planejamento de Lançamento" },
+  { value: "release_planning", label: "Planejamento de Lançamento" },
   // Company (corporate)
-  { value: "material_institucional", label: "Material Institucional" },
-  { value: "apresentacao_comercial", label: "Apresentação Comercial" },
+  { value: "institutional_material", label: "Material Institucional" },
+  { value: "commercial_presentation", label: "Apresentação Comercial" },
   { value: "folder", label: "Folder" },
-  { value: "video_institucional", label: "Vídeo Institucional" },
-  { value: "bastidores_empresa", label: "Bastidores da Empresa" },
-  { value: "cobertura_evento_corporativo", label: "Cobertura de Evento Corporativo" },
-  { value: "entrevista_corporativa", label: "Entrevista Corporativa" },
-  { value: "campanha_institucional", label: "Campanha Institucional" },
+  { value: "institutional_video", label: "Vídeo Institucional" },
+  { value: "company_behind_the_scenes", label: "Bastidores da Empresa" },
+  { value: "corporate_event_coverage", label: "Cobertura de Evento Corporativo" },
+  { value: "corporate_interview", label: "Entrevista Corporativa" },
+  { value: "institutional_campaign", label: "Campanha Institucional" },
   { value: "branding", label: "Branding" },
-  { value: "posicionamento_marca", label: "Posicionamento de Marca" },
-  { value: "comunicados", label: "Comunicados" },
-  { value: "relacionamento_parceiros", label: "Relacionamento com Parceiros" },
-  { value: "parcerias", label: "Parcerias" },
+  { value: "brand_positioning", label: "Posicionamento de Marca" },
+  { value: "announcements", label: "Comunicados" },
+  { value: "partner_relationship", label: "Relacionamento com Parceiros" },
+  { value: "partnerships", label: "Parcerias" },
   // Artist (career management)
-  { value: "planejamento_carreira", label: "Planejamento de Carreira" },
-  { value: "gestao_agenda", label: "Gestão de Agenda" },
-  { value: "planejamento_estrategico", label: "Planejamento Estratégico" },
-  { value: "assessoria_imprensa", label: "Assessoria de Imprensa" },
+  { value: "career_planning", label: "Planejamento de Carreira" },
+  { value: "schedule_management", label: "Gestão de Agenda" },
+  { value: "strategic_planning", label: "Planejamento Estratégico" },
+  { value: "press_relations", label: "Assessoria de Imprensa" },
   { value: "release", label: "Release" },
-  { value: "branding_pessoal", label: "Branding Pessoal" },
-  { value: "posicionamento", label: "Posicionamento" },
-  { value: "estrategias_crescimento", label: "Estratégias de Crescimento" },
-  { value: "sessao_fotos", label: "Sessão de Fotos" },
-  { value: "conteudo_redes_sociais", label: "Conteúdo para Redes Sociais" },
-  { value: "contratacoes", label: "Contratações" },
+  { value: "personal_branding", label: "Branding Pessoal" },
+  { value: "positioning", label: "Posicionamento" },
+  { value: "growth_strategies", label: "Estratégias de Crescimento" },
+  { value: "photo_session", label: "Sessão de Fotos" },
+  { value: "social_media_content", label: "Conteúdo para Redes Sociais" },
+  { value: "contracting", label: "Contratações" },
   { value: "shows", label: "Shows" },
   // Music project (release/work)
   { value: "motion_cover", label: "Motion Cover" },
-  { value: "arte_divulgacao", label: "Arte de Divulgação" },
+  { value: "promotional_art", label: "Arte de Divulgação" },
   { value: "teaser", label: "Teaser" },
-  { value: "conteudo_lancamento", label: "Conteúdo de Lançamento" },
-  { value: "distribuicao", label: "Distribuição" },
+  { value: "release_content", label: "Conteúdo de Lançamento" },
+  { value: "distribution", label: "Distribuição" },
   { value: "metadata", label: "Metadados" },
   { value: "pitching", label: "Pitching" },
   { value: "pre_save", label: "Pré-save" },
-  { value: "campanha_lancamento", label: "Campanha de Lançamento" },
-  { value: "divulgacao", label: "Divulgação" },
-  { value: "influenciadores", label: "Influenciadores" },
-  { value: "aprovacao_conteudo", label: "Aprovação de Conteúdo" },
+  { value: "release_campaign", label: "Campanha de Lançamento" },
+  { value: "promotion", label: "Divulgação" },
+  { value: "influencers", label: "Influenciadores" },
+  { value: "content_approval", label: "Aprovação de Conteúdo" },
 ];
 
 export const TASK_TYPE_LABEL = optionLabels(TASK_TYPE_OPTIONS);
@@ -437,14 +447,14 @@ export const SECTOR_OPTIONS: Option<string>[] = [
 const taskType = (value: TaskType): Option<TaskType> => ({ value, label: TASK_TYPE_LABEL[value] });
 
 export const SECTOR_TYPE_OPTIONS: Record<string, Option<TaskType>[]> = {
-  "Design": (["capa", "banner", "press_kit", "flyer", "arte_redes_sociais", "identidade_visual", "thumbnail", "material_promocional"] as TaskType[]).map(taskType),
-  "Audiovisual": (["videoclipe", "video_redes_sociais", "making_of", "bastidores", "lyric_video", "visualizer", "entrevista", "podcast_video", "captacao_evento"] as TaskType[]).map(taskType),
-  "Marketing": (["campanha", "trafego_pago", "planejamento", "analise", "conteudo_comercial", "conteudo_institucional", "conteudo_artistico"] as TaskType[]).map(taskType),
-  "Comunicação": (["copywriting", "publicacao", "revisao", "aprovacao", "conteudo_institucional", "conteudo_comercial", "reuniao"] as TaskType[]).map(taskType),
-  "Comercial": (["crm", "reuniao", "planejamento", "prospeccao", "negociacao", "follow_up"] as TaskType[]).map(taskType),
-  "Administração Musical": (["planejamento", "aprovacao", "reuniao", "analise", "bastidores"] as TaskType[]).map(taskType),
-  "Distribuição Digital": (["publicacao", "planejamento_lancamento", "aprovacao", "revisao", "analise"] as TaskType[]).map(taskType),
-  "CRM": (["crm", "campanha", "follow_up", "relacionamento", "analise"] as TaskType[]).map(taskType),
+  "Design": (["cover", "banner", "press_kit", "flyer", "social_media_art", "visual_identity", "thumbnail", "promotional_material"] as TaskType[]).map(taskType),
+  "Audiovisual": (["music_video", "social_media_video", "making_of", "behind_the_scenes", "lyric_video", "visualizer", "interview", "podcast_video", "event_coverage"] as TaskType[]).map(taskType),
+  "Marketing": (["campaign", "paid_traffic", "planning", "analysis", "commercial_content", "institutional_content", "artistic_content"] as TaskType[]).map(taskType),
+  "Comunicação": (["copywriting", "publishing", "review", "approval", "institutional_content", "commercial_content", "meeting"] as TaskType[]).map(taskType),
+  "Comercial": (["crm", "meeting", "planning", "prospecting", "negotiation", "follow_up"] as TaskType[]).map(taskType),
+  "Administração Musical": (["planning", "approval", "meeting", "analysis", "behind_the_scenes"] as TaskType[]).map(taskType),
+  "Distribuição Digital": (["publishing", "release_planning", "approval", "review", "analysis"] as TaskType[]).map(taskType),
+  "CRM": (["crm", "campaign", "follow_up", "relationship", "analysis"] as TaskType[]).map(taskType),
 };
 
 const sectorOpt = (name: string): Option<string> => ({ value: name, label: name });
@@ -456,33 +466,33 @@ const sectorOpt = (name: string): Option<string> => ({ value: name, label: name 
  * and the type field by context + department.
  */
 export const CONTEXT_SECTOR_OPTIONS: Record<MarketingTarget, Option<string>[]> = {
-  empresa: ["Design", "Audiovisual", "Marketing", "Comunicação", "Comercial"].map(sectorOpt),
-  artista: ["Administração Musical", "Comunicação", "Marketing", "Audiovisual", "Comercial"].map(sectorOpt),
-  projeto_musical: ["Design", "Audiovisual", "Distribuição Digital", "Marketing", "Comunicação"].map(sectorOpt),
+  company: ["Design", "Audiovisual", "Marketing", "Comunicação", "Comercial"].map(sectorOpt),
+  artist: ["Administração Musical", "Comunicação", "Marketing", "Audiovisual", "Comercial"].map(sectorOpt),
+  music_project: ["Design", "Audiovisual", "Distribuição Digital", "Marketing", "Comunicação"].map(sectorOpt),
 };
 
 /** Types allowed per Context × Sector. */
 export const CONTEXT_SECTOR_TYPE_OPTIONS: Record<MarketingTarget, Record<string, Option<TaskType>[]>> = {
-  empresa: {
-    "Design": (["material_institucional", "apresentacao_comercial", "folder", "banner", "identidade_visual"] as TaskType[]).map(taskType),
-    "Audiovisual": (["video_institucional", "bastidores_empresa", "cobertura_evento_corporativo", "entrevista_corporativa"] as TaskType[]).map(taskType),
-    "Marketing": (["campanha_institucional", "branding", "trafego_pago", "posicionamento_marca"] as TaskType[]).map(taskType),
-    "Comunicação": (["comunicados", "conteudo_institucional", "relacionamento_parceiros"] as TaskType[]).map(taskType),
-    "Comercial": (["reuniao", "negociacao", "prospeccao", "parcerias"] as TaskType[]).map(taskType),
+  company: {
+    "Design": (["institutional_material", "commercial_presentation", "folder", "banner", "visual_identity"] as TaskType[]).map(taskType),
+    "Audiovisual": (["institutional_video", "company_behind_the_scenes", "corporate_event_coverage", "corporate_interview"] as TaskType[]).map(taskType),
+    "Marketing": (["institutional_campaign", "branding", "paid_traffic", "brand_positioning"] as TaskType[]).map(taskType),
+    "Comunicação": (["announcements", "institutional_content", "partner_relationship"] as TaskType[]).map(taskType),
+    "Comercial": (["meeting", "negotiation", "prospecting", "partnerships"] as TaskType[]).map(taskType),
   },
-  artista: {
-    "Administração Musical": (["planejamento_carreira", "gestao_agenda", "planejamento_estrategico", "relacionamento_parceiros"] as TaskType[]).map(taskType),
-    "Comunicação": (["assessoria_imprensa", "release", "entrevista"] as TaskType[]).map(taskType),
-    "Marketing": (["branding_pessoal", "posicionamento", "estrategias_crescimento"] as TaskType[]).map(taskType),
-    "Audiovisual": (["sessao_fotos", "conteudo_redes_sociais", "bastidores"] as TaskType[]).map(taskType),
-    "Comercial": (["contratacoes", "shows", "negociacao", "prospeccao"] as TaskType[]).map(taskType),
+  artist: {
+    "Administração Musical": (["career_planning", "schedule_management", "strategic_planning", "partner_relationship"] as TaskType[]).map(taskType),
+    "Comunicação": (["press_relations", "release", "interview"] as TaskType[]).map(taskType),
+    "Marketing": (["personal_branding", "positioning", "growth_strategies"] as TaskType[]).map(taskType),
+    "Audiovisual": (["photo_session", "social_media_content", "behind_the_scenes"] as TaskType[]).map(taskType),
+    "Comercial": (["contracting", "shows", "negotiation", "prospecting"] as TaskType[]).map(taskType),
   },
-  projeto_musical: {
-    "Design": (["capa", "motion_cover", "press_kit", "thumbnail", "arte_divulgacao"] as TaskType[]).map(taskType),
-    "Audiovisual": (["videoclipe", "lyric_video", "visualizer", "teaser", "conteudo_lancamento"] as TaskType[]).map(taskType),
-    "Distribuição Digital": (["distribuicao", "metadata", "pitching", "pre_save"] as TaskType[]).map(taskType),
-    "Marketing": (["campanha_lancamento", "trafego_pago", "divulgacao", "influenciadores"] as TaskType[]).map(taskType),
-    "Comunicação": (["release", "aprovacao_conteudo", "publicacao"] as TaskType[]).map(taskType),
+  music_project: {
+    "Design": (["cover", "motion_cover", "press_kit", "thumbnail", "promotional_art"] as TaskType[]).map(taskType),
+    "Audiovisual": (["music_video", "lyric_video", "visualizer", "teaser", "release_content"] as TaskType[]).map(taskType),
+    "Distribuição Digital": (["distribution", "metadata", "pitching", "pre_save"] as TaskType[]).map(taskType),
+    "Marketing": (["release_campaign", "paid_traffic", "promotion", "influencers"] as TaskType[]).map(taskType),
+    "Comunicação": (["release", "content_approval", "publishing"] as TaskType[]).map(taskType),
   },
 };
 
@@ -522,25 +532,25 @@ export const TASK_BOARD_COLUMNS: TaskStatus[] = [
 // ---------------------------------------------------------------------------
 
 export const ASSET_CATEGORY_OPTIONS: Option<AssetCategory>[] = [
-  { value: "capa", label: "Capa" },
-  { value: "arte_promocional", label: "Arte Promocional" },
+  { value: "cover", label: "Capa" },
+  { value: "promotional_art", label: "Arte Promocional" },
   { value: "banner", label: "Banner" },
   { value: "logo", label: "Logo" },
-  { value: "identidade_visual", label: "Identidade Visual" },
-  { value: "fotografia", label: "Fotografia" },
+  { value: "visual_identity", label: "Identidade Visual" },
+  { value: "photography", label: "Fotografia" },
   { value: "reels", label: "Reels" },
   { value: "video", label: "Vídeo" },
   { value: "teaser", label: "Teaser" },
   { value: "shorts", label: "Shorts" },
   { value: "press_kit", label: "Press Kit" },
   { value: "template", label: "Template" },
-  { value: "documento_estrategico", label: "Documento Estratégico" },
-  { value: "material_institucional", label: "Material Institucional" },
-  { value: "material_comercial", label: "Material Comercial" },
-  { value: "material_bastidores", label: "Material de Bastidores" },
-  { value: "material_reuniao", label: "Material de Reunião" },
-  { value: "arquivo_portal", label: "Arquivo para Portal" },
-  { value: "asset_campanha", label: "Material de campanha" },
+  { value: "strategic_document", label: "Documento Estratégico" },
+  { value: "institutional_material", label: "Material Institucional" },
+  { value: "commercial_material", label: "Material Comercial" },
+  { value: "behind_the_scenes_material", label: "Material de Bastidores" },
+  { value: "meeting_material", label: "Material de Reunião" },
+  { value: "portal_file", label: "Arquivo para Portal" },
+  { value: "campaign_asset", label: "Material de campanha" },
 ];
 
 export const ASSET_CATEGORY_LABEL = optionLabels(ASSET_CATEGORY_OPTIONS);
@@ -594,11 +604,11 @@ export const DELIVERABLE_APPROVAL_TONE: Record<DeliverableApproval, Tone> = {
 // ---------------------------------------------------------------------------
 
 export const AUTOMATION_FLOW_LABEL: Record<AutomationFlowType, string> = {
-  lancamento_musical: "Fluxo de Lançamento Musical",
-  conteudo_corporativo: "Fluxo de Conteúdo Corporativo",
-  bastidores: "Fluxo de Bastidores",
-  evento: "Fluxo de Evento",
-  produto_servico_saas: "Fluxo de Produto, Serviço ou SaaS",
+  music_release: "Fluxo de Lançamento Musical",
+  corporate_content: "Fluxo de Conteúdo Corporativo",
+  behind_the_scenes: "Fluxo de Bastidores",
+  event: "Fluxo de Evento",
+  product_service_saas: "Fluxo de Produto, Serviço ou SaaS",
 };
 
 // ---------------------------------------------------------------------------

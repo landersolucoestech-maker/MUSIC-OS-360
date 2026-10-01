@@ -133,10 +133,18 @@ describe("marketing content vocabulary (S8)", () => {
   it("targetTypeToWire/FromWire cover every persisted target and reject anything else", () => {
     expect(MARKETING_TARGET_OPTIONS.map((o) => targetTypeToWire(o.value)).sort()).toEqual([...DB_TARGET_TYPES].sort());
     for (const wire of DB_TARGET_TYPES) expect(targetTypeToWire(targetTypeFromWire(wire))).toBe(wire);
-    for (const bad of ["empresa", "geral", "", undefined, null, "constructor"]) {
+    for (const bad of ["geral", "", undefined, null, "constructor"]) {
       expect(() => targetTypeFromWire(bad)).toThrow(/unknown content target type/);
     }
     expect(() => targetTypeToWire("constructor" as MarketingTarget)).toThrow(/unknown content target type/);
+  });
+
+  it("accepts the deprecated Portuguese target spelling on read only (dual-read, canonical out)", () => {
+    expect(targetTypeFromWire("projeto_musical")).toBe("music_project");
+    expect(targetTypeFromWire("artista")).toBe("artist");
+    expect(targetTypeFromWire("empresa")).toBe("company");
+    expect(() => targetTypeToWire("empresa" as MarketingTarget)).not.toThrow();
+    expect(targetTypeToWire("empresa" as MarketingTarget)).toBe("company");
   });
 
   it("sends exactly the DTO-accepted keys; approval and channels travel inside metadata", async () => {
@@ -160,7 +168,7 @@ describe("marketing content vocabulary (S8)", () => {
   });
 
   it("reading an unknown target type from the API fails loudly instead of guessing", async () => {
-    apiMock.get.mockResolvedValueOnce([{ ...dtoFromBody({ status: "scheduled" }), targetType: "empresa" }]);
+    apiMock.get.mockResolvedValueOnce([{ ...dtoFromBody({ status: "scheduled" }), targetType: "geral" }]);
     await expect(marketingService.contents.list()).rejects.toThrow(/unknown content target type received/);
   });
 });

@@ -8,6 +8,7 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.tokens';
 import { CampaignEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { canonicalMarketingCampaignPayload } from './marketing-vocabulary';
 
 export type BuilderStatus =
   | 'DRAFT' | 'READY' | 'PENDING_REVIEW' | 'SCHEDULED' | 'ACTIVE'
@@ -91,9 +92,11 @@ export class MarketingCampaignBuilderService {
   async create(
     tenantId: string,
     userId: string,
-    payload: CampaignBuilderPayload,
+    rawPayload: CampaignBuilderPayload,
     validation: CampaignValidation,
   ): Promise<StoredCampaign> {
+    // writers are canonical (MK2): promotedEntityType / type / platforms of an older web build are mapped
+    const payload = canonicalMarketingCampaignPayload(rawPayload);
     const row = this.repo.create({
       tenant_id: tenantId,
       name: payload.name?.trim() || 'Campanha sem título',
@@ -118,7 +121,7 @@ export class MarketingCampaignBuilderService {
     validation: CampaignValidation,
   ): Promise<StoredCampaign> {
     const current = await this.find(tenantId, id);
-    return this.persist(tenantId, userId, id, { ...current, ...patch }, current.status, validation, current.blueprint);
+    return this.persist(tenantId, userId, id, canonicalMarketingCampaignPayload({ ...current, ...patch }), current.status, validation, current.blueprint);
   }
 
   async setState(
@@ -184,7 +187,8 @@ export class MarketingCampaignBuilderService {
       blueprint?: CampaignBlueprint;
     };
     return {
-      ...(builder.payload ?? {}),
+      // legacy rows (before migration 20260930000026) read canonical: the response vocabulary is canonical only
+      ...canonicalMarketingCampaignPayload(builder.payload ?? {}),
       id: row.id,
       tenantId: row.tenant_id,
       name: builder.payload?.name ?? row.name,

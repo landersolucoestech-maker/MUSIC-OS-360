@@ -69,7 +69,7 @@ export type CampaignPlacement =
 
 export type CreativeType = "imagem" | "video" | "carrossel" | "audio" | "texto";
 
-export type CreativeStatus = "rascunho" | "pendente_revisao" | "aprovado" | "reprovado";
+export type CreativeStatus = "draft" | "pending_review" | "approved" | "rejected";
 
 export interface CampaignAudience {
   countries: string;
@@ -169,7 +169,7 @@ export interface BuilderStepProps {
 
 export const PLATFORM_TO_CHANNEL: Record<CampaignPlatform, ContentChannel> = {
   META_ADS: "facebook",
-  GOOGLE_ADS: "material_publicitario",
+  GOOGLE_ADS: "advertising_material",
   YOUTUBE_ADS: "youtube",
   TIKTOK_ADS: "tiktok",
   SPOTIFY_ADS: "podcast",

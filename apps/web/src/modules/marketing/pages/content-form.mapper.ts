@@ -47,7 +47,7 @@ function isCreativeConfig(value: unknown): value is CreativeConfig {
 
 export function initialContentForm(content?: MarketingContent | null): ContentFormValues {
   // Context restricted to company/artist — legacy contents of another context become "artista".
-  const targetType: MarketingTarget = content?.targetType === "empresa" ? "empresa" : "artista";
+  const targetType: MarketingTarget = content?.targetType === "company" ? "company" : "artist";
   // Selected platforms (multi-platform); the first one is the main one.
   const rawChannels = content?.channels?.length ? content.channels : [content?.channel ?? "instagram"];
   const channels = Array.from(new Set(rawChannels.map((c) => normalizePlatform(c))));
@@ -56,7 +56,7 @@ export function initialContentForm(content?: MarketingContent | null): ContentFo
   return {
     title: content?.title ?? "",
     targetType,
-    targetName: content?.targetName ?? (targetType === "empresa" ? "Empresa" : ""),
+    targetName: content?.targetName ?? (targetType === "company" ? "Empresa" : ""),
     channel,
     channels,
     type,
@@ -89,13 +89,13 @@ export function toMarketingContentInput(
   return {
     title: values.title.trim(),
     targetType: values.targetType,
-    targetName: values.targetType === "empresa" ? "Empresa" : values.targetName.trim(),
+    targetName: values.targetType === "company" ? "Empresa" : values.targetName.trim(),
     type: values.type,
     channel: values.channel,
     channels: values.channels,
     // Publishing rule: only company content can publish (via an integration).
     // Artist/music project content always stays "scheduled" (internal scheduling only).
-    status: values.targetType === "empresa" ? values.status : "scheduled",
+    status: values.targetType === "company" ? values.status : "scheduled",
     approval: current?.approval ?? "pending",
     publishDate: values.publishDate,
     publishTime: values.publishTime,

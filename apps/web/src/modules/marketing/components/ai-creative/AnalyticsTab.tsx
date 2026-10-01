@@ -23,15 +23,15 @@ export function AnalyticsTab({
   onGenerate: GenerateAiHandler;
   isGenerating: boolean;
 }) {
-  const result = useMemo<AiGeneratedResult | null>(() => getLatestResult(suggestions, ["analise_marca", "planejamento_campanha"]), [suggestions]);
+  const result = useMemo<AiGeneratedResult | null>(() => getLatestResult(suggestions, ["brand_analysis", "campaign_planning"]), [suggestions]);
   const topContents = useMemo(() => contents.filter((item) => item.title).slice(0, 5), [contents]);
   const topCampaigns = useMemo(() => campaigns.filter((item) => item.name).slice(0, 5), [campaigns]);
   const hasSignals = Boolean(analytics?.totals?.engagement || topContents.length || topCampaigns.length);
 
   const generate = () => {
     onGenerate({
-      kind: "analise_marca",
-      targetType: "empresa",
+      kind: "brand_analysis",
+      targetType: "company",
       targetName: companyName,
       prompt: "Analisar performance de marketing: melhores conteúdos, melhores campanhas, plataformas com melhor resultado e recomendações de otimização.",
     });

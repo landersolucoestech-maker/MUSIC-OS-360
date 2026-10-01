@@ -27,8 +27,8 @@ export function PlanningTab({
 
   const generate = () => {
     onGenerate({
-      kind: "planejamento_campanha",
-      targetType: artist ? "artista" : "empresa",
+      kind: "campaign_planning",
+      targetType: artist ? "artist" : "company",
       targetId: artist?.id,
       targetName: artist?.label || "Empresa",
       prompt: `Gerar plano executável de ${period} dias para ${artist?.label || "empresa"}${release ? ` / ${release.label}` : ""}. Objetivo: ${objective}. Plataforma: ${platform}. Itens sugeridos: ${plan.items.map((item) => item.title).join(", ")}.`,

@@ -5,21 +5,21 @@ export const ACCEPTED_AUDIO_MIME = ["audio/wav", "audio/x-wav"];
 export const ACCEPTED_AUDIO_EXTENSIONS = [".wav"];
 
 export const AI_KIND_LABEL: Record<AiSuggestion["kind"], string> = {
-  analise_fonograma: "Análise fonográfica",
-  analise_letra: "Análise de letra",
-  planejamento_campanha: "Planejamento de campanha",
-  sugestao_conteudo: "Sugestão de conteúdo",
-  legenda: "Legenda",
-  roteiro: "Roteiro",
-  analise_artista: "Análise de artista",
-  analise_marca: "Análise de marca",
-  analise_empresa: "Análise de empresa",
-  pitch_playlist: "Pitch para playlists",
-  pitch_imprensa: "Pitch para imprensa",
-  posicionamento: "Posicionamento",
-  calendario_editorial: "Calendário editorial",
-  conteudo_bastidores: "Conteúdo de bastidores",
-  conteudo_corporativo: "Conteúdo corporativo",
+  phonogram_analysis: "Análise fonográfica",
+  lyrics_analysis: "Análise de letra",
+  campaign_planning: "Planejamento de campanha",
+  content_suggestion: "Sugestão de conteúdo",
+  caption: "Legenda",
+  script: "Roteiro",
+  artist_analysis: "Análise de artista",
+  brand_analysis: "Análise de marca",
+  company_analysis: "Análise de empresa",
+  playlist_pitch: "Pitch para playlists",
+  press_pitch: "Pitch para imprensa",
+  positioning: "Posicionamento",
+  editorial_calendar: "Calendário editorial",
+  behind_the_scenes_content: "Conteúdo de bastidores",
+  corporate_content: "Conteúdo corporativo",
 };
 
 export function formatBytes(bytes: number) {

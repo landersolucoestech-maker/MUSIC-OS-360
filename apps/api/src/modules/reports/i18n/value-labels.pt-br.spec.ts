@@ -1,4 +1,4 @@
-import { exportValueLabel, valueFromExportLabel } from './value-labels.pt-br';
+import { MARKETING_TASK_KIND_LABELS_PT_BR, exportValueLabel, valueFromExportLabel } from './value-labels.pt-br';
 import { sanitizeExcelCellValue } from '../export/export-format.service';
 import { canonicalImportJsonColumn, canonicalImportValue } from '../import/import-value-canonicalizers';
 
@@ -66,5 +66,18 @@ describe('report enum values — PT-BR in the spreadsheet, canonical in the data
       expect(canonicalImportJsonColumn('artists', 'metadata', { gender: label })).toEqual({ gender });
     }
   });
-});
 
+  it('marketing task kind and target export PT-BR labels and import maps them back (MK2)', () => {
+    expect(sanitizeExcelCellValue('cover', { entity: 'marketing_tasks', column: 'kind' })).toBe('Capa');
+    expect(sanitizeExcelCellValue('behind_the_scenes_shot', { entity: 'marketing_tasks', column: 'kind' })).toBe('Bastidor');
+    expect(sanitizeExcelCellValue('music_project', { entity: 'marketing_tasks', column: 'targetType' })).toBe('Projeto Musical');
+    expect(sanitizeExcelCellValue('cover_art', { entity: 'marketing_tasks', column: 'kind' })).toBe('cover_art'); // kind outside the catalog is never invented
+    expect(valueFromExportLabel('marketing_tasks', 'kind', 'Material Promocional')).toBe('promotional_material');
+    expect(valueFromExportLabel('marketing_tasks', 'targetType', 'Empresa')).toBe('company');
+  });
+
+  it('marketing task kind labels are unique, so the import round-trip is unambiguous', () => {
+    const labels = Object.values(MARKETING_TASK_KIND_LABELS_PT_BR).map((label) => label.toLowerCase());
+    expect(new Set(labels).size).toBe(labels.length);
+  });
+});

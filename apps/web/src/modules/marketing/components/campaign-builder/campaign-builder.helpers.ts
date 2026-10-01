@@ -156,7 +156,7 @@ export function createDefaultCampaignState(campaign?: MarketingCampaign | null):
     objective,
     expectedOutcome: OUTCOMES_BY_OBJECTIVE[objective][0],
     // Context restricted to Empresa/Artista (legacy campaigns of another context become "empresa").
-    context: campaign?.targetType === "artista" ? "artista" : "empresa",
+    context: campaign?.targetType === "artist" ? "artist" : "company",
     // Selected publishing platforms — preserves all of them when reopening/editing.
     publishChannels: campaign?.platforms ?? [],
     name: campaign?.name ?? "",
@@ -280,7 +280,7 @@ export function toMarketingCampaignInput(state: CampaignBuilderState): CreateInp
     targetType: state.context,
     targetId: state.promotedEntityId || undefined,
     targetName: promotedEntityName,
-    type: state.promotedEntityType === "RELEASE" || state.promotedEntityType === "TRACK" ? "lancamento_musical" : "trafego_pago",
+    type: state.promotedEntityType === "RELEASE" || state.promotedEntityType === "TRACK" ? "music_release" : "paid_traffic",
     objective: state.objective,
     audience: `${state.audience.countries}; ${state.audience.locations}; ${state.audience.ageMin}-${state.audience.ageMax}; ${state.audience.interests}`,
     segmentation: JSON.stringify(state.audience),
@@ -289,7 +289,7 @@ export function toMarketingCampaignInput(state: CampaignBuilderState): CreateInp
     endDate: state.budget.endDate,
     // Publishing (social) platforms selected by the user — multi-platform.
     platforms: state.publishChannels,
-    status: "rascunho",
+    status: "draft",
     owner: state.owner || state.artist || "Marketing",
     projectId: state.project || undefined,
     creativeAssetIds: state.creatives.map((creative) => creative.id),

@@ -21,9 +21,9 @@ export function loadArtistContext(
   const phonograms = catalog.phonograms;
   const releases = sources.releases.filter((item) => item.artist_id === artist.id || item.artist?.id === artist.id);
   const projects = sources.projects.filter((item) => item.artistId === artist.id);
-  const campaigns = sources.campaigns.filter((item) => item.targetType === "artista" && item.targetId === artist.id);
-  const contents = sources.contents.filter((item) => item.targetType === "artista" && item.targetId === artist.id);
-  const tasks = sources.tasks.filter((item) => item.targetType === "artista" && item.targetId === artist.id);
+  const campaigns = sources.campaigns.filter((item) => item.targetType === "artist" && item.targetId === artist.id);
+  const contents = sources.contents.filter((item) => item.targetType === "artist" && item.targetId === artist.id);
+  const tasks = sources.tasks.filter((item) => item.targetType === "artist" && item.targetId === artist.id);
   const pitchings = sources.suggestions.filter((item) => item.targetId === artist.id || item.targetName === artist.label);
   const genreCandidates = [
     artistRecord?.musicGenre,

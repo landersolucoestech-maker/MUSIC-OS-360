@@ -124,11 +124,11 @@ export default function Tasks() {
 
   const targetOptions = useMemo<TaskTargetOptions>(
     () => ({
-      artista: artistNameOptions,
-      projeto_musical: projects
+      artist: artistNameOptions,
+      music_project: projects
         .map((p) => ({ value: p.name, label: p.name }))
         .filter((o) => o.value),
-      empresa: companyNameOptions,
+      company: companyNameOptions,
     }),
     [artistNameOptions, projects, companyNameOptions],
   );
@@ -221,7 +221,7 @@ export default function Tasks() {
         <div>
           <p className="text-sm">{t.targetName || "Empresa"}</p>
           <p className="text-[11px] text-muted-foreground">
-            {MARKETING_TARGET_LABEL[t.targetType ?? "empresa"]}
+            {MARKETING_TARGET_LABEL[t.targetType ?? "company"]}
           </p>
         </div>
       ),
@@ -265,7 +265,7 @@ export default function Tasks() {
     const input = toTaskInput(values);
     // Automatic WAV link — exclusive to the music project context: inherits the
     // selected project's reference track, without manual upload.
-    if (values.targetType === "projeto_musical") {
+    if (values.targetType === "music_project") {
       const project = projects.find((p) => p.name === values.targetName);
       const referenceAudio = findProjectReferenceAudio(project);
       if (referenceAudio) input.referenceAudio = referenceAudio;
@@ -481,7 +481,7 @@ function TaskViewModal({
             <MarketingPriorityBadge priority={task.priority} />
             <MarketingBadge tone="info">{TASK_TYPE_LABEL[task.type]}</MarketingBadge>
             <MarketingBadge tone="neutral">
-              {MARKETING_TARGET_LABEL[task.targetType ?? "empresa"]}
+              {MARKETING_TARGET_LABEL[task.targetType ?? "company"]}
             </MarketingBadge>
           </div>
 
@@ -512,7 +512,7 @@ function TaskViewModal({
             <ReadOnlyBlock
               label="Contexto"
               value={task.targetName || "Empresa"}
-              helper={MARKETING_TARGET_LABEL[task.targetType ?? "empresa"]}
+              helper={MARKETING_TARGET_LABEL[task.targetType ?? "company"]}
             />
             <ReadOnlyBlock
               label="Classificação"

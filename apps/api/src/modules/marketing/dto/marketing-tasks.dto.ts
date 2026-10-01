@@ -12,6 +12,8 @@ import {
 } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import {
+  canonicalMarketingTaskKind,
+  canonicalMarketingTaskMetadata,
   canonicalMarketingTaskPriority,
   canonicalMarketingTaskStatus,
   MARKETING_TASK_PRIORITIES,
@@ -60,8 +62,9 @@ export class CreateMarketingTaskDto {
   @IsIn(MARKETING_TASK_PRIORITIES)
   priority?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: 'Task kind. Free-form on purpose (the API itself writes cover_art, strategy_action, ...); deprecated Portuguese web kinds are mapped to the canonical English one.' })
   @IsOptional()
+  @Transform(canonicalMarketingTaskKind)
   @IsString()
   kind?: string | null;
 
@@ -87,6 +90,7 @@ export class CreateMarketingTaskDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @Transform(canonicalMarketingTaskMetadata)
   @IsObject()
   @HasSafeUrlValues()
   metadata?: Record<string, unknown>;

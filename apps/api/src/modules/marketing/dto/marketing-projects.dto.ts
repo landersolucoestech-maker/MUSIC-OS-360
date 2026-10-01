@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsDateString,
   IsIn,
@@ -8,6 +9,7 @@ import {
   IsUUID,
   MaxLength,
 } from 'class-validator';
+import { canonicalMarketingProjectMetadata } from '../marketing-vocabulary';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import { HasSafeUrlValues } from '../../../common/validators/safe-url.validation';
 
@@ -134,6 +136,7 @@ export class CreateMarketingProjectDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @Transform(canonicalMarketingProjectMetadata)
   @IsObject()
   @HasSafeUrlValues()
   metadata?: Record<string, unknown>;

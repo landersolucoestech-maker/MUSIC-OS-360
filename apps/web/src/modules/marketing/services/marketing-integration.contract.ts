@@ -103,5 +103,5 @@ export const CHANNEL_TO_PROVIDER: Partial<Record<ContentChannel, IntegrationProv
   reels: "instagram",
   stories: "instagram",
   shorts: "youtube",
-  portal_noticias: "news_portal",
+  news_portal: "news_portal",
 };

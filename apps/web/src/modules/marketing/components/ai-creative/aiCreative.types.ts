@@ -45,8 +45,8 @@ export type ResultActionProps = {
 export const DEFAULT_CHANNELS: ContentChannel[] = ["instagram", "tiktok", "youtube"];
 
 export const TARGET_LABEL: Record<MarketingTarget, string> = {
-  projeto_musical: "Projeto Musical",
-  artista: "Artista",
-  empresa: "Empresa",
+  music_project: "Projeto Musical",
+  artist: "Artista",
+  company: "Empresa",
 };
 

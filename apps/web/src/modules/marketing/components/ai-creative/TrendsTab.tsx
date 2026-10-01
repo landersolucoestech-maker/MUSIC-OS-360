@@ -17,12 +17,12 @@ export function TrendsTab({
   onGenerate: GenerateAiHandler;
   isGenerating: boolean;
 }) {
-  const result = useMemo<AiGeneratedResult | null>(() => getLatestResult(suggestions, ["posicionamento", "analise_marca"]), [suggestions]);
+  const result = useMemo<AiGeneratedResult | null>(() => getLatestResult(suggestions, ["positioning", "brand_analysis"]), [suggestions]);
 
   const generate = () => {
     onGenerate({
-      kind: "posicionamento",
-      targetType: "empresa",
+      kind: "positioning",
+      targetType: "company",
       targetName: companyName,
       prompt: "Gerar inteligência de mercado para marketing musical: gêneros em alta, conteúdos em alta, artistas em crescimento, oportunidades e recomendações da IA.",
     });

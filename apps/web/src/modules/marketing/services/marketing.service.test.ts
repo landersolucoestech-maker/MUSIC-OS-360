@@ -52,7 +52,7 @@ describe("marketingService production API boundary", () => {
 
     const created = await marketingService.campaigns.create({
       name: "Campanha",
-      type: "institucional",
+      type: "institutional",
       objective: "Alcance",
       audience: "",
       segmentation: "",
@@ -60,7 +60,7 @@ describe("marketingService production API boundary", () => {
       startDate: "2026-06-20",
       endDate: "2026-06-30",
       platforms: [],
-      status: "rascunho",
+      status: "draft",
       owner: "user-1",
       creativeAssetIds: [],
       contentIds: [],

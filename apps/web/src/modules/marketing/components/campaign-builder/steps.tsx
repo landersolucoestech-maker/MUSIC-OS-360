@@ -87,7 +87,7 @@ const GENDER_OPTIONS = [
   { value: "feminino", label: "Feminino" },
   { value: "masculino", label: "Masculino" },
   { value: "nao_binario", label: "Não binário" },
-  { value: "nao_informado", label: "ão informado" },
+  { value: "nao_informado", label: "Não informado" },
 ] as const;
 const OBJECTIVE_CARDS: Array<{ value: CampaignObjective; icon: typeof Megaphone }> = [
   { value: "REACH", icon: Megaphone },
@@ -186,8 +186,8 @@ export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
         <Select value={state.context} onValueChange={(context) => setState((c) => ({ ...c, context: context as MarketingTarget }))}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="empresa">Empresa</SelectItem>
-            <SelectItem value="artista">Artista</SelectItem>
+            <SelectItem value="company">Empresa</SelectItem>
+            <SelectItem value="artist">Artista</SelectItem>
           </SelectContent>
         </Select>
       </Field>
@@ -558,7 +558,7 @@ export function CampaignReviewStep({ state }: BuilderStepProps) {
       <Result title="Erros bloqueantes" items={issues.filter((i) => i.severity === "error").map((i) => i.message)} />
       <Result title="Avisos" items={issues.filter((i) => i.severity === "warning").map((i) => i.message)} />
       <Result title="Links/UTMs" items={state.creatives.map(buildUtmUrl).filter(Boolean)} />
-      <Result title="Criativos pendentes" items={state.creatives.filter((c) => c.status !== "aprovado").map((c) => c.name)} />
+      <Result title="Criativos pendentes" items={state.creatives.filter((c) => c.status !== "approved").map((c) => c.name)} />
     </div>
   );
 }
@@ -573,7 +573,7 @@ const CHANNEL_TO_AD_PLATFORM: Partial<Record<ContentChannel, CampaignPlatform>> 
   shorts: "YOUTUBE_ADS",
   tiktok: "TIKTOK_ADS",
   podcast: "SPOTIFY_ADS",
-  material_publicitario: "GOOGLE_ADS",
+  advertising_material: "GOOGLE_ADS",
 };
 
 function creativeTypeFromContent(content: MarketingContent): CreativeType {
@@ -610,14 +610,14 @@ function createCreativeFromContent(content: MarketingContent, destinationUrl: st
     utmMedium: "paid",
     utmCampaign: "campanha",
     utmContent: placement.toLowerCase(),
-    status: "rascunho",
+    status: "draft",
   };
 }
 
 function createCreative(placement: CampaignPlacement, destinationUrl: string): CampaignCreative {
   const platform = placement.startsWith("TIKTOK") ? "TIKTOK_ADS" : placement.startsWith("YOUTUBE") ? "YOUTUBE_ADS" : placement.startsWith("GOOGLE") ? "GOOGLE_ADS" : placement.startsWith("SPOTIFY") ? "SPOTIFY_ADS" : "META_ADS";
   const lower = placement.toLowerCase();
-  return { id: crypto.randomUUID(), name: PLACEMENT_LABEL[placement], platform, placement, type: lower.includes("audio") ? "audio" : lower.includes("search") ? "texto" : "video", fileName: "", fileSizeMb: 0, ratio: expectedRatio(placement), primaryCopy: "", headline: "", description: "", cta: "Saiba mais", destinationUrl, utmSource: platform.toLowerCase(), utmMedium: "paid", utmCampaign: "campanha", utmContent: placement.toLowerCase(), status: "rascunho" };
+  return { id: crypto.randomUUID(), name: PLACEMENT_LABEL[placement], platform, placement, type: lower.includes("audio") ? "audio" : lower.includes("search") ? "texto" : "video", fileName: "", fileSizeMb: 0, ratio: expectedRatio(placement), primaryCopy: "", headline: "", description: "", cta: "Saiba mais", destinationUrl, utmSource: platform.toLowerCase(), utmMedium: "paid", utmCampaign: "campanha", utmContent: placement.toLowerCase(), status: "draft" };
 }
 
 function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {

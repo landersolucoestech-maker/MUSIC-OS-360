@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { isPendingValue } from "../../services/musicIntelligenceEngine/pending";
 import { Disc3, FileAudio, ImageIcon, Send } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Textarea } from "@/shared/ui/textarea";
@@ -46,7 +47,7 @@ export function PitchingTab({
     () => artist && release ? loadReleaseContext(artist, release, sources) : null,
     [artist, release, sources],
   );
-  const result = useMemo<AiGeneratedResult | null>(() => getLatestResult(sources.suggestions, ["pitch_playlist"]), [sources.suggestions]);
+  const result = useMemo<AiGeneratedResult | null>(() => getLatestResult(sources.suggestions, ["playlist_pitch"]), [sources.suggestions]);
   const canGenerate = Boolean(context && diagnosis) && !isGenerating;
 
   useEffect(() => {
@@ -72,8 +73,8 @@ export function PitchingTab({
   const generate = () => {
     if (!context || !diagnosis) return;
     onGenerate({
-      kind: "pitch_playlist",
-      targetType: "projeto_musical",
+      kind: "playlist_pitch",
+      targetType: "music_project",
       targetId: context.release.id,
       targetName: context.release.label,
       prompt: [buildPitchingPrompt(context, diagnosis), differentials ? `Diferenciais revisados: ${differentials}` : ""].filter(Boolean).join("\n\n"),
@@ -198,9 +199,9 @@ function DiagnosisValue({ label, value }: { label: string; value: string }) {
   return (
     <Field label={label}>
       <div className="rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
-        {value || "Pendente"}
+        {!value || isPendingValue(value) ? "Pendente" : value}
       </div>
-      {!value || value === "pendente" ? <PendingText>Pendente para revisão manual ou inferência da IA.</PendingText> : null}
+      {!value || isPendingValue(value) ? <PendingText>Pendente para revisão manual ou inferência da IA.</PendingText> : null}
     </Field>
   );
 }

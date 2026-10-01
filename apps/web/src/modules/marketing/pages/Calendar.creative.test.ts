@@ -7,7 +7,7 @@ function baseContent(overrides: Partial<MarketingContent> = {}): MarketingConten
   return {
     id: "c1",
     title: "Existing content",
-    targetType: "empresa",
+    targetType: "company",
     channel: "instagram",
     status: "scheduled",
     publishDate: "2026-01-01",

@@ -110,8 +110,8 @@ import {
 import { toUserMessage } from "@/shared/lib/errors";
 /** Content context — exclusively company and artist. */
 const CONTENT_CONTEXT_OPTIONS: { value: MarketingTarget; label: string }[] = [
-  { value: "empresa", label: "Empresa" },
-  { value: "artista", label: "Artista" },
+  { value: "company", label: "Empresa" },
+  { value: "artist", label: "Artista" },
 ];
 
 /** Type filter shown in the toolbar (covers every supported format). */
@@ -354,7 +354,7 @@ function ContentScheduleModal({
   const { getConnectionsByCategory } = useMarketingOAuth();
 
   // ITEM 6 rule: only company content can publish via an integration.
-  const isCompany = values.targetType === "empresa";
+  const isCompany = values.targetType === "company";
   // Connected corporate accounts (publishing via authorized integrations).
   const integratedAccounts = getConnectionsByCategory("corporate_metrics").filter((c) => c.connected);
   const contextLabel = "Artista";
@@ -380,11 +380,11 @@ function ContentScheduleModal({
     setValues((prev) => ({
       ...prev,
       targetType,
-      targetName: targetType === "empresa" ? "Empresa" : "",
+      targetName: targetType === "company" ? "Empresa" : "",
       releaseId: "none",
       // Non-company content is internal scheduling only: clears publishing/integration.
-      status: targetType === "empresa" ? prev.status : "scheduled",
-      integratedAccountId: targetType === "empresa" ? prev.integratedAccountId : "none",
+      status: targetType === "company" ? prev.status : "scheduled",
+      integratedAccountId: targetType === "company" ? prev.integratedAccountId : "none",
     }));
     setErrors((prev) => ({ ...prev, targetType: undefined, targetName: undefined, integratedAccountId: undefined }));
   };
