@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-01T18:13:40.191Z",
+  "updatedAt": "2026-10-01T18:14:06.418Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -24,7 +24,18 @@
             "evid-8e3ed861",
             "evid-7fc518bd"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         },
         {
           "id": "ac-d232f321",
@@ -33,7 +44,18 @@
             "evid-039859b9",
             "evid-5935bbf2"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         }
       ],
       "createdAt": "2026-10-01T18:08:23.056Z"
@@ -50,7 +72,18 @@
             "evid-9c2c46dc",
             "evid-89fa904d"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         },
         {
           "id": "ac-9457b4c3",
@@ -59,7 +92,18 @@
             "evid-cd6cfddc",
             "evid-977ef5ca"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         }
       ],
       "createdAt": "2026-10-01T18:08:23.116Z"
@@ -76,7 +120,18 @@
             "evid-7f2d8429",
             "evid-d944ad60"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         },
         {
           "id": "ac-ad6235b3",
@@ -85,7 +140,18 @@
             "evid-f56079d4",
             "evid-9b30d3ac"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         }
       ],
       "createdAt": "2026-10-01T18:08:23.170Z"
@@ -102,7 +168,18 @@
             "evid-1fec5faa",
             "evid-9b8c1eb0"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         },
         {
           "id": "ac-5905b8d0",
@@ -111,7 +188,18 @@
             "evid-587c2607",
             "evid-dc7489a3"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         },
         {
           "id": "ac-523dfee6",
@@ -120,7 +208,18 @@
             "evid-1e20ade5",
             "evid-72f5b1dc"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         },
         {
           "id": "ac-585c1f53",
@@ -129,7 +228,18 @@
             "evid-5711c45e",
             "evid-2024606a"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         },
         {
           "id": "ac-72f6da63",
@@ -138,7 +248,18 @@
             "evid-23213d30",
             "evid-4a7836c6"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         },
         {
           "id": "ac-2249de9e",
@@ -146,7 +267,18 @@
           "evidenceIds": [
             "evid-9b0b8f2a"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         }
       ],
       "createdAt": "2026-10-01T18:08:23.230Z"
@@ -162,7 +294,18 @@
           "evidenceIds": [
             "evid-ed97449e"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
         }
       ],
       "createdAt": "2026-10-01T18:09:48.036Z"
