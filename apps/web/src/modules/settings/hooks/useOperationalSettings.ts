@@ -9,8 +9,8 @@ export type OperationalListKind =
   | "lead_status"
   | "lead_segment"
   | "contact_category"
-  | "contact_pf_classification"
-  | "contact_pj_classification"
+  | "contact_individual_classification"
+  | "contact_company_classification"
   | "event_type"
   | "marketing_context"
   | "marketing_sector"
@@ -38,36 +38,36 @@ export type OperationalOption = {
 const nowIso = () => new Date().toISOString();
 
 export const DEFAULT_LEAD_TYPES: OperationalListItem[] = [
-  { id: "lead-artista-banda", kind: "lead_type", name: "Artista / Banda", slug: "artist_or_band", description: "Artista solo, dupla, banda ou projeto musical.", active: true, order: 10, group: "Musical", metadata: { allowed_service_slugs: ["artist_management", "music_production", "audiovisual_production", "music_marketing", "social_media", "graphic_design", "digital_distribution"] } },
-  { id: "lead-contratante-show", kind: "lead_type", name: "Contratante de show", slug: "show_booker", description: "Pessoa ou empresa buscando contratação artística.", active: true, order: 20, group: "Eventos", metadata: { allowed_service_slugs: ["show_booking"] } },
-  { id: "lead-marca-empresa", kind: "lead_type", name: "Marca / Empresa", slug: "brand_or_company", description: "Empresa interessada em publicidade, licenciamento ou projeto comercial.", active: true, order: 30, group: "Corporativo" },
-  { id: "lead-produtora-eventos", kind: "lead_type", name: "Produtora de eventos", slug: "event_producer", description: "Produtora, promoter, festival ou organização de eventos.", active: true, order: 40, group: "Eventos" },
-  { id: "lead-gravadora-selo", kind: "lead_type", name: "Gravadora / Selo", slug: "record_label", description: "Gravadora, selo, editora ou parceiro musical.", active: true, order: 50, group: "Musical" },
-  { id: "lead-agencia", kind: "lead_type", name: "Agência", slug: "agency", description: "Agência de publicidade, marketing, casting ou PR.", active: true, order: 60, group: "Comercial" },
-  { id: "lead-influenciador", kind: "lead_type", name: "Influenciador", slug: "influencer", description: "Criador de conteúdo, influencer ou personalidade digital.", active: true, order: 70, group: "Digital" },
+  { id: "lead-type-artist-or-band", kind: "lead_type", name: "Artista / Banda", slug: "artist_or_band", description: "Artista solo, dupla, banda ou projeto musical.", active: true, order: 10, group: "Musical", metadata: { allowed_service_slugs: ["artist_management", "music_production", "audiovisual_production", "music_marketing", "social_media", "graphic_design", "digital_distribution"] } },
+  { id: "lead-type-show-booker", kind: "lead_type", name: "Contratante de show", slug: "show_booker", description: "Pessoa ou empresa buscando contratação artística.", active: true, order: 20, group: "Eventos", metadata: { allowed_service_slugs: ["show_booking"] } },
+  { id: "lead-type-brand-or-company", kind: "lead_type", name: "Marca / Empresa", slug: "brand_or_company", description: "Empresa interessada em publicidade, licenciamento ou projeto comercial.", active: true, order: 30, group: "Corporativo" },
+  { id: "lead-type-event-producer", kind: "lead_type", name: "Produtora de eventos", slug: "event_producer", description: "Produtora, promoter, festival ou organização de eventos.", active: true, order: 40, group: "Eventos" },
+  { id: "lead-type-record-label", kind: "lead_type", name: "Gravadora / Selo", slug: "record_label", description: "Gravadora, selo, editora ou parceiro musical.", active: true, order: 50, group: "Musical" },
+  { id: "lead-type-agency", kind: "lead_type", name: "Agência", slug: "agency", description: "Agência de publicidade, marketing, casting ou PR.", active: true, order: 60, group: "Comercial" },
+  { id: "lead-type-influencer", kind: "lead_type", name: "Influenciador", slug: "influencer", description: "Criador de conteúdo, influencer ou personalidade digital.", active: true, order: 70, group: "Digital" },
 ];
 
 export const DEFAULT_SERVICE_INTERESTS: OperationalListItem[] = [
   { id: "service-show-booking", kind: "service_interest", name: "Contratação artística", slug: "show_booking", description: "Contratação artística, apresentação, pocket show ou DJ set.", active: true, order: 10, group: "Eventos", metadata: { operational_type: "EVENT_SERVICE" } },
-  { id: "service-gestao-artistica", kind: "service_interest", name: "Gestão Artística", slug: "artist_management", description: "Gestão de carreira, posicionamento, agenda e operação artística.", active: true, order: 20, group: "Gestão", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-producao-musical", kind: "service_interest", name: "Produção Musical", slug: "music_production", description: "Produção completa, beat, arranjo ou gravação musical.", active: true, order: 25, group: "Produção", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-mixagem", kind: "service_interest", name: "Mixagem", slug: "mixing", description: "Mixagem de faixas, stems ou projeto musical.", active: true, order: 30, group: "Produção", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-masterizacao", kind: "service_interest", name: "Masterização", slug: "mastering", description: "Masterização para streaming, vídeo, CD, vinil ou plataformas digitais.", active: true, order: 40, group: "Produção", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-distribuicao-digital", kind: "service_interest", name: "Distribuição Digital", slug: "digital_distribution", description: "Distribuição em DSPs, metadados, release e monetização.", active: true, order: 50, group: "Distribuição", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-marketing-musical", kind: "service_interest", name: "Marketing Musical", slug: "music_marketing", description: "Campanhas, social media, tráfego pago e estratégia de lançamento.", active: true, order: 60, group: "Marketing", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-artist-management", kind: "service_interest", name: "Gestão Artística", slug: "artist_management", description: "Gestão de carreira, posicionamento, agenda e operação artística.", active: true, order: 20, group: "Gestão", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-music-production", kind: "service_interest", name: "Produção Musical", slug: "music_production", description: "Produção completa, beat, arranjo ou gravação musical.", active: true, order: 25, group: "Produção", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-mixing", kind: "service_interest", name: "Mixagem", slug: "mixing", description: "Mixagem de faixas, stems ou projeto musical.", active: true, order: 30, group: "Produção", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-mastering", kind: "service_interest", name: "Masterização", slug: "mastering", description: "Masterização para streaming, vídeo, CD, vinil ou plataformas digitais.", active: true, order: 40, group: "Produção", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-digital-distribution", kind: "service_interest", name: "Distribuição Digital", slug: "digital_distribution", description: "Distribuição em DSPs, metadados, release e monetização.", active: true, order: 50, group: "Distribuição", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-music-marketing", kind: "service_interest", name: "Marketing Musical", slug: "music_marketing", description: "Campanhas, social media, tráfego pago e estratégia de lançamento.", active: true, order: 60, group: "Marketing", metadata: { operational_type: "PRODUCTION_SERVICE" } },
   { id: "service-social-media", kind: "service_interest", name: "Social media", slug: "social_media", description: "Gestão de conteúdo, calendário editorial, publicações e redes sociais.", active: true, order: 70, group: "Marketing", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-producao-audiovisual", kind: "service_interest", name: "Audiovisual", slug: "audiovisual_production", description: "Videoclipe, visualizer, aftermovie, conteúdo ou audiovisual.", active: true, order: 80, group: "Audiovisual", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-design-grafico", kind: "service_interest", name: "Design Gráfico", slug: "graphic_design", description: "Capa, identidade visual, social media, motion ou material gráfico.", active: true, order: 90, group: "Design", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-licenciamento", kind: "service_interest", name: "Licenciamento", slug: "licensing", description: "Sync, publicidade, uso de obra, marca ou projeto audiovisual.", active: true, order: 90, group: "Direitos", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-consultoria", kind: "service_interest", name: "Consultoria", slug: "consulting", description: "Mentoria, consultoria musical, carreira, marketing ou tecnologia.", active: true, order: 100, group: "Consultoria", metadata: { operational_type: "PRODUCTION_SERVICE" } },
-  { id: "service-outro", kind: "service_interest", name: "Outro", slug: "other", description: "Serviço personalizado ou ainda não classificado.", active: true, order: 999, group: "Geral" },
+  { id: "service-audiovisual-production", kind: "service_interest", name: "Audiovisual", slug: "audiovisual_production", description: "Videoclipe, visualizer, aftermovie, conteúdo ou audiovisual.", active: true, order: 80, group: "Audiovisual", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-graphic-design", kind: "service_interest", name: "Design Gráfico", slug: "graphic_design", description: "Capa, identidade visual, social media, motion ou material gráfico.", active: true, order: 90, group: "Design", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-licensing", kind: "service_interest", name: "Licenciamento", slug: "licensing", description: "Sync, publicidade, uso de obra, marca ou projeto audiovisual.", active: true, order: 90, group: "Direitos", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-consulting", kind: "service_interest", name: "Consultoria", slug: "consulting", description: "Mentoria, consultoria musical, carreira, marketing ou tecnologia.", active: true, order: 100, group: "Consultoria", metadata: { operational_type: "PRODUCTION_SERVICE" } },
+  { id: "service-other", kind: "service_interest", name: "Outro", slug: "other", description: "Serviço personalizado ou ainda não classificado.", active: true, order: 999, group: "Geral" },
 ];
 
 export const DEFAULT_LEAD_CATEGORIES: OperationalListItem[] = [
-  { id: "lead-category-artista", kind: "lead_category", name: "Artista / Banda", slug: "artist_or_band", description: "Lead de artista, banda ou projeto musical.", active: true, order: 10, group: "Leads" },
-  { id: "lead-category-contratante", kind: "lead_category", name: "Contratante de show", slug: "show_booker", description: "Contratante, produtor ou casa de evento.", active: true, order: 20, group: "Leads" },
-  { id: "lead-category-marca", kind: "lead_category", name: "Marca / Empresa", slug: "brand_or_company", description: "Empresa interessada em projeto comercial.", active: true, order: 30, group: "Leads" },
-  { id: "lead-category-agencia", kind: "lead_category", name: "Agência", slug: "agency", description: "Agência, produtora ou parceiro comercial.", active: true, order: 40, group: "Leads" },
+  { id: "lead-category-artist-or-band", kind: "lead_category", name: "Artista / Banda", slug: "artist_or_band", description: "Lead de artista, banda ou projeto musical.", active: true, order: 10, group: "Leads" },
+  { id: "lead-category-show-booker", kind: "lead_category", name: "Contratante de show", slug: "show_booker", description: "Contratante, produtor ou casa de evento.", active: true, order: 20, group: "Leads" },
+  { id: "lead-category-brand-or-company", kind: "lead_category", name: "Marca / Empresa", slug: "brand_or_company", description: "Empresa interessada em projeto comercial.", active: true, order: 30, group: "Leads" },
+  { id: "lead-category-agency", kind: "lead_category", name: "Agência", slug: "agency", description: "Agência, produtora ou parceiro comercial.", active: true, order: 40, group: "Leads" },
 ];
 
 // Slugs are the LeadStatus enum (@music-os-360/types, apps/api leads.workflow.ts): the
@@ -77,21 +77,21 @@ export const DEFAULT_LEAD_CATEGORIES: OperationalListItem[] = [
 // matched a value the backend accepts; legacy rows are mapped by
 // lib/operational-vocabulary.ts). Labels are pt-BR display copy.
 export const DEFAULT_LEAD_STATUSES: OperationalListItem[] = [
-  { id: "lead-status-novo", kind: "lead_status", name: "Novo", slug: "new", description: "Lead recebido e ainda não qualificado.", active: true, order: 10, group: "Pipeline" },
-  { id: "lead-status-contato", kind: "lead_status", name: "Contato", slug: "contacted", description: "Primeiro contato realizado.", active: true, order: 20, group: "Pipeline" },
-  { id: "lead-status-em-contato", kind: "lead_status", name: "Em contato", slug: "in_contact", description: "Contato em andamento.", active: true, order: 30, group: "Pipeline" },
-  { id: "lead-status-qualificado", kind: "lead_status", name: "Qualificado", slug: "qualified", description: "Lead validado comercialmente.", active: true, order: 40, group: "Pipeline" },
-  { id: "lead-status-proposta", kind: "lead_status", name: "Proposta", slug: "proposal", description: "Proposta comercial enviada.", active: true, order: 50, group: "Pipeline" },
-  { id: "lead-status-negociacao", kind: "lead_status", name: "Negociação", slug: "negotiation", description: "Em negociação de termos.", active: true, order: 60, group: "Pipeline" },
-  { id: "lead-status-fechado", kind: "lead_status", name: "Fechado", slug: "closed", description: "Negócio fechado.", active: true, order: 70, group: "Pipeline" },
-  { id: "lead-status-perdido", kind: "lead_status", name: "Perdido", slug: "lost", description: "Oportunidade perdida.", active: true, order: 80, group: "Pipeline" },
-  { id: "lead-status-inativo", kind: "lead_status", name: "Inativo/Arquivado", slug: "inactive", description: "Arquivado sem movimentação.", active: true, order: 90, group: "Pipeline" },
+  { id: "lead-status-new", kind: "lead_status", name: "Novo", slug: "new", description: "Lead recebido e ainda não qualificado.", active: true, order: 10, group: "Pipeline" },
+  { id: "lead-status-contacted", kind: "lead_status", name: "Contato", slug: "contacted", description: "Primeiro contato realizado.", active: true, order: 20, group: "Pipeline" },
+  { id: "lead-status-in-contact", kind: "lead_status", name: "Em contato", slug: "in_contact", description: "Contato em andamento.", active: true, order: 30, group: "Pipeline" },
+  { id: "lead-status-qualified", kind: "lead_status", name: "Qualificado", slug: "qualified", description: "Lead validado comercialmente.", active: true, order: 40, group: "Pipeline" },
+  { id: "lead-status-proposal", kind: "lead_status", name: "Proposta", slug: "proposal", description: "Proposta comercial enviada.", active: true, order: 50, group: "Pipeline" },
+  { id: "lead-status-negotiation", kind: "lead_status", name: "Negociação", slug: "negotiation", description: "Em negociação de termos.", active: true, order: 60, group: "Pipeline" },
+  { id: "lead-status-closed", kind: "lead_status", name: "Fechado", slug: "closed", description: "Negócio fechado.", active: true, order: 70, group: "Pipeline" },
+  { id: "lead-status-lost", kind: "lead_status", name: "Perdido", slug: "lost", description: "Oportunidade perdida.", active: true, order: 80, group: "Pipeline" },
+  { id: "lead-status-inactive", kind: "lead_status", name: "Inativo/Arquivado", slug: "inactive", description: "Arquivado sem movimentação.", active: true, order: 90, group: "Pipeline" },
 ];
 
 export const DEFAULT_LEAD_SEGMENTS: OperationalListItem[] = [
-  { id: "lead-segment-musical", kind: "lead_segment", name: "Musical", slug: "music", description: "Artistas, selos, editoras e gravadoras.", active: true, order: 10, group: "Segmentos" },
-  { id: "lead-segment-eventos", kind: "lead_segment", name: "Eventos", slug: "events", description: "Shows, casas, festivais e contratantes.", active: true, order: 20, group: "Segmentos" },
-  { id: "lead-segment-corporativo", kind: "lead_segment", name: "Corporativo", slug: "corporate", description: "Marcas, empresas e agências.", active: true, order: 30, group: "Segmentos" },
+  { id: "lead-segment-music", kind: "lead_segment", name: "Musical", slug: "music", description: "Artistas, selos, editoras e gravadoras.", active: true, order: 10, group: "Segmentos" },
+  { id: "lead-segment-events", kind: "lead_segment", name: "Eventos", slug: "events", description: "Shows, casas, festivais e contratantes.", active: true, order: 20, group: "Segmentos" },
+  { id: "lead-segment-corporate", kind: "lead_segment", name: "Corporativo", slug: "corporate", description: "Marcas, empresas e agências.", active: true, order: 30, group: "Segmentos" },
 ];
 
 export const DEFAULT_CONTACT_CATEGORIES: OperationalListItem[] = [
@@ -102,55 +102,55 @@ export const DEFAULT_CONTACT_CATEGORIES: OperationalListItem[] = [
 ];
 
 export const DEFAULT_CONTACT_PF_CLASSIFICATIONS: OperationalListItem[] = [
-  { id: "contact-pf-artist-agent", kind: "contact_pf_classification", name: "Agente Artístico", slug: "ARTIST_AGENT", description: "Pessoa física que atua como agente artístico.", active: true, order: 10, group: "Pessoa Física" },
-  { id: "contact-pf-press", kind: "contact_pf_classification", name: "Assessoria de Imprensa", slug: "PRESS_OFFICE", description: "Profissional de imprensa ou PR.", active: true, order: 20, group: "Pessoa Física" },
-  { id: "contact-pf-videomaker", kind: "contact_pf_classification", name: "Videomaker", slug: "VIDEOMAKER", description: "Profissional de vídeo.", active: true, order: 30, group: "Pessoa Física" },
-  { id: "contact-pf-other", kind: "contact_pf_classification", name: "Outro", slug: "OTHER", description: "Classificação genérica.", active: true, order: 999, group: "Pessoa Física" },
+  { id: "contact-individual-artist-agent", kind: "contact_individual_classification", name: "Agente Artístico", slug: "ARTIST_AGENT", description: "Pessoa física que atua como agente artístico.", active: true, order: 10, group: "Pessoa Física" },
+  { id: "contact-individual-press-office", kind: "contact_individual_classification", name: "Assessoria de Imprensa", slug: "PRESS_OFFICE", description: "Profissional de imprensa ou PR.", active: true, order: 20, group: "Pessoa Física" },
+  { id: "contact-individual-videomaker", kind: "contact_individual_classification", name: "Videomaker", slug: "VIDEOMAKER", description: "Profissional de vídeo.", active: true, order: 30, group: "Pessoa Física" },
+  { id: "contact-individual-other", kind: "contact_individual_classification", name: "Outro", slug: "OTHER", description: "Classificação genérica.", active: true, order: 999, group: "Pessoa Física" },
 ];
 
 export const DEFAULT_CONTACT_PJ_CLASSIFICATIONS: OperationalListItem[] = [
-  { id: "contact-pj-agency", kind: "contact_pj_classification", name: "Agência de Marketing", slug: "MARKETING_AGENCY", description: "Empresa ou agência de marketing.", active: true, order: 10, group: "Pessoa Jurídica" },
-  { id: "contact-pj-venue", kind: "contact_pj_classification", name: "Casa de Show", slug: "VENUE", description: "Local de apresentação ou evento.", active: true, order: 20, group: "Pessoa Jurídica" },
-  { id: "contact-pj-supplier", kind: "contact_pj_classification", name: "Fornecedor", slug: "SUPPLIER", description: "Fornecedor ou prestador PJ.", active: true, order: 30, group: "Pessoa Jurídica" },
-  { id: "contact-pj-other", kind: "contact_pj_classification", name: "Outro", slug: "OTHER", description: "Classificação genérica.", active: true, order: 999, group: "Pessoa Jurídica" },
+  { id: "contact-company-marketing-agency", kind: "contact_company_classification", name: "Agência de Marketing", slug: "MARKETING_AGENCY", description: "Empresa ou agência de marketing.", active: true, order: 10, group: "Pessoa Jurídica" },
+  { id: "contact-company-venue", kind: "contact_company_classification", name: "Casa de Show", slug: "VENUE", description: "Local de apresentação ou evento.", active: true, order: 20, group: "Pessoa Jurídica" },
+  { id: "contact-company-supplier", kind: "contact_company_classification", name: "Fornecedor", slug: "SUPPLIER", description: "Fornecedor ou prestador PJ.", active: true, order: 30, group: "Pessoa Jurídica" },
+  { id: "contact-company-other", kind: "contact_company_classification", name: "Outro", slug: "OTHER", description: "Classificação genérica.", active: true, order: 999, group: "Pessoa Jurídica" },
 ];
 
 export const DEFAULT_EVENT_TYPES: OperationalListItem[] = [
-  { id: "event-type-studio", kind: "event_type", name: "Sessões de Estúdio", slug: "studio_sessions", description: "Gravações, sessões de estúdio e acompanhamento musical.", active: true, order: 10, group: "Agenda", metadata: { backend_type: "recording" } },
-  { id: "event-type-rehearsal", kind: "event_type", name: "Ensaios", slug: "rehearsals", description: "Ensaios artísticos, técnicos ou de banda.", active: true, order: 20, group: "Agenda", metadata: { backend_type: "recording" } },
-  { id: "event-type-photos", kind: "event_type", name: "Sessões de Fotos", slug: "photo_shoots", description: "Sessões fotográficas, capa e material promocional.", active: true, order: 30, group: "Agenda", metadata: { backend_type: "other" } },
+  { id: "event-type-studio-sessions", kind: "event_type", name: "Sessões de Estúdio", slug: "studio_sessions", description: "Gravações, sessões de estúdio e acompanhamento musical.", active: true, order: 10, group: "Agenda", metadata: { backend_type: "recording" } },
+  { id: "event-type-rehearsals", kind: "event_type", name: "Ensaios", slug: "rehearsals", description: "Ensaios artísticos, técnicos ou de banda.", active: true, order: 20, group: "Agenda", metadata: { backend_type: "recording" } },
+  { id: "event-type-photo-shoots", kind: "event_type", name: "Sessões de Fotos", slug: "photo_shoots", description: "Sessões fotográficas, capa e material promocional.", active: true, order: 30, group: "Agenda", metadata: { backend_type: "other" } },
   { id: "event-type-shows", kind: "event_type", name: "Shows", slug: "shows", description: "Shows, apresentações e eventos ao vivo.", active: true, order: 40, group: "Agenda", metadata: { backend_type: "show" } },
   { id: "event-type-interviews", kind: "event_type", name: "Entrevistas", slug: "interviews", description: "Entrevistas, imprensa e pautas editoriais.", active: true, order: 50, group: "Agenda", metadata: { backend_type: "interview" } },
   { id: "event-type-podcasts", kind: "event_type", name: "Podcasts", slug: "podcasts", description: "Participações em podcasts e videocasts.", active: true, order: 60, group: "Agenda", metadata: { backend_type: "interview" } },
-  { id: "event-type-tv", kind: "event_type", name: "Programas de TV", slug: "tv_shows", description: "Programas de TV, gravações e entrevistas televisivas.", active: true, order: 70, group: "Agenda", metadata: { backend_type: "interview" } },
+  { id: "event-type-tv-shows", kind: "event_type", name: "Programas de TV", slug: "tv_shows", description: "Programas de TV, gravações e entrevistas televisivas.", active: true, order: 70, group: "Agenda", metadata: { backend_type: "interview" } },
   { id: "event-type-radio", kind: "event_type", name: "Rádio", slug: "radio", description: "Entrevistas, divulgação e execuções em rádio.", active: true, order: 80, group: "Agenda", metadata: { backend_type: "interview" } },
-  { id: "event-type-content", kind: "event_type", name: "Produção de Conteúdo", slug: "content_production", description: "Conteúdos digitais, captações e ações promocionais.", active: true, order: 90, group: "Agenda", metadata: { backend_type: "other" } },
+  { id: "event-type-content-production", kind: "event_type", name: "Produção de Conteúdo", slug: "content_production", description: "Conteúdos digitais, captações e ações promocionais.", active: true, order: 90, group: "Agenda", metadata: { backend_type: "other" } },
   { id: "event-type-meetings", kind: "event_type", name: "Reuniões", slug: "meetings", description: "Reuniões internas, comerciais ou operacionais.", active: true, order: 100, group: "Agenda", metadata: { backend_type: "meeting" } },
 ];
 
 export const DEFAULT_MARKETING_CONTEXTS: OperationalListItem[] = [
-  { id: "marketing-context-projeto", kind: "marketing_context", name: "Projeto Musical", slug: "projeto_musical", description: "Tarefas vinculadas a lançamentos, obras ou projetos musicais.", active: true, order: 10, group: "Tarefas" },
-  { id: "marketing-context-artista", kind: "marketing_context", name: "Artista", slug: "artista", description: "Tarefas vinculadas ao artista.", active: true, order: 20, group: "Tarefas" },
-  { id: "marketing-context-empresa", kind: "marketing_context", name: "Empresa", slug: "empresa", description: "Tarefas corporativas ou institucionais.", active: true, order: 30, group: "Tarefas" },
+  { id: "marketing-context-music-project", kind: "marketing_context", name: "Projeto Musical", slug: "music_project", description: "Tarefas vinculadas a lançamentos, obras ou projetos musicais.", active: true, order: 10, group: "Tarefas" },
+  { id: "marketing-context-artist", kind: "marketing_context", name: "Artista", slug: "artist", description: "Tarefas vinculadas ao artista.", active: true, order: 20, group: "Tarefas" },
+  { id: "marketing-context-company", kind: "marketing_context", name: "Empresa", slug: "company", description: "Tarefas corporativas ou institucionais.", active: true, order: 30, group: "Tarefas" },
 ];
 
 export const DEFAULT_MARKETING_SECTORS: OperationalListItem[] = [
-  { id: "marketing-sector-design", kind: "marketing_sector", name: "Design", slug: "Design", description: "Criação visual, capas e peças gráficas.", active: true, order: 10, group: "Setores" },
-  { id: "marketing-sector-audiovisual", kind: "marketing_sector", name: "Audiovisual", slug: "Audiovisual", description: "Vídeo, fotografia e captação.", active: true, order: 20, group: "Setores" },
-  { id: "marketing-sector-marketing", kind: "marketing_sector", name: "Marketing", slug: "Marketing", description: "Estratégia, tráfego e campanhas.", active: true, order: 30, group: "Setores" },
-  { id: "marketing-sector-comunicacao", kind: "marketing_sector", name: "Comunicação", slug: "Comunicação", description: "Copy, releases e comunicação.", active: true, order: 40, group: "Setores" },
+  { id: "marketing-sector-design", kind: "marketing_sector", name: "Design", slug: "design", description: "Criação visual, capas e peças gráficas.", active: true, order: 10, group: "Setores" },
+  { id: "marketing-sector-audiovisual", kind: "marketing_sector", name: "Audiovisual", slug: "audiovisual", description: "Vídeo, fotografia e captação.", active: true, order: 20, group: "Setores" },
+  { id: "marketing-sector-marketing", kind: "marketing_sector", name: "Marketing", slug: "marketing", description: "Estratégia, tráfego e campanhas.", active: true, order: 30, group: "Setores" },
+  { id: "marketing-sector-communication", kind: "marketing_sector", name: "Comunicação", slug: "communication", description: "Copy, releases e comunicação.", active: true, order: 40, group: "Setores" },
 ];
 
 export const DEFAULT_MARKETING_TASK_TYPES: OperationalListItem[] = [
   { id: "marketing-task-design", kind: "marketing_task_type", name: "Design", slug: "design", description: "Tarefa de design.", active: true, order: 10, group: "Tipos" },
-  { id: "marketing-task-campanha", kind: "marketing_task_type", name: "Campanha", slug: "campanha", description: "Tarefa de campanha.", active: true, order: 20, group: "Tipos" },
-  { id: "marketing-task-copy", kind: "marketing_task_type", name: "Copywriting", slug: "copywriting", description: "Tarefa de texto ou copy.", active: true, order: 30, group: "Tipos" },
-  { id: "marketing-task-video", kind: "marketing_task_type", name: "Audiovisual", slug: "audiovisual", description: "Tarefa audiovisual.", active: true, order: 40, group: "Tipos" },
+  { id: "marketing-task-campaign", kind: "marketing_task_type", name: "Campanha", slug: "campaign", description: "Tarefa de campanha.", active: true, order: 20, group: "Tipos" },
+  { id: "marketing-task-copywriting", kind: "marketing_task_type", name: "Copywriting", slug: "copywriting", description: "Tarefa de texto ou copy.", active: true, order: 30, group: "Tipos" },
+  { id: "marketing-task-audiovisual", kind: "marketing_task_type", name: "Audiovisual", slug: "audiovisual", description: "Tarefa audiovisual.", active: true, order: 40, group: "Tipos" },
 ];
 
 export const DEFAULT_BRIEFING_SERVICE_TYPES: OperationalListItem[] = [
-  { id: "briefing-service-campanha", kind: "briefing_service_type", name: "Campanha", slug: "campanha", description: "Briefing de campanha.", active: true, order: 10, group: "Briefings" },
-  { id: "briefing-service-conteudo", kind: "briefing_service_type", name: "Conteúdo", slug: "conteudo", description: "Briefing de conteúdo.", active: true, order: 20, group: "Briefings" },
+  { id: "briefing-service-campaign", kind: "briefing_service_type", name: "Campanha", slug: "campaign", description: "Briefing de campanha.", active: true, order: 10, group: "Briefings" },
+  { id: "briefing-service-content", kind: "briefing_service_type", name: "Conteúdo", slug: "content", description: "Briefing de conteúdo.", active: true, order: 20, group: "Briefings" },
   { id: "briefing-service-design", kind: "briefing_service_type", name: "Design", slug: "design", description: "Briefing de design.", active: true, order: 30, group: "Briefings" },
   { id: "briefing-service-audiovisual", kind: "briefing_service_type", name: "Audiovisual", slug: "audiovisual", description: "Briefing audiovisual.", active: true, order: 40, group: "Briefings" },
 ];
@@ -185,8 +185,8 @@ export const DEFAULT_OPERATIONAL_LISTS_BY_KIND: Record<OperationalListKind, Oper
   lead_status: DEFAULT_LEAD_STATUSES,
   lead_segment: DEFAULT_LEAD_SEGMENTS,
   contact_category: DEFAULT_CONTACT_CATEGORIES,
-  contact_pf_classification: DEFAULT_CONTACT_PF_CLASSIFICATIONS,
-  contact_pj_classification: DEFAULT_CONTACT_PJ_CLASSIFICATIONS,
+  contact_individual_classification: DEFAULT_CONTACT_PF_CLASSIFICATIONS,
+  contact_company_classification: DEFAULT_CONTACT_PJ_CLASSIFICATIONS,
   event_type: DEFAULT_EVENT_TYPES,
   marketing_context: DEFAULT_MARKETING_CONTEXTS,
   marketing_sector: DEFAULT_MARKETING_SECTORS,
@@ -211,12 +211,11 @@ export function slugify(value: string) {
 }
 
 function normalizeSlug(kind: OperationalListKind, value: string) {
-  if (kind === "marketing_sector") return value.trim();
   const slug = slugify(value);
   if (
     kind === "contact_category" ||
-    kind === "contact_pf_classification" ||
-    kind === "contact_pj_classification"
+    kind === "contact_individual_classification" ||
+    kind === "contact_company_classification"
   ) {
     return slug.toUpperCase();
   }
@@ -258,6 +257,7 @@ function mergeWithDefaults(stored: OperationalListItem[]) {
   // Legacy reader: a stored item that is exactly a pre-OL1 platform default is read under its
   // canonical English slug; tenant-authored/edited items keep their slug untouched.
   const items = stored.map((item) => migrateLegacyDefaultItem(item, DEFAULT_OPERATIONAL_LISTS));
+  // (migrateLegacyDefaultItem also maps a legacy KIND for every stored item, tenant-authored ones included.)
   const existingKeys = new Set(items.map((item) => `${item.kind}:${item.slug}`));
   const missingDefaults = DEFAULT_OPERATIONAL_LISTS.filter((item) => !existingKeys.has(`${item.kind}:${item.slug}`));
   return withDefaultMetadata([...items, ...missingDefaults]);

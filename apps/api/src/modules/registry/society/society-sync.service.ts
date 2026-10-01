@@ -1,4 +1,5 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { redactDiagnosticText } from '../../../core/filters/redact-diagnostic';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { SocietySyncJobEntity } from '../../../database/entities';
@@ -87,7 +88,8 @@ export class SocietySyncService {
   ): Promise<SocietySyncJobEntity> {
     job.status = status;
     job.finished_at = new Date();
-    job.error_message = errorMessage;
+    // Persisted raw provider text: redact secrets/PII and cap before storage (R3-11); never returned on the wire.
+    job.error_message = errorMessage === null ? null : redactDiagnosticText(errorMessage).slice(0, 500);
     job.metadata = { ...job.metadata, ...metadata };
     return this.repo.save(job);
   }

@@ -391,11 +391,37 @@ const campaignEntityType = (value: unknown): unknown => {
 /** class-transformer @Transform: deprecated Portuguese task kind -> canonical (kind stays free-form: the API itself writes cover_art, strategy_action, ...). */
 export const canonicalMarketingTaskKind = ({ value }: { value: unknown }) => mapLegacyMarketingValue(LEGACY_MARKETING_TASK_KINDS, value);
 
-/** @Transform of a task `metadata`: targetType + uiType. */
+/**
+ * Platform-owned task sectors (AP3 / R3-03): the web persisted the Portuguese LABEL as the value of
+ * `marketing_tasks.metadata.sector`. Exact-match only: a sector a tenant typed (any other text) is user content and is never mapped.
+ */
+export const LEGACY_MARKETING_SECTORS: Readonly<Record<string, string>> = {
+  Design: 'design',
+  Audiovisual: 'audiovisual',
+  Marketing: 'marketing',
+  Comunicação: 'communication',
+  Comercial: 'commercial',
+  'Administração Musical': 'music_administration',
+  'Distribuição Digital': 'digital_distribution',
+  CRM: 'crm',
+};
+
+/** Ids of the five automation flow blueprints (persisted in `marketing_tasks.metadata.automationFlowId`). */
+export const LEGACY_MARKETING_AUTOMATION_FLOW_IDS: Readonly<Record<string, string>> = {
+  'flow-lancamento': 'flow-music-release',
+  'flow-conteudo-corporativo': 'flow-corporate-content',
+  'flow-bastidores': 'flow-behind-the-scenes',
+  'flow-evento': 'flow-event',
+  'flow-produto-saas': 'flow-product-saas',
+};
+
+/** @Transform of a task `metadata`: targetType + uiType + sector + automationFlowId. */
 export const canonicalMarketingTaskMetadata = ({ value }: { value: unknown }) =>
   mapKeys(value, {
     targetType: (v) => mapLegacyMarketingValue(LEGACY_MARKETING_TARGETS, v),
     uiType: (v) => mapLegacyMarketingValue(LEGACY_MARKETING_TASK_KINDS, v),
+    sector: (v) => mapLegacyMarketingValue(LEGACY_MARKETING_SECTORS, v),
+    automationFlowId: (v) => mapLegacyMarketingValue(LEGACY_MARKETING_AUTOMATION_FLOW_IDS, v),
   });
 
 /** @Transform of a project `metadata`: uiType + uiStatus + channels. */
@@ -413,12 +439,75 @@ export const canonicalMarketingBriefingMetadata = ({ value }: { value: unknown }
     channels: (v) => mapLegacyList(LEGACY_MARKETING_CHANNELS, v),
   });
 
-/** Campaign builder payload (service-level: the controller body is a type alias, not a validated class): promotedEntityType + type + platforms. */
+/** Campaign builder state (AP3 / R3-02): phase, creative type, audience gender and budget strategy were Portuguese words. */
+export const LEGACY_CAMPAIGN_PHASES: Readonly<Record<string, string>> = {
+  pre_lancamento: 'pre_launch',
+  lancamento: 'launch',
+  sustentacao: 'sustain',
+  catalogo: 'catalog',
+};
+export const LEGACY_CREATIVE_TYPES: Readonly<Record<string, string>> = {
+  imagem: 'image',
+  carrossel: 'carousel',
+  texto: 'text',
+};
+export const LEGACY_BUDGET_STRATEGIES: Readonly<Record<string, string>> = {
+  menor_custo: 'lowest_cost',
+  limite_custo: 'cost_cap',
+  custo_alvo: 'target_cost',
+};
+export const LEGACY_AUDIENCE_GENDERS: Readonly<Record<string, string>> = {
+  todos: 'all',
+  feminino: 'female',
+  masculino: 'male',
+  nao_binario: 'non_binary',
+  nao_informado: 'not_informed',
+};
+
+const mapCreatives = (v: unknown): unknown =>
+  Array.isArray(v)
+    ? v.map((c) => (isPlainObject(c) ? mapKeys(c, { type: (t) => mapLegacyMarketingValue(LEGACY_CREATIVE_TYPES, t) }) : c))
+    : v;
+const mapAudience = (v: unknown): unknown =>
+  mapKeys(v, { gender: (g) => mapLegacyMarketingValue(LEGACY_AUDIENCE_GENDERS, g) });
+
+/**
+ * The builder state travels as `JSON.stringify` in the payload `notes` (and the audience in `segmentation`):
+ * a JSON object has its machine keys mapped; free text typed by a user (not a JSON object) is returned as is.
+ */
+function mapJsonString(value: unknown, fn: (parsed: Json) => unknown): unknown {
+  if (typeof value !== 'string' || !value.trim().startsWith('{')) return value;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    return value;
+  }
+  if (!isPlainObject(parsed)) return value;
+  const mapped = fn(parsed);
+  return mapped === parsed ? value : JSON.stringify(mapped);
+}
+
+/** `notes` JSON of the campaign builder: phase, creatives[].type, budget.strategy. */
+export const canonicalCampaignBuilderNotes = (value: unknown): unknown =>
+  mapJsonString(value, (state) =>
+    mapKeys(state, {
+      phase: (v) => mapLegacyMarketingValue(LEGACY_CAMPAIGN_PHASES, v),
+      creatives: mapCreatives,
+      budget: (b) => mapKeys(b, { strategy: (v) => mapLegacyMarketingValue(LEGACY_BUDGET_STRATEGIES, v) }),
+    }),
+  );
+
+/** Campaign builder payload (service-level: the controller body is a type alias, not a validated class): promotedEntityType + type + platforms + builder state (notes, creatives, audience, segmentation). */
 export function canonicalMarketingCampaignPayload<T extends object>(payload: T): T {
   return mapKeys(payload, {
     promotedEntityType: campaignEntityType,
     type: (v) => mapLegacyMarketingValue(LEGACY_MARKETING_CAMPAIGN_TYPES, v),
     platforms: (v) => mapLegacyList(LEGACY_MARKETING_CHANNELS, v),
+    notes: canonicalCampaignBuilderNotes,
+    creatives: mapCreatives,
+    audience: mapAudience,
+    segmentation: (v) => mapJsonString(v, (a) => mapAudience(a)),
   }) as T;
 }
 

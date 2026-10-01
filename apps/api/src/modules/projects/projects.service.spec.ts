@@ -152,10 +152,10 @@ describe('ProjectsService', () => {
     ]);
   });
 
-  it('findById() rehydrates tracks with the canonical English fields', async () => {
+  it('findById() rehydrates tracks with the canonical English fields (a row not yet backfilled reads canonical)', async () => {
     const trackRows = [{
       id: 't1', project_id: PROJECT_ID, name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original',
-      instrumental: 'nao', duration_minutes: '3', duration_seconds: '30', music_genre: 'pop', language: 'pt-BR',
+      instrumental: 'nao', duration_minutes: '3', duration_seconds: '30', music_genre: 'pop', language: 'portugues',
       lyrics: 'lalala', audio_url: null,
     }];
     const participantRows = [
@@ -168,11 +168,16 @@ describe('ProjectsService', () => {
     expect(found).not.toHaveProperty('musicas');
     expect(found.tracks).toEqual([
       {
-        id: 't1', name: 'Faixa 1', soloFeat: 'solo', originalRemix: 'original', instrumental: 'nao',
-        durationMinutes: '3', durationSeconds: '30', genre: 'pop', language: 'pt-BR', lyrics: 'lalala', audioUrl: null,
+        id: 't1', name: 'Faixa 1', soloFeat: 'solo', originalRemix: 'original', instrumental: 'no',
+        durationMinutes: '3', durationSeconds: '30', genre: 'pop', language: 'pt', lyrics: 'lalala', audioUrl: null,
         composers: ['Fulano'], performers: ['Beltrano'], producers: [],
       },
     ]);
+  });
+
+  it('update() writes canonical track values even when a deprecated build sends sim/nao and a language slug', async () => {
+    await service.update(TENANT, 'u1', PROJECT_ID, { tracks: [{ name: 'Faixa', instrumental: 'sim', language: 'ingles' }] } as any);
+    expect(mockDs._tracksRepo.create).toHaveBeenCalledWith(expect.objectContaining({ instrumental: 'yes', language: 'en' }));
   });
 
   it('update() replaces the tracks (delete + insert) when the DTO sends the array', async () => {

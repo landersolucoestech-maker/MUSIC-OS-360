@@ -7,6 +7,7 @@ import { Separator } from "@/shared/ui/separator";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Play, User, Music2, Clock, Globe, Mic, ExternalLink, FileText } from "lucide-react";
 import { parseTracksFromProject, getTrackInfo } from "@/modules/projects/lib/track-helpers";
+import { trackLanguageLabel } from "../utils/track-vocabulary";
 import { WorkflowTransitionPanel } from "@/shared/components/WorkflowTransitionPanel";
 import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";
@@ -21,7 +22,7 @@ interface ProjectViewModalProps {
 
 const soloFeatLabel: Record<string, string> = { solo: "Solo", feat: "Feat" };
 const originalRemixLabel: Record<string, string> = { original: "Original", remix: "Remix" };
-const instrumentalLabel: Record<string, string> = { sim: "Instrumental", nao: "Com Letra" };
+const instrumentalLabel: Record<string, string> = { yes: "Instrumental", no: "Com Letra" };
 
 function capitalize(s: string) {
   if (!s) return s;
@@ -157,7 +158,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                                 <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
                                 <div>
                                   <span className="text-muted-foreground text-xs block">Idioma</span>
-                                  <span className="font-medium" data-testid={`text-view-language-${idx}`}>{info.language ? capitalize(info.language) : "—"}</span>
+                                  <span className="font-medium" data-testid={`text-view-language-${idx}`}>{info.language ? trackLanguageLabel(info.language) : "—"}</span>
                                 </div>
                               </div>
                             </div>

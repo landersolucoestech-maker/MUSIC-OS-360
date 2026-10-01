@@ -5,6 +5,7 @@ import { ProjectStatus } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
 import { HasSafeUrlValues } from '../../../common/validators/safe-url.validation';
+import { canonicalProjectTracksTransform } from '../project-track-vocabulary';
 
 /** Deploy-skew window: field names a pre-canonical web build still sends (see applyDeprecatedFieldAliases). */
 export const PROJECT_DEPRECATED_FIELDS: DeprecatedFieldAliases = { orcamento: 'budget', musicas: 'tracks' };
@@ -48,9 +49,10 @@ export class CreateProjectDto {
   // (no longer serialized into `description`). Item fields: id, name, soloFeat,
   // originalRemix, instrumental, durationMinutes, durationSeconds, genre,
   // language, lyrics, audioUrl, composers, performers, producers.
-  @ApiPropertyOptional({ type: [Object] }) @IsOptional() @IsArray() @HasSafeUrlValues() tracks?: Record<string, unknown>[];
+  // `instrumental` ('sim'/'nao' -> 'yes'/'no') and `language` (web slug -> ISO 639 code) of a deprecated build are mapped BEFORE validation.
+  @ApiPropertyOptional({ type: [Object] }) @canonicalProjectTracksTransform @IsOptional() @IsArray() @HasSafeUrlValues() tracks?: Record<string, unknown>[];
   @ApiPropertyOptional({ type: [Object], deprecated: true, description: 'Deprecated alias of tracks.' })
-  @IsOptional() @IsArray() @HasSafeUrlValues() musicas?: Record<string, unknown>[];
+  @canonicalProjectTracksTransform @IsOptional() @IsArray() @HasSafeUrlValues() musicas?: Record<string, unknown>[];
 }
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {

@@ -156,7 +156,7 @@ describe('Projetos — workbook faithful to the modal and with a single sheet', 
         projectType: 'ep', projectTitle: 'Meu EP', notes: 'Obs', projectStatus: 'em_andamento',
       }])
       .mockResolvedValueOnce([
-        { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'nao', duration_minutes: '3', duration_seconds: '5', music_genre: 'pop', language: 'portugues', lyrics: 'Letra 1', audio_url: 'audio-1.wav', sort_order: 0 },
+        { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'no', duration_minutes: '3', duration_seconds: '5', music_genre: 'pop', language: 'pt', lyrics: 'Letra 1', audio_url: 'audio-1.wav', sort_order: 0 },
         { id: 'track-2', project_id: '00000000-0000-0000-0000-000000000001', name: 'Faixa 2', solo_feat: 'feat', original_remix: 'remix', instrumental: 'sim', duration_minutes: '4', duration_seconds: '10', music_genre: 'rap', language: 'portugues', lyrics: 'Letra 2', audio_url: 'audio-2.wav', sort_order: 1 },
       ])
       .mockResolvedValueOnce([
@@ -179,11 +179,14 @@ describe('Projetos — workbook faithful to the modal and with a single sheet', 
     ]);
     expect(rows).toHaveLength(3);
     expect(rows[1]).toEqual([
-      'ep', 'Meu EP', 'Obs', 'em_andamento', 'Faixa 1', 'solo', 'original', 'nao',
-      '3', '5', 'pop', 'portugues', 'Compositor A', 'Intérprete A', 'Produtor A', 'Letra 1', 'audio-1.wav', '0',
+      'ep', 'Meu EP', 'Obs', 'em_andamento', 'Faixa 1', 'solo', 'original', 'Não',
+      '3', '5', 'pop', 'Português', 'Compositor A', 'Intérprete A', 'Produtor A', 'Letra 1', 'audio-1.wav', '0',
     ]);
     expect(rows[2]?.[0]).toBe('ep');
     expect(rows[2]?.[4]).toBe('Faixa 2');
+    // a row not yet backfilled (sim / portugues) exports the same PT-BR labels
+    expect(rows[2]?.[7]).toBe('Sim');
+    expect(rows[2]?.[11]).toBe('Português');
     expect(JSON.stringify(rows)).not.toContain('Projeto ID de referência');
     expect(JSON.stringify(rows)).not.toContain('Músicas do Projeto');
   });

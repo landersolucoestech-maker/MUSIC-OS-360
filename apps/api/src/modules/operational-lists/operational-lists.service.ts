@@ -3,7 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { OperationalListItemEntity } from '../../database/entities';
 import { OPERATIONAL_LIST_DEFAULTS } from './operational-lists.defaults';
-import { operationalStableKey } from './operational-list-vocabulary';
+import { canonicalOperationalKind, operationalKindAliases, operationalStableKey } from './operational-list-vocabulary';
 import type {
   CreateOperationalListItemDto,
   UpdateOperationalListItemDto,
@@ -59,7 +59,12 @@ export class OperationalListsService {
       .where('i.tenant_id = :tenantId', { tenantId })
       .andWhere('i.deleted_at IS NULL');
 
-    if (query.kind !== undefined) qb.andWhere('i.kind = :kind', { kind: query.kind });
+    // A canonical kind also matches the legacy kind of rows not yet backfilled (compat window, AP3).
+    if (query.kind !== undefined) {
+      const kinds = operationalKindAliases(query.kind);
+      if (kinds.length === 1) qb.andWhere('i.kind = :kind', { kind: kinds[0] });
+      else qb.andWhere('i.kind IN (:...kinds)', { kinds });
+    }
     if (query.active !== undefined) qb.andWhere('i.active = :active', { active: query.active });
     // A platform default renamed to its canonical English slug keeps the old slug
     // in legacy_slug: lookups by slug resolve either (compat window, OL1).
@@ -69,7 +74,8 @@ export class OperationalListsService {
       .skip(query.offset ?? 0)
       .take(query.limit ?? 200);
 
-    const [data, total] = await qb.getManyAndCount();
+    const [rows, total] = await qb.getManyAndCount();
+    const data = rows.map((row) => this.canonicalKind(row));
     return { data, meta: { total, offset: query.offset ?? 0, limit: query.limit ?? 200 } };
   }
 
@@ -79,17 +85,27 @@ export class OperationalListsService {
       .where('i.id = :id AND i.tenant_id = :tenantId AND i.deleted_at IS NULL', { id, tenantId })
       .getOne();
     if (!result) throw new NotFoundException('Item de lista operacional não encontrado');
-    return result;
+    return this.canonicalKind(result);
+  }
+
+  /** Responses are canonical only: a row still holding a legacy kind is returned under the canonical kind. */
+  private canonicalKind(row: OperationalListItemEntity): OperationalListItemEntity {
+    const kind = canonicalOperationalKind(row.kind);
+    return kind === row.kind ? row : Object.assign(row, { kind });
   }
 
   /** Live item of a list by slug OR legacy slug (the alias of a renamed platform default). The
    * unique indexes and the create/update clash checks keep at most one live row per value. */
   async findBySlug(tenantId: string, kind: string, slug: string): Promise<OperationalListItemEntity | null> {
-    return this.repo!
-      .createQueryBuilder('i')
-      .where('i.tenant_id = :tenantId AND i.kind = :kind AND i.deleted_at IS NULL', { tenantId, kind })
+    const kinds = operationalKindAliases(kind);
+    const base = this.repo!.createQueryBuilder('i');
+    const scoped = kinds.length === 1
+      ? base.where('i.tenant_id = :tenantId AND i.kind = :kind AND i.deleted_at IS NULL', { tenantId, kind: kinds[0] })
+      : base.where('i.tenant_id = :tenantId AND i.kind IN (:...kinds) AND i.deleted_at IS NULL', { tenantId, kinds });
+    return scoped
       .andWhere('(i.slug = :slug OR i.legacy_slug = :slug)', { slug })
-      .getOne();
+      .getOne()
+      .then((row) => (row ? this.canonicalKind(row) : null));
   }
 
   async create(

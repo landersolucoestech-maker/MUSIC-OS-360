@@ -9,7 +9,6 @@ import {
 import { ALL_MIGRATIONS } from './migrations';
 import { OPERATIONAL_LIST_DEFAULTS } from '../modules/operational-lists/operational-lists.defaults';
 import {
-  DEFERRED_STABLE_IDS,
   LEGACY_OPERATIONAL_NAMES,
   LEGACY_OPERATIONAL_SLUGS,
   canonicalOperationalSlug,
@@ -170,16 +169,17 @@ describe('operational list platform vocabulary (code constants <-> migration lis
     expect(newLead).toMatchObject({ matchName: 'Novo lead', canonicalSlug: 'new', stableKey: 'lead_status.new' });
   });
 
-  it('stable keys are unique, English and <kind>.<id>; deferred kinds keep the slug but get an English key', () => {
+  it('stable keys are unique, English and <kind>.<slug lower-case> (AP3: the marketing kinds are renamed like the others)', () => {
     const keys = OPERATIONAL_LIST_DEFAULTS.map((d) => operationalStableKey(d.kind, d.slug));
     expect(new Set(keys).size).toBe(keys.length);
     for (const key of keys) expect(key).toMatch(/^[a-z_]+\.[a-z0-9_]+$/);
-    for (const [kind, ids] of Object.entries(DEFERRED_STABLE_IDS)) {
-      expect(Object.keys(ids).sort()).toEqual(defaultsByKind(kind).map((d) => d.slug).sort());
-      expect(LEGACY_OPERATIONAL_SLUGS[kind]).toBeUndefined();
+    for (const kind of ['marketing_context', 'marketing_sector', 'marketing_task_type', 'briefing_service_type']) {
+      expect(Object.values(LEGACY_OPERATIONAL_SLUGS[kind]).length).toBeGreaterThan(0);
+      for (const d of defaultsByKind(kind)) expect(d.slug).toMatch(/^[a-z][a-z0-9_]*$/);
     }
     expect(operationalStableKey('contact_category', 'PARTNER')).toBe('contact_category.partner');
-    expect(operationalStableKey('marketing_sector', 'Comunicação')).toBe('marketing_sector.communication');
+    expect(operationalStableKey('marketing_sector', 'communication')).toBe('marketing_sector.communication');
+    expect(operationalStableKey('marketing_context', 'music_project')).toBe('marketing_context.music_project');
   });
 
   it('canonical slugs of renamed kinds are English machine values (no Portuguese residue)', () => {
@@ -195,7 +195,9 @@ describe('operational list platform vocabulary (code constants <-> migration lis
     expect(canonicalOperationalSlug('lead_type', 'artist_or_band')).toBe('artist_or_band');
     expect(canonicalOperationalSlug('lead_type', 'my-custom-slug')).toBe('my-custom-slug');
     expect(canonicalOperationalSlug('lead_status', 'artista_banda')).toBe('artista_banda');
-    expect(canonicalOperationalSlug('marketing_sector', 'Design')).toBe('Design');
+    expect(canonicalOperationalSlug('marketing_sector', 'Design')).toBe('design');
+    expect(canonicalOperationalSlug('marketing_sector', 'Comunicação')).toBe('communication');
+    expect(canonicalOperationalSlug('marketing_context', 'projeto_musical')).toBe('music_project');
     expect(legacyOperationalSlugs('service_interest', 'other')).toEqual(['outro']);
     expect(legacyOperationalSlugs('event_type', 'shows')).toEqual([]);
   });
@@ -233,7 +235,7 @@ describe('operational list platform vocabulary (code constants <-> migration lis
     const block = web.slice(web.indexOf('export const LEGACY_OPERATIONAL_SLUGS'), web.indexOf('export const LEGACY_OPERATIONAL_NAMES'));
     const parsed: Record<string, Record<string, string>> = {};
     for (const m of block.matchAll(/^ {2}(\w+): \{ (.*) \},$/gm)) {
-      parsed[m[1]] = Object.fromEntries([...m[2].matchAll(/(\w+): "([^"]+)"/g)].map((p) => [p[1], p[2]]));
+      parsed[m[1]] = Object.fromEntries([...m[2].matchAll(/"?([^":,\s]+)"?: "([^"]+)"/g)].map((p) => [p[1], p[2]]));
     }
 
     it('slug maps are identical', () => {

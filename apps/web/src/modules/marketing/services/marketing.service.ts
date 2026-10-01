@@ -16,6 +16,8 @@ import {
   canonicalContentChannels,
   canonicalMarketingTarget,
   canonicalPriority,
+  canonicalAutomationFlowId,
+  canonicalMarketingSector,
   canonicalTaskType,
 } from "../utils/marketing-legacy-vocabulary";
 import { deriveContentDisplayStatus } from "../utils/marketing-content-status";
@@ -391,7 +393,7 @@ function taskFromApi(row: RecordRow): MarketingTask {
     status: row.status,
     priority: row.priority,
     owner: meta.owner ?? row.assigned_to ?? "",
-    sector: meta.sector ?? "",
+    sector: canonicalMarketingSector(meta.sector),
     deadline: iso(row.due_date),
     projectId: row.marketing_project_id,
     campaignId: meta.campaignId,
@@ -404,7 +406,7 @@ function taskFromApi(row: RecordRow): MarketingTask {
     comments: meta.comments ?? [],
     history: meta.history ?? [],
     dependencies: row.dependencies ?? [],
-    automationFlowId: meta.automationFlowId,
+    automationFlowId: canonicalAutomationFlowId(meta.automationFlowId),
     createdAt: iso(row.created_at),
     updatedAt: iso(row.updated_at),
   } as MarketingTask;

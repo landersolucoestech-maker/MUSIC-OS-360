@@ -6,7 +6,7 @@
 import { Workflow, Play } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
-import { TASK_TYPE_LABEL } from "../constants/marketing.constants";
+import { marketingSectorLabel, TASK_TYPE_LABEL } from "../constants/marketing.constants";
 import type { AutomationFlow } from "../types/marketing.types";
 
 interface MarketingAutomationFlowCardProps {
@@ -47,7 +47,7 @@ export function MarketingAutomationFlowCard({
               </span>
               <span className="text-foreground">{step.task}</span>
               <span className="ml-auto whitespace-nowrap text-[10px] text-muted-foreground">
-                {step.sector} · {TASK_TYPE_LABEL[step.type]}
+                {marketingSectorLabel(step.sector)} · {TASK_TYPE_LABEL[step.type]}
               </span>
             </li>
           ))}

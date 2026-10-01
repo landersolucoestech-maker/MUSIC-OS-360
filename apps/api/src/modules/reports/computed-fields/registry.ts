@@ -7,6 +7,7 @@ import {
   fetchProjectTracksForExport,
   insertProjectTracksForImport,
 } from './project-tracks.field';
+import { canonicalProjectTrackImportRows } from '../../projects/project-track-vocabulary';
 import {
   fetchReleaseTracksForExport,
   writeReleaseTracksForImport,
@@ -48,7 +49,9 @@ export const REPEATING_GROUP_EXPORT_RESOLVERS: Record<string, RepeatingGroupExpo
 };
 
 export const REPEATING_GROUP_IMPORT_WRITERS: Record<string, RepeatingGroupImportWriter> = {
-  'projects.tracks': insertProjectTracksForImport,
+  // the spreadsheet cells (PT-BR labels, legacy sim/nao or language slugs, ISO codes) are canonicalized before the INSERT
+  'projects.tracks': (queryRunner, tenantId, parentId, items) =>
+    insertProjectTracksForImport(queryRunner, tenantId, parentId, canonicalProjectTrackImportRows(items)),
   'releases.tracks': writeReleaseTracksForImport,
   'invoices.items': makeRowEmbeddedRepeatingGroupImportWriter(invoiceItems),
   'events.participants': makeRowEmbeddedRepeatingGroupImportWriter(eventParticipants),

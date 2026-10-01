@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsBoolean, IsInt, MaxLength } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { canonicalOperationalKindTransform } from '../operational-list-vocabulary';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 /**
@@ -8,7 +9,8 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
  * rule: 1 form field = 1 identical name across every layer.
  */
 export class CreateOperationalListItemDto {
-  @ApiProperty() @IsString() @MaxLength(50) kind!: string;
+  /** A deprecated kind (contact_pf_classification / contact_pj_classification) is mapped to its canonical kind before validation. */
+  @ApiProperty() @Transform(canonicalOperationalKindTransform) @IsString() @MaxLength(50) kind!: string;
   @ApiProperty() @IsString() @MaxLength(150) name!: string;
   @ApiProperty() @IsString() @MaxLength(100) slug!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
@@ -21,7 +23,7 @@ export class CreateOperationalListItemDto {
 export class UpdateOperationalListItemDto extends PartialType(CreateOperationalListItemDto) {}
 
 export class QueryOperationalListItemDto extends PaginationDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() kind?: string;
+  @ApiPropertyOptional() @Transform(canonicalOperationalKindTransform) @IsOptional() @IsString() kind?: string;
   /** Matches the slug or the legacy slug (pre-OL1 Portuguese alias) of a platform default. */
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) slug?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() @Type(() => Boolean) active?: boolean;

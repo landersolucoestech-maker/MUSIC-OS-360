@@ -127,7 +127,7 @@ export class ContactOperationsAutomation {
   private buildInput(c: ClientRow, sourceLeadId: string | null): ContactOperationsInput {
     const input: ContactOperationsInput = {
       clientName: c.name?.trim() || 'Cliente',
-      clientCategory: c.category?.trim() || 'geral',
+      clientCategory: c.category?.trim() || 'general',
       clientPersonType: c.person_type?.trim() || 'company',
       language: 'pt-BR',
     };

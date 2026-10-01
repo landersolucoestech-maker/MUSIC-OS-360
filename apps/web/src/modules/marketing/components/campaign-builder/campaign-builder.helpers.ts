@@ -1,3 +1,4 @@
+import { canonicalBudgetStrategy, canonicalCampaignPhase, parseCampaignBuilderNotes } from "../../utils/marketing-legacy-vocabulary";
 import type { CreateInput, MarketingCampaign } from "../../types/marketing.types";
 import type {
   CampaignBuilderState,
@@ -7,6 +8,7 @@ import type {
   CampaignPlacement,
   CampaignPlatform,
   CampaignValidationIssue,
+  CreativeType,
   PromotedEntityType,
 } from "./campaign-builder.types";
 
@@ -119,6 +121,14 @@ export const PLACEMENTS_BY_PLATFORM: Record<CampaignPlatform, CampaignPlacement[
   SPOTIFY_ADS: ["SPOTIFY_AUDIO", "SPOTIFY_VIDEO", "SPOTIFY_HOMEPAGE", "SPOTIFY_OVERLAY"],
 };
 
+export const CREATIVE_TYPE_LABEL: Record<CreativeType, string> = {
+  image: "Imagem",
+  video: "Vídeo",
+  carousel: "Carrossel",
+  audio: "Áudio",
+  text: "Texto",
+};
+
 export const ALL_OBJECTIVES = Object.keys(OBJECTIVE_LABEL) as CampaignObjective[];
 
 /**
@@ -152,6 +162,10 @@ export function createDefaultCampaignState(campaign?: MarketingCampaign | null):
   const end = new Date();
   end.setDate(end.getDate() + 14);
   const objective = normalizeCampaignObjective(campaign?.objective);
+  // `notes` of a builder campaign is the JSON of the builder state; Portuguese phase/strategy of rows
+  // saved before migration 20260930000028 are read as their canonical English value.
+  const saved = parseCampaignBuilderNotes(campaign?.notes);
+  const savedBudget = saved?.budget && typeof saved.budget === "object" ? (saved.budget as { strategy?: unknown }) : undefined;
   return {
     objective,
     expectedOutcome: OUTCOMES_BY_OBJECTIVE[objective][0],
@@ -169,15 +183,15 @@ export function createDefaultCampaignState(campaign?: MarketingCampaign | null):
     promotedEntityName: campaign?.targetName ?? campaign?.owner ?? "",
     destinationUrl: "",
     owner: campaign?.owner ?? "Marketing",
-    phase: "lancamento",
-    internalDescription: campaign?.notes ?? "",
+    phase: canonicalCampaignPhase(saved?.phase) ?? "launch",
+    internalDescription: saved ? String(saved.description ?? "") : campaign?.notes ?? "",
     tags: "",
     audience: {
       countries: "Brasil",
       locations: "",
       ageMin: 18,
       ageMax: 34,
-      gender: "todos",
+      gender: "all",
       interests: "",
       language: "pt-BR",
       coldAudience: true,
@@ -194,7 +208,7 @@ export function createDefaultCampaignState(campaign?: MarketingCampaign | null):
       currency: "BRL",
       startDate: campaign?.startDate ?? today,
       endDate: campaign?.endDate ?? end.toISOString().slice(0, 10),
-      strategy: "menor_custo",
+      strategy: canonicalBudgetStrategy(savedBudget?.strategy) ?? "lowest_cost",
       platformSplit: {},
     },
   };
@@ -226,7 +240,7 @@ export function expectedRatio(placement: CampaignPlacement) {
 export function validateCreativeForPlacement(creative: CampaignCreative): CampaignValidationIssue[] {
   const issues: CampaignValidationIssue[] = [];
   const ratio = expectedRatio(creative.placement);
-  if (!creative.fileName && creative.type !== "texto") issues.push({ id: `${creative.id}-file`, step: 7, severity: "error", message: `${creative.name}: arquivo obrigatório.` });
+  if (!creative.fileName && creative.type !== "text") issues.push({ id: `${creative.id}-file`, step: 7, severity: "error", message: `${creative.name}: arquivo obrigatório.` });
   if (ratio !== "n/a" && creative.ratio && creative.ratio !== ratio) issues.push({ id: `${creative.id}-ratio`, step: 9, severity: "warning", message: `${creative.name}: proporção enviada ${creative.ratio}, esperada ${ratio}.` });
   if (!creative.cta) issues.push({ id: `${creative.id}-cta`, step: 7, severity: "error", message: `${creative.name}: CTA obrigatório.` });
   if (creative.fileSizeMb > 500) issues.push({ id: `${creative.id}-size`, step: 7, severity: "error", message: `${creative.name}: arquivo acima do limite.` });

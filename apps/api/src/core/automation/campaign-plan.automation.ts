@@ -129,7 +129,7 @@ export class CampaignPlanAutomation {
 
     const input: CampaignPlanInput = {
       campaignName: c.name?.trim() || 'Campanha',
-      campaignType: c.type?.trim() || 'geral',
+      campaignType: c.type?.trim() || 'general',
       language: 'pt-BR',
     };
 

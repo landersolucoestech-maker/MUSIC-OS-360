@@ -61,6 +61,7 @@ import {
 } from "../hooks/useMarketingTasks";
 import {
   MARKETING_TARGET_LABEL,
+  marketingSectorLabel,
   PRIORITY_LABEL,
   TASK_STATUS_LABEL,
   TASK_TYPE_LABEL,
@@ -120,6 +121,9 @@ export default function Tasks() {
   const { getOptionsByKind } = useOperationalSettings();
   const marketingContextOptions = getOptionsByKind("marketing_context");
   const marketingSectorOptions = getOptionsByKind("marketing_sector");
+  // platform sectors have a PT-BR catalog label; a tenant-defined sector falls back to its operational list name, then to the text as typed
+  const sectorLabel = (value: string) =>
+    marketingSectorLabel(value) === value ? marketingSectorOptions.find((o) => o.value === value)?.label ?? value : marketingSectorLabel(value);
   const marketingTaskTypeOptions = getOptionsByKind("marketing_task_type");
 
   const targetOptions = useMemo<TaskTargetOptions>(
@@ -227,7 +231,7 @@ export default function Tasks() {
       ),
     },
     { key: "priority", header: "Prioridade", cell: (t) => <MarketingPriorityBadge priority={t.priority} /> },
-    { key: "sector", header: "Setor", cell: (t) => t.sector },
+    { key: "sector", header: "Setor", cell: (t) => sectorLabel(t.sector) },
     { key: "owner", header: "Responsável", cell: (t) => t.owner || "—" },
     { key: "deadline", header: "Prazo", cell: (t) => <span className="text-xs text-muted-foreground">{formatDate(t.deadline)}</span> },
     {
@@ -378,6 +382,7 @@ export default function Tasks() {
 
         <TaskViewModal
           task={viewTask}
+          sectorLabel={sectorLabel}
           onOpenChange={(open) => {
             if (!open) setViewTask(null);
           }}
@@ -440,10 +445,12 @@ function TaskKpi({
 
 function TaskViewModal({
   task,
+  sectorLabel,
   onOpenChange,
   onEdit,
 }: {
   task: MarketingTask | null;
+  sectorLabel: (value: string) => string;
   onOpenChange: (open: boolean) => void;
   onEdit: (task: MarketingTask) => void;
 }) {
@@ -494,7 +501,7 @@ function TaskViewModal({
             <ReadOnlyTile
               icon={ListChecks}
               label="Setor"
-              value={task.sector || "Não informado"}
+              value={sectorLabel(task.sector) || "Não informado"}
             />
             <ReadOnlyTile
               icon={CalendarClock}

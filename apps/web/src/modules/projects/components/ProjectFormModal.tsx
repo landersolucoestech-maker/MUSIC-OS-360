@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { projectSchema } from "@/modules/projects/schemas/project-schema";
 import { MUSICAL_GENRES } from "@/constants/musicalGenres";
-import { LANGUAGES } from "@/constants/languages";
+import { TRACK_INSTRUMENTAL_OPTIONS, TRACK_LANGUAGE_OPTIONS, canonicalTrackInstrumental, canonicalTrackLanguage } from "../utils/track-vocabulary";
 import { Plus, Upload, X, Music, FileAudio, Loader2, Link } from "lucide-react";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
 import { toUserMessage } from "@/shared/lib/errors";
@@ -55,7 +55,7 @@ interface UploadedAudio {
 
 const musicGenres = MUSICAL_GENRES;
 
-const languages = LANGUAGES;
+const languages = TRACK_LANGUAGE_OPTIONS;
 
 const formatFileSize = (bytes: number) => {
   if (bytes === 0) return '0 Bytes';
@@ -70,7 +70,7 @@ const createEmptyTrack = (): TrackData => ({
   name: "",
   soloFeat: "solo",
   originalRemix: "original",
-  instrumental: "nao",
+  instrumental: "no",
   durationMinutes: "",
   durationSeconds: "",
   genre: "",
@@ -200,9 +200,9 @@ export function ProjectFormModal({ open, onOpenChange, project, mode, onComplete
         ...createEmptyTrack(), ...m,
         soloFeat: normEnum(m.soloFeat, "solo"),
         originalRemix: normEnum(m.originalRemix, "original"),
-        instrumental: normEnum(m.instrumental, "nao"),
+        instrumental: canonicalTrackInstrumental(normEnum(m.instrumental, "no")) || "no",
         genre: normEnum(m.genre, ""),
-        language: normEnum(m.language, ""),
+        language: canonicalTrackLanguage(normEnum(m.language, "")),
         id: m.id || crypto.randomUUID(),
       }));
     }
@@ -451,11 +451,10 @@ export function ProjectFormModal({ open, onOpenChange, project, mode, onComplete
       <div className="grid grid-cols-4 gap-4">
         <div className="space-y-2">
           <Label>Instrumental *</Label>
-          <Select value={track.instrumental || "nao"} onValueChange={(v) => updateTrack(track.id, 'instrumental', v)} disabled={isViewMode}>
+          <Select value={track.instrumental || "no"} onValueChange={(v) => updateTrack(track.id, 'instrumental', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="nao">Não</SelectItem>
-              <SelectItem value="sim">Sim</SelectItem>
+              {TRACK_INSTRUMENTAL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>

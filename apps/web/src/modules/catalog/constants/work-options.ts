@@ -175,11 +175,13 @@ export function workLanguageLabel(code: unknown): string | null {
 }
 
 /**
- * ISO code of a project track language. Projects persist the language slug of
- * constants/languages.ts (e.g. "portugues"); null when the slug is unknown.
+ * ISO code of a project track language. Projects persist the ISO code (AP3; before: the language slug of
+ * constants/languages.ts, e.g. "portugues", still read); null when the value is unknown.
  */
 export function workLanguageCodeFromProjectLanguage(slug: unknown): string | null {
   if (typeof slug !== "string" || !slug) return null;
+  // AP3: project tracks now persist the ISO code itself (dual read: a legacy slug is mapped through its label)
+  if (Object.prototype.hasOwnProperty.call(WORK_LANGUAGE_LABEL_BY_CODE, slug)) return slug;
   const label = LANGUAGE_LABEL_BY_VALUE[slug];
   return label ? (WORK_LANGUAGE_CODE_BY_LABEL.get(label) ?? null) : null;
 }

@@ -13,6 +13,7 @@ import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
+import { canonicalProjectTrackInstrumental, canonicalProjectTrackLanguage } from './project-track-vocabulary';
 
 type TrackRole = ProjectTrackRole;
 
@@ -97,11 +98,12 @@ export class ProjectsService {
         name: t.name,
         soloFeat: t.solo_feat,
         originalRemix: t.original_remix,
-        instrumental: t.instrumental,
+        // rows written before migration 20260930000032 read canonical: the response vocabulary is canonical only
+        instrumental: canonicalProjectTrackInstrumental(t.instrumental) as string | null,
         durationMinutes: t.duration_minutes,
         durationSeconds: t.duration_seconds,
         genre: t.music_genre,
-        language: t.language,
+        language: canonicalProjectTrackLanguage(t.language) as string | null,
         lyrics: t.lyrics,
         audioUrl: t.audio_url,
         composers: namesByRole(t.id, 'composer'),
@@ -134,11 +136,11 @@ export class ProjectsService {
           name: String(m.name ?? ''),
           solo_feat: (m.soloFeat as string) || null,
           original_remix: (m.originalRemix as string) || null,
-          instrumental: (m.instrumental as string) || null,
+          instrumental: (canonicalProjectTrackInstrumental(m.instrumental) as string) || null,
           duration_minutes: (m.durationMinutes as string) || null,
           duration_seconds: (m.durationSeconds as string) || null,
           music_genre: (m.genre as string) || null,
-          language: (m.language as string) || null,
+          language: (canonicalProjectTrackLanguage(m.language) as string) || null,
           lyrics: (m.lyrics as string) || null,
           audio_url: (m.audioUrl as string) || null,
           sort_order: sortOrder++,

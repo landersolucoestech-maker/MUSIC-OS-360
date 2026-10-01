@@ -340,6 +340,10 @@ import { BackfillCanonicalFromLegacyMirrors20260930000022 } from './202609300000
 import { BackfillTransactionTaxonomyToEnglish20260930000018 } from './20260930000018_BackfillTransactionTaxonomyToEnglish';
 import { BackfillMarketingVocabularyToEnglish20260930000026 } from './20260930000026_BackfillMarketingVocabularyToEnglish';
 import { BackfillArtistDistributorIdOtherToEnglish20260930000027 } from './20260930000027_BackfillArtistDistributorIdOtherToEnglish';
+import { BackfillCampaignBuilderStateToEnglish20260930000028 } from './20260930000028_BackfillCampaignBuilderStateToEnglish';
+import { BackfillMarketingTaskSectorToEnglish20260930000029 } from './20260930000029_BackfillMarketingTaskSectorToEnglish';
+import { ClassifyMarketingAndContactOperationalListsToEnglish20260930000031 } from './20260930000031_ClassifyMarketingAndContactOperationalListsToEnglish';
+import { BackfillProjectTrackInstrumentalAndLanguageToEnglish20260930000032 } from './20260930000032_BackfillProjectTrackInstrumentalAndLanguageToEnglish';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -663,4 +667,8 @@ export const ALL_MIGRATIONS = [
   BackfillTransactionTaxonomyToEnglish20260930000018,
   BackfillMarketingVocabularyToEnglish20260930000026,
   BackfillArtistDistributorIdOtherToEnglish20260930000027,
+  BackfillCampaignBuilderStateToEnglish20260930000028,
+  BackfillMarketingTaskSectorToEnglish20260930000029,
+  ClassifyMarketingAndContactOperationalListsToEnglish20260930000031,
+  BackfillProjectTrackInstrumentalAndLanguageToEnglish20260930000032,
 ] as const;

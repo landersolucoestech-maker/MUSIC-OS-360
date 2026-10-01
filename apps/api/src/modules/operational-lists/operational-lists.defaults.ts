@@ -82,17 +82,17 @@ export const OPERATIONAL_LIST_DEFAULTS: OperationalListItemDefault[] = [
   { kind: 'contact_category', name: 'Artista/Banda', slug: 'ARTIST_BAND', description: 'Contato artístico.', active: true, order: 30, group: 'Contatos' },
   { kind: 'contact_category', name: 'Outro', slug: 'OTHER', description: 'Categoria genérica para contato.', active: true, order: 999, group: 'Contatos' },
 
-  // ── contact_pf_classification ────────────────────────────────────────────
-  { kind: 'contact_pf_classification', name: 'Agente Artístico', slug: 'ARTIST_AGENT', description: 'Pessoa física que atua como agente artístico.', active: true, order: 10, group: 'Pessoa Física' },
-  { kind: 'contact_pf_classification', name: 'Assessoria de Imprensa', slug: 'PRESS_OFFICE', description: 'Profissional de imprensa ou PR.', active: true, order: 20, group: 'Pessoa Física' },
-  { kind: 'contact_pf_classification', name: 'Videomaker', slug: 'VIDEOMAKER', description: 'Profissional de vídeo.', active: true, order: 30, group: 'Pessoa Física' },
-  { kind: 'contact_pf_classification', name: 'Outro', slug: 'OTHER', description: 'Classificação genérica.', active: true, order: 999, group: 'Pessoa Física' },
+  // ── contact_individual_classification ────────────────────────────────────────────
+  { kind: 'contact_individual_classification', name: 'Agente Artístico', slug: 'ARTIST_AGENT', description: 'Pessoa física que atua como agente artístico.', active: true, order: 10, group: 'Pessoa Física' },
+  { kind: 'contact_individual_classification', name: 'Assessoria de Imprensa', slug: 'PRESS_OFFICE', description: 'Profissional de imprensa ou PR.', active: true, order: 20, group: 'Pessoa Física' },
+  { kind: 'contact_individual_classification', name: 'Videomaker', slug: 'VIDEOMAKER', description: 'Profissional de vídeo.', active: true, order: 30, group: 'Pessoa Física' },
+  { kind: 'contact_individual_classification', name: 'Outro', slug: 'OTHER', description: 'Classificação genérica.', active: true, order: 999, group: 'Pessoa Física' },
 
-  // ── contact_pj_classification ────────────────────────────────────────────
-  { kind: 'contact_pj_classification', name: 'Agência de Marketing', slug: 'MARKETING_AGENCY', description: 'Empresa ou agência de marketing.', active: true, order: 10, group: 'Pessoa Jurídica' },
-  { kind: 'contact_pj_classification', name: 'Casa de Show', slug: 'VENUE', description: 'Local de apresentação ou evento.', active: true, order: 20, group: 'Pessoa Jurídica' },
-  { kind: 'contact_pj_classification', name: 'Fornecedor', slug: 'SUPPLIER', description: 'Fornecedor ou prestador PJ.', active: true, order: 30, group: 'Pessoa Jurídica' },
-  { kind: 'contact_pj_classification', name: 'Outro', slug: 'OTHER', description: 'Classificação genérica.', active: true, order: 999, group: 'Pessoa Jurídica' },
+  // ── contact_company_classification ────────────────────────────────────────────
+  { kind: 'contact_company_classification', name: 'Agência de Marketing', slug: 'MARKETING_AGENCY', description: 'Empresa ou agência de marketing.', active: true, order: 10, group: 'Pessoa Jurídica' },
+  { kind: 'contact_company_classification', name: 'Casa de Show', slug: 'VENUE', description: 'Local de apresentação ou evento.', active: true, order: 20, group: 'Pessoa Jurídica' },
+  { kind: 'contact_company_classification', name: 'Fornecedor', slug: 'SUPPLIER', description: 'Fornecedor ou prestador PJ.', active: true, order: 30, group: 'Pessoa Jurídica' },
+  { kind: 'contact_company_classification', name: 'Outro', slug: 'OTHER', description: 'Classificação genérica.', active: true, order: 999, group: 'Pessoa Jurídica' },
 
   // ── event_type ───────────────────────────────────────────────────────────
   { kind: 'event_type', name: 'Sessões de Estúdio', slug: 'studio_sessions', description: 'Gravações, sessões de estúdio e acompanhamento musical.', active: true, order: 10, group: 'Agenda', metadata: { backend_type: 'recording' } },
@@ -107,25 +107,25 @@ export const OPERATIONAL_LIST_DEFAULTS: OperationalListItemDefault[] = [
   { kind: 'event_type', name: 'Reuniões', slug: 'meetings', description: 'Reuniões internas, comerciais ou operacionais.', active: true, order: 100, group: 'Agenda', metadata: { backend_type: 'meeting' } },
 
   // ── marketing_context ────────────────────────────────────────────────────
-  { kind: 'marketing_context', name: 'Projeto Musical', slug: 'projeto_musical', description: 'Tarefas vinculadas a lançamentos, obras ou projetos musicais.', active: true, order: 10, group: 'Tarefas' },
-  { kind: 'marketing_context', name: 'Artista', slug: 'artista', description: 'Tarefas vinculadas ao artista.', active: true, order: 20, group: 'Tarefas' },
-  { kind: 'marketing_context', name: 'Empresa', slug: 'empresa', description: 'Tarefas corporativas ou institucionais.', active: true, order: 30, group: 'Tarefas' },
+  { kind: 'marketing_context', name: 'Projeto Musical', slug: 'music_project', description: 'Tarefas vinculadas a lançamentos, obras ou projetos musicais.', active: true, order: 10, group: 'Tarefas' },
+  { kind: 'marketing_context', name: 'Artista', slug: 'artist', description: 'Tarefas vinculadas ao artista.', active: true, order: 20, group: 'Tarefas' },
+  { kind: 'marketing_context', name: 'Empresa', slug: 'company', description: 'Tarefas corporativas ou institucionais.', active: true, order: 30, group: 'Tarefas' },
 
   // ── marketing_sector ─────────────────────────────────────────────────────
-  { kind: 'marketing_sector', name: 'Design', slug: 'Design', description: 'Criação visual, capas e peças gráficas.', active: true, order: 10, group: 'Setores' },
-  { kind: 'marketing_sector', name: 'Audiovisual', slug: 'Audiovisual', description: 'Vídeo, fotografia e captação.', active: true, order: 20, group: 'Setores' },
-  { kind: 'marketing_sector', name: 'Marketing', slug: 'Marketing', description: 'Estratégia, tráfego e campanhas.', active: true, order: 30, group: 'Setores' },
-  { kind: 'marketing_sector', name: 'Comunicação', slug: 'Comunicação', description: 'Copy, releases e comunicação.', active: true, order: 40, group: 'Setores' },
+  { kind: 'marketing_sector', name: 'Design', slug: 'design', description: 'Criação visual, capas e peças gráficas.', active: true, order: 10, group: 'Setores' },
+  { kind: 'marketing_sector', name: 'Audiovisual', slug: 'audiovisual', description: 'Vídeo, fotografia e captação.', active: true, order: 20, group: 'Setores' },
+  { kind: 'marketing_sector', name: 'Marketing', slug: 'marketing', description: 'Estratégia, tráfego e campanhas.', active: true, order: 30, group: 'Setores' },
+  { kind: 'marketing_sector', name: 'Comunicação', slug: 'communication', description: 'Copy, releases e comunicação.', active: true, order: 40, group: 'Setores' },
 
   // ── marketing_task_type ──────────────────────────────────────────────────
   { kind: 'marketing_task_type', name: 'Design', slug: 'design', description: 'Tarefa de design.', active: true, order: 10, group: 'Tipos' },
-  { kind: 'marketing_task_type', name: 'Campanha', slug: 'campanha', description: 'Tarefa de campanha.', active: true, order: 20, group: 'Tipos' },
+  { kind: 'marketing_task_type', name: 'Campanha', slug: 'campaign', description: 'Tarefa de campanha.', active: true, order: 20, group: 'Tipos' },
   { kind: 'marketing_task_type', name: 'Copywriting', slug: 'copywriting', description: 'Tarefa de texto ou copy.', active: true, order: 30, group: 'Tipos' },
   { kind: 'marketing_task_type', name: 'Audiovisual', slug: 'audiovisual', description: 'Tarefa audiovisual.', active: true, order: 40, group: 'Tipos' },
 
   // ── briefing_service_type ────────────────────────────────────────────────
-  { kind: 'briefing_service_type', name: 'Campanha', slug: 'campanha', description: 'Briefing de campanha.', active: true, order: 10, group: 'Briefings' },
-  { kind: 'briefing_service_type', name: 'Conteúdo', slug: 'conteudo', description: 'Briefing de conteúdo.', active: true, order: 20, group: 'Briefings' },
+  { kind: 'briefing_service_type', name: 'Campanha', slug: 'campaign', description: 'Briefing de campanha.', active: true, order: 10, group: 'Briefings' },
+  { kind: 'briefing_service_type', name: 'Conteúdo', slug: 'content', description: 'Briefing de conteúdo.', active: true, order: 20, group: 'Briefings' },
   { kind: 'briefing_service_type', name: 'Design', slug: 'design', description: 'Briefing de design.', active: true, order: 30, group: 'Briefings' },
   { kind: 'briefing_service_type', name: 'Audiovisual', slug: 'audiovisual', description: 'Briefing audiovisual.', active: true, order: 40, group: 'Briefings' },
 

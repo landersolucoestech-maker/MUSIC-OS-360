@@ -8,6 +8,7 @@ import { GenerateMarketingSuggestionDto } from '../ai/dto/ai.dto';
 import { MarketingCampaignBuilderService } from './marketing-campaign-builder.service';
 import { MarketingAiSuggestionsService } from './marketing-ai-suggestions.service';
 import {
+  canonicalCampaignBuilderNotes,
   LEGACY_MARKETING_AI_KINDS,
   LEGACY_MARKETING_BRIEFING_TYPES,
   LEGACY_MARKETING_CAMPAIGN_TYPES,
@@ -61,7 +62,7 @@ describe('MK2 DTO input is canonicalized BEFORE validation (global pipe: whiteli
       metadata: { targetType: 'projeto_musical', uiType: 'arte_divulgacao', sector: 'Design', other: 1 },
     });
     expect(dto.kind).toBe('cover');
-    expect(dto.metadata).toEqual({ targetType: 'music_project', uiType: 'promotional_art', sector: 'Design', other: 1 });
+    expect(dto.metadata).toEqual({ targetType: 'music_project', uiType: 'promotional_art', sector: 'design', other: 1 });
     await expect(validate(UpdateMarketingTaskDto, { kind: 'bastidor' })).resolves.toMatchObject({ kind: 'behind_the_scenes_shot' });
   });
 
@@ -143,5 +144,23 @@ describe('MK2 AI suggestions (free-form blob)', () => {
     await service.create('t', 'u', { kind: 'legenda', targetType: 'artista', targetName: 'X' });
     expect(stored[0].metadata).toMatchObject({ kind: 'caption', targetType: 'artist' });
     await expect(service.list('t')).resolves.toEqual([expect.objectContaining({ id: 'a1', kind: 'script', targetType: 'music_project' })]);
+  });
+});
+
+describe('AP3 campaign builder state (R3-02)', () => {
+  it('maps phase / creative type / budget strategy inside the notes JSON string and keeps the rest', () => {
+    const legacy = JSON.stringify({ phase: 'sustentacao', description: 'imagem', creatives: [{ type: 'imagem' }, { type: 'texto' }, { type: 'video' }], budget: { strategy: 'menor_custo', totalBudget: 5 } });
+    expect(JSON.parse(canonicalCampaignBuilderNotes(legacy) as string)).toEqual({ phase: 'sustain', description: 'imagem', creatives: [{ type: 'image' }, { type: 'text' }, { type: 'video' }], budget: { strategy: 'lowest_cost', totalBudget: 5 } });
+  });
+
+  it('leaves free text, invalid JSON and canonical notes untouched (same string)', () => {
+    for (const v of ['lancamento em maio', '{not json', '{"phase":"launch"}', '[1]', null, 7]) expect(canonicalCampaignBuilderNotes(v)).toBe(v);
+  });
+
+  it('payload mapper covers notes, creatives, audience and segmentation; canonical payload is the same object', () => {
+    const payload = { name: 'x', notes: '{"phase":"catalogo"}', creatives: [{ type: 'carrossel' }], audience: { gender: 'todos' }, segmentation: '{"gender":"nao_informado"}' };
+    expect(canonicalMarketingCampaignPayload(payload)).toEqual({ name: 'x', notes: '{"phase":"catalog"}', creatives: [{ type: 'carousel' }], audience: { gender: 'all' }, segmentation: '{"gender":"not_informed"}' });
+    const canonicalPayload = { notes: '{"phase":"launch"}', creatives: [{ type: 'image' }] };
+    expect(canonicalMarketingCampaignPayload(canonicalPayload)).toBe(canonicalPayload);
   });
 });

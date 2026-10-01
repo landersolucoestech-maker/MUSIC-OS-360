@@ -22,6 +22,7 @@ import {
   PLATFORMS_BY_OBJECTIVE,
   PROMOTED_ENTITY_LABEL,
   validateCampaignStep,
+  CREATIVE_TYPE_LABEL,
 } from "./campaign-builder.helpers";
 import type { BuilderStepProps, CampaignCreative, CampaignObjective, CampaignPlacement, CampaignPlatform, CreativeType, PromotedEntityType } from "./campaign-builder.types";
 import { Badge } from "@/shared/ui/badge";
@@ -39,7 +40,7 @@ import { StoredFileLink } from "@/shared/components/StoredFileLink";
 import { safeImageSrc, safeMediaSrc } from "@/shared/lib/safe-url";
 
 const PLATFORMS = Object.keys(PLATFORM_LABEL) as CampaignPlatform[];
-const TYPES: CreativeType[] = ["imagem", "video", "carrossel", "audio", "texto"];
+const TYPES: CreativeType[] = ["image", "video", "carousel", "audio", "text"];
 const COUNTRY_OPTIONS = [
   "Afeganistao", "Africa do Sul", "Albania", "Alemanha", "Andorra", "Angola", "Antigua e Barbuda", "Arabia Saudita",
   "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijao", "Bahamas", "Bangladesh", "Barbados",
@@ -83,11 +84,11 @@ const LANGUAGE_OPTIONS = [
   { value: "yo", label: "Iorubá" }, { value: "zu", label: "Zulu" },
 ] as const;
 const GENDER_OPTIONS = [
-  { value: "todos", label: "Todos" },
-  { value: "feminino", label: "Feminino" },
-  { value: "masculino", label: "Masculino" },
-  { value: "nao_binario", label: "Não binário" },
-  { value: "nao_informado", label: "Não informado" },
+  { value: "all", label: "Todos" },
+  { value: "female", label: "Feminino" },
+  { value: "male", label: "Masculino" },
+  { value: "non_binary", label: "Não binário" },
+  { value: "not_informed", label: "Não informado" },
 ] as const;
 const OBJECTIVE_CARDS: Array<{ value: CampaignObjective; icon: typeof Megaphone }> = [
   { value: "REACH", icon: Megaphone },
@@ -332,10 +333,10 @@ export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
         <Select value={state.phase} onValueChange={(phase) => setState((c) => ({ ...c, phase: phase as typeof state.phase }))}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="pre_lancamento">Pré-lançamento</SelectItem>
-            <SelectItem value="lancamento">Lançamento</SelectItem>
-            <SelectItem value="sustentacao">Sustentação</SelectItem>
-            <SelectItem value="catalogo">Catálogo</SelectItem>
+            <SelectItem value="pre_launch">Pré-lançamento</SelectItem>
+            <SelectItem value="launch">Lançamento</SelectItem>
+            <SelectItem value="sustain">Sustentação</SelectItem>
+            <SelectItem value="catalog">Catálogo</SelectItem>
           </SelectContent>
         </Select>
       </Field>
@@ -485,7 +486,7 @@ export function CampaignCreativesStep({ state, setState }: BuilderStepProps) {
         <div key={creative.id} className="rounded-lg border border-border p-4">
           <div className="grid gap-3 md:grid-cols-2">
             <Field label="Nome"><Input value={creative.name} onChange={(e) => update(creative.id, { name: e.target.value })} /></Field>
-            <Field label="Tipo"><Select value={creative.type} onValueChange={(type) => update(creative.id, { type: type as CreativeType })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{TYPES.map((type) => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent></Select></Field>
+            <Field label="Tipo"><Select value={creative.type} onValueChange={(type) => update(creative.id, { type: type as CreativeType })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{TYPES.map((type) => <SelectItem key={type} value={type}>{CREATIVE_TYPE_LABEL[type]}</SelectItem>)}</SelectContent></Select></Field>
             <Field label="Formato">
               <Select value={creative.placement} onValueChange={(p) => update(creative.id, { placement: p as CampaignPlacement, ratio: expectedRatio(p as CampaignPlacement) })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -546,7 +547,7 @@ export function CampaignBudgetStep({ state, setState }: BuilderStepProps) {
       <Field label="Moeda"><Input value={state.budget.currency} onChange={(e) => update({ currency: e.target.value })} /></Field>
       <Field label="Data inicial"><DatePickerField value={state.budget.startDate} onChange={(iso) => update({ startDate: iso })} /></Field>
       <Field label="Data final"><DatePickerField value={state.budget.endDate} onChange={(iso) => update({ endDate: iso })} /></Field>
-      <Field label="Estratégia"><Select value={state.budget.strategy} onValueChange={(strategy) => update({ strategy: strategy as typeof state.budget.strategy })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="menor_custo">Menor custo</SelectItem><SelectItem value="limite_custo">Limite de custo</SelectItem><SelectItem value="custo_alvo">Custo alvo</SelectItem></SelectContent></Select></Field>
+      <Field label="Estratégia"><Select value={state.budget.strategy} onValueChange={(strategy) => update({ strategy: strategy as typeof state.budget.strategy })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="lowest_cost">Menor custo</SelectItem><SelectItem value="cost_cap">Limite de custo</SelectItem><SelectItem value="target_cost">Custo alvo</SelectItem></SelectContent></Select></Field>
     </div>
   );
 }
@@ -579,9 +580,9 @@ const CHANNEL_TO_AD_PLATFORM: Partial<Record<ContentChannel, CampaignPlatform>> 
 function creativeTypeFromContent(content: MarketingContent): CreativeType {
   const kind = content.files?.[0]?.kind ?? "";
   if (kind.startsWith("audio")) return "audio";
-  if (content.type === "carousel") return "carrossel";
+  if (content.type === "carousel") return "carousel";
   if (["reels", "shorts", "video", "stories"].includes(content.type)) return "video";
-  return "imagem";
+  return "image";
 }
 
 /** Creates a creative from an existing content, inheriting media and caption. */
@@ -617,7 +618,7 @@ function createCreativeFromContent(content: MarketingContent, destinationUrl: st
 function createCreative(placement: CampaignPlacement, destinationUrl: string): CampaignCreative {
   const platform = placement.startsWith("TIKTOK") ? "TIKTOK_ADS" : placement.startsWith("YOUTUBE") ? "YOUTUBE_ADS" : placement.startsWith("GOOGLE") ? "GOOGLE_ADS" : placement.startsWith("SPOTIFY") ? "SPOTIFY_ADS" : "META_ADS";
   const lower = placement.toLowerCase();
-  return { id: crypto.randomUUID(), name: PLACEMENT_LABEL[placement], platform, placement, type: lower.includes("audio") ? "audio" : lower.includes("search") ? "texto" : "video", fileName: "", fileSizeMb: 0, ratio: expectedRatio(placement), primaryCopy: "", headline: "", description: "", cta: "Saiba mais", destinationUrl, utmSource: platform.toLowerCase(), utmMedium: "paid", utmCampaign: "campanha", utmContent: placement.toLowerCase(), status: "draft" };
+  return { id: crypto.randomUUID(), name: PLACEMENT_LABEL[placement], platform, placement, type: lower.includes("audio") ? "audio" : lower.includes("search") ? "text" : "video", fileName: "", fileSizeMb: 0, ratio: expectedRatio(placement), primaryCopy: "", headline: "", description: "", cta: "Saiba mais", destinationUrl, utmSource: platform.toLowerCase(), utmMedium: "paid", utmCampaign: "campanha", utmContent: placement.toLowerCase(), status: "draft" };
 }
 
 function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {

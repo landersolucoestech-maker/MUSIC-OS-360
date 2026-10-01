@@ -5,6 +5,7 @@ import {
   type WorkAiUsageLevel,
   type WorkOrigin,
 } from "@/modules/catalog/constants/work-options";
+import { canonicalTrackInstrumental } from "@/modules/projects/utils/track-vocabulary";
 import type {
   Phonogram,
   PhonogramAudioFile,
@@ -641,8 +642,8 @@ export function formToPhonogramPayload(input: PhonogramFormInput): PhonogramPayl
  * the form is born prefilled with all the project's musical data
  * (title, genre, language, duration, composers, lyrics) and the project's artist.
  * The track language (a constants/languages slug) becomes the ISO code of
- * `works.language`; the track `instrumental` flag ("sim"/"nao", the projects
- * contract) becomes `is_instrumental`.
+ * `works.language`; the track `instrumental` flag ("yes"/"no", the projects
+ * contract; the legacy "sim"/"nao" is still read) becomes `is_instrumental`.
  *
  * Single source of truth for this transformation. Do NOT duplicate it in the components.
  */
@@ -683,7 +684,7 @@ export function projectToWorkSeed(
     music_genre: genre,
     language: workLanguageCodeFromProjectLanguage(track?.language),
     duration_text: formatDurationText(track?.durationMinutes ?? "", track?.durationSeconds ?? ""),
-    is_instrumental: track?.instrumental === "sim",
+    is_instrumental: canonicalTrackInstrumental(track?.instrumental) === "yes",
     participants: participants.length > 0 ? participants : null,
     lyrics: track?.lyrics || null,
   };

@@ -134,6 +134,23 @@ describe('OperationalListsService', () => {
     });
   });
 
+  describe('renamed kinds (AP3)', () => {
+    it('a canonical kind also lists the legacy kind of rows not yet backfilled, and responses carry the canonical kind', async () => {
+      const row = { id: 'p', kind: 'contact_pf_classification', slug: 'VIDEOMAKER' };
+      const { svc, repo } = makeService([row]);
+      const result = await svc.list('tenant-1', { kind: 'contact_individual_classification' } as any);
+      expect(repo._qb['andWhere']).toHaveBeenCalledWith('i.kind IN (:...kinds)', { kinds: ['contact_individual_classification', 'contact_pf_classification'] });
+      expect(result.data[0].kind).toBe('contact_individual_classification');
+    });
+
+    it('findBySlug resolves the legacy kind too', async () => {
+      const { svc, repo } = makeService([{ id: 'p', kind: 'contact_pj_classification', slug: 'VENUE' }]);
+      const found = await svc.findBySlug('tenant-1', 'contact_company_classification', 'VENUE');
+      expect(repo._qb['where']).toHaveBeenCalledWith('i.tenant_id = :tenantId AND i.kind IN (:...kinds) AND i.deleted_at IS NULL', { tenantId: 'tenant-1', kinds: ['contact_company_classification', 'contact_pj_classification'] });
+      expect(found?.kind).toBe('contact_company_classification');
+    });
+  });
+
   describe('findById', () => {
     it('throws NotFoundException when the item does not belong to the tenant or does not exist', async () => {
       const { svc, repo } = makeService([]);

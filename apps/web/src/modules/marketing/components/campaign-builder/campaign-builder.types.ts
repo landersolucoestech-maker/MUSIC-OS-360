@@ -27,7 +27,7 @@ export type CampaignExpectedOutcome =
   | "WHATSAPP_CONTACT"
   | "FORM_SUBMISSION";
 
-export type CampaignPhase = "pre_lancamento" | "lancamento" | "sustentacao" | "catalogo";
+export type CampaignPhase = "pre_launch" | "launch" | "sustain" | "catalog";
 export type PromotedEntityType =
   | "ARTIST"
   | "MUSIC_PROJECT"
@@ -67,7 +67,7 @@ export type CampaignPlacement =
   | "SPOTIFY_HOMEPAGE"
   | "SPOTIFY_OVERLAY";
 
-export type CreativeType = "imagem" | "video" | "carrossel" | "audio" | "texto";
+export type CreativeType = "image" | "video" | "carousel" | "audio" | "text";
 
 export type CreativeStatus = "draft" | "pending_review" | "approved" | "rejected";
 
@@ -123,7 +123,7 @@ export interface CampaignBudget {
   currency: string;
   startDate: string;
   endDate: string;
-  strategy: "menor_custo" | "limite_custo" | "custo_alvo";
+  strategy: "lowest_cost" | "cost_cap" | "target_cost";
   platformSplit: Partial<Record<CampaignPlatform, number>>;
 }
 

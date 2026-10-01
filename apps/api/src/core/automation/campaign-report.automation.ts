@@ -141,7 +141,7 @@ export class CampaignReportAutomation {
   private buildInput(c: CampaignRow): CampaignReportInput {
     const input: CampaignReportInput = {
       campaignName: c.name?.trim() || 'Campanha',
-      campaignType: c.type?.trim() || 'geral',
+      campaignType: c.type?.trim() || 'general',
       // CampaignStatus.CANCELLED is the only outcome that is not "completed";
       // any other status at this point of the lifecycle (ENDED) is a completion.
       outcomeStatus: c.status === 'cancelled' ? 'cancelled' : 'completed',

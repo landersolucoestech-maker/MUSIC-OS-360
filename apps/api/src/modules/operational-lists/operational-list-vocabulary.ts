@@ -16,11 +16,14 @@
  *    (kind, slug, name) against the defaults (canonical or legacy form).
  *  - the read path (service lookups, web readers) accepts the legacy slug.
  *
- * DEFERRED kinds (marketing_*, briefing_service_type): their slugs are the
- * persisted vocabulary of the marketing module (tasks/briefings metadata and the
- * web view-model MarketingTarget, BLK-MARKETING-TARGET-WEB-VOCABULARY). Their slug
- * stays as seeded; only the English `stable_key` is assigned, so the marketing
- * slice can later flip the slug without another classification pass.
+ * AP3 (R3-03): the marketing_context / marketing_sector / marketing_task_type /
+ * briefing_service_type defaults, formerly deferred, now follow the same rule
+ * (their slugs are the canonical marketing vocabulary: music_project/artist/company,
+ * design/.../communication, campaign, content), and the two contact classification
+ * KINDS (contact_pf_classification / contact_pj_classification) are renamed to
+ * contact_individual_classification / contact_company_classification. Rows are
+ * proven platform defaults by the same exact (kind, slug, name) match
+ * (migration 20260930000031); tenant-authored or edited rows are never touched.
  */
 
 /** legacy (Portuguese) slug -> canonical English slug, per kind. Only renamed slugs are listed. */
@@ -68,6 +71,25 @@ export const LEGACY_OPERATIONAL_SLUGS: Readonly<Record<string, Readonly<Record<s
     eventos: 'events',
     corporativo: 'corporate',
   },
+  // AP3: the marketing slugs were the persisted marketing vocabulary (now canonical English; the PT-BR copy is the `name`).
+  marketing_context: {
+    projeto_musical: 'music_project',
+    artista: 'artist',
+    empresa: 'company',
+  },
+  marketing_sector: {
+    Design: 'design',
+    Audiovisual: 'audiovisual',
+    Marketing: 'marketing',
+    Comunicação: 'communication',
+  },
+  marketing_task_type: {
+    campanha: 'campaign',
+  },
+  briefing_service_type: {
+    campanha: 'campaign',
+    conteudo: 'content',
+  },
   event_type: {
     sessoes_estudio: 'studio_sessions',
     ensaios: 'rehearsals',
@@ -91,13 +113,29 @@ export const LEGACY_OPERATIONAL_NAMES: Readonly<Record<string, Readonly<Record<s
   },
 };
 
-/** English stable ids of the DEFERRED kinds (slug unchanged): kind -> slug -> id. */
-export const DEFERRED_STABLE_IDS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  marketing_context: { projeto_musical: 'music_project', artista: 'artist', empresa: 'company' },
-  marketing_sector: { Design: 'design', Audiovisual: 'audiovisual', Marketing: 'marketing', 'Comunicação': 'communication' },
-  marketing_task_type: { design: 'design', campanha: 'campaign', copywriting: 'copywriting', audiovisual: 'audiovisual' },
-  briefing_service_type: { campanha: 'campaign', conteudo: 'content', design: 'design', audiovisual: 'audiovisual' },
+/**
+ * Renamed list KINDS (container ids; AP3): legacy kind -> canonical kind. `pf`/`pj` were the Portuguese
+ * abbreviations of pessoa fisica/juridica. Slugs of both kinds were already English.
+ */
+export const LEGACY_OPERATIONAL_KINDS: Readonly<Record<string, string>> = {
+  contact_pf_classification: 'contact_individual_classification',
+  contact_pj_classification: 'contact_company_classification',
 };
+
+/** Canonical kind for a stored/received kind (legacy kinds mapped, anything else unchanged). */
+export function canonicalOperationalKind(kind: string): string {
+  return Object.prototype.hasOwnProperty.call(LEGACY_OPERATIONAL_KINDS, kind) ? LEGACY_OPERATIONAL_KINDS[kind] : kind;
+}
+
+/** class-transformer @Transform: a deprecated kind in a request is mapped BEFORE validation (strings only). */
+export const canonicalOperationalKindTransform = ({ value }: { value: unknown }) =>
+  typeof value === 'string' ? canonicalOperationalKind(value) : value;
+
+/** Kinds to match when querying one canonical kind: itself plus the legacy kind(s) not yet backfilled. */
+export function operationalKindAliases(kind: string): string[] {
+  const canonical = canonicalOperationalKind(kind);
+  return [canonical, ...Object.keys(LEGACY_OPERATIONAL_KINDS).filter((legacy) => LEGACY_OPERATIONAL_KINDS[legacy] === canonical)];
+}
 
 export const OPERATIONAL_ORIGINS = ['platform', 'tenant'] as const;
 export type OperationalListOrigin = (typeof OPERATIONAL_ORIGINS)[number];
@@ -116,6 +154,5 @@ export function legacyOperationalSlugs(kind: string, canonicalSlug: string): str
 
 /** Stable, language-independent id of a platform default: `<kind>.<english id>`. */
 export function operationalStableKey(kind: string, slug: string): string {
-  const id = DEFERRED_STABLE_IDS[kind]?.[slug] ?? slug.toLowerCase();
-  return `${kind}.${id}`;
+  return `${kind}.${slug.toLowerCase()}`;
 }

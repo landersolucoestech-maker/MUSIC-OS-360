@@ -434,30 +434,34 @@ export const TASK_TYPE_LABEL = optionLabels(TASK_TYPE_OPTIONS);
  * this map: it only shows options compatible with the chosen department.
  */
 export const SECTOR_OPTIONS: Option<string>[] = [
-  { value: "Design", label: "Design" },
-  { value: "Audiovisual", label: "Audiovisual" },
-  { value: "Marketing", label: "Marketing" },
-  { value: "Comunicação", label: "Comunicação" },
-  { value: "Comercial", label: "Comercial" },
-  { value: "Administração Musical", label: "Administração Musical" },
-  { value: "Distribuição Digital", label: "Distribuição Digital" },
-  { value: "CRM", label: "CRM" },
+  { value: "design", label: "Design" },
+  { value: "audiovisual", label: "Audiovisual" },
+  { value: "marketing", label: "Marketing" },
+  { value: "communication", label: "Comunicação" },
+  { value: "commercial", label: "Comercial" },
+  { value: "music_administration", label: "Administração Musical" },
+  { value: "digital_distribution", label: "Distribuição Digital" },
+  { value: "crm", label: "CRM" },
 ];
+
+/** PT-BR label of a platform sector; a sector a tenant typed (not in the catalog) is shown as typed. */
+export const SECTOR_LABEL: Record<string, string> = Object.fromEntries(SECTOR_OPTIONS.map((o) => [o.value, o.label]));
+export const marketingSectorLabel = (value: string | undefined | null): string => (value ? SECTOR_LABEL[value] ?? value : "");
 
 const taskType = (value: TaskType): Option<TaskType> => ({ value, label: TASK_TYPE_LABEL[value] });
 
 export const SECTOR_TYPE_OPTIONS: Record<string, Option<TaskType>[]> = {
-  "Design": (["cover", "banner", "press_kit", "flyer", "social_media_art", "visual_identity", "thumbnail", "promotional_material"] as TaskType[]).map(taskType),
-  "Audiovisual": (["music_video", "social_media_video", "making_of", "behind_the_scenes", "lyric_video", "visualizer", "interview", "podcast_video", "event_coverage"] as TaskType[]).map(taskType),
-  "Marketing": (["campaign", "paid_traffic", "planning", "analysis", "commercial_content", "institutional_content", "artistic_content"] as TaskType[]).map(taskType),
-  "Comunicação": (["copywriting", "publishing", "review", "approval", "institutional_content", "commercial_content", "meeting"] as TaskType[]).map(taskType),
-  "Comercial": (["crm", "meeting", "planning", "prospecting", "negotiation", "follow_up"] as TaskType[]).map(taskType),
-  "Administração Musical": (["planning", "approval", "meeting", "analysis", "behind_the_scenes"] as TaskType[]).map(taskType),
-  "Distribuição Digital": (["publishing", "release_planning", "approval", "review", "analysis"] as TaskType[]).map(taskType),
-  "CRM": (["crm", "campaign", "follow_up", "relationship", "analysis"] as TaskType[]).map(taskType),
+  design: (["cover", "banner", "press_kit", "flyer", "social_media_art", "visual_identity", "thumbnail", "promotional_material"] as TaskType[]).map(taskType),
+  audiovisual: (["music_video", "social_media_video", "making_of", "behind_the_scenes", "lyric_video", "visualizer", "interview", "podcast_video", "event_coverage"] as TaskType[]).map(taskType),
+  marketing: (["campaign", "paid_traffic", "planning", "analysis", "commercial_content", "institutional_content", "artistic_content"] as TaskType[]).map(taskType),
+  communication: (["copywriting", "publishing", "review", "approval", "institutional_content", "commercial_content", "meeting"] as TaskType[]).map(taskType),
+  commercial: (["crm", "meeting", "planning", "prospecting", "negotiation", "follow_up"] as TaskType[]).map(taskType),
+  music_administration: (["planning", "approval", "meeting", "analysis", "behind_the_scenes"] as TaskType[]).map(taskType),
+  digital_distribution: (["publishing", "release_planning", "approval", "review", "analysis"] as TaskType[]).map(taskType),
+  crm: (["crm", "campaign", "follow_up", "relationship", "analysis"] as TaskType[]).map(taskType),
 };
 
-const sectorOpt = (name: string): Option<string> => ({ value: name, label: name });
+const sectorOpt = (value: string): Option<string> => ({ value, label: SECTOR_LABEL[value] ?? value });
 
 /**
  * Departments available per context. Operations are separate: company
@@ -466,33 +470,33 @@ const sectorOpt = (name: string): Option<string> => ({ value: name, label: name 
  * and the type field by context + department.
  */
 export const CONTEXT_SECTOR_OPTIONS: Record<MarketingTarget, Option<string>[]> = {
-  company: ["Design", "Audiovisual", "Marketing", "Comunicação", "Comercial"].map(sectorOpt),
-  artist: ["Administração Musical", "Comunicação", "Marketing", "Audiovisual", "Comercial"].map(sectorOpt),
-  music_project: ["Design", "Audiovisual", "Distribuição Digital", "Marketing", "Comunicação"].map(sectorOpt),
+  company: ["design", "audiovisual", "marketing", "communication", "commercial"].map(sectorOpt),
+  artist: ["music_administration", "communication", "marketing", "audiovisual", "commercial"].map(sectorOpt),
+  music_project: ["design", "audiovisual", "digital_distribution", "marketing", "communication"].map(sectorOpt),
 };
 
 /** Types allowed per Context × Sector. */
 export const CONTEXT_SECTOR_TYPE_OPTIONS: Record<MarketingTarget, Record<string, Option<TaskType>[]>> = {
   company: {
-    "Design": (["institutional_material", "commercial_presentation", "folder", "banner", "visual_identity"] as TaskType[]).map(taskType),
-    "Audiovisual": (["institutional_video", "company_behind_the_scenes", "corporate_event_coverage", "corporate_interview"] as TaskType[]).map(taskType),
-    "Marketing": (["institutional_campaign", "branding", "paid_traffic", "brand_positioning"] as TaskType[]).map(taskType),
-    "Comunicação": (["announcements", "institutional_content", "partner_relationship"] as TaskType[]).map(taskType),
-    "Comercial": (["meeting", "negotiation", "prospecting", "partnerships"] as TaskType[]).map(taskType),
+    design: (["institutional_material", "commercial_presentation", "folder", "banner", "visual_identity"] as TaskType[]).map(taskType),
+    audiovisual: (["institutional_video", "company_behind_the_scenes", "corporate_event_coverage", "corporate_interview"] as TaskType[]).map(taskType),
+    marketing: (["institutional_campaign", "branding", "paid_traffic", "brand_positioning"] as TaskType[]).map(taskType),
+    communication: (["announcements", "institutional_content", "partner_relationship"] as TaskType[]).map(taskType),
+    commercial: (["meeting", "negotiation", "prospecting", "partnerships"] as TaskType[]).map(taskType),
   },
   artist: {
-    "Administração Musical": (["career_planning", "schedule_management", "strategic_planning", "partner_relationship"] as TaskType[]).map(taskType),
-    "Comunicação": (["press_relations", "release", "interview"] as TaskType[]).map(taskType),
-    "Marketing": (["personal_branding", "positioning", "growth_strategies"] as TaskType[]).map(taskType),
-    "Audiovisual": (["photo_session", "social_media_content", "behind_the_scenes"] as TaskType[]).map(taskType),
-    "Comercial": (["contracting", "shows", "negotiation", "prospecting"] as TaskType[]).map(taskType),
+    music_administration: (["career_planning", "schedule_management", "strategic_planning", "partner_relationship"] as TaskType[]).map(taskType),
+    communication: (["press_relations", "release", "interview"] as TaskType[]).map(taskType),
+    marketing: (["personal_branding", "positioning", "growth_strategies"] as TaskType[]).map(taskType),
+    audiovisual: (["photo_session", "social_media_content", "behind_the_scenes"] as TaskType[]).map(taskType),
+    commercial: (["contracting", "shows", "negotiation", "prospecting"] as TaskType[]).map(taskType),
   },
   music_project: {
-    "Design": (["cover", "motion_cover", "press_kit", "thumbnail", "promotional_art"] as TaskType[]).map(taskType),
-    "Audiovisual": (["music_video", "lyric_video", "visualizer", "teaser", "release_content"] as TaskType[]).map(taskType),
-    "Distribuição Digital": (["distribution", "metadata", "pitching", "pre_save"] as TaskType[]).map(taskType),
-    "Marketing": (["release_campaign", "paid_traffic", "promotion", "influencers"] as TaskType[]).map(taskType),
-    "Comunicação": (["release", "content_approval", "publishing"] as TaskType[]).map(taskType),
+    design: (["cover", "motion_cover", "press_kit", "thumbnail", "promotional_art"] as TaskType[]).map(taskType),
+    audiovisual: (["music_video", "lyric_video", "visualizer", "teaser", "release_content"] as TaskType[]).map(taskType),
+    digital_distribution: (["distribution", "metadata", "pitching", "pre_save"] as TaskType[]).map(taskType),
+    marketing: (["release_campaign", "paid_traffic", "promotion", "influencers"] as TaskType[]).map(taskType),
+    communication: (["release", "content_approval", "publishing"] as TaskType[]).map(taskType),
   },
 };
 

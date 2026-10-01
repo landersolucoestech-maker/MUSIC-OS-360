@@ -78,7 +78,7 @@ async function main() {
           trade_name: 'Signup Smoke',
           workspace_name: 'Signup Smoke Workspace',
           workspace_slug: slug,
-          segment: 'gravadora',
+          segment: 'record_label',
           corporate_email: email,
           requested_plan: 'trial_14',
           accepted_terms: true,
@@ -113,7 +113,7 @@ async function main() {
           organizationName: 'Signup Smoke Organization',
           workspaceName: 'Signup Smoke Workspace',
           workspaceSlug: slug,
-          segment: 'gravadora',
+          segment: 'record_label',
           corporateEmail: email,
           requestedPlan: 'trial_14',
           acceptedTerms: true,
@@ -165,7 +165,7 @@ async function main() {
       method: 'PATCH',
       body: JSON.stringify({
         companyName: 'Signup Smoke Organization',
-        segment: 'gravadora',
+        segment: 'record_label',
         settings: { timezone: 'America/Sao_Paulo', locale: 'pt-BR', currency: 'BRL' },
       }),
     });

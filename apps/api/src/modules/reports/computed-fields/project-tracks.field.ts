@@ -4,6 +4,10 @@
  */
 import { randomUUID } from 'crypto';
 import type { DataSource, QueryRunner } from 'typeorm';
+import {
+  projectTrackInstrumentalLabel,
+  projectTrackLanguageLabel,
+} from '../../projects/project-track-vocabulary';
 
 export interface ProjectTrackFieldItem {
   trackName: string;
@@ -95,11 +99,12 @@ export async function fetchProjectTracksForExport(
       trackName: track.name,
       soloFeat: track.solo_feat,
       originalRemix: track.original_remix,
-      instrumental: track.instrumental,
+      // spreadsheet cell = PT-BR label (localized yes/no and language names); import maps it back to the canonical value
+      instrumental: projectTrackInstrumentalLabel(track.instrumental) as string | null,
       trackDurationMinutes: track.duration_minutes,
       trackDurationSeconds: track.duration_seconds,
       musicGenre: track.music_genre,
-      trackLanguage: track.language,
+      trackLanguage: projectTrackLanguageLabel(track.language) as string | null,
       composers: namesByRole(track.id, 'composer'),
       performers: namesByRole(track.id, 'performer'),
       producers: namesByRole(track.id, 'producer'),

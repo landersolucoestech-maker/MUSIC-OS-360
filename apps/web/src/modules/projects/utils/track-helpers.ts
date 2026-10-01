@@ -1,3 +1,5 @@
+import { canonicalTrackInstrumental, canonicalTrackLanguage } from "./track-vocabulary";
+
 export interface TrackData {
   id?: string;
   name?: string;
@@ -55,14 +57,14 @@ export function getTrackInfo(m: TrackData): TrackInfo {
   return {
     name: m.name || "",
     genre: m.genre || "",
-    language: m.language || "",
+    language: canonicalTrackLanguage(m.language),
     composers: joinArray(m.composers),
     performers: joinArray(m.performers),
     producers: joinArray(m.producers),
     duration: duration,
     soloFeat: m.soloFeat || "solo",
     originalRemix: m.originalRemix || "original",
-    instrumental: m.instrumental || "nao",
+    instrumental: canonicalTrackInstrumental(m.instrumental) || "no",
     lyrics: m.lyrics || "",
     audioUrl: m.audioUrl || "",
   };
@@ -74,7 +76,7 @@ export function getFirstTrackInfo(project: { tracks?: TrackData[] } | null | und
     return {
       name: "", genre: "", language: "", composers: "", performers: "",
       producers: "", duration: "", soloFeat: "solo", originalRemix: "original",
-      instrumental: "nao", lyrics: "", audioUrl: "",
+      instrumental: "no", lyrics: "", audioUrl: "",
     };
   }
   return getTrackInfo(tracks[0]);

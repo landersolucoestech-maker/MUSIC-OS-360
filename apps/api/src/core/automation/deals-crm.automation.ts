@@ -85,7 +85,7 @@ export class DealsCrmAutomation {
 
     const input: DealsCrmInput = {
       clientName: (client as { name?: string }).name?.trim() || 'Cliente',
-      clientCategory: (client as { category?: string }).category?.trim() || 'geral',
+      clientCategory: (client as { category?: string }).category?.trim() || 'general',
       deals,
       language: 'pt-BR',
     };

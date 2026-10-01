@@ -132,7 +132,7 @@ export class SocialContentAutomation {
   private buildInput(p: ContentRow): SocialContentInput {
     const input: SocialContentInput = {
       title: p.title?.trim() || 'Post',
-      targetType: p.target_type?.trim() || 'geral',
+      targetType: p.target_type?.trim() || 'general',
       targetName: p.target_name?.trim() || '—',
       channel: p.channel?.trim() || 'instagram',
       contentType: p.content_type?.trim() || 'feed',

@@ -357,3 +357,112 @@ const CANONICAL_ASSET_CATEGORIES: ReadonlySet<string> = new Set<AssetCategory>([
 ]);
 export const canonicalAssetCategory = (value: unknown): AssetCategory | undefined =>
   resolve(value, CANONICAL_ASSET_CATEGORIES, LEGACY_ASSET_CATEGORY_TO_CANONICAL);
+
+// ── AP3 (R3-02): campaign builder state persisted as JSON in the campaign payload `notes` ────────────
+// phase, creatives[].type and budget.strategy (and audience.gender in the in-memory state) were stored
+// as Portuguese words. Canonical English now; migration 20260930000028 rewrites stored rows, the readers
+// below accept both spellings (canonical wins) until the census is 0.
+
+export type CampaignPhaseValue = "pre_launch" | "launch" | "sustain" | "catalog";
+export type CreativeTypeValue = "image" | "video" | "carousel" | "audio" | "text";
+export type BudgetStrategyValue = "lowest_cost" | "cost_cap" | "target_cost";
+export type AudienceGenderValue = "all" | "female" | "male" | "non_binary" | "not_informed";
+
+export const LEGACY_CAMPAIGN_PHASE_TO_CANONICAL: Readonly<Record<string, CampaignPhaseValue>> = {
+  pre_lancamento: "pre_launch",
+  lancamento: "launch",
+  sustentacao: "sustain",
+  catalogo: "catalog",
+};
+export const LEGACY_CREATIVE_TYPE_TO_CANONICAL: Readonly<Record<string, CreativeTypeValue>> = {
+  imagem: "image",
+  carrossel: "carousel",
+  texto: "text",
+};
+export const LEGACY_BUDGET_STRATEGY_TO_CANONICAL: Readonly<Record<string, BudgetStrategyValue>> = {
+  menor_custo: "lowest_cost",
+  limite_custo: "cost_cap",
+  custo_alvo: "target_cost",
+};
+export const LEGACY_AUDIENCE_GENDER_TO_CANONICAL: Readonly<Record<string, AudienceGenderValue>> = {
+  todos: "all",
+  feminino: "female",
+  masculino: "male",
+  nao_binario: "non_binary",
+  nao_informado: "not_informed",
+};
+
+const CANONICAL_CAMPAIGN_PHASES: ReadonlySet<string> = new Set(["pre_launch", "launch", "sustain", "catalog"]);
+const CANONICAL_CREATIVE_TYPES: ReadonlySet<string> = new Set(["image", "video", "carousel", "audio", "text"]);
+const CANONICAL_BUDGET_STRATEGIES: ReadonlySet<string> = new Set(["lowest_cost", "cost_cap", "target_cost"]);
+const CANONICAL_AUDIENCE_GENDERS: ReadonlySet<string> = new Set(["all", "female", "male", "non_binary", "not_informed"]);
+
+export const canonicalCampaignPhase = (value: unknown): CampaignPhaseValue | undefined =>
+  resolve(value, CANONICAL_CAMPAIGN_PHASES, LEGACY_CAMPAIGN_PHASE_TO_CANONICAL);
+export const canonicalCreativeType = (value: unknown): CreativeTypeValue | undefined =>
+  resolve(value, CANONICAL_CREATIVE_TYPES, LEGACY_CREATIVE_TYPE_TO_CANONICAL);
+export const canonicalBudgetStrategy = (value: unknown): BudgetStrategyValue | undefined =>
+  resolve(value, CANONICAL_BUDGET_STRATEGIES, LEGACY_BUDGET_STRATEGY_TO_CANONICAL);
+export const canonicalAudienceGender = (value: unknown): AudienceGenderValue | undefined =>
+  resolve(value, CANONICAL_AUDIENCE_GENDERS, LEGACY_AUDIENCE_GENDER_TO_CANONICAL);
+
+/**
+ * The campaign payload `notes` is `JSON.stringify` of the builder state (phase, creatives, budget...).
+ * Returns the parsed object with phase / creatives[].type / budget.strategy canonical, or null when `notes`
+ * is not such a JSON object (free text typed by a user is never touched).
+ */
+export function parseCampaignBuilderNotes(notes: unknown): Record<string, unknown> | null {
+  if (typeof notes !== "string" || !notes.trim().startsWith("{")) return null;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(notes);
+  } catch {
+    return null;
+  }
+  if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+  const out: Record<string, unknown> = { ...(parsed as Record<string, unknown>) };
+  if (typeof out.phase === "string") out.phase = canonicalCampaignPhase(out.phase) ?? out.phase;
+  if (Array.isArray(out.creatives)) {
+    out.creatives = out.creatives.map((c) =>
+      c && typeof c === "object" && typeof (c as { type?: unknown }).type === "string"
+        ? { ...(c as object), type: canonicalCreativeType((c as { type: string }).type) ?? (c as { type: string }).type }
+        : c,
+    );
+  }
+  const budget = out.budget;
+  if (budget && typeof budget === "object" && !Array.isArray(budget) && typeof (budget as { strategy?: unknown }).strategy === "string") {
+    out.budget = { ...(budget as object), strategy: canonicalBudgetStrategy((budget as { strategy: string }).strategy) ?? (budget as { strategy: string }).strategy };
+  }
+  return out;
+}
+
+// ── AP3 (R3-03): platform sector + automation flow id ────────────────────────────────────────────────
+// `marketing_tasks.metadata.sector` stored the PT-BR LABEL of the platform sector; `metadata.automationFlowId`
+// the Portuguese flow id. Migration 20260930000029 rewrites them; readers accept both (canonical wins).
+// A sector a tenant typed (any text outside the map) is user content and is returned unchanged.
+export const LEGACY_MARKETING_SECTOR_TO_CANONICAL: Readonly<Record<string, string>> = {
+  Design: "design",
+  Audiovisual: "audiovisual",
+  Marketing: "marketing",
+  "Comunicação": "communication",
+  Comercial: "commercial",
+  "Administração Musical": "music_administration",
+  "Distribuição Digital": "digital_distribution",
+  CRM: "crm",
+};
+export function canonicalMarketingSector(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return hasOwn(LEGACY_MARKETING_SECTOR_TO_CANONICAL, value) ? LEGACY_MARKETING_SECTOR_TO_CANONICAL[value] : value;
+}
+
+export const LEGACY_AUTOMATION_FLOW_ID_TO_CANONICAL: Readonly<Record<string, string>> = {
+  "flow-lancamento": "flow-music-release",
+  "flow-conteudo-corporativo": "flow-corporate-content",
+  "flow-bastidores": "flow-behind-the-scenes",
+  "flow-evento": "flow-event",
+  "flow-produto-saas": "flow-product-saas",
+};
+export function canonicalAutomationFlowId(value: unknown): string | undefined {
+  if (typeof value !== "string" || value === "") return undefined;
+  return hasOwn(LEGACY_AUTOMATION_FLOW_ID_TO_CANONICAL, value) ? LEGACY_AUTOMATION_FLOW_ID_TO_CANONICAL[value] : value;
+}

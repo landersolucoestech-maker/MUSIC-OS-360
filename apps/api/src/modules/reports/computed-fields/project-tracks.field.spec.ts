@@ -14,8 +14,8 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
       const tracks = [
         {
           id: 'track-1', project_id: 'proj-1', name: 'Faixa 1', solo_feat: 'solo',
-          original_remix: 'original', instrumental: 'nao', duration_minutes: '3', duration_seconds: '30',
-          music_genre: 'pop', language: 'portugues', lyrics: 'la la', audio_url: 'https://x/a.mp3', sort_order: 0,
+          original_remix: 'original', instrumental: 'no', duration_minutes: '3', duration_seconds: '30',
+          music_genre: 'pop', language: 'pt', lyrics: 'la la', audio_url: 'https://x/a.mp3', sort_order: 0,
         },
       ];
       const participants = [
@@ -39,11 +39,11 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
         trackName: 'Faixa 1',
         soloFeat: 'solo',
         originalRemix: 'original',
-        instrumental: 'nao',
+        instrumental: 'Não',
         trackDurationMinutes: '3',
         trackDurationSeconds: '30',
         musicGenre: 'pop',
-        trackLanguage: 'portugues',
+        trackLanguage: 'Português',
         composers: ['Fulano'],
         performers: ['Ciclano'],
         producers: ['Beltrano'],
