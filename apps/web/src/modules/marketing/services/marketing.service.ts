@@ -19,6 +19,7 @@ import {
   canonicalAutomationFlowId,
   canonicalMarketingSector,
   canonicalTaskType,
+  canonicalSourceDepartment,
 } from "../utils/marketing-legacy-vocabulary";
 import { deriveContentDisplayStatus } from "../utils/marketing-content-status";
 import { targetTypeFromWire, targetTypeToWire } from "../utils/marketing-content-wire";
@@ -476,7 +477,7 @@ function assetFromApi(row: RecordRow): MarketingAsset {
     category: assetCategoryFromApi(meta.category, row.asset_type),
     projectId: meta.projectId ?? row.marketing_project_id,
     taskId: meta.taskId,
-    sourceDepartment: meta.sourceDepartment,
+    sourceDepartment: canonicalSourceDepartment(meta.sourceDepartment),
     campaignId: row.campaign_id,
     artistId: row.artist_id,
     department: meta.department,

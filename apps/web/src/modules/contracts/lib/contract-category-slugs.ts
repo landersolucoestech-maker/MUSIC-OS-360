@@ -18,7 +18,26 @@ export const LEGACY_CONTRACT_CATEGORY_SLUGS: Readonly<Record<string, string>> = 
   exclusividade: "exclusivity",
   publicitario: "advertising",
   semantico: "semantic",
+  // Also tenant-owned contract_service_types slugs: those rows are never rewritten,
+  // callers match them with `sameContractCategory`.
+  distribuicao: "distribution",
+  licenciamento: "licensing",
+  gestao: "management",
+  outros: "other",
 };
+
+/**
+ * Finds the tenant's service type for a contract/template category, matching either
+ * spelling (contracts now persist `distribution`, the tenant row may still be `distribuicao`).
+ * An exact slug match wins.
+ */
+export function findServiceTypeByCategory<T extends { slug: string }>(
+  serviceTypes: ReadonlyArray<T>,
+  category: string | null | undefined,
+): T | undefined {
+  if (!category) return undefined;
+  return serviceTypes.find((t) => t.slug === category) ?? serviceTypes.find((t) => sameContractCategory(t.slug, category));
+}
 
 export const SEMANTIC_CONTRACT_CATEGORY = "semantic";
 

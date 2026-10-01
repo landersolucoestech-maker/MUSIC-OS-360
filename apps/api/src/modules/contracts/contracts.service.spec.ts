@@ -376,10 +376,16 @@ describe('ContractsService.list — canonical and legacy filters (Phase 5 / C1)'
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type IN (:...types)', { types: ['recording', 'gravacao'] });
   });
 
-  it('keeps the exact match for tenant-owned / shared slugs', async () => {
+  it('matches both spellings of the registry seeds shared with tenant service types (R3-04)', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { type: 'distribuicao' } as unknown as QueryContractDto);
-    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'distribuicao' });
+    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type IN (:...types)', { types: ['distribution', 'distribuicao'] });
+  });
+
+  it('keeps the exact match for tenant-created slugs', async () => {
+    const { svc, repo } = makeServiceC1([baseContractRow()]);
+    await svc.list('tenant-1', { type: 'agenciamento' } as unknown as QueryContractDto);
+    expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'agenciamento' });
   });
 
   it('filters by the legacy tipo (translated to type)', async () => {

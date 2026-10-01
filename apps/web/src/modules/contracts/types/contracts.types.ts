@@ -110,16 +110,16 @@ export type ParticipantRole =
   | "TESTEMUNHA"
   | "REPRESENTANTE_LEGAL";
 
-export type EntityType = "pessoa_fisica" | "pessoa_juridica";
+export type EntityType = "individual" | "company";
 
 export type VariableCategory =
-  | "participantes"
-  | "financeiro"
-  | "obra_musical"
-  | "vigencia"
-  | "assinatura"
-  | "sistema"
-  | "personalizada";
+  | "participants"
+  | "financial"
+  | "musical_work"
+  | "term"
+  | "signature"
+  | "system"
+  | "custom";
 
 export type VariableType = "text" | "textarea" | "number" | "date" | "percentage" | "currency" | "boolean" | "select";
 
@@ -179,7 +179,7 @@ export interface MusicWork {
   language: string;
   releaseDate: string;
   platforms: string[];
-  distributionType: "exclusiva" | "nao_exclusiva" | "licenca" | "";
+  distributionType: "exclusive" | "non_exclusive" | "license" | "";
 }
 
 export interface SignatureSettings {

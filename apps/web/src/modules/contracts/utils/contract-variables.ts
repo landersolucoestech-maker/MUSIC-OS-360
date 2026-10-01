@@ -1,5 +1,7 @@
 import type { ContractVariable, EntityType, Participant, ParticipantRole, VariableCategory } from "@/modules/contracts/types/contracts.types";
 
+import { canonicalEntityType, canonicalVariableCategory } from "@/modules/contracts/lib/contract-variable-vocabulary";
+
 const ROLE_LABELS: Record<ParticipantRole, string> = {
   CONTRATANTE: "Contratante",
   CONTRATADO: "Contratado",
@@ -14,13 +16,13 @@ const ROLE_LABELS: Record<ParticipantRole, string> = {
 };
 
 const CATEGORY_ORDER: VariableCategory[] = [
-  "participantes",
-  "financeiro",
-  "obra_musical",
-  "vigencia",
-  "assinatura",
-  "sistema",
-  "personalizada",
+  "participants",
+  "financial",
+  "musical_work",
+  "term",
+  "signature",
+  "system",
+  "custom",
 ];
 
 const INDIVIDUAL_FIELDS: Array<{ suffix: string; label: string; description: string; example: string; type: ContractVariable["type"] }> = [
@@ -60,7 +62,7 @@ const COMPANY_FIELDS: Array<{ suffix: string; label: string; description: string
 ];
 
 export function generateParticipantVariables(role: ParticipantRole, entityType: EntityType): ContractVariable[] {
-  const fields = entityType === "pessoa_fisica" ? INDIVIDUAL_FIELDS : COMPANY_FIELDS;
+  const fields = canonicalEntityType(entityType) === "individual" ? INDIVIDUAL_FIELDS : COMPANY_FIELDS;
   const p = role;
   return fields.map((f) => ({
     id: `${p}_${f.suffix}`,
@@ -69,7 +71,7 @@ export function generateParticipantVariables(role: ParticipantRole, entityType: 
     description: f.description,
     type: f.type,
     source: "participant" as const,
-    category: "participantes" as VariableCategory,
+    category: "participants" as VariableCategory,
     required: false,
     example: f.example,
     participantReference: role,
@@ -80,97 +82,97 @@ export const SYSTEM_VARIABLES: ContractVariable[] = [
   {
     id: "START_DATE", key: "START_DATE", label: "Data de Início",
     description: "Data de início de vigência do contrato",
-    type: "date", source: "system", category: "vigencia",
+    type: "date", source: "system", category: "term",
     required: false, example: "01/01/2025",
   },
   {
     id: "END_DATE", key: "END_DATE", label: "Data de Término",
     description: "Data de término de vigência do contrato",
-    type: "date", source: "system", category: "vigencia",
+    type: "date", source: "system", category: "term",
     required: false, example: "31/12/2025",
   },
   {
     id: "DURATION_MONTHS", key: "DURATION_MONTHS", label: "Duração (meses)",
     description: "Duração total do contrato em meses",
-    type: "number", source: "system", category: "vigencia",
+    type: "number", source: "system", category: "term",
     required: false, example: "12",
   },
   {
     id: "FIXED_VALUE", key: "FIXED_VALUE", label: "Valor Fixo",
     description: "Valor fixo contratado em moeda corrente",
-    type: "currency", source: "financial", category: "financeiro",
+    type: "currency", source: "financial", category: "financial",
     required: false, example: "R$ 5.000,00",
   },
   {
     id: "EXTERNAL_RIGHTS_PERCENTAGE", key: "EXTERNAL_RIGHTS_PERCENTAGE", label: "Termos externos de direitos (%)",
     description: "Percentual de recebimentos externos de direitos acordado entre as partes",
-    type: "percentage", source: "financial", category: "financeiro",
+    type: "percentage", source: "financial", category: "financial",
     required: false, example: "15%",
   },
   {
     id: "ADVANCE_AMOUNT", key: "ADVANCE_AMOUNT", label: "Adiantamento",
     description: "Valor de adiantamento pago na assinatura",
-    type: "currency", source: "financial", category: "financeiro",
+    type: "currency", source: "financial", category: "financial",
     required: false, example: "R$ 2.000,00",
   },
   {
     id: "FINANCIAL_SUPPORT", key: "FINANCIAL_SUPPORT", label: "Suporte Financeiro Mensal",
     description: "Suporte financeiro mensal garantido pelo contratante",
-    type: "currency", source: "financial", category: "financeiro",
+    type: "currency", source: "financial", category: "financial",
     required: false, example: "R$ 1.500,00",
   },
   {
     id: "PAYMENT_FREQUENCY", key: "PAYMENT_FREQUENCY", label: "Frequência de Pagamento",
     description: "Periodicidade dos pagamentos (único, mensal, etc.)",
-    type: "text", source: "financial", category: "financeiro",
+    type: "text", source: "financial", category: "financial",
     required: false, example: "Mensal",
   },
   {
     id: "WORK_TITLE", key: "WORK_TITLE", label: "Título da Obra",
     description: "Nome/título da obra musical objeto do contrato",
-    type: "text", source: "work", category: "obra_musical",
+    type: "text", source: "work", category: "musical_work",
     required: false, example: "Minha Música",
   },
   {
     id: "WORK_ISRC", key: "WORK_ISRC", label: "ISRC da Obra",
     description: "Código ISRC (International Standard Recording Code)",
-    type: "text", source: "work", category: "obra_musical",
+    type: "text", source: "work", category: "musical_work",
     required: false, example: "BRBMG2400001",
   },
   {
     id: "WORK_GENRE", key: "WORK_GENRE", label: "Gênero Musical",
     description: "Gênero/estilo musical da obra",
-    type: "text", source: "work", category: "obra_musical",
+    type: "text", source: "work", category: "musical_work",
     required: false, example: "Sertanejo",
   },
   {
     id: "CONTRACT_DATE", key: "CONTRACT_DATE", label: "Data do Contrato",
     description: "Data de celebração/assinatura do contrato",
-    type: "date", source: "system", category: "sistema",
+    type: "date", source: "system", category: "system",
     required: false, example: new Date().toLocaleDateString("pt-BR"),
   },
   {
     id: "CONTRACT_CITY", key: "CONTRACT_CITY", label: "Cidade do Contrato",
     description: "Município de celebração do contrato (foro de eleição)",
-    type: "text", source: "system", category: "sistema",
+    type: "text", source: "system", category: "system",
     required: false, example: "São Paulo",
   },
   {
     id: "CONTRACT_STATE", key: "CONTRACT_STATE", label: "Estado do Contrato",
     description: "Estado/UF de celebração do contrato",
-    type: "text", source: "system", category: "sistema",
+    type: "text", source: "system", category: "system",
     required: false, example: "SP",
   },
 ];
 
 export const CATEGORY_LABELS: Record<string, string> = {
-  participantes: "Participantes",
-  financeiro: "Financeiro",
-  obra_musical: "Obra Musical",
-  vigencia: "Vigência",
-  assinatura: "Assinatura",
-  sistema: "Sistema",
-  personalizada: "Personalizadas",
+  participants: "Participantes",
+  financial: "Financeiro",
+  musical_work: "Obra Musical",
+  term: "Vigência",
+  signature: "Assinatura",
+  system: "Sistema",
+  custom: "Personalizadas",
 };
 
 /**
@@ -191,8 +193,8 @@ export function resolveAllVariables(participants: Participant[]): ContractVariab
   });
 
   return deduped.sort((a, b) => {
-    const oa = CATEGORY_ORDER.indexOf(a.category as VariableCategory);
-    const ob = CATEGORY_ORDER.indexOf(b.category as VariableCategory);
+    const oa = CATEGORY_ORDER.indexOf(canonicalVariableCategory(a.category));
+    const ob = CATEGORY_ORDER.indexOf(canonicalVariableCategory(b.category));
     const catDiff = (oa === -1 ? 999 : oa) - (ob === -1 ? 999 : ob);
     if (catDiff !== 0) return catDiff;
     return a.label.localeCompare(b.label, "pt-BR");

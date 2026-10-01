@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { localStore } from "@/shared/lib/local-store";
-import { sameContractCategory } from "@/modules/contracts/lib/contract-category-slugs";
+import { canonicalContractCategorySlug, sameContractCategory } from "@/modules/contracts/lib/contract-category-slugs";
 
 const STORAGE_KEY = "contract_categories";
 
@@ -27,17 +27,17 @@ function toSlug(text: string): string {
 }
 
 const SEED_CATEGORIES: Omit<ContractCategory, "id" | "createdAt">[] = [
-  { label: "Gravação",           value: "gravacao",        description: "Contratos de gravação musical" },
-  { label: "Distribuição",       value: "distribuicao",    description: "Contratos de distribuição digital e física" },
-  { label: "Licenciamento",      value: "licenciamento",   description: "Licenciamento de obras musicais" },
-  { label: "Cessão de Direitos", value: "cessao_direitos", description: "Cessão total ou parcial de direitos" },
-  { label: "Produção",           value: "producao",        description: "Contratos de produção artística" },
+  { label: "Gravação",           value: "recording",        description: "Contratos de gravação musical" },
+  { label: "Distribuição",       value: "distribution",    description: "Contratos de distribuição digital e física" },
+  { label: "Licenciamento",      value: "licensing",   description: "Licenciamento de obras musicais" },
+  { label: "Cessão de Direitos", value: "rights_assignment", description: "Cessão total ou parcial de direitos" },
+  { label: "Produção",           value: "production",        description: "Contratos de produção artística" },
   { label: "Shows e Eventos",    value: "shows",           description: "Contratos para apresentações ao vivo" },
-  { label: "Gestão Artística",   value: "gestao",          description: "Contratos de representação e gestão" },
-  { label: "Exclusividade",      value: "exclusividade",   description: "Contratos com cláusula de exclusividade" },
-  { label: "Publicitário",       value: "publicitario",    description: "Contratos para uso em publicidade" },
-  { label: "Semântico (IA)",     value: "semantico",       description: "Templates gerados com apoio de IA" },
-  { label: "Outros",             value: "outros",          description: "Categorias diversas" },
+  { label: "Gestão Artística",   value: "management",          description: "Contratos de representação e gestão" },
+  { label: "Exclusividade",      value: "exclusivity",   description: "Contratos com cláusula de exclusividade" },
+  { label: "Publicitário",       value: "advertising",    description: "Contratos para uso em publicidade" },
+  { label: "Semântico (IA)",     value: "semantic",       description: "Templates gerados com apoio de IA" },
+  { label: "Outros",             value: "other",          description: "Categorias diversas" },
 ];
 
 export const DEFAULT_CATEGORY_LABEL = "Padrão";
@@ -67,8 +67,27 @@ function buildSeeds(): ContractCategory[] {
   }));
 }
 
+/**
+ * Legacy reader: a registry stored by an earlier build holds the Portuguese spelling of the
+ * platform-seeded slugs. Rewrites exactly those values to the canonical slug (tenant-created
+ * slugs are untouched) and drops a duplicate when both spellings are present.
+ */
+export function canonicalizeStoredCategories(stored: ReadonlyArray<ContractCategory>): ContractCategory[] {
+  const seen = new Set<string>();
+  const out: ContractCategory[] = [];
+  for (const c of stored) {
+    if (!c || typeof c.value !== "string") continue;
+    const value = canonicalContractCategorySlug(c.value);
+    if (seen.has(value)) continue;
+    seen.add(value);
+    out.push(value === c.value ? c : { ...c, value });
+  }
+  return out;
+}
+
 function load(): ContractCategory[] {
-  return localStore.get<ContractCategory[]>(STORAGE_KEY) ?? buildSeeds();
+  const stored = localStore.get<ContractCategory[]>(STORAGE_KEY);
+  return Array.isArray(stored) ? canonicalizeStoredCategories(stored) : buildSeeds();
 }
 
 function save(cats: ContractCategory[]): void {

@@ -466,3 +466,15 @@ export function canonicalAutomationFlowId(value: unknown): string | undefined {
   if (typeof value !== "string" || value === "") return undefined;
   return hasOwn(LEGACY_AUTOMATION_FLOW_ID_TO_CANONICAL, value) ? LEGACY_AUTOMATION_FLOW_ID_TO_CANONICAL[value] : value;
 }
+
+/** `MarketingAsset.sourceDepartment` (asset metadata.sourceDepartment): open string, two known Portuguese spellings. */
+export const LEGACY_SOURCE_DEPARTMENT_TO_CANONICAL: Readonly<Record<string, string>> = {
+  conteudo: "content",
+  operacoes: "operations",
+};
+
+/** Canonical source department; any other value (the field is an open string) is returned untouched. */
+export function canonicalSourceDepartment(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  return Object.prototype.hasOwnProperty.call(LEGACY_SOURCE_DEPARTMENT_TO_CANONICAL, value) ? LEGACY_SOURCE_DEPARTMENT_TO_CANONICAL[value] : value;
+}

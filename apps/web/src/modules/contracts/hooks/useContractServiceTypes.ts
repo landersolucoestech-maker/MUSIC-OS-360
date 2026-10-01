@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { canonicalizeStoredMusicWork, canonicalizeStoredParticipants, canonicalizeStoredVariables } from "@/modules/contracts/lib/contract-variable-vocabulary";
 import { toast } from "sonner";
 import { contractsService } from "@/modules/contracts/services/contracts.service";
 import type { StorageRow } from "@/shared/lib/storage";
@@ -100,9 +101,9 @@ function rowToType(row: StorageRow): ContractServiceType {
     content: String(row.content ?? ""),
     created_at: String(row.created_at ?? ""),
     updated_at: String(row.updated_at ?? ""),
-    participants: parseJson<Participant[]>(row.participants, []),
-    variables: parseJson<ContractVariable[]>(row.variables, []),
-    music_work: parseJson<MusicWork | null>(row.music_work, null),
+    participants: canonicalizeStoredParticipants(parseJson<Participant[]>(row.participants, [])),
+    variables: canonicalizeStoredVariables(parseJson<ContractVariable[]>(row.variables, [])),
+    music_work: canonicalizeStoredMusicWork(parseJson<MusicWork | null>(row.music_work, null)),
     signature_settings: parseJson<SignatureSettings | null>(row.signature_settings, null),
     branding_settings: parseJson<BrandingSettings | null>(row.branding_settings, null),
     financial_currency: String(row.financial_currency ?? "BRL"),

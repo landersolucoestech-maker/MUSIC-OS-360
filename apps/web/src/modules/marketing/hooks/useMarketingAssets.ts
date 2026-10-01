@@ -1,4 +1,5 @@
 import { marketingService } from "../services/marketing.service";
+import { canonicalSourceDepartment } from "../utils/marketing-legacy-vocabulary";
 import type { MarketingAsset } from "../types/marketing.types";
 import { assetCategoryFromApi } from "../services/marketing-asset-wire";
 import { createResourceHooks } from "./useMarketingResource";
@@ -33,7 +34,7 @@ function normalizeProjectAsset(asset: ProjectAsset): MarketingAsset {
     category,
     projectId: asset.projectId ?? (metadata.projectId as string | undefined),
     taskId: asset.taskId ?? (metadata.taskId as string | undefined),
-    sourceDepartment: asset.sourceDepartment ?? (metadata.sourceDepartment as string | undefined),
+    sourceDepartment: canonicalSourceDepartment(asset.sourceDepartment ?? metadata.sourceDepartment),
     owner: asset.owner ?? "Sistema",
     approval: asset.approval ?? "approved",
     url: asset.url ?? asset.file_url ?? "",

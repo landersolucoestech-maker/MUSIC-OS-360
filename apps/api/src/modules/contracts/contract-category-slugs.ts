@@ -4,13 +4,16 @@
  *
  * The contract category registry still lives in the browser, so most slugs are
  * tenant-authored content and are NEVER rewritten here. Only the slugs the
- * platform itself seeds AND that no tenant-owned taxonomy shares are canonical
- * English ids. Legacy (Portuguese) slugs keep being read; writes are canonical.
+ * platform itself seeds are canonical English ids. Legacy (Portuguese) slugs keep
+ * being read (filters expand to both spellings); writes are canonical.
  *
- * Not included on purpose: `distribuicao`, `licenciamento`, `gestao`, `shows`,
- * `outros`. They are also `contract_service_types.slug` values that tenants own
- * (and compare by exact string), so renaming them needs the server-side
- * registry (see findings contracts-ct1.md, follow-up F1).
+ * `distribuicao`, `licenciamento`, `gestao`, `outros` are ALSO the slugs of the
+ * tenant-owned `contract_service_types` rows (derived from the tenant-entered
+ * names). Those rows are never rewritten: the web resolves a contract/template
+ * category to its service type with the alias-aware matcher
+ * (`sameContractCategory`). `shows` is already English and is kept.
+ * Tenant-created slugs (`agenciamento`, `edicao`, `empresariamento_360`, ...) are
+ * never touched.
  *
  * Removal condition for LEGACY_CONTRACT_CATEGORY_SLUGS: no `contracts.type` /
  * `contract_templates.service_type` row and no browser category registry still
@@ -23,6 +26,10 @@ export const CANONICAL_CONTRACT_CATEGORY_SLUGS = [
   'exclusivity',
   'advertising',
   'semantic',
+  'distribution',
+  'licensing',
+  'management',
+  'other',
 ] as const;
 
 export type CanonicalContractCategorySlug = (typeof CANONICAL_CONTRACT_CATEGORY_SLUGS)[number];
@@ -35,6 +42,10 @@ export const LEGACY_CONTRACT_CATEGORY_SLUGS: Readonly<Record<string, CanonicalCo
   exclusividade: 'exclusivity',
   publicitario: 'advertising',
   semantico: 'semantic',
+  distribuicao: 'distribution',
+  licenciamento: 'licensing',
+  gestao: 'management',
+  outros: 'other',
 };
 
 /** Canonical slug for a platform-owned legacy slug; every other slug is returned untouched. */

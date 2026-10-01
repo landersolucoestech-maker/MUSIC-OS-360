@@ -5,6 +5,7 @@ import {
   contractSchema,
   type ContractFormData,
   SIGNER_ROLES,
+  canonicalSignerRole,
   SIGNER_ROLE_LABEL,
 } from "@/modules/contracts/lib/contract-schema";
 import { Button } from "@/shared/ui/button";
@@ -27,7 +28,7 @@ import type { ContractSigner } from "@/modules/contracts/lib/contract-schema";
 import { useContractServiceTypes } from "@/modules/contracts/hooks/useContractServiceTypes";
 import { useContractTemplates } from "@/modules/contracts/hooks/useContractTemplates";
 import { useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
-import { sameContractCategory } from "@/modules/contracts/lib/contract-category-slugs";
+import { findServiceTypeByCategory, sameContractCategory } from "@/modules/contracts/lib/contract-category-slugs";
 import { UserPlus, X } from "lucide-react";
 import { CONTRACT_STATUS_OPTIONS, ContractStatus } from "@/modules/contracts/lib/contract-status";
 import { isWizardSignerRecord } from "@/modules/contracts/lib/contract-wizard-party";
@@ -94,6 +95,10 @@ const ContractForm = ({
       production: "producao_musical",
       advertising: "publicidade",
       semantic: "outros",
+      distribution: "distribuicao",
+      licensing: "licenciamento",
+      management: "gestao",
+      other: "outros",
     };
     if (MAP[slug]) return MAP[slug];
     // prefix match: "empresariamento_360" → "empresariamento"
@@ -138,11 +143,14 @@ const ContractForm = ({
     return map;
   }, [templates, registryCategories, normalizeToCst]);
 
-  const selectedType = allServiceTypes.find((t) => t.slug === serviceTypeValue);
+  // Contracts persist the canonical category spelling (`distribution`) while the tenant's
+  // service type row may still carry the legacy slug (`distribuicao`): resolve either way.
+  const selectedType = findServiceTypeByCategory(allServiceTypes, serviceTypeValue);
+  const resolvedServiceTypeSlug = selectedType?.slug ?? serviceTypeValue;
   const legacyServiceTypeLabel =
     serviceTypeValue &&
-    !typesWithTemplates.some((t) => t.slug === serviceTypeValue)
-      ? allServiceTypes.find((t) => t.slug === serviceTypeValue)?.name ?? serviceTypeValue
+    !typesWithTemplates.some((t) => t.slug === resolvedServiceTypeSlug)
+      ? selectedType?.name ?? serviceTypeValue
       : null;
 
   const { fields: signerFields, append: appendSigner, remove: removeSigner } = useFieldArray({
@@ -186,7 +194,7 @@ const ContractForm = ({
             <div className="space-y-2">
               <Label>Tipo de Serviço *</Label>
               <Select
-                value={form.watch("service_type")}
+                value={resolvedServiceTypeSlug}
                 onValueChange={(value) => form.setValue("service_type", value as ContractFormData["service_type"])}
               >
                 <SelectTrigger data-testid="select-service-type">
@@ -194,7 +202,7 @@ const ContractForm = ({
                 </SelectTrigger>
                 <SelectContent>
                   {legacyServiceTypeLabel && (
-                    <SelectItem value={serviceTypeValue!} disabled className="text-muted-foreground">
+                    <SelectItem value={resolvedServiceTypeSlug!} disabled className="text-muted-foreground">
                       {legacyServiceTypeLabel} (tipo anterior)
                     </SelectItem>
                   )}
@@ -448,7 +456,7 @@ const ContractForm = ({
                 size="sm"
                 className="gap-1.5 text-xs"
                 data-testid="button-add-signer"
-                onClick={() => appendSigner({ name: "", email: "", role: "artista" })}
+                onClick={() => appendSigner({ name: "", email: "", role: "artist" })}
               >
                 <UserPlus className="h-3.5 w-3.5" />
                 Adicionar Signatário
@@ -577,7 +585,9 @@ function contractToFormData(c: ContractWithRelations): Partial<ContractFormSubmi
     fixed_value:  c.fixed_value ?? undefined,
     observations: c.notes?.startsWith("{") ? undefined : (c.notes ?? undefined),
     signers:      Array.isArray(c.signers)
-      ? c.signers.filter((s): s is ContractSigner => !isWizardSignerRecord(s))
+      ? c.signers
+          .filter((s): s is ContractSigner => !isWizardSignerRecord(s))
+          .map((s) => ({ ...s, role: canonicalSignerRole(s.role) as ContractSigner["role"] }))
       : [],
     documents:   Array.isArray(c.documents) ? (c.documents as UploadedFile[]) : [],
   };

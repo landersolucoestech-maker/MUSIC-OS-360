@@ -89,6 +89,7 @@ import { useGoals } from "@/modules/marketing/hooks/useGoals";
 import type { Goal, GoalType } from "@/modules/marketing/types/marketing.types";
 import { ArtistGoalStatus, ARTIST_GOAL_STATUS_LABELS_PT_BR, statusLabelPtBr, type StatusDomain } from "@music-os-360/types";
 import { transactionCategoryLabel } from "@/modules/accounting/constants/transaction-constants";
+import { CONTRACT_TYPE_FILTERS, matchesContractTypeFilter } from "@/modules/artist/lib/contract-type-filters";
 import { NATURE_BUCKETS, matchesNatureBucket } from "@/modules/artist/lib/revenue-nature";
 import {
   useContracts,
@@ -127,17 +128,7 @@ const CAMPAIGN_SECTIONS: Array<{ key: string; label: string; status: string[] }>
 
 // ── Finance: revenue by nature (NATURE_BUCKETS in ../lib/revenue-nature) ──
 
-// ── Contracts: filters by type ────────────────────────────────────────────
-const CONTRACT_FILTERS: Array<{ key: string; label: string; types?: string[] }> = [
-  { key: "all", label: "Todos" },
-  { key: "business", label: "Empresarial", types: ["exclusivo", "nao_exclusivo", "gestao", "representacao"] },
-  { key: "distribution", label: "Distribuição", types: ["distribuicao"] },
-  { key: "licensing", label: "Licenciamento", types: ["licenciamento"] },
-  { key: "production", label: "Produção", types: ["producao", "production"] },
-  { key: "partnerships", label: "Parcerias", types: ["parceria"] },
-  { key: "services", label: "Serviços", types: ["servicos"] },
-  { key: "other", label: "Outros", types: ["outro"] },
-];
+// ── Contracts: filters by type (modules/artist/lib/contract-type-filters) ──
 
 // ── Agenda: labels and filters ─────────────────────────────────────────────
 // events.type only stores the backend's coarse enum (show/festival/recording/
@@ -545,9 +536,7 @@ export function ArtistVision360Modal({
     return daysLeft >= 0 && daysLeft <= 60;
   }).length;
   const filteredContracts = actualContracts.filter((c) => {
-    const cfg = CONTRACT_FILTERS.find((f) => f.key === contractFilter);
-    if (!cfg || !cfg.types) return true;
-    return cfg.types.includes(String(c.type ?? "").toLowerCase());
+    return matchesContractTypeFilter(contractFilter, c.type);
   });
 
   // ── History derived from real data ───────────────────────────────────
@@ -2283,7 +2272,7 @@ export function ArtistVision360Modal({
 
               {/* Filters by type */}
               <div className="flex flex-wrap gap-2">
-                {CONTRACT_FILTERS.map((f) => (
+                {CONTRACT_TYPE_FILTERS.map((f) => (
                   <Button
                     key={f.key}
                     size="sm"

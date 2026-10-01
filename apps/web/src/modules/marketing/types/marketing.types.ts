@@ -624,7 +624,7 @@ export interface MarketingAsset {
   category: AssetCategory;
   projectId?: ID;
   taskId?: ID;
-  sourceDepartment?: "design" | "audiovisual" | "marketing" | "conteudo" | "operacoes" | string;
+  sourceDepartment?: "design" | "audiovisual" | "marketing" | "content" | "operations" | string;
   campaignId?: ID;
   artistId?: ID;
   department?: string;

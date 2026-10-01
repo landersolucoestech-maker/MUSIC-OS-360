@@ -19,8 +19,17 @@ describe('contract category slugs (platform-owned only)', () => {
     expect(canonicalContractCategorySlug('toString')).toBe('toString');
   });
 
-  it('never renames slugs shared with tenant-owned service types', () => {
-    for (const shared of ['distribuicao', 'licenciamento', 'gestao', 'shows', 'outros', 'agenciamento', 'edicao']) {
+  it('canonicalizes the registry seeds that tenant service types share (R3-04)', () => {
+    expect(canonicalContractCategorySlug('distribuicao')).toBe('distribution');
+    expect(canonicalContractCategorySlug('licenciamento')).toBe('licensing');
+    expect(canonicalContractCategorySlug('gestao')).toBe('management');
+    expect(canonicalContractCategorySlug('outros')).toBe('other');
+    expect(contractCategorySlugVariants('distribution')).toEqual(['distribution', 'distribuicao']);
+    expect(contractCategorySlugVariants('outros')).toEqual(['other', 'outros']);
+  });
+
+  it('never renames tenant-created slugs or the already-English `shows`', () => {
+    for (const shared of ['shows', 'agenciamento', 'edicao', 'empresariamento_360', 'parceria']) {
       expect(canonicalContractCategorySlug(shared)).toBe(shared);
       expect(contractCategorySlugVariants(shared)).toEqual([shared]);
     }
