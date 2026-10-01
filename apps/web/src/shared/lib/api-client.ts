@@ -75,7 +75,6 @@ export const TABLE_ENDPOINT = {
   artist_goals: "/artist-goals",
   ecad_reports: "/ecad-reports",
   content_detections: "/content-detections",
-  employee_documents: "/hr/employees",
   support_tickets: "/support-tickets",
   audit_logs: "/audit-logs",
   inventory_items: "/inventory",
@@ -86,6 +85,7 @@ export const TABLE_ENDPOINT = {
 } as const satisfies Record<string, string>;
 
 export const PENDING_TABLES = {
+  employee_documents: "Employee documents have no backend table or route (mapping it to /hr/employees listed employees as documents and deleted employees on document removal)",
   rules: "Rules UI storage table has no backend controller",
   marketing_tasks: "Marketing tasks have no backend controller",
   monitoring: "Monitoring table has no backend controller",
