@@ -1,5 +1,15 @@
 import { FunctionalRole, SystemRole } from '@music-os-360/types';
 
+// Canonical-slug helpers are shared with the web (single source: packages/types role-slugs.ts).
+export {
+  LEGACY_TO_CANONICAL_ROLE_SLUG,
+  toCanonicalRoleSlug,
+  toLegacyRoleSlug,
+  isLegacyRoleSlug,
+  roleSlugEquivalents,
+  areEquivalentRoleSlugs,
+} from '@music-os-360/types';
+
 /**
  * RBAC expand step (English naming): each English slug is an ALIAS of the Portuguese slug that is
  * still persisted in org_members.role / roles.slug. An alias must resolve to exactly the same
@@ -15,6 +25,22 @@ export const ENGLISH_ROLE_ALIASES: Readonly<Record<string, string>> = {
   [FunctionalRole.COLLABORATOR]: FunctionalRole.COLABORADOR,
   [FunctionalRole.HR_MANAGER]: FunctionalRole.RH_MANAGER,
 };
+
+/**
+ * Level of a role slug, or undefined when the slug is not an OWN key of ROLE_HIERARCHY. A plain
+ * `ROLE_HIERARCHY[slug]` would resolve inherited keys (`constructor`, `toString`, `__proto__`) to
+ * functions/objects that compare as NaN and silently pass `level < required` denials.
+ */
+export function roleLevel(slug: string): number | undefined {
+  return typeof slug === 'string' && Object.prototype.hasOwnProperty.call(ROLE_HIERARCHY, slug)
+    ? ROLE_HIERARCHY[slug]
+    : undefined;
+}
+
+/** Own-property check: `constructor`, `__proto__`, ... are never aliases. */
+export function isEnglishRoleAlias(slug: string): boolean {
+  return typeof slug === 'string' && Object.prototype.hasOwnProperty.call(ENGLISH_ROLE_ALIASES, slug);
+}
 
 export const ROLE_HIERARCHY: Record<string, number> = {
   [SystemRole.SUPER_ADMIN]: 100,

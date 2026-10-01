@@ -18,37 +18,37 @@ export const LEADS_WORKFLOW: WorkflowDefinition<string> = {
       from:  LeadStatus.NEW,
       to:    LeadStatus.CONTACTED,
       label: 'Iniciar Contato',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','comercial','sales'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','sales','comercial'],
     },
     {
       from:  [LeadStatus.NEW, LeadStatus.CONTACTED],
       to:    LeadStatus.IN_CONTACT,
       label: 'Em Contato',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','comercial','sales'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','sales','comercial'],
     },
     {
       from:  [LeadStatus.CONTACTED, LeadStatus.IN_CONTACT],
       to:    LeadStatus.QUALIFIED,
       label: 'Qualificar Lead',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','comercial','sales'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','sales','comercial'],
     },
     {
       from:  LeadStatus.QUALIFIED,
       to:    LeadStatus.PROPOSAL,
       label: 'Enviar Proposta',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','comercial','sales'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','sales','comercial'],
     },
     {
       from:  LeadStatus.PROPOSAL,
       to:    LeadStatus.NEGOTIATION,
       label: 'Em Negociação',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','comercial','sales'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','sales','comercial'],
     },
     {
       from:  [LeadStatus.PROPOSAL, LeadStatus.NEGOTIATION],
       to:    LeadStatus.CLOSED,
       label: 'Fechar Negócio',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','comercial','sales'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','sales','comercial'],
     },
     {
       from:  [
@@ -61,7 +61,7 @@ export const LEADS_WORKFLOW: WorkflowDefinition<string> = {
       ],
       to:    LeadStatus.LOST,
       label: 'Marcar como Perdido',
-      roles: ['super_admin','tenant_owner','owner','admin','manager','comercial','sales'],
+      roles: ['super_admin','tenant_owner','owner','admin','manager','sales','comercial'],
     },
     {
       from:  [LeadStatus.LOST, LeadStatus.INACTIVE],

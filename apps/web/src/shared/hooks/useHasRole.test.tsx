@@ -18,6 +18,8 @@ const ALIAS_TO_CANONICAL: ReadonlyArray<readonly [alias: AppRole, canonical: App
   ["producer", "produtor"],
   ["collaborator", "colaborador"],
   ["hr_manager", "rh_manager"],
+  // canonical artist vs the legacy artista alias (S4a: artista is canonicalized to artist on write)
+  ["artist", "artista"],
 ];
 
 const ALL_ROLES = Object.keys(ROLE_LABELS) as AppRole[];
@@ -80,5 +82,63 @@ describe("useHasRole (PT/EN role slug aliases)", () => {
     expect(allowed("not_a_role", "viewer")).toBe(false);
     expect(allowed(null, "viewer")).toBe(false);
     expect(allowed("super_admin", "viewer")).toBe(true);
+  });
+});
+
+/**
+ * RBAC S4a: the API now WRITES the canonical English slug. The hook must give every legacy slug and its
+ * canonical slug the same result, deny what is unknown (including prototype keys) and never let a
+ * canonical slug reach a level its legacy twin does not.
+ */
+describe("useHasRole (S4a canonical English slugs)", () => {
+  beforeEach(() => {
+    mockUser = null;
+  });
+
+  const PAIRS: ReadonlyArray<readonly [legacy: AppRole, canonical: AppRole]> = [
+    ["juridico", "legal"],
+    ["comercial", "sales"],
+    ["produtor", "producer"],
+    ["colaborador", "collaborator"],
+    ["rh_manager", "hr_manager"],
+    ["artista", "artist"],
+  ];
+
+  it.each(PAIRS)("%s and %s: identical allow/deny as current and as required role against every role", (legacy, canonical) => {
+    for (const other of [...ALL_ROLES, "radio", "manager", "unknown_role"]) {
+      expect(allowed(legacy, other as AppRole)).toBe(allowed(canonical, other as AppRole));
+      expect(allowed(other, legacy)).toBe(allowed(other, canonical));
+    }
+  });
+
+  it("the canonical artist is no longer below every role: it ranks like its legacy alias", () => {
+    expect(allowed("artist", "viewer")).toBe(true);
+    expect(allowed("artist", "artist")).toBe(true);
+    expect(allowed("artist", "admin")).toBe(false);
+    expect(allowed("artist", "legal")).toBe(false);
+  });
+
+  it.each(PAIRS)("%s/%s never satisfy admin, owner, tenant_owner or super_admin", (legacy, canonical) => {
+    for (const role of [legacy, canonical]) {
+      for (const higher of ["admin", "owner", "tenant_owner", "super_admin"] as AppRole[]) {
+        expect(allowed(role, higher)).toBe(false);
+      }
+    }
+  });
+
+  it.each(["constructor", "__proto__", "toString", "hasOwnProperty", "LEGAL", "Legal", " legal", "juridico_", "", "admin_master", "ar_gestao", "leitor"])(
+    "unknown or malformed current role %j is denied even for the lowest requirement",
+    (role) => {
+      expect(allowed(role, "viewer")).toBe(false);
+    },
+  );
+
+  it.each(["constructor", "__proto__", "toString"])("prototype key %s as the REQUIRED role is not satisfiable by a low role", (required) => {
+    expect(allowed("collaborator", required as AppRole)).toBe(false);
+    expect(allowed("viewer", required as AppRole)).toBe(false);
+  });
+
+  it("every legacy slug keeps a label identical to its canonical slug (labels are the only Portuguese)", () => {
+    for (const [legacy, canonical] of PAIRS) expect(ROLE_LABELS[legacy]).toBe(ROLE_LABELS[canonical]);
   });
 });

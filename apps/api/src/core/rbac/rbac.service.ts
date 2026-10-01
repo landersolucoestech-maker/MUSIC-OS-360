@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { SystemRole, FunctionalRole } from '@music-os-360/types';
 import { PermissionResolverService, type MemberAuthzContext } from './permission-resolver.service';
-import { ENGLISH_ROLE_ALIASES, ROLE_HIERARCHY } from './role-hierarchy';
+import { ENGLISH_ROLE_ALIASES, ROLE_HIERARCHY, roleLevel } from './role-hierarchy';
 
 export type { MemberAuthzContext };
 
@@ -226,11 +226,11 @@ export class RbacService {
     // Fail closed: an unknown required role must never be satisfiable (it used to count as level 0,
     // so every caller passed). Mirrors RolesGuard, where an unknown required role counts as level 99.
     if (!Object.prototype.hasOwnProperty.call(ROLE_HIERARCHY, required)) return false;
-    return (ROLE_HIERARCHY[userRole] ?? 0) >= ROLE_HIERARCHY[required];
+    return (roleLevel(userRole) ?? 0) >= ROLE_HIERARCHY[required];
   }
 
   can(role: string, resource: Resource, action: Action): boolean {
-    const perms = ROLE_PERMISSIONS[role] ?? [];
+    const perms = this.getPermissions(role);
     return perms.includes(`${resource}:${action}`);
   }
 
@@ -245,11 +245,12 @@ export class RbacService {
   }
 
   getPermissions(role: string): string[] {
-    return ROLE_PERMISSIONS[role] ?? [];
+    // Own-property only: `constructor`/`__proto__` must not resolve to inherited objects.
+    return Object.prototype.hasOwnProperty.call(ROLE_PERMISSIONS, role) ? ROLE_PERMISSIONS[role] : [];
   }
 
   getHierarchyLevel(role: string): number {
-    return ROLE_HIERARCHY[role] ?? 0;
+    return roleLevel(role) ?? 0;
   }
 
   isSystemRole(role: string): role is SystemRole {

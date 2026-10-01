@@ -9,7 +9,13 @@ import { MembershipRoleResolverService } from './membership-role-resolver.servic
 import { RbacDistributedCacheService } from '../../core/rbac/rbac-distributed-cache.service';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
-import { ROLE_HIERARCHY } from '../../core/rbac/role-hierarchy';
+import {
+  ENGLISH_ROLE_ALIASES,
+  isEnglishRoleAlias,
+  roleLevel,
+  roleSlugEquivalents,
+  toCanonicalRoleSlug,
+} from '../../core/rbac/role-hierarchy';
 import { redactDiagnosticText } from '../../core/filters/redact-diagnostic';
 import { MailService } from '../../core/mail/mail.service';
 import { PlanLimitService } from '../../core/billing/plan-limit.service';
@@ -36,7 +42,9 @@ export class UsersService {
       .createQueryBuilder('m')
       .where('m.tenant_id = :tenantId', { tenantId });
 
-    if (q.role)   qb.andWhere('m.role = :role',       { role:   q.role });
+    // Dual-read: a legacy slug and its canonical English slug are the same role, so a filter by
+    // either must match members persisted under either form (S4a expand step).
+    if (q.role)   qb.andWhere('m.role IN (:...roles)', { roles:  roleSlugEquivalents(q.role) });
     if (q.search) qb.andWhere('m.email ILIKE :search', { search: `%${q.search}%` });
 
     qb.orderBy('m.created_at', q.ascending ? 'ASC' : 'DESC')
@@ -86,6 +94,7 @@ export class UsersService {
 
     // Dual-write (STEP 12-G): writes `role` (legacy) AND `role_id` (resolved canonical).
     const roleId = await this.roleResolver.resolveOrThrow(tenantId, dto.role);
+    const persistedRole = await this.toPersistedRoleSlug(tenantId, dto.role, roleId);
     const entity = this.repo!.create({
       org_id:        anyMember.org_id,
       tenant_id:     tenantId,
@@ -93,7 +102,7 @@ export class UsersService {
       email:         dto.email,
       full_name:     dto.fullName ?? null,
       phone:         dto.phone ?? null,
-      role:          dto.role,
+      role:          persistedRole,
       role_id:       roleId,
       is_active:     true,
     });
@@ -109,7 +118,7 @@ export class UsersService {
         tenantId,
         userId:    dto.userId,
         email:     dto.email,
-        role:      dto.role,
+        role:      persistedRole,
         invitedBy: invitedBy ?? 'system',
       },
     });
@@ -156,6 +165,8 @@ export class UsersService {
     const role = roles[0]?.slug;
     if (!role) throw new NotFoundException('Papel não encontrado ou não atribuível');
     await this.assertCanAssignRole(tenantId, actorRole, role);
+    // JWT claim source: Supabase invite metadata carries the same canonical slug that create() persists.
+    const persistedRole = await this.toPersistedRoleSlug(tenantId, role);
 
     const tenantRows = await this.repo!.manager.query(
       `SELECT "org_id", "slug" FROM "tenants"
@@ -185,7 +196,7 @@ export class UsersService {
     const redirectBase = this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:5000';
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
       redirectTo: `${redirectBase}/reset-password`,
-      data: { org_id: tenant.org_id, tenant_id: tenantId, tenant_slug: tenant.slug, role },
+      data: { org_id: tenant.org_id, tenant_id: tenantId, tenant_slug: tenant.slug, role: persistedRole },
     });
     if (error || !data.user) {
       this.logger.warn(`Supabase inviteUserByEmail failed: ${redactDiagnosticText(error?.message) || 'no user returned'}`);
@@ -196,7 +207,7 @@ export class UsersService {
     }
 
     const metadataResult = await supabase.auth.admin.updateUserById(data.user.id, {
-      app_metadata: { org_id: tenantId, role },
+      app_metadata: { org_id: tenantId, role: persistedRole },
     });
     if (metadataResult.error) {
       await supabase.auth.admin.deleteUser(data.user.id, true).catch(() => undefined);
@@ -211,7 +222,7 @@ export class UsersService {
       userId: data.user.id,
       email,
       role,
-    }, invitedBy);
+    }, invitedBy, actorRole);
     const invitations = await this.repo!.manager.query(
       `INSERT INTO "tenant_invitations" (
          "tenant_id", "org_id", "email", "role_id", "auth_user_id", "invited_by"
@@ -260,6 +271,7 @@ export class UsersService {
     const invitation = invitations[0];
     if (!invitation) throw new NotFoundException('Convite pendente não encontrado');
     await this.assertCanAssignRole(tenantId, actorRole, String(invitation['role_slug']));
+    const persistedRole = await this.toPersistedRoleSlug(tenantId, String(invitation['role_slug']));
 
     const redirectBase = this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:5000';
     const { data, error } = await this.supabaseAdmin().auth.admin.generateLink({
@@ -267,7 +279,7 @@ export class UsersService {
       email: String(invitation['email']),
       options: {
         redirectTo: `${redirectBase}/reset-password`,
-        data: { tenant_id: tenantId, role: invitation['role_slug'] },
+        data: { tenant_id: tenantId, role: persistedRole },
       },
     });
     if (error || !data.properties?.action_link) {
@@ -339,10 +351,11 @@ export class UsersService {
     // checks, it only prevents two concurrent role assignments from
     // silently overwriting each other.
     const roleId = await this.roleResolver.resolveOrThrow(tenantId, role, { membershipId: id });
+    const persistedRole = await this.toPersistedRoleSlug(tenantId, role, roleId);
     await casUpdate(
       this.repo!,
       { id, tenant_id: tenantId } as any,
-      { role, role_id: roleId, updated_at: new Date() } as any,
+      { role: persistedRole, role_id: roleId, updated_at: new Date() } as any,
       expectedUpdatedAt,
       'Este usuário foi alterado por outra pessoa desde que você o carregou. Recarregue e tente novamente.',
     );
@@ -408,14 +421,50 @@ export class UsersService {
     }
   }
 
+  /**
+   * S4a (canonical English slugs): the value persisted in org_members.role, tenant-facing events and the
+   * Supabase invite/app_metadata role claim. Legacy slugs (juridico, comercial, produtor, colaborador,
+   * rh_manager, artista) are written in their canonical English form (legal, sales, producer,
+   * collaborator, hr_manager, artist). role_id is NOT affected: it is always resolved from the slug the
+   * caller sent and follows canonical_role_id, so both forms point to the same role row.
+   *
+   * Fail-safe: the canonical slug is written ONLY when the roles table proves that it resolves to the
+   * same role_id as the slug the caller sent (global alias row present and live). Otherwise (alias
+   * missing, archived, shadowed by a tenant role, resolver error) the original slug is kept. Every
+   * read path accepts both forms (ROLE_HIERARCHY, permissions, workflow roles, web useHasRole), so
+   * this never changes authorization.
+   *
+   * Kill switch: RBAC_CANONICAL_ROLE_WRITE=false makes the writer emit the legacy (Portuguese) form
+   * for the 5 English aliases again (rolling deploy window / rollback). Both forms stay accepted.
+   */
+  private async toPersistedRoleSlug(tenantId: string, role: string, knownRoleId?: string): Promise<string> {
+    if (process.env['RBAC_CANONICAL_ROLE_WRITE'] === 'false') {
+      return isEnglishRoleAlias(role) ? ENGLISH_ROLE_ALIASES[role] : role;
+    }
+    const canonical = toCanonicalRoleSlug(role);
+    if (canonical === role) return role;
+    try {
+      const sent = knownRoleId ?? (await this.roleResolver.classify(tenantId, role)).roleId;
+      const target = await this.roleResolver.classify(tenantId, canonical);
+      if (sent && target.roleId === sent) return canonical;
+    } catch (err) {
+      this.logger.warn(`canonical role slug check failed for "${role}": ${redactDiagnosticText((err as Error)?.message)}`);
+    }
+    return role;
+  }
+
   private async assertCanAssignRole(
     tenantId: string,
     actorRole: string,
     targetRole: string,
   ): Promise<void> {
-    const slugs = Array.from(new Set([actorRole, targetRole]));
+    // S4a: an English alias (legal, sales, ...) is assignable exactly when the legacy global role it
+    // aliases is (its own roles row is seeded is_assignable=false until the gated S4b rename). Only a
+    // GLOBAL twin row counts, so a tenant custom role can never lend assignability/level to a slug.
+    const twinSlug = isEnglishRoleAlias(targetRole) ? ENGLISH_ROLE_ALIASES[targetRole] : null;
+    const slugs = Array.from(new Set([actorRole, targetRole, ...(twinSlug ? [twinSlug] : [])]));
     const roleRows = await this.repo!.manager.query(
-      `SELECT "slug", "hierarchy_level", "is_assignable"
+      `SELECT "slug", "hierarchy_level", "is_assignable", "tenant_id"
          FROM "roles"
         WHERE "slug" = ANY($1::text[])
           AND ("tenant_id" = $2 OR "tenant_id" IS NULL)
@@ -423,7 +472,7 @@ export class UsersService {
           AND "archived_at" IS NULL
         ORDER BY ("tenant_id" IS NULL) DESC`,
       [slugs, tenantId],
-    ) as Array<{ slug: string; hierarchy_level: number; is_assignable: boolean | null }>;
+    ) as Array<{ slug: string; hierarchy_level: number; is_assignable: boolean | null; tenant_id?: string | null }>;
     const levels = new Map<string, number>();
     const assignable = new Map<string, boolean>();
     // find-986186c1: a GLOBAL (tenant_id IS NULL) role row must always be
@@ -437,6 +486,19 @@ export class UsersService {
       if (!levels.has(row.slug)) levels.set(row.slug, Number(row.hierarchy_level));
       if (!assignable.has(row.slug)) assignable.set(row.slug, row.is_assignable !== false);
     }
+    if (twinSlug) {
+      // A live tenant-scoped role squatting on a reserved English slug must never inherit the legacy
+      // twin's assignability (the member string would get the code-map level with the tenant role_id).
+      if (roleRows.some((row) => row.slug === targetRole && row.tenant_id != null)) {
+        throw new BadRequestException('Este papel não pode ser atribuído por este fluxo.');
+      }
+      const twin = roleRows.find((row) => row.slug === twinSlug && row.tenant_id == null);
+      if (twin) {
+        // Policy (assignability + ceiling) is that of the legacy global twin; identical level by construction.
+        assignable.set(targetRole, twin.is_assignable !== false);
+        levels.set(targetRole, Number(twin.hierarchy_level));
+      }
+    }
     // find-5cc269d3: is_assignable is authoritative and applies regardless of
     // actor role — super_admin (and any other non-assignable role) can never
     // be granted through this self-service path, closing the gap where
@@ -444,11 +506,11 @@ export class UsersService {
     if (assignable.get(targetRole) === false) {
       throw new BadRequestException('Este papel não pode ser atribuído por este fluxo.');
     }
-    const actorLevel = levels.get(actorRole) ?? ROLE_HIERARCHY[actorRole] ?? 0;
+    const actorLevel = levels.get(actorRole) ?? roleLevel(actorRole) ?? 0;
     // Fail-closed: a target role with no known level (absent from the DB rows
     // AND from ROLE_HIERARCHY) must never be assignable. Previously the `?? 0`
     // fallback gave it level 0, which passed the ceiling check for any actor.
-    const knownTargetLevel = levels.get(targetRole) ?? ROLE_HIERARCHY[targetRole];
+    const knownTargetLevel = levels.get(targetRole) ?? roleLevel(targetRole);
     if (knownTargetLevel === undefined || !Number.isFinite(knownTargetLevel)) {
       this.logger.warn(`assertCanAssignRole rejected unknown target role "${targetRole}" (no DB level, not in ROLE_HIERARCHY)`);
       throw new BadRequestException({

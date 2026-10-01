@@ -19,8 +19,8 @@ import { RELEASES_WORKFLOW } from './releases.workflow';
  * The engine matches roles by exact string membership (no alias, no hierarchy), so this
  * table is a behavior contract: any role slug rename or array change must update it
  * deliberately. The literal arrays below are intentionally NOT derived from the definitions.
- * English aliases (legal, sales, producer, collaborator, hr_manager) appear immediately after
- * their Portuguese slug wherever the Portuguese slug is allowed (expand step; never instead of it).
+ * Canonical English slugs (legal, sales, producer, ...) come first; the legacy Portuguese slug
+ * follows wherever it is allowed (expand step S4a: both always listed, the legacy one never dropped).
  */
 
 // Every slug persisted in roles.slug / org_members.role (ROLE_HIERARCHY keys).
@@ -45,8 +45,8 @@ const EXPECTED: Record<string, { definition: WorkflowDefinition<string>; rows: R
   contracts: {
     definition: CONTRACTS_WORKFLOW,
     rows: [
-      { from: [ContractStatus.DRAFT], to: ContractStatus.UNDER_REVIEW, roles: [...CORE, 'juridico', 'legal'] },
-      { from: [ContractStatus.UNDER_REVIEW], to: ContractStatus.DRAFT, roles: [...CORE, 'juridico', 'legal'] },
+      { from: [ContractStatus.DRAFT], to: ContractStatus.UNDER_REVIEW, roles: [...CORE, 'legal', 'juridico'] },
+      { from: [ContractStatus.UNDER_REVIEW], to: ContractStatus.DRAFT, roles: [...CORE, 'legal', 'juridico'] },
       { from: [ContractStatus.UNDER_REVIEW], to: ContractStatus.AWAITING_SIGNATURE, roles: CORE },
       { from: [ContractStatus.AWAITING_SIGNATURE], to: ContractStatus.SIGNED, roles: CORE },
       { from: [ContractStatus.SIGNED], to: ContractStatus.IN_FORCE, roles: CORE },
@@ -73,12 +73,12 @@ const EXPECTED: Record<string, { definition: WorkflowDefinition<string>; rows: R
   leads: {
     definition: LEADS_WORKFLOW,
     rows: [
-      { from: [LeadStatus.NEW], to: LeadStatus.CONTACTED, roles: [...CORE, 'comercial', 'sales'] },
-      { from: [LeadStatus.NEW, LeadStatus.CONTACTED], to: LeadStatus.IN_CONTACT, roles: [...CORE, 'comercial', 'sales'] },
-      { from: [LeadStatus.CONTACTED, LeadStatus.IN_CONTACT], to: LeadStatus.QUALIFIED, roles: [...CORE, 'comercial', 'sales'] },
-      { from: [LeadStatus.QUALIFIED], to: LeadStatus.PROPOSAL, roles: [...CORE, 'comercial', 'sales'] },
-      { from: [LeadStatus.PROPOSAL], to: LeadStatus.NEGOTIATION, roles: [...CORE, 'comercial', 'sales'] },
-      { from: [LeadStatus.PROPOSAL, LeadStatus.NEGOTIATION], to: LeadStatus.CLOSED, roles: [...CORE, 'comercial', 'sales'] },
+      { from: [LeadStatus.NEW], to: LeadStatus.CONTACTED, roles: [...CORE, 'sales', 'comercial'] },
+      { from: [LeadStatus.NEW, LeadStatus.CONTACTED], to: LeadStatus.IN_CONTACT, roles: [...CORE, 'sales', 'comercial'] },
+      { from: [LeadStatus.CONTACTED, LeadStatus.IN_CONTACT], to: LeadStatus.QUALIFIED, roles: [...CORE, 'sales', 'comercial'] },
+      { from: [LeadStatus.QUALIFIED], to: LeadStatus.PROPOSAL, roles: [...CORE, 'sales', 'comercial'] },
+      { from: [LeadStatus.PROPOSAL], to: LeadStatus.NEGOTIATION, roles: [...CORE, 'sales', 'comercial'] },
+      { from: [LeadStatus.PROPOSAL, LeadStatus.NEGOTIATION], to: LeadStatus.CLOSED, roles: [...CORE, 'sales', 'comercial'] },
       {
         from: [
           LeadStatus.NEW,
@@ -89,7 +89,7 @@ const EXPECTED: Record<string, { definition: WorkflowDefinition<string>; rows: R
           LeadStatus.NEGOTIATION,
         ],
         to: LeadStatus.LOST,
-        roles: [...CORE, 'comercial', 'sales'],
+        roles: [...CORE, 'sales', 'comercial'],
       },
       { from: [LeadStatus.LOST, LeadStatus.INACTIVE], to: LeadStatus.NEW, roles: CORE },
       { from: [LeadStatus.CLOSED, LeadStatus.LOST], to: LeadStatus.INACTIVE, roles: CORE },
@@ -98,8 +98,8 @@ const EXPECTED: Record<string, { definition: WorkflowDefinition<string>; rows: R
   projects: {
     definition: PROJECTS_WORKFLOW,
     rows: [
-      { from: [ProjectStatus.PLANNING], to: ProjectStatus.IN_PROGRESS, roles: [...CORE, 'produtor', 'producer'] },
-      { from: [ProjectStatus.IN_PROGRESS], to: ProjectStatus.REVIEW, roles: [...CORE, 'produtor', 'producer'] },
+      { from: [ProjectStatus.PLANNING], to: ProjectStatus.IN_PROGRESS, roles: [...CORE, 'producer', 'produtor'] },
+      { from: [ProjectStatus.IN_PROGRESS], to: ProjectStatus.REVIEW, roles: [...CORE, 'producer', 'produtor'] },
       { from: [ProjectStatus.REVIEW], to: ProjectStatus.IN_PROGRESS, roles: CORE },
       { from: [ProjectStatus.REVIEW], to: ProjectStatus.COMPLETED, roles: CORE },
       {
@@ -115,17 +115,17 @@ const EXPECTED: Record<string, { definition: WorkflowDefinition<string>; rows: R
       {
         from: [ReleaseStatus.DRAFT],
         to: ReleaseStatus.METADATA_PENDING,
-        roles: ['super_admin', 'tenant_owner', 'owner', 'admin', 'editor', 'manager', 'produtor', 'producer', 'marketing_manager'],
+        roles: ['super_admin', 'tenant_owner', 'owner', 'admin', 'editor', 'manager', 'producer', 'produtor', 'marketing_manager'],
       },
       {
         from: [ReleaseStatus.METADATA_PENDING],
         to: ReleaseStatus.ASSETS_PENDING,
-        roles: ['super_admin', 'tenant_owner', 'owner', 'admin', 'editor', 'manager', 'produtor', 'producer', 'marketing_manager'],
+        roles: ['super_admin', 'tenant_owner', 'owner', 'admin', 'editor', 'manager', 'producer', 'produtor', 'marketing_manager'],
       },
       {
         from: [ReleaseStatus.ASSETS_PENDING],
         to: ReleaseStatus.REVIEW,
-        roles: ['super_admin', 'tenant_owner', 'owner', 'admin', 'editor', 'manager', 'produtor', 'producer', 'marketing_manager'],
+        roles: ['super_admin', 'tenant_owner', 'owner', 'admin', 'editor', 'manager', 'producer', 'produtor', 'marketing_manager'],
       },
       { from: [ReleaseStatus.REVIEW], to: ReleaseStatus.APPROVED, roles: CORE_MM },
       { from: [ReleaseStatus.REVIEW], to: ReleaseStatus.ASSETS_PENDING, roles: CORE_MM },

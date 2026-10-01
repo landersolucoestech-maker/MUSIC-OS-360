@@ -25,3 +25,23 @@ SELECT tenant_id, role, count(*) FROM org_members
 ```
 
 `RbacAdminService` also rejects these slugs (every `ROLE_HIERARCHY` key) for new/duplicated tenant roles, and the RBAC seed skips an alias that collides with a live tenant custom role.
+
+### Canonical English role writes (RBAC S4a)
+
+From S4a the API WRITES the canonical English slug (`juridico`->`legal`, `comercial`->`sales`, `produtor`->`producer`, `colaborador`->`collaborator`, `rh_manager`->`hr_manager`, `artista`->`artist`) into `org_members.role`, the `USER_INVITED` event and the Supabase invite / `app_metadata.role` claim. `role_id` is unchanged (it still resolves to the legacy row through `canonical_role_id`). Legacy and canonical slugs grant identical authorization everywhere they are read (ROLE_HIERARCHY, legacy permission matrix, workflow role arrays, RolesGuard, PermissionsGuard shadow, web `useHasRole`, member list filter); nothing is deleted or renamed and no data is backfilled.
+
+- Order: migrations -> API/web release. The writer emits the canonical slug only when `roles` proves that it resolves to the same `role_id` as the slug sent (live global alias row); with the migration missing, archived or shadowed by a tenant role it keeps the legacy slug. Migration `20260930000001` is therefore still a hard gate for the first deploy, and its member pre-flight query above only applies BEFORE its first run. After S4a, members holding a canonical slug are expected; the consistency check is the query below, which must return zero rows (a canonical `org_members.role` whose `role_id` is neither the row with the same slug nor its legacy twin):
+
+```sql
+SELECT m.role, r.slug, count(*) FROM org_members m LEFT JOIN roles r ON r.id = m.role_id
+ WHERE m.role IN ('legal','sales','producer','collaborator','hr_manager','artist')
+   AND r.slug IS DISTINCT FROM m.role
+   AND r.slug IS DISTINCT FROM CASE m.role WHEN 'legal' THEN 'juridico' WHEN 'sales' THEN 'comercial'
+         WHEN 'producer' THEN 'produtor' WHEN 'collaborator' THEN 'colaborador'
+         WHEN 'hr_manager' THEN 'rh_manager' WHEN 'artist' THEN 'artista' END
+ GROUP BY 1, 2;
+```
+
+- Rolling deploy: an API instance older than the 017 code maps the canonical slugs to level 0 (fail-closed lockout for that member). Keep `RBAC_CANONICAL_ROLE_WRITE=false` (kill switch: the writer emits the legacy form again; both forms stay accepted) until every instance runs the S4a build, then remove the variable. Rollback of S4a code is safe for the same reason; `down()` of `20260930000001` is refused while any member row holds a canonical slug (by design).
+- A canonical alias is assignable exactly when its legacy global twin is (`assertCanAssignRole`); a live tenant role squatting on a canonical slug is refused, and inherited object keys (`constructor`, `__proto__`, ...) are reserved for tenant roles and never resolve to a role level.
+- The S4b in-place rename / member backfill / retirement is NOT applied anywhere. Its design and gates: `docs/engineering/rbac-retirement-plan.md`; the draft migration lives under `apps/api/src/database/migration-drafts/` and is not registered in `migrations/index.ts`.

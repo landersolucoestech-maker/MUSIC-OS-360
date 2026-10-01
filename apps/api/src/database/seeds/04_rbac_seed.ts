@@ -57,11 +57,22 @@ const ROLE_NAMES: Record<string, string> = {
 // English aliases stay non-assignable until the org_members backfill (expand step): no member can hold them.
 const NON_ASSIGNABLE = new Set<string>(['super_admin', ...Object.keys(ENGLISH_ROLE_ALIASES)]);
 
+/**
+ * Canonical-first grant tables: the lists below name roles by their canonical English slug. While the
+ * Portuguese global rows are still the ones that carry role_permissions (expand phase, see
+ * ENGLISH_ROLE_ALIASES), a grant for `legal` is stored on the `juridico` row. After the gated in-place
+ * rename (docs/engineering/rbac-retirement-plan.md) ENGLISH_ROLE_ALIASES is emptied and this becomes
+ * the identity function; the tables do not change.
+ */
+function permissionHolderSlug(slug: string): string {
+  return Object.prototype.hasOwnProperty.call(ENGLISH_ROLE_ALIASES, slug) ? ENGLISH_ROLE_ALIASES[slug] : slug;
+}
+
 const FINANCIAL_PERMISSION_GRANTS: Record<string, string[]> = {
   'financial_category:read': [
     'super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting',
-    'juridico', 'marketing_manager', 'marketing', 'comercial', 'produtor', 'radio',
-    'tv', 'artist', 'colaborador', 'rh_manager', 'viewer',
+    'legal', 'marketing_manager', 'marketing', 'sales', 'producer', 'radio',
+    'tv', 'artist', 'collaborator', 'hr_manager', 'viewer',
   ],
   'financial_category:create': ['super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting'],
   'financial_category:update': ['super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting'],
@@ -70,8 +81,8 @@ const FINANCIAL_PERMISSION_GRANTS: Record<string, string[]> = {
 
   'financial_rule:read': [
     'super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting',
-    'juridico', 'marketing_manager', 'marketing', 'comercial', 'produtor', 'radio',
-    'tv', 'artist', 'colaborador', 'rh_manager', 'viewer',
+    'legal', 'marketing_manager', 'marketing', 'sales', 'producer', 'radio',
+    'tv', 'artist', 'collaborator', 'hr_manager', 'viewer',
   ],
   'financial_rule:create': ['super_admin', 'owner', 'admin', 'manager'],
   'financial_rule:update': ['super_admin', 'owner', 'admin', 'manager'],
@@ -80,8 +91,8 @@ const FINANCIAL_PERMISSION_GRANTS: Record<string, string[]> = {
 
   'financial_category_rule:read': [
     'super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting',
-    'juridico', 'marketing_manager', 'marketing', 'comercial', 'produtor', 'radio',
-    'tv', 'artist', 'colaborador', 'rh_manager', 'viewer',
+    'legal', 'marketing_manager', 'marketing', 'sales', 'producer', 'radio',
+    'tv', 'artist', 'collaborator', 'hr_manager', 'viewer',
   ],
   'financial_category_rule:create': ['super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting'],
   'financial_category_rule:update': ['super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting'],
@@ -94,8 +105,8 @@ const FINANCIAL_PERMISSION_GRANTS: Record<string, string[]> = {
 //   manager+   (level >= 70) = super_admin..manager
 const VIEWER_PLUS = [
   'super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting',
-  'juridico', 'marketing_manager', 'marketing', 'comercial', 'produtor', 'radio',
-  'tv', 'artist', 'colaborador', 'rh_manager', 'viewer',
+  'legal', 'marketing_manager', 'marketing', 'sales', 'producer', 'radio',
+  'tv', 'artist', 'collaborator', 'hr_manager', 'viewer',
 ];
 const FINANCIAL_PLUS = ['super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting'];
 const MANAGER_PLUS = ['super_admin', 'owner', 'admin', 'manager'];
@@ -255,7 +266,8 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
 
   // PHASE 8.1: incremental financial permissions without changing the legacy matrix.
   for (const [key, slugs] of Object.entries(FINANCIAL_PERMISSION_GRANTS)) {
-    for (const slug of slugs) {
+    for (const canonicalSlug of slugs) {
+      const slug = permissionHolderSlug(canonicalSlug);
       if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
@@ -271,7 +283,8 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
 
   // PHASE 8.3: transactions/invoices permissions at parity with the controllers' baseline.
   for (const [key, slugs] of Object.entries(TRANSACTION_INVOICE_PERMISSION_GRANTS)) {
-    for (const slug of slugs) {
+    for (const canonicalSlug of slugs) {
+      const slug = permissionHolderSlug(canonicalSlug);
       if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
@@ -287,7 +300,8 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
 
   // PHASE 8.4: contracts/contract-templates permissions at parity with the controllers' baseline.
   for (const [key, slugs] of Object.entries(CONTRACT_PERMISSION_GRANTS)) {
-    for (const slug of slugs) {
+    for (const canonicalSlug of slugs) {
+      const slug = permissionHolderSlug(canonicalSlug);
       if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
@@ -303,7 +317,8 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
 
   // PHASE 8.5: granular CRUD of the migrated controllers (closes the catalog×controller gap).
   for (const [key, slugs] of Object.entries(GRANULAR_CRUD_PERMISSION_GRANTS)) {
-    for (const slug of slugs) {
+    for (const canonicalSlug of slugs) {
+      const slug = permissionHolderSlug(canonicalSlug);
       if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
@@ -319,7 +334,8 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
 
   // PHASE 8.6: realignment of the artist:* and inventory:* distribution (adds missing grants).
   for (const [key, slugs] of Object.entries(ARTIST_INVENTORY_PERMISSION_GRANTS)) {
-    for (const slug of slugs) {
+    for (const canonicalSlug of slugs) {
+      const slug = permissionHolderSlug(canonicalSlug);
       if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")

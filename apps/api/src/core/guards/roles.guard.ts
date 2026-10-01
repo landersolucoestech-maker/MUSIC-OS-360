@@ -12,7 +12,7 @@ import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 import { AUTH_DISABLED } from '../auth-disabled';
 import { RbacDecisionService } from '../rbac/rbac-decision.service';
 import { IS_PUBLIC_KEY } from './auth.guard';
-import { ROLE_HIERARCHY } from '../rbac/role-hierarchy';
+import { ROLE_HIERARCHY, roleLevel } from '../rbac/role-hierarchy';
 import { AUTH_BOOTSTRAP_KEY } from '../decorators/auth-bootstrap.decorator';
 import { redactUrl } from '../security/redact';
 import { permissionDeniedException } from './authorization-errors';
@@ -22,7 +22,7 @@ const WRITE_METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
 
 function minAcceptedLevel(roles: string[] | undefined): number | null {
   if (!roles || roles.length === 0) return null;
-  return Math.min(...roles.map((role) => ROLE_HIERARCHY[role] ?? 99));
+  return Math.min(...roles.map((role) => roleLevel(role) ?? 99));
 }
 
 @Injectable()
@@ -124,7 +124,7 @@ export class RolesGuard implements CanActivate {
     const memberRole =
       ((member as Record<string, unknown>)['role'] as string | undefined) ??
       SystemRole.VIEWER;
-    const memberLevel = ROLE_HIERARCHY[memberRole] ?? 0;
+    const memberLevel = roleLevel(memberRole) ?? 0;
 
     if (memberLevel < requiredLevel) {
       await this.recordBeforeDeny(

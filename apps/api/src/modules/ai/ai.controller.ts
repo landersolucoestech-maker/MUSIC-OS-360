@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { RequireRole } from '../../core/decorators/roles.decorator';
-import { ROLE_HIERARCHY } from '../../core/guards/roles.guard';
+import { ROLE_HIERARCHY, roleLevel } from '../../core/rbac/role-hierarchy';
 import { AIService } from './ai.service';
 import {
   AICompletionDto,
@@ -18,7 +18,7 @@ import {
 function assertSystemPromptAllowed(req: any, systemPrompt?: string): void {
   if (!systemPrompt) return;
   const role = req.currentMember?.role ?? 'viewer';
-  const level = ROLE_HIERARCHY[role] ?? 0;
+  const level = roleLevel(role) ?? 0;
   const required = ROLE_HIERARCHY.manager ?? 70;
   if (level < required) {
     throw new ForbiddenException('Apenas gestores ou superiores podem definir instruções personalizadas para a IA.');

@@ -9,7 +9,7 @@ import {
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { RbacMutationService } from '../../core/rbac/rbac-mutation.service';
-import { ROLE_HIERARCHY } from '../../core/rbac/role-hierarchy';
+import { ROLE_HIERARCHY, roleLevel } from '../../core/rbac/role-hierarchy';
 import type {
   CreateTenantRoleDto,
   DuplicateTenantRoleDto,
@@ -141,7 +141,7 @@ export class RbacAdminService {
   }
 
   async createRole(tenantId: string, actorId: string, actorRole: string, dto: CreateTenantRoleDto) {
-    const hierarchyLevel = dto.hierarchyLevel ?? Math.max(0, (ROLE_HIERARCHY[actorRole] ?? 0) - 10);
+    const hierarchyLevel = dto.hierarchyLevel ?? Math.max(0, (roleLevel(actorRole) ?? 0) - 10);
     this.assertHierarchy(actorRole, hierarchyLevel);
     const slug = dto.slug ?? dto.name
       .normalize('NFD')
@@ -203,7 +203,7 @@ export class RbacAdminService {
     if (source.tenant_id !== tenantId) {
       throw new ForbiddenException('N\u00e3o \u00e9 poss\u00edvel duplicar um papel global do sistema');
     }
-    const level = Math.min(source.hierarchy_level, Math.max(0, (ROLE_HIERARCHY[actorRole] ?? 0) - 1));
+    const level = Math.min(source.hierarchy_level, Math.max(0, (roleLevel(actorRole) ?? 0) - 1));
     this.assertHierarchy(actorRole, level);
     const slug = dto.slug ?? dto.name.normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '').toLowerCase()
@@ -360,7 +360,7 @@ export class RbacAdminService {
   }
 
   private assertHierarchy(actorRole: string, targetLevel: number): void {
-    const actorLevel = ROLE_HIERARCHY[actorRole] ?? 0;
+    const actorLevel = roleLevel(actorRole) ?? 0;
     if (!['owner', 'tenant_owner', 'super_admin'].includes(actorRole) && targetLevel >= actorLevel) {
       throw new ForbiddenException('Não é permitido administrar um papel igual ou superior ao próprio nível');
     }
@@ -387,7 +387,9 @@ export class RbacAdminService {
   // sales, producer, collaborator, hr_manager) would gain that level before
   // the global alias rows exist (deploy window) or if they are ever removed.
   private async assertSlugNotReserved(slug: string): Promise<void> {
-    if (Object.prototype.hasOwnProperty.call(ROLE_HIERARCHY, slug)) {
+    // `in` (not hasOwn): inherited names (constructor, __proto__, toString, ...) are reserved too, because
+    // ROLE_HIERARCHY[slug] would otherwise resolve them to non-numeric values.
+    if (slug in ROLE_HIERARCHY) {
       throw new ForbiddenException(`O identificador de papel "${slug}" é reservado pelo sistema.`);
     }
     const [existing] = (await this.ds.query(

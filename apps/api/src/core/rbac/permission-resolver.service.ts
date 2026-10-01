@@ -8,6 +8,7 @@ import {
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.tokens';
 import { RbacDistributedCacheService } from './rbac-distributed-cache.service';
+import { areEquivalentRoleSlugs } from './role-hierarchy';
 
 export interface MemberAuthzContext {
   role?: string | null;
@@ -340,7 +341,8 @@ export class PermissionResolverService implements OnModuleInit {
     }
     const roleStr = typeof member.role === 'string' ? member.role : null;
     if (identity.canonical_slug) return 'ALIAS';
-    if (roleStr && roleStr !== identity.slug) return 'DIVERGENTE';
+    // A canonical English slug (legal) and the legacy slug of the role row (juridico) are the same role.
+    if (roleStr && roleStr !== identity.slug && !areEquivalentRoleSlugs(roleStr, identity.slug)) return 'DIVERGENTE';
     return 'MATCH';
   }
 

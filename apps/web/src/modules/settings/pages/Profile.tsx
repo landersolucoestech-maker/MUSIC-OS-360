@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useUserSettings } from "@/modules/settings/hooks/useUserSettings";
 import { useAuth } from "@/app/providers/AuthContext";
 import { cn } from "@/shared/lib/utils";
+import { ROLE_LABELS, type AppRole } from "@/shared/hooks/useHasRole";
 
 const DEPARTMENT_OPTIONS = [
   "Administrativo", "A&R", "Comercial", "Financeiro", "Jurídico",
@@ -53,7 +54,7 @@ export default function Profile() {
     if (r === "admin" || r === "owner" || r === "super_admin") return "Administrador";
     if (r === "manager") return "Gestor";
     if (r === "editor") return "Editor";
-    return r;
+    return ROLE_LABELS[r as AppRole] ?? r;
   })();
 
   const [formData, setFormData] = useState({

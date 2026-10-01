@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema, type UserFormData } from "@/modules/settings/lib/user-schema";
 import { FormField, FieldError } from "@/shared/components/FormField";
 import { useUsers } from "@/modules/settings/hooks/useUsers";
+import { toCanonicalRoleSlug } from "@music-os-360/types";
 interface UserFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -19,15 +20,19 @@ interface UserFormModalProps {
   mode: "create" | "edit" | "view";
 }
 
+// Machine values are canonical English role slugs (PT-BR only in `label`/`description`).
+// GATED (product decision, see docs/engineering/rbac-retirement-plan.md): admin_master, ar_gestao and
+// financeiro_contabil have no roles row and no unambiguous canonical slug; the API rejects them
+// (ROLE_UNKNOWN, fail-closed). They are kept verbatim and must not be guessed.
 const ACCESS_LEVELS = [
   { value: "admin_master", label: "Administrador Master", description: "Acesso total a todos os módulos e configurações do sistema." },
   { value: "ar_gestao", label: "A&R / Gestão Artística", description: "Gestão de artistas, projetos, lançamentos e repertório." },
   { value: "financeiro_contabil", label: "Contabilidade", description: "Acesso ao módulo de Contabilidade: transações e notas fiscais." },
-  { value: "juridico", label: "Jurídico", description: "Gestão de contratos, licenciamentos e questões legais." },
+  { value: "legal", label: "Jurídico", description: "Gestão de contratos, licenciamentos e questões legais." },
   { value: "marketing", label: "Marketing", description: "Campanhas, métricas e gestão de conteúdo promocional." },
-  { value: "artista", label: "Artista", description: "Acesso restrito aos próprios dados e projetos vinculados." },
-  { value: "colaborador", label: "Colaborador / Freelancer", description: "Acesso limitado a tarefas específicas designadas." },
-  { value: "leitor", label: "Leitor (somente leitura)", description: "Visualização sem permissão de edição ou criação." },
+  { value: "artist", label: "Artista", description: "Acesso restrito aos próprios dados e projetos vinculados." },
+  { value: "collaborator", label: "Colaborador / Freelancer", description: "Acesso limitado a tarefas específicas designadas." },
+  { value: "viewer", label: "Leitor (somente leitura)", description: "Visualização sem permissão de edição ou criação." },
 ];
 
 export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFormModalProps) {
@@ -65,7 +70,8 @@ export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFo
           email: member.email || "",
           phone: member.phone || "",
           status: member.status || "ativo",
-          accessLevel: member.role || "",
+          // Dual-read: a member persisted under a legacy slug (juridico, artista, ...) selects its canonical option.
+          accessLevel: toCanonicalRoleSlug(member.role || ""),
         });
       } else {
         reset({

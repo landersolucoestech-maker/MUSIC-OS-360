@@ -1,4 +1,5 @@
 import { useAuth } from "@/app/providers/AuthContext";
+import { toCanonicalRoleSlug } from "@music-os-360/types";
 
 /**
  * All 12 MUSIC OS 360 roles — mirrors server/src/common/types/roles.ts.
@@ -9,63 +10,72 @@ export type AppRole =
   | "owner"
   | "admin"
   | "accounting"
-  | "juridico"
-  | "artista"
-  | "produtor"
-  | "marketing_manager"
-  | "comercial"
-  | "colaborador"
-  | "rh_manager"
-  // English aliases (RBAC expand step): same level as the Portuguese slug still persisted
-  // in org_members.role / the JWT. Never remove the Portuguese members before the contract step.
+  | "viewer"
+  | "artist"
+  // Canonical English slugs (written by the API since RBAC S4a). Machine values are English;
+  // Portuguese appears only in ROLE_LABELS.
   | "legal"
   | "sales"
   | "producer"
   | "collaborator"
   | "hr_manager"
-  | "viewer";
+  | "marketing_manager"
+  // Legacy slugs: still persisted in older org_members rows / JWTs and accepted with the exact rank
+  // of their canonical slug until the gated S5 retirement. Never remove before then.
+  | "juridico"
+  | "artista"
+  | "produtor"
+  | "comercial"
+  | "colaborador"
+  | "rh_manager";
 
-/** Numeric hierarchy: lower = more privileged (mirrors backend ROLE_HIERARCHY). */
-const ROLE_HIERARCHY: Record<AppRole, number> = {
+/**
+ * Numeric hierarchy, keyed by CANONICAL slug only: lower = more privileged (mirrors the backend
+ * ROLE_HIERARCHY). Legacy slugs are resolved through toCanonicalRoleSlug(), so a legacy slug and its
+ * canonical slug can never drift apart.
+ */
+const ROLE_RANK: Readonly<Record<string, number>> = {
   super_admin:       0,
   tenant_owner:      1,
   owner:             1,
   admin:             2,
   accounting:        3,
-  juridico:          3,
-  rh_manager:        3,
   legal:             3,
   hr_manager:        3,
   marketing_manager: 4,
-  comercial:         4,
-  produtor:          4,
   sales:             4,
   producer:          4,
-  artista:           5,
-  colaborador:       6,
+  artist:            5,
   collaborator:      6,
   viewer:            7,
 };
 
+function roleRank(role: string): number | undefined {
+  const canonical = toCanonicalRoleSlug(role);
+  return Object.prototype.hasOwnProperty.call(ROLE_RANK, canonical) ? ROLE_RANK[canonical] : undefined;
+}
+
+/** PT-BR display labels (labels only; never persisted or compared). */
 export const ROLE_LABELS: Record<AppRole, string> = {
   super_admin:       "Super Admin",
   tenant_owner:      "Proprietário",
   owner:             "Proprietário",
   admin:             "Administrador",
   accounting:        "Gestor Accounting",
-  juridico:          "Jurídico / Contratos",
-  artista:           "Artista",
-  produtor:          "Produtor Musical",
-  marketing_manager: "Marketing",
-  comercial:         "Comercial",
-  colaborador:       "Colaborador",
-  rh_manager:        "Recursos Humanos",
+  artist:            "Artista",
   legal:             "Jurídico / Contratos",
   sales:             "Comercial",
   producer:          "Produtor Musical",
   collaborator:      "Colaborador",
   hr_manager:        "Recursos Humanos",
+  marketing_manager: "Marketing",
   viewer:            "Visualizador",
+  juridico:          "Jurídico / Contratos",
+  artista:           "Artista",
+  produtor:          "Produtor Musical",
+  comercial:         "Comercial",
+  colaborador:       "Colaborador",
+  rh_manager:        "Recursos Humanos",
 };
 
 /** Returns the current user's role from the JWT. */
@@ -88,8 +98,8 @@ export function useCurrentRole(): AppRole | null {
 export function useHasRole(minimumRole: AppRole): boolean {
   const role = useCurrentRole();
   if (!role) return false;
-  const userLevel = ROLE_HIERARCHY[role] ?? 99;
-  const requiredLevel = ROLE_HIERARCHY[minimumRole] ?? 0;
+  const userLevel = roleRank(role) ?? 99;
+  const requiredLevel = roleRank(minimumRole) ?? 0;
   return userLevel <= requiredLevel;
 }
 

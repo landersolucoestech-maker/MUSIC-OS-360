@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { useUsers, type UserAccount } from "@/modules/settings/hooks/useUsers";
 import { useRoles } from "@/modules/settings/hooks/useRoles";
+import { toCanonicalRoleSlug } from "@music-os-360/types";
 
 import { toUserMessage } from "@/shared/lib/errors";
 interface UserEditorModalProps {
@@ -19,10 +20,18 @@ interface UserEditorModalProps {
 export function UserEditorModal({ open, onOpenChange, user: member, mode }: UserEditorModalProps) {
   const { updateUser } = useUsers();
   const { roles, inviteUser } = useRoles();
-  const assignableRoles = useMemo(
-    () => roles.filter((role) => role.is_assignable !== false && !role.archived_at),
-    [roles],
-  );
+  // One option per CANONICAL slug (legal, not juridico): legacy and canonical rows of the same role are
+  // one choice, the value sent to the API is the canonical English slug, the label stays PT-BR (role.name).
+  const assignableRoles = useMemo(() => {
+    const byCanonical = new Map<string, (typeof roles)[number]>();
+    for (const role of roles) {
+      if (role.is_assignable === false || role.archived_at) continue;
+      const key = toCanonicalRoleSlug(role.slug);
+      const current = byCanonical.get(key);
+      if (!current || role.slug === key) byCanonical.set(key, role);
+    }
+    return Array.from(byCanonical.values());
+  }, [roles]);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -36,7 +45,7 @@ export function UserEditorModal({ open, onOpenChange, user: member, mode }: User
     setEmail(member?.email ?? "");
     setPhone(member?.phone ?? "");
     setStatus(member?.status ?? "ativo");
-    setRoleSlug(member?.role ?? "");
+    setRoleSlug(toCanonicalRoleSlug(member?.role ?? ""));
   }, [open, member]);
 
   const isSaving = updateUser.isPending || inviteUser.isPending;
@@ -54,7 +63,7 @@ export function UserEditorModal({ open, onOpenChange, user: member, mode }: User
 
     try {
       if (mode === "create") {
-        const role = assignableRoles.find((item) => item.slug === roleSlug);
+        const role = assignableRoles.find((item) => toCanonicalRoleSlug(item.slug) === roleSlug);
         if (!role) {
           toast.error("Papel selecionado não está disponível para convite");
           return;
@@ -135,7 +144,7 @@ export function UserEditorModal({ open, onOpenChange, user: member, mode }: User
               <SelectTrigger><SelectValue placeholder="Selecione um papel" /></SelectTrigger>
               <SelectContent>
                 {assignableRoles.map((role) => (
-                  <SelectItem key={role.id} value={role.slug}>{role.name}</SelectItem>
+                  <SelectItem key={role.id} value={toCanonicalRoleSlug(role.slug)}>{role.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
