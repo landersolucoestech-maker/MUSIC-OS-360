@@ -30,6 +30,10 @@ export const SIDE_TABLES: readonly string[] = [
   'assets_asset_type_backfill_20260930', // 20260930000025
   'marketing_vocabulary_backfill_20260930', // 20260930000026
   'artist_distributor_id_backfill_20260930', // 20260930000027
+  'campaign_builder_state_backfill_20260930', // 20260930000028
+  'marketing_task_sector_backfill_20260930', // 20260930000029
+  'operational_list_classification_backfill_20260930', // 20260930000031
+  'project_track_vocabulary_backfill_20260930', // 20260930000032
 ];
 
 function assertConfirmed(migrationName: string): void {
