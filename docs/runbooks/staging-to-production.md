@@ -82,6 +82,15 @@ Dispatch `staging.yml` only when the environment is isolated:
 - RLS, isolation or smoke failure.
 - The marketing approval migration (`20260930000003`) does the same for the `metadata->>'approval'` key of `marketing_content_posts` (no column: a jsonb key), restricting it to `pending`, `approved`, `rejected`, `revision_requested`. Run the approval distribution query from "Vocabulary pre-flight queries" first; any residue aborts the migration. An API build older than this release writes Portuguese approvals and fails the new CHECK, so it is stopped in the same swap as above.
 
+## Rollout window for the canonical-vocabulary migrations
+
+The canonical English vocabulary migrations (`20260930000012` to `20260930000025`) run **before** the new API build boots: the API refuses to start while migrations are pending, so a "deploy the API first" order is not possible. For a short window the previous API build serves traffic against migrated data:
+
+- Backfills are exact-match and additive; the new API reads both the legacy and the canonical spelling everywhere, and writes canonical values only.
+- The previous build does not know the canonical slugs: its lookups by renamed operational-list slugs (`20260930000016`) miss the renamed platform rows until it is replaced, and any write of an old Portuguese value into a column that now has a CHECK is rejected. Stop the previous API instances and workers in the same swap that runs the migrations (the staging workflow does this: `STAGING_STOP_WEBHOOK_URL`).
+- Run the "Vocabulary pre-flight queries" below in every environment first; residue values abort a guarded migration and block the whole pending batch.
+- Several migrations rewrite most rows of a table in one transaction (`transactions`, `clients`): run them in a low-traffic window, with a recent backup, and exercise the reverse `down()` order on a disposable PostgreSQL before production (`20260930000022` first, then `16`, `18`, `19`, `25`, `24`, `21`, `17`, `23`).
+
 ## Vocabulary pre-flight queries
 
 Read-only `SELECT`s to run on the target database (as the migration role, so RLS does not hide other tenants) before releasing the vocabulary migrations. Every value outside the expected set aborts the matching migration (nothing is coerced); resolve those rows first. The migrations print at most 20 offending values, each truncated to 40 characters.
