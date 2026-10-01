@@ -94,3 +94,25 @@ describe('InvoiceOverdueScheduler — P2-7 admin discovery', () => {
     expect(events.emitTyped).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('InvoiceOverdueScheduler - amount source (LC1: canonical service_amount, legacy fallback)', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  async function emittedAmount(row: Record<string, unknown>): Promise<string> {
+    const appRepo = makeRepo({ rawMany: [{ tenant_id: TENANT_A }], manyByTenant: { [TENANT_A]: [{ ...invoice(TENANT_A, 'i1'), ...row }] } });
+    await new InvoiceOverdueScheduler(dsOf(appRepo), events, dbContext, null).runCheck();
+    return (events.emitTyped.mock.calls[0][1] as { payload: { amount: string } }).payload.amount;
+  }
+
+  it('uses service_amount when present', async () => {
+    expect(await emittedAmount({ service_amount: '250.00', legacy_amount: 100 })).toBe('250.00');
+  });
+
+  it('falls back to legacy_amount for rows not yet backfilled (service_amount NULL)', async () => {
+    expect(await emittedAmount({ service_amount: null, legacy_amount: 100 })).toBe('100');
+  });
+
+  it('behavior unchanged when both mirror each other', async () => {
+    expect(await emittedAmount({ service_amount: 100, legacy_amount: 100 })).toBe('100');
+  });
+});

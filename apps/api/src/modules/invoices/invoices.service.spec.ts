@@ -121,3 +121,34 @@ describe('InvoicesService.create — cross-tenant FK ownership (find-99749ea0)',
     expect(query).not.toHaveBeenCalled();
   });
 });
+
+/**
+ * LC1: the web form no longer sends legacy_amount; the API derives the NOT NULL mirror from the
+ * canonical service_amount (staged retirement, docs/engineering/legacy-column-drop-plan.md).
+ */
+describe('InvoicesService.create - legacy_amount mirror derived from service_amount (LC1)', () => {
+  function setup() {
+    const repo = {
+      create: jest.fn((v: unknown) => v),
+      save: jest.fn(async (v: unknown) => ({ id: 'invoice-1', ...(v as object) })),
+      manager: { connection: { query: jest.fn(async () => []) } },
+    };
+    const ds = { getRepository: jest.fn(() => repo) } as any;
+    const enc = { decryptNullable: jest.fn(() => null), encryptNullable: jest.fn(() => null) } as any;
+    return { svc: new InvoicesService(ds, enc), repo };
+  }
+
+  it('a payload with service_amount only (the new web form) persists legacy_amount = service_amount', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { service_amount: 1234.5 } as any);
+    expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ service_amount: 1234.5, legacy_amount: 1234.5 }));
+  });
+
+  it('a payload without any amount leaves both columns to the DB (no invented legacy value)', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { notes: 'x' } as any);
+    const created = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(created).not.toHaveProperty('legacy_amount');
+    expect(created).not.toHaveProperty('service_amount');
+  });
+});

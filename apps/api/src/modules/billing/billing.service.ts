@@ -1010,14 +1010,17 @@ export class BillingService {
     await this.ds.query(
       `INSERT INTO invoices (
          tenant_id, stripe_invoice_id, invoice_number, type, status, amount_due, amount_paid, currency,
-         legacy_amount, due_date, hosted_invoice_url, invoice_pdf, attempt_count, metadata, created_by
+         legacy_amount, service_amount, due_date, hosted_invoice_url, invoice_pdf, attempt_count, metadata, created_by
        )
        -- find-475adb34: $4/$5 are integer cents: typed explicitly because $4 is also used in
-       -- the legacy_amount expression, and Postgres cannot deduce one type
+       -- the legacy_amount / service_amount expressions, and Postgres cannot deduce one type
        -- for a parameter bound to an integer column AND a ::numeric cast
        -- ("inconsistent types deduced for parameter $4" - every Stripe
        -- invoice upsert failed once tenant resolution worked).
-       VALUES ($1, $2, $2, 'stripe_subscription', $3, $4::integer, $5::integer, $6, ($4::integer / 100.0),
+       -- LC1 (expand): service_amount is the canonical amount; legacy_amount stays dual-written
+       -- (NOT NULL) until the staged retirement in docs/engineering/legacy-column-drop-plan.md.
+       VALUES ($1, $2, $2, 'stripe_subscription', $3, $4::integer, $5::integer, $6,
+               ($4::integer / 100.0), ($4::integer / 100.0),
                $7, $8, $9, $10, $11::jsonb, 'stripe:webhook')
        ON CONFLICT (stripe_invoice_id) WHERE stripe_invoice_id IS NOT NULL
        DO UPDATE SET
@@ -1026,6 +1029,7 @@ export class BillingService {
          amount_paid = EXCLUDED.amount_paid,
          currency = EXCLUDED.currency,
          legacy_amount = EXCLUDED.legacy_amount,
+         service_amount = EXCLUDED.service_amount,
          due_date = EXCLUDED.due_date,
          hosted_invoice_url = EXCLUDED.hosted_invoice_url,
          invoice_pdf = EXCLUDED.invoice_pdf,

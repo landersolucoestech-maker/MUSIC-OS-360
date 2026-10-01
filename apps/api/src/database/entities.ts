@@ -1381,9 +1381,10 @@ export class EventEntity {
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: EventStatus.SCHEDULED }) status: EventStatus;
-  // C3: legacy start column, kept equal to starts_at (service dual-write + trigger
-  // trg_events_sync_start_columns, migration 20260928000007) until its removal (E6).
-  @Column({ type: 'timestamp' }) data: Date;
+  // C3: legacy start column. LC1: never written through the entity (insert/update false);
+  // the DB trigger trg_events_sync_start_columns (migration 20260928000007) keeps it equal to
+  // starts_at until its drop (docs/engineering/legacy-column-drop-plan.md). Still read (API responses).
+  @Column({ type: 'timestamp', insert: false, update: false }) data: Date;
   // Canonical event start (C3/E4: every read uses it; NOT NULL since E5).
   @Column({ type: 'timestamp' }) starts_at: Date;
   @Column({ type: 'varchar', length: 255, nullable: true }) venue: string | null;

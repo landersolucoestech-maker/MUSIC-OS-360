@@ -93,7 +93,7 @@ export class EventsService {
 
   /**
    * Maps CreateEventDto / UpdateEventDto → EventEntity columns.
-   * The DTO uses title/type/startsAt/venue/artistId; the table uses title/type/data+starts_at/venue/artist_id.
+   * The DTO uses title/type/startsAt/venue/artistId; the table uses title/type/starts_at/venue/artist_id.
    */
   private dtoToEntity(dto: Partial<CreateEventDto & UpdateEventDto>): Partial<EventEntity> {
     const d = applyDeprecatedFieldAliases(dto as Record<string, unknown>, EVENT_DEPRECATED_FIELDS);
@@ -103,11 +103,11 @@ export class EventsService {
     if (d['artistId']  != null) out['artist_id'] = d['artistId'];
     if (d['venue']     != null) out['venue']      = d['venue'];
     if (d['startsAt']  != null) {
-      // C3 — dual-write: the SAME Date object feeds the canonical `starts_at`
-      // (read everywhere since E4) and the legacy `data` column (removed in E6).
-      const startValue = new Date(d['startsAt'] as string | Date);
-      out['data']      = startValue;
-      out['starts_at'] = startValue;
+      // LC1 — `starts_at` is the only start column written by the API. The legacy
+      // `data` mirror is kept equal by the DB trigger trg_events_sync_start_columns
+      // (migration 20260928000007; the reports importer already relies on it) until
+      // the events.data drop (docs/engineering/legacy-column-drop-plan.md).
+      out['starts_at'] = new Date(d['startsAt'] as string | Date);
     }
     if (d['endsAt']    != null) out['end_date']   = new Date(d['endsAt'] as string | Date);
     if (d['status']    != null) out['status']     = d['status'];
@@ -128,13 +128,9 @@ export class EventsService {
     // find-50dd3726: artist_id had no cross-tenant ownership check — an
     // event could silently reference another tenant's artist.
     await assertSameTenantFk(this.ds!, 'artists', mapped.artist_id, tenantId, 'Artista');
-    if (!mapped.data) {
+    if (!mapped.starts_at) {
       // NOT NULL column — uses "now" as a safe fallback when startsAt was not sent.
-      // C3/E2 — dual-write: the same instant feeds `data` and `starts_at`
-      // (a single new Date() call; two calls could diverge by ms).
-      const fallbackValue = new Date();
-      mapped.data = fallbackValue;
-      mapped.starts_at = fallbackValue;
+      mapped.starts_at = new Date();
     }
     const entity = this.repo!.create({
       tenant_id:  tenantId,

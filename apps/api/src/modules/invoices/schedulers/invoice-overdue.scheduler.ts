@@ -149,7 +149,8 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
           invoiceId:      invoice.id,
           tenantId:       invoice.tenant_id,
           invoiceNumber:  invoice.invoice_number ?? null,
-          amount:         String(invoice.legacy_amount),
+          // LC1: canonical service_amount first; legacy_amount only for rows not yet backfilled.
+          amount:         String(invoice.service_amount ?? invoice.legacy_amount),
           dueAt:          invoice.due_at!.toISOString(),
         },
       });

@@ -255,7 +255,6 @@ export function useInvoiceForm({
       tipo_nota: formData.tipo_nota,
       client_id: formData.client_id || null,
       sale_id: null,
-      legacy_amount: servicesAmount,
       issued_at: formData.issued_at ? format(formData.issued_at, "yyyy-MM-dd") : null,
       due_at: formData.due_at ? format(formData.due_at, "yyyy-MM-dd") : null,
       status: formData.status,

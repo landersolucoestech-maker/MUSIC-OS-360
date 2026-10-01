@@ -120,12 +120,12 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
   });
 
   describe('create() — current dtoToEntity mapping', () => {
-    it('startsAt persists in the data column', async () => {
+    it('startsAt persists in the starts_at column', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date('2026-08-01T20:00:00Z'),
       } as never);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ data: new Date('2026-08-01T20:00:00Z') }),
+        expect.objectContaining({ starts_at: new Date('2026-08-01T20:00:00Z') }),
       );
     });
 
@@ -173,42 +173,41 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
       }
     });
 
-    it('create without startsAt uses the current fallback (data = now, NOT NULL column)', async () => {
+    it('create without startsAt uses the current fallback (starts_at = now, NOT NULL column)', async () => {
       const before = Date.now();
       await service.create(TENANT, 'u1', { title: 'Show', type: 'show' } as never);
-      const created = mockDs._repo.create.mock.calls[0][0] as { data: Date };
-      expect(created.data).toBeInstanceOf(Date);
-      expect(created.data.getTime()).toBeGreaterThanOrEqual(before);
+      const created = mockDs._repo.create.mock.calls[0][0] as { starts_at: Date };
+      expect(created.starts_at).toBeInstanceOf(Date);
+      expect(created.starts_at.getTime()).toBeGreaterThanOrEqual(before);
     });
 
-    // C3/E2 — legitimate adjustment: the response now also contains starts_at
-    // (dual-write). `data` remains present until phase E6.
-    it('response contains data and starts_at with the same instant (E2)', async () => {
+    // LC1: the API writes starts_at only; the legacy `data` mirror is filled by the DB trigger.
+    it('response carries starts_at and no start_date/startsAt aliases', async () => {
       const saved = await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date('2026-08-01T20:00:00Z'),
-      } as never) as { data: Date; starts_at: Date };
-      expect(saved).toHaveProperty('data');
+      } as never) as { starts_at: Date };
       expect(saved).toHaveProperty('starts_at');
-      expect(saved.starts_at.getTime()).toBe(saved.data.getTime());
+      expect(saved.starts_at.getTime()).toBe(new Date('2026-08-01T20:00:00Z').getTime());
       expect(saved).not.toHaveProperty('start_date');
       expect(saved).not.toHaveProperty('startsAt');
     });
   });
 
-  describe('create()/update() — dual-write data/starts_at (C3/E2)', () => {
-    it('explicit startsAt writes data and starts_at with the SAME Date reference', async () => {
+  describe('create()/update() — starts_at only (LC1: legacy data mirror left to the DB trigger)', () => {
+    it('explicit startsAt writes starts_at only (never the legacy data column)', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date('2026-08-01T20:00:00Z'),
       } as never);
-      const created = mockDs._repo.create.mock.calls[0][0] as { data: Date; starts_at: Date };
-      expect(created.starts_at).toBe(created.data); // same reference, not just the same value
-      expect(created.data.getTime()).toBe(new Date('2026-08-01T20:00:00Z').getTime());
+      const created = mockDs._repo.create.mock.calls[0][0] as { data?: Date; starts_at: Date };
+      expect(created.starts_at.getTime()).toBe(new Date('2026-08-01T20:00:00Z').getTime());
+      expect(created).not.toHaveProperty('data');
     });
 
-    it('fallback without startsAt writes the same instant in both (a single new Date())', async () => {
+    it('fallback without startsAt writes starts_at only', async () => {
       await service.create(TENANT, 'u1', { title: 'Show', type: 'show' } as never);
-      const created = mockDs._repo.create.mock.calls[0][0] as { data: Date; starts_at: Date };
-      expect(created.starts_at).toBe(created.data);
+      const created = mockDs._repo.create.mock.calls[0][0] as { data?: Date; starts_at: Date };
+      expect(created.starts_at).toBeInstanceOf(Date);
+      expect(created).not.toHaveProperty('data');
     });
 
     it('endsAt still only goes to end_date — does not feed starts_at', async () => {
@@ -219,13 +218,11 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
       expect(updateCall[1]).not.toHaveProperty('data');
     });
 
-    it('update with startsAt updates both with the same value', async () => {
+    it('update with startsAt updates starts_at only', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { startsAt: new Date('2026-09-01T20:00:00Z') } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
-      expect(updateCall[1]).toMatchObject({
-        data: new Date('2026-09-01T20:00:00Z'),
-        starts_at: new Date('2026-09-01T20:00:00Z'),
-      });
+      expect(updateCall[1]).toMatchObject({ starts_at: new Date('2026-09-01T20:00:00Z') });
+      expect(updateCall[1]).not.toHaveProperty('data');
     });
 
     it('PATCH without startsAt does not send data or starts_at', async () => {
@@ -242,16 +239,15 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
       expect(updateCall[1]).not.toHaveProperty('starts_at');
     });
 
-    it('no create path writes only one of the columns when a start value is present', async () => {
+    it('every create path writes starts_at (NOT NULL) and never data', async () => {
       await service.create(TENANT, 'u1', {
         title: 'A', type: 'show', startsAt: new Date('2026-08-01T20:00:00Z'),
       } as never);
       await service.create(TENANT, 'u1', { title: 'B', type: 'show' } as never);
       for (const call of mockDs._repo.create.mock.calls) {
         const payload = call[0] as { data?: Date; starts_at?: Date };
-        expect(payload.data).toBeInstanceOf(Date);
         expect(payload.starts_at).toBeInstanceOf(Date);
-        expect(payload.starts_at!.getTime()).toBe(payload.data!.getTime());
+        expect(payload).not.toHaveProperty('data');
       }
     });
 
@@ -285,10 +281,10 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
       expect(updateCall[1]).not.toHaveProperty('end_date');
     });
 
-    it('startsAt in the PATCH updates data', async () => {
+    it('startsAt in the PATCH updates starts_at', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { startsAt: new Date('2026-09-01T20:00:00Z') } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
-      expect(updateCall[1]).toMatchObject({ data: new Date('2026-09-01T20:00:00Z') });
+      expect(updateCall[1]).toMatchObject({ starts_at: new Date('2026-09-01T20:00:00Z') });
     });
 
     it('endsAt in the PATCH updates end_date', async () => {

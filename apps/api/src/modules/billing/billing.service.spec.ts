@@ -139,6 +139,21 @@ describe('BillingService', () => {
     service = module.get<BillingService>(BillingService);
   });
 
+  describe('upsertStripeInvoice - legacy_amount expand (LC1)', () => {
+    it('dual-writes the canonical service_amount next to the legacy mirror, from the same cents expression', async () => {
+      await (service as unknown as { upsertStripeInvoice(i: unknown, t: string): Promise<void> }).upsertStripeInvoice(
+        { id: 'in_1', status: 'paid', amount_due: 12345, amount_paid: 12345, currency: 'brl' }, 'tenant-1',
+      );
+      const [sql, params] = mockDs.query.mock.calls[0] as [string, unknown[]];
+      expect(sql).toMatch(/legacy_amount, service_amount, due_date/);
+      expect(sql).toContain('($4::integer / 100.0), ($4::integer / 100.0)');
+      expect(sql).toContain('legacy_amount = EXCLUDED.legacy_amount');
+      expect(sql).toContain('service_amount = EXCLUDED.service_amount');
+      expect(params[3]).toBe(12345);
+      expect(params).toHaveLength(11);
+    });
+  });
+
   describe('createCheckoutSession', () => {
     it('uses stripe_price_id from the database (not STRIPE_PRICE_*)', async () => {
       const r = await service.createCheckoutSession({
