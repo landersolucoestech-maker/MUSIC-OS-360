@@ -123,7 +123,7 @@ const NAV_ITEMS: NavItem[] = [
   { title: "Inventário",       href: "/inventory", icon: Package,       featureFlag: "moduleInventory" },
   { title: "MusicChat",        href: "/chat",       icon: MessageCircle },
   { title: "CRM", href: "/leads", icon: Contact, featureFlag: "moduleCrm" },
-  { title: "RH",               href: "/hr",         icon: Briefcase,     featureFlag: "moduleRh" },
+  { title: "RH",               href: "/hr",         icon: Briefcase,     featureFlag: "moduleHr" },
   {
     title: "Marketing",
     icon: Megaphone,

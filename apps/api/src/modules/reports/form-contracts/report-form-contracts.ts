@@ -33,6 +33,8 @@ export interface ReportFieldSpec {
   storage: ReportFieldStorage;
   /** Physical column for encrypted storage or alias of a real column. */
   physical?: string;
+  /** metadata fields only: previous (Portuguese) jsonb key, still read by the export until the backfill has run everywhere. */
+  legacyKey?: string;
   /** false ⇒ export only (never overwritten on import). */
   importable?: boolean;
 }
@@ -85,6 +87,12 @@ const ro = (key: string, physical?: string): ReportFieldSpec => ({ key, storage:
  * not in the generic `metadata` column.
  */
 const meta = (key: string, physical: string = 'metadata'): ReportFieldSpec => ({ key, storage: 'metadata', physical });
+/**
+ * `meta()` field whose jsonb key was renamed from a Portuguese spelling (expand/contract, migration
+ * 20260930000019): writes use the canonical key, the export also reads `legacyKey` (canonical wins) until
+ * every row is backfilled.
+ */
+const metaRenamed = (key: string, legacyKey: string): ReportFieldSpec => ({ key, storage: 'metadata', physical: 'metadata', legacyKey });
 const enc = (key: string, physical: string): ReportFieldSpec => ({ key, storage: 'encrypted', physical });
 // ─── Artists (full form — 68 fields) ────────────────────────────────────────
 // CZ-042: every form field has its own physical column (col()); meta() only for
@@ -400,8 +408,8 @@ const TAKEDOWNS_CONTRACT: ReportFormContract = {
 // ─── Distribution (releases) ─────────────────────────────────────────────────
 // Canonical source: ReleaseFormModal.tsx (5-step wizard). Most of the
 // advanced fields (Step 0/3) live in the generic `metadata` column
-// (extraFields.* → metadata.*); `faixas[]` (Step 1) lives in
-// metadata.faixas — its own repeatable group (see release-tracks.field.ts).
+// (extraFields.* → metadata.*); the tracks (Step 1) live in
+// metadata.tracks (legacy key `faixas`) — its own repeatable group (see release-tracks.field.ts).
 // `platforms`/`assets`/`schedule` have no identifiable UI input
 // (platforms: no multi-platform selector in the current wizard; assets: no
 // dedicated upload besides the cover; schedule: no inputs in the modal) — excluded/
@@ -414,17 +422,17 @@ const RELEASES_CONTRACT: ReportFormContract = {
     col('release_date'), col('cover_url'), col('isrc_global'), col('internal_notes'),
     col('notes'), col('record_label'), col('copyright'), col('music_genre'), col('language'),
     ro('status'), ro('schedule'),
-    meta('variosArtistas'), meta('generoSecundario'),
-    meta('copyrightDataLancamento'), meta('copyrightDataGravacao'),
+    metaRenamed('variousArtists', 'variosArtistas'), metaRenamed('secondaryGenre', 'generoSecundario'),
+    metaRenamed('copyrightReleaseYear', 'copyrightDataLancamento'), metaRenamed('copyrightRecordingYear', 'copyrightDataGravacao'),
     meta('ownUpc'), meta('territory'), meta('releaseTime'), meta('releaseTimezone'),
     meta('preOrder'), meta('noPreviewsDuringPreOrder'), meta('pricing'),
-    meta('artistasAdicionaisAlbum'),
+    metaRenamed('additionalAlbumArtists', 'artistasAdicionaisAlbum'),
   ],
   excludedFormFields: {
     platforms: 'accepted by the DTO but no multi-platform selector exists in the current wizard',
     metadata: 'raw internal jsonb object — its individual fields are already contract columns',
     assets: 'no dedicated upload inputs besides the cover (coverUrl → cover_url, already has its own column)',
-    faixas: 'represented by its own repeating group ("Faixas do Lançamento", repeatingGroup) — never packed into a single cell',
+    tracks: 'represented by its own repeating group ("Faixas do Lançamento", repeatingGroup) — never packed into a single cell',
   },
   formFieldAliases: {
     title: 'title',
@@ -434,13 +442,28 @@ const RELEASES_CONTRACT: ReportFormContract = {
     releasedAt: 'release_date',
     coverUrl: 'cover_url',
   },
+  // Portuguese logical ids (saved column selections / external scripts) -> canonical ids.
+  deprecatedColumnAliases: {
+    variosArtistas: 'variousArtists',
+    generoSecundario: 'secondaryGenre',
+    copyrightDataLancamento: 'copyrightReleaseYear',
+    copyrightDataGravacao: 'copyrightRecordingYear',
+    artistasAdicionaisAlbum: 'additionalAlbumArtists',
+    nome: 'trackTitle',
+    isVersionAlternativa: 'isAlternateVersion',
+    tipoVersao: 'versionType',
+    compositores: 'composers',
+    faixa_idioma: 'releaseTrackLanguage',
+    letra: 'lyrics',
+    artista: 'trackArtist',
+  },
   repeatingGroup: {
-      key: 'faixas',
+      key: 'tracks',
       fields: [
-        { key: 'nome' }, { key: 'isVersionAlternativa' }, { key: 'tipoVersao' },
-        { key: 'versionCustomName' }, { key: 'compositores', multi: true },
-        { key: 'aiAssistanceLevel' }, { key: 'instrumental' }, { key: 'faixa_idioma' },
-        { key: 'letra' }, { key: 'explicit' }, { key: 'isrc' }, { key: 'artista' },
+        { key: 'trackTitle' }, { key: 'isAlternateVersion' }, { key: 'versionType' },
+        { key: 'versionCustomName' }, { key: 'composers', multi: true },
+        { key: 'aiAssistanceLevel' }, { key: 'instrumental' }, { key: 'releaseTrackLanguage' },
+        { key: 'lyrics' }, { key: 'explicit' }, { key: 'isrc' }, { key: 'trackArtist' },
       ],
   },
 };
@@ -834,6 +857,15 @@ export function contractEncryptedFields(contract: ReportFormContract): Record<st
   const out: Record<string, string> = {};
   for (const f of contract.fields) {
     if (f.storage === 'encrypted' && f.physical) out[f.key] = f.physical;
+  }
+  return out;
+}
+
+/** key → previous (Portuguese) jsonb key of the same field, for the dual-read window. */
+export function contractMetadataLegacyKeys(contract: ReportFormContract): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const f of contract.fields) {
+    if (f.storage === 'metadata' && f.legacyKey) out[f.key] = f.legacyKey;
   }
   return out;
 }

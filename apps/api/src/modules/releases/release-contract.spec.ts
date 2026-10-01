@@ -119,4 +119,42 @@ describe('Release request contract (CZ-038)', () => {
     const written = (repo.update.mock.calls as unknown as unknown[][])[0][1] as Record<string, unknown>;
     expect(written['metadata']).toEqual({ checklist: { done: 3 }, territory: 'PT', pricing: 'mid' });
   });
+
+  describe('metadata persisted keys (dual-read, canonical write)', () => {
+    const svcFor = (metadata: Record<string, unknown>) => {
+      const current = { id: 'r1', tenant_id: 'tenant-1', title: 'Aurora', status: 'draft', metadata };
+      const qb: Record<string, jest.Mock> = {};
+      for (const m of ['leftJoinAndMapOne', 'select', 'where']) qb[m] = jest.fn(() => qb);
+      qb['getOne'] = jest.fn(async () => ({ ...current }));
+      const repo = {
+        createQueryBuilder: jest.fn(() => qb),
+        update: jest.fn(async () => ({ affected: 1 })),
+        create: jest.fn((x: unknown) => x),
+        save: jest.fn(async (x: Record<string, unknown>) => ({ id: 'r1', ...x })),
+      };
+      const ds = { getRepository: jest.fn(() => repo) };
+      const workflow = { getAllowedTransitions: jest.fn(() => []), transitionInTx: jest.fn() };
+      return { repo, svc: new ReleasesService(ds as never, workflow as never, { emitTyped: jest.fn() } as never) };
+    };
+
+    it('an old web build posting Portuguese keys is stored canonical on create', async () => {
+      const { repo, svc } = svcFor({});
+      await svc.create('tenant-1', 'u1', { title: 'A', type: 'single', metadata: { variosArtistas: true, faixas: [{ title: 't', letra: 'x', tipoVersao: 'live' }] } } as never);
+      const created = (repo.create.mock.calls as unknown as unknown[][])[0][0] as Record<string, unknown>;
+      expect(created['metadata']).toEqual({ variousArtists: true, tracks: [{ title: 't', lyrics: 'x', versionType: 'live' }] });
+    });
+
+    it('update merges a canonical payload over a legacy-keyed stored row without leaving both spellings', async () => {
+      const { repo, svc } = svcFor({ checklist: { done: 3 }, faixas: [{ title: 'old', letra: 'old' }], generoSecundario: 'Samba' });
+      await svc.update('tenant-1', 'u1', 'r1', { metadata: { tracks: [{ title: 'new', lyrics: 'new' }] } } as never);
+      const written = (repo.update.mock.calls as unknown as unknown[][])[0][1] as Record<string, unknown>;
+      expect(written['metadata']).toEqual({ checklist: { done: 3 }, secondaryGenre: 'Samba', tracks: [{ title: 'new', lyrics: 'new' }] });
+    });
+
+    it('findById returns canonical metadata for a row not yet backfilled', async () => {
+      const { svc } = svcFor({ faixas: [{ title: 't', compositores: ['a'] }], copyrightDataLancamento: '2024' });
+      const found = await svc.findById('tenant-1', 'r1');
+      expect(found.metadata).toEqual({ tracks: [{ title: 't', composers: ['a'] }], copyrightReleaseYear: '2024' });
+    });
+  });
 });

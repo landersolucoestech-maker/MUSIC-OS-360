@@ -46,6 +46,21 @@ const LEGACY_IMPORT_HEADERS: Readonly<Record<string, Readonly<Record<string, str
     'país de origem': 'country_of_recording',
     ...Object.fromEntries(Object.entries(PHONOGRAM_DEPRECATED_FIELDS).map(([legacy, canonical]) => [legacy.toLowerCase(), canonical])),
   },
+  // Technical (Portuguese) logical ids of the release form metadata / track sheet, before 20260930000019.
+  releases: {
+    variosartistas: 'variousArtists',
+    generosecundario: 'secondaryGenre',
+    copyrightdatalancamento: 'copyrightReleaseYear',
+    copyrightdatagravacao: 'copyrightRecordingYear',
+    artistasadicionaisalbum: 'additionalAlbumArtists',
+    nome: 'trackTitle',
+    isversionalternativa: 'isAlternateVersion',
+    tipoversao: 'versionType',
+    compositores: 'composers',
+    faixa_idioma: 'releaseTrackLanguage',
+    letra: 'lyrics',
+    artista: 'trackArtist',
+  },
 };
 
 export interface HeaderMapping {

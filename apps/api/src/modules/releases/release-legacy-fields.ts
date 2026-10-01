@@ -7,6 +7,7 @@
  * mapped here before persistence. Responses are canonical (English).
  */
 import { applyDeprecatedFieldAliases, type DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import { canonicalReleaseMetadata } from '../../common/compat/release-metadata';
 
 export const RELEASE_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   notas_internas: 'internal_notes',
@@ -59,5 +60,7 @@ export function canonicalizeReleaseInput<T extends object>(input: T): T {
   if (out['type'] !== undefined) out['type'] = canonicalReleaseType(out['type']);
   if (out['schedule'] !== undefined) out['schedule'] = canonicalObjectKeys(out['schedule'], RELEASE_SCHEDULE_DEPRECATED_KEYS);
   if (out['assets'] !== undefined) out['assets'] = canonicalObjectKeys(out['assets'], RELEASE_ASSET_DEPRECATED_KEYS);
+  // Persisted jsonb keys: a web build that still posts variosArtistas/faixas/... is stored canonical (migration 20260930000019).
+  if (out['metadata'] !== undefined && out['metadata'] !== null) out['metadata'] = canonicalReleaseMetadata(out['metadata']);
   return out as T;
 }

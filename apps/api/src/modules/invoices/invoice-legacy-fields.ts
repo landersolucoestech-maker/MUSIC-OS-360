@@ -30,17 +30,24 @@ export const INVOICE_ITEM_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
 /**
  * invoices.payment_method vocabulary. The canonical values are the SAME payment
  * method vocabulary the ledger already uses (transactions.payment_method,
- * PAYMENT_METHODS) -- one concept, one vocabulary.
+ * PAYMENT_METHODS) plus `bank_transfer`: a generic bank transfer is not `ted`
+ * (one specific rail), and `transfer` is already the transaction TYPE, so the
+ * payment-rail value is `bank_transfer`.
  *
- * `transferencia` is a persisted value with NO unambiguous canonical
- * equivalent: `ted` is one specific payment rail, a generic bank transfer is
- * not, and adding a new value (e.g. `bank_transfer`) is a canonical-map
- * decision that has not been made. It is therefore NOT mapped (never guessed)
- * and stays a valid stored value until that decision is taken; the
- * chk_invoices_payment_method CHECK lists it explicitly for that reason.
+ * Expand/contract (migration 20260930000021): the legacy Portuguese
+ * `transferencia` is still ACCEPTED as input and still tolerated by the CHECK
+ * (an old API build / web bundle may write it during the deploy window) but it
+ * is always canonicalized to `bank_transfer` before persistence. The contract
+ * step (dropping `transferencia` from the CHECK and from the legacy map) is
+ * gated on the preflight census returning 0 (findings/persisted-jsonb-pj1.md).
  */
-export const INVOICE_PAYMENT_METHOD_PENDING_DECISION = 'transferencia';
-export const INVOICE_PAYMENT_METHODS: readonly string[] = [...PAYMENT_METHODS, INVOICE_PAYMENT_METHOD_PENDING_DECISION];
+export const INVOICE_PAYMENT_METHOD_BANK_TRANSFER = 'bank_transfer';
+/** Legacy persisted value, accepted as input and mapped to bank_transfer. */
+export const LEGACY_INVOICE_PAYMENT_METHOD_TRANSFER = 'transferencia';
+/** Canonical vocabulary (what the API stores and returns). */
+export const CANONICAL_INVOICE_PAYMENT_METHODS: readonly string[] = [...PAYMENT_METHODS, INVOICE_PAYMENT_METHOD_BANK_TRANSFER];
+/** Accepted input / values tolerated by chk_invoices_payment_method during the expand window. */
+export const INVOICE_PAYMENT_METHODS: readonly string[] = [...CANONICAL_INVOICE_PAYMENT_METHODS, LEGACY_INVOICE_PAYMENT_METHOD_TRANSFER];
 
 /**
  * Deprecated Portuguese value -> canonical value (input from a web build that
@@ -59,6 +66,7 @@ export const LEGACY_INVOICE_PAYMENT_METHODS: Readonly<Record<string, string>> = 
 export function canonicalInvoicePaymentMethod(value: unknown): unknown {
   if (typeof value !== 'string') return value;
   const key = value.trim().toLowerCase();
+  if (key === LEGACY_INVOICE_PAYMENT_METHOD_TRANSFER) return INVOICE_PAYMENT_METHOD_BANK_TRANSFER;
   if (Object.prototype.hasOwnProperty.call(LEGACY_INVOICE_PAYMENT_METHODS, key)) return LEGACY_INVOICE_PAYMENT_METHODS[key];
   return INVOICE_PAYMENT_METHODS.includes(key) ? key : value;
 }

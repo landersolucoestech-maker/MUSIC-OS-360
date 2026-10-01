@@ -1,6 +1,7 @@
 import { BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010 as Migration } from './migrations/20260930000010_BackfillAndRestrictInvoicePaymentMethodToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
-import { INVOICE_PAYMENT_METHODS, LEGACY_INVOICE_PAYMENT_METHODS } from '../modules/invoices/invoice-legacy-fields';
+import { PAYMENT_METHODS } from '../modules/transactions/transaction-legacy-fields';
+import { LEGACY_INVOICE_PAYMENT_METHODS } from '../modules/invoices/invoice-legacy-fields';
 
 type Call = { sql: string; params?: unknown[] };
 
@@ -15,6 +16,9 @@ function runner(opts: { bypass?: boolean; invalid?: string[] } = {}) {
   });
   return { query, calls };
 }
+
+/** Migration 20260930000010 is a frozen historical step: its CHECK is transactions methods + transferencia (replaced by 20260930000021). */
+const MIGRATION_10_ALLOWED = [...PAYMENT_METHODS, 'transferencia'];
 
 const quotedList = (sql: string) => [...sql.matchAll(/'([a-z_]+)'/g)].map((m) => m[1]);
 
@@ -62,10 +66,10 @@ describe('BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010', () =>
     const { query, calls } = runner();
     await migration.up({ query } as never);
     const add = calls.find((c) => c.sql.includes('ADD CONSTRAINT "chk_invoices_payment_method"'))!;
-    expect(quotedList(add.sql).sort()).toEqual([...INVOICE_PAYMENT_METHODS].sort());
+    expect(quotedList(add.sql).sort()).toEqual(MIGRATION_10_ALLOWED.sort());
     // and the verification audits the same set
     const verify = calls.find((c) => c.sql.includes('SELECT DISTINCT'))!;
-    expect(quotedList(verify.sql).sort()).toEqual([...INVOICE_PAYMENT_METHODS].sort());
+    expect(quotedList(verify.sql).sort()).toEqual(MIGRATION_10_ALLOWED.sort());
   });
 
   it('up() aborts, listing the values, when a row holds a value with no canonical mapping (no constraint is added)', async () => {

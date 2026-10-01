@@ -121,4 +121,15 @@ describe('ExportQueryBuilderService — entity-driven safe query', () => {
       expect(q.columns).toEqual(['stage_name', 'email', 'status']);
     });
   });
+
+  it('releases metadata fields: canonical jsonb key first, legacy Portuguese key as fallback (dual-read)', () => {
+    const def: ReportEntityDefinition = {
+      ...DEF, tableName: 'releases', identityColumn: 'title', displayColumn: 'title',
+      exportableColumns: ['title', 'variousArtists', 'territory'], importableColumns: [], filterableColumns: [], sortableColumns: [], searchableColumns: [],
+      sensitiveColumns: [], requiredImportColumns: [],
+    };
+    const q = svc.build(def, base(), 'tenant-1');
+    expect(q.sql).toContain(`COALESCE("metadata" ->> 'variousArtists', "metadata" ->> 'variosArtistas') AS "variousArtists"`);
+    expect(q.sql).toContain(`"metadata" ->> 'territory' AS "territory"`);
+  });
 });

@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { InvoicesService } from './invoices.service';
 import { CreateInvoiceDto } from './dto/invoices.dto';
-import { INVOICE_PAYMENT_METHODS, canonicalInvoicePaymentMethod } from './invoice-legacy-fields';
+import { CANONICAL_INVOICE_PAYMENT_METHODS, INVOICE_PAYMENT_METHODS, canonicalInvoicePaymentMethod } from './invoice-legacy-fields';
 import { PAYMENT_METHODS } from '../transactions/transaction-legacy-fields';
 
 /**
@@ -78,8 +78,9 @@ describe('Invoice payment_method vocabulary (chk_invoices_payment_method)', () =
     return (repo.create.mock.calls[0][0] as Record<string, unknown>)['payment_method'];
   };
 
-  it('reuses the transactions payment method vocabulary and adds only the undecided transferencia', () => {
-    expect(INVOICE_PAYMENT_METHODS).toEqual([...PAYMENT_METHODS, 'transferencia']);
+  it('reuses the transactions payment method vocabulary, adds bank_transfer, and still accepts legacy transferencia', () => {
+    expect(CANONICAL_INVOICE_PAYMENT_METHODS).toEqual([...PAYMENT_METHODS, 'bank_transfer']);
+    expect(INVOICE_PAYMENT_METHODS).toEqual([...PAYMENT_METHODS, 'bank_transfer', 'transferencia']);
   });
 
   it.each([
@@ -90,9 +91,13 @@ describe('Invoice payment_method vocabulary (chk_invoices_payment_method)', () =
     expect(await persistedMethod({ payment_method: sent })).toBe(stored);
   });
 
-  it('transferencia has no unambiguous canonical value: it is kept as-is, never guessed as ted', async () => {
-    expect(canonicalInvoicePaymentMethod('transferencia')).toBe('transferencia');
-    expect(await persistedMethod({ payment_method: 'transferencia' })).toBe('transferencia');
+  it.each(['transferencia', ' Transferencia ', 'TRANSFERENCIA'])('legacy %j is canonicalized to bank_transfer (never guessed as ted)', async (sent) => {
+    expect(canonicalInvoicePaymentMethod(sent)).toBe('bank_transfer');
+    expect(await persistedMethod({ payment_method: sent })).toBe('bank_transfer');
+  });
+
+  it('bank_transfer is accepted and persisted as-is', async () => {
+    expect(await persistedMethod({ payment_method: 'bank_transfer' })).toBe('bank_transfer');
   });
 
   it('the deprecated key forma_pagamento carries deprecated values too', async () => {

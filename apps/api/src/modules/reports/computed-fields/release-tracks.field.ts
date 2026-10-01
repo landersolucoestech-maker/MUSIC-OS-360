@@ -2,10 +2,10 @@
  * modules/reports/computed-fields/release-tracks.field.ts  ·  Part 89
  *
  * Dedicated resolver for the "Faixas do Lançamento" child sheet
- * (RELEASES_CONTRACT.childSheets). `faixas[]` lives inside
- * releases.metadata.faixas (not normalized into its own table, unlike
+ * (RELEASES_CONTRACT.childSheets). The tracks live inside
+ * releases.metadata.tracks (legacy key `faixas`, still read; not normalized into its own table, unlike
  * Projects/project_tracks). Each track uses the `title` key in the form's real
- * storage (LancamentoFormModal.tsx) — renamed to `nome` in the child
+ * storage (ReleaseFormModal.tsx) — exposed as `trackTitle` in the child
  * sheet so it does not collide with the release's (parent row) `title` column.
  *
  * Documented simplification (Part 89): each track's additional
@@ -17,20 +17,21 @@
 import { BadRequestException } from '@nestjs/common';
 import type { DataSource, QueryRunner } from 'typeorm';
 import { normalizeIsrc, isValidIsrc } from '../../registry/validators/registry-validators';
+import { canonicalReleaseTrack } from '../../../common/compat/release-metadata';
 
 interface ReleaseTrackItem {
-  nome: string;
-  isVersionAlternativa: unknown;
-  tipoVersao: unknown;
+  trackTitle: string;
+  isAlternateVersion: unknown;
+  versionType: unknown;
   versionCustomName: unknown;
-  compositores: string[];
+  composers: string[];
   aiAssistanceLevel: unknown;
   instrumental: unknown;
-  faixa_idioma: unknown;
-  letra: unknown;
+  releaseTrackLanguage: unknown;
+  lyrics: unknown;
   explicit: unknown;
   isrc: unknown;
-  artista: unknown;
+  trackArtist: unknown;
 }
 
 export async function fetchReleaseTracksForExport(
@@ -41,26 +42,29 @@ export async function fetchReleaseTracksForExport(
   const out = new Map<string, ReleaseTrackItem[]>();
   if (releaseIds.length === 0) return out;
   const rows = (await ds.query(
-    `SELECT "id", "metadata"->'faixas' AS faixas FROM "releases" WHERE "tenant_id" = $1 AND "id" = ANY($2::uuid[])`,
+    `SELECT "id", COALESCE("metadata"->'tracks', "metadata"->'faixas') AS tracks FROM "releases" WHERE "tenant_id" = $1 AND "id" = ANY($2::uuid[])`,
     [tenantId, releaseIds],
-  )) as { id: string; faixas: unknown }[];
+  )) as { id: string; tracks: unknown }[];
   for (const row of rows) {
-    const raw = Array.isArray(row.faixas) ? (row.faixas as Record<string, unknown>[]) : [];
+    // Dual-read: a row not yet backfilled (20260930000019) still carries the Portuguese track keys.
+    const raw = Array.isArray(row.tracks)
+      ? (row.tracks as unknown[]).map((t) => (canonicalReleaseTrack(t).value ?? {}) as Record<string, unknown>)
+      : [];
     out.set(
       row.id,
       raw.map((f) => ({
-        nome: String(f.title ?? ''),
-        isVersionAlternativa: f.isVersionAlternativa ?? null,
-        tipoVersao: f.tipoVersao ?? null,
+        trackTitle: String(f.title ?? ''),
+        isAlternateVersion: f.isAlternateVersion ?? null,
+        versionType: f.versionType ?? null,
         versionCustomName: f.versionCustomName ?? null,
-        compositores: Array.isArray(f.compositores) ? (f.compositores as string[]) : [],
+        composers: Array.isArray(f.composers) ? (f.composers as string[]) : [],
         aiAssistanceLevel: f.aiAssistanceLevel ?? null,
         instrumental: f.instrumental ?? null,
-        faixa_idioma: f.idioma ?? null,
-        letra: f.letra ?? null,
+        releaseTrackLanguage: f.language ?? null,
+        lyrics: f.lyrics ?? null,
         explicit: f.explicit ?? null,
         isrc: f.isrc ?? null,
-        artista: f.artista ?? null,
+        trackArtist: f.artist ?? null,
       })),
     );
   }
@@ -92,22 +96,22 @@ export async function writeReleaseTracksForImport(
       isrc = canonicalIsrc;
     }
     return {
-      title: String(f.nome ?? ''),
-      isVersionAlternativa: f.isVersionAlternativa ?? null,
-      tipoVersao: f.tipoVersao ?? null,
+      title: String(f.trackTitle ?? ''),
+      isAlternateVersion: f.isAlternateVersion ?? null,
+      versionType: f.versionType ?? null,
       versionCustomName: f.versionCustomName ?? null,
-      compositores: Array.isArray(f.compositores) ? f.compositores : [],
+      composers: Array.isArray(f.composers) ? f.composers : [],
       aiAssistanceLevel: f.aiAssistanceLevel ?? null,
       instrumental: f.instrumental ?? null,
-      idioma: f.faixa_idioma ?? null,
-      letra: f.letra ?? null,
+      language: f.releaseTrackLanguage ?? null,
+      lyrics: f.lyrics ?? null,
       explicit: f.explicit ?? null,
       isrc,
-      artista: f.artista ?? null,
+      artist: f.trackArtist ?? null,
     };
   });
   await qr.query(
-    `UPDATE "releases" SET "metadata" = jsonb_set(COALESCE("metadata", '{}'::jsonb), '{faixas}', $1::jsonb) WHERE "id" = $2 AND "tenant_id" = $3`,
+    `UPDATE "releases" SET "metadata" = jsonb_set(COALESCE("metadata", '{}'::jsonb) - 'faixas', '{tracks}', $1::jsonb) WHERE "id" = $2 AND "tenant_id" = $3`,
     [JSON.stringify(stored), releaseId, tenantId],
   );
 }

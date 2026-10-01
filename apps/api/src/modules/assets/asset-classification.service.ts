@@ -2,8 +2,10 @@
  * modules/assets/asset-classification.service.ts
  *
  * Asset Classification Skill (real). Classifies the central asset into operational
- * categories (wav, mp3, master, instrumental, guia, cover_art, banner, teaser,
- * reel, story, short, lyric_video, visualizer, videoclipe, document, contrato…)
+ * categories (wav, mp3, master, instrumental, guide_track, cover_art, banner, teaser,
+ * reel, story, short, lyric_video, visualizer, music_video, document, contract…).
+ * Legacy Portuguese values (guia, videoclipe, contrato) are still accepted as
+ * manual-review input and mapped (common/compat/asset-type.ts).
  * from MIME + file name + upload category.
  *
  *   - classifyAndApply(): used automatically by Asset Linking when creating the
@@ -18,6 +20,7 @@ import { Injectable, Inject, Optional, Logger, NotFoundException } from '@nestjs
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { AssetEntity, AssetUsageLogEntity } from '../../database/entities';
+import { canonicalAssetType } from '../../common/compat/asset-type';
 import { SkillRunService } from '../../core/skills/skill-run.service';
 
 export interface ClassificationResult {
@@ -53,7 +56,7 @@ export class AssetClassificationService {
     if (mime.startsWith('audio/')) {
       if (has('master')) return hit('master');
       if (has('instrumental')) return hit('instrumental');
-      if (has('guia', 'guide')) return hit('guia');
+      if (has('guia', 'guide')) return hit('guide_track');
       if (name.includes('.wav') || mime.includes('wav')) return hit('wav');
       if (name.includes('.mp3') || mime.includes('mpeg')) return hit('mp3');
       return weak('audio');
@@ -70,11 +73,11 @@ export class AssetClassificationService {
       if (has('short')) return hit('short');
       if (has('lyric')) return hit('lyric_video');
       if (has('visualizer')) return hit('visualizer');
-      if (has('clipe', 'videoclipe', 'music_video', 'music video', 'mv')) return hit('videoclipe');
+      if (has('clipe', 'videoclipe', 'music_video', 'music video', 'mv')) return hit('music_video');
       return weak('video');
     }
     if (mime === 'application/pdf' || name.includes('.pdf')) {
-      if (has('contrato', 'contract')) return hit('contrato');
+      if (has('contrato', 'contract')) return hit('contract');
       return weak('document');
     }
     return { assetType: 'unknown', confidence: 0.2, method: 'heuristic' };
@@ -133,7 +136,8 @@ export class AssetClassificationService {
   }
 
   /** MANUAL classification review — runs as a skill with its own auditing. */
-  async review(tenantId: string, assetId: string, assetType: string, actorId: string): Promise<ClassificationResult> {
+  async review(tenantId: string, assetId: string, rawAssetType: string, actorId: string): Promise<ClassificationResult> {
+    const assetType = canonicalAssetType(rawAssetType);
     return this.skillRuns.run<ClassificationResult>(
       {
         tenantId,

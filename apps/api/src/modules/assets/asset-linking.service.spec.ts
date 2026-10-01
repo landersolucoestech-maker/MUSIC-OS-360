@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { AssetLinkingService } from './asset-linking.service';
+import { AssetLinkingService, canonicalAssetResponse } from './asset-linking.service';
 import {
   AssetEntity,
   AssetVersionEntity,
@@ -144,5 +144,21 @@ describe('AssetLinkingService.getProjectAssetsDetailed', () => {
       fileUrl: 'tenant/t1/u1.wav',
       role: 'reference',
     });
+  });
+});
+
+describe('canonicalAssetResponse (dual-read of legacy asset types)', () => {
+  it('maps legacy asset_type and metadata.classification.assetType, keeping every other key', () => {
+    const out = canonicalAssetResponse({
+      id: 'a', asset_type: 'videoclipe',
+      metadata: { keep: 1, classification: { assetType: 'guia', confidence: 0.7 } },
+    } as never);
+    expect(out.asset_type).toBe('music_video');
+    expect(out.metadata).toEqual({ keep: 1, classification: { assetType: 'guide_track', confidence: 0.7 } });
+  });
+  it('leaves canonical rows and rows without classification untouched', () => {
+    expect(canonicalAssetResponse({ asset_type: 'wav', metadata: null } as never)).toMatchObject({ asset_type: 'wav', metadata: null });
+    expect(canonicalAssetResponse({ asset_type: 'contract', metadata: { classification: { assetType: 'contract' } } } as never).metadata)
+      .toEqual({ classification: { assetType: 'contract' } });
   });
 });

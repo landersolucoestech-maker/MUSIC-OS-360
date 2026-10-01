@@ -1,5 +1,5 @@
 import type { InvoiceOperationType } from "@/modules/accounting/types/invoice-type";
-import { INVOICE_PAYMENT_METHOD_PENDING_DECISION } from "@/modules/accounting/constants/invoice-payment-methods";
+import { INVOICE_PAYMENT_METHOD_BANK_TRANSFER } from "@/modules/accounting/constants/invoice-payment-methods";
 export type { InvoiceOperationType };
 
 export interface InvoiceLineItem {
@@ -93,7 +93,7 @@ export const INITIAL_FORM_DATA: InvoiceFormData = {
   ir_amount: 0,
   csll_amount: 0,
   net_amount: 0,
-  payment_method: INVOICE_PAYMENT_METHOD_PENDING_DECISION,
+  payment_method: INVOICE_PAYMENT_METHOD_BANK_TRANSFER,
   payment_terms: "30 dias",
   items: [{ ...INITIAL_ITEM }],
   url_pdf: "",

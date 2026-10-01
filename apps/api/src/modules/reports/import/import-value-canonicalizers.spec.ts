@@ -151,7 +151,7 @@ describe('canonicalImportValue — artists labels round-trip (CT-D2)', () => {
 describe('canonicalImportValue — invoices.payment_method (chk_invoices_payment_method)', () => {
   it.each([
     ['dinheiro', 'cash'], ['Cartao_Credito', 'credit_card'], ['cartao_debito', 'debit_card'], ['cheque', 'check'],
-    ['PIX', 'pix'], ['boleto', 'boleto'], ['cash', 'cash'], ['transferencia', 'transferencia'],
+    ['PIX', 'pix'], ['boleto', 'boleto'], ['cash', 'cash'], ['transferencia', 'bank_transfer'], ['bank_transfer', 'bank_transfer'],
   ])('%j -> %s', (cell, canonical) => {
     expect(canonicalImportValue('invoices', 'payment_method', cell)).toBe(canonical);
   });
@@ -162,7 +162,7 @@ describe('canonicalImportValue — invoices.payment_method (chk_invoices_payment
 });
 
 describe('isAllowedImportValue — invoices.payment_method', () => {
-  it.each(['cash', 'credit_card', 'pix', 'boleto', 'transferencia', 'dinheiro', ' Cartao_Debito ', 'CHEQUE', '', null])('accepts %j', (cell) => {
+  it.each(['cash', 'credit_card', 'pix', 'boleto', 'transferencia', 'bank_transfer', 'dinheiro', ' Cartao_Debito ', 'CHEQUE', '', null])('accepts %j', (cell) => {
     expect(isAllowedImportValue('invoices', 'payment_method', cell)).toBe(true);
   });
   it.each(['alien', 'cartão de crédito', 'credit card', 42])('rejects %j', (cell) => {

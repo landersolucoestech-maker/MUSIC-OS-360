@@ -1,6 +1,7 @@
 import { Injectable, Inject, Logger, Optional } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { DataSource, EntityManager, Repository } from 'typeorm';
+import { withLastPayment } from '../../../common/compat/contract-last-payment';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
 import { ContractEntity, CrmTaskEntity } from '../../../database/entities';
@@ -103,12 +104,8 @@ export class TransactionEventsHandler {
             .getOne();
 
           if (contract) {
-            const updatedMetadata = {
-              ...contract.metadata,
-              ultimo_pagamento_em:    paidAt,
-              ultimo_pagamento_valor: amountText,
-              ultimo_pagamento_por:   paidBy,
-            };
+            // Canonical English keys; the legacy ultimo_pagamento_* keys are replaced (migration 20260930000023).
+            const updatedMetadata = withLastPayment(contract.metadata, { at: paidAt, amount: amountText, by: paidBy });
             await contractRepo
               .createQueryBuilder()
               .update(ContractEntity)

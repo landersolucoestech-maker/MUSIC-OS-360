@@ -30,6 +30,7 @@ import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import type { AssetUploadedPayload } from '../../core/events/domain-events.types';
 import { SkillRunService } from '../../core/skills/skill-run.service';
 import { AssetClassificationService } from './asset-classification.service';
+import { canonicalAssetType } from '../../common/compat/asset-type';
 
 const PROJECT_ENTITY_ALIASES = new Set(['project', 'projeto', 'projects', 'projetos']);
 const TASK_ENTITY_ALIASES = new Set(['task', 'tarefa', 'tasks', 'tarefas', 'marketing_task', 'marketing_tasks', 'audiovisual_task']);
@@ -338,7 +339,8 @@ export class AssetLinkingService {
         linkedBy: link.linked_by,
         linkedAt: link.created_at,
         name: asset?.name ?? null,
-        assetType: asset?.asset_type ?? null,
+        // dual-read: rows not yet backfilled by 20260930000025 may still hold guia/videoclipe/contrato
+        assetType: asset?.asset_type == null ? null : (canonicalAssetType(asset.asset_type) as string),
         mimeType: asset?.mime_type ?? null,
         status: asset?.status ?? null,
         fileUrl: version?.file_url ?? null,
@@ -369,8 +371,23 @@ export class AssetLinkingService {
     const versions = this.versions
       ? await this.versions.find({ where: { tenant_id: tenantId, asset_id: assetId }, order: { version: 'DESC' } })
       : [];
-    return { asset, versions };
+    return { asset: canonicalAssetResponse(asset), versions };
   }
+}
+
+/**
+ * Dual-read of the asset classification: rows written before migration
+ * 20260930000025 may still hold guia/videoclipe/contrato in `asset_type` and in
+ * `metadata.classification.assetType`; the response is always canonical.
+ */
+export function canonicalAssetResponse(asset: AssetEntity): AssetEntity {
+  const metadata = asset.metadata as Record<string, unknown> | null | undefined;
+  const classification = metadata?.['classification'] as Record<string, unknown> | undefined;
+  const nextMetadata =
+    classification && typeof classification['assetType'] === 'string'
+      ? { ...metadata, classification: { ...classification, assetType: canonicalAssetType(classification['assetType']) } }
+      : metadata;
+  return { ...asset, asset_type: canonicalAssetType(asset.asset_type) as string, metadata: nextMetadata } as AssetEntity;
 }
 
 /** Enriched view of an asset linked to a project/task. */

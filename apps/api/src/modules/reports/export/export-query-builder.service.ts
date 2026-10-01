@@ -8,6 +8,7 @@ import {
 import {
   contractEncryptedFields,
   contractMetadataFields,
+  contractMetadataLegacyKeys,
   getReportFormContract,
 } from '../form-contracts/report-form-contracts';
 import { fieldCopyPtBr } from '../i18n/report-copy.pt-br';
@@ -24,9 +25,12 @@ function quote(name: string): string {
   return `"${name}"`;
 }
 
-function metadataSelectExpression(column: string, physicalJsonColumn: string): string {
+function metadataSelectExpression(column: string, physicalJsonColumn: string, legacyKey?: string): string {
   const safeJsonKey = column.replace(/'/g, "''");
-  return `${quote(physicalJsonColumn)} ->> '${safeJsonKey}' AS ${quote(column)}`;
+  if (!legacyKey) return `${quote(physicalJsonColumn)} ->> '${safeJsonKey}' AS ${quote(column)}`;
+  // Dual-read (expand/contract): the canonical key wins, the Portuguese key is the fallback for rows not yet backfilled.
+  const safeLegacyKey = legacyKey.replace(/'/g, "''");
+  return `COALESCE(${quote(physicalJsonColumn)} ->> '${safeJsonKey}', ${quote(physicalJsonColumn)} ->> '${safeLegacyKey}') AS ${quote(column)}`;
 }
 
 @Injectable()
@@ -59,10 +63,12 @@ export class ExportQueryBuilderService {
     const contract = getReportFormContract(def.tableName);
     const encryptedFields = contract ? contractEncryptedFields(contract) : {};
     const metadataFields = contract ? contractMetadataFields(contract) : {};
+    const metadataLegacyKeys = contract ? contractMetadataLegacyKeys(contract) : {};
     const logicalAliases: Record<string, string> = {};
     if (contract) {
       for (const field of contract.fields) {
-        if (field.physical && field.physical !== field.key) logicalAliases[field.key] = field.physical;
+        // A metadata field's `physical` is the jsonb COLUMN, not an alias of a scalar column: it is selected by metadataSelectExpression.
+        if (field.storage !== 'metadata' && field.physical && field.physical !== field.key) logicalAliases[field.key] = field.physical;
       }
     }
     const physicalAliasFields = { ...logicalAliases, ...encryptedFields };
@@ -71,7 +77,7 @@ export class ExportQueryBuilderService {
     const selectParts = columns.map((column) => {
       const physicalColumn = physicalAliasFields[column];
       if (physicalColumn) return `${quote(physicalColumn)} AS ${quote(column)}`;
-      if (metadataFields[column]) return metadataSelectExpression(column, metadataFields[column]);
+      if (metadataFields[column]) return metadataSelectExpression(column, metadataFields[column], metadataLegacyKeys[column]);
       return quote(column);
     });
     if (opts.includeInternalId) selectParts.push(`${quote('id')} AS ${quote('__internal_id')}`);

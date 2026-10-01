@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { stripeClient } from '@/modules/integrations/clients/stripe.client';
 import { AUTH_DISABLED } from '@/shared/lib/env';
+import { canonicalFeatureKeys } from '@/shared/lib/feature-flags';
 
 export interface PlanFeatures {
   moduleArtists:     boolean;
@@ -11,7 +12,7 @@ export interface PlanFeatures {
   moduleMarketing:   boolean;
   moduleAccounting:  boolean;
   moduleMonitoring:  boolean;
-  moduleRh:          boolean;
+  moduleHr:          boolean;
   moduleEvents:      boolean;
   moduleInventory:   boolean;
   moduleLicensing:   boolean;
@@ -28,7 +29,7 @@ const STARTER_FEATURES: PlanFeatures = {
   moduleMarketing:   false,
   moduleAccounting:  false,
   moduleMonitoring:  false,
-  moduleRh:          false,
+  moduleHr:          false,
   moduleEvents:      false,
   moduleInventory:   false,
   moduleLicensing:   false,
@@ -74,7 +75,7 @@ export function usePlanFeatures() {
   }
 
   const rawFeatures = (subscription as any)?.features ?? {};
-  const features: PlanFeatures = { ...STARTER_FEATURES, ...rawFeatures };
+  const features: PlanFeatures = { ...STARTER_FEATURES, ...canonicalFeatureKeys(rawFeatures) };
 
   return {
     features,

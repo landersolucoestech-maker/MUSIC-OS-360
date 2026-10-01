@@ -581,10 +581,16 @@ export const FIELD_LABELS_PT_BR = {
 
   // ── Part 89 — Distribution (releases) ───────────────────────────────────────
   schedule: 'Cronograma',
-  variosArtistas: 'Vários artistas', // reader: report-contract
-  generoSecundario: 'Gênero secundário', // reader: report-contract
-  copyrightDataLancamento: 'Ano de copyright (lançamento)', // reader: report-contract
-  copyrightDataGravacao: 'Ano de copyright (gravação)', // reader: report-contract
+  variousArtists: 'Vários artistas',
+  secondaryGenre: 'Gênero secundário',
+  copyrightReleaseYear: 'Ano de copyright (lançamento)',
+  copyrightRecordingYear: 'Ano de copyright (gravação)',
+  additionalAlbumArtists: 'Artistas adicionais do álbum',
+  isAlternateVersion: 'É versão alternativa',
+  versionType: 'Tipo de versão',
+  trackTitle: 'Nome',
+  trackArtist: 'Artista',
+  releaseTrackLanguage: 'Idioma da faixa',
   ownUpc: 'UPC próprio',
   territory: 'Território',
   releaseTime: 'Horário de lançamento',
@@ -592,13 +598,9 @@ export const FIELD_LABELS_PT_BR = {
   preOrder: 'Pré-venda',
   noPreviewsDuringPreOrder: 'Sem prévias durante a pré-venda',
   pricing: 'Precificação',
-  artistasAdicionaisAlbum: 'Artistas adicionais do álbum', // reader: report-contract
-  isVersionAlternativa: 'É versão alternativa', // reader: report-contract
-  tipoVersao: 'Tipo de versão', // reader: report-contract
   versionCustomName: 'Descrição da versão customizada',
   aiAssistanceLevel: 'Nível de assistência de IA',
   explicit: 'Conteúdo explícito',
-  faixaIdioma: 'Idioma da faixa', // reader: report-contract
 
   // ── Part 89 — Shares ─────────────────────────────────────────────────────────
   // `percentual` (WorkParticipantEntity) remains — shares migrated to

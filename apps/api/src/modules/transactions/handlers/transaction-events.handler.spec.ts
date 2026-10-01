@@ -49,6 +49,18 @@ describe('TransactionEventsHandler — P2-9', () => {
     );
   });
 
+  it('paid transaction writes the canonical last_payment_* keys on the linked contract (legacy keys replaced)', async () => {
+    const qb = makeQb({ id: 'c1', metadata: { keep: 1, ultimo_pagamento_em: 'old' } });
+    const contractRepo = { createQueryBuilder: jest.fn(() => qb) };
+    const taskRepo = { findOne: jest.fn().mockResolvedValue({ id: 'existing' }), create: jest.fn(), save: jest.fn() };
+    const ds = { getRepository: jest.fn().mockReturnValueOnce(contractRepo).mockReturnValueOnce(taskRepo) };
+    const dbContext = { runInTenantContext: jest.fn((_c: unknown, w: (m: unknown) => unknown) => w(undefined)) };
+    const handler = new TransactionEventsHandler(ds as any, { create: jest.fn() } as any, { evaluateRules: jest.fn() } as any, dbContext as any);
+    await handler.onTransactionPaid({ tenantId: 't1', payload: { ...payload, amount: '100.00' }, correlationId: null } as any);
+    const set = (qb.set.mock.calls[0][0] as { metadata: Record<string, unknown> }).metadata;
+    expect(set).toEqual({ keep: 1, last_payment_at: '2026-06-12', last_payment_amount: '100.00', last_payment_by: 'u1' });
+  });
+
   describe('onTransactionCreated', () => {
     const createdPayload = { transactionId: 'tx2', type: 'revenue', category: 'royalties', amount: '250' };
 

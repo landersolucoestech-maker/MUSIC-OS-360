@@ -370,7 +370,7 @@ export default function HR() {
   };
 
   return (
-    <FeatureGate feature="moduleRh" featureName="Recursos Humanos">
+    <FeatureGate feature="moduleHr" featureName="Recursos Humanos">
     <>
     {loadingEmployees || isLoadingEmployeePage ? (
       <MainLayout>

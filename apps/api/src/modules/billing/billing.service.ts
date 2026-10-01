@@ -70,20 +70,21 @@ interface StripeWebhookEvent {
   created?: number;
 }
 
+// Feature keys are canonical English (`moduleHr`, formerly `moduleRh`; legacy key still read: common/compat/plan-features.ts).
 export const PLAN_FEATURES = {
   starter: {
     moduleArtists: true, moduleCatalog: true, moduleContracts: true, moduleCrm: true,
-    moduleMarketing: false, moduleAccounting: false, moduleMonitoring: false, aiFeatures: false, moduleRh: false,
+    moduleMarketing: false, moduleAccounting: false, moduleMonitoring: false, aiFeatures: false, moduleHr: false,
   },
   professional: {
     moduleArtists: true, moduleCatalog: true, moduleContracts: true, moduleCrm: true,
     moduleMarketing: true, moduleAccounting: true, moduleMonitoring: true, aiFeatures: false,
-    moduleRh: true, moduleEvents: true, moduleInventory: true,
+    moduleHr: true, moduleEvents: true, moduleInventory: true,
   },
   enterprise: {
     moduleArtists: true, moduleCatalog: true, moduleContracts: true, moduleCrm: true,
     moduleMarketing: true, moduleAccounting: true, moduleMonitoring: true, aiFeatures: true,
-    moduleRh: true, moduleEvents: true, moduleInventory: true, moduleLicensing: true,
+    moduleHr: true, moduleEvents: true, moduleInventory: true, moduleLicensing: true,
     multiTenantAdmin: true, analyticsAdvanced: true,
   },
 } as const;

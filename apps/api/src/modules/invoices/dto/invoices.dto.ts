@@ -74,7 +74,7 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) csll_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) net_amount?: number;
 
-  @ApiPropertyOptional({ enum: [...INVOICE_PAYMENT_METHODS], description: 'Canonical payment method (same vocabulary as transactions). Deprecated Portuguese values (dinheiro, cartao_credito, cartao_debito, cheque) are accepted and mapped; membership is enforced by InvoicesService.' })
+  @ApiPropertyOptional({ enum: [...INVOICE_PAYMENT_METHODS], description: 'Canonical payment method (same vocabulary as transactions, plus bank_transfer). Deprecated Portuguese values (dinheiro, cartao_credito, cartao_debito, cheque, transferencia) are accepted and mapped; membership is enforced by InvoicesService.' })
   @IsOptional() @IsString() @MaxLength(100) payment_method?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(200) payment_terms?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(1000) url_pdf?: string;

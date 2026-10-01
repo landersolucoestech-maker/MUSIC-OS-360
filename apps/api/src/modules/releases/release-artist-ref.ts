@@ -1,6 +1,7 @@
 import type { SelectQueryBuilder } from 'typeorm';
 import { ArtistEntity, type ReleaseEntity } from '../../database/entities';
 import type { ReleaseArtistRefDto } from './dto/releases.dto';
+import { canonicalReleaseMetadata } from '../../common/compat/release-metadata';
 
 /**
  * Release artist embed (S1, review bc40b76).
@@ -51,5 +52,6 @@ export function toReleaseResponse(row: ReleaseEntity): ReleaseResponse {
   const { [ARTIST_REF_ALIAS]: artistRow, artist: _relation, ...columns } = row as JoinedReleaseRow;
   void _relation;
   const artist = toReleaseArtistRef(artistRow);
-  return { ...columns, artist, artistas: artist ? { ...artist } : null };
+  // Dual-read: rows not yet backfilled by 20260930000019 may still hold Portuguese metadata keys; the response is always canonical.
+  return { ...columns, metadata: canonicalReleaseMetadata(columns.metadata), artist, artistas: artist ? { ...artist } : null };
 }

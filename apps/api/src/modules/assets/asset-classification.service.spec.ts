@@ -31,7 +31,7 @@ describe('AssetClassificationService.classify (heuristic)', () => {
     ['audio/wav', 'track.wav', 'wav'],
     ['audio/mpeg', 'track.mp3', 'mp3'],
     ['audio/wav', 'song_master.wav', 'master'],
-    ['audio/wav', 'voz_guia.wav', 'guia'],
+    ['audio/wav', 'voz_guia.wav', 'guide_track'],
     ['audio/wav', 'beat_instrumental.wav', 'instrumental'],
     ['image/png', 'cover_art.png', 'cover_art'],
     ['image/jpeg', 'banner_topo.jpg', 'banner'],
@@ -39,8 +39,8 @@ describe('AssetClassificationService.classify (heuristic)', () => {
     ['video/mp4', 'reels_final.mp4', 'reel'],
     ['video/mp4', 'lyric_oficial.mp4', 'lyric_video'],
     ['video/mp4', 'visualizer.mp4', 'visualizer'],
-    ['video/mp4', 'videoclipe_oficial.mp4', 'videoclipe'],
-    ['application/pdf', 'contrato_edicao.pdf', 'contrato'],
+    ['video/mp4', 'videoclipe_oficial.mp4', 'music_video'],
+    ['application/pdf', 'contrato_edicao.pdf', 'contract'],
     ['application/pdf', 'rider.pdf', 'document'],
     ['application/zip', 'pacote.zip', 'unknown'],
   ];
@@ -66,6 +66,20 @@ describe('AssetClassificationService.classifyAndApply', () => {
 });
 
 describe('AssetClassificationService.review (manual)', () => {
+  it.each([['guia', 'guide_track'], ['videoclipe', 'music_video'], ['contrato', 'contract'], ['guide_track', 'guide_track']])(
+    'legacy input %s is persisted as canonical %s',
+    async (sent, stored) => {
+      const { ds, repos } = makeDs();
+      const svc = new AssetClassificationService(ds as never, skillRuns() as never);
+      const result = await svc.review('t1', 'asset-1', sent, 'user-1');
+      expect(result.assetType).toBe(stored);
+      expect(repos.get(AssetEntity)!.update).toHaveBeenCalledWith(
+        { id: 'asset-1', tenant_id: 't1' },
+        expect.objectContaining({ asset_type: stored, metadata: expect.objectContaining({ classification: expect.objectContaining({ assetType: stored }) }) }),
+      );
+    },
+  );
+
   it('applies manual classification (confidence 1, method manual)', async () => {
     const { ds, repos } = makeDs();
     const svc = new AssetClassificationService(ds as never, skillRuns() as never);

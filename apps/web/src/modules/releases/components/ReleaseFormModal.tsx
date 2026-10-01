@@ -61,6 +61,7 @@ import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/a
 import type { FonogramaWithRelations } from "@/modules/catalog/hooks/usePhonograms";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
+import { canonicalReleaseMetadata } from "@/modules/releases/lib/release-metadata";
 import {
   releaseToFormFields,
   emptyReleaseFormFields,
@@ -247,33 +248,33 @@ const PRICING_OPTS = [
 // INTERFACES
 // ────────────────────────────────────────────────────────────────────────────
 interface ArtistEntry {
-  nome: string;
+  name: string;
   role: string;
 }
 interface MusicianEntry {
-  nome: string;
-  instrumento: string;
+  name: string;
+  instrument: string;
 }
 
 interface ReleaseTrack {
   id: number;
   title: string;
-  artista: string;
+  artist: string;
   isrc: string;
   // version
-  isVersionAlternativa: boolean;
-  tipoVersao: string;
+  isAlternateVersion: boolean;
+  versionType: string;
   versionCustomName: string;
   // credits
-  artistasAdicionais: ArtistEntry[];
-  produtores: ArtistEntry[];
-  compositores: string[];
-  musicos: MusicianEntry[];
+  additionalArtists: ArtistEntry[];
+  producers: ArtistEntry[];
+  composers: string[];
+  musicians: MusicianEntry[];
   // AI / content
   aiAssistanceLevel: string;
   instrumental: boolean;
-  idioma: string;
-  letra: string;
+  language: string;
+  lyrics: string;
   explicit: string;
   // file
   audioFile: File | null;
@@ -283,11 +284,11 @@ interface ReleaseTrack {
 
 interface ExtraFields {
   // Album Info
-  variosArtistas: boolean;
-  artistasAdicionaisAlbum: ArtistEntry[];
-  generoSecundario: string;
-  copyrightDataLancamento: string;
-  copyrightDataGravacao: string;
+  variousArtists: boolean;
+  additionalAlbumArtists: ArtistEntry[];
+  secondaryGenre: string;
+  copyrightReleaseYear: string;
+  copyrightRecordingYear: string;
   ownUpc: boolean;
   // Distribution
   territory: string;
@@ -312,29 +313,29 @@ interface ReleaseFormModalProps {
 const createReleaseTrack = (id = Date.now()): ReleaseTrack => ({
   id,
   title: "",
-  artista: "",
+  artist: "",
   isrc: "",
-  isVersionAlternativa: false,
-  tipoVersao: "",
+  isAlternateVersion: false,
+  versionType: "",
   versionCustomName: "",
-  artistasAdicionais: [],
-  produtores: [],
-  compositores: [""],
-  musicos: [],
+  additionalArtists: [],
+  producers: [],
+  composers: [""],
+  musicians: [],
   aiAssistanceLevel: "",
   instrumental: false,
-  idioma: "pt-br",
-  letra: "",
+  language: "pt-br",
+  lyrics: "",
   explicit: "no",
   audioFile: null,
 });
 
 const DEFAULT_EXTRA: ExtraFields = {
-  variosArtistas: false,
-  artistasAdicionaisAlbum: [],
-  generoSecundario: "",
-  copyrightDataLancamento: "",
-  copyrightDataGravacao: "",
+  variousArtists: false,
+  additionalAlbumArtists: [],
+  secondaryGenre: "",
+  copyrightReleaseYear: "",
+  copyrightRecordingYear: "",
   ownUpc: false,
   territory: "world",
   releaseTime: "",
@@ -540,23 +541,22 @@ export function ReleaseFormModal({
     setCurrentStep(0);
     setFormData(releaseToFormFields(release ?? null));
 
-    const meta = release
-      ? ((release as Record<string, unknown>)["metadata"] as Record<string, unknown> | undefined) ?? {}
-      : {};
+    // Dual-read: rows not yet backfilled still carry the Portuguese metadata keys.
+    const meta = canonicalReleaseMetadata(release ? (release as Record<string, unknown>)["metadata"] : {});
 
-    if (release && Array.isArray(meta["faixas"]) && (meta["faixas"] as unknown[]).length > 0) {
-      setTracks((meta["faixas"] as ReleaseTrack[]).map(f => ({ ...f, audioFile: null })));
+    if (release && Array.isArray(meta["tracks"]) && (meta["tracks"] as unknown[]).length > 0) {
+      setTracks((meta["tracks"] as ReleaseTrack[]).map(f => ({ ...f, audioFile: null })));
     } else {
       setTracks([createReleaseTrack(1)]);
     }
 
     setExtraFields({
       ...DEFAULT_EXTRA,
-      ...(meta["variosArtistas"] !== undefined ? { variosArtistas: meta["variosArtistas"] as boolean } : {}),
-      ...(Array.isArray(meta["artistasAdicionaisAlbum"]) ? { artistasAdicionaisAlbum: meta["artistasAdicionaisAlbum"] as ArtistEntry[] } : {}),
-      ...(meta["generoSecundario"] ? { generoSecundario: String(meta["generoSecundario"]) } : {}),
-      ...(meta["copyrightDataLancamento"] ? { copyrightDataLancamento: String(meta["copyrightDataLancamento"]) } : {}),
-      ...(meta["copyrightDataGravacao"] ? { copyrightDataGravacao: String(meta["copyrightDataGravacao"]) } : {}),
+      ...(meta["variousArtists"] !== undefined ? { variousArtists: meta["variousArtists"] as boolean } : {}),
+      ...(Array.isArray(meta["additionalAlbumArtists"]) ? { additionalAlbumArtists: meta["additionalAlbumArtists"] as ArtistEntry[] } : {}),
+      ...(meta["secondaryGenre"] ? { secondaryGenre: String(meta["secondaryGenre"]) } : {}),
+      ...(meta["copyrightReleaseYear"] ? { copyrightReleaseYear: String(meta["copyrightReleaseYear"]) } : {}),
+      ...(meta["copyrightRecordingYear"] ? { copyrightRecordingYear: String(meta["copyrightRecordingYear"]) } : {}),
       ...(meta["ownUpc"] !== undefined ? { ownUpc: Boolean(meta["ownUpc"]) } : {}),
       ...(meta["territory"] ? { territory: String(meta["territory"]) } : {}),
       ...(meta["releaseTimezone"] ? { releaseTimezone: String(meta["releaseTimezone"]) } : {}),
@@ -624,13 +624,13 @@ export function ReleaseFormModal({
               return {
                 ...createReleaseTrack(i + 1),
                 title: m.nome ?? "",
-                artista: artistName,
+                artist: artistName,
                 isrc: trackIsrc,
-                compositores: m.compositores?.length ? m.compositores : [""],
-                produtores: m.produtores?.length
-                  ? m.produtores.map((p) => ({ nome: p, role: "Producer" }))
+                composers: m.compositores?.length ? m.compositores : [""],
+                producers: m.produtores?.length
+                  ? m.produtores.map((p) => ({ name: p, role: "Producer" }))
                   : [],
-                letra: m.letra ?? "",
+                lyrics: m.letra ?? "",
               };
             }),
           );
@@ -658,7 +658,7 @@ export function ReleaseFormModal({
       case 0:
         return (
           !!formData.title.trim() &&
-          (extraFields.variosArtistas || !!formData.artist_id.trim())
+          (extraFields.variousArtists || !!formData.artist_id.trim())
         );
       case 1:
         return tracks.every((f) => !!f.title.trim() && !!f.aiAssistanceLevel);
@@ -714,7 +714,7 @@ export function ReleaseFormModal({
   const addComp = (fid: number) =>
     setTracks((prev) =>
       prev.map((f) =>
-        f.id === fid ? { ...f, compositores: [...f.compositores, ""] } : f,
+        f.id === fid ? { ...f, composers: [...f.composers, ""] } : f,
       ),
     );
   const updComp = (fid: number, i: number, v: string) =>
@@ -723,7 +723,7 @@ export function ReleaseFormModal({
         f.id === fid
           ? {
               ...f,
-              compositores: f.compositores.map((c, idx) => (idx === i ? v : c)),
+              composers: f.composers.map((c, idx) => (idx === i ? v : c)),
             }
           : f,
       ),
@@ -732,7 +732,7 @@ export function ReleaseFormModal({
     setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
-          ? { ...f, compositores: f.compositores.filter((_, idx) => idx !== i) }
+          ? { ...f, composers: f.composers.filter((_, idx) => idx !== i) }
           : f,
       ),
     );
@@ -740,21 +740,21 @@ export function ReleaseFormModal({
   // ArtistEntry[] fields
   const addAE = (
     fid: number,
-    field: "artistasAdicionais" | "produtores",
+    field: "additionalArtists" | "producers",
     defaultRole: string,
   ) =>
     setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
-          ? { ...f, [field]: [...f[field], { nome: "", role: defaultRole }] }
+          ? { ...f, [field]: [...f[field], { name: "", role: defaultRole }] }
           : f,
       ),
     );
   const updAE = (
     fid: number,
-    field: "artistasAdicionais" | "produtores",
+    field: "additionalArtists" | "producers",
     i: number,
-    k: "nome" | "role",
+    k: "name" | "role",
     v: string,
   ) =>
     setTracks((prev) =>
@@ -771,7 +771,7 @@ export function ReleaseFormModal({
     );
   const removeAE = (
     fid: number,
-    field: "artistasAdicionais" | "produtores",
+    field: "additionalArtists" | "producers",
     i: number,
   ) =>
     setTracks((prev) =>
@@ -792,14 +792,14 @@ export function ReleaseFormModal({
     setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
-          ? { ...f, musicos: [...f.musicos, { nome: "", instrumento: "" }] }
+          ? { ...f, musicians: [...f.musicians, { name: "", instrument: "" }] }
           : f,
       ),
     );
   const updMus = (
     fid: number,
     i: number,
-    k: "nome" | "instrumento",
+    k: "name" | "instrument",
     v: string,
   ) =>
     setTracks((prev) =>
@@ -807,7 +807,7 @@ export function ReleaseFormModal({
         f.id === fid
           ? {
               ...f,
-              musicos: f.musicos.map((m, idx) =>
+              musicians: f.musicians.map((m, idx) =>
                 idx === i ? { ...m, [k]: v } : m,
               ),
             }
@@ -818,28 +818,28 @@ export function ReleaseFormModal({
     setTracks((prev) =>
       prev.map((f) =>
         f.id === fid
-          ? { ...f, musicos: f.musicos.filter((_, idx) => idx !== i) }
+          ? { ...f, musicians: f.musicians.filter((_, idx) => idx !== i) }
           : f,
       ),
     );
 
   // Album-level additional artists
   const addAlbumArtist = () =>
-    setExtra("artistasAdicionaisAlbum", [
-      ...extraFields.artistasAdicionaisAlbum,
-      { nome: "", role: "Performer" },
+    setExtra("additionalAlbumArtists", [
+      ...extraFields.additionalAlbumArtists,
+      { name: "", role: "Performer" },
     ]);
-  const updAlbumArtist = (i: number, k: "nome" | "role", v: string) =>
+  const updAlbumArtist = (i: number, k: "name" | "role", v: string) =>
     setExtra(
-      "artistasAdicionaisAlbum",
-      extraFields.artistasAdicionaisAlbum.map((e, idx) =>
+      "additionalAlbumArtists",
+      extraFields.additionalAlbumArtists.map((e, idx) =>
         idx === i ? { ...e, [k]: v } : e,
       ),
     );
   const removeAlbumArtist = (i: number) =>
     setExtra(
-      "artistasAdicionaisAlbum",
-      extraFields.artistasAdicionaisAlbum.filter((_, idx) => idx !== i),
+      "additionalAlbumArtists",
+      extraFields.additionalAlbumArtists.filter((_, idx) => idx !== i),
     );
 
 
@@ -889,18 +889,18 @@ export function ReleaseFormModal({
         ...(typeof payload["metadata"] === "object" && payload["metadata"] !== null
           ? (payload["metadata"] as Record<string, unknown>)
           : {}),
-        faixas: savableTracks,
+        tracks: savableTracks,
         territory: extraFields.territory,
         releaseTimezone: extraFields.releaseTimezone,
         pricing: extraFields.pricing,
-        generoSecundario: extraFields.generoSecundario,
-        copyrightDataLancamento: extraFields.copyrightDataLancamento,
-        copyrightDataGravacao: extraFields.copyrightDataGravacao,
+        secondaryGenre: extraFields.secondaryGenre,
+        copyrightReleaseYear: extraFields.copyrightReleaseYear,
+        copyrightRecordingYear: extraFields.copyrightRecordingYear,
         ownUpc: extraFields.ownUpc,
-        variosArtistas: extraFields.variosArtistas,
-        artistasAdicionaisAlbum: extraFields.artistasAdicionaisAlbum,
+        variousArtists: extraFields.variousArtists,
+        additionalAlbumArtists: extraFields.additionalAlbumArtists,
       };
-      payload["metadata"] = enrichedMeta;
+      payload["metadata"] = canonicalReleaseMetadata(enrichedMeta);
       if (mode === "edit" && release?.id) {
         await updateRelease.mutateAsync({
           id: release.id,
@@ -947,7 +947,7 @@ export function ReleaseFormModal({
     roles: string[];
     addLabel: string;
     onAdd: () => void;
-    onUpdate: (i: number, k: "nome" | "role", v: string) => void;
+    onUpdate: (i: number, k: "name" | "role", v: string) => void;
     onRemove: (i: number) => void;
     /** Enables registered-artist suggestions (server-side search) on this field. */
     withArtistSuggestions?: boolean;
@@ -958,15 +958,15 @@ export function ReleaseFormModal({
         <div key={i} className="flex gap-2 items-center">
           {withArtistSuggestions ? (
             <ArtistAutocompleteInput
-              value={e.nome}
-              onChange={(v) => onUpdate(i, "nome", v)}
+              value={e.name}
+              onChange={(v) => onUpdate(i, "name", v)}
               placeholder="Nome"
               disabled={isViewMode}
             />
           ) : (
             <Input
-              value={e.nome}
-              onChange={(ev) => onUpdate(i, "nome", ev.target.value)}
+              value={e.name}
+              onChange={(ev) => onUpdate(i, "name", ev.target.value)}
               placeholder="Nome"
               disabled={isViewMode}
               className="flex-1"
@@ -1180,8 +1180,8 @@ export function ReleaseFormModal({
             </InfoBox>
             <label className="flex items-center gap-2 cursor-pointer">
               <Checkbox
-                checked={extraFields.variosArtistas}
-                onCheckedChange={(checked) => setExtra("variosArtistas", checked === true)}
+                checked={extraFields.variousArtists}
+                onCheckedChange={(checked) => setExtra("variousArtists", checked === true)}
                 disabled={isViewMode}
                 data-cy="checkbox-various-artists"
               />
@@ -1190,7 +1190,7 @@ export function ReleaseFormModal({
           </div>
 
           {/* Primary Artist */}
-          {!extraFields.variosArtistas && (
+          {!extraFields.variousArtists && (
             <div className="space-y-2">
               <Label>Artista Principal *</Label>
               <Popover
@@ -1280,7 +1280,7 @@ export function ReleaseFormModal({
               artistas devem ser listados — não inclua selos ou produtoras.
             </InfoBox>
             <ArtistRows
-              entries={extraFields.artistasAdicionaisAlbum}
+              entries={extraFields.additionalAlbumArtists}
               roles={ARTIST_ROLES}
               addLabel="Adicionar Artista"
               onAdd={addAlbumArtist}
@@ -1323,8 +1323,8 @@ export function ReleaseFormModal({
             <div className="space-y-2">
               <Label>Gênero Secundário *</Label>
               <Select
-                value={extraFields.generoSecundario}
-                onValueChange={(v) => setExtra("generoSecundario", v)}
+                value={extraFields.secondaryGenre}
+                onValueChange={(v) => setExtra("secondaryGenre", v)}
                 disabled={isViewMode}
               >
                 <SelectTrigger>
@@ -1407,9 +1407,9 @@ export function ReleaseFormModal({
             <div className="space-y-2">
               <Label>Ano de Copyright — Lançamento *</Label>
               <Input
-                value={extraFields.copyrightDataLancamento}
+                value={extraFields.copyrightReleaseYear}
                 onChange={(e) =>
-                  setExtra("copyrightDataLancamento", e.target.value)
+                  setExtra("copyrightReleaseYear", e.target.value)
                 }
                 placeholder="Ex: 2026"
                 disabled={isViewMode}
@@ -1419,9 +1419,9 @@ export function ReleaseFormModal({
             <div className="space-y-2">
               <Label>Ano de Copyright — Gravação *</Label>
               <Input
-                value={extraFields.copyrightDataGravacao}
+                value={extraFields.copyrightRecordingYear}
                 onChange={(e) =>
-                  setExtra("copyrightDataGravacao", e.target.value)
+                  setExtra("copyrightRecordingYear", e.target.value)
                 }
                 placeholder="Ex: 2025"
                 disabled={isViewMode}
@@ -1536,9 +1536,9 @@ export function ReleaseFormModal({
             {/* Alternative version */}
             <label className="flex items-center gap-2 cursor-pointer">
               <Checkbox
-                checked={track.isVersionAlternativa}
+                checked={track.isAlternateVersion}
                 onCheckedChange={(checked) =>
-                  updF(track.id, "isVersionAlternativa", checked === true)
+                  updF(track.id, "isAlternateVersion", checked === true)
                 }
                 disabled={isViewMode}
                 data-cy="checkbox-alternative-version"
@@ -1548,7 +1548,7 @@ export function ReleaseFormModal({
               </span>
             </label>
 
-            {track.isVersionAlternativa && (
+            {track.isAlternateVersion && (
               <div className="space-y-3 pl-6 border-l-2 border-primary/20">
                 <Label>Tipo de Versão</Label>
                 <InfoBox>
@@ -1558,8 +1558,8 @@ export function ReleaseFormModal({
                 </InfoBox>
                 <div className="flex items-end gap-3">
                   <Select
-                    value={track.tipoVersao}
-                    onValueChange={(v) => updF(track.id, "tipoVersao", v)}
+                    value={track.versionType}
+                    onValueChange={(v) => updF(track.id, "versionType", v)}
                     disabled={isViewMode}
                   >
                     <SelectTrigger
@@ -1577,7 +1577,7 @@ export function ReleaseFormModal({
                     </SelectContent>
                   </Select>
 
-                  {track.tipoVersao === "other" && (
+                  {track.versionType === "other" && (
                     <div className="flex-1 space-y-2">
                       <Label>Descrição da Versão Customizada</Label>
                       <Input
@@ -1596,7 +1596,7 @@ export function ReleaseFormModal({
 
             {/* Album-level artists (read-only display) */}
             {(artistLabel ||
-              extraFields.artistasAdicionaisAlbum.length > 0) && (
+              extraFields.additionalAlbumArtists.length > 0) && (
               <div className="space-y-2">
                 <Label>
                   Artistas do Álbum{" "}
@@ -1614,9 +1614,9 @@ export function ReleaseFormModal({
                       </span>
                     </p>
                   )}
-                  {extraFields.artistasAdicionaisAlbum.map((a, i) => (
+                  {extraFields.additionalAlbumArtists.map((a, i) => (
                     <p key={i} className="text-sm">
-                      <span className="font-medium">{a.nome || "—"}</span>
+                      <span className="font-medium">{a.name || "—"}</span>
                       <span className="text-muted-foreground"> — {a.role}</span>
                     </p>
                   ))}
@@ -1632,14 +1632,14 @@ export function ReleaseFormModal({
                 Artistas do álbum aparecem automaticamente em todas as faixas.
               </InfoBox>
               <ArtistRows
-                entries={track.artistasAdicionais}
+                entries={track.additionalArtists}
                 roles={ARTIST_ROLES}
                 addLabel="Adicionar Artista / Colaborador"
-                onAdd={() => addAE(track.id, "artistasAdicionais", "Performer")}
+                onAdd={() => addAE(track.id, "additionalArtists", "Performer")}
                 onUpdate={(i, k, v) =>
-                  updAE(track.id, "artistasAdicionais", i, k, v)
+                  updAE(track.id, "additionalArtists", i, k, v)
                 }
-                onRemove={(i) => removeAE(track.id, "artistasAdicionais", i)}
+                onRemove={(i) => removeAE(track.id, "additionalArtists", i)}
                 withArtistSuggestions
               />
             </div>
@@ -1651,12 +1651,12 @@ export function ReleaseFormModal({
                 Adicione produtores e engenheiros que trabalharam nesta faixa.
               </InfoBox>
               <ArtistRows
-                entries={track.produtores}
+                entries={track.producers}
                 roles={PRODUCER_ROLES}
                 addLabel="Adicionar Produtor / Engenheiro"
-                onAdd={() => addAE(track.id, "produtores", "Producer")}
-                onUpdate={(i, k, v) => updAE(track.id, "produtores", i, k, v)}
-                onRemove={(i) => removeAE(track.id, "produtores", i)}
+                onAdd={() => addAE(track.id, "producers", "Producer")}
+                onUpdate={(i, k, v) => updAE(track.id, "producers", i, k, v)}
+                onRemove={(i) => removeAE(track.id, "producers", i)}
               />
             </div>
 
@@ -1667,7 +1667,7 @@ export function ReleaseFormModal({
                 Se todos os membros de uma dupla ou banda são compositores,
                 liste-os individualmente.
               </InfoBox>
-              {track.compositores.map((c, i) => (
+              {track.composers.map((c, i) => (
                 <div key={i} className="flex gap-2 items-center mb-2">
                   <Input
                     value={c}
@@ -1676,7 +1676,7 @@ export function ReleaseFormModal({
                     disabled={isViewMode}
                     className="flex-1"
                   />
-                  {track.compositores.length > 1 && !isViewMode && (
+                  {track.composers.length > 1 && !isViewMode && (
                     <Button
                       type="button"
                       variant="ghost"
@@ -1708,20 +1708,20 @@ export function ReleaseFormModal({
                 Adicione os músicos que tocaram nesta faixa e o instrumento
                 correspondente.
               </InfoBox>
-              {track.musicos.map((m, i) => (
+              {track.musicians.map((m, i) => (
                 <div key={i} className="flex gap-2 items-center mb-2">
                   <Input
-                    value={m.nome}
+                    value={m.name}
                     onChange={(e) =>
-                      updMus(track.id, i, "nome", e.target.value)
+                      updMus(track.id, i, "name", e.target.value)
                     }
                     placeholder="Nome do músico"
                     disabled={isViewMode}
                     className="flex-1"
                   />
                   <Select
-                    value={m.instrumento}
-                    onValueChange={(v) => updMus(track.id, i, "instrumento", v)}
+                    value={m.instrument}
+                    onValueChange={(v) => updMus(track.id, i, "instrument", v)}
                     disabled={isViewMode}
                   >
                     <SelectTrigger className="w-44">
@@ -1817,8 +1817,8 @@ export function ReleaseFormModal({
                   <div className="space-y-2">
                     <Label>Idioma da Faixa *</Label>
                     <Select
-                      value={track.idioma}
-                      onValueChange={(v) => updF(track.id, "idioma", v)}
+                      value={track.language}
+                      onValueChange={(v) => updF(track.id, "language", v)}
                       disabled={isViewMode}
                     >
                       <SelectTrigger className="w-64">
@@ -1841,8 +1841,8 @@ export function ReleaseFormModal({
                       branco.
                     </p>
                     <Textarea
-                      value={track.letra}
-                      onChange={(e) => updF(track.id, "letra", e.target.value)}
+                      value={track.lyrics}
+                      onChange={(e) => updF(track.id, "lyrics", e.target.value)}
                       placeholder="Letra da música..."
                       rows={5}
                       disabled={isViewMode}
@@ -1907,8 +1907,8 @@ export function ReleaseFormModal({
                 </span>
               </Label>
               <Input
-                value={track.artista}
-                onChange={(e) => updF(track.id, "artista", e.target.value)}
+                value={track.artist}
+                onChange={(e) => updF(track.id, "artist", e.target.value)}
                 placeholder="Nome do artista"
                 disabled={isViewMode}
               />
@@ -2399,19 +2399,19 @@ export function ReleaseFormModal({
   // ─────────────────────────────────────────────────────────────────────────
   const renderStep4 = () => {
     const artistName =
-      artistLabel || (extraFields.variosArtistas ? "Various Artists" : "—");
+      artistLabel || (extraFields.variousArtists ? "Various Artists" : "—");
 
     const warnings: string[] = [];
     if (!formData.title.trim()) warnings.push("Título do lançamento ausente.");
-    if (!extraFields.variosArtistas && !formData.artist_id)
+    if (!extraFields.variousArtists && !formData.artist_id)
       warnings.push("Artista principal não selecionado.");
     if (!formData.genre) warnings.push("Gênero principal não informado.");
-    if (!extraFields.generoSecundario)
+    if (!extraFields.secondaryGenre)
       warnings.push("Gênero secundário não informado.");
     if (!formData.recordLabel) warnings.push("Gravadora / Selo não informado.");
-    if (!extraFields.copyrightDataLancamento)
+    if (!extraFields.copyrightReleaseYear)
       warnings.push("Ano de copyright (lançamento) ausente.");
-    if (!extraFields.copyrightDataGravacao)
+    if (!extraFields.copyrightRecordingYear)
       warnings.push("Ano de copyright (gravação) ausente.");
     if (!mainCover) warnings.push("Capa do álbum não enviada.");
     if (!formData.releaseDate)
@@ -2470,8 +2470,8 @@ export function ReleaseFormModal({
                   <span>
                     {[
                       GENRE_LABELS[formData.genre] ?? formData.genre,
-                      GENRE_LABELS[extraFields.generoSecundario] ??
-                        extraFields.generoSecundario,
+                      GENRE_LABELS[extraFields.secondaryGenre] ??
+                        extraFields.secondaryGenre,
                     ]
                       .filter(Boolean)
                       .join(", ") || "—"}
@@ -2526,7 +2526,7 @@ export function ReleaseFormModal({
                       {f.title || "Sem título"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {f.artista || artistName}
+                      {f.artist || artistName}
                     </p>
                   </div>
                   {f.isrc && (
@@ -2544,20 +2544,20 @@ export function ReleaseFormModal({
             </div>
 
             {/* Copyright lines */}
-            {(extraFields.copyrightDataLancamento ||
-              extraFields.copyrightDataGravacao) && (
+            {(extraFields.copyrightReleaseYear ||
+              extraFields.copyrightRecordingYear) && (
               <>
                 <Separator className="my-3" />
                 <div className="text-xs text-muted-foreground space-y-1">
-                  {extraFields.copyrightDataLancamento && (
+                  {extraFields.copyrightReleaseYear && (
                     <p>
-                      © {extraFields.copyrightDataLancamento}{" "}
+                      © {extraFields.copyrightReleaseYear}{" "}
                       {formData.recordLabel || formData.copyright}
                     </p>
                   )}
-                  {extraFields.copyrightDataGravacao && (
+                  {extraFields.copyrightRecordingYear && (
                     <p>
-                      ℗ {extraFields.copyrightDataGravacao}{" "}
+                      ℗ {extraFields.copyrightRecordingYear}{" "}
                       {formData.recordLabel || formData.copyright}
                     </p>
                   )}

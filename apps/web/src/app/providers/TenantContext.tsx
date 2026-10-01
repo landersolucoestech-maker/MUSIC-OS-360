@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { FeatureFlags } from "@/shared/lib/feature-flags";
-import { DEFAULT_FEATURE_FLAGS } from "@/shared/lib/feature-flags";
+import { DEFAULT_FEATURE_FLAGS, canonicalFeatureKeys } from "@/shared/lib/feature-flags";
 import { AUTH_DISABLED, DEV_AUTH_BYPASS, IS_DEV } from "@/shared/lib/env";
 import { ROLE_PERMISSIONS } from "./tenant-labels";
 import { tenantModulePermissionKeys } from "@/shared/lib/permission-map";
@@ -245,10 +245,12 @@ function normalizePlan(plan: string | undefined): TenantPlan {
   return plan === "professional" || plan === "enterprise" ? plan : "starter";
 }
 
-function normalizeFeatures(features: Record<string, unknown>): FeatureFlags {
+function normalizeFeatures(rawFeatures: Record<string, unknown>): FeatureFlags {
   const next = { ...DEFAULT_FEATURE_FLAGS };
+  // Dual-read: a tenant row not yet backfilled may still carry `moduleRh` (now `moduleHr`).
+  const features = canonicalFeatureKeys(rawFeatures);
   for (const key of Object.keys(next) as Array<keyof FeatureFlags>) {
-    if (typeof features[key] === "boolean") next[key] = features[key];
+    if (typeof features[key] === "boolean") next[key] = features[key] as boolean;
   }
   return next;
 }

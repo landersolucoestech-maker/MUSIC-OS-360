@@ -2,11 +2,14 @@ import { EntityMetadataService } from '../entity-metadata.service';
 import { ReportEntityDefinitionService } from '../definitions/report-entity-definition.service';
 import { getFieldLabelPtBr, tryGetFieldLabelPtBr } from '../i18n/field-labels.pt-br';
 import { canonicalizeExportParams } from '../reports.controller';
+import { ImportMapperService } from '../import/import-mapper.service';
 import {
   REPORT_FORM_CONTRACTS,
   canonicalizeDeprecatedColumnId,
   contractExportableColumns,
   contractImportableColumns,
+  contractMetadataFields,
+  contractMetadataLegacyKeys,
 } from './report-form-contracts';
 
 const metadata = new EntityMetadataService();
@@ -54,6 +57,43 @@ describe('reports contracts — English logical ids with unchanged pt-BR headers
   it('events: date sort/filter that worked on the legacy `data` id keeps working on the canonical id', () => {
     expect(def('events').sortableColumns).toContain('eventDate');
     expect(def('events').filterableColumns).toContain('eventDate');
+  });
+});
+
+describe('releases contract — canonical logical ids, unchanged pt-BR headers', () => {
+  it('exposes no Portuguese metadata/track id and keeps the XLSX header text of the metadata + track columns', () => {
+    const c = REPORT_FORM_CONTRACTS.releases;
+    const exported = contractExportableColumns(c);
+    for (const legacy of ['variosArtistas', 'generoSecundario', 'copyrightDataLancamento', 'copyrightDataGravacao', 'artistasAdicionaisAlbum',
+      'nome', 'isVersionAlternativa', 'tipoVersao', 'compositores', 'faixa_idioma', 'letra', 'artista']) {
+      expect(exported).not.toContain(legacy);
+      expect(canonicalizeDeprecatedColumnId('releases', legacy)).not.toBe(legacy);
+    }
+    const headers = (ids: string[]) => ids.map(getFieldLabelPtBr);
+    expect(headers(['variousArtists', 'secondaryGenre', 'copyrightReleaseYear', 'copyrightRecordingYear', 'additionalAlbumArtists'])).toEqual([
+      'Vários artistas', 'Gênero secundário', 'Ano de copyright (lançamento)', 'Ano de copyright (gravação)', 'Artistas adicionais do álbum',
+    ]);
+    expect(headers(c.repeatingGroup!.fields.map((f) => f.key))).toEqual([
+      'Nome', 'É versão alternativa', 'Tipo de versão', 'Descrição da versão customizada', 'Compositores',
+      'Nível de assistência de IA', 'Instrumental', 'Idioma da faixa', 'Letra', 'Conteúdo explícito', 'ISRC', 'Artista',
+    ]);
+  });
+
+  it('the metadata fields read the legacy jsonb key as a fallback (dual-read) and write the canonical one', () => {
+    expect(contractMetadataLegacyKeys(REPORT_FORM_CONTRACTS.releases)).toEqual({
+      variousArtists: 'variosArtistas', secondaryGenre: 'generoSecundario',
+      copyrightReleaseYear: 'copyrightDataLancamento', copyrightRecordingYear: 'copyrightDataGravacao',
+      additionalAlbumArtists: 'artistasAdicionaisAlbum',
+    });
+    expect(Object.keys(contractMetadataFields(REPORT_FORM_CONTRACTS.releases))).toEqual(expect.arrayContaining(['variousArtists', 'territory']));
+  });
+
+  it('import accepts the old technical headers of an old export', () => {
+    const mapping = new ImportMapperService().build(def('releases'), ['variosArtistas', 'faixa_idioma', 'isVersionAlternativa', 'Título', 'artista']).mapping;
+    expect(mapping['variosArtistas']).toBe('variousArtists');
+    expect(mapping['faixa_idioma']).toBe('releaseTrackLanguage');
+    expect(mapping['isVersionAlternativa']).toBe('isAlternateVersion');
+    expect(mapping['artista']).toBe('trackArtist');
   });
 });
 

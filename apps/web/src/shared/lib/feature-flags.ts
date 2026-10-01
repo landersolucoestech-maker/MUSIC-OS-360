@@ -19,7 +19,7 @@ export interface FeatureFlags {
   moduleMarketing:    boolean;
   moduleEvents:       boolean;
   moduleInventory:    boolean;
-  moduleRh:           boolean;
+  moduleHr:           boolean;
   moduleMonitoring:   boolean;
   moduleLicensing:    boolean;
   moduleProjects:     boolean;
@@ -76,7 +76,7 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   moduleMarketing:    true,
   moduleEvents:       true,
   moduleInventory:    true,
-  moduleRh:           true,
+  moduleHr:           true,
   moduleMonitoring:   true,
   moduleLicensing:    true,
   moduleProjects:     true,
@@ -125,7 +125,7 @@ export const PLAN_FLAGS: Record<"starter" | "professional" | "enterprise", Parti
   starter: {
     moduleMonitoring:  false,
     moduleLicensing:   false,
-    moduleRh:          false,
+    moduleHr:          false,
     auditLog:          false,
     bulkActions:       false,
     analyticsAdvanced: false,
@@ -177,3 +177,21 @@ export function getIncompleteBackendReason(moduleKey: string): string | null {
   return MODULES_WITH_INCOMPLETE_BACKEND[moduleKey] ?? null;
 }
 
+
+/**
+ * Legacy persisted feature keys (tenants.features / billing plan features) -> canonical.
+ * `moduleRh` (Portuguese) -> `moduleHr`. The API already answers canonical keys
+ * (common/compat/plan-features.ts); this keeps an older API/response readable. Canonical wins when
+ * both are present. Removal condition: census in findings/persisted-jsonb-pj1.md at 0.
+ */
+export const LEGACY_FEATURE_KEYS: Readonly<Record<string, string>> = { moduleRh: "moduleHr" };
+
+export function canonicalFeatureKeys(features: Record<string, unknown> | null | undefined): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(features ?? {})) {
+    const canonical = Object.prototype.hasOwnProperty.call(LEGACY_FEATURE_KEYS, key) ? LEGACY_FEATURE_KEYS[key] : key;
+    if (canonical !== key && Object.prototype.hasOwnProperty.call(features, canonical)) continue;
+    out[canonical] = value;
+  }
+  return out;
+}

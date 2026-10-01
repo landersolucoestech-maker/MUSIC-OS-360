@@ -2,6 +2,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { RbacService } from '../../core/rbac/rbac.service';
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.tokens';
+import { canonicalPlanFeatures } from '../../common/compat/plan-features';
 
 interface AuthClaims {
   email?: string;
@@ -75,7 +76,8 @@ export class AuthContextService {
         slug: asString(tenant?.['slug'], 'workspace'),
         active: asBoolean(tenant?.['active'], true),
         plan: asString(tenant?.['plan'], 'starter'),
-        features: asObject(tenant?.['features']),
+        // dual-read: tenants.features may still carry the legacy `moduleRh` key until migration 20260930000024 ran
+        features: canonicalPlanFeatures(asObject(tenant?.['features'])),
         settings: asObject(tenant?.['settings']),
       },
       membership: {

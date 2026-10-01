@@ -324,6 +324,11 @@ import { DropArtistTipoColumn20260821000002 } from './20260821000002_DropArtistT
 import { CanonicalizeContractServiceTypeValuesAndIndex20260930000002 } from './20260930000002_CanonicalizeContractServiceTypeValuesAndIndex';
 import { AddEnglishRoleSlugAliases20260930000001 } from './20260930000001_AddEnglishRoleSlugAliases';
 import { BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010 } from './20260930000010_BackfillAndRestrictInvoicePaymentMethodToEnglish';
+import { BackfillReleaseMetadataKeysToEnglish20260930000019 } from './20260930000019_BackfillReleaseMetadataKeysToEnglish';
+import { BackfillInvoicePaymentMethodBankTransfer20260930000021 } from './20260930000021_BackfillInvoicePaymentMethodBankTransfer';
+import { BackfillContractLastPaymentKeysToEnglish20260930000023 } from './20260930000023_BackfillContractLastPaymentKeysToEnglish';
+import { BackfillPlanFeatureKeysToEnglish20260930000024 } from './20260930000024_BackfillPlanFeatureKeysToEnglish';
+import { BackfillAssetTypesToEnglish20260930000025 } from './20260930000025_BackfillAssetTypesToEnglish';
 import { ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011 } from './20260930000011_ValidateTransactionTypeAndRestrictFinancialRuleVocabulary';
 import { BackfillAndRestrictMarketingContentApprovalToEnglish20260930000003 } from './20260930000003_BackfillAndRestrictMarketingContentApprovalToEnglish';
 import { BackfillClientProfileToEnglish20260930000012 } from './20260930000012_BackfillClientProfileToEnglish';
@@ -640,6 +645,11 @@ export const ALL_MIGRATIONS = [
   CanonicalizeContractServiceTypeValuesAndIndex20260930000002,
   AddEnglishRoleSlugAliases20260930000001,
   BackfillAndRestrictInvoicePaymentMethodToEnglish20260930000010,
+  BackfillReleaseMetadataKeysToEnglish20260930000019,
+  BackfillInvoicePaymentMethodBankTransfer20260930000021,
+  BackfillContractLastPaymentKeysToEnglish20260930000023,
+  BackfillPlanFeatureKeysToEnglish20260930000024,
+  BackfillAssetTypesToEnglish20260930000025,
   ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011,
   BackfillAndRestrictMarketingContentApprovalToEnglish20260930000003,
   BackfillClientProfileToEnglish20260930000012,

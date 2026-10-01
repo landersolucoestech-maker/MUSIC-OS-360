@@ -32,6 +32,7 @@ import {
   resolveReleaseStatus,
   platformStatusBadge,
 } from "@/modules/releases/lib/release-status";
+import { canonicalReleaseMetadata } from "@/modules/releases/lib/release-metadata";
 import { formatReleaseDate, musicGenreLabel, releaseLanguageLabel, releaseTypeLabel } from "@/modules/releases/lib/release-format";
 import { findDistributionPlatform } from "@/modules/releases/services/distribution-platforms";
 import type { Release, PlatformError } from "@/modules/releases/types";
@@ -93,10 +94,11 @@ function creditName(value: unknown): string {
   return String(value ?? "").trim();
 }
 
-function aggregateField(tracks: any[], key: string): string {
+/** `legacyKey`: the Portuguese spelling still carried by catalog (phonogram) rows. */
+function aggregateField(tracks: any[], key: string, legacyKey?: string): string {
   const values = tracks
     .flatMap((f) => {
-      const value = f[key];
+      const value = f[key] ?? (legacyKey ? f[legacyKey] : undefined);
       if (Array.isArray(value)) return value;
       return String(value ?? "").split(",");
     })
@@ -169,10 +171,11 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
 
   if (!release) return null;
 
-  const metadata = ((release as Record<string, unknown>)["metadata"] as Record<string, unknown> | null | undefined) ?? {};
+  // Dual-read: rows not yet backfilled (20260930000019) still carry the Portuguese metadata keys.
+  const metadata = canonicalReleaseMetadata((release as Record<string, unknown>)["metadata"]);
   const assets = (release.assets ?? {}) as Record<string, unknown>;
   const schedule = (release.schedule ?? {}) as Record<string, unknown>;
-  const trackMetadata = Array.isArray(metadata["faixas"]) ? (metadata["faixas"] as any[]) : [];
+  const trackMetadata = Array.isArray(metadata["tracks"]) ? (metadata["tracks"] as any[]) : [];
 
   const allowedTransitions = resolveAllowedTransitions(
     "release",
@@ -189,19 +192,19 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
     .map((id) => resolvedPhonograms[id])
     .filter(Boolean);
   const tracks = trackMetadata.length > 0 ? trackMetadata : catalogTracks;
-  const composers = aggregateField(tracks, "compositores");
+  const composers = aggregateField(tracks, "composers", "compositores");
   const performers = aggregateField(tracks, "interpretes");
-  const producers = aggregateField(tracks, "produtores");
+  const producers = aggregateField(tracks, "producers", "produtores");
   const hasAssets = Object.values(assets).some(Boolean) || Boolean(coverUrl);
   const hasSchedule = Object.values(schedule).some(Boolean);
   const hasNotes = Boolean(release.notes || release.internal_notes);
 
   // Copyright (years + holder)
-  const copyrightReleaseYear = textValue(metadata["copyrightDataLancamento"]);
-  const copyrightRecordingYear = textValue(metadata["copyrightDataGravacao"]);
+  const copyrightReleaseYear = textValue(metadata["copyrightReleaseYear"]);
+  const copyrightRecordingYear = textValue(metadata["copyrightRecordingYear"]);
 
   // Subgenre + selected platforms
-  const subgenre = textValue(metadata["generoSecundario"]) ?? textValue(metadata["genero_secundario"]);
+  const subgenre = textValue(metadata["secondaryGenre"]);
   const platformsArr = Array.isArray(release.platforms) ? release.platforms.filter(Boolean) : [];
   const platformsLabel = platformsArr.length > 0 ? platformsArr.join(", ") : null;
 
