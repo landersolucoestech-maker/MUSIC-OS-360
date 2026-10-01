@@ -51,13 +51,11 @@ function joinNames(v: string | string[] | null | undefined): string {
   return v;
 }
 
-/** Derives the artist(s) of a work: linked artist → performers → composers. */
+/** Derives the artist(s) of a work: linked artist → composers. */
 export function workArtistLabel(work: Work | undefined | null): string {
   if (!work) return "";
   const linked = (work as { artist?: { stage_name?: string | null } | null }).artist?.stage_name;
   if (linked) return linked;
-  const performers = joinNames((work as { interpretes?: string | string[] | null }).interpretes);
-  if (performers) return performers;
   return joinNames(work.composer_names ?? work.composer_name);
 }
 

@@ -13,7 +13,6 @@ export interface UserAccount {
   phone: string | null;
   avatar_url: string | null;
   role: string;
-  cargo: string | null;
   status: "active" | "inactive";
   created_at: string;
 }
@@ -35,7 +34,6 @@ interface ApiUser {
   avatar_url?: string | null;
   role?: string | null;
   role_slug?: string | null;
-  cargo?: string | null;
   status?: "active" | "inactive" | "suspended" | "invited";
   is_active: boolean;
   created_at: string;
@@ -56,8 +54,6 @@ export interface UpdateUserInput {
   phone?: string;
   status?: "active" | "inactive";
   role?: string;
-  /** Legacy form compatibility: `cargo` always represented the role slug. */
-  cargo?: string;
 }
 
 function mapUser(user: ApiUser): UserAccount {
@@ -68,7 +64,6 @@ function mapUser(user: ApiUser): UserAccount {
     phone: user.phone ?? null,
     avatar_url: user.avatar_url ?? null,
     role: user.role_slug ?? user.role ?? "viewer",
-    cargo: user.cargo ?? null,
     status: user.is_active && user.status !== "inactive" ? "active" : "inactive",
     created_at: user.created_at,
   };
@@ -87,7 +82,7 @@ export function useUsers() {
   });
 
   const updateUser = useMutation({
-    mutationFn: async ({ id, full_name, phone, status, role, cargo: position }: UpdateUserInput) => {
+    mutationFn: async ({ id, full_name, phone, status, role }: UpdateUserInput) => {
       const profilePayload = {
         ...(full_name !== undefined && { fullName: full_name }),
         ...(phone !== undefined && { phone }),
@@ -104,12 +99,11 @@ export function useUsers() {
         await api.patch(`/users/${id}/status`, { status: normalizeUserStatus(status) === "active" ? "active" : "inactive" });
       }
 
-      const effectiveRole = role ?? position;
       // A role change has its own endpoint, authorization and auditing.
       // Sending `role` through the generic PATCH bypassed the RBAC hierarchy and
       // did not guarantee a role_id update.
-      if (effectiveRole !== undefined) {
-        await api.patch(`/users/${id}/role`, { role: effectiveRole });
+      if (role !== undefined) {
+        await api.patch(`/users/${id}/role`, { role });
       }
     },
     onSuccess: async () => {

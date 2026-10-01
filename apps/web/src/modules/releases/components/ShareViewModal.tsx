@@ -90,7 +90,6 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
       workTitle ||
       releaseTitle ||
       str("music_title") ||
-      str("titulo_obra") ||
       str("trackTitle") ||
       str("musicTitle") ||
       str("songTitle") ||

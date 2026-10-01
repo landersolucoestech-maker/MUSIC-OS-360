@@ -42,7 +42,8 @@ describe("transaction category labels — one PT-BR label per stored value", () 
 
   it("never shows a raw slug for values outside the lists", () => {
     expect(transactionCategoryLabel("outra-coisa")).toBe("Outra Coisa");
-    expect(transactionCategoryLabel("folha_pagamento")).toBe("Folha de Pagamento");
+    // folha_pagamento had a dead dictionary entry (never written); it is now just a humanized slug.
+    expect(transactionCategoryLabel("folha_pagamento")).toBe("Folha Pagamento");
     expect(transactionCategoryLabel("")).toBe("Sem categoria");
     expect(transactionCategoryLabel(null)).toBe("Sem categoria");
   });

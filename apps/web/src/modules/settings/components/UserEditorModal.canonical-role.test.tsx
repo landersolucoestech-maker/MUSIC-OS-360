@@ -29,7 +29,7 @@ vi.mock("@/modules/settings/hooks/useUsers", () => ({
 }));
 
 const member = (role: string): UserAccount => ({
-  id: "u1", email: "ana@example.com", full_name: "Ana Souza", phone: "", avatar_url: null, role, cargo: null, status: "active", created_at: "2026-01-01",
+  id: "u1", email: "ana@example.com", full_name: "Ana Souza", phone: "", avatar_url: null, role, status: "active", created_at: "2026-01-01",
 });
 
 describe("UserEditorModal canonical role slugs", () => {

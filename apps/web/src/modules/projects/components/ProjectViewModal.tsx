@@ -51,10 +51,10 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
     const tracks = parseTracksFromProject(project);
 
     const getStatusBadge = (status: string) => {
-      if (status?.toLowerCase().includes("pendente") || status === "planning") {
+      if (status === "planning") {
         return <Badge variant="warning">Registro Pendente</Badge>;
       }
-      if (status === "completed" || status?.toLowerCase().includes("conclu")) {
+      if (status === "completed") {
         return <Badge variant="success">Concluído</Badge>;
       }
       if (status === "in_progress") {

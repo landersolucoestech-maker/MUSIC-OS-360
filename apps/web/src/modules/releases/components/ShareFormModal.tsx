@@ -89,7 +89,7 @@ function shareToForm(share: Share & Record<string, unknown>): ShareFormState {
     holder: s("holder"),
     recipient: s("recipient"),
     participant_function: s("type") || "performer",
-    music_title: s("music_title") || s("titulo_obra"),
+    music_title: s("music_title"),
     external_artist_name: s("external_artist_name"),
     artist_id: s("artist_id"),
     payer: s("payer"),

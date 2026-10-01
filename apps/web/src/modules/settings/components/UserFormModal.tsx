@@ -95,7 +95,7 @@ export function UserFormModal({ open, onOpenChange, user: member, mode }: UserFo
           id: member.id,
           full_name: data.name,
           phone: data.phone ?? undefined,
-          cargo: data.accessLevel || undefined,
+          role: data.accessLevel || undefined,
         });
       } else if (mode === "create") {
         // Users are created through the auth signup flow

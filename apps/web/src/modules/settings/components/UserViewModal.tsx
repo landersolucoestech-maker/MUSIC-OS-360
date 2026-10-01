@@ -7,6 +7,7 @@ import {
 import { Badge } from "@/shared/ui/badge";
 import { User, Mail, Phone, Building2, Calendar, Shield } from "lucide-react";
 import { formatPersonName } from "@/shared/lib/format-name";
+import { ROLE_LABELS, type AppRole } from "@/shared/hooks/useHasRole";
 import { normalizeUserStatus, userStatusLabel } from "@/modules/settings/lib/user-status";
 
 interface UserViewModalProps {
@@ -17,6 +18,8 @@ interface UserViewModalProps {
 
 export function UserViewModal({ open, onOpenChange, user: member }: UserViewModalProps) {
   if (!member) return null;
+
+  const roleLabel = ROLE_LABELS[member.role as AppRole] ?? "Usuário";
 
   const getStatusBadge = (status: string) => {
     const canonical = normalizeUserStatus(status, "inactive");
@@ -43,14 +46,13 @@ export function UserViewModal({ open, onOpenChange, user: member }: UserViewModa
             </div>
             <div>
               <h2 className="text-xl font-bold text-foreground">{formatPersonName(member.fullName, member.fullName)}</h2>
-              <p className="text-muted-foreground">{member.cargo}</p>
             </div>
           </div>
 
           {/* Badges */}
           <div className="flex gap-2">
             <Badge variant="neutral">
-              {member.cargo || "Usuário"}
+              {roleLabel}
             </Badge>
             {getStatusBadge(member.status)}
           </div>
@@ -72,7 +74,7 @@ export function UserViewModal({ open, onOpenChange, user: member }: UserViewModa
               <p className="text-sm text-muted-foreground">Cargo</p>
               <div className="flex items-center gap-1.5">
                 <Shield className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{member.cargo || "-"}</span>
+                <span className="font-medium text-foreground">{roleLabel}</span>
               </div>
             </div>
             <div>

@@ -49,7 +49,6 @@ export function loadArtistContext(
     predominantGenre: mostCommon(genreCandidates),
     subgenres: uniqueStrings([
       ...phonograms.map((item) => phonogramRecordingClassificationLabel(item.recording_classification) ?? ""),
-      ...releases.map((item) => stringifyValue(item["subgenero"])),
     ]),
     moods: uniqueStrings([
       ...releases.map((item) => stringifyValue(item["mood"])),

@@ -577,9 +577,7 @@ export function WorkFormModal({
                       {filteredCompletedProjects.length > 0 ? (
                         (filteredCompletedProjects as ProjetoWithRelations[]).map((p) => {
                           const pId = p.id as string;
-                          const pNameDisplay = (p.title ??
-                            (p as { nome?: string }).nome ??
-                            "") as string;
+                          const pNameDisplay = (p.title ?? "") as string;
                           const pArtistNameDisplay = (p.artist?.stage_name ?? "") as string;
                           const selectProject = async () => {
                             setSelectedProject({

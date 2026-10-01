@@ -3,7 +3,7 @@
  * "Permissões" tab (per-module checkbox grid, templates, department
  * selector, artist link) that was never sent in onSubmit — the admin
  * checked/unchecked permissions, saved, and nothing persisted. The only real
- * field of that tab was the access level selector (accessLevel -> cargo ->
+ * field of that tab was the access level selector (accessLevel -> role ->
  * PATCH /users/:id/role, with the RBAC's own authorization/auditing).
  *
  * This test prevents the reintroduction of the dead UI: no per-module permission
@@ -36,13 +36,14 @@ describe("UserFormModal.tsx — no dead per-module permissions UI", () => {
     expect(SOURCE).not.toMatch(/\bSETORES\b/);
   });
 
-  it("onSubmit sends only fields the backend really supports (full_name/phone/cargo)", () => {
+  it("onSubmit sends only fields the backend really supports (full_name/phone/role)", () => {
     const onSubmitStart = SOURCE.indexOf("const onSubmit");
     const onSubmitEnd = SOURCE.indexOf("const selectedAccessLevel", onSubmitStart);
     const onSubmitBody = SOURCE.slice(onSubmitStart, onSubmitEnd);
     expect(onSubmitBody).toMatch(/full_name:\s*data\.name/);
     expect(onSubmitBody).toMatch(/phone:\s*data\.phone/);
-    expect(onSubmitBody).toMatch(/cargo:\s*data\.accessLevel/);
+    expect(onSubmitBody).toMatch(/role:\s*data\.accessLevel/);
+    expect(onSubmitBody).not.toMatch(/cargo/);
     expect(onSubmitBody).not.toMatch(/permissions|setor|department|artistaVinculado/);
   });
 
