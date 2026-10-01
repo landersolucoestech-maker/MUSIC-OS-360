@@ -93,9 +93,9 @@ function normType(v: string | null | undefined): string {
 }
 function normStatus(v: string | null | undefined): string {
   const s = (v || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  if (s === "in_progress" || s === "em_andamento" || s === "andamento") return "in_progress";
-  if (s === "completed" || s === "concluido") return "completed";
-  if (s === "cancelled" || s === "cancelado") return "cancelled";
+  if (s === "in_progress") return "in_progress";
+  if (s === "completed") return "completed";
+  if (s === "cancelled") return "cancelled";
   return "planning";
 }
 function normEnum(v: string | undefined, fallback: string): string {

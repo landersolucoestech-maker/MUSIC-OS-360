@@ -54,8 +54,7 @@ export interface UpdateUserInput {
   id: string;
   full_name?: string;
   phone?: string;
-  /** Canonical English; legacy ativo/inativo is still accepted (dual-read). */
-  status?: "active" | "inactive" | "ativo" | "inativo";
+  status?: "active" | "inactive";
   role?: string;
   /** Legacy form compatibility: `cargo` always represented the role slug. */
   cargo?: string;

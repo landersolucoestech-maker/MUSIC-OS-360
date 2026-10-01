@@ -77,19 +77,10 @@ const artistRelatedTypes = ARTIST_RELATED_EVENT_CATEGORIES;
 // Event types that should pull the venue from the CRM
 const venueTypesCrm = VENUE_CRM_EVENT_CATEGORIES;
 
-// Form status ids are the canonical English EventStatus values. The PT-BR
-// keys below are input-only aliases: callers outside this module (e.g. the
-// MusicChat prefill) and legacy drafts still hand the form PT-BR status words.
+// Form status ids are the canonical English EventStatus values. Portuguese status
+// words are no longer special-cased (events.status is English-only, CHECK-restricted;
+// every caller hands canonical English).
 const statusAliases: Record<string, string> = {
-  agendado: "scheduled",
-  confirmado: "confirmed",
-  pendente: "pending",
-  concluido: "completed",
-  cancelado: "cancelled",
-  realizado: "completed",
-  negociacao: "pending",
-  adiado: "postponed",
-  planejado: "planned",
   // The real events.status from the backend is canonical English (EventStatus from
   // @music-os-360/types) — without this, editing an existing event matched
   // no Select option (it stayed blank).

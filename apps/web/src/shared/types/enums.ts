@@ -176,17 +176,6 @@ export type LeadStatus = `${PkgLeadStatus}`;
 /** Derived from ClientStatus — source of truth: @music-os-360/types */
 export type ClientStatusValue = `${ClientStatus}`;
 
-export type ClientSegment =
-  | "artista"
-  | "gravadora"
-  | "editora"
-  | "distribuidora"
-  | "agencia"
-  | "marca"
-  | "produtor"
-  | "veiculo"
-  | "outro";
-
 // ── Event ─────────────────────────────────────────────────────────────────────
 
 /** Coarse enum persisted in events.type (CreateEventDto.type; see events/lib/event-type.ts). */
