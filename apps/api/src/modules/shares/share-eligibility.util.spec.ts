@@ -6,7 +6,7 @@ describe('isRegistryEligibleShare — TS predicate equivalent to the SQL "share_
   });
 
   it('false when share_type has any non-null value', () => {
-    expect(isRegistryEligibleShare({ share_type: 'pendente' })).toBe(false);
+    expect(isRegistryEligibleShare({ share_type: 'pending' })).toBe(false);
     expect(isRegistryEligibleShare({ share_type: '' })).toBe(false);
     expect(isRegistryEligibleShare({ share_type: 'registry' })).toBe(false);
   });
@@ -22,9 +22,9 @@ describe('isRegistryEligibleShare — TS predicate equivalent to the SQL "share_
   it('equivalence: for a set of simulated rows, the TS filter produces the same subset the SQL filter would apply', () => {
     const rows = [
       { id: '1', share_type: null },
-      { id: '2', share_type: 'pendente' },
+      { id: '2', share_type: 'pending' },
       { id: '3', share_type: null },
-      { id: '4', share_type: 'financeiro' },
+      { id: '4', share_type: 'financial' },
     ];
     // Simulates the result of `SELECT * FROM shares WHERE share_type IS NULL`
     const sqlEquivalentResult = rows.filter((r) => r.share_type === null);

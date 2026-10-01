@@ -1,4 +1,5 @@
 import { PENDING_VALUE, isPendingValue } from "./pending";
+import { audioLevelLabel, normalizeAudioLevel } from "./audioVocabulary";
 import { lyricsSentimentLabel, normalizeLyricsSentiment } from "./lyricsVocabulary";
 import type { TrackAudioAnalysis, TrackDiagnosis, TrackLyricsAnalysis } from "./types";
 
@@ -12,14 +13,14 @@ export function mergeAudioLyricsInsights(audio: TrackAudioAnalysis, lyrics: Trac
     bpm: audio.bpm || PENDING_VALUE,
     key: audio.key || PENDING_VALUE,
     mood,
-    energy: audio.energy || PENDING_VALUE,
+    energy: audioLevelLabel(audio.energy) || PENDING_VALUE,
     theme: lyrics.mainTheme || PENDING_VALUE,
     sentiment: lyricsSentimentLabel(lyrics.sentiment) || PENDING_VALUE,
     targetAudience: lyrics.targetAudience || PENDING_VALUE,
     editorialTags: lyrics.editorialTags,
     playlistFit: buildPlaylistFit(mood, lyrics.mainTheme),
     platformPriority: buildPlatformPriority(audio.energy, lyrics.hooks.length),
-    commercialPotential: audio.energy === "alta" ? "alto para campanhas digitais e vídeos curtos" : "médio, depende de narrativa e segmentação",
+    commercialPotential: normalizeAudioLevel(audio.energy) === "high" ? "alto para campanhas digitais e vídeos curtos" : "médio, depende de narrativa e segmentação",
     viralPotential: lyrics.hooks.length >= 2 ? "bom potencial de cortes com frases fortes" : "potencial dependente de gancho audiovisual",
     syncPotential: normalizeLyricsSentiment(lyrics.sentiment) === "melancholic" ? "bom para cenas emocionais/reflexivas" : "a validar por briefing de marcas e audiovisual",
     differentiators: [
@@ -40,6 +41,6 @@ function buildPlaylistFit(mood?: string, theme?: string) {
 }
 
 function buildPlatformPriority(energy?: string, hookCount = 0) {
-  if (energy === "alta" || hookCount >= 2) return ["TikTok", "Reels", "Shorts", "Spotify"];
+  if (normalizeAudioLevel(energy) === "high" || hookCount >= 2) return ["TikTok", "Reels", "Shorts", "Spotify"];
   return ["Spotify", "YouTube Music", "Imprensa", "Curadores independentes"];
 }

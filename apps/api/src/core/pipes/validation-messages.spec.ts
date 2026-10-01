@@ -62,7 +62,7 @@ describe('validation → PT-BR end-user copy boundary', () => {
 });
 
 describe('zod → PT-BR end-user copy boundary', () => {
-  const schema = z.object({ nome: z.string(), status: z.enum(['a', 'b']) }).strict();
+  const schema = z.object({ name: z.string(), status: z.enum(['a', 'b']) }).strict();
 
   it('maps zod defaults to PT-BR copy and keeps no English default text', () => {
     const result = schema.safeParse({ status: 'c', extra: 1 });

@@ -91,7 +91,7 @@ describe('evaluateRealtimeState', () => {
       rlsEnabled: true,
       owner: 'supabase_realtime_admin',
       currentUser: 'postgres',
-      policies: [CANONICAL_TENANT_POLICY, CANONICAL_USER_POLICY, { policyname: 'algo_inesperado', roles: [], cmd: 'SELECT', qual: 'x = 1', with_check: null }],
+      policies: [CANONICAL_TENANT_POLICY, CANONICAL_USER_POLICY, { policyname: 'unexpected_policy', roles: [], cmd: 'SELECT', qual: 'x = 1', with_check: null }],
     });
     expect(result.state).toBe('DRIFT');
   });

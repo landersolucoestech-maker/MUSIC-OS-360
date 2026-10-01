@@ -213,11 +213,11 @@ describe('WhatsAppCloudProvider', () => {
 
   it('configure: without proof of ownership (Graph API rejects the token) nothing is written (400)', async () => {
     fetchMock.mockResolvedValueOnce({ ok: false, status: 400, json: async () => ({ error: { code: 100 } }) });
-    await expect(provider.configure(TENANT_B, '1111111111', 'token-alheio', 'waba-b')).rejects.toMatchObject({ status: 400 });
+    await expect(provider.configure(TENANT_B, '1111111111', 'foreign-token', 'waba-b')).rejects.toMatchObject({ status: 400 });
     expect(integRepo._rows.size).toBe(0);
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toContain('/1111111111?fields=id');
-    expect(init.headers.Authorization).toBe('Bearer token-alheio');
+    expect(init.headers.Authorization).toBe('Bearer foreign-token');
   });
 
   it('configure: a Graph API response with another id does not prove ownership (400)', async () => {

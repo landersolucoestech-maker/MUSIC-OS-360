@@ -81,7 +81,7 @@ const getSortText = (value: unknown): string => {
 };
 
 const getPhonogramSortValue = (phonogram: Phonogram, key: string): unknown => {
-  if (key === "genero_musical") return getPhonogramGenreDisplay(phonogram);
+  if (key === "music_genre") return getPhonogramGenreDisplay(phonogram);
   if (key === "title") return phonogram.title ?? "";
   return phonogramListSortValue(phonogram, key);
 };
@@ -566,7 +566,7 @@ export default function MusicRegistry() {
                         {PHONOGRAM_LIST_PARTICIPANT_COLUMNS.map((column) => (
                           <SortableTableHead key={column.key} sortKey={column.key} sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">{column.label}</SortableTableHead>
                         ))}
-                        <SortableTableHead sortKey="genero_musical" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Gênero</SortableTableHead>
+                        <SortableTableHead sortKey="music_genre" sortState={phonogramSort} onSort={togglePhonogramSort} className="min-w-[120px]">Gênero</SortableTableHead>
                         <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>

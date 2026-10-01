@@ -67,7 +67,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     const svc = new AuthPasswordService(fullConfig, null, audit as any);
 
     await expect(
-      svc.changeRequiredPassword(buildAuth({ must_change_password: true }), 'tenant-1', dto(STRONG_PASSWORD, 'outra-coisa'), null),
+      svc.changeRequiredPassword(buildAuth({ must_change_password: true }), 'tenant-1', dto(STRONG_PASSWORD, 'something-else'), null),
     ).rejects.toThrow(BadRequestException);
     expect(updateUserByIdMock).not.toHaveBeenCalled();
     expect(audit.log).not.toHaveBeenCalled();

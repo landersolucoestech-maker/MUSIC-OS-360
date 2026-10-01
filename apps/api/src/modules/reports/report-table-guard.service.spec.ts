@@ -31,7 +31,7 @@ describe('ReportTableGuardService — availability guard', () => {
 
   it('missing metadata (report undefined) → 422', async () => {
     const g = guardWithTables(['artists']);
-    await expect(g.assertTableUsable('fantasma', undefined)).rejects.toBeInstanceOf(UnprocessableEntityException);
+    await expect(g.assertTableUsable('phantom', undefined)).rejects.toBeInstanceOf(UnprocessableEntityException);
   });
 
   it('multi-tenant without physical tenant_id column → 422', async () => {

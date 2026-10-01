@@ -155,11 +155,11 @@ describe('ReportEntityDefinitionService — contracts', () => {
 
     it('fake_table without a registered contract produces ZERO definitions', () => {
       const result = defsFor([
-        { name: 'nome', type: 'varchar' },
+        { name: 'name', type: 'varchar' },
         { name: 'tags', type: 'simple-array' },
-        { name: 'conteudo_html', type: 'text' },
-        { name: 'preferencias', type: 'json' },
-        { name: 'observacoes', type: 'text' },
+        { name: 'html_content', type: 'text' },
+        { name: 'preferences', type: 'json' },
+        { name: 'notes', type: 'text' },
       ]);
       expect(result).toEqual([]);
     });

@@ -25,7 +25,7 @@ describe('MarketBenchmarkRefreshProcessor', () => {
   it('unexpected job.name: ignored without calling computeAndPersist', async () => {
     const marketBenchmark = { computeAndPersist: jest.fn() } as unknown as MarketBenchmarkService;
     const processor = new MarketBenchmarkRefreshProcessor(marketBenchmark, makeDbContext() as never);
-    await processor.process(fakeJob({ name: 'outro-job' }));
+    await processor.process(fakeJob({ name: 'other-job' }));
     expect(marketBenchmark.computeAndPersist).not.toHaveBeenCalled();
   });
 

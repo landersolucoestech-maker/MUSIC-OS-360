@@ -56,8 +56,8 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
     it('project without tracks → does not appear in the map', async () => {
       const query = jest.fn().mockResolvedValueOnce([]);
       const ds = { query } as any;
-      const result = await fetchProjectTracksForExport(ds, 'tenant-1', ['proj-vazio']);
-      expect(result.has('proj-vazio')).toBe(false);
+      const result = await fetchProjectTracksForExport(ds, 'tenant-1', ['empty-project']);
+      expect(result.has('empty-project')).toBe(false);
       expect(query).toHaveBeenCalledTimes(1);
     });
   });
@@ -92,12 +92,12 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
         performers: ['B'],
         producers: [],
       }];
-      await insertProjectTracksForImport(qr, 'tenant-1', 'proj-novo', trackRows);
+      await insertProjectTracksForImport(qr, 'tenant-1', 'new-project', trackRows);
 
       const trackInsert = calls.find(([sql]) => sql.includes('"project_tracks"'));
       expect(trackInsert).toBeDefined();
       expect(trackInsert![1]).toEqual(
-        expect.arrayContaining(['tenant-1', 'proj-novo', 'Faixa importada', 'feat', 'remix', 'sim', '4', '12', 'rock', 'ingles']),
+        expect.arrayContaining(['tenant-1', 'new-project', 'Faixa importada', 'feat', 'remix', 'sim', '4', '12', 'rock', 'ingles']),
       );
 
       const participantInserts = calls.filter(([sql]) => sql.includes('"project_track_participants"'));

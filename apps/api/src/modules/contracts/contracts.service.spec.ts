@@ -450,7 +450,7 @@ describe('ContractsService.list — canonical and legacy filters (Phase 5 / C1)'
 describe('ContractsService.findById — unaffected by C1 (regression)', () => {
   it('still throws NotFoundException when the contract does not exist', async () => {
     const { svc } = makeServiceC1([]);
-    await expect(svc.findById('tenant-1', 'inexistente')).rejects.toThrow(NotFoundException);
+    await expect(svc.findById('tenant-1', 'missing-contract')).rejects.toThrow(NotFoundException);
   });
 });
 

@@ -138,7 +138,7 @@ describe('checkRegisteredHandleAgainstRegistry (Phase 1.3 — secondary fallback
     const soundcharts = {
       getArtistIdentifiers: jest.fn().mockResolvedValue({
         raw: {},
-        identifiers: [{ platform: 'instagram', identifier: 'outra-conta-qualquer' }],
+        identifiers: [{ platform: 'instagram', identifier: 'other-account' }],
       }),
     } as unknown as SoundchartsService;
 

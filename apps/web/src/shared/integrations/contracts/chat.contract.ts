@@ -38,14 +38,14 @@ export type MessageType =
  */
 export interface EntityReference {
   entity_type:
-    | "obra"
-    | "fonograma"
-    | "artista"
-    | "contrato"
-    | "lancamento"
-    | "projeto"
-    | "transacao"
-    | "campanha";
+    | "work"
+    | "phonogram"
+    | "artist"
+    | "contract"
+    | "release"
+    | "project"
+    | "transaction"
+    | "campaign";
   entity_id: string;
   entity_label: string;
   entity_url?: string;

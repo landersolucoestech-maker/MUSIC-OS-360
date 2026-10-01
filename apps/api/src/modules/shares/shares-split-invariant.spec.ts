@@ -94,7 +94,7 @@ describe('SharesService — split budget invariant (P1)', () => {
       // explicitly setting share_type marks it as financial/pending —
       // it never counts toward the registry split budget.
       await expect(svc.create('tenant-1', {
-        share_type: 'pendente', percentage: 50, workId: 'work-1',
+        share_type: 'pending', percentage: 50, workId: 'work-1',
       } as unknown as CreateShareDto)).resolves.toBeDefined();
     });
 

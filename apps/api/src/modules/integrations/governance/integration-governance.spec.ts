@@ -103,7 +103,7 @@ describe('Per-plan entitlement — composition', () => {
       { slug: 'professional', integrations: ['docusign'], amount: 2 },
     ] });
     expect(await p.plansIncluding('docusign')).toEqual(['professional']);
-    expect(await p.plansIncluding('inexistente')).toEqual([]);
+    expect(await p.plansIncluding('unknown-plan')).toEqual([]);
   });
 
   it('MULTI-TENANT: same provider, different plans → different access', async () => {

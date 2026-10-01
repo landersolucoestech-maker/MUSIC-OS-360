@@ -371,7 +371,7 @@ export function EmployeeFormModal({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="setor">Setor</Label>
+                <Label htmlFor="department">Setor</Label>
                 <Select
                   value={department}
                   onValueChange={setDepartment}
@@ -476,7 +476,7 @@ export function EmployeeFormModal({
 
             <div className="border-t pt-4 mt-2">
               <div className="space-y-1.5">
-                <Label htmlFor="vinculo_usuario" className="flex items-center gap-1.5">
+                <Label htmlFor="linked_user" className="flex items-center gap-1.5">
                   <Link2 className="h-3.5 w-3.5" />
                   Vincular a Usuário do Sistema
                 </Label>

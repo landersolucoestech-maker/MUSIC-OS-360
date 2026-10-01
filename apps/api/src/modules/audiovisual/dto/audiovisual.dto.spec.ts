@@ -47,7 +47,7 @@ describe('CreateShotDto', () => {
   });
 
   it('rejects an unknown field', async () => {
-    const errors = await validatePayload(CreateShotDto, { scene_title: 'x', campoInventado: 'y' });
+    const errors = await validatePayload(CreateShotDto, { scene_title: 'x', unknownField: 'y' });
     expect(errors.length).toBeGreaterThan(0);
   });
 
@@ -64,7 +64,7 @@ describe('UpdateShotDto', () => {
   });
 
   it('rejects shooting_status outside the CAPTURE_STATUSES enum (invalid enum)', async () => {
-    const errors = await validatePayload(UpdateShotDto, { shooting_status: 'nao_existe' });
+    const errors = await validatePayload(UpdateShotDto, { shooting_status: 'not_a_status' });
     expect(errors.length).toBeGreaterThan(0);
   });
 
@@ -83,7 +83,7 @@ describe('ReorderShotsDto', () => {
   });
 
   it('rejects a non-UUID item in the list (invalid UUID)', async () => {
-    const errors = await validatePayload(ReorderShotsDto, { ids: ['nao-e-um-uuid'] });
+    const errors = await validatePayload(ReorderShotsDto, { ids: ['not-a-uuid'] });
     expect(errors.length).toBeGreaterThan(0);
   });
 
@@ -125,7 +125,7 @@ describe('CreateTaskDto / UpdateTaskDto', () => {
   });
 
   it('rejects an assigned_to that is not a UUID (invalid UUID)', async () => {
-    const errors = await validatePayload(CreateTaskDto, { title: 'x', assigned_to: 'nao-e-uuid' });
+    const errors = await validatePayload(CreateTaskDto, { title: 'x', assigned_to: 'not-a-uuid' });
     expect(errors.length).toBeGreaterThan(0);
   });
 

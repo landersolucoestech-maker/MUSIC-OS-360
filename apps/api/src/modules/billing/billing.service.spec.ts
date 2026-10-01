@@ -179,7 +179,7 @@ describe('BillingService', () => {
     it('fails when plan_id is invalid (not found)', async () => {
       plans.resolve.mockResolvedValueOnce(null);
       await expect(service.createCheckoutSession({
-        orgId: 'o', tenantId: 't', planRef: 'inexistente', successUrl: '', cancelUrl: '',
+        orgId: 'o', tenantId: 't', planRef: 'missing-plan', successUrl: '', cancelUrl: '',
       })).rejects.toThrow(BadRequestException);
     });
 
@@ -222,7 +222,7 @@ describe('BillingService', () => {
     it('throws BadRequestException without a subscription', async () => {
       const repo = mockDs._repo;
       repo._qb.getOne.mockResolvedValueOnce(null);
-      await expect(service.createPortalSession('org-sem-sub', 'x')).rejects.toThrow();
+      await expect(service.createPortalSession('org-without-sub', 'x')).rejects.toThrow();
     });
 
     it('throws BadRequestException for a pending_ customer', async () => {

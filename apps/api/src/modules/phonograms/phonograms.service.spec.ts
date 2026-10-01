@@ -154,8 +154,8 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
     });
 
     it('rejects unknown field (whitelist)', async () => {
-      const errors = await validateDto({ title: 'X', campo_inexistente: 'y' });
-      expect(errors.some((e) => e.property === 'campo_inexistente')).toBe(true);
+      const errors = await validateDto({ title: 'X', unknown_field: 'y' });
+      expect(errors.some((e) => e.property === 'unknown_field')).toBe(true);
     });
   });
 
@@ -417,14 +417,14 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
     });
 
     it('other filters (status, search) keep working', async () => {
-      await service.list(TENANT, { status: 'active', search: 'noite' } as any);
+      await service.list(TENANT, { status: 'active', search: 'night' } as any);
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('p.status = :status', { status: 'active' });
-      expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('p.title ILIKE :search', { search: '%noite%' });
+      expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('p.title ILIKE :search', { search: '%night%' });
     });
   });
 
   it('findById throws NotFoundException for a nonexistent phonogram', async () => {
     mockDs._repo._qb.getOne.mockResolvedValueOnce(null);
-    await expect(service.findById(TENANT, 'nao-existe')).rejects.toThrow(NotFoundException);
+    await expect(service.findById(TENANT, 'does-not-exist')).rejects.toThrow(NotFoundException);
   });
 });

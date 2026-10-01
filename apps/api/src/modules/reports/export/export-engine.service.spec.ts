@@ -35,7 +35,7 @@ function makeEngine(options: {
   };
   const metadata = { scan: () => ({ entities: report ? [report] : [] }) } as any;
   const definitions = { getDefinition: () => options.definition === undefined ? ARTISTS_DEF : options.definition } as any;
-  const ds = { query: options.query ?? jest.fn().mockResolvedValue([{ stage_name: 'A', email: 'a@x.com', status: 'ativo' }]) } as any;
+  const ds = { query: options.query ?? jest.fn().mockResolvedValue([{ stage_name: 'A', email: 'a@x.com', status: 'active' }]) } as any;
   const audit = { record: jest.fn() } as any;
   const tableGuard = { assertTableUsable: jest.fn().mockResolvedValue(undefined) } as any;
   const encryption = { decryptNullable: jest.fn((value: string | null) => value) } as any;
@@ -74,7 +74,7 @@ describe('ExportEngineService', () => {
     const rows = Array.from({ length: EXPORT_DETECTION_LIMIT }, (_, index) => ({
       stage_name: `Artista ${index}`,
       email: `artista${index}@example.com`,
-      status: 'ativo',
+      status: 'active',
     }));
     const { engine, audit } = makeEngine({ query: jest.fn().mockResolvedValue(rows) });
 
@@ -98,14 +98,14 @@ describe('ExportEngineService', () => {
   // Regression: final XLSX order = canonical order (definition.exportableColumns)
   // filtered by the selection — never the order the caller sent in `columns`.
   it('selection out of canonical order is reordered by the canonical config (headers and values follow the same sequence)', async () => {
-    const query = jest.fn().mockResolvedValue([{ stage_name: 'A', status: 'ativo' }]);
+    const query = jest.fn().mockResolvedValue([{ stage_name: 'A', status: 'active' }]);
     const { engine } = makeEngine({ query });
     // Canonical: stage_name, email, status. Caller selects status before stage_name.
     const result = await engine.export('artists', params({ columns: ['status', 'stage_name'] }), 'tenant-1', 'user-1');
     const workbook = XLSX.read(result.body as Buffer, { type: 'buffer' });
     const rows = XLSX.utils.sheet_to_json<unknown[]>(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
     expect(rows[0]).toEqual(['Nome artístico', 'Situação']);
-    expect(rows[1]).toEqual(['A', 'ativo']);
+    expect(rows[1]).toEqual(['A', 'Ativo']);
   });
 });
 

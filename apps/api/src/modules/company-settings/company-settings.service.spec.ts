@@ -73,7 +73,7 @@ describe('CompanySettingsService', () => {
     const audit = { log: jest.fn() };
     const svc = new CompanySettingsService(ds as any, fakeEncryption, audit as any);
 
-    await expect(svc.get(TENANT_ID, 'org-inexistente')).rejects.toThrow(NotFoundException);
+    await expect(svc.get(TENANT_ID, 'missing-org')).rejects.toThrow(NotFoundException);
   });
 
   it('get() returns the decrypted CNPJ when present', async () => {

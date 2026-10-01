@@ -46,7 +46,7 @@ describe('ExportQueryBuilderService — entity-driven safe query', () => {
   });
 
   it('column outside the contract → 400', () => {
-    expect(() => svc.build(DEF, base({ columns: ['email', 'segredo'] }), 't')).toThrow(BadRequestException);
+    expect(() => svc.build(DEF, base({ columns: ['email', 'secret'] }), 't')).toThrow(BadRequestException);
   });
 
   it('sensitive column → 400 (never exported)', () => {
@@ -54,9 +54,9 @@ describe('ExportQueryBuilderService — entity-driven safe query', () => {
   });
 
   it('allowed filter applies a parameterized WHERE; forbidden filter → 400', () => {
-    const q = svc.build(DEF, base({ filters: { status: 'ativo' } }), 't');
+    const q = svc.build(DEF, base({ filters: { status: 'active' } }), 't');
     expect(q.sql).toContain('"status" = $2');
-    expect(q.parameters).toContain('ativo');
+    expect(q.parameters).toContain('active');
     expect(() => svc.build(DEF, base({ filters: { email: 'x@y' } }), 't')).toThrow(BadRequestException);
   });
 

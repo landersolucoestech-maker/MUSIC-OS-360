@@ -81,7 +81,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
       const repo = qr.manager.getRepository(ConversationEntity);
       await expect(repo.save(repo.create({
         tenant_id: TENANT,
-        status: 'invalido' as never,
+        status: 'invalid' as never,
         channel: 'internal',
       }))).rejects.toBeInstanceOf(QueryFailedError);
     } finally {

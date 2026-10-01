@@ -97,7 +97,7 @@ describe('InstagramArtistProfileProvider.resolve (Phase 1.3 — the registered h
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('canonical-uuid'),
       getArtistIdentifiers: jest.fn().mockResolvedValue({
         raw: {},
-        identifiers: [{ platform: 'instagram', identifier: 'outra-conta-do-canonico' }],
+        identifiers: [{ platform: 'instagram', identifier: 'other-canonical-account' }],
       }),
       getInstagramFollowers: jest.fn(),
     } as unknown as SoundchartsService;

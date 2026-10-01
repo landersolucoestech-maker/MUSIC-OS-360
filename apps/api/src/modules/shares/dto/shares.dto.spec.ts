@@ -66,7 +66,7 @@ describe('CreateShareDto/UpdateShareDto — holderName does not accept empty/whi
   });
 
   it('rejects non-whitelisted property (closed contract)', async () => {
-    const errors = await validatePayload(CreateShareDto, { holderName: 'X', campo_inexistente: 'y' });
+    const errors = await validatePayload(CreateShareDto, { holderName: 'X', unknown_field: 'y' });
     expect(errors.length).toBeGreaterThan(0);
   });
 });

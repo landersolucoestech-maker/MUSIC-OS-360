@@ -104,7 +104,7 @@ describe('OperationalListsService', () => {
       const { svc, repo } = makeService([]);
       (repo._qb['getOne'] as jest.Mock).mockResolvedValueOnce(null);
 
-      await svc.create('tenant-1', 'user-1', { kind: 'lead_type', slug: 'novo', name: 'Novo' } as any);
+      await svc.create('tenant-1', 'user-1', { kind: 'lead_type', slug: 'new-item', name: 'New item' } as any);
 
       const saved = (repo.create as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
       expect(saved['tenant_id']).toBe('tenant-1');
@@ -139,7 +139,7 @@ describe('OperationalListsService', () => {
       const { svc, repo } = makeService([]);
       (repo._qb['getOne'] as jest.Mock).mockResolvedValue(null);
 
-      await expect(svc.findById('tenant-1', 'inexistente')).rejects.toThrow(NotFoundException);
+      await expect(svc.findById('tenant-1', 'missing-id')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -197,7 +197,7 @@ describe('OperationalListsService', () => {
       const { svc, repo } = makeService([]);
       (repo._qb['getOne'] as jest.Mock).mockResolvedValue(null);
 
-      await expect(svc.remove('tenant-1', 'de-outro-tenant')).rejects.toThrow(NotFoundException);
+      await expect(svc.remove('tenant-1', 'other-tenant-id')).rejects.toThrow(NotFoundException);
     });
   });
 });

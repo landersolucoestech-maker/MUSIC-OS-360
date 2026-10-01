@@ -113,7 +113,7 @@ describe('bootstrapTenantZero', () => {
 
   it('rejects when another organization already claimed is_system_tenant=true', async () => {
     const ds = buildFakeDataSource({
-      organizations: [{ id: 'some-other-org-id', slug: 'outra-org', name: 'Outra Org', is_system_tenant: true }],
+      organizations: [{ id: 'some-other-org-id', slug: 'other-org', name: 'Other Org', is_system_tenant: true }],
     });
 
     await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/is already marked is_system_tenant=true/);
@@ -121,7 +121,7 @@ describe('bootstrapTenantZero', () => {
 
   it('rejects when the canonical ID already exists with a diverging slug (never overwrites identity)', async () => {
     const ds = buildFakeDataSource({
-      organizations: [{ id: TENANT_ZERO_ORG_ID, slug: 'nome-errado', name: 'Nome Errado', is_system_tenant: true }],
+      organizations: [{ id: TENANT_ZERO_ORG_ID, slug: 'wrong-name', name: 'Wrong Name', is_system_tenant: true }],
     });
 
     await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/Diverging identity/);

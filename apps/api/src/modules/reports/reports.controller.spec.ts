@@ -29,15 +29,15 @@ describe('parseExportParams — XLSX contract without pagination', () => {
     const params = parseExportParams({
       format: 'xlsx',
       columns: 'a, b ,a,c',
-      status: 'ativo',
-      sort: 'nome',
+      status: 'active',
+      sort: 'name',
       order: 'desc',
       page: '2',
       pageSize: '50',
     });
     expect(params.columns).toEqual(['a', 'b', 'c']);
-    expect(params.filters).toEqual({ status: 'ativo' });
-    expect(params.sort).toBe('nome');
+    expect(params.filters).toEqual({ status: 'active' });
+    expect(params.sort).toBe('name');
     expect(params.order).toBe('DESC');
     expect(params).not.toHaveProperty('page');
     expect(params).not.toHaveProperty('pageSize');
@@ -45,10 +45,10 @@ describe('parseExportParams — XLSX contract without pagination', () => {
 
   it('discards unsafe filter keys', () => {
     const query = Object.create(null) as Record<string, string>;
-    query.status = 'ativo';
-    query.__proto__ = 'contaminado';
+    query.status = 'active';
+    query.__proto__ = 'polluted-value';
     const params = parseExportParams(query);
-    expect(params.filters).toEqual({ status: 'ativo' });
+    expect(params.filters).toEqual({ status: 'active' });
     expect((Object.prototype as Record<string, unknown>)['polluted']).toBeUndefined();
   });
 });

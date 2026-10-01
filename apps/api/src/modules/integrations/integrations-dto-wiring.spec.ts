@@ -188,7 +188,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
         .post('/integrations/autentique/webhook')
         .send({
           event: 'document.signed', event_id: 'e1', document_id: 'd1',
-          campo_da_autentique_nao_modelado: true,
+          unmodeled_autentique_field: true,
         })
         .expect(200);
       expect(autentique.handleWebhook).toHaveBeenCalled();

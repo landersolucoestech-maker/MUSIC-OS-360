@@ -111,7 +111,7 @@ describe('TikTokArtistProfileProvider.resolve (Phase 1.3 — the registered hand
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('canonical-uuid'),
       getArtistIdentifiers: jest.fn().mockResolvedValue({
         raw: {},
-        identifiers: [{ platform: 'tiktok', identifier: 'outra-conta-do-canonico' }],
+        identifiers: [{ platform: 'tiktok', identifier: 'other-canonical-account' }],
       }),
       getTikTokFollowers: jest.fn(),
     } as unknown as SoundchartsService;

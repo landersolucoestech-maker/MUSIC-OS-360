@@ -183,7 +183,7 @@ export interface CreateMonitoringProjectInput {
 
 export interface MusicSearchQuery {
   query: string;
-  field?: "title" | "artista" | "isrc" | "iswc" | "all";
+  field?: "title" | "artist" | "isrc" | "iswc" | "all";
   limit?: number;
 }
 

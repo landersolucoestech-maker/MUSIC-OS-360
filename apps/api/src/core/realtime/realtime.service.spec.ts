@@ -82,10 +82,10 @@ describe('RealtimeService — canonical tenant topic (tenants.id -> org_id)', ()
   it('nonexistent tenant: does not publish to a topic using the raw tenantId as a fallback', async () => {
     const { service } = makeService(null);
 
-    service.sendToTenant('tenant-desconhecido', 'conversation:message', {});
+    service.sendToTenant('unknown-tenant', 'conversation:message', {});
     await flush();
 
-    expect(channelMock()).not.toHaveBeenCalledWith('tenant:tenant-desconhecido', expect.anything());
+    expect(channelMock()).not.toHaveBeenCalledWith('tenant:unknown-tenant', expect.anything());
     expect(channelMock()).not.toHaveBeenCalled();
   });
 

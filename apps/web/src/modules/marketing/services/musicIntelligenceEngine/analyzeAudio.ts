@@ -1,4 +1,5 @@
 import { PENDING_VALUE } from "./pending";
+import type { AudioLevel } from "./audioVocabulary";
 import type { ReleaseContext, TrackAudioAnalysis } from "./types";
 
 export function analyzeAudioDraft(input: Pick<ReleaseContext, "audioUrl" | "genre" | "subgenre" | "mood" | "bpm">): TrackAudioAnalysis {
@@ -26,17 +27,17 @@ export function analyzeAudioDraft(input: Pick<ReleaseContext, "audioUrl" | "genr
   };
 }
 
-function inferEnergy(mood: string) {
+function inferEnergy(mood: string): AudioLevel {
   const lower = mood.toLowerCase();
-  if (lower.includes("festa") || lower.includes("dan")) return "alta";
-  if (lower.includes("triste") || lower.includes("introspect")) return "baixa/media";
-  return "media";
+  if (lower.includes("festa") || lower.includes("dan")) return "high";
+  if (lower.includes("triste") || lower.includes("introspect")) return "low";
+  return "medium";
 }
 
-function inferDanceability(bpm: string) {
+function inferDanceability(bpm: string): AudioLevel | typeof PENDING_VALUE {
   const numeric = Number(bpm.replace(/\D/g, ""));
   if (!numeric) return PENDING_VALUE;
-  if (numeric >= 95 && numeric <= 130) return "alta";
-  if (numeric >= 75) return "media";
-  return "baixa";
+  if (numeric >= 95 && numeric <= 130) return "high";
+  if (numeric >= 75) return "medium";
+  return "low";
 }

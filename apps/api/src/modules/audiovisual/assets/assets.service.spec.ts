@@ -96,6 +96,6 @@ describe('AudiovisualAssetsService — Task L optimistic concurrency in update()
   it('a missing asset still returns 404 (pre-existing behavior preserved)', async () => {
     service = await buildService();
     mockDs._assetsRepo.findOne.mockResolvedValueOnce(null);
-    await expect(service.update(TENANT, 'nao-existe', { name: 'x' })).rejects.toThrow(NotFoundException);
+    await expect(service.update(TENANT, 'does-not-exist', { name: 'x' })).rejects.toThrow(NotFoundException);
   });
 });

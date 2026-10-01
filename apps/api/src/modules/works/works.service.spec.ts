@@ -120,7 +120,7 @@ describe('WorksService', () => {
 
   it('findById throws NotFoundException for a nonexistent work', async () => {
     mockDs._repo._qb.getOne.mockResolvedValueOnce(null);
-    await expect(service.findById(TENANT, 'nao-existe')).rejects.toThrow(NotFoundException);
+    await expect(service.findById(TENANT, 'does-not-exist')).rejects.toThrow(NotFoundException);
   });
 
   it('findById uses where with the correct tenant_id', async () => {
@@ -160,13 +160,13 @@ describe('WorksService', () => {
     });
 
     it('rejects project_id with an invalid UUID', async () => {
-      const errors = await validateDto({ ...realFormPayload, project_id: 'nao-e-uuid' });
+      const errors = await validateDto({ ...realFormPayload, project_id: 'not-a-uuid' });
       expect(errors.some((e) => e.property === 'project_id')).toBe(true);
     });
 
     it('rejects unknown field (whitelist)', async () => {
-      const errors = await validateDto({ ...realFormPayload, campo_inexistente: 'x' });
-      expect(errors.some((e) => e.property === 'campo_inexistente')).toBe(true);
+      const errors = await validateDto({ ...realFormPayload, unknown_field: 'x' });
+      expect(errors.some((e) => e.property === 'unknown_field')).toBe(true);
     });
   });
 

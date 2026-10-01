@@ -92,7 +92,7 @@ describe('queue topology — WorkflowQueueService (behavioral)', () => {
 describe('ExternalDataProcessor — unknown job fails visibly', () => {
   const processor = new ExternalDataProcessor({} as never, { runInTenantContext: (_c: unknown, w: () => unknown) => w() } as never);
 
-  for (const name of [WORKFLOW_JOB_NAMES.DISTRIBUTION_SYNC, SPOTIFY_JOB_NAMES.ACCOUNT_SYNC, 'qualquer-outro']) {
+  for (const name of [WORKFLOW_JOB_NAMES.DISTRIBUTION_SYNC, SPOTIFY_JOB_NAMES.ACCOUNT_SYNC, 'any-other']) {
     it(`'${name}' throws instead of completing without doing any work`, async () => {
       await expect(processor.process({ name, id: 'j', data: { tenantId: 't1' } } as never)).rejects.toThrow(/without a handler/);
     });

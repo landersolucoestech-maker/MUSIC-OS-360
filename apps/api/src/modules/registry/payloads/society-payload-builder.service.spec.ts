@@ -116,7 +116,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — share eligibility (P
 
   it('throws NotFoundException when the work does not exist/was deleted', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({ works: [] }));
-    await expect(svc.buildWorkPayload('t1', 'inexistente')).rejects.toThrow(NotFoundException);
+    await expect(svc.buildWorkPayload('t1', 'missing-work')).rejects.toThrow(NotFoundException);
   });
 });
 

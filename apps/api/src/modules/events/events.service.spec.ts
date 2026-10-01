@@ -109,12 +109,12 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
     });
 
     it('rejects an unknown field (whitelist)', async () => {
-      const errors = await validateDto({ title: 'X', type: 'show', campo_inexistente: 'y' });
-      expect(errors.some((e) => e.property === 'campo_inexistente')).toBe(true);
+      const errors = await validateDto({ title: 'X', type: 'show', unknown_field: 'y' });
+      expect(errors.some((e) => e.property === 'unknown_field')).toBe(true);
     });
 
     it('rejects invalid startsAt (unparseable date)', async () => {
-      const errors = await validateDto({ title: 'X', type: 'show', startsAt: 'nao-e-data' });
+      const errors = await validateDto({ title: 'X', type: 'show', startsAt: 'not-a-date' });
       expect(errors.some((e) => e.property === 'startsAt')).toBe(true);
     });
   });
@@ -335,6 +335,6 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
 
   it('findById throws NotFoundException for a nonexistent event', async () => {
     mockDs._repo._qb.getOne.mockResolvedValueOnce(null);
-    await expect(service.findById(TENANT, 'nao-existe')).rejects.toThrow(NotFoundException);
+    await expect(service.findById(TENANT, 'does-not-exist')).rejects.toThrow(NotFoundException);
   });
 });

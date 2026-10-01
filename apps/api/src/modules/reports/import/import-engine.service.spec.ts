@@ -12,8 +12,8 @@ import type { ReportEntityDefinition } from '../definitions/report-entity-defini
 const DEF: ReportEntityDefinition = {
   entityName: 'ArtistEntity', tableName: 'artists', category: EntityCategory.REPORTABLE,
   identityColumn: 'stage_name', displayColumn: 'stage_name', dateColumn: 'created_at',
-  exportableColumns: ['stage_name', 'email', 'status', 'categoria'],
-  importableColumns: ['stage_name', 'email', 'status', 'categoria'],
+  exportableColumns: ['stage_name', 'email', 'status', 'category'],
+  importableColumns: ['stage_name', 'email', 'status', 'category'],
   filterableColumns: ['status'], sortableColumns: ['stage_name'], searchableColumns: ['stage_name'],
   sensitiveColumns: ['cpf_encrypted'], requiredImportColumns: ['stage_name'],
   supportsExport: true, supportsImport: true,
@@ -24,10 +24,10 @@ const REPORT = {
   columns: [
     { name: 'stage_name', type: 'String', isEnum: false, nullable: false, hasDefault: false },
     { name: 'email', type: 'String', isEnum: false, nullable: true, hasDefault: false },
-    { name: 'status', type: 'String', isEnum: true, enumValues: ['ativo', 'inativo'], nullable: true, hasDefault: false },
+    { name: 'status', type: 'String', isEnum: true, enumValues: ['active', 'inactive'], nullable: true, hasDefault: false },
     { name: 'cpf_encrypted', type: 'String', isEnum: false, nullable: true, hasDefault: false },
     { name: 'tenant_id', type: 'String', isEnum: false, nullable: false, hasDefault: false },
-    { name: 'categoria', type: 'String', isEnum: false, nullable: false, hasDefault: false },
+    { name: 'category', type: 'String', isEnum: false, nullable: false, hasDefault: false },
   ],
 };
 
@@ -48,19 +48,19 @@ function makeEngine(opts: { reportable?: boolean; hasEntity?: boolean; def?: Rep
 describe('ImportEngineService — single-sheet XLSX', () => {
   it('maps pt-BR headers and validates', async () => {
     const result = await makeEngine().validateFile(
-      'artists', workbook('Artistas', [['Nome artístico', 'E-mail', 'Situação', 'Categoria'], ['João', 'joao@x.com', 'ativo', 'solo']]), 'tenant-1',
+      'artists', workbook('Artistas', [['Nome artístico', 'E-mail', 'Situação', 'Categoria'], ['João', 'joao@x.com', 'active', 'solo']]), 'tenant-1',
     );
     expect(result.validRows).toBe(1);
-    expect(result.rows[0].data).toMatchObject({ stage_name: 'João', email: 'joao@x.com', status: 'ativo', categoria: 'solo' });
+    expect(result.rows[0].data).toMatchObject({ stage_name: 'João', email: 'joao@x.com', status: 'active', category: 'solo' });
   });
 
   it('rejects missing or empty required column', async () => {
-    const defWithRequiredCategory = { ...DEF, requiredImportColumns: ['stage_name', 'categoria'] };
+    const defWithRequiredCategory = { ...DEF, requiredImportColumns: ['stage_name', 'category'] };
     const absent = await makeEngine({ def: defWithRequiredCategory }).validateFile(
       'artists', workbook('Artistas', [['Nome artístico'], ['Ana']]), 't',
     );
     expect(absent.errors).toContain('Coluna obrigatória ausente no arquivo: "Categoria".');
-    expect(absent.errors.join(' ')).not.toContain('"categoria"');
+    expect(absent.errors.join(' ')).not.toContain('"category"');
     const empty = await makeEngine({ def: defWithRequiredCategory }).validateFile(
       'artists', workbook('Artistas', [['Nome artístico', 'Categoria'], ['Ana', '']]), 't',
     );
@@ -108,12 +108,12 @@ describe('ImportEngineService — single-sheet XLSX', () => {
       'artists',
       workbook('Artistas', [
         ['Categoria', 'Situação', 'E-mail', 'Nome artístico'],
-        ['solo', 'ativo', 'joao@x.com', 'João'],
+        ['solo', 'active', 'joao@x.com', 'João'],
       ]),
       't',
     );
     expect(result.rows[0].data).toEqual({
-      categoria: 'solo', status: 'ativo', email: 'joao@x.com', stage_name: 'João',
+      category: 'solo', status: 'active', email: 'joao@x.com', stage_name: 'João',
     });
   });
 
@@ -132,7 +132,7 @@ describe('ImportEngineService — single-sheet XLSX', () => {
     expect(result.rows[0].data).toEqual(expect.objectContaining({
       stage_name: expect.any(String),
       email: expect.any(String),
-      categoria: expect.any(String),
+      category: expect.any(String),
     }));
   });
 

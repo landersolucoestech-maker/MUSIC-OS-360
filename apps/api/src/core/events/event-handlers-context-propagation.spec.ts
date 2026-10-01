@@ -181,7 +181,7 @@ describe('P2-9 event handlers context propagation', () => {
       type: DOMAIN_EVENTS.LEAD_CONVERTED,
       tenantId: 't1',
       userId: 'u1',
-      payload: { leadId: 'l1', tenantId: 't1', nome: 'Lead', empresa: null, convertedBy: 'u1', convertedAt: 'now' },
+      payload: { leadId: 'l1', tenantId: 't1', name: 'Lead', company: null, convertedBy: 'u1', convertedAt: 'now' },
     } as any);
     expectTenantContext(dbContext);
     expect(manager.getRepository).toHaveBeenCalledWith(ClientEntity);

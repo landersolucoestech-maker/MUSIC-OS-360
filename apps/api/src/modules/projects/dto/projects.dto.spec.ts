@@ -72,7 +72,7 @@ describe('CreateProjectDto — real canonical contract (audit 2026-07-18)', () =
   });
 
   it('rejects a type outside the real enum', async () => {
-    const errors = await validatePayload({ title: 'X', type: 'inexistente' });
+    const errors = await validatePayload({ title: 'X', type: 'unknown-type' });
     expect(errors.some((e) => e.property === 'type')).toBe(true);
   });
 });

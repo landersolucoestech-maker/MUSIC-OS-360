@@ -322,7 +322,7 @@ describe('SoundchartsService', () => {
     it('404 (UUID without identifiers) returns an empty list, never throws', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(404, { errors: [] }));
 
-      const result = await service.getArtistIdentifiers('uuid-sem-identifiers');
+      const result = await service.getArtistIdentifiers('uuid-without-identifiers');
 
       expect(result.identifiers).toEqual([]);
     });
@@ -350,7 +350,7 @@ describe('SoundchartsService', () => {
     it('no results returns an empty list', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(200, { items: [] }));
 
-      const result = await service.searchArtists('artista-inexistente-xyz');
+      const result = await service.searchArtists('unknown-artist-xyz');
 
       expect(result.results).toEqual([]);
     });

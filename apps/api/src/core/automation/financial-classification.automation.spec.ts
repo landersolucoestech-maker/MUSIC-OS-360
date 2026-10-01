@@ -55,7 +55,7 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
       type: 'expense',
       category: 'Marketing',
       amount: '1500.00',
-      contratoId: null,
+      contractId: null,
       artistId: 'a1',
       createdBy: 'u1',
       ...overrides,
@@ -69,7 +69,7 @@ const TX_ROW = {
   description: 'Tráfego pago Meta Ads campanha lançamento',
   amount: '1500.00',
   transaction_date: '2026-06-10T00:00:00.000Z',
-  referencia: null,
+  notes: null,
   artist_name: 'Banda Aurora',
   metadata: {},
 };

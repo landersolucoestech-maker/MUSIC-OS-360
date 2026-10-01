@@ -303,27 +303,27 @@ describe('ArtistMetricSnapshotsService', () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
-      baseSnapshot({ username: 'handle-antigo', monthly_listeners: 100, raw_payload: { observed_at: '2026-08-01T00:00:00.000Z' } }),
+      baseSnapshot({ username: 'old-handle', monthly_listeners: 100, raw_payload: { observed_at: '2026-08-01T00:00:00.000Z' } }),
     );
     await service.recordFromProfileSnapshot(
-      baseSnapshot({ username: 'handle-novo', monthly_listeners: 150, raw_payload: { observed_at: '2026-08-02T00:00:00.000Z' } }),
+      baseSnapshot({ username: 'new-handle', monthly_listeners: 150, raw_payload: { observed_at: '2026-08-02T00:00:00.000Z' } }),
     );
 
     expect(repo.__store).toHaveLength(2);
-    expect(repo.__store.map((r) => r.registered_identifier)).toEqual(['handle-antigo', 'handle-novo']);
+    expect(repo.__store.map((r) => r.registered_identifier)).toEqual(['old-handle', 'new-handle']);
   });
 
   it('14. resolved Soundcharts entity swap between two syncs: no silent merge — each point keeps its own provider_entity_id', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
-      baseSnapshot({ monthly_listeners: 100, raw_payload: { observed_at: '2026-08-01T00:00:00.000Z', soundcharts_uuid: 'uuid-antigo' } }),
+      baseSnapshot({ monthly_listeners: 100, raw_payload: { observed_at: '2026-08-01T00:00:00.000Z', soundcharts_uuid: 'old-uuid' } }),
     );
     await service.recordFromProfileSnapshot(
-      baseSnapshot({ monthly_listeners: 150, raw_payload: { observed_at: '2026-08-02T00:00:00.000Z', soundcharts_uuid: 'uuid-novo' } }),
+      baseSnapshot({ monthly_listeners: 150, raw_payload: { observed_at: '2026-08-02T00:00:00.000Z', soundcharts_uuid: 'new-uuid' } }),
     );
 
-    expect(repo.__store.map((r) => r.provider_entity_id)).toEqual(['uuid-antigo', 'uuid-novo']);
+    expect(repo.__store.map((r) => r.provider_entity_id)).toEqual(['old-uuid', 'new-uuid']);
   });
 
   it('15. idempotent retry: resending the same snapshot does not duplicate any point', async () => {
