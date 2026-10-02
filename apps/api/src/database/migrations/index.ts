@@ -347,6 +347,7 @@ import { BackfillProjectTrackInstrumentalAndLanguageToEnglish20260930000032 } fr
 import { RenameVideomakerJobFunctionSlugToVideographer20260930000033 } from './20260930000033_RenameVideomakerJobFunctionSlugToVideographer';
 import { BackfillContractTypeOutroToOther20260930000034 } from './20260930000034_BackfillContractTypeOutroToOther';
 import { BackfillContractSignedTransactionCategoryToContractualRevenue20260930000035 } from './20260930000035_BackfillContractSignedTransactionCategoryToContractualRevenue';
+import { BackfillContractCategorySlugsToEnglish20260930000036 } from './20260930000036_BackfillContractCategorySlugsToEnglish';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -677,4 +678,5 @@ export const ALL_MIGRATIONS = [
   RenameVideomakerJobFunctionSlugToVideographer20260930000033,
   BackfillContractTypeOutroToOther20260930000034,
   BackfillContractSignedTransactionCategoryToContractualRevenue20260930000035,
+  BackfillContractCategorySlugsToEnglish20260930000036,
 ] as const;

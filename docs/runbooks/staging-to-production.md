@@ -129,3 +129,30 @@ WHERE r.tenant_id IS NOT NULL AND r.deleted_at IS NULL
   AND r.slug IN ('legal', 'sales', 'producer', 'collaborator', 'hr_manager')
 GROUP BY m.tenant_id, r.slug;
 ```
+
+### Residue census of the contract vocabulary backfills (read-only)
+
+Removal condition of the matching read aliases: every query returns 0 in every environment (run as the migration role).
+
+```sql
+-- contracts.type default `outro` (20260930000034). Retires the `outro` alias.
+SELECT count(*) AS outro_rows FROM contracts WHERE type = 'outro';
+
+-- contract.signed provisional transactions (20260930000035): handler-created rows still on the ad-hoc category.
+SELECT category, count(*) FROM transactions
+WHERE category IN ('contratos', 'contracts') AND metadata ->> 'source' = 'contract.signed'
+GROUP BY 1;
+
+-- platform-owned contract category slugs (20260930000036), contracts and templates. Retires the ten legacy aliases.
+SELECT 'contracts' AS source, type AS slug, count(*) FROM contracts
+WHERE type IN ('gravacao', 'cessao_direitos', 'producao', 'exclusividade', 'publicitario', 'semantico', 'distribuicao', 'licenciamento', 'gestao', 'outros')
+GROUP BY 2
+UNION ALL
+SELECT 'contract_templates', service_type, count(*) FROM contract_templates
+WHERE service_type IN ('gravacao', 'cessao_direitos', 'producao', 'exclusividade', 'publicitario', 'semantico', 'distribuicao', 'licenciamento', 'gestao', 'outros')
+GROUP BY 2;
+```
+
+A value that is neither canonical nor in these lists (a tenant-authored slug such as `parceria`, or the pre-canonical `exclusivo`,
+`nao_exclusivo`, `representacao`, `servicos`) is not residue of these migrations; see blocker `BLK-CONTRACT-CATEGORY-REGISTRY` in
+`docs/NAMING_NORMALIZATION_CANONICAL_MAP.md`.

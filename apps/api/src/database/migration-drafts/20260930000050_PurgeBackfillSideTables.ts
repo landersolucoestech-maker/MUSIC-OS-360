@@ -36,6 +36,7 @@ export const SIDE_TABLES: readonly string[] = [
   'project_track_vocabulary_backfill_20260930', // 20260930000032
   'contract_type_backfill_20260930', // 20260930000034
   'contract_signed_transaction_category_backfill_20260930', // 20260930000035
+  'contract_category_slug_backfill_20260930', // 20260930000036
 ];
 
 function assertConfirmed(migrationName: string): void {

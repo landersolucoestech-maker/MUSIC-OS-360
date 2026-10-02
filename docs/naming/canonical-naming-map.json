@@ -41601,7 +41601,7 @@
       "id": "BLK-RELEASES-STATUS-CHECK",
       "item": "releases.status has no CHECK; legacy values rejeitado/takedown/take_down/remocao have no ReleaseStatus equivalent",
       "blocker": "Product decision: the release workflow has no rejected / taken-down state; mapping them onto another status would change their meaning.",
-      "evidence": "Migration 20260928000019 maps every other legacy Portuguese status; the web display map tolerates only these four (release-status.tsx UNMAPPED_LEGACY_TO_DISPLAY).",
+      "evidence": "Migration 20260928000019 maps every other legacy Portuguese status; the web display map tolerates only these four (release-status.tsx UNMAPPED_LEGACY_TO_DISPLAY). They are two concepts, not four: `rejeitado` is a distributor rejection (display `rejected`) and `takedown`/`take_down`/`remocao` are three spellings of one removal-from-platforms concept (display `takedown`); the distribution `platform_status` vocabulary already has `rejected` and `takedown`. `releases` has only `status` (no platform_status column) and no CHECK; packages/types ReleaseStatus has neither state.",
       "requiredAction": "Decide whether ReleaseStatus gains rejected/taken_down (workflow + labels) or these rows move to cancelled; then map them and add chk_releases_status.",
       "status": "OPEN"
     },
@@ -41615,10 +41615,10 @@
     },
     {
       "id": "BLK-TRANSACTION-CATEGORY-TAXONOMY",
-      "item": "transactions.category/subcategory slug values are Portuguese (outros, servicos, caches, receitas-musicais, ...) and financial_category_keyword_rules / financial categories are keyed by PT labels",
-      "blocker": "Product decision: the category taxonomy is user-configurable data shared with financial_categories; renaming slugs changes stored business data and rule matching.",
-      "evidence": "CZ-041 left the slugs unchanged on purpose (migration header, contract doc).",
-      "requiredAction": "Decide the canonical slug vocabulary (or move to financial_category_id as the single reference), then migrate values, rules and the web option lists together.",
+      "item": "transactions.category/subcategory: `receitas-internas` and `repasse-contrato` have no provable English meaning",
+      "blocker": "Domain decision: the platform-owned slugs were canonicalized by migration 20260930000018, but these two are user-selectable options whose accounting meaning is ambiguous (`receitas-internas`: intercompany vs internal-use revenue; `repasse-contrato`: remittance vs pass-through vs assignment of a contract). The UI still writes them as Portuguese kebab slugs.",
+      "evidence": "Only label evidence exists: companyRevenueCategories ('Receitas Internas', sibling of music_revenue/services/products/contractual_revenue) and contractualRevenueTypes ('Repasse de Contrato', sibling of commission/administrative_fee/reimbursement_received/contractual_fine) in apps/web/src/modules/accounting/constants/transaction-constants.ts; no sibling slug (`despesas-internas`, `repasse*`) was ever mapped; UNMAPPED_TRANSACTION_CATEGORY_SLUGS in api and web.",
+      "requiredAction": "Accounting owner states the meaning of each slug; then add them to LEGACY_TRANSACTION_CATEGORY_SLUGS (api + web parity test), write the canonical id in the option lists and run a guarded backfill like 20260930000018. Until then they stay as value-surface exceptions.",
       "status": "OPEN"
     },
     {
@@ -41651,6 +41651,62 @@
       "blocker": "MarketingTarget is shared by campaigns, tasks (metadata.targetType jsonb), the AI creative workspace, analytics hub, Artist 360 modal (outside the marketing module) and the operational-settings marketing_context slugs; renaming it needs a jsonb backfill of persisted campaign/task metadata plus a settings-slug migration. marketing_tasks.kind (TaskType, ~45 Portuguese values) is likewise a free varchar with Portuguese values.",
       "evidence": "CZ-047; apps/web marketing.types.ts MarketingTarget/TaskType; ArtistVision360Modal; useOperationalSettings marketing_context slugs",
       "requiredAction": "Own mission: canonical English MarketingTarget and TaskType, backfill campaigns/tasks metadata and settings slugs in one reversible migration, then delete marketing-content-wire.ts."
+    },
+    {
+      "id": "BLK-TAKEDOWNS-FK-COLUMNS",
+      "item": "TakedownEntity maps work_id, artist_id and response, which the migrated takedowns table does not have",
+      "blocker": "Product/security decision: removing them also removes the cross-tenant FK assertions (assertSameTenantFk on works/artists) and the `artist_id` list filter of the public API; adding the columns would invent schema.",
+      "evidence": "Migration 20260719000016 removed obra_id/artista_id/resposta as proven orphans; a database migrated from scratch fails repository.find() with `column TakedownEntity.work_id does not exist`; CreateTakedownDto.work_id/artist_id and QueryTakedownDto.artist_id still exist; the web form never sends them; takedowns.service.create.spec.ts proves the FK assertions.",
+      "requiredAction": "Owner decides: (a) remove the three entity columns, the two DTO fields, the artist_id filter and the FK assertions (and rewrite the P1 spec), or (b) add the columns back with a guarded migration and keep the assertions."
+    },
+    {
+      "id": "BLK-FINANCIAL-CATEGORY-LEGACY-ENTITIES",
+      "item": "Six legacy financial category entities map tables removed by migration 20260718000002",
+      "blocker": "Dead ORM classes (no module, service or controller references them) that contradict the schema; removal is mechanical but touches the shared entities file and any tooling that enumerates entities.",
+      "evidence": "FinancialCategoryEntity (columns path, depth_level, slug, ...) and FinancialCategory{Center,Link,Favorite,Rule,RuleRun}Entity have zero non-spec references; the tables financial_category_centers/links/favorites/rules/rule_runs do not exist after db:migrate.",
+      "requiredAction": "Delete the six classes from apps/api/src/database/entities.ts after confirming no external script imports them; then a DB-backed entity-vs-catalog guard can run with an empty allowlist."
+    },
+    {
+      "id": "BLK-HR-EMPLOYEE-DOCUMENTS",
+      "item": "HR employee documents have no backend",
+      "blocker": "Undefined product behavior: storage backend, document types, retention and who may read sensitive HR files are not specified anywhere in the repository; choosing a storage provider is an owner decision.",
+      "evidence": "No employee_documents table (only employees), no route or API module; api-client.ts PENDING_TABLES notes the old mapping onto /hr/employees listed employees as documents and deleted employees on document removal; HR.tsx renders EmployeeDocumentsUnavailable and HR.documents-unbacked.guard.test.ts enforces it.",
+      "requiredAction": "Owner specifies the capability (storage, types, retention, permissions); then add the table with RLS, API module, permissions and replace the unavailable state."
+    },
+    {
+      "id": "BLK-CI-JOB-NAME-FASE",
+      "item": "CI job name `Security Regression (FASE 9.x fixes)`",
+      "blocker": "The job name is a status-check context; renaming it can break branch protection or rulesets that require it, and the repository has no authoritative record of them.",
+      "evidence": ".github/workflows/ci.yml:212, scripts/verify-body-limit-guard.mjs:4 and docs/runbook.md reference the name; the only evidence about required checks is the 2026-09-13 audit (dev unprotected, none required), which is a dated snapshot and says nothing about staging/main.",
+      "requiredAction": "Admin lists the required checks of every protected branch/ruleset; if the name is not required (or after updating the protection), rename it and the three references together."
+    },
+    {
+      "id": "BLK-LEGACY-ROOT-SQL",
+      "item": "Stale root SQL scripts in apps/api",
+      "blocker": "Not executed by any tool, but migrations-complete.sql (generated 2026-05-21, 2168 lines, instructs `run in Supabase SQL Editor`) would build an obsolete schema outside the migration tracker; deleting generated/historical artifacts is the owner's call.",
+      "evidence": "migrations-complete-clean.sql and migrations-temp.sql are empty; migrations-complete.sql is the output of scripts/dump-migrations-sql.ts and is allowlisted by verify-provider-residue; seed-operational.sql, setup-supabase-complete.sql, supabase-jwt-hook.sql and supabase-rls.sql are documented manual provisioning scripts (PROVISIONING_GUIDE.md, CODEBASE_MAP.md).",
+      "requiredAction": "Owner decides to delete the two empty files and either delete or banner migrations-complete.sql as HISTORICAL (update the provider-residue allowlist and docs in the same change)."
+    },
+    {
+      "id": "BLK-CONTRACT-CATEGORY-REGISTRY",
+      "item": "Contract category registry: pre-canonical spellings and tenant-authored slugs",
+      "blocker": "The ten platform-owned slugs are backfilled (20260930000034/36) without a registry, but four more persisted spellings have no canonical value in CANONICAL_CONTRACT_CATEGORY_SLUGS and their meaning is not provable: `exclusivo`, `nao_exclusivo`, `representacao`, `servicos`.",
+      "evidence": "apps/web/src/modules/artist/lib/contract-type-filters.ts maps them to `exclusive`, `non_exclusive`, `representation`, `services` while the platform canonical for exclusividade is `exclusivity` (the filter accepts both `exclusivity` and `exclusive`); tenant-authored slugs (`parceria`, `empresariamento_360`, ...) live in the browser registry and contract_service_types.",
+      "requiredAction": "Contracts owner decides whether `exclusive` vs `exclusivity` (and the other three) are distinct categories, adds the agreed ones to the canonical set, then a guarded exact-match backfill like 20260930000036 can follow; tenant slugs stay tenant data."
+    },
+    {
+      "id": "BLK-WORKFLOW-EXECUTION-ERROR-TEXT",
+      "item": "WorkflowExecutionService.list/get return entities with the raw error_message",
+      "blocker": "Latent exposure, not a live leak: no controller serves workflow executions today, but the first one added would publish raw error text.",
+      "evidence": "apps/api/src/core/workflow/workflow-execution.service.ts list()/get() return WorkflowExecutionEntity rows; no *.controller.ts references the service; SkillRun, SocietySyncJob and ArtistPlatformProfile already map to error_code DTOs (raw-error-boundary.spec.ts).",
+      "requiredAction": "When a workflow execution endpoint is added, return a public DTO with error_code (classifyFailureCode) like the three existing mappers."
+    },
+    {
+      "id": "BLK-RESIDUE-CENSUS-DOCS",
+      "item": "85 references to findings/*.md files that are not in the repository",
+      "blocker": "The census queries behind most removal conditions lived in session-local findings files (contracts-ct1, transactions-tx1, persisted-jsonb-pj1, persisted-ap3, persisted-vocabulary-audit, marketing-mk2, contracts-taxonomy, bug1); only the contract batch (20260930000034..36) has its census queries in docs/runbooks/staging-to-production.md.",
+      "evidence": "git ls-files has no findings/ path; the references are in ledger rows, migration headers and code comments.",
+      "requiredAction": "Write the residue census per remaining backfill migration (20260930000017..033) next to the runbook queries, derived from each migration's own predicate, then repoint the references; do not reconstruct them from memory."
     }
   ]
 }
