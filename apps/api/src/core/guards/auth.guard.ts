@@ -156,7 +156,7 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
     // check lacked isProdLike()'s trim()/toLowerCase() normalization, so a NODE_ENV value with
     // different casing/whitespace would have let the HS256 dev-token bypass stay reachable in
     // what should have been treated as a prod-like environment (CODEBASE_MAP Gotcha #9).
-    const nodeEnv = this.config?.get<string>('NODE_ENV') ?? 'development';
+    const nodeEnv = this.config?.get<string>('NODE_ENV') ?? process.env['NODE_ENV'] ?? 'development';
     if (!isProdLike(nodeEnv)) {
       const devClaims = this.tryVerifyDevToken(token);
       if (devClaims) {

@@ -54,6 +54,19 @@ describe('dev-token helpers', () => {
     expect(isInsecureDevSecret('')).toBe(true);
     expect(isInsecureDevSecret(ZERO)).toBe(true);
     expect(isInsecureDevSecret(KEY)).toBe(false);
+    expect(isInsecureDevSecret('ab12'.repeat(8))).toBe(false);
+  });
+
+  it('F3: isInsecureDevSecret rejects non-zero secrets shorter than 32 characters', () => {
+    expect(isInsecureDevSecret('a'.repeat(31))).toBe(true);
+    expect(isInsecureDevSecret('short-secret')).toBe(true);
+    expect(isInsecureDevSecret('a'.repeat(32))).toBe(false);
+  });
+
+  it('F3: verifyDevToken fails closed for a short signing secret even when the token is validly signed with it', () => {
+    const short = 'k'.repeat(16);
+    expect(verifyDevToken(sign({ key: short }), short)).toBeNull();
+    expect(svc({ NODE_ENV: 'development', ENCRYPTION_KEY: short }).tryVerifyDevToken(sign({ key: short }))).toBeNull();
   });
 
   it('verifyDevToken rejects an alg=none token', () => {

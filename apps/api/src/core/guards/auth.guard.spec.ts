@@ -193,6 +193,36 @@ describe('JwtAuthGuard', () => {
       await expect(guard.canActivate(ctx)).rejects.toThrow(UnauthorizedException);
     });
 
+    describe('F2: NODE_ENV falls back to process.env, never to development, when ConfigService has no value', () => {
+      const original = process.env['NODE_ENV'];
+      const originalUrl = process.env['SUPABASE_URL'];
+      beforeEach(() => {
+        process.env['NODE_ENV'] = 'production';
+      });
+      afterEach(() => {
+        if (original === undefined) delete process.env['NODE_ENV'];
+        else process.env['NODE_ENV'] = original;
+        if (originalUrl === undefined) delete process.env['SUPABASE_URL'];
+        else process.env['SUPABASE_URL'] = originalUrl;
+      });
+
+      it('rejects an HS256 dev-token when ConfigService is absent and process.env.NODE_ENV=production', async () => {
+        process.env['SUPABASE_URL'] = 'https://test.supabase.co';
+        const guard = new JwtAuthGuard(undefined, { getAllAndOverride: jest.fn().mockReturnValue(false) } as unknown as Reflector, { record: jest.fn() } as any);
+        guard.onModuleInit();
+        const ctx = makeContext({ authHeader: `Bearer ${makeDevToken()}` });
+        await expect(guard.canActivate(ctx)).rejects.toThrow(UnauthorizedException);
+        expect(ctx.switchToHttp().getRequest().auth).toBeUndefined();
+      });
+
+      it('rejects an HS256 dev-token when ConfigService returns no NODE_ENV (and a valid dev key) but process.env.NODE_ENV=production', async () => {
+        const guard = makeGuard(false, { NODE_ENV: undefined as unknown as string, ENCRYPTION_KEY: DEV_KEY });
+        const ctx = makeContext({ authHeader: `Bearer ${makeDevToken()}` });
+        await expect(guard.canActivate(ctx)).rejects.toThrow(UnauthorizedException);
+        expect(ctx.switchToHttp().getRequest().auth).toBeUndefined();
+      });
+    });
+
     it.each(['Production', ' production ', 'STAGING', 'Staging'])(
       'rejects an HS256 dev-token when NODE_ENV=%j (case/whitespace variation must still be treated as prod-like -- CODEBASE_MAP Gotcha #9)',
       async (nodeEnv) => {
