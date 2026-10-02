@@ -227,6 +227,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "alerting-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "ambiguity-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -350,6 +355,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "availability-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "backend-architecture-engineer",
       "writes": [
         "docs/engineering/decisions/backend/**"
@@ -408,7 +418,17 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "capacity-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "chaos-test-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "circuit-breaker-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -577,6 +597,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "database-reliability-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "database-schema-analyzer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -588,6 +613,11 @@
     },
     {
       "agent": "dead-code-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "degradation-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -876,6 +906,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "integration-reliability-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "integration-resilience-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -921,7 +956,17 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "logging-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "mapping-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "metrics-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -998,6 +1043,15 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "observability-engineer",
+      "writes": [
+        "apps/api/src/core/metrics/**",
+        "apps/api/src/core/middleware/**",
+        "apps/api/src/core/interceptors/**"
+      ],
+      "note": "pack writer (reliability); scope declared in .claude/agents/observability-engineer.md"
+    },
+    {
       "agent": "optimistic-locking-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1026,6 +1080,15 @@
       "agent": "parallel-work-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "performance-engineer",
+      "writes": [
+        "apps/api/src/modules/**/*.service.ts",
+        "apps/api/src/modules/**/*.repository.ts",
+        "apps/api/src/cache/**"
+      ],
+      "note": "pack writer (reliability); scope declared in .claude/agents/performance-engineer.md"
     },
     {
       "agent": "performance-test-engineer",
@@ -1104,6 +1167,11 @@
     },
     {
       "agent": "queue-flow-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "queue-reliability-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1213,6 +1281,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "retry-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "risk-controller",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1251,7 +1324,17 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "runtime-performance-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "runtime-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "saturation-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1407,6 +1490,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "telemetry-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "tenant-boundary-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1442,7 +1530,17 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "timeout-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "tool-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "tracing-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1563,6 +1661,11 @@
     },
     {
       "agent": "worker-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "worker-reliability-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },

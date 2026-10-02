@@ -2309,6 +2309,149 @@
    "capabilities": [
     "testing.review.chaos"
    ]
+  },
+  {
+   "intent": "implement-observability",
+   "domain": "reliability",
+   "description": "Implement logging, metrics and tracing",
+   "keywords": [
+    "implement observability",
+    "add logging",
+    "add metrics",
+    "correlation id"
+   ],
+   "capabilities": [
+    "reliability.observability",
+    "reliability.review.logging"
+   ]
+  },
+  {
+   "intent": "improve-runtime-performance",
+   "domain": "reliability",
+   "description": "Improve backend performance with measurements",
+   "keywords": [
+    "backend performance",
+    "slow endpoint",
+    "runtime performance"
+   ],
+   "capabilities": [
+    "reliability.performance",
+    "reliability.review.runtime-performance"
+   ]
+  },
+  {
+   "intent": "review-queue-reliability",
+   "domain": "reliability",
+   "description": "Review queue and worker reliability",
+   "keywords": [
+    "queue reliability",
+    "worker reliability",
+    "dead letter",
+    "stuck job"
+   ],
+   "capabilities": [
+    "reliability.review.queue",
+    "reliability.review.worker"
+   ]
+  },
+  {
+   "intent": "review-database-reliability",
+   "domain": "reliability",
+   "description": "Review database reliability",
+   "keywords": [
+    "database reliability",
+    "connection pool",
+    "statement timeout"
+   ],
+   "capabilities": [
+    "reliability.review.database"
+   ]
+  },
+  {
+   "intent": "review-integration-reliability",
+   "domain": "reliability",
+   "description": "Review integration reliability",
+   "keywords": [
+    "integration reliability",
+    "provider outage behavior",
+    "dependency failure"
+   ],
+   "capabilities": [
+    "reliability.review.integration"
+   ]
+  },
+  {
+   "intent": "review-telemetry",
+   "domain": "reliability",
+   "description": "Review telemetry and tracing",
+   "keywords": [
+    "telemetry review",
+    "analytics events",
+    "distributed tracing",
+    "trace propagation"
+   ],
+   "capabilities": [
+    "reliability.review.telemetry",
+    "reliability.review.tracing"
+   ]
+  },
+  {
+   "intent": "review-metrics-and-alerts",
+   "domain": "reliability",
+   "description": "Review metrics and alerting",
+   "keywords": [
+    "metrics review",
+    "alert rules",
+    "alert noise"
+   ],
+   "capabilities": [
+    "reliability.review.metrics",
+    "reliability.review.alerting"
+   ]
+  },
+  {
+   "intent": "review-timeouts-and-retries",
+   "domain": "reliability",
+   "description": "Review timeouts, retries and breakers",
+   "keywords": [
+    "timeout review",
+    "retry amplification",
+    "breaker thresholds"
+   ],
+   "capabilities": [
+    "reliability.review.timeout",
+    "reliability.review.retry",
+    "reliability.review.circuit-breaker"
+   ]
+  },
+  {
+   "intent": "review-degradation",
+   "domain": "reliability",
+   "description": "Review graceful degradation",
+   "keywords": [
+    "graceful degradation",
+    "partial failure",
+    "degraded state"
+   ],
+   "capabilities": [
+    "reliability.review.degradation"
+   ]
+  },
+  {
+   "intent": "review-saturation-capacity",
+   "domain": "reliability",
+   "description": "Review saturation, availability and capacity",
+   "keywords": [
+    "saturation",
+    "availability review",
+    "capacity review",
+    "single point of failure"
+   ],
+   "capabilities": [
+    "reliability.review.saturation",
+    "reliability.review.availability",
+    "reliability.review.capacity"
+   ]
   }
  ],
  "highImpactSignals": [

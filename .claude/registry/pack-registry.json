@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 237,
+  "agents": 256,
   "skills": 0,
-  "capabilities": 214,
+  "capabilities": 233,
   "workflows": 6
  },
  "agents": [
@@ -187,6 +187,29 @@
    "skills": [
     "plan",
     "ownership-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "alerting-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/alerting-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.alerting"
+   ],
+   "skills": [
+    "implement-observability",
+    "runtime-smoke-test"
    ],
    "approval": "none"
   },
@@ -724,6 +747,30 @@
    "approval": "none"
   },
   {
+   "name": "availability-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/availability-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.availability"
+   ],
+   "skills": [
+    "runtime-smoke-test",
+    "production-build-check",
+    "migration-safety-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "backend-architecture-engineer",
    "kind": "engineer",
    "domain": "architecture",
@@ -970,6 +1017,30 @@
    "approval": "none"
   },
   {
+   "name": "capacity-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/capacity-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.capacity"
+   ],
+   "skills": [
+    "run-performance-tests",
+    "create-load-tests",
+    "queue-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "chaos-test-reviewer",
    "kind": "reviewer",
    "domain": "testing",
@@ -990,6 +1061,30 @@
     "run-integration-tests",
     "handle-provider-failure",
     "circuit-breaker-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "circuit-breaker-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/circuit-breaker-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.circuit-breaker"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "integration-audit",
+    "implement-circuit-breaker"
    ],
    "approval": "none"
   },
@@ -1709,6 +1804,30 @@
    "approval": "none"
   },
   {
+   "name": "database-reliability-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/database-reliability-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.database"
+   ],
+   "skills": [
+    "database-audit",
+    "transaction-audit",
+    "query-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "database-schema-analyzer",
    "kind": "analyzer",
    "domain": "repository-intelligence",
@@ -1778,6 +1897,30 @@
     "dead-code-analysis",
     "orphan-analysis",
     "dependency-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "degradation-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/degradation-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.degradation"
+   ],
+   "skills": [
+    "handle-provider-failure",
+    "integration-audit",
+    "frontend-audit"
    ],
    "approval": "none"
   },
@@ -3049,6 +3192,31 @@
    "approval": "none"
   },
   {
+   "name": "integration-reliability-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/integration-reliability-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.integration"
+   ],
+   "skills": [
+    "integration-audit",
+    "circuit-breaker-audit",
+    "retry-audit",
+    "handle-provider-failure"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "integration-resilience-reviewer",
    "kind": "reviewer",
    "domain": "integrations",
@@ -3239,6 +3407,30 @@
    "approval": "none"
   },
   {
+   "name": "logging-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/logging-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.logging"
+   ],
+   "skills": [
+    "secret-scan",
+    "pii-audit",
+    "implement-observability"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "mapping-reviewer",
    "kind": "reviewer",
    "domain": "integrations",
@@ -3258,6 +3450,30 @@
    "skills": [
     "data-provider-audit",
     "detect-data-inconsistency",
+    "naming-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "metrics-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/metrics-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.metrics"
+   ],
+   "skills": [
+    "implement-observability",
+    "runtime-path-trace",
     "naming-analysis"
    ],
    "approval": "none"
@@ -3601,6 +3817,37 @@
    "approval": "none"
   },
   {
+   "name": "observability-engineer",
+   "kind": "engineer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/observability-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/metrics/**",
+    "apps/api/src/core/middleware/**",
+    "apps/api/src/core/interceptors/**"
+   ],
+   "capabilities": [
+    "reliability.observability"
+   ],
+   "skills": [
+    "implement-observability",
+    "runtime-path-trace",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "optimistic-locking-reviewer",
    "kind": "reviewer",
    "domain": "database",
@@ -3743,6 +3990,37 @@
     "scope-lock",
     "ownership-map",
     "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "performance-engineer",
+   "kind": "engineer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/performance-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/*.service.ts",
+    "apps/api/src/modules/**/*.repository.ts",
+    "apps/api/src/cache/**"
+   ],
+   "capabilities": [
+    "reliability.performance"
+   ],
+   "skills": [
+    "implement-cache",
+    "run-performance-tests",
+    "create-performance-tests",
+    "query-audit"
    ],
    "approval": "none"
   },
@@ -4088,6 +4366,31 @@
     "queue-map",
     "worker-map",
     "queue-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "queue-reliability-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/queue-reliability-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.queue"
+   ],
+   "skills": [
+    "queue-audit",
+    "retry-audit",
+    "event-processing-audit",
+    "background-job-audit"
    ],
    "approval": "none"
   },
@@ -4584,6 +4887,30 @@
    "approval": "none"
   },
   {
+   "name": "retry-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/retry-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.retry"
+   ],
+   "skills": [
+    "retry-audit",
+    "queue-audit",
+    "integration-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "risk-controller",
    "kind": "controller",
    "domain": "control",
@@ -4761,6 +5088,31 @@
    "approval": "none"
   },
   {
+   "name": "runtime-performance-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/runtime-performance-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.runtime-performance"
+   ],
+   "skills": [
+    "query-audit",
+    "service-layer-audit",
+    "run-performance-tests",
+    "runtime-path-trace"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "runtime-validator",
    "kind": "engineer",
    "domain": "testing",
@@ -4782,6 +5134,30 @@
     "runtime-path-trace",
     "browser-runtime-check",
     "production-build-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "saturation-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/saturation-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.saturation"
+   ],
+   "skills": [
+    "queue-audit",
+    "worker-audit",
+    "run-performance-tests"
    ],
    "approval": "none"
   },
@@ -5442,6 +5818,30 @@
    "approval": "none"
   },
   {
+   "name": "telemetry-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/telemetry-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.telemetry"
+   ],
+   "skills": [
+    "pii-audit",
+    "naming-analysis",
+    "implement-observability"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "tenant-boundary-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -5596,6 +5996,30 @@
    "approval": "none"
   },
   {
+   "name": "timeout-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/timeout-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.timeout"
+   ],
+   "skills": [
+    "integration-audit",
+    "database-audit",
+    "circuit-breaker-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "tool-router",
    "kind": "router",
    "domain": "routing",
@@ -5616,6 +6040,30 @@
     "external-action-check",
     "destructive-change-check",
     "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "tracing-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/tracing-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.tracing"
+   ],
+   "skills": [
+    "runtime-path-trace",
+    "implement-observability",
+    "queue-audit"
    ],
    "approval": "none"
   },
@@ -6148,6 +6596,31 @@
     "worker-map",
     "scheduler-audit",
     "queue-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "worker-reliability-reviewer",
+   "kind": "reviewer",
+   "domain": "reliability",
+   "batch": 11,
+   "owner": "reliability owner",
+   "path": ".claude/agents/worker-reliability-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "reliability.review.worker"
+   ],
+   "skills": [
+    "worker-audit",
+    "scheduler-audit",
+    "background-job-audit",
+    "queue-audit"
    ],
    "approval": "none"
   },
@@ -9095,6 +9568,394 @@
     "create-regression-tests",
     "regression-gates",
     "test-generator"
+   ]
+  },
+  {
+   "id": "reliability.observability",
+   "domain": "reliability",
+   "description": "Implement logging, metrics, tracing and correlation with consistent names and no secret or personal data in telemetry",
+   "validation": [
+    "telemetry tests",
+    "log content scan"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "observability-engineer"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "implement-observability",
+    "run-unit-tests",
+    "runtime-path-trace"
+   ]
+  },
+  {
+   "id": "reliability.performance",
+   "domain": "reliability",
+   "description": "Improve runtime performance of backend paths with measurements before and after",
+   "validation": [
+    "measured before and after"
+   ],
+   "evidence": [
+    "change-set record",
+    "measurement"
+   ],
+   "approval": "none",
+   "executors": [
+    "performance-engineer"
+   ],
+   "skills": [
+    "create-performance-tests",
+    "implement-cache",
+    "query-audit",
+    "run-performance-tests"
+   ]
+  },
+  {
+   "id": "reliability.review.alerting",
+   "domain": "reliability",
+   "description": "Review alerting: symptoms over causes, thresholds, noise, ownership and runbook links",
+   "validation": [
+    "alerting audit"
+   ],
+   "evidence": [
+    "alerting verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "alerting-reviewer"
+   ],
+   "skills": [
+    "implement-observability",
+    "runtime-smoke-test"
+   ]
+  },
+  {
+   "id": "reliability.review.availability",
+   "domain": "reliability",
+   "description": "Review availability: single points of failure, health checks, startup and shutdown behavior and deployment safety",
+   "validation": [
+    "availability audit"
+   ],
+   "evidence": [
+    "availability verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "availability-reviewer"
+   ],
+   "skills": [
+    "migration-safety-check",
+    "production-build-check",
+    "runtime-smoke-test"
+   ]
+  },
+  {
+   "id": "reliability.review.capacity",
+   "domain": "reliability",
+   "description": "Review capacity: expected growth against known limits with evidence from load tests and metrics",
+   "validation": [
+    "capacity audit"
+   ],
+   "evidence": [
+    "capacity verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "capacity-reviewer"
+   ],
+   "skills": [
+    "create-load-tests",
+    "queue-audit",
+    "run-performance-tests"
+   ]
+  },
+  {
+   "id": "reliability.review.circuit-breaker",
+   "domain": "reliability",
+   "description": "Review circuit breakers: thresholds, half-open behavior, scope per dependency and visibility of open state",
+   "validation": [
+    "circuit breaker audit"
+   ],
+   "evidence": [
+    "circuit breaker verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "circuit-breaker-reviewer"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "implement-circuit-breaker",
+    "integration-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.database",
+   "domain": "reliability",
+   "description": "Review database reliability: connection pool, timeouts, transactions, failover behavior and long queries",
+   "validation": [
+    "database reliability audit"
+   ],
+   "evidence": [
+    "database reliability verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "database-reliability-reviewer"
+   ],
+   "skills": [
+    "database-audit",
+    "query-audit",
+    "transaction-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.degradation",
+   "domain": "reliability",
+   "description": "Review graceful degradation: what the user sees and what still works when a dependency is down",
+   "validation": [
+    "degradation audit"
+   ],
+   "evidence": [
+    "degradation verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "degradation-reviewer"
+   ],
+   "skills": [
+    "frontend-audit",
+    "handle-provider-failure",
+    "integration-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.integration",
+   "domain": "reliability",
+   "description": "Review integration reliability: timeouts, breakers, retries, fallbacks and outage behavior",
+   "validation": [
+    "integration reliability audit"
+   ],
+   "evidence": [
+    "integration reliability verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-reliability-reviewer"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "handle-provider-failure",
+    "integration-audit",
+    "retry-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.logging",
+   "domain": "reliability",
+   "description": "Review logging: levels, structure, correlation, volume and the absence of secrets and personal data",
+   "validation": [
+    "log audit"
+   ],
+   "evidence": [
+    "logging verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "logging-reviewer"
+   ],
+   "skills": [
+    "implement-observability",
+    "pii-audit",
+    "secret-scan"
+   ]
+  },
+  {
+   "id": "reliability.review.metrics",
+   "domain": "reliability",
+   "description": "Review metrics: names, labels, cardinality, units and whether they answer the operational questions",
+   "validation": [
+    "metrics audit"
+   ],
+   "evidence": [
+    "metrics verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "metrics-reviewer"
+   ],
+   "skills": [
+    "implement-observability",
+    "naming-analysis",
+    "runtime-path-trace"
+   ]
+  },
+  {
+   "id": "reliability.review.queue",
+   "domain": "reliability",
+   "description": "Review queue reliability: job options, retries, dead-letter behavior, ordering, duplicates and backpressure",
+   "validation": [
+    "queue audit"
+   ],
+   "evidence": [
+    "queue reliability verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "queue-reliability-reviewer"
+   ],
+   "skills": [
+    "background-job-audit",
+    "event-processing-audit",
+    "queue-audit",
+    "retry-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.retry",
+   "domain": "reliability",
+   "description": "Review retries across layers for amplification, idempotency and bounded attempts",
+   "validation": [
+    "retry audit"
+   ],
+   "evidence": [
+    "retry verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "retry-reviewer"
+   ],
+   "skills": [
+    "integration-audit",
+    "queue-audit",
+    "retry-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.runtime-performance",
+   "domain": "reliability",
+   "description": "Review runtime performance of changed code: algorithmic cost, unbounded work, sequential calls and payload size",
+   "validation": [
+    "performance audit with evidence of cost"
+   ],
+   "evidence": [
+    "runtime performance verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "runtime-performance-reviewer"
+   ],
+   "skills": [
+    "query-audit",
+    "run-performance-tests",
+    "runtime-path-trace",
+    "service-layer-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.saturation",
+   "domain": "reliability",
+   "description": "Review saturation risks: pools, queues, memory, CPU and rate limits that fill under load",
+   "validation": [
+    "saturation audit"
+   ],
+   "evidence": [
+    "saturation verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "saturation-reviewer"
+   ],
+   "skills": [
+    "queue-audit",
+    "run-performance-tests",
+    "worker-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.telemetry",
+   "domain": "reliability",
+   "description": "Review telemetry and analytics events: naming, properties, consent, privacy and cardinality",
+   "validation": [
+    "telemetry audit"
+   ],
+   "evidence": [
+    "telemetry verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "telemetry-reviewer"
+   ],
+   "skills": [
+    "implement-observability",
+    "naming-analysis",
+    "pii-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.timeout",
+   "domain": "reliability",
+   "description": "Review timeouts: every outbound call, query and job has a bounded duration consistent with its callers",
+   "validation": [
+    "timeout audit"
+   ],
+   "evidence": [
+    "timeout verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "timeout-reviewer"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "database-audit",
+    "integration-audit"
+   ]
+  },
+  {
+   "id": "reliability.review.tracing",
+   "domain": "reliability",
+   "description": "Review distributed tracing: context propagation across requests, queues and workers, sampling and span quality",
+   "validation": [
+    "tracing audit"
+   ],
+   "evidence": [
+    "tracing verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "tracing-reviewer"
+   ],
+   "skills": [
+    "implement-observability",
+    "queue-audit",
+    "runtime-path-trace"
+   ]
+  },
+  {
+   "id": "reliability.review.worker",
+   "domain": "reliability",
+   "description": "Review worker reliability: concurrency, shutdown, stuck jobs, error throttling and tenant context",
+   "validation": [
+    "worker audit"
+   ],
+   "evidence": [
+    "worker reliability verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "worker-reliability-reviewer"
+   ],
+   "skills": [
+    "background-job-audit",
+    "queue-audit",
+    "scheduler-audit",
+    "worker-audit"
    ]
   },
   {

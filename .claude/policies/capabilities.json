@@ -383,6 +383,15 @@
       ]
     },
     {
+      "agent": "alerting-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "ambiguity-detector",
       "allowedTools": [
         "Read",
@@ -577,6 +586,15 @@
       ]
     },
     {
+      "agent": "availability-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "backend-architecture-engineer",
       "allowedTools": [
         "Read",
@@ -668,7 +686,25 @@
       ]
     },
     {
+      "agent": "capacity-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "chaos-test-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "circuit-breaker-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -939,6 +975,15 @@
       ]
     },
     {
+      "agent": "database-reliability-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "database-schema-analyzer",
       "allowedTools": [
         "Read",
@@ -958,6 +1003,15 @@
     },
     {
       "agent": "dead-code-detector",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "degradation-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1433,6 +1487,15 @@
       ]
     },
     {
+      "agent": "integration-reliability-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "integration-resilience-reviewer",
       "allowedTools": [
         "Read",
@@ -1504,7 +1567,25 @@
       ]
     },
     {
+      "agent": "logging-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "mapping-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "metrics-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1636,6 +1717,17 @@
       ]
     },
     {
+      "agent": "observability-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "optimistic-locking-reviewer",
       "allowedTools": [
         "Read",
@@ -1688,6 +1780,17 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "performance-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     },
     {
@@ -1810,6 +1913,15 @@
     },
     {
       "agent": "queue-flow-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "queue-reliability-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1999,6 +2111,15 @@
       ]
     },
     {
+      "agent": "retry-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "risk-controller",
       "allowedTools": [
         "Read",
@@ -2064,7 +2185,25 @@
       ]
     },
     {
+      "agent": "runtime-performance-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "runtime-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "saturation-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2315,6 +2454,15 @@
       ]
     },
     {
+      "agent": "telemetry-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "tenant-boundary-mapper",
       "allowedTools": [
         "Read",
@@ -2371,7 +2519,25 @@
       ]
     },
     {
+      "agent": "timeout-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "tool-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "tracing-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2569,6 +2735,15 @@
     },
     {
       "agent": "worker-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "worker-reliability-reviewer",
       "allowedTools": [
         "Read",
         "Grep",

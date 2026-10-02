@@ -1921,135 +1921,154 @@
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "reliability-observability-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "reliability-observability-reviewer",
+   "file": ".claude/agents/observability-engineer.md"
   },
   {
    "name": "performance-engineer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "performance-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "performance-reviewer",
+   "file": ".claude/agents/performance-engineer.md"
   },
   {
    "name": "runtime-performance-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/runtime-performance-reviewer.md"
   },
   {
    "name": "queue-reliability-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/queue-reliability-reviewer.md"
   },
   {
    "name": "worker-reliability-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/worker-reliability-reviewer.md"
   },
   {
    "name": "database-reliability-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/database-reliability-reviewer.md"
   },
   {
    "name": "integration-reliability-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/integration-reliability-reviewer.md"
   },
   {
    "name": "logging-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/logging-reviewer.md"
   },
   {
    "name": "telemetry-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/telemetry-reviewer.md"
   },
   {
    "name": "tracing-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/tracing-reviewer.md"
   },
   {
    "name": "metrics-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/metrics-reviewer.md"
   },
   {
    "name": "alerting-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/alerting-reviewer.md"
   },
   {
    "name": "timeout-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/timeout-reviewer.md"
   },
   {
    "name": "retry-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/retry-reviewer.md"
   },
   {
    "name": "circuit-breaker-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/circuit-breaker-reviewer.md"
   },
   {
    "name": "degradation-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/degradation-reviewer.md"
   },
   {
    "name": "saturation-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/saturation-reviewer.md"
   },
   {
    "name": "availability-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/availability-reviewer.md"
   },
   {
    "name": "capacity-reviewer",
    "type": "agent",
    "batch": 11,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/capacity-reviewer.md"
   },
   {
    "name": "repository-guardian",

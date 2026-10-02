@@ -1667,6 +1667,237 @@
    "approval": "none"
   },
   {
+   "id": "reliability.observability",
+   "domain": "reliability",
+   "description": "Implement logging, metrics, tracing and correlation with consistent names and no secret or personal data in telemetry",
+   "validation": [
+    "telemetry tests",
+    "log content scan"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.performance",
+   "domain": "reliability",
+   "description": "Improve runtime performance of backend paths with measurements before and after",
+   "validation": [
+    "measured before and after"
+   ],
+   "evidence": [
+    "change-set record",
+    "measurement"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.alerting",
+   "domain": "reliability",
+   "description": "Review alerting: symptoms over causes, thresholds, noise, ownership and runbook links",
+   "validation": [
+    "alerting audit"
+   ],
+   "evidence": [
+    "alerting verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.availability",
+   "domain": "reliability",
+   "description": "Review availability: single points of failure, health checks, startup and shutdown behavior and deployment safety",
+   "validation": [
+    "availability audit"
+   ],
+   "evidence": [
+    "availability verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.capacity",
+   "domain": "reliability",
+   "description": "Review capacity: expected growth against known limits with evidence from load tests and metrics",
+   "validation": [
+    "capacity audit"
+   ],
+   "evidence": [
+    "capacity verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.circuit-breaker",
+   "domain": "reliability",
+   "description": "Review circuit breakers: thresholds, half-open behavior, scope per dependency and visibility of open state",
+   "validation": [
+    "circuit breaker audit"
+   ],
+   "evidence": [
+    "circuit breaker verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.database",
+   "domain": "reliability",
+   "description": "Review database reliability: connection pool, timeouts, transactions, failover behavior and long queries",
+   "validation": [
+    "database reliability audit"
+   ],
+   "evidence": [
+    "database reliability verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.degradation",
+   "domain": "reliability",
+   "description": "Review graceful degradation: what the user sees and what still works when a dependency is down",
+   "validation": [
+    "degradation audit"
+   ],
+   "evidence": [
+    "degradation verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.integration",
+   "domain": "reliability",
+   "description": "Review integration reliability: timeouts, breakers, retries, fallbacks and outage behavior",
+   "validation": [
+    "integration reliability audit"
+   ],
+   "evidence": [
+    "integration reliability verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.logging",
+   "domain": "reliability",
+   "description": "Review logging: levels, structure, correlation, volume and the absence of secrets and personal data",
+   "validation": [
+    "log audit"
+   ],
+   "evidence": [
+    "logging verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.metrics",
+   "domain": "reliability",
+   "description": "Review metrics: names, labels, cardinality, units and whether they answer the operational questions",
+   "validation": [
+    "metrics audit"
+   ],
+   "evidence": [
+    "metrics verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.queue",
+   "domain": "reliability",
+   "description": "Review queue reliability: job options, retries, dead-letter behavior, ordering, duplicates and backpressure",
+   "validation": [
+    "queue audit"
+   ],
+   "evidence": [
+    "queue reliability verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.retry",
+   "domain": "reliability",
+   "description": "Review retries across layers for amplification, idempotency and bounded attempts",
+   "validation": [
+    "retry audit"
+   ],
+   "evidence": [
+    "retry verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.runtime-performance",
+   "domain": "reliability",
+   "description": "Review runtime performance of changed code: algorithmic cost, unbounded work, sequential calls and payload size",
+   "validation": [
+    "performance audit with evidence of cost"
+   ],
+   "evidence": [
+    "runtime performance verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.saturation",
+   "domain": "reliability",
+   "description": "Review saturation risks: pools, queues, memory, CPU and rate limits that fill under load",
+   "validation": [
+    "saturation audit"
+   ],
+   "evidence": [
+    "saturation verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.telemetry",
+   "domain": "reliability",
+   "description": "Review telemetry and analytics events: naming, properties, consent, privacy and cardinality",
+   "validation": [
+    "telemetry audit"
+   ],
+   "evidence": [
+    "telemetry verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.timeout",
+   "domain": "reliability",
+   "description": "Review timeouts: every outbound call, query and job has a bounded duration consistent with its callers",
+   "validation": [
+    "timeout audit"
+   ],
+   "evidence": [
+    "timeout verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.tracing",
+   "domain": "reliability",
+   "description": "Review distributed tracing: context propagation across requests, queues and workers, sampling and span quality",
+   "validation": [
+    "tracing audit"
+   ],
+   "evidence": [
+    "tracing verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "reliability.review.worker",
+   "domain": "reliability",
+   "description": "Review worker reliability: concurrency, shutdown, stuck jobs, error throttling and tenant context",
+   "validation": [
+    "worker audit"
+   ],
+   "evidence": [
+    "worker reliability verdict"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "repo.analyze.api-contracts",
    "domain": "repository-intelligence",
    "description": "Analyze an API contract for producer and consumer agreement",
