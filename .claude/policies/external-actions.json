@@ -1,0 +1,35 @@
+{
+  "description": "External action policy: what reaches outside the repository or the product, and what that requires. Consumers: external-action-check, tool-router, approval-router and the notification and email agents.",
+  "classes": [
+    {
+      "action": "internal notification",
+      "requires": "normal permissions"
+    },
+    {
+      "action": "message leaving the organization",
+      "requires": "external-send approval under the sending policy"
+    },
+    {
+      "action": "submission to a distributor",
+      "requires": "external-send-irreversible approval bound to the package hash and a configured provider"
+    },
+    {
+      "action": "public publication",
+      "requires": "external-publish-irreversible approval"
+    },
+    {
+      "action": "signature request",
+      "requires": "signature approval bound to the document hash"
+    },
+    {
+      "action": "payment",
+      "requires": "payment approval and a configured payout provider"
+    }
+  ],
+  "rules": [
+    "a sent message cannot be recalled; compensation is a recorded correction message",
+    "an unconfigured provider is reported unavailable and never simulated",
+    "recipients come from validated records and roles, never from free text",
+    "every external action is recorded with its approval reference"
+  ]
+}

@@ -23,6 +23,9 @@ export const RECORD_KINDS = {
   failure: { schema: "failure-record.schema.json", dir: ".claude/ops/records/failure" },
   "gate-result": { schema: "gate-result.schema.json", dir: ".claude/ops/records/gate-result" },
   "perf-baseline": { schema: "perf-baseline-record.schema.json", dir: ".claude/ops/records/perf-baseline" },
+  "automation-run": { schema: "operational-automation-run.schema.json", dir: ".claude/ops/records/automation-run" },
+  "automation-approval": { schema: "automation-approval.schema.json", dir: ".claude/ops/records/automation-approval" },
+  "operational-recovery": { schema: "operational-recovery-record.schema.json", dir: ".claude/ops/records/operational-recovery" },
   vote: { schema: "vote-record.schema.json", dir: ".claude/ops/records/vote" },
 };
 

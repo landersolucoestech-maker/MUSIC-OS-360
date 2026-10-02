@@ -1,12 +1,176 @@
 {
-  "description": "Which action classes require a human-granted approval-request before they may execute. Consumer: policy-engine.mjs requiresApproval(actionClass); ops.mjs approval commands read this to validate an action class name.",
+  "description": "Which action classes require a human-granted approval-request before they may execute. Consumer: policy-engine.mjs requiresApproval(actionClass); ops.mjs approval commands read this to validate an action class name. The classes from rights-change to bulk-data-change are the human-in-the-loop classes of the MUSIC OS 360 operational pack: an approval of one of them must be bound to the exact payload (hash) it covers, decided by someone other than the requester, and is checked by the automation-runs-gated check of gate-engine.mjs.",
   "actionClasses": [
-    { "name": "destructive-git", "requiresApproval": true, "examples": ["push --force", "reset --hard", "clean -f", "branch -D"] },
-    { "name": "production-write", "requiresApproval": true, "examples": ["deploy to production", "run a migration against a live database"] },
-    { "name": "external-send", "requiresApproval": true, "examples": ["send an email", "post to an external API with side effects", "create a PR/issue comment"] },
-    { "name": "destructive-data", "requiresApproval": true, "examples": ["DROP TABLE", "TRUNCATE", "bulk DELETE"] },
-    { "name": "dependency-upgrade-mass", "requiresApproval": true, "examples": ["updating more than 5 dependencies in one change"] },
-    { "name": "repository-write", "requiresApproval": false, "examples": ["edit/create files", "run local tests"] },
-    { "name": "read-only", "requiresApproval": false, "examples": ["git status", "git diff", "reading files"] }
+    {
+      "name": "destructive-git",
+      "requiresApproval": true,
+      "examples": [
+        "push --force",
+        "reset --hard",
+        "clean -f",
+        "branch -D"
+      ]
+    },
+    {
+      "name": "production-write",
+      "requiresApproval": true,
+      "examples": [
+        "deploy to production",
+        "run a migration against a live database"
+      ]
+    },
+    {
+      "name": "external-send",
+      "requiresApproval": true,
+      "examples": [
+        "send an email",
+        "post to an external API with side effects",
+        "create a PR/issue comment"
+      ]
+    },
+    {
+      "name": "destructive-data",
+      "requiresApproval": true,
+      "examples": [
+        "DROP TABLE",
+        "TRUNCATE",
+        "bulk DELETE"
+      ]
+    },
+    {
+      "name": "dependency-upgrade-mass",
+      "requiresApproval": true,
+      "examples": [
+        "updating more than 5 dependencies in one change"
+      ]
+    },
+    {
+      "name": "repository-write",
+      "requiresApproval": false,
+      "examples": [
+        "edit/create files",
+        "run local tests"
+      ]
+    },
+    {
+      "name": "read-only",
+      "requiresApproval": false,
+      "examples": [
+        "git status",
+        "git diff",
+        "reading files"
+      ]
+    },
+    {
+      "name": "rights-change",
+      "requiresApproval": true,
+      "description": "Changing who holds a right, its territory or period on a Work or Phonogram",
+      "examples": [
+        "assign a right to another holder",
+        "change a territory or period of a right",
+        "change a credit that states authorship or performance"
+      ]
+    },
+    {
+      "name": "share-change",
+      "requiresApproval": true,
+      "description": "Changing a share of a Work or Phonogram",
+      "examples": [
+        "add, remove or edit a share row",
+        "change the participant a share belongs to"
+      ]
+    },
+    {
+      "name": "percentage-change",
+      "requiresApproval": true,
+      "description": "Changing a percentage that decides who is paid how much",
+      "examples": [
+        "edit a split percentage",
+        "rebalance shares to total one hundred percent"
+      ]
+    },
+    {
+      "name": "entity-merge",
+      "requiresApproval": true,
+      "description": "Merging two entities into one definitively",
+      "examples": [
+        "merge duplicate participants",
+        "merge duplicate artists"
+      ]
+    },
+    {
+      "name": "deletion",
+      "requiresApproval": true,
+      "description": "Deleting a business record or document",
+      "examples": [
+        "delete a Work, Phonogram, Release, contract or participant",
+        "purge archived documents"
+      ]
+    },
+    {
+      "name": "signature",
+      "requiresApproval": true,
+      "description": "Sending a document for signature or applying a signature",
+      "examples": [
+        "send a contract to its signers through a signature provider"
+      ]
+    },
+    {
+      "name": "legal-action",
+      "requiresApproval": true,
+      "description": "Any action with legal meaning outside signing",
+      "examples": [
+        "send a notice with legal effect",
+        "register a claim or a takedown on behalf of the company"
+      ]
+    },
+    {
+      "name": "payment",
+      "requiresApproval": true,
+      "description": "Executing or authorizing a payment or payout",
+      "examples": [
+        "pay a supplier",
+        "pay a rights holder",
+        "approve a payout batch"
+      ]
+    },
+    {
+      "name": "external-send-irreversible",
+      "requiresApproval": true,
+      "description": "Sending data to an external party in a way that cannot be recalled",
+      "examples": [
+        "submit a package to a distributor",
+        "deliver files to a partner"
+      ]
+    },
+    {
+      "name": "external-publish-irreversible",
+      "requiresApproval": true,
+      "description": "Publishing content publicly in a way that cannot be undone",
+      "examples": [
+        "publish a release publicly",
+        "publish credits or lyrics"
+      ]
+    },
+    {
+      "name": "auto-fix-legal-financial",
+      "requiresApproval": true,
+      "description": "Automatically correcting data whose change alters legal or financial meaning",
+      "examples": [
+        "repair a share total",
+        "repair a rights chain",
+        "correct a financial reconciliation difference"
+      ]
+    },
+    {
+      "name": "bulk-data-change",
+      "requiresApproval": true,
+      "description": "Applying a change to many business records at once",
+      "examples": [
+        "execute an approved import",
+        "repair a set of orphan records",
+        "roll back an import"
+      ]
+    }
   ]
 }

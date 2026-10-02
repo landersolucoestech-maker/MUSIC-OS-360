@@ -1,0 +1,33 @@
+{
+  "description": "GATE DEFINITION for operational automation (.claude/policies/operational-automation.json): runs are evidenced and approval gated, approvals are resolved, no conflict is open, no destructive effect is unreconciled and no recorded gate result failed. Run with: node .claude/runtime/gate-engine.mjs operational-automation.",
+  "checks": [
+    {
+      "id": "state-exists",
+      "type": "state-exists"
+    },
+    {
+      "id": "fingerprint-available",
+      "type": "fingerprint-available"
+    },
+    {
+      "id": "automation-runs-gated",
+      "type": "automation-runs-gated"
+    },
+    {
+      "id": "automation-approvals-resolved",
+      "type": "automation-approvals-resolved"
+    },
+    {
+      "id": "no-open-conflicts",
+      "type": "no-open-conflicts"
+    },
+    {
+      "id": "no-unreconciled-destructive-effects",
+      "type": "no-unreconciled-destructive-effects"
+    },
+    {
+      "id": "no-failed-gate-results",
+      "type": "no-failed-gate-results"
+    }
+  ]
+}

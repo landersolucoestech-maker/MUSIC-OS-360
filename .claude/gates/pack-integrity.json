@@ -1,0 +1,17 @@
+{
+  "description": "GATE DEFINITION for the integrity of the MUSIC OS 360 pack: every agent, skill, capability, workflow, registry entry, ownership entry and approval class satisfies its contract (validate-pack-contracts.mjs through batch 24). Run with: node .claude/runtime/gate-engine.mjs pack-integrity. Executed by the same gate-engine as completion.json.",
+  "checks": [
+    {
+      "id": "state-exists",
+      "type": "state-exists"
+    },
+    {
+      "id": "fingerprint-available",
+      "type": "fingerprint-available"
+    },
+    {
+      "id": "pack-contracts-valid",
+      "type": "pack-contracts-valid"
+    }
+  ]
+}

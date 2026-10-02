@@ -1,0 +1,27 @@
+{
+  "description": "Financial boundary policy: company finance is separate from external royalties and from society, association and distributor transfers. Consumers: finance-operations-agent, payment-operations-agent, financial-reconciliation-agent, payments-reviewer and report-automation-agent.",
+  "domains": {
+    "companyFinance": [
+      "company transactions",
+      "payables and receivables",
+      "company reports"
+    ],
+    "externalInformational": [
+      "society and association transfers",
+      "distributor statements",
+      "external royalties reported by providers"
+    ]
+  },
+  "rules": [
+    "external amounts are information and are never booked automatically as company income or expense",
+    "totals never combine the two domains",
+    "amounts use exact decimal arithmetic and explicit currency",
+    "payments are prepared with a verified basis and executed only after a recorded payment approval",
+    "corrections of financial data are proposals until a human approves them",
+    "reconciliations of the two domains are separate"
+  ],
+  "approvalClasses": [
+    "payment",
+    "auto-fix-legal-financial"
+  ]
+}

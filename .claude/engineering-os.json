@@ -6,18 +6,78 @@
   "structure": {
     "description": "Canonical expected-structure manifest consumed by .claude/runtime/validate-pack.mjs. Every entry the validator checks against the live filesystem. required=true means the structural validator BLOCKS when the path is missing from an installed pack; required=false means recommended/generated-on-demand (e.g. per-project files repo-intelligence creates).",
     "categories": {
-      "rules": { "dir": ".claude/rules", "glob": "*.md", "required": true, "minCount": 18 },
-      "agents": { "dir": ".claude/agents", "glob": "*.md", "required": true, "minCount": 34 },
-      "skills": { "dir": ".claude/skills", "glob": "*/SKILL.md", "required": true, "minCount": 45 },
-      "contracts": { "dir": ".claude/contracts", "glob": "*.schema.json", "required": true, "minCount": 43 },
-      "policies": { "dir": ".claude/policies", "glob": "*.json", "required": true, "minCount": 11 },
-      "runtime": { "dir": ".claude/runtime", "glob": "*.mjs", "required": true, "minCount": 21 },
-      "runtimeLib": { "dir": ".claude/runtime/lib", "glob": "*.mjs", "required": true, "minCount": 22 },
-      "evaluations": { "dir": ".claude/evaluations", "glob": "*.json", "required": true, "minCount": 1 },
-      "gates": { "dir": ".claude/gates", "glob": "*.json", "required": true, "minCount": 1 },
-      "launchers": { "dir": ".claude/launchers", "glob": "*", "required": true, "minCount": 2 },
-      "workflows": { "dir": ".claude/workflows", "glob": "*.json", "required": true, "minCount": 6 },
-      "claudeDocs": { "dir": ".claude/docs", "glob": "*.md", "required": true, "minCount": 1 }
+      "rules": {
+        "dir": ".claude/rules",
+        "glob": "*.md",
+        "required": true,
+        "minCount": 18
+      },
+      "agents": {
+        "dir": ".claude/agents",
+        "glob": "*.md",
+        "required": true,
+        "minCount": 408
+      },
+      "skills": {
+        "dir": ".claude/skills",
+        "glob": "*/SKILL.md",
+        "required": true,
+        "minCount": 373
+      },
+      "contracts": {
+        "dir": ".claude/contracts",
+        "glob": "*.schema.json",
+        "required": true,
+        "minCount": 55
+      },
+      "policies": {
+        "dir": ".claude/policies",
+        "glob": "*.json",
+        "required": true,
+        "minCount": 20
+      },
+      "runtime": {
+        "dir": ".claude/runtime",
+        "glob": "*.mjs",
+        "required": true,
+        "minCount": 21
+      },
+      "runtimeLib": {
+        "dir": ".claude/runtime/lib",
+        "glob": "*.mjs",
+        "required": true,
+        "minCount": 22
+      },
+      "evaluations": {
+        "dir": ".claude/evaluations",
+        "glob": "*.json",
+        "required": true,
+        "minCount": 1
+      },
+      "gates": {
+        "dir": ".claude/gates",
+        "glob": "*.json",
+        "required": true,
+        "minCount": 5
+      },
+      "launchers": {
+        "dir": ".claude/launchers",
+        "glob": "*",
+        "required": true,
+        "minCount": 2
+      },
+      "workflows": {
+        "dir": ".claude/workflows",
+        "glob": "*.json",
+        "required": true,
+        "minCount": 24
+      },
+      "claudeDocs": {
+        "dir": ".claude/docs",
+        "glob": "*.md",
+        "required": true,
+        "minCount": 1
+      }
     },
     "requiredFiles": [
       ".claude/ownership.json",
@@ -36,7 +96,23 @@
       ".claude/policies/impact-levels.json",
       ".claude/policies/gate-matrix.json",
       ".claude/gates/completion.json",
-      ".claude/evaluations/runtime-scenarios.json"
+      ".claude/evaluations/runtime-scenarios.json",
+      ".claude/policies/domain-boundaries.json",
+      ".claude/policies/human-approval.json",
+      ".claude/policies/operational-automation.json",
+      ".claude/policies/ai-runtime.json",
+      ".claude/policies/ai-tools.json",
+      ".claude/policies/financial-boundaries.json",
+      ".claude/policies/rights-shares-integrity.json",
+      ".claude/policies/external-actions.json",
+      ".claude/policies/privacy-data.json",
+      ".claude/gates/pack-integrity.json",
+      ".claude/gates/human-approval.json",
+      ".claude/gates/operational-automation.json",
+      ".claude/registry/pack-manifest.json",
+      ".claude/registry/pack-registry.json",
+      ".claude/registry/capabilities.json",
+      ".claude/registry/routing.json"
     ],
     "generatedPerInstall": [
       ".claude/project-manifest.json",

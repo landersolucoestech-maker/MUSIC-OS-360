@@ -1,0 +1,101 @@
+{
+  "description": "Domain boundary policy of MUSIC OS 360 consumed by domain-boundary-guardian, domain-boundary-reviewer and every operational agent: which entity owns which facts and what may never be shared or merged automatically.",
+  "entities": [
+    {
+      "name": "Project",
+      "owns": [
+        "planning data",
+        "team",
+        "budget",
+        "deadlines",
+        "workflow stage"
+      ],
+      "states": [
+        "planning",
+        "in-progress",
+        "completed",
+        "cancelled"
+      ],
+      "note": "Completing a Project never registers a Work or a Phonogram; items go to their own module as pending registration."
+    },
+    {
+      "name": "Work",
+      "owns": [
+        "composition metadata",
+        "authors and publishers",
+        "composition rights",
+        "composition shares",
+        "composition contracts",
+        "ISWC"
+      ],
+      "states": [
+        "draft",
+        "under-review",
+        "registered",
+        "rejected"
+      ],
+      "note": "A material lyrics or authorship change is handled by the project rule for a new Work and never silently overwrites the original."
+    },
+    {
+      "name": "Phonogram",
+      "owns": [
+        "recording metadata",
+        "performers and producers",
+        "master rights",
+        "master shares",
+        "recording contracts",
+        "ISRC"
+      ],
+      "states": [
+        "draft",
+        "under-review",
+        "registered",
+        "rejected"
+      ]
+    },
+    {
+      "name": "Release",
+      "owns": [
+        "commercial packaging",
+        "tracks by reference",
+        "artwork",
+        "territories and dates",
+        "UPC",
+        "distribution submissions"
+      ],
+      "states": [
+        "draft",
+        "ready",
+        "delivered",
+        "live"
+      ]
+    }
+  ],
+  "neverShared": [
+    "participants",
+    "rights",
+    "shares",
+    "percentages",
+    "contracts",
+    "status"
+  ],
+  "sharedOnlyByReference": [
+    "a Phonogram references its Work",
+    "a Release references its Phonograms",
+    "assets reference their owner entity"
+  ],
+  "financeSeparation": {
+    "companyFinance": "income, expenses, payables and receivables of the company itself",
+    "externalInformational": [
+      "society and association transfers",
+      "distributor statements",
+      "external royalties reported by providers"
+    ],
+    "rule": "External amounts are information and are never booked automatically as company income or expense; no agent or skill combines them in one total."
+  },
+  "enforcement": [
+    "domain-boundary-guardian blocks plans and diffs that merge entities",
+    "operational skills validate Work and Phonogram separately",
+    "reports keep company finance and external royalties in separate sections"
+  ]
+}

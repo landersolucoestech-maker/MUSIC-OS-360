@@ -1,0 +1,11 @@
+{
+  "description": "Privacy and data minimization policy for logs, prompts, fixtures, evidence and exports. Consumers: pii-reviewer, compliance-privacy-reviewer, logging-reviewer, retention-policy-reviewer and the pii-audit skill. It states no legal regime; a regime exists only where the project documents one.",
+  "rules": [
+    "collect and include only the fields a task needs",
+    "personal and financial values never enter prompts, logs, telemetry or evidence unless required and redacted",
+    "fixtures and evaluation sets use synthetic or consented data",
+    "exports contain only fields the requester may see",
+    "retention periods come from project documents; absence of a basis is reported as such and not invented",
+    "legal interpretation is for a human"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "description": "Human-in-the-loop policy: which actions need a recorded human approval, how it is bound and who may decide. Consumers: human-approval-agent, approval-router, the evaluate-human-approval, request-human-approval, resume-after-approval and reject-unsafe-automation skills, and the human-approval gate (automation-runs-gated).",
+  "requiresApprovalClasses": [
+    "rights-change",
+    "share-change",
+    "percentage-change",
+    "entity-merge",
+    "deletion",
+    "destructive-data",
+    "signature",
+    "legal-action",
+    "payment",
+    "external-send",
+    "external-send-irreversible",
+    "external-publish-irreversible",
+    "auto-fix-legal-financial",
+    "bulk-data-change",
+    "production-write",
+    "destructive-git"
+  ],
+  "binding": {
+    "payloadHash": "an approval is valid only for the exact payload hash it was requested for",
+    "expiry": "an approval expires; an expired approval is treated as denied",
+    "reuse": "an approval is single use"
+  },
+  "decider": {
+    "mustDifferFromRequester": true,
+    "mustBeHuman": true,
+    "agentsMayNeverGrant": true
+  },
+  "onMissing": "stop the automation at its checkpoint, record the stop and route the case to the exception owner",
+  "onDenied": "stop, record the decision and do not retry the same payload",
+  "evidence": [
+    "approval record",
+    "payload hash",
+    "decider",
+    "decision time",
+    "run reference"
+  ],
+  "implementedBy": {
+    "agents": [
+      "human-approval-agent",
+      "approval-router"
+    ],
+    "skills": [
+      "evaluate-human-approval",
+      "request-human-approval",
+      "resume-after-approval",
+      "reject-unsafe-automation",
+      "human-approval-validation"
+    ],
+    "gate": ".claude/gates/human-approval.json"
+  }
+}

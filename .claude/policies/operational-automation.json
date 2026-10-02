@@ -1,0 +1,36 @@
+{
+  "description": "Operational automation policy for the MUSIC OS 360 operational agents and skills: how runs execute, what they must record and what they must report as unavailable. Consumers: operational agents, audit-automation-run, record-automation-evidence and the operational-automation gate.",
+  "rules": [
+    "every run resolves its tenant explicitly and executes inside the tenant context",
+    "writes go through the guarded product services and never directly to the database",
+    "every step is idempotent or carries an idempotency key",
+    "a checkpoint is recorded before each high-impact step",
+    "every completed run has evidence references",
+    "unknown or missing data is reported as unknown and never filled with an invented value",
+    "a capability whose provider is not configured returns CAPABILITY_UNAVAILABLE with its expected contract and a safe fallback",
+    "retries are bounded and never applied to non-idempotent steps",
+    "operational agents propose and prepare; execution of a high-impact step happens only after a recorded approval bound to its payload"
+  ],
+  "unavailableCapabilities": [
+    {
+      "capability": "transcribe-audio",
+      "reason": "no transcription provider is configured"
+    },
+    {
+      "capability": "submit-distribution",
+      "reason": "no distributor provider is configured"
+    },
+    {
+      "capability": "sync-distribution-status",
+      "reason": "no distributor provider is configured"
+    },
+    {
+      "capability": "payment execution",
+      "reason": "no payout provider is configured"
+    }
+  ],
+  "runContract": "operational-automation-run.schema.json",
+  "approvalContract": "automation-approval.schema.json",
+  "recoveryContract": "operational-recovery-record.schema.json",
+  "gate": ".claude/gates/operational-automation.json"
+}

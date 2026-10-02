@@ -16,6 +16,7 @@ import { computeCoverage } from "./lib/coverage-ledger.mjs";
 import { outstandingCapabilities } from "./lib/capability-ledger.mjs";
 import { diffContractFiles, findVersionedSchemaPairs } from "./lib/contract-drift.mjs";
 import { detectAll } from "./lib/tool-capability.mjs";
+import { validatePack } from "./validate-pack-contracts.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -234,6 +235,43 @@ const CHECKS = {
         `STRICT_MULTI_AGENT: ${outstanding.length} discovered capability(ies) have no terminal disposition (COMPLETED/DONE or a justified NOT_APPLICABLE_WITH_EVIDENCE): ${shown.join(", ")}${more} -- run \`ops.mjs mobilization status\` for the full ledger`,
       ],
     };
+  },
+
+  // Operational automation: a COMPLETED/RECOVERED run needs evidence, and every step that used a high-impact
+  // skill (pack-registry approval class other than none) needs a GRANTED automation-approval of that class,
+  // listed in the run's approvalRefs, decided by someone other than the requester. Passes trivially when no
+  // automation-run record exists.
+  "automation-runs-gated": (ctx) => {
+    const runs = listRecords(ctx.cwd, "automation-run").filter((r) => ["COMPLETED", "RECOVERED"].includes(r.status));
+    if (runs.length === 0) return {};
+    const registry = loadJsonWithFallback(ctx.cwd, ".claude/registry", "pack-registry.json");
+    const skillApproval = new Map(((registry && registry.skills) || []).map((x) => [x.name, x.approval || "none"]));
+    const approvals = new Map(listRecords(ctx.cwd, "automation-approval").map((a) => [a.id, a]));
+    const reasons = [];
+    for (const run of runs) {
+      if (!(run.evidenceRefs || []).length) reasons.push(`automation run ${run.runId} is ${run.status} without evidenceRefs`);
+      const granted = (run.approvalRefs || []).map((id) => approvals.get(id)).filter(Boolean);
+      for (const step of run.steps || []) {
+        if (step.status !== "DONE") continue;
+        const cls = skillApproval.get(step.skill) || "none";
+        if (cls === "none") continue;
+        const ok = granted.some((a) => a.status === "GRANTED" && a.actionClass === cls && a.decidedBy && a.decidedBy !== a.requestedBy);
+        if (!ok) reasons.push(`automation run ${run.runId}: step ${step.id} used high-impact skill ${step.skill} (${cls}) without a GRANTED approval of that class decided by someone other than the requester`);
+      }
+    }
+    return reasons.length ? { reasons } : {};
+  },
+
+  // A PENDING automation approval is an open human decision: completion waits for it.
+  "automation-approvals-resolved": (ctx) => {
+    const pending = listRecords(ctx.cwd, "automation-approval").filter((a) => a.status === "PENDING");
+    return pending.length ? { reasons: [`${pending.length} automation approval(s) still PENDING: ${pending.map((a) => a.id).join(", ")}`] } : {};
+  },
+
+  // The pack itself (agents, skills, capabilities, workflows, registry, ownership, approval classes).
+  "pack-contracts-valid": (ctx) => {
+    const res = validatePack(ctx.cwd);
+    return res.problems.length ? { reasons: [`${res.problems.length} pack contract problem(s); first: ${res.problems.slice(0, 5).join(" | ")}`] } : {};
   },
 
   "no-failed-gate-results": (ctx) => {

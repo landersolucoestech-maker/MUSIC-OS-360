@@ -1,0 +1,75 @@
+{
+  "description": "Tool policy for AI agents: allowlists, argument constraints and approval classes. Consumers: ai-tool-policy-reviewer, ai-tooling-reviewer, the tool-policy-validation skill and tool-router.",
+  "defaults": {
+    "unknownTool": "deny",
+    "argumentValidation": "server side, tenant scoped",
+    "rateLimit": "per tenant and per agent"
+  },
+  "toolClasses": [
+    {
+      "class": "read",
+      "approval": "none",
+      "examples": [
+        "read a record",
+        "search the catalog"
+      ]
+    },
+    {
+      "class": "propose",
+      "approval": "none",
+      "examples": [
+        "prepare a change proposal",
+        "draft a document"
+      ]
+    },
+    {
+      "class": "write-low-impact",
+      "approval": "none",
+      "examples": [
+        "create a task",
+        "record evidence"
+      ],
+      "audit": true
+    },
+    {
+      "class": "write-high-impact",
+      "approval": "by action class",
+      "examples": [
+        "change rights, shares or percentages",
+        "merge entities",
+        "delete",
+        "apply a bulk change"
+      ]
+    },
+    {
+      "class": "external-send",
+      "approval": "external-send",
+      "examples": [
+        "send a notification or email"
+      ]
+    },
+    {
+      "class": "external-irreversible",
+      "approval": "external-send-irreversible or external-publish-irreversible",
+      "examples": [
+        "submit to a distributor",
+        "publish"
+      ]
+    },
+    {
+      "class": "signature",
+      "approval": "signature",
+      "examples": [
+        "send a contract for signature"
+      ]
+    },
+    {
+      "class": "payment",
+      "approval": "payment",
+      "examples": [
+        "execute a payment"
+      ]
+    }
+  ],
+  "agentCeiling": "an agent never holds a tool above its role ceiling in .claude/policies/capabilities.json"
+}

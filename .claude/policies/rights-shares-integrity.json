@@ -1,0 +1,22 @@
+{
+  "description": "Integrity rules for rights and shares: arithmetic, separation of composition and master rights and the approval required for any change. Consumers: rights-operations-agent, shares-operations-agent, rights-integrity-agent, credits-operations-agent and the validate-*-shares and rights skills.",
+  "arithmetic": {
+    "decimal": "exact",
+    "total": "each right type totals exactly one hundred percent",
+    "rightTypes": [
+      "composition",
+      "master"
+    ],
+    "negativeOrDuplicateRows": "invalid"
+  },
+  "origin": "every right traces to a contract, assignment or declaration; rights without an origin are reported",
+  "separation": "composition rights and shares live on the Work and master rights and shares on the Phonogram; neither is inferred from the other",
+  "changes": {
+    "rights": "rights-change",
+    "shares": "share-change",
+    "percentages": "percentage-change",
+    "repairs": "auto-fix-legal-financial",
+    "merges": "entity-merge"
+  },
+  "mergeSafety": "share totals and rights per Work and Phonogram are identical before and after a merge, with a pre-merge snapshot kept"
+}
