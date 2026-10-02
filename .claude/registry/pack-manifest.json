@@ -3024,1345 +3024,1533 @@
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/architecture-map/SKILL.md"
   },
   {
    "name": "authorization-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/authorization-audit/SKILL.md"
   },
   {
    "name": "authorization-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/authorization-map/SKILL.md"
   },
   {
    "name": "blast-radius-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/blast-radius-analysis/SKILL.md"
   },
   {
    "name": "branch-policy-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/branch-policy-check/SKILL.md"
   },
   {
    "name": "create-authorization-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-authorization-tests/SKILL.md"
   },
   {
    "name": "create-migration",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "schema-normalization"
+   "finalState": "CREATED",
+   "existingEquivalent": "schema-normalization",
+   "file": ".claude/skills/create-migration/SKILL.md"
   },
   {
    "name": "create-tenant-isolation-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-tenant-isolation-tests/SKILL.md"
   },
   {
    "name": "database-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "database-schema-drift"
+   "finalState": "CREATED",
+   "existingEquivalent": "database-schema-drift",
+   "file": ".claude/skills/database-map/SKILL.md"
   },
   {
    "name": "dependency-trace",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "contract-tracing"
+   "finalState": "CREATED",
+   "existingEquivalent": "contract-tracing",
+   "file": ".claude/skills/dependency-trace/SKILL.md"
   },
   {
    "name": "diff-review",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "code-review"
+   "finalState": "CREATED",
+   "existingEquivalent": "code-review",
+   "file": ".claude/skills/diff-review/SKILL.md"
   },
   {
    "name": "fix-bug",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "debug-assistant"
+   "finalState": "CREATED",
+   "existingEquivalent": "debug-assistant",
+   "file": ".claude/skills/fix-bug/SKILL.md"
   },
   {
    "name": "git-safety-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "git-checkpoint"
+   "finalState": "CREATED",
+   "existingEquivalent": "git-checkpoint",
+   "file": ".claude/skills/git-safety-check/SKILL.md"
   },
   {
    "name": "implement-auth",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-auth/SKILL.md"
   },
   {
    "name": "implement-authorization",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-authorization/SKILL.md"
   },
   {
    "name": "implement-feature",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "execute"
+   "finalState": "CREATED",
+   "existingEquivalent": "execute",
+   "file": ".claude/skills/implement-feature/SKILL.md"
   },
   {
    "name": "media-security-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/media-security-audit/SKILL.md"
   },
   {
    "name": "modify-schema",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "schema-normalization"
+   "finalState": "CREATED",
+   "existingEquivalent": "schema-normalization",
+   "file": ".claude/skills/modify-schema/SKILL.md"
   },
   {
    "name": "module-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/module-map/SKILL.md"
   },
   {
    "name": "navigation-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/navigation-audit/SKILL.md"
   },
   {
    "name": "quality-gate",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "gate"
+   "finalState": "CREATED",
+   "existingEquivalent": "gate",
+   "file": ".claude/skills/quality-gate/SKILL.md"
   },
   {
    "name": "repo-identity-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/repo-identity-check/SKILL.md"
   },
   {
    "name": "repo-inspect",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "bootstrap"
+   "finalState": "CREATED",
+   "existingEquivalent": "bootstrap",
+   "file": ".claude/skills/repo-inspect/SKILL.md"
   },
   {
    "name": "repository-census",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/repository-census/SKILL.md"
   },
   {
    "name": "root-cause-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "why"
+   "finalState": "CREATED",
+   "existingEquivalent": "why",
+   "file": ".claude/skills/root-cause-analysis/SKILL.md"
   },
   {
    "name": "run-build",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "regression-gates"
+   "finalState": "CREATED",
+   "existingEquivalent": "regression-gates",
+   "file": ".claude/skills/run-build/SKILL.md"
   },
   {
    "name": "run-lint",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "regression-gates"
+   "finalState": "CREATED",
+   "existingEquivalent": "regression-gates",
+   "file": ".claude/skills/run-lint/SKILL.md"
   },
   {
    "name": "run-typecheck",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "regression-gates"
+   "finalState": "CREATED",
+   "existingEquivalent": "regression-gates",
+   "file": ".claude/skills/run-typecheck/SKILL.md"
   },
   {
    "name": "run-unit-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "regression-gates"
+   "finalState": "CREATED",
+   "existingEquivalent": "regression-gates",
+   "file": ".claude/skills/run-unit-tests/SKILL.md"
   },
   {
    "name": "safe-refactor",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "refactor-guide"
+   "finalState": "CREATED",
+   "existingEquivalent": "refactor-guide",
+   "file": ".claude/skills/safe-refactor/SKILL.md"
   },
   {
    "name": "scope-lock",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/scope-lock/SKILL.md"
   },
   {
    "name": "tenant-isolation-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "security-tenancy-auditor"
+   "finalState": "CREATED",
+   "existingEquivalent": "security-tenancy-auditor",
+   "file": ".claude/skills/tenant-isolation-audit/SKILL.md"
   },
   {
    "name": "visual-consistency-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/visual-consistency-audit/SKILL.md"
   },
   {
    "name": "data-flow-trace",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/data-flow-trace/SKILL.md"
   },
   {
    "name": "route-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/route-map/SKILL.md"
   },
   {
    "name": "api-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/api-map/SKILL.md"
   },
   {
    "name": "integration-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/integration-map/SKILL.md"
   },
   {
    "name": "event-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/event-map/SKILL.md"
   },
   {
    "name": "queue-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/queue-map/SKILL.md"
   },
   {
    "name": "worker-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/worker-map/SKILL.md"
   },
   {
    "name": "config-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/config-map/SKILL.md"
   },
   {
    "name": "environment-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/environment-map/SKILL.md"
   },
   {
    "name": "ownership-map",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/ownership-map/SKILL.md"
   },
   {
    "name": "duplication-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/duplication-analysis/SKILL.md"
   },
   {
    "name": "dead-code-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/dead-code-analysis/SKILL.md"
   },
   {
    "name": "technical-debt-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/technical-debt-analysis/SKILL.md"
   },
   {
    "name": "naming-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/naming-analysis/SKILL.md"
   },
   {
    "name": "ownership-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/ownership-analysis/SKILL.md"
   },
   {
    "name": "producer-consumer-trace",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "contract-tracing"
+   "finalState": "CREATED",
+   "existingEquivalent": "contract-tracing",
+   "file": ".claude/skills/producer-consumer-trace/SKILL.md"
   },
   {
    "name": "runtime-path-trace",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/runtime-path-trace/SKILL.md"
   },
   {
    "name": "package-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/package-analysis/SKILL.md"
   },
   {
    "name": "dependency-cycle-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/dependency-cycle-analysis/SKILL.md"
   },
   {
    "name": "orphan-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/orphan-analysis/SKILL.md"
   },
   {
    "name": "stale-code-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/stale-code-analysis/SKILL.md"
   },
   {
    "name": "feature-flag-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/feature-flag-analysis/SKILL.md"
   },
   {
    "name": "create-component",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-component/SKILL.md"
   },
   {
    "name": "refactor-component",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/refactor-component/SKILL.md"
   },
   {
    "name": "create-hook",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-hook/SKILL.md"
   },
   {
    "name": "create-service",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-service/SKILL.md"
   },
   {
    "name": "create-use-case",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-use-case/SKILL.md"
   },
   {
    "name": "create-controller",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-controller/SKILL.md"
   },
   {
    "name": "create-api-route",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-api-route/SKILL.md"
   },
   {
    "name": "create-repository",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-repository/SKILL.md"
   },
   {
    "name": "create-event",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-event/SKILL.md"
   },
   {
    "name": "create-worker",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-worker/SKILL.md"
   },
   {
    "name": "create-job",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-job/SKILL.md"
   },
   {
    "name": "create-queue",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-queue/SKILL.md"
   },
   {
    "name": "create-webhook",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-webhook/SKILL.md"
   },
   {
    "name": "create-integration",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-integration/SKILL.md"
   },
   {
    "name": "implement-rbac",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-rbac/SKILL.md"
   },
   {
    "name": "implement-form",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-form/SKILL.md"
   },
   {
    "name": "implement-crud",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-crud/SKILL.md"
   },
   {
    "name": "implement-responsive-ui",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-responsive-ui/SKILL.md"
   },
   {
    "name": "implement-accessibility",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-accessibility/SKILL.md"
   },
   {
    "name": "implement-import",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-import/SKILL.md"
   },
   {
    "name": "implement-export",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-export/SKILL.md"
   },
   {
    "name": "implement-concurrency-control",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-concurrency-control/SKILL.md"
   },
   {
    "name": "implement-audit-log",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-audit-log/SKILL.md"
   },
   {
    "name": "implement-cache",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-cache/SKILL.md"
   },
   {
    "name": "implement-retry",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-retry/SKILL.md"
   },
   {
    "name": "implement-circuit-breaker",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-circuit-breaker/SKILL.md"
   },
   {
    "name": "implement-transaction",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-transaction/SKILL.md"
   },
   {
    "name": "implement-scheduler",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-scheduler/SKILL.md"
   },
   {
    "name": "implement-background-job",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-background-job/SKILL.md"
   },
   {
    "name": "implement-feature-flag",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-feature-flag/SKILL.md"
   },
   {
    "name": "implement-observability",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-observability/SKILL.md"
   },
   {
    "name": "implement-error-boundary",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/implement-error-boundary/SKILL.md"
   },
   {
    "name": "frontend-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/frontend-audit/SKILL.md"
   },
   {
    "name": "component-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/component-audit/SKILL.md"
   },
   {
    "name": "routing-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/routing-audit/SKILL.md"
   },
   {
    "name": "state-management-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/state-management-audit/SKILL.md"
   },
   {
    "name": "data-provider-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/data-provider-audit/SKILL.md"
   },
   {
    "name": "design-system-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/design-system-audit/SKILL.md"
   },
   {
    "name": "layout-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/layout-audit/SKILL.md"
   },
   {
    "name": "responsive-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/responsive-audit/SKILL.md"
   },
   {
    "name": "accessibility-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/accessibility-audit/SKILL.md"
   },
   {
    "name": "frontend-performance-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/frontend-performance-audit/SKILL.md"
   },
   {
    "name": "form-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/form-audit/SKILL.md"
   },
   {
    "name": "visual-regression",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/visual-regression/SKILL.md"
   },
   {
    "name": "browser-runtime-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/browser-runtime-check/SKILL.md"
   },
   {
    "name": "interaction-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/interaction-audit/SKILL.md"
   },
   {
    "name": "animation-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/animation-audit/SKILL.md"
   },
   {
    "name": "loading-state-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/loading-state-audit/SKILL.md"
   },
   {
    "name": "empty-state-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/empty-state-audit/SKILL.md"
   },
   {
    "name": "error-state-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/error-state-audit/SKILL.md"
   },
   {
    "name": "modal-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/modal-audit/SKILL.md"
   },
   {
    "name": "table-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/table-audit/SKILL.md"
   },
   {
    "name": "typography-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/typography-audit/SKILL.md"
   },
   {
    "name": "spacing-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/spacing-audit/SKILL.md"
   },
   {
    "name": "token-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/token-audit/SKILL.md"
   },
   {
    "name": "backend-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/backend-audit/SKILL.md"
   },
   {
    "name": "api-contract-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "contract-tracing"
+   "finalState": "CREATED",
+   "existingEquivalent": "contract-tracing",
+   "file": ".claude/skills/api-contract-audit/SKILL.md"
   },
   {
    "name": "service-layer-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/service-layer-audit/SKILL.md"
   },
   {
    "name": "repository-layer-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/repository-layer-audit/SKILL.md"
   },
   {
    "name": "database-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/database-audit/SKILL.md"
   },
   {
    "name": "migration-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/migration-audit/SKILL.md"
   },
   {
    "name": "query-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/query-audit/SKILL.md"
   },
   {
    "name": "integration-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/integration-audit/SKILL.md"
   },
   {
    "name": "event-processing-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/event-processing-audit/SKILL.md"
   },
   {
    "name": "queue-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/queue-audit/SKILL.md"
   },
   {
    "name": "worker-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/worker-audit/SKILL.md"
   },
   {
    "name": "data-integrity-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/data-integrity-audit/SKILL.md"
   },
   {
    "name": "concurrency-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/concurrency-audit/SKILL.md"
   },
   {
    "name": "transaction-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/transaction-audit/SKILL.md"
   },
   {
    "name": "cache-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/cache-audit/SKILL.md"
   },
   {
    "name": "scheduler-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/scheduler-audit/SKILL.md"
   },
   {
    "name": "retry-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/retry-audit/SKILL.md"
   },
   {
    "name": "circuit-breaker-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/circuit-breaker-audit/SKILL.md"
   },
   {
    "name": "background-job-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/background-job-audit/SKILL.md"
   },
   {
    "name": "data-retention-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/data-retention-audit/SKILL.md"
   },
   {
    "name": "auth-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/auth-audit/SKILL.md"
   },
   {
    "name": "rbac-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/rbac-audit/SKILL.md"
   },
   {
    "name": "secret-scan",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "security-audit"
+   "finalState": "CREATED",
+   "existingEquivalent": "security-audit",
+   "file": ".claude/skills/secret-scan/SKILL.md"
   },
   {
    "name": "dependency-scan",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "security-audit"
+   "finalState": "CREATED",
+   "existingEquivalent": "security-audit",
+   "file": ".claude/skills/dependency-scan/SKILL.md"
   },
   {
    "name": "supply-chain-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/supply-chain-audit/SKILL.md"
   },
   {
    "name": "upload-security-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/upload-security-audit/SKILL.md"
   },
   {
    "name": "webhook-security-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/webhook-security-audit/SKILL.md"
   },
   {
    "name": "prompt-injection-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/prompt-injection-audit/SKILL.md"
   },
   {
    "name": "pii-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/pii-audit/SKILL.md"
   },
   {
    "name": "security-boundary-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/security-boundary-audit/SKILL.md"
   },
   {
    "name": "session-security-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/session-security-audit/SKILL.md"
   },
   {
    "name": "csrf-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/csrf-audit/SKILL.md"
   },
   {
    "name": "xss-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/xss-audit/SKILL.md"
   },
   {
    "name": "ssrf-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/ssrf-audit/SKILL.md"
   },
   {
    "name": "sql-injection-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/sql-injection-audit/SKILL.md"
   },
   {
    "name": "credential-storage-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/credential-storage-audit/SKILL.md"
   },
   {
    "name": "encryption-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/encryption-audit/SKILL.md"
   },
   {
    "name": "permission-audit",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/permission-audit/SKILL.md"
   },
   {
    "name": "create-unit-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-unit-tests/SKILL.md"
   },
   {
    "name": "create-integration-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-integration-tests/SKILL.md"
   },
   {
    "name": "create-api-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-api-tests/SKILL.md"
   },
   {
    "name": "create-e2e-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-e2e-tests/SKILL.md"
   },
   {
    "name": "create-contract-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-contract-tests/SKILL.md"
   },
   {
    "name": "create-regression-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-regression-tests/SKILL.md"
   },
   {
    "name": "create-visual-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-visual-tests/SKILL.md"
   },
   {
    "name": "create-accessibility-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-accessibility-tests/SKILL.md"
   },
   {
    "name": "create-performance-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-performance-tests/SKILL.md"
   },
   {
    "name": "create-load-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-load-tests/SKILL.md"
   },
   {
    "name": "create-security-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-security-tests/SKILL.md"
   },
   {
    "name": "create-migration-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/create-migration-tests/SKILL.md"
   },
   {
    "name": "run-architecture-checks",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/run-architecture-checks/SKILL.md"
   },
   {
    "name": "run-integration-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/run-integration-tests/SKILL.md"
   },
   {
    "name": "run-api-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/run-api-tests/SKILL.md"
   },
   {
    "name": "run-e2e",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/run-e2e/SKILL.md"
   },
   {
    "name": "run-visual-regression",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/run-visual-regression/SKILL.md"
   },
   {
    "name": "run-accessibility-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/run-accessibility-tests/SKILL.md"
   },
   {
    "name": "run-security-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/run-security-tests/SKILL.md"
   },
   {
    "name": "run-performance-tests",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/run-performance-tests/SKILL.md"
   },
   {
    "name": "production-build-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/production-build-check/SKILL.md"
   },
   {
    "name": "runtime-smoke-test",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/runtime-smoke-test/SKILL.md"
   },
   {
    "name": "definition-of-done",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "release-checkpoint"
+   "finalState": "CREATED",
+   "existingEquivalent": "release-checkpoint",
+   "file": ".claude/skills/definition-of-done/SKILL.md"
   },
   {
    "name": "change-impact-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "impact"
+   "finalState": "CREATED",
+   "existingEquivalent": "impact",
+   "file": ".claude/skills/change-impact-check/SKILL.md"
   },
   {
    "name": "protected-file-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/protected-file-check/SKILL.md"
   },
   {
    "name": "dependency-safety-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/dependency-safety-check/SKILL.md"
   },
   {
    "name": "staged-diff-review",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "code-review"
+   "finalState": "CREATED",
+   "existingEquivalent": "code-review",
+   "file": ".claude/skills/staged-diff-review/SKILL.md"
   },
   {
    "name": "rollback-analysis",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "recover"
+   "finalState": "CREATED",
+   "existingEquivalent": "recover",
+   "file": ".claude/skills/rollback-analysis/SKILL.md"
   },
   {
    "name": "writer-conflict-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/writer-conflict-check/SKILL.md"
   },
   {
    "name": "dirty-tree-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/dirty-tree-check/SKILL.md"
   },
   {
    "name": "migration-safety-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/migration-safety-check/SKILL.md"
   },
   {
    "name": "destructive-change-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/destructive-change-check/SKILL.md"
   },
   {
    "name": "external-action-check",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/external-action-check/SKILL.md"
   },
   {
    "name": "authorization-hardening",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "security-audit"
+   "finalState": "CREATED",
+   "existingEquivalent": "security-audit",
+   "file": ".claude/skills/authorization-hardening/SKILL.md"
   },
   {
    "name": "control-plane",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/control-plane/SKILL.md"
   },
   {
    "name": "discover",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "prime"
+   "finalState": "CREATED",
+   "existingEquivalent": "prime",
+   "file": ".claude/skills/discover/SKILL.md"
   },
   {
    "name": "localhost-guardian",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/localhost-guardian/SKILL.md"
   },
   {
    "name": "plan",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "feature-planner"
+   "finalState": "CREATED",
+   "existingEquivalent": "feature-planner",
+   "file": ".claude/skills/plan/SKILL.md"
   },
   {
    "name": "verify",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "regression-gates"
+   "finalState": "CREATED",
+   "existingEquivalent": "regression-gates",
+   "file": ".claude/skills/verify/SKILL.md"
   },
   {
    "name": "databaseMigrationSafety",
    "type": "skill",
    "batch": 16,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/skills/databaseMigrationSafety/SKILL.md"
   },
   {
    "name": "ai-runtime-audit",

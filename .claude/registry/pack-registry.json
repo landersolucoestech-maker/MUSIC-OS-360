@@ -3,7 +3,7 @@
  "counts": {
   "packItems": 695,
   "agents": 374,
-  "skills": 0,
+  "skills": 188,
   "capabilities": 351,
   "workflows": 6
  },
@@ -9663,7 +9663,3005 @@
    "approval": "none"
   }
  ],
- "skills": [],
+ "skills": [
+  {
+   "name": "accessibility-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/accessibility-audit/SKILL.md",
+   "consumers": [
+    "accessibility-engineer"
+   ]
+  },
+  {
+   "name": "animation-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/animation-audit/SKILL.md",
+   "consumers": [
+    "animation-engineer"
+   ]
+  },
+  {
+   "name": "api-contract-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/api-contract-audit/SKILL.md",
+   "consumers": [
+    "ai-contract-reviewer",
+    "api-architecture-engineer",
+    "api-contract-analyzer",
+    "api-mapper",
+    "api-reviewer",
+    "contract-architecture-reviewer",
+    "data-fetching-engineer",
+    "dto-engineer",
+    "error-model-reviewer",
+    "frontend-data-flow-reviewer",
+    "input-validation-reviewer",
+    "provider-contract-reviewer",
+    "serialization-engineer"
+   ]
+  },
+  {
+   "name": "api-map",
+   "kind": "map",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/api-map/SKILL.md",
+   "consumers": [
+    "api-engineer",
+    "api-mapper",
+    "api-reviewer",
+    "module-mapper"
+   ]
+  },
+  {
+   "name": "architecture-map",
+   "kind": "map",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/architecture-map/SKILL.md",
+   "consumers": [
+    "architecture-engineer",
+    "architecture-guardian",
+    "architecture-mapper",
+    "backend-architecture-engineer",
+    "circular-dependency-detector",
+    "domain-architecture-engineer",
+    "frontend-architecture-engineer",
+    "modularity-reviewer",
+    "platform-architecture-engineer"
+   ]
+  },
+  {
+   "name": "auth-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/auth-audit/SKILL.md",
+   "consumers": [
+    "auth-engineer",
+    "authentication-reviewer",
+    "session-security-reviewer"
+   ]
+  },
+  {
+   "name": "authorization-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/authorization-audit/SKILL.md",
+   "consumers": [
+    "abuse-prevention-reviewer",
+    "api-reviewer",
+    "auditability-reviewer",
+    "authorization-reviewer",
+    "payments-reviewer",
+    "permission-boundary-reviewer",
+    "rbac-reviewer",
+    "security-auditor",
+    "security-investigator"
+   ]
+  },
+  {
+   "name": "authorization-hardening",
+   "kind": "implementation",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/authorization-hardening/SKILL.md",
+   "consumers": [
+    "authorization-engineer"
+   ]
+  },
+  {
+   "name": "authorization-map",
+   "kind": "map",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/authorization-map/SKILL.md",
+   "consumers": [
+    "api-mapper",
+    "authorization-engineer",
+    "authorization-reviewer",
+    "route-mapper",
+    "security-boundary-mapper",
+    "threat-model-reviewer"
+   ]
+  },
+  {
+   "name": "backend-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/backend-audit/SKILL.md",
+   "consumers": [
+    "consistency-reviewer",
+    "error-handling-engineer"
+   ]
+  },
+  {
+   "name": "background-job-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/background-job-audit/SKILL.md",
+   "consumers": [
+    "job-engineer",
+    "queue-reliability-reviewer",
+    "worker-reliability-reviewer"
+   ]
+  },
+  {
+   "name": "blast-radius-analysis",
+   "kind": "analysis",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/blast-radius-analysis/SKILL.md",
+   "consumers": [
+    "architecture-guardian",
+    "blast-radius-analyzer",
+    "dependency-tracer",
+    "domain-boundary-guardian",
+    "implementation-planner",
+    "regression-analyzer",
+    "risk-controller",
+    "scope-planner"
+   ]
+  },
+  {
+   "name": "branch-policy-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/branch-policy-check/SKILL.md",
+   "consumers": [
+    "branch-policy-validator",
+    "commit-validator",
+    "history-rewrite-guard",
+    "protected-branch-guard",
+    "repo-identity-validator",
+    "repository-guardian",
+    "repository-orchestrator"
+   ]
+  },
+  {
+   "name": "browser-runtime-check",
+   "kind": "test-run",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/browser-runtime-check/SKILL.md",
+   "consumers": [
+    "accessibility-auditor",
+    "animation-engineer",
+    "browser-compatibility-reviewer",
+    "browser-test-engineer",
+    "e2e-engineer",
+    "mobile-reviewer",
+    "responsive-engineer",
+    "runtime-validator",
+    "ui-ux-engineer",
+    "visual-qa-engineer",
+    "visual-regression-engineer"
+   ]
+  },
+  {
+   "name": "cache-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/cache-audit/SKILL.md",
+   "consumers": [
+    "caching-engineer",
+    "rate-limit-reviewer"
+   ]
+  },
+  {
+   "name": "change-impact-check",
+   "kind": "check",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/change-impact-check/SKILL.md",
+   "consumers": [
+    "atomic-commit-validator",
+    "blast-radius-analyzer",
+    "change-scope-guardian",
+    "code-reviewer",
+    "diff-reviewer",
+    "risk-controller",
+    "risk-planner",
+    "validation-router"
+   ]
+  },
+  {
+   "name": "circuit-breaker-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/circuit-breaker-audit/SKILL.md",
+   "consumers": [
+    "chaos-test-reviewer",
+    "circuit-breaker-reviewer",
+    "integration-reliability-reviewer",
+    "integration-resilience-reviewer",
+    "provider-failure-reviewer",
+    "resilience-test-engineer",
+    "retry-policy-reviewer",
+    "timeout-reviewer"
+   ]
+  },
+  {
+   "name": "component-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/component-audit/SKILL.md",
+   "consumers": [
+    "component-engineer",
+    "frontend-consistency-reviewer"
+   ]
+  },
+  {
+   "name": "concurrency-audit",
+   "kind": "audit",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/concurrency-audit/SKILL.md",
+   "consumers": [
+    "concurrency-engineer",
+    "concurrency-reviewer",
+    "locking-reviewer",
+    "optimistic-locking-reviewer",
+    "service-layer-reviewer",
+    "transaction-reviewer"
+   ]
+  },
+  {
+   "name": "config-map",
+   "kind": "map",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/config-map/SKILL.md",
+   "consumers": [
+    "config-mapper",
+    "configuration-analyzer",
+    "environment-analyzer",
+    "environment-mapper",
+    "feature-flag-analyzer",
+    "integration-mapper"
+   ]
+  },
+  {
+   "name": "control-plane",
+   "kind": "governance",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/control-plane/SKILL.md",
+   "consumers": [
+    "mission-controller",
+    "music-os-360-orchestrator",
+    "workflow-orchestrator"
+   ]
+  },
+  {
+   "name": "create-accessibility-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-accessibility-tests/SKILL.md",
+   "consumers": [
+    "accessibility-auditor",
+    "accessibility-engineer",
+    "browser-test-engineer"
+   ]
+  },
+  {
+   "name": "create-api-route",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-api-route/SKILL.md",
+   "consumers": [
+    "api-engineer",
+    "controller-engineer",
+    "dto-engineer",
+    "serialization-engineer",
+    "validation-engineer"
+   ]
+  },
+  {
+   "name": "create-api-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-api-tests/SKILL.md",
+   "consumers": [
+    "api-engineer",
+    "api-test-engineer",
+    "controller-engineer"
+   ]
+  },
+  {
+   "name": "create-authorization-tests",
+   "kind": "test-authoring",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-authorization-tests/SKILL.md",
+   "consumers": [
+    "api-test-engineer",
+    "authorization-engineer",
+    "security-test-engineer"
+   ]
+  },
+  {
+   "name": "create-component",
+   "kind": "implementation",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-component/SKILL.md",
+   "consumers": [
+    "component-engineer",
+    "design-system-engineer",
+    "frontend-engineer"
+   ]
+  },
+  {
+   "name": "create-contract-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-contract-tests/SKILL.md",
+   "consumers": [
+    "contract-test-engineer"
+   ]
+  },
+  {
+   "name": "create-controller",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-controller/SKILL.md",
+   "consumers": [
+    "backend-engineer",
+    "controller-engineer"
+   ]
+  },
+  {
+   "name": "create-e2e-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-e2e-tests/SKILL.md",
+   "consumers": [
+    "browser-test-engineer",
+    "e2e-engineer"
+   ]
+  },
+  {
+   "name": "create-event",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-event/SKILL.md",
+   "consumers": [
+    "event-engineer"
+   ]
+  },
+  {
+   "name": "create-hook",
+   "kind": "implementation",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-hook/SKILL.md",
+   "consumers": [
+    "data-fetching-engineer",
+    "frontend-engineer",
+    "state-management-engineer"
+   ]
+  },
+  {
+   "name": "create-integration",
+   "kind": "implementation",
+   "domain": "integrations",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-integration/SKILL.md",
+   "consumers": [
+    "adapter-engineer",
+    "connector-engineer",
+    "integration-engineer"
+   ]
+  },
+  {
+   "name": "create-integration-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-integration-tests/SKILL.md",
+   "consumers": [
+    "adapter-engineer",
+    "ai-automation-engineer",
+    "ai-workflow-engineer",
+    "background-processing-engineer",
+    "concurrency-engineer",
+    "connector-engineer",
+    "integration-data-mapper",
+    "integration-engineer",
+    "integration-test-engineer",
+    "mock-reviewer",
+    "resilience-test-engineer",
+    "sync-engineer",
+    "test-data-reviewer",
+    "test-engineer",
+    "transaction-engineer"
+   ]
+  },
+  {
+   "name": "create-job",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-job/SKILL.md",
+   "consumers": [
+    "job-engineer",
+    "scheduler-engineer"
+   ]
+  },
+  {
+   "name": "create-load-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-load-tests/SKILL.md",
+   "consumers": [
+    "capacity-reviewer",
+    "load-test-engineer"
+   ]
+  },
+  {
+   "name": "create-migration",
+   "kind": "implementation",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-migration/SKILL.md",
+   "consumers": [
+    "migration-engineer"
+   ]
+  },
+  {
+   "name": "create-migration-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-migration-tests/SKILL.md",
+   "consumers": [
+    "migration-engineer",
+    "migration-test-engineer"
+   ]
+  },
+  {
+   "name": "create-performance-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-performance-tests/SKILL.md",
+   "consumers": [
+    "indexing-engineer",
+    "performance-engineer",
+    "performance-test-engineer",
+    "query-performance-engineer"
+   ]
+  },
+  {
+   "name": "create-queue",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-queue/SKILL.md",
+   "consumers": [
+    "queue-engineer"
+   ]
+  },
+  {
+   "name": "create-regression-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-regression-tests/SKILL.md",
+   "consumers": [
+    "ai-regression-reviewer",
+    "mutation-test-reviewer",
+    "refactoring-engineer",
+    "regression-analyzer",
+    "test-engineer",
+    "test-planner",
+    "unit-test-engineer"
+   ]
+  },
+  {
+   "name": "create-repository",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-repository/SKILL.md",
+   "consumers": [
+    "backend-engineer",
+    "repository-engineer"
+   ]
+  },
+  {
+   "name": "create-security-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-security-tests/SKILL.md",
+   "consumers": [
+    "api-test-engineer",
+    "auth-engineer",
+    "security-engineer",
+    "security-test-engineer",
+    "validation-engineer",
+    "webhook-engineer"
+   ]
+  },
+  {
+   "name": "create-service",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-service/SKILL.md",
+   "consumers": [
+    "backend-engineer",
+    "service-layer-engineer"
+   ]
+  },
+  {
+   "name": "create-tenant-isolation-tests",
+   "kind": "test-authoring",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-tenant-isolation-tests/SKILL.md",
+   "consumers": [
+    "caching-engineer",
+    "integration-test-engineer",
+    "repository-engineer",
+    "security-test-engineer",
+    "tenant-isolation-reviewer",
+    "test-data-reviewer"
+   ]
+  },
+  {
+   "name": "create-unit-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-unit-tests/SKILL.md",
+   "consumers": [
+    "ai-agent-engineer",
+    "ai-memory-engineer",
+    "ai-skill-engineer",
+    "backend-engineer",
+    "database-engineer",
+    "dto-engineer",
+    "error-handling-engineer",
+    "event-engineer",
+    "fixture-reviewer",
+    "form-engineer",
+    "frontend-engineer",
+    "mock-reviewer",
+    "mutation-test-reviewer",
+    "observability-engineer",
+    "query-engineer",
+    "routing-engineer",
+    "snapshot-test-reviewer",
+    "test-engineer",
+    "unit-test-engineer",
+    "use-case-engineer"
+   ]
+  },
+  {
+   "name": "create-use-case",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-use-case/SKILL.md",
+   "consumers": [
+    "use-case-engineer"
+   ]
+  },
+  {
+   "name": "create-visual-tests",
+   "kind": "test-authoring",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-visual-tests/SKILL.md",
+   "consumers": [
+    "snapshot-test-reviewer",
+    "visual-qa-engineer",
+    "visual-regression-engineer"
+   ]
+  },
+  {
+   "name": "create-webhook",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-webhook/SKILL.md",
+   "consumers": [
+    "webhook-engineer"
+   ]
+  },
+  {
+   "name": "create-worker",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-worker/SKILL.md",
+   "consumers": [
+    "worker-engineer"
+   ]
+  },
+  {
+   "name": "credential-storage-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/credential-storage-audit/SKILL.md",
+   "consumers": [
+    "credential-management-reviewer",
+    "credential-storage-reviewer",
+    "encryption-reviewer"
+   ]
+  },
+  {
+   "name": "csrf-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/csrf-audit/SKILL.md",
+   "consumers": [
+    "csrf-reviewer",
+    "session-security-reviewer"
+   ]
+  },
+  {
+   "name": "data-flow-trace",
+   "kind": "analysis",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/data-flow-trace/SKILL.md",
+   "consumers": [
+    "codebase-explorer",
+    "data-engineering-reviewer",
+    "data-flow-tracer",
+    "domain-boundary-guardian",
+    "domain-boundary-reviewer",
+    "event-flow-mapper",
+    "multi-tenant-architecture-reviewer",
+    "producer-consumer-tracer",
+    "runtime-path-analyzer",
+    "tenant-boundary-mapper"
+   ]
+  },
+  {
+   "name": "data-integrity-audit",
+   "kind": "audit",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/data-integrity-audit/SKILL.md",
+   "consumers": [
+    "concurrency-reviewer",
+    "data-engineering-reviewer",
+    "data-integrity-reviewer",
+    "denormalization-reviewer",
+    "external-id-reviewer",
+    "normalization-reviewer",
+    "optimistic-locking-reviewer",
+    "payments-reviewer",
+    "relational-integrity-reviewer",
+    "schema-engineer",
+    "transaction-reviewer"
+   ]
+  },
+  {
+   "name": "data-provider-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/data-provider-audit/SKILL.md",
+   "consumers": [
+    "data-fetching-engineer",
+    "external-api-reviewer",
+    "external-schema-reviewer",
+    "frontend-architecture-engineer",
+    "frontend-data-flow-reviewer",
+    "frontend-performance-engineer",
+    "mapping-reviewer",
+    "provider-contract-reviewer",
+    "state-management-engineer"
+   ]
+  },
+  {
+   "name": "data-retention-audit",
+   "kind": "audit",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/data-retention-audit/SKILL.md",
+   "consumers": [
+    "archival-strategy-reviewer",
+    "backup-reviewer",
+    "compliance-privacy-reviewer",
+    "pii-reviewer",
+    "retention-policy-reviewer"
+   ]
+  },
+  {
+   "name": "database-audit",
+   "kind": "audit",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/database-audit/SKILL.md",
+   "consumers": [
+    "archival-strategy-reviewer",
+    "backup-reviewer",
+    "data-integrity-reviewer",
+    "database-mapper",
+    "database-reliability-reviewer",
+    "database-schema-analyzer",
+    "database-security-reviewer",
+    "denormalization-reviewer",
+    "external-id-reviewer",
+    "indexing-engineer",
+    "normalization-reviewer",
+    "optimistic-locking-reviewer",
+    "query-performance-engineer",
+    "relational-integrity-reviewer",
+    "restore-reviewer",
+    "retention-policy-reviewer",
+    "schema-engineer",
+    "tenant-isolation-reviewer",
+    "timeout-reviewer"
+   ]
+  },
+  {
+   "name": "database-map",
+   "kind": "map",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/database-map/SKILL.md",
+   "consumers": [
+    "data-integrity-reviewer",
+    "database-engineer",
+    "database-mapper",
+    "normalization-reviewer",
+    "orphan-detector",
+    "relational-integrity-reviewer",
+    "schema-engineer"
+   ]
+  },
+  {
+   "name": "databaseMigrationSafety",
+   "kind": "check",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/databaseMigrationSafety/SKILL.md",
+   "consumers": []
+  },
+  {
+   "name": "dead-code-analysis",
+   "kind": "analysis",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/dead-code-analysis/SKILL.md",
+   "consumers": [
+    "code-smell-reviewer",
+    "dead-code-detector",
+    "dead-code-reviewer",
+    "duplication-detector",
+    "orphan-detector",
+    "refactoring-engineer",
+    "technical-debt-analyzer",
+    "technical-debt-reviewer",
+    "unreachable-code-detector"
+   ]
+  },
+  {
+   "name": "definition-of-done",
+   "kind": "check",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/definition-of-done/SKILL.md",
+   "consumers": [
+    "completion-controller",
+    "evidence-controller",
+    "music-os-360-orchestrator",
+    "release-guardian",
+    "release-validator",
+    "requirements-validator"
+   ]
+  },
+  {
+   "name": "dependency-cycle-analysis",
+   "kind": "analysis",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/dependency-cycle-analysis/SKILL.md",
+   "consumers": [
+    "architecture-guardian",
+    "circular-dependency-detector",
+    "dependency-coordinator",
+    "dependency-tracer",
+    "modularity-reviewer",
+    "package-analyzer",
+    "platform-architecture-engineer"
+   ]
+  },
+  {
+   "name": "dependency-safety-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/dependency-safety-check/SKILL.md",
+   "consumers": [
+    "dependency-analyzer",
+    "dependency-safety-validator",
+    "devops-ci-reviewer",
+    "merge-safety-reviewer",
+    "release-orchestrator",
+    "vulnerability-reviewer"
+   ]
+  },
+  {
+   "name": "dependency-scan",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/dependency-scan/SKILL.md",
+   "consumers": [
+    "dependency-analyzer",
+    "dependency-safety-validator",
+    "secrets-reviewer",
+    "security-auditor",
+    "vulnerability-reviewer"
+   ]
+  },
+  {
+   "name": "dependency-trace",
+   "kind": "analysis",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/dependency-trace/SKILL.md",
+   "consumers": [
+    "architecture-mapper",
+    "blast-radius-analyzer",
+    "circular-dependency-detector",
+    "dead-code-detector",
+    "dependency-coordinator",
+    "dependency-planner",
+    "dependency-tracer",
+    "module-mapper"
+   ]
+  },
+  {
+   "name": "design-system-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/design-system-audit/SKILL.md",
+   "consumers": [
+    "design-system-engineer",
+    "visual-consistency-reviewer"
+   ]
+  },
+  {
+   "name": "destructive-change-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/destructive-change-check/SKILL.md",
+   "consumers": [
+    "data-migration-reviewer",
+    "destructive-change-guard",
+    "dirty-tree-guard",
+    "history-rewrite-guard",
+    "migration-engineer",
+    "protected-branch-guard",
+    "rollback-analyzer",
+    "rollback-planner",
+    "tool-router"
+   ]
+  },
+  {
+   "name": "diff-review",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/diff-review/SKILL.md",
+   "consumers": [
+    "code-reviewer",
+    "diff-reviewer",
+    "merge-safety-reviewer"
+   ]
+  },
+  {
+   "name": "dirty-tree-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/dirty-tree-check/SKILL.md",
+   "consumers": [
+    "change-scope-guardian",
+    "dirty-tree-guard",
+    "repo-inspector",
+    "repository-guardian",
+    "repository-orchestrator",
+    "scope-lock-validator",
+    "scope-planner",
+    "untracked-file-reviewer"
+   ]
+  },
+  {
+   "name": "discover",
+   "kind": "governance",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/discover/SKILL.md",
+   "consumers": [
+    "ambiguity-detector",
+    "assumption-detector",
+    "capability-router",
+    "music-os-360-orchestrator",
+    "skill-router",
+    "specification-reviewer",
+    "task-router"
+   ]
+  },
+  {
+   "name": "duplication-analysis",
+   "kind": "analysis",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/duplication-analysis/SKILL.md",
+   "consumers": [
+    "abstraction-reviewer",
+    "code-smell-reviewer",
+    "dead-code-reviewer",
+    "duplication-detector",
+    "duplication-reviewer",
+    "maintainability-reviewer",
+    "naming-reviewer",
+    "technical-debt-analyzer",
+    "technical-debt-reviewer"
+   ]
+  },
+  {
+   "name": "empty-state-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/empty-state-audit/SKILL.md",
+   "consumers": [
+    "ui-ux-engineer"
+   ]
+  },
+  {
+   "name": "encryption-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/encryption-audit/SKILL.md",
+   "consumers": [
+    "credential-management-reviewer",
+    "credential-storage-reviewer",
+    "encryption-reviewer"
+   ]
+  },
+  {
+   "name": "environment-map",
+   "kind": "map",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/environment-map/SKILL.md",
+   "consumers": [
+    "config-mapper",
+    "configuration-analyzer",
+    "environment-analyzer",
+    "environment-mapper",
+    "infrastructure-architecture-engineer"
+   ]
+  },
+  {
+   "name": "error-state-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/error-state-audit/SKILL.md",
+   "consumers": [
+    "error-model-reviewer",
+    "ui-ux-engineer"
+   ]
+  },
+  {
+   "name": "event-map",
+   "kind": "map",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/event-map/SKILL.md",
+   "consumers": [
+    "event-architecture-reviewer",
+    "event-driven-architecture-engineer",
+    "event-flow-mapper",
+    "runtime-path-analyzer"
+   ]
+  },
+  {
+   "name": "event-processing-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/event-processing-audit/SKILL.md",
+   "consumers": [
+    "event-architecture-reviewer",
+    "event-engineer",
+    "queue-reliability-reviewer",
+    "webhook-reviewer",
+    "webhook-security-reviewer"
+   ]
+  },
+  {
+   "name": "external-action-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/external-action-check/SKILL.md",
+   "consumers": [
+    "cloud-infrastructure-reviewer",
+    "destructive-change-guard",
+    "devops-ci-reviewer",
+    "infrastructure-architecture-engineer",
+    "release-guardian",
+    "release-orchestrator",
+    "ssrf-reviewer",
+    "tool-router"
+   ]
+  },
+  {
+   "name": "feature-flag-analysis",
+   "kind": "analysis",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/feature-flag-analysis/SKILL.md",
+   "consumers": [
+    "feature-flag-analyzer",
+    "unreachable-code-detector"
+   ]
+  },
+  {
+   "name": "fix-bug",
+   "kind": "implementation",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/fix-bug/SKILL.md",
+   "consumers": []
+  },
+  {
+   "name": "form-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/form-audit/SKILL.md",
+   "consumers": [
+    "form-engineer"
+   ]
+  },
+  {
+   "name": "frontend-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/frontend-audit/SKILL.md",
+   "consumers": [
+    "boundary-reviewer",
+    "browser-compatibility-reviewer",
+    "consistency-reviewer",
+    "degradation-reviewer",
+    "frontend-consistency-reviewer",
+    "mobile-reviewer",
+    "xss-reviewer"
+   ]
+  },
+  {
+   "name": "frontend-performance-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/frontend-performance-audit/SKILL.md",
+   "consumers": [
+    "animation-engineer",
+    "frontend-performance-engineer",
+    "performance-test-engineer"
+   ]
+  },
+  {
+   "name": "git-safety-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/git-safety-check/SKILL.md",
+   "consumers": [
+    "atomic-commit-validator",
+    "branch-policy-validator",
+    "commit-message-validator",
+    "commit-validator",
+    "destructive-change-guard",
+    "dirty-tree-guard",
+    "history-rewrite-guard",
+    "protected-branch-guard",
+    "repo-identity-validator",
+    "repository-guardian"
+   ]
+  },
+  {
+   "name": "implement-accessibility",
+   "kind": "implementation",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-accessibility/SKILL.md",
+   "consumers": [
+    "accessibility-engineer",
+    "interaction-engineer"
+   ]
+  },
+  {
+   "name": "implement-audit-log",
+   "kind": "implementation",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-audit-log/SKILL.md",
+   "consumers": [
+    "ai-workflow-engineer",
+    "auditability-reviewer",
+    "error-handling-engineer"
+   ]
+  },
+  {
+   "name": "implement-auth",
+   "kind": "implementation",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-auth/SKILL.md",
+   "consumers": [
+    "auth-engineer"
+   ]
+  },
+  {
+   "name": "implement-authorization",
+   "kind": "implementation",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-authorization/SKILL.md",
+   "consumers": [
+    "authorization-engineer"
+   ]
+  },
+  {
+   "name": "implement-background-job",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-background-job/SKILL.md",
+   "consumers": [
+    "background-processing-engineer",
+    "job-engineer"
+   ]
+  },
+  {
+   "name": "implement-cache",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-cache/SKILL.md",
+   "consumers": [
+    "caching-engineer",
+    "performance-engineer"
+   ]
+  },
+  {
+   "name": "implement-circuit-breaker",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-circuit-breaker/SKILL.md",
+   "consumers": [
+    "circuit-breaker-reviewer",
+    "connector-engineer"
+   ]
+  },
+  {
+   "name": "implement-concurrency-control",
+   "kind": "implementation",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-concurrency-control/SKILL.md",
+   "consumers": [
+    "concurrency-engineer",
+    "service-layer-engineer"
+   ]
+  },
+  {
+   "name": "implement-crud",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-crud/SKILL.md",
+   "consumers": []
+  },
+  {
+   "name": "implement-error-boundary",
+   "kind": "implementation",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-error-boundary/SKILL.md",
+   "consumers": [
+    "error-model-reviewer"
+   ]
+  },
+  {
+   "name": "implement-export",
+   "kind": "implementation",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-export/SKILL.md",
+   "consumers": [
+    "import-export-engineer"
+   ]
+  },
+  {
+   "name": "implement-feature",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-feature/SKILL.md",
+   "consumers": [
+    "backend-engineer",
+    "database-engineer",
+    "frontend-engineer",
+    "implementation-lead",
+    "integration-engineer",
+    "query-engineer",
+    "security-engineer",
+    "use-case-engineer"
+   ]
+  },
+  {
+   "name": "implement-feature-flag",
+   "kind": "implementation",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-feature-flag/SKILL.md",
+   "consumers": []
+  },
+  {
+   "name": "implement-form",
+   "kind": "implementation",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-form/SKILL.md",
+   "consumers": [
+    "form-engineer",
+    "frontend-engineer"
+   ]
+  },
+  {
+   "name": "implement-import",
+   "kind": "implementation",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-import/SKILL.md",
+   "consumers": [
+    "import-export-engineer"
+   ]
+  },
+  {
+   "name": "implement-observability",
+   "kind": "implementation",
+   "domain": "reliability",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-observability/SKILL.md",
+   "consumers": [
+    "ai-observability-engineer",
+    "alerting-reviewer",
+    "logging-reviewer",
+    "metrics-reviewer",
+    "observability-engineer",
+    "telemetry-reviewer",
+    "tracing-reviewer"
+   ]
+  },
+  {
+   "name": "implement-rbac",
+   "kind": "implementation",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-rbac/SKILL.md",
+   "consumers": [
+    "authorization-engineer"
+   ]
+  },
+  {
+   "name": "implement-responsive-ui",
+   "kind": "implementation",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-responsive-ui/SKILL.md",
+   "consumers": [
+    "responsive-engineer"
+   ]
+  },
+  {
+   "name": "implement-retry",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-retry/SKILL.md",
+   "consumers": [
+    "connector-engineer",
+    "queue-engineer",
+    "worker-engineer"
+   ]
+  },
+  {
+   "name": "implement-scheduler",
+   "kind": "implementation",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-scheduler/SKILL.md",
+   "consumers": [
+    "scheduler-engineer"
+   ]
+  },
+  {
+   "name": "implement-transaction",
+   "kind": "implementation",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/implement-transaction/SKILL.md",
+   "consumers": [
+    "database-engineer",
+    "service-layer-engineer",
+    "transaction-engineer"
+   ]
+  },
+  {
+   "name": "integration-audit",
+   "kind": "audit",
+   "domain": "integrations",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/integration-audit/SKILL.md",
+   "consumers": [
+    "ai-provider-reviewer",
+    "circuit-breaker-reviewer",
+    "credential-management-reviewer",
+    "degradation-reviewer",
+    "external-api-reviewer",
+    "external-id-reviewer",
+    "external-schema-reviewer",
+    "integration-reliability-reviewer",
+    "integration-resilience-reviewer",
+    "integration-security-reviewer",
+    "oauth-reviewer",
+    "payments-reviewer",
+    "provider-contract-reviewer",
+    "provider-failure-reviewer",
+    "rate-limit-reviewer",
+    "retry-policy-reviewer",
+    "retry-reviewer",
+    "timeout-reviewer",
+    "webhook-reviewer"
+   ]
+  },
+  {
+   "name": "integration-map",
+   "kind": "map",
+   "domain": "integrations",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/integration-map/SKILL.md",
+   "consumers": [
+    "adapter-engineer",
+    "external-api-reviewer",
+    "integration-architecture-reviewer",
+    "integration-engineer",
+    "integration-mapper",
+    "security-boundary-mapper"
+   ]
+  },
+  {
+   "name": "interaction-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/interaction-audit/SKILL.md",
+   "consumers": [
+    "interaction-engineer"
+   ]
+  },
+  {
+   "name": "layout-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/layout-audit/SKILL.md",
+   "consumers": [
+    "responsive-engineer"
+   ]
+  },
+  {
+   "name": "loading-state-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/loading-state-audit/SKILL.md",
+   "consumers": [
+    "interaction-engineer"
+   ]
+  },
+  {
+   "name": "localhost-guardian",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/localhost-guardian/SKILL.md",
+   "consumers": [
+    "environment-mapper"
+   ]
+  },
+  {
+   "name": "media-security-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/media-security-audit/SKILL.md",
+   "consumers": [
+    "file-upload-security-reviewer"
+   ]
+  },
+  {
+   "name": "migration-audit",
+   "kind": "audit",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/migration-audit/SKILL.md",
+   "consumers": [
+    "data-migration-reviewer",
+    "database-schema-analyzer",
+    "locking-reviewer"
+   ]
+  },
+  {
+   "name": "migration-safety-check",
+   "kind": "check",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/migration-safety-check/SKILL.md",
+   "consumers": [
+    "availability-reviewer",
+    "data-migration-reviewer",
+    "migration-engineer",
+    "migration-planner",
+    "migration-test-engineer",
+    "release-validator",
+    "restore-reviewer",
+    "rollback-analyzer"
+   ]
+  },
+  {
+   "name": "modal-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/modal-audit/SKILL.md",
+   "consumers": []
+  },
+  {
+   "name": "modify-schema",
+   "kind": "implementation",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/modify-schema/SKILL.md",
+   "consumers": [
+    "schema-engineer"
+   ]
+  },
+  {
+   "name": "module-map",
+   "kind": "map",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/module-map/SKILL.md",
+   "consumers": [
+    "architecture-mapper",
+    "codebase-explorer",
+    "modularity-reviewer",
+    "module-mapper",
+    "package-analyzer"
+   ]
+  },
+  {
+   "name": "naming-analysis",
+   "kind": "analysis",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/naming-analysis/SKILL.md",
+   "consumers": [
+    "complexity-reviewer",
+    "consistency-reviewer",
+    "denormalization-reviewer",
+    "duplication-detector",
+    "duplication-reviewer",
+    "frontend-consistency-reviewer",
+    "maintainability-reviewer",
+    "mapping-reviewer",
+    "metrics-reviewer",
+    "naming-analyzer",
+    "naming-reviewer",
+    "normalization-reviewer",
+    "readability-reviewer",
+    "technical-debt-reviewer",
+    "telemetry-reviewer"
+   ]
+  },
+  {
+   "name": "navigation-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/navigation-audit/SKILL.md",
+   "consumers": [
+    "route-mapper",
+    "routing-engineer"
+   ]
+  },
+  {
+   "name": "orphan-analysis",
+   "kind": "analysis",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/orphan-analysis/SKILL.md",
+   "consumers": [
+    "dead-code-detector",
+    "orphan-detector"
+   ]
+  },
+  {
+   "name": "ownership-analysis",
+   "kind": "analysis",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ownership-analysis/SKILL.md",
+   "consumers": [
+    "ownership-analyzer"
+   ]
+  },
+  {
+   "name": "ownership-map",
+   "kind": "map",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ownership-map/SKILL.md",
+   "consumers": [
+    "agent-router",
+    "ownership-analyzer",
+    "ownership-mapper",
+    "parallel-work-orchestrator"
+   ]
+  },
+  {
+   "name": "package-analysis",
+   "kind": "analysis",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/package-analysis/SKILL.md",
+   "consumers": [
+    "package-analyzer",
+    "platform-architecture-engineer"
+   ]
+  },
+  {
+   "name": "permission-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/permission-audit/SKILL.md",
+   "consumers": [
+    "ai-tool-policy-reviewer",
+    "ai-tooling-reviewer",
+    "authorization-reviewer",
+    "permission-boundary-reviewer",
+    "rbac-reviewer"
+   ]
+  },
+  {
+   "name": "pii-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/pii-audit/SKILL.md",
+   "consumers": [
+    "ai-context-engineer",
+    "ai-provider-reviewer",
+    "auditability-reviewer",
+    "compliance-privacy-reviewer",
+    "fixture-reviewer",
+    "logging-reviewer",
+    "pii-reviewer",
+    "serialization-engineer",
+    "telemetry-reviewer",
+    "test-data-reviewer"
+   ]
+  },
+  {
+   "name": "plan",
+   "kind": "governance",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/plan/SKILL.md",
+   "consumers": [
+    "agent-coordinator",
+    "agent-router",
+    "architecture-engineer",
+    "autonomous-planner",
+    "capability-router",
+    "dependency-coordinator",
+    "dependency-planner",
+    "escalation-router",
+    "execution-planner",
+    "implementation-planner",
+    "music-os-360-orchestrator",
+    "parallel-work-orchestrator",
+    "skill-router",
+    "task-orchestrator",
+    "tool-router",
+    "validation-router",
+    "workflow-orchestrator"
+   ]
+  },
+  {
+   "name": "producer-consumer-trace",
+   "kind": "analysis",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/producer-consumer-trace/SKILL.md",
+   "consumers": [
+    "api-contract-analyzer",
+    "contract-architecture-reviewer",
+    "data-flow-tracer",
+    "domain-boundary-guardian",
+    "event-architecture-reviewer",
+    "event-driven-architecture-engineer",
+    "event-flow-mapper",
+    "frontend-data-flow-reviewer",
+    "producer-consumer-tracer",
+    "stale-code-detector"
+   ]
+  },
+  {
+   "name": "production-build-check",
+   "kind": "test-run",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/production-build-check/SKILL.md",
+   "consumers": [
+    "availability-reviewer",
+    "cloud-infrastructure-reviewer",
+    "devops-ci-reviewer",
+    "frontend-performance-engineer",
+    "frontend-security-reviewer",
+    "release-orchestrator",
+    "release-planner",
+    "runtime-validator",
+    "smoke-test-validator"
+   ]
+  },
+  {
+   "name": "prompt-injection-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/prompt-injection-audit/SKILL.md",
+   "consumers": [
+    "ai-guardrail-reviewer",
+    "ai-red-team-reviewer",
+    "ai-retrieval-engineer",
+    "ai-security-reviewer",
+    "prompt-engineer",
+    "prompt-injection-reviewer"
+   ]
+  },
+  {
+   "name": "protected-file-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/protected-file-check/SKILL.md",
+   "consumers": [
+    "change-scope-guardian",
+    "dependency-safety-validator",
+    "protected-file-validator",
+    "staged-diff-reviewer",
+    "untracked-file-reviewer"
+   ]
+  },
+  {
+   "name": "quality-gate",
+   "kind": "check",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/quality-gate/SKILL.md",
+   "consumers": [
+    "completion-controller",
+    "music-os-360-orchestrator",
+    "validation-orchestrator",
+    "validation-router",
+    "workflow-orchestrator"
+   ]
+  },
+  {
+   "name": "query-audit",
+   "kind": "audit",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/query-audit/SKILL.md",
+   "consumers": [
+    "database-reliability-reviewer",
+    "indexing-engineer",
+    "performance-engineer",
+    "query-engineer",
+    "query-performance-engineer",
+    "repository-engineer",
+    "repository-reviewer",
+    "runtime-performance-reviewer",
+    "sql-injection-reviewer"
+   ]
+  },
+  {
+   "name": "queue-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/queue-audit/SKILL.md",
+   "consumers": [
+    "abuse-prevention-reviewer",
+    "capacity-reviewer",
+    "concurrency-reviewer",
+    "data-engineering-reviewer",
+    "integration-resilience-reviewer",
+    "load-test-engineer",
+    "queue-architecture-reviewer",
+    "queue-engineer",
+    "queue-flow-mapper",
+    "queue-reliability-reviewer",
+    "rate-limit-reviewer",
+    "retry-policy-reviewer",
+    "retry-reviewer",
+    "saturation-reviewer",
+    "tracing-reviewer",
+    "webhook-reviewer",
+    "worker-reliability-reviewer"
+   ]
+  },
+  {
+   "name": "queue-map",
+   "kind": "map",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/queue-map/SKILL.md",
+   "consumers": [
+    "event-driven-architecture-engineer",
+    "queue-architecture-reviewer",
+    "queue-flow-mapper",
+    "worker-mapper"
+   ]
+  },
+  {
+   "name": "rbac-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/rbac-audit/SKILL.md",
+   "consumers": [
+    "authorization-reviewer",
+    "rbac-reviewer"
+   ]
+  },
+  {
+   "name": "refactor-component",
+   "kind": "implementation",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/refactor-component/SKILL.md",
+   "consumers": [
+    "component-engineer",
+    "refactoring-engineer"
+   ]
+  },
+  {
+   "name": "repo-identity-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/repo-identity-check/SKILL.md",
+   "consumers": [
+    "repo-inspector",
+    "repository-orchestrator"
+   ]
+  },
+  {
+   "name": "repo-inspect",
+   "kind": "analysis",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/repo-inspect/SKILL.md",
+   "consumers": [
+    "codebase-explorer",
+    "repo-inspector",
+    "repository-orchestrator"
+   ]
+  },
+  {
+   "name": "repository-census",
+   "kind": "analysis",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/repository-census/SKILL.md",
+   "consumers": [
+    "repo-inspector"
+   ]
+  },
+  {
+   "name": "repository-layer-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/repository-layer-audit/SKILL.md",
+   "consumers": [
+    "boundary-reviewer",
+    "coupling-reviewer",
+    "repository-reviewer"
+   ]
+  },
+  {
+   "name": "responsive-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/responsive-audit/SKILL.md",
+   "consumers": [
+    "browser-compatibility-reviewer",
+    "mobile-reviewer",
+    "responsive-engineer"
+   ]
+  },
+  {
+   "name": "retry-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/retry-audit/SKILL.md",
+   "consumers": [
+    "integration-reliability-reviewer",
+    "integration-resilience-reviewer",
+    "provider-failure-reviewer",
+    "queue-architecture-reviewer",
+    "queue-reliability-reviewer",
+    "rate-limit-reviewer",
+    "retry-policy-reviewer",
+    "retry-reviewer"
+   ]
+  },
+  {
+   "name": "rollback-analysis",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/rollback-analysis/SKILL.md",
+   "consumers": [
+    "archival-strategy-reviewer",
+    "backup-reviewer",
+    "data-migration-reviewer",
+    "destructive-change-guard",
+    "migration-engineer",
+    "migration-planner",
+    "recovery-orchestrator",
+    "release-planner",
+    "release-validator",
+    "restore-reviewer",
+    "rollback-analyzer",
+    "rollback-planner"
+   ]
+  },
+  {
+   "name": "root-cause-analysis",
+   "kind": "analysis",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/root-cause-analysis/SKILL.md",
+   "consumers": [
+    "recovery-orchestrator",
+    "retry-orchestrator"
+   ]
+  },
+  {
+   "name": "route-map",
+   "kind": "map",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/route-map/SKILL.md",
+   "consumers": [
+    "module-mapper",
+    "route-mapper"
+   ]
+  },
+  {
+   "name": "routing-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/routing-audit/SKILL.md",
+   "consumers": [
+    "routing-engineer"
+   ]
+  },
+  {
+   "name": "run-accessibility-tests",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-accessibility-tests/SKILL.md",
+   "consumers": [
+    "accessibility-auditor",
+    "accessibility-engineer"
+   ]
+  },
+  {
+   "name": "run-api-tests",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-api-tests/SKILL.md",
+   "consumers": [
+    "api-engineer",
+    "api-test-engineer",
+    "contract-test-engineer",
+    "controller-engineer",
+    "smoke-test-validator"
+   ]
+  },
+  {
+   "name": "run-architecture-checks",
+   "kind": "test-run",
+   "domain": "architecture",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-architecture-checks/SKILL.md",
+   "consumers": [
+    "abstraction-reviewer",
+    "ai-runtime-architect",
+    "architecture-guardian",
+    "boundary-reviewer",
+    "code-reviewer",
+    "cohesion-reviewer",
+    "complexity-reviewer",
+    "consistency-reviewer",
+    "coupling-reviewer",
+    "maintainability-reviewer",
+    "technical-debt-reviewer"
+   ]
+  },
+  {
+   "name": "run-build",
+   "kind": "test-run",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-build/SKILL.md",
+   "consumers": [
+    "frontend-performance-engineer",
+    "validation-orchestrator"
+   ]
+  },
+  {
+   "name": "run-e2e",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-e2e/SKILL.md",
+   "consumers": [
+    "browser-compatibility-reviewer",
+    "browser-test-engineer",
+    "e2e-engineer",
+    "flaky-test-detector"
+   ]
+  },
+  {
+   "name": "run-integration-tests",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-integration-tests/SKILL.md",
+   "consumers": [
+    "adapter-engineer",
+    "ai-automation-engineer",
+    "ai-workflow-engineer",
+    "chaos-test-reviewer",
+    "connector-engineer",
+    "flaky-test-detector",
+    "integration-data-mapper",
+    "integration-engineer",
+    "integration-test-engineer",
+    "migration-test-engineer",
+    "resilience-test-engineer",
+    "sync-engineer",
+    "test-engineer"
+   ]
+  },
+  {
+   "name": "run-lint",
+   "kind": "test-run",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-lint/SKILL.md",
+   "consumers": [
+    "validation-orchestrator"
+   ]
+  },
+  {
+   "name": "run-performance-tests",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-performance-tests/SKILL.md",
+   "consumers": [
+    "ai-latency-reviewer",
+    "capacity-reviewer",
+    "indexing-engineer",
+    "load-test-engineer",
+    "performance-engineer",
+    "performance-test-engineer",
+    "query-performance-engineer",
+    "runtime-performance-reviewer",
+    "saturation-reviewer"
+   ]
+  },
+  {
+   "name": "run-security-tests",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-security-tests/SKILL.md",
+   "consumers": [
+    "auth-engineer",
+    "security-engineer",
+    "security-test-engineer"
+   ]
+  },
+  {
+   "name": "run-typecheck",
+   "kind": "test-run",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-typecheck/SKILL.md",
+   "consumers": [
+    "validation-orchestrator"
+   ]
+  },
+  {
+   "name": "run-unit-tests",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-unit-tests/SKILL.md",
+   "consumers": [
+    "ai-agent-engineer",
+    "ai-context-engineer",
+    "ai-evaluation-engineer",
+    "ai-memory-engineer",
+    "ai-observability-engineer",
+    "ai-retrieval-engineer",
+    "ai-skill-engineer",
+    "animation-engineer",
+    "backend-engineer",
+    "background-processing-engineer",
+    "caching-engineer",
+    "component-engineer",
+    "concurrency-engineer",
+    "contract-test-engineer",
+    "data-fetching-engineer",
+    "database-engineer",
+    "dto-engineer",
+    "error-handling-engineer",
+    "event-engineer",
+    "flaky-test-detector",
+    "form-engineer",
+    "frontend-engineer",
+    "interaction-engineer",
+    "job-engineer",
+    "mock-reviewer",
+    "mutation-test-reviewer",
+    "observability-engineer",
+    "prompt-engineer",
+    "query-engineer",
+    "queue-engineer",
+    "refactoring-engineer",
+    "regression-analyzer",
+    "repository-engineer",
+    "routing-engineer",
+    "scheduler-engineer",
+    "serialization-engineer",
+    "service-layer-engineer",
+    "snapshot-test-reviewer",
+    "state-management-engineer",
+    "test-engineer",
+    "transaction-engineer",
+    "unit-test-engineer",
+    "use-case-engineer",
+    "validation-engineer",
+    "validation-orchestrator",
+    "webhook-engineer",
+    "worker-engineer"
+   ]
+  },
+  {
+   "name": "run-visual-regression",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/run-visual-regression/SKILL.md",
+   "consumers": [
+    "visual-qa-engineer",
+    "visual-regression-engineer"
+   ]
+  },
+  {
+   "name": "runtime-path-trace",
+   "kind": "analysis",
+   "domain": "reliability",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/runtime-path-trace/SKILL.md",
+   "consumers": [
+    "data-flow-tracer",
+    "metrics-reviewer",
+    "observability-engineer",
+    "runtime-path-analyzer",
+    "runtime-performance-reviewer",
+    "runtime-validator",
+    "tracing-reviewer",
+    "unreachable-code-detector"
+   ]
+  },
+  {
+   "name": "runtime-smoke-test",
+   "kind": "test-run",
+   "domain": "testing",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/runtime-smoke-test/SKILL.md",
+   "consumers": [
+    "alerting-reviewer",
+    "availability-reviewer",
+    "e2e-engineer",
+    "environment-analyzer",
+    "release-orchestrator",
+    "runtime-validator",
+    "smoke-test-validator"
+   ]
+  },
+  {
+   "name": "safe-refactor",
+   "kind": "implementation",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/safe-refactor/SKILL.md",
+   "consumers": [
+    "code-smell-reviewer",
+    "cohesion-reviewer",
+    "complexity-reviewer",
+    "dead-code-reviewer",
+    "readability-reviewer",
+    "refactoring-engineer",
+    "refactoring-planner"
+   ]
+  },
+  {
+   "name": "scheduler-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/scheduler-audit/SKILL.md",
+   "consumers": [
+    "scheduler-engineer",
+    "worker-architecture-reviewer",
+    "worker-mapper",
+    "worker-reliability-reviewer"
+   ]
+  },
+  {
+   "name": "scope-lock",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/scope-lock/SKILL.md",
+   "consumers": [
+    "change-scope-guardian",
+    "diff-reviewer",
+    "implementation-lead",
+    "ownership-mapper",
+    "parallel-work-orchestrator",
+    "repository-orchestrator",
+    "scope-lock-validator",
+    "scope-planner"
+   ]
+  },
+  {
+   "name": "secret-scan",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/secret-scan/SKILL.md",
+   "consumers": [
+    "cloud-infrastructure-reviewer",
+    "config-mapper",
+    "configuration-analyzer",
+    "credential-management-reviewer",
+    "credential-storage-reviewer",
+    "database-security-reviewer",
+    "encryption-reviewer",
+    "fixture-reviewer",
+    "integration-security-reviewer",
+    "logging-reviewer",
+    "protected-file-validator",
+    "secrets-reviewer",
+    "security-auditor",
+    "security-investigator",
+    "staged-diff-reviewer",
+    "untracked-file-reviewer",
+    "vulnerability-reviewer"
+   ]
+  },
+  {
+   "name": "security-boundary-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/security-boundary-audit/SKILL.md",
+   "consumers": [
+    "abuse-prevention-reviewer",
+    "auditability-reviewer",
+    "authentication-reviewer",
+    "compliance-privacy-reviewer",
+    "csrf-reviewer",
+    "database-security-reviewer",
+    "error-model-reviewer",
+    "feature-flag-analyzer",
+    "frontend-security-reviewer",
+    "input-validation-reviewer",
+    "integration-security-reviewer",
+    "oauth-reviewer",
+    "permission-boundary-reviewer",
+    "pii-reviewer",
+    "secrets-reviewer",
+    "security-auditor",
+    "security-boundary-mapper",
+    "security-engineer",
+    "security-investigator",
+    "sql-injection-reviewer",
+    "ssrf-reviewer",
+    "tenant-boundary-mapper",
+    "tenant-isolation-reviewer",
+    "threat-model-reviewer",
+    "validation-engineer",
+    "webhook-security-reviewer",
+    "xss-reviewer"
+   ]
+  },
+  {
+   "name": "service-layer-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/service-layer-audit/SKILL.md",
+   "consumers": [
+    "abstraction-reviewer",
+    "backend-architecture-engineer",
+    "boundary-reviewer",
+    "cohesion-reviewer",
+    "coupling-reviewer",
+    "duplication-reviewer",
+    "runtime-performance-reviewer",
+    "service-layer-reviewer"
+   ]
+  },
+  {
+   "name": "session-security-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/session-security-audit/SKILL.md",
+   "consumers": [
+    "auth-engineer",
+    "authentication-reviewer",
+    "csrf-reviewer",
+    "frontend-security-reviewer",
+    "oauth-reviewer",
+    "session-security-reviewer"
+   ]
+  },
+  {
+   "name": "spacing-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/spacing-audit/SKILL.md",
+   "consumers": [
+    "design-system-engineer",
+    "visual-consistency-reviewer"
+   ]
+  },
+  {
+   "name": "sql-injection-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/sql-injection-audit/SKILL.md",
+   "consumers": [
+    "input-validation-reviewer",
+    "repository-reviewer",
+    "sql-injection-reviewer"
+   ]
+  },
+  {
+   "name": "ssrf-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ssrf-audit/SKILL.md",
+   "consumers": [
+    "integration-security-reviewer",
+    "ssrf-reviewer"
+   ]
+  },
+  {
+   "name": "staged-diff-review",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/staged-diff-review/SKILL.md",
+   "consumers": [
+    "atomic-commit-validator",
+    "commit-message-validator",
+    "commit-validator",
+    "protected-file-validator",
+    "staged-diff-reviewer"
+   ]
+  },
+  {
+   "name": "stale-code-analysis",
+   "kind": "analysis",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/stale-code-analysis/SKILL.md",
+   "consumers": [
+    "stale-code-detector"
+   ]
+  },
+  {
+   "name": "state-management-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/state-management-audit/SKILL.md",
+   "consumers": [
+    "frontend-data-flow-reviewer",
+    "state-management-engineer"
+   ]
+  },
+  {
+   "name": "supply-chain-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/supply-chain-audit/SKILL.md",
+   "consumers": [
+    "dependency-analyzer",
+    "infrastructure-architecture-engineer"
+   ]
+  },
+  {
+   "name": "table-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/table-audit/SKILL.md",
+   "consumers": []
+  },
+  {
+   "name": "technical-debt-analysis",
+   "kind": "analysis",
+   "domain": "quality",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/technical-debt-analysis/SKILL.md",
+   "consumers": [
+    "technical-debt-analyzer"
+   ]
+  },
+  {
+   "name": "tenant-isolation-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/tenant-isolation-audit/SKILL.md",
+   "consumers": [
+    "ai-automation-engineer",
+    "ai-context-engineer",
+    "ai-memory-engineer",
+    "ai-output-validation-reviewer",
+    "ai-retrieval-engineer",
+    "ai-security-reviewer",
+    "database-engineer",
+    "database-security-reviewer",
+    "domain-boundary-reviewer",
+    "file-upload-security-reviewer",
+    "multi-tenant-architecture-reviewer",
+    "query-engineer",
+    "repository-reviewer",
+    "security-auditor",
+    "security-investigator",
+    "tenant-boundary-mapper",
+    "tenant-isolation-reviewer"
+   ]
+  },
+  {
+   "name": "token-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/token-audit/SKILL.md",
+   "consumers": [
+    "design-system-engineer",
+    "visual-consistency-reviewer"
+   ]
+  },
+  {
+   "name": "transaction-audit",
+   "kind": "audit",
+   "domain": "database",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/transaction-audit/SKILL.md",
+   "consumers": [
+    "concurrency-reviewer",
+    "database-reliability-reviewer",
+    "locking-reviewer",
+    "payments-reviewer",
+    "service-layer-reviewer",
+    "transaction-engineer",
+    "transaction-reviewer"
+   ]
+  },
+  {
+   "name": "typography-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/typography-audit/SKILL.md",
+   "consumers": [
+    "design-system-engineer",
+    "visual-consistency-reviewer"
+   ]
+  },
+  {
+   "name": "upload-security-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/upload-security-audit/SKILL.md",
+   "consumers": [
+    "file-upload-security-reviewer"
+   ]
+  },
+  {
+   "name": "verify",
+   "kind": "check",
+   "domain": "governance",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/verify/SKILL.md",
+   "consumers": [
+    "evidence-orchestrator",
+    "task-orchestrator",
+    "validation-orchestrator",
+    "verification-controller"
+   ]
+  },
+  {
+   "name": "visual-consistency-audit",
+   "kind": "audit",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/visual-consistency-audit/SKILL.md",
+   "consumers": [
+    "visual-consistency-reviewer"
+   ]
+  },
+  {
+   "name": "visual-regression",
+   "kind": "test-run",
+   "domain": "frontend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/visual-regression/SKILL.md",
+   "consumers": [
+    "visual-regression-engineer"
+   ]
+  },
+  {
+   "name": "webhook-security-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/webhook-security-audit/SKILL.md",
+   "consumers": [
+    "payments-reviewer",
+    "webhook-engineer",
+    "webhook-reviewer",
+    "webhook-security-reviewer"
+   ]
+  },
+  {
+   "name": "worker-audit",
+   "kind": "audit",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/worker-audit/SKILL.md",
+   "consumers": [
+    "saturation-reviewer",
+    "worker-architecture-reviewer",
+    "worker-engineer",
+    "worker-reliability-reviewer"
+   ]
+  },
+  {
+   "name": "worker-map",
+   "kind": "map",
+   "domain": "backend",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/worker-map/SKILL.md",
+   "consumers": [
+    "queue-flow-mapper",
+    "worker-architecture-reviewer",
+    "worker-mapper"
+   ]
+  },
+  {
+   "name": "writer-conflict-check",
+   "kind": "check",
+   "domain": "repository",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/writer-conflict-check/SKILL.md",
+   "consumers": [
+    "implementation-lead",
+    "merge-safety-reviewer",
+    "ownership-analyzer",
+    "ownership-mapper",
+    "parallel-work-orchestrator",
+    "repository-guardian",
+    "scope-lock-validator"
+   ]
+  },
+  {
+   "name": "xss-audit",
+   "kind": "audit",
+   "domain": "security",
+   "batch": 16,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/xss-audit/SKILL.md",
+   "consumers": [
+    "frontend-security-reviewer",
+    "input-validation-reviewer",
+    "xss-reviewer"
+   ]
+  }
+ ],
  "capabilities": [
   {
    "id": "ai.agent",
