@@ -205,6 +205,13 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "api-architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/api/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/api-architecture-engineer.md"
+    },
+    {
       "agent": "api-contract-analyzer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -216,6 +223,18 @@
     },
     {
       "agent": "approval-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/cross-cutting/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/architecture-engineer.md"
+    },
+    {
+      "agent": "architecture-guardian",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -233,6 +252,13 @@
       "agent": "autonomous-planner",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "backend-architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/backend/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/backend-architecture-engineer.md"
     },
     {
       "agent": "blast-radius-analyzer",
@@ -275,9 +301,21 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "contract-architecture-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "contradiction-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "data-architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/data/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/data-architecture-engineer.md"
     },
     {
       "agent": "data-flow-tracer",
@@ -320,6 +358,23 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "domain-architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/domain/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/domain-architecture-engineer.md"
+    },
+    {
+      "agent": "domain-boundary-guardian",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "domain-boundary-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "duplication-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -338,6 +393,18 @@
       "agent": "escalation-router",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "event-architecture-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "event-driven-architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/events/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/event-driven-architecture-engineer.md"
     },
     {
       "agent": "event-flow-mapper",
@@ -365,12 +432,31 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "frontend-architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/frontend/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/frontend-architecture-engineer.md"
+    },
+    {
       "agent": "implementation-lead",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
     {
       "agent": "implementation-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "infrastructure-architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/infrastructure/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/infrastructure-architecture-engineer.md"
+    },
+    {
+      "agent": "integration-architecture-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -390,7 +476,17 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "modularity-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "module-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "multi-tenant-architecture-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -430,7 +526,19 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "platform-architecture-engineer",
+      "writes": [
+        "docs/engineering/decisions/platform/**"
+      ],
+      "note": "pack writer (architecture); scope declared in .claude/agents/platform-architecture-engineer.md"
+    },
+    {
       "agent": "producer-consumer-tracer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "queue-architecture-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -586,6 +694,11 @@
     },
     {
       "agent": "verification-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "worker-architecture-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },

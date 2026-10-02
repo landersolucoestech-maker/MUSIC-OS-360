@@ -597,6 +597,231 @@
    "capabilities": [
     "planning.dependency"
    ]
+  },
+  {
+   "intent": "guard-architecture",
+   "domain": "architecture",
+   "description": "Review a structural change against the established architecture",
+   "keywords": [
+    "architecture review",
+    "guard architecture",
+    "boundary review",
+    "structural change"
+   ],
+   "capabilities": [
+    "arch.guard"
+   ]
+  },
+  {
+   "intent": "design-architecture",
+   "domain": "architecture",
+   "description": "Design and record a cross-cutting architectural decision",
+   "keywords": [
+    "architectural decision",
+    "design architecture",
+    "decision record"
+   ],
+   "capabilities": [
+    "arch.design"
+   ]
+  },
+  {
+   "intent": "design-domain-model",
+   "domain": "architecture",
+   "description": "Design the domain model decisions",
+   "keywords": [
+    "domain model",
+    "domain decision",
+    "entity model",
+    "project work phonogram"
+   ],
+   "capabilities": [
+    "arch.domain.design"
+   ]
+  },
+  {
+   "intent": "review-domain-boundaries",
+   "domain": "architecture",
+   "description": "Guard and review domain boundaries",
+   "keywords": [
+    "domain boundaries",
+    "boundary integrity",
+    "work phonogram boundary",
+    "finance royalties boundary"
+   ],
+   "capabilities": [
+    "arch.domain.boundaries"
+   ]
+  },
+  {
+   "intent": "review-modularity",
+   "domain": "architecture",
+   "description": "Review modularity and coupling",
+   "keywords": [
+    "modularity",
+    "coupling cohesion",
+    "module size"
+   ],
+   "capabilities": [
+    "arch.review.modularity"
+   ]
+  },
+  {
+   "intent": "review-event-architecture",
+   "domain": "architecture",
+   "description": "Review event architecture",
+   "keywords": [
+    "event architecture",
+    "event design review"
+   ],
+   "capabilities": [
+    "arch.review.events"
+   ]
+  },
+  {
+   "intent": "review-queue-architecture",
+   "domain": "architecture",
+   "description": "Review queue architecture",
+   "keywords": [
+    "queue architecture",
+    "queue design review"
+   ],
+   "capabilities": [
+    "arch.review.queues"
+   ]
+  },
+  {
+   "intent": "review-worker-architecture",
+   "domain": "architecture",
+   "description": "Review worker architecture",
+   "keywords": [
+    "worker architecture",
+    "scheduler design review"
+   ],
+   "capabilities": [
+    "arch.review.workers"
+   ]
+  },
+  {
+   "intent": "review-multi-tenant-architecture",
+   "domain": "architecture",
+   "description": "Review multi-tenant architecture",
+   "keywords": [
+    "multi tenant architecture",
+    "tenant design review"
+   ],
+   "capabilities": [
+    "arch.review.multi-tenant"
+   ]
+  },
+  {
+   "intent": "review-contract-architecture",
+   "domain": "architecture",
+   "description": "Review contract architecture",
+   "keywords": [
+    "contract architecture",
+    "contract ownership",
+    "versioning review"
+   ],
+   "capabilities": [
+    "arch.review.contracts"
+   ]
+  },
+  {
+   "intent": "review-integration-architecture",
+   "domain": "architecture",
+   "description": "Review integration architecture",
+   "keywords": [
+    "integration architecture",
+    "provider isolation"
+   ],
+   "capabilities": [
+    "arch.review.integrations"
+   ]
+  },
+  {
+   "intent": "design-frontend-architecture",
+   "domain": "architecture",
+   "description": "Design frontend architecture",
+   "keywords": [
+    "frontend architecture",
+    "state ownership decision"
+   ],
+   "capabilities": [
+    "arch.design.frontend"
+   ]
+  },
+  {
+   "intent": "design-backend-architecture",
+   "domain": "architecture",
+   "description": "Design backend architecture",
+   "keywords": [
+    "backend architecture",
+    "layering decision"
+   ],
+   "capabilities": [
+    "arch.design.backend"
+   ]
+  },
+  {
+   "intent": "design-data-architecture",
+   "domain": "architecture",
+   "description": "Design data architecture",
+   "keywords": [
+    "data architecture",
+    "source of truth decision"
+   ],
+   "capabilities": [
+    "arch.design.data"
+   ]
+  },
+  {
+   "intent": "design-platform-architecture",
+   "domain": "architecture",
+   "description": "Design platform architecture",
+   "keywords": [
+    "platform architecture",
+    "shared package decision"
+   ],
+   "capabilities": [
+    "arch.design.platform"
+   ]
+  },
+  {
+   "intent": "design-infrastructure-architecture",
+   "domain": "architecture",
+   "description": "Design infrastructure architecture",
+   "keywords": [
+    "infrastructure architecture",
+    "deployment topology decision"
+   ],
+   "capabilities": [
+    "arch.design.infrastructure"
+   ]
+  },
+  {
+   "intent": "design-api-architecture",
+   "domain": "architecture",
+   "description": "Design API architecture",
+   "keywords": [
+    "api architecture",
+    "api versioning decision"
+   ],
+   "capabilities": [
+    "arch.design.api"
+   ]
+  },
+  {
+   "intent": "design-event-architecture",
+   "domain": "architecture",
+   "description": "Design event-driven architecture",
+   "keywords": [
+    "event driven architecture",
+    "event vocabulary decision"
+   ],
+   "capabilities": [
+    "arch.design.events"
+   ]
   }
  ],
  "highImpactSignals": [

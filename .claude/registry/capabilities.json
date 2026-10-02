@@ -1,6 +1,223 @@
 {
  "capabilities": [
   {
+   "id": "arch.design",
+   "domain": "architecture",
+   "description": "Design cross-cutting architectural decisions and record them as decision records",
+   "validation": [
+    "decision record reviewed by the architecture-guardian"
+   ],
+   "evidence": [
+    "decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.design.api",
+   "domain": "architecture",
+   "description": "Design API architecture: resource model, versioning, pagination, error contract and compatibility window",
+   "validation": [
+    "api design checklist"
+   ],
+   "evidence": [
+    "api decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.design.backend",
+   "domain": "architecture",
+   "description": "Design backend architecture: layering of controller, use case, service and repository, transactions and error model",
+   "validation": [
+    "backend architecture checklist"
+   ],
+   "evidence": [
+    "backend decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.design.data",
+   "domain": "architecture",
+   "description": "Design data architecture: ownership of data, schema evolution, retention and the single source of truth per concept",
+   "validation": [
+    "data architecture checklist"
+   ],
+   "evidence": [
+    "data decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.design.events",
+   "domain": "architecture",
+   "description": "Design event-driven architecture: event vocabulary, ownership, delivery guarantees and replay safety",
+   "validation": [
+    "event design checklist"
+   ],
+   "evidence": [
+    "event decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.design.frontend",
+   "domain": "architecture",
+   "description": "Design frontend architecture: module layout, data fetching, state ownership and design system use",
+   "validation": [
+    "frontend architecture checklist"
+   ],
+   "evidence": [
+    "frontend decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.design.infrastructure",
+   "domain": "architecture",
+   "description": "Design infrastructure architecture: environments, deployment topology, secrets handling and observability stack within the existing providers",
+   "validation": [
+    "infrastructure checklist"
+   ],
+   "evidence": [
+    "infrastructure decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.design.platform",
+   "domain": "architecture",
+   "description": "Design platform architecture: shared packages, build order, configuration and cross-cutting services",
+   "validation": [
+    "platform architecture checklist"
+   ],
+   "evidence": [
+    "platform decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.domain.boundaries",
+   "domain": "architecture",
+   "description": "Guard and review domain boundaries so entities, rights, shares, contracts and finance are never merged by accident",
+   "validation": [
+    "domain boundary checklist with code references"
+   ],
+   "evidence": [
+    "boundary review"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.domain.design",
+   "domain": "architecture",
+   "description": "Design the domain model of the product: Project, Work, Phonogram and released music as separate entities with independent participants, rights and shares",
+   "validation": [
+    "domain invariants checklist"
+   ],
+   "evidence": [
+    "domain decision record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.guard",
+   "domain": "architecture",
+   "description": "Guard the established architecture: block casual second package managers, ORMs, migration mechanisms, state sources or tenant boundaries",
+   "validation": [
+    "architecture checks",
+    "independent architecture review"
+   ],
+   "evidence": [
+    "architecture review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.review.contracts",
+   "domain": "architecture",
+   "description": "Review contract architecture: ownership, versioning and compatibility of API, event and shared types",
+   "validation": [
+    "producer-consumer table"
+   ],
+   "evidence": [
+    "contract architecture review"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.review.events",
+   "domain": "architecture",
+   "description": "Review event architecture: ownership of events, payload evolution, ordering and idempotent handlers",
+   "validation": [
+    "event map reconciliation"
+   ],
+   "evidence": [
+    "event architecture review"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.review.integrations",
+   "domain": "architecture",
+   "description": "Review integration architecture: anti-corruption layers, provider isolation, failure containment",
+   "validation": [
+    "integration map reconciliation"
+   ],
+   "evidence": [
+    "integration architecture review"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.review.modularity",
+   "domain": "architecture",
+   "description": "Review modularity: module size, public surface, coupling and cohesion between modules",
+   "validation": [
+    "module graph metrics"
+   ],
+   "evidence": [
+    "modularity review"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.review.multi-tenant",
+   "domain": "architecture",
+   "description": "Review multi-tenant architecture: tenant context propagation, RLS, caches and side paths",
+   "validation": [
+    "tenant chain trace"
+   ],
+   "evidence": [
+    "multi-tenant review"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.review.queues",
+   "domain": "architecture",
+   "description": "Review queue architecture: topology, retry and dead-letter policy, idempotency and backpressure",
+   "validation": [
+    "queue topology check"
+   ],
+   "evidence": [
+    "queue architecture review"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "arch.review.workers",
+   "domain": "architecture",
+   "description": "Review worker architecture: process model, concurrency, shutdown and scheduler overlap",
+   "validation": [
+    "worker map reconciliation"
+   ],
+   "evidence": [
+    "worker architecture review"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "control.completion",
    "domain": "control",
    "description": "Decide completion only from a PASS completion gate and closed criteria",

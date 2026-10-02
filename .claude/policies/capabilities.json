@@ -352,6 +352,17 @@
       ]
     },
     {
+      "agent": "api-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "api-contract-analyzer",
       "allowedTools": [
         "Read",
@@ -371,6 +382,26 @@
     },
     {
       "agent": "approval-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "architecture-guardian",
       "allowedTools": [
         "Read",
         "Grep",
@@ -400,6 +431,17 @@
       "agent": "autonomous-planner",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "backend-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -479,9 +521,29 @@
       ]
     },
     {
+      "agent": "contract-architecture-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "contradiction-detector",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "data-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -561,6 +623,35 @@
       ]
     },
     {
+      "agent": "domain-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "domain-boundary-guardian",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "domain-boundary-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "duplication-detector",
       "allowedTools": [
         "Read",
@@ -591,6 +682,26 @@
       "agent": "escalation-router",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "event-architecture-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "event-driven-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -643,6 +754,17 @@
       ]
     },
     {
+      "agent": "frontend-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "implementation-lead",
       "allowedTools": [
         "Read",
@@ -654,6 +776,26 @@
     },
     {
       "agent": "implementation-planner",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "infrastructure-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "integration-architecture-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -690,7 +832,25 @@
       ]
     },
     {
+      "agent": "modularity-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "module-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "multi-tenant-architecture-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -764,7 +924,27 @@
       ]
     },
     {
+      "agent": "platform-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "producer-consumer-tracer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "queue-architecture-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1050,6 +1230,15 @@
     },
     {
       "agent": "verification-controller",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "worker-architecture-reviewer",
       "allowedTools": [
         "Read",
         "Grep",

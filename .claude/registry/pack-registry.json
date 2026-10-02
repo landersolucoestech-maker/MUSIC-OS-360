@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 83,
+  "agents": 102,
   "skills": 0,
-  "capabilities": 61,
+  "capabilities": 79,
   "workflows": 6
  },
  "agents": [
@@ -106,6 +106,35 @@
    "approval": "none"
   },
   {
+   "name": "api-architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/api-architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/api/**"
+   ],
+   "capabilities": [
+    "arch.design.api"
+   ],
+   "skills": [
+    "api-design",
+    "contract-tracing",
+    "doc-writer",
+    "api-contract-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "api-contract-analyzer",
    "kind": "analyzer",
    "domain": "repository-intelligence",
@@ -180,6 +209,60 @@
    "approval": "none"
   },
   {
+   "name": "architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/cross-cutting/**"
+   ],
+   "capabilities": [
+    "arch.design"
+   ],
+   "skills": [
+    "architecture-map",
+    "plan",
+    "doc-writer",
+    "cross-layer-impact"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "architecture-guardian",
+   "kind": "guardian",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/architecture-guardian.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.guard"
+   ],
+   "skills": [
+    "architecture-map",
+    "run-architecture-checks",
+    "dependency-cycle-analysis",
+    "blast-radius-analysis"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "architecture-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -249,6 +332,35 @@
     "checkpoint",
     "mission-recovery",
     "resume"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "backend-architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/backend-architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/backend/**"
+   ],
+   "capabilities": [
+    "arch.design.backend"
+   ],
+   "skills": [
+    "architecture-map",
+    "api-design",
+    "doc-writer",
+    "service-layer-audit"
    ],
    "approval": "none"
   },
@@ -447,6 +559,30 @@
    "approval": "none"
   },
   {
+   "name": "contract-architecture-reviewer",
+   "kind": "reviewer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/contract-architecture-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.review.contracts"
+   ],
+   "skills": [
+    "contract-tracing",
+    "api-contract-audit",
+    "producer-consumer-trace"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "contradiction-detector",
    "kind": "detector",
    "domain": "requirements",
@@ -467,6 +603,35 @@
     "trace",
     "why",
     "quorum"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "data-architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/data-architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/data/**"
+   ],
+   "capabilities": [
+    "arch.design.data"
+   ],
+   "skills": [
+    "schema-normalization",
+    "canonical-naming",
+    "doc-writer",
+    "database-schema-drift"
    ],
    "approval": "none"
   },
@@ -665,6 +830,84 @@
    "approval": "none"
   },
   {
+   "name": "domain-architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/domain-architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/domain/**"
+   ],
+   "capabilities": [
+    "arch.domain.design"
+   ],
+   "skills": [
+    "architecture-map",
+    "canonical-naming",
+    "doc-writer",
+    "royalties-integrity-auditor"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "domain-boundary-guardian",
+   "kind": "guardian",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/domain-boundary-guardian.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.domain.boundaries"
+   ],
+   "skills": [
+    "data-flow-trace",
+    "producer-consumer-trace",
+    "blast-radius-analysis",
+    "royalties-integrity-auditor"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "domain-boundary-reviewer",
+   "kind": "reviewer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/domain-boundary-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.domain.boundaries"
+   ],
+   "skills": [
+    "data-flow-trace",
+    "code-review",
+    "tenant-isolation-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "duplication-detector",
    "kind": "detector",
    "domain": "repository-intelligence",
@@ -757,6 +1000,59 @@
     "quorum",
     "why",
     "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "event-architecture-reviewer",
+   "kind": "reviewer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/event-architecture-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.review.events"
+   ],
+   "skills": [
+    "event-map",
+    "event-processing-audit",
+    "producer-consumer-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "event-driven-architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/event-driven-architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/events/**"
+   ],
+   "capabilities": [
+    "arch.design.events"
+   ],
+   "skills": [
+    "event-map",
+    "queue-map",
+    "doc-writer",
+    "producer-consumer-trace"
    ],
    "approval": "none"
   },
@@ -885,6 +1181,35 @@
    "approval": "none"
   },
   {
+   "name": "frontend-architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/frontend-architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/frontend/**"
+   ],
+   "capabilities": [
+    "arch.design.frontend"
+   ],
+   "skills": [
+    "architecture-map",
+    "frontend-design",
+    "doc-writer",
+    "data-provider-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "implementation-lead",
    "kind": "controller",
    "domain": "control",
@@ -932,6 +1257,59 @@
     "feature-planner",
     "cross-layer-impact",
     "blast-radius-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "infrastructure-architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/infrastructure-architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/infrastructure/**"
+   ],
+   "capabilities": [
+    "arch.design.infrastructure"
+   ],
+   "skills": [
+    "environment-map",
+    "doc-writer",
+    "external-action-check",
+    "supply-chain-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "integration-architecture-reviewer",
+   "kind": "reviewer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/integration-architecture-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.review.integrations"
+   ],
+   "skills": [
+    "integration-map",
+    "external-boundary-mapping",
+    "soundcharts-id-integrity"
    ],
    "approval": "none"
   },
@@ -1012,6 +1390,30 @@
    "approval": "none"
   },
   {
+   "name": "modularity-reviewer",
+   "kind": "reviewer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/modularity-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.review.modularity"
+   ],
+   "skills": [
+    "module-map",
+    "dependency-cycle-analysis",
+    "architecture-map"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "module-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -1033,6 +1435,30 @@
     "dependency-trace",
     "route-map",
     "api-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "multi-tenant-architecture-reviewer",
+   "kind": "reviewer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/multi-tenant-architecture-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.review.multi-tenant"
+   ],
+   "skills": [
+    "tenant-isolation-audit",
+    "security-tenancy-auditor",
+    "data-flow-trace"
    ],
    "approval": "none"
   },
@@ -1214,6 +1640,35 @@
    "approval": "none"
   },
   {
+   "name": "platform-architecture-engineer",
+   "kind": "engineer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/platform-architecture-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "docs/engineering/decisions/platform/**"
+   ],
+   "capabilities": [
+    "arch.design.platform"
+   ],
+   "skills": [
+    "architecture-map",
+    "package-analysis",
+    "doc-writer",
+    "dependency-cycle-analysis"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "producer-consumer-tracer",
    "kind": "analyzer",
    "domain": "repository-intelligence",
@@ -1234,6 +1689,30 @@
     "producer-consumer-trace",
     "contract-tracing",
     "data-flow-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "queue-architecture-reviewer",
+   "kind": "reviewer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/queue-architecture-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.review.queues"
+   ],
+   "skills": [
+    "queue-map",
+    "queue-audit",
+    "retry-audit"
    ],
    "approval": "none"
   },
@@ -2004,6 +2483,30 @@
    "approval": "none"
   },
   {
+   "name": "worker-architecture-reviewer",
+   "kind": "reviewer",
+   "domain": "architecture",
+   "batch": 4,
+   "owner": "architecture owner",
+   "path": ".claude/agents/worker-architecture-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "arch.review.workers"
+   ],
+   "skills": [
+    "worker-map",
+    "worker-audit",
+    "scheduler-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "worker-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -2056,6 +2559,381 @@
  ],
  "skills": [],
  "capabilities": [
+  {
+   "id": "arch.design",
+   "domain": "architecture",
+   "description": "Design cross-cutting architectural decisions and record them as decision records",
+   "validation": [
+    "decision record reviewed by the architecture-guardian"
+   ],
+   "evidence": [
+    "decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "architecture-engineer"
+   ],
+   "skills": [
+    "architecture-map",
+    "cross-layer-impact",
+    "doc-writer",
+    "plan"
+   ]
+  },
+  {
+   "id": "arch.design.api",
+   "domain": "architecture",
+   "description": "Design API architecture: resource model, versioning, pagination, error contract and compatibility window",
+   "validation": [
+    "api design checklist"
+   ],
+   "evidence": [
+    "api decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "api-architecture-engineer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "api-design",
+    "contract-tracing",
+    "doc-writer"
+   ]
+  },
+  {
+   "id": "arch.design.backend",
+   "domain": "architecture",
+   "description": "Design backend architecture: layering of controller, use case, service and repository, transactions and error model",
+   "validation": [
+    "backend architecture checklist"
+   ],
+   "evidence": [
+    "backend decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "backend-architecture-engineer"
+   ],
+   "skills": [
+    "api-design",
+    "architecture-map",
+    "doc-writer",
+    "service-layer-audit"
+   ]
+  },
+  {
+   "id": "arch.design.data",
+   "domain": "architecture",
+   "description": "Design data architecture: ownership of data, schema evolution, retention and the single source of truth per concept",
+   "validation": [
+    "data architecture checklist"
+   ],
+   "evidence": [
+    "data decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "data-architecture-engineer"
+   ],
+   "skills": [
+    "canonical-naming",
+    "database-schema-drift",
+    "doc-writer",
+    "schema-normalization"
+   ]
+  },
+  {
+   "id": "arch.design.events",
+   "domain": "architecture",
+   "description": "Design event-driven architecture: event vocabulary, ownership, delivery guarantees and replay safety",
+   "validation": [
+    "event design checklist"
+   ],
+   "evidence": [
+    "event decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "event-driven-architecture-engineer"
+   ],
+   "skills": [
+    "doc-writer",
+    "event-map",
+    "producer-consumer-trace",
+    "queue-map"
+   ]
+  },
+  {
+   "id": "arch.design.frontend",
+   "domain": "architecture",
+   "description": "Design frontend architecture: module layout, data fetching, state ownership and design system use",
+   "validation": [
+    "frontend architecture checklist"
+   ],
+   "evidence": [
+    "frontend decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "frontend-architecture-engineer"
+   ],
+   "skills": [
+    "architecture-map",
+    "data-provider-audit",
+    "doc-writer",
+    "frontend-design"
+   ]
+  },
+  {
+   "id": "arch.design.infrastructure",
+   "domain": "architecture",
+   "description": "Design infrastructure architecture: environments, deployment topology, secrets handling and observability stack within the existing providers",
+   "validation": [
+    "infrastructure checklist"
+   ],
+   "evidence": [
+    "infrastructure decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "infrastructure-architecture-engineer"
+   ],
+   "skills": [
+    "doc-writer",
+    "environment-map",
+    "external-action-check",
+    "supply-chain-audit"
+   ]
+  },
+  {
+   "id": "arch.design.platform",
+   "domain": "architecture",
+   "description": "Design platform architecture: shared packages, build order, configuration and cross-cutting services",
+   "validation": [
+    "platform architecture checklist"
+   ],
+   "evidence": [
+    "platform decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "platform-architecture-engineer"
+   ],
+   "skills": [
+    "architecture-map",
+    "dependency-cycle-analysis",
+    "doc-writer",
+    "package-analysis"
+   ]
+  },
+  {
+   "id": "arch.domain.boundaries",
+   "domain": "architecture",
+   "description": "Guard and review domain boundaries so entities, rights, shares, contracts and finance are never merged by accident",
+   "validation": [
+    "domain boundary checklist with code references"
+   ],
+   "evidence": [
+    "boundary review"
+   ],
+   "approval": "none",
+   "executors": [
+    "domain-boundary-guardian",
+    "domain-boundary-reviewer"
+   ],
+   "skills": [
+    "blast-radius-analysis",
+    "code-review",
+    "data-flow-trace",
+    "producer-consumer-trace",
+    "royalties-integrity-auditor",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "arch.domain.design",
+   "domain": "architecture",
+   "description": "Design the domain model of the product: Project, Work, Phonogram and released music as separate entities with independent participants, rights and shares",
+   "validation": [
+    "domain invariants checklist"
+   ],
+   "evidence": [
+    "domain decision record"
+   ],
+   "approval": "none",
+   "executors": [
+    "domain-architecture-engineer"
+   ],
+   "skills": [
+    "architecture-map",
+    "canonical-naming",
+    "doc-writer",
+    "royalties-integrity-auditor"
+   ]
+  },
+  {
+   "id": "arch.guard",
+   "domain": "architecture",
+   "description": "Guard the established architecture: block casual second package managers, ORMs, migration mechanisms, state sources or tenant boundaries",
+   "validation": [
+    "architecture checks",
+    "independent architecture review"
+   ],
+   "evidence": [
+    "architecture review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "architecture-guardian"
+   ],
+   "skills": [
+    "architecture-map",
+    "blast-radius-analysis",
+    "dependency-cycle-analysis",
+    "run-architecture-checks"
+   ]
+  },
+  {
+   "id": "arch.review.contracts",
+   "domain": "architecture",
+   "description": "Review contract architecture: ownership, versioning and compatibility of API, event and shared types",
+   "validation": [
+    "producer-consumer table"
+   ],
+   "evidence": [
+    "contract architecture review"
+   ],
+   "approval": "none",
+   "executors": [
+    "contract-architecture-reviewer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "contract-tracing",
+    "producer-consumer-trace"
+   ]
+  },
+  {
+   "id": "arch.review.events",
+   "domain": "architecture",
+   "description": "Review event architecture: ownership of events, payload evolution, ordering and idempotent handlers",
+   "validation": [
+    "event map reconciliation"
+   ],
+   "evidence": [
+    "event architecture review"
+   ],
+   "approval": "none",
+   "executors": [
+    "event-architecture-reviewer"
+   ],
+   "skills": [
+    "event-map",
+    "event-processing-audit",
+    "producer-consumer-trace"
+   ]
+  },
+  {
+   "id": "arch.review.integrations",
+   "domain": "architecture",
+   "description": "Review integration architecture: anti-corruption layers, provider isolation, failure containment",
+   "validation": [
+    "integration map reconciliation"
+   ],
+   "evidence": [
+    "integration architecture review"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-architecture-reviewer"
+   ],
+   "skills": [
+    "external-boundary-mapping",
+    "integration-map",
+    "soundcharts-id-integrity"
+   ]
+  },
+  {
+   "id": "arch.review.modularity",
+   "domain": "architecture",
+   "description": "Review modularity: module size, public surface, coupling and cohesion between modules",
+   "validation": [
+    "module graph metrics"
+   ],
+   "evidence": [
+    "modularity review"
+   ],
+   "approval": "none",
+   "executors": [
+    "modularity-reviewer"
+   ],
+   "skills": [
+    "architecture-map",
+    "dependency-cycle-analysis",
+    "module-map"
+   ]
+  },
+  {
+   "id": "arch.review.multi-tenant",
+   "domain": "architecture",
+   "description": "Review multi-tenant architecture: tenant context propagation, RLS, caches and side paths",
+   "validation": [
+    "tenant chain trace"
+   ],
+   "evidence": [
+    "multi-tenant review"
+   ],
+   "approval": "none",
+   "executors": [
+    "multi-tenant-architecture-reviewer"
+   ],
+   "skills": [
+    "data-flow-trace",
+    "security-tenancy-auditor",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "arch.review.queues",
+   "domain": "architecture",
+   "description": "Review queue architecture: topology, retry and dead-letter policy, idempotency and backpressure",
+   "validation": [
+    "queue topology check"
+   ],
+   "evidence": [
+    "queue architecture review"
+   ],
+   "approval": "none",
+   "executors": [
+    "queue-architecture-reviewer"
+   ],
+   "skills": [
+    "queue-audit",
+    "queue-map",
+    "retry-audit"
+   ]
+  },
+  {
+   "id": "arch.review.workers",
+   "domain": "architecture",
+   "description": "Review worker architecture: process model, concurrency, shutdown and scheduler overlap",
+   "validation": [
+    "worker map reconciliation"
+   ],
+   "evidence": [
+    "worker architecture review"
+   ],
+   "approval": "none",
+   "executors": [
+    "worker-architecture-reviewer"
+   ],
+   "skills": [
+    "scheduler-audit",
+    "worker-audit",
+    "worker-map"
+   ]
+  },
   {
    "id": "control.completion",
    "domain": "control",

@@ -677,135 +677,154 @@
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "architecture-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "architecture-reviewer",
+   "file": ".claude/agents/architecture-guardian.md"
   },
   {
    "name": "architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/architecture-engineer.md"
   },
   {
    "name": "domain-architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/domain-architecture-engineer.md"
   },
   {
    "name": "domain-boundary-guardian",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/domain-boundary-guardian.md"
   },
   {
    "name": "domain-boundary-reviewer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/domain-boundary-reviewer.md"
   },
   {
    "name": "modularity-reviewer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/modularity-reviewer.md"
   },
   {
    "name": "event-architecture-reviewer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/event-architecture-reviewer.md"
   },
   {
    "name": "queue-architecture-reviewer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/queue-architecture-reviewer.md"
   },
   {
    "name": "worker-architecture-reviewer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/worker-architecture-reviewer.md"
   },
   {
    "name": "multi-tenant-architecture-reviewer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/multi-tenant-architecture-reviewer.md"
   },
   {
    "name": "contract-architecture-reviewer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "contract-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "contract-reviewer",
+   "file": ".claude/agents/contract-architecture-reviewer.md"
   },
   {
    "name": "integration-architecture-reviewer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/integration-architecture-reviewer.md"
   },
   {
    "name": "frontend-architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/frontend-architecture-engineer.md"
   },
   {
    "name": "backend-architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/backend-architecture-engineer.md"
   },
   {
    "name": "data-architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/data-architecture-engineer.md"
   },
   {
    "name": "platform-architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/platform-architecture-engineer.md"
   },
   {
    "name": "infrastructure-architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/infrastructure-architecture-engineer.md"
   },
   {
    "name": "api-architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/api-architecture-engineer.md"
   },
   {
    "name": "event-driven-architecture-engineer",
    "type": "agent",
    "batch": 4,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/event-driven-architecture-engineer.md"
   },
   {
    "name": "backend-engineer",
