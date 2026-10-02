@@ -2,12 +2,36 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 30,
+  "agents": 83,
   "skills": 0,
-  "capabilities": 29,
+  "capabilities": 61,
   "workflows": 6
  },
  "agents": [
+  {
+   "name": "acceptance-criteria-engineer",
+   "kind": "analyzer",
+   "domain": "requirements",
+   "batch": 3,
+   "owner": "requirements owner",
+   "path": ".claude/agents/acceptance-criteria-engineer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "requirements.criteria"
+   ],
+   "skills": [
+    "evidence-collection",
+    "trace",
+    "test-generator"
+   ],
+   "approval": "none"
+  },
   {
    "name": "agent-coordinator",
    "kind": "coordinator",
@@ -58,6 +82,78 @@
    "approval": "none"
   },
   {
+   "name": "ambiguity-detector",
+   "kind": "detector",
+   "domain": "requirements",
+   "batch": 3,
+   "owner": "requirements owner",
+   "path": ".claude/agents/ambiguity-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "requirements.detect-gaps"
+   ],
+   "skills": [
+    "trace",
+    "discover",
+    "canonical-naming"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "api-contract-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/api-contract-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.analyze.api-contracts"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "contract-tracing",
+    "producer-consumer-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "api-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/api-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.routes"
+   ],
+   "skills": [
+    "api-map",
+    "authorization-map",
+    "api-contract-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "approval-router",
    "kind": "router",
    "domain": "routing",
@@ -80,6 +176,54 @@
     "resume-after-approval",
     "reject-unsafe-automation",
     "human-approval-validation"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "architecture-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/architecture-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.architecture"
+   ],
+   "skills": [
+    "architecture-map",
+    "module-map",
+    "dependency-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "assumption-detector",
+   "kind": "detector",
+   "domain": "requirements",
+   "batch": 3,
+   "owner": "requirements owner",
+   "path": ".claude/agents/assumption-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "requirements.detect-gaps"
+   ],
+   "skills": [
+    "trace",
+    "discover",
+    "prime"
    ],
    "approval": "none"
   },
@@ -109,6 +253,30 @@
    "approval": "none"
   },
   {
+   "name": "blast-radius-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/blast-radius-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.analyze.blast-radius"
+   ],
+   "skills": [
+    "blast-radius-analysis",
+    "dependency-trace",
+    "change-impact-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "capability-router",
    "kind": "router",
    "domain": "routing",
@@ -128,6 +296,54 @@
    "skills": [
     "plan",
     "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "circular-dependency-detector",
+   "kind": "detector",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/circular-dependency-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.trace.dependencies"
+   ],
+   "skills": [
+    "dependency-cycle-analysis",
+    "dependency-trace",
+    "architecture-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "codebase-explorer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/codebase-explorer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.inspect"
+   ],
+   "skills": [
+    "repo-inspect",
+    "module-map",
+    "data-flow-trace"
    ],
    "approval": "none"
   },
@@ -153,6 +369,54 @@
     "quality-gate",
     "gate",
     "release-checkpoint"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "config-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/config-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.config"
+   ],
+   "skills": [
+    "config-map",
+    "environment-map",
+    "secret-scan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "configuration-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/configuration-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.config"
+   ],
+   "skills": [
+    "config-map",
+    "environment-map",
+    "secret-scan"
    ],
    "approval": "none"
   },
@@ -183,6 +447,150 @@
    "approval": "none"
   },
   {
+   "name": "contradiction-detector",
+   "kind": "detector",
+   "domain": "requirements",
+   "batch": 3,
+   "owner": "requirements owner",
+   "path": ".claude/agents/contradiction-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "requirements.detect-gaps"
+   ],
+   "skills": [
+    "trace",
+    "why",
+    "quorum"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "data-flow-tracer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/data-flow-tracer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.trace.data-flow"
+   ],
+   "skills": [
+    "data-flow-trace",
+    "producer-consumer-trace",
+    "runtime-path-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "database-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/database-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.database"
+   ],
+   "skills": [
+    "database-map",
+    "database-schema-drift",
+    "database-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "database-schema-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/database-schema-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.database"
+   ],
+   "skills": [
+    "database-schema-drift",
+    "database-audit",
+    "migration-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "dead-code-detector",
+   "kind": "detector",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/dead-code-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.detect.dead-code"
+   ],
+   "skills": [
+    "dead-code-analysis",
+    "orphan-analysis",
+    "dependency-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "dependency-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/dependency-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.analyze.dependencies"
+   ],
+   "skills": [
+    "dependency-scan",
+    "supply-chain-audit",
+    "dependency-safety-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "dependency-coordinator",
    "kind": "coordinator",
    "domain": "coordination",
@@ -209,6 +617,126 @@
    "approval": "none"
   },
   {
+   "name": "dependency-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/dependency-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.dependency"
+   ],
+   "skills": [
+    "dependency-trace",
+    "plan",
+    "cross-layer-impact"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "dependency-tracer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/dependency-tracer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.trace.dependencies"
+   ],
+   "skills": [
+    "dependency-trace",
+    "dependency-cycle-analysis",
+    "blast-radius-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "duplication-detector",
+   "kind": "detector",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/duplication-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.detect.duplication"
+   ],
+   "skills": [
+    "duplication-analysis",
+    "naming-analysis",
+    "dead-code-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "environment-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/environment-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.config"
+   ],
+   "skills": [
+    "environment-map",
+    "config-map",
+    "runtime-smoke-test"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "environment-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/environment-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.config"
+   ],
+   "skills": [
+    "environment-map",
+    "config-map",
+    "localhost-guardian"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "escalation-router",
    "kind": "router",
    "domain": "routing",
@@ -229,6 +757,30 @@
     "quorum",
     "why",
     "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "event-flow-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/event-flow-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.events"
+   ],
+   "skills": [
+    "event-map",
+    "producer-consumer-trace",
+    "data-flow-trace"
    ],
    "approval": "none"
   },
@@ -309,6 +861,30 @@
    "approval": "none"
   },
   {
+   "name": "feature-flag-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/feature-flag-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.analyze.feature-flags"
+   ],
+   "skills": [
+    "feature-flag-analysis",
+    "config-map",
+    "security-boundary-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "implementation-lead",
    "kind": "controller",
    "domain": "control",
@@ -331,6 +907,80 @@
     "scope-lock",
     "writer-conflict-check",
     "implement-feature"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "implementation-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/implementation-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.implementation"
+   ],
+   "skills": [
+    "plan",
+    "feature-planner",
+    "cross-layer-impact",
+    "blast-radius-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "integration-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/integration-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.integrations"
+   ],
+   "skills": [
+    "integration-map",
+    "external-boundary-mapping",
+    "config-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "migration-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/migration-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.migration"
+   ],
+   "skills": [
+    "schema-normalization",
+    "safe-db-rename",
+    "migration-safety-check",
+    "rollback-analysis"
    ],
    "approval": "none"
   },
@@ -358,6 +1008,31 @@
     "evidence-collection",
     "control-plane",
     "mission-recovery"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "module-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/module-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.architecture"
+   ],
+   "skills": [
+    "module-map",
+    "dependency-trace",
+    "route-map",
+    "api-map"
    ],
    "approval": "none"
   },
@@ -393,6 +1068,126 @@
    "approval": "none"
   },
   {
+   "name": "naming-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/naming-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.analyze.naming"
+   ],
+   "skills": [
+    "naming-analysis",
+    "canonical-naming",
+    "residue-search"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "orphan-detector",
+   "kind": "detector",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/orphan-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.detect.dead-code"
+   ],
+   "skills": [
+    "orphan-analysis",
+    "dead-code-analysis",
+    "database-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ownership-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/ownership-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.ownership"
+   ],
+   "skills": [
+    "ownership-analysis",
+    "ownership-map",
+    "writer-conflict-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ownership-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/ownership-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.ownership"
+   ],
+   "skills": [
+    "ownership-map",
+    "writer-conflict-check",
+    "scope-lock"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "package-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/package-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.analyze.dependencies"
+   ],
+   "skills": [
+    "package-analysis",
+    "dependency-cycle-analysis",
+    "module-map"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "parallel-work-orchestrator",
    "kind": "orchestrator",
    "domain": "orchestration",
@@ -415,6 +1210,54 @@
     "scope-lock",
     "ownership-map",
     "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "producer-consumer-tracer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/producer-consumer-tracer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.trace.data-flow"
+   ],
+   "skills": [
+    "producer-consumer-trace",
+    "contract-tracing",
+    "data-flow-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "queue-flow-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/queue-flow-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.events"
+   ],
+   "skills": [
+    "queue-map",
+    "worker-map",
+    "queue-audit"
    ],
    "approval": "none"
   },
@@ -447,6 +1290,54 @@
    "approval": "destructive-data"
   },
   {
+   "name": "refactoring-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/refactoring-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.refactoring"
+   ],
+   "skills": [
+    "refactor-guide",
+    "safe-refactor",
+    "residue-search"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "regression-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/regression-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.analyze.regression"
+   ],
+   "skills": [
+    "blast-radius-analysis",
+    "run-unit-tests",
+    "create-regression-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "release-orchestrator",
    "kind": "orchestrator",
    "domain": "release",
@@ -475,6 +1366,55 @@
    "approval": "production-write"
   },
   {
+   "name": "release-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/release-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.release"
+   ],
+   "skills": [
+    "release",
+    "production-build-check",
+    "rollback-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "repo-inspector",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/repo-inspector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.inspect"
+   ],
+   "skills": [
+    "repo-inspect",
+    "repo-identity-check",
+    "repository-census",
+    "dirty-tree-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "repository-orchestrator",
    "kind": "orchestrator",
    "domain": "orchestration",
@@ -498,6 +1438,30 @@
     "dirty-tree-check",
     "scope-lock",
     "repo-inspect"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "requirements-validator",
+   "kind": "validator",
+   "domain": "requirements",
+   "batch": 3,
+   "owner": "requirements owner",
+   "path": ".claude/agents/requirements-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "requirements.validate"
+   ],
+   "skills": [
+    "trace",
+    "definition-of-done",
+    "evidence-collection"
    ],
    "approval": "none"
   },
@@ -553,6 +1517,78 @@
    "approval": "none"
   },
   {
+   "name": "risk-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/risk-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.risk"
+   ],
+   "skills": [
+    "impact",
+    "threat-model",
+    "change-impact-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "rollback-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/rollback-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.rollback"
+   ],
+   "skills": [
+    "rollback-analysis",
+    "recover",
+    "destructive-change-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "route-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/route-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.routes"
+   ],
+   "skills": [
+    "route-map",
+    "navigation-audit",
+    "authorization-map"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "runtime-continuity-controller",
    "kind": "controller",
    "domain": "control",
@@ -579,6 +1615,78 @@
    "approval": "none"
   },
   {
+   "name": "runtime-path-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/runtime-path-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.trace.data-flow"
+   ],
+   "skills": [
+    "runtime-path-trace",
+    "data-flow-trace",
+    "event-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "scope-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/scope-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.scope"
+   ],
+   "skills": [
+    "scope-lock",
+    "blast-radius-analysis",
+    "dirty-tree-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "security-boundary-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/security-boundary-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.security-boundaries"
+   ],
+   "skills": [
+    "security-boundary-audit",
+    "authorization-map",
+    "integration-map"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "skill-router",
    "kind": "router",
    "domain": "routing",
@@ -598,6 +1706,54 @@
    "skills": [
     "plan",
     "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "specification-reviewer",
+   "kind": "validator",
+   "domain": "requirements",
+   "batch": 3,
+   "owner": "requirements owner",
+   "path": ".claude/agents/specification-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "requirements.validate"
+   ],
+   "skills": [
+    "feature-planner",
+    "trace",
+    "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "stale-code-detector",
+   "kind": "detector",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/stale-code-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.detect.dead-code"
+   ],
+   "skills": [
+    "stale-code-analysis",
+    "database-schema-drift",
+    "producer-consumer-trace"
    ],
    "approval": "none"
   },
@@ -651,6 +1807,78 @@
    "approval": "none"
   },
   {
+   "name": "technical-debt-analyzer",
+   "kind": "analyzer",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/technical-debt-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.analyze.debt"
+   ],
+   "skills": [
+    "technical-debt-analysis",
+    "dead-code-analysis",
+    "duplication-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "tenant-boundary-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/tenant-boundary-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.security-boundaries"
+   ],
+   "skills": [
+    "tenant-isolation-audit",
+    "security-boundary-audit",
+    "data-flow-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "test-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 3,
+   "owner": "planning owner",
+   "path": ".claude/agents/test-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.testing"
+   ],
+   "skills": [
+    "test-generator",
+    "regression-gates",
+    "create-regression-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "tool-router",
    "kind": "router",
    "domain": "routing",
@@ -671,6 +1899,30 @@
     "external-action-check",
     "destructive-change-check",
     "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "unreachable-code-detector",
+   "kind": "detector",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/unreachable-code-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.detect.dead-code"
+   ],
+   "skills": [
+    "dead-code-analysis",
+    "feature-flag-analysis",
+    "runtime-path-trace"
    ],
    "approval": "none"
   },
@@ -748,6 +2000,30 @@
     "verify",
     "regression-gates",
     "evidence-collection"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "worker-mapper",
+   "kind": "mapper",
+   "domain": "repository-intelligence",
+   "batch": 3,
+   "owner": "repository intelligence owner",
+   "path": ".claude/agents/worker-mapper.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repo.map.events"
+   ],
+   "skills": [
+    "worker-map",
+    "scheduler-audit",
+    "queue-map"
    ],
    "approval": "none"
   },
@@ -1232,6 +2508,26 @@
    ]
   },
   {
+   "id": "planning.dependency",
+   "domain": "planning",
+   "description": "Plan dependency ordering across tasks, packages and releases",
+   "validation": [
+    "acyclic order"
+   ],
+   "evidence": [
+    "dependency plan"
+   ],
+   "approval": "none",
+   "executors": [
+    "dependency-planner"
+   ],
+   "skills": [
+    "cross-layer-impact",
+    "dependency-trace",
+    "plan"
+   ]
+  },
+  {
    "id": "planning.execution",
    "domain": "planning",
    "description": "Produce an ordered, dependency-aware execution plan with gates and rollback per step",
@@ -1250,6 +2546,690 @@
     "feature-planner",
     "impact",
     "plan"
+   ]
+  },
+  {
+   "id": "planning.implementation",
+   "domain": "planning",
+   "description": "Plan an implementation as ordered, scoped steps",
+   "validation": [
+    "plan reviewed against requirements"
+   ],
+   "evidence": [
+    "task-spec records"
+   ],
+   "approval": "none",
+   "executors": [
+    "implementation-planner"
+   ],
+   "skills": [
+    "blast-radius-analysis",
+    "cross-layer-impact",
+    "feature-planner",
+    "plan"
+   ]
+  },
+  {
+   "id": "planning.migration",
+   "domain": "planning",
+   "description": "Plan a schema or data migration with compatibility window, backfill and rollback",
+   "validation": [
+    "migration plan checklist"
+   ],
+   "evidence": [
+    "migration plan"
+   ],
+   "approval": "none",
+   "executors": [
+    "migration-planner"
+   ],
+   "skills": [
+    "migration-safety-check",
+    "rollback-analysis",
+    "safe-db-rename",
+    "schema-normalization"
+   ]
+  },
+  {
+   "id": "planning.refactoring",
+   "domain": "planning",
+   "description": "Plan a behavior-preserving refactor with characterization tests first",
+   "validation": [
+    "tests exist before the refactor"
+   ],
+   "evidence": [
+    "refactor plan"
+   ],
+   "approval": "none",
+   "executors": [
+    "refactoring-planner"
+   ],
+   "skills": [
+    "refactor-guide",
+    "residue-search",
+    "safe-refactor"
+   ]
+  },
+  {
+   "id": "planning.release",
+   "domain": "planning",
+   "description": "Plan release order, gates and validation windows",
+   "validation": [
+    "release plan checklist"
+   ],
+   "evidence": [
+    "release plan"
+   ],
+   "approval": "none",
+   "executors": [
+    "release-planner"
+   ],
+   "skills": [
+    "production-build-check",
+    "release",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "planning.risk",
+   "domain": "planning",
+   "description": "Plan risk handling per step with mitigation and owner",
+   "validation": [
+    "risk register entries"
+   ],
+   "evidence": [
+    "risk plan"
+   ],
+   "approval": "none",
+   "executors": [
+    "risk-planner"
+   ],
+   "skills": [
+    "change-impact-check",
+    "impact",
+    "threat-model"
+   ]
+  },
+  {
+   "id": "planning.rollback",
+   "domain": "planning",
+   "description": "Plan how each part of a change can be undone",
+   "validation": [
+    "rollback per state-changing step"
+   ],
+   "evidence": [
+    "rollback plan"
+   ],
+   "approval": "none",
+   "executors": [
+    "rollback-planner"
+   ],
+   "skills": [
+    "destructive-change-check",
+    "recover",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "planning.scope",
+   "domain": "planning",
+   "description": "Plan and freeze the scope of a change and its explicit non-goals",
+   "validation": [
+    "scope-lock record"
+   ],
+   "evidence": [
+    "scope plan"
+   ],
+   "approval": "none",
+   "executors": [
+    "scope-planner"
+   ],
+   "skills": [
+    "blast-radius-analysis",
+    "dirty-tree-check",
+    "scope-lock"
+   ]
+  },
+  {
+   "id": "planning.testing",
+   "domain": "planning",
+   "description": "Plan the verification that matches the risk and boundaries of a change",
+   "validation": [
+    "plan covers negative paths"
+   ],
+   "evidence": [
+    "test plan"
+   ],
+   "approval": "none",
+   "executors": [
+    "test-planner"
+   ],
+   "skills": [
+    "create-regression-tests",
+    "regression-gates",
+    "test-generator"
+   ]
+  },
+  {
+   "id": "repo.analyze.api-contracts",
+   "domain": "repository-intelligence",
+   "description": "Analyze an API contract for producer and consumer agreement",
+   "validation": [
+    "producer-consumer table"
+   ],
+   "evidence": [
+    "contract analysis"
+   ],
+   "approval": "none",
+   "executors": [
+    "api-contract-analyzer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "contract-tracing",
+    "producer-consumer-trace"
+   ]
+  },
+  {
+   "id": "repo.analyze.blast-radius",
+   "domain": "repository-intelligence",
+   "description": "Compute which files, modules and consumers a change can break",
+   "validation": [
+    "consumer list from the import graph"
+   ],
+   "evidence": [
+    "blast radius report"
+   ],
+   "approval": "none",
+   "executors": [
+    "blast-radius-analyzer"
+   ],
+   "skills": [
+    "blast-radius-analysis",
+    "change-impact-check",
+    "dependency-trace"
+   ]
+  },
+  {
+   "id": "repo.analyze.debt",
+   "domain": "repository-intelligence",
+   "description": "Inventory technical debt with evidence, cost and a disposition",
+   "validation": [
+    "debt entries with file evidence"
+   ],
+   "evidence": [
+    "debt inventory"
+   ],
+   "approval": "none",
+   "executors": [
+    "technical-debt-analyzer"
+   ],
+   "skills": [
+    "dead-code-analysis",
+    "duplication-analysis",
+    "technical-debt-analysis"
+   ]
+  },
+  {
+   "id": "repo.analyze.dependencies",
+   "domain": "repository-intelligence",
+   "description": "Analyze package and dependency health: versions, duplicates, scripts, licenses",
+   "validation": [
+    "lockfile and manifest comparison"
+   ],
+   "evidence": [
+    "dependency analysis"
+   ],
+   "approval": "none",
+   "executors": [
+    "dependency-analyzer",
+    "package-analyzer"
+   ],
+   "skills": [
+    "dependency-cycle-analysis",
+    "dependency-safety-check",
+    "dependency-scan",
+    "module-map",
+    "package-analysis",
+    "supply-chain-audit"
+   ]
+  },
+  {
+   "id": "repo.analyze.feature-flags",
+   "domain": "repository-intelligence",
+   "description": "Find feature flags, their consumers and flags that can no longer change",
+   "validation": [
+    "flag list with consumers"
+   ],
+   "evidence": [
+    "feature flag analysis"
+   ],
+   "approval": "none",
+   "executors": [
+    "feature-flag-analyzer"
+   ],
+   "skills": [
+    "config-map",
+    "feature-flag-analysis",
+    "security-boundary-audit"
+   ]
+  },
+  {
+   "id": "repo.analyze.naming",
+   "domain": "repository-intelligence",
+   "description": "Find names that break the canonical naming rules and the canonical map",
+   "validation": [
+    "naming census output"
+   ],
+   "evidence": [
+    "naming analysis"
+   ],
+   "approval": "none",
+   "executors": [
+    "naming-analyzer"
+   ],
+   "skills": [
+    "canonical-naming",
+    "naming-analysis",
+    "residue-search"
+   ]
+  },
+  {
+   "id": "repo.analyze.regression",
+   "domain": "repository-intelligence",
+   "description": "Find what a change could break among previously working behavior",
+   "validation": [
+    "sibling feature and test list"
+   ],
+   "evidence": [
+    "regression analysis"
+   ],
+   "approval": "none",
+   "executors": [
+    "regression-analyzer"
+   ],
+   "skills": [
+    "blast-radius-analysis",
+    "create-regression-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "repo.detect.dead-code",
+   "domain": "repository-intelligence",
+   "description": "Find dead, unreachable, orphaned and stale code and prove it",
+   "validation": [
+    "zero live consumer proof"
+   ],
+   "evidence": [
+    "dead code report"
+   ],
+   "approval": "none",
+   "executors": [
+    "dead-code-detector",
+    "orphan-detector",
+    "stale-code-detector",
+    "unreachable-code-detector"
+   ],
+   "skills": [
+    "database-map",
+    "database-schema-drift",
+    "dead-code-analysis",
+    "dependency-trace",
+    "feature-flag-analysis",
+    "orphan-analysis",
+    "producer-consumer-trace",
+    "runtime-path-trace",
+    "stale-code-analysis"
+   ]
+  },
+  {
+   "id": "repo.detect.duplication",
+   "domain": "repository-intelligence",
+   "description": "Find duplicated code, rules and constants and name the authoritative copy",
+   "validation": [
+    "duplicate pairs with locations"
+   ],
+   "evidence": [
+    "duplication report"
+   ],
+   "approval": "none",
+   "executors": [
+    "duplication-detector"
+   ],
+   "skills": [
+    "dead-code-analysis",
+    "duplication-analysis",
+    "naming-analysis"
+   ]
+  },
+  {
+   "id": "repo.inspect",
+   "domain": "repository-intelligence",
+   "description": "Inspect repository state and structure: branch, HEAD, tree, packages, entry points and protected files",
+   "validation": [
+    "repo-inspect output cross-checked with git"
+   ],
+   "evidence": [
+    "inspection report"
+   ],
+   "approval": "none",
+   "executors": [
+    "codebase-explorer",
+    "repo-inspector"
+   ],
+   "skills": [
+    "data-flow-trace",
+    "dirty-tree-check",
+    "module-map",
+    "repo-identity-check",
+    "repo-inspect",
+    "repository-census"
+   ]
+  },
+  {
+   "id": "repo.map.architecture",
+   "domain": "repository-intelligence",
+   "description": "Map modules, layers and boundaries of the monorepo from the real source tree",
+   "validation": [
+    "map cross-checked against imports"
+   ],
+   "evidence": [
+    "architecture map"
+   ],
+   "approval": "none",
+   "executors": [
+    "architecture-mapper",
+    "module-mapper"
+   ],
+   "skills": [
+    "api-map",
+    "architecture-map",
+    "dependency-trace",
+    "module-map",
+    "route-map"
+   ]
+  },
+  {
+   "id": "repo.map.config",
+   "domain": "repository-intelligence",
+   "description": "Map configuration keys, environments and their allowed reach without reading secret values",
+   "validation": [
+    "key list reconciled with env.schema.ts"
+   ],
+   "evidence": [
+    "config map",
+    "environment map"
+   ],
+   "approval": "none",
+   "executors": [
+    "config-mapper",
+    "configuration-analyzer",
+    "environment-analyzer",
+    "environment-mapper"
+   ],
+   "skills": [
+    "config-map",
+    "environment-map",
+    "localhost-guardian",
+    "runtime-smoke-test",
+    "secret-scan"
+   ]
+  },
+  {
+   "id": "repo.map.database",
+   "domain": "repository-intelligence",
+   "description": "Map tables, columns, constraints, indexes, RLS and entity mapping from the migrated schema",
+   "validation": [
+    "catalog queried from a disposable database when available"
+   ],
+   "evidence": [
+    "database map"
+   ],
+   "approval": "none",
+   "executors": [
+    "database-mapper",
+    "database-schema-analyzer"
+   ],
+   "skills": [
+    "database-audit",
+    "database-map",
+    "database-schema-drift",
+    "migration-audit"
+   ]
+  },
+  {
+   "id": "repo.map.events",
+   "domain": "repository-intelligence",
+   "description": "Map domain events, queues, jobs, processors and schedulers with their producers and consumers",
+   "validation": [
+    "topology reconciled with queue constants and handlers"
+   ],
+   "evidence": [
+    "event map",
+    "queue map",
+    "worker map"
+   ],
+   "approval": "none",
+   "executors": [
+    "event-flow-mapper",
+    "queue-flow-mapper",
+    "worker-mapper"
+   ],
+   "skills": [
+    "data-flow-trace",
+    "event-map",
+    "producer-consumer-trace",
+    "queue-audit",
+    "queue-map",
+    "scheduler-audit",
+    "worker-map"
+   ]
+  },
+  {
+   "id": "repo.map.integrations",
+   "domain": "repository-intelligence",
+   "description": "Map external providers with auth, secrets handling, webhooks and failure behavior",
+   "validation": [
+    "integration list reconciled with env schema and clients"
+   ],
+   "evidence": [
+    "integration map"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-mapper"
+   ],
+   "skills": [
+    "config-map",
+    "external-boundary-mapping",
+    "integration-map"
+   ]
+  },
+  {
+   "id": "repo.map.ownership",
+   "domain": "repository-intelligence",
+   "description": "Map which agent or owner may write which path and find unowned or double-owned paths",
+   "validation": [
+    "ownership.json cross-check"
+   ],
+   "evidence": [
+    "ownership map"
+   ],
+   "approval": "none",
+   "executors": [
+    "ownership-analyzer",
+    "ownership-mapper"
+   ],
+   "skills": [
+    "ownership-analysis",
+    "ownership-map",
+    "scope-lock",
+    "writer-conflict-check"
+   ]
+  },
+  {
+   "id": "repo.map.routes",
+   "domain": "repository-intelligence",
+   "description": "List frontend routes and API endpoints with their guards, DTOs and handlers",
+   "validation": [
+    "route list reconciled with controllers and router"
+   ],
+   "evidence": [
+    "route map",
+    "api map"
+   ],
+   "approval": "none",
+   "executors": [
+    "api-mapper",
+    "route-mapper"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "api-map",
+    "authorization-map",
+    "navigation-audit",
+    "route-map"
+   ]
+  },
+  {
+   "id": "repo.map.security-boundaries",
+   "domain": "repository-intelligence",
+   "description": "Map trust and tenant boundaries and where each is enforced",
+   "validation": [
+    "boundary list reconciled with guards and RLS"
+   ],
+   "evidence": [
+    "security boundary map",
+    "tenant boundary map"
+   ],
+   "approval": "none",
+   "executors": [
+    "security-boundary-mapper",
+    "tenant-boundary-mapper"
+   ],
+   "skills": [
+    "authorization-map",
+    "data-flow-trace",
+    "integration-map",
+    "security-boundary-audit",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "repo.trace.data-flow",
+   "domain": "repository-intelligence",
+   "description": "Trace data, producers, consumers and runtime paths from input to storage to output",
+   "validation": [
+    "trace verified against code and tests"
+   ],
+   "evidence": [
+    "data-flow trace"
+   ],
+   "approval": "none",
+   "executors": [
+    "data-flow-tracer",
+    "producer-consumer-tracer",
+    "runtime-path-analyzer"
+   ],
+   "skills": [
+    "contract-tracing",
+    "data-flow-trace",
+    "event-map",
+    "producer-consumer-trace",
+    "runtime-path-trace"
+   ]
+  },
+  {
+   "id": "repo.trace.dependencies",
+   "domain": "repository-intelligence",
+   "description": "Trace module and package dependencies and detect import cycles",
+   "validation": [
+    "dependency-graph.mjs output"
+   ],
+   "evidence": [
+    "dependency graph",
+    "cycle list"
+   ],
+   "approval": "none",
+   "executors": [
+    "circular-dependency-detector",
+    "dependency-tracer"
+   ],
+   "skills": [
+    "architecture-map",
+    "blast-radius-analysis",
+    "dependency-cycle-analysis",
+    "dependency-trace"
+   ]
+  },
+  {
+   "id": "requirements.criteria",
+   "domain": "requirements",
+   "description": "Turn requirements into executable acceptance criteria",
+   "validation": [
+    "each criterion has a command or review"
+   ],
+   "evidence": [
+    "criterion records"
+   ],
+   "approval": "none",
+   "executors": [
+    "acceptance-criteria-engineer"
+   ],
+   "skills": [
+    "evidence-collection",
+    "test-generator",
+    "trace"
+   ]
+  },
+  {
+   "id": "requirements.detect-gaps",
+   "domain": "requirements",
+   "description": "Detect ambiguity, hidden assumptions and contradictions in requirements",
+   "validation": [
+    "gap list with quoted text"
+   ],
+   "evidence": [
+    "gap report",
+    "assumption records"
+   ],
+   "approval": "none",
+   "executors": [
+    "ambiguity-detector",
+    "assumption-detector",
+    "contradiction-detector"
+   ],
+   "skills": [
+    "canonical-naming",
+    "discover",
+    "prime",
+    "quorum",
+    "trace",
+    "why"
+   ]
+  },
+  {
+   "id": "requirements.validate",
+   "domain": "requirements",
+   "description": "Validate a specification or requirement set for completeness and testability",
+   "validation": [
+    "criteria are executable"
+   ],
+   "evidence": [
+    "requirements review"
+   ],
+   "approval": "none",
+   "executors": [
+    "requirements-validator",
+    "specification-reviewer"
+   ],
+   "skills": [
+    "definition-of-done",
+    "discover",
+    "evidence-collection",
+    "feature-planner",
+    "trace"
    ]
   },
   {

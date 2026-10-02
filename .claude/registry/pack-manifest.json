@@ -249,375 +249,428 @@
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "repo-intelligence"
+   "finalState": "CREATED",
+   "existingEquivalent": "repo-intelligence",
+   "file": ".claude/agents/repo-inspector.md"
   },
   {
    "name": "codebase-explorer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/codebase-explorer.md"
   },
   {
    "name": "architecture-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/architecture-mapper.md"
   },
   {
    "name": "module-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/module-mapper.md"
   },
   {
    "name": "dependency-tracer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/dependency-tracer.md"
   },
   {
    "name": "data-flow-tracer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/data-flow-tracer.md"
   },
   {
    "name": "route-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/route-mapper.md"
   },
   {
    "name": "api-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/api-mapper.md"
   },
   {
    "name": "database-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/database-mapper.md"
   },
   {
    "name": "integration-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/integration-mapper.md"
   },
   {
    "name": "event-flow-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/event-flow-mapper.md"
   },
   {
    "name": "queue-flow-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/queue-flow-mapper.md"
   },
   {
    "name": "worker-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/worker-mapper.md"
   },
   {
    "name": "config-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/config-mapper.md"
   },
   {
    "name": "environment-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/environment-mapper.md"
   },
   {
    "name": "ownership-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ownership-mapper.md"
   },
   {
    "name": "security-boundary-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/security-boundary-mapper.md"
   },
   {
    "name": "tenant-boundary-mapper",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/tenant-boundary-mapper.md"
   },
   {
    "name": "blast-radius-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/blast-radius-analyzer.md"
   },
   {
    "name": "api-contract-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/api-contract-analyzer.md"
   },
   {
    "name": "database-schema-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/database-schema-analyzer.md"
   },
   {
    "name": "configuration-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/configuration-analyzer.md"
   },
   {
    "name": "environment-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/environment-analyzer.md"
   },
   {
    "name": "dependency-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/dependency-analyzer.md"
   },
   {
    "name": "package-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/package-analyzer.md"
   },
   {
    "name": "dead-code-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/dead-code-detector.md"
   },
   {
    "name": "duplication-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/duplication-detector.md"
   },
   {
    "name": "technical-debt-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/technical-debt-analyzer.md"
   },
   {
    "name": "regression-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "regression-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "regression-reviewer",
+   "file": ".claude/agents/regression-analyzer.md"
   },
   {
    "name": "naming-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/naming-analyzer.md"
   },
   {
    "name": "ownership-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ownership-analyzer.md"
   },
   {
    "name": "circular-dependency-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/circular-dependency-detector.md"
   },
   {
    "name": "orphan-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/orphan-detector.md"
   },
   {
    "name": "unreachable-code-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/unreachable-code-detector.md"
   },
   {
    "name": "stale-code-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/stale-code-detector.md"
   },
   {
    "name": "feature-flag-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/feature-flag-analyzer.md"
   },
   {
    "name": "runtime-path-analyzer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/runtime-path-analyzer.md"
   },
   {
    "name": "producer-consumer-tracer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/producer-consumer-tracer.md"
   },
   {
    "name": "requirements-validator",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "requirements-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "requirements-reviewer",
+   "file": ".claude/agents/requirements-validator.md"
   },
   {
    "name": "specification-reviewer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/specification-reviewer.md"
   },
   {
    "name": "ambiguity-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ambiguity-detector.md"
   },
   {
    "name": "assumption-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/assumption-detector.md"
   },
   {
    "name": "contradiction-detector",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/contradiction-detector.md"
   },
   {
    "name": "acceptance-criteria-engineer",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "requirements-analyst"
+   "finalState": "CREATED",
+   "existingEquivalent": "requirements-analyst",
+   "file": ".claude/agents/acceptance-criteria-engineer.md"
   },
   {
    "name": "implementation-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/implementation-planner.md"
   },
   {
    "name": "migration-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/migration-planner.md"
   },
   {
    "name": "refactoring-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/refactoring-planner.md"
   },
   {
    "name": "test-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/test-planner.md"
   },
   {
    "name": "rollback-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/rollback-planner.md"
   },
   {
    "name": "release-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/release-planner.md"
   },
   {
    "name": "risk-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/risk-planner.md"
   },
   {
    "name": "dependency-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/dependency-planner.md"
   },
   {
    "name": "scope-planner",
    "type": "agent",
    "batch": 3,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/scope-planner.md"
   },
   {
    "name": "architecture-guardian",

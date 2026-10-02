@@ -185,6 +185,11 @@
       "note": "only against an existing recovery-plan record; anything DESTRUCTIVE/EXTERNAL_WRITE/PRODUCTION_WRITE additionally requires a GRANTED approval-request"
     },
     {
+      "agent": "acceptance-criteria-engineer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "agent-coordinator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -195,7 +200,32 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "ambiguity-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "api-contract-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "api-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "approval-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "architecture-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "assumption-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -205,7 +235,22 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "blast-radius-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "capability-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "circular-dependency-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "codebase-explorer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -215,7 +260,47 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "config-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "configuration-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "context-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "contradiction-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "data-flow-tracer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "database-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "database-schema-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "dead-code-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "dependency-analyzer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -225,7 +310,37 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "dependency-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "dependency-tracer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "duplication-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "environment-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "environment-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "escalation-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "event-flow-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -245,7 +360,27 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "feature-flag-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "implementation-lead",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "implementation-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "integration-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "migration-planner",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -255,7 +390,37 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "module-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "music-os-360-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "naming-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "orphan-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ownership-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ownership-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "package-analyzer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -265,7 +430,27 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "producer-consumer-tracer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "queue-flow-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "recovery-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "refactoring-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "regression-analyzer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -275,7 +460,22 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "release-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "repo-inspector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "repository-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "requirements-validator",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -290,12 +490,52 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "risk-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "rollback-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "route-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "runtime-continuity-controller",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "runtime-path-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "scope-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "security-boundary-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "skill-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "specification-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "stale-code-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -310,7 +550,27 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "technical-debt-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "tenant-boundary-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "test-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "tool-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "unreachable-code-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -326,6 +586,11 @@
     },
     {
       "agent": "verification-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "worker-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },

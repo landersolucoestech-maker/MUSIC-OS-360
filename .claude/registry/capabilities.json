@@ -257,6 +257,18 @@
    "approval": "none"
   },
   {
+   "id": "planning.dependency",
+   "domain": "planning",
+   "description": "Plan dependency ordering across tasks, packages and releases",
+   "validation": [
+    "acyclic order"
+   ],
+   "evidence": [
+    "dependency plan"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "planning.execution",
    "domain": "planning",
    "description": "Produce an ordered, dependency-aware execution plan with gates and rollback per step",
@@ -265,6 +277,385 @@
    ],
    "evidence": [
     "task-spec records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.implementation",
+   "domain": "planning",
+   "description": "Plan an implementation as ordered, scoped steps",
+   "validation": [
+    "plan reviewed against requirements"
+   ],
+   "evidence": [
+    "task-spec records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.migration",
+   "domain": "planning",
+   "description": "Plan a schema or data migration with compatibility window, backfill and rollback",
+   "validation": [
+    "migration plan checklist"
+   ],
+   "evidence": [
+    "migration plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.refactoring",
+   "domain": "planning",
+   "description": "Plan a behavior-preserving refactor with characterization tests first",
+   "validation": [
+    "tests exist before the refactor"
+   ],
+   "evidence": [
+    "refactor plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.release",
+   "domain": "planning",
+   "description": "Plan release order, gates and validation windows",
+   "validation": [
+    "release plan checklist"
+   ],
+   "evidence": [
+    "release plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.risk",
+   "domain": "planning",
+   "description": "Plan risk handling per step with mitigation and owner",
+   "validation": [
+    "risk register entries"
+   ],
+   "evidence": [
+    "risk plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.rollback",
+   "domain": "planning",
+   "description": "Plan how each part of a change can be undone",
+   "validation": [
+    "rollback per state-changing step"
+   ],
+   "evidence": [
+    "rollback plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.scope",
+   "domain": "planning",
+   "description": "Plan and freeze the scope of a change and its explicit non-goals",
+   "validation": [
+    "scope-lock record"
+   ],
+   "evidence": [
+    "scope plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.testing",
+   "domain": "planning",
+   "description": "Plan the verification that matches the risk and boundaries of a change",
+   "validation": [
+    "plan covers negative paths"
+   ],
+   "evidence": [
+    "test plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.analyze.api-contracts",
+   "domain": "repository-intelligence",
+   "description": "Analyze an API contract for producer and consumer agreement",
+   "validation": [
+    "producer-consumer table"
+   ],
+   "evidence": [
+    "contract analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.analyze.blast-radius",
+   "domain": "repository-intelligence",
+   "description": "Compute which files, modules and consumers a change can break",
+   "validation": [
+    "consumer list from the import graph"
+   ],
+   "evidence": [
+    "blast radius report"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.analyze.debt",
+   "domain": "repository-intelligence",
+   "description": "Inventory technical debt with evidence, cost and a disposition",
+   "validation": [
+    "debt entries with file evidence"
+   ],
+   "evidence": [
+    "debt inventory"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.analyze.dependencies",
+   "domain": "repository-intelligence",
+   "description": "Analyze package and dependency health: versions, duplicates, scripts, licenses",
+   "validation": [
+    "lockfile and manifest comparison"
+   ],
+   "evidence": [
+    "dependency analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.analyze.feature-flags",
+   "domain": "repository-intelligence",
+   "description": "Find feature flags, their consumers and flags that can no longer change",
+   "validation": [
+    "flag list with consumers"
+   ],
+   "evidence": [
+    "feature flag analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.analyze.naming",
+   "domain": "repository-intelligence",
+   "description": "Find names that break the canonical naming rules and the canonical map",
+   "validation": [
+    "naming census output"
+   ],
+   "evidence": [
+    "naming analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.analyze.regression",
+   "domain": "repository-intelligence",
+   "description": "Find what a change could break among previously working behavior",
+   "validation": [
+    "sibling feature and test list"
+   ],
+   "evidence": [
+    "regression analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.detect.dead-code",
+   "domain": "repository-intelligence",
+   "description": "Find dead, unreachable, orphaned and stale code and prove it",
+   "validation": [
+    "zero live consumer proof"
+   ],
+   "evidence": [
+    "dead code report"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.detect.duplication",
+   "domain": "repository-intelligence",
+   "description": "Find duplicated code, rules and constants and name the authoritative copy",
+   "validation": [
+    "duplicate pairs with locations"
+   ],
+   "evidence": [
+    "duplication report"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.inspect",
+   "domain": "repository-intelligence",
+   "description": "Inspect repository state and structure: branch, HEAD, tree, packages, entry points and protected files",
+   "validation": [
+    "repo-inspect output cross-checked with git"
+   ],
+   "evidence": [
+    "inspection report"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.map.architecture",
+   "domain": "repository-intelligence",
+   "description": "Map modules, layers and boundaries of the monorepo from the real source tree",
+   "validation": [
+    "map cross-checked against imports"
+   ],
+   "evidence": [
+    "architecture map"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.map.config",
+   "domain": "repository-intelligence",
+   "description": "Map configuration keys, environments and their allowed reach without reading secret values",
+   "validation": [
+    "key list reconciled with env.schema.ts"
+   ],
+   "evidence": [
+    "config map",
+    "environment map"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.map.database",
+   "domain": "repository-intelligence",
+   "description": "Map tables, columns, constraints, indexes, RLS and entity mapping from the migrated schema",
+   "validation": [
+    "catalog queried from a disposable database when available"
+   ],
+   "evidence": [
+    "database map"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.map.events",
+   "domain": "repository-intelligence",
+   "description": "Map domain events, queues, jobs, processors and schedulers with their producers and consumers",
+   "validation": [
+    "topology reconciled with queue constants and handlers"
+   ],
+   "evidence": [
+    "event map",
+    "queue map",
+    "worker map"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.map.integrations",
+   "domain": "repository-intelligence",
+   "description": "Map external providers with auth, secrets handling, webhooks and failure behavior",
+   "validation": [
+    "integration list reconciled with env schema and clients"
+   ],
+   "evidence": [
+    "integration map"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.map.ownership",
+   "domain": "repository-intelligence",
+   "description": "Map which agent or owner may write which path and find unowned or double-owned paths",
+   "validation": [
+    "ownership.json cross-check"
+   ],
+   "evidence": [
+    "ownership map"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.map.routes",
+   "domain": "repository-intelligence",
+   "description": "List frontend routes and API endpoints with their guards, DTOs and handlers",
+   "validation": [
+    "route list reconciled with controllers and router"
+   ],
+   "evidence": [
+    "route map",
+    "api map"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.map.security-boundaries",
+   "domain": "repository-intelligence",
+   "description": "Map trust and tenant boundaries and where each is enforced",
+   "validation": [
+    "boundary list reconciled with guards and RLS"
+   ],
+   "evidence": [
+    "security boundary map",
+    "tenant boundary map"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.trace.data-flow",
+   "domain": "repository-intelligence",
+   "description": "Trace data, producers, consumers and runtime paths from input to storage to output",
+   "validation": [
+    "trace verified against code and tests"
+   ],
+   "evidence": [
+    "data-flow trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repo.trace.dependencies",
+   "domain": "repository-intelligence",
+   "description": "Trace module and package dependencies and detect import cycles",
+   "validation": [
+    "dependency-graph.mjs output"
+   ],
+   "evidence": [
+    "dependency graph",
+    "cycle list"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "requirements.criteria",
+   "domain": "requirements",
+   "description": "Turn requirements into executable acceptance criteria",
+   "validation": [
+    "each criterion has a command or review"
+   ],
+   "evidence": [
+    "criterion records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "requirements.detect-gaps",
+   "domain": "requirements",
+   "description": "Detect ambiguity, hidden assumptions and contradictions in requirements",
+   "validation": [
+    "gap list with quoted text"
+   ],
+   "evidence": [
+    "gap report",
+    "assumption records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "requirements.validate",
+   "domain": "requirements",
+   "description": "Validate a specification or requirement set for completeness and testability",
+   "validation": [
+    "criteria are executable"
+   ],
+   "evidence": [
+    "requirements review"
    ],
    "approval": "none"
   },

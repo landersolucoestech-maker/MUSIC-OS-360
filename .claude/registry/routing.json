@@ -178,6 +178,425 @@
     "routing.validation",
     "routing.approval"
    ]
+  },
+  {
+   "intent": "inspect-repository",
+   "domain": "repository-intelligence",
+   "description": "Inspect repository identity, branch, tree and structure",
+   "keywords": [
+    "inspect repository",
+    "repository state",
+    "explore codebase",
+    "where is the code"
+   ],
+   "capabilities": [
+    "repo.inspect"
+   ]
+  },
+  {
+   "intent": "map-architecture",
+   "domain": "repository-intelligence",
+   "description": "Map the architecture and modules of the monorepo",
+   "keywords": [
+    "map architecture",
+    "module map",
+    "architecture map",
+    "layers and boundaries"
+   ],
+   "capabilities": [
+    "repo.map.architecture"
+   ]
+  },
+  {
+   "intent": "trace-dependencies",
+   "domain": "repository-intelligence",
+   "description": "Trace dependencies and import cycles",
+   "keywords": [
+    "trace dependencies",
+    "who imports",
+    "import cycle",
+    "circular dependency"
+   ],
+   "capabilities": [
+    "repo.trace.dependencies"
+   ]
+  },
+  {
+   "intent": "trace-data-flow",
+   "domain": "repository-intelligence",
+   "description": "Trace data, producers, consumers and runtime paths",
+   "keywords": [
+    "data flow",
+    "producer consumer",
+    "runtime path",
+    "trace field"
+   ],
+   "capabilities": [
+    "repo.trace.data-flow"
+   ]
+  },
+  {
+   "intent": "map-routes",
+   "domain": "repository-intelligence",
+   "description": "Map frontend routes and API endpoints",
+   "keywords": [
+    "route map",
+    "api map",
+    "list endpoints",
+    "list routes"
+   ],
+   "capabilities": [
+    "repo.map.routes"
+   ]
+  },
+  {
+   "intent": "map-database",
+   "domain": "repository-intelligence",
+   "description": "Map the database schema and entity drift",
+   "keywords": [
+    "database map",
+    "schema drift",
+    "entity drift",
+    "map schema"
+   ],
+   "capabilities": [
+    "repo.map.database"
+   ]
+  },
+  {
+   "intent": "map-integrations",
+   "domain": "repository-intelligence",
+   "description": "Map external provider integrations",
+   "keywords": [
+    "integration map",
+    "map providers",
+    "external providers"
+   ],
+   "capabilities": [
+    "repo.map.integrations"
+   ]
+  },
+  {
+   "intent": "map-async",
+   "domain": "repository-intelligence",
+   "description": "Map events, queues, jobs and schedulers",
+   "keywords": [
+    "event map",
+    "queue map",
+    "worker map",
+    "map queues",
+    "map schedulers"
+   ],
+   "capabilities": [
+    "repo.map.events"
+   ]
+  },
+  {
+   "intent": "map-configuration",
+   "domain": "repository-intelligence",
+   "description": "Map configuration and environments",
+   "keywords": [
+    "config map",
+    "environment map",
+    "configuration keys",
+    "map environments"
+   ],
+   "capabilities": [
+    "repo.map.config"
+   ]
+  },
+  {
+   "intent": "map-ownership",
+   "domain": "repository-intelligence",
+   "description": "Map write ownership of paths",
+   "keywords": [
+    "ownership map",
+    "who owns",
+    "write ownership"
+   ],
+   "capabilities": [
+    "repo.map.ownership"
+   ]
+  },
+  {
+   "intent": "map-security-boundaries",
+   "domain": "repository-intelligence",
+   "description": "Map trust and tenant boundaries",
+   "keywords": [
+    "security boundary",
+    "trust boundary",
+    "tenant boundary",
+    "tenant chain"
+   ],
+   "capabilities": [
+    "repo.map.security-boundaries"
+   ]
+  },
+  {
+   "intent": "analyze-blast-radius",
+   "domain": "repository-intelligence",
+   "description": "Compute the blast radius of a change",
+   "keywords": [
+    "blast radius",
+    "what can break",
+    "impact of change"
+   ],
+   "capabilities": [
+    "repo.analyze.blast-radius"
+   ]
+  },
+  {
+   "intent": "analyze-api-contract",
+   "domain": "repository-intelligence",
+   "description": "Analyze an API contract for producer and consumer agreement",
+   "keywords": [
+    "api contract",
+    "dto agreement",
+    "contract analysis"
+   ],
+   "capabilities": [
+    "repo.analyze.api-contracts"
+   ]
+  },
+  {
+   "intent": "analyze-dependencies",
+   "domain": "repository-intelligence",
+   "description": "Analyze third-party dependencies and packages",
+   "keywords": [
+    "dependency analysis",
+    "package analysis",
+    "lockfile",
+    "vulnerable dependencies"
+   ],
+   "capabilities": [
+    "repo.analyze.dependencies"
+   ]
+  },
+  {
+   "intent": "detect-dead-code",
+   "domain": "repository-intelligence",
+   "description": "Find dead, orphaned, unreachable and stale code",
+   "keywords": [
+    "dead code",
+    "orphan",
+    "unreachable code",
+    "stale code",
+    "unused code"
+   ],
+   "capabilities": [
+    "repo.detect.dead-code"
+   ]
+  },
+  {
+   "intent": "detect-duplication",
+   "domain": "repository-intelligence",
+   "description": "Find duplicated code and rules",
+   "keywords": [
+    "duplication",
+    "duplicated rule",
+    "duplicate code"
+   ],
+   "capabilities": [
+    "repo.detect.duplication"
+   ]
+  },
+  {
+   "intent": "analyze-technical-debt",
+   "domain": "repository-intelligence",
+   "description": "Inventory technical debt",
+   "keywords": [
+    "technical debt",
+    "debt inventory"
+   ],
+   "capabilities": [
+    "repo.analyze.debt"
+   ]
+  },
+  {
+   "intent": "analyze-regression",
+   "domain": "repository-intelligence",
+   "description": "Find what a change could break",
+   "keywords": [
+    "regression risk",
+    "could break",
+    "regression analysis"
+   ],
+   "capabilities": [
+    "repo.analyze.regression"
+   ]
+  },
+  {
+   "intent": "analyze-naming",
+   "domain": "repository-intelligence",
+   "description": "Find naming violations",
+   "keywords": [
+    "naming violations",
+    "naming analysis",
+    "canonical names"
+   ],
+   "capabilities": [
+    "repo.analyze.naming"
+   ]
+  },
+  {
+   "intent": "analyze-feature-flags",
+   "domain": "repository-intelligence",
+   "description": "Analyze feature flags and bypass switches",
+   "keywords": [
+    "feature flag",
+    "bypass switch",
+    "flag inventory"
+   ],
+   "capabilities": [
+    "repo.analyze.feature-flags"
+   ]
+  },
+  {
+   "intent": "validate-requirements",
+   "domain": "requirements",
+   "description": "Validate requirements and specifications",
+   "keywords": [
+    "validate requirements",
+    "review specification",
+    "requirements review"
+   ],
+   "capabilities": [
+    "requirements.validate"
+   ]
+  },
+  {
+   "intent": "detect-requirement-gaps",
+   "domain": "requirements",
+   "description": "Detect ambiguity, assumptions and contradictions",
+   "keywords": [
+    "ambiguity",
+    "assumptions",
+    "contradiction",
+    "requirement gaps"
+   ],
+   "capabilities": [
+    "requirements.detect-gaps"
+   ]
+  },
+  {
+   "intent": "define-acceptance-criteria",
+   "domain": "requirements",
+   "description": "Write executable acceptance criteria",
+   "keywords": [
+    "acceptance criteria",
+    "define criteria",
+    "executable criteria"
+   ],
+   "capabilities": [
+    "requirements.criteria"
+   ]
+  },
+  {
+   "intent": "plan-implementation",
+   "domain": "planning",
+   "description": "Plan an implementation",
+   "keywords": [
+    "plan implementation",
+    "implementation plan",
+    "task specs"
+   ],
+   "capabilities": [
+    "planning.implementation",
+    "planning.scope"
+   ]
+  },
+  {
+   "intent": "plan-migration",
+   "domain": "planning",
+   "description": "Plan a schema or data migration",
+   "keywords": [
+    "plan migration",
+    "migration plan",
+    "schema change plan"
+   ],
+   "capabilities": [
+    "planning.migration",
+    "planning.rollback"
+   ]
+  },
+  {
+   "intent": "plan-refactor",
+   "domain": "planning",
+   "description": "Plan a behavior-preserving refactor",
+   "keywords": [
+    "plan refactor",
+    "refactor plan",
+    "clean up code"
+   ],
+   "capabilities": [
+    "planning.refactoring",
+    "planning.testing"
+   ]
+  },
+  {
+   "intent": "plan-tests",
+   "domain": "planning",
+   "description": "Plan verification by risk",
+   "keywords": [
+    "plan tests",
+    "test plan",
+    "verification plan"
+   ],
+   "capabilities": [
+    "planning.testing"
+   ]
+  },
+  {
+   "intent": "plan-rollback",
+   "domain": "planning",
+   "description": "Plan rollback and recovery",
+   "keywords": [
+    "plan rollback",
+    "rollback plan",
+    "way back"
+   ],
+   "capabilities": [
+    "planning.rollback"
+   ]
+  },
+  {
+   "intent": "plan-release",
+   "domain": "planning",
+   "description": "Plan release order and validation",
+   "keywords": [
+    "plan release",
+    "release plan",
+    "deployment order"
+   ],
+   "capabilities": [
+    "planning.release"
+   ]
+  },
+  {
+   "intent": "plan-risk",
+   "domain": "planning",
+   "description": "Plan risk handling",
+   "keywords": [
+    "plan risk",
+    "risk plan",
+    "risk register"
+   ],
+   "capabilities": [
+    "planning.risk"
+   ]
+  },
+  {
+   "intent": "plan-dependencies",
+   "domain": "planning",
+   "description": "Plan dependency ordering",
+   "keywords": [
+    "plan dependencies",
+    "dependency order",
+    "order tasks"
+   ],
+   "capabilities": [
+    "planning.dependency"
+   ]
   }
  ],
  "highImpactSignals": [
