@@ -21,7 +21,7 @@ describe('reports contracts — English logical ids with unchanged pt-BR headers
     expect(def('projects').exportableColumns.map(getFieldLabelPtBr)).toEqual([
       'Tipo de Lançamento', 'Nome do EP/Álbum', 'Observações', 'Status',
       'Nome da música', 'Solo/Feat', 'Original/Remix', 'Instrumental',
-      'Duração — Minutos', 'Duração — Segundos', 'Gênero musical', 'Idioma da Música',
+      'Duração (minutos)', 'Duração (segundos)', 'Gênero musical', 'Idioma da Música',
       'Compositores', 'Intérpretes', 'Produtores', 'Letra', 'Arquivos de Áudio (MP3/WAV)', 'Ordem',
     ]);
   });

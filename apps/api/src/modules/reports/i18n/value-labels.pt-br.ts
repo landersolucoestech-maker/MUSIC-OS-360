@@ -7,6 +7,7 @@
  * to the canonical value, so an exported file round-trips. Labels come from
  * @music-os-360/types (single source shared with the web).
  */
+import { PROJECT_TYPE_LABELS_PT_BR } from '../../projects/project-track-vocabulary';
 import {
   STATUS_LABELS_PT_BR_BY_DOMAIN,
   TRANSACTION_TYPE_LABELS_PT_BR,
@@ -179,6 +180,8 @@ const COLUMN_LABELS: Readonly<Record<string, Readonly<Record<string, Labels>>>> 
     payment_type: TRANSACTION_PAYMENT_TYPE_LABELS_PT_BR,
     installment_interval: TRANSACTION_INSTALLMENT_INTERVAL_LABELS_PT_BR,
   },
+  // projectType is the logical export column of projects.type (the importer resolves the physical `type`).
+  projects: { projectType: PROJECT_TYPE_LABELS_PT_BR, type: PROJECT_TYPE_LABELS_PT_BR },
   works: { work_origin: WORK_ORIGIN_LABELS_PT_BR, ai_usage_level: WORK_AI_USAGE_LEVEL_LABELS_PT_BR },
   phonograms: {
     media_type: PHONOGRAM_MEDIA_TYPE_LABELS_PT_BR,

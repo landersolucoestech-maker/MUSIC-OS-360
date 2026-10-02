@@ -6,6 +6,8 @@ import { randomUUID } from 'crypto';
 import type { DataSource, QueryRunner } from 'typeorm';
 import {
   projectTrackInstrumentalLabel,
+  projectTrackOriginalRemixLabel,
+  projectTrackSoloFeatLabel,
   projectTrackLanguageLabel,
 } from '../../projects/project-track-vocabulary';
 
@@ -97,8 +99,8 @@ export async function fetchProjectTracksForExport(
     const list = output.get(track.project_id) ?? [];
     list.push({
       trackName: track.name,
-      soloFeat: track.solo_feat,
-      originalRemix: track.original_remix,
+      soloFeat: projectTrackSoloFeatLabel(track.solo_feat) as string | null,
+      originalRemix: projectTrackOriginalRemixLabel(track.original_remix) as string | null,
       // spreadsheet cell = PT-BR label (localized yes/no and language names); import maps it back to the canonical value
       instrumental: projectTrackInstrumentalLabel(track.instrumental) as string | null,
       trackDurationMinutes: track.duration_minutes,

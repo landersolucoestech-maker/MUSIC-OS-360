@@ -37,8 +37,8 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
 
       expect(result.get('proj-1')).toEqual([{
         trackName: 'Faixa 1',
-        soloFeat: 'solo',
-        originalRemix: 'original',
+        soloFeat: 'Solo',
+        originalRemix: 'Original',
         instrumental: 'Não',
         trackDurationMinutes: '3',
         trackDurationSeconds: '30',

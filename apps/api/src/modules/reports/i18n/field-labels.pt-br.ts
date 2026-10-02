@@ -703,8 +703,8 @@ export const FIELD_LABELS_PT_BR = {
   eventDate: 'Data',
   // projects.tracks repeating group (CZ-031) — same headers as before.
   trackName: 'Nome da música',
-  trackDurationMinutes: 'Duração — Minutos',
-  trackDurationSeconds: 'Duração — Segundos',
+  trackDurationMinutes: 'Duração (minutos)',
+  trackDurationSeconds: 'Duração (segundos)',
   trackLanguage: 'Idioma da Música',
   composers: 'Compositores',
   performers: 'Intérpretes',

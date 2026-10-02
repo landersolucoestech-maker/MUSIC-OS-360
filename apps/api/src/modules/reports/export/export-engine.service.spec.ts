@@ -11,6 +11,10 @@ import { ExportFormatService } from './export-format.service';
 import { EntityCategory } from '../entity-metadata.types';
 import type { ReportEntityDefinition } from '../definitions/report-entity-definition.types';
 import { EXPORT_DETECTION_LIMIT } from './export.types';
+import { ImportParserService } from '../import/import-parser.service';
+import { ImportMapperService } from '../import/import-mapper.service';
+import { canonicalImportValue } from '../import/import-value-canonicalizers';
+import { canonicalProjectTrackImportRows } from '../../projects/project-track-vocabulary';
 import { ACCOUNTING_SUMMARY_TABLE_NAME } from '../report-module-registry';
 
 const ARTISTS_DEF: ReportEntityDefinition = {
@@ -174,20 +178,61 @@ describe('Projetos — workbook faithful to the modal and with a single sheet', 
     expect(rows[0]).toEqual([
       'Tipo de Lançamento', 'Nome do EP/Álbum', 'Observações', 'Status',
       'Nome da música', 'Solo/Feat', 'Original/Remix', 'Instrumental',
-      'Duração — Minutos', 'Duração — Segundos', 'Gênero musical', 'Idioma da Música',
+      'Duração (minutos)', 'Duração (segundos)', 'Gênero musical', 'Idioma da Música',
       'Compositores', 'Intérpretes', 'Produtores', 'Letra', 'Arquivos de Áudio (MP3/WAV)', 'Ordem',
     ]);
     expect(rows).toHaveLength(3);
     expect(rows[1]).toEqual([
-      'ep', 'Meu EP', 'Obs', 'Em andamento', 'Faixa 1', 'solo', 'original', 'Não',
+      'EP', 'Meu EP', 'Obs', 'Em andamento', 'Faixa 1', 'Solo', 'Original', 'Não',
       '3', '5', 'pop', 'Português', 'Compositor A', 'Intérprete A', 'Produtor A', 'Letra 1', 'audio-1.wav', '0',
     ]);
-    expect(rows[2]?.[0]).toBe('ep');
+    expect(rows[2]?.[0]).toBe('EP');
+    expect(rows[2]?.[5]).toBe('Feat');
+    expect(rows[2]?.[6]).toBe('Remix');
     expect(rows[2]?.[4]).toBe('Faixa 2');
     // a row not yet backfilled (sim / portugues) exports the same PT-BR labels
     expect(rows[2]?.[7]).toBe('Sim');
     expect(rows[2]?.[11]).toBe('Português');
     expect(JSON.stringify(rows)).not.toContain('Projeto ID de referência');
     expect(JSON.stringify(rows)).not.toContain('Músicas do Projeto');
+  });
+
+  it('round-trips: the exported projects workbook passes the importer parser and maps every header and enum cell back', async () => {
+    const projectId = '00000000-0000-0000-0000-000000000001';
+    const query = jest.fn()
+      .mockResolvedValueOnce([{ __internal_id: projectId, projectType: 'album', projectTitle: 'Meu Album', notes: 'Obs', projectStatus: 'in_progress' }])
+      .mockResolvedValueOnce([
+        { id: 'track-1', project_id: projectId, name: 'Faixa 1', solo_feat: 'feat', original_remix: 'remix', instrumental: 'yes', duration_minutes: '3', duration_seconds: '5', music_genre: 'pop', language: 'pt', lyrics: 'x', audio_url: 'a.wav', sort_order: 0 },
+      ])
+      .mockResolvedValueOnce([]);
+    const def = { ...PROJECTS_DEF, importableColumns: PROJECTS_DEF.exportableColumns };
+    const { engine } = makeEngine({ tableName: 'projects', label: 'Projetos', definition: def, query });
+    const result = await engine.export('projects', params(), 'tenant-1', 'user-1');
+
+    const parsed = await new ImportParserService().parse('projetos.xlsx', result.body as Buffer, 'Projetos');
+    const mapped = new ImportMapperService().build(def, parsed.headers);
+    expect(mapped.unknownColumns).toEqual([]);
+    expect(mapped.ignoredColumns).toEqual([]);
+    expect(Object.values(mapped.mapping)).toEqual(def.exportableColumns);
+
+    const row = parsed.rows[0]!;
+    expect(row['Tipo de Lançamento']).toBe('Álbum');
+    expect(canonicalImportValue('projects', 'type', row['Tipo de Lançamento'])).toBe('album');
+    const [track] = canonicalProjectTrackImportRows([{ soloFeat: row['Solo/Feat'], originalRemix: row['Original/Remix'], instrumental: row['Instrumental'] }]) as Array<Record<string, unknown>>;
+    expect(track).toEqual({ soloFeat: 'feat', originalRemix: 'remix', instrumental: 'yes' });
+  });
+
+  it('a workbook exported before the rename (em dash duration headers) is still accepted and maps to the same columns', async () => {
+    const def = { ...PROJECTS_DEF, importableColumns: PROJECTS_DEF.exportableColumns };
+    const ws = XLSX.utils.aoa_to_sheet([['Nome do EP/Álbum', 'Duração — Minutos', 'Duração — Segundos'], ['Meu EP', '3', '5']]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Projetos');
+    const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }) as Buffer;
+
+    const parsed = await new ImportParserService().parse('projetos.xlsx', buffer, 'Projetos');
+    const mapped = new ImportMapperService().build(def, parsed.headers);
+    expect(mapped.unknownColumns).toEqual([]);
+    expect(Object.values(mapped.mapping)).toEqual(['projectTitle', 'trackDurationMinutes', 'trackDurationSeconds']);
+    expect(parsed.rows[0]!['Duração (minutos)']).toBe('3');
   });
 });

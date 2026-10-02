@@ -21,6 +21,15 @@ export const LEGACY_PROJECT_TRACK_INSTRUMENTAL: Readonly<Record<string, string>>
 
 export const PROJECT_TRACK_INSTRUMENTAL_LABELS_PT_BR: Readonly<Record<string, string>> = { yes: 'Sim', no: 'Não' };
 
+/** `projects.type` (release type) -> PT-BR label of the project form (ProjectFormModal release type select). */
+export const PROJECT_TYPE_LABELS_PT_BR: Readonly<Record<string, string>> = { single: 'Single', ep: 'EP', album: 'Álbum' };
+
+/** `project_tracks.solo_feat` -> PT-BR label of the project form track select. */
+export const PROJECT_TRACK_SOLO_FEAT_LABELS_PT_BR: Readonly<Record<string, string>> = { solo: 'Solo', feat: 'Feat' };
+
+/** `project_tracks.original_remix` -> PT-BR label of the project form track select. */
+export const PROJECT_TRACK_ORIGINAL_REMIX_LABELS_PT_BR: Readonly<Record<string, string>> = { original: 'Original', remix: 'Remix' };
+
 /** Slug of a PT-BR language label exactly as the web catalog derived it (constants/musicalGenres toGenreSlug). */
 export function legacyLanguageSlug(label: string): string {
   return label
@@ -71,6 +80,27 @@ export function projectTrackLanguageFromCell(value: unknown): unknown {
   return byLabel ? byLabel[1] : value;
 }
 
+/** A cell of a closed vocabulary: canonical value or PT-BR label (trimmed, case-insensitive) -> canonical; unknown text unchanged. */
+function enumFromCell(labels: Readonly<Record<string, string>>, value: unknown): unknown {
+  if (typeof value !== 'string') return value;
+  const wanted = value.trim().toLowerCase();
+  for (const [canonical, label] of Object.entries(labels)) {
+    if (canonical === wanted || label.toLowerCase() === wanted) return canonical;
+  }
+  return value;
+}
+
+export const projectTypeFromCell = (value: unknown): unknown => enumFromCell(PROJECT_TYPE_LABELS_PT_BR, value);
+export const projectTrackSoloFeatFromCell = (value: unknown): unknown => enumFromCell(PROJECT_TRACK_SOLO_FEAT_LABELS_PT_BR, value);
+export const projectTrackOriginalRemixFromCell = (value: unknown): unknown => enumFromCell(PROJECT_TRACK_ORIGINAL_REMIX_LABELS_PT_BR, value);
+
+const enumLabel = (labels: Readonly<Record<string, string>>, value: unknown): unknown =>
+  typeof value === 'string' && own(labels, value) ? labels[value] : value;
+
+/** PT-BR cell text of a persisted value (export); a value outside the map exports as stored. */
+export const projectTrackSoloFeatLabel = (value: unknown): unknown => enumLabel(PROJECT_TRACK_SOLO_FEAT_LABELS_PT_BR, value);
+export const projectTrackOriginalRemixLabel = (value: unknown): unknown => enumLabel(PROJECT_TRACK_ORIGINAL_REMIX_LABELS_PT_BR, value);
+
 /** PT-BR cell text of a persisted value (export); a value outside the maps exports as stored. */
 export function projectTrackInstrumentalLabel(value: unknown): unknown {
   const canonical = canonicalProjectTrackInstrumental(value);
@@ -106,6 +136,8 @@ export function canonicalProjectTrackImportRows(rows: unknown): unknown {
     const item = raw as Record<string, unknown>;
     return {
       ...item,
+      ...(item['soloFeat'] !== undefined ? { soloFeat: projectTrackSoloFeatFromCell(item['soloFeat']) } : {}),
+      ...(item['originalRemix'] !== undefined ? { originalRemix: projectTrackOriginalRemixFromCell(item['originalRemix']) } : {}),
       ...(item['instrumental'] !== undefined ? { instrumental: projectTrackInstrumentalFromCell(item['instrumental']) } : {}),
       ...(item['trackLanguage'] !== undefined ? { trackLanguage: projectTrackLanguageFromCell(item['trackLanguage']) } : {}),
     };

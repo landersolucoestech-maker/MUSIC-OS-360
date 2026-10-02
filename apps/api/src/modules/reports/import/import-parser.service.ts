@@ -17,6 +17,7 @@ import {
   type ImportFormat,
   type ParsedFile,
 } from './import.types';
+import { resolveDeprecatedImportHeader } from './deprecated-import-headers';
 import { OpenXmlParseError, readWorkbookIsolated, type IsolatedWorkbook } from './xlsx-isolated-reader';
 
 const ZIP_LOCAL_FILE_HEADER = 0x04034b50;
@@ -239,7 +240,9 @@ export class ImportParserService {
     const matrix = workbook.matrix;
     if (matrix.length === 0) throw new BadRequestException('Planilha vazia.');
 
-    const headers = (matrix[0] as unknown[]).map((header) => String(header ?? '').trim());
+    const headers = (matrix[0] as unknown[]).map((header) =>
+      resolveDeprecatedImportHeader(String(header ?? '').trim()),
+    );
     assertHeaders(headers);
 
     const body = matrix.slice(1);

@@ -8,6 +8,12 @@ import {
   canonicalProjectTrackInstrumental,
   canonicalProjectTrackLanguage,
   canonicalProjectTrackImportRows,
+  PROJECT_TYPE_LABELS_PT_BR,
+  projectTypeFromCell,
+  projectTrackSoloFeatFromCell,
+  projectTrackSoloFeatLabel,
+  projectTrackOriginalRemixFromCell,
+  projectTrackOriginalRemixLabel,
   canonicalProjectTracks,
   projectTrackInstrumentalFromCell,
   projectTrackInstrumentalLabel,
@@ -77,5 +83,36 @@ describe('project track vocabulary (AP3 R3-06)', () => {
     const dto = (await pipe.transform({ title: 'P', type: 'ep', tracks: [{ name: 'A', instrumental: 'nao', language: 'portugues' }], musicas: [{ instrumental: 'sim' }] }, { type: 'body', metatype: CreateProjectDto })) as CreateProjectDto;
     expect(dto.tracks).toEqual([{ name: 'A', instrumental: 'no', language: 'pt' }]);
     expect(dto.musicas).toEqual([{ instrumental: 'yes' }]);
+  });
+});
+
+describe('project type / solo-feat / original-remix PT-BR labels', () => {
+  it.each([
+    ['single', 'Single'], ['ep', 'EP'], ['album', 'Álbum'],
+  ])('projectType %s <-> %s', (canonical, label) => {
+    expect(PROJECT_TYPE_LABELS_PT_BR[canonical]).toBe(label);
+    expect(projectTypeFromCell(label)).toBe(canonical);
+    expect(projectTypeFromCell(`  ${label.toUpperCase()} `)).toBe(canonical);
+    expect(projectTypeFromCell(canonical)).toBe(canonical);
+  });
+
+  it.each([['solo', 'Solo'], ['feat', 'Feat']])('soloFeat %s <-> %s', (canonical, label) => {
+    expect(projectTrackSoloFeatLabel(canonical)).toBe(label);
+    expect(projectTrackSoloFeatFromCell(label)).toBe(canonical);
+    expect(projectTrackSoloFeatFromCell(` ${label.toLowerCase()} `)).toBe(canonical);
+  });
+
+  it.each([['original', 'Original'], ['remix', 'Remix']])('originalRemix %s <-> %s', (canonical, label) => {
+    expect(projectTrackOriginalRemixLabel(canonical)).toBe(label);
+    expect(projectTrackOriginalRemixFromCell(label)).toBe(canonical);
+    expect(projectTrackOriginalRemixFromCell(canonical)).toBe(canonical);
+  });
+
+  it('unknown text and non-strings are unchanged; import rows map the cells back', () => {
+    expect(projectTypeFromCell('Coletânea')).toBe('Coletânea');
+    expect(projectTrackSoloFeatLabel('x')).toBe('x');
+    expect(projectTrackSoloFeatFromCell(null)).toBeNull();
+    expect(projectTrackSoloFeatLabel(Object.prototype.toString.name)).toBe('toString');
+    expect(canonicalProjectTrackImportRows([{ soloFeat: 'Feat', originalRemix: 'Remix' }])).toEqual([{ soloFeat: 'feat', originalRemix: 'remix' }]);
   });
 });
