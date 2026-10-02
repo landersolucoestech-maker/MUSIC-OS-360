@@ -6,213 +6,243 @@
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "mission-orchestrator"
+   "finalState": "CREATED",
+   "existingEquivalent": "mission-orchestrator",
+   "file": ".claude/agents/music-os-360-orchestrator.md"
   },
   {
    "name": "task-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/task-orchestrator.md"
   },
   {
    "name": "workflow-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/workflow-orchestrator.md"
   },
   {
    "name": "repository-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/repository-orchestrator.md"
   },
   {
    "name": "validation-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/validation-orchestrator.md"
   },
   {
    "name": "release-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/release-orchestrator.md"
   },
   {
    "name": "recovery-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "recovery-engineer"
+   "finalState": "CREATED",
+   "existingEquivalent": "recovery-engineer",
+   "file": ".claude/agents/recovery-orchestrator.md"
   },
   {
    "name": "parallel-work-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/parallel-work-orchestrator.md"
   },
   {
    "name": "retry-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/retry-orchestrator.md"
   },
   {
    "name": "context-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/context-orchestrator.md"
   },
   {
    "name": "evidence-orchestrator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/evidence-orchestrator.md"
   },
   {
    "name": "agent-coordinator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/agent-coordinator.md"
   },
   {
    "name": "dependency-coordinator",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/dependency-coordinator.md"
   },
   {
    "name": "execution-planner",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/execution-planner.md"
   },
   {
    "name": "task-router",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/task-router.md"
   },
   {
    "name": "capability-router",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/capability-router.md"
   },
   {
    "name": "agent-router",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/agent-router.md"
   },
   {
    "name": "skill-router",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/skill-router.md"
   },
   {
    "name": "tool-router",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/tool-router.md"
   },
   {
    "name": "validation-router",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/validation-router.md"
   },
   {
    "name": "approval-router",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/approval-router.md"
   },
   {
    "name": "escalation-router",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/escalation-router.md"
   },
   {
    "name": "autonomous-planner",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/autonomous-planner.md"
   },
   {
    "name": "mission-controller",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "mission-orchestrator"
+   "finalState": "CREATED",
+   "existingEquivalent": "mission-orchestrator",
+   "file": ".claude/agents/mission-controller.md"
   },
   {
    "name": "implementation-lead",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/implementation-lead.md"
   },
   {
    "name": "completion-controller",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/completion-controller.md"
   },
   {
    "name": "verification-controller",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/verification-controller.md"
   },
   {
    "name": "evidence-controller",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/evidence-controller.md"
   },
   {
    "name": "risk-controller",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/risk-controller.md"
   },
   {
    "name": "runtime-continuity-controller",
    "type": "agent",
    "batch": 2,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/runtime-continuity-controller.md"
   },
   {
    "name": "repo-inspector",

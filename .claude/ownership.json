@@ -2,39 +2,338 @@
   "$schema": "./contracts/policy-manifest.schema.json",
   "description": "Path-ownership map consumed by .claude/runtime/policy-engine.mjs to enforce writer isolation (.claude/rules/agent-orchestration.md: 'never allow two agents to write the same file concurrently'; .claude/rules/scope-control.md: 'each writer owns a bounded path set'). An agent whose tools include Edit/Write is only authorized to write paths matching an entry naming it.",
   "owners": [
-    { "agent": "implementation-engineer", "writes": ["**"], "note": "default writer for the bounded batch it's given; scope is further narrowed per-batch by mission-orchestrator, not by this file alone" },
-    { "agent": "mission-orchestrator", "writes": [".claude/ops/**"], "note": "via ops.mjs only, never direct file edits to product code" },
-    { "agent": "git-auditor", "writes": [], "note": "read-only by contract; any write attempt is a policy violation" },
-    { "agent": "architecture-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "database-reviewer", "writes": [], "note": "read-only by default per data-governance.md" },
-    { "agent": "backend-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "contract-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "frontend-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "ui-ux-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "integration-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "distributed-systems-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "security-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "ai-llm-systems-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "supply-chain-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "performance-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "test-strategy-engineer", "writes": [], "note": "read-only; hands missing-coverage findings to implementation-engineer" },
-    { "agent": "reliability-observability-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "documentation-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "adversarial-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "repo-intelligence", "writes": ["docs/NAMING_NORMALIZATION_CANONICAL_MAP.md", ".claude/project-manifest.json", ".claude/rules/*.md"], "note": "may create/update per-project stack rule files and the project manifest; may NOT touch generic pack rules already present" },
-    { "agent": "requirements-analyst", "writes": [], "note": "writes only via ops.mjs (requirement/criterion add), never direct file edits" },
-    { "agent": "requirements-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "repo-investigator", "writes": [], "note": "read-only" },
-    { "agent": "root-cause-investigator", "writes": [], "note": "read-only" },
-    { "agent": "incident-investigator", "writes": [], "note": "read-only; containment itself is delegated to implementation-engineer" },
-    { "agent": "production-validator", "writes": [], "note": "read-only against production; never a write action against a live environment" },
-    { "agent": "compliance-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "cost-efficiency-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "dependency-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "regression-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "technology-selection-reviewer", "writes": [], "note": "read-only" },
-    { "agent": "qa-engineer", "writes": ["**/*.test.*", "**/*.spec.*", "**/__tests__/**", "**/fixtures/**", "**/mocks/**", "**/__mocks__/**"], "note": "test files/fixtures only, never product source" },
-    { "agent": "recovery-engineer", "writes": ["**"], "note": "only against an existing recovery-plan record; anything DESTRUCTIVE/EXTERNAL_WRITE/PRODUCTION_WRITE additionally requires a GRANTED approval-request" }
+    {
+      "agent": "implementation-engineer",
+      "writes": [
+        "**"
+      ],
+      "note": "default writer for the bounded batch it's given; scope is further narrowed per-batch by mission-orchestrator, not by this file alone"
+    },
+    {
+      "agent": "mission-orchestrator",
+      "writes": [
+        ".claude/ops/**"
+      ],
+      "note": "via ops.mjs only, never direct file edits to product code"
+    },
+    {
+      "agent": "git-auditor",
+      "writes": [],
+      "note": "read-only by contract; any write attempt is a policy violation"
+    },
+    {
+      "agent": "architecture-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "database-reviewer",
+      "writes": [],
+      "note": "read-only by default per data-governance.md"
+    },
+    {
+      "agent": "backend-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "contract-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "frontend-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "ui-ux-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "integration-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "distributed-systems-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "security-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "ai-llm-systems-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "supply-chain-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "performance-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "test-strategy-engineer",
+      "writes": [],
+      "note": "read-only; hands missing-coverage findings to implementation-engineer"
+    },
+    {
+      "agent": "reliability-observability-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "documentation-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "adversarial-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "repo-intelligence",
+      "writes": [
+        "docs/NAMING_NORMALIZATION_CANONICAL_MAP.md",
+        ".claude/project-manifest.json",
+        ".claude/rules/*.md"
+      ],
+      "note": "may create/update per-project stack rule files and the project manifest; may NOT touch generic pack rules already present"
+    },
+    {
+      "agent": "requirements-analyst",
+      "writes": [],
+      "note": "writes only via ops.mjs (requirement/criterion add), never direct file edits"
+    },
+    {
+      "agent": "requirements-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "repo-investigator",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "root-cause-investigator",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "incident-investigator",
+      "writes": [],
+      "note": "read-only; containment itself is delegated to implementation-engineer"
+    },
+    {
+      "agent": "production-validator",
+      "writes": [],
+      "note": "read-only against production; never a write action against a live environment"
+    },
+    {
+      "agent": "compliance-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "cost-efficiency-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "dependency-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "regression-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "technology-selection-reviewer",
+      "writes": [],
+      "note": "read-only"
+    },
+    {
+      "agent": "qa-engineer",
+      "writes": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/__tests__/**",
+        "**/fixtures/**",
+        "**/mocks/**",
+        "**/__mocks__/**"
+      ],
+      "note": "test files/fixtures only, never product source"
+    },
+    {
+      "agent": "recovery-engineer",
+      "writes": [
+        "**"
+      ],
+      "note": "only against an existing recovery-plan record; anything DESTRUCTIVE/EXTERNAL_WRITE/PRODUCTION_WRITE additionally requires a GRANTED approval-request"
+    },
+    {
+      "agent": "agent-coordinator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "agent-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "approval-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "autonomous-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "capability-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "completion-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "context-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "dependency-coordinator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "escalation-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "evidence-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "evidence-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "execution-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "implementation-lead",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "mission-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "music-os-360-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "parallel-work-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "recovery-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "release-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "repository-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "retry-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "risk-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "runtime-continuity-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "skill-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "task-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "task-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "tool-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "validation-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "validation-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "verification-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "workflow-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    }
   ],
   "conflictRule": "Two agents claiming write authority over an overlapping path for the same batch is a CONFLICT (.claude/contracts/conflict-record.schema.json) resolved by mission-orchestrator before either proceeds, never by last-write-wins."
 }

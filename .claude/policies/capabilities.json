@@ -1,39 +1,603 @@
 {
   "description": "Per-agent tool authorization ceiling, validated by policy-engine.mjs against each .claude/agents/*.md frontmatter's tools: line (an agent may declare a subset of this, never more). Keep this file and the frontmatter in sync — tests/policy-engine.test.mjs fails the build if they drift.",
   "roles": [
-    { "agent": "accessibility-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "adversarial-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "ai-llm-systems-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "contract-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "architecture-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "backend-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "compliance-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "cost-efficiency-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "database-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "dependency-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "distributed-systems-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "documentation-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "frontend-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "git-auditor", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "implementation-engineer", "allowedTools": ["Read", "Edit", "Write", "Grep", "Glob", "Bash"] },
-    { "agent": "incident-investigator", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "integration-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "mission-orchestrator", "allowedTools": ["Read", "Grep", "Glob", "Bash", "Task"] },
-    { "agent": "production-validator", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "qa-engineer", "allowedTools": ["Read", "Edit", "Write", "Grep", "Glob", "Bash"] },
-    { "agent": "recovery-engineer", "allowedTools": ["Read", "Edit", "Write", "Grep", "Glob", "Bash"] },
-    { "agent": "regression-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "reliability-observability-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "performance-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "repo-intelligence", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "repo-investigator", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "requirements-analyst", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "requirements-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "root-cause-investigator", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "security-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "supply-chain-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "technology-selection-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "test-strategy-engineer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] },
-    { "agent": "ui-ux-reviewer", "allowedTools": ["Read", "Grep", "Glob", "Bash"] }
+    {
+      "agent": "accessibility-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "adversarial-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "ai-llm-systems-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "contract-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "architecture-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "backend-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "compliance-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "cost-efficiency-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "database-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "dependency-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "distributed-systems-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "documentation-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "frontend-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "git-auditor",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "implementation-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "incident-investigator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "integration-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "mission-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "production-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "qa-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "recovery-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "regression-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "reliability-observability-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "performance-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "repo-intelligence",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "repo-investigator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "requirements-analyst",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "requirements-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "root-cause-investigator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "security-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "supply-chain-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "technology-selection-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "test-strategy-engineer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "ui-ux-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "agent-coordinator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "agent-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "approval-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "autonomous-planner",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "capability-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "completion-controller",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "context-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "dependency-coordinator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "escalation-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "evidence-controller",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "evidence-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "execution-planner",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "implementation-lead",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "mission-controller",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "music-os-360-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "parallel-work-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "recovery-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "release-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "repository-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "retry-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "risk-controller",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "runtime-continuity-controller",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "skill-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "task-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "task-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "tool-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "validation-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    },
+    {
+      "agent": "validation-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "verification-controller",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "workflow-orchestrator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Task"
+      ]
+    }
   ]
 }

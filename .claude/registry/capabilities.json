@@ -1,1 +1,370 @@
-{ "capabilities": [] }
+{
+ "capabilities": [
+  {
+   "id": "control.completion",
+   "domain": "control",
+   "description": "Decide completion only from a PASS completion gate and closed criteria",
+   "validation": [
+    "completion-gate.mjs"
+   ],
+   "evidence": [
+    "gate result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "control.evidence",
+   "domain": "control",
+   "description": "Keep evidence complete, fresh and bound to the fingerprint",
+   "validation": [
+    "criteria-fresh-evidence"
+   ],
+   "evidence": [
+    "evidence records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "control.implementation",
+   "domain": "control",
+   "description": "Lead a set of implementation tasks: assign writers, keep scope, collect results",
+   "validation": [
+    "scope-lock",
+    "writer-conflict-check"
+   ],
+   "evidence": [
+    "change-set record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "control.risk",
+   "domain": "control",
+   "description": "Classify and track risks per change and decide the review depth",
+   "validation": [
+    "impact.mjs level"
+   ],
+   "evidence": [
+    "impact assessment",
+    "finding records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "control.runtime-continuity",
+   "domain": "control",
+   "description": "Keep long runs resumable across interruptions with checkpoints and state",
+   "validation": [
+    "mission-recovery re-anchor"
+   ],
+   "evidence": [
+    "checkpoint records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "control.verification",
+   "domain": "control",
+   "description": "Verify a claimed result by re-executing the check that would falsify it",
+   "validation": [
+    "independent re-run"
+   ],
+   "evidence": [
+    "evidence records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "coordination.agents",
+   "domain": "orchestration",
+   "description": "Coordinate hand-offs between agents so each receives a bounded package and returns a typed result",
+   "validation": [
+    "handoff-record contract"
+   ],
+   "evidence": [
+    "handoff records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "coordination.dependencies",
+   "domain": "orchestration",
+   "description": "Order work by explicit dependencies between tasks, files, migrations and releases",
+   "validation": [
+    "graph-engine.mjs cycle detection"
+   ],
+   "evidence": [
+    "dependency graph"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.context",
+   "domain": "orchestration",
+   "description": "Build bounded context packages for delegation and close them when the delegate returns",
+   "validation": [
+    "context-engine.mjs"
+   ],
+   "evidence": [
+    "delegation records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.evidence",
+   "domain": "orchestration",
+   "description": "Collect command and review evidence and bind it to the workspace fingerprint",
+   "validation": [
+    "ops.mjs evidence run",
+    "criteria-fresh-evidence gate check"
+   ],
+   "evidence": [
+    "evidence records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.mission",
+   "domain": "orchestration",
+   "description": "Run a mission end to end: classify, discover, plan, delegate, validate, recover and close only after the Definition of Done",
+   "validation": [
+    "completion-gate.mjs PASS",
+    "validate-pack-contracts.mjs"
+   ],
+   "evidence": [
+    "ops evidence records",
+    "completion gate result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.parallel-work",
+   "domain": "orchestration",
+   "description": "Run independent writers in parallel with disjoint ownership and detect writer conflicts",
+   "validation": [
+    "writer-conflict-check"
+   ],
+   "evidence": [
+    "ownership map",
+    "conflict records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.recovery",
+   "domain": "orchestration",
+   "description": "Coordinate recovery of a failed run by resume, rollback or compensation under the loop breaker",
+   "validation": [
+    "recovery review",
+    "verification controller"
+   ],
+   "evidence": [
+    "recovery-plan record",
+    "operational recovery record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.release",
+   "domain": "orchestration",
+   "description": "Coordinate release validation across supply chain, gates, release record and post-deploy checks",
+   "validation": [
+    "release workflow gates"
+   ],
+   "evidence": [
+    "release record",
+    "production validation record"
+   ],
+   "approval": "production-write"
+  },
+  {
+   "id": "orchestration.repository",
+   "domain": "orchestration",
+   "description": "Order repository-level inspection and writes so identity, branch policy, scope and dirty-tree checks precede any edit",
+   "validation": [
+    "repo identity and branch policy checks"
+   ],
+   "evidence": [
+    "repo-inspect output",
+    "scope-lock record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.retry",
+   "domain": "orchestration",
+   "description": "Retry a failed step a bounded number of times and stop on a repeated failure fingerprint",
+   "validation": [
+    "loop breaker on repeated fingerprint"
+   ],
+   "evidence": [
+    "failure records",
+    "attempt counts"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.task",
+   "domain": "orchestration",
+   "description": "Decompose one bounded task into ordered steps and drive each step to a validated result",
+   "validation": [
+    "validation router result per step"
+   ],
+   "evidence": [
+    "task record",
+    "handoff records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.validation",
+   "domain": "orchestration",
+   "description": "Sequence validators and gates for a change and aggregate their results into one verdict",
+   "validation": [
+    "gate-engine.mjs",
+    "validation-result records"
+   ],
+   "evidence": [
+    "validation-result records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "orchestration.workflow",
+   "domain": "orchestration",
+   "description": "Instantiate a workflow manifest as an execution graph and walk it phase by phase",
+   "validation": [
+    "graph-engine.mjs build",
+    "gate-engine.mjs"
+   ],
+   "evidence": [
+    "execution graph",
+    "phase evidence"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.autonomous",
+   "domain": "planning",
+   "description": "Plan a long autonomous run as checkpointed batches with explicit stop conditions",
+   "validation": [
+    "checkpoint and resume rules"
+   ],
+   "evidence": [
+    "plan record",
+    "checkpoint records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "planning.execution",
+   "domain": "planning",
+   "description": "Produce an ordered, dependency-aware execution plan with gates and rollback per step",
+   "validation": [
+    "plan reviewed by the requirements and risk agents"
+   ],
+   "evidence": [
+    "task-spec records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "routing.agent",
+   "domain": "routing",
+   "description": "Pick the executing agent of a capability by domain, tool ceiling and write scope",
+   "validation": [
+    "capabilities.json ceiling check"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "routing.approval",
+   "domain": "routing",
+   "description": "Decide whether a step needs human approval and of which class",
+   "validation": [
+    "authority.json action classes"
+   ],
+   "evidence": [
+    "approval decision",
+    "automation-approval record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "routing.capability",
+   "domain": "routing",
+   "description": "Resolve an intent into the ordered capabilities needed",
+   "validation": [
+    "capability registry lookup"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "routing.escalation",
+   "domain": "routing",
+   "description": "Route conflicts and blocked steps to the owner or to quorum",
+   "validation": [
+    "quorum resolution"
+   ],
+   "evidence": [
+    "conflict record",
+    "quorum vote records"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "routing.skill",
+   "domain": "routing",
+   "description": "Pick the skills an agent runs for a capability",
+   "validation": [
+    "skill consumer check"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "routing.task",
+   "domain": "routing",
+   "description": "Classify a task into an intent and domain",
+   "validation": [
+    "routing-decision contract"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "routing.tool",
+   "domain": "routing",
+   "description": "Pick the tools for a step within the agent tool ceiling and the side-effect classification",
+   "validation": [
+    "tool-manifest classification"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "routing.validation",
+   "domain": "routing",
+   "description": "Pick the validators and gates that prove a step",
+   "validation": [
+    "gate-matrix.json"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none"
+  }
+ ]
+}

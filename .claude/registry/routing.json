@@ -1,0 +1,300 @@
+{
+ "description": "Routing table of the pack, read by .claude/runtime/route-task.mjs. `intents` map task keywords to an ordered capability list (the capability registry resolves each capability to an executor agent, its skills, tools, validation and evidence); `highImpactSignals` mark task text that needs human approval of the named authority action class. Source file: edited by hand per batch; the resolved view is the output of route-task.mjs.",
+ "intents": [
+  {
+   "intent": "run-mission",
+   "domain": "orchestration",
+   "description": "Take a mission from request to a verified result",
+   "keywords": [
+    "mission",
+    "end to end",
+    "run mission",
+    "full mission"
+   ],
+   "capabilities": [
+    "orchestration.mission",
+    "control.risk",
+    "control.completion"
+   ]
+  },
+  {
+   "intent": "execute-task",
+   "domain": "orchestration",
+   "description": "Drive one bounded task",
+   "keywords": [
+    "execute task",
+    "bounded task",
+    "task spec"
+   ],
+   "capabilities": [
+    "orchestration.task",
+    "orchestration.context"
+   ]
+  },
+  {
+   "intent": "run-workflow",
+   "domain": "orchestration",
+   "description": "Walk a named workflow graph",
+   "keywords": [
+    "run workflow",
+    "walk workflow",
+    "workflow phases"
+   ],
+   "capabilities": [
+    "orchestration.workflow",
+    "coordination.dependencies"
+   ]
+  },
+  {
+   "intent": "prepare-repository",
+   "domain": "orchestration",
+   "description": "Verify identity, branch, tree and scope before writing",
+   "keywords": [
+    "repository identity",
+    "dirty tree",
+    "branch policy",
+    "prepare repository"
+   ],
+   "capabilities": [
+    "orchestration.repository"
+   ]
+  },
+  {
+   "intent": "validate-change",
+   "domain": "orchestration",
+   "description": "Run the validators and gates a change needs and verify the result",
+   "keywords": [
+    "validate change",
+    "run gates",
+    "verify change",
+    "run validators"
+   ],
+   "capabilities": [
+    "orchestration.validation",
+    "control.verification",
+    "control.evidence"
+   ]
+  },
+  {
+   "intent": "release-change",
+   "domain": "release",
+   "description": "Validate and release a change to an environment",
+   "keywords": [
+    "release change",
+    "deploy",
+    "ship release",
+    "go live"
+   ],
+   "capabilities": [
+    "orchestration.release"
+   ]
+  },
+  {
+   "intent": "recover-run",
+   "domain": "recovery",
+   "description": "Recover a failed run or gate",
+   "keywords": [
+    "recover run",
+    "failed run",
+    "recover failure",
+    "repeated failure"
+   ],
+   "capabilities": [
+    "orchestration.retry",
+    "orchestration.recovery",
+    "control.runtime-continuity"
+   ]
+  },
+  {
+   "intent": "plan-work",
+   "domain": "planning",
+   "description": "Plan a mission or task as ordered steps",
+   "keywords": [
+    "plan work",
+    "execution plan",
+    "plan mission",
+    "batch plan"
+   ],
+   "capabilities": [
+    "planning.execution",
+    "planning.autonomous"
+   ]
+  },
+  {
+   "intent": "parallelize-work",
+   "domain": "orchestration",
+   "description": "Run independent writers in parallel safely",
+   "keywords": [
+    "parallel work",
+    "parallel writers",
+    "disjoint scopes"
+   ],
+   "capabilities": [
+    "orchestration.parallel-work"
+   ]
+  },
+  {
+   "intent": "coordinate-agents",
+   "domain": "coordination",
+   "description": "Coordinate hand-offs between agents",
+   "keywords": [
+    "coordinate agents",
+    "handoff",
+    "agent disagreement"
+   ],
+   "capabilities": [
+    "coordination.agents",
+    "routing.escalation"
+   ]
+  },
+  {
+   "intent": "implement-changes",
+   "domain": "control",
+   "description": "Lead the writers of an implementation plan",
+   "keywords": [
+    "implement plan",
+    "lead implementation",
+    "assign writers"
+   ],
+   "capabilities": [
+    "control.implementation"
+   ]
+  },
+  {
+   "intent": "resolve-routing",
+   "domain": "routing",
+   "description": "Resolve a task into capability, agent, skills, tools and validation",
+   "keywords": [
+    "route task",
+    "resolve routing",
+    "pick agent"
+   ],
+   "capabilities": [
+    "routing.task",
+    "routing.capability",
+    "routing.agent",
+    "routing.skill",
+    "routing.tool",
+    "routing.validation",
+    "routing.approval"
+   ]
+  }
+ ],
+ "highImpactSignals": [
+  {
+   "class": "rights-change",
+   "patterns": [
+    "change rights",
+    "alter rights",
+    "update rights",
+    "transfer rights",
+    "assign rights",
+    "modify rights"
+   ]
+  },
+  {
+   "class": "share-change",
+   "patterns": [
+    "change shares",
+    "alter shares",
+    "update shares",
+    "modify shares",
+    "rebalance shares"
+   ]
+  },
+  {
+   "class": "percentage-change",
+   "patterns": [
+    "change percentage",
+    "update percentage",
+    "alter percentage",
+    "modify percentage",
+    "change split"
+   ]
+  },
+  {
+   "class": "entity-merge",
+   "patterns": [
+    "merge participants",
+    "merge artists",
+    "merge duplicates",
+    "merge entities",
+    "definitive merge"
+   ]
+  },
+  {
+   "class": "deletion",
+   "patterns": [
+    "delete",
+    "permanently remove",
+    "purge records",
+    "erase records"
+   ]
+  },
+  {
+   "class": "destructive-data",
+   "patterns": [
+    "drop table",
+    "truncate",
+    "bulk delete",
+    "drop column"
+   ]
+  },
+  {
+   "class": "signature",
+   "patterns": [
+    "sign contract",
+    "mark as signed",
+    "apply signature",
+    "countersign"
+   ]
+  },
+  {
+   "class": "legal-action",
+   "patterns": [
+    "legal action",
+    "legal notice",
+    "terminate contract",
+    "lawsuit",
+    "takedown notice"
+   ]
+  },
+  {
+   "class": "payment",
+   "patterns": [
+    "pay",
+    "payment",
+    "payout",
+    "transfer funds",
+    "wire"
+   ]
+  },
+  {
+   "class": "external-send-irreversible",
+   "patterns": [
+    "send email",
+    "submit distribution",
+    "send to distributor",
+    "send to society"
+   ]
+  },
+  {
+   "class": "external-publish-irreversible",
+   "patterns": [
+    "publish release",
+    "publish to stores",
+    "go live to stores",
+    "publish externally"
+   ]
+  },
+  {
+   "class": "auto-fix-legal-financial",
+   "patterns": [
+    "auto fix",
+    "repair inconsistency",
+    "automatic repair",
+    "fix shares automatically"
+   ]
+  }
+ ]
+}

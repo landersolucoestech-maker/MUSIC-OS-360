@@ -2,14 +2,1417 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 0,
+  "agents": 30,
   "skills": 0,
-  "capabilities": 0,
+  "capabilities": 29,
   "workflows": 6
  },
- "agents": [],
+ "agents": [
+  {
+   "name": "agent-coordinator",
+   "kind": "coordinator",
+   "domain": "coordination",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/agent-coordinator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "coordination.agents"
+   ],
+   "skills": [
+    "prime",
+    "quorum",
+    "review",
+    "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "agent-router",
+   "kind": "router",
+   "domain": "routing",
+   "batch": 2,
+   "owner": "routing owner",
+   "path": ".claude/agents/agent-router.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "routing.agent"
+   ],
+   "skills": [
+    "plan",
+    "ownership-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "approval-router",
+   "kind": "router",
+   "domain": "routing",
+   "batch": 2,
+   "owner": "routing owner",
+   "path": ".claude/agents/approval-router.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "routing.approval"
+   ],
+   "skills": [
+    "evaluate-human-approval",
+    "request-human-approval",
+    "resume-after-approval",
+    "reject-unsafe-automation",
+    "human-approval-validation"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "autonomous-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/autonomous-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.autonomous"
+   ],
+   "skills": [
+    "plan",
+    "checkpoint",
+    "mission-recovery",
+    "resume"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "capability-router",
+   "kind": "router",
+   "domain": "routing",
+   "batch": 2,
+   "owner": "routing owner",
+   "path": ".claude/agents/capability-router.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "routing.capability"
+   ],
+   "skills": [
+    "plan",
+    "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "completion-controller",
+   "kind": "controller",
+   "domain": "control",
+   "batch": 2,
+   "owner": "governance owner",
+   "path": ".claude/agents/completion-controller.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "control.completion"
+   ],
+   "skills": [
+    "definition-of-done",
+    "quality-gate",
+    "gate",
+    "release-checkpoint"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "context-orchestrator",
+   "kind": "orchestrator",
+   "domain": "orchestration",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/context-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.context"
+   ],
+   "skills": [
+    "prime",
+    "recall",
+    "remember",
+    "checkpoint"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "dependency-coordinator",
+   "kind": "coordinator",
+   "domain": "coordination",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/dependency-coordinator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "coordination.dependencies"
+   ],
+   "skills": [
+    "dependency-trace",
+    "dependency-cycle-analysis",
+    "cross-layer-impact",
+    "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "escalation-router",
+   "kind": "router",
+   "domain": "routing",
+   "batch": 2,
+   "owner": "routing owner",
+   "path": ".claude/agents/escalation-router.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "routing.escalation"
+   ],
+   "skills": [
+    "quorum",
+    "why",
+    "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "evidence-controller",
+   "kind": "controller",
+   "domain": "control",
+   "batch": 2,
+   "owner": "governance owner",
+   "path": ".claude/agents/evidence-controller.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "control.evidence"
+   ],
+   "skills": [
+    "evidence-collection",
+    "audit-automation-run",
+    "trace",
+    "definition-of-done"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "evidence-orchestrator",
+   "kind": "orchestrator",
+   "domain": "evidence",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/evidence-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.evidence"
+   ],
+   "skills": [
+    "evidence-collection",
+    "evidence",
+    "record-automation-evidence",
+    "verify"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "execution-planner",
+   "kind": "planner",
+   "domain": "planning",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/execution-planner.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "planning.execution"
+   ],
+   "skills": [
+    "plan",
+    "feature-planner",
+    "cross-layer-impact",
+    "impact"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "implementation-lead",
+   "kind": "controller",
+   "domain": "control",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/implementation-lead.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "control.implementation"
+   ],
+   "skills": [
+    "execute",
+    "scope-lock",
+    "writer-conflict-check",
+    "implement-feature"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "mission-controller",
+   "kind": "controller",
+   "domain": "control",
+   "batch": 2,
+   "owner": "governance owner",
+   "path": ".claude/agents/mission-controller.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.mission"
+   ],
+   "skills": [
+    "intake",
+    "impact",
+    "evidence-collection",
+    "control-plane",
+    "mission-recovery"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "music-os-360-orchestrator",
+   "kind": "orchestrator",
+   "domain": "orchestration",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/music-os-360-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.mission"
+   ],
+   "skills": [
+    "intake",
+    "discover",
+    "plan",
+    "impact",
+    "control-plane",
+    "definition-of-done",
+    "mission-recovery",
+    "systemic-audit",
+    "quality-gate"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "parallel-work-orchestrator",
+   "kind": "orchestrator",
+   "domain": "orchestration",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/parallel-work-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.parallel-work"
+   ],
+   "skills": [
+    "writer-conflict-check",
+    "scope-lock",
+    "ownership-map",
+    "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "recovery-orchestrator",
+   "kind": "orchestrator",
+   "domain": "recovery",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/recovery-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.recovery"
+   ],
+   "skills": [
+    "recover",
+    "root-cause-analysis",
+    "rollback-analysis",
+    "recover-failed-workflow",
+    "create-operational-checkpoint",
+    "mission-recovery"
+   ],
+   "approval": "destructive-data"
+  },
+  {
+   "name": "release-orchestrator",
+   "kind": "orchestrator",
+   "domain": "release",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/release-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.release"
+   ],
+   "skills": [
+    "release",
+    "release-checkpoint",
+    "production-build-check",
+    "runtime-smoke-test",
+    "external-action-check",
+    "dependency-safety-check"
+   ],
+   "approval": "production-write"
+  },
+  {
+   "name": "repository-orchestrator",
+   "kind": "orchestrator",
+   "domain": "orchestration",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/repository-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.repository"
+   ],
+   "skills": [
+    "repo-identity-check",
+    "branch-policy-check",
+    "dirty-tree-check",
+    "scope-lock",
+    "repo-inspect"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "retry-orchestrator",
+   "kind": "orchestrator",
+   "domain": "orchestration",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/retry-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.retry"
+   ],
+   "skills": [
+    "retry-failed-operation",
+    "root-cause-analysis",
+    "recover",
+    "why"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "risk-controller",
+   "kind": "controller",
+   "domain": "control",
+   "batch": 2,
+   "owner": "governance owner",
+   "path": ".claude/agents/risk-controller.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "control.risk"
+   ],
+   "skills": [
+    "impact",
+    "change-impact-check",
+    "blast-radius-analysis",
+    "threat-model"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "runtime-continuity-controller",
+   "kind": "controller",
+   "domain": "control",
+   "batch": 2,
+   "owner": "governance owner",
+   "path": ".claude/agents/runtime-continuity-controller.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "control.runtime-continuity"
+   ],
+   "skills": [
+    "checkpoint",
+    "git-checkpoint",
+    "mission-recovery",
+    "resume",
+    "create-operational-checkpoint"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "skill-router",
+   "kind": "router",
+   "domain": "routing",
+   "batch": 2,
+   "owner": "routing owner",
+   "path": ".claude/agents/skill-router.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "routing.skill"
+   ],
+   "skills": [
+    "plan",
+    "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "task-orchestrator",
+   "kind": "orchestrator",
+   "domain": "orchestration",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/task-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.task"
+   ],
+   "skills": [
+    "plan",
+    "execute",
+    "verify",
+    "checkpoint"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "task-router",
+   "kind": "router",
+   "domain": "routing",
+   "batch": 2,
+   "owner": "routing owner",
+   "path": ".claude/agents/task-router.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "routing.task"
+   ],
+   "skills": [
+    "intake",
+    "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "tool-router",
+   "kind": "router",
+   "domain": "routing",
+   "batch": 2,
+   "owner": "routing owner",
+   "path": ".claude/agents/tool-router.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "routing.tool"
+   ],
+   "skills": [
+    "external-action-check",
+    "destructive-change-check",
+    "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "validation-orchestrator",
+   "kind": "orchestrator",
+   "domain": "orchestration",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/validation-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.validation"
+   ],
+   "skills": [
+    "quality-gate",
+    "regression-gates",
+    "run-lint",
+    "run-typecheck",
+    "run-unit-tests",
+    "run-build",
+    "verify"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "validation-router",
+   "kind": "router",
+   "domain": "routing",
+   "batch": 2,
+   "owner": "routing owner",
+   "path": ".claude/agents/validation-router.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "routing.validation"
+   ],
+   "skills": [
+    "quality-gate",
+    "change-impact-check",
+    "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "verification-controller",
+   "kind": "controller",
+   "domain": "control",
+   "batch": 2,
+   "owner": "governance owner",
+   "path": ".claude/agents/verification-controller.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "control.verification"
+   ],
+   "skills": [
+    "verify",
+    "regression-gates",
+    "evidence-collection"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "workflow-orchestrator",
+   "kind": "orchestrator",
+   "domain": "orchestration",
+   "batch": 2,
+   "owner": "orchestration owner",
+   "path": ".claude/agents/workflow-orchestrator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+   ],
+   "writes": [],
+   "capabilities": [
+    "orchestration.workflow"
+   ],
+   "skills": [
+    "plan",
+    "control-plane",
+    "quality-gate",
+    "resume"
+   ],
+   "approval": "none"
+  }
+ ],
  "skills": [],
- "capabilities": [],
+ "capabilities": [
+  {
+   "id": "control.completion",
+   "domain": "control",
+   "description": "Decide completion only from a PASS completion gate and closed criteria",
+   "validation": [
+    "completion-gate.mjs"
+   ],
+   "evidence": [
+    "gate result"
+   ],
+   "approval": "none",
+   "executors": [
+    "completion-controller"
+   ],
+   "skills": [
+    "definition-of-done",
+    "gate",
+    "quality-gate",
+    "release-checkpoint"
+   ]
+  },
+  {
+   "id": "control.evidence",
+   "domain": "control",
+   "description": "Keep evidence complete, fresh and bound to the fingerprint",
+   "validation": [
+    "criteria-fresh-evidence"
+   ],
+   "evidence": [
+    "evidence records"
+   ],
+   "approval": "none",
+   "executors": [
+    "evidence-controller"
+   ],
+   "skills": [
+    "audit-automation-run",
+    "definition-of-done",
+    "evidence-collection",
+    "trace"
+   ]
+  },
+  {
+   "id": "control.implementation",
+   "domain": "control",
+   "description": "Lead a set of implementation tasks: assign writers, keep scope, collect results",
+   "validation": [
+    "scope-lock",
+    "writer-conflict-check"
+   ],
+   "evidence": [
+    "change-set record"
+   ],
+   "approval": "none",
+   "executors": [
+    "implementation-lead"
+   ],
+   "skills": [
+    "execute",
+    "implement-feature",
+    "scope-lock",
+    "writer-conflict-check"
+   ]
+  },
+  {
+   "id": "control.risk",
+   "domain": "control",
+   "description": "Classify and track risks per change and decide the review depth",
+   "validation": [
+    "impact.mjs level"
+   ],
+   "evidence": [
+    "impact assessment",
+    "finding records"
+   ],
+   "approval": "none",
+   "executors": [
+    "risk-controller"
+   ],
+   "skills": [
+    "blast-radius-analysis",
+    "change-impact-check",
+    "impact",
+    "threat-model"
+   ]
+  },
+  {
+   "id": "control.runtime-continuity",
+   "domain": "control",
+   "description": "Keep long runs resumable across interruptions with checkpoints and state",
+   "validation": [
+    "mission-recovery re-anchor"
+   ],
+   "evidence": [
+    "checkpoint records"
+   ],
+   "approval": "none",
+   "executors": [
+    "runtime-continuity-controller"
+   ],
+   "skills": [
+    "checkpoint",
+    "create-operational-checkpoint",
+    "git-checkpoint",
+    "mission-recovery",
+    "resume"
+   ]
+  },
+  {
+   "id": "control.verification",
+   "domain": "control",
+   "description": "Verify a claimed result by re-executing the check that would falsify it",
+   "validation": [
+    "independent re-run"
+   ],
+   "evidence": [
+    "evidence records"
+   ],
+   "approval": "none",
+   "executors": [
+    "verification-controller"
+   ],
+   "skills": [
+    "evidence-collection",
+    "regression-gates",
+    "verify"
+   ]
+  },
+  {
+   "id": "coordination.agents",
+   "domain": "orchestration",
+   "description": "Coordinate hand-offs between agents so each receives a bounded package and returns a typed result",
+   "validation": [
+    "handoff-record contract"
+   ],
+   "evidence": [
+    "handoff records"
+   ],
+   "approval": "none",
+   "executors": [
+    "agent-coordinator"
+   ],
+   "skills": [
+    "plan",
+    "prime",
+    "quorum",
+    "review"
+   ]
+  },
+  {
+   "id": "coordination.dependencies",
+   "domain": "orchestration",
+   "description": "Order work by explicit dependencies between tasks, files, migrations and releases",
+   "validation": [
+    "graph-engine.mjs cycle detection"
+   ],
+   "evidence": [
+    "dependency graph"
+   ],
+   "approval": "none",
+   "executors": [
+    "dependency-coordinator"
+   ],
+   "skills": [
+    "cross-layer-impact",
+    "dependency-cycle-analysis",
+    "dependency-trace",
+    "plan"
+   ]
+  },
+  {
+   "id": "orchestration.context",
+   "domain": "orchestration",
+   "description": "Build bounded context packages for delegation and close them when the delegate returns",
+   "validation": [
+    "context-engine.mjs"
+   ],
+   "evidence": [
+    "delegation records"
+   ],
+   "approval": "none",
+   "executors": [
+    "context-orchestrator"
+   ],
+   "skills": [
+    "checkpoint",
+    "prime",
+    "recall",
+    "remember"
+   ]
+  },
+  {
+   "id": "orchestration.evidence",
+   "domain": "orchestration",
+   "description": "Collect command and review evidence and bind it to the workspace fingerprint",
+   "validation": [
+    "ops.mjs evidence run",
+    "criteria-fresh-evidence gate check"
+   ],
+   "evidence": [
+    "evidence records"
+   ],
+   "approval": "none",
+   "executors": [
+    "evidence-orchestrator"
+   ],
+   "skills": [
+    "evidence",
+    "evidence-collection",
+    "record-automation-evidence",
+    "verify"
+   ]
+  },
+  {
+   "id": "orchestration.mission",
+   "domain": "orchestration",
+   "description": "Run a mission end to end: classify, discover, plan, delegate, validate, recover and close only after the Definition of Done",
+   "validation": [
+    "completion-gate.mjs PASS",
+    "validate-pack-contracts.mjs"
+   ],
+   "evidence": [
+    "ops evidence records",
+    "completion gate result"
+   ],
+   "approval": "none",
+   "executors": [
+    "mission-controller",
+    "music-os-360-orchestrator"
+   ],
+   "skills": [
+    "control-plane",
+    "definition-of-done",
+    "discover",
+    "evidence-collection",
+    "impact",
+    "intake",
+    "mission-recovery",
+    "plan",
+    "quality-gate",
+    "systemic-audit"
+   ]
+  },
+  {
+   "id": "orchestration.parallel-work",
+   "domain": "orchestration",
+   "description": "Run independent writers in parallel with disjoint ownership and detect writer conflicts",
+   "validation": [
+    "writer-conflict-check"
+   ],
+   "evidence": [
+    "ownership map",
+    "conflict records"
+   ],
+   "approval": "none",
+   "executors": [
+    "parallel-work-orchestrator"
+   ],
+   "skills": [
+    "ownership-map",
+    "plan",
+    "scope-lock",
+    "writer-conflict-check"
+   ]
+  },
+  {
+   "id": "orchestration.recovery",
+   "domain": "orchestration",
+   "description": "Coordinate recovery of a failed run by resume, rollback or compensation under the loop breaker",
+   "validation": [
+    "recovery review",
+    "verification controller"
+   ],
+   "evidence": [
+    "recovery-plan record",
+    "operational recovery record"
+   ],
+   "approval": "none",
+   "executors": [
+    "recovery-orchestrator"
+   ],
+   "skills": [
+    "create-operational-checkpoint",
+    "mission-recovery",
+    "recover",
+    "recover-failed-workflow",
+    "rollback-analysis",
+    "root-cause-analysis"
+   ]
+  },
+  {
+   "id": "orchestration.release",
+   "domain": "orchestration",
+   "description": "Coordinate release validation across supply chain, gates, release record and post-deploy checks",
+   "validation": [
+    "release workflow gates"
+   ],
+   "evidence": [
+    "release record",
+    "production validation record"
+   ],
+   "approval": "production-write",
+   "executors": [
+    "release-orchestrator"
+   ],
+   "skills": [
+    "dependency-safety-check",
+    "external-action-check",
+    "production-build-check",
+    "release",
+    "release-checkpoint",
+    "runtime-smoke-test"
+   ]
+  },
+  {
+   "id": "orchestration.repository",
+   "domain": "orchestration",
+   "description": "Order repository-level inspection and writes so identity, branch policy, scope and dirty-tree checks precede any edit",
+   "validation": [
+    "repo identity and branch policy checks"
+   ],
+   "evidence": [
+    "repo-inspect output",
+    "scope-lock record"
+   ],
+   "approval": "none",
+   "executors": [
+    "repository-orchestrator"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "dirty-tree-check",
+    "repo-identity-check",
+    "repo-inspect",
+    "scope-lock"
+   ]
+  },
+  {
+   "id": "orchestration.retry",
+   "domain": "orchestration",
+   "description": "Retry a failed step a bounded number of times and stop on a repeated failure fingerprint",
+   "validation": [
+    "loop breaker on repeated fingerprint"
+   ],
+   "evidence": [
+    "failure records",
+    "attempt counts"
+   ],
+   "approval": "none",
+   "executors": [
+    "retry-orchestrator"
+   ],
+   "skills": [
+    "recover",
+    "retry-failed-operation",
+    "root-cause-analysis",
+    "why"
+   ]
+  },
+  {
+   "id": "orchestration.task",
+   "domain": "orchestration",
+   "description": "Decompose one bounded task into ordered steps and drive each step to a validated result",
+   "validation": [
+    "validation router result per step"
+   ],
+   "evidence": [
+    "task record",
+    "handoff records"
+   ],
+   "approval": "none",
+   "executors": [
+    "task-orchestrator"
+   ],
+   "skills": [
+    "checkpoint",
+    "execute",
+    "plan",
+    "verify"
+   ]
+  },
+  {
+   "id": "orchestration.validation",
+   "domain": "orchestration",
+   "description": "Sequence validators and gates for a change and aggregate their results into one verdict",
+   "validation": [
+    "gate-engine.mjs",
+    "validation-result records"
+   ],
+   "evidence": [
+    "validation-result records"
+   ],
+   "approval": "none",
+   "executors": [
+    "validation-orchestrator"
+   ],
+   "skills": [
+    "quality-gate",
+    "regression-gates",
+    "run-build",
+    "run-lint",
+    "run-typecheck",
+    "run-unit-tests",
+    "verify"
+   ]
+  },
+  {
+   "id": "orchestration.workflow",
+   "domain": "orchestration",
+   "description": "Instantiate a workflow manifest as an execution graph and walk it phase by phase",
+   "validation": [
+    "graph-engine.mjs build",
+    "gate-engine.mjs"
+   ],
+   "evidence": [
+    "execution graph",
+    "phase evidence"
+   ],
+   "approval": "none",
+   "executors": [
+    "workflow-orchestrator"
+   ],
+   "skills": [
+    "control-plane",
+    "plan",
+    "quality-gate",
+    "resume"
+   ]
+  },
+  {
+   "id": "planning.autonomous",
+   "domain": "planning",
+   "description": "Plan a long autonomous run as checkpointed batches with explicit stop conditions",
+   "validation": [
+    "checkpoint and resume rules"
+   ],
+   "evidence": [
+    "plan record",
+    "checkpoint records"
+   ],
+   "approval": "none",
+   "executors": [
+    "autonomous-planner"
+   ],
+   "skills": [
+    "checkpoint",
+    "mission-recovery",
+    "plan",
+    "resume"
+   ]
+  },
+  {
+   "id": "planning.execution",
+   "domain": "planning",
+   "description": "Produce an ordered, dependency-aware execution plan with gates and rollback per step",
+   "validation": [
+    "plan reviewed by the requirements and risk agents"
+   ],
+   "evidence": [
+    "task-spec records"
+   ],
+   "approval": "none",
+   "executors": [
+    "execution-planner"
+   ],
+   "skills": [
+    "cross-layer-impact",
+    "feature-planner",
+    "impact",
+    "plan"
+   ]
+  },
+  {
+   "id": "routing.agent",
+   "domain": "routing",
+   "description": "Pick the executing agent of a capability by domain, tool ceiling and write scope",
+   "validation": [
+    "capabilities.json ceiling check"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none",
+   "executors": [
+    "agent-router"
+   ],
+   "skills": [
+    "ownership-map",
+    "plan"
+   ]
+  },
+  {
+   "id": "routing.approval",
+   "domain": "routing",
+   "description": "Decide whether a step needs human approval and of which class",
+   "validation": [
+    "authority.json action classes"
+   ],
+   "evidence": [
+    "approval decision",
+    "automation-approval record"
+   ],
+   "approval": "none",
+   "executors": [
+    "approval-router"
+   ],
+   "skills": [
+    "evaluate-human-approval",
+    "human-approval-validation",
+    "reject-unsafe-automation",
+    "request-human-approval",
+    "resume-after-approval"
+   ]
+  },
+  {
+   "id": "routing.capability",
+   "domain": "routing",
+   "description": "Resolve an intent into the ordered capabilities needed",
+   "validation": [
+    "capability registry lookup"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none",
+   "executors": [
+    "capability-router"
+   ],
+   "skills": [
+    "discover",
+    "plan"
+   ]
+  },
+  {
+   "id": "routing.escalation",
+   "domain": "routing",
+   "description": "Route conflicts and blocked steps to the owner or to quorum",
+   "validation": [
+    "quorum resolution"
+   ],
+   "evidence": [
+    "conflict record",
+    "quorum vote records"
+   ],
+   "approval": "none",
+   "executors": [
+    "escalation-router"
+   ],
+   "skills": [
+    "plan",
+    "quorum",
+    "why"
+   ]
+  },
+  {
+   "id": "routing.skill",
+   "domain": "routing",
+   "description": "Pick the skills an agent runs for a capability",
+   "validation": [
+    "skill consumer check"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none",
+   "executors": [
+    "skill-router"
+   ],
+   "skills": [
+    "discover",
+    "plan"
+   ]
+  },
+  {
+   "id": "routing.task",
+   "domain": "routing",
+   "description": "Classify a task into an intent and domain",
+   "validation": [
+    "routing-decision contract"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none",
+   "executors": [
+    "task-router"
+   ],
+   "skills": [
+    "discover",
+    "intake"
+   ]
+  },
+  {
+   "id": "routing.tool",
+   "domain": "routing",
+   "description": "Pick the tools for a step within the agent tool ceiling and the side-effect classification",
+   "validation": [
+    "tool-manifest classification"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none",
+   "executors": [
+    "tool-router"
+   ],
+   "skills": [
+    "destructive-change-check",
+    "external-action-check",
+    "plan"
+   ]
+  },
+  {
+   "id": "routing.validation",
+   "domain": "routing",
+   "description": "Pick the validators and gates that prove a step",
+   "validation": [
+    "gate-matrix.json"
+   ],
+   "evidence": [
+    "routing decision"
+   ],
+   "approval": "none",
+   "executors": [
+    "validation-router"
+   ],
+   "skills": [
+    "change-impact-check",
+    "plan",
+    "quality-gate"
+   ]
+  }
+ ],
  "workflows": [
   {
    "name": "brownfield-change",
