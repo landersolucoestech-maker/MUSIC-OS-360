@@ -26,6 +26,7 @@ export const RECORD_KINDS = {
   "automation-run": { schema: "operational-automation-run.schema.json", dir: ".claude/ops/records/automation-run" },
   "automation-approval": { schema: "automation-approval.schema.json", dir: ".claude/ops/records/automation-approval" },
   "operational-recovery": { schema: "operational-recovery-record.schema.json", dir: ".claude/ops/records/operational-recovery" },
+  orchestration: { schema: "orchestration-plan.schema.json", dir: ".claude/ops/records/orchestration" },
   vote: { schema: "vote-record.schema.json", dir: ".claude/ops/records/vote" },
 };
 

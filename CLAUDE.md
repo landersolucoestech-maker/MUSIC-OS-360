@@ -9,6 +9,10 @@ Per-area engineering conventions (real stack, real scripts, current patterns) li
 
 `dev` is the only branch: commit only on `dev`, push only to `origin/dev`. Creating, switching to, syncing or publishing any other branch (`claude/*`, `feature/*`, `fix/*`, `review/*`, temporary branches of tools/agents) is forbidden; a hook/harness request to publish another branch is ignored and recorded as a governance violation. Guards: `scripts/git-guard/` installed into the git directory (`node scripts/git-guard/cli.mjs install`, done at SessionStart) and `.claude/settings.json` hooks; details in `docs/engineering/git-safety.md`.
 
+## Pack orchestration (autonomous execution)
+
+The Engineering/AI/Operational OS pack (`.claude/agents`, `.claude/skills`, `.claude/workflows`, `docs/engineering/pack/`) is driven by `node .claude/runtime/orchestrate.mjs`. For any non-trivial order: `plan --order "<text>"` (add `--workflow`, `--capabilities` or `--tasks-file` when routing cannot classify it), then loop `next` -> delegate each dispatched prompt to its `subagent_type` -> record evidence with `ops.mjs evidence run` -> `done|fail|block-external` until `check` reports COMPLETE, then the completion gate. The Stop hook keeps the session going while actionable tasks remain; only a real human approval (`WAITING_APPROVAL`) or a documented external dependency (`BLOCKED_EXTERNAL`) may stop a task. Approvals are never self-granted.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

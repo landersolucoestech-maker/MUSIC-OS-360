@@ -40,8 +40,29 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/runtime/orchestrate.mjs\" prompt-hook"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/runtime/orchestrate.mjs\" stop-check"
+          }
+        ]
+      }
     ]
   },
   "_comment": "Generic, safe defaults shipped with the pack: read-only git inspection and the pack's own deterministic runtime scripts are pre-allowed since they are LOCAL_WRITE at most and fully covered by tests; destructive git operations are explicitly denied by default per .claude/rules/git-safety.md. A target project's own settings.json is never overwritten by the installer (see installer/install.mjs skip-customized behavior) — this file only applies where the target has none yet.",
-  "_comment_git_guard": "Dev-only branch policy (docs/engineering/git-safety.md): SessionStart runs the guard installed in <git-common-dir>/git-guard (fallback: the working tree), which (re)installs it from the version committed on dev and states the policy; PreToolUse runs the installed guard, repairs core.hooksPath drift and fails closed (|| exit 2), refusing git/gh commands (Bash, PowerShell, Monitor), GitHub API tools, edits inside the git directory, worktree isolation and remote sessions that would create, switch to or push any branch other than dev. The installed git hooks enforce it locally for every git client; the only server-side boundary is a GitHub ruleset that the repository owner configures (see the doc for its current state)."
+  "_comment_git_guard": "Dev-only branch policy (docs/engineering/git-safety.md): SessionStart runs the guard installed in <git-common-dir>/git-guard (fallback: the working tree), which (re)installs it from the version committed on dev and states the policy; PreToolUse runs the installed guard, repairs core.hooksPath drift and fails closed (|| exit 2), refusing git/gh commands (Bash, PowerShell, Monitor), GitHub API tools, edits inside the git directory, worktree isolation and remote sessions that would create, switch to or push any branch other than dev. The installed git hooks enforce it locally for every git client; the only server-side boundary is a GitHub ruleset that the repository owner configures (see the doc for its current state).",
+  "_comment_orchestration": "Autonomy hooks of the pack (docs/engineering/pack/orchestration.md): UserPromptSubmit proposes the orchestrator for a long order and reports the active orchestration; Stop refuses to end a session while the active orchestration has actionable tasks (bounded: allowed after 3 consecutive blocks without progress). Neither hook grants approvals or marks anything done."
 }

@@ -28,7 +28,7 @@
         "dir": ".claude/contracts",
         "glob": "*.schema.json",
         "required": true,
-        "minCount": 55
+        "minCount": 56
       },
       "policies": {
         "dir": ".claude/policies",
@@ -40,7 +40,7 @@
         "dir": ".claude/runtime",
         "glob": "*.mjs",
         "required": true,
-        "minCount": 21
+        "minCount": 30
       },
       "runtimeLib": {
         "dir": ".claude/runtime/lib",

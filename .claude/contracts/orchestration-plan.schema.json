@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/orchestration-plan.schema.json",
+  "title": "OrchestrationPlan",
+  "description": "The persisted task graph of one orchestrated order: every task with its agent, skills, scope, dependencies, acceptance criteria, state, evidence and result. Consumer: .claude/runtime/orchestrate.mjs (plan, next, done, fail, block-external, await-approval, check, stop-check). The state machine is PENDING -> READY -> RUNNING -> COMPLETED, with FAILED (retried through a recovery task), WAITING_APPROVAL (a real human decision), BLOCKED_EXTERNAL (documented missing external dependency) and BLOCKED_INTERNAL (never a resting state: it is investigated and resolved).",
+  "type": "object",
+  "required": ["id", "order", "status", "tasks", "createdAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "order": { "type": "string" },
+    "title": { "type": "string" },
+    "workflow": { "type": ["string", "null"] },
+    "intent": { "type": ["string", "null"] },
+    "status": { "enum": ["ACTIVE", "COMPLETED", "ABANDONED"] },
+    "stopBlocks": { "type": "integer" },
+    "lastProgressAt": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "objective", "agent", "skills", "dependsOn", "acceptance", "status", "attempts"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "objective": { "type": "string" },
+          "agent": { "type": "string" },
+          "skills": { "type": "array", "items": { "type": "string" } },
+          "filesInScope": { "type": "array", "items": { "type": "string" } },
+          "dependsOn": { "type": "array", "items": { "type": "string" } },
+          "acceptance": { "type": "array", "items": { "type": "string" } },
+          "gates": { "type": "array", "items": { "type": "string" } },
+          "approvalClass": { "type": ["string", "null"] },
+          "status": { "enum": ["PENDING", "READY", "RUNNING", "BLOCKED_INTERNAL", "BLOCKED_EXTERNAL", "WAITING_APPROVAL", "FAILED", "COMPLETED"] },
+          "attempts": { "type": "integer" },
+          "delegationId": { "type": ["string", "null"] },
+          "approvalId": { "type": ["string", "null"] },
+          "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+          "result": { "type": ["string", "null"] },
+          "failureReason": { "type": ["string", "null"] },
+          "recoveryOf": { "type": ["string", "null"] },
+          "blockedExternal": {
+            "type": ["object", "null"],
+            "properties": {
+              "capability": { "type": "string" },
+              "cause": { "type": "string" },
+              "missingDependency": { "type": "string" },
+              "expectedContract": { "type": "string" },
+              "currentBehavior": { "type": "string" },
+              "fallback": { "type": "string" },
+              "impact": { "type": "string" },
+              "unblockCondition": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
