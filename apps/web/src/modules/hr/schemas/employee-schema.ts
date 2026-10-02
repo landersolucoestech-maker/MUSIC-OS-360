@@ -11,10 +11,7 @@ export const employeeSchema = z.object({
     .optional()
     .or(z.literal("")),
   cpf: z.string().max(20, "CPF inválido").optional().or(z.literal("")),
-  rg: z.string().max(20, "RG inválido").optional().or(z.literal("")),
-  birthDate: z.string().optional().or(z.literal("")),
   phone: z.string().max(20, "Telefone inválido").optional().or(z.literal("")),
-  address: z.string().max(300, "Endereço deve ter no máximo 300 caracteres").optional().or(z.literal("")),
   position: z.string().max(100, "Cargo deve ter no máximo 100 caracteres").optional().or(z.literal("")),
   department: z.string().optional().or(z.literal("")),
   contractType: z.string().optional().or(z.literal("")),

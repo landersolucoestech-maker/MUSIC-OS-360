@@ -54,11 +54,8 @@ export function EmployeeFormModal({
   const [activeTab, setActiveTab] = useState("personal");
   const [fullName, setFullName] = useState("");
   const [cpf, setCpf] = useState("");
-  const [rg, setRg] = useState("");
-  const [birthDate, setBirthDate] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
 
   const [position, setPosition] = useState("");
   const [department, setDepartment] = useState("");
@@ -77,11 +74,8 @@ export function EmployeeFormModal({
       if ((mode === "edit" || mode === "view") && employee) {
         setFullName((employee.name as string) || "");
         setCpf((employee.cpf as string) || "");
-        setRg((employee.rg as string) || "");
-        setBirthDate((employee.data_nascimento as string) || "");
         setEmail((employee.email as string) || "");
         setPhone((employee.phone as string) || "");
-        setAddress((employee.endereco as string) || "");
         setPosition((employee.job_title as string) || "");
         setDepartment((employee.department as string) || "");
         setContractType((employee.contract_type as string) || "");
@@ -93,11 +87,8 @@ export function EmployeeFormModal({
       } else {
         setFullName("");
         setCpf("");
-        setRg("");
-        setBirthDate("");
         setEmail("");
         setPhone("");
-        setAddress("");
         setPosition("");
         setDepartment("");
         setContractType("");
@@ -117,10 +108,7 @@ export function EmployeeFormModal({
       fullName,
       email: email || "",
       cpf: cpf || "",
-      rg: rg || "",
-      birthDate: birthDate || "",
       phone: phone || "",
-      address: address || "",
       position: position || "",
       department: department || "",
       contractType: contractType || "",
@@ -139,7 +127,7 @@ export function EmployeeFormModal({
         }
       });
       setErrors(newErrors);
-      if (newErrors.fullName || newErrors.email || newErrors.cpf || newErrors.rg || newErrors.birthDate || newErrors.phone || newErrors.address) {
+      if (newErrors.fullName || newErrors.email || newErrors.cpf || newErrors.phone) {
         setActiveTab("personal");
       }
       return false;
@@ -280,30 +268,9 @@ export function EmployeeFormModal({
                   data-testid="input-cpf"
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="rg">RG</Label>
-                <Input
-                  id="rg"
-                  placeholder="RG do funcionário"
-                  value={rg}
-                  onChange={(e) => setRg(e.target.value)}
-                  disabled={isViewMode}
-                  data-testid="input-rg"
-                />
-              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="birth_date">Data de Nascimento</Label>
-                <DatePickerField
-                  value={birthDate}
-                  onChange={setBirthDate}
-                  disabled={isViewMode}
-                  placeholder="Selecione a data"
-                  data-testid="datepicker-birth-date"
-                />
-              </div>
               <div className="space-y-1.5">
                 <Label htmlFor="email">E-mail</Label>
                 <Input
@@ -341,17 +308,6 @@ export function EmployeeFormModal({
                   onChange={(e) => setPhone(maskPhone(e.target.value))}
                   disabled={isViewMode}
                   data-testid="input-phone"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="address">Endereço</Label>
-                <Input
-                  id="address"
-                  placeholder="Endereço completo"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  disabled={isViewMode}
-                  data-testid="input-address"
                 />
               </div>
             </div>
