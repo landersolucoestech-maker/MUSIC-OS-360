@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { scanCatalog, schemaCensus, literalValues } from "./schema-naming-census.mjs";
+import { scanCatalog, schemaCensus, literalValues, CATALOG_SQL } from "./schema-naming-census.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const keys = (rows) => scanCatalog(rows).map((h) => h.key);
@@ -71,4 +71,11 @@ test("tooling error: no DATABASE_URL fails explicitly (exit 2), never false succ
   const r = spawnSync(process.execPath, [path.join(here, "schema-naming-census.mjs"), "--check"], { env, encoding: "utf8" });
   assert.equal(r.status, 2, r.stdout + r.stderr);
   assert.match(r.stderr, /DATABASE_URL is not set/);
+});
+
+test("catalog SQL: object and detail are text, so long table.constraint keys are never clipped at 63 characters", () => {
+  // The first UNION branch reads pg_class.relname (type `name`); without the casts the whole column resolves to `name`
+  // and a 74-character key loses its tail — hiding real words and flagging the clipped fragment ("amou").
+  assert.match(CATALOG_SQL, /c\.relname::text AS object/);
+  assert.match(CATALOG_SQL, /NULL::text AS detail/);
 });

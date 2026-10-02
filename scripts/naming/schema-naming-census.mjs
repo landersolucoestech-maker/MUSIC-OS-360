@@ -32,8 +32,11 @@ const SCHEMA_FILE = "database-schema";
 const TRACKING_TABLE = "musicos360_migrations";
 const VALUE = /^[a-z][a-zA-Z0-9]*(?:[_-][a-zA-Z0-9]+)*$/;
 
+// `object` and `detail` are cast to text: the first branch is a `name` column, so without the cast the
+// UNION resolves to `name` and clips every `table.constraint` / `table.index` key at 63 characters,
+// hiding the tail of long names and flagging truncated fragments as words.
 export const CATALOG_SQL = `
-  SELECT 'table' AS kind, c.relname AS object, NULL AS detail FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+  SELECT 'table' AS kind, c.relname::text AS object, NULL::text AS detail FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
    WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')
   UNION ALL SELECT 'view', table_name, NULL FROM information_schema.views WHERE table_schema = 'public'
   UNION ALL SELECT 'column', table_name || '.' || column_name, NULL FROM information_schema.columns WHERE table_schema = 'public'
