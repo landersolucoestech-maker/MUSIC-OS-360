@@ -71,6 +71,14 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   // written only by internal automatic workflows (see Block 26). "Tarefas"
   // in the registry points to marketing_tasks, the real screen. Outside the registry.
   operational_tasks: EntityCategory.NOT_REPORTABLE,
+  // Registered in ALL_ENTITIES by the entity registry guard (they were declared and used by services but unregistered).
+  // Operational modules outside the closed Reports registry: support, knowledge base, operational lists, external data.
+  support_requests: EntityCategory.NOT_REPORTABLE,
+  support_ticket_messages: EntityCategory.NOT_REPORTABLE,
+  knowledge_categories: EntityCategory.NOT_REPORTABLE,
+  knowledge_articles: EntityCategory.NOT_REPORTABLE,
+  operational_list_items: EntityCategory.NOT_REPORTABLE,
+  external_data_submissions: EntityCategory.NOT_REPORTABLE,
   audiovisual_tasks: EntityCategory.NOT_REPORTABLE,
   audiovisual_assets: EntityCategory.NOT_REPORTABLE,
   audiovisual_deliverables: EntityCategory.NOT_REPORTABLE,
