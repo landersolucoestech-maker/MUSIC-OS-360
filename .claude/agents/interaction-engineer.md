@@ -55,6 +55,7 @@ Give every interactive element all its states and make actions give immediate, a
 - `loading-state-audit` — audits loading states for every async surface
 - `implement-accessibility` — adds keyboard, focus, labels and contrast fixes
 - `run-unit-tests` — runs the real unit test suites and reports counts and failures
+- `modal-audit` — audits modals for focus trap, escape and destructive confirmation
 
 ## Escalation rules
 - Stop and hand back to the orchestrator when the change needs a file outside the write scope, when a gate fails twice with the same fingerprint (loop breaker), or when a decision belongs to the project owner.

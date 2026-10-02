@@ -54,6 +54,7 @@ Report migrations that can lock, lose data, fail halfway or break the running ap
 - `migration-safety-check` — checks a migration for locks, reversibility and old-new coexistence
 - `destructive-change-check` — detects destructive data or git operations before they run
 - `rollback-analysis` — determines how each part of a change can be undone
+- `databaseMigrationSafety` — checks migration safety rules for locking, backfill and rollback
 
 ## Escalation rules
 - Escalate to the escalation-router when two reviewers disagree on the same fact (it opens a conflict record and runs `ops.mjs quorum`); report BLOCKED_EXTERNAL, never PASS, when a required tool or service is unavailable.

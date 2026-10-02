@@ -55,6 +55,7 @@ Make every automation run observable, traceable and recoverable.
 - `record-automation-evidence` — records structured evidence of an automation step
 - `create-operational-checkpoint` — records a resumable checkpoint of an automation run
 - `trace-automation-decision` — traces why an automation took a decision
+- `explain-automation-action` — explains an automation action in plain language with its evidence
 
 ## Escalation rules
 - Escalate to the escalation-router when two reviewers disagree on the same fact (it opens a conflict record and runs `ops.mjs quorum`); report BLOCKED_EXTERNAL, never PASS, when a required tool or service is unavailable.

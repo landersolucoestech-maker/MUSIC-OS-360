@@ -58,6 +58,9 @@ Deliver a backend change that follows the established layering, scopes every que
 - `create-repository` — creates a repository that always scopes by tenant
 - `create-unit-tests` — writes unit tests for a bounded function or class
 - `run-unit-tests` — runs the real unit test suites and reports counts and failures
+- `fix-bug` — fixes a defect at its root cause with a regression test
+- `implement-crud` — implements create, read, update and delete with tenant scoping and audit
+- `implement-feature-flag` — adds a feature flag with a default, an owner and a removal condition
 
 ## Escalation rules
 - Stop and hand back to the orchestrator when the change needs a file outside the write scope, when a gate fails twice with the same fingerprint (loop breaker), or when a decision belongs to the project owner.

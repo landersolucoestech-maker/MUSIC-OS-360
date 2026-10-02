@@ -56,6 +56,7 @@ Make sure no high-impact action takes effect without a human decision that match
 - `request-human-approval` — creates a complete approval request for a human
 - `resume-after-approval` — resumes a paused run only on a granted approval
 - `reject-unsafe-automation` — stops an automation that would break a safety rule
+- `explain-automation-action` — explains an automation action in plain language with its evidence
 
 ## Escalation rules
 - Escalate to the escalation-router when two reviewers disagree on the same fact (it opens a conflict record and runs `ops.mjs quorum`); report BLOCKED_EXTERNAL, never PASS, when a required tool or service is unavailable.

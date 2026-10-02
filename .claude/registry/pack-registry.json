@@ -3,7 +3,7 @@
  "counts": {
   "packItems": 695,
   "agents": 374,
-  "skills": 210,
+  "skills": 321,
   "capabilities": 351,
   "workflows": 6
  },
@@ -100,7 +100,8 @@
    "skills": [
     "run-accessibility-tests",
     "create-accessibility-tests",
-    "browser-runtime-check"
+    "browser-runtime-check",
+    "modal-audit"
    ],
    "approval": "none"
   },
@@ -1603,7 +1604,10 @@
     "create-controller",
     "create-repository",
     "create-unit-tests",
-    "run-unit-tests"
+    "run-unit-tests",
+    "fix-bug",
+    "implement-crud",
+    "implement-feature-flag"
    ],
    "approval": "none"
   },
@@ -2980,7 +2984,8 @@
     "migration-audit",
     "migration-safety-check",
     "destructive-change-check",
-    "rollback-analysis"
+    "rollback-analysis",
+    "databaseMigrationSafety"
    ],
    "approval": "none"
   },
@@ -4653,7 +4658,9 @@
     "create-hook",
     "implement-form",
     "create-unit-tests",
-    "run-unit-tests"
+    "run-unit-tests",
+    "fix-bug",
+    "implement-feature-flag"
    ],
    "approval": "none"
   },
@@ -4757,7 +4764,8 @@
     "evaluate-human-approval",
     "request-human-approval",
     "resume-after-approval",
-    "reject-unsafe-automation"
+    "reject-unsafe-automation",
+    "explain-automation-action"
    ],
    "approval": "none"
   },
@@ -5222,7 +5230,8 @@
     "interaction-audit",
     "loading-state-audit",
     "implement-accessibility",
-    "run-unit-tests"
+    "run-unit-tests",
+    "modal-audit"
    ],
    "approval": "none"
   },
@@ -5535,7 +5544,8 @@
     "create-migration-tests",
     "migration-safety-check",
     "destructive-change-check",
-    "rollback-analysis"
+    "rollback-analysis",
+    "databaseMigrationSafety"
    ],
    "approval": "none"
   },
@@ -5970,7 +5980,8 @@
     "audit-automation-run",
     "record-automation-evidence",
     "create-operational-checkpoint",
-    "trace-automation-decision"
+    "trace-automation-decision",
+    "explain-automation-action"
    ],
    "approval": "none"
   },
@@ -9054,7 +9065,8 @@
     "ui-humanization",
     "browser-runtime-check",
     "empty-state-audit",
-    "error-state-audit"
+    "error-state-audit",
+    "table-audit"
    ],
    "approval": "none"
   },
@@ -9293,7 +9305,8 @@
     "design-system-audit",
     "token-audit",
     "spacing-audit",
-    "typography-audit"
+    "typography-audit",
+    "table-audit"
    ],
    "approval": "none"
   },
@@ -9677,6 +9690,18 @@
    ]
   },
   {
+   "name": "advance-project-workflow",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/advance-project-workflow/SKILL.md",
+   "consumers": [
+    "project-automation-agent"
+   ]
+  },
+  {
    "name": "ai-agent-audit",
    "kind": "audit",
    "domain": "ai-engineering",
@@ -9989,6 +10014,59 @@
    ]
   },
   {
+   "name": "archive-signed-contract",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/archive-signed-contract/SKILL.md",
+   "consumers": [
+    "contract-automation-agent",
+    "document-automation-agent",
+    "signature-automation-agent"
+   ]
+  },
+  {
+   "name": "assemble-distribution-package",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/assemble-distribution-package/SKILL.md",
+   "consumers": [
+    "distribution-automation-agent"
+   ]
+  },
+  {
+   "name": "assign-operational-task",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/assign-operational-task/SKILL.md",
+   "consumers": [
+    "exception-routing-agent",
+    "task-automation-agent"
+   ]
+  },
+  {
+   "name": "audit-automation-run",
+   "kind": "audit",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/audit-automation-run/SKILL.md",
+   "consumers": [
+    "evidence-controller",
+    "integration-operations-agent",
+    "operational-monitor-agent"
+   ]
+  },
+  {
    "name": "auth-audit",
    "kind": "audit",
    "domain": "security",
@@ -10151,6 +10229,18 @@
    ]
   },
   {
+   "name": "calculate-share-validation",
+   "kind": "calculation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/calculate-share-validation/SKILL.md",
+   "consumers": [
+    "shares-operations-agent"
+   ]
+  },
+  {
    "name": "change-impact-check",
    "kind": "check",
    "domain": "governance",
@@ -10170,6 +10260,19 @@
    ]
   },
   {
+   "name": "check-signature-status",
+   "kind": "status-check",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/check-signature-status/SKILL.md",
+   "consumers": [
+    "contract-status-agent",
+    "signature-automation-agent"
+   ]
+  },
+  {
    "name": "circuit-breaker-audit",
    "kind": "audit",
    "domain": "backend",
@@ -10186,6 +10289,30 @@
     "resilience-test-engineer",
     "retry-policy-reviewer",
     "timeout-reviewer"
+   ]
+  },
+  {
+   "name": "close-completed-task",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/close-completed-task/SKILL.md",
+   "consumers": [
+    "task-automation-agent"
+   ]
+  },
+  {
+   "name": "compare-lyrics-versions",
+   "kind": "comparison",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/compare-lyrics-versions/SKILL.md",
+   "consumers": [
+    "lyrics-automation-agent"
    ]
   },
   {
@@ -10477,6 +10604,34 @@
    ]
   },
   {
+   "name": "create-operational-checkpoint",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-operational-checkpoint/SKILL.md",
+   "consumers": [
+    "operational-monitor-agent",
+    "recovery-orchestrator",
+    "runtime-continuity-controller"
+   ]
+  },
+  {
+   "name": "create-operational-task",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-operational-task/SKILL.md",
+   "consumers": [
+    "exception-routing-agent",
+    "followup-automation-agent",
+    "task-automation-agent"
+   ]
+  },
+  {
    "name": "create-performance-tests",
    "kind": "test-authoring",
    "domain": "testing",
@@ -10489,6 +10644,30 @@
     "performance-engineer",
     "performance-test-engineer",
     "query-performance-engineer"
+   ]
+  },
+  {
+   "name": "create-phonogram-draft",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-phonogram-draft/SKILL.md",
+   "consumers": [
+    "phonogram-automation-agent"
+   ]
+  },
+  {
+   "name": "create-project-from-intake",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-project-from-intake/SKILL.md",
+   "consumers": [
+    "project-automation-agent"
    ]
   },
   {
@@ -10648,6 +10827,18 @@
    "path": ".claude/skills/create-webhook/SKILL.md",
    "consumers": [
     "webhook-engineer"
+   ]
+  },
+  {
+   "name": "create-work-draft",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/create-work-draft/SKILL.md",
+   "consumers": [
+    "work-automation-agent"
    ]
   },
   {
@@ -10824,7 +11015,10 @@
    "approval": "none",
    "mutates": false,
    "path": ".claude/skills/databaseMigrationSafety/SKILL.md",
-   "consumers": []
+   "consumers": [
+    "data-migration-reviewer",
+    "migration-engineer"
+   ]
   },
   {
    "name": "dead-code-analysis",
@@ -10967,6 +11161,186 @@
    ]
   },
   {
+   "name": "detect-data-inconsistency",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-data-inconsistency/SKILL.md",
+   "consumers": [
+    "data-engineering-reviewer",
+    "data-integrity-reviewer",
+    "data-quality-agent",
+    "denormalization-reviewer",
+    "external-data-reconciliation-agent",
+    "finance-operations-agent",
+    "financial-reconciliation-agent",
+    "mapping-reviewer",
+    "payment-operations-agent",
+    "retention-policy-reviewer"
+   ]
+  },
+  {
+   "name": "detect-duplicate-participant",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-duplicate-participant/SKILL.md",
+   "consumers": [
+    "artist-operations-agent",
+    "participant-operations-agent"
+   ]
+  },
+  {
+   "name": "detect-import-duplicates",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-import-duplicates/SKILL.md",
+   "consumers": [
+    "import-automation-agent",
+    "import-export-engineer"
+   ]
+  },
+  {
+   "name": "detect-metadata-conflict",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-metadata-conflict/SKILL.md",
+   "consumers": [
+    "data-quality-agent",
+    "external-data-reconciliation-agent",
+    "metadata-automation-agent",
+    "metadata-quality-agent"
+   ]
+  },
+  {
+   "name": "detect-missing-relationship",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-missing-relationship/SKILL.md",
+   "consumers": [
+    "catalog-integrity-agent",
+    "catalog-operations-agent",
+    "credits-operations-agent",
+    "relationship-integrity-agent"
+   ]
+  },
+  {
+   "name": "detect-orphan-record",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-orphan-record/SKILL.md",
+   "consumers": [
+    "catalog-integrity-agent",
+    "catalog-operations-agent",
+    "data-quality-agent",
+    "relationship-integrity-agent"
+   ]
+  },
+  {
+   "name": "detect-overdue-task",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-overdue-task/SKILL.md",
+   "consumers": [
+    "deadline-automation-agent",
+    "followup-automation-agent"
+   ]
+  },
+  {
+   "name": "detect-provider-drift",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-provider-drift/SKILL.md",
+   "consumers": [
+    "external-data-reconciliation-agent",
+    "external-id-reviewer",
+    "external-schema-reviewer",
+    "integration-data-mapper",
+    "integration-operations-agent",
+    "provider-sync-agent",
+    "sync-engineer"
+   ]
+  },
+  {
+   "name": "detect-rights-conflict",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-rights-conflict/SKILL.md",
+   "consumers": [
+    "rights-integrity-agent",
+    "rights-operations-agent"
+   ]
+  },
+  {
+   "name": "detect-share-conflict",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-share-conflict/SKILL.md",
+   "consumers": [
+    "shares-operations-agent"
+   ]
+  },
+  {
+   "name": "detect-status-conflict",
+   "kind": "detection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-status-conflict/SKILL.md",
+   "consumers": [
+    "catalog-integrity-agent",
+    "catalog-operations-agent",
+    "contract-automation-agent",
+    "contract-status-agent",
+    "data-quality-agent",
+    "distribution-status-agent",
+    "finance-operations-agent",
+    "financial-reconciliation-agent",
+    "relationship-integrity-agent"
+   ]
+  },
+  {
+   "name": "detect-work-version-change",
+   "kind": "comparison",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/detect-work-version-change/SKILL.md",
+   "consumers": [
+    "lyrics-automation-agent"
+   ]
+  },
+  {
    "name": "diff-review",
    "kind": "check",
    "domain": "repository",
@@ -11093,6 +11467,33 @@
    ]
   },
   {
+   "name": "escalate-overdue-task",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/escalate-overdue-task/SKILL.md",
+   "consumers": [
+    "deadline-automation-agent",
+    "exception-routing-agent"
+   ]
+  },
+  {
+   "name": "evaluate-human-approval",
+   "kind": "evaluation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/evaluate-human-approval/SKILL.md",
+   "consumers": [
+    "approval-router",
+    "human-approval-agent",
+    "payment-operations-agent"
+   ]
+  },
+  {
    "name": "event-map",
    "kind": "map",
    "domain": "backend",
@@ -11124,6 +11525,31 @@
    ]
   },
   {
+   "name": "execute-approved-import",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "bulk-data-change",
+   "mutates": true,
+   "path": ".claude/skills/execute-approved-import/SKILL.md",
+   "consumers": [
+    "import-automation-agent"
+   ]
+  },
+  {
+   "name": "explain-automation-action",
+   "kind": "explanation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/explain-automation-action/SKILL.md",
+   "consumers": [
+    "human-approval-agent",
+    "operational-monitor-agent"
+   ]
+  },
+  {
    "name": "external-action-check",
    "kind": "check",
    "domain": "repository",
@@ -11140,6 +11566,45 @@
     "release-orchestrator",
     "ssrf-reviewer",
     "tool-router"
+   ]
+  },
+  {
+   "name": "extract-audio-metadata",
+   "kind": "extraction",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/extract-audio-metadata/SKILL.md",
+   "consumers": [
+    "metadata-automation-agent"
+   ]
+  },
+  {
+   "name": "extract-file-metadata",
+   "kind": "extraction",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/extract-file-metadata/SKILL.md",
+   "consumers": [
+    "asset-automation-agent",
+    "document-automation-agent",
+    "metadata-automation-agent"
+   ]
+  },
+  {
+   "name": "extract-lyrics",
+   "kind": "extraction",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/extract-lyrics/SKILL.md",
+   "consumers": [
+    "lyrics-automation-agent",
+    "transcription-automation-agent"
    ]
   },
   {
@@ -11163,7 +11628,22 @@
    "approval": "none",
    "mutates": true,
    "path": ".claude/skills/fix-bug/SKILL.md",
-   "consumers": []
+   "consumers": [
+    "backend-engineer",
+    "frontend-engineer"
+   ]
+  },
+  {
+   "name": "follow-up-signature",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "external-send",
+   "mutates": true,
+   "path": ".claude/skills/follow-up-signature/SKILL.md",
+   "consumers": [
+    "signature-followup-agent"
+   ]
   },
   {
    "name": "form-audit",
@@ -11210,6 +11690,97 @@
    ]
   },
   {
+   "name": "generate-catalog-report",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/generate-catalog-report/SKILL.md",
+   "consumers": [
+    "catalog-operations-agent",
+    "report-automation-agent"
+   ]
+  },
+  {
+   "name": "generate-contract",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/generate-contract/SKILL.md",
+   "consumers": [
+    "contract-generation-agent",
+    "contract-test-engineer"
+   ]
+  },
+  {
+   "name": "generate-csv-export",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/generate-csv-export/SKILL.md",
+   "consumers": [
+    "csv-engineer",
+    "export-automation-agent"
+   ]
+  },
+  {
+   "name": "generate-distribution-report",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/generate-distribution-report/SKILL.md",
+   "consumers": [
+    "report-automation-agent"
+   ]
+  },
+  {
+   "name": "generate-operational-report",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/generate-operational-report/SKILL.md",
+   "consumers": [
+    "export-automation-agent",
+    "finance-operations-agent",
+    "release-automation-agent",
+    "report-automation-agent"
+   ]
+  },
+  {
+   "name": "generate-rights-report",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/generate-rights-report/SKILL.md",
+   "consumers": [
+    "report-automation-agent"
+   ]
+  },
+  {
+   "name": "generate-xlsx-export",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/generate-xlsx-export/SKILL.md",
+   "consumers": [
+    "export-automation-agent",
+    "xlsx-engineer"
+   ]
+  },
+  {
    "name": "git-safety-check",
    "kind": "check",
    "domain": "repository",
@@ -11228,6 +11799,27 @@
     "protected-branch-guard",
     "repo-identity-validator",
     "repository-guardian"
+   ]
+  },
+  {
+   "name": "handle-provider-failure",
+   "kind": "classification",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/handle-provider-failure/SKILL.md",
+   "consumers": [
+    "ai-fallback-reviewer",
+    "chaos-test-reviewer",
+    "contract-status-agent",
+    "degradation-reviewer",
+    "distribution-status-agent",
+    "integration-operations-agent",
+    "integration-reliability-reviewer",
+    "provider-failure-reviewer",
+    "provider-sync-agent",
+    "resilience-test-engineer"
    ]
   },
   {
@@ -11357,7 +11949,9 @@
    "approval": "none",
    "mutates": true,
    "path": ".claude/skills/implement-crud/SKILL.md",
-   "consumers": []
+   "consumers": [
+    "backend-engineer"
+   ]
   },
   {
    "name": "implement-error-boundary",
@@ -11410,7 +12004,10 @@
    "approval": "none",
    "mutates": true,
    "path": ".claude/skills/implement-feature-flag/SKILL.md",
-   "consumers": []
+   "consumers": [
+    "backend-engineer",
+    "frontend-engineer"
+   ]
   },
   {
    "name": "implement-form",
@@ -11520,6 +12117,32 @@
    ]
   },
   {
+   "name": "import-csv",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/import-csv/SKILL.md",
+   "consumers": [
+    "csv-engineer",
+    "import-automation-agent"
+   ]
+  },
+  {
+   "name": "import-xlsx",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/import-xlsx/SKILL.md",
+   "consumers": [
+    "import-automation-agent",
+    "xlsx-engineer"
+   ]
+  },
+  {
    "name": "integration-audit",
    "kind": "audit",
    "domain": "integrations",
@@ -11591,6 +12214,21 @@
    ]
   },
   {
+   "name": "link-project-assets",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/link-project-assets/SKILL.md",
+   "consumers": [
+    "asset-automation-agent",
+    "document-automation-agent",
+    "project-automation-agent",
+    "release-automation-agent"
+   ]
+  },
+  {
    "name": "loading-state-audit",
    "kind": "audit",
    "domain": "frontend",
@@ -11624,6 +12262,18 @@
    "path": ".claude/skills/media-security-audit/SKILL.md",
    "consumers": [
     "file-upload-security-reviewer"
+   ]
+  },
+  {
+   "name": "merge-participant-candidates",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "entity-merge",
+   "mutates": true,
+   "path": ".claude/skills/merge-participant-candidates/SKILL.md",
+   "consumers": [
+    "participant-operations-agent"
    ]
   },
   {
@@ -11667,7 +12317,10 @@
    "approval": "none",
    "mutates": false,
    "path": ".claude/skills/modal-audit/SKILL.md",
-   "consumers": []
+   "consumers": [
+    "accessibility-auditor",
+    "interaction-engineer"
+   ]
   },
   {
    "name": "modify-schema",
@@ -11734,6 +12387,58 @@
    "consumers": [
     "route-mapper",
     "routing-engineer"
+   ]
+  },
+  {
+   "name": "normalize-artist",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/normalize-artist/SKILL.md",
+   "consumers": [
+    "artist-operations-agent"
+   ]
+  },
+  {
+   "name": "normalize-import-data",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/normalize-import-data/SKILL.md",
+   "consumers": [
+    "csv-engineer",
+    "import-automation-agent",
+    "xlsx-engineer"
+   ]
+  },
+  {
+   "name": "normalize-lyrics",
+   "kind": "extraction",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/normalize-lyrics/SKILL.md",
+   "consumers": [
+    "lyrics-automation-agent",
+    "metadata-quality-agent",
+    "transcription-automation-agent"
+   ]
+  },
+  {
+   "name": "normalize-participant",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/normalize-participant/SKILL.md",
+   "consumers": [
+    "participant-operations-agent"
    ]
   },
   {
@@ -11852,6 +12557,69 @@
     "tool-router",
     "validation-router",
     "workflow-orchestrator"
+   ]
+  },
+  {
+   "name": "populate-contract",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/populate-contract/SKILL.md",
+   "consumers": [
+    "contract-generation-agent"
+   ]
+  },
+  {
+   "name": "prepare-release",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/prepare-release/SKILL.md",
+   "consumers": [
+    "release-automation-agent",
+    "release-guardian"
+   ]
+  },
+  {
+   "name": "preview-import-changes",
+   "kind": "preview",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/preview-import-changes/SKILL.md",
+   "consumers": [
+    "import-automation-agent",
+    "import-export-engineer"
+   ]
+  },
+  {
+   "name": "prioritize-operational-task",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/prioritize-operational-task/SKILL.md",
+   "consumers": [
+    "exception-routing-agent",
+    "task-automation-agent"
+   ]
+  },
+  {
+   "name": "process-distribution-rejection",
+   "kind": "classification",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/process-distribution-rejection/SKILL.md",
+   "consumers": [
+    "distribution-rejection-agent"
    ]
   },
   {
@@ -12034,6 +12802,59 @@
    ]
   },
   {
+   "name": "reconcile-external-identifiers",
+   "kind": "comparison",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/reconcile-external-identifiers/SKILL.md",
+   "consumers": [
+    "external-id-resolution-agent"
+   ]
+  },
+  {
+   "name": "reconcile-provider-data",
+   "kind": "comparison",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/reconcile-provider-data/SKILL.md",
+   "consumers": [
+    "external-data-reconciliation-agent",
+    "financial-reconciliation-agent",
+    "integration-data-mapper",
+    "sync-engineer"
+   ]
+  },
+  {
+   "name": "record-automation-evidence",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/record-automation-evidence/SKILL.md",
+   "consumers": [
+    "evidence-orchestrator",
+    "operational-monitor-agent"
+   ]
+  },
+  {
+   "name": "recover-failed-workflow",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/recover-failed-workflow/SKILL.md",
+   "consumers": [
+    "operational-recovery-agent",
+    "recovery-orchestrator"
+   ]
+  },
+  {
    "name": "refactor-component",
    "kind": "implementation",
    "domain": "frontend",
@@ -12044,6 +12865,35 @@
    "consumers": [
     "component-engineer",
     "refactoring-engineer"
+   ]
+  },
+  {
+   "name": "reject-unsafe-automation",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/reject-unsafe-automation/SKILL.md",
+   "consumers": [
+    "approval-router",
+    "exception-routing-agent",
+    "human-approval-agent"
+   ]
+  },
+  {
+   "name": "repair-approved-inconsistency",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "auto-fix-legal-financial",
+   "mutates": true,
+   "path": ".claude/skills/repair-approved-inconsistency/SKILL.md",
+   "consumers": [
+    "catalog-integrity-agent",
+    "financial-reconciliation-agent",
+    "relationship-integrity-agent",
+    "rights-integrity-agent"
    ]
   },
   {
@@ -12100,6 +12950,56 @@
    ]
   },
   {
+   "name": "request-human-approval",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/request-human-approval/SKILL.md",
+   "consumers": [
+    "approval-router",
+    "human-approval-agent",
+    "payment-operations-agent"
+   ]
+  },
+  {
+   "name": "resolve-artist",
+   "kind": "resolution",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/resolve-artist/SKILL.md",
+   "consumers": [
+    "artist-operations-agent"
+   ]
+  },
+  {
+   "name": "resolve-external-id",
+   "kind": "resolution",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/resolve-external-id/SKILL.md",
+   "consumers": [
+    "external-id-resolution-agent"
+   ]
+  },
+  {
+   "name": "resolve-participant",
+   "kind": "resolution",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/resolve-participant/SKILL.md",
+   "consumers": [
+    "participant-operations-agent"
+   ]
+  },
+  {
    "name": "responsive-audit",
    "kind": "audit",
    "domain": "frontend",
@@ -12111,6 +13011,31 @@
     "browser-compatibility-reviewer",
     "mobile-reviewer",
     "responsive-engineer"
+   ]
+  },
+  {
+   "name": "resume-after-approval",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/resume-after-approval/SKILL.md",
+   "consumers": [
+    "approval-router",
+    "human-approval-agent"
+   ]
+  },
+  {
+   "name": "resume-operational-workflow",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/resume-operational-workflow/SKILL.md",
+   "consumers": [
+    "operational-recovery-agent"
    ]
   },
   {
@@ -12130,6 +13055,33 @@
     "rate-limit-reviewer",
     "retry-policy-reviewer",
     "retry-reviewer"
+   ]
+  },
+  {
+   "name": "retry-failed-operation",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/retry-failed-operation/SKILL.md",
+   "consumers": [
+    "operational-recovery-agent",
+    "retry-orchestrator"
+   ]
+  },
+  {
+   "name": "retry-provider-sync",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/retry-provider-sync/SKILL.md",
+   "consumers": [
+    "integration-operations-agent",
+    "provider-sync-agent",
+    "sync-engineer"
    ]
   },
   {
@@ -12156,6 +13108,31 @@
    ]
   },
   {
+   "name": "rollback-import",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "bulk-data-change",
+   "mutates": true,
+   "path": ".claude/skills/rollback-import/SKILL.md",
+   "consumers": [
+    "import-automation-agent",
+    "import-export-engineer"
+   ]
+  },
+  {
+   "name": "rollback-operational-action",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "production-write",
+   "mutates": true,
+   "path": ".claude/skills/rollback-operational-action/SKILL.md",
+   "consumers": [
+    "operational-recovery-agent"
+   ]
+  },
+  {
    "name": "root-cause-analysis",
    "kind": "analysis",
    "domain": "quality",
@@ -12169,6 +13146,30 @@
    ]
   },
   {
+   "name": "route-contract-for-signature",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "signature",
+   "mutates": true,
+   "path": ".claude/skills/route-contract-for-signature/SKILL.md",
+   "consumers": [
+    "contract-routing-agent"
+   ]
+  },
+  {
+   "name": "route-distribution-correction",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/route-distribution-correction/SKILL.md",
+   "consumers": [
+    "distribution-rejection-agent"
+   ]
+  },
+  {
    "name": "route-map",
    "kind": "map",
    "domain": "frontend",
@@ -12179,6 +13180,30 @@
    "consumers": [
     "module-mapper",
     "route-mapper"
+   ]
+  },
+  {
+   "name": "route-phonogram-to-registration",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/route-phonogram-to-registration/SKILL.md",
+   "consumers": [
+    "phonogram-automation-agent"
+   ]
+  },
+  {
+   "name": "route-work-to-registration",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/route-work-to-registration/SKILL.md",
+   "consumers": [
+    "work-automation-agent"
    ]
   },
   {
@@ -12481,6 +13506,20 @@
    ]
   },
   {
+   "name": "schedule-followup",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/schedule-followup/SKILL.md",
+   "consumers": [
+    "deadline-automation-agent",
+    "followup-automation-agent",
+    "signature-followup-agent"
+   ]
+  },
+  {
    "name": "scheduler-audit",
    "kind": "audit",
    "domain": "backend",
@@ -12578,6 +13617,94 @@
     "validation-engineer",
     "webhook-security-reviewer",
     "xss-reviewer"
+   ]
+  },
+  {
+   "name": "select-contract-template",
+   "kind": "selection",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/select-contract-template/SKILL.md",
+   "consumers": [
+    "contract-automation-agent",
+    "contract-generation-agent"
+   ]
+  },
+  {
+   "name": "send-contract-notification",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "external-send",
+   "mutates": true,
+   "path": ".claude/skills/send-contract-notification/SKILL.md",
+   "consumers": [
+    "contract-routing-agent",
+    "email-automation-agent"
+   ]
+  },
+  {
+   "name": "send-distribution-notification",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "external-send",
+   "mutates": true,
+   "path": ".claude/skills/send-distribution-notification/SKILL.md",
+   "consumers": [
+    "notification-automation-agent"
+   ]
+  },
+  {
+   "name": "send-operational-notification",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "external-send",
+   "mutates": true,
+   "path": ".claude/skills/send-operational-notification/SKILL.md",
+   "consumers": [
+    "email-automation-agent",
+    "notification-automation-agent"
+   ]
+  },
+  {
+   "name": "send-rejection-notification",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "external-send",
+   "mutates": true,
+   "path": ".claude/skills/send-rejection-notification/SKILL.md",
+   "consumers": [
+    "distribution-rejection-agent",
+    "notification-automation-agent"
+   ]
+  },
+  {
+   "name": "send-release-notification",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "external-send",
+   "mutates": true,
+   "path": ".claude/skills/send-release-notification/SKILL.md",
+   "consumers": [
+    "notification-automation-agent"
+   ]
+  },
+  {
+   "name": "send-signature-reminder",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "external-send",
+   "mutates": true,
+   "path": ".claude/skills/send-signature-reminder/SKILL.md",
+   "consumers": [
+    "signature-followup-agent"
    ]
   },
   {
@@ -12713,6 +13840,18 @@
    ]
   },
   {
+   "name": "submit-distribution",
+   "kind": "high-impact-operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "external-send-irreversible",
+   "mutates": true,
+   "path": ".claude/skills/submit-distribution/SKILL.md",
+   "consumers": [
+    "distribution-automation-agent"
+   ]
+  },
+  {
    "name": "supply-chain-audit",
    "kind": "audit",
    "domain": "security",
@@ -12726,6 +13865,32 @@
    ]
   },
   {
+   "name": "sync-distribution-status",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/sync-distribution-status/SKILL.md",
+   "consumers": [
+    "distribution-status-agent"
+   ]
+  },
+  {
+   "name": "sync-provider-data",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/sync-provider-data/SKILL.md",
+   "consumers": [
+    "integration-data-mapper",
+    "provider-sync-agent",
+    "sync-engineer"
+   ]
+  },
+  {
    "name": "table-audit",
    "kind": "audit",
    "domain": "frontend",
@@ -12733,7 +13898,10 @@
    "approval": "none",
    "mutates": false,
    "path": ".claude/skills/table-audit/SKILL.md",
-   "consumers": []
+   "consumers": [
+    "ui-ux-engineer",
+    "visual-consistency-reviewer"
+   ]
   },
   {
    "name": "technical-debt-analysis",
@@ -12808,6 +13976,31 @@
    ]
   },
   {
+   "name": "trace-automation-decision",
+   "kind": "trace",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/trace-automation-decision/SKILL.md",
+   "consumers": [
+    "operational-monitor-agent"
+   ]
+  },
+  {
+   "name": "trace-rights-origin",
+   "kind": "trace",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/trace-rights-origin/SKILL.md",
+   "consumers": [
+    "credits-operations-agent",
+    "rights-operations-agent"
+   ]
+  },
+  {
    "name": "transaction-audit",
    "kind": "audit",
    "domain": "database",
@@ -12823,6 +14016,18 @@
     "service-layer-reviewer",
     "transaction-engineer",
     "transaction-reviewer"
+   ]
+  },
+  {
+   "name": "transcribe-audio",
+   "kind": "operation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/transcribe-audio/SKILL.md",
+   "consumers": [
+    "transcription-automation-agent"
    ]
   },
   {
@@ -12848,6 +14053,301 @@
    "path": ".claude/skills/upload-security-audit/SKILL.md",
    "consumers": [
     "file-upload-security-reviewer"
+   ]
+  },
+  {
+   "name": "validate-audio-assets",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-audio-assets/SKILL.md",
+   "consumers": [
+    "asset-automation-agent",
+    "release-readiness-agent"
+   ]
+  },
+  {
+   "name": "validate-contract-data",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-contract-data/SKILL.md",
+   "consumers": [
+    "contract-automation-agent",
+    "contract-generation-agent",
+    "contract-routing-agent",
+    "signature-automation-agent"
+   ]
+  },
+  {
+   "name": "validate-cover-art",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-cover-art/SKILL.md",
+   "consumers": [
+    "asset-automation-agent",
+    "release-readiness-agent"
+   ]
+  },
+  {
+   "name": "validate-distribution-metadata",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-distribution-metadata/SKILL.md",
+   "consumers": [
+    "distribution-automation-agent",
+    "distribution-readiness-agent"
+   ]
+  },
+  {
+   "name": "validate-distribution-readiness",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-distribution-readiness/SKILL.md",
+   "consumers": [
+    "distribution-readiness-agent"
+   ]
+  },
+  {
+   "name": "validate-import",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-import/SKILL.md",
+   "consumers": [
+    "csv-engineer",
+    "import-automation-agent",
+    "import-export-engineer",
+    "xlsx-engineer"
+   ]
+  },
+  {
+   "name": "validate-isrc",
+   "kind": "identifier-validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-isrc/SKILL.md",
+   "consumers": [
+    "distribution-readiness-agent",
+    "external-id-resolution-agent",
+    "metadata-automation-agent",
+    "metadata-quality-agent"
+   ]
+  },
+  {
+   "name": "validate-iswc",
+   "kind": "identifier-validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-iswc/SKILL.md",
+   "consumers": [
+    "external-id-resolution-agent",
+    "metadata-automation-agent",
+    "metadata-quality-agent"
+   ]
+  },
+  {
+   "name": "validate-phonogram-metadata",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-phonogram-metadata/SKILL.md",
+   "consumers": [
+    "metadata-automation-agent",
+    "phonogram-automation-agent"
+   ]
+  },
+  {
+   "name": "validate-phonogram-participants",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-phonogram-participants/SKILL.md",
+   "consumers": [
+    "credits-operations-agent",
+    "phonogram-automation-agent"
+   ]
+  },
+  {
+   "name": "validate-phonogram-rights",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-phonogram-rights/SKILL.md",
+   "consumers": [
+    "phonogram-automation-agent",
+    "rights-operations-agent"
+   ]
+  },
+  {
+   "name": "validate-phonogram-shares",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-phonogram-shares/SKILL.md",
+   "consumers": [
+    "phonogram-automation-agent",
+    "shares-operations-agent"
+   ]
+  },
+  {
+   "name": "validate-project-readiness",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-project-readiness/SKILL.md",
+   "consumers": [
+    "project-automation-agent"
+   ]
+  },
+  {
+   "name": "validate-release-readiness",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-release-readiness/SKILL.md",
+   "consumers": [
+    "release-automation-agent",
+    "release-guardian",
+    "release-readiness-agent",
+    "release-validator"
+   ]
+  },
+  {
+   "name": "validate-rights-chain",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-rights-chain/SKILL.md",
+   "consumers": [
+    "rights-integrity-agent",
+    "rights-operations-agent"
+   ]
+  },
+  {
+   "name": "validate-share-total",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-share-total/SKILL.md",
+   "consumers": [
+    "payment-operations-agent",
+    "rights-integrity-agent",
+    "shares-operations-agent"
+   ]
+  },
+  {
+   "name": "validate-upc",
+   "kind": "identifier-validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-upc/SKILL.md",
+   "consumers": [
+    "distribution-readiness-agent",
+    "metadata-automation-agent",
+    "metadata-quality-agent"
+   ]
+  },
+  {
+   "name": "validate-wav",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-wav/SKILL.md",
+   "consumers": [
+    "asset-automation-agent"
+   ]
+  },
+  {
+   "name": "validate-work-metadata",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-work-metadata/SKILL.md",
+   "consumers": [
+    "metadata-automation-agent",
+    "work-automation-agent"
+   ]
+  },
+  {
+   "name": "validate-work-participants",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-work-participants/SKILL.md",
+   "consumers": [
+    "credits-operations-agent",
+    "work-automation-agent"
+   ]
+  },
+  {
+   "name": "validate-work-rights",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-work-rights/SKILL.md",
+   "consumers": [
+    "rights-operations-agent",
+    "work-automation-agent"
+   ]
+  },
+  {
+   "name": "validate-work-shares",
+   "kind": "validation",
+   "domain": "operations",
+   "batch": 18,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/validate-work-shares/SKILL.md",
+   "consumers": [
+    "release-readiness-agent",
+    "shares-operations-agent",
+    "work-automation-agent"
    ]
   },
   {
@@ -14126,7 +15626,10 @@
     "create-repository",
     "create-service",
     "create-unit-tests",
+    "fix-bug",
+    "implement-crud",
     "implement-feature",
+    "implement-feature-flag",
     "run-unit-tests"
    ]
   },
@@ -14698,6 +16201,7 @@
    "skills": [
     "create-migration",
     "create-migration-tests",
+    "databaseMigrationSafety",
     "destructive-change-check",
     "migration-safety-check",
     "rollback-analysis"
@@ -14910,6 +16414,7 @@
     "data-migration-reviewer"
    ],
    "skills": [
+    "databaseMigrationSafety",
     "destructive-change-check",
     "migration-audit",
     "migration-safety-check",
@@ -15259,7 +16764,9 @@
     "create-component",
     "create-hook",
     "create-unit-tests",
+    "fix-bug",
     "implement-feature",
+    "implement-feature-flag",
     "implement-form",
     "run-unit-tests"
    ]
@@ -15283,6 +16790,7 @@
     "implement-accessibility",
     "interaction-audit",
     "loading-state-audit",
+    "modal-audit",
     "run-unit-tests"
    ]
   },
@@ -15433,6 +16941,7 @@
    "skills": [
     "design-system-audit",
     "spacing-audit",
+    "table-audit",
     "token-audit",
     "typography-audit",
     "visual-consistency-audit"
@@ -15503,6 +17012,7 @@
     "empty-state-audit",
     "error-state-audit",
     "frontend-design",
+    "table-audit",
     "ui-humanization"
    ]
   },
@@ -16472,6 +17982,7 @@
    ],
    "skills": [
     "evaluate-human-approval",
+    "explain-automation-action",
     "reject-unsafe-automation",
     "request-human-approval",
     "resume-after-approval"
@@ -16620,6 +18131,7 @@
    "skills": [
     "audit-automation-run",
     "create-operational-checkpoint",
+    "explain-automation-action",
     "record-automation-evidence",
     "trace-automation-decision"
    ]
@@ -20093,6 +21605,7 @@
    "skills": [
     "browser-runtime-check",
     "create-accessibility-tests",
+    "modal-audit",
     "run-accessibility-tests"
    ]
   },

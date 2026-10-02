@@ -56,6 +56,7 @@ Make screens predictable: clear hierarchy, confirmed destructive actions, helpfu
 - `browser-runtime-check` — runs the app in a real browser and records console errors and failed requests
 - `empty-state-audit` — audits empty states for guidance and calls to action
 - `error-state-audit` — audits error states for safe, humanized messages
+- `table-audit` — audits tables for sorting, paging, empty and overflow behavior
 
 ## Escalation rules
 - Stop and hand back to the orchestrator when the change needs a file outside the write scope, when a gate fails twice with the same fingerprint (loop breaker), or when a decision belongs to the project owner.

@@ -55,6 +55,7 @@ Report deviations from the design system with the screen, the token that should 
 - `token-audit` — audits design tokens for duplicates and hard-coded values
 - `spacing-audit` — audits spacing against the token scale
 - `typography-audit` — audits type scale, weight and line length
+- `table-audit` — audits tables for sorting, paging, empty and overflow behavior
 
 ## Escalation rules
 - Escalate to the escalation-router when two reviewers disagree on the same fact (it opens a conflict record and runs `ops.mjs quorum`); report BLOCKED_EXTERNAL, never PASS, when a required tool or service is unavailable.

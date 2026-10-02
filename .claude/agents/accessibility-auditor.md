@@ -53,6 +53,7 @@ Report accessibility defects found by tools and by hand with the element, the cr
 - `run-accessibility-tests` — runs automated accessibility checks
 - `create-accessibility-tests` — writes automated accessibility checks
 - `browser-runtime-check` — runs the app in a real browser and records console errors and failed requests
+- `modal-audit` — audits modals for focus trap, escape and destructive confirmation
 
 ## Escalation rules
 - Escalate to the escalation-router when two reviewers disagree on the same fact (it opens a conflict record and runs `ops.mjs quorum`); report BLOCKED_EXTERNAL, never PASS, when a required tool or service is unavailable.
