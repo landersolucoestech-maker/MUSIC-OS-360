@@ -1,13 +1,19 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // SECURITY-SENSITIVE — Auth bypass switch.
 //
-// AUTH_DISABLED bypasses JwtAuthGuard / TenantGuard / RolesGuard / RateLimitGuard.
+// AUTH_DISABLED bypasses JwtAuthGuard / TenantGuard / RolesGuard / PermissionsGuard /
+// MustChangePasswordGuard / BillingEnforcementGuard (every guard that imports this
+// flag). RateLimitGuard does NOT import it and is NOT bypassed.
 // It is honored ONLY when BOTH conditions hold:
 //   1. explicit opt-in via env: AUTH_DISABLED=true
-//   2. NODE_ENV is exactly 'development'
+//   2. NODE_ENV is exactly 'development' (case/whitespace-sensitive: 'Development'
+//      or ' development' are NOT development). An UNSET NODE_ENV defaults to
+//      'development' here, which is a local-use convenience; the release check
+//      `verify:production-flags` treats an unset NODE_ENV as a failure.
 // Staging/production are ALWAYS fail-closed (guards enforced), regardless of env.
-// A hard bootstrap guard in main.ts additionally aborts startup if someone sets
-// AUTH_DISABLED=true in production.
+// The startup guard lives in create-app.ts (assertApiRuntimeEnv/createApp), which
+// aborts startup if AUTH_DISABLED=true in a prod-like NODE_ENV; SecurityStartupService
+// repeats the check at bootstrap.
 // ─────────────────────────────────────────────────────────────────────────────
 import { isProdLike } from './config/runtime-environment';
 import {

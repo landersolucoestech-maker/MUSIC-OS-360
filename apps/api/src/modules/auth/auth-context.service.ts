@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from '@nestjs/common';
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { RbacService } from '../../core/rbac/rbac.service';
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.tokens';
@@ -31,6 +31,8 @@ function asObject(value: unknown): Record<string, unknown> {
 
 @Injectable()
 export class AuthContextService {
+  private readonly logger = new Logger(AuthContextService.name);
+
   constructor(
     private readonly rbac: RbacService,
     @Optional() @Inject(DATA_SOURCE) private readonly ds?: DataSource | null,
@@ -64,7 +66,13 @@ export class AuthContextService {
                 "updated_at" = now()
           WHERE "tenant_id" = $1 AND "auth_user_id" = $2 AND "status" = 'pending'`,
         [tenantId, auth.userId],
-      ).catch(() => undefined);
+      ).catch((error: unknown) => {
+        // Best-effort: accepting a pending invitation must never block building the auth
+        // context. Log the failure (error class/message only — no tokens, no PII, no ids).
+        this.logger.warn(
+          `tenant_invitations accept update failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+        );
+      });
     }
 
     return {

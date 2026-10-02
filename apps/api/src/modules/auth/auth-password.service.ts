@@ -68,7 +68,9 @@ export class AuthPasswordService {
       const { data, error } = await anon.auth.signInWithPassword({ email, password: candidate });
       if (data?.session) {
         // We do not need (nor want) to keep this test session alive.
-        await anon.auth.signOut().catch(() => {});
+        await anon.auth.signOut().catch((error: unknown) => {
+          this.logger.warn(`Anon test-session signOut failed: ${error instanceof Error ? error.message : 'unknown error'}`);
+        });
       }
       return !error && !!data?.session;
     } catch {
@@ -115,7 +117,9 @@ export class AuthPasswordService {
     // someone else using the compromised temporary password elsewhere).
     // Must never undo the already confirmed success of the password change.
     if (accessToken) {
-      await supabase.auth.admin.signOut(accessToken, 'others').catch(() => {});
+      await supabase.auth.admin.signOut(accessToken, 'others').catch((error: unknown) => {
+        this.logger.warn(`Revoking other sessions failed: ${error instanceof Error ? error.message : 'unknown error'}`);
+      });
     }
 
     await this.audit.log({

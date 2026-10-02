@@ -90,10 +90,10 @@ export class SecurityStartupService implements OnApplicationBootstrap {
         fatal:   true,
         check:   () =>
           !prodLike ||
-          !['AUTH_DISABLED', 'MOCK_MODE', 'USE_MOCK', 'VITE_MOCK_MODE'].some(
+          !['AUTH_DISABLED', 'MOCK_MODE', 'USE_MOCK', 'VITE_MOCK_MODE', 'DEV_AUTH_ENDPOINT_ENABLED'].some(
             (key) => this.getConfig(key) === 'true',
           ),
-        message: 'AUTH_DISABLED/MOCK_MODE/USE_MOCK/VITE_MOCK_MODE cannot be active in staging/production',
+        message: 'AUTH_DISABLED/MOCK_MODE/USE_MOCK/VITE_MOCK_MODE/DEV_AUTH_ENDPOINT_ENABLED cannot be active in staging/production',
       },
       {
         name:    'METRICS_TOKEN present in prod-like environments',

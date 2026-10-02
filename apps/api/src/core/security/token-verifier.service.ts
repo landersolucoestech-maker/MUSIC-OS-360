@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import type * as jwksRsaType from 'jwks-rsa';
 import { isProdLike } from '../config/runtime-environment';
+import { verifyDevToken } from './dev-token';
 
 // Lazy-loaded to avoid Jest parse errors when test suites that only need
 // HTTP guards transitively import this file (jwks-rsa uses syntax ts-jest
@@ -25,7 +26,6 @@ function getJwksRsa(): JwksRsaFn {
   return _jwksRsa!;
 }
 
-const DEV_ISSUER = 'music-os-360-dev';
 
 export interface VerifiedClaims {
   sub: string;
@@ -71,18 +71,8 @@ export class TokenVerifierService implements OnModuleInit {
   /** Try the local HS256 dev token first; null if not signed by ENCRYPTION_KEY. */
   tryVerifyDevToken(token: string): Record<string, unknown> | null {
     if (isProdLike(this.getConfig('NODE_ENV'))) return null;
-    const secret = this.getConfig('ENCRYPTION_KEY');
-    if (!secret) return null;
-    try {
-      const decoded = jwt.verify(token, secret, {
-        algorithms: ['HS256'],
-        issuer: DEV_ISSUER,
-      });
-      if (typeof decoded !== 'object' || !decoded) return null;
-      return decoded as Record<string, unknown>;
-    } catch {
-      return null;
-    }
+    // Requires `exp` and rejects the all-zero ENCRYPTION_KEY (see ./dev-token.ts).
+    return verifyDevToken(token, this.getConfig('ENCRYPTION_KEY'));
   }
 
   /** Full Supabase ES256 verification via JWKS. */

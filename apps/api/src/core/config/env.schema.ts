@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isProdLike as isProdLikeEnv } from './runtime-environment';
 
 // ── Supabase environment guard ────────────────────────────────────────────────
 // Single source of truth for the refs allowed per environment. The frontend mirrors
@@ -331,6 +332,54 @@ export function collectProductionAuthorityErrors(
   return errors;
 }
 
+/** Flags that must never be 'true' in a staging/production runtime. */
+export const PROD_FORBIDDEN_BYPASS_FLAGS = [
+  'AUTH_DISABLED',
+  'USE_MOCK',
+  'MOCK_MODE',
+  'DEV_AUTH_ENDPOINT_ENABLED',
+] as const;
+
+const CANONICAL_NODE_ENVS = ['development', 'test', 'staging', 'production'];
+
+/**
+ * Release-gate check (verify:production-flags) for the auth/mock bypass flags.
+ * Strict on purpose, unlike the runtime default (an unset NODE_ENV runs as
+ * 'development' locally so developers need no setup):
+ *  - an unset/blank NODE_ENV is a FAILURE (the gate cannot prove the environment);
+ *  - a NODE_ENV that is not exactly one of development|test|staging|production
+ *    (e.g. ' Production ', 'prod') is a FAILURE;
+ *  - any bypass flag === 'true' fails when the environment is prod-like OR unproven.
+ * Never includes flag values other than the literal name in the messages.
+ */
+export function collectProductionBypassFlagErrors(
+  env: Record<string, string | undefined>,
+): string[] {
+  const errors: string[] = [];
+  const raw = env['NODE_ENV'];
+  const unset = raw === undefined || raw.trim() === '';
+  if (unset) {
+    errors.push(
+      'NODE_ENV is not set — the release gate cannot prove this is not production ' +
+        "(the API runtime defaults an unset NODE_ENV to 'development' for local use only).",
+    );
+  } else if (!CANONICAL_NODE_ENVS.includes(raw as string)) {
+    errors.push(
+      `NODE_ENV is not exactly one of ${CANONICAL_NODE_ENVS.join('|')} (non-canonical value, ` +
+        'case/whitespace matter) — refusing to treat the environment as non-production.',
+    );
+  }
+  const strict = unset || isProdLikeEnv(raw) || !CANONICAL_NODE_ENVS.includes(raw as string);
+  if (strict) {
+    for (const flag of PROD_FORBIDDEN_BYPASS_FLAGS) {
+      if (env[flag] === 'true') {
+        errors.push(`${flag}=true is forbidden in a production-like or unproven environment.`);
+      }
+    }
+  }
+  return errors;
+}
+
 // Exported (Part 76) only for direct tests of the superRefine (e.g. AUTH_DISABLED
 // forbidden outside development) without having to trigger validateEnv()'s process.exit.
 export const envSchema = z.object({
@@ -592,6 +641,12 @@ export const envSchema = z.object({
   USE_MOCK: z.string().optional(),
   MOCK_MODE: z.string().optional(),
   AUTH_DISABLED: z.string().optional(),
+  // GET /dev-auth/token (DevAuthController) is OFF unless DEV_AUTH_ENDPOINT_ENABLED === 'true'
+  // (non prod-like only; forbidden by superRefine in staging/production). When enabled, the
+  // dev account comes from DEV_AUTH_EMAIL / DEV_AUTH_PASSWORD (no hardcoded credentials).
+  DEV_AUTH_ENDPOINT_ENABLED: z.string().optional(),
+  DEV_AUTH_EMAIL: z.string().optional(),
+  DEV_AUTH_PASSWORD: z.string().optional(),
 }).superRefine((cfg, ctx) => {
   const isProdLike = cfg.NODE_ENV === 'production' || cfg.NODE_ENV === 'staging';
 
@@ -644,7 +699,7 @@ export const envSchema = z.object({
     }
 
     // 4) Mock and auth bypass are exclusive to development.
-    for (const flag of ['USE_MOCK', 'MOCK_MODE', 'AUTH_DISABLED'] as const) {
+    for (const flag of ['USE_MOCK', 'MOCK_MODE', 'AUTH_DISABLED', 'DEV_AUTH_ENDPOINT_ENABLED'] as const) {
       if (cfg[flag] === 'true') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

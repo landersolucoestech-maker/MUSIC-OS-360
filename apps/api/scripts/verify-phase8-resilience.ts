@@ -156,7 +156,7 @@ function signExpired(orgId: string, userId: string) {
 
 async function getAuthA() {
   const auth = await http('GET', '/dev-auth/token');
-  expect('auth', auth.res.ok, 'dev-auth did not return 200', { status: auth.res.status, body: auth.json });
+  expect('auth', auth.res.ok, 'dev-auth did not return 200 — dev-auth unavailable: needs DEV_AUTH_ENDPOINT_ENABLED=true, DEV_AUTH_EMAIL and DEV_AUTH_PASSWORD on a local API (see .env.development.example)', { status: auth.res.status, body: auth.json });
   return { token: auth.json?.token as string, tenantId: auth.json?.tenantId as string, userId: auth.json?.user?.id as string };
 }
 

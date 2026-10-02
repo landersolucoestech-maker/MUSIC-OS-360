@@ -1,4 +1,13 @@
-import { Controller, Get, ForbiddenException, Inject, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  ForbiddenException,
+  Inject,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
 import { DataSource, Repository } from 'typeorm';
@@ -7,9 +16,6 @@ import { isProdLike } from '../../core/config/runtime-environment';
 import { Public } from '../../core/decorators/public.decorator';
 import { DATA_SOURCE } from '../../database/database.module';
 import { TenantEntity, OrgMemberEntity } from '../../database/entities';
-
-const DEV_EMAIL    = 'smoke-test@musicos360.dev';
-const DEV_PASSWORD = 'SmokeTest123!';
 
 @Controller('dev-auth')
 export class DevAuthController implements OnModuleInit {
@@ -36,10 +42,31 @@ export class DevAuthController implements OnModuleInit {
     }
   }
 
+  /**
+   * Explicit opt-in (default OFF) + credentials from env (never hardcoded). Runs
+   * before any DB/Supabase access so a disabled/misconfigured endpoint touches nothing.
+   * This endpoint issues an OWNER token: it must never be reachable by default.
+   */
+  private resolveDevCredentials(): { email: string; password: string } {
+    const enabled = this.config.get<string>('DEV_AUTH_ENDPOINT_ENABLED') ?? process.env.DEV_AUTH_ENDPOINT_ENABLED;
+    if (enabled !== 'true') {
+      throw new NotFoundException();
+    }
+    const email = (this.config.get<string>('DEV_AUTH_EMAIL') ?? process.env.DEV_AUTH_EMAIL ?? '').trim();
+    const password = this.config.get<string>('DEV_AUTH_PASSWORD') ?? process.env.DEV_AUTH_PASSWORD ?? '';
+    if (!email || !password) {
+      throw new ServiceUnavailableException(
+        'Dev auth endpoint is enabled but DEV_AUTH_EMAIL and DEV_AUTH_PASSWORD are not both set.',
+      );
+    }
+    return { email, password };
+  }
+
   @Public()
   @Get('token')
   async token() {
     this.assertDev();
+    const { email: devEmail, password: devPassword } = this.resolveDevCredentials();
 
     // Resolve the first active tenant to get the real org_id. `active` here is a
     // lifecycle-only signal (not a billing/subscription-status check, same
@@ -63,24 +90,25 @@ export class DevAuthController implements OnModuleInit {
     );
 
     // Try login first
-    let auth = await supabase.auth.signInWithPassword({ email: DEV_EMAIL, password: DEV_PASSWORD });
+    let auth = await supabase.auth.signInWithPassword({ email: devEmail, password: devPassword });
 
     if (auth.error) {
       // Create user if not found
       const { data: created, error: createErr } = await supabase.auth.admin.createUser({
-        email:         DEV_EMAIL,
-        password:      DEV_PASSWORD,
+        email:         devEmail,
+        password:      devPassword,
         email_confirm: true,
         app_metadata:  { org_id: orgId, role: 'owner' },
       });
 
       if (createErr) {
-        this.logger.error('Failed to create dev user:', createErr.message);
-        throw new ForbiddenException(`Could not create dev user: ${createErr.message}`);
+        // Detail stays server-side only; the client never sees the upstream auth error text.
+        this.logger.error(`Failed to create dev user: ${createErr.message}`);
+        throw new ForbiddenException('Could not create dev user.');
       }
 
       this.logger.log(`Dev user created: ${created.user?.id}`);
-      auth = await supabase.auth.signInWithPassword({ email: DEV_EMAIL, password: DEV_PASSWORD });
+      auth = await supabase.auth.signInWithPassword({ email: devEmail, password: devPassword });
     } else {
       // Ensure app_metadata.org_id is up to date (tenant may have changed)
       const userId = auth.data.user?.id;
@@ -89,7 +117,7 @@ export class DevAuthController implements OnModuleInit {
           app_metadata: { org_id: orgId, role: 'owner' },
         });
         // Re-login to get a fresh token with updated claims
-        auth = await supabase.auth.signInWithPassword({ email: DEV_EMAIL, password: DEV_PASSWORD });
+        auth = await supabase.auth.signInWithPassword({ email: devEmail, password: devPassword });
       }
     }
 
@@ -113,7 +141,7 @@ export class DevAuthController implements OnModuleInit {
           org_id:        orgId as any,
           tenant_id:     tenant.id as any,
           auth_user_id:  userId,
-          email:         DEV_EMAIL,
+          email:         devEmail,
           full_name:     'Dev User',
           role:          'owner',
           role_id:       ownerRoleId as any,
@@ -137,7 +165,7 @@ export class DevAuthController implements OnModuleInit {
           sub: userId,
           session_id: `dev-auth-${userId}`,
           app_metadata: { org_id: orgId, role: 'owner' },
-          email: DEV_EMAIL,
+          email: devEmail,
         },
         secret,
         { algorithm: 'HS256', issuer: 'music-os-360-dev', expiresIn: '1h' },
@@ -152,7 +180,7 @@ export class DevAuthController implements OnModuleInit {
       orgId,
       user: {
         id:    auth.data.user?.id,
-        email: DEV_EMAIL,
+        email: devEmail,
         role:  'owner',
         slug:  tenant?.slug,
       },

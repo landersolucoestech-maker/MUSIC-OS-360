@@ -165,7 +165,7 @@ async function putPresigned(url: string, body: Buffer, mimeType: string) {
 
 async function authA() {
   const auth = await http('GET', '/dev-auth/token');
-  assert(auth.res.ok, 'dev-auth failed', { status: auth.res.status, body: auth.json });
+  assert(auth.res.ok, 'dev-auth failed — dev-auth unavailable: needs DEV_AUTH_ENDPOINT_ENABLED=true, DEV_AUTH_EMAIL and DEV_AUTH_PASSWORD on a local API (see .env.development.example)', { status: auth.res.status, body: auth.json });
   assert(auth.json?.token && auth.json?.tenantId, 'dev-auth did not return token/tenantId', auth.json);
   const decoded = jwt.decode(auth.json.token) as { app_metadata?: { org_id?: string }; org_id?: string } | null;
   const tokenOrgId = decoded?.app_metadata?.org_id ?? decoded?.org_id ?? auth.json.orgId;

@@ -33,7 +33,7 @@ export function assertApiRuntimeEnv(logger: Logger): void {
   const errors = collectSupabaseEnvErrors(process.env as Record<string, string | undefined>, nodeEnv);
 
   if (prodLike) {
-    for (const flag of ['USE_MOCK', 'MOCK_MODE', 'AUTH_DISABLED'] as const) {
+    for (const flag of ['USE_MOCK', 'MOCK_MODE', 'AUTH_DISABLED', 'DEV_AUTH_ENDPOINT_ENABLED'] as const) {
       if (process.env[flag] === 'true') {
         errors.push(`${flag}=true is forbidden in NODE_ENV=${nodeEnv}`);
       }

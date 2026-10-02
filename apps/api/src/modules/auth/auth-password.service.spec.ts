@@ -1,4 +1,4 @@
-import { BadRequestException, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { AuthPasswordService } from './auth-password.service';
 import type { JwtAuth } from '../../core/guards/auth.guard';
 import type { ChangeRequiredPasswordDto } from './dto/change-required-password.dto';
@@ -201,5 +201,57 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
 
     const call = audit.log.mock.calls[0][0];
     expect(JSON.stringify(call)).not.toContain(STRONG_PASSWORD);
+  });
+});
+
+describe('AuthPasswordService — swallowed best-effort failures are logged (no secrets)', () => {
+  const cfg = {
+    get: (key: string) =>
+      ({
+        SUPABASE_URL: 'https://test.supabase.co',
+        SUPABASE_SERVICE_ROLE_KEY: 'service-role-key',
+        SUPABASE_ANON_KEY: 'anon-key',
+      })[key],
+  } as any;
+  let warnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    updateUserByIdMock.mockReset().mockResolvedValue({ data: {}, error: null });
+    signOutAdminMock.mockReset();
+    signInWithPasswordMock.mockReset().mockResolvedValue({ data: { session: null }, error: { message: 'invalid credentials' } });
+    signOutAnonMock.mockReset().mockResolvedValue({ error: null });
+    warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+  });
+  afterEach(() => warnSpy.mockRestore());
+
+  it('logs a failed admin signOut(others) and still completes the password change and audit', async () => {
+    signOutAdminMock.mockRejectedValue(new Error('revoke failed'));
+    const audit = { log: jest.fn() };
+    const svc = new AuthPasswordService(cfg, null, audit as any);
+
+    await expect(
+      svc.changeRequiredPassword(buildAuth({ must_change_password: true }), 'tenant-1', dto(STRONG_PASSWORD), 'secret-access-token'),
+    ).resolves.toEqual({ passwordChanged: true, mustRefreshSession: true });
+
+    expect(audit.log).toHaveBeenCalled();
+    const logged = warnSpy.mock.calls.map((c) => String(c[0])).join('\n');
+    expect(logged).toContain('revoke failed');
+    expect(logged).not.toContain('secret-access-token');
+    expect(logged).not.toContain(STRONG_PASSWORD);
+  });
+
+  it('logs a failed anon test-session signOut and still treats the password as reused', async () => {
+    signInWithPasswordMock.mockResolvedValue({ data: { session: { access_token: 'x' } }, error: null });
+    signOutAnonMock.mockRejectedValue(new Error('anon signout failed'));
+    const audit = { log: jest.fn() };
+    const svc = new AuthPasswordService(cfg, null, audit as any);
+
+    await expect(
+      svc.changeRequiredPassword(buildAuth({ must_change_password: true }), 'tenant-1', dto(STRONG_PASSWORD), null),
+    ).rejects.toThrow(BadRequestException);
+
+    const logged = warnSpy.mock.calls.map((c) => String(c[0])).join('\n');
+    expect(logged).toContain('anon signout failed');
+    expect(logged).not.toContain(STRONG_PASSWORD);
   });
 });

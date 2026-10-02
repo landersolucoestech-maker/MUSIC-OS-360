@@ -7,9 +7,11 @@
  * Usage:
  *   API_URL=http://localhost:3001 SMOKE_TOKEN=<jwt> SMOKE_TENANT=<org_id> pnpm smoke-test
  *
- * Without SMOKE_TOKEN/SMOKE_TENANT, the script tries GET /dev-auth/token in
- * local/staging environments. If credentials are unavailable, authenticated
- * tests are skipped and public liveness is still validated.
+ * Without SMOKE_TOKEN/SMOKE_TENANT, the script tries GET /dev-auth/token. That
+ * endpoint only exists on a local API started with DEV_AUTH_ENDPOINT_ENABLED=true plus
+ * DEV_AUTH_EMAIL/DEV_AUTH_PASSWORD (see .env.development.example); staging/production
+ * always refuse it, so staging must provide SMOKE_TOKEN/SMOKE_TENANT. If credentials are
+ * unavailable, authenticated tests are skipped and public liveness is still validated.
  */
 
 import 'reflect-metadata';
@@ -57,6 +59,13 @@ async function bootstrapAuth(): Promise<void> {
   if (SMOKE_TOKEN && SMOKE_TENANT) return;
 
   const res = await safeFetch(apiPath('/dev-auth/token'));
+  if (!res.ok) {
+    console.warn(
+      `dev-auth/token answered ${res.status}: set SMOKE_TOKEN/SMOKE_TENANT, or start a local API with ` +
+        'DEV_AUTH_ENDPOINT_ENABLED=true, DEV_AUTH_EMAIL and DEV_AUTH_PASSWORD. Authenticated checks will be skipped.',
+    );
+    return;
+  }
   const json = await res.json() as any;
   const payload = (json.data ?? json) as { token?: string; tenantId?: string; orgId?: string };
 

@@ -10,6 +10,14 @@ Real secrets must not enter prompts/logs/evidence. Use templates for shape disco
 
 For applicable changes activate security review and, when AI/tool use is involved, `ai-llm-systems-reviewer`. Verify negative/abuse paths, not only nominal flows.
 
+## Dev-only auth bypasses (not real authentication)
+
+- `AUTH_DISABLED=true` is honored only when `NODE_ENV` is exactly `development` (an unset `NODE_ENV` defaults to `development` at runtime for local use). `RateLimitGuard` is not bypassed. `createApp()`/`assertApiRuntimeEnv`, `SecurityStartupService` and the env schema refuse `AUTH_DISABLED`, `USE_MOCK`, `MOCK_MODE` and `DEV_AUTH_ENDPOINT_ENABLED` set to the exact string `true` in staging/production (exact match: the code does not trim or lowercase, so `TRUE` or ` true` is neither honored as enabled nor rejected by these checks).
+- `GET /dev-auth/token` is OFF by default: 404 unless `DEV_AUTH_ENDPOINT_ENABLED=true`, 403 in staging/production, and when enabled it requires `DEV_AUTH_EMAIL`/`DEV_AUTH_PASSWORD` (no built-in account). The route is not registered at all in prod-like environments. See `.env.development.example`.
+- Dev HS256 tokens (non-prod only) must carry `exp` and are rejected when `ENCRYPTION_KEY` is the all-zero default.
+- `verify:production-flags` (run by `scripts/release-check.mjs`) fails when a bypass flag is `true` in a prod-like environment and when `NODE_ENV` is unset or non-canonical, so the release check must run with `NODE_ENV=production|staging` set explicitly.
+- Known residual risk: access tokens are not revoked server-side (logout/password change do not invalidate an already issued JWT until `exp`); mitigate with a short access-token lifetime in the Supabase project settings (owner action). Real authentication is validated separately (institutional-credential e2e), not by these unit tests.
+
 ## RBAC English alias deploy order
 
 Migration `20260930000001_AddEnglishRoleSlugAliases` MUST run before (or as the first step of) the release that ships the code mapping `legal`, `sales`, `producer`, `collaborator` and `hr_manager` in `ROLE_HIERARCHY`. Code-first is not inert: `RolesGuard` authorizes on the `org_members.role` string, so an existing tenant custom role or member with one of these slugs gains that level (55/45/40/20/55, previously 0) as soon as the code is live. The migration refuses (fail-closed, aborting the whole migration batch) when such rows exist.

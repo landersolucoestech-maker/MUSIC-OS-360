@@ -88,7 +88,7 @@ async function main(): Promise<void> {
     const payload = unwrap(tokenResponse.data);
     const token = payload?.token;
     const tenantId = payload?.orgId ?? payload?.tenantId;
-    check('dev-auth fornece JWT e tenant', Boolean(token && tenantId), `status=${tokenResponse.status}`);
+    check('dev-auth fornece JWT e tenant', Boolean(token && tenantId), `status=${tokenResponse.status}; requer DEV_AUTH_ENDPOINT_ENABLED=true, DEV_AUTH_EMAIL e DEV_AUTH_PASSWORD (ver .env.development.example)`);
     const headers = { Authorization: `Bearer ${token}`, 'X-Tenant-ID': tenantId };
 
     const exportResponse = await fetch(

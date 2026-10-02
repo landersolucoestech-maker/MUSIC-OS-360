@@ -15,6 +15,7 @@ import type * as jwksRsaType from 'jwks-rsa';
 import { AUTH_DISABLED, DEV_AUTH } from '../auth-disabled';
 import { RbacErrorLogService } from '../rbac/rbac-error-log.service';
 import { isProdLike } from '../config/runtime-environment';
+import { verifyDevToken } from '../security/dev-token';
 
 // Lazy-loaded via require: under tsx/esbuild, `import * as` of a CJS module that
 // exports a function becomes a non-callable namespace — same pattern as token-verifier.service.
@@ -188,18 +189,8 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
   }
 
   private tryVerifyDevToken(token: string): Record<string, unknown> | null {
-    try {
-      const secret = this.config?.get<string>('ENCRYPTION_KEY');
-      if (!secret) return null;
-      const decoded = jwt.verify(token, secret, {
-        algorithms: ['HS256'],
-        issuer: 'music-os-360-dev',
-      });
-      if (typeof decoded !== 'object' || !decoded) return null;
-      return decoded as Record<string, unknown>;
-    } catch {
-      return null;
-    }
+    // Requires `exp` and rejects the all-zero ENCRYPTION_KEY (see core/security/dev-token.ts).
+    return verifyDevToken(token, this.config?.get<string>('ENCRYPTION_KEY'));
   }
 
   private verifyToken(token: string): Promise<AuthClaims> {

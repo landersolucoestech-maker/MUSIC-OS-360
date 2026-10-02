@@ -255,7 +255,7 @@ Prefixo global: `api/v1`, evidência `apps/api/src/main.ts:253`.
 | GET/POST | `/reports/*` | `reports.controller.ts` | global | table guard | role | sim | Sim | specs | PARCIAL |
 | GET/POST/etc | `/integrations/*` | `integrations.controller.ts` | global/public callbacks | tenant | role | parcial | Sim | NÃO VALIDADO | PARCIAL/MOCKADO |
 | GET | `/health`, `/health/live`, `/health/ready` | `health.controller.ts` | `@Public` em live/ready | N/A | N/A | N/A | infra | NÃO VALIDADO | PARCIAL |
-| GET | `/dev-auth/token` | `dev-auth.controller.ts` | dev-only presumido | N/A | N/A | N/A | smoke/runbook | NÃO VALIDADO | RISCO |
+| GET | `/dev-auth/token` | `dev-auth.controller.ts` | 404 salvo `DEV_AUTH_ENDPOINT_ENABLED=true`; 403 em staging/production; exige `DEV_AUTH_EMAIL`/`DEV_AUTH_PASSWORD` | N/A | N/A | N/A | smoke/runbook local | specs unitárias (autenticação real NÃO VALIDADA) | RISCO MITIGADO |
 
 Endpoints públicos encontrados: forms submit, OAuth exchange/callbacks, external-data webhooks, Autentique webhook, Stripe webhook, health live/ready, public artist registration. Status geral: `SEGURANÇA NÃO VALIDADA` até testes de assinatura, rate limit e abuse serem executados.
 

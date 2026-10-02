@@ -20,6 +20,12 @@ import { dirname, resolve } from "node:path";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const MIGRATE = process.argv.includes("--migrate");
 
+// The production-flags gate refuses an unset/non-canonical NODE_ENV; fail early with the reason.
+if (!["production", "staging"].includes(process.env.NODE_ENV ?? "")) {
+  console.error("release-check: set NODE_ENV=production (or staging) explicitly, e.g. NODE_ENV=production node scripts/release-check.mjs");
+  process.exit(2);
+}
+
 /** @type {{ name: string, cmd: string, writes?: boolean }[]} */
 const steps = [
   // Cheap, build-free checks first (RELEASE-01, RBAC-SHADOW-01, DBCTX-01).
