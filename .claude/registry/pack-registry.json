@@ -3,7 +3,7 @@
  "counts": {
   "packItems": 695,
   "agents": 374,
-  "skills": 188,
+  "skills": 210,
   "capabilities": 351,
   "workflows": 6
  },
@@ -9677,6 +9677,247 @@
    ]
   },
   {
+   "name": "ai-agent-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-agent-audit/SKILL.md",
+   "consumers": [
+    "ai-agent-engineer",
+    "ai-human-approval-reviewer",
+    "ai-tool-policy-reviewer",
+    "ai-tooling-reviewer"
+   ]
+  },
+  {
+   "name": "ai-automation-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-automation-audit/SKILL.md",
+   "consumers": [
+    "ai-automation-engineer",
+    "background-processing-engineer"
+   ]
+  },
+  {
+   "name": "ai-context-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-context-audit/SKILL.md",
+   "consumers": [
+    "ai-context-engineer"
+   ]
+  },
+  {
+   "name": "ai-cost-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-cost-audit/SKILL.md",
+   "consumers": [
+    "ai-cost-reviewer",
+    "ai-model-routing-reviewer",
+    "ai-observability-engineer"
+   ]
+  },
+  {
+   "name": "ai-evaluation",
+   "kind": "test-authoring",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": true,
+   "path": ".claude/skills/ai-evaluation/SKILL.md",
+   "consumers": [
+    "ai-evaluation-engineer",
+    "ai-hallucination-reviewer",
+    "ai-model-routing-reviewer",
+    "ai-quality-reviewer",
+    "ai-red-team-reviewer",
+    "ai-regression-reviewer",
+    "prompt-engineer"
+   ]
+  },
+  {
+   "name": "ai-fallback-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-fallback-audit/SKILL.md",
+   "consumers": [
+    "ai-fallback-reviewer"
+   ]
+  },
+  {
+   "name": "ai-hallucination-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-hallucination-audit/SKILL.md",
+   "consumers": [
+    "ai-evaluation-engineer",
+    "ai-hallucination-reviewer",
+    "ai-output-validation-reviewer",
+    "ai-quality-reviewer"
+   ]
+  },
+  {
+   "name": "ai-latency-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-latency-audit/SKILL.md",
+   "consumers": [
+    "ai-latency-reviewer"
+   ]
+  },
+  {
+   "name": "ai-memory-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-memory-audit/SKILL.md",
+   "consumers": [
+    "ai-memory-engineer"
+   ]
+  },
+  {
+   "name": "ai-model-routing-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-model-routing-audit/SKILL.md",
+   "consumers": [
+    "ai-cost-reviewer",
+    "ai-model-routing-reviewer"
+   ]
+  },
+  {
+   "name": "ai-observability-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-observability-audit/SKILL.md",
+   "consumers": [
+    "ai-cost-reviewer",
+    "ai-latency-reviewer",
+    "ai-observability-engineer"
+   ]
+  },
+  {
+   "name": "ai-provider-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-provider-audit/SKILL.md",
+   "consumers": [
+    "ai-fallback-reviewer",
+    "ai-provider-reviewer"
+   ]
+  },
+  {
+   "name": "ai-regression-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-regression-audit/SKILL.md",
+   "consumers": [
+    "ai-evaluation-engineer",
+    "ai-regression-reviewer"
+   ]
+  },
+  {
+   "name": "ai-retrieval-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-retrieval-audit/SKILL.md",
+   "consumers": [
+    "ai-retrieval-engineer"
+   ]
+  },
+  {
+   "name": "ai-runtime-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-runtime-audit/SKILL.md",
+   "consumers": [
+    "ai-runtime-architect"
+   ]
+  },
+  {
+   "name": "ai-security-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-security-audit/SKILL.md",
+   "consumers": [
+    "ai-guardrail-reviewer",
+    "ai-red-team-reviewer",
+    "ai-security-reviewer",
+    "prompt-injection-reviewer"
+   ]
+  },
+  {
+   "name": "ai-skill-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-skill-audit/SKILL.md",
+   "consumers": [
+    "ai-contract-reviewer",
+    "ai-skill-engineer"
+   ]
+  },
+  {
+   "name": "ai-workflow-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/ai-workflow-audit/SKILL.md",
+   "consumers": [
+    "ai-human-approval-reviewer",
+    "ai-workflow-engineer"
+   ]
+  },
+  {
    "name": "animation-audit",
    "kind": "audit",
    "domain": "frontend",
@@ -10990,6 +11231,22 @@
    ]
   },
   {
+   "name": "human-approval-validation",
+   "kind": "check",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/human-approval-validation/SKILL.md",
+   "consumers": [
+    "ai-agent-engineer",
+    "ai-human-approval-reviewer",
+    "ai-workflow-engineer",
+    "approval-router",
+    "prompt-injection-reviewer"
+   ]
+  },
+  {
    "name": "implement-accessibility",
    "kind": "implementation",
    "domain": "frontend",
@@ -11636,6 +11893,19 @@
     "release-planner",
     "runtime-validator",
     "smoke-test-validator"
+   ]
+  },
+  {
+   "name": "prompt-audit",
+   "kind": "audit",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/prompt-audit/SKILL.md",
+   "consumers": [
+    "ai-quality-reviewer",
+    "prompt-engineer"
    ]
   },
   {
@@ -12428,6 +12698,21 @@
    ]
   },
   {
+   "name": "structured-output-validation",
+   "kind": "check",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/structured-output-validation/SKILL.md",
+   "consumers": [
+    "ai-contract-reviewer",
+    "ai-hallucination-reviewer",
+    "ai-output-validation-reviewer",
+    "ai-skill-engineer"
+   ]
+  },
+  {
    "name": "supply-chain-audit",
    "kind": "audit",
    "domain": "security",
@@ -12501,6 +12786,25 @@
    "consumers": [
     "design-system-engineer",
     "visual-consistency-reviewer"
+   ]
+  },
+  {
+   "name": "tool-policy-validation",
+   "kind": "check",
+   "domain": "ai-engineering",
+   "batch": 17,
+   "approval": "none",
+   "mutates": false,
+   "path": ".claude/skills/tool-policy-validation/SKILL.md",
+   "consumers": [
+    "ai-agent-engineer",
+    "ai-guardrail-reviewer",
+    "ai-red-team-reviewer",
+    "ai-security-reviewer",
+    "ai-tool-policy-reviewer",
+    "ai-tooling-reviewer",
+    "permission-boundary-reviewer",
+    "prompt-injection-reviewer"
    ]
   },
   {
