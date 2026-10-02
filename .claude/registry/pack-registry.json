@@ -5,7 +5,7 @@
   "agents": 374,
   "skills": 321,
   "capabilities": 351,
-  "workflows": 6
+  "workflows": 24
  },
  "agents": [
   {
@@ -22079,9 +22079,54 @@
    "phases": 10
   },
   {
+   "name": "bug-fix",
+   "file": ".claude/workflows/bug-fix.json",
+   "phases": 6
+  },
+  {
+   "name": "contract-generation-and-signature-flow",
+   "file": ".claude/workflows/contract-generation-and-signature-flow.json",
+   "phases": 8
+  },
+  {
+   "name": "data-integrity-recovery-flow",
+   "file": ".claude/workflows/data-integrity-recovery-flow.json",
+   "phases": 5
+  },
+  {
+   "name": "database-change",
+   "file": ".claude/workflows/database-change.json",
+   "phases": 8
+  },
+  {
+   "name": "distribution-flow",
+   "file": ".claude/workflows/distribution-flow.json",
+   "phases": 7
+  },
+  {
+   "name": "distribution-rejection-flow",
+   "file": ".claude/workflows/distribution-rejection-flow.json",
+   "phases": 5
+  },
+  {
+   "name": "engineering-change",
+   "file": ".claude/workflows/engineering-change.json",
+   "phases": 7
+  },
+  {
    "name": "greenfield",
    "file": ".claude/workflows/greenfield.json",
    "phases": 5
+  },
+  {
+   "name": "human-approval-flow",
+   "file": ".claude/workflows/human-approval-flow.json",
+   "phases": 5
+  },
+  {
+   "name": "import-validation-flow",
+   "file": ".claude/workflows/import-validation-flow.json",
+   "phases": 8
   },
   {
    "name": "incident",
@@ -22094,14 +22139,59 @@
    "phases": 8
   },
   {
+   "name": "operational-recovery-flow",
+   "file": ".claude/workflows/operational-recovery-flow.json",
+   "phases": 6
+  },
+  {
+   "name": "phonogram-registration-flow",
+   "file": ".claude/workflows/phonogram-registration-flow.json",
+   "phases": 7
+  },
+  {
+   "name": "project-operational-flow",
+   "file": ".claude/workflows/project-operational-flow.json",
+   "phases": 6
+  },
+  {
+   "name": "provider-sync-flow",
+   "file": ".claude/workflows/provider-sync-flow.json",
+   "phases": 5
+  },
+  {
    "name": "recovery",
    "file": ".claude/workflows/recovery.json",
    "phases": 5
   },
   {
+   "name": "release-readiness-flow",
+   "file": ".claude/workflows/release-readiness-flow.json",
+   "phases": 6
+  },
+  {
+   "name": "release-validation",
+   "file": ".claude/workflows/release-validation.json",
+   "phases": 6
+  },
+  {
    "name": "release",
    "file": ".claude/workflows/release.json",
    "phases": 5
+  },
+  {
+   "name": "safe-refactor",
+   "file": ".claude/workflows/safe-refactor.json",
+   "phases": 6
+  },
+  {
+   "name": "security-review",
+   "file": ".claude/workflows/security-review.json",
+   "phases": 7
+  },
+  {
+   "name": "work-registration-flow",
+   "file": ".claude/workflows/work-registration-flow.json",
+   "phases": 7
   }
  ]
 }

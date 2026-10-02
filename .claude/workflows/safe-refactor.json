@@ -1,0 +1,126 @@
+{
+  "name": "safe-refactor",
+  "description": "A behavior-preserving refactor: characterization tests first, small verified steps and proof of unchanged behavior.",
+  "phases": [
+    {
+      "id": "inspect",
+      "requiredAgents": [
+        "repo-inspector",
+        "duplication-detector",
+        "dead-code-detector"
+      ],
+      "requiredSkills": [
+        "duplication-analysis",
+        "dead-code-analysis"
+      ],
+      "requiredEvidence": [
+        "findings"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "plan",
+      "requiredAgents": [
+        "refactoring-planner",
+        "scope-planner"
+      ],
+      "requiredSkills": [
+        "plan",
+        "scope-lock"
+      ],
+      "requiredEvidence": [
+        "plan-record",
+        "scope-lock-result"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "inspect"
+      ]
+    },
+    {
+      "id": "baseline",
+      "requiredAgents": [
+        "unit-test-engineer",
+        "test-engineer"
+      ],
+      "requiredSkills": [
+        "create-regression-tests",
+        "run-unit-tests"
+      ],
+      "requiredEvidence": [
+        "baseline-test-run"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "plan"
+      ]
+    },
+    {
+      "id": "refactor",
+      "requiredAgents": [
+        "refactoring-engineer"
+      ],
+      "requiredSkills": [
+        "safe-refactor",
+        "refactor-component"
+      ],
+      "requiredEvidence": [
+        "change-set-record"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "baseline"
+      ]
+    },
+    {
+      "id": "proof",
+      "requiredAgents": [
+        "verification-controller",
+        "regression-analyzer"
+      ],
+      "requiredSkills": [
+        "run-unit-tests",
+        "run-typecheck",
+        "diff-review"
+      ],
+      "requiredEvidence": [
+        "after-test-run",
+        "diff-review-record"
+      ],
+      "gates": [
+        "global"
+      ],
+      "dependsOn": [
+        "refactor"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "repository-guardian",
+        "completion-controller"
+      ],
+      "requiredSkills": [
+        "definition-of-done"
+      ],
+      "requiredEvidence": [
+        "completion-record"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "proof"
+      ]
+    }
+  ],
+  "recoveryPath": "restore the last verified state from git history and shrink the step size",
+  "completionConditions": [
+    "same tests pass before and after",
+    "no public contract changed",
+    "completion gate PASS"
+  ]
+}

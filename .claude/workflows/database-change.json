@@ -1,0 +1,162 @@
+{
+  "name": "database-change",
+  "description": "A schema or data change: plan, design, migrate, test up/down/up, review and restore evidence, with an approval gate before anything leaves a disposable database.",
+  "phases": [
+    {
+      "id": "map",
+      "requiredAgents": [
+        "database-mapper",
+        "database-schema-analyzer"
+      ],
+      "requiredSkills": [
+        "database-map",
+        "database-audit"
+      ],
+      "requiredEvidence": [
+        "schema-map"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "plan",
+      "requiredAgents": [
+        "migration-planner",
+        "data-architecture-engineer"
+      ],
+      "requiredSkills": [
+        "plan",
+        "rollback-analysis"
+      ],
+      "requiredEvidence": [
+        "migration-plan",
+        "rollback-analysis"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "map"
+      ]
+    },
+    {
+      "id": "design",
+      "requiredAgents": [
+        "schema-engineer"
+      ],
+      "requiredSkills": [
+        "modify-schema"
+      ],
+      "requiredEvidence": [
+        "entity-change-set"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "plan"
+      ]
+    },
+    {
+      "id": "migrate",
+      "requiredAgents": [
+        "migration-engineer"
+      ],
+      "requiredSkills": [
+        "create-migration",
+        "databaseMigrationSafety"
+      ],
+      "requiredEvidence": [
+        "migration-files"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "design"
+      ]
+    },
+    {
+      "id": "prove",
+      "requiredAgents": [
+        "migration-test-engineer",
+        "data-migration-reviewer",
+        "restore-reviewer"
+      ],
+      "requiredSkills": [
+        "create-migration-tests",
+        "migration-safety-check",
+        "destructive-change-check"
+      ],
+      "requiredEvidence": [
+        "up-down-up-run",
+        "restore-evidence"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "migrate"
+      ]
+    },
+    {
+      "id": "apply-approval",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "prove"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "verification",
+      "requiredAgents": [
+        "validation-orchestrator"
+      ],
+      "requiredSkills": [
+        "run-integration-tests",
+        "run-typecheck",
+        "run-build"
+      ],
+      "requiredEvidence": [
+        "test",
+        "build"
+      ],
+      "gates": [
+        "global"
+      ],
+      "dependsOn": [
+        "apply-approval"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "repository-guardian",
+        "completion-controller"
+      ],
+      "requiredSkills": [
+        "definition-of-done"
+      ],
+      "requiredEvidence": [
+        "completion-record"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "verification"
+      ]
+    }
+  ],
+  "recoveryPath": "recovery.json with a schema-rollback or data-restoration recovery-plan",
+  "completionConditions": [
+    "up, down and up pass on a disposable database",
+    "approval recorded before any shared target is touched",
+    "completion gate PASS"
+  ]
+}

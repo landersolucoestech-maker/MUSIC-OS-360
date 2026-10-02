@@ -1,0 +1,130 @@
+{
+  "name": "distribution-flow",
+  "description": "Delivering a Release to a distributor: readiness, package, a human approval, submission through a configured provider, status tracking and approved notifications.",
+  "phases": [
+    {
+      "id": "readiness",
+      "requiredAgents": [
+        "distribution-readiness-agent"
+      ],
+      "requiredSkills": [
+        "validate-distribution-readiness",
+        "validate-distribution-metadata"
+      ],
+      "requiredEvidence": [
+        "distribution-readiness-result"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "package",
+      "requiredAgents": [
+        "distribution-automation-agent"
+      ],
+      "requiredSkills": [
+        "assemble-distribution-package"
+      ],
+      "requiredEvidence": [
+        "package-proposal-with-hash"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "readiness"
+      ]
+    },
+    {
+      "id": "submission-approval",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "package"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "submit",
+      "requiredAgents": [
+        "distribution-automation-agent"
+      ],
+      "requiredSkills": [
+        "submit-distribution"
+      ],
+      "requiredEvidence": [
+        "submission-record-or-capability-unavailable"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "submission-approval"
+      ]
+    },
+    {
+      "id": "status",
+      "requiredAgents": [
+        "distribution-status-agent"
+      ],
+      "requiredSkills": [
+        "sync-distribution-status",
+        "detect-status-conflict"
+      ],
+      "requiredEvidence": [
+        "status-report-or-capability-unavailable"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "submit"
+      ]
+    },
+    {
+      "id": "notify-approval",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "status"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "notify",
+      "requiredAgents": [
+        "notification-automation-agent"
+      ],
+      "requiredSkills": [
+        "send-distribution-notification",
+        "send-release-notification"
+      ],
+      "requiredEvidence": [
+        "notification-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "notify-approval"
+      ]
+    }
+  ],
+  "recoveryPath": "distribution-rejection-flow when a rejection arrives; operational-recovery-flow on failure",
+  "completionConditions": [
+    "no submission without an approval bound to the package hash",
+    "status taken only from a provider answer",
+    "unavailable provider reported explicitly"
+  ]
+}

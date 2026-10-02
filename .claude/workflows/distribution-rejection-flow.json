@@ -1,0 +1,98 @@
+{
+  "name": "distribution-rejection-flow",
+  "description": "Handling a distributor rejection: classify reasons, route corrections, recheck readiness and notify with approval.",
+  "phases": [
+    {
+      "id": "classify",
+      "requiredAgents": [
+        "distribution-rejection-agent"
+      ],
+      "requiredSkills": [
+        "process-distribution-rejection"
+      ],
+      "requiredEvidence": [
+        "classified-reasons"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "route-corrections",
+      "requiredAgents": [
+        "distribution-rejection-agent",
+        "task-automation-agent"
+      ],
+      "requiredSkills": [
+        "route-distribution-correction",
+        "create-operational-task",
+        "assign-operational-task"
+      ],
+      "requiredEvidence": [
+        "correction-tasks"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "classify"
+      ]
+    },
+    {
+      "id": "notify-approval",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "route-corrections"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "notify",
+      "requiredAgents": [
+        "notification-automation-agent"
+      ],
+      "requiredSkills": [
+        "send-rejection-notification"
+      ],
+      "requiredEvidence": [
+        "notification-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "notify-approval"
+      ]
+    },
+    {
+      "id": "recheck",
+      "requiredAgents": [
+        "distribution-readiness-agent",
+        "followup-automation-agent"
+      ],
+      "requiredSkills": [
+        "validate-distribution-readiness",
+        "schedule-followup"
+      ],
+      "requiredEvidence": [
+        "recheck-result",
+        "followup-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "route-corrections"
+      ]
+    }
+  ],
+  "recoveryPath": "operational-recovery-flow",
+  "completionConditions": [
+    "every reason mapped to a correction and an owner",
+    "recheck scheduled",
+    "no automatic resubmission"
+  ]
+}

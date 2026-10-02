@@ -1,0 +1,140 @@
+{
+  "name": "phonogram-registration-flow",
+  "description": "Preparing a Phonogram (the recording) for registration: draft, performers, master rights, master shares, assets and routing, kept separate from the Work.",
+  "phases": [
+    {
+      "id": "draft",
+      "requiredAgents": [
+        "phonogram-automation-agent",
+        "asset-automation-agent"
+      ],
+      "requiredSkills": [
+        "create-phonogram-draft",
+        "extract-audio-metadata",
+        "validate-wav"
+      ],
+      "requiredEvidence": [
+        "phonogram-draft-record"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "participants",
+      "requiredAgents": [
+        "participant-operations-agent"
+      ],
+      "requiredSkills": [
+        "normalize-participant",
+        "resolve-participant",
+        "detect-duplicate-participant",
+        "validate-phonogram-participants"
+      ],
+      "requiredEvidence": [
+        "participant-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "draft"
+      ]
+    },
+    {
+      "id": "identity-approval",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "participants"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "participant-merge",
+      "requiredAgents": [
+        "participant-operations-agent"
+      ],
+      "requiredSkills": [
+        "merge-participant-candidates"
+      ],
+      "requiredEvidence": [
+        "merge-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "identity-approval"
+      ]
+    },
+    {
+      "id": "rights-and-shares",
+      "requiredAgents": [
+        "rights-operations-agent",
+        "shares-operations-agent"
+      ],
+      "requiredSkills": [
+        "validate-phonogram-rights",
+        "validate-phonogram-shares",
+        "validate-share-total",
+        "trace-rights-origin"
+      ],
+      "requiredEvidence": [
+        "rights-validation",
+        "share-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "participant-merge"
+      ]
+    },
+    {
+      "id": "metadata",
+      "requiredAgents": [
+        "metadata-automation-agent",
+        "external-id-resolution-agent"
+      ],
+      "requiredSkills": [
+        "validate-phonogram-metadata",
+        "validate-isrc",
+        "resolve-external-id"
+      ],
+      "requiredEvidence": [
+        "metadata-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "rights-and-shares"
+      ]
+    },
+    {
+      "id": "route",
+      "requiredAgents": [
+        "phonogram-automation-agent",
+        "exception-routing-agent"
+      ],
+      "requiredSkills": [
+        "route-phonogram-to-registration",
+        "create-operational-task"
+      ],
+      "requiredEvidence": [
+        "registration-routing-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "metadata"
+      ]
+    }
+  ],
+  "recoveryPath": "data-integrity-recovery-flow",
+  "completionConditions": [
+    "recording validated separately from its Work",
+    "master shares total one hundred percent",
+    "Phonogram pending registration or blockers routed"
+  ]
+}

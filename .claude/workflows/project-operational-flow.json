@@ -1,0 +1,114 @@
+{
+  "name": "project-operational-flow",
+  "description": "The operational life of a Project: intake, readiness, stage advance and notification. Completing a Project never registers a Work or Phonogram by itself.",
+  "phases": [
+    {
+      "id": "intake",
+      "requiredAgents": [
+        "project-automation-agent"
+      ],
+      "requiredSkills": [
+        "create-project-from-intake"
+      ],
+      "requiredEvidence": [
+        "project-draft-record"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "readiness",
+      "requiredAgents": [
+        "project-automation-agent",
+        "asset-automation-agent"
+      ],
+      "requiredSkills": [
+        "validate-project-readiness",
+        "validate-audio-assets",
+        "link-project-assets"
+      ],
+      "requiredEvidence": [
+        "readiness-result"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "intake"
+      ]
+    },
+    {
+      "id": "advance",
+      "requiredAgents": [
+        "project-automation-agent",
+        "task-automation-agent"
+      ],
+      "requiredSkills": [
+        "advance-project-workflow",
+        "create-operational-task"
+      ],
+      "requiredEvidence": [
+        "stage-transition-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "readiness"
+      ]
+    },
+    {
+      "id": "notification-approval",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "advance"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "notify",
+      "requiredAgents": [
+        "notification-automation-agent"
+      ],
+      "requiredSkills": [
+        "send-operational-notification"
+      ],
+      "requiredEvidence": [
+        "notification-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "notification-approval"
+      ]
+    },
+    {
+      "id": "audit",
+      "requiredAgents": [
+        "operational-monitor-agent"
+      ],
+      "requiredSkills": [
+        "audit-automation-run",
+        "record-automation-evidence"
+      ],
+      "requiredEvidence": [
+        "run-audit-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "notify"
+      ]
+    }
+  ],
+  "recoveryPath": "operational-recovery-flow",
+  "completionConditions": [
+    "Project in a valid stage with the checked conditions recorded",
+    "no Work or Phonogram registered automatically",
+    "run audited"
+  ]
+}

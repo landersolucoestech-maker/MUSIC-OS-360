@@ -1,0 +1,107 @@
+{
+  "name": "data-integrity-recovery-flow",
+  "description": "Finding and repairing data integrity problems across rights, catalog and relations, with approved, reversible repairs.",
+  "phases": [
+    {
+      "id": "detect",
+      "requiredAgents": [
+        "data-quality-agent",
+        "rights-integrity-agent",
+        "catalog-integrity-agent",
+        "relationship-integrity-agent"
+      ],
+      "requiredSkills": [
+        "detect-data-inconsistency",
+        "detect-orphan-record",
+        "detect-missing-relationship",
+        "detect-status-conflict",
+        "validate-rights-chain"
+      ],
+      "requiredEvidence": [
+        "detection-reports"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "propose",
+      "requiredAgents": [
+        "rights-integrity-agent",
+        "catalog-integrity-agent"
+      ],
+      "requiredSkills": [
+        "detect-rights-conflict",
+        "detect-share-conflict",
+        "preview-import-changes"
+      ],
+      "requiredEvidence": [
+        "repair-proposals-with-before-after"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "detect"
+      ]
+    },
+    {
+      "id": "repair-approval",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "propose"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "repair",
+      "requiredAgents": [
+        "catalog-integrity-agent",
+        "rights-integrity-agent"
+      ],
+      "requiredSkills": [
+        "repair-approved-inconsistency"
+      ],
+      "requiredEvidence": [
+        "repair-record",
+        "before-values"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "repair-approval"
+      ]
+    },
+    {
+      "id": "re-detect",
+      "requiredAgents": [
+        "data-quality-agent",
+        "verification-controller"
+      ],
+      "requiredSkills": [
+        "detect-data-inconsistency",
+        "verify"
+      ],
+      "requiredEvidence": [
+        "re-detection-result"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "repair"
+      ]
+    }
+  ],
+  "recoveryPath": "operational-recovery-flow with rollback-operational-action under its own approval",
+  "completionConditions": [
+    "repaired records no longer reported",
+    "before values stored",
+    "legal and financial repairs only after approval"
+  ]
+}

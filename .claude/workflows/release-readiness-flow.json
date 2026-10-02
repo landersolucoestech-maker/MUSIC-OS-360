@@ -1,0 +1,119 @@
+{
+  "name": "release-readiness-flow",
+  "description": "Checking that a Release is ready: tracks, assets, metadata, rights and the checklist, producing a ready or not-ready decision with evidence.",
+  "phases": [
+    {
+      "id": "prepare",
+      "requiredAgents": [
+        "release-automation-agent"
+      ],
+      "requiredSkills": [
+        "prepare-release",
+        "link-project-assets"
+      ],
+      "requiredEvidence": [
+        "release-package-proposal"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "assets",
+      "requiredAgents": [
+        "asset-automation-agent"
+      ],
+      "requiredSkills": [
+        "validate-audio-assets",
+        "validate-wav",
+        "validate-cover-art"
+      ],
+      "requiredEvidence": [
+        "asset-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "prepare"
+      ]
+    },
+    {
+      "id": "metadata",
+      "requiredAgents": [
+        "metadata-automation-agent",
+        "metadata-quality-agent"
+      ],
+      "requiredSkills": [
+        "validate-isrc",
+        "validate-upc",
+        "detect-metadata-conflict"
+      ],
+      "requiredEvidence": [
+        "metadata-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "prepare"
+      ]
+    },
+    {
+      "id": "rights",
+      "requiredAgents": [
+        "rights-integrity-agent",
+        "shares-operations-agent"
+      ],
+      "requiredSkills": [
+        "validate-rights-chain",
+        "validate-share-total"
+      ],
+      "requiredEvidence": [
+        "rights-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "prepare"
+      ]
+    },
+    {
+      "id": "decide",
+      "requiredAgents": [
+        "release-readiness-agent"
+      ],
+      "requiredSkills": [
+        "validate-release-readiness"
+      ],
+      "requiredEvidence": [
+        "readiness-result"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "assets",
+        "metadata",
+        "rights"
+      ]
+    },
+    {
+      "id": "route-blockers",
+      "requiredAgents": [
+        "exception-routing-agent",
+        "task-automation-agent"
+      ],
+      "requiredSkills": [
+        "create-operational-task",
+        "assign-operational-task",
+        "prioritize-operational-task"
+      ],
+      "requiredEvidence": [
+        "blocker-tasks"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "decide"
+      ]
+    }
+  ],
+  "recoveryPath": "operational-recovery-flow",
+  "completionConditions": [
+    "readiness result bound to the data version",
+    "every blocker has an owner",
+    "unknown data reported as not ready"
+  ]
+}

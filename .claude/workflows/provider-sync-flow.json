@@ -1,0 +1,97 @@
+{
+  "name": "provider-sync-flow",
+  "description": "Synchronizing configured providers: health, sync, drift, reconciliation and external id resolution, never overwriting internal data from provider values.",
+  "phases": [
+    {
+      "id": "health",
+      "requiredAgents": [
+        "integration-operations-agent"
+      ],
+      "requiredSkills": [
+        "handle-provider-failure",
+        "audit-automation-run"
+      ],
+      "requiredEvidence": [
+        "integration-health-report"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "sync",
+      "requiredAgents": [
+        "provider-sync-agent"
+      ],
+      "requiredSkills": [
+        "sync-provider-data",
+        "retry-provider-sync"
+      ],
+      "requiredEvidence": [
+        "sync-batch-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "health"
+      ]
+    },
+    {
+      "id": "drift",
+      "requiredAgents": [
+        "provider-sync-agent"
+      ],
+      "requiredSkills": [
+        "detect-provider-drift"
+      ],
+      "requiredEvidence": [
+        "drift-report"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "sync"
+      ]
+    },
+    {
+      "id": "reconcile",
+      "requiredAgents": [
+        "external-data-reconciliation-agent",
+        "external-id-resolution-agent"
+      ],
+      "requiredSkills": [
+        "reconcile-provider-data",
+        "reconcile-external-identifiers",
+        "resolve-external-id"
+      ],
+      "requiredEvidence": [
+        "reconciliation-report"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "drift"
+      ]
+    },
+    {
+      "id": "route",
+      "requiredAgents": [
+        "exception-routing-agent",
+        "task-automation-agent"
+      ],
+      "requiredSkills": [
+        "create-operational-task",
+        "assign-operational-task"
+      ],
+      "requiredEvidence": [
+        "review-tasks"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "reconcile"
+      ]
+    }
+  ],
+  "recoveryPath": "operational-recovery-flow",
+  "completionConditions": [
+    "provider values stored apart from internal values",
+    "every difference classified",
+    "unconfigured providers reported unavailable"
+  ]
+}

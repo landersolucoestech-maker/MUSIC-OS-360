@@ -1,0 +1,98 @@
+{
+  "name": "human-approval-flow",
+  "description": "The human-in-the-loop control: evaluate, request with the exact payload, wait for a recorded decision and resume only on a matching approval.",
+  "phases": [
+    {
+      "id": "evaluate",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-evaluation"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "request",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "request-human-approval",
+        "create-operational-checkpoint"
+      ],
+      "requiredEvidence": [
+        "approval-request",
+        "checkpoint"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "evaluate"
+      ]
+    },
+    {
+      "id": "decision",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval"
+      ],
+      "requiredEvidence": [
+        "recorded-decision"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "request"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "resume-or-stop",
+      "requiredAgents": [
+        "human-approval-agent",
+        "exception-routing-agent"
+      ],
+      "requiredSkills": [
+        "resume-after-approval",
+        "reject-unsafe-automation"
+      ],
+      "requiredEvidence": [
+        "resume-or-stop-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "decision"
+      ]
+    },
+    {
+      "id": "audit",
+      "requiredAgents": [
+        "operational-monitor-agent"
+      ],
+      "requiredSkills": [
+        "audit-automation-run",
+        "trace-automation-decision",
+        "explain-automation-action"
+      ],
+      "requiredEvidence": [
+        "run-audit-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "resume-or-stop"
+      ]
+    }
+  ],
+  "recoveryPath": "operational-recovery-flow",
+  "completionConditions": [
+    "resume only on a recorded approve bound to the payload hash",
+    "stop on reject, expiry or mismatch",
+    "decision explained in plain language"
+  ]
+}

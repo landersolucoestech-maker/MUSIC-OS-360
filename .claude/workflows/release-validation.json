@@ -1,0 +1,130 @@
+{
+  "name": "release-validation",
+  "description": "Validating a release candidate: supply chain, gates, rollback analysis, a human approval before deploy and post-deploy validation.",
+  "phases": [
+    {
+      "id": "supply-chain",
+      "requiredAgents": [
+        "supply-chain-reviewer",
+        "dependency-safety-validator"
+      ],
+      "requiredSkills": [
+        "dependency-safety-check",
+        "supply-chain-audit"
+      ],
+      "requiredEvidence": [
+        "supply-chain-verdict"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "plan",
+      "requiredAgents": [
+        "release-planner",
+        "rollback-planner"
+      ],
+      "requiredSkills": [
+        "plan",
+        "rollback-analysis"
+      ],
+      "requiredEvidence": [
+        "release-plan",
+        "rollback-analysis"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "supply-chain"
+      ]
+    },
+    {
+      "id": "regression",
+      "requiredAgents": [
+        "validation-orchestrator"
+      ],
+      "requiredSkills": [
+        "run-lint",
+        "run-typecheck",
+        "run-unit-tests",
+        "run-integration-tests",
+        "run-build",
+        "production-build-check"
+      ],
+      "requiredEvidence": [
+        "lint",
+        "typecheck",
+        "test",
+        "build"
+      ],
+      "gates": [
+        "global"
+      ],
+      "dependsOn": [
+        "plan"
+      ]
+    },
+    {
+      "id": "release-readiness",
+      "requiredAgents": [
+        "release-validator",
+        "release-guardian"
+      ],
+      "requiredSkills": [
+        "validate-release-readiness",
+        "definition-of-done"
+      ],
+      "requiredEvidence": [
+        "release-readiness-verdict"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "regression"
+      ]
+    },
+    {
+      "id": "deploy-approval",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "release-readiness"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "post-deploy",
+      "requiredAgents": [
+        "smoke-test-validator",
+        "production-validator"
+      ],
+      "requiredSkills": [
+        "runtime-smoke-test"
+      ],
+      "requiredEvidence": [
+        "smoke-run-record",
+        "production-validation-record"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "deploy-approval"
+      ]
+    }
+  ],
+  "recoveryPath": "recovery.json via a deployment-rollback recovery-plan when post-deploy validation fails",
+  "completionConditions": [
+    "release record and deployment record exist",
+    "production validation HEALTHY or explicitly out of scope",
+    "approval recorded before deploy"
+  ]
+}

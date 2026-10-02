@@ -1,0 +1,144 @@
+{
+  "name": "engineering-change",
+  "description": "A planned feature or change to existing code: discovery, requirements, scope lock, implementation, independent review, verification and closure.",
+  "phases": [
+    {
+      "id": "discovery",
+      "requiredAgents": [
+        "repo-inspector",
+        "codebase-explorer"
+      ],
+      "requiredSkills": [
+        "repo-inspect",
+        "discover"
+      ],
+      "requiredEvidence": [
+        "discovery-record"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "requirements",
+      "requiredAgents": [
+        "requirements-validator",
+        "acceptance-criteria-engineer"
+      ],
+      "requiredSkills": [],
+      "requiredEvidence": [
+        "requirement-records"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "discovery"
+      ]
+    },
+    {
+      "id": "plan-and-scope",
+      "requiredAgents": [
+        "execution-planner",
+        "scope-planner"
+      ],
+      "requiredSkills": [
+        "plan",
+        "scope-lock",
+        "change-impact-check"
+      ],
+      "requiredEvidence": [
+        "plan-record",
+        "scope-lock-result"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "requirements"
+      ]
+    },
+    {
+      "id": "implementation",
+      "requiredAgents": [
+        "implementation-lead"
+      ],
+      "requiredSkills": [
+        "implement-feature",
+        "create-unit-tests"
+      ],
+      "requiredEvidence": [
+        "change-set-record"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "plan-and-scope"
+      ]
+    },
+    {
+      "id": "independent-review",
+      "requiredAgents": [
+        "code-reviewer",
+        "architecture-guardian",
+        "test-planner"
+      ],
+      "requiredSkills": [
+        "diff-review"
+      ],
+      "requiredEvidence": [
+        "review-verdicts"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "verification",
+      "requiredAgents": [
+        "validation-orchestrator"
+      ],
+      "requiredSkills": [
+        "run-lint",
+        "run-typecheck",
+        "run-unit-tests",
+        "run-build"
+      ],
+      "requiredEvidence": [
+        "lint",
+        "typecheck",
+        "test",
+        "build"
+      ],
+      "gates": [
+        "global"
+      ],
+      "dependsOn": [
+        "independent-review"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "repository-guardian",
+        "completion-controller"
+      ],
+      "requiredSkills": [
+        "definition-of-done",
+        "staged-diff-review"
+      ],
+      "requiredEvidence": [
+        "completion-record"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "verification"
+      ]
+    }
+  ],
+  "recoveryPath": "mission-recovery skill; resume from .claude/ops/state.json at the failed phase",
+  "completionConditions": [
+    "completion gate PASS",
+    "every criterion closed with fresh evidence",
+    "no unexplained file delta"
+  ]
+}

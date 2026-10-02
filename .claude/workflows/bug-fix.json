@@ -1,0 +1,124 @@
+{
+  "name": "bug-fix",
+  "description": "A defect fixed at its root cause with a regression test: reproduce, diagnose, fix, prove and review for regressions.",
+  "phases": [
+    {
+      "id": "reproduce",
+      "requiredAgents": [
+        "root-cause-investigator",
+        "runtime-validator"
+      ],
+      "requiredSkills": [
+        "root-cause-analysis",
+        "runtime-path-trace"
+      ],
+      "requiredEvidence": [
+        "reproduction-record"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "diagnose",
+      "requiredAgents": [
+        "root-cause-investigator",
+        "producer-consumer-tracer"
+      ],
+      "requiredSkills": [
+        "root-cause-analysis",
+        "producer-consumer-trace"
+      ],
+      "requiredEvidence": [
+        "causal-chain"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "reproduce"
+      ]
+    },
+    {
+      "id": "fix",
+      "requiredAgents": [
+        "implementation-lead"
+      ],
+      "requiredSkills": [
+        "fix-bug",
+        "create-regression-tests"
+      ],
+      "requiredEvidence": [
+        "change-set-record",
+        "failing-test-before"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "diagnose"
+      ]
+    },
+    {
+      "id": "regression-review",
+      "requiredAgents": [
+        "regression-analyzer",
+        "code-reviewer"
+      ],
+      "requiredSkills": [
+        "blast-radius-analysis",
+        "diff-review"
+      ],
+      "requiredEvidence": [
+        "review-verdicts"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "fix"
+      ]
+    },
+    {
+      "id": "verification",
+      "requiredAgents": [
+        "verification-controller",
+        "validation-orchestrator"
+      ],
+      "requiredSkills": [
+        "run-unit-tests",
+        "run-integration-tests",
+        "verify"
+      ],
+      "requiredEvidence": [
+        "test"
+      ],
+      "gates": [
+        "global"
+      ],
+      "dependsOn": [
+        "regression-review"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "repository-guardian",
+        "completion-controller"
+      ],
+      "requiredSkills": [
+        "definition-of-done"
+      ],
+      "requiredEvidence": [
+        "completion-record"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "verification"
+      ]
+    }
+  ],
+  "recoveryPath": "recovery workflow when the same failure fingerprint repeats twice; change root-cause strategy",
+  "completionConditions": [
+    "regression test failed before and passes after",
+    "root cause recorded",
+    "completion gate PASS"
+  ]
+}

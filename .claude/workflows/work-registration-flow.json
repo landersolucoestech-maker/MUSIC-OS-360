@@ -1,0 +1,141 @@
+{
+  "name": "work-registration-flow",
+  "description": "Preparing a Work (the composition) for registration: draft, participants, rights, shares and routing to the registration module, with approval for any rights or identity change.",
+  "phases": [
+    {
+      "id": "draft",
+      "requiredAgents": [
+        "work-automation-agent",
+        "lyrics-automation-agent"
+      ],
+      "requiredSkills": [
+        "create-work-draft",
+        "extract-lyrics",
+        "normalize-lyrics",
+        "detect-work-version-change"
+      ],
+      "requiredEvidence": [
+        "work-draft-record"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "participants",
+      "requiredAgents": [
+        "participant-operations-agent"
+      ],
+      "requiredSkills": [
+        "normalize-participant",
+        "resolve-participant",
+        "detect-duplicate-participant",
+        "validate-work-participants"
+      ],
+      "requiredEvidence": [
+        "participant-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "draft"
+      ]
+    },
+    {
+      "id": "identity-approval",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "participants"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "participant-merge",
+      "requiredAgents": [
+        "participant-operations-agent"
+      ],
+      "requiredSkills": [
+        "merge-participant-candidates"
+      ],
+      "requiredEvidence": [
+        "merge-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "identity-approval"
+      ]
+    },
+    {
+      "id": "rights-and-shares",
+      "requiredAgents": [
+        "rights-operations-agent",
+        "shares-operations-agent",
+        "credits-operations-agent"
+      ],
+      "requiredSkills": [
+        "validate-work-rights",
+        "validate-work-shares",
+        "validate-share-total",
+        "validate-rights-chain"
+      ],
+      "requiredEvidence": [
+        "rights-validation",
+        "share-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "participant-merge"
+      ]
+    },
+    {
+      "id": "metadata",
+      "requiredAgents": [
+        "metadata-automation-agent"
+      ],
+      "requiredSkills": [
+        "validate-work-metadata",
+        "validate-iswc",
+        "detect-metadata-conflict"
+      ],
+      "requiredEvidence": [
+        "metadata-validation"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "rights-and-shares"
+      ]
+    },
+    {
+      "id": "route",
+      "requiredAgents": [
+        "work-automation-agent",
+        "exception-routing-agent"
+      ],
+      "requiredSkills": [
+        "route-work-to-registration",
+        "create-operational-task"
+      ],
+      "requiredEvidence": [
+        "registration-routing-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "metadata"
+      ]
+    }
+  ],
+  "recoveryPath": "data-integrity-recovery-flow",
+  "completionConditions": [
+    "composition validated separately from any Phonogram",
+    "shares total one hundred percent per right type",
+    "Work pending registration or blockers routed"
+  ]
+}

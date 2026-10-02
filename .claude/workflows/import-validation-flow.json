@@ -1,0 +1,149 @@
+{
+  "name": "import-validation-flow",
+  "description": "Importing files: parse into staging, validate, normalize, detect duplicates, preview, approve the exact preview, apply and keep a rollback path.",
+  "phases": [
+    {
+      "id": "parse",
+      "requiredAgents": [
+        "import-automation-agent"
+      ],
+      "requiredSkills": [
+        "import-xlsx",
+        "import-csv"
+      ],
+      "requiredEvidence": [
+        "staging-batch"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "validate",
+      "requiredAgents": [
+        "import-automation-agent"
+      ],
+      "requiredSkills": [
+        "validate-import",
+        "normalize-import-data",
+        "detect-import-duplicates"
+      ],
+      "requiredEvidence": [
+        "validation-report"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "parse"
+      ]
+    },
+    {
+      "id": "preview",
+      "requiredAgents": [
+        "import-automation-agent"
+      ],
+      "requiredSkills": [
+        "preview-import-changes"
+      ],
+      "requiredEvidence": [
+        "preview-with-hash"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "validate"
+      ]
+    },
+    {
+      "id": "import-approval",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "preview"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "apply",
+      "requiredAgents": [
+        "import-automation-agent"
+      ],
+      "requiredSkills": [
+        "execute-approved-import"
+      ],
+      "requiredEvidence": [
+        "import-result",
+        "rollback-information"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "import-approval"
+      ]
+    },
+    {
+      "id": "verify",
+      "requiredAgents": [
+        "data-quality-agent",
+        "operational-monitor-agent"
+      ],
+      "requiredSkills": [
+        "detect-data-inconsistency",
+        "record-automation-evidence"
+      ],
+      "requiredEvidence": [
+        "post-import-quality-report"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "apply"
+      ]
+    },
+    {
+      "id": "rollback-approval",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "verify"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "rollback",
+      "requiredAgents": [
+        "import-automation-agent"
+      ],
+      "requiredSkills": [
+        "rollback-import"
+      ],
+      "requiredEvidence": [
+        "rollback-verification"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "rollback-approval"
+      ]
+    }
+  ],
+  "recoveryPath": "operational-recovery-flow",
+  "completionConditions": [
+    "applied counts equal the approved preview",
+    "rollback information stored",
+    "rollback only after its own approval"
+  ]
+}

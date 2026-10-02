@@ -1,0 +1,155 @@
+{
+  "name": "contract-generation-and-signature-flow",
+  "description": "Contract lifecycle: template, data, generation, human review, an approval before sending for signature, status tracking, approved reminders and archive.",
+  "phases": [
+    {
+      "id": "select-and-validate",
+      "requiredAgents": [
+        "contract-automation-agent"
+      ],
+      "requiredSkills": [
+        "select-contract-template",
+        "validate-contract-data"
+      ],
+      "requiredEvidence": [
+        "template-selection",
+        "data-validation"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "generate",
+      "requiredAgents": [
+        "contract-generation-agent"
+      ],
+      "requiredSkills": [
+        "generate-contract",
+        "populate-contract",
+        "validate-contract-data"
+      ],
+      "requiredEvidence": [
+        "draft-record",
+        "variable-source-map"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "select-and-validate"
+      ]
+    },
+    {
+      "id": "signature-approval",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "review-record",
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "generate"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "send",
+      "requiredAgents": [
+        "contract-routing-agent"
+      ],
+      "requiredSkills": [
+        "route-contract-for-signature"
+      ],
+      "requiredEvidence": [
+        "signature-request-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "signature-approval"
+      ]
+    },
+    {
+      "id": "track",
+      "requiredAgents": [
+        "contract-status-agent"
+      ],
+      "requiredSkills": [
+        "check-signature-status",
+        "handle-provider-failure"
+      ],
+      "requiredEvidence": [
+        "status-report"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "send"
+      ]
+    },
+    {
+      "id": "reminder-approval",
+      "requiredAgents": [
+        "human-approval-agent"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "track"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "remind",
+      "requiredAgents": [
+        "signature-followup-agent",
+        "email-automation-agent"
+      ],
+      "requiredSkills": [
+        "follow-up-signature",
+        "send-signature-reminder",
+        "send-contract-notification"
+      ],
+      "requiredEvidence": [
+        "reminder-history"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "reminder-approval"
+      ]
+    },
+    {
+      "id": "archive",
+      "requiredAgents": [
+        "signature-automation-agent",
+        "document-automation-agent"
+      ],
+      "requiredSkills": [
+        "archive-signed-contract",
+        "extract-file-metadata"
+      ],
+      "requiredEvidence": [
+        "archive-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "track"
+      ]
+    }
+  ],
+  "recoveryPath": "operational-recovery-flow",
+  "completionConditions": [
+    "signed document archived with provider evidence",
+    "no send without a recorded approval bound to the document hash",
+    "implied rights changes only as proposals"
+  ]
+}

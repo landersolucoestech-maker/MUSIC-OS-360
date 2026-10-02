@@ -1,0 +1,115 @@
+{
+  "name": "operational-recovery-flow",
+  "description": "Recovering a failed operational run: audit, checkpoint resume or retry, and a rollback only under approval, then verification.",
+  "phases": [
+    {
+      "id": "audit",
+      "requiredAgents": [
+        "operational-monitor-agent"
+      ],
+      "requiredSkills": [
+        "audit-automation-run",
+        "trace-automation-decision"
+      ],
+      "requiredEvidence": [
+        "failure-audit"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "diagnose",
+      "requiredAgents": [
+        "root-cause-investigator",
+        "operational-recovery-agent"
+      ],
+      "requiredSkills": [
+        "root-cause-analysis"
+      ],
+      "requiredEvidence": [
+        "causal-chain"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "audit"
+      ]
+    },
+    {
+      "id": "recover",
+      "requiredAgents": [
+        "operational-recovery-agent"
+      ],
+      "requiredSkills": [
+        "recover-failed-workflow",
+        "resume-operational-workflow",
+        "retry-failed-operation"
+      ],
+      "requiredEvidence": [
+        "recovery-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "diagnose"
+      ]
+    },
+    {
+      "id": "rollback-approval",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "recover"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "rollback",
+      "requiredAgents": [
+        "operational-recovery-agent"
+      ],
+      "requiredSkills": [
+        "rollback-operational-action"
+      ],
+      "requiredEvidence": [
+        "rollback-verification"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "rollback-approval"
+      ]
+    },
+    {
+      "id": "verify",
+      "requiredAgents": [
+        "verification-controller",
+        "operational-monitor-agent"
+      ],
+      "requiredSkills": [
+        "verify",
+        "record-automation-evidence"
+      ],
+      "requiredEvidence": [
+        "verification-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "rollback"
+      ]
+    }
+  ],
+  "recoveryPath": "incident.json when the failure affects live users or data",
+  "completionConditions": [
+    "state verified after recovery",
+    "rollback only after approval",
+    "non-idempotent steps never retried"
+  ]
+}

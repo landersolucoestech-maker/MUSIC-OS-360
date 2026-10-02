@@ -1,0 +1,142 @@
+{
+  "name": "security-review",
+  "description": "An L5 security review: boundaries, threats, audit, negative tests and an independent verdict.",
+  "phases": [
+    {
+      "id": "map-boundaries",
+      "requiredAgents": [
+        "security-boundary-mapper",
+        "tenant-boundary-mapper"
+      ],
+      "requiredSkills": [
+        "security-boundary-audit",
+        "authorization-map"
+      ],
+      "requiredEvidence": [
+        "boundary-map"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "threat-model",
+      "requiredAgents": [
+        "threat-model-reviewer"
+      ],
+      "requiredSkills": [
+        "threat-model"
+      ],
+      "requiredEvidence": [
+        "threat-model-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "map-boundaries"
+      ]
+    },
+    {
+      "id": "audit",
+      "requiredAgents": [
+        "security-auditor",
+        "authorization-reviewer",
+        "tenant-isolation-reviewer",
+        "secrets-reviewer"
+      ],
+      "requiredSkills": [
+        "authorization-audit",
+        "tenant-isolation-audit",
+        "secret-scan",
+        "dependency-scan"
+      ],
+      "requiredEvidence": [
+        "audit-records"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "threat-model"
+      ]
+    },
+    {
+      "id": "negative-tests",
+      "requiredAgents": [
+        "security-test-engineer"
+      ],
+      "requiredSkills": [
+        "create-security-tests",
+        "create-tenant-isolation-tests",
+        "run-security-tests"
+      ],
+      "requiredEvidence": [
+        "security-test-run"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "audit"
+      ]
+    },
+    {
+      "id": "hardening",
+      "requiredAgents": [
+        "authorization-engineer",
+        "security-engineer"
+      ],
+      "requiredSkills": [
+        "authorization-hardening",
+        "implement-authorization"
+      ],
+      "requiredEvidence": [
+        "change-set-record"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "negative-tests"
+      ]
+    },
+    {
+      "id": "independent-verdict",
+      "requiredAgents": [
+        "security-reviewer",
+        "adversarial-reviewer"
+      ],
+      "requiredSkills": [
+        "security-audit"
+      ],
+      "requiredEvidence": [
+        "security-verdict"
+      ],
+      "gates": [
+        "security"
+      ],
+      "dependsOn": [
+        "hardening"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "repository-guardian",
+        "completion-controller"
+      ],
+      "requiredSkills": [
+        "definition-of-done"
+      ],
+      "requiredEvidence": [
+        "completion-record"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "independent-verdict"
+      ]
+    }
+  ],
+  "recoveryPath": "incident.json when a live exposure is suspected; containment before diagnosis",
+  "completionConditions": [
+    "security gate PASS",
+    "no open critical or high finding",
+    "negative tests executed"
+  ]
+}
