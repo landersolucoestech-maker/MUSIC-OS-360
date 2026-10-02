@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 256,
+  "agents": 277,
   "skills": 0,
-  "capabilities": 233,
+  "capabilities": 254,
   "workflows": 6
  },
  "agents": [
@@ -584,6 +584,30 @@
    "approval": "none"
   },
   {
+   "name": "atomic-commit-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/atomic-commit-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-atomic-commit"
+   ],
+   "skills": [
+    "git-safety-check",
+    "staged-diff-review",
+    "change-impact-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "auditability-reviewer",
    "kind": "reviewer",
    "domain": "security",
@@ -909,6 +933,29 @@
    "approval": "none"
   },
   {
+   "name": "branch-policy-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/branch-policy-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-branch"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "git-safety-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "browser-compatibility-reviewer",
    "kind": "reviewer",
    "domain": "frontend",
@@ -1041,6 +1088,31 @@
    "approval": "none"
   },
   {
+   "name": "change-scope-guardian",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/change-scope-guardian.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.guard-scope"
+   ],
+   "skills": [
+    "scope-lock",
+    "change-impact-check",
+    "protected-file-check",
+    "dirty-tree-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "chaos-test-reviewer",
    "kind": "reviewer",
    "domain": "testing",
@@ -1133,6 +1205,53 @@
     "repo-inspect",
     "module-map",
     "data-flow-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "commit-message-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/commit-message-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-commit-message"
+   ],
+   "skills": [
+    "git-safety-check",
+    "staged-diff-review"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "commit-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/commit-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-commit"
+   ],
+   "skills": [
+    "git-safety-check",
+    "staged-diff-review",
+    "branch-policy-check"
    ],
    "approval": "none"
   },
@@ -2024,6 +2143,30 @@
    "approval": "none"
   },
   {
+   "name": "dependency-safety-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/dependency-safety-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-dependencies"
+   ],
+   "skills": [
+    "dependency-safety-check",
+    "dependency-scan",
+    "protected-file-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "dependency-tracer",
    "kind": "analyzer",
    "domain": "repository-intelligence",
@@ -2076,6 +2219,79 @@
     "spacing-audit",
     "typography-audit",
     "create-component"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "destructive-change-guard",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/destructive-change-guard.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.guard-destructive"
+   ],
+   "skills": [
+    "destructive-change-check",
+    "rollback-analysis",
+    "external-action-check",
+    "git-safety-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "diff-reviewer",
+   "kind": "reviewer",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/diff-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.review-diff"
+   ],
+   "skills": [
+    "diff-review",
+    "change-impact-check",
+    "scope-lock"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "dirty-tree-guard",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/dirty-tree-guard.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.guard-dirty-tree"
+   ],
+   "skills": [
+    "dirty-tree-check",
+    "git-safety-check",
+    "destructive-change-check"
    ],
    "approval": "none"
   },
@@ -2915,6 +3131,30 @@
    "approval": "none"
   },
   {
+   "name": "history-rewrite-guard",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/history-rewrite-guard.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.guard-history"
+   ],
+   "skills": [
+    "git-safety-check",
+    "destructive-change-check",
+    "branch-policy-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "implementation-lead",
    "kind": "controller",
    "domain": "control",
@@ -3451,6 +3691,30 @@
     "data-provider-audit",
     "detect-data-inconsistency",
     "naming-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "merge-safety-reviewer",
+   "kind": "reviewer",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/merge-safety-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.review-merge"
+   ],
+   "skills": [
+    "diff-review",
+    "writer-conflict-check",
+    "dependency-safety-check"
    ],
    "approval": "none"
   },
@@ -4181,6 +4445,54 @@
    "approval": "none"
   },
   {
+   "name": "protected-branch-guard",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/protected-branch-guard.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.guard-protected-branch"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "git-safety-check",
+    "destructive-change-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "protected-file-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/protected-file-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-protected"
+   ],
+   "skills": [
+    "protected-file-check",
+    "secret-scan",
+    "staged-diff-review"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "provider-contract-reviewer",
    "kind": "reviewer",
    "domain": "integrations",
@@ -4544,6 +4856,31 @@
    "approval": "none"
   },
   {
+   "name": "release-guardian",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/release-guardian.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.guard-release"
+   ],
+   "skills": [
+    "validate-release-readiness",
+    "prepare-release",
+    "external-action-check",
+    "definition-of-done"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "release-orchestrator",
    "kind": "orchestrator",
    "domain": "release",
@@ -4592,6 +4929,54 @@
     "release",
     "production-build-check",
     "rollback-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "release-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/release-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-release"
+   ],
+   "skills": [
+    "validate-release-readiness",
+    "migration-safety-check",
+    "rollback-analysis",
+    "definition-of-done"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "repo-identity-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/repo-identity-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-identity"
+   ],
+   "skills": [
+    "git-safety-check",
+    "branch-policy-check"
    ],
    "approval": "none"
   },
@@ -4647,6 +5032,31 @@
     "create-tenant-isolation-tests",
     "query-audit",
     "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "repository-guardian",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/repository-guardian.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.guard"
+   ],
+   "skills": [
+    "git-safety-check",
+    "dirty-tree-check",
+    "branch-policy-check",
+    "writer-conflict-check"
    ],
    "approval": "none"
   },
@@ -4960,6 +5370,30 @@
    "approval": "none"
   },
   {
+   "name": "rollback-analyzer",
+   "kind": "reviewer",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/rollback-analyzer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.analyze-rollback"
+   ],
+   "skills": [
+    "rollback-analysis",
+    "destructive-change-check",
+    "migration-safety-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "rollback-planner",
    "kind": "planner",
    "domain": "planning",
@@ -5217,6 +5651,30 @@
     "database-map",
     "database-audit",
     "data-integrity-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "scope-lock-validator",
+   "kind": "validator",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/scope-lock-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.validate-scope-lock"
+   ],
+   "skills": [
+    "scope-lock",
+    "writer-conflict-check",
+    "dirty-tree-check"
    ],
    "approval": "none"
   },
@@ -5655,6 +6113,30 @@
     "ssrf-audit",
     "security-boundary-audit",
     "external-action-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "staged-diff-reviewer",
+   "kind": "reviewer",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/staged-diff-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.review-staged"
+   ],
+   "skills": [
+    "staged-diff-review",
+    "protected-file-check",
+    "secret-scan"
    ],
    "approval": "none"
   },
@@ -6201,6 +6683,30 @@
     "dead-code-analysis",
     "feature-flag-analysis",
     "runtime-path-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "untracked-file-reviewer",
+   "kind": "reviewer",
+   "domain": "repository",
+   "batch": 12,
+   "owner": "repository owner",
+   "path": ".claude/agents/untracked-file-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "repository.review-untracked"
+   ],
+   "skills": [
+    "dirty-tree-check",
+    "protected-file-check",
+    "secret-scan"
    ],
    "approval": "none"
   },
@@ -10409,6 +10915,470 @@
     "blast-radius-analysis",
     "dependency-cycle-analysis",
     "dependency-trace"
+   ]
+  },
+  {
+   "id": "repository.analyze-rollback",
+   "domain": "repository",
+   "description": "Analyze rollback: how each kind of change is undone and what cannot be undone by source rollback alone",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "rollback-analyzer"
+   ],
+   "skills": [
+    "destructive-change-check",
+    "migration-safety-check",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "repository.guard",
+   "domain": "repository",
+   "description": "Guard the repository as a whole: branch, remote, state of the working tree and the integrity of the history before and after work",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "repository-guardian"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "dirty-tree-check",
+    "git-safety-check",
+    "writer-conflict-check"
+   ]
+  },
+  {
+   "id": "repository.guard-destructive",
+   "domain": "repository",
+   "description": "Guard against destructive change: deletions, resets, force operations and data-destroying statements need explicit authorization",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "destructive-change-guard"
+   ],
+   "skills": [
+    "destructive-change-check",
+    "external-action-check",
+    "git-safety-check",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "repository.guard-dirty-tree",
+   "domain": "repository",
+   "description": "Guard a dirty working tree: pre-existing changes are preserved and never reset by reflex",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "dirty-tree-guard"
+   ],
+   "skills": [
+    "destructive-change-check",
+    "dirty-tree-check",
+    "git-safety-check"
+   ]
+  },
+  {
+   "id": "repository.guard-history",
+   "domain": "repository",
+   "description": "Guard against history rewriting on shared or permanent branches",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "history-rewrite-guard"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "destructive-change-check",
+    "git-safety-check"
+   ]
+  },
+  {
+   "id": "repository.guard-protected-branch",
+   "domain": "repository",
+   "description": "Guard protected branches: no direct destructive work and no bypass of the required policy",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "protected-branch-guard"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "destructive-change-check",
+    "git-safety-check"
+   ]
+  },
+  {
+   "id": "repository.guard-release",
+   "domain": "repository",
+   "description": "Guard a release: the artifact, commit and evidence that will ship match what was validated",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "release-guardian"
+   ],
+   "skills": [
+    "definition-of-done",
+    "external-action-check",
+    "prepare-release",
+    "validate-release-readiness"
+   ]
+  },
+  {
+   "id": "repository.guard-scope",
+   "domain": "repository",
+   "description": "Guard the declared change scope: every touched file belongs to the task and nothing unexplained changed",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "change-scope-guardian"
+   ],
+   "skills": [
+    "change-impact-check",
+    "dirty-tree-check",
+    "protected-file-check",
+    "scope-lock"
+   ]
+  },
+  {
+   "id": "repository.review-diff",
+   "domain": "repository",
+   "description": "Review the full working diff for correctness of scope, unintended edits and leftover debug or generated content",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "diff-reviewer"
+   ],
+   "skills": [
+    "change-impact-check",
+    "diff-review",
+    "scope-lock"
+   ]
+  },
+  {
+   "id": "repository.review-merge",
+   "domain": "repository",
+   "description": "Review merge safety: conflicts resolved correctly, no lost behavior and no silent reversions",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "merge-safety-reviewer"
+   ],
+   "skills": [
+    "dependency-safety-check",
+    "diff-review",
+    "writer-conflict-check"
+   ]
+  },
+  {
+   "id": "repository.review-staged",
+   "domain": "repository",
+   "description": "Review the staged diff before commit for scope, secrets and unrelated files",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "staged-diff-reviewer"
+   ],
+   "skills": [
+    "protected-file-check",
+    "secret-scan",
+    "staged-diff-review"
+   ]
+  },
+  {
+   "id": "repository.review-untracked",
+   "domain": "repository",
+   "description": "Review untracked files: what they are, whether they belong to the task and whether they hold secrets or generated junk",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "untracked-file-reviewer"
+   ],
+   "skills": [
+    "dirty-tree-check",
+    "protected-file-check",
+    "secret-scan"
+   ]
+  },
+  {
+   "id": "repository.validate-atomic-commit",
+   "domain": "repository",
+   "description": "Validate that a commit is atomic: one coherent change that builds and passes on its own",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "atomic-commit-validator"
+   ],
+   "skills": [
+    "change-impact-check",
+    "git-safety-check",
+    "staged-diff-review"
+   ]
+  },
+  {
+   "id": "repository.validate-branch",
+   "domain": "repository",
+   "description": "Validate branch policy: only the permitted branch is used for commits and pushes",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "branch-policy-validator"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "git-safety-check"
+   ]
+  },
+  {
+   "id": "repository.validate-commit",
+   "domain": "repository",
+   "description": "Validate a commit: message, content and authorship follow the repository rules and the commit is complete",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "commit-validator"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "git-safety-check",
+    "staged-diff-review"
+   ]
+  },
+  {
+   "id": "repository.validate-commit-message",
+   "domain": "repository",
+   "description": "Validate commit messages against the project convention and truthfulness of their claims",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "commit-message-validator"
+   ],
+   "skills": [
+    "git-safety-check",
+    "staged-diff-review"
+   ]
+  },
+  {
+   "id": "repository.validate-dependencies",
+   "domain": "repository",
+   "description": "Validate dependency changes: manifest and lockfile agree, lifecycle scripts reviewed and churn is explained",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "dependency-safety-validator"
+   ],
+   "skills": [
+    "dependency-safety-check",
+    "dependency-scan",
+    "protected-file-check"
+   ]
+  },
+  {
+   "id": "repository.validate-identity",
+   "domain": "repository",
+   "description": "Validate repository identity: the working copy, remote and project match the intended repository",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "repo-identity-validator"
+   ],
+   "skills": [
+    "branch-policy-check",
+    "git-safety-check"
+   ]
+  },
+  {
+   "id": "repository.validate-protected",
+   "domain": "repository",
+   "description": "Validate protected files: secrets, environment files, guard scripts and policy files were not modified without authorization",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "protected-file-validator"
+   ],
+   "skills": [
+    "protected-file-check",
+    "secret-scan",
+    "staged-diff-review"
+   ]
+  },
+  {
+   "id": "repository.validate-release",
+   "domain": "repository",
+   "description": "Validate release readiness: gates, evidence freshness, migrations, rollback plan and approvals recorded",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "release-validator"
+   ],
+   "skills": [
+    "definition-of-done",
+    "migration-safety-check",
+    "rollback-analysis",
+    "validate-release-readiness"
+   ]
+  },
+  {
+   "id": "repository.validate-scope-lock",
+   "domain": "repository",
+   "description": "Validate the scope lock: no file outside the owned path set was modified by a writer",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "scope-lock-validator"
+   ],
+   "skills": [
+    "dirty-tree-check",
+    "scope-lock",
+    "writer-conflict-check"
    ]
   },
   {

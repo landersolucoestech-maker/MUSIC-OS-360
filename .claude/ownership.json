@@ -317,6 +317,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "atomic-commit-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "auditability-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -392,6 +397,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "branch-policy-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "browser-compatibility-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -423,6 +433,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "change-scope-guardian",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "chaos-test-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -439,6 +454,16 @@
     },
     {
       "agent": "codebase-explorer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "commit-message-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "commit-validator",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -642,6 +667,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "dependency-safety-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "dependency-tracer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -654,6 +684,21 @@
         "apps/web/src/index.css"
       ],
       "note": "pack writer (frontend); scope declared in .claude/agents/design-system-engineer.md"
+    },
+    {
+      "agent": "destructive-change-guard",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "diff-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "dirty-tree-guard",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "domain-architecture-engineer",
@@ -842,6 +887,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "history-rewrite-guard",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "implementation-lead",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -962,6 +1012,11 @@
     },
     {
       "agent": "mapping-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "merge-safety-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1126,6 +1181,16 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "protected-branch-guard",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "protected-file-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "provider-contract-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1206,12 +1271,27 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "release-guardian",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "release-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
     {
       "agent": "release-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "release-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "repo-identity-validator",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1227,6 +1307,11 @@
         "apps/api/src/modules/**/*.repository.spec.ts"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/repository-engineer.md"
+    },
+    {
+      "agent": "repository-guardian",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "repository-orchestrator",
@@ -1296,6 +1381,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "rollback-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "rollback-planner",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1352,6 +1442,11 @@
         "apps/api/src/database/entities/**"
       ],
       "note": "pack writer (database); scope declared in .claude/agents/schema-engineer.md"
+    },
+    {
+      "agent": "scope-lock-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "scope-planner",
@@ -1450,6 +1545,11 @@
     },
     {
       "agent": "ssrf-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "staged-diff-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1574,6 +1674,11 @@
     },
     {
       "agent": "unreachable-code-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "untracked-file-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },

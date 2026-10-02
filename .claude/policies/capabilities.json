@@ -528,6 +528,15 @@
       ]
     },
     {
+      "agent": "atomic-commit-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "auditability-reviewer",
       "allowedTools": [
         "Read",
@@ -646,6 +655,15 @@
       ]
     },
     {
+      "agent": "branch-policy-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "browser-compatibility-reviewer",
       "allowedTools": [
         "Read",
@@ -695,6 +713,15 @@
       ]
     },
     {
+      "agent": "change-scope-guardian",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "chaos-test-reviewer",
       "allowedTools": [
         "Read",
@@ -723,6 +750,24 @@
     },
     {
       "agent": "codebase-explorer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "commit-message-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "commit-validator",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1057,6 +1102,15 @@
       ]
     },
     {
+      "agent": "dependency-safety-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "dependency-tracer",
       "allowedTools": [
         "Read",
@@ -1071,6 +1125,33 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "destructive-change-guard",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "diff-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "dirty-tree-guard",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -1386,6 +1467,15 @@
       ]
     },
     {
+      "agent": "history-rewrite-guard",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "implementation-lead",
       "allowedTools": [
         "Read",
@@ -1577,6 +1667,15 @@
     },
     {
       "agent": "mapping-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "merge-safety-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1852,6 +1951,24 @@
       ]
     },
     {
+      "agent": "protected-branch-guard",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "protected-file-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "provider-contract-reviewer",
       "allowedTools": [
         "Read",
@@ -1985,6 +2102,15 @@
       ]
     },
     {
+      "agent": "release-guardian",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "release-orchestrator",
       "allowedTools": [
         "Read",
@@ -1996,6 +2122,24 @@
     },
     {
       "agent": "release-planner",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "release-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "repo-identity-validator",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2018,6 +2162,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "repository-guardian",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -2138,6 +2291,15 @@
       ]
     },
     {
+      "agent": "rollback-analyzer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "rollback-planner",
       "allowedTools": [
         "Read",
@@ -2228,6 +2390,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "scope-lock-validator",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -2387,6 +2558,15 @@
     },
     {
       "agent": "ssrf-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "staged-diff-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2589,6 +2769,15 @@
     },
     {
       "agent": "unreachable-code-detector",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "untracked-file-reviewer",
       "allowedTools": [
         "Read",
         "Grep",

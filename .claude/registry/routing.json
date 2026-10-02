@@ -2452,6 +2452,159 @@
     "reliability.review.availability",
     "reliability.review.capacity"
    ]
+  },
+  {
+   "intent": "guard-repository-state",
+   "domain": "repository",
+   "description": "Guard repository state for a mission",
+   "keywords": [
+    "repository baseline",
+    "repository state check",
+    "dirty tree"
+   ],
+   "capabilities": [
+    "repository.guard",
+    "repository.guard-dirty-tree",
+    "repository.review-untracked"
+   ]
+  },
+  {
+   "intent": "guard-change-scope",
+   "domain": "repository",
+   "description": "Guard change scope",
+   "keywords": [
+    "change scope",
+    "scope lock",
+    "unexplained files"
+   ],
+   "capabilities": [
+    "repository.guard-scope",
+    "repository.validate-scope-lock"
+   ]
+  },
+  {
+   "intent": "guard-release",
+   "domain": "repository",
+   "description": "Guard and validate a release",
+   "keywords": [
+    "release guard",
+    "release readiness",
+    "validate release"
+   ],
+   "capabilities": [
+    "repository.guard-release",
+    "repository.validate-release"
+   ]
+  },
+  {
+   "intent": "validate-branch-and-identity",
+   "domain": "repository",
+   "description": "Validate branch policy and repository identity",
+   "keywords": [
+    "branch policy",
+    "repository identity",
+    "wrong remote"
+   ],
+   "capabilities": [
+    "repository.validate-branch",
+    "repository.validate-identity",
+    "repository.guard-protected-branch"
+   ]
+  },
+  {
+   "intent": "validate-protected-files",
+   "domain": "repository",
+   "description": "Validate protected files",
+   "keywords": [
+    "protected files",
+    "environment file change",
+    "staged secret"
+   ],
+   "capabilities": [
+    "repository.validate-protected"
+   ]
+  },
+  {
+   "intent": "guard-destructive-change",
+   "domain": "repository",
+   "description": "Guard destructive changes",
+   "keywords": [
+    "destructive change",
+    "irreversible operation",
+    "force operation"
+   ],
+   "capabilities": [
+    "repository.guard-destructive",
+    "repository.guard-history"
+   ]
+  },
+  {
+   "intent": "validate-dependency-change",
+   "domain": "repository",
+   "description": "Validate dependency change safety",
+   "keywords": [
+    "dependency change",
+    "lockfile churn",
+    "lifecycle scripts"
+   ],
+   "capabilities": [
+    "repository.validate-dependencies"
+   ]
+  },
+  {
+   "intent": "review-diff-before-commit",
+   "domain": "repository",
+   "description": "Review diffs before commit",
+   "keywords": [
+    "review diff",
+    "staged diff",
+    "before commit"
+   ],
+   "capabilities": [
+    "repository.review-diff",
+    "repository.review-staged"
+   ]
+  },
+  {
+   "intent": "analyze-rollback",
+   "domain": "repository",
+   "description": "Analyze rollback",
+   "keywords": [
+    "rollback analysis",
+    "how to undo",
+    "rollback plan"
+   ],
+   "capabilities": [
+    "repository.analyze-rollback"
+   ]
+  },
+  {
+   "intent": "validate-commits",
+   "domain": "repository",
+   "description": "Validate commits and messages",
+   "keywords": [
+    "validate commit",
+    "commit message",
+    "atomic commit"
+   ],
+   "capabilities": [
+    "repository.validate-commit",
+    "repository.validate-atomic-commit",
+    "repository.validate-commit-message"
+   ]
+  },
+  {
+   "intent": "review-merge-result",
+   "domain": "repository",
+   "description": "Review a merge result",
+   "keywords": [
+    "merge safety",
+    "conflict resolution",
+    "merge review"
+   ],
+   "capabilities": [
+    "repository.review-merge"
+   ]
   }
  ],
  "highImpactSignals": [

@@ -2075,151 +2075,172 @@
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "git-auditor"
+   "finalState": "CREATED",
+   "existingEquivalent": "git-auditor",
+   "file": ".claude/agents/repository-guardian.md"
   },
   {
    "name": "change-scope-guardian",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/change-scope-guardian.md"
   },
   {
    "name": "release-guardian",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/release-guardian.md"
   },
   {
    "name": "release-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "production-validator"
+   "finalState": "CREATED",
+   "existingEquivalent": "production-validator",
+   "file": ".claude/agents/release-validator.md"
   },
   {
    "name": "branch-policy-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/branch-policy-validator.md"
   },
   {
    "name": "repo-identity-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/repo-identity-validator.md"
   },
   {
    "name": "scope-lock-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/scope-lock-validator.md"
   },
   {
    "name": "protected-file-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/protected-file-validator.md"
   },
   {
    "name": "destructive-change-guard",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/destructive-change-guard.md"
   },
   {
    "name": "dependency-safety-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "supply-chain-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "supply-chain-reviewer",
+   "file": ".claude/agents/dependency-safety-validator.md"
   },
   {
    "name": "diff-reviewer",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "git-auditor"
+   "finalState": "CREATED",
+   "existingEquivalent": "git-auditor",
+   "file": ".claude/agents/diff-reviewer.md"
   },
   {
    "name": "staged-diff-reviewer",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/staged-diff-reviewer.md"
   },
   {
    "name": "rollback-analyzer",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/rollback-analyzer.md"
   },
   {
    "name": "commit-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/commit-validator.md"
   },
   {
    "name": "atomic-commit-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/atomic-commit-validator.md"
   },
   {
    "name": "merge-safety-reviewer",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/merge-safety-reviewer.md"
   },
   {
    "name": "history-rewrite-guard",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/history-rewrite-guard.md"
   },
   {
    "name": "untracked-file-reviewer",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/untracked-file-reviewer.md"
   },
   {
    "name": "dirty-tree-guard",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/dirty-tree-guard.md"
   },
   {
    "name": "protected-branch-guard",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/protected-branch-guard.md"
   },
   {
    "name": "commit-message-validator",
    "type": "agent",
    "batch": 12,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/commit-message-validator.md"
   },
   {
    "name": "code-reviewer",

@@ -2144,6 +2144,300 @@
    "approval": "none"
   },
   {
+   "id": "repository.analyze-rollback",
+   "domain": "repository",
+   "description": "Analyze rollback: how each kind of change is undone and what cannot be undone by source rollback alone",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.guard",
+   "domain": "repository",
+   "description": "Guard the repository as a whole: branch, remote, state of the working tree and the integrity of the history before and after work",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.guard-destructive",
+   "domain": "repository",
+   "description": "Guard against destructive change: deletions, resets, force operations and data-destroying statements need explicit authorization",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.guard-dirty-tree",
+   "domain": "repository",
+   "description": "Guard a dirty working tree: pre-existing changes are preserved and never reset by reflex",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.guard-history",
+   "domain": "repository",
+   "description": "Guard against history rewriting on shared or permanent branches",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.guard-protected-branch",
+   "domain": "repository",
+   "description": "Guard protected branches: no direct destructive work and no bypass of the required policy",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.guard-release",
+   "domain": "repository",
+   "description": "Guard a release: the artifact, commit and evidence that will ship match what was validated",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.guard-scope",
+   "domain": "repository",
+   "description": "Guard the declared change scope: every touched file belongs to the task and nothing unexplained changed",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.review-diff",
+   "domain": "repository",
+   "description": "Review the full working diff for correctness of scope, unintended edits and leftover debug or generated content",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.review-merge",
+   "domain": "repository",
+   "description": "Review merge safety: conflicts resolved correctly, no lost behavior and no silent reversions",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.review-staged",
+   "domain": "repository",
+   "description": "Review the staged diff before commit for scope, secrets and unrelated files",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.review-untracked",
+   "domain": "repository",
+   "description": "Review untracked files: what they are, whether they belong to the task and whether they hold secrets or generated junk",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-atomic-commit",
+   "domain": "repository",
+   "description": "Validate that a commit is atomic: one coherent change that builds and passes on its own",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-branch",
+   "domain": "repository",
+   "description": "Validate branch policy: only the permitted branch is used for commits and pushes",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-commit",
+   "domain": "repository",
+   "description": "Validate a commit: message, content and authorship follow the repository rules and the commit is complete",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-commit-message",
+   "domain": "repository",
+   "description": "Validate commit messages against the project convention and truthfulness of their claims",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-dependencies",
+   "domain": "repository",
+   "description": "Validate dependency changes: manifest and lockfile agree, lifecycle scripts reviewed and churn is explained",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-identity",
+   "domain": "repository",
+   "description": "Validate repository identity: the working copy, remote and project match the intended repository",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-protected",
+   "domain": "repository",
+   "description": "Validate protected files: secrets, environment files, guard scripts and policy files were not modified without authorization",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-release",
+   "domain": "repository",
+   "description": "Validate release readiness: gates, evidence freshness, migrations, rollback plan and approvals recorded",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "repository.validate-scope-lock",
+   "domain": "repository",
+   "description": "Validate the scope lock: no file outside the owned path set was modified by a writer",
+   "validation": [
+    "repository state read and recorded",
+    "independent verdict"
+   ],
+   "evidence": [
+    "git state record",
+    "guard verdict"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "requirements.criteria",
    "domain": "requirements",
    "description": "Turn requirements into executable acceptance criteria",
