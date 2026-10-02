@@ -17,6 +17,7 @@
 //   node .claude/runtime/orchestrate.mjs fail --task <id> --reason "<text>" [--plan <id>]
 //   node .claude/runtime/orchestrate.mjs block-external --task <id> --capability .. --cause .. --missing ..
 //        --contract .. --current .. --fallback .. --impact .. --unblock ..
+//   node .claude/runtime/orchestrate.mjs reassign --task <id> --agent <name>   (executor that can really write)
 //   node .claude/runtime/orchestrate.mjs sync-approvals | status | show | check | abandon [--plan <id>]
 //   node .claude/runtime/orchestrate.mjs stop-check | prompt-hook          (hooks, JSON on stdin)
 import { existsSync, readFileSync } from "node:fs";
@@ -286,6 +287,35 @@ export function blockExternal({ planId = null, task, capability, cause, missing,
   return { status: "OK", task, summary: summary(p) };
 }
 
+export function reassign({ planId = null, task, agent }, cwd = ROOT_DEFAULT) {
+  const p = loadPlan(cwd, planId);
+  const t = p.tasks.find((x) => x.id === task);
+  if (!t) throw new Error(`UNKNOWN_TASK: ${task}`);
+  if (!agentExists(cwd, agent)) throw new Error(`UNKNOWN_AGENT: ${agent}`);
+  if (t.status === "COMPLETED") throw new Error("TASK_ALREADY_COMPLETED");
+  t.agent = agent;
+  save(cwd, p);
+  return { status: "OK", task, agent };
+}
+
+export function addTask({ planId = null, id, agent, skills = [], deps = [], blocks = [], objective, acceptance = [], files = [] }, cwd = ROOT_DEFAULT) {
+  const p = loadPlan(cwd, planId);
+  const t = mkTask({ id, title: id, agent, skills, dependsOn: deps, objective, acceptance, filesInScope: files });
+  const next = [...p.tasks, t];
+  for (const b of blocks) {
+    const blocked = next.find((x) => x.id === b);
+    if (!blocked) throw new Error(`UNKNOWN_TASK: ${b}`);
+    if (blocked.status === "COMPLETED") throw new Error(`TASK_ALREADY_COMPLETED: ${b} cannot wait for a new task`);
+    blocked.dependsOn = [...blocked.dependsOn, id];
+    if (blocked.status === "READY") blocked.status = "PENDING";
+  }
+  const problems = validatePlanTasks(next, cwd);
+  if (problems.length) throw new Error(`INVALID_PLAN: ${problems.join("; ")}`);
+  p.tasks = next;
+  save(cwd, p);
+  return { status: "OK", task: id, summary: summary(p) };
+}
+
 export function syncApprovals({ planId = null } = {}, cwd = ROOT_DEFAULT) {
   const p = loadPlan(cwd, planId);
   const changes = [];
@@ -407,6 +437,8 @@ function main() {
       case "done": return out(done({ planId: f.plan || null, task: f.task, evidence: f.evidence, summary: f.summary }, cwd));
       case "fail": return out(fail({ planId: f.plan || null, task: f.task, reason: f.reason }, cwd));
       case "block-external": return out(blockExternal({ planId: f.plan || null, task: f.task, capability: f.capability, cause: f.cause, missing: f.missing, contract: f.contract, current: f.current, fallback: f.fallback, impact: f.impact, unblock: f.unblock }, cwd));
+      case "add-task": return out(addTask({ planId: f.plan || null, id: f.id, agent: f.agent, skills: String(f.skills || "").split(",").filter(Boolean), deps: String(f.deps || "").split(",").filter(Boolean), blocks: String(f.blocks || "").split(",").filter(Boolean), objective: f.objective, acceptance: String(f.acceptance || "").split("|").filter(Boolean), files: String(f.files || "").split(",").filter(Boolean) }, cwd));
+      case "reassign": return out(reassign({ planId: f.plan || null, task: f.task, agent: f.agent }, cwd));
       case "sync-approvals": return out(syncApprovals({ planId: f.plan || null }, cwd));
       case "status": return out(summary(loadPlan(cwd, f.plan || null)));
       case "show": return out(loadPlan(cwd, f.plan || null));

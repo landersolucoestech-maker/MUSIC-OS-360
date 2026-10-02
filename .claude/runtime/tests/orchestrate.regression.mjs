@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { addRecord, updateRecord } from "../lib/record-store.mjs";
-import { plan, next, done, fail, blockExternal, syncApprovals, check, stopCheck, promptHook } from "../orchestrate.mjs";
+import { plan, next, done, reassign, addTask, fail, blockExternal, syncApprovals, check, stopCheck, promptHook } from "../orchestrate.mjs";
 
 const OPS = join(dirname(fileURLToPath(import.meta.url)), "..", "ops.mjs");
 
@@ -155,4 +155,23 @@ test("explicit capabilities build one task per capability with its executor, ski
   const r = plan({ order: "audit", capabilities: "security.review.xss,security.review.ssrf" }, dir);
   assert.equal(r.status, "OK");
   assert.deepEqual(r.tasks.slice(0, 2).map((t) => t.agent), ["xss-reviewer", "ssrf-reviewer"]);
+}));
+
+test("reassign swaps the executor of an open task, refuses unknown agents and completed tasks", () => withDir((dir) => {
+  plan({ order: "x", workflow: "bug-fix" }, dir);
+  assert.equal(reassign({ task: "fix", agent: "backend-engineer" }, dir).agent, "backend-engineer");
+  assert.throws(() => reassign({ task: "fix", agent: "no-such-agent" }, dir), /UNKNOWN_AGENT/);
+  next({}, dir);
+  done({ task: "reproduce", evidence: pass(dir) }, dir);
+  assert.throws(() => reassign({ task: "reproduce", agent: "backend-engineer" }, dir), /ALREADY_COMPLETED/);
+}));
+
+test("add-task inserts a task found during execution and makes a later task wait for it; a cycle or a completed target is refused", () => withDir((dir) => {
+  plan({ order: "x", workflow: "bug-fix" }, dir);
+  const r = addTask({ id: "extra-review", agent: "security-reviewer", skills: ["security-audit"], deps: ["fix"], blocks: ["verification"], objective: "independent review" }, dir);
+  assert.equal(r.status, "OK");
+  assert.throws(() => addTask({ id: "loop", agent: "security-reviewer", deps: ["closure"], blocks: ["fix"], objective: "x" }, dir), /cycle/);
+  next({}, dir);
+  done({ task: "reproduce", evidence: pass(dir) }, dir);
+  assert.throws(() => addTask({ id: "late", agent: "security-reviewer", blocks: ["reproduce"], objective: "x" }, dir), /ALREADY_COMPLETED/);
 }));
