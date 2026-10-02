@@ -112,3 +112,9 @@
 {"name":"gate-run","at":"2026-10-02T03:10:53.783Z","gate":"completion","status":"PASS","durationMs":1780,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-02T03:11:36.003Z","gate":"completion","status":"PASS","durationMs":1789,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-02T03:11:37.897Z","gate":"security","status":"PASS","durationMs":1797,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-02T12:56:03.343Z","gate":"completion","status":"BLOCKED","durationMs":1856,"reasonCount":16}
+{"name":"gate-run","at":"2026-10-02T12:56:04.882Z","gate":"security","status":"BLOCKED","durationMs":1473,"reasonCount":16}
+{"name":"gate-run","at":"2026-10-02T12:56:05.177Z","gate":"pack-integrity","status":"PASS","durationMs":224,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-02T13:02:25.831Z","gate":"completion","status":"PASS","durationMs":1544,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-02T13:02:27.480Z","gate":"security","status":"PASS","durationMs":1577,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-02T13:02:27.758Z","gate":"pack-integrity","status":"PASS","durationMs":208,"reasonCount":0}
