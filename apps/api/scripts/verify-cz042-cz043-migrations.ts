@@ -77,7 +77,13 @@ async function lastMigration(db: Client): Promise<string> {
 }
 
 async function rollbackTo(db: Client, name: string): Promise<void> {
-  for (let i = 0; i < 20 && (await lastMigration(db)) !== name; i += 1) dbOps('rollback');
+  // Bound = migrations applied after the target (a fixed bound goes stale as migrations are added).
+  const { rows } = await db.query(
+    `SELECT count(*)::int AS n FROM musicos360_migrations WHERE id > (SELECT id FROM musicos360_migrations WHERE name = $1)`,
+    [name],
+  );
+  const steps: number = rows[0]?.n ?? 0;
+  for (let i = 0; i < steps && (await lastMigration(db)) !== name; i += 1) dbOps('rollback');
   if ((await lastMigration(db)) !== name) throw new Error(`could not roll back to ${name}`);
 }
 

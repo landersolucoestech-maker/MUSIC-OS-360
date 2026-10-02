@@ -75,7 +75,13 @@ async function lastMigration(db: Client): Promise<string> {
 }
 
 async function rollbackTo(db: Client, name: string): Promise<void> {
-  for (let i = 0; i < 5 && (await lastMigration(db)) !== name; i += 1) dbOps('rollback');
+  // Bound = migrations applied after the target (a fixed bound goes stale as migrations are added).
+  const { rows } = await db.query(
+    `SELECT count(*)::int AS n FROM musicos360_migrations WHERE id > (SELECT id FROM musicos360_migrations WHERE name = $1)`,
+    [name],
+  );
+  const steps: number = rows[0]?.n ?? 0;
+  for (let i = 0; i < steps && (await lastMigration(db)) !== name; i += 1) dbOps('rollback');
   if ((await lastMigration(db)) !== name) throw new Error(`could not roll back to ${name}`);
 }
 
@@ -141,7 +147,12 @@ async function main(): Promise<void> {
 
     // ── up ────────────────────────────────────────────────────────────────────
     dbOps('migrate');
-    check('up: 026 applied', await lastMigration(db), 'CanonicalizeMusicChatValuesToEnglish20260928000026');
+    // 026 must be applied; later migrations may exist, so it is no longer asserted to be the last one.
+    check(
+      'up: 026 applied',
+      (await db.query(`SELECT 1 FROM musicos360_migrations WHERE name = 'CanonicalizeMusicChatValuesToEnglish20260928000026'`)).rowCount,
+      1,
+    );
     check('up: conversation service_status/priority/selected_menu_option remapped, other keys untouched', await metadata(CONV_LEGACY), {
       ...LEGACY_CONVERSATION, service_status: 'waiting_agent', priority: 'high', selected_menu_option: 'wrong_contact',
     });
