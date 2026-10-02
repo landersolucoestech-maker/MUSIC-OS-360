@@ -1,0 +1,9 @@
+{
+  "id": "dele-69a99f76",
+  "createdAt": "2026-10-02T14:28:32.360Z",
+  "agent": "requirements-analyst",
+  "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). Investigate the TODO about share_type in apps/api/src/modules/shares/share-eligibility.util.ts: origin, domain meaning, schema (column, enum, CHECK), producers, consumers, API/DTO, frontend, tests and any canonical source (docs, canonical naming map, migrations) that determines the correct model. Conclude RESOLVABLE (give the exact change and tests) or NEEDS_BUSINESS_DECISION (file/context, decision, supported options, consequences, why not derivable).",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "dele-4cd3d949",
+  "createdAt": "2026-10-02T14:28:32.349Z",
+  "agent": "naming-analyzer",
+  "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). Recompute from the current tree, never from the ledger: run `node scripts/naming/technical-naming-census.mjs --check`, `node scripts/naming/schema-naming-census.mjs` (database not available: say so), `node scripts/naming/validate-canonical-map.mjs`; count blockers, compatibility rows (ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY, LEGACY_DATABASE_COMPATIBILITY) and distinct compatibility groups, aliases, legacy names. Report exact numbers with the command for each, and how many rows have a coveringTest.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

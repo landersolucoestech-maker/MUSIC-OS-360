@@ -1,0 +1,12 @@
+{
+  "id": "evid-8d14ed14",
+  "createdAt": "2026-10-02T14:30:50.321Z",
+  "type": "REVIEW",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "triage-compat-rows: 2183 rows classified by heuristic; 308 TX1 duplicate API/web mirrors; no row provably dead/obsolete from repo alone; ~10 table-driven tests would cover every train",
+  "workspaceFingerprint": "44eeb2c33bc40988ebaeabd46b82c720302504497b789fe82463c08127528b61",
+  "fingerprintStatus": "BOUND",
+  "head": "c6189270b7926bc3c761ed3900b0cfb28f7cdf37"
+}

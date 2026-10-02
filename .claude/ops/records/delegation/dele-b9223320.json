@@ -1,0 +1,9 @@
+{
+  "id": "dele-b9223320",
+  "createdAt": "2026-10-02T14:28:52.027Z",
+  "agent": "authorization-engineer",
+  "objective": "Revalidate the four dev-auth scripts (apps/api/scripts/smoke-test.ts, verify-phase8-resilience.ts, verify-phase7d-upload.ts, reports-smoke.ts) and add regression tests proving they: declare the DEV_AUTH_* flags explicitly, fail clearly on missing/incorrect configuration, never enable a bypass silently, and refuse production-like targets. Put shared logic in one small module under apps/api/scripts/lib if needed and unit-test it with jest. Scope: apps/api/scripts and its tests.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

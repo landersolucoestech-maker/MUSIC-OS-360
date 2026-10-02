@@ -1,0 +1,12 @@
+{
+  "id": "evid-e7a30850",
+  "createdAt": "2026-10-02T14:30:49.972Z",
+  "type": "REVIEW",
+  "reviewer": "database-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "triage-db-blockers: 7 column-drop blockers need owner authorization (archive-then-drop drafts exist, not registered); FINANCIAL-CATEGORY-LEGACY-ENTITIES and 2 empty root SQL files resolvable internally; releases status, phonogram derived fields, takedowns FK need product/owner decision",
+  "workspaceFingerprint": "44eeb2c33bc40988ebaeabd46b82c720302504497b789fe82463c08127528b61",
+  "fingerprintStatus": "BOUND",
+  "head": "c6189270b7926bc3c761ed3900b0cfb28f7cdf37"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "dele-db322253",
+  "createdAt": "2026-10-02T18:18:53.818Z",
+  "agent": "frontend-engineer",
+  "objective": "BLK-CONTRACT-CATEGORY-REGISTRY (partly stale): apps/web/src/modules/artist/lib/contract-type-filters.ts lists both 'exclusivity' and 'exclusive' in the business filter (two names for one concept; 'exclusive'/'non_exclusive' are separate canonical values of distributionType, a different concept). Map legacy 'exclusivo' to canonical 'exclusivity' (already in apps/api contract-category-slugs.ts CANONICAL_CONTRACT_CATEGORY_SLUGS), drop 'exclusive' from the business filter types, keep other mappings only if the canonical set carries them, otherwise report them for ledger rows. Add a web test for canonicalFilterContractType including the legacy values. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/web/src/modules/artist/lib/contract-type-filters.ts",
+    "apps/web/src/modules/artist/lib"
+  ],
+  "status": "CLOSED"
+}

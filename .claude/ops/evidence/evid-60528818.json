@@ -1,0 +1,12 @@
+{
+  "id": "evid-60528818",
+  "createdAt": "2026-10-02T18:56:36.129Z",
+  "type": "REVIEW",
+  "reviewer": "regression-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "regression-review-2: PASS-WITH-FINDINGS, no regression; api jest 460 suites/6834 tests, web vitest 251 files/1891 tests, naming:check exit 0. LOW findings fixed: stale VITE_DISABLE_AUTH banner/comments, docker-compose build arg, SECURITY_ARCHITECTURE and prod-test compose mentions, verify-production-flags comment. Operational note: staging smoke now fails loudly without SMOKE_TOKEN/SMOKE_TENANT (intended).",
+  "workspaceFingerprint": "3390b2a04789dae9f846487b34b1e0cbc9c0750a32d91122a9f828a98ba0af05",
+  "fingerprintStatus": "BOUND",
+  "head": "8071d767a08060f693001bebdf46a463e1ee8aff"
+}

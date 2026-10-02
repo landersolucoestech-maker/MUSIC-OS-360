@@ -1,0 +1,12 @@
+{
+  "id": "evid-b9d678c6",
+  "createdAt": "2026-10-02T18:39:53.254Z",
+  "type": "REVIEW",
+  "reviewer": "migration-test-engineer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "verify:cz042-cz043-migrations (35 checks) and verify:cz045-musicchat-migration (16 checks) exit 0 on disposable PostgreSQL with tenant created by seed:operational; orchestrator re-ran the full sequence (fresh DB, shim, migrate x2, seed, both verifiers): both 'all checks passed'; verifier rollbackTo bound bug fixed at root (bound = migrations applied after target), 026-applied assertion made order-independent, no assertion weakened; server stopped",
+  "workspaceFingerprint": "870735f63247cee22ede9029467a322b101917dbf9f27b2ffa2883d09f0bc6ea",
+  "fingerprintStatus": "BOUND",
+  "head": "e9da013c33bb0e09ddc6ca6c27f2a310b8124751"
+}

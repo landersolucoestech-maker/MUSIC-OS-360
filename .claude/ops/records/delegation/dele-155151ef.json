@@ -1,0 +1,12 @@
+{
+  "id": "dele-155151ef",
+  "createdAt": "2026-10-02T18:18:53.819Z",
+  "agent": "backend-engineer",
+  "objective": "BLK-TAKEDOWNS-FK-COLUMNS (live runtime defect): TakedownEntity (entities.ts ~1610-1613) maps work_id, artist_id and response, which migration 20260719000016 dropped after proving them empty, so repository.find() fails on a migrated database. The migrated schema is authoritative: remove the three entity columns, the matching DTO fields (takedowns.dto.ts ~41,42,65), the artist_id filter (takedowns.service.ts ~41) and the FK assertions for those removed fields (~91-92); keep every other tenant-isolation assertion. Rewrite takedowns.service.create.spec.ts so it still proves cross-tenant checks for the remaining FKs and add a negative test that the removed fields are rejected by the DTO whitelist. First prove by repository-wide search (api, web, scripts, e2e) that no producer/consumer uses them (web form never sends work_id/artist_id). Another agent may edit other parts of entities.ts earlier; make a minimal edit to the TakedownEntity only. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/database/entities.ts",
+    "apps/api/src/modules/takedowns"
+  ],
+  "status": "CLOSED"
+}

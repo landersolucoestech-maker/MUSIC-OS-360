@@ -1,0 +1,15 @@
+{
+  "id": "evid-b8717ca5",
+  "createdAt": "2026-10-02T18:07:48.254Z",
+  "type": "COMMAND",
+  "label": "bash /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/migverify.sh",
+  "command": "bash /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/migverify.sh",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "ea3bb207d46be3d38727987ded944b47b84c6c5fe49fd0c1cb10457356c94ff0",
+  "fingerprintStatus": "BOUND",
+  "head": "9a6450b4b4868f508da98b8fe02c36fd462e11ee",
+  "durationMs": 300410
+}

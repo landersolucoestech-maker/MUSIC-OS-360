@@ -1,0 +1,15 @@
+{
+  "id": "evid-8f6f538a",
+  "createdAt": "2026-10-02T19:12:42.252Z",
+  "type": "COMMAND",
+  "label": "node scripts/check-production-source.mjs",
+  "command": "node scripts/check-production-source.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "[production-source] PASS",
+  "stderrTail": "",
+  "workspaceFingerprint": "dbc0ff2d5414c51dd5c44dad64703fd9571596a2d1688cb069d6dff19b16bc85",
+  "fingerprintStatus": "BOUND",
+  "head": "eff1b1625a2bab715b749632e728af96315c611c",
+  "durationMs": 54
+}

@@ -1,0 +1,12 @@
+{
+  "id": "evid-ef9d3358",
+  "createdAt": "2026-10-02T14:30:49.847Z",
+  "type": "REVIEW",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "census-baseline: technical census exit 0 (4463 files, code debt 0, doc 8696); validate-canonical-map exit 0 (66 assertions, 138 tables); blockers 25 OPEN; exceptions 2445; compat rows 2183 (2100+83), 759 with coveringTest, 1391 TEMPORARY without; aliases 43; schema census needs a database (run later on disposable PG)",
+  "workspaceFingerprint": "44eeb2c33bc40988ebaeabd46b82c720302504497b789fe82463c08127528b61",
+  "fingerprintStatus": "BOUND",
+  "head": "c6189270b7926bc3c761ed3900b0cfb28f7cdf37"
+}

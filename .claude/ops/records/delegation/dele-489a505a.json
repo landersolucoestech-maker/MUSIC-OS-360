@@ -1,0 +1,9 @@
+{
+  "id": "dele-489a505a",
+  "createdAt": "2026-10-02T18:40:25.895Z",
+  "agent": "completion-controller",
+  "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

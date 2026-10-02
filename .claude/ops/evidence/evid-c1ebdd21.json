@@ -1,0 +1,15 @@
+{
+  "id": "evid-c1ebdd21",
+  "createdAt": "2026-10-02T18:39:03.232Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/web exec vitest run src/modules/artist/lib",
+  "command": "pnpm --filter @music-os-360/web exec vitest run src/modules/artist/lib",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "RUN  v2.1.9 /home/user/MUSIC-OS-360/apps/web\n\n ✓ src/modules/artist/lib/contract-type-filters.test.ts (5 tests) 5ms\n ✓ src/modules/artist/lib/distributor-id.test.ts (4 tests) 6ms\n ✓ src/modules/artist/lib/distributor-label.test.ts (4 tests) 4ms\n\n Test Files  3 passed (3)\n      Tests  13 passed (13)\n   Start at  18:39:01\n   Duration  1.82s (transform 342ms, setup 722ms, collect 573ms, tests 14ms, environment 1.84s, prepare 301ms)",
+  "stderrTail": "",
+  "workspaceFingerprint": "870735f63247cee22ede9029467a322b101917dbf9f27b2ffa2883d09f0bc6ea",
+  "fingerprintStatus": "BOUND",
+  "head": "e9da013c33bb0e09ddc6ca6c27f2a310b8124751",
+  "durationMs": 3003
+}

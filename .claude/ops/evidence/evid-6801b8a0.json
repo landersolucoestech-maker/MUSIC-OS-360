@@ -1,0 +1,12 @@
+{
+  "id": "evid-6801b8a0",
+  "createdAt": "2026-10-02T14:30:50.151Z",
+  "type": "REVIEW",
+  "reviewer": "requirements-analyst",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "share-type-todo: NEEDS_BUSINESS_DECISION (value set, omitted-share_type behavior, backfill L5, CHECK); option B low-risk dedup of raw IsNull/SQL usages is internal",
+  "workspaceFingerprint": "44eeb2c33bc40988ebaeabd46b82c720302504497b789fe82463c08127528b61",
+  "fingerprintStatus": "BOUND",
+  "head": "c6189270b7926bc3c761ed3900b0cfb28f7cdf37"
+}

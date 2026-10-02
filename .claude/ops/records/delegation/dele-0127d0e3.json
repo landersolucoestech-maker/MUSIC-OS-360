@@ -1,0 +1,9 @@
+{
+  "id": "dele-0127d0e3",
+  "createdAt": "2026-10-02T17:32:43.334Z",
+  "agent": "root-cause-investigator",
+  "objective": "Find the root cause of the failure of task share-type-dedup (\"share_type: value set and backfill need a business decision. Do the derivable part: route every consumer of the 'share_type IS NULL means registry split' rule through apps/api/src/modules/shares/share-eligibility.util.ts (isRegistryEligibleShare, REGISTRY_ELIGIBLE_SHARE_SQL): registry/payloads/society-payload-builder.service.ts (~96,136), registry/validation/entity-validators.ts (~60,114), core/external-data/external-data-exchange.service.ts (~562), shares.service.ts (~127,143). Remove duplicated raw IsNull()/hardcoded SQL. Replace the generic TODO with a precise DECISION REQUIRED block: file/context, decision, options (A: explicit 'registry' value + CHECK + backfill migration; B: keep NULL as the signal), consequences, impact, and why it cannot be derived from the canonical sources. Add a spec that fails if a consumer reintroduces a raw share_type IS NULL. No schema change, no behavior change. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.\"): subagent terminated by API rate limit (429) before reporting; no partial changes in tree. Do not retry the same approach.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "dele-90d6dd5e",
+  "createdAt": "2026-10-02T18:18:53.821Z",
+  "agent": "technical-debt-analyzer",
+  "objective": "BLK-RESIDUE-CENSUS-DOCS: 85 references to untracked findings/*.md files (grep -rE 'findings/[A-Za-z0-9_.-]+\\.md' excluding docs/naming/canonical-naming-map.json and .claude/ops) in ~26 files (code comments, migration headers, docs). Add one 'Residue census' subsection per backfill migration (20260930000017-19, 21-29, 31-33) to docs/runbooks/staging-to-production.md, each query derived from that migration's own predicate (read the migration; do not reconstruct from memory); read-only SELECT counts. Then repoint every findings/... reference in code comments, migration headers and docs to the new runbook anchors so the grep returns 0 outside the ledger (the orchestrator repoints ledger rows). Check no migration spec hashes file contents before editing headers; run the migration specs. List the old-reference -> new-anchor mapping in your report as JSON. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+  "requirementIds": [],
+  "filesInScope": [
+    "docs/runbooks/staging-to-production.md",
+    "docs"
+  ],
+  "status": "CLOSED"
+}

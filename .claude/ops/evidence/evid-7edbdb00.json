@@ -1,0 +1,15 @@
+{
+  "id": "evid-7edbdb00",
+  "createdAt": "2026-10-02T18:39:00.025Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/api exec jest src/core/workflow src/core/errors src/modules/reports src/modules/projects src/modules/takedowns src/database/entities",
+  "command": "pnpm --filter @music-os-360/api exec jest src/core/workflow src/core/errors src/modules/reports src/modules/projects src/modules/takedowns src/database/entities",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[95m[Nest] 8717  - \u001b[39m10/02/2026, 6:38:58 PM \u001b[95m  DEBUG\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[95mTrigger [r1] → action [notify] executed for tenant=t1\u001b[39m\n\u001b[33m[Nest] 8717  - \u001b[39m10/02/2026, 6:38:58 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[33mTrigger [r2] → action [notify] failed: Error: queue down. Enqueuing for retry.\u001b[39m\n\u001b[33m[Nest] 8717  - \u001b[39m10/02/2026, 6:38:58 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[33mWorkflowAutomation skipped event without tenantId [lead.created]\u001b[39m\n\u001b[95m[Nest] 8717  - \u001b[39m10/02/2026, 6:38:58 PM \u001b[95m  DEBUG\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[95mTrigger [r4] → action [notify] executed for tenant=tenant-a\u001b[39m\n\u001b[33m[Nest] 8717  - \u001b[39m10/02/2026, 6:38:59 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[WorkflowService] \u001b[39m\u001b[33mInvalid transition: 'draft' → 'signed' is not allowed in workflow 'demo_workflow' (demo e1, tenant t1, code=transition_not_defined)\u001b[39m\n\u001b[33m[Nest] 8717  - \u001b[39m10/02/2026, 6:38:59 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[WorkflowService] \u001b[39m\u001b[33mInsufficient permission: role 'viewer' cannot perform 'draft' → 'review' (demo e1, tenant t1, code=role_not_authorized)\u001b[39m\n\u001b[33m[Nest] 8717  - \u001b[39m10/02/2026, 6:38:59 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[WorkflowService] \u001b[39m\u001b[33mAccess denied: authentication required for transition 'draft' → 'review' (demo e1, tenant t1, code=actor_role_missing)\u001b[39m\n\u001b[33m[Nest] 8717  - \u001b[39m10/02/2026, 6:38:59 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[WorkflowService] \u001b[39m\u001b[33mGuard rejected transition 'review' → 'signed' in workflow 'demo_workflow' (demo e1, tenant t1, code=guard_rejected)\u001b[39m\n\u001b[32m[Nest] 8724  - \u001b[39m10/02/2026, 6:38:59 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[ExportAudit] \u001b[39m\u001b[32mREPORT_EXPORT tenant=t1 user=u1 entity=artists format=xlsx records=0 status=failed\u001b[39m\n\u001b[32m[Nest] 8724  - \u001b[39m10/02/2026, 6:38:59 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[ExportAudit] \u001b[39m\u001b[32mREPORT_EXPORT tenant=t user=u entity=e format=xlsx records=1 status=success\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "870735f63247cee22ede9029467a322b101917dbf9f27b2ffa2883d09f0bc6ea",
+  "fingerprintStatus": "BOUND",
+  "head": "e9da013c33bb0e09ddc6ca6c27f2a310b8124751",
+  "durationMs": 21107
+}

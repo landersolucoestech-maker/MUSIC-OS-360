@@ -1,0 +1,15 @@
+{
+  "id": "evid-aa4720dd",
+  "createdAt": "2026-10-02T17:38:03.456Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/api exec jest src/modules/shares src/modules/registry src/core/external-data",
+  "command": "pnpm --filter @music-os-360/api exec jest src/modules/shares src/modules/registry src/core/external-data",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "a81513eecb16cb48b42ea84d6916867e3619fb04e147a7ac0b34eaedaba54fb9",
+  "fingerprintStatus": "BOUND",
+  "head": "9a6450b4b4868f508da98b8fe02c36fd462e11ee",
+  "durationMs": 23436
+}

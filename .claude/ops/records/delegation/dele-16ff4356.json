@@ -1,0 +1,13 @@
+{
+  "id": "dele-16ff4356",
+  "createdAt": "2026-10-02T18:18:53.816Z",
+  "agent": "backend-engineer",
+  "objective": "BLK-PROJECTS-XLSX-HEADER-ROUNDTRIP and BLK-PROJECTS-EXPORT-RAW-TOKENS. (1) Round-trip: in reports i18n field-labels.pt-br.ts change the labels 'Duração — Minutos'/'Duração — Segundos' (trackDurationMinutes/Seconds, ~706-707) to the existing parenthesis style ('Duração (minutos)'-like, matching siblings at ~446-447, check they stay unique) so they satisfy WRITABLE_KEY_RE WITHOUT widening apps/api/src/core/security/safe-object.ts (do not touch that security primitive); keep the old em-dash headers accepted on import as a deprecated alias applied before the isWritableKey check (normalize only for alias lookup); update pinned specs (export-engine.service.spec.ts, report-column-ids.spec.ts); add a round-trip test (export then validate) for projects and for the old header. (2) Raw tokens: add PT-BR label maps for projectType (single/ep/album -> Single/EP/Álbum), soloFeat and originalRemix (solo/feat, original/remix) derived from the web ProjectFormModal wording (apps/web/src/modules/projects/... lines ~431-445,721-724), next to the instrumental/language maps in projects/project-track-vocabulary.ts; wire export (value-labels.pt-br.ts COLUMN_LABELS.projects.projectType, computed-fields/project-tracks.field.ts) and import (extend canonicalProjectTrackImportRows to map label or canonical value back, trimmed, case-insensitive; unknown text unchanged); tests label->canonical for each value. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/modules/reports",
+    "apps/api/src/modules/projects",
+    "apps/api/src/core/security/safe-object.ts"
+  ],
+  "status": "CLOSED"
+}

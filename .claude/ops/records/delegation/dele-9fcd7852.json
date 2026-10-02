@@ -1,0 +1,13 @@
+{
+  "id": "dele-9fcd7852",
+  "createdAt": "2026-10-02T14:31:42.132Z",
+  "agent": "schema-engineer",
+  "objective": "Resolve BLK-FINANCIAL-CATEGORY-LEGACY-ENTITIES and part of BLK-LEGACY-ROOT-SQL. In apps/api/src/database/entities.ts delete FinancialCategoryEntity, FinancialCategoryCenterEntity, FinancialCategoryLinkEntity, FinancialCategoryFavoriteEntity, FinancialCategoryRuleEntity, FinancialCategoryRuleRunEntity (lines ~3453-3542) and their ALL_ENTITIES entries (~3784-3789); KEEP FinancialCategoryAuditLogEntity. First re-prove by repository-wide search that nothing imports them (migration 20260718000002 already dropped their tables). Delete the two zero-byte files apps/api/migrations-complete-clean.sql and apps/api/migrations-temp.sql after proving no references except docs (fix those docs references). Do not touch migrations-complete.sql or any other root SQL. No schema or data change. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/database/entities.ts",
+    "apps/api/migrations-complete-clean.sql",
+    "apps/api/migrations-temp.sql"
+  ],
+  "status": "CLOSED"
+}

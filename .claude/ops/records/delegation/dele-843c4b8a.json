@@ -1,0 +1,9 @@
+{
+  "id": "dele-843c4b8a",
+  "createdAt": "2026-10-02T14:28:52.019Z",
+  "agent": "migration-test-engineer",
+  "objective": "Run the pending migration verifiers `verify:cz042-cz043-migrations` and `verify:cz045-musicchat-migration` of apps/api against a disposable PostgreSQL. Start it as the postgres user with `su postgres -c \"/usr/lib/postgresql/16/bin/pg_ctl -D /var/lib/postgresql/music-os-disposable/data -o '-p 54329 -k /var/lib/postgresql/music-os-disposable -c listen_addresses=127.0.0.1' -l /var/lib/postgresql/music-os-disposable/log -w start\"`; create a fresh `music_os_scratch_mig` database (role musicos360 superuser, then `apps/api/scripts/local-auth-shim.sql`, DB_SSL=false, NODE_ENV=test, DATABASE_URL postgresql://musicos360@127.0.0.1:54329/music_os_scratch_mig), run `db-ops.ts migrate`, then investigate how the repository creates a tenant safely (seeds, bootstrap-tenant-zero, signup provisioning) and create a disposable tenant so the verifiers can run. Fix verifier or seed failures at their root cause; never weaken a verifier. Stop the PostgreSQL server at the end. Scope: apps/api/scripts, apps/api/src/database/seeds (only if a seed fix is necessary).",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

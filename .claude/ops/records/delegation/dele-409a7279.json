@@ -1,0 +1,9 @@
+{
+  "id": "dele-409a7279",
+  "createdAt": "2026-10-02T14:28:32.358Z",
+  "agent": "naming-analyzer",
+  "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). Classify the 2100 active TEMPORARY_MIGRATION_COMPATIBILITY rows (and the LEGACY_DATABASE_COMPATIBILITY rows) in the ledger into: legitimate boundary (external contract, historical persistence, public interface), adapter/alias/bridge, duplicated, obsolete, dead. Group by path/consumer, and for each group propose: remove, isolate-and-cover, or keep with owner. Identify which groups can be covered by ONE behavioral/contract test each (not per-line tests) and name the test file to add. Give counts per class.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

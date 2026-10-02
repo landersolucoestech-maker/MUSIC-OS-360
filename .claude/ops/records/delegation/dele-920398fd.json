@@ -1,0 +1,9 @@
+{
+  "id": "dele-920398fd",
+  "createdAt": "2026-10-02T14:28:32.353Z",
+  "agent": "database-reviewer",
+  "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). For each ledger blocker in docs/naming/canonical-naming-map.json whose area is the database (BLK-C3-E6, BLK-HR-LEGACY-MIRRORS, BLK-SHARES-ARTIST-MIRROR, BLK-WORKS-LEGACY-DUPLICATES, BLK-PHONOGRAMS-LEGACY-DUPLICATES, BLK-TRANSACTIONS-LEGACY-DUPLICATES, BLK-CLIENTS-LEGACY-DUPLICATES, BLK-RELEASES-STATUS-CHECK, BLK-PHONOGRAMS-DERIVED-FIELDS, BLK-TAKEDOWNS-FK-COLUMNS, BLK-FINANCIAL-CATEGORY-LEGACY-ENTITIES, BLK-LEGACY-ROOT-SQL): trace every reader and writer in apps/api, apps/web, scripts and migrations, and decide with evidence whether it can be resolved NOW without losing data (e.g. a column with no reader and no writer proven by search, backfill-then-drop migration keeping a verified copy, dead entity removal) or whether it needs an owner decision. Give per blocker: verdict RESOLVABLE_INTERNALLY or NEEDS_DECISION, the exact change list, the data-preservation check, and blast radius.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

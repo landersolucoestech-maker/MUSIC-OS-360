@@ -1,0 +1,13 @@
+{
+  "id": "dele-5bf4a1a0",
+  "createdAt": "2026-10-02T18:18:53.814Z",
+  "agent": "service-layer-engineer",
+  "objective": "BLK-WORKFLOW-EXECUTION-ERROR-TEXT: WorkflowExecutionService.list()/get() in apps/api/src/core/workflow/workflow-execution.service.ts return entities with raw error_message. Follow the precedent toPublicSkillRun (core/skills/skill-run.service.ts) : add toPublicWorkflowExecution (and a log mapper if the log entity carries raw text) that drops error_message and exposes error_code via classifyFailureCode(raw,'WORKFLOW_EXECUTION_FAILED') (add the code to the shared error-code table packages/types/src/api-error-codes.ts and its PT-BR copy if absent); change list()/get() to return the public DTOs; update existing specs; add a case to core/errors/raw-error-boundary.spec.ts proving the serialized DTO contains no raw text. Verify consumers (workflow-automation.service.ts). Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/core/workflow",
+    "apps/api/src/core/errors",
+    "apps/api/src/core/skills"
+  ],
+  "status": "CLOSED"
+}

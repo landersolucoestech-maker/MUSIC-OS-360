@@ -1,0 +1,9 @@
+{
+  "id": "dele-7a54d8a4",
+  "createdAt": "2026-10-02T14:28:32.356Z",
+  "agent": "naming-analyzer",
+  "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). For each ledger blocker that is not purely a database blocker (BLK-HR-PII, BLK-CRM-PII-PLAINTEXT, BLK-TRANSACTION-CATEGORY-TAXONOMY, BLK-CLIENT-PROFILE-TAXONOMY, BLK-MARKETING-TARGET-WEB-VOCABULARY, BLK-HR-EMPLOYEE-DOCUMENTS, BLK-CI-JOB-NAME-FASE, BLK-CONTRACT-CATEGORY-REGISTRY, BLK-WORKFLOW-EXECUTION-ERROR-TEXT, BLK-RESIDUE-CENSUS-DOCS, BLK-PROJECTS-XLSX-HEADER-ROUNDTRIP, BLK-PROJECTS-EXPORT-RAW-TOKENS, BLK-E2E-ROOT-XLSX-DEPENDENCY): trace producers/consumers and decide with evidence RESOLVABLE_INTERNALLY (state the exact change list, files and tests) or NEEDS_DECISION (state the decision, supported options, consequences, why it cannot be derived from the repository's canonical sources).",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

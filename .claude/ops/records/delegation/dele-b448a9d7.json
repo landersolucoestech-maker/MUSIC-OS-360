@@ -1,0 +1,9 @@
+{
+  "id": "dele-b448a9d7",
+  "createdAt": "2026-10-02T14:28:52.013Z",
+  "agent": "configuration-analyzer",
+  "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). Audit environment variables for auth, security, runtime, database, integrations, compatibility and naming. Focus on duplicates and divergent semantics (AUTH_DISABLED / VITE_AUTH_DISABLED / VITE_DISABLE_AUTH; USE_MOCK / MOCK_MODE; others you find). For each: consumers, canonical name, whether a compatibility boundary is required, insecure-fallback or downgrade risk, and the exact change (code, scripts, CI, docs, validation) needed. Never print secret values.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

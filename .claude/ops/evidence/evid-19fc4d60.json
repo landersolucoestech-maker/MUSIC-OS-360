@@ -1,0 +1,15 @@
+{
+  "id": "evid-19fc4d60",
+  "createdAt": "2026-10-02T19:12:45.739Z",
+  "type": "COMMAND",
+  "label": "node .claude/runtime/validate-pack-contracts.mjs",
+  "command": "node .claude/runtime/validate-pack-contracts.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "pack contracts through batch 24: PASS ({\"manifestItems\":695,\"agentsPresent\":374,\"skillsPresent\":321,\"capabilities\":351})",
+  "stderrTail": "",
+  "workspaceFingerprint": "dbc0ff2d5414c51dd5c44dad64703fd9571596a2d1688cb069d6dff19b16bc85",
+  "fingerprintStatus": "BOUND",
+  "head": "eff1b1625a2bab715b749632e728af96315c611c",
+  "durationMs": 265
+}

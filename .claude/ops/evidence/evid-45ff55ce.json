@@ -1,0 +1,15 @@
+{
+  "id": "evid-45ff55ce",
+  "createdAt": "2026-10-02T17:32:36.074Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/api exec jest --config scripts/lib/jest.config.cjs",
+  "command": "pnpm --filter @music-os-360/api exec jest --config scripts/lib/jest.config.cjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "44eeb2c33bc40988ebaeabd46b82c720302504497b789fe82463c08127528b61",
+  "fingerprintStatus": "BOUND",
+  "head": "c6189270b7926bc3c761ed3900b0cfb28f7cdf37",
+  "durationMs": 8165
+}

@@ -1,0 +1,12 @@
+{
+  "id": "evid-dc4e3803",
+  "createdAt": "2026-10-02T18:56:36.019Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "security-review-2: PASS-WITH-FINDINGS, no CRITICAL/HIGH. G-1 loopback tunnel (accepted: server-side prod guard is the control), G-2 legacy VITE flags unchecked (fixed: forbidden when true), G-3 takedowns tenant_id spread order (fixed + test), G-4 skipped logs unsanitized (fixed + test). Orchestrator runtime gap (path traversal via workflow/agent/skill/task names) fixed with SAFE_NAME validation and regression test.",
+  "workspaceFingerprint": "3390b2a04789dae9f846487b34b1e0cbc9c0750a32d91122a9f828a98ba0af05",
+  "fingerprintStatus": "BOUND",
+  "head": "8071d767a08060f693001bebdf46a463e1ee8aff"
+}

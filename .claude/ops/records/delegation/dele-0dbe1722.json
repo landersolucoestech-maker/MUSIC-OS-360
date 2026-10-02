@@ -1,0 +1,9 @@
+{
+  "id": "dele-0dbe1722",
+  "createdAt": "2026-10-02T18:40:43.303Z",
+  "agent": "regression-reviewer",
+  "objective": "Regression review of the normalization batch (git diff c618927..HEAD): entity removal, takedowns, workflow DTO, projects export, share eligibility, env flag removals, verifier scripts, smoke-test change, ledger.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

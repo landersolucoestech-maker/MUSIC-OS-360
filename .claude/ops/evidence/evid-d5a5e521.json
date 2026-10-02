@@ -1,0 +1,12 @@
+{
+  "id": "evid-d5a5e521",
+  "createdAt": "2026-10-02T17:32:36.179Z",
+  "type": "REVIEW",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "triage-app-blockers: 8 resolvable (3 stale ledger rows: client-profile, marketing-target, contract-category), 5 need decision (HR PII, CRM PII, transaction taxonomy, HR docs, CI job name, E2E xlsx root dep)",
+  "workspaceFingerprint": "44eeb2c33bc40988ebaeabd46b82c720302504497b789fe82463c08127528b61",
+  "fingerprintStatus": "BOUND",
+  "head": "c6189270b7926bc3c761ed3900b0cfb28f7cdf37"
+}

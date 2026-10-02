@@ -1,0 +1,799 @@
+{
+  "id": "orch-a03c3f22",
+  "createdAt": "2026-10-02T14:28:26.606Z",
+  "order": "MUSIC OS 360 definitive normalization mission: recompute the naming census, eliminate naming blockers and unprotected compatibility debt, resolve share_type, run migration verifiers, audit env vars and dev-auth, then gates, security and regression reviews, final report",
+  "title": "definitive-normalization",
+  "workflow": null,
+  "intent": null,
+  "status": "COMPLETED",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-02T19:26:08.254Z",
+  "tasks": [
+    {
+      "id": "census-baseline",
+      "title": "census-baseline",
+      "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). Recompute from the current tree, never from the ledger: run `node scripts/naming/technical-naming-census.mjs --check`, `node scripts/naming/schema-naming-census.mjs` (database not available: say so), `node scripts/naming/validate-canonical-map.mjs`; count blockers, compatibility rows (ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY, LEGACY_DATABASE_COMPATIBILITY) and distinct compatibility groups, aliases, legacy names. Report exact numbers with the command for each, and how many rows have a coveringTest.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "repository-census"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "numbers with commands"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-4cd3d949",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-ef9d3358"
+      ],
+      "result": "baseline recomputed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "triage-db-blockers",
+      "title": "triage-db-blockers",
+      "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). For each ledger blocker in docs/naming/canonical-naming-map.json whose area is the database (BLK-C3-E6, BLK-HR-LEGACY-MIRRORS, BLK-SHARES-ARTIST-MIRROR, BLK-WORKS-LEGACY-DUPLICATES, BLK-PHONOGRAMS-LEGACY-DUPLICATES, BLK-TRANSACTIONS-LEGACY-DUPLICATES, BLK-CLIENTS-LEGACY-DUPLICATES, BLK-RELEASES-STATUS-CHECK, BLK-PHONOGRAMS-DERIVED-FIELDS, BLK-TAKEDOWNS-FK-COLUMNS, BLK-FINANCIAL-CATEGORY-LEGACY-ENTITIES, BLK-LEGACY-ROOT-SQL): trace every reader and writer in apps/api, apps/web, scripts and migrations, and decide with evidence whether it can be resolved NOW without losing data (e.g. a column with no reader and no writer proven by search, backfill-then-drop migration keeping a verified copy, dead entity removal) or whether it needs an owner decision. Give per blocker: verdict RESOLVABLE_INTERNALLY or NEEDS_DECISION, the exact change list, the data-preservation check, and blast radius.",
+      "agent": "database-reviewer",
+      "skills": [
+        "database-audit",
+        "schema-normalization"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "per-blocker verdict with evidence"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-920398fd",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-e7a30850"
+      ],
+      "result": "db blockers triaged",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "triage-app-blockers",
+      "title": "triage-app-blockers",
+      "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). For each ledger blocker that is not purely a database blocker (BLK-HR-PII, BLK-CRM-PII-PLAINTEXT, BLK-TRANSACTION-CATEGORY-TAXONOMY, BLK-CLIENT-PROFILE-TAXONOMY, BLK-MARKETING-TARGET-WEB-VOCABULARY, BLK-HR-EMPLOYEE-DOCUMENTS, BLK-CI-JOB-NAME-FASE, BLK-CONTRACT-CATEGORY-REGISTRY, BLK-WORKFLOW-EXECUTION-ERROR-TEXT, BLK-RESIDUE-CENSUS-DOCS, BLK-PROJECTS-XLSX-HEADER-ROUNDTRIP, BLK-PROJECTS-EXPORT-RAW-TOKENS, BLK-E2E-ROOT-XLSX-DEPENDENCY): trace producers/consumers and decide with evidence RESOLVABLE_INTERNALLY (state the exact change list, files and tests) or NEEDS_DECISION (state the decision, supported options, consequences, why it cannot be derived from the repository's canonical sources).",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "contract-tracing"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "per-blocker verdict with evidence"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-7a54d8a4",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-d5a5e521"
+      ],
+      "result": "app blockers triaged",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "triage-compat-rows",
+      "title": "triage-compat-rows",
+      "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). Classify the 2100 active TEMPORARY_MIGRATION_COMPATIBILITY rows (and the LEGACY_DATABASE_COMPATIBILITY rows) in the ledger into: legitimate boundary (external contract, historical persistence, public interface), adapter/alias/bridge, duplicated, obsolete, dead. Group by path/consumer, and for each group propose: remove, isolate-and-cover, or keep with owner. Identify which groups can be covered by ONE behavioral/contract test each (not per-line tests) and name the test file to add. Give counts per class.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "counts per class",
+        "group list with proposed action and test"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-409a7279",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-8d14ed14"
+      ],
+      "result": "compat classified",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "share-type-todo",
+      "title": "share-type-todo",
+      "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). Investigate the TODO about share_type in apps/api/src/modules/shares/share-eligibility.util.ts: origin, domain meaning, schema (column, enum, CHECK), producers, consumers, API/DTO, frontend, tests and any canonical source (docs, canonical naming map, migrations) that determines the correct model. Conclude RESOLVABLE (give the exact change and tests) or NEEDS_BUSINESS_DECISION (file/context, decision, supported options, consequences, why not derivable).",
+      "agent": "requirements-analyst",
+      "skills": [
+        "contract-tracing",
+        "data-flow-trace"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "resolution or decision record"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-69a99f76",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-6801b8a0"
+      ],
+      "result": "decision record",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "env-var-audit",
+      "title": "env-var-audit",
+      "objective": "READ-ONLY: change no file in the repository; write your findings into your final report (the orchestrator persists them). Audit environment variables for auth, security, runtime, database, integrations, compatibility and naming. Focus on duplicates and divergent semantics (AUTH_DISABLED / VITE_AUTH_DISABLED / VITE_DISABLE_AUTH; USE_MOCK / MOCK_MODE; others you find). For each: consumers, canonical name, whether a compatibility boundary is required, insecure-fallback or downgrade risk, and the exact change (code, scripts, CI, docs, validation) needed. Never print secret values.",
+      "agent": "configuration-analyzer",
+      "skills": [
+        "config-map",
+        "feature-flag-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "variable table with proposed canonical names and changes"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-b448a9d7",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-dea08fd9"
+      ],
+      "result": "env audit",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "migration-verifiers",
+      "title": "migration-verifiers",
+      "objective": "Run the pending migration verifiers `verify:cz042-cz043-migrations` and `verify:cz045-musicchat-migration` of apps/api against a disposable PostgreSQL. Start it as the postgres user with `su postgres -c \"/usr/lib/postgresql/16/bin/pg_ctl -D /var/lib/postgresql/music-os-disposable/data -o '-p 54329 -k /var/lib/postgresql/music-os-disposable -c listen_addresses=127.0.0.1' -l /var/lib/postgresql/music-os-disposable/log -w start\"`; create a fresh `music_os_scratch_mig` database (role musicos360 superuser, then `apps/api/scripts/local-auth-shim.sql`, DB_SSL=false, NODE_ENV=test, DATABASE_URL postgresql://musicos360@127.0.0.1:54329/music_os_scratch_mig), run `db-ops.ts migrate`, then investigate how the repository creates a tenant safely (seeds, bootstrap-tenant-zero, signup provisioning) and create a disposable tenant so the verifiers can run. Fix verifier or seed failures at their root cause; never weaken a verifier. Stop the PostgreSQL server at the end. Scope: apps/api/scripts, apps/api/src/database/seeds (only if a seed fix is necessary).",
+      "agent": "migration-test-engineer",
+      "skills": [
+        "create-migration-tests",
+        "run-integration-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "migration-verifiers-recovery-1"
+      ],
+      "acceptance": [
+        "both verifiers exit 0 with output, or a proven external blocker",
+        "server stopped"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-232e30ed",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-b9d678c6"
+      ],
+      "result": "both verifiers PASS on disposable PG",
+      "failureReason": "subagent terminated by API rate limit (429) before reporting; no partial changes in tree",
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "dev-auth-regression",
+      "title": "dev-auth-regression",
+      "objective": "Revalidate the four dev-auth scripts (apps/api/scripts/smoke-test.ts, verify-phase8-resilience.ts, verify-phase7d-upload.ts, reports-smoke.ts) and add regression tests proving they: declare the DEV_AUTH_* flags explicitly, fail clearly on missing/incorrect configuration, never enable a bypass silently, and refuse production-like targets. Put shared logic in one small module under apps/api/scripts/lib if needed and unit-test it with jest. Scope: apps/api/scripts and its tests.",
+      "agent": "authorization-engineer",
+      "skills": [
+        "create-security-tests",
+        "run-security-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "tests fail on old behavior",
+        "jest green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-b9223320",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-45ff55ce"
+      ],
+      "result": "shared guard module + 28 jest tests; scripts wired",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "completion-gate",
+      "title": "completion gate",
+      "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+      "agent": "completion-controller",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census-baseline",
+        "triage-db-blockers",
+        "triage-app-blockers",
+        "triage-compat-rows",
+        "share-type-todo",
+        "env-var-audit",
+        "migration-verifiers",
+        "dev-auth-regression"
+      ],
+      "acceptance": [
+        "node .claude/runtime/completion-gate.mjs reports PASS",
+        "no open criterion, finding or blocker"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-489a505a",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-70b2abd9"
+      ],
+      "result": "completion, security, pack-integrity, human-approval, operational-automation PASS on the final tree; 17 naming blockers and 1075 uncovered compatibility rows remain and are documented as decisions needed, not as completion",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "remove-dead-entities",
+      "title": "remove-dead-entities",
+      "objective": "Resolve BLK-FINANCIAL-CATEGORY-LEGACY-ENTITIES and part of BLK-LEGACY-ROOT-SQL. In apps/api/src/database/entities.ts delete FinancialCategoryEntity, FinancialCategoryCenterEntity, FinancialCategoryLinkEntity, FinancialCategoryFavoriteEntity, FinancialCategoryRuleEntity, FinancialCategoryRuleRunEntity (lines ~3453-3542) and their ALL_ENTITIES entries (~3784-3789); KEEP FinancialCategoryAuditLogEntity. First re-prove by repository-wide search that nothing imports them (migration 20260718000002 already dropped their tables). Delete the two zero-byte files apps/api/migrations-complete-clean.sql and apps/api/migrations-temp.sql after proving no references except docs (fix those docs references). Do not touch migrations-complete.sql or any other root SQL. No schema or data change. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.",
+      "agent": "schema-engineer",
+      "skills": [
+        "schema-normalization",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [
+        "apps/api/src/database/entities.ts",
+        "apps/api/migrations-complete-clean.sql",
+        "apps/api/migrations-temp.sql"
+      ],
+      "dependsOn": [
+        "remove-dead-entities-recovery-1"
+      ],
+      "acceptance": [
+        "6 dead FinancialCategory* entity classes removed from entities.ts and ALL_ENTITIES",
+        "two empty root SQL files deleted",
+        "entities-registry spec, api typecheck, crud-permission-metadata and raw-sql-column-references specs green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-1e3f57db",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-5199f687"
+      ],
+      "result": "6 dead entities removed; 2 empty SQL files git-rm'd by orchestrator",
+      "failureReason": "subagent terminated by API rate limit (429) before reporting; no partial changes in tree",
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "env-cleanup",
+      "title": "env-cleanup",
+      "objective": "Implement the env-var-audit findings: (1) collapse VITE_DISABLE_AUTH into VITE_AUTH_DISABLED (delete the second synthetic user/tenant) or, if a frontend-only contract is genuinely needed, rename to VITE_DEV_AUTH_BYPASS and validate it everywhere; add the prod-forbid rule to scripts/env-check.mjs and apps/web/scripts/assert-supabase-env.mjs; (2) remove the dead MOCK_MODE and VITE_MOCK_MODE/VITE_USE_MOCK reads, the mismatch check in env-check.mjs and VITE_MOCK_MODE in ci.yml; (3) rename USE_MOCK to DEV_SOCIAL_METRICS_MOCK keeping USE_MOCK only as a deprecated alias still forbidden in prod-like environments, with a test; (4) make PROD_FORBIDDEN_BYPASS_FLAGS in env.schema.ts the single source reused by create-app.ts, security-startup.service.ts, verify-production-flags.ts, plus a test that scripts and code agree; (5) UUID validation for DEV_TENANT_ID/DEV_ORG_ID; (6) hard-set VITE_AUTH_DISABLED=false in the production Dockerfile; (7) update .env.development.example, .env.production, .env.staging and docs that still describe MOCK_MODE as live. Never weaken a production guard; print no secret values. Do not touch apps/api/scripts. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.",
+      "agent": "configuration-analyzer",
+      "skills": [
+        "config-map",
+        "feature-flag-analysis"
+      ],
+      "filesInScope": [
+        "apps/api/src/core/config",
+        "apps/api/src/create-app.ts",
+        "apps/api/src/core/security",
+        "scripts/env-check.mjs",
+        "apps/web/scripts/assert-supabase-env.mjs",
+        "apps/web/src/shared/lib/env.ts",
+        ".github/workflows/ci.yml",
+        "apps/web/Dockerfile"
+      ],
+      "dependsOn": [
+        "env-cleanup-recovery-1"
+      ],
+      "acceptance": [
+        "one canonical frontend bypass flag with prod-forbid validation",
+        "MOCK_MODE and VITE_*MOCK* dead flags removed",
+        "forbid list single-sourced with agreement test",
+        "env:check, verify:production-flags and affected specs green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-b2a2f7a7",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-f01d4033",
+        "evid-a008964f"
+      ],
+      "result": "frontend bypass renamed VITE_DEV_AUTH_BYPASS + prod-forbid, dead MOCK flags removed, forbid list single-sourced with agreement test, UUID validation, Dockerfile hard-set, USE_MOCK alias->DEV_SOCIAL_METRICS_MOCK finished by orchestrator; remaining comment/doc mentions tracked for the residue task",
+      "failureReason": "subagent terminated by API rate limit (429) before reporting; no partial changes in tree",
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "share-type-dedup",
+      "title": "share-type-dedup",
+      "objective": "share_type: value set and backfill need a business decision. Do the derivable part: route every consumer of the 'share_type IS NULL means registry split' rule through apps/api/src/modules/shares/share-eligibility.util.ts (isRegistryEligibleShare, REGISTRY_ELIGIBLE_SHARE_SQL): registry/payloads/society-payload-builder.service.ts (~96,136), registry/validation/entity-validators.ts (~60,114), core/external-data/external-data-exchange.service.ts (~562), shares.service.ts (~127,143). Remove duplicated raw IsNull()/hardcoded SQL. Replace the generic TODO with a precise DECISION REQUIRED block: file/context, decision, options (A: explicit 'registry' value + CHECK + backfill migration; B: keep NULL as the signal), consequences, impact, and why it cannot be derived from the canonical sources. Add a spec that fails if a consumer reintroduces a raw share_type IS NULL. No schema change, no behavior change. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.",
+      "agent": "service-layer-engineer",
+      "skills": [
+        "contract-tracing",
+        "safe-refactor"
+      ],
+      "filesInScope": [
+        "apps/api/src/modules/shares",
+        "apps/api/src/modules/registry",
+        "apps/api/src/core/external-data/external-data-exchange.service.ts"
+      ],
+      "dependsOn": [
+        "share-type-dedup-recovery-1"
+      ],
+      "acceptance": [
+        "all consumers of the NULL=registry rule use isRegistryEligibleShare / REGISTRY_ELIGIBLE_SHARE_SQL",
+        "TODO replaced by an explicit decision record",
+        "test fails if a raw share_type IS NULL is reintroduced",
+        "focused specs green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-f6a9e21d",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-aa4720dd"
+      ],
+      "result": "consumers routed through util; DECISION REQUIRED block; guard spec",
+      "failureReason": "subagent terminated by API rate limit (429) before reporting; no partial changes in tree",
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "compat-coverage-tests",
+      "title": "compat-coverage-tests",
+      "objective": "Add the behavioral and contract tests proposed by the compatibility triage; NEW spec/test files only (no product code): (1) apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts table-driven over the LEGACY_* client profile and industry maps; (2) extend apps/api/src/database/operational-list-provenance.migration.spec.ts with a legacy_slug resolution table; (3) apps/api/src/modules/marketing/marketing-vocabulary.compat.spec.ts; (4) legacy->canonical table for contract categories in the existing contract-category-slugs spec; (5) apps/api/src/core/guards/legacy-role-alias.contract.spec.ts over every legacy role slug; (6) apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts; (7) a spec asserting stats/genres|generos and stats/relationship|vinculo return identical payloads; (8) extend apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts to assert web and API tables are identical. Read the ledger (docs/naming/canonical-naming-map.json, read-only) to see which exception rows each test covers and return a JSON map {row item+path -> covering test file} for every row genuinely covered. Break the behavior in a scratch copy to prove each test can fail, then restore. No per-line artificial tests. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-regression-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src",
+        "apps/web/src"
+      ],
+      "dependsOn": [
+        "compat-coverage-tests-recovery-1"
+      ],
+      "acceptance": [
+        "behavioral/contract tests per compatibility group that fail when alias handling breaks",
+        "JSON map ledger row->test file in the report",
+        "suites green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-3461a598",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-9fedeb94",
+        "evid-2532d154"
+      ],
+      "result": "7 behavioral/contract test groups with mutation proof; 316 ledger rows gained coveringTest, ratchet 1391->1075; 2 whole-file spec exemption rows; census exit 0",
+      "failureReason": "subagent terminated by API rate limit (429) before reporting; no partial changes in tree",
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "migration-verifiers-recovery-1",
+      "title": "recover migration-verifiers",
+      "objective": "Find the root cause of the failure of task migration-verifiers (\"Run the pending migration verifiers `verify:cz042-cz043-migrations` and `verify:cz045-musicchat-migration` of apps/api against a disposable PostgreSQL. Start it as the postgres user with `su postgres -c \"/usr/lib/postgresql/16/bin/pg_ctl -D /var/lib/postgresql/music-os-disposable/data -o '-p 54329 -k /var/lib/postgresql/music-os-disposable -c listen_addresses=127.0.0.1' -l /var/lib/postgresql/music-os-disposable/log -w start\"`; create a fresh `music_os_scratch_mig` database (role musicos360 superuser, then `apps/api/scripts/local-auth-shim.sql`, DB_SSL=false, NODE_ENV=test, DATABASE_URL postgresql://musicos360@127.0.0.1:54329/music_os_scratch_mig), run `db-ops.ts migrate`, then investigate how the repository creates a tenant safely (seeds, bootstrap-tenant-zero, signup provisioning) and create a disposable tenant so the verifiers can run. Fix verifier or seed failures at their root cause; never weaken a verifier. Stop the PostgreSQL server at the end. Scope: apps/api/scripts, apps/api/src/database/seeds (only if a seed fix is necessary).\"): subagent terminated by API rate limit (429) before reporting; no partial changes in tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-d44950ec",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-cf61ae9e"
+      ],
+      "result": "root cause: API rate limit 429, transient; retry unchanged",
+      "failureReason": null,
+      "recoveryOf": "migration-verifiers",
+      "blockedExternal": null
+    },
+    {
+      "id": "remove-dead-entities-recovery-1",
+      "title": "recover remove-dead-entities",
+      "objective": "Find the root cause of the failure of task remove-dead-entities (\"Resolve BLK-FINANCIAL-CATEGORY-LEGACY-ENTITIES and part of BLK-LEGACY-ROOT-SQL. In apps/api/src/database/entities.ts delete FinancialCategoryEntity, FinancialCategoryCenterEntity, FinancialCategoryLinkEntity, FinancialCategoryFavoriteEntity, FinancialCategoryRuleEntity, FinancialCategoryRuleRunEntity (lines ~3453-3542) and their ALL_ENTITIES entries (~3784-3789); KEEP FinancialCategoryAuditLogEntity. First re-prove by repository-wide search that nothing imports them (migration 20260718000002 already dropped their tables). Delete the two zero-byte files apps/api/migrations-complete-clean.sql and apps/api/migrations-temp.sql after proving no references except docs (fix those docs references). Do not touch migrations-complete.sql or any other root SQL. No schema or data change. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.\"): subagent terminated by API rate limit (429) before reporting; no partial changes in tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-77d1e062",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-cf61ae9e"
+      ],
+      "result": "root cause: API rate limit 429, transient; retry unchanged",
+      "failureReason": null,
+      "recoveryOf": "remove-dead-entities",
+      "blockedExternal": null
+    },
+    {
+      "id": "env-cleanup-recovery-1",
+      "title": "recover env-cleanup",
+      "objective": "Find the root cause of the failure of task env-cleanup (\"Implement the env-var-audit findings: (1) collapse VITE_DISABLE_AUTH into VITE_AUTH_DISABLED (delete the second synthetic user/tenant) or, if a frontend-only contract is genuinely needed, rename to VITE_DEV_AUTH_BYPASS and validate it everywhere; add the prod-forbid rule to scripts/env-check.mjs and apps/web/scripts/assert-supabase-env.mjs; (2) remove the dead MOCK_MODE and VITE_MOCK_MODE/VITE_USE_MOCK reads, the mismatch check in env-check.mjs and VITE_MOCK_MODE in ci.yml; (3) rename USE_MOCK to DEV_SOCIAL_METRICS_MOCK keeping USE_MOCK only as a deprecated alias still forbidden in prod-like environments, with a test; (4) make PROD_FORBIDDEN_BYPASS_FLAGS in env.schema.ts the single source reused by create-app.ts, security-startup.service.ts, verify-production-flags.ts, plus a test that scripts and code agree; (5) UUID validation for DEV_TENANT_ID/DEV_ORG_ID; (6) hard-set VITE_AUTH_DISABLED=false in the production Dockerfile; (7) update .env.development.example, .env.production, .env.staging and docs that still describe MOCK_MODE as live. Never weaken a production guard; print no secret values. Do not touch apps/api/scripts. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.\"): subagent terminated by API rate limit (429) before reporting; no partial changes in tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-bd13a158",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-cf61ae9e"
+      ],
+      "result": "root cause: API rate limit 429, transient; retry unchanged",
+      "failureReason": null,
+      "recoveryOf": "env-cleanup",
+      "blockedExternal": null
+    },
+    {
+      "id": "share-type-dedup-recovery-1",
+      "title": "recover share-type-dedup",
+      "objective": "Find the root cause of the failure of task share-type-dedup (\"share_type: value set and backfill need a business decision. Do the derivable part: route every consumer of the 'share_type IS NULL means registry split' rule through apps/api/src/modules/shares/share-eligibility.util.ts (isRegistryEligibleShare, REGISTRY_ELIGIBLE_SHARE_SQL): registry/payloads/society-payload-builder.service.ts (~96,136), registry/validation/entity-validators.ts (~60,114), core/external-data/external-data-exchange.service.ts (~562), shares.service.ts (~127,143). Remove duplicated raw IsNull()/hardcoded SQL. Replace the generic TODO with a precise DECISION REQUIRED block: file/context, decision, options (A: explicit 'registry' value + CHECK + backfill migration; B: keep NULL as the signal), consequences, impact, and why it cannot be derived from the canonical sources. Add a spec that fails if a consumer reintroduces a raw share_type IS NULL. No schema change, no behavior change. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.\"): subagent terminated by API rate limit (429) before reporting; no partial changes in tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-0127d0e3",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-cf61ae9e"
+      ],
+      "result": "root cause: API rate limit 429, transient; retry unchanged",
+      "failureReason": null,
+      "recoveryOf": "share-type-dedup",
+      "blockedExternal": null
+    },
+    {
+      "id": "compat-coverage-tests-recovery-1",
+      "title": "recover compat-coverage-tests",
+      "objective": "Find the root cause of the failure of task compat-coverage-tests (\"Add the behavioral and contract tests proposed by the compatibility triage; NEW spec/test files only (no product code): (1) apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts table-driven over the LEGACY_* client profile and industry maps; (2) extend apps/api/src/database/operational-list-provenance.migration.spec.ts with a legacy_slug resolution table; (3) apps/api/src/modules/marketing/marketing-vocabulary.compat.spec.ts; (4) legacy->canonical table for contract categories in the existing contract-category-slugs spec; (5) apps/api/src/core/guards/legacy-role-alias.contract.spec.ts over every legacy role slug; (6) apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts; (7) a spec asserting stats/genres|generos and stats/relationship|vinculo return identical payloads; (8) extend apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts to assert web and API tables are identical. Read the ledger (docs/naming/canonical-naming-map.json, read-only) to see which exception rows each test covers and return a JSON map {row item+path -> covering test file} for every row genuinely covered. Break the behavior in a scratch copy to prove each test can fail, then restore. No per-line artificial tests. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.\"): subagent terminated by API rate limit (429) before reporting; no partial changes in tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-5ceb4a7e",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-cf61ae9e"
+      ],
+      "result": "root cause: API rate limit 429, transient; retry unchanged",
+      "failureReason": null,
+      "recoveryOf": "compat-coverage-tests",
+      "blockedExternal": null
+    },
+    {
+      "id": "fix-workflow-error-text",
+      "title": "fix-workflow-error-text",
+      "objective": "BLK-WORKFLOW-EXECUTION-ERROR-TEXT: WorkflowExecutionService.list()/get() in apps/api/src/core/workflow/workflow-execution.service.ts return entities with raw error_message. Follow the precedent toPublicSkillRun (core/skills/skill-run.service.ts) : add toPublicWorkflowExecution (and a log mapper if the log entity carries raw text) that drops error_message and exposes error_code via classifyFailureCode(raw,'WORKFLOW_EXECUTION_FAILED') (add the code to the shared error-code table packages/types/src/api-error-codes.ts and its PT-BR copy if absent); change list()/get() to return the public DTOs; update existing specs; add a case to core/errors/raw-error-boundary.spec.ts proving the serialized DTO contains no raw text. Verify consumers (workflow-automation.service.ts). Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+      "agent": "service-layer-engineer",
+      "skills": [
+        "service-layer-audit",
+        "create-regression-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src/core/workflow",
+        "apps/api/src/core/errors",
+        "apps/api/src/core/skills"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "public mapper strips raw error_message",
+        "raw-error-boundary spec case",
+        "workflow specs green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-5bf4a1a0",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-7edbdb00",
+        "evid-641b2ab1"
+      ],
+      "result": "implemented, jest focused suites and naming:check green; residue docs applied by orchestrator (agent lacked Edit)",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "fix-projects-export",
+      "title": "fix-projects-export",
+      "objective": "BLK-PROJECTS-XLSX-HEADER-ROUNDTRIP and BLK-PROJECTS-EXPORT-RAW-TOKENS. (1) Round-trip: in reports i18n field-labels.pt-br.ts change the labels 'Duração — Minutos'/'Duração — Segundos' (trackDurationMinutes/Seconds, ~706-707) to the existing parenthesis style ('Duração (minutos)'-like, matching siblings at ~446-447, check they stay unique) so they satisfy WRITABLE_KEY_RE WITHOUT widening apps/api/src/core/security/safe-object.ts (do not touch that security primitive); keep the old em-dash headers accepted on import as a deprecated alias applied before the isWritableKey check (normalize only for alias lookup); update pinned specs (export-engine.service.spec.ts, report-column-ids.spec.ts); add a round-trip test (export then validate) for projects and for the old header. (2) Raw tokens: add PT-BR label maps for projectType (single/ep/album -> Single/EP/Álbum), soloFeat and originalRemix (solo/feat, original/remix) derived from the web ProjectFormModal wording (apps/web/src/modules/projects/... lines ~431-445,721-724), next to the instrumental/language maps in projects/project-track-vocabulary.ts; wire export (value-labels.pt-br.ts COLUMN_LABELS.projects.projectType, computed-fields/project-tracks.field.ts) and import (extend canonicalProjectTrackImportRows to map label or canonical value back, trimmed, case-insensitive; unknown text unchanged); tests label->canonical for each value. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+      "agent": "backend-engineer",
+      "skills": [
+        "create-regression-tests",
+        "safe-refactor"
+      ],
+      "filesInScope": [
+        "apps/api/src/modules/reports",
+        "apps/api/src/modules/projects",
+        "apps/api/src/core/security/safe-object.ts"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "XLSX export of projects round-trips through the importer",
+        "project type/solo-feat/original-remix exported as PT-BR labels and imported back",
+        "em-dash headers accepted as deprecated alias",
+        "specs green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-16ff4356",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-7edbdb00",
+        "evid-641b2ab1"
+      ],
+      "result": "implemented, jest focused suites and naming:check green; residue docs applied by orchestrator (agent lacked Edit)",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "fix-contract-filters",
+      "title": "fix-contract-filters",
+      "objective": "BLK-CONTRACT-CATEGORY-REGISTRY (partly stale): apps/web/src/modules/artist/lib/contract-type-filters.ts lists both 'exclusivity' and 'exclusive' in the business filter (two names for one concept; 'exclusive'/'non_exclusive' are separate canonical values of distributionType, a different concept). Map legacy 'exclusivo' to canonical 'exclusivity' (already in apps/api contract-category-slugs.ts CANONICAL_CONTRACT_CATEGORY_SLUGS), drop 'exclusive' from the business filter types, keep other mappings only if the canonical set carries them, otherwise report them for ledger rows. Add a web test for canonicalFilterContractType including the legacy values. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+      "agent": "frontend-engineer",
+      "skills": [
+        "create-unit-tests",
+        "safe-refactor"
+      ],
+      "filesInScope": [
+        "apps/web/src/modules/artist/lib/contract-type-filters.ts",
+        "apps/web/src/modules/artist/lib"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "business filter uses only the canonical exclusivity slug",
+        "web test for canonicalFilterContractType",
+        "vitest green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-db322253",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-c1ebdd21",
+        "evid-641b2ab1"
+      ],
+      "result": "business filter canonical, test added, census green after ledger rows",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "fix-takedowns-entity",
+      "title": "fix-takedowns-entity",
+      "objective": "BLK-TAKEDOWNS-FK-COLUMNS (live runtime defect): TakedownEntity (entities.ts ~1610-1613) maps work_id, artist_id and response, which migration 20260719000016 dropped after proving them empty, so repository.find() fails on a migrated database. The migrated schema is authoritative: remove the three entity columns, the matching DTO fields (takedowns.dto.ts ~41,42,65), the artist_id filter (takedowns.service.ts ~41) and the FK assertions for those removed fields (~91-92); keep every other tenant-isolation assertion. Rewrite takedowns.service.create.spec.ts so it still proves cross-tenant checks for the remaining FKs and add a negative test that the removed fields are rejected by the DTO whitelist. First prove by repository-wide search (api, web, scripts, e2e) that no producer/consumer uses them (web form never sends work_id/artist_id). Another agent may edit other parts of entities.ts earlier; make a minimal edit to the TakedownEntity only. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+      "agent": "backend-engineer",
+      "skills": [
+        "create-regression-tests",
+        "data-integrity-audit"
+      ],
+      "filesInScope": [
+        "apps/api/src/database/entities.ts",
+        "apps/api/src/modules/takedowns"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "TakedownEntity maps only columns that exist in the migrated table",
+        "DTO/service/spec updated",
+        "tenant FK assertion for removed fields gone, others kept",
+        "takedowns specs, entities-registry spec and typecheck green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-155151ef",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-7edbdb00",
+        "evid-641b2ab1"
+      ],
+      "result": "implemented, jest focused suites and naming:check green; residue docs applied by orchestrator (agent lacked Edit)",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "fix-residue-census-docs",
+      "title": "fix-residue-census-docs",
+      "objective": "BLK-RESIDUE-CENSUS-DOCS: 85 references to untracked findings/*.md files (grep -rE 'findings/[A-Za-z0-9_.-]+\\.md' excluding docs/naming/canonical-naming-map.json and .claude/ops) in ~26 files (code comments, migration headers, docs). Add one 'Residue census' subsection per backfill migration (20260930000017-19, 21-29, 31-33) to docs/runbooks/staging-to-production.md, each query derived from that migration's own predicate (read the migration; do not reconstruct from memory); read-only SELECT counts. Then repoint every findings/... reference in code comments, migration headers and docs to the new runbook anchors so the grep returns 0 outside the ledger (the orchestrator repoints ledger rows). Check no migration spec hashes file contents before editing headers; run the migration specs. List the old-reference -> new-anchor mapping in your report as JSON. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once); do not commit; use Edit/Write for edits. Report files changed and commands with exit codes; run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' (new Portuguese literals in tests must be avoided or reported, not hidden).",
+      "agent": "technical-debt-analyzer",
+      "skills": [
+        "residue-search",
+        "doc-writer"
+      ],
+      "filesInScope": [
+        "docs/runbooks/staging-to-production.md",
+        "docs"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "each backfill migration has a residue-census query in the runbook derived from its own predicate",
+        "zero references to findings/*.md outside the ledger",
+        "migration specs and doc checks green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-90d6dd5e",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-7edbdb00",
+        "evid-641b2ab1"
+      ],
+      "result": "implemented, jest focused suites and naming:check green; residue docs applied by orchestrator (agent lacked Edit)",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "security-review-2",
+      "title": "security-review-2",
+      "objective": "x",
+      "agent": "security-reviewer",
+      "skills": [
+        "security-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-7fa337ed",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-dc4e3803",
+        "evid-0afa4042"
+      ],
+      "result": "findings fixed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "regression-review-2",
+      "title": "regression-review-2",
+      "objective": "Regression review of the normalization batch (git diff c618927..HEAD): entity removal, takedowns, workflow DTO, projects export, share eligibility, env flag removals, verifier scripts, smoke-test change, ledger.",
+      "agent": "regression-reviewer",
+      "skills": [
+        "diff-review",
+        "blast-radius-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-0dbe1722",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-60528818"
+      ],
+      "result": "findings fixed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    }
+  ]
+}

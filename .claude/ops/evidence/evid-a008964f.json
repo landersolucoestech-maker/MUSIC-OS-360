@@ -1,0 +1,15 @@
+{
+  "id": "evid-a008964f",
+  "createdAt": "2026-10-02T17:39:59.918Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/web exec vitest run src/shared/lib",
+  "command": "pnpm --filter @music-os-360/web exec vitest run src/shared/lib",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "RUN  v2.1.9 /home/user/MUSIC-OS-360/apps/web\n\n ✓ src/shared/lib/api-client.test.ts (24 tests) 38ms\n ✓ src/shared/lib/technical-error-fields.guard.test.ts (7 tests) 197ms\n ✓ src/shared/lib/xlsx-isolated.test.ts (7 tests) 77ms\n ✓ src/shared/lib/stored-file.test.ts (6 tests) 11ms\n ✓ src/shared/lib/audit/runner.test.ts (10 tests) 89ms\n ✓ src/shared/lib/storage.listPaged.test.ts (11 tests) 19ms\n ✓ src/shared/lib/exportAll.test.ts (4 tests) 20ms\n ✓ src/shared/lib/safe-url.href.test.ts (89 tests) 43ms\n ✓ src/shared/lib/format-utils.calendar.test.ts (6 tests) 91ms\n ✓ src/shared/lib/auth-error-messages.test.ts (14 tests) 18ms\n ✓ src/shared/lib/category-labels.test.ts (3 tests) 6ms\n ✓ src/shared/lib/security.test.ts (5 tests) 4ms\n ✓ src/shared/lib/xlsx.test.ts (6 tests) 4ms\n ✓ src/shared/lib/safe-url.external.test.ts (4 tests) 9ms\n ✓ src/shared/lib/ws-events.test.ts (2 tests) 6ms\n ✓ src/shared/lib/env-auth-badge.test.ts (9 tests) 5ms\n ✓ src/shared/lib/errors.test.ts (5 tests) 17ms\n ✓ src/shared/lib/zod-pt-br.test.ts (4 tests) 15ms\n ✓ src/shared/lib/format-utils.calendar-label.test.ts (4 tests) 18ms\n ✓ src/shared/lib/storage.spec.ts (3 tests) 6ms\n ✓ src/shared/lib/permission-map.test.ts (4 tests) 42ms\n ✓ src/shared/lib/disabled-integration.test.ts (2 tests) 7ms\n ✓ src/shared/lib/env-dev-auth-bypass.test.ts (3 tests) 3ms\n ✓ src/shared/lib/feature-flags.test.ts (2 tests) 4ms\n ✓ src/shared/lib/normalize-email.test.ts (4 tests) 15ms\n ✓ src/shared/lib/api-client.table-map.guard.test.ts (2 tests) 4ms\n ✓ src/shared/lib/skill-output-labels.test.ts (5 tests) 16ms\n\n Test Files  27 passed (27)\n      Tests  245 passed (245)\n   Start at  17:39:39\n   Duration  20.23s (transform 1.21s, setup 9.33s, collect 4.58s, tests 786ms, environment 25.57s, prepare 4.05s)",
+  "stderrTail": "",
+  "workspaceFingerprint": "bb317c91b747ef1f421c5e977b00ceb9b2b640c16b9e3d848d7e10c9d4d00a8b",
+  "fingerprintStatus": "BOUND",
+  "head": "9a6450b4b4868f508da98b8fe02c36fd462e11ee",
+  "durationMs": 21454
+}

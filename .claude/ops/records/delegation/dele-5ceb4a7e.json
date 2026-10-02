@@ -1,0 +1,9 @@
+{
+  "id": "dele-5ceb4a7e",
+  "createdAt": "2026-10-02T17:32:43.337Z",
+  "agent": "root-cause-investigator",
+  "objective": "Find the root cause of the failure of task compat-coverage-tests (\"Add the behavioral and contract tests proposed by the compatibility triage; NEW spec/test files only (no product code): (1) apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts table-driven over the LEGACY_* client profile and industry maps; (2) extend apps/api/src/database/operational-list-provenance.migration.spec.ts with a legacy_slug resolution table; (3) apps/api/src/modules/marketing/marketing-vocabulary.compat.spec.ts; (4) legacy->canonical table for contract categories in the existing contract-category-slugs spec; (5) apps/api/src/core/guards/legacy-role-alias.contract.spec.ts over every legacy role slug; (6) apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts; (7) a spec asserting stats/genres|generos and stats/relationship|vinculo return identical payloads; (8) extend apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts to assert web and API tables are identical. Read the ledger (docs/naming/canonical-naming-map.json, read-only) to see which exception rows each test covers and return a JSON map {row item+path -> covering test file} for every row genuinely covered. Break the behavior in a scratch copy to prove each test can fail, then restore. No per-line artificial tests. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.\"): subagent terminated by API rate limit (429) before reporting; no partial changes in tree. Do not retry the same approach.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

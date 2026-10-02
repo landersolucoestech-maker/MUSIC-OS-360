@@ -1,0 +1,9 @@
+{
+  "id": "dele-bd13a158",
+  "createdAt": "2026-10-02T17:32:43.333Z",
+  "agent": "root-cause-investigator",
+  "objective": "Find the root cause of the failure of task env-cleanup (\"Implement the env-var-audit findings: (1) collapse VITE_DISABLE_AUTH into VITE_AUTH_DISABLED (delete the second synthetic user/tenant) or, if a frontend-only contract is genuinely needed, rename to VITE_DEV_AUTH_BYPASS and validate it everywhere; add the prod-forbid rule to scripts/env-check.mjs and apps/web/scripts/assert-supabase-env.mjs; (2) remove the dead MOCK_MODE and VITE_MOCK_MODE/VITE_USE_MOCK reads, the mismatch check in env-check.mjs and VITE_MOCK_MODE in ci.yml; (3) rename USE_MOCK to DEV_SOCIAL_METRICS_MOCK keeping USE_MOCK only as a deprecated alias still forbidden in prod-like environments, with a test; (4) make PROD_FORBIDDEN_BYPASS_FLAGS in env.schema.ts the single source reused by create-app.ts, security-startup.service.ts, verify-production-flags.ts, plus a test that scripts and code agree; (5) UUID validation for DEV_TENANT_ID/DEV_ORG_ID; (6) hard-set VITE_AUTH_DISABLED=false in the production Dockerfile; (7) update .env.development.example, .env.production, .env.staging and docs that still describe MOCK_MODE as live. Never weaken a production guard; print no secret values. Do not touch apps/api/scripts. Do NOT edit docs/naming/canonical-naming-map.json or .claude/ops (the orchestrator updates the ledger once, afterwards); do not commit; report files changed and commands with exit codes. Run the focused jest/vitest suites and 'node scripts/naming/technical-naming-census.mjs --check' before reporting.\"): subagent terminated by API rate limit (429) before reporting; no partial changes in tree. Do not retry the same approach.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}
