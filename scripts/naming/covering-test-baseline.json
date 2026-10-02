@@ -1,4 +1,4 @@
 {
   "$comment": "Ratchet for ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY rows without a coveringTest (docs/naming/canonical-naming-map.json). validate-canonical-map.mjs fails when the live count is above this number and hints to lower it when below. Lower it as rows gain a coveringTest; never raise it.",
-  "untestedTemporaryRows": 1075
+  "untestedTemporaryRows": 0
 }
