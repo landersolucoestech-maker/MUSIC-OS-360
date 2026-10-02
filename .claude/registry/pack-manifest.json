@@ -1,0 +1,4925 @@
+{
+ "name": "music-os-360-engineering-ai-operational-pack",
+ "items": [
+  {
+   "name": "music-os-360-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "mission-orchestrator"
+  },
+  {
+   "name": "task-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "workflow-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repository-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validation-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "release-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "recovery-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "recovery-engineer"
+  },
+  {
+   "name": "parallel-work-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "retry-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "context-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "evidence-orchestrator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "agent-coordinator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dependency-coordinator",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "execution-planner",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "task-router",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "capability-router",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "agent-router",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "skill-router",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "tool-router",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validation-router",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "approval-router",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "escalation-router",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "autonomous-planner",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "mission-controller",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "mission-orchestrator"
+  },
+  {
+   "name": "implementation-lead",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "completion-controller",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "verification-controller",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "evidence-controller",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "risk-controller",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "runtime-continuity-controller",
+   "type": "agent",
+   "batch": 2,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repo-inspector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "repo-intelligence"
+  },
+  {
+   "name": "codebase-explorer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "architecture-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "module-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dependency-tracer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-flow-tracer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "route-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "api-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "database-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "event-flow-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "queue-flow-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "worker-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "config-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "environment-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ownership-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "security-boundary-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "tenant-boundary-mapper",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "blast-radius-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "api-contract-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "database-schema-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "configuration-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "environment-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dependency-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "package-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dead-code-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "duplication-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "technical-debt-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "regression-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "regression-reviewer"
+  },
+  {
+   "name": "naming-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ownership-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "circular-dependency-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "orphan-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "unreachable-code-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "stale-code-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "feature-flag-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "runtime-path-analyzer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "producer-consumer-tracer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "requirements-validator",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "requirements-reviewer"
+  },
+  {
+   "name": "specification-reviewer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ambiguity-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "assumption-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "contradiction-detector",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "acceptance-criteria-engineer",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "requirements-analyst"
+  },
+  {
+   "name": "implementation-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "migration-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "refactoring-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "test-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rollback-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "release-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "risk-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dependency-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "scope-planner",
+   "type": "agent",
+   "batch": 3,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "architecture-guardian",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "architecture-reviewer"
+  },
+  {
+   "name": "architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "domain-architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "domain-boundary-guardian",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "domain-boundary-reviewer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "modularity-reviewer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "event-architecture-reviewer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "queue-architecture-reviewer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "worker-architecture-reviewer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "multi-tenant-architecture-reviewer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "contract-architecture-reviewer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "contract-reviewer"
+  },
+  {
+   "name": "integration-architecture-reviewer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "frontend-architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "backend-architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "platform-architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "infrastructure-architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "api-architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "event-driven-architecture-engineer",
+   "type": "agent",
+   "batch": 4,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "backend-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "backend-reviewer"
+  },
+  {
+   "name": "api-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "api-reviewer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "service-layer-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "service-layer-reviewer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repository-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repository-reviewer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "use-case-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "controller-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dto-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validation-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "event-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "queue-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "worker-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "job-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "scheduler-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "webhook-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "caching-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "serialization-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "transaction-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "concurrency-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "background-processing-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "error-handling-engineer",
+   "type": "agent",
+   "batch": 5,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "frontend-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "frontend-reviewer"
+  },
+  {
+   "name": "ui-ux-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "ui-ux-reviewer"
+  },
+  {
+   "name": "design-system-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "component-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "form-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "state-management-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-fetching-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "routing-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "interaction-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "animation-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "responsive-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "accessibility-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "visual-regression-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "visual-consistency-reviewer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "frontend-performance-engineer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "frontend-security-reviewer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "frontend-consistency-reviewer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "frontend-data-flow-reviewer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "browser-compatibility-reviewer",
+   "type": "agent",
+   "batch": 6,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "database-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "database-reviewer"
+  },
+  {
+   "name": "schema-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "migration-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "query-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "query-performance-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-integrity-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "relational-integrity-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "concurrency-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "optimistic-locking-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-migration-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "database-security-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "import-export-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "csv-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "xlsx-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "indexing-engineer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "transaction-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "locking-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "normalization-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "denormalization-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "archival-strategy-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "retention-policy-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "backup-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "restore-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-engineering-reviewer",
+   "type": "agent",
+   "batch": 7,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "security-engineer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "security-auditor",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "security-reviewer"
+  },
+  {
+   "name": "security-investigator",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "incident-investigator"
+  },
+  {
+   "name": "auth-engineer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "authorization-engineer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "authentication-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "authorization-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rbac-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "tenant-isolation-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "secrets-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "threat-model-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "vulnerability-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "input-validation-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "webhook-security-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "file-upload-security-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "prompt-injection-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "pii-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "permission-boundary-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "session-security-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "csrf-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "xss-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ssrf-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "sql-injection-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "credential-storage-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "encryption-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "auditability-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "abuse-prevention-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "compliance-privacy-reviewer",
+   "type": "agent",
+   "batch": 8,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "compliance-reviewer"
+  },
+  {
+   "name": "integration-engineer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "integration-reviewer"
+  },
+  {
+   "name": "external-api-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "oauth-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "webhook-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rate-limit-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "retry-policy-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-data-mapper",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-resilience-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-security-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "credential-management-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "external-id-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "provider-contract-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "sync-engineer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "connector-engineer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "adapter-engineer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "mapping-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "external-schema-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "provider-failure-reviewer",
+   "type": "agent",
+   "batch": 9,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "qa-engineer"
+  },
+  {
+   "name": "unit-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "api-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "e2e-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "contract-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "visual-qa-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "accessibility-auditor",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "accessibility-reviewer"
+  },
+  {
+   "name": "mutation-test-reviewer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "fixture-reviewer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "mock-reviewer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "test-data-reviewer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "flaky-test-detector",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "runtime-validator",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "smoke-test-validator",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "browser-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "performance-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "load-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "resilience-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "migration-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "security-test-engineer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "chaos-test-reviewer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "snapshot-test-reviewer",
+   "type": "agent",
+   "batch": 10,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "observability-engineer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "reliability-observability-reviewer"
+  },
+  {
+   "name": "performance-engineer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "performance-reviewer"
+  },
+  {
+   "name": "runtime-performance-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "queue-reliability-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "worker-reliability-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "database-reliability-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-reliability-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "logging-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "telemetry-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "tracing-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "metrics-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "alerting-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "timeout-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "retry-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "circuit-breaker-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "degradation-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "saturation-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "availability-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "capacity-reviewer",
+   "type": "agent",
+   "batch": 11,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repository-guardian",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "git-auditor"
+  },
+  {
+   "name": "change-scope-guardian",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "release-guardian",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "release-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "production-validator"
+  },
+  {
+   "name": "branch-policy-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repo-identity-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "scope-lock-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "protected-file-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "destructive-change-guard",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dependency-safety-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "supply-chain-reviewer"
+  },
+  {
+   "name": "diff-reviewer",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "git-auditor"
+  },
+  {
+   "name": "staged-diff-reviewer",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rollback-analyzer",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "commit-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "atomic-commit-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "merge-safety-reviewer",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "history-rewrite-guard",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "untracked-file-reviewer",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dirty-tree-guard",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "protected-branch-guard",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "commit-message-validator",
+   "type": "agent",
+   "batch": 12,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "code-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "naming-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "duplication-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dead-code-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "maintainability-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "complexity-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "refactoring-engineer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "technical-debt-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "abstraction-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "coupling-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "cohesion-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "code-smell-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "readability-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "consistency-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "boundary-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "error-model-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "cloud-infrastructure-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "devops-ci-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "mobile-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "payments-reviewer",
+   "type": "agent",
+   "batch": 13,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-runtime-architect",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-agent-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-skill-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-workflow-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-automation-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "prompt-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-evaluation-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-observability-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-security-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "ai-llm-systems-reviewer"
+  },
+  {
+   "name": "ai-cost-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-provider-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-model-routing-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-tooling-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-contract-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-output-validation-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-human-approval-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-context-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-memory-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-retrieval-engineer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-tool-policy-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-fallback-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-guardrail-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-red-team-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-latency-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-quality-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-regression-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-hallucination-reviewer",
+   "type": "agent",
+   "batch": 14,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "project-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "work-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "phonogram-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "release-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "distribution-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "artist-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "participant-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rights-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "shares-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "credits-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "catalog-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "metadata-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "asset-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "lyrics-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "transcription-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "release-readiness-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "distribution-readiness-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "distribution-status-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "distribution-rejection-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "contract-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "contract-generation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "contract-routing-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "contract-status-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "signature-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "signature-followup-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "provider-sync-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "external-data-reconciliation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "external-id-resolution-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "notification-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "email-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "task-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "deadline-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "followup-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "finance-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "payment-operations-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "financial-reconciliation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-quality-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "metadata-quality-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rights-integrity-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "catalog-integrity-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "relationship-integrity-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "document-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "import-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "export-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "report-automation-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "operational-monitor-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "exception-routing-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "human-approval-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "operational-recovery-agent",
+   "type": "agent",
+   "batch": 15,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "architecture-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "authorization-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "authorization-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "blast-radius-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "branch-policy-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-authorization-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-migration",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "schema-normalization"
+  },
+  {
+   "name": "create-tenant-isolation-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "database-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "database-schema-drift"
+  },
+  {
+   "name": "dependency-trace",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "contract-tracing"
+  },
+  {
+   "name": "diff-review",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "code-review"
+  },
+  {
+   "name": "fix-bug",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "debug-assistant"
+  },
+  {
+   "name": "git-safety-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "git-checkpoint"
+  },
+  {
+   "name": "implement-auth",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-authorization",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-feature",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "execute"
+  },
+  {
+   "name": "media-security-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "modify-schema",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "schema-normalization"
+  },
+  {
+   "name": "module-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "navigation-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "quality-gate",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "gate"
+  },
+  {
+   "name": "repo-identity-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repo-inspect",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "bootstrap"
+  },
+  {
+   "name": "repository-census",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "root-cause-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "why"
+  },
+  {
+   "name": "run-build",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "regression-gates"
+  },
+  {
+   "name": "run-lint",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "regression-gates"
+  },
+  {
+   "name": "run-typecheck",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "regression-gates"
+  },
+  {
+   "name": "run-unit-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "regression-gates"
+  },
+  {
+   "name": "safe-refactor",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "refactor-guide"
+  },
+  {
+   "name": "scope-lock",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "tenant-isolation-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "security-tenancy-auditor"
+  },
+  {
+   "name": "visual-consistency-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-flow-trace",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "route-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "api-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "event-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "queue-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "worker-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "config-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "environment-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ownership-map",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "duplication-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dead-code-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "technical-debt-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "naming-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ownership-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "producer-consumer-trace",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "contract-tracing"
+  },
+  {
+   "name": "runtime-path-trace",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "package-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dependency-cycle-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "orphan-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "stale-code-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "feature-flag-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-component",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "refactor-component",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-hook",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-service",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-use-case",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-controller",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-api-route",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-repository",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-event",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-worker",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-job",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-queue",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-webhook",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-integration",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-rbac",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-form",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-crud",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-responsive-ui",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-accessibility",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-import",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-export",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-concurrency-control",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-audit-log",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-cache",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-retry",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-circuit-breaker",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-transaction",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-scheduler",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-background-job",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-feature-flag",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-observability",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "implement-error-boundary",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "frontend-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "component-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "routing-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "state-management-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-provider-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "design-system-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "layout-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "responsive-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "accessibility-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "frontend-performance-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "form-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "visual-regression",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "browser-runtime-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "interaction-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "animation-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "loading-state-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "empty-state-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "error-state-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "modal-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "table-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "typography-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "spacing-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "token-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "backend-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "api-contract-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "contract-tracing"
+  },
+  {
+   "name": "service-layer-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repository-layer-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "database-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "migration-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "query-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "integration-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "event-processing-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "queue-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "worker-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-integrity-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "concurrency-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "transaction-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "cache-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "scheduler-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "retry-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "circuit-breaker-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "background-job-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "data-retention-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "auth-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rbac-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "secret-scan",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "security-audit"
+  },
+  {
+   "name": "dependency-scan",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "security-audit"
+  },
+  {
+   "name": "supply-chain-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "upload-security-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "webhook-security-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "prompt-injection-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "pii-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "security-boundary-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "session-security-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "csrf-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "xss-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ssrf-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "sql-injection-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "credential-storage-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "encryption-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "permission-audit",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-unit-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-integration-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-api-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-e2e-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-contract-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-regression-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-visual-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-accessibility-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-performance-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-load-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-security-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-migration-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "run-architecture-checks",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "run-integration-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "run-api-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "run-e2e",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "run-visual-regression",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "run-accessibility-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "run-security-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "run-performance-tests",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "production-build-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "runtime-smoke-test",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "definition-of-done",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "release-checkpoint"
+  },
+  {
+   "name": "change-impact-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "impact"
+  },
+  {
+   "name": "protected-file-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dependency-safety-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "staged-diff-review",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "code-review"
+  },
+  {
+   "name": "rollback-analysis",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "recover"
+  },
+  {
+   "name": "writer-conflict-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "dirty-tree-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "migration-safety-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "destructive-change-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "external-action-check",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "authorization-hardening",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "security-audit"
+  },
+  {
+   "name": "control-plane",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "discover",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "prime"
+  },
+  {
+   "name": "localhost-guardian",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "plan",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "feature-planner"
+  },
+  {
+   "name": "verify",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING",
+   "existingEquivalent": "regression-gates"
+  },
+  {
+   "name": "databaseMigrationSafety",
+   "type": "skill",
+   "batch": 16,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-runtime-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-agent-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-skill-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-workflow-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-automation-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "prompt-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-provider-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-model-routing-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-cost-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-observability-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-security-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-evaluation",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "structured-output-validation",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "tool-policy-validation",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "human-approval-validation",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-context-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-memory-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-retrieval-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-fallback-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-latency-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-regression-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "ai-hallucination-audit",
+   "type": "skill",
+   "batch": 17,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-project-from-intake",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-project-readiness",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "advance-project-workflow",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-work-draft",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-work-metadata",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-work-participants",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-work-rights",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-work-shares",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "route-work-to-registration",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-phonogram-draft",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-phonogram-metadata",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-phonogram-participants",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-phonogram-rights",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-phonogram-shares",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "route-phonogram-to-registration",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "transcribe-audio",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "extract-lyrics",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "normalize-lyrics",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "compare-lyrics-versions",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-work-version-change",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "extract-audio-metadata",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "extract-file-metadata",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-wav",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-audio-assets",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-cover-art",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "link-project-assets",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "generate-contract",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "select-contract-template",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "populate-contract",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-contract-data",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "route-contract-for-signature",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "check-signature-status",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "follow-up-signature",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "archive-signed-contract",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "prepare-release",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-release-readiness",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-distribution-readiness",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "assemble-distribution-package",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-distribution-metadata",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "submit-distribution",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "sync-distribution-status",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "process-distribution-rejection",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "route-distribution-correction",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "normalize-artist",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "resolve-artist",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "normalize-participant",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "resolve-participant",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-duplicate-participant",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "merge-participant-candidates",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-isrc",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-iswc",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-upc",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "resolve-external-id",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "reconcile-external-identifiers",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "calculate-share-validation",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-share-total",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-share-conflict",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-rights-conflict",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-rights-chain",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "trace-rights-origin",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "sync-provider-data",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "reconcile-provider-data",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-provider-drift",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "handle-provider-failure",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "retry-provider-sync",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-operational-task",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "assign-operational-task",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "prioritize-operational-task",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "schedule-followup",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-overdue-task",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "escalate-overdue-task",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "close-completed-task",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "send-operational-notification",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "send-contract-notification",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "send-signature-reminder",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "send-distribution-notification",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "send-rejection-notification",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "send-release-notification",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "import-xlsx",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "import-csv",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "validate-import",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "normalize-import-data",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-import-duplicates",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "preview-import-changes",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "execute-approved-import",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rollback-import",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "generate-xlsx-export",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "generate-csv-export",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "generate-operational-report",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "generate-catalog-report",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "generate-rights-report",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "generate-distribution-report",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-data-inconsistency",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-orphan-record",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-missing-relationship",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-metadata-conflict",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "detect-status-conflict",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "repair-approved-inconsistency",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "evaluate-human-approval",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "request-human-approval",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "resume-after-approval",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "reject-unsafe-automation",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "create-operational-checkpoint",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "resume-operational-workflow",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "retry-failed-operation",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "recover-failed-workflow",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "rollback-operational-action",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "audit-automation-run",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "record-automation-evidence",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "trace-automation-decision",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  },
+  {
+   "name": "explain-automation-action",
+   "type": "skill",
+   "batch": 18,
+   "initialState": "ABSENT",
+   "finalState": "PENDING"
+  }
+ ]
+}

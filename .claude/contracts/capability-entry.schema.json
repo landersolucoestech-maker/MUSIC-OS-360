@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/capability-entry.schema.json",
+  "title": "CapabilityEntry",
+  "description": "One capability of the pack's capability registry (.claude/registry/capabilities.json): what can be done, who executes it, with which skills and tools, how it is validated, what evidence it produces and whether it needs approval. A capability without an executor agent or without a skill is an error (capability sem executor).",
+  "type": "object",
+  "required": [
+    "id",
+    "domain",
+    "description",
+    "executors",
+    "skills",
+    "validation",
+    "evidence",
+    "approval"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "executors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validation": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approval": {
+      "type": "string"
+    },
+    "integration": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/pack-manifest.schema.json",
+  "title": "PackManifest",
+  "description": "Authoritative list of the components of the MUSIC OS 360 Engineering/AI/Operational pack and their completeness state (the Completeness Matrix). Every item ends EXISTING_VALID, ENHANCED, CREATED or BLOCKED_EXTERNAL; there is no skipped/optional/later state.",
+  "type": "object",
+  "required": [
+    "name",
+    "items"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "batch",
+          "initialState",
+          "finalState"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "agent",
+              "skill"
+            ]
+          },
+          "batch": {
+            "type": "integer"
+          },
+          "initialState": {
+            "enum": [
+              "ABSENT",
+              "EXISTING_VALID",
+              "EXISTING_INCOMPLETE"
+            ]
+          },
+          "finalState": {
+            "enum": [
+              "PENDING",
+              "EXISTING_VALID",
+              "ENHANCED",
+              "CREATED",
+              "BLOCKED_EXTERNAL"
+            ]
+          },
+          "existingEquivalent": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

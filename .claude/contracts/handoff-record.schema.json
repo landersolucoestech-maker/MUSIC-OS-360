@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/handoff-record.schema.json",
+  "title": "HandoffRecord",
+  "description": "The only way work moves between two agents: a bounded context package, never the whole conversation. Consumer: the orchestrators and .claude/rules/agent-orchestration.md (delegation constraints). A handoff carries the objective, exact inputs, the constraints that still hold, the evidence already produced and the output the receiver must return.",
+  "type": "object",
+  "required": [
+    "id",
+    "from",
+    "to",
+    "taskId",
+    "objective",
+    "inputs",
+    "expectedOutput",
+    "createdAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "from": {
+      "type": "string"
+    },
+    "to": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "objective": {
+      "type": "string"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "openQuestions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "expectedOutput": {
+      "type": "string"
+    },
+    "approvalRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

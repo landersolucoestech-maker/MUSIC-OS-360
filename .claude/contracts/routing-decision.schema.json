@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/routing-decision.schema.json",
+  "title": "RoutingDecision",
+  "description": "One resolved route: task -> capability -> agent -> skill -> tool -> validation -> evidence -> completion, produced by the routers from .claude/registry/routing.json. Records whether approval is required (approvalClass of authority.json) and the fallback agents tried on failure/conflict (retry-orchestrator, escalation-router).",
+  "type": "object",
+  "required": [
+    "taskId",
+    "intent",
+    "domain",
+    "capability",
+    "agent",
+    "skills",
+    "tools",
+    "validation",
+    "evidence",
+    "approvalRequired",
+    "createdAt"
+  ],
+  "properties": {
+    "taskId": {
+      "type": "string"
+    },
+    "intent": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "capability": {
+      "type": "string"
+    },
+    "agent": {
+      "type": "string"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validation": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approvalRequired": {
+      "type": "boolean"
+    },
+    "approvalClass": {
+      "type": "string"
+    },
+    "fallbackAgents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

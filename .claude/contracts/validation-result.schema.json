@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/validation-result.schema.json",
+  "title": "ValidationResult",
+  "description": "Outcome of one validator/validation router run over a subject (a file set, a record, a workflow run). PASS requires evidenceRefs; BLOCKED_EXTERNAL requires a named external dependency in `blockedBy`; a validator may never emit PASS for a check that did not execute.",
+  "type": "object",
+  "required": [
+    "id",
+    "subject",
+    "validator",
+    "status",
+    "checks",
+    "createdAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "validator": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED_EXTERNAL"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "BLOCKED_EXTERNAL",
+              "SKIPPED_NOT_APPLICABLE"
+            ]
+          },
+          "detail": {
+            "type": "string"
+          },
+          "evidenceRef": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blockedBy": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/agent-contract.schema.json",
+  "title": "AgentContract",
+  "description": "Parsed form of one pack agent (.claude/agents/<name>.md) as produced by .claude/runtime/build-pack-registry.mjs. The markdown file is the single source; this contract is what the registry builder and validate-pack-contracts.mjs verify against: identity and classification, the tool ceiling, the declared capabilities and skills, the write scope and the approval class, and that every mandatory section (identity, mission, responsibilities, scope, non-responsibilities, inputs, outputs, required evidence, allowed tools, forbidden actions, required skills, escalation rules, approval requirements, handoff contract, completion criteria) is present and non-empty.",
+  "type": "object",
+  "required": [
+    "name",
+    "kind",
+    "domain",
+    "batch",
+    "tools",
+    "capabilities",
+    "skills",
+    "writes",
+    "approval",
+    "sections"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "orchestrator",
+        "coordinator",
+        "planner",
+        "router",
+        "controller",
+        "mapper",
+        "analyzer",
+        "detector",
+        "validator",
+        "guardian",
+        "engineer",
+        "reviewer",
+        "auditor",
+        "investigator",
+        "operational"
+      ]
+    },
+    "domain": {
+      "type": "string"
+    },
+    "batch": {
+      "type": "integer"
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "writes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approval": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "path": {
+      "type": "string"
+    }
+  }
+}

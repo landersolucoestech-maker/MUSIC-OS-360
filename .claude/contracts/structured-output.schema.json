@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/structured-output.schema.json",
+  "title": "StructuredOutput",
+  "description": "Envelope every AI/automation skill returns instead of free text. The model proposes; the envelope states what was found, what was NOT found (`unknowns`), the evidence behind each claim and whether a human decision is needed. A value the evidence does not support is reported in `unknowns`, never invented (lyrics, rejection reasons, signatures, rights, percentages).",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "producer",
+    "task",
+    "status",
+    "result",
+    "evidence",
+    "unknowns"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "producer": {
+      "type": "string"
+    },
+    "task": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "OK",
+        "NEEDS_APPROVAL",
+        "BLOCKED_EXTERNAL",
+        "CAPABILITY_UNAVAILABLE",
+        "FAILED"
+      ]
+    },
+    "result": {
+      "type": "object"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "ref"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "enum": [
+        "HIGH",
+        "MEDIUM",
+        "LOW",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "capabilityUnavailable": {
+      "type": "object",
+      "properties": {
+        "requiredIntegration": {
+          "type": "string"
+        },
+        "expectedContract": {
+          "type": "string"
+        },
+        "expectedInput": {
+          "type": "string"
+        },
+        "expectedOutput": {
+          "type": "string"
+        },
+        "safeFallback": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

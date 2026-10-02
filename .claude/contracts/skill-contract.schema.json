@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/skill-contract.schema.json",
+  "title": "SkillContract",
+  "description": "Parsed form of one pack skill (.claude/skills/<name>/SKILL.md) as produced by build-pack-registry.mjs. Every skill states its purpose, invocation conditions, required inputs, a deterministic numbered procedure, expected outputs, validation, evidence, failure behavior, rollback/recovery and human approval. `consumers` is derived from the agents that list the skill under Required skills; a skill without a consumer is an orphan and fails validation.",
+  "type": "object",
+  "required": [
+    "name",
+    "kind",
+    "domain",
+    "batch",
+    "approval",
+    "sections",
+    "consumers"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "batch": {
+      "type": "integer"
+    },
+    "approval": {
+      "type": "string"
+    },
+    "consumers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "path": {
+      "type": "string"
+    },
+    "mutates": {
+      "type": "boolean"
+    },
+    "capabilityUnavailable": {
+      "type": "boolean"
+    }
+  }
+}

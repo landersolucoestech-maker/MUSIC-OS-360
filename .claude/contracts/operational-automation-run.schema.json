@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/operational-automation-run.schema.json",
+  "title": "OperationalAutomationRun",
+  "description": "One run of an operational automation workflow (project, work, phonogram, contract, signature, release, distribution, provider sync, import, integrity recovery). Records the trigger, tenant, ordered steps with their skill and status, checkpoints, approvals and evidence, so a run can be audited, resumed or rolled back. Consumer: the operational workflows and the audit/trace/explain skills.",
+  "type": "object",
+  "required": [
+    "runId",
+    "workflow",
+    "domain",
+    "tenantId",
+    "trigger",
+    "status",
+    "steps",
+    "startedAt"
+  ],
+  "properties": {
+    "runId": {
+      "type": "string"
+    },
+    "workflow": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "tenantId": {
+      "type": "string"
+    },
+    "trigger": {
+      "enum": [
+        "USER",
+        "SCHEDULE",
+        "EVENT",
+        "WEBHOOK",
+        "AGENT"
+      ]
+    },
+    "actor": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "PLANNED",
+        "RUNNING",
+        "WAITING_APPROVAL",
+        "PAUSED",
+        "COMPLETED",
+        "FAILED",
+        "ROLLED_BACK",
+        "RECOVERED",
+        "BLOCKED_EXTERNAL"
+      ]
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "skill",
+          "agent",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "skill": {
+            "type": "string"
+          },
+          "agent": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "DONE",
+              "FAILED",
+              "SKIPPED",
+              "WAITING_APPROVAL"
+            ]
+          },
+          "evidenceRef": {
+            "type": "string"
+          },
+          "checkpointId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approvalRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finishedAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  }
+}
