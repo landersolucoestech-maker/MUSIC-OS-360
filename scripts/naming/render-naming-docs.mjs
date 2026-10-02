@@ -102,7 +102,7 @@ export function renderMap(map) {
     "## Blockers",
     "",
     ...(map.blockers.length
-      ? table(["ID", "Item", "Exact blocker", "Evidence", "Independent work completed", "Required action", "Owner", "Disposition", "Status"], map.blockers.map((b) => [b.id, b.item, b.blocker, b.evidence, b.independentWorkCompleted, b.requiredAction, b.owner, b.disposition, b.status]))
+      ? table(["ID", "Item", "Exact blocker", "Evidence", "Independent work completed", "Required action", "Resolution", "Owner", "Disposition", "Status"], map.blockers.map((b) => [b.id, b.item, b.blocker, b.evidence, b.independentWorkCompleted, b.requiredAction, b.resolution, b.owner, b.disposition, b.status]))
       : ["None."]),
     "",
   ];

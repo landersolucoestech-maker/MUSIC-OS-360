@@ -101,6 +101,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-045 | MusicChat triage vocabulary (service status, priority, default menu option ids) | done | DONE | no |
 | CZ-046 | Marketing task status and priority vocabulary | done | DONE | no |
 | CZ-047 | Marketing content post status, target type and content type vocabulary | done | DONE | no |
+| CZ-048 | Transaction category/subcategory slug vocabulary (platform-owned options) | done | DONE | no |
 
-Concepts: 95. Renames: 0. Exceptions: 2902. Blockers: 25.
-By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/DONE 79, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 96. Renames: 0. Exceptions: 2902. Blockers: 25.
+By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/DONE 80, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.
