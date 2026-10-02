@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import * as XLSX from 'xlsx';
+import { XLSX } from './helpers/xlsx';
 import * as fs from 'fs';
 
 /**

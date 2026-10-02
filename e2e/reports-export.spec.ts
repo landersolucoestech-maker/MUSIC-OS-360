@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
-import * as XLSX from 'xlsx';
+import { XLSX } from './helpers/xlsx';
 
 /**
  * reports-export.spec.ts  (Part 78)
