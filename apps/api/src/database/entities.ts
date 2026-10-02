@@ -1607,10 +1607,7 @@ export class TakedownEntity {
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) platform: string;
   @Column({ type: 'varchar', length: 50, default: TakedownStatus.PENDING }) status: TakedownStatus;
-  @Column({ type: 'uuid', nullable: true }) work_id: string | null;
-  @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'text', nullable: true }) reason: string | null;
-  @Column({ type: 'text', nullable: true }) response: string | null;
   // ── Takedown form fields (1 column per field; English since CZ-034) ─────────────
   /** sent (issued by the tenant) | received (a claim against the tenant). */
   @Column({ type: 'varchar', length: 30, nullable: true }) type: string | null;

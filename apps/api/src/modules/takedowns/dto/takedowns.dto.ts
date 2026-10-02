@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsOptional, IsIn, IsUUID, MaxLength, IsObject, ValidateIf } from 'class-validator';
+import { IsString, IsOptional, IsIn, MaxLength, IsObject, ValidateIf } from 'class-validator';
 import { TakedownStatus } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import {
@@ -36,10 +36,6 @@ export class CreateTakedownDto {
   @ApiPropertyOptional() @IsOptional() @IsString() evidence?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
 
-  // Optional relations filled by internal flows, without replacing the
-  // readable fields displayed in the form.
-  @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
 
   // ── Deprecated aliases (CZ-034 deploy-skew window; see TAKEDOWN_DEPRECATED_FIELDS) ──
@@ -62,6 +58,5 @@ export class QueryTakedownDto extends PaginationDto {
   @ApiPropertyOptional({ enum: TakedownStatus }) @IsOptional() @IsIn(STATUSES) status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() platform?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "platform".' }) @IsOptional() @IsString() plataforma?: string;
-  @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() search?: string;
 }

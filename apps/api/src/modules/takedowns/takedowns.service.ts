@@ -5,7 +5,6 @@ import { TakedownEntity } from '../../database/entities';
 import { groupCount, type GroupStatsResult } from '../../common/stats/group-count.util';
 import type { CreateTakedownDto, UpdateTakedownDto, QueryTakedownDto } from './dto/takedowns.dto';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
-import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import {
   TAKEDOWN_DEPRECATED_FIELDS,
@@ -17,11 +16,9 @@ import {
 @Injectable()
 export class TakedownsService {
   private readonly repo: Repository<TakedownEntity> | null;
-  private readonly ds: DataSource | null;
 
   constructor(@Inject(DATA_SOURCE) ds: DataSource | null) {
     this.repo = ds?.getRepository(TakedownEntity) ?? null;
-    this.ds = ds;
   }
 
   private get repository(): Repository<TakedownEntity> {
@@ -38,7 +35,6 @@ export class TakedownsService {
 
     if (query.status) qb.andWhere('t.status = :status', { status: query.status });
     if (query.platform) qb.andWhere('t.platform = :platform', { platform: query.platform });
-    if (query.artist_id) qb.andWhere('t.artist_id = :artistId', { artistId: query.artist_id });
     if (query.search) {
       qb.andWhere(
         '(t.title ILIKE :search OR t.affected_work ILIKE :search OR t.artist_name ILIKE :search OR t.reason ILIKE :search)',
@@ -88,8 +84,6 @@ export class TakedownsService {
 
   async create(tenantId: string, userId: string, input: CreateTakedownDto): Promise<TakedownEntity> {
     const dto = this.canonicalPayload(input);
-    await assertSameTenantFk(this.ds!, 'works',   dto.work_id,    tenantId, 'Obra');
-    await assertSameTenantFk(this.ds!, 'artists', dto.artist_id, tenantId, 'Artista');
 
     const entity = this.repository.create({
       tenant_id: tenantId,
