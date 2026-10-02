@@ -780,6 +780,24 @@
       ]
     },
     {
+      "agent": "artist-operations-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "asset-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "assumption-detector",
       "allowedTools": [
         "Read",
@@ -975,6 +993,24 @@
     },
     {
       "agent": "capacity-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "catalog-integrity-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "catalog-operations-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1197,6 +1233,42 @@
       ]
     },
     {
+      "agent": "contract-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "contract-generation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "contract-routing-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "contract-status-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "contract-test-engineer",
       "allowedTools": [
         "Read",
@@ -1247,6 +1319,15 @@
     },
     {
       "agent": "credential-storage-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "credits-operations-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1333,6 +1414,15 @@
       ]
     },
     {
+      "agent": "data-quality-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "database-engineer",
       "allowedTools": [
         "Read",
@@ -1390,6 +1480,15 @@
     },
     {
       "agent": "dead-code-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "deadline-automation-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1509,6 +1608,51 @@
       ]
     },
     {
+      "agent": "distribution-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "distribution-readiness-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "distribution-rejection-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "distribution-status-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "document-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "domain-architecture-engineer",
       "allowedTools": [
         "Read",
@@ -1572,6 +1716,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "email-automation-agent",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -1693,6 +1846,15 @@
       ]
     },
     {
+      "agent": "exception-routing-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "execution-planner",
       "allowedTools": [
         "Read",
@@ -1702,7 +1864,34 @@
       ]
     },
     {
+      "agent": "export-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "external-api-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "external-data-reconciliation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "external-id-resolution-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1747,6 +1936,24 @@
       ]
     },
     {
+      "agent": "finance-operations-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "financial-reconciliation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "fixture-reviewer",
       "allowedTools": [
         "Read",
@@ -1757,6 +1964,15 @@
     },
     {
       "agent": "flaky-test-detector",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "followup-automation-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1845,6 +2061,15 @@
       ]
     },
     {
+      "agent": "human-approval-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "implementation-lead",
       "allowedTools": [
         "Read",
@@ -1856,6 +2081,15 @@
     },
     {
       "agent": "implementation-planner",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "import-automation-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1938,6 +2172,15 @@
     },
     {
       "agent": "integration-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "integration-operations-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2035,6 +2278,15 @@
       ]
     },
     {
+      "agent": "lyrics-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "maintainability-reviewer",
       "allowedTools": [
         "Read",
@@ -2054,6 +2306,24 @@
     },
     {
       "agent": "merge-safety-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "metadata-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "metadata-quality-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2203,6 +2473,15 @@
       ]
     },
     {
+      "agent": "notification-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "oauth-reviewer",
       "allowedTools": [
         "Read",
@@ -2217,6 +2496,24 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "operational-monitor-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "operational-recovery-agent",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -2278,6 +2575,24 @@
       ]
     },
     {
+      "agent": "participant-operations-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "payment-operations-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "payments-reviewer",
       "allowedTools": [
         "Read",
@@ -2318,6 +2633,15 @@
       ]
     },
     {
+      "agent": "phonogram-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "pii-reviewer",
       "allowedTools": [
         "Read",
@@ -2339,6 +2663,15 @@
     },
     {
       "agent": "producer-consumer-tracer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "project-automation-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2395,6 +2728,15 @@
     },
     {
       "agent": "provider-failure-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "provider-sync-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2538,6 +2880,24 @@
       ]
     },
     {
+      "agent": "relationship-integrity-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "release-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "release-guardian",
       "allowedTools": [
         "Read",
@@ -2566,6 +2926,15 @@
       ]
     },
     {
+      "agent": "release-readiness-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "release-validator",
       "allowedTools": [
         "Read",
@@ -2585,6 +2954,15 @@
     },
     {
       "agent": "repo-inspector",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "report-automation-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2701,6 +3079,24 @@
     },
     {
       "agent": "retry-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "rights-integrity-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "rights-operations-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2948,6 +3344,33 @@
       ]
     },
     {
+      "agent": "shares-operations-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "signature-automation-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "signature-followup-agent",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "skill-router",
       "allowedTools": [
         "Read",
@@ -3036,6 +3459,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "task-automation-agent",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -3183,6 +3615,15 @@
     },
     {
       "agent": "transaction-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "transcription-automation-agent",
       "allowedTools": [
         "Read",
         "Grep",
@@ -3340,6 +3781,15 @@
     },
     {
       "agent": "webhook-security-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "work-automation-agent",
       "allowedTools": [
         "Read",
         "Grep",

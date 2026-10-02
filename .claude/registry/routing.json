@@ -2983,6 +2983,279 @@
     "ai.review.regression",
     "ai.review.hallucination"
    ]
+  },
+  {
+   "intent": "operate-project",
+   "domain": "operations",
+   "description": "Operate a project from intake to readiness",
+   "keywords": [
+    "project intake",
+    "project readiness",
+    "advance project"
+   ],
+   "capabilities": [
+    "ops.project"
+   ]
+  },
+  {
+   "intent": "operate-work",
+   "domain": "operations",
+   "description": "Prepare and validate a work",
+   "keywords": [
+    "work draft",
+    "work metadata",
+    "work registration"
+   ],
+   "capabilities": [
+    "ops.work"
+   ]
+  },
+  {
+   "intent": "operate-phonogram",
+   "domain": "operations",
+   "description": "Prepare and validate a phonogram",
+   "keywords": [
+    "phonogram draft",
+    "phonogram metadata",
+    "phonogram registration"
+   ],
+   "capabilities": [
+    "ops.phonogram"
+   ]
+  },
+  {
+   "intent": "prepare-release",
+   "domain": "operations",
+   "description": "Prepare a release and its readiness",
+   "keywords": [
+    "release preparation",
+    "release readiness",
+    "release checklist"
+   ],
+   "capabilities": [
+    "ops.release",
+    "ops.release-readiness"
+   ]
+  },
+  {
+   "intent": "operate-distribution",
+   "domain": "operations",
+   "description": "Operate distribution packaging, status and rejection",
+   "keywords": [
+    "distribution package",
+    "distribution status",
+    "distribution rejection"
+   ],
+   "capabilities": [
+    "ops.distribution",
+    "ops.distribution-readiness",
+    "ops.distribution-status",
+    "ops.distribution-rejection"
+   ]
+  },
+  {
+   "intent": "operate-artists-and-participants",
+   "domain": "operations",
+   "description": "Operate artists and participants",
+   "keywords": [
+    "artist normalization",
+    "participant resolution",
+    "duplicate participant"
+   ],
+   "capabilities": [
+    "ops.artist",
+    "ops.participant"
+   ]
+  },
+  {
+   "intent": "operate-rights-and-shares",
+   "domain": "operations",
+   "description": "Operate rights, shares and credits",
+   "keywords": [
+    "rights chain",
+    "share total",
+    "credits",
+    "rights conflict"
+   ],
+   "capabilities": [
+    "ops.rights",
+    "ops.shares",
+    "ops.credits"
+   ]
+  },
+  {
+   "intent": "operate-catalog-and-metadata",
+   "domain": "operations",
+   "description": "Operate catalog and metadata",
+   "keywords": [
+    "catalog operations",
+    "metadata validation",
+    "isrc validation",
+    "upc validation"
+   ],
+   "capabilities": [
+    "ops.catalog",
+    "ops.metadata"
+   ]
+  },
+  {
+   "intent": "operate-assets-and-lyrics",
+   "domain": "operations",
+   "description": "Operate assets, lyrics and transcription",
+   "keywords": [
+    "audio assets",
+    "cover art",
+    "lyrics extraction",
+    "transcription"
+   ],
+   "capabilities": [
+    "ops.asset",
+    "ops.lyrics",
+    "ops.transcription"
+   ]
+  },
+  {
+   "intent": "operate-contracts",
+   "domain": "operations",
+   "description": "Operate contracts and signatures",
+   "keywords": [
+    "contract generation",
+    "contract routing",
+    "signature status",
+    "signature follow up"
+   ],
+   "capabilities": [
+    "ops.contract",
+    "ops.contract-generation",
+    "ops.contract-routing",
+    "ops.contract-status",
+    "ops.signature",
+    "ops.signature-followup"
+   ]
+  },
+  {
+   "intent": "operate-integrations",
+   "domain": "operations",
+   "description": "Operate integrations, provider sync and external ids",
+   "keywords": [
+    "provider sync",
+    "external id resolution",
+    "provider reconciliation"
+   ],
+   "capabilities": [
+    "ops.integration",
+    "ops.provider-sync",
+    "ops.external-reconciliation",
+    "ops.external-id"
+   ]
+  },
+  {
+   "intent": "operate-notifications-and-tasks",
+   "domain": "operations",
+   "description": "Operate notifications, email, tasks and deadlines",
+   "keywords": [
+    "operational notification",
+    "email notification",
+    "overdue task",
+    "follow up"
+   ],
+   "capabilities": [
+    "ops.notification",
+    "ops.email",
+    "ops.task",
+    "ops.deadline",
+    "ops.followup"
+   ]
+  },
+  {
+   "intent": "operate-finance",
+   "domain": "operations",
+   "description": "Operate company finance and reconciliation",
+   "keywords": [
+    "company finance",
+    "financial reconciliation",
+    "payment preparation"
+   ],
+   "capabilities": [
+    "ops.finance",
+    "ops.payment",
+    "ops.financial-reconciliation"
+   ]
+  },
+  {
+   "intent": "check-data-quality",
+   "domain": "operations",
+   "description": "Check data quality and integrity",
+   "keywords": [
+    "data quality",
+    "rights integrity",
+    "catalog integrity",
+    "orphan records"
+   ],
+   "capabilities": [
+    "ops.data-quality",
+    "ops.metadata-quality",
+    "ops.rights-integrity",
+    "ops.catalog-integrity",
+    "ops.relationship-integrity"
+   ]
+  },
+  {
+   "intent": "operate-documents-import-export-reports",
+   "domain": "operations",
+   "description": "Operate documents, imports, exports and reports",
+   "keywords": [
+    "document automation",
+    "xlsx import",
+    "csv export",
+    "operational report"
+   ],
+   "capabilities": [
+    "ops.document",
+    "ops.import",
+    "ops.export",
+    "ops.report"
+   ]
+  },
+  {
+   "intent": "monitor-operations",
+   "domain": "operations",
+   "description": "Monitor operations and route exceptions",
+   "keywords": [
+    "operational monitor",
+    "exception routing",
+    "stuck automation"
+   ],
+   "capabilities": [
+    "ops.monitor",
+    "ops.exception-routing"
+   ]
+  },
+  {
+   "intent": "request-human-approval",
+   "domain": "operations",
+   "description": "Request or evaluate a human approval",
+   "keywords": [
+    "human approval",
+    "approval request",
+    "resume after approval"
+   ],
+   "capabilities": [
+    "ops.human-approval"
+   ]
+  },
+  {
+   "intent": "recover-operation",
+   "domain": "operations",
+   "description": "Recover a failed operation or workflow",
+   "keywords": [
+    "operational recovery",
+    "failed workflow",
+    "retry failed operation"
+   ],
+   "capabilities": [
+    "ops.recovery"
+   ]
   }
  ],
  "highImpactSignals": [

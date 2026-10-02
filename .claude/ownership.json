@@ -470,6 +470,16 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "artist-operations-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "asset-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "assumption-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -592,6 +602,16 @@
     },
     {
       "agent": "capacity-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "catalog-integrity-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "catalog-operations-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -719,6 +739,26 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "contract-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "contract-generation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "contract-routing-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "contract-status-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "contract-test-engineer",
       "writes": [
         "apps/api/src/**/*.contract.spec.ts",
@@ -752,6 +792,11 @@
     },
     {
       "agent": "credential-storage-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "credits-operations-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -806,6 +851,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "data-quality-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "database-engineer",
       "writes": [
         "apps/api/src/modules/**/*.service.ts",
@@ -841,6 +891,11 @@
     },
     {
       "agent": "dead-code-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "deadline-automation-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -909,6 +964,31 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "distribution-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "distribution-readiness-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "distribution-rejection-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "distribution-status-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "document-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "domain-architecture-engineer",
       "writes": [
         "docs/engineering/decisions/domain/**"
@@ -949,6 +1029,11 @@
         "playwright.config.ts"
       ],
       "note": "pack writer (testing); scope declared in .claude/agents/e2e-engineer.md"
+    },
+    {
+      "agent": "email-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "encryption-reviewer",
@@ -1019,12 +1104,32 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "exception-routing-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "execution-planner",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "export-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "external-api-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "external-data-reconciliation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "external-id-resolution-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1049,12 +1154,27 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "finance-operations-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "financial-reconciliation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "fixture-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
     {
       "agent": "flaky-test-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "followup-automation-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1110,12 +1230,22 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "human-approval-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "implementation-lead",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
     {
       "agent": "implementation-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "import-automation-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1170,6 +1300,11 @@
     },
     {
       "agent": "integration-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "integration-operations-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1229,6 +1364,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "lyrics-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "maintainability-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1240,6 +1380,16 @@
     },
     {
       "agent": "merge-safety-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "metadata-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "metadata-quality-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1326,6 +1476,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "notification-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "oauth-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1338,6 +1493,16 @@
         "apps/api/src/core/interceptors/**"
       ],
       "note": "pack writer (reliability); scope declared in .claude/agents/observability-engineer.md"
+    },
+    {
+      "agent": "operational-monitor-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "operational-recovery-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "optimistic-locking-reviewer",
@@ -1370,6 +1535,16 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "participant-operations-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "payment-operations-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "payments-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1397,6 +1572,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "phonogram-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "pii-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1410,6 +1590,11 @@
     },
     {
       "agent": "producer-consumer-tracer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "project-automation-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1443,6 +1628,11 @@
     },
     {
       "agent": "provider-failure-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "provider-sync-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1531,6 +1721,16 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "relationship-integrity-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "release-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "release-guardian",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1546,6 +1746,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "release-readiness-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "release-validator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1557,6 +1762,11 @@
     },
     {
       "agent": "repo-inspector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "report-automation-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1627,6 +1837,16 @@
     },
     {
       "agent": "retry-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "rights-integrity-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "rights-operations-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1779,6 +1999,21 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "shares-operations-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "signature-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "signature-followup-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "skill-router",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1833,6 +2068,11 @@
         "apps/api/src/queues/**"
       ],
       "note": "pack writer (integrations); scope declared in .claude/agents/sync-engineer.md"
+    },
+    {
+      "agent": "task-automation-agent",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "task-orchestrator",
@@ -1918,6 +2158,11 @@
     },
     {
       "agent": "transaction-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "transcription-automation-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -2014,6 +2259,11 @@
     },
     {
       "agent": "webhook-security-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "work-automation-agent",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },

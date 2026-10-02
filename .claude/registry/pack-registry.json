@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 324,
+  "agents": 374,
   "skills": 0,
-  "capabilities": 301,
+  "capabilities": 351,
   "workflows": 6
  },
  "agents": [
@@ -1262,6 +1262,56 @@
    "approval": "none"
   },
   {
+   "name": "artist-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/artist-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.artist"
+   ],
+   "skills": [
+    "normalize-artist",
+    "resolve-artist",
+    "detect-duplicate-participant"
+   ],
+   "approval": "entity-merge"
+  },
+  {
+   "name": "asset-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/asset-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.asset"
+   ],
+   "skills": [
+    "validate-audio-assets",
+    "validate-wav",
+    "validate-cover-art",
+    "link-project-assets",
+    "extract-file-metadata"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "assumption-detector",
    "kind": "detector",
    "domain": "requirements",
@@ -1811,6 +1861,56 @@
     "run-performance-tests",
     "create-load-tests",
     "queue-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "catalog-integrity-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/catalog-integrity-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.catalog-integrity"
+   ],
+   "skills": [
+    "detect-orphan-record",
+    "detect-missing-relationship",
+    "detect-status-conflict",
+    "repair-approved-inconsistency"
+   ],
+   "approval": "bulk-data-change"
+  },
+  {
+   "name": "catalog-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/catalog-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.catalog"
+   ],
+   "skills": [
+    "generate-catalog-report",
+    "detect-missing-relationship",
+    "detect-orphan-record",
+    "detect-status-conflict"
    ],
    "approval": "none"
   },
@@ -2390,6 +2490,104 @@
    "approval": "none"
   },
   {
+   "name": "contract-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/contract-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.contract"
+   ],
+   "skills": [
+    "select-contract-template",
+    "validate-contract-data",
+    "archive-signed-contract",
+    "detect-status-conflict"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "contract-generation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/contract-generation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.contract-generation"
+   ],
+   "skills": [
+    "generate-contract",
+    "select-contract-template",
+    "populate-contract",
+    "validate-contract-data"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "contract-routing-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/contract-routing-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.contract-routing"
+   ],
+   "skills": [
+    "route-contract-for-signature",
+    "validate-contract-data",
+    "send-contract-notification"
+   ],
+   "approval": "signature"
+  },
+  {
+   "name": "contract-status-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/contract-status-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.contract-status"
+   ],
+   "skills": [
+    "check-signature-status",
+    "detect-status-conflict",
+    "handle-provider-failure"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "contract-test-engineer",
    "kind": "engineer",
    "domain": "testing",
@@ -2546,6 +2744,31 @@
     "secret-scan"
    ],
    "approval": "none"
+  },
+  {
+   "name": "credits-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/credits-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.credits"
+   ],
+   "skills": [
+    "validate-work-participants",
+    "validate-phonogram-participants",
+    "trace-rights-origin",
+    "detect-missing-relationship"
+   ],
+   "approval": "rights-change"
   },
   {
    "name": "csrf-reviewer",
@@ -2762,6 +2985,31 @@
    "approval": "none"
   },
   {
+   "name": "data-quality-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/data-quality-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.data-quality"
+   ],
+   "skills": [
+    "detect-data-inconsistency",
+    "detect-orphan-record",
+    "detect-metadata-conflict",
+    "detect-status-conflict"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "database-engineer",
    "kind": "engineer",
    "domain": "database",
@@ -2936,6 +3184,30 @@
     "dead-code-analysis",
     "duplication-analysis",
     "safe-refactor"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "deadline-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/deadline-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.deadline"
+   ],
+   "skills": [
+    "detect-overdue-task",
+    "escalate-overdue-task",
+    "schedule-followup"
    ],
    "approval": "none"
   },
@@ -3240,6 +3512,127 @@
    "approval": "none"
   },
   {
+   "name": "distribution-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/distribution-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.distribution"
+   ],
+   "skills": [
+    "assemble-distribution-package",
+    "validate-distribution-metadata",
+    "submit-distribution"
+   ],
+   "approval": "external-send-irreversible"
+  },
+  {
+   "name": "distribution-readiness-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/distribution-readiness-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.distribution-readiness"
+   ],
+   "skills": [
+    "validate-distribution-readiness",
+    "validate-distribution-metadata",
+    "validate-isrc",
+    "validate-upc"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "distribution-rejection-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/distribution-rejection-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.distribution-rejection"
+   ],
+   "skills": [
+    "process-distribution-rejection",
+    "route-distribution-correction",
+    "send-rejection-notification"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "distribution-status-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/distribution-status-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.distribution-status"
+   ],
+   "skills": [
+    "sync-distribution-status",
+    "detect-status-conflict",
+    "handle-provider-failure"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "document-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/document-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.document"
+   ],
+   "skills": [
+    "extract-file-metadata",
+    "link-project-assets",
+    "archive-signed-contract"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "domain-architecture-engineer",
    "kind": "engineer",
    "domain": "architecture",
@@ -3423,6 +3816,29 @@
     "runtime-smoke-test"
    ],
    "approval": "none"
+  },
+  {
+   "name": "email-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/email-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.email"
+   ],
+   "skills": [
+    "send-operational-notification",
+    "send-contract-notification"
+   ],
+   "approval": "external-send"
   },
   {
    "name": "encryption-reviewer",
@@ -3734,6 +4150,32 @@
    "approval": "none"
   },
   {
+   "name": "exception-routing-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/exception-routing-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.exception-routing"
+   ],
+   "skills": [
+    "create-operational-task",
+    "assign-operational-task",
+    "prioritize-operational-task",
+    "escalate-overdue-task",
+    "reject-unsafe-automation"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "execution-planner",
    "kind": "planner",
    "domain": "planning",
@@ -3759,6 +4201,30 @@
    "approval": "none"
   },
   {
+   "name": "export-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/export-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.export"
+   ],
+   "skills": [
+    "generate-xlsx-export",
+    "generate-csv-export",
+    "generate-operational-report"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "external-api-reviewer",
    "kind": "reviewer",
    "domain": "integrations",
@@ -3779,6 +4245,56 @@
     "integration-audit",
     "data-provider-audit",
     "integration-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "external-data-reconciliation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/external-data-reconciliation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.external-reconciliation"
+   ],
+   "skills": [
+    "reconcile-provider-data",
+    "detect-provider-drift",
+    "detect-metadata-conflict",
+    "detect-data-inconsistency"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "external-id-resolution-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/external-id-resolution-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.external-id"
+   ],
+   "skills": [
+    "resolve-external-id",
+    "reconcile-external-identifiers",
+    "validate-isrc",
+    "validate-iswc"
    ],
    "approval": "none"
   },
@@ -3880,6 +4396,55 @@
    "approval": "none"
   },
   {
+   "name": "finance-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/finance-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.finance"
+   ],
+   "skills": [
+    "generate-operational-report",
+    "detect-data-inconsistency",
+    "detect-status-conflict"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "financial-reconciliation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/financial-reconciliation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.financial-reconciliation"
+   ],
+   "skills": [
+    "reconcile-provider-data",
+    "detect-data-inconsistency",
+    "repair-approved-inconsistency",
+    "detect-status-conflict"
+   ],
+   "approval": "auto-fix-legal-financial"
+  },
+  {
    "name": "fixture-reviewer",
    "kind": "reviewer",
    "domain": "testing",
@@ -3924,6 +4489,30 @@
     "run-unit-tests",
     "run-integration-tests",
     "run-e2e"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "followup-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/followup-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.followup"
+   ],
+   "skills": [
+    "schedule-followup",
+    "create-operational-task",
+    "detect-overdue-task"
    ],
    "approval": "none"
   },
@@ -4148,6 +4737,31 @@
    "approval": "none"
   },
   {
+   "name": "human-approval-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/human-approval-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.human-approval"
+   ],
+   "skills": [
+    "evaluate-human-approval",
+    "request-human-approval",
+    "resume-after-approval",
+    "reject-unsafe-automation"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "implementation-lead",
    "kind": "controller",
    "domain": "control",
@@ -4197,6 +4811,35 @@
     "blast-radius-analysis"
    ],
    "approval": "none"
+  },
+  {
+   "name": "import-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/import-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.import"
+   ],
+   "skills": [
+    "import-xlsx",
+    "import-csv",
+    "validate-import",
+    "normalize-import-data",
+    "detect-import-duplicates",
+    "preview-import-changes",
+    "execute-approved-import",
+    "rollback-import"
+   ],
+   "approval": "bulk-data-change"
   },
   {
    "name": "import-export-engineer",
@@ -4421,6 +5064,31 @@
     "integration-map",
     "external-boundary-mapping",
     "config-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "integration-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/integration-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.integration"
+   ],
+   "skills": [
+    "handle-provider-failure",
+    "detect-provider-drift",
+    "retry-provider-sync",
+    "audit-automation-run"
    ],
    "approval": "none"
   },
@@ -4664,6 +5332,31 @@
    "approval": "none"
   },
   {
+   "name": "lyrics-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/lyrics-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.lyrics"
+   ],
+   "skills": [
+    "extract-lyrics",
+    "normalize-lyrics",
+    "compare-lyrics-versions",
+    "detect-work-version-change"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "maintainability-reviewer",
    "kind": "reviewer",
    "domain": "code-quality",
@@ -4732,6 +5425,61 @@
     "diff-review",
     "writer-conflict-check",
     "dependency-safety-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "metadata-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/metadata-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.metadata"
+   ],
+   "skills": [
+    "validate-work-metadata",
+    "validate-phonogram-metadata",
+    "extract-audio-metadata",
+    "extract-file-metadata",
+    "validate-isrc",
+    "validate-iswc",
+    "validate-upc",
+    "detect-metadata-conflict"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "metadata-quality-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/metadata-quality-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.metadata-quality"
+   ],
+   "skills": [
+    "detect-metadata-conflict",
+    "validate-isrc",
+    "validate-iswc",
+    "validate-upc",
+    "normalize-lyrics"
    ],
    "approval": "none"
   },
@@ -5122,6 +5870,31 @@
    "approval": "none"
   },
   {
+   "name": "notification-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/notification-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.notification"
+   ],
+   "skills": [
+    "send-operational-notification",
+    "send-release-notification",
+    "send-distribution-notification",
+    "send-rejection-notification"
+   ],
+   "approval": "external-send"
+  },
+  {
    "name": "oauth-reviewer",
    "kind": "reviewer",
    "domain": "integrations",
@@ -5175,6 +5948,56 @@
     "run-unit-tests"
    ],
    "approval": "none"
+  },
+  {
+   "name": "operational-monitor-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/operational-monitor-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.monitor"
+   ],
+   "skills": [
+    "audit-automation-run",
+    "record-automation-evidence",
+    "create-operational-checkpoint",
+    "trace-automation-decision"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "operational-recovery-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/operational-recovery-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.recovery"
+   ],
+   "skills": [
+    "recover-failed-workflow",
+    "resume-operational-workflow",
+    "retry-failed-operation",
+    "rollback-operational-action"
+   ],
+   "approval": "production-write"
   },
   {
    "name": "optimistic-locking-reviewer",
@@ -5323,6 +6146,56 @@
    "approval": "none"
   },
   {
+   "name": "participant-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/participant-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.participant"
+   ],
+   "skills": [
+    "normalize-participant",
+    "resolve-participant",
+    "detect-duplicate-participant",
+    "merge-participant-candidates"
+   ],
+   "approval": "entity-merge"
+  },
+  {
+   "name": "payment-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/payment-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.payment"
+   ],
+   "skills": [
+    "evaluate-human-approval",
+    "request-human-approval",
+    "validate-share-total",
+    "detect-data-inconsistency"
+   ],
+   "approval": "payment"
+  },
+  {
    "name": "payments-reviewer",
    "kind": "reviewer",
    "domain": "code-quality",
@@ -5434,6 +6307,33 @@
    "approval": "none"
   },
   {
+   "name": "phonogram-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/phonogram-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.phonogram"
+   ],
+   "skills": [
+    "create-phonogram-draft",
+    "validate-phonogram-metadata",
+    "validate-phonogram-participants",
+    "validate-phonogram-rights",
+    "validate-phonogram-shares",
+    "route-phonogram-to-registration"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "pii-reviewer",
    "kind": "reviewer",
    "domain": "security",
@@ -5507,6 +6407,31 @@
     "producer-consumer-trace",
     "contract-tracing",
     "data-flow-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "project-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/project-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.project"
+   ],
+   "skills": [
+    "create-project-from-intake",
+    "validate-project-readiness",
+    "advance-project-workflow",
+    "link-project-assets"
    ],
    "approval": "none"
   },
@@ -5659,6 +6584,31 @@
     "integration-audit",
     "retry-audit",
     "circuit-breaker-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "provider-sync-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/provider-sync-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.provider-sync"
+   ],
+   "skills": [
+    "sync-provider-data",
+    "detect-provider-drift",
+    "retry-provider-sync",
+    "handle-provider-failure"
    ],
    "approval": "none"
   },
@@ -6032,6 +6982,56 @@
    "approval": "none"
   },
   {
+   "name": "relationship-integrity-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/relationship-integrity-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.relationship-integrity"
+   ],
+   "skills": [
+    "detect-missing-relationship",
+    "detect-orphan-record",
+    "detect-status-conflict",
+    "repair-approved-inconsistency"
+   ],
+   "approval": "bulk-data-change"
+  },
+  {
+   "name": "release-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/release-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.release"
+   ],
+   "skills": [
+    "prepare-release",
+    "validate-release-readiness",
+    "link-project-assets",
+    "generate-operational-report"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "release-guardian",
    "kind": "validator",
    "domain": "repository",
@@ -6109,6 +7109,31 @@
    "approval": "none"
   },
   {
+   "name": "release-readiness-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/release-readiness-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.release-readiness"
+   ],
+   "skills": [
+    "validate-release-readiness",
+    "validate-audio-assets",
+    "validate-cover-art",
+    "validate-work-shares"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "release-validator",
    "kind": "validator",
    "domain": "repository",
@@ -6178,6 +7203,31 @@
     "repo-identity-check",
     "repository-census",
     "dirty-tree-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "report-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/report-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.report"
+   ],
+   "skills": [
+    "generate-operational-report",
+    "generate-catalog-report",
+    "generate-rights-report",
+    "generate-distribution-report"
    ],
    "approval": "none"
   },
@@ -6495,6 +7545,57 @@
     "integration-audit"
    ],
    "approval": "none"
+  },
+  {
+   "name": "rights-integrity-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/rights-integrity-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.rights-integrity"
+   ],
+   "skills": [
+    "validate-rights-chain",
+    "detect-rights-conflict",
+    "validate-share-total",
+    "repair-approved-inconsistency"
+   ],
+   "approval": "auto-fix-legal-financial"
+  },
+  {
+   "name": "rights-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/rights-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.rights"
+   ],
+   "skills": [
+    "validate-rights-chain",
+    "detect-rights-conflict",
+    "trace-rights-origin",
+    "validate-work-rights",
+    "validate-phonogram-rights"
+   ],
+   "approval": "rights-change"
   },
   {
    "name": "risk-controller",
@@ -7150,6 +8251,80 @@
    "approval": "none"
   },
   {
+   "name": "shares-operations-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/shares-operations-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.shares"
+   ],
+   "skills": [
+    "validate-share-total",
+    "calculate-share-validation",
+    "detect-share-conflict",
+    "validate-work-shares",
+    "validate-phonogram-shares"
+   ],
+   "approval": "share-change"
+  },
+  {
+   "name": "signature-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/signature-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.signature"
+   ],
+   "skills": [
+    "check-signature-status",
+    "archive-signed-contract",
+    "validate-contract-data"
+   ],
+   "approval": "signature"
+  },
+  {
+   "name": "signature-followup-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/signature-followup-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.signature-followup"
+   ],
+   "skills": [
+    "follow-up-signature",
+    "send-signature-reminder",
+    "schedule-followup"
+   ],
+   "approval": "external-send"
+  },
+  {
    "name": "skill-router",
    "kind": "router",
    "domain": "routing",
@@ -7399,6 +8574,31 @@
     "retry-provider-sync",
     "create-integration-tests",
     "run-integration-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "task-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/task-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.task"
+   ],
+   "skills": [
+    "create-operational-task",
+    "assign-operational-task",
+    "prioritize-operational-task",
+    "close-completed-task"
    ],
    "approval": "none"
   },
@@ -7800,6 +9000,30 @@
     "transaction-audit",
     "concurrency-audit",
     "data-integrity-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "transcription-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/transcription-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.transcription"
+   ],
+   "skills": [
+    "transcribe-audio",
+    "extract-lyrics",
+    "normalize-lyrics"
    ],
    "approval": "none"
   },
@@ -8226,6 +9450,33 @@
     "webhook-security-audit",
     "security-boundary-audit",
     "event-processing-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "work-automation-agent",
+   "kind": "operational",
+   "domain": "operations",
+   "batch": 15,
+   "owner": "operations owner",
+   "path": ".claude/agents/work-automation-agent.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ops.work"
+   ],
+   "skills": [
+    "create-work-draft",
+    "validate-work-metadata",
+    "validate-work-participants",
+    "validate-work-rights",
+    "validate-work-shares",
+    "route-work-to-registration"
    ],
    "approval": "none"
   },
@@ -11356,6 +12607,1161 @@
     "retry-provider-sync",
     "run-integration-tests",
     "sync-provider-data"
+   ]
+  },
+  {
+   "id": "ops.artist",
+   "domain": "operations",
+   "description": "Normalize and resolve artist records and propose merges of duplicates for human decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "entity-merge",
+   "executors": [
+    "artist-operations-agent"
+   ],
+   "skills": [
+    "detect-duplicate-participant",
+    "normalize-artist",
+    "resolve-artist"
+   ]
+  },
+  {
+   "id": "ops.asset",
+   "domain": "operations",
+   "description": "Validate audio and image assets of Phonograms and Releases and link them to their Project",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "asset-automation-agent"
+   ],
+   "skills": [
+    "extract-file-metadata",
+    "link-project-assets",
+    "validate-audio-assets",
+    "validate-cover-art",
+    "validate-wav"
+   ]
+  },
+  {
+   "id": "ops.catalog",
+   "domain": "operations",
+   "description": "Operate the catalog view: consistency of Works, Phonograms and Releases and generation of catalog reports",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "catalog-operations-agent"
+   ],
+   "skills": [
+    "detect-missing-relationship",
+    "detect-orphan-record",
+    "detect-status-conflict",
+    "generate-catalog-report"
+   ]
+  },
+  {
+   "id": "ops.catalog-integrity",
+   "domain": "operations",
+   "description": "Check relations and consistency of the catalog and propose bulk repairs for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "bulk-data-change",
+   "executors": [
+    "catalog-integrity-agent"
+   ],
+   "skills": [
+    "detect-missing-relationship",
+    "detect-orphan-record",
+    "detect-status-conflict",
+    "repair-approved-inconsistency"
+   ]
+  },
+  {
+   "id": "ops.contract",
+   "domain": "operations",
+   "description": "Coordinate the contract lifecycle: choose the next step, track state and keep the contract linked to its parties and rights",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "contract-automation-agent"
+   ],
+   "skills": [
+    "archive-signed-contract",
+    "detect-status-conflict",
+    "select-contract-template",
+    "validate-contract-data"
+   ]
+  },
+  {
+   "id": "ops.contract-generation",
+   "domain": "operations",
+   "description": "Generate a contract draft from a template and the validated data, for human review",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "contract-generation-agent"
+   ],
+   "skills": [
+    "generate-contract",
+    "populate-contract",
+    "select-contract-template",
+    "validate-contract-data"
+   ]
+  },
+  {
+   "id": "ops.contract-routing",
+   "domain": "operations",
+   "description": "Route a reviewed contract for signature to the right providers and signers, behind a recorded signature approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "signature",
+   "executors": [
+    "contract-routing-agent"
+   ],
+   "skills": [
+    "route-contract-for-signature",
+    "send-contract-notification",
+    "validate-contract-data"
+   ]
+  },
+  {
+   "id": "ops.contract-status",
+   "domain": "operations",
+   "description": "Track contract and signature status and detect stuck or conflicting states",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "contract-status-agent"
+   ],
+   "skills": [
+    "check-signature-status",
+    "detect-status-conflict",
+    "handle-provider-failure"
+   ]
+  },
+  {
+   "id": "ops.credits",
+   "domain": "operations",
+   "description": "Validate credits of Works and Phonograms against participants and roles and prepare credit corrections for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "rights-change",
+   "executors": [
+    "credits-operations-agent"
+   ],
+   "skills": [
+    "detect-missing-relationship",
+    "trace-rights-origin",
+    "validate-phonogram-participants",
+    "validate-work-participants"
+   ]
+  },
+  {
+   "id": "ops.data-quality",
+   "domain": "operations",
+   "description": "Measure data quality across the product data and report inconsistencies by class",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "data-quality-agent"
+   ],
+   "skills": [
+    "detect-data-inconsistency",
+    "detect-metadata-conflict",
+    "detect-orphan-record",
+    "detect-status-conflict"
+   ]
+  },
+  {
+   "id": "ops.deadline",
+   "domain": "operations",
+   "description": "Detect overdue tasks and approaching deadlines and escalate them",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "deadline-automation-agent"
+   ],
+   "skills": [
+    "detect-overdue-task",
+    "escalate-overdue-task",
+    "schedule-followup"
+   ]
+  },
+  {
+   "id": "ops.distribution",
+   "domain": "operations",
+   "description": "Assemble a distribution package and prepare its submission to a distributor, with submission itself behind human approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "external-send-irreversible",
+   "integration": "distributor provider: the repository has only an unconfigured distributor placeholder, so submission and status checks cannot run until a real provider contract is supplied; the safe fallback is the validated package plus the approval request, with no send.",
+   "executors": [
+    "distribution-automation-agent"
+   ],
+   "skills": [
+    "assemble-distribution-package",
+    "submit-distribution",
+    "validate-distribution-metadata"
+   ]
+  },
+  {
+   "id": "ops.distribution-readiness",
+   "domain": "operations",
+   "description": "Decide whether a Release meets the distributor requirements before submission",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "distribution-readiness-agent"
+   ],
+   "skills": [
+    "validate-distribution-metadata",
+    "validate-distribution-readiness",
+    "validate-isrc",
+    "validate-upc"
+   ]
+  },
+  {
+   "id": "ops.distribution-rejection",
+   "domain": "operations",
+   "description": "Process a distributor rejection: classify the reasons and route the correction",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "distribution-rejection-agent"
+   ],
+   "skills": [
+    "process-distribution-rejection",
+    "route-distribution-correction",
+    "send-rejection-notification"
+   ]
+  },
+  {
+   "id": "ops.distribution-status",
+   "domain": "operations",
+   "description": "Track the status of a submission at the distributor and report changes, when a provider exists",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "integration": "distributor provider: only an unconfigured placeholder exists; expected contract is a submission id in and a status with timestamp and reasons out, and the safe fallback is to keep the recorded status and ask a person to update it manually.",
+   "executors": [
+    "distribution-status-agent"
+   ],
+   "skills": [
+    "detect-status-conflict",
+    "handle-provider-failure",
+    "sync-distribution-status"
+   ]
+  },
+  {
+   "id": "ops.document",
+   "domain": "operations",
+   "description": "Process documents: extract their metadata, link them to the right entity and verify their identity",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "document-automation-agent"
+   ],
+   "skills": [
+    "archive-signed-contract",
+    "extract-file-metadata",
+    "link-project-assets"
+   ]
+  },
+  {
+   "id": "ops.email",
+   "domain": "operations",
+   "description": "Prepare operational emails and send them through the configured mail service under the sending policy",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "external-send",
+   "executors": [
+    "email-automation-agent"
+   ],
+   "skills": [
+    "send-contract-notification",
+    "send-operational-notification"
+   ]
+  },
+  {
+   "id": "ops.exception-routing",
+   "domain": "operations",
+   "description": "Route exceptions and blocked operations to the right human owner with full context",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "exception-routing-agent"
+   ],
+   "skills": [
+    "assign-operational-task",
+    "create-operational-task",
+    "escalate-overdue-task",
+    "prioritize-operational-task",
+    "reject-unsafe-automation"
+   ]
+  },
+  {
+   "id": "ops.export",
+   "domain": "operations",
+   "description": "Generate XLSX and CSV exports scoped to the tenant and permissions, without sensitive fields",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "export-automation-agent"
+   ],
+   "skills": [
+    "generate-csv-export",
+    "generate-operational-report",
+    "generate-xlsx-export"
+   ]
+  },
+  {
+   "id": "ops.external-id",
+   "domain": "operations",
+   "description": "Resolve external identifiers to internal entities with ownership proof, and reconcile identifier sets",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "external-id-resolution-agent"
+   ],
+   "skills": [
+    "reconcile-external-identifiers",
+    "resolve-external-id",
+    "validate-isrc",
+    "validate-iswc"
+   ]
+  },
+  {
+   "id": "ops.external-reconciliation",
+   "domain": "operations",
+   "description": "Reconcile external provider data with internal records and propose resolutions for human decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "external-data-reconciliation-agent"
+   ],
+   "skills": [
+    "detect-data-inconsistency",
+    "detect-metadata-conflict",
+    "detect-provider-drift",
+    "reconcile-provider-data"
+   ]
+  },
+  {
+   "id": "ops.finance",
+   "domain": "operations",
+   "description": "Operate company finance: classify and check company transactions and produce operational finance reports, separate from external royalties",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "finance-operations-agent"
+   ],
+   "skills": [
+    "detect-data-inconsistency",
+    "detect-status-conflict",
+    "generate-operational-report"
+   ]
+  },
+  {
+   "id": "ops.financial-reconciliation",
+   "domain": "operations",
+   "description": "Reconcile financial records against statements and provider data and propose corrections for human approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "auto-fix-legal-financial",
+   "executors": [
+    "financial-reconciliation-agent"
+   ],
+   "skills": [
+    "detect-data-inconsistency",
+    "detect-status-conflict",
+    "reconcile-provider-data",
+    "repair-approved-inconsistency"
+   ]
+  },
+  {
+   "id": "ops.followup",
+   "domain": "operations",
+   "description": "Schedule and track follow-ups for operations that wait on other parties",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "followup-automation-agent"
+   ],
+   "skills": [
+    "create-operational-task",
+    "detect-overdue-task",
+    "schedule-followup"
+   ]
+  },
+  {
+   "id": "ops.human-approval",
+   "domain": "operations",
+   "description": "Evaluate whether an action needs human approval, request it with the exact payload and resume only on a recorded decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "human-approval-agent"
+   ],
+   "skills": [
+    "evaluate-human-approval",
+    "reject-unsafe-automation",
+    "request-human-approval",
+    "resume-after-approval"
+   ]
+  },
+  {
+   "id": "ops.import",
+   "domain": "operations",
+   "description": "Run imports end to end: parse, validate, normalize, detect duplicates, preview and execute only after approval, with rollback",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "bulk-data-change",
+   "executors": [
+    "import-automation-agent"
+   ],
+   "skills": [
+    "detect-import-duplicates",
+    "execute-approved-import",
+    "import-csv",
+    "import-xlsx",
+    "normalize-import-data",
+    "preview-import-changes",
+    "rollback-import",
+    "validate-import"
+   ]
+  },
+  {
+   "id": "ops.integration",
+   "domain": "operations",
+   "description": "Operate the integrations that are configured: health, usage and failure handling, without adding providers",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-operations-agent"
+   ],
+   "skills": [
+    "audit-automation-run",
+    "detect-provider-drift",
+    "handle-provider-failure",
+    "retry-provider-sync"
+   ]
+  },
+  {
+   "id": "ops.lyrics",
+   "domain": "operations",
+   "description": "Extract, normalize and compare lyrics of a Work and detect version changes",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "lyrics-automation-agent"
+   ],
+   "skills": [
+    "compare-lyrics-versions",
+    "detect-work-version-change",
+    "extract-lyrics",
+    "normalize-lyrics"
+   ]
+  },
+  {
+   "id": "ops.metadata",
+   "domain": "operations",
+   "description": "Validate and extract metadata of Works, Phonograms and files, and propose normalized values",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "metadata-automation-agent"
+   ],
+   "skills": [
+    "detect-metadata-conflict",
+    "extract-audio-metadata",
+    "extract-file-metadata",
+    "validate-isrc",
+    "validate-iswc",
+    "validate-phonogram-metadata",
+    "validate-upc",
+    "validate-work-metadata"
+   ]
+  },
+  {
+   "id": "ops.metadata-quality",
+   "domain": "operations",
+   "description": "Assess metadata quality of the catalog and propose corrections for review",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "metadata-quality-agent"
+   ],
+   "skills": [
+    "detect-metadata-conflict",
+    "normalize-lyrics",
+    "validate-isrc",
+    "validate-iswc",
+    "validate-upc"
+   ]
+  },
+  {
+   "id": "ops.monitor",
+   "domain": "operations",
+   "description": "Monitor automation runs, detect stuck or failing operations and record checkpoints and evidence",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "operational-monitor-agent"
+   ],
+   "skills": [
+    "audit-automation-run",
+    "create-operational-checkpoint",
+    "record-automation-evidence",
+    "trace-automation-decision"
+   ]
+  },
+  {
+   "id": "ops.notification",
+   "domain": "operations",
+   "description": "Prepare operational notifications for people and send them under the sending policy",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "external-send",
+   "executors": [
+    "notification-automation-agent"
+   ],
+   "skills": [
+    "send-distribution-notification",
+    "send-operational-notification",
+    "send-rejection-notification",
+    "send-release-notification"
+   ]
+  },
+  {
+   "id": "ops.participant",
+   "domain": "operations",
+   "description": "Normalize and resolve participants (authors, performers, producers, publishers) and propose merges of duplicates",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "entity-merge",
+   "executors": [
+    "participant-operations-agent"
+   ],
+   "skills": [
+    "detect-duplicate-participant",
+    "merge-participant-candidates",
+    "normalize-participant",
+    "resolve-participant"
+   ]
+  },
+  {
+   "id": "ops.payment",
+   "domain": "operations",
+   "description": "Prepare payments for human approval and verify their basis; execution is unavailable and always human-approved",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "payment",
+   "integration": "payout provider: none is configured in this repository; expected contract is a payee, amount, currency and reference in and an execution result out, and the safe fallback is the approved dossier handled outside the system by an authorized person.",
+   "executors": [
+    "payment-operations-agent"
+   ],
+   "skills": [
+    "detect-data-inconsistency",
+    "evaluate-human-approval",
+    "request-human-approval",
+    "validate-share-total"
+   ]
+  },
+  {
+   "id": "ops.phonogram",
+   "domain": "operations",
+   "description": "Prepare and validate a Phonogram (the recording): create the draft, validate metadata, participants, rights and shares, and route it to registration",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "phonogram-automation-agent"
+   ],
+   "skills": [
+    "create-phonogram-draft",
+    "route-phonogram-to-registration",
+    "validate-phonogram-metadata",
+    "validate-phonogram-participants",
+    "validate-phonogram-rights",
+    "validate-phonogram-shares"
+   ]
+  },
+  {
+   "id": "ops.project",
+   "domain": "operations",
+   "description": "Operate a Project from intake to readiness: create it from intake data, check readiness and advance its workflow stage",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "project-automation-agent"
+   ],
+   "skills": [
+    "advance-project-workflow",
+    "create-project-from-intake",
+    "link-project-assets",
+    "validate-project-readiness"
+   ]
+  },
+  {
+   "id": "ops.provider-sync",
+   "domain": "operations",
+   "description": "Synchronize data from the configured providers and detect drift against internal data",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "provider-sync-agent"
+   ],
+   "skills": [
+    "detect-provider-drift",
+    "handle-provider-failure",
+    "retry-provider-sync",
+    "sync-provider-data"
+   ]
+  },
+  {
+   "id": "ops.recovery",
+   "domain": "operations",
+   "description": "Recover failed operations and workflows: resume from checkpoints, retry safely and prepare rollbacks for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "production-write",
+   "executors": [
+    "operational-recovery-agent"
+   ],
+   "skills": [
+    "recover-failed-workflow",
+    "resume-operational-workflow",
+    "retry-failed-operation",
+    "rollback-operational-action"
+   ]
+  },
+  {
+   "id": "ops.relationship-integrity",
+   "domain": "operations",
+   "description": "Check relations between people, companies, contracts and works and propose repairs for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "bulk-data-change",
+   "executors": [
+    "relationship-integrity-agent"
+   ],
+   "skills": [
+    "detect-missing-relationship",
+    "detect-orphan-record",
+    "detect-status-conflict",
+    "repair-approved-inconsistency"
+   ]
+  },
+  {
+   "id": "ops.release",
+   "domain": "operations",
+   "description": "Prepare a Release: assemble its tracks, assets and metadata, and produce the release checklist for human confirmation",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "release-automation-agent"
+   ],
+   "skills": [
+    "generate-operational-report",
+    "link-project-assets",
+    "prepare-release",
+    "validate-release-readiness"
+   ]
+  },
+  {
+   "id": "ops.release-readiness",
+   "domain": "operations",
+   "description": "Decide whether a Release is ready by checking every readiness rule with evidence",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "release-readiness-agent"
+   ],
+   "skills": [
+    "validate-audio-assets",
+    "validate-cover-art",
+    "validate-release-readiness",
+    "validate-work-shares"
+   ]
+  },
+  {
+   "id": "ops.report",
+   "domain": "operations",
+   "description": "Generate operational, catalog, rights and distribution reports with their scope and generation time",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "report-automation-agent"
+   ],
+   "skills": [
+    "generate-catalog-report",
+    "generate-distribution-report",
+    "generate-operational-report",
+    "generate-rights-report"
+   ]
+  },
+  {
+   "id": "ops.rights",
+   "domain": "operations",
+   "description": "Validate the rights chain and conflicts of Works and Phonograms and propose changes to rights for human decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "rights-change",
+   "executors": [
+    "rights-operations-agent"
+   ],
+   "skills": [
+    "detect-rights-conflict",
+    "trace-rights-origin",
+    "validate-phonogram-rights",
+    "validate-rights-chain",
+    "validate-work-rights"
+   ]
+  },
+  {
+   "id": "ops.rights-integrity",
+   "domain": "operations",
+   "description": "Check the integrity of rights and shares across the catalog and propose repairs for human approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "auto-fix-legal-financial",
+   "executors": [
+    "rights-integrity-agent"
+   ],
+   "skills": [
+    "detect-rights-conflict",
+    "repair-approved-inconsistency",
+    "validate-rights-chain",
+    "validate-share-total"
+   ]
+  },
+  {
+   "id": "ops.shares",
+   "domain": "operations",
+   "description": "Validate share totals and conflicts of Works and Phonograms and propose changes to shares or percentages for human decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "share-change",
+   "executors": [
+    "shares-operations-agent"
+   ],
+   "skills": [
+    "calculate-share-validation",
+    "detect-share-conflict",
+    "validate-phonogram-shares",
+    "validate-share-total",
+    "validate-work-shares"
+   ]
+  },
+  {
+   "id": "ops.signature",
+   "domain": "operations",
+   "description": "Process completed signatures: confirm the signed document and prepare archive and rights proposals",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "signature",
+   "executors": [
+    "signature-automation-agent"
+   ],
+   "skills": [
+    "archive-signed-contract",
+    "check-signature-status",
+    "validate-contract-data"
+   ]
+  },
+  {
+   "id": "ops.signature-followup",
+   "domain": "operations",
+   "description": "Follow up on pending signatures with reminders prepared for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "external-send",
+   "executors": [
+    "signature-followup-agent"
+   ],
+   "skills": [
+    "follow-up-signature",
+    "schedule-followup",
+    "send-signature-reminder"
+   ]
+  },
+  {
+   "id": "ops.task",
+   "domain": "operations",
+   "description": "Create, assign, prioritize and close operational tasks from events and findings",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "task-automation-agent"
+   ],
+   "skills": [
+    "assign-operational-task",
+    "close-completed-task",
+    "create-operational-task",
+    "prioritize-operational-task"
+   ]
+  },
+  {
+   "id": "ops.transcription",
+   "domain": "operations",
+   "description": "Transcribe audio to text when a transcription provider exists, and otherwise report the capability as unavailable",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "integration": "speech-to-text transcription provider: none is configured in this repository; expected contract is audio reference plus language in and timestamped text out, and the safe fallback is a manual transcript entered by a person.",
+   "executors": [
+    "transcription-automation-agent"
+   ],
+   "skills": [
+    "extract-lyrics",
+    "normalize-lyrics",
+    "transcribe-audio"
+   ]
+  },
+  {
+   "id": "ops.work",
+   "domain": "operations",
+   "description": "Prepare and validate a Work (the composition): create the draft, validate metadata, participants, rights and shares, and route it to registration",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "executors": [
+    "work-automation-agent"
+   ],
+   "skills": [
+    "create-work-draft",
+    "route-work-to-registration",
+    "validate-work-metadata",
+    "validate-work-participants",
+    "validate-work-rights",
+    "validate-work-shares"
    ]
   },
   {

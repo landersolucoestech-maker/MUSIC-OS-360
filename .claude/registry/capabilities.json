@@ -1724,6 +1724,710 @@
    "approval": "none"
   },
   {
+   "id": "ops.artist",
+   "domain": "operations",
+   "description": "Normalize and resolve artist records and propose merges of duplicates for human decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "entity-merge"
+  },
+  {
+   "id": "ops.asset",
+   "domain": "operations",
+   "description": "Validate audio and image assets of Phonograms and Releases and link them to their Project",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.catalog",
+   "domain": "operations",
+   "description": "Operate the catalog view: consistency of Works, Phonograms and Releases and generation of catalog reports",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.catalog-integrity",
+   "domain": "operations",
+   "description": "Check relations and consistency of the catalog and propose bulk repairs for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "bulk-data-change"
+  },
+  {
+   "id": "ops.contract",
+   "domain": "operations",
+   "description": "Coordinate the contract lifecycle: choose the next step, track state and keep the contract linked to its parties and rights",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.contract-generation",
+   "domain": "operations",
+   "description": "Generate a contract draft from a template and the validated data, for human review",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.contract-routing",
+   "domain": "operations",
+   "description": "Route a reviewed contract for signature to the right providers and signers, behind a recorded signature approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "signature"
+  },
+  {
+   "id": "ops.contract-status",
+   "domain": "operations",
+   "description": "Track contract and signature status and detect stuck or conflicting states",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.credits",
+   "domain": "operations",
+   "description": "Validate credits of Works and Phonograms against participants and roles and prepare credit corrections for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "rights-change"
+  },
+  {
+   "id": "ops.data-quality",
+   "domain": "operations",
+   "description": "Measure data quality across the product data and report inconsistencies by class",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.deadline",
+   "domain": "operations",
+   "description": "Detect overdue tasks and approaching deadlines and escalate them",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.distribution",
+   "domain": "operations",
+   "description": "Assemble a distribution package and prepare its submission to a distributor, with submission itself behind human approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "external-send-irreversible",
+   "integration": "distributor provider: the repository has only an unconfigured distributor placeholder, so submission and status checks cannot run until a real provider contract is supplied; the safe fallback is the validated package plus the approval request, with no send."
+  },
+  {
+   "id": "ops.distribution-readiness",
+   "domain": "operations",
+   "description": "Decide whether a Release meets the distributor requirements before submission",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.distribution-rejection",
+   "domain": "operations",
+   "description": "Process a distributor rejection: classify the reasons and route the correction",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.distribution-status",
+   "domain": "operations",
+   "description": "Track the status of a submission at the distributor and report changes, when a provider exists",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "integration": "distributor provider: only an unconfigured placeholder exists; expected contract is a submission id in and a status with timestamp and reasons out, and the safe fallback is to keep the recorded status and ask a person to update it manually."
+  },
+  {
+   "id": "ops.document",
+   "domain": "operations",
+   "description": "Process documents: extract their metadata, link them to the right entity and verify their identity",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.email",
+   "domain": "operations",
+   "description": "Prepare operational emails and send them through the configured mail service under the sending policy",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "external-send"
+  },
+  {
+   "id": "ops.exception-routing",
+   "domain": "operations",
+   "description": "Route exceptions and blocked operations to the right human owner with full context",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.export",
+   "domain": "operations",
+   "description": "Generate XLSX and CSV exports scoped to the tenant and permissions, without sensitive fields",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.external-id",
+   "domain": "operations",
+   "description": "Resolve external identifiers to internal entities with ownership proof, and reconcile identifier sets",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.external-reconciliation",
+   "domain": "operations",
+   "description": "Reconcile external provider data with internal records and propose resolutions for human decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.finance",
+   "domain": "operations",
+   "description": "Operate company finance: classify and check company transactions and produce operational finance reports, separate from external royalties",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.financial-reconciliation",
+   "domain": "operations",
+   "description": "Reconcile financial records against statements and provider data and propose corrections for human approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "auto-fix-legal-financial"
+  },
+  {
+   "id": "ops.followup",
+   "domain": "operations",
+   "description": "Schedule and track follow-ups for operations that wait on other parties",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.human-approval",
+   "domain": "operations",
+   "description": "Evaluate whether an action needs human approval, request it with the exact payload and resume only on a recorded decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.import",
+   "domain": "operations",
+   "description": "Run imports end to end: parse, validate, normalize, detect duplicates, preview and execute only after approval, with rollback",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "bulk-data-change"
+  },
+  {
+   "id": "ops.integration",
+   "domain": "operations",
+   "description": "Operate the integrations that are configured: health, usage and failure handling, without adding providers",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.lyrics",
+   "domain": "operations",
+   "description": "Extract, normalize and compare lyrics of a Work and detect version changes",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.metadata",
+   "domain": "operations",
+   "description": "Validate and extract metadata of Works, Phonograms and files, and propose normalized values",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.metadata-quality",
+   "domain": "operations",
+   "description": "Assess metadata quality of the catalog and propose corrections for review",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.monitor",
+   "domain": "operations",
+   "description": "Monitor automation runs, detect stuck or failing operations and record checkpoints and evidence",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.notification",
+   "domain": "operations",
+   "description": "Prepare operational notifications for people and send them under the sending policy",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "external-send"
+  },
+  {
+   "id": "ops.participant",
+   "domain": "operations",
+   "description": "Normalize and resolve participants (authors, performers, producers, publishers) and propose merges of duplicates",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "entity-merge"
+  },
+  {
+   "id": "ops.payment",
+   "domain": "operations",
+   "description": "Prepare payments for human approval and verify their basis; execution is unavailable and always human-approved",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "payment",
+   "integration": "payout provider: none is configured in this repository; expected contract is a payee, amount, currency and reference in and an execution result out, and the safe fallback is the approved dossier handled outside the system by an authorized person."
+  },
+  {
+   "id": "ops.phonogram",
+   "domain": "operations",
+   "description": "Prepare and validate a Phonogram (the recording): create the draft, validate metadata, participants, rights and shares, and route it to registration",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.project",
+   "domain": "operations",
+   "description": "Operate a Project from intake to readiness: create it from intake data, check readiness and advance its workflow stage",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.provider-sync",
+   "domain": "operations",
+   "description": "Synchronize data from the configured providers and detect drift against internal data",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.recovery",
+   "domain": "operations",
+   "description": "Recover failed operations and workflows: resume from checkpoints, retry safely and prepare rollbacks for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "production-write"
+  },
+  {
+   "id": "ops.relationship-integrity",
+   "domain": "operations",
+   "description": "Check relations between people, companies, contracts and works and propose repairs for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "bulk-data-change"
+  },
+  {
+   "id": "ops.release",
+   "domain": "operations",
+   "description": "Prepare a Release: assemble its tracks, assets and metadata, and produce the release checklist for human confirmation",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.release-readiness",
+   "domain": "operations",
+   "description": "Decide whether a Release is ready by checking every readiness rule with evidence",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.report",
+   "domain": "operations",
+   "description": "Generate operational, catalog, rights and distribution reports with their scope and generation time",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.rights",
+   "domain": "operations",
+   "description": "Validate the rights chain and conflicts of Works and Phonograms and propose changes to rights for human decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "rights-change"
+  },
+  {
+   "id": "ops.rights-integrity",
+   "domain": "operations",
+   "description": "Check the integrity of rights and shares across the catalog and propose repairs for human approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "auto-fix-legal-financial"
+  },
+  {
+   "id": "ops.shares",
+   "domain": "operations",
+   "description": "Validate share totals and conflicts of Works and Phonograms and propose changes to shares or percentages for human decision",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "share-change"
+  },
+  {
+   "id": "ops.signature",
+   "domain": "operations",
+   "description": "Process completed signatures: confirm the signed document and prepare archive and rights proposals",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "signature"
+  },
+  {
+   "id": "ops.signature-followup",
+   "domain": "operations",
+   "description": "Follow up on pending signatures with reminders prepared for approval",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "external-send"
+  },
+  {
+   "id": "ops.task",
+   "domain": "operations",
+   "description": "Create, assign, prioritize and close operational tasks from events and findings",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ops.transcription",
+   "domain": "operations",
+   "description": "Transcribe audio to text when a transcription provider exists, and otherwise report the capability as unavailable",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none",
+   "integration": "speech-to-text transcription provider: none is configured in this repository; expected contract is audio reference plus language in and timestamped text out, and the safe fallback is a manual transcript entered by a person."
+  },
+  {
+   "id": "ops.work",
+   "domain": "operations",
+   "description": "Prepare and validate a Work (the composition): create the draft, validate metadata, participants, rights and shares, and route it to registration",
+   "validation": [
+    "proposal validated against the domain invariants",
+    "operation record with evidence"
+   ],
+   "evidence": [
+    "operation proposal",
+    "validation result"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "orchestration.context",
    "domain": "orchestration",
    "description": "Build bounded context packages for delegation and close them when the delegate returns",
