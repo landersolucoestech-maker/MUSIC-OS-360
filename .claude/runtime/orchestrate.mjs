@@ -25,7 +25,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { addRecord, getRecord, listRecords, updateRecord } from "./lib/record-store.mjs";
 import { routeTask, classifyIntent } from "./route-task.mjs";
-import { loadWorkflow } from "./graph-engine.mjs";
+import { loadWorkflow, SAFE_NAME } from "./graph-engine.mjs";
 import { open as openDelegation, close as closeDelegation } from "./context-engine.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -98,7 +98,12 @@ export function validatePlanTasks(tasks, cwd) {
   const problems = [];
   const ids = new Set(tasks.map((t) => t.id));
   if (ids.size !== tasks.length) problems.push("duplicate task ids");
+  const safe = (v) => typeof v === "string" && SAFE_NAME.test(v) && !v.includes("..");
   for (const t of tasks) {
+    if (!safe(t.id)) problems.push(`task id ${JSON.stringify(t.id)} is not a safe name`);
+    if (!safe(t.agent)) { problems.push(`task ${t.id}: agent name ${JSON.stringify(t.agent)} is not a safe name`); continue; }
+    for (const s of t.skills) if (!safe(s)) problems.push(`task ${t.id}: skill name ${JSON.stringify(s)} is not a safe name`);
+    if (t.skills.some((s) => !safe(s))) continue;
     if (!agentExists(cwd, t.agent)) problems.push(`task ${t.id}: unknown agent "${t.agent}"`);
     for (const s of t.skills) if (!skillExists(cwd, s)) problems.push(`task ${t.id}: unknown skill "${s}"`);
     for (const d of t.dependsOn) if (!ids.has(d)) problems.push(`task ${t.id}: unknown dependency "${d}"`);

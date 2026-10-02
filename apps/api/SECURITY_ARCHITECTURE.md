@@ -249,8 +249,8 @@ has_min_role(required) → boolean
 ```env
 VITE_SUPABASE_URL=https://<project-id>.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJ...
-VITE_USE_MOCK=false
-VITE_MOCK_MODE=false
+VITE_AUTH_DISABLED=false
+VITE_DEV_AUTH_BYPASS=false
 ```
 
 ### Backend

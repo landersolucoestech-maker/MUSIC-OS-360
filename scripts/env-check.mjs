@@ -257,7 +257,7 @@ const PROD_FORBIDDEN_API_BYPASS_FLAGS = [
   "USE_MOCK",
   "DEV_AUTH_ENDPOINT_ENABLED",
 ];
-const PROD_FORBIDDEN_WEB_BYPASS_FLAGS = ["VITE_AUTH_DISABLED", "VITE_DEV_AUTH_BYPASS"];
+const PROD_FORBIDDEN_WEB_BYPASS_FLAGS = ["VITE_AUTH_DISABLED", "VITE_DEV_AUTH_BYPASS", "VITE_DISABLE_AUTH", "VITE_USE_MOCK", "VITE_MOCK_MODE"];
 if (isProdLike) {
   for (const flag of PROD_FORBIDDEN_API_BYPASS_FLAGS) {
     if (apiEnv[flag] === "true") errors.push(`${flag} (api)=true is forbidden with NODE_ENV=${nodeEnv}`);

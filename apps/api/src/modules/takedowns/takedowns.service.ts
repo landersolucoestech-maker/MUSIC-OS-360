@@ -86,8 +86,8 @@ export class TakedownsService {
     const dto = this.canonicalPayload(input);
 
     const entity = this.repository.create({
-      tenant_id: tenantId,
       ...dto,
+      tenant_id: tenantId,
       created_by: userId,
     } as Partial<TakedownEntity>);
     return this.repository.save(entity as TakedownEntity);

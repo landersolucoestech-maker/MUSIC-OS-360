@@ -124,7 +124,8 @@ export function assertWebSupabaseEnv(mode, envDir) {
     if (!env.VITE_API_URL) {
       errors.push(`VITE_API_URL is required in ${nodeEnv}`);
     }
-    for (const flag of ["VITE_AUTH_DISABLED", "VITE_DEV_AUTH_BYPASS"]) {
+    // Removed flags (VITE_DISABLE_AUTH, VITE_USE_MOCK, VITE_MOCK_MODE) are inert but a stale "true" must still fail the build.
+    for (const flag of ["VITE_AUTH_DISABLED", "VITE_DEV_AUTH_BYPASS", "VITE_DISABLE_AUTH", "VITE_USE_MOCK", "VITE_MOCK_MODE"]) {
       if (env[flag] === "true") {
         errors.push(`${flag}=true is forbidden in ${nodeEnv}`);
       }

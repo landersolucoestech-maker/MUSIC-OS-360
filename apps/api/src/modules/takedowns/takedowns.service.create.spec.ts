@@ -28,6 +28,12 @@ describe('TakedownsService.create — tenant scoping', () => {
     expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ tenant_id: 'tenant-1', created_by: 'user-1' }));
     expect((ds as unknown as { query: jest.Mock }).query).not.toHaveBeenCalled();
   });
+
+  it('defense in depth: a tenant_id smuggled past the DTO can never override the caller tenant', async () => {
+    const { service, repo } = makeService();
+    await service.create('tenant-1', 'user-1', { title: 'X', platform: 'youtube', reason: 'r', tenant_id: 'tenant-evil' } as unknown as CreateTakedownDto);
+    expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ tenant_id: 'tenant-1' }));
+  });
 });
 
 describe('Takedown DTOs — columns removed by migration 20260719000016', () => {

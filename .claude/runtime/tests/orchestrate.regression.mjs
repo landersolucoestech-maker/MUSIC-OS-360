@@ -175,3 +175,18 @@ test("add-task inserts a task found during execution and makes a later task wait
   done({ task: "reproduce", evidence: pass(dir) }, dir);
   assert.throws(() => addTask({ id: "late", agent: "security-reviewer", blocks: ["reproduce"], objective: "x" }, dir), /ALREADY_COMPLETED/);
 }));
+
+test("security: workflow, agent, skill and task names that could leave their directory are rejected", () => withDir((dir) => {
+  for (const workflow of ["../../etc/passwd", "..", "a/b", "bug-fix/../x", "bug fix"]) {
+    assert.throws(() => plan({ order: "x", workflow }, dir), /INVALID_WORKFLOW_NAME|UNKNOWN_WORKFLOW|order/i, `workflow ${workflow}`);
+  }
+  const tasks = (over) => ({ tasks: [{ id: "t1", agent: "root-cause-investigator", skills: [], objective: "o", acceptance: ["a"], ...over }] });
+  const file = join(dir, "tasks.json");
+  for (const bad of [{ agent: "../../outside" }, { agent: "a/b" }, { skills: ["../x"] }, { id: "../evil" }, { id: "a b" }]) {
+    writeFileSync(file, JSON.stringify(tasks(bad)));
+    const r = plan({ order: "x", tasksFile: file }, dir);
+    assert.equal(r.status, "INVALID_PLAN", JSON.stringify(bad));
+  }
+  writeFileSync(file, JSON.stringify(tasks({})));
+  assert.equal(plan({ order: "x", tasksFile: file }, dir).status, "OK");
+}));

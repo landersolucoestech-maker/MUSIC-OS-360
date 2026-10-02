@@ -110,6 +110,7 @@ describe('WorkflowExecutionService', () => {
     repo.find.mockResolvedValueOnce([
       { id: 'l1', status: 'failed', message: RAW, payload: { host: '10.0.0.5' } },
       { id: 'l2', status: 'success', message: 'ok', payload: null },
+      { id: 'l3', status: 'skipped', message: RAW, payload: { host: '10.0.0.5' } },
     ] as never);
     const svc = new WorkflowExecutionService(ds as never, ev() as never);
     const page = await svc.list('t1');
@@ -119,6 +120,7 @@ describe('WorkflowExecutionService', () => {
     expect(detail?.execution).not.toHaveProperty('error_message');
     expect(detail?.logs[0]).toMatchObject({ message: 'WORKFLOW_EXECUTION_FAILED', payload: null });
     expect(detail?.logs[1].message).toBe('ok');
+    expect(detail?.logs[2]).toMatchObject({ message: 'WORKFLOW_EXECUTION_FAILED', payload: null });
     expect(JSON.stringify({ page, detail })).not.toMatch(/ECONNREFUSED|10\.0\.0\.5/);
   });
 

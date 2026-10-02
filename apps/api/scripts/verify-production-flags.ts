@@ -8,7 +8,7 @@
  * instead of being explicitly declared — see collectProductionAuthorityErrors
  * in src/core/config/env.schema.ts for the exact rules.
  *
- * Also fails when AUTH_DISABLED / USE_MOCK / MOCK_MODE / DEV_AUTH_ENDPOINT_ENABLED is 'true'
+ * Also fails when AUTH_DISABLED / DEV_SOCIAL_METRICS_MOCK / USE_MOCK / DEV_AUTH_ENDPOINT_ENABLED is 'true'
  * in a production-like (or unproven) environment, and when NODE_ENV is unset or
  * non-canonical (collectProductionBypassFlagErrors). The API runtime still defaults an
  * unset NODE_ENV to 'development' for local use; this release gate does not.

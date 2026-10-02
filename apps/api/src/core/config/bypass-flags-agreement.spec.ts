@@ -40,6 +40,7 @@ describe('bypass-flag single source agreement', () => {
     const envCheck = extractArray(read('scripts/env-check.mjs'), 'PROD_FORBIDDEN_WEB_BYPASS_FLAGS');
     const assertWeb = read('apps/web/scripts/assert-supabase-env.mjs');
     for (const flag of envCheck) expect(assertWeb).toContain(`"${flag}"`);
-    expect(envCheck).toEqual(['VITE_AUTH_DISABLED', 'VITE_DEV_AUTH_BYPASS']);
+    // live flags first, then the removed (inert) names whose stale "true" must still fail a prod-like build
+    expect(envCheck).toEqual(['VITE_AUTH_DISABLED', 'VITE_DEV_AUTH_BYPASS', 'VITE_DISABLE_AUTH', 'VITE_USE_MOCK', 'VITE_MOCK_MODE']);
   });
 });

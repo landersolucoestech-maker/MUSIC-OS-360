@@ -21,7 +21,11 @@ function workflowsDir(cwd) {
   return existsSync(local) ? local : join(__dirname, "..", "workflows");
 }
 
+// Names become file names (workflows/<name>.json): reject anything that could leave the directory.
+export const SAFE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
 export function loadWorkflow(name, cwd = process.cwd()) {
+  if (typeof name !== "string" || !SAFE_NAME.test(name) || name.includes("..")) throw new Error(`INVALID_WORKFLOW_NAME: ${JSON.stringify(name)}`);
   const path = join(workflowsDir(cwd), `${name}.json`);
   if (!existsSync(path)) throw new Error(`UNKNOWN_WORKFLOW: ${name} (looked in ${path})`);
   const data = JSON.parse(readFileSync(path, "utf8"));

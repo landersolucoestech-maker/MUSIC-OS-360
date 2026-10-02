@@ -298,7 +298,7 @@ async function f77(): Promise<void> {
 // ============================================================================
 async function f78(): Promise<void> {
   section('7.8 — BUILD PROD COMPATIBILIDADE');
-  info('Web bundle (PHASE 6) confirms useUploadToR2 included and MOCK_MODE=false in prod.');
+  info('Web bundle (PHASE 6) confirms useUploadToR2 included and no dev bypass flags in prod.');
   info('Backend dist built via `tsc -p tsconfig.build.json` (PHASE 6.1).');
   info('The presign→PUT→confirm flow is pure HTTP — works in any environment where the API is reachable.');
   ok('Prod-compatible flow: HTTP/REST with no client-only dependency', true);

@@ -2,8 +2,8 @@ services:
   api:
     environment:
       NODE_ENV: production
-      MOCK_MODE: "false"
       USE_MOCK: "false"
+      DEV_SOCIAL_METRICS_MOCK: "false"
       # Real Supabase URL is required (we provide it from shell)
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}

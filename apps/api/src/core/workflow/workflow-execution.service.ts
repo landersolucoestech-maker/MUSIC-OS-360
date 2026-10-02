@@ -43,7 +43,7 @@ export type PublicWorkflowExecution = Omit<WorkflowExecutionEntity, 'error_messa
   error_code: ApiErrorCode | null;
 };
 
-/** Log line on the wire: failed lines carry raw action text, so they expose the stable code instead. */
+/** Log line on the wire: non-success lines carry raw action text, so they expose the stable code instead. */
 export type PublicWorkflowExecutionLog = WorkflowExecutionLogEntity;
 
 export function toPublicWorkflowExecution(exec: WorkflowExecutionEntity): PublicWorkflowExecution {
@@ -53,7 +53,8 @@ export function toPublicWorkflowExecution(exec: WorkflowExecutionEntity): Public
 }
 
 export function toPublicWorkflowExecutionLog(log: WorkflowExecutionLogEntity): PublicWorkflowExecutionLog {
-  if (log.status !== 'failed') return log;
+  // Only successful lines are safe on the wire (they carry the action type); failed and skipped lines can hold raw action text.
+  if (log.status === 'success') return log;
   return { ...log, message: classifyFailureCode(log.message, 'WORKFLOW_EXECUTION_FAILED'), payload: null };
 }
 
