@@ -3791,4 +3791,12 @@ export const ALL_ENTITIES = [
   // Workflow Executions (migration 20260607000002)
   WorkflowExecutionEntity,
   WorkflowExecutionLogEntity,
+  // Declared and used by services (support, knowledge base, operational lists, external data) but never
+  // registered: every query through them failed with "No metadata for <Entity> was found".
+  SupportTicketMessageEntity,
+  SupportRequestEntity,
+  KnowledgeCategoryEntity,
+  KnowledgeArticleEntity,
+  OperationalListItemEntity,
+  ExternalDataSubmissionEntity,
 ];

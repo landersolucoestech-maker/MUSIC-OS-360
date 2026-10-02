@@ -41707,6 +41707,27 @@
       "blocker": "The census queries behind most removal conditions lived in session-local findings files (contracts-ct1, transactions-tx1, persisted-jsonb-pj1, persisted-ap3, persisted-vocabulary-audit, marketing-mk2, contracts-taxonomy, bug1); only the contract batch (20260930000034..36) has its census queries in docs/runbooks/staging-to-production.md.",
       "evidence": "git ls-files has no findings/ path; the references are in ledger rows, migration headers and code comments.",
       "requiredAction": "Write the residue census per remaining backfill migration (20260930000017..033) next to the runbook queries, derived from each migration's own predicate, then repoint the references; do not reconstruct them from memory."
+    },
+    {
+      "id": "BLK-PROJECTS-XLSX-HEADER-ROUNDTRIP",
+      "item": "The projects XLSX export and import template are rejected by the importer",
+      "blocker": "Security-primitive decision: the importer's key guard (isWritableKey / WRITABLE_KEY_RE in core/security/safe-object.ts, a prototype-pollution barrier) does not allow the em dash that two exported header labels use; widening the guard or changing the headers (which saved report layouts and the export spec pin) are both owner decisions.",
+      "evidence": "Verified on a database migrated from scratch with the API running: GET /reports/entities/projects/export and /import/template return a workbook whose headers `Duração — Minutos` and `Duração — Segundos` are rejected by POST /reports/entities/projects/import/validate with `Cabeçalho inseguro`; the clients, contracts and transactions templates validate.",
+      "requiredAction": "Either allow U+2013/U+2014 in WRITABLE_KEY_RE (still cannot start with `_` or reach a prototype key) with a test, or rename the two labels to a hyphen and keep the old text as an accepted deprecated header alias; add a round-trip test (export -> validate) per reportable entity."
+    },
+    {
+      "id": "BLK-PROJECTS-EXPORT-RAW-TOKENS",
+      "item": "The projects export shows raw canonical tokens in three user-facing columns",
+      "blocker": "UX/labeling decision: `Tipo de Lançamento` (ep/album/single), `Solo/Feat` and `Original/Remix` export the stored value, not a PT-BR label; the status, instrumental and language columns are labeled.",
+      "evidence": "Export of a project created through the API on a migrated database: row values `ep`, `solo`, `original` next to `Em planejamento`, `Não`, `Português`; value-labels.pt-br.ts has no label table for projects.type, project_tracks.solo_feat or original_remix.",
+      "requiredAction": "Add the label tables (and the import mapping back to the canonical value) for those three columns, as done for status, instrumental and language."
+    },
+    {
+      "id": "BLK-E2E-ROOT-XLSX-DEPENDENCY",
+      "item": "`pnpm test:e2e` cannot load the Playwright suite from the repository root",
+      "blocker": "Dependency change (manifest + lockfile) is outside this normalization and needs supply-chain review.",
+      "evidence": "e2e/p86-reports-centralization.spec.ts and e2e/reports-export.spec.ts import `xlsx`, which only apps/api and apps/web declare; under pnpm's strict layout the root cannot resolve it, so `playwright test` aborts at load with `Cannot find package 'xlsx'` even though those specs would skip without credentials. The suite also needs a Chromium matching the installed @playwright/test build.",
+      "requiredAction": "Declare xlsx as a root devDependency (or move the two specs under an app that has it) and pin Playwright and its browser build together."
     }
   ]
 }
