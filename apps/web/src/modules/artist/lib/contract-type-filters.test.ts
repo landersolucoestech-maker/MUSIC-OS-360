@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchesContractTypeFilter } from "./contract-type-filters";
+import { CONTRACT_TYPE_FILTERS, canonicalFilterContractType, matchesContractTypeFilter } from "./contract-type-filters";
 
 describe("artist 360 contract type filters", () => {
   it("matches canonical and legacy spellings of the same category", () => {
@@ -24,5 +24,21 @@ describe("artist 360 contract type filters", () => {
   it("'all' and unknown keys match everything", () => {
     expect(matchesContractTypeFilter("all", "anything")).toBe(true);
     expect(matchesContractTypeFilter("nope", null)).toBe(true);
+  });
+
+  it("canonicalFilterContractType maps legacy spellings to canonical slugs", () => {
+    expect(canonicalFilterContractType("exclusivo")).toBe("exclusivity");
+    expect(canonicalFilterContractType("exclusividade")).toBe("exclusivity");
+    expect(canonicalFilterContractType("exclusivity")).toBe("exclusivity");
+    expect(canonicalFilterContractType("nao_exclusivo")).toBe("non_exclusive");
+    expect(canonicalFilterContractType(null)).toBe("");
+    expect(canonicalFilterContractType("parceria")).toBe("parceria");
+  });
+
+  it("business filter carries only the canonical exclusivity slug", () => {
+    const business = CONTRACT_TYPE_FILTERS.find((f) => f.key === "business");
+    expect(business?.types).toContain("exclusivity");
+    expect(business?.types).not.toContain("exclusive");
+    expect(matchesContractTypeFilter("business", "exclusive")).toBe(false);
   });
 });

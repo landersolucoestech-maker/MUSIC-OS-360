@@ -12,7 +12,7 @@ export interface ContractTypeFilter { key: string; label: string; types?: string
 
 export const CONTRACT_TYPE_FILTERS: ContractTypeFilter[] = [
   { key: "all", label: "Todos" },
-  { key: "business", label: "Empresarial", types: ["exclusivity", "exclusive", "non_exclusive", "management", "representation"] },
+  { key: "business", label: "Empresarial", types: ["exclusivity", "non_exclusive", "management", "representation"] },
   { key: "distribution", label: "Distribuição", types: ["distribution"] },
   { key: "licensing", label: "Licenciamento", types: ["licensing"] },
   { key: "production", label: "Produção", types: ["production"] },
@@ -23,7 +23,7 @@ export const CONTRACT_TYPE_FILTERS: ContractTypeFilter[] = [
 
 /** Pre-canonical spellings that no longer have a platform alias (READ compatibility only). */
 const LEGACY_CONTRACT_TYPE_ALIASES: Readonly<Record<string, string>> = {
-  exclusivo: "exclusive",
+  exclusivo: "exclusivity",
   nao_exclusivo: "non_exclusive",
   representacao: "representation",
   servicos: "services",
