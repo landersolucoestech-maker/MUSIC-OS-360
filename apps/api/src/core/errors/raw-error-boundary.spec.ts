@@ -6,6 +6,7 @@ import {
 } from '@music-os-360/types';
 import { toPublicSocialPlatformProfile } from '../../modules/artists/platform-profiles/social-platform-sync.types';
 import { toPublicSkillRun } from '../skills/skill-run.service';
+import { toPublicWorkflowExecution, toPublicWorkflowExecutionLog } from '../workflow/workflow-execution.service';
 import { toPublicSocietySyncJob } from '../../modules/registry/society/society-sync.service';
 
 const RAW =
@@ -46,6 +47,17 @@ describe('raw error boundary: stable codes instead of raw provider/database text
     expect(dto.error_code).toBe('SKILL_RUN_FAILED');
     expect(JSON.stringify(dto)).not.toContain('ECONNREFUSED');
     expect(toPublicSkillRun({ id: 'r', status: 'success', error_message: null } as never).error_code).toBeNull();
+  });
+
+  it('workflow execution DTO: error_message removed, error_code exposed, failed log text replaced', () => {
+    const dto = toPublicWorkflowExecution({ id: 'w', status: 'failed', error_message: RAW } as never);
+    expect(dto).not.toHaveProperty('error_message');
+    expect(dto.error_code).toBe('WORKFLOW_EXECUTION_FAILED');
+    expect(JSON.stringify(dto)).not.toMatch(/ECONNREFUSED|duplicate key|10\.0\.0\.5|dist\/x\.js/);
+    expect(toPublicWorkflowExecution({ id: 'w', status: 'success', error_message: null } as never).error_code).toBeNull();
+    const log = toPublicWorkflowExecutionLog({ id: 'l', status: 'failed', message: RAW, payload: { a: RAW } } as never);
+    expect(log.message).toBe('WORKFLOW_EXECUTION_FAILED');
+    expect(JSON.stringify(log)).not.toContain('ECONNREFUSED');
   });
 
   it('society sync job DTO: error_message removed, error_code exposed', () => {

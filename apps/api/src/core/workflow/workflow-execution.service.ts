@@ -14,6 +14,7 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { WorkflowExecutionEntity, WorkflowExecutionLogEntity } from '../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../events/events.service';
 import { CorrelationContext } from '../events/correlation.context';
+import { classifyFailureCode, type ApiErrorCode } from '@music-os-360/types';
 
 export type ExecutionStatus = 'running' | 'success' | 'failed' | 'partial' | 'cancelled';
 export type ActionLogStatus = 'success' | 'failed' | 'skipped';
@@ -32,6 +33,28 @@ export interface ExecutionFinishParams {
   succeeded: number;
   failed: number;
   error?: string | null;
+}
+
+/**
+ * Wire shape of a workflow execution. The persisted `error_message` (raw runtime/provider
+ * text) stays internal: clients receive the stable `error_code` only.
+ */
+export type PublicWorkflowExecution = Omit<WorkflowExecutionEntity, 'error_message'> & {
+  error_code: ApiErrorCode | null;
+};
+
+/** Log line on the wire: failed lines carry raw action text, so they expose the stable code instead. */
+export type PublicWorkflowExecutionLog = WorkflowExecutionLogEntity;
+
+export function toPublicWorkflowExecution(exec: WorkflowExecutionEntity): PublicWorkflowExecution {
+  const { error_message: rawError, ...rest } = exec;
+  const failed = exec.status === 'failed' || exec.status === 'partial' || !!rawError;
+  return { ...rest, error_code: failed ? classifyFailureCode(rawError, 'WORKFLOW_EXECUTION_FAILED') : null };
+}
+
+export function toPublicWorkflowExecutionLog(log: WorkflowExecutionLogEntity): PublicWorkflowExecutionLog {
+  if (log.status !== 'failed') return log;
+  return { ...log, message: classifyFailureCode(log.message, 'WORKFLOW_EXECUTION_FAILED'), payload: null };
 }
 
 @Injectable()
@@ -170,7 +193,7 @@ export class WorkflowExecutionService {
   async list(
     tenantId: string,
     opts: { ruleId?: string; status?: string; limit?: number; offset?: number } = {},
-  ): Promise<{ data: WorkflowExecutionEntity[]; total: number; limit: number; offset: number }> {
+  ): Promise<{ data: PublicWorkflowExecution[]; total: number; limit: number; offset: number }> {
     const limit = Math.min(Math.max(Number(opts.limit) || 25, 1), 100);
     const offset = Math.max(Number(opts.offset) || 0, 0);
     if (!this.execRepo) return { data: [], total: 0, limit, offset };
@@ -183,20 +206,20 @@ export class WorkflowExecutionService {
       take: limit,
       skip: offset,
     });
-    return { data, total, limit, offset };
+    return { data: data.map(toPublicWorkflowExecution), total, limit, offset };
   }
 
   /** Detail of an execution + action logs. */
   async get(
     tenantId: string,
     executionId: string,
-  ): Promise<{ execution: WorkflowExecutionEntity; logs: WorkflowExecutionLogEntity[] } | null> {
+  ): Promise<{ execution: PublicWorkflowExecution; logs: PublicWorkflowExecutionLog[] } | null> {
     if (!this.execRepo) return null;
     const execution = await this.execRepo.findOne({ where: { id: executionId, tenant_id: tenantId } });
     if (!execution) return null;
     const logs = this.logRepo
       ? await this.logRepo.find({ where: { execution_id: executionId }, order: { created_at: 'ASC' } })
       : [];
-    return { execution, logs };
+    return { execution: toPublicWorkflowExecution(execution), logs: logs.map(toPublicWorkflowExecutionLog) };
   }
 }

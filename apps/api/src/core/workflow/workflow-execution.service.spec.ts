@@ -102,6 +102,26 @@ describe('WorkflowExecutionService', () => {
     expect(detail?.logs).toHaveLength(1);
   });
 
+  it('list/get never return raw error_message or failed-log text; expose error_code', async () => {
+    const RAW = 'connect ECONNREFUSED 10.0.0.5:5432';
+    const { ds, repo } = makeDs();
+    repo.findAndCount.mockResolvedValueOnce([[{ id: 'exec-1', status: 'failed', error_message: RAW }], 1] as never);
+    repo.findOne.mockResolvedValueOnce({ id: 'exec-1', status: 'failed', error_message: RAW } as never);
+    repo.find.mockResolvedValueOnce([
+      { id: 'l1', status: 'failed', message: RAW, payload: { host: '10.0.0.5' } },
+      { id: 'l2', status: 'success', message: 'ok', payload: null },
+    ] as never);
+    const svc = new WorkflowExecutionService(ds as never, ev() as never);
+    const page = await svc.list('t1');
+    expect(page.data[0]).not.toHaveProperty('error_message');
+    expect(page.data[0].error_code).toBe('WORKFLOW_EXECUTION_FAILED');
+    const detail = await svc.get('t1', 'exec-1');
+    expect(detail?.execution).not.toHaveProperty('error_message');
+    expect(detail?.logs[0]).toMatchObject({ message: 'WORKFLOW_EXECUTION_FAILED', payload: null });
+    expect(detail?.logs[1].message).toBe('ok');
+    expect(JSON.stringify({ page, detail })).not.toMatch(/ECONNREFUSED|10\.0\.0\.5/);
+  });
+
   it('without DATA_SOURCE: tenant-scoped start returns "" and list is empty', async () => {
     const svc = new WorkflowExecutionService(null, ev() as never);
     expect(await svc.start({ tenantId: 't1', ruleId: 'r', ruleName: 'R', eventType: 'e', actionsTotal: 0 })).toBe('');
