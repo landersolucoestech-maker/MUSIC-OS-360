@@ -1,0 +1,9 @@
+{
+  "id": "dele-c67d8c3f",
+  "createdAt": "2026-10-02T13:19:56.172Z",
+  "agent": "integration-architecture-reviewer",
+  "objective": "Review the current boundary for the four externally blocked capabilities: audio transcription, distributor submission, distributor status sync and payment execution. State what already exists (interfaces, unconfigured providers, capability availability) and the exact gap against: ports, adapters, DTOs, state machine, error taxonomy, CAPABILITY_UNAVAILABLE, readiness checks, audit trail, tests.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

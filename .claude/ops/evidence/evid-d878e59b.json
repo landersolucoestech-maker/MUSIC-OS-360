@@ -1,0 +1,12 @@
+{
+  "id": "evid-d878e59b",
+  "createdAt": "2026-10-02T13:22:02.384Z",
+  "type": "REVIEW",
+  "reviewer": "integration-architecture-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Boundary review completed with 7 ranked findings; read-only, evidence by file:line",
+  "workspaceFingerprint": "970dc6f176495f4948aec1959fc3c45304ad5f44d9cf1214e78a8ce78ea21350",
+  "fingerprintStatus": "BOUND",
+  "head": "7f1ee1d2a2b999ce01cc367f194167218a7b3bf5"
+}

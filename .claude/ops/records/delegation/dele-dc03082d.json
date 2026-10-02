@@ -1,0 +1,13 @@
+{
+  "id": "dele-dc03082d",
+  "createdAt": "2026-10-02T13:23:48.111Z",
+  "agent": "authorization-engineer",
+  "objective": "Close every protection or test gap that the auth bypass audit lists and that can be closed locally, with tests that fail before and pass after.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/core/auth-disabled.ts",
+    "apps/api/src/modules/auth",
+    "apps/api/src/core/guards"
+  ],
+  "status": "CLOSED"
+}

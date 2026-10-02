@@ -1,0 +1,15 @@
+{
+  "id": "evid-d2965ba4",
+  "createdAt": "2026-10-02T13:21:06.791Z",
+  "type": "COMMAND",
+  "label": "node .claude/runtime/build-pack-registry.mjs --check",
+  "command": "node .claude/runtime/build-pack-registry.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "{\"status\":\"OK\",\"counts\":{\"packItems\":695,\"agents\":374,\"skills\":321,\"capabilities\":351,\"workflows\":24}}",
+  "stderrTail": "",
+  "workspaceFingerprint": "970dc6f176495f4948aec1959fc3c45304ad5f44d9cf1214e78a8ce78ea21350",
+  "fingerprintStatus": "BOUND",
+  "head": "7f1ee1d2a2b999ce01cc367f194167218a7b3bf5",
+  "durationMs": 118
+}

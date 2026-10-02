@@ -1,0 +1,9 @@
+{
+  "id": "dele-e48d275a",
+  "createdAt": "2026-10-02T14:16:38.275Z",
+  "agent": "dead-code-detector",
+  "objective": "Run the final residue search after the last change: broken references, orphans, stale docs, old names, items outside the manifest, TODO/FIXME in scope.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

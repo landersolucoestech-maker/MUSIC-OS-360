@@ -1,0 +1,12 @@
+{
+  "id": "evid-57c366e7",
+  "createdAt": "2026-10-02T13:40:19.292Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "PASS-WITH-FINDINGS: no CRITICAL/HIGH; MEDIUM-1 webhook external_id lookup not tenant scoped, MEDIUM-2 status check does not verify submission belongs to tenant, MEDIUM-3 viewer POST status-check writes blocked audit with unvalidated entityId; LOW dev-auth raw error message, doc overstatement, NODE_ENV unset note",
+  "workspaceFingerprint": "5f840427342e45e228c5c90b11d492e457ea70c5efd7956ccacf551dfa532180",
+  "fingerprintStatus": "BOUND",
+  "head": "7f1ee1d2a2b999ce01cc367f194167218a7b3bf5"
+}

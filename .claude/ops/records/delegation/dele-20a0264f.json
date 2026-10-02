@@ -1,0 +1,9 @@
+{
+  "id": "dele-20a0264f",
+  "createdAt": "2026-10-02T13:38:23.673Z",
+  "agent": "security-reviewer",
+  "objective": "Independent L5 review (read-only) of the changes of this orchestration: git diff of apps/api/src/core/auth-disabled.ts, core/guards, core/security, core/config, create-app.ts, modules/auth, scripts/verify-production-flags.ts, .env.development.example, core/billing/plan-limit.service.ts (fail-closed), core/external-data (capability unavailable, blocked audit, transitions, new capabilities endpoint). Look for authorization bypass, tenant isolation gaps, raw error leaks, secrets, fail-open paths and abuse paths; verify negative tests exist. Report findings with severity and file:line.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

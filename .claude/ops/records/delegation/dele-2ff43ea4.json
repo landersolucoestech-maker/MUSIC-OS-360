@@ -1,0 +1,11 @@
+{
+  "id": "dele-2ff43ea4",
+  "createdAt": "2026-10-02T13:22:02.629Z",
+  "agent": "adapter-engineer",
+  "objective": "Implement, inside apps/api/src/core/external-data and its tests, everything the four externally blocked capabilities can have without a provider: capability availability registry, ports, typed DTOs, state machine, error taxonomy, CAPABILITY_UNAVAILABLE results, readiness check and audit entries, plus tests that use mocks only inside test files. Add no provider and no network call.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/core/external-data"
+  ],
+  "status": "CLOSED"
+}

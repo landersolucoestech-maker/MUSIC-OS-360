@@ -1,0 +1,15 @@
+{
+  "id": "evid-ace2b1a0",
+  "createdAt": "2026-10-02T14:12:11.191Z",
+  "type": "COMMAND",
+  "label": "env DATABASE_URL=postgresql://postgres@127.0.0.1:54329/music_os_scratch DB_SSL=false NODE_ENV=test pnpm --filter @music-os-360/api db:check",
+  "command": "env DATABASE_URL=postgresql://postgres@127.0.0.1:54329/music_os_scratch DB_SSL=false NODE_ENV=test pnpm --filter @music-os-360/api db:check",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "> @music-os-360/api@0.0.1 db:check /home/user/MUSIC-OS-360/apps/api\n> tsx scripts/db-ops.ts check\n\n\n[db:check] Checking migration state…\n\n/home/user/MUSIC-OS-360/apps/api:\n ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @music-os-360/api@0.0.1 db:check: `tsx scripts/db-ops.ts check`\nExit status 1",
+  "stderrTail": "[db-ops:check] Error: connect ECONNREFUSED 127.0.0.1:54329\nError: connect ECONNREFUSED 127.0.0.1:54329\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)",
+  "workspaceFingerprint": "cd22c5476491558c84272403b65cce249712509f8f6f3e8023c361fe750200b4",
+  "fingerprintStatus": "BOUND",
+  "head": "ecda17e7a5b28cbc9d84c7abed5f0ce917b375ed",
+  "durationMs": 2048
+}

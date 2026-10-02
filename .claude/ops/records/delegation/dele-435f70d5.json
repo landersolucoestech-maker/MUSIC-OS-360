@@ -1,0 +1,9 @@
+{
+  "id": "dele-435f70d5",
+  "createdAt": "2026-10-02T13:22:55.794Z",
+  "agent": "refactoring-engineer",
+  "objective": "Fix the occurrences the placeholder scan classified as fixable now, without changing behavior outside the finding; record the rest as ledgered with owner.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

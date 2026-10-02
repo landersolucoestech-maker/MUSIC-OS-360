@@ -1,0 +1,9 @@
+{
+  "id": "dele-e275318f",
+  "createdAt": "2026-10-02T14:16:38.457Z",
+  "agent": "validation-orchestrator",
+  "objective": "Run every applicable gate on the final tree: lint, typecheck, API and web tests, build, naming, xlsx-only, provider residue, pack-integrity, human-approval, operational-automation, security and the completion gate, using the disposable PostgreSQL for database criteria.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

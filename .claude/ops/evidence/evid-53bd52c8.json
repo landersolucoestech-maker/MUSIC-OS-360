@@ -1,0 +1,12 @@
+{
+  "id": "evid-53bd52c8",
+  "createdAt": "2026-10-02T13:23:47.945Z",
+  "type": "REVIEW",
+  "reviewer": "authentication-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Auth bypass audit complete: no production reachability defect; test gaps F1-F6 and unvalidated real authentication reported with file:line",
+  "workspaceFingerprint": "ddcdb561d3ad19164176475de4f33da2a7a622fa2e78fa8c1fd848d8feb8f81e",
+  "fingerprintStatus": "BOUND",
+  "head": "7f1ee1d2a2b999ce01cc367f194167218a7b3bf5"
+}

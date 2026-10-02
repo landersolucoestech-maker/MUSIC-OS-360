@@ -1,0 +1,9 @@
+{
+  "id": "dele-113ce10c",
+  "createdAt": "2026-10-02T13:19:56.173Z",
+  "agent": "naming-analyzer",
+  "objective": "Re-run the naming census, the schema naming census and the canonical map validation; list every remaining Portuguese machine identifier outside the ledger and every ledger entry without owner or disposition; compare environment variables, CI, scripts and docs.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

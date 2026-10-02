@@ -1,0 +1,9 @@
+{
+  "id": "dele-56e8519e",
+  "createdAt": "2026-10-02T13:19:56.169Z",
+  "agent": "authentication-reviewer",
+  "objective": "Audit the development authentication bypass (AUTH_DISABLED with NODE_ENV=development): where it is implemented, what it covers, whether it can reach production, which guards prevent that, which tests prove the isolation and which scenarios still need real authentication.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

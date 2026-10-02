@@ -1,0 +1,12 @@
+{
+  "id": "evid-638f502d",
+  "createdAt": "2026-10-02T13:50:27.265Z",
+  "type": "REVIEW",
+  "reviewer": "regression-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Regression review: no previously-green behavior broken. Findings (red external-data spec, 4 dev scripts needing dev-auth flags, stale vi.mocks, stale spec doc line, release-check NODE_ENV) all fixed and re-verified: external-data+integrations jest 22 suites/236 tests green, api tsc clean, web ArtistEvolutionSection 8/8.",
+  "workspaceFingerprint": "08fa510e9b990a481d7c7a3c6681d1383c56f3c9aff85edba9b2ede1d550f436",
+  "fingerprintStatus": "BOUND",
+  "head": "7f1ee1d2a2b999ce01cc367f194167218a7b3bf5"
+}

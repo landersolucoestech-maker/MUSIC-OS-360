@@ -1,0 +1,15 @@
+{
+  "id": "evid-a056b045",
+  "createdAt": "2026-10-02T13:29:07.811Z",
+  "type": "COMMAND",
+  "label": "corepack pnpm --filter @music-os-360/api exec jest --config jest.config.ts --coverage=false src/core/external-data src/modules/integrations/external-data.controller.spec.ts src/modules/integrations/governance",
+  "command": "corepack pnpm --filter @music-os-360/api exec jest --config jest.config.ts --coverage=false src/core/external-data src/modules/integrations/external-data.controller.spec.ts src/modules/integrations/governance",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[33m[Nest] 13019  - \u001b[39m10/02/2026, 1:29:06 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[IntegrationUsageGuard] \u001b[39m\u001b[33m[integration-usage] docusign (use): denied for tenant=tenant-1 — reason=PLAN_NOT_INCLUDED\u001b[39m\n\u001b[33m[Nest] 13019  - \u001b[39m10/02/2026, 1:29:06 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[IntegrationUsageGuard] \u001b[39m\u001b[33m[integration-usage] docusign (connect): denied for tenant=tenant-1 — reason=PLAN_NOT_INCLUDED\u001b[39m\n\u001b[33m[Nest] 13019  - \u001b[39m10/02/2026, 1:29:06 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[IntegrationUsageGuard] \u001b[39m\u001b[33m[integration-usage] docusign: no tenant context — denied (fail-closed)\u001b[39m\n\u001b[33m[Nest] 13019  - \u001b[39m10/02/2026, 1:29:06 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[IntegrationUsageGuard] \u001b[39m\u001b[33m[integration-usage] x: no registered policy — denied (fail-closed)\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "b88e7e049b0cace67053de2c7e072c901e9caaf9fe6727013116e93fbae3ac57",
+  "fingerprintStatus": "BOUND",
+  "head": "7f1ee1d2a2b999ce01cc367f194167218a7b3bf5",
+  "durationMs": 31585
+}

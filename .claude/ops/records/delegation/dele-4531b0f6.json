@@ -1,0 +1,9 @@
+{
+  "id": "dele-4531b0f6",
+  "createdAt": "2026-10-02T13:38:23.678Z",
+  "agent": "regression-reviewer",
+  "objective": "Independent review (read-only) of what could have stopped working: removed web hooks, moved jsonb-row-backfill fake, plan-limit constructor now throws without DataSource (check every module/provider that constructs PlanLimitService), Metrics export removal, dev-auth endpoint now opt-in (check docs/scripts/e2e that call GET /dev-auth/token), 503 CAPABILITY_UNAVAILABLE behavior change for distributor endpoints. Report concrete breakages with file:line.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "dele-33e99a51",
+  "createdAt": "2026-10-02T13:40:19.590Z",
+  "agent": "security-engineer",
+  "objective": "Fix the security review findings M1, M2, M3, L2, L3 (see security-review result) with negative tests that fail before and pass after (cross-tenant external_id collision, foreign submissionId rejected, viewer role refused on status-check, invalid entityId rejected, dev-auth error message generic). Do not widen scope; no provider, no network.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/core/external-data",
+    "apps/api/src/modules/integrations",
+    "apps/api/src/modules/auth/dev-auth.controller.ts",
+    "docs/engineering/security.md"
+  ],
+  "status": "CLOSED"
+}

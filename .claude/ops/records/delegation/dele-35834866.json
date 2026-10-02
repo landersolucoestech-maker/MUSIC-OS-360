@@ -1,0 +1,9 @@
+{
+  "id": "dele-35834866",
+  "createdAt": "2026-10-02T13:19:56.171Z",
+  "agent": "technical-debt-analyzer",
+  "objective": "Search the whole repository (product and pack, excluding node_modules, dist and historical records) for TODO, FIXME, HACK, XXX, placeholder, stub, not-implemented throws, skipped or only-focused tests, empty handlers and capabilities without an executor. Classify each occurrence as benign, fixable now or external, with file and line.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

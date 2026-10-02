@@ -1,0 +1,9 @@
+{
+  "id": "dele-a8baccf7",
+  "createdAt": "2026-10-02T13:19:56.165Z",
+  "agent": "repo-inspector",
+  "objective": "Recompute from the source of truth the counts of agents, subagents, skills, capabilities, workflows, contracts, policies, hooks, commands and the CREATED / BLOCKED_EXTERNAL items, and compare them with the reported numbers (374/321/351/24/55 and 690/5). Report divergences with the command that produced each number.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

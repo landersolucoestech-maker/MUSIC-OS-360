@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-02T13:02:11.109Z",
+  "updatedAt": "2026-10-02T14:17:17.243Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -24,7 +24,8 @@
             "evid-8e3ed861",
             "evid-7fc518bd",
             "evid-5ea5f36e",
-            "evid-26ec8483"
+            "evid-26ec8483",
+            "evid-d6d4f262"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -46,7 +47,8 @@
             "evid-039859b9",
             "evid-5935bbf2",
             "evid-6e37da13",
-            "evid-1f87387b"
+            "evid-1f87387b",
+            "evid-a47a7375"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -76,7 +78,8 @@
             "evid-9c2c46dc",
             "evid-89fa904d",
             "evid-2c4fec3f",
-            "evid-185a50e2"
+            "evid-185a50e2",
+            "evid-aae25ec0"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -98,7 +101,8 @@
             "evid-cd6cfddc",
             "evid-977ef5ca",
             "evid-be242b35",
-            "evid-5eb17c0b"
+            "evid-5eb17c0b",
+            "evid-f83a4ff6"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -128,7 +132,8 @@
             "evid-7f2d8429",
             "evid-d944ad60",
             "evid-17b6acf7",
-            "evid-61ae799a"
+            "evid-61ae799a",
+            "evid-f08d2a7e"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -150,7 +155,8 @@
             "evid-f56079d4",
             "evid-9b30d3ac",
             "evid-4c8dec10",
-            "evid-218fb111"
+            "evid-218fb111",
+            "evid-cbd268f5"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -180,7 +186,8 @@
             "evid-1fec5faa",
             "evid-9b8c1eb0",
             "evid-de39929c",
-            "evid-1cd944a0"
+            "evid-1cd944a0",
+            "evid-937acd20"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -202,7 +209,8 @@
             "evid-587c2607",
             "evid-dc7489a3",
             "evid-4d5336c6",
-            "evid-827b3d44"
+            "evid-827b3d44",
+            "evid-6359b423"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -224,7 +232,8 @@
             "evid-1e20ade5",
             "evid-72f5b1dc",
             "evid-0dbb66cb",
-            "evid-3c3da598"
+            "evid-3c3da598",
+            "evid-c1cda4c4"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -246,7 +255,8 @@
             "evid-5711c45e",
             "evid-2024606a",
             "evid-29b805a1",
-            "evid-366cff89"
+            "evid-366cff89",
+            "evid-24b25d0a"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -268,7 +278,8 @@
             "evid-23213d30",
             "evid-4a7836c6",
             "evid-d6cb397f",
-            "evid-ff236350"
+            "evid-ff236350",
+            "evid-3a654857"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -289,7 +300,8 @@
           "evidenceIds": [
             "evid-9b0b8f2a",
             "evid-d6d1723e",
-            "evid-56ab43eb"
+            "evid-56ab43eb",
+            "evid-ceab6071"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -318,7 +330,8 @@
           "evidenceIds": [
             "evid-ed97449e",
             "evid-952de8fe",
-            "evid-0917dfb0"
+            "evid-0917dfb0",
+            "evid-06e78ed9"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -348,7 +361,9 @@
           "text": "schema naming census of a database migrated from scratch has no Portuguese debt",
           "evidenceIds": [
             "evid-93b4fea4",
-            "evid-f2611a19"
+            "evid-f2611a19",
+            "evid-e62ffda5",
+            "evid-997fcf79"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -368,7 +383,8 @@
           "text": "entity registry guard and the contract vocabulary migration specs pass",
           "evidenceIds": [
             "evid-f81fc5d3",
-            "evid-bd216f5c"
+            "evid-bd216f5c",
+            "evid-5ed34d46"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -388,7 +404,9 @@
           "text": "db:check reports no pending migrations on the migrated database",
           "evidenceIds": [
             "evid-987a371f",
-            "evid-6f246ee1"
+            "evid-6f246ee1",
+            "evid-ace2b1a0",
+            "evid-18dfdfb3"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -464,7 +482,48 @@
     "evid-0917dfb0",
     "evid-f2611a19",
     "evid-bd216f5c",
-    "evid-6f246ee1"
+    "evid-6f246ee1",
+    "evid-d2965ba4",
+    "evid-8f0ed595",
+    "evid-ef09db88",
+    "evid-d878e59b",
+    "evid-ef9ddec2",
+    "evid-53bd52c8",
+    "evid-6c6c13b2",
+    "evid-a056b045",
+    "evid-1f4e3bfe",
+    "evid-09e14be7",
+    "evid-5a6bfecd",
+    "evid-a0878b73",
+    "evid-57c366e7",
+    "evid-d21c8546",
+    "evid-638f502d",
+    "evid-d6d4f262",
+    "evid-a47a7375",
+    "evid-aae25ec0",
+    "evid-f83a4ff6",
+    "evid-f08d2a7e",
+    "evid-cbd268f5",
+    "evid-937acd20",
+    "evid-6359b423",
+    "evid-c1cda4c4",
+    "evid-24b25d0a",
+    "evid-3a654857",
+    "evid-ceab6071",
+    "evid-06e78ed9",
+    "evid-e62ffda5",
+    "evid-5ed34d46",
+    "evid-ace2b1a0",
+    "evid-e09e9ab2",
+    "evid-663d792e",
+    "evid-a10dbedb",
+    "evid-2630b5ab",
+    "evid-01076de3",
+    "evid-53063fd3",
+    "evid-21f7faae",
+    "evid-997fcf79",
+    "evid-18dfdfb3",
+    "evid-1f191523"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

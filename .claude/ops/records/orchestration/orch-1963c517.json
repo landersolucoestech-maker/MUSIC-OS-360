@@ -1,0 +1,544 @@
+{
+  "id": "orch-1963c517",
+  "createdAt": "2026-10-02T13:19:48.984Z",
+  "order": "Activate the pack and conclude the project: correct the orchestration, complete the external-capability boundaries, audit authentication, finish the naming normalization and produce the 35-section final report",
+  "title": "pack activation and project conclusion",
+  "workflow": null,
+  "intent": null,
+  "status": "COMPLETED",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-02T14:17:17.341Z",
+  "tasks": [
+    {
+      "id": "inventory",
+      "title": "inventory",
+      "objective": "Recompute from the source of truth the counts of agents, subagents, skills, capabilities, workflows, contracts, policies, hooks, commands and the CREATED / BLOCKED_EXTERNAL items, and compare them with the reported numbers (374/321/351/24/55 and 690/5). Report divergences with the command that produced each number.",
+      "agent": "repo-inspector",
+      "skills": [
+        "repo-inspect",
+        "repository-census"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "each count has a command and its output",
+        "divergences listed or stated absent"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-a8baccf7",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-8f0ed595",
+        "evid-ef09db88"
+      ],
+      "result": "All counts match: 408/374 agents, 373/321 skills, 351 capabilities, 24 workflows, 56 contracts, 20 policies, 5 gates, 690 CREATED, 5 BLOCKED_EXTERNAL; hooks 4 claude + 4 git; no .claude/commands",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "auth-bypass-audit",
+      "title": "auth-bypass-audit",
+      "objective": "Audit the development authentication bypass (AUTH_DISABLED with NODE_ENV=development): where it is implemented, what it covers, whether it can reach production, which guards prevent that, which tests prove the isolation and which scenarios still need real authentication.",
+      "agent": "authentication-reviewer",
+      "skills": [
+        "auth-audit",
+        "session-security-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "file and line of every guard",
+        "list of tests that prove isolation",
+        "list of missing protections or tests"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-56e8519e",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-53bd52c8"
+      ],
+      "result": "Bypass fenced in code (auth-disabled.ts:21-25, create-app.ts:30-62, env.schema.ts:646-655, security-startup.service.ts:88-97, dev-auth module omitted in prod-like) but gaps: F1 no tests for the auth-disabled constant, assertApiRuntimeEnv/createApp, SecurityStartupService, DevAuthController; F2 GET /dev-auth/token is public with hardcoded smoke-test credentials wherever not prod-like; F3 access tokens stay valid after logout/password change until exp (no revocation store); F4 dev HS256 tokens need no exp and accept the zero key; F5 NODE_ENV unset defaults to development and verify-production-flags.ts does not check AUTH_DISABLED; F6 stale comments auth-disabled.ts:4,9; JwtAuthGuard lacks wrong issuer/audience/alg/missing-kid tests; swallowed catches auth-context.service.ts:67 and auth-password.service.ts:71,118. Real authentication is NOT validated: e2e login spec needs institutional credentials (BLOCKED_EXTERNAL).",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "placeholder-scan",
+      "title": "placeholder-scan",
+      "objective": "Search the whole repository (product and pack, excluding node_modules, dist and historical records) for TODO, FIXME, HACK, XXX, placeholder, stub, not-implemented throws, skipped or only-focused tests, empty handlers and capabilities without an executor. Classify each occurrence as benign, fixable now or external, with file and line.",
+      "agent": "technical-debt-analyzer",
+      "skills": [
+        "technical-debt-analysis",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "every fixable occurrence listed with file and line",
+        "benign ones justified"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-35834866",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-ef9ddec2"
+      ],
+      "result": "FIX NOW (do not touch auth files, they belong to harden-auth-isolation; do not touch apps/api/src/core/external-data or modules/integrations): (a) apps/api/src/core/billing/plan-limit.service.ts:72 'if (!this.ds) return' is a fail-open branch for test stubs: make it fail closed / require the DataSource and fix the specs; (b) apps/api/src/modules/users/users.service.ts:213 swallowed deleteUser rollback: log it with the existing logger and surface per existing pattern; (c) apps/api/src/database/jsonb-row-backfill.fake.ts is test-only code in src: move to apps/api/test/helpers and update the 13 *.migration.spec.ts imports; (d) web dead stub hooks useR2, useStripe, useChat and empty-fetch hooks useAppleMusic/useInstagram/useSoundCloud/useSpotify/useYouTube (apps/web/src/modules/integrations/hooks) after proving no consumer except hooks/index.ts; fix stale comment in integrations/clients/index.ts; remove empty ws handler in shared/hooks/useRealtimeSync.ts:44 if the feed handles it elsewhere; (e) apps/web/src/modules/marketing/pages/Metrics.tsx:236-238 no-op handleExport with TODO: remove the non-functional export controls (or wire an existing export if one exists); (f) stale notes: marketing-campaign-builder.controller.ts:118-122 'stub endpoint' wording, apps/web/src/shared/lib/errors.ts NotImplementedError if unused, dead MOCK_MODE branches in apps/web/src/shared/lib/env.ts and its stale mentions; (g) web silent .catch(() => {}) on fire-and-forget fetches listed: report through the existing shared error helper without changing flows. LEAVE LEDGERED (owner/product or external): share-eligibility.util.ts:19 share_type TODO (L4 data model), lead-events.handler.ts:192 onboarding stub artist (product decision), marketing publishing processor, clicksign/ubc/ecad/nfe, portal-rpa and partner-api adapters, ACRCloud hook gap, dev social metrics mock (documented, gated), env-gated test skips (CI lacks credentials).",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "external-ports-review",
+      "title": "external-ports-review",
+      "objective": "Review the current boundary for the four externally blocked capabilities: audio transcription, distributor submission, distributor status sync and payment execution. State what already exists (interfaces, unconfigured providers, capability availability) and the exact gap against: ports, adapters, DTOs, state machine, error taxonomy, CAPABILITY_UNAVAILABLE, readiness checks, audit trail, tests.",
+      "agent": "integration-architecture-reviewer",
+      "skills": [
+        "integration-map",
+        "external-boundary-mapping"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "per capability: existing parts and missing parts with file references"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-c67d8c3f",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-d878e59b"
+      ],
+      "result": "FINDINGS to implement inside apps/api/src (no provider, no network): (1) add ApiErrorCode CAPABILITY_UNAVAILABLE in packages/types/src/api-error-codes.ts and make classifyFailureCode map 'not registered'/'not configured' to it; (2) external-data.types.ts: ExternalCapability union (distributor_submission, distributor_status, audio_transcription, payout), CapabilityUnavailableResult, ALLOWED_SUBMISSION_TRANSITIONS; (3) new core/external-data/capability-unavailable.error.ts (ServiceUnavailableException, body {error:'CAPABILITY_UNAVAILABLE', capability}); (4) new external-capability-readiness.service.ts check(capability, tenantId) using registry metadata supportsSubmit/supportsStatusCheck and technicalCapabilityOf, no provider call; (5) governance registry keys distributor, audio_transcription, payout as NOT_IMPLEMENTED (stripe must not imply payout); (6) unconfigured distributor/society providers and the registry throw CapabilityUnavailableError instead of bare Error, and unconfigured providers also register in prod/staging so they fail closed; (7) exchange service: readiness check first in submitDistributor and checkDistributorStatus, try/catch+emitFailed+assertDb for status check, audit log external_data.blocked without payload, validate webhook status against transitions; (8) new ports audio-transcription.port.ts and payout.port.ts with unconfigured adapters throwing CapabilityUnavailableError, plus GET integrations/external-data/capabilities readiness endpoint (viewer role), no other endpoint; (9) release DISTRIBUTED transition without provider evidence is an owner decision: do NOT change release behavior, record it as risk. Tests (mocks only inside spec files): unconfigured-providers.spec, registry spec (prod/staging), readiness spec, extend exchange service spec (SYNC_FAILED CAPABILITY_UNAVAILABLE, status failure audit, invalid transition rejected, tenant isolation negative), governance spec, controller spec 503 body, types classifyFailureCode test.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "naming-reopen",
+      "title": "naming-reopen",
+      "objective": "Re-run the naming census, the schema naming census and the canonical map validation; list every remaining Portuguese machine identifier outside the ledger and every ledger entry without owner or disposition; compare environment variables, CI, scripts and docs.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "census outputs with exit codes",
+        "residues outside the ledger listed or stated absent"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-113ce10c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-6c6c13b2"
+      ],
+      "result": "naming:check exit 0 (census 4446 files debt doc 8696 only; schema census 0 PT names 37 excepted; ledger 95 concepts 2434 exceptions 25 blockers). GAPS to fix now (ledger metadata, no behavior change): (1) all 25 blockers lack owner and disposition and the validator does not enforce them; (2) apps/api/drizzle/*.sql legacy Drizzle SQL with PT tokens has no ledger row or disposition (_DEPRECATED.md exists); (3) hard-coded exemption tables in scripts/naming/technical-naming-census.mjs (VENDORED, DETECTOR_FIXTURES, USER_INPUT_VOCABULARY, PT_CONTENT_VOCABULARY, EXTERNAL_PROPERTY_NAMES, EXTERNAL_TOOL_NAMES) are outside the ledger without owner/removalCondition; (4) NC-042 disposition BUG with status done contradicts; open concepts NC-017, NC-019, NC-039..041, NC-043..048, CZ-015, CZ-016, CZ-029 have no owner; (5) 1391 of 2100 TEMPORARY_MIGRATION_COMPATIBILITY rows have no coveringTest (validator only warns): ratchet so the count cannot grow; (6) duplicate env var names AUTH_DISABLED/VITE_AUTH_DISABLED/VITE_DISABLE_AUTH and USE_MOCK/MOCK_MODE: security-adjacent, leave and ledger as remaining risk; (7) 116 baselined audit docs (107 under docs/backend-v2) tolerated only by the ratchet: ledger them as DADO_HISTORICO groups, do not translate. LEAVE the 25 blockers and 2434 exceptions as they are.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "implement-external-capabilities",
+      "title": "implement-external-capabilities",
+      "objective": "Implement, inside apps/api/src/core/external-data and its tests, everything the four externally blocked capabilities can have without a provider: capability availability registry, ports, typed DTOs, state machine, error taxonomy, CAPABILITY_UNAVAILABLE results, readiness check and audit entries, plus tests that use mocks only inside test files. Add no provider and no network call.",
+      "agent": "adapter-engineer",
+      "skills": [
+        "create-integration",
+        "create-integration-tests",
+        "run-unit-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src/core/external-data"
+      ],
+      "dependsOn": [
+        "external-ports-review"
+      ],
+      "acceptance": [
+        "unit tests pass",
+        "no provider added",
+        "unconfigured providers return CAPABILITY_UNAVAILABLE with the expected contract"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-2ff43ea4",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-a056b045"
+      ],
+      "result": "Provider-less boundary implemented: CAPABILITY_UNAVAILABLE code, CapabilityUnavailableError (503), readiness service, ports for transcription and payout with unconfigured adapters, transition table, blocked audit, capabilities endpoint, governance keys NOT_IMPLEMENTED; no provider/network/dependency. Remaining owner decisions: release DISTRIBUTED transition without provider evidence; transition table sign-off; DI of ports in core.module not wired (ports unused until a provider exists).",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "harden-auth-isolation",
+      "title": "harden-auth-isolation",
+      "objective": "Close every protection or test gap that the auth bypass audit lists and that can be closed locally, with tests that fail before and pass after.",
+      "agent": "authorization-engineer",
+      "skills": [
+        "authorization-hardening",
+        "create-security-tests",
+        "run-security-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src/core/auth-disabled.ts",
+        "apps/api/src/modules/auth",
+        "apps/api/src/core/guards"
+      ],
+      "dependsOn": [
+        "auth-bypass-audit"
+      ],
+      "acceptance": [
+        "each closed gap has a negative test",
+        "API tests pass"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-dc03082d",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-a0878b73"
+      ],
+      "result": "Closed with tests (38 suites, 722 tests; 7/7 changed suites fail on HEAD sources): auth-disabled isolation tests, createApp/SecurityStartup fatal tests, dev-auth endpoint opt-in DEV_AUTH_ENDPOINT_ENABLED + credentials from env, dev token requires exp and rejects zero key, JwtAuthGuard issuer/audience/alg/kid negatives, production-flags gate rejects bypass flags and unset NODE_ENV, swallowed catches logged. NOT validated: real authentication. Remaining: F3 no server-side access-token revocation (owner: short Supabase access-token TTL); release-check now requires NODE_ENV set; older collectSupabaseEnvErrors compares NODE_ENV exactly.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "fix-placeholders",
+      "title": "fix-placeholders",
+      "objective": "Fix the occurrences the placeholder scan classified as fixable now, without changing behavior outside the finding; record the rest as ledgered with owner.",
+      "agent": "refactoring-engineer",
+      "skills": [
+        "safe-refactor",
+        "create-regression-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "placeholder-scan"
+      ],
+      "acceptance": [
+        "fixable occurrences resolved with tests",
+        "remaining ones justified"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-435f70d5",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-09e14be7",
+        "evid-5a6bfecd"
+      ],
+      "result": "Fixed: plan-limit fail-open (constructor requires DataSource, specs updated), users rollback logged, fake moved to test/helpers (13 importers), 8 dead stub hooks removed, Metrics no-op export removed, stale notes and NotImplementedError removed, web silent catches reported via captureError. Agent ran full api jest (446 suites) and web tests (251 files), lint 0 errors. Left ledgered: share_type TODO, lead onboarding stub, marketing publish processor, clicksign/ubc/ecad/nfe, portal-rpa, ACRCloud hooks gap, dev social mock, env-gated e2e skips.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "fix-naming-residue",
+      "title": "fix-naming-residue",
+      "objective": "Resolve the technically safe naming residues found by the reopened census and update the canonical map ledger; anything unsafe stays ledgered with its blocker.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "schema-normalization",
+        "naming-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "naming-reopen"
+      ],
+      "acceptance": [
+        "naming:check passes",
+        "ledger updated"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-2d97833a",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-1f4e3bfe"
+      ],
+      "result": "Ledger governance closed: 25 blockers now owner+disposition+status with validator enforcement; drizzle SQL row; 7 EXM exemption rows tied to census tables by test; NC-042 resolved with code evidence; owners on 14 open concepts; covering-test ratchet baseline 1391; 3 historical-doc group rows (census baselined, baseline unchanged). Not touched: duplicate env var names (security-adjacent), blocker substance, 2434 exceptions. Owners are labels to be reviewed by humans.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "final-report",
+      "title": "final-report",
+      "objective": "Write the versioned final report with exactly 35 sections (docs/engineering/pack/FINAL_REPORT.md) with concrete evidence for each section, regenerate the pack docs and the evidence index.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "doc-writer"
+      ],
+      "filesInScope": [
+        "docs/engineering/pack"
+      ],
+      "dependsOn": [
+        "inventory",
+        "implement-external-capabilities",
+        "harden-auth-isolation",
+        "fix-placeholders",
+        "fix-naming-residue",
+        "security-review",
+        "regression-review",
+        "fix-security-findings"
+      ],
+      "acceptance": [
+        "exactly 35 numbered sections",
+        "each section cites commands, files or records"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-9fc1f5c2",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-e09e9ab2"
+      ],
+      "result": "FINAL_REPORT.md written by the orchestrator session (35 sections verified by grep); pack docs check PASS",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "residue-final",
+      "title": "residue-final",
+      "objective": "Run the final residue search after the last change: broken references, orphans, stale docs, old names, items outside the manifest, TODO/FIXME in scope.",
+      "agent": "dead-code-detector",
+      "skills": [
+        "residue-search",
+        "orphan-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "final-report"
+      ],
+      "acceptance": [
+        "residue search output with zero solvable residues"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-e48d275a",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-663d792e"
+      ],
+      "result": "residue search executed directly by the orchestrator: provider residue exit 0, xlsx-only exit 0, 1 ledgered TODO, 0 skipped tests, empty catch replaced; no specialist agent was run for this task",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "final-gates",
+      "title": "final-gates",
+      "objective": "Run every applicable gate on the final tree: lint, typecheck, API and web tests, build, naming, xlsx-only, provider residue, pack-integrity, human-approval, operational-automation, security and the completion gate, using the disposable PostgreSQL for database criteria.",
+      "agent": "validation-orchestrator",
+      "skills": [
+        "quality-gate",
+        "run-lint",
+        "run-typecheck",
+        "run-unit-tests",
+        "run-build"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue-final"
+      ],
+      "acceptance": [
+        "every gate exit code recorded"
+      ],
+      "gates": [
+        "global",
+        "security",
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-e275318f",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-a10dbedb",
+        "evid-2630b5ab",
+        "evid-01076de3",
+        "evid-53063fd3",
+        "evid-21f7faae"
+      ],
+      "result": "lint, typecheck, build, naming, pack tests PASS on final tree; api jest 452 suites and web 251 files PASS (criteria evidence); DB migrate x2, db:check, rls, tenant-isolation PASS on disposable PG; e2e login BLOCKED_EXTERNAL",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "completion-gate",
+      "title": "completion gate",
+      "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+      "agent": "completion-controller",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "inventory",
+        "auth-bypass-audit",
+        "placeholder-scan",
+        "external-ports-review",
+        "naming-reopen",
+        "implement-external-capabilities",
+        "harden-auth-isolation",
+        "fix-placeholders",
+        "fix-naming-residue",
+        "final-report",
+        "residue-final",
+        "final-gates"
+      ],
+      "acceptance": [
+        "node .claude/runtime/completion-gate.mjs reports PASS",
+        "no open criterion, finding or blocker"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-5bdf227c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-1f191523"
+      ],
+      "result": "completion, security, pack-integrity, human-approval, operational-automation gates PASS on the final tree; 16 criteria fresh",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "security-review",
+      "title": "security-review",
+      "objective": "Independent L5 review (read-only) of the changes of this orchestration: git diff of apps/api/src/core/auth-disabled.ts, core/guards, core/security, core/config, create-app.ts, modules/auth, scripts/verify-production-flags.ts, .env.development.example, core/billing/plan-limit.service.ts (fail-closed), core/external-data (capability unavailable, blocked audit, transitions, new capabilities endpoint). Look for authorization bypass, tenant isolation gaps, raw error leaks, secrets, fail-open paths and abuse paths; verify negative tests exist. Report findings with severity and file:line.",
+      "agent": "security-reviewer",
+      "skills": [
+        "security-audit",
+        "authorization-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "harden-auth-isolation",
+        "implement-external-capabilities"
+      ],
+      "acceptance": [
+        "every changed security boundary classified",
+        "findings with severity or an explicit none"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-20a0264f",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-57c366e7"
+      ],
+      "result": "No blocking items. Findings to fix: M1 ingestWebhook findOne by external_id lacks tenant_id (external-data-exchange.service.ts ~L398-413); M2 checkDistributorStatus/checkSocietyStatus must require an external_data_submissions row for (tenant, provider, submission_id) before provider.checkStatus; M3 status-check endpoints are viewer POSTs that write audit rows: validate entityId as UUID, require editor role like submit, checkSocietyStatus needs assertDb + capability gate + blocked audit like distributor; L2 dev-auth.controller.ts:104-106 returns raw Supabase error: return a generic message and log the detail; L3 docs/engineering/security.md L15 says trim/case-insensitive but code is exactly 'true': fix wording. Test gap: cross-tenant external_id collision.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "regression-review",
+      "title": "regression-review",
+      "objective": "Independent review (read-only) of what could have stopped working: removed web hooks, moved jsonb-row-backfill fake, plan-limit constructor now throws without DataSource (check every module/provider that constructs PlanLimitService), Metrics export removal, dev-auth endpoint now opt-in (check docs/scripts/e2e that call GET /dev-auth/token), 503 CAPABILITY_UNAVAILABLE behavior change for distributor endpoints. Report concrete breakages with file:line.",
+      "agent": "regression-reviewer",
+      "skills": [
+        "diff-review",
+        "blast-radius-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "fix-placeholders"
+      ],
+      "acceptance": [
+        "each removed or changed contract has its consumers checked"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-4531b0f6",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-638f502d"
+      ],
+      "result": "regression findings fixed and re-verified",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "fix-security-findings",
+      "title": "fix-security-findings",
+      "objective": "Fix the security review findings M1, M2, M3, L2, L3 (see security-review result) with negative tests that fail before and pass after (cross-tenant external_id collision, foreign submissionId rejected, viewer role refused on status-check, invalid entityId rejected, dev-auth error message generic). Do not widen scope; no provider, no network.",
+      "agent": "security-engineer",
+      "skills": [
+        "authorization-hardening",
+        "create-security-tests",
+        "run-security-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src/core/external-data",
+        "apps/api/src/modules/integrations",
+        "apps/api/src/modules/auth/dev-auth.controller.ts",
+        "docs/engineering/security.md"
+      ],
+      "dependsOn": [
+        "security-review"
+      ],
+      "acceptance": [
+        "negative tests fail before and pass after",
+        "focused jest and api typecheck exit 0"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-33e99a51",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-d21c8546"
+      ],
+      "result": "M1 webhook external_id tenant-qualified plus tenant-scoped lookups; M2 assertSubmissionOwned before any provider call (404 uniform); M3 status-check DTO entityId UUID, editor role on both POSTs, society path gets assertDb/capability gate/blocked audit; L2 generic dev-auth error; L3 doc wording. 13 of 17 new/changed tests fail on HEAD sources; 283/283 pass. Remaining: editor requirement may affect viewer-only UI callers (owner product decision), legacy webhook keys honored per tenant.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    }
+  ]
+}
