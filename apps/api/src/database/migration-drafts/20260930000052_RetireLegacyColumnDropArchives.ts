@@ -1,10 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { assertMigrationRoleBypassesRls } from '../migration-guards';
 import { archiveTableOf } from './legacy-column-drop.base';
+import { PLANS as EMPLOYEES_PII } from './20260930000053_DropEmployeesLegacyPiiColumns';
 
 /**
  * DRAFT, GATED, NOT REGISTERED (LC1 D3). Retires the *_legacy_archive_20260930 tables written by the legacy
- * column drop drafts (20260930000040-45, 49). Retention rule and per-tenant erasure SQL:
+ * column drop drafts (20260930000040-45, 49, 53). Retention rule and per-tenant erasure SQL:
  * docs/engineering/backfill-side-tables-retention.md; order and gates: docs/engineering/legacy-column-drop-plan.md.
  *
  * The archives hold the only copy of the dropped legacy values (some third-party PII), so they are retired only
@@ -21,7 +22,11 @@ export const ARCHIVED_TABLES: readonly string[] = [
   'works', 'phonograms', 'transactions', 'clients', 'shares',
   'employees', 'payroll_entries', 'leave_requests', 'invoices',
 ];
-export const ARCHIVE_TABLES: readonly string[] = ARCHIVED_TABLES.map(archiveTableOf);
+/** Archive tables with an explicit name (draft 53: employees PII, kept apart from draft 45's employees archive). */
+export const ARCHIVE_TABLES: readonly string[] = [
+  ...ARCHIVED_TABLES.map(archiveTableOf),
+  ...EMPLOYEES_PII.map((p) => p.archiveTable ?? archiveTableOf(p.table)),
+];
 
 function assertConfirmed(migrationName: string): void {
   if (process.env[CONFIRM_ENV] !== CONFIRM_TOKEN) {

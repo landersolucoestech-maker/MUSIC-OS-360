@@ -158,7 +158,8 @@ describe('form-contracts — permanent guard form ↔ contract ↔ import/export
           (f.storage === 'encrypted' && encrypted[f.key] !== undefined && real!.has(encrypted[f.key])) ||
           (f.storage === 'metadata' && metaFields[f.key] !== undefined && real!.has(metaFields[f.key]));
         if (!ok) offenders.push(`${table}.${f.key} (${f.storage})`);
-        if (f.storage === 'encrypted' && real!.has(f.key)) {
+        // Only the declared dual-read window (legacyPlaintextColumn === key) may share the key with a physical column.
+        if (f.storage === 'encrypted' && real!.has(f.key) && f.legacyPlaintextColumn !== f.key) {
           offenders.push(`${table}.${f.key} (encrypted key colide com coluna física)`);
         }
       }

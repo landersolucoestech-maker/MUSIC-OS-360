@@ -14,6 +14,8 @@ reach them. They are rollback material, not a business dataset: they must be sho
 
 ## Inventory
 
+Exactly the tables of `SIDE_TABLES` in draft `20260930000050` (one row each; the spec `purge-backfill-side-tables.draft.spec.ts` fails if this table, the erasure SQL below or the migrations drift from that list). PII classification is derived from the columns each migration records (`columns` of its `RowBackfillSpec`, or the `CREATE TABLE` of the side table).
+
 | Side table | Migration | Content | PII risk |
 | --- | --- | --- | --- |
 | `contract_service_types_taxonomy_backup_20260930` | `20260930000002` | pre-image of `client_types`, `financial_model`, `financial_payment_frequency` | Low (vocabulary values) |
@@ -27,12 +29,20 @@ reach them. They are rollback material, not a business dataset: they must be sho
 | `assets_asset_type_backfill_20260930` | `20260930000025` | `before`/`after` of `assets.asset_type` and `assets.metadata` | Medium (file metadata) |
 | `marketing_vocabulary_backfill_20260930` | `20260930000026` | `before`/`after` of `metadata` (and task `kind`) of marketing projects, tasks, campaigns, briefings, content posts, `activity_logs` | **High** (free-form metadata, audience data, activity details) |
 | `artist_distributor_id_backfill_20260930` | `20260930000027` | `before`/`after` of the artists' distributor columns | Medium (contact e-mails, phones) |
+| `campaign_builder_state_backfill_20260930` | `20260930000028` | `before`/`after` of the whole `campaigns.metadata` jsonb (migration `columns: ['metadata']`): builder payload with audience gender/segmentation and free-text notes | **High** (free-form metadata, audience targeting) |
+| `marketing_task_sector_backfill_20260930` | `20260930000029` | `before`/`after` of the whole `marketing_tasks.metadata` jsonb (migration `columns: ['metadata']`), not only `sector`/`automationFlowId` | **High** (free-form task metadata) |
+| `operational_list_classification_backfill_20260930` | `20260930000031` | `before`/`after` of `kind`, `slug`, `name`, `legacy_slug`, `origin`, `stable_key` of `operational_list_items` | Low (tenant-authored list labels, no personal data by design) |
+| `project_track_vocabulary_backfill_20260930` | `20260930000032` | `before`/`after` of `project_tracks.instrumental` and `project_tracks.language` | Low (vocabulary values) |
 | `contract_type_backfill_20260930` | `20260930000034` | `before`/`after` of `contracts.type` (`outro` -> `other`) | Low (vocabulary values) |
 | `contract_signed_transaction_category_backfill_20260930` | `20260930000035` | `before`/`after` of `transactions.category` for contract-signed provisional transactions | Low (vocabulary values) |
 | `contract_category_slug_backfill_20260930` | `20260930000036` | `before`/`after` of `contracts.type` and `contract_templates.service_type` for the ten platform-owned category slugs | Low (vocabulary values) |
+| `transaction_internal_revenue_backfill_20260930` | `20260930000037` | `id`, `column_name`, `tenant_id`, `legacy_value`, `canonical_value` of `transactions.category` / `subcategory` (`receitas-internas`, `repasse-contrato`) | Low (vocabulary values) |
+| `phonogram_derived_fields_backfill_20260930` | `20260930000038` | `before`/`after` of `phonograms.duration_seconds`, `duration_text`, `isrc` and the four `isrc_*` parts | Low (catalogue metadata, ISRC is a public identifier) |
+| `phonogram_derived_field_conflicts_20260930` | `20260930000038` | `id`, `tenant_id`, `field_group`, `stored`/`derived` jsonb of phonogram rows whose stored and derived duration/ISRC values disagree (created by the same migration; it was missing from draft 50 and from this document) | Low (catalogue metadata) |
 
 Related: `<table>_legacy_archive_20260930` tables (works, phonograms, transactions, clients, shares, employees,
-payroll_entries, leave_requests, invoices) exist only if a gated legacy column drop
+payroll_entries, leave_requests, invoices) plus `employees_pii_legacy_archive_20260930` (draft 53: employees `rg`, `birth_date`, `address`,
+**direct personal data of employees, plaintext**; its retention period is decided by the HR owner before the drop and it is part of the erasure SQL) exist only if a gated legacy column drop
 (`docs/engineering/legacy-column-drop-plan.md`) was executed. They hold the only copy of the dropped values (HR names and
 salaries, client contact status), carry `tenant_id` WITHOUT a foreign key (a tenant deletion does not cascade to them), are RLS-locked
 like the tables above, are listed in the erasure procedure below, and are retired by the gated draft
@@ -75,8 +85,16 @@ BEGIN
     'assets_asset_type_backfill_20260930',
     'marketing_vocabulary_backfill_20260930',
     'artist_distributor_id_backfill_20260930',
+    'campaign_builder_state_backfill_20260930',
+    'marketing_task_sector_backfill_20260930',
+    'operational_list_classification_backfill_20260930',
+    'project_track_vocabulary_backfill_20260930',
+    'contract_type_backfill_20260930',
+    'contract_signed_transaction_category_backfill_20260930',
+    'contract_category_slug_backfill_20260930',
     'transaction_internal_revenue_backfill_20260930',
     'phonogram_derived_fields_backfill_20260930',
+    'phonogram_derived_field_conflicts_20260930',
     'works_legacy_archive_20260930',
     'phonograms_legacy_archive_20260930',
     'transactions_legacy_archive_20260930',
@@ -85,7 +103,8 @@ BEGIN
     'employees_legacy_archive_20260930',
     'payroll_entries_legacy_archive_20260930',
     'leave_requests_legacy_archive_20260930',
-    'invoices_legacy_archive_20260930'
+    'invoices_legacy_archive_20260930',
+    'employees_pii_legacy_archive_20260930'
   ] LOOP
     IF to_regclass(format('public.%I', t)) IS NOT NULL THEN
       EXECUTE format('DELETE FROM public.%I WHERE tenant_id = %L::uuid', t, current_setting('app.erase_tenant'));
@@ -109,9 +128,17 @@ DELETE FROM plan_features_backfill_20260930 WHERE tenant_id = :'tenant_id'; -- t
 DELETE FROM assets_asset_type_backfill_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM marketing_vocabulary_backfill_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM artist_distributor_id_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM campaign_builder_state_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM marketing_task_sector_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM operational_list_classification_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM project_track_vocabulary_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM contract_type_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM contract_signed_transaction_category_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM contract_category_slug_backfill_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM transaction_internal_revenue_backfill_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM phonogram_derived_fields_backfill_20260930 WHERE tenant_id = :'tenant_id';
-DELETE FROM works_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';        -- only if the table exists (legacy drop executed)
+DELETE FROM phonogram_derived_field_conflicts_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM works_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';        -- legacy archives: only if the table exists (legacy drop executed)
 DELETE FROM phonograms_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM transactions_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM clients_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
@@ -120,6 +147,7 @@ DELETE FROM employees_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM payroll_entries_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM leave_requests_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM invoices_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM employees_pii_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';  -- employee PII (rg, birth date, address)
 ```
 
 Verify with `SELECT count(*) FROM <table> WHERE tenant_id = :'tenant_id'` on each table (expect 0), and record the counts

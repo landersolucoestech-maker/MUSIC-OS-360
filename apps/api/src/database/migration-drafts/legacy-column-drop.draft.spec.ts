@@ -1,13 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ALL_MIGRATIONS } from '../migrations';
-import { CONFIRM_ENV, CONFIRM_TOKEN, DropTablePlan, archiveTableOf } from './legacy-column-drop.base';
+import { CONFIRM_ENV, CONFIRM_TOKEN, DropTablePlan, archiveOf } from './legacy-column-drop.base';
 import { DropWorksLegacyColumns20260930000040 as Works, PLANS as WORKS } from './20260930000040_DropWorksLegacyColumns';
 import { DropPhonogramsLegacyColumns20260930000041 as Phonograms, PLANS as PHONOGRAMS } from './20260930000041_DropPhonogramsLegacyColumns';
 import { DropTransactionsLegacyColumns20260930000042 as Transactions, PLANS as TRANSACTIONS } from './20260930000042_DropTransactionsLegacyColumns';
 import { DropClientsLegacyContactStatus20260930000043 as Clients, PLANS as CLIENTS } from './20260930000043_DropClientsLegacyContactStatus';
 import { DropSharesLegacyArtistProjectId20260930000044 as Shares, PLANS as SHARES } from './20260930000044_DropSharesLegacyArtistProjectId';
 import { DropHrLegacyMirrors20260930000045 as Hr, PLANS as HR } from './20260930000045_DropHrLegacyMirrors';
+import { DropEmployeesLegacyPiiColumns20260930000053 as EmployeesPii, PLANS as EMPLOYEES_PII } from './20260930000053_DropEmployeesLegacyPiiColumns';
 import { DropEventsDataAndSyncTrigger20260930000046 as EventsData } from './20260930000046_DropEventsDataAndSyncTrigger';
 import { RelaxInvoicesLegacyAmountNotNull20260930000048 as InvoicesRelax } from './20260930000048_RelaxInvoicesLegacyAmountNotNull';
 import { DropInvoicesLegacyAmount20260930000049 as InvoicesDrop, PLANS as INVOICES } from './20260930000049_DropInvoicesLegacyAmount';
@@ -20,7 +21,7 @@ type Ctor = new () => { name: string; up(q: unknown): Promise<void>; down(q: unk
 const GENERIC: Array<[string, Ctor, readonly DropTablePlan[]]> = [
   ['works', Works, WORKS], ['phonograms', Phonograms, PHONOGRAMS], ['transactions', Transactions, TRANSACTIONS],
   ['clients', Clients, CLIENTS], ['shares', Shares, SHARES], ['hr', Hr, HR],
-  ['invoices', InvoicesDrop, INVOICES],
+  ['invoices', InvoicesDrop, INVOICES], ['employees-pii', EmployeesPii, EMPLOYEES_PII],
 ];
 const ALL_DRAFTS: Array<[string, Ctor]> = [...GENERIC.map(([n, c]): [string, Ctor] => [n, c]), ['events', EventsData], ['invoices-relax', InvoicesRelax]];
 
@@ -115,14 +116,23 @@ describe('LC1 legacy column drop drafts', () => {
       await new Draft().up({ query } as never);
       expect(sql[0].text).toContain('rolbypassrls');
       expect(sql[1].text).toContain(`SET LOCAL lock_timeout = '15s'`);
+      // G4: every table of the plans is locked (SHARE ROW EXCLUSIVE, plan order) right after lock_timeout and before any read of the data or DDL.
+      const lockSql = sql.slice(2, 2 + new Set(plans.map((p) => p.table)).size).map((s) => s.text);
+      expect(lockSql).toEqual([...new Set(plans.map((p) => p.table))].map((t) => `LOCK TABLE "${t}" IN SHARE ROW EXCLUSIVE MODE`));
+      expect(idx(sql, 'LOCK TABLE')).toBeLessThan(idx(sql, 'information_schema.columns'));
       const firstCheck = idx(sql, /^SELECT count\(\*\)::int AS n FROM "\w+" WHERE/);
       const firstCreate = idx(sql, 'CREATE TABLE IF NOT EXISTS');
       const firstDrop = idx(sql, 'DROP COLUMN');
-      expect(idx(sql, 'information_schema.columns')).toBeLessThan(firstCheck);
-      expect(firstCheck).toBeLessThan(firstCreate);
+      expect(idx(sql, 'information_schema.columns')).toBeLessThan(firstCreate);
+      if (plans.some((p) => p.checks.length > 0)) {
+        expect(idx(sql, 'information_schema.columns')).toBeLessThan(firstCheck);
+        expect(firstCheck).toBeLessThan(firstCreate);
+      } else {
+        expect(firstCheck).toBe(-1); // no machine check (employees PII): presence, archive, verify, DROP only
+      }
       expect(firstCreate).toBeLessThan(firstDrop);
       for (const plan of plans) {
-        const archive = archiveTableOf(plan.table);
+        const archive = archiveOf(plan);
         const create = idx(sql, `CREATE TABLE IF NOT EXISTS "${archive}"`);
         expect(create).toBeGreaterThan(-1);
         expect(idx(sql, `ALTER TABLE "${archive}" ENABLE ROW LEVEL SECURITY`)).toBeGreaterThan(create);
@@ -146,7 +156,7 @@ describe('LC1 legacy column drop drafts', () => {
       const { query, sql } = runner(plans);
       await new Draft().up({ query } as never);
       for (const plan of plans) {
-        const create = sql.find((s) => s.text.includes(`CREATE TABLE IF NOT EXISTS "${archiveTableOf(plan.table)}"`))!.text;
+        const create = sql.find((s) => s.text.includes(`CREATE TABLE IF NOT EXISTS "${archiveOf(plan)}"`))!.text;
         for (const c of plan.columns) expect(create).toContain(`"${c.name}" ${c.type}`);
         expect(create).toContain('"id" uuid PRIMARY KEY');
         expect(create).toContain('"tenant_id" uuid NOT NULL');
@@ -154,13 +164,27 @@ describe('LC1 legacy column drop drafts', () => {
     });
 
     it('aborts on any failing zero-use check: counts only, nothing archived or dropped', async () => {
-      const first = plans[0].checks[0];
+      const plan = plans.find((p) => p.checks.length > 0);
+      if (!plan) { // no canonical counterpart exists (employees PII): the owner census is the only gate, see the plan doc 3.6
+        expect(plans.every((p) => p.checks.length === 0)).toBe(true);
+        return;
+      }
+      const first = plan.checks[0];
       const { query, sql } = runner(plans, { counts: { [first.where]: 3 } });
       const error = await new Draft().up({ query } as never).catch((e: Error) => e);
       expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).toContain(`${plans[0].table}:${first.label}=3`);
+      expect((error as Error).message).toContain(`${plan.table}:${first.label}=3`);
       expect((error as Error).message.length).toBeLessThan(700);
       expect(sql.some((s) => /CREATE TABLE|INSERT|DROP|UPDATE/.test(s.text))).toBe(false);
+    });
+
+    it('down() locks every table of the plans (SHARE ROW EXCLUSIVE) right after lock_timeout', async () => {
+      const { query, sql } = runner(plans);
+      await new Draft().down({ query } as never);
+      expect(sql[1].text).toContain(`SET LOCAL lock_timeout = '15s'`);
+      const tables = [...new Set(plans.map((p) => p.table))];
+      expect(sql.slice(2, 2 + tables.length).map((s) => s.text)).toEqual(tables.map((t) => `LOCK TABLE "${t}" IN SHARE ROW EXCLUSIVE MODE`));
+      expect(idx(sql, 'LOCK TABLE')).toBeLessThan(idx(sql, 'to_regclass'));
     });
 
     it('aborts when the archive does not cover every row, before any DROP', async () => {
@@ -173,9 +197,9 @@ describe('LC1 legacy column drop drafts', () => {
       const { query, sql } = runner(plans);
       await new Draft().up({ query } as never);
       for (const plan of plans) {
-        const verify = sql.find((s) => s.text.includes(`NOT EXISTS (SELECT 1 FROM "${archiveTableOf(plan.table)}"`))!.text;
+        const verify = sql.find((s) => s.text.includes(`NOT EXISTS (SELECT 1 FROM "${archiveOf(plan)}"`))!.text;
         for (const c of plan.columns) expect(verify).toContain(`a."${c.name}" IS NOT DISTINCT FROM t."${c.name}"`);
-        const insert = sql.find((s) => s.text.includes(`INSERT INTO "${archiveTableOf(plan.table)}"`))!.text;
+        const insert = sql.find((s) => s.text.includes(`INSERT INTO "${archiveOf(plan)}"`))!.text;
         expect(insert).toContain('ON CONFLICT ("id") DO NOTHING'); // kept on purpose: the value check below makes a stale row abort
       }
     });
@@ -208,7 +232,7 @@ describe('LC1 legacy column drop drafts', () => {
           expect(add).not.toContain(`${c.type} NOT NULL`);
         }
         const restore = sql.find((s) => s.text.startsWith(`UPDATE "${plan.table}" t SET`))!.text;
-        expect(restore).toContain(`FROM "${archiveTableOf(plan.table)}" a WHERE a."id" = t."id"`);
+        expect(restore).toContain(`FROM "${archiveOf(plan)}" a WHERE a."id" = t."id"`);
         for (const c of plan.columns) expect(restore).toContain(`"${c.name}" = a."${c.name}"`);
         expect(restore).not.toMatch(/SET\s+t\./);
       }
@@ -278,29 +302,91 @@ describe('LC1 legacy column drop drafts', () => {
   describe('invoices.legacy_amount staging', () => {
     beforeEach(() => { process.env[CONFIRM_ENV] = CONFIRM_TOKEN; });
 
-    it('relax: aborts while any row only has the legacy value; otherwise only drops NOT NULL', async () => {
-      const bad = jest.fn(async (t: string) => (t.includes('rolbypassrls') ? [{ bypass: true }] : t.startsWith('SELECT count') ? [{ n: 2 }] : []));
-      await expect(new InvoicesRelax().up({ query: bad } as never)).rejects.toThrow(/20260930000022 backfill/);
+    const relaxRunner = (over: { present?: boolean; unbackfilled?: number; both?: number } = {}) => {
       const sql: string[] = [];
-      const ok = jest.fn(async (t: string) => { sql.push(t); return t.includes('rolbypassrls') ? [{ bypass: true }] : t.startsWith('SELECT count') ? [{ n: 0 }] : []; });
-      await new InvoicesRelax().up({ query: ok } as never);
-      expect(sql.filter((s) => /ALTER TABLE/.test(s))).toEqual(['ALTER TABLE "invoices" ALTER COLUMN "legacy_amount" DROP NOT NULL']);
-      expect(sql.some((s) => /DROP COLUMN/.test(s))).toBe(false);
+      const query = jest.fn(async (t: string) => {
+        sql.push(t);
+        if (t.includes('rolbypassrls')) return [{ bypass: true }];
+        if (t.includes('information_schema.columns')) return over.present === false ? [] : [{ column_name: 'legacy_amount' }];
+        if (t.includes('"legacy_amount" IS NULL AND "service_amount" IS NULL')) return [{ n: over.both ?? 0 }];
+        if (t.startsWith('SELECT count')) return [{ n: over.unbackfilled ?? 0 }];
+        return [];
+      });
+      return { query, sql };
+    };
+
+    it('relax: aborts while any row only has the legacy value; otherwise only drops NOT NULL', async () => {
+      const bad = relaxRunner({ unbackfilled: 2 });
+      await expect(new InvoicesRelax().up({ query: bad.query } as never)).rejects.toThrow(/20260930000022 backfill/);
+      expect(bad.sql.some((s) => /ALTER TABLE/.test(s))).toBe(false);
+      const ok = relaxRunner();
+      await new InvoicesRelax().up({ query: ok.query } as never);
+      expect(ok.sql.filter((s) => /ALTER TABLE/.test(s))).toEqual(['ALTER TABLE "invoices" ALTER COLUMN "legacy_amount" DROP NOT NULL']);
+      expect(ok.sql.some((s) => /DROP COLUMN/.test(s))).toBe(false);
     });
 
-    it('relax down() refills NULLs then restores NOT NULL', async () => {
-      const sql: string[] = [];
-      const query = jest.fn(async (t: string) => { sql.push(t); return t.includes('rolbypassrls') ? [{ bypass: true }] : []; });
+    it('relax up(): lock_timeout, then LOCK TABLE invoices, then the column presence check, before any count or DDL', async () => {
+      const { query, sql } = relaxRunner();
+      await new InvoicesRelax().up({ query } as never);
+      expect(sql[1]).toContain(`SET LOCAL lock_timeout = '15s'`);
+      expect(sql[2]).toBe('LOCK TABLE "invoices" IN SHARE ROW EXCLUSIVE MODE');
+      expect(sql[3]).toContain('information_schema.columns');
+      expect(sql[3]).toContain(`table_name = 'invoices'`);
+      expect(sql.findIndex((s) => s.startsWith('SELECT count'))).toBeGreaterThan(3);
+    });
+
+    it('relax up() is a no-op when legacy_amount is already gone (draft 49 applied), not an error', async () => {
+      const gone = relaxRunner({ present: false });
+      await new InvoicesRelax().up({ query: gone.query } as never);
+      expect(gone.sql.some((s) => /SELECT count|ALTER TABLE|UPDATE/.test(s))).toBe(false);
+    });
+
+    it('relax down() refills NULLs from service_amount (no fabricated 0) then restores NOT NULL', async () => {
+      const { query, sql } = relaxRunner();
       await new InvoicesRelax().down({ query } as never);
-      const fill = sql.findIndex((s) => s.includes('COALESCE("service_amount", 0)'));
+      expect(sql[2]).toBe('LOCK TABLE "invoices" IN SHARE ROW EXCLUSIVE MODE');
+      const fill = sql.findIndex((s) => s.includes('SET "legacy_amount" = "service_amount"'));
       expect(fill).toBeGreaterThan(-1);
+      expect(sql.join('\n')).not.toMatch(/COALESCE|, 0\)/);
       expect(sql.findIndex((s) => s.includes('SET NOT NULL'))).toBeGreaterThan(fill);
+    });
+
+    it('relax down() refuses when rows hold neither value (would invent a 0) and when legacy_amount is absent; nothing written', async () => {
+      const both = relaxRunner({ both: 4 });
+      await expect(new InvoicesRelax().down({ query: both.query } as never)).rejects.toThrow(/refusing down\(\): 4 invoice row\(s\) have neither/);
+      expect(both.sql.some((s) => /UPDATE|ALTER TABLE/.test(s))).toBe(false);
+      const absent = relaxRunner({ present: false });
+      await expect(new InvoicesRelax().down({ query: absent.query } as never)).rejects.toThrow(/legacy_amount does not exist/);
+      expect(absent.sql.some((s) => /UPDATE|ALTER TABLE/.test(s))).toBe(false);
     });
 
     it('the final drop also demands service_amount to be present and equal (reconciled) before archiving', () => {
       const wheres = INVOICES[0].checks.map((c) => c.where).join(' | ');
       expect(wheres).toContain('"service_amount" IS NULL');
       expect(wheres).toContain('"legacy_amount" <> "service_amount"');
+    });
+  });
+
+  describe('employees PII columns (draft 53)', () => {
+    beforeEach(() => { process.env[CONFIRM_ENV] = CONFIRM_TOKEN; });
+    it('drops exactly rg, birth_date, address with their physical types, into an archive that does not collide with draft 45', () => {
+      expect(EMPLOYEES_PII).toHaveLength(1);
+      expect(EMPLOYEES_PII[0].table).toBe('employees');
+      expect(EMPLOYEES_PII[0].columns).toEqual([
+        { name: 'rg', type: 'varchar(30)' }, { name: 'birth_date', type: 'date' }, { name: 'address', type: 'varchar(300)' },
+      ]);
+      expect(archiveOf(EMPLOYEES_PII[0])).toBe('employees_pii_legacy_archive_20260930');
+      expect(archiveOf(EMPLOYEES_PII[0])).not.toBe(archiveOf(HR[0]));
+      expect(archiveOf(EMPLOYEES_PII[0])).toMatch(/_legacy_archive_20260930$/);
+    });
+    it('archive of the PII is locked down (RLS forced, grants revoked) and the draft file is not under migrations/', async () => {
+      const { query, sql } = runner(EMPLOYEES_PII);
+      await new EmployeesPii().up({ query } as never);
+      const archive = 'employees_pii_legacy_archive_20260930';
+      expect(sql.some((s) => s.text.includes(`ALTER TABLE "${archive}" FORCE ROW LEVEL SECURITY`))).toBe(true);
+      expect(sql.some((s) => s.text.includes(`REVOKE ALL ON TABLE "${archive}" FROM PUBLIC`))).toBe(true);
+      expect(sql.some((s) => s.text.includes(`ALTER TABLE "employees" DROP COLUMN IF EXISTS "rg", DROP COLUMN IF EXISTS "birth_date", DROP COLUMN IF EXISTS "address"`))).toBe(true);
+      expect(fs.readdirSync(path.join(__dirname, '..', 'migrations')).some((f) => f.startsWith('20260930000053'))).toBe(false);
     });
   });
 

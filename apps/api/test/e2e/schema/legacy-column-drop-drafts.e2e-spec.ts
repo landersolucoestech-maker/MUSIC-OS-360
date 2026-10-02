@@ -10,13 +10,14 @@
  * nothing dropped, up() -> archive exists + columns gone, down() -> values restored by id, up() again.
  */
 import { Client } from 'pg';
-import { CONFIRM_ENV, CONFIRM_TOKEN, DropTablePlan, archiveTableOf } from '../../../src/database/migration-drafts/legacy-column-drop.base';
+import { CONFIRM_ENV, CONFIRM_TOKEN, DropTablePlan, archiveOf, archiveTableOf } from '../../../src/database/migration-drafts/legacy-column-drop.base';
 import { DropWorksLegacyColumns20260930000040, PLANS as WORKS } from '../../../src/database/migration-drafts/20260930000040_DropWorksLegacyColumns';
 import { DropPhonogramsLegacyColumns20260930000041, PLANS as PHONOGRAMS } from '../../../src/database/migration-drafts/20260930000041_DropPhonogramsLegacyColumns';
 import { DropTransactionsLegacyColumns20260930000042, PLANS as TRANSACTIONS } from '../../../src/database/migration-drafts/20260930000042_DropTransactionsLegacyColumns';
 import { DropClientsLegacyContactStatus20260930000043, PLANS as CLIENTS } from '../../../src/database/migration-drafts/20260930000043_DropClientsLegacyContactStatus';
 import { DropSharesLegacyArtistProjectId20260930000044, PLANS as SHARES } from '../../../src/database/migration-drafts/20260930000044_DropSharesLegacyArtistProjectId';
 import { DropHrLegacyMirrors20260930000045, PLANS as HR } from '../../../src/database/migration-drafts/20260930000045_DropHrLegacyMirrors';
+import { DropEmployeesLegacyPiiColumns20260930000053, PLANS as EMPLOYEES_PII } from '../../../src/database/migration-drafts/20260930000053_DropEmployeesLegacyPiiColumns';
 import { DropEventsDataAndSyncTrigger20260930000046 } from '../../../src/database/migration-drafts/20260930000046_DropEventsDataAndSyncTrigger';
 
 const T = '10000000-0000-0000-0000-000000000002';
@@ -32,7 +33,8 @@ interface Group {
   /** Seed rows (consistent with the canonical columns: preflight must be 0) and return nothing. */
   seed: string[];
   /** One extra row that violates exactly the named check (label -> table), so up() must abort. */
-  violation: { prepare?: string; table: string; insert: string; expect: string };
+  /** Absent when the plan has no machine check (employees PII: no canonical counterpart, the owner census is the gate). */
+  violation?: { prepare?: string; table: string; insert: string; expect: string };
   archivedIds: Record<string, string[]>;
 }
 
@@ -104,6 +106,16 @@ const GROUPS: Group[] = [
     violation: { table: 'employees', insert: `INSERT INTO employees (id, tenant_id, name, legacy_full_name) VALUES ('${id(53)}', '${T}', 'Emp Three', 'Other Name')`, expect: 'employees:full_name_differs_from_name=1' },
     archivedIds: { employees: [id(51)], payroll_entries: [id(61)], leave_requests: [id(71)] },
   },
+  {
+    name: 'employees-pii', migration: new DropEmployeesLegacyPiiColumns20260930000053(), plans: EMPLOYEES_PII,
+    seed: [
+      `INSERT INTO employees (id, tenant_id, name, rg, birth_date, address)
+       VALUES ('${id(81)}', '${T}', 'Pii One', '12.345.678-9', '1990-02-03', 'Rua Exemplo 1')`,
+      `INSERT INTO employees (id, tenant_id, name, rg) VALUES ('${id(82)}', '${T}', 'Pii Two rg only', '98.765.432-1')`,
+      `INSERT INTO employees (id, tenant_id, name) VALUES ('${id(83)}', '${T}', 'Pii Three no pii')`,
+    ],
+    archivedIds: { employees: [id(81), id(82)] },
+  },
 ];
 
 describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY database only)', () => {
@@ -124,8 +136,8 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
   };
   const cols = async (table: string) =>
     (await c.query(`SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name=$1`, [table])).rows.map((r) => r.column_name as string);
-  const archiveExists = async (table: string) =>
-    (await c.query(`SELECT to_regclass('public.${archiveTableOf(table)}') IS NOT NULL AS ok`)).rows[0].ok as boolean;
+  const archiveExists = async (archive: string) =>
+    (await c.query(`SELECT to_regclass('public.${archive}') IS NOT NULL AS ok`)).rows[0].ok as boolean;
   const legacyJson = async (plan: DropTablePlan, ids: string[]) =>
     (await c.query(
       `SELECT id, to_jsonb(t) - ARRAY(SELECT jsonb_object_keys(to_jsonb(t)) EXCEPT SELECT unnest($2::text[])) AS v FROM "${plan.table}" t WHERE id = ANY($1::uuid[]) ORDER BY id`,
@@ -162,7 +174,7 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
     await b.connect();
     try {
       for (const g of GROUPS) for (const p of g.plans) {
-        expect((await b.query(`SELECT to_regclass('public.${archiveTableOf(p.table)}') IS NOT NULL AS ok`)).rows[0].ok).toBe(false);
+        expect((await b.query(`SELECT to_regclass('public.${archiveOf(p)}') IS NOT NULL AS ok`)).rows[0].ok).toBe(false);
       }
     } finally { await b.end(); }
   });
@@ -174,7 +186,7 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
     it('without LEGACY_DROP_CONFIRM up() throws and changes nothing', async () => {
       delete process.env[CONFIRM_ENV];
       try { await expect(run(g.migration, 'up')).rejects.toThrow(/gated draft/); } finally { process.env[CONFIRM_ENV] = CONFIRM_TOKEN; }
-      for (const p of g.plans) expect(await archiveExists(p.table)).toBe(false);
+      for (const p of g.plans) expect(await archiveExists(archiveOf(p))).toBe(false);
     });
 
     it('seeds representative legacy rows and records preflight counts (all 0 on consistent data)', async () => {
@@ -187,18 +199,20 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
     });
 
     it('a violating row aborts up() with the exact count; nothing archived, nothing dropped', async () => {
-      if (g.violation.prepare) await c.query(g.violation.prepare); // clients: chk_clients_status makes the check unreachable on a constrained schema; dropped in the COPY only
-      await c.query(g.violation.insert);
-      const plan = g.plans.find((p) => p.table === g.violation.table)!;
-      const n = (await c.query(`SELECT count(*)::int AS n FROM "${plan.table}" WHERE ${plan.checks.find((k) => g.violation.expect.includes(`:${k.label}=`))!.where}`)).rows[0].n as number;
-      counts[g.violation.expect.replace(/=\d+$/, '') + ':violating'] = n;
-      await expect(run(g.migration, 'up')).rejects.toThrow(g.violation.expect);
+      const v = g.violation;
+      if (!v) return; // see Group.violation
+      if (v.prepare) await c.query(v.prepare); // clients: chk_clients_status makes the check unreachable on a constrained schema; dropped in the COPY only
+      await c.query(v.insert);
+      const plan = g.plans.find((p) => p.table === v.table)!;
+      const n = (await c.query(`SELECT count(*)::int AS n FROM "${plan.table}" WHERE ${plan.checks.find((k) => v.expect.includes(`:${k.label}=`))!.where}`)).rows[0].n as number;
+      counts[v.expect.replace(/=\d+$/, '') + ':violating'] = n;
+      await expect(run(g.migration, 'up')).rejects.toThrow(v.expect);
       for (const p of g.plans) {
-        expect(await archiveExists(p.table)).toBe(false);
+        expect(await archiveExists(archiveOf(p))).toBe(false);
         const present = await cols(p.table);
         for (const col of p.columns) expect(present).toContain(col.name);
       }
-      await c.query(`DELETE FROM "${g.violation.table}" WHERE id = '${/'(0{8}-[^']+)'/.exec(g.violation.insert)![1]}'`);
+      await c.query(`DELETE FROM "${v.table}" WHERE id = '${/'(0{8}-[^']+)'/.exec(v.insert)![1]}'`);
     });
 
     it('up() archives, locks the archive down and drops the columns; down() restores by id; up() again', async () => {
@@ -211,15 +225,15 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
 
       await run(g.migration, 'up');
       for (const p of g.plans) {
-        expect(await archiveExists(p.table)).toBe(true);
+        expect(await archiveExists(archiveOf(p))).toBe(true);
         const present = await cols(p.table);
         for (const col of p.columns) expect(present).not.toContain(col.name);
-        const arch = (await c.query(`SELECT id FROM "${archiveTableOf(p.table)}" ORDER BY id`)).rows.map((r) => r.id);
+        const arch = (await c.query(`SELECT id FROM "${archiveOf(p)}" ORDER BY id`)).rows.map((r) => r.id);
         expect(arch).toEqual(g.archivedIds[p.table]); // only rows holding legacy values (the no-legacy row is not archived)
         counts[`${p.table}:archived_rows`] = arch.length;
-        const rls = (await c.query(`SELECT relrowsecurity, relforcerowsecurity FROM pg_class WHERE oid = to_regclass('public.${archiveTableOf(p.table)}')`)).rows[0];
+        const rls = (await c.query(`SELECT relrowsecurity, relforcerowsecurity FROM pg_class WHERE oid = to_regclass('public.${archiveOf(p)}')`)).rows[0];
         expect(rls).toEqual({ relrowsecurity: true, relforcerowsecurity: true });
-        const grants = (await c.query(`SELECT count(*)::int AS n FROM information_schema.role_table_grants WHERE table_name = $1 AND grantee IN ('PUBLIC','anon','authenticated','musicos_app')`, [archiveTableOf(p.table)])).rows[0].n;
+        const grants = (await c.query(`SELECT count(*)::int AS n FROM information_schema.role_table_grants WHERE table_name = $1 AND grantee IN ('PUBLIC','anon','authenticated','musicos_app')`, [archiveOf(p)])).rows[0].n;
         expect(grants).toBe(0);
       }
 
@@ -228,7 +242,7 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
         const present = await cols(p.table);
         for (const col of p.columns) expect(present).toContain(col.name);
         expect(await legacyJson(p, g.archivedIds[p.table])).toEqual(before[p.table]); // restored by id, same values
-        expect(await archiveExists(p.table)).toBe(true); // archives are never dropped by down()
+        expect(await archiveExists(archiveOf(p))).toBe(true); // archives are never dropped by down()
         const nulls = (await c.query(`SELECT count(*)::int AS n FROM "${p.table}" WHERE ${p.columns.map((x) => `"${x.name}" IS NOT NULL`).join(' OR ')}`)).rows[0].n;
         expect(nulls).toBe(g.archivedIds[p.table].length); // rows without legacy values stay NULL
       }
@@ -239,6 +253,42 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
         for (const col of p.columns) expect(present).not.toContain(col.name);
       }
       await run(g.migration, 'up'); // idempotent re-run: columns already absent, no-op
+    });
+  });
+
+  describe('employees PII (draft 53) beside draft 45', () => {
+    const m = new DropEmployeesLegacyPiiColumns20260930000053();
+    const piiArchive = archiveOf(EMPLOYEES_PII[0]);
+    const rgOf = async (table: string, rowId: string) => (await c.query(`SELECT rg FROM "${table}" WHERE id = $1`, [rowId])).rows[0]?.rg as string | undefined;
+
+    it('uses its own archive table, distinct from the employees archive of draft 45, and both coexist', async () => {
+      expect(piiArchive).toBe('employees_pii_legacy_archive_20260930');
+      expect(await archiveExists(piiArchive)).toBe(true);
+      expect(await archiveExists(archiveTableOf('employees'))).toBe(true);
+      expect(piiArchive).not.toBe(archiveTableOf('employees'));
+      const cols45 = (await cols(archiveTableOf('employees'))).sort();
+      expect(cols45).not.toContain('rg');
+      expect((await cols(piiArchive)).sort()).toEqual(['address', 'archived_at', 'birth_date', 'id', 'rg', 'tenant_id']);
+    });
+
+    it('a stale archive row (live value edited between a down() and the next up()) aborts up(): nothing dropped, archive untouched', async () => {
+      await run(m, 'down');
+      expect(await cols('employees')).toEqual(expect.arrayContaining(['rg', 'birth_date', 'address']));
+      await c.query(`UPDATE employees SET rg = 'CHANGED' WHERE id = '${id(81)}'`);
+      await expect(run(m, 'up')).rejects.toThrow(/archive verification failed|stale archive rows/);
+      expect(await cols('employees')).toEqual(expect.arrayContaining(['rg', 'birth_date', 'address']));
+      expect(await rgOf(piiArchive, id(81))).toBe('12.345.678-9');
+      await c.query(`UPDATE employees SET rg = '12.345.678-9' WHERE id = '${id(81)}'`);
+      await run(m, 'up');
+      expect(await cols('employees')).not.toEqual(expect.arrayContaining(['rg']));
+    });
+
+    it('down() refuses when the PII archive is missing (nothing re-added)', async () => {
+      await c.query(`ALTER TABLE "${piiArchive}" RENAME TO "${piiArchive}_x"`);
+      try {
+        await expect(run(m, 'down')).rejects.toThrow(/archive table .* is missing/);
+        expect(await cols('employees')).not.toContain('rg');
+      } finally { await c.query(`ALTER TABLE "${piiArchive}_x" RENAME TO "${piiArchive}"`); }
     });
   });
 

@@ -74,6 +74,22 @@ describe('ImportCommitService — transactional commit', () => {
     expect(value).toBe('["https://cdn/a.png"]');
   });
 
+  it('BLK-CRM-PII-PLAINTEXT: imported personal/bank fields are written to the ciphertext columns, never to the plaintext ones', async () => {
+    const withPii = validResult(1);
+    withPii.rows[0].data = { stage_name: 'A0', rg: '12.345.678-9', bank_account: '99887-6', birth_date: '1990-01-02' };
+    const { svc, qr } = makeSvc({ validation: withPii });
+    await svc.commit('artists', file, 'tenant-1', 'user-1');
+    const insert = qr.query.mock.calls.find((call: any[]) => String(call[0]).startsWith('INSERT'));
+    const cols = String(insert?.[0]).match(/\(([^)]*)\) VALUES/)![1].split(', ');
+    const values = insert?.[1] as unknown[];
+    expect(values[cols.indexOf('"rg_encrypted"')]).toBe('enc:12.345.678-9');
+    expect(values[cols.indexOf('"bank_account_encrypted"')]).toBe('enc:99887-6');
+    expect(values[cols.indexOf('"birth_date_encrypted"')]).toBe('enc:1990-01-02');
+    for (const plain of ['"rg"', '"bank_account"', '"birth_date"']) expect(cols).not.toContain(plain);
+    expect(values).not.toContain('12.345.678-9');
+    expect(values).not.toContain('99887-6');
+  });
+
   it('invalid validation does not open a transaction', async () => {
     const bad = validResult(1);
     bad.invalidRows = 1;

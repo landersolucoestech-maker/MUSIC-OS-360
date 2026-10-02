@@ -72,7 +72,7 @@ const LEGACY_METADATA_FORM_KEYS = [
  * contract stores documents/e-mail/phone encrypted in their own columns.
  * Matched case-insensitively ('-' and ' ' treated as '_').
  */
-const METADATA_PII_KEYS: ReadonlySet<string> = new Set([
+export const METADATA_PII_KEYS: ReadonlySet<string> = new Set([
   'cpf', 'cnpj', 'cpf_cnpj', 'documento', 'document', 'rg', 'email', 'e_mail', 'telefone', 'phone', 'celular',
 ]);
 const STRIPPED_METADATA_KEYS: ReadonlySet<string> = new Set([...METADATA_PII_KEYS, ...LEGACY_METADATA_FORM_KEYS]);

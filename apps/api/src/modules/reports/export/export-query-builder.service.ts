@@ -7,6 +7,7 @@ import {
 } from './export.types';
 import {
   contractEncryptedFields,
+  contractLegacyPlaintextColumns,
   contractMetadataFields,
   contractMetadataLegacyKeys,
   getReportFormContract,
@@ -62,6 +63,7 @@ export class ExportQueryBuilderService {
       : [...def.exportableColumns];
     const contract = getReportFormContract(def.tableName);
     const encryptedFields = contract ? contractEncryptedFields(contract) : {};
+    const legacyPlaintext = contract ? contractLegacyPlaintextColumns(contract) : {};
     const metadataFields = contract ? contractMetadataFields(contract) : {};
     const metadataLegacyKeys = contract ? contractMetadataLegacyKeys(contract) : {};
     const logicalAliases: Record<string, string> = {};
@@ -76,6 +78,10 @@ export class ExportQueryBuilderService {
 
     const selectParts = columns.map((column) => {
       const physicalColumn = physicalAliasFields[column];
+      // Dual-read (BLK-CRM-PII-PLAINTEXT): ciphertext first, legacy plaintext column (as text) for rows not yet backfilled.
+      if (physicalColumn && legacyPlaintext[column]) {
+        return `COALESCE(${quote(physicalColumn)}, ${quote(legacyPlaintext[column])}::text) AS ${quote(column)}`;
+      }
       if (physicalColumn) return `${quote(physicalColumn)} AS ${quote(column)}`;
       if (metadataFields[column]) return metadataSelectExpression(column, metadataFields[column], metadataLegacyKeys[column]);
       return quote(column);

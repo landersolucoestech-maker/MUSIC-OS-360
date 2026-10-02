@@ -39,6 +39,7 @@ export const SIDE_TABLES: readonly string[] = [
   'contract_category_slug_backfill_20260930', // 20260930000036
   'transaction_internal_revenue_backfill_20260930', // 20260930000037
   'phonogram_derived_fields_backfill_20260930', // 20260930000038
+  'phonogram_derived_field_conflicts_20260930', // 20260930000038 (stored vs derived values of disagreeing rows)
 ];
 
 function assertConfirmed(migrationName: string): void {

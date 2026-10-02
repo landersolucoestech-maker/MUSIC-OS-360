@@ -172,12 +172,17 @@ describe('Artist request/response contract (CZ-042)', () => {
 
     const persisted = repo.create.mock.calls[0][0] as Record<string, unknown>;
     expect(persisted).toMatchObject({
-      stage_name: 'MC Aurora', full_name: 'Aurora da Silva', bank_branch: '0001', agent_name: 'Beto',
-      profile_type: 'managed', contract_id: CONTRACT_ID, internal_notes: 'nota interna', birth_date: '1995-04-20',
+      stage_name: 'MC Aurora', full_name: 'Aurora da Silva', agent_name: 'Beto',
+      profile_type: 'managed', contract_id: CONTRACT_ID, internal_notes: 'nota interna',
+      // BLK-CRM-PII-PLAINTEXT: personal/bank data is persisted ONLY as ciphertext; the plaintext column stays unset.
+      birth_date_encrypted: 'cipher:1995-04-20', bank_branch_encrypted: 'cipher:0001', rg_encrypted: 'cipher:12.345.678-9',
       phone_encrypted: 'cipher:+55 11 99999-0000', manager_contact_encrypted: 'cipher:fabio@x.com',
       email_encrypted: 'cipher:aurora@example.com', cpf_cnpj_encrypted: 'cipher:123.456.789-00',
     });
     for (const key of Object.keys(persisted)) expect(PT_KEYS.has(key) && key !== 'metadata').toBe(false);
+    for (const column of ['birth_date', 'rg', 'address', 'bank_name', 'bank_branch', 'bank_account', 'pix_key', 'account_holder']) {
+      expect(persisted[column]).toBeUndefined();
+    }
     expect(Object.keys(persisted.metadata as object).sort()).toEqual([
       'apple_music_albums', 'deezer_fans', 'gender', 'instagram_followers', 'instagram_url',
       'soundcloud_followers', 'spotify_listeners', 'tiktok_followers', 'youtube_subscribers',
@@ -206,7 +211,8 @@ describe('Artist request/response contract (CZ-042)', () => {
     expect(response).not.toHaveProperty('leadId');
     expect(JSON.stringify(response)).not.toContain('cipher:');
     // Anything that is not a row column or a decrypted PII key must be an allow-listed metadata key.
-    const rowColumns = new Set(['id', 'tenant_id', 'status', 'stage_name']);
+    const piiColumns = ['birth_date', 'rg', 'address', 'bank_name', 'bank_branch', 'bank_account', 'pix_key', 'account_holder'];
+    const rowColumns = new Set(['id', 'tenant_id', 'status', 'stage_name', ...piiColumns]);
     const decrypted = new Set(['email', 'phone', 'cpf_cnpj', 'manager_contact']);
     const extra = Object.keys(response).filter((k) => !rowColumns.has(k) && !decrypted.has(k));
     expect(extra.sort()).toEqual(['gender', 'spotify_listeners']);

@@ -26,6 +26,7 @@ import { ReportTableGuardService } from '../report-table-guard.service';
 import { EncryptionService } from '../../../core/security/encryption.service';
 import {
   contractEncryptedFields,
+  contractLegacyPlaintextColumns,
   getReportFormContract,
   type ReportFormContract,
   type ReportRepeatingGroupSpec,
@@ -172,12 +173,16 @@ export class ExportEngineService {
   ): void {
     const encryptedFields = Object.keys(contract ? contractEncryptedFields(contract) : {})
       .filter((key) => columns.includes(key));
+    const legacyPlaintext = contract ? contractLegacyPlaintextColumns(contract) : {};
     for (const row of rows) {
       for (const key of encryptedFields) {
         const value = row[key];
-        row[key] = typeof value === 'string' && value.length > 0
-          ? this.encryption.decryptNullable(value)
-          : null;
+        if (typeof value !== 'string' || value.length === 0) {
+          row[key] = null;
+        } else {
+          // Dual-read fields: a value without the ciphertext prefix is legacy plaintext, not an undecryptable blob.
+          row[key] = legacyPlaintext[key] ? this.encryption.decryptOrLegacy(value) : this.encryption.decryptNullable(value);
+        }
       }
     }
   }

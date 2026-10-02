@@ -41,6 +41,21 @@ export class EncryptionService {
     return this.decrypt(value);
   }
 
+  /**
+   * Dual-read for a column that is being moved from plaintext to ciphertext: a value carrying the
+   * versioned prefix is decrypted, anything else is legacy plaintext and passes through unchanged.
+   * (`decrypt` alone would turn legacy plaintext into '[encrypted]'.)
+   */
+  decryptOrLegacy(value: string | null | undefined): string | null {
+    if (value == null || value === '') return null;
+    return value.startsWith(PREFIX) ? this.decrypt(value) : value;
+  }
+
+  /** True when the stored value is field-level ciphertext (versioned prefix). */
+  isCiphertext(value: unknown): value is string {
+    return typeof value === 'string' && value.startsWith(PREFIX);
+  }
+
   encrypt(plaintext: string): string {
     const iv         = crypto.randomBytes(IV_LENGTH);
     const cipher     = crypto.createCipheriv(ALGORITHM, this.key, iv);

@@ -11,7 +11,10 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
  * Second lock: up() and down() throw unless the operator exports LEGACY_DROP_CONFIRM=<CONFIRM_TOKEN>.
  *
  * up(), in this order (everything before the DROP is read-only or additive):
- *   1. confirmation gate, RLS-bypass guard (every tenant is archived), SET LOCAL lock_timeout '15s';
+ *   1. confirmation gate, RLS-bypass guard (every tenant is archived), SET LOCAL lock_timeout '15s', then
+ *      LOCK TABLE "<table>" IN SHARE ROW EXCLUSIVE MODE for EVERY table of the plans (in plan order, inside the
+ *      transaction): readers keep working, writers wait (bounded by lock_timeout) so the preconditions, the archive
+ *      and the ALTER see one frozen set of rows (no row can gain a legacy value between check/archive and DROP);
  *   2. column presence: none present -> table skipped (idempotent re-run); some present -> abort (unknown state);
  *   3. zero-use / reconciliation preconditions: every check counts rows that would LOSE information (a legacy
  *      value with no canonical counterpart); any count > 0 aborts with counts only (no row values, no PII);
@@ -24,7 +27,7 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
  *      A stale archive row (left by an earlier up/down/up cycle whose live values changed since) ABORTS: the operator
  *      reviews it and retires/renames that archive table; old values are never silently frozen over new ones;
  *   6. ALTER TABLE ... DROP COLUMN IF EXISTS (the only destructive statement, last).
- * down(): re-adds each column (same type, nullable) and restores the values by id from the archive (rows
+ * down(): the same lock, then re-adds each column (same type, nullable) and restores the values by id from the archive (rows
  * created after the drop have no archive row and stay NULL). The archive tables are NEVER dropped here: they
  * are retired by a separate later migration after the retention window.
  */
@@ -49,12 +52,19 @@ export interface PreflightCheck {
 
 export interface DropTablePlan {
   readonly table: string;
+  /** Archive table name when the default `<table>_legacy_archive_20260930` is already taken by another plan of the same table. */
+  readonly archiveTable?: string;
   readonly columns: readonly LegacyColumn[];
   readonly checks: readonly PreflightCheck[];
 }
 
 export function archiveTableOf(table: string): string {
   return `${table}${ARCHIVE_SUFFIX}`;
+}
+
+/** Archive table of a plan: its explicit `archiveTable`, else the default of its table. */
+export function archiveOf(plan: DropTablePlan): string {
+  return plan.archiveTable ?? archiveTableOf(plan.table);
 }
 
 export function bounded(text: string): string {
@@ -88,13 +98,24 @@ export async function lockDownArchiveTable(queryRunner: QueryRunner, archive: st
     END $$;`);
 }
 
-async function presentColumns(queryRunner: QueryRunner, plan: DropTablePlan): Promise<string[]> {
+/** Names (among `names`) that physically exist on public.<table>. */
+export async function presentColumnsOf(queryRunner: QueryRunner, table: string, names: readonly string[]): Promise<string[]> {
   const rows: Array<{ column_name: string }> = await queryRunner.query(
     `SELECT column_name FROM information_schema.columns
-     WHERE table_schema = 'public' AND table_name = '${plan.table}' AND column_name = ANY($1::text[])`,
-    [plan.columns.map((c) => c.name)],
+     WHERE table_schema = 'public' AND table_name = '${table}' AND column_name = ANY($1::text[])`,
+    [names],
   );
   return rows.map((r) => r.column_name);
+}
+
+const presentColumns = (queryRunner: QueryRunner, plan: DropTablePlan): Promise<string[]> =>
+  presentColumnsOf(queryRunner, plan.table, plan.columns.map((c) => c.name));
+
+/** Blocks writers (not readers) of every table of the plans until the end of the transaction. Call right after lock_timeout. */
+export async function lockTables(queryRunner: QueryRunner, tables: readonly string[]): Promise<void> {
+  for (const table of [...new Set(tables)]) {
+    await queryRunner.query(`LOCK TABLE "${table}" IN SHARE ROW EXCLUSIVE MODE`);
+  }
 }
 
 /** Runs the whole destructive skeleton for one or more tables. Returns the tables actually dropped. */
@@ -102,6 +123,7 @@ export async function runDrop(queryRunner: QueryRunner, migrationName: string, p
   assertConfirmed(migrationName);
   await assertMigrationRoleBypassesRls(queryRunner, migrationName);
   await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
+  await lockTables(queryRunner, plans.map((p) => p.table));
 
   // (2) presence, for every table before anything is written.
   const active: DropTablePlan[] = [];
@@ -129,7 +151,7 @@ export async function runDrop(queryRunner: QueryRunner, migrationName: string, p
 
   // (4)+(5) archive and verify, then (6) drop.
   for (const plan of active) {
-    const archive = archiveTableOf(plan.table);
+    const archive = archiveOf(plan);
     const columnDdl = plan.columns.map((c) => `"${c.name}" ${c.type}`).join(',\n        ');
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS "${archive}" (
@@ -173,15 +195,16 @@ export async function runRestore(queryRunner: QueryRunner, migrationName: string
   assertConfirmed(migrationName);
   await assertMigrationRoleBypassesRls(queryRunner, migrationName);
   await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
+  await lockTables(queryRunner, plans.map((p) => p.table));
   for (const plan of plans) {
-    const archive = archiveTableOf(plan.table);
+    const archive = archiveOf(plan);
     const exists: Array<{ ok: boolean }> = await queryRunner.query(`SELECT to_regclass('public.${archive}') IS NOT NULL AS ok`);
     if (!exists[0]?.ok) {
       throw new Error(bounded(`${migrationName}: refusing down(): archive table ${archive} is missing, values cannot be restored.`));
     }
   }
   for (const plan of plans) {
-    const archive = archiveTableOf(plan.table);
+    const archive = archiveOf(plan);
     await queryRunner.query(`ALTER TABLE "${plan.table}" ${plan.columns.map((c) => `ADD COLUMN IF NOT EXISTS "${c.name}" ${c.type}`).join(', ')}`);
     const sets = plan.columns.map((c) => `"${c.name}" = a."${c.name}"`).join(', ');
     await queryRunner.query(`UPDATE "${plan.table}" t SET ${sets} FROM "${archive}" a WHERE a."id" = t."id"`);

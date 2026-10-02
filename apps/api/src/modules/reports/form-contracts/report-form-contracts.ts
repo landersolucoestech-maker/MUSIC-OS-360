@@ -37,6 +37,12 @@ export interface ReportFieldSpec {
   legacyKey?: string;
   /** false ⇒ export only (never overwritten on import). */
   importable?: boolean;
+  /**
+   * encrypted fields only: the PLAINTEXT column the value used to live in (dual-read window of
+   * BLK-CRM-PII-PLAINTEXT). The export reads `COALESCE(<physical>, <legacyPlaintextColumn>)` and passes a value
+   * without the ciphertext prefix through unchanged; writes and imports only ever touch `physical`.
+   */
+  legacyPlaintextColumn?: string;
 }
 
 /** Repeatable group flattened into rows of the same XLSX sheet. */
@@ -94,6 +100,13 @@ const meta = (key: string, physical: string = 'metadata'): ReportFieldSpec => ({
  */
 const metaRenamed = (key: string, legacyKey: string): ReportFieldSpec => ({ key, storage: 'metadata', physical: 'metadata', legacyKey });
 const enc = (key: string, physical: string): ReportFieldSpec => ({ key, storage: 'encrypted', physical });
+/**
+ * `enc()` field that was a plaintext column before BLK-CRM-PII-PLAINTEXT: ciphertext in `<key>_encrypted`, the
+ * plaintext column of the same name stays readable (never written) until the gated backfill has run everywhere.
+ */
+const encFromPlaintext = (key: string): ReportFieldSpec => ({
+  key, storage: 'encrypted', physical: `${key}_encrypted`, legacyPlaintextColumn: key,
+});
 // ─── Artists (full form — 68 fields) ────────────────────────────────────────
 // CZ-042: every form field has its own physical column (col()); meta() only for
 // the metadata-only fields (gender, instagram/tiktok URLs, platform metrics).
@@ -107,7 +120,7 @@ const ARTISTS_CONTRACT: ReportFormContract = {
     col('music_genre'), col('notes'), col('specialties'),
     // Extended profile
     col('artist_slug'), col('profile_type'), col('career_stage'),
-    meta('gender'), col('birth_date'), col('rg'), col('address'),
+    meta('gender'), encFromPlaintext('birth_date'), encFromPlaintext('rg'), encFromPlaintext('address'),
     col('music_tags'),
     // Contact (encrypted)
     enc('email', 'email_encrypted'), enc('phone', 'phone_encrypted'),
@@ -136,7 +149,8 @@ const ARTISTS_CONTRACT: ReportFormContract = {
     // Bank details — "bank_branch" is the form's bank branch, not the booking
     // agency (col('booking_agency') above, a distinct field). Kept consecutive,
     // in the form's visual order (guard spec).
-    col('bank_name'), col('bank_branch'), col('bank_account'), col('pix_key'), col('account_holder'),
+    encFromPlaintext('bank_name'), encFromPlaintext('bank_branch'), encFromPlaintext('bank_account'),
+    encFromPlaintext('pix_key'), encFromPlaintext('account_holder'),
     // Distribution (jsonb; arrays/objects serialized as reversible JSON)
     col('selected_distributors'), col('general_distributors'),
     col('distributor_emails'), col('company_selected_distributors'),
@@ -850,6 +864,15 @@ export function contractEncryptedFields(contract: ReportFormContract): Record<st
   const out: Record<string, string> = {};
   for (const f of contract.fields) {
     if (f.storage === 'encrypted' && f.physical) out[f.key] = f.physical;
+  }
+  return out;
+}
+
+/** encrypted key → plaintext column it is dual-read from (BLK-CRM-PII-PLAINTEXT window). */
+export function contractLegacyPlaintextColumns(contract: ReportFormContract): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const f of contract.fields) {
+    if (f.storage === 'encrypted' && f.legacyPlaintextColumn) out[f.key] = f.legacyPlaintextColumn;
   }
   return out;
 }

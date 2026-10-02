@@ -26,6 +26,26 @@ describe('redactSensitiveObject (clear-text exposure, CWE-312/532)', () => {
     }
   });
 
+  it('BLK-CRM-PII-PLAINTEXT: redacts personal/bank data keys (canonical and Portuguese), exact match only', () => {
+    const out = redactSensitiveObject({
+      cpf: '1', cnpj: '2', cpf_cnpj: '3', rg: '4', birth_date: '5', data_nascimento: '5', bank_name: '6', bank_branch: '7',
+      bank_account: '8', pix_key: '9', chave_pix: '9', account_holder: 'a', titular_conta: 'a', banco: 'b', agencia: 'c',
+      conta: 'd', address: 'e', endereco: 'e', 'Bank-Account': 'f',
+      org: 'keep', organization_id: 'keep', stage_name: 'keep', nested: { rg: 'x', note: 'keep' },
+    }) as Record<string, any>;
+    for (const key of [
+      'cpf', 'cnpj', 'cpf_cnpj', 'rg', 'birth_date', 'data_nascimento', 'bank_name', 'bank_branch', 'bank_account',
+      'pix_key', 'chave_pix', 'account_holder', 'titular_conta', 'banco', 'agencia', 'conta', 'address', 'endereco', 'Bank-Account',
+    ]) {
+      expect(out[key]).toBe(REDACTED);
+    }
+    expect(out.org).toBe('keep');
+    expect(out.organization_id).toBe('keep');
+    expect(out.stage_name).toBe('keep');
+    expect(out.nested.rg).toBe(REDACTED);
+    expect(out.nested.note).toBe('keep');
+  });
+
   it('redacts nested objects and arrays', () => {
     const out = redactSensitiveObject({
       list: [{ token: 't', name: 'n' }],

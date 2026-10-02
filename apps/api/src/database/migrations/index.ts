@@ -350,6 +350,7 @@ import { BackfillContractSignedTransactionCategoryToContractualRevenue2026093000
 import { BackfillContractCategorySlugsToEnglish20260930000036 } from './20260930000036_BackfillContractCategorySlugsToEnglish';
 import { BackfillInternalRevenueAndContractPassThroughSlugs20260930000037 } from './20260930000037_BackfillInternalRevenueAndContractPassThroughSlugs';
 import { BackfillPhonogramDerivedFields20260930000038 } from './20260930000038_BackfillPhonogramDerivedFields';
+import { AddArtistsPiiEncryptedColumns20261002000001 } from './20261002000001_AddArtistsPiiEncryptedColumns';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -683,4 +684,5 @@ export const ALL_MIGRATIONS = [
   BackfillContractCategorySlugsToEnglish20260930000036,
   BackfillInternalRevenueAndContractPassThroughSlugs20260930000037,
   BackfillPhonogramDerivedFields20260930000038,
+  AddArtistsPiiEncryptedColumns20261002000001,
 ] as const;

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ALL_MIGRATIONS } from '../migrations';
-import { archiveTableOf } from './legacy-column-drop.base';
+import { archiveOf } from './legacy-column-drop.base';
 import { CONFIRM_ENV as DROP_ENV, CONFIRM_TOKEN as DROP_TOKEN } from './legacy-column-drop.base';
 import { PLANS as WORKS } from './20260930000040_DropWorksLegacyColumns';
 import { PLANS as PHONOGRAMS } from './20260930000041_DropPhonogramsLegacyColumns';
@@ -10,6 +10,7 @@ import { PLANS as CLIENTS } from './20260930000043_DropClientsLegacyContactStatu
 import { PLANS as SHARES } from './20260930000044_DropSharesLegacyArtistProjectId';
 import { PLANS as HR } from './20260930000045_DropHrLegacyMirrors';
 import { PLANS as INVOICES } from './20260930000049_DropInvoicesLegacyAmount';
+import { PLANS as EMPLOYEES_PII } from './20260930000053_DropEmployeesLegacyPiiColumns';
 import {
   ARCHIVE_TABLES,
   CONFIRM_ENV,
@@ -31,7 +32,7 @@ describe('RetireLegacyColumnDropArchives draft', () => {
   });
 
   it('retires exactly the archives of every drop plan', () => {
-    const planned = [...WORKS, ...PHONOGRAMS, ...TRANSACTIONS, ...CLIENTS, ...SHARES, ...HR, ...INVOICES].map((p) => archiveTableOf(p.table));
+    const planned = [...WORKS, ...PHONOGRAMS, ...TRANSACTIONS, ...CLIENTS, ...SHARES, ...HR, ...INVOICES, ...EMPLOYEES_PII].map(archiveOf);
     expect([...ARCHIVE_TABLES].sort()).toEqual([...planned].sort());
   });
 

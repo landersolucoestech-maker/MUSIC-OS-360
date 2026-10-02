@@ -6,6 +6,7 @@ import { EncryptionService } from '../../core/security/encryption.service';
 import {
   REPORT_FORM_CONTRACTS,
   contractEncryptedFields,
+  contractLegacyPlaintextColumns,
 } from '../reports/form-contracts/report-form-contracts';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { PlanLimitService } from '../../core/billing/plan-limit.service';
@@ -35,7 +36,6 @@ const REQUIRED_COLUMNS = ['stage_name', 'status'] as const;
 // Nullable columns: `undefined` = leave untouched; `null`/value = persist exactly.
 const NULLABLE_COLUMNS = [
   'full_name', 'music_genre', 'notes', 'photo_url', 'personal_documents_url', 'press_kit_url',
-  'birth_date', 'rg', 'address', 'bank_name', 'bank_branch', 'bank_account', 'pix_key', 'account_holder',
   'spotify_url', 'youtube_url', 'soundcloud_url', 'apple_music_url', 'deezer_url',
   'profile_type', 'internal_notes', 'contract_id', 'artist_slug', 'career_stage',
   'agent_id', 'agent_name', 'agent_phone', 'agent_email',
@@ -50,7 +50,7 @@ const NULLABLE_COLUMNS = [
 
 // Typed (date/uuid) columns: an empty string means "no value" (the form sends
 // '' for a blank input) — persisted as null instead of failing the cast.
-const EMPTY_AS_NULL_COLUMNS = new Set<string>(['birth_date', 'contract_id']);
+const EMPTY_AS_NULL_COLUMNS = new Set<string>(['contract_id']);
 
 // jsonb NOT NULL DEFAULT [] columns: null becomes an empty list.
 const JSONB_LIST_COLUMNS = ['gallery_urls', 'documents', 'specialties'] as const;
@@ -59,6 +59,11 @@ const JSONB_LIST_COLUMNS = ['gallery_urls', 'documents', 'specialties'] as const
 // central Reports contract (form-contracts) — the same one used by
 // export/import.
 const ENCRYPTED_FIELDS = new Set(Object.keys(contractEncryptedFields(REPORT_FORM_CONTRACTS.artists)));
+
+// BLK-CRM-PII-PLAINTEXT: personal/bank fields that used to be plaintext columns (birth_date, rg, address, bank_*,
+// pix_key, account_holder). They are ENCRYPTED_FIELDS too (`<field>_encrypted`); the plaintext column of the same
+// name is never written again (null on every write of the field) and only read as a dual-read fallback.
+const LEGACY_PLAINTEXT_FIELDS: readonly string[] = Object.keys(contractLegacyPlaintextColumns(REPORT_FORM_CONTRACTS.artists));
 
 const METADATA_FIELDS: ReadonlySet<string> = new Set(ARTIST_METADATA_ONLY_FIELDS);
 
@@ -69,8 +74,13 @@ const columnValue = (column: string, value: unknown): unknown =>
 export type ArtistMetadataResponse = Partial<Record<(typeof ARTIST_METADATA_ONLY_FIELDS)[number], unknown>>;
 
 /** Response shape: entity columns without ciphertext/raw metadata + decrypted PII + allow-listed metadata. */
+type ArtistPiiField = 'birth_date' | 'rg' | 'address' | 'bank_name' | 'bank_branch' | 'bank_account' | 'pix_key' | 'account_holder';
 export type ArtistResponse =
-  Omit<ArtistEntity, 'email_encrypted' | 'phone_encrypted' | 'cpf_cnpj_encrypted' | 'manager_contact_encrypted' | 'metadata'>
+  Omit<
+    ArtistEntity,
+    'email_encrypted' | 'phone_encrypted' | 'cpf_cnpj_encrypted' | 'manager_contact_encrypted' | 'metadata'
+    | `${ArtistPiiField}_encrypted`
+  >
   & ArtistMetadataResponse
   & { email: string | null; phone: string | null; cpf_cnpj: string | null; manager_contact: string | null };
 
@@ -102,6 +112,8 @@ export class ArtistsService {
   private toResponse(entity: ArtistEntity): ArtistResponse {
     const {
       email_encrypted, phone_encrypted, cpf_cnpj_encrypted, manager_contact_encrypted, metadata,
+      birth_date_encrypted, rg_encrypted, address_encrypted, bank_name_encrypted, bank_branch_encrypted,
+      bank_account_encrypted, pix_key_encrypted, account_holder_encrypted,
       ...columns
     } = entity;
     const meta = (metadata ?? {}) as Record<string, unknown>;
@@ -109,14 +121,32 @@ export class ArtistsService {
     for (const key of ARTIST_METADATA_ONLY_FIELDS) {
       if (Object.prototype.hasOwnProperty.call(meta, key)) metadataFields[key] = meta[key];
     }
+    // Dual-read (BLK-CRM-PII-PLAINTEXT): ciphertext wins; a row not yet backfilled still answers from its plaintext column.
+    const pii = {
+      birth_date:     this.piiValue(birth_date_encrypted, columns.birth_date, 'birth_date'),
+      rg:             this.piiValue(rg_encrypted, columns.rg, 'rg'),
+      address:        this.piiValue(address_encrypted, columns.address, 'address'),
+      bank_name:      this.piiValue(bank_name_encrypted, columns.bank_name, 'bank_name'),
+      bank_branch:    this.piiValue(bank_branch_encrypted, columns.bank_branch, 'bank_branch'),
+      bank_account:   this.piiValue(bank_account_encrypted, columns.bank_account, 'bank_account'),
+      pix_key:        this.piiValue(pix_key_encrypted, columns.pix_key, 'pix_key'),
+      account_holder: this.piiValue(account_holder_encrypted, columns.account_holder, 'account_holder'),
+    };
     return {
       ...columns,
       ...metadataFields,
+      ...pii,
       email:           this.safeDecrypt(email_encrypted, 'email'),
       phone:           this.safeDecrypt(phone_encrypted, 'phone'),
       cpf_cnpj:        this.safeDecrypt(cpf_cnpj_encrypted, 'cpf_cnpj'),
       manager_contact: this.safeDecrypt(manager_contact_encrypted, 'manager_contact'),
     };
+  }
+
+  /** Ciphertext column first, legacy plaintext column as fallback; unreadable ciphertext never leaks a raw value. */
+  private piiValue(ciphertext: string | null, legacyPlaintext: string | null, field: string): string | null {
+    if (ciphertext != null && ciphertext !== '') return this.safeDecrypt(ciphertext, field);
+    return legacyPlaintext ?? null;
   }
 
   /** Unreadable ciphertext (rotated key/legacy value) never breaks the read. */
@@ -364,10 +394,12 @@ export class ArtistsService {
       if (input[col] !== undefined) { updates[col] = input[col] ?? []; changedFields.push(col); }
     }
 
-    // Encrypted fields (wire name + _encrypted suffix, uniform for all 4)
+    // Encrypted fields (wire name + _encrypted suffix, uniform for every encrypted field)
     for (const field of ENCRYPTED_FIELDS) {
       if (input[field] !== undefined) {
         updates[`${field}_encrypted`] = this.encryption.encryptNullable(input[field] as string | null);
+        // The plaintext column of a moved field never keeps a copy once the field is written (this row only).
+        if (LEGACY_PLAINTEXT_FIELDS.includes(field)) updates[field] = null;
         changedFields.push(field);
       }
     }

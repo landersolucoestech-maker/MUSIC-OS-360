@@ -503,6 +503,17 @@ export class ArtistEntity {
   @Column({ type: 'varchar', length: 40, nullable: true }) bank_account: string | null;
   @Column({ type: 'varchar', length: 150, nullable: true }) pix_key: string | null;
   @Column({ type: 'varchar', length: 150, nullable: true }) account_holder: string | null;
+  // BLK-CRM-PII-PLAINTEXT: field-level ciphertext (EncryptionService, 'enc:v1:' prefix) for the personal/bank data
+  // above. New writes go ONLY here and null the plaintext column above (dual-read window: a row not yet
+  // backfilled still carries its plaintext column; see docs/engineering/data-governance-pii-backfill.md).
+  @Column({ type: 'text', nullable: true }) birth_date_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) rg_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) address_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) bank_name_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) bank_branch_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) bank_account_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) pix_key_encrypted: string | null;
+  @Column({ type: 'text', nullable: true }) account_holder_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) spotify_url: string | null;
   @Column({ type: 'text', nullable: true }) youtube_url: string | null;
   @Column({ type: 'text', nullable: true }) soundcloud_url: string | null;

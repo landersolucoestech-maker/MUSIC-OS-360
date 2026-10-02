@@ -108,6 +108,9 @@ describe('ArtistsService', () => {
     const { email_encrypted, phone_encrypted, cpf_cnpj_encrypted, manager_contact_encrypted, metadata, ...artistAPublic } = artistA;
     expect(result.data).toEqual([{
       ...artistAPublic,
+      // BLK-CRM-PII-PLAINTEXT: the personal/bank keys are always present (decrypted, or legacy plaintext, or null).
+      birth_date: null, rg: null, address: null, bank_name: null, bank_branch: null, bank_account: null,
+      pix_key: null, account_holder: null,
       email: null,
       phone: null,
       cpf_cnpj: null,

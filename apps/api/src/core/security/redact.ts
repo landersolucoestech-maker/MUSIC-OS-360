@@ -11,6 +11,15 @@
 const SENSITIVE_KEY_RE =
   /(pass(word)?|token|api_?key|secret|private_?key|service_?role|database_?url|direct_?url|jwt|bearer|credential|authorization|encryption_?key|dsn)/i;
 
+/**
+ * BLK-CRM-PII-PLAINTEXT: personal/bank data keys (canonical + pre-CZ-042 spellings) of artists/clients. Exact
+ * (anchored) key match after '-'/space -> '_' so unrelated keys (org, organization) are never redacted.
+ */
+const PII_KEY_RE =
+  /^(cpf|cnpj|cpf_cnpj|rg|birth_date|data_nascimento|bank_(name|branch|account)|pix_key|account_holder|banco|agencia|conta|chave_pix|titular_conta|address|endereco)$/i;
+const isSensitiveKey = (key: string): boolean =>
+  SENSITIVE_KEY_RE.test(key) || PII_KEY_RE.test(key.trim().replace(/[-\s]+/g, '_'));
+
 export const REDACTED = "[REDACTED]";
 
 /** Deep-redacts sensitive values in an object/array. Non-sensitive data kept. */
@@ -21,7 +30,7 @@ export function redactSensitiveObject<T>(value: T): T {
   if (value && typeof value === "object") {
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-      out[k] = SENSITIVE_KEY_RE.test(k) ? REDACTED : redactSensitiveObject(v);
+      out[k] = isSensitiveKey(k) ? REDACTED : redactSensitiveObject(v);
     }
     return out as T;
   }

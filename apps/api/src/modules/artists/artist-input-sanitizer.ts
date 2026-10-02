@@ -39,14 +39,32 @@ function invalidDtoProperties(values: Record<string, unknown>, keys: readonly st
 }
 
 /**
+ * BLK-CRM-PII-PLAINTEXT: personal/bank/contact keys (canonical and pre-CZ-042 spellings) that must never be
+ * persisted in plaintext inside `artists.metadata`. Their values live in the encrypted columns
+ * (`<field>_encrypted`); a caller-supplied metadata key of this kind is dropped, never persisted.
+ * Matched case-insensitively ('-' and ' ' treated as '_').
+ */
+export const ARTIST_METADATA_PII_KEYS: ReadonlySet<string> = new Set([
+  'cpf', 'cnpj', 'cpf_cnpj', 'documento', 'document', 'rg',
+  'birth_date', 'data_nascimento', 'address', 'endereco',
+  'bank_name', 'banco', 'bank_branch', 'agencia', 'bank_account', 'conta',
+  'pix_key', 'chave_pix', 'account_holder', 'titular_conta',
+  'email', 'e_mail', 'phone', 'telefone', 'celular', 'manager_contact', 'manager_contato',
+]);
+const normalizeMetadataKey = (key: string): string => key.trim().toLowerCase().replace(/[-\s]+/g, '_');
+
+/**
  * Caller-supplied artist metadata with every allow-listed response key that
- * fails its top-level DTO rule removed (e.g. `instagram_url: "javascript:..."`,
+ * fails its top-level DTO rule removed, plus every plaintext PII key (ARTIST_METADATA_PII_KEYS) (e.g. `instagram_url: "javascript:..."`,
  * `tiktok_url: "data:text/html,..."`, a non-numeric metric). Other keys are
  * kept untouched (they are never returned by the API).
  */
 export function sanitizeArtistMetadataInput(value: unknown): unknown {
   if (!isPlainObject(value)) return value;
   const out = { ...value };
+  for (const key of Object.keys(out)) {
+    if (ARTIST_METADATA_PII_KEYS.has(normalizeMetadataKey(key))) delete out[key];
+  }
   for (const key of invalidDtoProperties(out, ARTIST_METADATA_ONLY_FIELDS)) delete out[key];
   return out;
 }
