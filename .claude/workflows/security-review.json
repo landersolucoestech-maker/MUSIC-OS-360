@@ -138,5 +138,16 @@
     "security gate PASS",
     "no open critical or high finding",
     "negative tests executed"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "security review",
+      "threat",
+      "vulnerability",
+      "authorization audit"
+    ],
+    "examples": [
+      "Security review of an authentication change"
+    ]
+  }
 }

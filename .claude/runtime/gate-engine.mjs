@@ -17,6 +17,7 @@ import { outstandingCapabilities } from "./lib/capability-ledger.mjs";
 import { diffContractFiles, findVersionedSchemaPairs } from "./lib/contract-drift.mjs";
 import { detectAll } from "./lib/tool-capability.mjs";
 import { validatePack } from "./validate-pack-contracts.mjs";
+import { coverage as workflowCoverage } from "./workflow-match.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -269,6 +270,44 @@ const CHECKS = {
   },
 
   // The pack itself (agents, skills, capabilities, workflows, registry, ownership, approval classes).
+  // Every workflow is discoverable, its own examples select it, and a regression test exists.
+  "workflow-coverage": (ctx) => {
+    const cov = workflowCoverage(ctx.cwd);
+    const reasons = cov.failures.map((f) => `workflow coverage: ${f}`);
+    if (!existsSync(join(ctx.cwd, ".claude", "runtime", "tests", "workflow-match.regression.mjs"))) reasons.push("workflow coverage: .claude/runtime/tests/workflow-match.regression.mjs is missing");
+    return { reasons };
+  },
+
+  // A workflow was really instantiated and executed: a match record with all candidates, an instance,
+  // and at least one delegated task closed with existing evidence.
+  "workflow-runtime-exercised": (ctx) => {
+    const instances = listRecords(ctx.cwd, "workflow-instance");
+    if (!instances.length) return { reasons: ["workflow runtime: no workflow-instance record exists (the workflow layer was never exercised)"] };
+    const reasons = [];
+    const good = instances.filter((inst) => {
+      const match = getRecord(ctx.cwd, "workflow-match", inst.matchId);
+      const plan = listRecords(ctx.cwd, "orchestration").find((pl) => pl.id === inst.planId);
+      if (!match || !match.candidates || match.candidates.length < 2 || !plan) return false;
+      return plan.tasks.some((t) => t.delegationId && t.status === "COMPLETED" && (t.evidenceRefs || []).length && t.evidenceRefs.every((e) => getRecord(ctx.cwd, "evidence", e)));
+    });
+    if (!good.length) reasons.push("workflow runtime: no instance has a match record with all candidates plus a delegated task completed with existing evidence");
+    return { reasons };
+  },
+
+  // A plan that must be bound to a workflow is not complete until its instance is: every phase COMPLETED.
+  "workflow-instance-complete": (ctx) => {
+    const reasons = [];
+    for (const plan of listRecords(ctx.cwd, "orchestration")) {
+      if (plan.status === "ABANDONED" || !plan.requireWorkflow) continue;
+      if (!plan.workflowInstanceId) { reasons.push(`orchestration ${plan.id} requires a workflow instance and has none`); continue; }
+      const inst = getRecord(ctx.cwd, "workflow-instance", plan.workflowInstanceId);
+      if (!inst) { reasons.push(`orchestration ${plan.id}: workflow instance ${plan.workflowInstanceId} not found`); continue; }
+      const open = inst.steps.filter((st) => plan.tasks.find((t) => t.id === st.phase)?.status !== "COMPLETED").map((st) => st.phase);
+      if (open.length) reasons.push(`workflow instance ${inst.id} (${inst.workflow}) has phases not COMPLETED: ${open.join(", ")}`);
+    }
+    return { reasons };
+  },
+
   "pack-contracts-valid": (ctx) => {
     const res = validatePack(ctx.cwd);
     return res.problems.length ? { reasons: [`${res.problems.length} pack contract problem(s); first: ${res.problems.slice(0, 5).join(" | ")}`] } : {};

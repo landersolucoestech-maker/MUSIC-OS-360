@@ -122,5 +122,20 @@
     "same tests pass before and after",
     "no public contract changed",
     "completion gate PASS"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "refactor",
+      "cleanup",
+      "simplify",
+      "restructure without behavior change"
+    ],
+    "examples": [
+      "Refactor a service with identical behavior"
+    ],
+    "excludes": [
+      "normalization",
+      "naming"
+    ]
+  }
 }

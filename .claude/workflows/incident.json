@@ -2,15 +2,115 @@
   "name": "incident",
   "description": "Detect -> classify -> contain -> preserve evidence -> diagnose -> mitigate -> recover -> validate -> root cause -> prevention, per .claude/rules/incident-recovery.md.",
   "phases": [
-    { "id": "detect-classify", "requiredAgents": ["repo-intelligence"], "requiredEvidence": [], "gates": [], "dependsOn": [] },
-    { "id": "contain", "requiredAgents": ["implementation-engineer"], "requiredEvidence": [], "gates": [], "approvalRequired": true, "dependsOn": ["detect-classify"] },
-    { "id": "preserve-evidence", "requiredAgents": [], "requiredSkills": ["evidence-collection", "git-checkpoint"], "requiredEvidence": [], "gates": [], "dependsOn": ["contain"] },
-    { "id": "diagnose", "requiredAgents": [], "requiredSkills": [], "requiredEvidence": [], "gates": [], "dependsOn": ["preserve-evidence"] },
-    { "id": "mitigate", "requiredAgents": ["implementation-engineer"], "requiredEvidence": ["test"], "gates": ["incremental"], "dependsOn": ["diagnose"] },
-    { "id": "recover", "requiredAgents": [], "requiredSkills": [], "requiredEvidence": [], "gates": [], "dependsOn": ["mitigate"] },
-    { "id": "validate", "requiredAgents": ["adversarial-reviewer"], "requiredEvidence": [], "gates": [], "dependsOn": ["recover"] },
-    { "id": "root-cause-and-prevention", "requiredAgents": ["documentation-reviewer"], "requiredEvidence": [], "gates": ["completion"], "dependsOn": ["validate"] }
+    {
+      "id": "detect-classify",
+      "requiredAgents": [
+        "repo-intelligence"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "contain",
+      "requiredAgents": [
+        "implementation-engineer"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "approvalRequired": true,
+      "dependsOn": [
+        "detect-classify"
+      ]
+    },
+    {
+      "id": "preserve-evidence",
+      "requiredAgents": [],
+      "requiredSkills": [
+        "evidence-collection",
+        "git-checkpoint"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "contain"
+      ]
+    },
+    {
+      "id": "diagnose",
+      "requiredAgents": [],
+      "requiredSkills": [],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "preserve-evidence"
+      ]
+    },
+    {
+      "id": "mitigate",
+      "requiredAgents": [
+        "implementation-engineer"
+      ],
+      "requiredEvidence": [
+        "test"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "diagnose"
+      ]
+    },
+    {
+      "id": "recover",
+      "requiredAgents": [],
+      "requiredSkills": [],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "mitigate"
+      ]
+    },
+    {
+      "id": "validate",
+      "requiredAgents": [
+        "adversarial-reviewer"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "recover"
+      ]
+    },
+    {
+      "id": "root-cause-and-prevention",
+      "requiredAgents": [
+        "documentation-reviewer"
+      ],
+      "requiredEvidence": [],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "validate"
+      ]
+    }
   ],
   "recoveryPath": "this workflow IS the recovery path for other workflows' incidents; its own failure path is recovery.json",
-  "completionConditions": ["completion-gate.mjs PASS", "a documented root cause and a prevention action recorded as a decision-record"]
+  "completionConditions": [
+    "completion-gate.mjs PASS",
+    "a documented root cause and a prevention action recorded as a decision-record"
+  ],
+  "match": {
+    "keywords": [
+      "incident",
+      "outage",
+      "production down",
+      "live problem",
+      "leak"
+    ],
+    "examples": [
+      "Production outage: contain and diagnose"
+    ]
+  }
 }

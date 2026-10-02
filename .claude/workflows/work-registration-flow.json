@@ -137,5 +137,15 @@
     "composition validated separately from any Phonogram",
     "shares total one hundred percent per right type",
     "Work pending registration or blockers routed"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "work registration",
+      "composition registration",
+      "register work"
+    ],
+    "examples": [
+      "Work registration: register work and composition registration"
+    ]
+  }
 }

@@ -28,6 +28,8 @@ export const RECORD_KINDS = {
   "operational-recovery": { schema: "operational-recovery-record.schema.json", dir: ".claude/ops/records/operational-recovery" },
   orchestration: { schema: "orchestration-plan.schema.json", dir: ".claude/ops/records/orchestration" },
   vote: { schema: "vote-record.schema.json", dir: ".claude/ops/records/vote" },
+  "workflow-match": { schema: "workflow-match.schema.json", dir: ".claude/ops/records/workflow-match" },
+  "workflow-instance": { schema: "workflow-instance.schema.json", dir: ".claude/ops/records/workflow-instance" },
 };
 
 export function recordKindNames() {

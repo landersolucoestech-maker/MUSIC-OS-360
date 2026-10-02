@@ -151,5 +151,21 @@
     "signed document archived with provider evidence",
     "no send without a recorded approval bound to the document hash",
     "implied rights changes only as proposals"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "contract draft",
+      "signature",
+      "signer",
+      "sign the contract",
+      "contract generation"
+    ],
+    "examples": [
+      "Generate a contract draft and send it for signature"
+    ],
+    "excludes": [
+      "naming",
+      "normalization"
+    ]
+  }
 }

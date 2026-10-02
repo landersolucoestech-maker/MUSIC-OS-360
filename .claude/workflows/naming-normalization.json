@@ -1,0 +1,255 @@
+{
+  "name": "naming-normalization",
+  "description": "Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval.",
+  "match": {
+    "intents": [],
+    "keywords": [
+      "normalization",
+      "normalisation",
+      "normalização",
+      "naming",
+      "nomenclature",
+      "nomenclatura",
+      "canonical naming",
+      "compatibility boundary",
+      "legacy alias",
+      "legacy aliases",
+      "naming blocker",
+      "naming blockers",
+      "rename",
+      "technical language",
+      "canonical map",
+      "ledger"
+    ],
+    "excludes": [
+      "bug",
+      "incident"
+    ],
+    "examples": [
+      "Normalize technical language, naming and compatibility end to end",
+      "Eliminate naming blockers and legacy aliases with a canonical naming map",
+      "Continue the normalization of legacy compatibility boundaries"
+    ]
+  },
+  "phases": [
+    {
+      "id": "census",
+      "requiredAgents": [
+        "naming-analyzer",
+        "repo-inspector"
+      ],
+      "requiredSkills": [
+        "naming-analysis",
+        "repository-census"
+      ],
+      "requiredEvidence": [
+        "census-report"
+      ],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "classify",
+      "requiredAgents": [
+        "naming-analyzer",
+        "duplication-detector",
+        "dead-code-detector"
+      ],
+      "requiredSkills": [
+        "naming-analysis",
+        "duplication-analysis",
+        "dead-code-analysis"
+      ],
+      "requiredEvidence": [
+        "classification-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "census"
+      ]
+    },
+    {
+      "id": "canonical-model",
+      "requiredAgents": [
+        "naming-reviewer",
+        "domain-boundary-guardian"
+      ],
+      "requiredSkills": [
+        "canonical-naming"
+      ],
+      "requiredEvidence": [
+        "canonical-map-update"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "classify"
+      ]
+    },
+    {
+      "id": "schema-plan",
+      "requiredAgents": [
+        "migration-planner",
+        "database-reviewer",
+        "rollback-planner"
+      ],
+      "requiredSkills": [
+        "migration-audit",
+        "destructive-change-check"
+      ],
+      "requiredEvidence": [
+        "migration-plan",
+        "rollback-plan"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "canonical-model"
+      ]
+    },
+    {
+      "id": "destructive-approval",
+      "requiredAgents": [
+        "human-approval-agent",
+        "approval-router"
+      ],
+      "requiredSkills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "requiredEvidence": [
+        "approval-record"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "schema-plan"
+      ],
+      "approvalRequired": true
+    },
+    {
+      "id": "propagate",
+      "requiredAgents": [
+        "implementation-engineer",
+        "refactoring-engineer"
+      ],
+      "requiredSkills": [
+        "safe-refactor",
+        "schema-normalization"
+      ],
+      "requiredEvidence": [
+        "change-set-record"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "canonical-model",
+        "schema-plan"
+      ]
+    },
+    {
+      "id": "compatibility",
+      "requiredAgents": [
+        "qa-engineer",
+        "contract-test-engineer"
+      ],
+      "requiredSkills": [
+        "create-contract-tests",
+        "create-regression-tests"
+      ],
+      "requiredEvidence": [
+        "compatibility-test-run"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "propagate"
+      ]
+    },
+    {
+      "id": "verify",
+      "requiredAgents": [
+        "migration-test-engineer",
+        "verification-controller"
+      ],
+      "requiredSkills": [
+        "create-migration-tests",
+        "run-unit-tests",
+        "run-typecheck"
+      ],
+      "requiredEvidence": [
+        "after-test-run",
+        "migration-verification"
+      ],
+      "gates": [
+        "global"
+      ],
+      "dependsOn": [
+        "compatibility"
+      ]
+    },
+    {
+      "id": "residue",
+      "requiredAgents": [
+        "dead-code-detector",
+        "orphan-detector"
+      ],
+      "requiredSkills": [
+        "residue-search",
+        "orphan-analysis"
+      ],
+      "requiredEvidence": [
+        "residue-scan"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "verify"
+      ]
+    },
+    {
+      "id": "review",
+      "requiredAgents": [
+        "security-reviewer",
+        "regression-reviewer"
+      ],
+      "requiredSkills": [
+        "security-audit",
+        "diff-review",
+        "blast-radius-analysis"
+      ],
+      "requiredEvidence": [
+        "security-verdict",
+        "regression-verdict"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "residue"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "git-auditor",
+        "completion-controller"
+      ],
+      "requiredSkills": [
+        "definition-of-done"
+      ],
+      "requiredEvidence": [
+        "gate-results",
+        "final-report"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "review"
+      ]
+    }
+  ],
+  "recoveryPath": "recovery",
+  "completionConditions": [
+    "every phase COMPLETED",
+    "no naming blocker without a recorded GENUINE_BUSINESS_DECISION, DESTRUCTIVE_APPROVAL_REQUIRED or EXTERNAL classification",
+    "every kept compatibility row has a covering test",
+    "destructive operations only after a GRANTED approval",
+    "security and regression reviews recorded for the final tree"
+  ]
+}

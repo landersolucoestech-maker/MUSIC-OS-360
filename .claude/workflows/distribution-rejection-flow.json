@@ -94,5 +94,15 @@
     "every reason mapped to a correction and an owner",
     "recheck scheduled",
     "no automatic resubmission"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "rejection",
+      "rejected by distributor",
+      "correct and resubmit"
+    ],
+    "examples": [
+      "Process a distributor rejection and route the correction"
+    ]
+  }
 }

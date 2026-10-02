@@ -4,27 +4,109 @@
   "title": "WorkflowManifest",
   "description": "Shape of .claude/workflows/*.json. Consumer: graph-engine.mjs loads and validates each workflow file before building an execution-graph from it.",
   "type": "object",
-  "required": ["name", "phases"],
+  "required": [
+    "name",
+    "phases"
+  ],
   "properties": {
-    "name": { "type": "string" },
-    "description": { "type": "string" },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
     "phases": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "requiredAgents"],
+        "required": [
+          "id",
+          "requiredAgents"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "requiredAgents": { "type": "array", "items": { "type": "string" } },
-          "requiredSkills": { "type": "array", "items": { "type": "string" } },
-          "requiredEvidence": { "type": "array", "items": { "type": "string" } },
-          "gates": { "type": "array", "items": { "type": "string" } },
-          "approvalRequired": { "type": "boolean" },
-          "dependsOn": { "type": "array", "items": { "type": "string" } }
+          "id": {
+            "type": "string"
+          },
+          "requiredAgents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredSkills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredEvidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "gates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "dependsOn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       }
     },
-    "recoveryPath": { "type": "string" },
-    "completionConditions": { "type": "array", "items": { "type": "string" } }
+    "recoveryPath": {
+      "type": "string"
+    },
+    "completionConditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "match": {
+      "type": "object",
+      "description": "Discovery metadata used by workflow-match.mjs: which orders this workflow serves.",
+      "required": [
+        "keywords",
+        "examples"
+      ],
+      "properties": {
+        "intents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "examples": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
   }
 }

@@ -126,5 +126,16 @@
     "release record and deployment record exist",
     "production validation HEALTHY or explicitly out of scope",
     "approval recorded before deploy"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "release validation",
+      "pre release",
+      "deploy validation",
+      "production validation"
+    ],
+    "examples": [
+      "Release validation: pre release checks and production validation"
+    ]
+  }
 }

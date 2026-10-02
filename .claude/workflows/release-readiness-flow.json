@@ -115,5 +115,15 @@
     "readiness result bound to the data version",
     "every blocker has an owner",
     "unknown data reported as not ready"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "release readiness",
+      "ready to release",
+      "release checklist"
+    ],
+    "examples": [
+      "Release readiness: is the release checklist complete and ready to release"
+    ]
+  }
 }

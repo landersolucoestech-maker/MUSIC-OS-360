@@ -158,5 +158,22 @@
     "up, down and up pass on a disposable database",
     "approval recorded before any shared target is touched",
     "completion gate PASS"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "add column",
+      "new table",
+      "schema change",
+      "database change",
+      "constraint",
+      "index"
+    ],
+    "examples": [
+      "Add a column and a constraint to a table"
+    ],
+    "excludes": [
+      "normalization",
+      "naming"
+    ]
+  }
 }

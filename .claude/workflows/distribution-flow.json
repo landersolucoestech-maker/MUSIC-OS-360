@@ -126,5 +126,19 @@
     "no submission without an approval bound to the package hash",
     "status taken only from a provider answer",
     "unavailable provider reported explicitly"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "distribution",
+      "distributor",
+      "submit release",
+      "delivery to stores"
+    ],
+    "examples": [
+      "Prepare and submit a release to the distributor"
+    ],
+    "excludes": [
+      "normalization"
+    ]
+  }
 }

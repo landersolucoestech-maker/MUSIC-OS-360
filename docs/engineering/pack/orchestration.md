@@ -49,3 +49,14 @@ Task states: `PENDING`, `READY`, `RUNNING`, `WAITING_APPROVAL`, `BLOCKED_EXTERNA
 `BLOCKED_INTERNAL` and `FAILED` are never resting states. The Stop hook is bounded: after three consecutive blocks
 without progress a stop is allowed, so a hung task cannot trap a session. Regression test:
 `.claude/runtime/tests/orchestrate.regression.mjs`.
+
+
+## Workflow layer (discovery, matching, instance)
+
+`INTENT -> WORKFLOW DISCOVERY -> WORKFLOW MATCHING -> WORKFLOW INSTANCE -> STEPS -> TASK GRAPH -> AGENTS -> SKILLS -> EVIDENCE -> COMPLETION`.
+
+- **Discovery** (`workflow-match.mjs discover`): reads every `.claude/workflows/*.json`, validates it against `workflow-manifest.schema.json`, and refuses unsafe names. Each manifest carries a `match` block (`keywords`, `examples`, optional `intents` and `excludes`).
+- **Matching** (`matchOrder`): scores every workflow (keyword hits, intent, example similarity, exclusion penalty) and persists all candidates as a `workflow-match` record. A workflow is selected only at or above the threshold and when it beats the runner-up; otherwise the result is `NO_MATCH` or `AMBIGUOUS`.
+- **Instance** (`plan` binds it): a `workflow-instance` record with one step per phase; the phase tasks live in the plan. `workflow-status` derives each step's state from the tasks. The instance is COMPLETED exactly when every phase is.
+- **Adoption** (`plan --adopt-file`): a phase can adopt COMPLETED tasks of an earlier plan, only with evidence records that exist; nothing is copied or re-run.
+- **No match is a pack gap**: add or correct the workflow (this is how `naming-normalization` was added) and its match examples; `workflow-match.mjs --coverage` and the `workflow-runtime` gate prove every workflow is selected by its own examples and that a workflow was really instantiated and executed.

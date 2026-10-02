@@ -2,15 +2,138 @@
   "name": "migration",
   "description": "A schema/data migration, per .claude/rules/data-governance.md and the schema-normalization skill's expand-migrate-contract sequence. Always L4/L5.",
   "phases": [
-    { "id": "discovery", "requiredAgents": ["repo-intelligence", "database-reviewer"], "requiredEvidence": [], "gates": [], "dependsOn": [] },
-    { "id": "impact-classification", "requiredAgents": [], "requiredEvidence": ["impact-assessment"], "gates": [], "dependsOn": ["discovery"] },
-    { "id": "safety-review", "requiredAgents": ["database-reviewer", "security-reviewer"], "requiredEvidence": [], "gates": [], "approvalRequired": true, "dependsOn": ["impact-classification"] },
-    { "id": "expand", "requiredAgents": ["implementation-engineer"], "requiredSkills": ["schema-normalization"], "requiredEvidence": ["db:check"], "gates": ["incremental"], "dependsOn": ["safety-review"] },
-    { "id": "backfill", "requiredAgents": ["implementation-engineer"], "requiredEvidence": ["db:check"], "gates": ["incremental"], "dependsOn": ["expand"] },
-    { "id": "migrate-consumers", "requiredAgents": ["implementation-engineer"], "requiredSkills": ["cross-layer-impact"], "requiredEvidence": ["test"], "gates": ["incremental"], "dependsOn": ["backfill"] },
-    { "id": "adversarial-review", "requiredAgents": ["adversarial-reviewer"], "requiredEvidence": [], "gates": [], "dependsOn": ["migrate-consumers"] },
-    { "id": "closure", "requiredAgents": ["git-auditor"], "requiredSkills": ["release-checkpoint"], "requiredEvidence": [], "gates": ["completion"], "approvalRequired": true, "dependsOn": ["adversarial-review"] }
+    {
+      "id": "discovery",
+      "requiredAgents": [
+        "repo-intelligence",
+        "database-reviewer"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "impact-classification",
+      "requiredAgents": [],
+      "requiredEvidence": [
+        "impact-assessment"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "discovery"
+      ]
+    },
+    {
+      "id": "safety-review",
+      "requiredAgents": [
+        "database-reviewer",
+        "security-reviewer"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "approvalRequired": true,
+      "dependsOn": [
+        "impact-classification"
+      ]
+    },
+    {
+      "id": "expand",
+      "requiredAgents": [
+        "implementation-engineer"
+      ],
+      "requiredSkills": [
+        "schema-normalization"
+      ],
+      "requiredEvidence": [
+        "db:check"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "safety-review"
+      ]
+    },
+    {
+      "id": "backfill",
+      "requiredAgents": [
+        "implementation-engineer"
+      ],
+      "requiredEvidence": [
+        "db:check"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "expand"
+      ]
+    },
+    {
+      "id": "migrate-consumers",
+      "requiredAgents": [
+        "implementation-engineer"
+      ],
+      "requiredSkills": [
+        "cross-layer-impact"
+      ],
+      "requiredEvidence": [
+        "test"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "backfill"
+      ]
+    },
+    {
+      "id": "adversarial-review",
+      "requiredAgents": [
+        "adversarial-reviewer"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "migrate-consumers"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "git-auditor"
+      ],
+      "requiredSkills": [
+        "release-checkpoint"
+      ],
+      "requiredEvidence": [],
+      "gates": [
+        "completion"
+      ],
+      "approvalRequired": true,
+      "dependsOn": [
+        "adversarial-review"
+      ]
+    }
   ],
   "recoveryPath": "recovery skill; a partially-applied migration needs its down/rollback path per data-governance.md before any retry, not a plain re-run",
-  "completionConditions": ["completion-gate.mjs PASS", "safety-review approval-request GRANTED", "no undisposed CRITICAL/HIGH finding"]
+  "completionConditions": [
+    "completion-gate.mjs PASS",
+    "safety-review approval-request GRANTED",
+    "no undisposed CRITICAL/HIGH finding"
+  ],
+  "match": {
+    "keywords": [
+      "migration",
+      "migrate data",
+      "backfill",
+      "data migration"
+    ],
+    "examples": [
+      "Backfill and migrate persisted data safely"
+    ],
+    "excludes": [
+      "normalization"
+    ]
+  }
 }

@@ -3,7 +3,7 @@
 // (graph-engine.mjs), the delegation packages (context-engine.mjs), the evidence store and the gates were
 // separate parts; nothing connected them into a loop that keeps going. This driver is that loop:
 //
-//   order -> route -> task graph (persisted) -> next READY tasks -> delegation package + prompt for the
+//   order -> workflow discovery+matching -> workflow instance (phases) -> task graph (persisted) -> next READY tasks -> delegation package + prompt for the
 //   specialist agent -> done/fail/block with evidence -> next tasks -> ... -> completion gate
 //
 // and two hooks that make it autonomous: `stop-check` (Stop hook) refuses to let a session end while
@@ -11,7 +11,10 @@
 // state of the active plan. It never grants an approval and never marks a task done without evidence.
 //
 //   node .claude/runtime/orchestrate.mjs plan --order "<text>" [--workflow <name>] [--intent <id>]
-//        [--capabilities a,b] [--tasks-file graph.json] [--title <t>]
+//        [--capabilities a,b] [--tasks-file extra.json (tasks carry a phase)] [--adopt-file adopt.json] [--title <t>]
+//        [--unbound-reason "<why>"]   (the only way around workflow matching; recorded)
+//   node .claude/runtime/orchestrate.mjs workflow-status [--plan <id>]
+//   node .claude/runtime/orchestrate.mjs add-task --id .. --agent .. --phase <phase> [--reopen true] ...
 //   node .claude/runtime/orchestrate.mjs next [--plan <id>] [--limit N]
 //   node .claude/runtime/orchestrate.mjs done --task <id> --evidence <evid-..,..> --summary "<text>" [--plan <id>]
 //   node .claude/runtime/orchestrate.mjs fail --task <id> --reason "<text>" [--plan <id>]
@@ -26,6 +29,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { addRecord, getRecord, listRecords, updateRecord } from "./lib/record-store.mjs";
 import { routeTask, classifyIntent } from "./route-task.mjs";
 import { loadWorkflow, SAFE_NAME } from "./graph-engine.mjs";
+import { matchOrder, recordMatch, MATCH_THRESHOLD } from "./workflow-match.mjs";
 import { open as openDelegation, close as closeDelegation } from "./context-engine.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -136,7 +140,25 @@ function save(cwd, plan, progress = true) {
   refresh(plan);
   if (progress) { plan.stopBlocks = 0; plan.lastProgressAt = now(); }
   const { id, createdAt, ...rest } = plan;
-  return updateRecord(cwd, "orchestration", id, rest);
+  const saved = updateRecord(cwd, "orchestration", id, rest);
+  syncInstance(cwd, saved);
+  return saved;
+}
+
+// A workflow instance is COMPLETED exactly when every phase task of its plan is COMPLETED.
+function syncInstance(cwd, p) {
+  if (!p.workflowInstanceId) return;
+  const inst = getRecord(cwd, "workflow-instance", p.workflowInstanceId);
+  if (!inst) return;
+  const phases = new Set(inst.steps.map((st) => st.phase));
+  const done = [...phases].every((ph) => p.tasks.find((t) => t.id === ph)?.status === "COMPLETED");
+  const status = done ? "COMPLETED" : "ACTIVE";
+  const taskIdsByPhase = new Map(inst.steps.map((st) => [st.phase, p.tasks.filter((t) => t.phase === st.phase).map((t) => t.id)]));
+  const steps = inst.steps.map((st) => ({ ...st, taskIds: taskIdsByPhase.get(st.phase) }));
+  if (status !== inst.status || JSON.stringify(steps) !== JSON.stringify(inst.steps)) {
+    const { id, createdAt, ...rest } = inst;
+    updateRecord(cwd, "workflow-instance", id, { ...rest, status, steps });
+  }
 }
 
 function loadPlan(cwd, id) {
@@ -152,16 +174,43 @@ function loadPlan(cwd, id) {
 }
 
 // ------------------------------------------------------------------ commands
-export function plan({ order, workflow = null, intent = null, capabilities = null, tasksFile = null, title = null }, cwd = ROOT_DEFAULT) {
+export function plan({ order, workflow = null, intent = null, capabilities = null, tasksFile = null, title = null, adopt = [], unboundReason = null }, cwd = ROOT_DEFAULT) {
   if (!order) throw new Error('USAGE: plan --order "<text>"');
   let tasks;
   let chosenIntent = intent;
   let routes = [];
+  // WORKFLOW DISCOVERY AND MATCHING comes first, always. Every candidate is persisted for audit.
+  const m = matchOrder({ order, intent, cwd });
+  const matchRec = recordMatch(m, cwd);
+  let bound = null;
+  if (workflow) {
+    loadWorkflow(workflow, cwd); // validates the name and the manifest
+    bound = workflow;
+  } else if (m.status === "MATCHED") {
+    bound = m.selected;
+  } else if (!unboundReason) {
+    return {
+      status: "NO_WORKFLOW_MATCH", matchStatus: m.status, matchId: matchRec.id,
+      message: "no workflow was selected for this order. This is a gap in the pack (add or fix a workflow and its match metadata), not a reason to skip the workflow layer. Pass an explicit --workflow, or --unbound-reason \"<why>\" to record a justified exception.",
+      candidates: m.candidates.slice(0, 5).map((c) => ({ workflow: c.workflow, score: c.score, reasons: c.reasons })),
+    };
+  }
+  let extra = [];
   if (tasksFile) {
     const raw = JSON.parse(readFileSync(tasksFile, "utf8"));
-    tasks = (raw.tasks || raw).map(mkTask);
-  } else if (workflow) {
-    tasks = tasksFromWorkflow(workflow, cwd);
+    extra = (raw.tasks || raw).map((t) => ({ ...mkTask(t), phase: t.phase || null }));
+  }
+  if (bound) {
+    tasks = tasksFromWorkflow(bound, cwd);
+    for (const t of extra) {
+      if (!t.phase) return { status: "INVALID_PLAN", problems: [`task ${t.id}: with a workflow bound every extra task needs a "phase" of ${bound}`] };
+      const phaseTask = tasks.find((x) => x.id === t.phase);
+      if (!phaseTask) return { status: "INVALID_PLAN", problems: [`task ${t.id}: phase "${t.phase}" is not a phase of ${bound}`] };
+      phaseTask.dependsOn = [...phaseTask.dependsOn, t.id];
+      tasks.push(t);
+    }
+  } else if (tasksFile) {
+    tasks = extra;
   } else if (capabilities) {
     const reg = registry(cwd);
     routes = String(capabilities).split(",").filter(Boolean).map((cid) => {
@@ -179,12 +228,62 @@ export function plan({ order, workflow = null, intent = null, capabilities = nul
     chosenIntent = res.intent;
     tasks = tasksFromRoutes(res.routes);
   }
+  for (const t of tasks) if (bound && !t.phase) t.phase = t.id;
   tasks = withClosure(tasks);
   const problems = validatePlanTasks(tasks, cwd);
   if (problems.length) return { status: "INVALID_PLAN", problems };
-  const rec = addRecord(cwd, "orchestration", { order, title: title || order.slice(0, 80), workflow, intent: chosenIntent, status: "ACTIVE", stopBlocks: 0, lastProgressAt: now(), tasks });
-  const saved = save(cwd, rec);
-  return { status: "OK", planId: saved.id, tasks: saved.tasks.map((t) => ({ id: t.id, agent: t.agent, status: t.status, dependsOn: t.dependsOn })) };
+  const adoptedFrom = [];
+  for (const a of adopt) {
+    const phaseTask = tasks.find((t) => t.id === a.phase);
+    if (!bound || !phaseTask) return { status: "INVALID_ADOPTION", problems: [`phase "${a.phase}" is not a phase of ${bound}`] };
+    const old = loadPlan(cwd, a.fromPlan);
+    const refs = [];
+    for (const tid of a.tasks || []) {
+      const ot = old.tasks.find((x) => x.id === tid);
+      if (!ot || ot.status !== "COMPLETED") return { status: "INVALID_ADOPTION", problems: [`task ${tid} of ${a.fromPlan} is not COMPLETED`] };
+      const missing = (ot.evidenceRefs || []).filter((e) => !getRecord(cwd, "evidence", e));
+      if (!(ot.evidenceRefs || []).length || missing.length) return { status: "INVALID_ADOPTION", problems: [`task ${tid} of ${a.fromPlan} has no existing evidence (${missing.join(", ") || "none recorded"})`] };
+      refs.push({ plan: a.fromPlan, task: tid, evidenceRefs: ot.evidenceRefs });
+    }
+    phaseTask.adopted = [...(phaseTask.adopted || []), ...refs];
+    if (!adoptedFrom.includes(a.fromPlan)) adoptedFrom.push(a.fromPlan);
+    if (a.complete) {
+      phaseTask.status = "COMPLETED";
+      phaseTask.evidenceRefs = [...new Set(refs.flatMap((r) => r.evidenceRefs))];
+      phaseTask.result = `adopted from ${a.fromPlan}: ${refs.map((r) => r.task).join(", ")}`;
+    }
+  }
+  const rec = addRecord(cwd, "orchestration", {
+    order, title: title || order.slice(0, 80), workflow: bound, intent: chosenIntent, status: "ACTIVE", stopBlocks: 0, lastProgressAt: now(), tasks,
+    requireWorkflow: !unboundReason, ...(unboundReason ? { unboundReason } : {}),
+  });
+  let instanceId = null;
+  if (bound) {
+    const wf = loadWorkflow(bound, cwd);
+    const inst = addRecord(cwd, "workflow-instance", {
+      workflow: bound, planId: rec.id, matchId: matchRec.id, status: "ACTIVE", adoptedFrom,
+      steps: wf.phases.map((ph) => ({ phase: ph.id, taskIds: tasks.filter((t) => t.phase === ph.id).map((t) => t.id), adopted: (tasks.find((t) => t.id === ph.id)?.adopted || []).map((x) => `${x.plan}:${x.task}`) })),
+    });
+    instanceId = inst.id;
+    updateRecord(cwd, "orchestration", rec.id, { workflowInstanceId: inst.id });
+    rec.workflowInstanceId = inst.id;
+  }
+  const saved = save(cwd, { ...rec, workflowInstanceId: instanceId });
+  return { status: "OK", planId: saved.id, workflow: bound, matchId: matchRec.id, matchStatus: m.status, workflowInstanceId: instanceId, tasks: saved.tasks.map((t) => ({ id: t.id, phase: t.phase || null, agent: t.agent, status: t.status, dependsOn: t.dependsOn })) };
+}
+
+/** Per-phase view of a workflow instance, derived from the plan's tasks (never stored twice). */
+export function workflowStatus({ planId = null } = {}, cwd = ROOT_DEFAULT) {
+  const p = loadPlan(cwd, planId);
+  if (!p.workflowInstanceId) return { status: "NO_WORKFLOW_INSTANCE", planId: p.id };
+  const inst = getRecord(cwd, "workflow-instance", p.workflowInstanceId);
+  const steps = inst.steps.map((st) => {
+    const phaseTask = p.tasks.find((t) => t.id === st.phase);
+    const attached = p.tasks.filter((t) => t.phase === st.phase && t.id !== st.phase);
+    return { phase: st.phase, status: phaseTask ? phaseTask.status : "MISSING", tasks: attached.map((t) => ({ id: t.id, status: t.status })), adopted: st.adopted || [] };
+  });
+  const complete = steps.every((s) => s.status === "COMPLETED");
+  return { status: complete ? "COMPLETED" : "ACTIVE", instance: inst.id, workflow: inst.workflow, matchId: inst.matchId, planId: p.id, steps };
 }
 
 function depResults(plan, t) {
@@ -303,9 +402,17 @@ export function reassign({ planId = null, task, agent }, cwd = ROOT_DEFAULT) {
   return { status: "OK", task, agent };
 }
 
-export function addTask({ planId = null, id, agent, skills = [], deps = [], blocks = [], objective, acceptance = [], files = [] }, cwd = ROOT_DEFAULT) {
+export function addTask({ planId = null, id, agent, skills = [], deps = [], blocks = [], objective, acceptance = [], files = [], phase = null, reopen = false }, cwd = ROOT_DEFAULT) {
   const p = loadPlan(cwd, planId);
+  if (p.workflowInstanceId && !phase) throw new Error(`PHASE_REQUIRED: plan ${p.id} is bound to a workflow instance; attach the task to one of its phases (--phase)`);
   const t = mkTask({ id, title: id, agent, skills, dependsOn: deps, objective, acceptance, filesInScope: files });
+  if (phase) {
+    const phaseTask = p.tasks.find((x) => x.id === phase && (x.phase || x.id) === phase);
+    if (!phaseTask) throw new Error(`UNKNOWN_PHASE: ${phase}`);
+    t.phase = phase;
+    if (!blocks.includes(phase)) blocks = [...blocks, phase];
+    if (phaseTask.status === "COMPLETED" && reopen) { phaseTask.status = "PENDING"; phaseTask.result = `reopened by new task ${id}`; }
+  }
   const next = [...p.tasks, t];
   for (const b of blocks) {
     const blocked = next.find((x) => x.id === b);
@@ -437,12 +544,13 @@ function main() {
   const out = (o) => console.log(JSON.stringify(o, null, 2));
   try {
     switch (cmd) {
-      case "plan": return out(plan({ order: f.order, workflow: f.workflow || null, intent: f.intent || null, capabilities: f.capabilities || null, tasksFile: f["tasks-file"] || null, title: f.title || null }, cwd));
+      case "plan": return out(plan({ order: f.order, workflow: f.workflow || null, intent: f.intent || null, capabilities: f.capabilities || null, tasksFile: f["tasks-file"] || null, title: f.title || null, adopt: f["adopt-file"] ? JSON.parse(readFileSync(f["adopt-file"], "utf8")) : [], unboundReason: f["unbound-reason"] || null }, cwd));
+      case "workflow-status": return out(workflowStatus({ planId: f.plan || null }, cwd));
       case "next": return out(next({ planId: f.plan || null, limit: Number(f.limit || 5) }, cwd));
       case "done": return out(done({ planId: f.plan || null, task: f.task, evidence: f.evidence, summary: f.summary }, cwd));
       case "fail": return out(fail({ planId: f.plan || null, task: f.task, reason: f.reason }, cwd));
       case "block-external": return out(blockExternal({ planId: f.plan || null, task: f.task, capability: f.capability, cause: f.cause, missing: f.missing, contract: f.contract, current: f.current, fallback: f.fallback, impact: f.impact, unblock: f.unblock }, cwd));
-      case "add-task": return out(addTask({ planId: f.plan || null, id: f.id, agent: f.agent, skills: String(f.skills || "").split(",").filter(Boolean), deps: String(f.deps || "").split(",").filter(Boolean), blocks: String(f.blocks || "").split(",").filter(Boolean), objective: f.objective, acceptance: String(f.acceptance || "").split("|").filter(Boolean), files: String(f.files || "").split(",").filter(Boolean) }, cwd));
+      case "add-task": return out(addTask({ planId: f.plan || null, id: f.id, agent: f.agent, skills: String(f.skills || "").split(",").filter(Boolean), deps: String(f.deps || "").split(",").filter(Boolean), blocks: String(f.blocks || "").split(",").filter(Boolean), objective: f.objective, acceptance: String(f.acceptance || "").split("|").filter(Boolean), files: String(f.files || "").split(",").filter(Boolean), phase: f.phase || null, reopen: f.reopen === "true" }, cwd));
       case "reassign": return out(reassign({ planId: f.plan || null, task: f.task, agent: f.agent }, cwd));
       case "sync-approvals": return out(syncApprovals({ planId: f.plan || null }, cwd));
       case "status": return out(summary(loadPlan(cwd, f.plan || null)));
@@ -463,7 +571,7 @@ function main() {
         return;
       }
       default:
-        console.error("USAGE: orchestrate.mjs plan|next|done|fail|block-external|sync-approvals|status|show|check|abandon|stop-check|prompt-hook");
+        console.error("USAGE: orchestrate.mjs plan|workflow-status|next|done|fail|block-external|sync-approvals|status|show|check|abandon|stop-check|prompt-hook");
         process.exitCode = 2;
     }
   } catch (e) {

@@ -136,5 +136,15 @@
     "recording validated separately from its Work",
     "master shares total one hundred percent",
     "Phonogram pending registration or blockers routed"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "phonogram",
+      "recording registration",
+      "register phonogram"
+    ],
+    "examples": [
+      "Prepare a phonogram for registration"
+    ]
+  }
 }

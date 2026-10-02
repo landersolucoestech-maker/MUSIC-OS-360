@@ -5,7 +5,7 @@
   "agents": 374,
   "skills": 321,
   "capabilities": 351,
-  "workflows": 24
+  "workflows": 25
  },
  "agents": [
   {
@@ -22132,6 +22132,11 @@
    "name": "migration",
    "file": ".claude/workflows/migration.json",
    "phases": 8
+  },
+  {
+   "name": "naming-normalization",
+   "file": ".claude/workflows/naming-normalization.json",
+   "phases": 11
   },
   {
    "name": "operational-recovery-flow",

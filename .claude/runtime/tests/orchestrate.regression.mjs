@@ -136,7 +136,7 @@ test("stop-check blocks while actionable tasks remain, lets a session stop for w
 test("an invalid explicit graph (unknown agent, unknown skill, cycle) is refused", () => withDir((dir) => {
   const file = join(dir, "g.json");
   writeFileSync(file, JSON.stringify({ tasks: [{ id: "a", agent: "no-such-agent", skills: ["no-such-skill"], dependsOn: ["b"] }, { id: "b", agent: "task-orchestrator", dependsOn: ["a"] }] }));
-  const r = plan({ order: "x", tasksFile: file }, dir);
+  const r = plan({ order: "x", tasksFile: file, unboundReason: "test" }, dir);
   assert.equal(r.status, "INVALID_PLAN");
   assert.ok(r.problems.some((p) => p.includes("unknown agent")));
   assert.ok(r.problems.some((p) => p.includes("unknown skill")));
@@ -152,7 +152,7 @@ test("the prompt hook proposes the orchestrator for a long order and reports the
 }));
 
 test("explicit capabilities build one task per capability with its executor, skills and acceptance", () => withDir((dir) => {
-  const r = plan({ order: "audit", capabilities: "security.review.xss,security.review.ssrf" }, dir);
+  const r = plan({ order: "audit", capabilities: "security.review.xss,security.review.ssrf", unboundReason: "test of capability routing" }, dir);
   assert.equal(r.status, "OK");
   assert.deepEqual(r.tasks.slice(0, 2).map((t) => t.agent), ["xss-reviewer", "ssrf-reviewer"]);
 }));
@@ -168,12 +168,12 @@ test("reassign swaps the executor of an open task, refuses unknown agents and co
 
 test("add-task inserts a task found during execution and makes a later task wait for it; a cycle or a completed target is refused", () => withDir((dir) => {
   plan({ order: "x", workflow: "bug-fix" }, dir);
-  const r = addTask({ id: "extra-review", agent: "security-reviewer", skills: ["security-audit"], deps: ["fix"], blocks: ["verification"], objective: "independent review" }, dir);
+  const r = addTask({ id: "extra-review", agent: "security-reviewer", skills: ["security-audit"], deps: ["fix"], blocks: ["verification"], phase: "verification", objective: "independent review" }, dir);
   assert.equal(r.status, "OK");
-  assert.throws(() => addTask({ id: "loop", agent: "security-reviewer", deps: ["closure"], blocks: ["fix"], objective: "x" }, dir), /cycle/);
+  assert.throws(() => addTask({ id: "loop", agent: "security-reviewer", deps: ["closure"], blocks: ["fix"], phase: "fix", objective: "x" }, dir), /cycle/);
   next({}, dir);
   done({ task: "reproduce", evidence: pass(dir) }, dir);
-  assert.throws(() => addTask({ id: "late", agent: "security-reviewer", blocks: ["reproduce"], objective: "x" }, dir), /ALREADY_COMPLETED/);
+  assert.throws(() => addTask({ id: "late", agent: "security-reviewer", blocks: ["reproduce"], phase: "reproduce", objective: "x" }, dir), /ALREADY_COMPLETED/);
 }));
 
 test("security: workflow, agent, skill and task names that could leave their directory are rejected", () => withDir((dir) => {
@@ -184,9 +184,9 @@ test("security: workflow, agent, skill and task names that could leave their dir
   const file = join(dir, "tasks.json");
   for (const bad of [{ agent: "../../outside" }, { agent: "a/b" }, { skills: ["../x"] }, { id: "../evil" }, { id: "a b" }]) {
     writeFileSync(file, JSON.stringify(tasks(bad)));
-    const r = plan({ order: "x", tasksFile: file }, dir);
+    const r = plan({ order: "x", tasksFile: file, unboundReason: "test" }, dir);
     assert.equal(r.status, "INVALID_PLAN", JSON.stringify(bad));
   }
   writeFileSync(file, JSON.stringify(tasks({})));
-  assert.equal(plan({ order: "x", tasksFile: file }, dir).status, "OK");
+  assert.equal(plan({ order: "x", tasksFile: file, unboundReason: "test" }, dir).status, "OK");
 }));

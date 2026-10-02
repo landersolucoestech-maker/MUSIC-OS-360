@@ -110,5 +110,15 @@
     "Project in a valid stage with the checked conditions recorded",
     "no Work or Phonogram registered automatically",
     "run audited"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "project intake",
+      "project stage",
+      "advance project"
+    ],
+    "examples": [
+      "Project intake then advance project to the next project stage"
+    ]
+  }
 }

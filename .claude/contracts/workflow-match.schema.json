@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/workflow-match.schema.json",
+  "title": "WorkflowMatch",
+  "description": "Result of workflow discovery and matching for one order: every discovered workflow with its score and reasons, and the selected workflow (or the explicit absence of one). Producer: workflow-match.mjs.",
+  "type": "object",
+  "required": [
+    "id",
+    "order",
+    "threshold",
+    "candidates",
+    "selected",
+    "createdAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "order": {
+      "type": "string"
+    },
+    "intent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "threshold": {
+      "type": "number"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "selected": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "MATCHED",
+        "NO_MATCH",
+        "AMBIGUOUS"
+      ]
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "workflow",
+          "score"
+        ],
+        "properties": {
+          "workflow": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "matchedKeywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "matchedIntent": {
+            "type": "boolean"
+          },
+          "exampleSimilarity": {
+            "type": "number"
+          },
+          "excluded": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

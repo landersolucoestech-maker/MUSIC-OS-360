@@ -140,5 +140,20 @@
     "completion gate PASS",
     "every criterion closed with fresh evidence",
     "no unexplained file delta"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "engineering change",
+      "implement feature",
+      "new behavior",
+      "feature request"
+    ],
+    "examples": [
+      "Engineering change: implement feature with new behavior across api and web"
+    ],
+    "excludes": [
+      "normalization",
+      "naming"
+    ]
+  }
 }

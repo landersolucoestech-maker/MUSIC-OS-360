@@ -93,5 +93,15 @@
     "provider values stored apart from internal values",
     "every difference classified",
     "unconfigured providers reported unavailable"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "provider sync",
+      "sync provider data",
+      "reconcile provider"
+    ],
+    "examples": [
+      "Provider sync: sync provider data and reconcile provider differences"
+    ]
+  }
 }

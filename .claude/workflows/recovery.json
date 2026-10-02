@@ -2,12 +2,74 @@
   "name": "recovery",
   "description": "Recovering a mission after an interrupted execution, a failed gate, a stale-evidence state, or a partial side effect — see mission-recovery skill and .claude/rules/side-effects-recovery.md.",
   "phases": [
-    { "id": "re-anchor", "requiredAgents": [], "requiredSkills": ["mission-recovery"], "requiredEvidence": [], "gates": [], "dependsOn": [] },
-    { "id": "reconcile-side-effects", "requiredAgents": [], "requiredEvidence": [], "gates": [], "dependsOn": ["re-anchor"] },
-    { "id": "resolve-blockers", "requiredAgents": [], "requiredEvidence": [], "gates": [], "dependsOn": ["reconcile-side-effects"] },
-    { "id": "refresh-stale-evidence", "requiredAgents": [], "requiredSkills": ["evidence-collection"], "requiredEvidence": [], "gates": [], "dependsOn": ["resolve-blockers"] },
-    { "id": "resume", "requiredAgents": ["implementation-engineer"], "requiredEvidence": [], "gates": ["incremental"], "dependsOn": ["refresh-stale-evidence"] }
+    {
+      "id": "re-anchor",
+      "requiredAgents": [],
+      "requiredSkills": [
+        "mission-recovery"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "reconcile-side-effects",
+      "requiredAgents": [],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "re-anchor"
+      ]
+    },
+    {
+      "id": "resolve-blockers",
+      "requiredAgents": [],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "reconcile-side-effects"
+      ]
+    },
+    {
+      "id": "refresh-stale-evidence",
+      "requiredAgents": [],
+      "requiredSkills": [
+        "evidence-collection"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "resolve-blockers"
+      ]
+    },
+    {
+      "id": "resume",
+      "requiredAgents": [
+        "implementation-engineer"
+      ],
+      "requiredEvidence": [],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "refresh-stale-evidence"
+      ]
+    }
   ],
   "recoveryPath": "n/a — this is itself the recovery path",
-  "completionConditions": ["no open blocker remains unresolved or explicitly escalated", "mission status returns to active or done"]
+  "completionConditions": [
+    "no open blocker remains unresolved or explicitly escalated",
+    "mission status returns to active or done"
+  ],
+  "match": {
+    "keywords": [
+      "recovery",
+      "restore",
+      "compensate",
+      "rollback plan"
+    ],
+    "examples": [
+      "Execute a recovery plan after a failed deployment"
+    ]
+  }
 }

@@ -2,12 +2,93 @@
   "name": "greenfield",
   "description": "A new project with no existing product code to audit — repo-intelligence still runs (to confirm it really is empty/new) but most specialist review phases are skipped since there's nothing to review yet; the workflow is mostly requirements + architecture-forward implementation.",
   "phases": [
-    { "id": "discovery", "requiredAgents": ["repo-intelligence"], "requiredSkills": [], "requiredEvidence": [], "gates": [], "dependsOn": [] },
-    { "id": "requirements", "requiredAgents": ["requirements-analyst"], "requiredSkills": [], "requiredEvidence": [], "gates": [], "dependsOn": ["discovery"] },
-    { "id": "architecture-design", "requiredAgents": ["architecture-reviewer"], "requiredSkills": ["cross-layer-impact"], "requiredEvidence": [], "gates": [], "dependsOn": ["requirements"] },
-    { "id": "implementation", "requiredAgents": ["implementation-engineer"], "requiredSkills": ["evidence-collection"], "requiredEvidence": ["lint", "test"], "gates": ["incremental"], "dependsOn": ["architecture-design"] },
-    { "id": "closure", "requiredAgents": ["git-auditor"], "requiredSkills": ["release-checkpoint"], "requiredEvidence": [], "gates": ["completion"], "approvalRequired": false, "dependsOn": ["implementation"] }
+    {
+      "id": "discovery",
+      "requiredAgents": [
+        "repo-intelligence"
+      ],
+      "requiredSkills": [],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "requirements",
+      "requiredAgents": [
+        "requirements-analyst"
+      ],
+      "requiredSkills": [],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "discovery"
+      ]
+    },
+    {
+      "id": "architecture-design",
+      "requiredAgents": [
+        "architecture-reviewer"
+      ],
+      "requiredSkills": [
+        "cross-layer-impact"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "requirements"
+      ]
+    },
+    {
+      "id": "implementation",
+      "requiredAgents": [
+        "implementation-engineer"
+      ],
+      "requiredSkills": [
+        "evidence-collection"
+      ],
+      "requiredEvidence": [
+        "lint",
+        "test"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "architecture-design"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "git-auditor"
+      ],
+      "requiredSkills": [
+        "release-checkpoint"
+      ],
+      "requiredEvidence": [],
+      "gates": [
+        "completion"
+      ],
+      "approvalRequired": false,
+      "dependsOn": [
+        "implementation"
+      ]
+    }
   ],
   "recoveryPath": "mission-recovery skill; a greenfield mission has minimal state to lose since nothing existed before it",
-  "completionConditions": ["completion-gate.mjs PASS", "no undisposed CRITICAL/HIGH finding"]
+  "completionConditions": [
+    "completion-gate.mjs PASS",
+    "no undisposed CRITICAL/HIGH finding"
+  ],
+  "match": {
+    "keywords": [
+      "greenfield",
+      "new module",
+      "from scratch",
+      "new service"
+    ],
+    "examples": [
+      "Create a new module from scratch"
+    ]
+  }
 }

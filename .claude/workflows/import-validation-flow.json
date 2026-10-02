@@ -145,5 +145,16 @@
     "applied counts equal the approved preview",
     "rollback information stored",
     "rollback only after its own approval"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "import",
+      "xlsx import",
+      "validate import",
+      "bulk upload"
+    ],
+    "examples": [
+      "Validate and execute an XLSX import with preview"
+    ]
+  }
 }

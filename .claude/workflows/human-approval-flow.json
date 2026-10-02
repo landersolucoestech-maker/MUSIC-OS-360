@@ -94,5 +94,16 @@
     "resume only on a recorded approve bound to the payload hash",
     "stop on reject, expiry or mismatch",
     "decision explained in plain language"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "human approval",
+      "approve",
+      "approval request",
+      "grant approval"
+    ],
+    "examples": [
+      "Request and record a human approval for a high-impact action"
+    ]
+  }
 }

@@ -2,17 +2,158 @@
   "name": "brownfield-change",
   "description": "A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
   "phases": [
-    { "id": "discovery", "requiredAgents": ["repo-intelligence"], "requiredEvidence": [], "gates": [], "dependsOn": [] },
-    { "id": "requirements", "requiredAgents": ["requirements-analyst"], "requiredEvidence": [], "gates": [], "dependsOn": ["discovery"] },
-    { "id": "impact-classification", "requiredAgents": [], "requiredSkills": [], "requiredEvidence": ["impact-assessment"], "gates": [], "dependsOn": ["requirements"] },
-    { "id": "findings-inventory", "requiredAgents": ["architecture-reviewer", "backend-reviewer", "frontend-reviewer", "security-reviewer"], "requiredEvidence": [], "gates": [], "dependsOn": ["impact-classification"] },
-    { "id": "canonical-decisions", "requiredAgents": [], "requiredSkills": ["canonical-naming"], "requiredEvidence": [], "gates": [], "dependsOn": ["findings-inventory"] },
-    { "id": "cross-layer-impact", "requiredAgents": [], "requiredSkills": ["cross-layer-impact"], "requiredEvidence": [], "gates": [], "dependsOn": ["canonical-decisions"] },
-    { "id": "implementation", "requiredAgents": ["implementation-engineer"], "requiredSkills": ["evidence-collection"], "requiredEvidence": ["lint", "test"], "gates": ["incremental"], "dependsOn": ["cross-layer-impact"] },
-    { "id": "adversarial-review", "requiredAgents": ["adversarial-reviewer"], "requiredEvidence": [], "gates": [], "dependsOn": ["implementation"] },
-    { "id": "regression", "requiredAgents": [], "requiredSkills": ["regression-gates", "residue-search"], "requiredEvidence": [], "gates": ["global"], "dependsOn": ["adversarial-review"] },
-    { "id": "closure", "requiredAgents": ["git-auditor"], "requiredSkills": ["release-checkpoint"], "requiredEvidence": [], "gates": ["completion"], "approvalRequired": false, "dependsOn": ["regression"] }
+    {
+      "id": "discovery",
+      "requiredAgents": [
+        "repo-intelligence"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "requirements",
+      "requiredAgents": [
+        "requirements-analyst"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "discovery"
+      ]
+    },
+    {
+      "id": "impact-classification",
+      "requiredAgents": [],
+      "requiredSkills": [],
+      "requiredEvidence": [
+        "impact-assessment"
+      ],
+      "gates": [],
+      "dependsOn": [
+        "requirements"
+      ]
+    },
+    {
+      "id": "findings-inventory",
+      "requiredAgents": [
+        "architecture-reviewer",
+        "backend-reviewer",
+        "frontend-reviewer",
+        "security-reviewer"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "impact-classification"
+      ]
+    },
+    {
+      "id": "canonical-decisions",
+      "requiredAgents": [],
+      "requiredSkills": [
+        "canonical-naming"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "findings-inventory"
+      ]
+    },
+    {
+      "id": "cross-layer-impact",
+      "requiredAgents": [],
+      "requiredSkills": [
+        "cross-layer-impact"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "canonical-decisions"
+      ]
+    },
+    {
+      "id": "implementation",
+      "requiredAgents": [
+        "implementation-engineer"
+      ],
+      "requiredSkills": [
+        "evidence-collection"
+      ],
+      "requiredEvidence": [
+        "lint",
+        "test"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "dependsOn": [
+        "cross-layer-impact"
+      ]
+    },
+    {
+      "id": "adversarial-review",
+      "requiredAgents": [
+        "adversarial-reviewer"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "implementation"
+      ]
+    },
+    {
+      "id": "regression",
+      "requiredAgents": [],
+      "requiredSkills": [
+        "regression-gates",
+        "residue-search"
+      ],
+      "requiredEvidence": [],
+      "gates": [
+        "global"
+      ],
+      "dependsOn": [
+        "adversarial-review"
+      ]
+    },
+    {
+      "id": "closure",
+      "requiredAgents": [
+        "git-auditor"
+      ],
+      "requiredSkills": [
+        "release-checkpoint"
+      ],
+      "requiredEvidence": [],
+      "gates": [
+        "completion"
+      ],
+      "approvalRequired": false,
+      "dependsOn": [
+        "regression"
+      ]
+    }
   ],
   "recoveryPath": "mission-recovery skill; resume from .claude/ops/state.json rather than restarting discovery",
-  "completionConditions": ["completion-gate.mjs PASS", "no undisposed CRITICAL/HIGH finding", "git-auditor evidence PASS"]
+  "completionConditions": [
+    "completion-gate.mjs PASS",
+    "no undisposed CRITICAL/HIGH finding",
+    "git-auditor evidence PASS"
+  ],
+  "match": {
+    "keywords": [
+      "brownfield",
+      "existing code",
+      "legacy codebase",
+      "extend existing",
+      "modify existing feature"
+    ],
+    "examples": [
+      "Brownfield change: modify existing feature code without breaking the legacy codebase"
+    ],
+    "excludes": [
+      "greenfield"
+    ]
+  }
 }

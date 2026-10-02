@@ -2,12 +2,80 @@
   "name": "release",
   "description": "Preparing and validating a release/deploy, per .claude/rules/release-production.md and supply-chain.md.",
   "phases": [
-    { "id": "supply-chain-check", "requiredAgents": ["supply-chain-reviewer"], "requiredEvidence": [], "gates": [], "dependsOn": [] },
-    { "id": "regression", "requiredAgents": [], "requiredSkills": ["regression-gates"], "requiredEvidence": ["test", "build"], "gates": ["global"], "dependsOn": ["supply-chain-check"] },
-    { "id": "release-record", "requiredAgents": [], "requiredEvidence": [], "gates": [], "dependsOn": ["regression"] },
-    { "id": "deploy", "requiredAgents": [], "requiredEvidence": [], "gates": [], "approvalRequired": true, "dependsOn": ["release-record"] },
-    { "id": "production-validation", "requiredAgents": [], "requiredEvidence": [], "gates": ["completion"], "dependsOn": ["deploy"] }
+    {
+      "id": "supply-chain-check",
+      "requiredAgents": [
+        "supply-chain-reviewer"
+      ],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": []
+    },
+    {
+      "id": "regression",
+      "requiredAgents": [],
+      "requiredSkills": [
+        "regression-gates"
+      ],
+      "requiredEvidence": [
+        "test",
+        "build"
+      ],
+      "gates": [
+        "global"
+      ],
+      "dependsOn": [
+        "supply-chain-check"
+      ]
+    },
+    {
+      "id": "release-record",
+      "requiredAgents": [],
+      "requiredEvidence": [],
+      "gates": [],
+      "dependsOn": [
+        "regression"
+      ]
+    },
+    {
+      "id": "deploy",
+      "requiredAgents": [],
+      "requiredEvidence": [],
+      "gates": [],
+      "approvalRequired": true,
+      "dependsOn": [
+        "release-record"
+      ]
+    },
+    {
+      "id": "production-validation",
+      "requiredAgents": [],
+      "requiredEvidence": [],
+      "gates": [
+        "completion"
+      ],
+      "dependsOn": [
+        "deploy"
+      ]
+    }
   ],
   "recoveryPath": "recovery.json, entered via a deployment-rollback recovery-plan if production-validation fails",
-  "completionConditions": ["release-record and deployment-record both exist", "production-validation-record status HEALTHY or explicitly OUT_OF_SCOPE"]
+  "completionConditions": [
+    "release-record and deployment-record both exist",
+    "production-validation-record status HEALTHY or explicitly OUT_OF_SCOPE"
+  ],
+  "match": {
+    "keywords": [
+      "release",
+      "deploy",
+      "ship",
+      "cutover"
+    ],
+    "examples": [
+      "Release the validated build to production"
+    ],
+    "excludes": [
+      "normalization"
+    ]
+  }
 }

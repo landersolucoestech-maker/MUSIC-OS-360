@@ -1,0 +1,25 @@
+{
+  "description": "GATE DEFINITION for the workflow layer: every workflow is discoverable and selected by its own examples, a regression test exists, and a workflow was really instantiated and executed (match record with all candidates, instance, delegated task closed with evidence). Run with: node .claude/runtime/gate-engine.mjs workflow-runtime",
+  "checks": [
+    {
+      "id": "state-exists",
+      "type": "state-exists"
+    },
+    {
+      "id": "fingerprint-available",
+      "type": "fingerprint-available"
+    },
+    {
+      "id": "workflow-coverage",
+      "type": "workflow-coverage"
+    },
+    {
+      "id": "workflow-runtime-exercised",
+      "type": "workflow-runtime-exercised"
+    },
+    {
+      "id": "workflow-instance-complete",
+      "type": "workflow-instance-complete"
+    }
+  ]
+}

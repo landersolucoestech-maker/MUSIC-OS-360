@@ -111,5 +111,16 @@
     "state verified after recovery",
     "rollback only after approval",
     "non-idempotent steps never retried"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "operational recovery",
+      "failed workflow",
+      "resume run",
+      "rollback operation"
+    ],
+    "examples": [
+      "Operational recovery: resume run of a failed workflow"
+    ]
+  }
 }

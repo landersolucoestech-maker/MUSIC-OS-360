@@ -120,5 +120,18 @@
     "regression test failed before and passes after",
     "root cause recorded",
     "completion gate PASS"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "bug",
+      "defect",
+      "broken",
+      "regression fix",
+      "fails when",
+      "fix the error"
+    ],
+    "examples": [
+      "Fix a defect where the export fails for projects"
+    ]
+  }
 }

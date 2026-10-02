@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://engineering-os/contracts/workflow-instance.schema.json",
+  "title": "WorkflowInstance",
+  "description": "A workflow bound to an orchestration plan: every phase of the workflow is a step whose tasks live in the plan (adopted from earlier work or new). Consumer: orchestrate.mjs (instantiate, workflow-status), gate-engine (workflow-instance-complete).",
+  "type": "object",
+  "required": [
+    "id",
+    "workflow",
+    "planId",
+    "matchId",
+    "status",
+    "steps",
+    "createdAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "workflow": {
+      "type": "string"
+    },
+    "planId": {
+      "type": "string"
+    },
+    "matchId": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ACTIVE",
+        "COMPLETED"
+      ]
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "adoptedFrom": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "phase",
+          "taskIds"
+        ],
+        "properties": {
+          "phase": {
+            "type": "string"
+          },
+          "taskIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "adopted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

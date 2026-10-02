@@ -103,5 +103,17 @@
     "repaired records no longer reported",
     "before values stored",
     "legal and financial repairs only after approval"
-  ]
+  ],
+  "match": {
+    "keywords": [
+      "data integrity",
+      "orphan records",
+      "inconsistent data",
+      "repair data",
+      "reconcile records"
+    ],
+    "examples": [
+      "Data integrity: repair data, reconcile records and orphan records"
+    ]
+  }
 }
