@@ -185,7 +185,11 @@ async function mapError(res: Response): Promise<never> {
   let body: { message?: string | string[]; error?: string } = {};
   try {
     body = (await res.json()) as typeof body;
-  } catch {}
+  } catch {
+    // Non-JSON error body (proxy/gateway HTML, empty 5xx): not a failure of this mapper; the status
+    // alone selects the default copy below, and `technical` still records the HTTP status.
+    body = {};
+  }
 
   // `userMessage` is end-user copy (PT-BR); it is never the raw server text unless it passes
   // resolveApiUserMessage. `technical` is the internal diagnostic and never rendered.
