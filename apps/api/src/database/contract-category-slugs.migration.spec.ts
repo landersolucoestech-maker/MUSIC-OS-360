@@ -3,6 +3,7 @@ import {
   CONTRACT_CATEGORY_SLUG_BACKFILL,
 } from './migrations/20260930000036_BackfillContractCategorySlugsToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
+import { CONTRACT_TYPE_BACKFILL } from './migrations/20260930000034_BackfillContractTypeOutroToOther';
 import { CANONICAL_CONTRACT_CATEGORY_SLUGS, LEGACY_CONTRACT_CATEGORY_SLUGS } from '../modules/contracts/contract-category-slugs';
 import { fakeRunner, makeFakeDb, type Row } from './jsonb-row-backfill.fake';
 
@@ -34,8 +35,9 @@ describe('BackfillContractCategorySlugsToEnglish20260930000036', () => {
 
   it('is registered; its frozen map equals the application map except the singular `outro` (migration 34)', () => {
     expect(ALL_MIGRATIONS).toContain(Migration);
-    const { outro: _handledBy34, ...platform } = LEGACY_CONTRACT_CATEGORY_SLUGS as Record<string, string>;
-    void _handledBy34;
+    const platform = Object.fromEntries(
+      Object.entries(LEGACY_CONTRACT_CATEGORY_SLUGS as Record<string, string>).filter(([legacy]) => legacy !== CONTRACT_TYPE_BACKFILL.LEGACY_TYPE),
+    );
     expect(LEGACY_TO_CANONICAL).toEqual(platform);
     for (const canonical of Object.values(LEGACY_TO_CANONICAL)) expect(CANONICAL_CONTRACT_CATEGORY_SLUGS as readonly string[]).toContain(canonical);
   });
