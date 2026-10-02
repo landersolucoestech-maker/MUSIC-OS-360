@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNotEmpty, IsBase64, IsIn, IsArray, IsEmail, IsObject, Matches, ValidateIf } from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty, IsBase64, IsUUID, IsIn, IsArray, IsEmail, IsObject, Matches, ValidateIf } from 'class-validator';
 import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -187,7 +187,7 @@ export class ExternalDataStatusCheckDto {
   @IsOptional() @IsIn(['artist', 'release', 'work', 'phonogram'])
   entityType?: 'artist' | 'release' | 'work' | 'phonogram';
 
-  @ApiPropertyOptional() @IsOptional() @IsString()
+  @ApiPropertyOptional({ format: 'uuid' }) @IsOptional() @IsUUID()
   entityId?: string;
 
   @ApiPropertyOptional() @IsOptional() @IsString()

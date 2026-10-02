@@ -48,6 +48,13 @@ export class ExternalDataController {
     return this.exchange.listProviders(kind);
   }
 
+  @Get('capabilities')
+  @RequireRole('viewer')
+  @ApiOperation({ summary: 'Availability of externally dependent capabilities (no provider call)' })
+  listCapabilities(@CurrentTenant() tenant: { id: string }) {
+    return this.exchange.getCapabilities(tenant.id);
+  }
+
   @Post('sync/request')
   @RequireRole('editor')
   @ApiOperation({ summary: 'Request external data sync for an artist/work set' })
@@ -89,7 +96,7 @@ export class ExternalDataController {
   }
 
   @Post('distributor/status-check')
-  @RequireRole('viewer')
+  @RequireRole('editor')
   @ApiOperation({ summary: 'Check distributor submission status' })
   async checkDistributor(
     @CurrentTenant() tenant: { id: string },
@@ -130,7 +137,7 @@ export class ExternalDataController {
   }
 
   @Post('society/status-check')
-  @RequireRole('viewer')
+  @RequireRole('editor')
   @ApiOperation({ summary: 'Check society registration status' })
   async checkSociety(
     @CurrentTenant() tenant: { id: string },

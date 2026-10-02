@@ -37,7 +37,12 @@ const CAPABILITY: Record<string, { capability: IntegrationTechnicalCapability; e
   soundcharts:   { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'integrations/soundcharts/soundcharts.service.ts' },
   google_ads:    { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'integrations/google-ads/google-ads.service.ts' },
   meta_business: { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'integrations.controller.ts — OAuth Meta (META_APP_ID/SECRET)' },
-  stripe:        { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'modules/billing — Stripe SDK + webhook' },
+  // stripe covers SUBSCRIPTION BILLING only (modules/billing). It does NOT imply payout execution:
+  // that is the separate `payout` key below.
+  stripe:        { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'modules/billing — Stripe SDK + webhook (assinaturas; não executa payout)' },
+  distributor:   { capability: IntegrationTechnicalCapability.NOT_IMPLEMENTED, evidence: 'core/external-data: porta ExternalDataExchangeProvider sem provider real; só UnconfiguredDistributorProvider (CAPABILITY_UNAVAILABLE)' },
+  audio_transcription: { capability: IntegrationTechnicalCapability.NOT_IMPLEMENTED, evidence: 'core/external-data/audio-transcription.port.ts sem provider; só UnconfiguredTranscriptionProvider (CAPABILITY_UNAVAILABLE)' },
+  payout:        { capability: IntegrationTechnicalCapability.NOT_IMPLEMENTED, evidence: 'core/external-data/payout.port.ts sem provider; só UnconfiguredPayoutProvider (CAPABILITY_UNAVAILABLE)' },
   resend:        { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'core/mail/mail.service.ts (RESEND_API_KEY)' },
   whatsapp:      { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'integrations/whatsapp/whatsapp-cloud.provider.ts' },
 };

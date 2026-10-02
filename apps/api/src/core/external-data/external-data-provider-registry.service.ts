@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CapabilityUnavailableError } from './capability-unavailable.error';
 import { UnconfiguredDistributorProvider } from './unconfigured-distributor.provider';
 import { UnconfiguredSocietyProvider } from './unconfigured-society.provider';
 import {
@@ -18,15 +19,11 @@ export class ExternalDataProviderRegistry {
   private readonly providers = new Map<string, AnyProvider>();
 
   constructor() {
-    // Real distributor/society providers do not exist yet; the
-    // "unconfigured" providers registered outside prod/staging explicitly FAIL on
-    // every operation — they never fabricate submissions.
-    const nodeEnv = process.env.NODE_ENV ?? 'development';
-    const isProdLike = nodeEnv === 'production' || nodeEnv === 'staging';
-    if (!isProdLike) {
-      this.register(new UnconfiguredDistributorProvider());
-      this.register(new UnconfiguredSocietyProvider());
-    }
+    // No real distributor/society provider exists yet. The "unconfigured" providers are
+    // registered in EVERY environment so prod/staging fail closed exactly like dev: each
+    // operation throws CapabilityUnavailableError and never fabricates a submission.
+    this.register(new UnconfiguredDistributorProvider());
+    this.register(new UnconfiguredSocietyProvider());
   }
 
   register(provider: AnyProvider): void {
@@ -42,7 +39,7 @@ export class ExternalDataProviderRegistry {
   getDistributor(providerId: string): ExternalDataExchangeProvider<DistributorSubmissionPayload> {
     const provider = this.providers.get(providerId);
     if (!provider || provider.metadata.kind !== 'distributor') {
-      throw new Error(`Distributor provider not registered: ${providerId}`);
+      throw new CapabilityUnavailableError('distributor_submission');
     }
     return provider as ExternalDataExchangeProvider<DistributorSubmissionPayload>;
   }
@@ -50,14 +47,14 @@ export class ExternalDataProviderRegistry {
   getSociety(providerId: string): ExternalDataExchangeProvider<SocietyDataSubmissionPayload> {
     const provider = this.providers.get(providerId);
     if (!provider || provider.metadata.kind !== 'society') {
-      throw new Error(`Society provider not registered: ${providerId}`);
+      throw new CapabilityUnavailableError('society_submission');
     }
     return provider as ExternalDataExchangeProvider<SocietyDataSubmissionPayload>;
   }
 
   get(providerId: string): AnyProvider {
     const provider = this.providers.get(providerId);
-    if (!provider) throw new Error(`External data provider not registered: ${providerId}`);
+    if (!provider) throw new CapabilityUnavailableError('distributor_status');
     return provider;
   }
 }

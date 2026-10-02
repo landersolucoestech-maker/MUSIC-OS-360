@@ -213,3 +213,19 @@ describe('IntegrationUsageGuard — enforcement', () => {
     await expect(g2.canActivate(ctxFor(req))).rejects.toBeInstanceOf(ForbiddenException);
   });
 });
+
+describe('Technical capability registry — externally blocked capabilities', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const reg = require('./integration-capability.registry') as typeof import('./integration-capability.registry');
+
+  it.each(['distributor', 'audio_transcription', 'payout'])('%s is NOT_IMPLEMENTED with evidence text', (key) => {
+    expect(reg.technicalCapabilityOf(key)).toBe(reg.IntegrationTechnicalCapability.NOT_IMPLEMENTED);
+    expect(reg.capabilityEvidenceOf(key)).toBeTruthy();
+  });
+
+  it('stripe (billing) does not confer payout', () => {
+    expect(reg.technicalCapabilityOf('stripe')).toBe(reg.IntegrationTechnicalCapability.IMPLEMENTED);
+    expect(reg.technicalCapabilityOf('payout')).toBe(reg.IntegrationTechnicalCapability.NOT_IMPLEMENTED);
+    expect(reg.capabilityEvidenceOf('stripe')).toMatch(/não executa payout/);
+  });
+});

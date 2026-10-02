@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, Logger, Optional, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, Logger, NotFoundException, Optional, ServiceUnavailableException } from '@nestjs/common';
 import { createHmac, randomUUID, timingSafeEqual } from 'crypto';
 import { DataSource, Repository } from 'typeorm';
 import { ADMIN_DATA_SOURCE, DATA_SOURCE } from '../../database/database.module';
@@ -16,8 +16,14 @@ import { isRegistryEligibleShare } from '../../modules/shares/share-eligibility.
 import { EventsService, DOMAIN_EVENTS } from '../events/events.service';
 import { ExternalDataProviderRegistry } from './external-data-provider-registry.service';
 import { TenantBootstrapResolver } from '../../database/tenant-bootstrap.resolver';
+import { CapabilityUnavailableError } from './capability-unavailable.error';
+import { ExternalCapabilityReadinessService } from './external-capability-readiness.service';
 import {
   DistributorSubmissionPayload,
+  ExternalCapability,
+  ExternalDataSubmissionStatus,
+  isAllowedSubmissionTransition,
+  isExternalDataSubmissionStatus,
   ExternalDataExchangeKind,
   ExternalDataRequestContext,
   ExternalDataSubmissionResult,
@@ -26,6 +32,13 @@ import {
 } from './external-data.types';
 import { WebhookEventStatus, classifyFailureCode } from '@music-os-360/types';
 import { redactDiagnosticText } from '../filters/redact-diagnostic';
+
+/** Typed rejection for a webhook status that the submission lifecycle does not allow. */
+export class InvalidSubmissionTransitionError extends BadRequestException {
+  constructor(readonly from: ExternalDataSubmissionStatus | null, readonly to: string) {
+    super({ error: 'VALIDATION_FAILED', reason: 'INVALID_SUBMISSION_TRANSITION', from, to, message: 'VALIDATION_FAILED: invalid submission status transition' });
+  }
+}
 
 type EntityType = 'artist' | 'release' | 'work' | 'phonogram';
 
@@ -101,6 +114,18 @@ export class ExternalDataExchangeService {
     }
   }
 
+  private readiness: ExternalCapabilityReadinessService | null = null;
+
+  private get capabilityReadiness(): ExternalCapabilityReadinessService {
+    if (!this.readiness) this.readiness = new ExternalCapabilityReadinessService(this.registry);
+    return this.readiness;
+  }
+
+  /** Read-only capability map; never calls a provider. */
+  getCapabilities(tenantId?: string) {
+    return this.capabilityReadiness.checkAll(tenantId);
+  }
+
   listProviders(kind?: ExternalDataExchangeKind) {
     return this.registry.list(kind);
   }
@@ -147,9 +172,11 @@ export class ExternalDataExchangeService {
     this.assertDb();
     if (!input.providerId) throw new BadRequestException('Selecione o distribuidor para enviar.');
     const providerId = input.providerId;
+    const blockedContext = this.context(input.tenantId, input.userId, providerId, input.idempotencyKey);
+    await this.assertCapability('distributor_submission', input.tenantId, input.userId, 'artist', input.artistId, providerId, blockedContext.idempotencyKey);
     const provider = this.registry.getDistributor(providerId);
     const payload = await this.buildDistributorPayload(input, providerId);
-    const context = this.context(input.tenantId, input.userId, providerId, input.idempotencyKey);
+    const context = blockedContext;
 
     this.events.emitTyped(DOMAIN_EVENTS.EXTERNAL_DATA_SYNC_STARTED, {
       tenantId: input.tenantId,
@@ -206,6 +233,9 @@ export class ExternalDataExchangeService {
       return result;
     } catch (err) {
       this.emitFailed(input.tenantId, input.userId, input.artistId, context.idempotencyKey, providerId, err);
+      if (err instanceof CapabilityUnavailableError) {
+        await this.auditBlocked(input.tenantId, input.userId, 'artist', input.artistId, err.capability, providerId);
+      }
       throw err;
     }
   }
@@ -280,51 +310,98 @@ export class ExternalDataExchangeService {
   }
 
   async checkDistributorStatus(input: StatusCheckInput): Promise<ExternalDataSubmissionResult> {
+    this.assertDb();
     if (!input.providerId) throw new BadRequestException('Selecione o distribuidor para consultar o status.');
     const providerId = input.providerId;
-    const result = await this.registry.getDistributor(providerId)
-      .checkStatus(input.submissionId, this.context(input.tenantId, input.userId, providerId, input.idempotencyKey));
-    if (input.entityType && input.entityId) await this.persistResult(input.tenantId, input.userId, input.entityType, input.entityId, result);
-    this.events.emitTyped(DOMAIN_EVENTS.DISTRIBUTOR_STATUS_UPDATED, {
-      tenantId: input.tenantId,
-      userId: input.userId,
-      aggregateType: input.entityType ?? 'artist',
-      aggregateId: input.entityId ?? input.submissionId,
-      payload: {
+    const context = this.context(input.tenantId, input.userId, providerId, input.idempotencyKey);
+    const entityType = input.entityType ?? 'artist';
+    // Audit/event anchor: the real entity when supplied, otherwise the submission id (event contract
+    // requires a string artistId; see DistributorStatusUpdatedPayload).
+    const anchorId = input.entityId ?? input.submissionId;
+    try {
+      this.assertCapabilityReady('distributor_status', input.tenantId);
+      await this.assertSubmissionOwned(input.tenantId, providerId, input.submissionId);
+      const result = await this.registry.getDistributor(providerId).checkStatus(input.submissionId, context);
+      if (input.entityType && input.entityId) await this.persistResult(input.tenantId, input.userId, input.entityType, input.entityId, result);
+      this.events.emitTyped(DOMAIN_EVENTS.DISTRIBUTOR_STATUS_UPDATED, {
         tenantId: input.tenantId,
-        artistId: input.entityId ?? input.submissionId,
-        distributor: providerId,
-        submissionId: input.submissionId,
-        status: result.status,
-        externalId: result.externalReleaseId ?? result.externalArtistId ?? null,
-        updatedAt: result.lastSyncedAt,
-      },
-    });
-    return result;
+        userId: input.userId,
+        aggregateType: entityType,
+        aggregateId: anchorId,
+        payload: {
+          tenantId: input.tenantId,
+          artistId: anchorId,
+          distributor: providerId,
+          submissionId: input.submissionId,
+          status: result.status,
+          externalId: result.externalReleaseId ?? result.externalArtistId ?? null,
+          updatedAt: result.lastSyncedAt,
+        },
+      });
+      return result;
+    } catch (err) {
+      this.emitFailed(input.tenantId, input.userId, anchorId, context.idempotencyKey, providerId, err);
+      if (err instanceof CapabilityUnavailableError) {
+        await this.auditBlocked(input.tenantId, input.userId, input.entityId ? entityType : 'artist', input.entityId ?? input.tenantId, err.capability, providerId);
+      }
+      throw err;
+    }
   }
 
   async checkSocietyStatus(input: StatusCheckInput): Promise<ExternalDataSubmissionResult> {
+    this.assertDb();
     if (!input.providerId) throw new BadRequestException('Selecione a sociedade de gestão coletiva para consultar o status.');
     const providerId = input.providerId;
-    const result = await this.registry.getSociety(providerId)
-      .checkStatus(input.submissionId, this.context(input.tenantId, input.userId, providerId, input.idempotencyKey));
-    if (input.entityType && input.entityId) await this.persistResult(input.tenantId, input.userId, input.entityType, input.entityId, result);
-    this.events.emitTyped(DOMAIN_EVENTS.SOCIETY_STATUS_UPDATED, {
-      tenantId: input.tenantId,
-      userId: input.userId,
-      aggregateType: input.entityType ?? 'work',
-      aggregateId: input.entityId ?? input.submissionId,
-      payload: {
+    const context = this.context(input.tenantId, input.userId, providerId, input.idempotencyKey);
+    const entityType = input.entityType ?? 'work';
+    const anchorId = input.entityId ?? input.submissionId;
+    try {
+      this.assertSocietyStatusReady(providerId);
+      await this.assertSubmissionOwned(input.tenantId, providerId, input.submissionId);
+      const result = await this.registry.getSociety(providerId).checkStatus(input.submissionId, context);
+      if (input.entityType && input.entityId) await this.persistResult(input.tenantId, input.userId, input.entityType, input.entityId, result);
+      this.events.emitTyped(DOMAIN_EVENTS.SOCIETY_STATUS_UPDATED, {
         tenantId: input.tenantId,
-        artistId: input.entityId ?? input.submissionId,
-        society: providerId,
-        submissionId: input.submissionId,
-        status: result.status,
-        externalId: result.externalWorkId ?? result.externalPhonogramId ?? null,
-        updatedAt: result.lastSyncedAt,
-      },
-    });
-    return result;
+        userId: input.userId,
+        aggregateType: entityType,
+        aggregateId: anchorId,
+        payload: {
+          tenantId: input.tenantId,
+          artistId: anchorId,
+          society: providerId,
+          submissionId: input.submissionId,
+          status: result.status,
+          externalId: result.externalWorkId ?? result.externalPhonogramId ?? null,
+          updatedAt: result.lastSyncedAt,
+        },
+      });
+      return result;
+    } catch (err) {
+      this.emitFailed(input.tenantId, input.userId, anchorId, context.idempotencyKey, providerId, err);
+      if (err instanceof CapabilityUnavailableError) {
+        await this.auditBlocked(input.tenantId, input.userId, input.entityId ? entityType : 'artist', input.entityId ?? input.tenantId, err.capability, providerId);
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * Status checks may only reference a submission THIS tenant recorded for THIS provider
+   * (recordSubmission). Unknown and foreign ids are indistinguishable (same 404, no provider call).
+   */
+  private async assertSubmissionOwned(tenantId: string, provider: string, submissionId: string): Promise<void> {
+    const row = this.submissions
+      ? await this.submissions.findOne({ where: { tenant_id: tenantId, provider, submission_id: submissionId } as any })
+      : null;
+    if (!row) throw new NotFoundException('Submissão não encontrada.');
+  }
+
+  /** Society status readiness from provider metadata only (no society entry in the readiness map). */
+  private assertSocietyStatusReady(providerId: string): void {
+    const meta = this.registry.getSociety(providerId).metadata;
+    if (meta.unconfigured) throw new CapabilityUnavailableError('society_submission', 'NO_PROVIDER_CONFIGURED');
+    if (meta.mock) throw new CapabilityUnavailableError('society_submission', 'PROVIDER_DISABLED');
+    if (!meta.supportsStatusCheck) throw new CapabilityUnavailableError('society_submission', 'PROVIDER_LACKS_CAPABILITY');
   }
 
   async ingestWebhook(params: {
@@ -351,13 +428,19 @@ export class ExternalDataExchangeService {
     }
     await this.assertTenantActive(tenantId);
 
-    const externalId = `${params.providerId}:${normalized.providerEventId}`;
+    // external_id carries the tenant: webhook_events.external_id is globally unique, so a
+    // provider event id that collides across tenants must never resolve to (or re-apply) another
+    // tenant's row. Lookups are additionally scoped by tenant_id. The legacy un-prefixed key is
+    // honored only for this tenant's own rows (rows written before the tenant-qualified key).
+    const externalId = `${tenantId}:${params.providerId}:${normalized.providerEventId}`;
+    const legacyExternalId = `${params.providerId}:${normalized.providerEventId}`;
 
     // A prior row for this external_id is only a true duplicate once it reached the terminal
     // PROCESSED status. A row stuck PENDING/FAILED is the same event legitimately being
     // retried (matches WebhookService.ingest's identical reasoning) — reuse that row instead
     // of permanently blocking reprocessing or violating the external_id unique constraint.
-    const existing = await this.webhookEvents!.findOne({ where: { external_id: externalId } });
+    const existing = (await this.webhookEvents!.findOne({ where: { external_id: externalId, tenant_id: tenantId } as any }))
+      ?? (await this.webhookEvents!.findOne({ where: { external_id: legacyExternalId, tenant_id: tenantId } as any }));
     if (existing) {
       if (existing.status === WebhookEventStatus.PROCESSED) {
         return { duplicate: true, eventId: existing.id };
@@ -525,6 +608,15 @@ export class ExternalDataExchangeService {
       return;
     }
 
+    const nextStatus = (payload.status ?? 'processing') as string;
+    if (!isExternalDataSubmissionStatus(nextStatus)) {
+      throw new InvalidSubmissionTransitionError(null, nextStatus);
+    }
+    const previous = await this.currentStatus(tenantId, payload.entityType, payload.entityId, payload.providerId);
+    if (previous && !isAllowedSubmissionTransition(previous, nextStatus)) {
+      throw new InvalidSubmissionTransitionError(previous, nextStatus);
+    }
+
     const result: ExternalDataSubmissionResult = {
       providerId: payload.providerId,
       kind: payload.kind,
@@ -534,7 +626,7 @@ export class ExternalDataExchangeService {
       externalWorkId: payload.externalIds?.['external_work_id'] ?? null,
       externalPhonogramId: payload.externalIds?.['external_phonogram_id'] ?? null,
       protocol: payload.externalIds?.['protocol'] ?? null,
-      status: (payload.status ?? 'processing') as ExternalDataSubmissionResult['status'],
+      status: nextStatus,
       deliveryStatus: payload.deliveryStatus ?? null,
       registrationStatus: payload.registrationStatus ?? null,
       validationErrors: payload.validationErrors ?? [],
@@ -545,6 +637,18 @@ export class ExternalDataExchangeService {
       raw: payload.raw,
     };
     await this.persistResult(tenantId, 'system:webhook', payload.entityType, payload.entityId, result);
+  }
+
+  /** Last status this platform recorded for (entity, provider); tenant-scoped. */
+  private async currentStatus(
+    tenantId: string,
+    entityType: EntityType,
+    entityId: string,
+    providerId: string,
+  ): Promise<ExternalDataSubmissionStatus | null> {
+    const row = await this.repoFor(entityType).findOne({ where: { id: entityId, tenant_id: tenantId, deleted_at: null } as any });
+    const recorded = (row as any)?.metadata?.external_data_exchange?.[providerId]?.status;
+    return isExternalDataSubmissionStatus(recorded) ? recorded : null;
   }
 
   private async persistResult(
@@ -627,6 +731,52 @@ export class ExternalDataExchangeService {
       providerId,
       idempotencyKey: idempotencyKey || randomUUID(),
     };
+  }
+
+  private assertCapabilityReady(capability: ExternalCapability, tenantId: string): void {
+    const readiness = this.capabilityReadiness.check(capability, tenantId);
+    if (!readiness.available) throw new CapabilityUnavailableError(readiness.capability, readiness.reason);
+  }
+
+  /** Readiness gate for submit: fails closed BEFORE any read/write, emitting the failure event and the blocked audit. */
+  private async assertCapability(
+    capability: ExternalCapability,
+    tenantId: string,
+    userId: string,
+    entityType: string,
+    entityId: string,
+    providerId: string,
+    jobId: string,
+  ): Promise<void> {
+    try {
+      this.assertCapabilityReady(capability, tenantId);
+    } catch (err) {
+      this.emitFailed(tenantId, userId, entityId, jobId, providerId, err);
+      if (err instanceof CapabilityUnavailableError) {
+        await this.auditBlocked(tenantId, userId, entityType, entityId, err.capability, providerId);
+      }
+      throw err;
+    }
+  }
+
+  /** Audit entry with capability, provider and code only: never the payload. Audit failure never masks the block. */
+  private async auditBlocked(
+    tenantId: string,
+    userId: string,
+    entityType: string,
+    entityId: string,
+    capability: string,
+    providerId: string,
+  ): Promise<void> {
+    try {
+      await this.logActivity(tenantId, userId, entityType, entityId, 'external_data.blocked', {
+        capability,
+        provider: providerId,
+        code: 'CAPABILITY_UNAVAILABLE',
+      });
+    } catch (auditErr) {
+      this.logger.warn(`blocked-audit write failed: ${classifyFailureCode((auditErr as Error).message, 'SYNC_FAILED')}`);
+    }
   }
 
   private emitFailed(tenantId: string, userId: string, artistId: string, jobId: string, providerId: string, err: unknown): void {

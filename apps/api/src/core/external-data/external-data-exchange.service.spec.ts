@@ -21,6 +21,7 @@
  */
 import 'reflect-metadata';
 import { createHmac } from 'crypto';
+import { NotFoundException } from '@nestjs/common';
 import { ExternalDataExchangeService } from './external-data-exchange.service';
 import { WorkEntity, PhonogramEntity, ShareEntity, ExternalDataSubmissionEntity, ActivityLogEntity, WebhookEventEntity } from '../../database/entities';
 import { WebhookEventStatus } from '@music-os-360/types';
@@ -39,8 +40,9 @@ function makeQb(rows: Record<string, unknown>[]) {
 
 function makeSubmissionsRepo(rows: Array<{ provider: string; submission_id: string; tenant_id: string }> = []) {
   return {
-    findOne: jest.fn(async ({ where }: { where: { provider: string; submission_id: string } }) =>
-      rows.find((r) => r.provider === where.provider && r.submission_id === where.submission_id) ?? null),
+    findOne: jest.fn(async ({ where }: { where: { provider: string; submission_id: string; tenant_id?: string } }) =>
+      rows.find((r) => r.provider === where.provider && r.submission_id === where.submission_id
+        && (where.tenant_id === undefined || r.tenant_id === where.tenant_id)) ?? null),
     upsert: jest.fn(async () => undefined),
   };
 }
@@ -49,8 +51,9 @@ function makeWebhookEventsRepo(existing: Record<string, unknown> | null = null) 
   const rows = new Map<string, Record<string, unknown>>();
   if (existing) rows.set(existing.id as string, existing);
   return {
-    findOne: jest.fn(async ({ where }: { where: { external_id: string } }) =>
-      [...rows.values()].find((r) => r['external_id'] === where.external_id) ?? null),
+    findOne: jest.fn(async ({ where }: { where: { external_id: string; tenant_id?: string } }) =>
+      [...rows.values()].find((r) => r['external_id'] === where.external_id
+        && (where.tenant_id === undefined || r['tenant_id'] === where.tenant_id)) ?? null),
     update: jest.fn(async (criteria: { id: string }, patch: Record<string, unknown>) => {
       const row = rows.get(criteria.id);
       if (row) Object.assign(row, patch);
@@ -233,7 +236,7 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
   it('find-ee81e34d: an already-seen external_id that is not yet PROCESSED is reprocessed, not treated as a permanent duplicate', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-real', raw: {} });
     const existingRow = {
-      id: 'event-1', external_id: 'abramus:evt-1', status: WebhookEventStatus.FAILED, retry_count: 1,
+      id: 'event-1', tenant_id: 'tenant-real', external_id: 'abramus:evt-1', status: WebhookEventStatus.FAILED, retry_count: 1,
     };
     const { svc, webhookEventsRepo } = makeServiceWithWebhookRepo(
       { submissions: [{ provider: 'abramus', submission_id: 'sub-real', tenant_id: 'tenant-real' }], webhookEvent: existingRow },
@@ -258,7 +261,7 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
   it('find-ee81e34d: an already-PROCESSED external_id continues to be treated as a true duplicate', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-real' });
     const existingRow = {
-      id: 'event-1', external_id: 'abramus:evt-1', status: WebhookEventStatus.PROCESSED, retry_count: 0,
+      id: 'event-1', tenant_id: 'tenant-real', external_id: 'abramus:evt-1', status: WebhookEventStatus.PROCESSED, retry_count: 0,
     };
     const { svc, webhookEventsRepo } = makeServiceWithWebhookRepo(
       { submissions: [{ provider: 'abramus', submission_id: 'sub-real', tenant_id: 'tenant-real' }], webhookEvent: existingRow },
@@ -273,6 +276,39 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
 
     expect(result).toEqual({ duplicate: true, eventId: 'event-1' });
     expect(webhookEventsRepo.update).not.toHaveBeenCalled();
+  });
+});
+
+describe('ExternalDataExchangeService.ingestWebhook — cross-tenant external_id collision', () => {
+  it('a provider event id already stored for ANOTHER tenant is not treated as a duplicate and is not touched', async () => {
+    const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-real', raw: {} });
+    const foreignRow = { id: 'event-foreign', tenant_id: 'tenant-OTHER', external_id: 'abramus:evt-1', status: WebhookEventStatus.PROCESSED, retry_count: 0 };
+    const { svc, webhookEventsRepo } = makeServiceWithWebhookRepo(
+      { submissions: [{ provider: 'abramus', submission_id: 'sub-real', tenant_id: 'tenant-real' }], webhookEvent: foreignRow },
+      makeTenantResolver(),
+      registry,
+    );
+    const result = await svc.ingestWebhook({
+      providerId: 'abramus', kind: 'society', payload: { id: 'evt-1' }, signature: sign({ id: 'evt-1' }, 'shh'), secret: 'shh',
+    });
+    expect(result).toMatchObject({ duplicate: false });
+    expect((result as { eventId: string }).eventId).not.toBe('event-foreign');
+    expect(webhookEventsRepo.update).not.toHaveBeenCalledWith({ id: 'event-foreign' }, expect.anything());
+    expect(webhookEventsRepo.create).toHaveBeenCalledWith(expect.objectContaining({ tenant_id: 'tenant-real' }));
+    const created = webhookEventsRepo.create.mock.calls[0][0] as { external_id: string };
+    expect(created.external_id).not.toBe('abramus:evt-1');
+    expect(foreignRow.status).toBe(WebhookEventStatus.PROCESSED);
+  });
+
+  it('every event lookup is scoped by the resolved tenant', async () => {
+    const registry = makeRegistry({ providerEventId: 'evt-2', submissionId: 'sub-real', raw: {} });
+    const { svc, webhookEventsRepo } = makeServiceWithWebhookRepo(
+      { submissions: [{ provider: 'abramus', submission_id: 'sub-real', tenant_id: 'tenant-real' }] }, makeTenantResolver(), registry,
+    );
+    await svc.ingestWebhook({ providerId: 'abramus', kind: 'society', payload: { id: 'evt-2' }, signature: sign({ id: 'evt-2' }, 'shh'), secret: 'shh' });
+    for (const call of webhookEventsRepo.findOne.mock.calls) {
+      expect((call[0] as { where: { tenant_id: string } }).where.tenant_id).toBe('tenant-real');
+    }
   });
 });
 
@@ -306,5 +342,234 @@ describe('ExternalDataExchangeService — failure surfaces carry codes, never ra
     expect(failed).toBeDefined();
     const err = (failed![1] as { error: string }).error;
     expect(err).not.toMatch(/abc123|foo@bar/);
+  });
+});
+
+// ─── External capability blocking, status machine, tenant isolation ──────────
+import { ExternalDataProviderRegistry } from './external-data-provider-registry.service';
+import { CapabilityUnavailableError } from './capability-unavailable.error';
+import { InvalidSubmissionTransitionError } from './external-data-exchange.service';
+import { ALLOWED_SUBMISSION_TRANSITIONS, isAllowedSubmissionTransition } from './external-data.types';
+
+function makeCapDs(opts: { artist?: Record<string, unknown> | null; artistFindOne?: jest.Mock; ownedSubmission?: { tenant_id: string; provider: string; submission_id: string } } = {}) {
+  const activity = { create: jest.fn((d: unknown) => d), save: jest.fn(async () => undefined) };
+  const artists = {
+    findOne: opts.artistFindOne ?? jest.fn(async ({ where }: { where: { id: string; tenant_id: string } }) =>
+      opts.artist && opts.artist['id'] === where.id && opts.artist['tenant_id'] === where.tenant_id ? opts.artist : null),
+    update: jest.fn(async () => undefined),
+  };
+  const submissions = {
+    upsert: jest.fn(async () => undefined),
+    findOne: jest.fn(async ({ where }: { where: { tenant_id: string; provider: string; submission_id: string } }) =>
+      opts.ownedSubmission && opts.ownedSubmission.tenant_id === where.tenant_id && opts.ownedSubmission.provider === where.provider
+        && opts.ownedSubmission.submission_id === where.submission_id ? opts.ownedSubmission : null),
+  };
+  const map = new Map<unknown, unknown>([
+    [ActivityLogEntity, activity], [ExternalDataSubmissionEntity, submissions],
+  ]);
+  const { ArtistEntity, PhonogramEntity: P } = jest.requireActual('../../database/entities');
+  map.set(ArtistEntity, artists); map.set(P, { createQueryBuilder: jest.fn() });
+  return { ds: { getRepository: jest.fn((e: unknown) => map.get(e) ?? {}) } as never, activity, artists, submissions };
+}
+
+describe('ExternalDataExchangeService — blocked capabilities', () => {
+  const artist = { id: 'a1', tenant_id: 't1', stage_name: 'X' };
+
+  it('submitDistributor via unconfigured provider: SYNC_FAILED CAPABILITY_UNAVAILABLE, nothing persisted, blocked audit without payload', async () => {
+    const { ds, activity, artists, submissions } = makeCapDs({ artist });
+    const emitTyped = jest.fn();
+    const svc = new ExternalDataExchangeService(ds, new ExternalDataProviderRegistry(), { emitTyped } as never, makeTenantResolver() as never);
+
+    await expect(svc.submitDistributor({
+      tenantId: 't1', userId: 'u1', providerId: 'distributor-provider-not-configured', artistId: 'a1', idempotencyKey: 'key-1',
+      metadata: { secretNote: 'PAYLOAD-MARKER' },
+    })).rejects.toBeInstanceOf(CapabilityUnavailableError);
+
+    expect(emitTyped).toHaveBeenCalledTimes(1);
+    expect(emitTyped.mock.calls[0][0]).toBe('external-data.sync_failed');
+    expect(emitTyped.mock.calls[0][1].payload).toMatchObject({ errorCode: 'CAPABILITY_UNAVAILABLE', jobId: 'key-1' });
+    expect(artists.update).not.toHaveBeenCalled();
+    expect(submissions.upsert).not.toHaveBeenCalled();
+    const logged = activity.create.mock.calls.map((c) => c[0] as { action: string; metadata: unknown });
+    expect(logged).toHaveLength(1);
+    expect(logged[0].action).toBe('external_data.blocked');
+    expect(logged[0].metadata).toEqual({ capability: 'distributor_submission', provider: 'distributor-provider-not-configured', code: 'CAPABILITY_UNAVAILABLE' });
+    expect(JSON.stringify(logged)).not.toContain('PAYLOAD-MARKER');
+  });
+
+  it('checkDistributorStatus failure emits an event and the blocked audit', async () => {
+    const { ds, activity } = makeCapDs({ artist });
+    const emitTyped = jest.fn();
+    const svc = new ExternalDataExchangeService(ds, new ExternalDataProviderRegistry(), { emitTyped } as never, makeTenantResolver() as never);
+
+    await expect(svc.checkDistributorStatus({
+      tenantId: 't1', userId: 'u1', providerId: 'distributor-provider-not-configured', submissionId: 's1',
+    })).rejects.toBeInstanceOf(CapabilityUnavailableError);
+
+    expect(emitTyped.mock.calls[0][1].payload.errorCode).toBe('CAPABILITY_UNAVAILABLE');
+    expect((activity.create.mock.calls[0][0] as { action: string }).action).toBe('external_data.blocked');
+  });
+
+  it('checkDistributorStatus asserts persistence availability', async () => {
+    const svc = new ExternalDataExchangeService(null, new ExternalDataProviderRegistry(), { emitTyped: jest.fn() } as never, makeTenantResolver() as never);
+    await expect(svc.checkDistributorStatus({ tenantId: 't1', userId: 'u1', providerId: 'p', submissionId: 's' }))
+      .rejects.toThrow('persistence unavailable');
+  });
+
+  it('propagates the idempotency key to a registered capable provider and persists', async () => {
+    const { ds, artists } = makeCapDs({ artist });
+    const registry = new ExternalDataProviderRegistry();
+    const submit = jest.fn(async () => ({
+      providerId: 'fake-dist', kind: 'distributor', submissionId: 'sub-1', status: 'processing', validationErrors: [],
+      pendingRequirements: [], providerNotes: [], lastSyncedAt: new Date().toISOString(), raw: {},
+    }));
+    registry.register({
+      metadata: { providerId: 'fake-dist', displayName: 'F', kind: 'distributor', supportsSubmit: true, supportsStatusCheck: true, mock: false },
+      submit, checkStatus: jest.fn(), normalizeWebhook: jest.fn(),
+    } as never);
+    const svc = new ExternalDataExchangeService(ds, registry, { emitTyped: jest.fn() } as never, makeTenantResolver() as never);
+    (artists.findOne as jest.Mock).mockResolvedValue({ ...artist, metadata: {} });
+
+    await svc.submitDistributor({ tenantId: 't1', userId: 'u1', providerId: 'fake-dist', artistId: 'a1', idempotencyKey: 'key-42' });
+    expect((submit.mock.calls[0] as unknown[])[1]).toMatchObject({ idempotencyKey: 'key-42', tenantId: 't1' });
+    expect(artists.update).toHaveBeenCalled();
+  });
+
+  it('tenant isolation: another tenant\'s artist/submission entity id is rejected and nothing is written', async () => {
+    const { ds, artists } = makeCapDs({
+      artist: { id: 'a1', tenant_id: 'tenant-OTHER', stage_name: 'X' },
+      ownedSubmission: { tenant_id: 't1', provider: 'fake-dist', submission_id: 's1' },
+    });
+    const registry = new ExternalDataProviderRegistry();
+    registry.register({
+      metadata: { providerId: 'fake-dist', displayName: 'F', kind: 'distributor', supportsSubmit: true, supportsStatusCheck: true, mock: false },
+      submit: jest.fn(), checkStatus: jest.fn(async () => ({
+        providerId: 'fake-dist', kind: 'distributor', submissionId: 's1', status: 'approved', validationErrors: [],
+        pendingRequirements: [], providerNotes: [], lastSyncedAt: new Date().toISOString(), raw: {},
+      })), normalizeWebhook: jest.fn(),
+    } as never);
+    const svc = new ExternalDataExchangeService(ds, registry, { emitTyped: jest.fn() } as never, makeTenantResolver() as never);
+
+    await expect(svc.submitDistributor({ tenantId: 't1', userId: 'u1', providerId: 'fake-dist', artistId: 'a1' }))
+      .rejects.toThrow('Artista não encontrado.');
+    await expect(svc.checkDistributorStatus({ tenantId: 't1', userId: 'u1', providerId: 'fake-dist', submissionId: 's1', entityType: 'artist', entityId: 'a1' }))
+      .rejects.toThrow('Registro não encontrado.');
+    expect(artists.update).not.toHaveBeenCalled();
+  });
+});
+
+function capableRegistry(kind: 'distributor' | 'society', providerId: string, checkStatus: jest.Mock) {
+  const registry = new ExternalDataProviderRegistry();
+  registry.register({
+    metadata: { providerId, displayName: 'F', kind, supportsSubmit: true, supportsStatusCheck: true, mock: false },
+    submit: jest.fn(), checkStatus, normalizeWebhook: jest.fn(),
+  } as never);
+  return registry;
+}
+
+describe('ExternalDataExchangeService — status checks require an owned submission (abuse: foreign submissionId)', () => {
+  const okResult = (providerId: string, kind: string) => ({
+    providerId, kind, submissionId: 'sub-own', status: 'processing', validationErrors: [],
+    pendingRequirements: [], providerNotes: [], lastSyncedAt: new Date().toISOString(), raw: {},
+  });
+
+  it('distributor: foreign/unknown submissionId is a 404 and the provider is never called', async () => {
+    const { ds } = makeCapDs({ ownedSubmission: { tenant_id: 'tenant-OTHER', provider: 'fake-dist', submission_id: 'sub-foreign' } });
+    const checkStatus = jest.fn();
+    const svc = new ExternalDataExchangeService(ds, capableRegistry('distributor', 'fake-dist', checkStatus), { emitTyped: jest.fn() } as never, makeTenantResolver() as never);
+    await expect(svc.checkDistributorStatus({ tenantId: 't1', userId: 'u1', providerId: 'fake-dist', submissionId: 'sub-foreign' }))
+      .rejects.toBeInstanceOf(NotFoundException);
+    await expect(svc.checkDistributorStatus({ tenantId: 't1', userId: 'u1', providerId: 'fake-dist', submissionId: 'sub-unknown' }))
+      .rejects.toBeInstanceOf(NotFoundException);
+    expect(checkStatus).not.toHaveBeenCalled();
+  });
+
+  it('distributor: an owned submission reaches the provider', async () => {
+    const { ds } = makeCapDs({ ownedSubmission: { tenant_id: 't1', provider: 'fake-dist', submission_id: 'sub-own' } });
+    const checkStatus = jest.fn(async () => okResult('fake-dist', 'distributor'));
+    const svc = new ExternalDataExchangeService(ds, capableRegistry('distributor', 'fake-dist', checkStatus), { emitTyped: jest.fn() } as never, makeTenantResolver() as never);
+    await expect(svc.checkDistributorStatus({ tenantId: 't1', userId: 'u1', providerId: 'fake-dist', submissionId: 'sub-own' }))
+      .resolves.toMatchObject({ status: 'processing' });
+    expect(checkStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it('society: foreign submissionId is a 404 and the provider is never called', async () => {
+    const { ds } = makeCapDs({ ownedSubmission: { tenant_id: 'tenant-OTHER', provider: 'fake-soc', submission_id: 'sub-foreign' } });
+    const checkStatus = jest.fn();
+    const svc = new ExternalDataExchangeService(ds, capableRegistry('society', 'fake-soc', checkStatus), { emitTyped: jest.fn() } as never, makeTenantResolver() as never);
+    await expect(svc.checkSocietyStatus({ tenantId: 't1', userId: 'u1', providerId: 'fake-soc', submissionId: 'sub-foreign' }))
+      .rejects.toBeInstanceOf(NotFoundException);
+    expect(checkStatus).not.toHaveBeenCalled();
+  });
+
+  it('society: owned submission reaches the provider', async () => {
+    const { ds } = makeCapDs({ ownedSubmission: { tenant_id: 't1', provider: 'fake-soc', submission_id: 'sub-own' } });
+    const checkStatus = jest.fn(async () => okResult('fake-soc', 'society'));
+    const svc = new ExternalDataExchangeService(ds, capableRegistry('society', 'fake-soc', checkStatus), { emitTyped: jest.fn() } as never, makeTenantResolver() as never);
+    await expect(svc.checkSocietyStatus({ tenantId: 't1', userId: 'u1', providerId: 'fake-soc', submissionId: 'sub-own' }))
+      .resolves.toMatchObject({ status: 'processing' });
+  });
+
+  it('society: asserts persistence, and an unconfigured provider is blocked with event + blocked audit, no provider call', async () => {
+    const nodb = new ExternalDataExchangeService(null, new ExternalDataProviderRegistry(), { emitTyped: jest.fn() } as never, makeTenantResolver() as never);
+    await expect(nodb.checkSocietyStatus({ tenantId: 't1', userId: 'u1', providerId: 'p', submissionId: 's' }))
+      .rejects.toThrow('persistence unavailable');
+
+    const { ds, activity } = makeCapDs({});
+    const emitTyped = jest.fn();
+    const svc = new ExternalDataExchangeService(ds, new ExternalDataProviderRegistry(), { emitTyped } as never, makeTenantResolver() as never);
+    await expect(svc.checkSocietyStatus({ tenantId: 't1', userId: 'u1', providerId: 'society-provider-not-configured', submissionId: 's1' }))
+      .rejects.toBeInstanceOf(CapabilityUnavailableError);
+    expect(emitTyped.mock.calls[0][1].payload.errorCode).toBe('CAPABILITY_UNAVAILABLE');
+    expect((activity.create.mock.calls[0][0] as { action: string }).action).toBe('external_data.blocked');
+  });
+});
+
+describe('Submission status machine', () => {
+  it('table: completed terminal, same-status idempotent, unknown edges rejected', () => {
+    expect(ALLOWED_SUBMISSION_TRANSITIONS.completed).toEqual([]);
+    expect(isAllowedSubmissionTransition('completed', 'completed')).toBe(true);
+    expect(isAllowedSubmissionTransition('pending', 'processing')).toBe(true);
+    expect(isAllowedSubmissionTransition('completed', 'processing')).toBe(false);
+    expect(isAllowedSubmissionTransition('approved', 'pending')).toBe(false);
+  });
+
+  function webhookSvc(previousStatus: string | null, nextStatus: string) {
+    const registry = makeRegistry({
+      providerEventId: 'evt-1', submissionId: 'sub-real', entityType: 'artist', entityId: 'a1', providerId: 'abramus', kind: 'society',
+      status: nextStatus, raw: {},
+    });
+    const events = { emitTyped: jest.fn() } as never;
+    const ds = makeDs({ submissions: [{ provider: 'abramus', submission_id: 'sub-real', tenant_id: 'tenant-real' }] }) as unknown as { getRepository: jest.Mock };
+    const artistRow = { id: 'a1', tenant_id: 'tenant-real', metadata: previousStatus ? { external_data_exchange: { abramus: { status: previousStatus } } } : {} };
+    const artistRepo = { findOne: jest.fn(async () => artistRow), update: jest.fn(async () => undefined) };
+    const orig = ds.getRepository.getMockImplementation()!;
+    const { ArtistEntity } = jest.requireActual('../../database/entities');
+    ds.getRepository.mockImplementation((e: unknown) => (e === ArtistEntity ? artistRepo : orig(e)));
+    const svc = new ExternalDataExchangeService(ds as never, registry as never, events, makeTenantResolver() as never);
+    return { svc, artistRepo };
+  }
+  const run = (svc: ExternalDataExchangeService) => svc.ingestWebhook({
+    providerId: 'abramus', kind: 'society', payload: { id: 'evt-1' }, signature: sign({ id: 'evt-1' }, 'shh'), secret: 'shh',
+  });
+
+  it('rejects an invalid transition with a typed error and does not persist', async () => {
+    const { svc, artistRepo } = webhookSvc('completed', 'processing');
+    await expect(run(svc)).rejects.toBeInstanceOf(InvalidSubmissionTransitionError);
+    expect(artistRepo.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects an unknown status value', async () => {
+    const { svc, artistRepo } = webhookSvc('pending', 'bogus');
+    await expect(run(svc)).rejects.toBeInstanceOf(InvalidSubmissionTransitionError);
+    expect(artistRepo.update).not.toHaveBeenCalled();
+  });
+
+  it('keeps existing behavior for a valid transition and for a first-ever status', async () => {
+    const a = webhookSvc('pending', 'approved');
+    await expect(run(a.svc)).resolves.toMatchObject({ duplicate: false });
+    expect(a.artistRepo.update).toHaveBeenCalled();
+    const b = webhookSvc(null, 'completed');
+    await expect(run(b.svc)).resolves.toMatchObject({ duplicate: false });
   });
 });

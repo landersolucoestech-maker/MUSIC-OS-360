@@ -5,6 +5,7 @@ import {
   ExternalDataWebhookPayload,
   SocietyDataSubmissionPayload,
 } from './external-data.types';
+import { CapabilityUnavailableError } from './capability-unavailable.error';
 
 export class UnconfiguredSocietyProvider implements ExternalDataExchangeProvider<SocietyDataSubmissionPayload> {
   readonly metadata = {
@@ -14,23 +15,24 @@ export class UnconfiguredSocietyProvider implements ExternalDataExchangeProvider
     supportsSubmit: false,
     supportsStatusCheck: false,
     mock: false,
+    unconfigured: true,
   };
 
   async submit(
     _payload: SocietyDataSubmissionPayload,
     _context: ExternalDataRequestContext,
   ): Promise<ExternalDataSubmissionResult> {
-    throw new Error('Society external data provider is not configured.');
+    throw new CapabilityUnavailableError('society_submission');
   }
 
   async checkStatus(
     _submissionId: string,
     _context: ExternalDataRequestContext,
   ): Promise<ExternalDataSubmissionResult> {
-    throw new Error('Society external data provider is not configured.');
+    throw new CapabilityUnavailableError('society_submission');
   }
 
   normalizeWebhook(_payload: Record<string, unknown>): ExternalDataWebhookPayload {
-    throw new Error('Society external data provider is not configured.');
+    throw new CapabilityUnavailableError('society_submission');
   }
 }

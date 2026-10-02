@@ -36,6 +36,7 @@ export const API_ERROR_CODE_COPY_PT_BR = {
   PROVIDER_UNAUTHORIZED: "A integração não está autorizada. Reconecte a conta e tente novamente.",
   PROVIDER_RATE_LIMITED: "A integração atingiu o limite de uso. Tente novamente mais tarde.",
   PROVIDER_NOT_CONFIGURED: "A integração não está configurada.",
+  CAPABILITY_UNAVAILABLE: "Este recurso depende de um provedor externo que ainda não está disponível.",
   IDENTITY_MISMATCH: "O perfil encontrado não corresponde ao artista. Verifique o link.",
   SOURCE_ACCOUNT_NOT_INDEXED: "A conta ainda não está disponível na fonte de dados.",
   PUBLICATION_FAILED: "Não foi possível publicar o conteúdo. Tente novamente.",
@@ -68,6 +69,12 @@ export function classifyFailureCode(raw: unknown, fallback: ApiErrorCode = "SYNC
   if (token) return token;
   if (/\b(?:401|403)\b|unauthori[sz]ed|forbidden|invalid[_ ](?:token|credentials)/i.test(raw)) return "PROVIDER_UNAUTHORIZED";
   if (/\b429\b|rate.?limit|too many requests|quota/i.test(raw)) return "PROVIDER_RATE_LIMITED";
+  // Capability seams (distributor/society/transcription/payout) have no provider at all:
+  // a missing registration or an unconfigured capability port is CAPABILITY_UNAVAILABLE.
+  // A plain "not configured" (credentials missing for an existing integration) keeps
+  // mapping to PROVIDER_NOT_CONFIGURED.
+  if (/not registered/i.test(raw)) return "CAPABILITY_UNAVAILABLE";
+  if (/(?:distributor|society|transcription|payout|external data)[^.\n]*not[_ ]configured/i.test(raw)) return "CAPABILITY_UNAVAILABLE";
   if (/not[_ ]configured/i.test(raw)) return "PROVIDER_NOT_CONFIGURED";
   return fallback;
 }

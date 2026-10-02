@@ -5,6 +5,7 @@ import {
   ExternalDataSubmissionResult,
   ExternalDataWebhookPayload,
 } from './external-data.types';
+import { CapabilityUnavailableError } from './capability-unavailable.error';
 
 export class UnconfiguredDistributorProvider implements ExternalDataExchangeProvider<DistributorSubmissionPayload> {
   readonly metadata = {
@@ -14,23 +15,24 @@ export class UnconfiguredDistributorProvider implements ExternalDataExchangeProv
     supportsSubmit: false,
     supportsStatusCheck: false,
     mock: false,
+    unconfigured: true,
   };
 
   async submit(
     _payload: DistributorSubmissionPayload,
     _context: ExternalDataRequestContext,
   ): Promise<ExternalDataSubmissionResult> {
-    throw new Error('Distributor external data provider is not configured.');
+    throw new CapabilityUnavailableError('distributor_submission');
   }
 
   async checkStatus(
     _submissionId: string,
     _context: ExternalDataRequestContext,
   ): Promise<ExternalDataSubmissionResult> {
-    throw new Error('Distributor external data provider is not configured.');
+    throw new CapabilityUnavailableError('distributor_status');
   }
 
   normalizeWebhook(_payload: Record<string, unknown>): ExternalDataWebhookPayload {
-    throw new Error('Distributor external data provider is not configured.');
+    throw new CapabilityUnavailableError('distributor_status');
   }
 }
