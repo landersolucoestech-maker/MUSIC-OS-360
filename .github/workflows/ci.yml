@@ -206,7 +206,7 @@ jobs:
         run: docker rm -f api pg redis 2>/dev/null || true
 
   security-regression:
-    name: Security Regression (FASE 9.x fixes)
+    name: Security Regression
     runs-on: ubuntu-latest
     needs: [quality]
     steps:

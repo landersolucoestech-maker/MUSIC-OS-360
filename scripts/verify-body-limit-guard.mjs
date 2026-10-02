@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Structural replacement for the old `grep -q "express.json({ limit:"` check
- * (CI: "Security Regression (FASE 9.x fixes)" > "Body limit + 413 handler
+ * (CI: "Security Regression" > "Body limit + 413 handler
  * present"). The single-line grep broke as a false negative the moment
  * express.json({ ... }) was reformatted across multiple lines, even though
  * the actual body-limit hardening was untouched and correct.
