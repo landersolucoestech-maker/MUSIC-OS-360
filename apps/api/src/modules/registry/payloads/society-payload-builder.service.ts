@@ -1,5 +1,5 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
-import { DataSource, Repository, IsNull } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import {
   WorkEntity,
@@ -92,8 +92,8 @@ export class SocietyPayloadBuilderService {
     this.assertDb();
     const work = await this.works!.findOne({ where: { id: workId, tenant_id: tenantId } });
     if (!work || work.deleted_at) throw new NotFoundException('Obra não encontrada');
-    // share_type IS NULL = transitional registration eligibility (see share-eligibility.util.ts).
-    const shares = (await this.shares!.find({ where: { tenant_id: tenantId, work_id: workId, share_type: IsNull() } }))
+    // Registry eligibility is decided only by isRegistryEligibleShare (share-eligibility.util.ts).
+    const shares = (await this.shares!.find({ where: { tenant_id: tenantId, work_id: workId } }))
       .filter((s) => !s.deleted_at && isRegistryEligibleShare(s));
 
     const legacy: PayloadIdentifier[] = [];
@@ -132,8 +132,8 @@ export class SocietyPayloadBuilderService {
     this.assertDb();
     const rec = await this.phonograms!.findOne({ where: { id: recordingId, tenant_id: tenantId } });
     if (!rec || rec.deleted_at) throw new NotFoundException('Fonograma não encontrado');
-    // share_type IS NULL = transitional registration eligibility (see share-eligibility.util.ts).
-    const shares = (await this.shares!.find({ where: { tenant_id: tenantId, phonogram_id: recordingId, share_type: IsNull() } }))
+    // Registry eligibility is decided only by isRegistryEligibleShare (share-eligibility.util.ts).
+    const shares = (await this.shares!.find({ where: { tenant_id: tenantId, phonogram_id: recordingId } }))
       .filter((s) => !s.deleted_at && isRegistryEligibleShare(s));
 
     const legacy: PayloadIdentifier[] = [];

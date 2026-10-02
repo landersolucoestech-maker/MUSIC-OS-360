@@ -12,7 +12,7 @@ import {
   WebhookEventEntity,
   WorkEntity,
 } from '../../database/entities';
-import { isRegistryEligibleShare } from '../../modules/shares/share-eligibility.util';
+import { isRegistryEligibleShare, REGISTRY_ELIGIBLE_SHARE_SQL } from '../../modules/shares/share-eligibility.util';
 import { EventsService, DOMAIN_EVENTS } from '../events/events.service';
 import { ExternalDataProviderRegistry } from './external-data-provider-registry.service';
 import { TenantBootstrapResolver } from '../../database/tenant-bootstrap.resolver';
@@ -555,11 +555,11 @@ export class ExternalDataExchangeService {
         .where('p.tenant_id = :tenantId AND p.id IN (:...ids) AND p.deleted_at IS NULL', { tenantId: input.tenantId, ids: input.phonogramIds })
         .getMany()
       : [];
-    // share_type IS NULL = transitional registration eligibility (see share-eligibility.util.ts) —
+    // Registry eligibility (REGISTRY_ELIGIBLE_SHARE_SQL, see share-eligibility.util.ts) —
     // excludes financial/pending shares (Phase 5 / C6) from the submission to the external society.
     const shares = works.length
       ? (await this.shares!.createQueryBuilder('s')
-        .where('s.tenant_id = :tenantId AND s.work_id IN (:...ids) AND s.deleted_at IS NULL AND s.share_type IS NULL', { tenantId: input.tenantId, ids: works.map((w) => w.id) })
+        .where(`s.tenant_id = :tenantId AND s.work_id IN (:...ids) AND s.deleted_at IS NULL AND ${REGISTRY_ELIGIBLE_SHARE_SQL}`, { tenantId: input.tenantId, ids: works.map((w) => w.id) })
         .getMany()).filter(isRegistryEligibleShare)
       : [];
 

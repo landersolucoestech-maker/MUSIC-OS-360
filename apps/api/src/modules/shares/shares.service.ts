@@ -5,6 +5,7 @@ import { ShareEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { assertSplitBudgetNotExceeded } from './share-split-invariant.util';
+import { isRegistryEligibleShare, REGISTRY_ELIGIBLE_SHARE_SQL } from './share-eligibility.util';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import { SHARE_DEPRECATED_FIELDS, SHARE_QUERY_DEPRECATED_FIELDS, canonicalizeShareHistory, canonicalizeShareValues } from './share-legacy-fields';
 import type { CreateShareDto, UpdateShareDto, QueryShareDto } from './dto/shares.dto';
@@ -124,7 +125,7 @@ export class SharesService {
       .select('COALESCE(SUM(s.percentage), 0)', 'sum')
       .where('s.tenant_id = :tenantId', { tenantId })
       .andWhere('s.deleted_at IS NULL')
-      .andWhere('s.share_type IS NULL');
+      .andWhere(REGISTRY_ELIGIBLE_SHARE_SQL);
     if (workId)      qb.andWhere('s.work_id = :workId', { workId });
     if (phonogramId) qb.andWhere('s.phonogram_id = :phonogramId', { phonogramId });
     if (excludeId)   qb.andWhere('s.id != :excludeId', { excludeId });
@@ -140,7 +141,8 @@ export class SharesService {
   private async assertSplitBudget(
     tenantId: string, cols: Record<string, unknown>, excludeId?: string, manager?: EntityManager,
   ): Promise<void> {
-    const isEligible = cols['share_type'] === undefined || cols['share_type'] === null;
+    // An absent share_type means a new row with the column default (NULL).
+    const isEligible = isRegistryEligibleShare({ share_type: (cols['share_type'] as string | null | undefined) ?? null });
     if (!isEligible || cols['percentage'] == null) return;
 
     const workId      = (cols['work_id'] as string | undefined) ?? null;
