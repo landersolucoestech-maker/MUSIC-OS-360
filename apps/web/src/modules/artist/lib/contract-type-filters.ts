@@ -27,7 +27,6 @@ const LEGACY_CONTRACT_TYPE_ALIASES: Readonly<Record<string, string>> = {
   nao_exclusivo: "non_exclusive",
   representacao: "representation",
   servicos: "services",
-  outro: "other",
 };
 
 /** Canonical form of a stored `contracts.type` for filtering (lower-cased, legacy spellings mapped). */

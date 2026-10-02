@@ -25,7 +25,13 @@ describe('contract category slugs (platform-owned only)', () => {
     expect(canonicalContractCategorySlug('gestao')).toBe('management');
     expect(canonicalContractCategorySlug('outros')).toBe('other');
     expect(contractCategorySlugVariants('distribution')).toEqual(['distribution', 'distribuicao']);
-    expect(contractCategorySlugVariants('outros')).toEqual(['other', 'outros']);
+    expect(contractCategorySlugVariants('outros')).toEqual(['other', 'outros', 'outro']);
+  });
+
+  it('reads the singular `outro` (the old ContractsService default) as the canonical `other`, so list filters keep matching those rows', () => {
+    expect(canonicalContractCategorySlug('outro')).toBe('other');
+    expect(contractCategorySlugVariants('other')).toEqual(['other', 'outros', 'outro']);
+    expect(contractCategorySlugVariants('outro')).toEqual(['other', 'outros', 'outro']);
   });
 
   it('never renames tenant-created slugs or the already-English `shows`', () => {

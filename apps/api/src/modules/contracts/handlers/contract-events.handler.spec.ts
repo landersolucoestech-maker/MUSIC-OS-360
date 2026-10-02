@@ -1,4 +1,5 @@
 import { ContractEventsHandler } from './contract-events.handler';
+import { CANONICAL_TRANSACTION_CATEGORY_SLUGS } from '../../transactions/transaction-category-slugs';
 
 /**
  * Decision Gate items 2+3 (GAP-02/03): contract.signed already triggered
@@ -78,7 +79,7 @@ describe('ContractEventsHandler — onContractSigned', () => {
 
     expect(financialRules.evaluateRules).toHaveBeenCalledWith(
       't1', 'contract.signed',
-      expect.objectContaining({ entityId: 'c1', entityType: 'contract', amount: 5000, category: 'contracts' }),
+      expect.objectContaining({ entityId: 'c1', entityType: 'contract', amount: 5000, category: 'contractual_revenue' }),
     );
   });
 
@@ -92,6 +93,17 @@ describe('ContractEventsHandler — onContractSigned', () => {
     expect(transactionRepo.create).toHaveBeenCalledWith(
       expect.objectContaining({ transaction_date: new Date('2026-03-01T00:00:00.000Z') }),
     );
+  });
+
+  it('persists a category from the canonical transaction taxonomy, never an ad-hoc token (contratos / contracts)', async () => {
+    const { handler, transactionRepo } = buildWithContract({ id: 'c1', fixed_value: '5000', start_date: null });
+    await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
+
+    const created = transactionRepo.create.mock.calls[0][0] as { category: string; metadata: { source: string } };
+    expect(created.category).toBe('contractual_revenue');
+    expect(CANONICAL_TRANSACTION_CATEGORY_SLUGS).toContain(created.category);
+    // the backfill migration 20260930000035 selects legacy rows by exactly this provenance stamp
+    expect(created.metadata.source).toBe('contract.signed');
   });
 
   it('uses the current date as a fallback when the contract has no start_date', async () => {

@@ -183,7 +183,7 @@ export class ContractsService {
 
     const normalized = this.buildEntityPayload(rest, resolved);
     // contracts.type is NOT NULL; the wizard may not have a service type defined.
-    if (normalized['type'] == null) normalized['type'] = 'outro';
+    if (normalized['type'] == null) normalized['type'] = 'other';
     else if (typeof normalized['type'] === 'string') normalized['type'] = canonicalContractCategorySlug(normalized['type']);
 
     await assertSameTenantFk(this.ds!, 'artists', normalized['artist_id'] as string | undefined, tenantId, 'Artista');
@@ -238,7 +238,7 @@ export class ContractsService {
     this.logLegacyAliasUsage(legacyAliasesUsed, 'update', tenantId, id);
 
     const normalized = this.buildEntityPayload(restFields, resolved);
-    // No type='outro' default here — an absent PATCH must not force a value.
+    // No type='other' default here — an absent PATCH must not force a value.
     if (typeof normalized['type'] === 'string') normalized['type'] = canonicalContractCategorySlug(normalized['type']);
     // A client metadata update replaces the column: carry the server-owned
     // provider linkage over, or the signature webhook can no longer find the

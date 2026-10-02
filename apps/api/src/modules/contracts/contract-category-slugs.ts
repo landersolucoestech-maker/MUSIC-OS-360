@@ -46,6 +46,8 @@ export const LEGACY_CONTRACT_CATEGORY_SLUGS: Readonly<Record<string, CanonicalCo
   licenciamento: 'licensing',
   gestao: 'management',
   outros: 'other',
+  // Singular spelling written by ContractsService.create() as the default type until 20260930000034 backfilled it.
+  outro: 'other',
 };
 
 /** Canonical slug for a platform-owned legacy slug; every other slug is returned untouched. */

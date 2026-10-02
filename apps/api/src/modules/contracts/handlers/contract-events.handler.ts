@@ -149,7 +149,7 @@ export class ContractEventsHandler {
               const provisional = transactionRepo.create({
                 tenant_id: tenantId,
                 type: TransactionType.REVENUE,
-                category: 'contracts',
+                category: 'contractual_revenue',
                 description: `Receita prevista - contrato "${title}"`,
                 amount: String(contractAmount),
                 // GAP-0055: use the contract's real start date when available instead of
@@ -177,7 +177,7 @@ export class ContractEventsHandler {
                     transactionId: savedTx.id,
                     tenantId,
                     type: TransactionType.REVENUE,
-                    category: 'contracts',
+                    category: 'contractual_revenue',
                     amount: String(contractAmount),
                     contractId,
                     artistId: artistId ?? null,
@@ -192,7 +192,7 @@ export class ContractEventsHandler {
                   entityId: contractId,
                   entityType: 'contract',
                   amount: contractAmount,
-                  category: 'contracts',
+                  category: 'contractual_revenue',
                 });
               }
             }

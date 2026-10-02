@@ -31,7 +31,7 @@ const REAL_FORM_PAYLOAD = {
   tracks: [
     {
       id: 'track-1', name: 'Faixa 1', soloFeat: 'solo', originalRemix: 'original',
-      instrumental: 'nao', durationMinutes: '3', durationSeconds: '30', genre: 'pop', language: 'pt-BR',
+      instrumental: 'no', durationMinutes: '3', durationSeconds: '30', genre: 'pop', language: 'pt',
       composers: ['Fulano'], performers: ['Beltrano'], producers: ['Ciclano'], lyrics: 'lalala',
     },
   ],

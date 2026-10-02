@@ -231,7 +231,7 @@ async function createCoreData(token: string, tenantId: string, tag: string) {
     body: {
       transactionType: 'revenue',
       counterpartyType: 'company',
-      category: 'produtos',
+      category: 'products',
       subcategory: 'merchandising',
       description: `F8 Transaction ${tag}`,
       amount: '100.00',

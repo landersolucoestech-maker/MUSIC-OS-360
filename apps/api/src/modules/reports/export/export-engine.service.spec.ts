@@ -153,7 +153,7 @@ describe('Projetos — workbook faithful to the modal and with a single sheet', 
     const query = jest.fn()
       .mockResolvedValueOnce([{
         __internal_id: '00000000-0000-0000-0000-000000000001',
-        projectType: 'ep', projectTitle: 'Meu EP', notes: 'Obs', projectStatus: 'em_andamento',
+        projectType: 'ep', projectTitle: 'Meu EP', notes: 'Obs', projectStatus: 'in_progress',
       }])
       .mockResolvedValueOnce([
         { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'no', duration_minutes: '3', duration_seconds: '5', music_genre: 'pop', language: 'pt', lyrics: 'Letra 1', audio_url: 'audio-1.wav', sort_order: 0 },
@@ -179,7 +179,7 @@ describe('Projetos — workbook faithful to the modal and with a single sheet', 
     ]);
     expect(rows).toHaveLength(3);
     expect(rows[1]).toEqual([
-      'ep', 'Meu EP', 'Obs', 'em_andamento', 'Faixa 1', 'solo', 'original', 'Não',
+      'ep', 'Meu EP', 'Obs', 'Em andamento', 'Faixa 1', 'solo', 'original', 'Não',
       '3', '5', 'pop', 'Português', 'Compositor A', 'Intérprete A', 'Produtor A', 'Letra 1', 'audio-1.wav', '0',
     ]);
     expect(rows[2]?.[0]).toBe('ep');

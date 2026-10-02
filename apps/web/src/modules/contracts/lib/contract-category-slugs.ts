@@ -24,6 +24,8 @@ export const LEGACY_CONTRACT_CATEGORY_SLUGS: Readonly<Record<string, string>> = 
   licenciamento: "licensing",
   gestao: "management",
   outros: "other",
+  // Singular spelling the API wrote as the default contract type until migration 20260930000034.
+  outro: "other",
 };
 
 /**

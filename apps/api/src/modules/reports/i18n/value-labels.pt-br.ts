@@ -203,8 +203,15 @@ export function isMultiValueLabelColumn(table: string, column: string): boolean 
   return MULTI_VALUE_COLUMNS[table]?.has(column) ?? false;
 }
 
+/**
+ * Logical export/import column that carries the table's status under another name
+ * (projects: `projectStatus` -> status). Without it the column falls through to no labels and
+ * the sheet shows the raw canonical token (`in_progress`) instead of the PT-BR label.
+ */
+const LOGICAL_STATUS_COLUMN: Readonly<Record<string, string>> = { projects: 'projectStatus' };
+
 function labelsFor(table: string, column: string): Labels | null {
-  if (column === 'status') {
+  if (column === 'status' || LOGICAL_STATUS_COLUMN[table] === column) {
     const domain = STATUS_DOMAIN_BY_TABLE[table];
     return domain ? (STATUS_LABELS_PT_BR_BY_DOMAIN[domain] as Labels) : null;
   }

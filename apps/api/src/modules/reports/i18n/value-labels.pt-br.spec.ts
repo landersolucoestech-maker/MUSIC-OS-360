@@ -12,6 +12,14 @@ describe('report enum values — PT-BR in the spreadsheet, canonical in the data
     expect(sanitizeExcelCellValue('physical', { entity: 'phonograms', column: 'media_type' })).toBe('Física');
   });
 
+  it("labels the projects status under its logical export column (`projectStatus`) and maps the label back on import", () => {
+    expect(sanitizeExcelCellValue('in_progress', { entity: 'projects', column: 'projectStatus' })).toBe('Em andamento');
+    expect(sanitizeExcelCellValue('in_progress', { entity: 'projects', column: 'status' })).toBe('Em andamento');
+    expect(valueFromExportLabel('projects', 'projectStatus', 'Em andamento')).toBe('in_progress');
+    // another table's `projectStatus`-named column is not a status
+    expect(exportValueLabel('contracts', 'projectStatus', 'in_progress')).toBeNull();
+  });
+
   it('free text is never relabelled', () => {
     expect(exportValueLabel('transactions', 'description', 'revenue')).toBeNull();
     expect(sanitizeExcelCellValue('revenue', { entity: 'transactions', column: 'description' })).toBe('revenue');

@@ -609,7 +609,7 @@ function createCreativeFromContent(content: MarketingContent, destinationUrl: st
     destinationUrl,
     utmSource: platform.toLowerCase(),
     utmMedium: "paid",
-    utmCampaign: "campanha",
+    utmCampaign: "campaign",
     utmContent: placement.toLowerCase(),
     status: "draft",
   };
@@ -618,7 +618,7 @@ function createCreativeFromContent(content: MarketingContent, destinationUrl: st
 function createCreative(placement: CampaignPlacement, destinationUrl: string): CampaignCreative {
   const platform = placement.startsWith("TIKTOK") ? "TIKTOK_ADS" : placement.startsWith("YOUTUBE") ? "YOUTUBE_ADS" : placement.startsWith("GOOGLE") ? "GOOGLE_ADS" : placement.startsWith("SPOTIFY") ? "SPOTIFY_ADS" : "META_ADS";
   const lower = placement.toLowerCase();
-  return { id: crypto.randomUUID(), name: PLACEMENT_LABEL[placement], platform, placement, type: lower.includes("audio") ? "audio" : lower.includes("search") ? "text" : "video", fileName: "", fileSizeMb: 0, ratio: expectedRatio(placement), primaryCopy: "", headline: "", description: "", cta: "Saiba mais", destinationUrl, utmSource: platform.toLowerCase(), utmMedium: "paid", utmCampaign: "campanha", utmContent: placement.toLowerCase(), status: "draft" };
+  return { id: crypto.randomUUID(), name: PLACEMENT_LABEL[placement], platform, placement, type: lower.includes("audio") ? "audio" : lower.includes("search") ? "text" : "video", fileName: "", fileSizeMb: 0, ratio: expectedRatio(placement), primaryCopy: "", headline: "", description: "", cta: "Saiba mais", destinationUrl, utmSource: platform.toLowerCase(), utmMedium: "paid", utmCampaign: "campaign", utmContent: placement.toLowerCase(), status: "draft" };
 }
 
 function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {

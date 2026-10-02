@@ -37,6 +37,7 @@ import type {
 import { parseContractText } from "@/modules/contracts/services/semantic-parser.service";
 import { useVariableRegistry } from "@/modules/contracts/hooks/useVariableRegistry";
 import { useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
+import { SEMANTIC_CONTRACT_CATEGORY } from "@/modules/contracts/lib/contract-category-slugs";
 import { getExpectedUpdatedAt } from "@/shared/hooks/useConcurrencyConflict";
 
 // ── Props ──────────────────────────────────────────────────────────────────
@@ -537,7 +538,7 @@ export function ContractImportWorkspace({
 
   function handleClose() {
     setName("");
-    setCategory("semantico");
+    setCategory(SEMANTIC_CONTRACT_CATEGORY);
     setText("");
     setSearch("");
     setAiSuggestions([]);

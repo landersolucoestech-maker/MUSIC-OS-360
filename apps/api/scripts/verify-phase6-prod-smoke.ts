@@ -139,7 +139,7 @@ async function main() {
   ok('POST /contracts', [200,201].includes(ctr.status), `status=${ctr.status} body=${JSON.stringify(ctr.body).slice(0,150)}`);
   const ev = await call('POST', '/events', { title: `${tag}_EVENT`, type: 'show', startsAt: new Date().toISOString() });
   ok('POST /events', [200,201].includes(ev.status));
-  const tx = await call('POST', '/transactions', { transactionType: 'revenue', counterpartyType: 'company', category: 'outros', description: `${tag}_TX`, amount: '750.00', transactionDate: new Date().toISOString().slice(0,10), paymentMethod: 'pix', status: 'paid' });
+  const tx = await call('POST', '/transactions', { transactionType: 'revenue', counterpartyType: 'company', category: 'other', description: `${tag}_TX`, amount: '750.00', transactionDate: new Date().toISOString().slice(0,10), paymentMethod: 'pix', status: 'paid' });
   ok('POST /transactions', [200,201].includes(tx.status), `status=${tx.status}`);
 
   // Dashboard

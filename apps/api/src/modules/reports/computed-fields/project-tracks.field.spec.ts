@@ -81,11 +81,11 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
         trackName: 'Faixa importada',
         soloFeat: 'feat',
         originalRemix: 'remix',
-        instrumental: 'sim',
+        instrumental: 'yes',
         trackDurationMinutes: '4',
         trackDurationSeconds: '12',
         musicGenre: 'rock',
-        trackLanguage: 'ingles',
+        trackLanguage: 'en',
         lyrics: '',
         audioFiles: '',
         composers: ['A', ''],
@@ -97,7 +97,7 @@ describe('project-tracks.field — repeating group "Músicas do Projeto"', () =>
       const trackInsert = calls.find(([sql]) => sql.includes('"project_tracks"'));
       expect(trackInsert).toBeDefined();
       expect(trackInsert![1]).toEqual(
-        expect.arrayContaining(['tenant-1', 'new-project', 'Faixa importada', 'feat', 'remix', 'sim', '4', '12', 'rock', 'ingles']),
+        expect.arrayContaining(['tenant-1', 'new-project', 'Faixa importada', 'feat', 'remix', 'yes', '4', '12', 'rock', 'en']),
       );
 
       const participantInserts = calls.filter(([sql]) => sql.includes('"project_track_participants"'));

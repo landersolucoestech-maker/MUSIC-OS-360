@@ -4,7 +4,7 @@ import { BadRequestException } from '@nestjs/common';
  * Resolution of legacy EN aliases to the canonical pt-BR Contracts fields
  * (Phase 5 / C1). Pure: does not log, knows nothing of tenant/operation, does not access
  * a repository, does not import Swagger, does not apply business defaults (e.g.
- * tipo='outro') — that is ContractsService's responsibility.
+ * tipo='other') — that is ContractsService's responsibility.
  *
  * Presence rule: `hasOwnProperty` decides presence; `undefined` is treated
  * as absent; `null` is treated as provided (it takes part in conflicts, but

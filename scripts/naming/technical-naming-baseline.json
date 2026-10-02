@@ -1,7 +1,6 @@
 {
  "totals": {
-  "doc": 8696,
-  "value": 37
+  "doc": 8696
  },
  "debt": {
   "doc::docs/BLUEPRINT_ENTERPRISE.md": 237,
@@ -119,32 +118,6 @@
   "doc::docs/backend-v2/gap-resolution/00-canonical-gap-register.md": 883,
   "doc::docs/backend-v2/review/00-master-domain-functional-verification.md": 1779,
   "doc::reports/CLEANUP_REPORT.md": 140,
-  "doc::reports/phase3-architecture.md": 30,
-  "value::.claude/runtime/discovery-engine.mjs::string::cargo": 1,
-  "value::apps/api/scripts/verify-phase6-prod-smoke.ts::string::outros": 1,
-  "value::apps/api/scripts/verify-phase8-resilience.ts::string::produtos": 1,
-  "value::apps/api/src/core/automation/deals-crm.automation.spec.ts::string::distribuicao": 1,
-  "value::apps/api/src/core/automation/deals-crm.automation.spec.ts::string::gestao": 1,
-  "value::apps/api/src/modules/contract-service-types/contract-service-types.controller.spec.ts::string::distribuicao": 1,
-  "value::apps/api/src/modules/contract-service-types/contract-service-types.service.spec.ts::string::distribuicao": 5,
-  "value::apps/api/src/modules/contract-templates/contract-templates.service.spec.ts::string::semantico": 1,
-  "value::apps/api/src/modules/contracts/contracts.service.ts::string::outro": 1,
-  "value::apps/api/src/modules/hr/hr-cross-tenant-fk.security.spec.ts::string::ferias": 1,
-  "value::apps/api/src/modules/projects/dto/projects.dto.spec.ts::string::nao": 1,
-  "value::apps/api/src/modules/projects/projects.service.spec.ts::string::nao": 1,
-  "value::apps/api/src/modules/reports/computed-fields/project-tracks.field.spec.ts::string::ingles": 2,
-  "value::apps/api/src/modules/reports/computed-fields/project-tracks.field.spec.ts::string::sim": 2,
-  "value::apps/api/src/modules/reports/export/export-engine.service.spec.ts::string::em_andamento": 2,
-  "value::apps/api/src/modules/reports/export/export-engine.service.spec.ts::string::portugues": 1,
-  "value::apps/api/src/modules/reports/export/export-engine.service.spec.ts::string::sim": 1,
-  "value::apps/api/src/modules/reports/export/export-format.service.spec.ts::string::descricao": 1,
-  "value::apps/api/src/modules/reports/export/export-format.service.spec.ts::string::telefone": 1,
-  "value::apps/api/src/modules/reports/export/export-format.service.spec.ts::string::truncado": 1,
-  "value::apps/api/src/modules/reports/export/export-format.service.spec.ts::string::valor": 2,
-  "value::apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx::string::semantico": 1,
-  "value::apps/web/src/modules/contracts/hooks/contract-category-label.test.ts::string::cessao_direitos": 2,
-  "value::apps/web/src/modules/contracts/hooks/contract-category-label.test.ts::string::semantico": 2,
-  "value::apps/web/src/modules/marketing/components/campaign-builder/steps.tsx::string::campanha": 2,
-  "value::scripts/generate-blueprint-appendices.mjs::string::classe": 1
+  "doc::reports/phase3-architecture.md": 30
  }
 }

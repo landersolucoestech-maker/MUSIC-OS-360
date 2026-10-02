@@ -124,7 +124,7 @@ const appendix = [
   '',
   '### 26.8 API Entities',
   '',
-  table(['file', 'classe', '@Entity'], entityRows),
+  table(['file', 'class', '@Entity'], entityRows),
   '',
   listSection('26.9 API DTO Files', dtoFiles.map(rel)),
   listSection('26.10 API Validator Files', validatorFiles.map(rel)),

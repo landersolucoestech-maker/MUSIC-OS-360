@@ -49,7 +49,7 @@ describe('HrService — cross-tenant FK ownership (find-88311b49)', () => {
     await expect(
       service.createLeaveRequest('tenant-1', 'user-1', {
         employee_id: '323e4567-e89b-12d3-a456-426614174000',
-        type: 'ferias', start_date: '2026-01-01', end_date: '2026-01-10',
+        type: 'vacation', start_date: '2026-01-01', end_date: '2026-01-10',
       } as unknown as CreateLeaveRequestDto),
     ).rejects.toBeInstanceOf(BadRequestException);
   });

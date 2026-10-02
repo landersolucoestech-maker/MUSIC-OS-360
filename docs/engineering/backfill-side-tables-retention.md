@@ -27,6 +27,8 @@ reach them. They are rollback material, not a business dataset: they must be sho
 | `assets_asset_type_backfill_20260930` | `20260930000025` | `before`/`after` of `assets.asset_type` and `assets.metadata` | Medium (file metadata) |
 | `marketing_vocabulary_backfill_20260930` | `20260930000026` | `before`/`after` of `metadata` (and task `kind`) of marketing projects, tasks, campaigns, briefings, content posts, `activity_logs` | **High** (free-form metadata, audience data, activity details) |
 | `artist_distributor_id_backfill_20260930` | `20260930000027` | `before`/`after` of the artists' distributor columns | Medium (contact e-mails, phones) |
+| `contract_type_backfill_20260930` | `20260930000034` | `before`/`after` of `contracts.type` (`outro` -> `other`) | Low (vocabulary values) |
+| `contract_signed_transaction_category_backfill_20260930` | `20260930000035` | `before`/`after` of `transactions.category` for contract-signed provisional transactions | Low (vocabulary values) |
 
 Related but separate: `<table>_legacy_archive_20260930` tables exist only if a gated legacy column drop
 (`docs/engineering/legacy-column-drop-plan.md`) was executed; they follow the same rules and are retired by

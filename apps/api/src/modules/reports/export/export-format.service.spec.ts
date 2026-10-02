@@ -61,7 +61,7 @@ describe('ExportFormatService — XLSX serialization', () => {
 
     it('ensures the result never exceeds EXCEL_CELL_MAX_CHARS even for absurdly large inputs', () => {
       const absurd = 'Z'.repeat(200000);
-      const out = sanitizeExcelCellValue(absurd, { entity: 'briefings', column: 'descricao' });
+      const out = sanitizeExcelCellValue(absurd, { entity: 'briefings', column: 'description' });
       expect(out.length).toBeLessThanOrEqual(EXCEL_CELL_MAX_CHARS);
     });
 
@@ -84,14 +84,14 @@ describe('ExportFormatService — XLSX serialization', () => {
       });
 
       it('does NOT neutralize a legitimate phone number starting with "+" (real and common data in this application)', () => {
-        expect(sanitizeExcelCellValue('+5511999990000', { entity: 'clients', column: 'telefone' })).toBe(
+        expect(sanitizeExcelCellValue('+5511999990000', { entity: 'clients', column: 'phone' })).toBe(
           '+5511999990000',
         );
       });
 
       it('does NOT neutralize a legitimate negative monetary value starting with "-"', () => {
-        expect(sanitizeExcelCellValue('-42.50', { entity: 'transactions', column: 'valor' })).toBe('-42.50');
-        expect(sanitizeExcelCellValue('-1234,56', { entity: 'transactions', column: 'valor' })).toBe('-1234,56');
+        expect(sanitizeExcelCellValue('-42.50', { entity: 'transactions', column: 'amount' })).toBe('-42.50');
+        expect(sanitizeExcelCellValue('-1234,56', { entity: 'transactions', column: 'amount' })).toBe('-1234,56');
       });
 
       it('plain text without a dangerous prefix is not altered', () => {

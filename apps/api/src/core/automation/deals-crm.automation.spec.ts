@@ -31,9 +31,9 @@ function makeFailingAi() {
 const CLIENT = { name: 'Banda Aurora Produções', category: 'CORPORATE_CLIENT' };
 
 const CONTRACTS = [
-  { id: 'c1', title: 'Contrato de distribuição', type: 'distribuicao', status: 'signed', fixed_value: '5000.00', start_date: '2026-01-01', end_date: '2026-12-31' },
+  { id: 'c1', title: 'Contrato de distribuição', type: 'distribution', status: 'signed', fixed_value: '5000.00', start_date: '2026-01-01', end_date: '2026-12-31' },
   { id: 'c2', title: 'Contrato de shows', type: 'shows', status: 'expiring', fixed_value: null, start_date: '2026-01-01', end_date: '2026-02-01' },
-  { id: 'c3', title: 'Contrato antigo', type: 'gestao', status: 'cancelled', fixed_value: '1000.00', start_date: null, end_date: null },
+  { id: 'c3', title: 'Contrato antigo', type: 'management', status: 'cancelled', fixed_value: '1000.00', start_date: null, end_date: null },
 ];
 
 function makeClients(client: unknown = CLIENT, contracts: unknown = CONTRACTS) {

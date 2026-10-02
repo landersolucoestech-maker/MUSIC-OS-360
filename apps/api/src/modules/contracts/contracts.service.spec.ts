@@ -3,7 +3,7 @@
  *
  * Covers exclusively the C1 prerequisite (unrelated to EN/PT aliases):
  * persistence of template_id/signers (columns from migration
- * 20260712000004, already committed) and the default `type = 'outro'` when
+ * 20260712000004, already committed) and the default `type = 'other'` when
  * the wizard creates a contract without a defined service type. No test
  * here covers alias resolution — that belongs to the C1 commit proper.
  */
@@ -82,13 +82,13 @@ describe('ContractsService.create — template_id/signers/type default (C1 prere
     expect(created(repo)['documents']).toEqual([]);
   });
 
-  it('applies type="outro" when neither type nor tipo is sent (wizard flow without a template)', async () => {
+  it('applies type="other" when neither type nor tipo is sent (wizard flow without a template)', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato sem tipo definido',
     } as unknown as CreateContractDto);
 
-    expect(created(repo)['type']).toBe('outro');
+    expect(created(repo)['type']).toBe('other');
   });
 
   it('keeps the sent type when present (default not applied)', async () => {
@@ -258,10 +258,10 @@ describe('ContractsService.create — alias consolidation (Phase 5 / C1)', () =>
     expect(repo.create).not.toHaveBeenCalled();
   });
 
-  it('absent type applies the "outro" default (covered by the prerequisite; reconfirmed after resolver integration)', async () => {
+  it('absent type applies the "other" default (covered by the prerequisite; reconfirmed after resolver integration)', async () => {
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', { title: 'X' } as unknown as CreateContractDto);
-    expect(createdC1(repo)['type']).toBe('outro');
+    expect(createdC1(repo)['type']).toBe('other');
   });
 
   it('a zero value is preserved (not treated as absent)', async () => {
@@ -349,7 +349,7 @@ describe('ContractsService.update — alias consolidation (Phase 5 / C1)', () =>
     expect(repo.update).not.toHaveBeenCalled();
   });
 
-  it('update without a sent type does NOT apply the "outro" default', async () => {
+  it('update without a sent type does NOT apply the "other" default', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.update('tenant-1', 'user-1', 'contract-1', { notes: 'x' } as unknown as UpdateContractDto);
 
