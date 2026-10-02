@@ -333,6 +333,15 @@
       ]
     },
     {
+      "agent": "accessibility-auditor",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "accessibility-engineer",
       "allowedTools": [
         "Read",
@@ -437,6 +446,17 @@
       "agent": "api-reviewer",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "api-test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -617,6 +637,17 @@
       ]
     },
     {
+      "agent": "browser-test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "caching-engineer",
       "allowedTools": [
         "Read",
@@ -629,6 +660,15 @@
     },
     {
       "agent": "capability-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "chaos-test-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -746,6 +786,17 @@
       "agent": "contract-architecture-reviewer",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "contract-test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -1021,6 +1072,17 @@
       ]
     },
     {
+      "agent": "e2e-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "encryption-reviewer",
       "allowedTools": [
         "Read",
@@ -1173,6 +1235,24 @@
     },
     {
       "agent": "file-upload-security-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "fixture-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "flaky-test-detector",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1371,6 +1451,17 @@
       ]
     },
     {
+      "agent": "integration-test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "interaction-engineer",
       "allowedTools": [
         "Read",
@@ -1383,6 +1474,17 @@
     },
     {
       "agent": "job-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "load-test-engineer",
       "allowedTools": [
         "Read",
         "Edit",
@@ -1431,6 +1533,17 @@
       ]
     },
     {
+      "agent": "migration-test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "mission-controller",
       "allowedTools": [
         "Read",
@@ -1438,6 +1551,15 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "mock-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     },
     {
@@ -1475,6 +1597,15 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "mutation-test-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     },
     {
@@ -1557,6 +1688,17 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "performance-test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     },
     {
@@ -1798,6 +1940,17 @@
       ]
     },
     {
+      "agent": "resilience-test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "responsive-engineer",
       "allowedTools": [
         "Read",
@@ -1911,6 +2064,15 @@
       ]
     },
     {
+      "agent": "runtime-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "scheduler-engineer",
       "allowedTools": [
         "Read",
@@ -1989,6 +2151,17 @@
       ]
     },
     {
+      "agent": "security-test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "serialization-engineer",
       "allowedTools": [
         "Read",
@@ -2030,6 +2203,24 @@
     },
     {
       "agent": "skill-router",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "smoke-test-validator",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "snapshot-test-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -2142,6 +2333,26 @@
       ]
     },
     {
+      "agent": "test-data-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "test-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "test-planner",
       "allowedTools": [
         "Read",
@@ -2190,6 +2401,17 @@
     },
     {
       "agent": "ui-ux-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "unit-test-engineer",
       "allowedTools": [
         "Read",
         "Edit",
@@ -2260,6 +2482,15 @@
     },
     {
       "agent": "visual-consistency-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "visual-qa-engineer",
       "allowedTools": [
         "Read",
         "Grep",

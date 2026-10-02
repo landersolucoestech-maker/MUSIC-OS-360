@@ -1735,163 +1735,186 @@
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "qa-engineer"
+   "finalState": "CREATED",
+   "existingEquivalent": "qa-engineer",
+   "file": ".claude/agents/test-engineer.md"
   },
   {
    "name": "unit-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/unit-test-engineer.md"
   },
   {
    "name": "integration-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/integration-test-engineer.md"
   },
   {
    "name": "api-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/api-test-engineer.md"
   },
   {
    "name": "e2e-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/e2e-engineer.md"
   },
   {
    "name": "contract-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/contract-test-engineer.md"
   },
   {
    "name": "visual-qa-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/visual-qa-engineer.md"
   },
   {
    "name": "accessibility-auditor",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "accessibility-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "accessibility-reviewer",
+   "file": ".claude/agents/accessibility-auditor.md"
   },
   {
    "name": "mutation-test-reviewer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/mutation-test-reviewer.md"
   },
   {
    "name": "fixture-reviewer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/fixture-reviewer.md"
   },
   {
    "name": "mock-reviewer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/mock-reviewer.md"
   },
   {
    "name": "test-data-reviewer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/test-data-reviewer.md"
   },
   {
    "name": "flaky-test-detector",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/flaky-test-detector.md"
   },
   {
    "name": "runtime-validator",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/runtime-validator.md"
   },
   {
    "name": "smoke-test-validator",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/smoke-test-validator.md"
   },
   {
    "name": "browser-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/browser-test-engineer.md"
   },
   {
    "name": "performance-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/performance-test-engineer.md"
   },
   {
    "name": "load-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/load-test-engineer.md"
   },
   {
    "name": "resilience-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/resilience-test-engineer.md"
   },
   {
    "name": "migration-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/migration-test-engineer.md"
   },
   {
    "name": "security-test-engineer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/security-test-engineer.md"
   },
   {
    "name": "chaos-test-reviewer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/chaos-test-reviewer.md"
   },
   {
    "name": "snapshot-test-reviewer",
    "type": "agent",
    "batch": 10,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/snapshot-test-reviewer.md"
   },
   {
    "name": "observability-engineer",

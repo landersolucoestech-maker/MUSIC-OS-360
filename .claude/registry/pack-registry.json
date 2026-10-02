@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 214,
+  "agents": 237,
   "skills": 0,
-  "capabilities": 191,
+  "capabilities": 214,
   "workflows": 6
  },
  "agents": [
@@ -53,6 +53,30 @@
     "evidence-collection",
     "trace",
     "test-generator"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "accessibility-auditor",
+   "kind": "reviewer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/accessibility-auditor.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.accessibility-audit"
+   ],
+   "skills": [
+    "run-accessibility-tests",
+    "create-accessibility-tests",
+    "browser-runtime-check"
    ],
    "approval": "none"
   },
@@ -351,6 +375,36 @@
     "authorization-audit",
     "code-review",
     "api-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "api-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/api-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/**/*.controller.spec.ts",
+    "apps/api/test/**"
+   ],
+   "capabilities": [
+    "testing.api"
+   ],
+   "skills": [
+    "create-api-tests",
+    "run-api-tests",
+    "create-authorization-tests",
+    "create-security-tests"
    ],
    "approval": "none"
   },
@@ -833,6 +887,36 @@
    "approval": "none"
   },
   {
+   "name": "browser-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/browser-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "e2e/**",
+    "apps/web/e2e/**"
+   ],
+   "capabilities": [
+    "testing.browser"
+   ],
+   "skills": [
+    "create-e2e-tests",
+    "run-e2e",
+    "browser-runtime-check",
+    "create-accessibility-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "caching-engineer",
    "kind": "engineer",
    "domain": "backend",
@@ -882,6 +966,30 @@
    "skills": [
     "plan",
     "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "chaos-test-reviewer",
+   "kind": "reviewer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/chaos-test-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.review.chaos"
+   ],
+   "skills": [
+    "run-integration-tests",
+    "handle-provider-failure",
+    "circuit-breaker-audit"
    ],
    "approval": "none"
   },
@@ -1192,6 +1300,37 @@
     "contract-tracing",
     "api-contract-audit",
     "producer-consumer-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "contract-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/contract-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/**/*.contract.spec.ts",
+    "apps/web/src/**/*.contract.test.ts",
+    "packages/**/*.contract.test.ts"
+   ],
+   "capabilities": [
+    "testing.contract"
+   ],
+   "skills": [
+    "create-contract-tests",
+    "generate-contract",
+    "run-api-tests",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -1929,6 +2068,36 @@
    "approval": "none"
   },
   {
+   "name": "e2e-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/e2e-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "e2e/**",
+    "playwright.config.ts"
+   ],
+   "capabilities": [
+    "testing.e2e"
+   ],
+   "skills": [
+    "create-e2e-tests",
+    "run-e2e",
+    "browser-runtime-check",
+    "runtime-smoke-test"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "encryption-reviewer",
    "kind": "reviewer",
    "domain": "security",
@@ -2355,6 +2524,54 @@
     "upload-security-audit",
     "media-security-audit",
     "tenant-isolation-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "fixture-reviewer",
+   "kind": "reviewer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/fixture-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.review.fixture"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "pii-audit",
+    "secret-scan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "flaky-test-detector",
+   "kind": "investigator",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/flaky-test-detector.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.detect-flaky"
+   ],
+   "skills": [
+    "run-unit-tests",
+    "run-integration-tests",
+    "run-e2e"
    ],
    "approval": "none"
   },
@@ -2882,6 +3099,35 @@
    "approval": "none"
   },
   {
+   "name": "integration-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/integration-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/test/e2e/**",
+    "apps/api/src/**/*.integration.spec.ts"
+   ],
+   "capabilities": [
+    "testing.integration"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "run-integration-tests",
+    "create-tenant-isolation-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "interaction-engineer",
    "kind": "engineer",
    "domain": "frontend",
@@ -2937,6 +3183,34 @@
     "background-job-audit",
     "implement-background-job",
     "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "load-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/load-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/test/load/**"
+   ],
+   "capabilities": [
+    "testing.load"
+   ],
+   "skills": [
+    "create-load-tests",
+    "run-performance-tests",
+    "queue-audit"
    ],
    "approval": "none"
   },
@@ -3046,6 +3320,35 @@
    "approval": "none"
   },
   {
+   "name": "migration-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/migration-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/database/**/*.migration.spec.ts",
+    "apps/api/test/e2e/schema/**"
+   ],
+   "capabilities": [
+    "testing.migration"
+   ],
+   "skills": [
+    "create-migration-tests",
+    "migration-safety-check",
+    "run-integration-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "mission-controller",
    "kind": "controller",
    "domain": "control",
@@ -3069,6 +3372,30 @@
     "evidence-collection",
     "control-plane",
     "mission-recovery"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "mock-reviewer",
+   "kind": "reviewer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/mock-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.review.mock"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "create-integration-tests",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -3173,6 +3500,30 @@
     "mission-recovery",
     "systemic-audit",
     "quality-gate"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "mutation-test-reviewer",
+   "kind": "reviewer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/mutation-test-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.review.mutation"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "run-unit-tests",
+    "create-regression-tests"
    ],
    "approval": "none"
   },
@@ -3392,6 +3743,35 @@
     "scope-lock",
     "ownership-map",
     "plan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "performance-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/performance-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/test/performance/**",
+    "apps/web/src/**/*.perf.test.ts"
+   ],
+   "capabilities": [
+    "testing.performance"
+   ],
+   "skills": [
+    "create-performance-tests",
+    "run-performance-tests",
+    "frontend-performance-audit"
    ],
    "approval": "none"
   },
@@ -4044,6 +4424,36 @@
    "approval": "none"
   },
   {
+   "name": "resilience-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/resilience-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/test/resilience/**",
+    "apps/api/src/**/*.resilience.spec.ts"
+   ],
+   "capabilities": [
+    "testing.resilience"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "run-integration-tests",
+    "handle-provider-failure",
+    "circuit-breaker-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "responsive-engineer",
    "kind": "engineer",
    "domain": "frontend",
@@ -4351,6 +4761,31 @@
    "approval": "none"
   },
   {
+   "name": "runtime-validator",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/runtime-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.runtime-validate"
+   ],
+   "skills": [
+    "runtime-smoke-test",
+    "runtime-path-trace",
+    "browser-runtime-check",
+    "production-build-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "scheduler-engineer",
    "kind": "engineer",
    "domain": "backend",
@@ -4565,6 +5000,37 @@
    "approval": "none"
   },
   {
+   "name": "security-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/security-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/test/security/**",
+    "apps/api/src/**/*.security.spec.ts",
+    "apps/api/test/e2e/rls/**"
+   ],
+   "capabilities": [
+    "testing.security"
+   ],
+   "skills": [
+    "create-security-tests",
+    "run-security-tests",
+    "create-tenant-isolation-tests",
+    "create-authorization-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "serialization-engineer",
    "kind": "engineer",
    "domain": "backend",
@@ -4693,6 +5159,54 @@
    "skills": [
     "plan",
     "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "smoke-test-validator",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/smoke-test-validator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.smoke"
+   ],
+   "skills": [
+    "runtime-smoke-test",
+    "production-build-check",
+    "run-api-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "snapshot-test-reviewer",
+   "kind": "reviewer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/snapshot-test-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.review.snapshot"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "create-visual-tests",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -4977,6 +5491,63 @@
    "approval": "none"
   },
   {
+   "name": "test-data-reviewer",
+   "kind": "reviewer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/test-data-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.review.test-data"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "create-tenant-isolation-tests",
+    "pii-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/**/*.spec.ts",
+    "apps/api/test/**",
+    "apps/web/src/**/*.test.ts",
+    "apps/web/src/**/*.test.tsx"
+   ],
+   "capabilities": [
+    "testing.implement"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "create-integration-tests",
+    "create-regression-tests",
+    "run-unit-tests",
+    "run-integration-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "test-planner",
    "kind": "planner",
    "domain": "planning",
@@ -5129,6 +5700,35 @@
     "browser-runtime-check",
     "empty-state-audit",
     "error-state-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "unit-test-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/unit-test-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/**/*.spec.ts",
+    "apps/web/src/**/*.test.ts"
+   ],
+   "capabilities": [
+    "testing.unit"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "run-unit-tests",
+    "create-regression-tests"
    ],
    "approval": "none"
   },
@@ -5315,6 +5915,30 @@
     "token-audit",
     "spacing-audit",
     "typography-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "visual-qa-engineer",
+   "kind": "engineer",
+   "domain": "testing",
+   "batch": 10,
+   "owner": "testing owner",
+   "path": ".claude/agents/visual-qa-engineer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "testing.visual-qa"
+   ],
+   "skills": [
+    "run-visual-regression",
+    "create-visual-tests",
+    "browser-runtime-check"
    ],
    "approval": "none"
   },
@@ -9735,6 +10359,489 @@
     "frontend-audit",
     "security-boundary-audit",
     "xss-audit"
+   ]
+  },
+  {
+   "id": "testing.accessibility-audit",
+   "domain": "testing",
+   "description": "Audit accessibility with automated checks and keyboard and focus inspection of the running UI",
+   "validation": [
+    "accessibility test run",
+    "manual keyboard inspection"
+   ],
+   "evidence": [
+    "accessibility audit record"
+   ],
+   "approval": "none",
+   "executors": [
+    "accessibility-auditor"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "create-accessibility-tests",
+    "run-accessibility-tests"
+   ]
+  },
+  {
+   "id": "testing.api",
+   "domain": "testing",
+   "description": "Write API tests for routes: validation, authentication, authorization, response shape and errors",
+   "validation": [
+    "api tests executed"
+   ],
+   "evidence": [
+    "change-set record",
+    "api test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "api-test-engineer"
+   ],
+   "skills": [
+    "create-api-tests",
+    "create-authorization-tests",
+    "create-security-tests",
+    "run-api-tests"
+   ]
+  },
+  {
+   "id": "testing.browser",
+   "domain": "testing",
+   "description": "Write browser-level tests with a real browser engine for behavior unit tests cannot show",
+   "validation": [
+    "browser tests executed"
+   ],
+   "evidence": [
+    "change-set record",
+    "browser test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "browser-test-engineer"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "create-accessibility-tests",
+    "create-e2e-tests",
+    "run-e2e"
+   ]
+  },
+  {
+   "id": "testing.contract",
+   "domain": "testing",
+   "description": "Write contract tests that keep producers and consumers of an API, event or shared type in agreement",
+   "validation": [
+    "contract tests executed on both sides"
+   ],
+   "evidence": [
+    "change-set record",
+    "contract test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "contract-test-engineer"
+   ],
+   "skills": [
+    "create-contract-tests",
+    "generate-contract",
+    "run-api-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "testing.detect-flaky",
+   "domain": "testing",
+   "description": "Detect flaky tests by repeated execution and by reading for time, order and shared-state dependence",
+   "validation": [
+    "repeated runs with recorded outcomes"
+   ],
+   "evidence": [
+    "flakiness report"
+   ],
+   "approval": "none",
+   "executors": [
+    "flaky-test-detector"
+   ],
+   "skills": [
+    "run-e2e",
+    "run-integration-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "testing.e2e",
+   "domain": "testing",
+   "description": "Write end-to-end tests of real user journeys against a running stack with real persistence",
+   "validation": [
+    "e2e run in a real browser against the running stack"
+   ],
+   "evidence": [
+    "change-set record",
+    "e2e run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "e2e-engineer"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "create-e2e-tests",
+    "run-e2e",
+    "runtime-smoke-test"
+   ]
+  },
+  {
+   "id": "testing.implement",
+   "domain": "testing",
+   "description": "Write tests selected by risk and changed boundaries, covering the changed path and its negative cases",
+   "validation": [
+    "executed test run bound to the current workspace",
+    "false-green check"
+   ],
+   "evidence": [
+    "test code change set",
+    "test run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "test-engineer"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "create-regression-tests",
+    "create-unit-tests",
+    "run-integration-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "testing.integration",
+   "domain": "testing",
+   "description": "Write integration tests that exercise real module boundaries against a disposable database and queue",
+   "validation": [
+    "integration tests executed against a disposable database"
+   ],
+   "evidence": [
+    "change-set record",
+    "integration test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-test-engineer"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "create-tenant-isolation-tests",
+    "run-integration-tests"
+   ]
+  },
+  {
+   "id": "testing.load",
+   "domain": "testing",
+   "description": "Write load tests that ramp traffic on a disposable target and record latency, errors and saturation",
+   "validation": [
+    "load run on a disposable target"
+   ],
+   "evidence": [
+    "change-set record",
+    "load run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "load-test-engineer"
+   ],
+   "skills": [
+    "create-load-tests",
+    "queue-audit",
+    "run-performance-tests"
+   ]
+  },
+  {
+   "id": "testing.migration",
+   "domain": "testing",
+   "description": "Write migration tests that prove up, down and up again and old and new code coexistence on a disposable database",
+   "validation": [
+    "migration run on a disposable database"
+   ],
+   "evidence": [
+    "change-set record",
+    "migration run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "migration-test-engineer"
+   ],
+   "skills": [
+    "create-migration-tests",
+    "migration-safety-check",
+    "run-integration-tests"
+   ]
+  },
+  {
+   "id": "testing.performance",
+   "domain": "testing",
+   "description": "Write performance tests with a stated budget, a baseline and repeatable conditions",
+   "validation": [
+    "performance run against the budget"
+   ],
+   "evidence": [
+    "change-set record",
+    "performance run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "performance-test-engineer"
+   ],
+   "skills": [
+    "create-performance-tests",
+    "frontend-performance-audit",
+    "run-performance-tests"
+   ]
+  },
+  {
+   "id": "testing.resilience",
+   "domain": "testing",
+   "description": "Write resilience tests that inject provider, database and queue failures and prove degradation and recovery",
+   "validation": [
+    "failure injection run"
+   ],
+   "evidence": [
+    "change-set record",
+    "resilience run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "resilience-test-engineer"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "create-integration-tests",
+    "handle-provider-failure",
+    "run-integration-tests"
+   ]
+  },
+  {
+   "id": "testing.review.chaos",
+   "domain": "testing",
+   "description": "Review chaos and fault-injection experiments for safe scope, hypothesis, blast radius and recorded result",
+   "validation": [
+    "chaos experiment review"
+   ],
+   "evidence": [
+    "chaos review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "chaos-test-reviewer"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "handle-provider-failure",
+    "run-integration-tests"
+   ]
+  },
+  {
+   "id": "testing.review.fixture",
+   "domain": "testing",
+   "description": "Review fixtures for realism, isolation, determinism and absence of real personal data or secrets",
+   "validation": [
+    "fixture audit"
+   ],
+   "evidence": [
+    "fixture review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "fixture-reviewer"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "pii-audit",
+    "secret-scan"
+   ]
+  },
+  {
+   "id": "testing.review.mock",
+   "domain": "testing",
+   "description": "Review mocks for whether they remove the boundary under test and whether they match the real behavior",
+   "validation": [
+    "mock audit"
+   ],
+   "evidence": [
+    "mock review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "mock-reviewer"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "create-unit-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "testing.review.mutation",
+   "domain": "testing",
+   "description": "Review whether tests would fail if the code were wrong, using mutation results or targeted mutation by hand",
+   "validation": [
+    "mutation run or manual mutation of critical logic"
+   ],
+   "evidence": [
+    "mutation review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "mutation-test-reviewer"
+   ],
+   "skills": [
+    "create-regression-tests",
+    "create-unit-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "testing.review.snapshot",
+   "domain": "testing",
+   "description": "Review snapshot tests for meaningful assertions, bounded size and deliberate updates",
+   "validation": [
+    "snapshot audit"
+   ],
+   "evidence": [
+    "snapshot review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "snapshot-test-reviewer"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "create-visual-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "testing.review.test-data",
+   "domain": "testing",
+   "description": "Review test data for coverage of real cases, tenant separation, cleanup and absence of real data",
+   "validation": [
+    "test data audit"
+   ],
+   "evidence": [
+    "test data review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "test-data-reviewer"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "create-tenant-isolation-tests",
+    "pii-audit"
+   ]
+  },
+  {
+   "id": "testing.runtime-validate",
+   "domain": "testing",
+   "description": "Validate that the changed behavior actually runs: start the process, exercise the path and read logs and responses",
+   "validation": [
+    "runtime execution of the changed path"
+   ],
+   "evidence": [
+    "runtime validation record"
+   ],
+   "approval": "none",
+   "executors": [
+    "runtime-validator"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "production-build-check",
+    "runtime-path-trace",
+    "runtime-smoke-test"
+   ]
+  },
+  {
+   "id": "testing.security",
+   "domain": "testing",
+   "description": "Write security tests that prove prohibited access, hostile input and cross-tenant attempts fail closed",
+   "validation": [
+    "security tests executed with negative cases"
+   ],
+   "evidence": [
+    "change-set record",
+    "security test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "security-test-engineer"
+   ],
+   "skills": [
+    "create-authorization-tests",
+    "create-security-tests",
+    "create-tenant-isolation-tests",
+    "run-security-tests"
+   ]
+  },
+  {
+   "id": "testing.smoke",
+   "domain": "testing",
+   "description": "Run smoke tests on a build or deployment target to confirm the critical paths respond",
+   "validation": [
+    "smoke run with recorded results"
+   ],
+   "evidence": [
+    "smoke run record"
+   ],
+   "approval": "none",
+   "executors": [
+    "smoke-test-validator"
+   ],
+   "skills": [
+    "production-build-check",
+    "run-api-tests",
+    "runtime-smoke-test"
+   ]
+  },
+  {
+   "id": "testing.unit",
+   "domain": "testing",
+   "description": "Write fast unit tests for logic, including edge, error and boundary cases",
+   "validation": [
+    "unit tests executed"
+   ],
+   "evidence": [
+    "change-set record",
+    "unit test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "unit-test-engineer"
+   ],
+   "skills": [
+    "create-regression-tests",
+    "create-unit-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "testing.visual-qa",
+   "domain": "testing",
+   "description": "Run visual regression and judge whether differences are intended, with approved baselines only",
+   "validation": [
+    "visual regression run"
+   ],
+   "evidence": [
+    "visual run record"
+   ],
+   "approval": "none",
+   "executors": [
+    "visual-qa-engineer"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "create-visual-tests",
+    "run-visual-regression"
    ]
   }
  ],

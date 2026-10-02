@@ -195,6 +195,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "accessibility-auditor",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "accessibility-engineer",
       "writes": [
         "apps/web/src/shared/components/**",
@@ -265,6 +270,14 @@
       "agent": "api-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "api-test-engineer",
+      "writes": [
+        "apps/api/src/**/*.controller.spec.ts",
+        "apps/api/test/**"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/api-test-engineer.md"
     },
     {
       "agent": "approval-router",
@@ -374,6 +387,14 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "browser-test-engineer",
+      "writes": [
+        "e2e/**",
+        "apps/web/e2e/**"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/browser-test-engineer.md"
+    },
+    {
       "agent": "caching-engineer",
       "writes": [
         "apps/api/src/cache/**",
@@ -383,6 +404,11 @@
     },
     {
       "agent": "capability-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "chaos-test-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -453,6 +479,15 @@
       "agent": "contract-architecture-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "contract-test-engineer",
+      "writes": [
+        "apps/api/src/**/*.contract.spec.ts",
+        "apps/web/src/**/*.contract.test.ts",
+        "packages/**/*.contract.test.ts"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/contract-test-engineer.md"
     },
     {
       "agent": "contradiction-detector",
@@ -620,6 +655,14 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "e2e-engineer",
+      "writes": [
+        "e2e/**",
+        "playwright.config.ts"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/e2e-engineer.md"
+    },
+    {
       "agent": "encryption-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -709,6 +752,16 @@
     },
     {
       "agent": "file-upload-security-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "fixture-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "flaky-test-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -833,6 +886,14 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "integration-test-engineer",
+      "writes": [
+        "apps/api/test/e2e/**",
+        "apps/api/src/**/*.integration.spec.ts"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/integration-test-engineer.md"
+    },
+    {
       "agent": "interaction-engineer",
       "writes": [
         "apps/web/src/shared/components/**",
@@ -846,6 +907,13 @@
         "apps/api/src/queues/jobs/**"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/job-engineer.md"
+    },
+    {
+      "agent": "load-test-engineer",
+      "writes": [
+        "apps/api/test/load/**"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/load-test-engineer.md"
     },
     {
       "agent": "locking-reviewer",
@@ -872,7 +940,20 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "migration-test-engineer",
+      "writes": [
+        "apps/api/src/database/**/*.migration.spec.ts",
+        "apps/api/test/e2e/schema/**"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/migration-test-engineer.md"
+    },
+    {
       "agent": "mission-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "mock-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -893,6 +974,11 @@
     },
     {
       "agent": "music-os-360-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "mutation-test-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -940,6 +1026,14 @@
       "agent": "parallel-work-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "performance-test-engineer",
+      "writes": [
+        "apps/api/test/performance/**",
+        "apps/web/src/**/*.perf.test.ts"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/performance-test-engineer.md"
     },
     {
       "agent": "permission-boundary-reviewer",
@@ -1082,6 +1176,14 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "resilience-test-engineer",
+      "writes": [
+        "apps/api/test/resilience/**",
+        "apps/api/src/**/*.resilience.spec.ts"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/resilience-test-engineer.md"
+    },
+    {
       "agent": "responsive-engineer",
       "writes": [
         "apps/web/src/shared/components/**",
@@ -1149,6 +1251,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "runtime-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "scheduler-engineer",
       "writes": [
         "apps/api/src/modules/**/schedulers/**"
@@ -1199,6 +1306,15 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "security-test-engineer",
+      "writes": [
+        "apps/api/test/security/**",
+        "apps/api/src/**/*.security.spec.ts",
+        "apps/api/test/e2e/rls/**"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/security-test-engineer.md"
+    },
+    {
       "agent": "serialization-engineer",
       "writes": [
         "apps/api/src/common/serialization/**",
@@ -1226,6 +1342,16 @@
     },
     {
       "agent": "skill-router",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "smoke-test-validator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "snapshot-test-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1291,6 +1417,21 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "test-data-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "test-engineer",
+      "writes": [
+        "apps/api/src/**/*.spec.ts",
+        "apps/api/test/**",
+        "apps/web/src/**/*.test.ts",
+        "apps/web/src/**/*.test.tsx"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/test-engineer.md"
+    },
+    {
       "agent": "test-planner",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1324,6 +1465,14 @@
         "apps/web/src/shared/pages/**"
       ],
       "note": "pack writer (frontend); scope declared in .claude/agents/ui-ux-engineer.md"
+    },
+    {
+      "agent": "unit-test-engineer",
+      "writes": [
+        "apps/api/src/**/*.spec.ts",
+        "apps/web/src/**/*.test.ts"
+      ],
+      "note": "pack writer (testing); scope declared in .claude/agents/unit-test-engineer.md"
     },
     {
       "agent": "unreachable-code-detector",
@@ -1362,6 +1511,11 @@
     },
     {
       "agent": "visual-consistency-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "visual-qa-engineer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },

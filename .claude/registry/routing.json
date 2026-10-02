@@ -2060,6 +2060,255 @@
    "capabilities": [
     "integrations.review.external-schema"
    ]
+  },
+  {
+   "intent": "write-tests",
+   "domain": "testing",
+   "description": "Write tests for a change",
+   "keywords": [
+    "write tests",
+    "add tests",
+    "test coverage for change"
+   ],
+   "capabilities": [
+    "testing.implement",
+    "testing.review.mock"
+   ]
+  },
+  {
+   "intent": "write-unit-tests",
+   "domain": "testing",
+   "description": "Write unit tests",
+   "keywords": [
+    "unit tests",
+    "unit test for logic"
+   ],
+   "capabilities": [
+    "testing.unit"
+   ]
+  },
+  {
+   "intent": "write-integration-tests",
+   "domain": "testing",
+   "description": "Write integration tests",
+   "keywords": [
+    "integration tests",
+    "test against database"
+   ],
+   "capabilities": [
+    "testing.integration"
+   ]
+  },
+  {
+   "intent": "write-api-tests",
+   "domain": "testing",
+   "description": "Write API tests",
+   "keywords": [
+    "api tests",
+    "route tests",
+    "controller tests"
+   ],
+   "capabilities": [
+    "testing.api"
+   ]
+  },
+  {
+   "intent": "write-e2e-tests",
+   "domain": "testing",
+   "description": "Write end-to-end tests",
+   "keywords": [
+    "e2e test",
+    "end to end journey",
+    "user journey test"
+   ],
+   "capabilities": [
+    "testing.e2e",
+    "testing.browser"
+   ]
+  },
+  {
+   "intent": "write-contract-tests",
+   "domain": "testing",
+   "description": "Write contract tests",
+   "keywords": [
+    "contract tests",
+    "producer consumer test"
+   ],
+   "capabilities": [
+    "testing.contract"
+   ]
+  },
+  {
+   "intent": "run-visual-qa",
+   "domain": "testing",
+   "description": "Run visual QA",
+   "keywords": [
+    "visual qa",
+    "visual diff review",
+    "baseline approval"
+   ],
+   "capabilities": [
+    "testing.visual-qa"
+   ]
+  },
+  {
+   "intent": "audit-accessibility",
+   "domain": "testing",
+   "description": "Audit accessibility",
+   "keywords": [
+    "accessibility audit",
+    "keyboard audit",
+    "screen reader check"
+   ],
+   "capabilities": [
+    "testing.accessibility-audit"
+   ]
+  },
+  {
+   "intent": "review-test-strength",
+   "domain": "testing",
+   "description": "Review the strength of tests",
+   "keywords": [
+    "mutation testing",
+    "assertion strength",
+    "weak tests"
+   ],
+   "capabilities": [
+    "testing.review.mutation",
+    "testing.review.snapshot"
+   ]
+  },
+  {
+   "intent": "review-test-doubles-and-data",
+   "domain": "testing",
+   "description": "Review fixtures, mocks and test data",
+   "keywords": [
+    "fixture review",
+    "mock review",
+    "test data review"
+   ],
+   "capabilities": [
+    "testing.review.fixture",
+    "testing.review.mock",
+    "testing.review.test-data"
+   ]
+  },
+  {
+   "intent": "investigate-flaky-test",
+   "domain": "testing",
+   "description": "Investigate a flaky test",
+   "keywords": [
+    "flaky test",
+    "intermittent failure",
+    "passes on rerun"
+   ],
+   "capabilities": [
+    "testing.detect-flaky"
+   ]
+  },
+  {
+   "intent": "validate-runtime",
+   "domain": "testing",
+   "description": "Validate that a change runs",
+   "keywords": [
+    "validate runtime",
+    "run the application",
+    "runtime evidence"
+   ],
+   "capabilities": [
+    "testing.runtime-validate"
+   ]
+  },
+  {
+   "intent": "run-smoke-tests",
+   "domain": "testing",
+   "description": "Run smoke tests on a target",
+   "keywords": [
+    "smoke test",
+    "post deploy smoke",
+    "health journeys"
+   ],
+   "capabilities": [
+    "testing.smoke"
+   ]
+  },
+  {
+   "intent": "write-performance-tests",
+   "domain": "testing",
+   "description": "Write performance tests",
+   "keywords": [
+    "performance test",
+    "latency budget",
+    "performance budget"
+   ],
+   "capabilities": [
+    "testing.performance"
+   ]
+  },
+  {
+   "intent": "write-load-tests",
+   "domain": "testing",
+   "description": "Write load tests",
+   "keywords": [
+    "load test",
+    "stress test",
+    "capacity test"
+   ],
+   "capabilities": [
+    "testing.load"
+   ]
+  },
+  {
+   "intent": "write-resilience-tests",
+   "domain": "testing",
+   "description": "Write resilience tests",
+   "keywords": [
+    "resilience test",
+    "failure injection",
+    "provider failure test"
+   ],
+   "capabilities": [
+    "testing.resilience"
+   ]
+  },
+  {
+   "intent": "write-migration-tests",
+   "domain": "testing",
+   "description": "Write migration tests",
+   "keywords": [
+    "migration test",
+    "up down up",
+    "migration coexistence"
+   ],
+   "capabilities": [
+    "testing.migration"
+   ]
+  },
+  {
+   "intent": "write-security-tests",
+   "domain": "testing",
+   "description": "Write security tests",
+   "keywords": [
+    "security test",
+    "negative security test",
+    "cross tenant test"
+   ],
+   "capabilities": [
+    "testing.security"
+   ]
+  },
+  {
+   "intent": "review-chaos-experiment",
+   "domain": "testing",
+   "description": "Review a chaos experiment",
+   "keywords": [
+    "chaos experiment",
+    "fault injection",
+    "game day"
+   ],
+   "capabilities": [
+    "testing.review.chaos"
+   ]
   }
  ],
  "highImpactSignals": [

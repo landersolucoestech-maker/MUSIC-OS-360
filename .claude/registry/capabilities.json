@@ -2390,6 +2390,296 @@
     "xss verdict"
    ],
    "approval": "none"
+  },
+  {
+   "id": "testing.accessibility-audit",
+   "domain": "testing",
+   "description": "Audit accessibility with automated checks and keyboard and focus inspection of the running UI",
+   "validation": [
+    "accessibility test run",
+    "manual keyboard inspection"
+   ],
+   "evidence": [
+    "accessibility audit record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.api",
+   "domain": "testing",
+   "description": "Write API tests for routes: validation, authentication, authorization, response shape and errors",
+   "validation": [
+    "api tests executed"
+   ],
+   "evidence": [
+    "change-set record",
+    "api test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.browser",
+   "domain": "testing",
+   "description": "Write browser-level tests with a real browser engine for behavior unit tests cannot show",
+   "validation": [
+    "browser tests executed"
+   ],
+   "evidence": [
+    "change-set record",
+    "browser test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.contract",
+   "domain": "testing",
+   "description": "Write contract tests that keep producers and consumers of an API, event or shared type in agreement",
+   "validation": [
+    "contract tests executed on both sides"
+   ],
+   "evidence": [
+    "change-set record",
+    "contract test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.detect-flaky",
+   "domain": "testing",
+   "description": "Detect flaky tests by repeated execution and by reading for time, order and shared-state dependence",
+   "validation": [
+    "repeated runs with recorded outcomes"
+   ],
+   "evidence": [
+    "flakiness report"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.e2e",
+   "domain": "testing",
+   "description": "Write end-to-end tests of real user journeys against a running stack with real persistence",
+   "validation": [
+    "e2e run in a real browser against the running stack"
+   ],
+   "evidence": [
+    "change-set record",
+    "e2e run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.implement",
+   "domain": "testing",
+   "description": "Write tests selected by risk and changed boundaries, covering the changed path and its negative cases",
+   "validation": [
+    "executed test run bound to the current workspace",
+    "false-green check"
+   ],
+   "evidence": [
+    "test code change set",
+    "test run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.integration",
+   "domain": "testing",
+   "description": "Write integration tests that exercise real module boundaries against a disposable database and queue",
+   "validation": [
+    "integration tests executed against a disposable database"
+   ],
+   "evidence": [
+    "change-set record",
+    "integration test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.load",
+   "domain": "testing",
+   "description": "Write load tests that ramp traffic on a disposable target and record latency, errors and saturation",
+   "validation": [
+    "load run on a disposable target"
+   ],
+   "evidence": [
+    "change-set record",
+    "load run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.migration",
+   "domain": "testing",
+   "description": "Write migration tests that prove up, down and up again and old and new code coexistence on a disposable database",
+   "validation": [
+    "migration run on a disposable database"
+   ],
+   "evidence": [
+    "change-set record",
+    "migration run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.performance",
+   "domain": "testing",
+   "description": "Write performance tests with a stated budget, a baseline and repeatable conditions",
+   "validation": [
+    "performance run against the budget"
+   ],
+   "evidence": [
+    "change-set record",
+    "performance run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.resilience",
+   "domain": "testing",
+   "description": "Write resilience tests that inject provider, database and queue failures and prove degradation and recovery",
+   "validation": [
+    "failure injection run"
+   ],
+   "evidence": [
+    "change-set record",
+    "resilience run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.review.chaos",
+   "domain": "testing",
+   "description": "Review chaos and fault-injection experiments for safe scope, hypothesis, blast radius and recorded result",
+   "validation": [
+    "chaos experiment review"
+   ],
+   "evidence": [
+    "chaos review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.review.fixture",
+   "domain": "testing",
+   "description": "Review fixtures for realism, isolation, determinism and absence of real personal data or secrets",
+   "validation": [
+    "fixture audit"
+   ],
+   "evidence": [
+    "fixture review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.review.mock",
+   "domain": "testing",
+   "description": "Review mocks for whether they remove the boundary under test and whether they match the real behavior",
+   "validation": [
+    "mock audit"
+   ],
+   "evidence": [
+    "mock review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.review.mutation",
+   "domain": "testing",
+   "description": "Review whether tests would fail if the code were wrong, using mutation results or targeted mutation by hand",
+   "validation": [
+    "mutation run or manual mutation of critical logic"
+   ],
+   "evidence": [
+    "mutation review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.review.snapshot",
+   "domain": "testing",
+   "description": "Review snapshot tests for meaningful assertions, bounded size and deliberate updates",
+   "validation": [
+    "snapshot audit"
+   ],
+   "evidence": [
+    "snapshot review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.review.test-data",
+   "domain": "testing",
+   "description": "Review test data for coverage of real cases, tenant separation, cleanup and absence of real data",
+   "validation": [
+    "test data audit"
+   ],
+   "evidence": [
+    "test data review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.runtime-validate",
+   "domain": "testing",
+   "description": "Validate that the changed behavior actually runs: start the process, exercise the path and read logs and responses",
+   "validation": [
+    "runtime execution of the changed path"
+   ],
+   "evidence": [
+    "runtime validation record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.security",
+   "domain": "testing",
+   "description": "Write security tests that prove prohibited access, hostile input and cross-tenant attempts fail closed",
+   "validation": [
+    "security tests executed with negative cases"
+   ],
+   "evidence": [
+    "change-set record",
+    "security test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.smoke",
+   "domain": "testing",
+   "description": "Run smoke tests on a build or deployment target to confirm the critical paths respond",
+   "validation": [
+    "smoke run with recorded results"
+   ],
+   "evidence": [
+    "smoke run record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.unit",
+   "domain": "testing",
+   "description": "Write fast unit tests for logic, including edge, error and boundary cases",
+   "validation": [
+    "unit tests executed"
+   ],
+   "evidence": [
+    "change-set record",
+    "unit test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "testing.visual-qa",
+   "domain": "testing",
+   "description": "Run visual regression and judge whether differences are intended, with approved baselines only",
+   "validation": [
+    "visual regression run"
+   ],
+   "evidence": [
+    "visual run record"
+   ],
+   "approval": "none"
   }
  ]
 }
