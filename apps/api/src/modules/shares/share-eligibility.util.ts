@@ -10,25 +10,30 @@
  * shares. That is why NULL is the only available signal for "did not come from the
  * financial form".
  *
- * DECISION REQUIRED (share_type value set + backfill) — owner: project owner / product
+ * share_type value set (FIXED, enforced at the API): the FINANCIAL shares use exactly
+ * SHARE_TYPES = ['internal_release', 'external_receivable'] (share-legacy-fields.ts);
+ * CreateShareDto/UpdateShareDto/QueryShareDto reject any other value. The field stays
+ * optional: registry/integration writers omit it and the row keeps NULL (no DB default,
+ * no CHECK constraint, no migration).
+ *
+ * DECISION REQUIRED (remaining) — owner: project owner / product
  * - File/context: shares.share_type (varchar(30), nullable, entities.ts ShareEntity);
- *   written only by the financial flow (shares.service.ts::toColumns()); read as
- *   "NULL = registry split" by shares.service.ts (split budget),
+ *   read as "NULL = registry split" by shares.service.ts (split budget),
  *   registry/validation/entity-validators.ts, registry/payloads/society-payload-builder
  *   and core/external-data/external-data-exchange.service.ts, all via this file.
- * - Decision: which signal marks a registration share, and the closed value set of share_type.
- * - Option A: explicit 'registry' value + CHECK constraint on the value set + backfill
- *   migration (UPDATE shares SET share_type='registry' WHERE share_type IS NULL), then
- *   change only this file (predicate + SQL constant) and the registration creation path.
- * - Option B: keep NULL as the signal (current behavior); document it as permanent.
- * - Consequences: A needs a schema + data migration (L5, destructive-data rules: compat
- *   window, rollback, old/new app coexistence) and the financial value set must be
- *   enumerated; B leaves the implicit-NULL coupling and no DB-level domain constraint.
- * - Impact: L5 (schema/data). Today no code path writes any registry value, so rows
- *   cannot be classified by code.
- * - Why not derivable: the canonical sources (canonical naming map, entities, migrations,
- *   DTOs) define no share_type value set and no registration creation path; existing
- *   financial values are free text (@MaxLength(30)) and cannot be enumerated from the repo.
+ * - Decision (a): whether registry splits get an explicit token (e.g. 'registry') instead
+ *   of NULL. That needs a CHECK constraint + schema migration (L5) and a change of only
+ *   this file (predicate + SQL constant) plus the registration creation path.
+ * - Decision (b): whether to execute a backfill of historical NULL rows (L5, destructive-data
+ *   rules; needs a production census first). Historical financial rows written before the
+ *   field existed are NULL and are indistinguishable from registry splits by this column.
+ *   Deterministic inference (web resolveShareType, share-format.tsx): explicit share_type
+ *   wins; else release_id set -> internal_release; else music_title/payer/external_artist_name
+ *   set -> external_receivable; else internal_release (conservative default). Ambiguous case:
+ *   a NULL row with none of those fields (e.g. work_id + holder only) is either a registry
+ *   split or an internal financial split; the web default treats it as internal, but
+ *   backfilling that would REMOVE it from the registry split budget, so it cannot be
+ *   decided by code.
  * Until decided: no schema change, NULL stays the signal; do not add new raw
  * `share_type IS NULL` checks outside this file (guarded by share-eligibility.guard.spec.ts).
  *

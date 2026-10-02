@@ -26,6 +26,12 @@ type Labels = Readonly<Record<string, string>>;
 // ── API-local label maps (not yet in @music-os-360/types; same wording as the
 // web option lists: crm-relationships/constants, artist/services/artist.mapper) ──
 
+/** shares.share_type (financial discriminator; NULL = registry split is not labelled). Same wording as web share-format.tsx SHARE_TYPE_OPTIONS. */
+export const SHARE_TYPE_LABELS_PT_BR: Labels = {
+  internal_release: 'Lançamento interno',
+  external_receivable: 'Share externo a receber',
+};
+
 /** clients.person_type (CZ-043). */
 export const CLIENT_PERSON_TYPE_LABELS_PT_BR: Labels = {
   individual: 'Pessoa física',
@@ -187,6 +193,7 @@ const COLUMN_LABELS: Readonly<Record<string, Readonly<Record<string, Labels>>>> 
     media_type: PHONOGRAM_MEDIA_TYPE_LABELS_PT_BR,
     recording_classification: PHONOGRAM_RECORDING_CLASSIFICATION_LABELS_PT_BR,
   },
+  shares: { share_type: SHARE_TYPE_LABELS_PT_BR },
   clients: { person_type: CLIENT_PERSON_TYPE_LABELS_PT_BR, priority: CLIENT_PRIORITY_LABELS_PT_BR },
   marketing_tasks: { kind: MARKETING_TASK_KIND_LABELS_PT_BR, targetType: MARKETING_TARGET_LABELS_PT_BR },
   artists: {

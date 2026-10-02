@@ -98,6 +98,13 @@ describe('SharesService — split budget invariant (P1)', () => {
       } as unknown as CreateShareDto)).resolves.toBeDefined();
     });
 
+    it('still enforces the 100% budget when share_type is omitted (NULL = registry split)', async () => {
+      const { svc } = makeService({ existingSum: 80 });
+      await expect(svc.create('tenant-1', {
+        holderName: 'Autor D', percentage: 30, workId: 'work-1',
+      } as unknown as CreateShareDto)).rejects.toBeInstanceOf(BadRequestException);
+    });
+
     it('does not validate budget when there is no work_id or fonograma_id (share without registry context)', async () => {
       const { svc, repo } = makeService();
       await expect(svc.create('tenant-1', {

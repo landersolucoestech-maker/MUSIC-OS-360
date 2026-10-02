@@ -96,6 +96,14 @@ export const SHARE_LEGACY_VALUES: Readonly<Record<'status' | 'direction' | 'type
 
 export const SHARE_DIRECTIONS = ['receivable', 'payable'] as const;
 
+/**
+ * Closed value set of the FINANCIAL share discriminator `shares.share_type`.
+ * `share_type` is optional: registry/integration writers omit it and the column
+ * stays NULL (NULL = registry split, see share-eligibility.util.ts). There is no
+ * DB default and no CHECK constraint; the set is enforced at the API (DTO) only.
+ */
+export const SHARE_TYPES = ['internal_release', 'external_receivable'] as const;
+
 /** Maps any legacy Portuguese value of the share vocabularies to its canonical value. */
 export function canonicalizeShareValues<T extends object>(input: T): T {
   const out: Record<string, unknown> = { ...(input as Record<string, unknown>) };

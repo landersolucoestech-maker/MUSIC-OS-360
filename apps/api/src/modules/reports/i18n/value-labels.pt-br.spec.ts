@@ -88,4 +88,13 @@ describe('report enum values — PT-BR in the spreadsheet, canonical in the data
     const labels = Object.values(MARKETING_TASK_KIND_LABELS_PT_BR).map((label) => label.toLowerCase());
     expect(new Set(labels).size).toBe(labels.length);
   });
+
+  it('share_type exports its PT-BR label, maps it back, and leaves NULL/unknown untouched', () => {
+    expect(exportValueLabel('shares', 'share_type', 'internal_release')).toBe('Lançamento interno');
+    expect(exportValueLabel('shares', 'share_type', 'external_receivable')).toBe('Share externo a receber');
+    expect(exportValueLabel('shares', 'share_type', null)).toBeNull();
+    expect(exportValueLabel('shares', 'share_type', 'registry')).toBeNull();
+    expect(valueFromExportLabel('shares', 'share_type', 'Lançamento interno')).toBe('internal_release');
+    expect(valueFromExportLabel('shares', 'share_type', 'Share externo a receber')).toBe('external_receivable');
+  });
 });

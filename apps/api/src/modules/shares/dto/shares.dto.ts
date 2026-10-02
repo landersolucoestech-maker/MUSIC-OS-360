@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn, IsNumber, Min, Max, MaxLength, IsUUID, IsArray, IsInt, IsDateString, Matches } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
-import { SHARE_DIRECTIONS, SHARE_LEGACY_VALUES, SHARE_STATUSES } from '../share-legacy-fields';
+import { SHARE_DIRECTIONS, SHARE_LEGACY_VALUES, SHARE_STATUSES, SHARE_TYPES } from '../share-legacy-fields';
 
 const STATUS_INPUT = [...SHARE_STATUSES, ...Object.keys(SHARE_LEGACY_VALUES.status)];
 const DIRECTION_INPUT = [...SHARE_DIRECTIONS, ...Object.keys(SHARE_LEGACY_VALUES.direction)];
@@ -28,7 +28,8 @@ export class CreateShareDto {
   // Product rule 2026-07-12: each form field has its own physical column.
   // `percentage` also covers the old legacy EN alias (same name, same
   // column since 2026-09-13/RenameSharePartyFieldsToEnglish — see toColumns()).
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) share_type?: string;
+  // Closed set (SHARE_TYPES). Omitted stays NULL (registry/integration writers); no default.
+  @ApiPropertyOptional({ enum: SHARE_TYPES }) @IsOptional() @IsIn(SHARE_TYPES) share_type?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Max(100) @Type(() => Number) percentage?: number;
   // Legacy Portuguese values (pendente, enviado, ...) are accepted and mapped
   // to the canonical ShareStatus by the service (share-legacy-fields.ts).
@@ -86,5 +87,5 @@ export class QueryShareDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsIn(DIRECTION_INPUT) direction?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() share_type?: string;
+  @ApiPropertyOptional({ enum: SHARE_TYPES }) @IsOptional() @IsIn(SHARE_TYPES) share_type?: string;
 }

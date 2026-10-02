@@ -12,7 +12,7 @@
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validate, getMetadataStorage } from 'class-validator';
-import { CreateShareDto, UpdateShareDto } from './shares.dto';
+import { CreateShareDto, UpdateShareDto, QueryShareDto } from './shares.dto';
 
 async function validatePayload(dto: new () => object, payload: Record<string, unknown>) {
   const instance = plainToInstance(dto, payload);
@@ -87,5 +87,29 @@ describe('CreateShareDto — regression: financial share fields remain intact (P
       holder: 'D', external_artist_name: 'AE', payer: 'P', recipient: 'DEST', share_type: 'external_receivable', percentage: 100,
     });
     expect(errors).toEqual([]);
+  });
+});
+
+describe('share_type — closed to the canonical value set (create, update, query)', () => {
+  it.each([CreateShareDto, UpdateShareDto, QueryShareDto])('%p accepts both canonical values', async (dto) => {
+    for (const share_type of ['internal_release', 'external_receivable']) {
+      expect(await validatePayload(dto, { share_type })).toEqual([]);
+    }
+  });
+
+  it.each([CreateShareDto, UpdateShareDto, QueryShareDto])('%p rejects non-canonical values', async (dto) => {
+    for (const share_type of ['pending', 'registry', 'financial', '', 'INTERNAL_RELEASE']) {
+      const errors = await validatePayload(dto, { share_type });
+      expect(errors.map((e) => e.property)).toContain('share_type');
+    }
+  });
+
+  it('rejects a non-string share_type', async () => {
+    const errors = await validatePayload(CreateShareDto, { share_type: 1 });
+    expect(errors.map((e) => e.property)).toContain('share_type');
+  });
+
+  it.each([CreateShareDto, UpdateShareDto, QueryShareDto])('%p accepts omission (registry/integration writers keep NULL)', async (dto) => {
+    expect(await validatePayload(dto, {})).toEqual([]);
   });
 });
