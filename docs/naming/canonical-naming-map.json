@@ -54,6 +54,18 @@
       "active",
       "empty-dead",
       "obsolete"
+    ],
+    "blockerStatus": [
+      "OPEN",
+      "RESOLVED"
+    ],
+    "blockerDisposition": [
+      "BLOCKED_OWNER_AUTHORIZATION",
+      "BLOCKED_DESTRUCTIVE_CHANGE",
+      "BLOCKED_PRODUCT_DECISION",
+      "BLOCKED_SECURITY_DECISION",
+      "BLOCKED_COMPATIBILITY_WINDOW",
+      "BLOCKED_PENDING_OWNER_WORK"
     ]
   },
   "conventions": {
@@ -75,7 +87,12 @@
       "queueJobName": "kebab-case (ai-jobs, integrations-sync; job names kebab or <provider>:<action>)",
       "envVar": "SCREAMING_SNAKE_CASE English (VITE_ prefix for frontend-exposed)",
       "testDescription": "English behavior sentence; quoted Portuguese only for the user-visible text being asserted (it(\"shows 'Salvar projeto' when editing a project\"))"
-    }
+    },
+    "blockers": "Every blocker row needs id, item, blocker, evidence, requiredAction, owner, disposition and status (validated by canonical-map.mjs). disposition is one of statusVocabulary.blockerDisposition: BLOCKED_OWNER_AUTHORIZATION (an explicit owner go-ahead is required), BLOCKED_DESTRUCTIVE_CHANGE (drop/destructive data change, needs authorization and recovery design), BLOCKED_PRODUCT_DECISION (product/domain semantics undecided), BLOCKED_SECURITY_DECISION (security/data-governance decision), BLOCKED_COMPATIBILITY_WINDOW (a compatibility boundary must expire first), BLOCKED_PENDING_OWNER_WORK (no external decision needed; the named owner has not done the work). status is OPEN or RESOLVED.",
+    "censusExemptionTables": "Every hard-coded exemption table of scripts/naming/technical-naming-census.mjs (VENDORED, DETECTOR_FIXTURES, USER_INPUT_VOCABULARY, PT_CONTENT_VOCABULARY, EXTERNAL_PROPERTY_NAMES, EXTERNAL_TOOL_NAMES, UX_ARGUMENT_CALLEES) has one exception row here with an `id` (EXM-*), owner, reason, consumer, removalCondition and targetState, and a `ledger: EXM-*` comment next to the table; technical-naming-census.test.mjs fails if either side is missing.",
+    "openConceptOwner": "A concept whose disposition is not DONE or RESOLVED must carry an `owner`; disposition BUG with status done is rejected (a fixed bug is RESOLVED).",
+    "coveringTestRatchet": "The number of ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY rows without coveringTest is capped by scripts/naming/covering-test-baseline.json: the validator fails when it grows and hints to lower the baseline when it shrinks.",
+    "baselinedRecords": "An exception row with `census: \"baselined\"` is a governance record, not a suppression: exceptionIndex ignores it, the listed files stay in technical-naming-baseline.json (ratchet), and technical-naming-census.test.mjs requires every baselined doc entry to be covered by exactly one such row and every such row path to still be baselined (so the row is removed with the debt)."
   },
   "glossary": [
     {
@@ -779,7 +796,8 @@
       "api": "`name`",
       "displayPtBr": "Nome",
       "legacyAliases": [],
-      "notes": "MIGRATION_REQUIRED — Cluster Zero DB class; see the Cluster Zero section"
+      "notes": "MIGRATION_REQUIRED — Cluster Zero DB class; see the Cluster Zero section",
+      "owner": "crm / tenancy owner (Phase 0 naming)"
     },
     {
       "id": "NC-018",
@@ -807,7 +825,8 @@
       "api": "—",
       "displayPtBr": "Categoria",
       "legacyAliases": [],
-      "notes": "MIGRATION_REQUIRED — tied to the transactions v1/v2 decision below (NEEDS_PRODUCT_DECISION); see the Cluster Zero section"
+      "notes": "MIGRATION_REQUIRED — tied to the transactions v1/v2 decision below (NEEDS_PRODUCT_DECISION); see the Cluster Zero section",
+      "owner": "accounting owner (Phase 0 naming)"
     },
     {
       "id": "NC-020",
@@ -1088,7 +1107,8 @@
       "api": null,
       "displayPtBr": "—",
       "legacyAliases": [],
-      "notes": "Current state: **Re-investigated exhaustively (2026-09-23), classification confirmed unchanged.** `CreateShareDto.role` (the EN `ROLES` alias) is deliberately mapped onto `party_role` then deleted (`shares.service.ts` lines 96/99) before persistence — it never reaches the physical `role` column. Full-repo grep for writers of `role`/`rights_holder_id`/`publisher_id`/`credited_name`/`is_primary`/`is_featured` (the entire migration `20260601000001_RegistryFieldsPhase1` block) found **zero** write sites anywhere in `apps/api/src`, only the two documented reads (`entity-validators.ts`, `society-payload-builder.service.ts`). Unlike `shares.type`, this is not resolvable by \"code/usage determine authority\" — there is no real usage to find; a registry-share creation flow was scaffolded (columns + readers) but never built (no controller/service path creates it) · Blocker/resolution: **NEEDS_PRODUCT_DECISION (confirmed, not newly discoverable)** — wire a registry-share creation path, or give the block an explicit disposition. Do not drop in isolation (changes read behavior)"
+      "notes": "Current state: **Re-investigated exhaustively (2026-09-23), classification confirmed unchanged.** `CreateShareDto.role` (the EN `ROLES` alias) is deliberately mapped onto `party_role` then deleted (`shares.service.ts` lines 96/99) before persistence — it never reaches the physical `role` column. Full-repo grep for writers of `role`/`rights_holder_id`/`publisher_id`/`credited_name`/`is_primary`/`is_featured` (the entire migration `20260601000001_RegistryFieldsPhase1` block) found **zero** write sites anywhere in `apps/api/src`, only the two documented reads (`entity-validators.ts`, `society-payload-builder.service.ts`). Unlike `shares.type`, this is not resolvable by \"code/usage determine authority\" — there is no real usage to find; a registry-share creation flow was scaffolded (columns + readers) but never built (no controller/service path creates it) · Blocker/resolution: **NEEDS_PRODUCT_DECISION (confirmed, not newly discoverable)** — wire a registry-share creation path, or give the block an explicit disposition. Do not drop in isolation (changes read behavior)",
+      "owner": "shares owner (Phase 0 naming)"
     },
     {
       "id": "NC-040",
@@ -1101,7 +1121,8 @@
       "api": null,
       "displayPtBr": "—",
       "legacyAliases": [],
-      "notes": "Current state: No column, no DTO field, zero backend references — UI writes into a jsonb key nothing ever reads back · Blocker/resolution: **NEEDS_PRODUCT_DECISION** — not a naming issue: an unwired field, flag for product"
+      "notes": "Current state: No column, no DTO field, zero backend references — UI writes into a jsonb key nothing ever reads back · Blocker/resolution: **NEEDS_PRODUCT_DECISION** — not a naming issue: an unwired field, flag for product",
+      "owner": "crm / tenancy owner (Phase 0 naming)"
     },
     {
       "id": "NC-041",
@@ -1114,20 +1135,21 @@
       "api": null,
       "displayPtBr": "—",
       "legacyAliases": [],
-      "notes": "Current state: `financial_transactions` (a second, fully English-named table: `payment_method`, `payment_type`, `client_type`, `collecting_agency`, `investment_item`, `travel_reason`, `attachment_url`, `attachment_name`, `due_date`) already exists as the declared v2 canonical ledger, 0 rows, no entity wired up · Blocker/resolution: **NEEDS_PRODUCT_DECISION at a larger scope** — this is \"finish the v2 ledger cutover\", not a column rename on `transactions`"
+      "notes": "Current state: `financial_transactions` (a second, fully English-named table: `payment_method`, `payment_type`, `client_type`, `collecting_agency`, `investment_item`, `travel_reason`, `attachment_url`, `attachment_name`, `due_date`) already exists as the declared v2 canonical ledger, 0 rows, no entity wired up · Blocker/resolution: **NEEDS_PRODUCT_DECISION at a larger scope** — this is \"finish the v2 ledger cutover\", not a column rename on `transactions`",
+      "owner": "accounting owner (Phase 0 naming)"
     },
     {
       "id": "NC-042",
       "concept": "`billing.service.ts` `upsertStripeInvoice`/`upsertStripeSubscription` correctness bugs",
       "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
-      "disposition": "BUG",
+      "disposition": "RESOLVED",
       "status": "done",
       "database": null,
       "application": null,
       "api": null,
       "displayPtBr": "—",
       "legacyAliases": [],
-      "notes": "Current state: **Fixed 2026-09-20** (commit `6631bfe0`): `valor`→`legacy_amount`, `ON CONFLICT` partial-index predicate, Stripe status vocabulary mapping · Blocker/resolution: **BUG** (fixed) — closed, listed here for the record: real bugs surfaced by this naming audit, not naming issues themselves"
+      "notes": "Current state: **Fixed 2026-09-20** (commit `6631bfe0`): `valor`→`legacy_amount`, `ON CONFLICT` partial-index predicate, Stripe status vocabulary mapping · Blocker/resolution: **RESOLVED** (was BUG; fixed) — closed, listed here for the record: real bugs surfaced by this naming audit, not naming issues themselves · 2026-10-02 re-verified against the code: apps/api/src/modules/billing/billing.service.ts upsertStripeInvoice writes legacy_amount/service_amount (no `valor`), uses `ON CONFLICT (stripe_invoice_id) WHERE stripe_invoice_id IS NOT NULL`, and maps Stripe statuses through normalizeInvoiceStatus; billing.service.spec.ts 'upsertStripeInvoice - legacy_amount expand (LC1)' pins the SQL. The commit hash quoted above is not resolvable in this clone, so the code is the evidence."
     },
     {
       "id": "NC-043",
@@ -1142,7 +1164,8 @@
       "legacyAliases": [
         "works.origem_externa"
       ],
-      "notes": "db existence: exists (`entities.ts:717`) · population (dev, current): 0/0 rows non-null · readers: `report-form-contracts.ts` `ro('origem_externa')` only · writers: none found repo-wide · entity: mapped, `string | null` · dto: absent from `CreateWorkDto`/`UpdateWorkDto` · frontend: absent · integration: none found · migration: baseline `f840fc7f` (2026-06-21), pre-dates all Cluster commits · semantics: presumably \"external source system name\" for a planned catalog-sync · technical conclusion: scaffolded, read-only-in-contract, zero live producer or consumer anywhere in-repo · exact unresolved question: is an external-catalog-sync integration (Soundcharts or similar) still planned, or was this abandoned scaffolding? · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa -> external_source by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION."
+      "notes": "db existence: exists (`entities.ts:717`) · population (dev, current): 0/0 rows non-null · readers: `report-form-contracts.ts` `ro('origem_externa')` only · writers: none found repo-wide · entity: mapped, `string | null` · dto: absent from `CreateWorkDto`/`UpdateWorkDto` · frontend: absent · integration: none found · migration: baseline `f840fc7f` (2026-06-21), pre-dates all Cluster commits · semantics: presumably \"external source system name\" for a planned catalog-sync · technical conclusion: scaffolded, read-only-in-contract, zero live producer or consumer anywhere in-repo · exact unresolved question: is an external-catalog-sync integration (Soundcharts or similar) still planned, or was this abandoned scaffolding? · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa -> external_source by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION.",
+      "owner": "catalog owner (Phase 0 naming)"
     },
     {
       "id": "NC-044",
@@ -1157,7 +1180,8 @@
       "legacyAliases": [
         "works.origem_externa_id"
       ],
-      "notes": "db existence: exists (`entities.ts:718`) · population (dev, current): 0/0 rows non-null · readers: none found (absent from both report contracts entirely) · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: presumably \"external system's ID for this work\" · technical conclusion: scaffolded, not even contract-declared (weaker footprint than its siblings) · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa_id -> external_source_id by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION."
+      "notes": "db existence: exists (`entities.ts:718`) · population (dev, current): 0/0 rows non-null · readers: none found (absent from both report contracts entirely) · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: presumably \"external system's ID for this work\" · technical conclusion: scaffolded, not even contract-declared (weaker footprint than its siblings) · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa_id -> external_source_id by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION.",
+      "owner": "catalog owner (Phase 0 naming)"
     },
     {
       "id": "NC-045",
@@ -1172,7 +1196,8 @@
       "legacyAliases": [
         "works.origem_externa_sincronizado_em"
       ],
-      "notes": "db existence: exists (`entities.ts:719`) · population (dev, current): 0/0 rows non-null · readers: `report-form-contracts.ts` `ro('origem_externa_sincronizado_em')` only · writers: none found · entity: mapped, `Date | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: presumably \"last sync timestamp\" · technical conclusion: scaffolded, read-only-in-contract, zero live producer or consumer · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa_sincronizado_em -> external_source_synced_at by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION."
+      "notes": "db existence: exists (`entities.ts:719`) · population (dev, current): 0/0 rows non-null · readers: `report-form-contracts.ts` `ro('origem_externa_sincronizado_em')` only · writers: none found · entity: mapped, `Date | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: presumably \"last sync timestamp\" · technical conclusion: scaffolded, read-only-in-contract, zero live producer or consumer · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa_sincronizado_em -> external_source_synced_at by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION.",
+      "owner": "catalog owner (Phase 0 naming)"
     },
     {
       "id": "NC-046",
@@ -1187,7 +1212,8 @@
       "legacyAliases": [
         "phonograms.origem_externa"
       ],
-      "notes": "db existence: exists (`entities.ts:838`) · population (dev, current): 0/0 rows non-null · readers: `ro('origem_externa')` in the phonograms contract only · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern, phonograms side · technical conclusion: scaffolded · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa -> external_source by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION."
+      "notes": "db existence: exists (`entities.ts:838`) · population (dev, current): 0/0 rows non-null · readers: `ro('origem_externa')` in the phonograms contract only · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern, phonograms side · technical conclusion: scaffolded · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa -> external_source by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION.",
+      "owner": "catalog owner (Phase 0 naming)"
     },
     {
       "id": "NC-047",
@@ -1202,7 +1228,8 @@
       "legacyAliases": [
         "phonograms.origem_externa_id"
       ],
-      "notes": "db existence: exists (`entities.ts:839`) · population (dev, current): 0/0 rows non-null · readers: none found · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern · technical conclusion: scaffolded, not contract-declared · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa_id -> external_source_id by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION."
+      "notes": "db existence: exists (`entities.ts:839`) · population (dev, current): 0/0 rows non-null · readers: none found · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern · technical conclusion: scaffolded, not contract-declared · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa_id -> external_source_id by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION.",
+      "owner": "catalog owner (Phase 0 naming)"
     },
     {
       "id": "NC-048",
@@ -1217,7 +1244,8 @@
       "legacyAliases": [
         "phonograms.origem_externa_sincronizado_em"
       ],
-      "notes": "db existence: exists (`entities.ts:840`) · population (dev, current): 0/0 rows non-null · readers: `ro('origem_externa_sincronizado_em')` in the phonograms contract only · writers: none found · entity: mapped, `Date | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern · technical conclusion: scaffolded · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa_sincronizado_em -> external_source_synced_at by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION."
+      "notes": "db existence: exists (`entities.ts:840`) · population (dev, current): 0/0 rows non-null · readers: `ro('origem_externa_sincronizado_em')` in the phonograms contract only · writers: none found · entity: mapped, `Date | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern · technical conclusion: scaffolded · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION · 2026-09-28: renamed origem_externa_sincronizado_em -> external_source_synced_at by migration 20260928000024 (guarded, reversible; zero writers/rows). The name is closed; keep-vs-drop of the scaffolded column remains BLOCKED_PRODUCT_DECISION.",
+      "owner": "catalog owner (Phase 0 naming)"
     },
     {
       "id": "CZ-001",
@@ -1472,7 +1500,8 @@
       "canonicalEnglishName": "project-track-helpers.ts, ProjectTrackData, ProjectTrackInfo, parseProjectTracks, getProjectTrackInfo, getFirstProjectTrackInfo; ProjectTrackResponse/ProjectWithTracks/hydrateTracks/replaceTracks; computed-fields/project-tracks.field.ts (ProjectTrackFieldItem, fetch/insertProjectTracks*)",
       "definition": "Glossary track ('music'/'song' disallowed). The API wire field 'musicas' (projects payload) and the report column key are wire contracts, kept as PUBLIC_API_COMPATIBILITY exceptions until the Phase 6 contract cutover.",
       "producers": "ProjectsService",
-      "consumers": "ProjectFormModal, ProjectViewModal, reports export/import"
+      "consumers": "ProjectFormModal, ProjectViewModal, reports export/import",
+      "owner": "projects owner (Phase 0 naming)"
     },
     {
       "id": "CZ-016",
@@ -1489,7 +1518,8 @@
       "canonicalEnglishName": "ReleaseTrack/createReleaseTrack; computed-fields/release-tracks.field.ts (ReleaseTrackItem, fetch/writeReleaseTracks*)",
       "definition": "Glossary track.",
       "producers": "—",
-      "consumers": "release form, reports"
+      "consumers": "release form, reports",
+      "owner": "catalog owner (Phase 0 naming)"
     },
     {
       "id": "CZ-017",
@@ -1710,7 +1740,8 @@
       "canonicalEnglishName": "events.starts_at",
       "definition": "C3 expand-and-contract. E1 (20260716000001) added starts_at; E2 dual-write in EventsService; this change adds E3 (aborting backfill), a sync trigger (trg_events_sync_start_columns) so writers bypassing the service keep both columns equal, E4 (API filters/order/KPIs and every web read use starts_at) and E5 (starts_at NOT NULL). Only E6 remains: drop events.data. The reports export/import contract still addresses the column as `data` (header 'Data') so existing spreadsheets keep round-tripping; the trigger keeps it equal to starts_at.",
       "producers": "EventsService (dual-write), reports importer (writes data; trigger fills starts_at)",
-      "consumers": "EventsService list/stats, apps/web Schedule / SchedulerForm/ViewModal / Artist 360, reports export (via data)"
+      "consumers": "EventsService list/stats, apps/web Schedule / SchedulerForm/ViewModal / Artist 360, reports export (via data)",
+      "owner": "operations owner (Phase 0 naming)"
     },
     {
       "id": "CZ-030",
@@ -41541,6 +41572,184 @@
       "dependency": "migration 20260930000035",
       "status": "ACTIVE",
       "coveringTest": "apps/api/src/database/contract-signed-transaction-category.migration.spec.ts"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "item": "legacy Drizzle SQL migrations with Portuguese columns and values (apps/api/drizzle/*.sql)",
+      "path": "apps/api/drizzle/*.sql",
+      "currentName": "legacy Drizzle SQL identifiers and values",
+      "layer": "database",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Historical deprecated migrations superseded by the TypeORM migrations (apps/api/src/database/migrations/); archived for reference only and never applied (see apps/api/drizzle/_DEPRECATED.md). The census does not scan SQL content; this row records the Portuguese identifiers they contain so they are not an undocumented gap.",
+      "consumer": "none (archived snapshots; not executed by any tool)",
+      "owner": "api owner (database)",
+      "removalCondition": "delete the directory once the deprecation window documented in apps/api/drizzle/_DEPRECATED.md ends",
+      "targetState": "removed"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "id": "EXM-VENDORED",
+      "item": "census exemption table VENDORED (committed third-party bundles)",
+      "path": "scripts/naming/technical-naming-census.mjs",
+      "currentName": "VENDORED",
+      "layer": "scripts",
+      "exceptionClass": "EXTERNAL_CONTRACT",
+      "reason": "Third-party bundles committed as static assets (pdf.mjs, pdf.worker.min.mjs) are not names this repository controls; the census skips them entirely.",
+      "consumer": "technical-naming-census.mjs trackedFiles()",
+      "owner": "web platform owner",
+      "removalCondition": "remove an entry when the bundle is replaced by a package dependency; remove the table when no vendored bundle remains",
+      "targetState": "no vendored bundles"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "id": "EXM-DETECTOR-FIXTURES",
+      "item": "census exemption table DETECTOR_FIXTURES (+ DETECTOR_FIXTURE_PREFIXES)",
+      "path": "scripts/naming/technical-naming-census.mjs",
+      "currentName": "DETECTOR_FIXTURES",
+      "layer": "scripts",
+      "exceptionClass": "UX_TEXT",
+      "reason": "The naming detectors' vocabulary and test fixtures, and the old-to-new rename table, necessarily contain Portuguese words as data. Their identifiers are still checked; only string values, keys, test titles and comments are exempt.",
+      "consumer": "technical-naming-census.mjs scanSource()",
+      "owner": "naming governance",
+      "removalCondition": "remove an entry when the file stops embedding Portuguese data; remove the table when the detectors read their vocabulary from a non-code data file",
+      "targetState": "detector data held outside source files"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "id": "EXM-USER-INPUT-VOCABULARY",
+      "item": "census exemption table USER_INPUT_VOCABULARY (words end users type)",
+      "path": "scripts/naming/technical-naming-census.mjs",
+      "currentName": "USER_INPUT_VOCABULARY",
+      "layer": "scripts",
+      "exceptionClass": "UX_TEXT",
+      "reason": "Portuguese words that are genuine end-user input in one exact file: surname particles, spreadsheet/chat boolean answers, chat navigation commands, the redaction key senha. Exact file and exact value only.",
+      "consumer": "technical-naming-census.mjs scanSource()",
+      "owner": "web owner (Phase 0 naming)",
+      "removalCondition": "remove an entry when its file no longer parses that Portuguese input, or the input is matched through a locale resource",
+      "targetState": "input vocabulary in locale resources"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "id": "EXM-PT-CONTENT-VOCABULARY",
+      "item": "census exemption table PT_CONTENT_VOCABULARY (Portuguese content processed as data)",
+      "path": "scripts/naming/technical-naming-census.mjs",
+      "currentName": "PT_CONTENT_VOCABULARY",
+      "layer": "scripts",
+      "exceptionClass": "UX_TEXT",
+      "reason": "Portuguese words that are the data a file processes (classifier keyword probes, tokens parsed from LLM output and spreadsheet cells, the import template example label), not names the team chose. Exact file and exact value only.",
+      "consumer": "technical-naming-census.mjs scanSource()",
+      "owner": "domain owners per module (Phase 0 naming)",
+      "removalCondition": "remove an entry when the module reads the vocabulary from a locale or data resource, or stops processing that Portuguese content",
+      "targetState": "content vocabulary in data resources"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "id": "EXM-EXTERNAL-PROPERTY-NAMES",
+      "item": "census exemption table EXTERNAL_PROPERTY_NAMES (third-party payload fields)",
+      "path": "scripts/naming/technical-naming-census.mjs",
+      "currentName": "EXTERNAL_PROPERTY_NAMES",
+      "layer": "scripts",
+      "exceptionClass": "PROVIDER_DEFINED",
+      "reason": "Property names of third-party payloads we only read (ViaCEP, IBGE localities, ABRAMUS rows), exempt per exact file and exact name at the adapter boundary.",
+      "consumer": "technical-naming-census.mjs scanSource() (identifier and objectKey surfaces)",
+      "owner": "integrations owner",
+      "removalCondition": "remove an entry when the provider changes its payload or the adapter maps it to English before the name is used",
+      "targetState": "provider fields mapped to English at the adapter boundary"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "id": "EXM-EXTERNAL-TOOL-NAMES",
+      "item": "census exemption table EXTERNAL_TOOL_NAMES (ecosystem file names)",
+      "path": "scripts/naming/technical-naming-census.mjs",
+      "currentName": "EXTERNAL_TOOL_NAMES",
+      "layer": "scripts",
+      "exceptionClass": "PROVIDER_DEFINED",
+      "reason": "Third-party ecosystem names that collide with Portuguese words (Cargo.lock, Cargo.toml are Rust files, not 'cargo' = job role). Matched exactly and case-sensitively; never an entry this repository controls.",
+      "consumer": "technical-naming-census.mjs objectKey()",
+      "owner": "naming governance",
+      "removalCondition": "remove an entry when the tool file is no longer referenced by any tracked source",
+      "targetState": "no ecosystem file-name collisions"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "id": "EXM-UX-ARGUMENT-CALLEES",
+      "item": "census exemption table UX_ARGUMENT_CALLEES (toast helper noun/participle arguments)",
+      "path": "scripts/naming/technical-naming-census.mjs",
+      "currentName": "UX_ARGUMENT_CALLEES",
+      "layer": "scripts",
+      "exceptionClass": "UX_TEXT",
+      "reason": "Calls whose string arguments after the first are user-visible nouns or participles composed into a PT-BR toast; they are UX text, not technical values.",
+      "consumer": "technical-naming-census.mjs isUxValue()",
+      "owner": "web owner (Phase 0 naming)",
+      "removalCondition": "remove an entry when the callee takes a typed key resolved through a label resource",
+      "targetState": "toast arguments resolved through label resources"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "item": "historical record: docs/backend-v2 point-in-time audit documents (whole documents, 107 files)",
+      "path": "docs/backend-v2/00-repository-state.md, docs/backend-v2/01-working-tree-audit.md, docs/backend-v2/02-frontend-dirty-audit.md, docs/backend-v2/03-frontend-data-access-surface.md, docs/backend-v2/04-http-client-architecture.md, docs/backend-v2/05-http-endpoint-inventory.md, docs/backend-v2/06-http-request-contracts.md, docs/backend-v2/07-http-request-unknowns-resolution.md, docs/backend-v2/08-http-request-final-resolution.md, docs/backend-v2/09-http-response-contracts.md, docs/backend-v2/10-http-response-unknowns-resolution.md, docs/backend-v2/11-http-response-final-resolution.md, docs/backend-v2/12-http-list-query-contracts.md, docs/backend-v2/13-http-error-contracts.md, docs/backend-v2/14-http-error-final-resolution.md, docs/backend-v2/15-frontend-auth-permission-contracts.md, docs/backend-v2/16-permission-final-resolution.md, docs/backend-v2/17-supabase-direct-access-audit.md, docs/backend-v2/18-local-storage-audit.md, docs/backend-v2/19-backend-required-storage-map.md, docs/backend-v2/20-storage-cases-legacy-check.md, docs/backend-v2/21-storage-required-functional-contracts.md, docs/backend-v2/22-storage-functional-unknowns-resolution.md, docs/backend-v2/23-storage-contract-final-conflicts.md, docs/backend-v2/24-required-functional-decisions.md, docs/backend-v2/25-distributor-integration-decision.md, docs/backend-v2/26-music-chat-scope-decision.md, docs/backend-v2/27-runtime-mock-audit.md, docs/backend-v2/28-runtime-mock-final-resolution.md, docs/backend-v2/29-memory-usage-audit.md, docs/backend-v2/30-external-service-audit.md, docs/backend-v2/31-external-service-final-resolution.md, docs/backend-v2/32-pending-tables-audit.md, docs/backend-v2/33-realtime-event-contracts.md, docs/backend-v2/34-canonical-frontend-contract.md, docs/backend-v2/35-canonical-contract-incomplete-resolution.md, docs/backend-v2/36-canonical-contract-conflict-resolution.md, docs/backend-v2/37-canonical-frontend-contract-final.md, docs/backend-v2/38-domain-inventory.md, docs/backend-v2/39-domain-dependency-map.md, docs/backend-v2/40-domain-dependency-final-resolution.md, docs/backend-v2/41-domain-implementation-order.md, docs/backend-v2/42-api-v2-technical-constraints.md, docs/backend-v2/43-api-v2-http-framework-decision.md, docs/backend-v2/44-api-v2-http-framework-final-resolution.md, docs/backend-v2/45-api-v2-database-access-decision.md, docs/backend-v2/46-database-v2-migration-strategy.md, docs/backend-v2/47-api-v2-layered-architecture.md, docs/backend-v2/48-api-v2-directory-structure.md, docs/backend-v2/49-auth-tenant-request-context.md, docs/backend-v2/50-api-v2-error-model.md, docs/backend-v2/51-api-v2-transaction-strategy.md, docs/backend-v2/52-api-v2-observability-strategy.md, docs/backend-v2/53-api-v2-configuration-secrets-strategy.md, docs/backend-v2/54-current-project-stack-audit.md, docs/backend-v2/55-exact-current-stack-inventory.md, docs/backend-v2/56-unresolved-stack-versions-resolution.md, docs/backend-v2/57-current-stack-final.md, docs/backend-v2/58-api-v2-database-stack-final-decision.md, docs/backend-v2/59-api-v2-nestjs-version-final-decision.md, docs/backend-v2/60-api-v2-node-version-final-decision.md, docs/backend-v2/61-api-v2-deployment-model-final-decision.md, docs/backend-v2/62-business-behavior-preservation-rules.md, docs/backend-v2/63-api-v2-typescript-final-decision.md, docs/backend-v2/64-api-v2-validation-stack-final-decision.md, docs/backend-v2/65-api-v2-drizzle-postgres-versions-final.md, docs/backend-v2/66-api-v2-auth-jwt-stack-final-decision.md, docs/backend-v2/67-api-v2-async-processing-stack-final-decision.md, docs/backend-v2/68-api-v2-observability-stack-final-decision.md, docs/backend-v2/69-api-v2-testing-quality-gates-final-decision.md, docs/backend-v2/70-api-v2-http-security-stack-final-decision.md, docs/backend-v2/71-environment-file-naming-final-decision.md, docs/backend-v2/72-api-v2-final-stack-and-readiness.md, docs/backend-v2/73-api-v2-database-namespace-final-decision.md, docs/backend-v2/74-zero-gap-reconstruction-contract.md, docs/backend-v2/75-supabase-auth-url-smtp-configuration.md, docs/backend-v2/76-encryption-secret-exposure-resolution.md, docs/backend-v2/77-docusign-private-key-exposure-resolution.md, docs/backend-v2/78-current-database-complete-inventory.md, docs/backend-v2/79-database-unknown-classifications-resolution.md, docs/backend-v2/80-code-database-crosscheck-final-resolution.md, docs/backend-v2/81-field-level-zero-gap-traceability.md, docs/backend-v2/database-inventory/code-vs-live.md, docs/backend-v2/database-inventory/enums-views.md, docs/backend-v2/database-inventory/frontend-cross-check.md, docs/backend-v2/database-inventory/functions-triggers.md, docs/backend-v2/database-inventory/realtime-auth-storage.md, docs/backend-v2/database-inventory/rls.md, docs/backend-v2/database-inventory/schemas.md, docs/backend-v2/database-inventory/semantic-patterns.md, docs/backend-v2/database-inventory/tables-columns.md, docs/backend-v2/field-traceability/PROGRESS.md, docs/backend-v2/field-traceability/modules/accounting.md, docs/backend-v2/field-traceability/modules/admin.md, docs/backend-v2/field-traceability/modules/leads.md, docs/backend-v2/field-traceability/modules/licensing.md, docs/backend-v2/field-traceability/modules/marketing.md, docs/backend-v2/field-traceability/modules/monitoring.md, docs/backend-v2/field-traceability/modules/musicchat.md, docs/backend-v2/field-traceability/modules/projects.md, docs/backend-v2/field-traceability/modules/releases.md, docs/backend-v2/field-traceability/modules/reports.md, docs/backend-v2/field-traceability/modules/settings.md, docs/backend-v2/field-traceability/modules/support.md, docs/backend-v2/field-traceability/modules/workspace.md, docs/backend-v2/gap-resolution/00-canonical-gap-register.md, docs/backend-v2/review/00-master-domain-functional-verification.md",
+      "currentName": "*",
+      "surface": "doc",
+      "layer": "docs",
+      "exceptionClass": "UX_TEXT",
+      "reason": "Frozen point-in-time audit; not the current contract. Their Portuguese prose is the content of a historical record and must not be translated or edited. The census does NOT suppress these files: they stay counted in technical-naming-baseline.json (per-file ratchet, growth fails), and this row (census: baselined) only gives that tolerated debt an owner, removal condition and target state. DADO_HISTORICO is not an exceptionClass in statusVocabulary, so the closest existing class UX_TEXT (as for the other whole-document doc rows) is recorded; the historical meaning is stated here and in targetState.",
+      "consumer": "readers of past audit evidence; no runtime or build consumer",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete a document once it is archived outside the repository or superseded by the current engineering documentation (docs/engineering), and drop it from this row in the same change",
+      "targetState": "frozen historical record (DADO_HISTORICO), eventually removed",
+      "census": "baselined"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "item": "historical record: root docs/ point-in-time audit and blueprint documents (whole documents, 7 files)",
+      "path": "docs/BLUEPRINT_ENTERPRISE.md, docs/DB_AUDIT_2026-07-05.md, docs/ENTERPRISE_BLUEPRINT_FINAL_2026-07-09.md, docs/FORM_DATABASE_ALIGNMENT_AUDIT.md, docs/PROVISIONING_GUIDE.md, docs/STAGE_4_CANONICAL_BASELINE_157_80.md, docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md",
+      "currentName": "*",
+      "surface": "doc",
+      "layer": "docs",
+      "exceptionClass": "UX_TEXT",
+      "reason": "Frozen point-in-time audit; not the current contract. Their Portuguese prose is the content of a historical record and must not be translated or edited. The census does NOT suppress these files: they stay counted in technical-naming-baseline.json (per-file ratchet, growth fails), and this row (census: baselined) only gives that tolerated debt an owner, removal condition and target state. DADO_HISTORICO is not an exceptionClass in statusVocabulary, so the closest existing class UX_TEXT (as for the other whole-document doc rows) is recorded; the historical meaning is stated here and in targetState.",
+      "consumer": "readers of past audit evidence; no runtime or build consumer",
+      "owner": "naming governance",
+      "removalCondition": "delete a document once it is archived outside the repository or superseded by the current engineering documentation (docs/engineering), and drop it from this row in the same change",
+      "targetState": "frozen historical record (DADO_HISTORICO), eventually removed",
+      "census": "baselined"
+    },
+    {
+      "blocker": "none",
+      "dependency": null,
+      "status": "ACTIVE",
+      "item": "historical record: reports/ point-in-time audit documents (whole documents, 2 files)",
+      "path": "reports/CLEANUP_REPORT.md, reports/phase3-architecture.md",
+      "currentName": "*",
+      "surface": "doc",
+      "layer": "docs",
+      "exceptionClass": "UX_TEXT",
+      "reason": "Frozen point-in-time audit; not the current contract. Their Portuguese prose is the content of a historical record and must not be translated or edited. The census does NOT suppress these files: they stay counted in technical-naming-baseline.json (per-file ratchet, growth fails), and this row (census: baselined) only gives that tolerated debt an owner, removal condition and target state. DADO_HISTORICO is not an exceptionClass in statusVocabulary, so the closest existing class UX_TEXT (as for the other whole-document doc rows) is recorded; the historical meaning is stated here and in targetState.",
+      "consumer": "readers of past audit evidence; no runtime or build consumer",
+      "owner": "naming governance",
+      "removalCondition": "delete a document once it is archived outside the repository or superseded by the current engineering documentation (docs/engineering), and drop it from this row in the same change",
+      "targetState": "frozen historical record (DADO_HISTORICO), eventually removed",
+      "census": "baselined"
     }
   ],
   "blockers": [
@@ -41549,21 +41758,30 @@
       "item": "Drop events.data (C3/E6)",
       "blocker": "Destructive schema change: needs explicit owner authorization and a release that only reads starts_at deployed to every environment; the reports events contract must move from col('data') to starts_at with a header-compatible label in the same change.",
       "evidence": "migration 20260928000007 (E3/E5 + sync trigger); CZ-029",
-      "requiredAction": "After the E4 web/api release is live everywhere: switch the reports contract to starts_at keeping the 'Data' header accepted on import, stop the service dual-write, drop trg_events_sync_start_columns and events.data in one authorized migration."
+      "requiredAction": "After the E4 web/api release is live everywhere: switch the reports contract to starts_at keeping the 'Data' header accepted on import, stop the service dual-write, drop trg_events_sync_start_columns and events.data in one authorized migration.",
+      "owner": "explicit owner authorization required",
+      "disposition": "BLOCKED_OWNER_AUTHORIZATION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-HR-LEGACY-MIRRORS",
       "item": "employees.legacy_full_name/legacy_sector/legacy_base_salary, payroll_entries.legacy_employee_id/legacy_reference_month, leave_requests.legacy_employee_id",
       "blocker": "Unmapped mirror columns of mapped canonical columns (name, department, salary, employee_id, reference_month). Dropping them is destructive and needs a data reconciliation against the canonical column in every environment.",
       "evidence": "migration 20260928000008 (renamed legacy_*); 20260712000003 added them as form mirrors the service never kept in sync",
-      "requiredAction": "Compare each legacy_* value with its canonical column in DEV/STAGING/PROD; copy anything meaningful into the canonical column; then drop the legacy_* columns in an authorized migration."
+      "requiredAction": "Compare each legacy_* value with its canonical column in DEV/STAGING/PROD; copy anything meaningful into the canonical column; then drop the legacy_* columns in an authorized migration.",
+      "owner": "hr owner",
+      "disposition": "BLOCKED_DESTRUCTIVE_CHANGE",
+      "status": "OPEN"
     },
     {
       "id": "BLK-HR-PII",
       "item": "employees.birth_date, address, rg (collected by the employee form, never persisted)",
       "blocker": "Product + security decision: persisting these personal fields plaintext (cpf/email/phone are encrypted) or removing them from the form.",
       "evidence": "EmployeeFormModal collects rg/birthDate/address; CreateEmployeeDto never accepted them; columns exist unmapped (20260712000003)",
-      "requiredAction": "Owner decides: persist with field-level encryption (EncryptionService, like cpf) or remove the inputs; implement accordingly."
+      "requiredAction": "Owner decides: persist with field-level encryption (EncryptionService, like cpf) or remove the inputs; implement accordingly.",
+      "owner": "hr owner",
+      "disposition": "BLOCKED_SECURITY_DECISION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-SHARES-ARTIST-MIRROR",
@@ -41571,6 +41789,8 @@
       "blocker": "Dropping the legacy column is a destructive schema change that needs explicit authorization.",
       "evidence": "Migration 20260928000015 backfills artist_id from the mirror where empty and renames the mirror to legacy_artist_project_id; nothing writes or reads it any more (API maps the deprecated input artista_project_id to artist_id; web reads artist_id only).",
       "requiredAction": "After the CZ-037 web release is deployed everywhere, confirm legacy_artist_project_id IS DISTINCT FROM artist_id has zero rows, then drop the column with explicit authorization.",
+      "owner": "shares owner (Phase 0 naming)",
+      "disposition": "BLOCKED_DESTRUCTIVE_CHANGE",
       "status": "OPEN"
     },
     {
@@ -41579,6 +41799,8 @@
       "blocker": "Security/data-governance (L5): moving personal data into encrypted columns requires an encryption backfill of existing rows and explicit authorization; not a naming change.",
       "evidence": "database-reviewer investigation (Z6-D): web crm-relationships contacts.service.ts payloadOperacional cpf/cnpj -> clients.metadata; artists DTO routes rg/data_nascimento/endereco/banco/agencia/conta/chave_pix/titular_conta into artists.metadata (same class as BLK-HR-PII).",
       "requiredAction": "Security-reviewed plan: encrypted columns (or field-level encryption) for these attributes, backfill + scrub metadata with explicit authorization, then rename the remaining metadata keys.",
+      "owner": "crm / tenancy owner (Phase 0 naming)",
+      "disposition": "BLOCKED_SECURITY_DECISION",
       "status": "OPEN"
     },
     {
@@ -41587,6 +41809,8 @@
       "blocker": "Dropping the legacy columns is a destructive schema change that needs explicit authorization.",
       "evidence": "Migration 20260928000018 backfilled language/is_instrumental/ai_used/alternative_titles/lyrics from them where empty and renamed them legacy_*; the entity maps them select:false and nothing writes or reads them.",
       "requiredAction": "After the CZ-039 web release is deployed everywhere, confirm no row has a legacy value that disagrees with its registry column, then drop the legacy columns with explicit authorization.",
+      "owner": "catalog owner (Phase 0 naming)",
+      "disposition": "BLOCKED_DESTRUCTIVE_CHANGE",
       "status": "OPEN"
     },
     {
@@ -41595,6 +41819,8 @@
       "blocker": "Dropping the legacy columns is a destructive schema change that needs explicit authorization.",
       "evidence": "Migration 20260928000020 backfilled recording_date/release_date/duration_seconds/country_of_recording from them where empty and renamed them legacy_*; the entity maps them select:false and nothing writes or reads them.",
       "requiredAction": "After the CZ-040 web release is deployed everywhere, reconcile and drop the legacy columns with explicit authorization.",
+      "owner": "catalog owner (Phase 0 naming)",
+      "disposition": "BLOCKED_DESTRUCTIVE_CHANGE",
       "status": "OPEN"
     },
     {
@@ -41603,6 +41829,8 @@
       "blocker": "Product decision: the release workflow has no rejected / taken-down state; mapping them onto another status would change their meaning.",
       "evidence": "Migration 20260928000019 maps every other legacy Portuguese status; the web display map tolerates only these four (release-status.tsx UNMAPPED_LEGACY_TO_DISPLAY). They are two concepts, not four: `rejeitado` is a distributor rejection (display `rejected`) and `takedown`/`take_down`/`remocao` are three spellings of one removal-from-platforms concept (display `takedown`); the distribution `platform_status` vocabulary already has `rejected` and `takedown`. `releases` has only `status` (no platform_status column) and no CHECK; packages/types ReleaseStatus has neither state.",
       "requiredAction": "Decide whether ReleaseStatus gains rejected/taken_down (workflow + labels) or these rows move to cancelled; then map them and add chk_releases_status.",
+      "owner": "releases team",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
       "status": "OPEN"
     },
     {
@@ -41611,6 +41839,8 @@
       "blocker": "Dropping columns is a destructive data change (L5) and needs explicit authorization.",
       "evidence": "Migration 20260928000021 keeps their data; no code reads or writes them (entity select:false).",
       "requiredAction": "After confirming they hold no data absent from type/transaction_date/attachment_url in every environment, drop them in an authorized migration.",
+      "owner": "accounting owner (Phase 0 naming)",
+      "disposition": "BLOCKED_DESTRUCTIVE_CHANGE",
       "status": "OPEN"
     },
     {
@@ -41619,6 +41849,8 @@
       "blocker": "Domain decision: the platform-owned slugs were canonicalized by migration 20260930000018, but these two are user-selectable options whose accounting meaning is ambiguous (`receitas-internas`: intercompany vs internal-use revenue; `repasse-contrato`: remittance vs pass-through vs assignment of a contract). The UI still writes them as Portuguese kebab slugs.",
       "evidence": "Only label evidence exists: companyRevenueCategories ('Receitas Internas', sibling of music_revenue/services/products/contractual_revenue) and contractualRevenueTypes ('Repasse de Contrato', sibling of commission/administrative_fee/reimbursement_received/contractual_fine) in apps/web/src/modules/accounting/constants/transaction-constants.ts; no sibling slug (`despesas-internas`, `repasse*`) was ever mapped; UNMAPPED_TRANSACTION_CATEGORY_SLUGS in api and web.",
       "requiredAction": "Accounting owner states the meaning of each slug; then add them to LEGACY_TRANSACTION_CATEGORY_SLUGS (api + web parity test), write the canonical id in the option lists and run a guarded backfill like 20260930000018. Until then they stay as value-surface exceptions.",
+      "owner": "accounting owner (Phase 0 naming)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
       "status": "OPEN"
     },
     {
@@ -41627,6 +41859,8 @@
       "blocker": "Needs an owner decision on which field is authoritative and whether the other becomes derived/generated.",
       "evidence": "CZ-040 web writes both from the same inputs; the API accepts both independently.",
       "requiredAction": "Declare duration_seconds and the ISRC parts (or the compact isrc) canonical, derive the other server-side, and backfill.",
+      "owner": "catalog owner (Phase 0 naming)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
       "status": "OPEN"
     },
     {
@@ -41635,6 +41869,8 @@
       "blocker": "Dropping a column is a destructive data change (L5) needing explicit authorization.",
       "evidence": "Migration 20260928000023 keeps its data; entity select:false.",
       "requiredAction": "Confirm it holds nothing absent from status, then drop in an authorized migration.",
+      "owner": "crm / tenancy owner (Phase 0 naming)",
+      "disposition": "BLOCKED_DESTRUCTIVE_CHANGE",
       "status": "OPEN"
     },
     {
@@ -41643,6 +41879,8 @@
       "blocker": "Product decision: user-facing taxonomy shared with the CRM form options.",
       "evidence": "CZ-043 left the values unchanged on purpose.",
       "requiredAction": "Decide the canonical slug vocabulary, then migrate values and the web options together.",
+      "owner": "crm / tenancy owner (Phase 0 naming)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
       "status": "OPEN"
     },
     {
@@ -41650,84 +41888,120 @@
       "item": "apps/web MarketingTarget (projeto_musical/artista/empresa) and marketing task kind/type vocabulary",
       "blocker": "MarketingTarget is shared by campaigns, tasks (metadata.targetType jsonb), the AI creative workspace, analytics hub, Artist 360 modal (outside the marketing module) and the operational-settings marketing_context slugs; renaming it needs a jsonb backfill of persisted campaign/task metadata plus a settings-slug migration. marketing_tasks.kind (TaskType, ~45 Portuguese values) is likewise a free varchar with Portuguese values.",
       "evidence": "CZ-047; apps/web marketing.types.ts MarketingTarget/TaskType; ArtistVision360Modal; useOperationalSettings marketing_context slugs",
-      "requiredAction": "Own mission: canonical English MarketingTarget and TaskType, backfill campaigns/tasks metadata and settings slugs in one reversible migration, then delete marketing-content-wire.ts."
+      "requiredAction": "Own mission: canonical English MarketingTarget and TaskType, backfill campaigns/tasks metadata and settings slugs in one reversible migration, then delete marketing-content-wire.ts.",
+      "owner": "marketing owner (Phase 0 naming)",
+      "disposition": "BLOCKED_COMPATIBILITY_WINDOW",
+      "status": "OPEN"
     },
     {
       "id": "BLK-TAKEDOWNS-FK-COLUMNS",
       "item": "TakedownEntity maps work_id, artist_id and response, which the migrated takedowns table does not have",
       "blocker": "Product/security decision: removing them also removes the cross-tenant FK assertions (assertSameTenantFk on works/artists) and the `artist_id` list filter of the public API; adding the columns would invent schema.",
       "evidence": "Migration 20260719000016 removed obra_id/artista_id/resposta as proven orphans; a database migrated from scratch fails repository.find() with `column TakedownEntity.work_id does not exist`; CreateTakedownDto.work_id/artist_id and QueryTakedownDto.artist_id still exist; the web form never sends them; takedowns.service.create.spec.ts proves the FK assertions.",
-      "requiredAction": "Owner decides: (a) remove the three entity columns, the two DTO fields, the artist_id filter and the FK assertions (and rewrite the P1 spec), or (b) add the columns back with a guarded migration and keep the assertions."
+      "requiredAction": "Owner decides: (a) remove the three entity columns, the two DTO fields, the artist_id filter and the FK assertions (and rewrite the P1 spec), or (b) add the columns back with a guarded migration and keep the assertions.",
+      "owner": "takedowns team",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-FINANCIAL-CATEGORY-LEGACY-ENTITIES",
       "item": "Six legacy financial category entities map tables removed by migration 20260718000002",
       "blocker": "Dead ORM classes (no module, service or controller references them) that contradict the schema; removal is mechanical but touches the shared entities file and any tooling that enumerates entities.",
       "evidence": "FinancialCategoryEntity (columns path, depth_level, slug, ...) and FinancialCategory{Center,Link,Favorite,Rule,RuleRun}Entity have zero non-spec references; the tables financial_category_centers/links/favorites/rules/rule_runs do not exist after db:migrate.",
-      "requiredAction": "Delete the six classes from apps/api/src/database/entities.ts after confirming no external script imports them; then a DB-backed entity-vs-catalog guard can run with an empty allowlist."
+      "requiredAction": "Delete the six classes from apps/api/src/database/entities.ts after confirming no external script imports them; then a DB-backed entity-vs-catalog guard can run with an empty allowlist.",
+      "owner": "accounting owner (Phase 0 naming)",
+      "disposition": "BLOCKED_OWNER_AUTHORIZATION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-HR-EMPLOYEE-DOCUMENTS",
       "item": "HR employee documents have no backend",
       "blocker": "Undefined product behavior: storage backend, document types, retention and who may read sensitive HR files are not specified anywhere in the repository; choosing a storage provider is an owner decision.",
       "evidence": "No employee_documents table (only employees), no route or API module; api-client.ts PENDING_TABLES notes the old mapping onto /hr/employees listed employees as documents and deleted employees on document removal; HR.tsx renders EmployeeDocumentsUnavailable and HR.documents-unbacked.guard.test.ts enforces it.",
-      "requiredAction": "Owner specifies the capability (storage, types, retention, permissions); then add the table with RLS, API module, permissions and replace the unavailable state."
+      "requiredAction": "Owner specifies the capability (storage, types, retention, permissions); then add the table with RLS, API module, permissions and replace the unavailable state.",
+      "owner": "hr owner",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-CI-JOB-NAME-FASE",
       "item": "CI job name `Security Regression (FASE 9.x fixes)`",
       "blocker": "The job name is a status-check context; renaming it can break branch protection or rulesets that require it, and the repository has no authoritative record of them.",
       "evidence": ".github/workflows/ci.yml:212, scripts/verify-body-limit-guard.mjs:4 and docs/runbook.md reference the name; the only evidence about required checks is the 2026-09-13 audit (dev unprotected, none required), which is a dated snapshot and says nothing about staging/main.",
-      "requiredAction": "Admin lists the required checks of every protected branch/ruleset; if the name is not required (or after updating the protection), rename it and the three references together."
+      "requiredAction": "Admin lists the required checks of every protected branch/ruleset; if the name is not required (or after updating the protection), rename it and the three references together.",
+      "owner": "platform tooling owner",
+      "disposition": "BLOCKED_COMPATIBILITY_WINDOW",
+      "status": "OPEN"
     },
     {
       "id": "BLK-LEGACY-ROOT-SQL",
       "item": "Stale root SQL scripts in apps/api",
       "blocker": "Not executed by any tool, but migrations-complete.sql (generated 2026-05-21, 2168 lines, instructs `run in Supabase SQL Editor`) would build an obsolete schema outside the migration tracker; deleting generated/historical artifacts is the owner's call.",
       "evidence": "migrations-complete-clean.sql and migrations-temp.sql are empty; migrations-complete.sql is the output of scripts/dump-migrations-sql.ts and is allowlisted by verify-provider-residue; seed-operational.sql, setup-supabase-complete.sql, supabase-jwt-hook.sql and supabase-rls.sql are documented manual provisioning scripts (PROVISIONING_GUIDE.md, CODEBASE_MAP.md).",
-      "requiredAction": "Owner decides to delete the two empty files and either delete or banner migrations-complete.sql as HISTORICAL (update the provider-residue allowlist and docs in the same change)."
+      "requiredAction": "Owner decides to delete the two empty files and either delete or banner migrations-complete.sql as HISTORICAL (update the provider-residue allowlist and docs in the same change).",
+      "owner": "api owner (database)",
+      "disposition": "BLOCKED_OWNER_AUTHORIZATION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-CONTRACT-CATEGORY-REGISTRY",
       "item": "Contract category registry: pre-canonical spellings and tenant-authored slugs",
       "blocker": "The ten platform-owned slugs are backfilled (20260930000034/36) without a registry, but four more persisted spellings have no canonical value in CANONICAL_CONTRACT_CATEGORY_SLUGS and their meaning is not provable: `exclusivo`, `nao_exclusivo`, `representacao`, `servicos`.",
       "evidence": "apps/web/src/modules/artist/lib/contract-type-filters.ts maps them to `exclusive`, `non_exclusive`, `representation`, `services` while the platform canonical for exclusividade is `exclusivity` (the filter accepts both `exclusivity` and `exclusive`); tenant-authored slugs (`parceria`, `empresariamento_360`, ...) live in the browser registry and contract_service_types.",
-      "requiredAction": "Contracts owner decides whether `exclusive` vs `exclusivity` (and the other three) are distinct categories, adds the agreed ones to the canonical set, then a guarded exact-match backfill like 20260930000036 can follow; tenant slugs stay tenant data."
+      "requiredAction": "Contracts owner decides whether `exclusive` vs `exclusivity` (and the other three) are distinct categories, adds the agreed ones to the canonical set, then a guarded exact-match backfill like 20260930000036 can follow; tenant slugs stay tenant data.",
+      "owner": "contracts owner (Phase 0 naming)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-WORKFLOW-EXECUTION-ERROR-TEXT",
       "item": "WorkflowExecutionService.list/get return entities with the raw error_message",
       "blocker": "Latent exposure, not a live leak: no controller serves workflow executions today, but the first one added would publish raw error text.",
       "evidence": "apps/api/src/core/workflow/workflow-execution.service.ts list()/get() return WorkflowExecutionEntity rows; no *.controller.ts references the service; SkillRun, SocietySyncJob and ArtistPlatformProfile already map to error_code DTOs (raw-error-boundary.spec.ts).",
-      "requiredAction": "When a workflow execution endpoint is added, return a public DTO with error_code (classifyFailureCode) like the three existing mappers."
+      "requiredAction": "When a workflow execution endpoint is added, return a public DTO with error_code (classifyFailureCode) like the three existing mappers.",
+      "owner": "api owner (Phase 0 naming)",
+      "disposition": "BLOCKED_PENDING_OWNER_WORK",
+      "status": "OPEN"
     },
     {
       "id": "BLK-RESIDUE-CENSUS-DOCS",
       "item": "85 references to findings/*.md files that are not in the repository",
       "blocker": "The census queries behind most removal conditions lived in session-local findings files (contracts-ct1, transactions-tx1, persisted-jsonb-pj1, persisted-ap3, persisted-vocabulary-audit, marketing-mk2, contracts-taxonomy, bug1); only the contract batch (20260930000034..36) has its census queries in docs/runbooks/staging-to-production.md.",
       "evidence": "git ls-files has no findings/ path; the references are in ledger rows, migration headers and code comments.",
-      "requiredAction": "Write the residue census per remaining backfill migration (20260930000017..033) next to the runbook queries, derived from each migration's own predicate, then repoint the references; do not reconstruct them from memory."
+      "requiredAction": "Write the residue census per remaining backfill migration (20260930000017..033) next to the runbook queries, derived from each migration's own predicate, then repoint the references; do not reconstruct them from memory.",
+      "owner": "naming governance",
+      "disposition": "BLOCKED_PENDING_OWNER_WORK",
+      "status": "OPEN"
     },
     {
       "id": "BLK-PROJECTS-XLSX-HEADER-ROUNDTRIP",
       "item": "The projects XLSX export and import template are rejected by the importer",
       "blocker": "Security-primitive decision: the importer's key guard (isWritableKey / WRITABLE_KEY_RE in core/security/safe-object.ts, a prototype-pollution barrier) does not allow the em dash that two exported header labels use; widening the guard or changing the headers (which saved report layouts and the export spec pin) are both owner decisions.",
       "evidence": "Verified on a database migrated from scratch with the API running: GET /reports/entities/projects/export and /import/template return a workbook whose headers `Duração — Minutos` and `Duração — Segundos` are rejected by POST /reports/entities/projects/import/validate with `Cabeçalho inseguro`; the clients, contracts and transactions templates validate.",
-      "requiredAction": "Either allow U+2013/U+2014 in WRITABLE_KEY_RE (still cannot start with `_` or reach a prototype key) with a test, or rename the two labels to a hyphen and keep the old text as an accepted deprecated header alias; add a round-trip test (export -> validate) per reportable entity."
+      "requiredAction": "Either allow U+2013/U+2014 in WRITABLE_KEY_RE (still cannot start with `_` or reach a prototype key) with a test, or rename the two labels to a hyphen and keep the old text as an accepted deprecated header alias; add a round-trip test (export -> validate) per reportable entity.",
+      "owner": "reports owner (Phase 0 naming)",
+      "disposition": "BLOCKED_SECURITY_DECISION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-PROJECTS-EXPORT-RAW-TOKENS",
       "item": "The projects export shows raw canonical tokens in three user-facing columns",
       "blocker": "UX/labeling decision: `Tipo de Lançamento` (ep/album/single), `Solo/Feat` and `Original/Remix` export the stored value, not a PT-BR label; the status, instrumental and language columns are labeled.",
       "evidence": "Export of a project created through the API on a migrated database: row values `ep`, `solo`, `original` next to `Em planejamento`, `Não`, `Português`; value-labels.pt-br.ts has no label table for projects.type, project_tracks.solo_feat or original_remix.",
-      "requiredAction": "Add the label tables (and the import mapping back to the canonical value) for those three columns, as done for status, instrumental and language."
+      "requiredAction": "Add the label tables (and the import mapping back to the canonical value) for those three columns, as done for status, instrumental and language.",
+      "owner": "marketing / projects owner (Phase 0 naming)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "OPEN"
     },
     {
       "id": "BLK-E2E-ROOT-XLSX-DEPENDENCY",
       "item": "`pnpm test:e2e` cannot load the Playwright suite from the repository root",
       "blocker": "Dependency change (manifest + lockfile) is outside this normalization and needs supply-chain review.",
       "evidence": "e2e/p86-reports-centralization.spec.ts and e2e/reports-export.spec.ts import `xlsx`, which only apps/api and apps/web declare; under pnpm's strict layout the root cannot resolve it, so `playwright test` aborts at load with `Cannot find package 'xlsx'` even though those specs would skip without credentials. The suite also needs a Chromium matching the installed @playwright/test build.",
-      "requiredAction": "Declare xlsx as a root devDependency (or move the two specs under an app that has it) and pin Playwright and its browser build together."
+      "requiredAction": "Declare xlsx as a root devDependency (or move the two specs under an app that has it) and pin Playwright and its browser build together.",
+      "owner": "platform tooling owner",
+      "disposition": "BLOCKED_OWNER_AUTHORIZATION",
+      "status": "OPEN"
     }
   ]
 }

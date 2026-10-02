@@ -78,7 +78,7 @@ export function renderMap(map) {
         x.id, x.concept, x.currentTechnicalName ?? (x.legacyAliases?.length ? x.legacyAliases : x.database), x.layer ?? (x.database ? "database" : "application"),
         x.language ?? (x.disposition === "DONE" ? "English" : "mixed"), x.canonicalEnglishName ?? x.application ?? x.database, x.definition ?? x.notes,
         x.producers, x.consumers, x.renameRequired ?? (x.status === "done" ? "no" : "yes"), x.migrationRequired ?? (x.disposition === "MIGRATION_REQUIRED" ? "yes" : "no"),
-        `${x.status} / ${x.disposition}`,
+        `${x.status} / ${x.disposition}${x.owner ? ` (owner: ${x.owner})` : ""}`,
       ]),
     ),
     "",
@@ -97,12 +97,12 @@ export function renderMap(map) {
     "Every Portuguese technical name that remains has exactly one row here; the census guard uses this table as its only suppression list.",
     "",
     ...table(["Item", "Path", "Current name", "Layer", "Exception class", "Reason", "Consumer", "Owner", "Removal condition", "Target state", "Status"],
-      map.exceptions.map((e) => [e.item, e.path, e.currentName, e.layer, e.exceptionClass, e.reason, e.consumer, e.owner, e.removalCondition, e.targetState, e.status])),
+      map.exceptions.map((e) => [e.id ? `[${e.id}] ${e.item}` : e.item, e.path, e.currentName, e.layer, e.exceptionClass, e.reason, e.consumer, e.owner, e.removalCondition, e.targetState, e.status])),
     "",
     "## Blockers",
     "",
     ...(map.blockers.length
-      ? table(["ID", "Item", "Exact blocker", "Evidence", "Independent work completed", "Required action"], map.blockers.map((b) => [b.id, b.item, b.blocker, b.evidence, b.independentWorkCompleted, b.requiredAction]))
+      ? table(["ID", "Item", "Exact blocker", "Evidence", "Independent work completed", "Required action", "Owner", "Disposition", "Status"], map.blockers.map((b) => [b.id, b.item, b.blocker, b.evidence, b.independentWorkCompleted, b.requiredAction, b.owner, b.disposition, b.status]))
       : ["None."]),
     "",
   ];

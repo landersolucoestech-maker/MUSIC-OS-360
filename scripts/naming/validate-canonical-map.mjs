@@ -16,10 +16,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { loadAuthority, validateStructure, rowsWithoutCoveringTest } from "./canonical-map.mjs";
+import { execFileSync } from "node:child_process";
+import { loadAuthority, validateStructure, rowsWithoutCoveringTest, coveringTestRatchet } from "./canonical-map.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(here, "../..");
+export const COVERING_TEST_BASELINE = path.join(here, "covering-test-baseline.json");
 const require = createRequire(path.join(ROOT, "package.json"));
 const ts = require("typescript");
 
@@ -52,6 +54,20 @@ export function physicalColumns() {
   return byTable;
 }
 
+/** Glob (`*` within a segment, `**` across segments) to RegExp, for exception rows that name a file family. */
+export function globToRegExp(glob) {
+  const re = glob.split("**").map((part) => part.split("*").map((x) => x.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join("[^/]*")).join(".*");
+  return new RegExp(`^${re}$`);
+}
+
+/** A glob path in the ledger must still match at least one tracked file, otherwise the row is dangling. */
+export function danglingGlobRows(map, tracked) {
+  return (map.exceptions ?? [])
+    .filter((e) => e.status !== "REMOVED" && e.path !== "*" && String(e.path).includes("*"))
+    .filter((e) => String(e.path).split(/\s*,\s*/).some((g) => !tracked.some((f) => globToRegExp(g).test(f))))
+    .map((e) => `exception ${e.item ?? e.currentName}: path glob '${e.path}' matches no tracked file`);
+}
+
 function main() {
   const map = loadAuthority();
   const problems = validateStructure(map);
@@ -76,6 +92,12 @@ function main() {
       if (live.length) problems.push(`${c.id} ${c.concept}: legacy alias \`${alias}\` is still a physical column on ${live.join(", ")}`);
     }
   }
+  const tracked = execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" }).split("\n").filter(Boolean);
+  problems.push(...danglingGlobRows(map, tracked));
+  const ratchet = coveringTestRatchet(map, JSON.parse(fs.readFileSync(COVERING_TEST_BASELINE, "utf8")));
+  if (ratchet.grew) {
+    problems.push(`${ratchet.count} ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY rows have no coveringTest, above the baseline ${ratchet.baseline} (scripts/naming/covering-test-baseline.json): add the covering test path to the new rows instead of raising the baseline`);
+  }
   if (problems.length) {
     console.error(`canonical naming map validation failed (${problems.length}):\n  ${problems.join("\n  ")}`);
     process.exit(1);
@@ -83,7 +105,10 @@ function main() {
   const untested = rowsWithoutCoveringTest(map);
   const temporary = (map.exceptions ?? []).filter((e) => e.status === "ACTIVE" && e.exceptionClass === "TEMPORARY_MIGRATION_COMPATIBILITY").length;
   if (untested.length) {
-    console.warn(`warning: ${untested.length}/${temporary} ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY rows have no coveringTest (not a failure; add the test path that proves the alias)`);
+    console.warn(`warning: ${untested.length}/${temporary} ACTIVE TEMPORARY_MIGRATION_COMPATIBILITY rows have no coveringTest (ratchet baseline ${ratchet.baseline}: may only go down; add the test path that proves the alias)`);
+  }
+  if (ratchet.shrunk) {
+    console.warn(`hint: untested temporary rows dropped to ${ratchet.count} (baseline ${ratchet.baseline}); lower untestedTemporaryRows in scripts/naming/covering-test-baseline.json to ${ratchet.count} to lock the gain`);
   }
   console.log(`canonical naming map valid: structure ok, ${checked} column assertions against ${byTable.size} tables`);
 }

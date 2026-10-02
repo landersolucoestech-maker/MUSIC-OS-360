@@ -47,7 +47,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | NC-039 | `shares.role` | proposed | NEEDS_PRODUCT_DECISION | no |
 | NC-040 | `leads.observacoesInternas` | proposed | NEEDS_PRODUCT_DECISION | no |
 | NC-041 | `transactions.forma_pagamento`/`tipo_pagamento` (unwritten columns — values live in `metadata.formaPagamento`/`tipoPagamento`) | proposed | NEEDS_PRODUCT_DECISION | no |
-| NC-042 | `billing.service.ts` `upsertStripeInvoice`/`upsertStripeSubscription` correctness bugs | done | BUG | no |
+| NC-042 | `billing.service.ts` `upsertStripeInvoice`/`upsertStripeSubscription` correctness bugs | done | RESOLVED | no |
 | NC-043 | `works.external_source` | approved | BLOCKED_PRODUCT_DECISION | no |
 | NC-044 | `works.external_source_id` | approved | BLOCKED_PRODUCT_DECISION | no |
 | NC-045 | `works.external_source_synced_at` | approved | BLOCKED_PRODUCT_DECISION | no |
@@ -102,5 +102,5 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-046 | Marketing task status and priority vocabulary | done | DONE | no |
 | CZ-047 | Marketing content post status, target type and content type vocabulary | done | DONE | no |
 
-Concepts: 95. Renames: 0. Exceptions: 2434. Blockers: 25.
-By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 79, done/RESOLVED 1, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 95. Renames: 0. Exceptions: 2445. Blockers: 25.
+By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/DONE 79, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

@@ -59,9 +59,10 @@ const ts = require("typescript");
 export const SURFACES = ["apiRoute", "comment", "dbColumn", "directory", "doc", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "testTitle", "value"];
 const ENTITIES = "apps/api/src/database/entities.ts";
 
-/** Third-party bundles committed as static assets: not our names. */
+/** Third-party bundles committed as static assets: not our names. ledger: EXM-VENDORED */
 export const VENDORED = new Set(["apps/web/public/pdf.mjs", "apps/web/public/pdf.worker.min.mjs"]);
 /**
+ * ledger: EXM-DETECTOR-FIXTURES
  * The naming detectors' own vocabulary and test fixtures necessarily contain Portuguese
  * words as data. Their identifiers are still checked; their string values, keys, test
  * titles and comments are not.
@@ -79,6 +80,7 @@ export const DETECTOR_FIXTURES = new Set([
 export const DETECTOR_FIXTURE_PREFIXES = [".audit-runtime/"];
 const isDetectorFixture = (f) => DETECTOR_FIXTURES.has(f) || DETECTOR_FIXTURE_PREFIXES.some((p) => f.startsWith(p));
 /**
+ * ledger: EXM-USER-INPUT-VOCABULARY
  * Portuguese words that are genuine END-USER INPUT vocabulary in one specific file: surname
  * particles (`das`, `dos`), boolean answers typed in Portuguese spreadsheets and chat (`sim`,
  * `nao`, `verdadeiro`, `falso`), chat navigation commands (`inicio`, `voltar`) and the defensive
@@ -92,6 +94,7 @@ export const USER_INPUT_VOCABULARY = new Map([
   ["apps/api/src/modules/conversations/musicchat-automation.service.ts", new Set(["inicio", "início", "voltar"])],
 ]);
 /**
+ * ledger: EXM-PT-CONTENT-VOCABULARY
  * Portuguese words that are the DATA a file processes, not names the engineering team chose:
  * keyword probes of classifiers/planners matched against user-supplied filenames and titles,
  * Portuguese tokens parsed from (or fed to) LLM output and spreadsheet cells, and the example
@@ -121,6 +124,7 @@ export const PT_CONTENT_VOCABULARY = new Map([
   ["packages/ai-skills/src/support-triage/parser.ts", new Set(["sim", "nao", "não", "alta", "baixa", "crítica"])],
 ]);
 /**
+ * ledger: EXM-EXTERNAL-PROPERTY-NAMES
  * Property names that belong to a third-party payload we only read: ViaCEP (logradouro, bairro,
  * localidade, uf, ...), IBGE localities (nome, sigla, mesorregiao, ...) and ABRAMUS rows (duracao, compositores, ...). Exact file + exact
  * name; applies to identifier and object-key surfaces.
@@ -132,12 +136,14 @@ export const EXTERNAL_PROPERTY_NAMES = new Map([
   ["apps/web/src/modules/integrations/hooks/useAbramus.ts", new Set(["duracao", "genero", "compositores", "letristas", "gravadora", "produtores", "data_registro", "artista_nome"])],
 ]);
 /**
+ * ledger: EXM-UX-ARGUMENT-CALLEES
  * Calls whose string arguments after the first are user-visible nouns/participles composed
  * into a PT-BR toast ("Obra excluída com sucesso"): handleConcurrencyConflict(err, "evento"),
  * reportBulkResult(result, "excluída", "obra").
  */
 export const UX_ARGUMENT_CALLEES = new Set(["handleConcurrencyConflict", "reportBulkResult"]);
 /**
+ * ledger: EXM-EXTERNAL-TOOL-NAMES
  * Third-party ecosystem file names that collide with Portuguese words ("Cargo.lock" is the Rust
  * lockfile, not "cargo" = job role). Matched exactly and case-sensitively, so a real `cargo`
  * property or column is still reported. Never add a name this repository controls.

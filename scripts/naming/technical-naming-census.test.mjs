@@ -478,7 +478,7 @@ const q = { queue: "Atendimento" };`;
 
 test("living glossary/map docs: only whole-document ledger rows with surface doc exempt Markdown, for the two documents that are the Portuguese vocabulary", () => {
   const LIVING = new Set(["docs/engineering/ux-language-glossary.md", "docs/NAMING_NORMALIZATION_CANONICAL_MAP.md"]);
-  const rows = loadAuthority().exceptions.filter((e) => e.surface === "doc");
+  const rows = loadAuthority().exceptions.filter((e) => e.surface === "doc" && e.census !== "baselined");
   assert.ok(rows.length >= 2, "both living documents are ledgered");
   for (const e of rows) {
     assert.ok(LIVING.has(e.path), `${e.path}: a whole-document exemption is reserved for the glossary and the generated map`);
@@ -492,4 +492,44 @@ test("living glossary/map docs: only whole-document ledger rows with surface doc
     assert.ok(!(`doc::${f}` in c.debt), `${f} is not debt`);
   }
   assert.ok(Object.keys(c.debt).some((k) => k.startsWith("doc::docs/") && !k.endsWith("CANONICAL_MAP.md")), "other documents are still counted");
+});
+
+test("every census exemption table has a ledger row (id, owner, removal condition, target state) referenced next to the table", () => {
+  const src = fs.readFileSync(path.join(here, "technical-naming-census.mjs"), "utf8");
+  const exceptions = loadAuthority().exceptions;
+  const tables = ["VENDORED", "DETECTOR_FIXTURES", "USER_INPUT_VOCABULARY", "PT_CONTENT_VOCABULARY", "EXTERNAL_PROPERTY_NAMES", "EXTERNAL_TOOL_NAMES", "UX_ARGUMENT_CALLEES"];
+  for (const table of tables) {
+    const m = src.match(new RegExp(`/\\*\\*(?:(?!\\*/)[\\s\\S])*?\\*/\\s*export const ${table}\\b`));
+    assert.ok(m, `${table}: declaration with a doc comment not found`);
+    const ref = m[0].match(/ledger: (EXM-[A-Z-]+)/);
+    assert.ok(ref, `${table}: add a 'ledger: EXM-...' reference in the comment next to the table`);
+    const rows = exceptions.filter((e) => e.id === ref[1]);
+    assert.equal(rows.length, 1, `${table}: ledger row ${ref[1]} missing or duplicated`);
+    const [r] = rows;
+    assert.equal(r.currentName, table);
+    assert.equal(r.status, "ACTIVE");
+    for (const f of ["owner", "reason", "consumer", "removalCondition", "targetState"]) assert.ok(r[f], `${table}: ${ref[1]} lacks ${f}`);
+  }
+  // no extra EXM row without a table
+  const declared = new Set(tables);
+  for (const e of exceptions.filter((x) => x.id?.startsWith("EXM-"))) assert.ok(declared.has(e.currentName), `${e.id} has no exemption table`);
+});
+
+test("ledger rows for the deprecated Drizzle SQL and the frozen audit docs exist and are accepted by the structure validator", async () => {
+  const { validateStructure } = await import("./canonical-map.mjs");
+  const map = loadAuthority();
+  assert.deepEqual(validateStructure(map), []);
+  const drizzle = map.exceptions.find((e) => e.path === "apps/api/drizzle/*.sql");
+  assert.ok(drizzle && drizzle.owner && drizzle.removalCondition && drizzle.targetState === "removed");
+  const baseline = JSON.parse(fs.readFileSync(path.join(here, "technical-naming-baseline.json"), "utf8"));
+  const records = map.exceptions.filter((e) => e.census === "baselined");
+  assert.ok(records.length >= 3 && records.every((e) => e.owner && e.removalCondition && e.targetState && e.reason));
+  const covered = records.flatMap((e) => e.path.split(/\s*,\s*/));
+  assert.equal(new Set(covered).size, covered.length, "a baselined doc is covered by exactly one record row");
+  // every baselined doc is owned by a record row, and no record row outlives its baseline entry
+  const baselinedDocs = Object.keys(baseline.debt).filter((k) => k.startsWith("doc::")).map((k) => k.slice(5)).sort();
+  assert.deepEqual([...covered].sort(), baselinedDocs);
+  // records never suppress: the census still counts them as debt
+  const c = census();
+  for (const f of covered) assert.ok(`doc::${f}` in c.debt && !(`doc::${f}` in c.excepted), `${f} stays ratcheted debt`);
 });
