@@ -10,7 +10,7 @@ import {
   LEGACY_OPERATIONAL_SLUGS,
   operationalStableKey,
 } from '../modules/operational-lists/operational-list-vocabulary';
-import { fakeRunner, makeFakeDb, type Row } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb, type Row } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const ID = (n: number) => `00000000-0000-0000-0000-0000000000${String(n).padStart(2, '0')}`;
 const live = (r: Row) => r['deleted_at'] == null;

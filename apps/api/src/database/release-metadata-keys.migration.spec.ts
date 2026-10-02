@@ -1,7 +1,7 @@
 import { BackfillReleaseMetadataKeysToEnglish20260930000019 as Migration, canonicalReleaseMetadataForBackfill } from './migrations/20260930000019_BackfillReleaseMetadataKeysToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
 import { canonicalizeReleaseMetadata, RELEASE_METADATA_KEY_RENAMES, RELEASE_TRACK_KEY_RENAMES, RELEASE_CREDIT_ENTRY_KEY_RENAMES } from '../common/compat/release-metadata';
-import { fakeRunner, makeFakeDb } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const legacyMeta = () => ({
   keep: { automation: true },

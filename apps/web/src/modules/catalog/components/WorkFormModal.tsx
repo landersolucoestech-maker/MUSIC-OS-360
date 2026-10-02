@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { captureError } from "@/shared/lib/error-logger";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import { MUSICAL_GENRE_LABELS } from "@/constants/musicalGenres";
@@ -618,7 +619,9 @@ export function WorkFormModal({
                                   percentage: "",
                                 }));
                               }
-                            } catch {}
+                            } catch (err) {
+                              captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "WorkFormModal.parseProjectSongParticipants" } });
+                            }
                             // Fallback: use resolved artista name as single compositor
                             if (autoParticipants.length === 0 && artistNameResolved) {
                               autoParticipants = [{

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { captureError } from "@/shared/lib/error-logger";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { MainLayout } from "@/shared/components/MainLayout";
@@ -151,7 +152,7 @@ export default function Projects() {
         results.forEach((a, i) => { if (a) map[pageArtistIds[i]] = wireToArtist(a); });
         setResolvedArtistsMap((prev) => ({ ...prev, ...map }));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "Projects.resolveArtists" } }));
     return () => { cancelled = true; };
   }, [pageArtistIds]);
 

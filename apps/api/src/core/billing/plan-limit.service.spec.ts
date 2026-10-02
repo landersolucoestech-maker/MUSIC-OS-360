@@ -13,15 +13,18 @@ function makeDs(count: number) {
 }
 
 describe('PlanLimitService', () => {
-  it('resolvePlan returns "starter" when DS is null', async () => {
-    const svc = new PlanLimitService(null);
-    const plan = await svc.resolvePlan('org-1');
-    expect(plan).toBe('starter');
+  it('resolvePlan falls back to "starter" when the subscription lookup fails', async () => {
+    const ds = makeDs(0);
+    ds.getRepository = jest.fn(() => ({
+      findOne: jest.fn().mockRejectedValue(new Error('db down')),
+    }));
+    const svc = new PlanLimitService(ds as any);
+    await expect(svc.resolvePlan('org-1')).resolves.toBe('starter');
   });
 
-  it('enforce returns without errors when DS is null (noop)', async () => {
-    const svc = new PlanLimitService(null);
-    await expect(svc.enforce('t1', 'org-1', 'artists')).resolves.toBeUndefined();
+  it('fails closed: construction throws when no DataSource is available', () => {
+    expect(() => new PlanLimitService(undefined as any)).toThrow(/requires a DataSource/);
+    expect(() => new PlanLimitService(null as any)).toThrow(/requires a DataSource/);
   });
 
   it('enforce passes when below the limit', async () => {

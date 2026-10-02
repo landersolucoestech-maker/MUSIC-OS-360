@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { captureError } from "@/shared/lib/error-logger";
 import { useSearchParams } from "react-router-dom";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { ListSectionHeader } from "@/shared/components/ListSectionHeader";
@@ -110,7 +111,7 @@ export default function Shares() {
         results.forEach((o, i) => { if (o) map[shareWorkIds[i]] = o; });
         setResolvedWorks((prev) => ({ ...prev, ...map }));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "Shares.resolveWorks" } }));
     return () => { cancelled = true; };
   }, [shareWorkIds]);
   useEffect(() => {
@@ -123,7 +124,7 @@ export default function Shares() {
         results.forEach((a, i) => { if (a) map[shareArtistIds[i]] = a; });
         setResolvedArtists((prev) => ({ ...prev, ...map }));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "Shares.resolveArtists" } }));
     return () => { cancelled = true; };
   }, [shareArtistIds]);
 

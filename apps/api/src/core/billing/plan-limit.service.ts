@@ -14,7 +14,6 @@ import {
   Logger,
   ForbiddenException,
   Inject,
-  Optional,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
@@ -45,16 +44,17 @@ export class PlanLimitService {
   private readonly logger = new Logger(PlanLimitService.name);
 
   constructor(
-    @Optional() @Inject(DATA_SOURCE) private readonly ds: DataSource | null,
-  ) {}
+    @Inject(DATA_SOURCE) private readonly ds: DataSource,
+  ) {
+    // Fail closed: plan quotas cannot be enforced without the DataSource.
+    if (!ds) throw new Error('PlanLimitService requires a DataSource');
+  }
 
   /**
    * Resolves the current plan for an org.
    * Falls back to 'starter' when billing data is unavailable.
    */
   async resolvePlan(orgId: string): Promise<string> {
-    if (!this.ds) return 'starter';
-
     try {
       const subRepo = this.ds.getRepository(BillingSubscriptionEntity);
       const sub = await subRepo.findOne({ where: { org_id: orgId } as any });
@@ -69,8 +69,6 @@ export class PlanLimitService {
    * orgId is required only for the 'users' resource.
    */
   async enforce(tenantId: string, orgId: string, resource: LimitedResource): Promise<void> {
-    if (!this.ds) return; // DB unavailable in test stubs — skip
-
     const plan   = await this.resolvePlan(orgId);
     const limits = PLAN_LIMITS[plan] ?? PLAN_LIMITS['starter']!;
     const cap    = limits[resource] as number | null | undefined;
@@ -115,19 +113,17 @@ export class PlanLimitService {
     const resources: LimitedResource[] = ['artists', 'contracts', 'users'];
     const current: Record<string, number> = {};
 
-    if (this.ds) {
-      await Promise.all(
-        resources.map(async (r) => {
-          try {
-            const [sql, params] = RESOURCE_QUERIES[r](tenantId, orgId);
-            const rows = await this.ds!.query<[{ cnt: string }]>(sql, params);
-            current[r] = parseInt(rows[0]?.cnt ?? '0', 10);
-          } catch {
-            current[r] = 0;
-          }
-        }),
-      );
-    }
+    await Promise.all(
+      resources.map(async (r) => {
+        try {
+          const [sql, params] = RESOURCE_QUERIES[r](tenantId, orgId);
+          const rows = await this.ds.query<[{ cnt: string }]>(sql, params);
+          current[r] = parseInt(rows[0]?.cnt ?? '0', 10);
+        } catch {
+          current[r] = 0;
+        }
+      }),
+    );
 
     return {
       plan,

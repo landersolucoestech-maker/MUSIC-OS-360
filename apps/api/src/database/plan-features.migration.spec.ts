@@ -1,7 +1,7 @@
 import { BackfillPlanFeatureKeysToEnglish20260930000024 as Migration, canonicalFeaturesForBackfill } from './migrations/20260930000024_BackfillPlanFeatureKeysToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
 import { canonicalPlanFeatures } from '../common/compat/plan-features';
-import { fakeRunner, makeFakeDb } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const ID = (n: number) => `00000000-0000-0000-0000-00000000000${n}`;
 const legacy = (r: Record<string, unknown>) => !!r['features'] && typeof r['features'] === 'object' && !Array.isArray(r['features']) && 'moduleRh' in (r['features'] as object);

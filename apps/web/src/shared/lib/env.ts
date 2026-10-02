@@ -16,12 +16,6 @@ import { isProdLike } from "@music-os-360/config/environment";
 // in a production build. Set VITE_AUTH_DISABLED=true in the web app and
 // AUTH_DISABLED=true in the API to bypass auth temporarily during development.
 // Set the flags to false or remove them to restore the original auth flow.
-/**
- * Mock mode was REMOVED: literal false (type 'false') so every remaining
- * 'if (MOCK_MODE)' branch is provably dead code, eliminated from the
- * bundle by dead-code elimination. It reads no env var at all — impossible to turn on.
- * Physical removal of the remaining branches: see the no-mock report.
- */
 export const AUTH_DISABLED: boolean =
   import.meta.env.DEV === true &&
   import.meta.env.VITE_AUTH_DISABLED === "true";

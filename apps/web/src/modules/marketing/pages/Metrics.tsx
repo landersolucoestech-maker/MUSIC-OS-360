@@ -4,11 +4,7 @@ import {
   AlertCircle,
   AlertTriangle,
   BarChart3,
-  ChevronDown,
-  Download,
   ExternalLink,
-  FileSpreadsheet,
-  FileText,
   Globe2,
   TrendingUp,
 } from "lucide-react";
@@ -28,17 +24,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { toast } from "sonner";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { FeatureGate } from "@/shared/components/FeatureGate";
-import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { cn } from "@/shared/lib/utils";
 import { MarketingHeader, MarketingSectionCard } from "../components";
@@ -53,8 +41,6 @@ import type {
   PlatformMetric,
   TrendPoint,
 } from "../analytics/analytics-hub.types";
-
-type ExportFormat = "pdf" | "xlsx";
 
 type PlatformTab = {
   id: PlatformId;
@@ -233,11 +219,6 @@ function getPlatformBlock(platforms: PlatformBlock[], id: PlatformId) {
   return platforms.find((platform) => platform.id === id) ?? null;
 }
 
-function handleExport(format: ExportFormat) {
-  // Technical TODO: wire this handler to the real PDF/XLSX export endpoint once the API is available.
-  toast.info(`Exportação ${format.toUpperCase()} ainda não implementada. Nenhum arquivo foi gerado.`);
-}
-
 export default function Metrics() {
   const ctrl = useMarketingAnalyticsHub();
   const [searchParams] = useSearchParams();
@@ -339,29 +320,6 @@ export default function Metrics() {
     </FeatureGate>
   );
 }
-
-function ExportDropdown() {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="outline" className="h-8">
-          <Download className="mr-1.5 h-3.5 w-3.5" />
-          Exportar
-          <ChevronDown className="ml-1.5 h-3.5 w-3.5 opacity-70" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleExport("pdf")}>
-          <FileText className="mr-2 h-4 w-4" /> Exportar PDF
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleExport("xlsx")}>
-          <FileSpreadsheet className="mr-2 h-4 w-4" /> Exportar XLSX
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 
 function PlatformTabs({ value, onChange }: { value: PlatformId; onChange: (value: string) => void }) {
   return (

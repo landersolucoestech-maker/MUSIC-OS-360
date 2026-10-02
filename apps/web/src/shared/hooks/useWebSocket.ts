@@ -10,7 +10,7 @@ import {
  * Establishes and maintains the Supabase Realtime channels for the current
  * session (tenant + user broadcast topics — see ws-client.ts).
  *
- * - Skipped entirely in VITE_USE_MOCK mode / when VITE_WS_ENABLED=false.
+ * - Skipped entirely when VITE_WS_ENABLED=false.
  * - Returns only `connected`; no raw channel/socket handle is exposed here
  *   because no consumer in this codebase needs one — everything subscribes
  *   to named events via `useWsEvent`.

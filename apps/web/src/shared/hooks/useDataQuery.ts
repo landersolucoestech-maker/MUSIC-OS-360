@@ -18,8 +18,7 @@ const EMPTY_LIST: never[] = [];
  * Generic CRUD hook used by every module.
  *
  * Every read and write goes through the storage layer (shared/lib/storage.ts),
- * which abstracts access to the backend (HTTP mode) or MOCK_DATA (dev mode).
- * To switch modes, use the VITE_USE_MOCK variable.
+ * which abstracts access to the backend over HTTP.
  */
 
 /**

@@ -180,19 +180,6 @@ export class IntegrationError extends DomainError {
   }
 }
 
-// ─── Not Implemented ─────────────────────────────────────────────────────────
-
-/** Functionality not implemented yet (real integration stub). */
-export class NotImplementedError extends DomainError {
-  readonly feature: string;
-
-  constructor(feature: string, userMessage = "Esta funcionalidade ainda não está disponível em produção.") {
-    super(`[not-implemented] ${feature}`, "NOT_IMPLEMENTED", "warn", { userMessage });
-    this.name = "NotImplementedError";
-    this.feature = feature;
-  }
-}
-
 // ─── Conflict ────────────────────────────────────────────────────────────────
 
 /** Data conflict — duplicate, concurrency, etc. */

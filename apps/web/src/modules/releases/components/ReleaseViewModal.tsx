@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { captureError } from "@/shared/lib/error-logger";
 import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
 import { storage } from "@/shared/lib/storage";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -147,7 +148,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
         results.forEach((f, i) => { if (f) map[phonogramIds[i]] = f; });
         setResolvedPhonograms(map);
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "ReleaseViewModal.resolvePhonograms" } }));
     return () => { cancelled = true; };
   }, [open, phonogramIds]);
 
@@ -166,7 +167,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
         results.forEach((a, i) => { if (a) map[shareArtistIds[i]] = wireToArtist(a); });
         setResolvedShareArtists(map);
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "ReleaseViewModal.resolveShareArtists" } }));
     return () => { cancelled = true; };
   }, [open, shareArtistIds]);
 

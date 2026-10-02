@@ -6,7 +6,7 @@ import { QUERY_KEYS } from '@/shared/lib/query-config';
  * Subscribes to every backend WS domain event and invalidates the relevant
  * TanStack Query caches so lists/metrics stay fresh without polling.
  *
- * Gracefully no-ops in mock mode (socket is null → useWsEvent skips).
+ * Gracefully no-ops when realtime is disabled (socket is null → useWsEvent skips).
  * Mount this hook inside a component that lives for the entire authenticated
  * session (e.g. RealtimeLayer rendered inside AuthProvider).
  */
@@ -40,7 +40,6 @@ export function useRealtimeSync(): void {
   useWsEvent('finance.transaction.updated', () => inv(QUERY_KEYS.TRANSACTIONS));
   useWsEvent('finance.calculated',          () => inv(QUERY_KEYS.METRICS, QUERY_KEYS.TRANSACTIONS));
 
-  // ── Audit (no query to invalidate — feed handles via ActivityFeed) ────────
-  useWsEvent('audit.entry.created', () => {});
+  // 'audit.entry.created' is handled by the Dashboard activity feed (modules/dashboard/pages/Dashboard.tsx).
 }
 

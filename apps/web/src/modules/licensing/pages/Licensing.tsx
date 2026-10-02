@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { captureError } from "@/shared/lib/error-logger";
 import { storage } from "@/shared/lib/storage";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { MainLayout } from "@/shared/components/MainLayout";
@@ -105,7 +106,7 @@ export default function Licensing() {
         results.forEach((o, i) => { if (o) map[licenseWorkIds[i]] = o; });
         setResolvedWorks((prev) => ({ ...prev, ...map }));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "Licensing.resolveWorks" } }));
     return () => { cancelled = true; };
   }, [licenseWorkIds]);
   useEffect(() => {
@@ -118,7 +119,7 @@ export default function Licensing() {
         results.forEach((c, i) => { if (c) map[licenseClientIds[i]] = c; });
         setResolvedClients((prev) => ({ ...prev, ...map }));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "Licensing.resolveClients" } }));
     return () => { cancelled = true; };
   }, [licenseClientIds]);
 

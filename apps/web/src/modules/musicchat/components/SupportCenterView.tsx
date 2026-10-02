@@ -8,6 +8,7 @@
  * Interno" tab (the parent does not use `forceMount`, so only the active tab is mounted).
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import { captureError } from "@/shared/lib/error-logger";
 import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -416,7 +417,7 @@ export function SupportCenterView({
     if (data.conversationId) {
       void musicChatConversationsService.messages(data.conversationId)
         .then((rows) => setMessagesByConv((previous) => ({ ...previous, [data.conversationId]: rows })))
-        .catch(() => {});
+        .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "SupportCenterView.refreshMessages" } }));
     }
   });
 
@@ -552,7 +553,7 @@ export function SupportCenterView({
   };
 
   const refreshConversation = (conversationId: string) => {
-    void musicChatConversationsService.get(conversationId).then(upsertConversation).catch(() => {});
+    void musicChatConversationsService.get(conversationId).then(upsertConversation).catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "SupportCenterView.refreshConversation" } }));
   };
 
   useEffect(() => {

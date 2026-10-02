@@ -24,7 +24,7 @@ const TRANSACTION_TYPE_TOAST_TITLE: Readonly<Record<string, string>> = {
  *   3. data:changed     — invalidate entity cache when another user mutates data
  *   4. Inline WS toasts — user-visible notifications for key domain events
  *
- * In mock mode (VITE_USE_MOCK=true) the socket is never created so all
+ * When realtime is disabled (VITE_WS_ENABLED=false) the socket is never created so all
  * useWsEvent hooks no-op silently.
  */
 function RealtimeSyncAndNotify() {

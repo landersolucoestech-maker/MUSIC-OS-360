@@ -5,7 +5,7 @@ import {
 } from './migrations/20260930000029_BackfillMarketingTaskSectorToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
 import { LEGACY_MARKETING_AUTOMATION_FLOW_IDS, LEGACY_MARKETING_SECTORS } from '../modules/marketing/marketing-vocabulary';
-import { fakeRunner, makeFakeDb, type Row } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb, type Row } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const ID = (n: number) => `00000000-0000-0000-0000-0000000000${String(n).padStart(2, '0')}`;
 const isCandidate = (_t: string, r: Row) => {

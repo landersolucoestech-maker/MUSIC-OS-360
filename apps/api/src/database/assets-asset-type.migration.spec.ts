@@ -1,7 +1,7 @@
 import { BackfillAssetTypesToEnglish20260930000025 as Migration, canonicalAssetRowForBackfill } from './migrations/20260930000025_BackfillAssetTypesToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
 import { LEGACY_ASSET_TYPES } from '../common/compat/asset-type';
-import { fakeRunner, makeFakeDb } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const ID = (n: number) => `00000000-0000-0000-0000-00000000000${n}`;
 const isLegacy = (v: unknown) => typeof v === 'string' && v in LEGACY_ASSET_TYPES;

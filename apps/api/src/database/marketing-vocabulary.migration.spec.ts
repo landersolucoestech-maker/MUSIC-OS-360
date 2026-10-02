@@ -14,7 +14,7 @@ import {
   LEGACY_MARKETING_TARGETS,
   LEGACY_MARKETING_TASK_KINDS,
 } from '../modules/marketing/marketing-vocabulary';
-import { fakeRunner, makeFakeDb, type Row } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb, type Row } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const ID = (n: number) => `00000000-0000-0000-0000-0000000000${String(n).padStart(2, '0')}`;
 const CHANNELS = Object.keys(LEGACY_MARKETING_CHANNELS);

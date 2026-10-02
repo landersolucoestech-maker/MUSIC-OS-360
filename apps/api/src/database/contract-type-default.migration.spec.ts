@@ -1,7 +1,7 @@
 import { BackfillContractTypeOutroToOther20260930000034 as Migration, CONTRACT_TYPE_BACKFILL } from './migrations/20260930000034_BackfillContractTypeOutroToOther';
 import { ALL_MIGRATIONS } from './migrations';
 import { LEGACY_CONTRACT_CATEGORY_SLUGS, CANONICAL_CONTRACT_CATEGORY_SLUGS } from '../modules/contracts/contract-category-slugs';
-import { fakeRunner, makeFakeDb, type Row } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb, type Row } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const ID = (n: number) => `00000000-0000-0000-0000-0000000000${String(n).padStart(2, '0')}`;
 const isCandidate = (_t: string, r: Row) => r['type'] === 'outro';

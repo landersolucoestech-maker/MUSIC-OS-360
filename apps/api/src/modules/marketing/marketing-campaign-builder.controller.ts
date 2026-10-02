@@ -115,10 +115,10 @@ function buildBlueprint(payload: CampaignBuilderPayload): CampaignBlueprint {
     recommendedPlatforms,
     requiredActions,
     suggestedCtas: payload.objective === 'CONVERSIONS' ? ['Comprar agora', 'Fazer pré-save', 'Inscrever-se'] : ['Saiba mais', 'Ouvir agora', 'Acessar link'],
-    // Technical notes for API clients about this stub endpoint (not end-user copy).
+    // Technical notes for API clients about this rule-based endpoint (not end-user copy).
     notes: [
       'Blueprint generated from Campaign Builder rules.',
-      'Provider-side publishing is not executed by this stub endpoint.',
+      'Provider-side publishing is not executed by this endpoint.',
     ],
   };
 }

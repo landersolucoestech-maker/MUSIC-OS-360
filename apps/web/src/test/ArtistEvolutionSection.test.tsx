@@ -49,14 +49,6 @@ vi.mock("@tanstack/react-query", async () => {
   };
 });
 
-vi.mock("@/modules/integrations/hooks/useSpotify", () => ({
-  useSpotifyEvolution: (...args: any[]) => spotifyMock(...args),
-}));
-
-vi.mock("@/modules/integrations/hooks/useYouTube", () => ({
-  useYouTubeEvolution: (...args: any[]) => youtubeMock(...args),
-}));
-
 vi.mock("@/modules/integrations/hooks/useDeezer", () => ({
   useDeezerEvolution: (...args: any[]) => deezerMock(...args),
 }));

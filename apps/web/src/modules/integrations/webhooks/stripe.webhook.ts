@@ -6,7 +6,7 @@
  * CRITICAL RULE: webhooks are ALWAYS processed in the backend.
  * The frontend NEVER receives webhooks directly.
  * The frontend obtains the updated state via polling or domain events emitted
- * after the backend processes the webhook and updates the mockData/DB.
+ * after the backend processes the webhook and updates the database.
  *
  * Backend endpoint:
  *   POST /webhooks/stripe

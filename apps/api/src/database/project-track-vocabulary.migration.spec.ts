@@ -5,7 +5,7 @@ import {
 } from './migrations/20260930000032_BackfillProjectTrackInstrumentalAndLanguageToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
 import { LEGACY_PROJECT_TRACK_INSTRUMENTAL, LEGACY_PROJECT_TRACK_LANGUAGE } from '../modules/projects/project-track-vocabulary';
-import { fakeRunner, makeFakeDb, type Row } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb, type Row } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const ID = (n: number) => `00000000-0000-0000-0000-0000000000${String(n).padStart(2, '0')}`;
 const isCandidate = (_t: string, r: Row) => String(r['instrumental']) in PROJECT_TRACK_BACKFILL_MAPS.INSTRUMENTAL || String(r['language']) in PROJECT_TRACK_BACKFILL_MAPS.LANGUAGE;

@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { captureError } from "@/shared/lib/error-logger";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTenant } from "@/app/providers/TenantContext";
@@ -221,7 +222,7 @@ export function useKnowledgeArticles() {
   const articles = raw.map((a) => mapArticle(a, categoryNameById.get(a.category_id) ?? "Geral"));
 
   const incrementViews = useCallback((id: string) => {
-    knowledgeBaseService.incrementViews(id).catch(() => {});
+    knowledgeBaseService.incrementViews(id).catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "useSupport.incrementViews" } }));
   }, []);
 
   return { articles, isLoading, incrementViews };

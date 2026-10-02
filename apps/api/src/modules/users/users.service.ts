@@ -210,7 +210,14 @@ export class UsersService {
       app_metadata: { org_id: tenantId, role: persistedRole },
     });
     if (metadataResult.error) {
-      await supabase.auth.admin.deleteUser(data.user.id, true).catch(() => undefined);
+      try {
+        const rollback = await supabase.auth.admin.deleteUser(data.user.id, true);
+        if (rollback?.error) {
+          this.logger.warn(`Supabase deleteUser (invite rollback) failed: ${redactDiagnosticText(rollback.error.message)}`);
+        }
+      } catch (rollbackErr) {
+        this.logger.warn(`Supabase deleteUser (invite rollback) failed: ${redactDiagnosticText((rollbackErr as Error)?.message)}`);
+      }
       this.logger.warn(`Supabase updateUserById (invite app_metadata) failed: ${redactDiagnosticText(metadataResult.error.message)}`);
       throw new ConflictException({
         message: 'Não foi possível criar o convite. Tente novamente.',

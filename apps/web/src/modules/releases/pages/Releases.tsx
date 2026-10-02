@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect, useMemo } from "react";
+import { captureError } from "@/shared/lib/error-logger";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
@@ -300,7 +301,7 @@ export default function Releases() {
         results.forEach((a, i) => { if (a) map[pageArtistIds[i]] = wireToArtist(a); });
         setResolvedArtists((prev) => ({ ...prev, ...map }));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "Releases.resolveArtists" } }));
     return () => { cancelled = true; };
   }, [pageArtistIds]);
   const getArtistById = (id: string | null) => id ? resolvedArtists[id] : undefined;

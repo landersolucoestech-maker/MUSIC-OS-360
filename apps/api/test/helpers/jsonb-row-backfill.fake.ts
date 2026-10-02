@@ -1,7 +1,7 @@
 /**
  * In-memory stand-in for the QueryRunner used by the PJ1 backfill migration specs
  * (no database is available to the unit tests). It understands exactly the SQL
- * shapes emitted by jsonb-row-backfill.ts: candidate SELECT (the predicate is
+ * shapes emitted by src/database/jsonb-row-backfill.ts: candidate SELECT (the predicate is
  * evaluated by the supplied `isCandidate`), side-table INSERT / SELECT, guarded
  * UPDATE ... RETURNING, plus the RLS-bypass probe and DDL (recorded only).
  */

@@ -1,7 +1,7 @@
 import { BackfillContractLastPaymentKeysToEnglish20260930000023 as Migration, canonicalContractMetadataForBackfill } from './migrations/20260930000023_BackfillContractLastPaymentKeysToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
 import { LEGACY_LAST_PAYMENT_KEYS } from '../common/compat/contract-last-payment';
-import { fakeRunner, makeFakeDb } from './jsonb-row-backfill.fake';
+import { fakeRunner, makeFakeDb } from '../../test/helpers/jsonb-row-backfill.fake';
 
 const ID = (n: number) => `00000000-0000-0000-0000-00000000000${n}`;
 const hasLegacy = (m: unknown) => Object.keys(LEGACY_LAST_PAYMENT_KEYS).some((k) => m && typeof m === 'object' && k in (m as object));
