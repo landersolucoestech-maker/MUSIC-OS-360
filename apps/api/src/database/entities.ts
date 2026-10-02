@@ -1606,7 +1606,6 @@ export class TakedownEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) platform: string;
-  @Column({ type: 'text', nullable: true }) url: string | null;
   @Column({ type: 'varchar', length: 50, default: TakedownStatus.PENDING }) status: TakedownStatus;
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
@@ -2568,8 +2567,6 @@ export class CampaignAssetEntity {
   @Column({ type: 'varchar', length: 500 }) name: string;
   @Column({ type: 'varchar', length: 100 }) asset_type: string;
   @Column({ type: 'text' }) file_url: string;
-  @Column({ type: 'bigint', nullable: true }) file_size: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) mime_type: string | null;
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
@@ -2754,8 +2751,6 @@ export class RightsHolderEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) artistic_name: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) document_type: string | null;
   @Column({ type: 'varchar', length: 30, nullable: true }) document_number: string | null;
-  @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
-  @Column({ type: 'text', nullable: true }) phone_encrypted: string | null;
   @Column({ type: 'varchar', length: 2, nullable: true }) country: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) ipi_cae: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) society: string | null;

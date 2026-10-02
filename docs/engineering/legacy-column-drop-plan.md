@@ -15,8 +15,8 @@ this plan holds the SQL proofs, the order and the rollback.
 | `invoices.legacy_amount` EXPAND: Stripe upsert dual-writes `service_amount`; overdue scheduler reads `service_amount ?? legacy_amount` | `billing.service.ts upsertStripeInvoice`, `invoice-overdue.scheduler.ts`, specs |
 | Backfill migration `20260930000022_BackfillCanonicalFromLegacyMirrors` (guarded, reversible, no drop): fills NULL `invoices.service_amount` from `legacy_amount` and NULL `takedowns.infringing_url` from `url`, recording ids in RLS-locked side tables | `migrations/20260930000022_*.ts`, `backfill-canonical-from-legacy-mirrors.migration.spec.ts` |
 
-`takedowns.url` writer and web fallback are deliberately NOT removed yet (section 5.2): the writer cannot go before
-the fallback, and the fallback cannot go before the 20260930000022 backfill is applied everywhere.
+`takedowns.url` needs no drop: migration `20260719000016` removed the column from the physical schema, so the entity mapping, the API
+writers and the web fallback that still referenced it were removed instead (section 5.2). There is no draft 47.
 
 ## 2. Drafts (all gated, all NOT registered)
 
@@ -29,7 +29,6 @@ the fallback, and the fallback cannot go before the 20260930000022 backfill is a
 | 20260930000044 DropSharesLegacyArtistProjectId | shares.legacy_artist_project_id | shares_legacy_archive_20260930 | `legacy_artist_project_id IS DISTINCT FROM artist_id` = 0 | `entities.ts:1579`; `share-contract.spec.ts:91` stays (still true); `verify-canonical-column-order.ts:141` |
 | 20260930000045 DropHrLegacyMirrors | employees.legacy_full_name/legacy_sector/legacy_base_salary; payroll_entries.legacy_employee_id/legacy_reference_month; leave_requests.legacy_employee_id | employees_/payroll_entries_/leave_requests_legacy_archive_20260930 (PII: names, salary) | each legacy value equals its canonical (name, department, salary, employee_id, reference_month) | `verify-canonical-column-order.ts:165-203` (no entity declarations) |
 | 20260930000046 DropEventsDataAndSyncTrigger | events.data + trigger `trg_events_sync_start_columns` + function `sync_events_start_columns()` + index `idx_events_tenant_data` (with the column) | none (data == starts_at is the proof) | `data IS DISTINCT FROM starts_at` = 0, `starts_at IS NULL` = 0, `idx_events_tenant_starts_at` present | remove `EventEntity.data` (`entities.ts:1387`); keep `report-form-contracts.ts` deprecated column id `data -> eventDate` (saved layouts) and web header alias "Data"; `add-events-starts-at.migration.spec.ts:40` still true; delete `events-data-legacy-column.spec.ts` trigger assertions together with the trigger |
-| 20260930000047 DropTakedownsUrlMirror | takedowns.url | takedowns_legacy_archive_20260930 | `url IS DISTINCT FROM infringing_url` where url is set = 0 | stage 5.2 first; remove `TakedownEntity.url` (`entities.ts:1608`), writers (`takedowns.service.ts:98,112`), web fallback (`takedown-format.tsx:62`, `monitoring.types.ts:19`, test `takedown-format.test.tsx:28`), `takedown-contract.spec.ts:76` expectation |
 | 20260930000048 RelaxInvoicesLegacyAmountNotNull | (no drop) `ALTER COLUMN legacy_amount DROP NOT NULL` | none | no row with legacy_amount and NULL service_amount | none; reversible |
 | 20260930000049 DropInvoicesLegacyAmount | invoices.legacy_amount | invoices_legacy_archive_20260930 | `service_amount IS NULL` = 0 and `legacy_amount <> service_amount` = 0 | stage 5.1 steps 3-4 first; then remove `InvoiceEntity.legacy_amount` (`entities.ts:1128`), DTO `invoices.dto.ts:63`, `invoices.service.ts:82,170,183,186,242,259` fallbacks, Stripe upsert column, scheduler fallback, web fallbacks (`useInvoices.ts:17,19`, `Invoices.tsx:63`, `InvoiceViewModal.tsx:64,73`, `useInvoiceForm.ts:92,93`), e2e fixture `invoice-overdue-saas-exclusion.e2e-spec.ts:42` |
 
@@ -92,8 +91,6 @@ SELECT count(*) FILTER (WHERE legacy_employee_id IS NOT NULL AND legacy_employee
 SELECT count(*) FILTER (WHERE legacy_employee_id IS NOT NULL AND legacy_employee_id IS DISTINCT FROM employee_id) AS emp_div FROM leave_requests;
 -- events.data
 SELECT count(*) FILTER (WHERE data IS DISTINCT FROM starts_at) AS diverging, count(*) FILTER (WHERE starts_at IS NULL) AS null_start FROM events;
--- takedowns.url (after 20260930000022)
-SELECT count(*) FILTER (WHERE url IS NOT NULL AND infringing_url IS DISTINCT FROM url) AS url_unreconciled FROM takedowns;
 -- invoices.legacy_amount (after 20260930000022)
 SELECT count(*) FILTER (WHERE service_amount IS NULL AND legacy_amount IS NOT NULL) AS not_backfilled,
        count(*) FILTER (WHERE service_amount IS NOT NULL AND legacy_amount IS NOT NULL AND service_amount <> legacy_amount) AS diverging
@@ -149,8 +146,8 @@ indefinitely (it is anyway retained for rollback).
    `migrations/index.ts` + `migration-guards.spec.ts` (RLS-bypass list) + move the draft file from `migration-drafts/` to
    `migrations/` (and its spec) + export `LEGACY_DROP_CONFIRM=drop-legacy-columns-gates-satisfied` for that deploy only.
    Suggested order (lowest risk first): 44 shares, 43 clients, 40 works, 41 phonograms, 42 transactions, 45 HR (PII
-   retention decision first), 46 events (needs a release that only reads `starts_at`, already true: see below), 47 takedowns
-   (after 5.2), 48 then 49 invoices (after 5.1).
+   retention decision first), 46 events (needs a release that only reads `starts_at`, already true: see below), 48 then 49
+   invoices (after 5.1). There is no draft 47 (takedowns.url no longer exists, see 5.2).
 4. After the retention window (owner decides, suggested 90 days) a separate migration drops the `*_legacy_archive_20260930` tables
    and the two `*_backfill_20260930` tracking tables. Not drafted: it must not exist while rollback is still wanted.
 
@@ -179,13 +176,12 @@ NOT done (draft 48 down() does it, so roll back 49 then 48).
 
 ### 5.2 takedowns.url
 
-1. (done) Backfill `infringing_url` from `url` where NULL (20260930000022; down() reverts exactly those rows).
-2. Release B: remove the web fallback (`takedown-format.tsx:62` becomes `pick(raw.infringing_url)`, drop `url` from `monitoring.types.ts`, adjust
-   `takedown-format.test.tsx:28`), AND remove the two API writers (`takedowns.service.ts:98,112`) in the same release (the writer
-   cannot go first, otherwise a cleared `infringing_url` would leave a stale `url` visible through the fallback; the fallback cannot go
-   before the backfill, otherwise pre-CZ-034 rows lose their URL in the UI). The API response then still carries `url` (entity) until step 3.
-3. Draft 47: preconditions, archive, drop, entity column removed; the API response no longer has `url` (breaking only for an external
-   consumer that read it: confirm none in 3.2).
+Resolved by code, not by a drop. `takedowns.url` does not exist in any migrated schema: `20260719000016`
+(`RebuildTakedownsInCanonicalFormOrder`) removed it as a proven orphan. `TakedownEntity.url`, the two writers in
+`TakedownsService` and the web fallback (`takedown-format.tsx`, `monitoring.types.ts`) still referenced it, so the entity failed
+every query with `column TakedownEntity.url does not exist` against a database migrated from scratch. They are removed, and
+`takedown-contract.spec.ts` now asserts that a create never writes `url`. Migration `20260930000022` already skips the mirror
+when the column is absent. The former draft 47 had nothing to drop and was deleted.
 
 ### 5.3 events.data
 
@@ -210,7 +206,7 @@ side table like the tables above. Not drafted as a migration (owner must first s
 | step | rollback |
 |---|---|
 | 20260930000022 | `down()`: NULLs `service_amount` / `infringing_url` only for recorded ids that still equal their mirror, then drops the two tracking tables |
-| drafts 40-45, 47, 49 | `down()`: re-add the columns (nullable, same type) and restore values by id from `*_legacy_archive_20260930` (rows created after the drop stay NULL); refuses when the archive is missing; never drops the archive |
+| drafts 40-45, 49 | `down()`: re-add the columns (nullable, same type) and restore values by id from `*_legacy_archive_20260930` (rows created after the drop stay NULL); refuses when the archive is missing; never drops the archive |
 | draft 46 | `down()`: re-add `data`, `UPDATE data = starts_at`, SET NOT NULL, recreate function, trigger and `idx_events_tenant_data` |
 | draft 48 | `down()`: refill NULL `legacy_amount` from `service_amount` (0 if both NULL), SET NOT NULL |
 | code of the same release | revert the release; the entity declarations come back and match the restored columns |
@@ -245,7 +241,6 @@ Blockers in `docs/naming/canonical-naming-map.json` (to be regenerated by the or
 | 44 | BLK-SHARES-ARTIST-MIRROR |
 | 45 | BLK-HR-LEGACY-MIRRORS |
 | 46 | BLK-C3-E6 |
-| 47 | BLK-TAKEDOWNS-URL-MIRROR |
 | 49 | (no blocker; the invoices.legacy_amount debt is tracked only by the audit section 6) |
 
 Exception rows: `TEMPORARY_MIGRATION_COMPATIBILITY` for `client-entity-schema-alignment.spec.ts` (CZ-043 guard) stays, only its

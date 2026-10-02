@@ -94,8 +94,6 @@ export class TakedownsService {
     const entity = this.repository.create({
       tenant_id: tenantId,
       ...dto,
-      // `url` mirrors infringing_url (legacy duplicate column; canonical map blocker).
-      url: dto.infringing_url ?? null,
       created_by: userId,
     } as Partial<TakedownEntity>);
     return this.repository.save(entity as TakedownEntity);
@@ -109,7 +107,6 @@ export class TakedownsService {
       ...rest,
       updated_at: new Date(),
     };
-    if (dto.infringing_url !== undefined) updates['url'] = dto.infringing_url ?? null;
 
     await casUpdate(
       this.repository,

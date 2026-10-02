@@ -58,8 +58,7 @@ export function normalizeTakedown(raw: Takedown & Record<string, unknown>): Norm
     artistName: pick(raw.artist_name),
     platform: pick(raw.platform),
     priority: pick(raw.priority),
-    // `url` is the legacy mirror of infringing_url (read only as a fallback).
-    infringingUrl: pick(raw.infringing_url, raw.url),
+    infringingUrl: pick(raw.infringing_url),
     reason: pick(raw.reason),
     identifiedAt: pick(raw.identified_at),
     description: pick(raw.description),

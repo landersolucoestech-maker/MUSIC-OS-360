@@ -15,8 +15,6 @@ export interface Takedown {
   platform?: string | null;
   /** high | medium | low */
   priority?: string | null;
-  /** Legacy mirror of infringing_url. */
-  url?: string | null;
   infringing_url?: string | null;
   status?: TakedownStatus | string | null;
   reason?: string | null;

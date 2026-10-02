@@ -22,10 +22,10 @@ describe("takedown-format (CZ-034 canonical vocabulary)", () => {
     expect(priorityLabel("urgent")).toBe("—");
   });
 
-  it("normalizes the API row (infringing_url with the legacy url mirror as fallback)", () => {
+  it("normalizes the API row (infringing_url only; the dropped url column is never read)", () => {
     const n = normalizeTakedown({
       id: "t1", title: "T", affected_work: "Obra", artist_name: "Artista", platform: "YouTube",
-      priority: "high", url: "https://x.test", reason: "Plágio", identified_at: "2026-09-01", evidence: "print",
+      priority: "high", infringing_url: "https://x.test", reason: "Plágio", identified_at: "2026-09-01", evidence: "print",
     } as never);
     expect(n).toMatchObject({
       affectedWork: "Obra", artistName: "Artista", platform: "YouTube", priority: "high",

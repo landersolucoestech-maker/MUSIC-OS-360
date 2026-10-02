@@ -73,10 +73,11 @@ describe('Takedown request contract (CZ-034)', () => {
     const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
     expect(row).toMatchObject({
       type: 'sent', affected_work: 'Canção X', artist_name: 'Banda Y', platform: 'youtube',
-      infringing_url: 'https://youtube.test/v/1', url: 'https://youtube.test/v/1', reason: 'Uso sem licença',
+      infringing_url: 'https://youtube.test/v/1', reason: 'Uso sem licença',
       priority: 'high', status: 'pending', identified_at: '2026-09-01', evidence: 'print',
     });
-    for (const legacy of ['obra_afetada', 'artista', 'plataforma', 'url_infracao', 'motivo', 'prioridade', 'data_identificacao', 'evidencias']) {
+    // takedowns.url was dropped by migration 20260719000016: writing it fails against the real schema.
+    for (const legacy of ['url', 'obra_afetada', 'artista', 'plataforma', 'url_infracao', 'motivo', 'prioridade', 'data_identificacao', 'evidencias']) {
       expect(row).not.toHaveProperty(legacy);
     }
   });

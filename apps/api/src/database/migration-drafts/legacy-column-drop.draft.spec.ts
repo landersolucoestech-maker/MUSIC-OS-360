@@ -9,7 +9,6 @@ import { DropClientsLegacyContactStatus20260930000043 as Clients, PLANS as CLIEN
 import { DropSharesLegacyArtistProjectId20260930000044 as Shares, PLANS as SHARES } from './20260930000044_DropSharesLegacyArtistProjectId';
 import { DropHrLegacyMirrors20260930000045 as Hr, PLANS as HR } from './20260930000045_DropHrLegacyMirrors';
 import { DropEventsDataAndSyncTrigger20260930000046 as EventsData } from './20260930000046_DropEventsDataAndSyncTrigger';
-import { DropTakedownsUrlMirror20260930000047 as Takedowns, PLANS as TAKEDOWNS } from './20260930000047_DropTakedownsUrlMirror';
 import { RelaxInvoicesLegacyAmountNotNull20260930000048 as InvoicesRelax } from './20260930000048_RelaxInvoicesLegacyAmountNotNull';
 import { DropInvoicesLegacyAmount20260930000049 as InvoicesDrop, PLANS as INVOICES } from './20260930000049_DropInvoicesLegacyAmount';
 
@@ -20,7 +19,7 @@ import { DropInvoicesLegacyAmount20260930000049 as InvoicesDrop, PLANS as INVOIC
 type Ctor = new () => { name: string; up(q: unknown): Promise<void>; down(q: unknown): Promise<void> };
 const GENERIC: Array<[string, Ctor, readonly DropTablePlan[]]> = [
   ['works', Works, WORKS], ['phonograms', Phonograms, PHONOGRAMS], ['transactions', Transactions, TRANSACTIONS],
-  ['clients', Clients, CLIENTS], ['shares', Shares, SHARES], ['hr', Hr, HR], ['takedowns', Takedowns, TAKEDOWNS],
+  ['clients', Clients, CLIENTS], ['shares', Shares, SHARES], ['hr', Hr, HR],
   ['invoices', InvoicesDrop, INVOICES],
 ];
 const ALL_DRAFTS: Array<[string, Ctor]> = [...GENERIC.map(([n, c]): [string, Ctor] => [n, c]), ['events', EventsData], ['invoices-relax', InvoicesRelax]];
