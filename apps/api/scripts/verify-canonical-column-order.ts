@@ -26,6 +26,9 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'team_contacts', 'manager_name', 'manager_contact_encrypted', 'executive_producer', 'booking_agency', 'partner_label',
     'gallery_urls', 'documents', 'metadata', 'created_at', 'updated_at', 'created_by',
     'updated_by', 'deleted_at',
+    // 20261002000001 (additive): ciphertext twins appended after the rebuilt form order.
+    'birth_date_encrypted', 'rg_encrypted', 'address_encrypted', 'bank_name_encrypted',
+    'bank_branch_encrypted', 'bank_account_encrypted', 'pix_key_encrypted', 'account_holder_encrypted',
   ],
   works: [
     'id', 'tenant_id', 'project_id', 'society_code', 'ecad_code', 'iswc',
