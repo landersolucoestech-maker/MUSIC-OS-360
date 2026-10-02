@@ -28,7 +28,6 @@ function allowlistedBaseline() {
   return {
     'apps/api/src/database/migrations/20260520000004_SupabaseAuthColumnNames.ts': contents,
     'apps/api/src/database/migrations/20260801000001_RealtimeBroadcastAuthorization.ts': contents,
-    'apps/api/migrations-complete.sql': contents,
     'docs/backend-v2/61.md': contents,
     'docs/product-tasks/task-1.md': contents,
     'scripts/verify-provider-residue.mjs': contents,
@@ -73,9 +72,9 @@ test('the same content inside an allowlisted path passes', () => {
 
 test('a stale allowlist entry fails', () => {
   const files = allowlistedBaseline();
-  delete files['apps/api/migrations-complete.sql'];
+  delete files['docs/product-tasks/task-1.md'];
   const result = scan(fixture(files));
-  assert.deepEqual(result.staleAllowlist, ['apps/api/migrations-complete.sql']);
+  assert.deepEqual(result.staleAllowlist, ['docs/product-tasks/**']);
 });
 
 test('a provider name in a file name fails', () => {

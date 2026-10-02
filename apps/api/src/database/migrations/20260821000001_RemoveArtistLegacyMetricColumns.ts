@@ -13,7 +13,7 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
  * grep in apps/api and apps/web, including automation handlers outside the
  * artists module (leads/contracts/external-data): zero reads/writes outside
  * migrations, the `verify-canonical-column-order.ts` script (it only checks
- * physical order) and the schema dumps (drizzle/, migrations-complete.sql).
+ * physical order) and the schema dumps (drizzle/, and the former migrations-complete.sql, since removed).
  *
  * Physical vs metadata comparison on real DEV before this drop (3 active
  * artists, total population, not a sample):

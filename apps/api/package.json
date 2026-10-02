@@ -38,7 +38,6 @@
     "verify:contract-service-types": "tsx scripts/verify-contract-service-types-crud.ts",
     "smoke-test": "tsx scripts/smoke-test.ts",
     "provision": "pnpm run verify:supabase && pnpm run verify:rls && pnpm run verify:tenant-isolation",
-    "dump:sql": "tsx scripts/dump-migrations-sql.ts",
     "storage:e2e": "tsx scripts/storage-e2e.ts",
     "rbac:shadow:run": "tsx test/rbac-shadow-harness/rbac-shadow-harness.runner.ts",
     "rbac:shadow:go-no-go": "tsx scripts/rbac-shadow-go-no-go.ts",

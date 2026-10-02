@@ -49,11 +49,6 @@ export const ALLOWLIST = [
     reason: 'applied migration; historical comment, immutable by convention',
   },
   {
-    match: (file) => file === 'apps/api/migrations-complete.sql',
-    label: 'apps/api/migrations-complete.sql',
-    reason: 'legacy SQL dump documenting the historical column renames',
-  },
-  {
     match: (file) => file.startsWith('docs/backend-v2/'),
     label: 'docs/backend-v2/**',
     reason: 'historical decision records for a superseded, never-built design',

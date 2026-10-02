@@ -93,7 +93,7 @@ Comandos executados como evidência:
 | Web | app React/Vite | `apps/web` | SPA, rotas, módulos, providers, clients HTTP. | Usuário final. | BUILD QUEBRADO |
 | Packages | libs | `packages/auth`, `config`, `schemas`, `types`, `ui`, `utils`, `observability`, `ai-skills` | Tipos, schemas, auth helpers, UI, skills. | API e web. | PARCIAL |
 | Infra | observability/docker | `infra`, `docker-compose*.yml` | Prometheus/Grafana, docker compose, setup. | Operação local/staging. | NÃO VALIDADO |
-| Supabase | config/migrations | `supabase`, `apps/api/src/database/migrations`, `migrations-complete.sql` | Banco, RLS, migrations. | API, auth, storage. | PARCIAL |
+| Supabase | config/migrations | `supabase`, `apps/api/src/database/migrations` | Banco, RLS, migrations. | API, auth, storage. | PARCIAL |
 | CI/CD | GitHub Actions | `.github/workflows/*.yml` | CI, staging, security, backup. | GitHub Actions. | NÃO VALIDADO LOCALMENTE |
 | Documentação | docs/runbooks | `docs/*.md`, root `*.md` | Runbooks, blueprint, auditorias, governança. | Time técnico. | PARCIAL |
 | Assets | imagens/textos | `attached_assets`, `public`, `apps/web/src/assets` | Assets de UI e evidências históricas. | Web/docs. | PARCIAL |
@@ -136,16 +136,16 @@ Módulos encontrados em `apps/api/src/modules`: `activity-logs`, `ai`, `analytic
 
 | Tabela | Colunas principais | Tenant | RLS | FK | Índices | Migration origem | Status |
 |---|---|---|---|---|---|---|---|
-| `organizations` | `id`, `slug`, `plan`, `billing_status`, `external_auth_org_id` | org | Sim | NÃO VALIDADO | `idx_organizations_slug` | `migrations-complete.sql:44-62` | PARCIAL |
-| `tenants` | `id`, `org_id`, `slug`, `features`, `settings` | org/tenant | Sim | NÃO VALIDADO | `idx_tenants_org_id` | `migrations-complete.sql:63-79` | PARCIAL |
-| `org_members` | `tenant_id`, `auth_user_id`, `role` | Sim | Sim | NÃO VALIDADO | `idx_org_members_tenant_id` | `migrations-complete.sql:80-95` | PARCIAL |
-| `artists` | `tenant_id`, `nome`, `status`, `deleted_at` | Sim | Sim | NÃO VALIDADO | `idx_artists_tenant_id` | `migrations-complete.sql:112-150` | PARCIAL |
-| `works` | `tenant_id`, `titulo`, `isrc`, `iswc`, `status` | Sim | Sim | NÃO VALIDADO | `idx_works_tenant_id`, `idx_works_isrc` | `migrations-complete.sql:151-181` | PARCIAL |
-| `phonograms` | `tenant_id`, `obra_id`, `artista_id`, `isrc` | Sim | Sim | NÃO VALIDADO | `idx_phonograms_*` | `migrations-complete.sql:182-211` | PARCIAL |
-| `contracts` | `tenant_id`, `artista_id`, `status`, `data_fim` | Sim | Sim | NÃO VALIDADO | `idx_contracts_*` | `migrations-complete.sql:212-240` | PARCIAL |
-| `transactions` | `tenant_id`, `data`, `tipo`, `artista_id` | Sim | Sim | NÃO VALIDADO | `idx_transactions_*` | `migrations-complete.sql:255-278` | PARCIAL |
-| `uploads` | `tenant_id`, `file_id`, `entity`, `entity_id` | Sim | Sim | NÃO VALIDADO | `idx_uploads_*` | `migrations-complete.sql:526-546` | PARCIAL |
-| `audit_logs` | `tenant_id`, `entity`, `user_id`, `created_at` | Sim | Sim | NÃO VALIDADO | `idx_audit_logs_*` | `migrations-complete.sql:593-611` | PARCIAL |
+| `organizations` | `id`, `slug`, `plan`, `billing_status`, `external_auth_org_id` | org | Sim | NÃO VALIDADO | `idx_organizations_slug` | `20240101000000_InitialSchema` | PARCIAL |
+| `tenants` | `id`, `org_id`, `slug`, `features`, `settings` | org/tenant | Sim | NÃO VALIDADO | `idx_tenants_org_id` | `20240101000000_InitialSchema` | PARCIAL |
+| `org_members` | `tenant_id`, `auth_user_id`, `role` | Sim | Sim | NÃO VALIDADO | `idx_org_members_tenant_id` | `20240101000000_InitialSchema` | PARCIAL |
+| `artists` | `tenant_id`, `nome`, `status`, `deleted_at` | Sim | Sim | NÃO VALIDADO | `idx_artists_tenant_id` | `20240101000000_InitialSchema` | PARCIAL |
+| `works` | `tenant_id`, `titulo`, `isrc`, `iswc`, `status` | Sim | Sim | NÃO VALIDADO | `idx_works_tenant_id`, `idx_works_isrc` | `20240101000000_InitialSchema` | PARCIAL |
+| `phonograms` | `tenant_id`, `obra_id`, `artista_id`, `isrc` | Sim | Sim | NÃO VALIDADO | `idx_phonograms_*` | `20240101000000_InitialSchema` | PARCIAL |
+| `contracts` | `tenant_id`, `artista_id`, `status`, `data_fim` | Sim | Sim | NÃO VALIDADO | `idx_contracts_*` | `20240101000000_InitialSchema` | PARCIAL |
+| `transactions` | `tenant_id`, `data`, `tipo`, `artista_id` | Sim | Sim | NÃO VALIDADO | `idx_transactions_*` | `20240101000000_InitialSchema` | PARCIAL |
+| `uploads` | `tenant_id`, `file_id`, `entity`, `entity_id` | Sim | Sim | NÃO VALIDADO | `idx_uploads_*` | `20240101000000_InitialSchema` | PARCIAL |
+| `audit_logs` | `tenant_id`, `entity`, `user_id`, `created_at` | Sim | Sim | NÃO VALIDADO | `idx_audit_logs_*` | `20240101000000_InitialSchema` | PARCIAL |
 | `tenant_billing_state` | `tenant_id`, `status`, `grace_until` | Sim | Sim/Force | FK tenant | `idx_tenant_billing_state_status` | `apps/api/src/database/migrations/20260701000001_BillingEnforcement.ts:37-54`, `20260701000003_BillingRlsHardening.ts:30-40` | PARCIAL |
 | `payment_events` | `tenant_id`, `event_type` | Sim/parcial | Sim/Force | FK tenant nullable | `idx_payment_events_*` | `20260701000001_BillingEnforcement.ts:84-96`, `20260701000003_BillingRlsHardening.ts:47-57` | PARCIAL |
 | `billing_plans` | `slug`, `features`, `stripe_price_id`, `active` | Global | Sim permissivo | NÃO VALIDADO | `idx_billing_plans_active` | `20260701000002_BillingPlans.ts:16-62` | RISCO |
@@ -364,7 +364,7 @@ Escalabilidade: há filas BullMQ, processors, Redis, workers e indexes, mas conc
 |---|---|---|---|---|---|
 | JWT/session | app_metadata/top-level fallback no web | `TenantContext.tsx:368-375` | MÉDIO | tenant-label tests | PARCIAL |
 | API request | TenantGuard + RequestTenantContextInterceptor | `app.module.ts:230-253`; interceptors | MÉDIO | guard tests | PARCIAL |
-| Banco | `tenant_id`, RLS, `app_current_tenant_id()` | migrations `20260612000001`, `migrations-complete.sql:927+` | ALTO se not run | RLS e2e files | NÃO VALIDADO |
+| Banco | `tenant_id`, RLS, `app_current_tenant_id()` | migrations `20240101000000_InitialSchema`, `20260612000001_PortableRlsTenantContext` | ALTO se not run | RLS e2e files | NÃO VALIDADO |
 | Jobs/events | aborta sem tenantId | múltiplos handlers `fail-closed` | MÉDIO | handler specs | PARCIAL |
 | Billing | org/tenant billing state | `BillingContext`, billing migrations | MÉDIO/ALTO | billing specs | PARCIAL |
 | Storage/uploads | tenant em uploads/presign | uploads controller/storage specs | ALTO | specs | NÃO VALIDADO |
