@@ -4,6 +4,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import jwt from 'jsonwebtoken';
 import { redactSensitiveObject } from '../src/core/security/redact';
 import { Client as PgClient } from 'pg';
+import { assertDevAuthPreconditions } from './lib/dev-auth-guard';
 
 type HttpResult = { res: Response; json: any; text: string };
 
@@ -509,6 +510,7 @@ async function validateRecovery(token: string, tenantId: string, releaseId: stri
 async function main() {
   loadEnvFile('apps/api/.env.development');
   loadEnvFile('.env.development');
+  assertDevAuthPreconditions('verify-phase8-resilience', apiUrl);
   const pg = new PgClient({ connectionString: process.env.DATABASE_URL });
   await pg.connect();
   try {

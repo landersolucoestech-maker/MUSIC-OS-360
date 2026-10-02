@@ -9,6 +9,7 @@ import * as XLSX from 'xlsx';
 import { DataSource } from 'typeorm';
 import { ALL_ENTITIES } from '../src/database/entities';
 import { assertDatabaseCommandEnv } from '../src/core/config/env.schema';
+import { assertDevAuthPreconditions } from './lib/dev-auth-guard';
 
 const API = (process.env['API_URL'] ?? 'http://localhost:3001').replace(/\/$/, '');
 const TAG = `HTTPSMOKE_${Date.now()}`;
@@ -66,6 +67,7 @@ function unwrap(value: unknown): any {
 
 async function main(): Promise<void> {
   console.log(`\n[reports:smoke] API=${API}`);
+  assertDevAuthPreconditions('reports-smoke', API);
   // An explicitly-provided process env must always win over .env.development.
   const envPath = path.resolve(process.cwd(), '.env.development');
   const envText = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';

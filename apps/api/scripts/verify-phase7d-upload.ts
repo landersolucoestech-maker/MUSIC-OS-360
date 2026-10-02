@@ -12,6 +12,7 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { assertDevAuthPreconditions } from './lib/dev-auth-guard';
 
 type HttpResult = { res: Response; json: any; text: string };
 
@@ -454,6 +455,7 @@ async function validateSecurity(s3: S3Client, bucket: string, token: string, ten
 async function main() {
   loadEnvFile('apps/api/.env.development');
   loadEnvFile('.env.development');
+  assertDevAuthPreconditions('verify-phase7d-upload', apiUrl);
 
   const bucket = process.env.R2_BUCKET_NAME!;
   const s3 = createS3Client();

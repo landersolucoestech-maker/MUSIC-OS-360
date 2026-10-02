@@ -7,15 +7,16 @@
  * Usage:
  *   API_URL=http://localhost:3001 SMOKE_TOKEN=<jwt> SMOKE_TENANT=<org_id> pnpm smoke-test
  *
- * Without SMOKE_TOKEN/SMOKE_TENANT, the script tries GET /dev-auth/token. That
+ * Without SMOKE_TOKEN/SMOKE_TENANT the script FAILS unless SMOKE_PUBLIC_ONLY=true (liveness only)
+ * or dev-auth is explicitly declared on a loopback API: it then uses GET /dev-auth/token. That
  * endpoint only exists on a local API started with DEV_AUTH_ENDPOINT_ENABLED=true plus
  * DEV_AUTH_EMAIL/DEV_AUTH_PASSWORD (see .env.development.example); staging/production
- * always refuse it, so staging must provide SMOKE_TOKEN/SMOKE_TENANT. If credentials are
- * unavailable, authenticated tests are skipped and public liveness is still validated.
+ * always refuse it, so staging must provide SMOKE_TOKEN/SMOKE_TENANT.
  */
 
 import 'reflect-metadata';
 import * as path from 'path';
+import { assertDevAuthPreconditions } from './lib/dev-auth-guard';
 
 try {
   require('dotenv').config({ path: path.resolve(__dirname, '../../.env.development') });
@@ -57,14 +58,23 @@ async function safeFetch(url: string, init?: RequestInit): Promise<Response> {
 
 async function bootstrapAuth(): Promise<void> {
   if (SMOKE_TOKEN && SMOKE_TENANT) return;
+  if (SMOKE_TOKEN || SMOKE_TENANT) {
+    throw new Error('SMOKE_TOKEN and SMOKE_TENANT must be provided together (one of them is missing).');
+  }
+  // Explicit opt-out only: public liveness without credentials. Never a silent fallback.
+  if (process.env['SMOKE_PUBLIC_ONLY'] === 'true') {
+    console.warn('  SMOKE_PUBLIC_ONLY=true: authenticated checks are skipped by explicit request.');
+    return;
+  }
+  // No token supplied: the only remaining path is dev-auth, which must be declared and local.
+  assertDevAuthPreconditions('smoke-test', API_URL);
 
   const res = await safeFetch(apiPath('/dev-auth/token'));
   if (!res.ok) {
-    console.warn(
+    throw new Error(
       `dev-auth/token answered ${res.status}: set SMOKE_TOKEN/SMOKE_TENANT, or start a local API with ` +
-        'DEV_AUTH_ENDPOINT_ENABLED=true, DEV_AUTH_EMAIL and DEV_AUTH_PASSWORD. Authenticated checks will be skipped.',
+        'DEV_AUTH_ENDPOINT_ENABLED=true, DEV_AUTH_EMAIL and DEV_AUTH_PASSWORD (or SMOKE_PUBLIC_ONLY=true for liveness only).',
     );
-    return;
   }
   const json = await res.json() as any;
   const payload = (json.data ?? json) as { token?: string; tenantId?: string; orgId?: string };
@@ -138,13 +148,10 @@ async function main(): Promise<void> {
   console.log('\nMUSIC OS 360 - End-to-End Smoke Test\n');
   console.log(`  API_URL: ${API_URL}`);
 
-  try {
-    await bootstrapAuth();
-    console.log(`  Token:    ${SMOKE_TOKEN ? SMOKE_TOKEN.substring(0, 20) + '...' : '(unavailable)'}`);
-    console.log(`  TenantId: ${SMOKE_TENANT || '(unavailable)'}`);
-  } catch (err) {
-    console.warn(`  [WARN] bootstrapAuth failed: ${(err as Error).message} - authenticated tests will be skipped`);
-  }
+  // Configuration errors are fatal (caught by the main().catch handler => exit 1).
+  await bootstrapAuth();
+  console.log(`  Token:    ${SMOKE_TOKEN ? 'provided' : '(unavailable)'}`);
+  console.log(`  TenantId: ${SMOKE_TENANT || '(unavailable)'}`);
   console.log('');
 
   const hasAuth = !!SMOKE_TOKEN;
