@@ -12,8 +12,11 @@ describe("planning vocabulary", () => {
   });
 
   it("renders PT-BR labels and keeps typed platform names", () => {
-    expect(planningLabel("multichannel")).not.toBe("multichannel");
-    expect(planningLabel("high")).not.toBe("high");
+    expect(planningLabel("multichannel")).toBe("multicanal");
+    expect(planningLabel("planning")).toBe("planejamento");
+    expect(planningLabel("execution")).toBe("execução");
+    expect(planningLabel("high")).toBe("alta");
+    expect(planningLabel("medium")).toBe("média");
     expect(planningLabel("Instagram")).toBe("Instagram");
   });
 });

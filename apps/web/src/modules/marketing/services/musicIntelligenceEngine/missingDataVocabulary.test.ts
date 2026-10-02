@@ -14,8 +14,12 @@ describe("missing-data vocabulary", () => {
   });
 
   it("renders PT-BR labels and keeps unknown markers", () => {
-    expect(missingDataLabel("genre")).toBe(missingDataLabel("genre"));
-    expect(missingDataLabel("lyrics")).not.toBe("lyrics");
+    expect(missingDataLabel("audio")).toBe("áudio");
+    expect(missingDataLabel("bpm")).toBe("BPM");
+    expect(missingDataLabel("mood")).toBe("mood");
+    expect(missingDataLabel("genre")).toBe("gênero");
+    expect(missingDataLabel("subgenre")).toBe("subgênero");
+    expect(missingDataLabel("lyrics")).toBe("letra");
     expect(missingDataLabel("custom")).toBe("custom");
   });
 });
