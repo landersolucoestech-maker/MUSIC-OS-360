@@ -312,7 +312,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   if (res.status === 401) {
     setAccessToken(null);
-    // DEV ONLY (VITE_DISABLE_AUTH=true): under the frontend bypass, authenticated
+    // DEV ONLY (VITE_DEV_AUTH_BYPASS=true): under the frontend bypass, authenticated
     // calls without a real token get 401 expectedly and repeatedly (the
     // backend was not changed). We do not arm the 30s circuit breaker here —
     // it exists to stop poller storms when a REAL session

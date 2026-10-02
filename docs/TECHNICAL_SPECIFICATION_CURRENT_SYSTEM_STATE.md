@@ -108,13 +108,13 @@ Rotas lazy-load encontradas em `apps/web/src/app/routes/*.tsx`: accounting, admi
 
 | Artefato | Caminho | Responsabilidade | Usado por | Status |
 |---|---|---|---|---|
-| Auth provider | `apps/web/src/app/providers/AuthContext.tsx:329` | Usa `MockAuthProvider` quando `AUTH_DISABLED || MOCK_MODE`. | Rotas protegidas. | RISCO |
+| Auth provider | `apps/web/src/app/providers/AuthContext.tsx:329` | Usa o usuário sintético de dev quando `AUTH_DISABLED` ou `VITE_DEV_AUTH_BYPASS` (ambos só com `import.meta.env.DEV`; `MOCK_MODE` foi removido por ser flag morta). | Rotas protegidas. | RISCO |
 | Tenant provider | `apps/web/src/app/providers/TenantContext.tsx:177`, `:288` | Mock tenant e permissões permissivas em dev/mock/auth-disabled. | Permissões/UI. | RISCO / PARCIAL |
 | Billing context | `apps/web/src/app/providers/BillingContext.tsx:73-90` | Busca `/billing/subscription`; ignora em mock/auth-disabled. | Avisos/estado de billing. | API OK / UI NÃO VALIDADA |
 | API client | `apps/web/src/shared/lib/api-client.ts:161`, `:188` | Fetch para `${API_BASE_URL}/api/v1`. | Services/hooks. | PARCIAL |
 | Supabase client | `apps/web/src/lib/supabase.ts:46` | Auth persistente em `localStorage`. | AuthContext. | SEGURANÇA NÃO VALIDADA |
 | Mock data | `apps/web/src/shared/data/mockData.ts` | Dados seed/mock de UI. | Muitos módulos em mock. | MOCKADO |
-| Reports API | `apps/web/src/modules/reports/services/reports-api.ts:107`, `:212` | Usa dados locais quando `MOCK_MODE || AUTH_DISABLED`. | Relatórios. | MOCKADO/PARCIAL |
+| Reports API | `apps/web/src/modules/reports/services/reports-api.ts:107`, `:212` | Usa dados locais somente sob o bypass de dev do frontend (`MOCK_MODE` removido). | Relatórios. | MOCKADO/PARCIAL |
 
 ### Backend
 
@@ -433,11 +433,11 @@ Escalabilidade: há filas BullMQ, processors, Redis, workers e indexes, mas conc
 
 | Tipo | Local | Evidência | Impacto | Status |
 |---|---|---|---|---|
-| Mock auth | `AuthContext.tsx` | `MockAuthProvider`, `AUTH_DISABLED || MOCK_MODE` | login real bypassado em dev | MOCKADO |
+| Mock auth | `AuthContext.tsx` | usuário sintético, `AUTH_DISABLED` / `VITE_DEV_AUTH_BYPASS` (DEV only) | login real bypassado em dev | MOCKADO |
 | Mock tenant | `TenantContext.tsx` | `MOCK_TENANT`, permissivo em mock/dev | RBAC UI false positive | MOCKADO/RISCO |
 | Mock admin data | `apps/web/src/modules/admin/data/mockAdmin.ts` | tenants/subscriptions/integrations fictícios | decisões falsas | MOCKADO |
 | Mock AI providers | `OpenAIProvider.ts`, `ClaudeProvider.ts`, `GeminiProvider.ts`, `PerplexityProvider.ts` | retornos simulados em `MOCK_MODE` | IA não real | MOCKADO |
-| Local reports | `reports-api.ts` | `LOCAL_REPORTS_ENABLED = MOCK_MODE || AUTH_DISABLED` | export sem API | MOCKADO/PARCIAL |
+| Local reports | `reports-api.ts` | `LOCAL_REPORTS_ENABLED` somente sob o bypass de dev (`MOCK_MODE` removido) | export sem API | MOCKADO/PARCIAL |
 | TODO/fallbacks | packages ai-skills parsers | fallbacks estruturados | outputs heurísticos | PARCIAL |
 | Arquivos órfãos | `_archive`, removidos em git status | `_archive`, deleted reports files | confusão | RISCO |
 | Worktree sujo | repo todo | `git status --short` | auditoria mutável | RISCO |
@@ -459,7 +459,7 @@ Escalabilidade: há filas BullMQ, processors, Redis, workers e indexes, mas conc
 |---|---|---|---|---|---|
 | Componentes/forms gigantes | web | arquivos 1000-3000 linhas | regressão UX | decompor | testes por seção |
 | Billing real não homologado | billing | specs existem mas suíte falhou | acesso indevido/cobrança | smoke Stripe test-mode | checkout/webhook/subscription verdes |
-| Integrações com mocks/stubs | integrations | hooks/providers `MOCK_MODE` | falsa funcionalidade | classificar e gatear | matriz real/mock por provider |
+| Integrações com mocks/stubs | integrations | hooks/providers desligados por padrão (ver ledger de nomes) | falsa funcionalidade | classificar e gatear | matriz real/mock por provider |
 | Reports import/export não homologado | reports | API/UI existem, testes não verdes | perda de dados | roundtrip test | export/import com DB |
 
 ### P2 — Necessário para enterprise

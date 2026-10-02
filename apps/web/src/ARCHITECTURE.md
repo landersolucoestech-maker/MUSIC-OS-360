@@ -46,7 +46,7 @@
 | Directory | Sub-dirs | Purpose |
 |-----------|----------|---------|
 | `infrastructure/` | api, queue, websocket, redis, cache, monitoring, logging, telemetry, storage, auth, database, ai, workers, integrations | Technical infrastructure decoupled from the domain |
-| `workers/` | ai, analytics, integrations, automations, webhooks, processing | BullMQ-ready workers (MOCK_MODE: in-memory) |
+| `workers/` | ai, analytics, integrations, automations, webhooks, processing | BullMQ-ready workers |
 | `config/` | — | Centralized global configuration |
 | `styles/` | — | Global styles reference |
 | `types/` | — | Cross-cutting global types |

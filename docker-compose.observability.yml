@@ -13,7 +13,6 @@ services:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:3001/api/v1}
         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-}
         VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:-}
-        VITE_AUTH_DISABLED: ${VITE_AUTH_DISABLED:-false}
     container_name: musicos360_web
     restart: unless-stopped
     depends_on:

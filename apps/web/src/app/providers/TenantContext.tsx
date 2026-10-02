@@ -194,7 +194,7 @@ const TenantContext = createContext<TenantContextType | undefined>(undefined);
 // shows here.
 const AUTH_DISABLED_TENANT_ID = "a900b3a8-fa1c-5a6b-a852-1b0689e27fe3";
 
-// DEV ONLY (VITE_DISABLE_AUTH=true) — central synthetic tenant, IDs
+// DEV ONLY (VITE_DEV_AUTH_BYPASS=true) — central synthetic tenant, IDs
 // deliberately distinct from AUTH_DISABLED_TENANT_ID above (see the note in
 // AuthContext.tsx: this flag assumes no corresponding bypass in the
 // backend). Owner permissions to unlock all local navigation/UI.

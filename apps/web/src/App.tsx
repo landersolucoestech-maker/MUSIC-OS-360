@@ -133,7 +133,7 @@ function AuthDisabledBanner() {
 }
 
 /**
- * DEV ONLY — critical banner, always visible, when VITE_DISABLE_AUTH is
+ * DEV ONLY — critical banner, always visible, when VITE_DEV_AUTH_BYPASS is
  * active. Same purpose as the AuthDisabledBanner above, but for the purely
  * frontend bypass: no real Supabase session behind it at all, and no
  * assumption that the backend also has auth off — authenticated API
@@ -146,7 +146,7 @@ function DevAuthBypassBanner() {
       role="alert"
       className="sticky inset-x-0 top-0 z-[9999] bg-warning px-4 py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-warning-foreground"
     >
-      ⚠ VITE_DISABLE_AUTH ativo (DEV ONLY) — login, sessão e MFA pulados no frontend. Chamadas de API que exigem auth real podem retornar 401/403. Nunca use para validar login real.
+      ⚠ VITE_DEV_AUTH_BYPASS ativo (DEV ONLY) — login, sessão e MFA pulados no frontend. Chamadas de API que exigem auth real podem retornar 401/403. Nunca use para validar login real.
     </div>
   );
 }

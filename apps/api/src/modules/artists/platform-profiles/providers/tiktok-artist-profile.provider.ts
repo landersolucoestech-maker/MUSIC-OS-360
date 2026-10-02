@@ -109,7 +109,7 @@ export class TikTokArtistProfileProvider implements ArtistPlatformProvider {
       } else {
         resolvedUuid = canonicalUuid;
         primaryIdentityStatus = 'PROFILE_NOT_FOUND';
-        // Real "no linked social account" — in dev/local with USE_MOCK=true,
+        // Real "no linked social account" — in dev/local with DEV_SOCIAL_METRICS_MOCK=true,
         // uses the demo fallback (never in production/staging, see
         // dev-social-metrics-mock.ts).
         if (isDevMockSocialMetricsEnabled()) {

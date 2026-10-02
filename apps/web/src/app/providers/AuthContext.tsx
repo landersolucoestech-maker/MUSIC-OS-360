@@ -191,7 +191,7 @@ const AUTH_DISABLED_USER: User = {
   user_metadata: { full_name: "LANDER RECORDS (Owner Sintético — DEV/STAGING)", role: "owner" },
 };
 
-// DEV ONLY (VITE_DISABLE_AUTH=true) — central synthetic user to browse the
+// DEV ONLY (VITE_DEV_AUTH_BYPASS=true) — central synthetic user to browse the
 // UI without login. Deliberately distinct from AUTH_DISABLED_USER above: this one does NOT
 // mirror any real backend data (the backend has, and needs, no
 // corresponding bypass under this flag) — clearly synthetic IDs so they are
@@ -202,7 +202,7 @@ const DEV_BYPASS_USER: User = {
   role: "super_admin",
   org_id: "00000000-0000-4000-8000-000000000002",
   mustChangePassword: false,
-  user_metadata: { full_name: "DEV BYPASS USER (VITE_DISABLE_AUTH — DEV ONLY)", role: "super_admin" },
+  user_metadata: { full_name: "DEV BYPASS USER (VITE_DEV_AUTH_BYPASS — DEV ONLY)", role: "super_admin" },
 };
 
 const AUTH_BYPASS_ACTIVE = AUTH_DISABLED || DEV_AUTH_BYPASS;
