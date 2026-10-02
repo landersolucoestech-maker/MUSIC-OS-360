@@ -1,6 +1,6 @@
 ---
 name: service-layer-audit
-description: Audits services for business rule placement and transactions. Use when a change touches the changed services.
+description: Audits services for business rule placement and transactions. Use when a change modifies services.
 ---
 # service-layer-audit
 
@@ -16,7 +16,7 @@ description: Audits services for business rule placement and transactions. Use w
 Audits services for business rule placement and transactions.
 
 ## Invocation conditions
-- A change touches the changed services.
+- A change modifies services.
 - A reviewer, gate or owner asks for the audit of services for business rule placement and transactions.
 - Before a release that includes changes to this area.
 

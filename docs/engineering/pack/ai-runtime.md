@@ -19,5 +19,5 @@ retrieval) and the agents that engineer and review them (domain `ai-engineering`
 - **Evaluation.** A prompt, model or context change needs an evaluation run compared with its baseline
   (`ai-evaluation`, `ai-regression-audit`).
 
-Agents: 27 in `ai-engineering` (see [agents-map.md](./agents-map.md)); skills: the 22 `ai-*` skills and
+Agents: 27 in `ai-engineering` (see [agents-map.md](../../../.claude/docs/pack/agents-map.md)); skills: the 22 `ai-*` skills and
 `structured-output-validation`, `tool-policy-validation`, `human-approval-validation`.

@@ -1,6 +1,6 @@
 ---
 name: ownership-map
-description: Maps which agent or owner may write which paths. Use when a task needs the current which agent or owner may write which paths before a change is planned or reviewed.
+description: Maps which agent or owner may write which paths. Use when a task needs an up-to-date map of which agent or owner may write which paths before a change is planned or reviewed.
 ---
 # ownership-map
 
@@ -16,7 +16,7 @@ description: Maps which agent or owner may write which paths. Use when a task ne
 Maps which agent or owner may write which paths.
 
 ## Invocation conditions
-- A task needs the current which agent or owner may write which paths before a change is planned or reviewed.
+- A task needs an up-to-date map of which agent or owner may write which paths before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

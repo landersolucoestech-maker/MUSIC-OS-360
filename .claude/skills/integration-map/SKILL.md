@@ -1,6 +1,6 @@
 ---
 name: integration-map
-description: Lists every external provider with auth, secrets, webhooks and failure handling. Use when a task needs the current external providers with authentication, secrets, webhooks and failure handling before a change is planned or reviewed.
+description: Lists every external provider with auth, secrets, webhooks and failure handling. Use when a task needs an up-to-date map of external providers with authentication, secrets, webhooks and failure handling before a change is planned or reviewed.
 ---
 # integration-map
 
@@ -16,7 +16,7 @@ description: Lists every external provider with auth, secrets, webhooks and fail
 Lists every external provider with auth, secrets, webhooks and failure handling.
 
 ## Invocation conditions
-- A task needs the current external providers with authentication, secrets, webhooks and failure handling before a change is planned or reviewed.
+- A task needs an up-to-date map of external providers with authentication, secrets, webhooks and failure handling before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

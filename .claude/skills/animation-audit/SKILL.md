@@ -1,6 +1,6 @@
 ---
 name: animation-audit
-description: Audits motion for purpose, duration and reduced-motion support. Use when a change touches the changed animations and transitions.
+description: Audits motion for purpose, duration and reduced-motion support. Use when a change modifies animations and transitions.
 ---
 # animation-audit
 
@@ -16,7 +16,7 @@ description: Audits motion for purpose, duration and reduced-motion support. Use
 Audits motion for purpose, duration and reduced-motion support.
 
 ## Invocation conditions
-- A change touches the changed animations and transitions.
+- A change modifies animations and transitions.
 - A reviewer, gate or owner asks for the audit of motion for purpose, duration and reduced-motion support.
 - Before a release that includes changes to this area.
 

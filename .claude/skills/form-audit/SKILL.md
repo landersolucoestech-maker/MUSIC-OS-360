@@ -1,6 +1,6 @@
 ---
 name: form-audit
-description: Audits forms for validation, errors, defaults and concurrency. Use when a change touches the changed forms, their schemas and submit handlers.
+description: Audits forms for validation, errors, defaults and concurrency. Use when a change modifies forms, their schemas and submit handlers.
 ---
 # form-audit
 
@@ -16,7 +16,7 @@ description: Audits forms for validation, errors, defaults and concurrency. Use 
 Audits forms for validation, errors, defaults and concurrency.
 
 ## Invocation conditions
-- A change touches the changed forms, their schemas and submit handlers.
+- A change modifies forms, their schemas and submit handlers.
 - A reviewer, gate or owner asks for the audit of forms for validation, errors, defaults and concurrency.
 - Before a release that includes changes to this area.
 

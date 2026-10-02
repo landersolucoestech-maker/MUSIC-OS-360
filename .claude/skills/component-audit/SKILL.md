@@ -1,6 +1,6 @@
 ---
 name: component-audit
-description: Audits components for props, state, reuse and tests. Use when a change touches the changed components and their tests.
+description: Audits components for props, state, reuse and tests. Use when a change modifies components and their tests.
 ---
 # component-audit
 
@@ -16,7 +16,7 @@ description: Audits components for props, state, reuse and tests. Use when a cha
 Audits components for props, state, reuse and tests.
 
 ## Invocation conditions
-- A change touches the changed components and their tests.
+- A change modifies components and their tests.
 - A reviewer, gate or owner asks for the audit of components for props, state, reuse and tests.
 - Before a release that includes changes to this area.
 

@@ -1,6 +1,6 @@
 ---
 name: loading-state-audit
-description: Audits loading states for every async surface. Use when a change touches the changed pages and components that fetch data.
+description: Audits loading states for every async surface. Use when a change modifies pages and components that fetch data.
 ---
 # loading-state-audit
 
@@ -16,7 +16,7 @@ description: Audits loading states for every async surface. Use when a change to
 Audits loading states for every async surface.
 
 ## Invocation conditions
-- A change touches the changed pages and components that fetch data.
+- A change modifies pages and components that fetch data.
 - A reviewer, gate or owner asks for the audit of loading states for every async surface.
 - Before a release that includes changes to this area.
 

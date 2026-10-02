@@ -1,6 +1,6 @@
 ---
 name: responsive-audit
-description: Audits breakpoints and touch targets. Use when a change touches the changed screens at the supported viewport widths.
+description: Audits breakpoints and touch targets. Use when a change modifies screens at the supported viewport widths.
 ---
 # responsive-audit
 
@@ -16,7 +16,7 @@ description: Audits breakpoints and touch targets. Use when a change touches the
 Audits breakpoints and touch targets.
 
 ## Invocation conditions
-- A change touches the changed screens at the supported viewport widths.
+- A change modifies screens at the supported viewport widths.
 - A reviewer, gate or owner asks for the audit of breakpoints and touch targets.
 - Before a release that includes changes to this area.
 

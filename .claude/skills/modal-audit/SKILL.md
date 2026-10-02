@@ -1,6 +1,6 @@
 ---
 name: modal-audit
-description: Audits modals for focus trap, escape and destructive confirmation. Use when a change touches the changed dialogs and sheets.
+description: Audits modals for focus trap, escape and destructive confirmation. Use when a change modifies dialogs and sheets.
 ---
 # modal-audit
 
@@ -16,7 +16,7 @@ description: Audits modals for focus trap, escape and destructive confirmation. 
 Audits modals for focus trap, escape and destructive confirmation.
 
 ## Invocation conditions
-- A change touches the changed dialogs and sheets.
+- A change modifies dialogs and sheets.
 - A reviewer, gate or owner asks for the audit of modals for focus trap, escape and destructive confirmation.
 - Before a release that includes changes to this area.
 

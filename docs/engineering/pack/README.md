@@ -7,17 +7,19 @@ registry and every map below is derived from them.
 
 ## Maps (generated, never edited by hand)
 
+The maps live with the pack in `.claude/docs/pack/` because they name every agent and skill of the pack, including the ones that mention legacy formats only to refuse them; the product documentation under `docs/` stays free of those words.
+
 Regenerate with `node .claude/runtime/build-pack-docs.mjs`; `--check` fails when a document is stale.
 
 | Map | Content |
 |---|---|
-| [agents-map.md](./agents-map.md) | every agent by domain: kind, tools, write scope, capabilities, approval |
-| [skills-map.md](./skills-map.md) | every skill by domain: kind, mutation, approval class, consuming agents |
-| [capabilities-map.md](./capabilities-map.md) | every capability with executors, skills, validation and evidence |
-| [routing-map.md](./routing-map.md) | intents, keywords, capabilities and high-impact signals |
-| [workflows-map.md](./workflows-map.md) | every workflow phase with agents, skills, gates and approval phases |
-| [ownership-map.md](./ownership-map.md) | which agent may write which paths |
-| [contracts-policies-gates.md](./contracts-policies-gates.md) | contracts, policies, gates and approval action classes |
+| [agents-map.md](../../../.claude/docs/pack/agents-map.md) | every agent by domain: kind, tools, write scope, capabilities, approval |
+| [skills-map.md](../../../.claude/docs/pack/skills-map.md) | every skill by domain: kind, mutation, approval class, consuming agents |
+| [capabilities-map.md](../../../.claude/docs/pack/capabilities-map.md) | every capability with executors, skills, validation and evidence |
+| [routing-map.md](../../../.claude/docs/pack/routing-map.md) | intents, keywords, capabilities and high-impact signals |
+| [workflows-map.md](../../../.claude/docs/pack/workflows-map.md) | every workflow phase with agents, skills, gates and approval phases |
+| [ownership-map.md](../../../.claude/docs/pack/ownership-map.md) | which agent may write which paths |
+| [contracts-policies-gates.md](../../../.claude/docs/pack/contracts-policies-gates.md) | contracts, policies, gates and approval action classes |
 
 ## Concepts (written by hand, limited to what is implemented)
 

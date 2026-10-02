@@ -1,6 +1,6 @@
 ---
 name: authorization-map
-description: Maps who may do what across roles, permissions and guards. Use when a task needs the current who may do what across roles, permissions and guards before a change is planned or reviewed.
+description: Maps who may do what across roles, permissions and guards. Use when a task needs an up-to-date map of who may do what across roles, permissions and guards before a change is planned or reviewed.
 ---
 # authorization-map
 
@@ -16,7 +16,7 @@ description: Maps who may do what across roles, permissions and guards. Use when
 Maps who may do what across roles, permissions and guards.
 
 ## Invocation conditions
-- A task needs the current who may do what across roles, permissions and guards before a change is planned or reviewed.
+- A task needs an up-to-date map of who may do what across roles, permissions and guards before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

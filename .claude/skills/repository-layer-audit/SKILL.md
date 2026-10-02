@@ -1,6 +1,6 @@
 ---
 name: repository-layer-audit
-description: Audits repositories for tenant scoping and query safety. Use when a change touches the changed repositories and query builders.
+description: Audits repositories for tenant scoping and query safety. Use when a change modifies repositories and query builders.
 ---
 # repository-layer-audit
 
@@ -16,7 +16,7 @@ description: Audits repositories for tenant scoping and query safety. Use when a
 Audits repositories for tenant scoping and query safety.
 
 ## Invocation conditions
-- A change touches the changed repositories and query builders.
+- A change modifies repositories and query builders.
 - A reviewer, gate or owner asks for the audit of repositories for tenant scoping and query safety.
 - Before a release that includes changes to this area.
 

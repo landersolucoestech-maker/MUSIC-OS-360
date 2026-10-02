@@ -139,7 +139,7 @@
 | `archival-strategy-reviewer` | reviewer | Read, Grep, Glob, Bash | none | `database.review.archival` | none |
 | `backup-reviewer` | reviewer | Read, Grep, Glob, Bash | none | `database.review.backup` | none |
 | `concurrency-reviewer` | reviewer | Read, Grep, Glob, Bash | none | `database.review.concurrency` | none |
-| `csv-engineer` | engineer | Read, Edit, Write, Grep, Glob, Bash | `apps/api/src/shared/csv/**`<br>`apps/api/src/modules/**/csv/**` | `database.csv` | none |
+| `csv-engineer` | reviewer | Read, Grep, Glob, Bash | none | `database.csv` | none |
 | `data-engineering-reviewer` | reviewer | Read, Grep, Glob, Bash | none | `database.review.data-engineering` | none |
 | `data-integrity-reviewer` | reviewer | Read, Grep, Glob, Bash | none | `database.review.integrity` | none |
 | `data-migration-reviewer` | reviewer | Read, Grep, Glob, Bash | none | `database.review.migration` | none |

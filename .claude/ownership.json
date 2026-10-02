@@ -807,11 +807,8 @@
     },
     {
       "agent": "csv-engineer",
-      "writes": [
-        "apps/api/src/shared/csv/**",
-        "apps/api/src/modules/**/csv/**"
-      ],
-      "note": "pack writer (database); scope declared in .claude/agents/csv-engineer.md"
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "data-architecture-engineer",

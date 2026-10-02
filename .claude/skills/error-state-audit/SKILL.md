@@ -1,6 +1,6 @@
 ---
 name: error-state-audit
-description: Audits error states for safe, humanized messages. Use when a change touches the changed error displays, toasts and boundaries.
+description: Audits error states for safe, humanized messages. Use when a change modifies error displays, toasts and boundaries.
 ---
 # error-state-audit
 
@@ -16,7 +16,7 @@ description: Audits error states for safe, humanized messages. Use when a change
 Audits error states for safe, humanized messages.
 
 ## Invocation conditions
-- A change touches the changed error displays, toasts and boundaries.
+- A change modifies error displays, toasts and boundaries.
 - A reviewer, gate or owner asks for the audit of error states for safe, humanized messages.
 - Before a release that includes changes to this area.
 

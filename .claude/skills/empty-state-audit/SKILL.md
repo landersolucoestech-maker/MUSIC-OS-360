@@ -1,6 +1,6 @@
 ---
 name: empty-state-audit
-description: Audits empty states for guidance and calls to action. Use when a change touches the changed lists, tables and dashboards.
+description: Audits empty states for guidance and calls to action. Use when a change modifies lists, tables and dashboards.
 ---
 # empty-state-audit
 
@@ -16,7 +16,7 @@ description: Audits empty states for guidance and calls to action. Use when a ch
 Audits empty states for guidance and calls to action.
 
 ## Invocation conditions
-- A change touches the changed lists, tables and dashboards.
+- A change modifies lists, tables and dashboards.
 - A reviewer, gate or owner asks for the audit of empty states for guidance and calls to action.
 - Before a release that includes changes to this area.
 

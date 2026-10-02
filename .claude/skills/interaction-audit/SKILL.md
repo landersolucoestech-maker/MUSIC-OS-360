@@ -1,6 +1,6 @@
 ---
 name: interaction-audit
-description: Audits hover, focus, disabled and loading interactions. Use when a change touches the changed interactive components.
+description: Audits hover, focus, disabled and loading interactions. Use when a change modifies interactive components.
 ---
 # interaction-audit
 
@@ -16,7 +16,7 @@ description: Audits hover, focus, disabled and loading interactions. Use when a 
 Audits hover, focus, disabled and loading interactions.
 
 ## Invocation conditions
-- A change touches the changed interactive components.
+- A change modifies interactive components.
 - A reviewer, gate or owner asks for the audit of hover, focus, disabled and loading interactions.
 - Before a release that includes changes to this area.
 

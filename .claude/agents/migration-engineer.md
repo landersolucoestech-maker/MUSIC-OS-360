@@ -53,9 +53,9 @@ Produce a migration that is idempotent where possible, reversible, bounded in lo
 - `create-migration` — writes a guarded, reversible database migration through the repository tooling
 - `create-migration-tests` — writes tests that prove up, down and repeatability of a migration
 - `migration-safety-check` — checks a migration for locks, reversibility and old-new coexistence
+- `databaseMigrationSafety` — checks migration safety rules for locking, backfill and rollback
 - `destructive-change-check` — detects destructive data or git operations before they run
 - `rollback-analysis` — determines how each part of a change can be undone
-- `databaseMigrationSafety` — checks migration safety rules for locking, backfill and rollback
 
 ## Escalation rules
 - Stop and hand back to the orchestrator when the change needs a file outside the write scope, when a gate fails twice with the same fingerprint (loop breaker), or when a decision belongs to the project owner.

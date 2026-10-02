@@ -1,6 +1,6 @@
 ---
 name: api-map
-description: Lists every API endpoint with method, DTO, guard and handler. Use when a task needs the current API endpoints with method, DTO, guard and handler before a change is planned or reviewed.
+description: Lists every API endpoint with method, DTO, guard and handler. Use when a task needs an up-to-date map of API endpoints with method, DTO, guard and handler before a change is planned or reviewed.
 ---
 # api-map
 
@@ -16,7 +16,7 @@ description: Lists every API endpoint with method, DTO, guard and handler. Use w
 Lists every API endpoint with method, DTO, guard and handler.
 
 ## Invocation conditions
-- A task needs the current API endpoints with method, DTO, guard and handler before a change is planned or reviewed.
+- A task needs an up-to-date map of API endpoints with method, DTO, guard and handler before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

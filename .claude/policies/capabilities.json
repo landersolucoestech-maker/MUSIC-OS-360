@@ -1348,8 +1348,6 @@
       "agent": "csv-engineer",
       "allowedTools": [
         "Read",
-        "Edit",
-        "Write",
         "Grep",
         "Glob",
         "Bash"

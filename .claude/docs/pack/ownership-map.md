@@ -121,7 +121,7 @@
 | `credential-storage-reviewer` | none |
 | `credits-operations-agent` | none |
 | `csrf-reviewer` | none |
-| `csv-engineer` | `apps/api/src/shared/csv/**`<br>`apps/api/src/modules/**/csv/**` |
+| `csv-engineer` | none |
 | `data-architecture-engineer` | `docs/engineering/decisions/data/**` |
 | `data-engineering-reviewer` | none |
 | `data-fetching-engineer` | `apps/web/src/modules/**/services/**`<br>`apps/web/src/shared/lib/**`<br>`apps/web/src/shared/integrations/**`<br>`apps/web/src/shared/hooks/useDataQuery.ts` |

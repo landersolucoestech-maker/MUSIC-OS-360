@@ -1,6 +1,6 @@
 ---
 name: event-map
-description: Lists every domain event with producers, consumers and payload. Use when a task needs the current domain events with producers, consumers and payloads before a change is planned or reviewed.
+description: Lists every domain event with producers, consumers and payload. Use when a task needs an up-to-date map of domain events with producers, consumers and payloads before a change is planned or reviewed.
 ---
 # event-map
 
@@ -16,7 +16,7 @@ description: Lists every domain event with producers, consumers and payload. Use
 Lists every domain event with producers, consumers and payload.
 
 ## Invocation conditions
-- A task needs the current domain events with producers, consumers and payloads before a change is planned or reviewed.
+- A task needs an up-to-date map of domain events with producers, consumers and payloads before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

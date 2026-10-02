@@ -1,6 +1,6 @@
 ---
 name: queue-map
-description: Lists every queue and job with producers, processors, retries and idempotency. Use when a task needs the current queues and jobs with producers, processors, retries and idempotency before a change is planned or reviewed.
+description: Lists every queue and job with producers, processors, retries and idempotency. Use when a task needs an up-to-date map of queues and jobs with producers, processors, retries and idempotency before a change is planned or reviewed.
 ---
 # queue-map
 
@@ -16,7 +16,7 @@ description: Lists every queue and job with producers, processors, retries and i
 Lists every queue and job with producers, processors, retries and idempotency.
 
 ## Invocation conditions
-- A task needs the current queues and jobs with producers, processors, retries and idempotency before a change is planned or reviewed.
+- A task needs an up-to-date map of queues and jobs with producers, processors, retries and idempotency before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

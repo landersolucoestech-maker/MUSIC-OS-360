@@ -1,6 +1,6 @@
 ---
 name: typography-audit
-description: Audits type scale, weight and line length. Use when a change touches the changed screens and text styles.
+description: Audits type scale, weight and line length. Use when a change modifies screens and text styles.
 ---
 # typography-audit
 
@@ -16,7 +16,7 @@ description: Audits type scale, weight and line length. Use when a change touche
 Audits type scale, weight and line length.
 
 ## Invocation conditions
-- A change touches the changed screens and text styles.
+- A change modifies screens and text styles.
 - A reviewer, gate or owner asks for the audit of type scale, weight and line length.
 - Before a release that includes changes to this area.
 

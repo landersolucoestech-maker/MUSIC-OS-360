@@ -1,6 +1,6 @@
 ---
 name: worker-map
-description: Lists every worker and scheduler with its trigger and concurrency. Use when a task needs the current workers and schedulers with their trigger and concurrency before a change is planned or reviewed.
+description: Lists every worker and scheduler with its trigger and concurrency. Use when a task needs an up-to-date map of workers and schedulers with their trigger and concurrency before a change is planned or reviewed.
 ---
 # worker-map
 
@@ -16,7 +16,7 @@ description: Lists every worker and scheduler with its trigger and concurrency. 
 Lists every worker and scheduler with its trigger and concurrency.
 
 ## Invocation conditions
-- A task needs the current workers and schedulers with their trigger and concurrency before a change is planned or reviewed.
+- A task needs an up-to-date map of workers and schedulers with their trigger and concurrency before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

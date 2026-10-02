@@ -1,6 +1,6 @@
 ---
 name: table-audit
-description: Audits tables for sorting, paging, empty and overflow behavior. Use when a change touches the changed tables and data grids.
+description: Audits tables for sorting, paging, empty and overflow behavior. Use when a change modifies tables and data grids.
 ---
 # table-audit
 
@@ -16,7 +16,7 @@ description: Audits tables for sorting, paging, empty and overflow behavior. Use
 Audits tables for sorting, paging, empty and overflow behavior.
 
 ## Invocation conditions
-- A change touches the changed tables and data grids.
+- A change modifies tables and data grids.
 - A reviewer, gate or owner asks for the audit of tables for sorting, paging, empty and overflow behavior.
 - Before a release that includes changes to this area.
 

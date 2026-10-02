@@ -1,6 +1,6 @@
 ---
 name: backend-audit
-description: Audits backend modules for validation, authorization and error handling. Use when a change touches the changed controllers, services and repositories.
+description: Audits backend modules for validation, authorization and error handling. Use when a change modifies controllers, services and repositories.
 ---
 # backend-audit
 
@@ -16,7 +16,7 @@ description: Audits backend modules for validation, authorization and error hand
 Audits backend modules for validation, authorization and error handling.
 
 ## Invocation conditions
-- A change touches the changed controllers, services and repositories.
+- A change modifies controllers, services and repositories.
 - A reviewer, gate or owner asks for the audit of backend modules for validation, authorization and error handling.
 - Before a release that includes changes to this area.
 

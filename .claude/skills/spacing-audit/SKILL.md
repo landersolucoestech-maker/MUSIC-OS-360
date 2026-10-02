@@ -1,6 +1,6 @@
 ---
 name: spacing-audit
-description: Audits spacing against the token scale. Use when a change touches the changed layouts and components.
+description: Audits spacing against the token scale. Use when a change modifies layouts and components.
 ---
 # spacing-audit
 
@@ -16,7 +16,7 @@ description: Audits spacing against the token scale. Use when a change touches t
 Audits spacing against the token scale.
 
 ## Invocation conditions
-- A change touches the changed layouts and components.
+- A change modifies layouts and components.
 - A reviewer, gate or owner asks for the audit of spacing against the token scale.
 - Before a release that includes changes to this area.
 

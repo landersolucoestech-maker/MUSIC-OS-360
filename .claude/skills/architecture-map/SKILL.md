@@ -1,6 +1,6 @@
 ---
 name: architecture-map
-description: Maps the real modules, layers and boundaries of the repository. Use when a task needs the current modules, layers and boundaries of the repository before a change is planned or reviewed.
+description: Maps the real modules, layers and boundaries of the repository. Use when a task needs an up-to-date map of modules, layers and boundaries of the repository before a change is planned or reviewed.
 ---
 # architecture-map
 
@@ -16,7 +16,7 @@ description: Maps the real modules, layers and boundaries of the repository. Use
 Maps the real modules, layers and boundaries of the repository.
 
 ## Invocation conditions
-- A task needs the current modules, layers and boundaries of the repository before a change is planned or reviewed.
+- A task needs an up-to-date map of modules, layers and boundaries of the repository before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

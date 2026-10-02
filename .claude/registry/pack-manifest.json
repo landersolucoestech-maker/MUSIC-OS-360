@@ -2736,7 +2736,7 @@
    "type": "agent",
    "batch": 15,
    "initialState": "ABSENT",
-   "finalState": "CREATED",
+   "finalState": "BLOCKED_EXTERNAL",
    "file": ".claude/agents/transcription-automation-agent.md"
   },
   {
@@ -2760,7 +2760,7 @@
    "type": "agent",
    "batch": 15,
    "initialState": "ABSENT",
-   "finalState": "CREATED",
+   "finalState": "BLOCKED_EXTERNAL",
    "file": ".claude/agents/distribution-status-agent.md"
   },
   {
@@ -4853,7 +4853,7 @@
    "type": "skill",
    "batch": 18,
    "initialState": "ABSENT",
-   "finalState": "CREATED",
+   "finalState": "BLOCKED_EXTERNAL",
    "file": ".claude/skills/transcribe-audio/SKILL.md"
   },
   {
@@ -5045,7 +5045,7 @@
    "type": "skill",
    "batch": 18,
    "initialState": "ABSENT",
-   "finalState": "CREATED",
+   "finalState": "BLOCKED_EXTERNAL",
    "file": ".claude/skills/submit-distribution/SKILL.md"
   },
   {
@@ -5053,7 +5053,7 @@
    "type": "skill",
    "batch": 18,
    "initialState": "ABSENT",
-   "finalState": "CREATED",
+   "finalState": "BLOCKED_EXTERNAL",
    "file": ".claude/skills/sync-distribution-status/SKILL.md"
   },
   {

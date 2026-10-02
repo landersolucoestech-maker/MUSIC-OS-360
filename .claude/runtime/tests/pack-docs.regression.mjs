@@ -8,11 +8,11 @@ import { buildDocs } from "../build-pack-docs.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 
-test("every generated pack map in docs/engineering/pack equals what the registries produce", () => {
+test("every generated pack map in .claude/docs/pack equals what the registries produce", () => {
   const docs = buildDocs(ROOT);
-  assert.ok(Object.keys(docs).length >= 7);
+  assert.ok(Object.keys(docs).length >= 8);
   for (const [name, body] of Object.entries(docs)) {
-    const onDisk = readFileSync(join(ROOT, "docs", "engineering", "pack", name), "utf8");
+    const onDisk = readFileSync(join(ROOT, ".claude", "docs", "pack", name), "utf8");
     assert.equal(onDisk, body.endsWith("\n") ? body : body + "\n", `${name} is stale: run node .claude/runtime/build-pack-docs.mjs`);
   }
 });

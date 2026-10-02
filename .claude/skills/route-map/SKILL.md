@@ -1,6 +1,6 @@
 ---
 name: route-map
-description: Lists every frontend and API route with its guard. Use when a task needs the current frontend and API routes with their guards before a change is planned or reviewed.
+description: Lists every frontend and API route with its guard. Use when a task needs an up-to-date map of frontend and API routes with their guards before a change is planned or reviewed.
 ---
 # route-map
 
@@ -16,7 +16,7 @@ description: Lists every frontend and API route with its guard. Use when a task 
 Lists every frontend and API route with its guard.
 
 ## Invocation conditions
-- A task needs the current frontend and API routes with their guards before a change is planned or reviewed.
+- A task needs an up-to-date map of frontend and API routes with their guards before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

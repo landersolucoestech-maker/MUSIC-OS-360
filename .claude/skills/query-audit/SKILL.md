@@ -1,6 +1,6 @@
 ---
 name: query-audit
-description: Audits queries for correctness, scoping and cost. Use when a change touches the changed queries and their callers.
+description: Audits queries for correctness, scoping and cost. Use when a change modifies queries and their callers.
 ---
 # query-audit
 
@@ -16,7 +16,7 @@ description: Audits queries for correctness, scoping and cost. Use when a change
 Audits queries for correctness, scoping and cost.
 
 ## Invocation conditions
-- A change touches the changed queries and their callers.
+- A change modifies queries and their callers.
 - A reviewer, gate or owner asks for the audit of queries for correctness, scoping and cost.
 - Before a release that includes changes to this area.
 

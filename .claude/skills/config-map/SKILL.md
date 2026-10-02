@@ -1,6 +1,6 @@
 ---
 name: config-map
-description: Lists every configuration key with its source, default and consumers. Use when a task needs the current configuration keys with source, default and consumers before a change is planned or reviewed.
+description: Lists every configuration key with its source, default and consumers. Use when a task needs an up-to-date map of configuration keys with source, default and consumers before a change is planned or reviewed.
 ---
 # config-map
 
@@ -16,7 +16,7 @@ description: Lists every configuration key with its source, default and consumer
 Lists every configuration key with its source, default and consumers.
 
 ## Invocation conditions
-- A task needs the current configuration keys with source, default and consumers before a change is planned or reviewed.
+- A task needs an up-to-date map of configuration keys with source, default and consumers before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

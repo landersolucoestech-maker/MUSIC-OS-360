@@ -1,6 +1,6 @@
 ---
 name: visual-consistency-audit
-description: Audits UI against tokens, spacing and component conventions. Use when a change touches the changed screens compared with their neighbors.
+description: Audits UI against tokens, spacing and component conventions. Use when a change modifies screens compared with their neighbors.
 ---
 # visual-consistency-audit
 
@@ -16,7 +16,7 @@ description: Audits UI against tokens, spacing and component conventions. Use wh
 Audits UI against tokens, spacing and component conventions.
 
 ## Invocation conditions
-- A change touches the changed screens compared with their neighbors.
+- A change modifies screens compared with their neighbors.
 - A reviewer, gate or owner asks for the audit of UI consistency with tokens, spacing and component conventions.
 - Before a release that includes changes to this area.
 

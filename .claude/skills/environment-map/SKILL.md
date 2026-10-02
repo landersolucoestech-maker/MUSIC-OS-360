@@ -1,6 +1,6 @@
 ---
 name: environment-map
-description: Lists environments, their variables and what each is allowed to reach. Use when a task needs the current environments, their variables and what each may reach before a change is planned or reviewed.
+description: Lists environments, their variables and what each is allowed to reach. Use when a task needs an up-to-date map of environments, their variables and what each may reach before a change is planned or reviewed.
 ---
 # environment-map
 
@@ -16,7 +16,7 @@ description: Lists environments, their variables and what each is allowed to rea
 Lists environments, their variables and what each is allowed to reach.
 
 ## Invocation conditions
-- A task needs the current environments, their variables and what each may reach before a change is planned or reviewed.
+- A task needs an up-to-date map of environments, their variables and what each may reach before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

@@ -1,6 +1,6 @@
 ---
 name: layout-audit
-description: Audits layouts for overflow, alignment and structure. Use when a change touches the changed pages and layout components.
+description: Audits layouts for overflow, alignment and structure. Use when a change modifies pages and layout components.
 ---
 # layout-audit
 
@@ -16,7 +16,7 @@ description: Audits layouts for overflow, alignment and structure. Use when a ch
 Audits layouts for overflow, alignment and structure.
 
 ## Invocation conditions
-- A change touches the changed pages and layout components.
+- A change modifies pages and layout components.
 - A reviewer, gate or owner asks for the audit of layouts for overflow, alignment and structure.
 - Before a release that includes changes to this area.
 

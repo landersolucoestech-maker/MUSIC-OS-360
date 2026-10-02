@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generates the map documents of the MUSIC OS 360 pack under docs/engineering/pack/ from the machine
+// Generates the map documents of the MUSIC OS 360 pack under .claude/docs/pack/ from the machine
 // registries (pack-registry.json, routing.json, workflows, ownership, policies, gates, contracts), so the
 // documentation cannot describe a capability that does not exist and cannot drift without a failing check.
 //
@@ -9,10 +9,11 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { buildRegistry } from "./build-pack-registry.mjs";
+import { validatePack } from "./validate-pack-contracts.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DEFAULT = join(__dirname, "..", "..");
-const OUT_DIR = "docs/engineering/pack";
+const OUT_DIR = ".claude/docs/pack";
 const readJson = (p) => JSON.parse(readFileSync(p, "utf8"));
 const esc = (s) => String(s ?? "").replace(/\|/g, "\\|").replace(/\n/g, " ");
 const list = (a) => (a && a.length ? a.map((x) => `\`${x}\``).join(", ") : "none");
@@ -88,6 +89,26 @@ export function buildDocs(root = ROOT_DEFAULT) {
   md += `\n## Approval action classes (${authority.actionClasses.length})\n\n| Class | Requires approval |\n|---|---|\n`;
   for (const c of authority.actionClasses) md += `| \`${c.name}\` | ${c.requiresApproval ? "yes" : "no"} |\n`;
   docs["contracts-policies-gates.md"] = md;
+  // completeness matrix: one row per manifest item (the authoritative agent and skill lists of the mission)
+  const manifest = readJson(join(root, ".claude", "registry", "pack-manifest.json"));
+  const problems = validatePack(root).problems;
+  const inRegistry = new Set([...registry.agents.map((a) => `agent:${a.name}`), ...registry.skills.map((x) => `skill:${x.name}`)]);
+  const unavailable = new Map();
+  for (const it of manifest.items) {
+    if (it.type !== "skill" || !existsSync(join(root, it.file))) continue;
+    const t = readFileSync(join(root, it.file), "utf8");
+    const m = t.match(/## Capability unavailable\n- required integration: (.*)/);
+    if (m) unavailable.set(it.name, m[1].split(",")[0]);
+  }
+  const states = new Map();
+  for (const it of manifest.items) states.set(it.finalState, (states.get(it.finalState) || 0) + 1);
+  md = `# Completeness matrix\n\n${GENERATED}\n\n${manifest.items.length} items (${manifest.items.filter((i) => i.type === "agent").length} agents, ${manifest.items.filter((i) => i.type === "skill").length} skills). Final states: ${[...states.entries()].map(([k, v]) => `${k} ${v}`).join(", ")}. Allowed final states are EXISTING_VALID, ENHANCED, CREATED and BLOCKED_EXTERNAL; BLOCKED_EXTERNAL means the item is defined and valid but its execution depends on an external provider that is not configured. Validation column: the result of \`validate-pack-contracts.mjs\` for the item; Evidence column: the command that produces it.\n\n| Item | Type | Batch | Initial | Final | File | Registry | Contract | Validation | Evidence |\n|---|---|---|---|---|---|---|---|---|---|\n`;
+  for (const it of manifest.items) {
+    const bad = problems.filter((x) => x.includes(` ${it.name}:`)).length;
+    const note = unavailable.has(it.name) ? `capability unavailable (${esc(unavailable.get(it.name))})` : "";
+    md += `| \`${it.name}\` | ${it.type} | ${it.batch} | ${it.initialState} | ${it.finalState} | \`${it.file}\` | ${inRegistry.has(`${it.type}:${it.name}`) ? "yes" : "no"} | ${existsSync(join(root, it.file)) ? "present" : "missing"} | ${bad ? "FAIL" : "PASS"}${note ? "; " + note : ""} | \`node .claude/runtime/validate-pack-contracts.mjs\` |\n`;
+  }
+  docs["completeness-matrix.md"] = md;
   return docs;
 }
 

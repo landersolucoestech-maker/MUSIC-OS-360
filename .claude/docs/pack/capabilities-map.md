@@ -127,7 +127,7 @@
 
 | Capability | Executors | Skills | Validation | Evidence | Approval |
 |---|---|---|---|---|---|
-| `database.csv` | `csv-engineer` | `generate-csv-export`, `import-csv`, `normalize-import-data`, `validate-import` | csv tests with hostile input | change-set record; test output | none |
+| `database.csv` | `csv-engineer` | `generate-csv-export`, `import-csv`, `normalize-import-data`, `validate-import` | xlsx-only verification; compatibility path reference | compatibility decision | none |
 | `database.implement` | `database-engineer` | `create-unit-tests`, `database-map`, `implement-feature`, `implement-transaction`, `run-unit-tests`, `tenant-isolation-audit` | api typecheck; integration tests on a disposable database | change-set record; test output | none |
 | `database.import-export` | `import-export-engineer` | `detect-import-duplicates`, `implement-export`, `implement-import`, `preview-import-changes`, `rollback-import`, `validate-import` | import and export tests with invalid input | change-set record; test output | none |
 | `database.indexing` | `indexing-engineer` | `create-performance-tests`, `database-audit`, `query-audit`, `run-performance-tests` | query plan comparison; migration test | plan output; change-set record | none |

@@ -2800,23 +2800,18 @@
   },
   {
    "name": "csv-engineer",
-   "kind": "engineer",
+   "kind": "reviewer",
    "domain": "database",
    "batch": 7,
    "owner": "database owner",
    "path": ".claude/agents/csv-engineer.md",
    "tools": [
     "Read",
-    "Edit",
-    "Write",
     "Grep",
     "Glob",
     "Bash"
    ],
-   "writes": [
-    "apps/api/src/shared/csv/**",
-    "apps/api/src/modules/**/csv/**"
-   ],
+   "writes": [],
    "capabilities": [
     "database.csv"
    ],
@@ -2983,9 +2978,9 @@
    "skills": [
     "migration-audit",
     "migration-safety-check",
+    "databaseMigrationSafety",
     "destructive-change-check",
-    "rollback-analysis",
-    "databaseMigrationSafety"
+    "rollback-analysis"
    ],
    "approval": "none"
   },
@@ -5543,9 +5538,9 @@
     "create-migration",
     "create-migration-tests",
     "migration-safety-check",
+    "databaseMigrationSafety",
     "destructive-change-check",
-    "rollback-analysis",
-    "databaseMigrationSafety"
+    "rollback-analysis"
    ],
    "approval": "none"
   },
@@ -16091,13 +16086,13 @@
   {
    "id": "database.csv",
    "domain": "database",
-   "description": "Implement CSV parsing and generation with encoding, delimiter, quoting and formula-injection safety",
+   "description": "Guard the XLSX-only contract against CSV requests and specify safe handling only for an authorized compatibility path",
    "validation": [
-    "csv tests with hostile input"
+    "xlsx-only verification",
+    "compatibility path reference"
    ],
    "evidence": [
-    "change-set record",
-    "test output"
+    "compatibility decision"
    ],
    "approval": "none",
    "executors": [

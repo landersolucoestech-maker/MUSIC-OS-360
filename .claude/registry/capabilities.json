@@ -952,13 +952,13 @@
   {
    "id": "database.csv",
    "domain": "database",
-   "description": "Implement CSV parsing and generation with encoding, delimiter, quoting and formula-injection safety",
+   "description": "Guard the XLSX-only contract against CSV requests and specify safe handling only for an authorized compatibility path",
    "validation": [
-    "csv tests with hostile input"
+    "xlsx-only verification",
+    "compatibility path reference"
    ],
    "evidence": [
-    "change-set record",
-    "test output"
+    "compatibility decision"
    ],
    "approval": "none"
   },

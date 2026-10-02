@@ -1,6 +1,6 @@
 ---
 name: design-system-audit
-description: Audits use of the design system tokens and components. Use when a change touches the changed screens and the shared UI primitives.
+description: Audits use of the design system tokens and components. Use when a change modifies screens and the shared UI primitives.
 ---
 # design-system-audit
 
@@ -16,7 +16,7 @@ description: Audits use of the design system tokens and components. Use when a c
 Audits use of the design system tokens and components.
 
 ## Invocation conditions
-- A change touches the changed screens and the shared UI primitives.
+- A change modifies screens and the shared UI primitives.
 - A reviewer, gate or owner asks for the audit of use of design system tokens and components.
 - Before a release that includes changes to this area.
 

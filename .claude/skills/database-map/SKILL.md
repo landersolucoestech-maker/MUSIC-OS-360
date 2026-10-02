@@ -1,6 +1,6 @@
 ---
 name: database-map
-description: Maps tables, columns, constraints, indexes and RLS from the migrated schema. Use when a task needs the current tables, columns, constraints, indexes and policies of the migrated schema before a change is planned or reviewed.
+description: Maps tables, columns, constraints, indexes and RLS from the migrated schema. Use when a task needs an up-to-date map of tables, columns, constraints, indexes and policies of the migrated schema before a change is planned or reviewed.
 ---
 # database-map
 
@@ -16,7 +16,7 @@ description: Maps tables, columns, constraints, indexes and RLS from the migrate
 Maps tables, columns, constraints, indexes and RLS from the migrated schema.
 
 ## Invocation conditions
-- A task needs the current tables, columns, constraints, indexes and policies of the migrated schema before a change is planned or reviewed.
+- A task needs an up-to-date map of tables, columns, constraints, indexes and policies of the migrated schema before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs

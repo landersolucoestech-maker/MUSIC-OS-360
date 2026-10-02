@@ -1,6 +1,6 @@
 ---
 name: accessibility-audit
-description: Audits keyboard, focus, semantics, contrast and labels. Use when a change touches the changed screens and components.
+description: Audits keyboard, focus, semantics, contrast and labels. Use when a change modifies screens and components.
 ---
 # accessibility-audit
 
@@ -16,7 +16,7 @@ description: Audits keyboard, focus, semantics, contrast and labels. Use when a 
 Audits keyboard, focus, semantics, contrast and labels.
 
 ## Invocation conditions
-- A change touches the changed screens and components.
+- A change modifies screens and components.
 - A reviewer, gate or owner asks for the audit of keyboard, focus, semantics, contrast and labels.
 - Before a release that includes changes to this area.
 

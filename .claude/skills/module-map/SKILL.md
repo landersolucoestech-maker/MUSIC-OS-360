@@ -1,6 +1,6 @@
 ---
 name: module-map
-description: Maps one module: entry points, collaborators, data and tests. Use when a task needs the current one module: entry points, collaborators, data and tests before a change is planned or reviewed.
+description: Maps one module: entry points, collaborators, data and tests. Use when a task needs an up-to-date map of one module: entry points, collaborators, data and tests before a change is planned or reviewed.
 ---
 # module-map
 
@@ -16,7 +16,7 @@ description: Maps one module: entry points, collaborators, data and tests. Use w
 Maps one module: entry points, collaborators, data and tests.
 
 ## Invocation conditions
-- A task needs the current one module: entry points, collaborators, data and tests before a change is planned or reviewed.
+- A task needs an up-to-date map of one module: entry points, collaborators, data and tests before a change is planned or reviewed.
 - The recorded map is older than the last change to its sources.
 
 ## Required inputs
