@@ -235,6 +235,22 @@ WHERE EXISTS (
 );
 ```
 
+### Release status residue census (BLK-RELEASES-STATUS-CHECK, read-only)
+
+`releases.status` rows that hold a state the release workflow does not have (`rejeitado`, `takedown`, `take_down`, `remocao`) are left untouched by migrations `20260928000019` and `20260930000014`; mapping them would change their meaning, so no CHECK constraint exists yet. Run this census per environment and attach the result to the owner decision (ReleaseStatus gains `rejected`/`taken_down`, or these rows move to `cancelled`). A Release is not a Distribution: taking a distribution down does not by itself change the Release.
+
+```sql
+-- releases.status values outside the workflow, per tenant (read-only)
+SELECT tenant_id, status, count(*) AS rows
+FROM releases
+WHERE status IN ('rejeitado', 'takedown', 'take_down', 'remocao')
+GROUP BY tenant_id, status
+ORDER BY tenant_id, status;
+
+-- distribution of every stored status (anything unexpected is listed here too)
+SELECT status, count(*) AS rows FROM releases GROUP BY status ORDER BY status;
+```
+
 ### Residue census 20260930000021
 
 Migration `BackfillInvoicePaymentMethodBankTransfer`. Predicate: exact `payment_method = 'transferencia'`. Removal condition of the legacy map (`apps/api/src/modules/invoices/invoice-legacy-fields.ts`) and of `transferencia` in `chk_invoices_payment_method`: the count is 0 in every environment.
