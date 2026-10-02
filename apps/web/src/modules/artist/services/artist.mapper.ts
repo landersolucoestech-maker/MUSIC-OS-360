@@ -175,17 +175,6 @@ const SPECIALTY_ENUM: Record<string, ArtistSpecialty> = Object.fromEntries(
 );
 
 /**
- * Pre-CZ-042 spreadsheet values (the old Portuguese enum) → canonical value.
- * Only used when parsing user-supplied import files, never on the API wire.
- */
-const SPECIALTY_PRE_CZ042_IMPORT_VALUES: Record<string, ArtistSpecialty> = {
-  dj_produtor: "dj_producer",
-  compositor_autor: "songwriter",
-  interprete: "performer",
-  produtor: "producer",
-};
-
-/**
  * Converts any label or enum variation into the internal value.
  * Returns "" for unrecognized values (filtered out on import).
  */
@@ -198,7 +187,6 @@ export function normalizeSpecialty(raw: string): ArtistSpecialty | "" {
 
   const asEnum = v1.replace(/\//g, "_");
   if (Object.prototype.hasOwnProperty.call(SPECIALTY_LABELS, asEnum)) return asEnum as ArtistSpecialty;
-  if (SPECIALTY_PRE_CZ042_IMPORT_VALUES[asEnum]) return SPECIALTY_PRE_CZ042_IMPORT_VALUES[asEnum]!;
 
   return "";
 }

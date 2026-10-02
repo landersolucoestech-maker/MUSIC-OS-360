@@ -17,3 +17,11 @@ describe("lyrics tone legacy alias", () => {
     expect(lyricsToneLabel("sarcastic")).toBe("sarcastic");
   });
 });
+
+describe("lyrics tone display copy", () => {
+  it("renders the canonical tone with its fixed PT-BR label", () => {
+    expect(lyricsToneLabel("direct")).toBe("direto");
+    expect(lyricsToneLabel("narrative")).toBe("narrativo");
+    expect(lyricsToneLabel("direto")).toBe("direto");
+  });
+});

@@ -9506,7 +9506,7 @@
       "blocker": "data census of stored drafts/signers",
       "dependency": "contracts wizard canonical keys",
       "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.test.ts"
+      "coveringTest": "apps/web/src/modules/contracts/lib/contract-wizard-party.legacy-compat.test.ts"
     },
     {
       "item": "legacy contract wizard stored-draft key `artistas`",
@@ -20692,7 +20692,7 @@
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
       "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
+      "coveringTest": "apps/web/src/modules/artist/lib/revenue-nature.legacy-compat.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `licenc`",
@@ -26435,74 +26435,6 @@
       "dependency": null,
       "status": "ACTIVE",
       "coveringTest": "apps/web/src/modules/settings/hooks/useUserSettings.legacy-keys.test.tsx"
-    },
-    {
-      "item": "legacy compatibility `compositor_autor` (artist.mapper.ts)",
-      "path": "apps/web/src/modules/artist/services/artist.mapper.ts",
-      "currentName": "compositor_autor",
-      "surface": "objectKey",
-      "layer": "web",
-      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
-      "reason": "Import-only map: a spreadsheet cell holding the pre-CZ-042 specialty `compositor_autor` resolves to its canonical English ArtistSpecialty (asserted in artist.mapper.wire.test.ts); never used on the API wire.",
-      "consumer": "artist spreadsheet import (user-held XLSX exported before CZ-042 with the old Portuguese specialty enum)",
-      "owner": "artists web owner",
-      "removalCondition": "remove SPECIALTY_PRE_CZ042_IMPORT_VALUES in the first release after a release note announces the end of pre-CZ-042 spreadsheet imports (CZ-042 export format) and the artists import screen rejects those values; falsifiable by the artist-form-definition test no longer passing `compositor_autor`/`dj_produtor` in a pre-CZ-042 import row",
-      "targetState": "English canonical values only",
-      "blocker": "user-held files cannot be migrated; depends on the import deprecation window decision",
-      "dependency": null,
-      "status": "ACTIVE",
-      "coveringTest": "apps/web/src/test/artist-form-definition.test.ts"
-    },
-    {
-      "item": "legacy compatibility `dj_produtor` (artist.mapper.ts)",
-      "path": "apps/web/src/modules/artist/services/artist.mapper.ts",
-      "currentName": "dj_produtor",
-      "surface": "objectKey",
-      "layer": "web",
-      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
-      "reason": "Import-only map: a spreadsheet cell holding the pre-CZ-042 specialty `dj_produtor` resolves to its canonical English ArtistSpecialty (asserted in artist.mapper.wire.test.ts); never used on the API wire.",
-      "consumer": "artist spreadsheet import (user-held XLSX exported before CZ-042 with the old Portuguese specialty enum)",
-      "owner": "artists web owner",
-      "removalCondition": "remove SPECIALTY_PRE_CZ042_IMPORT_VALUES in the first release after a release note announces the end of pre-CZ-042 spreadsheet imports (CZ-042 export format) and the artists import screen rejects those values; falsifiable by the artist-form-definition test no longer passing `compositor_autor`/`dj_produtor` in a pre-CZ-042 import row",
-      "targetState": "English canonical values only",
-      "blocker": "user-held files cannot be migrated; depends on the import deprecation window decision",
-      "dependency": null,
-      "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/artist/services/artist.mapper.wire.test.ts"
-    },
-    {
-      "item": "legacy compatibility `interprete` (artist.mapper.ts)",
-      "path": "apps/web/src/modules/artist/services/artist.mapper.ts",
-      "currentName": "interprete",
-      "surface": "objectKey",
-      "layer": "web",
-      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
-      "reason": "Import-only map: a spreadsheet cell holding the pre-CZ-042 specialty `interprete` resolves to its canonical English ArtistSpecialty (asserted in artist.mapper.wire.test.ts); never used on the API wire.",
-      "consumer": "artist spreadsheet import (user-held XLSX exported before CZ-042 with the old Portuguese specialty enum)",
-      "owner": "artists web owner",
-      "removalCondition": "remove SPECIALTY_PRE_CZ042_IMPORT_VALUES in the first release after a release note announces the end of pre-CZ-042 spreadsheet imports (CZ-042 export format) and the artists import screen rejects those values; falsifiable by the artist-form-definition test no longer passing `compositor_autor`/`dj_produtor` in a pre-CZ-042 import row",
-      "targetState": "English canonical values only",
-      "blocker": "user-held files cannot be migrated; depends on the import deprecation window decision",
-      "dependency": null,
-      "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/artist/services/artist.mapper.wire.test.ts"
-    },
-    {
-      "item": "legacy compatibility `produtor` (artist.mapper.ts)",
-      "path": "apps/web/src/modules/artist/services/artist.mapper.ts",
-      "currentName": "produtor",
-      "surface": "objectKey",
-      "layer": "web",
-      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
-      "reason": "Import-only map: a spreadsheet cell holding the pre-CZ-042 specialty `produtor` resolves to its canonical English ArtistSpecialty (asserted in artist.mapper.wire.test.ts); never used on the API wire.",
-      "consumer": "artist spreadsheet import (user-held XLSX exported before CZ-042 with the old Portuguese specialty enum)",
-      "owner": "artists web owner",
-      "removalCondition": "remove SPECIALTY_PRE_CZ042_IMPORT_VALUES in the first release after a release note announces the end of pre-CZ-042 spreadsheet imports (CZ-042 export format) and the artists import screen rejects those values; falsifiable by the artist-form-definition test no longer passing `compositor_autor`/`dj_produtor` in a pre-CZ-042 import row",
-      "targetState": "English canonical values only",
-      "blocker": "user-held files cannot be migrated; depends on the import deprecation window decision",
-      "dependency": null,
-      "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/artist/services/artist.mapper.wire.test.ts"
     },
     {
       "item": "legacy compatibility `editora` (artist.mapper.ts)",
@@ -38154,7 +38086,7 @@
       "blocker": "persisted rows or external inputs can still carry the legacy value",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/artist/lib/contract-type-filters.test.ts"
+      "coveringTest": "apps/web/src/modules/artist/lib/contract-type-filters.legacy-compat.test.ts"
     },
     {
       "item": "legacy value `servicos` kept as a deliberate legacy reader/fixture",
@@ -39359,7 +39291,7 @@
       "blocker": "persisted rows or external inputs can still carry the legacy value",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/marketing/utils/marketing-source-department.test.ts"
+      "coveringTest": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.legacy-compat.test.ts"
     },
     {
       "item": "legacy value `operacoes` kept as a deliberate legacy reader/fixture",
