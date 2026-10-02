@@ -15,7 +15,7 @@ import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec
  *
  * Expand/contract, backfill step. The code that ships with this migration writes the canonical
  * values and keeps accepting/reading the legacy ones (common/compat/asset-type.ts: manual review
- * input, asset responses). Contract step gated on the census in findings/persisted-jsonb-pj1.md.
+ * input, asset responses). Contract step gated on the census in docs/runbooks/staging-to-production.md#residue-census-20260930000025.
  *
  * EXACT, case-sensitive matches only; rows whose columns are already canonical are skipped
  * (idempotent); only the two touched values change, every other metadata key is preserved;

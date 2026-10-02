@@ -8,7 +8,7 @@
  * Expand/contract (migration 20260930000025): writes are canonical; reads and
  * the manual-review input keep accepting the legacy values until the backfill
  * has run everywhere. Removal condition: the census queries in
- * findings/persisted-jsonb-pj1.md return 0 for one release window.
+ * docs/runbooks/staging-to-production.md#residue-census-20260930000025 return 0 for one release window.
  */
 export const LEGACY_ASSET_TYPES: Readonly<Record<string, string>> = {
   guia: 'guide_track',

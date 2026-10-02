@@ -191,7 +191,7 @@ export const canonicalMarketingContentMetadata = ({ value }: { value: unknown })
  * API maps them on INPUT (class-transformer @Transform before validation / service
  * canonicalization) and on the reads it reshapes (campaign builder, AI suggestions);
  * the migration backfills the persisted rows; everything written is canonical.
- * Removal condition: the census in findings/marketing-mk2.md returns 0 in every
+ * Removal condition: the census in docs/runbooks/staging-to-production.md#residue-census-20260930000026 returns 0 in every
  * environment and no web build older than the MK2 release is still served.
  */
 

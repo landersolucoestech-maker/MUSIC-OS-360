@@ -27,7 +27,7 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
  *      spellings collapses to one canonical member; order of first occurrence is
  *      kept; non-string members are preserved.
  *
- * NOT DONE ON PURPOSE (owner decision pending, see findings/contracts-taxonomy.md):
+ * NOT DONE ON PURPOSE (owner decision pending, see docs/NAMING_NORMALIZATION_CANONICAL_MAP.md (BLK-CONTRACT-CATEGORY-REGISTRY)):
  *   - the persisted value 'recebimentos externos de direitos' (and a possible
  *     pre-rewrite 'royalties') is left UNMAPPED, byte for byte;
  *   - NO CHECK constraint is added to `financial_model` (or to any other column)

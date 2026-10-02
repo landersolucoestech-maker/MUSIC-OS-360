@@ -8,7 +8,7 @@
  * keys it finds; `readLastPayment` reads both spellings (canonical wins). No reader exists in
  * the repository today (the keys are write-only); the reader is the documented dual-read
  * contract for any future consumer. Removal condition: the census in
- * findings/persisted-jsonb-pj1.md returns 0 for one release window.
+ * docs/runbooks/staging-to-production.md#residue-census-20260930000023 returns 0 for one release window.
  */
 export const LEGACY_LAST_PAYMENT_KEYS = {
   ultimo_pagamento_em: 'last_payment_at',

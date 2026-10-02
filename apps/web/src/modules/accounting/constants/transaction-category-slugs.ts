@@ -12,7 +12,7 @@
  * "Receitas Musicais") is never a slug and passes through untouched.
  *
  * Deliberately unmapped (meaning not clear): receitas-internas, repasse-contrato.
- * Removal condition for the legacy side: findings/transactions-tx1.md census = 0
+ * Removal condition for the legacy side: docs/runbooks/staging-to-production.md#residue-census-20260930000018 census = 0
  * for one release window.
  */
 export const LEGACY_TRANSACTION_CATEGORY_SLUGS: Readonly<Record<string, string>> = {

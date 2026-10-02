@@ -19,14 +19,14 @@
  * "Receitas Musicais") is never a slug and is never rewritten.
  *
  * Deliberately NOT mapped (meaning not clear from code or label; left as stored,
- * listed in findings/transactions-tx1.md): `receitas-internas`, `repasse-contrato`.
+ * listed in docs/runbooks/staging-to-production.md#residue-census-20260930000018): `receitas-internas`, `repasse-contrato`.
  * Already-English values (`marketing`, `internet`, `iof`, `iss`, `camera`, ...) are
  * not in the map: they keep their spelling. `external_rights_receipts` is owned by
  * CT1 (common/compat/external-rights-receipts.ts); its legacy phrase is folded in
  * by {@link canonicalTransactionSlug}, its hyphenated seed spelling is mapped here.
  *
  * Removal condition for the legacy side: the preflight census in
- * findings/transactions-tx1.md returns 0 legacy slugs for one release window.
+ * docs/runbooks/staging-to-production.md#residue-census-20260930000018 returns 0 legacy slugs for one release window.
  * S11 (CHECK on transactions.category) stays blocked until every writer is
  * validated (reports import included) and the residue preflight is 0.
  */

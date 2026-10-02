@@ -19,7 +19,7 @@
  * Expand/contract (migration 20260930000019): writers are canonical; readers accept
  * both. When BOTH spellings of a key are present the canonical one wins (the legacy
  * one is dropped). Removal condition: the census queries in
- * findings/persisted-jsonb-pj1.md return 0 for one release window.
+ * docs/runbooks/staging-to-production.md#residue-census-20260930000019 return 0 for one release window.
  *
  * The web twin of this file is apps/web/src/modules/releases/lib/release-metadata.ts
  * (same tables; keep both in sync).

@@ -20,7 +20,7 @@ import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec
  * Expand/contract, backfill step: the shipped code writes the canonical values (web form, API service, DTO @Transform
  * before validation, report import) and keeps ACCEPTING and READING the legacy ones (API canonical on read, web readers,
  * report import cells); report export writes the PT-BR labels (Sim/Não, Português). The contract step (delete the legacy maps)
- * is gated on the census in findings/persisted-ap3.md returning 0.
+ * is gated on the census in docs/runbooks/staging-to-production.md#residue-census-20260930000032 returning 0.
  *
  * Rules of jsonb-row-backfill.ts: candidate rows only, idempotent, `updated_at` untouched, guarded UPDATE (a concurrent
  * edit wins), BEFORE/AFTER of the changed columns only in the locked-down side table

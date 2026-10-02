@@ -6,7 +6,7 @@
  * Canonical English keys are written now; legacy keys are still READ (rows not yet backfilled by
  * migration 20260930000019, responses of an older API). When both spellings exist the canonical
  * one wins. Only keys are renamed: user-authored values (names, lyrics, free text) are untouched.
- * Removal condition of the legacy readers: census queries in findings/persisted-jsonb-pj1.md at 0.
+ * Removal condition of the legacy readers: census queries in docs/runbooks/staging-to-production.md#residue-census-20260930000019 at 0.
  */
 type Json = Record<string, unknown>;
 

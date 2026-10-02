@@ -10,7 +10,7 @@ import { CLIENT_PROFILES, LEGACY_CLIENT_PROFILES } from '../../modules/clients/c
  * (contact-classification.ts), which held Portuguese slugs; migration
  * 20260928000023 renamed the column (perfil -> profile) but deliberately left
  * the values (BLK-CLIENT-PROFILE-TAXONOMY). The audit
- * (findings/persisted-vocabulary-audit.md section 1) fixed the canonical English
+ * (docs/naming/canonical-naming-map.json (client profile rows) section 1) fixed the canonical English
  * ids: 50 of the 60 catalog slugs are renamed, 10 (abramus, ecad, inpi,
  * beatmaker, designer, manager, mix_engineer, motion_designer, hosting,
  * cloud_provider) are proper nouns / English loanwords and stay.

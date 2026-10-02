@@ -45,7 +45,7 @@ import {
  * blocked). Every writer must be validated first -- the reports import accepts free
  * text, the keyword rules write financial_categories.name, the form writes the
  * display text of the browser-local rule store -- and the residue preflight in
- * findings/transactions-tx1.md must be 0 in every environment. A NOT VALID CHECK
+ * docs/runbooks/staging-to-production.md#residue-census-20260930000018 must be 0 in every environment. A NOT VALID CHECK
  * would still fail every UPDATE of a residue row. The `external_rights_receipts`
  * phrase is owned by 20260930000017; already-English values are not touched.
  * `receitas-internas` and `repasse-contrato` stay unmapped (meaning not clear).

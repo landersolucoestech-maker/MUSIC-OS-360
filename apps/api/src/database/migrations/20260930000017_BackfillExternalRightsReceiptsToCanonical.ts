@@ -4,7 +4,7 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
 /**
  * 20260930000017_BackfillExternalRightsReceiptsToCanonical (CT1)
  *
- * Owner decision recorded in findings/persisted-vocabulary-audit.md: the persisted
+ * Owner decision recorded in docs/runbooks/staging-to-production.md#residue-census-20260930000017: the persisted
  * phrase 'recebimentos externos de direitos' is the canonical technical id
  * `external_rights_receipts` (precedent: financial_rules.type `external_rights_fee`);
  * the PT-BR label "Recebimentos externos de direitos" lives in the web UI only.
@@ -17,7 +17,7 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
  * canonical id and keeps READING / FILTERING the legacy phrase (API list filter on
  * transactions.category and contracts DTO input mapping; web normalizers). This is
  * the backfill step; the contract step (dropping the legacy readers) is gated on
- * the census queries in findings/contracts-ct1.md returning 0.
+ * the census queries in docs/runbooks/staging-to-production.md#residue-census-20260930000017 returning 0.
  *
  * Steps (EXACT match, case-sensitive, nothing else is touched; idempotent: a
  * canonical row never matches again; `updated_at` is left alone because this is a
@@ -42,7 +42,7 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
  * reverted; a row that held the canonical id before up() was never recorded, so it
  * is never turned into the legacy phrase). Idempotent.
  *
- * Preflight (read-only) SQL: see findings/contracts-ct1.md.
+ * Preflight (read-only) SQL: see docs/runbooks/staging-to-production.md#residue-census-20260930000017.
  */
 const LEGACY = 'recebimentos externos de direitos';
 const CANONICAL = 'external_rights_receipts';

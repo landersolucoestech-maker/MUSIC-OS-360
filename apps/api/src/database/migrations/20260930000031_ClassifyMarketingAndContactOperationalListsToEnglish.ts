@@ -28,7 +28,7 @@ import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec
  * that still hold exactly AFTER. Nothing is dropped.
  *
  * Expand/contract: the API (DTO @Transform before validation, list/lookup dual kind, canonical responses) and the web
- * readers accept the legacy kind and slugs until the census in findings/persisted-ap3.md is 0; the contract step
+ * readers accept the legacy kind and slugs until the census in docs/runbooks/staging-to-production.md#residue-census-20260930000031 is 0; the contract step
  * (drop legacy maps / legacy_slug) is a later, separate migration. Deploy the API first.
  */
 const MIGRATION = 'ClassifyMarketingAndContactOperationalListsToEnglish20260930000031';

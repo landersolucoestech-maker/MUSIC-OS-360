@@ -25,7 +25,7 @@ import { backfillRows, createBackfillLogTable, isEmptyJsonValue, restoreRows, ty
  * writes the canonical keys (API canonicalizes every write, web writes canonical) and
  * keeps READING both spellings (common/compat/release-metadata.ts, web twin). The
  * contract step (drop the legacy readers) is gated on the census in
- * findings/persisted-jsonb-pj1.md returning 0.
+ * docs/runbooks/staging-to-production.md#residue-census-20260930000019 returning 0.
  *
  * Rules (see jsonb-row-backfill.ts for the machinery): only rows holding at least one
  * legacy top-level key are candidates; EXACT key match, case-sensitive; every other key

@@ -9,7 +9,7 @@
  *
  * Expand/contract: writes are canonical; reads and filters keep accepting the
  * legacy phrase until migration 20260930000017 has run everywhere.
- * Removal condition: the census queries in findings/contracts-ct1.md return 0 on
+ * Removal condition: the census queries in docs/runbooks/staging-to-production.md#residue-census-20260930000017 return 0 on
  * production for one release window.
  */
 export const EXTERNAL_RIGHTS_RECEIPTS = 'external_rights_receipts' as const;

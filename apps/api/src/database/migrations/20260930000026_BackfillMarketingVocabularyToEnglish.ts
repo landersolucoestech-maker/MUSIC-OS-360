@@ -26,7 +26,7 @@ import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec
  * Expand/contract, backfill step. The code that ships with this migration writes the canonical
  * values (web + API) and keeps ACCEPTING and READING the Portuguese ones (the API maps input
  * before validation, the web readers map on read). The contract step (delete the legacy maps) is
- * gated on the census in findings/marketing-mk2.md returning 0. No CHECK is added: the columns are
+ * gated on the census in docs/runbooks/staging-to-production.md#residue-census-20260930000026 returning 0. No CHECK is added: the columns are
  * free-form (jsonb / varchar) and tenants' integrations may write other values.
  *
  * Rules (jsonb-row-backfill.ts): candidate rows only (cheap predicate), idempotent (a canonical row

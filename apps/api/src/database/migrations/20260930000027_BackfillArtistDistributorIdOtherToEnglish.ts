@@ -22,7 +22,7 @@ import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec
  * Expand/contract, backfill step. The code that ships with this migration writes `other`; the API
  * keeps ACCEPTING `outros` (DTO Transform before validation) and the web readers keep reading it
  * (an older build keeps working while it is rolled out). The contract step (drop the legacy mapping)
- * is gated on the preflight census in findings/bug1.md returning 0. No CHECK is added.
+ * is gated on the preflight census in docs/runbooks/staging-to-production.md#residue-census-20260930000027 returning 0. No CHECK is added.
  *
  * Rules (jsonb-row-backfill.ts): candidate rows only, idempotent, `updated_at` untouched, the UPDATE is
  * guarded by the value that was read, each rewritten row is recorded (BEFORE/AFTER of the changed

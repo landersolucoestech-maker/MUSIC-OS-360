@@ -42100,6 +42100,108 @@
       "dependency": "persisted vocabulary backfill census",
       "status": "ACTIVE",
       "coveringTest": "apps/api/src/modules/contracts/contract-category-slugs.spec.ts"
+    },
+    {
+      "item": "artist deprecated input fields contract spec (legacy keys and values)",
+      "path": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
+      "currentName": "*",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "The spec pins every deprecated Portuguese artist input key and value to its canonical mapping; the literals are the contract of the alias.",
+      "consumer": "artist-legacy-fields.ts and artists.service.ts legacy readers",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete the spec literals together with ARTIST_DEPRECATED_FIELDS once a web release sending only the canonical contract is live everywhere",
+      "targetState": "no legacy fixtures",
+      "blocker": null,
+      "dependency": "CZ-042 web release",
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts"
+    },
+    {
+      "item": "artist deprecated input fields contract spec (legacy keys and values)",
+      "path": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
+      "currentName": "*",
+      "surface": "objectKey",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "The spec pins every deprecated Portuguese artist input key and value to its canonical mapping; the literals are the contract of the alias.",
+      "consumer": "artist-legacy-fields.ts and artists.service.ts legacy readers",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete the spec literals together with ARTIST_DEPRECATED_FIELDS once a web release sending only the canonical contract is live everywhere",
+      "targetState": "no legacy fixtures",
+      "blocker": null,
+      "dependency": "CZ-042 web release",
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts"
+    },
+    {
+      "item": "legacy client profile and industry vocabulary reader spec",
+      "path": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts",
+      "currentName": "*",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Table-driven spec over the full LEGACY_* maps; the legacy literals are what the readers must keep resolving until the backfill census is 0.",
+      "consumer": "client-profile-vocabulary.ts, auth/organization-industry.ts",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete together with the legacy maps once migration 20260930000012 residue census returns 0 everywhere",
+      "targetState": "no legacy fixtures",
+      "blocker": null,
+      "dependency": "client profile canonical release",
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
+    },
+    {
+      "item": "marketing vocabulary compatibility spec (legacy input values)",
+      "path": "apps/api/src/modules/marketing/marketing-vocabulary.compat.spec.ts",
+      "currentName": "*",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "The spec pins legacy Portuguese marketing values to canonical English through the real DTOs and pipe.",
+      "consumer": "marketing-vocabulary.ts, marketing DTO pipe",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete together with the legacy readers once migration 20260930000026 residue census returns 0 everywhere",
+      "targetState": "no legacy fixtures",
+      "blocker": null,
+      "dependency": "marketing vocabulary release MK2",
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/marketing/marketing-vocabulary.compat.spec.ts"
+    },
+    {
+      "item": "legacy role slug alias contract spec",
+      "path": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts",
+      "currentName": "*",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Pins each persisted legacy role slug to the canonical role alias enforced by RolesGuard.",
+      "consumer": "roles.guard.ts ROLE_HIERARCHY legacy keys",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete together with the legacy role keys after RBAC S5 (owner authorization)",
+      "targetState": "no legacy fixtures",
+      "blocker": null,
+      "dependency": "RBAC S4/S5",
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts"
+    },
+    {
+      "item": "legacy contract type filter alias test",
+      "path": "apps/web/src/modules/artist/lib/contract-type-filters.test.ts",
+      "currentName": "*",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Pins legacy Portuguese contract type filter values to canonical filter ids.",
+      "consumer": "contract-type-filters.ts canonicalFilterContractType",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete together with the legacy filter aliases once the contract category residue census returns 0",
+      "targetState": "no legacy fixtures",
+      "blocker": null,
+      "dependency": "contract category registry",
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/artist/lib/contract-type-filters.test.ts"
     }
   ],
   "blockers": [
@@ -42227,41 +42329,41 @@
       "id": "BLK-CLIENT-PROFILE-TAXONOMY",
       "item": "clients.profile slug values (~70 Portuguese slugs, e.g. outros, produtora)",
       "blocker": "Product decision: user-facing taxonomy shared with the CRM form options.",
-      "evidence": "CZ-043 left the values unchanged on purpose.",
+      "evidence": "CZ-043 left the values unchanged on purpose. | RESOLVED: canonical vocabulary and exact-match backfill exist (client-profile-vocabulary.ts, migration 20260930000012, web contact-classification.ts); unknown tenant free-text profiles are tenant data by design; legacy readers removal is governed by exception rows with a covering test and the residue census",
       "requiredAction": "Decide the canonical slug vocabulary, then migrate values and the web options together.",
       "owner": "crm / tenancy owner (Phase 0 naming)",
       "disposition": "BLOCKED_PRODUCT_DECISION",
-      "status": "OPEN"
+      "status": "RESOLVED"
     },
     {
       "id": "BLK-MARKETING-TARGET-WEB-VOCABULARY",
       "item": "apps/web MarketingTarget (projeto_musical/artista/empresa) and marketing task kind/type vocabulary",
       "blocker": "MarketingTarget is shared by campaigns, tasks (metadata.targetType jsonb), the AI creative workspace, analytics hub, Artist 360 modal (outside the marketing module) and the operational-settings marketing_context slugs; renaming it needs a jsonb backfill of persisted campaign/task metadata plus a settings-slug migration. marketing_tasks.kind (TaskType, ~45 Portuguese values) is likewise a free varchar with Portuguese values.",
-      "evidence": "CZ-047; apps/web marketing.types.ts MarketingTarget/TaskType; ArtistVision360Modal; useOperationalSettings marketing_context slugs",
+      "evidence": "CZ-047; apps/web marketing.types.ts MarketingTarget/TaskType; ArtistVision360Modal; useOperationalSettings marketing_context slugs | RESOLVED: web MarketingTarget and TaskType are English (marketing.types.ts), migration 20260930000026 backfilled; remaining legacy readers are exception rows with covering tests",
       "requiredAction": "Own mission: canonical English MarketingTarget and TaskType, backfill campaigns/tasks metadata and settings slugs in one reversible migration, then delete marketing-content-wire.ts.",
       "owner": "marketing owner (Phase 0 naming)",
       "disposition": "BLOCKED_COMPATIBILITY_WINDOW",
-      "status": "OPEN"
+      "status": "RESOLVED"
     },
     {
       "id": "BLK-TAKEDOWNS-FK-COLUMNS",
       "item": "TakedownEntity maps work_id, artist_id and response, which the migrated takedowns table does not have",
       "blocker": "Product/security decision: removing them also removes the cross-tenant FK assertions (assertSameTenantFk on works/artists) and the `artist_id` list filter of the public API; adding the columns would invent schema.",
-      "evidence": "Migration 20260719000016 removed obra_id/artista_id/resposta as proven orphans; a database migrated from scratch fails repository.find() with `column TakedownEntity.work_id does not exist`; CreateTakedownDto.work_id/artist_id and QueryTakedownDto.artist_id still exist; the web form never sends them; takedowns.service.create.spec.ts proves the FK assertions.",
+      "evidence": "Migration 20260719000016 removed obra_id/artista_id/resposta as proven orphans; a database migrated from scratch fails repository.find() with `column TakedownEntity.work_id does not exist`; CreateTakedownDto.work_id/artist_id and QueryTakedownDto.artist_id still exist; the web form never sends them; takedowns.service.create.spec.ts proves the FK assertions. | RESOLVED: TakedownEntity no longer maps work_id, artist_id and response (dropped by 20260719000016); DTO whitelist rejects them; takedowns specs green",
       "requiredAction": "Owner decides: (a) remove the three entity columns, the two DTO fields, the artist_id filter and the FK assertions (and rewrite the P1 spec), or (b) add the columns back with a guarded migration and keep the assertions.",
       "owner": "takedowns team",
       "disposition": "BLOCKED_PRODUCT_DECISION",
-      "status": "OPEN"
+      "status": "RESOLVED"
     },
     {
       "id": "BLK-FINANCIAL-CATEGORY-LEGACY-ENTITIES",
       "item": "Six legacy financial category entities map tables removed by migration 20260718000002",
       "blocker": "Dead ORM classes (no module, service or controller references them) that contradict the schema; removal is mechanical but touches the shared entities file and any tooling that enumerates entities.",
-      "evidence": "FinancialCategoryEntity (columns path, depth_level, slug, ...) and FinancialCategory{Center,Link,Favorite,Rule,RuleRun}Entity have zero non-spec references; the tables financial_category_centers/links/favorites/rules/rule_runs do not exist after db:migrate.",
+      "evidence": "FinancialCategoryEntity (columns path, depth_level, slug, ...) and FinancialCategory{Center,Link,Favorite,Rule,RuleRun}Entity have zero non-spec references; the tables financial_category_centers/links/favorites/rules/rule_runs do not exist after db:migrate. | RESOLVED: six dead entity classes removed from entities.ts and ALL_ENTITIES (tables dropped by 20260718000002; nothing imported them); entities-registry, crud-permission-metadata and raw-sql guard specs green",
       "requiredAction": "Delete the six classes from apps/api/src/database/entities.ts after confirming no external script imports them; then a DB-backed entity-vs-catalog guard can run with an empty allowlist.",
       "owner": "accounting owner (Phase 0 naming)",
       "disposition": "BLOCKED_OWNER_AUTHORIZATION",
-      "status": "OPEN"
+      "status": "RESOLVED"
     },
     {
       "id": "BLK-HR-EMPLOYEE-DOCUMENTS",
@@ -42285,20 +42387,20 @@
     },
     {
       "id": "BLK-LEGACY-ROOT-SQL",
-      "item": "Stale root SQL scripts in apps/api",
-      "blocker": "Not executed by any tool, but migrations-complete.sql (generated 2026-05-21, 2168 lines, instructs `run in Supabase SQL Editor`) would build an obsolete schema outside the migration tracker; deleting generated/historical artifacts is the owner's call.",
+      "item": "Stale root SQL dump apps/api/migrations-complete.sql (two empty files already removed)",
+      "blocker": "migrations-complete.sql is a regenerable dump allowlisted by scripts/verify-provider-residue.mjs (a stale allowlist fails its test); deleting it changes a gate allowlist, its test and docs together",
       "evidence": "migrations-complete-clean.sql and migrations-temp.sql are empty; migrations-complete.sql is the output of scripts/dump-migrations-sql.ts and is allowlisted by verify-provider-residue; seed-operational.sql, setup-supabase-complete.sql, supabase-jwt-hook.sql and supabase-rls.sql are documented manual provisioning scripts (PROVISIONING_GUIDE.md, CODEBASE_MAP.md).",
-      "requiredAction": "Owner decides to delete the two empty files and either delete or banner migrations-complete.sql as HISTORICAL (update the provider-residue allowlist and docs in the same change).",
+      "requiredAction": "Owner decision: delete the dump with its allowlist entry, test case and doc mention in one change, or keep it with a HISTORICAL banner",
       "owner": "api owner (database)",
       "disposition": "BLOCKED_OWNER_AUTHORIZATION",
       "status": "OPEN"
     },
     {
       "id": "BLK-CONTRACT-CATEGORY-REGISTRY",
-      "item": "Contract category registry: pre-canonical spellings and tenant-authored slugs",
-      "blocker": "The ten platform-owned slugs are backfilled (20260930000034/36) without a registry, but four more persisted spellings have no canonical value in CANONICAL_CONTRACT_CATEGORY_SLUGS and their meaning is not provable: `exclusivo`, `nao_exclusivo`, `representacao`, `servicos`.",
+      "item": "Contract category registry: decide whether non_exclusive, representation and services become canonical category slugs",
+      "blocker": "Product decision: the canonical set has no non_exclusive/representation/services; web filter keeps their legacy aliases (nao_exclusivo, representacao, servicos) as documented exceptions. The exclusivity/exclusive duplicate was resolved.",
       "evidence": "apps/web/src/modules/artist/lib/contract-type-filters.ts maps them to `exclusive`, `non_exclusive`, `representation`, `services` while the platform canonical for exclusividade is `exclusivity` (the filter accepts both `exclusivity` and `exclusive`); tenant-authored slugs (`parceria`, `empresariamento_360`, ...) live in the browser registry and contract_service_types.",
-      "requiredAction": "Contracts owner decides whether `exclusive` vs `exclusivity` (and the other three) are distinct categories, adds the agreed ones to the canonical set, then a guarded exact-match backfill like 20260930000036 can follow; tenant slugs stay tenant data.",
+      "requiredAction": "Contracts owner states the canonical category for each of the three; then extend CANONICAL_CONTRACT_CATEGORY_SLUGS and the legacy map, add a guarded backfill like 20260930000034",
       "owner": "contracts owner (Phase 0 naming)",
       "disposition": "BLOCKED_PRODUCT_DECISION",
       "status": "OPEN"
@@ -42307,41 +42409,41 @@
       "id": "BLK-WORKFLOW-EXECUTION-ERROR-TEXT",
       "item": "WorkflowExecutionService.list/get return entities with the raw error_message",
       "blocker": "Latent exposure, not a live leak: no controller serves workflow executions today, but the first one added would publish raw error text.",
-      "evidence": "apps/api/src/core/workflow/workflow-execution.service.ts list()/get() return WorkflowExecutionEntity rows; no *.controller.ts references the service; SkillRun, SocietySyncJob and ArtistPlatformProfile already map to error_code DTOs (raw-error-boundary.spec.ts).",
+      "evidence": "apps/api/src/core/workflow/workflow-execution.service.ts list()/get() return WorkflowExecutionEntity rows; no *.controller.ts references the service; SkillRun, SocietySyncJob and ArtistPlatformProfile already map to error_code DTOs (raw-error-boundary.spec.ts). | RESOLVED: WorkflowExecutionService.list/get return toPublicWorkflowExecution(/Log) without error_message (error_code via classifyFailureCode); covered by workflow-execution.service.spec and raw-error-boundary.spec",
       "requiredAction": "When a workflow execution endpoint is added, return a public DTO with error_code (classifyFailureCode) like the three existing mappers.",
       "owner": "api owner (Phase 0 naming)",
       "disposition": "BLOCKED_PENDING_OWNER_WORK",
-      "status": "OPEN"
+      "status": "RESOLVED"
     },
     {
       "id": "BLK-RESIDUE-CENSUS-DOCS",
       "item": "85 references to findings/*.md files that are not in the repository",
       "blocker": "The census queries behind most removal conditions lived in session-local findings files (contracts-ct1, transactions-tx1, persisted-jsonb-pj1, persisted-ap3, persisted-vocabulary-audit, marketing-mk2, contracts-taxonomy, bug1); only the contract batch (20260930000034..36) has its census queries in docs/runbooks/staging-to-production.md.",
-      "evidence": "git ls-files has no findings/ path; the references are in ledger rows, migration headers and code comments.",
+      "evidence": "git ls-files has no findings/ path; the references are in ledger rows, migration headers and code comments. | RESOLVED: residue census SQL per backfill migration added to docs/runbooks/staging-to-production.md; all findings/*.md references repointed (grep returns 0 outside the ledger)",
       "requiredAction": "Write the residue census per remaining backfill migration (20260930000017..033) next to the runbook queries, derived from each migration's own predicate, then repoint the references; do not reconstruct them from memory.",
       "owner": "naming governance",
       "disposition": "BLOCKED_PENDING_OWNER_WORK",
-      "status": "OPEN"
+      "status": "RESOLVED"
     },
     {
       "id": "BLK-PROJECTS-XLSX-HEADER-ROUNDTRIP",
       "item": "The projects XLSX export and import template are rejected by the importer",
       "blocker": "Security-primitive decision: the importer's key guard (isWritableKey / WRITABLE_KEY_RE in core/security/safe-object.ts, a prototype-pollution barrier) does not allow the em dash that two exported header labels use; widening the guard or changing the headers (which saved report layouts and the export spec pin) are both owner decisions.",
-      "evidence": "Verified on a database migrated from scratch with the API running: GET /reports/entities/projects/export and /import/template return a workbook whose headers `Duração — Minutos` and `Duração — Segundos` are rejected by POST /reports/entities/projects/import/validate with `Cabeçalho inseguro`; the clients, contracts and transactions templates validate.",
+      "evidence": "Verified on a database migrated from scratch with the API running: GET /reports/entities/projects/export and /import/template return a workbook whose headers `Duração — Minutos` and `Duração — Segundos` are rejected by POST /reports/entities/projects/import/validate with `Cabeçalho inseguro`; the clients, contracts and transactions templates validate. | RESOLVED: labels moved to the parenthesis style so they pass WRITABLE_KEY_RE (safe-object.ts untouched); em-dash headers accepted as deprecated alias in reports/import/deprecated-import-headers.ts; round-trip tests",
       "requiredAction": "Either allow U+2013/U+2014 in WRITABLE_KEY_RE (still cannot start with `_` or reach a prototype key) with a test, or rename the two labels to a hyphen and keep the old text as an accepted deprecated header alias; add a round-trip test (export -> validate) per reportable entity.",
       "owner": "reports owner (Phase 0 naming)",
       "disposition": "BLOCKED_SECURITY_DECISION",
-      "status": "OPEN"
+      "status": "RESOLVED"
     },
     {
       "id": "BLK-PROJECTS-EXPORT-RAW-TOKENS",
       "item": "The projects export shows raw canonical tokens in three user-facing columns",
       "blocker": "UX/labeling decision: `Tipo de Lançamento` (ep/album/single), `Solo/Feat` and `Original/Remix` export the stored value, not a PT-BR label; the status, instrumental and language columns are labeled.",
-      "evidence": "Export of a project created through the API on a migrated database: row values `ep`, `solo`, `original` next to `Em planejamento`, `Não`, `Português`; value-labels.pt-br.ts has no label table for projects.type, project_tracks.solo_feat or original_remix.",
+      "evidence": "Export of a project created through the API on a migrated database: row values `ep`, `solo`, `original` next to `Em planejamento`, `Não`, `Português`; value-labels.pt-br.ts has no label table for projects.type, project_tracks.solo_feat or original_remix. | RESOLVED: PT-BR label maps for projectType, soloFeat and originalRemix wired into export and import with label<->canonical tests",
       "requiredAction": "Add the label tables (and the import mapping back to the canonical value) for those three columns, as done for status, instrumental and language.",
       "owner": "marketing / projects owner (Phase 0 naming)",
       "disposition": "BLOCKED_PRODUCT_DECISION",
-      "status": "OPEN"
+      "status": "RESOLVED"
     },
     {
       "id": "BLK-E2E-ROOT-XLSX-DEPENDENCY",

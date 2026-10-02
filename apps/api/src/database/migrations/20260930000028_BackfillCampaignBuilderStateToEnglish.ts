@@ -23,7 +23,7 @@ import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec
  * Expand/contract, backfill step. The code shipped with this migration writes the canonical values (web builder state, API
  * payload mapping) and keeps ACCEPTING and READING the Portuguese ones (API: canonicalMarketingCampaignPayload on
  * input and on read; web: parseCampaignBuilderNotes). The contract step (delete the legacy maps) is gated on the census
- * in findings/persisted-ap3.md returning 0. No CHECK: the payload is free-form jsonb.
+ * in docs/runbooks/staging-to-production.md#residue-census-20260930000028 returning 0. No CHECK: the payload is free-form jsonb.
  *
  * Rules (jsonb-row-backfill.ts): candidate rows only (cheap predicate), idempotent, every other key preserved,
  * `updated_at` untouched, guarded UPDATE (a concurrent edit wins), BEFORE/AFTER of the changed column only in the

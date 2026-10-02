@@ -9,7 +9,7 @@
  * Tenant-created slugs are never rewritten.
  *
  * Removal condition for LEGACY_CONTRACT_CATEGORY_SLUGS: see
- * findings/contracts-ct1.md (no row / registry still holds a legacy slug).
+ * docs/runbooks/staging-to-production.md#residue-census-of-the-contract-vocabulary-backfills-read-only (no row / registry still holds a legacy slug).
  */
 export const LEGACY_CONTRACT_CATEGORY_SLUGS: Readonly<Record<string, string>> = {
   gravacao: "recording",

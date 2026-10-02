@@ -22,7 +22,7 @@ import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec
  *
  * Expand/contract, backfill step: the shipped code writes the canonical values and keeps ACCEPTING (API DTO
  * @Transform before validation) and READING (web canonicalMarketingSector / canonicalAutomationFlowId) the
- * Portuguese ones; the contract step (delete the legacy maps) is gated on the census in findings/persisted-ap3.md
+ * Portuguese ones; the contract step (delete the legacy maps) is gated on the census in docs/runbooks/staging-to-production.md#residue-census-20260930000029
  * returning 0. Rules of jsonb-row-backfill.ts: candidate rows only, idempotent, `updated_at` untouched, guarded
  * UPDATE, BEFORE/AFTER of the changed column in the locked-down side table `marketing_task_sector_backfill_20260930`,
  * counts-only logs. down() restores BEFORE for rows still holding exactly AFTER; the side table is kept.

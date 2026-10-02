@@ -4,7 +4,7 @@
  *
  * `moduleRh` (Portuguese "RH") -> `moduleHr` (the HR module). Expand/contract (migration
  * 20260930000024): writers are canonical, readers accept both (canonical wins when both are
- * present). Removal condition: the census in findings/persisted-jsonb-pj1.md returns 0 for one
+ * present). Removal condition: the census in docs/runbooks/staging-to-production.md#residue-census-20260930000024 returns 0 for one
  * release window. The RBAC module key `rh` / role slug `rh_manager` belong to the RBAC slice.
  *
  * Web twin: apps/web/src/shared/lib/feature-flags.ts (canonicalFeatureKeys).

@@ -39,7 +39,7 @@ export const INVOICE_ITEM_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
  * (an old API build / web bundle may write it during the deploy window) but it
  * is always canonicalized to `bank_transfer` before persistence. The contract
  * step (dropping `transferencia` from the CHECK and from the legacy map) is
- * gated on the preflight census returning 0 (findings/persisted-jsonb-pj1.md).
+ * gated on the preflight census returning 0 (docs/runbooks/staging-to-production.md#residue-census-20260930000021).
  */
 export const INVOICE_PAYMENT_METHOD_BANK_TRANSFER = 'bank_transfer';
 /** Legacy persisted value, accepted as input and mapped to bank_transfer. */

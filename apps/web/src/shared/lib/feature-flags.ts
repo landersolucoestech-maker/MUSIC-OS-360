@@ -182,7 +182,7 @@ export function getIncompleteBackendReason(moduleKey: string): string | null {
  * Legacy persisted feature keys (tenants.features / billing plan features) -> canonical.
  * `moduleRh` (Portuguese) -> `moduleHr`. The API already answers canonical keys
  * (common/compat/plan-features.ts); this keeps an older API/response readable. Canonical wins when
- * both are present. Removal condition: census in findings/persisted-jsonb-pj1.md at 0.
+ * both are present. Removal condition: census in docs/runbooks/staging-to-production.md#residue-census-20260930000024 at 0.
  */
 export const LEGACY_FEATURE_KEYS: Readonly<Record<string, string>> = { moduleRh: "moduleHr" };
 
