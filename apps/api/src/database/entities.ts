@@ -3448,108 +3448,7 @@ export class AudiovisualAssetEntity {
 }
 
 // ─── Financial Categories (migration 20260526000002_FinancialCategoriesEnterprise) ─
-@Entity('financial_categories')
-@Index(['tenant_id'])
-export class FinancialCategoryEntity {
-  @PrimaryGeneratedColumn('uuid') id: string;
-  @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'uuid', nullable: true }) parent_id: string | null;
-  @Column({ type: 'text' }) path: string;
-  @Column({ type: 'integer', default: 0 }) depth_level: number;
-  @Column({ type: 'integer', default: 0 }) tree_order: number;
-  @Column({ type: 'varchar', length: 255 }) name: string;
-  @Column({ type: 'varchar', length: 255 }) slug: string;
-  @Column({ type: 'varchar', length: 80 }) code: string;
-  @Column({ type: 'text', nullable: true }) description: string | null;
-  @Column({ type: 'varchar', length: 40, nullable: true }) color: string | null;
-  @Column({ type: 'varchar', length: 80, nullable: true }) icon: string | null;
-  @Column({ type: 'text', array: true, default: () => "ARRAY[]::text[]" }) transaction_types: string[];
-  @Column({ type: 'varchar', length: 30, default: 'operational' }) category_kind: string;
-  @Column({ type: 'boolean', default: false }) system_category: boolean;
-  @Column({ type: 'boolean', default: false }) protected: boolean;
-  @Column({ type: 'boolean', default: true }) active: boolean;
-  @Column({ type: 'boolean', default: false }) archived: boolean;
-  @Column({ type: 'boolean', default: true }) allow_manual_usage: boolean;
-  @Column({ type: 'boolean', default: true }) allow_ai_suggestions: boolean;
-  @Column({ type: 'integer', default: 0 }) usage_count: number;
-  @Column({ type: 'integer', default: 0 }) sort_order: number;
-  @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
-  @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
-  @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
-  @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
-  @Column({ type: 'timestamptz', nullable: true }) deleted_at: Date | null;
-}
-
-@Entity('financial_category_centers')
-@Index(['tenant_id'])
-export class FinancialCategoryCenterEntity {
-  @PrimaryGeneratedColumn('uuid') id: string;
-  @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'uuid' }) category_id: string;
-  @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
-}
-
-@Entity('financial_category_links')
-@Index(['tenant_id'])
-export class FinancialCategoryLinkEntity {
-  @PrimaryGeneratedColumn('uuid') id: string;
-  @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'uuid' }) category_id: string;
-  @Column({ type: 'varchar', length: 80 }) entity_type: string;
-  @Column({ type: 'uuid', nullable: true }) entity_id: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) entity_label: string | null;
-  @Column({ type: 'varchar', length: 40 }) relation_role: string;
-  @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
-  @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
-  @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
-  @Column({ type: 'timestamptz', nullable: true }) deleted_at: Date | null;
-}
-
-@Entity('financial_category_favorites')
-@Index(['tenant_id'])
-export class FinancialCategoryFavoriteEntity {
-  @PrimaryGeneratedColumn('uuid') id: string;
-  @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'uuid' }) category_id: string;
-  @Column({ type: 'varchar', length: 255 }) user_id: string;
-  @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
-}
-
-@Entity('financial_category_rules')
-@Index(['tenant_id'])
-export class FinancialCategoryRuleEntity {
-  @PrimaryGeneratedColumn('uuid') id: string;
-  @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'uuid', nullable: true }) category_id: string | null;
-  @Column({ type: 'varchar', length: 255 }) name: string;
-  @Column({ type: 'text', nullable: true }) description: string | null;
-  @Column({ type: 'integer', default: 100 }) priority: number;
-  @Column({ type: 'boolean', default: true }) active: boolean;
-  @Column({ type: 'jsonb', default: {} }) conditions: Record<string, unknown>;
-  @Column({ type: 'jsonb', default: {} }) actions: Record<string, unknown>;
-  @Column({ type: 'timestamptz', nullable: true }) last_triggered_at: Date | null;
-  @Column({ type: 'integer', default: 0 }) trigger_count: number;
-  @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
-  @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
-  @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
-  @Column({ type: 'timestamptz', nullable: true }) deleted_at: Date | null;
-}
-
-@Entity('financial_category_rule_runs')
-@Index(['tenant_id'])
-export class FinancialCategoryRuleRunEntity {
-  @PrimaryGeneratedColumn('uuid') id: string;
-  @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'uuid', nullable: true }) rule_id: string | null;
-  @Column({ type: 'uuid', nullable: true }) category_id: string | null;
-  @Column({ type: 'jsonb', default: {} }) context: Record<string, unknown>;
-  @Column({ type: 'jsonb', default: {} }) result: Record<string, unknown>;
-  @Column({ type: 'boolean', default: false }) matched: boolean;
-  @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
-}
-
+// Only the audit log keeps an entity; the other financial_category_* tables were dropped by 20260718000002.
 @Entity('financial_category_audit_logs')
 @Index(['tenant_id'])
 export class FinancialCategoryAuditLogEntity {
@@ -3781,12 +3680,6 @@ export const ALL_ENTITIES = [
   AudiovisualTaskEntity,
   AudiovisualAssetEntity,
   // Financial Categories (migration 20260526000002)
-  FinancialCategoryEntity,
-  FinancialCategoryCenterEntity,
-  FinancialCategoryLinkEntity,
-  FinancialCategoryFavoriteEntity,
-  FinancialCategoryRuleEntity,
-  FinancialCategoryRuleRunEntity,
   FinancialCategoryAuditLogEntity,
   // Workflow Executions (migration 20260607000002)
   WorkflowExecutionEntity,
