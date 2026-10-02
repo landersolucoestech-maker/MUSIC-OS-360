@@ -1590,127 +1590,145 @@
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "integration-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "integration-reviewer",
+   "file": ".claude/agents/integration-engineer.md"
   },
   {
    "name": "external-api-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/external-api-reviewer.md"
   },
   {
    "name": "oauth-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/oauth-reviewer.md"
   },
   {
    "name": "webhook-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/webhook-reviewer.md"
   },
   {
    "name": "rate-limit-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/rate-limit-reviewer.md"
   },
   {
    "name": "retry-policy-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/retry-policy-reviewer.md"
   },
   {
    "name": "integration-data-mapper",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/integration-data-mapper.md"
   },
   {
    "name": "integration-resilience-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/integration-resilience-reviewer.md"
   },
   {
    "name": "integration-security-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/integration-security-reviewer.md"
   },
   {
    "name": "credential-management-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/credential-management-reviewer.md"
   },
   {
    "name": "external-id-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/external-id-reviewer.md"
   },
   {
    "name": "provider-contract-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/provider-contract-reviewer.md"
   },
   {
    "name": "sync-engineer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/sync-engineer.md"
   },
   {
    "name": "connector-engineer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/connector-engineer.md"
   },
   {
    "name": "adapter-engineer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/adapter-engineer.md"
   },
   {
    "name": "mapping-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/mapping-reviewer.md"
   },
   {
    "name": "external-schema-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/external-schema-reviewer.md"
   },
   {
    "name": "provider-failure-reviewer",
    "type": "agent",
    "batch": 9,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/provider-failure-reviewer.md"
   },
   {
    "name": "test-engineer",

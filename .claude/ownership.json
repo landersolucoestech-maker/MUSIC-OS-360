@@ -204,6 +204,14 @@
       "note": "pack writer (frontend); scope declared in .claude/agents/accessibility-engineer.md"
     },
     {
+      "agent": "adapter-engineer",
+      "writes": [
+        "apps/api/src/core/external-data/**",
+        "apps/api/src/modules/integrations/**/adapters/**"
+      ],
+      "note": "pack writer (integrations); scope declared in .claude/agents/adapter-engineer.md"
+    },
+    {
       "agent": "agent-coordinator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -429,6 +437,14 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "connector-engineer",
+      "writes": [
+        "apps/api/src/modules/integrations/**/*.service.ts",
+        "apps/api/src/modules/integrations/**/*.client.ts"
+      ],
+      "note": "pack writer (integrations); scope declared in .claude/agents/connector-engineer.md"
+    },
+    {
       "agent": "context-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -450,6 +466,11 @@
         "apps/api/src/modules/**/*.controller.spec.ts"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/controller-engineer.md"
+    },
+    {
+      "agent": "credential-management-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "credential-storage-reviewer",
@@ -667,6 +688,21 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "external-api-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "external-id-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "external-schema-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "feature-flag-analyzer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -766,7 +802,33 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "integration-data-mapper",
+      "writes": [
+        "apps/api/src/modules/integrations/**/mappers/**",
+        "apps/api/src/modules/integrations/**/mapping/**",
+        "apps/api/src/core/external-data/**"
+      ],
+      "note": "pack writer (integrations); scope declared in .claude/agents/integration-data-mapper.md"
+    },
+    {
+      "agent": "integration-engineer",
+      "writes": [
+        "apps/api/src/modules/integrations/**"
+      ],
+      "note": "pack writer (integrations); scope declared in .claude/agents/integration-engineer.md"
+    },
+    {
       "agent": "integration-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "integration-resilience-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "integration-security-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -787,6 +849,11 @@
     },
     {
       "agent": "locking-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "mapping-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -836,6 +903,11 @@
     },
     {
       "agent": "normalization-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "oauth-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -897,6 +969,16 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "provider-contract-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "provider-failure-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "query-engineer",
       "writes": [
         "apps/api/src/modules/**/*.repository.ts",
@@ -928,6 +1010,11 @@
     },
     {
       "agent": "queue-flow-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "rate-limit-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1015,6 +1102,11 @@
     },
     {
       "agent": "retry-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "retry-policy-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1166,6 +1258,14 @@
       "note": "pack writer (frontend); scope declared in .claude/agents/state-management-engineer.md"
     },
     {
+      "agent": "sync-engineer",
+      "writes": [
+        "apps/api/src/modules/integrations/**/sync/**",
+        "apps/api/src/queues/**"
+      ],
+      "note": "pack writer (integrations); scope declared in .claude/agents/sync-engineer.md"
+    },
+    {
       "agent": "task-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1284,6 +1384,11 @@
         "apps/api/src/modules/**/*webhook*"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/webhook-engineer.md"
+    },
+    {
+      "agent": "webhook-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "webhook-security-reviewer",

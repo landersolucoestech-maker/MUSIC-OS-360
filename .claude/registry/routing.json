@@ -1860,6 +1860,206 @@
    "capabilities": [
     "security.review.abuse-prevention"
    ]
+  },
+  {
+   "intent": "implement-integration-change",
+   "domain": "integrations",
+   "description": "Implement a change to a supported provider integration",
+   "keywords": [
+    "integration change",
+    "provider integration",
+    "implement integration"
+   ],
+   "capabilities": [
+    "integrations.implement",
+    "integrations.review.security"
+   ]
+  },
+  {
+   "intent": "review-external-api-use",
+   "domain": "integrations",
+   "description": "Review use of an external API",
+   "keywords": [
+    "external api",
+    "provider call",
+    "api usage review"
+   ],
+   "capabilities": [
+    "integrations.review.external-api",
+    "integrations.review.provider-contract"
+   ]
+  },
+  {
+   "intent": "review-oauth-flow",
+   "domain": "integrations",
+   "description": "Review an OAuth flow",
+   "keywords": [
+    "oauth flow",
+    "oauth callback",
+    "oauth scopes"
+   ],
+   "capabilities": [
+    "integrations.review.oauth"
+   ]
+  },
+  {
+   "intent": "review-webhook-handling",
+   "domain": "integrations",
+   "description": "Review webhook handling",
+   "keywords": [
+    "webhook handler",
+    "webhook idempotency",
+    "provider callback"
+   ],
+   "capabilities": [
+    "integrations.review.webhook"
+   ]
+  },
+  {
+   "intent": "review-rate-limits",
+   "domain": "integrations",
+   "description": "Review provider rate limit use",
+   "keywords": [
+    "rate limit",
+    "provider quota",
+    "throttling"
+   ],
+   "capabilities": [
+    "integrations.review.rate-limit"
+   ]
+  },
+  {
+   "intent": "review-retry-policy",
+   "domain": "integrations",
+   "description": "Review retry policy",
+   "keywords": [
+    "retry policy",
+    "backoff",
+    "retried calls"
+   ],
+   "capabilities": [
+    "integrations.review.retry-policy"
+   ]
+  },
+  {
+   "intent": "map-provider-data",
+   "domain": "integrations",
+   "description": "Map provider data to internal models",
+   "keywords": [
+    "map provider payload",
+    "field mapping",
+    "provider data mapping"
+   ],
+   "capabilities": [
+    "integrations.mapping",
+    "integrations.review.mapping"
+   ]
+  },
+  {
+   "intent": "review-integration-resilience",
+   "domain": "integrations",
+   "description": "Review integration resilience",
+   "keywords": [
+    "integration resilience",
+    "provider outage",
+    "circuit breaker review"
+   ],
+   "capabilities": [
+    "integrations.review.resilience",
+    "integrations.review.provider-failure"
+   ]
+  },
+  {
+   "intent": "review-integration-security",
+   "domain": "integrations",
+   "description": "Review integration security",
+   "keywords": [
+    "integration security",
+    "provider boundary security",
+    "outbound request safety"
+   ],
+   "capabilities": [
+    "integrations.review.security"
+   ]
+  },
+  {
+   "intent": "review-integration-credentials",
+   "domain": "integrations",
+   "description": "Review integration credentials",
+   "keywords": [
+    "integration credentials",
+    "provider token lifecycle",
+    "token rotation"
+   ],
+   "capabilities": [
+    "integrations.review.credential-management"
+   ]
+  },
+  {
+   "intent": "review-external-ids",
+   "domain": "integrations",
+   "description": "Review external identifiers",
+   "keywords": [
+    "external id",
+    "provider id linking",
+    "id drift"
+   ],
+   "capabilities": [
+    "integrations.review.external-id"
+   ]
+  },
+  {
+   "intent": "implement-provider-sync",
+   "domain": "integrations",
+   "description": "Implement provider synchronization",
+   "keywords": [
+    "provider sync",
+    "incremental sync",
+    "reconcile provider"
+   ],
+   "capabilities": [
+    "integrations.sync",
+    "integrations.review.external-schema"
+   ]
+  },
+  {
+   "intent": "implement-connector",
+   "domain": "integrations",
+   "description": "Implement or change a connector",
+   "keywords": [
+    "connector change",
+    "implement connector",
+    "new provider call"
+   ],
+   "capabilities": [
+    "integrations.connector"
+   ]
+  },
+  {
+   "intent": "implement-adapter",
+   "domain": "integrations",
+   "description": "Implement a provider adapter",
+   "keywords": [
+    "provider adapter",
+    "adapter interface",
+    "unconfigured provider"
+   ],
+   "capabilities": [
+    "integrations.adapter"
+   ]
+  },
+  {
+   "intent": "review-external-schema",
+   "domain": "integrations",
+   "description": "Review provider schema handling",
+   "keywords": [
+    "provider schema",
+    "schema drift",
+    "response validation"
+   ],
+   "capabilities": [
+    "integrations.review.external-schema"
+   ]
   }
  ],
  "highImpactSignals": [

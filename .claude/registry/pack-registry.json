@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 196,
+  "agents": 214,
   "skills": 0,
-  "capabilities": 173,
+  "capabilities": 191,
   "workflows": 6
  },
  "agents": [
@@ -84,6 +84,36 @@
     "accessibility-audit",
     "create-accessibility-tests",
     "run-accessibility-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "adapter-engineer",
+   "kind": "engineer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/adapter-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/external-data/**",
+    "apps/api/src/modules/integrations/**/adapters/**"
+   ],
+   "capabilities": [
+    "integrations.adapter"
+   ],
+   "skills": [
+    "create-integration",
+    "integration-map",
+    "create-integration-tests",
+    "run-integration-tests"
    ],
    "approval": "none"
   },
@@ -1085,6 +1115,37 @@
    "approval": "none"
   },
   {
+   "name": "connector-engineer",
+   "kind": "engineer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/connector-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/integrations/**/*.service.ts",
+    "apps/api/src/modules/integrations/**/*.client.ts"
+   ],
+   "capabilities": [
+    "integrations.connector"
+   ],
+   "skills": [
+    "create-integration",
+    "implement-retry",
+    "implement-circuit-breaker",
+    "create-integration-tests",
+    "run-integration-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "context-orchestrator",
    "kind": "orchestrator",
    "domain": "orchestration",
@@ -1185,6 +1246,31 @@
     "create-api-route",
     "create-api-tests",
     "run-api-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "credential-management-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/credential-management-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.credential-management"
+   ],
+   "skills": [
+    "credential-storage-audit",
+    "encryption-audit",
+    "integration-audit",
+    "secret-scan"
    ],
    "approval": "none"
   },
@@ -2152,6 +2238,79 @@
    "approval": "none"
   },
   {
+   "name": "external-api-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/external-api-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.external-api"
+   ],
+   "skills": [
+    "integration-audit",
+    "data-provider-audit",
+    "integration-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "external-id-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/external-id-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.external-id"
+   ],
+   "skills": [
+    "detect-provider-drift",
+    "database-audit",
+    "integration-audit",
+    "data-integrity-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "external-schema-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/external-schema-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.external-schema"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "integration-audit",
+    "detect-provider-drift"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "feature-flag-analyzer",
    "kind": "analyzer",
    "domain": "repository-intelligence",
@@ -2587,6 +2746,68 @@
    "approval": "none"
   },
   {
+   "name": "integration-data-mapper",
+   "kind": "engineer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/integration-data-mapper.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/integrations/**/mappers/**",
+    "apps/api/src/modules/integrations/**/mapping/**",
+    "apps/api/src/core/external-data/**"
+   ],
+   "capabilities": [
+    "integrations.mapping"
+   ],
+   "skills": [
+    "sync-provider-data",
+    "reconcile-provider-data",
+    "detect-provider-drift",
+    "create-integration-tests",
+    "run-integration-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "integration-engineer",
+   "kind": "engineer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/integration-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/integrations/**"
+   ],
+   "capabilities": [
+    "integrations.implement"
+   ],
+   "skills": [
+    "implement-feature",
+    "create-integration",
+    "integration-map",
+    "create-integration-tests",
+    "run-integration-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "integration-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -2607,6 +2828,56 @@
     "integration-map",
     "external-boundary-mapping",
     "config-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "integration-resilience-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/integration-resilience-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.resilience"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "retry-audit",
+    "integration-audit",
+    "queue-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "integration-security-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/integration-security-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.security"
+   ],
+   "skills": [
+    "integration-audit",
+    "security-boundary-audit",
+    "ssrf-audit",
+    "secret-scan"
    ],
    "approval": "none"
   },
@@ -2690,6 +2961,30 @@
     "concurrency-audit",
     "transaction-audit",
     "migration-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "mapping-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/mapping-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.mapping"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "detect-data-inconsistency",
+    "naming-analysis"
    ],
    "approval": "none"
   },
@@ -2927,6 +3222,30 @@
     "data-integrity-audit",
     "naming-analysis",
     "database-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "oauth-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/oauth-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.oauth"
+   ],
+   "skills": [
+    "security-boundary-audit",
+    "session-security-audit",
+    "integration-audit"
    ],
    "approval": "none"
   },
@@ -3204,6 +3523,55 @@
    "approval": "none"
   },
   {
+   "name": "provider-contract-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/provider-contract-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.provider-contract"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "integration-audit",
+    "api-contract-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "provider-failure-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/provider-failure-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.provider-failure"
+   ],
+   "skills": [
+    "handle-provider-failure",
+    "integration-audit",
+    "retry-audit",
+    "circuit-breaker-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "query-engineer",
    "kind": "engineer",
    "domain": "database",
@@ -3340,6 +3708,31 @@
     "queue-map",
     "worker-map",
     "queue-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "rate-limit-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/rate-limit-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.rate-limit"
+   ],
+   "skills": [
+    "integration-audit",
+    "retry-audit",
+    "queue-audit",
+    "cache-audit"
    ],
    "approval": "none"
   },
@@ -3752,6 +4145,31 @@
     "root-cause-analysis",
     "recover",
     "why"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "retry-policy-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/retry-policy-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.retry-policy"
+   ],
+   "skills": [
+    "retry-audit",
+    "queue-audit",
+    "circuit-breaker-audit",
+    "integration-audit"
    ],
    "approval": "none"
   },
@@ -4405,6 +4823,38 @@
    "approval": "none"
   },
   {
+   "name": "sync-engineer",
+   "kind": "engineer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/sync-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/integrations/**/sync/**",
+    "apps/api/src/queues/**"
+   ],
+   "capabilities": [
+    "integrations.sync"
+   ],
+   "skills": [
+    "sync-provider-data",
+    "reconcile-provider-data",
+    "detect-provider-drift",
+    "retry-provider-sync",
+    "create-integration-tests",
+    "run-integration-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "task-orchestrator",
    "kind": "orchestrator",
    "domain": "orchestration",
@@ -4948,6 +5398,31 @@
     "webhook-security-audit",
     "create-security-tests",
     "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "webhook-reviewer",
+   "kind": "reviewer",
+   "domain": "integrations",
+   "batch": 9,
+   "owner": "integrations owner",
+   "path": ".claude/agents/webhook-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "integrations.review.webhook"
+   ],
+   "skills": [
+    "webhook-security-audit",
+    "event-processing-audit",
+    "integration-audit",
+    "queue-audit"
    ],
    "approval": "none"
   },
@@ -7128,6 +7603,390 @@
     "create-visual-tests",
     "run-visual-regression",
     "visual-regression"
+   ]
+  },
+  {
+   "id": "integrations.adapter",
+   "domain": "integrations",
+   "description": "Implement an adapter that isolates a provider behind the internal interface so the domain never sees provider shapes",
+   "validation": [
+    "adapter contract tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "adapter-engineer"
+   ],
+   "skills": [
+    "create-integration",
+    "create-integration-tests",
+    "integration-map",
+    "run-integration-tests"
+   ]
+  },
+  {
+   "id": "integrations.connector",
+   "domain": "integrations",
+   "description": "Implement or change a connector for an already supported provider: authentication, calls and error classification",
+   "validation": [
+    "connector tests with mocked provider"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "connector-engineer"
+   ],
+   "skills": [
+    "create-integration",
+    "create-integration-tests",
+    "implement-circuit-breaker",
+    "implement-retry",
+    "run-integration-tests"
+   ]
+  },
+  {
+   "id": "integrations.implement",
+   "domain": "integrations",
+   "description": "Implement changes to an existing provider integration: client, service, DTOs and tests behind the shared integration base",
+   "validation": [
+    "integration tests with mocked provider",
+    "api typecheck"
+   ],
+   "evidence": [
+    "change-set record",
+    "integration test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-engineer"
+   ],
+   "skills": [
+    "create-integration",
+    "create-integration-tests",
+    "implement-feature",
+    "integration-map",
+    "run-integration-tests"
+   ]
+  },
+  {
+   "id": "integrations.mapping",
+   "domain": "integrations",
+   "description": "Map provider payloads to internal models with explicit field mapping, validation and unknown-field handling",
+   "validation": [
+    "mapping tests with real-shaped fixtures"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-data-mapper"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "detect-provider-drift",
+    "reconcile-provider-data",
+    "run-integration-tests",
+    "sync-provider-data"
+   ]
+  },
+  {
+   "id": "integrations.review.credential-management",
+   "domain": "integrations",
+   "description": "Review credential management for integrations: storage, encryption, rotation, revocation and scoping per tenant",
+   "validation": [
+    "credential audit"
+   ],
+   "evidence": [
+    "credential management verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "credential-management-reviewer"
+   ],
+   "skills": [
+    "credential-storage-audit",
+    "encryption-audit",
+    "integration-audit",
+    "secret-scan"
+   ]
+  },
+  {
+   "id": "integrations.review.external-api",
+   "domain": "integrations",
+   "description": "Review use of an external API against its documented contract: endpoints, parameters, errors, versions and limits",
+   "validation": [
+    "provider contract audit"
+   ],
+   "evidence": [
+    "external api verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "external-api-reviewer"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "integration-audit",
+    "integration-map"
+   ]
+  },
+  {
+   "id": "integrations.review.external-id",
+   "domain": "integrations",
+   "description": "Review how external identifiers are stored, validated and linked, including uniqueness, ownership proof and drift",
+   "validation": [
+    "external id audit"
+   ],
+   "evidence": [
+    "external id verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "external-id-reviewer"
+   ],
+   "skills": [
+    "data-integrity-audit",
+    "database-audit",
+    "detect-provider-drift",
+    "integration-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.external-schema",
+   "domain": "integrations",
+   "description": "Review handling of provider schemas: validation of responses, schema drift, versioning and unknown fields",
+   "validation": [
+    "external schema audit"
+   ],
+   "evidence": [
+    "external schema verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "external-schema-reviewer"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "detect-provider-drift",
+    "integration-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.mapping",
+   "domain": "integrations",
+   "description": "Review field mappings between provider and internal models for loss, wrong units, wrong enums and silent defaults",
+   "validation": [
+    "mapping audit with fixtures"
+   ],
+   "evidence": [
+    "mapping verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "mapping-reviewer"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "detect-data-inconsistency",
+    "naming-analysis"
+   ]
+  },
+  {
+   "id": "integrations.review.oauth",
+   "domain": "integrations",
+   "description": "Review OAuth flows: state and PKCE use, redirect validation, scopes, token storage, refresh and revocation",
+   "validation": [
+    "oauth security audit"
+   ],
+   "evidence": [
+    "oauth verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "oauth-reviewer"
+   ],
+   "skills": [
+    "integration-audit",
+    "security-boundary-audit",
+    "session-security-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.provider-contract",
+   "domain": "integrations",
+   "description": "Review the boundary contract between this system and a provider: request and response schemas, versions and compatibility",
+   "validation": [
+    "provider contract audit"
+   ],
+   "evidence": [
+    "provider contract verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "provider-contract-reviewer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "data-provider-audit",
+    "integration-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.provider-failure",
+   "domain": "integrations",
+   "description": "Review behavior when a provider fails: classification of errors, user-visible messages, retries, fallbacks and recorded state",
+   "validation": [
+    "provider failure audit"
+   ],
+   "evidence": [
+    "provider failure verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "provider-failure-reviewer"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "handle-provider-failure",
+    "integration-audit",
+    "retry-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.rate-limit",
+   "domain": "integrations",
+   "description": "Review how calls respect provider rate limits: client-side limiting, backoff on throttling and fair sharing across tenants",
+   "validation": [
+    "rate limit audit"
+   ],
+   "evidence": [
+    "rate limit verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "rate-limit-reviewer"
+   ],
+   "skills": [
+    "cache-audit",
+    "integration-audit",
+    "queue-audit",
+    "retry-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.resilience",
+   "domain": "integrations",
+   "description": "Review integration resilience: timeouts, circuit breakers, bulkheads, degradation and queue backpressure",
+   "validation": [
+    "resilience audit"
+   ],
+   "evidence": [
+    "integration resilience verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-resilience-reviewer"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "integration-audit",
+    "queue-audit",
+    "retry-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.retry-policy",
+   "domain": "integrations",
+   "description": "Review retry policy: what is retried, with what backoff and jitter, retry budgets and idempotency of retried calls",
+   "validation": [
+    "retry audit"
+   ],
+   "evidence": [
+    "retry policy verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "retry-policy-reviewer"
+   ],
+   "skills": [
+    "circuit-breaker-audit",
+    "integration-audit",
+    "queue-audit",
+    "retry-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.security",
+   "domain": "integrations",
+   "description": "Review integration security: secret sourcing, outbound request safety, payload trust and tenant mapping of provider ids",
+   "validation": [
+    "integration security audit"
+   ],
+   "evidence": [
+    "integration security verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "integration-security-reviewer"
+   ],
+   "skills": [
+    "integration-audit",
+    "secret-scan",
+    "security-boundary-audit",
+    "ssrf-audit"
+   ]
+  },
+  {
+   "id": "integrations.review.webhook",
+   "domain": "integrations",
+   "description": "Review webhook handling as an integration: contract, ordering, idempotency, retries from the provider and tenant resolution",
+   "validation": [
+    "webhook audit"
+   ],
+   "evidence": [
+    "webhook verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "webhook-reviewer"
+   ],
+   "skills": [
+    "event-processing-audit",
+    "integration-audit",
+    "queue-audit",
+    "webhook-security-audit"
+   ]
+  },
+  {
+   "id": "integrations.sync",
+   "domain": "integrations",
+   "description": "Implement synchronization with a provider: incremental fetch, reconciliation, drift detection and safe reruns",
+   "validation": [
+    "sync tests with partial failure and rerun"
+   ],
+   "evidence": [
+    "change-set record",
+    "sync test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "sync-engineer"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "detect-provider-drift",
+    "reconcile-provider-data",
+    "retry-provider-sync",
+    "run-integration-tests",
+    "sync-provider-data"
    ]
   },
   {

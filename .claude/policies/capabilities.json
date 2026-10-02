@@ -344,6 +344,17 @@
       ]
     },
     {
+      "agent": "adapter-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "agent-coordinator",
       "allowedTools": [
         "Read",
@@ -711,6 +722,17 @@
       ]
     },
     {
+      "agent": "connector-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "context-orchestrator",
       "allowedTools": [
         "Read",
@@ -744,6 +766,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "credential-management-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -1105,6 +1136,33 @@
       ]
     },
     {
+      "agent": "external-api-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "external-id-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "external-schema-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "feature-flag-analyzer",
       "allowedTools": [
         "Read",
@@ -1264,7 +1322,47 @@
       ]
     },
     {
+      "agent": "integration-data-mapper",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "integration-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "integration-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "integration-resilience-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "integration-security-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1296,6 +1394,15 @@
     },
     {
       "agent": "locking-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "mapping-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1381,6 +1488,15 @@
     },
     {
       "agent": "normalization-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "oauth-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1491,6 +1607,24 @@
       ]
     },
     {
+      "agent": "provider-contract-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "provider-failure-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "query-engineer",
       "allowedTools": [
         "Read",
@@ -1534,6 +1668,15 @@
     },
     {
       "agent": "queue-flow-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "rate-limit-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1691,6 +1834,15 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "retry-policy-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     },
     {
@@ -1933,6 +2085,17 @@
       ]
     },
     {
+      "agent": "sync-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "task-orchestrator",
       "allowedTools": [
         "Read",
@@ -2130,6 +2293,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "webhook-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
