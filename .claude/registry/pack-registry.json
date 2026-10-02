@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 125,
+  "agents": 144,
   "skills": 0,
-  "capabilities": 102,
+  "capabilities": 121,
   "workflows": 6
  },
  "agents": [
@@ -29,6 +29,37 @@
     "evidence-collection",
     "trace",
     "test-generator"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "accessibility-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/accessibility-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/shared/components/**",
+    "apps/web/src/shared/ui/**",
+    "apps/web/src/modules/**/components/**"
+   ],
+   "capabilities": [
+    "frontend.accessibility"
+   ],
+   "skills": [
+    "implement-accessibility",
+    "accessibility-audit",
+    "create-accessibility-tests",
+    "run-accessibility-tests"
    ],
    "approval": "none"
   },
@@ -102,6 +133,37 @@
     "trace",
     "discover",
     "canonical-naming"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "animation-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/animation-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/shared/components/**",
+    "apps/web/src/modules/**/components/**",
+    "apps/web/src/index.css"
+   ],
+   "capabilities": [
+    "frontend.animation"
+   ],
+   "skills": [
+    "animation-audit",
+    "browser-runtime-check",
+    "frontend-performance-audit",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -506,6 +568,31 @@
    "approval": "none"
   },
   {
+   "name": "browser-compatibility-reviewer",
+   "kind": "reviewer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/browser-compatibility-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "frontend.review.browser-compat"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "frontend-audit",
+    "run-e2e",
+    "responsive-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "caching-engineer",
    "kind": "engineer",
    "domain": "backend",
@@ -628,6 +715,36 @@
     "quality-gate",
     "gate",
     "release-checkpoint"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "component-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/component-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/shared/components/*.tsx",
+    "apps/web/src/shared/components/__tests__/**"
+   ],
+   "capabilities": [
+    "frontend.components"
+   ],
+   "skills": [
+    "create-component",
+    "refactor-component",
+    "component-audit",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -842,6 +959,38 @@
    "approval": "none"
   },
   {
+   "name": "data-fetching-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/data-fetching-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/modules/**/services/**",
+    "apps/web/src/shared/lib/**",
+    "apps/web/src/shared/integrations/**",
+    "apps/web/src/shared/hooks/useDataQuery.ts"
+   ],
+   "capabilities": [
+    "frontend.data-fetching"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "create-hook",
+    "api-contract-audit",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "data-flow-tracer",
    "kind": "analyzer",
    "domain": "repository-intelligence",
@@ -1032,6 +1181,38 @@
     "dependency-trace",
     "dependency-cycle-analysis",
     "blast-radius-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "design-system-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/design-system-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/shared/ui/**",
+    "apps/web/tailwind.config.ts",
+    "apps/web/src/index.css"
+   ],
+   "capabilities": [
+    "frontend.design-system"
+   ],
+   "skills": [
+    "design-system-audit",
+    "token-audit",
+    "spacing-audit",
+    "typography-audit",
+    "create-component"
    ],
    "approval": "none"
   },
@@ -1476,6 +1657,37 @@
    "approval": "none"
   },
   {
+   "name": "form-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/form-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/modules/**/schemas/**",
+    "apps/web/src/modules/**/components/**/*Form*",
+    "apps/web/src/shared/components/FormField.tsx"
+   ],
+   "capabilities": [
+    "frontend.forms"
+   ],
+   "skills": [
+    "implement-form",
+    "form-audit",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "frontend-architecture-engineer",
    "kind": "engineer",
    "domain": "architecture",
@@ -1501,6 +1713,142 @@
     "frontend-design",
     "doc-writer",
     "data-provider-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "frontend-consistency-reviewer",
+   "kind": "reviewer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/frontend-consistency-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "frontend.review.consistency"
+   ],
+   "skills": [
+    "frontend-audit",
+    "component-audit",
+    "naming-analysis",
+    "ui-humanization"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "frontend-data-flow-reviewer",
+   "kind": "reviewer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/frontend-data-flow-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "frontend.review.data-flow"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "state-management-audit",
+    "api-contract-audit",
+    "producer-consumer-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "frontend-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/frontend-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/modules/**"
+   ],
+   "capabilities": [
+    "frontend.implement"
+   ],
+   "skills": [
+    "implement-feature",
+    "create-component",
+    "create-hook",
+    "implement-form",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "frontend-performance-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/frontend-performance-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/vite.config.mjs",
+    "apps/web/src/shared/lib/perf/**"
+   ],
+   "capabilities": [
+    "frontend.performance"
+   ],
+   "skills": [
+    "frontend-performance-audit",
+    "run-build",
+    "production-build-check",
+    "data-provider-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "frontend-security-reviewer",
+   "kind": "reviewer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/frontend-security-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "frontend.review.security"
+   ],
+   "skills": [
+    "xss-audit",
+    "security-boundary-audit",
+    "session-security-audit",
+    "production-build-check"
    ],
    "approval": "none"
   },
@@ -1629,6 +1977,36 @@
     "integration-map",
     "external-boundary-mapping",
     "config-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "interaction-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/interaction-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/shared/components/**",
+    "apps/web/src/modules/**/components/**"
+   ],
+   "capabilities": [
+    "frontend.interaction"
+   ],
+   "skills": [
+    "interaction-audit",
+    "loading-state-audit",
+    "implement-accessibility",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -2355,6 +2733,37 @@
    "approval": "none"
   },
   {
+   "name": "responsive-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/responsive-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/shared/components/**",
+    "apps/web/src/modules/**/components/**",
+    "apps/web/src/modules/**/pages/**"
+   ],
+   "capabilities": [
+    "frontend.responsive"
+   ],
+   "skills": [
+    "responsive-audit",
+    "implement-responsive-ui",
+    "layout-audit",
+    "browser-runtime-check"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "retry-orchestrator",
    "kind": "orchestrator",
    "domain": "orchestration",
@@ -2474,6 +2883,36 @@
     "route-map",
     "navigation-audit",
     "authorization-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "routing-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/routing-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/app/routes/**",
+    "apps/web/src/App.tsx"
+   ],
+   "capabilities": [
+    "frontend.routing"
+   ],
+   "skills": [
+    "routing-audit",
+    "navigation-audit",
+    "create-unit-tests",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -2761,6 +3200,36 @@
    "approval": "none"
   },
   {
+   "name": "state-management-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/state-management-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/app/providers/**",
+    "apps/web/src/modules/**/hooks/**"
+   ],
+   "capabilities": [
+    "frontend.state"
+   ],
+   "skills": [
+    "state-management-audit",
+    "data-provider-audit",
+    "create-hook",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "task-orchestrator",
    "kind": "orchestrator",
    "domain": "orchestration",
@@ -2935,6 +3404,37 @@
    "approval": "none"
   },
   {
+   "name": "ui-ux-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/ui-ux-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/web/src/shared/components/layout/**",
+    "apps/web/src/shared/pages/**"
+   ],
+   "capabilities": [
+    "frontend.ux"
+   ],
+   "skills": [
+    "frontend-design",
+    "ui-humanization",
+    "browser-runtime-check",
+    "empty-state-audit",
+    "error-state-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "unreachable-code-detector",
    "kind": "detector",
    "domain": "repository-intelligence",
@@ -3091,6 +3591,62 @@
     "verify",
     "regression-gates",
     "evidence-collection"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "visual-consistency-reviewer",
+   "kind": "reviewer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/visual-consistency-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "frontend.review.visual-consistency"
+   ],
+   "skills": [
+    "visual-consistency-audit",
+    "design-system-audit",
+    "token-audit",
+    "spacing-audit",
+    "typography-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "visual-regression-engineer",
+   "kind": "engineer",
+   "domain": "frontend",
+   "batch": 6,
+   "owner": "frontend owner",
+   "path": ".claude/agents/visual-regression-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "e2e/visual/**",
+    "apps/web/src/test/visual/**"
+   ],
+   "capabilities": [
+    "frontend.visual-regression"
+   ],
+   "skills": [
+    "create-visual-tests",
+    "visual-regression",
+    "run-visual-regression",
+    "browser-runtime-check"
    ],
    "approval": "none"
   },
@@ -4280,6 +4836,430 @@
     "dependency-cycle-analysis",
     "dependency-trace",
     "plan"
+   ]
+  },
+  {
+   "id": "frontend.accessibility",
+   "domain": "frontend",
+   "description": "Implement keyboard, focus, semantics, labels and contrast fixes",
+   "validation": [
+    "accessibility tests",
+    "accessibility audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "accessibility test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "accessibility-engineer"
+   ],
+   "skills": [
+    "accessibility-audit",
+    "create-accessibility-tests",
+    "implement-accessibility",
+    "run-accessibility-tests"
+   ]
+  },
+  {
+   "id": "frontend.animation",
+   "domain": "frontend",
+   "description": "Implement purposeful motion with reduced-motion support using CSS and utility classes",
+   "validation": [
+    "animation audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "browser run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "animation-engineer"
+   ],
+   "skills": [
+    "animation-audit",
+    "browser-runtime-check",
+    "frontend-performance-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "frontend.components",
+   "domain": "frontend",
+   "description": "Implement reusable components with typed props, states and tests",
+   "validation": [
+    "component tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "component-engineer"
+   ],
+   "skills": [
+    "component-audit",
+    "create-component",
+    "refactor-component",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "frontend.data-fetching",
+   "domain": "frontend",
+   "description": "Implement data fetching with stable query keys, cache invalidation and typed clients",
+   "validation": [
+    "data provider audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "data-fetching-engineer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "create-hook",
+    "data-provider-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "frontend.design-system",
+   "domain": "frontend",
+   "description": "Maintain the design system: tokens, shared UI primitives and their variants",
+   "validation": [
+    "token audit",
+    "component tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "design-system-engineer"
+   ],
+   "skills": [
+    "create-component",
+    "design-system-audit",
+    "spacing-audit",
+    "token-audit",
+    "typography-audit"
+   ]
+  },
+  {
+   "id": "frontend.forms",
+   "domain": "frontend",
+   "description": "Implement forms with schema validation, humanized errors, defaults and concurrency handling",
+   "validation": [
+    "form tests with invalid input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "form-engineer"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "form-audit",
+    "implement-form",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "frontend.implement",
+   "domain": "frontend",
+   "description": "Implement a frontend feature inside one module: page, components, hooks, schema and tests",
+   "validation": [
+    "vitest tests pass",
+    "web typecheck",
+    "frontend-reviewer verdict"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "frontend-engineer"
+   ],
+   "skills": [
+    "create-component",
+    "create-hook",
+    "create-unit-tests",
+    "implement-feature",
+    "implement-form",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "frontend.interaction",
+   "domain": "frontend",
+   "description": "Implement hover, focus, disabled, loading and keyboard interactions consistently",
+   "validation": [
+    "interaction audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "interaction-engineer"
+   ],
+   "skills": [
+    "implement-accessibility",
+    "interaction-audit",
+    "loading-state-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "frontend.performance",
+   "domain": "frontend",
+   "description": "Improve frontend performance: bundle size, lazy loading, render cost and request storms",
+   "validation": [
+    "frontend performance audit",
+    "build output"
+   ],
+   "evidence": [
+    "change-set record",
+    "measurement"
+   ],
+   "approval": "none",
+   "executors": [
+    "frontend-performance-engineer"
+   ],
+   "skills": [
+    "data-provider-audit",
+    "frontend-performance-audit",
+    "production-build-check",
+    "run-build"
+   ]
+  },
+  {
+   "id": "frontend.responsive",
+   "domain": "frontend",
+   "description": "Make screens work across supported viewport widths with usable touch targets",
+   "validation": [
+    "responsive audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "browser run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "responsive-engineer"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "implement-responsive-ui",
+    "layout-audit",
+    "responsive-audit"
+   ]
+  },
+  {
+   "id": "frontend.review.browser-compat",
+   "domain": "frontend",
+   "description": "Review browser compatibility of used APIs, CSS and features",
+   "validation": [
+    "browser runtime check"
+   ],
+   "evidence": [
+    "browser compatibility verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "browser-compatibility-reviewer"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "frontend-audit",
+    "responsive-audit",
+    "run-e2e"
+   ]
+  },
+  {
+   "id": "frontend.review.consistency",
+   "domain": "frontend",
+   "description": "Review frontend structure and naming consistency across modules",
+   "validation": [
+    "frontend audit"
+   ],
+   "evidence": [
+    "frontend consistency verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "frontend-consistency-reviewer"
+   ],
+   "skills": [
+    "component-audit",
+    "frontend-audit",
+    "naming-analysis",
+    "ui-humanization"
+   ]
+  },
+  {
+   "id": "frontend.review.data-flow",
+   "domain": "frontend",
+   "description": "Review frontend data flow: query keys, cache correctness, request storms and agreement with the backend response shape",
+   "validation": [
+    "data provider audit"
+   ],
+   "evidence": [
+    "frontend data flow verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "frontend-data-flow-reviewer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "data-provider-audit",
+    "producer-consumer-trace",
+    "state-management-audit"
+   ]
+  },
+  {
+   "id": "frontend.review.security",
+   "domain": "frontend",
+   "description": "Review frontend security: XSS, unsafe URLs, token handling, client-only authorization and secrets in the bundle",
+   "validation": [
+    "xss audit",
+    "production source scan"
+   ],
+   "evidence": [
+    "frontend security verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "frontend-security-reviewer"
+   ],
+   "skills": [
+    "production-build-check",
+    "security-boundary-audit",
+    "session-security-audit",
+    "xss-audit"
+   ]
+  },
+  {
+   "id": "frontend.review.visual-consistency",
+   "domain": "frontend",
+   "description": "Review UI for consistency with tokens, spacing, typography and component conventions",
+   "validation": [
+    "visual consistency audit"
+   ],
+   "evidence": [
+    "visual consistency verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "visual-consistency-reviewer"
+   ],
+   "skills": [
+    "design-system-audit",
+    "spacing-audit",
+    "token-audit",
+    "typography-audit",
+    "visual-consistency-audit"
+   ]
+  },
+  {
+   "id": "frontend.routing",
+   "domain": "frontend",
+   "description": "Implement routes, guards, redirects and lazy boundaries",
+   "validation": [
+    "routing audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "routing-engineer"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "navigation-audit",
+    "routing-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "frontend.state",
+   "domain": "frontend",
+   "description": "Own state placement: server state in the query cache, local state in components, no duplicate sources",
+   "validation": [
+    "state audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "state-management-engineer"
+   ],
+   "skills": [
+    "create-hook",
+    "data-provider-audit",
+    "run-unit-tests",
+    "state-management-audit"
+   ]
+  },
+  {
+   "id": "frontend.ux",
+   "domain": "frontend",
+   "description": "Shape interaction and visual hierarchy: navigation, forms, tables, destructive confirmation, empty, loading and error states",
+   "validation": [
+    "ui-ux review",
+    "browser runtime check"
+   ],
+   "evidence": [
+    "change-set record",
+    "browser run output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ui-ux-engineer"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "empty-state-audit",
+    "error-state-audit",
+    "frontend-design",
+    "ui-humanization"
+   ]
+  },
+  {
+   "id": "frontend.visual-regression",
+   "domain": "frontend",
+   "description": "Create and maintain visual regression tests with approved baselines",
+   "validation": [
+    "visual regression run"
+   ],
+   "evidence": [
+    "visual test records"
+   ],
+   "approval": "none",
+   "executors": [
+    "visual-regression-engineer"
+   ],
+   "skills": [
+    "browser-runtime-check",
+    "create-visual-tests",
+    "run-visual-regression",
+    "visual-regression"
    ]
   },
   {

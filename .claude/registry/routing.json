@@ -1102,6 +1102,258 @@
    "capabilities": [
     "backend.error-handling"
    ]
+  },
+  {
+   "intent": "implement-frontend-feature",
+   "domain": "frontend",
+   "description": "Implement a frontend feature in a module",
+   "keywords": [
+    "frontend feature",
+    "implement screen",
+    "implement page",
+    "implement ui feature"
+   ],
+   "capabilities": [
+    "frontend.implement",
+    "frontend.review.consistency"
+   ]
+  },
+  {
+   "intent": "improve-ux",
+   "domain": "frontend",
+   "description": "Improve interaction and visual hierarchy",
+   "keywords": [
+    "improve ux",
+    "ux problem",
+    "empty state",
+    "destructive confirmation"
+   ],
+   "capabilities": [
+    "frontend.ux"
+   ]
+  },
+  {
+   "intent": "change-design-system",
+   "domain": "frontend",
+   "description": "Change tokens or shared UI primitives",
+   "keywords": [
+    "design system",
+    "design tokens",
+    "ui primitive"
+   ],
+   "capabilities": [
+    "frontend.design-system",
+    "frontend.review.visual-consistency"
+   ]
+  },
+  {
+   "intent": "implement-component",
+   "domain": "frontend",
+   "description": "Implement a reusable component",
+   "keywords": [
+    "reusable component",
+    "implement component",
+    "shared component"
+   ],
+   "capabilities": [
+    "frontend.components"
+   ]
+  },
+  {
+   "intent": "implement-form",
+   "domain": "frontend",
+   "description": "Implement or change a form",
+   "keywords": [
+    "implement form",
+    "form validation",
+    "form schema"
+   ],
+   "capabilities": [
+    "frontend.forms"
+   ]
+  },
+  {
+   "intent": "fix-state-management",
+   "domain": "frontend",
+   "description": "Fix state placement or duplication",
+   "keywords": [
+    "state management",
+    "duplicate state",
+    "stale state"
+   ],
+   "capabilities": [
+    "frontend.state",
+    "frontend.review.data-flow"
+   ]
+  },
+  {
+   "intent": "implement-data-fetching",
+   "domain": "frontend",
+   "description": "Implement queries and mutations",
+   "keywords": [
+    "data fetching",
+    "query key",
+    "mutation invalidation"
+   ],
+   "capabilities": [
+    "frontend.data-fetching",
+    "frontend.review.data-flow"
+   ]
+  },
+  {
+   "intent": "implement-routing",
+   "domain": "frontend",
+   "description": "Implement routes and guards",
+   "keywords": [
+    "client route",
+    "route guard",
+    "add page route"
+   ],
+   "capabilities": [
+    "frontend.routing"
+   ]
+  },
+  {
+   "intent": "implement-interaction",
+   "domain": "frontend",
+   "description": "Implement interaction states",
+   "keywords": [
+    "interaction states",
+    "hover focus disabled",
+    "double submission"
+   ],
+   "capabilities": [
+    "frontend.interaction"
+   ]
+  },
+  {
+   "intent": "implement-animation",
+   "domain": "frontend",
+   "description": "Implement purposeful motion",
+   "keywords": [
+    "animation",
+    "motion",
+    "reduced motion"
+   ],
+   "capabilities": [
+    "frontend.animation"
+   ]
+  },
+  {
+   "intent": "implement-responsive-layout",
+   "domain": "frontend",
+   "description": "Make a screen responsive",
+   "keywords": [
+    "responsive layout",
+    "small screen",
+    "mobile layout"
+   ],
+   "capabilities": [
+    "frontend.responsive"
+   ]
+  },
+  {
+   "intent": "implement-accessibility",
+   "domain": "frontend",
+   "description": "Fix accessibility defects",
+   "keywords": [
+    "accessibility fix",
+    "keyboard operation",
+    "screen reader",
+    "contrast"
+   ],
+   "capabilities": [
+    "frontend.accessibility"
+   ]
+  },
+  {
+   "intent": "protect-with-visual-tests",
+   "domain": "frontend",
+   "description": "Add visual regression protection",
+   "keywords": [
+    "visual regression",
+    "visual baseline",
+    "visual tests"
+   ],
+   "capabilities": [
+    "frontend.visual-regression"
+   ]
+  },
+  {
+   "intent": "review-visual-consistency",
+   "domain": "frontend",
+   "description": "Review visual consistency",
+   "keywords": [
+    "visual consistency",
+    "hard coded colors",
+    "spacing scale"
+   ],
+   "capabilities": [
+    "frontend.review.visual-consistency"
+   ]
+  },
+  {
+   "intent": "improve-frontend-performance",
+   "domain": "frontend",
+   "description": "Improve frontend performance with measurements",
+   "keywords": [
+    "frontend performance",
+    "bundle size",
+    "slow screen",
+    "request storm"
+   ],
+   "capabilities": [
+    "frontend.performance"
+   ]
+  },
+  {
+   "intent": "review-frontend-security",
+   "domain": "frontend",
+   "description": "Review frontend security",
+   "keywords": [
+    "frontend security",
+    "xss review",
+    "unsafe url"
+   ],
+   "capabilities": [
+    "frontend.review.security"
+   ]
+  },
+  {
+   "intent": "review-frontend-consistency",
+   "domain": "frontend",
+   "description": "Review frontend consistency",
+   "keywords": [
+    "frontend consistency",
+    "module layout review"
+   ],
+   "capabilities": [
+    "frontend.review.consistency"
+   ]
+  },
+  {
+   "intent": "review-frontend-data-flow",
+   "domain": "frontend",
+   "description": "Review frontend data flow",
+   "keywords": [
+    "frontend data flow",
+    "cache correctness"
+   ],
+   "capabilities": [
+    "frontend.review.data-flow"
+   ]
+  },
+  {
+   "intent": "review-browser-compatibility",
+   "domain": "frontend",
+   "description": "Review browser compatibility",
+   "keywords": [
+    "browser compatibility",
+    "supported browsers"
+   ],
+   "capabilities": [
+    "frontend.review.browser-compat"
+   ]
   }
  ],
  "highImpactSignals": [

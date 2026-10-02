@@ -1016,135 +1016,154 @@
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "frontend-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "frontend-reviewer",
+   "file": ".claude/agents/frontend-engineer.md"
   },
   {
    "name": "ui-ux-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "ui-ux-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "ui-ux-reviewer",
+   "file": ".claude/agents/ui-ux-engineer.md"
   },
   {
    "name": "design-system-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/design-system-engineer.md"
   },
   {
    "name": "component-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/component-engineer.md"
   },
   {
    "name": "form-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/form-engineer.md"
   },
   {
    "name": "state-management-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/state-management-engineer.md"
   },
   {
    "name": "data-fetching-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/data-fetching-engineer.md"
   },
   {
    "name": "routing-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/routing-engineer.md"
   },
   {
    "name": "interaction-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/interaction-engineer.md"
   },
   {
    "name": "animation-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/animation-engineer.md"
   },
   {
    "name": "responsive-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/responsive-engineer.md"
   },
   {
    "name": "accessibility-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/accessibility-engineer.md"
   },
   {
    "name": "visual-regression-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/visual-regression-engineer.md"
   },
   {
    "name": "visual-consistency-reviewer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/visual-consistency-reviewer.md"
   },
   {
    "name": "frontend-performance-engineer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/frontend-performance-engineer.md"
   },
   {
    "name": "frontend-security-reviewer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/frontend-security-reviewer.md"
   },
   {
    "name": "frontend-consistency-reviewer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/frontend-consistency-reviewer.md"
   },
   {
    "name": "frontend-data-flow-reviewer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/frontend-data-flow-reviewer.md"
   },
   {
    "name": "browser-compatibility-reviewer",
    "type": "agent",
    "batch": 6,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/browser-compatibility-reviewer.md"
   },
   {
    "name": "database-engineer",

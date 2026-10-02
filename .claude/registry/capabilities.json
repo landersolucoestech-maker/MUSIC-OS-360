@@ -615,6 +615,254 @@
    "approval": "none"
   },
   {
+   "id": "frontend.accessibility",
+   "domain": "frontend",
+   "description": "Implement keyboard, focus, semantics, labels and contrast fixes",
+   "validation": [
+    "accessibility tests",
+    "accessibility audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "accessibility test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.animation",
+   "domain": "frontend",
+   "description": "Implement purposeful motion with reduced-motion support using CSS and utility classes",
+   "validation": [
+    "animation audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "browser run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.components",
+   "domain": "frontend",
+   "description": "Implement reusable components with typed props, states and tests",
+   "validation": [
+    "component tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.data-fetching",
+   "domain": "frontend",
+   "description": "Implement data fetching with stable query keys, cache invalidation and typed clients",
+   "validation": [
+    "data provider audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.design-system",
+   "domain": "frontend",
+   "description": "Maintain the design system: tokens, shared UI primitives and their variants",
+   "validation": [
+    "token audit",
+    "component tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.forms",
+   "domain": "frontend",
+   "description": "Implement forms with schema validation, humanized errors, defaults and concurrency handling",
+   "validation": [
+    "form tests with invalid input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.implement",
+   "domain": "frontend",
+   "description": "Implement a frontend feature inside one module: page, components, hooks, schema and tests",
+   "validation": [
+    "vitest tests pass",
+    "web typecheck",
+    "frontend-reviewer verdict"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.interaction",
+   "domain": "frontend",
+   "description": "Implement hover, focus, disabled, loading and keyboard interactions consistently",
+   "validation": [
+    "interaction audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.performance",
+   "domain": "frontend",
+   "description": "Improve frontend performance: bundle size, lazy loading, render cost and request storms",
+   "validation": [
+    "frontend performance audit",
+    "build output"
+   ],
+   "evidence": [
+    "change-set record",
+    "measurement"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.responsive",
+   "domain": "frontend",
+   "description": "Make screens work across supported viewport widths with usable touch targets",
+   "validation": [
+    "responsive audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "browser run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.review.browser-compat",
+   "domain": "frontend",
+   "description": "Review browser compatibility of used APIs, CSS and features",
+   "validation": [
+    "browser runtime check"
+   ],
+   "evidence": [
+    "browser compatibility verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.review.consistency",
+   "domain": "frontend",
+   "description": "Review frontend structure and naming consistency across modules",
+   "validation": [
+    "frontend audit"
+   ],
+   "evidence": [
+    "frontend consistency verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.review.data-flow",
+   "domain": "frontend",
+   "description": "Review frontend data flow: query keys, cache correctness, request storms and agreement with the backend response shape",
+   "validation": [
+    "data provider audit"
+   ],
+   "evidence": [
+    "frontend data flow verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.review.security",
+   "domain": "frontend",
+   "description": "Review frontend security: XSS, unsafe URLs, token handling, client-only authorization and secrets in the bundle",
+   "validation": [
+    "xss audit",
+    "production source scan"
+   ],
+   "evidence": [
+    "frontend security verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.review.visual-consistency",
+   "domain": "frontend",
+   "description": "Review UI for consistency with tokens, spacing, typography and component conventions",
+   "validation": [
+    "visual consistency audit"
+   ],
+   "evidence": [
+    "visual consistency verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.routing",
+   "domain": "frontend",
+   "description": "Implement routes, guards, redirects and lazy boundaries",
+   "validation": [
+    "routing audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.state",
+   "domain": "frontend",
+   "description": "Own state placement: server state in the query cache, local state in components, no duplicate sources",
+   "validation": [
+    "state audit"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.ux",
+   "domain": "frontend",
+   "description": "Shape interaction and visual hierarchy: navigation, forms, tables, destructive confirmation, empty, loading and error states",
+   "validation": [
+    "ui-ux review",
+    "browser runtime check"
+   ],
+   "evidence": [
+    "change-set record",
+    "browser run output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "frontend.visual-regression",
+   "domain": "frontend",
+   "description": "Create and maintain visual regression tests with approved baselines",
+   "validation": [
+    "visual regression run"
+   ],
+   "evidence": [
+    "visual test records"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "orchestration.context",
    "domain": "orchestration",
    "description": "Build bounded context packages for delegation and close them when the delegate returns",

@@ -324,6 +324,17 @@
       ]
     },
     {
+      "agent": "accessibility-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "agent-coordinator",
       "allowedTools": [
         "Read",
@@ -346,6 +357,17 @@
       "agent": "ambiguity-detector",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "animation-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -499,6 +521,15 @@
       ]
     },
     {
+      "agent": "browser-compatibility-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "caching-engineer",
       "allowedTools": [
         "Read",
@@ -540,6 +571,17 @@
       "agent": "completion-controller",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "component-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -625,6 +667,17 @@
       ]
     },
     {
+      "agent": "data-fetching-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "data-flow-tracer",
       "allowedTools": [
         "Read",
@@ -692,6 +745,17 @@
       "agent": "dependency-tracer",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "design-system-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -862,11 +926,71 @@
       ]
     },
     {
+      "agent": "form-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "frontend-architecture-engineer",
       "allowedTools": [
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "frontend-consistency-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "frontend-data-flow-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "frontend-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "frontend-performance-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "frontend-security-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -915,6 +1039,17 @@
       "agent": "integration-mapper",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "interaction-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -1187,6 +1322,17 @@
       ]
     },
     {
+      "agent": "responsive-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "retry-orchestrator",
       "allowedTools": [
         "Read",
@@ -1227,6 +1373,17 @@
       "agent": "route-mapper",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "routing-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -1338,6 +1495,17 @@
       ]
     },
     {
+      "agent": "state-management-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "task-orchestrator",
       "allowedTools": [
         "Read",
@@ -1404,6 +1572,17 @@
       ]
     },
     {
+      "agent": "ui-ux-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "unreachable-code-detector",
       "allowedTools": [
         "Read",
@@ -1457,6 +1636,26 @@
       "agent": "verification-controller",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "visual-consistency-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "visual-regression-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"

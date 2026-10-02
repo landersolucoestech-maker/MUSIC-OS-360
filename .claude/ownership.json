@@ -190,6 +190,15 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "accessibility-engineer",
+      "writes": [
+        "apps/web/src/shared/components/**",
+        "apps/web/src/shared/ui/**",
+        "apps/web/src/modules/**/components/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/accessibility-engineer.md"
+    },
+    {
       "agent": "agent-coordinator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -203,6 +212,15 @@
       "agent": "ambiguity-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "animation-engineer",
+      "writes": [
+        "apps/web/src/shared/components/**",
+        "apps/web/src/modules/**/components/**",
+        "apps/web/src/index.css"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/animation-engineer.md"
     },
     {
       "agent": "api-architecture-engineer",
@@ -295,6 +313,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "browser-compatibility-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "caching-engineer",
       "writes": [
         "apps/api/src/cache/**",
@@ -321,6 +344,14 @@
       "agent": "completion-controller",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "component-engineer",
+      "writes": [
+        "apps/web/src/shared/components/*.tsx",
+        "apps/web/src/shared/components/__tests__/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/component-engineer.md"
     },
     {
       "agent": "concurrency-engineer",
@@ -370,6 +401,16 @@
       "note": "pack writer (architecture); scope declared in .claude/agents/data-architecture-engineer.md"
     },
     {
+      "agent": "data-fetching-engineer",
+      "writes": [
+        "apps/web/src/modules/**/services/**",
+        "apps/web/src/shared/lib/**",
+        "apps/web/src/shared/integrations/**",
+        "apps/web/src/shared/hooks/useDataQuery.ts"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/data-fetching-engineer.md"
+    },
+    {
       "agent": "data-flow-tracer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -408,6 +449,15 @@
       "agent": "dependency-tracer",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "design-system-engineer",
+      "writes": [
+        "apps/web/src/shared/ui/**",
+        "apps/web/tailwind.config.ts",
+        "apps/web/src/index.css"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/design-system-engineer.md"
     },
     {
       "agent": "domain-architecture-engineer",
@@ -507,11 +557,50 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "form-engineer",
+      "writes": [
+        "apps/web/src/modules/**/schemas/**",
+        "apps/web/src/modules/**/components/**/*Form*",
+        "apps/web/src/shared/components/FormField.tsx"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/form-engineer.md"
+    },
+    {
       "agent": "frontend-architecture-engineer",
       "writes": [
         "docs/engineering/decisions/frontend/**"
       ],
       "note": "pack writer (architecture); scope declared in .claude/agents/frontend-architecture-engineer.md"
+    },
+    {
+      "agent": "frontend-consistency-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "frontend-data-flow-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "frontend-engineer",
+      "writes": [
+        "apps/web/src/modules/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/frontend-engineer.md"
+    },
+    {
+      "agent": "frontend-performance-engineer",
+      "writes": [
+        "apps/web/vite.config.mjs",
+        "apps/web/src/shared/lib/perf/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/frontend-performance-engineer.md"
+    },
+    {
+      "agent": "frontend-security-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "implementation-lead",
@@ -539,6 +628,14 @@
       "agent": "integration-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "interaction-engineer",
+      "writes": [
+        "apps/web/src/shared/components/**",
+        "apps/web/src/modules/**/components/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/interaction-engineer.md"
     },
     {
       "agent": "job-engineer",
@@ -692,6 +789,15 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "responsive-engineer",
+      "writes": [
+        "apps/web/src/shared/components/**",
+        "apps/web/src/modules/**/components/**",
+        "apps/web/src/modules/**/pages/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/responsive-engineer.md"
+    },
+    {
       "agent": "retry-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -715,6 +821,14 @@
       "agent": "route-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "routing-engineer",
+      "writes": [
+        "apps/web/src/app/routes/**",
+        "apps/web/src/App.tsx"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/routing-engineer.md"
     },
     {
       "agent": "runtime-continuity-controller",
@@ -780,6 +894,14 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "state-management-engineer",
+      "writes": [
+        "apps/web/src/app/providers/**",
+        "apps/web/src/modules/**/hooks/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/state-management-engineer.md"
+    },
+    {
       "agent": "task-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -817,6 +939,14 @@
       "note": "pack writer (backend); scope declared in .claude/agents/transaction-engineer.md"
     },
     {
+      "agent": "ui-ux-engineer",
+      "writes": [
+        "apps/web/src/shared/components/layout/**",
+        "apps/web/src/shared/pages/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/ui-ux-engineer.md"
+    },
+    {
       "agent": "unreachable-code-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -850,6 +980,19 @@
       "agent": "verification-controller",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "visual-consistency-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "visual-regression-engineer",
+      "writes": [
+        "e2e/visual/**",
+        "apps/web/src/test/visual/**"
+      ],
+      "note": "pack writer (frontend); scope declared in .claude/agents/visual-regression-engineer.md"
     },
     {
       "agent": "webhook-engineer",
