@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   LEGACY_TRANSACTION_CATEGORY_SLUGS,
+  LEGACY_UNCATEGORIZED_CATEGORY,
   UNCATEGORIZED_CATEGORY,
   UNCHANGED_TRANSACTION_CATEGORY_SLUGS,
   UNMAPPED_TRANSACTION_CATEGORY_SLUGS,
@@ -47,6 +48,35 @@ describe("transaction taxonomy slugs — web mirror parity with the API source (
     expect([...UNCHANGED_TRANSACTION_CATEGORY_SLUGS]).toEqual(apiList("UNCHANGED_TRANSACTION_CATEGORY_SLUGS"));
     expect([...UNMAPPED_TRANSACTION_CATEGORY_SLUGS]).toEqual(apiList("UNMAPPED_TRANSACTION_CATEGORY_SLUGS"));
     expect(apiSource).toContain(`UNCATEGORIZED_CATEGORY = '${UNCATEGORIZED_CATEGORY}'`);
+  });
+});
+
+describe("web and API legacy tables are identical, entry by entry (compat-coverage)", () => {
+  const webEntries = Object.entries(LEGACY_TRANSACTION_CATEGORY_SLUGS);
+  const apiEntries = Object.entries(apiMap());
+
+  it("the API parse is complete: the regex captured every `'k': 'v'` line of the table (no silent drop)", () => {
+    const body = /LEGACY_TRANSACTION_CATEGORY_SLUGS: Readonly<Record<string, string>> = \{([\s\S]*?)\n\};/.exec(apiSource)![1];
+    const dataLines = body.split("\n").filter((l) => /^\s*['"][^'"]+['"]\s*:/.test(l));
+    expect(apiEntries.length).toBe(dataLines.length);
+    expect(apiEntries.length).toBeGreaterThan(100);
+    expect(webEntries.length).toBe(apiEntries.length);
+  });
+
+  it("same keys, same canonical targets, same order", () => {
+    expect(webEntries).toEqual(apiEntries);
+  });
+
+  it("every entry maps a legacy slug to a different canonical id, and canonical ids are never legacy keys", () => {
+    for (const [legacy, canonical] of apiEntries) {
+      expect(canonical, legacy).not.toBe(legacy);
+      expect(Object.prototype.hasOwnProperty.call(LEGACY_TRANSACTION_CATEGORY_SLUGS, canonical), canonical).toBe(false);
+    }
+  });
+
+  it("the legacy uncategorized placeholder is the same on both sides", () => {
+    expect(apiSource).toContain(`LEGACY_UNCATEGORIZED_CATEGORY = '${LEGACY_UNCATEGORIZED_CATEGORY}'`);
+    expect(canonicalTransactionSlug(LEGACY_UNCATEGORIZED_CATEGORY)).toBe(UNCATEGORIZED_CATEGORY);
   });
 });
 

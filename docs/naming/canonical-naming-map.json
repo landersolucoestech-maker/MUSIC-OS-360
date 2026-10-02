@@ -2802,7 +2802,8 @@
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": "CZ-024 web release",
       "status": "ACTIVE",
-      "surface": "identifier"
+      "surface": "identifier",
+      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts"
     },
     {
       "item": "deprecated alias `conteudo` of `content` (CZ-026)",
@@ -5925,7 +5926,8 @@
       "targetState": "canonical artist contract only",
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": "CZ-042 web release",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts"
     },
     {
       "item": "CZ-042 deprecated artist input aliases/values (artist-legacy-fields.ts)",
@@ -5941,7 +5943,8 @@
       "targetState": "canonical artist contract only",
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": "CZ-042 web release",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts"
     },
     {
       "item": "CZ-042 contract spec sends the pre-CZ-042 payload",
@@ -7542,7 +7545,8 @@
       "targetState": "English canonical values only",
       "blocker": "S4 backfill / S5 retirement need owner review (blocked domain decision B)",
       "dependency": "RBAC expand-contract S4/S5",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts"
     },
     {
       "item": "legacy persisted role slug fixture `colaborador`",
@@ -7558,7 +7562,8 @@
       "targetState": "English canonical values only",
       "blocker": "S4 backfill / S5 retirement need owner review (blocked domain decision B)",
       "dependency": "RBAC expand-contract S4/S5",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts"
     },
     {
       "item": "legacy persisted role slug fixture `comercial`",
@@ -7574,7 +7579,8 @@
       "targetState": "English canonical values only",
       "blocker": "S4 backfill / S5 retirement need owner review (blocked domain decision B)",
       "dependency": "RBAC expand-contract S4/S5",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts"
     },
     {
       "item": "legacy persisted role slug fixture `juridico`",
@@ -7590,7 +7596,8 @@
       "targetState": "English canonical values only",
       "blocker": "S4 backfill / S5 retirement need owner review (blocked domain decision B)",
       "dependency": "RBAC expand-contract S4/S5",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts"
     },
     {
       "item": "legacy persisted role slug fixture `produtor`",
@@ -7606,7 +7613,8 @@
       "targetState": "English canonical values only",
       "blocker": "S4 backfill / S5 retirement need owner review (blocked domain decision B)",
       "dependency": "RBAC expand-contract S4/S5",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts"
     },
     {
       "item": "legacy persisted role slug fixture `rh_manager`",
@@ -7622,7 +7630,8 @@
       "targetState": "English canonical values only",
       "blocker": "S4 backfill / S5 retirement need owner review (blocked domain decision B)",
       "dependency": "RBAC expand-contract S4/S5",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts"
     },
     {
       "item": "legacy persisted role slug fixture `artista`",
@@ -7734,7 +7743,8 @@
       "targetState": "English canonical values only",
       "blocker": "S4 backfill / S5 retirement need owner review (blocked domain decision B)",
       "dependency": "RBAC expand-contract S4/S5",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/guards/legacy-role-alias.contract.spec.ts"
     },
     {
       "item": "legacy persisted role slug fixture `artista`",
@@ -7846,7 +7856,8 @@
       "targetState": "canonical marketing vocabulary only",
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": "CZ-046/CZ-047 web release",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/marketing/marketing-vocabulary.compat.spec.ts"
     },
     {
       "item": "CZ-046 legacy marketing project priority read (marketing-legacy-vocabulary.ts)",
@@ -9711,7 +9722,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `distribuidora`",
@@ -9727,7 +9739,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `editora`",
@@ -9743,7 +9756,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `escritorio`",
@@ -9793,7 +9807,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `produtora`",
@@ -9826,7 +9841,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `agencia`",
@@ -9842,7 +9858,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `agencia_de_booking`",
@@ -9858,7 +9875,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `agencia_de_modelos`",
@@ -9874,7 +9892,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `agencia_de_publicidade`",
@@ -9890,7 +9909,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `artista_banda`",
@@ -9906,7 +9926,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `banco`",
@@ -9922,7 +9943,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `cartorio`",
@@ -9972,7 +9994,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `contador`",
@@ -9988,7 +10011,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `contratante_show`",
@@ -10004,7 +10028,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `curador_musical`",
@@ -10020,7 +10045,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `diretor`",
@@ -10036,7 +10062,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `diretor_de_video`",
@@ -10052,7 +10079,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `distribuidora_digital`",
@@ -10068,7 +10096,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `empresa`",
@@ -10084,7 +10113,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `empresa_de_ia`",
@@ -10100,7 +10130,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `empresa_de_internet`",
@@ -10116,7 +10147,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `empresa_de_som`",
@@ -10132,7 +10164,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `empresario_artistico`",
@@ -10165,7 +10198,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `estudio`",
@@ -10181,7 +10215,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `fotografo`",
@@ -10197,7 +10232,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `fundo_de_investimento`",
@@ -10213,7 +10249,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `gateway_de_pagamento`",
@@ -10229,7 +10266,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `gravadora_selo`",
@@ -10262,7 +10300,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `investidor`",
@@ -10278,7 +10317,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `jornalista`",
@@ -10294,7 +10334,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `marca`",
@@ -10310,7 +10351,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `masterizador`",
@@ -10326,7 +10368,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `oficina_mecanica`",
@@ -10342,7 +10385,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `operador_de_camera`",
@@ -10358,7 +10402,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `outros`",
@@ -10391,7 +10436,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `parceiros`",
@@ -10407,7 +10453,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `patrocinador`",
@@ -10423,7 +10470,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `plataforma_digital`",
@@ -10439,7 +10487,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `prefeitura`",
@@ -10455,7 +10504,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `produtor_executivo`",
@@ -10471,7 +10521,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `produtor_musical`",
@@ -10487,7 +10538,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `produtora_audiovisual`",
@@ -10503,7 +10555,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `produtora_de_eventos`",
@@ -10519,7 +10572,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `programador`",
@@ -10535,7 +10589,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `psicologo`",
@@ -10551,7 +10606,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `sala_de_ensaio`",
@@ -10567,7 +10623,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `agencia`",
@@ -11533,7 +11590,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and old web build retirement",
       "dependency": "persisted vocabulary release PV1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/clients/legacy-vocabulary.readers.spec.ts"
     },
     {
       "item": "deprecated persisted vocabulary legacy value (clients.profile, organizations.industry, releases default) `editora`",
@@ -12527,7 +12585,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `artista`",
@@ -12543,7 +12602,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `artista_banda`",
@@ -12576,7 +12636,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `consultoria`",
@@ -12592,7 +12653,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `conteudo`",
@@ -12608,7 +12670,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `contratante_show`",
@@ -12624,7 +12687,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `corporativo`",
@@ -12640,7 +12704,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `design_grafico`",
@@ -12656,7 +12721,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `distribuicao_digital`",
@@ -12672,7 +12738,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `em_contato`",
@@ -12705,7 +12772,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `ensaios`",
@@ -12721,7 +12789,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `entrevistas`",
@@ -12737,7 +12806,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `eventos`",
@@ -12753,7 +12823,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `fechado`",
@@ -12786,7 +12857,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `gravadora_selo`",
@@ -12802,7 +12874,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `influenciador`",
@@ -12818,7 +12891,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `licenciamento`",
@@ -12834,7 +12908,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `marca_empresa`",
@@ -12850,7 +12925,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `masterizacao`",
@@ -12866,7 +12942,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `mixagem`",
@@ -12882,7 +12959,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `novo_lead`",
@@ -12949,7 +13027,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `producao_conteudo`",
@@ -12965,7 +13044,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `producao_musical`",
@@ -12981,7 +13061,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `produtora_eventos`",
@@ -12997,7 +13078,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `programas_tv`",
@@ -13013,7 +13095,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `projeto_musical`",
@@ -13029,7 +13112,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `proposta_enviada`",
@@ -13079,7 +13163,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `sessoes_estudio`",
@@ -13095,7 +13180,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `sessoes_fotos`",
@@ -13111,7 +13197,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment",
       "dependency": "operational lists canonical release OL1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
     },
     {
       "item": "legacy operational list / event type slug map (platform defaults) `entrevista`",
@@ -14060,7 +14147,8 @@
       "targetState": "English canonical values only",
       "blocker": "data census and migration execution in every environment",
       "dependency": "contracts taxonomy release CT1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/contracts/contract-category-slugs.spec.ts"
     },
     {
       "item": "legacy contract category slug and external-rights phrase (read aliases) `gravacao`",
@@ -14093,7 +14181,8 @@
       "targetState": "English canonical values only",
       "blocker": "data census and migration execution in every environment",
       "dependency": "contracts taxonomy release CT1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/contracts/contract-category-slugs.spec.ts"
     },
     {
       "item": "legacy contract category slug and external-rights phrase (read aliases) `publicitario`",
@@ -14109,7 +14198,8 @@
       "targetState": "English canonical values only",
       "blocker": "data census and migration execution in every environment",
       "dependency": "contracts taxonomy release CT1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/contracts/contract-category-slugs.spec.ts"
     },
     {
       "item": "legacy contract category slug and external-rights phrase (read aliases) `semantico`",
@@ -14125,7 +14215,8 @@
       "targetState": "English canonical values only",
       "blocker": "data census and migration execution in every environment",
       "dependency": "contracts taxonomy release CT1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/contracts/contract-category-slugs.spec.ts"
     },
     {
       "item": "legacy contract category slug and external-rights phrase (read aliases) `gravacao`",
@@ -14957,7 +15048,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `adiantamento`",
@@ -14973,7 +15065,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `administrativo`",
@@ -14989,7 +15082,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `agua`",
@@ -15005,7 +15099,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `alimentacao`",
@@ -15021,7 +15116,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `aluguel`",
@@ -15037,7 +15133,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `anuncios`",
@@ -15053,7 +15150,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `aplicacao`",
@@ -15069,7 +15167,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `apoio-cultural`",
@@ -15085,7 +15184,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `ar-condicionado`",
@@ -15101,7 +15201,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `armazenamento`",
@@ -15117,7 +15218,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `assessoria-imprensa`",
@@ -15133,7 +15235,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `assessoria-juridica`",
@@ -15149,7 +15252,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `automacao`",
@@ -15165,7 +15269,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `beats-avulsos`",
@@ -15181,7 +15286,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `bonus-incentivo`",
@@ -15197,7 +15303,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `bonus-premiacao`",
@@ -15213,7 +15320,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `brindes-promocionais`",
@@ -15229,7 +15337,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `cenografia-pirotecnia`",
@@ -15245,7 +15354,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `certificacao`",
@@ -15261,7 +15371,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `comissao`",
@@ -15277,7 +15388,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `computador`",
@@ -15293,7 +15405,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `consultoria`",
@@ -15309,7 +15422,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `contabil-fiscal`",
@@ -15325,7 +15439,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `correios-logistica`",
@@ -15341,7 +15456,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `criacao-site`",
@@ -15357,7 +15473,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `curso-gestao`",
@@ -15373,7 +15490,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `curso-marketing`",
@@ -15389,7 +15507,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `curso-mixagem`",
@@ -15405,7 +15524,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `curso-producao`",
@@ -15421,7 +15541,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `design-grafico`",
@@ -15471,7 +15592,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `eletrica`",
@@ -15487,7 +15609,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `ensaio`",
@@ -15503,7 +15626,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `entre-contas`",
@@ -15519,7 +15643,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `equipamentos`",
@@ -15535,7 +15660,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `evento-lancamento`",
@@ -15551,7 +15677,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `evento-networking`",
@@ -15567,7 +15694,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `fee-administrativo`",
@@ -15583,7 +15711,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `fone-ouvido`",
@@ -15599,7 +15728,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `formacao`",
@@ -15615,7 +15745,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `fotografia`",
@@ -15631,7 +15762,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `fotografia-audiovisual`",
@@ -15647,7 +15779,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `gestao-redes-sociais`",
@@ -15663,7 +15796,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `gravacao-estudio`",
@@ -15679,7 +15813,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `hora-extra`",
@@ -15695,7 +15830,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `hospedagem`",
@@ -15711,7 +15847,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `ia`",
@@ -15727,7 +15864,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `iluminacao`",
@@ -15743,7 +15881,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `impostos`",
@@ -15759,7 +15898,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `infraestrutura`",
@@ -15775,7 +15915,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `instrumento-musical`",
@@ -15791,7 +15932,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `juros`",
@@ -15807,7 +15949,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `licenca-software`",
@@ -15823,7 +15966,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `licenciamento`",
@@ -15839,7 +15983,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `licenciamento-fonograma`",
@@ -15855,7 +16000,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `licenciamento-obra`",
@@ -15871,7 +16017,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `licenciamento-obras`",
@@ -15887,7 +16034,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `locacao-equipamentos`",
@@ -15903,7 +16051,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `locacao-estudio`",
@@ -15919,7 +16068,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `luz`",
@@ -15935,7 +16085,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `marketing-divulgacao`",
@@ -15951,7 +16102,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `marketing-trafego-pr`",
@@ -15967,7 +16119,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `masterizacao`",
@@ -15983,7 +16136,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `material-promocional`",
@@ -15999,7 +16153,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `mentoria`",
@@ -16015,7 +16170,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `mesa-som`",
@@ -16031,7 +16187,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `microfone`",
@@ -16047,7 +16204,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `mixagem`",
@@ -16063,7 +16221,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `mobiliario`",
@@ -16079,7 +16238,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `monitor-referencia`",
@@ -16095,7 +16255,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `multa-contratual`",
@@ -16111,7 +16272,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `multas`",
@@ -16127,7 +16289,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `outros`",
@@ -16160,7 +16323,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `participacao-show-evento`",
@@ -16193,7 +16357,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `patrocinio`",
@@ -16209,7 +16374,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `pesquisa-mercado`",
@@ -16225,7 +16391,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `prestador-autonomo`",
@@ -16241,7 +16408,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `pro-labore`",
@@ -16257,7 +16425,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `producao-audiovisual`",
@@ -16273,7 +16442,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `producao-musical`",
@@ -16289,7 +16459,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `produtos`",
@@ -16305,7 +16476,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `publicidade`",
@@ -16321,7 +16493,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `recebimentos-externos-streaming`",
@@ -16354,7 +16527,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `receitas-musicais`",
@@ -16387,7 +16561,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso`",
@@ -16403,7 +16578,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-alimentacao`",
@@ -16419,7 +16595,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-hospedagem`",
@@ -16435,7 +16612,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-materiais`",
@@ -16451,7 +16629,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-recebido`",
@@ -16467,7 +16646,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-transporte`",
@@ -16483,7 +16663,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reforma-escritorio`",
@@ -16499,7 +16680,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reforma-estudio`",
@@ -16515,7 +16697,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `remuneracao`",
@@ -16531,7 +16714,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `resgate`",
@@ -16547,7 +16731,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `salario`",
@@ -16563,7 +16748,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `seguranca`",
@@ -16579,7 +16765,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `servicos`",
@@ -16612,7 +16799,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `servicos-pf`",
@@ -16628,7 +16816,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `sessao-producao`",
@@ -16644,7 +16833,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `show-evento`",
@@ -16677,7 +16867,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `sincronizacao`",
@@ -16693,7 +16884,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `suporte-financeiro`",
@@ -16709,7 +16901,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `tarifas-plataformas`",
@@ -16725,7 +16918,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `taxas-bancarias`",
@@ -16741,7 +16935,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `tecnologia`",
@@ -16757,7 +16952,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `telefonia`",
@@ -16773,7 +16969,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `ti-desenvolvimento-saas`",
@@ -16789,7 +16986,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `trafego-pago`",
@@ -16805,7 +17003,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `transporte`",
@@ -16821,7 +17020,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `tratamento-acustico`",
@@ -16837,7 +17037,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-beats`",
@@ -16853,7 +17054,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-merchandising`",
@@ -16869,7 +17071,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-nfts`",
@@ -16885,7 +17088,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-produtos-digitais`",
@@ -16901,7 +17105,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-produtos-fisicos`",
@@ -16917,7 +17122,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-show-fechado`",
@@ -16933,7 +17139,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `viagens`",
@@ -16949,7 +17156,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `videoclipe`",
@@ -16965,7 +17173,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `acessorios`",
@@ -16981,7 +17190,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `adiantamento`",
@@ -16997,7 +17207,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `administrativo`",
@@ -17013,7 +17224,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `agua`",
@@ -17029,7 +17241,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `alimentacao`",
@@ -17045,7 +17258,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `aluguel`",
@@ -17061,7 +17275,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `anuncios`",
@@ -17094,7 +17309,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `apoio-cultural`",
@@ -17110,7 +17326,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `ar-condicionado`",
@@ -17126,7 +17343,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `armazenamento`",
@@ -17142,7 +17360,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `assessoria-imprensa`",
@@ -17158,7 +17377,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `assessoria-juridica`",
@@ -17174,7 +17394,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `automacao`",
@@ -17190,7 +17411,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `beats-avulsos`",
@@ -17206,7 +17428,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `bonus-incentivo`",
@@ -17222,7 +17445,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `bonus-premiacao`",
@@ -17238,7 +17462,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `brindes-promocionais`",
@@ -17254,7 +17479,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `cenografia-pirotecnia`",
@@ -17270,7 +17496,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `certificacao`",
@@ -17286,7 +17513,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `comissao`",
@@ -17302,7 +17530,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `computador`",
@@ -17318,7 +17547,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `consultoria`",
@@ -17334,7 +17564,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `contabil-fiscal`",
@@ -17350,7 +17581,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `correios-logistica`",
@@ -17366,7 +17598,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `criacao-site`",
@@ -17382,7 +17615,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `curso-gestao`",
@@ -17398,7 +17632,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `curso-marketing`",
@@ -17414,7 +17649,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `curso-mixagem`",
@@ -17430,7 +17666,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `curso-producao`",
@@ -17446,7 +17683,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `design-grafico`",
@@ -17496,7 +17734,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `eletrica`",
@@ -17512,7 +17751,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `ensaio`",
@@ -17528,7 +17768,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `entre-contas`",
@@ -17544,7 +17785,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `equipamentos`",
@@ -17560,7 +17802,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `evento-lancamento`",
@@ -17576,7 +17819,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `evento-networking`",
@@ -17592,7 +17836,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `fee-administrativo`",
@@ -17608,7 +17853,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `fone-ouvido`",
@@ -17624,7 +17870,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `formacao`",
@@ -17657,7 +17904,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `fotografia-audiovisual`",
@@ -17673,7 +17921,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `gestao-redes-sociais`",
@@ -17689,7 +17938,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `gravacao-estudio`",
@@ -17705,7 +17955,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `hora-extra`",
@@ -17721,7 +17972,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `hospedagem`",
@@ -17737,7 +17989,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `ia`",
@@ -17753,7 +18006,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `iluminacao`",
@@ -17769,7 +18023,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `impostos`",
@@ -17785,7 +18040,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `infraestrutura`",
@@ -17801,7 +18057,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `instrumento-musical`",
@@ -17817,7 +18074,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `juros`",
@@ -17833,7 +18091,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `licenca-software`",
@@ -17849,7 +18108,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `licenciamento`",
@@ -17916,7 +18176,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `locacao-equipamentos`",
@@ -17932,7 +18193,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `locacao-estudio`",
@@ -17948,7 +18210,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `luz`",
@@ -17964,7 +18227,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `marketing-divulgacao`",
@@ -17980,7 +18244,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `marketing-trafego-pr`",
@@ -17996,7 +18261,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `masterizacao`",
@@ -18012,7 +18278,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `material-promocional`",
@@ -18028,7 +18295,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `mentoria`",
@@ -18044,7 +18312,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `mesa-som`",
@@ -18060,7 +18329,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `microfone`",
@@ -18076,7 +18346,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `mixagem`",
@@ -18092,7 +18363,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `mobiliario`",
@@ -18108,7 +18380,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `monitor-referencia`",
@@ -18124,7 +18397,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `multa-contratual`",
@@ -18140,7 +18414,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `multas`",
@@ -18156,7 +18431,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `outros`",
@@ -18189,7 +18465,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `participacao-show-evento`",
@@ -18256,7 +18533,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `prestador-autonomo`",
@@ -18272,7 +18550,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `pro-labore`",
@@ -18288,7 +18567,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `producao-audiovisual`",
@@ -18304,7 +18584,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `producao-musical`",
@@ -18320,7 +18601,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `produtos`",
@@ -18336,7 +18618,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `publicidade`",
@@ -18386,7 +18669,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `receitas-musicais`",
@@ -18419,7 +18703,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso`",
@@ -18435,7 +18720,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-alimentacao`",
@@ -18451,7 +18737,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-hospedagem`",
@@ -18467,7 +18754,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-materiais`",
@@ -18483,7 +18771,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-recebido`",
@@ -18499,7 +18788,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reembolso-transporte`",
@@ -18515,7 +18805,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reforma-escritorio`",
@@ -18531,7 +18822,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `reforma-estudio`",
@@ -18547,7 +18839,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `remuneracao`",
@@ -18563,7 +18856,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `resgate`",
@@ -18579,7 +18873,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `salario`",
@@ -18595,7 +18890,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `seguranca`",
@@ -18611,7 +18907,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `servicos`",
@@ -18644,7 +18941,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `servicos-pf`",
@@ -18660,7 +18958,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `sessao-producao`",
@@ -18676,7 +18975,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `show-evento`",
@@ -18709,7 +19009,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `sincronizacao`",
@@ -18742,7 +19043,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `tarifas-plataformas`",
@@ -18758,7 +19060,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `taxas-bancarias`",
@@ -18774,7 +19077,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `tecnologia`",
@@ -18790,7 +19094,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `telefonia`",
@@ -18806,7 +19111,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `ti-desenvolvimento-saas`",
@@ -18822,7 +19128,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `trafego-pago`",
@@ -18838,7 +19145,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `transporte`",
@@ -18854,7 +19162,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `tratamento-acustico`",
@@ -18870,7 +19179,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-beats`",
@@ -18886,7 +19196,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-merchandising`",
@@ -18902,7 +19213,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-nfts`",
@@ -18918,7 +19230,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-produtos-digitais`",
@@ -18934,7 +19247,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-produtos-fisicos`",
@@ -18950,7 +19264,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `venda-show-fechado`",
@@ -19000,7 +19315,8 @@
       "targetState": "English canonical values only",
       "blocker": "migration execution in every environment and residue preflight",
       "dependency": "transaction taxonomy release TX1",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/accounting/constants/transaction-category-slugs.parity.test.ts"
     },
     {
       "item": "legacy transaction category/subcategory slug (read alias) `outros`",
@@ -41750,6 +42066,40 @@
       "removalCondition": "delete a document once it is archived outside the repository or superseded by the current engineering documentation (docs/engineering), and drop it from this row in the same change",
       "targetState": "frozen historical record (DADO_HISTORICO), eventually removed",
       "census": "baselined"
+    },
+    {
+      "item": "operational list legacy_slug resolution table (spec fixtures)",
+      "path": "apps/api/src/database/operational-list-provenance.migration.spec.ts",
+      "currentName": "*",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "The table pins every legacy Portuguese platform-default slug to its canonical English slug; it is the behavioral test of the alias, so the literals must stay.",
+      "consumer": "operational-list-vocabulary.ts legacy_slug resolution",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete the literals together with the legacy_slug map once migration 20260930000016 ran everywhere",
+      "targetState": "no legacy fixtures",
+      "blocker": null,
+      "dependency": "persisted vocabulary backfill census",
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/operational-list-provenance.migration.spec.ts"
+    },
+    {
+      "item": "contract category legacy slug table (spec fixtures)",
+      "path": "apps/api/src/modules/contracts/contract-category-slugs.spec.ts",
+      "currentName": "*",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Legacy-to-canonical pairs pinning the contract category alias map; the literals are the contract of the alias.",
+      "consumer": "contract-category-slugs.ts legacy map",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "delete the literals together with the legacy map once the contract category residue census returns 0",
+      "targetState": "no legacy fixtures",
+      "blocker": null,
+      "dependency": "persisted vocabulary backfill census",
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/contracts/contract-category-slugs.spec.ts"
     }
   ],
   "blockers": [

@@ -258,3 +258,55 @@ describe('operational list platform vocabulary (code constants <-> migration lis
     });
   });
 });
+
+/**
+ * legacy_slug resolution table (compat-coverage): literal (kind, legacy slug, canonical slug) rows,
+ * independent of the production maps, so any added, dropped or retargeted alias flips a test.
+ */
+const LEGACY_SLUG_TABLE: Array<[kind: string, legacy: string, canonical: string]> = [
+  ['lead_type', 'artista_banda', 'artist_or_band'], ['lead_type', 'contratante_show', 'show_booker'],
+  ['lead_type', 'marca_empresa', 'brand_or_company'], ['lead_type', 'produtora_eventos', 'event_producer'],
+  ['lead_type', 'gravadora_selo', 'record_label'], ['lead_type', 'agencia', 'agency'], ['lead_type', 'influenciador', 'influencer'],
+  ['lead_category', 'artista_banda', 'artist_or_band'], ['lead_category', 'contratante_show', 'show_booker'],
+  ['lead_category', 'marca_empresa', 'brand_or_company'], ['lead_category', 'agencia', 'agency'],
+  ['service_interest', 'gestao_artistica', 'artist_management'], ['service_interest', 'producao_musical', 'music_production'],
+  ['service_interest', 'mixagem', 'mixing'], ['service_interest', 'masterizacao', 'mastering'],
+  ['service_interest', 'distribuicao_digital', 'digital_distribution'], ['service_interest', 'marketing_musical', 'music_marketing'],
+  ['service_interest', 'producao_audiovisual', 'audiovisual_production'], ['service_interest', 'design_grafico', 'graphic_design'],
+  ['service_interest', 'licenciamento', 'licensing'], ['service_interest', 'consultoria', 'consulting'], ['service_interest', 'outro', 'other'],
+  ['lead_status', 'novo_lead', 'new'], ['lead_status', 'qualificado', 'qualified'], ['lead_status', 'em_contato', 'in_contact'],
+  ['lead_status', 'proposta_enviada', 'proposal'], ['lead_status', 'fechado', 'closed'], ['lead_status', 'perdido', 'lost'],
+  ['lead_segment', 'musical', 'music'], ['lead_segment', 'eventos', 'events'], ['lead_segment', 'corporativo', 'corporate'],
+  ['marketing_context', 'projeto_musical', 'music_project'], ['marketing_context', 'artista', 'artist'], ['marketing_context', 'empresa', 'company'],
+  ['marketing_sector', 'Design', 'design'], ['marketing_sector', 'Audiovisual', 'audiovisual'],
+  ['marketing_sector', 'Marketing', 'marketing'], ['marketing_sector', 'Comunicação', 'communication'],
+  ['marketing_task_type', 'campanha', 'campaign'],
+  ['briefing_service_type', 'campanha', 'campaign'], ['briefing_service_type', 'conteudo', 'content'],
+  ['event_type', 'sessoes_estudio', 'studio_sessions'], ['event_type', 'ensaios', 'rehearsals'], ['event_type', 'sessoes_fotos', 'photo_shoots'],
+  ['event_type', 'entrevistas', 'interviews'], ['event_type', 'programas_tv', 'tv_shows'],
+  ['event_type', 'producao_conteudo', 'content_production'], ['event_type', 'reunioes', 'meetings'],
+];
+
+describe('legacy_slug resolution table', () => {
+  it('the production map holds exactly the literal table (no silent additions, removals or retargets)', () => {
+    const fromMap = Object.entries(LEGACY_OPERATIONAL_SLUGS).flatMap(([kind, map]) => Object.entries(map).map(([l, c]) => [kind, l, c]));
+    expect(fromMap.sort()).toEqual([...LEGACY_SLUG_TABLE].sort());
+  });
+
+  it.each(LEGACY_SLUG_TABLE)('%s: legacy %s resolves to %s, round-trips, and is recorded as legacy_slug by the migration plan', (kind, legacy, canonical) => {
+    expect(canonicalOperationalSlug(kind, legacy)).toBe(canonical);
+    expect(canonicalOperationalSlug(kind, canonical)).toBe(canonical);
+    expect(legacyOperationalSlugs(kind, canonical)).toContain(legacy);
+    expect(buildRenames()).toContainEqual({
+      kind, stableKey: operationalStableKey(kind, canonical), canonicalSlug: canonical, legacySlug: legacy,
+    });
+  });
+
+  it('negative: a legacy slug under the wrong kind, an unknown slug and prototype keys are returned unchanged', () => {
+    expect(canonicalOperationalSlug('lead_status', 'artista_banda')).toBe('artista_banda');
+    expect(canonicalOperationalSlug('lead_type', 'banana')).toBe('banana');
+    expect(canonicalOperationalSlug('no_such_kind', 'novo_lead')).toBe('novo_lead');
+    expect(canonicalOperationalSlug('lead_status', 'constructor')).toBe('constructor');
+    expect(legacyOperationalSlugs('lead_status', 'banana')).toEqual([]);
+  });
+});

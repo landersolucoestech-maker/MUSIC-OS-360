@@ -47,3 +47,35 @@ describe('contract category slugs (platform-owned only)', () => {
     expect(contractCategorySlugVariants('custom_slug')).toEqual(['custom_slug']);
   });
 });
+
+/** Literal legacy -> canonical table (independent of the production map): an added, dropped or retargeted alias fails. */
+const LEGACY_TO_CANONICAL: Array<[string, string]> = [
+  ['gravacao', 'recording'], ['cessao_direitos', 'rights_assignment'], ['producao', 'production'],
+  ['exclusividade', 'exclusivity'], ['publicitario', 'advertising'], ['semantico', 'semantic'],
+  ['distribuicao', 'distribution'], ['licenciamento', 'licensing'], ['gestao', 'management'],
+  ['outros', 'other'], ['outro', 'other'],
+];
+
+describe('legacy -> canonical contract category table', () => {
+  it('the production map equals the literal table', () => {
+    expect(Object.entries(LEGACY_CONTRACT_CATEGORY_SLUGS).sort()).toEqual([...LEGACY_TO_CANONICAL].sort());
+  });
+
+  it.each(LEGACY_TO_CANONICAL)('%s -> %s: canonicalized, idempotent, and list filters expand to both spellings', (legacy, canonical) => {
+    expect(canonicalContractCategorySlug(legacy)).toBe(canonical);
+    expect(canonicalContractCategorySlug(canonical)).toBe(canonical);
+    for (const spelling of [legacy, canonical]) {
+      const variants = contractCategorySlugVariants(spelling);
+      expect(variants[0]).toBe(canonical);
+      expect(variants).toContain(legacy);
+      expect(variants).toContain(canonical);
+    }
+  });
+
+  it('negative: case variants and surrounding whitespace are not legacy slugs (exact, case-sensitive match)', () => {
+    for (const [legacy] of LEGACY_TO_CANONICAL) {
+      expect(canonicalContractCategorySlug(legacy.toUpperCase())).toBe(legacy.toUpperCase());
+      expect(canonicalContractCategorySlug(` ${legacy}`)).toBe(` ${legacy}`);
+    }
+  });
+});
