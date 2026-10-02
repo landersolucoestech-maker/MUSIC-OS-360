@@ -7,14 +7,15 @@ jest.mock('@nestjs/core', () => ({ NestFactory: { create: (...a: unknown[]) => c
 jest.mock('./app.module', () => ({ AppModule: class AppModule {} }));
 
 import { assertApiRuntimeEnv, createApp } from './create-app';
+import { PROD_FORBIDDEN_BYPASS_FLAGS } from './core/config/env.schema';
 
 const MANAGED = [
-  'NODE_ENV', 'AUTH_DISABLED', 'USE_MOCK', 'MOCK_MODE', 'VITE_MOCK_MODE', 'DEV_AUTH_ENDPOINT_ENABLED',
+  'NODE_ENV', ...PROD_FORBIDDEN_BYPASS_FLAGS,
   'DATABASE_URL', 'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
   'DIRECT_DATABASE_URL', 'APP_DATABASE_URL', 'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY',
 ] as const;
 
-const FLAGS = ['AUTH_DISABLED', 'USE_MOCK', 'MOCK_MODE', 'DEV_AUTH_ENDPOINT_ENABLED'] as const;
+const FLAGS = PROD_FORBIDDEN_BYPASS_FLAGS;
 
 describe('assertApiRuntimeEnv / createApp — bypass flags are FATAL in prod-like environments', () => {
   const saved: Record<string, string | undefined> = {};
@@ -62,18 +63,6 @@ describe('assertApiRuntimeEnv / createApp — bypass flags are FATAL in prod-lik
       expect(createMock).not.toHaveBeenCalled();
     });
 
-    it.each(['MOCK_MODE', 'VITE_MOCK_MODE'])('createApp rejects for %s=true with a FATAL mock-mode error before creating the app', async (flag) => {
-      process.env.NODE_ENV = nodeEnv;
-      process.env[flag] = 'true';
-      await expect(createApp()).rejects.toThrow(/FATAL/);
-      expect(createMock).not.toHaveBeenCalled();
-    });
-
-    it('createApp rejects for VITE_MOCK_MODE=true specifically via the second guard', async () => {
-      process.env.NODE_ENV = nodeEnv;
-      process.env.VITE_MOCK_MODE = 'true';
-      await expect(createApp()).rejects.toThrow(/MOCK_MODE=true is forbidden/);
-    });
   });
 
   it('flag value other than exactly "true" is not treated as active (documents the exact-match contract)', () => {

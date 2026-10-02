@@ -10,6 +10,7 @@
 import { Optional, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { isProdLike } from '../config/runtime-environment';
+import { PROD_FORBIDDEN_BYPASS_FLAGS } from '../config/env.schema';
 
 const ZERO_KEY = '0000000000000000000000000000000000000000000000000000000000000000';
 
@@ -90,10 +91,8 @@ export class SecurityStartupService implements OnApplicationBootstrap {
         fatal:   true,
         check:   () =>
           !prodLike ||
-          !['AUTH_DISABLED', 'MOCK_MODE', 'USE_MOCK', 'VITE_MOCK_MODE', 'DEV_AUTH_ENDPOINT_ENABLED'].some(
-            (key) => this.getConfig(key) === 'true',
-          ),
-        message: 'AUTH_DISABLED/MOCK_MODE/USE_MOCK/VITE_MOCK_MODE/DEV_AUTH_ENDPOINT_ENABLED cannot be active in staging/production',
+          !PROD_FORBIDDEN_BYPASS_FLAGS.some((key) => this.getConfig(key) === 'true'),
+        message: `${PROD_FORBIDDEN_BYPASS_FLAGS.join('/')} cannot be active in staging/production`,
       },
       {
         name:    'METRICS_TOKEN present in prod-like environments',

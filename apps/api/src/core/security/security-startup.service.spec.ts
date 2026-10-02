@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { SecurityStartupService } from './security-startup.service';
+import { PROD_FORBIDDEN_BYPASS_FLAGS } from '../config/env.schema';
 
 const KEY = 'ab12'.repeat(16);
 
@@ -43,7 +44,7 @@ describe('SecurityStartupService — bypass flags schedule process termination i
   });
 
   describe.each(['production', 'staging', ' Production ', 'STAGING'])('NODE_ENV=%j', (nodeEnv) => {
-    it.each(['AUTH_DISABLED', 'USE_MOCK', 'MOCK_MODE', 'VITE_MOCK_MODE', 'DEV_AUTH_ENDPOINT_ENABLED'])(
+    it.each([...PROD_FORBIDDEN_BYPASS_FLAGS])(
       '%s=true schedules process.exit(1)',
       (flag) => {
         service({ ...CLEAN_PROD, NODE_ENV: nodeEnv, [flag]: 'true' }).onApplicationBootstrap();

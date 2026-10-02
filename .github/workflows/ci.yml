@@ -95,7 +95,6 @@ jobs:
           CI: true
           VITE_SUPABASE_URL: https://dummy.supabase.co
           VITE_SUPABASE_ANON_KEY: dummy-anon-key-for-ci
-          VITE_MOCK_MODE: "true"
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         if: always()
@@ -112,8 +111,6 @@ jobs:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://sxmfeocztlztvpdnxayk.supabase.co' }}
       VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder' }}
       VITE_API_URL: ${{ secrets.VITE_API_URL || 'http://localhost:3001/api/v1' }}
-      VITE_USE_MOCK: "false"
-      VITE_MOCK_MODE: "false"
       NODE_ENV: production
     steps:
       - uses: actions/checkout@v4

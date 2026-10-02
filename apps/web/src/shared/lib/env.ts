@@ -5,8 +5,7 @@
  * for mode flags. Always import from here.
  *
  * There is no mock mode: the frontend consumes the real backend exclusively.
- * (VITE_USE_MOCK/VITE_MOCK_MODE=true are blocked at build time by the
- * assert-supabase-env guard.)
+ * (The former VITE_USE_MOCK/VITE_MOCK_MODE flags were dead and have been removed.)
  *
  */
 
@@ -21,7 +20,7 @@ export const AUTH_DISABLED: boolean =
   import.meta.env.VITE_AUTH_DISABLED === "true";
 
 /**
- * DEV_AUTH_BYPASS — VITE_DISABLE_AUTH=true — DEV ONLY.
+ * DEV_AUTH_BYPASS — VITE_DEV_AUTH_BYPASS=true — DEV ONLY (renamed from VITE_DISABLE_AUTH).
  *
  * A purely FRONTEND authentication/authorization bypass to browse the
  * interface without login during local development. Different from
@@ -35,9 +34,10 @@ export const AUTH_DISABLED: boolean =
  * import.meta.env). The core security guarantee: `isDev` can only be
  * `true` when Vite compiles in development mode (import.meta.env.DEV
  * is decided at build time by the build mode, it is not an env var read at
- * runtime) — so even if VITE_DISABLE_AUTH=true leaks into a
+ * runtime) — so even if VITE_DEV_AUTH_BYPASS=true leaks into a
  * staging/production `.env` by mistake, a production build will never have DEV === true
- * and the bypass stays disabled.
+ * and the bypass stays disabled. It is additionally forbidden (=true) in prod-like
+ * environments by scripts/env-check.mjs and apps/web/scripts/assert-supabase-env.mjs.
  */
 export function deriveDevAuthBypass(isDev: boolean, flagValue: string | undefined): boolean {
   return isDev === true && flagValue === "true";
@@ -45,7 +45,7 @@ export function deriveDevAuthBypass(isDev: boolean, flagValue: string | undefine
 
 export const DEV_AUTH_BYPASS: boolean = deriveDevAuthBypass(
   import.meta.env.DEV === true,
-  import.meta.env.VITE_DISABLE_AUTH as string | undefined,
+  import.meta.env.VITE_DEV_AUTH_BYPASS as string | undefined,
 );
 
 /**

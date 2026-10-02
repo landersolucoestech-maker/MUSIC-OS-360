@@ -10,10 +10,10 @@
  *
  * Same gate as AUTH_DISABLED/USE_MOCK (env.schema.ts): activates only with
  * BOTH
- *   1. explicit opt-in USE_MOCK=true (an existing flag, already blocked in
- *      staging/production by env.schema.ts + create-app.ts +
- *      security-startup.service.ts — reused here; we did not invent
- *      DEV_MOCK_SOCIAL_ANALYTICS or any new flag);
+ *   1. explicit opt-in DEV_SOCIAL_METRICS_MOCK=true (canonical name) or its
+ *      deprecated alias USE_MOCK=true — both blocked in staging/production by
+ *      PROD_FORBIDDEN_BYPASS_FLAGS (env.schema.ts, create-app.ts,
+ *      security-startup.service.ts);
  *   2. NODE_ENV is not production/staging (isProdLike).
  * Real Soundcharts data ALWAYS takes priority — this fallback only runs
  * after the real resolution (canonical + own handle) has already returned 404.
@@ -24,7 +24,8 @@ import { createHash } from 'crypto';
 import { isProdLike } from '../../../core/config/runtime-environment';
 
 export function isDevMockSocialMetricsEnabled(): boolean {
-  return process.env['USE_MOCK'] === 'true' && !isProdLike(process.env['NODE_ENV']);
+  const optedIn = process.env['DEV_SOCIAL_METRICS_MOCK'] === 'true' || process.env['USE_MOCK'] === 'true';
+  return optedIn && !isProdLike(process.env['NODE_ENV']);
 }
 
 /**

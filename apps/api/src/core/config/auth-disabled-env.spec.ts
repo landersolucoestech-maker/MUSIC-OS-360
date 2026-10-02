@@ -4,14 +4,14 @@
  * there was no test covering the rule — it was only discovered through
  * manual inspection during this Part.
  */
-import { collectProductionBypassFlagErrors, envSchema } from './env.schema';
+import { collectProductionBypassFlagErrors, envSchema, PROD_FORBIDDEN_BYPASS_FLAGS } from './env.schema';
 
 function issuePaths(result: ReturnType<typeof envSchema.safeParse>): string[] {
   if (result.success) return [];
   return result.error.issues.map((i) => i.path.join('.'));
 }
 
-describe('envSchema — AUTH_DISABLED/USE_MOCK/MOCK_MODE forbidden outside development', () => {
+describe('envSchema — AUTH_DISABLED/USE_MOCK/DEV_SOCIAL_METRICS_MOCK forbidden outside development', () => {
   it('AUTH_DISABLED=true in development does not raise an issue', () => {
     const result = envSchema.safeParse({ NODE_ENV: 'development', AUTH_DISABLED: 'true' });
     expect(issuePaths(result)).not.toContain('AUTH_DISABLED');
@@ -34,11 +34,23 @@ describe('envSchema — AUTH_DISABLED/USE_MOCK/MOCK_MODE forbidden outside devel
     }
   });
 
-  it('USE_MOCK/MOCK_MODE follow the same rule as AUTH_DISABLED', () => {
-    const staging = envSchema.safeParse({ NODE_ENV: 'staging', USE_MOCK: 'true', MOCK_MODE: 'true' });
+  it('USE_MOCK (deprecated alias) and DEV_SOCIAL_METRICS_MOCK follow the same rule as AUTH_DISABLED', () => {
+    const staging = envSchema.safeParse({ NODE_ENV: 'staging', USE_MOCK: 'true', DEV_SOCIAL_METRICS_MOCK: 'true' });
     const paths = issuePaths(staging);
     expect(paths).toContain('USE_MOCK');
-    expect(paths).toContain('MOCK_MODE');
+    expect(paths).toContain('DEV_SOCIAL_METRICS_MOCK');
+  });
+
+  it('MOCK_MODE is a removed dead flag: no schema key, no prod-forbid entry', () => {
+    expect(PROD_FORBIDDEN_BYPASS_FLAGS).not.toContain('MOCK_MODE' as never);
+  });
+
+  it('DEV_TENANT_ID / DEV_ORG_ID must be UUIDs when set', () => {
+    const uuid = '00000000-0000-4000-8000-000000000001';
+    expect(issuePaths(envSchema.safeParse({ NODE_ENV: 'development', DEV_TENANT_ID: uuid, DEV_ORG_ID: uuid }))).toEqual([]);
+    const bad = issuePaths(envSchema.safeParse({ NODE_ENV: 'development', DEV_TENANT_ID: 'nope', DEV_ORG_ID: '123' }));
+    expect(bad).toContain('DEV_TENANT_ID');
+    expect(bad).toContain('DEV_ORG_ID');
   });
 });
 
@@ -67,14 +79,14 @@ describe('envSchema — DEV_AUTH_ENDPOINT_ENABLED (F2) follows the bypass-flag r
 });
 
 describe('collectProductionBypassFlagErrors (verify:production-flags, F5)', () => {
-  const FLAGS = ['AUTH_DISABLED', 'USE_MOCK', 'MOCK_MODE', 'DEV_AUTH_ENDPOINT_ENABLED'];
+  const FLAGS = [...PROD_FORBIDDEN_BYPASS_FLAGS];
 
   it.each(['production', 'staging'])('control: clean %s passes', (NODE_ENV) => {
     expect(collectProductionBypassFlagErrors({ NODE_ENV })).toEqual([]);
   });
 
   it.each(['development', 'test'])('control: %s with bypass flags set is allowed (local use)', (NODE_ENV) => {
-    expect(collectProductionBypassFlagErrors({ NODE_ENV, AUTH_DISABLED: 'true', MOCK_MODE: 'true' })).toEqual([]);
+    expect(collectProductionBypassFlagErrors({ NODE_ENV, AUTH_DISABLED: 'true', USE_MOCK: 'true' })).toEqual([]);
   });
 
   describe.each(['production', 'staging'])('NODE_ENV=%s', (NODE_ENV) => {

@@ -332,11 +332,17 @@ export function collectProductionAuthorityErrors(
   return errors;
 }
 
-/** Flags that must never be 'true' in a staging/production runtime. */
+/**
+ * Flags that must never be 'true' in a staging/production runtime.
+ * SINGLE SOURCE: create-app.ts, security-startup.service.ts, the superRefine below and
+ * scripts/verify-production-flags.ts (through collectProductionBypassFlagErrors) all reuse
+ * this list; scripts/env-check.mjs mirrors it and bypass-flags-agreement.spec.ts proves it.
+ * USE_MOCK is the DEPRECATED alias of DEV_SOCIAL_METRICS_MOCK and stays forbidden.
+ */
 export const PROD_FORBIDDEN_BYPASS_FLAGS = [
   'AUTH_DISABLED',
+  'DEV_SOCIAL_METRICS_MOCK',
   'USE_MOCK',
-  'MOCK_MODE',
   'DEV_AUTH_ENDPOINT_ENABLED',
 ] as const;
 
@@ -638,8 +644,10 @@ export const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
 
   // LOCAL convenience flags — blocked outside development by the superRefine.
+  // DEV_SOCIAL_METRICS_MOCK: dev-only synthetic Instagram/TikTok followers fallback.
+  // USE_MOCK is its deprecated alias (still read, still forbidden in prod-like environments).
+  DEV_SOCIAL_METRICS_MOCK: z.string().optional(),
   USE_MOCK: z.string().optional(),
-  MOCK_MODE: z.string().optional(),
   AUTH_DISABLED: z.string().optional(),
   // GET /dev-auth/token (DevAuthController) is OFF unless DEV_AUTH_ENDPOINT_ENABLED === 'true'
   // (non prod-like only; forbidden by superRefine in staging/production). When enabled, the
@@ -647,6 +655,9 @@ export const envSchema = z.object({
   DEV_AUTH_ENDPOINT_ENABLED: z.string().optional(),
   DEV_AUTH_EMAIL: z.string().optional(),
   DEV_AUTH_PASSWORD: z.string().optional(),
+  // Identity overrides used under AUTH_DISABLED (core/auth-disabled.ts): must be UUIDs when set.
+  DEV_TENANT_ID: z.string().uuid().optional(),
+  DEV_ORG_ID: z.string().uuid().optional(),
 }).superRefine((cfg, ctx) => {
   const isProdLike = cfg.NODE_ENV === 'production' || cfg.NODE_ENV === 'staging';
 
@@ -699,7 +710,7 @@ export const envSchema = z.object({
     }
 
     // 4) Mock and auth bypass are exclusive to development.
-    for (const flag of ['USE_MOCK', 'MOCK_MODE', 'AUTH_DISABLED', 'DEV_AUTH_ENDPOINT_ENABLED'] as const) {
+    for (const flag of PROD_FORBIDDEN_BYPASS_FLAGS) {
       if (cfg[flag] === 'true') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

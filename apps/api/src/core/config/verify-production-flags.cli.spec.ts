@@ -6,6 +6,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
+import { PROD_FORBIDDEN_BYPASS_FLAGS } from './env.schema';
 
 const API_ROOT = resolve(__dirname, '../../..');
 const TSX = resolve(API_ROOT, 'node_modules/.bin/tsx');
@@ -34,7 +35,7 @@ describe('verify:production-flags CLI', () => {
     expect(r.status).toBe(0);
   });
 
-  it.each(['AUTH_DISABLED', 'USE_MOCK', 'MOCK_MODE', 'DEV_AUTH_ENDPOINT_ENABLED'])(
+  it.each([...PROD_FORBIDDEN_BYPASS_FLAGS])(
     'production with %s=true exits 1 and names the flag',
     (flag) => {
       const r = run({ NODE_ENV: 'production', ...VALID_AUTHORITY, [flag]: 'true' });

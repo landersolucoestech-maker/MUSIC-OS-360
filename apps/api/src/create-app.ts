@@ -22,7 +22,7 @@ import { GlobalExceptionFilter } from './core/filters/global-exception.filter';
 import { validationExceptionFactory } from './core/pipes/validation-messages';
 import { TransformInterceptor } from './core/interceptors/transform.interceptor';
 import { LoggingInterceptor } from './core/interceptors/logging.interceptor';
-import { collectSupabaseEnvErrors } from './core/config/env.schema';
+import { collectSupabaseEnvErrors, PROD_FORBIDDEN_BYPASS_FLAGS } from './core/config/env.schema';
 import { isProdLike } from './core/config/runtime-environment';
 
 /** Same fail-closed checks main.ts's bootstrap() always ran before creating
@@ -33,7 +33,7 @@ export function assertApiRuntimeEnv(logger: Logger): void {
   const errors = collectSupabaseEnvErrors(process.env as Record<string, string | undefined>, nodeEnv);
 
   if (prodLike) {
-    for (const flag of ['USE_MOCK', 'MOCK_MODE', 'AUTH_DISABLED', 'DEV_AUTH_ENDPOINT_ENABLED'] as const) {
+    for (const flag of PROD_FORBIDDEN_BYPASS_FLAGS) {
       if (process.env[flag] === 'true') {
         errors.push(`${flag}=true is forbidden in NODE_ENV=${nodeEnv}`);
       }
@@ -55,9 +55,6 @@ export async function createApp(): Promise<INestApplication> {
   if (isProdLike(nodeEnv)) {
     if (process.env.AUTH_DISABLED === 'true') {
       throw new Error(`FATAL: AUTH_DISABLED=true is forbidden in ${nodeEnv}.`);
-    }
-    if (process.env.MOCK_MODE === 'true' || process.env.VITE_MOCK_MODE === 'true') {
-      throw new Error(`FATAL: MOCK_MODE=true is forbidden in ${nodeEnv}.`);
     }
   }
 

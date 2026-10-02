@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { deriveDevAuthBypass } from "./env";
 
-describe("deriveDevAuthBypass (VITE_DISABLE_AUTH — DEV ONLY)", () => {
+describe("deriveDevAuthBypass (VITE_DEV_AUTH_BYPASS — DEV ONLY)", () => {
   it("never activates outside a development build, even with a misconfigured flag (staging/production)", () => {
     expect(deriveDevAuthBypass(false, "true")).toBe(false);
   });

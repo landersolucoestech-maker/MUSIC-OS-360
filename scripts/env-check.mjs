@@ -8,7 +8,8 @@
  *      point to the SAME Supabase project.
  *   3. The ref in use belongs to the environment's allowlist.
  *   4. Mandatory envs present and non-empty.
- *   5. Mock/auth-bypass forbidden outside development and coherent between web and api.
+ *   5. Auth/mock bypass flags forbidden in prod-like environments (api list mirrors
+ *      PROD_FORBIDDEN_BYPASS_FLAGS in env.schema.ts; web: VITE_AUTH_DISABLED, VITE_DEV_AUTH_BYPASS).
  *
  * Mirrors the constants of:
  *   - apps/api/src/core/config/env.schema.ts
@@ -248,27 +249,22 @@ if (web.VITE_API_URL && !/^https?:\/\//.test(web.VITE_API_URL)) {
   errors.push(`invalid VITE_API_URL: "${web.VITE_API_URL}" (expected http(s)://host[:port])`);
 }
 
-// Mock / auth bypass
-const mockFlags = [
-  ["USE_MOCK (api)", apiEnv.USE_MOCK],
-  ["MOCK_MODE (api)", apiEnv.MOCK_MODE],
-  ["VITE_USE_MOCK (web)", web.VITE_USE_MOCK],
-  ["VITE_MOCK_MODE (web)", web.VITE_MOCK_MODE],
+// Auth / mock bypass flags. The API list MIRRORS PROD_FORBIDDEN_BYPASS_FLAGS in
+// apps/api/src/core/config/env.schema.ts (agreement enforced by bypass-flags-agreement.spec.ts).
+const PROD_FORBIDDEN_API_BYPASS_FLAGS = [
+  "AUTH_DISABLED",
+  "DEV_SOCIAL_METRICS_MOCK",
+  "USE_MOCK",
+  "DEV_AUTH_ENDPOINT_ENABLED",
 ];
+const PROD_FORBIDDEN_WEB_BYPASS_FLAGS = ["VITE_AUTH_DISABLED", "VITE_DEV_AUTH_BYPASS"];
 if (isProdLike) {
-  for (const [label, value] of mockFlags) {
-    if (value === "true") errors.push(`${label}=true is forbidden with NODE_ENV=${nodeEnv}`);
+  for (const flag of PROD_FORBIDDEN_API_BYPASS_FLAGS) {
+    if (apiEnv[flag] === "true") errors.push(`${flag} (api)=true is forbidden with NODE_ENV=${nodeEnv}`);
   }
-  if (apiEnv.AUTH_DISABLED === "true" || web.VITE_AUTH_DISABLED === "true") {
-    errors.push(`auth bypass (AUTH_DISABLED/VITE_AUTH_DISABLED) is forbidden with NODE_ENV=${nodeEnv}`);
+  for (const flag of PROD_FORBIDDEN_WEB_BYPASS_FLAGS) {
+    if (web[flag] === "true") errors.push(`${flag} (web)=true is forbidden with NODE_ENV=${nodeEnv}`);
   }
-}
-const apiMock = apiEnv.USE_MOCK === "true" || apiEnv.MOCK_MODE === "true";
-const webMock = web.VITE_USE_MOCK === "true" || web.VITE_MOCK_MODE === "true";
-if (apiMock !== webMock) {
-  errors.push(
-    `mock mode mismatch: api=${apiMock} vs web=${webMock} — frontend and backend must run in the same mode`,
-  );
 }
 
 // ── Report ────────────────────────────────────────────────────────────────────
