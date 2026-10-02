@@ -461,6 +461,15 @@
       ]
     },
     {
+      "agent": "archival-strategy-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "assumption-detector",
       "allowedTools": [
         "Read",
@@ -506,6 +515,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "backup-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -599,6 +617,15 @@
       ]
     },
     {
+      "agent": "concurrency-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "config-mapper",
       "allowedTools": [
         "Read",
@@ -656,11 +683,31 @@
       ]
     },
     {
+      "agent": "csv-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "data-architecture-engineer",
       "allowedTools": [
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "data-engineering-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -687,6 +734,35 @@
       ]
     },
     {
+      "agent": "data-integrity-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "data-migration-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "database-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "database-mapper",
       "allowedTools": [
         "Read",
@@ -705,7 +781,25 @@
       ]
     },
     {
+      "agent": "database-security-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "dead-code-detector",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "denormalization-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1016,6 +1110,28 @@
       ]
     },
     {
+      "agent": "import-export-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "indexing-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "infrastructure-architecture-engineer",
       "allowedTools": [
         "Read",
@@ -1057,6 +1173,26 @@
     },
     {
       "agent": "job-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "locking-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "migration-engineer",
       "allowedTools": [
         "Read",
         "Edit",
@@ -1132,6 +1268,24 @@
       ]
     },
     {
+      "agent": "normalization-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "optimistic-locking-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "orphan-detector",
       "allowedTools": [
         "Read",
@@ -1198,6 +1352,28 @@
       ]
     },
     {
+      "agent": "query-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "query-performance-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "queue-architecture-reviewer",
       "allowedTools": [
         "Read",
@@ -1247,6 +1423,15 @@
     },
     {
       "agent": "regression-analyzer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "relational-integrity-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1333,6 +1518,24 @@
       ]
     },
     {
+      "agent": "restore-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "retention-policy-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "retry-orchestrator",
       "allowedTools": [
         "Read",
@@ -1409,6 +1612,17 @@
     },
     {
       "agent": "scheduler-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "schema-engineer",
       "allowedTools": [
         "Read",
         "Edit",
@@ -1572,6 +1786,15 @@
       ]
     },
     {
+      "agent": "transaction-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "ui-ux-engineer",
       "allowedTools": [
         "Read",
@@ -1709,6 +1932,17 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "xlsx-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     }
   ]

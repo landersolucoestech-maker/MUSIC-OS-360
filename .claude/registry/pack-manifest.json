@@ -1170,169 +1170,193 @@
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "database-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "database-reviewer",
+   "file": ".claude/agents/database-engineer.md"
   },
   {
    "name": "schema-engineer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/schema-engineer.md"
   },
   {
    "name": "migration-engineer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/migration-engineer.md"
   },
   {
    "name": "query-engineer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/query-engineer.md"
   },
   {
    "name": "query-performance-engineer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/query-performance-engineer.md"
   },
   {
    "name": "data-integrity-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/data-integrity-reviewer.md"
   },
   {
    "name": "relational-integrity-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/relational-integrity-reviewer.md"
   },
   {
    "name": "concurrency-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/concurrency-reviewer.md"
   },
   {
    "name": "optimistic-locking-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/optimistic-locking-reviewer.md"
   },
   {
    "name": "data-migration-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/data-migration-reviewer.md"
   },
   {
    "name": "database-security-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/database-security-reviewer.md"
   },
   {
    "name": "import-export-engineer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/import-export-engineer.md"
   },
   {
    "name": "csv-engineer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/csv-engineer.md"
   },
   {
    "name": "xlsx-engineer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/xlsx-engineer.md"
   },
   {
    "name": "indexing-engineer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/indexing-engineer.md"
   },
   {
    "name": "transaction-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/transaction-reviewer.md"
   },
   {
    "name": "locking-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/locking-reviewer.md"
   },
   {
    "name": "normalization-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/normalization-reviewer.md"
   },
   {
    "name": "denormalization-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/denormalization-reviewer.md"
   },
   {
    "name": "archival-strategy-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/archival-strategy-reviewer.md"
   },
   {
    "name": "retention-policy-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/retention-policy-reviewer.md"
   },
   {
    "name": "backup-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/backup-reviewer.md"
   },
   {
    "name": "restore-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/restore-reviewer.md"
   },
   {
    "name": "data-engineering-reviewer",
    "type": "agent",
    "batch": 7,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/data-engineering-reviewer.md"
   },
   {
    "name": "security-engineer",

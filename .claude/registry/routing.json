@@ -1354,6 +1354,239 @@
    "capabilities": [
     "frontend.review.browser-compat"
    ]
+  },
+  {
+   "intent": "implement-persistence-change",
+   "domain": "database",
+   "description": "Implement a persistence change",
+   "keywords": [
+    "persistence change",
+    "repository change",
+    "entity usage"
+   ],
+   "capabilities": [
+    "database.implement",
+    "database.review.integrity"
+   ]
+  },
+  {
+   "intent": "change-schema",
+   "domain": "database",
+   "description": "Change schema",
+   "keywords": [
+    "change schema",
+    "add column",
+    "add table",
+    "add constraint"
+   ],
+   "capabilities": [
+    "database.schema",
+    "database.review.relational",
+    "database.review.normalization"
+   ]
+  },
+  {
+   "intent": "write-migration",
+   "domain": "database",
+   "description": "Write a migration",
+   "keywords": [
+    "write migration",
+    "new migration",
+    "backfill"
+   ],
+   "capabilities": [
+    "database.migration",
+    "database.review.migration"
+   ]
+  },
+  {
+   "intent": "fix-query",
+   "domain": "database",
+   "description": "Write or fix a query",
+   "keywords": [
+    "fix query",
+    "unsafe query",
+    "wrong query result"
+   ],
+   "capabilities": [
+    "database.query"
+   ]
+  },
+  {
+   "intent": "optimize-query",
+   "domain": "database",
+   "description": "Improve query performance with plans",
+   "keywords": [
+    "slow query",
+    "query plan",
+    "optimize query"
+   ],
+   "capabilities": [
+    "database.query-performance"
+   ]
+  },
+  {
+   "intent": "review-data-integrity",
+   "domain": "database",
+   "description": "Review data integrity",
+   "keywords": [
+    "data integrity",
+    "orphan rows",
+    "duplicate source of truth"
+   ],
+   "capabilities": [
+    "database.review.integrity"
+   ]
+  },
+  {
+   "intent": "review-concurrency",
+   "domain": "database",
+   "description": "Review concurrency, transactions and locking",
+   "keywords": [
+    "race condition",
+    "lost update",
+    "transaction boundary",
+    "deadlock"
+   ],
+   "capabilities": [
+    "database.review.concurrency",
+    "database.review.transaction",
+    "database.review.locking"
+   ]
+  },
+  {
+   "intent": "review-optimistic-locking",
+   "domain": "database",
+   "description": "Review optimistic locking",
+   "keywords": [
+    "optimistic locking",
+    "edit conflict",
+    "version column"
+   ],
+   "capabilities": [
+    "database.review.optimistic-locking"
+   ]
+  },
+  {
+   "intent": "review-database-security",
+   "domain": "database",
+   "description": "Review database security",
+   "keywords": [
+    "database security",
+    "rls policy",
+    "tenant scoping review"
+   ],
+   "capabilities": [
+    "database.review.security"
+   ]
+  },
+  {
+   "intent": "implement-import-export",
+   "domain": "database",
+   "description": "Implement import or export",
+   "keywords": [
+    "implement import",
+    "implement export",
+    "bulk import"
+   ],
+   "capabilities": [
+    "database.import-export",
+    "database.csv",
+    "database.xlsx"
+   ]
+  },
+  {
+   "intent": "implement-csv",
+   "domain": "database",
+   "description": "Implement CSV handling",
+   "keywords": [
+    "csv parsing",
+    "csv export"
+   ],
+   "capabilities": [
+    "database.csv"
+   ]
+  },
+  {
+   "intent": "implement-xlsx",
+   "domain": "database",
+   "description": "Implement XLSX handling",
+   "keywords": [
+    "xlsx parsing",
+    "xlsx export",
+    "spreadsheet import"
+   ],
+   "capabilities": [
+    "database.xlsx"
+   ]
+  },
+  {
+   "intent": "design-index",
+   "domain": "database",
+   "description": "Design an index",
+   "keywords": [
+    "add index",
+    "missing index",
+    "unused index"
+   ],
+   "capabilities": [
+    "database.indexing"
+   ]
+  },
+  {
+   "intent": "review-normalization",
+   "domain": "database",
+   "description": "Review normalization and denormalization",
+   "keywords": [
+    "normalization review",
+    "denormalized column",
+    "mirror column"
+   ],
+   "capabilities": [
+    "database.review.normalization",
+    "database.review.denormalization"
+   ]
+  },
+  {
+   "intent": "review-archival-retention",
+   "domain": "database",
+   "description": "Review archival and retention",
+   "keywords": [
+    "archival strategy",
+    "retention policy",
+    "purge data"
+   ],
+   "capabilities": [
+    "database.review.archival",
+    "database.review.retention"
+   ]
+  },
+  {
+   "intent": "review-backup-restore",
+   "domain": "database",
+   "description": "Review backup and restore",
+   "keywords": [
+    "backup review",
+    "restore review",
+    "restore evidence"
+   ],
+   "capabilities": [
+    "database.review.backup",
+    "database.review.restore"
+   ]
+  },
+  {
+   "intent": "review-data-pipeline",
+   "domain": "database",
+   "description": "Review a data pipeline",
+   "keywords": [
+    "data pipeline",
+    "data lineage",
+    "rerun idempotency"
+   ],
+   "capabilities": [
+    "database.review.data-engineering"
+   ]
   }
  ],
  "highImpactSignals": [

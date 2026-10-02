@@ -615,6 +615,310 @@
    "approval": "none"
   },
   {
+   "id": "database.csv",
+   "domain": "database",
+   "description": "Implement CSV parsing and generation with encoding, delimiter, quoting and formula-injection safety",
+   "validation": [
+    "csv tests with hostile input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.implement",
+   "domain": "database",
+   "description": "Implement database access changes: entities, repositories and transactions with tenant scoping",
+   "validation": [
+    "api typecheck",
+    "integration tests on a disposable database"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.import-export",
+   "domain": "database",
+   "description": "Implement import and export pipelines with validation, preview, idempotency and rollback",
+   "validation": [
+    "import and export tests with invalid input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.indexing",
+   "domain": "database",
+   "description": "Design indexes from real query patterns with write cost and tenant prefix considered",
+   "validation": [
+    "query plan comparison",
+    "migration test"
+   ],
+   "evidence": [
+    "plan output",
+    "change-set record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.migration",
+   "domain": "database",
+   "description": "Write reversible, guarded migrations with backfill strategy and old/new application coexistence",
+   "validation": [
+    "migration up, down and up on a disposable database",
+    "migration safety check"
+   ],
+   "evidence": [
+    "migration test output",
+    "change-set record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.query",
+   "domain": "database",
+   "description": "Write and fix queries: parameterization, tenant scoping, pagination and projection",
+   "validation": [
+    "query audit",
+    "integration tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.query-performance",
+   "domain": "database",
+   "description": "Improve query performance with measured plans before and after",
+   "validation": [
+    "query plan comparison on realistic data"
+   ],
+   "evidence": [
+    "plan output before and after",
+    "change-set record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.archival",
+   "domain": "database",
+   "description": "Review archival strategy: what is archived, where, how it is restored and how it stays queryable",
+   "validation": [
+    "retention and archival audit"
+   ],
+   "evidence": [
+    "archival strategy verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.backup",
+   "domain": "database",
+   "description": "Review backup coverage, frequency, scope and the evidence that backups are usable",
+   "validation": [
+    "backup configuration audit"
+   ],
+   "evidence": [
+    "backup verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.concurrency",
+   "domain": "database",
+   "description": "Review concurrent write behavior: races, lost updates, duplicate effects and idempotency",
+   "validation": [
+    "concurrency audit"
+   ],
+   "evidence": [
+    "concurrency verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.data-engineering",
+   "domain": "database",
+   "description": "Review data pipelines: ingestion, transformation, reconciliation, idempotent reruns and lineage",
+   "validation": [
+    "pipeline audit"
+   ],
+   "evidence": [
+    "data engineering verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.denormalization",
+   "domain": "database",
+   "description": "Review denormalized and cached columns: documented owner, sync contract and drift risk",
+   "validation": [
+    "schema audit",
+    "drift check"
+   ],
+   "evidence": [
+    "denormalization verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.integrity",
+   "domain": "database",
+   "description": "Review data integrity: constraints, invariants, orphan risk and duplicate sources of truth",
+   "validation": [
+    "data integrity audit"
+   ],
+   "evidence": [
+    "data integrity verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.locking",
+   "domain": "database",
+   "description": "Review lock behavior: row, table and advisory locks, ordering, deadlock and long-held lock risk",
+   "validation": [
+    "locking audit"
+   ],
+   "evidence": [
+    "locking verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.migration",
+   "domain": "database",
+   "description": "Review a migration for lock time, backfill safety, rollback path and coexistence of old and new code",
+   "validation": [
+    "migration audit",
+    "migration safety check"
+   ],
+   "evidence": [
+    "data migration verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.normalization",
+   "domain": "database",
+   "description": "Review normalization: repeated groups, update anomalies and one source of truth per concept",
+   "validation": [
+    "schema audit"
+   ],
+   "evidence": [
+    "normalization verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.optimistic-locking",
+   "domain": "database",
+   "description": "Review optimistic locking: version columns, conflict detection and error mapping",
+   "validation": [
+    "optimistic lock audit"
+   ],
+   "evidence": [
+    "optimistic locking verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.relational",
+   "domain": "database",
+   "description": "Review relational integrity: foreign keys, cascade behavior, nullability and cardinality",
+   "validation": [
+    "relational audit against the catalog"
+   ],
+   "evidence": [
+    "relational integrity verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.restore",
+   "domain": "database",
+   "description": "Review restore procedure with evidence of an actual restore into a disposable target, since a backup alone is not restore evidence",
+   "validation": [
+    "restore evidence audit"
+   ],
+   "evidence": [
+    "restore verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.retention",
+   "domain": "database",
+   "description": "Review retention policy: periods, legal basis in the project, purge safety and side-table lifecycle",
+   "validation": [
+    "data retention audit"
+   ],
+   "evidence": [
+    "retention policy verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.security",
+   "domain": "database",
+   "description": "Review database security: RLS policies, tenant scoping, privileged roles and raw SQL injection risk",
+   "validation": [
+    "rls and tenant isolation audit"
+   ],
+   "evidence": [
+    "database security verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.review.transaction",
+   "domain": "database",
+   "description": "Review transaction boundaries: atomicity, isolation, partial failure and side effects inside transactions",
+   "validation": [
+    "transaction audit"
+   ],
+   "evidence": [
+    "transaction verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.schema",
+   "domain": "database",
+   "description": "Design and change schema: tables, columns, constraints and defaults with compatibility and rollback",
+   "validation": [
+    "entity versus catalog drift check",
+    "migration up and down on a disposable database"
+   ],
+   "evidence": [
+    "change-set record",
+    "migration test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "database.xlsx",
+   "domain": "database",
+   "description": "Implement XLSX parsing and generation with sheet validation, type handling and formula-injection safety",
+   "validation": [
+    "xlsx tests with hostile input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "frontend.accessibility",
    "domain": "frontend",
    "description": "Implement keyboard, focus, semantics, labels and contrast fixes",

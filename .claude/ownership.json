@@ -276,6 +276,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "archival-strategy-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "assumption-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -306,6 +311,11 @@
         "apps/api/src/core/automation/**"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/background-processing-engineer.md"
+    },
+    {
+      "agent": "backup-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "blast-radius-analyzer",
@@ -361,6 +371,11 @@
       "note": "pack writer (backend); scope declared in .claude/agents/concurrency-engineer.md"
     },
     {
+      "agent": "concurrency-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "config-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -394,11 +409,24 @@
       "note": "pack writer (backend); scope declared in .claude/agents/controller-engineer.md"
     },
     {
+      "agent": "csv-engineer",
+      "writes": [
+        "apps/api/src/shared/csv/**",
+        "apps/api/src/modules/**/csv/**"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/csv-engineer.md"
+    },
+    {
       "agent": "data-architecture-engineer",
       "writes": [
         "docs/engineering/decisions/data/**"
       ],
       "note": "pack writer (architecture); scope declared in .claude/agents/data-architecture-engineer.md"
+    },
+    {
+      "agent": "data-engineering-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "data-fetching-engineer",
@@ -416,6 +444,25 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "data-integrity-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "data-migration-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "database-engineer",
+      "writes": [
+        "apps/api/src/modules/**/*.service.ts",
+        "apps/api/src/modules/**/*.repository.ts",
+        "apps/api/src/database/**/*.spec.ts"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/database-engineer.md"
+    },
+    {
       "agent": "database-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -426,7 +473,17 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "database-security-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "dead-code-detector",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "denormalization-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -613,6 +670,22 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "import-export-engineer",
+      "writes": [
+        "apps/api/src/modules/**/import/**",
+        "apps/api/src/modules/**/export/**"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/import-export-engineer.md"
+    },
+    {
+      "agent": "indexing-engineer",
+      "writes": [
+        "apps/api/src/database/entities.ts",
+        "apps/api/src/database/indexes/**"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/indexing-engineer.md"
+    },
+    {
       "agent": "infrastructure-architecture-engineer",
       "writes": [
         "docs/engineering/decisions/infrastructure/**"
@@ -643,6 +716,20 @@
         "apps/api/src/queues/jobs/**"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/job-engineer.md"
+    },
+    {
+      "agent": "locking-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "migration-engineer",
+      "writes": [
+        "apps/api/src/database/migrations/**",
+        "apps/api/src/database/migrations/index.ts",
+        "apps/api/src/database/**/*.migration.spec.ts"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/migration-engineer.md"
     },
     {
       "agent": "migration-planner",
@@ -676,6 +763,16 @@
     },
     {
       "agent": "naming-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "normalization-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "optimistic-locking-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -717,6 +814,22 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "query-engineer",
+      "writes": [
+        "apps/api/src/modules/**/*.repository.ts",
+        "apps/api/src/modules/**/*.query.ts"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/query-engineer.md"
+    },
+    {
+      "agent": "query-performance-engineer",
+      "writes": [
+        "apps/api/src/modules/**/*.repository.ts",
+        "apps/api/src/modules/**/*.query.ts"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/query-performance-engineer.md"
+    },
+    {
       "agent": "queue-architecture-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -747,6 +860,11 @@
     },
     {
       "agent": "regression-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "relational-integrity-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -798,6 +916,16 @@
       "note": "pack writer (frontend); scope declared in .claude/agents/responsive-engineer.md"
     },
     {
+      "agent": "restore-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "retention-policy-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "retry-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -846,6 +974,14 @@
         "apps/api/src/modules/**/schedulers/**"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/scheduler-engineer.md"
+    },
+    {
+      "agent": "schema-engineer",
+      "writes": [
+        "apps/api/src/database/entities.ts",
+        "apps/api/src/database/entities/**"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/schema-engineer.md"
     },
     {
       "agent": "scope-planner",
@@ -939,6 +1075,11 @@
       "note": "pack writer (backend); scope declared in .claude/agents/transaction-engineer.md"
     },
     {
+      "agent": "transaction-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "ui-ux-engineer",
       "writes": [
         "apps/web/src/shared/components/layout/**",
@@ -1022,6 +1163,14 @@
       "agent": "workflow-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "xlsx-engineer",
+      "writes": [
+        "apps/api/src/shared/xlsx/**",
+        "apps/api/src/modules/**/xlsx/**"
+      ],
+      "note": "pack writer (database); scope declared in .claude/agents/xlsx-engineer.md"
     }
   ],
   "conflictRule": "Two agents claiming write authority over an overlapping path for the same batch is a CONFLICT (.claude/contracts/conflict-record.schema.json) resolved by mission-orchestrator before either proceeds, never by last-write-wins."

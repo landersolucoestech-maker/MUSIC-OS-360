@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 144,
+  "agents": 168,
   "skills": 0,
-  "capabilities": 121,
+  "capabilities": 145,
   "workflows": 6
  },
  "agents": [
@@ -405,6 +405,30 @@
    "approval": "none"
   },
   {
+   "name": "archival-strategy-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/archival-strategy-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.archival"
+   ],
+   "skills": [
+    "data-retention-audit",
+    "database-audit",
+    "rollback-analysis"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "assumption-detector",
    "kind": "detector",
    "domain": "requirements",
@@ -540,6 +564,30 @@
     "ai-automation-audit",
     "create-integration-tests",
     "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "backup-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/backup-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.backup"
+   ],
+   "skills": [
+    "database-audit",
+    "rollback-analysis",
+    "data-retention-audit"
    ],
    "approval": "none"
   },
@@ -778,6 +826,31 @@
    "approval": "none"
   },
   {
+   "name": "concurrency-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/concurrency-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.concurrency"
+   ],
+   "skills": [
+    "concurrency-audit",
+    "transaction-audit",
+    "queue-audit",
+    "data-integrity-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "config-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -930,6 +1003,36 @@
    "approval": "none"
   },
   {
+   "name": "csv-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/csv-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/shared/csv/**",
+    "apps/api/src/modules/**/csv/**"
+   ],
+   "capabilities": [
+    "database.csv"
+   ],
+   "skills": [
+    "import-csv",
+    "generate-csv-export",
+    "validate-import",
+    "normalize-import-data"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "data-architecture-engineer",
    "kind": "engineer",
    "domain": "architecture",
@@ -955,6 +1058,31 @@
     "canonical-naming",
     "doc-writer",
     "database-schema-drift"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "data-engineering-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/data-engineering-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.data-engineering"
+   ],
+   "skills": [
+    "data-flow-trace",
+    "detect-data-inconsistency",
+    "data-integrity-audit",
+    "queue-audit"
    ],
    "approval": "none"
   },
@@ -1015,6 +1143,89 @@
    "approval": "none"
   },
   {
+   "name": "data-integrity-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/data-integrity-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.integrity"
+   ],
+   "skills": [
+    "data-integrity-audit",
+    "database-audit",
+    "detect-data-inconsistency",
+    "database-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "data-migration-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/data-migration-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.migration"
+   ],
+   "skills": [
+    "migration-audit",
+    "migration-safety-check",
+    "destructive-change-check",
+    "rollback-analysis"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "database-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/database-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/*.service.ts",
+    "apps/api/src/modules/**/*.repository.ts",
+    "apps/api/src/database/**/*.spec.ts"
+   ],
+   "capabilities": [
+    "database.implement"
+   ],
+   "skills": [
+    "implement-feature",
+    "implement-transaction",
+    "database-map",
+    "tenant-isolation-audit",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "database-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -1063,6 +1274,31 @@
    "approval": "none"
   },
   {
+   "name": "database-security-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/database-security-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.security"
+   ],
+   "skills": [
+    "tenant-isolation-audit",
+    "security-boundary-audit",
+    "database-audit",
+    "secret-scan"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "dead-code-detector",
    "kind": "detector",
    "domain": "repository-intelligence",
@@ -1083,6 +1319,31 @@
     "dead-code-analysis",
     "orphan-analysis",
     "dependency-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "denormalization-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/denormalization-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.denormalization"
+   ],
+   "skills": [
+    "database-audit",
+    "data-integrity-audit",
+    "detect-data-inconsistency",
+    "naming-analysis"
    ],
    "approval": "none"
   },
@@ -1904,6 +2165,68 @@
    "approval": "none"
   },
   {
+   "name": "import-export-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/import-export-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/import/**",
+    "apps/api/src/modules/**/export/**"
+   ],
+   "capabilities": [
+    "database.import-export"
+   ],
+   "skills": [
+    "implement-import",
+    "implement-export",
+    "validate-import",
+    "detect-import-duplicates",
+    "preview-import-changes",
+    "rollback-import"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "indexing-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/indexing-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/database/entities.ts",
+    "apps/api/src/database/indexes/**"
+   ],
+   "capabilities": [
+    "database.indexing"
+   ],
+   "skills": [
+    "database-audit",
+    "query-audit",
+    "create-performance-tests",
+    "run-performance-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "infrastructure-architecture-engineer",
    "kind": "engineer",
    "domain": "architecture",
@@ -2036,6 +2359,62 @@
     "background-job-audit",
     "implement-background-job",
     "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "locking-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/locking-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.locking"
+   ],
+   "skills": [
+    "concurrency-audit",
+    "transaction-audit",
+    "migration-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "migration-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/migration-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/database/migrations/**",
+    "apps/api/src/database/migrations/index.ts",
+    "apps/api/src/database/**/*.migration.spec.ts"
+   ],
+   "capabilities": [
+    "database.migration"
+   ],
+   "skills": [
+    "create-migration",
+    "create-migration-tests",
+    "migration-safety-check",
+    "destructive-change-check",
+    "rollback-analysis"
    ],
    "approval": "none"
   },
@@ -2220,6 +2599,55 @@
    "approval": "none"
   },
   {
+   "name": "normalization-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/normalization-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.normalization"
+   ],
+   "skills": [
+    "database-audit",
+    "data-integrity-audit",
+    "naming-analysis",
+    "database-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "optimistic-locking-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/optimistic-locking-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.optimistic-locking"
+   ],
+   "skills": [
+    "concurrency-audit",
+    "data-integrity-audit",
+    "database-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "orphan-detector",
    "kind": "detector",
    "domain": "repository-intelligence",
@@ -2395,6 +2823,67 @@
    "approval": "none"
   },
   {
+   "name": "query-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/query-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/*.repository.ts",
+    "apps/api/src/modules/**/*.query.ts"
+   ],
+   "capabilities": [
+    "database.query"
+   ],
+   "skills": [
+    "query-audit",
+    "implement-feature",
+    "tenant-isolation-audit",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "query-performance-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/query-performance-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/*.repository.ts",
+    "apps/api/src/modules/**/*.query.ts"
+   ],
+   "capabilities": [
+    "database.query-performance"
+   ],
+   "skills": [
+    "query-audit",
+    "database-audit",
+    "run-performance-tests",
+    "create-performance-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "queue-architecture-reviewer",
    "kind": "reviewer",
    "domain": "architecture",
@@ -2546,6 +3035,30 @@
     "blast-radius-analysis",
     "run-unit-tests",
     "create-regression-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "relational-integrity-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/relational-integrity-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.relational"
+   ],
+   "skills": [
+    "database-audit",
+    "data-integrity-audit",
+    "database-map"
    ],
    "approval": "none"
   },
@@ -2760,6 +3273,54 @@
     "implement-responsive-ui",
     "layout-audit",
     "browser-runtime-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "restore-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/restore-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.restore"
+   ],
+   "skills": [
+    "rollback-analysis",
+    "database-audit",
+    "migration-safety-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "retention-policy-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/retention-policy-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.retention"
+   ],
+   "skills": [
+    "data-retention-audit",
+    "database-audit",
+    "detect-data-inconsistency"
    ],
    "approval": "none"
   },
@@ -2992,6 +3553,36 @@
     "scheduler-audit",
     "create-job",
     "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "schema-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/schema-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/database/entities.ts",
+    "apps/api/src/database/entities/**"
+   ],
+   "capabilities": [
+    "database.schema"
+   ],
+   "skills": [
+    "modify-schema",
+    "database-map",
+    "database-audit",
+    "data-integrity-audit"
    ],
    "approval": "none"
   },
@@ -3404,6 +3995,30 @@
    "approval": "none"
   },
   {
+   "name": "transaction-reviewer",
+   "kind": "reviewer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/transaction-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "database.review.transaction"
+   ],
+   "skills": [
+    "transaction-audit",
+    "concurrency-audit",
+    "data-integrity-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "ui-ux-engineer",
    "kind": "engineer",
    "domain": "frontend",
@@ -3779,6 +4394,36 @@
     "control-plane",
     "quality-gate",
     "resume"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "xlsx-engineer",
+   "kind": "engineer",
+   "domain": "database",
+   "batch": 7,
+   "owner": "database owner",
+   "path": ".claude/agents/xlsx-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/shared/xlsx/**",
+    "apps/api/src/modules/**/xlsx/**"
+   ],
+   "capabilities": [
+    "database.xlsx"
+   ],
+   "skills": [
+    "import-xlsx",
+    "generate-xlsx-export",
+    "validate-import",
+    "normalize-import-data"
    ],
    "approval": "none"
   }
@@ -4836,6 +5481,524 @@
     "dependency-cycle-analysis",
     "dependency-trace",
     "plan"
+   ]
+  },
+  {
+   "id": "database.csv",
+   "domain": "database",
+   "description": "Implement CSV parsing and generation with encoding, delimiter, quoting and formula-injection safety",
+   "validation": [
+    "csv tests with hostile input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "csv-engineer"
+   ],
+   "skills": [
+    "generate-csv-export",
+    "import-csv",
+    "normalize-import-data",
+    "validate-import"
+   ]
+  },
+  {
+   "id": "database.implement",
+   "domain": "database",
+   "description": "Implement database access changes: entities, repositories and transactions with tenant scoping",
+   "validation": [
+    "api typecheck",
+    "integration tests on a disposable database"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "database-engineer"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "database-map",
+    "implement-feature",
+    "implement-transaction",
+    "run-unit-tests",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "database.import-export",
+   "domain": "database",
+   "description": "Implement import and export pipelines with validation, preview, idempotency and rollback",
+   "validation": [
+    "import and export tests with invalid input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "import-export-engineer"
+   ],
+   "skills": [
+    "detect-import-duplicates",
+    "implement-export",
+    "implement-import",
+    "preview-import-changes",
+    "rollback-import",
+    "validate-import"
+   ]
+  },
+  {
+   "id": "database.indexing",
+   "domain": "database",
+   "description": "Design indexes from real query patterns with write cost and tenant prefix considered",
+   "validation": [
+    "query plan comparison",
+    "migration test"
+   ],
+   "evidence": [
+    "plan output",
+    "change-set record"
+   ],
+   "approval": "none",
+   "executors": [
+    "indexing-engineer"
+   ],
+   "skills": [
+    "create-performance-tests",
+    "database-audit",
+    "query-audit",
+    "run-performance-tests"
+   ]
+  },
+  {
+   "id": "database.migration",
+   "domain": "database",
+   "description": "Write reversible, guarded migrations with backfill strategy and old/new application coexistence",
+   "validation": [
+    "migration up, down and up on a disposable database",
+    "migration safety check"
+   ],
+   "evidence": [
+    "migration test output",
+    "change-set record"
+   ],
+   "approval": "none",
+   "executors": [
+    "migration-engineer"
+   ],
+   "skills": [
+    "create-migration",
+    "create-migration-tests",
+    "destructive-change-check",
+    "migration-safety-check",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "database.query",
+   "domain": "database",
+   "description": "Write and fix queries: parameterization, tenant scoping, pagination and projection",
+   "validation": [
+    "query audit",
+    "integration tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "query-engineer"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "implement-feature",
+    "query-audit",
+    "run-unit-tests",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "database.query-performance",
+   "domain": "database",
+   "description": "Improve query performance with measured plans before and after",
+   "validation": [
+    "query plan comparison on realistic data"
+   ],
+   "evidence": [
+    "plan output before and after",
+    "change-set record"
+   ],
+   "approval": "none",
+   "executors": [
+    "query-performance-engineer"
+   ],
+   "skills": [
+    "create-performance-tests",
+    "database-audit",
+    "query-audit",
+    "run-performance-tests"
+   ]
+  },
+  {
+   "id": "database.review.archival",
+   "domain": "database",
+   "description": "Review archival strategy: what is archived, where, how it is restored and how it stays queryable",
+   "validation": [
+    "retention and archival audit"
+   ],
+   "evidence": [
+    "archival strategy verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "archival-strategy-reviewer"
+   ],
+   "skills": [
+    "data-retention-audit",
+    "database-audit",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "database.review.backup",
+   "domain": "database",
+   "description": "Review backup coverage, frequency, scope and the evidence that backups are usable",
+   "validation": [
+    "backup configuration audit"
+   ],
+   "evidence": [
+    "backup verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "backup-reviewer"
+   ],
+   "skills": [
+    "data-retention-audit",
+    "database-audit",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "database.review.concurrency",
+   "domain": "database",
+   "description": "Review concurrent write behavior: races, lost updates, duplicate effects and idempotency",
+   "validation": [
+    "concurrency audit"
+   ],
+   "evidence": [
+    "concurrency verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "concurrency-reviewer"
+   ],
+   "skills": [
+    "concurrency-audit",
+    "data-integrity-audit",
+    "queue-audit",
+    "transaction-audit"
+   ]
+  },
+  {
+   "id": "database.review.data-engineering",
+   "domain": "database",
+   "description": "Review data pipelines: ingestion, transformation, reconciliation, idempotent reruns and lineage",
+   "validation": [
+    "pipeline audit"
+   ],
+   "evidence": [
+    "data engineering verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "data-engineering-reviewer"
+   ],
+   "skills": [
+    "data-flow-trace",
+    "data-integrity-audit",
+    "detect-data-inconsistency",
+    "queue-audit"
+   ]
+  },
+  {
+   "id": "database.review.denormalization",
+   "domain": "database",
+   "description": "Review denormalized and cached columns: documented owner, sync contract and drift risk",
+   "validation": [
+    "schema audit",
+    "drift check"
+   ],
+   "evidence": [
+    "denormalization verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "denormalization-reviewer"
+   ],
+   "skills": [
+    "data-integrity-audit",
+    "database-audit",
+    "detect-data-inconsistency",
+    "naming-analysis"
+   ]
+  },
+  {
+   "id": "database.review.integrity",
+   "domain": "database",
+   "description": "Review data integrity: constraints, invariants, orphan risk and duplicate sources of truth",
+   "validation": [
+    "data integrity audit"
+   ],
+   "evidence": [
+    "data integrity verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "data-integrity-reviewer"
+   ],
+   "skills": [
+    "data-integrity-audit",
+    "database-audit",
+    "database-map",
+    "detect-data-inconsistency"
+   ]
+  },
+  {
+   "id": "database.review.locking",
+   "domain": "database",
+   "description": "Review lock behavior: row, table and advisory locks, ordering, deadlock and long-held lock risk",
+   "validation": [
+    "locking audit"
+   ],
+   "evidence": [
+    "locking verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "locking-reviewer"
+   ],
+   "skills": [
+    "concurrency-audit",
+    "migration-audit",
+    "transaction-audit"
+   ]
+  },
+  {
+   "id": "database.review.migration",
+   "domain": "database",
+   "description": "Review a migration for lock time, backfill safety, rollback path and coexistence of old and new code",
+   "validation": [
+    "migration audit",
+    "migration safety check"
+   ],
+   "evidence": [
+    "data migration verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "data-migration-reviewer"
+   ],
+   "skills": [
+    "destructive-change-check",
+    "migration-audit",
+    "migration-safety-check",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "database.review.normalization",
+   "domain": "database",
+   "description": "Review normalization: repeated groups, update anomalies and one source of truth per concept",
+   "validation": [
+    "schema audit"
+   ],
+   "evidence": [
+    "normalization verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "normalization-reviewer"
+   ],
+   "skills": [
+    "data-integrity-audit",
+    "database-audit",
+    "database-map",
+    "naming-analysis"
+   ]
+  },
+  {
+   "id": "database.review.optimistic-locking",
+   "domain": "database",
+   "description": "Review optimistic locking: version columns, conflict detection and error mapping",
+   "validation": [
+    "optimistic lock audit"
+   ],
+   "evidence": [
+    "optimistic locking verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "optimistic-locking-reviewer"
+   ],
+   "skills": [
+    "concurrency-audit",
+    "data-integrity-audit",
+    "database-audit"
+   ]
+  },
+  {
+   "id": "database.review.relational",
+   "domain": "database",
+   "description": "Review relational integrity: foreign keys, cascade behavior, nullability and cardinality",
+   "validation": [
+    "relational audit against the catalog"
+   ],
+   "evidence": [
+    "relational integrity verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "relational-integrity-reviewer"
+   ],
+   "skills": [
+    "data-integrity-audit",
+    "database-audit",
+    "database-map"
+   ]
+  },
+  {
+   "id": "database.review.restore",
+   "domain": "database",
+   "description": "Review restore procedure with evidence of an actual restore into a disposable target, since a backup alone is not restore evidence",
+   "validation": [
+    "restore evidence audit"
+   ],
+   "evidence": [
+    "restore verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "restore-reviewer"
+   ],
+   "skills": [
+    "database-audit",
+    "migration-safety-check",
+    "rollback-analysis"
+   ]
+  },
+  {
+   "id": "database.review.retention",
+   "domain": "database",
+   "description": "Review retention policy: periods, legal basis in the project, purge safety and side-table lifecycle",
+   "validation": [
+    "data retention audit"
+   ],
+   "evidence": [
+    "retention policy verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "retention-policy-reviewer"
+   ],
+   "skills": [
+    "data-retention-audit",
+    "database-audit",
+    "detect-data-inconsistency"
+   ]
+  },
+  {
+   "id": "database.review.security",
+   "domain": "database",
+   "description": "Review database security: RLS policies, tenant scoping, privileged roles and raw SQL injection risk",
+   "validation": [
+    "rls and tenant isolation audit"
+   ],
+   "evidence": [
+    "database security verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "database-security-reviewer"
+   ],
+   "skills": [
+    "database-audit",
+    "secret-scan",
+    "security-boundary-audit",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "database.review.transaction",
+   "domain": "database",
+   "description": "Review transaction boundaries: atomicity, isolation, partial failure and side effects inside transactions",
+   "validation": [
+    "transaction audit"
+   ],
+   "evidence": [
+    "transaction verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "transaction-reviewer"
+   ],
+   "skills": [
+    "concurrency-audit",
+    "data-integrity-audit",
+    "transaction-audit"
+   ]
+  },
+  {
+   "id": "database.schema",
+   "domain": "database",
+   "description": "Design and change schema: tables, columns, constraints and defaults with compatibility and rollback",
+   "validation": [
+    "entity versus catalog drift check",
+    "migration up and down on a disposable database"
+   ],
+   "evidence": [
+    "change-set record",
+    "migration test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "schema-engineer"
+   ],
+   "skills": [
+    "data-integrity-audit",
+    "database-audit",
+    "database-map",
+    "modify-schema"
+   ]
+  },
+  {
+   "id": "database.xlsx",
+   "domain": "database",
+   "description": "Implement XLSX parsing and generation with sheet validation, type handling and formula-injection safety",
+   "validation": [
+    "xlsx tests with hostile input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "xlsx-engineer"
+   ],
+   "skills": [
+    "generate-xlsx-export",
+    "import-xlsx",
+    "normalize-import-data",
+    "validate-import"
    ]
   },
   {
