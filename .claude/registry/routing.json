@@ -822,6 +822,286 @@
    "capabilities": [
     "arch.design.events"
    ]
+  },
+  {
+   "intent": "implement-backend-feature",
+   "domain": "backend",
+   "description": "Implement a backend feature in a module",
+   "keywords": [
+    "backend feature",
+    "implement backend",
+    "new endpoint feature",
+    "implement module"
+   ],
+   "capabilities": [
+    "backend.implement",
+    "api.review"
+   ]
+  },
+  {
+   "intent": "change-api-plumbing",
+   "domain": "backend",
+   "description": "Change shared API conventions",
+   "keywords": [
+    "api convention",
+    "interceptor",
+    "pagination convention",
+    "response envelope"
+   ],
+   "capabilities": [
+    "api.engineer",
+    "api.review"
+   ]
+  },
+  {
+   "intent": "review-api-change",
+   "domain": "backend",
+   "description": "Review an API change",
+   "keywords": [
+    "review api",
+    "api change review",
+    "review endpoint"
+   ],
+   "capabilities": [
+    "api.review"
+   ]
+  },
+  {
+   "intent": "implement-service-rule",
+   "domain": "backend",
+   "description": "Implement a service layer business rule",
+   "keywords": [
+    "service layer",
+    "business rule",
+    "implement rule"
+   ],
+   "capabilities": [
+    "backend.service-layer",
+    "backend.service-layer.review"
+   ]
+  },
+  {
+   "intent": "implement-repository-query",
+   "domain": "backend",
+   "description": "Implement repository queries",
+   "keywords": [
+    "repository query",
+    "implement repository",
+    "new query"
+   ],
+   "capabilities": [
+    "backend.repository",
+    "backend.repository.review"
+   ]
+  },
+  {
+   "intent": "implement-use-case",
+   "domain": "backend",
+   "description": "Implement a use case",
+   "keywords": [
+    "use case",
+    "implement use case"
+   ],
+   "capabilities": [
+    "backend.use-case"
+   ]
+  },
+  {
+   "intent": "implement-controller",
+   "domain": "backend",
+   "description": "Implement controller routes",
+   "keywords": [
+    "controller route",
+    "implement controller",
+    "add route"
+   ],
+   "capabilities": [
+    "backend.controller",
+    "api.review"
+   ]
+  },
+  {
+   "intent": "implement-dto",
+   "domain": "backend",
+   "description": "Implement request and response DTOs",
+   "keywords": [
+    "dto",
+    "payload shape",
+    "request dto",
+    "response dto"
+   ],
+   "capabilities": [
+    "backend.dto"
+   ]
+  },
+  {
+   "intent": "implement-validation",
+   "domain": "backend",
+   "description": "Implement input validation",
+   "keywords": [
+    "input validation",
+    "validator",
+    "validation pipe"
+   ],
+   "capabilities": [
+    "backend.validation"
+   ]
+  },
+  {
+   "intent": "implement-event-handler",
+   "domain": "backend",
+   "description": "Implement a domain event and handler",
+   "keywords": [
+    "domain event",
+    "event handler",
+    "implement event"
+   ],
+   "capabilities": [
+    "backend.event"
+   ]
+  },
+  {
+   "intent": "implement-queue",
+   "domain": "backend",
+   "description": "Implement or configure a queue",
+   "keywords": [
+    "implement queue",
+    "queue configuration",
+    "bullmq queue"
+   ],
+   "capabilities": [
+    "backend.queue"
+   ]
+  },
+  {
+   "intent": "implement-worker",
+   "domain": "backend",
+   "description": "Implement a queue processor",
+   "keywords": [
+    "implement worker",
+    "queue processor",
+    "processor"
+   ],
+   "capabilities": [
+    "backend.worker"
+   ]
+  },
+  {
+   "intent": "implement-background-job",
+   "domain": "backend",
+   "description": "Implement a background job definition",
+   "keywords": [
+    "background job",
+    "job definition",
+    "implement job"
+   ],
+   "capabilities": [
+    "backend.job"
+   ]
+  },
+  {
+   "intent": "implement-scheduler",
+   "domain": "backend",
+   "description": "Implement a scheduled task",
+   "keywords": [
+    "scheduled task",
+    "implement scheduler",
+    "cron task"
+   ],
+   "capabilities": [
+    "backend.scheduler"
+   ]
+  },
+  {
+   "intent": "implement-webhook-endpoint",
+   "domain": "backend",
+   "description": "Implement an inbound webhook endpoint",
+   "keywords": [
+    "webhook endpoint",
+    "inbound webhook",
+    "implement webhook"
+   ],
+   "capabilities": [
+    "backend.webhook"
+   ]
+  },
+  {
+   "intent": "implement-cache",
+   "domain": "backend",
+   "description": "Implement a cache",
+   "keywords": [
+    "implement cache",
+    "add cache",
+    "cache key"
+   ],
+   "capabilities": [
+    "backend.cache"
+   ]
+  },
+  {
+   "intent": "implement-serialization",
+   "domain": "backend",
+   "description": "Implement response serialization",
+   "keywords": [
+    "serializer",
+    "response shape",
+    "serialization"
+   ],
+   "capabilities": [
+    "backend.serialization"
+   ]
+  },
+  {
+   "intent": "implement-transaction",
+   "domain": "backend",
+   "description": "Implement transaction boundaries",
+   "keywords": [
+    "transaction boundary",
+    "implement transaction",
+    "atomic write"
+   ],
+   "capabilities": [
+    "backend.transaction"
+   ]
+  },
+  {
+   "intent": "implement-concurrency-control",
+   "domain": "backend",
+   "description": "Implement optimistic concurrency",
+   "keywords": [
+    "optimistic locking",
+    "lost update",
+    "concurrency control"
+   ],
+   "capabilities": [
+    "backend.concurrency"
+   ]
+  },
+  {
+   "intent": "implement-background-processing",
+   "domain": "backend",
+   "description": "Implement background automation processing",
+   "keywords": [
+    "background processing",
+    "automation step",
+    "workflow processing"
+   ],
+   "capabilities": [
+    "backend.background-processing"
+   ]
+  },
+  {
+   "intent": "implement-error-handling",
+   "domain": "backend",
+   "description": "Implement the error model",
+   "keywords": [
+    "error handling",
+    "error model",
+    "exception filter"
+   ],
+   "capabilities": [
+    "backend.error-handling"
+   ]
   }
  ],
  "highImpactSignals": [

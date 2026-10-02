@@ -1,6 +1,32 @@
 {
  "capabilities": [
   {
+   "id": "api.engineer",
+   "domain": "backend",
+   "description": "Maintain API-wide plumbing: interceptors, decorators, pagination and response conventions",
+   "validation": [
+    "api tests pass",
+    "contract review"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "api.review",
+   "domain": "backend",
+   "description": "Review an API change for contract, validation, authorization and documentation",
+   "validation": [
+    "api contract audit"
+   ],
+   "evidence": [
+    "api review verdict"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "arch.design",
    "domain": "architecture",
    "description": "Design cross-cutting architectural decisions and record them as decision records",
@@ -214,6 +240,279 @@
    ],
    "evidence": [
     "worker architecture review"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.background-processing",
+   "domain": "backend",
+   "description": "Implement background automation and workflow processing with status and recovery",
+   "validation": [
+    "automation tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.cache",
+   "domain": "backend",
+   "description": "Implement caches with tenant-scoped keys, expiry and invalidation",
+   "validation": [
+    "cache isolation tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.concurrency",
+   "domain": "backend",
+   "description": "Implement optimistic concurrency and lost-update protection",
+   "validation": [
+    "concurrent update tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.controller",
+   "domain": "backend",
+   "description": "Implement controllers with guards, DTOs and documented responses",
+   "validation": [
+    "api tests with denial cases"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.dto",
+   "domain": "backend",
+   "description": "Implement DTOs with whitelist validation and deprecated-alias handling",
+   "validation": [
+    "dto validation tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.error-handling",
+   "domain": "backend",
+   "description": "Implement the error model: stable codes publicly, redacted diagnostics internally",
+   "validation": [
+    "error boundary tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.event",
+   "domain": "backend",
+   "description": "Implement domain events and idempotent handlers",
+   "validation": [
+    "handler idempotency tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.implement",
+   "domain": "backend",
+   "description": "Implement a backend feature end to end across controller, use case, service, repository and tests inside one module",
+   "validation": [
+    "unit and API tests pass",
+    "backend-reviewer verdict"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.job",
+   "domain": "backend",
+   "description": "Implement background jobs with unique keys, status and a failure path",
+   "validation": [
+    "job tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.queue",
+   "domain": "backend",
+   "description": "Implement queues with limits, retry policy and monitoring",
+   "validation": [
+    "queue topology test"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.repository",
+   "domain": "backend",
+   "description": "Implement repositories that always scope by tenant and avoid unsafe queries",
+   "validation": [
+    "repository tests",
+    "tenant isolation tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.repository.review",
+   "domain": "backend",
+   "description": "Review repositories for tenant scoping, query safety and cost",
+   "validation": [
+    "repository layer audit"
+   ],
+   "evidence": [
+    "repository review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.scheduler",
+   "domain": "backend",
+   "description": "Implement schedulers guarded against concurrent runs",
+   "validation": [
+    "scheduler overlap test"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.serialization",
+   "domain": "backend",
+   "description": "Implement serialization that exposes only intended fields and never raw internal errors",
+   "validation": [
+    "response shape tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.service-layer",
+   "domain": "backend",
+   "description": "Implement service-layer business rules with explicit transactions and tenant scoping",
+   "validation": [
+    "service unit tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.service-layer.review",
+   "domain": "backend",
+   "description": "Review services for rule placement, transactions and error handling",
+   "validation": [
+    "service layer audit"
+   ],
+   "evidence": [
+    "service review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.transaction",
+   "domain": "backend",
+   "description": "Implement transaction boundaries and persistence helpers with defined isolation",
+   "validation": [
+    "transaction rollback tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.use-case",
+   "domain": "backend",
+   "description": "Implement a use case with explicit inputs, rules and outputs",
+   "validation": [
+    "use case unit tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.validation",
+   "domain": "backend",
+   "description": "Implement validators and pipes that reject untrusted input before business logic",
+   "validation": [
+    "validation tests with invalid input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.webhook",
+   "domain": "backend",
+   "description": "Implement webhook endpoints with signature check, dedup and replay safety",
+   "validation": [
+    "webhook replay tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "backend.worker",
+   "domain": "backend",
+   "description": "Implement queue workers with idempotency, retries and graceful shutdown",
+   "validation": [
+    "processor tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
    ],
    "approval": "none"
   },

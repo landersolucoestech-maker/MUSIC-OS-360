@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 102,
+  "agents": 125,
   "skills": 0,
-  "capabilities": 79,
+  "capabilities": 102,
   "workflows": 6
  },
  "agents": [
@@ -159,6 +159,37 @@
    "approval": "none"
   },
   {
+   "name": "api-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/api-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/interceptors/**",
+    "apps/api/src/core/decorators/**",
+    "apps/api/src/common/pagination/**"
+   ],
+   "capabilities": [
+    "api.engineer"
+   ],
+   "skills": [
+    "api-map",
+    "create-api-route",
+    "create-api-tests",
+    "run-api-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "api-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -179,6 +210,31 @@
     "api-map",
     "authorization-map",
     "api-contract-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "api-reviewer",
+   "kind": "reviewer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/api-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "api.review"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "authorization-audit",
+    "code-review",
+    "api-map"
    ],
    "approval": "none"
   },
@@ -365,6 +421,67 @@
    "approval": "none"
   },
   {
+   "name": "backend-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/backend-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**",
+    "apps/api/src/core/**"
+   ],
+   "capabilities": [
+    "backend.implement"
+   ],
+   "skills": [
+    "implement-feature",
+    "create-service",
+    "create-controller",
+    "create-repository",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "background-processing-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/background-processing-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/automation/**"
+   ],
+   "capabilities": [
+    "backend.background-processing"
+   ],
+   "skills": [
+    "implement-background-job",
+    "ai-automation-audit",
+    "create-integration-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "blast-radius-analyzer",
    "kind": "analyzer",
    "domain": "repository-intelligence",
@@ -385,6 +502,36 @@
     "blast-radius-analysis",
     "dependency-trace",
     "change-impact-check"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "caching-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/caching-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/cache/**",
+    "apps/api/src/core/cache/**"
+   ],
+   "capabilities": [
+    "backend.cache"
+   ],
+   "skills": [
+    "implement-cache",
+    "cache-audit",
+    "create-tenant-isolation-tests",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -481,6 +628,35 @@
     "quality-gate",
     "gate",
     "release-checkpoint"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "concurrency-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/concurrency-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/common/concurrency/**"
+   ],
+   "capabilities": [
+    "backend.concurrency"
+   ],
+   "skills": [
+    "implement-concurrency-control",
+    "concurrency-audit",
+    "create-integration-tests",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -603,6 +779,36 @@
     "trace",
     "why",
     "quorum"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "controller-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/controller-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/*.controller.ts",
+    "apps/api/src/modules/**/*.controller.spec.ts"
+   ],
+   "capabilities": [
+    "backend.controller"
+   ],
+   "skills": [
+    "create-controller",
+    "create-api-route",
+    "create-api-tests",
+    "run-api-tests"
    ],
    "approval": "none"
   },
@@ -908,6 +1114,35 @@
    "approval": "none"
   },
   {
+   "name": "dto-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/dto-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/dto/**"
+   ],
+   "capabilities": [
+    "backend.dto"
+   ],
+   "skills": [
+    "create-api-route",
+    "api-contract-audit",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "duplication-detector",
    "kind": "detector",
    "domain": "repository-intelligence",
@@ -976,6 +1211,36 @@
     "environment-map",
     "config-map",
     "localhost-guardian"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "error-handling-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/error-handling-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/errors/**",
+    "apps/api/src/core/filters/**"
+   ],
+   "capabilities": [
+    "backend.error-handling"
+   ],
+   "skills": [
+    "backend-audit",
+    "implement-audit-log",
+    "create-unit-tests",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -1053,6 +1318,36 @@
     "queue-map",
     "doc-writer",
     "producer-consumer-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "event-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/event-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/events/**",
+    "apps/api/src/modules/**/handlers/**"
+   ],
+   "capabilities": [
+    "backend.event"
+   ],
+   "skills": [
+    "create-event",
+    "event-processing-audit",
+    "create-unit-tests",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -1334,6 +1629,35 @@
     "integration-map",
     "external-boundary-mapping",
     "config-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "job-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/job-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/queues/jobs/**"
+   ],
+   "capabilities": [
+    "backend.job"
+   ],
+   "skills": [
+    "create-job",
+    "background-job-audit",
+    "implement-background-job",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -1717,6 +2041,37 @@
    "approval": "none"
   },
   {
+   "name": "queue-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/queue-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/queues/queue.module.ts",
+    "apps/api/src/queues/queue.constants.ts",
+    "apps/api/src/queues/services/**"
+   ],
+   "capabilities": [
+    "backend.queue"
+   ],
+   "skills": [
+    "create-queue",
+    "queue-audit",
+    "implement-retry",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "queue-flow-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -1894,6 +2249,36 @@
    "approval": "none"
   },
   {
+   "name": "repository-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/repository-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/*.repository.ts",
+    "apps/api/src/modules/**/*.repository.spec.ts"
+   ],
+   "capabilities": [
+    "backend.repository"
+   ],
+   "skills": [
+    "create-repository",
+    "create-tenant-isolation-tests",
+    "query-audit",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "repository-orchestrator",
    "kind": "orchestrator",
    "domain": "orchestration",
@@ -1917,6 +2302,31 @@
     "dirty-tree-check",
     "scope-lock",
     "repo-inspect"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "repository-reviewer",
+   "kind": "reviewer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/repository-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "backend.repository.review"
+   ],
+   "skills": [
+    "repository-layer-audit",
+    "query-audit",
+    "sql-injection-audit",
+    "tenant-isolation-audit"
    ],
    "approval": "none"
   },
@@ -2118,6 +2528,35 @@
    "approval": "none"
   },
   {
+   "name": "scheduler-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/scheduler-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/schedulers/**"
+   ],
+   "capabilities": [
+    "backend.scheduler"
+   ],
+   "skills": [
+    "implement-scheduler",
+    "scheduler-audit",
+    "create-job",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "scope-planner",
    "kind": "planner",
    "domain": "planning",
@@ -2162,6 +2601,91 @@
     "security-boundary-audit",
     "authorization-map",
     "integration-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "serialization-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/serialization-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/common/serialization/**",
+    "apps/api/src/modules/**/*.serializer.ts"
+   ],
+   "capabilities": [
+    "backend.serialization"
+   ],
+   "skills": [
+    "create-api-route",
+    "api-contract-audit",
+    "pii-audit",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "service-layer-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/service-layer-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/*.service.ts",
+    "apps/api/src/modules/**/*.service.spec.ts"
+   ],
+   "capabilities": [
+    "backend.service-layer"
+   ],
+   "skills": [
+    "create-service",
+    "implement-transaction",
+    "implement-concurrency-control",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "service-layer-reviewer",
+   "kind": "reviewer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/service-layer-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "backend.service-layer.review"
+   ],
+   "skills": [
+    "service-layer-audit",
+    "transaction-audit",
+    "concurrency-audit",
+    "code-review"
    ],
    "approval": "none"
   },
@@ -2382,6 +2906,35 @@
    "approval": "none"
   },
   {
+   "name": "transaction-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/transaction-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/common/persistence/**"
+   ],
+   "capabilities": [
+    "backend.transaction"
+   ],
+   "skills": [
+    "implement-transaction",
+    "transaction-audit",
+    "create-integration-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "unreachable-code-detector",
    "kind": "detector",
    "domain": "repository-intelligence",
@@ -2402,6 +2955,65 @@
     "dead-code-analysis",
     "feature-flag-analysis",
     "runtime-path-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "use-case-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/use-case-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/use-cases/**"
+   ],
+   "capabilities": [
+    "backend.use-case"
+   ],
+   "skills": [
+    "create-use-case",
+    "implement-feature",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "validation-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/validation-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/common/validators/**",
+    "apps/api/src/core/pipes/**"
+   ],
+   "capabilities": [
+    "backend.validation"
+   ],
+   "skills": [
+    "create-api-route",
+    "create-security-tests",
+    "run-unit-tests",
+    "security-boundary-audit"
    ],
    "approval": "none"
   },
@@ -2483,6 +3095,35 @@
    "approval": "none"
   },
   {
+   "name": "webhook-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/webhook-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/**/*webhook*"
+   ],
+   "capabilities": [
+    "backend.webhook"
+   ],
+   "skills": [
+    "create-webhook",
+    "webhook-security-audit",
+    "create-security-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "worker-architecture-reviewer",
    "kind": "reviewer",
    "domain": "architecture",
@@ -2503,6 +3144,35 @@
     "worker-map",
     "worker-audit",
     "scheduler-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "worker-engineer",
+   "kind": "engineer",
+   "domain": "backend",
+   "batch": 5,
+   "owner": "backend owner",
+   "path": ".claude/agents/worker-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/queues/processors/**"
+   ],
+   "capabilities": [
+    "backend.worker"
+   ],
+   "skills": [
+    "create-worker",
+    "worker-audit",
+    "implement-retry",
+    "run-unit-tests"
    ],
    "approval": "none"
   },
@@ -2559,6 +3229,50 @@
  ],
  "skills": [],
  "capabilities": [
+  {
+   "id": "api.engineer",
+   "domain": "backend",
+   "description": "Maintain API-wide plumbing: interceptors, decorators, pagination and response conventions",
+   "validation": [
+    "api tests pass",
+    "contract review"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "api-engineer"
+   ],
+   "skills": [
+    "api-map",
+    "create-api-route",
+    "create-api-tests",
+    "run-api-tests"
+   ]
+  },
+  {
+   "id": "api.review",
+   "domain": "backend",
+   "description": "Review an API change for contract, validation, authorization and documentation",
+   "validation": [
+    "api contract audit"
+   ],
+   "evidence": [
+    "api review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "api-reviewer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "api-map",
+    "authorization-audit",
+    "code-review"
+   ]
+  },
   {
    "id": "arch.design",
    "domain": "architecture",
@@ -2932,6 +3646,470 @@
     "scheduler-audit",
     "worker-audit",
     "worker-map"
+   ]
+  },
+  {
+   "id": "backend.background-processing",
+   "domain": "backend",
+   "description": "Implement background automation and workflow processing with status and recovery",
+   "validation": [
+    "automation tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "background-processing-engineer"
+   ],
+   "skills": [
+    "ai-automation-audit",
+    "create-integration-tests",
+    "implement-background-job",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.cache",
+   "domain": "backend",
+   "description": "Implement caches with tenant-scoped keys, expiry and invalidation",
+   "validation": [
+    "cache isolation tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "caching-engineer"
+   ],
+   "skills": [
+    "cache-audit",
+    "create-tenant-isolation-tests",
+    "implement-cache",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.concurrency",
+   "domain": "backend",
+   "description": "Implement optimistic concurrency and lost-update protection",
+   "validation": [
+    "concurrent update tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "concurrency-engineer"
+   ],
+   "skills": [
+    "concurrency-audit",
+    "create-integration-tests",
+    "implement-concurrency-control",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.controller",
+   "domain": "backend",
+   "description": "Implement controllers with guards, DTOs and documented responses",
+   "validation": [
+    "api tests with denial cases"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "controller-engineer"
+   ],
+   "skills": [
+    "create-api-route",
+    "create-api-tests",
+    "create-controller",
+    "run-api-tests"
+   ]
+  },
+  {
+   "id": "backend.dto",
+   "domain": "backend",
+   "description": "Implement DTOs with whitelist validation and deprecated-alias handling",
+   "validation": [
+    "dto validation tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "dto-engineer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "create-api-route",
+    "create-unit-tests",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.error-handling",
+   "domain": "backend",
+   "description": "Implement the error model: stable codes publicly, redacted diagnostics internally",
+   "validation": [
+    "error boundary tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "error-handling-engineer"
+   ],
+   "skills": [
+    "backend-audit",
+    "create-unit-tests",
+    "implement-audit-log",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.event",
+   "domain": "backend",
+   "description": "Implement domain events and idempotent handlers",
+   "validation": [
+    "handler idempotency tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "event-engineer"
+   ],
+   "skills": [
+    "create-event",
+    "create-unit-tests",
+    "event-processing-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.implement",
+   "domain": "backend",
+   "description": "Implement a backend feature end to end across controller, use case, service, repository and tests inside one module",
+   "validation": [
+    "unit and API tests pass",
+    "backend-reviewer verdict"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "backend-engineer"
+   ],
+   "skills": [
+    "create-controller",
+    "create-repository",
+    "create-service",
+    "create-unit-tests",
+    "implement-feature",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.job",
+   "domain": "backend",
+   "description": "Implement background jobs with unique keys, status and a failure path",
+   "validation": [
+    "job tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "job-engineer"
+   ],
+   "skills": [
+    "background-job-audit",
+    "create-job",
+    "implement-background-job",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.queue",
+   "domain": "backend",
+   "description": "Implement queues with limits, retry policy and monitoring",
+   "validation": [
+    "queue topology test"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "queue-engineer"
+   ],
+   "skills": [
+    "create-queue",
+    "implement-retry",
+    "queue-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.repository",
+   "domain": "backend",
+   "description": "Implement repositories that always scope by tenant and avoid unsafe queries",
+   "validation": [
+    "repository tests",
+    "tenant isolation tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "repository-engineer"
+   ],
+   "skills": [
+    "create-repository",
+    "create-tenant-isolation-tests",
+    "query-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.repository.review",
+   "domain": "backend",
+   "description": "Review repositories for tenant scoping, query safety and cost",
+   "validation": [
+    "repository layer audit"
+   ],
+   "evidence": [
+    "repository review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "repository-reviewer"
+   ],
+   "skills": [
+    "query-audit",
+    "repository-layer-audit",
+    "sql-injection-audit",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "backend.scheduler",
+   "domain": "backend",
+   "description": "Implement schedulers guarded against concurrent runs",
+   "validation": [
+    "scheduler overlap test"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "scheduler-engineer"
+   ],
+   "skills": [
+    "create-job",
+    "implement-scheduler",
+    "run-unit-tests",
+    "scheduler-audit"
+   ]
+  },
+  {
+   "id": "backend.serialization",
+   "domain": "backend",
+   "description": "Implement serialization that exposes only intended fields and never raw internal errors",
+   "validation": [
+    "response shape tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "serialization-engineer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "create-api-route",
+    "pii-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.service-layer",
+   "domain": "backend",
+   "description": "Implement service-layer business rules with explicit transactions and tenant scoping",
+   "validation": [
+    "service unit tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "service-layer-engineer"
+   ],
+   "skills": [
+    "create-service",
+    "implement-concurrency-control",
+    "implement-transaction",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.service-layer.review",
+   "domain": "backend",
+   "description": "Review services for rule placement, transactions and error handling",
+   "validation": [
+    "service layer audit"
+   ],
+   "evidence": [
+    "service review verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "service-layer-reviewer"
+   ],
+   "skills": [
+    "code-review",
+    "concurrency-audit",
+    "service-layer-audit",
+    "transaction-audit"
+   ]
+  },
+  {
+   "id": "backend.transaction",
+   "domain": "backend",
+   "description": "Implement transaction boundaries and persistence helpers with defined isolation",
+   "validation": [
+    "transaction rollback tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "transaction-engineer"
+   ],
+   "skills": [
+    "create-integration-tests",
+    "implement-transaction",
+    "run-unit-tests",
+    "transaction-audit"
+   ]
+  },
+  {
+   "id": "backend.use-case",
+   "domain": "backend",
+   "description": "Implement a use case with explicit inputs, rules and outputs",
+   "validation": [
+    "use case unit tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "use-case-engineer"
+   ],
+   "skills": [
+    "create-unit-tests",
+    "create-use-case",
+    "implement-feature",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "backend.validation",
+   "domain": "backend",
+   "description": "Implement validators and pipes that reject untrusted input before business logic",
+   "validation": [
+    "validation tests with invalid input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "validation-engineer"
+   ],
+   "skills": [
+    "create-api-route",
+    "create-security-tests",
+    "run-unit-tests",
+    "security-boundary-audit"
+   ]
+  },
+  {
+   "id": "backend.webhook",
+   "domain": "backend",
+   "description": "Implement webhook endpoints with signature check, dedup and replay safety",
+   "validation": [
+    "webhook replay tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "webhook-engineer"
+   ],
+   "skills": [
+    "create-security-tests",
+    "create-webhook",
+    "run-unit-tests",
+    "webhook-security-audit"
+   ]
+  },
+  {
+   "id": "backend.worker",
+   "domain": "backend",
+   "description": "Implement queue workers with idempotency, retries and graceful shutdown",
+   "validation": [
+    "processor tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "worker-engineer"
+   ],
+   "skills": [
+    "create-worker",
+    "implement-retry",
+    "run-unit-tests",
+    "worker-audit"
    ]
   },
   {

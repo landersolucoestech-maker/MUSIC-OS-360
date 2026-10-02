@@ -831,162 +831,185 @@
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "backend-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "backend-reviewer",
+   "file": ".claude/agents/backend-engineer.md"
   },
   {
    "name": "api-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/api-engineer.md"
   },
   {
    "name": "api-reviewer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/api-reviewer.md"
   },
   {
    "name": "service-layer-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/service-layer-engineer.md"
   },
   {
    "name": "service-layer-reviewer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/service-layer-reviewer.md"
   },
   {
    "name": "repository-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/repository-engineer.md"
   },
   {
    "name": "repository-reviewer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/repository-reviewer.md"
   },
   {
    "name": "use-case-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/use-case-engineer.md"
   },
   {
    "name": "controller-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/controller-engineer.md"
   },
   {
    "name": "dto-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/dto-engineer.md"
   },
   {
    "name": "validation-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/validation-engineer.md"
   },
   {
    "name": "event-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/event-engineer.md"
   },
   {
    "name": "queue-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/queue-engineer.md"
   },
   {
    "name": "worker-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/worker-engineer.md"
   },
   {
    "name": "job-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/job-engineer.md"
   },
   {
    "name": "scheduler-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/scheduler-engineer.md"
   },
   {
    "name": "webhook-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/webhook-engineer.md"
   },
   {
    "name": "caching-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/caching-engineer.md"
   },
   {
    "name": "serialization-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/serialization-engineer.md"
   },
   {
    "name": "transaction-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/transaction-engineer.md"
   },
   {
    "name": "concurrency-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/concurrency-engineer.md"
   },
   {
    "name": "background-processing-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/background-processing-engineer.md"
   },
   {
    "name": "error-handling-engineer",
    "type": "agent",
    "batch": 5,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/error-handling-engineer.md"
   },
   {
    "name": "frontend-engineer",

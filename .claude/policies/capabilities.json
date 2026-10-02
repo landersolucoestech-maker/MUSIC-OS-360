@@ -372,7 +372,27 @@
       ]
     },
     {
+      "agent": "api-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "api-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "api-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -448,9 +468,42 @@
       ]
     },
     {
+      "agent": "backend-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "background-processing-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "blast-radius-analyzer",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "caching-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -487,6 +540,17 @@
       "agent": "completion-controller",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "concurrency-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -533,6 +597,17 @@
       "agent": "contradiction-detector",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "controller-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -652,6 +727,17 @@
       ]
     },
     {
+      "agent": "dto-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "duplication-detector",
       "allowedTools": [
         "Read",
@@ -679,6 +765,17 @@
       ]
     },
     {
+      "agent": "error-handling-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "escalation-router",
       "allowedTools": [
         "Read",
@@ -698,6 +795,17 @@
     },
     {
       "agent": "event-driven-architecture-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "event-engineer",
       "allowedTools": [
         "Read",
         "Edit",
@@ -807,6 +915,17 @@
       "agent": "integration-mapper",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "job-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -953,6 +1072,17 @@
       ]
     },
     {
+      "agent": "queue-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "queue-flow-mapper",
       "allowedTools": [
         "Read",
@@ -1018,6 +1148,17 @@
       ]
     },
     {
+      "agent": "repository-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "repository-orchestrator",
       "allowedTools": [
         "Read",
@@ -1025,6 +1166,15 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "repository-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     },
     {
@@ -1101,6 +1251,17 @@
       ]
     },
     {
+      "agent": "scheduler-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "scope-planner",
       "allowedTools": [
         "Read",
@@ -1111,6 +1272,37 @@
     },
     {
       "agent": "security-boundary-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "serialization-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "service-layer-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "service-layer-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1201,9 +1393,42 @@
       ]
     },
     {
+      "agent": "transaction-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "unreachable-code-detector",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "use-case-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "validation-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"
@@ -1238,9 +1463,31 @@
       ]
     },
     {
+      "agent": "webhook-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "worker-architecture-reviewer",
       "allowedTools": [
         "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "worker-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
         "Grep",
         "Glob",
         "Bash"

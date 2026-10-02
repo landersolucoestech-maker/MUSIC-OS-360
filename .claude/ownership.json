@@ -217,7 +217,21 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "api-engineer",
+      "writes": [
+        "apps/api/src/core/interceptors/**",
+        "apps/api/src/core/decorators/**",
+        "apps/api/src/common/pagination/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/api-engineer.md"
+    },
+    {
       "agent": "api-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "api-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -261,9 +275,32 @@
       "note": "pack writer (architecture); scope declared in .claude/agents/backend-architecture-engineer.md"
     },
     {
+      "agent": "backend-engineer",
+      "writes": [
+        "apps/api/src/modules/**",
+        "apps/api/src/core/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/backend-engineer.md"
+    },
+    {
+      "agent": "background-processing-engineer",
+      "writes": [
+        "apps/api/src/core/automation/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/background-processing-engineer.md"
+    },
+    {
       "agent": "blast-radius-analyzer",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "caching-engineer",
+      "writes": [
+        "apps/api/src/cache/**",
+        "apps/api/src/core/cache/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/caching-engineer.md"
     },
     {
       "agent": "capability-router",
@@ -284,6 +321,13 @@
       "agent": "completion-controller",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "concurrency-engineer",
+      "writes": [
+        "apps/api/src/common/concurrency/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/concurrency-engineer.md"
     },
     {
       "agent": "config-mapper",
@@ -309,6 +353,14 @@
       "agent": "contradiction-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "controller-engineer",
+      "writes": [
+        "apps/api/src/modules/**/*.controller.ts",
+        "apps/api/src/modules/**/*.controller.spec.ts"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/controller-engineer.md"
     },
     {
       "agent": "data-architecture-engineer",
@@ -375,6 +427,13 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "dto-engineer",
+      "writes": [
+        "apps/api/src/modules/**/dto/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/dto-engineer.md"
+    },
+    {
       "agent": "duplication-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -388,6 +447,14 @@
       "agent": "environment-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "error-handling-engineer",
+      "writes": [
+        "apps/api/src/core/errors/**",
+        "apps/api/src/core/filters/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/error-handling-engineer.md"
     },
     {
       "agent": "escalation-router",
@@ -405,6 +472,14 @@
         "docs/engineering/decisions/events/**"
       ],
       "note": "pack writer (architecture); scope declared in .claude/agents/event-driven-architecture-engineer.md"
+    },
+    {
+      "agent": "event-engineer",
+      "writes": [
+        "apps/api/src/core/events/**",
+        "apps/api/src/modules/**/handlers/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/event-engineer.md"
     },
     {
       "agent": "event-flow-mapper",
@@ -464,6 +539,13 @@
       "agent": "integration-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "job-engineer",
+      "writes": [
+        "apps/api/src/queues/jobs/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/job-engineer.md"
     },
     {
       "agent": "migration-planner",
@@ -543,6 +625,15 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "queue-engineer",
+      "writes": [
+        "apps/api/src/queues/queue.module.ts",
+        "apps/api/src/queues/queue.constants.ts",
+        "apps/api/src/queues/services/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/queue-engineer.md"
+    },
+    {
       "agent": "queue-flow-mapper",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -578,7 +669,20 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "repository-engineer",
+      "writes": [
+        "apps/api/src/modules/**/*.repository.ts",
+        "apps/api/src/modules/**/*.repository.spec.ts"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/repository-engineer.md"
+    },
+    {
       "agent": "repository-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "repository-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -623,12 +727,40 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "scheduler-engineer",
+      "writes": [
+        "apps/api/src/modules/**/schedulers/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/scheduler-engineer.md"
+    },
+    {
       "agent": "scope-planner",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
     {
       "agent": "security-boundary-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "serialization-engineer",
+      "writes": [
+        "apps/api/src/common/serialization/**",
+        "apps/api/src/modules/**/*.serializer.ts"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/serialization-engineer.md"
+    },
+    {
+      "agent": "service-layer-engineer",
+      "writes": [
+        "apps/api/src/modules/**/*.service.ts",
+        "apps/api/src/modules/**/*.service.spec.ts"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/service-layer-engineer.md"
+    },
+    {
+      "agent": "service-layer-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -678,9 +810,31 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "transaction-engineer",
+      "writes": [
+        "apps/api/src/common/persistence/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/transaction-engineer.md"
+    },
+    {
       "agent": "unreachable-code-detector",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "use-case-engineer",
+      "writes": [
+        "apps/api/src/modules/**/use-cases/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/use-case-engineer.md"
+    },
+    {
+      "agent": "validation-engineer",
+      "writes": [
+        "apps/api/src/common/validators/**",
+        "apps/api/src/core/pipes/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/validation-engineer.md"
     },
     {
       "agent": "validation-orchestrator",
@@ -698,9 +852,23 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "webhook-engineer",
+      "writes": [
+        "apps/api/src/modules/**/*webhook*"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/webhook-engineer.md"
+    },
+    {
       "agent": "worker-architecture-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "worker-engineer",
+      "writes": [
+        "apps/api/src/queues/processors/**"
+      ],
+      "note": "pack writer (backend); scope declared in .claude/agents/worker-engineer.md"
     },
     {
       "agent": "worker-mapper",
