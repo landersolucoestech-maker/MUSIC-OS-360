@@ -224,7 +224,10 @@ const CHECKS = {
     if (ctx.state.executionMode !== "STRICT_MULTI_AGENT") return {};
     const outstanding = outstandingCapabilities(ctx.cwd);
     if (outstanding.length === 0) return {};
-    const shown = outstanding.slice(0, 15).map((c) => `${c.name}(${c.status})`);
+    // FAILED/BLOCKED first: a repeatedly failing capability must be named even when hundreds of
+    // undispatched ones exist, because it is the one that needs a human decision.
+    const rank = (c) => (c.status === "FAILED" ? 0 : c.status === "BLOCKED" ? 1 : 2);
+    const shown = [...outstanding].sort((a, b) => rank(a) - rank(b)).slice(0, 15).map((c) => `${c.name}(${c.status})`);
     const more = outstanding.length > shown.length ? ` (+${outstanding.length - shown.length} more)` : "";
     return {
       reasons: [
