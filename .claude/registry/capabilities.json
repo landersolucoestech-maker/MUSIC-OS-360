@@ -1667,6 +1667,248 @@
    "approval": "none"
   },
   {
+   "id": "quality.refactor",
+   "domain": "code-quality",
+   "description": "Refactor with identical behavior proven by tests that pass before and after",
+   "validation": [
+    "tests pass before and after",
+    "diff shows no behavior change"
+   ],
+   "evidence": [
+    "change-set record",
+    "before and after test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.abstraction",
+   "domain": "code-quality",
+   "description": "Review abstractions for premature generalization, leaky layers and missing seams",
+   "validation": [
+    "abstraction review"
+   ],
+   "evidence": [
+    "abstraction verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.boundary",
+   "domain": "code-quality",
+   "description": "Review module and layer boundaries: what may import what, and where business rules live",
+   "validation": [
+    "boundary and import audit"
+   ],
+   "evidence": [
+    "boundary verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.cloud-infrastructure",
+   "domain": "code-quality",
+   "description": "Review cloud and container infrastructure definitions for least privilege, secrets handling, isolation and reproducibility",
+   "validation": [
+    "infrastructure definition audit"
+   ],
+   "evidence": [
+    "cloud infrastructure verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.code",
+   "domain": "code-quality",
+   "description": "Review a code change for correctness, clarity, tests and consistency with the surrounding code",
+   "validation": [
+    "independent code review"
+   ],
+   "evidence": [
+    "code review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.code-smell",
+   "domain": "code-quality",
+   "description": "Review code smells that predict defects: god objects, long parameter lists, flag arguments and feature envy",
+   "validation": [
+    "code smell review"
+   ],
+   "evidence": [
+    "code smell verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.cohesion",
+   "domain": "code-quality",
+   "description": "Review cohesion: modules and functions that do one thing and keep related code together",
+   "validation": [
+    "cohesion review"
+   ],
+   "evidence": [
+    "cohesion verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.complexity",
+   "domain": "code-quality",
+   "description": "Review complexity: long functions, deep nesting, many branches and large files",
+   "validation": [
+    "complexity review with measurements"
+   ],
+   "evidence": [
+    "complexity verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.consistency",
+   "domain": "code-quality",
+   "description": "Review consistency with existing patterns, layout, error handling and conventions in the same area",
+   "validation": [
+    "consistency review against neighboring code"
+   ],
+   "evidence": [
+    "consistency verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.coupling",
+   "domain": "code-quality",
+   "description": "Review coupling between modules, layers and packages, including dependency direction and cycles",
+   "validation": [
+    "dependency direction check"
+   ],
+   "evidence": [
+    "coupling verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.dead-code",
+   "domain": "code-quality",
+   "description": "Review dead, unreachable and unused code, flags and exports, with proof of non-use",
+   "validation": [
+    "dead code analysis with reference search"
+   ],
+   "evidence": [
+    "dead code verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.devops-ci",
+   "domain": "code-quality",
+   "description": "Review CI and release pipeline definitions for correctness, least privilege, reproducibility and gate integrity",
+   "validation": [
+    "workflow definition audit"
+   ],
+   "evidence": [
+    "devops ci verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.duplication",
+   "domain": "code-quality",
+   "description": "Review duplicated logic, constants and types that can drift apart",
+   "validation": [
+    "duplication analysis"
+   ],
+   "evidence": [
+    "duplication verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.error-model",
+   "domain": "code-quality",
+   "description": "Review the error model: typed errors, mapping to responses, humanized messages and no raw internals exposed",
+   "validation": [
+    "error flow audit with injected failures"
+   ],
+   "evidence": [
+    "error model verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.maintainability",
+   "domain": "code-quality",
+   "description": "Review how easy the change is to understand, modify and test later",
+   "validation": [
+    "maintainability review"
+   ],
+   "evidence": [
+    "maintainability verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.mobile",
+   "domain": "code-quality",
+   "description": "Review mobile surfaces: native or hybrid shells and installable web behavior, or report that none exist",
+   "validation": [
+    "mobile surface discovery"
+   ],
+   "evidence": [
+    "mobile review verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.naming",
+   "domain": "code-quality",
+   "description": "Review names against the canonical map: English technical names, correct case per layer and no leaked machine values in user text",
+   "validation": [
+    "naming analysis against the canonical map"
+   ],
+   "evidence": [
+    "naming verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.payments",
+   "domain": "code-quality",
+   "description": "Review payment and billing code: provider boundary, idempotency, amounts, webhooks and separation of company finance from external royalty flows",
+   "validation": [
+    "payments audit with negative cases"
+   ],
+   "evidence": [
+    "payments verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.readability",
+   "domain": "code-quality",
+   "description": "Review readability: naming, structure, comments that explain why and the absence of cleverness",
+   "validation": [
+    "readability review"
+   ],
+   "evidence": [
+    "readability verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "quality.review.technical-debt",
+   "domain": "code-quality",
+   "description": "Review and record technical debt with impact, cost and a disposition instead of fixing adjacent debt silently",
+   "validation": [
+    "debt register entry"
+   ],
+   "evidence": [
+    "technical debt verdict"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "reliability.observability",
    "domain": "reliability",
    "description": "Implement logging, metrics, tracing and correlation with consistent names and no secret or personal data in telemetry",

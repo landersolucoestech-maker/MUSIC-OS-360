@@ -315,6 +315,15 @@
       ]
     },
     {
+      "agent": "abstraction-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "abuse-prevention-reviewer",
       "allowedTools": [
         "Read",
@@ -655,6 +664,15 @@
       ]
     },
     {
+      "agent": "boundary-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "branch-policy-validator",
       "allowedTools": [
         "Read",
@@ -749,7 +767,43 @@
       ]
     },
     {
+      "agent": "cloud-infrastructure-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "code-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "code-smell-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "codebase-explorer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "cohesion-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -777,6 +831,15 @@
     },
     {
       "agent": "completion-controller",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "complexity-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -854,6 +917,15 @@
       ]
     },
     {
+      "agent": "consistency-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "context-orchestrator",
       "allowedTools": [
         "Read",
@@ -898,6 +970,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "coupling-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -1056,6 +1137,15 @@
       ]
     },
     {
+      "agent": "dead-code-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "degradation-reviewer",
       "allowedTools": [
         "Read",
@@ -1140,6 +1230,15 @@
       ]
     },
     {
+      "agent": "devops-ci-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "diff-reviewer",
       "allowedTools": [
         "Read",
@@ -1207,6 +1306,15 @@
       ]
     },
     {
+      "agent": "duplication-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "e2e-engineer",
       "allowedTools": [
         "Read",
@@ -1250,6 +1358,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "error-model-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -1666,6 +1783,15 @@
       ]
     },
     {
+      "agent": "maintainability-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "mapping-reviewer",
       "allowedTools": [
         "Read",
@@ -1734,6 +1860,15 @@
       ]
     },
     {
+      "agent": "mobile-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "mock-reviewer",
       "allowedTools": [
         "Read",
@@ -1790,6 +1925,15 @@
     },
     {
       "agent": "naming-analyzer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "naming-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1879,6 +2023,15 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "payments-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     },
     {
@@ -2065,6 +2218,15 @@
       ]
     },
     {
+      "agent": "readability-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "recovery-orchestrator",
       "allowedTools": [
         "Read",
@@ -2072,6 +2234,17 @@
         "Glob",
         "Bash",
         "Task"
+      ]
+    },
+    {
+      "agent": "refactoring-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
       ]
     },
     {
@@ -2626,6 +2799,15 @@
     },
     {
       "agent": "technical-debt-analyzer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "technical-debt-reviewer",
       "allowedTools": [
         "Read",
         "Grep",

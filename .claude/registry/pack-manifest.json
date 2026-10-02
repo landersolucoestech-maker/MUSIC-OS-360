@@ -2247,140 +2247,160 @@
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/code-reviewer.md"
   },
   {
    "name": "naming-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/naming-reviewer.md"
   },
   {
    "name": "duplication-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/duplication-reviewer.md"
   },
   {
    "name": "dead-code-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/dead-code-reviewer.md"
   },
   {
    "name": "maintainability-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/maintainability-reviewer.md"
   },
   {
    "name": "complexity-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/complexity-reviewer.md"
   },
   {
    "name": "refactoring-engineer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/refactoring-engineer.md"
   },
   {
    "name": "technical-debt-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/technical-debt-reviewer.md"
   },
   {
    "name": "abstraction-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/abstraction-reviewer.md"
   },
   {
    "name": "coupling-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/coupling-reviewer.md"
   },
   {
    "name": "cohesion-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/cohesion-reviewer.md"
   },
   {
    "name": "code-smell-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/code-smell-reviewer.md"
   },
   {
    "name": "readability-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/readability-reviewer.md"
   },
   {
    "name": "consistency-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/consistency-reviewer.md"
   },
   {
    "name": "boundary-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/boundary-reviewer.md"
   },
   {
    "name": "error-model-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/error-model-reviewer.md"
   },
   {
    "name": "cloud-infrastructure-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/cloud-infrastructure-reviewer.md"
   },
   {
    "name": "devops-ci-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/devops-ci-reviewer.md"
   },
   {
    "name": "mobile-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/mobile-reviewer.md"
   },
   {
    "name": "payments-reviewer",
    "type": "agent",
    "batch": 13,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/payments-reviewer.md"
   },
   {
    "name": "ai-runtime-architect",

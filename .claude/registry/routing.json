@@ -2605,6 +2605,164 @@
    "capabilities": [
     "repository.review-merge"
    ]
+  },
+  {
+   "intent": "review-code-change",
+   "domain": "code-quality",
+   "description": "Review a code change",
+   "keywords": [
+    "code review",
+    "review pull request",
+    "review change"
+   ],
+   "capabilities": [
+    "quality.review.code",
+    "quality.review.consistency",
+    "quality.review.readability"
+   ]
+  },
+  {
+   "intent": "review-naming",
+   "domain": "code-quality",
+   "description": "Review naming",
+   "keywords": [
+    "naming review",
+    "canonical names",
+    "rename identifier"
+   ],
+   "capabilities": [
+    "quality.review.naming"
+   ]
+  },
+  {
+   "intent": "review-duplication-and-dead-code",
+   "domain": "code-quality",
+   "description": "Review duplication and dead code",
+   "keywords": [
+    "duplicated logic",
+    "dead code",
+    "unused exports",
+    "abandoned flag"
+   ],
+   "capabilities": [
+    "quality.review.duplication",
+    "quality.review.dead-code"
+   ]
+  },
+  {
+   "intent": "review-maintainability",
+   "domain": "code-quality",
+   "description": "Review maintainability and complexity",
+   "keywords": [
+    "maintainability",
+    "complexity",
+    "long function",
+    "deep nesting"
+   ],
+   "capabilities": [
+    "quality.review.maintainability",
+    "quality.review.complexity",
+    "quality.review.code-smell"
+   ]
+  },
+  {
+   "intent": "refactor-code",
+   "domain": "code-quality",
+   "description": "Refactor with identical behavior",
+   "keywords": [
+    "refactor",
+    "extract function",
+    "restructure module"
+   ],
+   "capabilities": [
+    "quality.refactor",
+    "quality.review.code"
+   ]
+  },
+  {
+   "intent": "record-technical-debt",
+   "domain": "code-quality",
+   "description": "Record technical debt",
+   "keywords": [
+    "technical debt",
+    "debt register",
+    "adjacent debt"
+   ],
+   "capabilities": [
+    "quality.review.technical-debt"
+   ]
+  },
+  {
+   "intent": "review-structure",
+   "domain": "code-quality",
+   "description": "Review abstraction, coupling, cohesion and boundaries",
+   "keywords": [
+    "abstraction review",
+    "coupling review",
+    "cohesion review",
+    "layer boundary"
+   ],
+   "capabilities": [
+    "quality.review.abstraction",
+    "quality.review.coupling",
+    "quality.review.cohesion",
+    "quality.review.boundary"
+   ]
+  },
+  {
+   "intent": "review-error-model",
+   "domain": "code-quality",
+   "description": "Review the error model",
+   "keywords": [
+    "error model",
+    "raw error leak",
+    "error mapping"
+   ],
+   "capabilities": [
+    "quality.review.error-model"
+   ]
+  },
+  {
+   "intent": "review-infrastructure-definitions",
+   "domain": "code-quality",
+   "description": "Review infrastructure and CI definitions",
+   "keywords": [
+    "dockerfile review",
+    "compose review",
+    "ci workflow review",
+    "infrastructure as code"
+   ],
+   "capabilities": [
+    "quality.review.cloud-infrastructure",
+    "quality.review.devops-ci"
+   ]
+  },
+  {
+   "intent": "review-mobile-surface",
+   "domain": "code-quality",
+   "description": "Review mobile surfaces",
+   "keywords": [
+    "mobile app",
+    "mobile review",
+    "installable web app"
+   ],
+   "capabilities": [
+    "quality.review.mobile"
+   ]
+  },
+  {
+   "intent": "review-payments",
+   "domain": "code-quality",
+   "description": "Review payment and billing code",
+   "keywords": [
+    "payment review",
+    "billing review",
+    "stripe webhook",
+    "invoice code"
+   ],
+   "capabilities": [
+    "quality.review.payments"
+   ]
   }
  ],
  "highImpactSignals": [

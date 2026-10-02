@@ -185,6 +185,11 @@
       "note": "only against an existing recovery-plan record; anything DESTRUCTIVE/EXTERNAL_WRITE/PRODUCTION_WRITE additionally requires a GRANTED approval-request"
     },
     {
+      "agent": "abstraction-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "abuse-prevention-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -397,6 +402,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "boundary-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "branch-policy-validator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -453,7 +463,27 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "cloud-infrastructure-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "code-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "code-smell-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "codebase-explorer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "cohesion-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -469,6 +499,11 @@
     },
     {
       "agent": "completion-controller",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "complexity-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -516,6 +551,11 @@
       "note": "pack writer (integrations); scope declared in .claude/agents/connector-engineer.md"
     },
     {
+      "agent": "consistency-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "context-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -546,6 +586,11 @@
         "apps/api/src/modules/**/*.controller.spec.ts"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/controller-engineer.md"
+    },
+    {
+      "agent": "coupling-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "credential-management-reviewer",
@@ -642,6 +687,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "dead-code-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "degradation-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -691,6 +741,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "devops-ci-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "diff-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -730,6 +785,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "duplication-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "e2e-engineer",
       "writes": [
         "e2e/**",
@@ -759,6 +819,11 @@
         "apps/api/src/core/filters/**"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/error-handling-engineer.md"
+    },
+    {
+      "agent": "error-model-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "escalation-router",
@@ -1011,6 +1076,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "maintainability-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "mapping-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1053,6 +1123,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "mobile-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "mock-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1084,6 +1159,11 @@
     },
     {
       "agent": "naming-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "naming-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1133,6 +1213,11 @@
     },
     {
       "agent": "parallel-work-orchestrator",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "payments-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1251,9 +1336,23 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "readability-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "recovery-orchestrator",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "refactoring-engineer",
+      "writes": [
+        "apps/api/src/**",
+        "apps/web/src/**",
+        "packages/**"
+      ],
+      "note": "pack writer (code-quality); scope declared in .claude/agents/refactoring-engineer.md"
     },
     {
       "agent": "refactoring-planner",
@@ -1586,6 +1685,11 @@
     },
     {
       "agent": "technical-debt-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "technical-debt-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
