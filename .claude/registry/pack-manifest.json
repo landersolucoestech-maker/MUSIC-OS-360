@@ -1363,199 +1363,227 @@
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/security-engineer.md"
   },
   {
    "name": "security-auditor",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "security-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "security-reviewer",
+   "file": ".claude/agents/security-auditor.md"
   },
   {
    "name": "security-investigator",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "incident-investigator"
+   "finalState": "CREATED",
+   "existingEquivalent": "incident-investigator",
+   "file": ".claude/agents/security-investigator.md"
   },
   {
    "name": "auth-engineer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/auth-engineer.md"
   },
   {
    "name": "authorization-engineer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/authorization-engineer.md"
   },
   {
    "name": "authentication-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/authentication-reviewer.md"
   },
   {
    "name": "authorization-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/authorization-reviewer.md"
   },
   {
    "name": "rbac-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/rbac-reviewer.md"
   },
   {
    "name": "tenant-isolation-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/tenant-isolation-reviewer.md"
   },
   {
    "name": "secrets-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/secrets-reviewer.md"
   },
   {
    "name": "threat-model-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/threat-model-reviewer.md"
   },
   {
    "name": "vulnerability-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/vulnerability-reviewer.md"
   },
   {
    "name": "input-validation-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/input-validation-reviewer.md"
   },
   {
    "name": "webhook-security-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/webhook-security-reviewer.md"
   },
   {
    "name": "file-upload-security-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/file-upload-security-reviewer.md"
   },
   {
    "name": "prompt-injection-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/prompt-injection-reviewer.md"
   },
   {
    "name": "pii-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/pii-reviewer.md"
   },
   {
    "name": "permission-boundary-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/permission-boundary-reviewer.md"
   },
   {
    "name": "session-security-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/session-security-reviewer.md"
   },
   {
    "name": "csrf-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/csrf-reviewer.md"
   },
   {
    "name": "xss-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/xss-reviewer.md"
   },
   {
    "name": "ssrf-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ssrf-reviewer.md"
   },
   {
    "name": "sql-injection-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/sql-injection-reviewer.md"
   },
   {
    "name": "credential-storage-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/credential-storage-reviewer.md"
   },
   {
    "name": "encryption-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/encryption-reviewer.md"
   },
   {
    "name": "auditability-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/auditability-reviewer.md"
   },
   {
    "name": "abuse-prevention-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/abuse-prevention-reviewer.md"
   },
   {
    "name": "compliance-privacy-reviewer",
    "type": "agent",
    "batch": 8,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "compliance-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "compliance-reviewer",
+   "file": ".claude/agents/compliance-privacy-reviewer.md"
   },
   {
    "name": "integration-engineer",

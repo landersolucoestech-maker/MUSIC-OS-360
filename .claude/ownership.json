@@ -185,6 +185,11 @@
       "note": "only against an existing recovery-plan record; anything DESTRUCTIVE/EXTERNAL_WRITE/PRODUCTION_WRITE additionally requires a GRANTED approval-request"
     },
     {
+      "agent": "abuse-prevention-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "acceptance-criteria-engineer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -286,6 +291,39 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "auditability-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "auth-engineer",
+      "writes": [
+        "apps/api/src/modules/auth/**",
+        "apps/api/src/core/auth-disabled.ts"
+      ],
+      "note": "pack writer (security); scope declared in .claude/agents/auth-engineer.md"
+    },
+    {
+      "agent": "authentication-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "authorization-engineer",
+      "writes": [
+        "apps/api/src/core/guards/**",
+        "apps/api/src/core/rbac/**",
+        "apps/api/src/modules/rbac/**",
+        "apps/api/src/core/decorators/**"
+      ],
+      "note": "pack writer (security); scope declared in .claude/agents/authorization-engineer.md"
+    },
+    {
+      "agent": "authorization-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "autonomous-planner",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -356,6 +394,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "compliance-privacy-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "component-engineer",
       "writes": [
         "apps/web/src/shared/components/*.tsx",
@@ -407,6 +450,16 @@
         "apps/api/src/modules/**/*.controller.spec.ts"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/controller-engineer.md"
+    },
+    {
+      "agent": "credential-storage-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "csrf-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "csv-engineer",
@@ -546,6 +599,11 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "encryption-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "environment-analyzer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -610,6 +668,11 @@
     },
     {
       "agent": "feature-flag-analyzer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "file-upload-security-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -691,6 +754,11 @@
         "docs/engineering/decisions/infrastructure/**"
       ],
       "note": "pack writer (architecture); scope declared in .claude/agents/infrastructure-architecture-engineer.md"
+    },
+    {
+      "agent": "input-validation-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "integration-architecture-reviewer",
@@ -802,6 +870,16 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "permission-boundary-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "pii-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "platform-architecture-engineer",
       "writes": [
         "docs/engineering/decisions/platform/**"
@@ -810,6 +888,11 @@
     },
     {
       "agent": "producer-consumer-tracer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "prompt-injection-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -845,6 +928,11 @@
     },
     {
       "agent": "queue-flow-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "rbac-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -989,7 +1077,32 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "secrets-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "security-auditor",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "security-boundary-mapper",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "security-engineer",
+      "writes": [
+        "apps/api/src/core/security/**",
+        "apps/api/src/core/middleware/**",
+        "apps/api/src/core/pipes/**",
+        "apps/api/src/core/filters/**"
+      ],
+      "note": "pack writer (security); scope declared in .claude/agents/security-engineer.md"
+    },
+    {
+      "agent": "security-investigator",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1015,12 +1128,27 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "session-security-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "skill-router",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
     {
       "agent": "specification-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "sql-injection-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ssrf-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1058,7 +1186,17 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "tenant-isolation-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "test-planner",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "threat-model-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
     },
@@ -1136,11 +1274,21 @@
       "note": "pack writer (frontend); scope declared in .claude/agents/visual-regression-engineer.md"
     },
     {
+      "agent": "vulnerability-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
       "agent": "webhook-engineer",
       "writes": [
         "apps/api/src/modules/**/*webhook*"
       ],
       "note": "pack writer (backend); scope declared in .claude/agents/webhook-engineer.md"
+    },
+    {
+      "agent": "webhook-security-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     },
     {
       "agent": "worker-architecture-reviewer",
@@ -1171,6 +1319,11 @@
         "apps/api/src/modules/**/xlsx/**"
       ],
       "note": "pack writer (database); scope declared in .claude/agents/xlsx-engineer.md"
+    },
+    {
+      "agent": "xss-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
     }
   ],
   "conflictRule": "Two agents claiming write authority over an overlapping path for the same batch is a CONFLICT (.claude/contracts/conflict-record.schema.json) resolved by mission-orchestrator before either proceeds, never by last-write-wins."

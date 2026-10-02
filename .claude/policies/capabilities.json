@@ -315,6 +315,15 @@
       ]
     },
     {
+      "agent": "abuse-prevention-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "acceptance-criteria-engineer",
       "allowedTools": [
         "Read",
@@ -479,6 +488,55 @@
       ]
     },
     {
+      "agent": "auditability-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "auth-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "authentication-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "authorization-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "authorization-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "autonomous-planner",
       "allowedTools": [
         "Read",
@@ -595,6 +653,15 @@
       ]
     },
     {
+      "agent": "compliance-privacy-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "component-engineer",
       "allowedTools": [
         "Read",
@@ -677,6 +744,24 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "credential-storage-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "csrf-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -905,6 +990,15 @@
       ]
     },
     {
+      "agent": "encryption-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "environment-analyzer",
       "allowedTools": [
         "Read",
@@ -1012,6 +1106,15 @@
     },
     {
       "agent": "feature-flag-analyzer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "file-upload-security-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1137,6 +1240,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "input-validation-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -1332,6 +1444,24 @@
       ]
     },
     {
+      "agent": "permission-boundary-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "pii-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "platform-architecture-engineer",
       "allowedTools": [
         "Read",
@@ -1344,6 +1474,15 @@
     },
     {
       "agent": "producer-consumer-tracer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "prompt-injection-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1395,6 +1534,15 @@
     },
     {
       "agent": "queue-flow-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "rbac-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1642,7 +1790,45 @@
       ]
     },
     {
+      "agent": "secrets-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "security-auditor",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "security-boundary-mapper",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "security-engineer",
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "security-investigator",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1682,6 +1868,15 @@
       ]
     },
     {
+      "agent": "session-security-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "skill-router",
       "allowedTools": [
         "Read",
@@ -1692,6 +1887,24 @@
     },
     {
       "agent": "specification-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "sql-injection-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "ssrf-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1757,7 +1970,25 @@
       ]
     },
     {
+      "agent": "tenant-isolation-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "test-planner",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "threat-model-reviewer",
       "allowedTools": [
         "Read",
         "Grep",
@@ -1885,11 +2116,29 @@
       ]
     },
     {
+      "agent": "vulnerability-reviewer",
+      "allowedTools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
       "agent": "webhook-engineer",
       "allowedTools": [
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "webhook-security-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"
@@ -1940,6 +2189,15 @@
         "Read",
         "Edit",
         "Write",
+        "Grep",
+        "Glob",
+        "Bash"
+      ]
+    },
+    {
+      "agent": "xss-reviewer",
+      "allowedTools": [
+        "Read",
         "Grep",
         "Glob",
         "Bash"

@@ -2,12 +2,36 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 168,
+  "agents": 196,
   "skills": 0,
-  "capabilities": 145,
+  "capabilities": 173,
   "workflows": 6
  },
  "agents": [
+  {
+   "name": "abuse-prevention-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/abuse-prevention-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.abuse-prevention"
+   ],
+   "skills": [
+    "security-boundary-audit",
+    "authorization-audit",
+    "queue-audit"
+   ],
+   "approval": "none"
+  },
   {
    "name": "acceptance-criteria-engineer",
    "kind": "analyzer",
@@ -453,6 +477,144 @@
    "approval": "none"
   },
   {
+   "name": "auditability-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/auditability-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.auditability"
+   ],
+   "skills": [
+    "implement-audit-log",
+    "security-boundary-audit",
+    "authorization-audit",
+    "pii-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "auth-engineer",
+   "kind": "engineer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/auth-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/auth/**",
+    "apps/api/src/core/auth-disabled.ts"
+   ],
+   "capabilities": [
+    "security.auth"
+   ],
+   "skills": [
+    "implement-auth",
+    "auth-audit",
+    "session-security-audit",
+    "create-security-tests",
+    "run-security-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "authentication-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/authentication-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.authentication"
+   ],
+   "skills": [
+    "auth-audit",
+    "session-security-audit",
+    "security-boundary-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "authorization-engineer",
+   "kind": "engineer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/authorization-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/guards/**",
+    "apps/api/src/core/rbac/**",
+    "apps/api/src/modules/rbac/**",
+    "apps/api/src/core/decorators/**"
+   ],
+   "capabilities": [
+    "security.authorization"
+   ],
+   "skills": [
+    "implement-authorization",
+    "implement-rbac",
+    "authorization-map",
+    "create-authorization-tests",
+    "authorization-hardening"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "authorization-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/authorization-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.authorization"
+   ],
+   "skills": [
+    "authorization-audit",
+    "permission-audit",
+    "authorization-map",
+    "rbac-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "autonomous-planner",
    "kind": "planner",
    "domain": "planning",
@@ -767,6 +929,30 @@
    "approval": "none"
   },
   {
+   "name": "compliance-privacy-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/compliance-privacy-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.compliance-privacy"
+   ],
+   "skills": [
+    "pii-audit",
+    "data-retention-audit",
+    "security-boundary-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "component-engineer",
    "kind": "engineer",
    "domain": "frontend",
@@ -999,6 +1185,54 @@
     "create-api-route",
     "create-api-tests",
     "run-api-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "credential-storage-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/credential-storage-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.credential-storage"
+   ],
+   "skills": [
+    "credential-storage-audit",
+    "encryption-audit",
+    "secret-scan"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "csrf-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/csrf-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.csrf"
+   ],
+   "skills": [
+    "csrf-audit",
+    "session-security-audit",
+    "security-boundary-audit"
    ],
    "approval": "none"
   },
@@ -1609,6 +1843,30 @@
    "approval": "none"
   },
   {
+   "name": "encryption-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/encryption-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.encryption"
+   ],
+   "skills": [
+    "encryption-audit",
+    "credential-storage-audit",
+    "secret-scan"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "environment-analyzer",
    "kind": "analyzer",
    "domain": "repository-intelligence",
@@ -1914,6 +2172,30 @@
     "feature-flag-analysis",
     "config-map",
     "security-boundary-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "file-upload-security-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/file-upload-security-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.file-upload"
+   ],
+   "skills": [
+    "upload-security-audit",
+    "media-security-audit",
+    "tenant-isolation-audit"
    ],
    "approval": "none"
   },
@@ -2252,6 +2534,31 @@
     "doc-writer",
     "external-action-check",
     "supply-chain-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "input-validation-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/input-validation-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.input-validation"
+   ],
+   "skills": [
+    "security-boundary-audit",
+    "sql-injection-audit",
+    "xss-audit",
+    "api-contract-audit"
    ],
    "approval": "none"
   },
@@ -2770,6 +3077,55 @@
    "approval": "none"
   },
   {
+   "name": "permission-boundary-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/permission-boundary-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.permission-boundary"
+   ],
+   "skills": [
+    "security-boundary-audit",
+    "permission-audit",
+    "tool-policy-validation",
+    "authorization-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "pii-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/pii-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.pii"
+   ],
+   "skills": [
+    "pii-audit",
+    "data-retention-audit",
+    "security-boundary-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "platform-architecture-engineer",
    "kind": "engineer",
    "domain": "architecture",
@@ -2819,6 +3175,31 @@
     "producer-consumer-trace",
     "contract-tracing",
     "data-flow-trace"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "prompt-injection-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/prompt-injection-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.prompt-injection"
+   ],
+   "skills": [
+    "prompt-injection-audit",
+    "ai-security-audit",
+    "tool-policy-validation",
+    "human-approval-validation"
    ],
    "approval": "none"
   },
@@ -2959,6 +3340,30 @@
     "queue-map",
     "worker-map",
     "queue-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "rbac-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/rbac-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.rbac"
+   ],
+   "skills": [
+    "rbac-audit",
+    "permission-audit",
+    "authorization-audit"
    ],
    "approval": "none"
   },
@@ -3611,6 +4016,56 @@
    "approval": "none"
   },
   {
+   "name": "secrets-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/secrets-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.secrets"
+   ],
+   "skills": [
+    "secret-scan",
+    "dependency-scan",
+    "security-boundary-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "security-auditor",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/security-auditor.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.audit"
+   ],
+   "skills": [
+    "security-boundary-audit",
+    "authorization-audit",
+    "tenant-isolation-audit",
+    "secret-scan",
+    "dependency-scan"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "security-boundary-mapper",
    "kind": "mapper",
    "domain": "repository-intelligence",
@@ -3631,6 +4086,63 @@
     "security-boundary-audit",
     "authorization-map",
     "integration-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "security-engineer",
+   "kind": "engineer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/security-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/security/**",
+    "apps/api/src/core/middleware/**",
+    "apps/api/src/core/pipes/**",
+    "apps/api/src/core/filters/**"
+   ],
+   "capabilities": [
+    "security.implement"
+   ],
+   "skills": [
+    "implement-feature",
+    "security-boundary-audit",
+    "create-security-tests",
+    "run-security-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "security-investigator",
+   "kind": "investigator",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/security-investigator.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.investigate"
+   ],
+   "skills": [
+    "security-boundary-audit",
+    "secret-scan",
+    "authorization-audit",
+    "tenant-isolation-audit"
    ],
    "approval": "none"
   },
@@ -3720,6 +4232,30 @@
    "approval": "none"
   },
   {
+   "name": "session-security-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/session-security-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.session"
+   ],
+   "skills": [
+    "session-security-audit",
+    "auth-audit",
+    "csrf-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "skill-router",
    "kind": "router",
    "domain": "routing",
@@ -3763,6 +4299,54 @@
     "feature-planner",
     "trace",
     "discover"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "sql-injection-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/sql-injection-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.sql-injection"
+   ],
+   "skills": [
+    "sql-injection-audit",
+    "query-audit",
+    "security-boundary-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ssrf-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/ssrf-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.ssrf"
+   ],
+   "skills": [
+    "ssrf-audit",
+    "security-boundary-audit",
+    "external-action-check"
    ],
    "approval": "none"
   },
@@ -3918,6 +4502,31 @@
    "approval": "none"
   },
   {
+   "name": "tenant-isolation-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/tenant-isolation-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.tenant-isolation"
+   ],
+   "skills": [
+    "tenant-isolation-audit",
+    "create-tenant-isolation-tests",
+    "database-audit",
+    "security-boundary-audit"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "test-planner",
    "kind": "planner",
    "domain": "planning",
@@ -3938,6 +4547,30 @@
     "test-generator",
     "regression-gates",
     "create-regression-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "threat-model-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/threat-model-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.threat-model"
+   ],
+   "skills": [
+    "threat-model",
+    "security-boundary-audit",
+    "authorization-map"
    ],
    "approval": "none"
   },
@@ -4266,6 +4899,30 @@
    "approval": "none"
   },
   {
+   "name": "vulnerability-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/vulnerability-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.vulnerability"
+   ],
+   "skills": [
+    "dependency-scan",
+    "dependency-safety-check",
+    "secret-scan"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "webhook-engineer",
    "kind": "engineer",
    "domain": "backend",
@@ -4291,6 +4948,30 @@
     "webhook-security-audit",
     "create-security-tests",
     "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "webhook-security-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/webhook-security-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.webhook"
+   ],
+   "skills": [
+    "webhook-security-audit",
+    "security-boundary-audit",
+    "event-processing-audit"
    ],
    "approval": "none"
   },
@@ -4424,6 +5105,30 @@
     "generate-xlsx-export",
     "validate-import",
     "normalize-import-data"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "xss-reviewer",
+   "kind": "reviewer",
+   "domain": "security",
+   "batch": 8,
+   "owner": "security owner",
+   "path": ".claude/agents/xss-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "security.review.xss"
+   ],
+   "skills": [
+    "xss-audit",
+    "security-boundary-audit",
+    "frontend-audit"
    ],
    "approval": "none"
   }
@@ -7589,6 +8294,588 @@
     "change-impact-check",
     "plan",
     "quality-gate"
+   ]
+  },
+  {
+   "id": "security.audit",
+   "domain": "security",
+   "description": "Audit the security posture of a change or module across authn, authz, tenant isolation, injection and exposure",
+   "validation": [
+    "security audit with negative paths"
+   ],
+   "evidence": [
+    "security audit record"
+   ],
+   "approval": "none",
+   "executors": [
+    "security-auditor"
+   ],
+   "skills": [
+    "authorization-audit",
+    "dependency-scan",
+    "secret-scan",
+    "security-boundary-audit",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "security.auth",
+   "domain": "security",
+   "description": "Implement authentication: credential verification, session and token handling and onboarding flows",
+   "validation": [
+    "auth tests with invalid and expired credentials",
+    "security-reviewer verdict"
+   ],
+   "evidence": [
+    "change-set record",
+    "auth test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "auth-engineer"
+   ],
+   "skills": [
+    "auth-audit",
+    "create-security-tests",
+    "implement-auth",
+    "run-security-tests",
+    "session-security-audit"
+   ]
+  },
+  {
+   "id": "security.authorization",
+   "domain": "security",
+   "description": "Implement authorization: guards, permission checks and ownership checks enforced on the server",
+   "validation": [
+    "authorization tests with denied cases",
+    "security-reviewer verdict"
+   ],
+   "evidence": [
+    "change-set record",
+    "authorization test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "authorization-engineer"
+   ],
+   "skills": [
+    "authorization-hardening",
+    "authorization-map",
+    "create-authorization-tests",
+    "implement-authorization",
+    "implement-rbac"
+   ]
+  },
+  {
+   "id": "security.implement",
+   "domain": "security",
+   "description": "Implement security hardening: headers, rate limits, input pipes, error filters and safe defaults",
+   "validation": [
+    "api typecheck",
+    "security tests with abuse cases"
+   ],
+   "evidence": [
+    "change-set record",
+    "security test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "security-engineer"
+   ],
+   "skills": [
+    "create-security-tests",
+    "implement-feature",
+    "run-security-tests",
+    "security-boundary-audit"
+   ]
+  },
+  {
+   "id": "security.investigate",
+   "domain": "security",
+   "description": "Investigate a suspected security issue, preserving evidence and separating confirmed from unconfirmed",
+   "validation": [
+    "reproduction on a disposable target",
+    "evidence preservation"
+   ],
+   "evidence": [
+    "investigation record"
+   ],
+   "approval": "none",
+   "executors": [
+    "security-investigator"
+   ],
+   "skills": [
+    "authorization-audit",
+    "secret-scan",
+    "security-boundary-audit",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "security.review.abuse-prevention",
+   "domain": "security",
+   "description": "Review abuse prevention: rate limits, quotas, enumeration, bulk actions and costly operations",
+   "validation": [
+    "abuse path audit"
+   ],
+   "evidence": [
+    "abuse prevention verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "abuse-prevention-reviewer"
+   ],
+   "skills": [
+    "authorization-audit",
+    "queue-audit",
+    "security-boundary-audit"
+   ]
+  },
+  {
+   "id": "security.review.auditability",
+   "domain": "security",
+   "description": "Review auditability: security-relevant actions are logged with actor, tenant, target and outcome, without secrets",
+   "validation": [
+    "audit log audit"
+   ],
+   "evidence": [
+    "auditability verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "auditability-reviewer"
+   ],
+   "skills": [
+    "authorization-audit",
+    "implement-audit-log",
+    "pii-audit",
+    "security-boundary-audit"
+   ]
+  },
+  {
+   "id": "security.review.authentication",
+   "domain": "security",
+   "description": "Review authentication: credential handling, token lifetime and rotation, brute-force protection and recovery flows",
+   "validation": [
+    "auth audit"
+   ],
+   "evidence": [
+    "authentication verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "authentication-reviewer"
+   ],
+   "skills": [
+    "auth-audit",
+    "security-boundary-audit",
+    "session-security-audit"
+   ]
+  },
+  {
+   "id": "security.review.authorization",
+   "domain": "security",
+   "description": "Review authorization: every route and action checked server-side by role, ownership and tenant",
+   "validation": [
+    "authorization audit with denied cases"
+   ],
+   "evidence": [
+    "authorization verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "authorization-reviewer"
+   ],
+   "skills": [
+    "authorization-audit",
+    "authorization-map",
+    "permission-audit",
+    "rbac-audit"
+   ]
+  },
+  {
+   "id": "security.review.compliance-privacy",
+   "domain": "security",
+   "description": "Review privacy and compliance posture only where the project establishes a regime, without inventing one",
+   "validation": [
+    "privacy and compliance audit against the project basis"
+   ],
+   "evidence": [
+    "compliance privacy verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "compliance-privacy-reviewer"
+   ],
+   "skills": [
+    "data-retention-audit",
+    "pii-audit",
+    "security-boundary-audit"
+   ]
+  },
+  {
+   "id": "security.review.credential-storage",
+   "domain": "security",
+   "description": "Review how passwords, API keys and tokens are stored: hashing, encryption at rest and exposure in responses",
+   "validation": [
+    "credential storage audit"
+   ],
+   "evidence": [
+    "credential storage verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "credential-storage-reviewer"
+   ],
+   "skills": [
+    "credential-storage-audit",
+    "encryption-audit",
+    "secret-scan"
+   ]
+  },
+  {
+   "id": "security.review.csrf",
+   "domain": "security",
+   "description": "Review cross-site request forgery exposure given the way credentials are sent",
+   "validation": [
+    "csrf audit"
+   ],
+   "evidence": [
+    "csrf verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "csrf-reviewer"
+   ],
+   "skills": [
+    "csrf-audit",
+    "security-boundary-audit",
+    "session-security-audit"
+   ]
+  },
+  {
+   "id": "security.review.encryption",
+   "domain": "security",
+   "description": "Review encryption: algorithms, modes, key handling, field-level encryption and transport security",
+   "validation": [
+    "encryption audit"
+   ],
+   "evidence": [
+    "encryption verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "encryption-reviewer"
+   ],
+   "skills": [
+    "credential-storage-audit",
+    "encryption-audit",
+    "secret-scan"
+   ]
+  },
+  {
+   "id": "security.review.file-upload",
+   "domain": "security",
+   "description": "Review file uploads: type and size limits, content sniffing, storage path, scanning, and access control on download",
+   "validation": [
+    "upload security audit"
+   ],
+   "evidence": [
+    "upload security verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "file-upload-security-reviewer"
+   ],
+   "skills": [
+    "media-security-audit",
+    "tenant-isolation-audit",
+    "upload-security-audit"
+   ]
+  },
+  {
+   "id": "security.review.input-validation",
+   "domain": "security",
+   "description": "Review input validation at every boundary: DTOs, pipes, whitelisting, size limits and type coercion",
+   "validation": [
+    "input boundary audit with hostile payloads"
+   ],
+   "evidence": [
+    "input validation verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "input-validation-reviewer"
+   ],
+   "skills": [
+    "api-contract-audit",
+    "security-boundary-audit",
+    "sql-injection-audit",
+    "xss-audit"
+   ]
+  },
+  {
+   "id": "security.review.permission-boundary",
+   "domain": "security",
+   "description": "Review permission boundaries between roles, services, tools and automations, including privileged service credentials",
+   "validation": [
+    "security boundary audit"
+   ],
+   "evidence": [
+    "permission boundary verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "permission-boundary-reviewer"
+   ],
+   "skills": [
+    "authorization-audit",
+    "permission-audit",
+    "security-boundary-audit",
+    "tool-policy-validation"
+   ]
+  },
+  {
+   "id": "security.review.pii",
+   "domain": "security",
+   "description": "Review handling of personal data: collection, masking, logging, export, retention and access",
+   "validation": [
+    "pii audit"
+   ],
+   "evidence": [
+    "pii verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "pii-reviewer"
+   ],
+   "skills": [
+    "data-retention-audit",
+    "pii-audit",
+    "security-boundary-audit"
+   ]
+  },
+  {
+   "id": "security.review.prompt-injection",
+   "domain": "security",
+   "description": "Review where untrusted content reaches a model prompt or tool call and how it is isolated",
+   "validation": [
+    "prompt injection audit"
+   ],
+   "evidence": [
+    "prompt injection verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "prompt-injection-reviewer"
+   ],
+   "skills": [
+    "ai-security-audit",
+    "human-approval-validation",
+    "prompt-injection-audit",
+    "tool-policy-validation"
+   ]
+  },
+  {
+   "id": "security.review.rbac",
+   "domain": "security",
+   "description": "Review role-based access control: role definitions, permission matrix, escalation paths and defaults",
+   "validation": [
+    "rbac audit"
+   ],
+   "evidence": [
+    "rbac verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "rbac-reviewer"
+   ],
+   "skills": [
+    "authorization-audit",
+    "permission-audit",
+    "rbac-audit"
+   ]
+  },
+  {
+   "id": "security.review.secrets",
+   "domain": "security",
+   "description": "Review secret handling: sourcing, storage, logging, bundling and rotation, using pattern scans without reading values",
+   "validation": [
+    "secret scan"
+   ],
+   "evidence": [
+    "secrets verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "secrets-reviewer"
+   ],
+   "skills": [
+    "dependency-scan",
+    "secret-scan",
+    "security-boundary-audit"
+   ]
+  },
+  {
+   "id": "security.review.session",
+   "domain": "security",
+   "description": "Review session security: cookie or token storage, expiry, revocation, fixation and logout behavior",
+   "validation": [
+    "session security audit"
+   ],
+   "evidence": [
+    "session security verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "session-security-reviewer"
+   ],
+   "skills": [
+    "auth-audit",
+    "csrf-audit",
+    "session-security-audit"
+   ]
+  },
+  {
+   "id": "security.review.sql-injection",
+   "domain": "security",
+   "description": "Review SQL injection exposure in raw queries, dynamic identifiers and query builders",
+   "validation": [
+    "sql injection audit"
+   ],
+   "evidence": [
+    "sql injection verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "sql-injection-reviewer"
+   ],
+   "skills": [
+    "query-audit",
+    "security-boundary-audit",
+    "sql-injection-audit"
+   ]
+  },
+  {
+   "id": "security.review.ssrf",
+   "domain": "security",
+   "description": "Review server-side request forgery exposure in code that fetches user-supplied URLs",
+   "validation": [
+    "ssrf audit"
+   ],
+   "evidence": [
+    "ssrf verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ssrf-reviewer"
+   ],
+   "skills": [
+    "external-action-check",
+    "security-boundary-audit",
+    "ssrf-audit"
+   ]
+  },
+  {
+   "id": "security.review.tenant-isolation",
+   "domain": "security",
+   "description": "Review tenant isolation: scoping of queries, policies, caches, queues, storage paths and exports",
+   "validation": [
+    "tenant isolation audit with a cross-tenant negative case"
+   ],
+   "evidence": [
+    "tenant isolation verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "tenant-isolation-reviewer"
+   ],
+   "skills": [
+    "create-tenant-isolation-tests",
+    "database-audit",
+    "security-boundary-audit",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "security.review.threat-model",
+   "domain": "security",
+   "description": "Review or produce a threat model for a new trust boundary, listing assets, actors, threats and controls",
+   "validation": [
+    "threat model review"
+   ],
+   "evidence": [
+    "threat model verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "threat-model-reviewer"
+   ],
+   "skills": [
+    "authorization-map",
+    "security-boundary-audit",
+    "threat-model"
+   ]
+  },
+  {
+   "id": "security.review.vulnerability",
+   "domain": "security",
+   "description": "Review dependency and code vulnerabilities and assess exploitability in this repository",
+   "validation": [
+    "dependency scan",
+    "exploitability assessment"
+   ],
+   "evidence": [
+    "vulnerability verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "vulnerability-reviewer"
+   ],
+   "skills": [
+    "dependency-safety-check",
+    "dependency-scan",
+    "secret-scan"
+   ]
+  },
+  {
+   "id": "security.review.webhook",
+   "domain": "security",
+   "description": "Review webhook endpoints: signature verification, replay protection, idempotency and payload limits",
+   "validation": [
+    "webhook security audit"
+   ],
+   "evidence": [
+    "webhook security verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "webhook-security-reviewer"
+   ],
+   "skills": [
+    "event-processing-audit",
+    "security-boundary-audit",
+    "webhook-security-audit"
+   ]
+  },
+  {
+   "id": "security.review.xss",
+   "domain": "security",
+   "description": "Review cross-site scripting exposure in rendered content and generated documents",
+   "validation": [
+    "xss audit"
+   ],
+   "evidence": [
+    "xss verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "xss-reviewer"
+   ],
+   "skills": [
+    "frontend-audit",
+    "security-boundary-audit",
+    "xss-audit"
    ]
   }
  ],

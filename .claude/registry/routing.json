@@ -1587,6 +1587,279 @@
    "capabilities": [
     "database.review.data-engineering"
    ]
+  },
+  {
+   "intent": "implement-security-hardening",
+   "domain": "security",
+   "description": "Implement security hardening",
+   "keywords": [
+    "security hardening",
+    "rate limit",
+    "security headers",
+    "harden endpoint"
+   ],
+   "capabilities": [
+    "security.implement",
+    "security.review.input-validation"
+   ]
+  },
+  {
+   "intent": "audit-security",
+   "domain": "security",
+   "description": "Audit the security posture",
+   "keywords": [
+    "security audit",
+    "security posture",
+    "security review"
+   ],
+   "capabilities": [
+    "security.audit"
+   ]
+  },
+  {
+   "intent": "investigate-security-issue",
+   "domain": "security",
+   "description": "Investigate a suspected security issue",
+   "keywords": [
+    "suspected leak",
+    "security incident",
+    "possible exposure"
+   ],
+   "capabilities": [
+    "security.investigate"
+   ]
+  },
+  {
+   "intent": "implement-authentication",
+   "domain": "security",
+   "description": "Implement authentication",
+   "keywords": [
+    "implement login",
+    "authentication change",
+    "token handling",
+    "password reset flow"
+   ],
+   "capabilities": [
+    "security.auth",
+    "security.review.authentication",
+    "security.review.session"
+   ]
+  },
+  {
+   "intent": "implement-authorization-change",
+   "domain": "security",
+   "description": "Implement authorization",
+   "keywords": [
+    "permission check",
+    "implement guard",
+    "authorization change",
+    "ownership check"
+   ],
+   "capabilities": [
+    "security.authorization",
+    "security.review.authorization"
+   ]
+  },
+  {
+   "intent": "review-rbac",
+   "domain": "security",
+   "description": "Review the role model",
+   "keywords": [
+    "role model",
+    "permission matrix",
+    "privilege escalation"
+   ],
+   "capabilities": [
+    "security.review.rbac"
+   ]
+  },
+  {
+   "intent": "review-tenant-isolation",
+   "domain": "security",
+   "description": "Review tenant isolation",
+   "keywords": [
+    "tenant isolation",
+    "cross tenant",
+    "tenant leak"
+   ],
+   "capabilities": [
+    "security.review.tenant-isolation"
+   ]
+  },
+  {
+   "intent": "review-secrets",
+   "domain": "security",
+   "description": "Review secret handling",
+   "keywords": [
+    "secret handling",
+    "leaked secret",
+    "secret scan"
+   ],
+   "capabilities": [
+    "security.review.secrets",
+    "security.review.credential-storage"
+   ]
+  },
+  {
+   "intent": "build-threat-model",
+   "domain": "security",
+   "description": "Produce or review a threat model",
+   "keywords": [
+    "threat model",
+    "trust boundary",
+    "attack surface"
+   ],
+   "capabilities": [
+    "security.review.threat-model"
+   ]
+  },
+  {
+   "intent": "review-vulnerabilities",
+   "domain": "security",
+   "description": "Review vulnerabilities",
+   "keywords": [
+    "vulnerability",
+    "cve",
+    "vulnerable dependency"
+   ],
+   "capabilities": [
+    "security.review.vulnerability"
+   ]
+  },
+  {
+   "intent": "review-input-validation",
+   "domain": "security",
+   "description": "Review input validation",
+   "keywords": [
+    "input validation",
+    "dto validation",
+    "hostile payload"
+   ],
+   "capabilities": [
+    "security.review.input-validation"
+   ]
+  },
+  {
+   "intent": "review-webhook-security",
+   "domain": "security",
+   "description": "Review webhook security",
+   "keywords": [
+    "webhook signature",
+    "webhook replay",
+    "webhook security"
+   ],
+   "capabilities": [
+    "security.review.webhook"
+   ]
+  },
+  {
+   "intent": "review-upload-security",
+   "domain": "security",
+   "description": "Review file upload security",
+   "keywords": [
+    "upload security",
+    "file upload",
+    "path traversal"
+   ],
+   "capabilities": [
+    "security.review.file-upload"
+   ]
+  },
+  {
+   "intent": "review-prompt-injection",
+   "domain": "security",
+   "description": "Review prompt injection exposure",
+   "keywords": [
+    "prompt injection",
+    "untrusted content in prompt",
+    "model input trust"
+   ],
+   "capabilities": [
+    "security.review.prompt-injection"
+   ]
+  },
+  {
+   "intent": "review-pii",
+   "domain": "security",
+   "description": "Review personal data handling",
+   "keywords": [
+    "personal data",
+    "pii exposure",
+    "data masking"
+   ],
+   "capabilities": [
+    "security.review.pii",
+    "security.review.compliance-privacy"
+   ]
+  },
+  {
+   "intent": "review-permission-boundaries",
+   "domain": "security",
+   "description": "Review permission boundaries",
+   "keywords": [
+    "permission boundary",
+    "service credential",
+    "least authority"
+   ],
+   "capabilities": [
+    "security.review.permission-boundary"
+   ]
+  },
+  {
+   "intent": "review-web-attack-classes",
+   "domain": "security",
+   "description": "Review csrf, xss, ssrf and sql injection",
+   "keywords": [
+    "csrf review",
+    "xss review",
+    "ssrf review",
+    "sql injection review"
+   ],
+   "capabilities": [
+    "security.review.csrf",
+    "security.review.xss",
+    "security.review.ssrf",
+    "security.review.sql-injection"
+   ]
+  },
+  {
+   "intent": "review-encryption",
+   "domain": "security",
+   "description": "Review encryption",
+   "keywords": [
+    "encryption review",
+    "key handling",
+    "field encryption"
+   ],
+   "capabilities": [
+    "security.review.encryption"
+   ]
+  },
+  {
+   "intent": "review-auditability",
+   "domain": "security",
+   "description": "Review auditability",
+   "keywords": [
+    "audit trail",
+    "auditability",
+    "action logging"
+   ],
+   "capabilities": [
+    "security.review.auditability"
+   ]
+  },
+  {
+   "intent": "review-abuse-prevention",
+   "domain": "security",
+   "description": "Review abuse prevention",
+   "keywords": [
+    "abuse prevention",
+    "enumeration",
+    "quota review"
+   ],
+   "capabilities": [
+    "security.review.abuse-prevention"
+   ]
   }
  ],
  "highImpactSignals": [

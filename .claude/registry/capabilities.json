@@ -1824,6 +1824,350 @@
     "routing decision"
    ],
    "approval": "none"
+  },
+  {
+   "id": "security.audit",
+   "domain": "security",
+   "description": "Audit the security posture of a change or module across authn, authz, tenant isolation, injection and exposure",
+   "validation": [
+    "security audit with negative paths"
+   ],
+   "evidence": [
+    "security audit record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.auth",
+   "domain": "security",
+   "description": "Implement authentication: credential verification, session and token handling and onboarding flows",
+   "validation": [
+    "auth tests with invalid and expired credentials",
+    "security-reviewer verdict"
+   ],
+   "evidence": [
+    "change-set record",
+    "auth test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.authorization",
+   "domain": "security",
+   "description": "Implement authorization: guards, permission checks and ownership checks enforced on the server",
+   "validation": [
+    "authorization tests with denied cases",
+    "security-reviewer verdict"
+   ],
+   "evidence": [
+    "change-set record",
+    "authorization test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.implement",
+   "domain": "security",
+   "description": "Implement security hardening: headers, rate limits, input pipes, error filters and safe defaults",
+   "validation": [
+    "api typecheck",
+    "security tests with abuse cases"
+   ],
+   "evidence": [
+    "change-set record",
+    "security test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.investigate",
+   "domain": "security",
+   "description": "Investigate a suspected security issue, preserving evidence and separating confirmed from unconfirmed",
+   "validation": [
+    "reproduction on a disposable target",
+    "evidence preservation"
+   ],
+   "evidence": [
+    "investigation record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.abuse-prevention",
+   "domain": "security",
+   "description": "Review abuse prevention: rate limits, quotas, enumeration, bulk actions and costly operations",
+   "validation": [
+    "abuse path audit"
+   ],
+   "evidence": [
+    "abuse prevention verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.auditability",
+   "domain": "security",
+   "description": "Review auditability: security-relevant actions are logged with actor, tenant, target and outcome, without secrets",
+   "validation": [
+    "audit log audit"
+   ],
+   "evidence": [
+    "auditability verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.authentication",
+   "domain": "security",
+   "description": "Review authentication: credential handling, token lifetime and rotation, brute-force protection and recovery flows",
+   "validation": [
+    "auth audit"
+   ],
+   "evidence": [
+    "authentication verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.authorization",
+   "domain": "security",
+   "description": "Review authorization: every route and action checked server-side by role, ownership and tenant",
+   "validation": [
+    "authorization audit with denied cases"
+   ],
+   "evidence": [
+    "authorization verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.compliance-privacy",
+   "domain": "security",
+   "description": "Review privacy and compliance posture only where the project establishes a regime, without inventing one",
+   "validation": [
+    "privacy and compliance audit against the project basis"
+   ],
+   "evidence": [
+    "compliance privacy verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.credential-storage",
+   "domain": "security",
+   "description": "Review how passwords, API keys and tokens are stored: hashing, encryption at rest and exposure in responses",
+   "validation": [
+    "credential storage audit"
+   ],
+   "evidence": [
+    "credential storage verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.csrf",
+   "domain": "security",
+   "description": "Review cross-site request forgery exposure given the way credentials are sent",
+   "validation": [
+    "csrf audit"
+   ],
+   "evidence": [
+    "csrf verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.encryption",
+   "domain": "security",
+   "description": "Review encryption: algorithms, modes, key handling, field-level encryption and transport security",
+   "validation": [
+    "encryption audit"
+   ],
+   "evidence": [
+    "encryption verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.file-upload",
+   "domain": "security",
+   "description": "Review file uploads: type and size limits, content sniffing, storage path, scanning, and access control on download",
+   "validation": [
+    "upload security audit"
+   ],
+   "evidence": [
+    "upload security verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.input-validation",
+   "domain": "security",
+   "description": "Review input validation at every boundary: DTOs, pipes, whitelisting, size limits and type coercion",
+   "validation": [
+    "input boundary audit with hostile payloads"
+   ],
+   "evidence": [
+    "input validation verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.permission-boundary",
+   "domain": "security",
+   "description": "Review permission boundaries between roles, services, tools and automations, including privileged service credentials",
+   "validation": [
+    "security boundary audit"
+   ],
+   "evidence": [
+    "permission boundary verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.pii",
+   "domain": "security",
+   "description": "Review handling of personal data: collection, masking, logging, export, retention and access",
+   "validation": [
+    "pii audit"
+   ],
+   "evidence": [
+    "pii verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.prompt-injection",
+   "domain": "security",
+   "description": "Review where untrusted content reaches a model prompt or tool call and how it is isolated",
+   "validation": [
+    "prompt injection audit"
+   ],
+   "evidence": [
+    "prompt injection verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.rbac",
+   "domain": "security",
+   "description": "Review role-based access control: role definitions, permission matrix, escalation paths and defaults",
+   "validation": [
+    "rbac audit"
+   ],
+   "evidence": [
+    "rbac verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.secrets",
+   "domain": "security",
+   "description": "Review secret handling: sourcing, storage, logging, bundling and rotation, using pattern scans without reading values",
+   "validation": [
+    "secret scan"
+   ],
+   "evidence": [
+    "secrets verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.session",
+   "domain": "security",
+   "description": "Review session security: cookie or token storage, expiry, revocation, fixation and logout behavior",
+   "validation": [
+    "session security audit"
+   ],
+   "evidence": [
+    "session security verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.sql-injection",
+   "domain": "security",
+   "description": "Review SQL injection exposure in raw queries, dynamic identifiers and query builders",
+   "validation": [
+    "sql injection audit"
+   ],
+   "evidence": [
+    "sql injection verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.ssrf",
+   "domain": "security",
+   "description": "Review server-side request forgery exposure in code that fetches user-supplied URLs",
+   "validation": [
+    "ssrf audit"
+   ],
+   "evidence": [
+    "ssrf verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.tenant-isolation",
+   "domain": "security",
+   "description": "Review tenant isolation: scoping of queries, policies, caches, queues, storage paths and exports",
+   "validation": [
+    "tenant isolation audit with a cross-tenant negative case"
+   ],
+   "evidence": [
+    "tenant isolation verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.threat-model",
+   "domain": "security",
+   "description": "Review or produce a threat model for a new trust boundary, listing assets, actors, threats and controls",
+   "validation": [
+    "threat model review"
+   ],
+   "evidence": [
+    "threat model verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.vulnerability",
+   "domain": "security",
+   "description": "Review dependency and code vulnerabilities and assess exploitability in this repository",
+   "validation": [
+    "dependency scan",
+    "exploitability assessment"
+   ],
+   "evidence": [
+    "vulnerability verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.webhook",
+   "domain": "security",
+   "description": "Review webhook endpoints: signature verification, replay protection, idempotency and payload limits",
+   "validation": [
+    "webhook security audit"
+   ],
+   "evidence": [
+    "webhook security verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "security.review.xss",
+   "domain": "security",
+   "description": "Review cross-site scripting exposure in rendered content and generated documents",
+   "validation": [
+    "xss audit"
+   ],
+   "evidence": [
+    "xss verdict"
+   ],
+   "approval": "none"
   }
  ]
 }
