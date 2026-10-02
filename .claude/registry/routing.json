@@ -2763,6 +2763,226 @@
    "capabilities": [
     "quality.review.payments"
    ]
+  },
+  {
+   "intent": "design-ai-runtime",
+   "domain": "ai-engineering",
+   "description": "Design AI runtime structure",
+   "keywords": [
+    "ai runtime design",
+    "ai architecture",
+    "where does ai fit"
+   ],
+   "capabilities": [
+    "ai.architecture"
+   ]
+  },
+  {
+   "intent": "implement-ai-agent",
+   "domain": "ai-engineering",
+   "description": "Implement a product AI agent",
+   "keywords": [
+    "ai agent",
+    "implement agent",
+    "agent tools"
+   ],
+   "capabilities": [
+    "ai.agent",
+    "ai.review.tool-policy",
+    "ai.review.human-approval"
+   ]
+  },
+  {
+   "intent": "implement-ai-skill",
+   "domain": "ai-engineering",
+   "description": "Implement a product AI skill",
+   "keywords": [
+    "ai skill",
+    "implement skill",
+    "skill schema"
+   ],
+   "capabilities": [
+    "ai.skill",
+    "ai.review.contract"
+   ]
+  },
+  {
+   "intent": "implement-ai-workflow",
+   "domain": "ai-engineering",
+   "description": "Implement an AI workflow",
+   "keywords": [
+    "ai workflow",
+    "multi step ai",
+    "approval gate workflow"
+   ],
+   "capabilities": [
+    "ai.workflow",
+    "ai.review.human-approval"
+   ]
+  },
+  {
+   "intent": "implement-ai-automation",
+   "domain": "ai-engineering",
+   "description": "Implement an AI automation",
+   "keywords": [
+    "ai automation",
+    "automation trigger",
+    "scheduled ai run"
+   ],
+   "capabilities": [
+    "ai.automation"
+   ]
+  },
+  {
+   "intent": "write-prompts",
+   "domain": "ai-engineering",
+   "description": "Write or change prompts",
+   "keywords": [
+    "write prompt",
+    "change prompt",
+    "prompt version"
+   ],
+   "capabilities": [
+    "ai.prompt",
+    "ai.review.regression"
+   ]
+  },
+  {
+   "intent": "evaluate-ai-feature",
+   "domain": "ai-engineering",
+   "description": "Evaluate an AI feature",
+   "keywords": [
+    "ai evaluation",
+    "evaluation set",
+    "ai quality"
+   ],
+   "capabilities": [
+    "ai.evaluation",
+    "ai.review.quality"
+   ]
+  },
+  {
+   "intent": "implement-ai-observability",
+   "domain": "ai-engineering",
+   "description": "Implement AI observability",
+   "keywords": [
+    "ai observability",
+    "token usage",
+    "ai cost telemetry"
+   ],
+   "capabilities": [
+    "ai.observability"
+   ]
+  },
+  {
+   "intent": "review-ai-security",
+   "domain": "ai-engineering",
+   "description": "Review AI security",
+   "keywords": [
+    "ai security",
+    "prompt injection review",
+    "ai exfiltration"
+   ],
+   "capabilities": [
+    "ai.review.security",
+    "ai.review.guardrail"
+   ]
+  },
+  {
+   "intent": "review-ai-cost-and-routing",
+   "domain": "ai-engineering",
+   "description": "Review AI cost and model routing",
+   "keywords": [
+    "ai cost",
+    "model routing",
+    "token budget"
+   ],
+   "capabilities": [
+    "ai.review.cost",
+    "ai.review.model-routing"
+   ]
+  },
+  {
+   "intent": "review-ai-provider-usage",
+   "domain": "ai-engineering",
+   "description": "Review AI provider usage",
+   "keywords": [
+    "ai provider usage",
+    "model provider calls"
+   ],
+   "capabilities": [
+    "ai.review.provider",
+    "ai.review.fallback"
+   ]
+  },
+  {
+   "intent": "review-ai-tools-and-output",
+   "domain": "ai-engineering",
+   "description": "Review AI tools and output validation",
+   "keywords": [
+    "ai tools review",
+    "output validation",
+    "tool policy"
+   ],
+   "capabilities": [
+    "ai.review.tooling",
+    "ai.review.output-validation"
+   ]
+  },
+  {
+   "intent": "implement-ai-context-memory-retrieval",
+   "domain": "ai-engineering",
+   "description": "Implement context, memory and retrieval",
+   "keywords": [
+    "ai context",
+    "ai memory",
+    "retrieval",
+    "rag"
+   ],
+   "capabilities": [
+    "ai.context",
+    "ai.memory",
+    "ai.retrieval"
+   ]
+  },
+  {
+   "intent": "red-team-ai-feature",
+   "domain": "ai-engineering",
+   "description": "Red-team an AI feature",
+   "keywords": [
+    "red team",
+    "adversarial ai test",
+    "ai abuse test"
+   ],
+   "capabilities": [
+    "ai.review.red-team"
+   ]
+  },
+  {
+   "intent": "review-ai-latency",
+   "domain": "ai-engineering",
+   "description": "Review AI latency",
+   "keywords": [
+    "ai latency",
+    "time to first token"
+   ],
+   "capabilities": [
+    "ai.review.latency"
+   ]
+  },
+  {
+   "intent": "review-ai-regression-and-hallucination",
+   "domain": "ai-engineering",
+   "description": "Review AI regression and hallucination",
+   "keywords": [
+    "ai regression",
+    "hallucination",
+    "ungrounded output"
+   ],
+   "capabilities": [
+    "ai.review.regression",
+    "ai.review.hallucination"
+   ]
   }
  ],
  "highImpactSignals": [

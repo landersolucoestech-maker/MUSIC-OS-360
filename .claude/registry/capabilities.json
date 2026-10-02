@@ -1,6 +1,341 @@
 {
  "capabilities": [
   {
+   "id": "ai.agent",
+   "domain": "ai-engineering",
+   "description": "Implement product AI agents with explicit tools, limits, output contracts and human approval for high-impact actions",
+   "validation": [
+    "agent tests with a fake model",
+    "tool policy validation"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.architecture",
+   "domain": "ai-engineering",
+   "description": "Design the AI runtime: how agents, skills, workflows, tools, context and approvals fit together with clear trust boundaries",
+   "validation": [
+    "architecture review of the AI runtime design"
+   ],
+   "evidence": [
+    "design record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.automation",
+   "domain": "ai-engineering",
+   "description": "Implement automations that run AI skills on triggers, with tenant context, limits and audit entries",
+   "validation": [
+    "automation tests with tenant context"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.context",
+   "domain": "ai-engineering",
+   "description": "Implement context assembly for AI features: what is included, tenant scoping, size limits and provenance labels",
+   "validation": [
+    "context tests with tenant separation"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.evaluation",
+   "domain": "ai-engineering",
+   "description": "Build evaluation sets and runs that measure quality, safety and regressions of AI features with recorded results",
+   "validation": [
+    "evaluation run with recorded scores"
+   ],
+   "evidence": [
+    "evaluation set",
+    "evaluation run record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.memory",
+   "domain": "ai-engineering",
+   "description": "Implement AI memory as bounded, sourced, expirable records that never override current data or policy",
+   "validation": [
+    "memory tests with staleness and tenant separation"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.observability",
+   "domain": "ai-engineering",
+   "description": "Implement AI observability: runs, tokens, latency, cost and outcomes per tenant, without storing secrets or raw personal data",
+   "validation": [
+    "telemetry tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.prompt",
+   "domain": "ai-engineering",
+   "description": "Write and version prompts with delimited untrusted input, stable output contracts and tests",
+   "validation": [
+    "prompt tests with hostile input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.retrieval",
+   "domain": "ai-engineering",
+   "description": "Implement retrieval for AI features: indexing, tenant filtering, ranking and provenance of retrieved content",
+   "validation": [
+    "retrieval tests with tenant filter"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.contract",
+   "domain": "ai-engineering",
+   "description": "Review contracts between AI components and the rest of the system: input and output schemas and versions",
+   "validation": [
+    "contract audit"
+   ],
+   "evidence": [
+    "ai contract verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.cost",
+   "domain": "ai-engineering",
+   "description": "Review AI cost: tokens per feature, unbounded loops, model choice and per-tenant limits",
+   "validation": [
+    "ai cost audit"
+   ],
+   "evidence": [
+    "ai cost verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.fallback",
+   "domain": "ai-engineering",
+   "description": "Review fallback behavior when a model or provider fails: degraded output, honesty about uncertainty and no fabricated results",
+   "validation": [
+    "ai fallback audit"
+   ],
+   "evidence": [
+    "ai fallback verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.guardrail",
+   "domain": "ai-engineering",
+   "description": "Review guardrails: input and output filters, limits and refusal behavior, and whether they can be bypassed",
+   "validation": [
+    "guardrail audit with hostile inputs"
+   ],
+   "evidence": [
+    "ai guardrail verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.hallucination",
+   "domain": "ai-engineering",
+   "description": "Review hallucination risk: claims not grounded in provided data, invented identifiers and fabricated sources",
+   "validation": [
+    "grounding check against source data"
+   ],
+   "evidence": [
+    "ai hallucination verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.human-approval",
+   "domain": "ai-engineering",
+   "description": "Review human approval gates for AI actions: which actions need approval, who approves and that no path bypasses it",
+   "validation": [
+    "human approval validation"
+   ],
+   "evidence": [
+    "ai human approval verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.latency",
+   "domain": "ai-engineering",
+   "description": "Review AI latency: time to first token, total time, streaming, caching and timeouts",
+   "validation": [
+    "ai latency audit with measurements"
+   ],
+   "evidence": [
+    "ai latency verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.model-routing",
+   "domain": "ai-engineering",
+   "description": "Review model routing: which model serves which task, fallbacks and the evidence behind the choice",
+   "validation": [
+    "ai model routing audit"
+   ],
+   "evidence": [
+    "ai model routing verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.output-validation",
+   "domain": "ai-engineering",
+   "description": "Review validation of model output before it is stored or acted on: structure, ranges, enums and domain rules",
+   "validation": [
+    "structured output validation"
+   ],
+   "evidence": [
+    "ai output validation verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.provider",
+   "domain": "ai-engineering",
+   "description": "Review AI provider usage: error handling, timeouts, quotas, data sent and contractual limits",
+   "validation": [
+    "ai provider audit"
+   ],
+   "evidence": [
+    "ai provider verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.quality",
+   "domain": "ai-engineering",
+   "description": "Review AI output quality against the evaluation set and domain expectations",
+   "validation": [
+    "evaluation run review"
+   ],
+   "evidence": [
+    "ai quality verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.red-team",
+   "domain": "ai-engineering",
+   "description": "Red-team AI features with adversarial inputs on a disposable target and record what succeeds",
+   "validation": [
+    "adversarial test run on a disposable target"
+   ],
+   "evidence": [
+    "red team record"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.regression",
+   "domain": "ai-engineering",
+   "description": "Review AI regressions: prompt, model or context changes compared with recorded baselines",
+   "validation": [
+    "evaluation comparison against baseline"
+   ],
+   "evidence": [
+    "ai regression verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.security",
+   "domain": "ai-engineering",
+   "description": "Review AI security: prompt injection, data exfiltration, tool misuse, output handling and tenant isolation of context",
+   "validation": [
+    "ai security audit"
+   ],
+   "evidence": [
+    "ai security verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.tool-policy",
+   "domain": "ai-engineering",
+   "description": "Review tool policies: allowlists, argument constraints, rate limits and approval classes per tool",
+   "validation": [
+    "tool policy validation"
+   ],
+   "evidence": [
+    "tool policy verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.review.tooling",
+   "domain": "ai-engineering",
+   "description": "Review tools exposed to models: scope, arguments validation, side effects and ceilings",
+   "validation": [
+    "tool policy validation"
+   ],
+   "evidence": [
+    "ai tooling verdict"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.skill",
+   "domain": "ai-engineering",
+   "description": "Implement product AI skills as typed, versioned units with input and output schemas and tests",
+   "validation": [
+    "skill tests with schema validation"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
+   "id": "ai.workflow",
+   "domain": "ai-engineering",
+   "description": "Implement AI workflows with explicit steps, state, retries, approval gates and recovery",
+   "validation": [
+    "workflow tests including failure and approval"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none"
+  },
+  {
    "id": "api.engineer",
    "domain": "backend",
    "description": "Maintain API-wide plumbing: interceptors, decorators, pagination and response conventions",

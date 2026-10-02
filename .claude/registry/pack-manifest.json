@@ -2407,190 +2407,217 @@
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-runtime-architect.md"
   },
   {
    "name": "ai-agent-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-agent-engineer.md"
   },
   {
    "name": "ai-skill-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-skill-engineer.md"
   },
   {
    "name": "ai-workflow-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-workflow-engineer.md"
   },
   {
    "name": "ai-automation-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-automation-engineer.md"
   },
   {
    "name": "prompt-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/prompt-engineer.md"
   },
   {
    "name": "ai-evaluation-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-evaluation-engineer.md"
   },
   {
    "name": "ai-observability-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-observability-engineer.md"
   },
   {
    "name": "ai-security-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING",
-   "existingEquivalent": "ai-llm-systems-reviewer"
+   "finalState": "CREATED",
+   "existingEquivalent": "ai-llm-systems-reviewer",
+   "file": ".claude/agents/ai-security-reviewer.md"
   },
   {
    "name": "ai-cost-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-cost-reviewer.md"
   },
   {
    "name": "ai-provider-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-provider-reviewer.md"
   },
   {
    "name": "ai-model-routing-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-model-routing-reviewer.md"
   },
   {
    "name": "ai-tooling-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-tooling-reviewer.md"
   },
   {
    "name": "ai-contract-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-contract-reviewer.md"
   },
   {
    "name": "ai-output-validation-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-output-validation-reviewer.md"
   },
   {
    "name": "ai-human-approval-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-human-approval-reviewer.md"
   },
   {
    "name": "ai-context-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-context-engineer.md"
   },
   {
    "name": "ai-memory-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-memory-engineer.md"
   },
   {
    "name": "ai-retrieval-engineer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-retrieval-engineer.md"
   },
   {
    "name": "ai-tool-policy-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-tool-policy-reviewer.md"
   },
   {
    "name": "ai-fallback-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-fallback-reviewer.md"
   },
   {
    "name": "ai-guardrail-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-guardrail-reviewer.md"
   },
   {
    "name": "ai-red-team-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-red-team-reviewer.md"
   },
   {
    "name": "ai-latency-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-latency-reviewer.md"
   },
   {
    "name": "ai-quality-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-quality-reviewer.md"
   },
   {
    "name": "ai-regression-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-regression-reviewer.md"
   },
   {
    "name": "ai-hallucination-reviewer",
    "type": "agent",
    "batch": 14,
    "initialState": "ABSENT",
-   "finalState": "PENDING"
+   "finalState": "CREATED",
+   "file": ".claude/agents/ai-hallucination-reviewer.md"
   },
   {
    "name": "project-automation-agent",

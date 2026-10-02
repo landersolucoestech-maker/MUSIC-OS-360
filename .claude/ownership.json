@@ -232,6 +232,159 @@
       "note": "pack agent, read-only by contract"
     },
     {
+      "agent": "ai-agent-engineer",
+      "writes": [
+        "apps/api/src/core/automation/**",
+        "apps/api/src/modules/ai/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-agent-engineer.md"
+    },
+    {
+      "agent": "ai-automation-engineer",
+      "writes": [
+        "apps/api/src/core/automation/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-automation-engineer.md"
+    },
+    {
+      "agent": "ai-context-engineer",
+      "writes": [
+        "apps/api/src/modules/ai/context/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-context-engineer.md"
+    },
+    {
+      "agent": "ai-contract-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-cost-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-evaluation-engineer",
+      "writes": [
+        "apps/api/src/modules/ai/evals/**",
+        "apps/api/src/test/ai-evals/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-evaluation-engineer.md"
+    },
+    {
+      "agent": "ai-fallback-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-guardrail-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-hallucination-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-human-approval-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-latency-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-memory-engineer",
+      "writes": [
+        "apps/api/src/modules/ai/memory/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-memory-engineer.md"
+    },
+    {
+      "agent": "ai-model-routing-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-observability-engineer",
+      "writes": [
+        "apps/api/src/modules/ai/telemetry/**",
+        "apps/api/src/core/metrics/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-observability-engineer.md"
+    },
+    {
+      "agent": "ai-output-validation-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-provider-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-quality-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-red-team-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-regression-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-retrieval-engineer",
+      "writes": [
+        "apps/api/src/modules/ai/retrieval/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-retrieval-engineer.md"
+    },
+    {
+      "agent": "ai-runtime-architect",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-security-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-skill-engineer",
+      "writes": [
+        "packages/ai-skills/**",
+        "apps/api/src/core/skills/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-skill-engineer.md"
+    },
+    {
+      "agent": "ai-tool-policy-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-tooling-reviewer",
+      "writes": [],
+      "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "ai-workflow-engineer",
+      "writes": [
+        "apps/api/src/core/workflow/**",
+        "apps/api/src/queues/**"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/ai-workflow-engineer.md"
+    },
+    {
       "agent": "alerting-reviewer",
       "writes": [],
       "note": "pack agent, read-only by contract"
@@ -1259,6 +1412,14 @@
       "agent": "producer-consumer-tracer",
       "writes": [],
       "note": "pack agent, read-only by contract"
+    },
+    {
+      "agent": "prompt-engineer",
+      "writes": [
+        "apps/api/src/modules/ai/prompts/**",
+        "apps/api/src/core/automation/**/*.prompt.ts"
+      ],
+      "note": "pack writer (ai-engineering); scope declared in .claude/agents/prompt-engineer.md"
     },
     {
       "agent": "prompt-injection-reviewer",

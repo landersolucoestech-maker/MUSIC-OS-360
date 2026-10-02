@@ -2,9 +2,9 @@
  "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
-  "agents": 297,
+  "agents": 324,
   "skills": 0,
-  "capabilities": 274,
+  "capabilities": 301,
   "workflows": 6
  },
  "agents": [
@@ -211,6 +211,684 @@
    "skills": [
     "plan",
     "ownership-map"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-agent-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-agent-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/automation/**",
+    "apps/api/src/modules/ai/**"
+   ],
+   "capabilities": [
+    "ai.agent"
+   ],
+   "skills": [
+    "ai-agent-audit",
+    "tool-policy-validation",
+    "human-approval-validation",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-automation-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-automation-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/automation/**"
+   ],
+   "capabilities": [
+    "ai.automation"
+   ],
+   "skills": [
+    "ai-automation-audit",
+    "create-integration-tests",
+    "run-integration-tests",
+    "tenant-isolation-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-context-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-context-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/ai/context/**"
+   ],
+   "capabilities": [
+    "ai.context"
+   ],
+   "skills": [
+    "ai-context-audit",
+    "tenant-isolation-audit",
+    "pii-audit",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-contract-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-contract-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.contract"
+   ],
+   "skills": [
+    "structured-output-validation",
+    "api-contract-audit",
+    "ai-skill-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-cost-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-cost-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.cost"
+   ],
+   "skills": [
+    "ai-cost-audit",
+    "ai-model-routing-audit",
+    "ai-observability-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-evaluation-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-evaluation-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/ai/evals/**",
+    "apps/api/src/test/ai-evals/**"
+   ],
+   "capabilities": [
+    "ai.evaluation"
+   ],
+   "skills": [
+    "ai-evaluation",
+    "ai-regression-audit",
+    "ai-hallucination-audit",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-fallback-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-fallback-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.fallback"
+   ],
+   "skills": [
+    "ai-fallback-audit",
+    "handle-provider-failure",
+    "ai-provider-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-guardrail-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-guardrail-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.guardrail"
+   ],
+   "skills": [
+    "ai-security-audit",
+    "prompt-injection-audit",
+    "tool-policy-validation"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-hallucination-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-hallucination-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.hallucination"
+   ],
+   "skills": [
+    "ai-hallucination-audit",
+    "structured-output-validation",
+    "ai-evaluation"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-human-approval-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-human-approval-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.human-approval"
+   ],
+   "skills": [
+    "human-approval-validation",
+    "ai-agent-audit",
+    "ai-workflow-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-latency-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-latency-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.latency"
+   ],
+   "skills": [
+    "ai-latency-audit",
+    "run-performance-tests",
+    "ai-observability-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-memory-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-memory-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/ai/memory/**"
+   ],
+   "capabilities": [
+    "ai.memory"
+   ],
+   "skills": [
+    "ai-memory-audit",
+    "tenant-isolation-audit",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-model-routing-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-model-routing-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.model-routing"
+   ],
+   "skills": [
+    "ai-model-routing-audit",
+    "ai-evaluation",
+    "ai-cost-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-observability-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-observability-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/ai/telemetry/**",
+    "apps/api/src/core/metrics/**"
+   ],
+   "capabilities": [
+    "ai.observability"
+   ],
+   "skills": [
+    "ai-observability-audit",
+    "implement-observability",
+    "ai-cost-audit",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-output-validation-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-output-validation-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.output-validation"
+   ],
+   "skills": [
+    "structured-output-validation",
+    "ai-hallucination-audit",
+    "tenant-isolation-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-provider-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-provider-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.provider"
+   ],
+   "skills": [
+    "ai-provider-audit",
+    "integration-audit",
+    "pii-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-quality-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-quality-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.quality"
+   ],
+   "skills": [
+    "ai-evaluation",
+    "prompt-audit",
+    "ai-hallucination-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-red-team-reviewer",
+   "kind": "investigator",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-red-team-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.red-team"
+   ],
+   "skills": [
+    "ai-security-audit",
+    "prompt-injection-audit",
+    "tool-policy-validation",
+    "ai-evaluation"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-regression-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-regression-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.regression"
+   ],
+   "skills": [
+    "ai-regression-audit",
+    "ai-evaluation",
+    "create-regression-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-retrieval-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-retrieval-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/ai/retrieval/**"
+   ],
+   "capabilities": [
+    "ai.retrieval"
+   ],
+   "skills": [
+    "ai-retrieval-audit",
+    "tenant-isolation-audit",
+    "prompt-injection-audit",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-runtime-architect",
+   "kind": "planner",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-runtime-architect.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.architecture"
+   ],
+   "skills": [
+    "ai-runtime-audit",
+    "run-architecture-checks",
+    "threat-model"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-security-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-security-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.security"
+   ],
+   "skills": [
+    "ai-security-audit",
+    "prompt-injection-audit",
+    "tool-policy-validation",
+    "tenant-isolation-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-skill-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-skill-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "packages/ai-skills/**",
+    "apps/api/src/core/skills/**"
+   ],
+   "capabilities": [
+    "ai.skill"
+   ],
+   "skills": [
+    "ai-skill-audit",
+    "structured-output-validation",
+    "create-unit-tests",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-tool-policy-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-tool-policy-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.tool-policy"
+   ],
+   "skills": [
+    "tool-policy-validation",
+    "ai-agent-audit",
+    "permission-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-tooling-reviewer",
+   "kind": "reviewer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-tooling-reviewer.md",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [],
+   "capabilities": [
+    "ai.review.tooling"
+   ],
+   "skills": [
+    "tool-policy-validation",
+    "ai-agent-audit",
+    "permission-audit"
+   ],
+   "approval": "none"
+  },
+  {
+   "name": "ai-workflow-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/ai-workflow-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/core/workflow/**",
+    "apps/api/src/queues/**"
+   ],
+   "capabilities": [
+    "ai.workflow"
+   ],
+   "skills": [
+    "ai-workflow-audit",
+    "human-approval-validation",
+    "implement-audit-log",
+    "create-integration-tests",
+    "run-integration-tests"
    ],
    "approval": "none"
   },
@@ -4833,6 +5511,36 @@
    "approval": "none"
   },
   {
+   "name": "prompt-engineer",
+   "kind": "engineer",
+   "domain": "ai-engineering",
+   "batch": 14,
+   "owner": "ai engineering owner",
+   "path": ".claude/agents/prompt-engineer.md",
+   "tools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Grep",
+    "Glob",
+    "Bash"
+   ],
+   "writes": [
+    "apps/api/src/modules/ai/prompts/**",
+    "apps/api/src/core/automation/**/*.prompt.ts"
+   ],
+   "capabilities": [
+    "ai.prompt"
+   ],
+   "skills": [
+    "prompt-audit",
+    "ai-evaluation",
+    "prompt-injection-audit",
+    "run-unit-tests"
+   ],
+   "approval": "none"
+  },
+  {
    "name": "prompt-injection-reviewer",
    "kind": "reviewer",
    "domain": "security",
@@ -7706,6 +8414,571 @@
  ],
  "skills": [],
  "capabilities": [
+  {
+   "id": "ai.agent",
+   "domain": "ai-engineering",
+   "description": "Implement product AI agents with explicit tools, limits, output contracts and human approval for high-impact actions",
+   "validation": [
+    "agent tests with a fake model",
+    "tool policy validation"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-agent-engineer"
+   ],
+   "skills": [
+    "ai-agent-audit",
+    "create-unit-tests",
+    "human-approval-validation",
+    "run-unit-tests",
+    "tool-policy-validation"
+   ]
+  },
+  {
+   "id": "ai.architecture",
+   "domain": "ai-engineering",
+   "description": "Design the AI runtime: how agents, skills, workflows, tools, context and approvals fit together with clear trust boundaries",
+   "validation": [
+    "architecture review of the AI runtime design"
+   ],
+   "evidence": [
+    "design record"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-runtime-architect"
+   ],
+   "skills": [
+    "ai-runtime-audit",
+    "run-architecture-checks",
+    "threat-model"
+   ]
+  },
+  {
+   "id": "ai.automation",
+   "domain": "ai-engineering",
+   "description": "Implement automations that run AI skills on triggers, with tenant context, limits and audit entries",
+   "validation": [
+    "automation tests with tenant context"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-automation-engineer"
+   ],
+   "skills": [
+    "ai-automation-audit",
+    "create-integration-tests",
+    "run-integration-tests",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "ai.context",
+   "domain": "ai-engineering",
+   "description": "Implement context assembly for AI features: what is included, tenant scoping, size limits and provenance labels",
+   "validation": [
+    "context tests with tenant separation"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-context-engineer"
+   ],
+   "skills": [
+    "ai-context-audit",
+    "pii-audit",
+    "run-unit-tests",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "ai.evaluation",
+   "domain": "ai-engineering",
+   "description": "Build evaluation sets and runs that measure quality, safety and regressions of AI features with recorded results",
+   "validation": [
+    "evaluation run with recorded scores"
+   ],
+   "evidence": [
+    "evaluation set",
+    "evaluation run record"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-evaluation-engineer"
+   ],
+   "skills": [
+    "ai-evaluation",
+    "ai-hallucination-audit",
+    "ai-regression-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "ai.memory",
+   "domain": "ai-engineering",
+   "description": "Implement AI memory as bounded, sourced, expirable records that never override current data or policy",
+   "validation": [
+    "memory tests with staleness and tenant separation"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-memory-engineer"
+   ],
+   "skills": [
+    "ai-memory-audit",
+    "create-unit-tests",
+    "run-unit-tests",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "ai.observability",
+   "domain": "ai-engineering",
+   "description": "Implement AI observability: runs, tokens, latency, cost and outcomes per tenant, without storing secrets or raw personal data",
+   "validation": [
+    "telemetry tests"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-observability-engineer"
+   ],
+   "skills": [
+    "ai-cost-audit",
+    "ai-observability-audit",
+    "implement-observability",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "ai.prompt",
+   "domain": "ai-engineering",
+   "description": "Write and version prompts with delimited untrusted input, stable output contracts and tests",
+   "validation": [
+    "prompt tests with hostile input"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "prompt-engineer"
+   ],
+   "skills": [
+    "ai-evaluation",
+    "prompt-audit",
+    "prompt-injection-audit",
+    "run-unit-tests"
+   ]
+  },
+  {
+   "id": "ai.retrieval",
+   "domain": "ai-engineering",
+   "description": "Implement retrieval for AI features: indexing, tenant filtering, ranking and provenance of retrieved content",
+   "validation": [
+    "retrieval tests with tenant filter"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-retrieval-engineer"
+   ],
+   "skills": [
+    "ai-retrieval-audit",
+    "prompt-injection-audit",
+    "run-unit-tests",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "ai.review.contract",
+   "domain": "ai-engineering",
+   "description": "Review contracts between AI components and the rest of the system: input and output schemas and versions",
+   "validation": [
+    "contract audit"
+   ],
+   "evidence": [
+    "ai contract verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-contract-reviewer"
+   ],
+   "skills": [
+    "ai-skill-audit",
+    "api-contract-audit",
+    "structured-output-validation"
+   ]
+  },
+  {
+   "id": "ai.review.cost",
+   "domain": "ai-engineering",
+   "description": "Review AI cost: tokens per feature, unbounded loops, model choice and per-tenant limits",
+   "validation": [
+    "ai cost audit"
+   ],
+   "evidence": [
+    "ai cost verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-cost-reviewer"
+   ],
+   "skills": [
+    "ai-cost-audit",
+    "ai-model-routing-audit",
+    "ai-observability-audit"
+   ]
+  },
+  {
+   "id": "ai.review.fallback",
+   "domain": "ai-engineering",
+   "description": "Review fallback behavior when a model or provider fails: degraded output, honesty about uncertainty and no fabricated results",
+   "validation": [
+    "ai fallback audit"
+   ],
+   "evidence": [
+    "ai fallback verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-fallback-reviewer"
+   ],
+   "skills": [
+    "ai-fallback-audit",
+    "ai-provider-audit",
+    "handle-provider-failure"
+   ]
+  },
+  {
+   "id": "ai.review.guardrail",
+   "domain": "ai-engineering",
+   "description": "Review guardrails: input and output filters, limits and refusal behavior, and whether they can be bypassed",
+   "validation": [
+    "guardrail audit with hostile inputs"
+   ],
+   "evidence": [
+    "ai guardrail verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-guardrail-reviewer"
+   ],
+   "skills": [
+    "ai-security-audit",
+    "prompt-injection-audit",
+    "tool-policy-validation"
+   ]
+  },
+  {
+   "id": "ai.review.hallucination",
+   "domain": "ai-engineering",
+   "description": "Review hallucination risk: claims not grounded in provided data, invented identifiers and fabricated sources",
+   "validation": [
+    "grounding check against source data"
+   ],
+   "evidence": [
+    "ai hallucination verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-hallucination-reviewer"
+   ],
+   "skills": [
+    "ai-evaluation",
+    "ai-hallucination-audit",
+    "structured-output-validation"
+   ]
+  },
+  {
+   "id": "ai.review.human-approval",
+   "domain": "ai-engineering",
+   "description": "Review human approval gates for AI actions: which actions need approval, who approves and that no path bypasses it",
+   "validation": [
+    "human approval validation"
+   ],
+   "evidence": [
+    "ai human approval verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-human-approval-reviewer"
+   ],
+   "skills": [
+    "ai-agent-audit",
+    "ai-workflow-audit",
+    "human-approval-validation"
+   ]
+  },
+  {
+   "id": "ai.review.latency",
+   "domain": "ai-engineering",
+   "description": "Review AI latency: time to first token, total time, streaming, caching and timeouts",
+   "validation": [
+    "ai latency audit with measurements"
+   ],
+   "evidence": [
+    "ai latency verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-latency-reviewer"
+   ],
+   "skills": [
+    "ai-latency-audit",
+    "ai-observability-audit",
+    "run-performance-tests"
+   ]
+  },
+  {
+   "id": "ai.review.model-routing",
+   "domain": "ai-engineering",
+   "description": "Review model routing: which model serves which task, fallbacks and the evidence behind the choice",
+   "validation": [
+    "ai model routing audit"
+   ],
+   "evidence": [
+    "ai model routing verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-model-routing-reviewer"
+   ],
+   "skills": [
+    "ai-cost-audit",
+    "ai-evaluation",
+    "ai-model-routing-audit"
+   ]
+  },
+  {
+   "id": "ai.review.output-validation",
+   "domain": "ai-engineering",
+   "description": "Review validation of model output before it is stored or acted on: structure, ranges, enums and domain rules",
+   "validation": [
+    "structured output validation"
+   ],
+   "evidence": [
+    "ai output validation verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-output-validation-reviewer"
+   ],
+   "skills": [
+    "ai-hallucination-audit",
+    "structured-output-validation",
+    "tenant-isolation-audit"
+   ]
+  },
+  {
+   "id": "ai.review.provider",
+   "domain": "ai-engineering",
+   "description": "Review AI provider usage: error handling, timeouts, quotas, data sent and contractual limits",
+   "validation": [
+    "ai provider audit"
+   ],
+   "evidence": [
+    "ai provider verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-provider-reviewer"
+   ],
+   "skills": [
+    "ai-provider-audit",
+    "integration-audit",
+    "pii-audit"
+   ]
+  },
+  {
+   "id": "ai.review.quality",
+   "domain": "ai-engineering",
+   "description": "Review AI output quality against the evaluation set and domain expectations",
+   "validation": [
+    "evaluation run review"
+   ],
+   "evidence": [
+    "ai quality verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-quality-reviewer"
+   ],
+   "skills": [
+    "ai-evaluation",
+    "ai-hallucination-audit",
+    "prompt-audit"
+   ]
+  },
+  {
+   "id": "ai.review.red-team",
+   "domain": "ai-engineering",
+   "description": "Red-team AI features with adversarial inputs on a disposable target and record what succeeds",
+   "validation": [
+    "adversarial test run on a disposable target"
+   ],
+   "evidence": [
+    "red team record"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-red-team-reviewer"
+   ],
+   "skills": [
+    "ai-evaluation",
+    "ai-security-audit",
+    "prompt-injection-audit",
+    "tool-policy-validation"
+   ]
+  },
+  {
+   "id": "ai.review.regression",
+   "domain": "ai-engineering",
+   "description": "Review AI regressions: prompt, model or context changes compared with recorded baselines",
+   "validation": [
+    "evaluation comparison against baseline"
+   ],
+   "evidence": [
+    "ai regression verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-regression-reviewer"
+   ],
+   "skills": [
+    "ai-evaluation",
+    "ai-regression-audit",
+    "create-regression-tests"
+   ]
+  },
+  {
+   "id": "ai.review.security",
+   "domain": "ai-engineering",
+   "description": "Review AI security: prompt injection, data exfiltration, tool misuse, output handling and tenant isolation of context",
+   "validation": [
+    "ai security audit"
+   ],
+   "evidence": [
+    "ai security verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-security-reviewer"
+   ],
+   "skills": [
+    "ai-security-audit",
+    "prompt-injection-audit",
+    "tenant-isolation-audit",
+    "tool-policy-validation"
+   ]
+  },
+  {
+   "id": "ai.review.tool-policy",
+   "domain": "ai-engineering",
+   "description": "Review tool policies: allowlists, argument constraints, rate limits and approval classes per tool",
+   "validation": [
+    "tool policy validation"
+   ],
+   "evidence": [
+    "tool policy verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-tool-policy-reviewer"
+   ],
+   "skills": [
+    "ai-agent-audit",
+    "permission-audit",
+    "tool-policy-validation"
+   ]
+  },
+  {
+   "id": "ai.review.tooling",
+   "domain": "ai-engineering",
+   "description": "Review tools exposed to models: scope, arguments validation, side effects and ceilings",
+   "validation": [
+    "tool policy validation"
+   ],
+   "evidence": [
+    "ai tooling verdict"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-tooling-reviewer"
+   ],
+   "skills": [
+    "ai-agent-audit",
+    "permission-audit",
+    "tool-policy-validation"
+   ]
+  },
+  {
+   "id": "ai.skill",
+   "domain": "ai-engineering",
+   "description": "Implement product AI skills as typed, versioned units with input and output schemas and tests",
+   "validation": [
+    "skill tests with schema validation"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-skill-engineer"
+   ],
+   "skills": [
+    "ai-skill-audit",
+    "create-unit-tests",
+    "run-unit-tests",
+    "structured-output-validation"
+   ]
+  },
+  {
+   "id": "ai.workflow",
+   "domain": "ai-engineering",
+   "description": "Implement AI workflows with explicit steps, state, retries, approval gates and recovery",
+   "validation": [
+    "workflow tests including failure and approval"
+   ],
+   "evidence": [
+    "change-set record",
+    "test output"
+   ],
+   "approval": "none",
+   "executors": [
+    "ai-workflow-engineer"
+   ],
+   "skills": [
+    "ai-workflow-audit",
+    "create-integration-tests",
+    "human-approval-validation",
+    "implement-audit-log",
+    "run-integration-tests"
+   ]
+  },
   {
    "id": "api.engineer",
    "domain": "backend",
