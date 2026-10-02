@@ -36,3 +36,4 @@ current stack, scripts and patterns.
 | Supply chain | [supply-chain.md](./supply-chain.md) |
 | RBAC retirement plan | [rbac-retirement-plan.md](./rbac-retirement-plan.md) |
 | UX language glossary (PT-BR copy) | [ux-language-glossary.md](./ux-language-glossary.md) |
+| Engineering / AI / Operational OS pack (agents, skills, workflows, gates, approval model) | [pack/README.md](./pack/README.md) |
