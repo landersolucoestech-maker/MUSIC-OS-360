@@ -14,7 +14,9 @@ import {
   CreateTeamMemberDto,
   CreateAudiovisualProjectDto,
   TASK_STATUSES,
+  AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS,
 } from './audiovisual.dto';
+import { applyDeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
 
 async function validatePayload(dto: new () => object, payload: Record<string, unknown>) {
   const instance = plainToInstance(dto, payload);
@@ -218,5 +220,14 @@ describe('CreateAudiovisualProjectDto — regression of the real bug (audit 2026
   it('rejects a capture_status longer than 30 characters (varchar(30) column)', async () => {
     const errors = await validatePayload(CreateAudiovisualProjectDto, { ...REAL_FORM_PAYLOAD, capture_status: 'x'.repeat(31) });
     expect(errors.some((e) => e.property === 'capture_status')).toBe(true);
+  });
+});
+
+describe('AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS — legacy alias read-compat', () => {
+  it('maps the deprecated videomaker key to the canonical videographer field', () => {
+    expect(AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS).toEqual({ videomaker: 'videographer' });
+    const out = applyDeprecatedFieldAliases({ videomaker: 'Beltrano' }, AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS) as Record<string, unknown>;
+    expect(out.videographer).toBe('Beltrano');
+    expect(out).not.toHaveProperty('videomaker');
   });
 });

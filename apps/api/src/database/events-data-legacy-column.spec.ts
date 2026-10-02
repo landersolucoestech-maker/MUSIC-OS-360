@@ -4,18 +4,15 @@ import { EventsStartsAtBackfillAndSync20260928000007 } from './migrations/202609
 import { EventEntity } from './entities';
 
 /**
- * LC1: the API no longer writes events.data. That is only safe because the DB trigger
+ * LC1: the API no longer writes or reads events.data (the entity declares no data column). That is only safe because the DB trigger
  * (migration 20260928000007) fills it on INSERT and keeps it equal to starts_at on UPDATE.
  * These guards pin both halves of that contract so the dual-write cannot silently come back or
  * the trigger be weakened before the events.data drop (docs/engineering/legacy-column-drop-plan.md).
  */
 describe('events.data legacy mirror (LC1)', () => {
-  it('the entity never writes data (insert: false, update: false) and still reads it', () => {
+  it('the entity declares no data column (the physical column is filled by the trigger only) and writes starts_at', () => {
     const column = getMetadataArgsStorage().columns.find((c) => c.target === EventEntity && c.propertyName === 'data');
-    expect(column).toBeDefined();
-    expect(column!.options.insert).toBe(false);
-    expect(column!.options.update).toBe(false);
-    expect(column!.options.select).not.toBe(false);
+    expect(column).toBeUndefined();
     const startsAt = getMetadataArgsStorage().columns.find((c) => c.target === EventEntity && c.propertyName === 'starts_at');
     expect(startsAt!.options.insert).not.toBe(false);
     expect(startsAt!.options.update).not.toBe(false);

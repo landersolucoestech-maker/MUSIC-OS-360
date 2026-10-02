@@ -1,4 +1,3 @@
 {"table":"phonograms","className":"PhonogramEntity","field":"is_instrumental","columnOverride":null,"type":"boolean"}
 {"table":"project_tracks","className":"ProjectTrackEntity","field":"instrumental","columnOverride":null,"type":"varchar"}
 {"table":"works","className":"WorkEntity","field":"is_instrumental","columnOverride":null,"type":"boolean"}
-{"table":"works","className":"WorkEntity","field":"legacy_instrumental_flag","columnOverride":null,"type":"varchar"}

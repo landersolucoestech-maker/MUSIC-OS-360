@@ -7,8 +7,9 @@
  * here before persistence. Responses are canonical (English).
  *
  * `artista_project_id` was a mirror of `artist_id` (the web always wrote the
- * same value to both), so it folds into `artist_id`; the physical column is
- * kept as read-only `legacy_artist_project_id` (canonical map blocker).
+ * same value to both), so it folds into `artist_id`; the physical column
+ * `legacy_artist_project_id` remains in the database without an entity
+ * declaration until its approved drop.
  */
 import { ShareStatus } from '@music-os-360/types';
 import { applyDeprecatedFieldAliases, type DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';

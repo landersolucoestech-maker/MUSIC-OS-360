@@ -47,6 +47,7 @@ describe("transaction taxonomy slugs — web mirror parity with the API source (
   it("has the same unchanged / unmapped lists and placeholder as the API", () => {
     expect([...UNCHANGED_TRANSACTION_CATEGORY_SLUGS]).toEqual(apiList("UNCHANGED_TRANSACTION_CATEGORY_SLUGS"));
     expect([...UNMAPPED_TRANSACTION_CATEGORY_SLUGS]).toEqual(apiList("UNMAPPED_TRANSACTION_CATEGORY_SLUGS"));
+    expect([...UNMAPPED_TRANSACTION_CATEGORY_SLUGS]).toEqual([]);
     expect(apiSource).toContain(`UNCATEGORIZED_CATEGORY = '${UNCATEGORIZED_CATEGORY}'`);
   });
 });
@@ -85,7 +86,7 @@ describe("transaction option lists — canonical values, unchanged PT-BR labels"
   const canonicalIds = new Set(Object.values(LEGACY_TRANSACTION_CATEGORY_SLUGS));
   const reserved = new Set<string>([...UNCHANGED_TRANSACTION_CATEGORY_SLUGS, ...UNMAPPED_TRANSACTION_CATEGORY_SLUGS]);
 
-  it("no option writes a legacy slug; every value is canonical, an unchanged English slug or a documented unmapped slug", () => {
+  it("no option writes a legacy slug; every value is canonical or an unchanged English slug (no unmapped slug remains)", () => {
     for (const { value } of all) {
       expect(Object.prototype.hasOwnProperty.call(LEGACY_TRANSACTION_CATEGORY_SLUGS, value), value).toBe(false);
       expect(canonicalIds.has(value) || reserved.has(value), value).toBe(true);
@@ -118,6 +119,10 @@ describe("transaction option lists — canonical values, unchanged PT-BR labels"
     expect(transactionCategoryLabel("simples_nacional")).toBe("Simples Nacional");
     expect(transactionCategoryLabel("receitas-internas")).toBe("Receitas Internas");
     expect(transactionCategoryLabel("repasse-contrato")).toBe("Repasse de Contrato");
+    expect(transactionCategoryLabel("internal_revenue")).toBe("Receitas Internas");
+    expect(transactionCategoryLabel("contract_pass_through")).toBe("Repasse de Contrato");
+    expect(canonicalTransactionSlug("receitas-internas")).toBe("internal_revenue");
+    expect(canonicalTransactionSlug("repasse-contrato")).toBe("contract_pass_through");
   });
 
   it("free text is never rewritten", () => {

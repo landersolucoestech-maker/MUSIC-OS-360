@@ -61,11 +61,17 @@ const RENAMED_AFTER_CANONICAL: Record<string, string> = {
   interacoes: 'interactions',
 };
 
+// Physical columns that still exist in the database (and in the migration text above) but whose
+// ClientEntity declaration was removed ahead of the approved column drop
+// (docs/engineering/legacy-column-drop-plan.md). Every other migration column stays strictly checked.
+const DROPPED_ENTITY_COLUMNS: ReadonlySet<string> = new Set(['legacy_contact_status']);
+
 function extractMigrationColumns(): string[] {
   const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
   return [...block.matchAll(/^\s*([a-z_]+)\s+\w/gm)]
     .map((m) => m[1])
-    .map((c) => RENAMED_AFTER_CANONICAL[c] ?? c);
+    .map((c) => RENAMED_AFTER_CANONICAL[c] ?? c)
+    .filter((c) => !DROPPED_ENTITY_COLUMNS.has(c));
 }
 
 function extractEntityColumns(): string[] {

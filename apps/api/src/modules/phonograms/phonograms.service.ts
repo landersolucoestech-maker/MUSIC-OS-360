@@ -4,7 +4,7 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { PhonogramEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
-import { normalizeIsrc, isValidIsrc } from '../registry/validators/registry-validators';
+import { resolvePhonogramDerivedFields } from '../../common/registry-fields/registry-fields.util';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 import type { CreatePhonogramDto } from './dto/create-phonogram.dto';
@@ -128,6 +128,7 @@ export class PhonogramsService {
   private buildEntityPayload(
     input: Record<string, unknown>,
     resolved: ResolvedPhonogramWriteFields,
+    current: PhonogramEntity | null = null,
   ): Record<string, unknown> {
     const out: Record<string, unknown> = { ...input, ...resolved };
 
@@ -149,23 +150,15 @@ export class PhonogramsService {
     delete out['duration'];
     delete out['fileUrl'];
 
-    // find-1e77a856: ISRC had zero format validation/normalization on this
-    // write path (only the registry-submission flow validated it) — the same
-    // real ISRC could be persisted in different textual forms depending on
-    // entry path. Normalize to canonical uppercase/no-separator form and
-    // reject malformed values before persist, same rule the registry
-    // submission validator already enforces (registry-validators.ts).
-    if (typeof out['isrc'] === 'string' && out['isrc'].trim() !== '') {
-      const canonicalIsrc = normalizeIsrc(out['isrc']);
-      if (!isValidIsrc(canonicalIsrc)) {
-        throw new BadRequestException({
-          code: 'PHONOGRAM_ISRC_INVALID',
-          message: 'ISRC inválido. Formato esperado: CCXXXYYNNNNN (12 caracteres, hífens opcionais).',
-          field: 'isrc',
-        });
-      }
-      out['isrc'] = canonicalIsrc;
+    // Authoritative/derived pairs (BLK-PHONOGRAMS-DERIVED-FIELDS): duration_seconds is authoritative and
+    // duration_text is rewritten from it; the compact isrc is authoritative and the four isrc_* parts are
+    // rewritten from it. A partial PATCH merges the isrc parts over `current`. ISRC format validation and
+    // normalisation (find-1e77a856) live in the same shared resolver, so every write path applies one rule.
+    const { values, issue } = resolvePhonogramDerivedFields(out, current as unknown as Record<string, unknown> | null);
+    if (issue) {
+      throw new BadRequestException({ code: issue.code, message: issue.message, field: issue.field });
     }
+    Object.assign(out, values);
 
     // Removes null/undefined — preserves the current PATCH semantics (null does not
     // clear a column in this phase; see debt C2.4).
@@ -225,7 +218,7 @@ export class PhonogramsService {
     if (resolved.work_id !== undefined)   await assertSameTenantFk(this.ds!, 'works',   resolved.work_id,   tenantId, 'Obra');
     if (resolved.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', resolved.artist_id, tenantId, 'Artista');
 
-    const normalized = this.buildEntityPayload(input, resolved);
+    const normalized = this.buildEntityPayload(input, resolved, current);
     delete normalized['expectedUpdatedAt'];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await casUpdate(

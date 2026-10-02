@@ -31,9 +31,13 @@ reach them. They are rollback material, not a business dataset: they must be sho
 | `contract_signed_transaction_category_backfill_20260930` | `20260930000035` | `before`/`after` of `transactions.category` for contract-signed provisional transactions | Low (vocabulary values) |
 | `contract_category_slug_backfill_20260930` | `20260930000036` | `before`/`after` of `contracts.type` and `contract_templates.service_type` for the ten platform-owned category slugs | Low (vocabulary values) |
 
-Related but separate: `<table>_legacy_archive_20260930` tables exist only if a gated legacy column drop
-(`docs/engineering/legacy-column-drop-plan.md`) was executed; they follow the same rules and are retired by
-their own later migration.
+Related: `<table>_legacy_archive_20260930` tables (works, phonograms, transactions, clients, shares, employees,
+payroll_entries, leave_requests, invoices) exist only if a gated legacy column drop
+(`docs/engineering/legacy-column-drop-plan.md`) was executed. They hold the only copy of the dropped values (HR names and
+salaries, client contact status), carry `tenant_id` WITHOUT a foreign key (a tenant deletion does not cascade to them), are RLS-locked
+like the tables above, are listed in the erasure procedure below, and are retired by the gated draft
+`apps/api/src/database/migration-drafts/20260930000052_RetireLegacyColumnDropArchives.ts` (own token
+`LEGACY_ARCHIVE_RETIRE_CONFIRM=retire-legacy-archives-window-over`, `down()` refuses, not registered).
 
 ## Retention rule
 
@@ -70,7 +74,18 @@ BEGIN
     'plan_features_backfill_20260930',
     'assets_asset_type_backfill_20260930',
     'marketing_vocabulary_backfill_20260930',
-    'artist_distributor_id_backfill_20260930'
+    'artist_distributor_id_backfill_20260930',
+    'transaction_internal_revenue_backfill_20260930',
+    'phonogram_derived_fields_backfill_20260930',
+    'works_legacy_archive_20260930',
+    'phonograms_legacy_archive_20260930',
+    'transactions_legacy_archive_20260930',
+    'clients_legacy_archive_20260930',
+    'shares_legacy_archive_20260930',
+    'employees_legacy_archive_20260930',
+    'payroll_entries_legacy_archive_20260930',
+    'leave_requests_legacy_archive_20260930',
+    'invoices_legacy_archive_20260930'
   ] LOOP
     IF to_regclass(format('public.%I', t)) IS NOT NULL THEN
       EXECUTE format('DELETE FROM public.%I WHERE tenant_id = %L::uuid', t, current_setting('app.erase_tenant'));
@@ -94,6 +109,17 @@ DELETE FROM plan_features_backfill_20260930 WHERE tenant_id = :'tenant_id'; -- t
 DELETE FROM assets_asset_type_backfill_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM marketing_vocabulary_backfill_20260930 WHERE tenant_id = :'tenant_id';
 DELETE FROM artist_distributor_id_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM transaction_internal_revenue_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM phonogram_derived_fields_backfill_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM works_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';        -- only if the table exists (legacy drop executed)
+DELETE FROM phonograms_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM transactions_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM clients_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM shares_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM employees_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM payroll_entries_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM leave_requests_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
+DELETE FROM invoices_legacy_archive_20260930 WHERE tenant_id = :'tenant_id';
 ```
 
 Verify with `SELECT count(*) FROM <table> WHERE tenant_id = :'tenant_id'` on each table (expect 0), and record the counts

@@ -305,7 +305,7 @@ export const companyRevenueCategories = [
   { value: "services", label: "Serviços" },
   { value: "products", label: "Produtos" },
   { value: "contractual_revenue", label: "Receitas Contratuais" },
-  { value: "receitas-internas", label: "Receitas Internas" },
+  { value: "internal_revenue", label: "Receitas Internas" },
 ];
 
 // Music revenue subcategories
@@ -391,7 +391,7 @@ export const revenueProductTypes = [
 
 // Contractual revenue subcategories
 export const contractualRevenueTypes = [
-  { value: "repasse-contrato", label: "Repasse de Contrato" },
+  { value: "contract_pass_through", label: "Repasse de Contrato" },
   { value: "commission", label: "Comissão" },
   { value: "administrative_fee", label: "Fee Administrativo" },
   { value: "reimbursement_received", label: "Reembolso Recebido" },

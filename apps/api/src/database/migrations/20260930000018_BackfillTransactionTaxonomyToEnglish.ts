@@ -1,11 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { assertMigrationRoleBypassesRls, formatAuditValues } from '../migration-guards';
-import {
-  CANONICAL_TRANSACTION_CATEGORY_SLUGS,
-  LEGACY_TRANSACTION_CATEGORY_SLUGS,
-  UNCHANGED_TRANSACTION_CATEGORY_SLUGS,
-  UNMAPPED_TRANSACTION_CATEGORY_SLUGS,
-} from '../../modules/transactions/transaction-category-slugs';
+import { UNCHANGED_TRANSACTION_CATEGORY_SLUGS } from '../../modules/transactions/transaction-category-slugs';
 
 /**
  * 20260930000018_BackfillTransactionTaxonomyToEnglish (TX1 / S9)
@@ -48,7 +43,8 @@ import {
  * docs/runbooks/staging-to-production.md#residue-census-20260930000018 must be 0 in every environment. A NOT VALID CHECK
  * would still fail every UPDATE of a residue row. The `external_rights_receipts`
  * phrase is owned by 20260930000017; already-English values are not touched.
- * `receitas-internas` and `repasse-contrato` stay unmapped (meaning not clear).
+ * `receitas-internas` and `repasse-contrato` stay unmapped here (later mapped by 20260930000037; this file keeps a
+ * frozen literal snapshot of the map, so that edit does not change what this migration does).
  * financial_categories.slug / finance_category_keyword_rules persist no
  * transaction slug (rules reference category_id), so nothing is rewritten there.
  *
@@ -64,13 +60,171 @@ import {
 const LOG_TABLE = 'transaction_taxonomy_backfill_20260930';
 const COLUMNS = ['category', 'subcategory'] as const;
 
-const LEGACY = Object.keys(LEGACY_TRANSACTION_CATEGORY_SLUGS);
-const CANONICAL_OF_LEGACY = LEGACY.map((legacy) => LEGACY_TRANSACTION_CATEGORY_SLUGS[legacy]);
+/**
+ * FROZEN literal snapshot of the legacy -> canonical map as this migration shipped (it must not follow later edits of
+ * the live map: 20260930000037 maps `receitas-internas` / `repasse-contrato`, which this migration deliberately left
+ * as stored). The spec asserts it equals the live map minus those two entries.
+ */
+const LEGACY_TO_CANONICAL: Readonly<Record<string, string>> = {
+
+  // ── expense / company + person categories and subcategories ──
+  'servicos': 'services',
+  'produtos': 'products',
+  'administrativo': 'administrative',
+  'viagens': 'travel',
+  'suporte-financeiro': 'financial_support',
+  'remuneracao': 'compensation',
+  'servicos-pf': 'individual_services',
+  'reembolso': 'reimbursement',
+  'salario': 'salary',
+  'pro-labore': 'pro_labore',
+  'pagamento-diaria': 'daily_rate_payment',
+  'hora-extra': 'overtime',
+  'comissao': 'commission',
+  'bonus-premiacao': 'bonus_award',
+  'prestador-autonomo': 'independent_contractor',
+  'consultoria': 'consulting',
+  'reembolso-transporte': 'transport_reimbursement',
+  'reembolso-alimentacao': 'meal_reimbursement',
+  'reembolso-hospedagem': 'lodging_reimbursement',
+  'reembolso-materiais': 'materials_reimbursement',
+  'design-grafico': 'graphic_design',
+  'producao-audiovisual': 'audiovisual_production',
+  'licenciamento-obras': 'works_licensing',
+  'direitos-autorais': 'copyright',
+  'fotografia-audiovisual': 'photography_audiovisual',
+  'sampling-clearance': 'sampling_clearance',
+  'assessoria-juridica': 'legal_advisory',
+  'contabil-fiscal': 'accounting_tax',
+  'ti-desenvolvimento-saas': 'it_development_saas',
+  'marketing-trafego-pr': 'marketing_traffic_pr',
+  'anuncios': 'ads',
+  'brindes-promocionais': 'promotional_gifts',
+  'passagens': 'travel_tickets',
+  'hospedagem': 'lodging',
+  'alimentacao': 'meals',
+  'transporte': 'transport',
+  'locacao-equipamentos': 'equipment_rental',
+  'equipamentos': 'equipment',
+  'cenografia-pirotecnia': 'set_design_pyrotechnics',
+  'aluguel': 'rent',
+  'agua': 'water',
+  'luz': 'electricity',
+  'telefonia': 'telephony',
+  'correios-logistica': 'postal_logistics',
+  'taxas-bancarias': 'bank_fees',
+  'impostos': 'taxes',
+  'juros': 'interest',
+  'multas': 'fines',
+  'tarifas-plataformas': 'platform_fees',
+  'caches': 'performance_fees',
+  'show-evento': 'show_event',
+  'publicidade': 'advertising',
+  // ── revenue ──
+  'receitas-musicais': 'music_revenue',
+  'receitas-contratuais': 'contractual_revenue',
+  'participacao-show-evento': 'show_event_participation',
+  'venda-show-fechado': 'closed_show_sale',
+  'direitos-conexos': 'neighboring_rights',
+  'external-rights-streaming': 'external_rights_streaming',
+  'recebimentos-externos-streaming': 'external_rights_streaming',
+  'licenciamento-obra': 'work_licensing',
+  'licenciamento-fonograma': 'phonogram_licensing',
+  'sincronizacao': 'synchronization',
+  'venda-beats': 'beat_sales',
+  'producao-musical': 'music_production',
+  'marketing-divulgacao': 'marketing_promotion',
+  'criacao-site': 'website_creation',
+  'gestao-redes-sociais': 'social_media_management',
+  'trafego-pago': 'paid_traffic',
+  'gravacao-estudio': 'studio_recording',
+  'mixagem': 'mixing',
+  'masterizacao': 'mastering',
+  'sessao-producao': 'production_session',
+  'ensaio': 'rehearsal',
+  'locacao-estudio': 'studio_rental',
+  'venda-merchandising': 'merchandise_sales',
+  'venda-produtos-fisicos': 'physical_product_sales',
+  'venda-produtos-digitais': 'digital_product_sales',
+  'venda-nfts': 'nft_digital_asset_sales',
+  'beats-avulsos': 'single_beats',
+  'pack-beats': 'beat_packs',
+  'sample-packs': 'sample_packs',
+  'presets-plugins': 'presets_plugins',
+  'fee-administrativo': 'administrative_fee',
+  'reembolso-recebido': 'reimbursement_received',
+  'multa-contratual': 'contractual_fine',
+  'bonus-incentivo': 'bonus_incentive',
+  'patrocinio': 'sponsorship',
+  'apoio-cultural': 'cultural_support',
+  // ── artist revenue ──
+  'cache-show': 'show_fee',
+  'external-rights-receipts': 'external_rights_receipts', // seed spelling (CT1 owns the id)
+  'licenciamento': 'licensing',
+  'adiantamento': 'advance',
+  'outros': 'other',
+  // ── investment ──
+  'infraestrutura': 'infrastructure',
+  'tecnologia': 'technology',
+  'formacao': 'training',
+  'microfone': 'microphone',
+  'fone-ouvido': 'headphones',
+  'mesa-som': 'mixing_console',
+  'monitor-referencia': 'reference_monitor',
+  'interface-audio': 'audio_interface',
+  'instrumento-musical': 'musical_instrument',
+  'iluminacao': 'lighting',
+  'computador': 'computer',
+  'acessorios': 'accessories',
+  'reforma-escritorio': 'office_renovation',
+  'reforma-estudio': 'studio_renovation',
+  'mobiliario': 'furniture',
+  'tratamento-acustico': 'acoustic_treatment',
+  'ar-condicionado': 'air_conditioning',
+  'eletrica': 'electrical_installation',
+  'seguranca': 'security',
+  'software-daw': 'daw_software',
+  'plugins-vst': 'vst_plugins',
+  'licenca-software': 'software_license',
+  'servicos-cloud': 'cloud_services',
+  'armazenamento': 'storage',
+  'crm-erp': 'crm_erp',
+  'automacao': 'automation',
+  'ia': 'ai',
+  'redes-sociais': 'social_media',
+  'assessoria-imprensa': 'press_relations',
+  'material-promocional': 'promotional_material',
+  'evento-lancamento': 'launch_event',
+  'pesquisa-mercado': 'market_research',
+  'fotografia': 'photography',
+  'videoclipe': 'music_video',
+  'curso-producao': 'production_course',
+  'curso-mixagem': 'mixing_mastering_course',
+  'curso-gestao': 'management_course',
+  'curso-marketing': 'marketing_course',
+  'mentoria': 'mentoring',
+  'certificacao': 'certification',
+  'evento-networking': 'networking_event',
+  // ── tax / transfer (statutory acronyms keep their spelling; only `simples-nacional` changes format) ──
+  'simples-nacional': 'simples_nacional',
+  'entre-contas': 'between_accounts',
+  'aplicacao': 'investment_application',
+  'resgate': 'investment_redemption',
+};
+
+/** The two slugs this migration left unmapped; rewritten later by 20260930000037. */
+const UNMAPPED_AT_THE_TIME: readonly string[] = ['receitas-internas', 'repasse-contrato'];
+
+/** Exported for the unit spec only. */
+export const TRANSACTION_TAXONOMY_BACKFILL_18 = { LEGACY_TO_CANONICAL, UNMAPPED_AT_THE_TIME } as const;
+
+const LEGACY = Object.keys(LEGACY_TO_CANONICAL);
+const CANONICAL_OF_LEGACY = LEGACY.map((legacy) => LEGACY_TO_CANONICAL[legacy]);
 
 const KNOWN = [
-  ...CANONICAL_TRANSACTION_CATEGORY_SLUGS,
+  ...Array.from(new Set(CANONICAL_OF_LEGACY)).sort(),
   ...UNCHANGED_TRANSACTION_CATEGORY_SLUGS,
-  ...UNMAPPED_TRANSACTION_CATEGORY_SLUGS,
+  ...UNMAPPED_AT_THE_TIME,
 ];
 
 export class BackfillTransactionTaxonomyToEnglish20260930000018 implements MigrationInterface {

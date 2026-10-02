@@ -11,26 +11,10 @@
  *   - ai_tools / ai_prompts <- ai_harmony / ai_melody / ai_lyrics ({tool, prompt})
  */
 
-/**
- * `duration_text` ("MM:SS", the only format the write path ever produces --
- * see apps/web/.../music-registration.mapper.ts's formatDurationText; parsing
- * also accepts "HH:MM:SS" for defensiveness, matching that same file's
- * parseDurationText read side) -> `duration_seconds` (integer).
- */
-export function parseDurationTextToSeconds(durationText: string | null | undefined): number | null {
-  if (typeof durationText !== 'string' || !durationText.trim()) return null;
-  const parts = durationText.trim().split(':').map((p) => parseInt(p, 10));
-  if (parts.some((p) => Number.isNaN(p))) return null;
-  if (parts.length === 2) {
-    const [min, sec] = parts;
-    return min * 60 + sec;
-  }
-  if (parts.length === 3) {
-    const [hour, min, sec] = parts;
-    return hour * 3600 + min * 60 + sec;
-  }
-  return null;
-}
+import { parseDurationTextToSeconds } from '../../common/registry-fields/registry-fields.util';
+
+// parseDurationTextToSeconds moved to the shared registry-fields util; re-exported so existing imports keep working.
+export { parseDurationTextToSeconds };
 
 type AiElement = { tool?: string; prompt?: string } | null | undefined;
 

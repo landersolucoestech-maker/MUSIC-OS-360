@@ -1,10 +1,11 @@
-import { BackfillTransactionTaxonomyToEnglish20260930000018 as Migration } from './migrations/20260930000018_BackfillTransactionTaxonomyToEnglish';
+import {
+  BackfillTransactionTaxonomyToEnglish20260930000018 as Migration,
+  TRANSACTION_TAXONOMY_BACKFILL_18,
+} from './migrations/20260930000018_BackfillTransactionTaxonomyToEnglish';
 import { ALL_MIGRATIONS } from './migrations';
 import {
   LEGACY_TRANSACTION_CATEGORY_SLUGS,
-  CANONICAL_TRANSACTION_CATEGORY_SLUGS,
   UNCHANGED_TRANSACTION_CATEGORY_SLUGS,
-  UNMAPPED_TRANSACTION_CATEGORY_SLUGS,
 } from '../modules/transactions/transaction-category-slugs';
 
 type Call = { sql: string; params?: unknown[] };
@@ -40,7 +41,14 @@ describe('BackfillTransactionTaxonomyToEnglish20260930000018', () => {
     expect(query).toHaveBeenCalledTimes(1);
   });
 
-  it('set equality with the code constants: the bound arrays ARE the API legacy map (same keys, same targets, same order)', async () => {
+  it('the bound arrays ARE the frozen snapshot, and the snapshot is the live map minus the two slugs mapped later by 20260930000037', async () => {
+    const { LEGACY_TO_CANONICAL, UNMAPPED_AT_THE_TIME } = TRANSACTION_TAXONOMY_BACKFILL_18;
+    expect(UNMAPPED_AT_THE_TIME).toEqual(['receitas-internas', 'repasse-contrato']);
+    const liveMinusLater = Object.fromEntries(
+      Object.entries(LEGACY_TRANSACTION_CATEGORY_SLUGS).filter(([legacy]) => !UNMAPPED_AT_THE_TIME.includes(legacy)),
+    );
+    expect(LEGACY_TO_CANONICAL).toEqual(liveMinusLater);
+    expect(Object.entries(LEGACY_TO_CANONICAL)).toEqual(Object.entries(liveMinusLater));
     const { query, calls } = runner();
     await migration.up({ query } as never);
     expect(calls[1].sql).toContain("SET LOCAL lock_timeout = '15s'");
@@ -48,14 +56,14 @@ describe('BackfillTransactionTaxonomyToEnglish20260930000018', () => {
     expect(updates).toHaveLength(2);
     for (const u of updates) {
       const [legacy, canonical] = u.params as [string[], string[]];
-      expect(new Set(legacy)).toEqual(new Set(Object.keys(LEGACY_TRANSACTION_CATEGORY_SLUGS)));
-      expect(legacy).toHaveLength(Object.keys(LEGACY_TRANSACTION_CATEGORY_SLUGS).length);
-      expect(canonical).toEqual(legacy.map((l) => LEGACY_TRANSACTION_CATEGORY_SLUGS[l]));
-      expect(new Set(canonical)).toEqual(new Set(CANONICAL_TRANSACTION_CATEGORY_SLUGS));
+      expect(legacy).toEqual(Object.keys(LEGACY_TO_CANONICAL));
+      expect(canonical).toEqual(legacy.map((l) => LEGACY_TO_CANONICAL[l]));
+      expect(legacy).not.toContain('receitas-internas');
+      expect(legacy).not.toContain('repasse-contrato');
     }
-    // every target of the map is a canonical id and the unmapped/unchanged slugs are NOT in the map
-    const keys = new Set(Object.keys(LEGACY_TRANSACTION_CATEGORY_SLUGS));
-    for (const slug of [...UNMAPPED_TRANSACTION_CATEGORY_SLUGS, ...UNCHANGED_TRANSACTION_CATEGORY_SLUGS]) expect(keys.has(slug)).toBe(false);
+    // the unmapped (at the time) and unchanged slugs are NOT in the snapshot
+    const keys = new Set(Object.keys(LEGACY_TO_CANONICAL));
+    for (const slug of [...UNMAPPED_AT_THE_TIME, ...UNCHANGED_TRANSACTION_CATEGORY_SLUGS]) expect(keys.has(slug)).toBe(false);
   });
 
   it('up() records first, then rewrites category and subcategory by EXACT match only; updated_at untouched', async () => {

@@ -210,7 +210,7 @@ UNION ALL
 SELECT 'subcategory', t.subcategory, count(*) FROM transactions t JOIN legacy l ON t.subcategory = l.slug GROUP BY 2
 ORDER BY 1, 3 DESC;
 
--- Informational, not part of the zero condition: legacy slugs left as stored on purpose.
+-- Informational, not part of the zero condition: the two slugs 20260930000018 left as stored; they are mapped and backfilled by 20260930000037 (census below).
 SELECT 'category' AS col, category AS unmapped_slug, count(*) FROM transactions
 WHERE category IN ('receitas-internas', 'repasse-contrato') GROUP BY 2
 UNION ALL
@@ -434,4 +434,18 @@ WHERE slug = 'videomaker' AND name = 'Videomaker' AND deleted_at IS NULL;
 SELECT count(*) AS skipped_target_taken FROM job_functions t
 WHERE t.slug = 'videomaker' AND t.name = 'Videomaker' AND t.deleted_at IS NULL
   AND EXISTS (SELECT 1 FROM job_functions o WHERE o.tenant_id = t.tenant_id AND o.slug = 'videographer' AND o.deleted_at IS NULL);
+```
+
+### Residue census 20260930000037
+
+Migration `BackfillInternalRevenueAndContractPassThroughSlugs`. Predicate (its exact-match statement, one per column): `transactions.category` or `transactions.subcategory` equals exactly `receitas-internas` (rewritten to `internal_revenue`) or `repasse-contrato` (rewritten to `contract_pass_through`); soft-deleted rows included, no trimming or case folding. Removal condition of the two legacy aliases in `LEGACY_TRANSACTION_CATEGORY_SLUGS` (API and web): both counts are 0 for one release window, after the API that writes canonical values is deployed everywhere.
+
+```sql
+-- 20260930000037 internal revenue / contract pass-through slugs
+SELECT 'category' AS col, category AS legacy_slug, count(*) FROM transactions
+WHERE category IN ('receitas-internas', 'repasse-contrato') GROUP BY 2
+UNION ALL
+SELECT 'subcategory', subcategory, count(*) FROM transactions
+WHERE subcategory IN ('receitas-internas', 'repasse-contrato') GROUP BY 2
+ORDER BY 1, 3 DESC;
 ```

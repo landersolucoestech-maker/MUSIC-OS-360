@@ -18,8 +18,11 @@
  * written by users or by the keyword rules (financial_categories.name, e.g.
  * "Receitas Musicais") is never a slug and is never rewritten.
  *
- * Deliberately NOT mapped (meaning not clear from code or label; left as stored,
- * listed in docs/runbooks/staging-to-production.md#residue-census-20260930000018): `receitas-internas`, `repasse-contrato`.
+ * `receitas-internas` and `repasse-contrato` are persisted machine values with a fixed
+ * display label and nothing branches on their accounting meaning, so they map like every
+ * other slug (`internal_revenue`, `contract_pass_through`; backfill migration
+ * 20260930000037, census in docs/runbooks/staging-to-production.md#residue-census-20260930000037).
+ * Nothing is deliberately unmapped any more ({@link UNMAPPED_TRANSACTION_CATEGORY_SLUGS} stays, empty).
  * Already-English values (`marketing`, `internet`, `iof`, `iss`, `camera`, ...) are
  * not in the map: they keep their spelling. `external_rights_receipts` is owned by
  * CT1 (common/compat/external-rights-receipts.ts); its legacy phrase is folded in
@@ -90,6 +93,8 @@ export const LEGACY_TRANSACTION_CATEGORY_SLUGS: Readonly<Record<string, string>>
   // ── revenue ──
   'receitas-musicais': 'music_revenue',
   'receitas-contratuais': 'contractual_revenue',
+  'receitas-internas': 'internal_revenue',
+  'repasse-contrato': 'contract_pass_through',
   'participacao-show-evento': 'show_event_participation',
   'venda-show-fechado': 'closed_show_sale',
   'direitos-conexos': 'neighboring_rights',
@@ -179,8 +184,8 @@ export const LEGACY_TRANSACTION_CATEGORY_SLUGS: Readonly<Record<string, string>>
   'resgate': 'investment_redemption',
 };
 
-/** Legacy slugs whose meaning is not clear: left as stored (no canonical id), listed in the findings. */
-export const UNMAPPED_TRANSACTION_CATEGORY_SLUGS: readonly string[] = ['receitas-internas', 'repasse-contrato'];
+/** Legacy slugs whose meaning is not clear: left as stored (no canonical id). Empty since 20260930000037; kept as the extension point. */
+export const UNMAPPED_TRANSACTION_CATEGORY_SLUGS: readonly string[] = [];
 
 /**
  * Taxonomy slugs that were already English (or statutory acronyms) and keep their

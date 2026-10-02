@@ -352,3 +352,54 @@ describe('ImportCommitService — artist links are http(s) only, same rule as th
     expect(qr.commitTransaction).toHaveBeenCalled();
   });
 });
+
+describe('ImportCommitService — phonogram/work derived fields (BLK-PHONOGRAMS-DERIVED-FIELDS)', () => {
+  const def = (tableName: string): ReportEntityDefinition => ({
+    entityName: tableName === 'works' ? 'WorkEntity' : 'PhonogramEntity', tableName, category: EntityCategory.REPORTABLE,
+    identityColumn: 'title', displayColumn: 'title', dateColumn: 'created_at',
+    exportableColumns: ['title'], importableColumns: ['title', 'isrc', 'duration_text', 'duration_seconds', 'isrc_year'],
+    filterableColumns: [], sortableColumns: [], searchableColumns: [], sensitiveColumns: [],
+    requiredImportColumns: ['title'], supportsExport: true, supportsImport: true,
+  });
+  const validation = (entity: string, data: Record<string, unknown>): ImportValidationResult => ({
+    entity, supportsImport: true, mapping: {}, unknownColumns: [], ignoredColumns: [],
+    totalRows: 1, validRows: 1, invalidRows: 0,
+    rows: [{ index: 0, data: { title: 'F', ...data }, valid: true, errors: [], warnings: [] }],
+    errors: [], warnings: [],
+  });
+  const insertOf = (qr: ReturnType<typeof makeSvc>['qr']) => qr.query.mock.calls.find((c: any[]) => String(c[0]).startsWith('INSERT')) as any[] | undefined;
+
+  it('derives seconds, text, compact isrc and parts on a phonogram row', async () => {
+    const { svc, qr } = makeSvc({ def: def('phonograms'), validation: validation('phonograms', { duration_text: '3:25', isrc: 'br-abc-26-00001' }) });
+    const result = await svc.commit('phonograms', file, 'tenant-1', 'user-1');
+    expect(result.importedRows).toBe(1);
+    const insert = insertOf(qr)!;
+    for (const v of [205, '03:25', 'BRABC2600001', 'BR', 'ABC', '26', '00001']) expect(insert[1]).toContain(v);
+  });
+
+  it('rejects a duration mismatch and an isrc/part mismatch with rollback', async () => {
+    for (const data of [{ duration_text: '03:25', duration_seconds: 100 }, { isrc: 'BRABC2600001', isrc_year: '27' }]) {
+      const { svc, qr } = makeSvc({ def: def('phonograms'), validation: validation('phonograms', data) });
+      const result = await svc.commit('phonograms', file, 'tenant-1', 'user-1');
+      expect(qr.rollbackTransaction).toHaveBeenCalled();
+      expect(result.importedRows).toBe(0);
+      expect(result.errors).toHaveLength(1);
+      expect(insertOf(qr)).toBeUndefined();
+    }
+  });
+
+  it('rejects an unparseable duration_text on a phonogram and on a work', async () => {
+    for (const table of ['phonograms', 'works']) {
+      const { svc, qr } = makeSvc({ def: def(table), validation: validation(table, { duration_text: 'abc' }) });
+      const result = await svc.commit(table, file, 'tenant-1', 'user-1');
+      expect(qr.rollbackTransaction).toHaveBeenCalled();
+      expect(result.errors).toHaveLength(1);
+    }
+  });
+
+  it('derives work duration_seconds from duration_text', async () => {
+    const { svc, qr } = makeSvc({ def: def('works'), validation: validation('works', { duration_text: '02:05' }) });
+    await svc.commit('works', file, 'tenant-1', 'user-1');
+    expect(insertOf(qr)![1]).toContain(125);
+  });
+});

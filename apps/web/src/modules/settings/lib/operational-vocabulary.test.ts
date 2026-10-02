@@ -65,3 +65,28 @@ describe("operational vocabulary (legacy reader)", () => {
     expect(migrateLegacyDefaultItem(custom, DEFAULT_OPERATIONAL_LISTS)).toBe(custom);
   });
 });
+
+describe("operational vocabulary legacy slug table (explicit pairs through the real reader)", () => {
+  const EXPECTED: Record<string, Record<string, string>> = {
+    lead_type: { artista_banda: "artist_or_band", contratante_show: "show_booker", marca_empresa: "brand_or_company", produtora_eventos: "event_producer", gravadora_selo: "record_label", agencia: "agency", influenciador: "influencer" },
+    lead_category: { artista_banda: "artist_or_band", contratante_show: "show_booker", marca_empresa: "brand_or_company", agencia: "agency" },
+    service_interest: { gestao_artistica: "artist_management", producao_musical: "music_production", mixagem: "mixing", masterizacao: "mastering", distribuicao_digital: "digital_distribution", marketing_musical: "music_marketing", producao_audiovisual: "audiovisual_production", design_grafico: "graphic_design", licenciamento: "licensing", consultoria: "consulting", outro: "other" },
+    lead_status: { novo_lead: "new", qualificado: "qualified", em_contato: "in_contact", proposta_enviada: "proposal", fechado: "closed", perdido: "lost" },
+    lead_segment: { musical: "music", eventos: "events", corporativo: "corporate" },
+    marketing_context: { projeto_musical: "music_project", artista: "artist", empresa: "company" },
+    marketing_task_type: { campanha: "campaign" },
+    briefing_service_type: { campanha: "campaign", conteudo: "content" },
+    event_type: { sessoes_estudio: "studio_sessions", ensaios: "rehearsals", sessoes_fotos: "photo_shoots", entrevistas: "interviews", programas_tv: "tv_shows", producao_conteudo: "content_production", reunioes: "meetings" },
+  };
+
+  it("canonicalOperationalSlug maps every legacy default slug to its canonical English slug (and legacyOperationalSlugs reverses it)", () => {
+    for (const [kind, pairs] of Object.entries(EXPECTED)) {
+      for (const [legacy, canonical] of Object.entries(pairs)) {
+        expect(canonicalOperationalSlug(kind, legacy)).toBe(canonical);
+        expect(canonicalOperationalSlug(kind, canonical)).toBe(canonical);
+        expect(legacyOperationalSlugs(kind, canonical)).toContain(legacy);
+      }
+      expect(Object.keys(LEGACY_OPERATIONAL_SLUGS[kind]).sort()).toEqual(Object.keys(pairs).sort());
+    }
+  });
+});

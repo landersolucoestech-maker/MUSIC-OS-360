@@ -30,6 +30,7 @@ interface Script {
   counts?: Record<string, number>; // `${table}:${label}` is resolved through the predicate text
   missingArchive?: number;
   archiveExists?: boolean;
+  staleArchive?: number;
 }
 
 function runner(plans: readonly DropTablePlan[], script: Script = {}) {
@@ -43,6 +44,7 @@ function runner(plans: readonly DropTablePlan[], script: Script = {}) {
       return (script.present ? script.present(table) : plan.columns.map((c) => c.name)).map((column_name) => ({ column_name }));
     }
     if (text.includes('to_regclass')) return [{ ok: script.archiveExists ?? true }];
+    if (text.includes('JOIN') && text.includes('NOT (')) return [{ n: script.staleArchive ?? 0 }];
     if (text.includes('NOT EXISTS (SELECT 1 FROM')) return [{ n: script.missingArchive ?? 0 }];
     if (text.startsWith('SELECT count(*)::int AS n FROM')) {
       for (const [needle, n] of Object.entries(script.counts ?? {})) if (text.includes(needle)) return [{ n }];
@@ -167,6 +169,25 @@ describe('LC1 legacy column drop drafts', () => {
       expect(sql.some((s) => /DROP COLUMN/.test(s.text))).toBe(false);
     });
 
+    it('archive coverage compares VALUES per column (IS NOT DISTINCT FROM), not only the id', async () => {
+      const { query, sql } = runner(plans);
+      await new Draft().up({ query } as never);
+      for (const plan of plans) {
+        const verify = sql.find((s) => s.text.includes(`NOT EXISTS (SELECT 1 FROM "${archiveTableOf(plan.table)}"`))!.text;
+        for (const c of plan.columns) expect(verify).toContain(`a."${c.name}" IS NOT DISTINCT FROM t."${c.name}"`);
+        const insert = sql.find((s) => s.text.includes(`INSERT INTO "${archiveTableOf(plan.table)}"`))!.text;
+        expect(insert).toContain('ON CONFLICT ("id") DO NOTHING'); // kept on purpose: the value check below makes a stale row abort
+      }
+    });
+
+    it('a stale archive row (differs from the live row, NULLs included) aborts before any DROP', async () => {
+      const { query, sql } = runner(plans, { staleArchive: 1 });
+      await expect(new Draft().up({ query } as never)).rejects.toThrow(/stale archive rows/);
+      expect(sql.some((s) => /DROP COLUMN/.test(s.text))).toBe(false);
+      const staleQuery = sql.find((s) => s.text.includes('JOIN') && s.text.includes('NOT ('))!.text;
+      for (const c of plans[0].columns) expect(staleQuery).toContain(`a."${c.name}" IS NOT DISTINCT FROM t."${c.name}"`);
+    });
+
     it('a partially present column set aborts (unknown state), none present is a no-op re-run', async () => {
       if (plans[0].columns.length > 1) {
         const partial = runner(plans, { present: () => [plans[0].columns[0].name] });
@@ -280,6 +301,15 @@ describe('LC1 legacy column drop drafts', () => {
       const wheres = INVOICES[0].checks.map((c) => c.where).join(' | ');
       expect(wheres).toContain('"service_amount" IS NULL');
       expect(wheres).toContain('"legacy_amount" <> "service_amount"');
+    });
+  });
+
+  describe('clients precondition', () => {
+    it('the status check is explicitly informational and the draft header requires the (legacy, status) pair census', () => {
+      expect(CLIENTS[0].checks.every((c) => typeof c.informational === 'string' && c.informational.length > 0)).toBe(true);
+      const src = fs.readFileSync(path.join(__dirname, '20260930000043_DropClientsLegacyContactStatus.ts'), 'utf8');
+      expect(src).toContain('INFORMATIONAL PRECONDITION');
+      expect(src).toContain('PAIR CENSUS');
     });
   });
 

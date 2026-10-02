@@ -9,8 +9,6 @@ export interface Event {
   type?: EventType | string | null;
   status?: EventStatusValue | string | null;
   artist_id?: string | null;
-  /** Legacy start column (C3): dual-written with starts_at until its retirement. */
-  data?: string | null;
   starts_at?: string | null;
   end_date?: string | null;
   venue?: string | null;

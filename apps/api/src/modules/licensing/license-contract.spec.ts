@@ -77,6 +77,15 @@ describe('License request contract (CZ-035)', () => {
     for (const legacy of ['projeto', 'midia_destino', 'territorio', 'valor', 'moeda']) expect(row).not.toHaveProperty(legacy);
   });
 
+  it('maps the deprecated `cliente` alias to client_name and never persists it (CZ-035)', async () => {
+    expect(errorsFor({ title: 'X', cliente: 'Acme' })).toEqual([]);
+    const { service, repo } = makeService();
+    await service.create('tenant-1', 'user-1', { title: 'X', cliente: 'Acme' } as never);
+    const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(row).toMatchObject({ client_name: 'Acme' });
+    expect(row).not.toHaveProperty('cliente');
+  });
+
   it('list maps a legacy comma-separated status filter and target media filter', async () => {
     const { service, qb } = makeService();
     await service.list('tenant-1', { status: 'negociacao,proposal', midia_destino: 'tv' } as never);

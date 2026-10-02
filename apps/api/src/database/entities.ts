@@ -778,13 +778,6 @@ export class WorkEntity {
   @Column({ type: 'jsonb', nullable: true }) ai_lyrics: Record<string, unknown> | null;
   @Column({ type: 'jsonb', nullable: true }) related_references: unknown[] | null;
   @Column({ type: 'jsonb', nullable: true }) translator_names: unknown[] | null;
-  // Former Portuguese duplicates of the registry columns (CZ-039): legacy data,
-  // never written nor returned (BLK-WORKS-LEGACY-DUPLICATES).
-  @Column({ type: 'varchar', length: 20, nullable: true, select: false }) legacy_language_label: string | null;
-  @Column({ type: 'varchar', length: 10, nullable: true, select: false }) legacy_instrumental_flag: string | null;
-  @Column({ type: 'boolean', nullable: true, select: false }) legacy_ai_used: boolean | null;
-  @Column({ type: 'jsonb', nullable: true, select: false }) legacy_alternative_titles: unknown[] | null;
-  @Column({ type: 'text', nullable: true, select: false }) legacy_lyrics: string | null;
   @Column({ type: 'uuid', nullable: true }) project_id: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) work_origin: string | null;
 
@@ -921,13 +914,6 @@ export class PhonogramEntity {
   // session_musicians) — see ParticipationDto in dto/create-phonogram.dto.ts.
   @Column({ type: 'jsonb', nullable: true }) participation: PhonogramParticipation | null;
   @Column({ type: 'jsonb', nullable: true }) audio_file: Record<string, unknown> | null;
-  // Former Portuguese duplicates of the registry columns (CZ-040): legacy data,
-  // never written nor returned (BLK-PHONOGRAMS-LEGACY-DUPLICATES).
-  @Column({ type: 'date', nullable: true, select: false }) legacy_recording_date: string | null;
-  @Column({ type: 'date', nullable: true, select: false }) legacy_release_date: string | null;
-  @Column({ type: 'integer', nullable: true, select: false }) legacy_duration_minutes: number | null;
-  @Column({ type: 'integer', nullable: true, select: false }) legacy_duration_seconds_part: number | null;
-  @Column({ type: 'varchar', length: 100, nullable: true, select: false }) legacy_origin_country: string | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────
   // Artist→Works navigation: Artist → phonograms → PhonogramEntity → work → WorkEntity
@@ -1090,12 +1076,6 @@ export class TransactionEntity {
   @Column({ type: 'date', nullable: true }) first_installment_date: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) attachment_name: string | null;
   @Column({ type: 'uuid', nullable: true }) event_id: string | null;
-  // Former duplicates with no writer (CZ-041): legacy data, never written nor
-  // returned (BLK-TRANSACTIONS-LEGACY-DUPLICATES).
-  @Column({ type: 'varchar', length: 50, nullable: true, select: false }) legacy_transaction_type: string | null;
-  @Column({ type: 'date', nullable: true, select: false }) legacy_transaction_date: string | null;
-  @Column({ type: 'text', nullable: true, select: false }) legacy_attachment_url: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true, select: false }) legacy_reference: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
@@ -1206,8 +1186,6 @@ export class ClientEntity {
   @Column({ type: 'varchar', length: 2, nullable: true }) state: string | null;
   @Column({ type: 'varchar', length: 15, nullable: true }) zip_code: string | null;
   @Column({ type: 'varchar', length: 500, nullable: true }) address: string | null;
-  // Pre-CZ-043 duplicate of `status` with no reader/writer (legacy data).
-  @Column({ type: 'varchar', length: 40, nullable: true, select: false }) legacy_contact_status: string | null;
   @Column({ type: 'varchar', length: 40, nullable: true }) priority: string | null;
   @Column({ type: 'varchar', length: 150, nullable: true }) responsible_name: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) responsible_job_title: string | null;
@@ -1381,10 +1359,6 @@ export class EventEntity {
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: EventStatus.SCHEDULED }) status: EventStatus;
-  // C3: legacy start column. LC1: never written through the entity (insert/update false);
-  // the DB trigger trg_events_sync_start_columns (migration 20260928000007) keeps it equal to
-  // starts_at until its drop (docs/engineering/legacy-column-drop-plan.md). Still read (API responses).
-  @Column({ type: 'timestamp', insert: false, update: false }) data: Date;
   // Canonical event start (C3/E4: every read uses it; NOT NULL since E5).
   @Column({ type: 'timestamp' }) starts_at: Date;
   @Column({ type: 'varchar', length: 255, nullable: true }) venue: string | null;
@@ -1575,8 +1549,6 @@ export class ShareEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) recipient: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) type: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) external_artist_name: string | null;
-  /** Former mirror of artist_id (CZ-037): legacy data, never written nor returned (BLK-SHARES-ARTIST-MIRROR). */
-  @Column({ type: 'uuid', nullable: true, select: false }) legacy_artist_project_id: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) payer: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) payer_contact: string | null;

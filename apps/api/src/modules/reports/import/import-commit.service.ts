@@ -25,6 +25,7 @@ import { getFieldLabelPtBr } from '../i18n/field-labels.pt-br';
 import { ImportEngineService } from './import-engine.service';
 import type { RowValidation } from './import.types';
 import { FinanceCategoryRulesService } from '../../finance-category-rules/finance-category-rules.service';
+import { parseDurationTextToSeconds, resolvePhonogramDerivedFields, type DerivedFieldIssue } from '../../../common/registry-fields/registry-fields.util';
 import { canonicalImportJsonColumn, canonicalImportValue } from './import-value-canonicalizers';
 import { UNCATEGORIZED_PLACEHOLDER, toRuleTransactionType } from '../../transactions/transactions.service';
 import { canonicalTransactionSlug, isUncategorizedCategory } from '../../transactions/transaction-category-slugs';
@@ -165,6 +166,10 @@ export class ImportCommitService {
       for (const group of groups) await this.assertNotDuplicate(qr, def, contract, group.generalRow, tenantId, errors);
       for (const row of validation.rows) await this.assertRelationships(qr, def, row, tenantId, errors);
       for (const row of validation.rows) this.assertValidIsrc(def, contract, row, errors);
+      for (const row of validation.rows) {
+        const { issue } = this.deriveRegistryFields(def, row.data);
+        if (issue && issue.code !== 'PHONOGRAM_ISRC_INVALID') errors.push(`Linha ${row.index + 2}: ${issue.message}`);
+      }
       for (const row of validation.rows) this.assertValidArtistUrls(def, row, errors);
 
       if (errors.length > 0) {
@@ -256,6 +261,38 @@ export class ImportCommitService {
   }
 
   /**
+   * The import bypasses PhonogramsService/WorksService, so it applies the same authoritative/derived rule
+   * (registry-fields.util.ts): phonograms -> duration_seconds/duration_text and the compact isrc/isrc_* parts
+   * (mismatch or unparseable value rejects the row); works -> duration_seconds derived from duration_text.
+   * Returns only the columns to write over the generic mapping.
+   */
+  private deriveRegistryFields(
+    def: ReportEntityDefinition,
+    data: Record<string, unknown>,
+  ): { values: Record<string, unknown>; issue?: DerivedFieldIssue } {
+    const incoming: Record<string, unknown> = {};
+    for (const [key, raw] of Object.entries(data)) {
+      const value = normalizeImportedValue(raw);
+      if (value !== null) incoming[key] = value;
+    }
+    if (def.tableName === 'phonograms') {
+      const seconds = incoming['duration_seconds'];
+      if (typeof seconds === 'string' && /^\d+$/.test(seconds.trim())) incoming['duration_seconds'] = Number(seconds.trim());
+      return resolvePhonogramDerivedFields(incoming, null);
+    }
+    if (def.tableName === 'works') {
+      const text = incoming['duration_text'];
+      if (typeof text !== 'string' || text.trim() === '') return { values: {} };
+      const parsed = parseDurationTextToSeconds(text);
+      if (parsed === null) {
+        return { values: {}, issue: { code: 'WORK_DURATION_TEXT_INVALID', field: 'duration_text', message: 'Duração inválida. Formato esperado: MM:SS.' } };
+      }
+      return { values: { duration_seconds: parsed } };
+    }
+    return { values: {} };
+  }
+
+  /**
    * SEC-F1: artist link fields (photo, gallery, documents, press kit, social
    * URLs — including the metadata-only instagram_url/tiktok_url) are rendered
    * as href/src by the web. The import applies the same CreateArtistDto rules
@@ -340,6 +377,12 @@ export class ImportCommitService {
       if (Object.keys(object).length === 0) continue;
       cols.push(physicalColumn);
       values.push(canonicalImportJsonColumn(def.tableName, physicalColumn, object));
+    }
+
+    for (const [column, value] of Object.entries(this.deriveRegistryFields(def, group.generalRow.data).values)) {
+      const at = cols.indexOf(column);
+      if (at >= 0) values[at] = value;
+      else { cols.push(column); values.push(value); }
     }
 
     if (def.tableName === 'transactions') {

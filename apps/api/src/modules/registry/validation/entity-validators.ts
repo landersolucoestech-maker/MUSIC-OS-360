@@ -120,6 +120,9 @@ export class RecordingRegistryValidationService {
       issues.push(issue(E, 'recording_title_required', 'title', 'Título do fonograma é obrigatório.'));
     }
 
+    // duration_seconds is authoritative; the duration_text fallback stays until migration 20260930000038
+    // (BackfillPhonogramDerivedFields) has run everywhere (census: no row with duration_seconds IS NULL AND a
+    // well-formed duration_text). Only then may hasDuration read duration_seconds alone.
     const hasDuration = (recording.duration_seconds ?? 0) > 0 || !!(recording.duration_text && recording.duration_text.trim());
     if (!hasDuration) {
       issues.push(issue(E, 'recording_duration_required', 'duration_seconds', 'Duração do fonograma é obrigatória.'));

@@ -82,7 +82,7 @@ export class CreatePhonogramDto {
   @IsUUID()
   artistId?: string;
 
-  @ApiPropertyOptional({ example: 'BR-MSC-24-00001' })
+  @ApiPropertyOptional({ example: 'BR-MSC-24-00001', description: 'Authoritative ISRC (hyphens optional). The isrc_* parts are DERIVED from it; if both are sent they must agree (400 PHONOGRAM_ISRC_MISMATCH).' })
   @IsOptional()
   @IsString()
   @MaxLength(20)
@@ -123,10 +123,10 @@ export class CreatePhonogramDto {
   // Code at any collective management society (ABRAMUS, UBC, SOCINPRO, ...).
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) society_code?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) aggregator?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(5) isrc_country_code?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) isrc_registrant_code?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(4) isrc_year?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) isrc_designation_code?: string;
+  @ApiPropertyOptional({ description: 'DERIVED from isrc (still accepted): rewritten on every write; with no isrc, four complete parts (merged with the stored ones on PATCH) compose it.' }) @IsOptional() @IsString() @MaxLength(5) isrc_country_code?: string;
+  @ApiPropertyOptional({ description: 'DERIVED from isrc (still accepted): rewritten on every write; with no isrc, four complete parts (merged with the stored ones on PATCH) compose it.' }) @IsOptional() @IsString() @MaxLength(10) isrc_registrant_code?: string;
+  @ApiPropertyOptional({ description: 'DERIVED from isrc (still accepted): rewritten on every write; with no isrc, four complete parts (merged with the stored ones on PATCH) compose it.' }) @IsOptional() @IsString() @MaxLength(4) isrc_year?: string;
+  @ApiPropertyOptional({ description: 'DERIVED from isrc (still accepted): rewritten on every write; with no isrc, four complete parts (merged with the stored ones on PATCH) compose it.' }) @IsOptional() @IsString() @MaxLength(10) isrc_designation_code?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() ai_used?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() is_instrumental?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() is_national?: boolean;
@@ -134,8 +134,8 @@ export class CreatePhonogramDto {
   @ApiPropertyOptional({ example: '2026-01-31' }) @IsOptional() @IsString() issue_date?: string;
   @ApiPropertyOptional({ example: '2026-01-31' }) @IsOptional() @IsString() recording_date?: string;
   @ApiPropertyOptional({ example: '2026-01-31' }) @IsOptional() @IsString() release_date?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) duration_text?: string;
-  @ApiPropertyOptional({ description: 'Total duration in seconds.' }) @IsOptional() @Type(() => Number) @IsInt() @Min(0) duration_seconds?: number;
+  @ApiPropertyOptional({ description: 'DERIVED from duration_seconds (still accepted): rewritten as MM:SS on every write; sent alone it is parsed (400 PHONOGRAM_DURATION_TEXT_INVALID), sent with a different duration_seconds it is rejected (400 PHONOGRAM_DURATION_MISMATCH).' }) @IsOptional() @IsString() @MaxLength(20) duration_text?: string;
+  @ApiPropertyOptional({ description: 'Authoritative total duration in seconds.' }) @IsOptional() @Type(() => Number) @IsInt() @Min(0) duration_seconds?: number;
   @ApiPropertyOptional({ enum: PHONOGRAM_MEDIA_TYPES }) @IsOptional() @IsIn(MEDIA_TYPE_INPUT) media_type?: string;
   @ApiPropertyOptional({ enum: PHONOGRAM_RECORDING_CLASSIFICATIONS }) @IsOptional() @IsIn(CLASSIFICATION_INPUT) recording_classification?: string;
   @ApiPropertyOptional({ description: 'ISO 3166-1 alpha-2; ZZ = other/unknown.' }) @IsOptional() @IsString() @MaxLength(100) country_of_recording?: string;

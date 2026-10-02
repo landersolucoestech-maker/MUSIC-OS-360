@@ -11,8 +11,9 @@
  * case-sensitive: free text (user / keyword-rule category names such as
  * "Receitas Musicais") is never a slug and passes through untouched.
  *
- * Deliberately unmapped (meaning not clear): receitas-internas, repasse-contrato.
- * Removal condition for the legacy side: docs/runbooks/staging-to-production.md#residue-census-20260930000018 census = 0
+ * `receitas-internas` and `repasse-contrato` map to `internal_revenue` and
+ * `contract_pass_through` (backfill 20260930000037); nothing is left unmapped.
+ * Removal condition for the legacy side: docs/runbooks/staging-to-production.md#residue-census-20260930000018 (and ...37) census = 0
  * for one release window.
  */
 export const LEGACY_TRANSACTION_CATEGORY_SLUGS: Readonly<Record<string, string>> = {
@@ -72,6 +73,8 @@ export const LEGACY_TRANSACTION_CATEGORY_SLUGS: Readonly<Record<string, string>>
   // ── revenue ──
   "receitas-musicais": "music_revenue",
   "receitas-contratuais": "contractual_revenue",
+  "receitas-internas": "internal_revenue",
+  "repasse-contrato": "contract_pass_through",
   "participacao-show-evento": "show_event_participation",
   "venda-show-fechado": "closed_show_sale",
   "direitos-conexos": "neighboring_rights",
@@ -161,7 +164,7 @@ export const LEGACY_TRANSACTION_CATEGORY_SLUGS: Readonly<Record<string, string>>
   "resgate": "investment_redemption",
 };
 
-export const UNMAPPED_TRANSACTION_CATEGORY_SLUGS: readonly string[] = ["receitas-internas", "repasse-contrato"];
+export const UNMAPPED_TRANSACTION_CATEGORY_SLUGS: readonly string[] = [];
 
 /** Slugs that were already English (or statutory acronyms) and keep their spelling. */
 export const UNCHANGED_TRANSACTION_CATEGORY_SLUGS: readonly string[] = [

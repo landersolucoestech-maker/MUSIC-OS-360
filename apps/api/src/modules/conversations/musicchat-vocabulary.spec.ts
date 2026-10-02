@@ -154,6 +154,19 @@ describe('MusicChatAutomationService (CZ-045 values)', () => {
     expect(routedMetadata(shows.convRepo)).toMatchObject({ service_status: 'waiting_agent', priority: 'medium', selected_menu_option: 'shows' });
   });
 
+  it('creates the default settings with the pinned capitalized queue/sector values (R3-03 pending canonical slugs)', async () => {
+    const { svc, settingsRepo } = makeService();
+    Object.assign(settingsRepo, {
+      create: jest.fn((v: unknown) => v),
+      save: jest.fn(async (v: unknown) => v),
+    });
+    settingsRepo.findOne.mockResolvedValueOnce(null);
+    const created = (await svc.getSettings('t-new')) as unknown as { menu_options: Array<{ id: string; queue: string; sector: string }> };
+    const routing = Object.fromEntries(created.menu_options.map((o) => [o.id, [o.queue, o.sector]]));
+    expect(routing['other']).toEqual(['Atendimento', 'Suporte']);
+    expect(routing['wrong_contact']).toEqual(['Atendimento', 'Triagem']);
+  });
+
   it('escalation only scans conversations still waiting (canonical statuses)', async () => {
     const { svc, convQb } = makeService();
     await svc.runEscalation('t1');

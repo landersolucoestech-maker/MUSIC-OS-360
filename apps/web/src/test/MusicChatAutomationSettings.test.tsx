@@ -120,4 +120,17 @@ describe("<MusicChatAutomationSettings />", () => {
     expect(screen.queryByText("auth-sup")).not.toBeInTheDocument();
     expect(screen.queryByText("removed-member")).not.toBeInTheDocument();
   });
+
+  it("a new service questionnaire is saved with the pinned capitalized queue/sector values (R3-03)", async () => {
+    hookState.settings = TENANT_SETTINGS;
+    renderWithProviders(<MusicChatAutomationSettings />);
+    await openTab(/Templates/);
+    fireEvent.click(screen.getByRole("button", { name: /Adicionar questionário/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Salvar configuração/ }));
+    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({
+      menu_options: expect.arrayContaining([
+        expect.objectContaining({ label: "Novo questionário", queue: "Atendimento", sector: "Triagem" }),
+      ]),
+    }));
+  });
 });

@@ -32,6 +32,12 @@ describe('transaction taxonomy slugs (TX1)', () => {
     expect(multi).toEqual(['external_rights_streaming']);
   });
 
+  it('no slug is left unmapped: receitas-internas / repasse-contrato are mapped (20260930000037)', () => {
+    expect(UNMAPPED_TRANSACTION_CATEGORY_SLUGS).toEqual([]);
+    expect(LEGACY_TRANSACTION_CATEGORY_SLUGS['receitas-internas']).toBe('internal_revenue');
+    expect(LEGACY_TRANSACTION_CATEGORY_SLUGS['repasse-contrato']).toBe('contract_pass_through');
+  });
+
   it('canonical ids never collide with an unchanged English slug, an unmapped slug or another legacy key', () => {
     const reserved = new Set<string>([...UNCHANGED_TRANSACTION_CATEGORY_SLUGS, ...UNMAPPED_TRANSACTION_CATEGORY_SLUGS]);
     for (const canonical of CANONICAL_TRANSACTION_CATEGORY_SLUGS) expect(reserved.has(canonical)).toBe(false);
@@ -46,7 +52,11 @@ describe('transaction taxonomy slugs (TX1)', () => {
     expect(canonicalTransactionSlug('outros')).toBe('other');
     expect(canonicalTransactionSlug('music_revenue')).toBe('music_revenue');
     expect(canonicalTransactionSlug('marketing')).toBe('marketing');
-    expect(canonicalTransactionSlug('receitas-internas')).toBe('receitas-internas');
+    expect(canonicalTransactionSlug('receitas-internas')).toBe('internal_revenue');
+    expect(canonicalTransactionSlug('repasse-contrato')).toBe('contract_pass_through');
+    expect(canonicalTransactionSlug('internal_revenue')).toBe('internal_revenue');
+    expect(canonicalTransactionSlug('contract_pass_through')).toBe('contract_pass_through');
+    expect(canonicalTransactionSlug('Receitas Internas')).toBe('Receitas Internas');
     expect(canonicalTransactionSlug('Receitas Musicais')).toBe('Receitas Musicais');
     expect(canonicalTransactionSlug('Outros')).toBe('Outros');
     expect(canonicalTransactionSlug(' outros')).toBe(' outros');

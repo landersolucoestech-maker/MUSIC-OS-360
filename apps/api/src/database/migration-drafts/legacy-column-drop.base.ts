@@ -18,7 +18,11 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
  *   4. archive side table `<table>_legacy_archive_20260930` (id, tenant_id, the legacy columns, archived_at),
  *      RLS ENABLED + FORCED with NO policy and every app role revoked (same pattern as
  *      contract_service_types_taxonomy_backup_20260930): only the BYPASSRLS migration role can read it;
- *   5. archive every row that holds a non-NULL legacy value, then verify nothing is missing from the archive;
+ *   5. archive every row that holds a non-NULL legacy value (ON CONFLICT DO NOTHING keeps an existing archive row),
+ *      then verify by VALUE (IS NOT DISTINCT FROM per archived column) that every such row is covered by an archive
+ *      row holding the same values, and that no archive row is stale (differs from its live row, NULLs included).
+ *      A stale archive row (left by an earlier up/down/up cycle whose live values changed since) ABORTS: the operator
+ *      reviews it and retires/renames that archive table; old values are never silently frozen over new ones;
  *   6. ALTER TABLE ... DROP COLUMN IF EXISTS (the only destructive statement, last).
  * down(): re-adds each column (same type, nullable) and restores the values by id from the archive (rows
  * created after the drop have no archive row and stay NULL). The archive tables are NEVER dropped here: they
@@ -39,6 +43,8 @@ export interface PreflightCheck {
   readonly label: string;
   /** Rows matching this predicate would lose information on drop (must be 0). */
   readonly where: string;
+  /** Set when the check cannot prove the canonical counterpart (it only guards an obvious gap); the owner census is the real gate. */
+  readonly informational?: string;
 }
 
 export interface DropTablePlan {
@@ -60,6 +66,9 @@ export function assertConfirmed(migrationName: string): void {
     throw new Error(`${migrationName}: gated draft. Set ${CONFIRM_ENV} only after the gates of docs/engineering/legacy-column-drop-plan.md are evidenced.`);
   }
 }
+
+const sameValues = (plan: DropTablePlan, left: string, right: string): string =>
+  plan.columns.map((c) => `${left}."${c.name}" IS NOT DISTINCT FROM ${right}."${c.name}"`).join(' AND ');
 
 const anyLegacyValue = (plan: DropTablePlan): string => plan.columns.map((c) => `"${c.name}" IS NOT NULL`).join(' OR ');
 
@@ -135,12 +144,22 @@ export async function runDrop(queryRunner: QueryRunner, migrationName: string, p
       INSERT INTO "${archive}" ("id", "tenant_id", ${names})
       SELECT "id", "tenant_id", ${names} FROM "${plan.table}" WHERE ${anyLegacyValue(plan)}
       ON CONFLICT ("id") DO NOTHING`);
+    // Value coverage: a live row with a legacy value must have an archive row with the SAME values (id alone is not enough).
     const missing: Array<{ n: number }> = await queryRunner.query(
       `SELECT count(*)::int AS n FROM "${plan.table}" t
-       WHERE (${anyLegacyValue(plan)}) AND NOT EXISTS (SELECT 1 FROM "${archive}" a WHERE a."id" = t."id")`,
+       WHERE (${anyLegacyValue(plan)}) AND NOT EXISTS (SELECT 1 FROM "${archive}" a WHERE a."id" = t."id" AND ${sameValues(plan, 'a', 't')})`,
     );
     if ((missing[0]?.n ?? 0) > 0) {
-      throw new Error(bounded(`${migrationName}: archive verification failed for ${plan.table} (${missing[0].n} row(s) not archived); nothing dropped.`));
+      throw new Error(bounded(`${migrationName}: archive verification failed for ${plan.table} (${missing[0].n} row(s) not archived with their current values; a stale archive row from an earlier cycle must be reviewed and retired); nothing dropped.`));
+    }
+    // Staleness: an archive row that differs from its live row (including a live row whose legacy values are now all NULL)
+    // would be restored by down() over newer data. Aborts instead of refreshing silently.
+    const stale: Array<{ n: number }> = await queryRunner.query(
+      `SELECT count(*)::int AS n FROM "${archive}" a JOIN "${plan.table}" t ON t."id" = a."id"
+       WHERE NOT (${sameValues(plan, 'a', 't')})`,
+    );
+    if ((stale[0]?.n ?? 0) > 0) {
+      throw new Error(bounded(`${migrationName}: stale archive rows for ${plan.table} (${stale[0].n} row(s) differ from the live values); review and retire ${archive} before retrying; nothing dropped.`));
     }
   }
   for (const plan of active) {
