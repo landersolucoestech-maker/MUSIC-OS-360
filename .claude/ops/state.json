@@ -5,11 +5,11 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-01T18:14:06.418Z",
+  "updatedAt": "2026-10-02T03:11:28.203Z",
   "impact": {
-    "operatorDeclared": null,
-    "runtimeDetected": null,
-    "effective": null
+    "operatorDeclared": "L5",
+    "runtimeDetected": "L1",
+    "effective": "L5"
   },
   "requirements": [
     {
@@ -22,7 +22,8 @@
           "text": "naming census ratchet shows no new Portuguese technical names",
           "evidenceIds": [
             "evid-8e3ed861",
-            "evid-7fc518bd"
+            "evid-7fc518bd",
+            "evid-5ea5f36e"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -42,7 +43,8 @@
           "text": "canonical naming map ledger validates",
           "evidenceIds": [
             "evid-039859b9",
-            "evid-5935bbf2"
+            "evid-5935bbf2",
+            "evid-6e37da13"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -70,7 +72,8 @@
           "text": "API typecheck passes",
           "evidenceIds": [
             "evid-9c2c46dc",
-            "evid-89fa904d"
+            "evid-89fa904d",
+            "evid-2c4fec3f"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -90,7 +93,8 @@
           "text": "API jest suite passes",
           "evidenceIds": [
             "evid-cd6cfddc",
-            "evid-977ef5ca"
+            "evid-977ef5ca",
+            "evid-be242b35"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -118,7 +122,8 @@
           "text": "web typecheck passes",
           "evidenceIds": [
             "evid-7f2d8429",
-            "evid-d944ad60"
+            "evid-d944ad60",
+            "evid-17b6acf7"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -138,7 +143,8 @@
           "text": "web vitest suite passes",
           "evidenceIds": [
             "evid-f56079d4",
-            "evid-9b30d3ac"
+            "evid-9b30d3ac",
+            "evid-4c8dec10"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -166,7 +172,8 @@
           "text": "provider residue guard passes",
           "evidenceIds": [
             "evid-1fec5faa",
-            "evid-9b8c1eb0"
+            "evid-9b8c1eb0",
+            "evid-de39929c"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -186,7 +193,8 @@
           "text": "migration source-of-truth guard passes",
           "evidenceIds": [
             "evid-587c2607",
-            "evid-dc7489a3"
+            "evid-dc7489a3",
+            "evid-4d5336c6"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -206,7 +214,8 @@
           "text": "branch topology guard passes",
           "evidenceIds": [
             "evid-1e20ade5",
-            "evid-72f5b1dc"
+            "evid-72f5b1dc",
+            "evid-0dbb66cb"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -226,7 +235,8 @@
           "text": "critical workflows guard passes",
           "evidenceIds": [
             "evid-5711c45e",
-            "evid-2024606a"
+            "evid-2024606a",
+            "evid-29b805a1"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -246,7 +256,8 @@
           "text": "git-guard policy tests pass",
           "evidenceIds": [
             "evid-23213d30",
-            "evid-4a7836c6"
+            "evid-4a7836c6",
+            "evid-d6cb397f"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -265,7 +276,8 @@
           "id": "ac-2249de9e",
           "text": "xlsx-only spreadsheet contract holds",
           "evidenceIds": [
-            "evid-9b0b8f2a"
+            "evid-9b0b8f2a",
+            "evid-d6d1723e"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -292,7 +304,8 @@
           "id": "ac-14a5d418",
           "text": "API build configuration typechecks",
           "evidenceIds": [
-            "evid-ed97449e"
+            "evid-ed97449e",
+            "evid-952de8fe"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -309,6 +322,73 @@
         }
       ],
       "createdAt": "2026-10-01T18:09:48.036Z"
+    },
+    {
+      "id": "req-04f1a6ac",
+      "text": "Entities match the migrated schema and the contract vocabulary backfills are reversible and proven on a real PostgreSQL",
+      "nonRequirements": [
+        "No change to the takedown work_id/artist_id/response mapping (owner decision, blocker BLK-TAKEDOWNS-FK-COLUMNS)"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-5305eb7b",
+          "text": "schema naming census of a database migrated from scratch has no Portuguese debt",
+          "evidenceIds": [
+            "evid-93b4fea4"
+          ],
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, migrations and naming docs; .claude-only commits do not change what these commands verify"
+        },
+        {
+          "id": "ac-426642e3",
+          "text": "entity registry guard and the contract vocabulary migration specs pass",
+          "evidenceIds": [
+            "evid-f81fc5d3"
+          ],
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, migrations and naming docs; .claude-only commits do not change what these commands verify"
+        },
+        {
+          "id": "ac-577b07af",
+          "text": "db:check reports no pending migrations on the migrated database",
+          "evidenceIds": [
+            "evid-987a371f"
+          ],
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "supabase",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "Evidence is about product code, migrations and naming docs; .claude-only commits do not change what these commands verify"
+        }
+      ],
+      "createdAt": "2026-10-02T03:11:00.976Z"
     }
   ],
   "findings": [],
@@ -336,7 +416,23 @@
     "evid-cd6cfddc",
     "evid-f56079d4",
     "evid-977ef5ca",
-    "evid-9b30d3ac"
+    "evid-9b30d3ac",
+    "evid-5ea5f36e",
+    "evid-6e37da13",
+    "evid-2c4fec3f",
+    "evid-be242b35",
+    "evid-17b6acf7",
+    "evid-4c8dec10",
+    "evid-de39929c",
+    "evid-4d5336c6",
+    "evid-0dbb66cb",
+    "evid-29b805a1",
+    "evid-d6cb397f",
+    "evid-d6d1723e",
+    "evid-952de8fe",
+    "evid-93b4fea4",
+    "evid-f81fc5d3",
+    "evid-987a371f"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
