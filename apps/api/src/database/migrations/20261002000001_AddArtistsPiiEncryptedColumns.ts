@@ -11,7 +11,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * ADDITIVE ONLY: nullable text columns, no default, no index, no data copied or rewritten, plaintext columns
  * untouched (dual-read window). The API releases that write these columns require this migration first
  * (migrations -> API release). The backfill + scrub of the existing rows is NOT here: it is the gated draft
- * migration-drafts/20261002000002_EncryptArtistsAndClientsPiiInPlace.ts
+ * migration-drafts/20261002000002_EncryptArtistsAndClientsPiiBackfill.ts (backfill) and 20261002000003_ScrubArtistsAndClientsPlaintext.ts (scrub)
  * (docs/engineering/data-governance-pii-backfill.md).
  *
  * down(): refuses while any ciphertext exists in these columns (dropping them would destroy the only copy of

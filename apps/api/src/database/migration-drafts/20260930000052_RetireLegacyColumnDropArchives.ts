@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { assertMigrationRoleBypassesRls } from '../migration-guards';
 import { archiveTableOf } from './legacy-column-drop.base';
 import { PLANS as EMPLOYEES_PII } from './20260930000053_DropEmployeesLegacyPiiColumns';
-import { ARTISTS_ARCHIVE, CLIENTS_ARCHIVE } from './20261002000002_EncryptArtistsAndClientsPiiInPlace';
+import { ARTISTS_ARCHIVE, CLIENTS_ARCHIVE } from './20261002000002_EncryptArtistsAndClientsPiiBackfill';
 
 /**
  * DRAFT, GATED, NOT REGISTERED (LC1 D3). Retires the *_legacy_archive_20260930 tables written by the legacy
@@ -16,8 +16,9 @@ import { ARTISTS_ARCHIVE, CLIENTS_ARCHIVE } from './20261002000002_EncryptArtist
  * from LEGACY_DROP_CONFIRM, so confirming a drop never confirms the retirement).
  *
  * ORDERING: this draft also retires the PII backfill archives (artists_pii_archive_20261002 / clients_pii_archive_20261002),
- * so it must run AFTER the backfill draft 20261002000002. Its timestamp is earlier, so when it is registered it MUST be
- * re-timestamped after the backfill; run in timestamp order before the backfill it would be a no-op (DROP IF EXISTS) and the
+ * so it must run AFTER the backfill draft 20261002000002 AND the scrub draft 20261002000003 (the scrub's down() restores
+ * from these archives, so retiring them closes the way back). Its timestamp is earlier, so when it is registered it MUST be
+ * re-timestamped after both; run in timestamp order before the backfill it would be a no-op (DROP IF EXISTS) and the
  * plaintext PII archives created later would never be retired.
  */
 export const CONFIRM_ENV = 'LEGACY_ARCHIVE_RETIRE_CONFIRM';
