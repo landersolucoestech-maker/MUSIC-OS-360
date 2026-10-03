@@ -203,3 +203,10 @@
 {"name":"gate-run","at":"2026-10-03T04:30:53.753Z","gate":"completion","status":"BLOCKED","durationMs":12500,"reasonCount":1}
 {"name":"gate-run","at":"2026-10-03T05:08:23.156Z","gate":"security","status":"BLOCKED","durationMs":12880,"reasonCount":1}
 {"name":"gate-run","at":"2026-10-03T05:08:39.486Z","gate":"security","status":"BLOCKED","durationMs":12935,"reasonCount":1}
+{"name":"gate-run","at":"2026-10-03T05:31:06.369Z","gate":"security","status":"PASS","durationMs":13790,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T05:31:24.346Z","gate":"completion","status":"BLOCKED","durationMs":13582,"reasonCount":1}
+{"name":"gate-run","at":"2026-10-03T05:31:41.252Z","gate":"completion","status":"BLOCKED","durationMs":13264,"reasonCount":1}
+{"name":"gate-run","at":"2026-10-03T05:31:55.223Z","gate":"security","status":"PASS","durationMs":13887,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T05:31:55.623Z","gate":"pack-integrity","status":"PASS","durationMs":286,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T05:31:55.768Z","gate":"human-approval","status":"PASS","durationMs":54,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T05:31:55.935Z","gate":"operational-automation","status":"PASS","durationMs":54,"reasonCount":0}

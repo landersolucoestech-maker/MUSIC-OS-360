@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/verify-critical-workflows.mjs",
+  "command": "node scripts/verify-critical-workflows.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ verify:critical-workflows — 4 workflows present, not empty in the current working tree.\n[xlsx-only] contract validated: XLSX only for spreadsheets.",
+  "stderrTail": "",
+  "workspaceFingerprint": "170b5c2c9df5b431a371053c4bd27e53963468877a54270a0926f6e62852f62b",
+  "fingerprintStatus": "BOUND",
+  "head": "096189802320fe9522d229ba0c06b1d0b5e8a0a1",
+  "durationMs": 715,
+  "id": "evid-6c697a72",
+  "createdAt": "2026-10-03T05:30:12.070Z"
+}
