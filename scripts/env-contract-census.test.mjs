@@ -15,11 +15,13 @@ test("parseTemplate: active and commented assignments, values dropped from the r
   assert.deepEqual([...vars], [["A", "active"], ["B", "commented"], ["D", "active"]]);
 });
 
-test("looksLikeRealSecret: real shapes are caught, placeholders and truncated JWT prefixes are not", () => {
+test("looksLikeRealSecret: real shapes and truncated JWT-looking credentials are caught, canonical placeholders are not", () => {
   const b = (o) => Buffer.from(JSON.stringify(o)).toString("base64url");
   const jwt = `${b({ alg: "HS256" })}.${b({ ref: "x".repeat(20), role: "anon" })}.${"s".repeat(40)}`;
   assert.equal(looksLikeRealSecret(jwt, "SUPABASE_ANON_KEY"), true);
-  assert.equal(looksLikeRealSecret(`${jwt.split(".")[0]}.${b({ a: 1 }).slice(0, 13)}`, "SUPABASE_ANON_KEY"), false);
+  assert.equal(looksLikeRealSecret(`${jwt.split(".")[0]}.${b({ a: 1 }).slice(0, 13)}`, "SUPABASE_ANON_KEY"), true, "a truncated JWT-looking value in a credential slot is operationally misleading");
+  assert.equal(looksLikeRealSecret(jwt.split(".")[0], "SUPABASE_SERVICE_ROLE_KEY"), true);
+  assert.equal(looksLikeRealSecret("<SUPABASE_ANON_KEY>", "SUPABASE_ANON_KEY"), false);
   assert.equal(looksLikeRealSecret("a".repeat(64), "ENCRYPTION_KEY"), true);
   assert.equal(looksLikeRealSecret("a".repeat(64), "SUPABASE_ANON_KEY"), false, "a non-JWT value cannot be a working Supabase JWT");
   assert.equal(looksLikeRealSecret("sk_live_" + "A".repeat(24), "STRIPE_SECRET_KEY"), true);

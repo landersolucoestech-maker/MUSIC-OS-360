@@ -17,7 +17,7 @@ Cells: `set:<template>` = active line, `opt:<template>` = commented line, `-` = 
 | APP_URL | opt:api | set:api | set:api,set:root | Y | - | production(schema) | schema:'http://localhost:5000' | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
 | AUTENTIQUE_WEBHOOK_SECRET | opt:api | set:api | set:api,set:root | Y | - | production(schema) | - | schema | yes | env.schema.ts api-src root.production api.development api.staging api.production |
 | AUTH_DISABLED | opt:api,set:root | - | set:root | Y | - | - | - | schema | no | env.schema.ts api-src root.development root.production api.development |
-| BUILD_SHA | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
+| BUILD_SHA | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
 | CORS_ORIGINS | set:api | set:api | set:api,set:root | Y | - | production(schema) | schema:'http://localhost:5000' | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
 | DATABASE_SESSION_CONTEXT_ENABLED | opt:api | set:api | set:api,set:root | Y | - | - | schema:'false' | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
 | DATABASE_URL | set:api | set:api | set:api,set:root | Y | - | production(schema)+local(env:check) | - | schema+env:check | yes | env.schema.ts api-src root.production api.development api.staging api.production |
@@ -36,7 +36,7 @@ Cells: `set:<template>` = active line, `opt:<template>` = commented line, `-` = 
 | DOCUSIGN_AUTH_BASE_URL | - | - | set:root | Y | - | - | schema:'https://account-d.docusign.com' | schema | no | env.schema.ts api-src root.production |
 | DOCUSIGN_CLIENT_SECRET | - | - | set:root | Y | - | - | - | schema | yes | env.schema.ts api-src root.production |
 | DOCUSIGN_INTEGRATION_KEY | - | - | set:root | Y | - | - | - | schema | no | env.schema.ts api-src root.production |
-| DOCUSIGN_WEBHOOK_SECRET | opt:api | - | - | Y | - | - | - | schema | yes | env.schema.ts api-src api.development |
+| DOCUSIGN_WEBHOOK_SECRET | opt:api | opt:api | opt:api | Y | - | - | - | schema | yes | env.schema.ts api-src api.development api.staging api.production |
 | ENCRYPTION_KEY | opt:api,opt:root | set:api | set:api,set:root | Y | - | - | default(secret!) | schema | yes | env.schema.ts api-src root.development root.production api.development api.staging api.production |
 | EXTERNAL_DATA_WEBHOOK_SECRET | opt:api | set:api | set:api | Y | - | - | - | schema | yes | env.schema.ts api-src api.development api.staging api.production |
 | FRONTEND_URL | opt:api | set:api | set:api,set:root | Y | - | production(schema) | - | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
@@ -53,8 +53,7 @@ Cells: `set:<template>` = active line, `opt:<template>` = commented line, `-` = 
 | METRICS_TOKEN | opt:api | set:api | set:api | Y | - | - | - | schema | yes | env.schema.ts api-src api.development api.staging api.production |
 | NODE_ENV | set:api,set:root | set:api,set:root | set:api,set:root | Y | - | - | schema:'development' | schema | no | env.schema.ts api-src root.development root.staging root.production api.development api.staging api.production |
 | OPENAI_API_KEY | opt:api | set:api | set:api,set:root | Y | - | - | - | schema | yes | env.schema.ts api-src root.production api.development api.staging api.production |
-| OPENAI_BASE_URL | - | - | set:root | - | - | - | - | NO | no | root.production |
-| PLATFORM_CONTACT_RECIPIENT_EMAIL | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
+| PLATFORM_CONTACT_RECIPIENT_EMAIL | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
 | PORT | set:api | set:api | set:api,set:root | Y | - | - | schema:3001 | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
 | POSTHOG_API_KEY | opt:api | set:api | set:api,set:root | Y | - | - | - | schema | yes | env.schema.ts api-src root.production api.development api.staging api.production |
 | POSTHOG_HOST | opt:api | set:api | set:api,set:root | Y | - | - | schema:'https://app.posthog.com' | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
@@ -65,9 +64,9 @@ Cells: `set:<template>` = active line, `opt:<template>` = commented line, `-` = 
 | R2_BUCKET_NAME | opt:api | set:api,set:root | set:api,set:root | Y | - | - | schema:'music-os-360' | schema | no | env.schema.ts api-src root.staging root.production api.development api.staging api.production |
 | R2_PUBLIC_URL | opt:api | set:api,set:root | set:api,set:root | Y | - | production(schema) | - | schema | no | env.schema.ts api-src root.staging root.production api.development api.staging api.production |
 | R2_SECRET_KEY | opt:api | set:api,set:root | set:api,set:root | Y | - | - | - | schema | yes | env.schema.ts api-src root.staging root.production api.development api.staging api.production |
-| RATE_LIMIT_TRUST_PROXY | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
+| RATE_LIMIT_TRUST_PROXY | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
 | RBAC_AUDIT_MIRROR_ENABLED | - | - | set:root | Y | - | - | schema:'true' | schema | no | env.schema.ts root.production |
-| RBAC_CANONICAL_ROLE_WRITE | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
+| RBAC_CANONICAL_ROLE_WRITE | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
 | RBAC_DECISION_RETENTION_DAYS | - | - | set:root | Y | - | - | schema:30 | schema | no | env.schema.ts root.production |
 | RBAC_DECISION_RETENTION_INTERVAL_HOURS | - | - | set:root | Y | - | - | schema:6 | schema | no | env.schema.ts root.production |
 | RBAC_DISTRIBUTED_CACHE_ENABLED | - | - | set:root | Y | - | - | schema:'true' | schema | no | env.schema.ts api-src root.production |
@@ -95,13 +94,13 @@ Cells: `set:<template>` = active line, `opt:<template>` = commented line, `-` = 
 | RBAC_HARNESS_VIEWER_EMAIL | - | set:root | - | - | - | - | - | NO | no | root.staging |
 | RBAC_HARNESS_VIEWER_PASSWORD | - | set:root | - | - | - | - | - | NO | yes | root.staging |
 | RBAC_PERSISTED_AUTHORITY | opt:api | set:api | set:api,set:root | Y | - | - | schema:'SHADOW' | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
-| REDIS_HOST | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
-| REDIS_PASSWORD | opt:api | - | - | Y | - | - | - | schema | yes | env.schema.ts api-src api.development |
-| REDIS_PORT | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
+| REDIS_HOST | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
+| REDIS_PASSWORD | opt:api | opt:api | opt:api | Y | - | - | - | schema | yes | env.schema.ts api-src api.development api.staging api.production |
+| REDIS_PORT | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
 | REDIS_QUEUE_URL | opt:api | set:api | set:api,set:root | Y | - | production(schema) | - | schema | yes | env.schema.ts api-src root.production api.development api.staging api.production |
 | REDIS_URL | opt:api | set:api | set:api,set:root | Y | - | - | - | schema | yes | env.schema.ts api-src root.production api.development api.staging api.production |
-| REGISTRY_PARTNER_API_ENABLED | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
-| REGISTRY_PORTAL_RPA_ENABLED | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
+| REGISTRY_PARTNER_API_ENABLED | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
+| REGISTRY_PORTAL_RPA_ENABLED | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
 | RESEND_API_KEY | opt:api | set:api,set:root | set:api,set:root | Y | - | production(schema) | - | schema | yes | env.schema.ts api-src root.staging root.production api.development api.staging api.production |
 | RESEND_FROM_EMAIL | opt:api | set:api,set:root | set:api,set:root | Y | - | - | schema:'noreply@musicos360.com.br' | schema | no | env.schema.ts api-src root.staging root.production api.development api.staging api.production |
 | SEED_ADMIN_EMAIL | - | - | set:root | Y | - | - | - | NO | no | api-src root.production |
@@ -113,8 +112,8 @@ Cells: `set:<template>` = active line, `opt:<template>` = commented line, `-` = 
 | SEED_TENANT_ID | - | - | - | Y | - | - | - | NO | no | api-src |
 | SENTRY_DSN | opt:api | set:api,set:root | set:api,set:root | Y | - | production(schema) | - | schema | yes | env.schema.ts api-src root.staging root.production api.development api.staging api.production |
 | SENTRY_RELEASE | opt:api | set:api | set:api,set:root | Y | - | - | - | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
-| SOUNDCHARTS_CLIENT_ID | opt:api | - | - | Y | - | - | - | schema | no | env.schema.ts api-src api.development |
-| SOUNDCHARTS_CLIENT_SECRET | opt:api | - | - | Y | - | - | - | schema | yes | env.schema.ts api-src api.development |
+| SOUNDCHARTS_CLIENT_ID | opt:api | opt:api | opt:api | Y | - | - | - | schema | no | env.schema.ts api-src api.development api.staging api.production |
+| SOUNDCHARTS_CLIENT_SECRET | opt:api | opt:api | opt:api | Y | - | - | - | schema | yes | env.schema.ts api-src api.development api.staging api.production |
 | SOUNDCLOUD_CLIENT_ID | opt:api | set:api | set:api,set:root | Y | - | - | - | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
 | SPOTIFY_CLIENT_ID | opt:api | set:api | set:api,set:root | Y | - | - | - | schema | no | env.schema.ts api-src root.production api.development api.staging api.production |
 | SPOTIFY_CLIENT_SECRET | opt:api | set:api | set:api,set:root | Y | - | - | - | schema | yes | env.schema.ts api-src root.production api.development api.staging api.production |
@@ -156,5 +155,5 @@ Cells: `set:<template>` = active line, `opt:<template>` = commented line, `-` = 
 | VITE_SUPABASE_URL | set:web | set:web | set:web | - | Y | local(env:check)+web-build | - | env:check+web-guard | no | web-src web.development web.staging web.production |
 | VITE_TIKTOK_CLIENT_KEY | opt:web | set:web | set:web | - | Y | - | - | NO | no | web-src web.development web.staging web.production |
 | VITE_WS_ENABLED | opt:web | set:web | set:web | - | Y | - | - | NO | no | web-src web.development web.staging web.production |
-| WHATSAPP_WEBHOOK_VERIFY_TOKEN | opt:api | - | - | Y | - | - | - | schema | yes | env.schema.ts api-src api.development |
+| WHATSAPP_WEBHOOK_VERIFY_TOKEN | opt:api | opt:api | opt:api | Y | - | - | - | schema | yes | env.schema.ts api-src api.development api.staging api.production |
 | YOUTUBE_API_KEY | opt:api | set:api | set:api,set:root | Y | - | - | - | schema | yes | env.schema.ts api-src root.production api.development api.staging api.production |

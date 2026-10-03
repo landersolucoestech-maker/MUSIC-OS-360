@@ -50,7 +50,6 @@ See `docs/engineering/environment-contract.md` (how development works, the ten a
 
 ## Remaining, none of it internally solvable language work
 
-- Protected-file edits beyond comments (14 declared items: one unread variable in the root production template and thirteen optional variables the staging and production API templates do not document yet): need authorization to change protected templates.
 - Destructive data migrations (9 blockers, every package `READY: NO`): need owner approval after real-environment prerequisites.
 - Product decisions (release status; transactions v2 ledger cutover; shares registry; leads internal notes; external-source columns): need the owner.
 - Required CI check name: needs admin access to classic branch protection (external).

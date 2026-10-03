@@ -53,6 +53,9 @@ Owner order: prove the normalization against a baseline and correct everything i
 | R3 | Nine destructive-approval blockers (drops 40, 41, 42, 43, 44, 45, 46, 49, 53, PII backfill and scrub); every package `READY: NO` | DESTRUCTIVE_APPROVAL | Owner approval per package after its real-environment prerequisites are met |
 | R4 | Release status (D3), transactions v2 ledger cutover, shares registry creation, leads internal notes, external-source columns | HUMAN_DECISION | Owner answers (wording options for D3 in `docs/engineering/release-status-census.md`) |
 | R5 | Required CI check name confirmation (BLK-CI-JOB-NAME-FASE) | EXTERNAL_DEPENDENCY | A repository admin confirms (classic branch protection returned 403) |
-| R6 | 14 protected-template items declared in `scripts/env-contract.config.json`: `OPENAI_BASE_URL` (documented in the root production template, read by no code) and 13 optional variables the schema validates but the staging and production API templates do not document yet | HUMAN_DECISION (authorization to change protected templates beyond comments) | Authorize the edit; the gate then drops the declarations |
 
 Frozen historical records (115 Markdown documents, 8695 Portuguese prose lines) are counted separately as HISTORICAL_RECORD: every one carries a "Historical record / not the current contract" header (verified file by file), is explicitly not the current contract, are held by a per-file ratchet (growth fails), and are not translated by policy.
+
+## Third order (2026-10-03): protected templates resolved
+
+R6 closed: full technical edit of the protected templates authorized; `OPENAI_BASE_URL` removed (zero readers), thirteen optional variables documented as placeholders in the staging/production API templates, truncated JWT-looking `SUPABASE_ANON_KEY` in the root production template replaced by `<SUPABASE_ANON_KEY>` and a guard added. Environment gate: 0 violations, 0 pending.

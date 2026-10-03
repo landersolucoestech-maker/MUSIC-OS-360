@@ -61,25 +61,9 @@
   "buildInjected": {
     "VITE_COMMIT_SHA": "injected at build time by apps/web/vite.config.mjs (define), never an environment variable"
   },
-  "pendingTemplateCleanup": {
-    "OPENAI_BASE_URL": "documented in the root .env.production but read by no code; removing the line needs authorization to edit a protected template (the R1 authorization covers comments only)"
-  },
+  "pendingTemplateCleanup": {},
   "undocumentedOk": {},
   "documentationOnlyNames": {},
   "nonEnvTokens": [],
-  "pendingTemplateAdditions": {
-    "BUILD_SHA": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "DOCUSIGN_WEBHOOK_SECRET": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "PLATFORM_CONTACT_RECIPIENT_EMAIL": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "RATE_LIMIT_TRUST_PROXY": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "RBAC_CANONICAL_ROLE_WRITE": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "REDIS_HOST": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "REDIS_PASSWORD": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "REDIS_PORT": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "REGISTRY_PARTNER_API_ENABLED": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "REGISTRY_PORTAL_RPA_ENABLED": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "SOUNDCHARTS_CLIENT_ID": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "SOUNDCHARTS_CLIENT_SECRET": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
-    "WHATSAPP_WEBHOOK_VERIFY_TOKEN": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)"
-  }
+  "pendingTemplateAdditions": {}
 }
