@@ -199,3 +199,5 @@
 {"name":"gate-run","at":"2026-10-03T04:30:25.787Z","gate":"pack-integrity","status":"PASS","durationMs":263,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-03T04:30:25.937Z","gate":"human-approval","status":"PASS","durationMs":57,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-03T04:30:26.089Z","gate":"operational-automation","status":"PASS","durationMs":61,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T04:30:41.159Z","gate":"security","status":"PASS","durationMs":12229,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T04:30:53.753Z","gate":"completion","status":"BLOCKED","durationMs":12500,"reasonCount":1}
