@@ -211,7 +211,7 @@ test("B2: done refuses out-of-order closure, foreign-mission evidence and a miss
   // delegation record removed -> refused
   const pl = listRecords(dir, "orchestration")[0];
   const { id, createdAt, ...rest } = pl;
-  updateRecord(dir, "orchestration", id, { tasks: pl.tasks.map((t) => (t.id === "reproduce" ? { ...t, delegationId: "dele-forged" } : t)) });
+  updateRecord(dir, "orchestration", id, { tasks: pl.tasks.map((t) => (t.id === "reproduce" ? { ...t, delegationId: "delegation-forged" } : t)) });
   assert.throws(() => done({ task: "reproduce", evidence: pass(dir) }, dir), /UNKNOWN_DELEGATION/);
   updateRecord(dir, "orchestration", id, { tasks: pl.tasks });
   assert.equal(done({ task: "reproduce", evidence: pass(dir) }, dir).status, "OK");
@@ -235,7 +235,7 @@ test("B4: the runtime gate needs an existing delegation record and PASS evidence
   const gate = () => evaluateGateFile("workflow-runtime", { cwd: dir }).reasons.filter((x) => /workflow runtime/.test(x));
   assert.deepEqual(gate(), []);
   const pl = listRecords(dir, "orchestration").find((x) => x.id === r.planId);
-  updateRecord(dir, "orchestration", pl.id, { tasks: pl.tasks.map((t) => ({ ...t, delegationId: t.delegationId ? "dele-forged" : null })) });
+  updateRecord(dir, "orchestration", pl.id, { tasks: pl.tasks.map((t) => ({ ...t, delegationId: t.delegationId ? "delegation-forged" : null })) });
   assert.equal(gate().length, 1, "forged delegation ids do not count");
   updateRecord(dir, "orchestration", pl.id, { tasks: pl.tasks.map((t) => ({ ...t, evidenceRefs: t.evidenceRefs.length ? [addRecord(dir, "evidence", { type: "COMMAND", missionId: loadState(dir).missionId, label: "f", command: "f", status: "FAIL", exitCode: 1, workspaceFingerprint: "x", fingerprintStatus: "BOUND" }).id] : [] })) });
   assert.equal(gate().length, 1, "FAIL evidence does not count");
