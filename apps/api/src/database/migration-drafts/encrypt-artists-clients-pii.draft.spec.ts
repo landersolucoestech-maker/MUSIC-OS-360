@@ -94,7 +94,7 @@ describe('PII BACKFILL draft: write ciphertext only, never remove plaintext (BLK
     const migrations = path.join(__dirname, '..', 'migrations');
     expect(fs.existsSync(path.join(migrations, '20261002000002_EncryptArtistsAndClientsPiiBackfill.ts'))).toBe(false);
     expect(fs.readFileSync(path.join(migrations, 'index.ts'), 'utf8')).not.toContain('EncryptArtistsAndClientsPii');
-    expect(fs.existsSync(path.join(__dirname, '20261002000002_EncryptArtistsAndClientsPiiBackfill.ts'))).toBe(false);
+    expect(fs.existsSync(path.join(__dirname, '20261002000002_EncryptArtistsAndClientsPiiInPlace.ts'))).toBe(false); // the old single-step draft is gone
   });
 
   it('uses a confirmation token distinct from every other draft, including the scrub', () => {

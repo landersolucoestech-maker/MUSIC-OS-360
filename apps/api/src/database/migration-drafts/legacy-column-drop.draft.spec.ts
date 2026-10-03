@@ -233,7 +233,8 @@ describe('LC1 legacy column drop drafts', () => {
         }
         const restore = sql.find((s) => s.text.startsWith(`UPDATE "${plan.table}" t SET`))!.text;
         expect(restore).toContain(`FROM "${archiveOf(plan)}" a WHERE a."id" = t."id"`);
-        for (const c of plan.columns) expect(restore).toContain(`"${c.name}" = a."${c.name}"`);
+        // never overwrite a live value with an older archived one: COALESCE(live, archived)
+        for (const c of plan.columns) expect(restore).toContain(`"${c.name}" = COALESCE(t."${c.name}", a."${c.name}")`);
         expect(restore).not.toMatch(/SET\s+t\./);
       }
       expect(sql.some((s) => /DROP/i.test(s.text))).toBe(false);
@@ -284,6 +285,15 @@ describe('LC1 legacy column drop drafts', () => {
       const gone = eventsRunner({ hasColumn: false });
       await new EventsData().up({ query: gone.query } as never);
       expect(gone.sql.some((s) => /DROP/.test(s))).toBe(false);
+    });
+
+    it('up() and down() lock events (SHARE ROW EXCLUSIVE) right after lock_timeout, before presence/precondition/DDL', async () => {
+      for (const dir of ['up', 'down'] as const) {
+        const { query, sql } = eventsRunner();
+        await new EventsData()[dir]({ query } as never);
+        const lt = sql.findIndex((s) => s.includes(`SET LOCAL lock_timeout = '15s'`));
+        expect(sql[lt + 1]).toBe('LOCK TABLE "events" IN SHARE ROW EXCLUSIVE MODE');
+      }
     });
 
     it('down() rebuilds data from starts_at, NOT NULL, then function, trigger and index', async () => {

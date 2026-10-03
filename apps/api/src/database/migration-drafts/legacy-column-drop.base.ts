@@ -28,7 +28,8 @@ import { assertMigrationRoleBypassesRls } from '../migration-guards';
  *      reviews it and retires/renames that archive table; old values are never silently frozen over new ones;
  *   6. ALTER TABLE ... DROP COLUMN IF EXISTS (the only destructive statement, last).
  * down(): the same lock, then re-adds each column (same type, nullable) and restores the values by id from the archive (rows
- * created after the drop have no archive row and stay NULL). The archive tables are NEVER dropped here: they
+ * created after the drop have no archive row and stay NULL; a live non-NULL value is never overwritten by the archive:
+ * COALESCE(live, archived)). The archive tables are NEVER dropped here: they
  * are retired by a separate later migration after the retention window.
  */
 export const CONFIRM_ENV = 'LEGACY_DROP_CONFIRM';
@@ -206,7 +207,9 @@ export async function runRestore(queryRunner: QueryRunner, migrationName: string
   for (const plan of plans) {
     const archive = archiveOf(plan);
     await queryRunner.query(`ALTER TABLE "${plan.table}" ${plan.columns.map((c) => `ADD COLUMN IF NOT EXISTS "${c.name}" ${c.type}`).join(', ')}`);
-    const sets = plan.columns.map((c) => `"${c.name}" = a."${c.name}"`).join(', ');
+    // COALESCE: a column that was NOT dropped (down() run on a partly rolled back or never dropped schema) keeps its live
+    // value; the archive only fills what is NULL, so an older archived value never overwrites newer live data.
+    const sets = plan.columns.map((c) => `"${c.name}" = COALESCE(t."${c.name}", a."${c.name}")`).join(', ');
     await queryRunner.query(`UPDATE "${plan.table}" t SET ${sets} FROM "${archive}" a WHERE a."id" = t."id"`);
   }
 }

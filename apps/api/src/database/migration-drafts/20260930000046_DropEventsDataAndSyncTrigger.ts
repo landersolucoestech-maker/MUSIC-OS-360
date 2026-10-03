@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { assertMigrationRoleBypassesRls } from '../migration-guards';
-import { assertConfirmed, bounded } from './legacy-column-drop.base';
+import { assertConfirmed, bounded, lockTables } from './legacy-column-drop.base';
 
 /**
  * DRAFT, GATED, NOT REGISTERED (LC1). events.data + trigger trg_events_sync_start_columns (BLK-C3-E6).
@@ -10,7 +10,7 @@ import { assertConfirmed, bounded } from './legacy-column-drop.base';
  * 20260928000007, so the precondition `data IS DISTINCT FROM starts_at` = 0 proves the column carries no
  * information; rollback rebuilds it from starts_at.
  *
- * up(): gate, RLS guard, lock_timeout; presence; precondition (diverging rows = 0, NULL starts_at = 0);
+ * up(): gate, RLS guard, lock_timeout, LOCK TABLE events (SHARE ROW EXCLUSIVE); presence; precondition (diverging rows = 0, NULL starts_at = 0);
  * DROP TRIGGER; DROP FUNCTION; DROP COLUMN data (its index idx_events_tenant_data goes with it; the
  * replacement idx_events_tenant_starts_at exists since 20260716000001 and is asserted present BEFORE the drop).
  * Order matters: the trigger must go first, otherwise it would reference a dropped column.
@@ -43,6 +43,8 @@ export class DropEventsDataAndSyncTrigger20260930000046 implements MigrationInte
     assertConfirmed(this.name);
     await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
+    // Writers wait (bounded by lock_timeout) so the precondition holds until the DROP, same as every other draft.
+    await lockTables(queryRunner, ['events']);
 
     const present: Array<{ n: number }> = await queryRunner.query(
       `SELECT count(*)::int AS n FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'events' AND column_name = 'data'`,
@@ -70,6 +72,7 @@ export class DropEventsDataAndSyncTrigger20260930000046 implements MigrationInte
     assertConfirmed(this.name);
     await assertMigrationRoleBypassesRls(queryRunner, this.name);
     await queryRunner.query(`SET LOCAL lock_timeout = '15s'`);
+    await lockTables(queryRunner, ['events']);
     await queryRunner.query(`ALTER TABLE "events" ADD COLUMN IF NOT EXISTS "data" timestamp`);
     await queryRunner.query(`UPDATE "events" SET "data" = "starts_at" WHERE "data" IS NULL`);
     await queryRunner.query(`ALTER TABLE "events" ALTER COLUMN "data" SET NOT NULL`);

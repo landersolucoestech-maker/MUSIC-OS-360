@@ -9,6 +9,9 @@
  * Per group: seed representative legacy rows, preflight counts (printed as `PREFLIGHT ...`), negative abort with
  * nothing dropped, up() -> archive exists + columns gone, down() -> values restored by id, up() again.
  */
+import { createHash } from 'crypto';
+import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
 import { Client } from 'pg';
 import { CONFIRM_ENV, CONFIRM_TOKEN, DropTablePlan, archiveOf, archiveTableOf } from '../../../src/database/migration-drafts/legacy-column-drop.base';
 import { DropWorksLegacyColumns20260930000040, PLANS as WORKS } from '../../../src/database/migration-drafts/20260930000040_DropWorksLegacyColumns';
@@ -18,6 +21,8 @@ import { DropClientsLegacyContactStatus20260930000043, PLANS as CLIENTS } from '
 import { DropSharesLegacyArtistProjectId20260930000044, PLANS as SHARES } from '../../../src/database/migration-drafts/20260930000044_DropSharesLegacyArtistProjectId';
 import { DropHrLegacyMirrors20260930000045, PLANS as HR } from '../../../src/database/migration-drafts/20260930000045_DropHrLegacyMirrors';
 import { DropEmployeesLegacyPiiColumns20260930000053, PLANS as EMPLOYEES_PII } from '../../../src/database/migration-drafts/20260930000053_DropEmployeesLegacyPiiColumns';
+import { RelaxInvoicesLegacyAmountNotNull20260930000048 } from '../../../src/database/migration-drafts/20260930000048_RelaxInvoicesLegacyAmountNotNull';
+import { DropInvoicesLegacyAmount20260930000049, PLANS as INVOICES } from '../../../src/database/migration-drafts/20260930000049_DropInvoicesLegacyAmount';
 import { DropEventsDataAndSyncTrigger20260930000046 } from '../../../src/database/migration-drafts/20260930000046_DropEventsDataAndSyncTrigger';
 
 const T = '10000000-0000-0000-0000-000000000002';
@@ -28,6 +33,7 @@ type Migration = { name: string; up(q: unknown): Promise<void>; down(q: unknown)
 
 interface Group {
   name: string;
+  file: string;
   migration: Migration;
   plans: readonly DropTablePlan[];
   /** Seed rows (consistent with the canonical columns: preflight must be 0) and return nothing. */
@@ -40,7 +46,7 @@ interface Group {
 
 const GROUPS: Group[] = [
   {
-    name: 'works', migration: new DropWorksLegacyColumns20260930000040(), plans: WORKS,
+    name: 'works', file: '20260930000040_DropWorksLegacyColumns.ts', migration: new DropWorksLegacyColumns20260930000040(), plans: WORKS,
     seed: [
       `INSERT INTO works (id, tenant_id, title, type, language, is_instrumental, ai_used, alternative_titles, lyrics,
          legacy_language_label, legacy_instrumental_flag, legacy_ai_used, legacy_alternative_titles, legacy_lyrics)
@@ -52,7 +58,7 @@ const GROUPS: Group[] = [
     archivedIds: { works: [id(1)] },
   },
   {
-    name: 'phonograms', migration: new DropPhonogramsLegacyColumns20260930000041(), plans: PHONOGRAMS,
+    name: 'phonograms', file: '20260930000041_DropPhonogramsLegacyColumns.ts', migration: new DropPhonogramsLegacyColumns20260930000041(), plans: PHONOGRAMS,
     seed: [
       `INSERT INTO phonograms (id, tenant_id, title, type, recording_date, release_date, duration_seconds, country_of_recording,
          legacy_recording_date, legacy_release_date, legacy_duration_minutes, legacy_duration_seconds_part, legacy_origin_country)
@@ -63,7 +69,7 @@ const GROUPS: Group[] = [
     archivedIds: { phonograms: [id(11)] },
   },
   {
-    name: 'transactions', migration: new DropTransactionsLegacyColumns20260930000042(), plans: TRANSACTIONS,
+    name: 'transactions', file: '20260930000042_DropTransactionsLegacyColumns.ts', migration: new DropTransactionsLegacyColumns20260930000042(), plans: TRANSACTIONS,
     seed: [
       `INSERT INTO transactions (id, tenant_id, type, category, amount, transaction_date, attachment_url, notes,
          legacy_transaction_type, legacy_transaction_date, legacy_attachment_url, legacy_reference)
@@ -75,7 +81,7 @@ const GROUPS: Group[] = [
     archivedIds: { transactions: [id(21)] },
   },
   {
-    name: 'clients', migration: new DropClientsLegacyContactStatus20260930000043(), plans: CLIENTS,
+    name: 'clients', file: '20260930000043_DropClientsLegacyContactStatus.ts', migration: new DropClientsLegacyContactStatus20260930000043(), plans: CLIENTS,
     seed: [
       `INSERT INTO clients (id, tenant_id, category, profile, name, status, legacy_contact_status) VALUES ('${id(31)}', '${T}', 'label', 'b2b', 'C1', 'active', 'ativo')`,
       `INSERT INTO clients (id, tenant_id, category, profile, name, status) VALUES ('${id(32)}', '${T}', 'label', 'b2b', 'C2 no legacy', 'active')`,
@@ -84,7 +90,7 @@ const GROUPS: Group[] = [
     archivedIds: { clients: [id(31)] },
   },
   {
-    name: 'shares', migration: new DropSharesLegacyArtistProjectId20260930000044(), plans: SHARES,
+    name: 'shares', file: '20260930000044_DropSharesLegacyArtistProjectId.ts', migration: new DropSharesLegacyArtistProjectId20260930000044(), plans: SHARES,
     seed: [
       `INSERT INTO shares (id, tenant_id, artist_id, legacy_artist_project_id) VALUES ('${id(41)}', '${T}', '${id(500)}', '${id(500)}')`,
       `INSERT INTO shares (id, tenant_id) VALUES ('${id(42)}', '${T}')`,
@@ -93,7 +99,7 @@ const GROUPS: Group[] = [
     archivedIds: { shares: [id(41)] },
   },
   {
-    name: 'hr', migration: new DropHrLegacyMirrors20260930000045(), plans: HR,
+    name: 'hr', file: '20260930000045_DropHrLegacyMirrors.ts', migration: new DropHrLegacyMirrors20260930000045(), plans: HR,
     seed: [
       `INSERT INTO employees (id, tenant_id, name, department, salary, legacy_full_name, legacy_sector, legacy_base_salary)
        VALUES ('${id(51)}', '${T}', 'Emp One', 'Ops', 1234.56, 'Emp One', 'Ops', 1234.56)`,
@@ -107,7 +113,7 @@ const GROUPS: Group[] = [
     archivedIds: { employees: [id(51)], payroll_entries: [id(61)], leave_requests: [id(71)] },
   },
   {
-    name: 'employees-pii', migration: new DropEmployeesLegacyPiiColumns20260930000053(), plans: EMPLOYEES_PII,
+    name: 'employees-pii', file: '20260930000053_DropEmployeesLegacyPiiColumns.ts', migration: new DropEmployeesLegacyPiiColumns20260930000053(), plans: EMPLOYEES_PII,
     seed: [
       `INSERT INTO employees (id, tenant_id, name, rg, birth_date, address)
        VALUES ('${id(81)}', '${T}', 'Pii One', '12.345.678-9', '1990-02-03', 'Rua Exemplo 1')`,
@@ -127,6 +133,13 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
   let c: Client;
   const prevConfirm = process.env[CONFIRM_ENV];
   const counts: Record<string, number> = {};
+  // Machine-readable rehearsal result per draft (consumed by scripts/legacy-drop-preflight.mjs through --rehearsal-report).
+  // An entry exists ONLY when every assertion of that draft's up/down/up cycle passed; sha256 pins the exact draft file.
+  const rehearsal: Record<string, { migration_file: string; sha256: string; up_down_up: true; values_equal_by_id_after_down: boolean | null; archive_kept_after_down: boolean | null; archive_rows: number | null }> = {};
+  const record = (file: string, valuesEqual: boolean | null, archiveKept: boolean | null, archiveRows: number | null) => {
+    const sha256 = createHash('sha256').update(readFileSync(join(__dirname, '../../../src/database/migration-drafts', file))).digest('hex');
+    rehearsal[/^(\d{14})_/.exec(file)![1]] = { migration_file: file, sha256, up_down_up: true, values_equal_by_id_after_down: valuesEqual, archive_kept_after_down: archiveKept, archive_rows: archiveRows };
+  };
 
   // Same contract as TypeORM's QueryRunner.query for the calls the drafts make.
   const qr = () => ({ query: async (text: string, params?: unknown[]) => (await c.query(text, params as never)).rows });
@@ -167,6 +180,10 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
     if (admin) { await admin.query(`DROP DATABASE IF EXISTS "${copyDb}"`); await admin.end(); }
     // eslint-disable-next-line no-console
     console.log(`LC1 PREFLIGHT COUNTS ${JSON.stringify(counts)}`);
+    const reportPath = process.env['LEGACY_DROP_REHEARSAL_REPORT'];
+    if (reportPath) {
+      writeFileSync(reportPath, `${JSON.stringify({ environment: 'disposable-rehearsal', database: copyDb, drafts: rehearsal }, null, 2)}\n`);
+    }
   }, 60000);
 
   it('the base database is untouched and drafts are unregistered', async () => {
@@ -253,6 +270,7 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
         for (const col of p.columns) expect(present).not.toContain(col.name);
       }
       await run(g.migration, 'up'); // idempotent re-run: columns already absent, no-op
+      record(g.file, true, true, Object.values(g.archivedIds).reduce((a, ids) => a + ids.length, 0));
     });
   });
 
@@ -289,6 +307,84 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
         await expect(run(m, 'down')).rejects.toThrow(/archive table .* is missing/);
         expect(await cols('employees')).not.toContain('rg');
       } finally { await c.query(`ALTER TABLE "${piiArchive}_x" RENAME TO "${piiArchive}"`); }
+    });
+  });
+
+  describe('invoices (draft 48 relax NOT NULL, then draft 49 drop legacy_amount)', () => {
+    const relax = new RelaxInvoicesLegacyAmountNotNull20260930000048();
+    const drop = new DropInvoicesLegacyAmount20260930000049();
+    const [I1, I2, I3, I4, I5] = [id(9101), id(9102), id(9103), id(9104), id(9105)];
+    const archive = archiveOf(INVOICES[0]);
+    const ins = (rowId: string, legacy: string, service: string) =>
+      c.query(`INSERT INTO invoices (id, tenant_id, type, legacy_amount, service_amount) VALUES ('${rowId}', '${T}', 'nfse', ${legacy}, ${service})`);
+    const notNull = async () => (await c.query(`SELECT is_nullable FROM information_schema.columns WHERE table_schema='public' AND table_name='invoices' AND column_name='legacy_amount'`)).rows[0]?.is_nullable as string | undefined;
+    const legacyOf = async (ids: string[]) => (await c.query(`SELECT id, legacy_amount::text AS v FROM invoices WHERE id = ANY($1::uuid[]) ORDER BY id`, [ids])).rows;
+
+    it('48 up aborts while a row holds legacy_amount without service_amount (count only), column stays NOT NULL', async () => {
+      await ins(I1, '100.00', '100.00');
+      await ins(I2, '50.00', 'NULL');
+      const n = (await c.query(`SELECT count(*)::int AS n FROM invoices WHERE legacy_amount IS NOT NULL AND service_amount IS NULL`)).rows[0].n as number;
+      counts['invoices:legacy_amount_without_service_amount:violating'] = n;
+      expect(n).toBe(1);
+      await expect(run(relax, 'up')).rejects.toThrow(/1 invoice row\(s\) hold legacy_amount without service_amount/);
+      expect(await notNull()).toBe('NO');
+    });
+
+    it('48 up relaxes NOT NULL once reconciled; 48 down refuses rows with neither value, then refills from service_amount and restores NOT NULL', async () => {
+      await c.query(`UPDATE invoices SET service_amount = 50.00 WHERE id = '${I2}'`);
+      counts['invoices:legacy_amount_without_service_amount:clean'] = (await c.query(`SELECT count(*)::int AS n FROM invoices WHERE legacy_amount IS NOT NULL AND service_amount IS NULL`)).rows[0].n;
+      await run(relax, 'up');
+      expect(await notNull()).toBe('YES');
+      await ins(I3, 'NULL', '70.00');
+      await ins(I4, 'NULL', 'NULL');
+      await expect(run(relax, 'down')).rejects.toThrow(/refusing down\(\): 1 invoice row\(s\) have neither/);
+      expect(await notNull()).toBe('YES');
+      await c.query(`DELETE FROM invoices WHERE id = '${I4}'`);
+      await run(relax, 'down');
+      expect(await notNull()).toBe('NO');
+      expect(await legacyOf([I3])).toEqual([{ id: I3, v: '70.00' }]); // refilled from service_amount, never a fabricated 0
+      await run(relax, 'up');
+      await c.query(`UPDATE invoices SET legacy_amount = NULL WHERE id = '${I3}'`); // service-only row: holds no legacy value
+      expect(await notNull()).toBe('YES');
+      record('20260930000048_RelaxInvoicesLegacyAmountNotNull.ts', true, null, null); // up -> down -> up; down refilled legacy_amount from service_amount
+    });
+
+    it('49 aborts on a legacy_amount that differs from service_amount; nothing archived, column kept', async () => {
+      await ins(I5, '9.00', '8.00');
+      await expect(run(drop, 'up')).rejects.toThrow('invoices:legacy_amount_differs_from_service_amount=1');
+      expect(await archiveExists(archive)).toBe(false);
+      expect(await cols('invoices')).toContain('legacy_amount');
+      await c.query(`DELETE FROM invoices WHERE id = '${I5}'`);
+    });
+
+    it('49 up archives only rows holding legacy_amount and locks the archive; down restores by id and never overwrites a live value; up again; 48 down then refuses', async () => {
+      const before = await legacyOf([I1, I2]);
+      await run(drop, 'up');
+      expect(await cols('invoices')).not.toContain('legacy_amount');
+      const arch = (await c.query(`SELECT id FROM "${archive}" ORDER BY id`)).rows.map((r) => r.id);
+      expect(arch).toEqual([I1, I2]);
+      counts['invoices:archived_rows'] = arch.length;
+      expect((await c.query(`SELECT relrowsecurity, relforcerowsecurity FROM pg_class WHERE oid = to_regclass('public.${archive}')`)).rows[0]).toEqual({ relrowsecurity: true, relforcerowsecurity: true });
+      expect((await c.query(`SELECT count(*)::int AS n FROM information_schema.role_table_grants WHERE table_name = $1 AND grantee IN ('PUBLIC','anon','authenticated','musicos_app')`, [archive])).rows[0].n).toBe(0);
+      await expect(run(relax, 'down')).rejects.toThrow(/legacy_amount does not exist/);
+
+      await run(drop, 'down');
+      expect(await cols('invoices')).toContain('legacy_amount');
+      expect(await legacyOf([I1, I2])).toEqual(before);
+      expect(await legacyOf([I3])).toEqual([{ id: I3, v: null }]);
+      expect(await archiveExists(archive)).toBe(true);
+
+      // down() on a schema whose columns already exist keeps the live (newer) value instead of the archived one
+      await c.query(`UPDATE invoices SET legacy_amount = 999.00, service_amount = 999.00 WHERE id = '${I1}'`);
+      await run(drop, 'down');
+      expect(await legacyOf([I1])).toEqual([{ id: I1, v: '999.00' }]);
+      await c.query(`UPDATE invoices SET legacy_amount = 100.00, service_amount = 100.00 WHERE id = '${I1}'`);
+
+      await run(drop, 'up');
+      expect(await cols('invoices')).not.toContain('legacy_amount');
+      await run(drop, 'up'); // idempotent no-op
+      await run(relax, 'up'); // idempotent no-op once draft 49 applied
+      record('20260930000049_DropInvoicesLegacyAmount.ts', true, true, arch.length);
     });
   });
 
@@ -348,6 +444,7 @@ describe('LC1 legacy column drop drafts, real disposable PostgreSQL (COPY databa
       await run(m, 'up');
       expect(await cols('events')).not.toContain('data');
       expect(await trigger()).toBe(0);
+      record('20260930000046_DropEventsDataAndSyncTrigger.ts', true, null, null); // no archive by design: data == starts_at is the proof
     });
   });
 });
