@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://engineering-os/contracts/conflict-record.schema.json",
   "title": "ConflictRecord",
-  "description": "Two agents proposing incompatible outcomes (contradictory canonical names, contradictory severity) per .claude/rules/agent-orchestration.md. Consumer: ops.mjs record add --kind conflict, then ops.mjs quorum vote/resolve; the completion gate's no-open-conflicts check (gate-engine.mjs, via .claude/gates/completion.json) BLOCKS mission completion while this record's status is OPEN, until quorum resolve flips it to RESOLVED with a linked decision-record id.",
+  "description": "Two agents proposing incompatible outcomes (contradictory canonical names, contradictory severity) per .claude/rules/agent-orchestration.md. Consumer: ops.mjs conflict open, then ops.mjs quorum vote/resolve; the completion gate's no-open-conflicts check (gate-engine.mjs, via .claude/gates/completion.json) BLOCKS mission completion while this record's status is OPEN, until quorum resolve flips it to RESOLVED with a linked decision-record id.",
   "type": "object",
   "required": ["id", "parties", "description", "status", "createdAt"],
   "properties": {

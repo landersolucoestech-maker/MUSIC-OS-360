@@ -133,3 +133,10 @@ test("evidence review: reviewer must be delegated in this mission or --independe
   assert.equal(okRev.status, 0, okRev.stdout + okRev.stderr);
   assert.equal(json(okRev).evidence.independentReviewer, false);
 }));
+
+test("quorum resolve rejects a threshold that would let a minority win", async () => {
+  const { resolveByQuorum } = await import("../lib/quorum.mjs");
+  for (const bad of [0.1, 0, -1, 1, 2, NaN, Infinity, "0.2"]) {
+    assert.throws(() => resolveByQuorum(process.cwd(), "conf-none", { threshold: bad }), /INVALID_THRESHOLD/, `threshold ${String(bad)}`);
+  }
+});

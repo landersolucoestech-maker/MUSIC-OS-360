@@ -43,6 +43,11 @@ export function tallyVotes(cwd, conflictId) {
  * RESOLVED only when a winner is found; otherwise leaves both untouched and
  * reports resolved:false so the caller knows to keep soliciting votes. */
 export function resolveByQuorum(cwd, conflictId, { threshold = 0.5, decidedBy = "quorum" } = {}) {
+  // A quorum is a majority: a threshold below 0.5 (or not a finite number below 1) would let a minority resolve a conflict.
+  if (typeof threshold !== "number" || !Number.isFinite(threshold) || threshold < 0.5 || threshold >= 1) {
+    throw new Error(`INVALID_THRESHOLD: quorum threshold must be a finite number in [0.5, 1), got ${threshold}`);
+  }
+
   const conflict = getRecord(cwd, "conflict", conflictId);
   if (!conflict) throw new Error(`CONFLICT_NOT_FOUND: ${conflictId}`);
   if (conflict.status !== "OPEN") return { resolved: false, reason: `conflict already ${conflict.status}` };
