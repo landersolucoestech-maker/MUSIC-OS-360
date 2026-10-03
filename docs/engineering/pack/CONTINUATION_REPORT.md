@@ -104,3 +104,15 @@ Only these remain; each needs a human. Fields: ID, domain, files/schema, current
 
 ### D6 - Later releases (not asked now)
 - Retirement of drop and PII archives (`20260930000052`) and purge of backfill side tables (`20260930000050`) need their own approvals after the rollback windows; end-to-end login with institutional credentials and token revocation are external; shares registry creation (NC-039) and the transactions v2 ledger cutover (NC-041) remain product decisions recorded in the ledger.
+
+## 8. Owner decision of 2026-10-03 (addendum, supersedes the D1-D6 states above where it differs)
+
+Recorded as decision `deci-ed83c974`. It authorizes PREPARATORY, non-destructive work only. It is not a destructive-approval GRANTED: the umbrella task `destructive-approval` stays WAITING_APPROVAL (approval `appr-c049565b` PENDING) and nothing was dropped, scrubbed, archived-away or applied to any real environment. `LEGACY_DROP_CONFIRM`, `PII_ENCRYPT_CONFIRM` and `PII_SCRUB_CONFIRM` were never set anywhere.
+
+- D1 drops: pre-flight tool `scripts/legacy-drop-preflight.mjs` (26 tests) and one package per group in `legacy-drop-approval-packages.md` (44, 43, 40, 41, 42, 45, 46, 53, 48, 49). Every package is `READY_FOR_DESTRUCTIVE_EXECUTION: NO`; the missing items are real-environment census, divergences, restore proof, PITR, retention (43, 45, 53), staging rehearsal and deployment confirmations. Disposable-database rehearsals pass (39 e2e assertions).
+- D2 PII, option A: backfill (`20261002000002`, archive first, ciphertext only, SHA-256 verification) and scrub (`20261002000003`, own token) are separate drafts with separate packages in `pii-approval-packages.md`, both READY NO (key escrow, retention owner and period, real census, restore proof and PITR are not defined).
+- D3 release status: stays GENUINE_BUSINESS_DECISION; census and options in `release-status-census.md`; no status was added and no row was converted.
+- D4 HR employee documents: kept `CAPABILITY_UNAVAILABLE` (ledger blocker resolved by owner decision); no storage, types, retention or read scope invented.
+- D5 CI required check: EXTERNAL; confirmation needs admin access to classic branch protection.
+- D6: archive retirement, side-table purge, shares registry and transactions v2 cutover were not executed; no archive was deleted.
+- Runtime: `orchestrate.mjs add-task --approval-class human-approval` lets a protected operation own its approval. One such task (`approve-drop-40`) was dispatched by `next`, which opened approval `appr-c80c4e2f`; that approval is non-actionable (package 40 is READY NO) and must not be granted (decision `deci-f097b424`). The other protected operations were deliberately not added as dispatchable tasks, to avoid opening approvals for READY NO items.
