@@ -1,0 +1,15 @@
+{
+  "id": "evid-928d55cc",
+  "createdAt": "2026-10-02T22:51:55.220Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts src/database/migration-drafts src/database/events-data-legacy-column.spec.ts",
+  "command": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts src/database/migration-drafts src/database/events-data-legacy-column.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "f80cdbef2097d831cbba6e487fe0f04a3529003683ce16ecbb368418c5808973",
+  "fingerprintStatus": "BOUND",
+  "head": "ffe6c0ba150c2a5dd14fec9ee1cb197d6ee5f542",
+  "durationMs": 18044
+}

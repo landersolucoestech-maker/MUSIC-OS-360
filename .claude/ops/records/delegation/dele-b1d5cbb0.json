@@ -1,0 +1,12 @@
+{
+  "id": "dele-b1d5cbb0",
+  "createdAt": "2026-10-02T21:48:17.685Z",
+  "agent": "authorization-engineer",
+  "objective": "Auth review findings F2/F3 (task b7-auth-boundary): (F2) apps/api/src/core/guards/auth.guard.ts ~153 uses this.config?.get('NODE_ENV') ?? 'development'; use ?? process.env['NODE_ENV'] like token-verifier.service.ts getConfig, and add a test in auth.guard.spec.ts: ConfigService absent + process.env.NODE_ENV='production' makes an HS256 dev token return 401. (F3) core/security/dev-token.ts isInsecureDevSecret: reject dev secrets shorter than 32 characters with a matching spec case. Keep every existing negative test; no behavior change in development with a proper key. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/core/guards",
+    "apps/api/src/core/security"
+  ],
+  "status": "CLOSED"
+}

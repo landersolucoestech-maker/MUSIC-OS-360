@@ -1,0 +1,12 @@
+{
+  "id": "evid-5f1f9206",
+  "createdAt": "2026-10-02T21:53:34.481Z",
+  "type": "REVIEW",
+  "reviewer": "devops-ci-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "CI job rename internal (no required-check reference found), migrations-complete.sql stale partial generated dump removable (git is recovery), xlsx e2e import resolved without root dependency; only remote branch-protection read is external",
+  "workspaceFingerprint": "b366984dbc91c92ea154224b701e44d3e01126db10b53f385274a0978cc4cb0a",
+  "fingerprintStatus": "BOUND",
+  "head": "31c9fca58851778e571ea8dbdcaf66d6d02fdc86"
+}

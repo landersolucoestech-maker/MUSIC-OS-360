@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "git-auditor",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "final git audit at a61a861: branch dev, HEAD==origin/dev, 28 linear commits, only branch dev, no tags/force-push, no dependency or lockfile change, CI change = job rename only, 3 registered migrations, all destructive drafts token-gated and unregistered, no secrets, attribution lines present",
+  "workspaceFingerprint": "16337b99dc947c99752b25d4d37738802a629a13fac7f7fe76e11fd0000f5824",
+  "fingerprintStatus": "BOUND",
+  "head": "a61a8611b4453bed23a612f970469504090c0c2c",
+  "id": "evid-961bb44b",
+  "createdAt": "2026-10-03T04:21:26.023Z"
+}

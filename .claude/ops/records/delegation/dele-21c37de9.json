@@ -1,0 +1,12 @@
+{
+  "id": "dele-21c37de9",
+  "createdAt": "2026-10-02T22:33:36.590Z",
+  "agent": "qa-engineer",
+  "objective": "Verify the 53 rows of /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/verify-rows.json (rows whose proposed existing coveringTest names the literal and the module but whose assertion was not confirmed). For each row open the proposed test, decide whether it really asserts the alias behavior through the real module; if yes keep it, if not add the missing assertion to that test file (never weaken existing ones) or point the row to a better test. Return JSON {ledgerIndex: coveringTestPath} for confirmed/fixed rows and the rows that could not be covered with the reason. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src",
+    "apps/web/src"
+  ],
+  "status": "CLOSED"
+}

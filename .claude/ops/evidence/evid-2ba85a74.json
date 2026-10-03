@@ -1,0 +1,12 @@
+{
+  "id": "evid-2ba85a74",
+  "createdAt": "2026-10-02T22:33:35.144Z",
+  "type": "REVIEW",
+  "reviewer": "root-cause-investigator",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Root cause of 9 failed writer tasks: API session limit 429 (reset 22:30 UTC, passed at 22:32); not a code defect. Partial files exist in the tree and each retry must continue from them (git status) instead of restarting.",
+  "workspaceFingerprint": "442ddd51a19950ff3f145f2557e5e21a5ec3b48e35f2dd2c90a69a82230ce051",
+  "fingerprintStatus": "BOUND",
+  "head": "ad618b3e9d34c1ce968b80e4688dd6fa682049d3"
+}

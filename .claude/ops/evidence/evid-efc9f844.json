@@ -1,0 +1,15 @@
+{
+  "id": "evid-efc9f844",
+  "createdAt": "2026-10-02T22:50:10.750Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && npx jest src/modules/phonograms/phonograms-derived-fields.spec.ts src/common/registry-fields",
+  "command": "cd apps/api && npx jest src/modules/phonograms/phonograms-derived-fields.spec.ts src/common/registry-fields",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "baa55fd83553138d64a06d2511feb8cdda0ffb3e1ce314b07e087515b6879b3c",
+  "fingerprintStatus": "BOUND",
+  "head": "ffe6c0ba150c2a5dd14fec9ee1cb197d6ee5f542",
+  "durationMs": 3
+}

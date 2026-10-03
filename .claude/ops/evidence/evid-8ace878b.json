@@ -1,0 +1,15 @@
+{
+  "id": "evid-8ace878b",
+  "createdAt": "2026-10-02T23:04:31.407Z",
+  "type": "COMMAND",
+  "label": "node scripts/naming/validate-canonical-map.mjs",
+  "command": "node scripts/naming/validate-canonical-map.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "canonical naming map valid: structure ok, 66 column assertions against 132 tables",
+  "stderrTail": "",
+  "workspaceFingerprint": "0f5c248f538a2498a750cfde201ee310112d848741ae286bf9328863bdfce2bd",
+  "fingerprintStatus": "BOUND",
+  "head": "5102389d86e97619114a43d17c65c6d44d0e58e7",
+  "durationMs": 653
+}

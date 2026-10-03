@@ -1,0 +1,9 @@
+{
+  "id": "dele-8f7b63f7",
+  "createdAt": "2026-10-02T21:43:14.455Z",
+  "agent": "database-reviewer",
+  "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. Seven legacy column drop groups (BLK-C3-E6 events.data; BLK-HR-LEGACY-MIRRORS; BLK-SHARES-ARTIST-MIRROR; BLK-WORKS-LEGACY-DUPLICATES; BLK-PHONOGRAMS-LEGACY-DUPLICATES; BLK-TRANSACTIONS-LEGACY-DUPLICATES incl. legacy_reference gap; BLK-CLIENTS-LEGACY-DUPLICATES). For EACH group: table, columns, legacy name, canonical substitute, every read and write (api, web, jobs, scripts, e2e, reports/saved layouts), migrations, tests, whether a producer or consumer or fallback still exists, whether any data needs backfill, static validation of the archive-then-drop draft in apps/api/src/database/migration-drafts (base class, preconditions, archive coverage check, down() restore), the exact preflight SQL, and everything preparatory that can be done now without executing any DROP (entity lines removable only after the drop? scripts, verifier entries, docs). Conclude per group.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

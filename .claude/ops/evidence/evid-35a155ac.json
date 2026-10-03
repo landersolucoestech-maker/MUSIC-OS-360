@@ -1,0 +1,12 @@
+{
+  "id": "evid-35a155ac",
+  "createdAt": "2026-10-02T21:53:32.475Z",
+  "type": "REVIEW",
+  "reviewer": "database-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "7 drop groups traced (reads/writes/jobs/scripts/e2e/reports/migrations/tests): no producer/consumer/fallback of any legacy_* column outside entity declarations, the column-order verifier and drafts; events.data still selected via entity; drafts statically validated (9 suites/190 tests); findings F1-F10; drops DESTRUCTIVE_APPROVAL_REQUIRED; entity/web/spec preparation RESOLVABLE",
+  "workspaceFingerprint": "b366984dbc91c92ea154224b701e44d3e01126db10b53f385274a0978cc4cb0a",
+  "fingerprintStatus": "BOUND",
+  "head": "31c9fca58851778e571ea8dbdcaf66d6d02fdc86"
+}

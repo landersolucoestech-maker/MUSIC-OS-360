@@ -1,0 +1,9 @@
+{
+  "id": "dele-67a0f07c",
+  "createdAt": "2026-10-02T23:16:27.789Z",
+  "agent": "implementation-engineer",
+  "objective": "Phase \"propagate\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: refactoring-engineer.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

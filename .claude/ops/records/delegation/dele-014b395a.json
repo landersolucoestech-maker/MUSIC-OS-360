@@ -1,0 +1,17 @@
+{
+  "id": "dele-014b395a",
+  "createdAt": "2026-10-02T21:52:51.626Z",
+  "agent": "backend-engineer",
+  "objective": "BLK-PHONOGRAMS-DERIVED-FIELDS is resolvable (task b3-taxonomies, item 3): the model already declares duration_seconds and the compact isrc as authoritative. Implement the full change list: (1) move parseDurationTextToSeconds from works/work-registry-fields.util.ts into a shared util apps/api/src/common/registry-fields/ (keep the works import working), add formatDurationText(seconds) (MM:SS, minutes may exceed 59) , deriveIsrcParts(isrc) (2/3/2/5) and composeIsrc(parts); (2) phonograms.service.ts buildEntityPayload takes `current` (update() already loads it) and applies: duration_text only -> parse (unparseable: 400 PHONOGRAM_DURATION_TEXT_INVALID); both present and disagree -> 400 PHONOGRAM_DURATION_MISMATCH; always write duration_text as formatted duration_seconds; isrc absent and complete parts (merged with current) -> compose, normalise, validate; both present and disagree -> 400 PHONOGRAM_ISRC_MISMATCH; always rewrite the four parts from the normalised isrc; null still does not clear a column (existing behavior); (3) apply the same derivation in the phonogram branch of reports/import/import-commit.service.ts (it bypasses the service) and for works' duration_text if equally unguarded; add the error codes to packages/types api-error-codes if that is where codes live and the PT-BR copy; (4) entity-validators.ts ~123: hasDuration may use duration_seconds only after the backfill; (5) DTO docs mark duration_text and isrc_* as derived but still accepted; (6) new non-destructive logged backfill migration 20260930000038_BackfillPhonogramDerivedFields.ts (registered): fill NULL duration_seconds from well-formed duration_text, fill NULL isrc parts from a valid isrc, log disagreements in a side table and never overwrite them; reversible down(); migration spec in the existing style; (7) tests for mismatch, derivation, partial PATCH merge and import. Another agent owns migration 20260930000037 (transactions): use 38 and add only your own line in migrations/index.ts. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Run focused suites, the api typecheck (npx tsc --noEmit -p tsconfig.json in apps/api) and `node scripts/naming/technical-naming-census.mjs --check`; report any new Portuguese literal in tests with its file.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/modules/phonograms",
+    "apps/api/src/modules/works",
+    "apps/api/src/common/registry-fields",
+    "apps/api/src/modules/reports/import",
+    "apps/api/src/modules/registry/validation",
+    "apps/api/src/database/migrations",
+    "apps/api/src/database/migrations/index.ts"
+  ],
+  "status": "CLOSED"
+}

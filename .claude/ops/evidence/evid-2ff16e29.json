@@ -1,0 +1,12 @@
+{
+  "id": "evid-2ff16e29",
+  "createdAt": "2026-10-02T21:53:32.904Z",
+  "type": "REVIEW",
+  "reviewer": "pii-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "per-field PII verdicts: employees rg/birth_date/address unmapped and unpersisted -> remove inputs (resolvable); column drop destructive; artists rg/birth_date/address/bank_* plaintext with functional need -> protect (encrypted columns, existing enc() pattern), scrub destructive; clients metadata cpf/cnpj historical duplicates -> backfill/scrub destructive",
+  "workspaceFingerprint": "b366984dbc91c92ea154224b701e44d3e01126db10b53f385274a0978cc4cb0a",
+  "fingerprintStatus": "BOUND",
+  "head": "31c9fca58851778e571ea8dbdcaf66d6d02fdc86"
+}

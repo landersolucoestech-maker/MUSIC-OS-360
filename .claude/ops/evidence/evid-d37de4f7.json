@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "env DATABASE_URL=postgresql://postgres@127.0.0.1:54329/music_os_scratch DB_SSL=false node scripts/naming/schema-naming-census.mjs --check",
+  "command": "env DATABASE_URL=postgresql://postgres@127.0.0.1:54329/music_os_scratch DB_SSL=false node scripts/naming/schema-naming-census.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "schema naming census: 5204 catalog objects, 0 Portuguese names (38 excepted)",
+  "stderrTail": "",
+  "workspaceFingerprint": "5ad426afa959be27e3461f1d13533db15efee201ec53e3ee74a4b9ae1c1e9927",
+  "fingerprintStatus": "BOUND",
+  "head": "e1d22130fee14b694ebb63e78c482b932472734c",
+  "durationMs": 331,
+  "id": "evid-d37de4f7",
+  "createdAt": "2026-10-03T04:00:08.541Z"
+}

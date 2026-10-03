@@ -1,0 +1,9 @@
+{
+  "id": "dele-b73a228c",
+  "createdAt": "2026-10-02T23:01:08.231Z",
+  "agent": "naming-reviewer",
+  "objective": "Phase \"canonical-model\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: domain-boundary-guardian.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-ab7316db",
+  "createdAt": "2026-10-02T23:55:43.435Z",
+  "type": "COMMAND",
+  "label": "node scripts/naming/technical-naming-census.mjs --check",
+  "command": "node scripts/naming/technical-naming-census.mjs --check",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "technical-naming census: 4557 files, debt {\"doc\":8696,\"value\":15}",
+  "stderrTail": "NEW Portuguese technical names (engineering = English; Portuguese only in user-visible UX text):\n  value::apps/web/src/modules/artist/lib/contract-type-filters.legacy-compat.test.ts::string::exclusivo (0 -> 1)\n  value::apps/web/src/modules/artist/lib/contract-type-filters.legacy-compat.test.ts::string::nao_exclusivo (0 -> 1)\n  value::apps/web/src/modules/artist/lib/contract-type-filters.legacy-compat.test.ts::string::representacao (0 -> 3)\n  value::apps/web/src/modules/artist/lib/contract-type-filters.legacy-compat.test.ts::string::servicos (0 -> 1)\n  value::apps/web/src/modules/artist/lib/revenue-nature.legacy-compat.test.ts::string::anuncio (0 -> 1)\n  value::apps/web/src/modules/artist/lib/revenue-nature.legacy-compat.test.ts::string::anuncio-digital (0 -> 1)\n  value::apps/web/src/modules/artist/lib/revenue-nature.legacy-compat.test.ts::string::patrocinio (0 -> 1)\n  value::apps/web/src/modules/artist/services/artist.mapper.legacy-compat.test.ts::string::compositor_autor (0 -> 1)\n  value::apps/web/src/modules/artist/services/artist.mapper.legacy-compat.test.ts::string::dj_produtor (0 -> 1)\n  value::apps/web/src/modules/artist/services/artist.mapper.legacy-compat.test.ts::string::interprete (0 -> 1)\n  value::apps/web/src/modules/artist/services/artist.mapper.legacy-compat.test.ts::string::produtor (0 -> 1)\n  value::apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.legacy-compat.test.ts::string::conteudo (0 -> 2)\n\nRename to English. Only a documented exception (canonical-naming-map.json exceptions[]) may keep a Portuguese technical name.",
+  "workspaceFingerprint": "d009c3c3b08d9bc5de02ff27259bdc98b7ba74f6e28c37b5097f11d6c17aa84f",
+  "fingerprintStatus": "BOUND",
+  "head": "7a1ae8cc390bb62db78fbe8bcaa61d8fd213b983",
+  "durationMs": 11338
+}

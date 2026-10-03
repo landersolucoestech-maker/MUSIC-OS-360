@@ -1,0 +1,12 @@
+{
+  "id": "dele-b1bfc640",
+  "createdAt": "2026-10-02T21:48:17.689Z",
+  "agent": "qa-engineer",
+  "objective": "Create the 27 api test files of the slice /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/slice-api.json (each entry: file to create, ledger rows with item/currentName/path/group, source paths). The test must exercise the REAL reader/mapper/DTO/migration constant so that a legacy value is accepted and converted to canonical (legacy in, canonical out), or, for guard rows, fail when the legacy literal is reintroduced; no per-line artificial tests, one table-driven test per file. Group context: /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/group-map.json. Where a file path says apps/api/src/common/compat/*.legacy-compat.spec.ts for packages/types or packages/auth rows, import through the existing jest alias. After each batch is green, break one alias in the product source in a scratch copy to confirm the test fails, then restore. Return JSON {ledgerIndex: coveringTestPath} for every row your tests genuinely cover, plus rows you could not cover with the reason. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src",
+    "packages"
+  ],
+  "status": "CLOSED"
+}

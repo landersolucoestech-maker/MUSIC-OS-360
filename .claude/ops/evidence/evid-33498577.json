@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/verify-xlsx-only.mjs",
+  "command": "node scripts/verify-xlsx-only.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "[xlsx-only] contract validated: XLSX only for spreadsheets.",
+  "stderrTail": "",
+  "workspaceFingerprint": "5ad426afa959be27e3461f1d13533db15efee201ec53e3ee74a4b9ae1c1e9927",
+  "fingerprintStatus": "BOUND",
+  "head": "e1d22130fee14b694ebb63e78c482b932472734c",
+  "durationMs": 684,
+  "id": "evid-33498577",
+  "createdAt": "2026-10-03T04:00:02.614Z"
+}

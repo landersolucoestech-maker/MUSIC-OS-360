@@ -1,0 +1,13 @@
+{
+  "id": "dele-c957b93f",
+  "createdAt": "2026-10-02T21:48:17.677Z",
+  "agent": "service-layer-engineer",
+  "objective": "Implement the DERIVABLE part of share_type (task b4-share-type report in delegation records; summary): (1) add SHARE_TYPES = ['internal_release','external_receivable'] as const in apps/api/src/modules/shares/share-legacy-fields.ts next to SHARE_DIRECTIONS/SHARE_STATUSES; (2) shares.dto.ts: replace @IsString/@MaxLength(30) on share_type with @IsIn(SHARE_TYPES) (+ApiPropertyOptional enum), same for the query DTO; @IsOptional stays so registry/integration writers that omit it keep NULL; (3) negative DTO tests in dto/shares.dto.spec.ts ('pending' and 'registry' rejected, both canonical values accepted, omission accepted) and a service test that create WITHOUT share_type still enforces the 100% split budget; (4) value label for share_type in reports/i18n/value-labels.pt-br.ts reusing the PT-BR labels of apps/web/src/modules/releases/lib/share-format.tsx; (5) correct the DECISION REQUIRED block in share-eligibility.util.ts: the value set of the FINANCIAL shares IS fixed (internal_release, external_receivable, enforced now at the API); what remains a business decision is only (a) whether registry splits get an explicit token instead of NULL, (b) executing a backfill of historical NULL rows (L5, needs a production census) - state the deterministic inference rules from share-format.tsx:18-25 and the ambiguous case; (6) no DB default, no migration, no behavior change for omitted values. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/modules/shares",
+    "apps/api/src/modules/reports/i18n/value-labels.pt-br.ts",
+    "apps/api/src/modules/reports/i18n"
+  ],
+  "status": "CLOSED"
+}

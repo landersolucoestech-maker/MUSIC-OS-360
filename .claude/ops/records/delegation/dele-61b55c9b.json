@@ -1,0 +1,9 @@
+{
+  "id": "dele-61b55c9b",
+  "createdAt": "2026-10-02T21:43:14.466Z",
+  "agent": "naming-analyzer",
+  "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. The 1075 TEMPORARY_MIGRATION_COMPATIBILITY rows in docs/naming/canonical-naming-map.json that still have no coveringTest. Regroup them by BEHAVIOR (not by line): origin, boundary, canonical vs legacy representation, read path, write path, fallback, affected data, related migration, testability (fixture, disposable DB, contract test, behavioral test, mutation test) and removal condition. Classify each group as NECESSARY_AND_TESTABLE (give the exact test file to add and the rows it covers), OBSOLETE_AND_REMOVABLE (prove it: no producer, no consumer, no data path; give the removal change list), REQUIRES_ENVIRONMENT_BACKFILL_PROOF (the legacy path stays isolated and tested; give the automatic verifier that confirms the removal condition: a read-only residue query script) or EXTERNAL_CONTRACT_BOUNDARY (isolated and tested). Write the machine-readable group map to the report. Goal: every kept row gets a covering test even when removal cannot be proven.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

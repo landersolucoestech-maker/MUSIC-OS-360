@@ -1,0 +1,9 @@
+{
+  "id": "dele-f6284f89",
+  "createdAt": "2026-10-02T23:17:29.263Z",
+  "agent": "qa-engineer",
+  "objective": "Phase \"compatibility\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: contract-test-engineer.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

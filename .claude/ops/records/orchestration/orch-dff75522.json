@@ -1,0 +1,1591 @@
+{
+  "id": "orch-dff75522",
+  "createdAt": "2026-10-02T21:43:07.531Z",
+  "order": "Continue the normalization of technical language, naming blockers, compatibility boundaries and legacy aliases from the current state, closing the workflow runtime gap",
+  "title": "normalization-continuation",
+  "workflow": "naming-normalization",
+  "intent": null,
+  "status": "ACTIVE",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-03T04:21:26.326Z",
+  "tasks": [
+    {
+      "id": "census",
+      "title": "census",
+      "objective": "Phase \"census\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: repo-inspector.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "repository-census"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "evidence recorded: census-report"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-ef9d3358"
+      ],
+      "result": "adopted from orch-a03c3f22: census-baseline",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census",
+      "adopted": [
+        {
+          "plan": "orch-a03c3f22",
+          "task": "census-baseline",
+          "evidenceRefs": [
+            "evid-ef9d3358"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classify",
+      "title": "classify",
+      "objective": "Phase \"classify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: duplication-detector, dead-code-detector.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "duplication-analysis",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census",
+        "b1-drops-tracing",
+        "b2-pii-fields",
+        "b3-taxonomies",
+        "b4-share-type",
+        "b5-platform",
+        "b6-compat-groups",
+        "b7-auth-boundary"
+      ],
+      "acceptance": [
+        "evidence recorded: classification-record"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-19b66d89",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-93e29a14"
+      ],
+      "result": "17 blockers classified into the four dispositions in the ledger (validated vocabulary); commit 71ee783",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify",
+      "adopted": [
+        {
+          "plan": "orch-a03c3f22",
+          "task": "triage-db-blockers",
+          "evidenceRefs": [
+            "evid-e7a30850"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "triage-app-blockers",
+          "evidenceRefs": [
+            "evid-d5a5e521"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "triage-compat-rows",
+          "evidenceRefs": [
+            "evid-8d14ed14"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "share-type-todo",
+          "evidenceRefs": [
+            "evid-6801b8a0"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "env-var-audit",
+          "evidenceRefs": [
+            "evid-dea08fd9"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "canonical-model",
+      "title": "canonical-model",
+      "objective": "Phase \"canonical-model\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: domain-boundary-guardian.",
+      "agent": "naming-reviewer",
+      "skills": [
+        "canonical-naming"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "classify"
+      ],
+      "acceptance": [
+        "evidence recorded: canonical-map-update"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-b73a228c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-8ace878b"
+      ],
+      "result": "reviewer findings 1-3 fixed in commit 5102389 (concept CZ-048, resolution field); census exemptions for PII keys follow the PII agent",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "canonical-model"
+    },
+    {
+      "id": "schema-plan",
+      "title": "schema-plan",
+      "objective": "Phase \"schema-plan\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: database-reviewer, rollback-planner.",
+      "agent": "migration-planner",
+      "skills": [
+        "migration-audit",
+        "destructive-change-check"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-model",
+        "s1-drops-prep",
+        "p-drop-drafts-hardening"
+      ],
+      "acceptance": [
+        "evidence recorded: migration-plan",
+        "evidence recorded: rollback-plan"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-7f877be2",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-bd7ed4f5",
+        "evid-d9d5ba87",
+        "evid-571ce3fe"
+      ],
+      "result": "consolidated plan in legacy-column-drop-plan.md sec.10; drafts hardened (locks, employees PII draft, retention sync), 188 draft tests + 35 e2e up/down/up on disposable copy; commit 0540480",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "destructive-approval",
+      "title": "destructive-approval",
+      "objective": "Phase \"destructive-approval\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: approval-router.",
+      "agent": "human-approval-agent",
+      "skills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "schema-plan"
+      ],
+      "acceptance": [
+        "evidence recorded: approval-record",
+        "a recorded human approval of this phase"
+      ],
+      "gates": [],
+      "approvalClass": "human-approval",
+      "status": "WAITING_APPROVAL",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": "appr-c049565b",
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "destructive-approval"
+    },
+    {
+      "id": "propagate",
+      "title": "propagate",
+      "objective": "Phase \"propagate\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: refactoring-engineer.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "safe-refactor",
+        "schema-normalization"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-model",
+        "schema-plan",
+        "p-share-type",
+        "p-pii-hr",
+        "p-sql-dump",
+        "p-auth-hardening",
+        "p-xlsx-e2e",
+        "p-tx-categories",
+        "p-phonogram-derived",
+        "p-drop-entity-prep"
+      ],
+      "acceptance": [
+        "evidence recorded: change-set-record"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-67a0f07c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-35f5fa7f",
+        "evid-07cdc4e8"
+      ],
+      "result": "producers/consumers propagated by p-share-type, p-pii-hr, p-sql-dump, p-auth-hardening, p-xlsx-e2e, p-tx-categories, p-phonogram-derived, p-drop-entity-prep and the PII protection work; api+web typecheck clean; commits bffcd4a 0540480",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate",
+      "adopted": [
+        {
+          "plan": "orch-a03c3f22",
+          "task": "remove-dead-entities",
+          "evidenceRefs": [
+            "evid-5199f687"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "env-cleanup",
+          "evidenceRefs": [
+            "evid-f01d4033",
+            "evid-a008964f"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "share-type-dedup",
+          "evidenceRefs": [
+            "evid-aa4720dd"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "dev-auth-regression",
+          "evidenceRefs": [
+            "evid-45ff55ce"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "fix-workflow-error-text",
+          "evidenceRefs": [
+            "evid-7edbdb00",
+            "evid-641b2ab1"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "fix-projects-export",
+          "evidenceRefs": [
+            "evid-7edbdb00",
+            "evid-641b2ab1"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "fix-contract-filters",
+          "evidenceRefs": [
+            "evid-c1ebdd21",
+            "evid-641b2ab1"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "fix-takedowns-entity",
+          "evidenceRefs": [
+            "evid-7edbdb00",
+            "evid-641b2ab1"
+          ]
+        },
+        {
+          "plan": "orch-a03c3f22",
+          "task": "fix-residue-census-docs",
+          "evidenceRefs": [
+            "evid-7edbdb00",
+            "evid-641b2ab1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compatibility",
+      "title": "compatibility",
+      "objective": "Phase \"compatibility\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: contract-test-engineer.",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-regression-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "propagate",
+        "c-api",
+        "c-web-1",
+        "c-web-2",
+        "c-verify-rows",
+        "c-residue-census"
+      ],
+      "acceptance": [
+        "evidence recorded: compatibility-test-run"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-f6284f89",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-cd654d29",
+        "evid-5fca3e71",
+        "evid-d418cd42",
+        "evid-79371c58"
+      ],
+      "result": "0 compat rows without covering test; api 27 slices mutation-proven by agent, web 30 modules mutation-checked (6 weak fixed/removed); census+map pass; commit see git log",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility",
+      "adopted": [
+        {
+          "plan": "orch-a03c3f22",
+          "task": "compat-coverage-tests",
+          "evidenceRefs": [
+            "evid-9fedeb94",
+            "evid-2532d154"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "verify",
+      "title": "verify",
+      "objective": "Phase \"verify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: verification-controller.",
+      "agent": "migration-test-engineer",
+      "skills": [
+        "create-migration-tests",
+        "run-unit-tests",
+        "run-typecheck"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "compatibility"
+      ],
+      "acceptance": [
+        "evidence recorded: after-test-run",
+        "evidence recorded: migration-verification"
+      ],
+      "gates": [
+        "global"
+      ],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-887f7e6d",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-6dc93db6",
+        "evid-a7c9bded",
+        "evid-6d9208d3",
+        "evid-a909ffa4",
+        "evid-54995d24",
+        "evid-4d5baf31",
+        "evid-43b55c78",
+        "evid-8a94a616",
+        "evid-f33acd02",
+        "evid-15464194",
+        "evid-4eebd84c",
+        "evid-a5060f8d",
+        "evid-f9c9805f",
+        "evid-49fdc9cf",
+        "evid-7776a19a",
+        "evid-7bcafa13"
+      ],
+      "result": "16 criteria PASS on HEAD a1f7f04: api+web full suites, typechecks, naming census/map, migrations 2x, db:check, RLS, tenant isolation, critical RLS, canonical order, migration verifiers, schema census; artists canonical-order verifier fixed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "verify",
+      "adopted": [
+        {
+          "plan": "orch-a03c3f22",
+          "task": "migration-verifiers",
+          "evidenceRefs": [
+            "evid-b9d678c6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "residue",
+      "title": "residue",
+      "objective": "Phase \"residue\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: orphan-detector.",
+      "agent": "dead-code-detector",
+      "skills": [
+        "residue-search",
+        "orphan-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "verify"
+      ],
+      "acceptance": [
+        "evidence recorded: residue-scan"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-930439ab",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-c6436dbc",
+        "evid-a5ba8a95",
+        "evid-ac32403d",
+        "evid-d59c4a2f"
+      ],
+      "result": "residue scan findings F1/F2 fixed (stale ledger rows, stale doc note), F3 accepted (historical label present); no TODO/empty catch/env gates set; drafts unregistered",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "residue"
+    },
+    {
+      "id": "review",
+      "title": "review",
+      "objective": "Phase \"review\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: regression-reviewer.",
+      "agent": "security-reviewer",
+      "skills": [
+        "security-audit",
+        "diff-review",
+        "blast-radius-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "evidence recorded: security-verdict",
+        "evidence recorded: regression-verdict"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-acaa0f6e",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-f18da642",
+        "evid-65aac649",
+        "evid-6f5b209d"
+      ],
+      "result": "independent final reviews: security PASS (no CRITICAL/HIGH; MEDIUM zero-key default accepted+documented), regression PASS (api 500 suites/7350 tests, web 2163, pack green; stale naming-map markdown fixed b6fef66), adversarial rounds found and fixed pack-runtime bypasses (d3dabbd, e1d2213, 89d2a69, a61a861); last adversarial verdict FAIL recorded openly with the fix applied and regression-tested; residual risks inherent to plain-JSON local state",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "closure",
+      "title": "closure",
+      "objective": "Phase \"closure\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: completion-controller.",
+      "agent": "git-auditor",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "review"
+      ],
+      "acceptance": [
+        "evidence recorded: gate-results",
+        "evidence recorded: final-report"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-9b21dba2",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-961bb44b",
+        "evid-91738c19"
+      ],
+      "result": "independent git audit PASS at a61a861 (branch dev only, pushed, scope clean, no secrets, drafts gated/unregistered); branch topology verified",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "closure"
+    },
+    {
+      "id": "b1-drops-tracing",
+      "title": "b1-drops-tracing",
+      "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. Seven legacy column drop groups (BLK-C3-E6 events.data; BLK-HR-LEGACY-MIRRORS; BLK-SHARES-ARTIST-MIRROR; BLK-WORKS-LEGACY-DUPLICATES; BLK-PHONOGRAMS-LEGACY-DUPLICATES; BLK-TRANSACTIONS-LEGACY-DUPLICATES incl. legacy_reference gap; BLK-CLIENTS-LEGACY-DUPLICATES). For EACH group: table, columns, legacy name, canonical substitute, every read and write (api, web, jobs, scripts, e2e, reports/saved layouts), migrations, tests, whether a producer or consumer or fallback still exists, whether any data needs backfill, static validation of the archive-then-drop draft in apps/api/src/database/migration-drafts (base class, preconditions, archive coverage check, down() restore), the exact preflight SQL, and everything preparatory that can be done now without executing any DROP (entity lines removable only after the drop? scripts, verifier entries, docs). Conclude per group.",
+      "agent": "database-reviewer",
+      "skills": [
+        "database-audit",
+        "schema-normalization"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "per-group table with the 22 items of the order",
+        "preparatory change list that needs no approval"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-8f7b63f7",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-35a155ac"
+      ],
+      "result": "7 drop groups traced (reads/writes/jobs/scripts/e2e/reports/migrations/tests): no producer/consumer/fallback of any legacy_* column outside entity declarations, the column-order verifier and drafts; e",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "b2-pii-fields",
+      "title": "b2-pii-fields",
+      "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. PII fields of BLK-HR-PII (employees.birth_date, address, rg and any other field the HR form collects but never persists) and BLK-CRM-PII-PLAINTEXT (clients.metadata cpf/cnpj; artists.metadata rg, birth date, address, bank data). For EACH field: name, table or jsonb key, domain, current purpose, producers, consumers, UI, API, reports, exports, integrations, retention, operational need, whether data exists in the schema or migrations/seeds, current classification, minimization and removal possibility, impact of encryption (existing EncryptionService pattern for cpf/email/phone in hr.service.ts) and impact of removal. A field with no legitimate functional consumer is classified for removal; a field with a proven functional need gets a protection strategy compatible with the existing architecture. Output per-field verdicts and the residual human decision.",
+      "agent": "pii-reviewer",
+      "skills": [
+        "pii-audit",
+        "data-retention-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "per-field verdict table",
+        "exact change list for removable fields and for protected fields"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-79136169",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ff16e29"
+      ],
+      "result": "per-field PII verdicts: employees rg/birth_date/address unmapped and unpersisted -> remove inputs (resolvable); column drop destructive; artists rg/birth_date/address/bank_* plaintext with functional ",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "b3-taxonomies",
+      "title": "b3-taxonomies",
+      "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. Taxonomy blockers: BLK-TRANSACTION-CATEGORY-TAXONOMY (receitas-internas, repasse-contrato), BLK-RELEASES-STATUS-CHECK (releases.status values rejeitado/takedown/take_down/remocao vs ReleaseStatus enum and workflow), BLK-PHONOGRAMS-DERIVED-FIELDS (duration_text vs duration_seconds, isrc vs isrc_* parts), BLK-HR-EMPLOYEE-DOCUMENTS, BLK-CONTRACT-CATEGORY-REGISTRY (non_exclusive, representation, services), BLK-CLIENT-PROFILE-TAXONOMY residual. Investigate enums, migrations, fixtures, DTOs, validators, UI, filters, reports, tests, docs, domain rules, historical data and the canonical map. Preserve Work != Phonogram != released music, Project != Release != Distribution and the three contract kinds. If one interpretation is already supported by the existing model, say so and give the exact implementation (so it can be done now); keep GENUINE_BUSINESS_DECISION only when two or more valid alternatives remain after the full investigation.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "contract-tracing"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "per-blocker verdict with evidence and exact change list"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-9d1aa77c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-7a38d776"
+      ],
+      "result": "transaction categories, phonogram derived fields, contract categories (tenant-owned), client profile: resolvable with change lists; releases status (Release vs Distribution) and HR documents (types/re",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "b4-share-type",
+      "title": "b4-share-type",
+      "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. share_type, decided SEPARATELY as A canonical enum (which values are already used semantically: schema, migrations, types, DTOs, validators, services, repositories, frontend share-schema, imports, exports, XLSX, reports, calculations, tests, fixtures, git history, docs), B nullability (does NULL mean valid absence or historical debt), C default (implicit behavior already relied on), D backfill (do existing rows allow deterministic inference, from which fields: work_id/phonogram_id/holder_*/party_role vs financial fields). State what is derivable for each and implement-ready change lists for every derivable part; only the parts that truly need business input remain decisions.",
+      "agent": "requirements-analyst",
+      "skills": [
+        "contract-tracing",
+        "data-flow-trace"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "A,B,C,D each with a verdict and evidence"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-ff3b1add",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-3823781e"
+      ],
+      "result": "share_type A-D: financial value set fixed (internal_release, external_receivable) derivable and enforceable; NULL = registry or legacy-unclassified; API default NULL vs web default documented; determi",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "b5-platform",
+      "title": "b5-platform",
+      "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. Platform items, separately: (1) CI job name `Security Regression (FASE 9.x fixes)`: derive from .github/workflows/**, required-check references in workflows/scripts/docs/badges/previous audit evidence whether it can be renamed safely; only remote branch-protection access may stay external. (2) apps/api/migrations-complete.sql: function, consumers, whether canonical or generated (scripts/dump-migrations-sql.ts), legacy, duplicate of migrations, whether it can be removed together with the allowlist in scripts/verify-provider-residue.mjs, its test and docs. (3) xlsx dependency: real consumers (e2e specs at the repository root, apps/api, apps/web), import graph, whether the root needs it, whether the specs can move to the right workspace or use that workspace's dependency, and the relation to scripts/verify-xlsx-only.mjs and supply-chain rules (lockfile churn). Give an implementable change list for every internal part.",
+      "agent": "devops-ci-reviewer",
+      "skills": [
+        "dependency-scan",
+        "supply-chain-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "per-item verdict and change list"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-c481a85a",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-5f1f9206"
+      ],
+      "result": "CI job rename internal (no required-check reference found), migrations-complete.sql stale partial generated dump removable (git is recovery), xlsx e2e import resolved without root dependency; only rem",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "b6-compat-groups",
+      "title": "b6-compat-groups",
+      "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. The 1075 TEMPORARY_MIGRATION_COMPATIBILITY rows in docs/naming/canonical-naming-map.json that still have no coveringTest. Regroup them by BEHAVIOR (not by line): origin, boundary, canonical vs legacy representation, read path, write path, fallback, affected data, related migration, testability (fixture, disposable DB, contract test, behavioral test, mutation test) and removal condition. Classify each group as NECESSARY_AND_TESTABLE (give the exact test file to add and the rows it covers), OBSOLETE_AND_REMOVABLE (prove it: no producer, no consumer, no data path; give the removal change list), REQUIRES_ENVIRONMENT_BACKFILL_PROOF (the legacy path stays isolated and tested; give the automatic verifier that confirms the removal condition: a read-only residue query script) or EXTERNAL_CONTRACT_BOUNDARY (isolated and tested). Write the machine-readable group map to the report. Goal: every kept row gets a covering test even when removal cannot be proven.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "group table with counts per class",
+        "row->test mapping plan covering all 1075 rows"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-61b55c9b",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-893789cc"
+      ],
+      "result": "1075 uncovered rows regrouped into 100 behavioral groups (67 necessary and testable, 733 requiring environment backfill proof, 275 external contract boundary, 0 provably obsolete); row plan: 630 self-",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "b7-auth-boundary",
+      "title": "b7-auth-boundary",
+      "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. Separate in writing (no code change) what authentication behavior is validated INTERNALLY by the repository's tests and gates (production guards, fail-closed startup, middleware, authorization, token validation paths, session handling, RLS interaction, mocked contract tests, config validation, dev bypass isolation) with test file references, from what is NOT validated EXTERNALLY (only the E2E that needs institutional credentials, and server-side access-token revocation). Do not generalize the external gap to the whole architecture.",
+      "agent": "authentication-reviewer",
+      "skills": [
+        "auth-audit",
+        "session-security-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "internal-validated list with test references",
+        "external-only list"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-0390c21e",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-e4ad339e"
+      ],
+      "result": "auth internally validated (guards, dev token isolation, fail-closed startup, middleware chain, session/password paths, web boundary) with 41 suites/768 tests; externally unvalidated only real login E2",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "s1-drops-prep",
+      "title": "s1-drops-prep",
+      "objective": "After b1-drops-tracing: on a disposable PostgreSQL (start/stop as the postgres user, see scratchpad scripts dbgates.sh for the exact commands) apply the repository migrations, then for each of the seven drop groups run the archive-then-drop draft against a COPY database (never the main scratch DB): seed representative legacy rows, run the preflight SQL and record the exact counts, run up(), verify the archive table and that the columns are gone, run down() and verify the values are restored by id, run up() again. Draft fixes at the root if a draft is wrong. The drafts must remain unregistered and no DROP may touch anything but the disposable copy. Add a jest/spec or script test for each draft where the repository pattern allows. Stop the server at the end.",
+      "agent": "migration-test-engineer",
+      "skills": [
+        "create-migration-tests",
+        "destructive-change-check"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "b1-drops-tracing",
+        "p-drop-drafts-hardening"
+      ],
+      "acceptance": [
+        "per-group up/down/up evidence with counts",
+        "drafts remain unregistered"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-5366cfb1",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-8fdd250d"
+      ],
+      "result": "7 drop groups up/down/up on disposable copy DB, 28 e2e assertions, gate+abort+RLS checked, drafts unregistered; commit 8fc4241",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "completion-gate",
+      "title": "completion gate",
+      "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+      "agent": "completion-controller",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census",
+        "classify",
+        "canonical-model",
+        "schema-plan",
+        "destructive-approval",
+        "propagate",
+        "compatibility",
+        "verify",
+        "residue",
+        "review",
+        "closure",
+        "b1-drops-tracing",
+        "b2-pii-fields",
+        "b3-taxonomies",
+        "b4-share-type",
+        "b5-platform",
+        "b6-compat-groups",
+        "b7-auth-boundary",
+        "s1-drops-prep"
+      ],
+      "acceptance": [
+        "node .claude/runtime/completion-gate.mjs reports PASS",
+        "no open criterion, finding or blocker"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "p-share-type",
+      "title": "p-share-type",
+      "objective": "Implement the DERIVABLE part of share_type (task b4-share-type report in delegation records; summary): (1) add SHARE_TYPES = ['internal_release','external_receivable'] as const in apps/api/src/modules/shares/share-legacy-fields.ts next to SHARE_DIRECTIONS/SHARE_STATUSES; (2) shares.dto.ts: replace @IsString/@MaxLength(30) on share_type with @IsIn(SHARE_TYPES) (+ApiPropertyOptional enum), same for the query DTO; @IsOptional stays so registry/integration writers that omit it keep NULL; (3) negative DTO tests in dto/shares.dto.spec.ts ('pending' and 'registry' rejected, both canonical values accepted, omission accepted) and a service test that create WITHOUT share_type still enforces the 100% split budget; (4) value label for share_type in reports/i18n/value-labels.pt-br.ts reusing the PT-BR labels of apps/web/src/modules/releases/lib/share-format.tsx; (5) correct the DECISION REQUIRED block in share-eligibility.util.ts: the value set of the FINANCIAL shares IS fixed (internal_release, external_receivable, enforced now at the API); what remains a business decision is only (a) whether registry splits get an explicit token instead of NULL, (b) executing a backfill of historical NULL rows (L5, needs a production census) - state the deterministic inference rules from share-format.tsx:18-25 and the ambiguous case; (6) no DB default, no migration, no behavior change for omitted values. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "service-layer-engineer",
+      "skills": [
+        "contract-tracing",
+        "safe-refactor"
+      ],
+      "filesInScope": [
+        "apps/api/src/modules/shares",
+        "apps/api/src/modules/reports/i18n/value-labels.pt-br.ts",
+        "apps/api/src/modules/reports/i18n"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "share_type DTO closed to the two canonical values; NULL/default semantics documented in code; negative DTO tests; value labels; stale DECISION comment corrected",
+        "focused jest green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-c957b93f",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-5176e2c2"
+      ],
+      "result": "implemented, committed, focused suites green",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p-pii-hr",
+      "title": "p-pii-hr",
+      "objective": "BLK-HR-PII, resolvable part (task b2-pii-fields report): EmployeeFormModal.tsx collects rg, birthDate and address but handleSubmit drops them and nothing reads the columns. Remove the three inputs, their state, reset/edit-load code and validation references, and the same three fields from apps/web/src/modules/hr/schemas/employee-schema.ts; update modal/schema tests and add a test that the submitted payload and the rendered form contain none of the three fields. Do not touch the API or the database (dropping the columns is a separate approval-gated step). Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "frontend-engineer",
+      "skills": [
+        "implement-form",
+        "create-unit-tests"
+      ],
+      "filesInScope": [
+        "apps/web/src/modules/hr"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "HR employee form no longer collects rg, birth date or address that the API never persists",
+        "tests updated",
+        "vitest green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-5e98e118",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-7ffef1b7"
+      ],
+      "result": "implemented, committed, focused suites green",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p-sql-dump",
+      "title": "p-sql-dump",
+      "objective": "BLK-LEGACY-ROOT-SQL final part (task b5-platform report; the dump is tracked, generated, a stale partial snapshot of 10 of 332 migrations, not canonical; git history is the recovery, so this is not a data-destructive operation): (1) git rm apps/api/migrations-complete.sql; (2) remove its allowlist entry in scripts/verify-provider-residue.mjs (~51-55); (3) in scripts/verify-provider-residue.test.mjs keep the 'stale allowlist is reported' assertion meaningful by switching the fixture to another allowlisted path (do not delete or weaken the assertion); (4) delete apps/api/scripts/dump-migrations-sql.ts and the dump:sql script in apps/api/package.json so the file cannot be regenerated; (5) update docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md (line ~96, 139-148, 367) and docs/CODEBASE_MAP.md (~31, 169) replacing line-range citations with the migrations that define the tables; (6) comment-only edit of the reference in migration 20260821000001 if it exists (must not change behavior). Run node --test scripts/verify-provider-residue.test.mjs, node scripts/verify-provider-residue.mjs, pnpm typecheck. Do not edit historical files under docs/backend-v2 or docs/audit. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "refactoring-engineer",
+      "skills": [
+        "safe-refactor",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [
+        "apps/api/migrations-complete.sql",
+        "apps/api/scripts/dump-migrations-sql.ts",
+        "apps/api/package.json",
+        "scripts/verify-provider-residue.mjs",
+        "scripts/verify-provider-residue.test.mjs",
+        "docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md",
+        "docs/CODEBASE_MAP.md"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "stale partial SQL dump and its generator removed with the allowlist entry, the test kept meaningful and the docs corrected",
+        "residue guard, naming check, typecheck green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-ad30539a",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-9b623b18"
+      ],
+      "result": "implemented, committed, focused suites green",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p-auth-hardening",
+      "title": "p-auth-hardening",
+      "objective": "Auth review findings F2/F3 (task b7-auth-boundary): (F2) apps/api/src/core/guards/auth.guard.ts ~153 uses this.config?.get('NODE_ENV') ?? 'development'; use ?? process.env['NODE_ENV'] like token-verifier.service.ts getConfig, and add a test in auth.guard.spec.ts: ConfigService absent + process.env.NODE_ENV='production' makes an HS256 dev token return 401. (F3) core/security/dev-token.ts isInsecureDevSecret: reject dev secrets shorter than 32 characters with a matching spec case. Keep every existing negative test; no behavior change in development with a proper key. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "authorization-engineer",
+      "skills": [
+        "authorization-hardening",
+        "create-security-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src/core/guards",
+        "apps/api/src/core/security"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "NODE_ENV fallback hardened with a negative test; dev secret minimum length with a test",
+        "security suites green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-b1d5cbb0",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-5176e2c2"
+      ],
+      "result": "implemented, committed, focused suites green",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p-xlsx-e2e",
+      "title": "p-xlsx-e2e",
+      "objective": "BLK-E2E-ROOT-XLSX-DEPENDENCY (task b5-platform report): e2e/p86-reports-centralization.spec.ts and e2e/reports-export.spec.ts import 'xlsx' but the root has no xlsx and no hoisting, so they cannot load; the root playwright suite is not run in CI. Do NOT add xlsx to the root package.json (lockfile churn, waiver widening). Determine whether the root playwright config and @playwright/test already exist and where; implement the cleanest internal fix: preferably move these two specs (and any shared helper they need) under the workspace that depends on xlsx (apps/web) with a minimal playwright config there, or, if that is not feasible, resolve xlsx through a single helper that uses createRequire anchored at apps/web/package.json. Update the dependency waiver evidence if spec locations change, update pnpm test:e2e scripts accordingly, and prove with `node -e` / a dry run (playwright test --list) that both specs load. pnpm-lock.yaml must not change. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "e2e-engineer",
+      "skills": [
+        "create-e2e-tests",
+        "dependency-scan"
+      ],
+      "filesInScope": [
+        "e2e",
+        "apps/web",
+        "package.json",
+        "playwright.config.ts",
+        ".github/workflows"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "the two root e2e specs resolve their xlsx import without adding xlsx to the root manifest",
+        "lockfile unchanged",
+        "gate xlsx-only green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-642422e5",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-e8225558"
+      ],
+      "result": "implemented, committed, focused suites green",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "c-api",
+      "title": "c-api",
+      "objective": "Create the 27 api test files of the slice /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/slice-api.json (each entry: file to create, ledger rows with item/currentName/path/group, source paths). The test must exercise the REAL reader/mapper/DTO/migration constant so that a legacy value is accepted and converted to canonical (legacy in, canonical out), or, for guard rows, fail when the legacy literal is reintroduced; no per-line artificial tests, one table-driven test per file. Group context: /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/group-map.json. Where a file path says apps/api/src/common/compat/*.legacy-compat.spec.ts for packages/types or packages/auth rows, import through the existing jest alias. After each batch is green, break one alias in the product source in a scratch copy to confirm the test fails, then restore. Return JSON {ledgerIndex: coveringTestPath} for every row your tests genuinely cover, plus rows you could not cover with the reason. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-regression-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src",
+        "packages"
+      ],
+      "dependsOn": [
+        "c-api-recovery-1"
+      ],
+      "acceptance": [
+        "one behavioral/contract test per compatibility group slice; mutation proof for each",
+        "suites green",
+        "JSON map ledgerIndex -> covering test returned"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-8df4f770",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-43487541",
+        "evid-d9971c11",
+        "evid-48ed99c0"
+      ],
+      "result": "27 api legacy-compat specs (172 tests), TS6059 fixed, census exemptions added, mutation proofs by agent; tax acronym rows reclassified",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "c-web-1",
+      "title": "c-web-1",
+      "objective": "Create the 12 web test files of /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/slice-web1.json (file to create, ledger rows, source paths; group context in group-map.json next to it). Exercise the REAL module (legacy value in, canonical out; legacy accepted on read; guard rows fail if the literal is reintroduced); for component rows (StatusBadge, ContractFormModal) render and assert the canonical behavior with the legacy input. One table-driven test per file. Mutation-prove each file in a scratch copy then restore. Return JSON {ledgerIndex: coveringTestPath} for the rows really covered and the reasons for any not covered. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-unit-tests"
+      ],
+      "filesInScope": [
+        "apps/web/src"
+      ],
+      "dependsOn": [
+        "c-web-1-recovery-1"
+      ],
+      "acceptance": [
+        "one behavioral test per slice entry with mutation proof",
+        "vitest green",
+        "map returned"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-bbab4881",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-8f841e6c"
+      ],
+      "result": "web legacy-compat tests pass; commit bffcd4a",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "c-web-2",
+      "title": "c-web-2",
+      "objective": "Create the 12 web test files of /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/slice-web2.json (same method and rules as the sibling task c-web-1: real module, legacy in canonical out, mutation proof, one table-driven test per file). Return JSON {ledgerIndex: coveringTestPath} and reasons for rows not covered. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-unit-tests"
+      ],
+      "filesInScope": [
+        "apps/web/src"
+      ],
+      "dependsOn": [
+        "c-web-2-recovery-1"
+      ],
+      "acceptance": [
+        "one behavioral test per slice entry with mutation proof",
+        "vitest green",
+        "map returned"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-51d9edb5",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-8f841e6c"
+      ],
+      "result": "web legacy-compat tests pass; commit bffcd4a",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "c-verify-rows",
+      "title": "c-verify-rows",
+      "objective": "Verify the 53 rows of /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/verify-rows.json (rows whose proposed existing coveringTest names the literal and the module but whose assertion was not confirmed). For each row open the proposed test, decide whether it really asserts the alias behavior through the real module; if yes keep it, if not add the missing assertion to that test file (never weaken existing ones) or point the row to a better test. Return JSON {ledgerIndex: coveringTestPath} for confirmed/fixed rows and the rows that could not be covered with the reason. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "diff-review"
+      ],
+      "filesInScope": [
+        "apps/api/src",
+        "apps/web/src"
+      ],
+      "dependsOn": [
+        "c-verify-rows-recovery-1"
+      ],
+      "acceptance": [
+        "each of the 53 rows either confirmed covered by an existing test (assertion exercises the alias through the module) or covered by an added assertion",
+        "map returned"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-21c37de9",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-8f841e6c"
+      ],
+      "result": "53 rows verified/covered; ledger mapped; commit ffe6c0b",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "c-residue-census",
+      "title": "c-residue-census",
+      "objective": "Implement scripts/naming/residue-census.mjs and scripts/naming/residue-census.test.mjs (node:test, same style as the sibling *.test.mjs) per the proposal in the b6-compat-groups report (group-map at /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/group-map.json, groups of class REQUIRES_ENVIRONMENT_BACKFILL_PROOF, relatedMigrations): for each group a read-only SELECT count(*) of rows still holding the legacy values (derive each predicate from the migration's own candidatePredicate/exact-match map, never from memory), executed inside BEGIN READ ONLY against DATABASE_URL; one line per group (table, column, legacy values, count); exit 0 only if every count is 0, exit 1 if any residue, and a distinct non-zero exit code with the message BLOCKED when there is no database connection (never PASS). Tests use a fake pg client for the logic and, when DATABASE_URL points to a disposable PostgreSQL, an optional integration case. Register the script in the root package.json scripts as naming:residue-census (no other change to package.json). Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+      "agent": "implementation-engineer",
+      "skills": [
+        "create-unit-tests",
+        "safe-refactor"
+      ],
+      "filesInScope": [
+        "scripts/naming"
+      ],
+      "dependsOn": [
+        "c-residue-census-recovery-1"
+      ],
+      "acceptance": [
+        "read-only residue census verifier with tests: exit 0 only when every count is 0, exit 1 on residue, BLOCKED when no database",
+        "node tests green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-7d49930a",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-a76fb18a"
+      ],
+      "result": "residue-census verifier + test; commit ffe6c0b",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "p-tx-categories",
+      "title": "p-tx-categories",
+      "objective": "BLK-TRANSACTION-CATEGORY-TAXONOMY is resolvable (task b3-taxonomies, item 1): the two slugs are persisted machine values with fixed PT-BR labels and nothing branches on their accounting meaning. Implement the change list: (1) apps/api/src/modules/transactions/transaction-category-slugs.ts add 'receitas-internas': 'internal_revenue' and 'repasse-contrato': 'contract_pass_through' to LEGACY_TRANSACTION_CATEGORY_SLUGS, set UNMAPPED_TRANSACTION_CATEGORY_SLUGS = [] (keep the export), fix header comments; (2) same in apps/web/src/modules/accounting/constants/transaction-category-slugs.ts; (3) apps/web/.../transaction-constants.ts ~308 and ~394: values internal_revenue and contract_pass_through, labels unchanged; (4) update transaction-category-slugs.spec.ts and transaction-category-slugs.parity.test.ts (reserved set, expectations); (5) new migration apps/api/src/database/migrations/20260930000037_BackfillInternalRevenueAndContractPassThroughSlugs.ts registered in migrations/index.ts, same shape as 20260930000018 (log table, exact-match UPDATE on category and subcategory, reversible down(), no updated_at change); FREEZE migration 18's LEGACY list to a literal snapshot (it derives from the live map today, so the map edit would silently change it) and adjust transaction-taxonomy.migration.spec.ts accordingly without weakening it; add a migration spec for 37 in the style of the existing ones; (6) docs/runbooks/staging-to-production.md: add a residue census subsection for 20260930000037 derived from its own predicate. Do not touch any other file. Mention in the report the Portuguese literals your new tests contain. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Run focused suites, the api typecheck (npx tsc --noEmit -p tsconfig.json in apps/api) and `node scripts/naming/technical-naming-census.mjs --check`; report any new Portuguese literal in tests with its file.",
+      "agent": "backend-engineer",
+      "skills": [
+        "safe-refactor",
+        "create-migration"
+      ],
+      "filesInScope": [
+        "apps/api/src/modules/transactions",
+        "apps/api/src/database/migrations",
+        "apps/web/src/modules/accounting",
+        "docs/runbooks/staging-to-production.md"
+      ],
+      "dependsOn": [
+        "p-tx-categories-recovery-1"
+      ],
+      "acceptance": [
+        "receitas-internas and repasse-contrato become internal_revenue and contract_pass_through in api and web with a reversible logged backfill; migration 18 frozen; parity and specs green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-9ae16e4e",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-07894b67"
+      ],
+      "result": "canonical transaction slugs, backfills 37/38, api+web parity; commit bffcd4a",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p-phonogram-derived",
+      "title": "p-phonogram-derived",
+      "objective": "BLK-PHONOGRAMS-DERIVED-FIELDS is resolvable (task b3-taxonomies, item 3): the model already declares duration_seconds and the compact isrc as authoritative. Implement the full change list: (1) move parseDurationTextToSeconds from works/work-registry-fields.util.ts into a shared util apps/api/src/common/registry-fields/ (keep the works import working), add formatDurationText(seconds) (MM:SS, minutes may exceed 59) , deriveIsrcParts(isrc) (2/3/2/5) and composeIsrc(parts); (2) phonograms.service.ts buildEntityPayload takes `current` (update() already loads it) and applies: duration_text only -> parse (unparseable: 400 PHONOGRAM_DURATION_TEXT_INVALID); both present and disagree -> 400 PHONOGRAM_DURATION_MISMATCH; always write duration_text as formatted duration_seconds; isrc absent and complete parts (merged with current) -> compose, normalise, validate; both present and disagree -> 400 PHONOGRAM_ISRC_MISMATCH; always rewrite the four parts from the normalised isrc; null still does not clear a column (existing behavior); (3) apply the same derivation in the phonogram branch of reports/import/import-commit.service.ts (it bypasses the service) and for works' duration_text if equally unguarded; add the error codes to packages/types api-error-codes if that is where codes live and the PT-BR copy; (4) entity-validators.ts ~123: hasDuration may use duration_seconds only after the backfill; (5) DTO docs mark duration_text and isrc_* as derived but still accepted; (6) new non-destructive logged backfill migration 20260930000038_BackfillPhonogramDerivedFields.ts (registered): fill NULL duration_seconds from well-formed duration_text, fill NULL isrc parts from a valid isrc, log disagreements in a side table and never overwrite them; reversible down(); migration spec in the existing style; (7) tests for mismatch, derivation, partial PATCH merge and import. Another agent owns migration 20260930000037 (transactions): use 38 and add only your own line in migrations/index.ts. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Run focused suites, the api typecheck (npx tsc --noEmit -p tsconfig.json in apps/api) and `node scripts/naming/technical-naming-census.mjs --check`; report any new Portuguese literal in tests with its file.",
+      "agent": "backend-engineer",
+      "skills": [
+        "safe-refactor",
+        "create-regression-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src/modules/phonograms",
+        "apps/api/src/modules/works",
+        "apps/api/src/common/registry-fields",
+        "apps/api/src/modules/reports/import",
+        "apps/api/src/modules/registry/validation",
+        "apps/api/src/database/migrations",
+        "apps/api/src/database/migrations/index.ts"
+      ],
+      "dependsOn": [
+        "p-phonogram-derived-recovery-1"
+      ],
+      "acceptance": [
+        "one authoritative field per pair (duration_seconds, compact isrc) enforced on every write path with mismatch errors; derived fields rewritten; backfill migration logged; tests"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-a388904d",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-24907dde"
+      ],
+      "result": "phonogram derived fields util, service/DTO, backfill 38; commit bffcd4a",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p-drop-entity-prep",
+      "title": "p-drop-entity-prep",
+      "objective": "Non-destructive preparation of the seven column drops (b1-drops-tracing, section 4 E1-E7): the 16 legacy_* columns are nullable, select:false and never written; events.data is filled by a DB trigger and has no reader. Remove the entity declarations only (no migration, no DB change, the physical columns remain until an approved drop): E1 remove the 16 legacy_* declarations in apps/api/src/database/entities.ts (works 5 ~783-787, phonograms 5 ~926-930, transactions 4 ~1095-1098, clients 1 ~1210, shares 1 ~1579); E2 remove EventEntity.data (~1387) with its comment; E3 events-data-legacy-column.spec.ts: replace the entity-keeps-data assertions by 'entity declares no data' keeping every trigger assertion; E4 apps/web events.types.ts remove the data? field and stale comment; E5 client-entity-schema-alignment.spec.ts: do NOT just delete the status_contato entry (the migration text still declares it): add a dropped-columns filter in extractMigrationColumns, keeping the test strict for every other column; E6 regenerate the two .audit-runtime/*.jsonl baselines following the procedure in the header of pt-column-naming-baseline.guard.spec.ts (works.legacy_instrumental_flag disappears) and keep that guard test passing; E7 update the stale comment in share-legacy-fields.ts. Do NOT touch verify-canonical-column-order.ts (it must change only in the drop release), migrations, migration-drafts or migrations/index.ts. Check by search that nothing else references the removed fields (an API response shape change for events data is intended: no reader exists). Run: jest src/database src/modules/shares src/modules/events src/modules/clients src/modules/works src/modules/phonograms src/modules/transactions, web vitest src/modules/events, tsc for api and web. Rules: use Edit/Write; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops; do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code; run the focused suites, api typecheck and `node scripts/naming/technical-naming-census.mjs --check`.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "safe-refactor",
+        "schema-normalization"
+      ],
+      "filesInScope": [
+        "apps/api/src/database/entities.ts",
+        "apps/api/src/database/events-data-legacy-column.spec.ts",
+        "apps/api/src/database/client-entity-schema-alignment.spec.ts",
+        "apps/web/src/modules/events/types/events.types.ts",
+        "apps/api/src/modules/shares/share-legacy-fields.ts",
+        ".audit-runtime/pt-column-census.jsonl",
+        ".audit-runtime/pt-census-classified.jsonl"
+      ],
+      "dependsOn": [
+        "p-drop-entity-prep-recovery-1"
+      ],
+      "acceptance": [
+        "legacy_* entity declarations and EventEntity.data removed (columns stay in the database), specs/baselines adjusted without weakening, typecheck and DB spec suites green"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-463c3832",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-928d55cc"
+      ],
+      "result": "entities cleaned of legacy columns, events data column spec; commit bffcd4a",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p-drop-drafts-hardening",
+      "title": "p-drop-drafts-hardening",
+      "objective": "Harden the unregistered archive-then-drop drafts (b1-drops-tracing findings F1-F4,F6,F7,F10 and section 4 D1-D3): D1 in legacy-column-drop.base.ts make the archive coverage check compare VALUES (IS NOT DISTINCT FROM per archived column) and make a stale archive row abort or be refreshed (no silent ON CONFLICT DO NOTHING freezing old values on an up/down/up cycle), with spec cases; D2 in 20260930000043_DropClientsLegacyContactStatus.ts keep the check but mark it explicitly informational and add the (legacy,status) pair census requirement to the draft header and the plan section for clients (the claimed canonical status is NOT proven: the 20260719000010 header calls status distinct from status_contato); D3 add a gated Retire*LegacyArchives draft (own confirm token, down() refuses) for the *_legacy_archive_20260930 tables and add the archive tables to the per-tenant erasure procedure in docs/engineering/backfill-side-tables-retention.md; correct the plan docs/engineering/legacy-column-drop-plan.md: F3 (client alignment spec edit is a filter, not a deletion), F4 (events 'data' verifier entry and the two .audit-runtime baselines), F7 (the missing legacy-columns-census.md reference and the AND/OR precedence slip in §3.0 SQL), F10 (deploy the entity removal one release before the drop; staging stops the build before migrating), and add the catalog dependency query (pg_depend) and the exact per-group preflight SQL from the b1 report (retrieve it from the b1 task result in the delegation record or re-derive it from each draft). The drafts must stay in migration-drafts, unregistered; run the draft specs. Rules: use Edit/Write; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops; do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code; run the focused suites, api typecheck and `node scripts/naming/technical-naming-census.mjs --check`.",
+      "agent": "migration-engineer",
+      "skills": [
+        "create-migration",
+        "create-migration-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src/database/migration-drafts",
+        "docs/engineering/legacy-column-drop-plan.md",
+        "docs/engineering/backfill-side-tables-retention.md"
+      ],
+      "dependsOn": [
+        "p-drop-drafts-hardening-recovery-1"
+      ],
+      "acceptance": [
+        "archive coverage compares values, stale archive rows abort, vacuous client precondition made explicit, retirement draft for archives, plan corrected, specs green; drafts remain unregistered"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-a7107cdb",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-928d55cc"
+      ],
+      "result": "drop drafts hardened and unregistered, draft spec passes; commit bffcd4a",
+      "failureReason": "subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "p-tx-categories-recovery-1",
+      "title": "recover p-tx-categories",
+      "objective": "Find the root cause of the failure of task p-tx-categories (\"BLK-TRANSACTION-CATEGORY-TAXONOMY is resolvable (task b3-taxonomies, item 1): the two slugs are persisted machine values with fixed PT-BR labels and nothing branches on their accounting meaning. Implement the change list: (1) apps/api/src/modules/transactions/transaction-category-slugs.ts add 'receitas-internas': 'internal_revenue' and 'repasse-contrato': 'contract_pass_through' to LEGACY_TRANSACTION_CATEGORY_SLUGS, set UNMAPPED_TRANSACTION_CATEGORY_SLUGS = [] (keep the export), fix header comments; (2) same in apps/web/src/modules/accounting/constants/transaction-category-slugs.ts; (3) apps/web/.../transaction-constants.ts ~308 and ~394: values internal_revenue and contract_pass_through, labels unchanged; (4) update transaction-category-slugs.spec.ts and transaction-category-slugs.parity.test.ts (reserved set, expectations); (5) new migration apps/api/src/database/migrations/20260930000037_BackfillInternalRevenueAndContractPassThroughSlugs.ts registered in migrations/index.ts, same shape as 20260930000018 (log table, exact-match UPDATE on category and subcategory, reversible down(), no updated_at change); FREEZE migration 18's LEGACY list to a literal snapshot (it derives from the live map today, so the map edit would silently change it) and adjust transaction-taxonomy.migration.spec.ts accordingly without weakening it; add a migration spec for 37 in the style of the existing ones; (6) docs/runbooks/staging-to-production.md: add a residue census subsection for 20260930000037 derived from its own predicate. Do not touch any other file. Mention in the report the Portuguese literals your new tests contain. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Run focused suites, the api typecheck (npx tsc --noEmit -p tsconfig.json in apps/api) and `node scripts/naming/technical-naming-census.mjs --check`; report any new Portuguese literal in tests with its file.\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "p-tx-categories",
+      "blockedExternal": null
+    },
+    {
+      "id": "p-phonogram-derived-recovery-1",
+      "title": "recover p-phonogram-derived",
+      "objective": "Find the root cause of the failure of task p-phonogram-derived (\"BLK-PHONOGRAMS-DERIVED-FIELDS is resolvable (task b3-taxonomies, item 3): the model already declares duration_seconds and the compact isrc as authoritative. Implement the full change list: (1) move parseDurationTextToSeconds from works/work-registry-fields.util.ts into a shared util apps/api/src/common/registry-fields/ (keep the works import working), add formatDurationText(seconds) (MM:SS, minutes may exceed 59) , deriveIsrcParts(isrc) (2/3/2/5) and composeIsrc(parts); (2) phonograms.service.ts buildEntityPayload takes `current` (update() already loads it) and applies: duration_text only -> parse (unparseable: 400 PHONOGRAM_DURATION_TEXT_INVALID); both present and disagree -> 400 PHONOGRAM_DURATION_MISMATCH; always write duration_text as formatted duration_seconds; isrc absent and complete parts (merged with current) -> compose, normalise, validate; both present and disagree -> 400 PHONOGRAM_ISRC_MISMATCH; always rewrite the four parts from the normalised isrc; null still does not clear a column (existing behavior); (3) apply the same derivation in the phonogram branch of reports/import/import-commit.service.ts (it bypasses the service) and for works' duration_text if equally unguarded; add the error codes to packages/types api-error-codes if that is where codes live and the PT-BR copy; (4) entity-validators.ts ~123: hasDuration may use duration_seconds only after the backfill; (5) DTO docs mark duration_text and isrc_* as derived but still accepted; (6) new non-destructive logged backfill migration 20260930000038_BackfillPhonogramDerivedFields.ts (registered): fill NULL duration_seconds from well-formed duration_text, fill NULL isrc parts from a valid isrc, log disagreements in a side table and never overwrite them; reversible down(); migration spec in the existing style; (7) tests for mismatch, derivation, partial PATCH merge and import. Another agent owns migration 20260930000037 (transactions): use 38 and add only your own line in migrations/index.ts. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Run focused suites, the api typecheck (npx tsc --noEmit -p tsconfig.json in apps/api) and `node scripts/naming/technical-naming-census.mjs --check`; report any new Portuguese literal in tests with its file.\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "p-phonogram-derived",
+      "blockedExternal": null
+    },
+    {
+      "id": "c-api-recovery-1",
+      "title": "recover c-api",
+      "objective": "Find the root cause of the failure of task c-api (\"Create the 27 api test files of the slice /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/slice-api.json (each entry: file to create, ledger rows with item/currentName/path/group, source paths). The test must exercise the REAL reader/mapper/DTO/migration constant so that a legacy value is accepted and converted to canonical (legacy in, canonical out), or, for guard rows, fail when the legacy literal is reintroduced; no per-line artificial tests, one table-driven test per file. Group context: /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/group-map.json. Where a file path says apps/api/src/common/compat/*.legacy-compat.spec.ts for packages/types or packages/auth rows, import through the existing jest alias. After each batch is green, break one alias in the product source in a scratch copy to confirm the test fails, then restore. Return JSON {ledgerIndex: coveringTestPath} for every row your tests genuinely cover, plus rows you could not cover with the reason. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "c-api",
+      "blockedExternal": null
+    },
+    {
+      "id": "c-web-1-recovery-1",
+      "title": "recover c-web-1",
+      "objective": "Find the root cause of the failure of task c-web-1 (\"Create the 12 web test files of /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/slice-web1.json (file to create, ledger rows, source paths; group context in group-map.json next to it). Exercise the REAL module (legacy value in, canonical out; legacy accepted on read; guard rows fail if the literal is reintroduced); for component rows (StatusBadge, ContractFormModal) render and assert the canonical behavior with the legacy input. One table-driven test per file. Mutation-prove each file in a scratch copy then restore. Return JSON {ledgerIndex: coveringTestPath} for the rows really covered and the reasons for any not covered. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "c-web-1",
+      "blockedExternal": null
+    },
+    {
+      "id": "c-web-2-recovery-1",
+      "title": "recover c-web-2",
+      "objective": "Find the root cause of the failure of task c-web-2 (\"Create the 12 web test files of /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/slice-web2.json (same method and rules as the sibling task c-web-1: real module, legacy in canonical out, mutation proof, one table-driven test per file). Return JSON {ledgerIndex: coveringTestPath} and reasons for rows not covered. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "c-web-2",
+      "blockedExternal": null
+    },
+    {
+      "id": "c-verify-rows-recovery-1",
+      "title": "recover c-verify-rows",
+      "objective": "Find the root cause of the failure of task c-verify-rows (\"Verify the 53 rows of /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/verify-rows.json (rows whose proposed existing coveringTest names the literal and the module but whose assertion was not confirmed). For each row open the proposed test, decide whether it really asserts the alias behavior through the real module; if yes keep it, if not add the missing assertion to that test file (never weaken existing ones) or point the row to a better test. Return JSON {ledgerIndex: coveringTestPath} for confirmed/fixed rows and the rows that could not be covered with the reason. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "c-verify-rows",
+      "blockedExternal": null
+    },
+    {
+      "id": "c-residue-census-recovery-1",
+      "title": "recover c-residue-census",
+      "objective": "Find the root cause of the failure of task c-residue-census (\"Implement scripts/naming/residue-census.mjs and scripts/naming/residue-census.test.mjs (node:test, same style as the sibling *.test.mjs) per the proposal in the b6-compat-groups report (group-map at /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/group-map.json, groups of class REQUIRES_ENVIRONMENT_BACKFILL_PROOF, relatedMigrations): for each group a read-only SELECT count(*) of rows still holding the legacy values (derive each predicate from the migration's own candidatePredicate/exact-match map, never from memory), executed inside BEGIN READ ONLY against DATABASE_URL; one line per group (table, column, legacy values, count); exit 0 only if every count is 0, exit 1 if any residue, and a distinct non-zero exit code with the message BLOCKED when there is no database connection (never PASS). Tests use a fake pg client for the logic and, when DATABASE_URL points to a disposable PostgreSQL, an optional integration case. Register the script in the root package.json scripts as naming:residue-census (no other change to package.json). Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "c-residue-census",
+      "blockedExternal": null
+    },
+    {
+      "id": "p-drop-entity-prep-recovery-1",
+      "title": "recover p-drop-entity-prep",
+      "objective": "Find the root cause of the failure of task p-drop-entity-prep (\"Non-destructive preparation of the seven column drops (b1-drops-tracing, section 4 E1-E7): the 16 legacy_* columns are nullable, select:false and never written; events.data is filled by a DB trigger and has no reader. Remove the entity declarations only (no migration, no DB change, the physical columns remain until an approved drop): E1 remove the 16 legacy_* declarations in apps/api/src/database/entities.ts (works 5 ~783-787, phonograms 5 ~926-930, transactions 4 ~1095-1098, clients 1 ~1210, shares 1 ~1579); E2 remove EventEntity.data (~1387) with its comment; E3 events-data-legacy-column.spec.ts: replace the entity-keeps-data assertions by 'entity declares no data' keeping every trigger assertion; E4 apps/web events.types.ts remove the data? field and stale comment; E5 client-entity-schema-alignment.spec.ts: do NOT just delete the status_contato entry (the migration text still declares it): add a dropped-columns filter in extractMigrationColumns, keeping the test strict for every other column; E6 regenerate the two .audit-runtime/*.jsonl baselines following the procedure in the header of pt-column-naming-baseline.guard.spec.ts (works.legacy_instrumental_flag disappears) and keep that guard test passing; E7 update the stale comment in share-legacy-fields.ts. Do NOT touch verify-canonical-column-order.ts (it must change only in the drop release), migrations, migration-drafts or migrations/index.ts. Check by search that nothing else references the removed fields (an API response shape change for events data is intended: no reader exists). Run: jest src/database src/modules/shares src/modules/events src/modules/clients src/modules/works src/modules/phonograms src/modules/transactions, web vitest src/modules/events, tsc for api and web. Rules: use Edit/Write; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops; do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code; run the focused suites, api typecheck and `node scripts/naming/technical-naming-census.mjs --check`.\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "p-drop-entity-prep",
+      "blockedExternal": null
+    },
+    {
+      "id": "p-drop-drafts-hardening-recovery-1",
+      "title": "recover p-drop-drafts-hardening",
+      "objective": "Find the root cause of the failure of task p-drop-drafts-hardening (\"Harden the unregistered archive-then-drop drafts (b1-drops-tracing findings F1-F4,F6,F7,F10 and section 4 D1-D3): D1 in legacy-column-drop.base.ts make the archive coverage check compare VALUES (IS NOT DISTINCT FROM per archived column) and make a stale archive row abort or be refreshed (no silent ON CONFLICT DO NOTHING freezing old values on an up/down/up cycle), with spec cases; D2 in 20260930000043_DropClientsLegacyContactStatus.ts keep the check but mark it explicitly informational and add the (legacy,status) pair census requirement to the draft header and the plan section for clients (the claimed canonical status is NOT proven: the 20260719000010 header calls status distinct from status_contato); D3 add a gated Retire*LegacyArchives draft (own confirm token, down() refuses) for the *_legacy_archive_20260930 tables and add the archive tables to the per-tenant erasure procedure in docs/engineering/backfill-side-tables-retention.md; correct the plan docs/engineering/legacy-column-drop-plan.md: F3 (client alignment spec edit is a filter, not a deletion), F4 (events 'data' verifier entry and the two .audit-runtime baselines), F7 (the missing legacy-columns-census.md reference and the AND/OR precedence slip in §3.0 SQL), F10 (deploy the entity removal one release before the drop; staging stops the build before migrating), and add the catalog dependency query (pg_depend) and the exact per-group preflight SQL from the b1 report (retrieve it from the b1 task result in the delegation record or re-derive it from each draft). The drafts must stay in migration-drafts, unregistered; run the draft specs. Rules: use Edit/Write; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops; do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code; run the focused suites, api typecheck and `node scripts/naming/technical-naming-census.mjs --check`.\"): subagent terminated by API session rate limit (429) before reporting; partial files remain in the tree. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2ba85a74"
+      ],
+      "result": "rate limit, transient; retry continuing from partial files",
+      "failureReason": null,
+      "recoveryOf": "p-drop-drafts-hardening",
+      "blockedExternal": null
+    }
+  ],
+  "requireWorkflow": true,
+  "workflowInstanceId": "work-c27898bd"
+}

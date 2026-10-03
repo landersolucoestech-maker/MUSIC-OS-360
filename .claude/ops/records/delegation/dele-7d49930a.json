@@ -1,0 +1,11 @@
+{
+  "id": "dele-7d49930a",
+  "createdAt": "2026-10-02T22:33:36.592Z",
+  "agent": "implementation-engineer",
+  "objective": "Implement scripts/naming/residue-census.mjs and scripts/naming/residue-census.test.mjs (node:test, same style as the sibling *.test.mjs) per the proposal in the b6-compat-groups report (group-map at /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/group-map.json, groups of class REQUIRES_ENVIRONMENT_BACKFILL_PROOF, relatedMigrations): for each group a read-only SELECT count(*) of rows still holding the legacy values (derive each predicate from the migration's own candidatePredicate/exact-match map, never from memory), executed inside BEGIN READ ONLY against DATABASE_URL; one line per group (table, column, legacy values, count); exit 0 only if every count is 0, exit 1 if any residue, and a distinct non-zero exit code with the message BLOCKED when there is no database connection (never PASS). Tests use a fake pg client for the logic and, when DATABASE_URL points to a disposable PostgreSQL, an optional integration case. Register the script in the root package.json scripts as naming:residue-census (no other change to package.json). Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "scripts/naming"
+  ],
+  "status": "CLOSED"
+}

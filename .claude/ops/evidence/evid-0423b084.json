@@ -1,0 +1,16 @@
+{
+  "id": "evid-0423b084",
+  "createdAt": "2026-10-03T03:45:46.412Z",
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "env DATABASE_URL=postgresql://postgres@127.0.0.1:54329/music_os_scratch DB_SSL=false node scripts/naming/schema-naming-census.mjs --check",
+  "command": "env DATABASE_URL=postgresql://postgres@127.0.0.1:54329/music_os_scratch DB_SSL=false node scripts/naming/schema-naming-census.mjs --check",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "schema naming census: 5204 catalog objects, 1 Portuguese names (37 excepted)",
+  "stderrTail": "NEW Portuguese schema names (rename in a migration, or register an exception):\n  schema::constraint-value::invoices.chk_invoices_payment_method::transferencia",
+  "workspaceFingerprint": "8f149356dc02213b8f9235515ec961044c8f55de653dd0c2e83d280c153c0737",
+  "fingerprintStatus": "BOUND",
+  "head": "580521c519c7b8436b534b179591485e7e0a66da",
+  "durationMs": 640
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-43487541",
+  "createdAt": "2026-10-02T22:55:39.761Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts legacy-compat",
+  "command": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts legacy-compat",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "8c3c2fdbf2257264d5325fb3aaff5ebaf4cecf4588b62ea4e893eb7ac1842435",
+  "fingerprintStatus": "BOUND",
+  "head": "ffe6c0ba150c2a5dd14fec9ee1cb197d6ee5f542",
+  "durationMs": 18367
+}

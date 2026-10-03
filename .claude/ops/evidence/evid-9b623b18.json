@@ -1,0 +1,15 @@
+{
+  "id": "evid-9b623b18",
+  "createdAt": "2026-10-02T22:33:21.107Z",
+  "type": "COMMAND",
+  "label": "node --test scripts/verify-provider-residue.test.mjs",
+  "command": "node --test scripts/verify-provider-residue.test.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "TAP version 13\n# Subtest: a clean tree passes with a fully matched allowlist\nok 1 - a clean tree passes with a fully matched allowlist\n  ---\n  duration_ms: 13.423213\n  type: 'test'\n  ...\n# Subtest: a direct Vercel reference outside the allowlist fails\nok 2 - a direct Vercel reference outside the allowlist fails\n  ---\n  duration_ms: 9.882351\n  type: 'test'\n  ...\n# Subtest: a direct Clerk reference outside the allowlist fails\nok 3 - a direct Clerk reference outside the allowlist fails\n  ---\n  duration_ms: 7.647895\n  type: 'test'\n  ...\n# Subtest: a direct Replit reference outside the allowlist fails\nok 4 - a direct Replit reference outside the allowlist fails\n  ---\n  duration_ms: 7.287003\n  type: 'test'\n  ...\n# Subtest: split-string evasions are detected\nok 5 - split-string evasions are detected\n  ---\n  duration_ms: 0.836123\n  type: 'test'\n  ...\n# Subtest: provider identifiers are detected\nok 6 - provider identifiers are detected\n  ---\n  duration_ms: 0.192852\n  type: 'test'\n  ...\n# Subtest: unrelated code is not flagged\nok 7 - unrelated code is not flagged\n  ---\n  duration_ms: 0.246802\n  type: 'test'\n  ...\n# Subtest: the same content inside an allowlisted path passes\nok 8 - the same content inside an allowlisted path passes\n  ---\n  duration_ms: 9.377029\n  type: 'test'\n  ...\n# Subtest: a stale allowlist entry fails\nok 9 - a stale allowlist entry fails\n  ---\n  duration_ms: 9.176948\n  type: 'test'\n  ...\n# Subtest: a provider name in a file name fails\nok 10 - a provider name in a file name fails\n  ---\n  duration_ms: 26.773808\n  type: 'test'\n  ...\n# Subtest: every allowlist entry documents a reason\nok 11 - every allowlist entry documents a reason\n  ---\n  duration_ms: 0.737041\n  type: 'test'\n  ...\n1..11\n# tests 11\n# suites 0\n# pass 11\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 222.090832",
+  "stderrTail": "",
+  "workspaceFingerprint": "442ddd51a19950ff3f145f2557e5e21a5ec3b48e35f2dd2c90a69a82230ce051",
+  "fingerprintStatus": "BOUND",
+  "head": "ad618b3e9d34c1ce968b80e4688dd6fa682049d3",
+  "durationMs": 299
+}

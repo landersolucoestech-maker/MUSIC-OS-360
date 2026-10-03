@@ -1,0 +1,15 @@
+{
+  "id": "evid-fb02e817",
+  "createdAt": "2026-10-02T22:50:10.603Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && npx jest src/modules/transactions/transaction-category-slugs.spec.ts src/database/transaction-taxonomy.migration.spec.ts",
+  "command": "cd apps/api && npx jest src/modules/transactions/transaction-category-slugs.spec.ts src/database/transaction-taxonomy.migration.spec.ts",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "baa55fd83553138d64a06d2511feb8cdda0ffb3e1ce314b07e087515b6879b3c",
+  "fingerprintStatus": "BOUND",
+  "head": "ffe6c0ba150c2a5dd14fec9ee1cb197d6ee5f542",
+  "durationMs": 2
+}

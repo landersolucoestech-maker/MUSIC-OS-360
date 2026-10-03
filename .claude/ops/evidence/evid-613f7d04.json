@@ -1,0 +1,12 @@
+{
+  "id": "evid-613f7d04",
+  "createdAt": "2026-10-03T00:12:39.373Z",
+  "type": "REVIEW",
+  "reviewer": "dead-code-detector",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "residue scan: F1 stale rows and F2 stale doc fixed in this commit; F3 docs already labelled historical",
+  "workspaceFingerprint": "257e43ff4897ebf7c398e88d18d88c921a79749e9701323dc83612f4b6817511",
+  "fingerprintStatus": "BOUND",
+  "head": "bb700f4685bed79952c6cd231bb671726e8d6ee3"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "dele-5e98e118",
+  "createdAt": "2026-10-02T21:48:17.680Z",
+  "agent": "frontend-engineer",
+  "objective": "BLK-HR-PII, resolvable part (task b2-pii-fields report): EmployeeFormModal.tsx collects rg, birthDate and address but handleSubmit drops them and nothing reads the columns. Remove the three inputs, their state, reset/edit-load code and validation references, and the same three fields from apps/web/src/modules/hr/schemas/employee-schema.ts; update modal/schema tests and add a test that the submitted payload and the rendered form contain none of the three fields. Do not touch the API or the database (dropping the columns is a separate approval-gated step). Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/web/src/modules/hr"
+  ],
+  "status": "CLOSED"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-d9d5ba87",
+  "createdAt": "2026-10-02T23:16:10.317Z",
+  "type": "COMMAND",
+  "label": "env DB_SSL=false NODE_ENV=test DATABASE_URL=postgresql://musicos360@127.0.0.1:54329/music_os_drops_base pnpm --filter @music-os-360/api exec jest --config jest.e2e.config.ts test/e2e/schema/legacy-column-drop-drafts",
+  "command": "env DB_SSL=false NODE_ENV=test DATABASE_URL=postgresql://musicos360@127.0.0.1:54329/music_os_drops_base pnpm --filter @music-os-360/api exec jest --config jest.e2e.config.ts test/e2e/schema/legacy-column-drop-drafts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "console.log\n    LC1 PREFLIGHT COUNTS {\"works:language_label_without_language:clean\":0,\"works:instrumental_flag_without_is_instrumental:clean\":0,\"works:ai_used_without_ai_used:clean\":0,\"works:alternative_titles_without_alternative_titles:clean\":0,\"works:lyrics_without_lyrics:clean\":0,\"works:lyrics_without_lyrics:violating\":1,\"works:archived_rows\":1,\"phonograms:recording_date_missing:clean\":0,\"phonograms:release_date_missing:clean\":0,\"phonograms:duration_seconds_missing:clean\":0,\"phonograms:country_of_recording_missing:clean\":0,\"phonograms:country_of_recording_missing:violating\":1,\"phonograms:archived_rows\":1,\"transactions:attachment_url_missing:clean\":0,\"transactions:reference_not_in_notes:clean\":0,\"transactions:attachment_url_missing:violating\":1,\"transactions:archived_rows\":1,\"clients:contact_status_without_status:clean\":0,\"clients:contact_status_without_status:violating\":1,\"clients:archived_rows\":1,\"shares:artist_project_id_differs_from_artist_id:clean\":0,\"shares:artist_project_id_differs_from_artist_id:violating\":1,\"shares:archived_rows\":1,\"employees:full_name_differs_from_name:clean\":0,\"employees:sector_differs_from_department:clean\":0,\"employees:base_salary_differs_from_salary:clean\":0,\"payroll_entries:employee_id_differs:clean\":0,\"payroll_entries:reference_month_differs:clean\":0,\"leave_requests:employee_id_differs:clean\":0,\"employees:full_name_differs_from_name:violating\":1,\"employees:archived_rows\":2,\"payroll_entries:archived_rows\":1,\"leave_requests:archived_rows\":1,\"events:diverging:clean\":0,\"events:null_start:clean\":0,\"events:diverging:violating\":1}\n\n      at Object.<anonymous> (test/e2e/schema/legacy-column-drop-drafts.e2e-spec.ts:169:13)",
+  "stderrTail": "",
+  "workspaceFingerprint": "53dbe0b3bb12aa74e7a4fa277aa3f3eea122af49d3b6716d85c97731b728191d",
+  "fingerprintStatus": "BOUND",
+  "head": "05404807ba960530a94c89f96dfbf900a1d12886",
+  "durationMs": 9838
+}

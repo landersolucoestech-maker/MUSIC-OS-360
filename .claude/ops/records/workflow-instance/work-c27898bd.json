@@ -1,0 +1,134 @@
+{
+  "id": "work-c27898bd",
+  "createdAt": "2026-10-02T21:43:07.535Z",
+  "workflow": "naming-normalization",
+  "planId": "orch-dff75522",
+  "matchId": "work-b3fd2144",
+  "status": "ACTIVE",
+  "adoptedFrom": [
+    "orch-a03c3f22"
+  ],
+  "steps": [
+    {
+      "phase": "census",
+      "taskIds": [
+        "census"
+      ],
+      "adopted": [
+        "orch-a03c3f22:census-baseline"
+      ]
+    },
+    {
+      "phase": "classify",
+      "taskIds": [
+        "classify",
+        "b1-drops-tracing",
+        "b2-pii-fields",
+        "b3-taxonomies",
+        "b4-share-type",
+        "b5-platform",
+        "b6-compat-groups",
+        "b7-auth-boundary"
+      ],
+      "adopted": [
+        "orch-a03c3f22:triage-db-blockers",
+        "orch-a03c3f22:triage-app-blockers",
+        "orch-a03c3f22:triage-compat-rows",
+        "orch-a03c3f22:share-type-todo",
+        "orch-a03c3f22:env-var-audit"
+      ]
+    },
+    {
+      "phase": "canonical-model",
+      "taskIds": [
+        "canonical-model"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "schema-plan",
+      "taskIds": [
+        "schema-plan",
+        "s1-drops-prep",
+        "p-drop-drafts-hardening"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "destructive-approval",
+      "taskIds": [
+        "destructive-approval"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "propagate",
+      "taskIds": [
+        "propagate",
+        "p-share-type",
+        "p-pii-hr",
+        "p-sql-dump",
+        "p-auth-hardening",
+        "p-xlsx-e2e",
+        "p-tx-categories",
+        "p-phonogram-derived",
+        "p-drop-entity-prep"
+      ],
+      "adopted": [
+        "orch-a03c3f22:remove-dead-entities",
+        "orch-a03c3f22:env-cleanup",
+        "orch-a03c3f22:share-type-dedup",
+        "orch-a03c3f22:dev-auth-regression",
+        "orch-a03c3f22:fix-workflow-error-text",
+        "orch-a03c3f22:fix-projects-export",
+        "orch-a03c3f22:fix-contract-filters",
+        "orch-a03c3f22:fix-takedowns-entity",
+        "orch-a03c3f22:fix-residue-census-docs"
+      ]
+    },
+    {
+      "phase": "compatibility",
+      "taskIds": [
+        "compatibility",
+        "c-api",
+        "c-web-1",
+        "c-web-2",
+        "c-verify-rows",
+        "c-residue-census"
+      ],
+      "adopted": [
+        "orch-a03c3f22:compat-coverage-tests"
+      ]
+    },
+    {
+      "phase": "verify",
+      "taskIds": [
+        "verify"
+      ],
+      "adopted": [
+        "orch-a03c3f22:migration-verifiers"
+      ]
+    },
+    {
+      "phase": "residue",
+      "taskIds": [
+        "residue"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "review",
+      "taskIds": [
+        "review"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "closure",
+      "taskIds": [
+        "closure"
+      ],
+      "adopted": []
+    }
+  ]
+}

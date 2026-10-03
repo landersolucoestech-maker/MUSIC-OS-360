@@ -1,0 +1,9 @@
+{
+  "id": "dele-c481a85a",
+  "createdAt": "2026-10-02T21:43:14.464Z",
+  "agent": "devops-ci-reviewer",
+  "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. Platform items, separately: (1) CI job name `Security Regression (FASE 9.x fixes)`: derive from .github/workflows/**, required-check references in workflows/scripts/docs/badges/previous audit evidence whether it can be renamed safely; only remote branch-protection access may stay external. (2) apps/api/migrations-complete.sql: function, consumers, whether canonical or generated (scripts/dump-migrations-sql.ts), legacy, duplicate of migrations, whether it can be removed together with the allowlist in scripts/verify-provider-residue.mjs, its test and docs. (3) xlsx dependency: real consumers (e2e specs at the repository root, apps/api, apps/web), import graph, whether the root needs it, whether the specs can move to the right workspace or use that workspace's dependency, and the relation to scripts/verify-xlsx-only.mjs and supply-chain rules (lockfile churn). Give an implementable change list for every internal part.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

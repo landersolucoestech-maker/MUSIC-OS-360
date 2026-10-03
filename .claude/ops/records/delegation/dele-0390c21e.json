@@ -1,0 +1,9 @@
+{
+  "id": "dele-0390c21e",
+  "createdAt": "2026-10-02T21:43:14.467Z",
+  "agent": "authentication-reviewer",
+  "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. Separate in writing (no code change) what authentication behavior is validated INTERNALLY by the repository's tests and gates (production guards, fail-closed startup, middleware, authorization, token validation paths, session handling, RLS interaction, mocked contract tests, config validation, dev bypass isolation) with test file references, from what is NOT validated EXTERNALLY (only the E2E that needs institutional credentials, and server-side access-token revocation). Do not generalize the external gap to the whole architecture.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

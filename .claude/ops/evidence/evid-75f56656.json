@@ -1,0 +1,15 @@
+{
+  "id": "evid-75f56656",
+  "createdAt": "2026-10-02T22:50:13.775Z",
+  "type": "COMMAND",
+  "label": "cd apps/web && npx vitest run src/modules/accounting src/modules/settings/lib src/modules/hr/components src/modules/releases",
+  "command": "cd apps/web && npx vitest run src/modules/accounting src/modules/settings/lib src/modules/hr/components src/modules/releases",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "baa55fd83553138d64a06d2511feb8cdda0ffb3e1ce314b07e087515b6879b3c",
+  "fingerprintStatus": "BOUND",
+  "head": "ffe6c0ba150c2a5dd14fec9ee1cb197d6ee5f542",
+  "durationMs": 2
+}

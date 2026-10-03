@@ -1,0 +1,12 @@
+{
+  "id": "evid-2cbd6b45",
+  "createdAt": "2026-10-02T23:16:27.574Z",
+  "type": "REVIEW",
+  "reviewer": "migration-planner",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "schema-plan review: gaps G1-G12; G1,G2,G3,G4,G5,G8,G9 fixed in 0540480 (G6,G7,G10-12 environment/external evidence)",
+  "workspaceFingerprint": "53dbe0b3bb12aa74e7a4fa277aa3f3eea122af49d3b6716d85c97731b728191d",
+  "fingerprintStatus": "BOUND",
+  "head": "05404807ba960530a94c89f96dfbf900a1d12886"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-d59c4a2f",
+  "createdAt": "2026-10-03T00:12:39.117Z",
+  "type": "COMMAND",
+  "label": "node scripts/naming/render-naming-docs.mjs --check",
+  "command": "node scripts/naming/render-naming-docs.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "naming docs in sync (96 concepts, 0 renames, 2971 exceptions)",
+  "stderrTail": "",
+  "workspaceFingerprint": "257e43ff4897ebf7c398e88d18d88c921a79749e9701323dc83612f4b6817511",
+  "fingerprintStatus": "BOUND",
+  "head": "bb700f4685bed79952c6cd231bb671726e8d6ee3",
+  "durationMs": 196
+}

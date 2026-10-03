@@ -1,0 +1,17 @@
+{
+  "id": "dele-ad30539a",
+  "createdAt": "2026-10-02T21:48:17.683Z",
+  "agent": "refactoring-engineer",
+  "objective": "BLK-LEGACY-ROOT-SQL final part (task b5-platform report; the dump is tracked, generated, a stale partial snapshot of 10 of 332 migrations, not canonical; git history is the recovery, so this is not a data-destructive operation): (1) git rm apps/api/migrations-complete.sql; (2) remove its allowlist entry in scripts/verify-provider-residue.mjs (~51-55); (3) in scripts/verify-provider-residue.test.mjs keep the 'stale allowlist is reported' assertion meaningful by switching the fixture to another allowlisted path (do not delete or weaken the assertion); (4) delete apps/api/scripts/dump-migrations-sql.ts and the dump:sql script in apps/api/package.json so the file cannot be regenerated; (5) update docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md (line ~96, 139-148, 367) and docs/CODEBASE_MAP.md (~31, 169) replacing line-range citations with the migrations that define the tables; (6) comment-only edit of the reference in migration 20260821000001 if it exists (must not change behavior). Run node --test scripts/verify-provider-residue.test.mjs, node scripts/verify-provider-residue.mjs, pnpm typecheck. Do not edit historical files under docs/backend-v2 or docs/audit. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/migrations-complete.sql",
+    "apps/api/scripts/dump-migrations-sql.ts",
+    "apps/api/package.json",
+    "scripts/verify-provider-residue.mjs",
+    "scripts/verify-provider-residue.test.mjs",
+    "docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md",
+    "docs/CODEBASE_MAP.md"
+  ],
+  "status": "CLOSED"
+}

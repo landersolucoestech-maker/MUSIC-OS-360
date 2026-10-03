@@ -1,0 +1,15 @@
+{
+  "id": "evid-d4ca8d6f",
+  "createdAt": "2026-10-03T00:01:21.867Z",
+  "type": "COMMAND",
+  "label": "node scripts/verify-branch-topology.mjs",
+  "command": "node scripts/verify-branch-topology.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ Branch topology verified: dev is the only branch",
+  "stderrTail": "",
+  "workspaceFingerprint": "d009c3c3b08d9bc5de02ff27259bdc98b7ba74f6e28c37b5097f11d6c17aa84f",
+  "fingerprintStatus": "BOUND",
+  "head": "7a1ae8cc390bb62db78fbe8bcaa61d8fd213b983",
+  "durationMs": 60
+}

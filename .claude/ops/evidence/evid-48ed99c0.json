@@ -1,0 +1,15 @@
+{
+  "id": "evid-48ed99c0",
+  "createdAt": "2026-10-02T22:55:59.665Z",
+  "type": "COMMAND",
+  "label": "node scripts/naming/technical-naming-census.mjs --check",
+  "command": "node scripts/naming/technical-naming-census.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "technical-naming census: 4544 files, debt {\"doc\":8696}",
+  "stderrTail": "",
+  "workspaceFingerprint": "8c3c2fdbf2257264d5325fb3aaff5ebaf4cecf4588b62ea4e893eb7ac1842435",
+  "fingerprintStatus": "BOUND",
+  "head": "ffe6c0ba150c2a5dd14fec9ee1cb197d6ee5f542",
+  "durationMs": 13311
+}

@@ -1,0 +1,14 @@
+{
+  "id": "dele-c9e6147d",
+  "createdAt": "2026-10-02T21:52:51.625Z",
+  "agent": "backend-engineer",
+  "objective": "BLK-TRANSACTION-CATEGORY-TAXONOMY is resolvable (task b3-taxonomies, item 1): the two slugs are persisted machine values with fixed PT-BR labels and nothing branches on their accounting meaning. Implement the change list: (1) apps/api/src/modules/transactions/transaction-category-slugs.ts add 'receitas-internas': 'internal_revenue' and 'repasse-contrato': 'contract_pass_through' to LEGACY_TRANSACTION_CATEGORY_SLUGS, set UNMAPPED_TRANSACTION_CATEGORY_SLUGS = [] (keep the export), fix header comments; (2) same in apps/web/src/modules/accounting/constants/transaction-category-slugs.ts; (3) apps/web/.../transaction-constants.ts ~308 and ~394: values internal_revenue and contract_pass_through, labels unchanged; (4) update transaction-category-slugs.spec.ts and transaction-category-slugs.parity.test.ts (reserved set, expectations); (5) new migration apps/api/src/database/migrations/20260930000037_BackfillInternalRevenueAndContractPassThroughSlugs.ts registered in migrations/index.ts, same shape as 20260930000018 (log table, exact-match UPDATE on category and subcategory, reversible down(), no updated_at change); FREEZE migration 18's LEGACY list to a literal snapshot (it derives from the live map today, so the map edit would silently change it) and adjust transaction-taxonomy.migration.spec.ts accordingly without weakening it; add a migration spec for 37 in the style of the existing ones; (6) docs/runbooks/staging-to-production.md: add a residue census subsection for 20260930000037 derived from its own predicate. Do not touch any other file. Mention in the report the Portuguese literals your new tests contain. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Run focused suites, the api typecheck (npx tsc --noEmit -p tsconfig.json in apps/api) and `node scripts/naming/technical-naming-census.mjs --check`; report any new Portuguese literal in tests with its file.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/modules/transactions",
+    "apps/api/src/database/migrations",
+    "apps/web/src/modules/accounting",
+    "docs/runbooks/staging-to-production.md"
+  ],
+  "status": "CLOSED"
+}

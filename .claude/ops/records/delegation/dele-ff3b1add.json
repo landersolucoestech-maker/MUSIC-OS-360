@@ -1,0 +1,9 @@
+{
+  "id": "dele-ff3b1add",
+  "createdAt": "2026-10-02T21:43:14.463Z",
+  "agent": "requirements-analyst",
+  "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. share_type, decided SEPARATELY as A canonical enum (which values are already used semantically: schema, migrations, types, DTOs, validators, services, repositories, frontend share-schema, imports, exports, XLSX, reports, calculations, tests, fixtures, git history, docs), B nullability (does NULL mean valid absence or historical debt), C default (implicit behavior already relied on), D backfill (do existing rows allow deterministic inference, from which fields: work_id/phonogram_id/holder_*/party_role vs financial fields). State what is derivable for each and implement-ready change lists for every derivable part; only the parts that truly need business input remain decisions.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

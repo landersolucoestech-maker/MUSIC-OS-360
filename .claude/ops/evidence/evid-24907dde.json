@@ -1,0 +1,15 @@
+{
+  "id": "evid-24907dde",
+  "createdAt": "2026-10-02T22:51:36.986Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts src/modules/phonograms/phonograms-derived-fields.spec.ts src/common/registry-fields",
+  "command": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts src/modules/phonograms/phonograms-derived-fields.spec.ts src/common/registry-fields",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "f80cdbef2097d831cbba6e487fe0f04a3529003683ce16ecbb368418c5808973",
+  "fingerprintStatus": "BOUND",
+  "head": "ffe6c0ba150c2a5dd14fec9ee1cb197d6ee5f542",
+  "durationMs": 20340
+}

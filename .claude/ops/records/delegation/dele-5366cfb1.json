@@ -1,0 +1,9 @@
+{
+  "id": "dele-5366cfb1",
+  "createdAt": "2026-10-02T22:52:36.157Z",
+  "agent": "migration-test-engineer",
+  "objective": "After b1-drops-tracing: on a disposable PostgreSQL (start/stop as the postgres user, see scratchpad scripts dbgates.sh for the exact commands) apply the repository migrations, then for each of the seven drop groups run the archive-then-drop draft against a COPY database (never the main scratch DB): seed representative legacy rows, run the preflight SQL and record the exact counts, run up(), verify the archive table and that the columns are gone, run down() and verify the values are restored by id, run up() again. Draft fixes at the root if a draft is wrong. The drafts must remain unregistered and no DROP may touch anything but the disposable copy. Add a jest/spec or script test for each draft where the repository pattern allows. Stop the server at the end.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

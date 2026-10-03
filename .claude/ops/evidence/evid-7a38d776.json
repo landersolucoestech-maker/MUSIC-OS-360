@@ -1,0 +1,12 @@
+{
+  "id": "evid-7a38d776",
+  "createdAt": "2026-10-02T21:53:33.378Z",
+  "type": "REVIEW",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "transaction categories, phonogram derived fields, contract categories (tenant-owned), client profile: resolvable with change lists; releases status (Release vs Distribution) and HR documents (types/retention/read scope): genuine business decisions",
+  "workspaceFingerprint": "b366984dbc91c92ea154224b701e44d3e01126db10b53f385274a0978cc4cb0a",
+  "fingerprintStatus": "BOUND",
+  "head": "31c9fca58851778e571ea8dbdcaf66d6d02fdc86"
+}

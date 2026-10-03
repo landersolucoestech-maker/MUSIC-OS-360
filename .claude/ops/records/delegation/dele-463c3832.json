@@ -1,0 +1,17 @@
+{
+  "id": "dele-463c3832",
+  "createdAt": "2026-10-02T22:33:36.596Z",
+  "agent": "implementation-engineer",
+  "objective": "Non-destructive preparation of the seven column drops (b1-drops-tracing, section 4 E1-E7): the 16 legacy_* columns are nullable, select:false and never written; events.data is filled by a DB trigger and has no reader. Remove the entity declarations only (no migration, no DB change, the physical columns remain until an approved drop): E1 remove the 16 legacy_* declarations in apps/api/src/database/entities.ts (works 5 ~783-787, phonograms 5 ~926-930, transactions 4 ~1095-1098, clients 1 ~1210, shares 1 ~1579); E2 remove EventEntity.data (~1387) with its comment; E3 events-data-legacy-column.spec.ts: replace the entity-keeps-data assertions by 'entity declares no data' keeping every trigger assertion; E4 apps/web events.types.ts remove the data? field and stale comment; E5 client-entity-schema-alignment.spec.ts: do NOT just delete the status_contato entry (the migration text still declares it): add a dropped-columns filter in extractMigrationColumns, keeping the test strict for every other column; E6 regenerate the two .audit-runtime/*.jsonl baselines following the procedure in the header of pt-column-naming-baseline.guard.spec.ts (works.legacy_instrumental_flag disappears) and keep that guard test passing; E7 update the stale comment in share-legacy-fields.ts. Do NOT touch verify-canonical-column-order.ts (it must change only in the drop release), migrations, migration-drafts or migrations/index.ts. Check by search that nothing else references the removed fields (an API response shape change for events data is intended: no reader exists). Run: jest src/database src/modules/shares src/modules/events src/modules/clients src/modules/works src/modules/phonograms src/modules/transactions, web vitest src/modules/events, tsc for api and web. Rules: use Edit/Write; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops; do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code; run the focused suites, api typecheck and `node scripts/naming/technical-naming-census.mjs --check`.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/database/entities.ts",
+    "apps/api/src/database/events-data-legacy-column.spec.ts",
+    "apps/api/src/database/client-entity-schema-alignment.spec.ts",
+    "apps/web/src/modules/events/types/events.types.ts",
+    "apps/api/src/modules/shares/share-legacy-fields.ts",
+    ".audit-runtime/pt-column-census.jsonl",
+    ".audit-runtime/pt-census-classified.jsonl"
+  ],
+  "status": "CLOSED"
+}

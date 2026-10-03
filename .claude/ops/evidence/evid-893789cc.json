@@ -1,0 +1,12 @@
+{
+  "id": "evid-893789cc",
+  "createdAt": "2026-10-02T21:53:34.917Z",
+  "type": "REVIEW",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "1075 uncovered rows regrouped into 100 behavioral groups (67 necessary and testable, 733 requiring environment backfill proof, 275 external contract boundary, 0 provably obsolete); row plan: 630 self-existing tests, 198 existing tests, 247 need 51 new files; residue-census verifier proposed",
+  "workspaceFingerprint": "b366984dbc91c92ea154224b701e44d3e01126db10b53f385274a0978cc4cb0a",
+  "fingerprintStatus": "BOUND",
+  "head": "31c9fca58851778e571ea8dbdcaf66d6d02fdc86"
+}

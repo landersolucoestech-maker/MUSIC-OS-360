@@ -1,0 +1,11 @@
+{
+  "id": "dele-4c71726a",
+  "createdAt": "2026-10-02T21:48:17.691Z",
+  "agent": "qa-engineer",
+  "objective": "Create the 12 web test files of /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/b6/slice-web2.json (same method and rules as the sibling task c-web-1: real module, legacy in canonical out, mutation proof, one table-driven test per file). Return JSON {ledgerIndex: coveringTestPath} and reasons for rows not covered. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/web/src"
+  ],
+  "status": "CLOSED"
+}

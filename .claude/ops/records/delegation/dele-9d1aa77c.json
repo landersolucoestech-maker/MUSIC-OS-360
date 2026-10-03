@@ -1,0 +1,9 @@
+{
+  "id": "dele-9d1aa77c",
+  "createdAt": "2026-10-02T21:43:14.461Z",
+  "agent": "naming-analyzer",
+  "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. Taxonomy blockers: BLK-TRANSACTION-CATEGORY-TAXONOMY (receitas-internas, repasse-contrato), BLK-RELEASES-STATUS-CHECK (releases.status values rejeitado/takedown/take_down/remocao vs ReleaseStatus enum and workflow), BLK-PHONOGRAMS-DERIVED-FIELDS (duration_text vs duration_seconds, isrc vs isrc_* parts), BLK-HR-EMPLOYEE-DOCUMENTS, BLK-CONTRACT-CATEGORY-REGISTRY (non_exclusive, representation, services), BLK-CLIENT-PROFILE-TAXONOMY residual. Investigate enums, migrations, fixtures, DTOs, validators, UI, filters, reports, tests, docs, domain rules, historical data and the canonical map. Preserve Work != Phonogram != released music, Project != Release != Distribution and the three contract kinds. If one interpretation is already supported by the existing model, say so and give the exact implementation (so it can be done now); keep GENUINE_BUSINESS_DECISION only when two or more valid alternatives remain after the full investigation.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/verify-provider-residue.mjs",
+  "command": "node scripts/verify-provider-residue.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "[verify-provider-residue] PASS — no active provider coupling; allowlist validated.",
+  "stderrTail": "",
+  "workspaceFingerprint": "0e9e56b785ecab761b2496fc609db9d28d943fbd48dbf26e59462d3d7c7d96eb",
+  "fingerprintStatus": "BOUND",
+  "head": "89d2a6983092666f5e9051f990881998330a1620",
+  "durationMs": 1546,
+  "id": "evid-04627fc1",
+  "createdAt": "2026-10-03T04:18:11.459Z"
+}

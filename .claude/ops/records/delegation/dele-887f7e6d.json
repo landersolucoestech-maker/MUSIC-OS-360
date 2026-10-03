@@ -1,0 +1,9 @@
+{
+  "id": "dele-887f7e6d",
+  "createdAt": "2026-10-02T23:53:50.089Z",
+  "agent": "migration-test-engineer",
+  "objective": "Phase \"verify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: verification-controller.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

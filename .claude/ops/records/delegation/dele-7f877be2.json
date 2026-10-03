@@ -1,0 +1,9 @@
+{
+  "id": "dele-7f877be2",
+  "createdAt": "2026-10-02T23:04:31.815Z",
+  "agent": "migration-planner",
+  "objective": "Phase \"schema-plan\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: database-reviewer, rollback-planner.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

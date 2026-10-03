@@ -1,0 +1,15 @@
+{
+  "id": "evid-ac32403d",
+  "createdAt": "2026-10-03T00:12:38.765Z",
+  "type": "COMMAND",
+  "label": "node scripts/verify-provider-residue.mjs",
+  "command": "node scripts/verify-provider-residue.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "[verify-provider-residue] PASS — no active provider coupling; allowlist validated.",
+  "stderrTail": "",
+  "workspaceFingerprint": "257e43ff4897ebf7c398e88d18d88c921a79749e9701323dc83612f4b6817511",
+  "fingerprintStatus": "BOUND",
+  "head": "bb700f4685bed79952c6cd231bb671726e8d6ee3",
+  "durationMs": 1609
+}

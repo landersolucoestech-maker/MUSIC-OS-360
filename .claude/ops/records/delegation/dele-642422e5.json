@@ -1,0 +1,15 @@
+{
+  "id": "dele-642422e5",
+  "createdAt": "2026-10-02T21:48:17.687Z",
+  "agent": "e2e-engineer",
+  "objective": "BLK-E2E-ROOT-XLSX-DEPENDENCY (task b5-platform report): e2e/p86-reports-centralization.spec.ts and e2e/reports-export.spec.ts import 'xlsx' but the root has no xlsx and no hoisting, so they cannot load; the root playwright suite is not run in CI. Do NOT add xlsx to the root package.json (lockfile churn, waiver widening). Determine whether the root playwright config and @playwright/test already exist and where; implement the cleanest internal fix: preferably move these two specs (and any shared helper they need) under the workspace that depends on xlsx (apps/web) with a minimal playwright config there, or, if that is not feasible, resolve xlsx through a single helper that uses createRequire anchored at apps/web/package.json. Update the dependency waiver evidence if spec locations change, update pnpm test:e2e scripts accordingly, and prove with `node -e` / a dry run (playwright test --list) that both specs load. pnpm-lock.yaml must not change. Rules: use Edit/Write for edits; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops (the orchestrator applies the ledger once); do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code. Before reporting run the focused suites and `node scripts/naming/technical-naming-census.mjs --check` (a new Portuguese literal in a test must be reported with its file so a whole-file exemption row can be added; do not hide it).",
+  "requirementIds": [],
+  "filesInScope": [
+    "e2e",
+    "apps/web",
+    "package.json",
+    "playwright.config.ts",
+    ".github/workflows"
+  ],
+  "status": "CLOSED"
+}

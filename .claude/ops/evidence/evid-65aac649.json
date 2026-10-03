@@ -1,0 +1,13 @@
+{
+  "type": "REVIEW",
+  "missionId": "mission-c83f8d58",
+  "reviewer": "regression-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "final regression review: api 500 suites/7350 tests, web 2163 tests, pack 12 files green; one HIGH finding (stale naming map markdown) fixed in b6fef66 and re-verified (pnpm naming:check exit 0 on pristine export)",
+  "workspaceFingerprint": "f855683821ed8f09a929a7e96fc16b5ad6ee7321d0288a8d055d8a6cdfe650cd",
+  "fingerprintStatus": "BOUND",
+  "head": "b6fef66109d3043eced06803644e8e81c5573a0d",
+  "id": "evid-65aac649",
+  "createdAt": "2026-10-03T04:07:09.171Z"
+}

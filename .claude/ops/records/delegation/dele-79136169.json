@@ -1,0 +1,9 @@
+{
+  "id": "dele-79136169",
+  "createdAt": "2026-10-02T21:43:14.459Z",
+  "agent": "pii-reviewer",
+  "objective": "READ-ONLY: edit no repository file and no .claude/ops; report evidence-backed findings with file:line; run tests/queries only to verify. Classify strictly as RESOLVABLE_FROM_CANONICAL_SOURCES, DESTRUCTIVE_APPROVAL_REQUIRED, GENUINE_BUSINESS_DECISION or EXTERNAL (no other category) and for each item give the exact change list for the resolvable part. PII fields of BLK-HR-PII (employees.birth_date, address, rg and any other field the HR form collects but never persists) and BLK-CRM-PII-PLAINTEXT (clients.metadata cpf/cnpj; artists.metadata rg, birth date, address, bank data). For EACH field: name, table or jsonb key, domain, current purpose, producers, consumers, UI, API, reports, exports, integrations, retention, operational need, whether data exists in the schema or migrations/seeds, current classification, minimization and removal possibility, impact of encryption (existing EncryptionService pattern for cpf/email/phone in hr.service.ts) and impact of removal. A field with no legitimate functional consumer is classified for removal; a field with a proven functional need gets a protection strategy compatible with the existing architecture. Output per-field verdicts and the residual human decision.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED"
+}

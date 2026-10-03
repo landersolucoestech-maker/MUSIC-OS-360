@@ -1,0 +1,12 @@
+{
+  "id": "evid-3823781e",
+  "createdAt": "2026-10-02T21:53:33.937Z",
+  "type": "REVIEW",
+  "reviewer": "requirements-analyst",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "share_type A-D: financial value set fixed (internal_release, external_receivable) derivable and enforceable; NULL = registry or legacy-unclassified; API default NULL vs web default documented; deterministic backfill inference defined but execution is L5 and the production census is external; registry token is the only business decision",
+  "workspaceFingerprint": "b366984dbc91c92ea154224b701e44d3e01126db10b53f385274a0978cc4cb0a",
+  "fingerprintStatus": "BOUND",
+  "head": "31c9fca58851778e571ea8dbdcaf66d6d02fdc86"
+}

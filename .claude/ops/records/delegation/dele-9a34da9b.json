@@ -1,0 +1,13 @@
+{
+  "id": "dele-9a34da9b",
+  "createdAt": "2026-10-02T21:53:54.253Z",
+  "agent": "migration-engineer",
+  "objective": "Harden the unregistered archive-then-drop drafts (b1-drops-tracing findings F1-F4,F6,F7,F10 and section 4 D1-D3): D1 in legacy-column-drop.base.ts make the archive coverage check compare VALUES (IS NOT DISTINCT FROM per archived column) and make a stale archive row abort or be refreshed (no silent ON CONFLICT DO NOTHING freezing old values on an up/down/up cycle), with spec cases; D2 in 20260930000043_DropClientsLegacyContactStatus.ts keep the check but mark it explicitly informational and add the (legacy,status) pair census requirement to the draft header and the plan section for clients (the claimed canonical status is NOT proven: the 20260719000010 header calls status distinct from status_contato); D3 add a gated Retire*LegacyArchives draft (own confirm token, down() refuses) for the *_legacy_archive_20260930 tables and add the archive tables to the per-tenant erasure procedure in docs/engineering/backfill-side-tables-retention.md; correct the plan docs/engineering/legacy-column-drop-plan.md: F3 (client alignment spec edit is a filter, not a deletion), F4 (events 'data' verifier entry and the two .audit-runtime baselines), F7 (the missing legacy-columns-census.md reference and the AND/OR precedence slip in §3.0 SQL), F10 (deploy the entity removal one release before the drop; staging stops the build before migrating), and add the catalog dependency query (pg_depend) and the exact per-group preflight SQL from the b1 report (retrieve it from the b1 task result in the delegation record or re-derive it from each draft). The drafts must stay in migration-drafts, unregistered; run the draft specs. Rules: use Edit/Write; do NOT edit docs/naming/canonical-naming-map.json, scripts/naming/*baseline*.json or .claude/ops; do not commit; stay inside your scope; never weaken or delete an existing test; report files changed and every command with its exit code; run the focused suites, api typecheck and `node scripts/naming/technical-naming-census.mjs --check`.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/database/migration-drafts",
+    "docs/engineering/legacy-column-drop-plan.md",
+    "docs/engineering/backfill-side-tables-retention.md"
+  ],
+  "status": "CLOSED"
+}
