@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadState } from "../lib/state-store.mjs";
-import { addRecord, updateRecord } from "../lib/record-store.mjs";
+import { addRecord, updateRecord, listRecords } from "../lib/record-store.mjs";
 import { plan, next, done, reassign, addTask, fail, blockExternal, syncApprovals, check, stopCheck, promptHook } from "../orchestrate.mjs";
 
 const OPS = join(dirname(fileURLToPath(import.meta.url)), "..", "ops.mjs");
@@ -190,4 +190,15 @@ test("security: workflow, agent, skill and task names that could leave their dir
   }
   writeFileSync(file, JSON.stringify(tasks({})));
   assert.equal(plan({ order: "x", tasksFile: file, unboundReason: "test of an explicit graph" }, dir).status, "OK");
+}));
+
+test("add-task can attach a per-operation human approval class; the driver requests it only when the task is ready and never grants it", () => withDir((dir) => {
+  plan({ order: "ship", workflow: "release-validation" }, dir);
+  const r = addTask({ id: "approve-op-a", agent: "human-approval-agent", phase: "deploy-approval", deps: ["release-readiness"], approvalClass: "human-approval", objective: "operation A" }, dir);
+  assert.equal(r.status, "OK");
+  const t = listRecords(dir, "orchestration")[0].tasks.find((x) => x.id === "approve-op-a");
+  assert.equal(t.approvalClass, "human-approval");
+  assert.equal(t.status, "PENDING");
+  // it is not ready before its predecessors, so no approval is requested yet
+  assert.notEqual(next({}, dir).dispatched.find?.((d) => d.taskId === "approve-op-a")?.kind, "approval");
 }));

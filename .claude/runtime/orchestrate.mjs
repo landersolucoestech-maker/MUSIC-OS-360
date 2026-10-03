@@ -14,7 +14,7 @@
 //        [--capabilities a,b] [--tasks-file extra.json (tasks carry a phase)] [--adopt-file adopt.json] [--title <t>]
 //        [--unbound-reason "<why>"]   (the only way around workflow matching; recorded)
 //   node .claude/runtime/orchestrate.mjs workflow-status [--plan <id>]
-//   node .claude/runtime/orchestrate.mjs add-task --id .. --agent .. --phase <phase> [--reopen true] ...
+//   node .claude/runtime/orchestrate.mjs add-task --id .. --agent .. --phase <phase> [--reopen true] [--approval-class human-approval] ...
 //   node .claude/runtime/orchestrate.mjs next [--plan <id>] [--limit N]
 //   node .claude/runtime/orchestrate.mjs done --task <id> --evidence <evid-..,..> --summary "<text>" [--plan <id>]
 //   node .claude/runtime/orchestrate.mjs fail --task <id> --reason "<text>" [--plan <id>]
@@ -446,10 +446,10 @@ export function abandon({ planId = null, reason, confirmIncomplete = false }, cw
   return { status: "OK", planId: p.id, abandonedIncompleteTasks: incomplete.length };
 }
 
-export function addTask({ planId = null, id, agent, skills = [], deps = [], blocks = [], objective, acceptance = [], files = [], phase = null, reopen = false }, cwd = ROOT_DEFAULT) {
+export function addTask({ planId = null, id, agent, skills = [], deps = [], blocks = [], objective, acceptance = [], files = [], phase = null, reopen = false, approvalClass = null }, cwd = ROOT_DEFAULT) {
   const p = loadPlan(cwd, planId);
   if (p.workflowInstanceId && !phase) throw new Error(`PHASE_REQUIRED: plan ${p.id} is bound to a workflow instance; attach the task to one of its phases (--phase)`);
-  const t = mkTask({ id, title: id, agent, skills, dependsOn: deps, objective, acceptance, filesInScope: files });
+  const t = mkTask({ id, title: id, agent, skills, dependsOn: deps, objective, acceptance, filesInScope: files, approvalClass });
   let reopened = null;
   if (phase) {
     const phaseTask = p.tasks.find((x) => x.id === phase && (x.phase || x.id) === phase);
@@ -612,7 +612,7 @@ function main() {
       case "done": return out(done({ planId: f.plan || null, task: f.task, evidence: f.evidence, summary: f.summary }, cwd));
       case "fail": return out(fail({ planId: f.plan || null, task: f.task, reason: f.reason }, cwd));
       case "block-external": return out(blockExternal({ planId: f.plan || null, task: f.task, capability: f.capability, cause: f.cause, missing: f.missing, contract: f.contract, current: f.current, fallback: f.fallback, impact: f.impact, unblock: f.unblock }, cwd));
-      case "add-task": return out(addTask({ planId: f.plan || null, id: f.id, agent: f.agent, skills: String(f.skills || "").split(",").filter(Boolean), deps: String(f.deps || "").split(",").filter(Boolean), blocks: String(f.blocks || "").split(",").filter(Boolean), objective: f.objective, acceptance: String(f.acceptance || "").split("|").filter(Boolean), files: String(f.files || "").split(",").filter(Boolean), phase: f.phase || null, reopen: f.reopen === "true" }, cwd));
+      case "add-task": return out(addTask({ planId: f.plan || null, id: f.id, agent: f.agent, skills: String(f.skills || "").split(",").filter(Boolean), deps: String(f.deps || "").split(",").filter(Boolean), blocks: String(f.blocks || "").split(",").filter(Boolean), objective: f.objective, acceptance: String(f.acceptance || "").split("|").filter(Boolean), files: String(f.files || "").split(",").filter(Boolean), phase: f.phase || null, reopen: f.reopen === "true", approvalClass: f["approval-class"] || null }, cwd));
       case "reassign": return out(reassign({ planId: f.plan || null, task: f.task, agent: f.agent }, cwd));
       case "sync-approvals": return out(syncApprovals({ planId: f.plan || null }, cwd));
       case "status": return out(summary(loadPlan(cwd, f.plan || null)));
