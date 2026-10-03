@@ -55059,6 +55059,23 @@
       "dependency": null,
       "status": "ACTIVE",
       "coveringTest": "apps/api/src/modules/reports/i18n/field-labels.legacy-keys.spec.ts"
+    },
+    {
+      "item": "release status census document quotes the legacy release status literals (whole document)",
+      "path": "docs/engineering/release-status-census.md",
+      "currentName": "*",
+      "surface": "doc",
+      "layer": "docs",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "The D3 census document must quote the legacy Portuguese release status values and the Portuguese display words it analyses; they are the data under decision, not engineering prose.",
+      "consumer": "the owner deciding BLK-RELEASES-STATUS-CHECK",
+      "owner": "catalog owner (Phase 0 naming)",
+      "removalCondition": "remove once the D3 decision is executed and the census shows no row with a legacy value",
+      "targetState": "document archived or deleted after the decision",
+      "blocker": "owner decision D3",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/release-status.legacy-compat.test.tsx"
     }
   ],
   "blockers": [
@@ -55071,7 +55088,7 @@
       "owner": "explicit owner authorization required",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Reports contract already reads starts_at."
+      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Reports contract already reads starts_at. Owner decision 2026-10-03 (decision record deci-ed83c974). Authorizes only the non-destructive pre-flight, censuses, verifications and rehearsals; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. Approval packages: docs/engineering/legacy-drop-approval-packages.md."
     },
     {
       "id": "BLK-HR-LEGACY-MIRRORS",
@@ -55082,7 +55099,7 @@
       "owner": "hr owner",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Approval must also authorize the per-environment reconciliation of legacy_* against the canonical columns."
+      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Approval must also authorize the per-environment reconciliation of legacy_* against the canonical columns. Owner decision 2026-10-03 (decision record deci-ed83c974). Authorizes only the non-destructive pre-flight, censuses, verifications and rehearsals; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. Approval packages: docs/engineering/legacy-drop-approval-packages.md."
     },
     {
       "id": "BLK-HR-PII",
@@ -55093,7 +55110,7 @@
       "owner": "hr owner",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Product/security question resolved from sources: the form inputs rg/birthDate/address were never persisted nor mapped and have no consumer, so they were removed from the employee form (test EmployeeFormModal.no-unpersisted-pii). Remaining: drop of the unmapped employees columns (rg, birth_date, address) is destructive and needs a per-environment row census; draft prepared. Guarded unregistered draft 20260930000053_DropEmployeesLegacyPiiColumns (archive-first, down() restores by id) rehearsed up/down/up on a disposable COPY database; census query and HR retention decision documented in legacy-column-drop-plan.md section 3.6."
+      "independentWorkCompleted": "Product/security question resolved from sources: the form inputs rg/birthDate/address were never persisted nor mapped and have no consumer, so they were removed from the employee form (test EmployeeFormModal.no-unpersisted-pii). Remaining: drop of the unmapped employees columns (rg, birth_date, address) is destructive and needs a per-environment row census; draft prepared. Guarded unregistered draft 20260930000053_DropEmployeesLegacyPiiColumns (archive-first, down() restores by id) rehearsed up/down/up on a disposable COPY database; census query and HR retention decision documented in legacy-column-drop-plan.md section 3.6. Owner decision 2026-10-03 (decision record deci-ed83c974). Authorizes only the non-destructive pre-flight, censuses, verifications and rehearsals; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. Approval packages: docs/engineering/legacy-drop-approval-packages.md."
     },
     {
       "id": "BLK-SHARES-ARTIST-MIRROR",
@@ -55104,7 +55121,7 @@
       "owner": "shares owner (Phase 0 naming)",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval."
+      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Owner decision 2026-10-03 (decision record deci-ed83c974). Authorizes only the non-destructive pre-flight, censuses, verifications and rehearsals; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. Approval packages: docs/engineering/legacy-drop-approval-packages.md."
     },
     {
       "id": "BLK-CRM-PII-PLAINTEXT",
@@ -55115,7 +55132,7 @@
       "owner": "crm / tenancy owner (Phase 0 naming)",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Protection strategy implemented additively on the existing EncryptionService pattern (enc:v1:): artists rg/birth_date/address/bank fields get <field>_encrypted columns (registered additive migration 20261002000001), writes persist ciphertext only and null the plaintext column, caller metadata can no longer carry PII keys (sanitizer), reads dual-read (ciphertext wins, legacy plaintext still readable), exports dual-read and never include metadata, logs redact PII keys; clients cpf_cnpj/email/phone were already encrypted. Backfill+scrub of existing rows is an UNREGISTERED guarded draft (20261002000002, PII_ENCRYPT_CONFIRM + real ENCRYPTION_KEY + BYPASSRLS, archive-first, residue audit, down() restores) documented in docs/engineering/data-governance-pii-backfill.md; only its execution, the later plaintext column drop and key-escrow/retention evidence await approval."
+      "independentWorkCompleted": "Protection strategy implemented additively on the existing EncryptionService pattern (enc:v1:): artists rg/birth_date/address/bank fields get <field>_encrypted columns (registered additive migration 20261002000001), writes persist ciphertext only and null the plaintext column, caller metadata can no longer carry PII keys (sanitizer), reads dual-read (ciphertext wins, legacy plaintext still readable), exports dual-read and never include metadata, logs redact PII keys; clients cpf_cnpj/email/phone were already encrypted. Backfill+scrub of existing rows is an UNREGISTERED guarded draft (20261002000002, PII_ENCRYPT_CONFIRM + real ENCRYPTION_KEY + BYPASSRLS, archive-first, residue audit, down() restores) documented in docs/engineering/data-governance-pii-backfill.md; only its execution, the later plaintext column drop and key-escrow/retention evidence await approval. Owner decision 2026-10-03 (decision record deci-ed83c974). Option A (archive, encrypted backfill, verification, ciphertext canonical); backfill and plaintext scrub are separate drafts with separate tokens; no production scrub authorized. Packages: docs/engineering/pii-approval-packages.md."
     },
     {
       "id": "BLK-WORKS-LEGACY-DUPLICATES",
@@ -55126,7 +55143,7 @@
       "owner": "catalog owner (Phase 0 naming)",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval."
+      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Owner decision 2026-10-03 (decision record deci-ed83c974). Authorizes only the non-destructive pre-flight, censuses, verifications and rehearsals; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. Approval packages: docs/engineering/legacy-drop-approval-packages.md."
     },
     {
       "id": "BLK-PHONOGRAMS-LEGACY-DUPLICATES",
@@ -55137,7 +55154,7 @@
       "owner": "catalog owner (Phase 0 naming)",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval."
+      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Owner decision 2026-10-03 (decision record deci-ed83c974). Authorizes only the non-destructive pre-flight, censuses, verifications and rehearsals; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. Approval packages: docs/engineering/legacy-drop-approval-packages.md."
     },
     {
       "id": "BLK-RELEASES-STATUS-CHECK",
@@ -55148,7 +55165,7 @@
       "owner": "releases team",
       "disposition": "GENUINE_BUSINESS_DECISION",
       "status": "OPEN",
-      "independentWorkCompleted": "Census query for existing rejected/taken_down rows documented in the staging-to-production runbook; Release != Distribution boundary preserved. Two valid alternatives remain (A: ReleaseStatus gains rejected/taken_down; B: rows move to cancelled)."
+      "independentWorkCompleted": "Census query for existing rejected/taken_down rows documented in the staging-to-production runbook; Release != Distribution boundary preserved. Two valid alternatives remain (A: ReleaseStatus gains rejected/taken_down; B: rows move to cancelled). Owner decision 2026-10-03 (decision record deci-ed83c974). Stays a GENUINE_BUSINESS_DECISION: rejected/taken_down are NOT implemented and the rows are NOT mapped to cancelled; the census and the consequences of options A and B are in docs/engineering/release-status-census.md. This does not block independent work."
     },
     {
       "id": "BLK-TRANSACTIONS-LEGACY-DUPLICATES",
@@ -55159,7 +55176,7 @@
       "owner": "accounting owner (Phase 0 naming)",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval."
+      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Owner decision 2026-10-03 (decision record deci-ed83c974). Authorizes only the non-destructive pre-flight, censuses, verifications and rehearsals; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. Approval packages: docs/engineering/legacy-drop-approval-packages.md."
     },
     {
       "id": "BLK-TRANSACTION-CATEGORY-TAXONOMY",
@@ -55194,7 +55211,7 @@
       "owner": "crm / tenancy owner (Phase 0 naming)",
       "disposition": "DESTRUCTIVE_APPROVAL_REQUIRED",
       "status": "OPEN",
-      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval."
+      "independentWorkCompleted": "Entities no longer map the legacy columns; reads/writes/jobs/scripts traced (no producer/consumer/fallback); archive-then-drop draft (unregistered, LEGACY_DROP_CONFIRM-gated, preflight counts, RLS-forced archive, down() restores by id) rehearsed up/down/up on a disposable COPY database (e2e spec legacy-column-drop-drafts, 28 assertions); only the destructive DROP executes after approval. Owner decision 2026-10-03 (decision record deci-ed83c974). Authorizes only the non-destructive pre-flight, censuses, verifications and rehearsals; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. Approval packages: docs/engineering/legacy-drop-approval-packages.md."
     },
     {
       "id": "BLK-CLIENT-PROFILE-TAXONOMY",
@@ -55245,11 +55262,12 @@
       "item": "HR employee documents have no backend",
       "blocker": "Undefined product behavior: storage backend, document types, retention and who may read sensitive HR files are not specified anywhere in the repository; choosing a storage provider is an owner decision.",
       "evidence": "No employee_documents table (only employees), no route or API module; api-client.ts PENDING_TABLES notes the old mapping onto /hr/employees listed employees as documents and deleted employees on document removal; HR.tsx renders EmployeeDocumentsUnavailable and HR.documents-unbacked.guard.test.ts enforces it.",
-      "requiredAction": "Owner specifies the capability (storage, types, retention, permissions); then add the table with RLS, API module, permissions and replace the unavailable state.",
+      "requiredAction": "None: resolved by the owner decision (capability kept unavailable). Reopen only if the owner later specifies storage, types, retention and read scope.",
       "owner": "hr owner",
       "disposition": "GENUINE_BUSINESS_DECISION",
-      "status": "OPEN",
-      "independentWorkCompleted": "Unavailable state is honest and tested; storage backend, document types, retention and read scope are not specified anywhere in the repository (no existing model supports a default)."
+      "status": "RESOLVED",
+      "independentWorkCompleted": "Unavailable state is honest and tested; storage backend, document types, retention and read scope are not specified anywhere in the repository (no existing model supports a default).",
+      "resolution": "Owner decision 2026-10-03 (decision record deci-ed83c974). The capability stays UNAVAILABLE on purpose (CAPABILITY_UNAVAILABLE): no storage provider, document types, retention or read scope are invented, nothing is implemented and no existing data is deleted. Tests: EmployeeDocumentsUnavailable.test.tsx and HR.documents-unbacked.guard.test.ts keep the honest unavailable state."
     },
     {
       "id": "BLK-CI-JOB-NAME-FASE",
@@ -55260,7 +55278,7 @@
       "owner": "platform tooling owner",
       "disposition": "EXTERNAL",
       "status": "OPEN",
-      "independentWorkCompleted": "Job renamed (commit ad618b3); in-repo references derived from the local workflows; repository rulesets read via API and verified to require no status check; stale git-safety doc about rulesets corrected."
+      "independentWorkCompleted": "Job renamed (commit ad618b3); in-repo references derived from the local workflows; repository rulesets read via API and verified to require no status check; stale git-safety doc about rulesets corrected. Owner decision 2026-10-03 (decision record deci-ed83c974). Stays EXTERNAL: the final confirmation depends on administrative access to the classic branch protection; the job name is not changed again and no permission is bypassed. This does not block independent work."
     },
     {
       "id": "BLK-LEGACY-ROOT-SQL",
