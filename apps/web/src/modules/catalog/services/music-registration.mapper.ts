@@ -180,7 +180,7 @@ export function participantsToComposerAndTranslatorNames(
 
 export function workTitle(work: any): string {
   if (!work) return "";
-  return (work.title as string) ?? "";
+  return (work.title as string) ?? (work.titulo as string) ?? "";
 }
 
 export function workAlternativeTitles(work: Partial<Work> | null | undefined): string[] {

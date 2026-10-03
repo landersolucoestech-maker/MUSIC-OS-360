@@ -7541,6 +7541,10 @@ FRONTEND	identifier	apps/web/src/modules/catalog/components/ParticipanteViewModa
 FRONTEND	identifier	apps/web/src/modules/catalog/components/ParticipanteViewModal.tsx	variable	tipoPessoa	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	identifier	apps/web/src/modules/catalog/components/PhonogramFormModal.legacy-compat.test.tsx	property-read	nome	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	identifier	apps/web/src/modules/catalog/components/PhonogramFormModal.legacy-compat.test.tsx	property-read	produtores	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+FRONTEND	identifier	apps/web/src/modules/catalog/components/PhonogramFormModal.tsx	property-read	nome	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+FRONTEND	identifier	apps/web/src/modules/catalog/components/PhonogramFormModal.tsx	property-read	produtores	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+FRONTEND	identifier	apps/web/src/modules/catalog/components/PhonogramFormModal.tsx	property	nome	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+FRONTEND	identifier	apps/web/src/modules/catalog/components/PhonogramFormModal.tsx	property	produtores	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	identifier	apps/web/src/modules/catalog/hooks/useCatalogPaginated.ts	function	useFonogramasGeneros	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/catalog/hooks/useCatalogPaginated.ts	function	useFonogramasPaginated	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/catalog/hooks/useCatalogPaginated.ts	function	useFonogramasStats	1	0	NORMALIZED	
@@ -7679,6 +7683,7 @@ FRONTEND	identifier	apps/web/src/modules/catalog/schemas/fonograma-schema.ts	typ
 FRONTEND	identifier	apps/web/src/modules/catalog/schemas/fonograma-schema.ts	variable	fonogramaSchema	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/catalog/schemas/obra-schema.ts	type	ObraFormData	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/catalog/schemas/obra-schema.ts	variable	obraSchema	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/modules/catalog/services/music-registration.mapper.ts	property-read	titulo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	identifier	apps/web/src/modules/catalog/services/registro-musicas.mapper.test.ts	parameter	participantes	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	identifier	apps/web/src/modules/catalog/services/registro-musicas.mapper.test.ts	property-read	compositores	2	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	identifier	apps/web/src/modules/catalog/services/registro-musicas.mapper.test.ts	property-read	letristas	2	0	NORMALIZED	
@@ -14111,8 +14116,8 @@ FRONTEND	objectKey	apps/web/src/modules/catalog/components/ObraFormModal.tsx	obj
 FRONTEND	objectKey	apps/web/src/modules/catalog/components/ObraFormModal.tsx	object-key	tipoObra	2	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/catalog/components/ObraFormModal.tsx	object-key	tituloObra	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/catalog/components/ObraViewModal.tsx	object-key	obra	1	0	NORMALIZED	
-TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/modules/catalog/components/PhonogramFormModal.legacy-compat.test.tsx	object-key	nome	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/modules/catalog/components/PhonogramFormModal.legacy-compat.test.tsx	object-key	produtores	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/modules/catalog/components/PhonogramFormModal.legacy-compat.test.tsx	object-key	nome	0	6	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/modules/catalog/components/PhonogramFormModal.legacy-compat.test.tsx	object-key	produtores	0	6	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	objectKey	apps/web/src/modules/catalog/hooks/useCatalogPaginated.ts	object-key	fonogramas	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/catalog/hooks/useCatalogPaginated.ts	object-key	generos	2	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/catalog/hooks/useCatalogPaginated.ts	object-key	obras	1	0	NORMALIZED	

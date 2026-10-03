@@ -708,14 +708,20 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                 if ((fullWork.project_id as string | null | undefined)) {
                                   const project = await storage.findById<ProjetoWithRelations>("projects", fullWork.project_id as string);
                                   if (project) {
-                                    // Producers of the project track with the same name (the API returns the hydrated `tracks` array)
                                     const normT = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                                    const trackMatch = parseTracksFromProject(project as { tracks?: TrackData[] }).find((m) =>
-                                      normT(m.name || "") === normT(fullWork.title || "") ||
-                                      normT(m.name || "") === normT(work.title || "")
-                                    );
-                                    if (trackMatch?.producers?.length) {
-                                      sessionMusicians = trackMatch.producers.map((name: string) => ({
+                                    const sameTitle = (name: string) => normT(name) === normT(fullWork.title || "") || normT(name) === normT(work.title || "");
+                                    // Producers of the project track with the same name (the API returns the hydrated `tracks` array)
+                                    const trackMatch = parseTracksFromProject(project as { tracks?: TrackData[] }).find((m) => sameTitle(m.name || ""));
+                                    let producerNames: string[] = trackMatch?.producers ?? [];
+                                    // Legacy read-compat: projects whose description still holds the old JSON tracks ([{ nome, produtores }]).
+                                    if (producerNames.length === 0 && project.description) {
+                                      try {
+                                        const legacy = JSON.parse(project.description as string) as Array<{ nome?: string; produtores?: string[] }>;
+                                        producerNames = legacy.find((m) => sameTitle(m.nome || ""))?.produtores ?? [];
+                                      } catch { /* invalid JSON — leave blank */ }
+                                    }
+                                    if (producerNames.length > 0) {
+                                      sessionMusicians = producerNames.map((name: string) => ({
                                         id: crypto.randomUUID(), name, percentage: "",
                                       }));
                                     }

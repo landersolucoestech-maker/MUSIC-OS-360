@@ -6,7 +6,7 @@ import { screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 import { renderWithProviders } from "@/test/_helpers/render-with-providers";
 
-const { projectDescription } = vi.hoisted(() => ({ projectDescription: { value: "" } }));
+const { projectDescription, projectTracks } = vi.hoisted(() => ({ projectDescription: { value: "" }, projectTracks: { value: undefined as unknown } }));
 
 vi.mock("@/modules/catalog/hooks/usePhonograms", () => {
   const stableReturn = {
@@ -44,7 +44,7 @@ vi.mock("@/shared/lib/storage", async () => {
     storage: {
       ...actual.storage,
       findById: vi.fn(async (table: string, id: string) => {
-        if (table === "projects" && id === "proj-1") return { id: "proj-1", description: projectDescription.value };
+        if (table === "projects" && id === "proj-1") return { id: "proj-1", description: projectDescription.value, tracks: projectTracks.value };
         return undefined;
       }),
       listPaged: vi.fn(async (table: string) => {
@@ -83,7 +83,7 @@ const participantNames = () =>
   screen.queryAllByPlaceholderText("Nome do participante").map((el) => (el as HTMLInputElement).value).filter(Boolean);
 
 describe("PhonogramFormModal legacy project track JSON (nome/produtores) read-compat", () => {
-  beforeEach(() => { projectDescription.value = ""; });
+  beforeEach(() => { projectDescription.value = ""; projectTracks.value = undefined; });
 
   it.each(LEGACY_TRACK_JSON)("%s", async (_label, tracks, expectedNames) => {
     projectDescription.value = JSON.stringify(tracks);
@@ -100,6 +100,15 @@ describe("PhonogramFormModal legacy project track JSON (nome/produtores) read-co
         for (const name of track.produtores) expect(participantNames()).not.toContain(name);
       }
     }
+  });
+
+  it("canonical project tracks (API `tracks[].name/producers`) resolve to session musicians, and win over the legacy description", async () => {
+    projectTracks.value = [{ name: "Canção Sétima", producers: ["Gil Canônico"] }, { name: "Outra", producers: ["Fora"] }];
+    projectDescription.value = JSON.stringify([{ nome: "Canção Sétima", produtores: ["Beto Legado"] }]);
+    await linkWork();
+    await waitFor(() => expect(participantNames()).toEqual(expect.arrayContaining(["Gil Canônico"])));
+    expect(participantNames()).not.toContain("Beto Legado");
+    expect(participantNames()).not.toContain("Fora");
   });
 
   it("invalid JSON in the legacy description leaves participants blank without breaking the link", async () => {

@@ -56895,6 +56895,23 @@
       "dependency": "CZ-022 web release",
       "status": "ACTIVE",
       "coveringTest": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts"
+    },
+    {
+      "item": "legacy Portuguese name `titulo` read in music-registration.mapper.ts",
+      "path": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
+      "currentName": "titulo",
+      "surface": "identifier",
+      "layer": "frontend",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Documented legacy-name reader (expand/contract): old payloads, stored metadata or deprecated query parameters still carry the Portuguese name; the canonical English name is read first.",
+      "consumer": "old payloads, stored jsonb and deprecated parameters",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "removed together with the legacy alias it reads (residue census returns 0 for one release window)",
+      "targetState": "reader and test deleted with the alias",
+      "blocker": "deployment cutover (web release) — outside this environment",
+      "dependency": "CZ-022 web release",
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/test/musicRegistrationMappers.test.ts"
     }
   ],
   "blockers": [
