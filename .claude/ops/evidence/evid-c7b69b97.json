@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node apps/api/node_modules/typescript/bin/tsc -p apps/api/tsconfig.build.json --noEmit",
+  "command": "node apps/api/node_modules/typescript/bin/tsc -p apps/api/tsconfig.build.json --noEmit",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "893cf0b9937033f07d3cccf99c747ea018aa75a40a551995f5c21c35f5f3623d",
+  "fingerprintStatus": "BOUND",
+  "head": "d0ab2024829bae8ddd5129dd245999088f30b34a",
+  "durationMs": 3625,
+  "id": "evid-c7b69b97",
+  "createdAt": "2026-10-03T13:09:50.450Z"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/dead-artifacts-proof.mjs",
+  "command": "node /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/dead-artifacts-proof.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "{\"summary\":{\"code\":2,\"comment\":0,\"doc\":4,\"generatedOrHistory\":496},\"packageJsonConsumers\":[],\"ciDockerConsumers\":[]}\nCODE_REFERENCES:\n  scripts/naming/normalization-audit.mjs:42\n  scripts/naming/normalization-audit.test.mjs:13\nCOMMENT_REFERENCES:\n  (none)\nDOC_REFERENCES:\n  docs/CODEBASE_MAP.md:167\n  docs/CODEBASE_MAP.md:256\n  docs/engineering/legacy-drop-approval-packages.md:256\n  docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md:43\nCONSUMERS=0 (code references only in files that exist exclusively for these artifacts)",
+  "stderrTail": "",
+  "workspaceFingerprint": "893cf0b9937033f07d3cccf99c747ea018aa75a40a551995f5c21c35f5f3623d",
+  "fingerprintStatus": "BOUND",
+  "head": "d0ab2024829bae8ddd5129dd245999088f30b34a",
+  "durationMs": 515,
+  "id": "evid-d0b8f368",
+  "createdAt": "2026-10-03T13:11:34.551Z"
+}

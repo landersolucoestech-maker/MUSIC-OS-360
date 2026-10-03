@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/independent-residue.mjs",
+  "command": "node /tmp/claude-0/-home-user-MUSIC-OS-360/9b5d3b27-585f-5e7a-9638-b42140d5676f/scratchpad/independent-residue.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "aliases: 38; code files scanned: 2633; alias nodes found: 411 in 120 files; uncovered by the ledger: 0",
+  "stderrTail": "",
+  "workspaceFingerprint": "893cf0b9937033f07d3cccf99c747ea018aa75a40a551995f5c21c35f5f3623d",
+  "fingerprintStatus": "BOUND",
+  "head": "d0ab2024829bae8ddd5129dd245999088f30b34a",
+  "durationMs": 1577,
+  "id": "evid-ae3c5b59",
+  "createdAt": "2026-10-03T13:11:36.228Z"
+}

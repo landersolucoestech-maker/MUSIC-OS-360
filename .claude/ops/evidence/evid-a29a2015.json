@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm naming:audit",
+  "command": "pnpm naming:audit",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "> music-os-360-monorepo@0.0.0 naming:audit /home/user/MUSIC-OS-360\n> node scripts/naming/normalization-audit.mjs --baseline 02f1ee8a75be16a93f91caae1d8a78702ab2f4fc\n\n\n| CAMADA | ITENS AUDITADOS | ALTERADOS (files) | NORMALIZED | LEGITIMATE_COMPATIBILITY_BOUNDARY | HISTORICAL_RECORD | NOT_NORMALIZED |\n|---|---:|---:|---:|---:|---:|---:|\n| DATABASE | 689 | 194 | 655 | 34 | 0 | 0 |\n| BACKEND_API | 7300 | 631 | 5289 | 2011 | 0 | 0 |\n| FRONTEND | 19013 | 713 | 17569 | 1444 | 0 | 0 |\n| SHARED_PACKAGES | 386 | 136 | 353 | 33 | 0 | 0 |\n| TESTS_FIXTURES_MOCKS | 10381 | 786 | 6276 | 4105 | 0 | 0 |\n| TOOLING_SCRIPTS_CI | 293 | 163 | 254 | 39 | 0 | 0 |\n| DOCUMENTATION | 20939 | 1063 | 10379 | 1865 | 8695 | 0 |\n| **TOTAL** | 59001 | 3686 | 40775 | 9531 | 8695 | 0 |",
+  "stderrTail": "",
+  "workspaceFingerprint": "893cf0b9937033f07d3cccf99c747ea018aa75a40a551995f5c21c35f5f3623d",
+  "fingerprintStatus": "BOUND",
+  "head": "d0ab2024829bae8ddd5129dd245999088f30b34a",
+  "durationMs": 19287,
+  "id": "evid-a29a2015",
+  "createdAt": "2026-10-03T13:11:55.617Z"
+}
